@@ -1,0 +1,15 @@
+{
+  "processors": ["stylelint-processor-styled-components"],
+  "extends": [
+    "stylelint-config-styled-components",
+    "stylelint-config-prettier",
+    "stylelint-config-airbnb"
+  ],
+  "rules": {
+    "indentation": 2,
+    "color-hex-case": "lower",
+    "max-empty-lines": 2,
+    "max-nesting-depth": 3,
+    "string-quotes": "single"
+  }
+}

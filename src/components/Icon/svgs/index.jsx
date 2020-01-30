@@ -1,0 +1,10 @@
+export { ReactComponent as calendar } from './calendar.svg';
+export { ReactComponent as drug } from './drug.svg';
+export { ReactComponent as drugPrescription } from './drugPrescription.svg';
+export { ReactComponent as edit } from './edit.svg';
+export { ReactComponent as intervention } from './intervention.svg';
+export { ReactComponent as report } from './report.svg';
+export { ReactComponent as segments } from './segments.svg';
+export { ReactComponent as star } from './star.svg';
+export { ReactComponent as table } from './table.svg';
+export { ReactComponent as user } from './user.svg';

@@ -1,0 +1,79 @@
+import 'styled-components/macro';
+import React from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+import Heading from '@components/Heading';
+import { Row, Col } from '@components/Grid';
+import { Select } from '@components/Inputs';
+import { Box } from './Filter.style';
+
+const validationSchema = Yup.object().shape({
+  idDrug: Yup.number().required('É necessário escolher um medicamento'),
+  idSegment: Yup.number().required('É necessário escolher um segmento')
+});
+
+export default function Filter({ segments, drugs, outliers, fetchOutliersList }) {
+  const { values, setFieldValue } = useFormik({
+    validationSchema,
+    enableReinitialize: true,
+    initialValues: outliers.selecteds,
+    onSubmit: fetchOutliersList
+  });
+
+  const handleChange = (key, value) => {
+    setFieldValue(key, value);
+    fetchOutliersList(values);
+  };
+
+  return (
+    <form css="margin-bottom: 25px;">
+      <Row type="flex" gutter={24}>
+        <Col span={24} md={8}>
+          <Box>
+            <Heading as="label" htmlFor="segments" size="16px" margin="0 10px 0 0">
+              Segmento:
+            </Heading>
+            <Select
+              id="idSegment"
+              name="idSegment"
+              style={{ width: '100%' }}
+              placeholder="Selectione um segmento..."
+              loading={segments.isFetching}
+              value={values.idSegment}
+              onChange={val => handleChange('idSegment', val)}
+            >
+              {segments.list.map(({ id, description: text }) => (
+                <Select.Option key={id} value={id}>
+                  {text}
+                </Select.Option>
+              ))}
+            </Select>
+          </Box>
+        </Col>
+        <Col span={24} md={24 - 8 - 4}>
+          <Box>
+            <Heading as="label" htmlFor="drug" size="16px" margin="0 10px 0 0">
+              Medicamento:
+            </Heading>
+            <Select
+              id="idDrug"
+              name="idDrug"
+              style={{ width: '100%' }}
+              placeholder="Selectione um medicamento..."
+              loading={drugs.isFetching}
+              value={values.idDrug}
+              onChange={val => handleChange('idDrug', val)}
+            >
+              {drugs.list.map(({ idDrug, name: text }) => (
+                <Select.Option key={idDrug} value={idDrug}>
+                  {text}
+                </Select.Option>
+              ))}
+            </Select>
+          </Box>
+        </Col>
+      </Row>
+    </form>
+  );
+}
