@@ -20,4 +20,8 @@ export const InputNumber = styled(antInputNumber)`
     border-color: ${get('colors.accentSecondary')};
     box-shadow: 0 0 0 2px ${rgba('#70bdc3', 0.2)};
   }
+
+  .ant-input-number-handler-wrap {
+    opacity: 1;
+  }
 `;

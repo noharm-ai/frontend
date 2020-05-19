@@ -38,7 +38,7 @@ export const Wrapper = styled(AntLayout)`
 
 Wrapper.Footer = styled(AntLayout.Footer)`
   &.ant-layout-footer {
-    color: #b4c1d9;
+    color: #888;
     font-size: 16px;
     font-family: ${get('fonts.secondary')};
     font-weight: ${get('weight.light')};

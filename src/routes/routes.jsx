@@ -7,6 +7,7 @@ import withAuth from '@lib/withAuth';
  * Pages
  */
 import Login from '@pages/Login';
+import Logout from '@pages/Logout';
 import ScreeningList from '@pages/ScreeningList';
 import Screening from '@pages/Screening';
 import Segments from '@pages/Segments';
@@ -16,6 +17,11 @@ import References from '@pages/References';
 import Reports from '@pages/Reports';
 
 const routes = [
+  {
+    exact: true,
+    path: '/logout',
+    component: Logout
+  },
   {
     exact: true,
     path: '/login',
@@ -62,6 +68,20 @@ const routes = [
   {
     exact: true,
     path: '/tabela-referencia',
+    component: withAuth({
+      component: References
+    })
+  },
+  {
+    exact: true,
+    path: '/tabela-referencia/:idSegment/:idDrug/:slug',
+    component: withAuth({
+      component: References
+    })
+  },
+  {
+    exact: true,
+    path: '/tabela-referencia/:idSegment/:idDrug/:slug/:dose/:frequency',
     component: withAuth({
       component: References
     })

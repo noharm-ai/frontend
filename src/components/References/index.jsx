@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
 
 import breakpoints from '@styles/breakpoints';
@@ -7,9 +7,17 @@ import { toDataSource } from '@utils';
 import Table from '@components/Table';
 import Empty from '@components/Empty';
 import notification from '@components/notification';
+import Heading from '@components/Heading';
+import { FieldSet } from '@components/Inputs';
+import DefaultModal from '@components/Modal';
+import Tabs from '@components/Tabs';
 
+import Edit from '@containers/References/Edit';
 import Filter from './Filter';
 import columns from './columns';
+import unitConversionColumns from './UnitConversion/columns';
+
+import DrugForm from '@containers/Forms/Drug';
 
 // empty text for table result.
 const emptyText = (
@@ -20,17 +28,59 @@ const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
   description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
 };
+const saveObsMessage = {
+  message: 'Uhu! Outlier atualizado com sucesso! :)'
+};
 const noop = () => {};
 const theTitle = () => 'Deslize para a direita para ver mais conteúdo.';
 
-export default function References({ outliers, fetchReferencesList, saveOutlier, ...restProps }) {
+export default function References({
+  match,
+  outliers,
+  fetchReferencesList,
+  saveOutlier,
+  saveUnitCoefficient,
+  selectOutlier,
+  ...restProps
+}) {
   const { isFetching, list, error } = outliers;
-  const dataSource = toDataSource(list, 'idOutlier', { saveOutlier });
+  const [obsModalVisible, setObsModalVisibility] = useState(false);
+
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
+  const {
+    drugs: { units }
+  } = restProps;
+
+  const onSaveObs = () => {
+    saveOutlier(outliers.edit.item.idOutlier, { obs: outliers.edit.item.obs });
+  };
+  const onCancelObs = () => {
+    selectOutlier({});
+    setObsModalVisibility(false);
+  };
+  const onShowObsModal = data => {
+    selectOutlier(data);
+    setObsModalVisibility(true);
+  };
+
+  const dataSource = toDataSource(list, 'idOutlier', { saveOutlier, onShowObsModal });
+  const unitsDatasource = toDataSource(units.list, 'idMeasureUnit', {
+    saveUnitCoefficient,
+    idDrug: outliers.selecteds.idDrug
+  });
 
   useEffect(() => {
-    fetchReferencesList()
-  }, [fetchReferencesList]);
+    if (!isEmpty(match.params)) {
+      fetchReferencesList(
+        match.params.idSegment,
+        match.params.idDrug,
+        match.params.dose,
+        match.params.frequency
+      );
+    } else {
+      fetchReferencesList();
+    }
+  }, [fetchReferencesList, match.params]);
 
   // show message if has error
   useEffect(() => {
@@ -39,18 +89,91 @@ export default function References({ outliers, fetchReferencesList, saveOutlier,
     }
   }, [error]);
 
+  useEffect(() => {
+    if (outliers.saveStatus.success) {
+      notification.success(saveObsMessage);
+      setObsModalVisibility(false);
+    }
+
+    if (outliers.saveStatus.error) {
+      notification.error(errorMessage);
+    }
+  }, [outliers.saveStatus.success, outliers.saveStatus.error]);
+
+  const convFreq = (frequency) => {
+    switch (frequency) {
+      case '33':
+        return 'SN';
+      case '44':
+        return 'ACM';
+      case '99':
+        return 'N/D';
+      default: 
+        return frequency;
+    }
+  };
+
+  const rowClassName = (record, index) => {
+    if (
+      record.dose + '' === match.params.dose &&
+      record.frequency + '' === convFreq(match.params.frequency)
+    ) {
+      return 'highlight';
+    }
+  };
+
   return (
     <>
       <Filter {...restProps} outliers={outliers} />
-      <Table
-        title={title}
-        columns={columns}
-        pagination={false}
-        scroll={{ x: 800 }}
-        loading={isFetching}
-        locale={{ emptyText }}
-        dataSource={!isFetching ? dataSource : []}
-      />
+      <Tabs defaultActiveKey="1" style={{ width: '100%', marginTop: '20px' }} type="card">
+        <Tabs.TabPane tab="Escores" key="1">
+          <Table
+            title={title}
+            columns={columns}
+            pagination={false}
+            loading={isFetching}
+            locale={{ emptyText }}
+            dataSource={!isFetching ? dataSource : []}
+            rowClassName={rowClassName}
+          />
+          <FieldSet style={{ marginBottom: '25px', marginTop: '25px' }}>
+            <Heading as="label" size="16px" margin="0 0 10px">
+              Conversão de unidades:
+            </Heading>
+          </FieldSet>
+          <Table
+            columns={unitConversionColumns}
+            pagination={false}
+            loading={units.isFetching}
+            locale={{ emptyText }}
+            dataSource={!units.isFetching ? unitsDatasource : []}
+          />
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="Atributos" key="2">
+          <DrugForm />
+        </Tabs.TabPane>
+      </Tabs>
+
+      <DefaultModal
+        centered
+        destroyOnClose
+        onOk={onSaveObs}
+        visible={obsModalVisible}
+        onCancel={onCancelObs}
+        confirmLoading={outliers.saveStatus.isSaving}
+        okText="Salvar"
+        okButtonProps={{
+          disabled: outliers.saveStatus.isSaving,
+          type: 'gtm-bt-save-obs'
+        }}
+        cancelText="Cancelar"
+        cancelButtonProps={{
+          disabled: outliers.saveStatus.isSaving,
+          type: 'primary gtm-bt-cancel-obs'
+        }}
+      >
+        <Edit />
+      </DefaultModal>
     </>
   );
 }

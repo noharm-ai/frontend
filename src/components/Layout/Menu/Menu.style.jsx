@@ -10,6 +10,17 @@ export const Wrapper = styled(AntMenu)`
     background: transparent;
     border: 0;
   }
+
+  &.ant-menu-inline-collapsed {
+    .ant-menu-item {
+      padding: 0 !important;
+    }
+
+    .nav-text {
+      width: 75px;
+      text-align: center;
+    }
+  }
 `;
 
 Wrapper.Item = styled(AntMenu.Item)`

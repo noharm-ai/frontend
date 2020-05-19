@@ -8,7 +8,8 @@ const mapStateToProps = ({ prescriptions }) => ({
   prescription: {
     check: {
       ...prescriptions.single.check
-    }
+    },
+    content: prescriptions.single.data
   }
 });
 const mapDispatchToProps = dispatch =>

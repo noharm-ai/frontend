@@ -1,5 +1,5 @@
 import 'styled-components/macro';
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
 import appInfo from '@utils/appInfo';
 import Avatar from '@components/Avatar';
@@ -11,6 +11,11 @@ import { Wrapper as Main, Brand, LogOut, UserName } from './Layout.style';
 const siderWidth = 250;
 const { Sider, Header, Content, Footer } = Main;
 
+const setTitle = ({ user }) => {
+  document.title = process.env.REACT_APP_SITE_TITLE + ' - ' + user.account.schema;
+  return user.account.userName;
+};
+
 const Me = ({ user, doLogout }) => (
   <div
     css="
@@ -19,8 +24,10 @@ const Me = ({ user, doLogout }) => (
     "
   >
     <Avatar size={44} icon="user" css="margin-right: 12px !important;" />
-    <UserName>{user.account.userName}</UserName>
-    <LogOut onClick={e => doLogout(e)}>Sair</LogOut>
+    <UserName>{setTitle({ user })}</UserName>
+    <LogOut onClick={e => doLogout(e)} id="gtm-lnk-sair">
+      Sair
+    </LogOut>
   </div>
 );
 
@@ -43,12 +50,12 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
 
       setAppSider({
         collapsed: isCollapsed
-      })
+      });
 
       return {
         ...prevState,
         collapsed: isCollapsed
-      }
+      };
     });
   };
 
@@ -76,9 +83,12 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
           {theme === 'boxed' ? <Box {...props}>{children}</Box> : children}
         </Content>
         <Footer>
-          {appInfo.copyright}
+          {appInfo.copyright} &nbsp;
+          <a href={process.env.REACT_APP_UPDOWN_LINK} target="_blank" rel="noopener noreferrer">
+            <img src="/updown.png" width="12px" alt="updown logo" />
+          </a>
         </Footer>
       </Main>
     </Main>
-  )
+  );
 }

@@ -42,15 +42,31 @@ const Button = styled(AntButton)`
       color: ${get('colors.commonLighter')};
     }
   }
+
+  &.ant-btn-link-active {
+    span {
+      text-decoration: underline;
+    }
+  }
+
+  &.ant-btn-link-hover:hover {
+    span {
+      text-decoration: underline;
+    }
+  }
 `;
 
-export const Link = ({ href, to, children, ...props }) => {
+export const Link = ({ href, to, children, target, ...props }) => {
   const history = useHistory();
 
   return (
     <Button
       onClick={() => {
-        history.push(href || to);
+        if (target === '_blank') {
+          window.open(href || to);
+        } else {
+          history.push(href || to);
+        }
       }}
       {...props}
     >

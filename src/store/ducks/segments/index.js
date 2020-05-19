@@ -8,6 +8,7 @@ export const { Types, Creators } = createActions({
   segmentsFetchSingleStart: [''],
   segmentsFetchSingleError: ['error'],
   segmentsFetchSingleSuccess: ['content'],
+  segmentsFetchSingleReset: [''],
 
   segmentsSaveSingleStart: [''],
   segmentsSaveSingleSuccess: [''],
@@ -26,7 +27,7 @@ const INITIAL_STATE = {
   },
   single: {
     error: null,
-    isFetching: true,
+    isFetching: false,
     content: {}
   }
 };
@@ -76,6 +77,13 @@ const fetchSingleSuccess = (state = INITIAL_STATE, { content }) => ({
   }
 });
 
+const fetchSingleReset = (state = INITIAL_STATE) => ({
+  ...state,
+  single: {
+    ...INITIAL_STATE.single
+  }
+});
+
 const saveSingleStart = (state = INITIAL_STATE) => ({
   ...state,
   save: {
@@ -89,14 +97,14 @@ const saveSingleError = (state = INITIAL_STATE, { error }) => ({
   save: {
     ...state.save,
     error,
-    isSaving: false,
+    isSaving: false
   }
 });
 
 const saveSingleReset = (state = INITIAL_STATE) => ({
   ...state,
   save: {
-    ...INITIAL_STATE.save,
+    ...INITIAL_STATE.save
   }
 });
 
@@ -106,7 +114,7 @@ const saveSingleSuccess = (state = INITIAL_STATE) => ({
     ...state.save,
     error: null,
     success: true,
-    isSaving: false,
+    isSaving: false
   }
 });
 
@@ -118,11 +126,12 @@ const HANDLERS = {
   [Types.SEGMENTS_FETCH_SINGLE_START]: fetchSingleStart,
   [Types.SEGMENTS_FETCH_SINGLE_ERROR]: fetchSingleError,
   [Types.SEGMENTS_FETCH_SINGLE_SUCCESS]: fetchSingleSuccess,
+  [Types.SEGMENTS_FETCH_SINGLE_RESET]: fetchSingleReset,
 
   [Types.SEGMENTS_SAVE_SINGLE_START]: saveSingleStart,
   [Types.SEGMENTS_SAVE_SINGLE_ERROR]: saveSingleError,
   [Types.SEGMENTS_SAVE_SINGLE_RESET]: saveSingleReset,
-  [Types.SEGMENTS_SAVE_SINGLE_SUCCESS]: saveSingleSuccess,
+  [Types.SEGMENTS_SAVE_SINGLE_SUCCESS]: saveSingleSuccess
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

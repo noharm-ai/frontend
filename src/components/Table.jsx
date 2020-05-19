@@ -45,6 +45,10 @@ const Table = styled(AntTable)`
       background-color: #e46666;
     }
 
+    &.orange {
+      background-color: #e67e22;
+    }
+
     &.yellow {
       background-color: #e4da66;
     }
@@ -63,6 +67,70 @@ const Table = styled(AntTable)`
   .ant-table-thead > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td,
   .ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
     background: rgba(244, 244, 244, 0.8);
+  }
+
+  .ant-table-row-expand-icon-cell,
+  .ant-table-expand-icon-th {
+    width: 15px;
+  }
+
+  .ant-table-right-border {
+    border-right: 1px solid #e8e8e8;
+  }
+
+  .ant-table-row {
+    transition: all 0.5s;
+  }
+
+  .ant-table-row:hover {
+    td,
+    a {
+      opacity: 1;
+    }
+  }
+
+  .suspended {
+    td,
+    a {
+      opacity: 0.45;
+      text-decoration: line-through;
+    }
+  }
+
+  .checked {
+    td {
+      opacity: 0.45;
+    }
+  }
+
+  .danger {
+    background: #ffcdd2;
+  }
+
+  .highlight {
+    background: #e6f7ff;
+  }
+
+  .hidden-sorter {
+    .ant-table-column-sorters {
+      display: none !important;
+    }
+  }
+
+  .divider-row {
+    .ant-table-row-expand-icon {
+      display: none;
+    }
+  }
+`;
+
+export const ExpandableTable = styled(Table)`
+  .ant-table-title {
+    padding: 0;
+  }
+
+  .ant-table-expanded-row > td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
   }
 `;
 

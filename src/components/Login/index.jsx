@@ -89,11 +89,11 @@ export default function Login({ isLogging, error, doLogin }) {
                   </FieldSet>
                 </Col>
                 <Col span={12} css="text-align: right">
-                  <ForgotPass href="#">Esqueci a senha</ForgotPass>
+                  <ForgotPass href="#" className="gtm-lnk-forgotpass">Esqueci a senha</ForgotPass>
                 </Col>
               </Row>
 
-              <Button type="primary" htmlType="submit" block loading={isLogging}>
+              <Button type="primary gtm-btn-login" htmlType="submit" block loading={isLogging}>
                 Acessar
               </Button>
             </Box>

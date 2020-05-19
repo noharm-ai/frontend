@@ -3,7 +3,7 @@ import ScreeningList from '@containers/ScreeningList';
 
 const layoutProps = {
   theme: 'boxed',
-  pageTitle: 'Lista de Pacientes para Triagem'
+  pageTitle: 'Pacientes para Triagem'
 };
 
 export default withLayout(ScreeningList, layoutProps);

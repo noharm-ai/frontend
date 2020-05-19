@@ -31,7 +31,19 @@ const {
 
   prescriptionsCheckStart,
   prescriptionsCheckError,
-  prescriptionsCheckSuccess
+  prescriptionsCheckSuccess,
+
+  prescriptionDrugCheckStart,
+  prescriptionDrugCheckError,
+  prescriptionDrugCheckSuccess,
+
+  prescriptionsUpdateListStatus,
+
+  prescriptionsUpdateIntervention,
+
+  prescriptionInterventionCheckStart,
+  prescriptionInterventionCheckError,
+  prescriptionInterventionCheckSuccess
 } = PrescriptionsCreators;
 
 export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, getState) => {
@@ -67,6 +79,22 @@ export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, get
 
   dispatch(patientsFetchListSuccess(patientsHandled));
   dispatch(prescriptionsFetchListSuccess(list));
+};
+
+export const updatePrescriptionStatusThunk = (params = {}) => async (dispatch, getState) => {
+  const { auth } = getState();
+  const { access_token } = auth.identify;
+  const {
+    data: { data },
+    error
+  } = await api.getPrescriptionsStatus(access_token, params).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(prescriptionsFetchListError(error));
+    return;
+  }
+
+  dispatch(prescriptionsUpdateListStatus(data));
 };
 
 export const fetchPrescriptionByIdThunk = idPrescription => async (dispatch, getState) => {
@@ -159,12 +187,12 @@ export const fetchScreeningThunk = idPrescription => async (dispatch, getState) 
   dispatch(prescriptionsFetchSingleSuccess(singlePrescriptionAddedPatientName));
 };
 
-export const checkScreeningThunk = idPrescription => async (dispatch, getState) => {
-  dispatch(prescriptionsCheckStart());
+export const checkScreeningThunk = (idPrescription, status) => async (dispatch, getState) => {
+  dispatch(prescriptionsCheckStart(idPrescription));
 
   const { access_token } = getState().auth.identify;
   const params = {
-    status: 's'
+    status
   };
   const { data, error } = await api
     .putPrescriptionById(access_token, idPrescription, params)
@@ -177,8 +205,71 @@ export const checkScreeningThunk = idPrescription => async (dispatch, getState) 
 
   const success = {
     status: data.status,
-    id: data.data
+    id: data.data,
+    newStatus: status
   };
 
   dispatch(prescriptionsCheckSuccess(success));
+};
+
+export const checkPrescriptionDrugThunk = (idPrescriptionDrug, status, type) => async (
+  dispatch,
+  getState
+) => {
+  dispatch(prescriptionDrugCheckStart(idPrescriptionDrug));
+
+  const { access_token } = getState().auth.identify;
+  const params = {
+    idPrescriptionDrug,
+    status
+  };
+
+  const { data, error } = await api.updateIntervention(access_token, params).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(prescriptionDrugCheckError(error));
+    return;
+  }
+
+  const success = {
+    status: data.status,
+    id: data.data,
+    newStatus: status,
+    type
+  };
+
+  dispatch(prescriptionDrugCheckSuccess(success));
+};
+
+export const updateInterventionDataThunk = (
+  idPrescriptionDrug,
+  source,
+  intervention
+) => dispatch => {
+  dispatch(prescriptionsUpdateIntervention(idPrescriptionDrug, source, intervention));
+};
+
+export const checkInterventionThunk = (id, status) => async (dispatch, getState) => {
+  dispatch(prescriptionInterventionCheckStart(id));
+
+  const { access_token } = getState().auth.identify;
+  const params = {
+    idPrescriptionDrug: id,
+    status
+  };
+
+  const { data, error } = await api.updateIntervention(access_token, params).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(prescriptionInterventionCheckError(error));
+    return;
+  }
+
+  const success = {
+    status: data.status,
+    id,
+    newStatus: status
+  };
+
+  dispatch(prescriptionInterventionCheckSuccess(success));
 };

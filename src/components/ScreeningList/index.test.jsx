@@ -58,7 +58,7 @@ const columns = setDataIndex([
         key: 'na'
       },
       {
-        title: 'RNI',
+        title: 'PRO',
         key: 'rni'
       }
     ])

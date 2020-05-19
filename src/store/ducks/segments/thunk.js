@@ -13,11 +13,12 @@ const {
   segmentsFetchSingleStart,
   segmentsFetchSingleError,
   segmentsFetchSingleSuccess,
+  segmentsFetchSingleReset,
 
   segmentsSaveSingleStart,
   segmentsSaveSingleReset,
   segmentsSaveSingleSuccess,
-  segmentsSaveSingleError,
+  segmentsSaveSingleError
 } = SegmentsCreators;
 
 export const fetchSegmentsListThunk = (params = {}) => async (dispatch, getState) => {
@@ -51,6 +52,10 @@ export const fetchSegmentByIdThunk = id => async (dispatch, getState) => {
   const single = transformSegment(data.data);
 
   dispatch(segmentsFetchSingleSuccess(single));
+};
+
+export const resetSingleSegmentThunk = () => async (dispatch, getState) => {
+  dispatch(segmentsFetchSingleReset());
 };
 
 export const saveSegmentThunk = (params = {}) => async (dispatch, getState) => {

@@ -4,9 +4,10 @@ import isEmpty from 'lodash.isempty';
 
 import Icon from '@components/Icon';
 import Heading from '@components/Heading';
-import Button, { Link } from '@components/Button';
+import Button from '@components/Button';
 import { Row, Col } from '@components/Grid';
 import notification from '@components/notification';
+import Tooltip from '@components/Tooltip';
 
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
@@ -16,9 +17,13 @@ const errorMessage = {
   description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
 };
 
+const close = () => {
+  window.close();
+};
+
 export default function PageHeader({ match, pageTitle, prescription, checkScreening }) {
   const id = parseInt(extractId(match.params.slug));
-  const { isChecking, error, success } = prescription.check;
+  const { isChecking, error } = prescription.check;
 
   // show message if has error
   useEffect(() => {
@@ -30,7 +35,9 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
   return (
     <Row type="flex" css="margin-bottom: 30px;">
       <Col span={24} md={16}>
-        <Heading>{pageTitle}</Heading>
+        <Heading>
+          {pageTitle} nº {prescription.content.idPrescription} - {prescription.content.dateFormated}
+        </Heading>
       </Col>
       <Col
         span={24}
@@ -43,12 +50,37 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
           }
         "
       >
-        <Link href="/" type="secondary" css="margin-right: 10px;">
-          Lista de pacientes
-        </Link>
-        <Button type="primary" onClick={() => checkScreening(id)} loading={isChecking}>
-          {!isEmpty(success) && success.id === id && <Icon type="check" />}
-          {!isEmpty(success) && success.id === id ? 'Checado' : 'Checar'}
+        {prescription.content.status === '0' && (
+          <Button
+            type="primary gtm-bt-check"
+            onClick={() => checkScreening(id, 's')}
+            loading={isChecking}
+            style={{ marginRight: '5px' }}
+          >
+            <Icon type="check" />
+            Checar
+          </Button>
+        )}
+        {prescription.content.status === 's' && (
+          <>
+            <span style={{ marginRight: '10px' }}>
+              <Icon type="check" /> Prescrição checada
+            </span>
+            <Tooltip title="Desfazer checagem">
+              <Button
+                type="danger gtm-bt-undo-check"
+                ghost
+                onClick={() => checkScreening(id, '0')}
+                loading={isChecking}
+                style={{ marginRight: '5px' }}
+              >
+                <Icon type="rollback" style={{ fontSize: 16 }} />
+              </Button>
+            </Tooltip>
+          </>
+        )}
+        <Button type="default gtm-bt-close" onClick={close}>
+          Fechar
         </Button>
       </Col>
     </Row>

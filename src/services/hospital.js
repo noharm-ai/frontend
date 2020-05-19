@@ -34,9 +34,15 @@ const getPatients = async (bearerToken, requestConfig) => {
 
     console.log('%cRequested patient of id: ', 'color: #e67e22;', idPatient);
     const urlRequest = data.url.replace(flag, idPatient);
-    const { data: patient } = await axios.get(urlRequest);
 
-    return patient;
+    try {
+      const { data: patient } = await axios.get(urlRequest, { timeout: 8000 });
+      return patient;
+    } catch (e) {
+      const { data: patient } = await api.getPatient(bearerToken, idPatient)
+      return patient;
+    }
+
   });
 
   const patients = await Promise.all(promises);

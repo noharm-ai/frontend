@@ -1,11 +1,14 @@
 import 'styled-components/macro';
 import React from 'react';
+import { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import Heading from '@components/Heading';
 import { Row, Col } from '@components/Grid';
 import { Select } from '@components/Inputs';
+import { createSlug } from '@utils/transformers/utils';
 import { Box } from './Filter.style';
 
 const validationSchema = Yup.object().shape({
@@ -13,18 +16,41 @@ const validationSchema = Yup.object().shape({
   idSegment: Yup.number().required('É necessário escolher um segmento')
 });
 
-export default function Filter({ segments, drugs, outliers, fetchOutliersList }) {
-  const { values, setFieldValue } = useFormik({
+export default function Filter({
+  segments,
+  drugs,
+  outliers,
+  fetchOutliersList,
+  fetchDrugsUnitsList
+}) {
+  const { values } = useFormik({
     validationSchema,
     enableReinitialize: true,
     initialValues: outliers.selecteds,
     onSubmit: fetchOutliersList
   });
+  const history = useHistory();
+
+  useEffect(() => {
+    if (outliers.selecteds.idDrug) {
+      fetchDrugsUnitsList({ id: outliers.selecteds.idDrug });
+    }
+  }, [fetchDrugsUnitsList, outliers.selecteds.idDrug]);
 
   const handleChange = (key, value) => {
-    setFieldValue(key, value);
-    fetchOutliersList(values);
+    const params = {
+      ...values,
+      [key]: value
+    };
+
+    const drug = drugs.list.find(item => item.idDrug === params.idDrug);
+    const slug = createSlug(drug.name);
+
+    history.push(`/tabela-referencia/${params.idSegment}/${params.idDrug}/${slug}`);
   };
+
+  const filterOption = (input, option) =>
+    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 
   return (
     <form css="margin-bottom: 25px;">
@@ -42,6 +68,8 @@ export default function Filter({ segments, drugs, outliers, fetchOutliersList })
               loading={segments.isFetching}
               value={values.idSegment}
               onChange={val => handleChange('idSegment', val)}
+              showSearch
+              filterOption={filterOption}
             >
               {segments.list.map(({ id, description: text }) => (
                 <Select.Option key={id} value={id}>
@@ -64,6 +92,8 @@ export default function Filter({ segments, drugs, outliers, fetchOutliersList })
               loading={drugs.isFetching}
               value={values.idDrug}
               onChange={val => handleChange('idDrug', val)}
+              showSearch
+              filterOption={filterOption}
             >
               {drugs.list.map(({ idDrug, name: text }) => (
                 <Select.Option key={idDrug} value={idDrug}>

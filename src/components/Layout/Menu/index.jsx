@@ -12,11 +12,11 @@ export default function Menu({ defaultSelectedKeys, navigation }) {
       mode="inline"
       defaultSelectedKeys={[defaultSelectedKeys ? defaultSelectedKeys : location.pathname]}
     >
-      {navigation.map(({ text, key, icon }) => (
+      {navigation.map(({ text, key, icon, id }) => (
         <Navigator.Item key={key}>
-          <Link className="nav-text" to={key}>
+          <Link className="nav-text" id={id} to={key}>
             {icon && <Icon type={icon} style={{ fontSize: 14 }} />}
-            {text}
+            <span>{text}</span>
           </Link>
         </Navigator.Item>
       ))}

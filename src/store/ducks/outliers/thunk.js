@@ -20,13 +20,16 @@ const {
   outliersSaveSuccess,
   outliersSaveReset,
   outliersSaveError,
+
+  outliersSetSelectedItem,
+  outliersUpdateSelectedItem
 } = OutliersCreators;
 
 const { drugsFetchListStart, drugsFetchListError, drugsFetchListSuccess } = DrugsCreators;
 const {
   segmentsFetchListStart,
   segmentsFetchListError,
-  segmentsFetchListSuccess,
+  segmentsFetchListSuccess
 } = SegmentsCreators;
 
 export const generateOutlierThunk = ({ id: idSegment, nameSegment }) => async (
@@ -79,18 +82,21 @@ export const saveOutlierThunk = (idOutlier, params = {}) => async (dispatch, get
 
   dispatch(outliersSaveStart());
   const { access_token } = getState().auth.identify;
-  const { status, error } = await api.putManualScore(access_token, idOutlier, params);
+  const { status, error } = await api.updateOutlier(access_token, idOutlier, params);
 
   if (status !== 200) {
     dispatch(outliersSaveError(error));
     return;
   }
 
-  dispatch(outliersSaveSuccess());
+  dispatch(outliersSaveSuccess(idOutlier, params));
   dispatch(outliersSaveReset());
 };
 
-export const fetchReferencesListThunk = () => async (dispatch, getState) => {
+export const fetchReferencesListThunk = (idSegment, idDrug, dose, frequency) => async (
+  dispatch,
+  getState
+) => {
   dispatch(drugsFetchListStart());
   dispatch(segmentsFetchListStart());
   dispatch(outliersFetchListStart());
@@ -98,10 +104,7 @@ export const fetchReferencesListThunk = () => async (dispatch, getState) => {
   const { access_token } = getState().auth.identify;
 
   // get drugs list
-  const {
-    data: drugsData,
-    drugsError
-  } = await api.getDrugs(access_token).catch(errorHandler);
+  const { data: drugsData, drugsError } = await api.getDrugs(access_token).catch(errorHandler);
 
   if (!isEmpty(drugsError)) {
     dispatch(drugsFetchListError(drugsError));
@@ -113,7 +116,9 @@ export const fetchReferencesListThunk = () => async (dispatch, getState) => {
   dispatch(drugsFetchListSuccess(drugsList));
 
   // get segments list
-  const { data: segmentsData, segmentsError } = await api.getSegments(access_token).catch(errorHandler);
+  const { data: segmentsData, segmentsError } = await api
+    .getSegments(access_token)
+    .catch(errorHandler);
 
   if (!isEmpty(segmentsError)) {
     dispatch(segmentsFetchListError(segmentsError));
@@ -125,12 +130,29 @@ export const fetchReferencesListThunk = () => async (dispatch, getState) => {
   dispatch(segmentsFetchListSuccess(segmentsList));
 
   // get outliers list
-  const [drug] = drugsList;
-  const [segment] = segmentsList;
-  const params = {
-    idDrug: drug.idDrug,
-    idSegment: segment.id,
-  };
+  let drug;
+  let params;
+
+  if (idDrug != null) {
+    params = {
+      idDrug: parseInt(idDrug, 10),
+      idSegment: parseInt(idSegment, 10)
+    };
+    drug = drugsList.find(item => item.idDrug === params.idDrug);
+  } else {
+    const [segment] = segmentsList;
+    drug = drugsList[0];
+
+    params = {
+      idDrug: drug.idDrug,
+      idSegment: segment.id
+    };
+  }
+
+  if (dose != null && frequency != null) {
+    params.d = dose;
+    params.f = frequency;
+  }
 
   const {
     data: { data },
@@ -142,7 +164,20 @@ export const fetchReferencesListThunk = () => async (dispatch, getState) => {
     return;
   }
 
-  const list = data.map(item => ({ ...item, ...drug }));
+  const { outliers } = data;
+  const list = outliers.map(item => ({
+    ...item,
+    ...drug,
+    ...data
+  }));
 
   dispatch(outliersFetchListSuccess(list, params));
+};
+
+export const selectItemToSaveThunk = item => dispatch => {
+  dispatch(outliersSetSelectedItem(item));
+};
+
+export const updateSelectedItemToSaveOutlierThunk = item => dispatch => {
+  dispatch(outliersUpdateSelectedItem(item));
 };

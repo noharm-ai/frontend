@@ -48,11 +48,11 @@ export const updateSelectedItemToSaveInterventionThunk = intervention => dispatc
 export const saveInterventionThunk = (params = {}) => async (dispatch, getState) => {
   dispatch(interventionSetSaveStart());
 
-  const { intervention, idPrescriptionDrug } = params;
+  const { intervention, idPrescriptionDrug, admissionNumber } = params;
   const defaultArgs = {
-    propagation: 'N',
     observation: '',
     idPrescriptionDrug,
+    admissionNumber,
     idInterventionReason: null
   };
 
@@ -62,9 +62,7 @@ export const saveInterventionThunk = (params = {}) => async (dispatch, getState)
   };
 
   const { access_token } = getState().auth.identify;
-  const method = args.id ? 'updateIntervention' : 'createIntervention';
-
-  const { status, error } = await api[method](access_token, args).catch(errorHandler);
+  const { status, error } = await api.updateIntervention(access_token, args).catch(errorHandler);
 
   if (status !== 200) {
     dispatch(interventionSetSaveError(error));

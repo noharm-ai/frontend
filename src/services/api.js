@@ -17,6 +17,7 @@ const instance = axios.create(requestConfig);
 const endpoints = {
   segments: '/segments',
   resolveNamesUrl: '/user/name-url',
+  patientName: '/patient-name',
   refreshToken: '/refresh-token',
   authentication: '/authenticate',
   prescriptions: '/prescriptions',
@@ -78,6 +79,9 @@ const updateSegment = (bearerToken, { id, ...params }) =>
 const getPrescriptions = (bearerToken, params = {}) =>
   instance.get(endpoints.prescriptions, { params, ...setHeaders(bearerToken) });
 
+const getPrescriptionsStatus = (bearerToken, params = {}) =>
+  instance.get(`${endpoints.prescriptions}/status`, { params, ...setHeaders(bearerToken) });
+
 const getPrescriptionById = (bearerToken, idPrescription, params = {}) =>
   instance.get(`${endpoints.prescriptions}/${idPrescription}`, {
     params,
@@ -94,6 +98,9 @@ const putPrescriptionById = (bearerToken, idPrescription, params = {}) =>
 const getResolveNamesUrl = bearerToken =>
   instance.get(endpoints.resolveNamesUrl, { ...setHeaders(bearerToken) });
 
+const getPatient = (bearerToken, idPatient) =>
+  instance.get(`${endpoints.patientName}/${idPatient}`, { ...setHeaders(bearerToken) });
+
 /**
  * Drugs.
  *
@@ -101,12 +108,28 @@ const getResolveNamesUrl = bearerToken =>
 const getDrugs = (bearerToken, params = {}) =>
   instance.get(endpoints.drugs, { params, ...setHeaders(bearerToken) });
 
+const updateDrug = (bearerToken, { id, ...params }) =>
+  instance.put(`${endpoints.drugs}/${id}`, params, setHeaders(bearerToken));
+
+const getDrugUnits = (bearerToken, { id, ...params }) =>
+  instance.get(`${endpoints.drugs}/${id}/units`, { params, ...setHeaders(bearerToken) });
+
+const updateUnitCoefficient = (bearerToken, idDrug, idMeasureUnit, params = {}) =>
+  instance.post(
+    `${endpoints.drugs}/${idDrug}/convertunit/${idMeasureUnit}`,
+    params,
+    setHeaders(bearerToken)
+  );
+
 /**
  * Departments.
  *
  */
 const getFreeDepartments = (bearerToken, params = {}) =>
   instance.get(`${endpoints.departments}/free`, { params, ...setHeaders(bearerToken) });
+
+const getDepartmentsBySegment = (bearerToken, idSegment, params = {}) =>
+  instance.get(`${endpoints.segments}/${idSegment}`, { params, ...setHeaders(bearerToken) });
 
 /**
  * Outliers.
@@ -118,7 +141,7 @@ const getOutliersBySegmentAndDrug = (bearerToken, { idSegment, idDrug, ...params
     ...setHeaders(bearerToken)
   });
 
-const putManualScore = (bearerToken, idOutlier, params = {}) =>
+const updateOutlier = (bearerToken, idOutlier, params = {}) =>
   instance.put(`${endpoints.outliers}/${idOutlier}`, params, setHeaders(bearerToken));
 
 /**
@@ -131,11 +154,12 @@ const getInterventionReasons = (bearerToken, { idSegment, idDrug, ...params }) =
     ...setHeaders(bearerToken)
   });
 
-const createIntervention = (bearerToken, params = {}) =>
-  instance.post(endpoints.intervention.base, params, setHeaders(bearerToken));
-
-const updateIntervention = (bearerToken, { id, ...params }) =>
-  instance.put(`${endpoints.intervention.base}/${id}`, params, setHeaders(bearerToken));
+const updateIntervention = (bearerToken, { idPrescriptionDrug, ...params }) =>
+  instance.put(
+    `${endpoints.intervention.base}/${idPrescriptionDrug}`,
+    params,
+    setHeaders(bearerToken)
+  );
 
 /**
  * API
@@ -149,16 +173,21 @@ const api = {
   createSegment,
   updateSegment,
   getPrescriptions,
+  getPrescriptionsStatus,
   getPrescriptionById,
   putPrescriptionById,
   getResolveNamesUrl,
+  getPatient,
   getDrugs,
+  updateDrug,
+  getDrugUnits,
+  updateUnitCoefficient,
   generateOutlier,
   getFreeDepartments,
+  getDepartmentsBySegment,
   getOutliersBySegmentAndDrug,
-  putManualScore,
+  updateOutlier,
   getInterventionReasons,
-  createIntervention,
   updateIntervention
 };
 

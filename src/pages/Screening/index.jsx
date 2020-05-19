@@ -6,7 +6,7 @@ import PageHeader from '@containers/Screening/PageHeader';
 
 const layoutProps = {
   theme: 'boxed',
-  pageTitle: 'Triagem',
+  pageTitle: 'Prescrição',
   defaultSelectedKeys: '/',
   renderHeader: props => <PageHeader {...props} />
 };

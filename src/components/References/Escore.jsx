@@ -1,13 +1,18 @@
 import 'styled-components/macro';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 import Button from '@components/Button';
 import Icon from '@components/Icon';
 import { InputNumber } from '@components/Inputs';
+import { useOutsideAlerter } from '@lib/hooks';
 
 export default function Escore({ idOutlier, manualScore, saveOutlier }) {
   const [edit, setEdit] = useState(false);
-  const [score, setScore] = useState(manualScore || 0);
+  const [score, setScore] = useState(manualScore === null ? '-' : manualScore);
+  const wrapperRef = useRef(null);
+  useOutsideAlerter(wrapperRef, () => {
+    setEdit(false);
+  });
 
   const handleClick = event => {
     event.preventDefault();
@@ -15,34 +20,41 @@ export default function Escore({ idOutlier, manualScore, saveOutlier }) {
   };
 
   const handleSave = () => {
+    const validValues = [0, 1, 2, 3];
+    let manualScore = score;
+
+    if (manualScore === '-') {
+      manualScore = 0;
+      setScore(0);
+    }
+
+    if (validValues.indexOf(manualScore) === -1) {
+      return;
+    }
+
     setEdit(false);
-    saveOutlier(
-      idOutlier,
-      {
-        manualScore: score
-      }
-    );
+    saveOutlier(idOutlier, { manualScore });
   };
 
-  return edit
-    ? (
-      <>
-        <InputNumber
-          style={{
-            marginRight: 8,
-            width: 60
-          }}
-          min={0}
-          max={3}
-          defaultValue={score}
-          onChange={setScore}
-        />
-        <Button type="primary" onClick={handleSave}>
-          <Icon type="check" />
-        </Button>
-      </>
-    )
-    :
+  return edit ? (
+    <span ref={wrapperRef}>
+      <InputNumber
+        style={{
+          marginRight: 8,
+          width: 60
+        }}
+        min={0}
+        max={3}
+        defaultValue={score === '-' ? 0 : score}
+        onChange={setScore}
+        autoFocus={true}
+        onPressEnter={handleSave}
+      />
+      <Button type="primary gtm-bt-change-score" onClick={handleSave}>
+        <Icon type="check" />
+      </Button>
+    </span>
+  ) : (
     <>
       <span css="margin-right: 10px;">{score}</span>
       {/*eslint-disable-next-line*/}
@@ -50,5 +62,5 @@ export default function Escore({ idOutlier, manualScore, saveOutlier }) {
         <Icon type="edit" />
       </a>
     </>
-  ;
+  );
 }

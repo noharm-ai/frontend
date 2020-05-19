@@ -10,9 +10,12 @@ export const { Types, Creators } = createActions({
   outliersFetchListSuccess: ['list', 'firstFilter'],
 
   outliersSaveStart: [''],
-  outliersSaveSuccess: [''],
+  outliersSaveSuccess: ['idOutlier', 'params'],
   outliersSaveReset: [''],
-  outliersSaveError: ['error']
+  outliersSaveError: ['error'],
+
+  outliersSetSelectedItem: ['item'],
+  outliersUpdateSelectedItem: ['item']
 });
 
 const INITIAL_STATE = {
@@ -33,6 +36,11 @@ const INITIAL_STATE = {
     isSaving: false,
     success: false,
     error: null
+  },
+  edit: {
+    isSaving: false,
+    error: null,
+    item: {}
   }
 };
 
@@ -92,7 +100,7 @@ const saveError = (state = INITIAL_STATE, { error }) => ({
   save: {
     ...state.save,
     error,
-    isSaving: false,
+    isSaving: false
   }
 });
 
@@ -103,13 +111,42 @@ const saveReset = (state = INITIAL_STATE) => ({
   }
 });
 
-const saveSuccess = (state = INITIAL_STATE) => ({
+const saveSuccess = (state = INITIAL_STATE, { idOutlier, params }) => {
+  const list = [...state.list];
+  const outlierIndex = list.findIndex(item => item.idOutlier === idOutlier);
+
+  if (outlierIndex !== -1) {
+    list[outlierIndex] = { ...list[outlierIndex], ...params };
+  }
+
+  return {
+    ...state,
+    list,
+    save: {
+      ...state.save,
+      error: null,
+      success: true,
+      isSaving: false
+    }
+  };
+};
+
+const setSelectedItem = (state = INITIAL_STATE, { item }) => ({
   ...state,
-  save: {
-    ...state.save,
-    error: null,
-    success: true,
-    isSaving: false,
+  edit: {
+    ...state.edit,
+    item
+  }
+});
+
+const updateSelectedItem = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  edit: {
+    ...state.edit,
+    item: {
+      ...state.edit.item,
+      ...item
+    }
   }
 });
 
@@ -126,6 +163,9 @@ const HANDLERS = {
   [Types.OUTLIERS_SAVE_ERROR]: saveError,
   [Types.OUTLIERS_SAVE_RESET]: saveReset,
   [Types.OUTLIERS_SAVE_SUCCESS]: saveSuccess,
+
+  [Types.OUTLIERS_SET_SELECTED_ITEM]: setSelectedItem,
+  [Types.OUTLIERS_UPDATE_SELECTED_ITEM]: updateSelectedItem
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);
