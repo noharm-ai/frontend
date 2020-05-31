@@ -43,7 +43,11 @@ const {
 
   prescriptionInterventionCheckStart,
   prescriptionInterventionCheckError,
-  prescriptionInterventionCheckSuccess
+  prescriptionInterventionCheckSuccess,
+
+  prescriptionsFetchPeriodStart,
+  prescriptionsFetchPeriodError,
+  prescriptionsFetchPeriodSuccess
 } = PrescriptionsCreators;
 
 export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, getState) => {
@@ -272,4 +276,25 @@ export const checkInterventionThunk = (id, status) => async (dispatch, getState)
   };
 
   dispatch(prescriptionInterventionCheckSuccess(success));
+};
+
+export const fetchPrescriptionDrugPeriodThunk = (idPrescriptionDrug, source) => async (
+  dispatch,
+  getState
+) => {
+  dispatch(prescriptionsFetchPeriodStart());
+
+  const { auth } = getState();
+  const { access_token } = auth.identify;
+  const {
+    data: { data },
+    error
+  } = await api.getPrescriptionDrugPeriod(access_token, idPrescriptionDrug).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(prescriptionsFetchPeriodError(error));
+    return;
+  }
+
+  dispatch(prescriptionsFetchPeriodSuccess(idPrescriptionDrug, source, data));
 };

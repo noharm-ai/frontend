@@ -25,16 +25,15 @@ const getExamValue = exam => {
   return exam.value;
 };
 
-
 const refText = text => {
   return text.split('\n').map(function(item, key) {
     return (
       <span key={key}>
         {item}
-        <br/>
+        <br />
       </span>
-    )
-  })
+    );
+  });
 };
 
 const ExamData = ({ exam }) => (
@@ -126,8 +125,7 @@ export default function Patient({
   ...prescription
 }) {
   const gridStyle = width => {
-    return { width: width,
-             textAlign: 'center'};
+    return { width: width, textAlign: 'center' };
   };
 
   return (
@@ -147,10 +145,10 @@ export default function Patient({
             <strong>Segmento:</strong> {segment.content.description}
           </Cell>
           <Cell>
-            <strong>Idade:</strong> {age} anos
+            <strong>Idade:</strong> {age} {isNaN(age) ? '' : 'anos'}
           </Cell>
           <Cell>
-            <strong>Sexo:</strong> {gender ? gender === 'M' ? 'Masculino' : 'Feminino' : ''}
+            <strong>Sexo:</strong> {gender ? (gender === 'M' ? 'Masculino' : 'Feminino') : ''}
           </Cell>
           <Cell>
             <strong>Peso:</strong> {weight} Kg{' '}

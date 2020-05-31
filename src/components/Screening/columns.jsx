@@ -1,10 +1,9 @@
 import React from 'react';
 import styled from 'styled-components/macro';
 import isEmpty from 'lodash.isempty';
-import { format } from 'date-fns';
 
 import Icon from '@components/Icon';
-import Button from '@components/Button';
+import Button, { Link } from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import Popover from '@components/PopoverStyled';
 import Descriptions from '@components/Descriptions';
@@ -12,6 +11,8 @@ import Tag from '@components/Tag';
 import { createSlug } from '@utils/transformers/utils';
 import Menu from '@components/Menu';
 import Dropdown from '@components/Dropdown';
+import Alert from '@components/Alert';
+import { InterventionView } from './Intervention/columns';
 
 const TableLink = styled.a`
   color: rgba(0, 0, 0, 0.65);
@@ -202,6 +203,20 @@ const periodDates = dates => {
   );
 };
 
+const showAlerts = alerts => {
+  if (alerts == null || alerts.length === 0) {
+    return '--';
+  }
+
+  return (
+    <>
+      {alerts.map((item, index) => (
+        <Alert key={index} type="error" message={item} style={{ marginTop: '5px' }} showIcon />
+      ))}
+    </>
+  );
+};
+
 const periodDatesList = dates => {
   if (dates == null || dates.length === 0) {
     return '';
@@ -287,8 +302,20 @@ export const expandedRowRender = record => {
   return (
     <NestedTableContainer>
       <Descriptions bordered>
+        <Descriptions.Item label="Alertas:" span={3}>
+          {showAlerts(record.alerts)}
+        </Descriptions.Item>
         <Descriptions.Item label="Período de uso:" span={3}>
-          {periodDates(record.periodDates)}
+          {isEmpty(record.periodDates) && (
+            <Link
+              onClick={() => record.fetchPeriod(record.idPrescriptionDrug, record.source)}
+              loading={record.periodObject.isFetching}
+              type="nda gtm-bt-period"
+            >
+              Visualizar período de uso
+            </Link>
+          )}
+          {!isEmpty(record.periodDates) && periodDates(record.periodDates)}
         </Descriptions.Item>
         {record.prescriptionType === 'solutions' && (
           <Descriptions.Item label="Horários:" span={3}>
@@ -300,37 +327,16 @@ export const expandedRowRender = record => {
         </Descriptions.Item>
         {!isEmpty(record.prevIntervention) && (
           <Descriptions.Item label="Intervenção anterior:" span={3}>
-            <Descriptions bordered>
-              <Descriptions.Item label="Situação" span={3}>
-                <Tag color={config.color}>{config.label}</Tag> <InterventionAction {...record} />
-              </Descriptions.Item>
-              <Descriptions.Item label="Data" span={3}>
-                {format(new Date(record.prevIntervention.date), 'dd/MM/yyyy HH:mm')}
-              </Descriptions.Item>
-
-              <Descriptions.Item label="Possível Erro de prescrição:" span={3}>
-                {record.prevIntervention.error ? 'Sim' : 'Não'}
-              </Descriptions.Item>
-              <Descriptions.Item label="Gera redução de custo:" span={3}>
-                {record.prevIntervention.cost ? 'Sim' : 'Não'}
-              </Descriptions.Item>
-              <Descriptions.Item label="Motivos:" span={3}>
-                {record.prevIntervention.reasonDescription}
-              </Descriptions.Item>
-              <Descriptions.Item
-                label={
-                  <Tooltip title="Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade">
-                    Relações:
-                  </Tooltip>
-                }
-                span={3}
-              >
-                {record.prevIntervention.interactionsDescription}
-              </Descriptions.Item>
-              <Descriptions.Item label="Observação:" span={3}>
-                <div dangerouslySetInnerHTML={{ __html: record.prevIntervention.observation }} />
-              </Descriptions.Item>
-            </Descriptions>
+            <InterventionView
+              intervention={record.prevIntervention}
+              showReasons
+              showDate
+              status={
+                <Descriptions.Item label="Situação" span={3}>
+                  <Tag color={config.color}>{config.label}</Tag> <InterventionAction {...record} />
+                </Descriptions.Item>
+              }
+            />
           </Descriptions.Item>
         )}
       </Descriptions>
@@ -398,15 +404,15 @@ const drugInfo = [
   }
 ];
 
-const convFreq = (dayFrequency) => {
+const convFreq = dayFrequency => {
   switch (dayFrequency) {
     case 33:
-      return 'SN';
+      return 'SN *';
     case 44:
-      return 'ACM';
+      return 'ACM *';
     case 99:
-      return 'N/D';
-    default: 
+      return 'N/D *';
+    default:
       return dayFrequency + 'x/dia *';
   }
 };
@@ -505,6 +511,15 @@ const actionColumns = [
           {prescription.suspended && (
             <Tooltip title="Suspenso">
               <Icon type="stop" style={{ fontSize: 18, color: '#f5222d' }} />
+            </Tooltip>
+          )}
+        </span>
+        <span className="tag">
+          {!isEmpty(prescription.alerts) && (
+            <Tooltip title="Alertas">
+              <Tag color="red" style={{ marginLeft: '2px' }}>
+                {prescription.alerts.length}
+              </Tag>
             </Tooltip>
           )}
         </span>

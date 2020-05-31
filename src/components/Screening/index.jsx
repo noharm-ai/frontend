@@ -53,10 +53,10 @@ export default function Screening({
   reset,
   select,
   fetchScreeningById,
-  fetchPrescriptionById,
   savePrescriptionDrugStatus,
   updateInterventionData,
-  saveInterventionStatus
+  saveInterventionStatus,
+  fetchPeriod
 }) {
   const id = extractId(match.params.slug);
   const { isFetching, content, error } = prescription;
@@ -107,7 +107,9 @@ export default function Screening({
     uniqueDrugList: getUniqueDrugs(drugList, solutionList, proceduresList),
     admissionNumber: content.admissionNumber,
     saveInterventionStatus,
-    checkIntervention: prescription.checkIntervention
+    checkIntervention: prescription.checkIntervention,
+    periodObject: prescription.periodObject,
+    fetchPeriod
   };
 
   const dataSource = toDataSource(drugList, 'idPrescriptionDrug', {
@@ -159,7 +161,7 @@ export default function Screening({
 
       notification.success(saveMessage);
     }
-  }, [wasSaved, id, fetchPrescriptionById, reset, item, updateInterventionData]);
+  }, [wasSaved, id, reset, item, updateInterventionData]);
 
   const rowClassName = (record, index) => {
     let classes = [];
@@ -192,6 +194,10 @@ export default function Screening({
       <Tag {...props}>{count}</Tag>
     </>
   );
+
+  if (error) {
+    return null;
+  }
 
   return (
     <>

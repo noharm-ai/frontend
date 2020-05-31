@@ -1,6 +1,10 @@
 import { createActions, createReducer } from 'reduxsauce';
 
 export const { Types, Creators } = createActions({
+  interventionFetchListStart: [''],
+  interventionFetchListError: ['error'],
+  interventionFetchListSuccess: ['list'],
+
   interventionFetchReasonsListStart: [''],
   interventionFetchReasonsListError: ['error'],
   interventionFetchReasonsListSuccess: ['list'],
@@ -11,15 +15,30 @@ export const { Types, Creators } = createActions({
   interventionClearSavedStatus: [''],
 
   interventionSetSelectedItem: ['item'],
-  interventionUpdateSelectedItemIntervention: ['intervention']
+  interventionUpdateSelectedItemIntervention: ['intervention'],
+
+  interventionCheckStart: ['id'],
+  interventionCheckError: ['error'],
+  interventionCheckSuccess: ['success'],
+
+  interventionUpdateList: ['intervention']
 });
 
 const INITIAL_STATE = {
+  error: null,
+  isFetching: true,
+  list: [],
   maybeCreateOrUpdate: {
     isSaving: false,
     wasSaved: false,
     error: null,
     item: {}
+  },
+  check: {
+    error: null,
+    success: {},
+    isChecking: false,
+    currentId: null
   },
   reasons: {
     error: null,
@@ -35,6 +54,24 @@ const setSaveStart = (state = INITIAL_STATE) => ({
     wasSaved: false,
     isSaving: true
   }
+});
+
+const fetchListStart = (state = INITIAL_STATE) => ({
+  ...state,
+  isFetching: true
+});
+
+const fetchListError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  error,
+  isFetching: false
+});
+
+const fetchListSuccess = (state = INITIAL_STATE, { list }) => ({
+  ...state,
+  list,
+  error: null,
+  isFetching: false
 });
 
 const fetchReasonsListStart = (state = INITIAL_STATE) => ({
@@ -116,7 +153,60 @@ const updateSelectedItemIntervention = (state = INITIAL_STATE, { intervention })
   }
 });
 
+const checkStart = (state = INITIAL_STATE, { currentId }) => ({
+  ...state,
+  check: {
+    ...state.check,
+    isChecking: true,
+    currentId
+  }
+});
+
+const checkError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  check: {
+    ...state.check,
+    isChecking: false,
+    error
+  }
+});
+
+const checkSuccess = (state = INITIAL_STATE, { success }) => {
+  const list = [...state.list];
+
+  const index = list.findIndex(item => item.id === success.id);
+  list[index].status = success.newStatus;
+
+  return {
+    ...state,
+    list,
+    check: {
+      ...state.check,
+      error: null,
+      isChecking: false,
+      success
+    }
+  };
+};
+
+const updateList = (state = INITIAL_STATE, { intervention }) => {
+  const list = [...state.list];
+
+  const index = list.findIndex(item => item.id === intervention.intervention.idPrescriptionDrug);
+  list[index] = intervention.intervention;
+  list[index].id = intervention.intervention.idPrescriptionDrug;
+
+  return {
+    ...state,
+    list
+  };
+};
+
 const HANDLERS = {
+  [Types.INTERVENTION_FETCH_LIST_START]: fetchListStart,
+  [Types.INTERVENTION_FETCH_LIST_ERROR]: fetchListError,
+  [Types.INTERVENTION_FETCH_LIST_SUCCESS]: fetchListSuccess,
+
   [Types.INTERVENTION_FETCH_REASONS_LIST_START]: fetchReasonsListStart,
   [Types.INTERVENTION_FETCH_REASONS_LIST_ERROR]: fetchReasonsListError,
   [Types.INTERVENTION_FETCH_REASONS_LIST_SUCCESS]: fetchReasonsListSuccess,
@@ -127,7 +217,13 @@ const HANDLERS = {
   [Types.INTERVENTION_CLEAR_SAVED_STATUS]: clearSavedStatus,
 
   [Types.INTERVENTION_SET_SELECTED_ITEM]: setSelectedItem,
-  [Types.INTERVENTION_UPDATE_SELECTED_ITEM_INTERVENTION]: updateSelectedItemIntervention
+  [Types.INTERVENTION_UPDATE_SELECTED_ITEM_INTERVENTION]: updateSelectedItemIntervention,
+
+  [Types.INTERVENTION_CHECK_START]: checkStart,
+  [Types.INTERVENTION_CHECK_ERROR]: checkError,
+  [Types.INTERVENTION_CHECK_SUCCESS]: checkSuccess,
+
+  [Types.INTERVENTION_UPDATE_LIST]: updateList
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

@@ -27,7 +27,8 @@ const endpoints = {
   intervention: {
     base: '/intervention',
     reasons: '/intervention/reasons'
-  }
+  },
+  reports: '/reports'
 };
 
 /**
@@ -66,6 +67,12 @@ const generateOutlier = (bearerToken, idSegment) =>
     ...setHeaders(bearerToken)
   });
 
+const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
+  instance.get(`/segments/${idSegment}/outliers/generate/drug/${idDrug}/clean/1`, {
+    params,
+    ...setHeaders(bearerToken)
+  });
+
 const createSegment = (bearerToken, params = {}) =>
   instance.post(endpoints.segments, params, setHeaders(bearerToken));
 
@@ -84,6 +91,12 @@ const getPrescriptionsStatus = (bearerToken, params = {}) =>
 
 const getPrescriptionById = (bearerToken, idPrescription, params = {}) =>
   instance.get(`${endpoints.prescriptions}/${idPrescription}`, {
+    params,
+    ...setHeaders(bearerToken)
+  });
+
+const getPrescriptionDrugPeriod = (bearerToken, idPrescriptionDrug, params = {}) =>
+  instance.get(`${endpoints.prescriptions}/drug/${idPrescriptionDrug}/period`, {
     params,
     ...setHeaders(bearerToken)
   });
@@ -107,6 +120,12 @@ const getPatient = (bearerToken, idPatient) =>
  */
 const getDrugs = (bearerToken, params = {}) =>
   instance.get(endpoints.drugs, { params, ...setHeaders(bearerToken) });
+
+const getDrugsBySegment = (bearerToken, idSegment, params = {}) =>
+  instance.get(`${endpoints.drugs}/${idSegment}`, {
+    params,
+    ...setHeaders(bearerToken)
+  });
 
 const updateDrug = (bearerToken, { id, ...params }) =>
   instance.put(`${endpoints.drugs}/${id}`, params, setHeaders(bearerToken));
@@ -148,6 +167,12 @@ const updateOutlier = (bearerToken, idOutlier, params = {}) =>
  * Intervention.
  *
  */
+const getInterventions = (bearerToken, { params }) =>
+  instance.get(endpoints.intervention.base, {
+    params,
+    ...setHeaders(bearerToken)
+  });
+
 const getInterventionReasons = (bearerToken, { idSegment, idDrug, ...params }) =>
   instance.get(endpoints.intervention.reasons, {
     params,
@@ -160,6 +185,16 @@ const updateIntervention = (bearerToken, { idPrescriptionDrug, ...params }) =>
     params,
     setHeaders(bearerToken)
   );
+
+/**
+ * Reports
+ */
+
+const getReports = (bearerToken, params = {}) =>
+  instance.get(endpoints.reports, {
+    params,
+    ...setHeaders(bearerToken)
+  });
 
 /**
  * API
@@ -175,20 +210,25 @@ const api = {
   getPrescriptions,
   getPrescriptionsStatus,
   getPrescriptionById,
+  getPrescriptionDrugPeriod,
   putPrescriptionById,
   getResolveNamesUrl,
   getPatient,
   getDrugs,
+  getDrugsBySegment,
   updateDrug,
   getDrugUnits,
   updateUnitCoefficient,
   generateOutlier,
+  generateDrugOutlier,
   getFreeDepartments,
   getDepartmentsBySegment,
   getOutliersBySegmentAndDrug,
   updateOutlier,
   getInterventionReasons,
-  updateIntervention
+  updateIntervention,
+  getReports,
+  getInterventions
 };
 
 export default api;

@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import security from '@services/security';
 
 import {
   fetchDrugsListThunk,
@@ -10,12 +11,14 @@ import {
   fetchOutliersListThunk,
   saveOutlierThunk,
   fetchReferencesListThunk,
-  selectItemToSaveThunk
+  selectItemToSaveThunk,
+  generateDrugOutlierThunk,
+  resetGenerateDrugOutlierThunk
 } from '@store/ducks/outliers/thunk';
 import { fetchSegmentsListThunk } from '@store/ducks/segments/thunk';
 import References from '@components/References';
 
-const mapStateToProps = ({ drugs, segments, outliers }) => ({
+const mapStateToProps = ({ drugs, segments, outliers, user }) => ({
   drugs,
   segments: {
     error: segments.error,
@@ -28,8 +31,10 @@ const mapStateToProps = ({ drugs, segments, outliers }) => ({
     selecteds: outliers.firstFilter,
     isFetching: outliers.isFetching,
     edit: outliers.edit,
-    saveStatus: outliers.save
-  }
+    saveStatus: outliers.save,
+    generateStatus: outliers.generateDrugOutlier
+  },
+  security: security(user.account.roles)
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -41,7 +46,9 @@ const mapDispatchToProps = dispatch =>
       fetchDrugsUnitsList: fetchDrugsUnitsListThunk,
       fetchSegmentsList: fetchSegmentsListThunk,
       fetchOutliersList: fetchOutliersListThunk,
-      fetchReferencesList: fetchReferencesListThunk
+      fetchReferencesList: fetchReferencesListThunk,
+      generateOutlier: generateDrugOutlierThunk,
+      generateOutlierReset: resetGenerateDrugOutlierThunk
     },
     dispatch
   );

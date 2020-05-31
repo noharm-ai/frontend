@@ -5,6 +5,11 @@ export const { Types, Creators } = createActions({
   outliersGenerateStop: ['status'],
   outliersResetGenerate: [''],
 
+  outliersGenerateDrugStart: [''],
+  outliersGenerateDrugError: ['error'],
+  outliersGenerateDrugSuccess: [''],
+  outliersGenerateDrugReset: [''],
+
   outliersFetchListStart: [''],
   outliersFetchListError: ['error'],
   outliersFetchListSuccess: ['list', 'firstFilter'],
@@ -31,6 +36,11 @@ const INITIAL_STATE = {
     nameSegment: '',
     isGenerating: false,
     status: null
+  },
+  generateDrugOutlier: {
+    isGenerating: false,
+    generated: false,
+    error: null
   },
   save: {
     isSaving: false,
@@ -65,6 +75,43 @@ const resetGenerate = (state = INITIAL_STATE) => ({
   ...state,
   generate: {
     ...INITIAL_STATE.generate
+  }
+});
+
+const generateDrugStart = (state = INITIAL_STATE) => ({
+  ...state,
+  generateDrugOutlier: {
+    ...state.generateDrugOutlier,
+    isGenerating: true
+  }
+});
+
+const generateDrugError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  generateDrugOutlier: {
+    ...state.generateDrugOutlier,
+    isGenerating: false,
+    error
+  }
+});
+
+const generateDrugSuccess = (state = INITIAL_STATE) => ({
+  ...state,
+  generateDrugOutlier: {
+    ...state.generateDrugOutlier,
+    isGenerating: false,
+    generated: true,
+    error: null
+  }
+});
+
+const generateDrugReset = (state = INITIAL_STATE) => ({
+  ...state,
+  generateDrugOutlier: {
+    ...state.generateDrugOutlier,
+    isGenerating: false,
+    generated: false,
+    error: null
   }
 });
 
@@ -154,6 +201,11 @@ const HANDLERS = {
   [Types.OUTLIERS_GENERATE_STOP]: generateStop,
   [Types.OUTLIERS_GENERATE_START]: generateStart,
   [Types.OUTLIERS_RESET_GENERATE]: resetGenerate,
+
+  [Types.OUTLIERS_GENERATE_DRUG_START]: generateDrugStart,
+  [Types.OUTLIERS_GENERATE_DRUG_ERROR]: generateDrugError,
+  [Types.OUTLIERS_GENERATE_DRUG_SUCCESS]: generateDrugSuccess,
+  [Types.OUTLIERS_GENERATE_DRUG_RESET]: generateDrugReset,
 
   [Types.OUTLIERS_FETCH_LIST_START]: fetchListStart,
   [Types.OUTLIERS_FETCH_LIST_ERROR]: fetchListError,

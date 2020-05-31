@@ -1,16 +1,15 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { selectReportThunk, fetchReportsListThunk } from '@store/ducks/reports/thunk';
 import Reports from '@components/Reports';
-import widgets from './widgets';
 
-const mapStateToProps = () => ({ widgets });
+const mapStateToProps = ({ reports }) => ({ reports });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      loadPage: () => () => {
-        console.log('loadPage');
-      }
+      select: selectReportThunk,
+      fetchList: fetchReportsListThunk
     },
     dispatch
   );

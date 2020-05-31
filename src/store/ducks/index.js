@@ -11,6 +11,7 @@ import segmentsReducer from './segments';
 import interventionReducer from './intervention';
 import departmentsReducer from './departments';
 import prescriptionsReducer from './prescriptions';
+import reportsReducer from './reports';
 
 export default combineReducers({
   app: appReducer,
@@ -23,5 +24,6 @@ export default combineReducers({
   segments: segmentsReducer,
   departments: departmentsReducer,
   intervention: interventionReducer,
-  prescriptions: prescriptionsReducer
+  prescriptions: prescriptionsReducer,
+  reports: reportsReducer
 });

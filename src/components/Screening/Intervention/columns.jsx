@@ -9,6 +9,7 @@ import Tag from '@components/Tag';
 import Menu from '@components/Menu';
 import Dropdown from '@components/Dropdown';
 import Tooltip from '@components/Tooltip';
+import isEmpty from 'lodash.isempty';
 
 const NestedTableContainer = styled.div`
   margin-top: 5px;
@@ -52,38 +53,67 @@ const menu = (id, saveInterventionStatus) => (
   </Menu>
 );
 
+export const PrescriptionInline = ({ dose, measureUnit, frequency, route, time }) => (
+  <>
+    {dose}
+    {measureUnit.label} x {frequency.label} {route} ({time})
+  </>
+);
+
+export const InterventionView = ({ intervention, showReasons, showDate, status }) => (
+  <Descriptions bordered>
+    {status}
+    <Descriptions.Item label="Prescrição:" span={3}>
+      <PrescriptionInline {...intervention} />
+    </Descriptions.Item>
+    {showDate && (
+      <Descriptions.Item label="Data" span={3}>
+        {format(new Date(intervention.date), 'dd/MM/yyyy HH:mm')}
+      </Descriptions.Item>
+    )}
+    <Descriptions.Item label="Possível erro de prescrição:" span={3}>
+      {intervention.error ? 'Sim' : 'Não'}
+    </Descriptions.Item>
+    <Descriptions.Item label="Gera redução de custo:" span={3}>
+      {intervention.cost ? 'Sim' : 'Não'}
+    </Descriptions.Item>
+    {showReasons && (
+      <Descriptions.Item label="Motivos:" span={3}>
+        {intervention.reasonDescription}
+      </Descriptions.Item>
+    )}
+
+    <Descriptions.Item
+      label={
+        <Tooltip title="Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade">
+          Relações:
+        </Tooltip>
+      }
+      span={3}
+    >
+      {!isEmpty(intervention.interactionsList) &&
+        intervention.interactionsList.map(item => item.name).join(', ')}
+    </Descriptions.Item>
+    <Descriptions.Item label="Observação:" span={3}>
+      <div dangerouslySetInnerHTML={{ __html: intervention.observation }} />
+    </Descriptions.Item>
+  </Descriptions>
+);
+
 export const expandedInterventionRowRender = record => {
   return (
     <NestedTableContainer>
-      <Descriptions bordered>
-        <Descriptions.Item label="Erro de prescrição:" span={3}>
-          {record.error ? 'Sim' : 'Não'}
-        </Descriptions.Item>
-        <Descriptions.Item label="Gera redução de custo:" span={3}>
-          {record.cost ? 'Sim' : 'Não'}
-        </Descriptions.Item>
-        <Descriptions.Item
-          label={
-            <Tooltip title="Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade">
-              Relações:
-            </Tooltip>
-          }
-          span={3}
-        >
-          {record.interactionsDescription}
-        </Descriptions.Item>
-        <Descriptions.Item label="Observação:" span={3}>
-          <div dangerouslySetInnerHTML={{ __html: record.observation }} />
-        </Descriptions.Item>
-      </Descriptions>
+      <InterventionView intervention={record} />
     </NestedTableContainer>
   );
 };
 
-const Action = ({ check, id, saveInterventionStatus, ...data }) => {
+const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumber, ...data }) => {
   const isDisabled = check.currentId !== id && check.isChecking;
   const isChecking = check.currentId === id && check.isChecking;
   const isChecked = data.status !== 's';
+  const closedStatuses = ['a', 'n', 'x'];
+  const isClosed = closedStatuses.indexOf(data.status) !== -1;
 
   return (
     <>
@@ -115,6 +145,31 @@ const Action = ({ check, id, saveInterventionStatus, ...data }) => {
             <Icon type="caret-down" style={{ fontSize: 16 }} />
           </Button>
         </Dropdown>
+      )}
+      {onShowModal && (
+        <Tooltip
+          title={
+            isClosed
+              ? 'Esta intervenção não pode mais ser alterada, pois já foi resolvida.'
+              : 'Alterar intervenção'
+          }
+          placement="left"
+        >
+          <Button
+            style={{ marginLeft: '5px' }}
+            disabled={isClosed}
+            onClick={() => {
+              onShowModal({
+                ...data,
+                idPrescriptionDrug: id,
+                uniqueDrugList: [],
+                admissionNumber
+              });
+            }}
+          >
+            <Icon type="edit" style={{ fontSize: 16 }} />
+          </Button>
+        </Tooltip>
       )}
     </>
   );

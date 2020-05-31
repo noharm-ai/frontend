@@ -379,7 +379,7 @@ export default (sortedInfo, filteredInfo) => {
         },
         {
           title: <Tooltip title="Intervenções Pendentes">IP</Tooltip>,
-          className: 'gtm-th-ip',
+          className: 'bg-light-gray gtm-th-ip',
           key: 'interventions',
           width: 20,
           align: 'center',
@@ -389,7 +389,7 @@ export default (sortedInfo, filteredInfo) => {
         },
         {
           title: <Tooltip title="Escore Alto">A</Tooltip>,
-          className: 'bg-light-gray gtm-th-a',
+          className: 'gtm-th-a',
           key: 'scoreThree',
           width: 20,
           align: 'center',
@@ -399,7 +399,7 @@ export default (sortedInfo, filteredInfo) => {
         },
         {
           title: <Tooltip title="Escore Médio">M</Tooltip>,
-          className: 'gtm-th-m',
+          className: 'bg-light-gray gtm-th-m',
           key: 'scoreTwo',
           width: 20,
           align: 'center',
@@ -409,7 +409,7 @@ export default (sortedInfo, filteredInfo) => {
         },
         {
           title: <Tooltip title="Escore Baixo">B</Tooltip>,
-          className: 'bg-light-gray gtm-th-b',
+          className: 'gtm-th-b',
           key: 'scoreOne',
           width: 20,
           align: 'center',
@@ -419,7 +419,7 @@ export default (sortedInfo, filteredInfo) => {
         },
         {
           title: <Tooltip title="Escore Total">T</Tooltip>,
-          className: 'gtm-th-t',
+          className: 'bg-light-gray gtm-th-t',
           key: 'prescriptionScore',
           width: 20,
           align: 'center',

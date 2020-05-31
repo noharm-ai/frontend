@@ -44,7 +44,6 @@ const TableInfo = styled.span`
   button.active {
     background-color: #eee;
   }
-
 `;
 
 // empty text for table result.
@@ -159,13 +158,20 @@ export default function ScreeningList({
         </Button>
       </Tooltip>
 
-      <Tooltip title="Ver todas prescrições">
+      <Tooltip
+        title={
+          listCount.all === 250
+            ? 'Limite de 250 prescrições atingido, reduza os setores para visualizar todas do dia.'
+            : 'Ver todas prescrições'
+        }
+      >
         <Button
           type="gtm-lnk-filter-presc-todas ant-btn-link-hover"
           className={isFilterActive(null) ? 'active' : ''}
           onClick={e => handleFilter(e, 'all')}
         >
-          Todas <Tag>{listCount.all}</Tag>
+          Todas {listCount.all === 250 ? '*' : ''}
+          <Tag>{listCount.all}</Tag>
         </Button>
       </Tooltip>
     </TableInfo>
@@ -173,7 +179,11 @@ export default function ScreeningList({
 
   return (
     <>
-      <Filter {...restProps} fetchPrescriptionsList={fetchPrescriptionsList} />
+      <Filter
+        {...restProps}
+        fetchPrescriptionsList={fetchPrescriptionsList}
+        isFetchingPrescription={isFetching}
+      />
       {info}
       <ScreeningTable
         title={title}

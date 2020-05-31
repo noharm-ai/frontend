@@ -5,6 +5,12 @@ export default [
     icon: 'user',
     id: 'gtm-lnk-pacientes-triagem'
   },
+  {
+    key: '/intervencoes',
+    text: 'Intervenções',
+    icon: 'warning',
+    id: 'gtm-lnk-intervencoes'
+  },
   /*{
     key: '/segmentos',
     text: 'Segmentos',
@@ -15,10 +21,11 @@ export default [
     text: 'Tabela de referências',
     icon: 'table',
     id: 'gtm-lnk-tabela-referencias'
-  }
-  /*{
+  },
+  {
     key: '/relatorios',
     text: 'Relatorios',
-    icon: 'report'
-  }*/
+    icon: 'report',
+    id: 'gtm-lnk-report'
+  }
 ];

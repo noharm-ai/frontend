@@ -1,3 +1,8 @@
+import 'styled-components/macro';
+import React from 'react';
+import Coefficient from './Coefficient';
+import Tooltip from '@components/Tooltip';
+
 export default [
   {
     title: 'Medicamento',
@@ -13,11 +18,11 @@ export default [
     title: 'Fator',
     dataIndex: 'fator',
     width: 40,
-    //render: (entry, record) => <Coefficient {...record} />
+    render: (entry, record) => (record.isAdmin ? <Coefficient {...record} /> : record.fator)
   },
   {
-    title: 'Contagem',
+    title: <Tooltip title="Somatório de todo o Hospital">Contagem *</Tooltip>,
     dataIndex: 'contagem',
-    width: 40
+    width: 50
   }
 ].map(item => ({ ...item, key: item.dataIndex }));

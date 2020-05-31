@@ -11,7 +11,8 @@ import {
   fetchPrescriptionByIdThunk,
   checkPrescriptionDrugThunk,
   updateInterventionDataThunk,
-  checkInterventionThunk
+  checkInterventionThunk,
+  fetchPrescriptionDrugPeriodThunk
 } from '@store/ducks/prescriptions/thunk';
 import Screening from '@components/Screening';
 
@@ -22,7 +23,8 @@ const mapStateToProps = ({ prescriptions, segments, intervention }) => ({
     isFetching: prescriptions.single.isFetching,
     content: prescriptions.single.data,
     checkPrescriptionDrug: prescriptions.single.checkPrescriptionDrug,
-    checkIntervention: prescriptions.single.checkIntervention
+    checkIntervention: prescriptions.single.checkIntervention,
+    periodObject: prescriptions.single.period
   },
   segment: {
     ...segments.single
@@ -36,6 +38,7 @@ const mapDispatchToProps = dispatch =>
     {
       fetchPrescriptionById: fetchPrescriptionByIdThunk,
       fetchScreeningById: fetchScreeningThunk,
+      fetchPeriod: fetchPrescriptionDrugPeriodThunk,
       select: selectItemToSaveThunk,
       save: saveInterventionThunk,
       reset: clearSavedInterventionStatusThunk,

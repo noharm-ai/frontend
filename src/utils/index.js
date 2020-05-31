@@ -1,6 +1,6 @@
 import isEmpty from 'lodash.isempty';
 
-export const errorHandler = e => ({ error: e.response.data, status: e.response.status });
+export const errorHandler = e => ({ error: e.response ? e.response.data: 'error', status: e.response ? e.response.status : e.code, data: {} });
 
 export const tokenDecode = token => JSON.parse(window.atob(token.split('.')[1]));
 

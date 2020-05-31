@@ -15,6 +15,8 @@ import NewSegment from '@pages/Segments/NewSegment';
 import EditSegment from '@pages/Segments/EditSegment';
 import References from '@pages/References';
 import Reports from '@pages/Reports';
+import ViewReport from '@pages/Reports/ViewReport';
+import InterventionList from '@pages/InterventionList';
 
 const routes = [
   {
@@ -91,6 +93,20 @@ const routes = [
     path: '/relatorios',
     component: withAuth({
       component: Reports
+    })
+  },
+  {
+    exact: true,
+    path: '/relatorios/visualizar',
+    component: withAuth({
+      component: ViewReport
+    })
+  },
+  {
+    exact: true,
+    path: '/intervencoes',
+    component: withAuth({
+      component: InterventionList
     })
   }
 ];

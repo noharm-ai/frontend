@@ -9,6 +9,10 @@ const {
   drugsFetchListError,
   drugsFetchListSuccess,
 
+  drugsSearchStart,
+  drugsSearchError,
+  drugsSearchSuccess,
+
   drugsUnitsFetchListStart,
   drugsUnitsFetchListError,
   drugsUnitsFetchListSuccess,
@@ -38,6 +42,24 @@ export const fetchDrugsListThunk = (params = {}) => async (dispatch, getState) =
   const list = data.data;
 
   dispatch(drugsFetchListSuccess(list));
+};
+
+export const searchDrugsThunk = (idSegment, params = {}) => async (dispatch, getState) => {
+  dispatch(drugsSearchStart());
+
+  const { access_token } = getState().auth.identify;
+  const { data, error } = await api
+    .getDrugsBySegment(access_token, idSegment, params)
+    .catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(drugsSearchError(error));
+    return;
+  }
+
+  const list = data.data;
+
+  dispatch(drugsSearchSuccess(list));
 };
 
 export const saveDrugThunk = (params = {}) => async (dispatch, getState) => {

@@ -1,5 +1,5 @@
 const appName = 'NoHarm';
-const version = 'v1.7-beta';
+const version = 'v1.8-beta';
 const currentYear = new Date().getFullYear();
 const copyright = `${appName} ${currentYear} ${version}`;
 

@@ -74,7 +74,9 @@ export default function Base({ units }) {
                 name="liver"
                 id="liver"
               >
-                <Tooltip title="Medicamento contraindicado ou com ajuste de dose para paciente com insuficiência hepática.">Hepatotóxico</Tooltip>
+                <Tooltip title="Medicamento contraindicado ou com ajuste de dose para paciente com insuficiência hepática.">
+                  Hepatotóxico
+                </Tooltip>
               </Checkbox>
             </Col>
             <Col xs={8}>
@@ -94,35 +96,38 @@ export default function Base({ units }) {
       <Col xs={24}>
         <Box>
           <Heading as="label" size="14px" className="fixed">
-            Dose máxima:
+            <Tooltip title="Dose de Alerta Diária">Dose de Alerta:</Tooltip>
           </Heading>
           <InputNumber
             style={{
               width: 120,
-              marginRight: 5,
+              marginRight: 5
             }}
             min={0}
             max={99999}
             value={maxDose}
             onChange={value => setFieldValue('maxDose', value)}
-          /> {unit}
+          />{' '}
+          {unit}
         </Box>
       </Col>
       <Col md={24} xs={24}>
         <Box>
           <Heading as="label" size="14px" margin="0 0 10px" className="fixed">
-            <Tooltip title="Valor de Taxa de Filtração Glomerular (CKD-EPI) a partir do qual o medicamento deve sofrer ajuste de dose ou frequência.">Nefrotóxico</Tooltip>
+            <Tooltip title="Valor de Taxa de Filtração Glomerular (CKD-EPI) a partir do qual o medicamento deve sofrer ajuste de dose ou frequência.">
+              Nefrotóxico
+            </Tooltip>
           </Heading>
           <InputNumber
             style={{
               width: 120,
-              marginRight: 5,
+              marginRight: 5
             }}
             min={0}
             max={100}
             value={kidney}
             onChange={value => setFieldValue('kidney', value)}
-          /> 
+          />
           mL/min
         </Box>
       </Col>

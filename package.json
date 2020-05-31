@@ -34,6 +34,7 @@
     "babel-plugin-styled-components": "^1.10.6",
     "date-fns": "^2.8.1",
     "formik": "^2.0.6",
+    "lodash.debounce": "^4.0.8",
     "lodash.get": "^4.4.2",
     "lodash.isempty": "^4.4.0",
     "lodash.uniqby": "^4.7.0",

@@ -1,5 +1,6 @@
 import slugify from 'slugify';
 import isEmpty from 'lodash.isempty';
+import moment from 'moment';
 
 const noValues = [0, 'None', null, undefined];
 
@@ -11,4 +12,27 @@ export const stringify = (data = [], noValueSymbol = '#', separator = ' | ') =>
 export const createSlug = function(/*arguments*/) {
   const args = arguments;
   return slugify(Array.from(args).join('-')).toLowerCase();
+};
+
+export const formatAge = birthdate => {
+  const now = moment();
+  const mBirthdate = moment(birthdate);
+
+  const years = now.diff(mBirthdate, 'year');
+  if (years > 2) {
+    return years;
+  }
+
+  mBirthdate.add(years, 'years');
+
+  const months = now.diff(mBirthdate, 'months');
+  mBirthdate.add(months, 'months');
+
+  const days = now.diff(mBirthdate, 'days');
+
+  if (years === 0) {
+    return `${months}m ${days}d`;
+  }
+
+  return `${years}a ${months}m ${days}d`;
 };

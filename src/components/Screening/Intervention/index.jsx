@@ -1,6 +1,8 @@
 import 'styled-components/macro';
 import React, { useEffect } from 'react';
 import isEmpty from 'lodash.isempty';
+import uniqBy from 'lodash.uniqby';
+import debounce from 'lodash.debounce';
 
 import { Row, Col } from '@components/Grid';
 import { Select } from '@components/Inputs';
@@ -36,9 +38,7 @@ const Drug = ({ drug, dosage, frequency, route, score }) => (
           Frequência:
         </Heading>
       </Col>
-      <Col span={24 - 8}>
-        {frequency.value} {frequency.label}
-      </Col>
+      <Col span={24 - 8}>{frequency && `${frequency.value} ${frequency.label}`}</Col>
     </Row>
     <Row type="flex" gutter={24} css="padding: 2px 0">
       <Col span={8}>
@@ -48,36 +48,43 @@ const Drug = ({ drug, dosage, frequency, route, score }) => (
       </Col>
       <Col span={24 - 8}>{route}</Col>
     </Row>
-    <Row type="flex" gutter={24} css="padding: 2px 0">
-      <Col span={8}>
-        <Heading as="p" size="14px">
-          Escore:
-        </Heading>
-      </Col>
-      <Col span={24 - 8}>{score}</Col>
-    </Row>
   </Box>
 );
 
 const Reason = ({ reasons, defaultReason, updateReason }) => {
+  const joinReasons = (ids, reasons) => {
+    if (isEmpty(ids)) return '';
+
+    const selectedReasons = ids.map(id => {
+      const index = reasons.findIndex(item => item.id === id);
+      return reasons[index].description;
+    });
+
+    return selectedReasons.join(', ');
+  };
+
   const handleChange = idInterventionReason => {
+    const reasonDescription = joinReasons(idInterventionReason, reasons.list);
     if (!hasRelationships(reasons.list, idInterventionReason)) {
-      updateReason({ idInterventionReason, interactions: null });
+      updateReason({ idInterventionReason, interactions: null, reasonDescription });
     } else {
-      updateReason({ idInterventionReason });
+      updateReason({ idInterventionReason, reasonDescription });
     }
   };
 
   return (
     <Box css="display: flex; align-items: center">
       <Heading as="label" htmlFor="reason" size="14px" className="fixed">
-        Motivos: *
+        <Tooltip title="Apresentação, Substituição, Interações, Incompatibilidades ou Duplicidade abrem a opção de informar os medicamentos relacionados">
+          Motivos: *
+        </Tooltip>
       </Heading>
       <Select
         id="reason"
         mode="multiple"
+        optionFilterProp="children"
         style={{ width: '80%' }}
-        placeholder="Selectione os motivos..."
+        placeholder="Selecione os motivos..."
         loading={reasons.isFetching}
         onChange={handleChange}
         defaultValue={defaultReason || undefined}
@@ -131,29 +138,72 @@ const Cost = ({ handleChangeCost, defaultChecked }) => {
   );
 };
 
-const Interactions = ({ uniqueDrugList, interactions, updateInteractions }) => {
+const Interactions = ({
+  interactions,
+  interactionsList,
+  updateInteractions,
+  drugs,
+  searchDrugs,
+  idSegment
+}) => {
   const handleChange = interactions => {
-    updateInteractions({ interactions });
+    if (!isEmpty(interactions)) {
+      interactions = interactions.map(item => parseInt(item, 10));
+    }
+
+    const list = drugs.list
+      .concat(interactionsList)
+      .map(i => {
+        if (interactions.indexOf(parseInt(i.idDrug, 10)) !== -1) {
+          i.idDrug = i.idDrug + '';
+          return i;
+        }
+
+        return null;
+      })
+      .filter(i => i != null);
+
+    updateInteractions({ interactions, interactionsList: list });
   };
+
+  const search = debounce(value => {
+    if (value.length < 3) return;
+    searchDrugs(idSegment, { q: value });
+  }, 800);
+
+  if (!isEmpty(interactions)) {
+    interactions = interactions.map(item => item + '');
+  }
+
+  interactionsList = interactionsList ? interactionsList : [];
+  const normalizedList = drugs.list.concat(interactionsList).map(i => {
+    i.idDrug = i.idDrug + '';
+    return i;
+  });
 
   return (
     <Box css="display: flex; align-items: center">
       <Heading as="label" htmlFor="interactions" size="14px" className="fixed">
-        <Tooltip title="Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade">
+        <Tooltip title="Lista de medicamentos com Interações, Incompatibilidades, Duplicidade, Substituições e diferentes formas de apresentação">
           Relações:
         </Tooltip>
       </Heading>
+
       <Select
         id="interactions"
         mode="multiple"
+        optionFilterProp="children"
         style={{ width: '80%' }}
         placeholder="Selecione as relações..."
         onChange={handleChange}
         defaultValue={interactions || undefined}
+        notFoundContent={drugs.isFetching ? <LoadBox /> : null}
+        filterOption={false}
+        onSearch={search}
       >
-        {uniqueDrugList.map(({ idDrug, drug }) => (
+        {uniqBy(normalizedList, 'idDrug').map(({ idDrug, name }) => (
           <Select.Option key={idDrug} value={idDrug}>
-            {drug}
+            {name}
           </Select.Option>
         ))}
       </Select>
@@ -179,11 +229,9 @@ const Observations = ({ content, onEditObservation }) => {
 };
 
 const hasRelationships = (reasonList, selectedReasons = []) => {
-  const reasonsWithRelationships = [
-    'interações medicamentosas',
-    'duplicidade',
-    'incompatibilidades'
-  ];
+  if (!selectedReasons) return false;
+
+  const reasonsWithRelationshipsRegEx = /duplicidade|interaç|incompatib|apresentaç|substituiç/g;
   let hasRelationships = false;
 
   selectedReasons.forEach(itemId => {
@@ -191,7 +239,7 @@ const hasRelationships = (reasonList, selectedReasons = []) => {
 
     if (reasonIndex !== -1) {
       const reason = reasonList[reasonIndex].description.toLowerCase();
-      if (reasonsWithRelationships.indexOf(reason) !== -1) {
+      if (reason.match(reasonsWithRelationshipsRegEx)) {
         hasRelationships = true;
       }
     }
@@ -203,7 +251,9 @@ const hasRelationships = (reasonList, selectedReasons = []) => {
 export default function Intervention({
   intervention,
   fetchReasonsList,
-  updateSelectedItemToSaveIntervention
+  updateSelectedItemToSaveIntervention,
+  drugs,
+  searchDrugs
 }) {
   useEffect(() => {
     fetchReasonsList();
@@ -244,9 +294,12 @@ export default function Intervention({
         itemToSave.intervention.idInterventionReason
       ) && (
         <Interactions
-          uniqueDrugList={itemToSave.uniqueDrugList}
           interactions={itemToSave.intervention.interactions}
+          interactionsList={itemToSave.intervention.interactionsList}
           updateInteractions={updateSelectedItemToSaveIntervention}
+          searchDrugs={searchDrugs}
+          idSegment={itemToSave.intervention.idSegment || itemToSave.idSegment}
+          drugs={drugs}
         />
       )}
 

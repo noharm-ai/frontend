@@ -5,6 +5,10 @@ import { errorHandler } from '@utils';
 import { Creators as InterventionCreators } from './index';
 
 const {
+  interventionFetchListStart,
+  interventionFetchListError,
+  interventionFetchListSuccess,
+
   interventionFetchReasonsListStart,
   interventionFetchReasonsListError,
   interventionFetchReasonsListSuccess,
@@ -15,10 +19,38 @@ const {
   interventionSetSaveStart,
   interventionSetSaveError,
   interventionSetSaveSuccess,
-  interventionClearSavedStatus
+  interventionClearSavedStatus,
+
+  interventionCheckStart,
+  interventionCheckError,
+  interventionCheckSuccess,
+
+  interventionUpdateList
 } = InterventionCreators;
 
+export const fetchListThunk = (params = {}) => async (dispatch, getState) => {
+  dispatch(interventionFetchListStart());
+
+  const { access_token } = getState().auth.identify;
+  const {
+    data: { data },
+    error
+  } = await api.getInterventions(access_token, params).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(interventionFetchListError(error));
+    return;
+  }
+
+  const list = data;
+
+  dispatch(interventionFetchListSuccess(list));
+};
+
 export const fetchReasonsListThunk = (params = {}) => async (dispatch, getState) => {
+  if (!isEmpty(getState().intervention.reasons.list)) {
+    return;
+  }
   dispatch(interventionFetchReasonsListStart());
 
   const { access_token } = getState().auth.identify;
@@ -74,4 +106,33 @@ export const saveInterventionThunk = (params = {}) => async (dispatch, getState)
 
 export const clearSavedInterventionStatusThunk = () => dispatch => {
   dispatch(interventionClearSavedStatus());
+};
+
+export const checkInterventionThunk = (id, status) => async (dispatch, getState) => {
+  dispatch(interventionCheckStart(id));
+
+  const { access_token } = getState().auth.identify;
+  const params = {
+    idPrescriptionDrug: id,
+    status
+  };
+
+  const { data, error } = await api.updateIntervention(access_token, params).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(interventionCheckError(error));
+    return;
+  }
+
+  const success = {
+    status: data.status,
+    id,
+    newStatus: status
+  };
+
+  dispatch(interventionCheckSuccess(success));
+};
+
+export const updateInterventionListDataThunk = intervention => dispatch => {
+  dispatch(interventionUpdateList(intervention));
 };

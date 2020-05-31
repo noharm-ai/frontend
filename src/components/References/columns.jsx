@@ -29,7 +29,7 @@ export default [
   {
     title: 'Frequência diária',
     dataIndex: 'frequency',
-    width: 60
+    width: 65
   },
   {
     title: 'Escore',

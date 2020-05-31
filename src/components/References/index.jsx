@@ -11,6 +11,8 @@ import Heading from '@components/Heading';
 import { FieldSet } from '@components/Inputs';
 import DefaultModal from '@components/Modal';
 import Tabs from '@components/Tabs';
+import Button from '@components/Button';
+import PopConfirm from '@components/PopConfirm';
 
 import Edit from '@containers/References/Edit';
 import Filter from './Filter';
@@ -41,10 +43,14 @@ export default function References({
   saveOutlier,
   saveUnitCoefficient,
   selectOutlier,
+  security,
+  generateOutlier,
+  generateOutlierReset,
   ...restProps
 }) {
-  const { isFetching, list, error } = outliers;
+  const { isFetching, list, error, generateStatus } = outliers;
   const [obsModalVisible, setObsModalVisibility] = useState(false);
+  const isAdmin = security.isAdmin();
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
   const {
@@ -66,7 +72,8 @@ export default function References({
   const dataSource = toDataSource(list, 'idOutlier', { saveOutlier, onShowObsModal });
   const unitsDatasource = toDataSource(units.list, 'idMeasureUnit', {
     saveUnitCoefficient,
-    idDrug: outliers.selecteds.idDrug
+    idDrug: outliers.selecteds.idDrug,
+    isAdmin
   });
 
   useEffect(() => {
@@ -90,6 +97,38 @@ export default function References({
   }, [error]);
 
   useEffect(() => {
+    if (!isEmpty(generateStatus.error)) {
+      notification.error({ message: 'Ops! Algo de errado aconteceu ao gerar os outliers.' });
+    }
+  }, [generateStatus.error]);
+
+  useEffect(() => {
+    if (generateStatus.generated) {
+      generateOutlierReset();
+
+      if (!isEmpty(match.params)) {
+        fetchReferencesList(
+          match.params.idSegment,
+          match.params.idDrug,
+          match.params.dose,
+          match.params.frequency
+        );
+      } else {
+        fetchReferencesList();
+      }
+
+      restProps.fetchDrugsUnitsList({ id: outliers.selecteds.idDrug });
+    }
+  }, [
+    generateStatus.generated,
+    generateOutlierReset,
+    match.params,
+    fetchReferencesList,
+    restProps,
+    outliers.selecteds.idDrug
+  ]);
+
+  useEffect(() => {
     if (outliers.saveStatus.success) {
       notification.success(saveObsMessage);
       setObsModalVisibility(false);
@@ -100,7 +139,7 @@ export default function References({
     }
   }, [outliers.saveStatus.success, outliers.saveStatus.error]);
 
-  const convFreq = (frequency) => {
+  const convFreq = frequency => {
     switch (frequency) {
       case '33':
         return 'SN';
@@ -108,7 +147,7 @@ export default function References({
         return 'ACM';
       case '99':
         return 'N/D';
-      default: 
+      default:
         return frequency;
     }
   };
@@ -120,6 +159,10 @@ export default function References({
     ) {
       return 'highlight';
     }
+  };
+
+  const generate = () => {
+    generateOutlier({ idSegment: outliers.selecteds.idSegment, idDrug: outliers.selecteds.idDrug });
   };
 
   return (
@@ -148,6 +191,22 @@ export default function References({
             locale={{ emptyText }}
             dataSource={!units.isFetching ? unitsDatasource : []}
           />
+          {isAdmin && (
+            <PopConfirm
+              title="Ao gerar novos outliers os escores manuais serão perdidos. Deseja continuar?"
+              onConfirm={generate}
+              okText="Sim"
+              cancelText="Não"
+            >
+              <Button
+                type="primary"
+                style={{ marginTop: '10px' }}
+                loading={generateStatus.isGenerating}
+              >
+                Gerar outlier
+              </Button>
+            </PopConfirm>
+          )}
         </Tabs.TabPane>
         <Tabs.TabPane tab="Atributos" key="2">
           <DrugForm />
@@ -164,12 +223,12 @@ export default function References({
         okText="Salvar"
         okButtonProps={{
           disabled: outliers.saveStatus.isSaving,
-          type: 'gtm-bt-save-obs'
+          type: 'primary gtm-bt-save-obs'
         }}
         cancelText="Cancelar"
         cancelButtonProps={{
           disabled: outliers.saveStatus.isSaving,
-          type: 'primary gtm-bt-cancel-obs'
+          type: 'nda gtm-bt-cancel-obs'
         }}
       >
         <Edit />

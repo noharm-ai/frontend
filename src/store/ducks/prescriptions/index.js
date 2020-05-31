@@ -23,7 +23,11 @@ export const { Types, Creators } = createActions({
 
   prescriptionInterventionCheckStart: ['id'],
   prescriptionInterventionCheckError: ['error'],
-  prescriptionInterventionCheckSuccess: ['success']
+  prescriptionInterventionCheckSuccess: ['success'],
+
+  prescriptionsFetchPeriodStart: [''],
+  prescriptionsFetchPeriodError: ['error'],
+  prescriptionsFetchPeriodSuccess: ['idPrescriptionDrug', 'source', 'data']
 });
 
 const INITIAL_STATE = {
@@ -51,6 +55,10 @@ const INITIAL_STATE = {
       success: {},
       isChecking: false,
       currentId: null
+    },
+    period: {
+      error: null,
+      isFetching: false
     },
     data: {}
   }
@@ -345,6 +353,71 @@ const updateInterventionData = (
   };
 };
 
+const fetchPeriodStart = (state = INITIAL_STATE) => ({
+  ...state,
+  single: {
+    ...state.single,
+    period: {
+      ...state.single.period,
+      isFetching: true
+    }
+  }
+});
+
+const fetchPeriodError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  single: {
+    ...state.single,
+    period: {
+      ...state.single.period,
+      error,
+      isFetching: false
+    }
+  }
+});
+
+const fetchPeriodSuccess = (state = INITIAL_STATE, { idPrescriptionDrug, source, data }) => {
+  const prescriptions = [...state.single.data.prescription];
+  const solutions = [...state.single.data.solution];
+  const procedures = [...state.single.data.procedures];
+
+  const updateData = (list, idPrescriptionDrug, newData) => {
+    const index = list.findIndex(item => item.idPrescriptionDrug === idPrescriptionDrug);
+    list[index].periodDates = newData;
+  };
+
+  // TODO: rever este tipo
+  switch (source) {
+    case 'Medicamentos':
+      updateData(prescriptions, idPrescriptionDrug, data);
+      break;
+    case 'Soluções':
+      updateData(solutions, idPrescriptionDrug, data);
+      break;
+    default:
+      updateData(procedures, idPrescriptionDrug, data);
+      break;
+  }
+
+  return {
+    ...state,
+    single: {
+      ...state.single,
+      period: {
+        ...state.single.period,
+        error: null,
+        isFetching: false
+      },
+      data: {
+        ...state.single.data,
+        prescription: prescriptions,
+        solution: solutions,
+        procedures
+      }
+    }
+  };
+};
+
 const HANDLERS = {
   [Types.PRESCRIPTIONS_FETCH_LIST_START]: fetchListStart,
   [Types.PRESCRIPTIONS_FETCH_LIST_ERROR]: fetchListError,
@@ -368,7 +441,11 @@ const HANDLERS = {
 
   [Types.PRESCRIPTION_INTERVENTION_CHECK_START]: checkInterventionStart,
   [Types.PRESCRIPTION_INTERVENTION_CHECK_ERROR]: checkInterventionError,
-  [Types.PRESCRIPTION_INTERVENTION_CHECK_SUCCESS]: checkInterventionSuccess
+  [Types.PRESCRIPTION_INTERVENTION_CHECK_SUCCESS]: checkInterventionSuccess,
+
+  [Types.PRESCRIPTIONS_FETCH_PERIOD_START]: fetchPeriodStart,
+  [Types.PRESCRIPTIONS_FETCH_PERIOD_ERROR]: fetchPeriodError,
+  [Types.PRESCRIPTIONS_FETCH_PERIOD_SUCCESS]: fetchPeriodSuccess
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

@@ -1,6 +1,6 @@
-import { format, differenceInYears } from 'date-fns';
+import { format } from 'date-fns';
 
-import { stringify } from './utils';
+import { stringify, formatAge } from './utils';
 import { uniqBy } from '@utils/lodash';
 
 export const transformDrug = ({ dose, measureUnit, route, ...drug }) => ({
@@ -36,7 +36,7 @@ export const transformPrescription = ({
   dateFormated: format(new Date(date), 'dd/MM/yyyy HH:mm'),
   shortDateFormat: format(new Date(date), 'dd/MM'),
   birthdate,
-  age: birthdate ? differenceInYears(new Date(), new Date(birthdate)) : '',
+  age: birthdate ? formatAge(birthdate) : '',
   mdrd,
   tgo,
   tgp,

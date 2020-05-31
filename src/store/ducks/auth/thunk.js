@@ -21,10 +21,11 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
     return;
   }
 
-  const { userName, schema, ...identify } = data;
+  const { userName, schema, roles, ...identify } = data;
   const user = {
     userName,
-    schema
+    schema,
+    roles
   };
 
   dispatch(authSetIdentify(identify));
