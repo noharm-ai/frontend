@@ -23,7 +23,7 @@ const validationSchema = Yup.object().shape({
   id: Yup.number()
 });
 
-export default function Drug({ saveStatus, saveDrug, afterSaveDrug, outlier, units }) {
+export default function Drug({ saveStatus, saveDrug, afterSaveDrug, outlier, units, idSegment }) {
   const { isSaving, success, error } = saveStatus;
   const {
     idDrug,
@@ -36,6 +36,8 @@ export default function Drug({ saveStatus, saveDrug, afterSaveDrug, outlier, uni
     kidney,
     liver,
     elderly,
+    division,
+    useWeight,
     outliers
   } = outlier;
 
@@ -45,11 +47,14 @@ export default function Drug({ saveStatus, saveDrug, afterSaveDrug, outlier, uni
     mav: mav == null ? false : mav,
     controlled: controlled == null ? false : controlled,
     notdefault: notdefault == null ? false : notdefault,
-    liver: liver == null ? false : liver,
     elderly: elderly == null ? false : elderly,
+    useWeight: useWeight == null ? false : useWeight,
     maxDose,
     kidney,
+    division,
+    liver,
     idMeasureUnit,
+    idSegment,
     unit: outliers[0] ? outliers[0].unit : ''
   };
 
