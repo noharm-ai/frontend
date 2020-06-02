@@ -1,11 +1,11 @@
 import 'styled-components/macro';
 import React from 'react';
+import moment from 'moment';
 import { Row, Col } from 'antd';
 
 import Popover from '@components/PopoverStyled';
 import Statistic from '@components/Statistic';
 import Card from '@components/Card';
-import { format } from 'date-fns';
 
 import { Wrapper, Name, Box, ExamBox } from './Patient.style';
 
@@ -128,6 +128,22 @@ export default function Patient({
     return { width: width, textAlign: 'center' };
   };
 
+  const formatWeightDate = weightDate => {
+    const emptyMsg = 'data não disponível';
+    if (!weightDate) {
+      return emptyMsg;
+    }
+
+    const date = moment(weightDate);
+    const now = moment();
+
+    if (now.diff(date, 'year') > 10) {
+      return emptyMsg;
+    }
+
+    return date.format('YYYY-MM-DD hh:mm');
+  };
+
   return (
     <Row gutter={8}>
       <Col md={8}>
@@ -151,8 +167,7 @@ export default function Patient({
             <strong>Sexo:</strong> {gender ? (gender === 'M' ? 'Masculino' : 'Feminino') : ''}
           </Cell>
           <Cell>
-            <strong>Peso:</strong> {weight} Kg{' '}
-            {weightDate ? '(' + format(new Date(weightDate), 'dd/MM/yyyy HH:mm') + ')' : ''}
+            <strong>Peso:</strong> {weight} Kg ({formatWeightDate(weightDate)})
           </Cell>
           <Cell>
             <strong>Cor da pele:</strong> {skinColor}

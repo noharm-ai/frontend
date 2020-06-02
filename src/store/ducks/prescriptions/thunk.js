@@ -3,22 +3,11 @@ import isEmpty from 'lodash.isempty';
 import api from '@services/api';
 import hospital from '@services/hospital';
 import { errorHandler, toObject } from '@utils';
-import {
-  transformPrescriptions,
-  transformPrescription,
-  transformSegment
-} from '@utils/transformers';
+import { transformPrescriptions, transformPrescription } from '@utils/transformers';
 import { Creators as PatientsCreators } from '../patients';
-import { Creators as SegmentsCreators } from '../segments';
 import { Creators as PrescriptionsCreators } from './index';
 
 const { patientsFetchListSuccess } = PatientsCreators;
-
-const {
-  segmentsFetchSingleStart,
-  segmentsFetchSingleError,
-  segmentsFetchSingleSuccess
-} = SegmentsCreators;
 
 const {
   prescriptionsFetchListStart,
