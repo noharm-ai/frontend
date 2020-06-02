@@ -16,7 +16,7 @@ import {
 } from '@store/ducks/prescriptions/thunk';
 import Screening from '@components/Screening';
 
-const mapStateToProps = ({ prescriptions, segments, intervention }) => ({
+const mapStateToProps = ({ prescriptions, intervention }) => ({
   prescription: {
     error: prescriptions.single.error,
     message: prescriptions.single.message,
@@ -25,9 +25,6 @@ const mapStateToProps = ({ prescriptions, segments, intervention }) => ({
     checkPrescriptionDrug: prescriptions.single.checkPrescriptionDrug,
     checkIntervention: prescriptions.single.checkIntervention,
     periodObject: prescriptions.single.period
-  },
-  segment: {
-    ...segments.single
   },
   maybeCreateOrUpdate: {
     ...intervention.maybeCreateOrUpdate

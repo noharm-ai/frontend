@@ -121,7 +121,7 @@ export default function Patient({
   weightDate,
   skinColor,
   namePatient,
-  segment,
+  segmentName,
   ...prescription
 }) {
   const gridStyle = width => {
@@ -142,7 +142,7 @@ export default function Patient({
             <strong>Setor:</strong> {department}
           </Cell>
           <Cell>
-            <strong>Segmento:</strong> {segment.content.description}
+            <strong>Segmento:</strong> {segmentName}
           </Cell>
           <Cell>
             <strong>Idade:</strong> {age} {isNaN(age) ? '' : 'anos'}
