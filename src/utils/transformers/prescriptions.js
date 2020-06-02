@@ -54,7 +54,7 @@ export const transformPrescriptions = prescriptions => prescriptions.map(transfo
 
 export const getUniqueDrugs = (prescriptions, solutions, procedures) => {
   const drugs = [];
-  const add = ({ idDrug, drug }) => drugs.push({ idDrug, drug });
+  const add = ({ idDrug, drug }) => drugs.push({ idDrug, name: drug });
 
   if (prescriptions) prescriptions.forEach(item => add(item));
   if (solutions) solutions.forEach(item => add(item));
