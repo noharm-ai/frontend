@@ -14,7 +14,7 @@ export default function Menu({ defaultSelectedKeys, navigation }) {
     >
       {navigation.map(({ text, key, icon, id }) => (
         <Navigator.Item key={key}>
-          <Link className="nav-text" id={id} to={key}>
+          <Link className="nav-text" id={id} to={key} target="_blank">
             {icon && <Icon type={icon} style={{ fontSize: 14 }} />}
             <span>{text}</span>
           </Link>
