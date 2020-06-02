@@ -183,14 +183,19 @@ export default function Filter({
             />
           </Box>
         </Col>
-        <Col md={3}>
+        <Col md={4}>
           <div style={{ display: 'flex' }}>
             <Tooltip title={hiddenFieldCount > 0 ? 'Existem mais filtros aplicados' : ''}>
-              <Button type="link gtm-btn-adv-search" onClick={() => setOpen(!open)} style={{ marginTop: '14px' }}>
+              <Button
+                type="link gtm-btn-adv-search"
+                onClick={() => setOpen(!open)}
+                style={{ marginTop: '14px' }}
+              >
                 <Badge count={hiddenFieldCount}>Ver mais</Badge>
                 <Icon type={open ? 'caret-up' : 'caret-down'} />
               </Button>
             </Tooltip>
+
             <Tooltip title="Pesquisar">
               <Button
                 type="secondary gtm-btn-search"
@@ -199,6 +204,17 @@ export default function Filter({
                 onClick={search}
                 size="large"
                 style={{ marginTop: '7px' }}
+                loading={isFetchingPrescription}
+              />
+            </Tooltip>
+            <Tooltip title="Limpar filtros">
+              <Button
+                className="gtm-btn-reset"
+                shape="circle"
+                icon="delete"
+                onClick={reset}
+                size="medium"
+                style={{ marginTop: '11px', marginLeft: '5px' }}
                 loading={isFetchingPrescription}
               />
             </Tooltip>
@@ -220,6 +236,8 @@ export default function Filter({
               loading={segments.single.isFetching}
               value={filter.idDepartment}
               onChange={onDepartmentChange}
+              autoClearSearchValue={false}
+              allowClear
             >
               {segments.single.content.departments &&
                 segments.single.content.departments.map(({ idDepartment, name }) => (
