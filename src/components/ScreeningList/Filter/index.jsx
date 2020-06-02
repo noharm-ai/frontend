@@ -186,14 +186,14 @@ export default function Filter({
         <Col md={3}>
           <div style={{ display: 'flex' }}>
             <Tooltip title={hiddenFieldCount > 0 ? 'Existem mais filtros aplicados' : ''}>
-              <Button type="link" onClick={() => setOpen(!open)} style={{ marginTop: '14px' }}>
+              <Button type="link gtm-btn-adv-search" onClick={() => setOpen(!open)} style={{ marginTop: '14px' }}>
                 <Badge count={hiddenFieldCount}>Ver mais</Badge>
                 <Icon type={open ? 'caret-up' : 'caret-down'} />
               </Button>
             </Tooltip>
             <Tooltip title="Pesquisar">
               <Button
-                type="secondary"
+                type="secondary gtm-btn-search"
                 shape="circle"
                 icon="search"
                 onClick={search}

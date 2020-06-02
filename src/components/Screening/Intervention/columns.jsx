@@ -30,23 +30,23 @@ const TableLink = styled.a`
   }
 `;
 
-const menu = (id, saveInterventionStatus) => (
+const menu = (id, saveInterventionStatus, onShowModal) => (
   <Menu>
     <Menu.Item
       onClick={() => saveInterventionStatus(id, 'a')}
-      className="gtm-btn-tab-interv-accept"
+      className={onShowModal ? 'gtm-btn-menu-interv-accept' : 'gtm-btn-tab-interv-accept'}
     >
       Aceita
     </Menu.Item>
     <Menu.Item
       onClick={() => saveInterventionStatus(id, 'n')}
-      className="gtm-btn-tab-interv-not-accept"
+      className={onShowModal ? 'gtm-btn-menu-interv-not-accept' : 'gtm-btn-tab-interv-not-accept'}
     >
       Não aceita
     </Menu.Item>
     <Menu.Item
       onClick={() => saveInterventionStatus(id, 'x')}
-      className="gtm-btn-tab-interv-not-apply"
+      className={onShowModal ? 'gtm-btn-menu-interv-not-apply' : 'gtm-btn-tab-interv-not-apply'}
     >
       Não se aplica
     </Menu.Item>
@@ -120,7 +120,7 @@ const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumbe
       {isChecked && (
         <Tooltip title="Desfazer situação" placement="left">
           <Button
-            type="danger gtm-bt-tab-undo-interv-status"
+            type={onShowModal ? 'danger gtm-bt-menu-undo-interv-status' : 'danger gtm-bt-tab-undo-interv-status'}
             ghost
             onClick={() => saveInterventionStatus(id, 's')}
             loading={isChecking}
@@ -132,7 +132,7 @@ const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumbe
       )}
       {!isChecked && (
         <Dropdown
-          overlay={menu(id, saveInterventionStatus)}
+          overlay={menu(id, saveInterventionStatus, onShowModal)}
           loading={isChecking}
           disabled={isDisabled}
         >
@@ -140,7 +140,7 @@ const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumbe
             type="primary"
             loading={isChecking}
             disabled={isDisabled}
-            className="gtm-bt-tab-interv-status"
+            className={onShowModal ? 'gtm-bt-menu-interv-status' : 'gtm-bt-tab-interv-status'}
           >
             <Icon type="caret-down" style={{ fontSize: 16 }} />
           </Button>
@@ -156,6 +156,7 @@ const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumbe
           placement="left"
         >
           <Button
+            type="none gtm-bt-menu-interv"
             style={{ marginLeft: '5px' }}
             disabled={isClosed}
             onClick={() => {
