@@ -7,13 +7,51 @@ import { subDays } from 'date-fns';
 import message from '@components/message';
 import Heading from '@components/Heading';
 import { Row, Col } from '@components/Grid';
-import { Select, DatePicker } from '@components/Inputs';
+import { Select, DatePicker, Input } from '@components/Inputs';
 import { Box, SearchBox } from './Filter.style';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 import Icon from '@components/Icon';
 import Badge from '@components/Badge';
+import Menu from '@components/Menu';
+import Dropdown from '@components/Dropdown';
+import Modal from '@components/Modal';
+import notification from '@components/notification';
 import './index.css';
+
+const filterMenu = (savedFilters, openSaveModal, loadFilter, removeFilter) => (
+  <Menu>
+    <Menu.Item className="gtm-btn-menu-filter-save" onClick={() => openSaveModal(true)}>
+      Salvar filtro atual
+    </Menu.Item>
+
+    <Menu.SubMenu title="Aplicar filtro">
+      {isEmpty(savedFilters) && (
+        <Menu.Item>
+          Nenhum filtro disponível.
+          <br /> Clique em "Salvar filtro atual" para criar um novo filtro.
+        </Menu.Item>
+      )}
+      {savedFilters.map((item, index) => (
+        <Menu.Item key={index} onClick={() => loadFilter(item.data)}>
+          {item.name}
+        </Menu.Item>
+      ))}
+    </Menu.SubMenu>
+    <Menu.Item />
+    <Menu.Divider />
+    {!isEmpty(savedFilters) && (
+      <Menu.SubMenu title="Excluir filtro" danger>
+        {savedFilters.map((item, index) => (
+          <Menu.Item key={index} onClick={() => removeFilter(index)} style={{ color: '#ff4d4f' }}>
+            <Icon type="delete" style={{ fontSize: 16, color: '#ff4d4f' }} />
+            {item.name}
+          </Menu.Item>
+        ))}
+      </Menu.SubMenu>
+    )}
+  </Menu>
+);
 
 export default function Filter({
   fetchPrescriptionsList,
@@ -23,9 +61,14 @@ export default function Filter({
   updatePrescriptionListStatus,
   filter,
   setScreeningListFilter,
-  isFetchingPrescription
+  isFetchingPrescription,
+  savedFilters,
+  saveFilter,
+  removeFilter
 }) {
   const [open, setOpen] = useState(false);
+  const [saveFilterOpen, setSaveFilterOpen] = useState(false);
+  const [filterName, setFilterName] = useState('');
   const [date, setDate] = useState(moment());
 
   const getParams = useCallback(
@@ -143,6 +186,27 @@ export default function Filter({
     return count;
   };
 
+  const saveFilterAction = (filterName, currentFilter) => {
+    saveFilter('screeningList', {
+      name: filterName,
+      data: currentFilter
+    });
+    setSaveFilterOpen(false);
+    setFilterName('');
+    notification.success({ message: 'Uhu! Filtro salvo com sucesso!' });
+  };
+
+  const removeFilterAction = index => {
+    removeFilter('screeningList', index);
+
+    notification.success({ message: 'Filtro removido com sucesso!' });
+  };
+
+  const loadFilterAction = filterData => {
+    setScreeningListFilter(filterData);
+    fetchPrescriptionsList(getParams({ ...filterData, idDept: filterData.idDepartment }));
+  };
+
   const hiddenFieldCount = countHiddenFilters(filter);
   return (
     <SearchBox className={open ? 'open' : ''}>
@@ -213,11 +277,25 @@ export default function Filter({
                 shape="circle"
                 icon="delete"
                 onClick={reset}
-                size="medium"
                 style={{ marginTop: '11px', marginLeft: '5px' }}
                 loading={isFetchingPrescription}
               />
             </Tooltip>
+            <Dropdown
+              overlay={filterMenu(
+                savedFilters,
+                setSaveFilterOpen,
+                loadFilterAction,
+                removeFilterAction
+              )}
+            >
+              <Button
+                className="gtm-btn-filter"
+                shape="circle"
+                icon="filter"
+                style={{ marginTop: '11px', marginLeft: '5px' }}
+              />
+            </Dropdown>
           </div>
         </Col>
       </Row>
@@ -259,6 +337,22 @@ export default function Filter({
           </div>
         </Col>
       </Row>
+      <Modal
+        visible={saveFilterOpen}
+        onCancel={() => setSaveFilterOpen(false)}
+        onOk={() => saveFilterAction(filterName, filter)}
+        okButtonProps={{
+          disabled: filterName === ''
+        }}
+        okText="Salvar"
+        okType="primary gtm-bt-save-filter"
+        cancelText="Cancelar"
+      >
+        <Heading as="label" size="14px" className="fixed" css="margin-top: 12px;">
+          Nome do filtro:
+        </Heading>
+        <Input onChange={({ target }) => setFilterName(target.value)} value={filterName} />
+      </Modal>
     </SearchBox>
   );
 }
