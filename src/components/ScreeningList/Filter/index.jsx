@@ -205,6 +205,7 @@ export default function Filter({
   const loadFilterAction = filterData => {
     setScreeningListFilter(filterData);
     fetchPrescriptionsList(getParams({ ...filterData, idDept: filterData.idDepartment }));
+    setOpen(false);
   };
 
   const hiddenFieldCount = countHiddenFilters(filter);

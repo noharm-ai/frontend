@@ -23,7 +23,15 @@ const validationSchema = Yup.object().shape({
   id: Yup.number()
 });
 
-export default function Drug({ saveStatus, saveDrug, afterSaveDrug, outlier, units, idSegment }) {
+export default function Drug({
+  saveStatus,
+  saveDrug,
+  afterSaveDrug,
+  outlier,
+  units,
+  idSegment,
+  security
+}) {
   const { isSaving, success, error } = saveStatus;
   const {
     idDrug,
@@ -80,7 +88,7 @@ export default function Drug({ saveStatus, saveDrug, afterSaveDrug, outlier, uni
         <form onSubmit={handleSubmit}>
           <FormContainer>
             <Row type="flex" gutter={[16, 24]}>
-              <Base units={units.list} />
+              <Base units={units.list} security={security} />
             </Row>
           </FormContainer>
           <Footer>
