@@ -38,6 +38,7 @@ export default function Filter({
   }, [fetchDrugsUnitsList, outliers.selecteds.idDrug]);
 
   const handleChange = (key, value) => {
+    values[key] = value;
     const params = {
       ...values,
       [key]: value
