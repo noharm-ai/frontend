@@ -8,6 +8,15 @@ import Escore from './Escore';
 
 const flags = ['green', 'yellow', 'orange', 'red'];
 
+const convDose = outlier => {
+  if (outlier.division) {
+    return outlier.dose + '-' + (outlier.dose-outlier.division) + ' ' + outlier.unit + (outlier.useWeight ? '/Kg' : '');
+  } else {
+    return outlier.dose + ' ' + outlier.unit + (outlier.useWeight ? '/Kg' : '');
+  }
+
+};
+
 export default [
   {
     dataIndex: 'class',
@@ -26,7 +35,7 @@ export default [
     title: 'Dose',
     dataIndex: 'dose',
     width: 60,
-    render: (entry, outlier) => `${outlier.dose} ${outlier.unit}${outlier.useWeight ? '/Kg' : ''}`
+    render: (entry, outlier) => convDose(outlier)
   },
   {
     title: 'Frequência diária',
