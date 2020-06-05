@@ -10,11 +10,10 @@ const flags = ['green', 'yellow', 'orange', 'red'];
 
 const convDose = outlier => {
   if (outlier.division) {
-    return outlier.dose + '-' + (outlier.dose-outlier.division) + ' ' + outlier.unit + (outlier.useWeight ? '/Kg' : '');
+    return (outlier.dose-outlier.division) + '-' + outlier.dose + ' ' + outlier.unit + (outlier.useWeight ? '/Kg' : '');
   } else {
     return outlier.dose + ' ' + outlier.unit + (outlier.useWeight ? '/Kg' : '');
   }
-
 };
 
 export default [
