@@ -404,19 +404,6 @@ const drugInfo = [
   }
 ];
 
-const convFreq = dayFrequency => {
-  switch (dayFrequency) {
-    case 33:
-      return 'SN *';
-    case 44:
-      return 'ACM *';
-    case 99:
-      return 'N/D *';
-    default:
-      return dayFrequency + 'x/dia *';
-  }
-};
-
 const frequencyAndTime = [
   {
     title: 'Frequência',
@@ -426,7 +413,7 @@ const frequencyAndTime = [
       if (isEmpty(prescription.frequency)) {
         return (
           <Tooltip title="Frequência obtida por conversão" placement="top">
-            {convFreq(prescription.dayFrequency)}
+            *
           </Tooltip>
         );
       }

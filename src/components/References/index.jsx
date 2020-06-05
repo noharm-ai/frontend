@@ -203,7 +203,7 @@ export default function References({
                 style={{ marginTop: '10px' }}
                 loading={generateStatus.isGenerating}
               >
-                Gerar outlier
+                Gerar Outlier
               </Button>
             </PopConfirm>
           )}

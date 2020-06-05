@@ -133,7 +133,7 @@ export default function Base({ units, security }) {
       <Col xs={24}>
         <Box>
           <Heading as="label" size="14px" className="fixed">
-            <Tooltip title="">Hepatotoxicidade:</Tooltip>
+            <Tooltip title="Valor de TGO ou TGP a partir do qual o medicamento deve sofrer ajuste de dose ou frequência.">Hepatotóxico:</Tooltip>
           </Heading>
           <InputNumber
             style={{

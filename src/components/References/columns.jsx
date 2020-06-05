@@ -24,7 +24,7 @@ export default [
     title: 'Dose',
     dataIndex: 'dose',
     width: 60,
-    render: (entry, record) => `${record.dose} ${record.unit}`
+    render: (entry, outlier) => `${outlier.dose} ${outlier.unit}`
   },
   {
     title: 'Frequência diária',
@@ -40,7 +40,7 @@ export default [
     title: 'Escore Manual',
     dataIndex: 'manualScore',
     width: 60,
-    render: (entry, record) => <Escore {...record} />
+    render: (entry, outlier) => <Escore {...outlier} />
   },
   {
     title: 'Contagem',

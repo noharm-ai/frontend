@@ -35,7 +35,7 @@ const SegmentActions = ({ id, slug, outliers, generateOutlier, description: name
   return (
     <ActionsBox>
       <Button type="secondary" loading={isGenerating} disabled={isDisabled} onClick={generate}>
-        Gerar Outler
+        Gerar Outlier
       </Button>
       <Link type="primary" to={`/segmentos/editar/${slug}`}>
         <Icon type="edit" />

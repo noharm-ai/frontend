@@ -91,7 +91,7 @@ export default function InterventionList({
           emptyText: (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="Nenhuma intervenção encontrada."
+              description="Parabéns! Nenhuma intervenção pendente."
             />
           )
         }}

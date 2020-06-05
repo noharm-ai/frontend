@@ -1,13 +1,13 @@
 export default [
   {
     key: '/',
-    text: 'Pacientes para triagem',
+    text: 'Pacientes para Triagem',
     icon: 'user',
     id: 'gtm-lnk-pacientes-triagem'
   },
   {
     key: '/intervencoes',
-    text: 'Intervenções',
+    text: 'Intervenções Pendentes',
     icon: 'warning',
     id: 'gtm-lnk-intervencoes'
   },
@@ -18,13 +18,13 @@ export default [
   },*/
   {
     key: '/tabela-referencia',
-    text: 'Tabela de referências',
+    text: 'Tabela de Referências',
     icon: 'table',
     id: 'gtm-lnk-tabela-referencias'
   },
   {
     key: '/relatorios',
-    text: 'Relatorios',
+    text: 'Relatórios',
     icon: 'report',
     id: 'gtm-lnk-report'
   }
