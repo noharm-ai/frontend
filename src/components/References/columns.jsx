@@ -13,7 +13,9 @@ export default [
     dataIndex: 'class',
     key: 'class',
     width: 20,
-    render: (entry, { score, manualScore }) => <span className={`flag ${flags[parseInt(manualScore || score)]}`} />
+    render: (entry, { score, manualScore }) => (
+      <span className={`flag ${flags[parseInt(manualScore || score)]}`} />
+    )
   },
   {
     title: 'Medicamento',
@@ -24,7 +26,7 @@ export default [
     title: 'Dose',
     dataIndex: 'dose',
     width: 60,
-    render: (entry, outlier) => `${outlier.dose} ${outlier.unit}`
+    render: (entry, outlier) => `${outlier.dose} ${outlier.unit}${outlier.useWeight ? '/Kg' : ''}`
   },
   {
     title: 'Frequência diária',

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import isEmpty from 'lodash.isempty';
 
 import { Row } from '@components/Grid';
 import Button from '@components/Button';
@@ -30,7 +31,9 @@ export default function Drug({
   outlier,
   units,
   idSegment,
-  security
+  security,
+  fetchReferencesList,
+  match
 }) {
   const { isSaving, success, error } = saveStatus;
   const {
@@ -70,12 +73,22 @@ export default function Drug({
     if (success) {
       notification.success(saveMessage);
       afterSaveDrug();
+      if (!isEmpty(match.params)) {
+        fetchReferencesList(
+          match.params.idSegment,
+          match.params.idDrug,
+          match.params.dose,
+          match.params.frequency
+        );
+      } else {
+        fetchReferencesList();
+      }
     }
 
     if (error) {
       notification.error(errorMessage);
     }
-  }, [success, error, afterSaveDrug]);
+  }, [success, error, afterSaveDrug, fetchReferencesList, match.params]);
 
   return (
     <Formik

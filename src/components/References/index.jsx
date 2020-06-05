@@ -209,7 +209,7 @@ export default function References({
           )}
         </Tabs.TabPane>
         <Tabs.TabPane tab="Atributos" key="2">
-          <DrugForm />
+          <DrugForm fetchReferencesList={fetchReferencesList} match={match} />
         </Tabs.TabPane>
       </Tabs>
 
