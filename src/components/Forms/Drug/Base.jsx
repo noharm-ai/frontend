@@ -107,7 +107,7 @@ export default function Base({ units, security }) {
             value={maxDose}
             onChange={value => setFieldValue('maxDose', value)}
           />{' '}
-          {unit}
+          {unit}{useWeight?'/Kg':''}
         </Box>
       </Col>
       <Col md={24} xs={24}>
