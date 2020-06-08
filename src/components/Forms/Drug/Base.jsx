@@ -145,6 +145,7 @@ export default function Base({ units, security }) {
             value={liver}
             onChange={value => setFieldValue('liver', value)}
           />
+          U/L
         </Box>
       </Col>
       {security.isAdmin() && (
