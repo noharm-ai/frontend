@@ -3,22 +3,11 @@ import isEmpty from 'lodash.isempty';
 import api from '@services/api';
 import hospital from '@services/hospital';
 import { errorHandler, toObject } from '@utils';
-import {
-  transformPrescriptions,
-  transformPrescription,
-  transformSegment
-} from '@utils/transformers';
+import { transformPrescriptions, transformPrescription } from '@utils/transformers';
 import { Creators as PatientsCreators } from '../patients';
-import { Creators as SegmentsCreators } from '../segments';
 import { Creators as PrescriptionsCreators } from './index';
 
 const { patientsFetchListSuccess } = PatientsCreators;
-
-const {
-  segmentsFetchSingleStart,
-  segmentsFetchSingleError,
-  segmentsFetchSingleSuccess
-} = SegmentsCreators;
 
 const {
   prescriptionsFetchListStart,
@@ -144,7 +133,6 @@ export const fetchPrescriptionByIdThunk = idPrescription => async (dispatch, get
  */
 export const fetchScreeningThunk = idPrescription => async (dispatch, getState) => {
   dispatch(prescriptionsFetchSingleStart());
-  dispatch(segmentsFetchSingleStart());
 
   const { auth, patients } = getState();
   const { list: listPatients } = patients;
@@ -155,12 +143,7 @@ export const fetchScreeningThunk = idPrescription => async (dispatch, getState) 
   } = await api.getPrescriptionById(access_token, idPrescription).catch(errorHandler);
 
   if (!isEmpty(error)) {
-    let errorSegment = {
-      message: 'Não foi possivel carregar o segmento.'
-    };
-
     dispatch(prescriptionsFetchSingleError(error));
-    dispatch(segmentsFetchSingleError(errorSegment));
     return;
   }
 
@@ -181,13 +164,7 @@ export const fetchScreeningThunk = idPrescription => async (dispatch, getState) 
     namePatient: patientsList[singlePrescription.idPatient].name
   };
 
-  const {
-    data: { data: segment }
-  } = await api.getSegmentById(access_token, singlePrescription.idSegment).catch(errorHandler);
-  const singleSegment = transformSegment(segment);
-
   dispatch(patientsFetchListSuccess(patientsList));
-  dispatch(segmentsFetchSingleSuccess(singleSegment));
   dispatch(prescriptionsFetchSingleSuccess(singlePrescriptionAddedPatientName));
 };
 

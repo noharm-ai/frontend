@@ -8,12 +8,22 @@ import Escore from './Escore';
 
 const flags = ['green', 'yellow', 'orange', 'red'];
 
+const convDose = outlier => {
+  if (outlier.division) {
+    return (outlier.dose-outlier.division) + '-' + outlier.dose + ' ' + outlier.unit + (outlier.useWeight ? '/Kg' : '');
+  } else {
+    return outlier.dose + ' ' + outlier.unit + (outlier.useWeight ? '/Kg' : '');
+  }
+};
+
 export default [
   {
     dataIndex: 'class',
     key: 'class',
     width: 20,
-    render: (entry, { score, manualScore }) => <span className={`flag ${flags[parseInt(manualScore || score)]}`} />
+    render: (entry, { score, manualScore }) => (
+      <span className={`flag ${flags[parseInt(manualScore || score)]}`} />
+    )
   },
   {
     title: 'Medicamento',
@@ -24,7 +34,7 @@ export default [
     title: 'Dose',
     dataIndex: 'dose',
     width: 60,
-    render: (entry, record) => `${record.dose} ${record.unit}`
+    render: (entry, outlier) => convDose(outlier)
   },
   {
     title: 'Frequência diária',
@@ -40,7 +50,7 @@ export default [
     title: 'Escore Manual',
     dataIndex: 'manualScore',
     width: 60,
-    render: (entry, record) => <Escore {...record} />
+    render: (entry, outlier) => <Escore {...outlier} />
   },
   {
     title: 'Contagem',

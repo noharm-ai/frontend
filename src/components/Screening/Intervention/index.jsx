@@ -144,7 +144,8 @@ const Interactions = ({
   updateInteractions,
   drugs,
   searchDrugs,
-  idSegment
+  idSegment,
+  uniqueDrugList
 }) => {
   const handleChange = interactions => {
     if (!isEmpty(interactions)) {
@@ -176,10 +177,14 @@ const Interactions = ({
   }
 
   interactionsList = interactionsList ? interactionsList : [];
-  const normalizedList = drugs.list.concat(interactionsList).map(i => {
-    i.idDrug = i.idDrug + '';
-    return i;
-  });
+  uniqueDrugList = uniqueDrugList ? uniqueDrugList : [];
+  const normalizedList = drugs.list
+    .concat(interactionsList)
+    .concat(uniqueDrugList)
+    .map(i => {
+      i.idDrug = i.idDrug + '';
+      return i;
+    });
 
   return (
     <Box css="display: flex; align-items: center">
@@ -300,6 +305,7 @@ export default function Intervention({
           searchDrugs={searchDrugs}
           idSegment={itemToSave.intervention.idSegment || itemToSave.idSegment}
           drugs={drugs}
+          uniqueDrugList={itemToSave.uniqueDrugList}
         />
       )}
 

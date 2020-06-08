@@ -47,7 +47,6 @@ const ScreeningTabs = styled(Tabs)`
 export default function Screening({
   match,
   prescription,
-  segment,
   maybeCreateOrUpdate,
   save,
   reset,
@@ -203,7 +202,7 @@ export default function Screening({
     <>
       <Row type="flex" gutter={24}>
         <Col span={24} md={24}>
-          {isFetching ? <LoadBox /> : <Patient {...content} segment={segment} />}
+          {isFetching ? <LoadBox /> : <Patient {...content} />}
         </Col>
         <ScreeningTabs
           defaultActiveKey="1"

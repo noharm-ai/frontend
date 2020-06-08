@@ -203,13 +203,13 @@ export default function References({
                 style={{ marginTop: '10px' }}
                 loading={generateStatus.isGenerating}
               >
-                Gerar outlier
+                Gerar Outlier
               </Button>
             </PopConfirm>
           )}
         </Tabs.TabPane>
         <Tabs.TabPane tab="Atributos" key="2">
-          <DrugForm />
+          <DrugForm fetchReferencesList={fetchReferencesList} match={match} />
         </Tabs.TabPane>
       </Tabs>
 

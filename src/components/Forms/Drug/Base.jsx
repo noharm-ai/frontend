@@ -10,9 +10,21 @@ import Tooltip from '@components/Tooltip';
 
 import { Box } from './Drug.style';
 
-export default function Base({ units }) {
+export default function Base({ units, security }) {
   const { values, setFieldValue } = useFormikContext();
-  const { antimicro, mav, controlled, notdefault, maxDose, kidney, liver, elderly, unit } = values;
+  const {
+    antimicro,
+    mav,
+    controlled,
+    notdefault,
+    maxDose,
+    kidney,
+    liver,
+    elderly,
+    unit,
+    division,
+    useWeight
+  } = values;
 
   return (
     <>
@@ -68,19 +80,6 @@ export default function Base({ units }) {
             </Col>
             <Col xs={8}>
               <Checkbox
-                onChange={({ target }) => setFieldValue('liver', !target.value)}
-                value={liver}
-                checked={liver}
-                name="liver"
-                id="liver"
-              >
-                <Tooltip title="Medicamento contraindicado ou com ajuste de dose para paciente com insuficiência hepática.">
-                  Hepatotóxico
-                </Tooltip>
-              </Checkbox>
-            </Col>
-            <Col xs={8}>
-              <Checkbox
                 onChange={({ target }) => setFieldValue('elderly', !target.value)}
                 value={elderly}
                 checked={elderly}
@@ -108,7 +107,7 @@ export default function Base({ units }) {
             value={maxDose}
             onChange={value => setFieldValue('maxDose', value)}
           />{' '}
-          {unit}
+          {unit}{useWeight?'/Kg':''}
         </Box>
       </Col>
       <Col md={24} xs={24}>
@@ -131,6 +130,52 @@ export default function Base({ units }) {
           mL/min
         </Box>
       </Col>
+      <Col xs={24}>
+        <Box>
+          <Heading as="label" size="14px" className="fixed">
+            <Tooltip title="Valor de TGO ou TGP a partir do qual o medicamento deve sofrer ajuste de dose ou frequência.">Hepatotóxico:</Tooltip>
+          </Heading>
+          <InputNumber
+            style={{
+              width: 120,
+              marginRight: 5
+            }}
+            min={0}
+            max={99999}
+            value={liver}
+            onChange={value => setFieldValue('liver', value)}
+          />
+          U/L
+        </Box>
+      </Col>
+      {security.isAdmin() && (
+        <Col xs={24}>
+          <Box>
+            <Heading as="label" size="14px" className="fixed">
+              <Tooltip title="">Divisor de faixas:</Tooltip>
+            </Heading>
+            <InputNumber
+              style={{
+                width: 120,
+                marginRight: '10px'
+              }}
+              min={0}
+              max={99999}
+              value={division}
+              onChange={value => setFieldValue('division', value)}
+            />
+            <Checkbox
+              onChange={({ target }) => setFieldValue('useWeight', !target.value)}
+              value={useWeight}
+              checked={useWeight}
+              name="useWeight"
+              id="useWeight"
+            >
+              <Tooltip title="">Considerar peso</Tooltip>
+            </Checkbox>
+          </Box>
+        </Col>
+      )}
     </>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import isEmpty from 'lodash.isempty';
 
 import { Row } from '@components/Grid';
 import Button from '@components/Button';
@@ -23,7 +24,17 @@ const validationSchema = Yup.object().shape({
   id: Yup.number()
 });
 
-export default function Drug({ saveStatus, saveDrug, afterSaveDrug, outlier, units }) {
+export default function Drug({
+  saveStatus,
+  saveDrug,
+  afterSaveDrug,
+  outlier,
+  units,
+  idSegment,
+  security,
+  fetchReferencesList,
+  match
+}) {
   const { isSaving, success, error } = saveStatus;
   const {
     idDrug,
@@ -36,6 +47,8 @@ export default function Drug({ saveStatus, saveDrug, afterSaveDrug, outlier, uni
     kidney,
     liver,
     elderly,
+    division,
+    useWeight,
     outliers
   } = outlier;
 
@@ -45,11 +58,14 @@ export default function Drug({ saveStatus, saveDrug, afterSaveDrug, outlier, uni
     mav: mav == null ? false : mav,
     controlled: controlled == null ? false : controlled,
     notdefault: notdefault == null ? false : notdefault,
-    liver: liver == null ? false : liver,
     elderly: elderly == null ? false : elderly,
+    useWeight: useWeight == null ? false : useWeight,
     maxDose,
     kidney,
+    division,
+    liver,
     idMeasureUnit,
+    idSegment,
     unit: outliers[0] ? outliers[0].unit : ''
   };
 
@@ -57,12 +73,22 @@ export default function Drug({ saveStatus, saveDrug, afterSaveDrug, outlier, uni
     if (success) {
       notification.success(saveMessage);
       afterSaveDrug();
+      if (!isEmpty(match.params)) {
+        fetchReferencesList(
+          match.params.idSegment,
+          match.params.idDrug,
+          match.params.dose,
+          match.params.frequency
+        );
+      } else {
+        fetchReferencesList();
+      }
     }
 
     if (error) {
       notification.error(errorMessage);
     }
-  }, [success, error, afterSaveDrug]);
+  }, [success, error, afterSaveDrug, fetchReferencesList, match.params]);
 
   return (
     <Formik
@@ -75,7 +101,7 @@ export default function Drug({ saveStatus, saveDrug, afterSaveDrug, outlier, uni
         <form onSubmit={handleSubmit}>
           <FormContainer>
             <Row type="flex" gutter={[16, 24]}>
-              <Base units={units.list} />
+              <Base units={units.list} security={security} />
             </Row>
           </FormContainer>
           <Footer>
