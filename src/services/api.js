@@ -28,6 +28,7 @@ const endpoints = {
     base: '/intervention',
     reasons: '/intervention/reasons'
   },
+  exams: '/exams',
   reports: '/reports'
 };
 
@@ -78,6 +79,13 @@ const createSegment = (bearerToken, params = {}) =>
 
 const updateSegment = (bearerToken, { id, ...params }) =>
   instance.put(`${endpoints.segments}/${id}`, params, setHeaders(bearerToken));
+
+/**
+ * Exams.
+ *
+ */
+const getExams = (bearerToken, admissionNumber, params = {}) =>
+  instance.get(`${endpoints.exams}/${admissionNumber}`, { params, ...setHeaders(bearerToken) });
 
 /**
  * Prescriptions.
@@ -228,7 +236,8 @@ const api = {
   getInterventionReasons,
   updateIntervention,
   getReports,
-  getInterventions
+  getInterventions,
+  getExams
 };
 
 export default api;

@@ -3,7 +3,7 @@ import isEmpty from 'lodash.isempty';
 import api from '@services/api';
 import hospital from '@services/hospital';
 import { errorHandler, toObject } from '@utils';
-import { transformPrescriptions, transformPrescription } from '@utils/transformers';
+import { transformPrescriptions, transformPrescription, transformExams } from '@utils/transformers';
 import { Creators as PatientsCreators } from '../patients';
 import { Creators as PrescriptionsCreators } from './index';
 
@@ -36,7 +36,11 @@ const {
 
   prescriptionsFetchPeriodStart,
   prescriptionsFetchPeriodError,
-  prescriptionsFetchPeriodSuccess
+  prescriptionsFetchPeriodSuccess,
+
+  prescriptionsFetchExamsStart,
+  prescriptionsFetchExamsError,
+  prescriptionsFetchExamsSuccess
 } = PrescriptionsCreators;
 
 export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, getState) => {
@@ -274,4 +278,22 @@ export const fetchPrescriptionDrugPeriodThunk = (idPrescriptionDrug, source) => 
   }
 
   dispatch(prescriptionsFetchPeriodSuccess(idPrescriptionDrug, source, data));
+};
+
+export const fetchPrescriptionExamsThunk = admissionNumber => async (dispatch, getState) => {
+  dispatch(prescriptionsFetchExamsStart());
+
+  const { auth } = getState();
+  const { access_token } = auth.identify;
+  const {
+    data: { data },
+    error
+  } = await api.getExams(access_token, admissionNumber).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(prescriptionsFetchExamsError(error));
+    return;
+  }
+
+  dispatch(prescriptionsFetchExamsSuccess(transformExams(data)));
 };
