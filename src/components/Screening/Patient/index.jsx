@@ -1,13 +1,18 @@
 import 'styled-components/macro';
-import React from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 import { Row, Col } from 'antd';
 
 import Popover from '@components/PopoverStyled';
 import Statistic from '@components/Statistic';
 import Card from '@components/Card';
+import Button from '@components/Button';
+import Icon from '@components/Icon';
+import Tooltip from '@components/Tooltip';
 
-import { Wrapper, Name, Box, ExamBox } from './Patient.style';
+import Modal from './Modal';
+
+import { Wrapper, Name, NameWrapper, Box, ExamBox } from './Patient.style';
 
 function Cell({ children }) {
   return (
@@ -124,6 +129,12 @@ export default function Patient({
   segmentName,
   ...prescription
 }) {
+  const [visible, setVisible] = useState(false);
+
+  const onCancel = () => {
+    setVisible(false);
+  };
+
   const gridStyle = width => {
     return { width: width, textAlign: 'center' };
   };
@@ -148,9 +159,22 @@ export default function Patient({
     <Row gutter={8}>
       <Col md={8}>
         <Wrapper>
-          <Name as="h3" size="18px">
-            {namePatient || '-'}
-          </Name>
+          <NameWrapper>
+            <Row gutter={8}>
+              <Col xs={20}>
+                <Name as="h3" size="18px">
+                  {namePatient || '-'}
+                </Name>
+              </Col>
+              <Col xs={4} className="btn-container">
+                <Tooltip title="Editar dados do paciente">
+                  <Button type="none gtm-bt-edit-patient" onClick={() => setVisible(true)}>
+                    <Icon type="edit" style={{ fontSize: 16 }} />
+                  </Button>
+                </Tooltip>
+              </Col>
+            </Row>
+          </NameWrapper>
           <Cell>
             <strong>Atendimento:</strong> {admissionNumber}
           </Cell>
@@ -196,6 +220,13 @@ export default function Patient({
           </Card>
         </ExamBox>
       </Col>
+      <Modal
+        visible={visible}
+        onCancel={onCancel}
+        okText="Salvar"
+        okType="primary gtm-bt-save-patient"
+        cancelText="Cancelar"
+      />
     </Row>
   );
 }
