@@ -16,20 +16,15 @@ const columns = [
     align: 'center'
   },
   {
-    title: 'Percentual',
+    title: 'Valor',
     align: 'center',
     render: record => {
       if (record.perc) {
-        return record.perc + ' %';
+        return record.perc;
       }
 
-      return '';
+      return record.value;
     }
-  },
-  {
-    title: 'Valor',
-    dataIndex: 'value',
-    align: 'center'
   },
   {
     title: 'Referência',
