@@ -324,6 +324,11 @@ export const expandedRowRender = record => {
             {record.time}
           </Descriptions.Item>
         )}
+        {record.useWeight && (
+          <Descriptions.Item label="Dose / Kg:" span={3}>
+            {record.doseconv}
+          </Descriptions.Item>
+        )}
         <Descriptions.Item label="Observação médica:" span={3}>
           <RichTextView text={record.recommendation} />
         </Descriptions.Item>
