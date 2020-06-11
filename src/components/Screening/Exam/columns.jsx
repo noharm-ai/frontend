@@ -11,11 +11,6 @@ const columns = [
     align: 'left'
   },
   {
-    title: 'Data',
-    dataIndex: 'date',
-    align: 'center'
-  },
-  {
     title: 'Percentual',
     dataIndex: 'perc',
     align: 'center'
@@ -29,6 +24,11 @@ const columns = [
     title: 'Referência',
     dataIndex: 'ref',
     align: 'left'
+  },
+  {
+    title: 'Data',
+    dataIndex: 'date',
+    align: 'center'
   }
 ];
 

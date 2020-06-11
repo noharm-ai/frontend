@@ -38,6 +38,20 @@ export const Box = styled.div`
   strong {
     color: #2e3c5a;
   }
+
+  &.see-more {
+    display: flex;
+    justify-content: center;
+
+    button {
+      color: #696766;
+      height: auto;
+    }
+
+    button:hover span {
+      text-decoration: underline;
+    }
+  }
 `;
 
 export const ExamBox = styled.div`
@@ -74,5 +88,9 @@ export const ExamBox = styled.div`
 
   .ant-card-grid {
     padding: 20px;
+  }
+
+  .ant-card-body {
+    padding: 21px;
   }
 `;

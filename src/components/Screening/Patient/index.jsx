@@ -13,9 +13,9 @@ import FormPatientModal from '@containers/Forms/Patient';
 
 import { Wrapper, Name, NameWrapper, Box, ExamBox } from './Patient.style';
 
-function Cell({ children }) {
+function Cell({ children, ...props }) {
   return (
-    <Box>
+    <Box {...props}>
       <p>{children}</p>
     </Box>
   );
@@ -126,10 +126,13 @@ export default function Patient({
   skinColor,
   namePatient,
   segmentName,
+  bed,
   fetchScreening,
+  record,
   ...prescription
 }) {
   const [visible, setVisible] = useState(false);
+  const [seeMore, setSeeMore] = useState(false);
 
   const onCancel = () => {
     setVisible(false);
@@ -156,8 +159,11 @@ export default function Patient({
   };
 
   const afterSavePatient = () => {
-    console.log('salvouu', prescription);
     fetchScreening(prescription.idPrescription);
+  };
+
+  const toggleSeeMore = () => {
+    setSeeMore(!seeMore);
   };
 
   return (
@@ -187,9 +193,6 @@ export default function Patient({
             <strong>Setor:</strong> {department}
           </Cell>
           <Cell>
-            <strong>Segmento:</strong> {segmentName}
-          </Cell>
-          <Cell>
             <strong>Idade:</strong> {age} {isNaN(age) ? '' : 'anos'}
           </Cell>
           <Cell>
@@ -201,6 +204,24 @@ export default function Patient({
           <Cell>
             <strong>Cor da pele:</strong> {skinColor}
           </Cell>
+          <Cell className="see-more">
+            <Button type="link" onClick={toggleSeeMore}>
+              <Icon type={seeMore ? 'up' : 'down'} /> Ver mais
+            </Button>
+          </Cell>
+          {seeMore && (
+            <>
+              <Cell>
+                <strong>Segmento:</strong> {segmentName}
+              </Cell>
+              <Cell>
+                <strong>Leito:</strong> {bed}
+              </Cell>
+              <Cell>
+                <strong>Prontuário:</strong> {record}
+              </Cell>
+            </>
+          )}
         </Wrapper>
       </Col>
 
