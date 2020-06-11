@@ -3,6 +3,7 @@ import isEmpty from 'lodash.isempty';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 import { subDays } from 'date-fns';
+import debounce from 'lodash.debounce';
 
 import message from '@components/message';
 import Heading from '@components/Heading';
@@ -17,6 +18,7 @@ import Menu from '@components/Menu';
 import Dropdown from '@components/Dropdown';
 import Modal from '@components/Modal';
 import notification from '@components/notification';
+import LoadBox from '@components/LoadBox';
 import './index.css';
 
 const filterMenu = (savedFilters, openSaveModal, loadFilter, removeFilter) => (
@@ -41,7 +43,7 @@ const filterMenu = (savedFilters, openSaveModal, loadFilter, removeFilter) => (
     <Menu.Item />
     <Menu.Divider />
     {!isEmpty(savedFilters) && (
-      <Menu.SubMenu title="Excluir filtro" danger>
+      <Menu.SubMenu title="Excluir filtro">
         {savedFilters.map((item, index) => (
           <Menu.Item key={index} onClick={() => removeFilter(index)} style={{ color: '#ff4d4f' }}>
             <Icon type="delete" style={{ fontSize: 16, color: '#ff4d4f' }} />
@@ -64,7 +66,9 @@ export default function Filter({
   isFetchingPrescription,
   savedFilters,
   saveFilter,
-  removeFilter
+  removeFilter,
+  drugs,
+  searchDrugs
 }) {
   const [open, setOpen] = useState(false);
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
@@ -76,6 +80,7 @@ export default function Filter({
       const params = {
         idSegment: filter.idSegment,
         idDept: filter.idDepartment,
+        idDrug: filter.idDrug,
         date: date ? date.format('YYYY-MM-DD') : 'all'
       };
       const mixedParams = { ...params, ...forceParams };
@@ -137,6 +142,10 @@ export default function Filter({
     setScreeningListFilter({ idDepartment: idDept });
   };
 
+  const onDrugChange = idDrug => {
+    setScreeningListFilter({ idDrug });
+  };
+
   const onDateChange = dt => {
     setDate(dt);
   };
@@ -152,6 +161,11 @@ export default function Filter({
     if (filter.idSegment) {
       fetchPrescriptionsList(getParams());
     }
+
+    if (!isEmpty(filter.idDrug) && filter.idSegment) {
+      // TODO
+      searchDrugs(filter.idSegment, { q: 'levoflo' });
+    }
   }, []); // eslint-disable-line
 
   const disabledDate = current => {
@@ -166,7 +180,8 @@ export default function Filter({
   const reset = () => {
     setScreeningListFilter({
       idSegment: segments.list[0].id,
-      idDepartment: []
+      idDepartment: [],
+      idDrug: []
     });
     setDate(moment());
   };
@@ -205,8 +220,17 @@ export default function Filter({
   const loadFilterAction = filterData => {
     setScreeningListFilter(filterData);
     fetchPrescriptionsList(getParams({ ...filterData, idDept: filterData.idDepartment }));
+    if (!isEmpty(filterData.idDrug)) {
+      // TODO:
+      searchDrugs(filterData.idSegment, { q: 'levoflo' });
+    }
     setOpen(false);
   };
+
+  const searchDrugsAutocomplete = debounce(value => {
+    if (value.length < 3) return;
+    searchDrugs(filter.idSegment, { q: value });
+  }, 800);
 
   const hiddenFieldCount = countHiddenFilters(filter);
   return (
@@ -304,7 +328,7 @@ export default function Filter({
         <Col md={14}>
           <Box>
             <Heading as="label" htmlFor="departments" size="14px">
-              Setor:
+              Setores:
             </Heading>
             <Select
               id="departments"
@@ -324,6 +348,34 @@ export default function Filter({
                     {name}
                   </Select.Option>
                 ))}
+            </Select>
+          </Box>
+        </Col>
+      </Row>
+      <Row gutter={[20, 0]}>
+        <Col md={14}>
+          <Box>
+            <Heading as="label" htmlFor="drugs" size="14px">
+              Medicamentos:
+            </Heading>
+            <Select
+              id="drugs"
+              mode="multiple"
+              optionFilterProp="children"
+              style={{ width: '100%' }}
+              placeholder="Selecione os medicamentos..."
+              onChange={onDrugChange}
+              value={filter.idDrug}
+              notFoundContent={drugs.isFetching ? <LoadBox /> : null}
+              filterOption={false}
+              allowClear
+              onSearch={searchDrugsAutocomplete}
+            >
+              {drugs.list.map(({ idDrug, name }) => (
+                <Select.Option key={idDrug} value={idDrug}>
+                  {name}
+                </Select.Option>
+              ))}
             </Select>
           </Box>
         </Col>

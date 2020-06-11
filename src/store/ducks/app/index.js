@@ -17,7 +17,8 @@ const INITIAL_STATE = {
   filter: {
     screeningList: {
       idSegment: null,
-      idDepartment: []
+      idDepartment: [],
+      idDrug: []
     }
   },
   savedFilters: {

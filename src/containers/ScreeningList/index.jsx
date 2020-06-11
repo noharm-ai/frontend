@@ -16,9 +16,10 @@ import {
   checkScreeningThunk,
   updatePrescriptionStatusThunk
 } from '@store/ducks/prescriptions/thunk';
+import { searchDrugsThunk } from '@store/ducks/drugs/thunk';
 import ScreeningList from '@components/ScreeningList';
 
-const mapStateToProps = ({ segments, prescriptions, app }) => ({
+const mapStateToProps = ({ segments, prescriptions, app, drugs }) => ({
   segments: {
     error: segments.error,
     list: segments.list,
@@ -34,7 +35,8 @@ const mapStateToProps = ({ segments, prescriptions, app }) => ({
     }
   },
   filter: app.filter.screeningList,
-  savedFilters: app.savedFilters.screeningList
+  savedFilters: app.savedFilters.screeningList,
+  drugs: drugs.search
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -47,7 +49,8 @@ const mapDispatchToProps = dispatch =>
       updatePrescriptionListStatus: updatePrescriptionStatusThunk,
       setScreeningListFilter: setScreeningListFilterThunk,
       saveFilter: saveFilterThunk,
-      removeFilter: removeFilterThunk
+      removeFilter: removeFilterThunk,
+      searchDrugs: searchDrugsThunk
     },
     dispatch
   );
