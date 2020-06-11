@@ -217,7 +217,7 @@ export default function Screening({
     <>
       <Row type="flex" gutter={24}>
         <Col span={24} md={24}>
-          {isFetching ? <LoadBox /> : <Patient {...content} />}
+          {isFetching ? <LoadBox /> : <Patient {...content} fetchScreening={fetchScreeningById} />}
         </Col>
         <ScreeningTabs
           defaultActiveKey="1"

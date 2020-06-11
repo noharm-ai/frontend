@@ -9,8 +9,7 @@ import Card from '@components/Card';
 import Button from '@components/Button';
 import Icon from '@components/Icon';
 import Tooltip from '@components/Tooltip';
-
-import Modal from './Modal';
+import FormPatientModal from '@containers/Forms/Patient';
 
 import { Wrapper, Name, NameWrapper, Box, ExamBox } from './Patient.style';
 
@@ -127,6 +126,7 @@ export default function Patient({
   skinColor,
   namePatient,
   segmentName,
+  fetchScreening,
   ...prescription
 }) {
   const [visible, setVisible] = useState(false);
@@ -152,7 +152,12 @@ export default function Patient({
       return emptyMsg;
     }
 
-    return date.format('YYYY-MM-DD hh:mm');
+    return date.format('DD/MM/YYYY hh:mm');
+  };
+
+  const afterSavePatient = () => {
+    console.log('salvouu', prescription);
+    fetchScreening(prescription.idPrescription);
   };
 
   return (
@@ -220,12 +225,13 @@ export default function Patient({
           </Card>
         </ExamBox>
       </Col>
-      <Modal
+      <FormPatientModal
         visible={visible}
         onCancel={onCancel}
         okText="Salvar"
         okType="primary gtm-bt-save-patient"
         cancelText="Cancelar"
+        afterSavePatient={afterSavePatient}
       />
     </Row>
   );

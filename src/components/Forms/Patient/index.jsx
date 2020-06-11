@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { Row } from '@components/Grid';
 import notification from '@components/notification';
 import Heading from '@components/Heading';
+import DefaultModal from '@components/Modal';
 
 import Base from './Base';
 import { FormContainer } from './Patient.style';
@@ -16,10 +17,10 @@ const errorMessage = {
 };
 
 const saveMessage = {
-  message: 'Uhu! Dados do paciente salvos com sucesso! :)'
+  message: 'Uhu! Dados do paciente salvo com sucesso! :)'
 };
 const validationSchema = Yup.object().shape({
-  id: Yup.number()
+  weight: Yup.number()
 });
 
 export default function Patient({
@@ -28,12 +29,10 @@ export default function Patient({
   afterSavePatient,
   idPrescription,
   admissionNumber,
-  weight
+  weight,
+  ...props
 }) {
-  //const { isSaving, success, error } = saveStatus;
-  const isSaving = false;
-  const success = false;
-  const error = null;
+  const { isSaving, success, error } = saveStatus;
 
   const initialValues = {
     idPrescription,
@@ -53,17 +52,30 @@ export default function Patient({
   }, [success, error, afterSavePatient]);
 
   return (
-    <>
-      <header>
-        <Heading margin="0 0 11px">Dados do paciente</Heading>
-      </header>
-      <Formik
-        enableReinitialize
-        onSubmit={savePatient}
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-      >
-        {({ handleSubmit, isValid }) => (
+    <Formik
+      enableReinitialize
+      onSubmit={savePatient}
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+    >
+      {({ handleSubmit }) => (
+        <DefaultModal
+          centered
+          destroyOnClose
+          {...props}
+          onOk={handleSubmit}
+          confirmLoading={isSaving}
+          okButtonProps={{
+            disabled: isSaving
+          }}
+          cancelButtonProps={{
+            disabled: isSaving,
+            className: 'gtm-bt-cancel-edit-patient'
+          }}
+        >
+          <header>
+            <Heading margin="0 0 11px">Dados do paciente</Heading>
+          </header>
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
@@ -71,9 +83,9 @@ export default function Patient({
               </Row>
             </FormContainer>
           </form>
-        )}
-      </Formik>
-    </>
+        </DefaultModal>
+      )}
+    </Formik>
   );
 }
 

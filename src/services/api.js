@@ -17,6 +17,7 @@ const instance = axios.create(requestConfig);
 const endpoints = {
   segments: '/segments',
   resolveNamesUrl: '/user/name-url',
+  patient: '/patient',
   patientName: '/patient-name',
   refreshToken: '/refresh-token',
   authentication: '/authenticate',
@@ -121,6 +122,9 @@ const getResolveNamesUrl = bearerToken =>
 
 const getPatient = (bearerToken, idPatient) =>
   instance.get(`${endpoints.patientName}/${idPatient}`, { ...setHeaders(bearerToken) });
+
+const updatePatient = (bearerToken, admissionNumber, params = {}) =>
+  instance.post(`${endpoints.patient}/${admissionNumber}`, params, setHeaders(bearerToken));
 
 /**
  * Drugs.
@@ -237,7 +241,8 @@ const api = {
   updateIntervention,
   getReports,
   getInterventions,
-  getExams
+  getExams,
+  updatePatient
 };
 
 export default api;

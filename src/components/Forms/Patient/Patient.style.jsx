@@ -27,4 +27,8 @@ export const Box = styled.div`
     width: 140px;
     margin-right: 10px;
   }
+
+  input {
+    background: ${props => (props.hasError ? '#ffcdd2;' : 'inherit')};
+  }
 `;
