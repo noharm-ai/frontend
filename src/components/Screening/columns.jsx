@@ -12,6 +12,8 @@ import { createSlug } from '@utils/transformers/utils';
 import Menu from '@components/Menu';
 import Dropdown from '@components/Dropdown';
 import Alert from '@components/Alert';
+import RichTextView from '@components/RichTextView';
+
 import { InterventionView } from './Intervention/columns';
 
 const TableLink = styled.a`
@@ -323,7 +325,7 @@ export const expandedRowRender = record => {
           </Descriptions.Item>
         )}
         <Descriptions.Item label="Observação médica:" span={3}>
-          {record.recommendation && record.recommendation !== 'None' ? record.recommendation : '--'}
+          <RichTextView text={record.recommendation} />
         </Descriptions.Item>
         {!isEmpty(record.prevIntervention) && (
           <Descriptions.Item label="Intervenção anterior:" span={3}>
