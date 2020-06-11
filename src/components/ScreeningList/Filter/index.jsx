@@ -164,7 +164,7 @@ export default function Filter({
 
     if (!isEmpty(filter.idDrug) && filter.idSegment) {
       // TODO
-      searchDrugs(filter.idSegment, { q: 'levoflo' });
+      searchDrugs(filter.idSegment, { idDrug: filter.idDrug });
     }
   }, []); // eslint-disable-line
 
@@ -222,7 +222,7 @@ export default function Filter({
     fetchPrescriptionsList(getParams({ ...filterData, idDept: filterData.idDepartment }));
     if (!isEmpty(filterData.idDrug)) {
       // TODO:
-      searchDrugs(filterData.idSegment, { q: 'levoflo' });
+      searchDrugs(filterData.idSegment, { idDrug: filterData.idDrug });
     }
     setOpen(false);
   };
