@@ -1,4 +1,5 @@
 import React from 'react';
+import { format } from 'date-fns';
 import { Row, Col } from 'antd';
 
 import { toDataSource } from '@utils';
@@ -20,8 +21,10 @@ const columns = [
   },
   {
     title: 'Valor',
-    dataIndex: 'value',
-    align: 'center'
+    align: 'center',
+    render: (text, record) => {
+      return record.value + ' ' + record.unit;
+    }
   },
   {
     title: 'Referência',
@@ -30,8 +33,10 @@ const columns = [
   },
   {
     title: 'Data',
-    dataIndex: 'date',
-    align: 'center'
+    align: 'center',
+    render: (text, record) => {
+      return format(new Date(record.date), 'dd/MM/yyyy HH:mm');
+    }
   }
 ];
 
@@ -50,26 +55,33 @@ export const expandedExamRowRender = record => {
     {
       title: 'Histórico de exames',
       align: 'left',
+      key: 'test',
       children: [
         {
           title: 'Valor',
-          dataIndex: 'value',
-          align: 'center'
+          align: 'center',
+          key: 'key',
+          render: (text, record) => {
+            return record.value + ' ' + record.unit;
+          }
         },
         {
           title: 'Data',
-          dataIndex: 'date',
-          align: 'center'
+          align: 'center',
+          key: 'testdata',
+          render: (text, record) => {
+            return format(new Date(record.date), 'dd/MM/yyyy HH:mm');
+          }
         }
       ]
     }
   ];
 
-  const history = record.history.map((item, index) => ({ ...item, key: index }));
+  const history = record.history.map((item, index) => ({ ...item, objKey: index }));
 
-  const dsHistory = toDataSource(history, 'key');
+  const dsHistory = toDataSource(history, 'objKey');
   const graphDataArray = history.map(item => {
-    return [item.date, parseFloat(item.value.match(/[\d|,|.|e|E|\+]+/g)[0], 10)]; // eslint-disable-line
+    return [format(new Date(item.date), 'dd/MM'), parseFloat(item.value, 10)];
   });
   const dsGraph = [['data', 'valor']].concat(graphDataArray.reverse());
 

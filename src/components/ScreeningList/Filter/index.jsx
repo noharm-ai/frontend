@@ -163,7 +163,6 @@ export default function Filter({
     }
 
     if (!isEmpty(filter.idDrug) && filter.idSegment) {
-      // TODO
       searchDrugs(filter.idSegment, { idDrug: filter.idDrug });
     }
   }, []); // eslint-disable-line
@@ -221,7 +220,6 @@ export default function Filter({
     setScreeningListFilter(filterData);
     fetchPrescriptionsList(getParams({ ...filterData, idDept: filterData.idDepartment }));
     if (!isEmpty(filterData.idDrug)) {
-      // TODO:
       searchDrugs(filterData.idSegment, { idDrug: filterData.idDrug });
     }
     setOpen(false);

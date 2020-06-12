@@ -42,7 +42,7 @@ const refText = text => {
 
 const ExamData = ({ exam }) => (
   <>
-    {exam.date && <div>Data: {exam.date}</div>}
+    {exam.date && <div>Data: {moment(exam.date).format('DD/MM/YYYY hh:mm')}</div>}
     {exam.ref && <div>Ref: {refText(exam.ref)}</div>}
   </>
 );
@@ -204,11 +204,6 @@ export default function Patient({
           <Cell>
             <strong>Cor da pele:</strong> {skinColor}
           </Cell>
-          <Cell className="see-more">
-            <Button type="link" onClick={toggleSeeMore}>
-              <Icon type={seeMore ? 'up' : 'down'} /> Ver mais
-            </Button>
-          </Cell>
           {seeMore && (
             <>
               <Cell>
@@ -222,6 +217,11 @@ export default function Patient({
               </Cell>
             </>
           )}
+          <Cell className="see-more">
+            <Button type="link" onClick={toggleSeeMore}>
+              <Icon type={seeMore ? 'up' : 'down'} /> {seeMore ? 'Ver menos' : 'Ver mais'}
+            </Button>
+          </Cell>
         </Wrapper>
       </Col>
 

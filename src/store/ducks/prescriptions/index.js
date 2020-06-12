@@ -65,7 +65,7 @@ const INITIAL_STATE = {
       isFetching: false
     },
     exams: {
-      isFetching: false,
+      isFetching: true,
       error: null,
       list: []
     },
