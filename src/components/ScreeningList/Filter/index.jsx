@@ -121,16 +121,6 @@ export default function Filter({
   }, [segments, updatePrescriptionListStatus, getParams]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      updateStatus();
-    }, 60000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [updateStatus]);
-
-  useEffect(() => {
     window.addEventListener('focus', updateStatus);
 
     return () => {
