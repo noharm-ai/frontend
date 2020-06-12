@@ -81,9 +81,11 @@ export const expandedExamRowRender = record => {
 
   const dsHistory = toDataSource(history, 'objKey');
   const graphDataArray = history.map(item => {
-    return [format(new Date(item.date), 'dd/MM'), parseFloat(item.value, 10)];
+    return [format(new Date(item.date), 'dd/MM'), parseFloat(item.value, 10), item.max, item.min];
   });
-  const dsGraph = [['data', 'valor']].concat(graphDataArray.reverse());
+  const dsGraph = [['data', `valor ${history[0].unit}`, 'máximo', 'mínimo']].concat(
+    graphDataArray.reverse()
+  );
 
   return (
     <NestedTableContainer>
@@ -119,7 +121,11 @@ export const expandedExamRowRender = record => {
                 vAxis: {
                   title: 'Valor'
                 },
-                backgroundColor: 'transparent'
+                backgroundColor: 'transparent',
+                series: {
+                  1: { color: '#d9363e' },
+                  2: { color: '#d9363e' }
+                }
               }}
               rootProps={{ 'data-testid': '1' }}
             />
