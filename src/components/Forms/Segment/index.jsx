@@ -22,10 +22,6 @@ const saveMessage = {
 };
 const validationSchema = Yup.object().shape({
   id: Yup.number(),
-  minAge: Yup.number().required(),
-  maxAge: Yup.number().required(),
-  minWeight: Yup.number().required(),
-  maxWeight: Yup.number().required(),
   description: Yup.string().required(),
   departments: Yup.array()
 });
@@ -82,10 +78,6 @@ export default function Segment({ initialValues, departments, saveStatus, saveSe
 Segment.defaultProps = {
   afterSaveSegment: () => {},
   initialValues: {
-    minAge: '',
-    maxAge: '',
-    minWeight: '',
-    maxWeight: '',
     description: '',
     departments: []
   }

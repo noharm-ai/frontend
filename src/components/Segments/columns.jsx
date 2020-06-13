@@ -51,14 +51,6 @@ export default [
     dataIndex: 'description'
   },
   {
-    title: 'Idade (Anos)',
-    dataIndex: 'minMaxAge'
-  },
-  {
-    title: 'Peso (Kg)',
-    dataIndex: 'minMaxWeight'
-  },
-  {
     title: 'Ações',
     dataIndex: 'id',
     width: 300,

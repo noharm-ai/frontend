@@ -343,11 +343,11 @@ export default function Filter({
       <Row gutter={[20, 0]}>
         <Col md={14}>
           <Box>
-            <Heading as="label" htmlFor="drugs" size="14px">
+            <Heading as="label" htmlFor="drugs-filter" size="14px">
               Medicamentos:
             </Heading>
             <Select
-              id="drugs"
+              id="drugs-filter"
               mode="multiple"
               optionFilterProp="children"
               style={{ width: '100%' }}
@@ -371,8 +371,8 @@ export default function Filter({
       <Row gutter={20} style={{ marginTop: '10px' }} type="flex">
         <Col md={14}>
           <div className="search-box-buttons">
-            <Button onClick={reset}>Limpar</Button>
-            <Button type="secondary" onClick={search} loading={isFetchingPrescription}>
+            <Button type="nda gtm-bt-clear-filter" onClick={reset}>Limpar</Button>
+            <Button type="secondary gtm-bt-search-filter" onClick={search} loading={isFetchingPrescription}>
               Pesquisar
             </Button>
           </div>

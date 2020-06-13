@@ -26,7 +26,7 @@ const getExamValue = exam => {
     return '--';
   }
 
-  return exam.value;
+  return exam.value + ' ' + (exam.unit? exam.unit : '');
 };
 
 const refText = text => {
@@ -218,7 +218,7 @@ export default function Patient({
             </>
           )}
           <Cell className="see-more">
-            <Button type="link" onClick={toggleSeeMore}>
+            <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
               <Icon type={seeMore ? 'up' : 'down'} /> {seeMore ? 'Ver menos' : 'Ver mais'}
             </Button>
           </Cell>

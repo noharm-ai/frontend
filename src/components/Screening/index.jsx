@@ -193,7 +193,7 @@ export default function Screening({
   const TabTitle = ({ title, count, ...props }) => (
     <>
       <span style={{ marginRight: '10px' }}>{title}</span>
-      <Tag {...props}>{count}</Tag>
+      { count >= 0 ? <Tag {...props}>{count}</Tag> : null}
     </>
   );
 
@@ -323,7 +323,12 @@ export default function Screening({
               />
             </Col>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Exames" key="5">
+          <Tabs.TabPane
+            tab={
+              <TabTitle title="Exames" />
+            } 
+            key="5"
+          >
             <ExpandableTable
               title={title}
               columns={examColumns}
