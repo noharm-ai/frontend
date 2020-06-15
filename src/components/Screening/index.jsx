@@ -18,6 +18,7 @@ import Modal from './Modal';
 import Patient from './Patient';
 import columnsTable, { expandedRowRender, solutionColumns, groupSolutions } from './columns';
 import interventionColumns, { expandedInterventionRowRender } from './Intervention/columns';
+import examColumns, { examRowClassName, expandedExamRowRender } from './Exam/columns';
 
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
@@ -39,7 +40,7 @@ const ScreeningTabs = styled(Tabs)`
     width: 100%;
   }
 
-  .ant-tabs-nav .ant-tabs-tab:last-child {
+  .ant-tabs-nav .ant-tabs-tab:nth-child(4) {
     margin-left: 50px !important;
   }
 `;
@@ -55,10 +56,11 @@ export default function Screening({
   savePrescriptionDrugStatus,
   updateInterventionData,
   saveInterventionStatus,
-  fetchPeriod
+  fetchPeriod,
+  fetchExams
 }) {
   const id = extractId(match.params.slug);
-  const { isFetching, content, error } = prescription;
+  const { isFetching, content, error, exams } = prescription;
   const {
     prescription: drugList,
     solution: solutionList,
@@ -129,6 +131,7 @@ export default function Screening({
     saveInterventionStatus,
     check: prescription.checkIntervention
   });
+  const dsExams = toDataSource(exams.list, 'key', {});
 
   const listCount = {
     prescriptions: drugList ? drugList.length : 0,
@@ -190,9 +193,21 @@ export default function Screening({
   const TabTitle = ({ title, count, ...props }) => (
     <>
       <span style={{ marginRight: '10px' }}>{title}</span>
-      <Tag {...props}>{count}</Tag>
+      { count >= 0 ? <Tag {...props}>{count}</Tag> : null}
     </>
   );
+
+  const loadExams = () => {
+    if (isEmpty(exams.list)) {
+      fetchExams(content.admissionNumber);
+    }
+  };
+
+  const onTabClick = key => {
+    if (key === '5') {
+      loadExams();
+    }
+  };
 
   if (error) {
     return null;
@@ -202,12 +217,13 @@ export default function Screening({
     <>
       <Row type="flex" gutter={24}>
         <Col span={24} md={24}>
-          {isFetching ? <LoadBox /> : <Patient {...content} />}
+          {isFetching ? <LoadBox /> : <Patient {...content} fetchScreening={fetchScreeningById} />}
         </Col>
         <ScreeningTabs
           defaultActiveKey="1"
           style={{ width: '100%', marginTop: '20px' }}
           type="card"
+          onTabClick={onTabClick}
         >
           <Tabs.TabPane
             tab={<TabTitle title="Medicamentos" count={listCount.prescriptions} />}
@@ -287,7 +303,6 @@ export default function Screening({
               />
             }
             key="4"
-            css="float: right"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
               <ExpandableTable
@@ -307,6 +322,30 @@ export default function Screening({
                 expandedRowRender={expandedInterventionRowRender}
               />
             </Col>
+          </Tabs.TabPane>
+          <Tabs.TabPane
+            tab={
+              <TabTitle title="Exames" />
+            } 
+            key="5"
+          >
+            <ExpandableTable
+              title={title}
+              columns={examColumns}
+              pagination={false}
+              loading={exams.isFetching}
+              locale={{
+                emptyText: (
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description="Nenhum exame encontrado."
+                  />
+                )
+              }}
+              dataSource={!exams.isFetching ? dsExams : []}
+              rowClassName={examRowClassName}
+              expandedRowRender={expandedExamRowRender}
+            />
           </Tabs.TabPane>
         </ScreeningTabs>
       </Row>

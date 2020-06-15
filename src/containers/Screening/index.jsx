@@ -12,7 +12,8 @@ import {
   checkPrescriptionDrugThunk,
   updateInterventionDataThunk,
   checkInterventionThunk,
-  fetchPrescriptionDrugPeriodThunk
+  fetchPrescriptionDrugPeriodThunk,
+  fetchPrescriptionExamsThunk
 } from '@store/ducks/prescriptions/thunk';
 import Screening from '@components/Screening';
 
@@ -24,7 +25,8 @@ const mapStateToProps = ({ prescriptions, intervention }) => ({
     content: prescriptions.single.data,
     checkPrescriptionDrug: prescriptions.single.checkPrescriptionDrug,
     checkIntervention: prescriptions.single.checkIntervention,
-    periodObject: prescriptions.single.period
+    periodObject: prescriptions.single.period,
+    exams: prescriptions.single.exams
   },
   maybeCreateOrUpdate: {
     ...intervention.maybeCreateOrUpdate
@@ -36,6 +38,7 @@ const mapDispatchToProps = dispatch =>
       fetchPrescriptionById: fetchPrescriptionByIdThunk,
       fetchScreeningById: fetchScreeningThunk,
       fetchPeriod: fetchPrescriptionDrugPeriodThunk,
+      fetchExams: fetchPrescriptionExamsThunk,
       select: selectItemToSaveThunk,
       save: saveInterventionThunk,
       reset: clearSavedInterventionStatusThunk,

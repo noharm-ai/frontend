@@ -3,6 +3,7 @@ import isEmpty from 'lodash.isempty';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 import { subDays } from 'date-fns';
+import debounce from 'lodash.debounce';
 
 import message from '@components/message';
 import Heading from '@components/Heading';
@@ -17,6 +18,7 @@ import Menu from '@components/Menu';
 import Dropdown from '@components/Dropdown';
 import Modal from '@components/Modal';
 import notification from '@components/notification';
+import LoadBox from '@components/LoadBox';
 import './index.css';
 
 const filterMenu = (savedFilters, openSaveModal, loadFilter, removeFilter) => (
@@ -41,7 +43,7 @@ const filterMenu = (savedFilters, openSaveModal, loadFilter, removeFilter) => (
     <Menu.Item />
     <Menu.Divider />
     {!isEmpty(savedFilters) && (
-      <Menu.SubMenu title="Excluir filtro" danger>
+      <Menu.SubMenu title="Excluir filtro">
         {savedFilters.map((item, index) => (
           <Menu.Item key={index} onClick={() => removeFilter(index)} style={{ color: '#ff4d4f' }}>
             <Icon type="delete" style={{ fontSize: 16, color: '#ff4d4f' }} />
@@ -64,7 +66,9 @@ export default function Filter({
   isFetchingPrescription,
   savedFilters,
   saveFilter,
-  removeFilter
+  removeFilter,
+  drugs,
+  searchDrugs
 }) {
   const [open, setOpen] = useState(false);
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
@@ -76,6 +80,7 @@ export default function Filter({
       const params = {
         idSegment: filter.idSegment,
         idDept: filter.idDepartment,
+        idDrug: filter.idDrug,
         date: date ? date.format('YYYY-MM-DD') : 'all'
       };
       const mixedParams = { ...params, ...forceParams };
@@ -116,16 +121,6 @@ export default function Filter({
   }, [segments, updatePrescriptionListStatus, getParams]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      updateStatus();
-    }, 60000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [updateStatus]);
-
-  useEffect(() => {
     window.addEventListener('focus', updateStatus);
 
     return () => {
@@ -135,6 +130,10 @@ export default function Filter({
 
   const onDepartmentChange = idDept => {
     setScreeningListFilter({ idDepartment: idDept });
+  };
+
+  const onDrugChange = idDrug => {
+    setScreeningListFilter({ idDrug });
   };
 
   const onDateChange = dt => {
@@ -152,6 +151,10 @@ export default function Filter({
     if (filter.idSegment) {
       fetchPrescriptionsList(getParams());
     }
+
+    if (!isEmpty(filter.idDrug) && filter.idSegment) {
+      searchDrugs(filter.idSegment, { idDrug: filter.idDrug });
+    }
   }, []); // eslint-disable-line
 
   const disabledDate = current => {
@@ -166,7 +169,8 @@ export default function Filter({
   const reset = () => {
     setScreeningListFilter({
       idSegment: segments.list[0].id,
-      idDepartment: []
+      idDepartment: [],
+      idDrug: []
     });
     setDate(moment());
   };
@@ -205,8 +209,16 @@ export default function Filter({
   const loadFilterAction = filterData => {
     setScreeningListFilter(filterData);
     fetchPrescriptionsList(getParams({ ...filterData, idDept: filterData.idDepartment }));
+    if (!isEmpty(filterData.idDrug)) {
+      searchDrugs(filterData.idSegment, { idDrug: filterData.idDrug });
+    }
     setOpen(false);
   };
+
+  const searchDrugsAutocomplete = debounce(value => {
+    if (value.length < 3) return;
+    searchDrugs(filter.idSegment, { q: value });
+  }, 800);
 
   const hiddenFieldCount = countHiddenFilters(filter);
   return (
@@ -304,7 +316,7 @@ export default function Filter({
         <Col md={14}>
           <Box>
             <Heading as="label" htmlFor="departments" size="14px">
-              Setor:
+              Setores:
             </Heading>
             <Select
               id="departments"
@@ -328,11 +340,39 @@ export default function Filter({
           </Box>
         </Col>
       </Row>
+      <Row gutter={[20, 0]}>
+        <Col md={14}>
+          <Box>
+            <Heading as="label" htmlFor="drugs-filter" size="14px">
+              Medicamentos:
+            </Heading>
+            <Select
+              id="drugs-filter"
+              mode="multiple"
+              optionFilterProp="children"
+              style={{ width: '100%' }}
+              placeholder="Selecione os medicamentos..."
+              onChange={onDrugChange}
+              value={filter.idDrug}
+              notFoundContent={drugs.isFetching ? <LoadBox /> : null}
+              filterOption={false}
+              allowClear
+              onSearch={searchDrugsAutocomplete}
+            >
+              {drugs.list.map(({ idDrug, name }) => (
+                <Select.Option key={idDrug} value={idDrug}>
+                  {name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Box>
+        </Col>
+      </Row>
       <Row gutter={20} style={{ marginTop: '10px' }} type="flex">
         <Col md={14}>
           <div className="search-box-buttons">
-            <Button onClick={reset}>Limpar</Button>
-            <Button type="secondary" onClick={search} loading={isFetchingPrescription}>
+            <Button type="nda gtm-bt-clear-filter" onClick={reset}>Limpar</Button>
+            <Button type="secondary gtm-bt-search-filter" onClick={search} loading={isFetchingPrescription}>
               Pesquisar
             </Button>
           </div>

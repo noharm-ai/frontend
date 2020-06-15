@@ -12,6 +12,8 @@ import { createSlug } from '@utils/transformers/utils';
 import Menu from '@components/Menu';
 import Dropdown from '@components/Dropdown';
 import Alert from '@components/Alert';
+import RichTextView from '@components/RichTextView';
+
 import { InterventionView } from './Intervention/columns';
 
 const TableLink = styled.a`
@@ -322,8 +324,13 @@ export const expandedRowRender = record => {
             {record.time}
           </Descriptions.Item>
         )}
+        {record.useWeight && (
+          <Descriptions.Item label="Dose / Kg:" span={3}>
+            {record.doseconv}
+          </Descriptions.Item>
+        )}
         <Descriptions.Item label="Observação médica:" span={3}>
-          {record.recommendation && record.recommendation !== 'None' ? record.recommendation : '--'}
+          <RichTextView text={record.recommendation} />
         </Descriptions.Item>
         {!isEmpty(record.prevIntervention) && (
           <Descriptions.Item label="Intervenção anterior:" span={3}>
@@ -404,19 +411,6 @@ const drugInfo = [
   }
 ];
 
-const convFreq = dayFrequency => {
-  switch (dayFrequency) {
-    case 33:
-      return 'SN *';
-    case 44:
-      return 'ACM *';
-    case 99:
-      return 'N/D *';
-    default:
-      return dayFrequency + 'x/dia *';
-  }
-};
-
 const frequencyAndTime = [
   {
     title: 'Frequência',
@@ -426,7 +420,7 @@ const frequencyAndTime = [
       if (isEmpty(prescription.frequency)) {
         return (
           <Tooltip title="Frequência obtida por conversão" placement="top">
-            {convFreq(prescription.dayFrequency)}
+            *
           </Tooltip>
         );
       }

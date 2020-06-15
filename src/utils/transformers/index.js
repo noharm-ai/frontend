@@ -1,2 +1,7 @@
-export { transformPrescription, transformPrescriptions, getUniqueDrugs } from './prescriptions';
+export {
+  transformPrescription,
+  transformPrescriptions,
+  getUniqueDrugs,
+  transformExams
+} from './prescriptions';
 export { transformSegment, transformSegments } from './segments';

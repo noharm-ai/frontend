@@ -27,7 +27,11 @@ export const { Types, Creators } = createActions({
 
   prescriptionsFetchPeriodStart: [''],
   prescriptionsFetchPeriodError: ['error'],
-  prescriptionsFetchPeriodSuccess: ['idPrescriptionDrug', 'source', 'data']
+  prescriptionsFetchPeriodSuccess: ['idPrescriptionDrug', 'source', 'data'],
+
+  prescriptionsFetchExamsStart: [''],
+  prescriptionsFetchExamsError: ['error'],
+  prescriptionsFetchExamsSuccess: ['list']
 });
 
 const INITIAL_STATE = {
@@ -59,6 +63,11 @@ const INITIAL_STATE = {
     period: {
       error: null,
       isFetching: false
+    },
+    exams: {
+      isFetching: true,
+      error: null,
+      list: []
     },
     data: {}
   }
@@ -418,6 +427,42 @@ const fetchPeriodSuccess = (state = INITIAL_STATE, { idPrescriptionDrug, source,
   };
 };
 
+const fetchExamsStart = (state = INITIAL_STATE) => ({
+  ...state,
+  single: {
+    ...state.single,
+    exams: {
+      ...state.single.exams,
+      isFetching: true
+    }
+  }
+});
+
+const fetchExamsError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  single: {
+    ...state.single,
+    exams: {
+      ...state.single.exams,
+      isFetching: false,
+      error
+    }
+  }
+});
+
+const fetchExamsSuccess = (state = INITIAL_STATE, { list }) => ({
+  ...state,
+  single: {
+    ...state.single,
+    exams: {
+      ...state.single.exams,
+      isFetching: false,
+      error: null,
+      list
+    }
+  }
+});
+
 const HANDLERS = {
   [Types.PRESCRIPTIONS_FETCH_LIST_START]: fetchListStart,
   [Types.PRESCRIPTIONS_FETCH_LIST_ERROR]: fetchListError,
@@ -445,7 +490,11 @@ const HANDLERS = {
 
   [Types.PRESCRIPTIONS_FETCH_PERIOD_START]: fetchPeriodStart,
   [Types.PRESCRIPTIONS_FETCH_PERIOD_ERROR]: fetchPeriodError,
-  [Types.PRESCRIPTIONS_FETCH_PERIOD_SUCCESS]: fetchPeriodSuccess
+  [Types.PRESCRIPTIONS_FETCH_PERIOD_SUCCESS]: fetchPeriodSuccess,
+
+  [Types.PRESCRIPTIONS_FETCH_EXAMS_START]: fetchExamsStart,
+  [Types.PRESCRIPTIONS_FETCH_EXAMS_ERROR]: fetchExamsError,
+  [Types.PRESCRIPTIONS_FETCH_EXAMS_SUCCESS]: fetchExamsSuccess
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

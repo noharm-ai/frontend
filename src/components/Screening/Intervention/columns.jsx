@@ -9,6 +9,7 @@ import Tag from '@components/Tag';
 import Menu from '@components/Menu';
 import Dropdown from '@components/Dropdown';
 import Tooltip from '@components/Tooltip';
+import RichTextView from '@components/RichTextView';
 import isEmpty from 'lodash.isempty';
 
 const NestedTableContainer = styled.div`
@@ -95,7 +96,7 @@ export const InterventionView = ({ intervention, showReasons, showDate, status }
         intervention.interactionsList.map(item => item.name).join(', ')}
     </Descriptions.Item>
     <Descriptions.Item label="Observação:" span={3}>
-      <div dangerouslySetInnerHTML={{ __html: intervention.observation }} />
+      <RichTextView text={intervention.observation} />
     </Descriptions.Item>
   </Descriptions>
 );
@@ -120,7 +121,11 @@ const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumbe
       {isChecked && (
         <Tooltip title="Desfazer situação" placement="left">
           <Button
-            type={onShowModal ? 'danger gtm-bt-menu-undo-interv-status' : 'danger gtm-bt-tab-undo-interv-status'}
+            type={
+              onShowModal
+                ? 'danger gtm-bt-menu-undo-interv-status'
+                : 'danger gtm-bt-tab-undo-interv-status'
+            }
             ghost
             onClick={() => saveInterventionStatus(id, 's')}
             loading={isChecking}

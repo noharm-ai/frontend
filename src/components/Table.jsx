@@ -134,4 +134,14 @@ export const ExpandableTable = styled(Table)`
   }
 `;
 
+export const NestedTableContainer = styled.div`
+  margin-top: 5px;
+  margin-bottom: 35px;
+
+  .ant-descriptions-item-label {
+    font-weight: 600;
+    color: #2e3c5a;
+  }
+`;
+
 export default Table;

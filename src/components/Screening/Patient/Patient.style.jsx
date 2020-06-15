@@ -10,10 +10,17 @@ export const Wrapper = styled.div`
 `;
 
 export const Name = styled(Heading)`
-  padding: 8px 15px;
+  padding: 6px 15px;
 
   @media (max-width: 768px) {
     margin: 0;
+  }
+`;
+
+export const NameWrapper = styled.div`
+  .btn-container {
+    display: flex;
+    justify-content: flex-end;
   }
 `;
 
@@ -28,9 +35,23 @@ export const Box = styled.div`
     margin: 0;
   }
 
-  strong { color: #2E3C5A; }
+  strong {
+    color: #2e3c5a;
+  }
 
+  &.see-more {
+    display: flex;
+    justify-content: center;
 
+    button {
+      color: #696766;
+      height: auto;
+    }
+
+    button:hover span {
+      text-decoration: underline;
+    }
+  }
 `;
 
 export const ExamBox = styled.div`
@@ -69,4 +90,7 @@ export const ExamBox = styled.div`
     padding: 20px;
   }
 
+  .ant-card-body {
+    padding: 21px;
+  }
 `;

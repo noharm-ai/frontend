@@ -66,3 +66,9 @@ export const getUniqueDrugs = (prescriptions, solutions, procedures) => {
     return 0;
   });
 };
+
+export const transformExams = exams =>
+  Object.keys(exams).map(key => {
+    const obj = exams[key];
+    return { ...obj, key };
+  });
