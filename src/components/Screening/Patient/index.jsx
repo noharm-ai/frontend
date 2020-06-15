@@ -148,7 +148,7 @@ export default function Patient({
       return emptyMsg;
     }
 
-    const date = moment(weightDate);
+    const date = moment(weightDate).add('hours', 3);
     const now = moment();
 
     if (now.diff(date, 'year') > 10) {
