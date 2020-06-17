@@ -113,6 +113,13 @@ const getPrescriptionDrugPeriod = (bearerToken, idPrescriptionDrug, params = {})
 const putPrescriptionById = (bearerToken, idPrescription, params = {}) =>
   instance.put(`${endpoints.prescriptions}/${idPrescription}`, params, setHeaders(bearerToken));
 
+const updatePrescriptionDrug = (bearerToken, idPrescriptionDrug, params = {}) =>
+  instance.put(
+    `${endpoints.prescriptions}/drug/${idPrescriptionDrug}`,
+    params,
+    setHeaders(bearerToken)
+  );
+
 /**
  * Patients.
  *
@@ -242,7 +249,8 @@ const api = {
   getReports,
   getInterventions,
   getExams,
-  updatePatient
+  updatePatient,
+  updatePrescriptionDrug
 };
 
 export default api;

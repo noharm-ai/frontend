@@ -29,6 +29,7 @@ const {
   prescriptionsUpdateListStatus,
 
   prescriptionsUpdateIntervention,
+  prescriptionsUpdatePrescriptionDrug,
 
   prescriptionInterventionCheckStart,
   prescriptionInterventionCheckError,
@@ -232,6 +233,10 @@ export const updateInterventionDataThunk = (
   intervention
 ) => dispatch => {
   dispatch(prescriptionsUpdateIntervention(idPrescriptionDrug, source, intervention));
+};
+
+export const updatePrescriptionDrugDataThunk = (idPrescriptionDrug, source, data) => dispatch => {
+  dispatch(prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data));
 };
 
 export const checkInterventionThunk = (id, status) => async (dispatch, getState) => {

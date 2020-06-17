@@ -107,6 +107,7 @@ const Action = ({
   idPrescriptionDrug,
   prescriptionType,
   onShowModal,
+  onShowPrescriptionDrugModal,
   uniqueDrugList,
   admissionNumber,
   ...data
@@ -120,6 +121,7 @@ const Action = ({
   const isChecking = check.idPrescriptionDrug === idPrescriptionDrug && check.isChecking;
   const isChecked = data.status === 's';
   const isIntervened = data.intervened;
+  const hasNotes = data.notes !== '' && data.notes != null;
   let btnTitle = isChecked ? 'Alterar intervenção' : 'Enviar intervenção';
 
   if (isIntervened && !isChecked) {
@@ -156,6 +158,19 @@ const Action = ({
           disabled={isDisabled}
         >
           <Icon type="warning" style={{ fontSize: 16 }} />
+        </Button>
+      </Tooltip>
+
+      <Tooltip title={hasNotes ? 'Alterar anotação' : 'Adicionar anotação'} placement="left">
+        <Button
+          type="primary gtm-bt-notes"
+          ghost={!hasNotes}
+          onClick={() => {
+            onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug });
+          }}
+          disabled={isDisabled}
+        >
+          <Icon type="form" style={{ fontSize: 16 }} />
         </Button>
       </Tooltip>
     </TableTags>
