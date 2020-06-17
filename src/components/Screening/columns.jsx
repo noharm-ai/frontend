@@ -304,10 +304,13 @@ export const expandedRowRender = record => {
 
   return (
     <NestedTableContainer>
-      <Descriptions bordered>
-        <Descriptions.Item label="Alertas:" span={3}>
-          {showAlerts(record.alerts)}
-        </Descriptions.Item>
+      <Descriptions bordered size="small">
+        {!isEmpty(record.alerts) && (
+          <Descriptions.Item label="Alertas:" span={3}>
+            {showAlerts(record.alerts)}
+          </Descriptions.Item>
+        )}
+
         <Descriptions.Item label="Período de uso:" span={3}>
           {isEmpty(record.periodDates) && (
             <Link
@@ -330,9 +333,17 @@ export const expandedRowRender = record => {
             {record.doseconv}
           </Descriptions.Item>
         )}
-        <Descriptions.Item label="Observação médica:" span={3}>
-          <RichTextView text={record.recommendation} />
-        </Descriptions.Item>
+        {record.recommendation && (
+          <Descriptions.Item label="Observação médica:" span={3}>
+            <RichTextView text={record.recommendation} />
+          </Descriptions.Item>
+        )}
+        {record.prevNotes && (
+          <Descriptions.Item label="Anotação:" span={3}>
+            <RichTextView text={record.prevNotes} />
+          </Descriptions.Item>
+        )}
+
         {!isEmpty(record.prevIntervention) && (
           <Descriptions.Item label="Intervenção anterior:" span={3}>
             <InterventionView
@@ -492,6 +503,13 @@ const actionColumns = [
           {prescription.recommendation && prescription.recommendation !== 'None' && (
             <Tooltip title="Possui observação médica">
               <Icon type="message" style={{ fontSize: 18, color: '#108ee9' }} />
+            </Tooltip>
+          )}
+        </span>
+        <span className="tag">
+          {prescription.prevNotes && prescription.prevNotes !== 'None' && (
+            <Tooltip title="Possui anotação">
+              <Icon type="form" style={{ fontSize: 18, color: '#108ee9' }} />
             </Tooltip>
           )}
         </span>
