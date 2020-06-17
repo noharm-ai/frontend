@@ -134,20 +134,6 @@ const Action = ({
 
   return (
     <TableTags>
-      {isChecked && (
-        <Tooltip title="Desfazer intervenção" placement="left">
-          <Button
-            type="danger gtm-bt-undo-interv"
-            ghost
-            onClick={() => savePrescriptionDrugStatus(idPrescriptionDrug, '0', prescriptionType)}
-            loading={isChecking}
-            disabled={isDisabled}
-          >
-            <Icon type="rollback" style={{ fontSize: 16 }} />
-          </Button>
-        </Tooltip>
-      )}
-
       <Tooltip title={btnTitle} placement="left">
         <Button
           type={isIntervened ? 'danger gtm-bt-interv' : 'primary gtm-bt-interv'}

@@ -13,6 +13,9 @@ import { Row, Col } from '@components/Grid';
 import notification from '@components/notification';
 import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
+import Button from '@components/Button';
+import Tooltip from '@components/Tooltip';
+import Icon from '@components/Icon';
 
 import Modal from './Modal';
 import PrescriptionDrugModal from './PrescriptionDrugModal';
@@ -241,6 +244,44 @@ export default function Screening({
     }
   };
 
+  const InterventionFooter = () => {
+    const isChecked = item.status === 's';
+
+    const undoIntervention = () => {
+      savePrescriptionDrugStatus(item.idPrescriptionDrug, '0', item.source);
+      setVisibility(false);
+    };
+
+    return (
+      <>
+        <Button onClick={() => onCancel()} disabled={isSaving} className="gtm-bt-cancel-interv">
+          Cancelar
+        </Button>
+        {isChecked && (
+          <Tooltip title="Desfazer intervenção" placement="top">
+            <Button
+              type="danger gtm-bt-undo-interv"
+              ghost
+              loading={prescription.checkPrescriptionDrug.isChecking}
+              onClick={() => undoIntervention()}
+            >
+              <Icon type="rollback" style={{ fontSize: 16 }} />
+            </Button>
+          </Tooltip>
+        )}
+
+        <Button
+          type="primary gtm-bt-save-interv"
+          onClick={() => onSave()}
+          disabled={isSaving || isSaveBtnDisabled(item)}
+          loading={isSaving}
+        >
+          Salvar
+        </Button>
+      </>
+    );
+  };
+
   if (error) {
     return null;
   }
@@ -377,22 +418,7 @@ export default function Screening({
         </ScreeningTabs>
       </Row>
 
-      <Modal
-        onOk={onSave}
-        visible={visible}
-        onCancel={onCancel}
-        confirmLoading={isSaving}
-        okButtonProps={{
-          disabled: isSaving || isSaveBtnDisabled(item)
-        }}
-        cancelButtonProps={{
-          disabled: isSaving,
-          className: 'gtm-bt-cancel-interv'
-        }}
-        okText="Salvar"
-        okType="primary gtm-bt-save-interv"
-        cancelText="Cancelar"
-      />
+      <Modal visible={visible} confirmLoading={isSaving} footer={<InterventionFooter />} />
       <PrescriptionDrugModal
         onOk={onSavePrescriptionDrug}
         visible={openPrescriptionDrugModal}

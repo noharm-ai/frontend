@@ -226,12 +226,15 @@ const checkPrescriptionDrugSuccess = (state = INITIAL_STATE, { success }) => {
 
   switch (success.type) {
     case 'prescriptions':
+    case 'Medicamentos':
       updateStatus(prescriptions, success.id, success.newStatus);
       break;
     case 'solutions':
+    case 'Soluções':
       updateStatus(solutions, success.id, success.newStatus);
       break;
     case 'procedures':
+    case 'Procedimentos':
       updateStatus(procedures, success.id, success.newStatus);
       break;
     default:
@@ -338,9 +341,11 @@ const updatePrescriptionDrugData = (
 
   // TODO: rever este tipo
   switch (source) {
+    case 'prescriptions':
     case 'Medicamentos':
       updateData(prescriptions, idPrescriptionDrug, data);
       break;
+    case 'solutions':
     case 'Soluções':
       updateData(solutions, idPrescriptionDrug, data);
       break;
