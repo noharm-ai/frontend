@@ -12,7 +12,7 @@ export const { Types, Creators } = createActions({
 
   outliersFetchListStart: [''],
   outliersFetchListError: ['error'],
-  outliersFetchListSuccess: ['list', 'firstFilter'],
+  outliersFetchListSuccess: ['list', 'drugData', 'firstFilter'],
 
   outliersSaveStart: [''],
   outliersSaveSuccess: ['idOutlier', 'params'],
@@ -26,6 +26,7 @@ export const { Types, Creators } = createActions({
 const INITIAL_STATE = {
   error: null,
   isFetching: false,
+  drugData: {},
   list: [],
   firstFilter: {
     idDrug: undefined,
@@ -126,9 +127,10 @@ const fetchListError = (state = INITIAL_STATE, { error }) => ({
   isFetching: false
 });
 
-const fetchListSuccess = (state = INITIAL_STATE, { list, firstFilter }) => ({
+const fetchListSuccess = (state = INITIAL_STATE, { list, drugData, firstFilter }) => ({
   ...state,
   list,
+  drugData,
   firstFilter,
   error: null,
   isFetching: false

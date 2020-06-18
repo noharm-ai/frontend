@@ -201,8 +201,10 @@ export const fetchReferencesListThunk = (idSegment, idDrug, dose, frequency) => 
     ...drug,
     ...data
   }));
+  const drugData = data;
+  delete drugData.outliers;
 
-  dispatch(outliersFetchListSuccess(list, params));
+  dispatch(outliersFetchListSuccess(list, drugData, params));
 };
 
 export const selectItemToSaveThunk = item => dispatch => {

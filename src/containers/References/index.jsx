@@ -32,7 +32,8 @@ const mapStateToProps = ({ drugs, segments, outliers, user }) => ({
     isFetching: outliers.isFetching,
     edit: outliers.edit,
     saveStatus: outliers.save,
-    generateStatus: outliers.generateDrugOutlier
+    generateStatus: outliers.generateDrugOutlier,
+    drugData: outliers.drugData
   },
   security: security(user.account.roles)
 });

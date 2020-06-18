@@ -18,6 +18,7 @@ import Edit from '@containers/References/Edit';
 import Filter from './Filter';
 import columns from './columns';
 import unitConversionColumns from './UnitConversion/columns';
+import relationsColumns from './Relations/columns';
 
 import DrugForm from '@containers/Forms/Drug';
 
@@ -48,7 +49,7 @@ export default function References({
   generateOutlierReset,
   ...restProps
 }) {
-  const { isFetching, list, error, generateStatus } = outliers;
+  const { isFetching, list, error, generateStatus, drugData } = outliers;
   const [obsModalVisible, setObsModalVisibility] = useState(false);
   const isAdmin = security.isAdmin();
 
@@ -74,6 +75,9 @@ export default function References({
     saveUnitCoefficient,
     idDrug: outliers.selecteds.idDrug,
     isAdmin
+  });
+  const dsRelations = toDataSource(drugData.relations, null, {
+    relationTypes: drugData.relationTypes
   });
 
   useEffect(() => {
@@ -210,6 +214,16 @@ export default function References({
         </Tabs.TabPane>
         <Tabs.TabPane tab="Atributos" key="2">
           <DrugForm fetchReferencesList={fetchReferencesList} match={match} />
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="Relações" key="3">
+          <Table
+            title={title}
+            columns={relationsColumns}
+            pagination={false}
+            loading={isFetching}
+            locale={{ emptyText }}
+            dataSource={!isFetching ? dsRelations : []}
+          />
         </Tabs.TabPane>
       </Tabs>
 
