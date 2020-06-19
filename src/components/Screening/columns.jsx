@@ -310,19 +310,20 @@ export const expandedRowRender = record => {
             {showAlerts(record.alerts)}
           </Descriptions.Item>
         )}
-
-        <Descriptions.Item label="Período de uso:" span={3}>
-          {isEmpty(record.periodDates) && (
-            <Link
-              onClick={() => record.fetchPeriod(record.idPrescriptionDrug, record.source)}
-              loading={record.periodObject.isFetching}
-              type="nda gtm-bt-period"
-            >
-              Visualizar período de uso
-            </Link>
-          )}
-          {!isEmpty(record.periodDates) && periodDates(record.periodDates)}
-        </Descriptions.Item>
+        {!isEmpty(record.period) && (
+          <Descriptions.Item label="Período de uso:" span={3}>
+            {isEmpty(record.periodDates) && (
+              <Link
+                onClick={() => record.fetchPeriod(record.idPrescriptionDrug, record.source)}
+                loading={record.periodObject.isFetching}
+                type="nda gtm-bt-period"
+              >
+                Visualizar período de uso
+              </Link>
+            )}
+            {!isEmpty(record.periodDates) && periodDates(record.periodDates)}
+          </Descriptions.Item>
+        )}
         {record.prescriptionType === 'solutions' && (
           <Descriptions.Item label="Horários:" span={3}>
             {record.time}
