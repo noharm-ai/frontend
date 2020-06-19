@@ -328,9 +328,9 @@ export const expandedRowRender = record => {
             {record.time}
           </Descriptions.Item>
         )}
-        {record.useWeight && (
+        {record.doseWeight && (
           <Descriptions.Item label="Dose / Kg:" span={3}>
-            {record.doseconv}
+            {record.doseWeight}
           </Descriptions.Item>
         )}
         {record.recommendation && (
