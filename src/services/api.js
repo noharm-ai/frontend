@@ -25,6 +25,7 @@ const endpoints = {
   drugs: '/drugs',
   departments: '/departments',
   outliers: '/outliers',
+  relation: '/relation',
   intervention: {
     base: '/intervention',
     reasons: '/intervention/reasons'
@@ -182,6 +183,13 @@ const getOutliersBySegmentAndDrug = (bearerToken, { idSegment, idDrug, ...params
 const updateOutlier = (bearerToken, idOutlier, params = {}) =>
   instance.put(`${endpoints.outliers}/${idOutlier}`, params, setHeaders(bearerToken));
 
+const updateOutlierRelation = (bearerToken, { sctidA, sctidB, type, ...params }) =>
+  instance.put(
+    `${endpoints.relation}/${sctidA}/${sctidB}/${type}`,
+    params,
+    setHeaders(bearerToken)
+  );
+
 /**
  * Intervention.
  *
@@ -244,6 +252,7 @@ const api = {
   getDepartmentsBySegment,
   getOutliersBySegmentAndDrug,
   updateOutlier,
+  updateOutlierRelation,
   getInterventionReasons,
   updateIntervention,
   getReports,

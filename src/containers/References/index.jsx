@@ -13,7 +13,9 @@ import {
   fetchReferencesListThunk,
   selectItemToSaveThunk,
   generateDrugOutlierThunk,
-  resetGenerateDrugOutlierThunk
+  resetGenerateDrugOutlierThunk,
+  selectOutlierRelationThunk,
+  saveOutlierRelationThunk
 } from '@store/ducks/outliers/thunk';
 import { fetchSegmentsListThunk } from '@store/ducks/segments/thunk';
 import References from '@components/References';
@@ -33,7 +35,8 @@ const mapStateToProps = ({ drugs, segments, outliers, user }) => ({
     edit: outliers.edit,
     saveStatus: outliers.save,
     generateStatus: outliers.generateDrugOutlier,
-    drugData: outliers.drugData
+    drugData: outliers.drugData,
+    saveRelation: outliers.saveRelation
   },
   security: security(user.account.roles)
 });
@@ -41,7 +44,9 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       selectOutlier: selectItemToSaveThunk,
+      selectOutlierRelation: selectOutlierRelationThunk,
       saveOutlier: saveOutlierThunk,
+      saveOutlierRelation: saveOutlierRelationThunk,
       saveUnitCoefficient: saveUnitCoeffiecientThunk,
       fetchDrugsList: fetchDrugsListThunk,
       fetchDrugsUnitsList: fetchDrugsUnitsListThunk,

@@ -15,10 +15,11 @@ import Button from '@components/Button';
 import PopConfirm from '@components/PopConfirm';
 
 import Edit from '@containers/References/Edit';
+import Relation from '@containers/References/Relation';
 import Filter from './Filter';
 import columns from './columns';
 import unitConversionColumns from './UnitConversion/columns';
-import relationsColumns from './Relations/columns';
+import relationsColumns from './Relation/columns';
 
 import DrugForm from '@containers/Forms/Drug';
 
@@ -42,15 +43,18 @@ export default function References({
   outliers,
   fetchReferencesList,
   saveOutlier,
+  saveOutlierRelation,
   saveUnitCoefficient,
   selectOutlier,
+  selectOutlierRelation,
   security,
   generateOutlier,
   generateOutlierReset,
   ...restProps
 }) {
-  const { isFetching, list, error, generateStatus, drugData } = outliers;
+  const { isFetching, list, error, generateStatus, drugData, saveRelation } = outliers;
   const [obsModalVisible, setObsModalVisibility] = useState(false);
+  const [relationModalVisible, setRelationModalVisibility] = useState(false);
   const isAdmin = security.isAdmin();
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
@@ -70,6 +74,18 @@ export default function References({
     setObsModalVisibility(true);
   };
 
+  const onSaveRelation = () => {
+    saveOutlierRelation(saveRelation.item);
+  };
+  const onCancelRelation = () => {
+    selectOutlierRelation({});
+    setRelationModalVisibility(false);
+  };
+  const onShowRelationModal = data => {
+    selectOutlierRelation(data);
+    setRelationModalVisibility(true);
+  };
+
   const dataSource = toDataSource(list, 'idOutlier', { saveOutlier, onShowObsModal });
   const unitsDatasource = toDataSource(units.list, 'idMeasureUnit', {
     saveUnitCoefficient,
@@ -77,7 +93,10 @@ export default function References({
     isAdmin
   });
   const dsRelations = toDataSource(drugData.relations, null, {
-    relationTypes: drugData.relationTypes
+    showModal: onShowRelationModal,
+    relationTypes: drugData.relationTypes,
+    sctidA: drugData.sctidA,
+    sctNameA: drugData.sctNameA
   });
 
   useEffect(() => {
@@ -142,6 +161,17 @@ export default function References({
       notification.error(errorMessage);
     }
   }, [outliers.saveStatus.success, outliers.saveStatus.error]);
+
+  useEffect(() => {
+    if (saveRelation.success) {
+      notification.success({ message: 'Uhu! Relação salva com sucesso.' });
+      setRelationModalVisibility(false);
+    }
+
+    if (saveRelation.error) {
+      notification.error(errorMessage);
+    }
+  }, [saveRelation.success, saveRelation.error]);
 
   const convFreq = frequency => {
     switch (frequency) {
@@ -246,6 +276,27 @@ export default function References({
         }}
       >
         <Edit />
+      </DefaultModal>
+
+      <DefaultModal
+        centered
+        destroyOnClose
+        onOk={onSaveRelation}
+        visible={relationModalVisible}
+        onCancel={onCancelRelation}
+        confirmLoading={saveRelation.isSaving}
+        okText="Salvar"
+        okButtonProps={{
+          disabled: saveRelation.isSaving,
+          type: 'primary gtm-bt-save-relation'
+        }}
+        cancelText="Cancelar"
+        cancelButtonProps={{
+          disabled: saveRelation.isSaving,
+          type: 'nda gtm-bt-cancel-relation'
+        }}
+      >
+        <Relation />
       </DefaultModal>
     </>
   );

@@ -27,7 +27,14 @@ const {
   outliersSaveError,
 
   outliersSetSelectedItem,
-  outliersUpdateSelectedItem
+  outliersUpdateSelectedItem,
+
+  outliersSelectRelation,
+  outliersUpdateRelation,
+  outliersSaveRelationStart,
+  outliersSaveRelationSuccess,
+  outliersSaveRelationReset,
+  outliersSaveRelationError
 } = OutliersCreators;
 
 const { drugsFetchListStart, drugsFetchListError, drugsFetchListSuccess } = DrugsCreators;
@@ -213,4 +220,26 @@ export const selectItemToSaveThunk = item => dispatch => {
 
 export const updateSelectedItemToSaveOutlierThunk = item => dispatch => {
   dispatch(outliersUpdateSelectedItem(item));
+};
+
+export const selectOutlierRelationThunk = item => dispatch => {
+  dispatch(outliersSelectRelation(item));
+};
+
+export const updateOutlierRelationThunk = item => dispatch => {
+  dispatch(outliersUpdateRelation(item));
+};
+
+export const saveOutlierRelationThunk = (params = {}) => async (dispatch, getState) => {
+  dispatch(outliersSaveRelationStart());
+  const { access_token } = getState().auth.identify;
+  const { status, error } = await api.updateOutlierRelation(access_token, params);
+
+  if (status !== 200) {
+    dispatch(outliersSaveRelationError(error));
+    return;
+  }
+
+  dispatch(outliersSaveRelationSuccess(params));
+  dispatch(outliersSaveRelationReset());
 };
