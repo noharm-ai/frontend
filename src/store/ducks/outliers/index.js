@@ -14,6 +14,10 @@ export const { Types, Creators } = createActions({
   outliersFetchListError: ['error'],
   outliersFetchListSuccess: ['list', 'drugData', 'firstFilter'],
 
+  outliersFetchSubstanceListStart: [''],
+  outliersFetchSubstanceListError: ['error'],
+  outliersFetchSubstanceListSuccess: ['list'],
+
   outliersSaveStart: [''],
   outliersSaveSuccess: ['idOutlier', 'params'],
   outliersSaveReset: [''],
@@ -65,6 +69,11 @@ const INITIAL_STATE = {
     success: false,
     error: null,
     item: {}
+  },
+  substance: {
+    error: null,
+    isFetching: true,
+    list: []
   }
 };
 
@@ -147,6 +156,33 @@ const fetchListSuccess = (state = INITIAL_STATE, { list, drugData, firstFilter }
   firstFilter,
   error: null,
   isFetching: false
+});
+
+const fetchSubstanceListStart = (state = INITIAL_STATE) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    isFetching: true
+  }
+});
+
+const fetchSubstanceListError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    isFetching: false,
+    error
+  }
+});
+
+const fetchSubstanceListSuccess = (state = INITIAL_STATE, { list }) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    isFetching: false,
+    error: null,
+    list
+  }
 });
 
 const saveStart = (state = INITIAL_STATE) => ({
@@ -293,6 +329,10 @@ const HANDLERS = {
   [Types.OUTLIERS_FETCH_LIST_START]: fetchListStart,
   [Types.OUTLIERS_FETCH_LIST_ERROR]: fetchListError,
   [Types.OUTLIERS_FETCH_LIST_SUCCESS]: fetchListSuccess,
+
+  [Types.OUTLIERS_FETCH_SUBSTANCE_LIST_START]: fetchSubstanceListStart,
+  [Types.OUTLIERS_FETCH_SUBSTANCE_LIST_ERROR]: fetchSubstanceListError,
+  [Types.OUTLIERS_FETCH_SUBSTANCE_LIST_SUCCESS]: fetchSubstanceListSuccess,
 
   [Types.OUTLIERS_SAVE_START]: saveStart,
   [Types.OUTLIERS_SAVE_ERROR]: saveError,

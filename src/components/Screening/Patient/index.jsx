@@ -26,7 +26,7 @@ const getExamValue = exam => {
     return '--';
   }
 
-  return exam.value + ' ' + (exam.unit? exam.unit : '');
+  return exam.value + ' ' + (exam.unit ? exam.unit : '');
 };
 
 const refText = text => {
@@ -67,7 +67,7 @@ const exams = [
     width: '15%'
   },
   {
-    value: 'creatinina',
+    value: 'cr',
     label: 'Creatinina',
     description: 'Creatinina',
     width: '20%'

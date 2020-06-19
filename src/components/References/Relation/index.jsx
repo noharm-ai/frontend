@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components/macro';
 
 import { Row, Col } from '@components/Grid';
+import { Select } from '@components/Inputs';
 import Heading from '@components/Heading';
 import Editor from '@components/Editor';
 import RichTextView from '@components/RichTextView';
@@ -21,9 +22,17 @@ export const EditorBox = styled.div`
   }
 `;
 
-export default function Edit({ relation, update }) {
+export default function Relation({ relation, relationTypes, substance, update, fetchSubstances }) {
+  useEffect(() => {
+    fetchSubstances();
+  }, [fetchSubstances]);
+
   const onEditObs = text => {
     update({ text });
+  };
+
+  const onChangeSctidB = obj => {
+    update({ sctidB: obj.key, nameB: obj.label });
   };
 
   return (
@@ -40,34 +49,104 @@ export default function Edit({ relation, update }) {
           </Col>
           <Col span={24 - 8}>{relation.item.sctNameA}</Col>
         </Row>
-        <Row type="flex" gutter={24} css="padding: 7px 0">
-          <Col span={8}>
-            <Heading as="p" size="14px">
-              Relação:
-            </Heading>
-          </Col>
-          <Col span={24 - 8}>{relation.item.nameB}</Col>
-        </Row>
-        <Row type="flex" gutter={24} css="padding: 7px 0">
-          <Col span={8}>
-            <Heading as="p" size="14px">
-              Tipo:
-            </Heading>
-          </Col>
-          <Col span={24 - 8}>{getTypeName(relation.item.type, relation.item.relationTypes)}</Col>
-        </Row>
-        {!relation.item.editable && (
-          <Row type="flex" gutter={24} css="padding: 7px 0">
-            <Col span={8}>
-              <Heading as="p" size="14px">
-                Texto:
-              </Heading>
-            </Col>
-            <Col span={24 - 8}>
-              <RichTextView text={relation.item.text} />
-            </Col>
-          </Row>
+        {relation.item.new && (
+          <>
+            <Row type="flex" gutter={24} css="padding: 7px 0">
+              <Col span={8}>
+                <Heading as="p" size="14px">
+                  Med. relacionado:
+                </Heading>
+              </Col>
+              <Col span={24 - 8}>
+                <Select
+                  id="sctidB"
+                  labelInValue
+                  optionFilterProp="children"
+                  style={{ width: '100%' }}
+                  placeholder="Selecione o medicamento..."
+                  onChange={onChangeSctidB}
+                  value={{ key: relation.item.sctidB || '' }}
+                  loading={substance.isFetching}
+                >
+                  {substance.list.map(({ sctid, name }) => (
+                    <Select.Option key={sctid} value={sctid}>
+                      {name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Col>
+            </Row>
+            <Row type="flex" gutter={24} css="padding: 7px 0">
+              <Col span={8}>
+                <Heading as="p" size="14px">
+                  Tipo:
+                </Heading>
+              </Col>
+              <Col span={24 - 8}>
+                <Select
+                  id="type"
+                  optionFilterProp="children"
+                  style={{ width: '100%' }}
+                  placeholder="Selecione o tipo de relação..."
+                  onChange={type => update({ type })}
+                  defaultValue={relation.item.type || undefined}
+                >
+                  {relationTypes.map(item => (
+                    <Select.Option key={Object.keys(item)[0]} value={Object.keys(item)[0]}>
+                      {Object.values(item)[0]}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Col>
+            </Row>
+          </>
         )}
+        {relation.item.sctidB && !relation.item.new && (
+          <>
+            <Row type="flex" gutter={24} css="padding: 7px 0">
+              <Col span={8}>
+                <Heading as="p" size="14px">
+                  Med. relacionado:
+                </Heading>
+              </Col>
+              <Col span={24 - 8}>{relation.item.nameB}</Col>
+            </Row>
+            <Row type="flex" gutter={24} css="padding: 7px 0">
+              <Col span={8}>
+                <Heading as="p" size="14px">
+                  Tipo:
+                </Heading>
+              </Col>
+              <Col span={24 - 8}>
+                {getTypeName(relation.item.type, relation.item.relationTypes)}
+              </Col>
+            </Row>
+          </>
+        )}
+        {!relation.item.editable && (
+          <>
+            <Row type="flex" gutter={24} css="padding: 7px 0">
+              <Col span={8}>
+                <Heading as="p" size="14px">
+                  Texto:
+                </Heading>
+              </Col>
+              <Col span={24 - 8}>
+                <RichTextView text={relation.item.text} />
+              </Col>
+            </Row>
+          </>
+        )}
+        <Row type="flex" gutter={24} css="padding: 7px 0">
+          <Col span={8}>
+            <Heading as="p" size="14px">
+              Ativo:
+            </Heading>
+          </Col>
+          <Col span={24 - 8}>
+            <Switch onChange={active => update({ active })} checked={relation.item.active} />
+          </Col>
+        </Row>
         {relation.item.editable && (
           <Row type="flex" gutter={24} css="padding: 7px 0">
             <Col span={24}>
@@ -82,17 +161,6 @@ export default function Edit({ relation, update }) {
             </Col>
           </Row>
         )}
-
-        <Row type="flex" gutter={24} css="padding: 7px 0">
-          <Col span={8}>
-            <Heading as="p" size="14px">
-              Ativo:
-            </Heading>
-          </Col>
-          <Col span={24 - 8}>
-            <Switch onChange={active => update({ active })} checked={relation.item.active} />
-          </Col>
-        </Row>
       </Box>
     </>
   );

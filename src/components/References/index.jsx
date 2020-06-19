@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
+import { Row } from 'antd';
 
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
@@ -13,6 +14,7 @@ import DefaultModal from '@components/Modal';
 import Tabs from '@components/Tabs';
 import Button from '@components/Button';
 import PopConfirm from '@components/PopConfirm';
+import Icon from '@components/Icon';
 
 import Edit from '@containers/References/Edit';
 import Relation from '@containers/References/Relation';
@@ -75,7 +77,10 @@ export default function References({
   };
 
   const onSaveRelation = () => {
-    saveOutlierRelation(saveRelation.item);
+    saveOutlierRelation({
+      ...saveRelation.item,
+      new: false
+    });
   };
   const onCancelRelation = () => {
     selectOutlierRelation({});
@@ -84,6 +89,17 @@ export default function References({
   const onShowRelationModal = data => {
     selectOutlierRelation(data);
     setRelationModalVisibility(true);
+  };
+  const addRelationModal = () => {
+    const data = {
+      new: true,
+      editable: true,
+      active: true,
+      sctidA: drugData.sctidA,
+      sctNameA: drugData.sctNameA
+    };
+
+    onShowRelationModal(data);
   };
 
   const dataSource = toDataSource(list, 'idOutlier', { saveOutlier, onShowObsModal });
@@ -246,6 +262,11 @@ export default function References({
           <DrugForm fetchReferencesList={fetchReferencesList} match={match} />
         </Tabs.TabPane>
         <Tabs.TabPane tab="Relações" key="3">
+          <Row type="flex" justify="end">
+            <Button type="primary" onClick={addRelationModal}>
+              <Icon type="plus" /> Adicionar
+            </Button>
+          </Row>
           <Table
             title={title}
             columns={relationsColumns}
@@ -287,7 +308,10 @@ export default function References({
         confirmLoading={saveRelation.isSaving}
         okText="Salvar"
         okButtonProps={{
-          disabled: saveRelation.isSaving,
+          disabled:
+            saveRelation.isSaving ||
+            saveRelation.item.sctidB == null ||
+            saveRelation.item.type == null,
           type: 'primary gtm-bt-save-relation'
         }}
         cancelText="Cancelar"

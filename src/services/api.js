@@ -31,7 +31,8 @@ const endpoints = {
     reasons: '/intervention/reasons'
   },
   exams: '/exams',
-  reports: '/reports'
+  reports: '/reports',
+  substance: '/substance'
 };
 
 /**
@@ -190,6 +191,12 @@ const updateOutlierRelation = (bearerToken, { sctidA, sctidB, type, ...params })
     setHeaders(bearerToken)
   );
 
+const getSubstances = (bearerToken, params = {}) =>
+  instance.get(endpoints.substance, {
+    params,
+    ...setHeaders(bearerToken)
+  });
+
 /**
  * Intervention.
  *
@@ -259,7 +266,8 @@ const api = {
   getInterventions,
   getExams,
   updatePatient,
-  updatePrescriptionDrug
+  updatePrescriptionDrug,
+  getSubstances
 };
 
 export default api;
