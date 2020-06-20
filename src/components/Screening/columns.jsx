@@ -153,7 +153,7 @@ const Action = ({
           type="primary gtm-bt-notes"
           ghost={!hasNotes}
           onClick={() => {
-            onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug });
+            onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber });
           }}
           disabled={isDisabled}
         >
