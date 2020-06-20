@@ -21,7 +21,7 @@ const truncateText = text => {
 
 export default [
   {
-    title: 'Medicamento relacionado',
+    title: 'Substância relacionado',
     dataIndex: 'nameB',
     width: 350
   },
