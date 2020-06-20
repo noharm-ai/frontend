@@ -72,7 +72,7 @@ export default [
             ghost={!hasObs}
             onClick={() => outlier.onShowObsModal(outlier)}
           >
-            <Icon type="message" />
+            <Icon type="form" />
           </Button>
         </Tooltip>
       );

@@ -140,6 +140,7 @@ const Action = ({
           onClick={() => {
             onShowModal({ ...data, idPrescriptionDrug, uniqueDrugList, admissionNumber });
           }}
+          ghost={!isChecked}
           loading={isChecking}
           disabled={isDisabled}
         >
