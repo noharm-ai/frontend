@@ -8,6 +8,7 @@ import Relation from '@components/References/Relation';
 const mapStateToProps = ({ outliers }) => ({
   relation: outliers.saveRelation,
   relationTypes: outliers.drugData.relationTypes,
+  typeRelations: outliers.drugData.typeRelations,
   substance: outliers.substance
 });
 const mapDispatchToProps = dispatch =>

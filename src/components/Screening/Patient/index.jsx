@@ -73,7 +73,7 @@ const exams = [
     width: '20%'
   },
   {
-    value: 'pcr',
+    value: 'pcru',
     label: 'PCR',
     description: 'Proteína C Reativa',
     width: '20%'

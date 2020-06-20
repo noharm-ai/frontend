@@ -7,9 +7,8 @@ import Icon from '@components/Icon';
 
 export const getTypeName = (currentType, types) => {
   if (currentType == null || types == null) return '';
-
-  const index = types.findIndex(item => Object.keys(item)[0] === currentType);
-  return Object.values(types[index])[0];
+  
+  return types[currentType];
 };
 
 const truncateText = text => {
@@ -29,7 +28,7 @@ export default [
   {
     title: 'Tipo',
     render: (entry, record) => {
-      return getTypeName(record.type, record.relationTypes);
+      return getTypeName(record.type, record.typeRelations);
     }
   },
   {
