@@ -7,7 +7,7 @@ import Icon from '@components/Icon';
 
 export const getTypeName = (currentType, types) => {
   if (currentType == null || types == null) return '';
-  
+
   return types[currentType];
 };
 
@@ -21,7 +21,7 @@ const truncateText = text => {
 
 export default [
   {
-    title: 'Substância relacionado',
+    title: 'Substância relacionada',
     dataIndex: 'nameB',
     width: 350
   },
