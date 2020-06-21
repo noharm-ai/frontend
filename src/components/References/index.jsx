@@ -263,9 +263,9 @@ export default function References({
         </Tabs.TabPane>
         <Tabs.TabPane tab="Relações" key="3">
           <Row type="flex" justify="end">
-            <Button type="primary gtm-bt-add-relation" onClick={addRelationModal}>
+            {drugData.sctidA && (<Button type="primary gtm-bt-add-relation" onClick={addRelationModal}>
               <Icon type="plus" /> Adicionar
-            </Button>
+            </Button>)}
           </Row>
           <Table
             title={title}
