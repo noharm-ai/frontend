@@ -111,7 +111,6 @@ export default function References({
   const dsRelations = toDataSource(drugData.relations, null, {
     showModal: onShowRelationModal,
     relationTypes: drugData.relationTypes,
-    typeRelations: drugData.typeRelations,
     sctidA: drugData.sctidA,
     sctNameA: drugData.sctNameA
   });
