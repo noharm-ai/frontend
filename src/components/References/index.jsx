@@ -263,7 +263,7 @@ export default function References({
         </Tabs.TabPane>
         <Tabs.TabPane tab="Relações" key="3">
           <Row type="flex" justify="end">
-            <Button type="primary" onClick={addRelationModal}>
+            <Button type="primary gtm-bt-add-relation" onClick={addRelationModal}>
               <Icon type="plus" /> Adicionar
             </Button>
           </Row>
