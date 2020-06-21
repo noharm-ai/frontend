@@ -92,7 +92,7 @@ export default function Relation({ relation, relationTypes, substance, update, f
                   defaultValue={relation.item.type || undefined}
                 >
                   {relationTypes.map(({ key, value }) => (
-                    <Select.Option key={key} value={value}>
+                    <Select.Option key={key} value={key}>
                       {value}
                     </Select.Option>
                   ))}
