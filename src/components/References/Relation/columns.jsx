@@ -37,7 +37,7 @@ export default [
     }
   },
   {
-    title: 'Texto',
+    title: 'Efeito',
     render: (entry, { text }) => {
       const regex = /(<([^>]+)>)/gi;
       return text ? truncateText(text.replace(regex, '')) : '';

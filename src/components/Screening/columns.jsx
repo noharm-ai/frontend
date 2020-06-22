@@ -215,7 +215,7 @@ const showAlerts = alerts => {
   return (
     <>
       {alerts.map((item, index) => (
-        <Alert key={index} type="error" message={item} style={{ marginTop: '5px' }} showIcon />
+        <Alert key={index} type="error" message=<RichTextView text={item} /> style={{ marginTop: '5px' }} showIcon />
       ))}
     </>
   );
