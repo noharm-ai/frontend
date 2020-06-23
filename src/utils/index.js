@@ -1,6 +1,10 @@
 import isEmpty from 'lodash.isempty';
 
-export const errorHandler = e => ({ error: e.response ? e.response.data: 'error', status: e.response ? e.response.status : e.code, data: {} });
+export const errorHandler = e => ({
+  error: e.response ? e.response.data : 'error',
+  status: e.response ? e.response.status : e.code,
+  data: {}
+});
 
 export const tokenDecode = token => JSON.parse(window.atob(token.split('.')[1]));
 
@@ -17,10 +21,20 @@ export const toObject = (array, key) =>
 // transform a list to dataSource table
 export const toDataSource = (list, uniqKey, toAdd = {}) =>
   !isEmpty(list)
-    ? list.map(item => ({
-        ...item,
-        ...toAdd,
-        key: item[uniqKey],
-        [uniqKey]: item[uniqKey]
-      }))
+    ? list.map((item, i) => {
+        if (uniqKey) {
+          return {
+            ...item,
+            ...toAdd,
+            key: item[uniqKey],
+            [uniqKey]: item[uniqKey]
+          };
+        }
+
+        return {
+          ...item,
+          ...toAdd,
+          key: i
+        };
+      })
     : [];

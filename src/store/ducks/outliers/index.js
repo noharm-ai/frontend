@@ -12,7 +12,11 @@ export const { Types, Creators } = createActions({
 
   outliersFetchListStart: [''],
   outliersFetchListError: ['error'],
-  outliersFetchListSuccess: ['list', 'firstFilter'],
+  outliersFetchListSuccess: ['list', 'drugData', 'firstFilter'],
+
+  outliersFetchSubstanceListStart: [''],
+  outliersFetchSubstanceListError: ['error'],
+  outliersFetchSubstanceListSuccess: ['list'],
 
   outliersSaveStart: [''],
   outliersSaveSuccess: ['idOutlier', 'params'],
@@ -20,12 +24,20 @@ export const { Types, Creators } = createActions({
   outliersSaveError: ['error'],
 
   outliersSetSelectedItem: ['item'],
-  outliersUpdateSelectedItem: ['item']
+  outliersUpdateSelectedItem: ['item'],
+
+  outliersSelectRelation: ['item'],
+  outliersUpdateRelation: ['item'],
+  outliersSaveRelationStart: [''],
+  outliersSaveRelationSuccess: ['item'],
+  outliersSaveRelationReset: [''],
+  outliersSaveRelationError: ['error']
 });
 
 const INITIAL_STATE = {
   error: null,
   isFetching: false,
+  drugData: {},
   list: [],
   firstFilter: {
     idDrug: undefined,
@@ -51,6 +63,17 @@ const INITIAL_STATE = {
     isSaving: false,
     error: null,
     item: {}
+  },
+  saveRelation: {
+    isSaving: false,
+    success: false,
+    error: null,
+    item: {}
+  },
+  substance: {
+    error: null,
+    isFetching: true,
+    list: []
   }
 };
 
@@ -126,12 +149,40 @@ const fetchListError = (state = INITIAL_STATE, { error }) => ({
   isFetching: false
 });
 
-const fetchListSuccess = (state = INITIAL_STATE, { list, firstFilter }) => ({
+const fetchListSuccess = (state = INITIAL_STATE, { list, drugData, firstFilter }) => ({
   ...state,
   list,
+  drugData,
   firstFilter,
   error: null,
   isFetching: false
+});
+
+const fetchSubstanceListStart = (state = INITIAL_STATE) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    isFetching: true
+  }
+});
+
+const fetchSubstanceListError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    isFetching: false,
+    error
+  }
+});
+
+const fetchSubstanceListSuccess = (state = INITIAL_STATE, { list }) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    isFetching: false,
+    error: null,
+    list
+  }
 });
 
 const saveStart = (state = INITIAL_STATE) => ({
@@ -197,6 +248,74 @@ const updateSelectedItem = (state = INITIAL_STATE, { item }) => ({
   }
 });
 
+const selectRelation = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  saveRelation: {
+    ...state.saveRelation,
+    item
+  }
+});
+
+const updateRelation = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  saveRelation: {
+    ...state.saveRelation,
+    item: {
+      ...state.saveRelation.item,
+      ...item
+    }
+  }
+});
+
+const saveRelationStart = (state = INITIAL_STATE) => ({
+  ...state,
+  saveRelation: {
+    ...state.saveRelation,
+    isSaving: true
+  }
+});
+
+const saveRelationError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  saveRelation: {
+    ...state.saveRelation,
+    error,
+    isSaving: false
+  }
+});
+
+const saveRelationReset = (state = INITIAL_STATE) => ({
+  ...state,
+  saveRelation: {
+    ...INITIAL_STATE.saveRelation
+  }
+});
+
+const saveRelationSuccess = (state = INITIAL_STATE, { item }) => {
+  const relations = [...state.drugData.relations];
+  const index = relations.findIndex(r => item.sctidB === r.sctidB && item.type === r.type);
+
+  if (index !== -1) {
+    relations[index] = { ...relations[index], ...item };
+  } else {
+    relations.push(item);
+  }
+
+  return {
+    ...state,
+    drugData: {
+      ...state.drugData,
+      relations
+    },
+    saveRelation: {
+      ...state.saveRelation,
+      error: null,
+      success: true,
+      isSaving: false
+    }
+  };
+};
+
 const HANDLERS = {
   [Types.OUTLIERS_GENERATE_STOP]: generateStop,
   [Types.OUTLIERS_GENERATE_START]: generateStart,
@@ -211,13 +330,25 @@ const HANDLERS = {
   [Types.OUTLIERS_FETCH_LIST_ERROR]: fetchListError,
   [Types.OUTLIERS_FETCH_LIST_SUCCESS]: fetchListSuccess,
 
+  [Types.OUTLIERS_FETCH_SUBSTANCE_LIST_START]: fetchSubstanceListStart,
+  [Types.OUTLIERS_FETCH_SUBSTANCE_LIST_ERROR]: fetchSubstanceListError,
+  [Types.OUTLIERS_FETCH_SUBSTANCE_LIST_SUCCESS]: fetchSubstanceListSuccess,
+
   [Types.OUTLIERS_SAVE_START]: saveStart,
   [Types.OUTLIERS_SAVE_ERROR]: saveError,
   [Types.OUTLIERS_SAVE_RESET]: saveReset,
   [Types.OUTLIERS_SAVE_SUCCESS]: saveSuccess,
 
   [Types.OUTLIERS_SET_SELECTED_ITEM]: setSelectedItem,
-  [Types.OUTLIERS_UPDATE_SELECTED_ITEM]: updateSelectedItem
+  [Types.OUTLIERS_UPDATE_SELECTED_ITEM]: updateSelectedItem,
+
+  [Types.OUTLIERS_SAVE_RELATION_START]: saveRelationStart,
+  [Types.OUTLIERS_SAVE_RELATION_ERROR]: saveRelationError,
+  [Types.OUTLIERS_SAVE_RELATION_RESET]: saveRelationReset,
+  [Types.OUTLIERS_SAVE_RELATION_SUCCESS]: saveRelationSuccess,
+
+  [Types.OUTLIERS_SELECT_RELATION]: selectRelation,
+  [Types.OUTLIERS_UPDATE_RELATION]: updateRelation
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

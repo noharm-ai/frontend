@@ -13,8 +13,12 @@ import { Row, Col } from '@components/Grid';
 import notification from '@components/notification';
 import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
+import Button from '@components/Button';
+import Tooltip from '@components/Tooltip';
+import Icon from '@components/Icon';
 
 import Modal from './Modal';
+import PrescriptionDrugModal from './PrescriptionDrugModal';
 import Patient from './Patient';
 import columnsTable, { expandedRowRender, solutionColumns, groupSolutions } from './columns';
 import interventionColumns, { expandedInterventionRowRender } from './Intervention/columns';
@@ -55,9 +59,13 @@ export default function Screening({
   fetchScreeningById,
   savePrescriptionDrugStatus,
   updateInterventionData,
+  updatePrescriptionDrugData,
   saveInterventionStatus,
   fetchPeriod,
-  fetchExams
+  fetchExams,
+  prescriptionDrug,
+  savePrescriptionDrug,
+  selectPrescriptionDrug
 }) {
   const id = extractId(match.params.slug);
   const { isFetching, content, error, exams } = prescription;
@@ -70,6 +78,8 @@ export default function Screening({
   const { isSaving, wasSaved, item } = maybeCreateOrUpdate;
 
   const [visible, setVisibility] = useState(false);
+  const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
+
   const columns = useMedia(
     [`(min-width: ${breakpoints.lg})`],
     [[...columnsTable]],
@@ -87,6 +97,17 @@ export default function Screening({
     setVisibility(true);
   };
 
+  const onSavePrescriptionDrug = () =>
+    savePrescriptionDrug(prescriptionDrug.item.idPrescriptionDrug, prescriptionDrug.item);
+  const onCancelPrescriptionDrug = () => {
+    selectPrescriptionDrug({});
+    setOpenPrescriptionDrugModal(false);
+  };
+  const onShowPrescriptionDrugModal = data => {
+    selectPrescriptionDrug(data);
+    setOpenPrescriptionDrugModal(true);
+  };
+
   const isSaveBtnDisabled = item => {
     if (isEmpty(item)) {
       return true;
@@ -102,6 +123,7 @@ export default function Screening({
   // extra resources to add in table item.
   const bag = {
     onShowModal,
+    onShowPrescriptionDrugModal,
     check: prescription.checkPrescriptionDrug,
     savePrescriptionDrugStatus,
     idSegment: content.idSegment,
@@ -165,6 +187,19 @@ export default function Screening({
     }
   }, [wasSaved, id, reset, item, updateInterventionData]);
 
+  useEffect(() => {
+    if (prescriptionDrug.success) {
+      updatePrescriptionDrugData(
+        prescriptionDrug.item.idPrescriptionDrug,
+        prescriptionDrug.item.source,
+        prescriptionDrug.item
+      );
+      setOpenPrescriptionDrugModal(false);
+
+      notification.success({ message: 'Uhu! Anotação salva com sucesso' });
+    }
+  }, [prescriptionDrug.success, updatePrescriptionDrugData, prescriptionDrug.item]);
+
   const rowClassName = (record, index) => {
     let classes = [];
     if (!record.idPrescriptionDrug) {
@@ -193,7 +228,7 @@ export default function Screening({
   const TabTitle = ({ title, count, ...props }) => (
     <>
       <span style={{ marginRight: '10px' }}>{title}</span>
-      { count >= 0 ? <Tag {...props}>{count}</Tag> : null}
+      {count >= 0 ? <Tag {...props}>{count}</Tag> : null}
     </>
   );
 
@@ -207,6 +242,44 @@ export default function Screening({
     if (key === '5') {
       loadExams();
     }
+  };
+
+  const InterventionFooter = () => {
+    const isChecked = item.status === 's';
+
+    const undoIntervention = () => {
+      savePrescriptionDrugStatus(item.idPrescriptionDrug, '0', item.source);
+      setVisibility(false);
+    };
+
+    return (
+      <>
+        <Button onClick={() => onCancel()} disabled={isSaving} className="gtm-bt-cancel-interv">
+          Cancelar
+        </Button>
+        {isChecked && (
+          <Tooltip title="Desfazer intervenção" placement="top">
+            <Button
+              type="danger gtm-bt-undo-interv"
+              ghost
+              loading={prescription.checkPrescriptionDrug.isChecking}
+              onClick={() => undoIntervention()}
+            >
+              <Icon type="rollback" style={{ fontSize: 16 }} />
+            </Button>
+          </Tooltip>
+        )}
+
+        <Button
+          type="primary gtm-bt-save-interv"
+          onClick={() => onSave()}
+          disabled={isSaving || isSaveBtnDisabled(item)}
+          loading={isSaving}
+        >
+          Salvar
+        </Button>
+      </>
+    );
   };
 
   if (error) {
@@ -323,12 +396,7 @@ export default function Screening({
               />
             </Col>
           </Tabs.TabPane>
-          <Tabs.TabPane
-            tab={
-              <TabTitle title="Exames" />
-            } 
-            key="5"
-          >
+          <Tabs.TabPane tab={<TabTitle title="Exames" />} key="5">
             <ExpandableTable
               title={title}
               columns={examColumns}
@@ -350,20 +418,21 @@ export default function Screening({
         </ScreeningTabs>
       </Row>
 
-      <Modal
-        onOk={onSave}
-        visible={visible}
-        onCancel={onCancel}
-        confirmLoading={isSaving}
+      <Modal visible={visible} confirmLoading={isSaving} footer={<InterventionFooter />} />
+      <PrescriptionDrugModal
+        onOk={onSavePrescriptionDrug}
+        visible={openPrescriptionDrugModal}
+        onCancel={onCancelPrescriptionDrug}
+        confirmLoading={prescriptionDrug.isSaving}
         okButtonProps={{
-          disabled: isSaving || isSaveBtnDisabled(item)
+          disabled: isSaving
         }}
         cancelButtonProps={{
           disabled: isSaving,
-          className: 'gtm-bt-cancel-interv'
+          className: 'gtm-bt-cancel-notes'
         }}
         okText="Salvar"
-        okType="primary gtm-bt-save-interv"
+        okType="primary gtm-bt-save-notes"
         cancelText="Cancelar"
       />
     </>

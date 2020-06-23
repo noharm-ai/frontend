@@ -107,6 +107,7 @@ const Action = ({
   idPrescriptionDrug,
   prescriptionType,
   onShowModal,
+  onShowPrescriptionDrugModal,
   uniqueDrugList,
   admissionNumber,
   ...data
@@ -120,6 +121,7 @@ const Action = ({
   const isChecking = check.idPrescriptionDrug === idPrescriptionDrug && check.isChecking;
   const isChecked = data.status === 's';
   const isIntervened = data.intervened;
+  const hasNotes = data.notes !== '' && data.notes != null;
   let btnTitle = isChecked ? 'Alterar intervenção' : 'Enviar intervenção';
 
   if (isIntervened && !isChecked) {
@@ -132,30 +134,30 @@ const Action = ({
 
   return (
     <TableTags>
-      {isChecked && (
-        <Tooltip title="Desfazer intervenção" placement="left">
-          <Button
-            type="danger gtm-bt-undo-interv"
-            ghost
-            onClick={() => savePrescriptionDrugStatus(idPrescriptionDrug, '0', prescriptionType)}
-            loading={isChecking}
-            disabled={isDisabled}
-          >
-            <Icon type="rollback" style={{ fontSize: 16 }} />
-          </Button>
-        </Tooltip>
-      )}
-
       <Tooltip title={btnTitle} placement="left">
         <Button
           type={isIntervened ? 'danger gtm-bt-interv' : 'primary gtm-bt-interv'}
           onClick={() => {
             onShowModal({ ...data, idPrescriptionDrug, uniqueDrugList, admissionNumber });
           }}
+          ghost={!isChecked}
           loading={isChecking}
           disabled={isDisabled}
         >
           <Icon type="warning" style={{ fontSize: 16 }} />
+        </Button>
+      </Tooltip>
+
+      <Tooltip title={hasNotes ? 'Alterar anotação' : 'Adicionar anotação'} placement="left">
+        <Button
+          type="primary gtm-bt-notes"
+          ghost={!hasNotes}
+          onClick={() => {
+            onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber });
+          }}
+          disabled={isDisabled}
+        >
+          <Icon type="form" style={{ fontSize: 16 }} />
         </Button>
       </Tooltip>
     </TableTags>
@@ -213,7 +215,7 @@ const showAlerts = alerts => {
   return (
     <>
       {alerts.map((item, index) => (
-        <Alert key={index} type="error" message={item} style={{ marginTop: '5px' }} showIcon />
+        <Alert key={index} type="error" message=<RichTextView text={item} /> style={{ marginTop: '5px' }} showIcon />
       ))}
     </>
   );
@@ -303,35 +305,47 @@ export const expandedRowRender = record => {
 
   return (
     <NestedTableContainer>
-      <Descriptions bordered>
-        <Descriptions.Item label="Alertas:" span={3}>
-          {showAlerts(record.alerts)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Período de uso:" span={3}>
-          {isEmpty(record.periodDates) && (
-            <Link
-              onClick={() => record.fetchPeriod(record.idPrescriptionDrug, record.source)}
-              loading={record.periodObject.isFetching}
-              type="nda gtm-bt-period"
-            >
-              Visualizar período de uso
-            </Link>
-          )}
-          {!isEmpty(record.periodDates) && periodDates(record.periodDates)}
-        </Descriptions.Item>
+      <Descriptions bordered size="small">
+        {!isEmpty(record.alerts) && (
+          <Descriptions.Item label="Alertas:" span={3}>
+            {showAlerts(record.alerts)}
+          </Descriptions.Item>
+        )}
+        {!isEmpty(record.period) && (
+          <Descriptions.Item label="Período de uso:" span={3}>
+            {isEmpty(record.periodDates) && (
+              <Link
+                onClick={() => record.fetchPeriod(record.idPrescriptionDrug, record.source)}
+                loading={record.periodObject.isFetching}
+                type="nda gtm-bt-period"
+              >
+                Visualizar período de uso
+              </Link>
+            )}
+            {!isEmpty(record.periodDates) && periodDates(record.periodDates)}
+          </Descriptions.Item>
+        )}
         {record.prescriptionType === 'solutions' && (
           <Descriptions.Item label="Horários:" span={3}>
             {record.time}
           </Descriptions.Item>
         )}
-        {record.useWeight && (
+        {record.doseWeight && (
           <Descriptions.Item label="Dose / Kg:" span={3}>
-            {record.doseconv}
+            {record.doseWeight}
           </Descriptions.Item>
         )}
-        <Descriptions.Item label="Observação médica:" span={3}>
-          <RichTextView text={record.recommendation} />
-        </Descriptions.Item>
+        {record.recommendation && (
+          <Descriptions.Item label="Observação médica:" span={3}>
+            <RichTextView text={record.recommendation} />
+          </Descriptions.Item>
+        )}
+        {record.prevNotes && (
+          <Descriptions.Item label="Anotação:" span={3}>
+            <RichTextView text={record.prevNotes} />
+          </Descriptions.Item>
+        )}
+
         {!isEmpty(record.prevIntervention) && (
           <Descriptions.Item label="Intervenção anterior:" span={3}>
             <InterventionView
@@ -491,6 +505,13 @@ const actionColumns = [
           {prescription.recommendation && prescription.recommendation !== 'None' && (
             <Tooltip title="Possui observação médica">
               <Icon type="message" style={{ fontSize: 18, color: '#108ee9' }} />
+            </Tooltip>
+          )}
+        </span>
+        <span className="tag">
+          {prescription.prevNotes && prescription.prevNotes !== 'None' && (
+            <Tooltip title="Possui anotação">
+              <Icon type="form" style={{ fontSize: 18, color: '#108ee9' }} />
             </Tooltip>
           )}
         </span>

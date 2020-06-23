@@ -66,7 +66,7 @@ export default function Drug({
     liver,
     idMeasureUnit,
     idSegment,
-    unit: outliers[0] ? outliers[0].unit : ''
+    unit: outliers ? outliers[0] ? outliers[0].unit : '' : ''
   };
 
   useEffect(() => {

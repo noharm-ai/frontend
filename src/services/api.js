@@ -25,12 +25,14 @@ const endpoints = {
   drugs: '/drugs',
   departments: '/departments',
   outliers: '/outliers',
+  relation: '/relation',
   intervention: {
     base: '/intervention',
     reasons: '/intervention/reasons'
   },
   exams: '/exams',
-  reports: '/reports'
+  reports: '/reports',
+  substance: '/substance'
 };
 
 /**
@@ -113,6 +115,13 @@ const getPrescriptionDrugPeriod = (bearerToken, idPrescriptionDrug, params = {})
 const putPrescriptionById = (bearerToken, idPrescription, params = {}) =>
   instance.put(`${endpoints.prescriptions}/${idPrescription}`, params, setHeaders(bearerToken));
 
+const updatePrescriptionDrug = (bearerToken, idPrescriptionDrug, params = {}) =>
+  instance.put(
+    `${endpoints.prescriptions}/drug/${idPrescriptionDrug}`,
+    params,
+    setHeaders(bearerToken)
+  );
+
 /**
  * Patients.
  *
@@ -174,6 +183,19 @@ const getOutliersBySegmentAndDrug = (bearerToken, { idSegment, idDrug, ...params
 
 const updateOutlier = (bearerToken, idOutlier, params = {}) =>
   instance.put(`${endpoints.outliers}/${idOutlier}`, params, setHeaders(bearerToken));
+
+const updateOutlierRelation = (bearerToken, { sctidA, sctidB, type, ...params }) =>
+  instance.put(
+    `${endpoints.relation}/${sctidA}/${sctidB}/${type}`,
+    params,
+    setHeaders(bearerToken)
+  );
+
+const getSubstances = (bearerToken, params = {}) =>
+  instance.get(endpoints.substance, {
+    params,
+    ...setHeaders(bearerToken)
+  });
 
 /**
  * Intervention.
@@ -237,12 +259,15 @@ const api = {
   getDepartmentsBySegment,
   getOutliersBySegmentAndDrug,
   updateOutlier,
+  updateOutlierRelation,
   getInterventionReasons,
   updateIntervention,
   getReports,
   getInterventions,
   getExams,
-  updatePatient
+  updatePatient,
+  updatePrescriptionDrug,
+  getSubstances
 };
 
 export default api;

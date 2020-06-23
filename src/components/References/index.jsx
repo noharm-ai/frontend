@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
+import { Row } from 'antd';
 
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
@@ -13,11 +14,14 @@ import DefaultModal from '@components/Modal';
 import Tabs from '@components/Tabs';
 import Button from '@components/Button';
 import PopConfirm from '@components/PopConfirm';
+import Icon from '@components/Icon';
 
 import Edit from '@containers/References/Edit';
+import Relation from '@containers/References/Relation';
 import Filter from './Filter';
 import columns from './columns';
 import unitConversionColumns from './UnitConversion/columns';
+import relationsColumns from './Relation/columns';
 
 import DrugForm from '@containers/Forms/Drug';
 
@@ -41,15 +45,18 @@ export default function References({
   outliers,
   fetchReferencesList,
   saveOutlier,
+  saveOutlierRelation,
   saveUnitCoefficient,
   selectOutlier,
+  selectOutlierRelation,
   security,
   generateOutlier,
   generateOutlierReset,
   ...restProps
 }) {
-  const { isFetching, list, error, generateStatus } = outliers;
+  const { isFetching, list, error, generateStatus, drugData, saveRelation } = outliers;
   const [obsModalVisible, setObsModalVisibility] = useState(false);
+  const [relationModalVisible, setRelationModalVisibility] = useState(false);
   const isAdmin = security.isAdmin();
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
@@ -69,11 +76,43 @@ export default function References({
     setObsModalVisibility(true);
   };
 
+  const onSaveRelation = () => {
+    saveOutlierRelation({
+      ...saveRelation.item,
+      new: false
+    });
+  };
+  const onCancelRelation = () => {
+    selectOutlierRelation({});
+    setRelationModalVisibility(false);
+  };
+  const onShowRelationModal = data => {
+    selectOutlierRelation(data);
+    setRelationModalVisibility(true);
+  };
+  const addRelationModal = () => {
+    const data = {
+      new: true,
+      editable: true,
+      active: true,
+      sctidA: drugData.sctidA,
+      sctNameA: drugData.sctNameA
+    };
+
+    onShowRelationModal(data);
+  };
+
   const dataSource = toDataSource(list, 'idOutlier', { saveOutlier, onShowObsModal });
   const unitsDatasource = toDataSource(units.list, 'idMeasureUnit', {
     saveUnitCoefficient,
     idDrug: outliers.selecteds.idDrug,
     isAdmin
+  });
+  const dsRelations = toDataSource(drugData.relations, null, {
+    showModal: onShowRelationModal,
+    relationTypes: drugData.relationTypes,
+    sctidA: drugData.sctidA,
+    sctNameA: drugData.sctNameA
   });
 
   useEffect(() => {
@@ -138,6 +177,17 @@ export default function References({
       notification.error(errorMessage);
     }
   }, [outliers.saveStatus.success, outliers.saveStatus.error]);
+
+  useEffect(() => {
+    if (saveRelation.success) {
+      notification.success({ message: 'Uhu! Relação salva com sucesso.' });
+      setRelationModalVisibility(false);
+    }
+
+    if (saveRelation.error) {
+      notification.error(errorMessage);
+    }
+  }, [saveRelation.success, saveRelation.error]);
 
   const convFreq = frequency => {
     switch (frequency) {
@@ -211,6 +261,21 @@ export default function References({
         <Tabs.TabPane tab="Atributos" key="2">
           <DrugForm fetchReferencesList={fetchReferencesList} match={match} />
         </Tabs.TabPane>
+        <Tabs.TabPane tab="Relações" key="3">
+          <Row type="flex" justify="end">
+            {drugData.sctidA && (<Button type="primary gtm-bt-add-relation" onClick={addRelationModal}>
+              <Icon type="plus" /> Adicionar
+            </Button>)}
+          </Row>
+          <Table
+            title={title}
+            columns={relationsColumns}
+            pagination={false}
+            loading={isFetching}
+            locale={{ emptyText }}
+            dataSource={!isFetching ? dsRelations : []}
+          />
+        </Tabs.TabPane>
       </Tabs>
 
       <DefaultModal
@@ -232,6 +297,30 @@ export default function References({
         }}
       >
         <Edit />
+      </DefaultModal>
+
+      <DefaultModal
+        centered
+        destroyOnClose
+        onOk={onSaveRelation}
+        visible={relationModalVisible}
+        onCancel={onCancelRelation}
+        confirmLoading={saveRelation.isSaving}
+        okText="Salvar"
+        okButtonProps={{
+          disabled:
+            saveRelation.isSaving ||
+            saveRelation.item.sctidB == null ||
+            saveRelation.item.type == null,
+          type: 'primary gtm-bt-save-relation'
+        }}
+        cancelText="Cancelar"
+        cancelButtonProps={{
+          disabled: saveRelation.isSaving,
+          type: 'nda gtm-bt-cancel-relation'
+        }}
+      >
+        <Relation />
       </DefaultModal>
     </>
   );

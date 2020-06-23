@@ -22,11 +22,11 @@ function Cell({ children, ...props }) {
 }
 
 const getExamValue = exam => {
-  if (!exam.value) {
+  if (!exam || !exam.value) {
     return '--';
   }
 
-  return exam.value + ' ' + (exam.unit? exam.unit : '');
+  return exam.value + ' ' + (exam.unit ? exam.unit : '');
 };
 
 const refText = text => {
@@ -42,8 +42,8 @@ const refText = text => {
 
 const ExamData = ({ exam }) => (
   <>
-    {exam.date && <div>Data: {moment(exam.date).format('DD/MM/YYYY hh:mm')}</div>}
-    {exam.ref && <div>Ref: {refText(exam.ref)}</div>}
+    {exam && exam.date && <div>Data: {moment(exam.date).format('DD/MM/YYYY hh:mm')}</div>}
+    {exam && exam.ref && <div>Ref: {refText(exam.ref)}</div>}
   </>
 );
 
@@ -67,13 +67,13 @@ const exams = [
     width: '15%'
   },
   {
-    value: 'creatinina',
+    value: 'cr',
     label: 'Creatinina',
     description: 'Creatinina',
     width: '20%'
   },
   {
-    value: 'pcr',
+    value: 'pcru',
     label: 'PCR',
     description: 'Proteína C Reativa',
     width: '20%'
@@ -238,7 +238,7 @@ export default function Patient({
                   <Statistic
                     title={exam.label}
                     value={getExamValue(prescription[exam.value])}
-                    valueStyle={prescription[exam.value].alert ? { color: '#cf1322' } : {}}
+                    valueStyle={!prescription[exam.value] || !prescription[exam.value].alert ? {} : { color: '#cf1322' }}
                   />
                 </Card.Grid>
               </Popover>

@@ -11,6 +11,7 @@ import segmentsReducer from './segments';
 import interventionReducer from './intervention';
 import departmentsReducer from './departments';
 import prescriptionsReducer from './prescriptions';
+import prescriptionDrugsReducer from './prescriptionDrugs';
 import reportsReducer from './reports';
 
 export default combineReducers({
@@ -25,5 +26,6 @@ export default combineReducers({
   departments: departmentsReducer,
   intervention: interventionReducer,
   prescriptions: prescriptionsReducer,
+  prescriptionDrugs: prescriptionDrugsReducer,
   reports: reportsReducer
 });

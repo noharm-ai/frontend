@@ -21,6 +21,8 @@ export const { Types, Creators } = createActions({
 
   prescriptionsUpdateIntervention: ['idPrescriptionDrug', 'source', 'intervention'],
 
+  prescriptionsUpdatePrescriptionDrug: ['idPrescriptionDrug', 'source', 'data'],
+
   prescriptionInterventionCheckStart: ['id'],
   prescriptionInterventionCheckError: ['error'],
   prescriptionInterventionCheckSuccess: ['success'],
@@ -224,12 +226,15 @@ const checkPrescriptionDrugSuccess = (state = INITIAL_STATE, { success }) => {
 
   switch (success.type) {
     case 'prescriptions':
+    case 'Medicamentos':
       updateStatus(prescriptions, success.id, success.newStatus);
       break;
     case 'solutions':
+    case 'Soluções':
       updateStatus(solutions, success.id, success.newStatus);
       break;
     case 'procedures':
+    case 'Procedimentos':
       updateStatus(procedures, success.id, success.newStatus);
       break;
     default:
@@ -313,6 +318,48 @@ const checkInterventionSuccess = (state = INITIAL_STATE, { success }) => {
       data: {
         ...state.single.data,
         interventions,
+        prescription: prescriptions,
+        solution: solutions,
+        procedures
+      }
+    }
+  };
+};
+
+const updatePrescriptionDrugData = (
+  state = INITIAL_STATE,
+  { idPrescriptionDrug, source, data }
+) => {
+  const prescriptions = [...state.single.data.prescription];
+  const solutions = [...state.single.data.solution];
+  const procedures = [...state.single.data.procedures];
+
+  const updateData = (list, idPrescriptionDrug, newData) => {
+    const index = list.findIndex(item => item.idPrescriptionDrug === idPrescriptionDrug);
+    list[index] = newData;
+  };
+
+  // TODO: rever este tipo
+  switch (source) {
+    case 'prescriptions':
+    case 'Medicamentos':
+      updateData(prescriptions, idPrescriptionDrug, data);
+      break;
+    case 'solutions':
+    case 'Soluções':
+      updateData(solutions, idPrescriptionDrug, data);
+      break;
+    default:
+      updateData(procedures, idPrescriptionDrug, data);
+      break;
+  }
+
+  return {
+    ...state,
+    single: {
+      ...state.single,
+      data: {
+        ...state.single.data,
         prescription: prescriptions,
         solution: solutions,
         procedures
@@ -483,6 +530,7 @@ const HANDLERS = {
   [Types.PRESCRIPTIONS_UPDATE_LIST_STATUS]: updateListStatus,
 
   [Types.PRESCRIPTIONS_UPDATE_INTERVENTION]: updateInterventionData,
+  [Types.PRESCRIPTIONS_UPDATE_PRESCRIPTION_DRUG]: updatePrescriptionDrugData,
 
   [Types.PRESCRIPTION_INTERVENTION_CHECK_START]: checkInterventionStart,
   [Types.PRESCRIPTION_INTERVENTION_CHECK_ERROR]: checkInterventionError,

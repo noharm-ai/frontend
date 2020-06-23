@@ -21,13 +21,24 @@ const {
   outliersFetchListError,
   outliersFetchListSuccess,
 
+  outliersFetchSubstanceListStart,
+  outliersFetchSubstanceListError,
+  outliersFetchSubstanceListSuccess,
+
   outliersSaveStart,
   outliersSaveSuccess,
   outliersSaveReset,
   outliersSaveError,
 
   outliersSetSelectedItem,
-  outliersUpdateSelectedItem
+  outliersUpdateSelectedItem,
+
+  outliersSelectRelation,
+  outliersUpdateRelation,
+  outliersSaveRelationStart,
+  outliersSaveRelationSuccess,
+  outliersSaveRelationReset,
+  outliersSaveRelationError
 } = OutliersCreators;
 
 const { drugsFetchListStart, drugsFetchListError, drugsFetchListSuccess } = DrugsCreators;
@@ -201,8 +212,10 @@ export const fetchReferencesListThunk = (idSegment, idDrug, dose, frequency) => 
     ...drug,
     ...data
   }));
+  const drugData = data;
+  delete drugData.outliers;
 
-  dispatch(outliersFetchListSuccess(list, params));
+  dispatch(outliersFetchListSuccess(list, drugData, params));
 };
 
 export const selectItemToSaveThunk = item => dispatch => {
@@ -211,4 +224,48 @@ export const selectItemToSaveThunk = item => dispatch => {
 
 export const updateSelectedItemToSaveOutlierThunk = item => dispatch => {
   dispatch(outliersUpdateSelectedItem(item));
+};
+
+export const selectOutlierRelationThunk = item => dispatch => {
+  dispatch(outliersSelectRelation(item));
+};
+
+export const updateOutlierRelationThunk = item => dispatch => {
+  dispatch(outliersUpdateRelation(item));
+};
+
+export const saveOutlierRelationThunk = (params = {}) => async (dispatch, getState) => {
+  dispatch(outliersSaveRelationStart());
+  const { access_token } = getState().auth.identify;
+  const { status, error } = await api.updateOutlierRelation(access_token, params);
+
+  if (status !== 200) {
+    dispatch(outliersSaveRelationError(error));
+    return;
+  }
+
+  dispatch(outliersSaveRelationSuccess(params));
+  dispatch(outliersSaveRelationReset());
+};
+
+export const fetchSubstanceListThunk = (params = {}) => async (dispatch, getState) => {
+  if (!isEmpty(getState().outliers.substance.list)) {
+    return;
+  }
+  dispatch(outliersFetchSubstanceListStart());
+
+  const { access_token } = getState().auth.identify;
+  const {
+    data: { data },
+    error
+  } = await api.getSubstances(access_token, params).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(outliersFetchSubstanceListError(error));
+    return;
+  }
+
+  const list = data;
+
+  dispatch(outliersFetchSubstanceListSuccess(list));
 };
