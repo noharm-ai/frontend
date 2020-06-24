@@ -20,7 +20,8 @@ const saveMessage = {
   message: 'Uhu! Dados do paciente salvo com sucesso! :)'
 };
 const validationSchema = Yup.object().shape({
-  weight: Yup.number()
+  weight: Yup.number(),
+  height: Yup.number()
 });
 
 export default function Patient({
@@ -30,6 +31,7 @@ export default function Patient({
   idPrescription,
   admissionNumber,
   weight,
+  height,
   ...props
 }) {
   const { isSaving, success, error } = saveStatus;
@@ -37,7 +39,8 @@ export default function Patient({
   const initialValues = {
     idPrescription,
     admissionNumber,
-    weight
+    weight,
+    height
   };
 
   useEffect(() => {
@@ -92,6 +95,7 @@ export default function Patient({
 Patient.defaultProps = {
   afterSavePatient: () => {},
   initialValues: {
-    weight: ''
+    weight: '',
+    height: ''
   }
 };
