@@ -49,7 +49,8 @@ export default function Drug({
     elderly,
     division,
     useWeight,
-    outliers
+    outliers,
+    amount
   } = outlier;
 
   const initialValues = {
@@ -66,7 +67,8 @@ export default function Drug({
     liver,
     idMeasureUnit,
     idSegment,
-    unit: outliers ? outliers[0] ? outliers[0].unit : '' : ''
+    amount,
+    unit: outliers ? (outliers[0] ? outliers[0].unit : '') : ''
   };
 
   useEffect(() => {

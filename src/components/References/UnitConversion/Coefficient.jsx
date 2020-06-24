@@ -5,7 +5,7 @@ import Button from '@components/Button';
 import Icon from '@components/Icon';
 import { InputNumber } from '@components/Inputs';
 
-export default function Escore({ idDrug, idMeasureUnit, fator, saveUnitCoefficient }) {
+export default function Escore({ idDrug, idMeasureUnit, fator, saveUnitCoefficient, idSegment }) {
   const [edit, setEdit] = useState(false);
   const [coefficient, setCoefficient] = useState(fator || 0);
 
@@ -17,7 +17,8 @@ export default function Escore({ idDrug, idMeasureUnit, fator, saveUnitCoefficie
   const handleSave = () => {
     setEdit(false);
     saveUnitCoefficient(idDrug, idMeasureUnit, {
-      fator: coefficient
+      fator: coefficient,
+      idSegment
     });
   };
 
