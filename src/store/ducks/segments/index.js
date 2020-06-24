@@ -7,7 +7,7 @@ export const { Types, Creators } = createActions({
 
   segmentsFetchSingleStart: [''],
   segmentsFetchSingleError: ['error'],
-  segmentsFetchSingleSuccess: ['content'],
+  segmentsFetchSingleSuccess: ['content', 'firstFilter'],
   segmentsFetchSingleReset: [''],
 
   segmentsSaveSingleStart: [''],
@@ -20,6 +20,9 @@ const INITIAL_STATE = {
   error: null,
   isFetching: true,
   list: [],
+  firstFilter: {
+    idSegment: undefined
+  },
   save: {
     isSaving: false,
     success: false,
@@ -67,8 +70,9 @@ const fetchSingleError = (state = INITIAL_STATE, { error }) => ({
   }
 });
 
-const fetchSingleSuccess = (state = INITIAL_STATE, { content }) => ({
+const fetchSingleSuccess = (state = INITIAL_STATE, { content, firstFilter }) => ({
   ...state,
+  firstFilter,
   single: {
     ...state.single,
     content,

@@ -21,6 +21,10 @@ export const Wrapper = styled(AntMenu)`
       text-align: center;
     }
   }
+
+  .ant-menu-submenu-selected {
+    color: #70bdc3 !important;
+  }
 `;
 
 Wrapper.Item = styled(AntMenu.Item)`
@@ -68,5 +72,27 @@ Wrapper.Item = styled(AntMenu.Item)`
     &:hover {
       color: inherit;
     }
+  }
+`;
+
+Wrapper.SubMenu = styled(AntMenu.SubMenu)`
+  color: ${get('colors.commonLighter')};
+  font-weight: ${get('weight.light')};
+
+  .ant-menu {
+    background-color: transparent !important;
+  }
+
+  .ant-menu-submenu-active,
+  .ant-menu-submenu-title:hover {
+    color: #70bdc3;
+  }
+
+  .ant-menu-submenu-title:hover .ant-menu-submenu-arrow::before {
+    background: linear-gradient(to right, #70bdc3, #70bdc3) !important;
+  }
+
+  .ant-menu-submenu-title:hover .ant-menu-submenu-arrow::after {
+    background: linear-gradient(to right, #70bdc3, #70bdc3) !important;
   }
 `;

@@ -27,5 +27,19 @@ export default [
     text: 'Relatórios',
     icon: 'report',
     id: 'gtm-lnk-report'
+  },
+  {
+    key: 'config',
+    text: 'Configurações',
+    icon: 'setting',
+    id: 'gtm-lnk-config',
+    children: [
+      {
+        key: '/segmentos',
+        text: 'Segmentos',
+        icon: 'medicine-box',
+        id: 'gtm-lnk-segmentos'
+      }
+    ]
   }
 ];

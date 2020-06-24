@@ -11,8 +11,6 @@ import Logout from '@pages/Logout';
 import ScreeningList from '@pages/ScreeningList';
 import Screening from '@pages/Screening';
 import Segments from '@pages/Segments';
-import NewSegment from '@pages/Segments/NewSegment';
-import EditSegment from '@pages/Segments/EditSegment';
 import References from '@pages/References';
 import Reports from '@pages/Reports';
 import ViewReport from '@pages/Reports/ViewReport';
@@ -55,16 +53,9 @@ const routes = [
   },
   {
     exact: true,
-    path: '/segmentos/novo',
+    path: '/segmentos/:idSegment/:slug',
     component: withAuth({
-      component: NewSegment
-    })
-  },
-  {
-    exact: true,
-    path: '/segmentos/editar/:slug',
-    component: withAuth({
-      component: EditSegment
+      component: Segments
     })
   },
   {

@@ -51,7 +51,7 @@ export const fetchSegmentByIdThunk = id => async (dispatch, getState) => {
 
   const single = transformSegment(data.data);
 
-  dispatch(segmentsFetchSingleSuccess(single));
+  dispatch(segmentsFetchSingleSuccess(single, { idSegment: parseInt(id, 10) }));
 };
 
 export const resetSingleSegmentThunk = () => async (dispatch, getState) => {
