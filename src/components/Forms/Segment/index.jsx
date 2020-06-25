@@ -32,15 +32,18 @@ export default function Segment({
   saveSegment,
   fetchDepartments,
   afterSaveSegment,
-  segmentDepartments
+  segmentDepartments,
+  firstFilter
 }) {
   const { isSaving, success, error } = saveStatus;
   const departmentsList = [...departments.list, ...segmentDepartments];
 
   // fetch departments.
   useEffect(() => {
-    fetchDepartments();
-  }, [fetchDepartments]);
+    if (firstFilter.idSegment) {
+      fetchDepartments();
+    }
+  }, [fetchDepartments, firstFilter.idSegment]);
 
   useEffect(() => {
     if (success) {

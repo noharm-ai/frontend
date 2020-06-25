@@ -12,6 +12,7 @@ const mapStateToProps = ({ departments, segments }) => ({
     list: departments.list,
     isFetching: departments.isFetching
   },
+  firstFilter: segments.firstFilter,
   segmentDepartments: segments.single.content.departments || [],
   initialValues: {
     id: segments.single.content.id,
