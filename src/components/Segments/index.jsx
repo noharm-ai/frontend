@@ -115,7 +115,7 @@ function Segments({
         )}
 
         <Tabs.TabPane tab="Exames" key="2">
-          <Row type="flex" justify="end">
+          <Row type="flex" justify="end" style={{ marginBottom: '20px' }}>
             <Button type="primary gtm-bt-add-exam" onClick={addExamModal}>
               <Icon type="plus" /> Adicionar
             </Button>

@@ -81,7 +81,7 @@ export default function Base({ examTypes }) {
       <Box hasError={errors.ref}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Ref.:</Tooltip>
+            <Tooltip title="">Referência:</Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>
