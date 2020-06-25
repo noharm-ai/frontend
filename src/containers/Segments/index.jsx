@@ -16,7 +16,8 @@ const mapStateToProps = ({ segments, outliers, user }) => ({
     list: segments.list,
     isFetching: segments.isFetching,
     firstFilter: segments.firstFilter,
-    single: segments.single
+    single: segments.single,
+    examTypes: segments.examTypes
   },
   outliers: {
     generate: {

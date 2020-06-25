@@ -10,10 +10,13 @@ import Tooltip from '@components/Tooltip';
 
 import { Box } from '../Form.style';
 
-export default function Base({ examTypes }) {
+export default function Base({ examTypes, examList }) {
   const { values, setFieldValue, errors } = useFormikContext();
   const { type, name, initials, min, max, ref, active } = values;
   const layout = { label: 8, input: 16 };
+  const availableExamTypes = examTypes.list.filter(
+    type => examList.findIndex(e => e.type === type) === -1
+  );
 
   return (
     <>
@@ -33,7 +36,7 @@ export default function Base({ examTypes }) {
             loading={examTypes.isFetching}
             disabled={!values.new}
           >
-            {examTypes.list.map(item => (
+            {availableExamTypes.map(item => (
               <Select.Option key={item} value={item}>
                 {item}
               </Select.Option>

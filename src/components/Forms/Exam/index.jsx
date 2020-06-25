@@ -28,7 +28,15 @@ const validationSchema = Yup.object().shape({
   max: Yup.number().required()
 });
 
-export default function Exam({ saveStatus, save, afterSave, fetchExamTypes, examTypes, ...props }) {
+export default function Exam({
+  saveStatus,
+  save,
+  afterSave,
+  fetchExamTypes,
+  examTypes,
+  examList,
+  ...props
+}) {
   const { isSaving, success, error, item } = saveStatus;
 
   const initialValues = {
@@ -80,7 +88,7 @@ export default function Exam({ saveStatus, save, afterSave, fetchExamTypes, exam
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base examTypes={examTypes} />
+                <Base examTypes={examTypes} examList={examList} />
               </Row>
             </FormContainer>
           </form>

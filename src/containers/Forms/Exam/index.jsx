@@ -7,7 +7,8 @@ import FormExam from '@components/Forms/Exam';
 
 const mapStateToProps = ({ segments }) => ({
   saveStatus: segments.saveExam,
-  examTypes: segments.examTypes
+  examTypes: segments.examTypes,
+  examList: segments.single.content.exams
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

@@ -8,6 +8,8 @@ import Button from '@components/Button';
 import Table from '@components/Table';
 import Empty from '@components/Empty';
 import Icon from '@components/Icon';
+import Tooltip from '@components/Tooltip';
+
 import FormSegment from '@containers/Forms/Segment';
 import FormExamModal from '@containers/Forms/Exam';
 
@@ -32,7 +34,12 @@ function Segments({
 }) {
   const [examModalVisible, setExamModalVisibility] = useState(false);
   const { generate } = outliers;
-  const { single: currentSegment } = segments;
+  const { single: currentSegment, examTypes } = segments;
+  const availableExamTypes = currentSegment.content.exams
+    ? examTypes.list.filter(
+        type => currentSegment.content.exams.findIndex(e => e.type === type) === -1
+      )
+    : [];
 
   useEffect(() => {
     fetchSegmentsList();
@@ -114,9 +121,17 @@ function Segments({
 
         <Tabs.TabPane tab="Exames" key="2">
           <Row type="flex" justify="end" style={{ marginBottom: '20px' }}>
-            <Button type="primary gtm-bt-add-exam" onClick={addExamModal}>
-              <Icon type="plus" /> Adicionar
-            </Button>
+            <Tooltip
+              title={isEmpty(availableExamTypes) ? 'Não há exames disponíves para cadastro' : ''}
+            >
+              <Button
+                type="primary gtm-bt-add-exam"
+                onClick={addExamModal}
+                disabled={isEmpty(availableExamTypes)}
+              >
+                <Icon type="plus" /> Adicionar
+              </Button>
+            </Tooltip>
           </Row>
           <Table
             columns={examColumns}
