@@ -45,7 +45,6 @@ export default function Segment({
   useEffect(() => {
     if (success) {
       notification.success(saveMessage);
-      fetchDepartments();
       afterSaveSegment();
     }
 

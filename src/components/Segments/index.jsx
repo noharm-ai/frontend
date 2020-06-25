@@ -78,9 +78,7 @@ function Segments({
     idSegment: segments.firstFilter.idSegment
   });
 
-  const afterSaveSegment = () => {
-    console.log('after save segment');
-  };
+  const afterSaveSegment = () => {};
 
   const generateOutlierClick = () =>
     generateOutlier({
