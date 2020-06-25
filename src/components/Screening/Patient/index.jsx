@@ -47,75 +47,6 @@ const ExamData = ({ exam }) => (
   </>
 );
 
-const exams = [
-  {
-    value: 'mdrd',
-    label: 'MDRD',
-    description: 'Modification of Diet in Renal Disease',
-    width: '15%'
-  },
-  {
-    value: 'cg',
-    label: 'CG',
-    description: 'Cockcroft-Gault',
-    width: '15%'
-  },
-  {
-    value: 'ckd',
-    label: 'CKD',
-    description: 'Chronic Kidney Disease Epidemiology',
-    width: '15%'
-  },
-  {
-    value: 'cr',
-    label: 'Creatinina',
-    description: 'Creatinina',
-    width: '20%'
-  },
-  {
-    value: 'pcru',
-    label: 'PCR',
-    description: 'Proteína C Reativa',
-    width: '20%'
-  },
-  {
-    value: 'rni',
-    label: 'RNI',
-    description: 'Razão de Normatização Internacional',
-    width: '15%'
-  },
-  {
-    value: 'tgo',
-    label: 'TGO',
-    description: 'Transaminase Glutâmico-Pxalacética',
-    width: '20%'
-  },
-  {
-    value: 'tgp',
-    label: 'TGP',
-    description: 'Transaminase Glutâmico-Pirúvica',
-    width: '20%'
-  },
-  {
-    value: 'k',
-    label: 'K',
-    description: 'Potássio',
-    width: '20%'
-  },
-  {
-    value: 'na',
-    label: 'Na',
-    description: 'Sódio',
-    width: '20%'
-  },
-  {
-    value: 'mg',
-    label: 'Magnésio',
-    description: 'Magnésio',
-    width: '20%'
-  }
-];
-
 export default function Patient({
   admissionNumber,
   department,
@@ -130,6 +61,7 @@ export default function Patient({
   fetchScreening,
   record,
   height,
+  exams,
   ...prescription
 }) {
   const [visible, setVisible] = useState(false);
@@ -234,19 +166,15 @@ export default function Patient({
           <Card title="Exames">
             {exams.map(exam => (
               <Popover
-                content={<ExamData exam={prescription[exam.value]} />}
-                title={exam.description}
-                key={exam.value}
+                content={<ExamData exam={exam.value} />}
+                title={exam.value.name}
+                key={exam.key}
               >
-                <Card.Grid hoverable={true} style={gridStyle(exam.width)}>
+                <Card.Grid hoverable={true} style={gridStyle('25%')}>
                   <Statistic
-                    title={exam.label}
-                    value={getExamValue(prescription[exam.value])}
-                    valueStyle={
-                      !prescription[exam.value] || !prescription[exam.value].alert
-                        ? {}
-                        : { color: '#cf1322' }
-                    }
+                    title={exam.value.initials}
+                    value={getExamValue(exam.value)}
+                    valueStyle={!exam.value.value || !exam.value.alert ? {} : { color: '#cf1322' }}
                   />
                 </Card.Grid>
               </Popover>
