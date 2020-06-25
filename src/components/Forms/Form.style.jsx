@@ -22,6 +22,7 @@ export const FormContainer = styled.div`
 export const Box = styled.div`
   display: flex;
   align-items: center;
+  width: 100%;
 
   label.fixed {
     width: 140px;

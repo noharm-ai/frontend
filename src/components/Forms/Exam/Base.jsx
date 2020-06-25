@@ -13,14 +13,17 @@ import { Box } from '../Form.style';
 export default function Base({ examTypes }) {
   const { values, setFieldValue, errors } = useFormikContext();
   const { type, name, initials, min, max, ref, active } = values;
+  const layout = { label: 8, input: 16 };
 
   return (
     <>
-      <Col xs={24}>
-        <Box hasError={errors.type}>
-          <Heading as="label" size="14px">
+      <Box hasError={errors.type}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
             <Tooltip title="">Exame:</Tooltip>
           </Heading>
+        </Col>
+        <Col xs={layout.input}>
           <Select
             optionFilterProp="children"
             style={{ width: '100%', marginLeft: 10 }}
@@ -36,13 +39,16 @@ export default function Base({ examTypes }) {
               </Select.Option>
             ))}
           </Select>
-        </Box>
-      </Col>
-      <Col xs={24}>
-        <Box hasError={errors.name}>
-          <Heading as="label" size="14px">
+        </Col>
+      </Box>
+
+      <Box hasError={errors.name}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
             <Tooltip title="">Nome:</Tooltip>
           </Heading>
+        </Col>
+        <Col xs={layout.input}>
           <Input
             style={{
               marginLeft: 10
@@ -51,13 +57,16 @@ export default function Base({ examTypes }) {
             onChange={({ target }) => setFieldValue('name', target.value)}
             maxLength={250}
           />
-        </Box>
-      </Col>
-      <Col xs={24}>
-        <Box hasError={errors.initials}>
-          <Heading as="label" size="14px">
+        </Col>
+      </Box>
+
+      <Box hasError={errors.initials}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
             <Tooltip title="">Iniciais:</Tooltip>
           </Heading>
+        </Col>
+        <Col xs={layout.input}>
           <Input
             style={{
               marginLeft: 10
@@ -66,13 +75,16 @@ export default function Base({ examTypes }) {
             onChange={({ target }) => setFieldValue('initials', target.value)}
             maxLength={50}
           />
-        </Box>
-      </Col>
-      <Col xs={24}>
-        <Box hasError={errors.ref}>
-          <Heading as="label" size="14px">
+        </Col>
+      </Box>
+
+      <Box hasError={errors.ref}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
             <Tooltip title="">Ref.:</Tooltip>
           </Heading>
+        </Col>
+        <Col xs={layout.input}>
           <Input
             style={{
               marginLeft: 10
@@ -81,13 +93,16 @@ export default function Base({ examTypes }) {
             onChange={({ target }) => setFieldValue('ref', target.value)}
             maxLength={250}
           />
-        </Box>
-      </Col>
-      <Col xs={24}>
-        <Box hasError={errors.min}>
-          <Heading as="label" size="14px">
+        </Col>
+      </Box>
+
+      <Box hasError={errors.min}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
             <Tooltip title="">Valor mínimo:</Tooltip>
           </Heading>
+        </Col>
+        <Col xs={layout.input}>
           <InputNumber
             style={{
               width: 120,
@@ -99,13 +114,16 @@ export default function Base({ examTypes }) {
             value={min}
             onChange={value => setFieldValue('min', value)}
           />
-        </Box>
-      </Col>
-      <Col xs={24}>
-        <Box hasError={errors.max}>
-          <Heading as="label" size="14px">
+        </Col>
+      </Box>
+
+      <Box hasError={errors.max}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
             <Tooltip title="">Valor máximo:</Tooltip>
           </Heading>
+        </Col>
+        <Col xs={layout.input}>
           <InputNumber
             style={{
               width: 120,
@@ -117,14 +135,16 @@ export default function Base({ examTypes }) {
             value={max}
             onChange={value => setFieldValue('max', value)}
           />
-        </Box>
-      </Col>
+        </Col>
+      </Box>
 
-      <Col xs={24}>
-        <Box hasError={errors.active}>
-          <Heading as="label" size="14px">
+      <Box hasError={errors.active}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
             <Tooltip title="">Ativo:</Tooltip>
           </Heading>
+        </Col>
+        <Col xs={layout.input}>
           <Switch
             onChange={active => setFieldValue('active', active)}
             checked={active}
@@ -133,8 +153,8 @@ export default function Base({ examTypes }) {
               marginRight: 5
             }}
           />
-        </Box>
-      </Col>
+        </Col>
+      </Box>
     </>
   );
 }

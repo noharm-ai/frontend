@@ -9,6 +9,7 @@ const Heading = styled.h1`
   font-size: ${({ size }) => size || '24px'};
   font-weight: ${get('weight.semiBold')};
   margin: ${({ margin }) => margin || 0};
+  text-align: ${({ textAlign }) => textAlign || 'left'};
 
   @media (max-width: 768px) {
     font-size: 18px;
