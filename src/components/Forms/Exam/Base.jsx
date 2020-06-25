@@ -141,7 +141,7 @@ export default function Base({ examTypes, examList }) {
         </Col>
       </Box>
 
-      <Box hasError={errors.max}>
+      <Box hasError={errors.order}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
             <Tooltip title="Ordem em que o exame vai aparecer no cabeçalho da prescrição">
