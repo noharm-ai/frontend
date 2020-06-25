@@ -181,7 +181,7 @@ export default function Base({ units, security }) {
           </Box>
         </Col>
       )}
-      <Col xs={24}>
+      {/* <Col xs={24}>
         <Box>
           <Heading as="label" size="14px" className="fixed">
             <Tooltip title="">Concentração:</Tooltip>
@@ -218,7 +218,7 @@ export default function Base({ units, security }) {
             ))}
           </Select>
         </Box>
-      </Col>
+      </Col> */}
     </>
   );
 }
