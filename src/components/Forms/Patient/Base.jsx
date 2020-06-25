@@ -50,7 +50,7 @@ export default function Base() {
             value={height}
             onChange={value => setFieldValue('height', value)}
           />{' '}
-          m
+          cm
         </Box>
       </Col>
     </>

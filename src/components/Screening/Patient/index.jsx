@@ -129,6 +129,7 @@ export default function Patient({
   bed,
   fetchScreening,
   record,
+  height,
   ...prescription
 }) {
   const [visible, setVisible] = useState(false);
@@ -202,10 +203,13 @@ export default function Patient({
             <strong>Peso:</strong> {weight} Kg ({formatWeightDate(weightDate)})
           </Cell>
           <Cell>
-            <strong>Cor da pele:</strong> {skinColor}
+            <strong>Altura:</strong> {height ? `${height} cm` : 'Não disponível'}
           </Cell>
           {seeMore && (
             <>
+              <Cell>
+                <strong>Cor da pele:</strong> {skinColor}
+              </Cell>
               <Cell>
                 <strong>Segmento:</strong> {segmentName}
               </Cell>
@@ -238,7 +242,11 @@ export default function Patient({
                   <Statistic
                     title={exam.label}
                     value={getExamValue(prescription[exam.value])}
-                    valueStyle={!prescription[exam.value] || !prescription[exam.value].alert ? {} : { color: '#cf1322' }}
+                    valueStyle={
+                      !prescription[exam.value] || !prescription[exam.value].alert
+                        ? {}
+                        : { color: '#cf1322' }
+                    }
                   />
                 </Card.Grid>
               </Popover>
