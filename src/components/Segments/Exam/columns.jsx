@@ -11,6 +11,10 @@ export default [
     dataIndex: 'type'
   },
   {
+    title: 'Ordem',
+    dataIndex: 'header'
+  },
+  {
     title: 'Nome',
     dataIndex: 'name',
     width: 350

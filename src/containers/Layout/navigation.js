@@ -11,17 +11,6 @@ export default [
     icon: 'warning',
     id: 'gtm-lnk-intervencoes'
   },
-  /*{
-    key: '/segmentos',
-    text: 'Segmentos',
-    icon: 'segments'
-  },*/
-  {
-    key: '/tabela-referencia',
-    text: 'Tabela de Referências',
-    icon: 'table',
-    id: 'gtm-lnk-tabela-referencias'
-  },
   {
     key: '/relatorios',
     text: 'Relatórios',
@@ -34,6 +23,12 @@ export default [
     icon: 'setting',
     id: 'gtm-lnk-config',
     children: [
+      {
+        key: '/tabela-referencia',
+        text: 'Tabela de Referências',
+        icon: 'table',
+        id: 'gtm-lnk-tabela-referencias'
+      },
       {
         key: '/segmentos',
         text: 'Segmentos',

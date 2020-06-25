@@ -25,7 +25,8 @@ const validationSchema = Yup.object().shape({
   initials: Yup.string().required(),
   ref: Yup.string().required(),
   min: Yup.number().required(),
-  max: Yup.number().required()
+  max: Yup.number().required(),
+  order: Yup.number().required(),
 });
 
 export default function Exam({

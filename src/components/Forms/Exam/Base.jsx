@@ -12,7 +12,7 @@ import { Box } from '../Form.style';
 
 export default function Base({ examTypes, examList }) {
   const { values, setFieldValue, errors } = useFormikContext();
-  const { type, name, initials, min, max, ref, active } = values;
+  const { type, name, initials, min, max, ref, active, order } = values;
   const layout = { label: 8, input: 16 };
   const availableExamTypes = examTypes.list.filter(
     type => examList.findIndex(e => e.type === type) === -1
@@ -95,6 +95,27 @@ export default function Base({ examTypes, examList }) {
             value={ref}
             onChange={({ target }) => setFieldValue('ref', target.value)}
             maxLength={250}
+          />
+        </Col>
+      </Box>
+
+      <Box hasError={errors.order}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
+            <Tooltip title="">Ordem:</Tooltip>
+          </Heading>
+        </Col>
+        <Col xs={layout.input}>
+          <InputNumber
+            style={{
+              width: 120,
+              marginLeft: 10,
+              marginRight: 5
+            }}
+            min={0}
+            max={100}
+            value={order}
+            onChange={value => setFieldValue('order', value)}
           />
         </Col>
       </Box>
