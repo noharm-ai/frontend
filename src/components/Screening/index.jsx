@@ -234,7 +234,7 @@ export default function Screening({
 
   const loadExams = () => {
     if (isEmpty(exams.list)) {
-      fetchExams(content.admissionNumber);
+      fetchExams(content.admissionNumber, { idSegment: content.idSegment });
     }
   };
 
