@@ -12,7 +12,7 @@ export default [
   },
   {
     title: 'Ordem',
-    dataIndex: 'header'
+    dataIndex: 'order'
   },
   {
     title: 'Nome',
