@@ -18,7 +18,18 @@ const {
   segmentsSaveSingleStart,
   segmentsSaveSingleReset,
   segmentsSaveSingleSuccess,
-  segmentsSaveSingleError
+  segmentsSaveSingleError,
+
+  segmentsSelectExam,
+  segmentsUpdateExam,
+  segmentsSaveExamStart,
+  segmentsSaveExamSuccess,
+  segmentsSaveExamReset,
+  segmentsSaveExamError,
+
+  segmentsFetchExamTypesListStart,
+  segmentsFetchExamTypesListError,
+  segmentsFetchExamTypesListSuccess
 } = SegmentsCreators;
 
 export const fetchSegmentsListThunk = (params = {}) => async (dispatch, getState) => {
@@ -73,4 +84,48 @@ export const saveSegmentThunk = (params = {}) => async (dispatch, getState) => {
 
   dispatch(segmentsSaveSingleSuccess());
   dispatch(segmentsSaveSingleReset());
+};
+
+export const selectSegmentExamThunk = item => dispatch => {
+  dispatch(segmentsSelectExam(item));
+};
+
+export const updateSegmentExamThunk = item => dispatch => {
+  dispatch(segmentsUpdateExam(item));
+};
+
+export const saveSegmentExamThunk = (params = {}) => async (dispatch, getState) => {
+  dispatch(segmentsSaveExamStart());
+  const { access_token } = getState().auth.identify;
+  const { status, error } = await api.updateSegmentExam(access_token, params);
+
+  if (status !== 200) {
+    dispatch(segmentsSaveExamError(error));
+    return;
+  }
+
+  dispatch(segmentsSaveExamSuccess(params));
+  dispatch(segmentsSaveExamReset());
+};
+
+export const fetchExamTypesListThunk = (params = {}) => async (dispatch, getState) => {
+  if (!isEmpty(getState().segments.examTypes.list)) {
+    return;
+  }
+  dispatch(segmentsFetchExamTypesListStart());
+
+  const { access_token } = getState().auth.identify;
+  const {
+    data: { data },
+    error
+  } = await api.getExamTypes(access_token, params).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(segmentsFetchExamTypesListError(error));
+    return;
+  }
+
+  const list = data;
+
+  dispatch(segmentsFetchExamTypesListSuccess(list.types));
 };

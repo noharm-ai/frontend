@@ -13,7 +13,18 @@ export const { Types, Creators } = createActions({
   segmentsSaveSingleStart: [''],
   segmentsSaveSingleSuccess: [''],
   segmentsSaveSingleReset: [''],
-  segmentsSaveSingleError: ['error']
+  segmentsSaveSingleError: ['error'],
+
+  segmentsSelectExam: ['item'],
+  segmentsUpdateExam: ['item'],
+  segmentsSaveExamStart: [''],
+  segmentsSaveExamSuccess: ['item'],
+  segmentsSaveExamReset: [''],
+  segmentsSaveExamError: ['error'],
+
+  segmentsFetchExamTypesListStart: [''],
+  segmentsFetchExamTypesListError: ['error'],
+  segmentsFetchExamTypesListSuccess: ['list']
 });
 
 const INITIAL_STATE = {
@@ -32,6 +43,17 @@ const INITIAL_STATE = {
     error: null,
     isFetching: false,
     content: {}
+  },
+  saveExam: {
+    isSaving: false,
+    success: false,
+    error: null,
+    item: {}
+  },
+  examTypes: {
+    error: null,
+    isFetching: true,
+    list: []
   }
 };
 
@@ -122,6 +144,104 @@ const saveSingleSuccess = (state = INITIAL_STATE) => ({
   }
 });
 
+const selectExam = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  saveExam: {
+    ...state.saveExam,
+    item
+  }
+});
+
+const updateExam = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  saveExam: {
+    ...state.saveExam,
+    item: {
+      ...state.saveExam.item,
+      ...item
+    }
+  }
+});
+
+const saveExamStart = (state = INITIAL_STATE) => ({
+  ...state,
+  saveExam: {
+    ...state.saveExam,
+    isSaving: true
+  }
+});
+
+const saveExamError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  saveExam: {
+    ...state.saveExam,
+    error,
+    isSaving: false
+  }
+});
+
+const saveExamReset = (state = INITIAL_STATE) => ({
+  ...state,
+  saveExam: {
+    ...INITIAL_STATE.saveExam
+  }
+});
+
+const fetchExamTypesListStart = (state = INITIAL_STATE) => ({
+  ...state,
+  examTypes: {
+    ...state.examTypes,
+    isFetching: true
+  }
+});
+
+const fetchExamTypesListError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  examTypes: {
+    ...state.examTypes,
+    isFetching: false,
+    error
+  }
+});
+
+const fetchExamTypesListSuccess = (state = INITIAL_STATE, { list }) => ({
+  ...state,
+  examTypes: {
+    ...state.examTypes,
+    isFetching: false,
+    error: null,
+    list
+  }
+});
+
+const saveExamSuccess = (state = INITIAL_STATE, { item }) => {
+  const exams = [...state.single.content.exams];
+  const index = exams.findIndex(e => item.type === e.type);
+
+  if (index !== -1) {
+    exams[index] = { ...exams[index], ...item };
+  } else {
+    exams.push({ ...item, new: false });
+  }
+
+  return {
+    ...state,
+    single: {
+      ...state.single,
+      content: {
+        ...state.single.content,
+        exams
+      }
+    },
+    saveExam: {
+      ...state.saveExam,
+      error: null,
+      success: true,
+      isSaving: false
+    }
+  };
+};
+
 const HANDLERS = {
   [Types.SEGMENTS_FETCH_LIST_START]: fetchListStart,
   [Types.SEGMENTS_FETCH_LIST_ERROR]: fetchListError,
@@ -135,7 +255,19 @@ const HANDLERS = {
   [Types.SEGMENTS_SAVE_SINGLE_START]: saveSingleStart,
   [Types.SEGMENTS_SAVE_SINGLE_ERROR]: saveSingleError,
   [Types.SEGMENTS_SAVE_SINGLE_RESET]: saveSingleReset,
-  [Types.SEGMENTS_SAVE_SINGLE_SUCCESS]: saveSingleSuccess
+  [Types.SEGMENTS_SAVE_SINGLE_SUCCESS]: saveSingleSuccess,
+
+  [Types.SEGMENTS_SAVE_EXAM_START]: saveExamStart,
+  [Types.SEGMENTS_SAVE_EXAM_ERROR]: saveExamError,
+  [Types.SEGMENTS_SAVE_EXAM_RESET]: saveExamReset,
+  [Types.SEGMENTS_SAVE_EXAM_SUCCESS]: saveExamSuccess,
+
+  [Types.SEGMENTS_SELECT_EXAM]: selectExam,
+  [Types.SEGMENTS_UPDATE_EXAM]: updateExam,
+
+  [Types.SEGMENTS_FETCH_EXAM_TYPES_LIST_START]: fetchExamTypesListStart,
+  [Types.SEGMENTS_FETCH_EXAM_TYPES_LIST_ERROR]: fetchExamTypesListError,
+  [Types.SEGMENTS_FETCH_EXAM_TYPES_LIST_SUCCESS]: fetchExamTypesListSuccess
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

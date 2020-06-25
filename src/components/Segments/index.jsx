@@ -1,13 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import isEmpty from 'lodash.isempty';
 import { Row, Col } from 'antd';
 
+import { toDataSource } from '@utils';
 import Tabs from '@components/Tabs';
 import Button from '@components/Button';
+import Table from '@components/Table';
+import Empty from '@components/Empty';
+import Icon from '@components/Icon';
 import FormSegment from '@containers/Forms/Segment';
+import FormExamModal from '@containers/Forms/Exam';
 
 import feedback from './feedback';
 import Filter from './Filter';
+import examColumns from './Exam/columns';
+
+const emptyText = (
+  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Nenhum dado encontrado." />
+);
 
 function Segments({
   segments,
@@ -17,9 +27,12 @@ function Segments({
   resetGenerate,
   fetchSegmentsList,
   fetchSegmentById,
-  security
+  security,
+  selectExam
 }) {
+  const [examModalVisible, setExamModalVisibility] = useState(false);
   const { generate } = outliers;
+  const { single: currentSegment } = segments;
 
   useEffect(() => {
     fetchSegmentsList();
@@ -41,6 +54,29 @@ function Segments({
       resetGenerate();
     }
   }, [generate, resetGenerate]);
+
+  const onShowExamModal = data => {
+    selectExam(data);
+    setExamModalVisibility(true);
+  };
+
+  const addExamModal = () => {
+    selectExam({
+      new: true,
+      idSegment: segments.firstFilter.idSegment,
+      active: true
+    });
+    setExamModalVisibility(true);
+  };
+
+  const onCancelExamModal = useCallback(() => {
+    setExamModalVisibility(false);
+  }, [setExamModalVisibility]);
+
+  const dsExams = toDataSource(currentSegment.content.exams, null, {
+    showModal: onShowExamModal,
+    idSegment: segments.firstFilter.idSegment
+  });
 
   const afterSaveSegment = () => {
     console.log('after save segment');
@@ -79,9 +115,28 @@ function Segments({
         )}
 
         <Tabs.TabPane tab="Exames" key="2">
-          Aqui vao os exames! :)
+          <Row type="flex" justify="end">
+            <Button type="primary gtm-bt-add-exam" onClick={addExamModal}>
+              <Icon type="plus" /> Adicionar
+            </Button>
+          </Row>
+          <Table
+            columns={examColumns}
+            pagination={false}
+            loading={currentSegment.isFetching}
+            locale={{ emptyText }}
+            dataSource={!currentSegment.isFetching ? dsExams : []}
+          />
         </Tabs.TabPane>
       </Tabs>
+      <FormExamModal
+        visible={examModalVisible}
+        onCancel={onCancelExamModal}
+        okText="Salvar"
+        okType="primary gtm-bt-save-exam"
+        cancelText="Cancelar"
+        afterSave={onCancelExamModal}
+      />
     </>
   );
 }

@@ -3,7 +3,11 @@ import { bindActionCreators } from 'redux';
 import security from '@services/security';
 
 import { generateOutlierThunk, resetGenerateThunk } from '@store/ducks/outliers/thunk';
-import { fetchSegmentsListThunk, fetchSegmentByIdThunk } from '@store/ducks/segments/thunk';
+import {
+  fetchSegmentsListThunk,
+  fetchSegmentByIdThunk,
+  selectSegmentExamThunk
+} from '@store/ducks/segments/thunk';
 import Segments from '@components/Segments';
 
 const mapStateToProps = ({ segments, outliers, user }) => ({
@@ -27,7 +31,8 @@ const mapDispatchToProps = dispatch =>
       resetGenerate: resetGenerateThunk,
       generateOutlier: generateOutlierThunk,
       fetchSegmentsList: fetchSegmentsListThunk,
-      fetchSegmentById: fetchSegmentByIdThunk
+      fetchSegmentById: fetchSegmentByIdThunk,
+      selectExam: selectSegmentExamThunk
     },
     dispatch
   );
