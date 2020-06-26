@@ -24,10 +24,10 @@ export default [
     id: 'gtm-lnk-config',
     children: [
       {
-        key: '/tabela-referencia',
-        text: 'Tabela de Referências',
-        icon: 'table',
-        id: 'gtm-lnk-tabela-referencias'
+        key: '/medicamentos',
+        text: 'Medicamentos',
+        icon: 'drug',
+        id: 'gtm-lnk-medicamentos'
       },
       {
         key: '/segmentos',

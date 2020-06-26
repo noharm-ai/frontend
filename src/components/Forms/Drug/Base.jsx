@@ -201,7 +201,7 @@ export default function Base({ units, security }) {
       <Col md={24} xs={24}>
         <Box>
           <Heading as="label" size="14px" className="fixed">
-            Unidade padrão:
+            Unidade Padrão:
           </Heading>
           <Select
             placeholder="Selecione a unidade de medida padrão para este medicamento"

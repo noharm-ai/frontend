@@ -60,21 +60,21 @@ const routes = [
   },
   {
     exact: true,
-    path: '/tabela-referencia',
+    path: '/medicamentos',
     component: withAuth({
       component: References
     })
   },
   {
     exact: true,
-    path: '/tabela-referencia/:idSegment/:idDrug/:slug',
+    path: '/medicamentos/:idSegment/:idDrug/:slug',
     component: withAuth({
       component: References
     })
   },
   {
     exact: true,
-    path: '/tabela-referencia/:idSegment/:idDrug/:slug/:dose/:frequency',
+    path: '/medicamentos/:idSegment/:idDrug/:slug/:dose/:frequency',
     component: withAuth({
       component: References
     })

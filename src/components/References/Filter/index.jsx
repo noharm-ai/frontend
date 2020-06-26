@@ -47,7 +47,7 @@ export default function Filter({
     const drug = drugs.list.find(item => item.idDrug === params.idDrug);
     const slug = createSlug(drug.name);
 
-    history.push(`/tabela-referencia/${params.idSegment}/${params.idDrug}/${slug}`);
+    history.push(`/medicamentos/${params.idSegment}/${params.idDrug}/${slug}`);
   };
 
   const filterOption = (input, option) =>
