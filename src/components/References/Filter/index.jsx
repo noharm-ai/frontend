@@ -33,7 +33,10 @@ export default function Filter({
 
   useEffect(() => {
     if (outliers.selecteds.idDrug) {
-      fetchDrugsUnitsList({ id: outliers.selecteds.idDrug });
+      fetchDrugsUnitsList({
+        id: outliers.selecteds.idDrug,
+        idSegment: outliers.selecteds.idSegment
+      });
     }
   }, [fetchDrugsUnitsList, outliers.selecteds.idDrug]);
 
