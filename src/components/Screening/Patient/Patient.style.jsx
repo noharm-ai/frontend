@@ -57,12 +57,12 @@ export const Box = styled.div`
 export const ExamBox = styled.div`
   .ant-statistic-content {
     color: #696766;
-    font-size: 14px;
+    font-size: 13px;
     font-family: ${get('fonts.primary')};
   }
 
   .ant-statistic-content-value-decimal {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .ant-statistic-title {

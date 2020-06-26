@@ -53,6 +53,7 @@ export default function Patient({
   age,
   gender,
   weight,
+  weightUser,
   weightDate,
   skinColor,
   namePatient,
@@ -132,15 +133,16 @@ export default function Patient({
             <strong>Sexo:</strong> {gender ? (gender === 'M' ? 'Masculino' : 'Feminino') : ''}
           </Cell>
           <Cell>
-            <strong>Peso:</strong> {weight} Kg ({formatWeightDate(weightDate)})
+            <strong>Peso:</strong> {weight} Kg ({formatWeightDate(weightDate)}) 
+            {weightUser && <Tooltip title="Peso alterado manualmente"> *</Tooltip>}
           </Cell>
           <Cell>
-            <strong>Altura:</strong> {height ? `${height} cm` : 'Não disponível'}
+            <strong>Cor da pele:</strong> {skinColor}
           </Cell>
           {seeMore && (
             <>
               <Cell>
-                <strong>Cor da pele:</strong> {skinColor}
+                <strong>Altura:</strong> {height ? `${height} cm` : 'Não disponível'}
               </Cell>
               <Cell>
                 <strong>Segmento:</strong> {segmentName}
@@ -170,7 +172,7 @@ export default function Patient({
                 title={exam.value.name}
                 key={exam.key}
               >
-                <Card.Grid hoverable={true} style={gridStyle('25%')}>
+                <Card.Grid hoverable={true} style={gridStyle('20%')}>
                   <Statistic
                     title={exam.value.initials}
                     value={getExamValue(exam.value)}
