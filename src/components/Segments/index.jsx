@@ -9,6 +9,7 @@ import Table from '@components/Table';
 import Empty from '@components/Empty';
 import Icon from '@components/Icon';
 import Tooltip from '@components/Tooltip';
+import PopConfirm from '@components/PopConfirm';
 
 import FormSegment from '@containers/Forms/Segment';
 import FormExamModal from '@containers/Forms/Exam';
@@ -100,14 +101,21 @@ function Segments({
         </Col>
         <Col xs={12} style={{ textAlign: 'right' }}>
           {security.isAdmin() && (
-            <Button
-              type="secondary"
-              loading={outliers.generate.isGenerating}
-              disabled={outliers.generate.isGenerating}
-              onClick={generateOutlierClick}
+            <PopConfirm
+              title="Essa ação irá recalcular os escores de todo o segmento. Deseja continuar?"
+              onConfirm={generateOutlierClick}
+              okText="Sim"
+              cancelText="Não"
             >
-              Gerar Outlier
-            </Button>
+              <Button
+                type="primary"
+                style={{ marginTop: '10px' }}
+                loading={outliers.generate.isGenerating}
+                disabled={outliers.generate.isGenerating}
+              >
+                Gerar Escores
+              </Button>
+            </PopConfirm>
           )}
         </Col>
       </Row>

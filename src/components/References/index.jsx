@@ -244,7 +244,7 @@ export default function References({
           />
           {isAdmin && (
             <PopConfirm
-              title="Ao gerar novos outliers os escores manuais serão perdidos. Deseja continuar?"
+              title="Com essa ação os escores manuais serão perdidos. Deseja continuar?"
               onConfirm={generate}
               okText="Sim"
               cancelText="Não"
@@ -254,7 +254,7 @@ export default function References({
                 style={{ marginTop: '10px' }}
                 loading={generateStatus.isGenerating}
               >
-                Gerar Outlier
+                Gerar Escores
               </Button>
             </PopConfirm>
           )}
