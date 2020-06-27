@@ -38,7 +38,7 @@ export default function Filter({
         idSegment: outliers.selecteds.idSegment
       });
     }
-  }, [fetchDrugsUnitsList, outliers.selecteds.idDrug]);
+  }, [fetchDrugsUnitsList, outliers.selecteds.idDrug, outliers.selecteds.idSegment]);
 
   const handleChange = (key, value) => {
     values[key] = value;
