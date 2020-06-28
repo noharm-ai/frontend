@@ -66,7 +66,7 @@ export default function Base({ examTypes, examList }) {
       <Box hasError={errors.initials}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Iniciais:</Tooltip>
+            <Tooltip title="">Rótulo:</Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>

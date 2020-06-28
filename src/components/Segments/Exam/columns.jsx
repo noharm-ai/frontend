@@ -20,7 +20,7 @@ export default [
     width: 350
   },
   {
-    title: 'Iniciais',
+    title: 'Rótulo',
     dataIndex: 'initials'
   },
   {
