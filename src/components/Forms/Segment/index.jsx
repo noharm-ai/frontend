@@ -1,20 +1,19 @@
 import React, { useEffect } from 'react';
 import { Formik } from 'formik';
-import isEmpty from 'lodash.isempty';
 import * as Yup from 'yup';
 
 import { Row } from '@components/Grid';
-import Button, { Link } from '@components/Button';
+import Button from '@components/Button';
 import notification from '@components/notification';
 
-import Base from './Base';
 import Departments from './Departments';
 import { Footer } from './Segment.style';
 
 // error message when save has error.
 const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
-  description: 'Aconteceu algo que nos impediu de salvar os dados deste segmento. Por favor, tente novamente.'
+  description:
+    'Aconteceu algo que nos impediu de salvar os dados deste segmento. Por favor, tente novamente.'
 };
 // save message when saved intervention.
 const saveMessage = {
@@ -26,20 +25,29 @@ const validationSchema = Yup.object().shape({
   departments: Yup.array()
 });
 
-export default function Segment({ initialValues, departments, saveStatus, saveSegment, fetchDepartments, afterSaveSegment }) {
+export default function Segment({
+  initialValues,
+  departments,
+  saveStatus,
+  saveSegment,
+  fetchDepartments,
+  afterSaveSegment,
+  segmentDepartments,
+  firstFilter
+}) {
   const { isSaving, success, error } = saveStatus;
-  const departmentsList = [...departments.list, ...initialValues.departments];
-  const defaultValues = !isEmpty(initialValues.departments) ? initialValues.departments.map(({ idDepartment }) => idDepartment) : [];
+  const departmentsList = [...departments.list, ...segmentDepartments];
 
   // fetch departments.
   useEffect(() => {
-    fetchDepartments();
-  }, [fetchDepartments]);
+    if (firstFilter.idSegment) {
+      fetchDepartments();
+    }
+  }, [fetchDepartments, firstFilter.idSegment]);
 
   useEffect(() => {
     if (success) {
       notification.success(saveMessage);
-      fetchDepartments();
       afterSaveSegment();
     }
 
@@ -58,14 +66,10 @@ export default function Segment({ initialValues, departments, saveStatus, saveSe
       {({ handleSubmit, isValid }) => (
         <form onSubmit={handleSubmit}>
           <Row type="flex" gutter={24}>
-            <Base />
-            <Departments defaultValue={defaultValues} isFetching={departments.isFetching} list={departmentsList} />
+            <Departments isFetching={departments.isFetching} list={departmentsList} />
           </Row>
           <Footer>
-            <Link href="/segmentos" disabled={isSaving}>
-              {success ? 'Voltar' : 'Cancelar'}
-            </Link>
-            <Button type="primary" htmlType="submit" disabled={isSaving || !isValid}>
+            <Button type="primary gtm-bt-save-segment" htmlType="submit" disabled={isSaving || !isValid}>
               Salvar
             </Button>
           </Footer>

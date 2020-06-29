@@ -11,7 +11,7 @@ import { Box } from './Patient.style';
 
 export default function Base() {
   const { values, setFieldValue, errors } = useFormikContext();
-  const { weight } = values;
+  const { weight, height } = values;
 
   return (
     <>
@@ -32,6 +32,25 @@ export default function Base() {
             onChange={value => setFieldValue('weight', value)}
           />{' '}
           Kg
+        </Box>
+      </Col>
+      <Col xs={24}>
+        <Box hasError={errors.height}>
+          <Heading as="label" size="14px">
+            <Tooltip title="">Altura:</Tooltip>
+          </Heading>
+          <InputNumber
+            style={{
+              width: 120,
+              marginLeft: 10,
+              marginRight: 5
+            }}
+            min={0}
+            max={99999}
+            value={height}
+            onChange={value => setFieldValue('height', value)}
+          />{' '}
+          cm
         </Box>
       </Col>
     </>

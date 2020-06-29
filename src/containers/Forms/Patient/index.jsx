@@ -9,7 +9,8 @@ const mapStateToProps = ({ prescriptions, patients }) => ({
   saveStatus: patients.save,
   idPrescription: prescriptions.single.data.idPrescription,
   admissionNumber: prescriptions.single.data.admissionNumber,
-  weight: prescriptions.single.data.weight
+  weight: prescriptions.single.data.weight,
+  height: prescriptions.single.data.height
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

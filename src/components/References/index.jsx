@@ -106,6 +106,7 @@ export default function References({
   const unitsDatasource = toDataSource(units.list, 'idMeasureUnit', {
     saveUnitCoefficient,
     idDrug: outliers.selecteds.idDrug,
+    idSegment: outliers.selecteds.idSegment,
     isAdmin
   });
   const dsRelations = toDataSource(drugData.relations, null, {
@@ -218,7 +219,7 @@ export default function References({
   return (
     <>
       <Filter {...restProps} outliers={outliers} />
-      <Tabs defaultActiveKey="1" style={{ width: '100%', marginTop: '20px' }} type="card">
+      <Tabs defaultActiveKey="1" style={{ width: '100%', marginTop: '20px' }} type="card gtm-tab-med">
         <Tabs.TabPane tab="Escores" key="1">
           <Table
             title={title}
@@ -243,17 +244,17 @@ export default function References({
           />
           {isAdmin && (
             <PopConfirm
-              title="Ao gerar novos outliers os escores manuais serão perdidos. Deseja continuar?"
+              title="Com essa ação os escores manuais serão perdidos. Deseja continuar?"
               onConfirm={generate}
               okText="Sim"
               cancelText="Não"
             >
               <Button
-                type="primary"
+                type="primary gtm-bt-med-generate"
                 style={{ marginTop: '10px' }}
                 loading={generateStatus.isGenerating}
               >
-                Gerar Outlier
+                Gerar Escores
               </Button>
             </PopConfirm>
           )}
@@ -263,9 +264,11 @@ export default function References({
         </Tabs.TabPane>
         <Tabs.TabPane tab="Relações" key="3">
           <Row type="flex" justify="end">
-            {drugData.sctidA && (<Button type="primary gtm-bt-add-relation" onClick={addRelationModal}>
-              <Icon type="plus" /> Adicionar
-            </Button>)}
+            {drugData.sctidA && (
+              <Button type="primary gtm-bt-add-relation" onClick={addRelationModal}>
+                <Icon type="plus" /> Adicionar
+              </Button>
+            )}
           </Row>
           <Table
             title={title}

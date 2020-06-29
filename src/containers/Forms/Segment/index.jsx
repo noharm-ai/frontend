@@ -11,6 +11,15 @@ const mapStateToProps = ({ departments, segments }) => ({
     error: departments.error,
     list: departments.list,
     isFetching: departments.isFetching
+  },
+  firstFilter: segments.firstFilter,
+  segmentDepartments: segments.single.content.departments || [],
+  initialValues: {
+    id: segments.single.content.id,
+    description: segments.single.content.description || '',
+    departments: segments.single.content.departments
+      ? segments.single.content.departments.map(i => i.idDepartment)
+      : []
   }
 });
 const mapDispatchToProps = dispatch =>

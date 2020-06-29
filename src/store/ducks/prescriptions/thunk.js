@@ -285,7 +285,10 @@ export const fetchPrescriptionDrugPeriodThunk = (idPrescriptionDrug, source) => 
   dispatch(prescriptionsFetchPeriodSuccess(idPrescriptionDrug, source, data));
 };
 
-export const fetchPrescriptionExamsThunk = admissionNumber => async (dispatch, getState) => {
+export const fetchPrescriptionExamsThunk = (admissionNumber, params = {}) => async (
+  dispatch,
+  getState
+) => {
   dispatch(prescriptionsFetchExamsStart());
 
   const { auth } = getState();
@@ -293,7 +296,7 @@ export const fetchPrescriptionExamsThunk = admissionNumber => async (dispatch, g
   const {
     data: { data },
     error
-  } = await api.getExams(access_token, admissionNumber).catch(errorHandler);
+  } = await api.getExams(access_token, admissionNumber, params).catch(errorHandler);
 
   if (!isEmpty(error)) {
     dispatch(prescriptionsFetchExamsError(error));

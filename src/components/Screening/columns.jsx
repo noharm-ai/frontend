@@ -379,12 +379,12 @@ const drugInfo = [
     title: 'Medicamento',
     align: 'left',
     render: record => {
-      const href = `/tabela-referencia/${record.idSegment}/${record.idDrug}/${createSlug(
+      const href = `/medicamentos/${record.idSegment}/${record.idDrug}/${createSlug(
         record.drug
       )}/${record.doseconv}/${record.dayFrequency}`;
       return (
         <>
-          <Tooltip title="Ver tabela de referência" placement="top">
+          <Tooltip title="Ver Medicamento" placement="top">
             <TableLink href={href} target="_blank" rel="noopener noreferrer">
               {record.drug}
             </TableLink>

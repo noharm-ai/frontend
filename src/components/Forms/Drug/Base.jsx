@@ -5,7 +5,7 @@ import { Checkbox } from 'antd';
 
 import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
-import { InputNumber } from '@components/Inputs';
+import { InputNumber, Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 
 import { Box } from './Drug.style';
@@ -23,7 +23,9 @@ export default function Base({ units, security }) {
     elderly,
     unit,
     division,
-    useWeight
+    useWeight,
+    idMeasureUnit,
+    amount
   } = values;
 
   return (
@@ -107,7 +109,8 @@ export default function Base({ units, security }) {
             value={maxDose}
             onChange={value => setFieldValue('maxDose', value)}
           />{' '}
-          {unit}{useWeight?'/Kg':''}
+          {unit}
+          {useWeight ? '/Kg' : ''}
         </Box>
       </Col>
       <Col md={24} xs={24}>
@@ -133,7 +136,9 @@ export default function Base({ units, security }) {
       <Col xs={24}>
         <Box>
           <Heading as="label" size="14px" className="fixed">
-            <Tooltip title="Valor de TGO ou TGP a partir do qual o medicamento deve sofrer ajuste de dose ou frequência.">Hepatotóxico:</Tooltip>
+            <Tooltip title="Valor de TGO ou TGP a partir do qual o medicamento deve sofrer ajuste de dose ou frequência.">
+              Hepatotóxico:
+            </Tooltip>
           </Heading>
           <InputNumber
             style={{
@@ -176,6 +181,44 @@ export default function Base({ units, security }) {
           </Box>
         </Col>
       )}
+      <Col xs={24}>
+        <Box>
+          <Heading as="label" size="14px" className="fixed">
+            <Tooltip title="">Concentração:</Tooltip>
+          </Heading>
+          <InputNumber
+            style={{
+              width: 120,
+              marginRight: '10px'
+            }}
+            min={0}
+            max={99999}
+            value={amount}
+            onChange={value => setFieldValue('amount', value)}
+          />
+        </Box>
+      </Col>
+      <Col md={24} xs={24}>
+        <Box>
+          <Heading as="label" size="14px" className="fixed">
+            Unidade Padrão:
+          </Heading>
+          <Select
+            placeholder="Selecione a unidade de medida padrão para este medicamento"
+            onChange={value => setFieldValue('idMeasureUnit', value)}
+            value={idMeasureUnit}
+            identify="idMeasureUnit"
+            allowClear
+            style={{ minWidth: '300px' }}
+          >
+            {units.map(unit => (
+              <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
+                {unit.description}
+              </Select.Option>
+            ))}
+          </Select>
+        </Box>
+      </Col>
     </>
   );
 }

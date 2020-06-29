@@ -11,21 +11,30 @@ export default [
     icon: 'warning',
     id: 'gtm-lnk-intervencoes'
   },
-  /*{
-    key: '/segmentos',
-    text: 'Segmentos',
-    icon: 'segments'
-  },*/
-  {
-    key: '/tabela-referencia',
-    text: 'Tabela de Referências',
-    icon: 'table',
-    id: 'gtm-lnk-tabela-referencias'
-  },
   {
     key: '/relatorios',
     text: 'Relatórios',
     icon: 'report',
     id: 'gtm-lnk-report'
+  },
+  {
+    key: 'config',
+    text: 'Configurações',
+    icon: 'setting',
+    id: 'gtm-lnk-config',
+    children: [
+      {
+        key: '/medicamentos',
+        text: 'Medicamentos',
+        icon: 'drug',
+        id: 'gtm-lnk-medicamentos'
+      },
+      {
+        key: '/segmentos',
+        text: 'Segmentos',
+        icon: 'medicine-box',
+        id: 'gtm-lnk-segmentos'
+      }
+    ]
   }
 ];

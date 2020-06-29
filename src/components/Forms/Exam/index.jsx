@@ -8,56 +8,63 @@ import Heading from '@components/Heading';
 import DefaultModal from '@components/Modal';
 
 import Base from './Base';
-import { FormContainer } from './Patient.style';
+import { FormContainer } from '../Form.style';
 
 const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
   description:
-    'Aconteceu algo que nos impediu de salvar os dados deste medicamento. Por favor, tente novamente.'
+    'Aconteceu algo que nos impediu de salvar os dados deste exame. Por favor, tente novamente.'
 };
 
 const saveMessage = {
-  message: 'Uhu! Dados do paciente salvo com sucesso! :)'
+  message: 'Uhu! Exame salvo com sucesso! :)'
 };
 const validationSchema = Yup.object().shape({
-  weight: Yup.number(),
-  height: Yup.number()
+  type: Yup.string().required(),
+  name: Yup.string().required(),
+  initials: Yup.string().required(),
+  ref: Yup.string().required(),
+  min: Yup.number().required(),
+  max: Yup.number().required(),
+  order: Yup.number().required(),
 });
 
-export default function Patient({
+export default function Exam({
   saveStatus,
-  savePatient,
-  afterSavePatient,
-  idPrescription,
-  admissionNumber,
-  weight,
-  height,
+  save,
+  afterSave,
+  fetchExamTypes,
+  examTypes,
+  examList,
   ...props
 }) {
-  const { isSaving, success, error } = saveStatus;
+  const { isSaving, success, error, item } = saveStatus;
 
   const initialValues = {
-    idPrescription,
-    admissionNumber,
-    weight,
-    height
+    ...item
   };
 
   useEffect(() => {
     if (success) {
       notification.success(saveMessage);
-      afterSavePatient();
+      if (afterSave) {
+        afterSave();
+      }
     }
 
     if (error) {
       notification.error(errorMessage);
     }
-  }, [success, error, afterSavePatient]);
+  }, [success, error, afterSave]);
+
+  useEffect(() => {
+    fetchExamTypes();
+  }, [fetchExamTypes]);
 
   return (
     <Formik
       enableReinitialize
-      onSubmit={savePatient}
+      onSubmit={save}
       initialValues={initialValues}
       validationSchema={validationSchema}
     >
@@ -73,16 +80,16 @@ export default function Patient({
           }}
           cancelButtonProps={{
             disabled: isSaving,
-            className: 'gtm-bt-cancel-edit-patient'
+            className: 'gtm-bt-cancel-edit-exam'
           }}
         >
           <header>
-            <Heading margin="0 0 11px">Dados do paciente</Heading>
+            <Heading margin="0 0 11px">Exame</Heading>
           </header>
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base />
+                <Base examTypes={examTypes} examList={examList} />
               </Row>
             </FormContainer>
           </form>
@@ -92,10 +99,11 @@ export default function Patient({
   );
 }
 
-Patient.defaultProps = {
-  afterSavePatient: () => {},
+Exam.defaultProps = {
+  afterSave: () => {},
   initialValues: {
-    weight: '',
-    height: ''
+    type: '',
+    name: '',
+    active: true
   }
 };

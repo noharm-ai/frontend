@@ -154,110 +154,42 @@ export const expandedRowRender = record => {
     }
   ]);
 
-  const exams = setDataIndex([
-    {
-      title: 'Exames',
-      align: 'left',
-      children: setDataIndex([
-        {
-          title: <Tooltip title="Modification of Diet in Renal Disease">MDRD</Tooltip>,
-          className: 'gtm-th-mdrd',
-          key: 'mdrd',
-          width: 55,
-          align: 'center',
-          render: (text, prescription) => <ExamResult exam={prescription.mdrd} />
-        },
-        {
-          title: <Tooltip title="Cockcroft-Gault">CG</Tooltip>,
-          className: 'gtm-th-cg',
-          key: 'cg',
-          width: 40,
-          align: 'center',
-          render: (text, prescription) => <ExamResult exam={prescription.cg} />
-        },
-        {
-          title: <Tooltip title="Chronic Kidney Disease Epidemiology">CKD</Tooltip>,
-          className: 'gtm-th-ckd',
-          key: 'ckd',
-          width: 40,
-          align: 'center',
-          render: (text, prescription) => <ExamResult exam={prescription.ckd} />
-        },
-        {
-          title: <Tooltip title="Creatinina">CR</Tooltip>,
-          className: 'gtm-th-cr',
-          key: 'cr',
-          width: 40,
-          align: 'center',
-          render: (text, prescription) => <ExamResult exam={prescription.cr} />
-        },
-        {
-          title: <Tooltip title="Proteína C Reativa">PCR</Tooltip>,
-          className: 'gtm-th-pcr',
-          key: 'pcr',
-          width: 30,
-          align: 'center',
-          render: (text, prescription) => <ExamResult exam={prescription.pcr} />
-        },
-        {
-          title: <Tooltip title="Razão de Normatização Internacional">RNI</Tooltip>,
-          className: 'gtm-th-rni',
-          key: 'rni',
-          width: 30,
-          align: 'center',
-          render: (text, prescription) => <ExamResult exam={prescription.rni} />
-        },
-        {
-          title: <Tooltip title="Transaminase Glutâmico-Pxalacética">TGO</Tooltip>,
-          className: 'gtm-th-tgo',
-          key: 'tgo',
-          width: 40,
-          align: 'center',
-          render: (text, prescription) => <ExamResult exam={prescription.tgo} />
-        },
-        {
-          title: <Tooltip title="Transaminase Glutâmico-Pirúvica">TGP</Tooltip>,
-          className: 'gtm-th-tgp',
-          key: 'tgp',
-          width: 40,
-          align: 'center',
-          render: (text, prescription) => <ExamResult exam={prescription.tgp} />
-        },
-        {
-          title: <Tooltip title="Potássio">K</Tooltip>,
-          className: 'gtm-th-k',
-          key: 'k',
-          width: 20,
-          align: 'center',
-          render: (text, prescription) => <ExamResult exam={prescription.k} />
-        },
-        {
-          title: <Tooltip title="Sódio">Na</Tooltip>,
-          className: 'gtm-th-na',
-          key: 'na',
-          width: 30,
-          align: 'center',
-          render: (text, prescription) => <ExamResult exam={prescription.na} />
-        },
-        {
-          title: <Tooltip title="Magnésio">Mg</Tooltip>,
-          className: 'gtm-th-mg',
-          key: 'mg',
-          width: 30,
-          align: 'center',
-          render: (text, prescription) => <ExamResult exam={prescription.mg} />
-        }
-      ])
-    }
-  ]);
+  const examColumns = examList => {
+    const columns = examList.map(e => ({
+      title: <Tooltip title={e.value.name}>{e.value.initials}</Tooltip>,
+      key: e.key,
+      dataIndex: e.key,
+      width: 55,
+      align: 'center',
+      render: (text, obj) => <ExamResult exam={obj[e.key]} />
+    }));
+
+    return setDataIndex([
+      {
+        title: 'Exames',
+        key: 'exams',
+        align: 'left',
+        children: setDataIndex(columns)
+      }
+    ]);
+  };
+
+  const examDatasource = examList => {
+    const reducer = (acc, item) => {
+      acc[item.key] = item.value;
+      return acc;
+    };
+
+    return examList.reduce(reducer, {});
+  };
 
   return (
     <NestedTableContainer>
       <Table columns={columns} dataSource={[record]} pagination={false} />
 
       <Table
-        columns={exams}
-        dataSource={[record]}
+        columns={examColumns(record.exams)}
+        dataSource={[{ ...examDatasource(record.exams), key: 'examRow' }]}
         pagination={false}
         style={{ marginTop: '20px' }}
       />
