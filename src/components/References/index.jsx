@@ -219,7 +219,7 @@ export default function References({
   return (
     <>
       <Filter {...restProps} outliers={outliers} />
-      <Tabs defaultActiveKey="1" style={{ width: '100%', marginTop: '20px' }} type="card">
+      <Tabs defaultActiveKey="1" style={{ width: '100%', marginTop: '20px' }} type="card gtm-tab-med">
         <Tabs.TabPane tab="Escores" key="1">
           <Table
             title={title}
@@ -250,7 +250,7 @@ export default function References({
               cancelText="Não"
             >
               <Button
-                type="primary"
+                type="primary gtm-bt-med-generate"
                 style={{ marginTop: '10px' }}
                 loading={generateStatus.isGenerating}
               >

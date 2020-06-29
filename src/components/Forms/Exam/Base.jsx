@@ -113,7 +113,7 @@ export default function Base({ examTypes, examList }) {
               marginRight: 5
             }}
             min={0}
-            max={99999}
+            max={999999}
             value={min}
             onChange={value => setFieldValue('min', value)}
           />
@@ -134,7 +134,7 @@ export default function Base({ examTypes, examList }) {
               marginRight: 5
             }}
             min={0}
-            max={99999}
+            max={999999}
             value={max}
             onChange={value => setFieldValue('max', value)}
           />

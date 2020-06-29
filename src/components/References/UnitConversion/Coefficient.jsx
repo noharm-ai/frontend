@@ -32,7 +32,7 @@ export default function Escore({ idDrug, idMeasureUnit, fator, saveUnitCoefficie
         defaultValue={coefficient}
         onChange={setCoefficient}
       />
-      <Button type="primary" onClick={handleSave}>
+      <Button type="primary gtm-bt-save-factor" onClick={handleSave}>
         <Icon type="check" />
       </Button>
     </>

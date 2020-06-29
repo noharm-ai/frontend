@@ -47,7 +47,7 @@ export default function Filter({ segments }) {
               Segmento:
             </Heading>
             <Select
-              id="idSegment"
+              id="idSegmentSegment"
               name="idSegment"
               style={{ width: '100%' }}
               placeholder="Selecione um segmento..."

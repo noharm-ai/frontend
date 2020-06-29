@@ -295,7 +295,7 @@ export default function Screening({
         <ScreeningTabs
           defaultActiveKey="1"
           style={{ width: '100%', marginTop: '20px' }}
-          type="card"
+          type="card gtm-tab-screening"
           onTabClick={onTabClick}
         >
           <Tabs.TabPane

@@ -108,7 +108,7 @@ function Segments({
               cancelText="Não"
             >
               <Button
-                type="primary"
+                type="primary gtm-bt-seg-generate"
                 style={{ marginTop: '10px' }}
                 loading={outliers.generate.isGenerating}
                 disabled={outliers.generate.isGenerating}
@@ -120,7 +120,7 @@ function Segments({
         </Col>
       </Row>
 
-      <Tabs defaultActiveKey="1" style={{ width: '100%', marginTop: '20px' }} type="card">
+      <Tabs defaultActiveKey="1" style={{ width: '100%', marginTop: '20px' }} type="card gtm-tab-segments">
         {security.isAdmin() && (
           <Tabs.TabPane tab="Setores" key="1">
             <FormSegment afterSaveSegment={afterSaveSegment} />

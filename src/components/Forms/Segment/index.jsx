@@ -69,7 +69,7 @@ export default function Segment({
             <Departments isFetching={departments.isFetching} list={departmentsList} />
           </Row>
           <Footer>
-            <Button type="primary" htmlType="submit" disabled={isSaving || !isValid}>
+            <Button type="primary gtm-bt-save-segment" htmlType="submit" disabled={isSaving || !isValid}>
               Salvar
             </Button>
           </Footer>
