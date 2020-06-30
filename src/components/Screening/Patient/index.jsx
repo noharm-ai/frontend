@@ -85,7 +85,7 @@ export default function Patient({
       return emptyMsg;
     }
 
-    return date.format('DD/MM/YYYY hh:mm');
+    return date.format('DD/MM/YYYY HH:mm');
   };
 
   const afterSavePatient = () => {
