@@ -78,6 +78,11 @@ export default function Screening({
   const { isSaving, wasSaved, item } = maybeCreateOrUpdate;
 
   const [visible, setVisibility] = useState(false);
+  const [expandedRows, setExpandedRows] = useState({
+    prescription: [],
+    solution: [],
+    procedure: []
+  });
   const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
 
   const columns = useMedia(
@@ -120,6 +125,36 @@ export default function Screening({
     return false;
   };
 
+  const updateExpandedRows = (list, key) => {
+    if (list.includes(key)) {
+      return list.filter(i => i !== key);
+    } else {
+      return [...list, key];
+    }
+  };
+
+  const handleRowExpand = record => {
+    switch (record.source) {
+      case 'Medicamentos':
+        setExpandedRows({
+          ...expandedRows,
+          prescription: updateExpandedRows(expandedRows.prescription, record.key)
+        });
+        break;
+      case 'Soluções':
+        setExpandedRows({
+          ...expandedRows,
+          solution: updateExpandedRows(expandedRows.solution, record.key)
+        });
+        break;
+      default:
+        setExpandedRows({
+          ...expandedRows,
+          procedure: updateExpandedRows(expandedRows.procedure, record.key)
+        });
+    }
+  };
+
   // extra resources to add in table item.
   const bag = {
     onShowModal,
@@ -132,7 +167,8 @@ export default function Screening({
     saveInterventionStatus,
     checkIntervention: prescription.checkIntervention,
     periodObject: prescription.periodObject,
-    fetchPeriod
+    fetchPeriod,
+    handleRowExpand
   };
 
   const dataSource = toDataSource(drugList, 'idPrescriptionDrug', {
@@ -304,6 +340,8 @@ export default function Screening({
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
               <ExpandableTable
+                expandedRowKeys={expandedRows.prescription}
+                onExpand={(expanded, record) => handleRowExpand(record)}
                 title={title}
                 columns={columns}
                 pagination={false}
@@ -339,6 +377,8 @@ export default function Screening({
                 }}
                 dataSource={!isFetching ? dsSolutions : []}
                 expandedRowRender={expandedRowRender}
+                expandedRowKeys={expandedRows.solution}
+                onExpand={(expanded, record) => handleRowExpand(record)}
                 rowClassName={rowClassName}
               />
             </Col>
@@ -363,6 +403,8 @@ export default function Screening({
                 }}
                 dataSource={!isFetching ? dsProcedures : []}
                 expandedRowRender={expandedRowRender}
+                expandedRowKeys={expandedRows.procedure}
+                onExpand={(expanded, record) => handleRowExpand(record)}
                 rowClassName={rowClassName}
               />
             </Col>

@@ -36,6 +36,7 @@ const TableTags = styled.div`
   span.tag {
     display: inline-block;
     width: 20px;
+    cursor: pointer;
   }
 `;
 
@@ -500,42 +501,42 @@ const actionColumns = [
     align: 'center',
     render: (text, prescription) => (
       <TableTags>
-        <span className="tag">
+        <span className="tag" onClick={() => prescription.handleRowExpand(prescription)}>
           {prescription.checked && (
             <Tooltip title="Checado anteriormente">
               <Icon type="check" style={{ fontSize: 18, color: '#52c41a' }} />
             </Tooltip>
           )}
         </span>
-        <span className="tag">
+        <span className="tag" onClick={() => prescription.handleRowExpand(prescription)}>
           {prescription.recommendation && prescription.recommendation !== 'None' && (
             <Tooltip title="Possui observação médica">
               <Icon type="message" style={{ fontSize: 18, color: '#108ee9' }} />
             </Tooltip>
           )}
         </span>
-        <span className="tag">
+        <span className="tag" onClick={() => prescription.handleRowExpand(prescription)}>
           {prescription.prevNotes && prescription.prevNotes !== 'None' && (
             <Tooltip title="Possui anotação">
               <Icon type="form" style={{ fontSize: 18, color: '#108ee9' }} />
             </Tooltip>
           )}
         </span>
-        <span className="tag">
+        <span className="tag" onClick={() => prescription.handleRowExpand(prescription)}>
           {!isEmpty(prescription.prevIntervention) && (
             <Tooltip title="Possui intervenção anterior">
               <Icon type="warning" style={{ fontSize: 18, color: '#fa8c16' }} />
             </Tooltip>
           )}
         </span>
-        <span className="tag">
+        <span className="tag" onClick={() => prescription.handleRowExpand(prescription)}>
           {prescription.suspended && (
             <Tooltip title="Suspenso">
               <Icon type="stop" style={{ fontSize: 18, color: '#f5222d' }} />
             </Tooltip>
           )}
         </span>
-        <span className="tag">
+        <span className="tag" onClick={() => prescription.handleRowExpand(prescription)}>
           {!isEmpty(prescription.alerts) && (
             <Tooltip title="Alertas">
               <Tag color="red" style={{ marginLeft: '2px' }}>
