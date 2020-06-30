@@ -87,10 +87,25 @@ export const ExamBox = styled.div`
   }
 
   .ant-card-grid {
+    width: 20%;
     padding: 20px;
+    text-align: center;
   }
 
   .ant-card-body {
     padding: 21px;
+  }
+
+  @media only screen and (max-width: 1440px) {
+    .ant-card-grid {
+      width: 20%;
+      padding: 20px 10px;
+      width: 25%;
+    }
+
+    .ant-card-grid:nth-child(9),
+    .ant-card-grid:nth-child(10) {
+      display: none;
+    }
   }
 `;
