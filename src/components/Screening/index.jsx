@@ -418,7 +418,12 @@ export default function Screening({
         </ScreeningTabs>
       </Row>
 
-      <Modal visible={visible} confirmLoading={isSaving} footer={<InterventionFooter />} />
+      <Modal
+        visible={visible}
+        confirmLoading={isSaving}
+        footer={<InterventionFooter />}
+        onCancel={onCancel}
+      />
       <PrescriptionDrugModal
         onOk={onSavePrescriptionDrug}
         visible={openPrescriptionDrugModal}
