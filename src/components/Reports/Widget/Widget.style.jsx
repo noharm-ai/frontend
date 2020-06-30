@@ -3,6 +3,8 @@ import styled from 'styled-components/macro';
 import { get } from '@styles/utils';
 
 export const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   background: ${get('colors.commonLighter')};
   border: 1px solid ${get('colors.fifth')};
   border-radius: 5px;
@@ -10,9 +12,10 @@ export const Wrapper = styled.div`
   padding: 30px;
   text-align: center;
   transition: box-shadow 0.3s;
+  cursor: pointer;
 
   &:hover {
-    box-shadow: 0px 0px 5px rgba(4, 0, 6, 0.15);
+    box-shadow: 0px 0px 5px rgba(4, 0, 6, 0.35);
   }
 `;
 
