@@ -215,7 +215,13 @@ const showAlerts = alerts => {
   return (
     <>
       {alerts.map((item, index) => (
-        <Alert key={index} type="error" message=<RichTextView text={item} /> style={{ marginTop: '5px' }} showIcon />
+        <Alert
+          key={index}
+          type="error"
+          message=<RichTextView text={item} />
+          style={{ marginTop: '5px' }}
+          showIcon
+        />
       ))}
     </>
   );
@@ -379,9 +385,9 @@ const drugInfo = [
     title: 'Medicamento',
     align: 'left',
     render: record => {
-      const href = `/medicamentos/${record.idSegment}/${record.idDrug}/${createSlug(
-        record.drug
-      )}/${record.doseconv}/${record.dayFrequency}`;
+      const href = `/medicamentos/${record.idSegment}/${record.idDrug}/${createSlug(record.drug)}/${
+        record.doseconv
+      }/${record.dayFrequency}`;
       return (
         <>
           <Tooltip title="Ver Medicamento" placement="top">
