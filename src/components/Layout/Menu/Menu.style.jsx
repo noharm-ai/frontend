@@ -88,11 +88,19 @@ Wrapper.SubMenu = styled(AntMenu.SubMenu)`
     color: #70bdc3;
   }
 
-  .ant-menu-submenu-title:hover .ant-menu-submenu-arrow::before {
+  &.ant-menu-submenu-selected .ant-menu-submenu-arrow::before,
+  &.ant-menu-submenu-selected .ant-menu-submenu-arrow::after,
+  .ant-menu-submenu-title:hover .ant-menu-submenu-arrow::before,
+  .ant-menu-submenu-title:hover .ant-menu-submenu-arrow::after {
     background: linear-gradient(to right, #70bdc3, #70bdc3) !important;
   }
 
-  .ant-menu-submenu-title:hover .ant-menu-submenu-arrow::after {
-    background: linear-gradient(to right, #70bdc3, #70bdc3) !important;
+  .ant-menu-submenu-arrow::after,
+  .ant-menu-submenu-arrow::before {
+    background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 1)
+    ) !important;
   }
 `;
