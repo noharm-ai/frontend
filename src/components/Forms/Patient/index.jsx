@@ -20,8 +20,8 @@ const saveMessage = {
   message: 'Uhu! Dados do paciente salvo com sucesso! :)'
 };
 const validationSchema = Yup.object().shape({
-  weight: Yup.number(),
-  height: Yup.number()
+  weight: Yup.number().nullable(),
+  height: Yup.number().nullable()
 });
 
 export default function Patient({
