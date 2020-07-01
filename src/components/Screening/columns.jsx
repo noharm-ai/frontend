@@ -219,7 +219,7 @@ const showAlerts = alerts => {
         <Alert
           key={index}
           type="error"
-          message=<RichTextView text={item} />
+          message={<RichTextView text={item} />}
           style={{ marginTop: '5px' }}
           showIcon
         />
@@ -380,7 +380,11 @@ const drugInfo = [
     dataIndex: 'score',
     width: 20,
     align: 'center',
-    render: (entry, { score }) => <span className={`flag ${flags[parseInt(score, 10)]}`} />
+    render: (entry, { score, near }) => (
+      <Tooltip title={near ? `* Escore aproximado: ${score}` : `Escore: ${score}`}>
+        <span className={`flag has-score ${flags[parseInt(score, 10)]}`}>{score}</span>
+      </Tooltip>
+    )
   },
   {
     title: 'Medicamento',
@@ -478,22 +482,6 @@ const actionColumns = [
     title: 'Via',
     dataIndex: 'route',
     width: 85
-  },
-  {
-    title: 'Escore',
-    dataIndex: 'score',
-    width: 85,
-    render: (text, prescription) => {
-      if (prescription.near) {
-        return (
-          <Tooltip title="Escore aproximado" placement="left">
-            {prescription.score} *
-          </Tooltip>
-        );
-      }
-
-      return prescription.score;
-    }
   },
   {
     title: 'Tags',

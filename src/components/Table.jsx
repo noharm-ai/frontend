@@ -41,20 +41,45 @@ const Table = styled(AntTable)`
     height: 15px;
     width: 5px;
 
+    &.has-score {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      height: 32px;
+      width: 13px;
+      border-radius: 7px;
+      font-size: 11px;
+      padding-top: 1px;
+
+      &:before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 1px;
+        background: #fff;
+        top: 50%;
+      }
+    }
+
     &.red {
       background-color: #e46666;
+      color: #fff;
     }
 
     &.orange {
       background-color: #e67e22;
+      color: #fff;
     }
 
     &.yellow {
       background-color: #e4da66;
+      color: #000;
     }
 
     &.green {
       background-color: #7ebe9a;
+      color: #fff;
     }
   }
 
