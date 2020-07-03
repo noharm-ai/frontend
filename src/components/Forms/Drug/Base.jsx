@@ -25,7 +25,9 @@ export default function Base({ units, security }) {
     division,
     useWeight,
     idMeasureUnit,
-    amount
+    amount,
+    amountUnit,
+    whiteList
   } = values;
 
   return (
@@ -89,6 +91,17 @@ export default function Base({ units, security }) {
                 id="elderly"
               >
                 <Tooltip title="Medicamento Potencialmente Inapropriado para Idosos">MPI</Tooltip>
+              </Checkbox>
+            </Col>
+            <Col xs={8}>
+              <Checkbox
+                onChange={({ target }) => setFieldValue('whiteList', !target.value)}
+                value={whiteList}
+                checked={whiteList}
+                name="whiteList"
+                id="whiteList"
+              >
+                <Tooltip title="Medicamento isento de Escore e Validação">Sem escore</Tooltip>
               </Checkbox>
             </Col>
           </div>
@@ -196,6 +209,32 @@ export default function Base({ units, security }) {
             value={amount}
             onChange={value => setFieldValue('amount', value)}
           />
+        </Box>
+      </Col>
+      <Col md={24} xs={24}>
+        <Box>
+          <Heading as="label" size="14px" className="fixed">
+            Unid. concentração:
+          </Heading>
+          <Select
+            placeholder="Selecione a unidade da concentração"
+            onChange={value => setFieldValue('amountUnit', value)}
+            value={amountUnit}
+            identify="amountUnit"
+            allowClear
+            style={{ minWidth: '300px' }}
+          >
+            <Select.Option value="" key=""></Select.Option>
+            <Select.Option value="mEq" key="mEq">
+              mEq
+            </Select.Option>
+            <Select.Option value="mg" key="mg">
+              mg
+            </Select.Option>
+            <Select.Option value="mcg" key="mcg">
+              mcg
+            </Select.Option>
+          </Select>
         </Box>
       </Col>
       <Col md={24} xs={24}>

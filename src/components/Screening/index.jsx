@@ -73,7 +73,8 @@ export default function Screening({
     prescription: drugList,
     solution: solutionList,
     procedures: proceduresList,
-    interventions: interventionList
+    interventions: interventionList,
+    infusion: infusionList
   } = content;
   const { isSaving, wasSaved, item } = maybeCreateOrUpdate;
 
@@ -168,7 +169,8 @@ export default function Screening({
     checkIntervention: prescription.checkIntervention,
     periodObject: prescription.periodObject,
     fetchPeriod,
-    handleRowExpand
+    handleRowExpand,
+    weight: content.weight
   };
 
   const dataSource = toDataSource(drugList, 'idPrescriptionDrug', {
@@ -179,7 +181,8 @@ export default function Screening({
     toDataSource(solutionList, 'idPrescriptionDrug', {
       ...bag,
       prescriptionType: 'solutions'
-    })
+    }),
+    infusionList
   );
   const dsProcedures = toDataSource(proceduresList, 'idPrescriptionDrug', {
     ...bag,
@@ -238,19 +241,20 @@ export default function Screening({
 
   const rowClassName = (record, index) => {
     let classes = [];
-    if (!record.idPrescriptionDrug) {
-      classes.push('divider-row');
+
+    if (record.total) {
+      classes.push('summary-row');
     }
 
     if (record.suspended) {
       classes.push('suspended');
     }
 
-    if (record.checked & isEmpty(record.prevIntervention)) {
+    if (record.checked && isEmpty(record.prevIntervention)) {
       classes.push('checked');
     }
 
-    if (isEmpty(record.route)) {
+    if (isEmpty(record.route) && !record.total) {
       classes.push('checked');
     }
 

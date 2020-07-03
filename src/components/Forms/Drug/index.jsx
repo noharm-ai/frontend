@@ -50,7 +50,9 @@ export default function Drug({
     division,
     useWeight,
     outliers,
-    amount
+    amount,
+    whiteList,
+    amountUnit
   } = outlier;
 
   const initialValues = {
@@ -61,6 +63,7 @@ export default function Drug({
     notdefault: notdefault == null ? false : notdefault,
     elderly: elderly == null ? false : elderly,
     useWeight: useWeight == null ? false : useWeight,
+    whiteList: whiteList == null ? false : whiteList,
     maxDose,
     kidney,
     division,
@@ -68,6 +71,7 @@ export default function Drug({
     idMeasureUnit,
     idSegment,
     amount,
+    amountUnit,
     unit: outliers ? (outliers[0] ? outliers[0].unit : '') : ''
   };
 

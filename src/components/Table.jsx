@@ -147,6 +147,10 @@ const Table = styled(AntTable)`
       display: none;
     }
   }
+
+  .summary-row {
+    background: rgba(244, 244, 244, 0.8);
+  }
 `;
 
 export const ExpandableTable = styled(Table)`
