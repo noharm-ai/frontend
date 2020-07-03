@@ -17,7 +17,7 @@ export default [
     title: 'Fator',
     dataIndex: 'fator',
     width: 40,
-    render: (entry, record) => (record.isAdmin ? <Coefficient {...record} /> : record.fator)
+    render: (entry, record) => (<Coefficient {...record} />)
   },
   {
     title: 'Contagem',

@@ -242,22 +242,20 @@ export default function References({
             locale={{ emptyText }}
             dataSource={!units.isFetching ? unitsDatasource : []}
           />
-          {isAdmin && (
-            <PopConfirm
-              title="Com essa ação os escores manuais serão perdidos. Deseja continuar?"
-              onConfirm={generate}
-              okText="Sim"
-              cancelText="Não"
+          <PopConfirm
+            title="Com essa ação os escores manuais serão perdidos. Deseja continuar?"
+            onConfirm={generate}
+            okText="Sim"
+            cancelText="Não"
+          >
+            <Button
+              type="primary gtm-bt-med-generate"
+              style={{ marginTop: '10px' }}
+              loading={generateStatus.isGenerating}
             >
-              <Button
-                type="primary gtm-bt-med-generate"
-                style={{ marginTop: '10px' }}
-                loading={generateStatus.isGenerating}
-              >
-                Gerar Escores
-              </Button>
-            </PopConfirm>
-          )}
+              Gerar Escores
+            </Button>
+          </PopConfirm>
         </Tabs.TabPane>
         <Tabs.TabPane tab="Atributos" key="2">
           <DrugForm fetchReferencesList={fetchReferencesList} match={match} />
