@@ -101,7 +101,7 @@ export default function Base({ units, security }) {
                 name="whiteList"
                 id="whiteList"
               >
-                <Tooltip title="Medicamento isento de Escore e Validação">Sem escore</Tooltip>
+                <Tooltip title="Medicamento isento de Validação e Escore">Sem validação</Tooltip>
               </Checkbox>
             </Col>
           </div>
@@ -189,7 +189,7 @@ export default function Base({ units, security }) {
               name="useWeight"
               id="useWeight"
             >
-              <Tooltip title="">Considerar peso</Tooltip>
+              <Tooltip title="Somente será considerado peso se houver Divisor de Faixas atribuído">Considerar peso</Tooltip>
             </Checkbox>
           </Box>
         </Col>
@@ -214,7 +214,7 @@ export default function Base({ units, security }) {
       <Col md={24} xs={24}>
         <Box>
           <Heading as="label" size="14px" className="fixed">
-            Unid. concentração:
+            Unidade da concentração:
           </Heading>
           <Select
             placeholder="Selecione a unidade da concentração"
@@ -237,7 +237,7 @@ export default function Base({ units, security }) {
           </Select>
         </Box>
       </Col>
-      <Col md={24} xs={24}>
+      {needUnits(units) && (<Col md={24} xs={24}>
         <Box>
           <Heading as="label" size="14px" className="fixed">
             Unidade Padrão:
@@ -251,33 +251,23 @@ export default function Base({ units, security }) {
             style={{ minWidth: '300px' }}
           >
             {units.map(unit => (
+              unit.fator === 1 &&
               <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
                 {unit.description}
               </Select.Option>
             ))}
           </Select>
         </Box>
-      </Col>
+      </Col>)}
     </>
   );
 }
 
-//<FieldSet style={{ marginBottom: '25px', marginTop: '25px' }}>
-//  <Heading as="label" size="16px" margin="0 0 10px">
-//    Unidade de medida padrão:
-//  </Heading>
-//  <Select
-//    placeholder="Selecione a unidade de medida padrão para este medicamento"
-//    onChange={value => setFieldValue('idMeasureUnit', value)}
-//    value={idMeasureUnit}
-//    identify="idMeasureUnit"
-//    allowClear
-//    style={{ minWidth: '300px' }}
-//  >
-//    {units.map(unit => (
-//      <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
-//        {unit.description}
-//      </Select.Option>
-//    ))}
-//  </Select>
-//</FieldSet>
+const needUnits = units => {
+  var count = 0
+  units.map(unit => (
+    unit.fator === 1 ? count += 1 : 0
+  ))
+
+  return count > 1
+};

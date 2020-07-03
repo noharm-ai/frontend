@@ -138,7 +138,7 @@ export default function Patient({
           {seeMore && (
             <>
               <Cell>
-                <strong>Altura:</strong> {height ? `${height} cm` : 'Não disponível'}
+                <strong>Altura:</strong> {height ? <Tooltip title="Altura alterada manualmente">{height} *</Tooltip> : 'Não disponível'}
               </Cell>
               <Cell>
                 <strong>Segmento:</strong> {segmentName}
