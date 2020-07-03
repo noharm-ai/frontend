@@ -254,7 +254,7 @@ export default function Screening({
       classes.push('checked');
     }
 
-    if (isEmpty(record.route) && !record.total) {
+    if (record.whiteList && !record.total) {
       classes.push('checked');
     }
 
