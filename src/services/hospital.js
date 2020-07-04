@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment';
 
 import api from '@services/api';
 
@@ -27,21 +28,23 @@ const getPatients = async (bearerToken, requestConfig) => {
   const { listToRequest, listToEscape } = requestConfig;
   const { data } = await api.getResolveNamesUrl(bearerToken);
 
-  const promises = await listToRequest.map(async ({ idPatient }) => {
+  const promises = await listToRequest.map(async ({ idPatient, birthdate }) => {
     if (listToEscape[idPatient]) {
       return listToEscape[idPatient];
     }
 
-    console.log('%cRequested patient of id: ', 'color: #e67e22;', idPatient);
+    const cache = moment().diff(birthdate, 'years') > 0;
+    console.log('%cRequested patient of id: ', 'color: #e67e22;', idPatient, 'cache:', cache);
     const urlRequest = data.url.replace(flag, idPatient);
 
     try {
       const { data: patient } = await axios.get(urlRequest, { timeout: 8000 });
-      return patient;
+      return { ...patient, cache };
     } catch (e) {
       return {
         idPatient,
         name: `Paciente ${idPatient}`,
+        cache,
         status: 'success'
       };
     }

@@ -8,7 +8,6 @@ import {
 } from '@store/ducks/intervention/thunk';
 import {
   fetchScreeningThunk,
-  fetchPrescriptionByIdThunk,
   checkPrescriptionDrugThunk,
   updateInterventionDataThunk,
   updatePrescriptionDrugDataThunk,
@@ -41,7 +40,6 @@ const mapStateToProps = ({ prescriptions, prescriptionDrugs, intervention }) => 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      fetchPrescriptionById: fetchPrescriptionByIdThunk,
       fetchScreeningById: fetchScreeningThunk,
       fetchPeriod: fetchPrescriptionDrugPeriodThunk,
       fetchExams: fetchPrescriptionExamsThunk,
