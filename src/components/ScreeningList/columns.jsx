@@ -187,12 +187,12 @@ export const expandedRowRender = record => {
     <NestedTableContainer>
       <Table columns={columns} dataSource={[record]} pagination={false} />
 
-      <Table
+      {false && <Table
         columns={examColumns(record.exams)}
         dataSource={[{ ...examDatasource(record.exams), key: 'examRow' }]}
         pagination={false}
         style={{ marginTop: '20px' }}
-      />
+      />}
     </NestedTableContainer>
   );
 };
