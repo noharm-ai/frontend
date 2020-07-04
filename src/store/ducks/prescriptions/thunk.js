@@ -95,43 +95,6 @@ export const updatePrescriptionStatusThunk = (params = {}) => async (dispatch, g
   dispatch(prescriptionsUpdateListStatus(data));
 };
 
-export const fetchPrescriptionByIdThunk = idPrescription => async (dispatch, getState) => {
-  dispatch(prescriptionsFetchSingleStart());
-
-  const { auth, patients } = getState();
-  const { list: listPatients } = patients;
-  const { access_token } = auth.identify;
-  const {
-    data: { data },
-    error
-  } = await api.getPrescriptionById(access_token, idPrescription).catch(errorHandler);
-
-  if (!isEmpty(error)) {
-    dispatch(prescriptionsFetchSingleError(error));
-    return;
-  }
-
-  const single = transformPrescription(data);
-
-  const requestConfig = {
-    listToRequest: [single],
-    listToEscape: listPatients
-  };
-
-  const patientsList = toObject(
-    await hospital.getPatients(access_token, requestConfig),
-    'idPatient'
-  );
-
-  const singleAddedPatientName = {
-    ...single,
-    namePatient: patientsList[single.idPatient].name
-  };
-
-  dispatch(patientsFetchListSuccess(patientsList));
-  dispatch(prescriptionsFetchSingleSuccess(singleAddedPatientName));
-};
-
 /**
  * Fetch data for Screening page.
  * @param {number} idPrescription
