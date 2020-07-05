@@ -238,7 +238,7 @@ export default function Base({ units, security }) {
             <Select.Option value="UI" key="UI">
               UI
             </Select.Option>
-          </Select>
+          </Select> &nbsp; /mL
         </Box>
       </Col>
       {needUnits(units) && (<Col md={24} xs={24}>
