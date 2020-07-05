@@ -195,7 +195,7 @@ export default function Base({ units, security }) {
       <Col xs={24}>
         <Box>
           <Heading as="label" size="14px" className="fixed">
-            <Tooltip title="">Concentração:</Tooltip>
+            <Tooltip title="Informação que será utilizada na calculadora de soluções">Concentração:</Tooltip>
           </Heading>
           <InputNumber
             style={{
@@ -231,6 +231,12 @@ export default function Base({ units, security }) {
             </Select.Option>
             <Select.Option value="mcg" key="mcg">
               mcg
+            </Select.Option>
+            <Select.Option value="U" key="U">
+              U
+            </Select.Option>
+            <Select.Option value="UI" key="UI">
+              UI
             </Select.Option>
           </Select>
         </Box>

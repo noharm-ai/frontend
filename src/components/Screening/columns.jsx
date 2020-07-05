@@ -340,7 +340,7 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
           <Row gutter={gutter} type="flex" align="middle">
             <Col xs={labelSize}>
               <Heading as="label" size="14px" textAlign="right">
-                Medicamento ({unit}/mL)
+                Concentração ({unit}/mL)
               </Heading>
             </Col>
             <Col xs={inputSize}>
@@ -595,7 +595,7 @@ const drugInfo = [
           <Tooltip title="Abrir calculadora de solução" placement="top">
             <span onClick={() => record.handleRowExpand(record)} style={{ cursor: 'pointer' }}>
               <Icon type="calculator" style={{ fontSize: 16, marginRight: '10px' }} />
-              <strong>Calculadora de solução</strong>
+              Calculadora de solução
             </span>
           </Tooltip>
         );

@@ -161,7 +161,7 @@ const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumbe
           placement="left"
         >
           <Button
-            type="none gtm-bt-menu-interv"
+            type="primary gtm-bt-menu-interv"
             style={{ marginLeft: '5px' }}
             disabled={isClosed}
             onClick={() => {
@@ -173,7 +173,7 @@ const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumbe
               });
             }}
           >
-            <Icon type="edit" style={{ fontSize: 16 }} />
+            <Icon type="warning" style={{ fontSize: 16 }} />
           </Button>
         </Tooltip>
       )}
