@@ -67,7 +67,7 @@ const ScreeningActions = ({ idPrescription, status, slug, checkScreening, check 
   return (
     <ActionsBox>
       {!isChecked && (
-        <Tooltip title="Checar prescrição">
+        <Tooltip title="Checar prescrição" placement="left">
           <Button
             type="primary gtm-bt-check"
             loading={isChecking}
@@ -79,13 +79,13 @@ const ScreeningActions = ({ idPrescription, status, slug, checkScreening, check 
         </Tooltip>
       )}
       {isChecked && (
-        <Tooltip title="Prescrição checada">
+        <Tooltip title="Prescrição checada" placement="left">
           <CheckedBox>
             <Icon type="check" />
           </CheckedBox>
         </Tooltip>
       )}
-      <Tooltip title="Ver detalhes">
+      <Tooltip title="Ver detalhes" placement="left">
         <span>
           <Link type="secondary gtm-bt-detail" href={`/triagem/${slug}`} target="_blank">
             <Icon type="search" />
@@ -187,12 +187,12 @@ export const expandedRowRender = record => {
     <NestedTableContainer>
       <Table columns={columns} dataSource={[record]} pagination={false} />
 
-      <Table
+      {false && <Table
         columns={examColumns(record.exams)}
         dataSource={[{ ...examDatasource(record.exams), key: 'examRow' }]}
         pagination={false}
         style={{ marginTop: '20px' }}
-      />
+      />}
     </NestedTableContainer>
   );
 };

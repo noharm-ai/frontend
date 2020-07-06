@@ -72,10 +72,6 @@ export default function Patient({
     setVisible(false);
   };
 
-  const gridStyle = width => {
-    return { width: width, textAlign: 'center' };
-  };
-
   const formatWeightDate = weightDate => {
     const emptyMsg = 'data não disponível';
     if (!weightDate) {
@@ -89,7 +85,7 @@ export default function Patient({
       return emptyMsg;
     }
 
-    return date.format('DD/MM/YYYY hh:mm');
+    return date.format('DD/MM/YYYY HH:mm');
   };
 
   const afterSavePatient = () => {
@@ -133,7 +129,7 @@ export default function Patient({
             <strong>Sexo:</strong> {gender ? (gender === 'M' ? 'Masculino' : 'Feminino') : ''}
           </Cell>
           <Cell>
-            <strong>Peso:</strong> {weight} Kg ({formatWeightDate(weightDate)}) 
+            <strong>Peso:</strong> {weight} Kg ({formatWeightDate(weightDate)})
             {weightUser && <Tooltip title="Peso alterado manualmente"> *</Tooltip>}
           </Cell>
           <Cell>
@@ -142,7 +138,7 @@ export default function Patient({
           {seeMore && (
             <>
               <Cell>
-                <strong>Altura:</strong> {height ? `${height} cm` : 'Não disponível'}
+                <strong>Altura:</strong> {height ? <Tooltip title="Altura alterada manualmente">{height} *</Tooltip> : 'Não disponível'}
               </Cell>
               <Cell>
                 <strong>Segmento:</strong> {segmentName}
@@ -172,7 +168,7 @@ export default function Patient({
                 title={exam.value.name}
                 key={exam.key}
               >
-                <Card.Grid hoverable={true} style={gridStyle('20%')}>
+                <Card.Grid hoverable={true}>
                   <Statistic
                     title={exam.value.initials}
                     value={getExamValue(exam.value)}

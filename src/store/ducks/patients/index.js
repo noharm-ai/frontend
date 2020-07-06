@@ -37,12 +37,22 @@ const fetchListError = (state = INITIAL_STATE, { error }) => ({
   isFetching: false
 });
 
-const fetchListSuccess = (state = INITIAL_STATE, { list }) => ({
-  ...state,
-  list,
-  error: null,
-  isFetching: false
-});
+const fetchListSuccess = (state = INITIAL_STATE, { list }) => {
+  const cachedList = {};
+  Object.keys(list).map(i => {
+    if (list[i].cache) {
+      cachedList[i] = list[i];
+    }
+    return false;
+  });
+
+  return {
+    ...state,
+    list: cachedList,
+    error: null,
+    isFetching: false
+  };
+};
 
 const saveSingleStart = (state = INITIAL_STATE) => ({
   ...state,

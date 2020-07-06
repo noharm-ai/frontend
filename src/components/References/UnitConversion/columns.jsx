@@ -1,6 +1,7 @@
 import 'styled-components/macro';
 import React from 'react';
 import Coefficient from './Coefficient';
+import Tooltip from '@components/Tooltip';
 
 export default [
   {
@@ -14,10 +15,10 @@ export default [
     width: 50
   },
   {
-    title: 'Fator',
+    title: <Tooltip title="Unidade padrão deve ter fator 1, demais unidades devem ser ajustadas com fator multiplicador para conversão." placement="top">Fator</Tooltip>,
     dataIndex: 'fator',
     width: 40,
-    render: (entry, record) => (record.isAdmin ? <Coefficient {...record} /> : record.fator)
+    render: (entry, record) => (<Coefficient {...record} />)
   },
   {
     title: 'Contagem',

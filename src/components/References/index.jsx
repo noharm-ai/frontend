@@ -15,6 +15,7 @@ import Tabs from '@components/Tabs';
 import Button from '@components/Button';
 import PopConfirm from '@components/PopConfirm';
 import Icon from '@components/Icon';
+import Tooltip from '@components/Tooltip';
 
 import Edit from '@containers/References/Edit';
 import Relation from '@containers/References/Relation';
@@ -242,13 +243,13 @@ export default function References({
             locale={{ emptyText }}
             dataSource={!units.isFetching ? unitsDatasource : []}
           />
-          {isAdmin && (
-            <PopConfirm
-              title="Com essa ação os escores manuais serão perdidos. Deseja continuar?"
-              onConfirm={generate}
-              okText="Sim"
-              cancelText="Não"
-            >
+          <PopConfirm
+            title="Com esta ação os escores manuais e os comentários serão excluídos. Será necessário reinseri-los manualmente. Deseja continuar?"
+            onConfirm={generate}
+            okText="Sim"
+            cancelText="Não"
+          >
+            <Tooltip title="Gerar novo outlier em caso de mudança de fator de conversão, atribuição de dose/peso e ajuste de faixa." placement="top">
               <Button
                 type="primary gtm-bt-med-generate"
                 style={{ marginTop: '10px' }}
@@ -256,8 +257,8 @@ export default function References({
               >
                 Gerar Escores
               </Button>
-            </PopConfirm>
-          )}
+            </Tooltip>
+          </PopConfirm>
         </Tabs.TabPane>
         <Tabs.TabPane tab="Atributos" key="2">
           <DrugForm fetchReferencesList={fetchReferencesList} match={match} />

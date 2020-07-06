@@ -25,7 +25,9 @@ export default function Base({ units, security }) {
     division,
     useWeight,
     idMeasureUnit,
-    amount
+    amount,
+    amountUnit,
+    whiteList
   } = values;
 
   return (
@@ -91,6 +93,17 @@ export default function Base({ units, security }) {
                 <Tooltip title="Medicamento Potencialmente Inapropriado para Idosos">MPI</Tooltip>
               </Checkbox>
             </Col>
+            <Col xs={8}>
+              <Checkbox
+                onChange={({ target }) => setFieldValue('whiteList', !target.value)}
+                value={whiteList}
+                checked={whiteList}
+                name="whiteList"
+                id="whiteList"
+              >
+                <Tooltip title="Medicamento isento de Validação e Escore">Sem validação</Tooltip>
+              </Checkbox>
+            </Col>
           </div>
         </Box>
       </Col>
@@ -153,38 +166,36 @@ export default function Base({ units, security }) {
           U/L
         </Box>
       </Col>
-      {security.isAdmin() && (
-        <Col xs={24}>
-          <Box>
-            <Heading as="label" size="14px" className="fixed">
-              <Tooltip title="">Divisor de faixas:</Tooltip>
-            </Heading>
-            <InputNumber
-              style={{
-                width: 120,
-                marginRight: '10px'
-              }}
-              min={0}
-              max={99999}
-              value={division}
-              onChange={value => setFieldValue('division', value)}
-            />
-            <Checkbox
-              onChange={({ target }) => setFieldValue('useWeight', !target.value)}
-              value={useWeight}
-              checked={useWeight}
-              name="useWeight"
-              id="useWeight"
-            >
-              <Tooltip title="">Considerar peso</Tooltip>
-            </Checkbox>
-          </Box>
-        </Col>
-      )}
       <Col xs={24}>
         <Box>
           <Heading as="label" size="14px" className="fixed">
-            <Tooltip title="">Concentração:</Tooltip>
+            <Tooltip title="">Divisor de faixas:</Tooltip>
+          </Heading>
+          <InputNumber
+            style={{
+              width: 120,
+              marginRight: '10px'
+            }}
+            min={0}
+            max={99999}
+            value={division}
+            onChange={value => setFieldValue('division', value)}
+          />
+          <Checkbox
+            onChange={({ target }) => setFieldValue('useWeight', !target.value)}
+            value={useWeight}
+            checked={useWeight}
+            name="useWeight"
+            id="useWeight"
+          >
+            <Tooltip title="Somente será considerado peso se houver Divisor de Faixas atribuído">Considerar peso</Tooltip>
+          </Checkbox>
+        </Box>
+      </Col>
+      <Col xs={24}>
+        <Box>
+          <Heading as="label" size="14px" className="fixed">
+            <Tooltip title="Informação que será utilizada na calculadora de soluções">Concentração:</Tooltip>
           </Heading>
           <InputNumber
             style={{
@@ -201,6 +212,38 @@ export default function Base({ units, security }) {
       <Col md={24} xs={24}>
         <Box>
           <Heading as="label" size="14px" className="fixed">
+            Unidade da concentração:
+          </Heading>
+          <Select
+            placeholder="Selecione a unidade da concentração"
+            onChange={value => setFieldValue('amountUnit', value)}
+            value={amountUnit}
+            identify="amountUnit"
+            allowClear
+            style={{ minWidth: '300px' }}
+          >
+            <Select.Option value="" key=""></Select.Option>
+            <Select.Option value="mEq" key="mEq">
+              mEq
+            </Select.Option>
+            <Select.Option value="mg" key="mg">
+              mg
+            </Select.Option>
+            <Select.Option value="mcg" key="mcg">
+              mcg
+            </Select.Option>
+            <Select.Option value="U" key="U">
+              U
+            </Select.Option>
+            <Select.Option value="UI" key="UI">
+              UI
+            </Select.Option>
+          </Select> &nbsp; /mL
+        </Box>
+      </Col>
+      {needUnits(units) && (<Col md={24} xs={24}>
+        <Box>
+          <Heading as="label" size="14px" className="fixed">
             Unidade Padrão:
           </Heading>
           <Select
@@ -212,33 +255,23 @@ export default function Base({ units, security }) {
             style={{ minWidth: '300px' }}
           >
             {units.map(unit => (
+              unit.fator === 1 &&
               <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
                 {unit.description}
               </Select.Option>
             ))}
           </Select>
         </Box>
-      </Col>
+      </Col>)}
     </>
   );
 }
 
-//<FieldSet style={{ marginBottom: '25px', marginTop: '25px' }}>
-//  <Heading as="label" size="16px" margin="0 0 10px">
-//    Unidade de medida padrão:
-//  </Heading>
-//  <Select
-//    placeholder="Selecione a unidade de medida padrão para este medicamento"
-//    onChange={value => setFieldValue('idMeasureUnit', value)}
-//    value={idMeasureUnit}
-//    identify="idMeasureUnit"
-//    allowClear
-//    style={{ minWidth: '300px' }}
-//  >
-//    {units.map(unit => (
-//      <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
-//        {unit.description}
-//      </Select.Option>
-//    ))}
-//  </Select>
-//</FieldSet>
+const needUnits = units => {
+  var count = 0
+  units.map(unit => (
+    unit.fator === 1 ? count += 1 : 0
+  ))
+
+  return count > 1
+};
