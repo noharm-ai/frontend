@@ -158,7 +158,10 @@ export default function References({
         fetchReferencesList();
       }
 
-      restProps.fetchDrugsUnitsList({ id: outliers.selecteds.idDrug });
+      restProps.fetchDrugsUnitsList({
+        id: outliers.selecteds.idDrug,
+        idSegment: outliers.selecteds.idSegment
+      });
     }
   }, [
     generateStatus.generated,
@@ -166,7 +169,8 @@ export default function References({
     match.params,
     fetchReferencesList,
     restProps,
-    outliers.selecteds.idDrug
+    outliers.selecteds.idDrug,
+    outliers.selecteds.idSegment
   ]);
 
   useEffect(() => {
@@ -220,7 +224,11 @@ export default function References({
   return (
     <>
       <Filter {...restProps} outliers={outliers} />
-      <Tabs defaultActiveKey="1" style={{ width: '100%', marginTop: '20px' }} type="card gtm-tab-med">
+      <Tabs
+        defaultActiveKey="1"
+        style={{ width: '100%', marginTop: '20px' }}
+        type="card gtm-tab-med"
+      >
         <Tabs.TabPane tab="Escores" key="1">
           <Table
             title={title}
@@ -249,7 +257,10 @@ export default function References({
             okText="Sim"
             cancelText="Não"
           >
-            <Tooltip title="Gerar novo outlier em caso de mudança de fator de conversão, atribuição de dose/peso e ajuste de faixa." placement="top">
+            <Tooltip
+              title="Gerar novo outlier em caso de mudança de fator de conversão, atribuição de dose/peso e ajuste de faixa."
+              placement="top"
+            >
               <Button
                 type="primary gtm-bt-med-generate"
                 style={{ marginTop: '10px' }}
