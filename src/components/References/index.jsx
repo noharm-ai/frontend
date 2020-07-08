@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
-import { Row } from 'antd';
+import { Row, Col } from 'antd';
 
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
@@ -276,11 +276,20 @@ export default function References({
         </Tabs.TabPane>
         <Tabs.TabPane tab="Relações" key="3">
           <Row type="flex" justify="end">
-            {drugData.sctidA && (
-              <Button type="primary gtm-bt-add-relation" onClick={addRelationModal}>
-                <Icon type="plus" /> Adicionar
-              </Button>
-            )}
+            <Col xs={12}>
+              <Heading as="h3" size="16px">
+                Substância: {drugData.sctNameA}
+              </Heading>
+            </Col>
+            <Col xs={12}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                {drugData.sctidA && (
+                  <Button type="primary gtm-bt-add-relation" onClick={addRelationModal}>
+                    <Icon type="plus" /> Adicionar
+                  </Button>
+                )}
+              </div>
+            </Col>
           </Row>
           <Table
             title={title}
