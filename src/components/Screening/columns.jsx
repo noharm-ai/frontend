@@ -276,9 +276,9 @@ const DrugTags = ({ drug }) => (
 export const groupSolutions = (list, infusionList) => {
   if (list.length === 0) return list;
 
-  const createTotalRow = (item, group) => {
+  const createTotalRow = (item, group, key) => {
     return {
-      key: item.key + 'expand',
+      key: key + 'expand',
       total: true,
       source: 'Soluções',
       handleRowExpand: item.handleRowExpand,
@@ -289,16 +289,19 @@ export const groupSolutions = (list, infusionList) => {
 
   const items = [];
   let currentGroup = list[0].grp_solution;
+  let currentKey = list[0].key;
   list.forEach((item, index) => {
     if (item.grp_solution !== currentGroup) {
-      items.push(createTotalRow(item, currentGroup));
+      items.push(createTotalRow(item, currentGroup, currentKey));
       currentGroup = item.grp_solution;
     }
+
+    currentKey = item.key;
 
     items.push(item);
 
     if (index === list.length - 1) {
-      items.push(createTotalRow(item, item.grp_solution));
+      items.push(createTotalRow(item, item.grp_solution, item.key));
     }
   });
 
