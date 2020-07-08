@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Prismic from 'prismic-javascript';
 
 /**
  * AXIOS instance.
@@ -9,6 +10,9 @@ const requestConfig = {
 };
 
 const instance = axios.create(requestConfig);
+const prismicClient = Prismic.client(process.env.REACT_APP_PRISMIC_API_URL, {
+  accessToken: process.env.REACT_APP_PRISMIC_TOKEN
+});
 
 /**
  * Endpoints.
@@ -237,6 +241,13 @@ const getReports = (bearerToken, params = {}) =>
   });
 
 /**
+ * PRISMIC HELP
+ */
+const getHelp = id => {
+  return prismicClient.getByUID('faq', id);
+};
+
+/**
  * API
  * all functions that can be user in API.
  */
@@ -275,7 +286,8 @@ const api = {
   updatePrescriptionDrug,
   getSubstances,
   updateSegmentExam,
-  getExamTypes
+  getExamTypes,
+  getHelp
 };
 
 export default api;
