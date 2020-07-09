@@ -21,7 +21,12 @@ const saveMessage = {
   message: 'Uhu! Medicamento salvo com sucesso! :)'
 };
 const validationSchema = Yup.object().shape({
-  id: Yup.number()
+  id: Yup.number(),
+  division: Yup.number().when('useWeight', {
+    is: true,
+    then: Yup.number().required(),
+    otherwise: Yup.number().nullable()
+  })
 });
 
 export default function Drug({

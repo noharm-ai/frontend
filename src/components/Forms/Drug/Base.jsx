@@ -11,7 +11,7 @@ import Tooltip from '@components/Tooltip';
 import { Box } from './Drug.style';
 
 export default function Base({ units, security }) {
-  const { values, setFieldValue } = useFormikContext();
+  const { values, setFieldValue, errors } = useFormikContext();
   const {
     antimicro,
     mav,
@@ -108,7 +108,7 @@ export default function Base({ units, security }) {
         </Box>
       </Col>
       <Col xs={24}>
-        <Box>
+        <Box hasError={errors.maxDose}>
           <Heading as="label" size="14px" className="fixed">
             <Tooltip title="Dose de Alerta Diária">Dose de Alerta:</Tooltip>
           </Heading>
@@ -127,7 +127,7 @@ export default function Base({ units, security }) {
         </Box>
       </Col>
       <Col md={24} xs={24}>
-        <Box>
+        <Box hasError={errors.kidney}>
           <Heading as="label" size="14px" margin="0 0 10px" className="fixed">
             <Tooltip title="Valor de Taxa de Filtração Glomerular (CKD-EPI) a partir do qual o medicamento deve sofrer ajuste de dose ou frequência.">
               Nefrotóxico
@@ -147,7 +147,7 @@ export default function Base({ units, security }) {
         </Box>
       </Col>
       <Col xs={24}>
-        <Box>
+        <Box hasError={errors.liver}>
           <Heading as="label" size="14px" className="fixed">
             <Tooltip title="Valor de TGO ou TGP a partir do qual o medicamento deve sofrer ajuste de dose ou frequência.">
               Hepatotóxico:
@@ -167,7 +167,7 @@ export default function Base({ units, security }) {
         </Box>
       </Col>
       <Col xs={24}>
-        <Box>
+        <Box hasError={errors.division}>
           <Heading as="label" size="14px" className="fixed">
             <Tooltip title="">Divisor de faixas:</Tooltip>
           </Heading>
@@ -188,14 +188,18 @@ export default function Base({ units, security }) {
             name="useWeight"
             id="useWeight"
           >
-            <Tooltip title="Somente será considerado peso se houver Divisor de Faixas atribuído">Considerar peso</Tooltip>
+            <Tooltip title="Somente será considerado peso se houver Divisor de Faixas atribuído">
+              Considerar peso
+            </Tooltip>
           </Checkbox>
         </Box>
       </Col>
       <Col xs={24}>
-        <Box>
+        <Box hasError={errors.amount}>
           <Heading as="label" size="14px" className="fixed">
-            <Tooltip title="Informação que será utilizada na calculadora de soluções">Concentração:</Tooltip>
+            <Tooltip title="Informação que será utilizada na calculadora de soluções">
+              Concentração:
+            </Tooltip>
           </Heading>
           <InputNumber
             style={{
@@ -210,7 +214,7 @@ export default function Base({ units, security }) {
         </Box>
       </Col>
       <Col md={24} xs={24}>
-        <Box>
+        <Box hasError={errors.amountUnit}>
           <Heading as="label" size="14px" className="fixed">
             Unidade da concentração:
           </Heading>
@@ -238,40 +242,43 @@ export default function Base({ units, security }) {
             <Select.Option value="UI" key="UI">
               UI
             </Select.Option>
-          </Select> &nbsp; /mL
+          </Select>{' '}
+          &nbsp; /mL
         </Box>
       </Col>
-      {needUnits(units) && (<Col md={24} xs={24}>
-        <Box>
-          <Heading as="label" size="14px" className="fixed">
-            Unidade Padrão:
-          </Heading>
-          <Select
-            placeholder="Selecione a unidade de medida padrão para este medicamento"
-            onChange={value => setFieldValue('idMeasureUnit', value)}
-            value={idMeasureUnit}
-            identify="idMeasureUnit"
-            allowClear
-            style={{ minWidth: '300px' }}
-          >
-            {units.map(unit => (
-              unit.fator === 1 &&
-              <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
-                {unit.description}
-              </Select.Option>
-            ))}
-          </Select>
-        </Box>
-      </Col>)}
+      {needUnits(units) && (
+        <Col md={24} xs={24}>
+          <Box hasError={errors.idMeasureUnit}>
+            <Heading as="label" size="14px" className="fixed">
+              Unidade Padrão:
+            </Heading>
+            <Select
+              placeholder="Selecione a unidade de medida padrão para este medicamento"
+              onChange={value => setFieldValue('idMeasureUnit', value)}
+              value={idMeasureUnit}
+              identify="idMeasureUnit"
+              allowClear
+              style={{ minWidth: '300px' }}
+            >
+              {units.map(
+                unit =>
+                  unit.fator === 1 && (
+                    <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
+                      {unit.description}
+                    </Select.Option>
+                  )
+              )}
+            </Select>
+          </Box>
+        </Col>
+      )}
     </>
   );
 }
 
 const needUnits = units => {
-  var count = 0
-  units.map(unit => (
-    unit.fator === 1 ? count += 1 : 0
-  ))
+  var count = 0;
+  units.map(unit => (unit.fator === 1 ? (count += 1) : 0));
 
-  return count > 1
+  return count > 1;
 };
