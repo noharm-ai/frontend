@@ -1,5 +1,5 @@
 const appName = 'NoHarm.ai';
-const version = 'v1.14-beta';
+const version = 'v1.15-beta';
 const currentYear = new Date().getFullYear();
 const copyright = `${appName} ${currentYear} ${version}`;
 
