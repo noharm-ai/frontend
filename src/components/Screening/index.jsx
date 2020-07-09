@@ -426,7 +426,7 @@ export default function Screening({
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
               <ExpandableTable
                 title={title}
-                columns={interventionColumns}
+                columns={interventionColumns({ status: null })}
                 pagination={false}
                 loading={isFetching}
                 locale={{

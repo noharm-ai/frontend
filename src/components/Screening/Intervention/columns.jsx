@@ -181,7 +181,7 @@ const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumbe
   );
 };
 
-const columns = [
+const columns = filteredInfo => [
   {
     title: 'Data',
     dataIndex: 'date',
@@ -225,6 +225,8 @@ const columns = [
     dataIndex: 'status',
     align: 'center',
     width: 80,
+    filteredValue: filteredInfo.status || null,
+    onFilter: (value, record) => record.status === value,
     render: (text, record) => {
       const config = {};
       switch (record.status) {
