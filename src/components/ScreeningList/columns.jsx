@@ -243,6 +243,16 @@ export default (sortedInfo, filteredInfo) => {
           sortDirections: sortDirections,
           sorter: (a, b) => getValue(a.alertExams) - getValue(b.alertExams),
           sortOrder: sortedInfo.columnKey === 'alertExams' && sortedInfo.order
+        },
+        {
+          title: <Tooltip title="Alertas na Prescrição: Relações, Toxicidades e Dose de Alerta">AL</Tooltip>,
+          className: 'ant-table-right-border gtm-th-alerts',
+          key: 'alerts',
+          width: 30,
+          align: 'center',
+          sortDirections: sortDirections,
+          sorter: (a, b) => getValue(a.alerts) - getValue(b.alerts),
+          sortOrder: sortedInfo.columnKey === 'alerts' && sortedInfo.order
         }
       ])
     },
