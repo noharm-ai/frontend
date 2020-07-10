@@ -8,7 +8,7 @@ import Heading from '@components/Heading';
 import { InputNumber, Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 
-import { Box } from './Drug.style';
+import { Box, FieldError } from './Drug.style';
 
 export default function Base({ units, security }) {
   const { values, setFieldValue, errors } = useFormikContext();
@@ -167,32 +167,35 @@ export default function Base({ units, security }) {
         </Box>
       </Col>
       <Col xs={24}>
-        <Box hasError={errors.division}>
-          <Heading as="label" size="14px" className="fixed">
-            <Tooltip title="">Divisor de faixas:</Tooltip>
-          </Heading>
-          <InputNumber
-            style={{
-              width: 120,
-              marginRight: '10px'
-            }}
-            min={0}
-            max={99999}
-            value={division}
-            onChange={value => setFieldValue('division', value)}
-          />
-          <Checkbox
-            onChange={({ target }) => setFieldValue('useWeight', !target.value)}
-            value={useWeight}
-            checked={useWeight}
-            name="useWeight"
-            id="useWeight"
-          >
-            <Tooltip title="Somente será considerado peso se houver Divisor de Faixas atribuído">
-              Considerar peso
-            </Tooltip>
-          </Checkbox>
-        </Box>
+        <>
+          <Box hasError={errors.division}>
+            <Heading as="label" size="14px" className="fixed">
+              <Tooltip title="">Divisor de faixas:</Tooltip>
+            </Heading>
+            <InputNumber
+              style={{
+                width: 120,
+                marginRight: '10px'
+              }}
+              min={0}
+              max={99999}
+              value={division}
+              onChange={value => setFieldValue('division', value)}
+            />
+            <Checkbox
+              onChange={({ target }) => setFieldValue('useWeight', !target.value)}
+              value={useWeight}
+              checked={useWeight}
+              name="useWeight"
+              id="useWeight"
+            >
+              <Tooltip title="Somente será considerado peso se houver Divisor de Faixas atribuído">
+                Considerar peso
+              </Tooltip>
+            </Checkbox>
+          </Box>
+          {errors.division && <FieldError>{errors.division}</FieldError>}
+        </>
       </Col>
       <Col xs={24}>
         <Box hasError={errors.amount}>
