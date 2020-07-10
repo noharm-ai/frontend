@@ -6,6 +6,8 @@ export const routeToId = path => {
       return 'prescricao';
     case '/medicamentos/:idSegment/:idDrug/:slug':
       return 'medicamentos';
+    case '/relatorios/visualizar':
+      return 'relatorios';
 
     default:
       return path.replace('/', '');
