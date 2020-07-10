@@ -10,13 +10,14 @@ import Button from '@components/Button';
 import Icon from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 import FormPatientModal from '@containers/Forms/Patient';
+import RichTextView from '@components/RichTextView';
 
 import { Wrapper, Name, NameWrapper, Box, ExamBox } from './Patient.style';
 
 function Cell({ children, ...props }) {
   return (
     <Box {...props}>
-      <p>{children}</p>
+      <div className="cell">{children}</div>
     </Box>
   );
 }
@@ -63,6 +64,7 @@ export default function Patient({
   record,
   height,
   exams,
+  observation,
   ...prescription
 }) {
   const [visible, setVisible] = useState(false);
@@ -138,7 +140,12 @@ export default function Patient({
           {seeMore && (
             <>
               <Cell>
-                <strong>Altura:</strong> {height ? <Tooltip title="Altura alterada manualmente">{height} *</Tooltip> : 'Não disponível'}
+                <strong>Altura:</strong>{' '}
+                {height ? (
+                  <Tooltip title="Altura alterada manualmente">{height} *</Tooltip>
+                ) : (
+                  'Não disponível'
+                )}
               </Cell>
               <Cell>
                 <strong>Segmento:</strong> {segmentName}
@@ -149,12 +156,36 @@ export default function Patient({
               <Cell>
                 <strong>Prontuário:</strong> {record}
               </Cell>
+              <Cell>
+                <strong>Anotações:</strong>
+                <div
+                  style={{
+                    maxHeight: '300px',
+                    overflow: 'auto',
+                    marginTop: '10px',
+                    minHeight: '60px'
+                  }}
+                >
+                  <RichTextView text={observation} />
+                </div>
+              </Cell>
             </>
           )}
           <Cell className="see-more">
             <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
               <Icon type={seeMore ? 'up' : 'down'} /> {seeMore ? 'Ver menos' : 'Ver mais'}
             </Button>
+            <div className="tags">
+              {observation && (
+                <Tooltip title="Possui anotação">
+                  <Icon
+                    type="form"
+                    style={{ fontSize: 18, color: '#108ee9' }}
+                    onClick={toggleSeeMore}
+                  />
+                </Tooltip>
+              )}
+            </div>
           </Cell>
         </Wrapper>
       </Col>

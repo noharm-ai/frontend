@@ -10,7 +10,8 @@ const mapStateToProps = ({ prescriptions, patients }) => ({
   idPrescription: prescriptions.single.data.idPrescription,
   admissionNumber: prescriptions.single.data.admissionNumber,
   weight: prescriptions.single.data.weight,
-  height: prescriptions.single.data.height
+  height: prescriptions.single.data.height,
+  observation: prescriptions.single.data.observation
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
