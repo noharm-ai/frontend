@@ -180,13 +180,14 @@ const updateListStatus = (state = INITIAL_STATE, { data }) => {
     const prescriptionIndex = list.findIndex(item => item.idPrescription === st.idPrescription);
 
     if (prescriptionIndex !== -1) {
-      list[prescriptionIndex].status = st.status;
+      delete st.namePatient;
+      list[prescriptionIndex] = { ...list[prescriptionIndex], ...st };
     }
   });
 
   return {
-    list,
-    ...state
+    ...state,
+    list
   };
 };
 

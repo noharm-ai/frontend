@@ -77,7 +77,7 @@ export default function ScreeningList({
     checkScreening,
     check
   };
-  const dataSource = toDataSource(list, 'idPrescription', bag);
+  const dataSource = toDataSource(list, null, bag);
   const columns = columnsTable(sortOrder, filter);
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
   const listCount = {

@@ -107,9 +107,6 @@ const getExams = (bearerToken, admissionNumber, params = {}) =>
 const getPrescriptions = (bearerToken, params = {}) =>
   instance.get(endpoints.prescriptions, { params, ...setHeaders(bearerToken) });
 
-const getPrescriptionsStatus = (bearerToken, params = {}) =>
-  instance.get(`${endpoints.prescriptions}/status`, { params, ...setHeaders(bearerToken) });
-
 const getPrescriptionById = (bearerToken, idPrescription, params = {}) =>
   instance.get(`${endpoints.prescriptions}/${idPrescription}`, {
     params,
@@ -259,7 +256,6 @@ const api = {
   createSegment,
   updateSegment,
   getPrescriptions,
-  getPrescriptionsStatus,
   getPrescriptionById,
   getPrescriptionDrugPeriod,
   putPrescriptionById,

@@ -62,7 +62,7 @@ const ScreeningActions = ({ idPrescription, status, slug, checkScreening, check 
 
   const isDisabled = check.idPrescription !== idPrescription && check.isChecking;
   const isChecking = check.idPrescription === idPrescription && check.isChecking;
-  const isChecked = check.checkedPrescriptions.indexOf(idPrescription) !== -1 || status === 's';
+  const isChecked = status === 's';
 
   return (
     <ActionsBox>
@@ -187,12 +187,14 @@ export const expandedRowRender = record => {
     <NestedTableContainer>
       <Table columns={columns} dataSource={[record]} pagination={false} />
 
-      {false && <Table
-        columns={examColumns(record.exams)}
-        dataSource={[{ ...examDatasource(record.exams), key: 'examRow' }]}
-        pagination={false}
-        style={{ marginTop: '20px' }}
-      />}
+      {false && (
+        <Table
+          columns={examColumns(record.exams)}
+          dataSource={[{ ...examDatasource(record.exams), key: 'examRow' }]}
+          pagination={false}
+          style={{ marginTop: '20px' }}
+        />
+      )}
     </NestedTableContainer>
   );
 };
@@ -200,13 +202,23 @@ export const expandedRowRender = record => {
 const sortDirections = ['descend', 'ascend'];
 
 export default (sortedInfo, filteredInfo) => {
-  return setDataIndex([
+  return [
     {
       key: 'class',
       width: 20,
       align: 'center',
       className: 'hidden-sorter',
-      render: className => <Flag className={className || 'green'} />,
+      render: record => {
+        if (record.processed) {
+          return <Flag className={record.class || 'green'} />;
+        }
+
+        return (
+          <Tooltip title="Os indicadores estão sendo calculados. Atualize a página para visualizá-los.">
+            <Icon type="loading" spin />
+          </Tooltip>
+        );
+      },
       sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
       sortOrder: sortedInfo.columnKey === 'date' && sortedInfo.order
     },
@@ -245,7 +257,11 @@ export default (sortedInfo, filteredInfo) => {
           sortOrder: sortedInfo.columnKey === 'alertExams' && sortedInfo.order
         },
         {
-          title: <Tooltip title="Alertas na Prescrição: Relações, Toxicidades e Dose de Alerta">AL</Tooltip>,
+          title: (
+            <Tooltip title="Alertas na Prescrição: Relações, Toxicidades e Dose de Alerta">
+              AL
+            </Tooltip>
+          ),
           className: 'ant-table-right-border gtm-th-alerts',
           key: 'alerts',
           width: 30,
@@ -380,5 +396,5 @@ export default (sortedInfo, filteredInfo) => {
       onFilter: (value, record) => record.status === value,
       render: (text, prescription) => <ScreeningActions {...prescription} />
     }
-  ]);
+  ];
 };
