@@ -214,7 +214,7 @@ export default (sortedInfo, filteredInfo) => {
         }
 
         return (
-          <Tooltip title="Os indicadores estão sendo calculados. Atualize a página para visualizá-los.">
+          <Tooltip title="Os indicadores estão sendo calculados. Aguarde ou atualize a página para visualizá-los.">
             <Icon type="loading" spin />
           </Tooltip>
         );

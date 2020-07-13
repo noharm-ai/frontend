@@ -125,6 +125,9 @@ export default function Patient({
             <strong>Setor:</strong> {department}
           </Cell>
           <Cell>
+            <strong>Leito:</strong> {bed}
+          </Cell>
+          <Cell>
             <strong>Idade:</strong> {age} {isNaN(age) ? '' : 'anos'}
           </Cell>
           <Cell>
@@ -134,11 +137,11 @@ export default function Patient({
             <strong>Peso:</strong> {weight} Kg ({formatWeightDate(weightDate)})
             {weightUser && <Tooltip title="Peso alterado manualmente"> *</Tooltip>}
           </Cell>
-          <Cell>
-            <strong>Cor da pele:</strong> {skinColor}
-          </Cell>
           {seeMore && (
             <>
+              <Cell>
+                <strong>Cor da pele:</strong> {skinColor}
+              </Cell>
               <Cell>
                 <strong>Altura:</strong>{' '}
                 {height ? (
@@ -149,9 +152,6 @@ export default function Patient({
               </Cell>
               <Cell>
                 <strong>Segmento:</strong> {segmentName}
-              </Cell>
-              <Cell>
-                <strong>Leito:</strong> {bed}
               </Cell>
               <Cell>
                 <strong>Prontuário:</strong> {record}
