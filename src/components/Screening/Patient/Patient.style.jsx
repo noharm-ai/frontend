@@ -31,10 +31,6 @@ export const Box = styled.div`
   min-height: 30px;
   padding: 3.5px 15px;
 
-  p {
-    margin: 0;
-  }
-
   strong {
     color: #2e3c5a;
   }
@@ -42,6 +38,7 @@ export const Box = styled.div`
   &.see-more {
     display: flex;
     justify-content: center;
+    text-align: center;
 
     button {
       color: #696766;
@@ -50,6 +47,11 @@ export const Box = styled.div`
 
     button:hover span {
       text-decoration: underline;
+    }
+
+    div.tags {
+      display: inline-block;
+      vertical-align: middle;
     }
   }
 `;

@@ -1,4 +1,12 @@
 import React from 'react';
+import styled from 'styled-components/macro';
+
+const Container = styled.div`
+  p {
+    margin-top: 5px !important;
+    max-width: 700px;
+  }
+`;
 
 const textToHtml = obs => {
   if (obs && obs !== 'None') {
@@ -9,9 +17,7 @@ const textToHtml = obs => {
 };
 
 const RichTextView = ({ text }) => {
-  return (
-    <div dangerouslySetInnerHTML={{ __html: textToHtml(text) }} style={{ maxWidth: '700px' }} />
-  );
+  return <Container dangerouslySetInnerHTML={{ __html: textToHtml(text) }} />;
 };
 
 export default RichTextView;

@@ -32,6 +32,7 @@ export default function Patient({
   admissionNumber,
   weight,
   height,
+  observation,
   ...props
 }) {
   const { isSaving, success, error } = saveStatus;
@@ -40,7 +41,8 @@ export default function Patient({
     idPrescription,
     admissionNumber,
     weight,
-    height
+    height,
+    observation
   };
 
   useEffect(() => {

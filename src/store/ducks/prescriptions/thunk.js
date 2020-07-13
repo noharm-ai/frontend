@@ -85,14 +85,14 @@ export const updatePrescriptionStatusThunk = (params = {}) => async (dispatch, g
   const {
     data: { data },
     error
-  } = await api.getPrescriptionsStatus(access_token, params).catch(errorHandler);
+  } = await api.getPrescriptions(access_token, params).catch(errorHandler);
 
   if (!isEmpty(error)) {
     dispatch(prescriptionsFetchListError(error));
     return;
   }
 
-  dispatch(prescriptionsUpdateListStatus(data));
+  dispatch(prescriptionsUpdateListStatus(transformPrescriptions(data)));
 };
 
 /**

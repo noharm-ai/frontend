@@ -20,8 +20,19 @@ const errorMessage = {
 const saveMessage = {
   message: 'Uhu! Medicamento salvo com sucesso! :)'
 };
+const divisionErrorMessage =
+  'O campo Divisor de faixas é obrigatório quando o peso deve ser considerado.';
 const validationSchema = Yup.object().shape({
-  id: Yup.number()
+  id: Yup.number(),
+  division: Yup.number().when('useWeight', {
+    is: true,
+    then: Yup.number()
+      .typeError(divisionErrorMessage)
+      .required(divisionErrorMessage),
+    otherwise: Yup.number()
+      .typeError(divisionErrorMessage)
+      .nullable()
+  })
 });
 
 export default function Drug({

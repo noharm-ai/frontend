@@ -21,6 +21,7 @@ export const FormContainer = styled.div`
 
 export const Box = styled.div`
   display: flex;
+  flex-direction: ${props => (props.flexDirection ? props.flexDirection : 'row')};
   align-items: center;
   width: 100%;
 
@@ -32,5 +33,11 @@ export const Box = styled.div`
   input,
   .ant-select .ant-select-selection {
     background: ${props => (props.hasError ? '#ffcdd2;' : 'inherit')};
+  }
+`;
+
+export const EditorBox = styled.div`
+  .ck-content {
+    min-height: 100px;
   }
 `;

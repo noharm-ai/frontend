@@ -27,4 +27,15 @@ export const Box = styled.div`
     width: 140px;
     margin-right: 10px;
   }
+
+  input,
+  .ant-select .ant-select-selection {
+    background: ${props => (props.hasError ? '#ffcdd2;' : 'inherit')};
+  }
+`;
+
+export const FieldError = styled.div`
+  margin-left: 150px;
+  margin-top: 10px;
+  color: #f5222d;
 `;

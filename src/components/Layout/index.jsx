@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 
 import appInfo from '@utils/appInfo';
 import Avatar from '@components/Avatar';
+import Drawer from '@components/Drawer';
+
+import Help from '@components/Help';
 
 import Box from './Box';
 import Menu from './Menu';
@@ -16,7 +19,7 @@ const setTitle = ({ user }) => {
   return user.account.userName;
 };
 
-const Me = ({ user, doLogout }) => (
+const Me = ({ user, doLogout, toggleDrawer }) => (
   <div
     css="
       align-items: center;
@@ -25,6 +28,9 @@ const Me = ({ user, doLogout }) => (
   >
     <Avatar size={44} icon="user" css="margin-right: 12px !important;" />
     <UserName>{setTitle({ user })}</UserName>
+    <LogOut onClick={e => toggleDrawer(e)} id="gtm-lnk-ajuda" style={{ marginRight: '12px' }}>
+      Ajuda
+    </LogOut>
     <LogOut onClick={e => doLogout(e)} id="gtm-lnk-sair">
       Sair
     </LogOut>
@@ -36,6 +42,7 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
     collapsed: app.sider.collapsed,
     collapsedWidth: 80
   });
+  const [isDrawerVisible, setDrawerVisibility] = useState(false);
 
   const onBreakpoint = breaked => {
     setSider(prevState => ({
@@ -59,6 +66,10 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
     });
   };
 
+  const toggleDrawer = () => {
+    setDrawerVisibility(!isDrawerVisible);
+  };
+
   return (
     <Main style={{ minHeight: '100vh' }}>
       <Sider
@@ -77,7 +88,7 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
       </Sider>
       <Main style={{ paddingLeft: sider.collapsed ? sider.collapsedWidth : siderWidth }}>
         <Header>
-          <Me {...props} />
+          <Me {...props} toggleDrawer={toggleDrawer} />
         </Header>
         <Content css="padding: 25px 18px;">
           {theme === 'boxed' ? <Box {...props}>{children}</Box> : children}
@@ -88,6 +99,15 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
             <img src="/updown.png" width="12px" alt="updown logo" />
           </a>
         </Footer>
+        <Drawer
+          width={640}
+          placement="right"
+          closable={false}
+          onClose={toggleDrawer}
+          visible={isDrawerVisible}
+        >
+          <Help />
+        </Drawer>
       </Main>
     </Main>
   );

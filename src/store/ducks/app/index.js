@@ -23,6 +23,9 @@ const INITIAL_STATE = {
   },
   savedFilters: {
     screeningList: []
+  },
+  help: {
+    section: null
   }
 };
 

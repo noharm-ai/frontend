@@ -6,20 +6,24 @@ import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
 import { InputNumber } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
+import Editor from '@components/Editor';
 
-import { Box } from './Patient.style';
+import { Box, EditorBox } from '../Form.style';
 
 export default function Base() {
   const { values, setFieldValue, errors } = useFormikContext();
-  const { weight, height } = values;
+  const { weight, height, observation } = values;
+  const layout = { label: 8, input: 16 };
 
   return (
     <>
-      <Col xs={24}>
-        <Box hasError={errors.weight}>
-          <Heading as="label" size="14px">
+      <Box hasError={errors.weight}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
             <Tooltip title="">Peso:</Tooltip>
           </Heading>
+        </Col>
+        <Col xs={layout.input}>
           <InputNumber
             style={{
               width: 120,
@@ -32,13 +36,16 @@ export default function Base() {
             onChange={value => setFieldValue('weight', value)}
           />{' '}
           Kg
-        </Box>
-      </Col>
-      <Col xs={24}>
-        <Box hasError={errors.height}>
-          <Heading as="label" size="14px">
+        </Col>
+      </Box>
+
+      <Box hasError={errors.height}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
             <Tooltip title="">Altura:</Tooltip>
           </Heading>
+        </Col>
+        <Col xs={layout.input}>
           <InputNumber
             style={{
               width: 120,
@@ -51,8 +58,24 @@ export default function Base() {
             onChange={value => setFieldValue('height', value)}
           />{' '}
           cm
-        </Box>
-      </Col>
+        </Col>
+      </Box>
+
+      <Box hasError={errors.observation} flexDirection="column">
+        <Col xs={24} style={{ paddingBottom: '0' }}>
+          <Heading as="label" size="14px">
+            <Tooltip title="">Observações:</Tooltip>
+          </Heading>
+        </Col>
+        <Col xs={24}>
+          <EditorBox>
+            <Editor
+              onEdit={value => setFieldValue('observation', value)}
+              content={observation || ''}
+            />
+          </EditorBox>
+        </Col>
+      </Box>
     </>
   );
 }
