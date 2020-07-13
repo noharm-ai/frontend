@@ -1,4 +1,6 @@
 ![Build](https://github.com/noharm-ai/frontend/workflows/Build/badge.svg)
+[![Issues](https://img.shields.io/github/issues-raw/tterb/PlayMusic.svg?maxAge=25000)](https://github.com/noharm-ai/frontend/issues)  
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
