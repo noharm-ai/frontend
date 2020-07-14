@@ -805,6 +805,28 @@ const actionColumns = [
   }
 ];
 
+export const isPendingValidation = record =>
+  (!record.whiteList && !record.checked) || !isEmpty(record.prevIntervention);
+
 export const solutionColumns = [...drugInfo, ...stageAndInfusion, ...actionColumns];
 
-export default [...drugInfo, ...frequencyAndTime, ...actionColumns];
+export default filteredInfo => {
+  const columns = [...drugInfo, ...frequencyAndTime, ...actionColumns];
+
+  columns[0] = {
+    ...columns[0],
+    ...{
+      filteredValue: filteredInfo.status || null,
+      onFilter: (value, record) => {
+        switch (value) {
+          case 'pending-validation':
+            return isPendingValidation(record);
+          default:
+            return true;
+        }
+      }
+    }
+  };
+
+  return columns;
+};

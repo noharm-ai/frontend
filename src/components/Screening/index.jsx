@@ -16,11 +16,17 @@ import Tag from '@components/Tag';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import Icon from '@components/Icon';
+import TableFilter from '@components/TableFilter';
 
 import Modal from './Modal';
 import PrescriptionDrugModal from './PrescriptionDrugModal';
 import Patient from './Patient';
-import columnsTable, { expandedRowRender, solutionColumns, groupSolutions } from './columns';
+import columnsTable, {
+  expandedRowRender,
+  solutionColumns,
+  groupSolutions,
+  isPendingValidation
+} from './columns';
 import interventionColumns, { expandedInterventionRowRender } from './Intervention/columns';
 import examColumns, { examRowClassName, expandedExamRowRender } from './Exam/columns';
 
@@ -85,12 +91,24 @@ export default function Screening({
     procedure: []
   });
   const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
+  const [filter, setFilter] = useState({
+    status: null
+  });
 
-  const columns = useMedia(
-    [`(min-width: ${breakpoints.lg})`],
-    [[...columnsTable]],
-    [...columnsTable]
-  );
+  const handleFilter = (e, status) => {
+    if (status) {
+      setFilter({ status: status === 'all' ? null : [status] });
+    }
+  };
+
+  const isFilterActive = status => {
+    if (filter.status) {
+      return filter.status[0] === status;
+    }
+
+    return filter.status == null && status == null;
+  };
+
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
 
   const onSave = () => save(item);
@@ -201,6 +219,11 @@ export default function Screening({
     interventions: interventionList
       ? interventionList.reduce((n, i) => n + (i.status === 's'), 0)
       : 0
+  };
+
+  const prescriptionCount = {
+    all: listCount.prescriptions,
+    pendingValidation: drugList ? drugList.reduce((n, i) => n + isPendingValidation(i), 0) : 0
   };
 
   // fetch data
@@ -322,6 +345,31 @@ export default function Screening({
     );
   };
 
+  const ListFilter = ({ listCount, handleFilter, isFilterActive }) => (
+    <TableFilter style={{ marginBottom: 15 }}>
+      <Tooltip title="Ver somente pendentes de validação">
+        <Button
+          type="gtm-lnk-filter-intrv-pendente ant-btn-link-hover"
+          className={isFilterActive('pending-validation') ? 'active' : ''}
+          onClick={e => handleFilter(e, 'pending-validation')}
+        >
+          Pendentes de validação
+          <Tag color="orange">{listCount.pendingValidation}</Tag>
+        </Button>
+      </Tooltip>
+      <Tooltip title="Ver todos">
+        <Button
+          type="gtm-lnk-filter-intrv-pendente ant-btn-link-hover"
+          className={isFilterActive(null) ? 'active' : ''}
+          onClick={e => handleFilter(e, 'all')}
+        >
+          Todos
+          <Tag>{listCount.all}</Tag>
+        </Button>
+      </Tooltip>
+    </TableFilter>
+  );
+
   if (error) {
     return null;
   }
@@ -343,11 +391,16 @@ export default function Screening({
             key="1"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
+              <ListFilter
+                listCount={prescriptionCount}
+                handleFilter={handleFilter}
+                isFilterActive={isFilterActive}
+              />
               <ExpandableTable
                 expandedRowKeys={expandedRows.prescription}
                 onExpand={(expanded, record) => handleRowExpand(record)}
                 title={title}
-                columns={columns}
+                columns={columnsTable(filter)}
                 pagination={false}
                 loading={isFetching}
                 locale={{
@@ -394,7 +447,7 @@ export default function Screening({
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
               <ExpandableTable
                 title={title}
-                columns={columns}
+                columns={columnsTable({ status: null })}
                 pagination={false}
                 loading={isFetching}
                 locale={{
