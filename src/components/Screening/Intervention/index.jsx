@@ -227,7 +227,13 @@ const Observations = ({ content, onEditObservation }) => {
         Observações:
       </Heading>
       <EditorBox>
-        <Editor onEdit={onEdit} content={content || ''} />
+        <Editor
+          onEdit={onEdit}
+          content={content || ''}
+          onInit={editor => {
+            editor.editing.view.focus();
+          }}
+        />
       </EditorBox>
     </Box>
   );

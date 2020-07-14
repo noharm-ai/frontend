@@ -72,6 +72,9 @@ export default function Base() {
             <Editor
               onEdit={value => setFieldValue('observation', value)}
               content={observation || ''}
+              onInit={editor => {
+                editor.editing.view.focus();
+              }}
             />
           </EditorBox>
         </Col>
