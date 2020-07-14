@@ -1,8 +1,8 @@
 export default [
   {
     key: '/',
-    text: 'Pacientes para Triagem',
-    icon: 'user',
+    text: 'Priorização de Prescrições',
+    icon: 'drugPrescription',
     id: 'gtm-lnk-pacientes-triagem'
   },
   {
