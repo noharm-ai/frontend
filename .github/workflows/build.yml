@@ -23,3 +23,8 @@ jobs:
       uses: borales/actions-yarn@v2.0.0
       with:
         cmd: build
+    - name: yarn test
+      uses: borales/actions-yarn@v2.0.0
+      with:
+        cmd: test
+        
