@@ -116,14 +116,6 @@ export const desktopAction = {
   ...defaultAction
 };
 
-const getValue = v => {
-  if (v === 'None' || v === '') {
-    return -1;
-  }
-
-  return parseFloat(v, 10);
-};
-
 export const expandedRowRender = record => {
   const columns = setDataIndex([
     {
@@ -233,7 +225,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 30,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.age) - getValue(b.age),
+          sorter: (a, b) => a.age - b.age,
           sortOrder: sortedInfo.columnKey === 'age' && sortedInfo.order
         },
         {
@@ -243,7 +235,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 30,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.lengthStay) - getValue(b.lengthStay),
+          sorter: (a, b) => a.lengthStay - b.lengthStay,
           sortOrder: sortedInfo.columnKey === 'lengthStay' && sortedInfo.order
         },
         {
@@ -253,7 +245,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 30,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.alertExams) - getValue(b.alertExams),
+          sorter: (a, b) => a.alertExams - b.alertExams,
           sortOrder: sortedInfo.columnKey === 'alertExams' && sortedInfo.order
         },
         {
@@ -267,7 +259,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 30,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.alerts) - getValue(b.alerts),
+          sorter: (a, b) => a.alerts - b.alerts,
           sortOrder: sortedInfo.columnKey === 'alerts' && sortedInfo.order
         }
       ])
@@ -282,7 +274,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 30,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.am) - getValue(b.am),
+          sorter: (a, b) => a.am - b.am,
           sortOrder: sortedInfo.columnKey === 'am' && sortedInfo.order
         },
         {
@@ -292,7 +284,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 30,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.av) - getValue(b.av),
+          sorter: (a, b) => a.av - b.av,
           sortOrder: sortedInfo.columnKey === 'av' && sortedInfo.order
         },
         {
@@ -302,7 +294,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 20,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.controlled) - getValue(b.controlled),
+          sorter: (a, b) => a.controlled - b.controlled,
           sortOrder: sortedInfo.columnKey === 'controlled' && sortedInfo.order
         },
         {
@@ -312,7 +304,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 30,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.np) - getValue(b.np),
+          sorter: (a, b) => a.np - b.np,
           sortOrder: sortedInfo.columnKey === 'np' && sortedInfo.order
         },
         {
@@ -322,7 +314,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 20,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.tube) - getValue(b.tube),
+          sorter: (a, b) => a.tube - b.tube,
           sortOrder: sortedInfo.columnKey === 'tube' && sortedInfo.order
         },
         {
@@ -332,7 +324,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 20,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.diff) - getValue(b.diff),
+          sorter: (a, b) => a.diff - b.diff,
           sortOrder: sortedInfo.columnKey === 'diff' && sortedInfo.order
         },
         {
@@ -342,7 +334,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 20,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.interventions) - getValue(b.interventions),
+          sorter: (a, b) => a.interventions - b.interventions,
           sortOrder: sortedInfo.columnKey === 'interventions' && sortedInfo.order
         },
         {
@@ -352,7 +344,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 20,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.scoreThree) - getValue(b.scoreThree),
+          sorter: (a, b) => a.scoreThree - b.scoreThree,
           sortOrder: sortedInfo.columnKey === 'scoreThree' && sortedInfo.order
         },
         {
@@ -362,7 +354,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 20,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.scoreTwo) - getValue(b.scoreTwo),
+          sorter: (a, b) => a.scoreTwo - b.scoreTwo,
           sortOrder: sortedInfo.columnKey === 'scoreTwo' && sortedInfo.order
         },
         {
@@ -372,7 +364,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 20,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.scoreOne) - getValue(b.scoreOne),
+          sorter: (a, b) => a.scoreOne - b.scoreOne,
           sortOrder: sortedInfo.columnKey === 'scoreOne' && sortedInfo.order
         },
         {
@@ -382,7 +374,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 20,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => getValue(a.prescriptionScore) - getValue(b.prescriptionScore),
+          sorter: (a, b) => a.prescriptionScore - b.prescriptionScore,
           sortOrder: sortedInfo.columnKey === 'prescriptionScore' && sortedInfo.order
         }
       ])

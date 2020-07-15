@@ -1,4 +1,5 @@
 import 'antd/lib/table/style/index.css';
+import 'antd/lib/pagination/style/index.css';
 import AntTable from 'antd/lib/table';
 import styled from 'styled-components/macro';
 
@@ -112,6 +113,10 @@ const Table = styled(AntTable)`
     a {
       opacity: 1;
     }
+  }
+
+  .ant-table-pagination.ant-pagination {
+    margin: 5px;
   }
 
   .suspended {

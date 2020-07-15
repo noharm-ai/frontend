@@ -136,7 +136,7 @@ export default function ScreeningList({
   };
 
   const info = (
-    <TableInfo style={{ marginBottom: 15 }}>
+    <TableInfo>
       <Tooltip title="Ver prescrições pendentes">
         <Button
           type="gtm-lnk-filter-presc-pendente ant-btn-link-hover"
@@ -184,12 +184,14 @@ export default function ScreeningList({
         fetchPrescriptionsList={fetchPrescriptionsList}
         isFetchingPrescription={isFetching}
       />
-      {info}
+      {!isFetching && info}
       <ScreeningTable
         title={title}
         columns={columns}
-        pagination={false}
-        scroll={{ x: 800 }}
+        pagination={{
+          pageSize: 50,
+          position: 'both'
+        }}
         loading={isFetching}
         locale={{ emptyText }}
         expandedRowRender={expandedRowRender}
