@@ -239,7 +239,7 @@ export default (sortedInfo, filteredInfo) => {
           sortOrder: sortedInfo.columnKey === 'lengthStay' && sortedInfo.order
         },
         {
-          title: <Tooltip title="Exames alterados">EXA</Tooltip>,
+          title: <Tooltip title="Exames Alterados">EX</Tooltip>,
           className: 'ant-table-right-border gtm-th-exames',
           key: 'alertExams',
           width: 30,
