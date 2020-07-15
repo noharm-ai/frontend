@@ -160,8 +160,8 @@ export default function ScreeningList({
 
       <Tooltip
         title={
-          listCount.all === 250
-            ? 'Limite de 250 prescrições atingido, reduza os setores para visualizar todas do dia.'
+          listCount.all === 500
+            ? 'Limite de 500 prescrições atingido, reduza os setores para visualizar todas do dia.'
             : 'Ver todas prescrições'
         }
       >
@@ -170,7 +170,7 @@ export default function ScreeningList({
           className={isFilterActive(null) ? 'active' : ''}
           onClick={e => handleFilter(e, 'all')}
         >
-          Todas {listCount.all === 250 ? '*' : ''}
+          Todas {listCount.all === 500 ? '*' : ''}
           <Tag>{listCount.all}</Tag>
         </Button>
       </Tooltip>
