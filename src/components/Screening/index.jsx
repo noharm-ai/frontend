@@ -349,7 +349,7 @@ export default function Screening({
     <TableFilter style={{ marginBottom: 15 }}>
       <Tooltip title="Ver somente pendentes de validação">
         <Button
-          type="gtm-lnk-filter-intrv-pendente ant-btn-link-hover"
+          type="gtm-lnk-filter-presc-pendentevalidacao ant-btn-link-hover"
           className={isFilterActive('pending-validation') ? 'active' : ''}
           onClick={e => handleFilter(e, 'pending-validation')}
         >
@@ -359,7 +359,7 @@ export default function Screening({
       </Tooltip>
       <Tooltip title="Ver todos">
         <Button
-          type="gtm-lnk-filter-intrv-pendente ant-btn-link-hover"
+          type="gtm-lnk-filter-presc-todos ant-btn-link-hover"
           className={isFilterActive(null) ? 'active' : ''}
           onClick={e => handleFilter(e, 'all')}
         >
