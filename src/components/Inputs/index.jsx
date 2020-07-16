@@ -5,3 +5,4 @@ export { InputNumber } from './InputNumber';
 export { FieldSet } from './FieldSet';
 export { DatePicker } from './DatePicker';
 export { Radio } from './Radio';
+export { Textarea } from './Textarea';

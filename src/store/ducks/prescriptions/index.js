@@ -13,6 +13,11 @@ export const { Types, Creators } = createActions({
   prescriptionsCheckError: ['error'],
   prescriptionsCheckSuccess: ['success'],
 
+  prescriptionsSaveStart: [''],
+  prescriptionsSaveError: ['error'],
+  prescriptionsSaveSuccess: ['data'],
+  prescriptionsSaveReset: [''],
+
   prescriptionDrugCheckStart: ['idPrescriptionDrug'],
   prescriptionDrugCheckError: ['error'],
   prescriptionDrugCheckSuccess: ['success'],
@@ -43,6 +48,8 @@ const INITIAL_STATE = {
   single: {
     error: null,
     isFetching: true,
+    isSaving: false,
+    success: false,
     check: {
       error: null,
       success: {},
@@ -171,6 +178,47 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
     }
   };
 };
+
+const saveStart = (state = INITIAL_STATE) => ({
+  ...state,
+  single: {
+    ...state.single,
+    isSaving: true
+  }
+});
+
+const saveError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  single: {
+    ...state.single,
+    isSaving: false,
+    error
+  }
+});
+
+const saveSuccess = (state = INITIAL_STATE, { data }) => ({
+  ...state,
+  single: {
+    ...state.single,
+    isSaving: false,
+    error: null,
+    success: true,
+    data: {
+      ...state.single.data,
+      ...data
+    }
+  }
+});
+
+const saveReset = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  single: {
+    ...state.single,
+    isSaving: false,
+    error: null,
+    success: false
+  }
+});
 
 const updateListStatus = (state = INITIAL_STATE, { data }) => {
   const list = [...state.list];
@@ -523,6 +571,11 @@ const HANDLERS = {
   [Types.PRESCRIPTIONS_CHECK_START]: checkStart,
   [Types.PRESCRIPTIONS_CHECK_ERROR]: checkError,
   [Types.PRESCRIPTIONS_CHECK_SUCCESS]: checkSuccess,
+
+  [Types.PRESCRIPTIONS_SAVE_START]: saveStart,
+  [Types.PRESCRIPTIONS_SAVE_ERROR]: saveError,
+  [Types.PRESCRIPTIONS_SAVE_SUCCESS]: saveSuccess,
+  [Types.PRESCRIPTIONS_SAVE_RESET]: saveReset,
 
   [Types.PRESCRIPTION_DRUG_CHECK_START]: checkPrescriptionDrugStart,
   [Types.PRESCRIPTION_DRUG_CHECK_ERROR]: checkPrescriptionDrugError,
