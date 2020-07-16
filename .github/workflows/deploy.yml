@@ -20,6 +20,12 @@ jobs:
       uses: borales/actions-yarn@v2.0.0
       with:
         cmd: build
+      env: 
+        REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+        REACT_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE }}
+        REACT_APP_UPDOWN_LINK: ${{ secrets.REACT_APP_UPDOWN_LINK }}
+        REACT_APP_PRISMIC_API_URL: ${{ secrets.REACT_APP_PRISMIC_API_URL }}
+        REACT_APP_PRISMIC_TOKEN: ${{ secrets.REACT_APP_PRISMIC_TOKEN }}
     - name: yarn test
       uses: borales/actions-yarn@v2.0.0
       with:
