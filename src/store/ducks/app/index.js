@@ -18,7 +18,8 @@ const INITIAL_STATE = {
     screeningList: {
       idSegment: null,
       idDepartment: [],
-      idDrug: []
+      idDrug: [],
+      pending: false
     }
   },
   savedFilters: {

@@ -8,7 +8,8 @@ import debounce from 'lodash.debounce';
 import message from '@components/message';
 import Heading from '@components/Heading';
 import { Row, Col } from '@components/Grid';
-import { Select, DatePicker, Input } from '@components/Inputs';
+import { Select, RangeDatePicker, Input } from '@components/Inputs';
+import Switch from '@components/Switch';
 import { Box, SearchBox } from './Filter.style';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
@@ -73,7 +74,7 @@ export default function Filter({
   const [open, setOpen] = useState(false);
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
   const [filterName, setFilterName] = useState('');
-  const [date, setDate] = useState(moment());
+  const [date, setDate] = useState([moment(), null]);
 
   const getParams = useCallback(
     forceParams => {
@@ -81,7 +82,9 @@ export default function Filter({
         idSegment: filter.idSegment,
         idDept: filter.idDepartment,
         idDrug: filter.idDrug,
-        date: date ? date.format('YYYY-MM-DD') : 'all'
+        pending: filter.pending,
+        startDate: date[0] ? date[0].format('YYYY-MM-DD') : 'all',
+        endDate: date[1] ? date[1].format('YYYY-MM-DD') : 'all'
       };
       const mixedParams = { ...params, ...forceParams };
       const finalParams = {};
@@ -136,6 +139,10 @@ export default function Filter({
     setScreeningListFilter({ idDrug });
   };
 
+  const onPendingChange = pending => {
+    setScreeningListFilter({ pending });
+  };
+
   const onDateChange = dt => {
     setDate(dt);
   };
@@ -170,9 +177,10 @@ export default function Filter({
     setScreeningListFilter({
       idSegment: segments.list[0].id,
       idDepartment: [],
-      idDrug: []
+      idDrug: [],
+      pending: false
     });
-    setDate(moment());
+    setDate([moment(), null]);
   };
 
   const countHiddenFilters = filters => {
@@ -182,7 +190,7 @@ export default function Filter({
     Object.keys(filters).forEach(key => {
       if (skip.indexOf(key) !== -1) return;
 
-      if (!isEmpty(filter[key])) {
+      if (!isEmpty(filter[key]) || filter[key] === true) {
         count++;
       }
     });
@@ -245,12 +253,12 @@ export default function Filter({
             </Select>
           </Box>
         </Col>
-        <Col md={3}>
+        <Col md={4}>
           <Box>
             <Heading as="label" htmlFor="date" size="14px">
               Data:
             </Heading>
-            <DatePicker
+            <RangeDatePicker
               format="DD/MM/YYYY"
               disabledDate={disabledDate}
               value={date}
@@ -266,7 +274,7 @@ export default function Filter({
               <Button
                 type="link gtm-btn-adv-search"
                 onClick={() => setOpen(!open)}
-                style={{ marginTop: '14px' }}
+                style={{ marginTop: '14px', paddingLeft: 0 }}
               >
                 <Badge count={hiddenFieldCount}>Ver mais</Badge>
                 <Icon type={open ? 'caret-up' : 'caret-down'} />
@@ -368,11 +376,32 @@ export default function Filter({
           </Box>
         </Col>
       </Row>
-      <Row gutter={20} style={{ marginTop: '10px' }} type="flex">
+      <Row gutter={[20, 0]} style={{ marginTop: '20px' }}>
+        <Col md={14}>
+          <Box flexDirection="row" alignItems="center">
+            <Heading as="label" htmlFor="drugs-filter" size="14px">
+              Somente prescrições pendentes:
+            </Heading>
+
+            <Switch
+              style={{ marginLeft: '10px' }}
+              onChange={onPendingChange}
+              checked={filter.pending}
+            />
+          </Box>
+        </Col>
+      </Row>
+      <Row gutter={20} style={{ marginTop: '10px' }}>
         <Col md={14}>
           <div className="search-box-buttons">
-            <Button type="nda gtm-bt-clear-filter" onClick={reset}>Limpar</Button>
-            <Button type="secondary gtm-bt-search-filter" onClick={search} loading={isFetchingPrescription}>
+            <Button type="nda gtm-bt-clear-filter" onClick={reset}>
+              Limpar
+            </Button>
+            <Button
+              type="secondary gtm-bt-search-filter"
+              onClick={search}
+              loading={isFetchingPrescription}
+            >
               Pesquisar
             </Button>
           </div>
