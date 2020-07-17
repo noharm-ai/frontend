@@ -39,6 +39,13 @@ const routes = [
   },
   {
     exact: true,
+    path: '/:startDate',
+    component: withAuth({
+      component: ScreeningList
+    })
+  },
+  {
+    exact: true,
     path: '/triagem/:slug',
     component: withAuth({
       component: Screening

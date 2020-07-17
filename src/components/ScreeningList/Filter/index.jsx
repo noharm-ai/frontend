@@ -69,12 +69,13 @@ export default function Filter({
   saveFilter,
   removeFilter,
   drugs,
-  searchDrugs
+  searchDrugs,
+  match
 }) {
   const [open, setOpen] = useState(false);
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
   const [filterName, setFilterName] = useState('');
-  const [date, setDate] = useState([moment(), null]);
+  const [date, setDate] = useState([moment(match.params.startDate), null]);
 
   const getParams = useCallback(
     forceParams => {
