@@ -140,7 +140,7 @@ export default function Filter({
   };
 
   const onPendingChange = pending => {
-    setScreeningListFilter({ pending });
+    setScreeningListFilter({ pending: pending ? 1 : 0 });
   };
 
   const onDateChange = dt => {
@@ -178,7 +178,7 @@ export default function Filter({
       idSegment: segments.list[0].id,
       idDepartment: [],
       idDrug: [],
-      pending: false
+      pending: 0
     });
     setDate([moment(), null]);
   };
@@ -190,7 +190,7 @@ export default function Filter({
     Object.keys(filters).forEach(key => {
       if (skip.indexOf(key) !== -1) return;
 
-      if (!isEmpty(filter[key]) || filter[key] === true) {
+      if (!isEmpty(filter[key]) || filter[key] === true || filter[key] === 1) {
         count++;
       }
     });
@@ -253,7 +253,7 @@ export default function Filter({
             </Select>
           </Box>
         </Col>
-        <Col md={4}>
+        <Col md={7} lg={7} xxl={5}>
           <Box>
             <Heading as="label" htmlFor="date" size="14px">
               Data:

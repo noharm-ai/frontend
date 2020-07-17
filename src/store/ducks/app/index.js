@@ -19,7 +19,7 @@ const INITIAL_STATE = {
       idSegment: null,
       idDepartment: [],
       idDrug: [],
-      pending: false
+      pending: 0
     }
   },
   savedFilters: {
