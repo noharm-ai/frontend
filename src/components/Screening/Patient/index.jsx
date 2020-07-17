@@ -51,6 +51,7 @@ const ExamData = ({ exam }) => (
 export default function Patient({
   admissionNumber,
   department,
+  lastDepartment,
   age,
   gender,
   weight,
@@ -127,6 +128,7 @@ export default function Patient({
           </Cell>
           <Cell>
             <strong>Setor:</strong> {department}
+            {department !== lastDepartment && <Tooltip title={"Setor antigo: " + lastDepartment}> *</Tooltip>}
           </Cell>
           <Cell>
             <strong>Leito:</strong> {bed}
