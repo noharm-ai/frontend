@@ -45,16 +45,16 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
 
   return (
     <>
-      <Row type="flex" css="margin-bottom: 30px;">
-        <Col span={24} md={16}>
+      <Row type="flex" css="margin-bottom: 15px;">
+        <Col span={24} md={10}>
           <Heading>
-            {pageTitle} nº {prescription.content.idPrescription} -{' '}
-            {prescription.content.dateFormated}
+            {pageTitle} nº {prescription.content.idPrescription}
+            <span className="legend">Prescrito em {prescription.content.dateFormated}</span>
           </Heading>
         </Col>
         <Col
           span={24}
-          md={24 - 16}
+          md={24 - 10}
           css="
           text-align: right;
 

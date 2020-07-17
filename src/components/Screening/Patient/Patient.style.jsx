@@ -101,7 +101,7 @@ export const ExamBox = styled.div`
   @media only screen and (max-width: 1440px) {
     .ant-card-grid {
       width: 20%;
-      padding: 20px 10px;
+      padding: 20px 4px;
       width: 25%;
     }
 
