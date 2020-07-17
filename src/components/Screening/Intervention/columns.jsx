@@ -67,18 +67,21 @@ export const InterventionView = ({ intervention, showReasons, showDate, status }
     <Descriptions.Item label="Prescrição:" span={3}>
       <PrescriptionInline {...intervention} />
     </Descriptions.Item>
-    <Descriptions.Item label="Prescrição Porterior:" span={3}>
-      {isEmpty(intervention.future) && (
-        <Link
-          onClick={() => intervention.fetchPeriod(intervention.idPrescriptionDrug)}
-          loading={intervention.isFetching}
-          type="nda gtm-bt-iterv-future"
-        >
-          Visualizar prescrição posterior
-        </Link>
-      )}
-      {!isEmpty(intervention.future) && intervention.future}
-    </Descriptions.Item>
+    {intervention.fetchFuturePrescription && (
+      <Descriptions.Item label="Prescrição posterior:" span={3}>
+        {isEmpty(intervention.future) && (
+          <Link
+            onClick={() => intervention.fetchFuturePrescription(intervention.id)}
+            loading={intervention.futurePrescription.isFetching}
+            type="nda gtm-bt-iterv-future"
+          >
+            Visualizar prescrição posterior
+          </Link>
+        )}
+        {!isEmpty(intervention.future) && intervention.future}
+      </Descriptions.Item>
+    )}
+
     {showDate && (
       <Descriptions.Item label="Data" span={3}>
         {format(new Date(intervention.date), 'dd/MM/yyyy HH:mm')}

@@ -48,7 +48,9 @@ export default function InterventionList({
   save,
   reset,
   select,
-  updateList
+  updateList,
+  futurePrescription,
+  fetchFuturePrescription
 }) {
   const [visible, setVisibility] = useState(false);
   const { isFetching, list, error } = intervention;
@@ -118,7 +120,9 @@ export default function InterventionList({
   const dsInterventions = toDataSource(list, 'id', {
     check: checkData,
     saveInterventionStatus: checkIntervention,
-    onShowModal
+    onShowModal,
+    futurePrescription,
+    fetchFuturePrescription
   });
   const listCount = {
     all: list ? list.length : 0,

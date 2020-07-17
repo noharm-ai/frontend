@@ -7,19 +7,22 @@ import {
   selectItemToSaveThunk,
   saveInterventionThunk,
   updateInterventionListDataThunk,
-  clearSavedInterventionStatusThunk
+  clearSavedInterventionStatusThunk,
+  fetchFuturePrescriptionThunk
 } from '@store/ducks/intervention/thunk';
 
 import InterventionList from '@components/InterventionList';
 
 const mapStateToProps = ({ intervention }) => ({
   intervention,
-  checkData: intervention.check
+  checkData: intervention.check,
+  futurePrescription: intervention.futurePrescription
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       fetchList: fetchListThunk,
+      fetchFuturePrescription: fetchFuturePrescriptionThunk,
       checkIntervention: checkInterventionThunk,
       select: selectItemToSaveThunk,
       save: saveInterventionThunk,
