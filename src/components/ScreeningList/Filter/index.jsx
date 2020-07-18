@@ -380,7 +380,7 @@ export default function Filter({
       <Row gutter={[20, 0]} style={{ marginTop: '20px' }}>
         <Col md={14}>
           <Box flexDirection="row" alignItems="center">
-            <Heading as="label" htmlFor="drugs-filter" size="14px">
+            <Heading as="label" htmlFor="pending-filter" size="14px">
               Somente prescrições pendentes:
             </Heading>
 
@@ -388,6 +388,7 @@ export default function Filter({
               style={{ marginLeft: '10px' }}
               onChange={onPendingChange}
               checked={filter.pending}
+              id="gtm-pending-filter"
             />
           </Box>
         </Col>
