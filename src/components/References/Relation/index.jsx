@@ -61,6 +61,7 @@ export default function Relation({ relation, relationTypes, substance, update, f
                 <Select
                   id="sctidB"
                   labelInValue
+                  showSearch
                   optionFilterProp="children"
                   style={{ width: '100%' }}
                   placeholder="Selecione o medicamento..."
@@ -85,6 +86,7 @@ export default function Relation({ relation, relationTypes, substance, update, f
               <Col span={24 - 8}>
                 <Select
                   id="type"
+                  showSearch
                   optionFilterProp="children"
                   style={{ width: '100%' }}
                   placeholder="Selecione o tipo de relação..."

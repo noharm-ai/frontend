@@ -64,7 +64,7 @@ export default function Base() {
       <Box hasError={errors.observation} flexDirection="column">
         <Col xs={24} style={{ paddingBottom: '0' }}>
           <Heading as="label" size="14px">
-            <Tooltip title="">Observações:</Tooltip>
+            <Tooltip title="">Anotações:</Tooltip>
           </Heading>
         </Col>
         <Col xs={24}>
@@ -72,6 +72,9 @@ export default function Base() {
             <Editor
               onEdit={value => setFieldValue('observation', value)}
               content={observation || ''}
+              onInit={editor => {
+                editor.editing.view.focus();
+              }}
             />
           </EditorBox>
         </Col>

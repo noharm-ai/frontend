@@ -51,6 +51,7 @@ const ExamData = ({ exam }) => (
 export default function Patient({
   admissionNumber,
   department,
+  lastDepartment,
   age,
   gender,
   weight,
@@ -111,7 +112,11 @@ export default function Patient({
               </Col>
               <Col xs={4} className="btn-container">
                 <Tooltip title="Editar dados do paciente">
-                  <Button type="none gtm-bt-edit-patient" onClick={() => setVisible(true)}>
+                  <Button
+                    type="primary gtm-bt-edit-patient"
+                    onClick={() => setVisible(true)}
+                    ghost={!observation}
+                  >
                     <Icon type="edit" style={{ fontSize: 16 }} />
                   </Button>
                 </Tooltip>
@@ -123,6 +128,7 @@ export default function Patient({
           </Cell>
           <Cell>
             <strong>Setor:</strong> {department}
+            {department !== lastDepartment && <Tooltip title={"Setor antigo: " + lastDepartment}> *</Tooltip>}
           </Cell>
           <Cell>
             <strong>Leito:</strong> {bed}
@@ -175,17 +181,6 @@ export default function Patient({
             <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
               <Icon type={seeMore ? 'up' : 'down'} /> {seeMore ? 'Ver menos' : 'Ver mais'}
             </Button>
-            <div className="tags">
-              {observation && (
-                <Tooltip title="Possui anotação">
-                  <Icon
-                    type="form"
-                    style={{ fontSize: 18, color: '#108ee9' }}
-                    onClick={toggleSeeMore}
-                  />
-                </Tooltip>
-              )}
-            </div>
           </Cell>
         </Wrapper>
       </Col>

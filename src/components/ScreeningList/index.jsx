@@ -136,7 +136,7 @@ export default function ScreeningList({
   };
 
   const info = (
-    <TableInfo style={{ marginBottom: 15 }}>
+    <TableInfo>
       <Tooltip title="Ver prescrições pendentes">
         <Button
           type="gtm-lnk-filter-presc-pendente ant-btn-link-hover"
@@ -160,8 +160,8 @@ export default function ScreeningList({
 
       <Tooltip
         title={
-          listCount.all === 250
-            ? 'Limite de 250 prescrições atingido, reduza os setores para visualizar todas do dia.'
+          listCount.all === 500
+            ? 'Limite de 500 prescrições atingido, reduza os setores para visualizar todas do dia.'
             : 'Ver todas prescrições'
         }
       >
@@ -170,7 +170,7 @@ export default function ScreeningList({
           className={isFilterActive(null) ? 'active' : ''}
           onClick={e => handleFilter(e, 'all')}
         >
-          Todas {listCount.all === 250 ? '*' : ''}
+          Todas {listCount.all === 500 ? '*' : ''}
           <Tag>{listCount.all}</Tag>
         </Button>
       </Tooltip>
@@ -184,12 +184,14 @@ export default function ScreeningList({
         fetchPrescriptionsList={fetchPrescriptionsList}
         isFetchingPrescription={isFetching}
       />
-      {info}
+      {!isFetching && info}
       <ScreeningTable
         title={title}
         columns={columns}
-        pagination={false}
-        scroll={{ x: 800 }}
+        pagination={{
+          pageSize: 50,
+          position: 'both'
+        }}
         loading={isFetching}
         locale={{ emptyText }}
         expandedRowRender={expandedRowRender}

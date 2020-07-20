@@ -1,9 +1,9 @@
 import styled from 'styled-components/macro';
 
 export const Box = styled.div`
-  align-items: flex-start;
+  align-items: ${props => (props.alignItems ? props.alignItems : 'flex-start')};
   display: flex;
-  flex-direction: column;
+  flex-direction: ${props => (props.flexDirection ? props.flexDirection : 'column')};
 `;
 
 export const SearchBox = styled.div`

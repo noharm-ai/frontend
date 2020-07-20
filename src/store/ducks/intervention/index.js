@@ -21,7 +21,11 @@ export const { Types, Creators } = createActions({
   interventionCheckError: ['error'],
   interventionCheckSuccess: ['success'],
 
-  interventionUpdateList: ['intervention']
+  interventionUpdateList: ['intervention'],
+
+  interventionFetchFuturePrescriptionStart: [''],
+  interventionFetchFuturePrescriptionError: ['error'],
+  interventionFetchFuturePrescriptionSuccess: ['id', 'data']
 });
 
 const INITIAL_STATE = {
@@ -44,6 +48,10 @@ const INITIAL_STATE = {
     error: null,
     isFetching: true,
     list: []
+  },
+  futurePrescription: {
+    error: null,
+    isFetching: false
   }
 };
 
@@ -202,6 +210,38 @@ const updateList = (state = INITIAL_STATE, { intervention }) => {
   };
 };
 
+const fetchFuturePrescriptionStart = (state = INITIAL_STATE) => ({
+  ...state,
+  futurePrescription: {
+    ...state.futurePrescription,
+    isFetching: true
+  }
+});
+
+const fetchFuturePrescriptionError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  futurePrescription: {
+    ...state.futurePrescription,
+    isFetching: false,
+    error
+  }
+});
+
+const fetchFuturePrescriptionSuccess = (state = INITIAL_STATE, { id, data }) => {
+  const list = [...state.list];
+  const index = list.findIndex(item => item.id === id);
+  list[index].future = data;
+
+  return {
+    ...state,
+    list,
+    futurePrescription: {
+      error: null,
+      isFetching: false
+    }
+  };
+};
+
 const HANDLERS = {
   [Types.INTERVENTION_FETCH_LIST_START]: fetchListStart,
   [Types.INTERVENTION_FETCH_LIST_ERROR]: fetchListError,
@@ -223,7 +263,11 @@ const HANDLERS = {
   [Types.INTERVENTION_CHECK_ERROR]: checkError,
   [Types.INTERVENTION_CHECK_SUCCESS]: checkSuccess,
 
-  [Types.INTERVENTION_UPDATE_LIST]: updateList
+  [Types.INTERVENTION_UPDATE_LIST]: updateList,
+
+  [Types.INTERVENTION_FETCH_FUTURE_PRESCRIPTION_START]: fetchFuturePrescriptionStart,
+  [Types.INTERVENTION_FETCH_FUTURE_PRESCRIPTION_ERROR]: fetchFuturePrescriptionError,
+  [Types.INTERVENTION_FETCH_FUTURE_PRESCRIPTION_SUCCESS]: fetchFuturePrescriptionSuccess
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

@@ -25,7 +25,11 @@ const {
   interventionCheckError,
   interventionCheckSuccess,
 
-  interventionUpdateList
+  interventionUpdateList,
+
+  interventionFetchFuturePrescriptionStart,
+  interventionFetchFuturePrescriptionError,
+  interventionFetchFuturePrescriptionSuccess
 } = InterventionCreators;
 
 export const fetchListThunk = (params = {}) => async (dispatch, getState) => {
@@ -135,4 +139,22 @@ export const checkInterventionThunk = (id, status) => async (dispatch, getState)
 
 export const updateInterventionListDataThunk = intervention => dispatch => {
   dispatch(interventionUpdateList(intervention));
+};
+
+export const fetchFuturePrescriptionThunk = id => async (dispatch, getState) => {
+  dispatch(interventionFetchFuturePrescriptionStart());
+
+  const { auth } = getState();
+  const { access_token } = auth.identify;
+  const {
+    data: { data },
+    error
+  } = await api.getPrescriptionDrugPeriod(access_token, id, { future: 1 }).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(interventionFetchFuturePrescriptionError(error));
+    return;
+  }
+
+  dispatch(interventionFetchFuturePrescriptionSuccess(id, data));
 };

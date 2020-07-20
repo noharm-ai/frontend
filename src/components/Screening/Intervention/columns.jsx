@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 import { format } from 'date-fns';
 
 import Icon from '@components/Icon';
-import Button from '@components/Button';
+import Button, { Link } from '@components/Button';
 import Descriptions from '@components/Descriptions';
 import Tag from '@components/Tag';
 import Menu from '@components/Menu';
@@ -67,6 +67,21 @@ export const InterventionView = ({ intervention, showReasons, showDate, status }
     <Descriptions.Item label="Prescrição:" span={3}>
       <PrescriptionInline {...intervention} />
     </Descriptions.Item>
+    {intervention.fetchFuturePrescription && (
+      <Descriptions.Item label="Prescrição posterior:" span={3}>
+        {isEmpty(intervention.future) && (
+          <Link
+            onClick={() => intervention.fetchFuturePrescription(intervention.id)}
+            loading={intervention.futurePrescription.isFetching}
+            type="nda gtm-bt-iterv-future"
+          >
+            Visualizar prescrição posterior
+          </Link>
+        )}
+        {!isEmpty(intervention.future) && intervention.future}
+      </Descriptions.Item>
+    )}
+
     {showDate && (
       <Descriptions.Item label="Data" span={3}>
         {format(new Date(intervention.date), 'dd/MM/yyyy HH:mm')}

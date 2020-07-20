@@ -99,6 +99,13 @@ const routes = [
     component: withAuth({
       component: InterventionList
     })
+  },
+  {
+    exact: true,
+    path: '/:startDate',
+    component: withAuth({
+      component: ScreeningList
+    })
   }
 ];
 

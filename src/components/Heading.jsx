@@ -16,6 +16,14 @@ const Heading = styled.h1`
     margin-bottom: 15px;
     margin-top: 15px;
   }
+
+  .legend {
+    font-size: 15px;
+    font-weight: 500;
+    display: block;
+    margin-top: 2px;
+    margin-left: 2px;
+  }
 `;
 
 export default Heading;

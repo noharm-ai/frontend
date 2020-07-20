@@ -208,7 +208,7 @@ const getSubstances = (bearerToken, params = {}) =>
  * Intervention.
  *
  */
-const getInterventions = (bearerToken, { params }) =>
+const getInterventions = (bearerToken, params) =>
   instance.get(endpoints.intervention.base, {
     params,
     ...setHeaders(bearerToken)

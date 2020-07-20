@@ -22,6 +22,11 @@ const {
   prescriptionsCheckError,
   prescriptionsCheckSuccess,
 
+  prescriptionsSaveStart,
+  prescriptionsSaveError,
+  prescriptionsSaveSuccess,
+  prescriptionsSaveReset,
+
   prescriptionDrugCheckStart,
   prescriptionDrugCheckError,
   prescriptionDrugCheckSuccess,
@@ -159,6 +164,26 @@ export const checkScreeningThunk = (idPrescription, status) => async (dispatch, 
   };
 
   dispatch(prescriptionsCheckSuccess(success));
+};
+
+export const savePrescriptionThunk = ({ idPrescription, ...params }) => async (
+  dispatch,
+  getState
+) => {
+  dispatch(prescriptionsSaveStart());
+
+  const { access_token } = getState().auth.identify;
+  const { error } = await api
+    .putPrescriptionById(access_token, idPrescription, params)
+    .catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(prescriptionsSaveError(error));
+    return;
+  }
+
+  dispatch(prescriptionsSaveSuccess(params));
+  dispatch(prescriptionsSaveReset());
 };
 
 export const checkPrescriptionDrugThunk = (idPrescriptionDrug, status, type) => async (
