@@ -53,7 +53,13 @@ export default function Edit({ outlier, updateSelectedOutlier }) {
           <Col span={24 - 8}>{outlier.item.frequency}</Col>
         </Row>
         <EditorBox>
-          <Editor content={outlier.item.obs || ''} onEdit={onEditObs} />
+          <Editor
+            content={outlier.item.obs || ''}
+            onEdit={onEditObs}
+            onInit={editor => {
+              editor.editing.view.focus();
+            }}
+          />
         </EditorBox>
       </Box>
     </>
