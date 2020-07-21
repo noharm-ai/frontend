@@ -216,9 +216,7 @@ export default function Screening({
     prescriptions: drugList ? drugList.length : 0,
     solutions: solutionList ? solutionList.length : 0,
     procedures: proceduresList ? proceduresList.length : 0,
-    interventions: interventionList
-      ? interventionList.reduce((n, i) => n + (i.status === 's'), 0)
-      : 0
+    interventions: interventionList ? interventionList.length : 0
   };
 
   const prescriptionCount = {
@@ -467,13 +465,7 @@ export default function Screening({
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane
-            tab={
-              <TabTitle
-                title="Intervenções Anteriores"
-                color={listCount.interventions > 0 ? 'orange' : null}
-                count={listCount.interventions}
-              />
-            }
+            tab={<TabTitle title="Intervenções Anteriores" count={listCount.interventions} />}
             key="4"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
