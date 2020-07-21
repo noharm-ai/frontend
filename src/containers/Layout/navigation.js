@@ -7,7 +7,7 @@ export default [
   },
   {
     key: '/intervencoes',
-    text: 'Intervenções Pendentes',
+    text: 'Intervenções',
     icon: 'warning',
     id: 'gtm-lnk-intervencoes'
   },

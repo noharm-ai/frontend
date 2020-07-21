@@ -56,8 +56,7 @@ const menu = (id, saveInterventionStatus, onShowModal) => (
 
 export const PrescriptionInline = ({ dose, measureUnit, frequency, route, time }) => (
   <>
-    {dose}
-    {measureUnit.label} x {frequency.label} {route} ({time})
+    {frequency.label} x {dose} {measureUnit.label} via {route} ({time})
   </>
 );
 
