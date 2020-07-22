@@ -10,6 +10,7 @@ import notification from '@components/notification';
 import Tooltip from '@components/Tooltip';
 
 import FormClinicalNotes from '@containers/Forms/ClinicalNotes';
+import FormClinicalAlert from '@containers/Forms/ClinicalAlert';
 
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
@@ -27,6 +28,7 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
   const id = parseInt(extractId(match.params.slug));
   const { isChecking, error } = prescription.check;
   const [isClinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
+  const [isClinicalAlertVisible, setClinicalAlertVisibility] = useState(false);
 
   const onCancelClinicalNotes = () => {
     setClinicalNotesVisibility(false);
@@ -34,6 +36,14 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
 
   const afterSaveClinicalNotes = () => {
     setClinicalNotesVisibility(false);
+  };
+
+  const onCancelClinicalAlert = () => {
+    setClinicalAlertVisibility(false);
+  };
+
+  const afterSaveClinicalAlert = () => {
+    setClinicalAlertVisibility(false);
   };
 
   // show message if has error
@@ -93,15 +103,26 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
             </>
           )}
           {security.isAdmin() && (
-            <Button
-              type="primary gtm-bt-check"
-              onClick={() => setClinicalNotesVisibility(true)}
-              style={{ marginRight: '5px' }}
-              ghost={!prescription.content.notes}
-            >
-              <Icon type="file-add" />
-              Evolução
-            </Button>
+            <>
+              <Button
+                type="primary gtm-bt-check"
+                onClick={() => setClinicalNotesVisibility(true)}
+                style={{ marginRight: '5px' }}
+                ghost={!prescription.content.notes}
+              >
+                <Icon type="file-add" />
+                Evolução
+              </Button>
+              <Button
+                type="primary gtm-bt-check"
+                onClick={() => setClinicalAlertVisibility(true)}
+                style={{ marginRight: '5px' }}
+                ghost={!prescription.content.alert}
+              >
+                <Icon type="alert" />
+                Alerta
+              </Button>
+            </>
           )}
           <Button type="default gtm-bt-close" onClick={close}>
             Fechar
@@ -115,6 +136,14 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
         okType="primary gtm-bt-save-evolucao"
         cancelText="Cancelar"
         afterSave={afterSaveClinicalNotes}
+      />
+      <FormClinicalAlert
+        visible={isClinicalAlertVisible}
+        onCancel={onCancelClinicalAlert}
+        okText="Salvar"
+        okType="primary gtm-bt-save-alerta"
+        cancelText="Cancelar"
+        afterSave={afterSaveClinicalAlert}
       />
     </>
   );

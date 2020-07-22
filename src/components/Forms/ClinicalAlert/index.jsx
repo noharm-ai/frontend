@@ -17,20 +17,23 @@ const errorMessage = {
 };
 
 const saveMessage = {
-  message: 'Uhu! Evolução salva com sucesso! :)'
+  message: 'Uhu! Alerta salvo com sucesso! :)'
 };
+const requiredFieldMessage = 'Campo obrigatório';
 const validationSchema = Yup.object().shape({
-  idPrescription: Yup.number().required()
+  alert: Yup.string().required(requiredFieldMessage),
+  alertExpire: Yup.string().required(requiredFieldMessage)
 });
-const formId = 'clinicalNotes';
+const formId = 'clinicalAlert';
 
-export default function ClinicalNotes({ prescription, save, afterSave, ...props }) {
+export default function ClinicalAlert({ prescription, save, afterSave, ...props }) {
   const { isSaving, success, error, data } = prescription;
 
   const initialValues = {
     formId,
-    idPrescription: data.idPrescription,
-    notes: data.notes
+    admissionNumber: data.admissionNumber,
+    alert: data.alert,
+    alertExpire: data.alertExpire
   };
 
   useEffect(() => {
@@ -70,7 +73,7 @@ export default function ClinicalNotes({ prescription, save, afterSave, ...props 
           }}
         >
           <header>
-            <Heading margin="0 0 11px">Evolução</Heading>
+            <Heading margin="0 0 11px">Alerta</Heading>
           </header>
           <form onSubmit={handleSubmit}>
             <FormContainer>
