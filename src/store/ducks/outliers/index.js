@@ -31,7 +31,9 @@ export const { Types, Creators } = createActions({
   outliersSaveRelationStart: [''],
   outliersSaveRelationSuccess: ['item'],
   outliersSaveRelationReset: [''],
-  outliersSaveRelationError: ['error']
+  outliersSaveRelationError: ['error'],
+
+  outliersUpdateDrugData: ['item']
 });
 
 const INITIAL_STATE = {
@@ -316,6 +318,14 @@ const saveRelationSuccess = (state = INITIAL_STATE, { item }) => {
   };
 };
 
+const updateDrugData = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  drugData: {
+    ...state.drugData,
+    ...item
+  }
+});
+
 const HANDLERS = {
   [Types.OUTLIERS_GENERATE_STOP]: generateStop,
   [Types.OUTLIERS_GENERATE_START]: generateStart,
@@ -348,7 +358,9 @@ const HANDLERS = {
   [Types.OUTLIERS_SAVE_RELATION_SUCCESS]: saveRelationSuccess,
 
   [Types.OUTLIERS_SELECT_RELATION]: selectRelation,
-  [Types.OUTLIERS_UPDATE_RELATION]: updateRelation
+  [Types.OUTLIERS_UPDATE_RELATION]: updateRelation,
+
+  [Types.OUTLIERS_UPDATE_DRUG_DATA]: updateDrugData
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

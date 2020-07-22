@@ -38,7 +38,9 @@ const {
   outliersSaveRelationStart,
   outliersSaveRelationSuccess,
   outliersSaveRelationReset,
-  outliersSaveRelationError
+  outliersSaveRelationError,
+
+  outliersUpdateDrugData
 } = OutliersCreators;
 
 const { drugsFetchListStart, drugsFetchListError, drugsFetchListSuccess } = DrugsCreators;
@@ -268,4 +270,8 @@ export const fetchSubstanceListThunk = (params = {}) => async (dispatch, getStat
   const list = data;
 
   dispatch(outliersFetchSubstanceListSuccess(list));
+};
+
+export const updateDrugDataThunk = item => dispatch => {
+  dispatch(outliersUpdateDrugData(item));
 };

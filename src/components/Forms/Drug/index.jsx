@@ -35,6 +35,8 @@ const validationSchema = Yup.object().shape({
   })
 });
 
+const formId = 'drugForm';
+
 export default function Drug({
   saveStatus,
   saveDrug,
@@ -67,6 +69,7 @@ export default function Drug({
   } = outlier;
 
   const initialValues = {
+    formId,
     id: idDrug,
     antimicro: antimicro == null ? false : antimicro,
     mav: mav == null ? false : mav,
@@ -87,7 +90,7 @@ export default function Drug({
   };
 
   useEffect(() => {
-    if (success) {
+    if (success === formId) {
       notification.success(saveMessage);
       afterSaveDrug();
       if (!isEmpty(match.params)) {

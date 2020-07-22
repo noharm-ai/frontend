@@ -14,7 +14,7 @@ export const { Types, Creators } = createActions({
   drugsUnitsFetchListSuccess: ['list'],
 
   drugsSaveSingleStart: [''],
-  drugsSaveSingleSuccess: [''],
+  drugsSaveSingleSuccess: ['success'],
   drugsSaveSingleReset: [''],
   drugsSaveSingleError: ['error'],
 
@@ -147,12 +147,12 @@ const saveSingleReset = (state = INITIAL_STATE) => ({
   }
 });
 
-const saveSingleSuccess = (state = INITIAL_STATE) => ({
+const saveSingleSuccess = (state = INITIAL_STATE, { success }) => ({
   ...state,
   save: {
     ...state.save,
     error: null,
-    success: true,
+    success,
     isSaving: false
   }
 });

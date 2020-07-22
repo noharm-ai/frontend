@@ -18,6 +18,7 @@ import Icon from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 
 import Edit from '@containers/References/Edit';
+import EditSubstance from '@containers/References/EditSubstance';
 import Relation from '@containers/References/Relation';
 import Filter from './Filter';
 import columns from './columns';
@@ -277,9 +278,7 @@ export default function References({
         <Tabs.TabPane tab="Relações" key="3">
           <Row type="flex" justify="end">
             <Col xs={12}>
-              <Heading as="h3" size="16px">
-                Substância: {drugData.sctNameA}
-              </Heading>
+              <EditSubstance />
             </Col>
             <Col xs={12}>
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

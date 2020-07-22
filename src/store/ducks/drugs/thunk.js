@@ -62,7 +62,7 @@ export const searchDrugsThunk = (idSegment, params = {}) => async (dispatch, get
   dispatch(drugsSearchSuccess(list));
 };
 
-export const saveDrugThunk = (params = {}) => async (dispatch, getState) => {
+export const saveDrugThunk = ({ formId, ...params }) => async (dispatch, getState) => {
   dispatch(drugsSaveSingleStart());
 
   const { access_token } = getState().auth.identify;
@@ -73,7 +73,7 @@ export const saveDrugThunk = (params = {}) => async (dispatch, getState) => {
     return;
   }
 
-  dispatch(drugsSaveSingleSuccess());
+  dispatch(drugsSaveSingleSuccess(formId));
   dispatch(drugsSaveSingleReset());
 };
 
