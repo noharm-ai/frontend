@@ -47,7 +47,11 @@ const {
   outliersSaveSubstanceStart,
   outliersSaveSubstanceSuccess,
   outliersSaveSubstanceReset,
-  outliersSaveSubstanceError
+  outliersSaveSubstanceError,
+
+  outliersFetchRelationStart,
+  outliersFetchRelationError,
+  outliersFetchRelationSuccess
 } = OutliersCreators;
 
 const { drugsFetchListStart, drugsFetchListError, drugsFetchListSuccess } = DrugsCreators;
@@ -319,4 +323,21 @@ export const saveOutlierSubstanceThunk = (params = {}) => async (dispatch, getSt
       })
     );
   }
+};
+
+export const fetchRelationListThunk = (id, params = {}) => async (dispatch, getState) => {
+  dispatch(outliersFetchRelationStart());
+
+  const { access_token } = getState().auth.identify;
+  const {
+    data: { data },
+    error
+  } = await api.getSubstanceRelations(access_token, id, params).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(outliersFetchRelationError(error));
+    return;
+  }
+
+  dispatch(outliersFetchRelationSuccess(data));
 };

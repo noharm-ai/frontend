@@ -204,6 +204,12 @@ const getSubstances = (bearerToken, params = {}) =>
     ...setHeaders(bearerToken)
   });
 
+const getSubstanceRelations = (bearerToken, id, params = {}) =>
+  instance.get(`${endpoints.substance}/${id}/relation`, {
+    params,
+    ...setHeaders(bearerToken)
+  });
+
 const updateSubstance = (bearerToken, { sctid, ...params }) =>
   instance.put(`${endpoints.substance}/${sctid}`, params, setHeaders(bearerToken));
 
@@ -287,7 +293,8 @@ const api = {
   updateSegmentExam,
   getExamTypes,
   getHelp,
-  updateSubstance
+  updateSubstance,
+  getSubstanceRelations
 };
 
 export default api;

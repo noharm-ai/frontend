@@ -40,7 +40,11 @@ export const { Types, Creators } = createActions({
   outliersSaveSubstanceReset: [''],
   outliersSaveSubstanceError: ['error'],
 
-  outliersUpdateDrugData: ['item']
+  outliersUpdateDrugData: ['item'],
+
+  outliersFetchRelationStart: [''],
+  outliersFetchRelationError: ['error'],
+  outliersFetchRelationSuccess: ['list']
 });
 
 const INITIAL_STATE = {
@@ -72,6 +76,10 @@ const INITIAL_STATE = {
     isSaving: false,
     error: null,
     item: {}
+  },
+  relation: {
+    isFetching: false,
+    error: null
   },
   saveRelation: {
     isSaving: false,
@@ -421,6 +429,35 @@ const updateDrugData = (state = INITIAL_STATE, { item }) => ({
   }
 });
 
+const fetchRelationStart = (state = INITIAL_STATE) => ({
+  ...state,
+  relation: {
+    isFetching: true
+  }
+});
+
+const fetchRelationError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  relation: {
+    ...state.relation,
+    error,
+    isFetching: false
+  }
+});
+
+const fetchRelationSuccess = (state = INITIAL_STATE, { list }) => ({
+  ...state,
+  drugData: {
+    ...state.drugData,
+    relations: list
+  },
+  relation: {
+    ...state.relation,
+    isFetching: false,
+    error: null
+  }
+});
+
 const HANDLERS = {
   [Types.OUTLIERS_GENERATE_STOP]: generateStop,
   [Types.OUTLIERS_GENERATE_START]: generateStart,
@@ -462,7 +499,11 @@ const HANDLERS = {
   [Types.OUTLIERS_SAVE_SUBSTANCE_RESET]: saveSubstanceReset,
   [Types.OUTLIERS_SAVE_SUBSTANCE_SUCCESS]: saveSubstanceSuccess,
   [Types.OUTLIERS_SELECT_SUBSTANCE]: selectSubstance,
-  [Types.OUTLIERS_UPDATE_SUBSTANCE]: updateSubstance
+  [Types.OUTLIERS_UPDATE_SUBSTANCE]: updateSubstance,
+
+  [Types.OUTLIERS_FETCH_RELATION_START]: fetchRelationStart,
+  [Types.OUTLIERS_FETCH_RELATION_ERROR]: fetchRelationError,
+  [Types.OUTLIERS_FETCH_RELATION_SUCCESS]: fetchRelationSuccess
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

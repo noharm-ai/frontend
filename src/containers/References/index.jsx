@@ -36,7 +36,8 @@ const mapStateToProps = ({ drugs, segments, outliers, user }) => ({
     saveStatus: outliers.save,
     generateStatus: outliers.generateDrugOutlier,
     drugData: outliers.drugData,
-    saveRelation: outliers.saveRelation
+    saveRelation: outliers.saveRelation,
+    relationStatus: outliers.relation
   },
   security: security(user.account.roles)
 });

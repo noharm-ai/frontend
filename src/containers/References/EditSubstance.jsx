@@ -6,7 +6,8 @@ import { saveDrugThunk } from '@store/ducks/drugs/thunk';
 import {
   fetchSubstanceListThunk,
   updateDrugDataThunk,
-  selectOutlierSubstanceThunk
+  selectOutlierSubstanceThunk,
+  fetchRelationListThunk
 } from '@store/ducks/outliers/thunk';
 import EditSubstanceComponent from '@components/References/EditSubstance';
 
@@ -23,7 +24,8 @@ const mapDispatchToProps = dispatch =>
       saveDrug: saveDrugThunk,
       fetchSubstances: fetchSubstanceListThunk,
       updateDrugData: updateDrugDataThunk,
-      selectSubstance: selectOutlierSubstanceThunk
+      selectSubstance: selectOutlierSubstanceThunk,
+      fetchRelations: fetchRelationListThunk
     },
     dispatch
   );

@@ -56,7 +56,15 @@ export default function References({
   generateOutlierReset,
   ...restProps
 }) {
-  const { isFetching, list, error, generateStatus, drugData, saveRelation } = outliers;
+  const {
+    isFetching,
+    list,
+    error,
+    generateStatus,
+    drugData,
+    saveRelation,
+    relationStatus
+  } = outliers;
   const [obsModalVisible, setObsModalVisibility] = useState(false);
   const [relationModalVisible, setRelationModalVisibility] = useState(false);
   const isAdmin = security.isAdmin();
@@ -294,7 +302,7 @@ export default function References({
             title={title}
             columns={relationsColumns}
             pagination={false}
-            loading={isFetching}
+            loading={isFetching || relationStatus.isFetching}
             locale={{ emptyText }}
             dataSource={!isFetching ? dsRelations : []}
           />

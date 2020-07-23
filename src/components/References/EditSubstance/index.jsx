@@ -31,7 +31,8 @@ export default function EditSubstance({
   idDrug,
   updateDrugData,
   security,
-  selectSubstance
+  selectSubstance,
+  fetchRelations
 }) {
   const [isFormVisible, setFormVisibility] = useState(false);
   const { isSaving, error, success } = saveStatus;
@@ -48,7 +49,7 @@ export default function EditSubstance({
     if (error) {
       notification.error(errorMessage);
     }
-  }, [success, error]);
+  }, [success, error, fetchRelations]);
 
   const onCancelForm = () => {
     setFormVisibility(false);
@@ -69,6 +70,8 @@ export default function EditSubstance({
       sctid: value.key,
       formId
     });
+
+    fetchRelations(value.key);
   };
 
   const edit = () => {
