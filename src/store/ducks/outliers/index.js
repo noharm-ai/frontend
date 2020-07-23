@@ -33,6 +33,13 @@ export const { Types, Creators } = createActions({
   outliersSaveRelationReset: [''],
   outliersSaveRelationError: ['error'],
 
+  outliersSelectSubstance: ['item'],
+  outliersUpdateSubstance: ['item'],
+  outliersSaveSubstanceStart: [''],
+  outliersSaveSubstanceSuccess: ['item'],
+  outliersSaveSubstanceReset: [''],
+  outliersSaveSubstanceError: ['error'],
+
   outliersUpdateDrugData: ['item']
 });
 
@@ -75,7 +82,12 @@ const INITIAL_STATE = {
   substance: {
     error: null,
     isFetching: true,
-    list: []
+    list: [],
+    single: {
+      isSaving: false,
+      error: null,
+      item: {}
+    }
   }
 };
 
@@ -318,6 +330,89 @@ const saveRelationSuccess = (state = INITIAL_STATE, { item }) => {
   };
 };
 
+const selectSubstance = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...state.substance.single,
+      item
+    }
+  }
+});
+
+const updateSubstance = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...state.substance.single,
+      item: {
+        ...state.substance.single.item,
+        ...item
+      }
+    }
+  }
+});
+
+const saveSubstanceStart = (state = INITIAL_STATE) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...state.substance.single,
+      isSaving: true
+    }
+  }
+});
+
+const saveSubstanceError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...state.substance.single,
+      isSaving: false,
+      error
+    }
+  }
+});
+
+const saveSubstanceReset = (state = INITIAL_STATE) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...INITIAL_STATE.substance.single
+    }
+  }
+});
+
+const saveSubstanceSuccess = (state = INITIAL_STATE, { item }) => {
+  const list = [...state.substance.list];
+  const index = list.findIndex(r => item.sctid === r.sctid);
+
+  if (index !== -1) {
+    list[index] = { ...list[index], ...item };
+  } else {
+    list.push(item);
+  }
+
+  return {
+    ...state,
+    substance: {
+      ...state.substance,
+      list,
+      single: {
+        ...state.substance.single,
+        error: null,
+        success: true,
+        isSaving: false
+      }
+    }
+  };
+};
+
 const updateDrugData = (state = INITIAL_STATE, { item }) => ({
   ...state,
   drugData: {
@@ -360,7 +455,14 @@ const HANDLERS = {
   [Types.OUTLIERS_SELECT_RELATION]: selectRelation,
   [Types.OUTLIERS_UPDATE_RELATION]: updateRelation,
 
-  [Types.OUTLIERS_UPDATE_DRUG_DATA]: updateDrugData
+  [Types.OUTLIERS_UPDATE_DRUG_DATA]: updateDrugData,
+
+  [Types.OUTLIERS_SAVE_SUBSTANCE_START]: saveSubstanceStart,
+  [Types.OUTLIERS_SAVE_SUBSTANCE_ERROR]: saveSubstanceError,
+  [Types.OUTLIERS_SAVE_SUBSTANCE_RESET]: saveSubstanceReset,
+  [Types.OUTLIERS_SAVE_SUBSTANCE_SUCCESS]: saveSubstanceSuccess,
+  [Types.OUTLIERS_SELECT_SUBSTANCE]: selectSubstance,
+  [Types.OUTLIERS_UPDATE_SUBSTANCE]: updateSubstance
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

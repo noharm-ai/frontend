@@ -40,7 +40,14 @@ const {
   outliersSaveRelationReset,
   outliersSaveRelationError,
 
-  outliersUpdateDrugData
+  outliersUpdateDrugData,
+
+  outliersSelectSubstance,
+  outliersUpdateSubstance,
+  outliersSaveSubstanceStart,
+  outliersSaveSubstanceSuccess,
+  outliersSaveSubstanceReset,
+  outliersSaveSubstanceError
 } = OutliersCreators;
 
 const { drugsFetchListStart, drugsFetchListError, drugsFetchListSuccess } = DrugsCreators;
@@ -274,4 +281,42 @@ export const fetchSubstanceListThunk = (params = {}) => async (dispatch, getStat
 
 export const updateDrugDataThunk = item => dispatch => {
   dispatch(outliersUpdateDrugData(item));
+};
+
+/**
+ * Substances
+ */
+
+export const selectOutlierSubstanceThunk = item => dispatch => {
+  dispatch(outliersSelectSubstance(item));
+};
+
+export const updateOutlierSubstanceThunk = item => dispatch => {
+  dispatch(outliersUpdateSubstance(item));
+};
+
+export const saveOutlierSubstanceThunk = (params = {}) => async (dispatch, getState) => {
+  dispatch(outliersSaveSubstanceStart());
+  const { access_token } = getState().auth.identify;
+  const { status, error } = await api.updateSubstance(access_token, params);
+
+  if (status !== 200) {
+    dispatch(outliersSaveSubstanceError(error));
+    return;
+  }
+
+  const isAdd = params.isAdd;
+  delete params.isAdd;
+
+  dispatch(outliersSaveSubstanceSuccess(params));
+  dispatch(outliersSaveSubstanceReset());
+
+  if (!isAdd) {
+    dispatch(
+      outliersUpdateDrugData({
+        sctidA: params.sctid,
+        sctNameA: params.name
+      })
+    );
+  }
 };

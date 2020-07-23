@@ -3,7 +3,11 @@ import { bindActionCreators } from 'redux';
 
 import security from '@services/security';
 import { saveDrugThunk } from '@store/ducks/drugs/thunk';
-import { fetchSubstanceListThunk, updateDrugDataThunk } from '@store/ducks/outliers/thunk';
+import {
+  fetchSubstanceListThunk,
+  updateDrugDataThunk,
+  selectOutlierSubstanceThunk
+} from '@store/ducks/outliers/thunk';
 import EditSubstanceComponent from '@components/References/EditSubstance';
 
 const mapStateToProps = ({ outliers, drugs, user }) => ({
@@ -18,7 +22,8 @@ const mapDispatchToProps = dispatch =>
     {
       saveDrug: saveDrugThunk,
       fetchSubstances: fetchSubstanceListThunk,
-      updateDrugData: updateDrugDataThunk
+      updateDrugData: updateDrugDataThunk,
+      selectSubstance: selectOutlierSubstanceThunk
     },
     dispatch
   );

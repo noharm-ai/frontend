@@ -1,9 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Row, Col } from '@components/Grid';
 import { Select } from '@components/Inputs';
 import Heading from '@components/Heading';
 import notification from '@components/notification';
+import Button from '@components/Button';
+import Icon from '@components/Icon';
+import Tooltip from '@components/Tooltip';
+
+import FormSubstance from '@containers/Forms/Substance';
 
 const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
@@ -25,8 +30,10 @@ export default function EditSubstance({
   saveStatus,
   idDrug,
   updateDrugData,
-  security
+  security,
+  selectSubstance
 }) {
+  const [isFormVisible, setFormVisibility] = useState(false);
   const { isSaving, error, success } = saveStatus;
 
   useEffect(() => {
@@ -43,16 +50,39 @@ export default function EditSubstance({
     }
   }, [success, error]);
 
+  const onCancelForm = () => {
+    setFormVisibility(false);
+  };
+
+  const afterSaveForm = () => {
+    setFormVisibility(false);
+  };
+
   const saveSubstance = value => {
     updateDrugData({
-      sctidA: value
+      sctidA: value.key,
+      sctNameA: value.label
     });
 
     saveDrug({
       id: idDrug,
-      sctid: value,
+      sctid: value.key,
       formId
     });
+  };
+
+  const edit = () => {
+    selectSubstance({
+      sctid: drugData.sctidA,
+      name: drugData.sctNameA
+    });
+    setFormVisibility(true);
+  };
+  const add = () => {
+    selectSubstance({
+      isAdd: true
+    });
+    setFormVisibility(true);
   };
 
   return (
@@ -65,23 +95,44 @@ export default function EditSubstance({
         </Col>
         <Col md={24 - 7} xxl={24 - 4}>
           {security.isAdmin() && (
-            <Select
-              id="sctidA"
-              style={{ width: '100%' }}
-              showSearch
-              optionFilterProp="children"
-              placeholder="Selecione a substância..."
-              value={drugData.sctidA || ''}
-              loading={substance.isFetching}
-              disabled={isSaving}
-              onChange={saveSubstance}
-            >
-              {substance.list.map(({ sctid, name }) => (
-                <Select.Option key={sctid} value={sctid}>
-                  {name}
-                </Select.Option>
-              ))}
-            </Select>
+            <>
+              <Select
+                id="sctidA"
+                labelInValue
+                style={{ width: '70%' }}
+                showSearch
+                optionFilterProp="children"
+                placeholder="Selecione a substância..."
+                value={{ key: drugData.sctidA || '' }}
+                loading={substance.isFetching}
+                disabled={isSaving}
+                onChange={saveSubstance}
+              >
+                {substance.list.map(({ sctid, name }) => (
+                  <Select.Option key={sctid} value={sctid}>
+                    {name}
+                  </Select.Option>
+                ))}
+              </Select>
+              <Tooltip title="Editar substância">
+                <Button
+                  type="primary gtm-bt-edit-substancia"
+                  style={{ marginLeft: '5px' }}
+                  onClick={edit}
+                >
+                  <Icon type="form" />
+                </Button>
+              </Tooltip>
+              <Tooltip title="Adicionar substância">
+                <Button
+                  type="primary gtm-bt-add-substancia"
+                  style={{ marginLeft: '5px' }}
+                  onClick={add}
+                >
+                  <Icon type="plus" />
+                </Button>
+              </Tooltip>
+            </>
           )}
           {!security.isAdmin() && (
             <Heading as="h3" size="16px">
@@ -90,6 +141,14 @@ export default function EditSubstance({
           )}
         </Col>
       </Row>
+      <FormSubstance
+        visible={isFormVisible}
+        onCancel={onCancelForm}
+        okText="Salvar"
+        okType="primary gtm-bt-save-substance"
+        cancelText="Cancelar"
+        afterSave={afterSaveForm}
+      />
     </>
   );
 }
