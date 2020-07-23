@@ -1,4 +1,5 @@
 import 'styled-components/macro';
+import styled from 'styled-components/macro';
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
 
@@ -24,6 +25,20 @@ const close = () => {
   window.close();
 };
 
+const UnstyledButton = styled.button`
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 export default function PageHeader({ match, pageTitle, prescription, checkScreening, security }) {
   const id = parseInt(extractId(match.params.slug));
   const { isChecking, error } = prescription.check;
@@ -46,6 +61,11 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
     setClinicalAlertVisibility(false);
   };
 
+  const copyToClipboard = text => {
+    navigator.clipboard.writeText(text);
+    notification.success({ message: 'Número da prescrição copiado!' });
+  };
+
   // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
@@ -58,7 +78,12 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
       <Row type="flex" css="margin-bottom: 15px;">
         <Col span={24} md={10}>
           <Heading>
-            {pageTitle} nº {prescription.content.idPrescription}
+            {pageTitle} nº{' '}
+            <Tooltip title="Clique para copiar o número da prescrição">
+              <UnstyledButton onClick={() => copyToClipboard(prescription.content.idPrescription)}>
+                {prescription.content.idPrescription}
+              </UnstyledButton>
+            </Tooltip>
             <span className="legend">Prescrito em {prescription.content.dateFormated}</span>
           </Heading>
         </Col>
