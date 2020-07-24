@@ -29,6 +29,7 @@ export default function ScoreWizard({
   security
 }) {
   const [currentStep, setCurrentStep] = useState(0);
+  const [validationErrors, setValidationErrors] = useState({});
   const isAdmin = security.isAdmin();
   const maxSteps = 3;
 
@@ -49,7 +50,9 @@ export default function ScoreWizard({
   };
 
   const nextStep = () => {
-    setCurrentStep(currentStep + 1);
+    if (isValid(currentStep)) {
+      setCurrentStep(currentStep + 1);
+    }
   };
 
   const previousStep = () => {
@@ -64,6 +67,21 @@ export default function ScoreWizard({
     } else {
       updateDrugData({ useWeight: useWeight, touched: true });
     }
+  };
+
+  const isValid = step => {
+    if (step === 1) {
+      if (drugData.useWeight && !drugData.division) {
+        setValidationErrors({
+          division: 'Este campo é obrigatório quando o peso for considerado'
+        });
+
+        return false;
+      }
+    }
+
+    setValidationErrors({});
+    return true;
   };
 
   const unitsDatasource = toDataSource(drugUnits.list, 'idMeasureUnit', {
@@ -119,6 +137,7 @@ export default function ScoreWizard({
                 value={drugData.division}
                 disabled={!drugData.useWeight}
                 onChange={value => updateDrugData({ division: value, touched: true })}
+                className={validationErrors.division ? 'error' : ''}
               />
               <Checkbox
                 value={drugData.useWeight}
@@ -129,6 +148,9 @@ export default function ScoreWizard({
                   Considerar peso
                 </Tooltip>
               </Checkbox>
+              {validationErrors.division && (
+                <div className="error-description">{validationErrors.division}</div>
+              )}
             </Col>
           </Row>
         </StepContent>
