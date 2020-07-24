@@ -76,10 +76,11 @@ const generateOutlier = (bearerToken, idSegment) =>
   });
 
 const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
-  instance.get(`/segments/${idSegment}/outliers/generate/drug/${idDrug}/clean/1`, {
+  instance.post(
+    `/segments/${idSegment}/outliers/generate/drug/${idDrug}/clean/1`,
     params,
-    ...setHeaders(bearerToken)
-  });
+    setHeaders(bearerToken)
+  );
 
 const createSegment = (bearerToken, params = {}) =>
   instance.post(endpoints.segments, params, setHeaders(bearerToken));

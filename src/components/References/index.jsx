@@ -13,16 +13,14 @@ import { FieldSet } from '@components/Inputs';
 import DefaultModal from '@components/Modal';
 import Tabs from '@components/Tabs';
 import Button from '@components/Button';
-import PopConfirm from '@components/PopConfirm';
 import Icon from '@components/Icon';
-import Tooltip from '@components/Tooltip';
 
 import Edit from '@containers/References/Edit';
 import EditSubstance from '@containers/References/EditSubstance';
 import Relation from '@containers/References/Relation';
+import ScoreWizard from '@containers/References/ScoreWizard';
 import Filter from './Filter';
 import columns from './columns';
-import unitConversionColumns from './UnitConversion/columns';
 import relationsColumns from './Relation/columns';
 
 import DrugForm from '@containers/Forms/Drug';
@@ -54,6 +52,7 @@ export default function References({
   security,
   generateOutlier,
   generateOutlierReset,
+  updateDrugData,
   ...restProps
 }) {
   const {
@@ -67,12 +66,8 @@ export default function References({
   } = outliers;
   const [obsModalVisible, setObsModalVisibility] = useState(false);
   const [relationModalVisible, setRelationModalVisibility] = useState(false);
-  const isAdmin = security.isAdmin();
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
-  const {
-    drugs: { units }
-  } = restProps;
 
   const onSaveObs = () => {
     saveOutlier(outliers.edit.item.idOutlier, { obs: outliers.edit.item.obs });
@@ -113,12 +108,6 @@ export default function References({
   };
 
   const dataSource = toDataSource(list, 'idOutlier', { saveOutlier, onShowObsModal });
-  const unitsDatasource = toDataSource(units.list, 'idMeasureUnit', {
-    saveUnitCoefficient,
-    idDrug: outliers.selecteds.idDrug,
-    idSegment: outliers.selecteds.idSegment,
-    isAdmin
-  });
   const dsRelations = toDataSource(drugData.relations, null, {
     showModal: onShowRelationModal,
     relationTypes: drugData.relationTypes,
@@ -154,6 +143,7 @@ export default function References({
 
   useEffect(() => {
     if (generateStatus.generated) {
+      notification.success({ message: 'Escores gerados com sucesso!' });
       generateOutlierReset();
 
       if (!isEmpty(match.params)) {
@@ -226,10 +216,6 @@ export default function References({
     }
   };
 
-  const generate = () => {
-    generateOutlier({ idSegment: outliers.selecteds.idSegment, idDrug: outliers.selecteds.idDrug });
-  };
-
   return (
     <>
       <Filter {...restProps} outliers={outliers} />
@@ -248,37 +234,24 @@ export default function References({
             dataSource={!isFetching ? dataSource : []}
             rowClassName={rowClassName}
           />
+
           <FieldSet style={{ marginBottom: '25px', marginTop: '25px' }}>
             <Heading as="label" size="16px" margin="0 0 10px">
-              Conversão de unidades:
+              Cálculo de escore{' '}
+              <span
+                style={{
+                  color: 'rgba(0, 0, 0, 0.65)',
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '400'
+                }}
+              >
+                Alterações que envolvem a geração de escore
+              </span>
             </Heading>
           </FieldSet>
-          <Table
-            columns={unitConversionColumns}
-            pagination={false}
-            loading={units.isFetching}
-            locale={{ emptyText }}
-            dataSource={!units.isFetching ? unitsDatasource : []}
-          />
-          <PopConfirm
-            title="Com esta ação os escores manuais e os comentários serão excluídos. Será necessário reinseri-los manualmente. Deseja continuar?"
-            onConfirm={generate}
-            okText="Sim"
-            cancelText="Não"
-          >
-            <Tooltip
-              title="Gerar novo outlier em caso de mudança de fator de conversão, atribuição de dose/peso e ajuste de faixa."
-              placement="top"
-            >
-              <Button
-                type="primary gtm-bt-med-generate"
-                style={{ marginTop: '10px' }}
-                loading={generateStatus.isGenerating}
-              >
-                Gerar Escores
-              </Button>
-            </Tooltip>
-          </PopConfirm>
+
+          <ScoreWizard />
         </Tabs.TabPane>
         <Tabs.TabPane tab="Atributos" key="2">
           <DrugForm fetchReferencesList={fetchReferencesList} match={match} />

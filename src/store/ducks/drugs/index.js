@@ -19,7 +19,7 @@ export const { Types, Creators } = createActions({
   drugsSaveSingleError: ['error'],
 
   unitCoefficientSaveStart: [''],
-  unitCoefficientSaveSuccess: [''],
+  unitCoefficientSaveSuccess: ['idMeasureUnit', 'item'],
   unitCoefficientSaveReset: [''],
   unitCoefficientSaveError: ['error']
 });
@@ -157,16 +157,18 @@ const saveSingleSuccess = (state = INITIAL_STATE, { success }) => ({
   }
 });
 
-const unitCoefficientSaveStart = (state = INITIAL_STATE) => ({
-  ...state,
-  units: {
-    ...state.units,
-    save: {
-      ...state.units.save,
-      isSaving: true
+const unitCoefficientSaveStart = (state = INITIAL_STATE) => {
+  return {
+    ...state,
+    units: {
+      ...state.units,
+      save: {
+        ...state.units.save,
+        isSaving: true
+      }
     }
-  }
-});
+  };
+};
 
 const unitCoefficientSaveError = (state = INITIAL_STATE, { error }) => ({
   ...state,
@@ -190,18 +192,28 @@ const unitCoefficientSaveReset = (state = INITIAL_STATE) => ({
   }
 });
 
-const unitCoefficientSaveSuccess = (state = INITIAL_STATE) => ({
-  ...state,
-  units: {
-    ...state.units,
-    save: {
-      ...state.units.save,
-      error: null,
-      success: true,
-      isSaving: false
-    }
+const unitCoefficientSaveSuccess = (state = INITIAL_STATE, { idMeasureUnit, item }) => {
+  const list = [...state.units.list];
+  const index = list.findIndex(i => i.idMeasureUnit === idMeasureUnit);
+
+  if (index !== -1) {
+    list[index] = { ...list[index], ...item };
   }
-});
+
+  return {
+    ...state,
+    units: {
+      ...state.units,
+      list,
+      save: {
+        ...state.units.save,
+        error: null,
+        success: true,
+        isSaving: false
+      }
+    }
+  };
+};
 
 const HANDLERS = {
   [Types.DRUGS_FETCH_LIST_START]: fetchListStart,

@@ -24,8 +24,7 @@ const {
 
   unitCoefficientSaveStart,
   unitCoefficientSaveReset,
-  unitCoefficientSaveSuccess,
-  unitCoefficientSaveError
+  unitCoefficientSaveSuccess
 } = DrugsCreators;
 
 export const fetchDrugsListThunk = (params = {}) => async (dispatch, getState) => {
@@ -93,22 +92,8 @@ export const fetchDrugsUnitsListThunk = (params = {}) => async (dispatch, getSta
   dispatch(drugsUnitsFetchListSuccess(list));
 };
 
-export const saveUnitCoeffiecientThunk = (idDrug, idMeasureUnit, params = {}) => async (
-  dispatch,
-  getState
-) => {
+export const saveUnitCoeffiecientThunk = (idMeasureUnit, params = {}) => async dispatch => {
   dispatch(unitCoefficientSaveStart());
-
-  const { access_token } = getState().auth.identify;
-  const { status, error } = await api
-    .updateUnitCoefficient(access_token, idDrug, idMeasureUnit, params)
-    .catch(errorHandler);
-
-  if (status !== 200) {
-    dispatch(unitCoefficientSaveError(error));
-    return;
-  }
-
-  dispatch(unitCoefficientSaveSuccess());
+  dispatch(unitCoefficientSaveSuccess(idMeasureUnit, params));
   dispatch(unitCoefficientSaveReset());
 };

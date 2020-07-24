@@ -73,14 +73,14 @@ export const generateOutlierThunk = ({ id: idSegment, nameSegment }) => async (
   dispatch(outliersGenerateStop(status));
 };
 
-export const generateDrugOutlierThunk = ({ idSegment, idDrug }) => async (dispatch, getState) => {
+export const generateDrugOutlierThunk = params => async (dispatch, getState) => {
   dispatch(outliersGenerateDrugStart());
 
   const { access_token } = getState().auth.identify;
   const {
     data: { data },
     error
-  } = await api.generateDrugOutlier(access_token, { idSegment, idDrug }).catch(errorHandler);
+  } = await api.generateDrugOutlier(access_token, params).catch(errorHandler);
 
   if (!isEmpty(error)) {
     dispatch(outliersGenerateDrugError(error));
