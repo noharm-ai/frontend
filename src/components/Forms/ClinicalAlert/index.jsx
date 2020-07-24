@@ -65,11 +65,12 @@ export default function ClinicalAlert({ prescription, save, afterSave, ...props 
           onOk={handleSubmit}
           confirmLoading={isSaving}
           okButtonProps={{
-            disabled: isSaving
+            disabled: isSaving,
+            className: 'gtm-bt-save-alert'
           }}
           cancelButtonProps={{
             disabled: isSaving,
-            className: 'gtm-bt-cancel-evoluir'
+            className: 'gtm-bt-cancel-alert'
           }}
         >
           <header>

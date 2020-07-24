@@ -62,11 +62,12 @@ export default function ClinicalNotes({ prescription, save, afterSave, ...props 
           onOk={handleSubmit}
           confirmLoading={isSaving}
           okButtonProps={{
-            disabled: isSaving
+            disabled: isSaving,
+            className: 'gtm-bt-save-clinical-notes'
           }}
           cancelButtonProps={{
             disabled: isSaving,
-            className: 'gtm-bt-cancel-evoluir'
+            className: 'gtm-bt-cancel-clinical-notes'
           }}
         >
           <header>

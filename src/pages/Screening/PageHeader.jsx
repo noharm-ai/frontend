@@ -130,7 +130,7 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
           {security.isAdmin() && (
             <>
               <Button
-                type="primary gtm-bt-check"
+                type="primary gtm-bt-clinical-notes"
                 onClick={() => setClinicalNotesVisibility(true)}
                 style={{ marginRight: '5px' }}
                 ghost={!prescription.content.notes}
@@ -139,7 +139,7 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
                 Evolução
               </Button>
               <Button
-                type="primary gtm-bt-check"
+                type="primary gtm-bt-alert"
                 onClick={() => setClinicalAlertVisibility(true)}
                 style={{ marginRight: '5px' }}
                 ghost={!prescription.content.alert}
@@ -158,7 +158,7 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
         visible={isClinicalNotesVisible}
         onCancel={onCancelClinicalNotes}
         okText="Salvar"
-        okType="primary gtm-bt-save-evolucao"
+        okType="primary"
         cancelText="Cancelar"
         afterSave={afterSaveClinicalNotes}
       />
@@ -166,7 +166,7 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
         visible={isClinicalAlertVisible}
         onCancel={onCancelClinicalAlert}
         okText="Salvar"
-        okType="primary gtm-bt-save-alerta"
+        okType="primary"
         cancelText="Cancelar"
         afterSave={afterSaveClinicalAlert}
       />
