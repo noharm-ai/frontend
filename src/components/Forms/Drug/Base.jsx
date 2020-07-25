@@ -167,37 +167,6 @@ export default function Base({ units, security }) {
         </Box>
       </Col>
       <Col xs={24}>
-        <>
-          <Box hasError={errors.division}>
-            <Heading as="label" size="14px" className="fixed">
-              <Tooltip title="">Divisor de faixas:</Tooltip>
-            </Heading>
-            <InputNumber
-              style={{
-                width: 120,
-                marginRight: '10px'
-              }}
-              min={0}
-              max={99999}
-              value={division}
-              onChange={value => setFieldValue('division', value)}
-            />
-            <Checkbox
-              onChange={({ target }) => setFieldValue('useWeight', !target.value)}
-              value={useWeight}
-              checked={useWeight}
-              name="useWeight"
-              id="useWeight"
-            >
-              <Tooltip title="Somente será considerado peso se houver Divisor de Faixas atribuído">
-                Considerar peso
-              </Tooltip>
-            </Checkbox>
-          </Box>
-          {errors.division && <FieldError>{errors.division}</FieldError>}
-        </>
-      </Col>
-      <Col xs={24}>
         <Box hasError={errors.amount}>
           <Heading as="label" size="14px" className="fixed">
             <Tooltip title="Informação que será utilizada na calculadora de soluções">
