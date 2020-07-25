@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import isEmpty from 'lodash.isempty';
 
 import { Row } from '@components/Grid';
@@ -20,20 +19,6 @@ const errorMessage = {
 const saveMessage = {
   message: 'Uhu! Medicamento salvo com sucesso! :)'
 };
-const divisionErrorMessage =
-  'O campo Divisor de faixas é obrigatório quando o peso deve ser considerado.';
-const validationSchema = Yup.object().shape({
-  id: Yup.number(),
-  division: Yup.number().when('useWeight', {
-    is: true,
-    then: Yup.number()
-      .typeError(divisionErrorMessage)
-      .required(divisionErrorMessage),
-    otherwise: Yup.number()
-      .typeError(divisionErrorMessage)
-      .nullable()
-  })
-});
 
 const formId = 'drugForm';
 
@@ -115,7 +100,6 @@ export default function Drug({
       enableReinitialize
       onSubmit={saveDrug}
       initialValues={initialValues}
-      validationSchema={validationSchema}
     >
       {({ handleSubmit, isValid }) => (
         <form onSubmit={handleSubmit}>

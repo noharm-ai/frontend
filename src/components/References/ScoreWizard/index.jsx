@@ -135,7 +135,6 @@ export default function ScoreWizard({
                 min={0}
                 max={99999}
                 value={drugData.division}
-                disabled={!drugData.useWeight}
                 onChange={value => updateDrugData({ division: value, touched: true })}
                 className={validationErrors.division ? 'error' : ''}
               />
