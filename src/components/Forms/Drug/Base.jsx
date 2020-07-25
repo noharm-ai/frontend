@@ -8,7 +8,7 @@ import Heading from '@components/Heading';
 import { InputNumber, Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 
-import { Box, FieldError } from './Drug.style';
+import { Box } from './Drug.style';
 
 export default function Base({ units, security }) {
   const { values, setFieldValue, errors } = useFormikContext();
@@ -22,7 +22,6 @@ export default function Base({ units, security }) {
     liver,
     elderly,
     unit,
-    division,
     useWeight,
     idMeasureUnit,
     amount,
