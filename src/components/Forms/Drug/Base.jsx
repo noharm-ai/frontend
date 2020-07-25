@@ -10,7 +10,7 @@ import Tooltip from '@components/Tooltip';
 
 import { Box } from './Drug.style';
 
-export default function Base({ units, security }) {
+export default function Base() {
   const { values, setFieldValue, errors } = useFormikContext();
   const {
     antimicro,
@@ -23,7 +23,6 @@ export default function Base({ units, security }) {
     elderly,
     unit,
     useWeight,
-    idMeasureUnit,
     amount,
     amountUnit,
     whiteList
@@ -217,39 +216,6 @@ export default function Base({ units, security }) {
           &nbsp; /mL
         </Box>
       </Col>
-      {needUnits(units) && (
-        <Col md={24} xs={24}>
-          <Box hasError={errors.idMeasureUnit}>
-            <Heading as="label" size="14px" className="fixed">
-              Unidade Padrão:
-            </Heading>
-            <Select
-              placeholder="Selecione a unidade de medida padrão para este medicamento"
-              onChange={value => setFieldValue('idMeasureUnit', value)}
-              value={idMeasureUnit}
-              identify="idMeasureUnit"
-              allowClear
-              style={{ minWidth: '300px' }}
-            >
-              {units.map(
-                unit =>
-                  unit.fator === 1 && (
-                    <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
-                      {unit.description}
-                    </Select.Option>
-                  )
-              )}
-            </Select>
-          </Box>
-        </Col>
-      )}
     </>
   );
 }
-
-const needUnits = units => {
-  var count = 0;
-  units.map(unit => (unit.fator === 1 ? (count += 1) : 0));
-
-  return count > 1;
-};

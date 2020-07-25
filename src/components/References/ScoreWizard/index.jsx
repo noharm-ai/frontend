@@ -7,7 +7,7 @@ import Empty from '@components/Empty';
 import Heading from '@components/Heading';
 import Tooltip from '@components/Tooltip';
 import Steps from '@components/Steps';
-import { InputNumber } from '@components/Inputs';
+import { InputNumber, Select } from '@components/Inputs';
 import PopConfirm from '@components/PopConfirm';
 import Button from '@components/Button';
 
@@ -26,7 +26,8 @@ export default function ScoreWizard({
   updateDrugData,
   generateStatus,
   saveUnitCoefficient,
-  security
+  security,
+  resetWizard
 }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState({});
@@ -34,10 +35,10 @@ export default function ScoreWizard({
   const maxSteps = 3;
 
   useEffect(() => {
-    if (generateStatus.generated) {
+    if (resetWizard) {
       setCurrentStep(0);
     }
-  }, [generateStatus.generated]);
+  }, [resetWizard]);
 
   const generate = () => {
     generateOutlier({
@@ -45,6 +46,7 @@ export default function ScoreWizard({
       idDrug: selecteds.idDrug,
       division: drugData.division,
       useWeight: drugData.useWeight,
+      idMeasureUnit: drugData.idMeasureUnit,
       measureUnitList: drugUnits.list
     });
   };
@@ -84,6 +86,13 @@ export default function ScoreWizard({
     return true;
   };
 
+  const needUnits = units => {
+    var count = 0;
+    units.map(unit => (unit.fator === 1 ? (count += 1) : 0));
+
+    return count > 1;
+  };
+
   const unitsDatasource = toDataSource(drugUnits.list, 'idMeasureUnit', {
     saveUnitCoefficient,
     idDrug: selecteds.idDrug,
@@ -97,7 +106,7 @@ export default function ScoreWizard({
       <Steps current={currentStep}>
         <Steps.Step key={0} title="Conversão de unidades" />
         <Steps.Step key={1} title="Divisor de faixas" />
-        <Steps.Step key={2} title="Gerar escore" />
+        <Steps.Step key={2} title="Gerar escores" />
       </Steps>
 
       {currentStep === 0 && (
@@ -114,6 +123,35 @@ export default function ScoreWizard({
             locale={{ emptyText }}
             dataSource={!drugUnits.isFetching ? unitsDatasource : []}
           />
+          {needUnits(drugUnits.list) && (
+            <Row gutter={24} align="middle" type="flex" style={{ marginTop: '20px' }}>
+              <>
+                <Col md={5} xxl={3}>
+                  <Heading as="label" size="14px" textAlign="right">
+                    Unidade Padrão:
+                  </Heading>
+                </Col>
+                <Col md={24 - 5} xxl={24 - 3}>
+                  <Select
+                    placeholder="Selecione a unidade de medida padrão para este medicamento"
+                    value={drugData.idMeasureUnit}
+                    style={{ minWidth: '300px' }}
+                    disabled={!needUnits(drugUnits.list)}
+                    onChange={value => updateDrugData({ idMeasureUnit: value, touched: true })}
+                  >
+                    {drugUnits.list.map(
+                      unit =>
+                        unit.fator === 1 && (
+                          <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
+                            {unit.description}
+                          </Select.Option>
+                        )
+                    )}
+                  </Select>
+                </Col>
+              </>
+            </Row>
+          )}
         </StepContent>
       )}
 

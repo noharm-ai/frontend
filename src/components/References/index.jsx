@@ -66,6 +66,7 @@ export default function References({
   } = outliers;
   const [obsModalVisible, setObsModalVisibility] = useState(false);
   const [relationModalVisible, setRelationModalVisibility] = useState(false);
+  const [resetWizard, setResetWizard] = useState(false);
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
 
@@ -145,6 +146,7 @@ export default function References({
     if (generateStatus.generated) {
       notification.success({ message: 'Escores gerados com sucesso!' });
       generateOutlierReset();
+      setResetWizard(true);
 
       if (!isEmpty(match.params)) {
         fetchReferencesList(
@@ -161,6 +163,8 @@ export default function References({
         id: outliers.selecteds.idDrug,
         idSegment: outliers.selecteds.idSegment
       });
+    } else {
+      setResetWizard(false);
     }
   }, [
     generateStatus.generated,
@@ -251,7 +255,7 @@ export default function References({
             </Heading>
           </FieldSet>
 
-          <ScoreWizard />
+          <ScoreWizard resetWizard={resetWizard} />
         </Tabs.TabPane>
         <Tabs.TabPane tab="Atributos" key="2">
           <DrugForm fetchReferencesList={fetchReferencesList} match={match} />
