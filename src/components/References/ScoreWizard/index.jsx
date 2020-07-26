@@ -157,7 +157,7 @@ export default function ScoreWizard({
 
       {currentStep === 1 && (
         <StepContent>
-          <p>O divisor de faixas define...</p>
+          <p>O divisor de faixas define os intervalos de dose que entrarão na mesma faixa. Ex.: Divisor 5 vai definir faixas de dose de "0-5", de "5-10", etc. Caso deva ser considerado o peso do paciente na faixa de doses, selecione essa opção.</p>
           <Row gutter={24} align="middle" type="flex">
             <Col md={5} xxl={3}>
               <Heading as="label" size="14px" textAlign="right">

@@ -241,7 +241,7 @@ export default function References({
 
           <FieldSet style={{ marginBottom: '25px', marginTop: '25px' }}>
             <Heading as="label" size="16px" margin="0 0 10px">
-              Cálculo de escore{' '}
+              Assistente para Geração de Escores{' '}
               <span
                 style={{
                   color: 'rgba(0, 0, 0, 0.65)',
