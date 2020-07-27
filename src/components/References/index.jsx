@@ -13,15 +13,14 @@ import { FieldSet } from '@components/Inputs';
 import DefaultModal from '@components/Modal';
 import Tabs from '@components/Tabs';
 import Button from '@components/Button';
-import PopConfirm from '@components/PopConfirm';
 import Icon from '@components/Icon';
-import Tooltip from '@components/Tooltip';
 
 import Edit from '@containers/References/Edit';
+import EditSubstance from '@containers/References/EditSubstance';
 import Relation from '@containers/References/Relation';
+import ScoreWizard from '@containers/References/ScoreWizard';
 import Filter from './Filter';
 import columns from './columns';
-import unitConversionColumns from './UnitConversion/columns';
 import relationsColumns from './Relation/columns';
 
 import DrugForm from '@containers/Forms/Drug';
@@ -53,17 +52,23 @@ export default function References({
   security,
   generateOutlier,
   generateOutlierReset,
+  updateDrugData,
   ...restProps
 }) {
-  const { isFetching, list, error, generateStatus, drugData, saveRelation } = outliers;
+  const {
+    isFetching,
+    list,
+    error,
+    generateStatus,
+    drugData,
+    saveRelation,
+    relationStatus
+  } = outliers;
   const [obsModalVisible, setObsModalVisibility] = useState(false);
   const [relationModalVisible, setRelationModalVisibility] = useState(false);
-  const isAdmin = security.isAdmin();
+  const [resetWizard, setResetWizard] = useState(false);
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
-  const {
-    drugs: { units }
-  } = restProps;
 
   const onSaveObs = () => {
     saveOutlier(outliers.edit.item.idOutlier, { obs: outliers.edit.item.obs });
@@ -104,12 +109,6 @@ export default function References({
   };
 
   const dataSource = toDataSource(list, 'idOutlier', { saveOutlier, onShowObsModal });
-  const unitsDatasource = toDataSource(units.list, 'idMeasureUnit', {
-    saveUnitCoefficient,
-    idDrug: outliers.selecteds.idDrug,
-    idSegment: outliers.selecteds.idSegment,
-    isAdmin
-  });
   const dsRelations = toDataSource(drugData.relations, null, {
     showModal: onShowRelationModal,
     relationTypes: drugData.relationTypes,
@@ -145,7 +144,9 @@ export default function References({
 
   useEffect(() => {
     if (generateStatus.generated) {
+      notification.success({ message: 'Escores gerados com sucesso!' });
       generateOutlierReset();
+      setResetWizard(true);
 
       if (!isEmpty(match.params)) {
         fetchReferencesList(
@@ -162,6 +163,8 @@ export default function References({
         id: outliers.selecteds.idDrug,
         idSegment: outliers.selecteds.idSegment
       });
+    } else {
+      setResetWizard(false);
     }
   }, [
     generateStatus.generated,
@@ -217,10 +220,6 @@ export default function References({
     }
   };
 
-  const generate = () => {
-    generateOutlier({ idSegment: outliers.selecteds.idSegment, idDrug: outliers.selecteds.idDrug });
-  };
-
   return (
     <>
       <Filter {...restProps} outliers={outliers} />
@@ -239,37 +238,24 @@ export default function References({
             dataSource={!isFetching ? dataSource : []}
             rowClassName={rowClassName}
           />
+
           <FieldSet style={{ marginBottom: '25px', marginTop: '25px' }}>
             <Heading as="label" size="16px" margin="0 0 10px">
-              Conversão de unidades:
+              Assistente para Geração de Escores{' '}
+              <span
+                style={{
+                  color: 'rgba(0, 0, 0, 0.65)',
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '400'
+                }}
+              >
+                Alterações que envolvem a geração de escore
+              </span>
             </Heading>
           </FieldSet>
-          <Table
-            columns={unitConversionColumns}
-            pagination={false}
-            loading={units.isFetching}
-            locale={{ emptyText }}
-            dataSource={!units.isFetching ? unitsDatasource : []}
-          />
-          <PopConfirm
-            title="Com esta ação os escores manuais e os comentários serão excluídos. Será necessário reinseri-los manualmente. Deseja continuar?"
-            onConfirm={generate}
-            okText="Sim"
-            cancelText="Não"
-          >
-            <Tooltip
-              title="Gerar novo outlier em caso de mudança de fator de conversão, atribuição de dose/peso e ajuste de faixa."
-              placement="top"
-            >
-              <Button
-                type="primary gtm-bt-med-generate"
-                style={{ marginTop: '10px' }}
-                loading={generateStatus.isGenerating}
-              >
-                Gerar Escores
-              </Button>
-            </Tooltip>
-          </PopConfirm>
+
+          <ScoreWizard resetWizard={resetWizard} />
         </Tabs.TabPane>
         <Tabs.TabPane tab="Atributos" key="2">
           <DrugForm fetchReferencesList={fetchReferencesList} match={match} />
@@ -277,9 +263,7 @@ export default function References({
         <Tabs.TabPane tab="Relações" key="3">
           <Row type="flex" justify="end">
             <Col xs={12}>
-              <Heading as="h3" size="16px">
-                Substância: {drugData.sctNameA}
-              </Heading>
+              <EditSubstance />
             </Col>
             <Col xs={12}>
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -295,7 +279,7 @@ export default function References({
             title={title}
             columns={relationsColumns}
             pagination={false}
-            loading={isFetching}
+            loading={isFetching || relationStatus.isFetching}
             locale={{ emptyText }}
             dataSource={!isFetching ? dsRelations : []}
           />

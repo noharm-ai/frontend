@@ -8,10 +8,8 @@ import Icon from '@components/Icon';
 export const getTypeName = (currentType, types) => {
   if (currentType == null || types == null) return '';
 
-  var type = ''
-  types.map(({ key, value }) => (
-    type = (currentType === key ? value : type)
-  ))
+  var type = '';
+  types.map(({ key, value }) => (type = currentType === key ? value : type));
 
   return type;
 };
@@ -27,11 +25,15 @@ const truncateText = text => {
 export default [
   {
     title: 'Substância relacionada',
+    sorter: (a, b) => a.nameB.localeCompare(b.nameB),
+    sortDirections: ['descend', 'ascend'],
     dataIndex: 'nameB',
     width: 350
   },
   {
     title: 'Tipo',
+    sorter: (a, b) =>
+      getTypeName(a.type, a.relationTypes).localeCompare(getTypeName(b.type, b.relationTypes)),
     render: (entry, record) => {
       return getTypeName(record.type, record.relationTypes);
     }

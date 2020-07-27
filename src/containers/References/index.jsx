@@ -15,7 +15,8 @@ import {
   generateDrugOutlierThunk,
   resetGenerateDrugOutlierThunk,
   selectOutlierRelationThunk,
-  saveOutlierRelationThunk
+  saveOutlierRelationThunk,
+  updateDrugDataThunk
 } from '@store/ducks/outliers/thunk';
 import { fetchSegmentsListThunk } from '@store/ducks/segments/thunk';
 import References from '@components/References';
@@ -36,7 +37,8 @@ const mapStateToProps = ({ drugs, segments, outliers, user }) => ({
     saveStatus: outliers.save,
     generateStatus: outliers.generateDrugOutlier,
     drugData: outliers.drugData,
-    saveRelation: outliers.saveRelation
+    saveRelation: outliers.saveRelation,
+    relationStatus: outliers.relation
   },
   security: security(user.account.roles)
 });
@@ -54,7 +56,8 @@ const mapDispatchToProps = dispatch =>
       fetchOutliersList: fetchOutliersListThunk,
       fetchReferencesList: fetchReferencesListThunk,
       generateOutlier: generateDrugOutlierThunk,
-      generateOutlierReset: resetGenerateDrugOutlierThunk
+      generateOutlierReset: resetGenerateDrugOutlierThunk,
+      updateDrugData: updateDrugDataThunk
     },
     dispatch
   );

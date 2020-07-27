@@ -13,28 +13,26 @@ import { FormContainer } from '../Form.style';
 const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
   description:
-    'Aconteceu algo que nos impediu de salvar os dados desta evolução. Por favor, tente novamente.'
+    'Aconteceu algo que nos impediu de salvar os dados desta substância. Por favor, tente novamente.'
 };
 
 const saveMessage = {
-  message: 'Uhu! Evolução salva com sucesso! :)'
+  message: 'Uhu! Substância salva com sucesso! :)'
 };
 const validationSchema = Yup.object().shape({
-  idPrescription: Yup.number().required()
+  sctid: Yup.number().required(),
+  name: Yup.string().required()
 });
-const formId = 'clinicalNotes';
 
-export default function ClinicalNotes({ prescription, save, afterSave, ...props }) {
-  const { isSaving, success, error, data } = prescription;
+export default function Substance({ saveStatus, save, afterSave, ...props }) {
+  const { isSaving, success, error, item } = saveStatus;
 
   const initialValues = {
-    formId,
-    idPrescription: data.idPrescription,
-    notes: data.notes
+    ...item
   };
 
   useEffect(() => {
-    if (success === formId) {
+    if (success) {
       notification.success(saveMessage);
       if (afterSave) {
         afterSave();
@@ -55,23 +53,21 @@ export default function ClinicalNotes({ prescription, save, afterSave, ...props 
     >
       {({ handleSubmit }) => (
         <DefaultModal
-          width={700}
           centered
           destroyOnClose
           {...props}
           onOk={handleSubmit}
           confirmLoading={isSaving}
           okButtonProps={{
-            disabled: isSaving,
-            className: 'gtm-bt-save-clinical-notes'
+            disabled: isSaving
           }}
           cancelButtonProps={{
             disabled: isSaving,
-            className: 'gtm-bt-cancel-clinical-notes'
+            className: 'gtm-bt-cancel-edit-substance'
           }}
         >
           <header>
-            <Heading margin="0 0 11px">Evolução</Heading>
+            <Heading margin="0 0 11px">Substância</Heading>
           </header>
           <form onSubmit={handleSubmit}>
             <FormContainer>

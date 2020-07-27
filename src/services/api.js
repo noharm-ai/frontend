@@ -76,10 +76,11 @@ const generateOutlier = (bearerToken, idSegment) =>
   });
 
 const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
-  instance.get(`/segments/${idSegment}/outliers/generate/drug/${idDrug}/clean/1`, {
+  instance.post(
+    `/segments/${idSegment}/outliers/generate/drug/${idDrug}/clean/1`,
     params,
-    ...setHeaders(bearerToken)
-  });
+    setHeaders(bearerToken)
+  );
 
 const createSegment = (bearerToken, params = {}) =>
   instance.post(endpoints.segments, params, setHeaders(bearerToken));
@@ -204,6 +205,15 @@ const getSubstances = (bearerToken, params = {}) =>
     ...setHeaders(bearerToken)
   });
 
+const getSubstanceRelations = (bearerToken, id, params = {}) =>
+  instance.get(`${endpoints.substance}/${id}/relation`, {
+    params,
+    ...setHeaders(bearerToken)
+  });
+
+const updateSubstance = (bearerToken, { sctid, ...params }) =>
+  instance.put(`${endpoints.substance}/${sctid}`, params, setHeaders(bearerToken));
+
 /**
  * Intervention.
  *
@@ -283,7 +293,9 @@ const api = {
   getSubstances,
   updateSegmentExam,
   getExamTypes,
-  getHelp
+  getHelp,
+  updateSubstance,
+  getSubstanceRelations
 };
 
 export default api;

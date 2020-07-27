@@ -166,7 +166,7 @@ export const checkScreeningThunk = (idPrescription, status) => async (dispatch, 
   dispatch(prescriptionsCheckSuccess(success));
 };
 
-export const savePrescriptionThunk = ({ idPrescription, ...params }) => async (
+export const savePrescriptionThunk = ({ idPrescription, formId, ...params }) => async (
   dispatch,
   getState
 ) => {
@@ -182,7 +182,27 @@ export const savePrescriptionThunk = ({ idPrescription, ...params }) => async (
     return;
   }
 
-  dispatch(prescriptionsSaveSuccess(params));
+  dispatch(prescriptionsSaveSuccess(params, formId));
+  dispatch(prescriptionsSaveReset());
+};
+
+export const saveAdmissionThunk = ({ admissionNumber, formId, ...params }) => async (
+  dispatch,
+  getState
+) => {
+  dispatch(prescriptionsSaveStart());
+
+  const { access_token } = getState().auth.identify;
+  const { error } = await api
+    .updatePatient(access_token, admissionNumber, params)
+    .catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(prescriptionsSaveError(error));
+    return;
+  }
+
+  dispatch(prescriptionsSaveSuccess(params, formId));
   dispatch(prescriptionsSaveReset());
 };
 

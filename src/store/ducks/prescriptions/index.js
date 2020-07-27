@@ -15,7 +15,7 @@ export const { Types, Creators } = createActions({
 
   prescriptionsSaveStart: [''],
   prescriptionsSaveError: ['error'],
-  prescriptionsSaveSuccess: ['data'],
+  prescriptionsSaveSuccess: ['data', 'success'],
   prescriptionsSaveReset: [''],
 
   prescriptionDrugCheckStart: ['idPrescriptionDrug'],
@@ -196,13 +196,13 @@ const saveError = (state = INITIAL_STATE, { error }) => ({
   }
 });
 
-const saveSuccess = (state = INITIAL_STATE, { data }) => ({
+const saveSuccess = (state = INITIAL_STATE, { data, success }) => ({
   ...state,
   single: {
     ...state.single,
     isSaving: false,
     error: null,
-    success: true,
+    success,
     data: {
       ...state.single.data,
       ...data
@@ -210,7 +210,7 @@ const saveSuccess = (state = INITIAL_STATE, { data }) => ({
   }
 });
 
-const saveReset = (state = INITIAL_STATE, { error }) => ({
+const saveReset = (state = INITIAL_STATE) => ({
   ...state,
   single: {
     ...state.single,

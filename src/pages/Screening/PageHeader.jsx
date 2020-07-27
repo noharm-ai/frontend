@@ -1,4 +1,5 @@
 import 'styled-components/macro';
+import styled from 'styled-components/macro';
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
 
@@ -10,6 +11,7 @@ import notification from '@components/notification';
 import Tooltip from '@components/Tooltip';
 
 import FormClinicalNotes from '@containers/Forms/ClinicalNotes';
+import FormClinicalAlert from '@containers/Forms/ClinicalAlert';
 
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
@@ -23,10 +25,25 @@ const close = () => {
   window.close();
 };
 
+const UnstyledButton = styled.button`
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 export default function PageHeader({ match, pageTitle, prescription, checkScreening, security }) {
   const id = parseInt(extractId(match.params.slug));
   const { isChecking, error } = prescription.check;
   const [isClinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
+  const [isClinicalAlertVisible, setClinicalAlertVisibility] = useState(false);
 
   const onCancelClinicalNotes = () => {
     setClinicalNotesVisibility(false);
@@ -34,6 +51,19 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
 
   const afterSaveClinicalNotes = () => {
     setClinicalNotesVisibility(false);
+  };
+
+  const onCancelClinicalAlert = () => {
+    setClinicalAlertVisibility(false);
+  };
+
+  const afterSaveClinicalAlert = () => {
+    setClinicalAlertVisibility(false);
+  };
+
+  const copyToClipboard = text => {
+    navigator.clipboard.writeText(text);
+    notification.success({ message: 'Número da prescrição copiado!' });
   };
 
   // show message if has error
@@ -48,7 +78,12 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
       <Row type="flex" css="margin-bottom: 15px;">
         <Col span={24} md={10}>
           <Heading>
-            {pageTitle} nº {prescription.content.idPrescription}
+            {pageTitle} nº{' '}
+            <Tooltip title="Clique para copiar o número da prescrição">
+              <UnstyledButton onClick={() => copyToClipboard(prescription.content.idPrescription)}>
+                {prescription.content.idPrescription}
+              </UnstyledButton>
+            </Tooltip>
             <span className="legend">Prescrito em {prescription.content.dateFormated}</span>
           </Heading>
         </Col>
@@ -93,15 +128,26 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
             </>
           )}
           {security.isAdmin() && (
-            <Button
-              type="primary gtm-bt-check"
-              onClick={() => setClinicalNotesVisibility(true)}
-              style={{ marginRight: '5px' }}
-              ghost={!prescription.content.notes}
-            >
-              <Icon type="file-add" />
-              Evolução
-            </Button>
+            <>
+              <Button
+                type="primary gtm-bt-clinical-notes"
+                onClick={() => setClinicalNotesVisibility(true)}
+                style={{ marginRight: '5px' }}
+                ghost={!prescription.content.notes}
+              >
+                <Icon type="file-add" />
+                Evolução
+              </Button>
+              <Button
+                type="primary gtm-bt-alert"
+                onClick={() => setClinicalAlertVisibility(true)}
+                style={{ marginRight: '5px' }}
+                ghost={!prescription.content.alert}
+              >
+                <Icon type="alert" />
+                Alerta
+              </Button>
+            </>
           )}
           <Button type="default gtm-bt-close" onClick={close}>
             Fechar
@@ -112,9 +158,17 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
         visible={isClinicalNotesVisible}
         onCancel={onCancelClinicalNotes}
         okText="Salvar"
-        okType="primary gtm-bt-save-evolucao"
+        okType="primary"
         cancelText="Cancelar"
         afterSave={afterSaveClinicalNotes}
+      />
+      <FormClinicalAlert
+        visible={isClinicalAlertVisible}
+        onCancel={onCancelClinicalAlert}
+        okText="Salvar"
+        okType="primary"
+        cancelText="Cancelar"
+        afterSave={afterSaveClinicalAlert}
       />
     </>
   );

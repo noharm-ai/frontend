@@ -31,7 +31,8 @@ export const Box = styled.div`
   }
 
   input,
-  .ant-select .ant-select-selection {
+  .ant-select .ant-select-selection,
+  textarea {
     background: ${props => (props.hasError ? '#ffcdd2;' : 'inherit')};
   }
 `;
@@ -40,4 +41,8 @@ export const EditorBox = styled.div`
   .ck-content {
     min-height: 100px;
   }
+`;
+
+export const FieldError = styled.div`
+  color: #f5222d;
 `;

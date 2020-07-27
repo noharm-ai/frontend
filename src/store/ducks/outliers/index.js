@@ -31,7 +31,20 @@ export const { Types, Creators } = createActions({
   outliersSaveRelationStart: [''],
   outliersSaveRelationSuccess: ['item'],
   outliersSaveRelationReset: [''],
-  outliersSaveRelationError: ['error']
+  outliersSaveRelationError: ['error'],
+
+  outliersSelectSubstance: ['item'],
+  outliersUpdateSubstance: ['item'],
+  outliersSaveSubstanceStart: [''],
+  outliersSaveSubstanceSuccess: ['item'],
+  outliersSaveSubstanceReset: [''],
+  outliersSaveSubstanceError: ['error'],
+
+  outliersUpdateDrugData: ['item'],
+
+  outliersFetchRelationStart: [''],
+  outliersFetchRelationError: ['error'],
+  outliersFetchRelationSuccess: ['list']
 });
 
 const INITIAL_STATE = {
@@ -64,6 +77,10 @@ const INITIAL_STATE = {
     error: null,
     item: {}
   },
+  relation: {
+    isFetching: false,
+    error: null
+  },
   saveRelation: {
     isSaving: false,
     success: false,
@@ -73,7 +90,12 @@ const INITIAL_STATE = {
   substance: {
     error: null,
     isFetching: true,
-    list: []
+    list: [],
+    single: {
+      isSaving: false,
+      error: null,
+      item: {}
+    }
   }
 };
 
@@ -316,6 +338,126 @@ const saveRelationSuccess = (state = INITIAL_STATE, { item }) => {
   };
 };
 
+const selectSubstance = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...state.substance.single,
+      item
+    }
+  }
+});
+
+const updateSubstance = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...state.substance.single,
+      item: {
+        ...state.substance.single.item,
+        ...item
+      }
+    }
+  }
+});
+
+const saveSubstanceStart = (state = INITIAL_STATE) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...state.substance.single,
+      isSaving: true
+    }
+  }
+});
+
+const saveSubstanceError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...state.substance.single,
+      isSaving: false,
+      error
+    }
+  }
+});
+
+const saveSubstanceReset = (state = INITIAL_STATE) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...INITIAL_STATE.substance.single
+    }
+  }
+});
+
+const saveSubstanceSuccess = (state = INITIAL_STATE, { item }) => {
+  const list = [...state.substance.list];
+  const index = list.findIndex(r => item.sctid === r.sctid);
+
+  if (index !== -1) {
+    list[index] = { ...list[index], ...item };
+  } else {
+    list.push(item);
+  }
+
+  return {
+    ...state,
+    substance: {
+      ...state.substance,
+      list,
+      single: {
+        ...state.substance.single,
+        error: null,
+        success: true,
+        isSaving: false
+      }
+    }
+  };
+};
+
+const updateDrugData = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  drugData: {
+    ...state.drugData,
+    ...item
+  }
+});
+
+const fetchRelationStart = (state = INITIAL_STATE) => ({
+  ...state,
+  relation: {
+    isFetching: true
+  }
+});
+
+const fetchRelationError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  relation: {
+    ...state.relation,
+    error,
+    isFetching: false
+  }
+});
+
+const fetchRelationSuccess = (state = INITIAL_STATE, { list }) => ({
+  ...state,
+  drugData: {
+    ...state.drugData,
+    relations: list
+  },
+  relation: {
+    ...state.relation,
+    isFetching: false,
+    error: null
+  }
+});
+
 const HANDLERS = {
   [Types.OUTLIERS_GENERATE_STOP]: generateStop,
   [Types.OUTLIERS_GENERATE_START]: generateStart,
@@ -348,7 +490,20 @@ const HANDLERS = {
   [Types.OUTLIERS_SAVE_RELATION_SUCCESS]: saveRelationSuccess,
 
   [Types.OUTLIERS_SELECT_RELATION]: selectRelation,
-  [Types.OUTLIERS_UPDATE_RELATION]: updateRelation
+  [Types.OUTLIERS_UPDATE_RELATION]: updateRelation,
+
+  [Types.OUTLIERS_UPDATE_DRUG_DATA]: updateDrugData,
+
+  [Types.OUTLIERS_SAVE_SUBSTANCE_START]: saveSubstanceStart,
+  [Types.OUTLIERS_SAVE_SUBSTANCE_ERROR]: saveSubstanceError,
+  [Types.OUTLIERS_SAVE_SUBSTANCE_RESET]: saveSubstanceReset,
+  [Types.OUTLIERS_SAVE_SUBSTANCE_SUCCESS]: saveSubstanceSuccess,
+  [Types.OUTLIERS_SELECT_SUBSTANCE]: selectSubstance,
+  [Types.OUTLIERS_UPDATE_SUBSTANCE]: updateSubstance,
+
+  [Types.OUTLIERS_FETCH_RELATION_START]: fetchRelationStart,
+  [Types.OUTLIERS_FETCH_RELATION_ERROR]: fetchRelationError,
+  [Types.OUTLIERS_FETCH_RELATION_SUCCESS]: fetchRelationSuccess
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

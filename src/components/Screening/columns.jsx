@@ -160,7 +160,6 @@ const Action = ({
           onClick={() => {
             onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber });
           }}
-          disabled={isDisabled}
         >
           <Icon type="form" style={{ fontSize: 16 }} />
         </Button>

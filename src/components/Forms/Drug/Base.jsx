@@ -8,9 +8,9 @@ import Heading from '@components/Heading';
 import { InputNumber, Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 
-import { Box, FieldError } from './Drug.style';
+import { Box } from './Drug.style';
 
-export default function Base({ units, security }) {
+export default function Base() {
   const { values, setFieldValue, errors } = useFormikContext();
   const {
     antimicro,
@@ -22,9 +22,7 @@ export default function Base({ units, security }) {
     liver,
     elderly,
     unit,
-    division,
     useWeight,
-    idMeasureUnit,
     amount,
     amountUnit,
     whiteList
@@ -167,37 +165,6 @@ export default function Base({ units, security }) {
         </Box>
       </Col>
       <Col xs={24}>
-        <>
-          <Box hasError={errors.division}>
-            <Heading as="label" size="14px" className="fixed">
-              <Tooltip title="">Divisor de faixas:</Tooltip>
-            </Heading>
-            <InputNumber
-              style={{
-                width: 120,
-                marginRight: '10px'
-              }}
-              min={0}
-              max={99999}
-              value={division}
-              onChange={value => setFieldValue('division', value)}
-            />
-            <Checkbox
-              onChange={({ target }) => setFieldValue('useWeight', !target.value)}
-              value={useWeight}
-              checked={useWeight}
-              name="useWeight"
-              id="useWeight"
-            >
-              <Tooltip title="Somente será considerado peso se houver Divisor de Faixas atribuído">
-                Considerar peso
-              </Tooltip>
-            </Checkbox>
-          </Box>
-          {errors.division && <FieldError>{errors.division}</FieldError>}
-        </>
-      </Col>
-      <Col xs={24}>
         <Box hasError={errors.amount}>
           <Heading as="label" size="14px" className="fixed">
             <Tooltip title="Informação que será utilizada na calculadora de soluções">
@@ -249,39 +216,6 @@ export default function Base({ units, security }) {
           &nbsp; /mL
         </Box>
       </Col>
-      {needUnits(units) && (
-        <Col md={24} xs={24}>
-          <Box hasError={errors.idMeasureUnit}>
-            <Heading as="label" size="14px" className="fixed">
-              Unidade Padrão:
-            </Heading>
-            <Select
-              placeholder="Selecione a unidade de medida padrão para este medicamento"
-              onChange={value => setFieldValue('idMeasureUnit', value)}
-              value={idMeasureUnit}
-              identify="idMeasureUnit"
-              allowClear
-              style={{ minWidth: '300px' }}
-            >
-              {units.map(
-                unit =>
-                  unit.fator === 1 && (
-                    <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
-                      {unit.description}
-                    </Select.Option>
-                  )
-              )}
-            </Select>
-          </Box>
-        </Col>
-      )}
     </>
   );
 }
-
-const needUnits = units => {
-  var count = 0;
-  units.map(unit => (unit.fator === 1 ? (count += 1) : 0));
-
-  return count > 1;
-};

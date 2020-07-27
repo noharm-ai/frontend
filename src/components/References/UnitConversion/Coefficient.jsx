@@ -5,7 +5,7 @@ import Button from '@components/Button';
 import Icon from '@components/Icon';
 import { InputNumber } from '@components/Inputs';
 
-export default function Escore({ idDrug, idMeasureUnit, fator, saveUnitCoefficient, idSegment }) {
+export default function Escore({ idMeasureUnit, fator, saveUnitCoefficient, updateDrugData }) {
   const [edit, setEdit] = useState(false);
   const [coefficient, setCoefficient] = useState(fator || 0);
 
@@ -16,10 +16,10 @@ export default function Escore({ idDrug, idMeasureUnit, fator, saveUnitCoefficie
 
   const handleSave = () => {
     setEdit(false);
-    saveUnitCoefficient(idDrug, idMeasureUnit, {
-      fator: coefficient,
-      idSegment
+    saveUnitCoefficient(idMeasureUnit, {
+      fator: coefficient
     });
+    updateDrugData({ touched: true });
   };
 
   return edit ? (
@@ -38,7 +38,7 @@ export default function Escore({ idDrug, idMeasureUnit, fator, saveUnitCoefficie
     </>
   ) : (
     <>
-      <span css="margin-right: 10px;">{coefficient}</span>
+      <span css="margin-right: 10px;">{fator}</span>
       {/*eslint-disable-next-line*/}
       <a href="#" css="color: inherit;" onClick={handleClick}>
         <Icon type="edit" />
