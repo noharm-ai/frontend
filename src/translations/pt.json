@@ -21,5 +21,16 @@
 		"config": "Configurações",
 		"medications": "Medicamentos",
 		"segments": "Segmentos"
+	},
+	"screeningList" : {
+		"segment": "Segmento",
+		"date": "Data",
+		"seeMore": "Ver mais",
+		"pending": "Prescrições pendentes",
+		"checked": "Prescrições checadas",
+		"all": "Todas",
+		"patientRisk": "Risco do paciente",
+		"prescriptionRisk": "Risco da prescrição",
+		"actions": "Ações"
 	}
 }

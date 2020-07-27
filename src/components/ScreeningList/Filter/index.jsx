@@ -4,6 +4,7 @@ import moment from 'moment';
 import 'moment/locale/pt-br';
 import { subDays } from 'date-fns';
 import debounce from 'lodash.debounce';
+import { useTranslation } from "react-i18next";
 
 import message from '@components/message';
 import Heading from '@components/Heading';
@@ -76,6 +77,7 @@ export default function Filter({
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
   const [filterName, setFilterName] = useState('');
   const [date, setDate] = useState([moment(match.params.startDate), null]);
+  const {t} = useTranslation();
 
   const getParams = useCallback(
     forceParams => {
@@ -236,7 +238,7 @@ export default function Filter({
         <Col md={8}>
           <Box>
             <Heading as="label" htmlFor="segments" size="14px">
-              Segmento:
+              {t('screeningList.segment')}:
             </Heading>
             <Select
               id="segments"
@@ -257,7 +259,7 @@ export default function Filter({
         <Col md={7} lg={7} xxl={5}>
           <Box>
             <Heading as="label" htmlFor="date" size="14px">
-              Data:
+              {t('screeningList.date')}:
             </Heading>
             <RangeDatePicker
               format="DD/MM/YYYY"
@@ -277,7 +279,7 @@ export default function Filter({
                 onClick={() => setOpen(!open)}
                 style={{ marginTop: '14px', paddingLeft: 0 }}
               >
-                <Badge count={hiddenFieldCount}>Ver mais</Badge>
+                <Badge count={hiddenFieldCount}>{t('screeningList.seeMore')}</Badge>
                 <Icon type={open ? 'caret-up' : 'caret-down'} />
               </Button>
             </Tooltip>

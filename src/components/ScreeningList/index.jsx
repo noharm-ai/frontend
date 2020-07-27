@@ -11,7 +11,7 @@ import notification from '@components/notification';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import Tag from '@components/Tag';
-
+import { useTranslation } from "react-i18next";
 import Filter from './Filter';
 
 import columnsTable, { expandedRowRender } from './columns';
@@ -86,6 +86,8 @@ export default function ScreeningList({
     checked: 0
   };
 
+  const {t} = useTranslation();
+
   if (list) {
     list.forEach(item => {
       if (item.status === 's') {
@@ -143,7 +145,7 @@ export default function ScreeningList({
           className={isFilterActive('0') ? 'active' : ''}
           onClick={e => handleFilter(e, '0')}
         >
-          Prescrições pendentes
+          {t('screeningList.pending')}
           <Tag color="orange">{listCount.pending}</Tag>
         </Button>
       </Tooltip>
@@ -154,7 +156,7 @@ export default function ScreeningList({
           className={isFilterActive('s') ? 'active' : ''}
           onClick={e => handleFilter(e, 's')}
         >
-          Prescrições checadas <Tag color="green">{listCount.checked}</Tag>
+         {t('screeningList.checked')} <Tag color="green">{listCount.checked}</Tag>
         </Button>
       </Tooltip>
 
@@ -170,7 +172,7 @@ export default function ScreeningList({
           className={isFilterActive(null) ? 'active' : ''}
           onClick={e => handleFilter(e, 'all')}
         >
-          Todas {listCount.all === 500 ? '*' : ''}
+          {t('screeningList.all')} {listCount.all === 500 ? '*' : ''}
           <Tag>{listCount.all}</Tag>
         </Button>
       </Tooltip>
