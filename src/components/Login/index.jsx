@@ -34,7 +34,7 @@ export default function Login({ isLogging, error, doLogin }) {
     onSubmit: values => doLogin(values)
   });
 
-  const {t, i18n} = useTranslation('common');
+  const {t, i18n} = useTranslation();
 
   useEffect(() => {
     if (!isEmpty(error)) {
@@ -54,7 +54,7 @@ export default function Login({ isLogging, error, doLogin }) {
                 className={setErrorClassName((errors.email && touched.email) || !isEmpty(error))}
               >
                 <Input
-                  placeholder="Email"
+                  placeholder={t('login.email')}
                   prefix={<Icon type="user" />}
                   name="email"
                   type="email"
@@ -70,7 +70,7 @@ export default function Login({ isLogging, error, doLogin }) {
                 )}
               >
                 <Input.Password
-                  placeholder="Senha"
+                  placeholder={t('login.password')}
                   prefix={<Icon type="lock" />}
                   name="password"
                   value={values.password}
@@ -92,13 +92,19 @@ export default function Login({ isLogging, error, doLogin }) {
                   </FieldSet>
                 </Col>
                 <Col span={12} css="text-align: right">
-                  <ForgotPass href="#" className="gtm-lnk-forgotpass">Esqueci a senha</ForgotPass>
+                  <ForgotPass href="#" className="gtm-lnk-forgotpass">{t('login.forgotPass')}</ForgotPass>
                 </Col>
               </Row>
 
               <Button type="primary gtm-btn-login" htmlType="submit" block loading={isLogging}>
-                Acessar
+                {t('login.login')}
               </Button>
+
+              <div>
+                  <h1>{t('login.chooseLanguage')}</h1>
+                  <button onClick={() => i18n.changeLanguage('pt')}>Português</button>
+                  <button onClick={() => i18n.changeLanguage('en')}>English</button>
+              </div>
             </Box>
           </Col>
         </Row>

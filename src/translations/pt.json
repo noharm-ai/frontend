@@ -3,6 +3,23 @@
         "title": "Bem-vindo à NoHarm"
     },
 	"login" : {
-		"keepMeLogged": "Manter conectado"
+		"email": "Email",
+		"password": "Senha",
+		"keepMeLogged": "Manter conectado",
+		"forgotPass": "Esqueci a senha",
+		"login": "Acessar",
+		"chooseLanguage": "Escolha a língua"
+	},
+	"layout" : {
+		"help": "Ajuda",
+		"logout": "Sair"
+	},
+	"menu" : {
+		"prioritization": "Priorização de Prescrições",
+		"interventions": "Intervenções",
+		"reports": "Relatórios",
+		"config": "Configurações",
+		"medications": "Medicamentos",
+		"segments": "Segmentos"
 	}
 }

@@ -3,7 +3,7 @@ import Segments from '@containers/Segments';
 
 const layoutProps = {
   theme: 'boxed',
-  pageTitle: 'Segmentos'
+  pageTitle: 'menu.segments'
 };
 
 export default withLayout(Segments, layoutProps);

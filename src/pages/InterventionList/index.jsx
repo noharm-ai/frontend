@@ -5,7 +5,7 @@ import PageHeader from '@containers/InterventionList/PageHeader';
 
 const layoutProps = {
   theme: 'boxed',
-  pageTitle: 'Intervenções',
+  pageTitle: 'menu.interventions',
   renderHeader: props => <PageHeader {...props} />
 };
 

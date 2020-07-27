@@ -3,7 +3,7 @@ import ScreeningList from '@containers/ScreeningList';
 
 const layoutProps = {
   theme: 'boxed',
-  pageTitle: 'Priorização de Prescrições'
+  pageTitle: 'menu.prioritization'
 };
 
 export default withLayout(ScreeningList, layoutProps);

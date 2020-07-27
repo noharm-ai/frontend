@@ -3,12 +3,14 @@ import React from 'react';
 
 import Heading from '@components/Heading';
 import { Row, Col } from '@components/Grid';
+import { useTranslation } from "react-i18next";
 
 export default function PageHeader({ userName }) {
+  const {t} = useTranslation();
   return (
     <Row type="flex" css="margin-bottom: 30px;">
       <Col span={16} sm={12} xs={24}>
-        <Heading>Intervenções</Heading>
+        <Heading>{t('menu.interventions')}</Heading>
         <p>Lista de intervenções criadas por {userName}.</p>
       </Col>
     </Row>

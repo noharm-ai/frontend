@@ -3,7 +3,7 @@ import References from '@containers/References';
 
 const layoutProps = {
   theme: 'boxed',
-  pageTitle: 'Medicamentos'
+  pageTitle: 'menu.medications'
 };
 
 export default withLayout(References, layoutProps);

@@ -19,18 +19,22 @@ Webfontloader.load({
   }
 });
 
-    i18next.init({
-        interpolation: { escapeValue: false },  // React already does escaping
-        lng: 'pt',                              // language to use
-        resources: {
-            en: {
-                common: trans_en               // 'common' is our custom namespace
-            },
-            pt: {
-                common: trans_pt
-            },
+i18next.init({
+    interpolation: { escapeValue: false },  // React already does escaping
+    lng: 'en',                              // language to use
+	ns: ['common'],
+	defaultNS: 'common',
+    resources: {
+        en: {
+        	name: 'English',
+            common: trans_en               // 'common' is our custom namespace
         },
-    });
+        pt: {
+        	name: 'Português',
+            common: trans_pt
+        },
+    },
+});
 
 ReactDOM.render(
   <Provider store={store}>

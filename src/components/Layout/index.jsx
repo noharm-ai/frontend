@@ -10,6 +10,7 @@ import Help from '@components/Help';
 import Box from './Box';
 import Menu from './Menu';
 import { Wrapper as Main, Brand, LogOut, UserName } from './Layout.style';
+import { useTranslation } from "react-i18next";
 
 const siderWidth = 250;
 const { Sider, Header, Content, Footer } = Main;
@@ -19,7 +20,7 @@ const setTitle = ({ user }) => {
   return user.account.userName;
 };
 
-const Me = ({ user, doLogout, toggleDrawer }) => (
+const Me = ({ user, doLogout, toggleDrawer, t }) => (
   <div
     css="
       align-items: center;
@@ -29,10 +30,10 @@ const Me = ({ user, doLogout, toggleDrawer }) => (
     <Avatar size={44} icon="user" css="margin-right: 12px !important;" />
     <UserName>{setTitle({ user })}</UserName>
     <LogOut onClick={e => toggleDrawer(e)} id="gtm-lnk-ajuda" style={{ marginRight: '12px' }}>
-      Ajuda
+      {t('layout.help')}
     </LogOut>
     <LogOut onClick={e => doLogout(e)} id="gtm-lnk-sair">
-      Sair
+      {t('layout.logout')}
     </LogOut>
   </div>
 );
@@ -70,6 +71,8 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
     setDrawerVisibility(!isDrawerVisible);
   };
 
+  const {t} = useTranslation();
+
   return (
     <Main style={{ minHeight: '100vh' }}>
       <Sider
@@ -88,7 +91,7 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
       </Sider>
       <Main style={{ paddingLeft: sider.collapsed ? sider.collapsedWidth : siderWidth }}>
         <Header>
-          <Me {...props} toggleDrawer={toggleDrawer} />
+          <Me {...props} toggleDrawer={toggleDrawer} t={t} />
         </Header>
         <Content css="padding: 25px 18px;">
           {theme === 'boxed' ? <Box {...props}>{children}</Box> : children}

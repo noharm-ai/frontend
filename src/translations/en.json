@@ -3,6 +3,23 @@
         "title": "Welcome to NoHarm"
     },
 	"login" : {
-		"keepMeLogged": "Remember me"
+		"email": "Email",
+		"password": "Password",
+		"keepMeLogged": "Remember me",
+		"forgotPass": "Forgotten your password?",
+		"login": "Log In",
+		"chooseLanguage": "Choose your language"
+	},
+	"layout" : {
+		"help": "Help",
+		"logout": "Logout"
+	},
+	"menu" : {
+		"prioritization": "Prescriptions Prioritization",
+		"interventions": "Interventions",
+		"reports": "Reports",
+		"config": "Settings",
+		"medications": "Medications",
+		"segments": "Segments"
 	}
 }
