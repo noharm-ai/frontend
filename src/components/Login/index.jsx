@@ -13,6 +13,7 @@ import Button from '@components/Button';
 import { Input, Checkbox } from '@components/Inputs';
 import { Container, Row, Col } from '@components/Grid';
 import { Wrapper, Box, Brand, FieldSet, ForgotPass } from './Login.style';
+import { useTranslation } from "react-i18next";
 
 const initialValues = {
   email: '',
@@ -32,6 +33,8 @@ export default function Login({ isLogging, error, doLogin }) {
     validationSchema,
     onSubmit: values => doLogin(values)
   });
+
+  const {t, i18n} = useTranslation('common');
 
   useEffect(() => {
     if (!isEmpty(error)) {
@@ -84,7 +87,7 @@ export default function Login({ isLogging, error, doLogin }) {
                       checked={values.keepMeLogged}
                       onChange={handleChange}
                     >
-                      Manter conectado
+                      {t('login.keepMeLogged')}
                     </Checkbox>
                   </FieldSet>
                 </Col>

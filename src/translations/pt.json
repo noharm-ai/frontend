@@ -1,0 +1,8 @@
+{
+    "welcome": {
+        "title": "Bem-vindo à NoHarm"
+    },
+	"login" : {
+		"keepMeLogged": "Manter conectado"
+	}
+}
