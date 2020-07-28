@@ -100,6 +100,15 @@ export default function ScoreWizard({
     saveUnitCoefficient(value, { fator: 1 });
   };
 
+  const getMeasureUnit = (id, list) => {
+    const mu = list.find(i => i.idMeasureUnit === id);
+    if (mu) {
+      return mu.description;
+    }
+
+    return '';
+  };
+
   return (
     <>
       <Steps current={currentStep}>
@@ -180,6 +189,13 @@ export default function ScoreWizard({
                 onChange={value => updateDrugData({ division: value, touched: true })}
                 className={validationErrors.division ? 'error' : ''}
               />
+              <span
+                style={{
+                  marginRight: '10px'
+                }}
+              >
+                {getMeasureUnit(drugData.idMeasureUnit, drugUnits.list)}
+              </span>
               <Checkbox
                 value={drugData.useWeight}
                 checked={drugData.useWeight}
