@@ -4,8 +4,15 @@ import React, { useState } from 'react';
 import Button from '@components/Button';
 import Icon from '@components/Icon';
 import { InputNumber } from '@components/Inputs';
+import Tooltip from '@components/Tooltip';
 
-export default function Escore({ idMeasureUnit, fator, saveUnitCoefficient, updateDrugData }) {
+export default function Escore({
+  idMeasureUnit,
+  fator,
+  saveUnitCoefficient,
+  updateDrugData,
+  defaultIdMeasureUnit
+}) {
   const [edit, setEdit] = useState(false);
   const [coefficient, setCoefficient] = useState(fator || 0);
 
@@ -39,10 +46,20 @@ export default function Escore({ idMeasureUnit, fator, saveUnitCoefficient, upda
   ) : (
     <>
       <span css="margin-right: 10px;">{fator}</span>
-      {/*eslint-disable-next-line*/}
-      <a href="#" css="color: inherit;" onClick={handleClick}>
-        <Icon type="edit" />
-      </a>
+
+      {idMeasureUnit !== defaultIdMeasureUnit && (
+        <>
+          {/*eslint-disable-next-line*/}
+          <a href="#" css="color: inherit;" onClick={handleClick}>
+            <Icon type="edit" />
+          </a>
+        </>
+      )}
+      {idMeasureUnit === defaultIdMeasureUnit && (
+        <Tooltip title="Unidade padrão">
+          <Icon type="star" />
+        </Tooltip>
+      )}
     </>
   );
 }
