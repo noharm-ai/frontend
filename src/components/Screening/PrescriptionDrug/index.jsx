@@ -80,7 +80,7 @@ export default function PrescriptionDrug({ prescriptionDrug, update }) {
       </header>
       <Drug {...itemToSave} />
 
-      <Observations content={!isEmpty(itemToSave) && itemToSave.notes} onEditObservation={update} />
+      <Observations content={(!isEmpty(itemToSave) && (itemToSave.notes || itemToSave.prevNotes))} onEditObservation={update} />
     </>
   );
 }

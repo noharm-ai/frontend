@@ -7,6 +7,7 @@ import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
 import { InputNumber, Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
+import { InfoIcon } from '@components/Icon';
 
 import { Box } from './Drug.style';
 
@@ -88,7 +89,7 @@ export default function Base() {
                 name="elderly"
                 id="elderly"
               >
-                <Tooltip title="Medicamento Potencialmente Inapropriado para Idosos">MPI</Tooltip>
+                <Tooltip title="Medicamento Potencialmente Inapropriado para Idosos">MPI<InfoIcon /></Tooltip>
               </Checkbox>
             </Col>
             <Col xs={8}>
@@ -99,7 +100,7 @@ export default function Base() {
                 name="whiteList"
                 id="whiteList"
               >
-                <Tooltip title="Medicamento isento de Validação e Escore">Sem validação</Tooltip>
+                <Tooltip title="Medicamento isento de Validação e Escore">Sem validação<InfoIcon /></Tooltip>
               </Checkbox>
             </Col>
           </div>
@@ -128,7 +129,7 @@ export default function Base() {
         <Box hasError={errors.kidney}>
           <Heading as="label" size="14px" margin="0 0 10px" className="fixed">
             <Tooltip title="Valor de Taxa de Filtração Glomerular (CKD-EPI) a partir do qual o medicamento deve sofrer ajuste de dose ou frequência.">
-              Nefrotóxico
+              Nefrotóxico<InfoIcon />:
             </Tooltip>
           </Heading>
           <InputNumber
@@ -148,7 +149,7 @@ export default function Base() {
         <Box hasError={errors.liver}>
           <Heading as="label" size="14px" className="fixed">
             <Tooltip title="Valor de TGO ou TGP a partir do qual o medicamento deve sofrer ajuste de dose ou frequência.">
-              Hepatotóxico:
+              Hepatotóxico<InfoIcon />:
             </Tooltip>
           </Heading>
           <InputNumber
@@ -168,7 +169,7 @@ export default function Base() {
         <Box hasError={errors.amount}>
           <Heading as="label" size="14px" className="fixed">
             <Tooltip title="Informação que será utilizada na calculadora de soluções">
-              Concentração:
+              Concentração<InfoIcon />:
             </Tooltip>
           </Heading>
           <InputNumber

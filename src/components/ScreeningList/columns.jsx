@@ -88,7 +88,7 @@ const ScreeningActions = ({ idPrescription, status, slug, checkScreening, check 
       )}
       <Tooltip title="Ver detalhes" placement="left">
         <span>
-          <Link type="secondary gtm-bt-detail" href={`/triagem/${slug}`} target="_blank">
+          <Link type="secondary gtm-bt-detail" href={`/prescricao/${slug}`} target="_blank">
             <Icon type="search" />
           </Link>
         </span>

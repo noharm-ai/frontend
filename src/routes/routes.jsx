@@ -39,7 +39,7 @@ const routes = [
   },
   {
     exact: true,
-    path: '/triagem/:slug',
+    path: '/prescricao/:slug',
     component: withAuth({
       component: Screening
     })

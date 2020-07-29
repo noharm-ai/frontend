@@ -249,7 +249,7 @@ export default function ScoreWizard({
             okText="Sim"
             cancelText="Não"
           >
-            <Button type="primary" loading={generateStatus.isGenerating}>
+            <Button type="primary gtm-bt-med-generate" loading={generateStatus.isGenerating}>
               Gerar escores
             </Button>
           </PopConfirm>

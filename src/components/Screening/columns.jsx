@@ -126,7 +126,7 @@ const Action = ({
   const isChecking = check.idPrescriptionDrug === idPrescriptionDrug && check.isChecking;
   const isChecked = data.status === 's';
   const isIntervened = data.intervened;
-  const hasNotes = data.notes !== '' && data.notes != null;
+  const hasNotes = (data.notes !== '' && data.notes != null) || (data.prevNotes && data.prevNotes !== 'None');
   let btnTitle = isChecked ? 'Alterar intervenção' : 'Enviar intervenção';
 
   if (isIntervened && !isChecked) {

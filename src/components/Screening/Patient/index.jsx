@@ -12,6 +12,7 @@ import Tooltip from '@components/Tooltip';
 import FormPatientModal from '@containers/Forms/Patient';
 import RichTextView from '@components/RichTextView';
 
+import { InfoIcon } from '@components/Icon';
 import { Wrapper, Name, NameWrapper, Box, ExamBox } from './Patient.style';
 
 function Cell({ children, ...props }) {
@@ -128,7 +129,7 @@ export default function Patient({
           </Cell>
           <Cell>
             <strong>Setor:</strong> {department}
-            {department !== lastDepartment && <Tooltip title={"Setor antigo: " + lastDepartment}> *</Tooltip>}
+            {department !== lastDepartment && <Tooltip title={"Setor antigo: " + lastDepartment}> <InfoIcon /></Tooltip>}
           </Cell>
           <Cell>
             <strong>Leito:</strong> {bed}
@@ -141,7 +142,7 @@ export default function Patient({
           </Cell>
           <Cell>
             <strong>Peso:</strong> {weight} Kg ({formatWeightDate(weightDate)})
-            {weightUser && <Tooltip title="Peso alterado manualmente"> *</Tooltip>}
+            {weightUser && <Tooltip title="Peso alterado manualmente"> <InfoIcon /></Tooltip>}
           </Cell>
           {seeMore && (
             <>
@@ -151,7 +152,7 @@ export default function Patient({
               <Cell>
                 <strong>Altura:</strong>{' '}
                 {height ? (
-                  <Tooltip title="Altura alterada manualmente">{height} *</Tooltip>
+                  <Tooltip title="Altura alterada manualmente">{height} <InfoIcon /></Tooltip>
                 ) : (
                   'Não disponível'
                 )}
