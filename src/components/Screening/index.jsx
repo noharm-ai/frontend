@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/macro';
 
+import api from '@services/api';
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
 import { toDataSource } from '@utils';
@@ -71,7 +72,8 @@ export default function Screening({
   fetchExams,
   prescriptionDrug,
   savePrescriptionDrug,
-  selectPrescriptionDrug
+  selectPrescriptionDrug,
+  access_token
 }) {
   const id = extractId(match.params.slug);
   const { isFetching, content, error, exams } = prescription;
@@ -259,6 +261,23 @@ export default function Screening({
       notification.success({ message: 'Uhu! Anotação salva com sucesso' });
     }
   }, [prescriptionDrug.success, updatePrescriptionDrugData, prescriptionDrug.item]);
+
+  const updatePrescriptionData = useCallback(async () => {
+    const { data } = await api.shouldUpdatePrescription(access_token, id);
+
+    const shouldUpdate = data.data;
+    if (shouldUpdate) {
+      fetchScreeningById(id);
+    }
+  }, [id, access_token, fetchScreeningById]);
+
+  useEffect(() => {
+    window.addEventListener('focus', updatePrescriptionData);
+
+    return () => {
+      window.removeEventListener('focus', updatePrescriptionData);
+    };
+  }, [updatePrescriptionData]);
 
   const rowClassName = (record, index) => {
     let classes = [];

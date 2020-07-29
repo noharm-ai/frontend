@@ -130,6 +130,13 @@ const updatePrescriptionDrug = (bearerToken, idPrescriptionDrug, params = {}) =>
     setHeaders(bearerToken)
   );
 
+const shouldUpdatePrescription = (bearerToken, idPrescription, params = {}) => {
+  return instance.get(`${endpoints.prescriptions}/${idPrescription}/update`, {
+    params,
+    ...setHeaders(bearerToken)
+  });
+};
+
 /**
  * Patients.
  *
@@ -295,7 +302,8 @@ const api = {
   getExamTypes,
   getHelp,
   updateSubstance,
-  getSubstanceRelations
+  getSubstanceRelations,
+  shouldUpdatePrescription
 };
 
 export default api;
