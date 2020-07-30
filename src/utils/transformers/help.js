@@ -8,7 +8,8 @@ export const routeToId = path => {
       return 'medicamentos';
     case '/relatorios/visualizar':
       return 'relatorios';
-
+    case '/segmentos/:idSegment/:slug':
+      return 'segmentos';
     default:
       return path.replace('/', '');
   }
