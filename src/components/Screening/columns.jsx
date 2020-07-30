@@ -126,7 +126,8 @@ const Action = ({
   const isChecking = check.idPrescriptionDrug === idPrescriptionDrug && check.isChecking;
   const isChecked = data.status === 's';
   const isIntervened = data.intervened;
-  const hasNotes = (data.notes !== '' && data.notes != null) || (data.prevNotes && data.prevNotes !== 'None');
+  const hasNotes =
+    (data.notes !== '' && data.notes != null) || (data.prevNotes && data.prevNotes !== 'None');
   let btnTitle = isChecked ? 'Alterar intervenção' : 'Enviar intervenção';
 
   if (isIntervened && !isChecked) {
@@ -805,7 +806,7 @@ const actionColumns = [
 ];
 
 export const isPendingValidation = record =>
-  (!record.whiteList && !record.checked) || !isEmpty(record.prevIntervention);
+  (!record.whiteList && !record.checked) || !isEmpty(record.prevIntervention) || record.prevNotes;
 
 export const solutionColumns = [...drugInfo, ...stageAndInfusion, ...actionColumns];
 
