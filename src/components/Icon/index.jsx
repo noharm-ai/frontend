@@ -16,7 +16,9 @@ const Icon = ({ type, ...props }) => {
 };
 
 export const InfoIcon = props => {
-  return <AntIcon theme='filled' type='info-circle' style={{'font-size':'80%', 'vertical-align':'top'}} />
+  return (
+    <AntIcon theme="filled" type="info-circle" style={{ fontSize: '80%', verticalAlign: 'top' }} />
+  );
 };
 
 export default Icon;
