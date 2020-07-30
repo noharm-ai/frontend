@@ -32,6 +32,14 @@ const routes = [
   },
   {
     exact: true,
+    path: '/login/:language',
+    component: withAuth({
+      component: Login,
+      isLoginPage: true
+    })
+  },
+  {
+    exact: true,
     path: '/',
     component: withAuth({
       component: ScreeningList

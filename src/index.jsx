@@ -8,10 +8,10 @@ import Routes from '@routes';
 import { store, persistor } from '@store';
 import * as serviceWorker from './serviceWorker';
 
-import {I18nextProvider} from "react-i18next";
-import i18next from "i18next";
-import trans_pt from "./translations/pt.json";
-import trans_en from "./translations/en.json";
+import { I18nextProvider } from 'react-i18next';
+import i18next from 'i18next';
+import trans_pt from './translations/pt.json';
+import trans_en from './translations/en.json';
 
 Webfontloader.load({
   google: {
@@ -20,28 +20,28 @@ Webfontloader.load({
 });
 
 i18next.init({
-    interpolation: { escapeValue: false },  // React already does escaping
-    lng: 'en',                              // language to use
-	ns: ['common'],
-	defaultNS: 'common',
-    resources: {
-        en: {
-        	name: 'English',
-            common: trans_en               // 'common' is our custom namespace
-        },
-        pt: {
-        	name: 'Português',
-            common: trans_pt
-        },
+  interpolation: { escapeValue: false },
+  lng: localStorage.getItem('language') || 'pt', // language to use
+  ns: ['common'],
+  defaultNS: 'common',
+  resources: {
+    en: {
+      name: 'English',
+      common: trans_en
     },
+    pt: {
+      name: 'Português',
+      common: trans_pt
+    }
+  }
 });
 
 ReactDOM.render(
   <Provider store={store}>
-  	<I18nextProvider i18n={i18next}>
-	    <PersistGate loading={null} persistor={persistor}>
-	      <Routes />
-	    </PersistGate>
+    <I18nextProvider i18n={i18next}>
+      <PersistGate loading={null} persistor={persistor}>
+        <Routes />
+      </PersistGate>
     </I18nextProvider>
   </Provider>,
   document.getElementById('root')

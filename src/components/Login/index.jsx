@@ -13,7 +13,7 @@ import Button from '@components/Button';
 import { Input, Checkbox } from '@components/Inputs';
 import { Container, Row, Col } from '@components/Grid';
 import { Wrapper, Box, Brand, FieldSet, ForgotPass } from './Login.style';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 const initialValues = {
   email: '',
@@ -27,20 +27,29 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required('Você se esquecei de inserir a sua senha.')
 });
 
-export default function Login({ isLogging, error, doLogin }) {
+export default function Login({ isLogging, error, doLogin, match }) {
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues,
     validationSchema,
     onSubmit: values => doLogin(values)
   });
 
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     if (!isEmpty(error)) {
       message.error(error.message);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (match.params.language) {
+      i18n.changeLanguage(match.params.language);
+      localStorage.setItem('language', match.params.language);
+    } else {
+      localStorage.setItem('language', 'pt');
+    }
+  }, [match, i18n]);
 
   return (
     <Wrapper as="form" onSubmit={handleSubmit}>
@@ -92,19 +101,15 @@ export default function Login({ isLogging, error, doLogin }) {
                   </FieldSet>
                 </Col>
                 <Col span={12} css="text-align: right">
-                  <ForgotPass href="#" className="gtm-lnk-forgotpass">{t('login.forgotPass')}</ForgotPass>
+                  <ForgotPass href="#" className="gtm-lnk-forgotpass">
+                    {t('login.forgotPass')}
+                  </ForgotPass>
                 </Col>
               </Row>
 
               <Button type="primary gtm-btn-login" htmlType="submit" block loading={isLogging}>
                 {t('login.login')}
               </Button>
-
-              <div>
-                  <h1>{t('login.chooseLanguage')}</h1>
-                  <button onClick={() => i18n.changeLanguage('pt')}>Português</button>
-                  <button onClick={() => i18n.changeLanguage('en')}>English</button>
-              </div>
             </Box>
           </Col>
         </Row>
