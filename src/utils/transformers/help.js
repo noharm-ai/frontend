@@ -10,6 +10,8 @@ export const routeToId = path => {
       return 'relatorios';
     case '/segmentos/:idSegment/:slug':
       return 'segmentos';
+    case '/base-de-conhecimento/:uid':
+      return 'base-de-conhecimento';
     default:
       return path.replace('/', '');
   }
