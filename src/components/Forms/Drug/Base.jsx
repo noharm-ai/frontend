@@ -7,7 +7,6 @@ import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
 import { InputNumber, Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
-import { InfoIcon } from '@components/Icon';
 
 import { Box } from './Drug.style';
 
@@ -89,7 +88,9 @@ export default function Base() {
                 name="elderly"
                 id="elderly"
               >
-                <Tooltip title="Medicamento Potencialmente Inapropriado para Idosos">MPI<InfoIcon /></Tooltip>
+                <Tooltip title="Medicamento Potencialmente Inapropriado para Idosos" underline>
+                  MPI
+                </Tooltip>
               </Checkbox>
             </Col>
             <Col xs={8}>
@@ -100,7 +101,9 @@ export default function Base() {
                 name="whiteList"
                 id="whiteList"
               >
-                <Tooltip title="Medicamento isento de Validação e Escore">Sem validação<InfoIcon /></Tooltip>
+                <Tooltip title="Medicamento isento de Validação e Escore" underline>
+                  Sem validação
+                </Tooltip>
               </Checkbox>
             </Col>
           </div>
@@ -128,8 +131,11 @@ export default function Base() {
       <Col md={24} xs={24}>
         <Box hasError={errors.kidney}>
           <Heading as="label" size="14px" margin="0 0 10px" className="fixed">
-            <Tooltip title="Valor de Taxa de Filtração Glomerular (CKD-EPI) a partir do qual o medicamento deve sofrer ajuste de dose ou frequência.">
-              Nefrotóxico<InfoIcon />:
+            <Tooltip
+              title="Valor de Taxa de Filtração Glomerular (CKD-EPI) a partir do qual o medicamento deve sofrer ajuste de dose ou frequência."
+              underline
+            >
+              Nefrotóxico
             </Tooltip>
           </Heading>
           <InputNumber
@@ -148,8 +154,11 @@ export default function Base() {
       <Col xs={24}>
         <Box hasError={errors.liver}>
           <Heading as="label" size="14px" className="fixed">
-            <Tooltip title="Valor de TGO ou TGP a partir do qual o medicamento deve sofrer ajuste de dose ou frequência.">
-              Hepatotóxico<InfoIcon />:
+            <Tooltip
+              title="Valor de TGO ou TGP a partir do qual o medicamento deve sofrer ajuste de dose ou frequência."
+              underline
+            >
+              Hepatotóxico:
             </Tooltip>
           </Heading>
           <InputNumber
@@ -168,8 +177,8 @@ export default function Base() {
       <Col xs={24}>
         <Box hasError={errors.amount}>
           <Heading as="label" size="14px" className="fixed">
-            <Tooltip title="Informação que será utilizada na calculadora de soluções">
-              Concentração<InfoIcon />:
+            <Tooltip title="Informação que será utilizada na calculadora de soluções" underline>
+              Concentração:
             </Tooltip>
           </Heading>
           <InputNumber
