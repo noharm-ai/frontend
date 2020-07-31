@@ -4,7 +4,7 @@ import 'antd/lib/tooltip/style/index.css';
 import AntTooltip from 'antd/lib/tooltip';
 
 const StyledTooltip = styled(AntTooltip)`
-  border-bottom: ${({ underline }) => (underline ? '2px dotted #999' : '1px')};
+  ${({ underline }) => (underline ? 'border-bottom: 2px dotted #999' : '')};
 `;
 
 const Tooltip = ({ children, ...props }) => (
