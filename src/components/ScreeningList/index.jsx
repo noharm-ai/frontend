@@ -13,6 +13,7 @@ import Tooltip from '@components/Tooltip';
 import Tag from '@components/Tag';
 import { useTranslation } from "react-i18next";
 import Filter from './Filter';
+import { InfoIcon } from '@components/Icon';
 
 import columnsTable, { expandedRowRender } from './columns';
 
@@ -172,7 +173,7 @@ export default function ScreeningList({
           className={isFilterActive(null) ? 'active' : ''}
           onClick={e => handleFilter(e, 'all')}
         >
-          {t('screeningList.all')} {listCount.all === 500 ? '*' : ''}
+          {t('screeningList.all')} {listCount.all === 500 ? <InfoIcon /> : ''}
           <Tag>{listCount.all}</Tag>
         </Button>
       </Tooltip>
