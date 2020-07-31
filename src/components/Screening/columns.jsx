@@ -4,6 +4,7 @@ import isEmpty from 'lodash.isempty';
 import { Row, Col } from 'antd';
 
 import Icon from '@components/Icon';
+import { InfoIcon } from '@components/Icon';
 import Button, { Link } from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import Popover from '@components/PopoverStyled';
@@ -583,7 +584,7 @@ const drugInfo = [
       }
 
       return (
-        <Tooltip title={near ? `* Escore aproximado: ${score}` : `Escore: ${score}`}>
+        <Tooltip title={near ? `Escore aproximado: ${score}` : `Escore: ${score}`}>
           <span className={`flag has-score ${flags[parseInt(score, 10)]}`}>{score}</span>
         </Tooltip>
       );
@@ -688,7 +689,7 @@ const frequencyAndTime = [
       if (isEmpty(prescription.frequency)) {
         return (
           <Tooltip title="Frequência obtida por conversão" placement="top">
-            *
+            {''}<InfoIcon />
           </Tooltip>
         );
       }

@@ -135,7 +135,7 @@ export default function Base() {
               title="Valor de Taxa de Filtração Glomerular (CKD-EPI) a partir do qual o medicamento deve sofrer ajuste de dose ou frequência."
               underline
             >
-              Nefrotóxico
+              Nefrotóxico:
             </Tooltip>
           </Heading>
           <InputNumber

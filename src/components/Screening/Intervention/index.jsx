@@ -75,8 +75,8 @@ const Reason = ({ reasons, defaultReason, updateReason }) => {
   return (
     <Box css="display: flex; align-items: center">
       <Heading as="label" htmlFor="reason" size="14px" className="fixed">
-        <Tooltip title="Apresentação, Substituição, Interações, Incompatibilidades ou Duplicidade abrem a opção de informar os medicamentos relacionados">
-          Motivos: *
+        <Tooltip title="Apresentação, Substituição, Interações, Incompatibilidades ou Duplicidade abrem a opção de informar os medicamentos relacionados" underline>
+          Motivos:
         </Tooltip>
       </Heading>
       <Select
@@ -114,7 +114,7 @@ const Error = ({ handleChangeError, defaultChecked }) => {
         className="fixed"
         style={{ width: '205px' }}
       >
-        <Tooltip title="Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa">
+        <Tooltip title="Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa" underline>
           Possível Erro de prescrição:
         </Tooltip>
       </Heading>
@@ -131,7 +131,7 @@ const Cost = ({ handleChangeCost, defaultChecked }) => {
   return (
     <Box css="align-items: center;display: flex;">
       <Heading as="label" htmlFor="reason" size="14px" margin="0 10px 0 0" className="fixed">
-        <Tooltip title="Esta intervenção gera redução de custo?">Reduz custo:</Tooltip>
+        <Tooltip title="Esta intervenção gera redução de custo?" underline>Reduz custo:</Tooltip>
       </Heading>
       <Switch onChange={handleChange} defaultChecked={defaultChecked} />
     </Box>
@@ -189,7 +189,7 @@ const Interactions = ({
   return (
     <Box css="display: flex; align-items: center">
       <Heading as="label" htmlFor="interactions" size="14px" className="fixed">
-        <Tooltip title="Lista de medicamentos com Interações, Incompatibilidades, Duplicidade, Substituições e diferentes formas de apresentação">
+        <Tooltip title="Lista de medicamentos com Interações, Incompatibilidades, Duplicidade, Substituições e/ou diferentes formas de apresentação" underline>
           Relações:
         </Tooltip>
       </Heading>
