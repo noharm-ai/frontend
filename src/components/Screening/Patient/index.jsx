@@ -129,7 +129,7 @@ export default function Patient({
           </Cell>
           <Cell>
             <strong>Setor:</strong> {department}
-            {department !== lastDepartment && <Tooltip title={"Setor antigo: " + lastDepartment}> <InfoIcon /></Tooltip>}
+            {lastDepartment && department !== lastDepartment && <Tooltip title={"Setor Anterior: " + lastDepartment}> <InfoIcon /></Tooltip>}
           </Cell>
           <Cell>
             <strong>Leito:</strong> {bed}

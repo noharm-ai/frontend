@@ -807,7 +807,7 @@ const actionColumns = [
 ];
 
 export const isPendingValidation = record =>
-  (!record.whiteList && !record.checked) || !isEmpty(record.prevIntervention) || record.prevNotes;
+  (!record.whiteList && !record.checked) || !isEmpty(record.prevIntervention) || !isEmpty(record.prevNotes);
 
 export const solutionColumns = [...drugInfo, ...stageAndInfusion, ...actionColumns];
 
