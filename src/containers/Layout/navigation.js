@@ -18,6 +18,12 @@ export default [
     id: 'gtm-lnk-report'
   },
   {
+    key: '/base-de-conhecimento',
+    text: 'menu.knowledgeBase',
+    icon: 'bulb',
+    id: 'gtm-lnk-knowledgeBase'
+  },
+  {
     key: 'config',
     text: 'menu.config',
     icon: 'setting',

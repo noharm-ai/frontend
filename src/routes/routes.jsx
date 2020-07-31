@@ -15,6 +15,8 @@ import References from '@pages/References';
 import Reports from '@pages/Reports';
 import ViewReport from '@pages/Reports/ViewReport';
 import InterventionList from '@pages/InterventionList';
+import KnowledgeBase from '@pages/KnowledgeBase';
+import KnowledgeBaseArticle from '@pages/KnowledgeBase/Article';
 
 const routes = [
   {
@@ -106,6 +108,20 @@ const routes = [
     path: '/intervencoes',
     component: withAuth({
       component: InterventionList
+    })
+  },
+  {
+    exact: true,
+    path: '/base-de-conhecimento',
+    component: withAuth({
+      component: KnowledgeBase
+    })
+  },
+  {
+    exact: true,
+    path: '/base-de-conhecimento/:uid',
+    component: withAuth({
+      component: KnowledgeBaseArticle
     })
   },
   {
