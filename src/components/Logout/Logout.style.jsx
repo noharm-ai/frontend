@@ -47,5 +47,3 @@ export const Brand = styled(LogoSVG)`
   max-width: 213px;
   width: 100%;
 `;
-
-export const Link = styled.a``;
