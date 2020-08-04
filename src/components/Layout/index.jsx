@@ -10,7 +10,7 @@ import Help from '@components/Help';
 import Box from './Box';
 import Menu from './Menu';
 import { Wrapper as Main, Brand, LogOut, UserName } from './Layout.style';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 const siderWidth = 250;
 const { Sider, Header, Content, Footer } = Main;
@@ -20,7 +20,7 @@ const setTitle = ({ user }) => {
   return user.account.userName;
 };
 
-const Me = ({ user, doLogout, toggleDrawer, t }) => (
+const Me = ({ user, toggleDrawer, t }) => (
   <div
     css="
       align-items: center;
@@ -32,7 +32,7 @@ const Me = ({ user, doLogout, toggleDrawer, t }) => (
     <LogOut onClick={e => toggleDrawer(e)} id="gtm-lnk-ajuda" style={{ marginRight: '12px' }}>
       {t('layout.help')}
     </LogOut>
-    <LogOut onClick={e => doLogout(e)} id="gtm-lnk-sair">
+    <LogOut href="/logout" id="gtm-lnk-sair">
       {t('layout.logout')}
     </LogOut>
   </div>
@@ -71,7 +71,7 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
     setDrawerVisibility(!isDrawerVisible);
   };
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <Main style={{ minHeight: '100vh' }}>

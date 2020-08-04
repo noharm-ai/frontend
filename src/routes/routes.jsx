@@ -22,7 +22,10 @@ const routes = [
   {
     exact: true,
     path: '/logout',
-    component: Logout
+    component: withAuth({
+      component: Logout,
+      isLogoutPage: true
+    })
   },
   {
     exact: true,

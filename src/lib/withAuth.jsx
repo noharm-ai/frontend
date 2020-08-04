@@ -8,7 +8,15 @@ import { logoutThunk } from '@store/ducks/auth/thunk';
 const noop = () => {};
 const initialPage = '/';
 
-const AuthHandler = ({ user, logout, session, isLoginPage, component: Component, ...props }) => {
+const AuthHandler = ({
+  user,
+  logout,
+  session,
+  isLoginPage,
+  isLogoutPage,
+  component: Component,
+  ...props
+}) => {
   const { isFirstAccess } = session;
   const { isLogged, keepMeLogged } = user;
 
@@ -18,7 +26,7 @@ const AuthHandler = ({ user, logout, session, isLoginPage, component: Component,
     }
   }, [isFirstAccess, isLogged, keepMeLogged, logout]);
 
-  if (!isLoginPage && !isLogged) {
+  if (!isLoginPage && !isLogoutPage && !isLogged) {
     return <Redirect to="/login" />;
   }
 
