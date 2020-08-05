@@ -130,6 +130,13 @@ const updatePrescriptionDrug = (bearerToken, idPrescriptionDrug, params = {}) =>
     setHeaders(bearerToken)
   );
 
+const shouldUpdatePrescription = (bearerToken, idPrescription, params = {}) => {
+  return instance.get(`${endpoints.prescriptions}/${idPrescription}/update`, {
+    params,
+    ...setHeaders(bearerToken)
+  });
+};
+
 /**
  * Patients.
  *
@@ -255,6 +262,17 @@ const getHelp = id => {
 };
 
 /**
+ * PRISMIC KNOWLEDGE BASE
+ */
+const getKnowledgeBaseArticles = () => {
+  return prismicClient.query(Prismic.Predicates.at('document.type', 'knowledgebase'), {
+    orderings: '[my.knowledgebase.first_publication_date desc]'
+  });
+};
+
+const getKnowledgeBaseArticleByUID = id => prismicClient.getByUID('knowledgebase', id);
+
+/**
  * API
  * all functions that can be user in API.
  */
@@ -295,7 +313,10 @@ const api = {
   getExamTypes,
   getHelp,
   updateSubstance,
-  getSubstanceRelations
+  getSubstanceRelations,
+  shouldUpdatePrescription,
+  getKnowledgeBaseArticles,
+  getKnowledgeBaseArticleByUID
 };
 
 export default api;

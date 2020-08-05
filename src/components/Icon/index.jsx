@@ -15,4 +15,10 @@ const Icon = ({ type, ...props }) => {
   return <AntIcon component={component} {...props} />;
 };
 
+export const InfoIcon = props => {
+  return (
+    <AntIcon theme="filled" type="info-circle" style={{ fontSize: '80%', verticalAlign: 'top' }} />
+  );
+};
+
 export default Icon;

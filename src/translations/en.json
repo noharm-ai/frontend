@@ -1,0 +1,38 @@
+{
+  "welcome": {
+    "title": "Welcome to NoHarm"
+  },
+  "login": {
+    "email": "Email",
+    "password": "Password",
+    "keepMeLogged": "Remember me",
+    "forgotPass": "Forgotten your password?",
+    "login": "Log In",
+    "chooseLanguage": "Choose your language"
+  },
+  "layout": {
+    "help": "Help",
+    "logout": "Logout",
+    "goBack": "Back"
+  },
+  "menu": {
+    "prioritization": "Prescriptions Prioritization",
+    "interventions": "Interventions",
+    "reports": "Reports",
+    "config": "Settings",
+    "medications": "Medications",
+    "segments": "Segments",
+    "knowledgeBase": "Knowledge Base"
+  },
+  "screeningList": {
+    "segment": "Segment",
+    "date": "Date",
+    "seeMore": "See more",
+    "pending": "Pending prescriptions",
+    "checked": "Checked prescriptions",
+    "all": "All",
+    "patientRisk": "Patient risk",
+    "prescriptionRisk": "Prescription risk",
+    "actions": "Actions"
+  }
+}

@@ -1,12 +1,16 @@
 import React from 'react';
-
+import styled from 'styled-components/macro';
 import 'antd/lib/tooltip/style/index.css';
 import AntTooltip from 'antd/lib/tooltip';
 
-const Tooltip = props => (
-  <AntTooltip mouseLeaveDelay={0} {...props}>
-    {props.children}
-  </AntTooltip>
+const StyledTooltip = styled(AntTooltip)`
+  ${({ underline }) => (underline ? 'border-bottom: 2px dotted #999' : '')};
+`;
+
+const Tooltip = ({ children, ...props }) => (
+  <StyledTooltip mouseLeaveDelay={0} {...props}>
+    {children}
+  </StyledTooltip>
 );
 
 export default Tooltip;

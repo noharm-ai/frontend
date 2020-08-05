@@ -4,15 +4,17 @@ import PropTypes from 'prop-types';
 
 import Heading from '@components/Heading';
 import { Wrapper } from './Box.style';
+import { useTranslation } from "react-i18next";
 
 export default function Box({ renderHeader, children, pageTitle, ...props }) {
+  const {t} = useTranslation();
   return (
     <Wrapper>
       {renderHeader ? (
         renderHeader({ ...props, pageTitle })
       ) : (
         <header css="margin-bottom: 30px;">
-          <Heading>{pageTitle}</Heading>
+          <Heading>{t(pageTitle)}</Heading>
         </header>
       )}
 

@@ -33,9 +33,7 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
   dispatch(userSetCurrentUser(user, keepMeLogged));
 };
 
-export const logoutThunk = event => {
-  event.preventDefault();
-
+export const logoutThunk = () => {
   return dispatch => {
     dispatch(userLogout());
     dispatch(authDelIdentify());

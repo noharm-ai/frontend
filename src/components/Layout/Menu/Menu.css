@@ -1,3 +1,7 @@
 .ant-menu-submenu-popup .ant-menu {
   background-color: #2e3c5a;
 }
+
+.ant-menu-submenu-hidden {
+  display: none;
+}

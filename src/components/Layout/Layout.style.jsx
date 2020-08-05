@@ -23,6 +23,7 @@ export const LogOut = styled.a`
   cursor: pointer;
   font-weight: ${get('weight.bold')};
   transition: color 0.3s ease;
+  text-decoration: none;
 
   &:hover {
     color: ${get('colors.accent')};

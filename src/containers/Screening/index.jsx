@@ -21,7 +21,7 @@ import {
 } from '@store/ducks/prescriptionDrugs/thunk';
 import Screening from '@components/Screening';
 
-const mapStateToProps = ({ prescriptions, prescriptionDrugs, intervention }) => ({
+const mapStateToProps = ({ prescriptions, prescriptionDrugs, intervention, auth }) => ({
   prescription: {
     error: prescriptions.single.error,
     message: prescriptions.single.message,
@@ -35,7 +35,8 @@ const mapStateToProps = ({ prescriptions, prescriptionDrugs, intervention }) => 
   maybeCreateOrUpdate: {
     ...intervention.maybeCreateOrUpdate
   },
-  prescriptionDrug: prescriptionDrugs.single
+  prescriptionDrug: prescriptionDrugs.single,
+  access_token: auth.identify.access_token
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

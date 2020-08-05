@@ -15,16 +15,29 @@ import References from '@pages/References';
 import Reports from '@pages/Reports';
 import ViewReport from '@pages/Reports/ViewReport';
 import InterventionList from '@pages/InterventionList';
+import KnowledgeBase from '@pages/KnowledgeBase';
+import KnowledgeBaseArticle from '@pages/KnowledgeBase/Article';
 
 const routes = [
   {
     exact: true,
     path: '/logout',
-    component: Logout
+    component: withAuth({
+      component: Logout,
+      isLogoutPage: true
+    })
   },
   {
     exact: true,
     path: '/login',
+    component: withAuth({
+      component: Login,
+      isLoginPage: true
+    })
+  },
+  {
+    exact: true,
+    path: '/login/:language',
     component: withAuth({
       component: Login,
       isLoginPage: true
@@ -39,7 +52,7 @@ const routes = [
   },
   {
     exact: true,
-    path: '/triagem/:slug',
+    path: '/prescricao/:slug',
     component: withAuth({
       component: Screening
     })
@@ -98,6 +111,20 @@ const routes = [
     path: '/intervencoes',
     component: withAuth({
       component: InterventionList
+    })
+  },
+  {
+    exact: true,
+    path: '/base-de-conhecimento',
+    component: withAuth({
+      component: KnowledgeBase
+    })
+  },
+  {
+    exact: true,
+    path: '/base-de-conhecimento/:uid',
+    component: withAuth({
+      component: KnowledgeBaseArticle
     })
   },
   {

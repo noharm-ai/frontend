@@ -86,20 +86,28 @@ export default function ScoreWizard({
     return true;
   };
 
-  const needUnits = units => {
-    var count = 0;
-    units.map(unit => (unit.fator === 1 ? (count += 1) : 0));
-
-    return count > 1;
-  };
-
   const unitsDatasource = toDataSource(drugUnits.list, 'idMeasureUnit', {
     saveUnitCoefficient,
     idDrug: selecteds.idDrug,
     idSegment: selecteds.idSegment,
     isAdmin,
-    updateDrugData
+    updateDrugData,
+    defaultIdMeasureUnit: drugData.idMeasureUnit
   });
+
+  const onDefaultMeasureUnitChange = value => {
+    updateDrugData({ idMeasureUnit: value, touched: true });
+    saveUnitCoefficient(value, { fator: 1 });
+  };
+
+  const getMeasureUnit = (id, list) => {
+    const mu = list.find(i => i.idMeasureUnit === id);
+    if (mu) {
+      return mu.description;
+    }
+
+    return '';
+  };
 
   return (
     <>
@@ -116,19 +124,17 @@ export default function ScoreWizard({
             conversão para outras unidades. Lembre-se que a unidade padrão é definida pelo fator de
             conversão igual a 1.
           </p>
-          <Table
-            columns={unitConversionColumns}
-            pagination={false}
-            loading={drugUnits.isFetching}
-            locale={{ emptyText }}
-            dataSource={!drugUnits.isFetching ? unitsDatasource : []}
-          />
-          {needUnits(drugUnits.list) && (
-            <Row gutter={24} align="middle" type="flex" style={{ marginTop: '20px' }}>
+          {drugUnits.list.length > 1 && (
+            <Row
+              gutter={24}
+              align="middle"
+              type="flex"
+              style={{ marginTop: '20px', marginBottom: '20px' }}
+            >
               <>
                 <Col md={5} xxl={3}>
                   <Heading as="label" size="14px" textAlign="right">
-                    Unidade Padrão:
+                    Unidade padrão:
                   </Heading>
                 </Col>
                 <Col md={24 - 5} xxl={24 - 3}>
@@ -136,28 +142,35 @@ export default function ScoreWizard({
                     placeholder="Selecione a unidade de medida padrão para este medicamento"
                     value={drugData.idMeasureUnit}
                     style={{ minWidth: '300px' }}
-                    disabled={!needUnits(drugUnits.list)}
-                    onChange={value => updateDrugData({ idMeasureUnit: value, touched: true })}
+                    onChange={value => onDefaultMeasureUnitChange(value)}
                   >
-                    {drugUnits.list.map(
-                      unit =>
-                        unit.fator === 1 && (
-                          <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
-                            {unit.description}
-                          </Select.Option>
-                        )
-                    )}
+                    {drugUnits.list.map(unit => (
+                      <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
+                        {unit.description}
+                      </Select.Option>
+                    ))}
                   </Select>
                 </Col>
               </>
             </Row>
           )}
+          <Table
+            columns={unitConversionColumns}
+            pagination={false}
+            loading={drugUnits.isFetching}
+            locale={{ emptyText }}
+            dataSource={!drugUnits.isFetching ? unitsDatasource : []}
+          />
         </StepContent>
       )}
 
       {currentStep === 1 && (
         <StepContent>
-          <p>O divisor de faixas define os intervalos de dose que entrarão na mesma faixa. Ex.: Divisor 5 vai definir faixas de dose de "0-5", de "5-10", etc. Caso deva ser considerado o peso do paciente na faixa de doses, selecione essa opção.</p>
+          <p>
+            O divisor de faixas define os intervalos de dose que entrarão na mesma faixa. Ex.:
+            Divisor 5 vai definir faixas de dose de "0-5", de "5-10", etc. Caso deva ser considerado
+            o peso do paciente na faixa de doses, selecione essa opção.
+          </p>
           <Row gutter={24} align="middle" type="flex">
             <Col md={5} xxl={3}>
               <Heading as="label" size="14px" textAlign="right">
@@ -176,6 +189,13 @@ export default function ScoreWizard({
                 onChange={value => updateDrugData({ division: value, touched: true })}
                 className={validationErrors.division ? 'error' : ''}
               />
+              <span
+                style={{
+                  marginRight: '10px'
+                }}
+              >
+                {getMeasureUnit(drugData.idMeasureUnit, drugUnits.list)}
+              </span>
               <Checkbox
                 value={drugData.useWeight}
                 checked={drugData.useWeight}
@@ -229,7 +249,7 @@ export default function ScoreWizard({
             okText="Sim"
             cancelText="Não"
           >
-            <Button type="primary" loading={generateStatus.isGenerating}>
+            <Button type="primary gtm-bt-med-generate" loading={generateStatus.isGenerating}>
               Gerar escores
             </Button>
           </PopConfirm>

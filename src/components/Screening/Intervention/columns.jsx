@@ -213,7 +213,7 @@ const columns = filteredInfo => [
     render: (text, record) => {
       return (
         <TableLink
-          href={`/triagem/${record.idPrescription}`}
+          href={`/prescricao/${record.idPrescription}`}
           target="_blank"
           rel="noopener noreferrer"
         >

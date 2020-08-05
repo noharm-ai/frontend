@@ -13,6 +13,7 @@ import Button from '@components/Button';
 import { Input, Checkbox } from '@components/Inputs';
 import { Container, Row, Col } from '@components/Grid';
 import { Wrapper, Box, Brand, FieldSet, ForgotPass } from './Login.style';
+import { useTranslation } from 'react-i18next';
 
 const initialValues = {
   email: '',
@@ -26,18 +27,29 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required('Você se esquecei de inserir a sua senha.')
 });
 
-export default function Login({ isLogging, error, doLogin }) {
+export default function Login({ isLogging, error, doLogin, match }) {
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues,
     validationSchema,
     onSubmit: values => doLogin(values)
   });
 
+  const { t, i18n } = useTranslation();
+
   useEffect(() => {
     if (!isEmpty(error)) {
       message.error(error.message);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (match.params.language) {
+      i18n.changeLanguage(match.params.language);
+      localStorage.setItem('language', match.params.language);
+    } else {
+      localStorage.setItem('language', 'pt');
+    }
+  }, [match, i18n]);
 
   return (
     <Wrapper as="form" onSubmit={handleSubmit}>
@@ -51,7 +63,7 @@ export default function Login({ isLogging, error, doLogin }) {
                 className={setErrorClassName((errors.email && touched.email) || !isEmpty(error))}
               >
                 <Input
-                  placeholder="Email"
+                  placeholder={t('login.email')}
                   prefix={<Icon type="user" />}
                   name="email"
                   type="email"
@@ -67,7 +79,7 @@ export default function Login({ isLogging, error, doLogin }) {
                 )}
               >
                 <Input.Password
-                  placeholder="Senha"
+                  placeholder={t('login.password')}
                   prefix={<Icon type="lock" />}
                   name="password"
                   value={values.password}
@@ -84,17 +96,19 @@ export default function Login({ isLogging, error, doLogin }) {
                       checked={values.keepMeLogged}
                       onChange={handleChange}
                     >
-                      Manter conectado
+                      {t('login.keepMeLogged')}
                     </Checkbox>
                   </FieldSet>
                 </Col>
                 <Col span={12} css="text-align: right">
-                  <ForgotPass href="#" className="gtm-lnk-forgotpass">Esqueci a senha</ForgotPass>
+                  <ForgotPass href="#" className="gtm-lnk-forgotpass">
+                    {t('login.forgotPass')}
+                  </ForgotPass>
                 </Col>
               </Row>
 
               <Button type="primary gtm-btn-login" htmlType="submit" block loading={isLogging}>
-                Acessar
+                {t('login.login')}
               </Button>
             </Box>
           </Col>

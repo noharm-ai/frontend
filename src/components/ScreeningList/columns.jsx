@@ -4,6 +4,7 @@ import Button, { Link } from '@components/Button';
 import Icon from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 import Table from '@components/Table';
+import { useTranslation } from "react-i18next";
 
 const setDataIndex = list =>
   list.map(({ key, ...column }) => ({
@@ -87,7 +88,7 @@ const ScreeningActions = ({ idPrescription, status, slug, checkScreening, check 
       )}
       <Tooltip title="Ver detalhes" placement="left">
         <span>
-          <Link type="secondary gtm-bt-detail" href={`/triagem/${slug}`} target="_blank">
+          <Link type="secondary gtm-bt-detail" href={`/prescricao/${slug}`} target="_blank">
             <Icon type="search" />
           </Link>
         </span>
@@ -194,6 +195,7 @@ export const expandedRowRender = record => {
 const sortDirections = ['descend', 'ascend'];
 
 export default (sortedInfo, filteredInfo) => {
+  const {t} = useTranslation();
   return [
     {
       key: 'class',
@@ -215,7 +217,7 @@ export default (sortedInfo, filteredInfo) => {
       sortOrder: sortedInfo.columnKey === 'date' && sortedInfo.order
     },
     {
-      title: 'Risco do paciente',
+      title: t('screeningList.patientRisk'),
       className: 'ant-table-right-border',
       children: setDataIndex([
         {
@@ -265,7 +267,7 @@ export default (sortedInfo, filteredInfo) => {
       ])
     },
     {
-      title: 'Risco da prescrição',
+      title: t('screeningList.prescriptionRisk'),
       children: setDataIndex([
         {
           title: <Tooltip title="Antimicrobianos">AM</Tooltip>,
@@ -380,7 +382,7 @@ export default (sortedInfo, filteredInfo) => {
       ])
     },
     {
-      title: 'Ações',
+      title: t('screeningList.actions'),
       key: 'operations',
       width: 70,
       align: 'center',

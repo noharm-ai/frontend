@@ -4,6 +4,7 @@ import isEmpty from 'lodash.isempty';
 import { Row, Col } from 'antd';
 
 import Icon from '@components/Icon';
+import { InfoIcon } from '@components/Icon';
 import Button, { Link } from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import Popover from '@components/PopoverStyled';
@@ -126,7 +127,8 @@ const Action = ({
   const isChecking = check.idPrescriptionDrug === idPrescriptionDrug && check.isChecking;
   const isChecked = data.status === 's';
   const isIntervened = data.intervened;
-  const hasNotes = data.notes !== '' && data.notes != null;
+  const hasNotes =
+    (data.notes !== '' && data.notes != null) || (data.prevNotes && data.prevNotes !== 'None');
   let btnTitle = isChecked ? 'Alterar intervenção' : 'Enviar intervenção';
 
   if (isIntervened && !isChecked) {
@@ -582,7 +584,7 @@ const drugInfo = [
       }
 
       return (
-        <Tooltip title={near ? `* Escore aproximado: ${score}` : `Escore: ${score}`}>
+        <Tooltip title={near ? `Escore aproximado: ${score}` : `Escore: ${score}`}>
           <span className={`flag has-score ${flags[parseInt(score, 10)]}`}>{score}</span>
         </Tooltip>
       );
@@ -687,7 +689,7 @@ const frequencyAndTime = [
       if (isEmpty(prescription.frequency)) {
         return (
           <Tooltip title="Frequência obtida por conversão" placement="top">
-            *
+            {''}<InfoIcon />
           </Tooltip>
         );
       }
@@ -805,7 +807,7 @@ const actionColumns = [
 ];
 
 export const isPendingValidation = record =>
-  (!record.whiteList && !record.checked) || !isEmpty(record.prevIntervention);
+  (!record.whiteList && !record.checked) || !isEmpty(record.prevIntervention) || !isEmpty(record.prevNotes);
 
 export const solutionColumns = [...drugInfo, ...stageAndInfusion, ...actionColumns];
 
