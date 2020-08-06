@@ -36,7 +36,8 @@ const endpoints = {
   },
   exams: '/exams',
   reports: '/reports',
-  substance: '/substance'
+  substance: '/substance',
+  memory: '/memory'
 };
 
 /**
@@ -255,6 +256,23 @@ const getReports = (bearerToken, params = {}) =>
   });
 
 /**
+ * Memory
+ */
+
+const getMemory = (bearerToken, type) =>
+  instance.get(`${endpoints.memory}/${type}`, {
+    ...setHeaders(bearerToken)
+  });
+
+const putMemory = (bearerToken, { id, ...params }) => {
+  if (id) {
+    return instance.put(`${endpoints.memory}/${id}`, params, setHeaders(bearerToken));
+  }
+
+  return instance.put(`${endpoints.memory}`, params, setHeaders(bearerToken));
+};
+
+/**
  * PRISMIC HELP
  */
 const getHelp = id => {
@@ -316,7 +334,9 @@ const api = {
   getSubstanceRelations,
   shouldUpdatePrescription,
   getKnowledgeBaseArticles,
-  getKnowledgeBaseArticleByUID
+  getKnowledgeBaseArticleByUID,
+  getMemory,
+  putMemory
 };
 
 export default api;
