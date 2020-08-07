@@ -35,13 +35,13 @@ export const memorySaveReasonTextThunk = params => async (dispatch, getState) =>
 
   const { access_token } = getState().auth.identify;
 
-  const { error } = await api.putMemory(access_token, params).catch(errorHandler);
+  const { data, error } = await api.putMemory(access_token, params).catch(errorHandler);
 
   if (!isEmpty(error)) {
     dispatch(memorySaveReasonTextError(error));
     return;
   }
 
-  dispatch(memorySaveReasonTextSuccess(params));
+  dispatch(memorySaveReasonTextSuccess({ ...params, key: data.data }));
   dispatch(memorySaveReasonTextReset());
 };
