@@ -47,7 +47,7 @@ export default function KnowledgeBase() {
           >
             <List.Item.Meta
               title={
-                <a href={`base-de-conhecimento/${item.uid}`}>{RichText.asText(item.data.title)}</a>
+                <a class="gtm-kb-item" href={`base-de-conhecimento/${item.uid}`}>{RichText.asText(item.data.title)}</a>
               }
             />
             {RichText.asText(item.data.brief)}

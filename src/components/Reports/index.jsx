@@ -39,7 +39,7 @@ export default function Reports({ reports, select, fetchList }) {
     <Row type="flex" gutter={[20, 20]}>
       {list.map((reportData, index) => (
         <Col key={index} span={24} md={12} lg={8}>
-          <Widget css="height: 100%;" reportData={reportData} showReport={showReport} id={index} />
+          <Widget css="height: 100%;" reportData={reportData} showReport={showReport} id={index} className="gtm-report-item" />
         </Col>
       ))}
     </Row>
