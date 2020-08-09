@@ -13,6 +13,7 @@ import departmentsReducer from './departments';
 import prescriptionsReducer from './prescriptions';
 import prescriptionDrugsReducer from './prescriptionDrugs';
 import reportsReducer from './reports';
+import memoryReducer from './memory';
 
 export default combineReducers({
   app: appReducer,
@@ -27,5 +28,6 @@ export default combineReducers({
   intervention: interventionReducer,
   prescriptions: prescriptionsReducer,
   prescriptionDrugs: prescriptionDrugsReducer,
-  reports: reportsReducer
+  reports: reportsReducer,
+  memory: memoryReducer
 });

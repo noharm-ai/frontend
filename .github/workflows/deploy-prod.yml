@@ -1,7 +1,7 @@
 name: Deploy Production
 on:
   push:
-    branches: [ develop ]    
+    branches: [ master ]    
     
 jobs:
   deploy:
@@ -30,7 +30,7 @@ jobs:
       uses: borales/actions-yarn@v2.0.0
       with:
         cmd: test
-    - name: Deploy Test to AWS
+    - name: Deploy Production to AWS
       uses: jakejarvis/s3-sync-action@master
       with:
         args: --acl public-read

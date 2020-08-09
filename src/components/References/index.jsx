@@ -15,7 +15,6 @@ import Tabs from '@components/Tabs';
 import Button from '@components/Button';
 import Icon from '@components/Icon';
 import BackTop from '@components/BackTop';
-import Tooltip from '@components/Tooltip';
 
 import Edit from '@containers/References/Edit';
 import EditSubstance from '@containers/References/EditSubstance';
@@ -288,9 +287,7 @@ export default function References({
         </Tabs.TabPane>
       </Tabs>
 
-      <Tooltip title="Voltar pro topo">
-        <BackTop />
-      </Tooltip>
+      <BackTop />
 
       <DefaultModal
         centered

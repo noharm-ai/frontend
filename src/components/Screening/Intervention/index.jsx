@@ -11,6 +11,8 @@ import Heading from '@components/Heading';
 import Editor from '@components/Editor';
 import LoadBox from '@components/LoadBox';
 import Tooltip from '@components/Tooltip';
+import Button from '@components/Button';
+import notification from '@components/notification';
 
 import { Box, EditorBox } from './Intervention.style';
 
@@ -75,7 +77,10 @@ const Reason = ({ reasons, defaultReason, updateReason }) => {
   return (
     <Box css="display: flex; align-items: center">
       <Heading as="label" htmlFor="reason" size="14px" className="fixed">
-        <Tooltip title="Apresentação, Substituição, Interações, Incompatibilidades ou Duplicidade abrem a opção de informar os medicamentos relacionados" underline>
+        <Tooltip
+          title="Apresentação, Substituição, Interações, Incompatibilidades ou Duplicidade abrem a opção de informar os medicamentos relacionados"
+          underline
+        >
           Motivos:
         </Tooltip>
       </Heading>
@@ -114,7 +119,10 @@ const Error = ({ handleChangeError, defaultChecked }) => {
         className="fixed"
         style={{ width: '205px' }}
       >
-        <Tooltip title="Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa" underline>
+        <Tooltip
+          title="Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa"
+          underline
+        >
           Possível Erro de prescrição:
         </Tooltip>
       </Heading>
@@ -131,7 +139,9 @@ const Cost = ({ handleChangeCost, defaultChecked }) => {
   return (
     <Box css="align-items: center;display: flex;">
       <Heading as="label" htmlFor="reason" size="14px" margin="0 10px 0 0" className="fixed">
-        <Tooltip title="Esta intervenção gera redução de custo?" underline>Reduz custo:</Tooltip>
+        <Tooltip title="Esta intervenção gera redução de custo?" underline>
+          Reduz custo:
+        </Tooltip>
       </Heading>
       <Switch onChange={handleChange} defaultChecked={defaultChecked} />
     </Box>
@@ -189,7 +199,10 @@ const Interactions = ({
   return (
     <Box css="display: flex; align-items: center">
       <Heading as="label" htmlFor="interactions" size="14px" className="fixed">
-        <Tooltip title="Lista de medicamentos com Interações, Incompatibilidades, Duplicidade, Substituições e/ou diferentes formas de apresentação" underline>
+        <Tooltip
+          title="Lista de medicamentos com Interações, Incompatibilidades, Duplicidade, Substituições e/ou diferentes formas de apresentação"
+          underline
+        >
           Relações:
         </Tooltip>
       </Heading>
@@ -216,16 +229,115 @@ const Interactions = ({
   );
 };
 
-const Observations = ({ content, onEditObservation }) => {
+const Observations = ({
+  content,
+  onEditObservation,
+  memory,
+  fetchMemory,
+  saveMemory,
+  currentReason
+}) => {
+  const isMemoryDisabled = currentReason == null || currentReason.length !== 1;
+
+  useEffect(() => {
+    if (!isMemoryDisabled) {
+      fetchMemory(`reasonsDefaultText-${currentReason[0]}`);
+    }
+  }, [fetchMemory, currentReason, isMemoryDisabled]);
+
+  useEffect(() => {
+    if (memory.save.success) {
+      notification.success({ message: 'Uhu! Observação modelo salva com sucesso!' });
+    }
+  }, [memory.save.success]);
+
+  const saveDefaultText = () => {
+    const payload = {
+      type: `reasonsDefaultText-${currentReason[0]}`,
+      value: { text: content }
+    };
+
+    if (!isEmpty(memory.list)) {
+      payload.id = memory.list[0].key;
+    }
+    saveMemory(payload);
+  };
+
+  const loadDefaultText = () => {
+    onEditObservation({ observation: memory.list[0].value.text });
+    notification.success({ message: 'Observação modelo aplicada com sucesso!' });
+  };
+
   const onEdit = observation => {
     onEditObservation({ observation });
   };
 
+  const getMemoryTooltip = () => {
+    const config = { save: 'Salvar observação modelo', apply: 'Aplicar observação modelo' };
+
+    if (currentReason && currentReason.length > 1) {
+      const msg =
+        'Modelos: Esta funcionalidade é desabilitada quando múltiplos motivos são selecionados';
+      return {
+        save: msg,
+        apply: msg
+      };
+    }
+
+    if (isMemoryDisabled) {
+      const msg = 'Modelos: Selecione um motivo para liberar esta funcionalidade';
+      return {
+        save: msg,
+        apply: msg
+      };
+    }
+
+    if (isEmpty(memory.list) || !content) {
+      return {
+        save: content ? config.save : 'Preencha o texto para salvar como modelo',
+        apply: !isEmpty(memory.list) ? config.apply : 'Este motivo ainda não possui um modelo salvo'
+      };
+    }
+
+    return config;
+  };
+
+  const memoryTooltip = getMemoryTooltip();
+
   return (
     <Box>
-      <Heading as="h4" htmlFor="reason" size="14px" margin="0 0 14px">
-        Observações:
-      </Heading>
+      <Row>
+        <Col xs={20}>
+          <Heading as="h4" htmlFor="reason" size="14px" margin="0 0 14px">
+            Observações:
+          </Heading>
+        </Col>
+        <Col xs={4}>
+          <div style={{ textAlign: 'right' }}>
+            <Tooltip title={memoryTooltip.save}>
+              <Button
+                shape="circle"
+                icon="save"
+                loading={memory.isFetching || memory.save.isSaving}
+                onClick={saveDefaultText}
+                disabled={isMemoryDisabled || !content}
+                style={{ marginRight: '5px' }}
+                type="nda gtm-bt-interv-mem-save"
+              />
+            </Tooltip>
+            <Tooltip title={memoryTooltip.apply}>
+              <Button
+                shape="circle"
+                icon="download"
+                loading={memory.isFetching || memory.save.isSaving}
+                onClick={loadDefaultText}
+                disabled={isMemoryDisabled || isEmpty(memory.list)}
+                type={!isEmpty(memory.list) ? 'primary gtm-bt-interv-mem-apply' : ''}
+              />
+            </Tooltip>
+          </div>
+        </Col>
+      </Row>
       <EditorBox>
         <Editor
           onEdit={onEdit}
@@ -264,7 +376,10 @@ export default function Intervention({
   fetchReasonsList,
   updateSelectedItemToSaveIntervention,
   drugs,
-  searchDrugs
+  searchDrugs,
+  reasonTextMemory,
+  memorySaveReasonText,
+  memoryFetchReasonText
 }) {
   useEffect(() => {
     fetchReasonsList();
@@ -318,6 +433,10 @@ export default function Intervention({
       <Observations
         content={!isEmpty(itemToSave) && itemToSave.intervention.observation}
         onEditObservation={updateSelectedItemToSaveIntervention}
+        memory={reasonTextMemory}
+        fetchMemory={memoryFetchReasonText}
+        saveMemory={memorySaveReasonText}
+        currentReason={!isEmpty(itemToSave) && itemToSave.intervention.idInterventionReason}
       />
     </>
   );
