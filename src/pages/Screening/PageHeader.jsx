@@ -84,7 +84,9 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
                 {prescription.content.idPrescription}
               </UnstyledButton>
             </Tooltip>
-            <span className="legend">Prescrito em {prescription.content.dateFormated}</span>
+            <span className="legend">Prescrita em {prescription.content.dateFormated}
+            {prescription.content.expire && <>, válida até {prescription.content.expireFormated}</>}
+            </span>
           </Heading>
         </Col>
         <Col

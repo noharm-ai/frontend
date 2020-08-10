@@ -62,6 +62,7 @@ export default function Patient({
   namePatient,
   segmentName,
   bed,
+  prescriber,
   fetchScreening,
   record,
   height,
@@ -162,6 +163,9 @@ export default function Patient({
               </Cell>
               <Cell>
                 <strong>Prontuário:</strong> {record}
+              </Cell>
+              <Cell>
+                <strong>Prescritor:</strong> {prescriber}
               </Cell>
               <Cell>
                 <strong>Anotações:</strong>
