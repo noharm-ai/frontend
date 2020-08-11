@@ -9,6 +9,8 @@ import Button from '@components/Button';
 import { Row, Col } from '@components/Grid';
 import notification from '@components/notification';
 import Tooltip from '@components/Tooltip';
+import moment from 'moment';
+ import { InfoIcon } from '@components/Icon';
 
 import FormClinicalNotes from '@containers/Forms/ClinicalNotes';
 import FormClinicalAlert from '@containers/Forms/ClinicalAlert';
@@ -66,6 +68,10 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
     notification.success({ message: 'Número da prescrição copiado!' });
   };
 
+  const now = moment();
+  const createDate = moment(prescription.content.date);
+  const expireDate = moment(prescription.content.expire);
+
   // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
@@ -84,8 +90,12 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
                 {prescription.content.idPrescription}
               </UnstyledButton>
             </Tooltip>
-            <span className="legend">Prescrita em {prescription.content.dateFormated}
-            {prescription.content.expire && <>, válida até {prescription.content.expireFormated}</>}
+            <span className={expireDate.diff(now, 'minute') < 0 ? 'legend red' : 'legend'}>
+              Prescrita em {prescription.content.dateFormated}
+              {prescription.content.expire && <>, válida até {prescription.content.expireFormated}</>}
+              {prescription.content.expire && 
+                (expireDate.diff(createDate, 'hour') < 12) && 
+                    <Tooltip title="Intercorrência"> <InfoIcon /></Tooltip>}
             </span>
           </Heading>
         </Col>
