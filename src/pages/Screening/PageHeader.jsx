@@ -94,7 +94,7 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
               Prescrita em {prescription.content.dateFormated}
               {prescription.content.expire && <>, válida até {prescription.content.expireFormated}</>}
               {prescription.content.expire && 
-                (expireDate.diff(createDate, 'hour') < 12) && 
+                (expireDate.diff(createDate, 'hour') < 23) && 
                     <Tooltip title="Intercorrência"> <InfoIcon /></Tooltip>}
             </span>
           </Heading>
