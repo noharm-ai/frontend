@@ -24,6 +24,10 @@ const Heading = styled.h1`
     margin-top: 2px;
     margin-left: 2px;
   }
+
+  .red {
+    color: red;
+  }
 `;
 
 export default Heading;

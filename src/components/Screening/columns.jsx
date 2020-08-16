@@ -626,7 +626,7 @@ const drugInfo = [
   },
   {
     title: <Tooltip title="Período de uso">Período</Tooltip>,
-    width: 100,
+    width: 70,
     render: record => {
       if (record.total) {
         return (
@@ -654,7 +654,7 @@ const drugInfo = [
   {
     title: 'Dose',
     dataIndex: 'dosage',
-    width: 100,
+    width: 130,
     render: (text, prescription) => {
       if (prescription.total) {
         return (

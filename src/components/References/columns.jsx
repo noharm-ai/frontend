@@ -28,12 +28,12 @@ export default [
   {
     title: 'Medicamento',
     dataIndex: 'name',
-    width: 350
+    width: 320
   },
   {
     title: 'Dose',
     dataIndex: 'dose',
-    width: 60,
+    width: 90,
     render: (entry, outlier) => convDose(outlier)
   },
   {
