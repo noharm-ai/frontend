@@ -86,6 +86,7 @@ export default function Filter({
         idDept: filter.idDepartment,
         idDrug: filter.idDrug,
         pending: filter.pending,
+        agg: filter.agg,
         startDate: date[0] ? date[0].format('YYYY-MM-DD') : 'all',
         endDate: date[1] ? date[1].format('YYYY-MM-DD') : 'all'
       };
@@ -146,6 +147,10 @@ export default function Filter({
     setScreeningListFilter({ pending: pending ? 1 : 0 });
   };
 
+const onAggChange = agg => {
+    setScreeningListFilter({ agg: agg ? 1 : 0 });
+  };
+
   const onDateChange = dt => {
     setDate(dt);
   };
@@ -181,7 +186,8 @@ export default function Filter({
       idSegment: segments.list[0].id,
       idDepartment: [],
       idDrug: [],
-      pending: 0
+      pending: 0,
+      agg: 0
     });
     setDate([moment(), null]);
   };
@@ -391,6 +397,22 @@ export default function Filter({
               onChange={onPendingChange}
               checked={filter.pending}
               id="gtm-pending-filter"
+            />
+          </Box>
+        </Col>
+      </Row>
+      <Row gutter={[20, 0]} style={{ marginTop: '20px' }}>
+        <Col md={14}>
+          <Box flexDirection="row" alignItems="center">
+            <Heading as="label" htmlFor="agg-filter" size="14px">
+              Priorização por Atendimento (beta):
+            </Heading>
+
+            <Switch
+              style={{ marginLeft: '10px' }}
+              onChange={onAggChange}
+              checked={filter.agg}
+              id="gtm-agg-filter"
             />
           </Box>
         </Col>

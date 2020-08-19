@@ -59,6 +59,13 @@ const routes = [
   },
   {
     exact: true,
+    path: '/atendimento/:slug',
+    component: withAuth({
+      component: Screening
+    })
+  },
+  {
+    exact: true,
     path: '/segmentos',
     component: withAuth({
       component: Segments

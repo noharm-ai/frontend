@@ -4,6 +4,8 @@ export const routeToId = path => {
       return 'triagem';
     case '/prescricao/:slug':
       return 'prescricao';
+    case '/atendimento/:slug':
+      return 'prescricao';
     case '/medicamentos/:idSegment/:idDrug/:slug':
       return 'medicamentos';
     case '/relatorios/visualizar':
