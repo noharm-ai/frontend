@@ -21,6 +21,7 @@ import Dropdown from '@components/Dropdown';
 import Modal from '@components/Modal';
 import notification from '@components/notification';
 import LoadBox from '@components/LoadBox';
+import { InfoIcon } from '@components/Icon';
 import './index.css';
 
 const filterMenu = (savedFilters, openSaveModal, loadFilter, removeFilter) => (
@@ -405,7 +406,10 @@ const onAggChange = agg => {
         <Col md={14}>
           <Box flexDirection="row" alignItems="center">
             <Heading as="label" htmlFor="agg-filter" size="14px">
-              Priorização por Atendimento (beta):
+              Priorização por Atendimento 
+                 <Tooltip title="Funcionalidade em testes. Obrigado pela paciência ;)" placement="top">
+                    {' '}<InfoIcon />
+                 </Tooltip>:
             </Heading>
 
             <Switch
