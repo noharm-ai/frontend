@@ -15,6 +15,7 @@ import References from '@pages/References';
 import Reports from '@pages/Reports';
 import ViewReport from '@pages/Reports/ViewReport';
 import InterventionList from '@pages/InterventionList';
+import User from  '@pages/User';
 
 const routes = [
   {
@@ -99,7 +100,14 @@ const routes = [
     component: withAuth({
       component: InterventionList
     })
-  }
+  },
+  {
+    exact: true,
+    path: '/usuario',
+    component: withAuth({
+      component: User
+    })
+  },
 ];
 
 export default routes;

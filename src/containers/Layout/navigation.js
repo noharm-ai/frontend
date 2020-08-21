@@ -34,6 +34,12 @@ export default [
         text: 'Segmentos',
         icon: 'medicine-box',
         id: 'gtm-lnk-segmentos'
+      },
+      {
+        key: '/usuario',
+        text: 'Usuário',
+        icon: 'user',
+        id: 'gtm-lnk-usuario'
       }
     ]
   }
