@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 
 import { stringify, formatAge } from './utils';
 import { uniqBy } from '@utils/lodash';
+import moment from 'moment';
 
 export const transformDrug = ({ dose, measureUnit, route, ...drug }) => ({
   ...drug,
@@ -35,11 +36,13 @@ export const transformPrescription = ({
   prescriptionRisk: stringify([prescriptionScore]),
   date,
   dateFormated: format(new Date(date), 'dd/MM/yyyy HH:mm'),
+  dateOnlyFormated: format(new Date(date), 'dd/MM/yyyy'),
   expire,
   expireFormated: expire ? format(new Date(expire), 'dd/MM/yyyy HH:mm') : '',
   shortDateFormat: format(new Date(date), 'dd/MM'),
   birthdate,
   age: birthdate ? formatAge(birthdate) : '',
+  birthdays: birthdate ? moment().diff(birthdate, 'day') : '',
   mdrd,
   tgo,
   tgp,

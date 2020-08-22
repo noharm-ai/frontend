@@ -2,6 +2,8 @@ export const routeToId = path => {
   switch (path) {
     case '/':
       return 'triagem';
+    case '/:startDate':
+      return 'triagem';
     case '/prescricao/:slug':
       return 'prescricao';
     case '/medicamentos/:idSegment/:idDrug/:slug':

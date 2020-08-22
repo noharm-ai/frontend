@@ -84,19 +84,32 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
       <Row type="flex" css="margin-bottom: 15px;">
         <Col span={24} md={10}>
           <Heading>
-            {pageTitle} nº{' '}
-            <Tooltip title="Clique para copiar o número da prescrição">
-              <UnstyledButton onClick={() => copyToClipboard(prescription.content.idPrescription)}>
-                {prescription.content.idPrescription}
-              </UnstyledButton>
-            </Tooltip>
-            <span className={expireDate.diff(now, 'minute') < 0 ? 'legend red' : 'legend'}>
-              Prescrita em {prescription.content.dateFormated}
-              {prescription.content.expire && <>, válida até {prescription.content.expireFormated}</>}
-              {prescription.content.expire && 
-                (expireDate.diff(createDate, 'hour') < 23) && 
-                    <Tooltip title="Intercorrência"> <InfoIcon /></Tooltip>}
-            </span>
+            {!prescription.content.agg && ( <>
+              {pageTitle} nº{' '}
+              <Tooltip title="Clique para copiar o número da prescrição">
+                <UnstyledButton onClick={() => copyToClipboard(prescription.content.idPrescription)}>
+                  {prescription.content.idPrescription}
+                </UnstyledButton>
+              </Tooltip>
+              <span className={expireDate.diff(now, 'minute') < 0 ? 'legend red' : 'legend'}>
+                Prescrita em {prescription.content.dateFormated}
+                {prescription.content.expire && <>, válida até {prescription.content.expireFormated}</>}
+                {prescription.content.expire && 
+                  (expireDate.diff(createDate, 'hour') < 23) && 
+                      <Tooltip title="Intercorrência"> <InfoIcon /></Tooltip>}
+              </span>
+            </> )}
+            {prescription.content.agg && ( <>
+              Atendimento nº{' '}
+              <Tooltip title="Clique para copiar o número do atendimento">
+                <UnstyledButton onClick={() => copyToClipboard(prescription.content.admissionNumber)}>
+                  {prescription.content.admissionNumber}
+                </UnstyledButton>
+              </Tooltip>
+              <span className='legend'>
+                Prescrições Agregadas de {prescription.content.dateOnlyFormated}
+              </span>
+            </> )}
           </Heading>
         </Col>
         <Col

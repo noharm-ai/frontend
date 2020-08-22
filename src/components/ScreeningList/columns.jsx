@@ -227,7 +227,7 @@ export default (sortedInfo, filteredInfo) => {
           width: 30,
           align: 'center',
           sortDirections: sortDirections,
-          sorter: (a, b) => a.age - b.age,
+          sorter: (a, b) => a.birthdays - b.birthdays,
           sortOrder: sortedInfo.columnKey === 'age' && sortedInfo.order
         },
         {
