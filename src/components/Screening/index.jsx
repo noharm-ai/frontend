@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/macro';
 
-import api from '@services/api';
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
 import { toDataSource } from '@utils';
@@ -262,23 +261,6 @@ export default function Screening({
     }
   }, [prescriptionDrug.success, updatePrescriptionDrugData, prescriptionDrug.item]);
 
-  const updatePrescriptionData = useCallback(async () => {
-    const { data } = await api.shouldUpdatePrescription(access_token, id);
-
-    const shouldUpdate = data.data;
-    if (shouldUpdate) {
-      fetchScreeningById(id);
-    }
-  }, [id, access_token, fetchScreeningById]);
-
-  useEffect(() => {
-    window.addEventListener('focus', updatePrescriptionData);
-
-    return () => {
-      window.removeEventListener('focus', updatePrescriptionData);
-    };
-  }, [updatePrescriptionData]);
-
   const rowClassName = (record, index) => {
     let classes = [];
 
@@ -395,7 +377,7 @@ export default function Screening({
     <>
       <Row type="flex" gutter={24}>
         <Col span={24} md={24}>
-          {isFetching ? <LoadBox /> : <Patient {...content} fetchScreening={fetchScreeningById} />}
+          {isFetching ? <LoadBox /> : <Patient {...content} fetchScreening={fetchScreeningById} access_token={access_token}/>}
         </Col>
         <ScreeningTabs
           defaultActiveKey="1"

@@ -35,6 +35,12 @@ export const Box = styled.div`
     color: #2e3c5a;
   }
 
+  &.recalc {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
   &.see-more {
     display: flex;
     justify-content: center;

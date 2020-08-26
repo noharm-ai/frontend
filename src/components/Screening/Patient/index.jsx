@@ -1,8 +1,9 @@
 import 'styled-components/macro';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import moment from 'moment';
 import { Row, Col } from 'antd';
 
+import api from '@services/api';
 import Popover from '@components/PopoverStyled';
 import Statistic from '@components/Statistic';
 import Card from '@components/Card';
@@ -64,6 +65,7 @@ export default function Patient({
   bed,
   prescriber,
   fetchScreening,
+  access_token,
   record,
   height,
   exams,
@@ -96,6 +98,11 @@ export default function Patient({
   const afterSavePatient = () => {
     fetchScreening(prescription.idPrescription);
   };
+
+  const updatePrescriptionData = useCallback(async () => {
+    await api.shouldUpdatePrescription(access_token, prescription.idPrescription);
+    fetchScreening(prescription.idPrescription);
+  }, [access_token, fetchScreening, prescription.idPrescription]);
 
   const toggleSeeMore = () => {
     setSeeMore(!seeMore);
@@ -179,6 +186,14 @@ export default function Patient({
                 >
                   <RichTextView text={observation} />
                 </div>
+              </Cell>
+              <Cell className="recalc">
+                <Button
+                  type="primary gtm-bt-update"
+                  onClick={updatePrescriptionData}
+                >
+                  Recalcular Prescrição
+                </Button>
               </Cell>
             </>
           )}
