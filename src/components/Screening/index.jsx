@@ -60,6 +60,7 @@ const PrescriptionHeader = styled.div`
   padding: 5px;
   padding-left: 15px;
   border-radius: 4px;
+  margin-top: 20px;
 `;
 
 export default function Screening({
@@ -198,16 +199,26 @@ export default function Screening({
     weight: content.weight
   };
 
-  const ds1 = toDataSource(drugList, 'idPrescriptionDrug', {
-    ...bag,
-    prescriptionType: 'prescriptions'
-  });
-  const ds2 = toDataSource(drugList ? drugList.slice(3) : [], 'idPrescriptionDrug', {
-    ...bag,
-    prescriptionType: 'prescriptions'
-  });
+  const splitDS = (list) => {
+    let drugArray = []
+    list.forEach(item => {
+      if (!drugArray[item.grp_solution]) { drugArray[item.grp_solution] = [] }
+      drugArray[item.grp_solution].push(item)
+    });
 
-  const dsArray = [ds1, ds2];
+    let dsArray = []
+    drugArray.forEach((item, index) => {
+      dsArray.push({
+        key: index,
+        value: toDataSource(item, 'idPrescriptionDrug', {...bag,  prescriptionType: 'prescriptions' })
+      })
+    });
+
+    return dsArray;
+  }
+
+  const dsArray = drugList ? splitDS(drugList) : [];
+
   const dsSolutions = groupSolutions(
     toDataSource(solutionList, 'idPrescriptionDrug', {
       ...bag,
@@ -411,9 +422,10 @@ export default function Screening({
                 handleFilter={handleFilter}
                 isFilterActive={isFilterActive}
               />
-              {dsArray.map(ds => (
+              {isFetching ? (<LoadBox />) : 
+                dsArray.map(ds => (
                 <>
-                  <PrescriptionHeader>Prescrição Número</PrescriptionHeader>
+                  { (content.agg) && <PrescriptionHeader>Prescrição #{ds.key} </PrescriptionHeader> }
                   <ExpandableTable
                     expandedRowKeys={expandedRows.prescription}
                     onExpand={(expanded, record) => handleRowExpand(record)}
@@ -429,7 +441,7 @@ export default function Screening({
                         />
                       )
                     }}
-                    dataSource={!isFetching ? ds : []}
+                    dataSource={!isFetching ? ds.value : []}
                     expandedRowRender={expandedRowRender}
                     rowClassName={rowClassName}
                   />
