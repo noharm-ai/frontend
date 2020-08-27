@@ -55,6 +55,13 @@ const ScreeningTabs = styled(Tabs)`
   }
 `;
 
+const PrescriptionHeader = styled.div`
+    background-color: lightgray;
+    padding: 5px;
+    padding-left: 15px;
+    border-radius: 4px;
+`;
+
 export default function Screening({
   match,
   prescription,
@@ -395,6 +402,11 @@ export default function Screening({
                 handleFilter={handleFilter}
                 isFilterActive={isFilterActive}
               />
+              {false && (
+                <PrescriptionHeader>
+                  Prescrição Número
+                </PrescriptionHeader>
+              )}
               <ExpandableTable
                 expandedRowKeys={expandedRows.prescription}
                 onExpand={(expanded, record) => handleRowExpand(record)}
@@ -406,7 +418,7 @@ export default function Screening({
                   emptyText: (
                     <Empty
                       image={Empty.PRESENTED_IMAGE_SIMPLE}
-                      description="Nenhuma prescrição encontrada."
+                      description="Nenhum medicamento encontrado."
                     />
                   )
                 }}
