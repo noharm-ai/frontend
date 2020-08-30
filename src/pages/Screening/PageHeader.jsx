@@ -152,28 +152,24 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
               </Tooltip>
             </>
           )}
-          {security.isAdmin() && (
-            <>
-              <Button
-                type="primary gtm-bt-clinical-notes"
-                onClick={() => setClinicalNotesVisibility(true)}
-                style={{ marginRight: '5px' }}
-                ghost={!prescription.content.notes}
-              >
-                <Icon type="file-add" />
-                Evolução
-              </Button>
-              <Button
-                type="primary gtm-bt-alert"
-                onClick={() => setClinicalAlertVisibility(true)}
-                style={{ marginRight: '5px' }}
-                ghost={!prescription.content.alert}
-              >
-                <Icon type="alert" />
-                Alerta
-              </Button>
-            </>
-          )}
+          <Button
+            type="primary gtm-bt-clinical-notes"
+            onClick={() => setClinicalNotesVisibility(true)}
+            style={{ marginRight: '5px' }}
+            ghost={!prescription.content.notes}
+          >
+            <Icon type="file-add" />
+            Evolução
+          </Button>
+          <Button
+            type="primary gtm-bt-alert"
+            onClick={() => setClinicalAlertVisibility(true)}
+            style={{ marginRight: '5px' }}
+            ghost={!prescription.content.alert}
+          >
+            <Icon type="alert" />
+            Alerta
+          </Button>
           <Button type="default gtm-bt-close" onClick={close}>
             Fechar
           </Button>
