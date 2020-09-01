@@ -17,6 +17,7 @@ import Tooltip from '@components/Tooltip';
 import Icon from '@components/Icon';
 import TableFilter from '@components/TableFilter';
 import { toDataSource } from '@utils';
+import { format } from 'date-fns';
 
 import Modal from './Modal';
 import PrescriptionDrugModal from './PrescriptionDrugModal';
@@ -61,6 +62,15 @@ const PrescriptionHeader = styled.div`
   padding-left: 15px;
   border-radius: 4px;
   margin-top: 20px;
+
+  span {
+    padding-left: 15px;
+  }
+
+  .p-number {
+    padding-right: 10px;
+  }
+
 `;
 
 export default function Screening({
@@ -425,7 +435,27 @@ export default function Screening({
               {isFetching ? (<LoadBox />) : 
                 dsArray.map(ds => (
                 <>
-                  { (content.agg) && <PrescriptionHeader>Prescrição #{ds.key} </PrescriptionHeader> }
+                  { (content.agg) && 
+                      <PrescriptionHeader>
+                        <strong class="p-number">Prescrição #{ds.key}</strong>
+                        <span>
+                          <strong>Liberação:</strong> &nbsp;
+                          {format(new Date(content.headers[ds.key].date), 'dd/MM/yyyy HH:mm')}
+                        </span>
+                        <span>
+                          <strong>Vigência:</strong> &nbsp;
+                          {format(new Date(content.headers[ds.key].expire), 'dd/MM/yyyy HH:mm')}
+                        </span>
+                        <span>
+                          <strong>Leito:</strong> &nbsp;
+                          {content.headers[ds.key].bed}
+                        </span>
+                        <span>
+                          <strong>Prescritor:</strong> &nbsp;
+                          {content.headers[ds.key].prescriber}
+                        </span>
+                      </PrescriptionHeader> 
+                  }
                   <ExpandableTable
                     expandedRowKeys={expandedRows.prescription}
                     onExpand={(expanded, record) => handleRowExpand(record)}

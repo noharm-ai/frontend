@@ -126,6 +126,7 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
           {prescription.content.status === '0' && (
             <Button
               type="primary gtm-bt-check"
+              ghost
               onClick={() => checkScreening(id, 's')}
               loading={isChecking}
               style={{ marginRight: '5px' }}
@@ -142,7 +143,6 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
               <Tooltip title="Desfazer checagem">
                 <Button
                   type="danger gtm-bt-undo-check"
-                  ghost
                   onClick={() => checkScreening(id, '0')}
                   loading={isChecking}
                   style={{ marginRight: '5px' }}
