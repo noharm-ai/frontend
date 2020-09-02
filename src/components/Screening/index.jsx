@@ -91,6 +91,7 @@ export default function Screening({
   selectPrescriptionDrug,
   access_token
 }) {
+  console.log('render screening');
   const id = extractId(match.params.slug);
   const { isFetching, content, error, exams } = prescription;
   const {
@@ -209,6 +210,10 @@ export default function Screening({
   };
 
   const [dsDrugList, setDrugList] = useState([]);
+  const [dsSolutions, setDsSolutions] = useState([]);
+  const [dsProcedures, setDsProcedures] = useState([]);
+  const [dsInterventions, setDsInterventions] = useState([]);
+  const [dsExams, setDsExams] = useState([]);
 
   useEffect(() => {
     const splitDS = list => {
@@ -237,22 +242,39 @@ export default function Screening({
     setDrugList(drugList ? splitDS(drugList) : []);
   }, [drugList]); // eslint-disable-line
 
-  const dsSolutions = groupSolutions(
-    toDataSource(solutionList, 'idPrescriptionDrug', {
-      ...bag,
-      prescriptionType: 'solutions'
-    }),
-    infusionList
-  );
-  const dsProcedures = toDataSource(proceduresList, 'idPrescriptionDrug', {
-    ...bag,
-    prescriptionType: 'procedures'
-  });
-  const dsInterventions = toDataSource(interventionList, 'id', {
-    saveInterventionStatus,
-    check: prescription.checkIntervention
-  });
-  const dsExams = toDataSource(exams.list, 'key', {});
+  useEffect(() => {
+    setDsSolutions(
+      groupSolutions(
+        toDataSource(solutionList, 'idPrescriptionDrug', {
+          ...bag,
+          prescriptionType: 'solutions'
+        }),
+        infusionList
+      )
+    );
+  }, [solutionList]); // eslint-disable-line
+
+  useEffect(() => {
+    setDsProcedures(
+      toDataSource(proceduresList, 'idPrescriptionDrug', {
+        ...bag,
+        prescriptionType: 'procedures'
+      })
+    );
+  }, [proceduresList]); // eslint-disable-line
+
+  useEffect(() => {
+    setDsInterventions(
+      toDataSource(interventionList, 'id', {
+        saveInterventionStatus,
+        check: prescription.checkIntervention
+      })
+    );
+  }, [interventionList]); // eslint-disable-line
+
+  useEffect(() => {
+    setDsExams(toDataSource(exams.list, 'key', {}));
+  }, [exams.list]); // eslint-disable-line
 
   const listCount = {
     prescriptions: drugList ? drugList.length : 0,
