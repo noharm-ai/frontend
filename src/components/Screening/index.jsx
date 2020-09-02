@@ -91,7 +91,6 @@ export default function Screening({
   selectPrescriptionDrug,
   access_token
 }) {
-  console.log('render screening');
   const id = extractId(match.params.slug);
   const { isFetching, content, error, exams } = prescription;
   const {
