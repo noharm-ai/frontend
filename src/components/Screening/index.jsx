@@ -209,25 +209,31 @@ export default function Screening({
     weight: content.weight
   };
 
-  const splitDS = (list) => {
-    let drugArray = []
-    list.forEach(item => {
-      if (!drugArray[item.grp_solution]) { drugArray[item.grp_solution] = [] }
-      drugArray[item.grp_solution].push(item)
-    });
+  const [dsDrugList, setDrugList] = useState([]);
 
-    let dsArray = []
-    drugArray.forEach((item, index) => {
-      dsArray.push({
-        key: index,
-        value: toDataSource(item, 'idPrescriptionDrug', {...bag,  prescriptionType: 'prescriptions' })
-      })
-    });
+  useEffect(() => {
 
-    return dsArray;
-  }
+    const splitDS = (list) => {
+      let drugArray = []
+      list.forEach(item => {
+        if (!drugArray[item.grp_solution]) { drugArray[item.grp_solution] = [] }
+        drugArray[item.grp_solution].push(item)
+      });
 
-  const dsArray = drugList ? splitDS(drugList) : [];
+      let dsArray = []
+      drugArray.forEach((item, index) => {
+        dsArray.push({
+          key: index,
+          value: toDataSource(item, 'idPrescriptionDrug', {...bag,  prescriptionType: 'prescriptions' })
+        })
+      });
+
+      return dsArray;
+    }
+
+    drugList ? setDrugList(splitDS(drugList)) : setDrugList([]);
+
+  }, [drugList, bag]);
 
   const dsSolutions = groupSolutions(
     toDataSource(solutionList, 'idPrescriptionDrug', {
@@ -433,7 +439,7 @@ export default function Screening({
                 isFilterActive={isFilterActive}
               />
               {isFetching ? (<LoadBox />) : 
-                dsArray.map(ds => (
+                dsDrugList.map(ds => (
                 <>
                   { (content.agg) && 
                       <PrescriptionHeader>
