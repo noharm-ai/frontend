@@ -16,8 +16,8 @@ import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import Icon from '@components/Icon';
 import TableFilter from '@components/TableFilter';
-import { toDataSource } from '@utils';
 import { format } from 'date-fns';
+import { toDataSource } from '@utils';
 
 import Modal from './Modal';
 import PrescriptionDrugModal from './PrescriptionDrugModal';
@@ -70,7 +70,6 @@ const PrescriptionHeader = styled.div`
   .p-number {
     padding-right: 10px;
   }
-
 `;
 
 export default function Screening({
@@ -212,28 +211,31 @@ export default function Screening({
   const [dsDrugList, setDrugList] = useState([]);
 
   useEffect(() => {
-
-    const splitDS = (list) => {
-      let drugArray = []
+    const splitDS = list => {
+      const drugArray = [];
       list.forEach(item => {
-        if (!drugArray[item.grp_solution]) { drugArray[item.grp_solution] = [] }
-        drugArray[item.grp_solution].push(item)
+        if (!drugArray[item.grp_solution]) {
+          drugArray[item.grp_solution] = [];
+        }
+        drugArray[item.grp_solution].push(item);
       });
 
-      let dsArray = []
+      const dsArray = [];
       drugArray.forEach((item, index) => {
         dsArray.push({
           key: index,
-          value: toDataSource(item, 'idPrescriptionDrug', {...bag,  prescriptionType: 'prescriptions' })
-        })
+          value: toDataSource(item, 'idPrescriptionDrug', {
+            ...bag,
+            prescriptionType: 'prescriptions'
+          })
+        });
       });
 
       return dsArray;
-    }
+    };
 
-    drugList ? setDrugList(splitDS(drugList)) : setDrugList([]);
-
-  }, [drugList, bag]);
+    setDrugList(drugList ? splitDS(drugList) : []);
+  }, [drugList]); // eslint-disable-line
 
   const dsSolutions = groupSolutions(
     toDataSource(solutionList, 'idPrescriptionDrug', {
@@ -438,12 +440,14 @@ export default function Screening({
                 handleFilter={handleFilter}
                 isFilterActive={isFilterActive}
               />
-              {isFetching ? (<LoadBox />) : 
+              {isFetching ? (
+                <LoadBox />
+              ) : (
                 dsDrugList.map(ds => (
-                <>
-                  { (content.agg) && 
+                  <>
+                    {content.agg && (
                       <PrescriptionHeader>
-                        <strong class="p-number">Prescrição #{ds.key}</strong>
+                        <strong className="p-number">Prescrição #{ds.key}</strong>
                         <span>
                           <strong>Liberação:</strong> &nbsp;
                           {format(new Date(content.headers[ds.key].date), 'dd/MM/yyyy HH:mm')}
@@ -460,29 +464,30 @@ export default function Screening({
                           <strong>Prescritor:</strong> &nbsp;
                           {content.headers[ds.key].prescriber}
                         </span>
-                      </PrescriptionHeader> 
-                  }
-                  <ExpandableTable
-                    expandedRowKeys={expandedRows.prescription}
-                    onExpand={(expanded, record) => handleRowExpand(record)}
-                    title={title}
-                    columns={columnsTable(filter)}
-                    pagination={false}
-                    loading={isFetching}
-                    locale={{
-                      emptyText: (
-                        <Empty
-                          image={Empty.PRESENTED_IMAGE_SIMPLE}
-                          description="Nenhum medicamento encontrado."
-                        />
-                      )
-                    }}
-                    dataSource={!isFetching ? ds.value : []}
-                    expandedRowRender={expandedRowRender}
-                    rowClassName={rowClassName}
-                  />
-                </>
-              ))}
+                      </PrescriptionHeader>
+                    )}
+                    <ExpandableTable
+                      expandedRowKeys={expandedRows.prescription}
+                      onExpand={(expanded, record) => handleRowExpand(record)}
+                      title={title}
+                      columns={columnsTable(filter)}
+                      pagination={false}
+                      loading={isFetching}
+                      locale={{
+                        emptyText: (
+                          <Empty
+                            image={Empty.PRESENTED_IMAGE_SIMPLE}
+                            description="Nenhum medicamento encontrado."
+                          />
+                        )
+                      }}
+                      dataSource={!isFetching ? ds.value : []}
+                      expandedRowRender={expandedRowRender}
+                      rowClassName={rowClassName}
+                    />
+                  </>
+                ))
+              )}
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane tab={<TabTitle title="Soluções" count={listCount.solutions} />} key="2">
