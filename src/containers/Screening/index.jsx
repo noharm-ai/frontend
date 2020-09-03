@@ -21,20 +21,15 @@ import {
 } from '@store/ducks/prescriptionDrugs/thunk';
 import Screening from '@components/Screening';
 
-const mapStateToProps = ({ prescriptions, prescriptionDrugs, intervention, auth }) => ({
-  prescription: {
-    error: prescriptions.single.error,
-    message: prescriptions.single.message,
-    isFetching: prescriptions.single.isFetching,
-    content: prescriptions.single.data,
-    checkPrescriptionDrug: prescriptions.single.checkPrescriptionDrug,
-    checkIntervention: prescriptions.single.checkIntervention,
-    periodObject: prescriptions.single.period,
-    exams: prescriptions.single.exams
-  },
-  maybeCreateOrUpdate: {
-    ...intervention.maybeCreateOrUpdate
-  },
+const mapStateToProps = ({ prescriptions, prescriptionDrugs, auth }) => ({
+  error: prescriptions.single.error,
+  message: prescriptions.single.message,
+  isFetching: prescriptions.single.isFetching,
+  content: prescriptions.single.data,
+  checkPrescriptionDrug: prescriptions.single.checkPrescriptionDrug,
+  checkIntervention: prescriptions.single.checkIntervention,
+  periodObject: prescriptions.single.period,
+  exams: prescriptions.single.exams,
   prescriptionDrug: prescriptionDrugs.single,
   access_token: auth.identify.access_token
 });

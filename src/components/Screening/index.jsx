@@ -14,12 +14,11 @@ import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
-import Icon from '@components/Icon';
 import TableFilter from '@components/TableFilter';
 import { format } from 'date-fns';
+import ModalIntervention from '@containers/Screening/ModalIntervention';
 import { toDataSource } from '@utils';
 
-import Modal from './Modal';
 import PrescriptionDrugModal from './PrescriptionDrugModal';
 import Patient from './Patient';
 import columnsTable, {
@@ -34,15 +33,6 @@ import examColumns, { examRowClassName, expandedExamRowRender } from './Exam/col
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
 
-// error message when fetch has error.
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
-};
-// save message when saved intervention.
-const saveMessage = {
-  message: 'Uhu! Intervenção salva com sucesso! :)'
-};
 const noop = () => {};
 const theTitle = () => 'Deslize para a direita para ver mais conteúdo.';
 
@@ -74,14 +64,9 @@ const PrescriptionHeader = styled.div`
 
 export default function Screening({
   match,
-  prescription,
-  maybeCreateOrUpdate,
-  save,
-  reset,
   select,
   fetchScreeningById,
   savePrescriptionDrugStatus,
-  updateInterventionData,
   updatePrescriptionDrugData,
   saveInterventionStatus,
   fetchPeriod,
@@ -89,10 +74,16 @@ export default function Screening({
   prescriptionDrug,
   savePrescriptionDrug,
   selectPrescriptionDrug,
-  access_token
+  access_token,
+  isFetching,
+  content,
+  error,
+  exams,
+  checkPrescriptionDrug,
+  checkIntervention,
+  periodObject
 }) {
   const id = extractId(match.params.slug);
-  const { isFetching, content, error, exams } = prescription;
   const {
     prescription: drugList,
     solution: solutionList,
@@ -100,7 +91,7 @@ export default function Screening({
     interventions: interventionList,
     infusion: infusionList
   } = content;
-  const { isSaving, wasSaved, item } = maybeCreateOrUpdate;
+  // const { isSaving, wasSaved, item } = maybeCreateOrUpdate;
 
   const [visible, setVisibility] = useState(false);
   const [expandedRows, setExpandedRows] = useState({
@@ -129,16 +120,6 @@ export default function Screening({
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
 
-  const onSave = () => save(item);
-  const onCancel = () => {
-    select({});
-    setVisibility(false);
-  };
-  const onShowModal = data => {
-    select(data);
-    setVisibility(true);
-  };
-
   const onSavePrescriptionDrug = () =>
     savePrescriptionDrug(prescriptionDrug.item.idPrescriptionDrug, prescriptionDrug.item);
   const onCancelPrescriptionDrug = () => {
@@ -148,18 +129,6 @@ export default function Screening({
   const onShowPrescriptionDrugModal = data => {
     selectPrescriptionDrug(data);
     setOpenPrescriptionDrugModal(true);
-  };
-
-  const isSaveBtnDisabled = item => {
-    if (isEmpty(item)) {
-      return true;
-    }
-
-    if (isEmpty(item.intervention.idInterventionReason)) {
-      return true;
-    }
-
-    return false;
   };
 
   const updateExpandedRows = (list, key) => {
@@ -191,18 +160,23 @@ export default function Screening({
     }
   };
 
+  const onShowModal = data => {
+    select(data);
+    setVisibility(true);
+  };
+
   // extra resources to add in table item.
   const bag = {
     onShowModal,
     onShowPrescriptionDrugModal,
-    check: prescription.checkPrescriptionDrug,
+    check: checkPrescriptionDrug,
     savePrescriptionDrugStatus,
     idSegment: content.idSegment,
     uniqueDrugList: getUniqueDrugs(drugList, solutionList, proceduresList),
     admissionNumber: content.admissionNumber,
     saveInterventionStatus,
-    checkIntervention: prescription.checkIntervention,
-    periodObject: prescription.periodObject,
+    checkIntervention,
+    periodObject,
     fetchPeriod,
     handleRowExpand,
     weight: content.weight
@@ -266,7 +240,7 @@ export default function Screening({
     setDsInterventions(
       toDataSource(interventionList, 'id', {
         saveInterventionStatus,
-        check: prescription.checkIntervention
+        check: checkIntervention
       })
     );
   }, [interventionList]); // eslint-disable-line
@@ -291,24 +265,6 @@ export default function Screening({
   useEffect(() => {
     fetchScreeningById(id);
   }, [id, fetchScreeningById]);
-
-  // show message if has error
-  useEffect(() => {
-    if (!isEmpty(error)) {
-      notification.error(errorMessage);
-    }
-  }, [error]);
-
-  // handle after save intervention.
-  useEffect(() => {
-    if (wasSaved) {
-      updateInterventionData(item.idPrescriptionDrug, item.source, item.intervention);
-      reset();
-      setVisibility(false);
-
-      notification.success(saveMessage);
-    }
-  }, [wasSaved, id, reset, item, updateInterventionData]);
 
   useEffect(() => {
     if (prescriptionDrug.success) {
@@ -366,44 +322,6 @@ export default function Screening({
     if (key === '5') {
       loadExams();
     }
-  };
-
-  const InterventionFooter = () => {
-    const isChecked = item.status === 's';
-
-    const undoIntervention = () => {
-      savePrescriptionDrugStatus(item.idPrescriptionDrug, '0', item.source);
-      setVisibility(false);
-    };
-
-    return (
-      <>
-        <Button onClick={() => onCancel()} disabled={isSaving} className="gtm-bt-cancel-interv">
-          Cancelar
-        </Button>
-        {isChecked && (
-          <Tooltip title="Desfazer intervenção" placement="top">
-            <Button
-              type="danger gtm-bt-undo-interv"
-              ghost
-              loading={prescription.checkPrescriptionDrug.isChecking}
-              onClick={() => undoIntervention()}
-            >
-              <Icon type="rollback" style={{ fontSize: 16 }} />
-            </Button>
-          </Tooltip>
-        )}
-
-        <Button
-          type="primary gtm-bt-save-interv"
-          onClick={() => onSave()}
-          disabled={isSaving || isSaveBtnDisabled(item)}
-          loading={isSaving}
-        >
-          Salvar
-        </Button>
-      </>
-    );
   };
 
   const ListFilter = ({ listCount, handleFilter, isFilterActive }) => (
@@ -605,22 +523,17 @@ export default function Screening({
         </ScreeningTabs>
       </Row>
 
-      <Modal
-        visible={visible}
-        confirmLoading={isSaving}
-        footer={<InterventionFooter />}
-        onCancel={onCancel}
-      />
+      <ModalIntervention visible={visible} setVisibility={setVisibility} />
       <PrescriptionDrugModal
         onOk={onSavePrescriptionDrug}
         visible={openPrescriptionDrugModal}
         onCancel={onCancelPrescriptionDrug}
         confirmLoading={prescriptionDrug.isSaving}
         okButtonProps={{
-          disabled: isSaving
+          disabled: prescriptionDrug.isSaving
         }}
         cancelButtonProps={{
-          disabled: isSaving,
+          disabled: prescriptionDrug.isSaving,
           className: 'gtm-bt-cancel-notes'
         }}
         okText="Salvar"
