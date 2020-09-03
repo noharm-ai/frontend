@@ -10,18 +10,14 @@ import {
   fetchScreeningThunk,
   checkPrescriptionDrugThunk,
   updateInterventionDataThunk,
-  updatePrescriptionDrugDataThunk,
   checkInterventionThunk,
   fetchPrescriptionDrugPeriodThunk,
   fetchPrescriptionExamsThunk
 } from '@store/ducks/prescriptions/thunk';
-import {
-  selectPrescriptionDrugThunk,
-  savePrescriptionDrugThunk
-} from '@store/ducks/prescriptionDrugs/thunk';
+import { selectPrescriptionDrugThunk } from '@store/ducks/prescriptionDrugs/thunk';
 import Screening from '@components/Screening';
 
-const mapStateToProps = ({ prescriptions, prescriptionDrugs, auth }) => ({
+const mapStateToProps = ({ prescriptions, auth }) => ({
   error: prescriptions.single.error,
   message: prescriptions.single.message,
   isFetching: prescriptions.single.isFetching,
@@ -30,7 +26,6 @@ const mapStateToProps = ({ prescriptions, prescriptionDrugs, auth }) => ({
   checkIntervention: prescriptions.single.checkIntervention,
   periodObject: prescriptions.single.period,
   exams: prescriptions.single.exams,
-  prescriptionDrug: prescriptionDrugs.single,
   access_token: auth.identify.access_token
 });
 const mapDispatchToProps = dispatch =>
@@ -44,10 +39,8 @@ const mapDispatchToProps = dispatch =>
       reset: clearSavedInterventionStatusThunk,
       savePrescriptionDrugStatus: checkPrescriptionDrugThunk,
       updateInterventionData: updateInterventionDataThunk,
-      updatePrescriptionDrugData: updatePrescriptionDrugDataThunk,
       saveInterventionStatus: checkInterventionThunk,
-      selectPrescriptionDrug: selectPrescriptionDrugThunk,
-      savePrescriptionDrug: savePrescriptionDrugThunk
+      selectPrescriptionDrug: selectPrescriptionDrugThunk
     },
     dispatch
   );

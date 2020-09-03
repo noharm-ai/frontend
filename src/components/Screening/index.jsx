@@ -9,7 +9,6 @@ import { ExpandableTable } from '@components/Table';
 import Empty from '@components/Empty';
 import LoadBox from '@components/LoadBox';
 import { Row, Col } from '@components/Grid';
-import notification from '@components/notification';
 import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
 import Button from '@components/Button';
@@ -17,9 +16,9 @@ import Tooltip from '@components/Tooltip';
 import TableFilter from '@components/TableFilter';
 import { format } from 'date-fns';
 import ModalIntervention from '@containers/Screening/ModalIntervention';
+import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 import { toDataSource } from '@utils';
 
-import PrescriptionDrugModal from './PrescriptionDrugModal';
 import Patient from './Patient';
 import columnsTable, {
   expandedRowRender,
@@ -67,12 +66,9 @@ export default function Screening({
   select,
   fetchScreeningById,
   savePrescriptionDrugStatus,
-  updatePrescriptionDrugData,
   saveInterventionStatus,
   fetchPeriod,
   fetchExams,
-  prescriptionDrug,
-  savePrescriptionDrug,
   selectPrescriptionDrug,
   access_token,
   isFetching,
@@ -120,12 +116,6 @@ export default function Screening({
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
 
-  const onSavePrescriptionDrug = () =>
-    savePrescriptionDrug(prescriptionDrug.item.idPrescriptionDrug, prescriptionDrug.item);
-  const onCancelPrescriptionDrug = () => {
-    selectPrescriptionDrug({});
-    setOpenPrescriptionDrugModal(false);
-  };
   const onShowPrescriptionDrugModal = data => {
     selectPrescriptionDrug(data);
     setOpenPrescriptionDrugModal(true);
@@ -265,19 +255,6 @@ export default function Screening({
   useEffect(() => {
     fetchScreeningById(id);
   }, [id, fetchScreeningById]);
-
-  useEffect(() => {
-    if (prescriptionDrug.success) {
-      updatePrescriptionDrugData(
-        prescriptionDrug.item.idPrescriptionDrug,
-        prescriptionDrug.item.source,
-        prescriptionDrug.item
-      );
-      setOpenPrescriptionDrugModal(false);
-
-      notification.success({ message: 'Uhu! Anotação salva com sucesso' });
-    }
-  }, [prescriptionDrug.success, updatePrescriptionDrugData, prescriptionDrug.item]);
 
   const rowClassName = (record, index) => {
     const classes = [];
@@ -524,21 +501,9 @@ export default function Screening({
       </Row>
 
       <ModalIntervention visible={visible} setVisibility={setVisibility} />
-      <PrescriptionDrugModal
-        onOk={onSavePrescriptionDrug}
+      <ModalPrescriptionDrug
         visible={openPrescriptionDrugModal}
-        onCancel={onCancelPrescriptionDrug}
-        confirmLoading={prescriptionDrug.isSaving}
-        okButtonProps={{
-          disabled: prescriptionDrug.isSaving
-        }}
-        cancelButtonProps={{
-          disabled: prescriptionDrug.isSaving,
-          className: 'gtm-bt-cancel-notes'
-        }}
-        okText="Salvar"
-        okType="primary gtm-bt-save-notes"
-        cancelText="Cancelar"
+        setVisibility={setOpenPrescriptionDrugModal}
       />
     </>
   );
