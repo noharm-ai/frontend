@@ -359,8 +359,8 @@ export default function Screening({
               {isFetching ? (
                 <LoadBox />
               ) : (
-                dsDrugList.map(ds => (
-                  <>
+                dsDrugList.map((ds, index) => (
+                  <div key={index}>
                     {content.agg && (
                       <PrescriptionHeader>
                         <strong className="p-number">Prescrição #{ds.key}</strong>
@@ -401,7 +401,7 @@ export default function Screening({
                       expandedRowRender={expandedRowRender}
                       rowClassName={rowClassName}
                     />
-                  </>
+                  </div>
                 ))
               )}
             </Col>
