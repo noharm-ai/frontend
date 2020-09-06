@@ -183,7 +183,7 @@ export default function ScoreWizard({
                   width: 120,
                   marginRight: '10px'
                 }}
-                min={1}
+                min={0}
                 max={99999}
                 value={drugData.division}
                 onChange={value => updateDrugData({ division: value, touched: true })}
