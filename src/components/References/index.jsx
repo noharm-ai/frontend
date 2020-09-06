@@ -213,8 +213,12 @@ export default function References({
   };
 
   const rowClassName = (record, index) => {
+    let matchDose = match.params.dose
+    if (drugData.division) {
+      matchDose = Math.ceil(matchDose/drugData.division) * drugData.division;
+    }
     if (
-      record.dose + '' === match.params.dose &&
+      record.dose + '' === matchDose + '' &&
       record.frequency + '' === convFreq(match.params.frequency)
     ) {
       return 'highlight';

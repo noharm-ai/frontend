@@ -59,6 +59,16 @@ const PrescriptionHeader = styled.div`
   .p-number {
     padding-right: 10px;
   }
+
+  a {
+    color: rgba(0, 0, 0, 0.65);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
 `;
 
 export default function Screening({
@@ -363,7 +373,16 @@ export default function Screening({
                   <div key={index}>
                     {content.agg && (
                       <PrescriptionHeader>
-                        <strong className="p-number">Prescrição #{ds.key}</strong>
+                        <strong className="p-number">
+                          Prescrição &nbsp;
+                          <a
+                            href={`/prescricao/${ds.key}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            # {ds.key}
+                          </a>
+                        </strong>
                         <span>
                           <strong>Liberação:</strong> &nbsp;
                           {format(new Date(content.headers[ds.key].date), 'dd/MM/yyyy HH:mm')}
