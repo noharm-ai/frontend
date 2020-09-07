@@ -10,7 +10,7 @@ import { ExpandableTable } from '@components/Table';
 import interventionColumns, {
   expandedInterventionRowRender
 } from '@components/Screening/Intervention/columns';
-import Modal from '@components/Screening/Modal';
+import ModalIntervention from '@containers/Screening/ModalIntervention';
 import Button from '@components/Button';
 import Tag from '@components/Tag';
 import Tooltip from '@components/Tooltip';
@@ -54,7 +54,7 @@ export default function InterventionList({
 }) {
   const [visible, setVisibility] = useState(false);
   const { isFetching, list, error } = intervention;
-  const { isSaving, wasSaved, item } = intervention.maybeCreateOrUpdate;
+  const { wasSaved, item } = intervention.maybeCreateOrUpdate;
   const [filter, setFilter] = useState({
     status: null
   });
@@ -67,13 +67,6 @@ export default function InterventionList({
       intervention: data
     });
     setVisibility(true);
-  };
-  const onSave = () => {
-    save(item);
-  };
-  const onCancel = () => {
-    select({});
-    setVisibility(false);
   };
 
   const handleFilter = (e, status) => {
@@ -221,22 +214,7 @@ export default function InterventionList({
         dataSource={!isFetching ? dsInterventions : []}
         expandedRowRender={expandedInterventionRowRender}
       />
-      <Modal
-        onOk={onSave}
-        visible={visible}
-        onCancel={onCancel}
-        confirmLoading={isSaving}
-        okButtonProps={{
-          disabled: isSaving
-        }}
-        cancelButtonProps={{
-          disabled: isSaving,
-          className: 'gtm-bt-cancel-interv'
-        }}
-        okText="Salvar"
-        okType="primary gtm-bt-save-interv"
-        cancelText="Cancelar"
-      />
+      <ModalIntervention visible={visible} setVisibility={setVisibility} />
     </>
   );
 }

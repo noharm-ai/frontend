@@ -9,17 +9,16 @@ import { ExpandableTable } from '@components/Table';
 import Empty from '@components/Empty';
 import LoadBox from '@components/LoadBox';
 import { Row, Col } from '@components/Grid';
-import notification from '@components/notification';
 import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
-import Icon from '@components/Icon';
 import TableFilter from '@components/TableFilter';
+import { format } from 'date-fns';
+import ModalIntervention from '@containers/Screening/ModalIntervention';
+import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 import { toDataSource } from '@utils';
 
-import Modal from './Modal';
-import PrescriptionDrugModal from './PrescriptionDrugModal';
 import Patient from './Patient';
 import columnsTable, {
   expandedRowRender,
@@ -33,15 +32,6 @@ import examColumns, { examRowClassName, expandedExamRowRender } from './Exam/col
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
 
-// error message when fetch has error.
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
-};
-// save message when saved intervention.
-const saveMessage = {
-  message: 'Uhu! Intervenção salva com sucesso! :)'
-};
 const noop = () => {};
 const theTitle = () => 'Deslize para a direita para ver mais conteúdo.';
 
@@ -61,29 +51,45 @@ const PrescriptionHeader = styled.div`
   padding-left: 15px;
   border-radius: 4px;
   margin-top: 20px;
+
+  span {
+    padding-left: 15px;
+  }
+
+  .p-number {
+    padding-right: 10px;
+  }
+
+  a {
+    color: rgba(0, 0, 0, 0.65);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
 `;
 
 export default function Screening({
   match,
-  prescription,
-  maybeCreateOrUpdate,
-  save,
-  reset,
   select,
   fetchScreeningById,
   savePrescriptionDrugStatus,
-  updateInterventionData,
-  updatePrescriptionDrugData,
   saveInterventionStatus,
   fetchPeriod,
   fetchExams,
-  prescriptionDrug,
-  savePrescriptionDrug,
   selectPrescriptionDrug,
-  access_token
+  access_token,
+  isFetching,
+  content,
+  error,
+  exams,
+  checkPrescriptionDrug,
+  checkIntervention,
+  periodObject
 }) {
   const id = extractId(match.params.slug);
-  const { isFetching, content, error, exams } = prescription;
   const {
     prescription: drugList,
     solution: solutionList,
@@ -91,7 +97,7 @@ export default function Screening({
     interventions: interventionList,
     infusion: infusionList
   } = content;
-  const { isSaving, wasSaved, item } = maybeCreateOrUpdate;
+  // const { isSaving, wasSaved, item } = maybeCreateOrUpdate;
 
   const [visible, setVisibility] = useState(false);
   const [expandedRows, setExpandedRows] = useState({
@@ -120,37 +126,9 @@ export default function Screening({
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
 
-  const onSave = () => save(item);
-  const onCancel = () => {
-    select({});
-    setVisibility(false);
-  };
-  const onShowModal = data => {
-    select(data);
-    setVisibility(true);
-  };
-
-  const onSavePrescriptionDrug = () =>
-    savePrescriptionDrug(prescriptionDrug.item.idPrescriptionDrug, prescriptionDrug.item);
-  const onCancelPrescriptionDrug = () => {
-    selectPrescriptionDrug({});
-    setOpenPrescriptionDrugModal(false);
-  };
   const onShowPrescriptionDrugModal = data => {
     selectPrescriptionDrug(data);
     setOpenPrescriptionDrugModal(true);
-  };
-
-  const isSaveBtnDisabled = item => {
-    if (isEmpty(item)) {
-      return true;
-    }
-
-    if (isEmpty(item.intervention.idInterventionReason)) {
-      return true;
-    }
-
-    return false;
   };
 
   const updateExpandedRows = (list, key) => {
@@ -182,59 +160,94 @@ export default function Screening({
     }
   };
 
+  const onShowModal = data => {
+    select(data);
+    setVisibility(true);
+  };
+
   // extra resources to add in table item.
   const bag = {
     onShowModal,
     onShowPrescriptionDrugModal,
-    check: prescription.checkPrescriptionDrug,
+    check: checkPrescriptionDrug,
     savePrescriptionDrugStatus,
     idSegment: content.idSegment,
     uniqueDrugList: getUniqueDrugs(drugList, solutionList, proceduresList),
     admissionNumber: content.admissionNumber,
     saveInterventionStatus,
-    checkIntervention: prescription.checkIntervention,
-    periodObject: prescription.periodObject,
+    checkIntervention,
+    periodObject,
     fetchPeriod,
     handleRowExpand,
     weight: content.weight
   };
 
-  const splitDS = (list) => {
-    let drugArray = []
-    list.forEach(item => {
-      if (!drugArray[item.grp_solution]) { drugArray[item.grp_solution] = [] }
-      drugArray[item.grp_solution].push(item)
-    });
+  const [dsDrugList, setDrugList] = useState([]);
+  const [dsSolutions, setDsSolutions] = useState([]);
+  const [dsProcedures, setDsProcedures] = useState([]);
+  const [dsInterventions, setDsInterventions] = useState([]);
+  const [dsExams, setDsExams] = useState([]);
 
-    let dsArray = []
-    drugArray.forEach((item, index) => {
-      dsArray.push({
-        key: index,
-        value: toDataSource(item, 'idPrescriptionDrug', {...bag,  prescriptionType: 'prescriptions' })
+  useEffect(() => {
+    const splitDS = list => {
+      const drugArray = [];
+      list.forEach(item => {
+        if (!drugArray[item.grp_solution]) {
+          drugArray[item.grp_solution] = [];
+        }
+        drugArray[item.grp_solution].push(item);
+      });
+
+      const dsArray = [];
+      drugArray.forEach((item, index) => {
+        dsArray.push({
+          key: index,
+          value: toDataSource(item, 'idPrescriptionDrug', {
+            ...bag,
+            prescriptionType: 'prescriptions'
+          })
+        });
+      });
+
+      return dsArray;
+    };
+
+    setDrugList(drugList ? splitDS(drugList) : []);
+  }, [drugList]); // eslint-disable-line
+
+  useEffect(() => {
+    setDsSolutions(
+      groupSolutions(
+        toDataSource(solutionList, 'idPrescriptionDrug', {
+          ...bag,
+          prescriptionType: 'solutions'
+        }),
+        infusionList
+      )
+    );
+  }, [solutionList]); // eslint-disable-line
+
+  useEffect(() => {
+    setDsProcedures(
+      toDataSource(proceduresList, 'idPrescriptionDrug', {
+        ...bag,
+        prescriptionType: 'procedures'
       })
-    });
+    );
+  }, [proceduresList]); // eslint-disable-line
 
-    return dsArray;
-  }
+  useEffect(() => {
+    setDsInterventions(
+      toDataSource(interventionList, 'id', {
+        saveInterventionStatus,
+        check: checkIntervention
+      })
+    );
+  }, [interventionList]); // eslint-disable-line
 
-  const dsArray = drugList ? splitDS(drugList) : [];
-
-  const dsSolutions = groupSolutions(
-    toDataSource(solutionList, 'idPrescriptionDrug', {
-      ...bag,
-      prescriptionType: 'solutions'
-    }),
-    infusionList
-  );
-  const dsProcedures = toDataSource(proceduresList, 'idPrescriptionDrug', {
-    ...bag,
-    prescriptionType: 'procedures'
-  });
-  const dsInterventions = toDataSource(interventionList, 'id', {
-    saveInterventionStatus,
-    check: prescription.checkIntervention
-  });
-  const dsExams = toDataSource(exams.list, 'key', {});
+  useEffect(() => {
+    setDsExams(toDataSource(exams.list, 'key', {}));
+  }, [exams.list]); // eslint-disable-line
 
   const listCount = {
     prescriptions: drugList ? drugList.length : 0,
@@ -252,37 +265,6 @@ export default function Screening({
   useEffect(() => {
     fetchScreeningById(id);
   }, [id, fetchScreeningById]);
-
-  // show message if has error
-  useEffect(() => {
-    if (!isEmpty(error)) {
-      notification.error(errorMessage);
-    }
-  }, [error]);
-
-  // handle after save intervention.
-  useEffect(() => {
-    if (wasSaved) {
-      updateInterventionData(item.idPrescriptionDrug, item.source, item.intervention);
-      reset();
-      setVisibility(false);
-
-      notification.success(saveMessage);
-    }
-  }, [wasSaved, id, reset, item, updateInterventionData]);
-
-  useEffect(() => {
-    if (prescriptionDrug.success) {
-      updatePrescriptionDrugData(
-        prescriptionDrug.item.idPrescriptionDrug,
-        prescriptionDrug.item.source,
-        prescriptionDrug.item
-      );
-      setOpenPrescriptionDrugModal(false);
-
-      notification.success({ message: 'Uhu! Anotação salva com sucesso' });
-    }
-  }, [prescriptionDrug.success, updatePrescriptionDrugData, prescriptionDrug.item]);
 
   const rowClassName = (record, index) => {
     const classes = [];
@@ -327,44 +309,6 @@ export default function Screening({
     if (key === '5') {
       loadExams();
     }
-  };
-
-  const InterventionFooter = () => {
-    const isChecked = item.status === 's';
-
-    const undoIntervention = () => {
-      savePrescriptionDrugStatus(item.idPrescriptionDrug, '0', item.source);
-      setVisibility(false);
-    };
-
-    return (
-      <>
-        <Button onClick={() => onCancel()} disabled={isSaving} className="gtm-bt-cancel-interv">
-          Cancelar
-        </Button>
-        {isChecked && (
-          <Tooltip title="Desfazer intervenção" placement="top">
-            <Button
-              type="danger gtm-bt-undo-interv"
-              ghost
-              loading={prescription.checkPrescriptionDrug.isChecking}
-              onClick={() => undoIntervention()}
-            >
-              <Icon type="rollback" style={{ fontSize: 16 }} />
-            </Button>
-          </Tooltip>
-        )}
-
-        <Button
-          type="primary gtm-bt-save-interv"
-          onClick={() => onSave()}
-          disabled={isSaving || isSaveBtnDisabled(item)}
-          loading={isSaving}
-        >
-          Salvar
-        </Button>
-      </>
-    );
   };
 
   const ListFilter = ({ listCount, handleFilter, isFilterActive }) => (
@@ -422,31 +366,63 @@ export default function Screening({
                 handleFilter={handleFilter}
                 isFilterActive={isFilterActive}
               />
-              {isFetching ? (<LoadBox />) : 
-                dsArray.map(ds => (
-                <>
-                  { (content.agg) && <PrescriptionHeader>Prescrição #{ds.key} </PrescriptionHeader> }
-                  <ExpandableTable
-                    expandedRowKeys={expandedRows.prescription}
-                    onExpand={(expanded, record) => handleRowExpand(record)}
-                    title={title}
-                    columns={columnsTable(filter)}
-                    pagination={false}
-                    loading={isFetching}
-                    locale={{
-                      emptyText: (
-                        <Empty
-                          image={Empty.PRESENTED_IMAGE_SIMPLE}
-                          description="Nenhum medicamento encontrado."
-                        />
-                      )
-                    }}
-                    dataSource={!isFetching ? ds.value : []}
-                    expandedRowRender={expandedRowRender}
-                    rowClassName={rowClassName}
-                  />
-                </>
-              ))}
+              {isFetching ? (
+                <LoadBox />
+              ) : (
+                dsDrugList.map((ds, index) => (
+                  <div key={index}>
+                    {content.agg && (
+                      <PrescriptionHeader>
+                        <strong className="p-number">
+                          Prescrição &nbsp;
+                          <a
+                            href={`/prescricao/${ds.key}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            # {ds.key}
+                          </a>
+                        </strong>
+                        <span>
+                          <strong>Liberação:</strong> &nbsp;
+                          {format(new Date(content.headers[ds.key].date), 'dd/MM/yyyy HH:mm')}
+                        </span>
+                        <span>
+                          <strong>Vigência:</strong> &nbsp;
+                          {format(new Date(content.headers[ds.key].expire), 'dd/MM/yyyy HH:mm')}
+                        </span>
+                        <span>
+                          <strong>Leito:</strong> &nbsp;
+                          {content.headers[ds.key].bed}
+                        </span>
+                        <span>
+                          <strong>Prescritor:</strong> &nbsp;
+                          {content.headers[ds.key].prescriber}
+                        </span>
+                      </PrescriptionHeader>
+                    )}
+                    <ExpandableTable
+                      expandedRowKeys={expandedRows.prescription}
+                      onExpand={(expanded, record) => handleRowExpand(record)}
+                      title={title}
+                      columns={columnsTable(filter)}
+                      pagination={false}
+                      loading={isFetching}
+                      locale={{
+                        emptyText: (
+                          <Empty
+                            image={Empty.PRESENTED_IMAGE_SIMPLE}
+                            description="Nenhum medicamento encontrado."
+                          />
+                        )
+                      }}
+                      dataSource={!isFetching ? ds.value : []}
+                      expandedRowRender={expandedRowRender}
+                      rowClassName={rowClassName}
+                    />
+                  </div>
+                ))
+              )}
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane tab={<TabTitle title="Soluções" count={listCount.solutions} />} key="2">
@@ -543,27 +519,10 @@ export default function Screening({
         </ScreeningTabs>
       </Row>
 
-      <Modal
-        visible={visible}
-        confirmLoading={isSaving}
-        footer={<InterventionFooter />}
-        onCancel={onCancel}
-      />
-      <PrescriptionDrugModal
-        onOk={onSavePrescriptionDrug}
+      <ModalIntervention visible={visible} setVisibility={setVisibility} />
+      <ModalPrescriptionDrug
         visible={openPrescriptionDrugModal}
-        onCancel={onCancelPrescriptionDrug}
-        confirmLoading={prescriptionDrug.isSaving}
-        okButtonProps={{
-          disabled: isSaving
-        }}
-        cancelButtonProps={{
-          disabled: isSaving,
-          className: 'gtm-bt-cancel-notes'
-        }}
-        okText="Salvar"
-        okType="primary gtm-bt-save-notes"
-        cancelText="Cancelar"
+        setVisibility={setOpenPrescriptionDrugModal}
       />
     </>
   );
