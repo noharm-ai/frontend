@@ -78,7 +78,7 @@ const Reason = ({ reasons, defaultReason, updateReason }) => {
     <Box css="display: flex; align-items: center">
       <Heading as="label" htmlFor="reason" size="14px" className="fixed">
         <Tooltip
-          title="Apresentação, Substituição, Interações, Incompatibilidades ou Duplicidade abrem a opção de informar os medicamentos relacionados"
+          title="Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica abrem a opção de informar os medicamentos relacionados"
           underline
         >
           Motivos:
@@ -200,7 +200,7 @@ const Interactions = ({
     <Box css="display: flex; align-items: center">
       <Heading as="label" htmlFor="interactions" size="14px" className="fixed">
         <Tooltip
-          title="Lista de medicamentos com Interações, Incompatibilidades, Duplicidade, Substituições e/ou diferentes formas de apresentação"
+          title="Lista de medicamentos com Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica"
           underline
         >
           Relações:
@@ -354,7 +354,7 @@ const Observations = ({
 const hasRelationships = (reasonList, selectedReasons = []) => {
   if (!selectedReasons) return false;
 
-  const reasonsWithRelationshipsRegEx = /duplicidade|interaç|incompatib|apresentaç|substituiç/g;
+  const reasonsWithRelationshipsRegEx = /duplicidade|interaç|incompatib|apresentaç|forma/g;
   let hasRelationships = false;
 
   selectedReasons.forEach(itemId => {
