@@ -135,7 +135,7 @@ export const fetchScreeningThunk = idPrescription => async (dispatch, getState) 
 
   const singlePrescriptionAddedPatientName = {
     ...singlePrescription,
-    namePatient: patientsList[singlePrescription.idPatient].name
+    namePatient: patientsList[singlePrescription.idPatient] ? patientsList[singlePrescription.idPatient].name : 'Paciente'
   };
 
   dispatch(patientsFetchListSuccess(patientsList));
