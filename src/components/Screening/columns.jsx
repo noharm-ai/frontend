@@ -476,7 +476,7 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
 };
 
 export const expandedRowRender = record => {
-  if (record.total) {
+  if (record.total && record.infusion) {
     return (
       <NestedTableContainer>
         <SolutionCalculator {...record.infusion.value} weight={record.weight} />
@@ -485,27 +485,29 @@ export const expandedRowRender = record => {
   }
 
   const config = {};
-  switch (record.prevIntervention.status) {
-    case 'a':
-      config.label = 'Aceita';
-      config.color = 'green';
-      break;
-    case 'n':
-      config.label = 'Não aceita';
-      config.color = 'red';
-      break;
-    case 'x':
-      config.label = 'Não se aplica';
-      config.color = null;
-      break;
-    case 's':
-      config.label = 'Pendente';
-      config.color = 'orange';
-      break;
-    default:
-      config.label = `Indefinido (${record.prevIntervention.status})`;
-      config.color = null;
-      break;
+  if (record.prevIntervention) {
+    switch (record.prevIntervention.status) {
+      case 'a':
+        config.label = 'Aceita';
+        config.color = 'green';
+        break;
+      case 'n':
+        config.label = 'Não aceita';
+        config.color = 'red';
+        break;
+      case 'x':
+        config.label = 'Não se aplica';
+        config.color = null;
+        break;
+      case 's':
+        config.label = 'Pendente';
+        config.color = 'orange';
+        break;
+      default:
+        config.label = `Indefinido (${record.prevIntervention.status})`;
+        config.color = null;
+        break;
+    }
   }
 
   return (
@@ -656,7 +658,7 @@ const drugInfo = [
     dataIndex: 'dosage',
     width: 130,
     render: (text, prescription) => {
-      if (prescription.total) {
+      if (prescription.total && prescription.infusion) {
         return (
           <Tooltip title="Abrir calculadora de solução" placement="top">
             <span

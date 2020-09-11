@@ -32,9 +32,9 @@ const getPatients = async (bearerToken, requestConfig) => {
 
     const cache = moment().diff(birthdate, 'years') > 0;
     console.log('%cRequested patient of id: ', 'color: #e67e22;', idPatient, 'cache:', cache);
-    const urlRequest = nameUrl.replace(flag, idPatient);
 
     try {
+      const urlRequest = nameUrl.replace(flag, idPatient);
       const { data: patient } = await axios.get(urlRequest, { timeout: 8000 });
       return { ...patient, cache };
     } catch (e) {
