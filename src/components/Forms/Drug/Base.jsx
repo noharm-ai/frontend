@@ -18,6 +18,7 @@ export default function Base() {
     controlled,
     notdefault,
     maxDose,
+    price,
     kidney,
     liver,
     elderly,
@@ -107,6 +108,23 @@ export default function Base() {
               </Checkbox>
             </Col>
           </div>
+        </Box>
+      </Col>
+      <Col xs={24}>
+        <Box hasError={errors.price}>
+          <Heading as="label" size="14px" className="fixed">
+            Custo:
+          </Heading>
+          <InputNumber
+            style={{
+              width: 120,
+              marginRight: 5
+            }}
+            min={0}
+            max={99999}
+            value={price}
+            onChange={value => setFieldValue('price', value)}
+          />
         </Box>
       </Col>
       <Col xs={24}>

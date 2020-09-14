@@ -2,8 +2,8 @@ import isEmpty from 'lodash.isempty';
 
 import api from '@services/api';
 import hospital from '@services/hospital';
-import { errorHandler, toObject } from '@utils';
 import { transformPrescriptions, transformPrescription, transformExams } from '@utils/transformers';
+import { errorHandler, toObject } from '@utils';
 import { Creators as PatientsCreators } from '../patients';
 import { Creators as PrescriptionsCreators } from './index';
 
@@ -52,7 +52,7 @@ const {
 export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, getState) => {
   dispatch(prescriptionsFetchListStart());
 
-  const { auth, patients } = getState();
+  const { auth, patients, app } = getState();
   const { list: listPatients } = patients;
   const { access_token } = auth.identify;
   const {
@@ -67,7 +67,9 @@ export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, get
 
   const requestConfig = {
     listToRequest: data,
-    listToEscape: listPatients
+    listToEscape: listPatients,
+    nameUrl: app.config.nameUrl,
+    useCache: true
   };
 
   const patientsList = await hospital.getPatients(access_token, requestConfig);
@@ -107,7 +109,7 @@ export const updatePrescriptionStatusThunk = (params = {}) => async (dispatch, g
 export const fetchScreeningThunk = idPrescription => async (dispatch, getState) => {
   dispatch(prescriptionsFetchSingleStart());
 
-  const { auth, patients } = getState();
+  const { auth, patients, app } = getState();
   const { list: listPatients } = patients;
   const { access_token } = auth.identify;
   const {
@@ -124,7 +126,9 @@ export const fetchScreeningThunk = idPrescription => async (dispatch, getState) 
 
   const requestConfig = {
     listToRequest: [singlePrescription],
-    listToEscape: listPatients
+    listToEscape: listPatients,
+    nameUrl: app.config.nameUrl,
+    useCache: false
   };
 
   const patientsList = toObject(

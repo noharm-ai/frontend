@@ -5,10 +5,12 @@ import { errorHandler } from '@utils';
 import { Creators as UserCreators } from '../user';
 import { Creators as SessionCreators } from '../session';
 import { Creators as AuthCreators } from './index';
+import { Creators as AppCreators } from '../app';
 
 const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { authSetErrorIdentify, authSetIdentify, authDelIdentify } = AuthCreators;
+const { appSetConfig } = AppCreators;
 
 export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch => {
   dispatch(userSetLoginStart());
@@ -21,7 +23,7 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
     return;
   }
 
-  const { userName, schema, roles, ...identify } = data;
+  const { userName, schema, roles, nameUrl, ...identify } = data;
   const user = {
     userName,
     schema,
@@ -31,6 +33,7 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
   dispatch(authSetIdentify(identify));
   dispatch(sessionSetFirstAccess());
   dispatch(userSetCurrentUser(user, keepMeLogged));
+  dispatch(appSetConfig({ nameUrl }));
 };
 
 export const logoutThunk = () => {
