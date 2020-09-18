@@ -70,6 +70,7 @@ export default function Exam({
     >
       {({ handleSubmit }) => (
         <DefaultModal
+          width={700}
           centered
           destroyOnClose
           {...props}

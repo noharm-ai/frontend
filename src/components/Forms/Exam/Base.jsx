@@ -30,6 +30,7 @@ export default function Base({ examTypes, examList }) {
           <Select
             optionFilterProp="children"
             style={{ width: '100%', marginLeft: 10 }}
+            showSearch
             placeholder="Selecione o exame..."
             onChange={value => setFieldValue('type', value)}
             value={type}

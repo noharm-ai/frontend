@@ -111,6 +111,9 @@ export default function EditSubstance({
                 disabled={isSaving}
                 onChange={saveSubstance}
               >
+                <Select.Option key="0" value="0">
+                  &nbsp;
+                </Select.Option>
                 {substance.list.map(({ sctid, name }) => (
                   <Select.Option key={sctid} value={sctid}>
                     {name}
