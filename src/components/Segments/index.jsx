@@ -88,6 +88,15 @@ function Segments({
 
   const afterSaveSegment = () => {};
 
+  const [sortOrder, setSortOrder] = useState({
+    order: null,
+    columnKey: null
+  });
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    setSortOrder(sorter);
+  };
+
   const generateOutlierClick = () =>
     generateOutlier({
       id: segments.firstFilter.idSegment
@@ -142,11 +151,12 @@ function Segments({
             </Tooltip>
           </Row>
           <Table
-            columns={examColumns}
+            columns={examColumns(sortOrder)}
             pagination={false}
             loading={currentSegment.isFetching}
             locale={{ emptyText }}
             dataSource={!currentSegment.isFetching ? dsExams : []}
+            onChange={handleTableChange}
           />
         </Tabs.TabPane>
       </Tabs>

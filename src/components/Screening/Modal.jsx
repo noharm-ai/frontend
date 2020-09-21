@@ -109,6 +109,7 @@ export default function Modal({
 
   return (
     <DefaultModal
+      width={700}
       centered
       destroyOnClose
       visible={visible}
