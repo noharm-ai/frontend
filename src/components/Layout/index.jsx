@@ -15,8 +15,16 @@ import { useTranslation } from 'react-i18next';
 const siderWidth = 250;
 const { Sider, Header, Content, Footer } = Main;
 
+const octadesk = window.octadesk;
+
 const setTitle = ({ user }) => {
   document.title = process.env.REACT_APP_SITE_TITLE + ' - ' + user.account.schema;
+  if (octadesk && octadesk.chat) {
+    octadesk.chat.login({
+      name: user.account.userName,
+      email: user.account.email
+    });
+  };
   return user.account.userName;
 };
 
@@ -38,12 +46,14 @@ const Me = ({ user, toggleDrawer, t }) => (
   </div>
 );
 
-export default function Layout({ children, theme, app, setAppSider, ...props }) {
+export default function Layout({ children, theme, app, setAppSider, security, ...props }) {
   const [sider, setSider] = useState({
     collapsed: app.sider.collapsed,
     collapsedWidth: 80
   });
   const [isDrawerVisible, setDrawerVisibility] = useState(false);
+
+  const isAdmin = security.isAdmin();
 
   const onBreakpoint = breaked => {
     setSider(prevState => ({
@@ -68,7 +78,11 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
   };
 
   const toggleDrawer = () => {
-    setDrawerVisibility(!isDrawerVisible);
+    if (isAdmin) { 
+      octadesk.chat.toggle(); 
+    } else {
+      setDrawerVisibility(!isDrawerVisible);
+    }
   };
 
   const { t } = useTranslation();

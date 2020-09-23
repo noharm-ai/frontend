@@ -11,7 +11,8 @@ export const { Types, Creators } = createActions({
 
 const INITIAL_STATE = {
   account: {
-    userName: ''
+    userName: '',
+    email: ''
   },
   keepMeLogged: false,
   isLogged: false,
