@@ -12,7 +12,7 @@ export default [
     id: 'gtm-lnk-intervencoes'
   },
   {
-    key: './relatorios',
+    key: '/relatorios',
     text: 'menu.reports',
     icon: 'report',
     id: 'gtm-lnk-report'

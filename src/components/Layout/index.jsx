@@ -46,7 +46,7 @@ const Me = ({ user, toggleDrawer, t }) => (
   </div>
 );
 
-export default function Layout({ children, theme, app, setAppSider, security, ...props }) {
+export default function Layout({ children, theme, app, setAppSider, ...props }) {
   const [sider, setSider] = useState({
     collapsed: app.sider.collapsed,
     collapsedWidth: 80
