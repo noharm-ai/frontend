@@ -40,7 +40,7 @@ const Me = ({ user, toggleDrawer, t }) => (
     <LogOut onClick={e => octadesk.chat.toggle()} id="gtm-lnk-ajuda" style={{ marginRight: '12px' }}>
       {t('layout.help')}
     </LogOut>
-    <LogOut href="/logout" id="gtm-lnk-sair">
+    <LogOut onClick={e => octadesk.chat.hide()} href="/logout" id="gtm-lnk-sair">
       {t('layout.logout')}
     </LogOut>
   </div>
