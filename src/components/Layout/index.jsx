@@ -37,7 +37,7 @@ const Me = ({ user, toggleDrawer, t }) => (
   >
     <Avatar size={44} icon="user" css="margin-right: 12px !important;" />
     <UserName>{setTitle({ user })}</UserName>
-    <LogOut onClick={e => toggleDrawer(e)} id="gtm-lnk-ajuda" style={{ marginRight: '12px' }}>
+    <LogOut onClick={e => octadesk.chat.toggle()} id="gtm-lnk-ajuda" style={{ marginRight: '12px' }}>
       {t('layout.help')}
     </LogOut>
     <LogOut href="/logout" id="gtm-lnk-sair">
@@ -52,8 +52,6 @@ export default function Layout({ children, theme, app, setAppSider, security, ..
     collapsedWidth: 80
   });
   const [isDrawerVisible, setDrawerVisibility] = useState(false);
-
-  const isAdmin = security.isAdmin();
 
   const onBreakpoint = breaked => {
     setSider(prevState => ({
@@ -78,11 +76,7 @@ export default function Layout({ children, theme, app, setAppSider, security, ..
   };
 
   const toggleDrawer = () => {
-    if (isAdmin) { 
-      octadesk.chat.toggle(); 
-    } else {
-      setDrawerVisibility(!isDrawerVisible);
-    }
+    setDrawerVisibility(!isDrawerVisible);
   };
 
   const { t } = useTranslation();
