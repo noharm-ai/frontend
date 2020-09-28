@@ -19,6 +19,7 @@ export default function Base() {
     notdefault,
     maxDose,
     price,
+    maxTime,
     kidney,
     liver,
     elderly,
@@ -125,6 +126,23 @@ export default function Base() {
             value={price}
             onChange={value => setFieldValue('price', value)}
           />
+        </Box>
+      </Col>
+      <Col xs={24}>
+        <Box hasError={errors.maxTime}>
+          <Heading as="label" size="14px" className="fixed">
+            Tempo Máximo de Tratamento
+          </Heading>
+          <InputNumber
+            style={{
+              width: 120,
+              marginRight: 5
+            }}
+            min={0}
+            max={99999}
+            value={maxTime}
+            onChange={value => setFieldValue('maxTime', value)}
+          />{' dias'}
         </Box>
       </Col>
       <Col xs={24}>

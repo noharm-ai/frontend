@@ -18,7 +18,7 @@ export default [
     id: 'gtm-lnk-report'
   },
   {
-    key: '/base-de-conhecimento',
+    key: { pathname: 'https://noharm.octadesk.com/kb' },
     text: 'menu.knowledgeBase',
     icon: 'bulb',
     id: 'gtm-lnk-knowledgeBase'

@@ -15,8 +15,16 @@ import { useTranslation } from 'react-i18next';
 const siderWidth = 250;
 const { Sider, Header, Content, Footer } = Main;
 
+const octadesk = window.octadesk;
+
 const setTitle = ({ user }) => {
   document.title = process.env.REACT_APP_SITE_TITLE + ' - ' + user.account.schema;
+  if (octadesk && octadesk.chat) {
+    octadesk.chat.login({
+      name: user.account.userName,
+      email: user.account.email
+    });
+  };
   return user.account.userName;
 };
 
@@ -29,10 +37,10 @@ const Me = ({ user, toggleDrawer, t }) => (
   >
     <Avatar size={44} icon="user" css="margin-right: 12px !important;" />
     <UserName>{setTitle({ user })}</UserName>
-    <LogOut onClick={e => toggleDrawer(e)} id="gtm-lnk-ajuda" style={{ marginRight: '12px' }}>
+    <LogOut onClick={e => octadesk.chat.toggle()} id="gtm-lnk-ajuda" style={{ marginRight: '12px' }}>
       {t('layout.help')}
     </LogOut>
-    <LogOut href="/logout" id="gtm-lnk-sair">
+    <LogOut onClick={e => octadesk.chat.hideApp()} href="/logout" id="gtm-lnk-sair">
       {t('layout.logout')}
     </LogOut>
   </div>

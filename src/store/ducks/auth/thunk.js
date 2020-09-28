@@ -23,9 +23,10 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
     return;
   }
 
-  const { userName, schema, roles, nameUrl, ...identify } = data;
+  const { userName, email, schema, roles, nameUrl, ...identify } = data;
   const user = {
     userName,
+    email,
     schema,
     roles
   };
