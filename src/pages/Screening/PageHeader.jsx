@@ -170,7 +170,11 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
             <Icon type="alert" />
             Alerta
           </Button>
-          <Button type="default gtm-bt-close" onClick={close}>
+          <Button 
+            type="default gtm-bt-close" 
+            onClick={close}
+            style={{zIndex: 2147483699}}
+          >
             Fechar
           </Button>
         </Col>
