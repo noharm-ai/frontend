@@ -18,6 +18,7 @@ import { format } from 'date-fns';
 import ModalIntervention from '@containers/Screening/ModalIntervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 import { toDataSource } from '@utils';
+import BackTop from '@components/BackTop';
 
 import Patient from './Patient';
 import columnsTable, {
@@ -518,6 +519,8 @@ export default function Screening({
           </Tabs.TabPane>
         </ScreeningTabs>
       </Row>
+
+      <BackTop />
 
       <ModalIntervention visible={visible} setVisibility={setVisibility} />
       <ModalPrescriptionDrug

@@ -14,6 +14,7 @@ import ModalIntervention from '@containers/Screening/ModalIntervention';
 import Button from '@components/Button';
 import Tag from '@components/Tag';
 import Tooltip from '@components/Tooltip';
+import BackTop from '@components/BackTop';
 
 const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
@@ -199,6 +200,9 @@ export default function InterventionList({
           </Button>
         </Tooltip>
       </TableInfo>
+
+      <BackTop />
+
       <ExpandableTable
         columns={interventionColumns(filter)}
         pagination={false}

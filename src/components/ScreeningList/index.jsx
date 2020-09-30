@@ -14,6 +14,7 @@ import Tag from '@components/Tag';
 import { useTranslation } from "react-i18next";
 import Filter from './Filter';
 import { InfoIcon } from '@components/Icon';
+import BackTop from '@components/BackTop';
 
 import columnsTable, { expandedRowRender } from './columns';
 
@@ -201,6 +202,9 @@ export default function ScreeningList({
         dataSource={!isFetching ? dataSource : []}
         onChange={handleTableChange}
       />
+      
+      <BackTop />
+
       <div style={{ height: '20px', marginTop: '5px' }}>{info}</div>
     </>
   );

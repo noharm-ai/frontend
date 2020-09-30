@@ -10,6 +10,7 @@ import Empty from '@components/Empty';
 import Icon from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 import PopConfirm from '@components/PopConfirm';
+import BackTop from '@components/BackTop';
 
 import FormSegment from '@containers/Forms/Segment';
 import FormExamModal from '@containers/Forms/Exam';
@@ -160,6 +161,9 @@ function Segments({
           />
         </Tabs.TabPane>
       </Tabs>
+
+      <BackTop />
+      
       <FormExamModal
         visible={examModalVisible}
         onCancel={onCancelExamModal}
