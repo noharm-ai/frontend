@@ -60,6 +60,8 @@ export default function Patient({
   weightUser,
   weightDate,
   skinColor,
+  dischargeReason,
+  dischargeDate,
   namePatient,
   segmentName,
   bed,
@@ -170,6 +172,10 @@ export default function Patient({
               </Cell>
               <Cell>
                 <strong>Prontuário:</strong> {record}
+              </Cell>
+              <Cell>
+                <strong>Alta:</strong> 
+                {dischargeDate && <Tooltip title={formatWeightDate(dischargeDate)}> {dischargeReason} <InfoIcon /></Tooltip>}
               </Cell>
               <Cell>
                 <strong>Prescritor:</strong> {prescriber}
