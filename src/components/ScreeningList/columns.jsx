@@ -5,6 +5,8 @@ import Icon from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 import Table from '@components/Table';
 import { useTranslation } from "react-i18next";
+import { InfoIcon } from '@components/Icon';
+import moment from 'moment';
 
 const setDataIndex = list =>
   list.map(({ key, ...column }) => ({
@@ -234,6 +236,18 @@ export default (sortedInfo, filteredInfo) => {
           title: <Tooltip title="Tempo de internação (dias)">TI</Tooltip>,
           className: 'bg-light-gray gtm-th-tempo-int',
           key: 'lengthStay',
+          render: (entry, { lengthStay,  dischargeDate}) => { 
+            if (dischargeDate) {
+              const date = moment(dischargeDate).add(3, 'hours');
+              return (
+                <Tooltip title={'Paciente teve alta em ' + date.format('DD/MM/YYYY HH:mm')} placement="top">
+                  {lengthStay} <InfoIcon />
+                </Tooltip>
+              )
+            } else {
+              return lengthStay;
+            }
+          },
           width: 30,
           align: 'center',
           sortDirections: sortDirections,
