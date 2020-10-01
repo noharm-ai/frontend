@@ -173,7 +173,6 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
           <Button 
             type="default gtm-bt-close" 
             onClick={close}
-            style={{zIndex: 2147483699}}
           >
             Fechar
           </Button>

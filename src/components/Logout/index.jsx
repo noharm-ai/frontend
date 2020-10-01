@@ -95,7 +95,7 @@ export default function Logout({ doLogout }) {
         <Row type="flex" justify="center">
           <Col span={24} md={8}>
             <Box>
-              <Brand title="noHarm.ai | Cuidando dos pacientes" />
+              <Brand title="noHarm.ai | Cuidando dos pacientes (Outubro Rosa)" />
 
               {feedback}
             </Box>

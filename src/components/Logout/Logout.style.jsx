@@ -46,4 +46,5 @@ export const Brand = styled(LogoSVG)`
   margin: 0 auto 20px;
   max-width: 213px;
   width: 100%;
+  filter: hue-rotate(150deg);
 `;

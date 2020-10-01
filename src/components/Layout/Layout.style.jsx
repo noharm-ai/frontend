@@ -10,6 +10,7 @@ export const Brand = styled(LogoSVG)`
   min-width: 164px;
   max-width: 164px;
   width: 100%;
+  filter: hue-rotate(150deg);
 `;
 
 export const UserName = styled.p`
