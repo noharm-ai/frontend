@@ -131,7 +131,7 @@ export default function Base() {
       <Col xs={24}>
         <Box hasError={errors.maxTime}>
           <Heading as="label" size="14px" className="fixed">
-            Tempo Máximo de Tratamento
+            Alerta de Tempo de Tratamento
           </Heading>
           <InputNumber
             style={{
