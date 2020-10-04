@@ -61,7 +61,7 @@ export default function Patient({
   weightDate,
   skinColor,
   dischargeReason,
-  dischargeDate,
+  dischargeFormated,
   namePatient,
   segmentName,
   bed,
@@ -87,7 +87,7 @@ export default function Patient({
       return emptyMsg;
     }
 
-    const date = moment(weightDate).add(3, 'hours');
+    const date = moment(weightDate);
     const now = moment();
 
     if (now.diff(date, 'year') > 10) {
@@ -110,10 +110,10 @@ export default function Patient({
     setSeeMore(!seeMore);
   };
 
-  const dischargeMessage = (dischargeDate, dischargeReason) => {
-    if (dischargeDate) {
-      const date = moment(dischargeDate).add(3, 'hours');;
-      return <Tooltip title={"Paciente com " + dischargeReason + " em " + date.format('DD/MM/YYYY HH:mm')}> <InfoIcon /></Tooltip>
+  const dischargeMessage = (dischargeFormated, dischargeReason) => {
+    if (dischargeFormated) {
+      const reason = dischargeReason ? dischargeReason : 'alta';
+      return <Tooltip title={"Paciente com " + reason + " em " + dischargeFormated}> <InfoIcon /></Tooltip>
     };
   };
 
@@ -126,7 +126,7 @@ export default function Patient({
               <Col xs={20}>
                 <Name as="h3" size="18px">
                   {namePatient || '-'}
-                  {dischargeMessage(dischargeDate, dischargeReason)}
+                  {dischargeMessage(dischargeFormated, dischargeReason)}
                 </Name>
               </Col>
               <Col xs={4} className="btn-container">
