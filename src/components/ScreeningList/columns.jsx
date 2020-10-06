@@ -5,6 +5,7 @@ import Icon from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 import Table from '@components/Table';
 import { useTranslation } from "react-i18next";
+import { InfoIcon } from '@components/Icon';
 
 const setDataIndex = list =>
   list.map(({ key, ...column }) => ({
@@ -234,6 +235,17 @@ export default (sortedInfo, filteredInfo) => {
           title: <Tooltip title="Tempo de internação (dias)">TI</Tooltip>,
           className: 'bg-light-gray gtm-th-tempo-int',
           key: 'lengthStay',
+          render: (entry, { lengthStay,  dischargeFormated}) => { 
+            if (dischargeFormated) {
+              return (
+                <Tooltip title={'Paciente com alta em ' + dischargeFormated} placement="top">
+                  {lengthStay} <InfoIcon />
+                </Tooltip>
+              )
+            } else {
+              return lengthStay;
+            }
+          },
           width: 30,
           align: 'center',
           sortDirections: sortDirections,

@@ -92,7 +92,7 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
                 </UnstyledButton>
               </Tooltip>
               <span className={expireDate.diff(now, 'minute') < 0 ? 'legend red' : 'legend'}>
-                Prescrita em {prescription.content.dateFormated}
+                Liberada em {prescription.content.dateFormated}
                 {prescription.content.expire && <>, válida até {prescription.content.expireFormated}</>}
                 {prescription.content.expire && 
                   (expireDate.diff(createDate, 'hour') < 23) && 
@@ -170,7 +170,10 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
             <Icon type="alert" />
             Alerta
           </Button>
-          <Button type="default gtm-bt-close" onClick={close}>
+          <Button 
+            type="default gtm-bt-close" 
+            onClick={close}
+          >
             Fechar
           </Button>
         </Col>

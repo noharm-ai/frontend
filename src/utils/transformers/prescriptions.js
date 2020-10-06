@@ -27,6 +27,7 @@ export const transformPrescription = ({
   procedures,
   namePatient,
   idPrescription,
+  dischargeDate,
   ...item
 }) => ({
   ...item,
@@ -39,6 +40,7 @@ export const transformPrescription = ({
   dateOnlyFormated: format(new Date(date), 'dd/MM/yyyy'),
   expire,
   expireFormated: expire ? format(new Date(expire), 'dd/MM/yyyy HH:mm') : '',
+  dischargeFormated: dischargeDate ? format(new Date(dischargeDate), 'dd/MM/yyyy HH:mm') : '',
   shortDateFormat: format(new Date(date), 'dd/MM'),
   birthdate,
   age: birthdate ? formatAge(birthdate) : '',

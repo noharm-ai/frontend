@@ -60,6 +60,8 @@ export default function Patient({
   weightUser,
   weightDate,
   skinColor,
+  dischargeReason,
+  dischargeFormated,
   namePatient,
   segmentName,
   bed,
@@ -85,7 +87,7 @@ export default function Patient({
       return emptyMsg;
     }
 
-    const date = moment(weightDate).add(3, 'hours');
+    const date = moment(weightDate);
     const now = moment();
 
     if (now.diff(date, 'year') > 10) {
@@ -108,6 +110,13 @@ export default function Patient({
     setSeeMore(!seeMore);
   };
 
+  const dischargeMessage = (dischargeFormated, dischargeReason) => {
+    if (dischargeFormated) {
+      const reason = dischargeReason ? dischargeReason : 'alta';
+      return <Tooltip title={"Paciente com " + reason + " em " + dischargeFormated}> <InfoIcon /></Tooltip>
+    };
+  };
+
   return (
     <Row gutter={8}>
       <Col md={8}>
@@ -117,6 +126,7 @@ export default function Patient({
               <Col xs={20}>
                 <Name as="h3" size="18px">
                   {namePatient || '-'}
+                  {dischargeMessage(dischargeFormated, dischargeReason)}
                 </Name>
               </Col>
               <Col xs={4} className="btn-container">

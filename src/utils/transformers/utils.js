@@ -20,7 +20,7 @@ export const formatAge = birthdate => {
 
   const years = now.diff(mBirthdate, 'year');
   if (years > 2) {
-    return years;
+    return `${years}a`;
   }
 
   mBirthdate.add(years, 'years');

@@ -36,6 +36,7 @@ export const Brand = styled(LogoSVG)`
   margin: 0 auto 62px;
   max-width: 213px;
   width: 100%;
+  filter: hue-rotate(150deg);
 `;
 
 export const Box = styled.div`
