@@ -121,7 +121,7 @@ function Segments({
                 type="primary gtm-bt-seg-generate"
                 style={{ marginTop: '10px' }}
                 loading={outliers.generate.isGenerating}
-                disabled={outliers.generate.isGenerating}
+                disabled={outliers.generate.isGenerating || true}
               >
                 Gerar Escores
               </Button>
