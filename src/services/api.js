@@ -48,16 +48,21 @@ const setHeaders = token =>
   token
     ? {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          'x-api-key': process.env.REACT_APP_API_KEY || ''
         }
       }
-    : {};
+    : {
+      headers: {
+        'x-api-key': process.env.REACT_APP_API_KEY || ''
+      }
+    };
 
 /**
  * Authentication.
  * Loggin and refresh token...
  */
-const authenticate = params => instance.post(endpoints.authentication, params);
+const authenticate = params => instance.post(endpoints.authentication, params, setHeaders());
 
 const refreshToken = token => instance.post(endpoints.refreshToken, {}, setHeaders(token));
 
