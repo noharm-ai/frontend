@@ -7,5 +7,6 @@ export default {
   appName,
   version,
   currentYear,
-  copyright
+  copyright,
+  apiKey: process.env.REACT_APP_API_KEY || null
 };

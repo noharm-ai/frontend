@@ -6,6 +6,7 @@ import { Creators as UserCreators } from '../user';
 import { Creators as SessionCreators } from '../session';
 import { Creators as AuthCreators } from './index';
 import { Creators as AppCreators } from '../app';
+import appInfo from '@utils/appInfo';
 
 const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
@@ -23,18 +24,22 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
     return;
   }
 
-  const { userName, email, schema, roles, nameUrl, ...identify } = data;
+  const { userName, email, schema, roles, nameUrl, apiKey, ...identify } = data;
   const user = {
     userName,
     email,
     schema,
-    roles
+    roles,
+    nameUrl,
+    apiKey
   };
+
+  appInfo.apiKey = apiKey;
 
   dispatch(authSetIdentify(identify));
   dispatch(sessionSetFirstAccess());
   dispatch(userSetCurrentUser(user, keepMeLogged));
-  dispatch(appSetConfig({ nameUrl }));
+  dispatch(appSetConfig({ nameUrl, apiKey }));
 };
 
 export const logoutThunk = () => {

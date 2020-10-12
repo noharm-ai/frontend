@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Prismic from 'prismic-javascript';
+import appInfo from '@utils/appInfo';
 
 /**
  * AXIOS instance.
@@ -49,12 +50,12 @@ const setHeaders = token =>
     ? {
         headers: {
           Authorization: `Bearer ${token}`,
-          'x-api-key': process.env.REACT_APP_API_KEY || ''
+          'x-api-key': appInfo.apiKey
         }
       }
     : {
       headers: {
-        'x-api-key': process.env.REACT_APP_API_KEY || ''
+        'x-api-key': appInfo.apiKey
       }
     };
 
