@@ -14,11 +14,10 @@ import Tag from '@components/Tag';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import TableFilter from '@components/TableFilter';
-import { format } from 'date-fns';
 import ModalIntervention from '@containers/Screening/ModalIntervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
-import { toDataSource } from '@utils';
 import BackTop from '@components/BackTop';
+import { toDataSource } from '@utils';
 
 import Patient from './Patient';
 import columnsTable, {
@@ -29,6 +28,7 @@ import columnsTable, {
 } from './columns';
 import interventionColumns, { expandedInterventionRowRender } from './Intervention/columns';
 import examColumns, { examRowClassName, expandedExamRowRender } from './Exam/columns';
+import PrescriptionDrugList from './PrescriptionDrug/PrescriptionDrugList';
 
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
@@ -44,32 +44,6 @@ const ScreeningTabs = styled(Tabs)`
   .ant-tabs-nav .ant-tabs-tab:nth-child(4) {
     margin-left: 50px !important;
   }
-`;
-
-const PrescriptionHeader = styled.div`
-  background-color: lightgray;
-  padding: 5px;
-  padding-left: 15px;
-  border-radius: 4px;
-  margin-top: 20px;
-
-  span {
-    padding-left: 15px;
-  }
-
-  .p-number {
-    padding-right: 10px;
-  }
-
-  a {
-    color: rgba(0, 0, 0, 0.65);
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
 `;
 
 export default function Screening({
@@ -367,63 +341,16 @@ export default function Screening({
                 handleFilter={handleFilter}
                 isFilterActive={isFilterActive}
               />
-              {isFetching ? (
-                <LoadBox />
-              ) : (
-                dsDrugList.map((ds, index) => (
-                  <div key={index}>
-                    {content.agg && (
-                      <PrescriptionHeader>
-                        <strong className="p-number">
-                          Prescrição &nbsp;
-                          <a
-                            href={`/prescricao/${ds.key}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            # {ds.key}
-                          </a>
-                        </strong>
-                        <span>
-                          <strong>Liberação:</strong> &nbsp;
-                          {format(new Date(content.headers[ds.key].date), 'dd/MM/yyyy HH:mm')}
-                        </span>
-                        <span>
-                          <strong>Vigência:</strong> &nbsp;
-                          {format(new Date(content.headers[ds.key].expire), 'dd/MM/yyyy HH:mm')}
-                        </span>
-                        <span>
-                          <strong>Leito:</strong> &nbsp;
-                          {content.headers[ds.key].bed}
-                        </span>
-                        <span>
-                          <strong>Prescritor:</strong> &nbsp;
-                          {content.headers[ds.key].prescriber}
-                        </span>
-                      </PrescriptionHeader>
-                    )}
-                    <ExpandableTable
-                      expandedRowKeys={expandedRows.prescription}
-                      onExpand={(expanded, record) => handleRowExpand(record)}
-                      title={title}
-                      columns={columnsTable(filter)}
-                      pagination={false}
-                      loading={isFetching}
-                      locale={{
-                        emptyText: (
-                          <Empty
-                            image={Empty.PRESENTED_IMAGE_SIMPLE}
-                            description="Nenhum medicamento encontrado."
-                          />
-                        )
-                      }}
-                      dataSource={!isFetching ? ds.value : []}
-                      expandedRowRender={expandedRowRender}
-                      rowClassName={rowClassName}
-                    />
-                  </div>
-                ))
-              )}
+              <PrescriptionDrugList
+                isFetching={isFetching}
+                dataSource={dsDrugList}
+                headers={content.headers}
+                aggregated={content.agg}
+                columns={columnsTable(filter)}
+                expandedRowRender={expandedRowRender}
+                handleRowExpand={handleRowExpand}
+                expandedRows={expandedRows.prescription}
+              />
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane tab={<TabTitle title="Soluções" count={listCount.solutions} />} key="2">
