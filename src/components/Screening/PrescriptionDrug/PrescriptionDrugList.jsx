@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/macro';
 import isEmpty from 'lodash.isempty';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 import Icon from '@components/Icon';
 import LoadBox from '@components/LoadBox';
@@ -54,6 +54,14 @@ const PrescriptionPanel = styled(Collapse.Panel)`
 
   .ant-collapse-content {
     background: #fff !important;
+  }
+`;
+
+const GroupPanel = styled(PrescriptionPanel)`
+  background: #e0e8ec;
+
+  .ant-collapse-content-active {
+    padding-top: 15px;
   }
 `;
 
@@ -145,36 +153,68 @@ export default function PrescriptionDrugList({
     </PrescriptionHeader>
   );
 
-  const infoIcon = ds => {
-    if (headers[ds.key].status === 's') {
-      return (
-        <Tooltip title="Prescrição checada">
-          <Icon type="check" style={{ fontSize: 18, color: '#52c41a' }} />
-        </Tooltip>
-      );
-    }
+  const infoIcon = title => {
+    return (
+      <Tooltip title={title}>
+        <Icon type="check" style={{ fontSize: 18, color: '#52c41a' }} />
+      </Tooltip>
+    );
+  };
 
-    return null;
+  const list = group => {
+    return dataSource.map((ds, index) => (
+      <div key={index}>
+        {group.indexOf(`${ds.key}`) !== -1 && (
+          <Collapse bordered defaultActiveKey={headers[ds.key].status === 's' ? [] : ['1']}>
+            <PrescriptionPanel
+              header={panelHeader(ds)}
+              key="1"
+              className={headers[ds.key].status === 's' ? 'checked' : ''}
+              extra={headers[ds.key].status === 's' ? infoIcon('Prescrição checada') : null}
+            >
+              {table(ds)}
+            </PrescriptionPanel>
+          </Collapse>
+        )}
+      </div>
+    ));
   };
 
   if (!aggregated) {
     return table(!isEmpty(dataSource) ? dataSource[0] : []);
   }
 
-  return dataSource.map((ds, index) => (
-    <div key={index}>
-      {aggregated && (
-        <Collapse bordered defaultActiveKey={headers[ds.key].status === 's' ? [] : ['1']}>
-          <PrescriptionPanel
-            header={panelHeader(ds)}
-            key="1"
-            className={headers[ds.key].status === 's' ? 'checked' : ''}
-            extra={infoIcon(ds)}
-          >
-            {table(ds)}
-          </PrescriptionPanel>
-        </Collapse>
-      )}
-    </div>
+  const groups = {};
+  Object.keys(headers).forEach(k => {
+    const dt = headers[k].expire.substr(0, 10);
+
+    if (groups[dt]) {
+      groups[dt].ids.push(k);
+      if (headers[k].status !== 's') {
+        groups[dt].checked = false;
+      }
+    } else {
+      groups[dt] = {
+        checked: headers[k].status === 's',
+        ids: [k]
+      };
+    }
+  });
+
+  return Object.keys(groups).map(g => (
+    <Collapse bordered={false} key={g} defaultActiveKey={groups[g].checked ? [] : ['1']}>
+      <GroupPanel
+        header={`Vigência: ${format(parseISO(g), 'dd/MM/yyyy')}`}
+        key="1"
+        className={groups[g].checked ? 'checked' : ''}
+        extra={
+          groups[g].checked
+            ? infoIcon('Todas as prescrições desta vigência já foram checadas')
+            : null
+        }
+      >
+        {list(groups[g].ids)}
+      </GroupPanel>
+    </Collapse>
   ));
 }
