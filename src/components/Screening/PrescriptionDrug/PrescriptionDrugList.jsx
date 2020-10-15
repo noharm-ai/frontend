@@ -218,7 +218,17 @@ export default function PrescriptionDrugList({
   const infoIcon = title => {
     return (
       <Tooltip title={title}>
-        <Icon type="check" style={{ fontSize: 18, color: '#52c41a' }} />
+        <Icon
+          type="check"
+          style={{
+            fontSize: 18,
+            color: '#52c41a',
+            position: 'absolute',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            right: '15px'
+          }}
+        />
       </Tooltip>
     );
   };
