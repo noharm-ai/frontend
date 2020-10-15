@@ -30,6 +30,14 @@ const PrescriptionHeader = styled.div`
   a:hover {
     text-decoration: underline;
   }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .subtitle {
+    opacity: 0.6;
+  }
 `;
 
 const PrescriptionPanel = styled(Collapse.Panel)`
@@ -169,34 +177,38 @@ export default function PrescriptionDrugList({
 
   const panelHeader = ds => (
     <PrescriptionHeader className="panel-header">
-      <strong className="p-number">
-        Prescrição &nbsp;
-        <a href={`/prescricao/${ds.key}`} target="_blank" rel="noopener noreferrer">
-          # {ds.key}
-        </a>
-      </strong>
-      <span>
-        <strong>Liberação:</strong> &nbsp;
-        {format(new Date(headers[ds.key].date), 'dd/MM/yyyy HH:mm')}
-      </span>
-      <span>
-        <strong>Vigência:</strong> &nbsp;
-        {format(new Date(headers[ds.key].expire), 'dd/MM/yyyy HH:mm')}
-      </span>
-      <span>
-        <strong>Leito:</strong> &nbsp;
-        {headers[ds.key].bed}
-      </span>
-      <span>
-        <strong>Prescritor:</strong> &nbsp;
-        {headers[ds.key].prescriber}
-      </span>
+      <div className="title">
+        <strong className="p-number">
+          Prescrição &nbsp;
+          <a href={`/prescricao/${ds.key}`} target="_blank" rel="noopener noreferrer">
+            # {ds.key}
+          </a>
+        </strong>
+      </div>
+      <div className="subtitle">
+        <span style={{ paddingLeft: 0 }}>
+          <strong>Liberação:</strong> &nbsp;
+          {format(new Date(headers[ds.key].date), 'dd/MM/yyyy HH:mm')}
+        </span>
+        <span>
+          <strong>Vigência:</strong> &nbsp;
+          {format(new Date(headers[ds.key].expire), 'dd/MM/yyyy HH:mm')}
+        </span>
+        <span>
+          <strong>Leito:</strong> &nbsp;
+          {headers[ds.key].bed}
+        </span>
+        <span>
+          <strong>Prescritor:</strong> &nbsp;
+          {headers[ds.key].prescriber}
+        </span>
+      </div>
     </PrescriptionHeader>
   );
 
   const groupHeader = dt => (
     <PrescriptionHeader>
-      <span>
+      <span style={{ fontSize: '16px' }}>
         <strong>Vigência:</strong> &nbsp;
         {format(parseISO(dt), 'dd/MM/yyyy')}
       </span>
