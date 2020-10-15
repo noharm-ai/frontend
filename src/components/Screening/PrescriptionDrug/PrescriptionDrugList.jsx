@@ -55,13 +55,54 @@ const PrescriptionPanel = styled(Collapse.Panel)`
   .ant-collapse-content {
     background: #fff !important;
   }
+
+  & > .ant-collapse-content > .ant-collapse-content-box {
+    padding-right: 2px;
+    padding-left: 2px;
+  }
 `;
 
 const GroupPanel = styled(PrescriptionPanel)`
   background: #e0e8ec;
+  border-bottom: 0 !important;
+
+  &.checked {
+    & > .ant-collapse-content {
+      border-left: 2px solid #dcedc8;
+    }
+
+    & > .ant-collapse-content > .ant-collapse-content-box {
+      &::after {
+        background: #dcedc8;
+      }
+    }
+  }
 
   .ant-collapse-content-active {
     padding-top: 15px;
+  }
+
+  & > .ant-collapse-content > .ant-collapse-content-box {
+    padding-right: 0;
+    padding-left: 10px;
+
+    position: relative;
+
+    &::after {
+      position: absolute;
+      content: ' ';
+      width: 20px;
+      height: 3px;
+      bottom: 0;
+      left: -10px;
+      background: #e0e8ec;
+    }
+  }
+
+  & > .ant-collapse-content {
+    background: #fff !important;
+    border-left: 3px solid #e0e8ec;
+    border-radius: 0;
   }
 `;
 
@@ -153,6 +194,15 @@ export default function PrescriptionDrugList({
     </PrescriptionHeader>
   );
 
+  const groupHeader = dt => (
+    <PrescriptionHeader>
+      <span>
+        <strong>Vigência:</strong> &nbsp;
+        {format(parseISO(dt), 'dd/MM/yyyy')}
+      </span>
+    </PrescriptionHeader>
+  );
+
   const infoIcon = title => {
     return (
       <Tooltip title={title}>
@@ -204,7 +254,7 @@ export default function PrescriptionDrugList({
   return Object.keys(groups).map(g => (
     <Collapse bordered={false} key={g} defaultActiveKey={groups[g].checked ? [] : ['1']}>
       <GroupPanel
-        header={`Vigência: ${format(parseISO(g), 'dd/MM/yyyy')}`}
+        header={groupHeader(g)}
         key="1"
         className={groups[g].checked ? 'checked' : ''}
         extra={
