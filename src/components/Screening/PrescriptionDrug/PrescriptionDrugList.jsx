@@ -148,7 +148,8 @@ export default function PrescriptionDrugList({
   columns,
   expandedRowRender,
   expandedRows,
-  handleRowExpand
+  handleRowExpand,
+  emptyMessage
 }) {
   if (isFetching) {
     return <LoadBox />;
@@ -162,12 +163,7 @@ export default function PrescriptionDrugList({
       pagination={false}
       loading={isFetching}
       locale={{
-        emptyText: (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description="Nenhum medicamento encontrado."
-          />
-        )
+        emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={emptyMessage} />
       }}
       dataSource={!isFetching ? ds.value : []}
       expandedRowRender={expandedRowRender}
@@ -234,6 +230,22 @@ export default function PrescriptionDrugList({
   };
 
   const list = group => {
+    const msg = 'Nenhuma prescrição encontrada.';
+
+    if (isEmpty(dataSource)) {
+      return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={msg} />;
+    }
+    let hasPrescription = false;
+    dataSource.forEach(ds => {
+      if (group.indexOf(`${ds.key}`) !== -1) {
+        hasPrescription = true;
+      }
+    });
+
+    if (!hasPrescription) {
+      return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={msg} />;
+    }
+
     return dataSource.map((ds, index) => (
       <div key={index}>
         {group.indexOf(`${ds.key}`) !== -1 && (
