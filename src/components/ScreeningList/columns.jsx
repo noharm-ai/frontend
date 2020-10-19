@@ -312,7 +312,7 @@ export default (sortedInfo, filteredInfo) => {
           sortOrder: sortedInfo.columnKey === 'controlled' && sortedInfo.order
         },
         {
-          title: <Tooltip title="Não padronizados">NP</Tooltip>,
+          title: <Tooltip title="Não padronizados (sem Intervenção)">NP</Tooltip>,
           className: 'gtm-th-np',
           key: 'np',
           width: 30,

@@ -19,6 +19,7 @@ const octadesk = window.octadesk;
 
 const setTitle = ({ user }) => {
   document.title = process.env.REACT_APP_SITE_TITLE + ' - ' + user.account.schema;
+  appInfo.apiKey = user.account.apiKey;
   if (octadesk && octadesk.chat) {
     octadesk.chat.login({
       name: user.account.userName,

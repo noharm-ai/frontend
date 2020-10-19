@@ -13,7 +13,8 @@ export const { Types, Creators } = createActions({
 
 const INITIAL_STATE = {
   config: {
-    nameUrl: null
+    nameUrl: null,
+    apiKey: process.env.REACT_APP_API_KEY || null,
   },
   sider: {
     collapsed: false

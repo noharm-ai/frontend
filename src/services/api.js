@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Prismic from 'prismic-javascript';
+import appInfo from '@utils/appInfo';
 
 /**
  * AXIOS instance.
@@ -48,16 +49,21 @@ const setHeaders = token =>
   token
     ? {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          'x-api-key': appInfo.apiKey
         }
       }
-    : {};
+    : {
+      headers: {
+        'x-api-key': appInfo.apiKey
+      }
+    };
 
 /**
  * Authentication.
  * Loggin and refresh token...
  */
-const authenticate = params => instance.post(endpoints.authentication, params);
+const authenticate = params => instance.post(endpoints.authentication, params, setHeaders());
 
 const refreshToken = token => instance.post(endpoints.refreshToken, {}, setHeaders(token));
 
