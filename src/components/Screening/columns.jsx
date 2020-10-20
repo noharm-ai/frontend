@@ -774,6 +774,11 @@ const actionColumns = [
               <Icon type="warning" style={{ fontSize: 18, color: '#fa8c16' }} />
             </Tooltip>
           )}
+          {prescription.existIntervention && (
+            <Tooltip title="Possui intervenção anterior já resolvida">
+              <Icon type="warning" style={{ fontSize: 18, color: 'gray' }} />
+            </Tooltip>
+          )}
         </span>
         <span
           className="tag gtm-tag-stop"
