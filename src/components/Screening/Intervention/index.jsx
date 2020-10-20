@@ -354,7 +354,7 @@ const Observations = ({
 const hasRelationships = (reasonList, selectedReasons = []) => {
   if (!selectedReasons) return false;
 
-  const reasonsWithRelationshipsRegEx = /duplicidade|interaç|incompatib|apresentaç|forma/g;
+  const reasonsWithRelationshipsRegEx = /duplicidade|interaç|incompatib|apresentaç|forma|subst/g;
   let hasRelationships = false;
 
   selectedReasons.forEach(itemId => {
