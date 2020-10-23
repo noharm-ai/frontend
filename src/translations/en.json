@@ -16,7 +16,9 @@
     "goBack": "Back"
   },
   "menu": {
-    "prioritization": "Prescriptions Prioritization",
+    "prioritization": "Prioritization",
+    "prioritization-prescription": "Prescriptions",
+    "prioritization-patient": "Patients",
     "interventions": "Interventions",
     "reports": "Reports",
     "config": "Settings",
@@ -25,6 +27,8 @@
     "knowledgeBase": "Knowledge Base"
   },
   "screeningList": {
+    "title-prescription": "Prescription Prioritization",
+    "title-patient": "Patient Prioritization",
     "segment": "Segment",
     "date": "Date",
     "seeMore": "See more",

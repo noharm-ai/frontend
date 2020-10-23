@@ -2,6 +2,7 @@
  * Auth verification
  */
 import withAuth from '@lib/withAuth';
+import chooseJourney from '@lib/chooseJourney';
 
 /**
  * Pages
@@ -47,7 +48,23 @@ const routes = [
     exact: true,
     path: '/',
     component: withAuth({
-      component: ScreeningList
+      component: chooseJourney()
+    })
+  },
+  {
+    exact: true,
+    path: '/priorizacao/prescricoes',
+    component: withAuth({
+      component: ScreeningList,
+      prioritizationType: 'prescription'
+    })
+  },
+  {
+    exact: true,
+    path: '/priorizacao/pacientes',
+    component: withAuth({
+      component: ScreeningList,
+      prioritizationType: 'patient'
     })
   },
   {

@@ -4,14 +4,13 @@ import moment from 'moment';
 import 'moment/locale/pt-br';
 import { subDays } from 'date-fns';
 import debounce from 'lodash.debounce';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 import message from '@components/message';
 import Heading from '@components/Heading';
 import { Row, Col } from '@components/Grid';
 import { Select, RangeDatePicker, Input } from '@components/Inputs';
 import Switch from '@components/Switch';
-import { Box, SearchBox } from './Filter.style';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 import Icon from '@components/Icon';
@@ -21,7 +20,8 @@ import Dropdown from '@components/Dropdown';
 import Modal from '@components/Modal';
 import notification from '@components/notification';
 import LoadBox from '@components/LoadBox';
-import { InfoIcon } from '@components/Icon';
+
+import { Box, SearchBox } from './Filter.style';
 import './index.css';
 
 const filterMenu = (savedFilters, openSaveModal, loadFilter, removeFilter) => (
@@ -72,13 +72,14 @@ export default function Filter({
   removeFilter,
   drugs,
   searchDrugs,
-  match
+  match,
+  prioritizationType
 }) {
   const [open, setOpen] = useState(false);
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
   const [filterName, setFilterName] = useState('');
   const [date, setDate] = useState([moment(match.params.startDate), null]);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const getParams = useCallback(
     forceParams => {
@@ -87,7 +88,7 @@ export default function Filter({
         idDept: filter.idDepartment,
         idDrug: filter.idDrug,
         pending: filter.pending,
-        agg: filter.agg,
+        agg: prioritizationType === 'prescription' ? 0 : 1,
         startDate: date[0] ? date[0].format('YYYY-MM-DD') : 'all',
         endDate: date[1] ? date[1].format('YYYY-MM-DD') : 'all'
       };
@@ -102,7 +103,7 @@ export default function Filter({
 
       return finalParams;
     },
-    [filter, date]
+    [filter.idSegment, filter.idDepartment, filter.idDrug, filter.pending, prioritizationType, date]
   );
 
   useEffect(() => {
@@ -148,10 +149,6 @@ export default function Filter({
     setScreeningListFilter({ pending: pending ? 1 : 0 });
   };
 
-const onAggChange = agg => {
-    setScreeningListFilter({ agg: agg ? 1 : 0 });
-  };
-
   const onDateChange = dt => {
     setDate(dt);
   };
@@ -187,14 +184,13 @@ const onAggChange = agg => {
       idSegment: segments.list[0].id,
       idDepartment: [],
       idDrug: [],
-      pending: 0,
-      agg: 0
+      pending: 0
     });
     setDate([moment(), null]);
   };
 
   const countHiddenFilters = filters => {
-    const skip = ['idSegment'];
+    const skip = ['idSegment', 'agg'];
     let count = 0;
 
     Object.keys(filters).forEach(key => {
@@ -358,34 +354,36 @@ const onAggChange = agg => {
           </Box>
         </Col>
       </Row>
-      <Row gutter={[20, 0]}>
-        <Col md={14}>
-          <Box>
-            <Heading as="label" htmlFor="drugs-filter" size="14px">
-              Medicamentos:
-            </Heading>
-            <Select
-              id="drugs-filter"
-              mode="multiple"
-              optionFilterProp="children"
-              style={{ width: '100%' }}
-              placeholder="Selecione os medicamentos..."
-              onChange={onDrugChange}
-              value={filter.idDrug}
-              notFoundContent={drugs.isFetching ? <LoadBox /> : null}
-              filterOption={false}
-              allowClear
-              onSearch={searchDrugsAutocomplete}
-            >
-              {drugs.list.map(({ idDrug, name }) => (
-                <Select.Option key={idDrug} value={idDrug}>
-                  {name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Box>
-        </Col>
-      </Row>
+      {prioritizationType === 'prescription' && (
+        <Row gutter={[20, 0]}>
+          <Col md={14}>
+            <Box>
+              <Heading as="label" htmlFor="drugs-filter" size="14px">
+                Medicamentos:
+              </Heading>
+              <Select
+                id="drugs-filter"
+                mode="multiple"
+                optionFilterProp="children"
+                style={{ width: '100%' }}
+                placeholder="Selecione os medicamentos..."
+                onChange={onDrugChange}
+                value={filter.idDrug}
+                notFoundContent={drugs.isFetching ? <LoadBox /> : null}
+                filterOption={false}
+                allowClear
+                onSearch={searchDrugsAutocomplete}
+              >
+                {drugs.list.map(({ idDrug, name }) => (
+                  <Select.Option key={idDrug} value={idDrug}>
+                    {name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Box>
+          </Col>
+        </Row>
+      )}
       <Row gutter={[20, 0]} style={{ marginTop: '20px' }}>
         <Col md={14}>
           <Box flexDirection="row" alignItems="center">
@@ -398,25 +396,6 @@ const onAggChange = agg => {
               onChange={onPendingChange}
               checked={filter.pending}
               id="gtm-pending-filter"
-            />
-          </Box>
-        </Col>
-      </Row>
-      <Row gutter={[20, 0]} style={{ marginTop: '20px' }}>
-        <Col md={14}>
-          <Box flexDirection="row" alignItems="center">
-            <Heading as="label" htmlFor="agg-filter" size="14px">
-              Priorização por Atendimento 
-                 <Tooltip title="Funcionalidade em testes. Obrigado pela paciência ;)" placement="top">
-                    {' '}<InfoIcon />
-                 </Tooltip>:
-            </Heading>
-
-            <Switch
-              style={{ marginLeft: '10px' }}
-              onChange={onAggChange}
-              checked={filter.agg}
-              id="gtm-agg-filter"
             />
           </Box>
         </Col>

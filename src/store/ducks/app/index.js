@@ -14,7 +14,7 @@ export const { Types, Creators } = createActions({
 const INITIAL_STATE = {
   config: {
     nameUrl: null,
-    apiKey: process.env.REACT_APP_API_KEY || null,
+    apiKey: process.env.REACT_APP_API_KEY || null
   },
   sider: {
     collapsed: false
@@ -32,6 +32,9 @@ const INITIAL_STATE = {
   },
   help: {
     section: null
+  },
+  preferences: {
+    journey: 'patient'
   }
 };
 
