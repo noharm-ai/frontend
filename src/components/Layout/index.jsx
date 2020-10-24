@@ -55,6 +55,7 @@ const Me = ({ user, toggleDrawer, t }) => {
         style={{ width: 300 }}
         size="large"
         onSearch={onSearch}
+        id="gtm-search-box"
       />
 
       <div className="controls">
