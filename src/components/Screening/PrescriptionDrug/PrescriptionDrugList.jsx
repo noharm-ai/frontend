@@ -121,6 +121,10 @@ const rowClassName = record => {
     classes.push('summary-row');
   }
 
+  if (record.dividerRow) {
+    classes.push('divider-row');
+  }
+
   if (record.suspended) {
     classes.push('suspended');
   }

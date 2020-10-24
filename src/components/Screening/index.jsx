@@ -24,6 +24,7 @@ import columnsTable, {
   expandedRowRender,
   solutionColumns,
   groupSolutions,
+  groupProcedures,
   isPendingValidation
 } from './columns';
 import interventionColumns, { expandedInterventionRowRender } from './Intervention/columns';
@@ -163,7 +164,7 @@ export default function Screening({
   const [dsInterventions, setDsInterventions] = useState([]);
   const [dsExams, setDsExams] = useState([]);
 
-  const splitDatasource = (list, prescriptionType, group) => {
+  const splitDatasource = (list, prescriptionType, groupFunction) => {
     const drugArray = [];
     list.forEach(item => {
       if (!drugArray[item.idPrescription]) {
@@ -174,10 +175,10 @@ export default function Screening({
 
     const dsArray = [];
     drugArray.forEach((item, index) => {
-      if (group) {
+      if (groupFunction) {
         dsArray.push({
           key: index,
-          value: groupSolutions(
+          value: groupFunction(
             toDataSource(item, 'idPrescriptionDrug', {
               ...bag,
               prescriptionType
@@ -200,15 +201,17 @@ export default function Screening({
   };
 
   useEffect(() => {
-    setDrugList(drugList ? splitDatasource(drugList, 'prescriptions', false) : []);
+    setDrugList(drugList ? splitDatasource(drugList, 'prescriptions') : []);
   }, [drugList]); // eslint-disable-line
 
   useEffect(() => {
-    setDsSolutions(solutionList ? splitDatasource(solutionList, 'solutions', true) : []);
+    setDsSolutions(solutionList ? splitDatasource(solutionList, 'solutions', groupSolutions) : []);
   }, [solutionList]); // eslint-disable-line
 
   useEffect(() => {
-    setDsProcedures(proceduresList ? splitDatasource(proceduresList, 'procedures', false) : []);
+    setDsProcedures(
+      proceduresList ? splitDatasource(proceduresList, 'procedures', groupProcedures) : []
+    );
   }, [proceduresList]); // eslint-disable-line
 
   useEffect(() => {

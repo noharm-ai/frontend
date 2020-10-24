@@ -3,8 +3,7 @@ import styled from 'styled-components/macro';
 import isEmpty from 'lodash.isempty';
 import { Row, Col } from 'antd';
 
-import Icon from '@components/Icon';
-import { InfoIcon } from '@components/Icon';
+import Icon, { InfoIcon } from '@components/Icon';
 import Button, { Link } from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import Popover from '@components/PopoverStyled';
@@ -67,7 +66,7 @@ const InterventionAction = ({
   prevIntervention,
   saveInterventionStatus
 }) => {
-  const id = prevIntervention.id;
+  const { id } = prevIntervention;
   const isDisabled = check.currentId !== id && check.isChecking;
   const isChecking = check.currentId === id && check.isChecking;
   const isChecked = prevIntervention.status !== 's';
@@ -274,26 +273,13 @@ const DrugTags = ({ drug }) => (
   </span>
 );
 
-export const groupSolutions = (list, infusionList) => {
-  if (list.length === 0) return list;
-
-  const createTotalRow = (item, group, key) => {
-    return {
-      key: key + 'expand',
-      total: true,
-      source: 'Soluções',
-      handleRowExpand: item.handleRowExpand,
-      weight: item.weight,
-      infusion: infusionList.find(i => i.key === group)
-    };
-  };
-
+const groupPrescriptionDrugs = (list, createTotalRowFunction) => {
   const items = [];
   let currentGroup = list[0].grp_solution;
   let currentKey = list[0].key;
   list.forEach((item, index) => {
     if (item.grp_solution !== currentGroup) {
-      items.push(createTotalRow(item, currentGroup, currentKey));
+      items.push(createTotalRowFunction(item, currentGroup, currentKey));
       currentGroup = item.grp_solution;
     }
 
@@ -302,11 +288,42 @@ export const groupSolutions = (list, infusionList) => {
     items.push(item);
 
     if (index === list.length - 1) {
-      items.push(createTotalRow(item, item.grp_solution, item.key));
+      items.push(createTotalRowFunction(item, item.grp_solution, item.key));
     }
   });
 
   return items;
+};
+
+export const groupSolutions = (list, infusionList) => {
+  if (list.length === 0) return list;
+
+  const createTotalRow = (item, group, key) => {
+    return {
+      key: `${key}expand`,
+      total: true,
+      source: 'Soluções',
+      handleRowExpand: item.handleRowExpand,
+      weight: item.weight,
+      infusion: infusionList.find(i => i.key === group)
+    };
+  };
+
+  return groupPrescriptionDrugs(list, createTotalRow);
+};
+
+export const groupProcedures = list => {
+  if (list.length === 0) return list;
+
+  const createTotalRow = (item, group, key) => {
+    return {
+      key: `${key}expand`,
+      source: 'Procedimentos',
+      dividerRow: true
+    };
+  };
+
+  return groupPrescriptionDrugs(list, createTotalRow);
 };
 
 const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
@@ -688,10 +705,14 @@ const frequencyAndTime = [
     dataIndex: 'frequency',
     width: 150,
     render: (text, prescription) => {
+      if (prescription.dividerRow) {
+        return null;
+      }
+
       if (isEmpty(prescription.frequency)) {
         return (
           <Tooltip title="Frequência obtida por conversão" placement="top">
-            {''}<InfoIcon />
+            <InfoIcon />
           </Tooltip>
         );
       }
@@ -814,7 +835,9 @@ const actionColumns = [
 ];
 
 export const isPendingValidation = record =>
-  (!record.whiteList && !record.checked) || !isEmpty(record.prevIntervention) || !isEmpty(record.prevNotes);
+  (!record.whiteList && !record.checked) ||
+  !isEmpty(record.prevIntervention) ||
+  !isEmpty(record.prevNotes);
 
 export const solutionColumns = [...drugInfo, ...stageAndInfusion, ...actionColumns];
 
