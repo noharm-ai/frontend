@@ -15,7 +15,7 @@ export default [
         key: '/priorizacao/pacientes',
         text: 'menu.prioritization-patient',
         icon: 'user',
-        id: 'gtm-lnk-priorizacao-prescricao'
+        id: 'gtm-lnk-priorizacao-paciente'
       }
     ]
   },
