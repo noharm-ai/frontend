@@ -354,36 +354,36 @@ export default function Filter({
           </Box>
         </Col>
       </Row>
-      {prioritizationType === 'prescription' && (
-        <Row gutter={[20, 0]}>
-          <Col md={14}>
-            <Box>
-              <Heading as="label" htmlFor="drugs-filter" size="14px">
-                Medicamentos:
-              </Heading>
-              <Select
-                id="drugs-filter"
-                mode="multiple"
-                optionFilterProp="children"
-                style={{ width: '100%' }}
-                placeholder="Selecione os medicamentos..."
-                onChange={onDrugChange}
-                value={filter.idDrug}
-                notFoundContent={drugs.isFetching ? <LoadBox /> : null}
-                filterOption={false}
-                allowClear
-                onSearch={searchDrugsAutocomplete}
-              >
-                {drugs.list.map(({ idDrug, name }) => (
-                  <Select.Option key={idDrug} value={idDrug}>
-                    {name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Box>
-          </Col>
-        </Row>
-      )}
+
+      <Row gutter={[20, 0]}>
+        <Col md={14}>
+          <Box>
+            <Heading as="label" htmlFor="drugs-filter" size="14px">
+              Medicamentos:
+            </Heading>
+            <Select
+              id="drugs-filter"
+              mode="multiple"
+              optionFilterProp="children"
+              style={{ width: '100%' }}
+              placeholder="Selecione os medicamentos..."
+              onChange={onDrugChange}
+              value={filter.idDrug}
+              notFoundContent={drugs.isFetching ? <LoadBox /> : null}
+              filterOption={false}
+              allowClear
+              onSearch={searchDrugsAutocomplete}
+            >
+              {drugs.list.map(({ idDrug, name }) => (
+                <Select.Option key={idDrug} value={idDrug}>
+                  {name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Box>
+        </Col>
+      </Row>
+
       <Row gutter={[20, 0]} style={{ marginTop: '20px' }}>
         <Col md={14}>
           <Box flexDirection="row" alignItems="center">

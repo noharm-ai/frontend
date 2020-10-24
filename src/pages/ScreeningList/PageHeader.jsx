@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Tooltip } from 'antd';
 
 import Heading from '@components/Heading';
 import { Row, Col } from '@components/Grid';
 import Switch from '@components/Switch';
-import { useTranslation } from 'react-i18next';
-import { Tooltip } from 'antd';
 
 export default function PageHeader({ journey, prioritizationType, setJourney }) {
   const { t } = useTranslation();
   const [stateChecked, setStateChecked] = useState(false);
   const title = `screeningList.title-${prioritizationType}`;
+  const name = prioritizationType === 'prescription' ? 'prescrição' : 'paciente';
   const msg =
-    journey === prioritizationType ? 'Priorização padrão' : 'Tornar esta priorização padrão';
+    journey === prioritizationType
+      ? 'Priorização padrão'
+      : `Definir a priorização por ${name} como tela inicial`;
 
   const onChangeJourney = checked => {
     if (checked) {
