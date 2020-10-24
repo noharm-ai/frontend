@@ -82,10 +82,15 @@ Wrapper.Sider = styled(AntLayout.Sider)`
 Wrapper.Header = styled(AntLayout.Header)`
   align-items: center;
   display: flex;
-  justify-content: flex-end;
+  width: 100%;
 
   &.ant-layout-header {
     background: ${get('colors.commonLighter')};
     padding: 20px;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
   }
 `;
