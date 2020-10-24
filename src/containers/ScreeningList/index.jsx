@@ -4,7 +4,8 @@ import { bindActionCreators } from 'redux';
 import {
   setScreeningListFilterThunk,
   saveFilterThunk,
-  removeFilterThunk
+  removeFilterThunk,
+  setJourneyThunk
 } from '@store/ducks/app/thunk';
 import {
   fetchSegmentsListThunk,
@@ -36,7 +37,8 @@ const mapStateToProps = ({ segments, prescriptions, app, drugs }) => ({
   },
   filter: app.filter.screeningList,
   savedFilters: app.savedFilters.screeningList,
-  drugs: drugs.search
+  drugs: drugs.search,
+  currentJourney: app.preferences.journey
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -50,7 +52,8 @@ const mapDispatchToProps = dispatch =>
       setScreeningListFilter: setScreeningListFilterThunk,
       saveFilter: saveFilterThunk,
       removeFilter: removeFilterThunk,
-      searchDrugs: searchDrugsThunk
+      searchDrugs: searchDrugsThunk,
+      setJourney: setJourneyThunk
     },
     dispatch
   );
