@@ -39,6 +39,7 @@ export default function PageHeader({ journey, prioritizationType, setJourney }) 
                 onChange={onChangeJourney}
                 checked={journey === prioritizationType}
                 disabled={journey === prioritizationType}
+                id="gtm-default-initial"
               />
             </Tooltip>
           )}

@@ -148,7 +148,24 @@ const routes = [
     exact: true,
     path: '/:startDate',
     component: withAuth({
-      component: ScreeningList
+      component: ScreeningList,
+      prioritizationType: 'patient'
+    })
+  },
+  {
+    exact: true,
+    path: '/priorizacao/pacientes/:startDate',
+    component: withAuth({
+      component: ScreeningList,
+      prioritizationType: 'patient'
+    })
+  },
+  {
+    exact: true,
+    path: '/priorizacao/prescricoes/:startDate',
+    component: withAuth({
+      component: ScreeningList,
+      prioritizationType: 'prescription'
     })
   }
 ];
