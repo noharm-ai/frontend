@@ -1,16 +1,15 @@
-import 'styled-components/macro';
 import styled from 'styled-components/macro';
+
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
 
-import Icon from '@components/Icon';
+import Icon, { InfoIcon } from '@components/Icon';
 import Heading from '@components/Heading';
 import Button from '@components/Button';
 import { Row, Col } from '@components/Grid';
 import notification from '@components/notification';
 import Tooltip from '@components/Tooltip';
 import moment from 'moment';
- import { InfoIcon } from '@components/Icon';
 
 import FormClinicalNotes from '@containers/Forms/ClinicalNotes';
 import FormClinicalAlert from '@containers/Forms/ClinicalAlert';
@@ -79,37 +78,54 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
     }
   }, [error]);
 
+  if (!prescription.content.idPrescription) {
+    return null;
+  }
+
   return (
     <>
       <Row type="flex" css="margin-bottom: 15px;">
         <Col span={24} md={10}>
           <Heading>
-            {!prescription.content.agg && ( <>
-              {pageTitle} nº{' '}
-              <Tooltip title="Clique para copiar o número da prescrição">
-                <UnstyledButton onClick={() => copyToClipboard(prescription.content.idPrescription)}>
-                  {prescription.content.idPrescription}
-                </UnstyledButton>
-              </Tooltip>
-              <span className={expireDate.diff(now, 'minute') < 0 ? 'legend red' : 'legend'}>
-                Liberada em {prescription.content.dateFormated}
-                {prescription.content.expire && <>, válida até {prescription.content.expireFormated}</>}
-                {prescription.content.expire && 
-                  (expireDate.diff(createDate, 'hour') < 23) && 
-                      <Tooltip title="Intercorrência"> <InfoIcon /></Tooltip>}
-              </span>
-            </> )}
-            {prescription.content.agg && ( <>
-              Atendimento nº{' '}
-              <Tooltip title="Clique para copiar o número do atendimento">
-                <UnstyledButton onClick={() => copyToClipboard(prescription.content.admissionNumber)}>
-                  {prescription.content.admissionNumber}
-                </UnstyledButton>
-              </Tooltip>
-              <span className='legend'>
-                Prescrições Agregadas de {prescription.content.dateOnlyFormated}
-              </span>
-            </> )}
+            {!prescription.content.agg && (
+              <>
+                {pageTitle} nº{' '}
+                <Tooltip title="Clique para copiar o número da prescrição">
+                  <UnstyledButton
+                    onClick={() => copyToClipboard(prescription.content.idPrescription)}
+                  >
+                    {prescription.content.idPrescription}
+                  </UnstyledButton>
+                </Tooltip>
+                <span className={expireDate.diff(now, 'minute') < 0 ? 'legend red' : 'legend'}>
+                  Liberada em {prescription.content.dateFormated}
+                  {prescription.content.expire && (
+                    <>, válida até {prescription.content.expireFormated}</>
+                  )}
+                  {prescription.content.expire && expireDate.diff(createDate, 'hour') < 23 && (
+                    <Tooltip title="Intercorrência">
+                      {' '}
+                      <InfoIcon />
+                    </Tooltip>
+                  )}
+                </span>
+              </>
+            )}
+            {prescription.content.agg && (
+              <>
+                Atendimento nº{' '}
+                <Tooltip title="Clique para copiar o número do atendimento">
+                  <UnstyledButton
+                    onClick={() => copyToClipboard(prescription.content.admissionNumber)}
+                  >
+                    {prescription.content.admissionNumber}
+                  </UnstyledButton>
+                </Tooltip>
+                <span className="legend">
+                  Prescrições Agregadas de {prescription.content.dateOnlyFormated}
+                </span>
+              </>
+            )}
           </Heading>
         </Col>
         <Col
@@ -170,10 +186,7 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
             <Icon type="alert" />
             Alerta
           </Button>
-          <Button 
-            type="default gtm-bt-close" 
-            onClick={close}
-          >
+          <Button type="default gtm-bt-close" onClick={close}>
             Fechar
           </Button>
         </Col>

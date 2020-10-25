@@ -13,6 +13,7 @@ import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
+import notification from '@components/notification';
 import TableFilter from '@components/TableFilter';
 import ModalIntervention from '@containers/Screening/ModalIntervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
@@ -46,6 +47,11 @@ const ScreeningTabs = styled(Tabs)`
     margin-left: 50px !important;
   }
 `;
+
+const errorMessage = {
+  message: 'Ops! Algo de errado aconteceu.',
+  description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
+};
 
 export default function Screening({
   match,
@@ -227,6 +233,13 @@ export default function Screening({
     setDsExams(toDataSource(exams.list, 'key', {}));
   }, [exams.list]); // eslint-disable-line
 
+  // show message if has error
+  useEffect(() => {
+    if (!isEmpty(error)) {
+      notification.error(errorMessage);
+    }
+  }, [error]);
+
   const listCount = {
     prescriptions: drugList ? drugList.length : 0,
     solutions: solutionList ? solutionList.length : 0,
@@ -289,7 +302,13 @@ export default function Screening({
   );
 
   if (error) {
-    return null;
+    return (
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description={error.message}
+        id="gtm-prescription-error"
+      />
+    );
   }
 
   return (
