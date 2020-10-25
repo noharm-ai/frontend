@@ -34,8 +34,10 @@ const setTitle = ({ user }) => {
 const Me = ({ user, toggleDrawer, t }) => {
   const onSearch = value => {
     const reg = /^-?\d*(\.\d*)?$/;
-    if (!isNaN(value) && reg.test(value) && value !== '') {
-      window.open(`/prescricao/${value}`);
+    const searchValue = value.trim();
+
+    if (!isNaN(searchValue) && reg.test(searchValue) && searchValue !== '') {
+      window.open(`/prescricao/${searchValue}`);
     } else {
       notification.error({ message: 'Número de prescrição inválido.' });
     }
