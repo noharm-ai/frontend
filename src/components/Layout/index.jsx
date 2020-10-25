@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import appInfo from '@utils/appInfo';
 import Avatar from '@components/Avatar';
 import Drawer from '@components/Drawer';
-import { Input } from '@components/Inputs';
+import { InputSearchNumber } from '@components/Inputs';
 
 import Help from '@components/Help';
 
@@ -52,12 +52,13 @@ const Me = ({ user, toggleDrawer, t }) => {
       justify-content: space-between;
     "
     >
-      <Input.Search
+      <InputSearchNumber
         placeholder="Buscar por nº de prescrição"
         style={{ width: 300 }}
         size="large"
         onSearch={onSearch}
         id="gtm-search-box"
+        type="number"
       />
 
       <div className="controls">
