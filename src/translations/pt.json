@@ -17,8 +17,8 @@
   },
   "menu": {
     "prioritization": "Priorização",
-    "prioritization-prescription": "De Prescrições",
-    "prioritization-patient": "De Pacientes",
+    "prioritization-prescription": "por Prescrições",
+    "prioritization-patient": "por Pacientes",
     "interventions": "Intervenções",
     "reports": "Relatórios",
     "config": "Configurações",
@@ -27,8 +27,8 @@
     "knowledgeBase": "Base de Conhecimento"
   },
   "screeningList": {
-    "title-prescription": "Priorização de Prescrições",
-    "title-patient": "Priorização de Pacientes",
+    "title-prescription": "Priorização por Prescrições",
+    "title-patient": "Priorização por Pacientes",
     "segment": "Segmento",
     "date": "Data",
     "seeMore": "Ver mais",
