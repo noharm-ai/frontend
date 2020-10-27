@@ -16,3 +16,15 @@ export const Input = styled(AntInput)`
     box-shadow: 0 0 0 2px ${rgba('#70bdc3', 0.2)};
   }
 `;
+
+export const InputSearchNumber = styled(Input.Search)`
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield; /* Firefox */
+  }
+`;

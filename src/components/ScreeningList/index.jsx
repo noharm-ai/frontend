@@ -4,17 +4,17 @@ import styled from 'styled-components/macro';
 
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
-import { toDataSource } from '@utils';
 import Empty from '@components/Empty';
 import Table from '@components/Table';
 import notification from '@components/notification';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import Tag from '@components/Tag';
-import { useTranslation } from "react-i18next";
-import Filter from './Filter';
+import { useTranslation } from 'react-i18next';
 import { InfoIcon } from '@components/Icon';
 import BackTop from '@components/BackTop';
+import Filter from './Filter';
+import { toDataSource } from '@utils';
 
 import columnsTable, { expandedRowRender } from './columns';
 
@@ -65,6 +65,7 @@ export default function ScreeningList({
   fetchSegmentsList,
   fetchPrescriptionsList,
   checkScreening,
+  prioritizationType,
   ...restProps
 }) {
   const [sortOrder, setSortOrder] = useState({
@@ -88,7 +89,7 @@ export default function ScreeningList({
     checked: 0
   };
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   if (list) {
     list.forEach(item => {
@@ -158,7 +159,7 @@ export default function ScreeningList({
           className={isFilterActive('s') ? 'active' : ''}
           onClick={e => handleFilter(e, 's')}
         >
-         {t('screeningList.checked')} <Tag color="green">{listCount.checked}</Tag>
+          {t('screeningList.checked')} <Tag color="green">{listCount.checked}</Tag>
         </Button>
       </Tooltip>
 
@@ -185,6 +186,7 @@ export default function ScreeningList({
     <>
       <Filter
         {...restProps}
+        prioritizationType={prioritizationType}
         fetchPrescriptionsList={fetchPrescriptionsList}
         isFetchingPrescription={isFetching}
       />
@@ -202,7 +204,7 @@ export default function ScreeningList({
         dataSource={!isFetching ? dataSource : []}
         onChange={handleTableChange}
       />
-      
+
       <BackTop />
 
       <div style={{ height: '20px', marginTop: '5px' }}>{info}</div>

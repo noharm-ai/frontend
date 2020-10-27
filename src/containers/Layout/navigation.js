@@ -1,9 +1,23 @@
 export default [
   {
-    key: '/',
+    key: 'prioritization',
     text: 'menu.prioritization',
-    icon: 'drugPrescription',
-    id: 'gtm-lnk-pacientes-triagem'
+    icon: 'table',
+    id: 'gtm-lnk-priorizacao',
+    children: [
+      {
+        key: '/priorizacao/prescricoes',
+        text: 'menu.prioritization-prescription',
+        icon: 'drugPrescription',
+        id: 'gtm-lnk-priorizacao-prescricao'
+      },
+      {
+        key: '/priorizacao/pacientes',
+        text: 'menu.prioritization-patient',
+        icon: 'user',
+        id: 'gtm-lnk-priorizacao-paciente'
+      }
+    ]
   },
   {
     key: '/intervencoes',

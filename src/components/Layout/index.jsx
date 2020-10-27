@@ -4,48 +4,81 @@ import React, { useState } from 'react';
 import appInfo from '@utils/appInfo';
 import Avatar from '@components/Avatar';
 import Drawer from '@components/Drawer';
+import { InputSearchNumber } from '@components/Inputs';
 
 import Help from '@components/Help';
 
+import { useTranslation } from 'react-i18next';
+import { notification } from 'antd';
 import Box from './Box';
 import Menu from './Menu';
 import { Wrapper as Main, Brand, LogOut, UserName } from './Layout.style';
-import { useTranslation } from 'react-i18next';
 
 const siderWidth = 250;
 const { Sider, Header, Content, Footer } = Main;
 
-const octadesk = window.octadesk;
+const { octadesk } = window;
 
 const setTitle = ({ user }) => {
-  document.title = process.env.REACT_APP_SITE_TITLE + ' - ' + user.account.schema;
+  document.title = `${process.env.REACT_APP_SITE_TITLE} - ${user.account.schema}`;
   appInfo.apiKey = user.account.apiKey;
   if (octadesk && octadesk.chat) {
     octadesk.chat.login({
       name: user.account.userName,
       email: user.account.email
     });
-  };
+  }
   return user.account.userName;
 };
 
-const Me = ({ user, toggleDrawer, t }) => (
-  <div
-    css="
+const Me = ({ user, toggleDrawer, t }) => {
+  const onSearch = value => {
+    const reg = /^-?\d*(\.\d*)?$/;
+    const searchValue = value.trim();
+
+    if (!isNaN(searchValue) && reg.test(searchValue) && searchValue !== '') {
+      window.open(`/prescricao/${searchValue}`);
+    } else {
+      notification.error({ message: 'Número de prescrição inválido.' });
+    }
+  };
+
+  return (
+    <div
+      css="
       align-items: center;
       display: flex;
+      width: 100%;
+      justify-content: space-between;
     "
-  >
-    <Avatar size={44} icon="user" css="margin-right: 12px !important;" />
-    <UserName>{setTitle({ user })}</UserName>
-    <LogOut onClick={e => octadesk.chat.toggle()} id="gtm-lnk-ajuda" style={{ marginRight: '12px' }}>
-      {t('layout.help')}
-    </LogOut>
-    <LogOut onClick={e => octadesk.chat.hideApp()} href="/logout" id="gtm-lnk-sair">
-      {t('layout.logout')}
-    </LogOut>
-  </div>
-);
+    >
+      <InputSearchNumber
+        placeholder="Buscar por nº de prescrição"
+        style={{ width: 300 }}
+        size="large"
+        onSearch={onSearch}
+        id="gtm-search-box"
+        type="number"
+      />
+
+      <div className="controls">
+        <Avatar size={44} icon="user" css="margin-right: 12px !important;" />
+        <UserName>{setTitle({ user })}</UserName>
+
+        <LogOut
+          onClick={e => octadesk.chat.toggle()}
+          id="gtm-lnk-ajuda"
+          style={{ marginRight: '12px' }}
+        >
+          {t('layout.help')}
+        </LogOut>
+        <LogOut onClick={e => octadesk.chat.hideApp()} href="/logout" id="gtm-lnk-sair">
+          {t('layout.logout')}
+        </LogOut>
+      </div>
+    </div>
+  );
+};
 
 export default function Layout({ children, theme, app, setAppSider, ...props }) {
   const [sider, setSider] = useState({
@@ -94,7 +127,7 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
         collapsedWidth={sider.collapsedWidth}
       >
         <div css="padding: 0 15px 30px;">
-          <Brand className="brand" title="noHarm.ai | Cuidando dos pacientes (Outubro Rosa)"/>
+          <Brand className="brand" title="noHarm.ai | Cuidando dos pacientes (Outubro Rosa)" />
         </div>
         <Menu {...props} />
       </Sider>

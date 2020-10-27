@@ -1,4 +1,4 @@
-export { Input } from './Input';
+export { Input, InputSearchNumber } from './Input';
 export { Checkbox } from './Checkbox';
 export { Select } from './Select';
 export { InputNumber } from './InputNumber';

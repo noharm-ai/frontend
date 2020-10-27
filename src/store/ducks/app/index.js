@@ -8,13 +8,14 @@ export const { Types, Creators } = createActions({
   appSetSider: ['sider'],
   appSetScreeningListFilter: ['params'],
   appSaveFilter: ['filterType', 'filter'],
-  appRemoveFilter: ['filterType', 'index']
+  appRemoveFilter: ['filterType', 'index'],
+  appSetJourney: ['journey']
 });
 
 const INITIAL_STATE = {
   config: {
     nameUrl: null,
-    apiKey: process.env.REACT_APP_API_KEY || null,
+    apiKey: process.env.REACT_APP_API_KEY || null
   },
   sider: {
     collapsed: false
@@ -32,6 +33,9 @@ const INITIAL_STATE = {
   },
   help: {
     section: null
+  },
+  preferences: {
+    journey: 'patient'
   }
 };
 
@@ -120,9 +124,18 @@ const setScreeningListFilter = (state = INITIAL_STATE, { params }) => ({
   }
 });
 
+const setJourney = (state = INITIAL_STATE, { journey }) => ({
+  ...state,
+  preferences: {
+    ...state.preferences,
+    journey
+  }
+});
+
 const HANDLERS = {
   [Types.APP_SET_CONFIG]: setConfig,
   [Types.APP_SET_SIDER]: setSider,
+  [Types.APP_SET_JOURNEY]: setJourney,
   [Types.APP_SET_SCREENING_LIST_FILTER]: setScreeningListFilter,
   [Types.APP_SAVE_FILTER]: saveFilter,
   [Types.APP_REMOVE_FILTER]: removeFilter

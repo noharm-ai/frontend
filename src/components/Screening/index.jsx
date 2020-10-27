@@ -13,6 +13,7 @@ import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
+import notification from '@components/notification';
 import TableFilter from '@components/TableFilter';
 import ModalIntervention from '@containers/Screening/ModalIntervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
@@ -24,6 +25,7 @@ import columnsTable, {
   expandedRowRender,
   solutionColumns,
   groupSolutions,
+  groupProcedures,
   isPendingValidation
 } from './columns';
 import interventionColumns, { expandedInterventionRowRender } from './Intervention/columns';
@@ -45,6 +47,11 @@ const ScreeningTabs = styled(Tabs)`
     margin-left: 50px !important;
   }
 `;
+
+const errorMessage = {
+  message: 'Ops! Algo de errado aconteceu.',
+  description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
+};
 
 export default function Screening({
   match,
@@ -163,7 +170,7 @@ export default function Screening({
   const [dsInterventions, setDsInterventions] = useState([]);
   const [dsExams, setDsExams] = useState([]);
 
-  const splitDatasource = (list, prescriptionType, group) => {
+  const splitDatasource = (list, prescriptionType, groupFunction) => {
     const drugArray = [];
     list.forEach(item => {
       if (!drugArray[item.idPrescription]) {
@@ -174,10 +181,10 @@ export default function Screening({
 
     const dsArray = [];
     drugArray.forEach((item, index) => {
-      if (group) {
+      if (groupFunction) {
         dsArray.push({
           key: index,
-          value: groupSolutions(
+          value: groupFunction(
             toDataSource(item, 'idPrescriptionDrug', {
               ...bag,
               prescriptionType
@@ -200,15 +207,17 @@ export default function Screening({
   };
 
   useEffect(() => {
-    setDrugList(drugList ? splitDatasource(drugList, 'prescriptions', false) : []);
+    setDrugList(drugList ? splitDatasource(drugList, 'prescriptions') : []);
   }, [drugList]); // eslint-disable-line
 
   useEffect(() => {
-    setDsSolutions(solutionList ? splitDatasource(solutionList, 'solutions', true) : []);
+    setDsSolutions(solutionList ? splitDatasource(solutionList, 'solutions', groupSolutions) : []);
   }, [solutionList]); // eslint-disable-line
 
   useEffect(() => {
-    setDsProcedures(proceduresList ? splitDatasource(proceduresList, 'procedures', false) : []);
+    setDsProcedures(
+      proceduresList ? splitDatasource(proceduresList, 'procedures', groupProcedures) : []
+    );
   }, [proceduresList]); // eslint-disable-line
 
   useEffect(() => {
@@ -223,6 +232,13 @@ export default function Screening({
   useEffect(() => {
     setDsExams(toDataSource(exams.list, 'key', {}));
   }, [exams.list]); // eslint-disable-line
+
+  // show message if has error
+  useEffect(() => {
+    if (!isEmpty(error)) {
+      notification.error(errorMessage);
+    }
+  }, [error]);
 
   const listCount = {
     prescriptions: drugList ? drugList.length : 0,
@@ -286,7 +302,13 @@ export default function Screening({
   );
 
   if (error) {
-    return null;
+    return (
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description={error.message}
+        id="gtm-prescription-error"
+      />
+    );
   }
 
   return (

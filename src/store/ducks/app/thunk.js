@@ -5,11 +5,16 @@ const {
   appSetScreeningListFilter,
   appSaveFilter,
   appRemoveFilter,
-  appSetConfig
+  appSetConfig,
+  appSetJourney
 } = AppCreators;
 
 export const setSiderThunk = (state = {}) => dispatch => {
   dispatch(appSetSider(state));
+};
+
+export const setJourneyThunk = journey => dispatch => {
+  dispatch(appSetJourney(journey));
 };
 
 export const setConfigThunk = (config = {}) => dispatch => {
