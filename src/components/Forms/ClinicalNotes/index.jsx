@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -9,6 +9,7 @@ import DefaultModal from '@components/Modal';
 
 import Base from './Base';
 import { FormContainer } from '../Form.style';
+import getInterventionTemplate from './util/getInterventionTemplate';
 
 const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
@@ -24,14 +25,9 @@ const validationSchema = Yup.object().shape({
 });
 const formId = 'clinicalNotes';
 
-export default function ClinicalNotes({ prescription, save, afterSave, ...props }) {
+export default function ClinicalNotes({ prescription, save, afterSave, account, ...props }) {
+  const initialValues = useRef(null);
   const { isSaving, success, error, data } = prescription;
-
-  const initialValues = {
-    formId,
-    idPrescription: data.idPrescription,
-    notes: data.notes
-  };
 
   useEffect(() => {
     if (success === formId) {
@@ -46,11 +42,19 @@ export default function ClinicalNotes({ prescription, save, afterSave, ...props 
     }
   }, [success, error]); // eslint-disable-line
 
+  useEffect(() => {
+    initialValues.current = {
+      formId,
+      idPrescription: data.idPrescription,
+      notes: data.notes ? data.notes : getInterventionTemplate(prescription, account)
+    };
+  }, [account, data.idPrescription, data.notes, prescription]);
+
   return (
     <Formik
       enableReinitialize
       onSubmit={save}
-      initialValues={initialValues}
+      initialValues={initialValues.current}
       validationSchema={validationSchema}
     >
       {({ handleSubmit }) => (

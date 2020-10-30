@@ -5,8 +5,9 @@ import { savePrescriptionThunk } from '@store/ducks/prescriptions/thunk';
 
 import FormClinicalNotes from '@components/Forms/ClinicalNotes';
 
-const mapStateToProps = ({ prescriptions }) => ({
-  prescription: prescriptions.single
+const mapStateToProps = ({ prescriptions, user }) => ({
+  prescription: prescriptions.single,
+  account: user.account
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
