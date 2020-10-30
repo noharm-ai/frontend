@@ -5,10 +5,9 @@ import uniqBy from 'lodash.uniqby';
 import debounce from 'lodash.debounce';
 
 import { Row, Col } from '@components/Grid';
-import { Select } from '@components/Inputs';
+import { Select, Textarea } from '@components/Inputs';
 import Switch from '@components/Switch';
 import Heading from '@components/Heading';
-import Editor from '@components/Editor';
 import LoadBox from '@components/LoadBox';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
@@ -166,7 +165,7 @@ const Interactions = ({
       .concat(interactionsList)
       .map(i => {
         if (interactions.indexOf(parseInt(i.idDrug, 10)) !== -1) {
-          i.idDrug = i.idDrug + '';
+          i.idDrug += '';
           return i;
         }
 
@@ -183,16 +182,16 @@ const Interactions = ({
   }, 800);
 
   if (!isEmpty(interactions)) {
-    interactions = interactions.map(item => item + '');
+    interactions = interactions.map(item => `${item}`);
   }
 
-  interactionsList = interactionsList ? interactionsList : [];
-  uniqueDrugList = uniqueDrugList ? uniqueDrugList : [];
+  interactionsList = interactionsList || [];
+  uniqueDrugList = uniqueDrugList || [];
   const normalizedList = drugs.list
     .concat(interactionsList)
     .concat(uniqueDrugList)
     .map(i => {
-      i.idDrug = i.idDrug + '';
+      i.idDrug += '';
       return i;
     });
 
@@ -339,12 +338,11 @@ const Observations = ({
         </Col>
       </Row>
       <EditorBox>
-        <Editor
-          onEdit={onEdit}
-          content={content || ''}
-          onInit={editor => {
-            editor.editing.view.focus();
-          }}
+        <Textarea
+          autoFocus
+          value={content || ''}
+          onChange={({ target }) => onEdit(target.value)}
+          style={{ minHeight: '200px' }}
         />
       </EditorBox>
     </Box>
@@ -381,16 +379,20 @@ export default function Intervention({
   memorySaveReasonText,
   memoryFetchReasonText
 }) {
+  const { maybeCreateOrUpdate } = intervention;
+  const { item: itemToSave } = maybeCreateOrUpdate;
+
   useEffect(() => {
     fetchReasonsList();
   }, [fetchReasonsList]);
 
   useEffect(() => {
-    updateSelectedItemToSaveIntervention({ status: 's' });
-  }, [updateSelectedItemToSaveIntervention]);
-
-  const { maybeCreateOrUpdate } = intervention;
-  const { item: itemToSave } = maybeCreateOrUpdate;
+    updateSelectedItemToSaveIntervention({
+      status: 's',
+      idPrescription: itemToSave.idPrescription,
+      drugName: itemToSave.drug
+    });
+  }, [updateSelectedItemToSaveIntervention]); // eslint-disable-line
 
   if (isEmpty(itemToSave)) {
     return <LoadBox />;
