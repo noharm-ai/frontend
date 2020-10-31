@@ -36,7 +36,6 @@ export default (prescription, account) => {
   const list = [...prescriptions, ...solutions, ...procedures];
 
   const interventions = groupByPrescription(getInterventions(list));
-  console.log('group', interventions);
 
   const tpl = interventions.map((iList, p) => {
     const iTpl = iList.map(i => interventionTemplate(i));

@@ -1,5 +1,5 @@
 import 'styled-components/macro';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import isEmpty from 'lodash.isempty';
 import uniqBy from 'lodash.uniqby';
 import debounce from 'lodash.debounce';
@@ -12,6 +12,7 @@ import LoadBox from '@components/LoadBox';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 import notification from '@components/notification';
+import stripHtml from '@utils/stripHtml';
 
 import { Box, EditorBox } from './Intervention.style';
 
@@ -236,6 +237,7 @@ const Observations = ({
   saveMemory,
   currentReason
 }) => {
+  const text = useRef(content || '');
   const isMemoryDisabled = currentReason == null || currentReason.length !== 1;
 
   useEffect(() => {
@@ -249,6 +251,10 @@ const Observations = ({
       notification.success({ message: 'Uhu! Observação modelo salva com sucesso!' });
     }
   }, [memory.save.success]);
+
+  useEffect(() => {
+    text.current = content ? stripHtml(content) : '';
+  }, []); // eslint-disable-line
 
   const saveDefaultText = () => {
     const payload = {
@@ -269,6 +275,7 @@ const Observations = ({
 
   const onEdit = observation => {
     onEditObservation({ observation });
+    text.current = observation;
   };
 
   const getMemoryTooltip = () => {
@@ -340,7 +347,7 @@ const Observations = ({
       <EditorBox>
         <Textarea
           autoFocus
-          value={content || ''}
+          value={text.current || ''}
           onChange={({ target }) => onEdit(target.value)}
           style={{ minHeight: '200px' }}
         />
