@@ -270,6 +270,7 @@ const Observations = ({
 
   const loadDefaultText = () => {
     onEditObservation({ observation: memory.list[0].value.text });
+    text.current = memory.list[0].value.text;
     notification.success({ message: 'Observação modelo aplicada com sucesso!' });
   };
 
