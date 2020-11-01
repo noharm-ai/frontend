@@ -1,5 +1,14 @@
 import stripHtml from '@utils/stripHtml';
 
+const emptyInterventionTemplate = `S/O: Verifico prescrição vigente do paciente.
+
+A: Realizo validação de dose, via e frequência dos medicamentos prescritos.
+
+P: Acompanhamento da conduta médica na próxima prescrição.
+
+Validação diária das prescrições do paciente.
+Me coloco à disposição.`;
+
 export const prescriptionTemplate = (p, i) => `
 Prescrição nº ${p}
 
@@ -12,9 +21,11 @@ ${stripHtml(i.observation)}
 `;
 
 export const layoutTemplate = (prescription, interventions, signature) => `Farmácia Clínica
-${prescription.namePatient}, ${prescription.age}, ${prescription.weight}Kg
+${prescription.namePatient}, ${prescription.age}${
+  prescription.weight ? `, ${prescription.weight}Kg` : ''
+}
 
-${interventions}
+${interventions || emptyInterventionTemplate}
 
 ${signature}
 `;
