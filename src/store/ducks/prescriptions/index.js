@@ -159,6 +159,11 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
     list[prescriptionIndex].status = success.newStatus;
   }
 
+  const headers = [];
+  Object.keys(state.single.data.headers).forEach(p => {
+    headers[p] = { ...state.single.data.headers[p], status: success.newStatus };
+  });
+
   return {
     ...state,
     list,
@@ -173,6 +178,7 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
       },
       data: {
         ...state.single.data,
+        headers,
         status: success.newStatus
       }
     }
