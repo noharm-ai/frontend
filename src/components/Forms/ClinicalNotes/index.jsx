@@ -24,13 +24,12 @@ const validationSchema = Yup.object().shape({
 });
 const formId = 'clinicalNotes';
 
-export default function ClinicalNotes({ prescription, save, afterSave, ...props }) {
+export default function ClinicalNotes({ prescription, save, afterSave, account, ...props }) {
   const { isSaving, success, error, data } = prescription;
-
   const initialValues = {
     formId,
     idPrescription: data.idPrescription,
-    notes: data.notes
+    notes: data.notes ? data.notes : ''
   };
 
   useEffect(() => {
@@ -76,7 +75,7 @@ export default function ClinicalNotes({ prescription, save, afterSave, ...props 
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base />
+                <Base prescription={prescription} account={account} />
               </Row>
             </FormContainer>
           </form>
