@@ -18,16 +18,15 @@ import TableFilter from '@components/TableFilter';
 import ModalIntervention from '@containers/Screening/ModalIntervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 import BackTop from '@components/BackTop';
+import {
+  groupSolutions,
+  groupProcedures,
+  filterWhitelistedChildren
+} from '@utils/transformers/prescriptionDrugs';
 import { toDataSource } from '@utils';
 
 import Patient from './Patient';
-import columnsTable, {
-  expandedRowRender,
-  solutionColumns,
-  groupSolutions,
-  groupProcedures,
-  isPendingValidation
-} from './columns';
+import columnsTable, { expandedRowRender, solutionColumns, isPendingValidation } from './columns';
 import interventionColumns, { expandedInterventionRowRender } from './Intervention/columns';
 import examColumns, { examRowClassName, expandedExamRowRender } from './Exam/columns';
 import PrescriptionDrugList from './PrescriptionDrug/PrescriptionDrugList';
@@ -207,7 +206,9 @@ export default function Screening({
   };
 
   useEffect(() => {
-    setDrugList(drugList ? splitDatasource(drugList, 'prescriptions') : []);
+    setDrugList(
+      drugList ? splitDatasource(filterWhitelistedChildren(drugList), 'prescriptions') : []
+    );
   }, [drugList]); // eslint-disable-line
 
   useEffect(() => {
