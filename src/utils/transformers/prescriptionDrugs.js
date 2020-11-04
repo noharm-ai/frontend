@@ -1,3 +1,5 @@
+import isEmpty from 'lodash.isempty';
+
 const groupPrescriptionDrugs = (list, createTotalRowFunction) => {
   const items = [];
   let currentGroup = list[0].grp_solution;
@@ -65,5 +67,27 @@ export const filterWhitelistedChildren = list => {
     }
 
     return true;
+  });
+};
+
+export const getWhitelistedChildren = list => {
+  console.log('getWhitelistedChildren');
+
+  if (isEmpty(list)) {
+    return [];
+  }
+
+  const isChild = i => {
+    const grp = `${i.grp_solution.replace(i.idPrescription, '')}000`;
+
+    return grp !== `${i.idPrescriptionDrug}`;
+  };
+
+  return list.filter(i => {
+    if (i.whiteList && isChild(i)) {
+      return true;
+    }
+
+    return false;
   });
 };

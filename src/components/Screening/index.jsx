@@ -21,7 +21,8 @@ import BackTop from '@components/BackTop';
 import {
   groupSolutions,
   groupProcedures,
-  filterWhitelistedChildren
+  filterWhitelistedChildren,
+  getWhitelistedChildren
 } from '@utils/transformers/prescriptionDrugs';
 import { toDataSource } from '@utils';
 
@@ -146,28 +147,12 @@ export default function Screening({
     setVisibility(true);
   };
 
-  // extra resources to add in table item.
-  const bag = {
-    onShowModal,
-    onShowPrescriptionDrugModal,
-    check: checkPrescriptionDrug,
-    savePrescriptionDrugStatus,
-    idSegment: content.idSegment,
-    uniqueDrugList: getUniqueDrugs(drugList, solutionList, proceduresList),
-    admissionNumber: content.admissionNumber,
-    saveInterventionStatus,
-    checkIntervention,
-    periodObject,
-    fetchPeriod,
-    handleRowExpand,
-    weight: content.weight
-  };
-
   const [dsDrugList, setDrugList] = useState([]);
   const [dsSolutions, setDsSolutions] = useState([]);
   const [dsProcedures, setDsProcedures] = useState([]);
   const [dsInterventions, setDsInterventions] = useState([]);
   const [dsExams, setDsExams] = useState([]);
+  const [bag, setBag] = useState({});
 
   const splitDatasource = (list, prescriptionType, groupFunction) => {
     const drugArray = [];
@@ -204,6 +189,32 @@ export default function Screening({
 
     return dsArray;
   };
+
+  useEffect(() => {
+    setBag({
+      onShowModal,
+      onShowPrescriptionDrugModal,
+      check: checkPrescriptionDrug,
+      savePrescriptionDrugStatus,
+      idSegment: content.idSegment,
+      uniqueDrugList: getUniqueDrugs(drugList, solutionList, proceduresList),
+      admissionNumber: content.admissionNumber,
+      saveInterventionStatus,
+      checkIntervention,
+      periodObject,
+      fetchPeriod,
+      handleRowExpand,
+      weight: content.weight,
+      whitelistedChildren: getWhitelistedChildren(drugList)
+    });
+  }, [ // eslint-disable-line
+    content.idSegment, // eslint-disable-line
+    content.admissionNumber, // eslint-disable-line
+    content.weight, // eslint-disable-line
+    drugList, // eslint-disable-line
+    solutionList, // eslint-disable-line
+    proceduresList // eslint-disable-line
+  ]); // eslint-disable-line
 
   useEffect(() => {
     setDrugList(
