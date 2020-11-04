@@ -378,7 +378,7 @@ export const expandedRowRender = record => {
           </Descriptions.Item>
         )}
         {!isEmpty(diluents) && (
-          <Descriptions.Item label="Diluentes:" span={3}>
+          <Descriptions.Item label="Diluentes (sem validação):" span={3}>
             <SimpleList>
               {diluents.map((d, i) => (
                 <li key={i}>
