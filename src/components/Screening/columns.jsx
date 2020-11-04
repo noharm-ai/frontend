@@ -306,6 +306,20 @@ export const expandedRowRender = record => {
     }
   }
 
+  let diluents = [];
+
+  if (!isEmpty(record.whitelistedChildren)) {
+    diluents = record.whitelistedChildren.filter(d => {
+      const grp = `${d.grp_solution.replace(d.idPrescription, '')}000`;
+
+      if (grp === `${record.idPrescriptionDrug}`) {
+        return true;
+      }
+
+      return false;
+    });
+  }
+
   return (
     <NestedTableContainer>
       <Descriptions bordered size="small">
@@ -361,6 +375,17 @@ export const expandedRowRender = record => {
                 </Descriptions.Item>
               }
             />
+          </Descriptions.Item>
+        )}
+        {!isEmpty(diluents) && (
+          <Descriptions.Item label="Diluentes:" span={3}>
+            <SimpleList>
+              {diluents.map((d, i) => (
+                <li key={i}>
+                  {d.drug} ({d.dosage})
+                </li>
+              ))}
+            </SimpleList>
           </Descriptions.Item>
         )}
       </Descriptions>

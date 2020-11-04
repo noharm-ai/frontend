@@ -57,7 +57,7 @@ export const filterWhitelistedChildren = list => {
   const isChild = i => {
     const grp = `${i.grp_solution.replace(i.idPrescription, '')}000`;
 
-    return grp !== `${i.idPrescriptionDrug}`;
+    return grp !== `${i.idPrescriptionDrug}` && i.grp_solution !== `${i.idPrescription}`;
   };
 
   return list.filter(i => {
@@ -71,8 +71,6 @@ export const filterWhitelistedChildren = list => {
 };
 
 export const getWhitelistedChildren = list => {
-  console.log('getWhitelistedChildren');
-
   if (isEmpty(list)) {
     return [];
   }

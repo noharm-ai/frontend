@@ -147,14 +147,29 @@ export default function Screening({
     setVisibility(true);
   };
 
+  const bag = {
+    onShowModal,
+    onShowPrescriptionDrugModal,
+    check: checkPrescriptionDrug,
+    savePrescriptionDrugStatus,
+    idSegment: content.idSegment,
+    uniqueDrugList: getUniqueDrugs(drugList, solutionList, proceduresList),
+    admissionNumber: content.admissionNumber,
+    saveInterventionStatus,
+    checkIntervention,
+    periodObject,
+    fetchPeriod,
+    handleRowExpand,
+    weight: content.weight
+  };
+
   const [dsDrugList, setDrugList] = useState([]);
   const [dsSolutions, setDsSolutions] = useState([]);
   const [dsProcedures, setDsProcedures] = useState([]);
   const [dsInterventions, setDsInterventions] = useState([]);
   const [dsExams, setDsExams] = useState([]);
-  const [bag, setBag] = useState({});
 
-  const splitDatasource = (list, prescriptionType, groupFunction) => {
+  const splitDatasource = (list, prescriptionType, groupFunction, extraContent) => {
     const drugArray = [];
     list.forEach(item => {
       if (!drugArray[item.idPrescription]) {
@@ -171,6 +186,7 @@ export default function Screening({
           value: groupFunction(
             toDataSource(item, 'idPrescriptionDrug', {
               ...bag,
+              ...extraContent,
               prescriptionType
             }),
             infusionList
@@ -181,6 +197,7 @@ export default function Screening({
           key: index,
           value: toDataSource(item, 'idPrescriptionDrug', {
             ...bag,
+            ...extraContent,
             prescriptionType
           })
         });
@@ -191,34 +208,12 @@ export default function Screening({
   };
 
   useEffect(() => {
-    setBag({
-      onShowModal,
-      onShowPrescriptionDrugModal,
-      check: checkPrescriptionDrug,
-      savePrescriptionDrugStatus,
-      idSegment: content.idSegment,
-      uniqueDrugList: getUniqueDrugs(drugList, solutionList, proceduresList),
-      admissionNumber: content.admissionNumber,
-      saveInterventionStatus,
-      checkIntervention,
-      periodObject,
-      fetchPeriod,
-      handleRowExpand,
-      weight: content.weight,
-      whitelistedChildren: getWhitelistedChildren(drugList)
-    });
-  }, [ // eslint-disable-line
-    content.idSegment, // eslint-disable-line
-    content.admissionNumber, // eslint-disable-line
-    content.weight, // eslint-disable-line
-    drugList, // eslint-disable-line
-    solutionList, // eslint-disable-line
-    proceduresList // eslint-disable-line
-  ]); // eslint-disable-line
-
-  useEffect(() => {
     setDrugList(
-      drugList ? splitDatasource(filterWhitelistedChildren(drugList), 'prescriptions') : []
+      drugList
+        ? splitDatasource(filterWhitelistedChildren(drugList), 'prescriptions', null, {
+            whitelistedChildren: getWhitelistedChildren(drugList)
+          })
+        : []
     );
   }, [drugList]); // eslint-disable-line
 
