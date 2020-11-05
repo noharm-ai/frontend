@@ -516,6 +516,7 @@ const frequencyAndTime = [
       if (isEmpty(prescription.frequency)) {
         return (
           <Tooltip title="Frequência obtida por conversão" placement="top">
+            {' '}
             <InfoIcon />
           </Tooltip>
         );
