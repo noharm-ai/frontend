@@ -53,15 +53,23 @@ export const groupProcedures = list => {
   return groupPrescriptionDrugs(list, createTotalRow);
 };
 
+export const isWhitelistedChild = (whitelist, groupSolution, idPrescriptionDrug) => {
+  if (!whitelist) {
+    return false;
+  }
+
+  if (!groupSolution) {
+    return false;
+  }
+
+  const parent = `${groupSolution}000`;
+
+  return parent !== `${idPrescriptionDrug}`;
+};
+
 export const filterWhitelistedChildren = list => {
-  const isChild = i => {
-    const grp = `${i.grp_solution.replace(i.idPrescription, '')}000`;
-
-    return grp !== `${i.idPrescriptionDrug}` && i.grp_solution !== `${i.idPrescription}`;
-  };
-
   return list.filter(i => {
-    if (i.whiteList && isChild(i)) {
+    if (isWhitelistedChild(i.whiteList, i.grp_solution, i.idPrescriptionDrug)) {
       console.log('removed', i);
       return false;
     }
@@ -75,14 +83,8 @@ export const getWhitelistedChildren = list => {
     return [];
   }
 
-  const isChild = i => {
-    const grp = `${i.grp_solution.replace(i.idPrescription, '')}000`;
-
-    return grp !== `${i.idPrescriptionDrug}`;
-  };
-
   return list.filter(i => {
-    if (i.whiteList && isChild(i)) {
+    if (isWhitelistedChild(i.whiteList, i.grp_solution, i.idPrescriptionDrug)) {
       return true;
     }
 
