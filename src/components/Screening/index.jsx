@@ -18,16 +18,16 @@ import TableFilter from '@components/TableFilter';
 import ModalIntervention from '@containers/Screening/ModalIntervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 import BackTop from '@components/BackTop';
+import {
+  groupSolutions,
+  groupProcedures,
+  filterWhitelistedChildren,
+  getWhitelistedChildren
+} from '@utils/transformers/prescriptionDrugs';
 import { toDataSource } from '@utils';
 
 import Patient from './Patient';
-import columnsTable, {
-  expandedRowRender,
-  solutionColumns,
-  groupSolutions,
-  groupProcedures,
-  isPendingValidation
-} from './columns';
+import columnsTable, { expandedRowRender, solutionColumns, isPendingValidation } from './columns';
 import interventionColumns, { expandedInterventionRowRender } from './Intervention/columns';
 import examColumns, { examRowClassName, expandedExamRowRender } from './Exam/columns';
 import PrescriptionDrugList from './PrescriptionDrug/PrescriptionDrugList';
@@ -147,7 +147,6 @@ export default function Screening({
     setVisibility(true);
   };
 
-  // extra resources to add in table item.
   const bag = {
     onShowModal,
     onShowPrescriptionDrugModal,
@@ -170,7 +169,7 @@ export default function Screening({
   const [dsInterventions, setDsInterventions] = useState([]);
   const [dsExams, setDsExams] = useState([]);
 
-  const splitDatasource = (list, prescriptionType, groupFunction) => {
+  const splitDatasource = (list, prescriptionType, groupFunction, extraContent) => {
     const drugArray = [];
     list.forEach(item => {
       if (!drugArray[item.idPrescription]) {
@@ -187,6 +186,7 @@ export default function Screening({
           value: groupFunction(
             toDataSource(item, 'idPrescriptionDrug', {
               ...bag,
+              ...extraContent,
               prescriptionType
             }),
             infusionList
@@ -197,6 +197,7 @@ export default function Screening({
           key: index,
           value: toDataSource(item, 'idPrescriptionDrug', {
             ...bag,
+            ...extraContent,
             prescriptionType
           })
         });
@@ -207,7 +208,13 @@ export default function Screening({
   };
 
   useEffect(() => {
-    setDrugList(drugList ? splitDatasource(drugList, 'prescriptions') : []);
+    setDrugList(
+      drugList
+        ? splitDatasource(filterWhitelistedChildren(drugList), 'prescriptions', null, {
+            whitelistedChildren: getWhitelistedChildren(drugList)
+          })
+        : []
+    );
   }, [drugList]); // eslint-disable-line
 
   useEffect(() => {
