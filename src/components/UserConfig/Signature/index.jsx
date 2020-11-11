@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
@@ -7,9 +7,28 @@ import { Box, EditorBox, ButtonContainer } from '@components/Forms/Form.style';
 import Button from '@components/Button';
 import Icon from '@components/Icon';
 
-export default function Signature() {
+const SIGNATURE_STORE_ID = 'signature';
+const SIGNATURE_MEMORY_TYPE = 'config-signature';
+
+export default function Signature({ fetchMemory, saveMemory, memory }) {
+  const [signature, setSignature] = useState('');
+  const { isFetching, list: memoryData } = memory;
+
+  useEffect(() => {
+    fetchMemory(SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE);
+  }, [fetchMemory]);
+
+  useEffect(() => {
+    setSignature(memoryData[0] ? memoryData[0].value : '');
+  }, [memoryData]);
+
   const save = () => {
-    console.log('save');
+    saveMemory(SIGNATURE_STORE_ID, {
+      ...memoryData[0],
+      id: memoryData[0] ? memoryData[0].key : '',
+      type: SIGNATURE_MEMORY_TYPE,
+      value: signature
+    });
   };
 
   return (
@@ -21,10 +40,16 @@ export default function Signature() {
       </Col>
       <Col xs={12} style={{ alignSelf: 'flex-start' }}>
         <EditorBox>
-          <Textarea autoFocus style={{ minHeight: '150px' }} />
+          <Textarea
+            autoFocus
+            style={{ minHeight: '150px' }}
+            disabled={isFetching}
+            value={signature}
+            onChange={({ target }) => setSignature(target.value)}
+          />
         </EditorBox>
         <ButtonContainer>
-          <Button type="primary" onClick={() => save()}>
+          <Button type="primary" onClick={() => save()} disabled={isFetching}>
             Salvar <Icon type="check" />
           </Button>
         </ButtonContainer>

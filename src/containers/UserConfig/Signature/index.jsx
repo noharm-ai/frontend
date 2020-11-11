@@ -3,7 +3,16 @@ import { bindActionCreators } from 'redux';
 
 import Signature from '@components/UserConfig/Signature';
 
-const mapStateToProps = ({ reports }) => ({ reports });
-const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch);
+import { memoryFetchThunk, memorySaveThunk } from '@store/ducks/memory/thunk';
+
+const mapStateToProps = ({ memory }) => ({ memory: memory.signature });
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      fetchMemory: memoryFetchThunk,
+      saveMemory: memorySaveThunk
+    },
+    dispatch
+  );
 
 export default connect(mapStateToProps, mapDispatchToProps)(Signature);
