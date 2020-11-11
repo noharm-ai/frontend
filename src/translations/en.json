@@ -24,7 +24,8 @@
     "config": "Settings",
     "medications": "Medications",
     "segments": "Segments",
-    "knowledgeBase": "Knowledge Base"
+    "knowledgeBase": "Knowledge Base",
+    "userConfig": "User"
   },
   "screeningList": {
     "title-prescription": "Prescription Prioritization",

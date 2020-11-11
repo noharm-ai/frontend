@@ -18,6 +18,7 @@ import ViewReport from '@pages/Reports/ViewReport';
 import InterventionList from '@pages/InterventionList';
 import KnowledgeBase from '@pages/KnowledgeBase';
 import KnowledgeBaseArticle from '@pages/KnowledgeBase/Article';
+import UserConfig from '@pages/UserConfig';
 
 const routes = [
   {
@@ -142,6 +143,13 @@ const routes = [
     path: '/base-de-conhecimento/:uid',
     component: withAuth({
       component: KnowledgeBaseArticle
+    })
+  },
+  {
+    exact: true,
+    path: '/configuracoes/usuario',
+    component: withAuth({
+      component: UserConfig
     })
   },
   {
