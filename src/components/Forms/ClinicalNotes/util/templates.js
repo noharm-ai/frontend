@@ -1,3 +1,5 @@
+import isEmpty from 'lodash.isempty';
+
 import stripHtml from '@utils/stripHtml';
 
 const emptyInterventionTemplate = `S/O: Verifico prescrição vigente do paciente.
@@ -30,6 +32,12 @@ ${interventions || emptyInterventionTemplate}
 ${signature}
 `;
 
-export const signatureTemplate = account => `Farm. ${account.userName}
+export const signatureTemplate = (signature, account) => {
+  if (isEmpty(signature.list) || signature.list[0].value === '') {
+    return `Farm. ${account.userName}
 CRF/UF:
 Ramal:`;
+  }
+
+  return signature.list[0].value;
+};

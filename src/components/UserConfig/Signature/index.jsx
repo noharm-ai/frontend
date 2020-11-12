@@ -6,13 +6,14 @@ import { Textarea } from '@components/Inputs';
 import { Box, EditorBox, ButtonContainer } from '@components/Forms/Form.style';
 import Button from '@components/Button';
 import Icon from '@components/Icon';
+import notification from '@components/notification';
 
-const SIGNATURE_STORE_ID = 'signature';
-const SIGNATURE_MEMORY_TYPE = 'config-signature';
+import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from '@utils/memory';
 
 export default function Signature({ fetchMemory, saveMemory, memory }) {
   const [signature, setSignature] = useState('');
   const { isFetching, list: memoryData } = memory;
+  const { isSaving, success, error } = memory.save;
 
   useEffect(() => {
     fetchMemory(SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE);
@@ -21,6 +22,22 @@ export default function Signature({ fetchMemory, saveMemory, memory }) {
   useEffect(() => {
     setSignature(memoryData[0] ? memoryData[0].value : '');
   }, [memoryData]);
+
+  useEffect(() => {
+    if (success) {
+      notification.success({ message: 'Uhu! Assinatura salva com sucesso! :)' });
+    }
+  }, [success]);
+
+  useEffect(() => {
+    if (error) {
+      notification.error({
+        message: 'Ops! Algo de errado aconteceu.',
+        description:
+          'Aconteceu algo que nos impediu de salvar os dados desta assinatura. Por favor, tente novamente.'
+      });
+    }
+  }, [error]);
 
   const save = () => {
     saveMemory(SIGNATURE_STORE_ID, {
@@ -49,7 +66,12 @@ export default function Signature({ fetchMemory, saveMemory, memory }) {
           />
         </EditorBox>
         <ButtonContainer>
-          <Button type="primary" onClick={() => save()} disabled={isFetching}>
+          <Button
+            type="primary"
+            onClick={() => save()}
+            disabled={isFetching || isSaving}
+            loading={isSaving}
+          >
             Salvar <Icon type="check" />
           </Button>
         </ButtonContainer>

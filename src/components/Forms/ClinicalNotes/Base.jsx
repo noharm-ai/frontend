@@ -10,12 +10,12 @@ import Button from '@components/Button';
 import getInterventionTemplate from './util/getInterventionTemplate';
 import { Box, EditorBox } from '../Form.style';
 
-export default function Base({ prescription, account }) {
+export default function Base({ prescription, account, signature }) {
   const { values, setFieldValue, errors } = useFormikContext();
   const { notes } = values;
 
   const loadDefaultText = () => {
-    setFieldValue('notes', getInterventionTemplate(prescription, account));
+    setFieldValue('notes', getInterventionTemplate(prescription, account, signature));
   };
 
   return (
