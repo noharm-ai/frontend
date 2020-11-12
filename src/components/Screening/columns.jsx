@@ -275,7 +275,7 @@ export const expandedRowRender = record => {
   if (record.total && record.infusion) {
     return (
       <NestedTableContainer>
-        <SolutionCalculator {...record.infusion.value} weight={record.weight} />
+        <SolutionCalculator {...record.infusion} weight={record.weight} />
       </NestedTableContainer>
     );
   }
@@ -486,7 +486,7 @@ const drugInfo = [
               onClick={() => prescription.handleRowExpand(prescription)}
               style={{ cursor: 'pointer', fontWeight: 600 }}
             >
-              {prescription.infusion.value.totalVol} mL
+              {prescription.infusion.totalVol} mL
             </span>
           </Tooltip>
         );

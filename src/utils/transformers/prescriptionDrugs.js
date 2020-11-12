@@ -32,7 +32,7 @@ export const groupSolutions = (list, infusionList) => {
       source: 'Soluções',
       handleRowExpand: item.handleRowExpand,
       weight: item.weight,
-      infusion: infusionList.find(i => i.key === group)
+      infusion: infusionList[item.idPrescription][group]
     };
   };
 
