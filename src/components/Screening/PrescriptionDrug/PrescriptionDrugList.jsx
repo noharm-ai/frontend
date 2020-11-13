@@ -14,7 +14,7 @@ const PrescriptionHeader = styled.div`
   display: inline-block;
   padding-left: 15px;
 
-  span {
+  div > span {
     padding-left: 15px;
   }
 
@@ -37,6 +37,10 @@ const PrescriptionHeader = styled.div`
 
   .subtitle {
     opacity: 0.6;
+  }
+
+  .expired {
+    color: rgb(207, 19, 34);
   }
 `;
 
@@ -113,6 +117,14 @@ const GroupPanel = styled(PrescriptionPanel)`
     border-radius: 0;
   }
 `;
+
+const isExpired = date => {
+  if (parseISO(date).getTime() < Date.now()) {
+    return true;
+  }
+
+  return false;
+};
 
 const rowClassName = record => {
   const classes = [];
@@ -192,7 +204,9 @@ export default function PrescriptionDrugList({
         </span>
         <span>
           <strong>Vigência:</strong> &nbsp;
-          {format(new Date(headers[ds.key].expire), 'dd/MM/yyyy HH:mm')}
+          <span className={isExpired(headers[ds.key].expire, true) ? 'expired' : ''}>
+            {format(new Date(headers[ds.key].expire), 'dd/MM/yyyy HH:mm')}
+          </span>
         </span>
         <span>
           <strong>Leito:</strong> &nbsp;
@@ -210,7 +224,9 @@ export default function PrescriptionDrugList({
     <PrescriptionHeader>
       <span style={{ fontSize: '16px' }}>
         <strong>Vigência:</strong> &nbsp;
-        {format(parseISO(dt), 'dd/MM/yyyy')}
+        <span className={isExpired(`${dt}T23:59:59`) ? 'expired' : ''}>
+          {format(parseISO(dt), 'dd/MM/yyyy')}
+        </span>
       </span>
     </PrescriptionHeader>
   );
