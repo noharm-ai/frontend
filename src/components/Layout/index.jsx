@@ -127,7 +127,7 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
         collapsedWidth={sider.collapsedWidth}
       >
         <div css="padding: 0 15px 30px;">
-          <Brand className="brand" title="noHarm.ai | Cuidando dos pacientes (Outubro Rosa)" />
+          <Brand className="brand" title="noHarm.ai | Cuidando dos pacientes" />
         </div>
         <Menu {...props} />
       </Sider>
