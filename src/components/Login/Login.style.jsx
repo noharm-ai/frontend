@@ -36,7 +36,7 @@ export const Brand = styled(LogoSVG)`
   margin: 0 auto 62px;
   max-width: 213px;
   width: 100%;
-  filter: hue-rotate(150deg);
+  // filter: hue-rotate(150deg); // outubro rosa
 `;
 
 export const Box = styled.div`

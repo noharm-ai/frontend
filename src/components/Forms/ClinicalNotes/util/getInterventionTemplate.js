@@ -31,7 +31,7 @@ const groupByPrescription = list => {
   return items;
 };
 
-export default (prescription, account) => {
+export default (prescription, account, signature) => {
   const { prescription: prescriptions, solution: solutions, procedures } = prescription.data;
   const list = [...prescriptions, ...solutions, ...procedures];
 
@@ -43,5 +43,5 @@ export default (prescription, account) => {
     return prescriptionTemplate(p, iTpl.join(''));
   });
 
-  return layoutTemplate(prescription.data, tpl.join(''), signatureTemplate(account));
+  return layoutTemplate(prescription.data, tpl.join(''), signatureTemplate(signature, account));
 };

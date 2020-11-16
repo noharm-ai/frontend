@@ -12,8 +12,8 @@ import Icon from '@components/Icon';
 import Button from '@components/Button';
 import { Input, Checkbox } from '@components/Inputs';
 import { Container, Row, Col } from '@components/Grid';
-import { Wrapper, Box, Brand, FieldSet, ForgotPass } from './Login.style';
 import { useTranslation } from 'react-i18next';
+import { Wrapper, Box, Brand, FieldSet, ForgotPass } from './Login.style';
 
 const initialValues = {
   email: '',
@@ -57,7 +57,7 @@ export default function Login({ isLogging, error, doLogin, match }) {
         <Row type="flex" justify="center">
           <Col span={24} md={8}>
             <Box>
-              <Brand title="noHarm.ai | Cuidando dos pacientes (Outubro Rosa)" />
+              <Brand title="noHarm.ai | Cuidando dos pacientes" />
 
               <FieldSet
                 className={setErrorClassName((errors.email && touched.email) || !isEmpty(error))}

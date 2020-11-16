@@ -6,6 +6,7 @@ import { Row } from '@components/Grid';
 import notification from '@components/notification';
 import Heading from '@components/Heading';
 import DefaultModal from '@components/Modal';
+import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from '@utils/memory';
 
 import Base from './Base';
 import { FormContainer } from '../Form.style';
@@ -24,13 +25,28 @@ const validationSchema = Yup.object().shape({
 });
 const formId = 'clinicalNotes';
 
-export default function ClinicalNotes({ prescription, save, afterSave, account, ...props }) {
+export default function ClinicalNotes({
+  prescription,
+  save,
+  afterSave,
+  account,
+  signature,
+  fetchMemory,
+  visible,
+  ...props
+}) {
   const { isSaving, success, error, data } = prescription;
   const initialValues = {
     formId,
     idPrescription: data.idPrescription,
     notes: data.notes ? data.notes : ''
   };
+
+  useEffect(() => {
+    if (visible) {
+      fetchMemory(SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE);
+    }
+  }, [fetchMemory, visible]);
 
   useEffect(() => {
     if (success === formId) {
@@ -57,6 +73,7 @@ export default function ClinicalNotes({ prescription, save, afterSave, account, 
           width={700}
           centered
           destroyOnClose
+          visible={visible}
           {...props}
           onOk={handleSubmit}
           confirmLoading={isSaving}
@@ -75,7 +92,7 @@ export default function ClinicalNotes({ prescription, save, afterSave, account, 
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base prescription={prescription} account={account} />
+                <Base prescription={prescription} account={account} signature={signature} />
               </Row>
             </FormContainer>
           </form>

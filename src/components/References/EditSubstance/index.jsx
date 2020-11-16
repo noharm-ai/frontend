@@ -35,11 +35,16 @@ export default function EditSubstance({
   fetchRelations
 }) {
   const [isFormVisible, setFormVisibility] = useState(false);
+  const [currentSubstance, setCurrentSubstance] = useState({});
   const { isSaving, error, success } = saveStatus;
 
   useEffect(() => {
     fetchSubstances();
   }, [fetchSubstances]);
+
+  useEffect(() => {
+    setCurrentSubstance({ sctidA: drugData.sctidA, sctNameA: drugData.sctNameA });
+  }, [drugData.sctNameA, drugData.sctidA]);
 
   useEffect(() => {
     if (success === formId) {
@@ -59,19 +64,25 @@ export default function EditSubstance({
     setFormVisibility(false);
   };
 
-  const saveSubstance = value => {
+  const changeSubstance = value => {
+    setCurrentSubstance({ sctidA: value.key, sctNameA: value.label });
+
+    fetchRelations(value.key);
+  };
+
+  const saveSubstance = () => {
+    const { sctidA, sctNameA } = currentSubstance;
+
     updateDrugData({
-      sctidA: value.key,
-      sctNameA: value.label
+      sctidA,
+      sctNameA
     });
 
     saveDrug({
       id: idDrug,
-      sctid: value.key,
+      sctid: sctidA,
       formId
     });
-
-    fetchRelations(value.key);
   };
 
   const edit = () => {
@@ -106,10 +117,10 @@ export default function EditSubstance({
                 showSearch
                 optionFilterProp="children"
                 placeholder="Selecione a substância..."
-                value={{ key: drugData.sctidA || '' }}
+                value={{ key: currentSubstance.sctidA || '' }}
                 loading={substance.isFetching}
                 disabled={isSaving}
-                onChange={saveSubstance}
+                onChange={changeSubstance}
               >
                 <Select.Option key="0" value="0">
                   &nbsp;
@@ -120,24 +131,41 @@ export default function EditSubstance({
                   </Select.Option>
                 ))}
               </Select>
-              <Tooltip title="Editar substância">
-                <Button
-                  type="primary gtm-bt-edit-substancia"
-                  style={{ marginLeft: '5px' }}
-                  onClick={edit}
-                >
-                  <Icon type="form" />
-                </Button>
-              </Tooltip>
-              <Tooltip title="Adicionar substância">
-                <Button
-                  type="primary gtm-bt-add-substancia"
-                  style={{ marginLeft: '5px' }}
-                  onClick={add}
-                >
-                  <Icon type="plus" />
-                </Button>
-              </Tooltip>
+              {drugData.sctidA !== currentSubstance.sctidA && (
+                <Tooltip title="Confirmar e Salvar a alteração">
+                  <Button
+                    type="primary gtm-bt-change-substancia"
+                    style={{ marginLeft: '5px' }}
+                    onClick={saveSubstance}
+                    disabled={isSaving}
+                    loading={isSaving}
+                  >
+                    <Icon type="check" />
+                  </Button>
+                </Tooltip>
+              )}
+              {drugData.sctidA === currentSubstance.sctidA && (
+                <>
+                  <Tooltip title="Editar substância">
+                    <Button
+                      type="primary gtm-bt-edit-substancia"
+                      style={{ marginLeft: '5px' }}
+                      onClick={edit}
+                    >
+                      <Icon type="form" />
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="Adicionar substância">
+                    <Button
+                      type="primary gtm-bt-add-substancia"
+                      style={{ marginLeft: '5px' }}
+                      onClick={add}
+                    >
+                      <Icon type="plus" />
+                    </Button>
+                  </Tooltip>
+                </>
+              )}
             </>
           )}
           {!security.isAdmin() && (

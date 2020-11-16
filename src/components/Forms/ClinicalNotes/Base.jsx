@@ -1,5 +1,6 @@
 import React from 'react';
 import 'styled-components/macro';
+import isEmpty from 'lodash.isempty';
 import { useFormikContext } from 'formik';
 
 import { Col } from '@components/Grid';
@@ -10,12 +11,16 @@ import Button from '@components/Button';
 import getInterventionTemplate from './util/getInterventionTemplate';
 import { Box, EditorBox } from '../Form.style';
 
-export default function Base({ prescription, account }) {
+export default function Base({ prescription, account, signature }) {
   const { values, setFieldValue, errors } = useFormikContext();
   const { notes } = values;
 
   const loadDefaultText = () => {
-    setFieldValue('notes', getInterventionTemplate(prescription, account));
+    setFieldValue('notes', getInterventionTemplate(prescription, account, signature));
+  };
+
+  const openUserConfig = () => {
+    window.open('/configuracoes/usuario');
   };
 
   return (
@@ -29,6 +34,17 @@ export default function Base({ prescription, account }) {
             type="primary gtm-bt-clinicalNotes-applyDefaultText"
           />
         </Tooltip>
+        {(isEmpty(signature.list) || signature.list[0].value === '') && (
+          <Tooltip title="Configurar assinatura padrão">
+            <Button
+              shape="circle"
+              icon="setting"
+              onClick={openUserConfig}
+              type="primary gtm-bt-clinicalNotes-configDefaultText"
+              style={{ marginLeft: '5px' }}
+            />
+          </Tooltip>
+        )}
       </Col>
       <Box hasError={errors.observation} flexDirection="column">
         <Col xs={24}>
