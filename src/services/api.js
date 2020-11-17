@@ -287,6 +287,10 @@ const updatePassword = (bearerToken, { ...params }) => {
   return instance.put(`${endpoints.user}`, params, setHeaders(bearerToken));
 };
 
+const forgotPassword = email => {
+  return instance.get(`${endpoints.user}/forget?email=${email}`, { ...setHeaders() });
+};
+
 /**
  * PRISMIC HELP
  */
@@ -352,7 +356,8 @@ const api = {
   getKnowledgeBaseArticleByUID,
   getMemory,
   putMemory,
-  updatePassword
+  updatePassword,
+  forgotPassword
 };
 
 export default api;

@@ -41,7 +41,7 @@ export default function ChangePassword({ updatePassword, status }) {
         message: 'Ops! Algo de errado aconteceu.',
         description:
           error.message ||
-          'Aconteceu algo que nos impediu de salvar os dados desta assinatura. Por favor, tente novamente.'
+          'Aconteceu algo que nos impediu de salvar os dados. Por favor, tente novamente.'
       });
     }
   }, [error]);
