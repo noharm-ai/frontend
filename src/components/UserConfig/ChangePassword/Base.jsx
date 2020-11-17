@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'styled-components/macro';
 import { useFormikContext } from 'formik';
 
@@ -8,14 +8,20 @@ import Heading from '@components/Heading';
 
 import { Box, FieldError } from '../../Forms/Form.style';
 
-export default function Base() {
-  const { values, setFieldValue, errors, touched } = useFormikContext();
-  const { currentPassword, newPassword, confirmPassword } = values;
+export default function Base({ success }) {
+  const { values, setFieldValue, errors, touched, resetForm } = useFormikContext();
+  const { password, newpassword, confirmPassword } = values;
   const layout = { label: 10, input: 14 };
+
+  useEffect(() => {
+    if (success) {
+      resetForm();
+    }
+  }, [resetForm, success]);
 
   return (
     <>
-      <Box hasError={errors.currentPassword && touched.currentPassword}>
+      <Box hasError={errors.password && touched.password}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
             Senha atual:
@@ -23,15 +29,13 @@ export default function Base() {
         </Col>
         <Col xs={layout.input}>
           <Input.Password
-            value={currentPassword}
-            onChange={({ target }) => setFieldValue('currentPassword', target.value)}
+            value={password}
+            onChange={({ target }) => setFieldValue('password', target.value)}
           />
-          {errors.currentPassword && touched.currentPassword && (
-            <FieldError>{errors.currentPassword}</FieldError>
-          )}
+          {errors.password && touched.password && <FieldError>{errors.password}</FieldError>}
         </Col>
       </Box>
-      <Box hasError={errors.newPassword && touched.newPassword}>
+      <Box hasError={errors.newpassword && touched.newpassword}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
             Nova senha:
@@ -39,11 +43,11 @@ export default function Base() {
         </Col>
         <Col xs={layout.input}>
           <Input.Password
-            value={newPassword}
-            onChange={({ target }) => setFieldValue('newPassword', target.value)}
+            value={newpassword}
+            onChange={({ target }) => setFieldValue('newpassword', target.value)}
           />
-          {errors.newPassword && touched.newPassword && (
-            <FieldError>{errors.newPassword}</FieldError>
+          {errors.newpassword && touched.newpassword && (
+            <FieldError>{errors.newpassword}</FieldError>
           )}
         </Col>
       </Box>

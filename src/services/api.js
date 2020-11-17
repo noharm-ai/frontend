@@ -38,7 +38,8 @@ const endpoints = {
   exams: '/exams',
   reports: '/reports',
   substance: '/substance',
-  memory: '/memory'
+  memory: '/memory',
+  user: '/user'
 };
 
 /**
@@ -54,10 +55,10 @@ const setHeaders = token =>
         }
       }
     : {
-      headers: {
-        'x-api-key': appInfo.apiKey
-      }
-    };
+        headers: {
+          'x-api-key': appInfo.apiKey
+        }
+      };
 
 /**
  * Authentication.
@@ -279,6 +280,14 @@ const putMemory = (bearerToken, { id, ...params }) => {
 };
 
 /**
+ * User.
+ *
+ */
+const updatePassword = (bearerToken, { ...params }) => {
+  return instance.put(`${endpoints.user}`, params, setHeaders(bearerToken));
+};
+
+/**
  * PRISMIC HELP
  */
 const getHelp = id => {
@@ -342,7 +351,8 @@ const api = {
   getKnowledgeBaseArticles,
   getKnowledgeBaseArticleByUID,
   getMemory,
-  putMemory
+  putMemory,
+  updatePassword
 };
 
 export default api;
