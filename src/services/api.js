@@ -291,6 +291,16 @@ const forgotPassword = email => {
   return instance.get(`${endpoints.user}/forget?email=${email}`, { ...setHeaders() });
 };
 
+const resetPassword = (token, password) => {
+  return instance.post(
+    `${endpoints.user}/reset`,
+    { reset_token: token, newpassword: password },
+    {
+      ...setHeaders()
+    }
+  );
+};
+
 /**
  * PRISMIC HELP
  */
@@ -357,7 +367,8 @@ const api = {
   getMemory,
   putMemory,
   updatePassword,
-  forgotPassword
+  forgotPassword,
+  resetPassword
 };
 
 export default api;

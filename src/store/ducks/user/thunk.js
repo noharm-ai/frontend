@@ -32,3 +32,17 @@ export const forgotPasswordThunk = email => async dispatch => {
   dispatch(userSaveSuccess());
   dispatch(userSaveReset());
 };
+
+export const resetPasswordThunk = (token, passsword) => async dispatch => {
+  dispatch(userSaveStart());
+
+  const { status, error } = await api.resetPassword(token, passsword).catch(errorHandler);
+
+  if (status !== 200) {
+    dispatch(userSaveError(error));
+    return;
+  }
+
+  dispatch(userSaveSuccess());
+  dispatch(userSaveReset());
+};
