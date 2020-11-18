@@ -23,7 +23,7 @@ const validationSchema = Yup.object().shape({
 
 export default function ForgotPassword({ forgotPassword, status }) {
   const { isSaving, success, error } = status;
-  const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
+  const { values, errors, touched, handleChange, handleBlur, handleSubmit, resetForm } = useFormik({
     initialValues,
     validationSchema,
     onSubmit: values => {
@@ -38,8 +38,9 @@ export default function ForgotPassword({ forgotPassword, status }) {
       notification.success({
         message: `Um e-mail foi enviado para ${values.email} com as instruções para alterar a senha`
       });
+      resetForm();
     }
-  }, [success, values.email]);
+  }, [resetForm, success]); //eslint-disable-line
 
   useEffect(() => {
     if (error) {
