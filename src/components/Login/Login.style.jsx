@@ -6,6 +6,11 @@ import { ReactComponent as LogoSVG } from '@assets/noHarm.svg';
 
 const borderSize = '8px';
 
+export const FieldError = styled.span`
+  display: block;
+  margin-top: 5px;
+`;
+
 export const ForgotPass = styled.a`
   color: #6f8bc7;
   font-weight: ${get('weight.light')};

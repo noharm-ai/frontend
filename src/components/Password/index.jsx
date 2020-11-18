@@ -10,10 +10,13 @@ import Icon from '@components/Icon';
 import Button from '@components/Button';
 import { Input } from '@components/Inputs';
 import { Container, Row, Col } from '@components/Grid';
-import { Wrapper, Box, Brand, FieldSet, ForgotPass } from '../Login/Login.style';
+import { passwordValidation } from '@utils';
+import { Wrapper, Box, Brand, FieldSet, ForgotPass, FieldError } from '../Login/Login.style';
 
 const validationSchema = Yup.object().shape({
-  newpassword: Yup.string().required('Campo obrigatório'),
+  newpassword: Yup.string()
+    .required('Campo obrigatório')
+    .matches(passwordValidation.regex, passwordValidation.message),
   confirmPassword: Yup.string()
     .required('Campo obrigatório')
     .oneOf([Yup.ref('newpassword'), null], 'Senhas não conferem')
@@ -74,6 +77,7 @@ export default function Password({ resetPassword, match, status }) {
                       onBlur={handleBlur}
                       onChange={handleChange}
                     />
+                    <FieldError>{errors.newpassword}</FieldError>
                   </FieldSet>
 
                   <FieldSet
@@ -87,6 +91,7 @@ export default function Password({ resetPassword, match, status }) {
                       onBlur={handleBlur}
                       onChange={handleChange}
                     />
+                    <FieldError>{errors.confirmPassword}</FieldError>
                   </FieldSet>
 
                   <Button

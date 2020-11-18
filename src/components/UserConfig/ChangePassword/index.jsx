@@ -8,6 +8,7 @@ import Button from '@components/Button';
 import Icon from '@components/Icon';
 import Card from '@components/Card';
 import notification from '@components/notification';
+import { passwordValidation } from '@utils';
 
 import { FormContainer } from '../../Forms/Form.style';
 import Base from './Base';
@@ -15,7 +16,9 @@ import Base from './Base';
 const requiredFieldMessage = 'Campo obrigatório';
 const validationSchema = Yup.object().shape({
   password: Yup.string().required(requiredFieldMessage),
-  newpassword: Yup.string().required(requiredFieldMessage),
+  newpassword: Yup.string()
+    .required(requiredFieldMessage)
+    .matches(passwordValidation.regex, passwordValidation.message),
   confirmPassword: Yup.string()
     .required(requiredFieldMessage)
     .oneOf([Yup.ref('newpassword'), null], 'Senhas não conferem')
