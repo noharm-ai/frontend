@@ -23,7 +23,7 @@ export default function Base({ examTypes, examList }) {
       <Box hasError={errors.type}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Exame:</Tooltip>
+            <Tooltip title="">Tipo de Exame:</Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>
