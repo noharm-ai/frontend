@@ -10,14 +10,15 @@ import notification from '@components/notification';
 
 import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from '@utils/memory';
 
-export default function Signature({ fetchMemory, saveMemory, memory }) {
+export default function Signature({ fetchMemory, saveMemory, memory, userId }) {
   const [signature, setSignature] = useState('');
   const { isFetching, list: memoryData } = memory;
   const { isSaving, success, error } = memory.save;
+  const memoryType = `${SIGNATURE_MEMORY_TYPE}_${userId}`;
 
   useEffect(() => {
-    fetchMemory(SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE);
-  }, [fetchMemory]);
+    fetchMemory(SIGNATURE_STORE_ID, memoryType);
+  }, [fetchMemory]); //eslint-disable-line
 
   useEffect(() => {
     setSignature(memoryData[0] ? memoryData[0].value : '');
@@ -43,7 +44,7 @@ export default function Signature({ fetchMemory, saveMemory, memory }) {
     saveMemory(SIGNATURE_STORE_ID, {
       ...memoryData[0],
       id: memoryData[0] ? memoryData[0].key : '',
-      type: SIGNATURE_MEMORY_TYPE,
+      type: memoryType,
       value: signature
     });
   };

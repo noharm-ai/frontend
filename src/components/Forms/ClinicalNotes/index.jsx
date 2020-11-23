@@ -44,9 +44,9 @@ export default function ClinicalNotes({
 
   useEffect(() => {
     if (visible) {
-      fetchMemory(SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE);
+      fetchMemory(SIGNATURE_STORE_ID, `${SIGNATURE_MEMORY_TYPE}_${account.userId}`);
     }
-  }, [fetchMemory, visible]);
+  }, [account.userId, fetchMemory, visible]);
 
   useEffect(() => {
     if (success === formId) {
