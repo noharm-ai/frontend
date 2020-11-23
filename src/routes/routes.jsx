@@ -19,6 +19,7 @@ import InterventionList from '@pages/InterventionList';
 import KnowledgeBase from '@pages/KnowledgeBase';
 import KnowledgeBaseArticle from '@pages/KnowledgeBase/Article';
 import UserConfig from '@pages/UserConfig';
+import Password from '@pages/Password';
 
 const routes = [
   {
@@ -35,6 +36,14 @@ const routes = [
     component: withAuth({
       component: Login,
       isLoginPage: true
+    })
+  },
+  {
+    exact: true,
+    path: '/reset/:token',
+    component: withAuth({
+      component: Password,
+      isLogoutPage: true
     })
   },
   {
@@ -150,14 +159,6 @@ const routes = [
     path: '/configuracoes/usuario',
     component: withAuth({
       component: UserConfig
-    })
-  },
-  {
-    exact: true,
-    path: '/:startDate',
-    component: withAuth({
-      component: ScreeningList,
-      prioritizationType: 'patient'
     })
   },
   {

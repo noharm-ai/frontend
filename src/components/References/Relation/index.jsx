@@ -34,6 +34,7 @@ export default function Relation({ relation, relationTypes, substance, update, f
   const onChangeSctidB = obj => {
     update({ sctidB: obj.key, nameB: obj.label });
   };
+  
 
   return (
     <>
@@ -44,7 +45,7 @@ export default function Relation({ relation, relationTypes, substance, update, f
         <Row type="flex" gutter={24} css="padding: 7px 0">
           <Col span={8}>
             <Heading as="p" size="14px">
-              Medicamento:
+              Substância:
             </Heading>
           </Col>
           <Col span={24 - 8}>{relation.item.sctNameA}</Col>

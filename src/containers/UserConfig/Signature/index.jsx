@@ -5,7 +5,10 @@ import Signature from '@components/UserConfig/Signature';
 
 import { memoryFetchThunk, memorySaveThunk } from '@store/ducks/memory/thunk';
 
-const mapStateToProps = ({ memory }) => ({ memory: memory.signature });
+const mapStateToProps = ({ memory, user }) => ({
+  memory: memory.signature,
+  userId: user.account.userId
+});
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {

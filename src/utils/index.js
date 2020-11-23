@@ -1,5 +1,10 @@
 import isEmpty from 'lodash.isempty';
 
+export const passwordValidation = {
+  regex: /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$/,
+  message: 'A senha deve possuir, no mínimo, 8 caracteres, letras maíusculas, minúsculas e números'
+};
+
 export const errorHandler = e => ({
   error: e.response ? e.response.data : 'error',
   status: e.response ? e.response.status : e.code,
