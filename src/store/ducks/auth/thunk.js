@@ -1,12 +1,12 @@
 import isEmpty from 'lodash.isempty';
 
 import api from '@services/api';
+import appInfo from '@utils/appInfo';
 import { errorHandler } from '@utils';
 import { Creators as UserCreators } from '../user';
 import { Creators as SessionCreators } from '../session';
 import { Creators as AuthCreators } from './index';
 import { Creators as AppCreators } from '../app';
-import appInfo from '@utils/appInfo';
 
 const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
@@ -24,8 +24,9 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
     return;
   }
 
-  const { userName, email, schema, roles, nameUrl, apiKey, ...identify } = data;
+  const { userId, userName, email, schema, roles, nameUrl, apiKey, ...identify } = data;
   const user = {
+    userId,
     userName,
     email,
     schema,

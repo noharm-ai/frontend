@@ -15,6 +15,7 @@ export const { Types, Creators } = createActions({
 
 const INITIAL_STATE = {
   account: {
+    userId: '',
     userName: '',
     email: ''
   },
