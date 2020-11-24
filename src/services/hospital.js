@@ -1,6 +1,15 @@
 import axios from 'axios';
 import moment from 'moment';
 
+import securityService from '@services/security';
+
+const defaultValue = idPatient => ({
+  idPatient,
+  name: `Paciente ${idPatient}`,
+  cache: false,
+  status: 'success'
+});
+
 /**
  *
  * @param {string} bearerToken
@@ -23,35 +32,40 @@ import moment from 'moment';
 const getPatients = async (bearerToken, requestConfig) => {
   const flag = '{idPatient}';
 
-  const { listToRequest, listToEscape, nameUrl, useCache } = requestConfig;
+  const { listToRequest, listToEscape, nameUrl, useCache, userRoles } = requestConfig;
+  const security = securityService(userRoles);
+  let promises;
 
-  const promises = await listToRequest.map(async ({ idPatient, birthdate }) => {
-    if (listToEscape[idPatient] && useCache) {
-      return listToEscape[idPatient];
-    }
+  if (!security.isAdmin()) {
+    promises = await listToRequest.map(async ({ idPatient, birthdate }) => {
+      if (listToEscape[idPatient] && useCache) {
+        return listToEscape[idPatient];
+      }
 
-    const cache = moment().diff(birthdate, 'years') > 0;
-    console.log('%cRequested patient of id: ', 'color: #e67e22;', idPatient, 'cache:', cache);  
-    console.log('%cRequested patient of url: ', 'color: #e67e22;', nameUrl)
-    const urlRequest = nameUrl.replace(flag, idPatient);
+      const cache = moment().diff(birthdate, 'years') > 0;
+      console.log('%cRequested patient of id: ', 'color: #e67e22;', idPatient, 'cache:', cache);
+      console.log('%cRequested patient of url: ', 'color: #e67e22;', nameUrl);
+      const urlRequest = nameUrl.replace(flag, idPatient);
 
-    try {  
-      const { data: patient } = await axios.get(urlRequest, { timeout: 8000 });
-      return { ...patient, cache };
-    } catch (e) {
-      return {
-        idPatient,
-        name: `Paciente ${idPatient}`,
-        cache,
-        status: 'success'
-      };
-    }
-  });
+      try {
+        const { data: patient } = await axios.get(urlRequest, { timeout: 8000 });
+        return { ...patient, cache };
+      } catch (e) {
+        return defaultValue(idPatient);
+      }
+    });
+  } else {
+    console.log('bypass name resolution service');
+    promises = listToRequest.map(async ({ idPatient }) => defaultValue(idPatient));
+  }
 
   const patients = await Promise.all(promises);
-  const previous = Object.keys(listToEscape).map(key => listToEscape[key]);
 
-  return [...previous, ...patients];
+  patients.forEach(p => {
+    listToEscape[p.idPatient] = p;
+  });
+
+  return listToEscape;
 };
 
 const hospital = {
