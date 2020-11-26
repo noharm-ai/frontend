@@ -6,15 +6,23 @@ import {
 } from './templates';
 
 const getInterventions = list => {
-  return list
-    .map(l => {
-      if (l.status === 's') {
-        return l.intervention;
-      }
+  const interventionList = [];
 
-      return null;
-    })
-    .filter(i => i != null);
+  list.forEach(group => {
+    interventionList.push(
+      ...group.value
+        .map(l => {
+          if (l.status === 's') {
+            return l.intervention;
+          }
+
+          return null;
+        })
+        .filter(i => i != null)
+    );
+  });
+
+  return interventionList;
 };
 
 const groupByPrescription = list => {
