@@ -1,8 +1,58 @@
 import { format } from 'date-fns';
 
-import { stringify, formatAge } from './utils';
 import { uniqBy } from '@utils/lodash';
 import moment from 'moment';
+import {
+  groupSolutions,
+  groupProcedures,
+  filterWhitelistedChildren,
+  getWhitelistedChildren
+} from '@utils/transformers/prescriptionDrugs';
+import { stringify, formatAge } from './utils';
+import { toDataSource } from '@utils';
+
+/**
+ * group by Prescription
+ * @param {*} list
+ * @param {*} prescriptionType
+ * @param {*} groupFunction
+ * @param {*} extraContent
+ */
+const groupByPrescription = (list, prescriptionType, groupFunction, infusionList, extraContent) => {
+  const drugArray = [];
+  list.forEach(item => {
+    if (!drugArray[item.idPrescription]) {
+      drugArray[item.idPrescription] = [];
+    }
+    drugArray[item.idPrescription].push(item);
+  });
+
+  const dsArray = [];
+  drugArray.forEach((item, index) => {
+    if (groupFunction) {
+      dsArray.push({
+        key: index,
+        value: groupFunction(
+          toDataSource(item, 'idPrescriptionDrug', {
+            prescriptionType,
+            ...extraContent
+          }),
+          infusionList
+        )
+      });
+    } else {
+      dsArray.push({
+        key: index,
+        value: toDataSource(item, 'idPrescriptionDrug', {
+          prescriptionType,
+          ...extraContent
+        })
+      });
+    }
+  });
+
+  return dsArray;
+};
 
 export const transformDrug = ({ dose, measureUnit, route, ...drug }) => ({
   ...drug,
@@ -28,6 +78,7 @@ export const transformPrescription = ({
   namePatient,
   idPrescription,
   dischargeDate,
+  infusion,
   ...item
 }) => ({
   ...item,
@@ -50,12 +101,30 @@ export const transformPrescription = ({
   tgp,
   patientScore,
   patientRisk: stringify([mdrd, tgo, tgp, patientScore], ' 0 '),
-  prescription: prescription ? prescription.map(transformDrug) : [],
-  solution: solution ? solution.map(transformDrug) : [],
-  procedures: procedures ? procedures.map(transformDrug) : [],
+  prescription: prescription
+    ? groupByPrescription(
+        filterWhitelistedChildren(prescription.map(transformDrug)),
+        'prescriptions',
+        null,
+        null,
+        {
+          whitelistedChildren: getWhitelistedChildren(prescription)
+        }
+      )
+    : [],
+  solution: solution
+    ? groupByPrescription(solution.map(transformDrug), 'solutions', groupSolutions, infusion)
+    : [],
+  procedures: procedures
+    ? groupByPrescription(procedures.map(transformDrug), 'procedures', groupProcedures)
+    : [],
   namePatient,
   idPrescription,
-  slug: idPrescription
+  slug: idPrescription,
+  infusion,
+  prescriptionRaw: prescription,
+  solutionRaw: solution,
+  proceduresRaw: procedures
 });
 
 export const transformPrescriptions = prescriptions => prescriptions.map(transformPrescription);

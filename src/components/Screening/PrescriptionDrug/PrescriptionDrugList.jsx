@@ -1,5 +1,4 @@
-import React from 'react';
-import styled from 'styled-components/macro';
+import React, { useState } from 'react';
 import isEmpty from 'lodash.isempty';
 import { format, parseISO } from 'date-fns';
 
@@ -9,114 +8,15 @@ import { ExpandableTable } from '@components/Table';
 import Empty from '@components/Empty';
 import Collapse from '@components/Collapse';
 import Tooltip from '@components/Tooltip';
+import Button from '@components/Button';
+import TableFilter from '@components/TableFilter';
+import Tag from '@components/Tag';
 
-const PrescriptionHeader = styled.div`
-  display: inline-block;
-  padding-left: 15px;
+import ModalIntervention from '@containers/Screening/ModalIntervention';
+import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 
-  div > span {
-    padding-left: 15px;
-  }
-
-  .p-number {
-    padding-right: 10px;
-  }
-
-  a {
-    color: rgba(0, 0, 0, 0.65);
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  .title {
-    font-size: 16px;
-  }
-
-  .subtitle {
-    opacity: 0.6;
-  }
-
-  .expired {
-    color: rgb(207, 19, 34);
-  }
-`;
-
-const PrescriptionPanel = styled(Collapse.Panel)`
-  background: #fafafa;
-  margin-bottom: 10px;
-
-  .ant-collapse-header {
-    .panel-header {
-      transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
-    }
-
-    &:hover {
-      .panel-header {
-        transform: translateX(2px);
-      }
-    }
-  }
-
-  &.checked {
-    background: #dcedc8;
-  }
-
-  .ant-collapse-content {
-    background: #fff !important;
-  }
-
-  & > .ant-collapse-content > .ant-collapse-content-box {
-    padding-right: 2px;
-    padding-left: 2px;
-  }
-`;
-
-const GroupPanel = styled(PrescriptionPanel)`
-  background: #e0e8ec;
-  border-bottom: 0 !important;
-
-  &.checked {
-    & > .ant-collapse-content {
-      border-left: 2px solid #dcedc8;
-    }
-
-    & > .ant-collapse-content > .ant-collapse-content-box {
-      &::after {
-        background: #dcedc8;
-      }
-    }
-  }
-
-  .ant-collapse-content-active {
-    padding-top: 15px;
-  }
-
-  & > .ant-collapse-content > .ant-collapse-content-box {
-    padding-right: 0;
-    padding-left: 10px;
-
-    position: relative;
-
-    &::after {
-      position: absolute;
-      content: ' ';
-      width: 20px;
-      height: 3px;
-      bottom: 0;
-      left: -10px;
-      background: #e0e8ec;
-    }
-  }
-
-  & > .ant-collapse-content {
-    background: #fff !important;
-    border-left: 3px solid #e0e8ec;
-    border-radius: 0;
-  }
-`;
+import columnsTable, { expandedRowRender, solutionColumns, isPendingValidation } from '../columns';
+import { GroupPanel, PrescriptionPanel, PrescriptionHeader } from './PrescriptionDrug.style';
 
 const isExpired = date => {
   if (parseISO(date).getTime() < Date.now()) {
@@ -159,31 +59,126 @@ const rowClassName = record => {
 export default function PrescriptionDrugList({
   isFetching,
   dataSource,
+  listRaw,
   headers,
   aggregated,
-  columns,
-  expandedRowRender,
-  expandedRows,
-  handleRowExpand,
-  emptyMessage
+  emptyMessage,
+  saveInterventionStatus,
+  checkIntervention,
+  periodObject,
+  fetchPeriod,
+  weight,
+  admissionNumber,
+  checkPrescriptionDrug,
+  savePrescriptionDrugStatus,
+  idSegment,
+  select,
+  selectPrescriptionDrug
 }) {
+  const [visible, setVisibility] = useState(false);
+  const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
+  const [expandedRows, setExpandedRows] = useState([]);
+  const [filter, setFilter] = useState({
+    status: null
+  });
+
   if (isFetching) {
     return <LoadBox />;
   }
 
+  const handleFilter = (e, status) => {
+    if (status) {
+      setFilter({ status: status === 'all' ? null : [status] });
+    }
+  };
+
+  const isFilterActive = status => {
+    if (filter.status) {
+      return filter.status[0] === status;
+    }
+
+    return filter.status == null && status == null;
+  };
+
+  const onShowModal = data => {
+    select(data);
+    setVisibility(true);
+  };
+
+  const onShowPrescriptionDrugModal = data => {
+    selectPrescriptionDrug(data);
+    setOpenPrescriptionDrugModal(true);
+  };
+
+  const updateExpandedRows = (list, key) => {
+    if (list.includes(key)) {
+      return list.filter(i => i !== key);
+    }
+    return [...list, key];
+  };
+
+  const handleRowExpand = record => {
+    setExpandedRows(updateExpandedRows(expandedRows, record.key));
+  };
+
+  const bag = {
+    onShowModal,
+    onShowPrescriptionDrugModal,
+    handleRowExpand,
+    check: checkPrescriptionDrug,
+    savePrescriptionDrugStatus,
+    idSegment,
+    admissionNumber,
+    saveInterventionStatus,
+    checkIntervention,
+    periodObject,
+    fetchPeriod,
+    weight
+  };
+
+  const prescriptionCount = {
+    all: listRaw ? listRaw.length : 0,
+    pendingValidation: listRaw ? listRaw.reduce((n, i) => n + isPendingValidation(i), 0) : 0
+  };
+
+  const ListFilter = ({ listCount, handleFilter, isFilterActive }) => (
+    <TableFilter style={{ marginBottom: 15 }}>
+      <Tooltip title="Ver somente pendentes de validação">
+        <Button
+          type="gtm-lnk-filter-presc-pendentevalidacao ant-btn-link-hover"
+          className={isFilterActive('pending-validation') ? 'active' : ''}
+          onClick={e => handleFilter(e, 'pending-validation')}
+        >
+          Pendentes de validação
+          <Tag color="orange">{listCount.pendingValidation}</Tag>
+        </Button>
+      </Tooltip>
+      <Tooltip title="Ver todos">
+        <Button
+          type="gtm-lnk-filter-presc-todos ant-btn-link-hover"
+          className={isFilterActive(null) ? 'active' : ''}
+          onClick={e => handleFilter(e, 'all')}
+        >
+          Todos
+          <Tag>{listCount.all}</Tag>
+        </Button>
+      </Tooltip>
+    </TableFilter>
+  );
+
   const table = ds => (
     <ExpandableTable
-      expandedRowKeys={expandedRows}
-      onExpand={(expanded, record) => handleRowExpand(record)}
-      columns={columns}
+      columns={columnsTable(filter, bag)}
       pagination={false}
       loading={isFetching}
       locale={{
         emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={emptyMessage} />
       }}
       dataSource={!isFetching ? ds.value : []}
-      expandedRowRender={expandedRowRender}
+      expandedRowRender={expandedRowRender(bag)}
       rowClassName={rowClassName}
+      expandedRowKeys={expandedRows}
+      onExpand={(expanded, record) => handleRowExpand(record)}
     />
   );
 
@@ -305,20 +300,34 @@ export default function PrescriptionDrugList({
     }
   });
 
-  return Object.keys(groups).map(g => (
-    <Collapse bordered={false} key={g} defaultActiveKey={groups[g].checked ? [] : ['1']}>
-      <GroupPanel
-        header={groupHeader(g)}
-        key="1"
-        className={groups[g].checked ? 'checked' : ''}
-        extra={
-          groups[g].checked
-            ? infoIcon('Todas as prescrições desta vigência já foram checadas')
-            : null
-        }
-      >
-        {list(groups[g].ids)}
-      </GroupPanel>
-    </Collapse>
-  ));
+  return (
+    <>
+      <ListFilter
+        listCount={prescriptionCount}
+        handleFilter={handleFilter}
+        isFilterActive={isFilterActive}
+      />
+      {Object.keys(groups).map(g => (
+        <Collapse bordered={false} key={g} defaultActiveKey={groups[g].checked ? [] : ['1']}>
+          <GroupPanel
+            header={groupHeader(g)}
+            key="1"
+            className={groups[g].checked ? 'checked' : ''}
+            extra={
+              groups[g].checked
+                ? infoIcon('Todas as prescrições desta vigência já foram checadas')
+                : null
+            }
+          >
+            {list(groups[g].ids)}
+          </GroupPanel>
+        </Collapse>
+      ))}
+      <ModalIntervention visible={visible} setVisibility={setVisibility} />
+      <ModalPrescriptionDrug
+        visible={openPrescriptionDrugModal}
+        setVisibility={setOpenPrescriptionDrugModal}
+      />
+    </>
+  );
 }
