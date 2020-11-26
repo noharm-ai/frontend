@@ -27,7 +27,8 @@ const mapStateToProps = ({ prescriptions, auth }) => ({
   access_token: auth.identify.access_token,
   weight: prescriptions.single.data.weight,
   idSegment: prescriptions.single.data.idSegment,
-  admissionNumber: prescriptions.single.data.admissionNumber
+  admissionNumber: prescriptions.single.data.admissionNumber,
+  uniqueDrugs: prescriptions.single.data.uniqueDrugs
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

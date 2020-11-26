@@ -275,8 +275,15 @@ const checkPrescriptionDrugSuccess = (state = INITIAL_STATE, { success }) => {
   const procedures = [...state.single.data.procedures];
 
   const updateStatus = (list, id, newStatus) => {
-    const index = list.findIndex(item => item.idPrescriptionDrug === id);
-    list[index].status = newStatus;
+    for (let i = 0; i < list.length; i++) {
+      const group = list[i];
+      const index = group.value.findIndex(item => item.idPrescriptionDrug === id);
+
+      if (index !== -1) {
+        group.value[index].status = newStatus;
+        break;
+      }
+    }
   };
 
   switch (success.type) {
@@ -350,9 +357,14 @@ const checkInterventionSuccess = (state = INITIAL_STATE, { success }) => {
   interventions[index].status = success.newStatus;
 
   const updatePrevIntervention = (list, id, newStatus) => {
-    const index = list.findIndex(item => item.prevIntervention.id === id);
-    if (index !== -1) {
-      list[index].prevIntervention.status = newStatus;
+    for (let i = 0; i < list.length; i++) {
+      const group = list[i];
+      const itemIndex = group.value.findIndex(item => item.prevIntervention.id === id);
+
+      if (itemIndex !== -1) {
+        group.value[itemIndex].prevIntervention.status = newStatus;
+        break;
+      }
     }
   };
 
@@ -390,8 +402,16 @@ const updatePrescriptionDrugData = (
   const procedures = [...state.single.data.procedures];
 
   const updateData = (list, idPrescriptionDrug, newData) => {
-    const index = list.findIndex(item => item.idPrescriptionDrug === idPrescriptionDrug);
-    list[index] = newData;
+    for (let i = 0; i < list.length; i++) {
+      const group = list[i];
+      const index = group.value.findIndex(item => item.idPrescriptionDrug === idPrescriptionDrug);
+
+      if (index !== -1) {
+        const { key } = group.value[index];
+        group.value[index] = { ...newData, key };
+        break;
+      }
+    }
   };
 
   // TODO: rever este tipo
@@ -432,9 +452,17 @@ const updateInterventionData = (
   const procedures = [...state.single.data.procedures];
 
   const updateData = (list, idPrescriptionDrug, newData) => {
-    const index = list.findIndex(item => item.idPrescriptionDrug === idPrescriptionDrug);
-    list[index].intervention = newData;
-    list[index].status = 's';
+    for (let i = 0; i < list.length; i++) {
+      const group = list[i];
+      const index = group.value.findIndex(item => item.idPrescriptionDrug === idPrescriptionDrug);
+
+      if (index !== -1) {
+        group.value[index].periodDates = newData;
+        group.value[index].intervention = newData;
+        group.value[index].status = 's';
+        break;
+      }
+    }
   };
 
   // TODO: rever este tipo
@@ -493,8 +521,15 @@ const fetchPeriodSuccess = (state = INITIAL_STATE, { idPrescriptionDrug, source,
   const procedures = [...state.single.data.procedures];
 
   const updateData = (list, idPrescriptionDrug, newData) => {
-    const index = list.findIndex(item => item.idPrescriptionDrug === idPrescriptionDrug);
-    list[index].periodDates = newData;
+    for (let i = 0; i < list.length; i++) {
+      const group = list[i];
+      const index = group.value.findIndex(item => item.idPrescriptionDrug === idPrescriptionDrug);
+
+      if (index !== -1) {
+        group.value[index].periodDates = newData;
+        break;
+      }
+    }
   };
 
   // TODO: rever este tipo

@@ -62,6 +62,21 @@ export const transformDrug = ({ dose, measureUnit, route, ...drug }) => ({
   route
 });
 
+export const getUniqueDrugs = (prescriptions, solutions, procedures) => {
+  const drugs = [];
+  const add = ({ idDrug, drug }) => drugs.push({ idDrug, name: drug });
+
+  if (prescriptions) prescriptions.forEach(item => add(item));
+  if (solutions) solutions.forEach(item => add(item));
+  if (procedures) procedures.forEach(item => add(item));
+
+  return uniqBy(drugs, 'idDrug').sort((a, b) => {
+    if (a.drug > b.drug) return 1;
+    if (a.drug < b.drug) return -1;
+    return 0;
+  });
+};
+
 export const transformPrescription = ({
   daysAgo,
   prescriptionScore,
@@ -124,25 +139,11 @@ export const transformPrescription = ({
   infusion,
   prescriptionRaw: prescription,
   solutionRaw: solution,
-  proceduresRaw: procedures
+  proceduresRaw: procedures,
+  uniqueDrugs: getUniqueDrugs(prescription, solution, procedures)
 });
 
 export const transformPrescriptions = prescriptions => prescriptions.map(transformPrescription);
-
-export const getUniqueDrugs = (prescriptions, solutions, procedures) => {
-  const drugs = [];
-  const add = ({ idDrug, drug }) => drugs.push({ idDrug, name: drug });
-
-  if (prescriptions) prescriptions.forEach(item => add(item));
-  if (solutions) solutions.forEach(item => add(item));
-  if (procedures) procedures.forEach(item => add(item));
-
-  return uniqBy(drugs, 'idDrug').sort((a, b) => {
-    if (a.drug > b.drug) return 1;
-    if (a.drug < b.drug) return -1;
-    return 0;
-  });
-};
 
 export const transformExams = exams =>
   Object.keys(exams).map(key => {

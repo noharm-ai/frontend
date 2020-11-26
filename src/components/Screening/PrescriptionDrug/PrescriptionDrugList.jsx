@@ -73,7 +73,8 @@ export default function PrescriptionDrugList({
   savePrescriptionDrugStatus,
   idSegment,
   select,
-  selectPrescriptionDrug
+  selectPrescriptionDrug,
+  uniqueDrugs
 }) {
   const [visible, setVisibility] = useState(false);
   const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
@@ -133,7 +134,8 @@ export default function PrescriptionDrugList({
     checkIntervention,
     periodObject,
     fetchPeriod,
-    weight
+    weight,
+    uniqueDrugList: uniqueDrugs
   };
 
   const prescriptionCount = {
@@ -280,7 +282,16 @@ export default function PrescriptionDrugList({
   };
 
   if (!aggregated) {
-    return table(!isEmpty(dataSource) ? dataSource[0] : []);
+    return (
+      <>
+        {table(!isEmpty(dataSource) ? dataSource[0] : [])}
+        <ModalIntervention visible={visible} setVisibility={setVisibility} />
+        <ModalPrescriptionDrug
+          visible={openPrescriptionDrugModal}
+          setVisibility={setOpenPrescriptionDrugModal}
+        />
+      </>
+    );
   }
 
   const groups = {};

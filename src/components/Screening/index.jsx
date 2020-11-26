@@ -4,7 +4,6 @@ import styled from 'styled-components/macro';
 
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
-import { getUniqueDrugs } from '@utils/transformers';
 import { ExpandableTable } from '@components/Table';
 import Empty from '@components/Empty';
 import LoadBox from '@components/LoadBox';
