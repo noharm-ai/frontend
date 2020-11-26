@@ -57,6 +57,8 @@ const rowClassName = record => {
 };
 
 export default function PrescriptionDrugList({
+  hasFilter,
+  listType,
   isFetching,
   dataSource,
   listRaw,
@@ -170,7 +172,11 @@ export default function PrescriptionDrugList({
 
   const table = ds => (
     <ExpandableTable
-      columns={columnsTable(filter, bag)}
+      columns={
+        listType === 'solution'
+          ? solutionColumns(bag)
+          : columnsTable(hasFilter ? filter : { status: null }, bag)
+      }
       pagination={false}
       loading={isFetching}
       locale={{
@@ -313,11 +319,14 @@ export default function PrescriptionDrugList({
 
   return (
     <>
-      <ListFilter
-        listCount={prescriptionCount}
-        handleFilter={handleFilter}
-        isFilterActive={isFilterActive}
-      />
+      {hasFilter && (
+        <ListFilter
+          listCount={prescriptionCount}
+          handleFilter={handleFilter}
+          isFilterActive={isFilterActive}
+        />
+      )}
+
       {Object.keys(groups).map(g => (
         <Collapse bordered={false} key={g} defaultActiveKey={groups[g].checked ? [] : ['1']}>
           <GroupPanel

@@ -11,9 +11,13 @@ import { Row, Col } from '@components/Grid';
 import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
 import notification from '@components/notification';
-import PreviousInterventionList from '@containers/Screening/PreviousInterventionList';
+
 import BackTop from '@components/BackTop';
+
 import PrescriptionList from '@containers/Screening/PrescriptionDrug/PrescriptionList';
+import SolutionList from '@containers/Screening/PrescriptionDrug/SolutionList';
+import ProcedureList from '@containers/Screening/PrescriptionDrug/ProcedureList';
+import PreviousInterventionList from '@containers/Screening/PreviousInterventionList';
 import { toDataSource } from '@utils';
 
 import Patient from './Patient';
@@ -134,22 +138,20 @@ export default function Screening({
             key="1"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
-              <PrescriptionList emptyMessage="Nenhum medicamento encontrado." />
+              <PrescriptionList
+                emptyMessage="Nenhum medicamento encontrado."
+                hasFilter
+                listType="prescription"
+              />
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane tab={<TabTitle title="Soluções" count={listCount.solutions} />} key="2">
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
-              {/* <PrescriptionDrugList
-                isFetching={isFetching}
-                dataSource={solutionList}
-                headers={content.headers}
-                aggregated={content.agg}
-                columns={solutionColumns}
-                expandedRowRender={expandedRowRender}
-                handleRowExpand={handleRowExpand}
-                expandedRows={expandedRows.solution}
+              <SolutionList
                 emptyMessage="Nenhuma solução encontrada."
-              /> */}
+                hasFilter={false}
+                listType="solution"
+              />
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane
@@ -157,17 +159,11 @@ export default function Screening({
             key="3"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
-              {/* <PrescriptionDrugList
-                isFetching={isFetching}
-                dataSource={proceduresList}
-                headers={content.headers}
-                aggregated={content.agg}
-                columns={columnsTable({ status: null })}
-                expandedRowRender={expandedRowRender}
-                handleRowExpand={handleRowExpand}
-                expandedRows={expandedRows.procedure}
-                emptyMessage="Nenhum procedimento/exame encontrado."
-              /> */}
+              <ProcedureList
+                emptyMessage="Nenhuma solução encontrada."
+                hasFilter={false}
+                listType="procedure"
+              />
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane

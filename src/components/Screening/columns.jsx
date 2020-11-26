@@ -113,9 +113,10 @@ const Action = ({
   onShowPrescriptionDrugModal,
   uniqueDrugList,
   admissionNumber,
+  emptyRow,
   ...data
 }) => {
-  if (!check) return null;
+  if (emptyRow) return null;
 
   const closedStatuses = ['a', 'n', 'x'];
   const isClosed = closedStatuses.indexOf(data.status) !== -1;
@@ -165,17 +166,6 @@ const Action = ({
       </Tooltip>
     </TableTags>
   );
-};
-export const defaultAction = {
-  title: 'Ações',
-  dataIndex: 'intervention',
-  width: 180,
-  render: (text, prescription) => <Action {...prescription} />
-};
-
-export const desktopAction = {
-  ...defaultAction,
-  fixed: 'right'
 };
 
 const NestedTableContainer = styled.div`
