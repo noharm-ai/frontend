@@ -42,24 +42,31 @@ const TableTags = styled.div`
   }
 `;
 
-const interventionMenu = (id, saveInterventionStatus) => (
+const interventionMenu = (id, saveInterventionStatus, source) => (
   <Menu>
-    <Menu.Item onClick={() => saveInterventionStatus(id, 'a')} className="gtm-btn-interv-accept">
+    <Menu.Item
+      onClick={() => saveInterventionStatus(id, 'a', source)}
+      className="gtm-btn-interv-accept"
+    >
       Aceita
     </Menu.Item>
     <Menu.Item
-      onClick={() => saveInterventionStatus(id, 'n')}
+      onClick={() => saveInterventionStatus(id, 'n', source)}
       className="gtm-btn-interv-not-accept"
     >
       Não aceita
     </Menu.Item>
-    <Menu.Item onClick={() => saveInterventionStatus(id, 'x')} className="gtm-btn-interv-not-apply">
+    <Menu.Item
+      onClick={() => saveInterventionStatus(id, 'x', source)}
+      className="gtm-btn-interv-not-apply"
+    >
       Não se aplica
     </Menu.Item>
   </Menu>
 );
 
 const InterventionAction = ({
+  source,
   checkIntervention: check,
   prevIntervention,
   saveInterventionStatus
@@ -76,7 +83,7 @@ const InterventionAction = ({
           <Button
             type="danger gtm-bt-undo-interv-status"
             ghost
-            onClick={() => saveInterventionStatus(id, 's')}
+            onClick={() => saveInterventionStatus(id, 's', source)}
             loading={isChecking}
             disabled={isDisabled}
           >
@@ -86,7 +93,7 @@ const InterventionAction = ({
       )}
       {!isChecked && (
         <Dropdown
-          overlay={interventionMenu(id, saveInterventionStatus)}
+          overlay={interventionMenu(id, saveInterventionStatus, source)}
           loading={isChecking}
           disabled={isDisabled}
         >

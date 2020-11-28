@@ -16,13 +16,13 @@ import { selectPrescriptionDrugThunk } from '@store/ducks/prescriptionDrugs/thun
 import PrescriptionDrugList from '@components/Screening/PrescriptionDrug/PrescriptionDrugList';
 
 const mapStateToProps = ({ prescriptions, auth }) => ({
-  dataSource: prescriptions.single.data.procedures,
+  dataSource: prescriptions.single.procedure.list,
   listRaw: prescriptions.single.data.proceduresRaw,
   isFetching: prescriptions.single.isFetching,
   headers: prescriptions.single.data.headers,
   aggregated: prescriptions.single.data.agg,
-  checkPrescriptionDrug: prescriptions.single.checkPrescriptionDrug,
-  checkIntervention: prescriptions.single.checkIntervention,
+  checkPrescriptionDrug: prescriptions.single.procedure.checkPrescriptionDrug,
+  checkIntervention: prescriptions.single.procedure.checkIntervention,
   periodObject: prescriptions.single.period,
   access_token: auth.identify.access_token,
   weight: prescriptions.single.data.weight,

@@ -91,14 +91,14 @@ export default function Modal({
 
   // handle after save intervention.
   useEffect(() => {
-    if (wasSaved) {
+    if (wasSaved && visible) {
       updateInterventionData(item.idPrescriptionDrug, item.source, item.intervention);
       reset();
       setVisibility(false);
 
       notification.success(saveMessage);
     }
-  }, [wasSaved, reset, item, updateInterventionData, setVisibility]);
+  }, [wasSaved, reset, item, updateInterventionData, setVisibility, visible]);
 
   // show message if has error
   useEffect(() => {

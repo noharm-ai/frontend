@@ -78,6 +78,7 @@ export default function PrescriptionDrugList({
   selectPrescriptionDrug,
   uniqueDrugs
 }) {
+  console.log('render list', listType);
   const [visible, setVisibility] = useState(false);
   const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
   const [expandedRows, setExpandedRows] = useState([]);
@@ -291,7 +292,11 @@ export default function PrescriptionDrugList({
     return (
       <>
         {table(!isEmpty(dataSource) ? dataSource[0] : [])}
-        <ModalIntervention visible={visible} setVisibility={setVisibility} />
+        <ModalIntervention
+          visible={visible}
+          setVisibility={setVisibility}
+          checkPrescriptionDrug={checkPrescriptionDrug}
+        />
         <ModalPrescriptionDrug
           visible={openPrescriptionDrugModal}
           setVisibility={setOpenPrescriptionDrugModal}
@@ -343,7 +348,11 @@ export default function PrescriptionDrugList({
           </GroupPanel>
         </Collapse>
       ))}
-      <ModalIntervention visible={visible} setVisibility={setVisibility} />
+      <ModalIntervention
+        visible={visible}
+        setVisibility={setVisibility}
+        checkPrescriptionDrug={checkPrescriptionDrug}
+      />
       <ModalPrescriptionDrug
         visible={openPrescriptionDrugModal}
         setVisibility={setOpenPrescriptionDrugModal}

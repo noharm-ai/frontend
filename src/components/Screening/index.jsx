@@ -54,12 +54,13 @@ export default function Screening({
   error,
   exams
 }) {
+  console.log('rendere screening');
   const id = extractId(match.params.slug);
   const {
     prescriptionRaw: drugList,
     solutionRaw: solutionList,
     proceduresRaw: proceduresList,
-    interventions: interventionList
+    interventionsRaw: interventionList
   } = content;
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);

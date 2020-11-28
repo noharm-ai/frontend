@@ -77,6 +77,35 @@ export const getUniqueDrugs = (prescriptions, solutions, procedures) => {
   });
 };
 
+export const sourceToStoreType = source => {
+  switch (source) {
+    case 'prescription':
+    case 'prescriptions':
+    case 'Medicamentos':
+      return 'prescription';
+
+    case 'solution':
+    case 'solutions':
+    case 'Soluções':
+      return 'solution';
+
+    case 'procedure':
+    case 'procedures':
+    case 'Procedimentos':
+    case 'Proced/Exames':
+      return 'procedure';
+
+    case 'intervention':
+    case 'interventions':
+    case 'Intervenções':
+      return 'intervention';
+
+    default:
+      console.error('undefined source', source);
+      return null;
+  }
+};
+
 export const transformPrescription = ({
   daysAgo,
   prescriptionScore,
@@ -94,6 +123,8 @@ export const transformPrescription = ({
   idPrescription,
   dischargeDate,
   infusion,
+  source,
+  interventions,
   ...item
 }) => ({
   ...item,
@@ -133,6 +164,7 @@ export const transformPrescription = ({
   procedures: procedures
     ? groupByPrescription(procedures.map(transformDrug), 'procedures', groupProcedures)
     : [],
+  interventions,
   namePatient,
   idPrescription,
   slug: idPrescription,
@@ -140,7 +172,9 @@ export const transformPrescription = ({
   prescriptionRaw: prescription,
   solutionRaw: solution,
   proceduresRaw: procedures,
-  uniqueDrugs: getUniqueDrugs(prescription, solution, procedures)
+  interventionsRaw: interventions,
+  uniqueDrugs: getUniqueDrugs(prescription, solution, procedures),
+  source: sourceToStoreType(source)
 });
 
 export const transformPrescriptions = prescriptions => prescriptions.map(transformPrescription);

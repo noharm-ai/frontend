@@ -3,6 +3,7 @@ import isEmpty from 'lodash.isempty';
 import api from '@services/api';
 import hospital from '@services/hospital';
 import { transformPrescriptions, transformPrescription, transformExams } from '@utils/transformers';
+import { sourceToStoreType } from '@utils/transformers/prescriptions';
 import { errorHandler } from '@utils';
 import { Creators as PatientsCreators } from '../patients';
 import { Creators as PrescriptionsCreators } from './index';
@@ -212,7 +213,7 @@ export const checkPrescriptionDrugThunk = (idPrescriptionDrug, status, type) => 
   dispatch,
   getState
 ) => {
-  dispatch(prescriptionDrugCheckStart(idPrescriptionDrug));
+  dispatch(prescriptionDrugCheckStart(idPrescriptionDrug, sourceToStoreType(type)));
 
   const { access_token } = getState().auth.identify;
   const params = {
@@ -223,7 +224,7 @@ export const checkPrescriptionDrugThunk = (idPrescriptionDrug, status, type) => 
   const { data, error } = await api.updateIntervention(access_token, params).catch(errorHandler);
 
   if (!isEmpty(error)) {
-    dispatch(prescriptionDrugCheckError(error));
+    dispatch(prescriptionDrugCheckError(error, sourceToStoreType(type)));
     return;
   }
 
@@ -234,7 +235,7 @@ export const checkPrescriptionDrugThunk = (idPrescriptionDrug, status, type) => 
     type
   };
 
-  dispatch(prescriptionDrugCheckSuccess(success));
+  dispatch(prescriptionDrugCheckSuccess(success, sourceToStoreType(type)));
 };
 
 export const updateInterventionDataThunk = (
@@ -249,8 +250,11 @@ export const updatePrescriptionDrugDataThunk = (idPrescriptionDrug, source, data
   dispatch(prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data));
 };
 
-export const checkInterventionThunk = (id, status) => async (dispatch, getState) => {
-  dispatch(prescriptionInterventionCheckStart(id));
+export const checkInterventionThunk = (id, status, source = 'intervention') => async (
+  dispatch,
+  getState
+) => {
+  dispatch(prescriptionInterventionCheckStart(id, source));
 
   const { access_token } = getState().auth.identify;
   const params = {
@@ -261,7 +265,7 @@ export const checkInterventionThunk = (id, status) => async (dispatch, getState)
   const { data, error } = await api.updateIntervention(access_token, params).catch(errorHandler);
 
   if (!isEmpty(error)) {
-    dispatch(prescriptionInterventionCheckError(error));
+    dispatch(prescriptionInterventionCheckError(error, source));
     return;
   }
 
@@ -271,7 +275,7 @@ export const checkInterventionThunk = (id, status) => async (dispatch, getState)
     newStatus: status
   };
 
-  dispatch(prescriptionInterventionCheckSuccess(success));
+  dispatch(prescriptionInterventionCheckSuccess(success, source));
 };
 
 export const fetchPrescriptionDrugPeriodThunk = (idPrescriptionDrug, source) => async (
