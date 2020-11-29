@@ -316,14 +316,14 @@ const checkPrescriptionDrugSuccess = (state = INITIAL_STATE, { success }) => {
   };
 };
 
-const checkInterventionStart = (state = INITIAL_STATE, { currentId }) => ({
+const checkInterventionStart = (state = INITIAL_STATE, { id }) => ({
   ...state,
   single: {
     ...state.single,
     checkIntervention: {
       ...state.single.checkIntervention,
       isChecking: true,
-      currentId
+      currentId: id
     }
   }
 });

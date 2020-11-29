@@ -17,6 +17,7 @@ import notification from '@components/notification';
 import TableFilter from '@components/TableFilter';
 import ModalIntervention from '@containers/Screening/ModalIntervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
+import PreviousInterventionList from '@containers/Screening/PreviousInterventionList';
 import BackTop from '@components/BackTop';
 import {
   groupSolutions,
@@ -28,7 +29,6 @@ import { toDataSource } from '@utils';
 
 import Patient from './Patient';
 import columnsTable, { expandedRowRender, solutionColumns, isPendingValidation } from './columns';
-import interventionColumns, { expandedInterventionRowRender } from './Intervention/columns';
 import examColumns, { examRowClassName, expandedExamRowRender } from './Exam/columns';
 import PrescriptionDrugList from './PrescriptionDrug/PrescriptionDrugList';
 
@@ -166,7 +166,6 @@ export default function Screening({
   const [dsDrugList, setDrugList] = useState([]);
   const [dsSolutions, setDsSolutions] = useState([]);
   const [dsProcedures, setDsProcedures] = useState([]);
-  const [dsInterventions, setDsInterventions] = useState([]);
   const [dsExams, setDsExams] = useState([]);
 
   const splitDatasource = (list, prescriptionType, groupFunction, extraContent) => {
@@ -226,15 +225,6 @@ export default function Screening({
       proceduresList ? splitDatasource(proceduresList, 'procedures', groupProcedures) : []
     );
   }, [proceduresList]); // eslint-disable-line
-
-  useEffect(() => {
-    setDsInterventions(
-      toDataSource(interventionList, 'id', {
-        saveInterventionStatus,
-        check: checkIntervention
-      })
-    );
-  }, [interventionList]); // eslint-disable-line
 
   useEffect(() => {
     setDsExams(toDataSource(exams.list, 'key', {}));
@@ -395,22 +385,7 @@ export default function Screening({
             key="4"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
-              <ExpandableTable
-                title={title}
-                columns={interventionColumns({ status: null })}
-                pagination={false}
-                loading={isFetching}
-                locale={{
-                  emptyText: (
-                    <Empty
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
-                      description="Nenhuma intervenção encontrada."
-                    />
-                  )
-                }}
-                dataSource={!isFetching ? dsInterventions : []}
-                expandedRowRender={expandedInterventionRowRender}
-              />
+              <PreviousInterventionList />
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane tab={<TabTitle title="Exames" />} key="5">

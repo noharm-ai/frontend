@@ -3,7 +3,7 @@ import isEmpty from 'lodash.isempty';
 import api from '@services/api';
 import hospital from '@services/hospital';
 import { transformPrescriptions, transformPrescription, transformExams } from '@utils/transformers';
-import { errorHandler, toObject } from '@utils';
+import { errorHandler } from '@utils';
 import { Creators as PatientsCreators } from '../patients';
 import { Creators as PrescriptionsCreators } from './index';
 
@@ -52,7 +52,7 @@ const {
 export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, getState) => {
   dispatch(prescriptionsFetchListStart());
 
-  const { auth, patients, app } = getState();
+  const { auth, patients, app, user } = getState();
   const { list: listPatients } = patients;
   const { access_token } = auth.identify;
   const {
@@ -69,20 +69,20 @@ export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, get
     listToRequest: data,
     listToEscape: listPatients,
     nameUrl: app.config.nameUrl,
-    useCache: true
+    useCache: true,
+    userRoles: user.account.roles
   };
 
   const patientsList = await hospital.getPatients(access_token, requestConfig);
-  const patientsHandled = toObject(patientsList, 'idPatient');
   const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
     ...item,
     idPatient,
-    namePatient: patientsHandled[idPatient].name
+    namePatient: patientsList[idPatient].name
   }));
 
   const list = transformPrescriptions(listAddedPatientName);
 
-  dispatch(patientsFetchListSuccess(patientsHandled));
+  dispatch(patientsFetchListSuccess(patientsList));
   dispatch(prescriptionsFetchListSuccess(list));
 };
 
@@ -109,36 +109,34 @@ export const updatePrescriptionStatusThunk = (params = {}) => async (dispatch, g
 export const fetchScreeningThunk = idPrescription => async (dispatch, getState) => {
   dispatch(prescriptionsFetchSingleStart());
 
-  const { auth, patients, app } = getState();
+  const { auth, patients, app, user } = getState();
   const { list: listPatients } = patients;
   const { access_token } = auth.identify;
   const {
     data: { data },
     error
   } = await api.getPrescriptionById(access_token, idPrescription).catch(errorHandler);
-
   if (!isEmpty(error)) {
     dispatch(prescriptionsFetchSingleError(error));
     return;
   }
 
   const singlePrescription = transformPrescription(data);
-
   const requestConfig = {
     listToRequest: [singlePrescription],
     listToEscape: listPatients,
     nameUrl: app.config.nameUrl,
-    useCache: false
+    useCache: false,
+    userRoles: user.account.roles
   };
 
-  const patientsList = toObject(
-    await hospital.getPatients(access_token, requestConfig),
-    'idPatient'
-  );
+  const patientsList = await hospital.getPatients(access_token, requestConfig);
 
   const singlePrescriptionAddedPatientName = {
     ...singlePrescription,
-    namePatient: patientsList[singlePrescription.idPatient] ? patientsList[singlePrescription.idPatient].name : 'Paciente'
+    namePatient: patientsList[singlePrescription.idPatient]
+      ? patientsList[singlePrescription.idPatient].name
+      : 'Paciente'
   };
 
   dispatch(patientsFetchListSuccess(patientsList));
