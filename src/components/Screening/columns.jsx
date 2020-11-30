@@ -252,17 +252,17 @@ const DrugTags = ({ drug }) => (
     )}
     {drug.am && (
       <Tooltip title="Antimicrobianos">
-        <Tag>AM</Tag>
+        <Tag color='green'>AM</Tag>
       </Tooltip>
     )}
     {drug.av && (
       <Tooltip title="Alta vigilância">
-        <Tag>AV</Tag>
+        <Tag color='red'>AV</Tag>
       </Tooltip>
     )}
     {drug.c && (
       <Tooltip title="Controlado">
-        <Tag>C</Tag>
+        <Tag color='orange'>C</Tag>
       </Tooltip>
     )}
   </span>
