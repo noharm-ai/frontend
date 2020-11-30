@@ -40,8 +40,11 @@ const groupByPrescription = list => {
 };
 
 export default (prescription, account, signature) => {
-  const { prescription: prescriptions, solution: solutions, procedures } = prescription.data;
-  const list = [...prescriptions, ...solutions, ...procedures];
+  const list = [
+    ...prescription.prescription.list,
+    ...prescription.solution.list,
+    ...prescription.procedure.list
+  ];
 
   const interventions = groupByPrescription(getInterventions(list));
 
