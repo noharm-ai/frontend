@@ -78,7 +78,6 @@ export default function PrescriptionDrugList({
   selectPrescriptionDrug,
   uniqueDrugs
 }) {
-  console.log('render list', listType);
   const [visible, setVisibility] = useState(false);
   const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
   const [expandedRows, setExpandedRows] = useState([]);

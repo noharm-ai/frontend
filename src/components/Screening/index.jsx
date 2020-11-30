@@ -54,7 +54,6 @@ export default function Screening({
   error,
   exams
 }) {
-  console.log('rendere screening');
   const id = extractId(match.params.slug);
   const {
     prescriptionRaw: drugList,
