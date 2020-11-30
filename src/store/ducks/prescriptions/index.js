@@ -467,7 +467,9 @@ const checkInterventionSuccess = (state = INITIAL_STATE, { success }) => {
   const updatePrevIntervention = (list, id, newStatus) => {
     for (let i = 0; i < list.length; i++) {
       const group = list[i];
-      const itemIndex = group.value.findIndex(item => item.prevIntervention?.id === id);
+      const itemIndex = group.value.findIndex(
+        item => item.prevIntervention && item.prevIntervention.id === id
+      );
 
       if (itemIndex !== -1) {
         group.value[itemIndex].prevIntervention.status = newStatus;
