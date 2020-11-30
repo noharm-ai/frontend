@@ -282,7 +282,7 @@ export const fetchPrescriptionDrugPeriodThunk = (idPrescriptionDrug, source) => 
   dispatch,
   getState
 ) => {
-  dispatch(prescriptionsFetchPeriodStart());
+  dispatch(prescriptionsFetchPeriodStart(source));
 
   const { auth } = getState();
   const { access_token } = auth.identify;
@@ -292,7 +292,7 @@ export const fetchPrescriptionDrugPeriodThunk = (idPrescriptionDrug, source) => 
   } = await api.getPrescriptionDrugPeriod(access_token, idPrescriptionDrug).catch(errorHandler);
 
   if (!isEmpty(error)) {
-    dispatch(prescriptionsFetchPeriodError(error));
+    dispatch(prescriptionsFetchPeriodError(error, source));
     return;
   }
 

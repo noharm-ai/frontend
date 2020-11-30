@@ -23,7 +23,7 @@ const mapStateToProps = ({ prescriptions, auth }) => ({
   aggregated: prescriptions.single.data.agg,
   checkPrescriptionDrug: prescriptions.single.solution.checkPrescriptionDrug,
   checkIntervention: prescriptions.single.solution.checkIntervention,
-  periodObject: prescriptions.single.period,
+  periodObject: prescriptions.single.solution.period,
   access_token: auth.identify.access_token,
   weight: prescriptions.single.data.weight,
   idSegment: prescriptions.single.data.idSegment,

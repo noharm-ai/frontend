@@ -33,8 +33,8 @@ export const { Types, Creators } = createActions({
   prescriptionInterventionCheckError: ['error', 'source'],
   prescriptionInterventionCheckSuccess: ['success', 'source'],
 
-  prescriptionsFetchPeriodStart: [''],
-  prescriptionsFetchPeriodError: ['error'],
+  prescriptionsFetchPeriodStart: ['source'],
+  prescriptionsFetchPeriodError: ['error', 'source'],
   prescriptionsFetchPeriodSuccess: ['idPrescriptionDrug', 'source', 'data'],
 
   prescriptionsFetchExamsStart: [''],
@@ -58,10 +58,6 @@ const INITIAL_STATE = {
       idPrescription: null,
       checkedPrescriptions: []
     },
-    period: {
-      error: null,
-      isFetching: false
-    },
     exams: {
       isFetching: true,
       error: null,
@@ -81,6 +77,10 @@ const INITIAL_STATE = {
         success: {},
         isChecking: false,
         currentId: null
+      },
+      period: {
+        error: null,
+        isFetching: false
       }
     },
     solution: {
@@ -96,6 +96,10 @@ const INITIAL_STATE = {
         success: {},
         isChecking: false,
         currentId: null
+      },
+      period: {
+        error: null,
+        isFetching: false
       }
     },
     procedure: {
@@ -111,6 +115,10 @@ const INITIAL_STATE = {
         success: {},
         isChecking: false,
         currentId: null
+      },
+      period: {
+        error: null,
+        isFetching: false
       }
     },
     intervention: {
@@ -658,7 +666,6 @@ const updateInterventionData = (
     }
   };
 
-  // TODO: rever este tipo
   switch (sourceToStoreType(source)) {
     case 'prescription':
       updateData(prescriptions, idPrescriptionDrug, intervention);
@@ -699,25 +706,31 @@ const updateInterventionData = (
   }
 };
 
-const fetchPeriodStart = (state = INITIAL_STATE) => ({
+const fetchPeriodStart = (state = INITIAL_STATE, { source }) => ({
   ...state,
   single: {
     ...state.single,
-    period: {
-      ...state.single.period,
-      isFetching: true
+    [sourceToStoreType(source)]: {
+      ...state.single[sourceToStoreType(source)],
+      period: {
+        ...state.single[sourceToStoreType(source)].period,
+        isFetching: true
+      }
     }
   }
 });
 
-const fetchPeriodError = (state = INITIAL_STATE, { error }) => ({
+const fetchPeriodError = (state = INITIAL_STATE, { error, source }) => ({
   ...state,
   single: {
     ...state.single,
-    period: {
-      ...state.single.period,
-      error,
-      isFetching: false
+    [sourceToStoreType(source)]: {
+      ...state.single[sourceToStoreType(source)],
+      period: {
+        ...state.single[sourceToStoreType(source)].period,
+        error,
+        isFetching: false
+      }
     }
   }
 });
@@ -746,14 +759,15 @@ const fetchPeriodSuccess = (state = INITIAL_STATE, { idPrescriptionDrug, source,
         ...state,
         single: {
           ...state.single,
-          period: {
-            ...state.single.period,
-            error: null,
-            isFetching: false
-          },
+
           prescription: {
             ...state.single.prescription,
-            list: prescriptions
+            list: prescriptions,
+            period: {
+              ...state.single.prescription.period,
+              error: null,
+              isFetching: false
+            }
           }
         }
       };
@@ -764,14 +778,14 @@ const fetchPeriodSuccess = (state = INITIAL_STATE, { idPrescriptionDrug, source,
         ...state,
         single: {
           ...state.single,
-          period: {
-            ...state.single.period,
-            error: null,
-            isFetching: false
-          },
           solution: {
             ...state.single.solution,
-            list: solutions
+            list: solutions,
+            period: {
+              ...state.single.solution.period,
+              error: null,
+              isFetching: false
+            }
           }
         }
       };
@@ -783,14 +797,14 @@ const fetchPeriodSuccess = (state = INITIAL_STATE, { idPrescriptionDrug, source,
         ...state,
         single: {
           ...state.single,
-          period: {
-            ...state.single.period,
-            error: null,
-            isFetching: false
-          },
           procedure: {
             ...state.single.procedure,
-            list: procedures
+            list: procedures,
+            period: {
+              ...state.single.procedure.period,
+              error: null,
+              isFetching: false
+            }
           }
         }
       };
