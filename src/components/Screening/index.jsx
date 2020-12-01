@@ -167,7 +167,7 @@ export default function Screening({
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane
-            tab={<TabTitle title="Intervenções Anteriores" count={listCount.interventions} />}
+            tab={<TabTitle title="Intervenções" count={listCount.interventions} />}
             key="4"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
