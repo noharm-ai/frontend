@@ -68,7 +68,7 @@ export default function Signature({ fetchMemory, saveMemory, memory, userId }) {
         </EditorBox>
         <ButtonContainer>
           <Button
-            type="primary"
+            type="primary gtm-btn-save-signature"
             onClick={() => save()}
             disabled={isFetching || isSaving}
             loading={isSaving}
