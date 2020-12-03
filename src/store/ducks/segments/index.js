@@ -24,7 +24,12 @@ export const { Types, Creators } = createActions({
 
   segmentsFetchExamTypesListStart: [''],
   segmentsFetchExamTypesListError: ['error'],
-  segmentsFetchExamTypesListSuccess: ['list']
+  segmentsFetchExamTypesListSuccess: ['list'],
+
+  segmentsUpdateExamOrderStart: [''],
+  segmentsUpdateExamOrderError: ['error'],
+  segmentsUpdateExamOrderSuccess: ['exams'],
+  segmentsUpdateExamOrderReset: ['']
 });
 
 const INITIAL_STATE = {
@@ -49,6 +54,11 @@ const INITIAL_STATE = {
     success: false,
     error: null,
     item: {}
+  },
+  sortExam: {
+    isSaving: false,
+    success: false,
+    error: null
   },
   examTypes: {
     error: null,
@@ -163,6 +173,41 @@ const updateExam = (state = INITIAL_STATE, { item }) => ({
   }
 });
 
+const updateExamOrderSuccess = (state = INITIAL_STATE, { exams }) => ({
+  ...state,
+  single: {
+    ...state.single,
+    content: {
+      ...state.single.content,
+      exams
+    }
+  }
+});
+
+const updateExamOrderStart = (state = INITIAL_STATE) => ({
+  ...state,
+  sortExam: {
+    ...state.sortExam,
+    isSaving: true
+  }
+});
+
+const updateExamOrderError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  sortExam: {
+    ...state.sortExam,
+    error,
+    isSaving: false
+  }
+});
+
+const updateExamOrderReset = (state = INITIAL_STATE) => ({
+  ...state,
+  sortExam: {
+    ...INITIAL_STATE.sortExam
+  }
+});
+
 const saveExamStart = (state = INITIAL_STATE) => ({
   ...state,
   saveExam: {
@@ -264,6 +309,11 @@ const HANDLERS = {
 
   [Types.SEGMENTS_SELECT_EXAM]: selectExam,
   [Types.SEGMENTS_UPDATE_EXAM]: updateExam,
+
+  [Types.SEGMENTS_UPDATE_EXAM_ORDER_START]: updateExamOrderStart,
+  [Types.SEGMENTS_UPDATE_EXAM_ORDER_ERROR]: updateExamOrderError,
+  [Types.SEGMENTS_UPDATE_EXAM_ORDER_SUCCESS]: updateExamOrderSuccess,
+  [Types.SEGMENTS_UPDATE_EXAM_ORDER_RESET]: updateExamOrderReset,
 
   [Types.SEGMENTS_FETCH_EXAM_TYPES_LIST_START]: fetchExamTypesListStart,
   [Types.SEGMENTS_FETCH_EXAM_TYPES_LIST_ERROR]: fetchExamTypesListError,
