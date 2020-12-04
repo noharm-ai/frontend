@@ -229,7 +229,7 @@ export default function Base() {
         <Box hasError={errors.platelets}>
           <Heading as="label" size="14px" className="fixed">
             <Tooltip
-              title="Valor de Plauqetas/µL a partir do qual o medicamento pode aumentar risco de sangramento."
+              title="Valor de Plauqetas/µL a partir do qual o uso do medicamento é inadequado."
               underline
             >
               Alerta de Plaquetas:
