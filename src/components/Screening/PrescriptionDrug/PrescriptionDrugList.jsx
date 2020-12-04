@@ -11,6 +11,7 @@ import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 import TableFilter from '@components/TableFilter';
 import Tag from '@components/Tag';
+import { sourceToStoreType } from '@utils/transformers/prescriptions';
 
 import ModalIntervention from '@containers/Screening/ModalIntervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
@@ -252,6 +253,88 @@ export default function PrescriptionDrugList({
     );
   };
 
+  const tagSummary = (header, source) => {
+    if (header.status === 's') {
+      return infoIcon('Prescrição checada');
+    }
+
+    const getSummary = s => {
+      switch (sourceToStoreType(s)) {
+        case 'prescription':
+          return header.drugs;
+
+        case 'solution':
+          return header.solutions;
+        case 'procedure':
+          return header.procedures;
+        default:
+          console.error('invalid source', s);
+          return null;
+      }
+    };
+    const summary = getSummary(source);
+    const tags = [];
+
+    if (summary.alerts) {
+      tags.push(
+        <Tooltip title="Alertas" key="alerts">
+          <Tag color="red" key="alerts">
+            {summary.alerts}
+          </Tag>
+        </Tooltip>
+      );
+    }
+
+    if (summary.interventions) {
+      tags.push(
+        <Tooltip title="Possui intervenções" key="interventions">
+          <Icon
+            type="warning"
+            style={{ fontSize: 18, color: '#fa8c16', verticalAlign: 'middle', marginRight: '7px' }}
+          />
+        </Tooltip>
+      );
+    }
+
+    if (summary.np) {
+      tags.push(
+        <Tooltip title="Possui medicamentos não padronizados" key="np">
+          <Tag>NP</Tag>
+        </Tooltip>
+      );
+    }
+
+    if (summary.am) {
+      tags.push(
+        <Tooltip title="Possui antimicrobianos" key="am">
+          <Tag color="green">AM</Tag>
+        </Tooltip>
+      );
+    }
+
+    if (summary.av) {
+      tags.push(
+        <Tooltip title="Possui medicamentos de Alta vigilância" key="av">
+          <Tag color="red">AV</Tag>
+        </Tooltip>
+      );
+    }
+
+    if (summary.controlled) {
+      tags.push(
+        <Tooltip title="Possui medicamentos Controlados" key="controlled">
+          <Tag color="orange">C</Tag>
+        </Tooltip>
+      );
+    }
+
+    if (!tags.length) {
+      return null;
+    }
+
+    return tags.map(t => t);
+  };
+
   const list = group => {
     const msg = 'Nenhuma prescrição encontrada.';
 
@@ -277,7 +360,7 @@ export default function PrescriptionDrugList({
               header={panelHeader(ds)}
               key="1"
               className={headers[ds.key].status === 's' ? 'checked' : ''}
-              extra={headers[ds.key].status === 's' ? infoIcon('Prescrição checada') : null}
+              extra={tagSummary(headers[ds.key], isEmpty(ds.value) ? null : ds.value[0].source)}
             >
               {table(ds)}
             </PrescriptionPanel>
