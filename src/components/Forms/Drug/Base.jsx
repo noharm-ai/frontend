@@ -22,7 +22,9 @@ export default function Base() {
     maxTime,
     kidney,
     liver,
+    platelets,
     elderly,
+    tube,
     unit,
     useWeight,
     amount,
@@ -105,6 +107,19 @@ export default function Base() {
               >
                 <Tooltip title="Medicamento isento de Validação e Escore (Ex.: Diluentes)" underline>
                   Sem validação
+                </Tooltip>
+              </Checkbox>
+            </Col>
+            <Col xs={8}>
+              <Checkbox
+                onChange={({ target }) => setFieldValue('tube', !target.value)}
+                value={tube}
+                checked={tube}
+                name="tube"
+                id="tube"
+              >
+                <Tooltip title="Medicamento contraindicado via Sonda" underline>
+                  Sonda
                 </Tooltip>
               </Checkbox>
             </Col>
@@ -208,6 +223,29 @@ export default function Base() {
             onChange={value => setFieldValue('liver', value)}
           />
           U/L
+        </Box>
+      </Col>
+      <Col xs={24}>
+        <Box hasError={errors.platelets}>
+          <Heading as="label" size="14px" className="fixed">
+            <Tooltip
+              title="Valor de Plauqetas/µL a partir do qual o medicamento pode aumentar risco de sangramento."
+              underline
+            >
+              Alerta de Plaquetas:
+            </Tooltip>
+          </Heading>
+          <InputNumber
+            style={{
+              width: 120,
+              marginRight: 5
+            }}
+            min={0}
+            max={999999}
+            value={platelets}
+            onChange={value => setFieldValue('platelets', value)}
+          />
+          plaquetas/µL
         </Box>
       </Col>
       <Col xs={24}>
