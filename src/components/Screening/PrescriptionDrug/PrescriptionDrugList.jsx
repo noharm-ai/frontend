@@ -253,26 +253,7 @@ export default function PrescriptionDrugList({
     );
   };
 
-  const tagSummary = (header, source) => {
-    if (header.status === 's') {
-      return infoIcon('Prescrição checada');
-    }
-
-    const getSummary = s => {
-      switch (sourceToStoreType(s)) {
-        case 'prescription':
-          return header.drugs;
-
-        case 'solution':
-          return header.solutions;
-        case 'procedure':
-          return header.procedures;
-        default:
-          console.error('invalid source', s);
-          return null;
-      }
-    };
-    const summary = getSummary(source);
+  const summaryTags = summary => {
     const tags = [];
 
     if (summary.alerts) {
@@ -335,6 +316,38 @@ export default function PrescriptionDrugList({
     return tags.map(t => t);
   };
 
+  const summarySourceToType = s => {
+    switch (sourceToStoreType(s)) {
+      case 'prescription':
+        return 'drugs';
+
+      case 'solution':
+        return 'solutions';
+      case 'procedure':
+        return 'procedures';
+
+      default:
+        console.error('invalid source', s);
+        return null;
+    }
+  };
+
+  const prescriptionSummary = (header, source) => {
+    if (header.status === 's') {
+      return infoIcon('Prescrição checada');
+    }
+
+    return summaryTags(header[summarySourceToType(source)]);
+  };
+
+  const groupSummary = groupData => {
+    if (groupData.checked) {
+      return infoIcon('Todas as prescrições desta vigência já foram checadas');
+    }
+
+    return summaryTags(groupData.summary);
+  };
+
   const list = group => {
     const msg = 'Nenhuma prescrição encontrada.';
 
@@ -360,7 +373,10 @@ export default function PrescriptionDrugList({
               header={panelHeader(ds)}
               key="1"
               className={headers[ds.key].status === 's' ? 'checked' : ''}
-              extra={tagSummary(headers[ds.key], isEmpty(ds.value) ? null : ds.value[0].source)}
+              extra={prescriptionSummary(
+                headers[ds.key],
+                isEmpty(ds.value) ? null : ds.value[0].source
+              )}
             >
               {table(ds)}
             </PrescriptionPanel>
@@ -387,19 +403,42 @@ export default function PrescriptionDrugList({
     );
   }
 
+  const aggSummary = (currentData, addData) => {
+    const baseData = currentData || {
+      alerts: 0,
+      interventions: 0,
+      np: 0,
+      am: 0,
+      av: 0,
+      controlled: 0
+    };
+
+    const aggData = {};
+    Object.keys(baseData).forEach(k => {
+      aggData[k] = baseData[k] + addData[k];
+    });
+
+    return aggData;
+  };
+
   const groups = {};
   Object.keys(headers).forEach(k => {
     const dt = headers[k].expire.substr(0, 10);
 
     if (groups[dt]) {
       groups[dt].ids.push(k);
+      groups[dt].summary = aggSummary(
+        groups[dt].summary,
+        headers[k][summarySourceToType(listType)]
+      );
       if (headers[k].status !== 's') {
         groups[dt].checked = false;
       }
     } else {
       groups[dt] = {
         checked: headers[k].status === 's',
-        ids: [k]
+        ids: [k],
+        summary: aggSummary(null, headers[k][summarySourceToType(listType)])
       };
     }
   });
@@ -420,11 +459,7 @@ export default function PrescriptionDrugList({
             header={groupHeader(g)}
             key="1"
             className={groups[g].checked ? 'checked' : ''}
-            extra={
-              groups[g].checked
-                ? infoIcon('Todas as prescrições desta vigência já foram checadas')
-                : null
-            }
+            extra={groupSummary(groups[g])}
           >
             {list(groups[g].ids)}
           </GroupPanel>
