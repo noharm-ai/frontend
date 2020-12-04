@@ -118,7 +118,7 @@ export default function Base() {
                 name="tube"
                 id="tube"
               >
-                <Tooltip title="Medicamento contraindicado via Sonda" underline>
+                <Tooltip title="Medicamento contraindicado via Sonda Nasoenteral, Nasogástrica, Enteral, Jejunostomia ou Gastrostomia" underline>
                   Sonda
                 </Tooltip>
               </Checkbox>

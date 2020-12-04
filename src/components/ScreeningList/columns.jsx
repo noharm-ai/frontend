@@ -322,7 +322,7 @@ export default (sortedInfo, filteredInfo) => {
           sortOrder: sortedInfo.columnKey === 'np' && sortedInfo.order
         },
         {
-          title: <Tooltip title="Sonda">S</Tooltip>,
+          title: <Tooltip title="Alerta de Sonda">S</Tooltip>,
           className: 'bg-light-gray gtm-th-s',
           key: 'tube',
           width: 20,
