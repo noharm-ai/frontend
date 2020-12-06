@@ -366,7 +366,7 @@ export default (sortedInfo, filteredInfo) => {
           sortOrder: sortedInfo.columnKey === 'interventions' && sortedInfo.order
         },
         {
-          title: <Tooltip title="Escore da Prescrição pela I.A.">T</Tooltip>,
+          title: <Tooltip title="Escore Total da Prescrição pela I.A.">T</Tooltip>,
           className: 'ant-table-right-border gtm-th-t',
           key: 'prescriptionScore',
           width: 20,
