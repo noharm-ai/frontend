@@ -125,12 +125,14 @@ export const transformPrescription = ({
   infusion,
   source,
   interventions,
+  globalScore,
   ...item
 }) => ({
   ...item,
   daysAgo,
   daysAgoString: `${daysAgo} dia(s)`,
   prescriptionScore,
+  globalScore,
   prescriptionRisk: stringify([prescriptionScore]),
   date,
   dateFormated: format(new Date(date), 'dd/MM/yyyy HH:mm'),

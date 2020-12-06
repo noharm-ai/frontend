@@ -394,7 +394,7 @@ export default function Filter({
             <Switch
               style={{ marginLeft: '10px' }}
               onChange={onPendingChange}
-              checked={filter.pending}
+              checked={filter.pending===1}
               id="gtm-pending-filter"
             />
           </Box>

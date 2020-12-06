@@ -35,6 +35,10 @@ const Flag = styled.span`
   &.green {
     background-color: #7ebe9a;
   }
+
+  &.blue {
+    background-color: #66c7e4;
+  }
 `;
 
 const ActionsBox = styled.div`
@@ -254,7 +258,7 @@ export default (sortedInfo, filteredInfo) => {
         },
         {
           title: <Tooltip title="Exames Alterados">EX</Tooltip>,
-          className: 'ant-table-right-border gtm-th-exames',
+          className: 'gtm-th-exames',
           key: 'alertExams',
           width: 30,
           align: 'center',
@@ -268,13 +272,23 @@ export default (sortedInfo, filteredInfo) => {
               AL
             </Tooltip>
           ),
-          className: 'ant-table-right-border gtm-th-alerts',
+          className: 'bg-light-gray gtm-th-alerts',
           key: 'alerts',
           width: 30,
           align: 'center',
           sortDirections: sortDirections,
           sorter: (a, b) => a.alerts - b.alerts,
           sortOrder: sortedInfo.columnKey === 'alerts' && sortedInfo.order
+        },
+        {
+          title: <Tooltip title="Escore Global do Paciente: Exames + Alertas + Alta Vigilância + Escore da Prescrição." underline>EG</Tooltip>,
+          className: 'ant-table-right-border gtm-th-ge',
+          key: 'globalScore',
+          width: 20,
+          align: 'center',
+          sortDirections: sortDirections,
+          sorter: (a, b) => a.globalScore - b.globalScore,
+          sortOrder: sortedInfo.columnKey === 'globalScore' && sortedInfo.order
         }
       ])
     },
@@ -352,38 +366,8 @@ export default (sortedInfo, filteredInfo) => {
           sortOrder: sortedInfo.columnKey === 'interventions' && sortedInfo.order
         },
         {
-          title: <Tooltip title="Escore Alto">A</Tooltip>,
-          className: 'gtm-th-a',
-          key: 'scoreThree',
-          width: 20,
-          align: 'center',
-          sortDirections: sortDirections,
-          sorter: (a, b) => a.scoreThree - b.scoreThree,
-          sortOrder: sortedInfo.columnKey === 'scoreThree' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Escore Médio">M</Tooltip>,
-          className: 'bg-light-gray gtm-th-m',
-          key: 'scoreTwo',
-          width: 20,
-          align: 'center',
-          sortDirections: sortDirections,
-          sorter: (a, b) => a.scoreTwo - b.scoreTwo,
-          sortOrder: sortedInfo.columnKey === 'scoreTwo' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Escore Baixo">B</Tooltip>,
-          className: 'gtm-th-b',
-          key: 'scoreOne',
-          width: 20,
-          align: 'center',
-          sortDirections: sortDirections,
-          sorter: (a, b) => a.scoreOne - b.scoreOne,
-          sortOrder: sortedInfo.columnKey === 'scoreOne' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Escore Total">T</Tooltip>,
-          className: 'bg-light-gray gtm-th-t',
+          title: <Tooltip title="Escore da Prescrição pela I.A.">T</Tooltip>,
+          className: 'ant-table-right-border gtm-th-t',
           key: 'prescriptionScore',
           width: 20,
           align: 'center',
