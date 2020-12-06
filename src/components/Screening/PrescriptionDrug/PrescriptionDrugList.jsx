@@ -258,7 +258,7 @@ export default function PrescriptionDrugList({
 
     if (summary.alerts) {
       tags.push(
-        <Tooltip title="Alertas" key="alerts">
+        <Tooltip title="Total de alertas" key="alerts">
           <Tag color="red" key="alerts">
             {summary.alerts}
           </Tag>
@@ -273,38 +273,6 @@ export default function PrescriptionDrugList({
             type="warning"
             style={{ fontSize: 18, color: '#fa8c16', verticalAlign: 'middle', marginRight: '7px' }}
           />
-        </Tooltip>
-      );
-    }
-
-    if (summary.np) {
-      tags.push(
-        <Tooltip title="Possui medicamentos não padronizados" key="np">
-          <Tag>NP</Tag>
-        </Tooltip>
-      );
-    }
-
-    if (summary.am) {
-      tags.push(
-        <Tooltip title="Possui antimicrobianos" key="am">
-          <Tag color="green">AM</Tag>
-        </Tooltip>
-      );
-    }
-
-    if (summary.av) {
-      tags.push(
-        <Tooltip title="Possui medicamentos de Alta vigilância" key="av">
-          <Tag color="red">AV</Tag>
-        </Tooltip>
-      );
-    }
-
-    if (summary.controlled) {
-      tags.push(
-        <Tooltip title="Possui medicamentos Controlados" key="controlled">
-          <Tag color="orange">C</Tag>
         </Tooltip>
       );
     }
