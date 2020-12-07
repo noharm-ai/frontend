@@ -54,14 +54,6 @@ const groupByPrescription = (list, prescriptionType, groupFunction, infusionList
   return dsArray;
 };
 
-export const transformDrug = ({ dose, measureUnit, route, ...drug }) => ({
-  ...drug,
-  dose,
-  measureUnit,
-  dosage: `${dose} ${measureUnit.value}`,
-  route
-});
-
 export const getUniqueDrugs = (prescriptions, solutions, procedures) => {
   const drugs = [];
   const add = ({ idDrug, drug }) => drugs.push({ idDrug, name: drug });
@@ -123,7 +115,6 @@ export const transformPrescription = ({
   idPrescription,
   dischargeDate,
   infusion,
-  source,
   interventions,
   globalScore,
   ...item
@@ -175,8 +166,7 @@ export const transformPrescription = ({
   solutionRaw: solution,
   proceduresRaw: procedures,
   interventionsRaw: interventions,
-  uniqueDrugs: getUniqueDrugs(prescription, solution, procedures),
-  source: sourceToStoreType(source)
+  uniqueDrugs: getUniqueDrugs(prescription, solution, procedures)
 });
 
 export const transformPrescriptions = prescriptions => prescriptions.map(transformPrescription);
@@ -186,3 +176,12 @@ export const transformExams = exams =>
     const obj = exams[key];
     return { ...obj, key };
   });
+
+export const transformDrug = ({ dose, measureUnit, route, source, ...drug }) => ({
+  ...drug,
+  dose,
+  measureUnit,
+  dosage: `${dose} ${measureUnit.value}`,
+  route,
+  source: sourceToStoreType(source)
+});
