@@ -272,23 +272,13 @@ export default (sortedInfo, filteredInfo) => {
               AL
             </Tooltip>
           ),
-          className: 'bg-light-gray gtm-th-alerts',
+          className: 'ant-table-right-border bg-light-gray gtm-th-alerts',
           key: 'alerts',
           width: 30,
           align: 'center',
           sortDirections: sortDirections,
           sorter: (a, b) => a.alerts - b.alerts,
           sortOrder: sortedInfo.columnKey === 'alerts' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Escore Global do Paciente: Exames + Alertas + Alta Vigilância + Escore da Prescrição." underline>EG</Tooltip>,
-          className: 'ant-table-right-border gtm-th-ge',
-          key: 'globalScore',
-          width: 20,
-          align: 'center',
-          sortDirections: sortDirections,
-          sorter: (a, b) => a.globalScore - b.globalScore,
-          sortOrder: sortedInfo.columnKey === 'globalScore' && sortedInfo.order
         }
       ])
     },
@@ -297,7 +287,7 @@ export default (sortedInfo, filteredInfo) => {
       children: setDataIndex([
         {
           title: <Tooltip title="Antimicrobianos">AM</Tooltip>,
-          className: 'bg-light-gray gtm-th-am',
+          className: 'gtm-th-am',
           key: 'am',
           width: 30,
           align: 'center',
@@ -307,7 +297,7 @@ export default (sortedInfo, filteredInfo) => {
         },
         {
           title: <Tooltip title="Alta Vigilância">AV</Tooltip>,
-          className: 'gtm-th-av',
+          className: 'bg-light-gray gtm-th-av',
           key: 'av',
           width: 30,
           align: 'center',
@@ -317,7 +307,7 @@ export default (sortedInfo, filteredInfo) => {
         },
         {
           title: <Tooltip title="Controlados">C</Tooltip>,
-          className: 'bg-light-gray gtm-th-c',
+          className: 'gtm-th-c',
           key: 'controlled',
           width: 20,
           align: 'center',
@@ -327,7 +317,7 @@ export default (sortedInfo, filteredInfo) => {
         },
         {
           title: <Tooltip title="Não padronizados (sem Intervenção)">NP</Tooltip>,
-          className: 'gtm-th-np',
+          className: 'bg-light-gray gtm-th-np',
           key: 'np',
           width: 30,
           align: 'center',
@@ -337,7 +327,7 @@ export default (sortedInfo, filteredInfo) => {
         },
         {
           title: <Tooltip title="Alerta de Sonda">S</Tooltip>,
-          className: 'bg-light-gray gtm-th-s',
+          className: 'gtm-th-s',
           key: 'tube',
           width: 20,
           align: 'center',
@@ -347,7 +337,7 @@ export default (sortedInfo, filteredInfo) => {
         },
         {
           title: <Tooltip title="Diferentes">D</Tooltip>,
-          className: 'gtm-th-d',
+          className: 'bg-light-gray gtm-th-d',
           key: 'diff',
           width: 20,
           align: 'center',
@@ -357,7 +347,7 @@ export default (sortedInfo, filteredInfo) => {
         },
         {
           title: <Tooltip title="Intervenções Pendentes">IP</Tooltip>,
-          className: 'bg-light-gray gtm-th-ip',
+          className: 'gtm-th-ip',
           key: 'interventions',
           width: 20,
           align: 'center',
@@ -366,14 +356,24 @@ export default (sortedInfo, filteredInfo) => {
           sortOrder: sortedInfo.columnKey === 'interventions' && sortedInfo.order
         },
         {
-          title: <Tooltip title="Escore Total da Prescrição pela I.A.">T</Tooltip>,
-          className: 'ant-table-right-border gtm-th-t',
+          title: <Tooltip title="Escore Total da Prescrição">T</Tooltip>,
+          className: 'ant-table-right-border bg-light-gray gtm-th-t',
           key: 'prescriptionScore',
           width: 20,
           align: 'center',
           sortDirections: sortDirections,
           sorter: (a, b) => a.prescriptionScore - b.prescriptionScore,
           sortOrder: sortedInfo.columnKey === 'prescriptionScore' && sortedInfo.order
+        },
+        {
+          title: <Tooltip title="Escore Global: Exames + Alertas + Alta Vigilância + Escore Total da Prescrição." underline>EG</Tooltip>,
+          className: 'ant-table-right-border gtm-th-ge',
+          key: 'globalScore',
+          width: 20,
+          align: 'center',
+          sortDirections: sortDirections,
+          sorter: (a, b) => a.globalScore - b.globalScore,
+          sortOrder: sortedInfo.columnKey === 'globalScore' && sortedInfo.order
         }
       ])
     },
