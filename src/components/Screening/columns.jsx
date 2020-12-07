@@ -42,24 +42,31 @@ const TableTags = styled.div`
   }
 `;
 
-const interventionMenu = (id, saveInterventionStatus) => (
+const interventionMenu = (id, saveInterventionStatus, source) => (
   <Menu>
-    <Menu.Item onClick={() => saveInterventionStatus(id, 'a')} className="gtm-btn-interv-accept">
+    <Menu.Item
+      onClick={() => saveInterventionStatus(id, 'a', source)}
+      className="gtm-btn-interv-accept"
+    >
       Aceita
     </Menu.Item>
     <Menu.Item
-      onClick={() => saveInterventionStatus(id, 'n')}
+      onClick={() => saveInterventionStatus(id, 'n', source)}
       className="gtm-btn-interv-not-accept"
     >
       Não aceita
     </Menu.Item>
-    <Menu.Item onClick={() => saveInterventionStatus(id, 'x')} className="gtm-btn-interv-not-apply">
+    <Menu.Item
+      onClick={() => saveInterventionStatus(id, 'x', source)}
+      className="gtm-btn-interv-not-apply"
+    >
       Não se aplica
     </Menu.Item>
   </Menu>
 );
 
 const InterventionAction = ({
+  source,
   checkIntervention: check,
   prevIntervention,
   saveInterventionStatus
@@ -76,7 +83,7 @@ const InterventionAction = ({
           <Button
             type="danger gtm-bt-undo-interv-status"
             ghost
-            onClick={() => saveInterventionStatus(id, 's')}
+            onClick={() => saveInterventionStatus(id, 's', source)}
             loading={isChecking}
             disabled={isDisabled}
           >
@@ -86,7 +93,7 @@ const InterventionAction = ({
       )}
       {!isChecked && (
         <Dropdown
-          overlay={interventionMenu(id, saveInterventionStatus)}
+          overlay={interventionMenu(id, saveInterventionStatus, source)}
           loading={isChecking}
           disabled={isDisabled}
         >
@@ -113,9 +120,10 @@ const Action = ({
   onShowPrescriptionDrugModal,
   uniqueDrugList,
   admissionNumber,
+  emptyRow,
   ...data
 }) => {
-  if (!check) return null;
+  if (emptyRow) return null;
 
   const closedStatuses = ['a', 'n', 'x'];
   const isClosed = closedStatuses.indexOf(data.status) !== -1;
@@ -165,17 +173,6 @@ const Action = ({
       </Tooltip>
     </TableTags>
   );
-};
-export const defaultAction = {
-  title: 'Ações',
-  dataIndex: 'intervention',
-  width: 180,
-  render: (text, prescription) => <Action {...prescription} />
-};
-
-export const desktopAction = {
-  ...defaultAction,
-  fixed: 'right'
 };
 
 const NestedTableContainer = styled.div`
@@ -271,11 +268,11 @@ const DrugTags = ({ drug }) => (
   </span>
 );
 
-export const expandedRowRender = record => {
+export const expandedRowRender = bag => record => {
   if (record.total && record.infusion) {
     return (
       <NestedTableContainer>
-        <SolutionCalculator {...record.infusion} weight={record.weight} />
+        <SolutionCalculator {...record.infusion} weight={bag.weight} />
       </NestedTableContainer>
     );
   }
@@ -332,8 +329,8 @@ export const expandedRowRender = record => {
           <Descriptions.Item label="Período de uso:" span={3}>
             {isEmpty(record.periodDates) && (
               <Link
-                onClick={() => record.fetchPeriod(record.idPrescriptionDrug, record.source)}
-                loading={record.periodObject.isFetching}
+                onClick={() => bag.fetchPeriod(record.idPrescriptionDrug, record.source)}
+                loading={bag.periodObject.isFetching}
                 type="nda gtm-bt-period"
               >
                 Visualizar período de uso
@@ -371,7 +368,8 @@ export const expandedRowRender = record => {
               showDate
               status={
                 <Descriptions.Item label="Situação" span={3}>
-                  <Tag color={config.color}>{config.label}</Tag> <InterventionAction {...record} />
+                  <Tag color={config.color}>{config.label}</Tag>{' '}
+                  <InterventionAction {...record} {...bag} />
                 </Descriptions.Item>
               }
             />
@@ -395,7 +393,7 @@ export const expandedRowRender = record => {
 
 const flags = ['green', 'yellow', 'orange', 'red', 'red'];
 
-const drugInfo = [
+const drugInfo = bag => [
   {
     key: 'idPrescriptionDrug',
     dataIndex: 'score',
@@ -422,7 +420,7 @@ const drugInfo = [
           <Tooltip title="Abrir calculadora de solução" placement="top">
             <span
               className="gtm-tag-calc"
-              onClick={() => record.handleRowExpand(record)}
+              onClick={() => bag.handleRowExpand(record)}
               style={{ cursor: 'pointer' }}
             >
               <Icon type="calculator" style={{ fontSize: 16, marginRight: '10px' }} />
@@ -432,7 +430,7 @@ const drugInfo = [
         );
       }
 
-      const href = `/medicamentos/${record.idSegment}/${record.idDrug}/${createSlug(record.drug)}/${
+      const href = `/medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(record.drug)}/${
         record.doseconv
       }/${record.dayFrequency}`;
       return (
@@ -455,7 +453,7 @@ const drugInfo = [
         return (
           <Tooltip title="Abrir calculadora de solução" placement="top">
             <span
-              onClick={() => record.handleRowExpand(record)}
+              onClick={() => bag.handleRowExpand(record)}
               style={{ cursor: 'pointer', fontWeight: 600 }}
             >
               Total:
@@ -483,7 +481,7 @@ const drugInfo = [
         return (
           <Tooltip title="Abrir calculadora de solução" placement="top">
             <span
-              onClick={() => prescription.handleRowExpand(prescription)}
+              onClick={() => bag.handleRowExpand(prescription)}
               style={{ cursor: 'pointer', fontWeight: 600 }}
             >
               {prescription.infusion.totalVol} mL
@@ -549,7 +547,7 @@ const stageAndInfusion = [
   }
 ];
 
-const actionColumns = [
+const actionColumns = bag => [
   {
     title: 'Via',
     dataIndex: 'route',
@@ -561,40 +559,28 @@ const actionColumns = [
     align: 'center',
     render: (text, prescription) => (
       <TableTags>
-        <span
-          className="tag gtm-tag-check"
-          onClick={() => prescription.handleRowExpand(prescription)}
-        >
+        <span className="tag gtm-tag-check" onClick={() => bag.handleRowExpand(prescription)}>
           {prescription.checked && (
             <Tooltip title="Checado anteriormente">
               <Icon type="check" style={{ fontSize: 18, color: '#52c41a' }} />
             </Tooltip>
           )}
         </span>
-        <span
-          className="tag gtm-tag-msg"
-          onClick={() => prescription.handleRowExpand(prescription)}
-        >
+        <span className="tag gtm-tag-msg" onClick={() => bag.handleRowExpand(prescription)}>
           {prescription.recommendation && prescription.recommendation !== 'None' && (
             <Tooltip title="Possui observação médica">
               <Icon type="message" style={{ fontSize: 18, color: '#108ee9' }} />
             </Tooltip>
           )}
         </span>
-        <span
-          className="tag gtm-ico-form"
-          onClick={() => prescription.handleRowExpand(prescription)}
-        >
+        <span className="tag gtm-ico-form" onClick={() => bag.handleRowExpand(prescription)}>
           {prescription.prevNotes && prescription.prevNotes !== 'None' && (
             <Tooltip title="Possui anotação">
               <Icon type="form" style={{ fontSize: 18, color: '#108ee9' }} />
             </Tooltip>
           )}
         </span>
-        <span
-          className="tag gtm-tag-warn"
-          onClick={() => prescription.handleRowExpand(prescription)}
-        >
+        <span className="tag gtm-tag-warn" onClick={() => bag.handleRowExpand(prescription)}>
           {!isEmpty(prescription.prevIntervention) && (
             <Tooltip title="Possui intervenção anterior">
               <Icon type="warning" style={{ fontSize: 18, color: '#fa8c16' }} />
@@ -606,20 +592,14 @@ const actionColumns = [
             </Tooltip>
           )}
         </span>
-        <span
-          className="tag gtm-tag-stop"
-          onClick={() => prescription.handleRowExpand(prescription)}
-        >
+        <span className="tag gtm-tag-stop" onClick={() => bag.handleRowExpand(prescription)}>
           {prescription.suspended && (
             <Tooltip title="Suspenso">
               <Icon type="stop" style={{ fontSize: 18, color: '#f5222d' }} />
             </Tooltip>
           )}
         </span>
-        <span
-          className="tag gtm-tag-alert"
-          onClick={() => prescription.handleRowExpand(prescription)}
-        >
+        <span className="tag gtm-tag-alert" onClick={() => bag.handleRowExpand(prescription)}>
           {!isEmpty(prescription.alerts) && (
             <Tooltip title="Alertas">
               <Tag color="red" style={{ marginLeft: '2px' }}>
@@ -635,7 +615,7 @@ const actionColumns = [
     title: 'Ações',
     dataIndex: 'intervention',
     width: 110,
-    render: (text, prescription) => <Action {...prescription} />
+    render: (text, prescription) => <Action {...prescription} {...bag} />
   }
 ];
 
@@ -644,10 +624,14 @@ export const isPendingValidation = record =>
   !isEmpty(record.prevIntervention) ||
   !isEmpty(record.prevNotes);
 
-export const solutionColumns = [...drugInfo, ...stageAndInfusion, ...actionColumns];
+export const solutionColumns = bag => [
+  ...drugInfo(bag),
+  ...stageAndInfusion,
+  ...actionColumns(bag)
+];
 
-export default filteredInfo => {
-  const columns = [...drugInfo, ...frequencyAndTime, ...actionColumns];
+export default (filteredInfo, bag) => {
+  const columns = [...drugInfo(bag), ...frequencyAndTime, ...actionColumns(bag)];
 
   columns[0] = {
     ...columns[0],

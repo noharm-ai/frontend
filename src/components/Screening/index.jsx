@@ -4,33 +4,24 @@ import styled from 'styled-components/macro';
 
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
-import { getUniqueDrugs } from '@utils/transformers';
 import { ExpandableTable } from '@components/Table';
 import Empty from '@components/Empty';
 import LoadBox from '@components/LoadBox';
 import { Row, Col } from '@components/Grid';
 import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
-import Button from '@components/Button';
-import Tooltip from '@components/Tooltip';
 import notification from '@components/notification';
-import TableFilter from '@components/TableFilter';
-import ModalIntervention from '@containers/Screening/ModalIntervention';
-import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
-import PreviousInterventionList from '@containers/Screening/PreviousInterventionList';
+
 import BackTop from '@components/BackTop';
-import {
-  groupSolutions,
-  groupProcedures,
-  filterWhitelistedChildren,
-  getWhitelistedChildren
-} from '@utils/transformers/prescriptionDrugs';
+
+import PrescriptionList from '@containers/Screening/PrescriptionDrug/PrescriptionList';
+import SolutionList from '@containers/Screening/PrescriptionDrug/SolutionList';
+import ProcedureList from '@containers/Screening/PrescriptionDrug/ProcedureList';
+import PreviousInterventionList from '@containers/Screening/PreviousInterventionList';
 import { toDataSource } from '@utils';
 
 import Patient from './Patient';
-import columnsTable, { expandedRowRender, solutionColumns, isPendingValidation } from './columns';
 import examColumns, { examRowClassName, expandedExamRowRender } from './Exam/columns';
-import PrescriptionDrugList from './PrescriptionDrug/PrescriptionDrugList';
 
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
@@ -55,176 +46,24 @@ const errorMessage = {
 
 export default function Screening({
   match,
-  select,
   fetchScreeningById,
-  savePrescriptionDrugStatus,
-  saveInterventionStatus,
-  fetchPeriod,
   fetchExams,
-  selectPrescriptionDrug,
   access_token,
   isFetching,
   content,
   error,
-  exams,
-  checkPrescriptionDrug,
-  checkIntervention,
-  periodObject
+  exams
 }) {
   const id = extractId(match.params.slug);
   const {
-    prescription: drugList,
-    solution: solutionList,
-    procedures: proceduresList,
-    interventions: interventionList,
-    infusion: infusionList
+    prescriptionRaw: drugList,
+    solutionRaw: solutionList,
+    proceduresRaw: proceduresList,
+    interventionsRaw: interventionList
   } = content;
-  // const { isSaving, wasSaved, item } = maybeCreateOrUpdate;
-
-  const [visible, setVisibility] = useState(false);
-  const [expandedRows, setExpandedRows] = useState({
-    prescription: [],
-    solution: [],
-    procedure: []
-  });
-  const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
-  const [filter, setFilter] = useState({
-    status: null
-  });
-
-  const handleFilter = (e, status) => {
-    if (status) {
-      setFilter({ status: status === 'all' ? null : [status] });
-    }
-  };
-
-  const isFilterActive = status => {
-    if (filter.status) {
-      return filter.status[0] === status;
-    }
-
-    return filter.status == null && status == null;
-  };
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
-
-  const onShowPrescriptionDrugModal = data => {
-    selectPrescriptionDrug(data);
-    setOpenPrescriptionDrugModal(true);
-  };
-
-  const updateExpandedRows = (list, key) => {
-    if (list.includes(key)) {
-      return list.filter(i => i !== key);
-    }
-    return [...list, key];
-  };
-
-  const handleRowExpand = record => {
-    switch (record.source) {
-      case 'Medicamentos':
-        setExpandedRows({
-          ...expandedRows,
-          prescription: updateExpandedRows(expandedRows.prescription, record.key)
-        });
-        break;
-      case 'Soluções':
-        setExpandedRows({
-          ...expandedRows,
-          solution: updateExpandedRows(expandedRows.solution, record.key)
-        });
-        break;
-      default:
-        setExpandedRows({
-          ...expandedRows,
-          procedure: updateExpandedRows(expandedRows.procedure, record.key)
-        });
-    }
-  };
-
-  const onShowModal = data => {
-    select(data);
-    setVisibility(true);
-  };
-
-  const bag = {
-    onShowModal,
-    onShowPrescriptionDrugModal,
-    check: checkPrescriptionDrug,
-    savePrescriptionDrugStatus,
-    idSegment: content.idSegment,
-    uniqueDrugList: getUniqueDrugs(drugList, solutionList, proceduresList),
-    admissionNumber: content.admissionNumber,
-    saveInterventionStatus,
-    checkIntervention,
-    periodObject,
-    fetchPeriod,
-    handleRowExpand,
-    weight: content.weight
-  };
-
-  const [dsDrugList, setDrugList] = useState([]);
-  const [dsSolutions, setDsSolutions] = useState([]);
-  const [dsProcedures, setDsProcedures] = useState([]);
   const [dsExams, setDsExams] = useState([]);
-
-  const splitDatasource = (list, prescriptionType, groupFunction, extraContent) => {
-    const drugArray = [];
-    list.forEach(item => {
-      if (!drugArray[item.idPrescription]) {
-        drugArray[item.idPrescription] = [];
-      }
-      drugArray[item.idPrescription].push(item);
-    });
-
-    const dsArray = [];
-    drugArray.forEach((item, index) => {
-      if (groupFunction) {
-        dsArray.push({
-          key: index,
-          value: groupFunction(
-            toDataSource(item, 'idPrescriptionDrug', {
-              ...bag,
-              ...extraContent,
-              prescriptionType
-            }),
-            infusionList
-          )
-        });
-      } else {
-        dsArray.push({
-          key: index,
-          value: toDataSource(item, 'idPrescriptionDrug', {
-            ...bag,
-            ...extraContent,
-            prescriptionType
-          })
-        });
-      }
-    });
-
-    return dsArray;
-  };
-
-  useEffect(() => {
-    setDrugList(
-      drugList
-        ? splitDatasource(filterWhitelistedChildren(drugList), 'prescriptions', null, {
-            whitelistedChildren: getWhitelistedChildren(drugList)
-          })
-        : []
-    );
-  }, [drugList]); // eslint-disable-line
-
-  useEffect(() => {
-    setDsSolutions(solutionList ? splitDatasource(solutionList, 'solutions', groupSolutions) : []);
-  }, [solutionList]); // eslint-disable-line
-
-  useEffect(() => {
-    setDsProcedures(
-      proceduresList ? splitDatasource(proceduresList, 'procedures', groupProcedures) : []
-    );
-  }, [proceduresList]); // eslint-disable-line
 
   useEffect(() => {
     setDsExams(toDataSource(exams.list, 'key', {}));
@@ -242,11 +81,6 @@ export default function Screening({
     solutions: solutionList ? solutionList.length : 0,
     procedures: proceduresList ? proceduresList.length : 0,
     interventions: interventionList ? interventionList.length : 0
-  };
-
-  const prescriptionCount = {
-    all: listCount.prescriptions,
-    pendingValidation: drugList ? drugList.reduce((n, i) => n + isPendingValidation(i), 0) : 0
   };
 
   // fetch data
@@ -272,31 +106,6 @@ export default function Screening({
       loadExams();
     }
   };
-
-  const ListFilter = ({ listCount, handleFilter, isFilterActive }) => (
-    <TableFilter style={{ marginBottom: 15 }}>
-      <Tooltip title="Ver somente pendentes de validação">
-        <Button
-          type="gtm-lnk-filter-presc-pendentevalidacao ant-btn-link-hover"
-          className={isFilterActive('pending-validation') ? 'active' : ''}
-          onClick={e => handleFilter(e, 'pending-validation')}
-        >
-          Pendentes de validação
-          <Tag color="orange">{listCount.pendingValidation}</Tag>
-        </Button>
-      </Tooltip>
-      <Tooltip title="Ver todos">
-        <Button
-          type="gtm-lnk-filter-presc-todos ant-btn-link-hover"
-          className={isFilterActive(null) ? 'active' : ''}
-          onClick={e => handleFilter(e, 'all')}
-        >
-          Todos
-          <Tag>{listCount.all}</Tag>
-        </Button>
-      </Tooltip>
-    </TableFilter>
-  );
 
   if (error) {
     return (
@@ -329,36 +138,19 @@ export default function Screening({
             key="1"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
-              <ListFilter
-                listCount={prescriptionCount}
-                handleFilter={handleFilter}
-                isFilterActive={isFilterActive}
-              />
-              <PrescriptionDrugList
-                isFetching={isFetching}
-                dataSource={dsDrugList}
-                headers={content.headers}
-                aggregated={content.agg}
-                columns={columnsTable(filter)}
-                expandedRowRender={expandedRowRender}
-                handleRowExpand={handleRowExpand}
-                expandedRows={expandedRows.prescription}
+              <PrescriptionList
                 emptyMessage="Nenhum medicamento encontrado."
+                hasFilter
+                listType="prescription"
               />
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane tab={<TabTitle title="Soluções" count={listCount.solutions} />} key="2">
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
-              <PrescriptionDrugList
-                isFetching={isFetching}
-                dataSource={dsSolutions}
-                headers={content.headers}
-                aggregated={content.agg}
-                columns={solutionColumns}
-                expandedRowRender={expandedRowRender}
-                handleRowExpand={handleRowExpand}
-                expandedRows={expandedRows.solution}
+              <SolutionList
                 emptyMessage="Nenhuma solução encontrada."
+                hasFilter={false}
+                listType="solution"
               />
             </Col>
           </Tabs.TabPane>
@@ -367,21 +159,15 @@ export default function Screening({
             key="3"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
-              <PrescriptionDrugList
-                isFetching={isFetching}
-                dataSource={dsProcedures}
-                headers={content.headers}
-                aggregated={content.agg}
-                columns={columnsTable({ status: null })}
-                expandedRowRender={expandedRowRender}
-                handleRowExpand={handleRowExpand}
-                expandedRows={expandedRows.procedure}
-                emptyMessage="Nenhum procedimento/exame encontrado."
+              <ProcedureList
+                emptyMessage="Nenhuma solução encontrada."
+                hasFilter={false}
+                listType="procedure"
               />
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane
-            tab={<TabTitle title="Intervenções Anteriores" count={listCount.interventions} />}
+            tab={<TabTitle title="Intervenções" count={listCount.interventions} />}
             key="4"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
@@ -411,12 +197,6 @@ export default function Screening({
       </Row>
 
       <BackTop />
-
-      <ModalIntervention visible={visible} setVisibility={setVisibility} />
-      <ModalPrescriptionDrug
-        visible={openPrescriptionDrugModal}
-        setVisibility={setOpenPrescriptionDrugModal}
-      />
     </>
   );
 }

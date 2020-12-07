@@ -8,12 +8,11 @@ import Popover from '@components/PopoverStyled';
 import Statistic from '@components/Statistic';
 import Card from '@components/Card';
 import Button from '@components/Button';
-import Icon from '@components/Icon';
+import Icon, { InfoIcon } from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 import FormPatientModal from '@containers/Forms/Patient';
 import RichTextView from '@components/RichTextView';
 
-import { InfoIcon } from '@components/Icon';
 import { Wrapper, Name, NameWrapper, Box, ExamBox } from './Patient.style';
 
 function Cell({ children, ...props }) {
@@ -29,7 +28,7 @@ const getExamValue = exam => {
     return '--';
   }
 
-  return exam.value + ' ' + (exam.unit ? exam.unit : '');
+  return `${exam.value} ${exam.unit ? exam.unit : ''}`;
 };
 
 const refText = text => {
@@ -112,9 +111,14 @@ export default function Patient({
 
   const dischargeMessage = (dischargeFormated, dischargeReason) => {
     if (dischargeFormated) {
-      const reason = dischargeReason ? dischargeReason : 'alta';
-      return <Tooltip title={"Paciente com " + reason + " em " + dischargeFormated}> <InfoIcon /></Tooltip>
-    };
+      const reason = dischargeReason || 'alta';
+      return (
+        <Tooltip title={`Paciente com ${reason} em ${dischargeFormated}`}>
+          {' '}
+          <InfoIcon />
+        </Tooltip>
+      );
+    }
   };
 
   return (
@@ -147,7 +151,12 @@ export default function Patient({
           </Cell>
           <Cell>
             <strong>Setor:</strong> {department}
-            {lastDepartment && department !== lastDepartment && <Tooltip title={"Setor Anterior: " + lastDepartment}> <InfoIcon /></Tooltip>}
+            {lastDepartment && department !== lastDepartment && (
+              <Tooltip title={`Setor Anterior: ${lastDepartment}`}>
+                {' '}
+                <InfoIcon />
+              </Tooltip>
+            )}
           </Cell>
           <Cell>
             <strong>Leito:</strong> {bed}
@@ -160,7 +169,12 @@ export default function Patient({
           </Cell>
           <Cell>
             <strong>Peso:</strong> {weight} Kg ({formatWeightDate(weightDate)})
-            {weightUser && <Tooltip title="Peso alterado manualmente"> <InfoIcon /></Tooltip>}
+            {weightUser && (
+              <Tooltip title="Peso alterado manualmente">
+                {' '}
+                <InfoIcon />
+              </Tooltip>
+            )}
           </Cell>
           {seeMore && (
             <>
@@ -170,7 +184,9 @@ export default function Patient({
               <Cell>
                 <strong>Altura:</strong>{' '}
                 {height ? (
-                  <Tooltip title="Altura alterada manualmente">{height} <InfoIcon /></Tooltip>
+                  <Tooltip title="Altura alterada manualmente">
+                    {height} <InfoIcon />
+                  </Tooltip>
                 ) : (
                   'Não disponível'
                 )}
@@ -198,10 +214,7 @@ export default function Patient({
                 </div>
               </Cell>
               <Cell className="recalc">
-                <Button
-                  type="primary gtm-bt-update"
-                  onClick={updatePrescriptionData}
-                >
+                <Button type="primary gtm-bt-update" onClick={updatePrescriptionData}>
                   Recalcular Prescrição
                 </Button>
               </Cell>
@@ -223,8 +236,9 @@ export default function Patient({
                 content={<ExamData exam={exam.value} />}
                 title={exam.value.name}
                 key={exam.key}
+                mouseLeaveDelay={0}
               >
-                <Card.Grid hoverable={true}>
+                <Card.Grid hoverable>
                   <Statistic
                     title={exam.value.initials}
                     value={getExamValue(exam.value)}

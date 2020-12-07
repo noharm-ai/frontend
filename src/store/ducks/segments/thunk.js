@@ -1,8 +1,9 @@
 import isEmpty from 'lodash.isempty';
+import arrayMove from 'array-move';
 
 import api from '@services/api';
-import { errorHandler } from '@utils';
 import { transformSegments, transformSegment } from '@utils/transformers';
+import { errorHandler } from '@utils';
 import { Creators as SegmentsCreators } from './index';
 
 const {
@@ -29,7 +30,12 @@ const {
 
   segmentsFetchExamTypesListStart,
   segmentsFetchExamTypesListError,
-  segmentsFetchExamTypesListSuccess
+  segmentsFetchExamTypesListSuccess,
+
+  segmentsUpdateExamOrderStart,
+  segmentsUpdateExamOrderError,
+  segmentsUpdateExamOrderSuccess,
+  segmentsUpdateExamOrderReset
 } = SegmentsCreators;
 
 export const fetchSegmentsListThunk = (params = {}) => async (dispatch, getState) => {
@@ -92,6 +98,32 @@ export const selectSegmentExamThunk = item => dispatch => {
 
 export const updateSegmentExamThunk = item => dispatch => {
   dispatch(segmentsUpdateExam(item));
+};
+
+export const updateSegmentExamOrderThunk = (oldIndex, newIndex) => async (dispatch, getState) => {
+  const currentExamsOrder = getState().segments.single.content.exams;
+  const exams = arrayMove([...getState().segments.single.content.exams], oldIndex, newIndex);
+  dispatch(segmentsUpdateExamOrderSuccess(exams));
+
+  dispatch(segmentsUpdateExamOrderStart());
+
+  const { access_token } = getState().auth.identify;
+  const examTypes = exams.map(e => e.type);
+  const { status, error } = await api.updateSegmentExamOrder(
+    access_token,
+    getState().segments.firstFilter.idSegment,
+    {
+      exams: examTypes
+    }
+  );
+
+  if (status !== 200) {
+    dispatch(segmentsUpdateExamOrderSuccess(currentExamsOrder));
+    dispatch(segmentsUpdateExamOrderError(error));
+    return;
+  }
+
+  dispatch(segmentsUpdateExamOrderReset());
 };
 
 export const saveSegmentExamThunk = (params = {}) => async (dispatch, getState) => {

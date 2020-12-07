@@ -102,6 +102,9 @@ const updateSegmentExam = (bearerToken, { idSegment, type, ...params }) =>
 const getExamTypes = (bearerToken, params = {}) =>
   instance.get(`${endpoints.segments}/exams/types`, { params, ...setHeaders(bearerToken) });
 
+const updateSegmentExamOrder = (bearerToken, idSegment, params = {}) =>
+  instance.put(`${endpoints.segments}/${idSegment}/exams-order`, params, setHeaders(bearerToken));
+
 /**
  * Exams.
  *
@@ -368,7 +371,8 @@ const api = {
   putMemory,
   updatePassword,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  updateSegmentExamOrder
 };
 
 export default api;

@@ -13,8 +13,7 @@ import {
 } from '@store/ducks/prescriptions/thunk';
 import ModalIntervention from '@components/Screening/Modal';
 
-const mapStateToProps = ({ intervention, prescriptions }) => ({
-  checkPrescriptionDrug: prescriptions.single.checkPrescriptionDrug,
+const mapStateToProps = ({ intervention }) => ({
   maybeCreateOrUpdate: {
     ...intervention.maybeCreateOrUpdate
   }

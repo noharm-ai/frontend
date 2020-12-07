@@ -22,7 +22,9 @@ export default function Base() {
     maxTime,
     kidney,
     liver,
+    platelets,
     elderly,
+    tube,
     unit,
     useWeight,
     amount,
@@ -103,8 +105,21 @@ export default function Base() {
                 name="whiteList"
                 id="whiteList"
               >
-                <Tooltip title="Medicamento isento de Validação e Escore" underline>
+                <Tooltip title="Medicamento isento de Validação e Escore (Ex.: Diluentes)" underline>
                   Sem validação
+                </Tooltip>
+              </Checkbox>
+            </Col>
+            <Col xs={8}>
+              <Checkbox
+                onChange={({ target }) => setFieldValue('tube', !target.value)}
+                value={tube}
+                checked={tube}
+                name="tube"
+                id="tube"
+              >
+                <Tooltip title="Medicamento contraindicado via Sonda Nasoenteral, Nasogástrica, Enteral, Jejunostomia ou Gastrostomia" underline>
+                  Sonda
                 </Tooltip>
               </Checkbox>
             </Col>
@@ -208,6 +223,29 @@ export default function Base() {
             onChange={value => setFieldValue('liver', value)}
           />
           U/L
+        </Box>
+      </Col>
+      <Col xs={24}>
+        <Box hasError={errors.platelets}>
+          <Heading as="label" size="14px" className="fixed">
+            <Tooltip
+              title="Valor de Plaquetas/µL abaixo do qual o uso do medicamento é inadequado."
+              underline
+            >
+              Alerta de Plaquetas:
+            </Tooltip>
+          </Heading>
+          <InputNumber
+            style={{
+              width: 120,
+              marginRight: 5
+            }}
+            min={0}
+            max={999999}
+            value={platelets}
+            onChange={value => setFieldValue('platelets', value)}
+          />
+          plaquetas/µL
         </Box>
       </Col>
       <Col xs={24}>

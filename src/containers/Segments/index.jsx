@@ -6,7 +6,8 @@ import { generateOutlierThunk, resetGenerateThunk } from '@store/ducks/outliers/
 import {
   fetchSegmentsListThunk,
   fetchSegmentByIdThunk,
-  selectSegmentExamThunk
+  selectSegmentExamThunk,
+  updateSegmentExamOrderThunk
 } from '@store/ducks/segments/thunk';
 import Segments from '@components/Segments';
 
@@ -19,6 +20,7 @@ const mapStateToProps = ({ segments, outliers, user }) => ({
     single: segments.single,
     examTypes: segments.examTypes
   },
+  sortStatus: segments.sortExam,
   outliers: {
     generate: {
       ...outliers.generate
@@ -33,7 +35,8 @@ const mapDispatchToProps = dispatch =>
       generateOutlier: generateOutlierThunk,
       fetchSegmentsList: fetchSegmentsListThunk,
       fetchSegmentById: fetchSegmentByIdThunk,
-      selectExam: selectSegmentExamThunk
+      selectExam: selectSegmentExamThunk,
+      updateExamOrder: updateSegmentExamOrderThunk
     },
     dispatch
   );
