@@ -209,15 +209,18 @@ export const saveAdmissionThunk = ({ admissionNumber, formId, ...params }) => as
   dispatch(prescriptionsSaveReset());
 };
 
-export const checkPrescriptionDrugThunk = (idPrescriptionDrug, status, type) => async (
-  dispatch,
-  getState
-) => {
+export const checkPrescriptionDrugThunk = (
+  idPrescriptionDrug,
+  idPrescription,
+  status,
+  type
+) => async (dispatch, getState) => {
   dispatch(prescriptionDrugCheckStart(idPrescriptionDrug, sourceToStoreType(type)));
 
   const { access_token } = getState().auth.identify;
   const params = {
     idPrescriptionDrug,
+    idPrescription,
     status
   };
 

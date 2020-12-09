@@ -53,6 +53,27 @@ const Drug = ({ drug, dosage, frequency, route, score }) => (
   </Box>
 );
 
+const PatientData = ({ patientName, age }) => (
+  <Box>
+    <Row type="flex" gutter={24} css="padding: 2px 0">
+      <Col span={8}>
+        <Heading as="p" size="14px">
+          Paciente:
+        </Heading>
+      </Col>
+      <Col span={24 - 8}>{patientName}</Col>
+    </Row>
+    <Row type="flex" gutter={24} css="padding: 2px 0">
+      <Col span={8}>
+        <Heading as="p" size="14px">
+          Idade:
+        </Heading>
+      </Col>
+      <Col span={24 - 8}>{age}</Col>
+    </Row>
+  </Box>
+);
+
 const Reason = ({ reasons, defaultReason, updateReason }) => {
   const joinReasons = (ids, reasons) => {
     if (isEmpty(ids)) return '';
@@ -396,7 +417,6 @@ export default function Intervention({
 
   useEffect(() => {
     updateSelectedItemToSaveIntervention({
-      status: 's',
       idPrescription: itemToSave.idPrescription,
       drugName: itemToSave.drug
     });
@@ -411,7 +431,8 @@ export default function Intervention({
       <header>
         <Heading margin="0 0 11px">Intervenção</Heading>
       </header>
-      <Drug {...itemToSave} />
+      {itemToSave.interventionType === 'patient' && <PatientData {...itemToSave} />}
+      {itemToSave.interventionType !== 'patient' && <Drug {...itemToSave} />}
       <Error
         handleChangeError={updateSelectedItemToSaveIntervention}
         defaultChecked={!isEmpty(itemToSave) && itemToSave.intervention.error}

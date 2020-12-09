@@ -50,7 +50,7 @@ const rowClassName = record => {
     classes.push('checked');
   }
 
-  if (record.status === 's') {
+  if (record.intervention && record.intervention.status === 's') {
     classes.push('danger');
   }
 

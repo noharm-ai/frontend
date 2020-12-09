@@ -130,7 +130,7 @@ const Action = ({
   const isDisabled =
     (check.idPrescriptionDrug !== idPrescriptionDrug && check.isChecking) || isClosed;
   const isChecking = check.idPrescriptionDrug === idPrescriptionDrug && check.isChecking;
-  const isChecked = data.status === 's';
+  const isChecked = data.intervention && data.intervention.status === 's';
   const isIntervened = data.intervened;
   const hasNotes =
     (data.notes !== '' && data.notes != null) || (data.prevNotes && data.prevNotes !== 'None');
@@ -252,17 +252,17 @@ const DrugTags = ({ drug }) => (
     )}
     {drug.am && (
       <Tooltip title="Antimicrobianos">
-        <Tag color='green'>AM</Tag>
+        <Tag color="green">AM</Tag>
       </Tooltip>
     )}
     {drug.av && (
       <Tooltip title="Alta vigilância">
-        <Tag color='red'>AV</Tag>
+        <Tag color="red">AV</Tag>
       </Tooltip>
     )}
     {drug.c && (
       <Tooltip title="Controlado">
-        <Tag color='orange'>C</Tag>
+        <Tag color="orange">C</Tag>
       </Tooltip>
     )}
   </span>

@@ -18,9 +18,9 @@ import PrescriptionList from '@containers/Screening/PrescriptionDrug/Prescriptio
 import SolutionList from '@containers/Screening/PrescriptionDrug/SolutionList';
 import ProcedureList from '@containers/Screening/PrescriptionDrug/ProcedureList';
 import PreviousInterventionList from '@containers/Screening/PreviousInterventionList';
+import Patient from '@containers/Screening/Patient';
 import { toDataSource } from '@utils';
 
-import Patient from './Patient';
 import examColumns, { examRowClassName, expandedExamRowRender } from './Exam/columns';
 
 // extract idPrescription from slug.
@@ -48,7 +48,6 @@ export default function Screening({
   match,
   fetchScreeningById,
   fetchExams,
-  access_token,
   isFetching,
   content,
   error,
@@ -121,11 +120,7 @@ export default function Screening({
     <>
       <Row type="flex" gutter={24}>
         <Col span={24} md={24}>
-          {isFetching ? (
-            <LoadBox />
-          ) : (
-            <Patient {...content} fetchScreening={fetchScreeningById} access_token={access_token} />
-          )}
+          {isFetching ? <LoadBox /> : <Patient />}
         </Col>
         <ScreeningTabs
           defaultActiveKey="1"

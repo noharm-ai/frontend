@@ -18,6 +18,9 @@ export const Name = styled(Heading)`
 `;
 
 export const NameWrapper = styled.div`
+  transition: all 0.5s;
+  background: ${props => (props.hasIntervention ? '#ffcdd2' : '#fff')};
+
   .btn-container {
     display: flex;
     justify-content: flex-end;

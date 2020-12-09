@@ -13,6 +13,8 @@ import Tooltip from '@components/Tooltip';
 import FormPatientModal from '@containers/Forms/Patient';
 import RichTextView from '@components/RichTextView';
 
+import ModalIntervention from '@containers/Screening/ModalIntervention';
+
 import { Wrapper, Name, NameWrapper, Box, ExamBox } from './Patient.style';
 
 function Cell({ children, ...props }) {
@@ -50,31 +52,50 @@ const ExamData = ({ exam }) => (
 );
 
 export default function Patient({
-  admissionNumber,
-  department,
-  lastDepartment,
-  age,
-  gender,
-  weight,
-  weightUser,
-  weightDate,
-  skinColor,
-  dischargeReason,
-  dischargeFormated,
-  namePatient,
-  segmentName,
-  bed,
-  prescriber,
   fetchScreening,
   access_token,
-  record,
-  height,
-  exams,
-  observation,
-  ...prescription
+  prescription,
+  selectIntervention
 }) {
+  const {
+    admissionNumber,
+    department,
+    lastDepartment,
+    age,
+    gender,
+    weight,
+    weightUser,
+    weightDate,
+    skinColor,
+    dischargeReason,
+    dischargeFormated,
+    namePatient,
+    segmentName,
+    bed,
+    prescriber,
+    record,
+    height,
+    exams,
+    observation,
+    intervention
+  } = prescription;
+  const [interventionVisible, setInterventionVisibility] = useState(false);
   const [visible, setVisible] = useState(false);
   const [seeMore, setSeeMore] = useState(false);
+
+  const showInterventionModal = () => {
+    selectIntervention({
+      interventionType: 'patient',
+      idPrescriptionDrug: 0,
+      admissionNumber,
+      idPrescription: prescription.idPrescription,
+      patientName: namePatient,
+      age,
+      status: intervention ? intervention.status : '0',
+      intervention: intervention || {}
+    });
+    setInterventionVisibility(true);
+  };
 
   const onCancel = () => {
     setVisible(false);
@@ -125,7 +146,7 @@ export default function Patient({
     <Row gutter={8}>
       <Col md={8}>
         <Wrapper>
-          <NameWrapper>
+          <NameWrapper hasIntervention={intervention && intervention.status === 's'}>
             <Row gutter={8}>
               <Col xs={20}>
                 <Name as="h3" size="18px">
@@ -134,6 +155,16 @@ export default function Patient({
                 </Name>
               </Col>
               <Col xs={4} className="btn-container">
+                <Tooltip title="Intervenção no paciente">
+                  <Button
+                    type="primary gtm-bt-patient-intervention"
+                    onClick={() => showInterventionModal()}
+                    style={{ marginRight: '3px' }}
+                    ghost={!intervention || intervention.status !== 's'}
+                  >
+                    <Icon type="warning" style={{ fontSize: 16 }} />
+                  </Button>
+                </Tooltip>
                 <Tooltip title="Editar dados do paciente">
                   <Button
                     type="primary gtm-bt-edit-patient"
@@ -258,6 +289,7 @@ export default function Patient({
         cancelText="Cancelar"
         afterSavePatient={afterSavePatient}
       />
+      <ModalIntervention visible={interventionVisible} setVisibility={setInterventionVisibility} />
     </Row>
   );
 }

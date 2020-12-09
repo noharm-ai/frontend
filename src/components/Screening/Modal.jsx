@@ -52,10 +52,10 @@ export default function Modal({
   };
 
   const InterventionFooter = () => {
-    const isChecked = item.status === 's';
+    const isChecked = item.intervention && item.intervention.status === 's';
 
     const undoIntervention = () => {
-      savePrescriptionDrugStatus(item.idPrescriptionDrug, '0', item.source);
+      savePrescriptionDrugStatus(item.idPrescriptionDrug, item.idPrescription, '0', item.source);
       setVisibility(false);
     };
 
@@ -69,7 +69,7 @@ export default function Modal({
             <Button
               type="danger gtm-bt-undo-interv"
               ghost
-              loading={checkPrescriptionDrug.isChecking}
+              loading={checkPrescriptionDrug && checkPrescriptionDrug.isChecking}
               onClick={() => undoIntervention()}
             >
               <Icon type="rollback" style={{ fontSize: 16 }} />
@@ -92,7 +92,10 @@ export default function Modal({
   // handle after save intervention.
   useEffect(() => {
     if (wasSaved && visible) {
-      updateInterventionData(item.idPrescriptionDrug, item.source, item.intervention);
+      updateInterventionData(item.idPrescriptionDrug, item.source, {
+        ...item.intervention,
+        status: 's'
+      });
       reset();
       setVisibility(false);
 

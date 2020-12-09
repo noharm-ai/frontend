@@ -94,7 +94,8 @@ export const saveInterventionThunk = (params = {}) => async (dispatch, getState)
 
   const args = {
     ...defaultArgs,
-    ...intervention
+    ...intervention,
+    status: 's'
   };
 
   const { access_token } = getState().auth.identify;

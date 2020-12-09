@@ -347,6 +347,22 @@ const checkPrescriptionDrugError = (state = INITIAL_STATE, { error, source }) =>
 });
 
 const checkPrescriptionDrugSuccess = (state = INITIAL_STATE, { success, source }) => {
+  if (success.id === 0) {
+    return {
+      ...state,
+      single: {
+        ...state.single,
+        data: {
+          ...state.single.data,
+          intervention: {
+            ...state.single.data.intervention,
+            status: success.status
+          }
+        }
+      }
+    };
+  }
+
   const prescriptions = [...state.single.prescription.list];
   const solutions = [...state.single.solution.list];
   const procedures = [...state.single.procedure.list];
@@ -357,6 +373,8 @@ const checkPrescriptionDrugSuccess = (state = INITIAL_STATE, { success, source }
       const index = group.value.findIndex(item => item.idPrescriptionDrug === id);
 
       if (index !== -1) {
+        group.value[index].intervention.status = newStatus;
+        // deprecated
         group.value[index].status = newStatus;
         break;
       }
@@ -650,6 +668,19 @@ const updateInterventionData = (
   state = INITIAL_STATE,
   { idPrescriptionDrug, source, intervention }
 ) => {
+  if (idPrescriptionDrug === 0) {
+    return {
+      ...state,
+      single: {
+        ...state.single,
+        data: {
+          ...state.single.data,
+          intervention
+        }
+      }
+    };
+  }
+
   const prescriptions = [...state.single.prescription.list];
   const solutions = [...state.single.solution.list];
   const procedures = [...state.single.procedure.list];
