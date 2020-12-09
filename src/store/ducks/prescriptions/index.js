@@ -691,7 +691,6 @@ const updateInterventionData = (
       const index = group.value.findIndex(item => item.idPrescriptionDrug === idPrescriptionDrug);
 
       if (index !== -1) {
-        group.value[index].periodDates = newData;
         group.value[index].intervention = newData;
         group.value[index].status = 's';
         break;
