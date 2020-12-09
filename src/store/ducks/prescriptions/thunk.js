@@ -253,15 +253,18 @@ export const updatePrescriptionDrugDataThunk = (idPrescriptionDrug, source, data
   dispatch(prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data));
 };
 
-export const checkInterventionThunk = (id, status, source = 'intervention') => async (
-  dispatch,
-  getState
-) => {
+export const checkInterventionThunk = (
+  id,
+  idPrescription,
+  status,
+  source = 'intervention'
+) => async (dispatch, getState) => {
   dispatch(prescriptionInterventionCheckStart(id, source));
 
   const { access_token } = getState().auth.identify;
   const params = {
     idPrescriptionDrug: id,
+    idPrescription,
     status
   };
 
