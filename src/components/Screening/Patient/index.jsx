@@ -276,6 +276,7 @@ export default function Patient({
                 title={exam.value.name}
                 key={exam.key}
                 mouseLeaveDelay={0}
+                mouseEnterDelay={0.5}
               >
                 <Card.Grid hoverable>
                   <Statistic
