@@ -141,6 +141,14 @@ export default function Patient({
     }
   };
 
+  const currentStatus = intervention ? intervention.status : 's';
+  const isInterventionClosed = ['a', 'n', 'x'].indexOf(currentStatus) !== -1;
+  let interventionTooltip = 'Intervenção no paciente';
+
+  if (isInterventionClosed) {
+    interventionTooltip = 'Esta intervenção não pode mais ser alterada, pois já foi resolvida.';
+  }
+
   return (
     <Row gutter={8}>
       <Col md={8}>
@@ -154,12 +162,13 @@ export default function Patient({
                 </Name>
               </Col>
               <Col xs={4} className="btn-container">
-                <Tooltip title="Intervenção no paciente">
+                <Tooltip title={interventionTooltip}>
                   <Button
                     type="primary gtm-bt-patient-intervention"
                     onClick={() => showInterventionModal()}
                     style={{ marginRight: '3px' }}
                     ghost={!intervention || intervention.status !== 's'}
+                    disabled={isInterventionClosed}
                   >
                     <Icon type="warning" style={{ fontSize: 16 }} />
                   </Button>
