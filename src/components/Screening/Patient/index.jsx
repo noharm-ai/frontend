@@ -85,14 +85,13 @@ export default function Patient({
 
   const showInterventionModal = () => {
     selectIntervention({
-      interventionType: 'patient',
       idPrescriptionDrug: 0,
       admissionNumber,
       idPrescription: prescription.idPrescription,
       patientName: namePatient,
       age,
       status: intervention ? intervention.status : '0',
-      intervention: intervention || {}
+      intervention: intervention || { id: 0, idPrescription: prescription.idPrescription }
     });
     setInterventionVisibility(true);
   };

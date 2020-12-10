@@ -190,6 +190,7 @@ const Action = ({
               onShowModal({
                 ...data,
                 idPrescriptionDrug: id,
+                idPrescription,
                 uniqueDrugList: [],
                 admissionNumber
               });
