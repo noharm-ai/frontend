@@ -16,7 +16,7 @@ export default function PreviousInterventionList({
 
   useEffect(() => {
     setDsInterventions(
-      toDataSource(interventions, 'id', {
+      toDataSource(interventions, null, {
         saveInterventionStatus,
         check: checkIntervention
       })

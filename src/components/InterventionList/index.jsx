@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/macro';
 
-import { toDataSource } from '@utils';
 import Empty from '@components/Empty';
 import LoadBox from '@components/LoadBox';
 import notification from '@components/notification';
@@ -15,6 +14,7 @@ import Button from '@components/Button';
 import Tag from '@components/Tag';
 import Tooltip from '@components/Tooltip';
 import BackTop from '@components/BackTop';
+import { toDataSource } from '@utils';
 
 const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
@@ -111,7 +111,7 @@ export default function InterventionList({
     return <LoadBox />;
   }
 
-  const dsInterventions = toDataSource(list, 'id', {
+  const dsInterventions = toDataSource(list, null, {
     check: checkData,
     saveInterventionStatus: checkIntervention,
     onShowModal,
