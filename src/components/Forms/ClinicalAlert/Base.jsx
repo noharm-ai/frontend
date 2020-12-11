@@ -50,6 +50,7 @@ export default function Base() {
               value={alert}
               onChange={({ target }) => setFieldValue('alert', target.value)}
               style={{ minHeight: '300px' }}
+              maxLength={1950}
             />
             {errors.alert && touched.alert && <FieldError>{errors.alert}</FieldError>}
           </EditorBox>
