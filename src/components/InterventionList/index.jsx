@@ -212,6 +212,7 @@ export default function InterventionList({
         visible={visible}
         setVisibility={setVisibility}
         afterSaveIntervention={afterSaveIntervention}
+        disableUndoIntervention
       />
     </>
   );

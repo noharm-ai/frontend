@@ -30,7 +30,8 @@ export default function Modal({
   checkPrescriptionDrug,
   setVisibility,
   visible,
-  afterSaveIntervention
+  afterSaveIntervention,
+  disableUndoIntervention
 }) {
   const { isSaving, wasSaved, item } = maybeCreateOrUpdate;
 
@@ -53,7 +54,7 @@ export default function Modal({
   };
 
   const InterventionFooter = () => {
-    const isChecked = item.intervention && item.intervention.status === 's' && item.source;
+    const isChecked = item.intervention && item.intervention.status === 's';
 
     const undoIntervention = () => {
       savePrescriptionDrugStatus(item.idPrescriptionDrug, item.idPrescription, '0', item.source);
@@ -65,7 +66,7 @@ export default function Modal({
         <Button onClick={() => onCancel()} disabled={isSaving} className="gtm-bt-cancel-interv">
           Cancelar
         </Button>
-        {isChecked && (
+        {isChecked && !disableUndoIntervention && (
           <Tooltip title="Desfazer intervenção" placement="top">
             <Button
               type="danger gtm-bt-undo-interv"
