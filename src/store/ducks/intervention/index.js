@@ -182,7 +182,9 @@ const checkError = (state = INITIAL_STATE, { error }) => ({
 const checkSuccess = (state = INITIAL_STATE, { success }) => {
   const list = [...state.list];
 
-  const index = list.findIndex(item => item.id === success.id);
+  const index = list.findIndex(
+    item => item.id === success.id && item.idPrescription === success.idPrescription
+  );
   list[index].status = success.newStatus;
 
   return {
@@ -200,7 +202,11 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
 const updateList = (state = INITIAL_STATE, { intervention }) => {
   const list = [...state.list];
 
-  const index = list.findIndex(item => item.id === intervention.intervention.idPrescriptionDrug);
+  const index = list.findIndex(
+    item =>
+      item.id === intervention.intervention.idPrescriptionDrug &&
+      item.idPrescription === intervention.intervention.idPrescription
+  );
   list[index] = intervention.intervention;
   list[index].id = intervention.intervention.idPrescriptionDrug;
 

@@ -136,6 +136,7 @@ export const checkInterventionThunk = (id, idPrescription, status) => async (
   const success = {
     status: data.status,
     id,
+    idPrescription,
     newStatus: status
   };
 

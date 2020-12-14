@@ -479,7 +479,9 @@ const checkInterventionSuccess = (state = INITIAL_STATE, { success }) => {
   const solutions = [...state.single.solution.list];
   const procedures = [...state.single.procedure.list];
 
-  const index = interventions.findIndex(item => item.id === success.id);
+  const index = interventions.findIndex(
+    item => item.id === success.id && item.idPrescription === success.idPrescription
+  );
   interventions[index].status = success.newStatus;
 
   const updatePrevIntervention = (list, id, newStatus) => {

@@ -278,6 +278,7 @@ export const checkInterventionThunk = (
   const success = {
     status: data.status,
     id,
+    idPrescription,
     newStatus: status
   };
 

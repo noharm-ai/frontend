@@ -42,20 +42,18 @@ const TableInfo = styled.span`
 `;
 
 export default function InterventionList({
-  intervention,
   fetchList,
   checkData,
   checkIntervention,
-  save,
-  reset,
   select,
   updateList,
   futurePrescription,
-  fetchFuturePrescription
+  fetchFuturePrescription,
+  isFetching,
+  list,
+  error
 }) {
   const [visible, setVisibility] = useState(false);
-  const { isFetching, list, error } = intervention;
-  const { wasSaved, item } = intervention.maybeCreateOrUpdate;
   const [filter, setFilter] = useState({
     status: null
   });
@@ -95,17 +93,9 @@ export default function InterventionList({
     }
   }, [error]);
 
-  useEffect(() => {
-    if (wasSaved) {
-      updateList(item);
-      reset();
-      setVisibility(false);
-
-      notification.success({
-        message: 'Uhu! Intervenção salva com sucesso! :)'
-      });
-    }
-  }, [wasSaved, reset, updateList, item]);
+  const afterSaveIntervention = item => {
+    updateList(item);
+  };
 
   if (isFetching) {
     return <LoadBox />;
@@ -218,7 +208,11 @@ export default function InterventionList({
         dataSource={!isFetching ? dsInterventions : []}
         expandedRowRender={expandedInterventionRowRender}
       />
-      <ModalIntervention visible={visible} setVisibility={setVisibility} />
+      <ModalIntervention
+        visible={visible}
+        setVisibility={setVisibility}
+        afterSaveIntervention={afterSaveIntervention}
+      />
     </>
   );
 }

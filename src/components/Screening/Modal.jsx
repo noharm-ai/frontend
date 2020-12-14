@@ -29,7 +29,8 @@ export default function Modal({
   savePrescriptionDrugStatus,
   checkPrescriptionDrug,
   setVisibility,
-  visible
+  visible,
+  afterSaveIntervention
 }) {
   const { isSaving, wasSaved, item } = maybeCreateOrUpdate;
 
@@ -52,7 +53,7 @@ export default function Modal({
   };
 
   const InterventionFooter = () => {
-    const isChecked = item.intervention && item.intervention.status === 's';
+    const isChecked = item.intervention && item.intervention.status === 's' && item.source;
 
     const undoIntervention = () => {
       savePrescriptionDrugStatus(item.idPrescriptionDrug, item.idPrescription, '0', item.source);
@@ -92,16 +93,21 @@ export default function Modal({
   // handle after save intervention.
   useEffect(() => {
     if (wasSaved && visible) {
-      updateInterventionData(item.idPrescriptionDrug, item.source, {
-        ...item.intervention,
-        status: 's'
-      });
+      if (afterSaveIntervention) {
+        afterSaveIntervention(item);
+      } else {
+        updateInterventionData(item.idPrescriptionDrug, item.source, {
+          ...item.intervention,
+          status: 's'
+        });
+      }
+
       reset();
       setVisibility(false);
 
       notification.success(saveMessage);
     }
-  }, [wasSaved, reset, item, updateInterventionData, setVisibility, visible]);
+  }, [wasSaved, reset, item, updateInterventionData, setVisibility, visible]); // eslint-disable-line
 
   // show message if has error
   useEffect(() => {
