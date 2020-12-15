@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/macro';
 
-import { toDataSource } from '@utils';
 import Empty from '@components/Empty';
 import LoadBox from '@components/LoadBox';
 import notification from '@components/notification';
@@ -15,6 +14,7 @@ import Button from '@components/Button';
 import Tag from '@components/Tag';
 import Tooltip from '@components/Tooltip';
 import BackTop from '@components/BackTop';
+import { toDataSource } from '@utils';
 
 const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
@@ -42,20 +42,18 @@ const TableInfo = styled.span`
 `;
 
 export default function InterventionList({
-  intervention,
   fetchList,
   checkData,
   checkIntervention,
-  save,
-  reset,
   select,
   updateList,
   futurePrescription,
-  fetchFuturePrescription
+  fetchFuturePrescription,
+  isFetching,
+  list,
+  error
 }) {
   const [visible, setVisibility] = useState(false);
-  const { isFetching, list, error } = intervention;
-  const { wasSaved, item } = intervention.maybeCreateOrUpdate;
   const [filter, setFilter] = useState({
     status: null
   });
@@ -95,23 +93,15 @@ export default function InterventionList({
     }
   }, [error]);
 
-  useEffect(() => {
-    if (wasSaved) {
-      updateList(item);
-      reset();
-      setVisibility(false);
-
-      notification.success({
-        message: 'Uhu! Intervenção salva com sucesso! :)'
-      });
-    }
-  }, [wasSaved, reset, updateList, item]);
+  const afterSaveIntervention = item => {
+    updateList(item);
+  };
 
   if (isFetching) {
     return <LoadBox />;
   }
 
-  const dsInterventions = toDataSource(list, 'id', {
+  const dsInterventions = toDataSource(list, null, {
     check: checkData,
     saveInterventionStatus: checkIntervention,
     onShowModal,
@@ -218,7 +208,12 @@ export default function InterventionList({
         dataSource={!isFetching ? dsInterventions : []}
         expandedRowRender={expandedInterventionRowRender}
       />
-      <ModalIntervention visible={visible} setVisibility={setVisibility} />
+      <ModalIntervention
+        visible={visible}
+        setVisibility={setVisibility}
+        afterSaveIntervention={afterSaveIntervention}
+        disableUndoIntervention
+      />
     </>
   );
 }

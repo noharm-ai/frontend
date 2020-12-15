@@ -31,22 +31,22 @@ const TableLink = styled.a`
   }
 `;
 
-const menu = (id, saveInterventionStatus, onShowModal) => (
+const menu = (id, idPrescription, saveInterventionStatus, onShowModal) => (
   <Menu>
     <Menu.Item
-      onClick={() => saveInterventionStatus(id, 'a')}
+      onClick={() => saveInterventionStatus(id, idPrescription, 'a')}
       className={onShowModal ? 'gtm-btn-menu-interv-accept' : 'gtm-btn-tab-interv-accept'}
     >
       Aceita
     </Menu.Item>
     <Menu.Item
-      onClick={() => saveInterventionStatus(id, 'n')}
+      onClick={() => saveInterventionStatus(id, idPrescription, 'n')}
       className={onShowModal ? 'gtm-btn-menu-interv-not-accept' : 'gtm-btn-tab-interv-not-accept'}
     >
       Não aceita
     </Menu.Item>
     <Menu.Item
-      onClick={() => saveInterventionStatus(id, 'x')}
+      onClick={() => saveInterventionStatus(id, idPrescription, 'x')}
       className={onShowModal ? 'gtm-btn-menu-interv-not-apply' : 'gtm-btn-tab-interv-not-apply'}
     >
       Não se aplica
@@ -123,7 +123,15 @@ export const expandedInterventionRowRender = record => {
   );
 };
 
-const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumber, ...data }) => {
+const Action = ({
+  check,
+  id,
+  idPrescription,
+  saveInterventionStatus,
+  onShowModal,
+  admissionNumber,
+  ...data
+}) => {
   const isDisabled = check.currentId !== id && check.isChecking;
   const isChecking = check.currentId === id && check.isChecking;
   const isChecked = data.status !== 's';
@@ -141,7 +149,7 @@ const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumbe
                 : 'danger gtm-bt-tab-undo-interv-status'
             }
             ghost
-            onClick={() => saveInterventionStatus(id, 's')}
+            onClick={() => saveInterventionStatus(id, idPrescription, 's')}
             loading={isChecking}
             disabled={isDisabled}
           >
@@ -151,7 +159,7 @@ const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumbe
       )}
       {!isChecked && (
         <Dropdown
-          overlay={menu(id, saveInterventionStatus, onShowModal)}
+          overlay={menu(id, idPrescription, saveInterventionStatus, onShowModal)}
           loading={isChecking}
           disabled={isDisabled}
         >
@@ -182,6 +190,7 @@ const Action = ({ check, id, saveInterventionStatus, onShowModal, admissionNumbe
               onShowModal({
                 ...data,
                 idPrescriptionDrug: id,
+                idPrescription,
                 uniqueDrugList: [],
                 admissionNumber
               });

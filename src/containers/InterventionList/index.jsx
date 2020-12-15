@@ -14,7 +14,9 @@ import {
 import InterventionList from '@components/InterventionList';
 
 const mapStateToProps = ({ intervention }) => ({
-  intervention,
+  isFetching: intervention.isFetching,
+  list: intervention.list,
+  error: intervention.error,
   checkData: intervention.check,
   futurePrescription: intervention.futurePrescription
 });

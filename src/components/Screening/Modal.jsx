@@ -29,7 +29,9 @@ export default function Modal({
   savePrescriptionDrugStatus,
   checkPrescriptionDrug,
   setVisibility,
-  visible
+  visible,
+  afterSaveIntervention,
+  disableUndoIntervention
 }) {
   const { isSaving, wasSaved, item } = maybeCreateOrUpdate;
 
@@ -52,10 +54,10 @@ export default function Modal({
   };
 
   const InterventionFooter = () => {
-    const isChecked = item.status === 's';
+    const isChecked = item.intervention && item.intervention.status === 's';
 
     const undoIntervention = () => {
-      savePrescriptionDrugStatus(item.idPrescriptionDrug, '0', item.source);
+      savePrescriptionDrugStatus(item.idPrescriptionDrug, item.idPrescription, '0', item.source);
       setVisibility(false);
     };
 
@@ -64,12 +66,12 @@ export default function Modal({
         <Button onClick={() => onCancel()} disabled={isSaving} className="gtm-bt-cancel-interv">
           Cancelar
         </Button>
-        {isChecked && (
+        {isChecked && !disableUndoIntervention && (
           <Tooltip title="Desfazer intervenção" placement="top">
             <Button
               type="danger gtm-bt-undo-interv"
               ghost
-              loading={checkPrescriptionDrug.isChecking}
+              loading={checkPrescriptionDrug && checkPrescriptionDrug.isChecking}
               onClick={() => undoIntervention()}
             >
               <Icon type="rollback" style={{ fontSize: 16 }} />
@@ -92,13 +94,21 @@ export default function Modal({
   // handle after save intervention.
   useEffect(() => {
     if (wasSaved && visible) {
-      updateInterventionData(item.idPrescriptionDrug, item.source, item.intervention);
+      if (afterSaveIntervention) {
+        afterSaveIntervention(item);
+      } else {
+        updateInterventionData(item.idPrescriptionDrug, item.source, {
+          ...item.intervention,
+          status: 's'
+        });
+      }
+
       reset();
       setVisibility(false);
 
       notification.success(saveMessage);
     }
-  }, [wasSaved, reset, item, updateInterventionData, setVisibility, visible]);
+  }, [wasSaved, reset, item, updateInterventionData, setVisibility, visible]); // eslint-disable-line
 
   // show message if has error
   useEffect(() => {

@@ -94,7 +94,8 @@ export const saveInterventionThunk = (params = {}) => async (dispatch, getState)
 
   const args = {
     ...defaultArgs,
-    ...intervention
+    ...intervention,
+    status: 's'
   };
 
   const { access_token } = getState().auth.identify;
@@ -112,12 +113,16 @@ export const clearSavedInterventionStatusThunk = () => dispatch => {
   dispatch(interventionClearSavedStatus());
 };
 
-export const checkInterventionThunk = (id, status) => async (dispatch, getState) => {
+export const checkInterventionThunk = (id, idPrescription, status) => async (
+  dispatch,
+  getState
+) => {
   dispatch(interventionCheckStart(id));
 
   const { access_token } = getState().auth.identify;
   const params = {
     idPrescriptionDrug: id,
+    idPrescription,
     status
   };
 
@@ -131,6 +136,7 @@ export const checkInterventionThunk = (id, status) => async (dispatch, getState)
   const success = {
     status: data.status,
     id,
+    idPrescription,
     newStatus: status
   };
 
