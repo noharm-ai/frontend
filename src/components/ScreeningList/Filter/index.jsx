@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import message from '@components/message';
 import Heading from '@components/Heading';
 import { Row, Col } from '@components/Grid';
-import { Select, RangeDatePicker, Input } from '@components/Inputs';
+import { Select, RangeDatePicker, Input, Checkbox } from '@components/Inputs';
 import Switch from '@components/Switch';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
@@ -88,6 +88,7 @@ export default function Filter({
         idDept: filter.idDepartment,
         idDrug: filter.idDrug,
         pending: filter.pending,
+        currentDepartment: prioritizationType === 'prescription' ? 0 : filter.currentDepartment,
         agg: prioritizationType === 'prescription' ? 0 : 1,
         startDate: date[0] ? date[0].format('YYYY-MM-DD') : 'all',
         endDate: date[1] ? date[1].format('YYYY-MM-DD') : 'all'
@@ -103,7 +104,15 @@ export default function Filter({
 
       return finalParams;
     },
-    [filter.idSegment, filter.idDepartment, filter.idDrug, filter.pending, prioritizationType, date]
+    [
+      filter.idSegment,
+      filter.idDepartment,
+      filter.idDrug,
+      filter.pending,
+      filter.currentDepartment,
+      prioritizationType,
+      date
+    ]
   );
 
   useEffect(() => {
@@ -139,6 +148,10 @@ export default function Filter({
 
   const onDepartmentChange = idDept => {
     setScreeningListFilter({ idDepartment: idDept });
+  };
+
+  const onCurrentDepartmentChange = e => {
+    setScreeningListFilter({ currentDepartment: e.target.checked ? 1 : 0 });
   };
 
   const onDrugChange = idDrug => {
@@ -329,28 +342,46 @@ export default function Filter({
       <Row gutter={[20, 20]}>
         <Col md={14}>
           <Box>
-            <Heading as="label" htmlFor="departments" size="14px">
-              Setores:
-            </Heading>
-            <Select
-              id="departments"
-              mode="multiple"
-              optionFilterProp="children"
-              style={{ width: '100%' }}
-              placeholder="Selectione os setores..."
-              loading={segments.single.isFetching}
-              value={filter.idDepartment}
-              onChange={onDepartmentChange}
-              autoClearSearchValue={false}
-              allowClear
-            >
-              {segments.single.content.departments &&
-                segments.single.content.departments.map(({ idDepartment, name }) => (
-                  <Select.Option key={idDepartment} value={idDepartment}>
-                    {name}
-                  </Select.Option>
-                ))}
-            </Select>
+            <Row gutter={[20, 20]}>
+              <Col md={prioritizationType === 'patient' ? 20 : 24}>
+                <Heading as="label" htmlFor="departments" size="14px">
+                  Setores:
+                </Heading>
+                <Select
+                  id="departments"
+                  mode="multiple"
+                  optionFilterProp="children"
+                  style={{ width: '100%' }}
+                  placeholder="Selectione os setores..."
+                  loading={segments.single.isFetching}
+                  value={filter.idDepartment}
+                  onChange={onDepartmentChange}
+                  autoClearSearchValue={false}
+                  allowClear
+                >
+                  {segments.single.content.departments &&
+                    segments.single.content.departments.map(({ idDepartment, name }) => (
+                      <Select.Option key={idDepartment} value={idDepartment}>
+                        {name}
+                      </Select.Option>
+                    ))}
+                </Select>
+              </Col>
+              {prioritizationType === 'patient' && (
+                <Col md={4}>
+                  <Checkbox
+                    style={{ marginTop: '17px' }}
+                    checked={filter.currentDepartment}
+                    onChange={onCurrentDepartmentChange}
+                    id="gtm-currentDepartment-filter"
+                  >
+                    <Tooltip title="Considerar somente o setor atual do paciente" underline>
+                      Setor atual
+                    </Tooltip>
+                  </Checkbox>
+                </Col>
+              )}
+            </Row>
           </Box>
         </Col>
       </Row>
@@ -394,7 +425,7 @@ export default function Filter({
             <Switch
               style={{ marginLeft: '10px' }}
               onChange={onPendingChange}
-              checked={filter.pending===1}
+              checked={filter.pending === 1}
               id="gtm-pending-filter"
             />
           </Box>
