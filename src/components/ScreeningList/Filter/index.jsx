@@ -340,113 +340,118 @@ export default function Filter({
         </Col>
       </Row>
       <Row gutter={[20, 20]}>
-        <Col md={14}>
-          <Box>
-            <Row gutter={[20, 20]}>
-              <Col md={prioritizationType === 'patient' ? 20 : 24}>
-                <Heading as="label" htmlFor="departments" size="14px">
-                  Setores:
+        <Col md={24} xl={18} xxl={14}>
+          <Row gutter={[20, 20]}>
+            <Col>
+              <Box>
+                <Row gutter={0}>
+                  <Col md={prioritizationType === 'patient' ? 19 : 24}>
+                    <Heading as="label" htmlFor="departments" size="14px">
+                      Setores:
+                    </Heading>
+                    <Select
+                      id="departments"
+                      mode="multiple"
+                      optionFilterProp="children"
+                      style={{ width: '100%' }}
+                      placeholder="Selectione os setores..."
+                      loading={segments.single.isFetching}
+                      value={filter.idDepartment}
+                      onChange={onDepartmentChange}
+                      autoClearSearchValue={false}
+                      allowClear
+                    >
+                      {segments.single.content.departments &&
+                        segments.single.content.departments.map(({ idDepartment, name }) => (
+                          <Select.Option key={idDepartment} value={idDepartment}>
+                            {name}
+                          </Select.Option>
+                        ))}
+                    </Select>
+                  </Col>
+                  {prioritizationType === 'patient' && (
+                    <Col md={5}>
+                      <Checkbox
+                        style={{ marginTop: '17px', marginLeft: '10px' }}
+                        checked={filter.currentDepartment}
+                        onChange={onCurrentDepartmentChange}
+                        id="gtm-currentDepartment-filter"
+                      >
+                        <Tooltip title="Considerar somente o setor atual do paciente" underline>
+                          Setor atual
+                        </Tooltip>
+                      </Checkbox>
+                    </Col>
+                  )}
+                </Row>
+              </Box>
+            </Col>
+          </Row>
+
+          <Row gutter={[20, 0]} style={{ marginTop: '10px' }}>
+            <Col>
+              <Box>
+                <Heading as="label" htmlFor="drugs-filter" size="14px">
+                  Medicamentos:
                 </Heading>
                 <Select
-                  id="departments"
+                  id="drugs-filter"
                   mode="multiple"
                   optionFilterProp="children"
                   style={{ width: '100%' }}
-                  placeholder="Selectione os setores..."
-                  loading={segments.single.isFetching}
-                  value={filter.idDepartment}
-                  onChange={onDepartmentChange}
-                  autoClearSearchValue={false}
+                  placeholder="Selecione os medicamentos..."
+                  onChange={onDrugChange}
+                  value={filter.idDrug}
+                  notFoundContent={drugs.isFetching ? <LoadBox /> : null}
+                  filterOption={false}
                   allowClear
+                  onSearch={searchDrugsAutocomplete}
                 >
-                  {segments.single.content.departments &&
-                    segments.single.content.departments.map(({ idDepartment, name }) => (
-                      <Select.Option key={idDepartment} value={idDepartment}>
-                        {name}
-                      </Select.Option>
-                    ))}
+                  {drugs.list.map(({ idDrug, name }) => (
+                    <Select.Option key={idDrug} value={idDrug}>
+                      {name}
+                    </Select.Option>
+                  ))}
                 </Select>
-              </Col>
-              {prioritizationType === 'patient' && (
-                <Col md={4}>
-                  <Checkbox
-                    style={{ marginTop: '17px' }}
-                    checked={filter.currentDepartment}
-                    onChange={onCurrentDepartmentChange}
-                    id="gtm-currentDepartment-filter"
-                  >
-                    <Tooltip title="Considerar somente o setor atual do paciente" underline>
-                      Setor atual
-                    </Tooltip>
-                  </Checkbox>
-                </Col>
-              )}
-            </Row>
-          </Box>
+              </Box>
+            </Col>
+          </Row>
+
+          <Row gutter={[20, 0]} style={{ marginTop: '20px' }}>
+            <Col>
+              <Box flexDirection="row" alignItems="center">
+                <Heading as="label" htmlFor="pending-filter" size="14px">
+                  Somente prescrições pendentes:
+                </Heading>
+
+                <Switch
+                  style={{ marginLeft: '10px' }}
+                  onChange={onPendingChange}
+                  checked={filter.pending === 1}
+                  id="gtm-pending-filter"
+                />
+              </Box>
+            </Col>
+          </Row>
+          <Row gutter={20} style={{ marginTop: '10px' }}>
+            <Col>
+              <div className="search-box-buttons">
+                <Button type="nda gtm-bt-clear-filter" onClick={reset}>
+                  Limpar
+                </Button>
+                <Button
+                  type="secondary gtm-bt-search-filter"
+                  onClick={search}
+                  loading={isFetchingPrescription}
+                >
+                  Pesquisar
+                </Button>
+              </div>
+            </Col>
+          </Row>
         </Col>
       </Row>
 
-      <Row gutter={[20, 0]}>
-        <Col md={14}>
-          <Box>
-            <Heading as="label" htmlFor="drugs-filter" size="14px">
-              Medicamentos:
-            </Heading>
-            <Select
-              id="drugs-filter"
-              mode="multiple"
-              optionFilterProp="children"
-              style={{ width: '100%' }}
-              placeholder="Selecione os medicamentos..."
-              onChange={onDrugChange}
-              value={filter.idDrug}
-              notFoundContent={drugs.isFetching ? <LoadBox /> : null}
-              filterOption={false}
-              allowClear
-              onSearch={searchDrugsAutocomplete}
-            >
-              {drugs.list.map(({ idDrug, name }) => (
-                <Select.Option key={idDrug} value={idDrug}>
-                  {name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Box>
-        </Col>
-      </Row>
-
-      <Row gutter={[20, 0]} style={{ marginTop: '20px' }}>
-        <Col md={14}>
-          <Box flexDirection="row" alignItems="center">
-            <Heading as="label" htmlFor="pending-filter" size="14px">
-              Somente prescrições pendentes:
-            </Heading>
-
-            <Switch
-              style={{ marginLeft: '10px' }}
-              onChange={onPendingChange}
-              checked={filter.pending === 1}
-              id="gtm-pending-filter"
-            />
-          </Box>
-        </Col>
-      </Row>
-      <Row gutter={20} style={{ marginTop: '10px' }}>
-        <Col md={14}>
-          <div className="search-box-buttons">
-            <Button type="nda gtm-bt-clear-filter" onClick={reset}>
-              Limpar
-            </Button>
-            <Button
-              type="secondary gtm-bt-search-filter"
-              onClick={search}
-              loading={isFetchingPrescription}
-            >
-              Pesquisar
-            </Button>
-          </div>
-        </Col>
-      </Row>
       <Modal
         visible={saveFilterOpen}
         onCancel={() => setSaveFilterOpen(false)}
