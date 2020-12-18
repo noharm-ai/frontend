@@ -344,7 +344,7 @@ export default function Filter({
           <Row gutter={[20, 20]}>
             <Col>
               <Box>
-                <Row gutter={0}>
+                <Row gutter={0} style={{ width: '100%' }}>
                   <Col md={prioritizationType === 'patient' ? 19 : 24}>
                     <Heading as="label" htmlFor="departments" size="14px">
                       Setores:
