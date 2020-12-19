@@ -34,8 +34,8 @@ const ScreeningTabs = styled(Tabs)`
     width: 100%;
   }
 
-  .ant-tabs-nav .ant-tabs-tab:nth-child(4) {
-    margin-left: 50px !important;
+  .ant-tabs-nav .ant-tabs-tab:nth-last-child(2) {
+    margin-left: 100px !important;
   }
 `;
 
@@ -140,6 +140,7 @@ export default function Screening({
               />
             </Col>
           </Tabs.TabPane>
+          {listCount.solutions > 0 &&
           <Tabs.TabPane tab={<TabTitle title="Soluções" count={listCount.solutions} />} key="2">
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
               <SolutionList
@@ -148,7 +149,8 @@ export default function Screening({
                 listType="solution"
               />
             </Col>
-          </Tabs.TabPane>
+          </Tabs.TabPane>}
+          {listCount.procedures > 0 &&
           <Tabs.TabPane
             tab={<TabTitle title="Procedimentos/Exames" count={listCount.procedures} />}
             key="3"
@@ -160,7 +162,7 @@ export default function Screening({
                 listType="procedure"
               />
             </Col>
-          </Tabs.TabPane>
+          </Tabs.TabPane> }
           <Tabs.TabPane
             tab={<TabTitle title="Intervenções" count={listCount.interventions} />}
             key="4"
