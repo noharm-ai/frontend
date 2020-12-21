@@ -12,7 +12,7 @@ const getInterventions = list => {
     interventionList.push(
       ...group.value
         .map(l => {
-          if (l.status === 's') {
+          if (l.intervention && l.intervention.status === 's') {
             return l.intervention;
           }
 
@@ -46,12 +46,24 @@ export default (prescription, account, signature) => {
     ...prescription.procedure.list
   ];
 
+  if (prescription.data.intervention) {
+    list.push({
+      key: 0,
+      value: [
+        {
+          status: prescription.data.intervention.status,
+          intervention: { ...prescription.data.intervention, idPrescription: 0 }
+        }
+      ]
+    });
+  }
+
   const interventions = groupByPrescription(getInterventions(list));
 
-  const tpl = interventions.map((iList, p) => {
-    const iTpl = iList.map(i => interventionTemplate(i));
+  const tpl = Object.keys(interventions).map(k => {
+    const iTpl = interventions[k].map(i => interventionTemplate(i));
 
-    return prescriptionTemplate(p, iTpl.join(''));
+    return prescriptionTemplate(k, iTpl.join(''));
   });
 
   return layoutTemplate(prescription.data, tpl.join(''), signatureTemplate(signature, account));
