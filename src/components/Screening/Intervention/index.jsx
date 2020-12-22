@@ -434,7 +434,11 @@ export default function Intervention({
 
   useEffect(() => {
     updateSelectedItemToSaveIntervention({
-      drugName: itemToSave.drug
+      drugName:
+        itemToSave.intervention.id === 0 || itemToSave.intervention.idPrescriptionDrug === 0
+          ? 'Intervenção no Paciente'
+          : itemToSave.drug,
+      idPrescription: itemToSave.idPrescription
     });
   }, [updateSelectedItemToSaveIntervention]); // eslint-disable-line
 

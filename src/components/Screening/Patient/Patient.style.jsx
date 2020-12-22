@@ -24,6 +24,11 @@ export const NameWrapper = styled.div`
   .btn-container {
     display: flex;
     justify-content: flex-end;
+
+    > i {
+      padding-top: 6px;
+      margin-right: 7px;
+    }
   }
 `;
 

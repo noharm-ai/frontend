@@ -77,7 +77,9 @@ export default function Patient({
     height,
     exams,
     observation,
-    intervention
+    intervention,
+    prevIntervention,
+    existIntervention
   } = prescription;
   const [interventionVisible, setInterventionVisibility] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -141,8 +143,9 @@ export default function Patient({
     }
   };
 
+  const closedStatus = ['a', 'n', 'x'];
   const currentStatus = intervention ? intervention.status : 's';
-  const isInterventionClosed = ['a', 'n', 'x'].indexOf(currentStatus) !== -1;
+  const isInterventionClosed = closedStatus.indexOf(currentStatus) !== -1;
   let interventionTooltip = 'Intervenção no paciente';
 
   if (isInterventionClosed) {
@@ -162,6 +165,17 @@ export default function Patient({
                 </Name>
               </Col>
               <Col xs={4} className="btn-container">
+                {prevIntervention && (
+                  <Tooltip title="Possui intervenção anterior (consulte a aba Intervenções)">
+                    <Icon type="warning" style={{ fontSize: 18, color: '#fa8c16' }} />
+                  </Tooltip>
+                )}
+                {!prevIntervention && existIntervention && (
+                  <Tooltip title="Possui intervenção anterior já resolvida (consulte a aba Intervenções)">
+                    <Icon type="warning" style={{ fontSize: 18, color: 'gray' }} />
+                  </Tooltip>
+                )}
+
                 <Tooltip title={interventionTooltip}>
                   <Button
                     type="primary gtm-bt-patient-intervention"

@@ -11,11 +11,19 @@ P: Acompanhamento da conduta médica na próxima prescrição.
 Validação diária das prescrições do paciente.
 Me coloco à disposição.`;
 
-export const prescriptionTemplate = (p, i) => `
-Prescrição nº ${p}
+export const prescriptionTemplate = (p, i) => {
+  if (p !== '0') {
+    return `
+    Prescrição nº ${p}
 
     ${i}
-`;
+    `;
+  }
+
+  return `
+  ${i}
+  `;
+};
 
 export const interventionTemplate = i => `
 ${i.drugName}
