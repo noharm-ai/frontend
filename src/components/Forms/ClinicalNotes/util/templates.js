@@ -14,14 +14,14 @@ Me coloco à disposição.`;
 export const prescriptionTemplate = (p, i) => {
   if (p !== '0') {
     return `
-    Prescrição nº ${p}
+Prescrição nº ${p}
 
-    ${i}
-    `;
+${i}
+`;
   }
 
   return `
-  ${i}
+${i}
   `;
 };
 
