@@ -21,8 +21,12 @@ const saveMessage = {
 };
 const requiredFieldMessage = 'Campo obrigatório';
 const validationSchema = Yup.object().shape({
-  alert: Yup.string().required(requiredFieldMessage),
-  alertExpire: Yup.string().required(requiredFieldMessage)
+  alert: Yup.string()
+    .nullable()
+    .required(requiredFieldMessage),
+  alertExpire: Yup.string()
+    .nullable()
+    .required(requiredFieldMessage)
 });
 const formId = 'clinicalAlert';
 
