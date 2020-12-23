@@ -21,7 +21,10 @@ const saveMessage = {
   message: 'Uhu! Evolução salva com sucesso! :)'
 };
 const validationSchema = Yup.object().shape({
-  idPrescription: Yup.number().required()
+  idPrescription: Yup.number().required(),
+  notes: Yup.string()
+    .nullable()
+    .required('Campo obrigatório')
 });
 const formId = 'clinicalNotes';
 

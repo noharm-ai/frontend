@@ -9,10 +9,10 @@ import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 
 import getInterventionTemplate from './util/getInterventionTemplate';
-import { Box, EditorBox } from '../Form.style';
+import { Box, EditorBox, FieldError } from '../Form.style';
 
 export default function Base({ prescription, account, signature }) {
-  const { values, setFieldValue, errors } = useFormikContext();
+  const { values, setFieldValue, errors, touched } = useFormikContext();
   const { notes } = values;
 
   const loadDefaultText = () => {
@@ -46,7 +46,7 @@ export default function Base({ prescription, account, signature }) {
           </Tooltip>
         )}
       </Col>
-      <Box hasError={errors.observation} flexDirection="column">
+      <Box hasError={errors.notes} flexDirection="column">
         <Col xs={24}>
           <EditorBox>
             <Textarea
@@ -55,6 +55,7 @@ export default function Base({ prescription, account, signature }) {
               onChange={({ target }) => setFieldValue('notes', target.value)}
               style={{ minHeight: '300px' }}
             />
+            {errors.notes && touched.notes && <FieldError>{errors.notes}</FieldError>}
           </EditorBox>
         </Col>
       </Box>
