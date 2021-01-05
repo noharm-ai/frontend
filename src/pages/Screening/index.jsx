@@ -1,14 +1,9 @@
-import React from 'react';
-
 import withLayout from '@lib/withLayout';
 import Screening from '@containers/Screening';
-import PageHeader from '@containers/Screening/PageHeader';
 
 const layoutProps = {
-  theme: 'boxed',
   pageTitle: 'Prescrição',
-  defaultSelectedKeys: '/',
-  renderHeader: props => <PageHeader {...props} />
+  defaultSelectedKeys: '/'
 };
 
 export default withLayout(Screening, layoutProps);

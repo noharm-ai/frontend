@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
-import styled from 'styled-components/macro';
 
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
@@ -11,33 +10,25 @@ import { Row, Col } from '@components/Grid';
 import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
 import notification from '@components/notification';
-
 import BackTop from '@components/BackTop';
 
 import PrescriptionList from '@containers/Screening/PrescriptionDrug/PrescriptionList';
 import SolutionList from '@containers/Screening/PrescriptionDrug/SolutionList';
 import ProcedureList from '@containers/Screening/PrescriptionDrug/ProcedureList';
 import PreviousInterventionList from '@containers/Screening/PreviousInterventionList';
+import PageHeader from '@containers/Screening/PageHeader';
 import Patient from '@containers/Screening/Patient';
+
 import { toDataSource } from '@utils';
 
 import examColumns, { examRowClassName, expandedExamRowRender } from './Exam/columns';
+import { BoxWrapper, ScreeningTabs } from './index.style';
 
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
 
 const noop = () => {};
 const theTitle = () => 'Deslize para a direita para ver mais conteúdo.';
-
-const ScreeningTabs = styled(Tabs)`
-  .ant-tabs-nav {
-    width: 100%;
-  }
-
-  .ant-tabs-nav .ant-tabs-tab:nth-last-child(2) {
-    margin-left: 100px !important;
-  }
-`;
 
 const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
@@ -118,13 +109,19 @@ export default function Screening({
 
   return (
     <>
+      <BoxWrapper>
+        <PageHeader match={match} />
+        <Row type="flex" gutter={24}>
+          <Col span={24} md={24}>
+            {isFetching ? <LoadBox /> : <Patient />}
+          </Col>
+        </Row>
+      </BoxWrapper>
+
       <Row type="flex" gutter={24}>
-        <Col span={24} md={24}>
-          {isFetching ? <LoadBox /> : <Patient />}
-        </Col>
         <ScreeningTabs
           defaultActiveKey="1"
-          style={{ width: '100%', marginTop: '20px' }}
+          style={{ width: '100%', padding: '10px', marginTop: '10px' }}
           type="card gtm-tab-screening"
           onTabClick={onTabClick}
         >

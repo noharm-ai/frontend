@@ -283,25 +283,23 @@ export default function Patient({
 
       <Col md={16}>
         <ExamBox>
-          <Card title="Exames">
-            {exams.map(exam => (
-              <Popover
-                content={<ExamData exam={exam.value} />}
-                title={exam.value.name}
-                key={exam.key}
-                mouseLeaveDelay={0}
-                mouseEnterDelay={0.5}
-              >
-                <Card.Grid hoverable>
-                  <Statistic
-                    title={exam.value.initials}
-                    value={getExamValue(exam.value)}
-                    valueStyle={!exam.value.value || !exam.value.alert ? {} : { color: '#cf1322' }}
-                  />
-                </Card.Grid>
-              </Popover>
-            ))}
-          </Card>
+          {exams.map(exam => (
+            <Popover
+              content={<ExamData exam={exam.value} />}
+              title={exam.value.name}
+              key={exam.key}
+              mouseLeaveDelay={0}
+              mouseEnterDelay={0.5}
+            >
+              <Card.Grid hoverable>
+                <Statistic
+                  title={exam.value.initials}
+                  value={getExamValue(exam.value)}
+                  valueStyle={!exam.value.value || !exam.value.alert ? {} : { color: '#cf1322' }}
+                />
+              </Card.Grid>
+            </Popover>
+          ))}
         </ExamBox>
       </Col>
       <FormPatientModal
