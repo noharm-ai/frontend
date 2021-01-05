@@ -66,7 +66,6 @@ const interventionMenu = (id, idPrescription, saveInterventionStatus, source) =>
 );
 
 const InterventionAction = ({
-  idPrescription,
   source,
   checkIntervention: check,
   prevIntervention,
@@ -84,7 +83,7 @@ const InterventionAction = ({
           <Button
             type="danger gtm-bt-undo-interv-status"
             ghost
-            onClick={() => saveInterventionStatus(id, idPrescription, 's', source)}
+            onClick={() => saveInterventionStatus(id, prevIntervention.idPrescription, 's', source)}
             loading={isChecking}
             disabled={isDisabled}
           >
@@ -94,7 +93,12 @@ const InterventionAction = ({
       )}
       {!isChecked && (
         <Dropdown
-          overlay={interventionMenu(id, idPrescription, saveInterventionStatus, source)}
+          overlay={interventionMenu(
+            id,
+            prevIntervention.idPrescription,
+            saveInterventionStatus,
+            source
+          )}
           loading={isChecking}
           disabled={isDisabled}
         >
