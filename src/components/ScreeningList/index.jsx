@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/macro';
+import debounce from 'lodash.debounce';
 
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
@@ -13,6 +14,7 @@ import Tag from '@components/Tag';
 import { useTranslation } from 'react-i18next';
 import { InfoIcon } from '@components/Icon';
 import BackTop from '@components/BackTop';
+import { Input } from '@components/Inputs';
 import Filter from './Filter';
 import { toDataSource } from '@utils';
 
@@ -46,6 +48,17 @@ const TableInfo = styled.span`
   button.active {
     background-color: #eee;
   }
+
+  .ant-input-affix-wrapper {
+    margin-right: 10px;
+
+    &.active {
+      input {
+        border-color: #096dd9;
+        background-color: #eee;
+      }
+    }
+  }
 `;
 
 // empty text for table result.
@@ -73,7 +86,8 @@ export default function ScreeningList({
     columnKey: null
   });
   const [filter, setFilter] = useState({
-    status: null
+    status: null,
+    searchKey: null
   });
   const { isFetching, list, error, check } = prescriptions;
   const bag = {
@@ -113,6 +127,10 @@ export default function ScreeningList({
     }
   }, [error]);
 
+  useEffect(() => {
+    setFilter({ ...filter, searchKey: null });
+  }, [isFetching]); //eslint-disable-line
+
   const handleFilter = (e, status) => {
     if (status) {
       setFilter({ status: status === 'all' ? null : [status] });
@@ -126,6 +144,23 @@ export default function ScreeningList({
     } else {
       setFilter({ status: null });
     }
+  };
+
+  const onClientSearch = ev => {
+    ev.persist();
+
+    if (ev.target.value === '') {
+      setFilter({ ...filter, searchKey: null });
+      return;
+    }
+
+    debounce(e => {
+      if (e.target.value !== '' && e.target.value.length > 3) {
+        setFilter({ ...filter, searchKey: [e.target.value.toLowerCase()] });
+      } else if (filter.searchKey) {
+        setFilter({ ...filter, searchKey: null });
+      }
+    }, 800)(ev);
   };
 
   const handleTableChange = (pagination, filters, sorter) => {
@@ -142,6 +177,13 @@ export default function ScreeningList({
 
   const info = (
     <TableInfo>
+      <Input
+        placeholder="Buscar por paciente ou nº atendimento"
+        style={{ width: 300 }}
+        allowClear
+        onChange={onClientSearch}
+        className={filter.searchKey ? 'active' : ''}
+      />
       <Tooltip title="Ver prescrições pendentes">
         <Button
           type="gtm-lnk-filter-presc-pendente ant-btn-link-hover"
@@ -206,8 +248,6 @@ export default function ScreeningList({
       />
 
       <BackTop />
-
-      <div style={{ height: '20px', marginTop: '5px' }}>{info}</div>
     </>
   );
 }
