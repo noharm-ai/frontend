@@ -5,7 +5,6 @@ import Heading from '@components/Heading';
 
 export const Wrapper = styled.div`
   border: 1px solid ${get('colors.detail')};
-  border-radius: 6px;
   overflow: hidden;
 `;
 
@@ -73,18 +72,19 @@ export const Box = styled.div`
 export const ExamBox = styled.div`
   .ant-statistic-content {
     color: #696766;
-    font-size: 14px;
+    font-size: 15px;
     font-family: ${get('fonts.primary')};
   }
 
   .ant-statistic-content-value-decimal {
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .ant-statistic-title {
     margin-bottom: 0;
     color: #2e3c5a;
     font-weight: bolder;
+    font-size: 16px;
   }
 
   .ant-card-head-title {
@@ -104,7 +104,7 @@ export const ExamBox = styled.div`
 
   .ant-card-grid {
     width: 20%;
-    padding: 20px;
+    padding: 38px 20px;
     text-align: center;
   }
 
@@ -112,11 +112,15 @@ export const ExamBox = styled.div`
     padding: 21px;
   }
 
-  @media only screen and (max-width: 1440px) {
+  @media only screen and (max-width: 1515px) {
     .ant-card-grid {
       width: 20%;
-      padding: 20px 4px;
+      padding: 39px 4px;
       width: 25%;
+    }
+
+    .ant-statistic-content {
+      font-size: 14px;
     }
 
     .ant-card-grid:nth-child(9),

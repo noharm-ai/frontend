@@ -1,11 +1,10 @@
 import React from 'react';
 import styled from 'styled-components/macro';
 import Button, { Link } from '@components/Button';
-import Icon from '@components/Icon';
+import Icon, { InfoIcon } from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 import Table from '@components/Table';
-import { useTranslation } from "react-i18next";
-import { InfoIcon } from '@components/Icon';
+import { useTranslation } from 'react-i18next';
 
 const setDataIndex = list =>
   list.map(({ key, ...column }) => ({
@@ -200,7 +199,7 @@ export const expandedRowRender = record => {
 const sortDirections = ['descend', 'ascend'];
 
 export default (sortedInfo, filteredInfo) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return [
     {
       key: 'class',
@@ -218,8 +217,9 @@ export default (sortedInfo, filteredInfo) => {
           </Tooltip>
         );
       },
-      sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-      sortOrder: sortedInfo.columnKey === 'date' && sortedInfo.order
+      filteredValue: filteredInfo.searchKey || null,
+      onFilter: (value, record) =>
+        record.namePatient.toLowerCase().includes(value) || `${record.admissionNumber}` === value
     },
     {
       title: t('screeningList.patientRisk'),
@@ -231,7 +231,7 @@ export default (sortedInfo, filteredInfo) => {
           key: 'age',
           width: 30,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.birthdays - b.birthdays,
           sortOrder: sortedInfo.columnKey === 'age' && sortedInfo.order
         },
@@ -239,20 +239,19 @@ export default (sortedInfo, filteredInfo) => {
           title: <Tooltip title="Tempo de internação (dias)">TI</Tooltip>,
           className: 'bg-light-gray gtm-th-tempo-int',
           key: 'lengthStay',
-          render: (entry, { lengthStay,  dischargeFormated}) => { 
+          render: (entry, { lengthStay, dischargeFormated }) => {
             if (dischargeFormated) {
               return (
-                <Tooltip title={'Paciente com alta em ' + dischargeFormated} placement="top">
+                <Tooltip title={`Paciente com alta em ${dischargeFormated}`} placement="top">
                   {lengthStay} <InfoIcon />
                 </Tooltip>
-              )
-            } else {
-              return lengthStay;
+              );
             }
+            return lengthStay;
           },
           width: 30,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.lengthStay - b.lengthStay,
           sortOrder: sortedInfo.columnKey === 'lengthStay' && sortedInfo.order
         },
@@ -262,7 +261,7 @@ export default (sortedInfo, filteredInfo) => {
           key: 'alertExams',
           width: 30,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.alertExams - b.alertExams,
           sortOrder: sortedInfo.columnKey === 'alertExams' && sortedInfo.order
         },
@@ -276,7 +275,7 @@ export default (sortedInfo, filteredInfo) => {
           key: 'alerts',
           width: 30,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.alerts - b.alerts,
           sortOrder: sortedInfo.columnKey === 'alerts' && sortedInfo.order
         }
@@ -291,7 +290,7 @@ export default (sortedInfo, filteredInfo) => {
           key: 'am',
           width: 30,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.am - b.am,
           sortOrder: sortedInfo.columnKey === 'am' && sortedInfo.order
         },
@@ -301,7 +300,7 @@ export default (sortedInfo, filteredInfo) => {
           key: 'av',
           width: 30,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.av - b.av,
           sortOrder: sortedInfo.columnKey === 'av' && sortedInfo.order
         },
@@ -311,7 +310,7 @@ export default (sortedInfo, filteredInfo) => {
           key: 'controlled',
           width: 20,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.controlled - b.controlled,
           sortOrder: sortedInfo.columnKey === 'controlled' && sortedInfo.order
         },
@@ -321,7 +320,7 @@ export default (sortedInfo, filteredInfo) => {
           key: 'np',
           width: 30,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.np - b.np,
           sortOrder: sortedInfo.columnKey === 'np' && sortedInfo.order
         },
@@ -331,7 +330,7 @@ export default (sortedInfo, filteredInfo) => {
           key: 'tube',
           width: 20,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.tube - b.tube,
           sortOrder: sortedInfo.columnKey === 'tube' && sortedInfo.order
         },
@@ -341,7 +340,7 @@ export default (sortedInfo, filteredInfo) => {
           key: 'diff',
           width: 20,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.diff - b.diff,
           sortOrder: sortedInfo.columnKey === 'diff' && sortedInfo.order
         },
@@ -351,7 +350,7 @@ export default (sortedInfo, filteredInfo) => {
           key: 'interventions',
           width: 20,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.interventions - b.interventions,
           sortOrder: sortedInfo.columnKey === 'interventions' && sortedInfo.order
         },
@@ -361,17 +360,24 @@ export default (sortedInfo, filteredInfo) => {
           key: 'prescriptionScore',
           width: 20,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.prescriptionScore - b.prescriptionScore,
           sortOrder: sortedInfo.columnKey === 'prescriptionScore' && sortedInfo.order
         },
         {
-          title: <Tooltip title="Escore Global: Exames + Alertas + Alta Vigilância + Escore Total da Prescrição." underline>EG</Tooltip>,
+          title: (
+            <Tooltip
+              title="Escore Global: Exames + Alertas + Alta Vigilância + Escore Total da Prescrição."
+              underline
+            >
+              EG
+            </Tooltip>
+          ),
           className: 'ant-table-right-border gtm-th-ge',
           key: 'globalScore',
           width: 20,
           align: 'center',
-          sortDirections: sortDirections,
+          sortDirections,
           sorter: (a, b) => a.globalScore - b.globalScore,
           sortOrder: sortedInfo.columnKey === 'globalScore' && sortedInfo.order
         }
