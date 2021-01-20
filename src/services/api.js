@@ -39,7 +39,8 @@ const endpoints = {
   reports: '/reports',
   substance: '/substance',
   memory: '/memory',
-  user: '/user'
+  user: '/user',
+  clinicalNotes: '/notes'
 };
 
 /**
@@ -305,6 +306,13 @@ const resetPassword = (token, password) => {
 };
 
 /**
+ * ClinicalNotes.
+ *
+ */
+const getClinicalNotes = (bearerToken, admissionNumber) =>
+  instance.get(`${endpoints.clinicalNotes}/${admissionNumber}`, { ...setHeaders(bearerToken) });
+
+/**
  * PRISMIC HELP
  */
 const getHelp = id => {
@@ -372,7 +380,8 @@ const api = {
   updatePassword,
   forgotPassword,
   resetPassword,
-  updateSegmentExamOrder
+  updateSegmentExamOrder,
+  getClinicalNotes
 };
 
 export default api;

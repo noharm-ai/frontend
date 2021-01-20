@@ -14,6 +14,7 @@ import prescriptionsReducer from './prescriptions';
 import prescriptionDrugsReducer from './prescriptionDrugs';
 import reportsReducer from './reports';
 import memoryReducer from './memory';
+import clinicalNotesReducer from './clinicalNotes';
 
 export default combineReducers({
   app: appReducer,
@@ -29,5 +30,6 @@ export default combineReducers({
   prescriptions: prescriptionsReducer,
   prescriptionDrugs: prescriptionDrugsReducer,
   reports: reportsReducer,
-  memory: memoryReducer
+  memory: memoryReducer,
+  clinicalNotes: clinicalNotesReducer
 });
