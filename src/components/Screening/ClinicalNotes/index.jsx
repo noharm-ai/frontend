@@ -39,11 +39,15 @@ export default function ClinicalNotes({ isFetching, list, selected, select }) {
           <List>
             <>
               {Object.keys(list).map(g => (
-                <div key={g}>
+                <React.Fragment key={g}>
                   <h2>{format(parseISO(g), 'dd/MM/yyyy')}</h2>
                   <div className="line-group">
                     {list[g].map((c, i) => (
-                      <div className="line" key={i} onClick={() => select(c)}>
+                      <div
+                        className={`line ${selected && c.id === selected.id ? 'active' : ''}`}
+                        key={i}
+                        onClick={() => select(c)}
+                      >
                         <div className="time">{c.date.substr(11, 5)}</div>
                         <div className="name">
                           {c.prescriber}
@@ -56,7 +60,7 @@ export default function ClinicalNotes({ isFetching, list, selected, select }) {
                       </div>
                     ))}
                   </div>
-                </div>
+                </React.Fragment>
               ))}
               {/* <h2>12/01/2021</h2>
 
