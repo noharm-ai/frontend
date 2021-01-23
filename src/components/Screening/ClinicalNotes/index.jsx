@@ -31,7 +31,9 @@ export default function ClinicalNotes({ isFetching, list, selected, select }) {
                   </div>
                 </div>
               </PaperHeader>
-              <Paper>{selected.text}</Paper>
+              <Paper
+                dangerouslySetInnerHTML={{ __html: selected.text.replaceAll('  ', '<br/>') }}
+              />
             </>
           )}
         </Col>

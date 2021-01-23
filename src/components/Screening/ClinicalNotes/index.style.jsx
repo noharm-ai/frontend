@@ -7,6 +7,7 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: #fafafa;
   }
 
   .list-panel {
@@ -15,11 +16,15 @@ export const Container = styled.div`
 `;
 
 export const Paper = styled.div`
-  padding: 15px;
+  position: relative;
+  padding: 25px 25px;
+  margin-bottom: 15px;
   height: 80vh;
-  max-width: 700px;
+  width: 100%;
+  max-width: 740px;
   font-size: 18px;
   overflow-y: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 
   scrollbar-width: thin;
   scrollbar-color: #8f9499 #ffffff;
@@ -108,9 +113,9 @@ export const List = styled.div`
 `;
 
 export const PaperHeader = styled.div`
-  padding: 5px 15px;
+  padding: 5px 15px 10px 15px;
   width: 100%;
-  max-width: 700px;
+  max-width: 740px;
 
   .info {
     font-size: 18px;
