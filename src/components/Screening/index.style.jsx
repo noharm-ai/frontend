@@ -8,8 +8,16 @@ export const ScreeningTabs = styled(Tabs)`
     width: 100%;
   }
 
-  .ant-tabs-nav .ant-tabs-tab:nth-last-child(2) {
-    margin-left: 100px !important;
+  &.breaktab-2 {
+    .ant-tabs-nav .ant-tabs-tab:nth-child(3) {
+      margin-left: 100px !important;
+    }
+  }
+
+  &.breaktab-3 {
+    .ant-tabs-nav .ant-tabs-tab:nth-child(4) {
+      margin-left: 100px !important;
+    }
   }
 
   .ant-tabs-bar {

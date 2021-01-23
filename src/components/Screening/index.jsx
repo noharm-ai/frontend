@@ -132,6 +132,7 @@ export default function Screening({
           style={{ width: '100%', padding: '10px', marginTop: '10px' }}
           type="card gtm-tab-screening"
           onTabClick={onTabClick}
+          className={listCount.procedures > 0 ? 'breaktab-3' : 'breaktab-2'}
         >
           <Tabs.TabPane
             tab={<TabTitle title="Medicamentos" count={listCount.prescriptions} />}
@@ -196,7 +197,7 @@ export default function Screening({
               expandedRowRender={expandedExamRowRender}
             />
           </Tabs.TabPane>
-          {content.clinicalNotes !== null && (
+          {!isFetching && content.clinicalNotes !== null && (
             <Tabs.TabPane
               tab={<TabTitle title="Evoluções" count={content.clinicalNotes} />}
               key="6"
