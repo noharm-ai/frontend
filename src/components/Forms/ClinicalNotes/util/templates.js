@@ -2,14 +2,25 @@ import isEmpty from 'lodash.isempty';
 
 import stripHtml from '@utils/stripHtml';
 
-const emptyInterventionTemplate = `S/O: Verifico prescrição vigente do paciente.
+const emptyInterventionTemplate = prescription => {
+  const msg = `S/O: Verifico prescrição vigente do paciente.
 
-A: Realizo validação de dose, via e frequência dos medicamentos prescritos.
+  A: Realizo validação de dose, via e frequência dos medicamentos prescritos.
+  
+  P: Acompanhamento da conduta médica na próxima prescrição.
+  
+  Validação diária das prescrições do paciente.
+  Me coloco à disposição.`;
 
-P: Acompanhamento da conduta médica na próxima prescrição.
+  if (prescription.agg) {
+    return `  ${msg}`;
+  }
 
-Validação diária das prescrições do paciente.
-Me coloco à disposição.`;
+  return `Prescrição: ${prescription.idPrescription}
+
+  ${msg}
+  `;
+};
 
 export const prescriptionTemplate = (p, i) => {
   if (p !== '0') {
@@ -35,7 +46,7 @@ ${prescription.namePatient}, ${prescription.age}${
   prescription.weight ? `, ${prescription.weight}Kg` : ''
 }
 
-${interventions || emptyInterventionTemplate}
+${interventions || emptyInterventionTemplate(prescription)}
 
 ${signature}
 `;
