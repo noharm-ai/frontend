@@ -3,11 +3,10 @@ import isEmpty from 'lodash.isempty';
 import { format, parseISO } from 'date-fns';
 
 import { Row, Col } from '@components/Grid';
-import Tag from '@components/Tag';
 import LoadBox from '@components/LoadBox';
 import Empty from '@components/Empty';
 
-import { Container, Paper, List, PaperHeader } from './index.style';
+import { Container, Paper, List, PaperHeader, PaperContainer } from './index.style';
 
 export default function ClinicalNotes({ isFetching, list, selected, select }) {
   if (isFetching) {
@@ -32,9 +31,11 @@ export default function ClinicalNotes({ isFetching, list, selected, select }) {
                   </div>
                 </div>
               </PaperHeader>
-              <Paper
-                dangerouslySetInnerHTML={{ __html: selected.text.replaceAll('  ', '<br/>') }}
-              />
+              <PaperContainer>
+                <Paper
+                  dangerouslySetInnerHTML={{ __html: selected.text.replaceAll('  ', '<br/>') }}
+                />
+              </PaperContainer>
             </>
           )}
         </Col>
@@ -63,10 +64,7 @@ export default function ClinicalNotes({ isFetching, list, selected, select }) {
                             {c.prescriber}
                             <span>{c.position}</span>
                           </div>
-                          <div className="indicators">
-                            <Tag color="orange">5</Tag>
-                            <Tag color="red">2</Tag>
-                          </div>
+                          <div className="indicators" />
                         </div>
                       ))}
                     </div>
