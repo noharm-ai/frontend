@@ -18,6 +18,7 @@ import ProcedureList from '@containers/Screening/PrescriptionDrug/ProcedureList'
 import PreviousInterventionList from '@containers/Screening/PreviousInterventionList';
 import PageHeader from '@containers/Screening/PageHeader';
 import Patient from '@containers/Screening/Patient';
+import ClinicalNotes from '@containers/Screening/ClinicalNotes';
 
 import { toDataSource } from '@utils';
 
@@ -39,6 +40,7 @@ export default function Screening({
   match,
   fetchScreeningById,
   fetchExams,
+  fetchClinicalNotes,
   isFetching,
   content,
   error,
@@ -54,6 +56,7 @@ export default function Screening({
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
   const [dsExams, setDsExams] = useState([]);
+  const [clinicalNotesLoaded, setClinicalNotesLoaded] = useState(false);
 
   useEffect(() => {
     setDsExams(toDataSource(exams.list, 'key', {}));
@@ -94,6 +97,11 @@ export default function Screening({
   const onTabClick = key => {
     if (key === '5') {
       loadExams();
+    } else if (key === '6') {
+      if (!clinicalNotesLoaded) {
+        fetchClinicalNotes(content.admissionNumber);
+        setClinicalNotesLoaded(true);
+      }
     }
   };
 
@@ -124,6 +132,7 @@ export default function Screening({
           style={{ width: '100%', padding: '10px', marginTop: '10px' }}
           type="card gtm-tab-screening"
           onTabClick={onTabClick}
+          className={listCount.procedures > 0 ? 'breaktab-3' : 'breaktab-2'}
         >
           <Tabs.TabPane
             tab={<TabTitle title="Medicamentos" count={listCount.prescriptions} />}
@@ -188,6 +197,14 @@ export default function Screening({
               expandedRowRender={expandedExamRowRender}
             />
           </Tabs.TabPane>
+          {!isFetching && content.clinicalNotes !== null && (
+            <Tabs.TabPane
+              tab={<TabTitle title="Evoluções" count={content.clinicalNotes} />}
+              key="6"
+            >
+              <ClinicalNotes />
+            </Tabs.TabPane>
+          )}
         </ScreeningTabs>
       </Row>
 
