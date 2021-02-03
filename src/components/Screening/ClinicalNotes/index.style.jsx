@@ -1,5 +1,19 @@
 import styled from 'styled-components/macro';
 
+import Menu from '@components/Menu';
+
+export const MenuPopup = styled(Menu)`
+  &.ant-menu-dark {
+    background: rgba(46, 60, 90, 0.9);
+  }
+
+  &.ant-menu-dark .ant-menu-item,
+  &.ant-menu-dark .ant-menu-item-group-title,
+  &.ant-menu-dark .ant-menu-item > a {
+    color: rgba(255, 255, 255, 0.8);
+  }
+`;
+
 export const Container = styled.div`
   padding: 10px;
 
@@ -16,6 +30,7 @@ export const Container = styled.div`
 `;
 
 export const PaperContainer = styled.div`
+  position: relative;
   padding: 5px;
   background: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -35,7 +50,6 @@ export const Paper = styled.div`
   width: 100%;
   font-size: 18px;
   overflow-y: auto;
-
   scrollbar-width: thin;
   scrollbar-color: rgba(143, 148, 153, 0.8) #ffffff;
 
@@ -49,6 +63,15 @@ export const Paper = styled.div`
 
   &::-webkit-scrollbar-thumb {
     background-color: rgba(143, 148, 153, 0.8);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    overflow-y: hidden;
+  }
+
+  .annotation {
+    background: yellow;
   }
 `;
 
