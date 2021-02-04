@@ -70,8 +70,22 @@ export const Paper = styled.div`
     overflow-y: hidden;
   }
 
-  .annotation {
+  .annotation-1 {
+    background: red;
+    color: #fff;
+    padding: 2px 4px;
+  }
+
+  .annotation-2 {
+    background: green;
+    color: #fff;
+    padding: 2px 4px;
+  }
+
+  .annotation-3 {
     background: yellow;
+    color: #000;
+    padding: 2px 4px;
   }
 `;
 

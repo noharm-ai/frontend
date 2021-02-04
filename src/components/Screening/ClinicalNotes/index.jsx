@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import isEmpty from 'lodash.isempty';
 import { format, parseISO } from 'date-fns';
 
@@ -9,39 +9,76 @@ import { useOutsideAlerter } from '@lib/hooks';
 
 import { Container, Paper, List, PaperHeader, PaperContainer, MenuPopup } from './index.style';
 
-export default function ClinicalNotes({ isFetching, list, selected, select }) {
-  console.log('render');
+export default function ClinicalNotes({ isFetching, list, selected, select, update }) {
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
   const [isMenuVisible, setMenuVisibility] = useState(false);
   const [menuPosition, setMenuPosition] = useState({});
   const [selectionRange, setSelectionRange] = useState(null);
+
   useOutsideAlerter(menuRef, () => {
     setMenuVisibility(false);
   });
 
-  const annotate = k => {
-    console.log('range', selectionRange, k);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(selectionRange);
+  useEffect(() => {
+    if (!isMenuVisible && selectionRange) {
+      console.log('clean span', selectionRange);
+      const textNode = document.createTextNode(selectionRange.toString());
+      selectionRange.deleteContents();
+      selectionRange.insertNode(textNode);
+    }
+  }, [isMenuVisible]); //eslint-disable-line
+
+  const annotate = option => {
+    const elm = document.createElement('span');
+    const content = document.createTextNode(selectionRange.toString());
+
+    elm.setAttribute('class', `annotation-${option.key}`);
+    elm.appendChild(content);
+
+    selectionRange.deleteContents();
+    selectionRange.insertNode(elm);
+
+    setSelectionRange(null);
     setMenuVisibility(false);
+    update({ id: selected.id, text: paperContainerRef.current.firstChild.innerHTML });
+  };
+
+  const isValidSelection = () => {
+    const selection = window.getSelection();
+
+    if (selection.toString() === '') return false;
+
+    const range = selection.getRangeAt(0);
+
+    if (range.commonAncestorContainer.offsetParent !== undefined) {
+      const { className } = range.commonAncestorContainer.offsetParent;
+      if (!className.includes('Paper-') && !className.includes('PaperContainer')) {
+        console.log(
+          'invalid selection',
+          range.commonAncestorContainer.offsetParent.className,
+          range
+        );
+        return false;
+      }
+    }
+
+    return true;
   };
 
   const selectionChange = () => {
-    if (window.getSelection().toString() !== '') {
+    if (isValidSelection()) {
       const selection = window.getSelection();
       const range = selection.getRangeAt(0);
+
       const elm = document.createElement('span');
       const content = document.createTextNode(window.getSelection().toString());
 
-      // elm.setAttribute('class', 'annotation');
       elm.appendChild(content);
 
       range.deleteContents();
       range.insertNode(elm);
 
-      // selection.empty();
       const containerPosition = paperContainerRef.current.getBoundingClientRect();
       const menuContainerPosition = menuRef.current.getBoundingClientRect();
       const elmPosition = elm.getBoundingClientRect();
@@ -67,7 +104,7 @@ export default function ClinicalNotes({ isFetching, list, selected, select }) {
       }}
       ref={menuRef}
     >
-      <MenuPopup theme="dark" onClick={k => annotate(k)}>
+      <MenuPopup theme="dark" onClick={k => annotate(k)} selectable={false}>
         <MenuPopup.Item key="1">Evento adverso</MenuPopup.Item>
         <MenuPopup.Item key="2">Sintoma</MenuPopup.Item>
         <MenuPopup.Item key="3">Dado</MenuPopup.Item>
