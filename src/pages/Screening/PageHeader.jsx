@@ -89,7 +89,7 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
           <Heading>
             {!prescription.content.agg && (
               <>
-                {pageTitle} nº{' '}
+                Prescrição nº{' '}
                 <Tooltip title="Clique para copiar o número da prescrição">
                   <UnstyledButton
                     onClick={() => copyToClipboard(prescription.content.idPrescription)}

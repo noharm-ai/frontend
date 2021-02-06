@@ -495,7 +495,9 @@ const drugInfo = bag => [
         );
       }
 
-      if (!prescription.measureUnit) return '';
+      if (!prescription.measureUnit) {
+        return prescription.dose;
+      }
 
       return (
         <Tooltip title={prescription.measureUnit.label} placement="top">
