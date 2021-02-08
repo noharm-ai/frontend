@@ -85,6 +85,7 @@
   "jest": {
     "moduleNameMapper": {
       "@utils/(.*)": "<rootDir>/src/utils/$1",
+      "@models/(.*)": "<rootDir>/src/models/$1",
       "@assets/(.*)": "<rootDir>/src/assets/$1",
       "@components/(.*)": "<rootDir>/src/components/$1",
       "@containers/(.*)": "<rootDir>/src/containers/$1",
