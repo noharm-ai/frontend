@@ -2,7 +2,8 @@ const path = require('path');
 
 /* config-overrides.js */
 module.exports = function override(config, env) {
-  config.resolve.alias = Object.assign({}, config.resolve.alias, {
+  config.resolve.alias = {
+    ...config.resolve.alias,
     '@assets': path.resolve(__dirname, './src/assets'),
     '@components': path.resolve(__dirname, './src/components'),
     '@containers': path.resolve(__dirname, './src/containers'),
@@ -12,9 +13,10 @@ module.exports = function override(config, env) {
     '@services': path.resolve(__dirname, './src/services'),
     '@store': path.resolve(__dirname, './src/store'),
     '@styles': path.resolve(__dirname, './src/styles'),
-    '@utils': path.resolve(__dirname, './src/utils')
-  });
+    '@utils': path.resolve(__dirname, './src/utils'),
+    '@models': path.resolve(__dirname, './src/models')
+  };
 
-  //do stuff with the webpack config...
+  // do stuff with the webpack config...
   return config;
 };
