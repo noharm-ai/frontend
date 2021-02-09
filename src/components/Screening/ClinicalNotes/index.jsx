@@ -6,6 +6,8 @@ import { Row, Col } from '@components/Grid';
 import LoadBox from '@components/LoadBox';
 import Empty from '@components/Empty';
 import { Select } from '@components/Inputs';
+import Tooltip from '@components/Tooltip';
+import Button from '@components/Button';
 
 import {
   Container,
@@ -18,10 +20,15 @@ import {
 } from './index.style';
 
 export default function ClinicalNotes({ isFetching, list, selected, select, positionList }) {
-  const [selectedPositions, setPositions] = useState([]);
+  const [positions, setPositions] = useState([]);
+  const [selectedPositions, selectPositions] = useState([]);
 
   const handlePositionChange = p => {
     setPositions(p);
+  };
+
+  const search = () => {
+    selectPositions(positions);
   };
 
   const getFilteredList = clinicalNotes => {
@@ -68,21 +75,34 @@ export default function ClinicalNotes({ isFetching, list, selected, select, posi
         <Col md={10} xl={8} className="list-panel">
           {positionList.length > 0 && (
             <FilterContainer>
-              <label>Cargo</label>
-              <Select
-                placeholder="Filtrar por cargo"
-                onChange={handlePositionChange}
-                allowClear
-                style={{ minWidth: '300px' }}
-                mode="multiple"
-                optionFilterProp="children"
-              >
-                {positionList.map((p, i) => (
-                  <Select.Option value={p} key={i}>
-                    {p}
-                  </Select.Option>
-                ))}
-              </Select>
+              <div>
+                <label>Cargo</label>
+                <Select
+                  placeholder="Filtrar por cargo"
+                  onChange={handlePositionChange}
+                  allowClear
+                  style={{ minWidth: '300px' }}
+                  mode="multiple"
+                  optionFilterProp="children"
+                >
+                  {positionList.map((p, i) => (
+                    <Select.Option value={p} key={i}>
+                      {p}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+              <div className="btn-search">
+                <Tooltip title="Pesquisar">
+                  <Button
+                    type="secondary gtm-cn-btn-search"
+                    shape="circle"
+                    icon="search"
+                    size="large"
+                    onClick={search}
+                  />
+                </Tooltip>
+              </div>
             </FilterContainer>
           )}
           <List>

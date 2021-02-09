@@ -142,6 +142,7 @@ export const PaperHeader = styled.div`
 `;
 
 export const FilterContainer = styled.div`
+  display: flex;
   padding: 5px 15px;
   background: #fafafa;
   margin-bottom: 5px;
@@ -149,6 +150,12 @@ export const FilterContainer = styled.div`
   label {
     display: block;
     font-weight: 700;
+  }
+
+  .btn-search {
+    display: flex;
+    align-items: flex-end;
+    margin-left: 10px;
   }
 `;
 
