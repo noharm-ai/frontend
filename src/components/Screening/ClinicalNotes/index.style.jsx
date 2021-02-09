@@ -153,5 +153,5 @@ export const FilterContainer = styled.div`
 `;
 
 export const Legend = styled.div`
-  font-size: 14px;
+  font-size: 13px;
 `;
