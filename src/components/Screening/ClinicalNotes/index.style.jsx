@@ -53,7 +53,7 @@ export const Paper = styled.div`
 `;
 
 export const List = styled.div`
-  height: 86vh;
+  height: 80vh;
   padding: 0 15px 10px 15px;
   overflow-y: auto;
   scrollbar-width: thin;
