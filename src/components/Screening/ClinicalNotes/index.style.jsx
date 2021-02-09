@@ -94,6 +94,7 @@ export const List = styled.div`
       &:hover,
       &.active {
         background: rgba(244, 244, 244, 0.8);
+        color: #1890ff;
       }
 
       .time {
@@ -137,5 +138,16 @@ export const PaperHeader = styled.div`
     .name {
       font-weight: 600;
     }
+  }
+`;
+
+export const FilterContainer = styled.div`
+  padding: 5px 15px;
+  background: #fafafa;
+  margin-bottom: 5px;
+
+  label {
+    display: block;
+    font-weight: 700;
   }
 `;

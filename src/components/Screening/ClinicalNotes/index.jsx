@@ -1,14 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import isEmpty from 'lodash.isempty';
 import { format, parseISO } from 'date-fns';
 
 import { Row, Col } from '@components/Grid';
 import LoadBox from '@components/LoadBox';
 import Empty from '@components/Empty';
+import { Select } from '@components/Inputs';
 
-import { Container, Paper, List, PaperHeader, PaperContainer } from './index.style';
+import {
+  Container,
+  Paper,
+  List,
+  PaperHeader,
+  PaperContainer,
+  FilterContainer
+} from './index.style';
 
-export default function ClinicalNotes({ isFetching, list, selected, select }) {
+export default function ClinicalNotes({ isFetching, list, selected, select, positionList }) {
+  const [selectedPositions, setPositions] = useState([]);
+
+  const handlePositionChange = p => {
+    setPositions(p);
+  };
+
+  const getFilteredList = clinicalNotes => {
+    if (selectedPositions.length === 0) {
+      return clinicalNotes;
+    }
+
+    return clinicalNotes.filter(i => selectedPositions.indexOf(i.position) !== -1);
+  };
+
   if (isFetching) {
     return (
       <Container>
@@ -40,6 +62,25 @@ export default function ClinicalNotes({ isFetching, list, selected, select }) {
           )}
         </Col>
         <Col md={10} xl={8} className="list-panel">
+          {positionList.length > 0 && (
+            <FilterContainer>
+              <label>Cargo</label>
+              <Select
+                placeholder="Filtrar por cargo"
+                onChange={handlePositionChange}
+                allowClear
+                style={{ minWidth: '300px' }}
+                mode="multiple"
+                optionFilterProp="children"
+              >
+                {positionList.map((p, i) => (
+                  <Select.Option value={p} key={i}>
+                    {p}
+                  </Select.Option>
+                ))}
+              </Select>
+            </FilterContainer>
+          )}
           <List>
             {Object.keys(list).length === 0 && (
               <Empty
@@ -53,7 +94,7 @@ export default function ClinicalNotes({ isFetching, list, selected, select }) {
                   <React.Fragment key={g}>
                     <h2>{format(parseISO(g), 'dd/MM/yyyy')}</h2>
                     <div className="line-group">
-                      {list[g].map((c, i) => (
+                      {getFilteredList(list[g]).map((c, i) => (
                         <div
                           className={`line ${selected && c.id === selected.id ? 'active' : ''}`}
                           key={i}

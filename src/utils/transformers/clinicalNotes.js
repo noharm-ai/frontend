@@ -1,4 +1,6 @@
-export default function transformClinicalNotes(clinicalNotes) {
+import { uniq } from '@utils/lodash';
+
+export const transformClinicalNotes = clinicalNotes => {
   const groups = [];
 
   clinicalNotes.forEach(c => {
@@ -12,4 +14,16 @@ export default function transformClinicalNotes(clinicalNotes) {
   });
 
   return groups;
-}
+};
+
+export const getPositionList = clinicalNotes => {
+  const positions = [];
+
+  clinicalNotes.forEach(c => {
+    if (c.position && c.position !== '') {
+      positions.push(c.position);
+    }
+  });
+
+  return uniq(positions).sort();
+};

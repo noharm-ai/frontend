@@ -1,6 +1,6 @@
 import isEmpty from 'lodash.isempty';
 
-import transformClinicalNotes from '@utils/transformers/clinicalNotes';
+import { transformClinicalNotes, getPositionList } from '@utils/transformers/clinicalNotes';
 import api from '@services/api';
 import { errorHandler } from '@utils';
 import { Creators as ReportsCreators } from './index';
@@ -28,7 +28,7 @@ export const fetchClinicalNotesListThunk = admissionNumber => async (dispatch, g
   }
 
   const groups = transformClinicalNotes(data.data);
-  dispatch(clinicalNotesFetchListSuccess(groups));
+  dispatch(clinicalNotesFetchListSuccess(groups, getPositionList(data.data)));
   dispatch(clinicalNotesSelect(data.data[0]));
 };
 
