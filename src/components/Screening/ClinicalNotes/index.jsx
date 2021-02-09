@@ -13,7 +13,8 @@ import {
   List,
   PaperHeader,
   PaperContainer,
-  FilterContainer
+  FilterContainer,
+  Legend
 } from './index.style';
 
 export default function ClinicalNotes({ isFetching, list, selected, select, positionList }) {
@@ -58,6 +59,9 @@ export default function ClinicalNotes({ isFetching, list, selected, select, posi
                   dangerouslySetInnerHTML={{ __html: selected.text.replaceAll('  ', '<br/>') }}
                 />
               </PaperContainer>
+              <Legend>
+                * Nomes presentes na evolução são substituídos por três asteriscos (***).
+              </Legend>
             </>
           )}
         </Col>

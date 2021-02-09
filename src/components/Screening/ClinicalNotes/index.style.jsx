@@ -151,3 +151,7 @@ export const FilterContainer = styled.div`
     font-weight: 700;
   }
 `;
+
+export const Legend = styled.div`
+  font-size: 14px;
+`;
