@@ -8,6 +8,7 @@ const createIndicatorClasses = () => {
     i => `
     &.annotation-${i.value} {
       border-color: ${i.color};
+      background: ${i.backgroundColor};
 
       &:before {
         content: '${i.label}';
