@@ -9,17 +9,10 @@ import { Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 
-import {
-  Container,
-  Paper,
-  List,
-  PaperHeader,
-  PaperContainer,
-  FilterContainer,
-  Legend
-} from './index.style';
+import View from './View';
+import { Container, List, FilterContainer, Legend } from './index.style';
 
-export default function ClinicalNotes({ isFetching, list, selected, select, positionList }) {
+export default function ClinicalNotes({ isFetching, list, selected, select, update, positionList }) {
   const [positions, setPositions] = useState([]);
   const [selectedPositions, selectPositions] = useState([]);
 
@@ -51,26 +44,7 @@ export default function ClinicalNotes({ isFetching, list, selected, select, posi
     <Container>
       <Row type="flex" gutter={0}>
         <Col md={14} xl={16} className="paper-panel">
-          {!isEmpty(selected) && (
-            <>
-              <PaperHeader>
-                <div className="line">
-                  <div className="info">
-                    {format(parseISO(selected.date), 'dd/MM/yyyy HH:mm')} -{' '}
-                    <span className="name">{selected.prescriber}</span>
-                  </div>
-                </div>
-              </PaperHeader>
-              <PaperContainer>
-                <Paper
-                  dangerouslySetInnerHTML={{ __html: selected.text.replaceAll('  ', '<br/>') }}
-                />
-              </PaperContainer>
-              <Legend>
-                * Nomes presentes na evolução são substituídos por três asteriscos (***).
-              </Legend>
-            </>
-          )}
+          <View selected={selected} update={update} />
         </Col>
         <Col md={10} xl={8} className="list-panel">
           {positionList.length > 0 && (
@@ -123,6 +97,7 @@ export default function ClinicalNotes({ isFetching, list, selected, select, posi
                           className={`line ${selected && c.id === selected.id ? 'active' : ''}`}
                           key={i}
                           onClick={() => select(c)}
+                          aria-hidden="true"
                         >
                           <div className="time">{c.date.substr(11, 5)}</div>
                           <div className="name">

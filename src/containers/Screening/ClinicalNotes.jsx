@@ -3,7 +3,8 @@ import { bindActionCreators } from 'redux';
 
 import {
   fetchClinicalNotesListThunk,
-  selectClinicalNoteThunk
+  selectClinicalNoteThunk,
+  updateClinicalNoteThunk
 } from '@store/ducks/clinicalNotes/thunk';
 
 import ClinicalNotes from '@components/Screening/ClinicalNotes';
@@ -19,7 +20,8 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       fetch: fetchClinicalNotesListThunk,
-      select: selectClinicalNoteThunk
+      select: selectClinicalNoteThunk,
+      update: updateClinicalNoteThunk
     },
     dispatch
   );

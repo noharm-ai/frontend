@@ -5,7 +5,8 @@ export const { Types, Creators } = createActions({
   clinicalNotesFetchListError: ['error'],
   clinicalNotesFetchListSuccess: ['list', 'positionList'],
 
-  clinicalNotesSelect: ['clinicalNote']
+  clinicalNotesSelect: ['clinicalNote'],
+  clinicalNotesUpdate: ['clinicalNote']
 });
 
 const INITIAL_STATE = {
@@ -40,12 +41,34 @@ const select = (state = INITIAL_STATE, { clinicalNote }) => ({
   single: clinicalNote
 });
 
+const update = (state = INITIAL_STATE, { clinicalNote }) => {
+  const list = { ...state.list };
+
+  Object.keys(list).forEach(key => {
+    const noteList = list[key];
+    const index = noteList.findIndex(item => item.id === clinicalNote.id);
+    if (index !== -1) {
+      noteList[index] = { ...noteList[index], ...clinicalNote };
+    }
+  });
+
+  return {
+    ...state,
+    list,
+    single: {
+      ...state.single,
+      ...clinicalNote
+    }
+  };
+};
+
 const HANDLERS = {
   [Types.CLINICAL_NOTES_FETCH_LIST_START]: fetchListStart,
   [Types.CLINICAL_NOTES_FETCH_LIST_ERROR]: fetchListError,
   [Types.CLINICAL_NOTES_FETCH_LIST_SUCCESS]: fetchListSuccess,
 
-  [Types.CLINICAL_NOTES_SELECT]: select
+  [Types.CLINICAL_NOTES_SELECT]: select,
+  [Types.CLINICAL_NOTES_UPDATE]: update
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

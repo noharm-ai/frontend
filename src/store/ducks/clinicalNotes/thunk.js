@@ -10,7 +10,8 @@ const {
   clinicalNotesFetchListError,
   clinicalNotesFetchListSuccess,
 
-  clinicalNotesSelect
+  clinicalNotesSelect,
+  clinicalNotesUpdate
 } = ReportsCreators;
 
 export const fetchClinicalNotesListThunk = admissionNumber => async (dispatch, getState) => {
@@ -34,4 +35,8 @@ export const fetchClinicalNotesListThunk = admissionNumber => async (dispatch, g
 
 export const selectClinicalNoteThunk = clinicalNote => async dispatch => {
   dispatch(clinicalNotesSelect(clinicalNote));
+};
+
+export const updateClinicalNoteThunk = clinicalNote => async dispatch => {
+  dispatch(clinicalNotesUpdate(clinicalNote));
 };
