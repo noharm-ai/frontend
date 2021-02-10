@@ -22,7 +22,6 @@ export default function ClinicalNotes({ isFetching, list, selected, select, upda
 
   useEffect(() => {
     if (!isMenuVisible && selectionRange) {
-      console.log('clean span', selectionRange);
       const textNode = document.createTextNode(selectionRange.toString());
       selectionRange.deleteContents();
       selectionRange.insertNode(textNode);
@@ -31,10 +30,15 @@ export default function ClinicalNotes({ isFetching, list, selected, select, upda
 
   const annotate = option => {
     const elm = document.createElement('span');
+    const close = document.createElement('a');
     const content = document.createTextNode(selectionRange.toString());
 
-    elm.setAttribute('class', `annotation-${option.key}`);
+    close.setAttribute('class', 'close-btn');
+    close.appendChild(document.createTextNode('X'));
+
+    elm.setAttribute('class', `annotation annotation-${option.key}`);
     elm.appendChild(content);
+    elm.appendChild(close);
 
     selectionRange.deleteContents();
     selectionRange.insertNode(elm);
@@ -44,12 +48,27 @@ export default function ClinicalNotes({ isFetching, list, selected, select, upda
     update({ id: selected.id, text: paperContainerRef.current.firstChild.innerHTML });
   };
 
+  const removeAnnotation = e => {
+    const el = e.target.closest('SPAN');
+    if (el && e.target.className === 'close-btn') {
+      el.removeChild(el.getElementsByClassName('close-btn')[0]);
+      el.replaceWith(document.createTextNode(el.innerText));
+      update({ id: selected.id, text: paperContainerRef.current.firstChild.innerHTML });
+    }
+  };
+
   const isValidSelection = () => {
     const selection = window.getSelection();
 
     if (selection.toString() === '') return false;
 
+    if (selection.focusNode.nodeName !== '#text') return false;
+
     const range = selection.getRangeAt(0);
+
+    if (range.cloneContents().querySelectorAll('span').length) {
+      return false;
+    }
 
     if (range.commonAncestorContainer.offsetParent !== undefined) {
       const { className } = range.commonAncestorContainer.offsetParent;
@@ -141,6 +160,7 @@ export default function ClinicalNotes({ isFetching, list, selected, select, upda
                       __html: selected.text.trim().replaceAll('  ', '<br/>')
                     }}
                     onMouseUp={e => selectionChange(e)}
+                    onClick={e => removeAnnotation(e)}
                     className={isMenuVisible ? 'disabled' : ''}
                   />
                   {menu}

@@ -70,22 +70,91 @@ export const Paper = styled.div`
     overflow-y: hidden;
   }
 
-  .annotation-1 {
-    background: red;
-    color: #fff;
-    padding: 2px 4px;
-  }
+  span {
+    position: relative;
+    display: inline-block;
+    cursor: default;
 
-  .annotation-2 {
-    background: green;
-    color: #fff;
-    padding: 2px 4px;
-  }
+    a {
+      position: absolute;
+      z-index: 2;
+      top: -15px;
+      right: -15px;
+      width: 20px;
+      height: 20px;
+      background: rgba(46, 60, 90, 0.9);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      pointer-events: all;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.83, 0, 0.17, 1);
+    }
 
-  .annotation-3 {
-    background: yellow;
-    color: #000;
-    padding: 2px 4px;
+    &:before {
+      position: absolute;
+      z-index: 2;
+      bottom: -30px;
+      left: 50%;
+      font-size: 12px;
+      min-width: 96px;
+      width: 100%;
+      background: rgba(46, 60, 90, 0.9);
+      border-radius: 5px;
+      color: #fff;
+      transform: translateX(-50%);
+      padding: 5px;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.83, 0, 0.17, 1);
+    }
+
+    &:hover {
+      a {
+        opacity: 1;
+      }
+
+      &:before {
+        opacity: 1;
+      }
+    }
+
+    &.annotation {
+      padding: 0 4px;
+      border-radius: 5px;
+      border-width: 2px;
+      border-style: solid;
+      margin-bottom: 2px;
+    }
+
+    &.annotation-1 {
+      border-color: red;
+
+      &:before {
+        content: 'Evento adverso';
+      }
+    }
+
+    &.annotation-2 {
+      border-color: green;
+
+      &:before {
+        content: 'Sintoma';
+      }
+    }
+
+    &.annotation-3 {
+      border-color: yellow;
+
+      &:before {
+        content: 'Dado';
+      }
+    }
   }
 `;
 
