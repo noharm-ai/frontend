@@ -170,7 +170,7 @@ export const Paper = styled.div`
 `;
 
 export const List = styled.div`
-  height: 86vh;
+  height: 80vh;
   padding: 0 15px 10px 15px;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -211,6 +211,7 @@ export const List = styled.div`
       &:hover,
       &.active {
         background: rgba(244, 244, 244, 0.8);
+        color: #1890ff;
       }
 
       .time {
@@ -255,4 +256,26 @@ export const PaperHeader = styled.div`
       font-weight: 600;
     }
   }
+`;
+
+export const FilterContainer = styled.div`
+  display: flex;
+  padding: 5px 15px;
+  background: #fafafa;
+  margin-bottom: 5px;
+
+  label {
+    display: block;
+    font-weight: 700;
+  }
+
+  .btn-search {
+    display: flex;
+    align-items: flex-end;
+    margin-left: 10px;
+  }
+`;
+
+export const Legend = styled.div`
+  font-size: 13px;
 `;

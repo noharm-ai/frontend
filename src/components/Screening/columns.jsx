@@ -13,6 +13,7 @@ import Menu from '@components/Menu';
 import Dropdown from '@components/Dropdown';
 import Alert from '@components/Alert';
 import RichTextView from '@components/RichTextView';
+import InterventionStatus from '@models/InterventionStatus';
 
 import SolutionCalculator from './PrescriptionDrug/components/SolutionCalculator';
 
@@ -55,6 +56,12 @@ const interventionMenu = (id, idPrescription, saveInterventionStatus, source) =>
       className="gtm-btn-interv-not-accept"
     >
       Não aceita
+    </Menu.Item>
+    <Menu.Item
+      onClick={() => saveInterventionStatus(id, idPrescription, 'j', source)}
+      className="gtm-btn-interv-not-accept-j"
+    >
+      Não aceita com Justificativa
     </Menu.Item>
     <Menu.Item
       onClick={() => saveInterventionStatus(id, idPrescription, 'x', source)}
@@ -130,7 +137,7 @@ const Action = ({
 }) => {
   if (emptyRow) return null;
 
-  const closedStatuses = ['a', 'n', 'x'];
+  const closedStatuses = InterventionStatus.getClosedStatuses();
   const isClosed = closedStatuses.indexOf(data.status) !== -1;
   const isDisabled =
     (check.idPrescriptionDrug !== idPrescriptionDrug && check.isChecking) || isClosed;
@@ -282,30 +289,9 @@ export const expandedRowRender = bag => record => {
     );
   }
 
-  const config = {};
+  let config = {};
   if (record.prevIntervention) {
-    switch (record.prevIntervention.status) {
-      case 'a':
-        config.label = 'Aceita';
-        config.color = 'green';
-        break;
-      case 'n':
-        config.label = 'Não aceita';
-        config.color = 'red';
-        break;
-      case 'x':
-        config.label = 'Não se aplica';
-        config.color = null;
-        break;
-      case 's':
-        config.label = 'Pendente';
-        config.color = 'orange';
-        break;
-      default:
-        config.label = `Indefinido (${record.prevIntervention.status})`;
-        config.color = null;
-        break;
-    }
+    config = InterventionStatus.translate(record.prevIntervention.status);
   }
 
   let diluents = [];
@@ -495,7 +481,9 @@ const drugInfo = bag => [
         );
       }
 
-      if (!prescription.measureUnit) return '';
+      if (!prescription.measureUnit) {
+        return prescription.dose;
+      }
 
       return (
         <Tooltip title={prescription.measureUnit.label} placement="top">

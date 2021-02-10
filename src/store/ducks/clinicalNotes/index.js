@@ -3,7 +3,7 @@ import { createActions, createReducer } from 'reduxsauce';
 export const { Types, Creators } = createActions({
   clinicalNotesFetchListStart: [''],
   clinicalNotesFetchListError: ['error'],
-  clinicalNotesFetchListSuccess: ['list'],
+  clinicalNotesFetchListSuccess: ['list', 'positionList'],
 
   clinicalNotesSelect: ['clinicalNote'],
   clinicalNotesUpdate: ['clinicalNote']
@@ -13,6 +13,7 @@ const INITIAL_STATE = {
   error: null,
   isFetching: true,
   list: [],
+  positionList: [],
   single: null
 };
 
@@ -27,9 +28,10 @@ const fetchListError = (state = INITIAL_STATE, { error }) => ({
   isFetching: false
 });
 
-const fetchListSuccess = (state = INITIAL_STATE, { list }) => ({
+const fetchListSuccess = (state = INITIAL_STATE, { list, positionList }) => ({
   ...state,
   list,
+  positionList,
   error: null,
   isFetching: false
 });

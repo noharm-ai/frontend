@@ -13,6 +13,7 @@ const mapStateToProps = ({ clinicalNotes }) => ({
   isFetching: clinicalNotes.isFetching,
   error: clinicalNotes.error,
   list: clinicalNotes.list,
+  positionList: clinicalNotes.positionList,
   selected: clinicalNotes.single
 });
 const mapDispatchToProps = dispatch =>

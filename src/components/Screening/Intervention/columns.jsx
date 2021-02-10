@@ -11,6 +11,7 @@ import Dropdown from '@components/Dropdown';
 import Tooltip from '@components/Tooltip';
 import RichTextView from '@components/RichTextView';
 import isEmpty from 'lodash.isempty';
+import InterventionStatus from '@models/InterventionStatus';
 
 const NestedTableContainer = styled.div`
   margin-top: 5px;
@@ -44,6 +45,14 @@ const menu = (id, idPrescription, saveInterventionStatus, onShowModal) => (
       className={onShowModal ? 'gtm-btn-menu-interv-not-accept' : 'gtm-btn-tab-interv-not-accept'}
     >
       Não aceita
+    </Menu.Item>
+    <Menu.Item
+      onClick={() => saveInterventionStatus(id, idPrescription, 'j')}
+      className={
+        onShowModal ? 'gtm-btn-menu-interv-not-accept-j' : 'gtm-btn-tab-interv-not-accept-j'
+      }
+    >
+      Não aceita com Justificativa
     </Menu.Item>
     <Menu.Item
       onClick={() => saveInterventionStatus(id, idPrescription, 'x')}
@@ -135,7 +144,7 @@ const Action = ({
   const isDisabled = check.currentId !== id && check.isChecking;
   const isChecking = check.currentId === id && check.isChecking;
   const isChecked = data.status !== 's';
-  const closedStatuses = ['a', 'n', 'x'];
+  const closedStatuses = InterventionStatus.getClosedStatuses();
   const isClosed = closedStatuses.indexOf(data.status) !== -1;
 
   return (
@@ -251,29 +260,7 @@ const columns = filteredInfo => [
     filteredValue: filteredInfo.status || null,
     onFilter: (value, record) => record.status === value,
     render: (text, record) => {
-      const config = {};
-      switch (record.status) {
-        case 'a':
-          config.label = 'Aceita';
-          config.color = 'green';
-          break;
-        case 'n':
-          config.label = 'Não aceita';
-          config.color = 'red';
-          break;
-        case 'x':
-          config.label = 'Não se aplica';
-          config.color = null;
-          break;
-        case 's':
-          config.label = 'Pendente';
-          config.color = 'orange';
-          break;
-        default:
-          config.label = `Indefinido (${record.status})`;
-          config.color = null;
-          break;
-      }
+      const config = InterventionStatus.translate(record.status);
 
       return <Tag color={config.color}>{config.label}</Tag>;
     }
