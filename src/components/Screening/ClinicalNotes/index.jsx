@@ -7,6 +7,7 @@ import LoadBox from '@components/LoadBox';
 import Empty from '@components/Empty';
 import { useOutsideAlerter } from '@lib/hooks';
 
+import ClinicalNotesIndicator from './ClinicalNotesIndicator';
 import { Container, Paper, List, PaperHeader, PaperContainer, MenuPopup } from './index.style';
 
 export default function ClinicalNotes({ isFetching, list, selected, select, update }) {
@@ -124,9 +125,11 @@ export default function ClinicalNotes({ isFetching, list, selected, select, upda
       ref={menuRef}
     >
       <MenuPopup theme="dark" onClick={k => annotate(k)} selectable={false}>
-        <MenuPopup.Item key="1">Evento adverso</MenuPopup.Item>
-        <MenuPopup.Item key="2">Sintoma</MenuPopup.Item>
-        <MenuPopup.Item key="3">Dado</MenuPopup.Item>
+        {ClinicalNotesIndicator.list().map(i => (
+          <MenuPopup.Item key={i.value}>
+            <div className="avatar" style={{ backgroundColor: i.color }} /> {i.label}
+          </MenuPopup.Item>
+        ))}
       </MenuPopup>
     </div>
   );

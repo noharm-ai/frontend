@@ -1,6 +1,23 @@
 import styled from 'styled-components/macro';
 
 import Menu from '@components/Menu';
+import ClinicalNotesIndicator from './ClinicalNotesIndicator';
+
+const createIndicatorClasses = () => {
+  const classList = ClinicalNotesIndicator.list().map(
+    i => `
+    &.annotation-${i.value} {
+      border-color: ${i.color};
+
+      &:before {
+        content: '${i.label}';
+      }
+    }
+  `
+  );
+
+  return classList.join(' ');
+};
 
 export const MenuPopup = styled(Menu)`
   &.ant-menu-dark {
@@ -11,6 +28,20 @@ export const MenuPopup = styled(Menu)`
   &.ant-menu-dark .ant-menu-item-group-title,
   &.ant-menu-dark .ant-menu-item > a {
     color: rgba(255, 255, 255, 0.8);
+  }
+
+  .ant-menu-item {
+    display: flex;
+    align-items: center;
+
+    .avatar {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      border-radius: 50%;
+      margin-right: 10px;
+      border: 2px solid #fff;
+    }
   }
 `;
 
@@ -130,31 +161,10 @@ export const Paper = styled.div`
       border-width: 2px;
       border-style: solid;
       margin-bottom: 2px;
+      font-weight: 500;
     }
 
-    &.annotation-1 {
-      border-color: red;
-
-      &:before {
-        content: 'Evento adverso';
-      }
-    }
-
-    &.annotation-2 {
-      border-color: green;
-
-      &:before {
-        content: 'Sintoma';
-      }
-    }
-
-    &.annotation-3 {
-      border-color: yellow;
-
-      &:before {
-        content: 'Dado';
-      }
-    }
+    ${createIndicatorClasses()}
   }
 `;
 
