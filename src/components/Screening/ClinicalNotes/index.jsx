@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import isEmpty from 'lodash.isempty';
 import { format, parseISO } from 'date-fns';
 
 import { Row, Col } from '@components/Grid';
@@ -10,9 +9,17 @@ import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 
 import View from './View';
-import { Container, List, FilterContainer, Legend } from './index.style';
+import { Container, List, FilterContainer } from './index.style';
 
-export default function ClinicalNotes({ isFetching, list, selected, select, update, positionList }) {
+export default function ClinicalNotes({
+  isFetching,
+  list,
+  selected,
+  select,
+  update,
+  positionList,
+  security
+}) {
   const [positions, setPositions] = useState([]);
   const [selectedPositions, selectPositions] = useState([]);
 
@@ -44,7 +51,7 @@ export default function ClinicalNotes({ isFetching, list, selected, select, upda
     <Container>
       <Row type="flex" gutter={0}>
         <Col md={14} xl={16} className="paper-panel">
-          <View selected={selected} update={update} />
+          <View selected={selected} update={update} security={security} />
         </Col>
         <Col md={10} xl={8} className="list-panel">
           {positionList.length > 0 && (

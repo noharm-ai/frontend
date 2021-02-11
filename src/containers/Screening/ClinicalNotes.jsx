@@ -7,14 +7,16 @@ import {
   updateClinicalNoteThunk
 } from '@store/ducks/clinicalNotes/thunk';
 
+import security from '@services/security';
 import ClinicalNotes from '@components/Screening/ClinicalNotes';
 
-const mapStateToProps = ({ clinicalNotes }) => ({
+const mapStateToProps = ({ clinicalNotes, user }) => ({
   isFetching: clinicalNotes.isFetching,
   error: clinicalNotes.error,
   list: clinicalNotes.list,
   positionList: clinicalNotes.positionList,
-  selected: clinicalNotes.single
+  selected: clinicalNotes.single,
+  security: security(user.account.roles)
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

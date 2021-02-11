@@ -5,9 +5,9 @@ import { format, parseISO } from 'date-fns';
 import { useOutsideAlerter } from '@lib/hooks';
 
 import ClinicalNotesIndicator from './ClinicalNotesIndicator';
-import { Paper, PaperHeader, PaperContainer, MenuPopup } from './index.style';
+import { Paper, PaperHeader, PaperContainer, MenuPopup, Legend } from './index.style';
 
-export default function View({ selected, update }) {
+export default function View({ selected, update, security }) {
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
   const [isMenuVisible, setMenuVisibility] = useState(false);
@@ -56,6 +56,8 @@ export default function View({ selected, update }) {
   };
 
   const isValidSelection = () => {
+    if (!security.isAdmin()) return false;
+
     const selection = window.getSelection();
 
     if (selection.toString() === '') return false;
@@ -156,6 +158,7 @@ export default function View({ selected, update }) {
           {menu}
         </>
       </PaperContainer>
+      <Legend>* Nomes presentes na evolução são substituídos por três asteriscos (***).</Legend>
     </>
   );
 }
