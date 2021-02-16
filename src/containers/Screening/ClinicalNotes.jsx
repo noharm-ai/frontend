@@ -3,22 +3,27 @@ import { bindActionCreators } from 'redux';
 
 import {
   fetchClinicalNotesListThunk,
-  selectClinicalNoteThunk
+  selectClinicalNoteThunk,
+  updateClinicalNoteThunk
 } from '@store/ducks/clinicalNotes/thunk';
 
+import security from '@services/security';
 import ClinicalNotes from '@components/Screening/ClinicalNotes';
 
-const mapStateToProps = ({ clinicalNotes }) => ({
+const mapStateToProps = ({ clinicalNotes, user }) => ({
   isFetching: clinicalNotes.isFetching,
   error: clinicalNotes.error,
   list: clinicalNotes.list,
-  selected: clinicalNotes.single
+  positionList: clinicalNotes.positionList,
+  selected: clinicalNotes.single,
+  security: security(user.account.roles)
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       fetch: fetchClinicalNotesListThunk,
-      select: selectClinicalNoteThunk
+      select: selectClinicalNoteThunk,
+      update: updateClinicalNoteThunk
     },
     dispatch
   );

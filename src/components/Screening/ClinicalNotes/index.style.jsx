@@ -1,5 +1,51 @@
 import styled from 'styled-components/macro';
 
+import Menu from '@components/Menu';
+import ClinicalNotesIndicator from './ClinicalNotesIndicator';
+
+const createIndicatorClasses = () => {
+  const classList = ClinicalNotesIndicator.list().map(
+    i => `
+    &.annotation-${i.value} {
+      border-color: ${i.color};
+      background: ${i.backgroundColor};
+
+      &:before {
+        content: '${i.label}';
+      }
+    }
+  `
+  );
+
+  return classList.join(' ');
+};
+
+export const MenuPopup = styled(Menu)`
+  &.ant-menu-dark {
+    background: rgba(46, 60, 90, 0.9);
+  }
+
+  &.ant-menu-dark .ant-menu-item,
+  &.ant-menu-dark .ant-menu-item-group-title,
+  &.ant-menu-dark .ant-menu-item > a {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .ant-menu-item {
+    display: flex;
+    align-items: center;
+
+    .avatar {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      border-radius: 50%;
+      margin-right: 10px;
+      border: 2px solid #fff;
+    }
+  }
+`;
+
 export const Container = styled.div`
   padding: 10px;
 
@@ -16,6 +62,7 @@ export const Container = styled.div`
 `;
 
 export const PaperContainer = styled.div`
+  position: relative;
   padding: 5px;
   background: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -35,7 +82,6 @@ export const Paper = styled.div`
   width: 100%;
   font-size: 18px;
   overflow-y: auto;
-
   scrollbar-width: thin;
   scrollbar-color: rgba(143, 148, 153, 0.8) #ffffff;
 
@@ -50,10 +96,81 @@ export const Paper = styled.div`
   &::-webkit-scrollbar-thumb {
     background-color: rgba(143, 148, 153, 0.8);
   }
+
+  &.disabled {
+    opacity: 0.5;
+    overflow-y: hidden;
+  }
+
+  span {
+    position: relative;
+    display: inline-block;
+    cursor: default;
+
+    a {
+      position: absolute;
+      z-index: 2;
+      top: -15px;
+      right: -15px;
+      width: 20px;
+      height: 20px;
+      background: rgba(46, 60, 90, 0.9);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      pointer-events: all;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.83, 0, 0.17, 1);
+    }
+
+    &:before {
+      position: absolute;
+      z-index: 2;
+      bottom: -30px;
+      left: 50%;
+      font-size: 12px;
+      min-width: 96px;
+      width: 100%;
+      background: rgba(46, 60, 90, 0.9);
+      border-radius: 5px;
+      color: #fff;
+      transform: translateX(-50%);
+      padding: 5px;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.83, 0, 0.17, 1);
+    }
+
+    &:hover {
+      a {
+        opacity: 1;
+      }
+
+      &:before {
+        opacity: 1;
+      }
+    }
+
+    &.annotation {
+      padding: 0 4px;
+      border-radius: 5px;
+      border-width: 2px;
+      border-style: solid;
+      margin-bottom: 2px;
+      font-weight: 500;
+    }
+
+    ${createIndicatorClasses()}
+  }
 `;
 
 export const List = styled.div`
-  height: 86vh;
+  height: 80vh;
   padding: 0 15px 10px 15px;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -94,6 +211,7 @@ export const List = styled.div`
       &:hover,
       &.active {
         background: rgba(244, 244, 244, 0.8);
+        color: #1890ff;
       }
 
       .time {
@@ -138,4 +256,26 @@ export const PaperHeader = styled.div`
       font-weight: 600;
     }
   }
+`;
+
+export const FilterContainer = styled.div`
+  display: flex;
+  padding: 5px 15px;
+  background: #fafafa;
+  margin-bottom: 5px;
+
+  label {
+    display: block;
+    font-weight: 700;
+  }
+
+  .btn-search {
+    display: flex;
+    align-items: flex-end;
+    margin-left: 10px;
+  }
+`;
+
+export const Legend = styled.div`
+  font-size: 13px;
 `;

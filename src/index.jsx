@@ -4,18 +4,18 @@ import Webfontloader from 'webfontloader';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
+import { I18nextProvider } from 'react-i18next';
+import i18next from 'i18next';
 import Routes from '@routes';
 import { store, persistor } from '@store';
 import * as serviceWorker from './serviceWorker';
 
-import { I18nextProvider } from 'react-i18next';
-import i18next from 'i18next';
 import trans_pt from './translations/pt.json';
 import trans_en from './translations/en.json';
 
 Webfontloader.load({
   google: {
-    families: ['Montserrat:300,400,700', 'Roboto:300', 'sans-serif']
+    families: ['Montserrat:300,400,500,700', 'Roboto:300', 'sans-serif']
   }
 });
 
