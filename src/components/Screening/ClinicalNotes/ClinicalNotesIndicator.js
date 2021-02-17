@@ -1,12 +1,53 @@
 export default {
   list: () => [
-    { label: 'Sintomas', value: 0, color: '#F9A825', backgroundColor: 'rgba(249,168,37, 0.1)' },
-    { label: 'Doenças', value: 1, color: '#7B1FA2', backgroundColor: 'rgba(123,31,162, 0.1)' },
-    { label: 'Complicações', value: 2, color: '#FF0000', backgroundColor: 'rgba(255,0,0, 0.1)' },
-    { label: 'Medicamentos', value: 3, color: '#2196F3', backgroundColor: 'rgba(33,150,243, 0.1)' },
-    { label: 'Dados', value: 4, color: '#9E9E9E', backgroundColor: 'rgba(158,158,158, 0.1)' },
-    { label: 'Conduta', value: 5, color: '#3949AB', backgroundColor: 'rgba(57,73,171, 0.1)' },
-    { label: 'Sinais', value: 6, color: '#FF5722', backgroundColor: 'rgba(255,87,34, 0.1)' },
-    { label: 'Nome', value: 7, color: '#000', backgroundColor: 'rgba(255,255,255, 0.1)' }
+    {
+      label: 'Complicações',
+      value: 'complicacoes',
+      color: '#e71d36',
+      backgroundColor: 'rgba(231, 29, 54, 0.1)'
+    },
+    {
+      label: 'Conduta',
+      value: 'conduta',
+      color: '#ff9f1c',
+      backgroundColor: 'rgba(255, 159, 28, 0.1)'
+    },
+    {
+      label: 'Dados',
+      value: 'dados',
+      color: '#43bccd',
+      backgroundColor: 'rgba(67, 188, 205, 0.1)'
+    },
+    {
+      label: 'Doenças',
+      value: 'doencas',
+      color: '#f1d302',
+      backgroundColor: 'rgba(241, 211, 2, 0.1)'
+    },
+
+    {
+      label: 'Medicamentos',
+      value: 'medicamentos',
+      color: '#224FF2',
+      backgroundColor: 'rgba(34, 79, 242, 0.1)'
+    },
+    {
+      label: 'Nomes',
+      value: 'nomes',
+      color: '#808080',
+      backgroundColor: 'rgba(128, 128, 128, 0.1)'
+    },
+    {
+      label: 'Sinais',
+      value: 'sinais',
+      color: '#662e9b',
+      backgroundColor: 'rgba(102, 46, 155, 0.1)'
+    },
+    {
+      label: 'Sintomas',
+      value: 'sintomas',
+      color: '#41a804',
+      backgroundColor: 'rgba(65, 168, 4, 0.1)'
+    }
   ]
 };
