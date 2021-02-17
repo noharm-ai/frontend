@@ -14,6 +14,7 @@ import Button from '@components/Button';
 import Tag from '@components/Tag';
 import Tooltip from '@components/Tooltip';
 import BackTop from '@components/BackTop';
+import { InfoIcon } from '@components/Icon';
 import { toDataSource } from '@utils';
 
 const errorMessage = {
@@ -179,13 +180,19 @@ export default function InterventionList({
           </Button>
         </Tooltip>
 
-        <Tooltip title="Ver todas intervenções">
+        <Tooltip
+          title={
+            listCount.all === 500
+              ? 'Ver todas intervenções (a lista foi limitada em 500 registros)'
+              : 'Ver todas intervenções'
+          }
+        >
           <Button
             type="gtm-lnk-filter-intrv-todas ant-btn-link-hover"
             className={isFilterActive(null) ? 'active' : ''}
             onClick={e => handleFilter(e, 'all')}
           >
-            Todas
+            Todas {listCount.all === 500 ? <InfoIcon /> : ''}
             <Tag>{listCount.all}</Tag>
           </Button>
         </Tooltip>
@@ -195,7 +202,10 @@ export default function InterventionList({
 
       <ExpandableTable
         columns={interventionColumns(filter, true)}
-        pagination={false}
+        pagination={{
+          pageSize: 50,
+          position: 'both'
+        }}
         loading={isFetching}
         locale={{
           emptyText: (
