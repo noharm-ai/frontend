@@ -213,66 +213,80 @@ const Action = ({
   );
 };
 
-const columns = filteredInfo => [
-  {
-    title: 'Data',
-    dataIndex: 'date',
-    align: 'center',
-    width: 80,
-    render: (text, record) => {
-      return format(new Date(record.date), 'dd/MM/yyyy HH:mm');
+const columns = (filteredInfo, name = false) => {
+  const columnsArray = [
+    {
+      title: 'Data',
+      dataIndex: 'date',
+      align: 'center',
+      width: 80,
+      render: (text, record) => {
+        return format(new Date(record.date), 'dd/MM/yyyy HH:mm');
+      }
     }
-  },
-  {
-    title: 'Prescrição',
-    dataIndex: 'idPrescription',
-    align: 'center',
-    width: 80,
-    render: (text, record) => {
-      return (
-        <TableLink
-          href={`/prescricao/${record.idPrescription}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          # {record.idPrescription}
-        </TableLink>
-      );
-    }
-  },
-  {
-    title: 'Medicamento',
-    dataIndex: 'drugName',
-    align: 'left',
-    width: 200
-  },
-  {
-    title: 'Motivo',
-    dataIndex: 'reasonDescription',
-    align: 'left',
-    width: 100
-  },
-  {
-    title: 'Situação',
-    dataIndex: 'status',
-    align: 'center',
-    width: 80,
-    filteredValue: filteredInfo.status || null,
-    onFilter: (value, record) => record.status === value,
-    render: (text, record) => {
-      const config = InterventionStatus.translate(record.status);
+  ];
 
-      return <Tag color={config.color}>{config.label}</Tag>;
-    }
-  },
-  {
-    title: 'Ações',
-    align: 'center',
-    width: 80,
-    render: (text, record) => {
-      return <Action {...record} />;
-    }
+  if (name) {
+    columnsArray.push({
+      title: 'Responsável',
+      dataIndex: 'user',
+      width: 100
+    });
   }
-];
+
+  return [
+    ...columnsArray,
+    {
+      title: 'Prescrição',
+      dataIndex: 'idPrescription',
+      align: 'center',
+      width: 80,
+      render: (text, record) => {
+        return (
+          <TableLink
+            href={`/prescricao/${record.idPrescription}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            # {record.idPrescription}
+          </TableLink>
+        );
+      }
+    },
+    {
+      title: 'Medicamento',
+      dataIndex: 'drugName',
+      align: 'left',
+      width: 200
+    },
+    {
+      title: 'Motivo',
+      dataIndex: 'reasonDescription',
+      align: 'left',
+      width: 100
+    },
+    {
+      title: 'Situação',
+      dataIndex: 'status',
+      align: 'center',
+      width: 80,
+      filteredValue: filteredInfo.status || null,
+      onFilter: (value, record) => record.status === value,
+      render: (text, record) => {
+        const config = InterventionStatus.translate(record.status);
+
+        return <Tag color={config.color}>{config.label}</Tag>;
+      }
+    },
+    {
+      title: 'Ações',
+      align: 'center',
+      width: 80,
+      render: (text, record) => {
+        return <Action {...record} />;
+      }
+    }
+  ];
+};
 
 export default columns;

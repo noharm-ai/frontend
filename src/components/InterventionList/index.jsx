@@ -194,7 +194,7 @@ export default function InterventionList({
       <BackTop />
 
       <ExpandableTable
-        columns={interventionColumns(filter)}
+        columns={interventionColumns(filter, true)}
         pagination={false}
         loading={isFetching}
         locale={{
