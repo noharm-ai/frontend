@@ -230,7 +230,15 @@ const columns = (filteredInfo, name = false) => {
     columnsArray.push({
       title: 'Responsável',
       dataIndex: 'user',
-      width: 100
+      width: 80,
+      filteredValue: filteredInfo.responsible || [],
+      onFilter: (value, record) => {
+        if (value.length === 0) {
+          return true;
+        }
+
+        return value.indexOf(record.user) !== -1;
+      }
     });
   }
 
@@ -281,7 +289,7 @@ const columns = (filteredInfo, name = false) => {
     {
       title: 'Ações',
       align: 'center',
-      width: 80,
+      width: 100,
       render: (text, record) => {
         return <Action {...record} />;
       }

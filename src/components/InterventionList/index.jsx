@@ -10,11 +10,10 @@ import interventionColumns, {
   expandedInterventionRowRender
 } from '@components/Screening/Intervention/columns';
 import ModalIntervention from '@containers/Screening/ModalIntervention';
-import Button from '@components/Button';
 import Tag from '@components/Tag';
-import Tooltip from '@components/Tooltip';
 import BackTop from '@components/BackTop';
-import { InfoIcon } from '@components/Icon';
+import { Select } from '@components/Inputs';
+import { uniqBy } from '@utils/lodash';
 import { toDataSource } from '@utils';
 
 const errorMessage = {
@@ -22,23 +21,19 @@ const errorMessage = {
   description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
 };
 
-const TableInfo = styled.span`
-  span {
-    margin-left: 10px;
-  }
+const TableInfo = styled.div`
+  background: #eff1f4;
+  padding: 10px;
 
-  button span {
-    color: rgba(0, 0, 0, 0.65);
-    font-size: 14px;
-  }
-
-  button {
+  .filter-field {
+    display: inline-block;
     margin-right: 10px;
-    margin-bottom: 15px;
-  }
 
-  button.active {
-    background-color: #eee;
+    label {
+      display: block;
+      margin-bottom: 2px;
+      color: #2e3c5a;
+    }
   }
 `;
 
@@ -56,7 +51,8 @@ export default function InterventionList({
 }) {
   const [visible, setVisibility] = useState(false);
   const [filter, setFilter] = useState({
-    status: null
+    status: null,
+    responsible: []
   });
   const onShowModal = data => {
     select({
@@ -67,20 +63,6 @@ export default function InterventionList({
       intervention: data
     });
     setVisibility(true);
-  };
-
-  const handleFilter = (e, status) => {
-    if (status) {
-      setFilter({ status: status === 'all' ? null : [status] });
-    }
-  };
-
-  const isFilterActive = status => {
-    if (filter.status) {
-      return filter.status[0] === status;
-    }
-
-    return filter.status == null && status == null;
   };
 
   useEffect(() => {
@@ -102,6 +84,22 @@ export default function InterventionList({
     return <LoadBox />;
   }
 
+  const getResponsibleList = () => {
+    if (!list) return [];
+
+    return uniqBy(list, 'user')
+      .map(i => i.user)
+      .sort();
+  };
+
+  const handleResponsibleChange = responsible => {
+    setFilter({ ...filter, responsible });
+  };
+
+  const handleStatusChange = status => {
+    setFilter({ ...filter, status: !status || status === 'all' ? null : [status] });
+  };
+
   const dsInterventions = toDataSource(list, null, {
     check: checkData,
     saveInterventionStatus: checkIntervention,
@@ -114,6 +112,7 @@ export default function InterventionList({
     pending: 0,
     accepted: 0,
     notAccepted: 0,
+    notAcceptedJustified: 0,
     notApplicable: 0
   };
 
@@ -125,6 +124,9 @@ export default function InterventionList({
           break;
         case 'n':
           listCount.notAccepted += 1;
+          break;
+        case 'j':
+          listCount.notAcceptedJustified += 1;
           break;
         case 'x':
           listCount.notApplicable += 1;
@@ -138,64 +140,53 @@ export default function InterventionList({
   return (
     <>
       <TableInfo style={{ marginBottom: 15 }}>
-        <Tooltip title="Ver intervenções pendentes">
-          <Button
-            type="gtm-lnk-filter-intrv-pendente ant-btn-link-hover"
-            className={isFilterActive('s') ? 'active' : ''}
-            onClick={e => handleFilter(e, 's')}
+        <div className="filter-field">
+          <label>Responsável</label>
+          <Select
+            onChange={handleResponsibleChange}
+            placeholder="Filtrar por responsável"
+            allowClear
+            style={{ minWidth: '300px' }}
+            mode="multiple"
+            optionFilterProp="children"
           >
-            Pendentes
-            <Tag color="orange">{listCount.pending}</Tag>
-          </Button>
-        </Tooltip>
-
-        <Tooltip title="Ver intervenções aceitas">
-          <Button
-            type="gtm-lnk-filter-intrv-aceita ant-btn-link-hover"
-            className={isFilterActive('a') ? 'active' : ''}
-            onClick={e => handleFilter(e, 'a')}
+            {getResponsibleList().map((p, i) => (
+              <Select.Option value={p} key={i}>
+                {p}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+        <div className="filter-field">
+          <label>Situação</label>
+          <Select
+            onChange={handleStatusChange}
+            placeholder="Filtrar por situação"
+            allowClear
+            style={{ minWidth: '300px' }}
+            optionFilterProp="children"
+            defaultValue="all"
           >
-            Aceitas <Tag color="green">{listCount.accepted}</Tag>
-          </Button>
-        </Tooltip>
-
-        <Tooltip title="Ver intervenções não aceitas">
-          <Button
-            type="gtm-lnk-filter-intrv-naoaceita ant-btn-link-hover"
-            className={isFilterActive('n') ? 'active' : ''}
-            onClick={e => handleFilter(e, 'n')}
-          >
-            Não aceitas <Tag color="red">{listCount.notAccepted}</Tag>
-          </Button>
-        </Tooltip>
-
-        <Tooltip title="Ver intervenções com situação Não se aplica">
-          <Button
-            type="gtm-lnk-filter-intrv-naoseaplica ant-btn-link-hover"
-            className={isFilterActive('x') ? 'active' : ''}
-            onClick={e => handleFilter(e, 'x')}
-          >
-            Não se aplica
-            <Tag>{listCount.notApplicable}</Tag>
-          </Button>
-        </Tooltip>
-
-        <Tooltip
-          title={
-            listCount.all === 500
-              ? 'Ver todas intervenções (a lista foi limitada em 500 registros)'
-              : 'Ver todas intervenções'
-          }
-        >
-          <Button
-            type="gtm-lnk-filter-intrv-todas ant-btn-link-hover"
-            className={isFilterActive(null) ? 'active' : ''}
-            onClick={e => handleFilter(e, 'all')}
-          >
-            Todas {listCount.all === 500 ? <InfoIcon /> : ''}
-            <Tag>{listCount.all}</Tag>
-          </Button>
-        </Tooltip>
+            <Select.Option value="s" key="s">
+              Pendentes <Tag color="orange">{listCount.pending}</Tag>
+            </Select.Option>
+            <Select.Option value="a" key="a">
+              Aceitas <Tag color="green">{listCount.accepted}</Tag>
+            </Select.Option>
+            <Select.Option value="n" key="n">
+              Não aceitas <Tag color="red">{listCount.notAccepted}</Tag>
+            </Select.Option>
+            <Select.Option value="j" key="j">
+              Não aceitas (Justificadas) <Tag color="red">{listCount.notAcceptedJustified}</Tag>
+            </Select.Option>
+            <Select.Option value="x" key="x">
+              Não se aplica <Tag>{listCount.notApplicable}</Tag>
+            </Select.Option>
+            <Select.Option value="all" key="all">
+              Todas <Tag>{listCount.all}</Tag>
+            </Select.Option>
+          </Select>
+        </div>
       </TableInfo>
 
       <BackTop />
@@ -211,7 +202,7 @@ export default function InterventionList({
           emptyText: (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="Parabéns! Nenhuma intervenção pendente."
+              description="Nenhuma intervenção encontrada."
             />
           )
         }}
