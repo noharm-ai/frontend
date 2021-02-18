@@ -11,7 +11,12 @@ const {
   clinicalNotesFetchListSuccess,
 
   clinicalNotesSelect,
-  clinicalNotesUpdate
+  clinicalNotesUpdate,
+
+  clinicalNotesSaveStart,
+  clinicalNotesSaveSuccess,
+  clinicalNotesSaveReset,
+  clinicalNotesSaveError
 } = ReportsCreators;
 
 export const fetchClinicalNotesListThunk = admissionNumber => async (dispatch, getState) => {
@@ -37,6 +42,20 @@ export const selectClinicalNoteThunk = clinicalNote => async dispatch => {
   dispatch(clinicalNotesSelect(clinicalNote));
 };
 
-export const updateClinicalNoteThunk = clinicalNote => async dispatch => {
+export const updateClinicalNoteThunk = clinicalNote => async (dispatch, getState) => {
+  dispatch(clinicalNotesSaveStart());
+  const { access_token } = getState().auth.identify;
+
+  const { error } = await api
+    .updateClinicalNote(access_token, clinicalNote.id, clinicalNote.text)
+    .catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(clinicalNotesSaveError(error));
+    return;
+  }
+
   dispatch(clinicalNotesUpdate(clinicalNote));
+  dispatch(clinicalNotesSaveSuccess());
+  dispatch(clinicalNotesSaveReset());
 };

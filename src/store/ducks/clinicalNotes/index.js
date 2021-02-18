@@ -6,7 +6,12 @@ export const { Types, Creators } = createActions({
   clinicalNotesFetchListSuccess: ['list', 'positionList'],
 
   clinicalNotesSelect: ['clinicalNote'],
-  clinicalNotesUpdate: ['clinicalNote']
+  clinicalNotesUpdate: ['clinicalNote'],
+
+  clinicalNotesSaveStart: [''],
+  clinicalNotesSaveSuccess: [''],
+  clinicalNotesSaveReset: [''],
+  clinicalNotesSaveError: ['error']
 });
 
 const INITIAL_STATE = {
@@ -14,7 +19,12 @@ const INITIAL_STATE = {
   isFetching: true,
   list: [],
   positionList: [],
-  single: null
+  single: null,
+  save: {
+    isSaving: false,
+    success: false,
+    error: null
+  }
 };
 
 const fetchListStart = (state = INITIAL_STATE) => ({
@@ -62,13 +72,52 @@ const update = (state = INITIAL_STATE, { clinicalNote }) => {
   };
 };
 
+const saveStart = (state = INITIAL_STATE) => ({
+  ...state,
+  save: {
+    ...state.save,
+    isSaving: true
+  }
+});
+
+const saveError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  save: {
+    ...state.save,
+    error,
+    isSaving: false
+  }
+});
+
+const saveReset = (state = INITIAL_STATE) => ({
+  ...state,
+  save: {
+    ...INITIAL_STATE.save
+  }
+});
+
+const saveSuccess = (state = INITIAL_STATE) => ({
+  ...state,
+  save: {
+    ...state.save,
+    error: null,
+    success: true,
+    isSaving: false
+  }
+});
+
 const HANDLERS = {
   [Types.CLINICAL_NOTES_FETCH_LIST_START]: fetchListStart,
   [Types.CLINICAL_NOTES_FETCH_LIST_ERROR]: fetchListError,
   [Types.CLINICAL_NOTES_FETCH_LIST_SUCCESS]: fetchListSuccess,
 
   [Types.CLINICAL_NOTES_SELECT]: select,
-  [Types.CLINICAL_NOTES_UPDATE]: update
+  [Types.CLINICAL_NOTES_UPDATE]: update,
+
+  [Types.CLINICAL_NOTES_SAVE_START]: saveStart,
+  [Types.CLINICAL_NOTES_SAVE_SUCCESS]: saveSuccess,
+  [Types.CLINICAL_NOTES_SAVE_RESET]: saveReset,
+  [Types.CLINICAL_NOTES_SAVE_ERROR]: saveError
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);
