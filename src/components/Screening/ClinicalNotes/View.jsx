@@ -153,7 +153,9 @@ export default function View({ selected, update, security }) {
             }}
             onMouseUp={e => selectionChange(e)}
             onClick={e => removeAnnotation(e)}
-            className={isMenuVisible ? 'disabled' : ''}
+            className={`${isMenuVisible ? 'disabled' : ''} ${
+              security.isAdmin() ? 'annotation-enabled' : 'annotation-disabled'
+            }`}
           />
           {menu}
         </>
