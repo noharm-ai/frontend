@@ -20,6 +20,24 @@ const createIndicatorClasses = () => {
   return classList.join(' ');
 };
 
+const createIndicatorTagClasses = () => {
+  const classList = ClinicalNotesIndicator.list().map(
+    i => `
+    .${i.key} {
+      border-width: 2px;
+      border-color: ${i.color};
+      background: ${i.backgroundColor};
+      color: rgba(0, 0, 0, 0.65);
+      font-weight: 500;
+      height: 24px;
+      min-width: 24px;
+    }
+  `
+  );
+
+  return classList.join(' ');
+};
+
 export const MenuPopup = styled(Menu)`
   &.ant-menu-dark {
     background: rgba(46, 60, 90, 0.9);
@@ -227,10 +245,17 @@ export const List = styled.div`
       .time {
         margin-left: 8px;
         margin-right: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
       }
 
       .name {
         font-weight: 700;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
 
         span {
           display: block;
@@ -239,8 +264,17 @@ export const List = styled.div`
       }
 
       .indicators {
-        flex: 1;
-        text-align: right;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        max-width: 75px;
+        align-items: center;
+
+        .ant-tag {
+          margin-bottom: 2px;
+        }
+
+        ${createIndicatorTagClasses()}
       }
     }
 
