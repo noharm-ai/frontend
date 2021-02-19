@@ -125,7 +125,7 @@ export default function View({ selected, update, security }) {
     >
       <MenuPopup theme="dark" onClick={k => annotate(k)} selectable={false}>
         {ClinicalNotesIndicator.list().map(i => (
-          <MenuPopup.Item key={i.value}>
+          <MenuPopup.Item key={i.value} className="gtm-indicator">
             <div className="avatar" style={{ backgroundColor: i.color }} /> {i.label}
           </MenuPopup.Item>
         ))}
