@@ -24,13 +24,17 @@ const createIndicatorTagClasses = () => {
   const classList = ClinicalNotesIndicator.list().map(
     i => `
     .${i.key} {
-      border-width: 2px;
+      border-width: 1px;
       border-color: ${i.color};
       background: ${i.backgroundColor};
       color: rgba(0, 0, 0, 0.65);
       font-weight: 500;
       height: 24px;
       min-width: 24px;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   `
   );
@@ -152,7 +156,7 @@ export const Paper = styled.div`
         bottom: -30px;
         left: 50%;
         font-size: 12px;
-        min-width: 96px;
+        min-width: 110px;
         width: 100%;
         background: rgba(46, 60, 90, 0.9);
         border-radius: 5px;
@@ -178,7 +182,7 @@ export const Paper = styled.div`
       &.annotation {
         padding: 0 4px;
         border-radius: 5px;
-        border-width: 2px;
+        border-width: 1px;
         border-style: solid;
         margin-bottom: 2px;
         font-weight: 500;

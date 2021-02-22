@@ -2,7 +2,7 @@ export default {
   list: () => [
     {
       key: 'complication',
-      label: 'Complicações',
+      label: 'Eventos Adversos',
       value: 'complicacoes',
       color: '#e71d36',
       backgroundColor: 'rgba(231, 29, 54, 0.1)',
