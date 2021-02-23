@@ -312,6 +312,16 @@ const resetPassword = (token, password) => {
 const getClinicalNotes = (bearerToken, admissionNumber) =>
   instance.get(`${endpoints.clinicalNotes}/${admissionNumber}`, { ...setHeaders(bearerToken) });
 
+const updateClinicalNote = (bearerToken, id, text) => {
+  return instance.post(
+    `${endpoints.clinicalNotes}/${id}`,
+    { text },
+    {
+      ...setHeaders(bearerToken)
+    }
+  );
+};
+
 /**
  * PRISMIC HELP
  */
@@ -381,7 +391,8 @@ const api = {
   forgotPassword,
   resetPassword,
   updateSegmentExamOrder,
-  getClinicalNotes
+  getClinicalNotes,
+  updateClinicalNote
 };
 
 export default api;

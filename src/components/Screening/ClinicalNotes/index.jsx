@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
 
 import { Row, Col } from '@components/Grid';
@@ -7,8 +7,11 @@ import Empty from '@components/Empty';
 import { Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
+import notification from '@components/notification';
+import Tag from '@components/Tag';
 
 import View from './View';
+import ClinicalNotesIndicator from './ClinicalNotesIndicator';
 import { Container, List, FilterContainer } from './index.style';
 
 export default function ClinicalNotes({
@@ -18,10 +21,27 @@ export default function ClinicalNotes({
   select,
   update,
   positionList,
-  security
+  security,
+  saveStatus
 }) {
   const [positions, setPositions] = useState([]);
   const [selectedPositions, selectPositions] = useState([]);
+
+  useEffect(() => {
+    if (saveStatus.success) {
+      notification.success({
+        message: 'Uhu! Anotação salva com sucesso! :)'
+      });
+    }
+
+    if (saveStatus.error) {
+      notification.error({
+        message: 'Ops! Algo de errado aconteceu.',
+        description:
+          'Aconteceu algo que nos impediu de salvar os dados desta anotação. Por favor, tente novamente.'
+      });
+    }
+  }, [saveStatus]);
 
   const handlePositionChange = p => {
     setPositions(p);
@@ -62,7 +82,7 @@ export default function ClinicalNotes({
                   placeholder="Filtrar por cargo"
                   onChange={handlePositionChange}
                   allowClear
-                  style={{ minWidth: '300px' }}
+                  style={{ minWidth: '250px' }}
                   mode="multiple"
                   optionFilterProp="children"
                 >
@@ -106,12 +126,26 @@ export default function ClinicalNotes({
                           onClick={() => select(c)}
                           aria-hidden="true"
                         >
-                          <div className="time">{c.date.substr(11, 5)}</div>
+                          <div className="time">
+                            {c.date.substr(11, 5)}
+                            <div>&nbsp;</div>
+                          </div>
                           <div className="name">
                             {c.prescriber}
                             <span>{c.position}</span>
                           </div>
-                          <div className="indicators" />
+                          <div className="indicators">
+                            {security.isAdmin() &&
+                              ClinicalNotesIndicator.listByCategory('priority').map(indicator => (
+                                <React.Fragment key={indicator.key}>
+                                  {c[indicator.key] > 0 && (
+                                    <Tooltip title={indicator.label}>
+                                      <Tag className={indicator.key}>{c[indicator.key]}</Tag>
+                                    </Tooltip>
+                                  )}
+                                </React.Fragment>
+                              ))}
+                          </div>
                         </div>
                       ))}
                     </div>

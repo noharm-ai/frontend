@@ -16,6 +16,7 @@ const mapStateToProps = ({ clinicalNotes, user }) => ({
   list: clinicalNotes.list,
   positionList: clinicalNotes.positionList,
   selected: clinicalNotes.single,
+  saveStatus: clinicalNotes.save,
   security: security(user.account.roles)
 });
 const mapDispatchToProps = dispatch =>

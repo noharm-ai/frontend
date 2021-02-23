@@ -20,6 +20,28 @@ const createIndicatorClasses = () => {
   return classList.join(' ');
 };
 
+const createIndicatorTagClasses = () => {
+  const classList = ClinicalNotesIndicator.list().map(
+    i => `
+    .${i.key} {
+      border-width: 1px;
+      border-color: ${i.color};
+      background: ${i.backgroundColor};
+      color: rgba(0, 0, 0, 0.65);
+      font-weight: 500;
+      height: 24px;
+      min-width: 24px;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  `
+  );
+
+  return classList.join(' ');
+};
+
 export const MenuPopup = styled(Menu)`
   &.ant-menu-dark {
     background: rgba(46, 60, 90, 0.9);
@@ -102,70 +124,80 @@ export const Paper = styled.div`
     overflow-y: hidden;
   }
 
-  span {
-    position: relative;
-    display: inline-block;
-    cursor: default;
+  &.annotation-enabled {
+    span {
+      position: relative;
+      display: inline-block;
+      cursor: default;
 
-    a {
-      position: absolute;
-      z-index: 2;
-      top: -15px;
-      right: -15px;
-      width: 20px;
-      height: 20px;
-      background: rgba(46, 60, 90, 0.9);
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      font-size: 12px;
-      cursor: pointer;
-      pointer-events: all;
-      opacity: 0;
-      transition: all 0.3s cubic-bezier(0.83, 0, 0.17, 1);
-    }
-
-    &:before {
-      position: absolute;
-      z-index: 2;
-      bottom: -30px;
-      left: 50%;
-      font-size: 12px;
-      min-width: 96px;
-      width: 100%;
-      background: rgba(46, 60, 90, 0.9);
-      border-radius: 5px;
-      color: #fff;
-      transform: translateX(-50%);
-      padding: 5px;
-      text-align: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s cubic-bezier(0.83, 0, 0.17, 1);
-    }
-
-    &:hover {
       a {
-        opacity: 1;
+        position: absolute;
+        z-index: 2;
+        top: -15px;
+        right: -15px;
+        width: 20px;
+        height: 20px;
+        background: rgba(46, 60, 90, 0.9);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        font-size: 12px;
+        cursor: pointer;
+        pointer-events: all;
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.83, 0, 0.17, 1);
       }
 
       &:before {
-        opacity: 1;
+        position: absolute;
+        z-index: 2;
+        bottom: -30px;
+        left: 50%;
+        font-size: 12px;
+        min-width: 110px;
+        width: 100%;
+        background: rgba(46, 60, 90, 0.9);
+        border-radius: 5px;
+        color: #fff;
+        transform: translateX(-50%);
+        padding: 5px;
+        text-align: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s cubic-bezier(0.83, 0, 0.17, 1);
+      }
+
+      &:hover {
+        a {
+          opacity: 1;
+        }
+
+        &:before {
+          opacity: 1;
+        }
+      }
+
+      &.annotation {
+        padding: 0 4px;
+        border-radius: 5px;
+        border-width: 1px;
+        border-style: solid;
+        margin-bottom: 2px;
+        font-weight: 500;
+      }
+
+      ${createIndicatorClasses()}
+    }
+  }
+
+  &.annotation-disabled {
+    span {
+      a {
+        display: none;
       }
     }
-
-    &.annotation {
-      padding: 0 4px;
-      border-radius: 5px;
-      border-width: 2px;
-      border-style: solid;
-      margin-bottom: 2px;
-      font-weight: 500;
-    }
-
-    ${createIndicatorClasses()}
   }
 `;
 
@@ -217,10 +249,17 @@ export const List = styled.div`
       .time {
         margin-left: 8px;
         margin-right: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
       }
 
       .name {
         font-weight: 700;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
 
         span {
           display: block;
@@ -229,8 +268,17 @@ export const List = styled.div`
       }
 
       .indicators {
-        flex: 1;
-        text-align: right;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        max-width: 75px;
+        align-items: center;
+
+        .ant-tag {
+          margin-bottom: 2px;
+        }
+
+        ${createIndicatorTagClasses()}
       }
     }
 
