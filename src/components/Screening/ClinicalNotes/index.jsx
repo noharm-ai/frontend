@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
 
+import { annotationManifest } from '@utils/featureManifest';
 import { Row, Col } from '@components/Grid';
 import LoadBox from '@components/LoadBox';
 import Empty from '@components/Empty';
@@ -22,7 +23,9 @@ export default function ClinicalNotes({
   update,
   positionList,
   security,
-  saveStatus
+  saveStatus,
+  access_token,
+  userId
 }) {
   const [positions, setPositions] = useState([]);
   const [selectedPositions, selectPositions] = useState([]);
@@ -71,7 +74,13 @@ export default function ClinicalNotes({
     <Container>
       <Row type="flex" gutter={0}>
         <Col md={14} xl={16} className="paper-panel">
-          <View selected={selected} update={update} security={security} />
+          <View
+            selected={selected}
+            update={update}
+            security={security}
+            access_token={access_token}
+            userId={userId}
+          />
         </Col>
         <Col md={10} xl={8} className="list-panel">
           {positionList.length > 0 && (
@@ -135,7 +144,7 @@ export default function ClinicalNotes({
                             <span>{c.position}</span>
                           </div>
                           <div className="indicators">
-                            {security.isAdmin() &&
+                            {annotationManifest.isEnabled(security) &&
                               ClinicalNotesIndicator.listByCategory('priority').map(indicator => (
                                 <React.Fragment key={indicator.key}>
                                   {c[indicator.key] > 0 && (

@@ -2,17 +2,29 @@ import React, { useState, useRef, useEffect } from 'react';
 import isEmpty from 'lodash.isempty';
 import { format, parseISO } from 'date-fns';
 
+import { annotationManifest } from '@utils/featureManifest';
 import { useOutsideAlerter } from '@lib/hooks';
+import Button from '@components/Button';
+import Tooltip from '@components/Tooltip';
+import { PopoverWelcome } from '@components/Popover';
 
 import ClinicalNotesIndicator from './ClinicalNotesIndicator';
-import { Paper, PaperHeader, PaperContainer, MenuPopup, Legend } from './index.style';
+import {
+  Paper,
+  PaperHeader,
+  PaperContainer,
+  MenuPopup,
+  Legend,
+  WelcomeBubble
+} from './index.style';
 
-export default function View({ selected, update, security }) {
+export default function View({ selected, update, security, access_token, userId }) {
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
   const [isMenuVisible, setMenuVisibility] = useState(false);
   const [menuPosition, setMenuPosition] = useState({});
   const [selectionRange, setSelectionRange] = useState(null);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   useOutsideAlerter(menuRef, () => {
     setMenuVisibility(false);
@@ -25,6 +37,27 @@ export default function View({ selected, update, security }) {
       selectionRange.insertNode(textNode);
     }
   }, [isMenuVisible]); //eslint-disable-line
+
+  useEffect(() => {
+    const shouldShowWelcome = async () => {
+      const show = await annotationManifest.shouldShowWelcome(access_token, userId);
+
+      if (show) {
+        setShowWelcome(true);
+      }
+    };
+
+    shouldShowWelcome();
+  }, [access_token, userId]);
+
+  const gotIt = () => {
+    annotationManifest.gotIt(access_token, userId);
+    setShowWelcome(false);
+  };
+
+  const goToHelp = () => {
+    window.open('https://noharm.octadesk.com/kb/article/aba-evolucoes');
+  };
 
   const annotate = option => {
     const elm = document.createElement('span');
@@ -133,6 +166,22 @@ export default function View({ selected, update, security }) {
     </div>
   );
 
+  const welcomeTooltip = (
+    <WelcomeBubble>
+      A NoHarm criou uma <strong>Inteligência Artificial</strong> para destacar as partes mais
+      relevantes das evoluções.
+      <br />
+      <br />
+      <strong>Você pode ajudar a treiná-la!</strong>
+      <br /> Clique no ícone de ajuda para mais detalhes.
+      <div className="action">
+        <Button type="primary gtm-annotation-btn-help-ok" ghost onClick={() => gotIt()}>
+          OK, entendi!
+        </Button>
+      </div>
+    </WelcomeBubble>
+  );
+
   if (isEmpty(selected)) return null;
 
   return (
@@ -142,6 +191,26 @@ export default function View({ selected, update, security }) {
           <div className="info">
             {format(parseISO(selected.date), 'dd/MM/yyyy HH:mm')} -{' '}
             <span className="name">{selected.prescriber}</span>
+          </div>
+          <div className="help">
+            <Tooltip title="Ajuda">
+              <PopoverWelcome
+                title="Nova funcionalidade!"
+                content={welcomeTooltip}
+                trigger="hover"
+                placement="bottom"
+                visible={showWelcome}
+              >
+                <Button
+                  type="primary gtm-annotation-btn-help"
+                  ghost
+                  shape="circle"
+                  icon="question"
+                  style={{ width: '28px', height: '28px', minWidth: '28px' }}
+                  onClick={goToHelp}
+                />
+              </PopoverWelcome>
+            </Tooltip>
           </div>
         </div>
       </PaperHeader>
@@ -154,7 +223,7 @@ export default function View({ selected, update, security }) {
             onMouseUp={e => selectionChange(e)}
             onClick={e => removeAnnotation(e)}
             className={`${isMenuVisible ? 'disabled' : ''} ${
-              security.isAdmin() ? 'annotation-enabled' : 'annotation-disabled'
+              annotationManifest.isEnabled(security) ? 'annotation-enabled' : 'annotation-disabled'
             }`}
           />
           {menu}

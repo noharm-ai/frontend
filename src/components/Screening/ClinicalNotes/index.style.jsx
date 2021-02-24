@@ -297,6 +297,11 @@ export const PaperHeader = styled.div`
     max-width: 720px;
   }
 
+  .line {
+    display: flex;
+    justify-content: space-between;
+  }
+
   .info {
     font-size: 18px;
 
@@ -326,4 +331,12 @@ export const FilterContainer = styled.div`
 
 export const Legend = styled.div`
   font-size: 13px;
+`;
+
+export const WelcomeBubble = styled.div`
+  width: 400px;
+
+  .action {
+    margin-top: 15px;
+  }
 `;

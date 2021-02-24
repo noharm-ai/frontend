@@ -10,14 +10,16 @@ import {
 import security from '@services/security';
 import ClinicalNotes from '@components/Screening/ClinicalNotes';
 
-const mapStateToProps = ({ clinicalNotes, user }) => ({
+const mapStateToProps = ({ clinicalNotes, user, auth }) => ({
   isFetching: clinicalNotes.isFetching,
   error: clinicalNotes.error,
   list: clinicalNotes.list,
   positionList: clinicalNotes.positionList,
   selected: clinicalNotes.single,
   saveStatus: clinicalNotes.save,
-  security: security(user.account.roles)
+  security: security(user.account.roles),
+  access_token: auth.identify.access_token,
+  userId: user.account.userId
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
