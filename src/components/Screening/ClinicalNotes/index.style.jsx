@@ -331,6 +331,15 @@ export const FilterContainer = styled.div`
 
 export const Legend = styled.div`
   font-size: 13px;
+
+  a {
+    color: #1890ff;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 `;
 
 export const WelcomeBubble = styled.div`

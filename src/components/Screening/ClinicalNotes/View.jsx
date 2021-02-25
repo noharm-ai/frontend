@@ -18,6 +18,8 @@ import {
   WelcomeBubble
 } from './index.style';
 
+const helpLink = 'https://noharm.octadesk.com/kb/article/aba-evolucoes';
+
 export default function View({ selected, update, security, access_token, userId }) {
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
@@ -56,7 +58,7 @@ export default function View({ selected, update, security, access_token, userId 
   };
 
   const goToHelp = () => {
-    window.open('https://noharm.octadesk.com/kb/article/aba-evolucoes');
+    window.open(helpLink);
   };
 
   const annotate = option => {
@@ -230,6 +232,13 @@ export default function View({ selected, update, security, access_token, userId 
         </>
       </PaperContainer>
       <Legend>* Nomes presentes na evolução são substituídos por três asteriscos (***).</Legend>
+      <Legend>
+        * As anotações são geradas pela nossa <strong>Inteligência Artificial</strong>.{' '}
+        <a href={helpLink} target="_blank" rel="noopener noreferrer" title="Saiba como ajudar">
+          Você pode ajudar a treiná-la
+        </a>
+        .
+      </Legend>
     </>
   );
 }
