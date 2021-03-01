@@ -1,14 +1,6 @@
 export default {
   list: () => [
     {
-      key: 'complication',
-      label: 'Eventos Adversos',
-      value: 'complicacoes',
-      color: '#e71d36',
-      backgroundColor: 'rgba(231, 29, 54, 0.1)',
-      category: 'priority'
-    },
-    {
       key: 'conduct',
       label: 'Conduta',
       value: 'conduta',
@@ -20,8 +12,8 @@ export default {
       key: 'info',
       label: 'Dados',
       value: 'dados',
-      color: '#43bccd',
-      backgroundColor: 'rgba(67, 188, 205, 0.1)',
+      color: '#1919e0',
+      backgroundColor: 'rgba(25,25,224, 0.1)',
       category: 'info'
     },
     {
@@ -32,13 +24,20 @@ export default {
       backgroundColor: 'rgba(241, 211, 2, 0.1)',
       category: 'priority'
     },
-
+    {
+      key: 'complication',
+      label: 'Eventos Adversos',
+      value: 'complicacoes',
+      color: '#e71d36',
+      backgroundColor: 'rgba(231, 29, 54, 0.1)',
+      category: 'priority'
+    },
     {
       key: 'medications',
       label: 'Medicamentos',
       value: 'medicamentos',
-      color: '#224FF2',
-      backgroundColor: 'rgba(34, 79, 242, 0.1)',
+      color: '#662e9b',
+      backgroundColor: 'rgba(102,46,155, 0.1)',
       category: 'info'
     },
     {
@@ -53,16 +52,16 @@ export default {
       key: 'signs',
       label: 'Sinais',
       value: 'sinais',
-      color: '#662e9b',
-      backgroundColor: 'rgba(102, 46, 155, 0.1)',
+      color: '#c157a3',
+      backgroundColor: 'rgba(193,87,163, 0.1)',
       category: 'info'
     },
     {
       key: 'symptoms',
       label: 'Sintomas',
       value: 'sintomas',
-      color: '#41a804',
-      backgroundColor: 'rgba(65, 168, 4, 0.1)',
+      color: '#43bccd',
+      backgroundColor: 'rgba(67,188,205, 0.1)',
       category: 'priority'
     }
   ],
