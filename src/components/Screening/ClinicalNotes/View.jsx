@@ -91,7 +91,7 @@ export default function View({ selected, update, security, access_token, userId 
   };
 
   const isValidSelection = () => {
-    if (!security.isAdmin()) return false;
+    if (!annotationManifest.isEnabled()) return false;
 
     const selection = window.getSelection();
 
