@@ -67,6 +67,12 @@ export const Box = styled.div`
       vertical-align: middle;
     }
   }
+
+  &.experimental {
+    .cell strong {
+      color: #1890ff;
+    }
+  }
 `;
 
 export const ExamBox = styled.div`

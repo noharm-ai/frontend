@@ -79,11 +79,15 @@ export default function Patient({
     observation,
     intervention,
     prevIntervention,
-    existIntervention
+    existIntervention,
+    clinicalNotes,
+    notesInfo,
+    notesSigns
   } = prescription;
   const [interventionVisible, setInterventionVisibility] = useState(false);
   const [visible, setVisible] = useState(false);
   const [seeMore, setSeeMore] = useState(false);
+  console.log('prescription', prescription);
 
   const showInterventionModal = () => {
     selectIntervention({
@@ -266,6 +270,50 @@ export default function Patient({
                   <RichTextView text={observation} />
                 </div>
               </Cell>
+              {clinicalNotes != null && (
+                <>
+                  <Cell className="experimental">
+                    <strong>
+                      Dados{' '}
+                      <Tooltip title="Dados extraídos pela Inteligência Artificial">
+                        {' '}
+                        <InfoIcon />
+                      </Tooltip>{' '}
+                      :
+                    </strong>
+                    <div
+                      style={{
+                        maxHeight: '300px',
+                        overflow: 'auto',
+                        marginTop: '10px',
+                        minHeight: '60px'
+                      }}
+                    >
+                      {notesInfo === '' ? '--' : notesInfo}
+                    </div>
+                  </Cell>
+                  <Cell className="experimental">
+                    <strong>
+                      Sinais{' '}
+                      <Tooltip title="Sinais extraídos pela Inteligência Artificial">
+                        {' '}
+                        <InfoIcon />
+                      </Tooltip>{' '}
+                      :
+                    </strong>
+                    <div
+                      style={{
+                        maxHeight: '300px',
+                        overflow: 'auto',
+                        marginTop: '10px',
+                        minHeight: '60px'
+                      }}
+                    >
+                      {notesSigns === '' ? '--' : notesSigns}
+                    </div>
+                  </Cell>
+                </>
+              )}
               <Cell className="recalc">
                 <Button type="primary gtm-bt-update" onClick={updatePrescriptionData}>
                   Recalcular Prescrição
