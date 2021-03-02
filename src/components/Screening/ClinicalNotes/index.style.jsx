@@ -313,9 +313,17 @@ export const PaperHeader = styled.div`
 
 export const FilterContainer = styled.div`
   display: flex;
-  padding: 5px 15px;
+  padding: 5px 5px;
   background: #fafafa;
   margin-bottom: 5px;
+
+  > div {
+    width: 40%;
+
+    @media only screen and (min-width: 1400px) {
+      width: 45%;
+    }
+  }
 
   label {
     display: block;
@@ -325,7 +333,16 @@ export const FilterContainer = styled.div`
   .btn-search {
     display: flex;
     align-items: flex-end;
-    margin-left: 10px;
+    justify-content: flex-end;
+    width: 20%;
+
+    @media only screen and (min-width: 1400px) {
+      width: 10%;
+    }
+  }
+
+  .ant-select-selection__choice {
+    height: 27px !important;
   }
 `;
 
