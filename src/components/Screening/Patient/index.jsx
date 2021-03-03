@@ -151,6 +151,16 @@ export default function Patient({
     }
   };
 
+  const aiDataTooltip = (type, date) => {
+    const msg = `${type} extraídos pela Inteligência Artificial`;
+
+    if (date) {
+      return `${msg} em ${moment(date).format('DD/MM/YYYY hh:mm')}`;
+    }
+
+    return msg;
+  };
+
   const closedStatus = ['a', 'n', 'x'];
   const currentStatus = intervention ? intervention.status : 's';
   const isInterventionClosed = closedStatus.indexOf(currentStatus) !== -1;
@@ -279,11 +289,7 @@ export default function Patient({
                   <Cell className="experimental">
                     <strong>
                       Dados{' '}
-                      <Tooltip
-                        title={`Dados extraídos pela Inteligência Artificial em ${moment(
-                          notesInfoDate
-                        ).format('DD/MM/YYYY hh:mm')}`}
-                      >
+                      <Tooltip title={aiDataTooltip('Dados', notesInfoDate)}>
                         {' '}
                         <InfoIcon />
                       </Tooltip>{' '}
@@ -303,11 +309,7 @@ export default function Patient({
                   <Cell className="experimental">
                     <strong>
                       Sinais{' '}
-                      <Tooltip
-                        title={`Sinais extraídos pela Inteligência Artificial em ${moment(
-                          notesSignsDate
-                        ).format('DD/MM/YYYY hh:mm')}`}
-                      >
+                      <Tooltip title={aiDataTooltip('Sinais', notesSignsDate)}>
                         {' '}
                         <InfoIcon />
                       </Tooltip>{' '}
