@@ -260,10 +260,12 @@ export const List = styled.div`
         display: flex;
         flex-direction: column;
         justify-content: center;
+        text-transform: uppercase;
 
         span {
           display: block;
           font-weight: 300;
+          text-transform: none;
         }
       }
 

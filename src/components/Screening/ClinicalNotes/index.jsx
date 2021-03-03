@@ -10,6 +10,7 @@ import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 import notification from '@components/notification';
 import Tag from '@components/Tag';
+import { getFirstAndLastName } from '@utils';
 
 import View from './View';
 import ClinicalNotesIndicator from './ClinicalNotesIndicator';
@@ -193,7 +194,7 @@ export default function ClinicalNotes({
                             <div>&nbsp;</div>
                           </div>
                           <div className="name">
-                            {c.prescriber}
+                            {getFirstAndLastName(c.prescriber)}
                             <span>{c.position}</span>
                           </div>
                           <div className="indicators">
