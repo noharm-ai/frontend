@@ -82,12 +82,16 @@ export default function Patient({
     existIntervention,
     clinicalNotes,
     notesInfo,
-    notesSigns
+    notesInfoDate,
+    notesSigns,
+    notesSignsDate
   } = prescription;
   const [interventionVisible, setInterventionVisibility] = useState(false);
   const [visible, setVisible] = useState(false);
   const [seeMore, setSeeMore] = useState(false);
-  console.log('prescription', prescription);
+
+  const hasClinicalNotes = clinicalNotes != null;
+  const hasAIData = hasClinicalNotes && (notesSigns !== '' || notesInfo !== '');
 
   const showInterventionModal = () => {
     selectIntervention({
@@ -270,12 +274,16 @@ export default function Patient({
                   <RichTextView text={observation} />
                 </div>
               </Cell>
-              {clinicalNotes != null && (
+              {hasClinicalNotes && (
                 <>
                   <Cell className="experimental">
                     <strong>
                       Dados{' '}
-                      <Tooltip title="Dados extraídos pela Inteligência Artificial">
+                      <Tooltip
+                        title={`Dados extraídos pela Inteligência Artificial em ${moment(
+                          notesInfoDate
+                        ).format('DD/MM/YYYY hh:mm')}`}
+                      >
                         {' '}
                         <InfoIcon />
                       </Tooltip>{' '}
@@ -295,7 +303,11 @@ export default function Patient({
                   <Cell className="experimental">
                     <strong>
                       Sinais{' '}
-                      <Tooltip title="Sinais extraídos pela Inteligência Artificial">
+                      <Tooltip
+                        title={`Sinais extraídos pela Inteligência Artificial em ${moment(
+                          notesSignsDate
+                        ).format('DD/MM/YYYY hh:mm')}`}
+                      >
                         {' '}
                         <InfoIcon />
                       </Tooltip>{' '}
@@ -325,6 +337,12 @@ export default function Patient({
             <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
               <Icon type={seeMore ? 'up' : 'down'} /> {seeMore ? 'Ver menos' : 'Ver mais'}
             </Button>
+            {hasAIData && (
+              <Tooltip title="Veja os dados extraídos pela Inteligência Artificial">
+                {'  '}
+                <InfoIcon />
+              </Tooltip>
+            )}
           </Cell>
         </Wrapper>
       </Col>

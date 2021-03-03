@@ -56,10 +56,15 @@ export const Box = styled.div`
     button {
       color: #696766;
       height: auto;
+      padding-right: 2px;
     }
 
     button:hover span {
       text-decoration: underline;
+    }
+
+    .anticon-info-circle {
+      color: #1890ff;
     }
 
     div.tags {
