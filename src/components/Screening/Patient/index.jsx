@@ -152,7 +152,7 @@ export default function Patient({
   };
 
   const aiDataTooltip = (type, date) => {
-    const msg = `${type} extraídos pela Inteligência Artificial`;
+    const msg = `${type} extraídos pela NoHarm Care`;
 
     if (date) {
       return `${msg} em ${moment(date).format('DD/MM/YYYY hh:mm')}`;
@@ -340,7 +340,7 @@ export default function Patient({
               <Icon type={seeMore ? 'up' : 'down'} /> {seeMore ? 'Ver menos' : 'Ver mais'}
             </Button>
             {hasAIData && (
-              <Tooltip title="Veja os dados extraídos pela Inteligência Artificial">
+              <Tooltip title="Veja os dados extraídos pela NoHarm Care">
                 {'  '}
                 <InfoIcon />
               </Tooltip>
