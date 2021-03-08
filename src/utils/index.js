@@ -43,3 +43,13 @@ export const toDataSource = (list, uniqKey, toAdd = {}) =>
         };
       })
     : [];
+
+export const getFirstAndLastName = name => {
+  const nameArray = name.split(' ');
+
+  if (nameArray.length > 1) {
+    return `${nameArray[0]} ${nameArray.slice(-1)}`;
+  }
+
+  return name;
+};

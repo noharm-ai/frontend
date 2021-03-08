@@ -10,6 +10,7 @@ import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 import notification from '@components/notification';
 import Tag from '@components/Tag';
+import { getFirstAndLastName } from '@utils';
 
 import View from './View';
 import ClinicalNotesIndicator from './ClinicalNotesIndicator';
@@ -28,7 +29,9 @@ export default function ClinicalNotes({
   userId
 }) {
   const [positions, setPositions] = useState([]);
+  const [indicators, setIndicators] = useState([]);
   const [selectedPositions, selectPositions] = useState([]);
+  const [selectedIndicators, selectIndicators] = useState([]);
 
   useEffect(() => {
     if (saveStatus.success) {
@@ -50,16 +53,35 @@ export default function ClinicalNotes({
     setPositions(p);
   };
 
+  const handleIndicatorsChange = i => {
+    setIndicators(i);
+  };
+
   const search = () => {
     selectPositions(positions);
+    selectIndicators(indicators);
   };
 
   const getFilteredList = clinicalNotes => {
-    if (selectedPositions.length === 0) {
+    if (selectedPositions.length === 0 && selectedIndicators.length === 0) {
       return clinicalNotes;
     }
 
-    return clinicalNotes.filter(i => selectedPositions.indexOf(i.position) !== -1);
+    return clinicalNotes.filter(item => {
+      const hasPosition =
+        selectedPositions.length === 0 ? true : selectedPositions.indexOf(item.position) !== -1;
+
+      let hasIndicator = false;
+      if (selectedIndicators.length > 0) {
+        selectedIndicators.forEach(indicator => {
+          hasIndicator = hasIndicator || item[indicator] > 0;
+        });
+      } else {
+        hasIndicator = true;
+      }
+
+      return hasPosition && hasIndicator;
+    });
   };
 
   if (isFetching) {
@@ -91,13 +113,45 @@ export default function ClinicalNotes({
                   placeholder="Filtrar por cargo"
                   onChange={handlePositionChange}
                   allowClear
-                  style={{ minWidth: '250px' }}
+                  style={{ width: '90%' }}
                   mode="multiple"
                   optionFilterProp="children"
+                  dropdownMatchSelectWidth={false}
                 >
                   {positionList.map((p, i) => (
                     <Select.Option value={p} key={i}>
                       {p}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <label>Indicadores</label>
+                <Select
+                  placeholder="Filtrar por indicadores"
+                  onChange={handleIndicatorsChange}
+                  allowClear
+                  style={{ width: '100%' }}
+                  mode="multiple"
+                  optionFilterProp="children"
+                  dropdownMatchSelectWidth={false}
+                >
+                  {ClinicalNotesIndicator.list().map((indicator, i) => (
+                    <Select.Option value={indicator.key} key={indicator.key}>
+                      <span
+                        style={{
+                          backgroundColor: indicator.backgroundColor,
+                          borderColor: indicator.color,
+                          borderWidth: '1px',
+                          borderStyle: 'solid',
+                          borderRadius: '5px',
+                          padding: '0 2px',
+                          display: 'inline-block',
+                          fontWeight: 500
+                        }}
+                      >
+                        {indicator.label}
+                      </span>
                     </Select.Option>
                   ))}
                 </Select>
@@ -140,7 +194,7 @@ export default function ClinicalNotes({
                             <div>&nbsp;</div>
                           </div>
                           <div className="name">
-                            {c.prescriber}
+                            {getFirstAndLastName(c.prescriber)}
                             <span>{c.position}</span>
                           </div>
                           <div className="indicators">

@@ -79,11 +79,19 @@ export default function Patient({
     observation,
     intervention,
     prevIntervention,
-    existIntervention
+    existIntervention,
+    clinicalNotes,
+    notesInfo,
+    notesInfoDate,
+    notesSigns,
+    notesSignsDate
   } = prescription;
   const [interventionVisible, setInterventionVisibility] = useState(false);
   const [visible, setVisible] = useState(false);
   const [seeMore, setSeeMore] = useState(false);
+
+  const hasClinicalNotes = clinicalNotes != null;
+  const hasAIData = hasClinicalNotes && (notesSigns !== '' || notesInfo !== '');
 
   const showInterventionModal = () => {
     selectIntervention({
@@ -141,6 +149,16 @@ export default function Patient({
         </Tooltip>
       );
     }
+  };
+
+  const aiDataTooltip = (type, date) => {
+    const msg = `${type} extraídos pela NoHarm Care`;
+
+    if (date) {
+      return `${msg} em ${moment(date).format('DD/MM/YYYY hh:mm')}`;
+    }
+
+    return msg;
   };
 
   const closedStatus = ['a', 'n', 'x'];
@@ -266,6 +284,50 @@ export default function Patient({
                   <RichTextView text={observation} />
                 </div>
               </Cell>
+              {hasClinicalNotes && (
+                <>
+                  <Cell className="experimental">
+                    <strong>
+                      Dados{' '}
+                      <Tooltip title={aiDataTooltip('Dados', notesInfoDate)}>
+                        {' '}
+                        <InfoIcon />
+                      </Tooltip>{' '}
+                      :
+                    </strong>
+                    <div
+                      style={{
+                        maxHeight: '300px',
+                        overflow: 'auto',
+                        marginTop: '10px',
+                        minHeight: '60px'
+                      }}
+                    >
+                      {notesInfo === '' ? '--' : notesInfo}
+                    </div>
+                  </Cell>
+                  <Cell className="experimental">
+                    <strong>
+                      Sinais{' '}
+                      <Tooltip title={aiDataTooltip('Sinais', notesSignsDate)}>
+                        {' '}
+                        <InfoIcon />
+                      </Tooltip>{' '}
+                      :
+                    </strong>
+                    <div
+                      style={{
+                        maxHeight: '300px',
+                        overflow: 'auto',
+                        marginTop: '10px',
+                        minHeight: '60px'
+                      }}
+                    >
+                      {notesSigns === '' ? '--' : notesSigns}
+                    </div>
+                  </Cell>
+                </>
+              )}
               <Cell className="recalc">
                 <Button type="primary gtm-bt-update" onClick={updatePrescriptionData}>
                   Recalcular Prescrição
@@ -277,6 +339,12 @@ export default function Patient({
             <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
               <Icon type={seeMore ? 'up' : 'down'} /> {seeMore ? 'Ver menos' : 'Ver mais'}
             </Button>
+            {hasAIData && (
+              <Tooltip title="Veja os dados extraídos pela NoHarm Care">
+                {'  '}
+                <InfoIcon />
+              </Tooltip>
+            )}
           </Cell>
         </Wrapper>
       </Col>

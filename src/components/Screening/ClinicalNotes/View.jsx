@@ -18,7 +18,7 @@ import {
   WelcomeBubble
 } from './index.style';
 
-const helpLink = 'https://noharm.octadesk.com/kb/article/aba-evolucoes';
+const helpLink = 'https://noharm.octadesk.com/kb/article/noharm-care';
 
 export default function View({ selected, update, security, access_token, userId }) {
   const paperContainerRef = useRef(null);
@@ -170,8 +170,8 @@ export default function View({ selected, update, security, access_token, userId 
 
   const welcomeTooltip = (
     <WelcomeBubble>
-      A NoHarm criou uma <strong>Inteligência Artificial</strong> para destacar as partes mais
-      relevantes das evoluções.
+      A <strong>NoHarm Care</strong> é uma Inteligência Artificial que anota os indicadores de risco
+      do paciente nas evoluções.
       <br />
       <br />
       <strong>Você pode ajudar a treiná-la!</strong>
@@ -233,7 +233,7 @@ export default function View({ selected, update, security, access_token, userId 
       </PaperContainer>
       <Legend>* Nomes presentes na evolução são substituídos por três asteriscos (***).</Legend>
       <Legend>
-        * As anotações são geradas pela nossa <strong>Inteligência Artificial</strong>.{' '}
+        * As anotações são geradas pela <strong>NoHarm Care</strong>.{' '}
         <a href={helpLink} target="_blank" rel="noopener noreferrer" title="Saiba como ajudar">
           Você pode ajudar a treiná-la
         </a>
