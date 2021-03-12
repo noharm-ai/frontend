@@ -18,9 +18,10 @@ import {
   updatePrescriptionStatusThunk
 } from '@store/ducks/prescriptions/thunk';
 import { searchDrugsThunk } from '@store/ducks/drugs/thunk';
+import security from '@services/security';
 import ScreeningList from '@components/ScreeningList';
 
-const mapStateToProps = ({ segments, prescriptions, app, drugs }) => ({
+const mapStateToProps = ({ segments, prescriptions, app, drugs, user }) => ({
   segments: {
     error: segments.error,
     list: segments.list,
@@ -38,7 +39,8 @@ const mapStateToProps = ({ segments, prescriptions, app, drugs }) => ({
   filter: app.filter.screeningList,
   savedFilters: app.savedFilters.screeningList,
   drugs: drugs.search,
-  currentJourney: app.preferences.journey
+  currentJourney: app.preferences.journey,
+  security: security(user.account.roles)
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

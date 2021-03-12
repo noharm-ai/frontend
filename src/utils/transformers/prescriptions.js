@@ -26,12 +26,12 @@ const groupByPrescription = (list, prescriptionType, groupFunction, infusionList
     }
     drugArray[item.idPrescription].push(item);
   });
-
   const dsArray = [];
-  drugArray.forEach((item, index) => {
+  Object.keys(drugArray).forEach(idPrescription => {
+    const item = drugArray[idPrescription];
     if (groupFunction) {
       dsArray.push({
-        key: index,
+        key: idPrescription,
         value: groupFunction(
           toDataSource(item, 'idPrescriptionDrug', {
             prescriptionType,
@@ -42,7 +42,7 @@ const groupByPrescription = (list, prescriptionType, groupFunction, infusionList
       });
     } else {
       dsArray.push({
-        key: index,
+        key: idPrescription,
         value: toDataSource(item, 'idPrescriptionDrug', {
           prescriptionType,
           ...extraContent
@@ -50,7 +50,6 @@ const groupByPrescription = (list, prescriptionType, groupFunction, infusionList
       });
     }
   });
-
   return dsArray;
 };
 

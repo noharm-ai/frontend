@@ -79,6 +79,7 @@ export default function ScreeningList({
   fetchPrescriptionsList,
   checkScreening,
   prioritizationType,
+  security,
   ...restProps
 }) {
   const [sortOrder, setSortOrder] = useState({
@@ -231,6 +232,7 @@ export default function ScreeningList({
         prioritizationType={prioritizationType}
         fetchPrescriptionsList={fetchPrescriptionsList}
         isFetchingPrescription={isFetching}
+        hasPeriodLimit={!security.hasRole('nolimit')}
       />
       {!isFetching && info}
       <ScreeningTable

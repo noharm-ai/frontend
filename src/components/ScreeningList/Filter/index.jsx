@@ -73,7 +73,8 @@ export default function Filter({
   drugs,
   searchDrugs,
   match,
-  prioritizationType
+  prioritizationType,
+  hasPeriodLimit
 }) {
   const [open, setOpen] = useState(false);
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
@@ -184,7 +185,11 @@ export default function Filter({
   }, []); // eslint-disable-line
 
   const disabledDate = current => {
-    return current < subDays(new Date(), 8) || current > new Date();
+    if (hasPeriodLimit) {
+      return current < subDays(new Date(), 8) || current > new Date();
+    }
+
+    return false;
   };
 
   const search = () => {
