@@ -19,7 +19,7 @@ import { Wrapper, Box, Brand, FieldSet, ForgotPass } from './Login.style';
 const initialValues = {
   email: '',
   password: '',
-  keepMeLogged: false
+  keepMeLogged: true
 };
 const validationSchema = Yup.object().shape({
   email: Yup.string()
