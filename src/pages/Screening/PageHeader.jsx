@@ -40,7 +40,7 @@ const UnstyledButton = styled.button`
   }
 `;
 
-export default function PageHeader({ match, pageTitle, prescription, checkScreening, security }) {
+export default function PageHeader({ match, prescription, type, checkScreening }) {
   const id = parseInt(extractId(match.params.slug));
   const { isChecking, error } = prescription.check;
   const [isClinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
@@ -71,6 +71,59 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
   const createDate = moment(prescription.content.date);
   const expireDate = moment(prescription.content.expire);
 
+  const Title = ({ content, type }) => {
+    if (type === 'conciliation') {
+      return (
+        <Heading>
+          Conciliação nº{' '}
+          <Tooltip title="Clique para copiar o número da conciliação">
+            <UnstyledButton onClick={() => copyToClipboard(content.idPrescription)}>
+              {content.idPrescription}
+            </UnstyledButton>
+          </Tooltip>
+        </Heading>
+      );
+    }
+
+    if (!content.agg) {
+      return (
+        <Heading>
+          Prescrição nº{' '}
+          <Tooltip title="Clique para copiar o número da prescrição">
+            <UnstyledButton onClick={() => copyToClipboard(prescription.content.idPrescription)}>
+              {prescription.content.idPrescription}
+            </UnstyledButton>
+          </Tooltip>
+          <span className={expireDate.diff(now, 'minute') < 0 ? 'legend red' : 'legend'}>
+            Liberada em {prescription.content.dateFormated}
+            {prescription.content.expire && <>, válida até {prescription.content.expireFormated}</>}
+            {prescription.content.expire && expireDate.diff(createDate, 'hour') < 23 && (
+              <Tooltip title="Intercorrência">
+                {' '}
+                <InfoIcon />
+              </Tooltip>
+            )}
+          </span>
+        </Heading>
+      );
+    }
+    // aggregated
+
+    return (
+      <Heading>
+        Atendimento nº{' '}
+        <Tooltip title="Clique para copiar o número do atendimento">
+          <UnstyledButton onClick={() => copyToClipboard(prescription.content.admissionNumber)}>
+            {prescription.content.admissionNumber}
+          </UnstyledButton>
+        </Tooltip>
+        <span className="legend">
+          Prescrições Agregadas de {prescription.content.dateOnlyFormated}
+        </span>
+      </Heading>
+    );
+  };
+
   // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
@@ -86,47 +139,7 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
     <>
       <Row type="flex" css="margin-bottom: 15px;">
         <Col span={24} md={10}>
-          <Heading>
-            {!prescription.content.agg && (
-              <>
-                Prescrição nº{' '}
-                <Tooltip title="Clique para copiar o número da prescrição">
-                  <UnstyledButton
-                    onClick={() => copyToClipboard(prescription.content.idPrescription)}
-                  >
-                    {prescription.content.idPrescription}
-                  </UnstyledButton>
-                </Tooltip>
-                <span className={expireDate.diff(now, 'minute') < 0 ? 'legend red' : 'legend'}>
-                  Liberada em {prescription.content.dateFormated}
-                  {prescription.content.expire && (
-                    <>, válida até {prescription.content.expireFormated}</>
-                  )}
-                  {prescription.content.expire && expireDate.diff(createDate, 'hour') < 23 && (
-                    <Tooltip title="Intercorrência">
-                      {' '}
-                      <InfoIcon />
-                    </Tooltip>
-                  )}
-                </span>
-              </>
-            )}
-            {prescription.content.agg && (
-              <>
-                Atendimento nº{' '}
-                <Tooltip title="Clique para copiar o número do atendimento">
-                  <UnstyledButton
-                    onClick={() => copyToClipboard(prescription.content.admissionNumber)}
-                  >
-                    {prescription.content.admissionNumber}
-                  </UnstyledButton>
-                </Tooltip>
-                <span className="legend">
-                  Prescrições Agregadas de {prescription.content.dateOnlyFormated}
-                </span>
-              </>
-            )}
-          </Heading>
+          <Title content={prescription.content} type={type} />
         </Col>
         <Col
           span={24}
@@ -177,15 +190,18 @@ export default function PageHeader({ match, pageTitle, prescription, checkScreen
             <Icon type="file-add" />
             Evolução
           </Button>
-          <Button
-            type="primary gtm-bt-alert"
-            onClick={() => setClinicalAlertVisibility(true)}
-            style={{ marginRight: '5px' }}
-            ghost={!prescription.content.alert}
-          >
-            <Icon type="alert" />
-            Alerta
-          </Button>
+          {type !== 'conciliation' && (
+            <Button
+              type="primary gtm-bt-alert"
+              onClick={() => setClinicalAlertVisibility(true)}
+              style={{ marginRight: '5px' }}
+              ghost={!prescription.content.alert}
+            >
+              <Icon type="alert" />
+              Alerta
+            </Button>
+          )}
+
           <Button type="default gtm-bt-close" onClick={close}>
             Fechar
           </Button>

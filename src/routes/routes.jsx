@@ -20,6 +20,7 @@ import KnowledgeBase from '@pages/KnowledgeBase';
 import KnowledgeBaseArticle from '@pages/KnowledgeBase/Article';
 import UserConfig from '@pages/UserConfig';
 import Password from '@pages/Password';
+import Conciliation from '@pages/Conciliation';
 
 const routes = [
   {
@@ -82,6 +83,13 @@ const routes = [
     path: '/prescricao/:slug',
     component: withAuth({
       component: Screening
+    })
+  },
+  {
+    exact: true,
+    path: '/conciliacao/:id',
+    component: withAuth({
+      component: Conciliation
     })
   },
   {
