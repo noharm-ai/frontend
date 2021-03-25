@@ -9,6 +9,7 @@ import BackTop from '@components/BackTop';
 
 import PageHeader from '@containers/Conciliation/PageHeader';
 import Patient from '@containers/Screening/Patient';
+import ConciliationDrugList from '@containers/Conciliation/ConciliationDrugList';
 
 import { BoxWrapper } from './index.style';
 
@@ -53,7 +54,9 @@ export default function Screening({ match, fetchScreeningById, isFetching, error
         </Row>
       </BoxWrapper>
 
-      <Row type="flex" gutter={24} />
+      <div style={{ marginTop: '15px' }}>
+        <ConciliationDrugList />
+      </div>
 
       <BackTop />
     </>
