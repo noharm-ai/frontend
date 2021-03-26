@@ -93,7 +93,8 @@ export default function ScreeningList({
   const { isFetching, list, error, check } = prescriptions;
   const bag = {
     checkScreening,
-    check
+    check,
+    prioritizationType
   };
   const dataSource = toDataSource(list, null, bag);
   const columns = columnsTable(sortOrder, filter);

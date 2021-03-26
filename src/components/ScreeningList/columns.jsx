@@ -62,7 +62,14 @@ const NestedTableContainer = styled.div`
   margin-bottom: 35px;
 `;
 
-const ScreeningActions = ({ idPrescription, status, slug, checkScreening, check }) => {
+const ScreeningActions = ({
+  idPrescription,
+  status,
+  slug,
+  checkScreening,
+  check,
+  prioritizationType
+}) => {
   const checkAction = () => checkScreening(idPrescription, 's');
 
   const isDisabled = check.idPrescription !== idPrescription && check.isChecking;
@@ -92,7 +99,13 @@ const ScreeningActions = ({ idPrescription, status, slug, checkScreening, check 
       )}
       <Tooltip title="Ver detalhes" placement="left">
         <span>
-          <Link type="secondary gtm-bt-detail" href={`/prescricao/${slug}`} target="_blank">
+          <Link
+            type="secondary gtm-bt-detail"
+            href={
+              prioritizationType === 'conciliation' ? `/conciliacao/${slug}` : `/prescricao/${slug}`
+            }
+            target="_blank"
+          >
             <Icon type="search" />
           </Link>
         </span>

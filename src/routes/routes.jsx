@@ -80,6 +80,14 @@ const routes = [
   },
   {
     exact: true,
+    path: '/priorizacao/conciliacoes',
+    component: withAuth({
+      component: ScreeningList,
+      prioritizationType: 'conciliation'
+    })
+  },
+  {
+    exact: true,
     path: '/prescricao/:slug',
     component: withAuth({
       component: Screening
@@ -183,6 +191,14 @@ const routes = [
     component: withAuth({
       component: ScreeningList,
       prioritizationType: 'prescription'
+    })
+  },
+  {
+    exact: true,
+    path: '/priorizacao/conciliacoes/:startDate',
+    component: withAuth({
+      component: ScreeningList,
+      prioritizationType: 'conciliation'
     })
   }
 ];
