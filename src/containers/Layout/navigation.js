@@ -21,7 +21,8 @@ export default [
         key: '/priorizacao/conciliacoes',
         text: 'menu.prioritization-conciliation',
         icon: 'swap',
-        id: 'gtm-lnk-priorizacao-conciliacao'
+        id: 'gtm-lnk-priorizacao-conciliacao',
+        role: 'suporte'
       }
     ]
   },
