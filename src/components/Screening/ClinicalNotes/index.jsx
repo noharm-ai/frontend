@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { format, parseISO } from 'date-fns';
 
 import { annotationManifest } from '@utils/featureManifest';
@@ -32,6 +32,55 @@ export default function ClinicalNotes({
   const [indicators, setIndicators] = useState([]);
   const [selectedPositions, selectPositions] = useState([]);
   const [selectedIndicators, selectIndicators] = useState([]);
+  const [filteredList, setFilteredList] = useState([]);
+  const filterList = useCallback(
+    stateList => {
+      const filteredGroup = [];
+      Object.keys(stateList).forEach(g => {
+        const clinicalNotes = stateList[g];
+
+        if (selectedPositions.length === 0 && selectedIndicators.length === 0) {
+          filteredGroup.push({
+            label: g,
+            value: clinicalNotes
+          });
+        } else {
+          const filteredNotes = clinicalNotes.filter(item => {
+            const hasPosition =
+              selectedPositions.length === 0
+                ? true
+                : selectedPositions.indexOf(item.position) !== -1;
+
+            let hasIndicator = false;
+            if (selectedIndicators.length > 0) {
+              selectedIndicators.forEach(indicator => {
+                hasIndicator = hasIndicator || item[indicator] > 0;
+              });
+            } else {
+              hasIndicator = true;
+            }
+
+            return hasPosition && hasIndicator;
+          });
+
+          if (filteredNotes.length) {
+            filteredGroup.push({
+              label: g,
+              value: filteredNotes
+            });
+          }
+        }
+      });
+
+      if (filteredGroup.length) {
+        select(filteredGroup[0].value[0]);
+      } else {
+        select({});
+      }
+      return filteredGroup;
+    },
+    [selectedIndicators, selectedPositions, select]
+  );
 
   useEffect(() => {
     if (saveStatus.success) {
@@ -49,6 +98,10 @@ export default function ClinicalNotes({
     }
   }, [saveStatus]);
 
+  useEffect(() => {
+    setFilteredList(filterList(list));
+  }, [filterList, list]);
+
   const handlePositionChange = p => {
     setPositions(p);
   };
@@ -60,28 +113,6 @@ export default function ClinicalNotes({
   const search = () => {
     selectPositions(positions);
     selectIndicators(indicators);
-  };
-
-  const getFilteredList = clinicalNotes => {
-    if (selectedPositions.length === 0 && selectedIndicators.length === 0) {
-      return clinicalNotes;
-    }
-
-    return clinicalNotes.filter(item => {
-      const hasPosition =
-        selectedPositions.length === 0 ? true : selectedPositions.indexOf(item.position) !== -1;
-
-      let hasIndicator = false;
-      if (selectedIndicators.length > 0) {
-        selectedIndicators.forEach(indicator => {
-          hasIndicator = hasIndicator || item[indicator] > 0;
-        });
-      } else {
-        hasIndicator = true;
-      }
-
-      return hasPosition && hasIndicator;
-    });
   };
 
   if (isFetching) {
@@ -170,19 +201,19 @@ export default function ClinicalNotes({
             </FilterContainer>
           )}
           <List>
-            {Object.keys(list).length === 0 && (
+            {filteredList.length === 0 && (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
                 description="Nenhuma evolução encontrada"
               />
             )}
-            {Object.keys(list).length > 0 && (
+            {filteredList.length > 0 && (
               <>
-                {Object.keys(list).map(g => (
-                  <React.Fragment key={g}>
-                    <h2>{format(parseISO(g), 'dd/MM/yyyy')}</h2>
+                {filteredList.map(group => (
+                  <React.Fragment key={group.label}>
+                    <h2>{format(parseISO(group.label), 'dd/MM/yyyy')}</h2>
                     <div className="line-group">
-                      {getFilteredList(list[g]).map((c, i) => (
+                      {group.value.map((c, i) => (
                         <div
                           className={`line ${selected && c.id === selected.id ? 'active' : ''}`}
                           key={i}
