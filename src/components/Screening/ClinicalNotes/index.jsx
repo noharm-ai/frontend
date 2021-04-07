@@ -34,12 +34,12 @@ export default function ClinicalNotes({
   const [selectedIndicators, selectIndicators] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
   const filterList = useCallback(
-    stateList => {
+    (stateList, selectFirst, positionsArray, indicatorsArray) => {
       const filteredGroup = [];
       Object.keys(stateList).forEach(g => {
         const clinicalNotes = stateList[g];
 
-        if (selectedPositions.length === 0 && selectedIndicators.length === 0) {
+        if (positionsArray.length === 0 && indicatorsArray.length === 0) {
           filteredGroup.push({
             label: g,
             value: clinicalNotes
@@ -47,13 +47,11 @@ export default function ClinicalNotes({
         } else {
           const filteredNotes = clinicalNotes.filter(item => {
             const hasPosition =
-              selectedPositions.length === 0
-                ? true
-                : selectedPositions.indexOf(item.position) !== -1;
+              positionsArray.length === 0 ? true : positionsArray.indexOf(item.position) !== -1;
 
             let hasIndicator = false;
-            if (selectedIndicators.length > 0) {
-              selectedIndicators.forEach(indicator => {
+            if (indicatorsArray.length > 0) {
+              indicatorsArray.forEach(indicator => {
                 hasIndicator = hasIndicator || item[indicator] > 0;
               });
             } else {
@@ -72,14 +70,17 @@ export default function ClinicalNotes({
         }
       });
 
-      if (filteredGroup.length) {
-        select(filteredGroup[0].value[0]);
-      } else {
-        select({});
+      if (selectFirst) {
+        if (filteredGroup.length) {
+          select(filteredGroup[0].value[0]);
+        } else {
+          select({});
+        }
       }
+
       return filteredGroup;
     },
-    [selectedIndicators, selectedPositions, select]
+    [select]
   );
 
   useEffect(() => {
@@ -99,8 +100,8 @@ export default function ClinicalNotes({
   }, [saveStatus]);
 
   useEffect(() => {
-    setFilteredList(filterList(list));
-  }, [filterList, list]);
+    setFilteredList(filterList(list, false, selectedPositions, selectedIndicators));
+  }, [list]); //eslint-disable-line
 
   const handlePositionChange = p => {
     setPositions(p);
@@ -113,6 +114,8 @@ export default function ClinicalNotes({
   const search = () => {
     selectPositions(positions);
     selectIndicators(indicators);
+
+    setFilteredList(filterList(list, true, positions, indicators));
   };
 
   if (isFetching) {
