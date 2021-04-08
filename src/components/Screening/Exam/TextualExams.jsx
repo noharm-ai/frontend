@@ -3,6 +3,7 @@ import styled from 'styled-components/macro';
 import { format } from 'date-fns';
 import { Row, Col } from 'antd';
 
+import Card from '@components/Card';
 import Icon from '@components/Icon';
 import Empty from '@components/Empty';
 import Table, { NestedTableContainer } from '@components/Table';
@@ -14,6 +15,7 @@ export const PaperContainer = styled.div`
   background: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   max-width: 640px;
+  min-height: 300px;
   width: 100%;
   margin-bottom: 15px;
   margin-left: 30px;
@@ -83,38 +85,40 @@ export default function TextualExams({ record }) {
 
   return (
     <NestedTableContainer>
-      <Row gutter={8} type="flex" justify="center">
-        <Col md={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Table
-            columns={expandedColumns}
-            pagination={false}
-            locale={{
-              emptyText: (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description="Nenhum exame encontrado."
-                />
-              )
-            }}
-            dataSource={dsHistory}
-            rowClassName={rowClassName}
-            onRow={r => ({
-              onClick: () => {
-                select(r);
-              }
-            })}
-          />
-        </Col>
-        <Col md={18} style={{ display: 'flex', paddingTop: '35px' }}>
-          <PaperContainer>
-            <Paper
-              dangerouslySetInnerHTML={{
-                __html: selected.value
+      <Card>
+        <Row gutter={8} type="flex" justify="center">
+          <Col md={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Table
+              columns={expandedColumns}
+              pagination={false}
+              locale={{
+                emptyText: (
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description="Nenhum exame encontrado."
+                  />
+                )
               }}
+              dataSource={dsHistory}
+              rowClassName={rowClassName}
+              onRow={r => ({
+                onClick: () => {
+                  select(r);
+                }
+              })}
             />
-          </PaperContainer>
-        </Col>
-      </Row>
+          </Col>
+          <Col md={18} style={{ display: 'flex', paddingTop: '32px' }}>
+            <PaperContainer>
+              <Paper
+                dangerouslySetInnerHTML={{
+                  __html: selected.value
+                }}
+              />
+            </PaperContainer>
+          </Col>
+        </Row>
+      </Card>
     </NestedTableContainer>
   );
 }
