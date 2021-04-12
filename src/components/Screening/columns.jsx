@@ -278,6 +278,11 @@ const DrugTags = ({ drug }) => (
         <Tag color="orange">C</Tag>
       </Tooltip>
     )}
+    {drug.q && (
+      <Tooltip title="Quimioterápico">
+        <Tag color="cyan">Q</Tag>
+      </Tooltip>
+    )}
   </span>
 );
 

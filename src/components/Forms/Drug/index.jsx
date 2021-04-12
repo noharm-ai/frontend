@@ -38,6 +38,7 @@ export default function Drug({
     idDrug,
     idMeasureUnit,
     antimicro,
+    chemo,
     mav,
     controlled,
     notdefault,
@@ -61,6 +62,7 @@ export default function Drug({
     formId,
     id: idDrug,
     antimicro: antimicro == null ? false : antimicro,
+    chemo: chemo == null ? false : chemo,
     mav: mav == null ? false : mav,
     controlled: controlled == null ? false : controlled,
     notdefault: notdefault == null ? false : notdefault,
@@ -104,11 +106,7 @@ export default function Drug({
   }, [success, error, afterSaveDrug, fetchReferencesList, match.params]);
 
   return (
-    <Formik
-      enableReinitialize
-      onSubmit={saveDrug}
-      initialValues={initialValues}
-    >
+    <Formik enableReinitialize onSubmit={saveDrug} initialValues={initialValues}>
       {({ handleSubmit, isValid }) => (
         <form onSubmit={handleSubmit}>
           <FormContainer>

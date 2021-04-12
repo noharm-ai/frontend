@@ -15,6 +15,7 @@ export default function Base() {
   const {
     antimicro,
     mav,
+    chemo,
     controlled,
     notdefault,
     maxDose,
@@ -105,7 +106,10 @@ export default function Base() {
                 name="whiteList"
                 id="whiteList"
               >
-                <Tooltip title="Medicamento isento de Validação e Escore (Ex.: Diluentes)" underline>
+                <Tooltip
+                  title="Medicamento isento de Validação e Escore (Ex.: Diluentes)"
+                  underline
+                >
                   Sem validação
                 </Tooltip>
               </Checkbox>
@@ -118,9 +122,23 @@ export default function Base() {
                 name="tube"
                 id="tube"
               >
-                <Tooltip title="Medicamento contraindicado via Sonda Nasoenteral, Nasogástrica, Enteral, Jejunostomia ou Gastrostomia" underline>
+                <Tooltip
+                  title="Medicamento contraindicado via Sonda Nasoenteral, Nasogástrica, Enteral, Jejunostomia ou Gastrostomia"
+                  underline
+                >
                   Sonda
                 </Tooltip>
+              </Checkbox>
+            </Col>
+            <Col xs={8}>
+              <Checkbox
+                onChange={({ target }) => setFieldValue('chemo', !target.value)}
+                value={chemo}
+                checked={chemo}
+                name="chemo"
+                id="chemo"
+              >
+                Quimioterápico
               </Checkbox>
             </Col>
           </div>
@@ -157,7 +175,8 @@ export default function Base() {
             max={99999}
             value={maxTime}
             onChange={value => setFieldValue('maxTime', value)}
-          />{' dias'}
+          />
+          {' dias'}
         </Box>
       </Col>
       <Col xs={24}>
