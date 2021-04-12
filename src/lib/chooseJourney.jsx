@@ -8,6 +8,10 @@ const JourneySwitch = ({ journey }) => {
     return <Redirect to="/priorizacao/prescricoes" />;
   }
 
+  if (journey === 'conciliation') {
+    return <Redirect to="/priorizacao/conciliacoes" />;
+  }
+
   return <Redirect to="/priorizacao/pacientes" />;
 };
 

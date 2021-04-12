@@ -89,8 +89,9 @@ export default function Filter({
         idDept: filter.idDepartment,
         idDrug: filter.idDrug,
         pending: filter.pending,
-        currentDepartment: prioritizationType === 'prescription' ? 0 : filter.currentDepartment,
-        agg: prioritizationType === 'prescription' ? 0 : 1,
+        currentDepartment: prioritizationType === 'patient' ? filter.currentDepartment : 0,
+        agg: prioritizationType === 'patient' ? 1 : 0,
+        conciliation: prioritizationType === 'conciliation' ? 1 : 0,
         startDate: date[0] ? date[0].format('YYYY-MM-DD') : 'all',
         endDate: date[1] ? date[1].format('YYYY-MM-DD') : 'all'
       };
