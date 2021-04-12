@@ -16,6 +16,13 @@ export default [
         text: 'menu.prioritization-patient',
         icon: 'user',
         id: 'gtm-lnk-priorizacao-paciente'
+      },
+      {
+        key: '/priorizacao/conciliacoes',
+        text: 'menu.prioritization-conciliation',
+        icon: 'swap',
+        id: 'gtm-lnk-priorizacao-conciliacao',
+        role: 'suporte'
       }
     ]
   },

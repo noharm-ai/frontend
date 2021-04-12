@@ -20,6 +20,7 @@ import KnowledgeBase from '@pages/KnowledgeBase';
 import KnowledgeBaseArticle from '@pages/KnowledgeBase/Article';
 import UserConfig from '@pages/UserConfig';
 import Password from '@pages/Password';
+import Conciliation from '@pages/Conciliation';
 
 const routes = [
   {
@@ -79,9 +80,24 @@ const routes = [
   },
   {
     exact: true,
+    path: '/priorizacao/conciliacoes',
+    component: withAuth({
+      component: ScreeningList,
+      prioritizationType: 'conciliation'
+    })
+  },
+  {
+    exact: true,
     path: '/prescricao/:slug',
     component: withAuth({
       component: Screening
+    })
+  },
+  {
+    exact: true,
+    path: '/conciliacao/:id',
+    component: withAuth({
+      component: Conciliation
     })
   },
   {
@@ -175,6 +191,14 @@ const routes = [
     component: withAuth({
       component: ScreeningList,
       prioritizationType: 'prescription'
+    })
+  },
+  {
+    exact: true,
+    path: '/priorizacao/conciliacoes/:startDate',
+    component: withAuth({
+      component: ScreeningList,
+      prioritizationType: 'conciliation'
     })
   }
 ];

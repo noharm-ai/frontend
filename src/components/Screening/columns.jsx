@@ -14,6 +14,7 @@ import Dropdown from '@components/Dropdown';
 import Alert from '@components/Alert';
 import RichTextView from '@components/RichTextView';
 import InterventionStatus from '@models/InterventionStatus';
+import { Select } from '@components/Inputs';
 
 import SolutionCalculator from './PrescriptionDrug/components/SolutionCalculator';
 
@@ -384,6 +385,72 @@ export const expandedRowRender = bag => record => {
 
 const flags = ['green', 'yellow', 'orange', 'red', 'red'];
 
+const dose = bag => ({
+  title: 'Dose',
+  dataIndex: 'dosage',
+  width: 130,
+  render: (text, prescription) => {
+    if (prescription.total && prescription.infusion) {
+      return (
+        <Tooltip title="Abrir calculadora de solução" placement="top">
+          <span
+            onClick={() => bag.handleRowExpand(prescription)}
+            style={{ cursor: 'pointer', fontWeight: 600 }}
+          >
+            {prescription.infusion.totalVol} mL
+          </span>
+        </Tooltip>
+      );
+    }
+
+    if (!prescription.measureUnit) {
+      return prescription.dose;
+    }
+
+    return (
+      <Tooltip title={prescription.measureUnit.label} placement="top">
+        {prescription.dosage}
+      </Tooltip>
+    );
+  }
+});
+
+const drug = (bag, addkey) => ({
+  key: addkey ? 'idPrescriptionDrug' : null,
+  title: 'Medicamento',
+  align: 'left',
+  render: record => {
+    if (record.total) {
+      return (
+        <Tooltip title="Abrir calculadora de solução" placement="top">
+          <span
+            className="gtm-tag-calc"
+            onClick={() => bag.handleRowExpand(record)}
+            style={{ cursor: 'pointer' }}
+          >
+            <Icon type="calculator" style={{ fontSize: 16, marginRight: '10px' }} />
+            Calculadora de solução
+          </span>
+        </Tooltip>
+      );
+    }
+
+    const href = `/medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(record.drug)}/${
+      record.doseconv
+    }/${record.dayFrequency}`;
+    return (
+      <>
+        <Tooltip title="Ver Medicamento" placement="top">
+          <TableLink href={href} target="_blank" rel="noopener noreferrer">
+            {record.drug}
+          </TableLink>
+        </Tooltip>
+        <DrugTags drug={record} />
+      </>
+    );
+  }
+});
+
 const drugInfo = bag => [
   {
     key: 'idPrescriptionDrug',
@@ -402,40 +469,7 @@ const drugInfo = bag => [
       );
     }
   },
-  {
-    title: 'Medicamento',
-    align: 'left',
-    render: record => {
-      if (record.total) {
-        return (
-          <Tooltip title="Abrir calculadora de solução" placement="top">
-            <span
-              className="gtm-tag-calc"
-              onClick={() => bag.handleRowExpand(record)}
-              style={{ cursor: 'pointer' }}
-            >
-              <Icon type="calculator" style={{ fontSize: 16, marginRight: '10px' }} />
-              Calculadora de solução
-            </span>
-          </Tooltip>
-        );
-      }
-
-      const href = `/medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(record.drug)}/${
-        record.doseconv
-      }/${record.dayFrequency}`;
-      return (
-        <>
-          <Tooltip title="Ver Medicamento" placement="top">
-            <TableLink href={href} target="_blank" rel="noopener noreferrer">
-              {record.drug}
-            </TableLink>
-          </Tooltip>
-          <DrugTags drug={record} />
-        </>
-      );
-    }
-  },
+  drug(bag, false),
   {
     title: <Tooltip title="Período de uso">Período</Tooltip>,
     width: 70,
@@ -463,63 +497,37 @@ const drugInfo = bag => [
       );
     }
   },
-  {
-    title: 'Dose',
-    dataIndex: 'dosage',
-    width: 130,
-    render: (text, prescription) => {
-      if (prescription.total && prescription.infusion) {
-        return (
-          <Tooltip title="Abrir calculadora de solução" placement="top">
-            <span
-              onClick={() => bag.handleRowExpand(prescription)}
-              style={{ cursor: 'pointer', fontWeight: 600 }}
-            >
-              {prescription.infusion.totalVol} mL
-            </span>
-          </Tooltip>
-        );
-      }
-
-      if (!prescription.measureUnit) {
-        return prescription.dose;
-      }
-
-      return (
-        <Tooltip title={prescription.measureUnit.label} placement="top">
-          {prescription.dosage}
-        </Tooltip>
-      );
-    }
-  }
+  dose(bag)
 ];
 
-const frequencyAndTime = [
-  {
-    title: 'Frequência',
-    dataIndex: 'frequency',
-    width: 150,
-    render: (text, prescription) => {
-      if (prescription.dividerRow) {
-        return null;
-      }
+const frequency = {
+  title: 'Frequência',
+  dataIndex: 'frequency',
+  width: 150,
+  render: (text, prescription) => {
+    if (prescription.dividerRow) {
+      return null;
+    }
 
-      if (isEmpty(prescription.frequency)) {
-        return (
-          <Tooltip title="Frequência obtida por conversão" placement="top">
-            {' '}
-            <InfoIcon />
-          </Tooltip>
-        );
-      }
-
+    if (isEmpty(prescription.frequency)) {
       return (
-        <Tooltip title={prescription.frequency.label} placement="top">
-          {prescription.frequency.label}
+        <Tooltip title="Frequência obtida por conversão" placement="top">
+          {' '}
+          <InfoIcon />
         </Tooltip>
       );
     }
-  },
+
+    return (
+      <Tooltip title={prescription.frequency.label} placement="top">
+        {prescription.frequency.label}
+      </Tooltip>
+    );
+  }
+};
+
+const frequencyAndTime = [
+  frequency,
   {
     title: 'Horários',
     dataIndex: 'time',
@@ -540,70 +548,72 @@ const stageAndInfusion = [
   }
 ];
 
+const route = bag => ({
+  title: 'Via',
+  dataIndex: 'route',
+  width: 85
+});
+
+const tags = bag => ({
+  title: 'Tags',
+  width: 50,
+  align: 'center',
+  render: (text, prescription) => (
+    <TableTags>
+      <span className="tag gtm-tag-check" onClick={() => bag.handleRowExpand(prescription)}>
+        {prescription.checked && (
+          <Tooltip title="Checado anteriormente">
+            <Icon type="check" style={{ fontSize: 18, color: '#52c41a' }} />
+          </Tooltip>
+        )}
+      </span>
+      <span className="tag gtm-tag-msg" onClick={() => bag.handleRowExpand(prescription)}>
+        {prescription.recommendation && prescription.recommendation !== 'None' && (
+          <Tooltip title="Possui observação médica">
+            <Icon type="message" style={{ fontSize: 18, color: '#108ee9' }} />
+          </Tooltip>
+        )}
+      </span>
+      <span className="tag gtm-ico-form" onClick={() => bag.handleRowExpand(prescription)}>
+        {prescription.prevNotes && prescription.prevNotes !== 'None' && (
+          <Tooltip title="Possui anotação">
+            <Icon type="form" style={{ fontSize: 18, color: '#108ee9' }} />
+          </Tooltip>
+        )}
+      </span>
+      <span className="tag gtm-tag-warn" onClick={() => bag.handleRowExpand(prescription)}>
+        {!isEmpty(prescription.prevIntervention) && (
+          <Tooltip title="Possui intervenção anterior">
+            <Icon type="warning" style={{ fontSize: 18, color: '#fa8c16' }} />
+          </Tooltip>
+        )}
+        {isEmpty(prescription.prevIntervention) && prescription.existIntervention && (
+          <Tooltip title="Possui intervenção anterior já resolvida">
+            <Icon type="warning" style={{ fontSize: 18, color: 'gray' }} />
+          </Tooltip>
+        )}
+      </span>
+      <span className="tag gtm-tag-stop" onClick={() => bag.handleRowExpand(prescription)}>
+        {prescription.suspended && (
+          <Tooltip title="Suspenso">
+            <Icon type="stop" style={{ fontSize: 18, color: '#f5222d' }} />
+          </Tooltip>
+        )}
+      </span>
+      <span className="tag gtm-tag-alert" onClick={() => bag.handleRowExpand(prescription)}>
+        {!isEmpty(prescription.alerts) && (
+          <Tooltip title="Alertas">
+            <Tag color="red" style={{ marginLeft: '2px' }}>
+              {prescription.alerts.length}
+            </Tag>
+          </Tooltip>
+        )}
+      </span>
+    </TableTags>
+  )
+});
+
 const actionColumns = bag => [
-  {
-    title: 'Via',
-    dataIndex: 'route',
-    width: 85
-  },
-  {
-    title: 'Tags',
-    width: 50,
-    align: 'center',
-    render: (text, prescription) => (
-      <TableTags>
-        <span className="tag gtm-tag-check" onClick={() => bag.handleRowExpand(prescription)}>
-          {prescription.checked && (
-            <Tooltip title="Checado anteriormente">
-              <Icon type="check" style={{ fontSize: 18, color: '#52c41a' }} />
-            </Tooltip>
-          )}
-        </span>
-        <span className="tag gtm-tag-msg" onClick={() => bag.handleRowExpand(prescription)}>
-          {prescription.recommendation && prescription.recommendation !== 'None' && (
-            <Tooltip title="Possui observação médica">
-              <Icon type="message" style={{ fontSize: 18, color: '#108ee9' }} />
-            </Tooltip>
-          )}
-        </span>
-        <span className="tag gtm-ico-form" onClick={() => bag.handleRowExpand(prescription)}>
-          {prescription.prevNotes && prescription.prevNotes !== 'None' && (
-            <Tooltip title="Possui anotação">
-              <Icon type="form" style={{ fontSize: 18, color: '#108ee9' }} />
-            </Tooltip>
-          )}
-        </span>
-        <span className="tag gtm-tag-warn" onClick={() => bag.handleRowExpand(prescription)}>
-          {!isEmpty(prescription.prevIntervention) && (
-            <Tooltip title="Possui intervenção anterior">
-              <Icon type="warning" style={{ fontSize: 18, color: '#fa8c16' }} />
-            </Tooltip>
-          )}
-          {isEmpty(prescription.prevIntervention) && prescription.existIntervention && (
-            <Tooltip title="Possui intervenção anterior já resolvida">
-              <Icon type="warning" style={{ fontSize: 18, color: 'gray' }} />
-            </Tooltip>
-          )}
-        </span>
-        <span className="tag gtm-tag-stop" onClick={() => bag.handleRowExpand(prescription)}>
-          {prescription.suspended && (
-            <Tooltip title="Suspenso">
-              <Icon type="stop" style={{ fontSize: 18, color: '#f5222d' }} />
-            </Tooltip>
-          )}
-        </span>
-        <span className="tag gtm-tag-alert" onClick={() => bag.handleRowExpand(prescription)}>
-          {!isEmpty(prescription.alerts) && (
-            <Tooltip title="Alertas">
-              <Tag color="red" style={{ marginLeft: '2px' }}>
-                {prescription.alerts.length}
-              </Tag>
-            </Tooltip>
-          )}
-        </span>
-      </TableTags>
-    )
-  },
   {
     title: 'Ações',
     dataIndex: 'intervention',
@@ -611,6 +621,27 @@ const actionColumns = bag => [
     render: (text, prescription) => <Action {...prescription} {...bag} />
   }
 ];
+
+const relationColumn = bag => ({
+  title: 'Prescrição vigente',
+  width: 300,
+  render: (text, prescription) => {
+    return (
+      <Select
+        mode="multiple"
+        optionFilterProp="children"
+        style={{ width: '100%' }}
+        placeholder="Relação com a prescrição vigente"
+      >
+        {bag.uniqueDrugList.map(({ idDrug, name }) => (
+          <Select.Option key={idDrug} value={idDrug}>
+            {name}
+          </Select.Option>
+        ))}
+      </Select>
+    );
+  }
+});
 
 export const isPendingValidation = record =>
   (!record.whiteList && !record.checked) ||
@@ -620,11 +651,27 @@ export const isPendingValidation = record =>
 export const solutionColumns = bag => [
   ...drugInfo(bag),
   ...stageAndInfusion,
+  route(bag),
+  tags(bag),
+  ...actionColumns(bag)
+];
+
+export const conciliationColumns = bag => [
+  drug(bag, true),
+  dose(bag),
+  frequency,
+  relationColumn(bag),
   ...actionColumns(bag)
 ];
 
 export default (filteredInfo, bag) => {
-  const columns = [...drugInfo(bag), ...frequencyAndTime, ...actionColumns(bag)];
+  const columns = [
+    ...drugInfo(bag),
+    ...frequencyAndTime,
+    route(bag),
+    tags(bag),
+    ...actionColumns(bag)
+  ];
 
   columns[0] = {
     ...columns[0],

@@ -27,7 +27,7 @@ const isExpired = date => {
   return false;
 };
 
-const rowClassName = record => {
+export const rowClassName = record => {
   const classes = [];
 
   if (record.total) {

@@ -141,6 +141,29 @@ const Table = styled(AntTable)`
     background: #e6f7ff;
   }
 
+  .selectable {
+    cursor: pointer;
+    font-weight: 500;
+
+    .anticon {
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.64, 0, 0.78, 0);
+
+      svg {
+        transition: all 0.3s cubic-bezier(0.64, 0, 0.78, 0);
+      }
+    }
+
+    &:hover,
+    &.active {
+      color: #1890ff;
+
+      .anticon {
+        opacity: 1;
+      }
+    }
+  }
+
   .hidden-sorter {
     .ant-table-column-sorters {
       display: none !important;

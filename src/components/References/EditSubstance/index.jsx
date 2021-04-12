@@ -108,70 +108,61 @@ export default function EditSubstance({
           </Heading>
         </Col>
         <Col md={24 - 7} xxl={24 - 4}>
-          {security.isAdmin() && (
-            <>
-              <Select
-                id="sctidA"
-                labelInValue
-                style={{ width: '70%' }}
-                showSearch
-                optionFilterProp="children"
-                placeholder="Selecione a substância..."
-                value={{ key: currentSubstance.sctidA || '' }}
-                loading={substance.isFetching}
+          <Select
+            id="sctidA"
+            labelInValue
+            style={{ width: '70%' }}
+            showSearch
+            optionFilterProp="children"
+            placeholder="Selecione a substância..."
+            value={{ key: currentSubstance.sctidA || '' }}
+            loading={substance.isFetching}
+            disabled={isSaving}
+            onChange={changeSubstance}
+          >
+            <Select.Option key="0" value="0">
+              &nbsp;
+            </Select.Option>
+            {substance.list.map(({ sctid, name }) => (
+              <Select.Option key={sctid} value={sctid}>
+                {name}
+              </Select.Option>
+            ))}
+          </Select>
+          {drugData.sctidA !== currentSubstance.sctidA && (
+            <Tooltip title="Confirmar e Salvar a alteração">
+              <Button
+                type="primary gtm-bt-change-substancia"
+                style={{ marginLeft: '5px' }}
+                onClick={saveSubstance}
                 disabled={isSaving}
-                onChange={changeSubstance}
+                loading={isSaving}
               >
-                <Select.Option key="0" value="0">
-                  &nbsp;
-                </Select.Option>
-                {substance.list.map(({ sctid, name }) => (
-                  <Select.Option key={sctid} value={sctid}>
-                    {name}
-                  </Select.Option>
-                ))}
-              </Select>
-              {drugData.sctidA !== currentSubstance.sctidA && (
-                <Tooltip title="Confirmar e Salvar a alteração">
-                  <Button
-                    type="primary gtm-bt-change-substancia"
-                    style={{ marginLeft: '5px' }}
-                    onClick={saveSubstance}
-                    disabled={isSaving}
-                    loading={isSaving}
-                  >
-                    <Icon type="check" />
-                  </Button>
-                </Tooltip>
-              )}
-              {drugData.sctidA === currentSubstance.sctidA && (
-                <>
-                  <Tooltip title="Editar substância">
-                    <Button
-                      type="primary gtm-bt-edit-substancia"
-                      style={{ marginLeft: '5px' }}
-                      onClick={edit}
-                    >
-                      <Icon type="form" />
-                    </Button>
-                  </Tooltip>
-                  <Tooltip title="Adicionar substância">
-                    <Button
-                      type="primary gtm-bt-add-substancia"
-                      style={{ marginLeft: '5px' }}
-                      onClick={add}
-                    >
-                      <Icon type="plus" />
-                    </Button>
-                  </Tooltip>
-                </>
-              )}
-            </>
+                <Icon type="check" />
+              </Button>
+            </Tooltip>
           )}
-          {!security.isAdmin() && (
-            <Heading as="h3" size="16px">
-              {drugData.sctNameA}
-            </Heading>
+          {security.isAdmin() && drugData.sctidA === currentSubstance.sctidA && (
+            <>
+              <Tooltip title="Editar substância">
+                <Button
+                  type="primary gtm-bt-edit-substancia"
+                  style={{ marginLeft: '5px' }}
+                  onClick={edit}
+                >
+                  <Icon type="form" />
+                </Button>
+              </Tooltip>
+              <Tooltip title="Adicionar substância">
+                <Button
+                  type="primary gtm-bt-add-substancia"
+                  style={{ marginLeft: '5px' }}
+                  onClick={add}
+                >
+                  <Icon type="plus" />
+                </Button>
+              </Tooltip>
+            </>
           )}
         </Col>
       </Row>

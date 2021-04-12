@@ -19,6 +19,7 @@
     "prioritization": "Prioritization",
     "prioritization-prescription": "Prescriptions",
     "prioritization-patient": "Patients",
+    "prioritization-conciliation": "Conciliation",
     "interventions": "Interventions",
     "reports": "Reports",
     "config": "Settings",
@@ -30,6 +31,7 @@
   "screeningList": {
     "title-prescription": "Prescription Prioritization",
     "title-patient": "Patient Prioritization",
+    "title-conciliation": "Conciliation Prioritization",
     "segment": "Segment",
     "date": "Date",
     "seeMore": "See more",

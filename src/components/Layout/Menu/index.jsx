@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import Icon from '@components/Icon';
 import { Wrapper as Navigator } from './Menu.style';
 import './Menu.css';
-import { useTranslation } from 'react-i18next';
 
-export default function Menu({ defaultSelectedKeys, navigation }) {
+export default function Menu({ defaultSelectedKeys, navigation, security }) {
   const location = useLocation();
 
   const { t } = useTranslation();
@@ -18,13 +18,19 @@ export default function Menu({ defaultSelectedKeys, navigation }) {
     </>
   );
 
-  const renderItem = ({ text, key, icon, id }, t) => (
-    <Navigator.Item key={key}>
-      <Link className="nav-text" id={id} to={key} target="_blank">
-        <ItemTitle icon={icon} text={t(text)} />
-      </Link>
-    </Navigator.Item>
-  );
+  const renderItem = ({ text, key, icon, id, role }, t) => {
+    if (role && !security.hasRole(role)) {
+      return;
+    }
+
+    return (
+      <Navigator.Item key={key}>
+        <Link className="nav-text" id={id} to={key} target="_blank">
+          <ItemTitle icon={icon} text={t(text)} />
+        </Link>
+      </Navigator.Item>
+    );
+  };
 
   const renderMenu = (navigation, t) => {
     return navigation.map(item => {
@@ -44,10 +50,7 @@ export default function Menu({ defaultSelectedKeys, navigation }) {
   };
 
   return (
-    <Navigator
-      mode="inline"
-      defaultSelectedKeys={[defaultSelectedKeys ? defaultSelectedKeys : location.pathname]}
-    >
+    <Navigator mode="inline" defaultSelectedKeys={[defaultSelectedKeys || location.pathname]}>
       {renderMenu(navigation, t)}
     </Navigator>
   );
