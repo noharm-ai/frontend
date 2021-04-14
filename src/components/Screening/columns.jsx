@@ -629,20 +629,35 @@ const actionColumns = bag => [
 
 const relationColumn = bag => ({
   title: 'Prescrição vigente',
-  width: 300,
+  width: 450,
   render: (text, prescription) => {
+    const relation = bag.currentPrescription.find(d => {
+      return d.idDrug === prescription.idDrug;
+    });
+
     return (
       <Select
-        mode="multiple"
+        showSearch
         optionFilterProp="children"
-        style={{ width: '100%' }}
+        style={{ width: '100%', maxWidth: '450px' }}
         placeholder="Relação com a prescrição vigente"
+        defaultValue={relation ? relation.idPrescriptionDrug : null}
       >
-        {bag.uniqueDrugList.map(({ idDrug, name }) => (
-          <Select.Option key={idDrug} value={idDrug}>
-            {name}
-          </Select.Option>
-        ))}
+        {bag.currentPrescription.map(
+          ({ idPrescriptionDrug, drug, dose, measureUnit, frequency }) => (
+            <Select.Option
+              key={idPrescriptionDrug}
+              value={idPrescriptionDrug}
+              style={{ overflow: 'auto', whiteSpace: 'inherit' }}
+            >
+              {drug}
+              <br />{' '}
+              <span className="extra-info" style={{ fontSize: '12px' }}>
+                ({dose} {measureUnit.label} X {frequency.label})
+              </span>
+            </Select.Option>
+          )
+        )}
       </Select>
     );
   }

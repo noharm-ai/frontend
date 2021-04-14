@@ -22,7 +22,8 @@ const mapStateToProps = ({ prescriptions }) => ({
   checkIntervention: prescriptions.single.prescription.checkIntervention,
   idSegment: prescriptions.single.data.idSegment,
   admissionNumber: prescriptions.single.data.admissionNumber,
-  uniqueDrugs: prescriptions.single.data.uniqueDrugs
+  uniqueDrugs: prescriptions.single.data.uniqueDrugs,
+  currentPrescription: prescriptions.single.data.conciliaList
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

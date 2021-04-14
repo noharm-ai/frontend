@@ -24,7 +24,8 @@ export default function PrescriptionDrugList({
   idSegment,
   select,
   selectPrescriptionDrug,
-  uniqueDrugs
+  uniqueDrugs,
+  currentPrescription
 }) {
   const [openIntervention, setOpenIntervention] = useState(false);
   const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
@@ -52,7 +53,8 @@ export default function PrescriptionDrugList({
     admissionNumber,
     saveInterventionStatus,
     checkIntervention,
-    uniqueDrugList: uniqueDrugs
+    uniqueDrugList: uniqueDrugs,
+    currentPrescription
   };
 
   return (

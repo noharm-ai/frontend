@@ -91,7 +91,7 @@ export default function Filter({
         pending: filter.pending,
         currentDepartment: prioritizationType === 'patient' ? filter.currentDepartment : 0,
         agg: prioritizationType === 'patient' ? 1 : 0,
-        conciliation: prioritizationType === 'conciliation' ? 1 : 0,
+        concilia: prioritizationType === 'conciliation' ? 1 : 0,
         startDate: date[0] ? date[0].format('YYYY-MM-DD') : 'all',
         endDate: date[1] ? date[1].format('YYYY-MM-DD') : 'all'
       };

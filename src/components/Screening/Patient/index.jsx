@@ -84,7 +84,8 @@ export default function Patient({
     notesInfo,
     notesInfoDate,
     notesSigns,
-    notesSignsDate
+    notesSignsDate,
+    concilia
   } = prescription;
   const [interventionVisible, setInterventionVisibility] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -328,11 +329,13 @@ export default function Patient({
                   </Cell>
                 </>
               )}
-              <Cell className="recalc">
-                <Button type="primary gtm-bt-update" onClick={updatePrescriptionData}>
-                  Recalcular Prescrição
-                </Button>
-              </Cell>
+              {!concilia && (
+                <Cell className="recalc">
+                  <Button type="primary gtm-bt-update" onClick={updatePrescriptionData}>
+                    Recalcular Prescrição
+                  </Button>
+                </Cell>
+              )}
             </>
           )}
           <Cell className="see-more">

@@ -25,4 +25,10 @@ export const Select = styled(AntSelect)`
   .ant-select-arrow svg {
     display: inline-block;
   }
+
+  .ant-select-selection-selected-value {
+    .extra-info {
+      display: none;
+    }
+  }
 `;
