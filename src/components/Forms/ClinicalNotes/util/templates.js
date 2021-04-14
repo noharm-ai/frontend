@@ -2,24 +2,19 @@ import isEmpty from 'lodash.isempty';
 
 import stripHtml from '@utils/stripHtml';
 
-const emptyInterventionTemplate = prescription => {
-  const msg = `S/O: Verifico prescrição vigente do paciente.
+export const conciliationTemplate = (p, i) => {
+  return `Conciliação Medicamentosa realizada com:
 
-  A: Realizo validação de dose, via e frequência dos medicamentos prescritos.
-  
-  P: Acompanhamento da conduta médica na próxima prescrição.
-  
-  Validação diária das prescrições do paciente.
-  Me coloco à disposição.`;
+1. Histórico de saúde:
 
-  if (prescription.agg) {
-    return `  ${msg}`;
-  }
 
-  return `Prescrição: ${prescription.idPrescription}
+2. Conciliação medicamentosa:
+${i}
+3. Conduta:
 
-  ${msg}
-  `;
+
+Me coloco à disposição.
+`;
 };
 
 export const prescriptionTemplate = (p, i) => {
@@ -40,6 +35,35 @@ export const interventionTemplate = i => `
 ${i.drugName}
 ${stripHtml(i.observation)}
 `;
+
+const emptyInterventionTemplate = ({ idPrescription, agg, concilia }) => {
+  if (concilia) {
+    return conciliationTemplate(
+      '',
+      `
+      Nenhuma divergência encontrada.
+      `
+    );
+  }
+
+  const msg = `S/O: Verifico prescrição vigente do paciente.
+
+  A: Realizo validação de dose, via e frequência dos medicamentos prescritos.
+  
+  P: Acompanhamento da conduta médica na próxima prescrição.
+  
+  Validação diária das prescrições do paciente.
+  Me coloco à disposição.`;
+
+  if (agg) {
+    return `  ${msg}`;
+  }
+
+  return `Prescrição: ${idPrescription}
+
+  ${msg}
+  `;
+};
 
 export const layoutTemplate = (prescription, interventions, signature) => `Farmácia Clínica
 ${prescription.namePatient}, ${prescription.age}${

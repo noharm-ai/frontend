@@ -1,5 +1,6 @@
 import {
   prescriptionTemplate,
+  conciliationTemplate,
   interventionTemplate,
   signatureTemplate,
   layoutTemplate
@@ -62,6 +63,10 @@ export default (prescription, account, signature) => {
 
   const tpl = Object.keys(interventions).map(k => {
     const iTpl = interventions[k].map(i => interventionTemplate(i));
+
+    if (prescription.data.concilia) {
+      return conciliationTemplate(k, iTpl.join(''));
+    }
 
     return prescriptionTemplate(k, iTpl.join(''));
   });
