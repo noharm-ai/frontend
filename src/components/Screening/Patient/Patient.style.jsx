@@ -78,6 +78,14 @@ export const Box = styled.div`
       color: #1890ff;
     }
   }
+
+  .experimental-text {
+    cursor: pointer;
+    outline: none;
+    color: #1890ff;
+    border: 0;
+    background: #fff;
+  }
 `;
 
 export const ExamBox = styled.div`

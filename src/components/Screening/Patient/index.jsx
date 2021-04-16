@@ -162,6 +162,19 @@ export default function Patient({
     return msg;
   };
 
+  const AISuggestion = ({ notes, action }) => {
+    return (
+      <>
+        <div>{notes}</div>
+        <div style={{ textAlign: 'center', marginTop: '15px' }}>
+          <Button type="primary gtm-bt-update-weight" onClick={() => setVisible(true)}>
+            {action}
+          </Button>
+        </div>
+      </>
+    );
+  };
+
   const closedStatus = ['a', 'n', 'x'];
   const currentStatus = intervention ? intervention.status : 's';
   const isInterventionClosed = closedStatus.indexOf(currentStatus) !== -1;
@@ -240,12 +253,36 @@ export default function Patient({
             <strong>Sexo:</strong> {gender ? (gender === 'M' ? 'Masculino' : 'Feminino') : ''}
           </Cell>
           <Cell>
-            <strong>Peso:</strong> {weight} Kg ({formatWeightDate(weightDate)})
-            {weightUser && (
-              <Tooltip title="Peso alterado manualmente">
-                {' '}
-                <InfoIcon />
-              </Tooltip>
+            <strong>Peso: </strong>
+            {weight && (
+              <>
+                {weight} Kg ({formatWeightDate(weightDate)})
+                {weightUser && (
+                  <Tooltip title="Peso alterado manualmente">
+                    {' '}
+                    <InfoIcon />
+                  </Tooltip>
+                )}
+              </>
+            )}
+            {!weight && <>Não disponível</>}
+            {hasClinicalNotes && notesInfo && (
+              <>
+                <Popover
+                  content={<AISuggestion notes={notesInfo} action="Atualizar o peso" />}
+                  title={`Dados extraídos pela NoHarm Care em ${moment(notesInfoDate).format(
+                    'DD/MM/YYYY hh:mm'
+                  )}`}
+                >
+                  <button
+                    type="button"
+                    className="experimental-text"
+                    onClick={() => setVisible(true)}
+                  >
+                    (NoHarm Care) <InfoIcon />
+                  </button>
+                </Popover>
+              </>
             )}
           </Cell>
           {seeMore && (
@@ -261,6 +298,24 @@ export default function Patient({
                   </Tooltip>
                 ) : (
                   'Não disponível'
+                )}
+                {hasClinicalNotes && notesInfo && (
+                  <>
+                    <Popover
+                      content={<AISuggestion notes={notesInfo} action="Atualizar a altura" />}
+                      title={`Dados extraídos pela NoHarm Care em ${moment(notesInfoDate).format(
+                        'DD/MM/YYYY hh:mm'
+                      )}`}
+                    >
+                      <button
+                        type="button"
+                        className="experimental-text"
+                        onClick={() => setVisible(true)}
+                      >
+                        (NoHarm Care) <InfoIcon />
+                      </button>
+                    </Popover>
+                  </>
                 )}
               </Cell>
               <Cell>
