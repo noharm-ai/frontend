@@ -45,6 +45,7 @@ export default function PrescriptionDrugList({
   };
 
   const bag = {
+    concilia: true,
     onShowModal,
     onShowPrescriptionDrugModal,
     check: checkPrescriptionDrug,

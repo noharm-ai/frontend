@@ -425,6 +425,13 @@ const drug = (bag, addkey) => ({
   title: 'Medicamento',
   align: 'left',
   render: record => {
+    if (bag.concilia) {
+      return (
+        <>
+          {record.drug} <DrugTags drug={record} />
+        </>
+      );
+    }
     if (record.total) {
       return (
         <Tooltip title="Abrir calculadora de solução" placement="top">
