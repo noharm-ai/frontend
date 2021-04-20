@@ -5,6 +5,7 @@ import { Row, Col } from 'antd';
 
 import api from '@services/api';
 import Popover from '@components/PopoverStyled';
+import { PopoverWelcome } from '@components/Popover';
 import Statistic from '@components/Statistic';
 import Card from '@components/Card';
 import Button from '@components/Button';
@@ -12,6 +13,7 @@ import Icon, { InfoIcon } from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 import FormPatientModal from '@containers/Forms/Patient';
 import RichTextView from '@components/RichTextView';
+import Alert from '@components/Alert';
 
 import ModalIntervention from '@containers/Screening/ModalIntervention';
 
@@ -84,7 +86,8 @@ export default function Patient({
     notesInfo,
     notesInfoDate,
     notesSigns,
-    notesSignsDate
+    notesSignsDate,
+    concilia
   } = prescription;
   const [interventionVisible, setInterventionVisibility] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -159,6 +162,25 @@ export default function Patient({
     }
 
     return msg;
+  };
+
+  const AISuggestion = ({ notes, action, date }) => {
+    return (
+      <>
+        <div style={{ maxWidth: '300px', textAlign: 'center' }}>
+          <Alert description={notes} type="info" />
+        </div>
+        <div style={{ fontSize: '11px', fontWeight: 300, marginTop: '10px' }}>
+          Dados extraídos pela <strong>NoHarm Care</strong> em{' '}
+          {moment(date).format('DD/MM/YYYY hh:mm')}
+        </div>
+        <div style={{ textAlign: 'center', marginTop: '15px' }}>
+          <Button type="primary gtm-bt-update-weight" onClick={() => setVisible(true)}>
+            {action}
+          </Button>
+        </div>
+      </>
+    );
   };
 
   const closedStatus = ['a', 'n', 'x'];
@@ -239,12 +261,41 @@ export default function Patient({
             <strong>Sexo:</strong> {gender ? (gender === 'M' ? 'Masculino' : 'Feminino') : ''}
           </Cell>
           <Cell>
-            <strong>Peso:</strong> {weight} Kg ({formatWeightDate(weightDate)})
-            {weightUser && (
-              <Tooltip title="Peso alterado manualmente">
-                {' '}
-                <InfoIcon />
-              </Tooltip>
+            <strong>Peso: </strong>
+            {weight && (
+              <>
+                {weight} Kg ({formatWeightDate(weightDate)})
+                {weightUser && (
+                  <Tooltip title="Peso alterado manualmente">
+                    {' '}
+                    <InfoIcon />
+                  </Tooltip>
+                )}
+              </>
+            )}
+            {!weight && <>Não disponível</>}
+            {hasClinicalNotes && notesInfo && (
+              <>
+                <PopoverWelcome
+                  content={
+                    <AISuggestion
+                      notes={notesInfo}
+                      date={notesInfoDate}
+                      action="Atualizar o peso"
+                    />
+                  }
+                  placement="right"
+                  mouseLeaveDelay={0.02}
+                >
+                  <button
+                    type="button"
+                    className="experimental-text"
+                    onClick={() => setVisible(true)}
+                  >
+                    (NoHarm Care) <InfoIcon />
+                  </button>
+                </PopoverWelcome>
+              </>
             )}
           </Cell>
           {seeMore && (
@@ -260,6 +311,23 @@ export default function Patient({
                   </Tooltip>
                 ) : (
                   'Não disponível'
+                )}
+                {hasClinicalNotes && notesInfo && (
+                  <>
+                    <PopoverWelcome
+                      content={<AISuggestion notes={notesInfo} action="Atualizar a altura" />}
+                      placement="right"
+                      mouseLeaveDelay={0.02}
+                    >
+                      <button
+                        type="button"
+                        className="experimental-text"
+                        onClick={() => setVisible(true)}
+                      >
+                        (NoHarm Care) <InfoIcon />
+                      </button>
+                    </PopoverWelcome>
+                  </>
                 )}
               </Cell>
               <Cell>
@@ -328,11 +396,13 @@ export default function Patient({
                   </Cell>
                 </>
               )}
-              <Cell className="recalc">
-                <Button type="primary gtm-bt-update" onClick={updatePrescriptionData}>
-                  Recalcular Prescrição
-                </Button>
-              </Cell>
+              {!concilia && (
+                <Cell className="recalc">
+                  <Button type="primary gtm-bt-update" onClick={updatePrescriptionData}>
+                    Recalcular Prescrição
+                  </Button>
+                </Cell>
+              )}
             </>
           )}
           <Cell className="see-more">

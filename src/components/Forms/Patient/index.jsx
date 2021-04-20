@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import moment from 'moment';
 
+import Alert from '@components/Alert';
 import { Row } from '@components/Grid';
 import notification from '@components/notification';
 import Heading from '@components/Heading';
@@ -33,6 +35,9 @@ export default function Patient({
   weight,
   height,
   observation,
+  clinicalNotes,
+  notesInfo,
+  notesInfoDate,
   ...props
 }) {
   const { isSaving, success, error } = saveStatus;
@@ -81,6 +86,14 @@ export default function Patient({
           <header>
             <Heading margin="0 0 11px">Dados do paciente</Heading>
           </header>
+          {clinicalNotes != null && notesInfo && (
+            <Alert
+              message={`NoHarm Care (${moment(notesInfoDate).format('DD/MM/YYYY hh:mm')})`}
+              description={notesInfo}
+              type="info"
+              showIcon
+            />
+          )}
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>

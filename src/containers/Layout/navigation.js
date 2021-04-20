@@ -22,7 +22,7 @@ export default [
         text: 'menu.prioritization-conciliation',
         icon: 'swap',
         id: 'gtm-lnk-priorizacao-conciliacao',
-        role: 'suporte'
+        role: 'concilia'
       }
     ]
   },
