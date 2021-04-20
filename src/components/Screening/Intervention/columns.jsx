@@ -118,6 +118,9 @@ export const InterventionView = ({ intervention, showReasons, showDate, status }
       {!isEmpty(intervention.interactionsList) &&
         intervention.interactionsList.map(item => item.name).join(', ')}
     </Descriptions.Item>
+    <Descriptions.Item label="Responsável:" span={3}>
+      {intervention.user}
+    </Descriptions.Item>
     <Descriptions.Item label="Observação:" span={3}>
       <RichTextView text={intervention.observation} />
     </Descriptions.Item>
