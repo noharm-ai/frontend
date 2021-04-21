@@ -2,7 +2,7 @@ import { createActions, createReducer } from 'reduxsauce';
 
 export const { Types, Creators } = createActions({
   outliersGenerateStart: ['segment'],
-  outliersGenerateStop: ['status'],
+  outliersGenerateStop: ['status', 'data'],
   outliersResetGenerate: [''],
 
   outliersGenerateDrugStart: [''],
@@ -60,7 +60,8 @@ const INITIAL_STATE = {
     idSegment: null,
     nameSegment: '',
     isGenerating: false,
-    status: null
+    status: null,
+    data: null
   },
   generateDrugOutlier: {
     isGenerating: false,
@@ -107,12 +108,13 @@ const generateStart = (state = INITIAL_STATE, { segment }) => ({
   }
 });
 
-const generateStop = (state = INITIAL_STATE, { status }) => ({
+const generateStop = (state = INITIAL_STATE, { status, data }) => ({
   ...state,
   generate: {
     ...state.generate,
     status,
-    isGenerating: false
+    isGenerating: false,
+    data
   }
 });
 

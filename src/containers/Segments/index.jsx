@@ -11,7 +11,7 @@ import {
 } from '@store/ducks/segments/thunk';
 import Segments from '@components/Segments';
 
-const mapStateToProps = ({ segments, outliers, user }) => ({
+const mapStateToProps = ({ segments, outliers, user, auth }) => ({
   segments: {
     error: segments.error,
     list: segments.list,
@@ -26,6 +26,7 @@ const mapStateToProps = ({ segments, outliers, user }) => ({
       ...outliers.generate
     }
   },
+  access_token: auth.identify.access_token,
   security: security(user.account.roles)
 });
 const mapDispatchToProps = dispatch =>

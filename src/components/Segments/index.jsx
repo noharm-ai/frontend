@@ -12,10 +12,14 @@ import Tooltip from '@components/Tooltip';
 import PopConfirm from '@components/PopConfirm';
 import BackTop from '@components/BackTop';
 import notification from '@components/notification';
+import DefaultModal from '@components/Modal';
+import Progress from '@components/Progress';
+import Heading from '@components/Heading';
 
 import FormSegment from '@containers/Forms/Segment';
 import FormExamModal from '@containers/Forms/Exam';
-import { toDataSource } from '@utils';
+import api from '@services/api';
+import { toDataSource, errorHandler } from '@utils';
 
 import feedback from './feedback';
 import Filter from './Filter';
@@ -37,10 +41,13 @@ function Segments({
   security,
   selectExam,
   updateExamOrder,
-  sortStatus
+  sortStatus,
+  access_token
 }) {
   const [enableSortExams, setEnableSortExams] = useState(true);
   const [examModalVisible, setExamModalVisibility] = useState(false);
+  const [progressModalVisible, setProgressModalVisibility] = useState(false);
+  const [progressPercentage, setProgressPercentage] = useState(0);
   const { generate } = outliers;
   const { single: currentSegment, examTypes } = segments;
   const availableExamTypes = currentSegment.content.exams
@@ -64,11 +71,52 @@ function Segments({
   }, [fetchSegmentById, match.params, segments.list]);
 
   useEffect(() => {
+    let errorResponse = null;
+    const startOutliersGeneration = async () => {
+      const progressStep = Math.round(100 / generate.data.length);
+      let progressTotal = 0;
+
+      for (let i = 0; i < generate.data.length; i++) {
+        const url = generate.data[i];
+
+        const { error } = await api.generateOutlierFold(access_token, url).catch(errorHandler);
+        if (error) {
+          errorResponse = error;
+          break;
+        }
+
+        if (i === generate.data.length - 1) {
+          progressTotal = 100;
+        } else {
+          progressTotal += progressStep;
+        }
+
+        setProgressPercentage(progressTotal);
+      }
+
+      if (!errorResponse) {
+        setTimeout(() => {
+          setProgressModalVisibility(false);
+          feedback(generate.status, generate);
+          setProgressPercentage(0);
+          resetGenerate();
+        }, 1000);
+      } else {
+        notification.error({
+          message: 'Ops! Algo de errado aconteceu.',
+          description:
+            'Aconteceu algo que nos impediu de gerar os escores. Por favor, tente novamente.'
+        });
+        setProgressModalVisibility(false);
+        resetGenerate();
+      }
+    };
+
     if (generate.status) {
-      feedback(generate.status, generate);
-      resetGenerate();
+      setProgressModalVisibility(true);
+      startOutliersGeneration();
     }
-  }, [generate, resetGenerate]);
+  }, [access_token, generate, resetGenerate]);
 
   useEffect(() => {
     if (sortStatus.error) {
@@ -236,6 +284,29 @@ function Segments({
         cancelText="Cancelar"
         afterSave={onCancelExamModal}
       />
+
+      <DefaultModal
+        width={210}
+        centered
+        destroyOnClose
+        visible={progressModalVisible}
+        footer={null}
+        closable={false}
+      >
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Progress
+            type="circle"
+            percent={progressPercentage}
+            strokeColor={{
+              '0%': 'rgb(112, 189, 196)',
+              '100%': 'rgb(126, 190, 154)'
+            }}
+          />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '15px' }}>
+          <Heading size="16px">Gerando escores...</Heading>
+        </div>
+      </DefaultModal>
     </>
   );
 }
