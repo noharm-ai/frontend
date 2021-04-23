@@ -59,14 +59,21 @@ export default (prescription, account, signature) => {
     });
   }
 
+  if (prescription.data.concilia) {
+    const interventions = getInterventions(list);
+    const tplInterventions = interventions.map(i => interventionTemplate(i));
+
+    return conciliationTemplate(
+      prescription,
+      tplInterventions.join(''),
+      signatureTemplate(signature, account)
+    );
+  }
+
   const interventions = groupByPrescription(getInterventions(list));
 
   const tpl = Object.keys(interventions).map(k => {
     const iTpl = interventions[k].map(i => interventionTemplate(i));
-
-    if (prescription.data.concilia) {
-      return conciliationTemplate(k, iTpl.join(''));
-    }
 
     return prescriptionTemplate(k, iTpl.join(''));
   });
