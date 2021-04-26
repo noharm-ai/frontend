@@ -53,3 +53,7 @@ export const getFirstAndLastName = name => {
 
   return name;
 };
+
+export const getCorporalSurface = (weight, height) => Math.sqrt((weight * height) / 3600);
+
+export const getIMC = (weight, height) => weight / (height / 100) ** 2;

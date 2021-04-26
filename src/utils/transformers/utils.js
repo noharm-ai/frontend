@@ -9,7 +9,7 @@ export const stringify = (data = [], noValueSymbol = '#', separator = ' | ') =>
     ? data.map(item => (noValues.includes(item) ? noValueSymbol : item)).join(separator)
     : '';
 
-export const createSlug = function(/*arguments*/) {
+export const createSlug = function(/* arguments */) {
   const args = arguments;
   return slugify(Array.from(args).join('-')).toLowerCase();
 };
