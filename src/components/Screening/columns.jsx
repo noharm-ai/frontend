@@ -644,6 +644,7 @@ const relationColumn = bag => ({
 
     return (
       <Select
+        allowClear
         showSearch
         optionFilterProp="children"
         style={{ width: '100%', maxWidth: '450px' }}

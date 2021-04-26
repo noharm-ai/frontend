@@ -1,8 +1,8 @@
 import isEmpty from 'lodash.isempty';
 
 import api from '@services/api';
-import { errorHandler } from '@utils';
 import { transformSegments } from '@utils/transformers';
+import { errorHandler } from '@utils';
 import { Creators as DrugsCreators } from '../drugs';
 import { Creators as SegmentsCreators } from '../segments';
 import { Creators as OutliersCreators } from './index';
@@ -68,9 +68,12 @@ export const generateOutlierThunk = ({ id: idSegment, nameSegment }) => async (
   dispatch(outliersGenerateStart({ idSegment, nameSegment }));
 
   const { access_token } = getState().auth.identify;
-  const { status } = await api.generateOutlier(access_token, idSegment);
+  const {
+    status,
+    data: { data }
+  } = await api.generateOutlier(access_token, idSegment);
 
-  dispatch(outliersGenerateStop(status));
+  dispatch(outliersGenerateStop(status, data));
 };
 
 export const generateDrugOutlierThunk = params => async (dispatch, getState) => {
@@ -309,7 +312,7 @@ export const saveOutlierSubstanceThunk = (params = {}) => async (dispatch, getSt
     return;
   }
 
-  const isAdd = params.isAdd;
+  const { isAdd } = params;
   delete params.isAdd;
 
   dispatch(outliersSaveSubstanceSuccess(params));

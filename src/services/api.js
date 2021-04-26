@@ -84,6 +84,8 @@ const generateOutlier = (bearerToken, idSegment) =>
     ...setHeaders(bearerToken)
   });
 
+const generateOutlierFold = (bearerToken, url) => instance.get(url, { ...setHeaders(bearerToken) });
+
 const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
   instance.post(
     `/segments/${idSegment}/outliers/generate/drug/${idDrug}/clean/1`,
@@ -363,6 +365,7 @@ const api = {
   getDrugUnits,
   updateUnitCoefficient,
   generateOutlier,
+  generateOutlierFold,
   generateDrugOutlier,
   getFreeDepartments,
   getDepartmentsBySegment,
