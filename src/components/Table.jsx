@@ -179,6 +179,16 @@ const Table = styled(AntTable)`
   .summary-row {
     background: rgba(244, 244, 244, 0.8);
   }
+
+  .gtm-tag-alert {
+    .ant-tag-red {
+      margin-right: 0;
+    }
+
+    .ant-badge-dot {
+      background: #f57f17;
+    }
+  }
 `;
 
 export const ExpandableTable = styled(Table)`

@@ -15,6 +15,7 @@ import Alert from '@components/Alert';
 import RichTextView from '@components/RichTextView';
 import InterventionStatus from '@models/InterventionStatus';
 import { Select } from '@components/Inputs';
+import Badge from '@components/Badge';
 
 import SolutionCalculator from './PrescriptionDrug/components/SolutionCalculator';
 
@@ -614,10 +615,12 @@ const tags = bag => ({
       </span>
       <span className="tag gtm-tag-alert" onClick={() => bag.handleRowExpand(prescription)}>
         {!isEmpty(prescription.alerts) && (
-          <Tooltip title="Alertas">
-            <Tag color="red" style={{ marginLeft: '2px' }}>
-              {prescription.alerts.length}
-            </Tag>
+          <Tooltip title={prescription.alergy ? 'Alertas (**possui Alergia)' : 'Alertas'}>
+            <Badge dot count={prescription.alergy ? 1 : 0}>
+              <Tag color="red" style={{ marginLeft: '2px' }}>
+                {prescription.alerts.length}
+              </Tag>
+            </Badge>
           </Tooltip>
         )}
       </span>
