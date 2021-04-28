@@ -24,7 +24,14 @@ const validationSchema = Yup.object().shape({
   idPrescription: Yup.number().required(),
   notes: Yup.string()
     .nullable()
-    .required('Campo obrigatório')
+    .required('Campo obrigatório'),
+  hasConciliation: Yup.boolean(),
+  concilia: Yup.string()
+    .nullable()
+    .when('hasConciliation', {
+      is: true,
+      then: Yup.string().required('Campo obrigatório')
+    })
 });
 const formId = 'clinicalNotes';
 
@@ -42,7 +49,9 @@ export default function ClinicalNotes({
   const initialValues = {
     formId,
     idPrescription: data.idPrescription,
-    notes: data.notes ? data.notes : ''
+    notes: data.notes ? data.notes : '',
+    concilia: data.concilia && data.concilia === 's' ? '' : data.concilia,
+    hasConciliation: !!data.concilia
   };
 
   useEffect(() => {
@@ -64,10 +73,23 @@ export default function ClinicalNotes({
     }
   }, [success, error]); // eslint-disable-line
 
+  const submit = formData => {
+    const params = { ...formData };
+
+    if (params.hasConciliation) {
+      delete params.hasConciliation;
+    } else {
+      delete params.hasConciliation;
+      delete params.concilia;
+    }
+
+    save(params);
+  };
+
   return (
     <Formik
       enableReinitialize
-      onSubmit={save}
+      onSubmit={submit}
       initialValues={initialValues}
       validationSchema={validationSchema}
     >
