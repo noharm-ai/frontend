@@ -66,6 +66,21 @@ export const PrescriptionPanel = styled(Collapse.Panel)`
         transform: translateX(2px);
       }
     }
+
+    .ant-collapse-extra {
+      .tag-badge {
+        margin-right: 0;
+      }
+
+      .ant-badge-dot {
+        background: #f57f17;
+      }
+
+      .ant-badge,
+      .anticon {
+        margin-left: 5px;
+      }
+    }
   }
 
   &.checked {

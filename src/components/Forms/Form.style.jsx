@@ -45,6 +45,9 @@ export const EditorBox = styled.div`
 
 export const FieldError = styled.div`
   color: #f5222d;
+  font-size: 13px;
+  margin-left: 5px;
+  margin-top: 3px;
 `;
 
 export const ButtonContainer = styled.div`

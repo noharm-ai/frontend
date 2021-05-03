@@ -14,6 +14,7 @@ import Tooltip from '@components/Tooltip';
 import FormPatientModal from '@containers/Forms/Patient';
 import RichTextView from '@components/RichTextView';
 import Alert from '@components/Alert';
+import { getCorporalSurface, getIMC } from '@utils/index';
 
 import ModalIntervention from '@containers/Screening/ModalIntervention';
 
@@ -307,7 +308,7 @@ export default function Patient({
                 <strong>Altura:</strong>{' '}
                 {height ? (
                   <Tooltip title="Altura alterada manualmente">
-                    {height} <InfoIcon />
+                    {height} cm <InfoIcon />
                   </Tooltip>
                 ) : (
                   'Não disponível'
@@ -328,6 +329,22 @@ export default function Patient({
                       </button>
                     </PopoverWelcome>
                   </>
+                )}
+              </Cell>
+              <Cell>
+                <strong>Superfície corporal: </strong>
+                {weight && height ? (
+                  <>{getCorporalSurface(weight, height).toFixed(3)} m²</>
+                ) : (
+                  'Não disponível'
+                )}
+              </Cell>
+              <Cell>
+                <strong>IMC: </strong>
+                {weight && height ? (
+                  <>{getIMC(weight, height).toFixed(2)} kg/m²</>
+                ) : (
+                  'Não disponível'
                 )}
               </Cell>
               <Cell>

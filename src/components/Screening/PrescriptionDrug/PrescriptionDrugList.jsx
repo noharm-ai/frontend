@@ -11,6 +11,7 @@ import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 import TableFilter from '@components/TableFilter';
 import Tag from '@components/Tag';
+import Badge from '@components/Badge';
 import { sourceToStoreType } from '@utils/transformers/prescriptions';
 
 import ModalIntervention from '@containers/Screening/ModalIntervention';
@@ -258,10 +259,15 @@ export default function PrescriptionDrugList({
 
     if (summary.alerts) {
       tags.push(
-        <Tooltip title="Total de alertas" key="alerts">
-          <Tag color="red" key="alerts">
-            {summary.alerts}
-          </Tag>
+        <Tooltip
+          title={summary.alergy ? 'Total de alertas (**possui alergias)' : 'Total de alertas'}
+          key="alerts"
+        >
+          <Badge dot count={summary.alergy}>
+            <Tag color="red" key="alerts" className="tag-badge">
+              {summary.alerts}
+            </Tag>
+          </Badge>
         </Tooltip>
       );
     }
@@ -374,6 +380,7 @@ export default function PrescriptionDrugList({
   const aggSummary = (currentData, addData) => {
     const baseData = currentData || {
       alerts: 0,
+      alergy: 0,
       interventions: 0,
       np: 0,
       am: 0,

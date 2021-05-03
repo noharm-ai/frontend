@@ -20,7 +20,7 @@ export default [
       {
         key: '/priorizacao/conciliacoes',
         text: 'menu.prioritization-conciliation',
-        icon: 'swap',
+        icon: 'reconciliation',
         id: 'gtm-lnk-priorizacao-conciliacao',
         role: 'concilia'
       }

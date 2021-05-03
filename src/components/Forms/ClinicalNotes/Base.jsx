@@ -4,16 +4,19 @@ import isEmpty from 'lodash.isempty';
 import { useFormikContext } from 'formik';
 
 import { Col } from '@components/Grid';
-import { Textarea } from '@components/Inputs';
+import { Textarea, Select } from '@components/Inputs';
+
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
+import Heading from '@components/Heading';
 
 import getInterventionTemplate from './util/getInterventionTemplate';
 import { Box, EditorBox, FieldError } from '../Form.style';
 
 export default function Base({ prescription, account, signature }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
-  const { notes } = values;
+  const { notes, concilia } = values;
+  const layout = { label: 2, input: 20 };
 
   const loadDefaultText = () => {
     setFieldValue('notes', getInterventionTemplate(prescription, account, signature));
@@ -25,6 +28,36 @@ export default function Base({ prescription, account, signature }) {
 
   return (
     <>
+      {prescription.data.concilia && (
+        <Box hasError={errors.concilia && touched.concilia}>
+          <Col xs={layout.label}>
+            <Heading as="label" size="14px">
+              <Tooltip title="Informe o tipo desta conciliação">Tipo:</Tooltip>
+            </Heading>
+          </Col>
+          <Col xs={layout.input}>
+            <Select
+              placeholder="Selecione o tipo de conciliação"
+              onChange={value => setFieldValue('concilia', value)}
+              value={concilia}
+              identify="concilia"
+              allowClear
+              style={{ minWidth: '300px' }}
+            >
+              <Select.Option value="b" key="b">
+                Admissão
+              </Select.Option>
+              <Select.Option value="t" key="t">
+                Transferência
+              </Select.Option>
+              <Select.Option value="a" key="a">
+                Alta
+              </Select.Option>
+            </Select>
+            {errors.concilia && touched.concilia && <FieldError>{errors.concilia}</FieldError>}
+          </Col>
+        </Box>
+      )}
       <Col xs={24} style={{ textAlign: 'right', padding: '0 8px' }}>
         <Tooltip title="Aplicar evolução modelo">
           <Button
