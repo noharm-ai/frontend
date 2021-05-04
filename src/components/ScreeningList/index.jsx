@@ -97,7 +97,7 @@ export default function ScreeningList({
     prioritizationType
   };
   const dataSource = toDataSource(list, null, bag);
-  const columns = columnsTable(sortOrder, filter);
+  const columns = columnsTable(sortOrder, filter, security.hasRole('care'));
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
   const listCount = {
     all: list ? list.length : 0,
