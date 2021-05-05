@@ -9,7 +9,8 @@ export const { Types, Creators } = createActions({
   appSetScreeningListFilter: ['params'],
   appSaveFilter: ['filterType', 'filter'],
   appRemoveFilter: ['filterType', 'index'],
-  appSetJourney: ['journey']
+  appSetJourney: ['journey'],
+  appSetCurrentVersion: ['version']
 });
 
 const INITIAL_STATE = {
@@ -36,7 +37,8 @@ const INITIAL_STATE = {
   },
   preferences: {
     journey: 'patient'
-  }
+  },
+  currentVersion: '0'
 };
 
 const saveFilter = (state = INITIAL_STATE, { filterType, filter }) => {
@@ -97,6 +99,11 @@ const removeFilter = (state = INITIAL_STATE, { filterType, index }) => {
   return updateListByType(filterType, list);
 };
 
+const setCurrentVersion = (state = INITIAL_STATE, { version }) => ({
+  ...state,
+  currentVersion: version
+});
+
 const setSider = (state = INITIAL_STATE, { sider }) => ({
   ...state,
   sider: {
@@ -138,7 +145,8 @@ const HANDLERS = {
   [Types.APP_SET_JOURNEY]: setJourney,
   [Types.APP_SET_SCREENING_LIST_FILTER]: setScreeningListFilter,
   [Types.APP_SAVE_FILTER]: saveFilter,
-  [Types.APP_REMOVE_FILTER]: removeFilter
+  [Types.APP_REMOVE_FILTER]: removeFilter,
+  [Types.APP_SET_CURRENT_VERSION]: setCurrentVersion
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);
