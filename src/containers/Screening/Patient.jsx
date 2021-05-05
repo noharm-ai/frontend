@@ -4,11 +4,13 @@ import { bindActionCreators } from 'redux';
 import { selectItemToSaveThunk } from '@store/ducks/intervention/thunk';
 import { fetchScreeningThunk } from '@store/ducks/prescriptions/thunk';
 import Patient from '@components/Screening/Patient';
+import security from '@services/security';
 
-const mapStateToProps = ({ prescriptions, auth }) => ({
+const mapStateToProps = ({ prescriptions, auth, user }) => ({
   isFetching: prescriptions.single.isFetching,
   prescription: prescriptions.single.data,
-  access_token: auth.identify.access_token
+  access_token: auth.identify.access_token,
+  security: security(user.account.roles)
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

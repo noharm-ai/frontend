@@ -76,7 +76,8 @@ export default function Patient({
   fetchScreening,
   access_token,
   prescription,
-  selectIntervention
+  selectIntervention,
+  security
 }) {
   const {
     admissionNumber,
@@ -101,7 +102,6 @@ export default function Patient({
     intervention,
     prevIntervention,
     existIntervention,
-    clinicalNotes,
     notesInfo,
     notesInfoDate,
     notesSigns,
@@ -112,7 +112,7 @@ export default function Patient({
   const [visible, setVisible] = useState(false);
   const [seeMore, setSeeMore] = useState(false);
 
-  const hasClinicalNotes = clinicalNotes != null;
+  const hasClinicalNotes = security.hasNoHarmCare();
   const hasAIData = hasClinicalNotes && (notesSigns !== '' || notesInfo !== '');
 
   const showInterventionModal = () => {
