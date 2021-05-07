@@ -467,7 +467,7 @@ export default function Patient({
               <Card.Grid hoverable>
                 <Statistic
                   title={exam.value.initials}
-                  suffix={getExamDelta(exam.delta)}
+                  suffix={getExamDelta(exam.value.delta)}
                   value={getExamValue(exam.value)}
                   valueStyle={!exam.value.value || !exam.value.alert ? {} : { color: '#cf1322' }}
                 />
