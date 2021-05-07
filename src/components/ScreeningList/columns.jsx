@@ -369,7 +369,7 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
     {
       title: (
         <Tooltip
-          title="Escore Global: Exames + Alertas + Alta Vigilância + Escore Total da Prescrição."
+          title="Escore Global: Exames + Alertas + Alta Vigilância + Diferentes + Escore Total da Prescrição."
           underline
         >
           EG
