@@ -1,6 +1,14 @@
 export default {
   list: () => [
     {
+      key: 'alergy',
+      label: 'Alergia',
+      value: 'alergia',
+      color: '#E65100',
+      backgroundColor: 'rgba(230, 81, 0, 0.1)',
+      category: 'indo'
+    },
+    {
       key: 'conduct',
       label: 'Conduta',
       value: 'conduta',
