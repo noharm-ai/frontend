@@ -11,7 +11,7 @@ import { Creators as AppCreators } from '../app';
 const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { authSetErrorIdentify, authSetIdentify, authDelIdentify } = AuthCreators;
-const { appSetConfig } = AppCreators;
+const { appSetConfig, appSetCurrentVersion } = AppCreators;
 
 export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch => {
   dispatch(userSetLoginStart());
@@ -39,6 +39,7 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
 
   dispatch(authSetIdentify(identify));
   dispatch(sessionSetFirstAccess());
+  dispatch(appSetCurrentVersion(appInfo.version));
   dispatch(userSetCurrentUser(user, keepMeLogged));
   dispatch(appSetConfig({ nameUrl, apiKey }));
 };

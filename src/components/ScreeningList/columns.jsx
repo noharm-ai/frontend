@@ -209,10 +209,182 @@ export const expandedRowRender = record => {
   );
 };
 
+const oddClass = index => (index % 2 ? 'bg-light-gray' : '');
+
 const sortDirections = ['descend', 'ascend'];
 
-export default (sortedInfo, filteredInfo) => {
+export default (sortedInfo, filteredInfo, noharmCare) => {
   const { t } = useTranslation();
+  let index = 0;
+
+  const patientRiskColumns = [
+    {
+      title: <Tooltip title="Idade">ID</Tooltip>,
+      className: `gtm-th-idade ${oddClass(index++)}`,
+      key: 'age',
+      width: 30,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.birthdays - b.birthdays,
+      sortOrder: sortedInfo.columnKey === 'age' && sortedInfo.order
+    },
+    {
+      title: <Tooltip title="Tempo de internação (dias)">TI</Tooltip>,
+      className: `gtm-th-tempo-int ${oddClass(index++)}`,
+      key: 'lengthStay',
+      render: (entry, { lengthStay, dischargeFormated }) => {
+        if (dischargeFormated) {
+          return (
+            <Tooltip title={`Paciente com alta em ${dischargeFormated}`} placement="top">
+              {lengthStay} <InfoIcon />
+            </Tooltip>
+          );
+        }
+        return lengthStay;
+      },
+      width: 30,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.lengthStay - b.lengthStay,
+      sortOrder: sortedInfo.columnKey === 'lengthStay' && sortedInfo.order
+    },
+    {
+      title: <Tooltip title="Exames Alterados">EX</Tooltip>,
+      className: `gtm-th-exames ${oddClass(index++)}`,
+      key: 'alertExams',
+      width: 30,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.alertExams - b.alertExams,
+      sortOrder: sortedInfo.columnKey === 'alertExams' && sortedInfo.order
+    },
+    {
+      title: (
+        <Tooltip title="Alertas na Prescrição: Relações, Toxicidades e Dose de Alerta">AL</Tooltip>
+      ),
+      className: `ant-table-right-border gtm-th-alerts ${oddClass(index++)}`,
+      key: 'alerts',
+      width: 30,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.alerts - b.alerts,
+      sortOrder: sortedInfo.columnKey === 'alerts' && sortedInfo.order
+    }
+  ];
+
+  if (noharmCare) {
+    patientRiskColumns.push({
+      title: <Tooltip title="Eventos adversos">EA</Tooltip>,
+      className: `ant-table-right-border gtm-th-ea ${oddClass(index++)}`,
+      key: 'complication',
+      width: 30,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.complication - b.complication,
+      sortOrder: sortedInfo.columnKey === 'complication' && sortedInfo.order
+    });
+  }
+
+  const prescriptionRiskColumns = [
+    {
+      title: <Tooltip title="Antimicrobianos">AM</Tooltip>,
+      className: `gtm-th-am ${oddClass(index++)}`,
+      key: 'am',
+      width: 30,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.am - b.am,
+      sortOrder: sortedInfo.columnKey === 'am' && sortedInfo.order
+    },
+    {
+      title: <Tooltip title="Alta Vigilância">AV</Tooltip>,
+      className: `gtm-th-av ${oddClass(index++)}`,
+      key: 'av',
+      width: 30,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.av - b.av,
+      sortOrder: sortedInfo.columnKey === 'av' && sortedInfo.order
+    },
+    {
+      title: <Tooltip title="Controlados">C</Tooltip>,
+      className: `gtm-th-c ${oddClass(index++)}`,
+      key: 'controlled',
+      width: 20,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.controlled - b.controlled,
+      sortOrder: sortedInfo.columnKey === 'controlled' && sortedInfo.order
+    },
+    {
+      title: <Tooltip title="Não padronizados (sem Intervenção)">NP</Tooltip>,
+      className: `gtm-th-np ${oddClass(index++)}`,
+      key: 'np',
+      width: 30,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.np - b.np,
+      sortOrder: sortedInfo.columnKey === 'np' && sortedInfo.order
+    },
+    {
+      title: <Tooltip title="Alerta de Sonda">S</Tooltip>,
+      className: `gtm-th-s ${oddClass(index++)}`,
+      key: 'tube',
+      width: 20,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.tube - b.tube,
+      sortOrder: sortedInfo.columnKey === 'tube' && sortedInfo.order
+    },
+    {
+      title: <Tooltip title="Diferentes">D</Tooltip>,
+      className: `gtm-th-d ${oddClass(index++)}`,
+      key: 'diff',
+      width: 20,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.diff - b.diff,
+      sortOrder: sortedInfo.columnKey === 'diff' && sortedInfo.order
+    },
+    {
+      title: <Tooltip title="Intervenções Pendentes">IP</Tooltip>,
+      className: `gtm-th-ip ${oddClass(index++)}`,
+      key: 'interventions',
+      width: 20,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.interventions - b.interventions,
+      sortOrder: sortedInfo.columnKey === 'interventions' && sortedInfo.order
+    },
+    {
+      title: <Tooltip title="Escore Total da Prescrição">T</Tooltip>,
+      className: `ant-table-right-border gtm-th-t ${oddClass(index++)}`,
+      key: 'prescriptionScore',
+      width: 20,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.prescriptionScore - b.prescriptionScore,
+      sortOrder: sortedInfo.columnKey === 'prescriptionScore' && sortedInfo.order
+    },
+    {
+      title: (
+        <Tooltip
+          title="Escore Global: Exames + Alertas + Alta Vigilância + Diferentes + Escore Total da Prescrição."
+          underline
+        >
+          EG
+        </Tooltip>
+      ),
+      className: `ant-table-right-border gtm-th-ge ${oddClass(index++)}`,
+      key: 'globalScore',
+      width: 20,
+      align: 'center',
+      sortDirections,
+      sorter: (a, b) => a.globalScore - b.globalScore,
+      sortOrder: sortedInfo.columnKey === 'globalScore' && sortedInfo.order
+    }
+  ];
+
   return [
     {
       key: 'class',
@@ -237,164 +409,11 @@ export default (sortedInfo, filteredInfo) => {
     {
       title: t('screeningList.patientRisk'),
       className: 'ant-table-right-border',
-      children: setDataIndex([
-        {
-          title: <Tooltip title="Idade">ID</Tooltip>,
-          className: 'gtm-th-idade',
-          key: 'age',
-          width: 30,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.birthdays - b.birthdays,
-          sortOrder: sortedInfo.columnKey === 'age' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Tempo de internação (dias)">TI</Tooltip>,
-          className: 'bg-light-gray gtm-th-tempo-int',
-          key: 'lengthStay',
-          render: (entry, { lengthStay, dischargeFormated }) => {
-            if (dischargeFormated) {
-              return (
-                <Tooltip title={`Paciente com alta em ${dischargeFormated}`} placement="top">
-                  {lengthStay} <InfoIcon />
-                </Tooltip>
-              );
-            }
-            return lengthStay;
-          },
-          width: 30,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.lengthStay - b.lengthStay,
-          sortOrder: sortedInfo.columnKey === 'lengthStay' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Exames Alterados">EX</Tooltip>,
-          className: 'gtm-th-exames',
-          key: 'alertExams',
-          width: 30,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.alertExams - b.alertExams,
-          sortOrder: sortedInfo.columnKey === 'alertExams' && sortedInfo.order
-        },
-        {
-          title: (
-            <Tooltip title="Alertas na Prescrição: Relações, Toxicidades e Dose de Alerta">
-              AL
-            </Tooltip>
-          ),
-          className: 'ant-table-right-border bg-light-gray gtm-th-alerts',
-          key: 'alerts',
-          width: 30,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.alerts - b.alerts,
-          sortOrder: sortedInfo.columnKey === 'alerts' && sortedInfo.order
-        }
-      ])
+      children: setDataIndex(patientRiskColumns)
     },
     {
       title: t('screeningList.prescriptionRisk'),
-      children: setDataIndex([
-        {
-          title: <Tooltip title="Antimicrobianos">AM</Tooltip>,
-          className: 'gtm-th-am',
-          key: 'am',
-          width: 30,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.am - b.am,
-          sortOrder: sortedInfo.columnKey === 'am' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Alta Vigilância">AV</Tooltip>,
-          className: 'bg-light-gray gtm-th-av',
-          key: 'av',
-          width: 30,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.av - b.av,
-          sortOrder: sortedInfo.columnKey === 'av' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Controlados">C</Tooltip>,
-          className: 'gtm-th-c',
-          key: 'controlled',
-          width: 20,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.controlled - b.controlled,
-          sortOrder: sortedInfo.columnKey === 'controlled' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Não padronizados (sem Intervenção)">NP</Tooltip>,
-          className: 'bg-light-gray gtm-th-np',
-          key: 'np',
-          width: 30,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.np - b.np,
-          sortOrder: sortedInfo.columnKey === 'np' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Alerta de Sonda">S</Tooltip>,
-          className: 'gtm-th-s',
-          key: 'tube',
-          width: 20,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.tube - b.tube,
-          sortOrder: sortedInfo.columnKey === 'tube' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Diferentes">D</Tooltip>,
-          className: 'bg-light-gray gtm-th-d',
-          key: 'diff',
-          width: 20,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.diff - b.diff,
-          sortOrder: sortedInfo.columnKey === 'diff' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Intervenções Pendentes">IP</Tooltip>,
-          className: 'gtm-th-ip',
-          key: 'interventions',
-          width: 20,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.interventions - b.interventions,
-          sortOrder: sortedInfo.columnKey === 'interventions' && sortedInfo.order
-        },
-        {
-          title: <Tooltip title="Escore Total da Prescrição">T</Tooltip>,
-          className: 'ant-table-right-border bg-light-gray gtm-th-t',
-          key: 'prescriptionScore',
-          width: 20,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.prescriptionScore - b.prescriptionScore,
-          sortOrder: sortedInfo.columnKey === 'prescriptionScore' && sortedInfo.order
-        },
-        {
-          title: (
-            <Tooltip
-              title="Escore Global: Exames + Alertas + Alta Vigilância + Escore Total da Prescrição."
-              underline
-            >
-              EG
-            </Tooltip>
-          ),
-          className: 'ant-table-right-border gtm-th-ge',
-          key: 'globalScore',
-          width: 20,
-          align: 'center',
-          sortDirections,
-          sorter: (a, b) => a.globalScore - b.globalScore,
-          sortOrder: sortedInfo.columnKey === 'globalScore' && sortedInfo.order
-        }
-      ])
+      children: setDataIndex(prescriptionRiskColumns)
     },
     {
       title: t('screeningList.actions'),

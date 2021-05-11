@@ -44,9 +44,11 @@ export default function Screening({
   isFetching,
   content,
   error,
-  exams
+  exams,
+  security
 }) {
   const id = extractId(match.params.slug);
+  const hasNoHarmCare = security.hasNoHarmCare();
   const {
     prescriptionRaw: drugList,
     solutionRaw: solutionList,
@@ -197,7 +199,7 @@ export default function Screening({
               expandedRowRender={expandedExamRowRender}
             />
           </Tabs.TabPane>
-          {!isFetching && content.clinicalNotes !== null && (
+          {!isFetching && hasNoHarmCare && (
             <Tabs.TabPane
               tab={<TabTitle title="Evoluções" count={content.clinicalNotes} />}
               key="6"

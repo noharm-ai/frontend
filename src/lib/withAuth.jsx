@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 
 import { logoutThunk } from '@store/ducks/auth/thunk';
+import appInfo from '@utils/appInfo';
 
 const noop = () => {};
 const initialPage = '/';
@@ -14,6 +15,7 @@ const AuthHandler = ({
   session,
   isLoginPage,
   isLogoutPage,
+  currentVersion,
   component: Component,
   ...props
 }) => {
@@ -34,10 +36,19 @@ const AuthHandler = ({
     return <Redirect to={initialPage} />;
   }
 
+  if (currentVersion !== appInfo.version && isLogged) {
+    logout({ preventDefault: noop });
+    return <Redirect to="/login" />;
+  }
+
   return <Component {...props} />;
 };
 
-const mapStateToProps = ({ user, session }) => ({ user, session });
+const mapStateToProps = ({ user, session, app }) => ({
+  user,
+  session,
+  currentVersion: app.currentVersion
+});
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {

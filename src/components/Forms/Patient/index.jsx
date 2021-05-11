@@ -38,9 +38,11 @@ export default function Patient({
   clinicalNotes,
   notesInfo,
   notesInfoDate,
+  security,
   ...props
 }) {
   const { isSaving, success, error } = saveStatus;
+  const hasNoHarmCare = security.hasNoHarmCare();
 
   const initialValues = {
     idPrescription,
@@ -86,7 +88,7 @@ export default function Patient({
           <header>
             <Heading margin="0 0 11px">Dados do paciente</Heading>
           </header>
-          {clinicalNotes != null && notesInfo && (
+          {hasNoHarmCare && notesInfo && (
             <Alert
               message={`NoHarm Care (${moment(notesInfoDate).format('DD/MM/YYYY hh:mm')})`}
               description={notesInfo}

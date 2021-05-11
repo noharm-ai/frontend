@@ -36,6 +36,18 @@ const getExamValue = exam => {
   return `${exam.value} ${exam.unit ? exam.unit : ''}`;
 };
 
+const getExamDelta = delta => {
+  if (delta > 0) {
+    return <Icon type="arrow-up" />;
+  }
+
+  if (delta < 0) {
+    return <Icon type="arrow-down" />;
+  }
+
+  return null;
+};
+
 const refText = text => {
   return text.split('\n').map(function(item, key) {
     return (
@@ -51,6 +63,12 @@ const ExamData = ({ exam }) => (
   <>
     {exam && exam.date && <div>Data: {moment(exam.date).format('DD/MM/YYYY hh:mm')}</div>}
     {exam && exam.ref && <div>Ref: {refText(exam.ref)}</div>}
+    {exam && exam.delta && (
+      <div>
+        Variação em relação ao último exame: {exam.delta > 0 ? '+' : ''}
+        {exam.delta}%
+      </div>
+    )}
   </>
 );
 
@@ -58,7 +76,8 @@ export default function Patient({
   fetchScreening,
   access_token,
   prescription,
-  selectIntervention
+  selectIntervention,
+  security
 }) {
   const {
     admissionNumber,
@@ -83,7 +102,6 @@ export default function Patient({
     intervention,
     prevIntervention,
     existIntervention,
-    clinicalNotes,
     notesInfo,
     notesInfoDate,
     notesSigns,
@@ -94,7 +112,7 @@ export default function Patient({
   const [visible, setVisible] = useState(false);
   const [seeMore, setSeeMore] = useState(false);
 
-  const hasClinicalNotes = clinicalNotes != null;
+  const hasClinicalNotes = security.hasNoHarmCare();
   const hasAIData = hasClinicalNotes && (notesSigns !== '' || notesInfo !== '');
 
   const showInterventionModal = () => {
@@ -449,6 +467,7 @@ export default function Patient({
               <Card.Grid hoverable>
                 <Statistic
                   title={exam.value.initials}
+                  suffix={getExamDelta(exam.value.delta)}
                   value={getExamValue(exam.value)}
                   valueStyle={!exam.value.value || !exam.value.alert ? {} : { color: '#cf1322' }}
                 />
