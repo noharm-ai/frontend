@@ -4,19 +4,23 @@ import { bindActionCreators } from 'redux';
 import {
   selectItemToSaveThunk,
   saveInterventionThunk,
-  clearSavedInterventionStatusThunk
+  clearSavedInterventionStatusThunk,
+  fetchReasonsListThunk,
+  updateSelectedItemToSaveInterventionThunk
 } from '@store/ducks/intervention/thunk';
 import {
   updateInterventionDataThunk,
   checkInterventionThunk,
   checkPrescriptionDrugThunk
 } from '@store/ducks/prescriptions/thunk';
-import ModalIntervention from '@components/Screening/Modal';
+import { searchDrugsThunk } from '@store/ducks/drugs/thunk';
+import { memoryFetchReasonTextThunk, memorySaveReasonTextThunk } from '@store/ducks/memory/thunk';
+import Intervention from '@components/Forms/Intervention';
 
-const mapStateToProps = ({ intervention }) => ({
-  maybeCreateOrUpdate: {
-    ...intervention.maybeCreateOrUpdate
-  }
+const mapStateToProps = ({ intervention, drugs, memory }) => ({
+  intervention,
+  drugs: drugs.search,
+  reasonTextMemory: memory.reasonText
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -26,9 +30,14 @@ const mapDispatchToProps = dispatch =>
       reset: clearSavedInterventionStatusThunk,
       updateInterventionData: updateInterventionDataThunk,
       saveInterventionStatus: checkInterventionThunk,
-      savePrescriptionDrugStatus: checkPrescriptionDrugThunk
+      savePrescriptionDrugStatus: checkPrescriptionDrugThunk,
+      fetchReasonsList: fetchReasonsListThunk,
+      updateSelectedItemToSaveIntervention: updateSelectedItemToSaveInterventionThunk,
+      searchDrugs: searchDrugsThunk,
+      memorySaveReasonText: memorySaveReasonTextThunk,
+      memoryFetchReasonText: memoryFetchReasonTextThunk
     },
     dispatch
   );
 
-export default connect(mapStateToProps, mapDispatchToProps)(ModalIntervention);
+export default connect(mapStateToProps, mapDispatchToProps)(Intervention);
