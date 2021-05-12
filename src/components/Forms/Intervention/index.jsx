@@ -49,12 +49,7 @@ export default function Intervention({
   visible,
   ...props
 }) {
-  // const { isSaving, success, error, data } = prescription;
-  const { isSaving, wasSaved, item } = intervention.maybeCreateOrUpdate;
-
-  const initialValues = {
-    formId
-  };
+  const { isSaving, wasSaved, item } = intervention;
 
   // handle after save intervention.
   useEffect(() => {
@@ -81,6 +76,18 @@ export default function Intervention({
       notification.error(errorMessage);
     }
   }, [error]);
+
+  if (!item.intervention) {
+    return null;
+  }
+
+  const initialValues = {
+    formId,
+    error: item.intervention.error
+  };
+
+  console.log('intervention', intervention);
+  console.log('initial values', initialValues);
 
   const onCancel = () => {
     select({});
@@ -159,7 +166,7 @@ export default function Intervention({
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base />
+                <Base intervention={intervention} />
               </Row>
             </FormContainer>
           </form>

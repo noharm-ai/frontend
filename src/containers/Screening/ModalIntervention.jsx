@@ -18,7 +18,7 @@ import { memoryFetchReasonTextThunk, memorySaveReasonTextThunk } from '@store/du
 import Intervention from '@components/Forms/Intervention';
 
 const mapStateToProps = ({ intervention, drugs, memory }) => ({
-  intervention,
+  intervention: intervention.maybeCreateOrUpdate,
   drugs: drugs.search,
   reasonTextMemory: memory.reasonText
 });
