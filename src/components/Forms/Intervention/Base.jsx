@@ -11,9 +11,11 @@ import Switch from '@components/Switch';
 
 import PatientData from './PatientData';
 import DrugData from './DrugData';
+import Interaction from './Fields/Interaction';
+
 import { Box, EditorBox, FieldError } from '../Form.style';
 
-export default function Base({ intervention, reasons }) {
+export default function Base({ intervention, reasons, searchDrugs, drugs }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const { item: itemToSave } = intervention;
   const { error, cost, idInterventionReason } = values;
@@ -147,7 +149,17 @@ export default function Base({ intervention, reasons }) {
               </Tooltip>
             </Heading>
           </Col>
-          <Col xs={layout.input} />
+          <Col xs={layout.input}>
+            <Interaction
+              interactions={itemToSave.intervention.interactions}
+              interactionsList={itemToSave.intervention.interactionsList}
+              setFieldValue={setFieldValue}
+              searchDrugs={searchDrugs}
+              idSegment={itemToSave.intervention.idSegment || itemToSave.idSegment}
+              drugs={drugs}
+              uniqueDrugList={itemToSave.uniqueDrugList}
+            />
+          </Col>
         </Box>
       )}
     </>

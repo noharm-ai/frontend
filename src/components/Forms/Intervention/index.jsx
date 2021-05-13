@@ -48,6 +48,8 @@ export default function Intervention({
   disableUndoIntervention,
   visible,
   fetchReasonsList,
+  searchDrugs,
+  drugs,
   ...props
 }) {
   const { isSaving, wasSaved, item } = intervention;
@@ -175,7 +177,12 @@ export default function Intervention({
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base intervention={intervention} reasons={reasons} />
+                <Base
+                  intervention={intervention}
+                  reasons={reasons}
+                  searchDrugs={searchDrugs}
+                  drugs={drugs}
+                />
               </Row>
             </FormContainer>
           </form>
