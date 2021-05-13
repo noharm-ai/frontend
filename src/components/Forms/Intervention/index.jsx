@@ -32,10 +32,10 @@ const validationSchema = Yup.object().shape({
     .nullable()
     .required(requiredFieldMessage)
 });
-const formId = 'clinicalAlert';
 
 export default function Intervention({
   intervention,
+  reasons,
   updateInterventionData,
   reset,
   error,
@@ -47,6 +47,7 @@ export default function Intervention({
   afterSaveIntervention,
   disableUndoIntervention,
   visible,
+  fetchReasonsList,
   ...props
 }) {
   const { isSaving, wasSaved, item } = intervention;
@@ -77,13 +78,21 @@ export default function Intervention({
     }
   }, [error]);
 
+  useEffect(() => {
+    if (visible) {
+      fetchReasonsList();
+    }
+  }, [fetchReasonsList, visible]);
+
   if (!item.intervention) {
     return null;
   }
 
   const initialValues = {
-    formId,
-    error: item.intervention.error
+    error: item.intervention.error,
+    cost: item.intervention.cost,
+    idInterventionReason: item.intervention.idInterventionReason,
+    reasonDescription: null
   };
 
   console.log('intervention', intervention);
@@ -166,7 +175,7 @@ export default function Intervention({
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base intervention={intervention} />
+                <Base intervention={intervention} reasons={reasons} />
               </Row>
             </FormContainer>
           </form>

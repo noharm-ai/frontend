@@ -19,6 +19,7 @@ import Intervention from '@components/Forms/Intervention';
 
 const mapStateToProps = ({ intervention, drugs, memory }) => ({
   intervention: intervention.maybeCreateOrUpdate,
+  reasons: intervention.reasons,
   drugs: drugs.search,
   reasonTextMemory: memory.reasonText
 });
