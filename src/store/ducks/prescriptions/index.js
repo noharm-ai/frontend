@@ -231,9 +231,11 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
   }
 
   const headers = [];
-  Object.keys(state.single.data.headers).forEach(p => {
-    headers[p] = { ...state.single.data.headers[p], status: success.newStatus };
-  });
+  if (state.single.data.headers) {
+    Object.keys(state.single.data.headers).forEach(p => {
+      headers[p] = { ...state.single.data.headers[p], status: success.newStatus };
+    });
+  }
 
   return {
     ...state,
