@@ -4,24 +4,29 @@ import isEmpty from 'lodash.isempty';
 import { useFormikContext } from 'formik';
 
 import { Col } from '@components/Grid';
-import { Textarea, Select } from '@components/Inputs';
+import { Select } from '@components/Inputs';
 import Heading from '@components/Heading';
 import Tooltip from '@components/Tooltip';
 import Switch from '@components/Switch';
 
-import PatientData from './PatientData';
-import DrugData from './DrugData';
 import Interaction from './Fields/Interaction';
+import Observation from './Fields/Observation';
 
-import { Box, EditorBox, FieldError } from '../Form.style';
+import { Box, FieldError } from '../Form.style';
 
-export default function Base({ intervention, reasons, searchDrugs, drugs }) {
+export default function Base({
+  intervention,
+  reasons,
+  searchDrugs,
+  drugs,
+  reasonTextMemory,
+  memorySaveReasonText,
+  memoryFetchReasonText
+}) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const { item: itemToSave } = intervention;
-  const { error, cost, idInterventionReason } = values;
+  const { error, cost, idInterventionReason, interactions, observation } = values;
   const layout = { label: 8, input: 16 };
-
-  console.log('reasons', reasons);
 
   const hasRelationships = (reasonList, selectedReasons = []) => {
     if (!selectedReasons) return false;
@@ -67,12 +72,6 @@ export default function Base({ intervention, reasons, searchDrugs, drugs }) {
 
   return (
     <>
-      {(itemToSave.intervention.id === 0 || itemToSave.intervention.idPrescriptionDrug === 0) && (
-        <PatientData {...itemToSave} />
-      )}
-      {itemToSave.intervention.id !== 0 && itemToSave.intervention.idPrescriptionDrug !== 0 && (
-        <DrugData {...itemToSave} />
-      )}
       <Box hasError={errors.error && touched.error}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
@@ -120,7 +119,7 @@ export default function Base({ intervention, reasons, searchDrugs, drugs }) {
             id="reason"
             mode="multiple"
             optionFilterProp="children"
-            style={{ width: '80%' }}
+            style={{ width: '100%' }}
             placeholder="Selecione os motivos..."
             loading={reasons.isFetching}
             value={idInterventionReason}
@@ -138,7 +137,7 @@ export default function Base({ intervention, reasons, searchDrugs, drugs }) {
         </Col>
       </Box>
       {hasRelationships(reasons.list, idInterventionReason) && (
-        <Box hasError={errors.idInterventionReason && touched.idInterventionReason}>
+        <Box hasError={errors.interactions && touched.interactions}>
           <Col xs={layout.label}>
             <Heading as="label" size="14px">
               <Tooltip
@@ -151,7 +150,7 @@ export default function Base({ intervention, reasons, searchDrugs, drugs }) {
           </Col>
           <Col xs={layout.input}>
             <Interaction
-              interactions={itemToSave.intervention.interactions}
+              interactions={interactions}
               interactionsList={itemToSave.intervention.interactionsList}
               setFieldValue={setFieldValue}
               searchDrugs={searchDrugs}
@@ -159,9 +158,23 @@ export default function Base({ intervention, reasons, searchDrugs, drugs }) {
               drugs={drugs}
               uniqueDrugList={itemToSave.uniqueDrugList}
             />
+            {errors.interactions && touched.interactions && (
+              <FieldError>{errors.interactions}</FieldError>
+            )}
           </Col>
         </Box>
       )}
+      <Box hasError={errors.observation && touched.observation}>
+        <Observation
+          content={observation}
+          setFieldValue={setFieldValue}
+          memory={reasonTextMemory}
+          fetchMemory={memoryFetchReasonText}
+          saveMemory={memorySaveReasonText}
+          currentReason={idInterventionReason}
+        />
+        {errors.observation && touched.observation && <FieldError>{errors.observation}</FieldError>}
+      </Box>
     </>
   );
 }

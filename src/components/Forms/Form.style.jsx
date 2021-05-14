@@ -22,6 +22,7 @@ export const FormContainer = styled.div`
 export const Box = styled.div`
   display: flex;
   flex-direction: ${props => (props.flexDirection ? props.flexDirection : 'row')};
+  flex-wrap: wrap;
   align-items: center;
   width: 100%;
 
@@ -54,4 +55,11 @@ export const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
+`;
+
+export const FormHeader = styled.div`
+  border-top: 1px solid ${get('colors.detail')};
+  border-bottom: 1px solid ${get('colors.detail')};
+  padding: 10px 0;
+  margin-bottom: 15px;
 `;

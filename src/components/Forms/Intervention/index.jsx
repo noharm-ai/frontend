@@ -12,7 +12,8 @@ import Heading from '@components/Heading';
 import DefaultModal from '@components/Modal';
 
 import Base from './Base';
-import { FormContainer } from '../Form.style';
+import PatientData from './PatientData';
+import DrugData from './DrugData';
 
 const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
@@ -50,6 +51,9 @@ export default function Intervention({
   fetchReasonsList,
   searchDrugs,
   drugs,
+  reasonTextMemory,
+  memorySaveReasonText,
+  memoryFetchReasonText,
   ...props
 }) {
   const { isSaving, wasSaved, item } = intervention;
@@ -94,7 +98,9 @@ export default function Intervention({
     error: item.intervention.error,
     cost: item.intervention.cost,
     idInterventionReason: item.intervention.idInterventionReason,
-    reasonDescription: null
+    reasonDescription: null,
+    interactions: item.intervention.interactions,
+    observation: item.intervention.observation
   };
 
   console.log('intervention', intervention);
@@ -174,17 +180,24 @@ export default function Intervention({
           <header>
             <Heading margin="0 0 11px">Intervenção</Heading>
           </header>
+          {(item.intervention.id === 0 || item.intervention.idPrescriptionDrug === 0) && (
+            <PatientData {...item} />
+          )}
+          {item.intervention.id !== 0 && item.intervention.idPrescriptionDrug !== 0 && (
+            <DrugData {...item} />
+          )}
           <form onSubmit={handleSubmit}>
-            <FormContainer>
-              <Row type="flex" gutter={[16, 24]}>
-                <Base
-                  intervention={intervention}
-                  reasons={reasons}
-                  searchDrugs={searchDrugs}
-                  drugs={drugs}
-                />
-              </Row>
-            </FormContainer>
+            <Row type="flex" gutter={[16, 16]}>
+              <Base
+                intervention={intervention}
+                reasons={reasons}
+                searchDrugs={searchDrugs}
+                drugs={drugs}
+                reasonTextMemory={reasonTextMemory}
+                memorySaveReasonText={memorySaveReasonText}
+                memoryFetchReasonText={memoryFetchReasonText}
+              />
+            </Row>
           </form>
         </DefaultModal>
       )}

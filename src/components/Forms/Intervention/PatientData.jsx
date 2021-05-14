@@ -4,12 +4,12 @@ import React from 'react';
 import { Row, Col } from '@components/Grid';
 
 import Heading from '@components/Heading';
-import { Box } from './Intervention.style';
+import { FormHeader } from '@components/Forms/Form.style';
 
 export default function PatientData({ patientName, age, intervention }) {
   if (!patientName) {
     return (
-      <Box>
+      <FormHeader>
         <Row type="flex" gutter={24} css="padding: 2px 0">
           <Col span={8}>
             <Heading as="p" size="14px">
@@ -18,12 +18,12 @@ export default function PatientData({ patientName, age, intervention }) {
           </Col>
           <Col span={24 - 8}>#{intervention.idPrescription} (Intervenção no paciente)</Col>
         </Row>
-      </Box>
+      </FormHeader>
     );
   }
 
   return (
-    <Box>
+    <FormHeader>
       <Row type="flex" gutter={24} css="padding: 2px 0">
         <Col span={8}>
           <Heading as="p" size="14px">
@@ -40,6 +40,6 @@ export default function PatientData({ patientName, age, intervention }) {
         </Col>
         <Col span={24 - 8}>{age}</Col>
       </Row>
-    </Box>
+    </FormHeader>
   );
 }

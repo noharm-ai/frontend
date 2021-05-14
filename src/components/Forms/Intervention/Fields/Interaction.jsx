@@ -60,7 +60,7 @@ export default function Interaction({
       id="interactions"
       mode="multiple"
       optionFilterProp="children"
-      style={{ width: '80%' }}
+      style={{ width: '100%' }}
       placeholder="Selecione as relações..."
       defaultValue={interactions || undefined}
       notFoundContent={drugs.isFetching ? <LoadBox /> : null}
