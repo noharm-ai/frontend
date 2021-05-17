@@ -641,10 +641,6 @@ const relationColumn = bag => ({
   title: 'Prescrição vigente',
   width: 450,
   render: (text, prescription) => {
-    const relation = bag.currentPrescription.find(d => {
-      return d.idDrug === prescription.idDrug;
-    });
-
     return (
       <Select
         allowClear
@@ -652,7 +648,13 @@ const relationColumn = bag => ({
         optionFilterProp="children"
         style={{ width: '100%', maxWidth: '450px' }}
         placeholder="Relação com a prescrição vigente"
-        defaultValue={relation ? relation.idPrescriptionDrug : null}
+        defaultValue={prescription.conciliaRelationId}
+        onChange={value =>
+          bag.updatePrescriptionDrugData(prescription.idPrescriptionDrug, prescription.source, {
+            ...prescription,
+            conciliaRelationId: value
+          })
+        }
       >
         {bag.currentPrescription.map(
           ({ idPrescriptionDrug, drug, dose, measureUnit, frequency }) => (
