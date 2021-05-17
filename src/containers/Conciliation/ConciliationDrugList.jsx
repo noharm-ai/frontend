@@ -9,7 +9,8 @@ import {
 import {
   checkPrescriptionDrugThunk,
   updateInterventionDataThunk,
-  checkInterventionThunk
+  checkInterventionThunk,
+  updatePrescriptionDrugDataThunk
 } from '@store/ducks/prescriptions/thunk';
 import { selectPrescriptionDrugThunk } from '@store/ducks/prescriptionDrugs/thunk';
 import ConciliationDrugList from '@components/Conciliation/ConciliationDrugList';
@@ -34,7 +35,8 @@ const mapDispatchToProps = dispatch =>
       savePrescriptionDrugStatus: checkPrescriptionDrugThunk,
       updateInterventionData: updateInterventionDataThunk,
       saveInterventionStatus: checkInterventionThunk,
-      selectPrescriptionDrug: selectPrescriptionDrugThunk
+      selectPrescriptionDrug: selectPrescriptionDrugThunk,
+      updatePrescriptionDrugData: updatePrescriptionDrugDataThunk
     },
     dispatch
   );

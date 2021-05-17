@@ -9,24 +9,56 @@ const emptyInterventionMessage = `
 const getConduct = interventions => {
   if (interventions !== '') {
     return `
-Intervenções realizadas. Contato prescritor e aguardo conduta.
-Realizada análise de risco para tromboembolismo venoso. Prescrição de acordo com o protocolo. Contato prescritor para avaliação de terapia farmacológica anticoagulante.
+Realizada a conciliação dos medicamentos de uso domiciliar e feitas intervenções pertinentes. Caso as divergências encontradas sejam intencionais, desconsiderar.
 `;
   }
   return `
-Realizada análise de risco para tromboembolismo venoso. Prescrição de acordo com o protocolo. Contato prescritor para avaliação de terapia farmacológica anticoagulante.
+Realizada a conciliação dos medicamentos e não encontrada divergência não intencional.
 `;
 };
 
 const getConciliationDrugList = list => {
-  const tpl = list.map(d => {
-    return `
-  ${d.drug}: ${d.dosage} ${d.frequency ? d.frequency.label : ''}
-  Medicamento ou indicação cobertos em prescrição hospitalar?
+  const tplWithRelation = list
+    .map(d => {
+      if (d.conciliaRelationId) {
+        return `
+  - ${d.drug}: ${d.dosage} ${d.frequency ? d.frequency.label : ''}
     `;
-  });
+      }
 
-  return tpl.join('');
+      return null;
+    })
+    .filter(t => t != null);
+
+  const tplWithoutRelation = list
+    .map(d => {
+      if (d.conciliaRelationId == null) {
+        return `
+  - ${d.drug}: ${d.dosage} ${d.frequency ? d.frequency.label : ''}
+    `;
+      }
+
+      return null;
+    })
+    .filter(t => t != null);
+
+  let tpl = '';
+
+  if (tplWithRelation.length) {
+    tpl += `
+*Medicamento ou indicação cobertos em prescrição hospitalar:
+    ${tplWithRelation.join('')}
+    `;
+  }
+
+  if (tplWithoutRelation.length) {
+    tpl += `
+*Medicamento ou indicação NÃO cobertos em prescrição hospitalar:
+    ${tplWithoutRelation.join('')}
+    `;
+  }
+
+  return tpl;
 };
 
 export const conciliationTemplate = (prescription, interventions, signature) => {
