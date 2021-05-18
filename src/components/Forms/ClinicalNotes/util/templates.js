@@ -18,11 +18,21 @@ Realizada a conciliação dos medicamentos e não encontrada divergência não i
 };
 
 const getConciliationDrugList = list => {
+  if (list.length === 0 || (list.length === 1 && list[0].drug === '')) {
+    return `
+Paciente nega uso contínuo de medicamentos.
+`;
+  }
+
+  const drugDescription = d => {
+    return `${d.drug}: ${d.dose ? d.dosage : ''} ${d.frequency ? d.frequency.label : ''}`;
+  };
+
   const tplWithRelation = list
     .map(d => {
       if (d.conciliaRelationId) {
         return `
-  - ${d.drug}: ${d.dosage} ${d.frequency ? d.frequency.label : ''}
+  - ${drugDescription(d)}
     `;
       }
 
@@ -34,7 +44,7 @@ const getConciliationDrugList = list => {
     .map(d => {
       if (d.conciliaRelationId == null) {
         return `
-  - ${d.drug}: ${d.dosage} ${d.frequency ? d.frequency.label : ''}
+  - ${drugDescription(d)}
     `;
       }
 
@@ -73,7 +83,9 @@ Conciliação Medicamentosa realizada com:
 
 
 2. Conciliação medicamentosa:
-${getConciliationDrugList(prescription.prescription.list[0].value)}
+${getConciliationDrugList(
+  prescription.prescription.list.length ? prescription.prescription.list[0].value : []
+)}
 3. Intervenções:
 ${interventions === '' ? emptyInterventionMessage : interventions}
 4. Conduta:
@@ -101,7 +113,7 @@ ${i}
 
 export const interventionTemplate = i => `
   ${i.drugName}
-  ${stripHtml(i.observation)}
+  ${i.observation ? stripHtml(i.observation) : ''}
 `;
 
 const emptyInterventionTemplate = ({ idPrescription, agg, concilia }) => {
