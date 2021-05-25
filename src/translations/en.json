@@ -29,6 +29,7 @@
     "userConfig": "User"
   },
   "screeningList": {
+    "empty": "No records found",
     "title-prescription": "Prescription Prioritization",
     "title-patient": "Patient Prioritization",
     "title-conciliation": "Conciliation Prioritization",
@@ -36,10 +37,28 @@
     "date": "Date",
     "seeMore": "See more",
     "pending": "Pending prescriptions",
+    "pendingHint": "Show pending prescriptions",
     "checked": "Checked prescriptions",
+    "checkedHint": "Show checked prescriptions",
     "all": "All",
+    "allHint": "Show all prescriptions",
+    "allHintLimit": "500 prescription limit reached",
     "patientRisk": "Patient risk",
     "prescriptionRisk": "Prescription risk",
-    "actions": "Actions"
+    "actions": "Actions",
+    "search": "Search",
+    "resetFilter": "Reset",
+    "saveFilter": "Save current filter",
+    "applyFilter": "Apply filter",
+    "noFilter": "No filters available.",
+    "noFilterHint": "Click on Save filter to create one.",
+    "labelDepartment": "Departments",
+    "labelDepartmentPlaceholder": "Select departments",
+    "labelCurrentDepartment": "Current department",
+    "labelCurrentDepartmentHint": "Filter patient`s current department",
+    "labelDrug": "Drugs",
+    "labelDrugPlaceholder": "Select drugs",
+    "labelPendingPrescription": "Pending prescriptions (only)",
+    "iptSearchPlaceholder": "Search by patient or admission number"
   }
 }

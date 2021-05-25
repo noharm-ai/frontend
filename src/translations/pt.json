@@ -29,6 +29,7 @@
     "userConfig": "Usuário"
   },
   "screeningList": {
+    "empty": "Nenhum registro encontrado",
     "title-prescription": "Priorização por Prescrições",
     "title-patient": "Priorização por Pacientes",
     "title-conciliation": "Priorização de Conciliações",
@@ -36,10 +37,28 @@
     "date": "Data",
     "seeMore": "Ver mais",
     "pending": "Prescrições pendentes",
+    "pendingHint": "Ver prescrições pendentes",
     "checked": "Prescrições checadas",
+    "checkedHint": "Ver prescrições checadas",
     "all": "Todas",
+    "allHint": "Ver todas as prescrições",
+    "allHintLimit": "Limite de 500 prescrições atingido, reduza os setores para visualizar todas do dia.",
     "patientRisk": "Risco do paciente",
     "prescriptionRisk": "Risco da prescrição",
-    "actions": "Ações"
+    "actions": "Ações",
+    "search": "Pesquisar",
+    "resetFilter": "Limpar",
+    "saveFilter": "Salvar filtro atual",
+    "applyFilter": "Aplicar filtro",
+    "noFilter": "Nenhum filtro disponível.",
+    "noFilterHint": "Clique em \"Salvar filtro atual\" para criar um novo filtro.",
+    "labelDepartment": "Setores",
+    "labelDepartmentPlaceholder": "Selecione os setores",
+    "labelCurrentDepartment": "Setor atual",
+    "labelCurrentDepartmentHint": "Considerar somente o setor atual do paciente",
+    "labelDrug": "Medicamentos",
+    "labelDrugPlaceholder": "Selecione os medicamentos",
+    "labelPendingPrescription": "Somente prescrições pendentes",
+    "iptSearchPlaceholder": "Buscar por paciente ou nº atendimento"
   }
 }
