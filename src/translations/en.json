@@ -98,5 +98,21 @@
     "btnCheck": "Check prescription",
     "btnChecked": "Checked prescription",
     "btnOpen": "View prescription"
+  },
+  "screeningHeader": {
+    "titleAdmission": "Admission number",
+    "titlePrescription": "Prescription number",
+    "titleConciliation": "Conciliation number",
+    "copyHint": "Click to copy",
+    "subtitleAdmission": "Aggregated prescription of",
+    "issuedOn": "Issued on",
+    "validUntil": "valid until",
+    "intercurrence": "Intercurrence",
+    "btnChecked": "Checked",
+    "btnUndoCheck": "Undo",
+    "btnCheck": "Check",
+    "btnClinicalNotes": "Clinical notes",
+    "btnAlert": "Alert",
+    "btnClose": "Close"
   }
 }

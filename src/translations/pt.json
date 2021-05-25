@@ -98,5 +98,21 @@
     "btnCheck": "Checar prescrição",
     "btnChecked": "Prescrição checada",
     "btnOpen": "Ver detalhes"
+  },
+  "screeningHeader": {
+    "titleAdmission": "Atendimento n°",
+    "titlePrescription": "Prescrição nº",
+    "titleConciliation": "Conciliação n°",
+    "copyHint": "Clique para copiar",
+    "subtitleAdmission": "Prescrições agregadas de",
+    "issuedOn": "Liberada em",
+    "validUntil": "válida até",
+    "intercurrence": "Intercorrência",
+    "btnChecked": "Prescrição checada",
+    "btnUndoCheck": "Desfazer checagem",
+    "btnCheck": "Checar",
+    "btnClinicalNotes": "Evolução",
+    "btnAlert": "Alerta",
+    "btnClose": "Fechar"
   }
 }
