@@ -242,7 +242,7 @@ export default function ScreeningList({
         }}
         loading={isFetching}
         locale={{ emptyText }}
-        expandedRowRender={expandedRowRender}
+        expandedRowRender={expandedRowRender(t)}
         dataSource={!isFetching ? dataSource : []}
         onChange={handleTableChange}
       />
