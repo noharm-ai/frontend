@@ -152,5 +152,13 @@
     "editHeight": "Atualizar a altura",
     "examDate": "Data",
     "examVariation": "Variação em relação ao último exame"
+  },
+  "screeningBody": {
+    "tabDrugs": "Medicamentos",
+    "tabSolutions": "Soluções",
+    "tabProcedures": "Procedimentos/Exames",
+    "tabInterventions": "Intervenções",
+    "tabLabResults": "Exames",
+    "tabClinicalNotes": "Evoluções"
   }
 }

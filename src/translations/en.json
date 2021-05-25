@@ -152,5 +152,13 @@
     "editHeight": "Edit height",
     "examDate": "Date",
     "examVariation": "Variation compared to last lab result"
+  },
+  "screeningBody": {
+    "tabDrugs": "Drugs",
+    "tabSolutions": "Solutions",
+    "tabProcedures": "Procedures/Exams",
+    "tabInterventions": "Interventions",
+    "tabLabResults": "Lab results",
+    "tabClinicalNotes": "Clinical notes"
   }
 }
