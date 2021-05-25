@@ -13,7 +13,8 @@
   "layout": {
     "help": "Help",
     "logout": "Logout",
-    "goBack": "Back"
+    "goBack": "Back",
+    "iptSearch": "Search by prescription number"
   },
   "menu": {
     "prioritization": "Prioritization",
@@ -114,5 +115,42 @@
     "btnClinicalNotes": "Clinical notes",
     "btnAlert": "Alert",
     "btnClose": "Close"
+  },
+  "patientCard": {
+    "admission": "Admission",
+    "department": "Department",
+    "previousDepartment": "Previous department",
+    "bed": "Bed",
+    "age": "Age",
+    "gender": "Gender",
+    "weight": "Weight",
+    "skin": "Skin color",
+    "height": "Height",
+    "bodySurface": "Body surface",
+    "bmi": "BMI",
+    "segment": "Segment",
+    "medicalRecord": "Medical record",
+    "prescriber": "Prescriber",
+    "notes": "Notes",
+    "data": "Data",
+    "dataExtractedFrom": "Data extracted by NoHarm Care",
+    "signals": "Signals",
+    "signalsExtractedFrom": "Signals extracted by NoHarm Care",
+    "extractedFrom": "Extracted by NoHarm Care on",
+    "more": "More",
+    "less": "Less",
+    "recalculate": "Recalculate prescription",
+    "patientIntervention": "Patient intervention",
+    "patientInterventionDisabled": "This intervention can no longer be updated",
+    "editPatient": "Edit patient data",
+    "notAvailable": "Not available",
+    "ctaNoHarmCare": "NoHarm Care extracted data",
+    "male": "Male",
+    "female": "Female",
+    "manuallyUpdated": "Updated manually",
+    "editWeigth": "Edit weight",
+    "editHeight": "Edit height",
+    "examDate": "Date",
+    "examVariation": "Variation compared to last lab result"
   }
 }

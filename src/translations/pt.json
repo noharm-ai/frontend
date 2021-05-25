@@ -13,7 +13,8 @@
   "layout": {
     "help": "Ajuda",
     "logout": "Sair",
-    "goBack": "Voltar"
+    "goBack": "Voltar",
+    "iptSearch": "Buscar por nº de prescrição"
   },
   "menu": {
     "prioritization": "Priorização",
@@ -114,5 +115,42 @@
     "btnClinicalNotes": "Evolução",
     "btnAlert": "Alerta",
     "btnClose": "Fechar"
+  },
+  "patientCard": {
+    "admission": "Atendimento",
+    "department": "Setor",
+    "previousDepartment": "Setor anterior",
+    "bed": "Leito",
+    "age": "Idade",
+    "gender": "Sexo",
+    "weight": "Peso",
+    "skin": "Cor da pele",
+    "height": "Altura",
+    "bodySurface": "Superfície corporal",
+    "bmi": "IMC",
+    "segment": "Segmento",
+    "medicalRecord": "Prontuário",
+    "prescriber": "Prescritor",
+    "notes": "Anotações",
+    "data": "Dados",
+    "dataExtractedFrom": "Dados extraídos pela NoHarm Care",
+    "signals": "Sinais",
+    "signalsExtractedFrom": "Sinais extraídos pela NoHarm Care",
+    "extractedFrom": "Extraído pela NoHarm Care em",
+    "more": "Ver mais",
+    "less": "Ver menos",
+    "recalculate": "Recalcular prescrição",
+    "patientIntervention": "Intervenção no paciente",
+    "patientInterventionDisabled": "Esta intervenção não pode mais ser alterada, pois já foi resolvida.",
+    "editPatient": "Editar dados de paciente",
+    "notAvailable": "Não disponível",
+    "ctaNoHarmCare": "Veja os dados extraídos pela NoHarm Care",
+    "male": "Masculino",
+    "female": "Feminino",
+    "manuallyUpdated": "Alterado manualmente",
+    "editWeigth": "Atualizar o peso",
+    "editHeight": "Atualizar a altura",
+    "examDate": "Data",
+    "examVariation": "Variação em relação ao último exame"
   }
 }
