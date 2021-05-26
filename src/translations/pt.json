@@ -117,6 +117,8 @@
     "btnClose": "Fechar"
   },
   "patientCard": {
+    "prescription": "Prescrição",
+    "patient": "Paciente",
     "admission": "Atendimento",
     "department": "Setor",
     "previousDepartment": "Setor anterior",
@@ -228,5 +230,26 @@
     "exrNotes": "Anotação:",
     "exrPrevIntervention": "Intervenção anterior:",
     "exrDiluent": "Diluentes (sem validação):"
+  },
+
+  "interventionForm": {
+    "title": "Intervenção",
+
+    "labelPrescriptionError": "Possível erro de prescrição",
+    "labelCostReduction": "Reduz custo",
+    "labelReasons": "Motivos",
+    "labelRelations": "Relações",
+    "labelObservations": "Observações",
+
+    "btnModelEmpty": "Este motivo ainda não possui um modelo salvo",
+    "btnModelSave": "Salvar observação modelo",
+    "btnModelSaveHint": "Preencha o texto para salvar como modelo",
+    "btnModelApply": "Aplicar observação modelo",
+    "btnModelInvalid": "Modelos: Esta funcionalidade é desabilitada quando múltiplos motivos são selecionados",
+    "btnModelDisabled": "Modelos: Selecione um motivo para liberar esta funcionalidade",
+
+    "btnSave": "Salvar",
+    "btnUndo": "Desfazer intervenção",
+    "btnCancel": "Cancelar"
   }
 }

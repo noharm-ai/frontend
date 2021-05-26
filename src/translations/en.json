@@ -117,6 +117,8 @@
     "btnClose": "Close"
   },
   "patientCard": {
+    "prescription": "Prescription",
+    "patient": "Patient",
     "admission": "Admission",
     "department": "Department",
     "previousDepartment": "Previous department",
@@ -228,5 +230,26 @@
     "exrNotes": "Notes:",
     "exrPrevIntervention": "Previous intervention:",
     "exrDiluent": "Diluent (not validated):"
+  },
+
+  "interventionForm": {
+    "title": "Intervention",
+
+    "labelPrescriptionError": "Prescription error",
+    "labelCostReduction": "Cost reduction",
+    "labelReasons": "Reasons",
+    "labelRelations": "Relations",
+    "labelObservations": "Observations",
+
+    "btnModelEmpty": "No observation saved for this reason",
+    "btnModelSave": "Save observation",
+    "btnModelSaveHint": "Fill the observation to save and reuse later",
+    "btnModelApply": "Apply saved observation",
+    "btnModelInvalid": "Models: Disabled when multiple reasons selected",
+    "btnModelDisabled": "Models: Select a reason",
+
+    "btnSave": "Save",
+    "btnUndo": "Undo",
+    "btnCancel": "Cancel"
   }
 }

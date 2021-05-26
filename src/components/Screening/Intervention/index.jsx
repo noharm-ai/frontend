@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import isEmpty from 'lodash.isempty';
 import uniqBy from 'lodash.uniqby';
 import debounce from 'lodash.debounce';
+import { useTranslation } from 'react-i18next';
 
 import { Row, Col } from '@components/Grid';
 import { Select, Textarea } from '@components/Inputs';
@@ -16,54 +17,62 @@ import stripHtml from '@utils/stripHtml';
 
 import { Box, EditorBox } from './Intervention.style';
 
-const Drug = ({ drug, dosage, frequency, route, score }) => (
-  <Box>
-    <Row type="flex" gutter={24} css="padding: 2px 0">
-      <Col span={8}>
-        <Heading as="p" size="14px">
-          Medicamento:
-        </Heading>
-      </Col>
-      <Col span={24 - 8}>{drug}</Col>
-    </Row>
-    <Row type="flex" gutter={24} css="padding: 2px 0">
-      <Col span={8}>
-        <Heading as="p" size="14px">
-          Dose:
-        </Heading>
-      </Col>
-      <Col span={24 - 8}>{dosage}</Col>
-    </Row>
-    <Row type="flex" gutter={24} css="padding: 2px 0">
-      <Col span={8}>
-        <Heading as="p" size="14px">
-          Frequência:
-        </Heading>
-      </Col>
-      <Col span={24 - 8}>{frequency && `${frequency.value} ${frequency.label}`}</Col>
-    </Row>
-    <Row type="flex" gutter={24} css="padding: 2px 0">
-      <Col span={8}>
-        <Heading as="p" size="14px">
-          Via:
-        </Heading>
-      </Col>
-      <Col span={24 - 8}>{route}</Col>
-    </Row>
-  </Box>
-);
+const Drug = ({ drug, dosage, frequency, route }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Box>
+      <Row type="flex" gutter={24} css="padding: 2px 0">
+        <Col span={8}>
+          <Heading as="p" size="14px">
+            {t('tableHeader.drug')}:
+          </Heading>
+        </Col>
+        <Col span={24 - 8}>{drug}</Col>
+      </Row>
+      <Row type="flex" gutter={24} css="padding: 2px 0">
+        <Col span={8}>
+          <Heading as="p" size="14px">
+            {t('tableHeader.dose')}:
+          </Heading>
+        </Col>
+        <Col span={24 - 8}>{dosage}</Col>
+      </Row>
+      <Row type="flex" gutter={24} css="padding: 2px 0">
+        <Col span={8}>
+          <Heading as="p" size="14px">
+            {t('tableHeader.frequency')}:
+          </Heading>
+        </Col>
+        <Col span={24 - 8}>{frequency && `${frequency.value} ${frequency.label}`}</Col>
+      </Row>
+      <Row type="flex" gutter={24} css="padding: 2px 0">
+        <Col span={8}>
+          <Heading as="p" size="14px">
+            {t('tableHeader.route')}:
+          </Heading>
+        </Col>
+        <Col span={24 - 8}>{route}</Col>
+      </Row>
+    </Box>
+  );
+};
 
 const PatientData = ({ patientName, age, intervention }) => {
+  const { t } = useTranslation();
+
   if (!patientName) {
     return (
       <Box>
         <Row type="flex" gutter={24} css="padding: 2px 0">
           <Col span={8}>
             <Heading as="p" size="14px">
-              Prescrição:
+              {t('patientCard.prescription')}:
             </Heading>
           </Col>
-          <Col span={24 - 8}>#{intervention.idPrescription} (Intervenção no paciente)</Col>
+          <Col span={24 - 8}>
+            #{intervention.idPrescription} ({t('patientCard.patientIntervention')})
+          </Col>
         </Row>
       </Box>
     );
@@ -74,7 +83,7 @@ const PatientData = ({ patientName, age, intervention }) => {
       <Row type="flex" gutter={24} css="padding: 2px 0">
         <Col span={8}>
           <Heading as="p" size="14px">
-            Paciente:
+            {t('patientCard.patient')}:
           </Heading>
         </Col>
         <Col span={24 - 8}>{patientName}</Col>
@@ -82,7 +91,7 @@ const PatientData = ({ patientName, age, intervention }) => {
       <Row type="flex" gutter={24} css="padding: 2px 0">
         <Col span={8}>
           <Heading as="p" size="14px">
-            Idade:
+            {t('patientCard.age')}:
           </Heading>
         </Col>
         <Col span={24 - 8}>{age}</Col>
@@ -92,6 +101,8 @@ const PatientData = ({ patientName, age, intervention }) => {
 };
 
 const Reason = ({ reasons, defaultReason, updateReason }) => {
+  const { t } = useTranslation();
+
   const joinReasons = (ids, reasons) => {
     if (isEmpty(ids)) return '';
 
@@ -119,7 +130,7 @@ const Reason = ({ reasons, defaultReason, updateReason }) => {
           title="Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica abrem a opção de informar os medicamentos relacionados"
           underline
         >
-          Motivos:
+          {t('interventionForm.labelReasons')}:
         </Tooltip>
       </Heading>
       <Select
@@ -143,6 +154,7 @@ const Reason = ({ reasons, defaultReason, updateReason }) => {
 };
 
 const Error = ({ handleChangeError, defaultChecked }) => {
+  const { t } = useTranslation();
   const handleChange = isChecked => {
     handleChangeError({ error: isChecked });
   };
@@ -161,7 +173,7 @@ const Error = ({ handleChangeError, defaultChecked }) => {
           title="Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa"
           underline
         >
-          Possível Erro de prescrição:
+          {t('interventionForm.labelPrescriptionError')}:
         </Tooltip>
       </Heading>
       <Switch onChange={handleChange} defaultChecked={defaultChecked} />
@@ -170,6 +182,7 @@ const Error = ({ handleChangeError, defaultChecked }) => {
 };
 
 const Cost = ({ handleChangeCost, defaultChecked }) => {
+  const { t } = useTranslation();
   const handleChange = isChecked => {
     handleChangeCost({ cost: isChecked });
   };
@@ -178,7 +191,7 @@ const Cost = ({ handleChangeCost, defaultChecked }) => {
     <Box css="align-items: center;display: flex;">
       <Heading as="label" htmlFor="reason" size="14px" margin="0 10px 0 0" className="fixed">
         <Tooltip title="Esta intervenção gera redução de custo?" underline>
-          Reduz custo:
+          {t('interventionForm.labelCostReduction')}:
         </Tooltip>
       </Heading>
       <Switch onChange={handleChange} defaultChecked={defaultChecked} />
@@ -195,6 +208,8 @@ const Interactions = ({
   idSegment,
   uniqueDrugList
 }) => {
+  const { t } = useTranslation();
+
   const handleChange = interactions => {
     if (!isEmpty(interactions)) {
       interactions = interactions.map(item => parseInt(item, 10));
@@ -241,7 +256,7 @@ const Interactions = ({
           title="Lista de medicamentos com Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica"
           underline
         >
-          Relações:
+          {t('interventionForm.labelRelations')}:
         </Tooltip>
       </Heading>
 
@@ -276,6 +291,7 @@ const Observations = ({
   currentReason
 }) => {
   const text = useRef(content || '');
+  const { t } = useTranslation();
   const isMemoryDisabled = currentReason == null || currentReason.length !== 1;
 
   useEffect(() => {
@@ -318,11 +334,13 @@ const Observations = ({
   };
 
   const getMemoryTooltip = () => {
-    const config = { save: 'Salvar observação modelo', apply: 'Aplicar observação modelo' };
+    const config = {
+      save: t('interventionForm.btnModelSave'),
+      apply: t('interventionForm.btnModelApply')
+    };
 
     if (currentReason && currentReason.length > 1) {
-      const msg =
-        'Modelos: Esta funcionalidade é desabilitada quando múltiplos motivos são selecionados';
+      const msg = t('interventionForm.btnModelInvalid');
       return {
         save: msg,
         apply: msg
@@ -330,7 +348,7 @@ const Observations = ({
     }
 
     if (isMemoryDisabled) {
-      const msg = 'Modelos: Selecione um motivo para liberar esta funcionalidade';
+      const msg = t('interventionForm.btnModelDisabled');
       return {
         save: msg,
         apply: msg
@@ -339,8 +357,8 @@ const Observations = ({
 
     if (isEmpty(memory.list) || !content) {
       return {
-        save: content ? config.save : 'Preencha o texto para salvar como modelo',
-        apply: !isEmpty(memory.list) ? config.apply : 'Este motivo ainda não possui um modelo salvo'
+        save: content ? config.save : t('interventionForm.btnModelSaveHint'),
+        apply: !isEmpty(memory.list) ? config.apply : t('interventionForm.btnModelEmpty')
       };
     }
 
@@ -354,7 +372,7 @@ const Observations = ({
       <Row>
         <Col xs={20}>
           <Heading as="h4" htmlFor="reason" size="14px" margin="0 0 14px">
-            Observações:
+            {t('interventionForm.labelObservations')}:
           </Heading>
         </Col>
         <Col xs={4}>
@@ -427,6 +445,7 @@ export default function Intervention({
 }) {
   const { maybeCreateOrUpdate } = intervention;
   const { item: itemToSave } = maybeCreateOrUpdate;
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchReasonsList();
@@ -449,7 +468,7 @@ export default function Intervention({
   return (
     <>
       <header>
-        <Heading margin="0 0 11px">Intervenção</Heading>
+        <Heading margin="0 0 11px">{t('interventionForm.title')}</Heading>
       </header>
       {(itemToSave.intervention.id === 0 || itemToSave.intervention.idPrescriptionDrug === 0) && (
         <PatientData {...itemToSave} />

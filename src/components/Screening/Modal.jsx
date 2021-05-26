@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import isEmpty from 'lodash.isempty';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
@@ -33,6 +34,7 @@ export default function Modal({
   afterSaveIntervention,
   disableUndoIntervention
 }) {
+  const { t } = useTranslation();
   const { isSaving, wasSaved, item } = maybeCreateOrUpdate;
 
   const onSave = () => save(item);
@@ -64,10 +66,10 @@ export default function Modal({
     return (
       <>
         <Button onClick={() => onCancel()} disabled={isSaving} className="gtm-bt-cancel-interv">
-          Cancelar
+          {t('interventionForm.btnCancel')}
         </Button>
         {isChecked && !disableUndoIntervention && (
-          <Tooltip title="Desfazer intervenção" placement="top">
+          <Tooltip title={t('interventionForm.btnUndo')} placement="top">
             <Button
               type="danger gtm-bt-undo-interv"
               ghost
@@ -85,7 +87,7 @@ export default function Modal({
           disabled={isSaving || isSaveBtnDisabled(item)}
           loading={isSaving}
         >
-          Salvar
+          {t('interventionForm.btnSave')}
         </Button>
       </>
     );
