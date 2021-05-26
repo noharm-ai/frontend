@@ -423,7 +423,7 @@ const dose = bag => ({
 
 const drug = (bag, addkey) => ({
   key: addkey ? 'idPrescriptionDrug' : null,
-  title: 'Medicamento',
+  title: bag.t('tableHeader.drug'),
   align: 'left',
   render: record => {
     if (bag.concilia) {
@@ -484,7 +484,7 @@ const drugInfo = bag => [
   },
   drug(bag, false),
   {
-    title: <Tooltip title="Período de uso">Período</Tooltip>,
+    title: bag.t('tableHeader.period'),
     width: 70,
     render: record => {
       if (record.total) {
@@ -513,8 +513,8 @@ const drugInfo = bag => [
   dose(bag)
 ];
 
-const frequency = {
-  title: 'Frequência',
+const frequency = bag => ({
+  title: bag.t('tableHeader.frequency'),
   dataIndex: 'frequency',
   width: 150,
   render: (text, prescription) => {
@@ -537,32 +537,32 @@ const frequency = {
       </Tooltip>
     );
   }
-};
+});
 
-const frequencyAndTime = [
-  frequency,
+const frequencyAndTime = bag => [
+  frequency(bag),
   {
-    title: 'Horários',
+    title: bag.t('tableHeader.time'),
     dataIndex: 'time',
     width: 100
   }
 ];
 
-const stageAndInfusion = [
+const stageAndInfusion = bag => [
   {
-    title: 'Etapas',
+    title: bag.t('tableHeader.stage'),
     dataIndex: 'stage',
     width: 100
   },
   {
-    title: 'Infusão',
+    title: bag.t('tableHeader.infusion'),
     dataIndex: 'infusion',
     width: 100
   }
 ];
 
 const route = bag => ({
-  title: 'Via',
+  title: bag.t('tableHeader.route'),
   dataIndex: 'route',
   width: 85
 });
@@ -630,7 +630,7 @@ const tags = bag => ({
 
 const actionColumns = bag => [
   {
-    title: 'Ações',
+    title: bag.t('tableHeader.action'),
     dataIndex: 'intervention',
     width: 110,
     render: (text, prescription) => <Action {...prescription} {...bag} />
@@ -683,7 +683,7 @@ export const isPendingValidation = record =>
 
 export const solutionColumns = bag => [
   ...drugInfo(bag),
-  ...stageAndInfusion,
+  ...stageAndInfusion(bag),
   route(bag),
   tags(bag),
   ...actionColumns(bag)
@@ -700,7 +700,7 @@ export const conciliationColumns = bag => [
 export default (filteredInfo, bag) => {
   const columns = [
     ...drugInfo(bag),
-    ...frequencyAndTime,
+    ...frequencyAndTime(bag),
     route(bag),
     tags(bag),
     ...actionColumns(bag)

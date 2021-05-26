@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import isEmpty from 'lodash.isempty';
 import { format, parseISO } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 import Icon from '@components/Icon';
 import LoadBox from '@components/LoadBox';
@@ -86,6 +87,7 @@ export default function PrescriptionDrugList({
   const [filter, setFilter] = useState({
     status: null
   });
+  const { t } = useTranslation();
 
   if (isFetching) {
     return <LoadBox />;
@@ -139,7 +141,8 @@ export default function PrescriptionDrugList({
     periodObject,
     fetchPeriod,
     weight,
-    uniqueDrugList: uniqueDrugs
+    uniqueDrugList: uniqueDrugs,
+    t
   };
 
   const prescriptionCount = {
@@ -149,23 +152,23 @@ export default function PrescriptionDrugList({
 
   const ListFilter = ({ listCount, handleFilter, isFilterActive }) => (
     <TableFilter style={{ marginBottom: 15 }}>
-      <Tooltip title="Ver somente pendentes de validação">
+      <Tooltip title={t('prescriptionDrugList.btnPendingValidationHint')}>
         <Button
           type="gtm-lnk-filter-presc-pendentevalidacao ant-btn-link-hover"
           className={isFilterActive('pending-validation') ? 'active' : ''}
           onClick={e => handleFilter(e, 'pending-validation')}
         >
-          Pendentes de validação
+          {t('prescriptionDrugList.btnPendingValidation')}
           <Tag color="orange">{listCount.pendingValidation}</Tag>
         </Button>
       </Tooltip>
-      <Tooltip title="Ver todos">
+      <Tooltip title={t('prescriptionDrugList.btnAllHint')}>
         <Button
           type="gtm-lnk-filter-presc-todos ant-btn-link-hover"
           className={isFilterActive(null) ? 'active' : ''}
           onClick={e => handleFilter(e, 'all')}
         >
-          Todos
+          {t('prescriptionDrugList.btnAll')}
           <Tag>{listCount.all}</Tag>
         </Button>
       </Tooltip>
@@ -196,7 +199,7 @@ export default function PrescriptionDrugList({
     <PrescriptionHeader className="panel-header">
       <div className="title">
         <strong className="p-number">
-          Prescrição &nbsp;
+          {t('prescriptionDrugList.panelPrescription')} &nbsp;
           <a href={`/prescricao/${ds.key}`} target="_blank" rel="noopener noreferrer">
             # {ds.key}
           </a>
@@ -204,21 +207,21 @@ export default function PrescriptionDrugList({
       </div>
       <div className="subtitle">
         <span style={{ paddingLeft: 0 }}>
-          <strong>Liberação:</strong> &nbsp;
+          <strong>{t('prescriptionDrugList.panelIssueDate')}:</strong> &nbsp;
           {format(new Date(headers[ds.key].date), 'dd/MM/yyyy HH:mm')}
         </span>
         <span>
-          <strong>Vigência:</strong> &nbsp;
+          <strong>{t('prescriptionDrugList.panelValidUntil')}:</strong> &nbsp;
           <span className={isExpired(headers[ds.key].expire, true) ? 'expired' : ''}>
             {format(new Date(headers[ds.key].expire), 'dd/MM/yyyy HH:mm')}
           </span>
         </span>
         <span>
-          <strong>Leito:</strong> &nbsp;
+          <strong>{t('prescriptionDrugList.panelBed')}:</strong> &nbsp;
           {headers[ds.key].bed}
         </span>
         <span>
-          <strong>Prescritor:</strong> &nbsp;
+          <strong>{t('prescriptionDrugList.panelPrescriber')}:</strong> &nbsp;
           {headers[ds.key].prescriber}
         </span>
       </div>
@@ -228,7 +231,7 @@ export default function PrescriptionDrugList({
   const groupHeader = dt => (
     <PrescriptionHeader>
       <span style={{ fontSize: '16px' }}>
-        <strong>Vigência:</strong> &nbsp;
+        <strong>{t('prescriptionDrugList.panelValidUntil')}:</strong> &nbsp;
         <span className={isExpired(`${dt}T23:59:59`) ? 'expired' : ''}>
           {format(parseISO(dt), 'dd/MM/yyyy')}
         </span>
@@ -260,7 +263,11 @@ export default function PrescriptionDrugList({
     if (summary.alerts) {
       tags.push(
         <Tooltip
-          title={summary.alergy ? 'Total de alertas (**possui alergias)' : 'Total de alertas'}
+          title={
+            summary.alergy
+              ? t('prescriptionDrugTags.alertsAllergy')
+              : t('prescriptionDrugTags.alerts')
+          }
           key="alerts"
         >
           <Badge dot count={summary.alergy}>
@@ -274,7 +281,7 @@ export default function PrescriptionDrugList({
 
     if (summary.interventions) {
       tags.push(
-        <Tooltip title="Possui intervenções" key="interventions">
+        <Tooltip title={t('prescriptionDrugTags.intervention')} key="interventions">
           <Icon
             type="warning"
             style={{ fontSize: 18, color: '#fa8c16', verticalAlign: 'middle', marginRight: '7px' }}

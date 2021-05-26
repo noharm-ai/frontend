@@ -160,5 +160,55 @@
     "tabInterventions": "Intervenções",
     "tabLabResults": "Exames",
     "tabClinicalNotes": "Evoluções"
+  },
+  "tableHeader": {
+    "drug": "Medicamento",
+    "period": "Período",
+    "dose": "Dose",
+    "frequency": "Frequência",
+    "time": "Horários",
+    "route": "Via",
+    "action": "Ações",
+    "stage": "Etapas",
+    "infusion": "Infusão"
+  },
+  "prescriptionDrugTags": {
+    "checked": "Checado anteriorment",
+    "recommendation": "Possui observação médica",
+    "prevNotes": "Possui anotação",
+    "prevIntervention": "Possui intervenção anterior",
+    "prevInterventionSolved": "Possui intervenção anterior já resolvida",
+    "suspended": "Suspenso",
+    "alerts": "Alertas",
+    "alertsAllergy": "Alertas (**possui alergias)",
+    "intervention": "Possui intervenção"
+  },
+  "drugTags": {
+    "np": "NP",
+    "npDesc": "Não padronizado",
+    "am": "AM",
+    "amDesc": "Antimicrobianos",
+    "av": "AV",
+    "avDesc": "Alta vigilância",
+    "c": "C",
+    "cDesc": "Controlado",
+    "q": "Q",
+    "qDesc": "Quimioterápico"
+  },
+  "prescriptionDrugList": {
+    "addIntervention": "Enviar intervenção",
+    "updateIntervention": "Alterar intervenção",
+    "addNotes": "Adicionar anotação",
+    "updateNotes": "Alterar anotação",
+    "btnPendingValidation": "Pendente de validação",
+    "btnPendingValidationHint": "Ver somente pendentes de validação",
+    "btnAll": "Todos",
+    "btnAllHint": "Ver todos",
+
+    "panelPrescription": "Prescrição",
+    "panelIssueDate": "Liberação",
+    "panelValidUntil": "Vigência",
+    "panelBed": "Leito",
+    "panelPrescriber": "Prescritor"
   }
 }

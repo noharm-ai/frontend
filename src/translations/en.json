@@ -160,5 +160,54 @@
     "tabInterventions": "Interventions",
     "tabLabResults": "Lab results",
     "tabClinicalNotes": "Clinical notes"
+  },
+  "tableHeader": {
+    "drug": "Drug",
+    "period": "Period",
+    "dose": "Dose",
+    "frequency": "Frequency",
+    "time": "Time",
+    "route": "Route",
+    "action": "Action",
+    "stage": "Stages",
+    "infusion": "Infusion"
+  },
+  "prescriptionDrugTags": {
+    "checked": "Checked previously",
+    "recommendation": "Has medical observation",
+    "prevNotes": "Has notes",
+    "prevIntervention": "Has previous intervention",
+    "prevInterventionSolved": "Has previous intervention (resolved)",
+    "suspended": "Suspended",
+    "alerts": "Alerts",
+    "alertsAllergy": "Alerts (** has allergies)",
+    "intervention": "Has intervention"
+  },
+  "drugTags": {
+    "np": "NS",
+    "npDesc": "Non-standard",
+    "am": "AM",
+    "amDesc": "Antimicrobials",
+    "av": "HS",
+    "avDesc": "High surveillance",
+    "c": "C",
+    "cDesc": "Controlled",
+    "q": "CH",
+    "qDesc": "Chemotherapeutic"
+  },
+  "prescriptionDrugList": {
+    "addIntervention": "Add intervention",
+    "updateIntervention": "Edit intervention",
+    "addNotes": "Add notes",
+    "updateNotes": "Edit notes",
+    "btnPendingValidation": "Pending validation",
+    "btnPendingValidationHint": "Show pending validation drugs",
+    "btnAll": "All",
+    "btnAllHint": "Show all",
+    "panelPrescription": "Prescription",
+    "panelIssueDate": "Issue date",
+    "panelValidUntil": "Valid until",
+    "panelBed": "Bed",
+    "panelPrescriber": "Prescriber"
   }
 }
