@@ -135,6 +135,7 @@ const Action = ({
   uniqueDrugList,
   admissionNumber,
   emptyRow,
+  t,
   ...data
 }) => {
   if (emptyRow) return null;
@@ -148,14 +149,16 @@ const Action = ({
   const isIntervened = data.intervened;
   const hasNotes =
     (data.notes !== '' && data.notes != null) || (data.prevNotes && data.prevNotes !== 'None');
-  let btnTitle = isChecked ? 'Alterar intervenção' : 'Enviar intervenção';
+  let btnTitle = isChecked
+    ? t('prescriptionDrugList.updateIntervention')
+    : t('prescriptionDrugList.addIntervention');
 
   if (isIntervened && !isChecked) {
-    btnTitle = 'Enviar intervenção (novamente)';
+    btnTitle = t('prescriptionDrugList.addInterventionAgain');
   }
 
   if (isClosed) {
-    btnTitle = 'Esta intervenção não pode mais ser alterada, pois já foi resolvida.';
+    btnTitle = t('prescriptionDrugList.addInterventionDisabled');
   }
 
   return (
@@ -174,7 +177,12 @@ const Action = ({
         </Button>
       </Tooltip>
 
-      <Tooltip title={hasNotes ? 'Alterar anotação' : 'Adicionar anotação'} placement="left">
+      <Tooltip
+        title={
+          hasNotes ? t('prescriptionDrugList.updateNotes') : t('prescriptionDrugList.addNotes')
+        }
+        placement="left"
+      >
         <Button
           type="primary gtm-bt-notes"
           ghost={!hasNotes}
@@ -257,31 +265,31 @@ const periodDatesList = dates => {
   );
 };
 
-const DrugTags = ({ drug }) => (
+const DrugTags = ({ drug, t }) => (
   <span style={{ marginLeft: '10px' }}>
     {drug.np && (
-      <Tooltip title="Não padronizado">
-        <Tag>NP</Tag>
+      <Tooltip title={t('drugTags.npHint')}>
+        <Tag>{t('drugTags.np')}</Tag>
       </Tooltip>
     )}
     {drug.am && (
-      <Tooltip title="Antimicrobianos">
-        <Tag color="green">AM</Tag>
+      <Tooltip title={t('drugTags.amHint')}>
+        <Tag color="green">{t('drugTags.am')}</Tag>
       </Tooltip>
     )}
     {drug.av && (
-      <Tooltip title="Alta vigilância">
-        <Tag color="red">AV</Tag>
+      <Tooltip title={t('drugTags.avHint')}>
+        <Tag color="red">{t('drugTags.av')}</Tag>
       </Tooltip>
     )}
     {drug.c && (
-      <Tooltip title="Controlado">
-        <Tag color="orange">C</Tag>
+      <Tooltip title={t('drugTags.cHint')}>
+        <Tag color="orange">{t('drugTags.c')}</Tag>
       </Tooltip>
     )}
     {drug.q && (
-      <Tooltip title="Quimioterápico">
-        <Tag color="cyan">Q</Tag>
+      <Tooltip title={t('drugTags.qHint')}>
+        <Tag color="cyan">{t('drugTags.q')}</Tag>
       </Tooltip>
     )}
   </span>
@@ -398,7 +406,7 @@ const dose = bag => ({
   render: (text, prescription) => {
     if (prescription.total && prescription.infusion) {
       return (
-        <Tooltip title="Abrir calculadora de solução" placement="top">
+        <Tooltip title={bag.t('prescriptionDrugList.openSolutionCalculator')} placement="top">
           <span
             onClick={() => bag.handleRowExpand(prescription)}
             style={{ cursor: 'pointer', fontWeight: 600 }}
@@ -429,20 +437,20 @@ const drug = (bag, addkey) => ({
     if (bag.concilia) {
       return (
         <>
-          {record.drug} <DrugTags drug={record} />
+          {record.drug} <DrugTags drug={record} t={bag.t} />
         </>
       );
     }
     if (record.total) {
       return (
-        <Tooltip title="Abrir calculadora de solução" placement="top">
+        <Tooltip title={bag.t('prescriptionDrugList.openSolutionCalculator')} placement="top">
           <span
             className="gtm-tag-calc"
             onClick={() => bag.handleRowExpand(record)}
             style={{ cursor: 'pointer' }}
           >
             <Icon type="calculator" style={{ fontSize: 16, marginRight: '10px' }} />
-            Calculadora de solução
+            {bag.t('prescriptionDrugList.solutionCalculator')}
           </span>
         </Tooltip>
       );
@@ -453,12 +461,12 @@ const drug = (bag, addkey) => ({
     }/${record.dayFrequency}`;
     return (
       <>
-        <Tooltip title="Ver Medicamento" placement="top">
+        <Tooltip title={bag.t('prescriptionDrugList.viewDrug')} placement="top">
           <TableLink href={href} target="_blank" rel="noopener noreferrer">
             {record.drug}
           </TableLink>
         </Tooltip>
-        <DrugTags drug={record} />
+        <DrugTags drug={record} t={bag.t} />
       </>
     );
   }
@@ -476,7 +484,13 @@ const drugInfo = bag => [
       }
 
       return (
-        <Tooltip title={near ? `Escore aproximado: ${score}` : `Escore: ${score}`}>
+        <Tooltip
+          title={
+            near
+              ? `${bag.t('tableHeader.approximateScore')}: ${score}`
+              : `${bag.t('tableHeader.score')}: ${score}`
+          }
+        >
           <span className={`flag has-score ${flags[parseInt(score, 10)]}`}>{score}</span>
         </Tooltip>
       );
@@ -489,7 +503,7 @@ const drugInfo = bag => [
     render: record => {
       if (record.total) {
         return (
-          <Tooltip title="Abrir calculadora de solução" placement="top">
+          <Tooltip title={bag.t('prescriptionDrugList.openSolutionCalculator')} placement="top">
             <span
               onClick={() => bag.handleRowExpand(record)}
               style={{ cursor: 'pointer', fontWeight: 600 }}
@@ -575,47 +589,53 @@ const tags = bag => ({
     <TableTags>
       <span className="tag gtm-tag-check" onClick={() => bag.handleRowExpand(prescription)}>
         {prescription.checked && (
-          <Tooltip title="Checado anteriormente">
+          <Tooltip title={bag.t('prescriptionDrugTags.checked')}>
             <Icon type="check" style={{ fontSize: 18, color: '#52c41a' }} />
           </Tooltip>
         )}
       </span>
       <span className="tag gtm-tag-msg" onClick={() => bag.handleRowExpand(prescription)}>
         {prescription.recommendation && prescription.recommendation !== 'None' && (
-          <Tooltip title="Possui observação médica">
+          <Tooltip title={bag.t('prescriptionDrugTags.recommendation')}>
             <Icon type="message" style={{ fontSize: 18, color: '#108ee9' }} />
           </Tooltip>
         )}
       </span>
       <span className="tag gtm-ico-form" onClick={() => bag.handleRowExpand(prescription)}>
         {prescription.prevNotes && prescription.prevNotes !== 'None' && (
-          <Tooltip title="Possui anotação">
+          <Tooltip title={bag.t('prescriptionDrugTags.prevNotes')}>
             <Icon type="form" style={{ fontSize: 18, color: '#108ee9' }} />
           </Tooltip>
         )}
       </span>
       <span className="tag gtm-tag-warn" onClick={() => bag.handleRowExpand(prescription)}>
         {!isEmpty(prescription.prevIntervention) && (
-          <Tooltip title="Possui intervenção anterior">
+          <Tooltip title={bag.t('prescriptionDrugTags.prevIntervention')}>
             <Icon type="warning" style={{ fontSize: 18, color: '#fa8c16' }} />
           </Tooltip>
         )}
         {isEmpty(prescription.prevIntervention) && prescription.existIntervention && (
-          <Tooltip title="Possui intervenção anterior já resolvida">
+          <Tooltip title={bag.t('prescriptionDrugTags.prevInterventionSolved')}>
             <Icon type="warning" style={{ fontSize: 18, color: 'gray' }} />
           </Tooltip>
         )}
       </span>
       <span className="tag gtm-tag-stop" onClick={() => bag.handleRowExpand(prescription)}>
         {prescription.suspended && (
-          <Tooltip title="Suspenso">
+          <Tooltip title={bag.t('prescriptionDrugTags.suspended')}>
             <Icon type="stop" style={{ fontSize: 18, color: '#f5222d' }} />
           </Tooltip>
         )}
       </span>
       <span className="tag gtm-tag-alert" onClick={() => bag.handleRowExpand(prescription)}>
         {!isEmpty(prescription.alerts) && (
-          <Tooltip title={prescription.alergy ? 'Alertas (**possui Alergia)' : 'Alertas'}>
+          <Tooltip
+            title={
+              prescription.alergy
+                ? bag.t('prescriptionDrugTags.alertsAllergy')
+                : bag.t('prescriptionDrugTags.alerts')
+            }
+          >
             <Badge dot count={prescription.alergy ? 1 : 0}>
               <Tag color="red" style={{ marginLeft: '2px' }}>
                 {prescription.alerts.length}

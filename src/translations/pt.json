@@ -162,6 +162,8 @@
     "tabClinicalNotes": "Evoluções"
   },
   "tableHeader": {
+    "score": "Escore",
+    "approximateScore": "Escore aproximado",
     "drug": "Medicamento",
     "period": "Período",
     "dose": "Dose",
@@ -173,7 +175,7 @@
     "infusion": "Infusão"
   },
   "prescriptionDrugTags": {
-    "checked": "Checado anteriorment",
+    "checked": "Checado anteriormente",
     "recommendation": "Possui observação médica",
     "prevNotes": "Possui anotação",
     "prevIntervention": "Possui intervenção anterior",
@@ -185,18 +187,20 @@
   },
   "drugTags": {
     "np": "NP",
-    "npDesc": "Não padronizado",
+    "npHint": "Não padronizado",
     "am": "AM",
-    "amDesc": "Antimicrobianos",
+    "amHint": "Antimicrobianos",
     "av": "AV",
-    "avDesc": "Alta vigilância",
+    "avHint": "Alta vigilância",
     "c": "C",
-    "cDesc": "Controlado",
+    "cHint": "Controlado",
     "q": "Q",
-    "qDesc": "Quimioterápico"
+    "qHint": "Quimioterápico"
   },
   "prescriptionDrugList": {
     "addIntervention": "Enviar intervenção",
+    "addInterventionAgain": "Enviar intervenção (novamente)",
+    "addInterventionDisabled": "Esta intervenção não pode mais ser alterada, pois já foi resolvida",
     "updateIntervention": "Alterar intervenção",
     "addNotes": "Adicionar anotação",
     "updateNotes": "Alterar anotação",
@@ -209,6 +213,10 @@
     "panelIssueDate": "Liberação",
     "panelValidUntil": "Vigência",
     "panelBed": "Leito",
-    "panelPrescriber": "Prescritor"
+    "panelPrescriber": "Prescritor",
+
+    "viewDrug": "Ver medicamento",
+    "openSolutionCalculator": "Abrir calculadora de soluções",
+    "solutionCalculation": "Calculadora de solução"
   }
 }

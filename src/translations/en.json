@@ -162,6 +162,8 @@
     "tabClinicalNotes": "Clinical notes"
   },
   "tableHeader": {
+    "score": "Score",
+    "approximateScore": "Approximate score",
     "drug": "Drug",
     "period": "Period",
     "dose": "Dose",
@@ -185,18 +187,20 @@
   },
   "drugTags": {
     "np": "NS",
-    "npDesc": "Non-standard",
+    "npHint": "Non-standard",
     "am": "AM",
-    "amDesc": "Antimicrobials",
+    "amHint": "Antimicrobials",
     "av": "HS",
-    "avDesc": "High surveillance",
+    "avHint": "High surveillance",
     "c": "C",
-    "cDesc": "Controlled",
+    "cHint": "Controlled",
     "q": "CH",
-    "qDesc": "Chemotherapeutic"
+    "qHint": "Chemotherapeutic"
   },
   "prescriptionDrugList": {
     "addIntervention": "Add intervention",
+    "addInterventionAgain": "Add intervention (again)",
+    "addInterventionDisabled": "This intervention can no longer be updated",
     "updateIntervention": "Edit intervention",
     "addNotes": "Add notes",
     "updateNotes": "Edit notes",
@@ -204,10 +208,15 @@
     "btnPendingValidationHint": "Show pending validation drugs",
     "btnAll": "All",
     "btnAllHint": "Show all",
+
     "panelPrescription": "Prescription",
     "panelIssueDate": "Issue date",
     "panelValidUntil": "Valid until",
     "panelBed": "Bed",
-    "panelPrescriber": "Prescriber"
+    "panelPrescriber": "Prescriber",
+
+    "viewDrug": "View drug",
+    "openSolutionCalculator": "Open solution calculator",
+    "solutionCalculator": "Solution calculator"
   }
 }
