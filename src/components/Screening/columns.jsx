@@ -327,47 +327,47 @@ export const expandedRowRender = bag => record => {
     <NestedTableContainer>
       <Descriptions bordered size="small">
         {!isEmpty(record.alerts) && (
-          <Descriptions.Item label="Alertas:" span={3}>
+          <Descriptions.Item label={bag.t('prescriptionDrugList.exrAlert')} span={3}>
             {showAlerts(record.alerts)}
           </Descriptions.Item>
         )}
         {!isEmpty(record.period) && (
-          <Descriptions.Item label="Período de uso:" span={3}>
+          <Descriptions.Item label={bag.t('prescriptionDrugList.exrPeriod')} span={3}>
             {isEmpty(record.periodDates) && (
               <Link
                 onClick={() => bag.fetchPeriod(record.idPrescriptionDrug, record.source)}
                 loading={bag.periodObject.isFetching}
                 type="nda gtm-bt-period"
               >
-                Visualizar período de uso
+                {bag.t('prescriptionDrugList.exrPeriodBtn')}
               </Link>
             )}
             {!isEmpty(record.periodDates) && periodDates(record.periodDates)}
           </Descriptions.Item>
         )}
         {record.prescriptionType === 'solutions' && (
-          <Descriptions.Item label="Horários:" span={3}>
+          <Descriptions.Item label={bag.t('prescriptionDrugList.exrTime')} span={3}>
             {record.time}
           </Descriptions.Item>
         )}
         {record.doseWeight && (
-          <Descriptions.Item label="Dose / Kg:" span={3}>
+          <Descriptions.Item label={bag.t('prescriptionDrugList.exrDoseKg')} span={3}>
             {record.doseWeight}
           </Descriptions.Item>
         )}
         {record.recommendation && (
-          <Descriptions.Item label="Observação médica:" span={3}>
+          <Descriptions.Item label={bag.t('prescriptionDrugList.exrMedicalNotes')} span={3}>
             <RichTextView text={record.recommendation} />
           </Descriptions.Item>
         )}
         {record.prevNotes && (
-          <Descriptions.Item label="Anotação:" span={3}>
+          <Descriptions.Item label={bag.t('prescriptionDrugList.exrNotes')} span={3}>
             <RichTextView text={record.prevNotes} />
           </Descriptions.Item>
         )}
 
         {!isEmpty(record.prevIntervention) && (
-          <Descriptions.Item label="Intervenção anterior:" span={3}>
+          <Descriptions.Item label={bag.t('prescriptionDrugList.exrPrevIntervention')} span={3}>
             <InterventionView
               intervention={record.prevIntervention}
               showReasons
@@ -382,7 +382,7 @@ export const expandedRowRender = bag => record => {
           </Descriptions.Item>
         )}
         {!isEmpty(diluents) && (
-          <Descriptions.Item label="Diluentes (sem validação):" span={3}>
+          <Descriptions.Item label={bag.t('prescriptionDrugList.exrDiluent')} span={3}>
             <SimpleList>
               {diluents.map((d, i) => (
                 <li key={i}>

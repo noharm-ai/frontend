@@ -217,6 +217,16 @@
 
     "viewDrug": "View drug",
     "openSolutionCalculator": "Open solution calculator",
-    "solutionCalculator": "Solution calculator"
+    "solutionCalculator": "Solution calculator",
+
+    "exrAlert": "Alerts:",
+    "exrPeriod": "Period:",
+    "exrPeriodBtn": "View period",
+    "exrTime": "Time:",
+    "exrDoseKg": "Dose / Kg:",
+    "exrMedicalNotes": "Medical notes:",
+    "exrNotes": "Notes:",
+    "exrPrevIntervention": "Previous intervention:",
+    "exrDiluent": "Diluent (not validated):"
   }
 }

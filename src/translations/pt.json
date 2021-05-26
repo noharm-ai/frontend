@@ -217,6 +217,16 @@
 
     "viewDrug": "Ver medicamento",
     "openSolutionCalculator": "Abrir calculadora de soluções",
-    "solutionCalculation": "Calculadora de solução"
+    "solutionCalculation": "Calculadora de solução",
+
+    "exrAlert": "Alertas:",
+    "exrPeriod": "Periodo de uso:",
+    "exrPeriodBtn": "Visualizar período de uso",
+    "exrTime": "Horários:",
+    "exrDoseKg": "Dose / Kg:",
+    "exrMedicalNotes": "Observação médica:",
+    "exrNotes": "Anotação:",
+    "exrPrevIntervention": "Intervenção anterior:",
+    "exrDiluent": "Diluentes (sem validação):"
   }
 }
