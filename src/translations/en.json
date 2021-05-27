@@ -174,7 +174,15 @@
     "route": "Route",
     "action": "Action",
     "stage": "Stages",
-    "infusion": "Infusion"
+    "infusion": "Infusion",
+    "exam": "Lab exam",
+    "percentage": "Percentage",
+    "value": "Value",
+    "reference": "Reference",
+    "date": "Date",
+    "examHistory": "Lab exams history",
+    "min": "Minimum",
+    "max": "Maximum"
   },
   "prescriptionDrugTags": {
     "checked": "Checked previously",

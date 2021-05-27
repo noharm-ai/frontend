@@ -174,7 +174,15 @@
     "route": "Via",
     "action": "Ações",
     "stage": "Etapas",
-    "infusion": "Infusão"
+    "infusion": "Infusão",
+    "exam": "Exame",
+    "percentage": "Percentual",
+    "value": "Valor",
+    "reference": "Referência",
+    "date": "Data",
+    "examHistory": "Histórico de exames",
+    "min": "Mínimo",
+    "max": "Máximo"
   },
   "prescriptionDrugTags": {
     "checked": "Checado anteriormente",
