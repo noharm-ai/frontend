@@ -184,6 +184,15 @@
     "min": "Mínimo",
     "max": "Máximo"
   },
+  "labels": {
+    "role": "Cargo",
+    "rolePlaceholderFilter": "Filtrar por cargo",
+    "indicator": "Indicador",
+    "indicatorPlaceholderFilter": "Filtrar por indicadores"
+  },
+  "buttons": {
+    "search": "Pesquisar"
+  },
   "prescriptionDrugTags": {
     "checked": "Checado anteriormente",
     "recommendation": "Possui observação médica",
@@ -259,5 +268,17 @@
     "btnSave": "Salvar",
     "btnUndo": "Desfazer intervenção",
     "btnCancel": "Cancelar"
+  },
+
+  "clinicalNotesIndicator": {
+    "allergy": "Alergia",
+    "conduct": "Conduta",
+    "info": "Dados",
+    "diseases": "Doenças",
+    "complication": "Eventos adversos",
+    "medications": "Medicamentos",
+    "names": "Nomes",
+    "signs": "Sinais",
+    "symptoms": "Sintomas"
   }
 }

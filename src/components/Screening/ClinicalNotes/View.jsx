@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import isEmpty from 'lodash.isempty';
 import { format, parseISO } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 import { annotationManifest } from '@utils/featureManifest';
 import { useOutsideAlerter } from '@lib/hooks';
@@ -27,6 +28,7 @@ export default function View({ selected, update, security, access_token, userId 
   const [menuPosition, setMenuPosition] = useState({});
   const [selectionRange, setSelectionRange] = useState(null);
   const [showWelcome, setShowWelcome] = useState(false);
+  const { t } = useTranslation();
 
   useOutsideAlerter(menuRef, () => {
     setMenuVisibility(false);
@@ -159,7 +161,7 @@ export default function View({ selected, update, security, access_token, userId 
       ref={menuRef}
     >
       <MenuPopup theme="dark" onClick={k => annotate(k)} selectable={false}>
-        {ClinicalNotesIndicator.list().map(i => (
+        {ClinicalNotesIndicator.list(t).map(i => (
           <MenuPopup.Item key={i.value} className="gtm-indicator">
             <div className="avatar" style={{ backgroundColor: i.color }} /> {i.label}
           </MenuPopup.Item>
@@ -195,7 +197,7 @@ export default function View({ selected, update, security, access_token, userId 
             <span className="name">{selected.prescriber}</span>
           </div>
           <div className="help">
-            <Tooltip title="Ajuda">
+            <Tooltip title={t('layout.help')}>
               <PopoverWelcome
                 title="Nova funcionalidade!"
                 content={welcomeTooltip}
@@ -219,6 +221,7 @@ export default function View({ selected, update, security, access_token, userId 
       <PaperContainer ref={paperContainerRef}>
         <>
           <Paper
+            t={t}
             dangerouslySetInnerHTML={{
               __html: selected.text.trim().replaceAll('  ', '<br/>')
             }}

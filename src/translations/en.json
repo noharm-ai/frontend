@@ -136,8 +136,8 @@
     "notes": "Notes",
     "data": "Data",
     "dataExtractedFrom": "Data extracted by NoHarm Care",
-    "signals": "Signals",
-    "signalsExtractedFrom": "Signals extracted by NoHarm Care",
+    "signals": "Signs",
+    "signalsExtractedFrom": "Signs extracted by NoHarm Care",
     "extractedFrom": "Extracted by NoHarm Care on",
     "more": "More",
     "less": "Less",
@@ -183,6 +183,15 @@
     "examHistory": "Lab exams history",
     "min": "Minimum",
     "max": "Maximum"
+  },
+  "labels": {
+    "role": "Role",
+    "rolePlaceholderFilter": "Filter by role",
+    "indicator": "Indicator",
+    "indicatorPlaceholderFilter": "Filter by indicator"
+  },
+  "buttons": {
+    "search": "Search"
   },
   "prescriptionDrugTags": {
     "checked": "Checked previously",
@@ -259,5 +268,16 @@
     "btnSave": "Save",
     "btnUndo": "Undo",
     "btnCancel": "Cancel"
+  },
+  "clinicalNotesIndicator": {
+    "allergy": "Allergy",
+    "conduct": "Conduct",
+    "info": "Info",
+    "diseases": "Diseases",
+    "complication": "Adverse events",
+    "medications": "Drugs",
+    "names": "Names",
+    "signs": "Signs",
+    "symptoms": "Symptoms"
   }
 }
