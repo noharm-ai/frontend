@@ -195,7 +195,7 @@ export default function Screening({
           <Tabs.TabPane tab={<TabTitle title={t('screeningBody.tabLabResults')} />} key="5">
             <ExpandableTable
               title={title}
-              columns={examColumns()}
+              columns={examColumns(t)}
               pagination={false}
               loading={exams.isFetching}
               locale={{

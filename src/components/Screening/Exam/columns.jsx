@@ -1,13 +1,10 @@
 import React from 'react';
 import { format } from 'date-fns';
-import { useTranslation } from 'react-i18next';
 
 import ValuedExams from './ValuedExams';
 import TextualExams from './TextualExams';
 
-export default () => {
-  const { t } = useTranslation();
-
+export default t => {
   return [
     {
       title: t('tableHeader.exam'),
