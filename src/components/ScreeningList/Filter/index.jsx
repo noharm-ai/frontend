@@ -24,17 +24,17 @@ import LoadBox from '@components/LoadBox';
 import { Box, SearchBox } from './Filter.style';
 import './index.css';
 
-const filterMenu = (savedFilters, openSaveModal, loadFilter, removeFilter) => (
+const filterMenu = (savedFilters, openSaveModal, loadFilter, removeFilter, t) => (
   <Menu>
     <Menu.Item className="gtm-btn-menu-filter-save" onClick={() => openSaveModal(true)}>
-      Salvar filtro atual
+      {t('screeningList.saveFilter')}
     </Menu.Item>
 
-    <Menu.SubMenu title="Aplicar filtro">
+    <Menu.SubMenu title={t('screeningList.applyFilter')}>
       {isEmpty(savedFilters) && (
         <Menu.Item>
-          Nenhum filtro disponível.
-          <br /> Clique em "Salvar filtro atual" para criar um novo filtro.
+          {t('screeningList.noFilter')}
+          <br /> {t('screeningList.noFilterHint')}
         </Menu.Item>
       )}
       {savedFilters.map((item, index) => (
@@ -80,7 +80,7 @@ export default function Filter({
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
   const [filterName, setFilterName] = useState('');
   const [date, setDate] = useState([moment(match.params.startDate), null]);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const getParams = useCallback(
     forceParams => {
@@ -265,7 +265,6 @@ export default function Filter({
             <Select
               id="segments"
               style={{ width: '100%' }}
-              placeholder="Selectione um segmento..."
               loading={segments.isFetching}
               onChange={idSegment => setScreeningListFilter({ idSegment, idDepartment: [] })}
               value={filter.idSegment}
@@ -290,6 +289,7 @@ export default function Filter({
               onChange={onDateChange}
               dropdownClassName="noArrow"
               allowClear={false}
+              language={i18n.language}
             />
           </Box>
         </Col>
@@ -306,7 +306,7 @@ export default function Filter({
               </Button>
             </Tooltip>
 
-            <Tooltip title="Pesquisar">
+            <Tooltip title={t('screeningList.search')}>
               <Button
                 type="secondary gtm-btn-search"
                 shape="circle"
@@ -317,7 +317,7 @@ export default function Filter({
                 loading={isFetchingPrescription}
               />
             </Tooltip>
-            <Tooltip title="Limpar filtros">
+            <Tooltip title={t('screeningList.resetFilter')}>
               <Button
                 className="gtm-btn-reset"
                 shape="circle"
@@ -332,7 +332,8 @@ export default function Filter({
                 savedFilters,
                 setSaveFilterOpen,
                 loadFilterAction,
-                removeFilterAction
+                removeFilterAction,
+                t
               )}
             >
               <Button
@@ -353,14 +354,14 @@ export default function Filter({
                 <Row gutter={0} style={{ width: '100%' }}>
                   <Col md={prioritizationType === 'patient' ? 19 : 24}>
                     <Heading as="label" htmlFor="departments" size="14px">
-                      Setores:
+                      {t('screeningList.labelDepartment')}:
                     </Heading>
                     <Select
                       id="departments"
                       mode="multiple"
                       optionFilterProp="children"
                       style={{ width: '100%' }}
-                      placeholder="Selectione os setores..."
+                      placeholder={t('screeningList.labelDepartmentPlaceholder')}
                       loading={segments.single.isFetching}
                       value={filter.idDepartment}
                       onChange={onDepartmentChange}
@@ -383,8 +384,8 @@ export default function Filter({
                         onChange={onCurrentDepartmentChange}
                         id="gtm-currentDepartment-filter"
                       >
-                        <Tooltip title="Considerar somente o setor atual do paciente" underline>
-                          Setor atual
+                        <Tooltip title={t('screeningList.labelCurrentDepartmentHint')} underline>
+                          {t('screeningList.labelCurrentDepartment')}
                         </Tooltip>
                       </Checkbox>
                     </Col>
@@ -398,14 +399,14 @@ export default function Filter({
             <Col>
               <Box>
                 <Heading as="label" htmlFor="drugs-filter" size="14px">
-                  Medicamentos:
+                  {t('screeningList.labelDrug')}:
                 </Heading>
                 <Select
                   id="drugs-filter"
                   mode="multiple"
                   optionFilterProp="children"
                   style={{ width: '100%' }}
-                  placeholder="Selecione os medicamentos..."
+                  placeholder={t('screeningList.labelDrugPlaceholder')}
                   onChange={onDrugChange}
                   value={filter.idDrug}
                   notFoundContent={drugs.isFetching ? <LoadBox /> : null}
@@ -427,7 +428,7 @@ export default function Filter({
             <Col>
               <Box flexDirection="row" alignItems="center">
                 <Heading as="label" htmlFor="pending-filter" size="14px">
-                  Somente prescrições pendentes:
+                  {t('screeningList.labelPendingPrescription')}
                 </Heading>
 
                 <Switch
@@ -443,14 +444,14 @@ export default function Filter({
             <Col>
               <div className="search-box-buttons">
                 <Button type="nda gtm-bt-clear-filter" onClick={reset}>
-                  Limpar
+                  {t('screeningList.resetFilter')}
                 </Button>
                 <Button
                   type="secondary gtm-bt-search-filter"
                   onClick={search}
                   loading={isFetchingPrescription}
                 >
-                  Pesquisar
+                  {t('screeningList.search')}
                 </Button>
               </div>
             </Col>

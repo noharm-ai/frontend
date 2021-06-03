@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { format, parseISO } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 import { annotationManifest } from '@utils/featureManifest';
 import { Row, Col } from '@components/Grid';
@@ -33,6 +34,7 @@ export default function ClinicalNotes({
   const [selectedPositions, selectPositions] = useState([]);
   const [selectedIndicators, selectIndicators] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
+  const { t } = useTranslation();
   const filterList = useCallback(
     (stateList, selectFirst, positionsArray, indicatorsArray) => {
       const filteredGroup = [];
@@ -142,9 +144,9 @@ export default function ClinicalNotes({
           {positionList.length > 0 && (
             <FilterContainer>
               <div>
-                <label>Cargo</label>
+                <label>{t('labels.role')}</label>
                 <Select
-                  placeholder="Filtrar por cargo"
+                  placeholder={t('labels.rolePlaceholderFilter')}
                   onChange={handlePositionChange}
                   allowClear
                   style={{ width: '90%' }}
@@ -160,9 +162,9 @@ export default function ClinicalNotes({
                 </Select>
               </div>
               <div>
-                <label>Indicadores</label>
+                <label>{t('labels.indicator')}</label>
                 <Select
-                  placeholder="Filtrar por indicadores"
+                  placeholder={t('labels.indicatorPlaceholderFilter')}
                   onChange={handleIndicatorsChange}
                   allowClear
                   style={{ width: '100%' }}
@@ -170,7 +172,7 @@ export default function ClinicalNotes({
                   optionFilterProp="children"
                   dropdownMatchSelectWidth={false}
                 >
-                  {ClinicalNotesIndicator.list().map((indicator, i) => (
+                  {ClinicalNotesIndicator.list(t).map((indicator, i) => (
                     <Select.Option value={indicator.key} key={indicator.key}>
                       <span
                         style={{
@@ -191,7 +193,7 @@ export default function ClinicalNotes({
                 </Select>
               </div>
               <div className="btn-search">
-                <Tooltip title="Pesquisar">
+                <Tooltip title={t('buttons.search')}>
                   <Button
                     type="secondary gtm-cn-btn-search"
                     shape="circle"
@@ -203,7 +205,7 @@ export default function ClinicalNotes({
               </div>
             </FilterContainer>
           )}
-          <List>
+          <List t={t}>
             {filteredList.length === 0 && (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -233,15 +235,17 @@ export default function ClinicalNotes({
                           </div>
                           <div className="indicators">
                             {annotationManifest.isEnabled(security) &&
-                              ClinicalNotesIndicator.listByCategory('priority').map(indicator => (
-                                <React.Fragment key={indicator.key}>
-                                  {c[indicator.key] > 0 && (
-                                    <Tooltip title={indicator.label}>
-                                      <Tag className={indicator.key}>{c[indicator.key]}</Tag>
-                                    </Tooltip>
-                                  )}
-                                </React.Fragment>
-                              ))}
+                              ClinicalNotesIndicator.listByCategory('priority', t).map(
+                                indicator => (
+                                  <React.Fragment key={indicator.key}>
+                                    {c[indicator.key] > 0 && (
+                                      <Tooltip title={indicator.label}>
+                                        <Tag className={indicator.key}>{c[indicator.key]}</Tag>
+                                      </Tooltip>
+                                    )}
+                                  </React.Fragment>
+                                )
+                              )}
                           </div>
                         </div>
                       ))}

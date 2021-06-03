@@ -2,6 +2,7 @@ import React from 'react';
 import { format } from 'date-fns';
 import { Row, Col } from 'antd';
 import Chart from 'react-google-charts';
+import { useTranslation } from 'react-i18next';
 
 import LoadBox from '@components/LoadBox';
 import Empty from '@components/Empty';
@@ -11,14 +12,16 @@ import { toDataSource } from '@utils';
 import { examRowClassName } from './columns';
 
 export default function ValuedExams({ record }) {
+  const { t } = useTranslation();
+
   const expandedColumns = [
     {
-      title: 'Histórico de exames',
+      title: t('tableHeader.examHistory'),
       align: 'left',
       key: 'test',
       children: [
         {
-          title: 'Valor',
+          title: t('tableHeader.value'),
           align: 'center',
           key: 'key',
           render: (text, record) => {
@@ -26,7 +29,7 @@ export default function ValuedExams({ record }) {
           }
         },
         {
-          title: 'Data',
+          title: t('tableHeader.date'),
           align: 'center',
           key: 'testdata',
           render: (text, record) => {
@@ -43,9 +46,14 @@ export default function ValuedExams({ record }) {
   const graphDataArray = history.map(item => {
     return [format(new Date(item.date), 'dd/MM'), parseFloat(item.value, 10), item.max, item.min];
   });
-  const dsGraph = [['data', `valor ${history[0].unit}`, 'máximo', 'mínimo']].concat(
-    graphDataArray.reverse()
-  );
+  const dsGraph = [
+    [
+      t('tableHeader.date'),
+      `${t('tableHeader.value')} ${history[0].unit}`,
+      t('tableHeader.max'),
+      t('tableHeader.min')
+    ]
+  ].concat(graphDataArray.reverse());
 
   return (
     <NestedTableContainer>
@@ -76,10 +84,10 @@ export default function ValuedExams({ record }) {
               data={dsGraph}
               options={{
                 hAxis: {
-                  title: 'Data'
+                  title: t('tableHeader.date')
                 },
                 vAxis: {
-                  title: 'Valor'
+                  title: t('tableHeader.value')
                 },
                 backgroundColor: 'transparent',
                 series: {

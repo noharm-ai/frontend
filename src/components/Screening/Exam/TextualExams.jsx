@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { format } from 'date-fns';
 import { Row, Col } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 import Card from '@components/Card';
 import Icon from '@components/Icon';
@@ -50,9 +51,11 @@ export const Paper = styled.div`
 
 export default function TextualExams({ record }) {
   const [selected, select] = useState({});
+  const { t } = useTranslation();
+
   const expandedColumns = [
     {
-      title: 'Histórico de exames',
+      title: t('tableHeader.examHistory'),
       align: 'center',
       key: 'testdata',
       render: (text, record) => {

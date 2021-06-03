@@ -68,7 +68,8 @@ const ScreeningActions = ({
   slug,
   checkScreening,
   check,
-  prioritizationType
+  prioritizationType,
+  t
 }) => {
   const checkAction = () => checkScreening(idPrescription, 's');
 
@@ -79,7 +80,7 @@ const ScreeningActions = ({
   return (
     <ActionsBox>
       {!isChecked && (
-        <Tooltip title="Checar prescrição" placement="left">
+        <Tooltip title={t('screeningList.btnCheck')} placement="left">
           <Button
             type="primary gtm-bt-check"
             loading={isChecking}
@@ -91,13 +92,13 @@ const ScreeningActions = ({
         </Tooltip>
       )}
       {isChecked && (
-        <Tooltip title="Prescrição checada" placement="left">
+        <Tooltip title={t('screeningList.btnChecked')} placement="left">
           <CheckedBox>
             <Icon type="check" />
           </CheckedBox>
         </Tooltip>
       )}
-      <Tooltip title="Ver detalhes" placement="left">
+      <Tooltip title={t('screeningList.btnOpen')} placement="left">
         <span>
           <Link
             type="secondary gtm-bt-detail"
@@ -114,14 +115,6 @@ const ScreeningActions = ({
   );
 };
 
-const ExamResult = ({ exam }) => {
-  if (exam.alert) {
-    return <span style={{ fontWeight: 600, color: '#ff4d4f' }}>{exam.value}</span>;
-  }
-
-  return exam.value;
-};
-
 export const defaultAction = {
   title: 'Ações',
   key: 'operations',
@@ -134,79 +127,43 @@ export const desktopAction = {
   ...defaultAction
 };
 
-export const expandedRowRender = record => {
-  const columns = setDataIndex([
-    {
-      title: 'Nome',
-      width: 150,
-      key: 'namePatient'
-    },
-    {
-      title: 'Data/Hora',
-      width: 100,
-      key: 'dateFormated',
-      align: 'center'
-    },
-    {
-      title: 'Setor',
-      width: 150,
-      key: 'department'
-    },
-    {
-      title: '# Atendimento',
-      width: 100,
-      key: 'admissionNumber'
-    },
-    {
-      title: '# Prescrição',
-      width: 100,
-      key: 'idPrescription'
-    }
-  ]);
-
-  const examColumns = examList => {
-    const columns = examList.map(e => ({
-      title: <Tooltip title={e.value.name}>{e.value.initials}</Tooltip>,
-      key: e.key,
-      dataIndex: e.key,
-      width: 55,
-      align: 'center',
-      render: (text, obj) => <ExamResult exam={obj[e.key]} />
-    }));
-
-    return setDataIndex([
+export const expandedRowRender = t => {
+  return record => {
+    const columns = setDataIndex([
       {
-        title: 'Exames',
-        key: 'exams',
-        align: 'left',
-        children: setDataIndex(columns)
+        title: t('screeningList.clExName'),
+        width: 150,
+        key: 'namePatient'
+      },
+      {
+        title: t('screeningList.clExDate'),
+        width: 100,
+        key: 'dateFormated',
+        align: 'center'
+      },
+      {
+        title: t('screeningList.clExDepartment'),
+        width: 150,
+        key: 'department'
+      },
+      {
+        title: t('screeningList.clExAdmissionNumber'),
+        width: 100,
+        key: 'admissionNumber'
+      },
+      {
+        title: t('screeningList.clExPrescription'),
+        width: 100,
+        key: 'idPrescription'
       }
     ]);
+
+    return (
+      <NestedTableContainer>
+        <Table columns={columns} dataSource={[record]} pagination={false} />
+      </NestedTableContainer>
+    );
   };
-
-  const examDatasource = examList => {
-    const reducer = (acc, item) => {
-      acc[item.key] = item.value;
-      return acc;
-    };
-
-    return examList.reduce(reducer, {});
-  };
-
-  return (
-    <NestedTableContainer>
-      <Table columns={columns} dataSource={[record]} pagination={false} />
-
-      {false && (
-        <Table
-          columns={examColumns(record.exams)}
-          dataSource={[{ ...examDatasource(record.exams), key: 'examRow' }]}
-          pagination={false}
-          style={{ marginTop: '20px' }}
-        />
-      )}
-    </NestedTableContainer>
-  );
 };
 
 const oddClass = index => (index % 2 ? 'bg-light-gray' : '');
@@ -219,7 +176,7 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
 
   const patientRiskColumns = [
     {
-      title: <Tooltip title="Idade">ID</Tooltip>,
+      title: <Tooltip title={t('screeningList.clAgeHint')}>{t('screeningList.clAge')}</Tooltip>,
       className: `gtm-th-idade ${oddClass(index++)}`,
       key: 'age',
       width: 30,
@@ -229,7 +186,9 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
       sortOrder: sortedInfo.columnKey === 'age' && sortedInfo.order
     },
     {
-      title: <Tooltip title="Tempo de internação (dias)">TI</Tooltip>,
+      title: (
+        <Tooltip title={t('screeningList.clLengthHint')}>{t('screeningList.clLength')}</Tooltip>
+      ),
       className: `gtm-th-tempo-int ${oddClass(index++)}`,
       key: 'lengthStay',
       render: (entry, { lengthStay, dischargeFormated }) => {
@@ -249,7 +208,7 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
       sortOrder: sortedInfo.columnKey === 'lengthStay' && sortedInfo.order
     },
     {
-      title: <Tooltip title="Exames Alterados">EX</Tooltip>,
+      title: <Tooltip title={t('screeningList.clExamHint')}>{t('screeningList.clExam')}</Tooltip>,
       className: `gtm-th-exames ${oddClass(index++)}`,
       key: 'alertExams',
       width: 30,
@@ -259,9 +218,7 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
       sortOrder: sortedInfo.columnKey === 'alertExams' && sortedInfo.order
     },
     {
-      title: (
-        <Tooltip title="Alertas na Prescrição: Relações, Toxicidades e Dose de Alerta">AL</Tooltip>
-      ),
+      title: <Tooltip title={t('screeningList.clAlertHint')}>{t('screeningList.clAlert')}</Tooltip>,
       className: `ant-table-right-border gtm-th-alerts ${oddClass(index++)}`,
       key: 'alerts',
       width: 30,
@@ -274,7 +231,11 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
 
   if (noharmCare) {
     patientRiskColumns.push({
-      title: <Tooltip title="Eventos adversos">EA</Tooltip>,
+      title: (
+        <Tooltip title={t('screeningList.clAdverseEventsHint')}>
+          {t('screeningList.clAdverseEvents')}
+        </Tooltip>
+      ),
       className: `ant-table-right-border gtm-th-ea ${oddClass(index++)}`,
       key: 'complication',
       width: 30,
@@ -287,7 +248,7 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
 
   const prescriptionRiskColumns = [
     {
-      title: <Tooltip title="Antimicrobianos">AM</Tooltip>,
+      title: <Tooltip title={t('screeningList.clAmHint')}>{t('screeningList.clAm')}</Tooltip>,
       className: `gtm-th-am ${oddClass(index++)}`,
       key: 'am',
       width: 30,
@@ -297,7 +258,7 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
       sortOrder: sortedInfo.columnKey === 'am' && sortedInfo.order
     },
     {
-      title: <Tooltip title="Alta Vigilância">AV</Tooltip>,
+      title: <Tooltip title={t('screeningList.clAvHint')}>{t('screeningList.clAv')}</Tooltip>,
       className: `gtm-th-av ${oddClass(index++)}`,
       key: 'av',
       width: 30,
@@ -307,7 +268,7 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
       sortOrder: sortedInfo.columnKey === 'av' && sortedInfo.order
     },
     {
-      title: <Tooltip title="Controlados">C</Tooltip>,
+      title: <Tooltip title={t('screeningList.clCHint')}>{t('screeningList.clC')}</Tooltip>,
       className: `gtm-th-c ${oddClass(index++)}`,
       key: 'controlled',
       width: 20,
@@ -317,7 +278,7 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
       sortOrder: sortedInfo.columnKey === 'controlled' && sortedInfo.order
     },
     {
-      title: <Tooltip title="Não padronizados (sem Intervenção)">NP</Tooltip>,
+      title: <Tooltip title={t('screeningList.clNpHint')}>{t('screeningList.clNp')}</Tooltip>,
       className: `gtm-th-np ${oddClass(index++)}`,
       key: 'np',
       width: 30,
@@ -327,7 +288,7 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
       sortOrder: sortedInfo.columnKey === 'np' && sortedInfo.order
     },
     {
-      title: <Tooltip title="Alerta de Sonda">S</Tooltip>,
+      title: <Tooltip title={t('screeningList.clTubeHint')}>{t('screeningList.clTube')}</Tooltip>,
       className: `gtm-th-s ${oddClass(index++)}`,
       key: 'tube',
       width: 20,
@@ -337,7 +298,7 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
       sortOrder: sortedInfo.columnKey === 'tube' && sortedInfo.order
     },
     {
-      title: <Tooltip title="Diferentes">D</Tooltip>,
+      title: <Tooltip title={t('screeningList.clDiffHint')}>{t('screeningList.clDiff')}</Tooltip>,
       className: `gtm-th-d ${oddClass(index++)}`,
       key: 'diff',
       width: 20,
@@ -347,7 +308,11 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
       sortOrder: sortedInfo.columnKey === 'diff' && sortedInfo.order
     },
     {
-      title: <Tooltip title="Intervenções Pendentes">IP</Tooltip>,
+      title: (
+        <Tooltip title={t('screeningList.clInterventionsHint')}>
+          {t('screeningList.clInterventions')}
+        </Tooltip>
+      ),
       className: `gtm-th-ip ${oddClass(index++)}`,
       key: 'interventions',
       width: 20,
@@ -357,7 +322,11 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
       sortOrder: sortedInfo.columnKey === 'interventions' && sortedInfo.order
     },
     {
-      title: <Tooltip title="Escore Total da Prescrição">T</Tooltip>,
+      title: (
+        <Tooltip title={t('screeningList.clPrescriptionScoreHint')}>
+          {t('screeningList.clPrescriptionScore')}
+        </Tooltip>
+      ),
       className: `ant-table-right-border gtm-th-t ${oddClass(index++)}`,
       key: 'prescriptionScore',
       width: 20,
@@ -368,11 +337,8 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
     },
     {
       title: (
-        <Tooltip
-          title="Escore Global: Exames + Alertas + Alta Vigilância + Diferentes + Escore Total da Prescrição."
-          underline
-        >
-          EG
+        <Tooltip title={t('screeningList.clGlobalScoreHint')} underline>
+          {t('screeningList.clGlobalScore')}
         </Tooltip>
       ),
       className: `ant-table-right-border gtm-th-ge ${oddClass(index++)}`,
@@ -422,7 +388,7 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
       align: 'center',
       filteredValue: filteredInfo.status || null,
       onFilter: (value, record) => record.status === value,
-      render: (text, prescription) => <ScreeningActions {...prescription} />
+      render: (text, prescription) => <ScreeningActions t={t} {...prescription} />
     }
   ];
 };

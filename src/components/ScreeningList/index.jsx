@@ -61,10 +61,6 @@ const TableInfo = styled.span`
   }
 `;
 
-// empty text for table result.
-const emptyText = (
-  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Nenhum paciente encontrado." />
-);
 // error message when fetch has error.
 const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
@@ -106,6 +102,11 @@ export default function ScreeningList({
   };
 
   const { t } = useTranslation();
+
+  // empty text for table result.
+  const emptyText = (
+    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('screeningList.empty')} />
+  );
 
   if (list) {
     list.forEach(item => {
@@ -180,13 +181,13 @@ export default function ScreeningList({
   const info = (
     <TableInfo>
       <Input
-        placeholder="Buscar por paciente ou nº atendimento"
+        placeholder={t('screeningList.iptSearchPlaceholder')}
         style={{ width: 300 }}
         allowClear
         onChange={onClientSearch}
         className={filter.searchKey ? 'active' : ''}
       />
-      <Tooltip title="Ver prescrições pendentes">
+      <Tooltip title={t('screeningList.pendingHint')}>
         <Button
           type="gtm-lnk-filter-presc-pendente ant-btn-link-hover"
           className={isFilterActive('0') ? 'active' : ''}
@@ -197,7 +198,7 @@ export default function ScreeningList({
         </Button>
       </Tooltip>
 
-      <Tooltip title="Ver prescrições checadas">
+      <Tooltip title={t('screeningList.pendingHint')}>
         <Button
           type="gtm-lnk-filter-presc-checada ant-btn-link-hover"
           className={isFilterActive('s') ? 'active' : ''}
@@ -208,11 +209,7 @@ export default function ScreeningList({
       </Tooltip>
 
       <Tooltip
-        title={
-          listCount.all === 500
-            ? 'Limite de 500 prescrições atingido, reduza os setores para visualizar todas do dia.'
-            : 'Ver todas prescrições'
-        }
+        title={listCount.all === 500 ? t('screeningList.allHintLimit') : t('screeningList.allHint')}
       >
         <Button
           type="gtm-lnk-filter-presc-todas ant-btn-link-hover"
@@ -245,7 +242,7 @@ export default function ScreeningList({
         }}
         loading={isFetching}
         locale={{ emptyText }}
-        expandedRowRender={expandedRowRender}
+        expandedRowRender={expandedRowRender(t)}
         dataSource={!isFetching ? dataSource : []}
         onChange={handleTableChange}
       />

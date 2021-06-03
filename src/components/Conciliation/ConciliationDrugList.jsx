@@ -24,6 +24,7 @@ export default function PrescriptionDrugList({
   idSegment,
   select,
   selectPrescriptionDrug,
+  updatePrescriptionDrugData,
   uniqueDrugs,
   currentPrescription
 }) {
@@ -50,6 +51,7 @@ export default function PrescriptionDrugList({
     onShowPrescriptionDrugModal,
     check: checkPrescriptionDrug,
     savePrescriptionDrugStatus,
+    updatePrescriptionDrugData,
     idSegment,
     admissionNumber,
     saveInterventionStatus,

@@ -3,8 +3,8 @@ import styled from 'styled-components/macro';
 import Menu from '@components/Menu';
 import ClinicalNotesIndicator from './ClinicalNotesIndicator';
 
-const createIndicatorClasses = () => {
-  const classList = ClinicalNotesIndicator.list().map(
+const createIndicatorClasses = t => {
+  const classList = ClinicalNotesIndicator.list(t).map(
     i => `
     &.annotation-${i.value} {
       border-color: ${i.color};
@@ -20,8 +20,8 @@ const createIndicatorClasses = () => {
   return classList.join(' ');
 };
 
-const createIndicatorTagClasses = () => {
-  const classList = ClinicalNotesIndicator.list().map(
+const createIndicatorTagClasses = t => {
+  const classList = ClinicalNotesIndicator.list(t).map(
     i => `
     .${i.key} {
       border-width: 1px;
@@ -188,7 +188,7 @@ export const Paper = styled.div`
         font-weight: 500;
       }
 
-      ${createIndicatorClasses()}
+      ${props => createIndicatorClasses(props.t)}
     }
   }
 
@@ -280,7 +280,7 @@ export const List = styled.div`
           margin-bottom: 2px;
         }
 
-        ${createIndicatorTagClasses()}
+        ${props => createIndicatorTagClasses(props.t)}
       }
     }
 

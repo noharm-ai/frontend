@@ -53,7 +53,7 @@ const Me = ({ user, toggleDrawer, t }) => {
     "
     >
       <InputSearchNumber
-        placeholder="Buscar por nº de prescrição"
+        placeholder={t('layout.iptSearch')}
         style={{ width: 300 }}
         size="large"
         onSearch={onSearch}

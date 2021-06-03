@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
+import { useTranslation } from 'react-i18next';
 
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
@@ -59,6 +60,7 @@ export default function Screening({
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
   const [dsExams, setDsExams] = useState([]);
   const [clinicalNotesLoaded, setClinicalNotesLoaded] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setDsExams(toDataSource(exams.list, 'key', {}));
@@ -137,7 +139,7 @@ export default function Screening({
           className={listCount.procedures > 0 ? 'breaktab-3' : 'breaktab-2'}
         >
           <Tabs.TabPane
-            tab={<TabTitle title="Medicamentos" count={listCount.prescriptions} />}
+            tab={<TabTitle title={t('screeningBody.tabDrugs')} count={listCount.prescriptions} />}
             key="1"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
@@ -149,7 +151,10 @@ export default function Screening({
             </Col>
           </Tabs.TabPane>
 
-          <Tabs.TabPane tab={<TabTitle title="Soluções" count={listCount.solutions} />} key="2">
+          <Tabs.TabPane
+            tab={<TabTitle title={t('screeningBody.tabSolutions')} count={listCount.solutions} />}
+            key="2"
+          >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
               <SolutionList
                 emptyMessage="Nenhuma solução encontrada."
@@ -160,7 +165,9 @@ export default function Screening({
           </Tabs.TabPane>
           {listCount.procedures > 0 && (
             <Tabs.TabPane
-              tab={<TabTitle title="Procedimentos/Exames" count={listCount.procedures} />}
+              tab={
+                <TabTitle title={t('screeningBody.tabProcedures')} count={listCount.procedures} />
+              }
               key="3"
             >
               <Col span={24} md={24} style={{ marginTop: '20px' }}>
@@ -173,17 +180,22 @@ export default function Screening({
             </Tabs.TabPane>
           )}
           <Tabs.TabPane
-            tab={<TabTitle title="Intervenções" count={listCount.interventions} />}
+            tab={
+              <TabTitle
+                title={t('screeningBody.tabInterventions')}
+                count={listCount.interventions}
+              />
+            }
             key="4"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
               <PreviousInterventionList />
             </Col>
           </Tabs.TabPane>
-          <Tabs.TabPane tab={<TabTitle title="Exames" />} key="5">
+          <Tabs.TabPane tab={<TabTitle title={t('screeningBody.tabLabResults')} />} key="5">
             <ExpandableTable
               title={title}
-              columns={examColumns}
+              columns={examColumns(t)}
               pagination={false}
               loading={exams.isFetching}
               locale={{
@@ -201,7 +213,12 @@ export default function Screening({
           </Tabs.TabPane>
           {!isFetching && hasNoHarmCare && (
             <Tabs.TabPane
-              tab={<TabTitle title="Evoluções" count={content.clinicalNotes} />}
+              tab={
+                <TabTitle
+                  title={t('screeningBody.tabClinicalNotes')}
+                  count={content.clinicalNotes}
+                />
+              }
               key="6"
             >
               <ClinicalNotes />

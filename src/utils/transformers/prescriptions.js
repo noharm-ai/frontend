@@ -11,6 +11,24 @@ import {
 import { stringify, formatAge } from './utils';
 import { toDataSource } from '@utils';
 
+const fillConciliationRelatedDrugs = (list, conciliaList) => {
+  list.forEach(item => {
+    let relation;
+
+    if (conciliaList) {
+      relation = conciliaList.find(d => {
+        return d.idDrug === item.idDrug;
+      });
+    }
+
+    if (relation) {
+      item.conciliaRelationId = relation.idPrescriptionDrug;
+    } else {
+      item.conciliaRelationId = null;
+    }
+  });
+};
+
 /**
  * group by Prescription
  * @param {*} list
@@ -19,6 +37,10 @@ import { toDataSource } from '@utils';
  * @param {*} extraContent
  */
 const groupByPrescription = (list, prescriptionType, groupFunction, infusionList, extraContent) => {
+  if (extraContent && extraContent.concilia) {
+    fillConciliationRelatedDrugs(list, extraContent.conciliaList);
+  }
+
   const drugArray = [];
   list.forEach(item => {
     if (!drugArray[item.idPrescription]) {
@@ -146,7 +168,9 @@ export const transformPrescription = ({
         null,
         null,
         {
-          whitelistedChildren: getWhitelistedChildren(prescription)
+          whitelistedChildren: getWhitelistedChildren(prescription),
+          concilia: item.concilia,
+          conciliaList: item.conciliaList
         }
       )
     : [],
@@ -180,7 +204,7 @@ export const transformDrug = ({ dose, measureUnit, route, source, ...drug }) => 
   ...drug,
   dose,
   measureUnit,
-  dosage: `${dose} ${measureUnit.value}`,
+  dosage: `${dose.toLocaleString('pt-BR')} ${measureUnit.value}`,
   route,
   source: sourceToStoreType(source)
 });

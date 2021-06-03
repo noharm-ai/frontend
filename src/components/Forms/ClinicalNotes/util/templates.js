@@ -9,24 +9,66 @@ const emptyInterventionMessage = `
 const getConduct = interventions => {
   if (interventions !== '') {
     return `
-Intervenções realizadas. Contato prescritor e aguardo conduta.
-Realizada análise de risco para tromboembolismo venoso. Prescrição de acordo com o protocolo. Contato prescritor para avaliação de terapia farmacológica anticoagulante.
+Realizada a conciliação dos medicamentos de uso domiciliar e feitas intervenções pertinentes. Caso as divergências encontradas sejam intencionais, desconsiderar.
 `;
   }
   return `
-Realizada análise de risco para tromboembolismo venoso. Prescrição de acordo com o protocolo. Contato prescritor para avaliação de terapia farmacológica anticoagulante.
+Realizada a conciliação dos medicamentos e não encontrada divergência não intencional.
 `;
 };
 
 const getConciliationDrugList = list => {
-  const tpl = list.map(d => {
+  if (list.length === 0 || (list.length === 1 && list[0].drug === '')) {
     return `
-  ${d.drug}: ${d.dosage} ${d.frequency ? d.frequency.label : ''}
-  Medicamento ou indicação cobertos em prescrição hospitalar?
-    `;
-  });
+Paciente nega uso contínuo de medicamentos.
+`;
+  }
 
-  return tpl.join('');
+  const drugDescription = d => {
+    return `${d.drug}: ${d.dose ? d.dosage : ''} ${d.frequency ? d.frequency.label : ''}`;
+  };
+
+  const tplWithRelation = list
+    .map(d => {
+      if (d.conciliaRelationId) {
+        return `
+  - ${drugDescription(d)}
+    `;
+      }
+
+      return null;
+    })
+    .filter(t => t != null);
+
+  const tplWithoutRelation = list
+    .map(d => {
+      if (d.conciliaRelationId == null) {
+        return `
+  - ${drugDescription(d)}
+    `;
+      }
+
+      return null;
+    })
+    .filter(t => t != null);
+
+  let tpl = '';
+
+  if (tplWithRelation.length) {
+    tpl += `
+*Medicamento ou indicação cobertos em prescrição hospitalar:
+    ${tplWithRelation.join('')}
+    `;
+  }
+
+  if (tplWithoutRelation.length) {
+    tpl += `
+*Medicamento ou indicação NÃO cobertos em prescrição hospitalar:
+    ${tplWithoutRelation.join('')}
+    `;
+  }
+
+  return tpl;
 };
 
 export const conciliationTemplate = (prescription, interventions, signature) => {
@@ -41,7 +83,9 @@ Conciliação Medicamentosa realizada com:
 
 
 2. Conciliação medicamentosa:
-${getConciliationDrugList(prescription.prescription.list[0].value)}
+${getConciliationDrugList(
+  prescription.prescription.list.length ? prescription.prescription.list[0].value : []
+)}
 3. Intervenções:
 ${interventions === '' ? emptyInterventionMessage : interventions}
 4. Conduta:
@@ -69,7 +113,7 @@ ${i}
 
 export const interventionTemplate = i => `
   ${i.drugName}
-  ${stripHtml(i.observation)}
+  ${i.observation ? stripHtml(i.observation) : ''}
 `;
 
 const emptyInterventionTemplate = ({ idPrescription, agg, concilia }) => {
