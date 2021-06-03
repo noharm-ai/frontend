@@ -204,7 +204,7 @@ export const transformDrug = ({ dose, measureUnit, route, source, ...drug }) => 
   ...drug,
   dose,
   measureUnit,
-  dosage: `${dose} ${measureUnit.value}`,
+  dosage: `${dose.toLocaleString('pt-BR')} ${measureUnit.value}`,
   route,
   source: sourceToStoreType(source)
 });

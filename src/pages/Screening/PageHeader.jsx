@@ -2,6 +2,7 @@ import styled from 'styled-components/macro';
 
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
+import { useTranslation } from 'react-i18next';
 
 import Icon, { InfoIcon } from '@components/Icon';
 import Heading from '@components/Heading';
@@ -45,6 +46,7 @@ export default function PageHeader({ match, prescription, type, checkScreening }
   const { isChecking, error } = prescription.check;
   const [isClinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
   const [isClinicalAlertVisible, setClinicalAlertVisibility] = useState(false);
+  const { t } = useTranslation();
 
   const onCancelClinicalNotes = () => {
     setClinicalNotesVisibility(false);
@@ -75,8 +77,8 @@ export default function PageHeader({ match, prescription, type, checkScreening }
     if (type === 'conciliation') {
       return (
         <Heading>
-          Conciliação nº{' '}
-          <Tooltip title="Clique para copiar o número da conciliação">
+          {t('screeningHeader.titleConciliation')}{' '}
+          <Tooltip title={t('screeningHeader.copyHint')}>
             <UnstyledButton onClick={() => copyToClipboard(content.idPrescription)}>
               {content.idPrescription}
             </UnstyledButton>
@@ -88,17 +90,21 @@ export default function PageHeader({ match, prescription, type, checkScreening }
     if (!content.agg) {
       return (
         <Heading>
-          Prescrição nº{' '}
-          <Tooltip title="Clique para copiar o número da prescrição">
+          {t('screeningHeader.titlePrescription')}{' '}
+          <Tooltip title={t('screeningHeader.copyHint')}>
             <UnstyledButton onClick={() => copyToClipboard(prescription.content.idPrescription)}>
               {prescription.content.idPrescription}
             </UnstyledButton>
           </Tooltip>
           <span className={expireDate.diff(now, 'minute') < 0 ? 'legend red' : 'legend'}>
-            Liberada em {prescription.content.dateFormated}
-            {prescription.content.expire && <>, válida até {prescription.content.expireFormated}</>}
+            {t('screeningHeader.issuedOn')} {prescription.content.dateFormated}
+            {prescription.content.expire && (
+              <>
+                , {t('screeningHeader.validUntil')} {prescription.content.expireFormated}
+              </>
+            )}
             {prescription.content.expire && expireDate.diff(createDate, 'hour') < 23 && (
-              <Tooltip title="Intercorrência">
+              <Tooltip title={t('screeningHeader.intercurrence')}>
                 {' '}
                 <InfoIcon />
               </Tooltip>
@@ -111,14 +117,14 @@ export default function PageHeader({ match, prescription, type, checkScreening }
 
     return (
       <Heading>
-        Atendimento nº{' '}
-        <Tooltip title="Clique para copiar o número do atendimento">
+        {t('screeningHeader.titleAdmission')}{' '}
+        <Tooltip title={t('screeningHeader.copyHint')}>
           <UnstyledButton onClick={() => copyToClipboard(prescription.content.admissionNumber)}>
             {prescription.content.admissionNumber}
           </UnstyledButton>
         </Tooltip>
         <span className="legend">
-          Prescrições Agregadas de {prescription.content.dateOnlyFormated}
+          {t('screeningHeader.subtitleAdmission')} {prescription.content.dateOnlyFormated}
         </span>
       </Heading>
     );
@@ -161,15 +167,15 @@ export default function PageHeader({ match, prescription, type, checkScreening }
               style={{ marginRight: '5px' }}
             >
               <Icon type="check" />
-              Checar
+              {t('screeningHeader.btnCheck')}
             </Button>
           )}
           {prescription.content.status === 's' && (
             <>
               <span style={{ marginRight: '10px' }}>
-                <Icon type="check" /> Prescrição checada
+                <Icon type="check" /> {t('screeningHeader.btnChecked')}
               </span>
-              <Tooltip title="Desfazer checagem">
+              <Tooltip title={t('screeningHeader.btnUndoCheck')}>
                 <Button
                   type="danger gtm-bt-undo-check"
                   onClick={() => checkScreening(id, '0')}
@@ -188,7 +194,7 @@ export default function PageHeader({ match, prescription, type, checkScreening }
             ghost={!prescription.content.notes}
           >
             <Icon type="file-add" />
-            Evolução
+            {t('screeningHeader.btnClinicalNotes')}
           </Button>
           {type !== 'conciliation' && (
             <Button
@@ -198,12 +204,12 @@ export default function PageHeader({ match, prescription, type, checkScreening }
               ghost={!prescription.content.alert}
             >
               <Icon type="alert" />
-              Alerta
+              {t('screeningHeader.btnAlert')}
             </Button>
           )}
 
           <Button type="default gtm-bt-close" onClick={close}>
-            Fechar
+            {t('screeningHeader.btnClose')}
           </Button>
         </Col>
       </Row>

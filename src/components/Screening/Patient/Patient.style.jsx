@@ -99,6 +99,10 @@ export const ExamBox = styled.div`
     font-size: 15px;
   }
 
+  .ant-statistic-content-suffix {
+    font-size: 14px;
+  }
+
   .ant-statistic-title {
     margin-bottom: 0;
     color: #2e3c5a;

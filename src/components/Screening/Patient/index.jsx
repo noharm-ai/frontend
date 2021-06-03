@@ -2,6 +2,7 @@ import 'styled-components/macro';
 import React, { useState, useCallback } from 'react';
 import moment from 'moment';
 import { Row, Col } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 import api from '@services/api';
 import Popover from '@components/PopoverStyled';
@@ -59,13 +60,17 @@ const refText = text => {
   });
 };
 
-const ExamData = ({ exam }) => (
+const ExamData = ({ exam, t }) => (
   <>
-    {exam && exam.date && <div>Data: {moment(exam.date).format('DD/MM/YYYY hh:mm')}</div>}
+    {exam && exam.date && (
+      <div>
+        {t('patientCard.examDate')}: {moment(exam.date).format('DD/MM/YYYY hh:mm')}
+      </div>
+    )}
     {exam && exam.ref && <div>Ref: {refText(exam.ref)}</div>}
     {exam && exam.delta && (
       <div>
-        Variação em relação ao último exame: {exam.delta > 0 ? '+' : ''}
+        {t('patientCard.examVariation')}: {exam.delta > 0 ? '+' : ''}
         {exam.delta}%
       </div>
     )}
@@ -111,6 +116,7 @@ export default function Patient({
   const [interventionVisible, setInterventionVisibility] = useState(false);
   const [visible, setVisible] = useState(false);
   const [seeMore, setSeeMore] = useState(false);
+  const { t } = useTranslation();
 
   const hasClinicalNotes = security.hasNoHarmCare();
   const hasAIData = hasClinicalNotes && (notesSigns !== '' || notesInfo !== '');
@@ -173,25 +179,22 @@ export default function Patient({
     }
   };
 
-  const aiDataTooltip = (type, date) => {
-    const msg = `${type} extraídos pela NoHarm Care`;
-
+  const aiDataTooltip = (msg, date) => {
     if (date) {
-      return `${msg} em ${moment(date).format('DD/MM/YYYY hh:mm')}`;
+      return `${msg} (${moment(date).format('DD/MM/YYYY hh:mm')})`;
     }
 
     return msg;
   };
 
-  const AISuggestion = ({ notes, action, date }) => {
+  const AISuggestion = ({ notes, action, date, t }) => {
     return (
       <>
         <div style={{ maxWidth: '300px', textAlign: 'center' }}>
           <Alert description={notes} type="info" />
         </div>
         <div style={{ fontSize: '11px', fontWeight: 300, marginTop: '10px' }}>
-          Dados extraídos pela <strong>NoHarm Care</strong> em{' '}
-          {moment(date).format('DD/MM/YYYY hh:mm')}
+          {t('patientCard.extractedFrom')} {moment(date).format('DD/MM/YYYY hh:mm')}
         </div>
         <div style={{ textAlign: 'center', marginTop: '15px' }}>
           <Button type="primary gtm-bt-update-weight" onClick={() => setVisible(true)}>
@@ -205,10 +208,10 @@ export default function Patient({
   const closedStatus = ['a', 'n', 'x'];
   const currentStatus = intervention ? intervention.status : 's';
   const isInterventionClosed = closedStatus.indexOf(currentStatus) !== -1;
-  let interventionTooltip = 'Intervenção no paciente';
+  let interventionTooltip = t('patientCard.patientIntervention');
 
   if (isInterventionClosed) {
-    interventionTooltip = 'Esta intervenção não pode mais ser alterada, pois já foi resolvida.';
+    interventionTooltip = t('patientCard.patientInterventionDisabled');
   }
 
   return (
@@ -246,7 +249,7 @@ export default function Patient({
                     <Icon type="warning" style={{ fontSize: 16 }} />
                   </Button>
                 </Tooltip>
-                <Tooltip title="Editar dados do paciente">
+                <Tooltip title={t('patientCard.editPatient')}>
                   <Button
                     type="primary gtm-bt-edit-patient"
                     onClick={() => setVisible(true)}
@@ -259,40 +262,41 @@ export default function Patient({
             </Row>
           </NameWrapper>
           <Cell>
-            <strong>Atendimento:</strong> {admissionNumber}
+            <strong>{t('patientCard.admission')}:</strong> {admissionNumber}
           </Cell>
           <Cell>
-            <strong>Setor:</strong> {department}
+            <strong>{t('patientCard.department')}:</strong> {department}
             {lastDepartment && department !== lastDepartment && (
-              <Tooltip title={`Setor Anterior: ${lastDepartment}`}>
+              <Tooltip title={`${t('patientCard.previousDepartment')}: ${lastDepartment}`}>
                 {' '}
                 <InfoIcon />
               </Tooltip>
             )}
           </Cell>
           <Cell>
-            <strong>Leito:</strong> {bed}
+            <strong>{t('patientCard.bed')}:</strong> {bed}
           </Cell>
           <Cell>
-            <strong>Idade:</strong> {age} {isNaN(age) ? '' : 'anos'}
+            <strong>{t('patientCard.age')}:</strong> {age} {isNaN(age) ? '' : 'anos'}
           </Cell>
           <Cell>
-            <strong>Sexo:</strong> {gender ? (gender === 'M' ? 'Masculino' : 'Feminino') : ''}
+            <strong>{t('patientCard.gender')}:</strong>{' '}
+            {gender ? (gender === 'M' ? t('patientCard.male') : t('patientCard.female')) : ''}
           </Cell>
           <Cell>
-            <strong>Peso: </strong>
+            <strong>{t('patientCard.weight')}: </strong>
             {weight && (
               <>
                 {weight} Kg ({formatWeightDate(weightDate)})
                 {weightUser && (
-                  <Tooltip title="Peso alterado manualmente">
+                  <Tooltip title={t('patientCard.manuallyUpdated')}>
                     {' '}
                     <InfoIcon />
                   </Tooltip>
                 )}
               </>
             )}
-            {!weight && <>Não disponível</>}
+            {!weight && t('patientCard.notAvailable')}
             {hasClinicalNotes && notesInfo && (
               <>
                 <PopoverWelcome
@@ -300,7 +304,8 @@ export default function Patient({
                     <AISuggestion
                       notes={notesInfo}
                       date={notesInfoDate}
-                      action="Atualizar o peso"
+                      action={t('patientCard.editWeigth')}
+                      t={t}
                     />
                   }
                   placement="right"
@@ -320,21 +325,27 @@ export default function Patient({
           {seeMore && (
             <>
               <Cell>
-                <strong>Cor da pele:</strong> {skinColor}
+                <strong>{t('patientCard.skin')}:</strong> {skinColor}
               </Cell>
               <Cell>
-                <strong>Altura:</strong>{' '}
+                <strong>{t('patientCard.height')}:</strong>{' '}
                 {height ? (
-                  <Tooltip title="Altura alterada manualmente">
+                  <Tooltip title={t('patientCard.manuallyUpdated')}>
                     {height} cm <InfoIcon />
                   </Tooltip>
                 ) : (
-                  'Não disponível'
+                  t('patientCard.notAvailable')
                 )}
                 {hasClinicalNotes && notesInfo && (
                   <>
                     <PopoverWelcome
-                      content={<AISuggestion notes={notesInfo} action="Atualizar a altura" />}
+                      content={
+                        <AISuggestion
+                          notes={notesInfo}
+                          action={t('patientCard.editHeight')}
+                          t={t}
+                        />
+                      }
                       placement="right"
                       mouseLeaveDelay={0.02}
                     >
@@ -350,32 +361,32 @@ export default function Patient({
                 )}
               </Cell>
               <Cell>
-                <strong>Superfície corporal: </strong>
+                <strong>{t('patientCard.bodySurface')}: </strong>
                 {weight && height ? (
                   <>{getCorporalSurface(weight, height).toFixed(3)} m²</>
                 ) : (
-                  'Não disponível'
+                  t('patientCard.notAvailable')
                 )}
               </Cell>
               <Cell>
-                <strong>IMC: </strong>
+                <strong>{t('patientCard.bmi')}: </strong>
                 {weight && height ? (
                   <>{getIMC(weight, height).toFixed(2)} kg/m²</>
                 ) : (
-                  'Não disponível'
+                  t('patientCard.notAvailable')
                 )}
               </Cell>
               <Cell>
-                <strong>Segmento:</strong> {segmentName}
+                <strong>{t('patientCard.segment')}:</strong> {segmentName}
               </Cell>
               <Cell>
-                <strong>Prontuário:</strong> {record}
+                <strong>{t('patientCard.medicalRecord')}:</strong> {record}
               </Cell>
               <Cell>
-                <strong>Prescritor:</strong> {prescriber}
+                <strong>{t('patientCard.prescriber')}:</strong> {prescriber}
               </Cell>
               <Cell>
-                <strong>Anotações:</strong>
+                <strong>{t('patientCard.notes')}:</strong>
                 <div
                   style={{
                     maxHeight: '300px',
@@ -391,8 +402,10 @@ export default function Patient({
                 <>
                   <Cell className="experimental">
                     <strong>
-                      Dados{' '}
-                      <Tooltip title={aiDataTooltip('Dados', notesInfoDate)}>
+                      {t('patientCard.data')}{' '}
+                      <Tooltip
+                        title={aiDataTooltip(t('patientCard.dataExtractedFrom'), notesInfoDate)}
+                      >
                         {' '}
                         <InfoIcon />
                       </Tooltip>{' '}
@@ -411,8 +424,10 @@ export default function Patient({
                   </Cell>
                   <Cell className="experimental">
                     <strong>
-                      Sinais{' '}
-                      <Tooltip title={aiDataTooltip('Sinais', notesSignsDate)}>
+                      {t('patientCard.signals')}{' '}
+                      <Tooltip
+                        title={aiDataTooltip(t('patientCard.signalsExtractedFrom'), notesSignsDate)}
+                      >
                         {' '}
                         <InfoIcon />
                       </Tooltip>{' '}
@@ -434,7 +449,7 @@ export default function Patient({
               {!concilia && (
                 <Cell className="recalc">
                   <Button type="primary gtm-bt-update" onClick={updatePrescriptionData}>
-                    Recalcular Prescrição
+                    {t('patientCard.recalculate')}
                   </Button>
                 </Cell>
               )}
@@ -442,10 +457,11 @@ export default function Patient({
           )}
           <Cell className="see-more">
             <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
-              <Icon type={seeMore ? 'up' : 'down'} /> {seeMore ? 'Ver menos' : 'Ver mais'}
+              <Icon type={seeMore ? 'up' : 'down'} />{' '}
+              {seeMore ? t('patientCard.less') : t('patientCard.more')}
             </Button>
             {hasAIData && (
-              <Tooltip title="Veja os dados extraídos pela NoHarm Care">
+              <Tooltip title={t('patientCard.ctaNoHarmCare')}>
                 {'  '}
                 <InfoIcon />
               </Tooltip>
@@ -458,7 +474,7 @@ export default function Patient({
         <ExamBox>
           {exams.map(exam => (
             <Popover
-              content={<ExamData exam={exam.value} />}
+              content={<ExamData exam={exam.value} t={t} />}
               title={exam.value.name}
               key={exam.key}
               mouseLeaveDelay={0}
