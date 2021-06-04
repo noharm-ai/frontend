@@ -26,10 +26,7 @@ const saveMessage = {
 };
 const requiredFieldMessage = 'Campo obrigatório';
 const validationSchema = Yup.object().shape({
-  alert: Yup.string()
-    .nullable()
-    .required(requiredFieldMessage),
-  alertExpire: Yup.string()
+  idInterventionReason: Yup.string()
     .nullable()
     .required(requiredFieldMessage)
 });
@@ -95,6 +92,8 @@ export default function Intervention({
   }
 
   const initialValues = {
+    idPrescriptionDrug: item.idPrescriptionDrug,
+    admissionNumber: item.admissionNumber,
     error: item.intervention.error,
     cost: item.intervention.cost,
     idInterventionReason: item.intervention.idInterventionReason,
@@ -103,24 +102,14 @@ export default function Intervention({
     observation: item.intervention.observation
   };
 
-  console.log('intervention', intervention);
-  console.log('initial values', initialValues);
-
   const onCancel = () => {
     select({});
     setVisibility(false);
   };
 
-  const isSaveBtnDisabled = item => {
-    if (isEmpty(item)) {
-      return true;
-    }
-
-    if (isEmpty(item.intervention.idInterventionReason)) {
-      return true;
-    }
-
-    return false;
+  const onSave = params => {
+    console.log('saving', params);
+    save(params);
   };
 
   const InterventionFooter = ({ handleSubmit }) => {
@@ -149,12 +138,7 @@ export default function Intervention({
           </Tooltip>
         )}
 
-        <Button
-          type="primary gtm-bt-save-interv"
-          onClick={() => handleSubmit()}
-          disabled={isSaving || isSaveBtnDisabled(item)}
-          loading={isSaving}
-        >
+        <Button type="primary gtm-bt-save-interv" onClick={() => handleSubmit()} loading={isSaving}>
           Salvar
         </Button>
       </>
@@ -164,7 +148,7 @@ export default function Intervention({
   return (
     <Formik
       enableReinitialize
-      onSubmit={save}
+      onSubmit={onSave}
       initialValues={initialValues}
       validationSchema={validationSchema}
     >

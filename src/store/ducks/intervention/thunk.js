@@ -84,7 +84,7 @@ export const updateSelectedItemToSaveInterventionThunk = intervention => dispatc
 export const saveInterventionThunk = (params = {}) => async (dispatch, getState) => {
   dispatch(interventionSetSaveStart());
 
-  const { intervention, idPrescriptionDrug, admissionNumber } = params;
+  const { idPrescriptionDrug, admissionNumber } = params;
   const defaultArgs = {
     observation: '',
     idPrescriptionDrug,
@@ -94,7 +94,7 @@ export const saveInterventionThunk = (params = {}) => async (dispatch, getState)
 
   const args = {
     ...defaultArgs,
-    ...intervention,
+    ...params,
     status: 's'
   };
 

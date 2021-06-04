@@ -95,7 +95,7 @@ export default function Observations({
 
   return (
     <>
-      <Col xs={20} style={{ padding: '0 8px' }}>
+      <Col xs={20} style={{ padding: '0 8px', alignSelf: 'flex-end' }}>
         <Heading as="h4" htmlFor="reason" size="14px">
           Observações:
         </Heading>

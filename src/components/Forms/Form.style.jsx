@@ -23,7 +23,7 @@ export const Box = styled.div`
   display: flex;
   flex-direction: ${props => (props.flexDirection ? props.flexDirection : 'row')};
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
 
   label.fixed {
