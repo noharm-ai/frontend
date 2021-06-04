@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import isEmpty from 'lodash.isempty';
+import { useTranslation } from 'react-i18next';
 
 import LoadBox from '@components/LoadBox';
 import Table from '@components/Table';
@@ -30,6 +31,7 @@ export default function PrescriptionDrugList({
 }) {
   const [openIntervention, setOpenIntervention] = useState(false);
   const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
+  const { t } = useTranslation();
 
   if (isFetching) {
     return <LoadBox />;
@@ -57,7 +59,8 @@ export default function PrescriptionDrugList({
     saveInterventionStatus,
     checkIntervention,
     uniqueDrugList: uniqueDrugs,
-    currentPrescription
+    currentPrescription,
+    t
   };
 
   return (
