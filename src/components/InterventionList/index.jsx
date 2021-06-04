@@ -9,7 +9,7 @@ import { ExpandableTable } from '@components/Table';
 import interventionColumns, {
   expandedInterventionRowRender
 } from '@components/Screening/Intervention/columns';
-import ModalIntervention from '@containers/Screening/ModalIntervention';
+import FormIntervention from '@containers/Forms/Intervention';
 import Tag from '@components/Tag';
 import BackTop from '@components/BackTop';
 import { Select } from '@components/Inputs';
@@ -209,7 +209,7 @@ export default function InterventionList({
         dataSource={!isFetching ? dsInterventions : []}
         expandedRowRender={expandedInterventionRowRender}
       />
-      <ModalIntervention
+      <FormIntervention
         visible={visible}
         setVisibility={setVisibility}
         afterSaveIntervention={afterSaveIntervention}

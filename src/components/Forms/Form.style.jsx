@@ -36,6 +36,10 @@ export const Box = styled.div`
   textarea {
     background: ${props => (props.hasError ? '#ffcdd2;' : 'inherit')};
   }
+
+  .ant-select-selection__placeholder {
+    color: ${props => (props.hasError ? '#454545;' : 'inherit')};
+  }
 `;
 
 export const EditorBox = styled.div`

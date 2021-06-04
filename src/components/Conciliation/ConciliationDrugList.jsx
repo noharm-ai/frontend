@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import isEmpty from 'lodash.isempty';
+import { useTranslation } from 'react-i18next';
 
 import LoadBox from '@components/LoadBox';
 import Table from '@components/Table';
 import Empty from '@components/Empty';
 
-import ModalIntervention from '@containers/Screening/ModalIntervention';
+import FormIntervention from '@containers/Forms/Intervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 
 import { conciliationColumns } from '../Screening/columns';
@@ -30,6 +31,7 @@ export default function PrescriptionDrugList({
 }) {
   const [openIntervention, setOpenIntervention] = useState(false);
   const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
+  const { t } = useTranslation();
 
   if (isFetching) {
     return <LoadBox />;
@@ -57,7 +59,8 @@ export default function PrescriptionDrugList({
     saveInterventionStatus,
     checkIntervention,
     uniqueDrugList: uniqueDrugs,
-    currentPrescription
+    currentPrescription,
+    t
   };
 
   return (
@@ -77,7 +80,7 @@ export default function PrescriptionDrugList({
         dataSource={!isEmpty(dataSource) ? dataSource[0].value : []}
         rowClassName={rowClassName}
       />
-      <ModalIntervention
+      <FormIntervention
         visible={openIntervention}
         setVisibility={setOpenIntervention}
         checkPrescriptionDrug={checkPrescriptionDrug}

@@ -92,6 +92,7 @@ export default function Intervention({
   }
 
   const initialValues = {
+    idPrescription: item.idPrescription,
     idPrescriptionDrug: item.idPrescriptionDrug,
     admissionNumber: item.admissionNumber,
     error: item.intervention.error,

@@ -15,7 +15,7 @@ import Tag from '@components/Tag';
 import Badge from '@components/Badge';
 import { sourceToStoreType } from '@utils/transformers/prescriptions';
 
-import ModalIntervention from '@containers/Screening/ModalIntervention';
+import FormIntervention from '@containers/Forms/Intervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 
 import columnsTable, { expandedRowRender, solutionColumns, isPendingValidation } from '../columns';
@@ -371,7 +371,7 @@ export default function PrescriptionDrugList({
     return (
       <>
         {table(!isEmpty(dataSource) ? dataSource[0] : [])}
-        <ModalIntervention
+        <FormIntervention
           visible={visible}
           setVisibility={setVisibility}
           checkPrescriptionDrug={checkPrescriptionDrug}
@@ -447,7 +447,7 @@ export default function PrescriptionDrugList({
           </GroupPanel>
         </Collapse>
       ))}
-      <ModalIntervention
+      <FormIntervention
         visible={visible}
         setVisibility={setVisibility}
         checkPrescriptionDrug={checkPrescriptionDrug}

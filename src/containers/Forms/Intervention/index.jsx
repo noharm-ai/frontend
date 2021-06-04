@@ -15,6 +15,7 @@ import {
 } from '@store/ducks/prescriptions/thunk';
 import { searchDrugsThunk } from '@store/ducks/drugs/thunk';
 import { memoryFetchReasonTextThunk, memorySaveReasonTextThunk } from '@store/ducks/memory/thunk';
+
 import Intervention from '@components/Forms/Intervention';
 
 const mapStateToProps = ({ intervention, drugs, memory }) => ({
