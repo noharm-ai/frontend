@@ -126,6 +126,7 @@ export default function Patient({
       idPrescriptionDrug: 0,
       admissionNumber,
       idPrescription: prescription.idPrescription,
+      idSegment: prescription.idSegment,
       patientName: namePatient,
       age,
       status: intervention ? intervention.status : '0',
