@@ -56,6 +56,8 @@ export default function InterventionList({
   });
   const onShowModal = data => {
     select({
+      idPrescription: data.idPrescription,
+      idPrescriptionDrug: data.idPrescriptionDrug,
       dosage: `${data.dose} ${data.measureUnit.value}`,
       frequency: data.frequency,
       drug: data.drugName,
