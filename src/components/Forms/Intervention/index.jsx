@@ -109,7 +109,6 @@ export default function Intervention({
   };
 
   const onSave = params => {
-    console.log('saving', params);
     save(params);
   };
 
@@ -159,6 +158,7 @@ export default function Intervention({
           width={700}
           centered
           destroyOnClose
+          onCancel={onCancel}
           footer={<InterventionFooter handleSubmit={handleSubmit} />}
           {...props}
         >
