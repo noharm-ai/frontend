@@ -2,6 +2,7 @@ import 'styled-components/macro';
 import React from 'react';
 import isEmpty from 'lodash.isempty';
 import { useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
 
 import { Col } from '@components/Grid';
 import { Select } from '@components/Inputs';
@@ -24,6 +25,7 @@ export default function Base({
   memoryFetchReasonText
 }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
+  const { t } = useTranslation();
   const { item: itemToSave } = intervention;
   const { error, cost, idInterventionReason, interactions, observation } = values;
   const layout = { label: 8, input: 16 };
@@ -79,7 +81,7 @@ export default function Base({
               title="Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa"
               underline
             >
-              Possível Erro de prescrição:
+              {t('interventionForm.labelPrescriptionError')}:
             </Tooltip>
           </Heading>
         </Col>
@@ -93,7 +95,7 @@ export default function Base({
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
             <Tooltip title="Esta intervenção gera redução de custo?" underline>
-              Reduz custo:
+              {t('interventionForm.labelCostReduction')}:
             </Tooltip>
           </Heading>
         </Col>
@@ -110,7 +112,7 @@ export default function Base({
               title="Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica abrem a opção de informar os medicamentos relacionados"
               underline
             >
-              Motivos:
+              {t('interventionForm.labelReasons')}:
             </Tooltip>
           </Heading>
         </Col>
@@ -144,7 +146,7 @@ export default function Base({
                 title="Lista de medicamentos com Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica"
                 underline
               >
-                Relações:
+                {t('interventionForm.labelRelations')}:
               </Tooltip>
             </Heading>
           </Col>

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import isEmpty from 'lodash.isempty';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { useTranslation } from 'react-i18next';
 
 import { Row } from '@components/Grid';
 import Button from '@components/Button';
@@ -53,6 +54,7 @@ export default function Intervention({
   memoryFetchReasonText,
   ...props
 }) {
+  const { t } = useTranslation();
   const { isSaving, wasSaved, item } = intervention;
 
   // handle after save intervention.
@@ -123,10 +125,10 @@ export default function Intervention({
     return (
       <>
         <Button onClick={() => onCancel()} disabled={isSaving} className="gtm-bt-cancel-interv">
-          Cancelar
+          {t('interventionForm.btnCancel')}
         </Button>
         {isChecked && !disableUndoIntervention && (
-          <Tooltip title="Desfazer intervenção" placement="top">
+          <Tooltip title={t('interventionForm.btnUndo')} placement="top">
             <Button
               type="danger gtm-bt-undo-interv"
               ghost
@@ -139,7 +141,7 @@ export default function Intervention({
         )}
 
         <Button type="primary gtm-bt-save-interv" onClick={() => handleSubmit()} loading={isSaving}>
-          Salvar
+          {t('interventionForm.btnSave')}
         </Button>
       </>
     );

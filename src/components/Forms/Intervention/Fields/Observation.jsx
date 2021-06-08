@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import isEmpty from 'lodash.isempty';
+import { useTranslation } from 'react-i18next';
 
 import { Col } from '@components/Grid';
 import { Textarea } from '@components/Inputs';
@@ -20,6 +21,7 @@ export default function Observations({
   currentReason
 }) {
   const text = useRef(content || '');
+  const { t } = useTranslation();
   const isMemoryDisabled = currentReason == null || currentReason.length !== 1;
 
   useEffect(() => {
@@ -62,11 +64,13 @@ export default function Observations({
   };
 
   const getMemoryTooltip = () => {
-    const config = { save: 'Salvar observação modelo', apply: 'Aplicar observação modelo' };
+    const config = {
+      save: t('interventionForm.btnModelSave'),
+      apply: t('interventionForm.btnModelApply')
+    };
 
     if (currentReason && currentReason.length > 1) {
-      const msg =
-        'Modelos: Esta funcionalidade é desabilitada quando múltiplos motivos são selecionados';
+      const msg = t('interventionForm.btnModelInvalid');
       return {
         save: msg,
         apply: msg
@@ -74,7 +78,7 @@ export default function Observations({
     }
 
     if (isMemoryDisabled) {
-      const msg = 'Modelos: Selecione um motivo para liberar esta funcionalidade';
+      const msg = t('interventionForm.btnModelDisabled');
       return {
         save: msg,
         apply: msg
@@ -83,8 +87,8 @@ export default function Observations({
 
     if (isEmpty(memory.list) || !content) {
       return {
-        save: content ? config.save : 'Preencha o texto para salvar como modelo',
-        apply: !isEmpty(memory.list) ? config.apply : 'Este motivo ainda não possui um modelo salvo'
+        save: content ? config.save : t('interventionForm.btnModelSaveHint'),
+        apply: !isEmpty(memory.list) ? config.apply : t('interventionForm.btnModelEmpty')
       };
     }
 
@@ -97,7 +101,7 @@ export default function Observations({
     <>
       <Col xs={20} style={{ padding: '0 8px', alignSelf: 'flex-end' }}>
         <Heading as="h4" htmlFor="reason" size="14px">
-          Observações:
+          {t('interventionForm.labelObservations')}:
         </Heading>
       </Col>
       <Col xs={4} style={{ paddingTop: '4px', paddingBottom: '0' }}>
