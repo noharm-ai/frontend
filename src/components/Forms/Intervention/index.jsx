@@ -58,15 +58,6 @@ export default function Intervention({
   // handle after save intervention.
   useEffect(() => {
     if (wasSaved && visible) {
-      if (afterSaveIntervention) {
-        afterSaveIntervention(item);
-      } else {
-        updateInterventionData(item.idPrescriptionDrug, item.source, {
-          ...item.intervention,
-          status: 's'
-        });
-      }
-
       reset();
       setVisibility(false);
 
@@ -110,6 +101,15 @@ export default function Intervention({
 
   const onSave = params => {
     save(params);
+
+    if (afterSaveIntervention) {
+      afterSaveIntervention(params);
+    } else {
+      updateInterventionData(item.idPrescriptionDrug, item.source, {
+        ...params,
+        status: 's'
+      });
+    }
   };
 
   const InterventionFooter = ({ handleSubmit }) => {
