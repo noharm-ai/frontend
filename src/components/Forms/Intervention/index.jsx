@@ -119,7 +119,8 @@ export default function Intervention({
     const isChecked = item.intervention && item.intervention.status === 's';
 
     const undoIntervention = () => {
-      savePrescriptionDrugStatus(item.idPrescriptionDrug, item.idPrescription, '0', item.source);
+      const source = item.idPrescriptionDrug === 0 ? 'patient' : item.source;
+      savePrescriptionDrugStatus(item.idPrescriptionDrug, item.idPrescription, '0', source);
       setVisibility(false);
     };
 

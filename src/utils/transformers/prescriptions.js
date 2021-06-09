@@ -113,6 +113,9 @@ export const sourceToStoreType = source => {
     case 'Intervenções':
       return 'intervention';
 
+    case 'patient':
+      return 'patient';
+
     default:
       console.error('undefined source', source);
       return null;
