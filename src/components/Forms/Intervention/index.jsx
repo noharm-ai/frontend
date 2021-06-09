@@ -104,6 +104,7 @@ export default function Intervention({
   const onSave = params => {
     save(params);
 
+    // move to useeffect
     if (afterSaveIntervention) {
       afterSaveIntervention(params);
     } else {
