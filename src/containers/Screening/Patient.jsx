@@ -9,6 +9,7 @@ import security from '@services/security';
 const mapStateToProps = ({ prescriptions, auth, user }) => ({
   isFetching: prescriptions.single.isFetching,
   prescription: prescriptions.single.data,
+  checkPrescriptionDrug: prescriptions.single.patient.checkPrescriptionDrug,
   access_token: auth.identify.access_token,
   security: security(user.account.roles)
 });

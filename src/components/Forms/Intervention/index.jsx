@@ -67,6 +67,12 @@ export default function Intervention({
     }
   }, [wasSaved, reset, item, updateInterventionData, setVisibility, visible]); // eslint-disable-line
 
+  useEffect(() => {
+    if (checkPrescriptionDrug && checkPrescriptionDrug.success) {
+      setVisibility(false);
+    }
+  }, [checkPrescriptionDrug, setVisibility]);
+
   // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
@@ -121,7 +127,6 @@ export default function Intervention({
     const undoIntervention = () => {
       const source = item.idPrescriptionDrug === 0 ? 'patient' : item.source;
       savePrescriptionDrugStatus(item.idPrescriptionDrug, item.idPrescription, '0', source);
-      setVisibility(false);
     };
 
     return (

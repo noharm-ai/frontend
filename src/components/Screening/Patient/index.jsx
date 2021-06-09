@@ -81,6 +81,7 @@ export default function Patient({
   fetchScreening,
   access_token,
   prescription,
+  checkPrescriptionDrug,
   selectIntervention,
   security
 }) {
@@ -501,7 +502,11 @@ export default function Patient({
         cancelText="Cancelar"
         afterSavePatient={afterSavePatient}
       />
-      <FormIntervention visible={interventionVisible} setVisibility={setInterventionVisibility} />
+      <FormIntervention
+        visible={interventionVisible}
+        setVisibility={setInterventionVisibility}
+        checkPrescriptionDrug={checkPrescriptionDrug}
+      />
     </Row>
   );
 }
