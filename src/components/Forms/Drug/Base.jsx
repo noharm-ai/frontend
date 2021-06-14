@@ -2,16 +2,19 @@ import React from 'react';
 import 'styled-components/macro';
 import { useFormikContext } from 'formik';
 import { Checkbox } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
 import { InputNumber, Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
+import { HelpButton } from '@components/Button';
 
 import { Box } from './Drug.style';
 
 export default function Base() {
   const { values, setFieldValue, errors } = useFormikContext();
+  const { t } = useTranslation();
   const {
     antimicro,
     mav,
@@ -219,6 +222,14 @@ export default function Base() {
             onChange={value => setFieldValue('kidney', value)}
           />
           mL/min
+          <Tooltip title={t('layout.help')}>
+            <div>
+              <HelpButton
+                type="primary gtm-medication-btn-help-nefro"
+                href="https://noharm.octadesk.com/kb/article/ajuste-de-dose-por-funcao-renal"
+              />
+            </div>
+          </Tooltip>
         </Box>
       </Col>
       <Col xs={24}>
@@ -242,6 +253,14 @@ export default function Base() {
             onChange={value => setFieldValue('liver', value)}
           />
           U/L
+          <Tooltip title={t('layout.help')}>
+            <div>
+              <HelpButton
+                type="primary gtm-medication-btn-help-hepa"
+                href="https://noharm.octadesk.com/kb/article/ajuste-de-dose-por-funcao-hepatica"
+              />
+            </div>
+          </Tooltip>
         </Box>
       </Col>
       <Col xs={24}>

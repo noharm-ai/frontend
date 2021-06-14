@@ -75,4 +75,19 @@ export const Link = ({ href, to, children, target, ...props }) => {
   );
 };
 
+export const HelpButton = ({ href, type }) => {
+  return (
+    <Button
+      type={type}
+      ghost
+      shape="circle"
+      icon="question"
+      style={{ width: '28px', height: '28px', minWidth: '28px', margin: '0 5px' }}
+      onClick={() => {
+        window.open(href);
+      }}
+    />
+  );
+};
+
 export default Button;
