@@ -193,7 +193,7 @@ export default function Base() {
               marginRight: 5
             }}
             min={0}
-            max={99999}
+            max={9999999}
             value={maxDose}
             onChange={value => setFieldValue('maxDose', value)}
           />{' '}
