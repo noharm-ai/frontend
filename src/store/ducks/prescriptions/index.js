@@ -64,6 +64,15 @@ const INITIAL_STATE = {
       list: []
     },
     data: {},
+    patient: {
+      list: [],
+      checkPrescriptionDrug: {
+        error: null,
+        success: {},
+        isChecking: false,
+        idPrescriptionDrug: null
+      }
+    },
     prescription: {
       list: [],
       checkPrescriptionDrug: {
@@ -359,6 +368,15 @@ const checkPrescriptionDrugSuccess = (state = INITIAL_STATE, { success, source }
           intervention: {
             ...state.single.data.intervention,
             status: success.status
+          }
+        },
+        patient: {
+          ...state.single.patient,
+          checkPrescriptionDrug: {
+            ...state.single.patient.checkPrescriptionDrug,
+            error: null,
+            isChecking: false,
+            success
           }
         }
       }

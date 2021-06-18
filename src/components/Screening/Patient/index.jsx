@@ -17,7 +17,7 @@ import RichTextView from '@components/RichTextView';
 import Alert from '@components/Alert';
 import { getCorporalSurface, getIMC } from '@utils/index';
 
-import ModalIntervention from '@containers/Screening/ModalIntervention';
+import FormIntervention from '@containers/Forms/Intervention';
 
 import { Wrapper, Name, NameWrapper, Box, ExamBox } from './Patient.style';
 
@@ -81,6 +81,7 @@ export default function Patient({
   fetchScreening,
   access_token,
   prescription,
+  checkPrescriptionDrug,
   selectIntervention,
   security
 }) {
@@ -126,6 +127,7 @@ export default function Patient({
       idPrescriptionDrug: 0,
       admissionNumber,
       idPrescription: prescription.idPrescription,
+      idSegment: prescription.idSegment,
       patientName: namePatient,
       age,
       status: intervention ? intervention.status : '0',
@@ -500,7 +502,11 @@ export default function Patient({
         cancelText="Cancelar"
         afterSavePatient={afterSavePatient}
       />
-      <ModalIntervention visible={interventionVisible} setVisibility={setInterventionVisibility} />
+      <FormIntervention
+        visible={interventionVisible}
+        setVisibility={setInterventionVisibility}
+        checkPrescriptionDrug={checkPrescriptionDrug}
+      />
     </Row>
   );
 }

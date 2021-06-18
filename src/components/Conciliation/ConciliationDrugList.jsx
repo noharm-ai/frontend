@@ -6,7 +6,7 @@ import LoadBox from '@components/LoadBox';
 import Table from '@components/Table';
 import Empty from '@components/Empty';
 
-import ModalIntervention from '@containers/Screening/ModalIntervention';
+import FormIntervention from '@containers/Forms/Intervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 
 import { conciliationColumns } from '../Screening/columns';
@@ -80,7 +80,7 @@ export default function PrescriptionDrugList({
         dataSource={!isEmpty(dataSource) ? dataSource[0].value : []}
         rowClassName={rowClassName}
       />
-      <ModalIntervention
+      <FormIntervention
         visible={openIntervention}
         setVisibility={setOpenIntervention}
         checkPrescriptionDrug={checkPrescriptionDrug}

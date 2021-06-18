@@ -5,6 +5,7 @@ import { get } from '@styles/utils';
 export const Box = styled.div`
   border-top: 1px solid ${get('colors.detail')};
   padding: 10px 0;
+  width: 100%;
 
   label.fixed {
     width: 20%;

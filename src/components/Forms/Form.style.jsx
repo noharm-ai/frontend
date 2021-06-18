@@ -22,7 +22,8 @@ export const FormContainer = styled.div`
 export const Box = styled.div`
   display: flex;
   flex-direction: ${props => (props.flexDirection ? props.flexDirection : 'row')};
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: flex-start;
   width: 100%;
 
   label.fixed {
@@ -34,6 +35,10 @@ export const Box = styled.div`
   .ant-select .ant-select-selection,
   textarea {
     background: ${props => (props.hasError ? '#ffcdd2;' : 'inherit')};
+  }
+
+  .ant-select-selection__placeholder {
+    color: ${props => (props.hasError ? '#454545;' : 'inherit')};
   }
 `;
 
@@ -54,4 +59,11 @@ export const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
+`;
+
+export const FormHeader = styled.div`
+  border-top: 1px solid ${get('colors.detail')};
+  border-bottom: 1px solid ${get('colors.detail')};
+  padding: 10px 0;
+  margin-bottom: 15px;
 `;
