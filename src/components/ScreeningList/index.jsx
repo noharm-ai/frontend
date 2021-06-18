@@ -198,7 +198,7 @@ export default function ScreeningList({
         </Button>
       </Tooltip>
 
-      <Tooltip title={t('screeningList.pendingHint')}>
+      <Tooltip title={t('screeningList.checkedHint')}>
         <Button
           type="gtm-lnk-filter-presc-checada ant-btn-link-hover"
           className={isFilterActive('s') ? 'active' : ''}
