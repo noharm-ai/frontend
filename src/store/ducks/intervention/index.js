@@ -204,11 +204,14 @@ const updateList = (state = INITIAL_STATE, { intervention }) => {
 
   const index = list.findIndex(
     item =>
-      item.id === intervention.intervention.idPrescriptionDrug &&
-      item.idPrescription === intervention.intervention.idPrescription
+      item.id === intervention.idPrescriptionDrug &&
+      item.idPrescription === intervention.idPrescription
   );
-  list[index] = intervention.intervention;
-  list[index].id = intervention.intervention.idPrescriptionDrug;
+  list[index] = {
+    ...list[index],
+    ...intervention
+  };
+  list[index].id = intervention.idPrescriptionDrug;
 
   return {
     ...state,
