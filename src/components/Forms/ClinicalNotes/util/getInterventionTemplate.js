@@ -14,7 +14,10 @@ const getInterventions = list => {
       ...group.value
         .map(l => {
           if (l.intervention && l.intervention.status === 's') {
-            return l.intervention;
+            return {
+              drugName: l.drug,
+              ...l.intervention
+            };
           }
 
           return null;
