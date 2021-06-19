@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import isEmpty from 'lodash.isempty';
 import { useTranslation } from 'react-i18next';
 
@@ -8,7 +8,6 @@ import Heading from '@components/Heading';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 import notification from '@components/notification';
-import stripHtml from '@utils/stripHtml';
 
 import { EditorBox } from '@components/Forms/Form.style';
 
@@ -20,7 +19,6 @@ export default function Observations({
   saveMemory,
   currentReason
 }) {
-  const text = useRef(content || '');
   const { t } = useTranslation();
   const isMemoryDisabled = currentReason == null || currentReason.length !== 1;
 
@@ -36,10 +34,6 @@ export default function Observations({
     }
   }, [memory.save.success]);
 
-  useEffect(() => {
-    text.current = content ? stripHtml(content) : '';
-  }, []); // eslint-disable-line
-
   const saveDefaultText = () => {
     const payload = {
       type: `reasonsDefaultText-${currentReason[0]}`,
@@ -54,13 +48,11 @@ export default function Observations({
 
   const loadDefaultText = () => {
     setFieldValue('observation', memory.list[0].value.text);
-    text.current = memory.list[0].value.text;
     notification.success({ message: 'Observação modelo aplicada com sucesso!' });
   };
 
   const onEdit = observation => {
     setFieldValue('observation', observation);
-    text.current = observation;
   };
 
   const getMemoryTooltip = () => {
@@ -133,7 +125,7 @@ export default function Observations({
         <EditorBox>
           <Textarea
             autoFocus
-            value={text.current || ''}
+            value={content || ''}
             onChange={({ target }) => onEdit(target.value)}
             style={{ minHeight: '200px' }}
           />
