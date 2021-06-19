@@ -99,7 +99,7 @@ export default function Intervention({
     idInterventionReason: item.intervention.idInterventionReason,
     reasonDescription: null,
     interactions: item.intervention.interactions,
-    observation: item.intervention.observation
+    observation: item.intervention.observation || ''
   };
 
   const onCancel = () => {
