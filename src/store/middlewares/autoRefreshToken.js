@@ -1,12 +1,14 @@
 import isEmpty from 'lodash.isempty';
 import { toDate, isPast } from 'date-fns';
 
-import { tokenDecode, errorHandler } from '@utils';
 import api from '@services/api';
+import { tokenDecode } from '@utils';
 
 import { Creators as AuthCreators } from '../ducks/auth';
+import { Creators as UserCreators } from '../ducks/user';
 
-const { authSetIdentify } = AuthCreators;
+const { authSetIdentify, authDelIdentify } = AuthCreators;
+const { userLogout } = UserCreators;
 
 const autoRefreshToken = ({ dispatch, getState }) => next => async action => {
   if (typeof action !== 'function') {
@@ -19,6 +21,16 @@ const autoRefreshToken = ({ dispatch, getState }) => next => async action => {
     const { access_token, refresh_token } = auth.identify;
     const { exp } = tokenDecode(access_token);
     const expireDate = toDate(exp * 1000);
+    const errorHandler = e => {
+      dispatch(userLogout());
+      dispatch(authDelIdentify());
+
+      return {
+        error: e.response ? e.response.data : 'error',
+        status: e.response ? e.response.status : e.code,
+        data: {}
+      };
+    };
 
     if (!isPast(expireDate)) {
       return next(action);
@@ -29,9 +41,8 @@ const autoRefreshToken = ({ dispatch, getState }) => next => async action => {
     dispatch(authSetIdentify(identify));
 
     return next(action);
-  } else {
-    return next(action);
   }
+  return next(action);
 };
 
 export default autoRefreshToken;
