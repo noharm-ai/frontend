@@ -13,7 +13,7 @@ import FormIntervention from '@containers/Forms/Intervention';
 import Tag from '@components/Tag';
 import BackTop from '@components/BackTop';
 import { Select } from '@components/Inputs';
-import { uniqBy } from '@utils/lodash';
+import { uniqBy, intersection } from '@utils/lodash';
 import { toDataSource } from '@utils';
 
 const errorMessage = {
@@ -47,13 +47,21 @@ export default function InterventionList({
   fetchFuturePrescription,
   isFetching,
   list,
-  error
+  error,
+  fetchReasonsList,
+  reasons
 }) {
   const [visible, setVisibility] = useState(false);
+  const [prescriberList, setPrescriberList] = useState([]);
+  const [departmentList, setDepartmentList] = useState([]);
   const [filter, setFilter] = useState({
     status: null,
-    responsible: []
+    responsible: [],
+    prescriber: [],
+    department: [],
+    reason: []
   });
+
   const onShowModal = data => {
     select({
       idPrescription: data.idPrescription,
@@ -70,6 +78,24 @@ export default function InterventionList({
   useEffect(() => {
     fetchList();
   }, [fetchList]);
+
+  useEffect(() => {
+    fetchReasonsList();
+  }, [fetchReasonsList]);
+
+  useEffect(() => {
+    setPrescriberList(
+      uniqBy(list, 'prescriber')
+        .map(i => i.prescriber)
+        .sort()
+    );
+
+    setDepartmentList(
+      uniqBy(list, 'department')
+        .map(i => i.department)
+        .sort()
+    );
+  }, [list]);
 
   // show message if has error
   useEffect(() => {
@@ -98,11 +124,43 @@ export default function InterventionList({
     setFilter({ ...filter, responsible });
   };
 
+  const handlePrescriberChange = prescriber => {
+    setFilter({ ...filter, prescriber });
+  };
+
+  const handleDepartmentChange = department => {
+    setFilter({ ...filter, department });
+  };
+
+  const handleReasonChange = reason => {
+    setFilter({ ...filter, reason });
+  };
+
   const handleStatusChange = status => {
     setFilter({ ...filter, status: !status || status === 'all' ? null : [status] });
   };
 
-  const dsInterventions = toDataSource(list, null, {
+  const filterList = filter => {
+    return list.filter(i => {
+      let show = true;
+
+      if (filter.prescriber.length) {
+        show = show && filter.prescriber.indexOf(i.prescriber) !== -1;
+      }
+
+      if (filter.department.length) {
+        show = show && filter.department.indexOf(i.department) !== -1;
+      }
+
+      if (filter.reason.length) {
+        show = show && intersection(filter.reason, i.idInterventionReason).length > 0;
+      }
+
+      return show;
+    });
+  };
+
+  const dsInterventions = toDataSource(filterList(filter), null, {
     check: checkData,
     saveInterventionStatus: checkIntervention,
     onShowModal,
@@ -143,29 +201,12 @@ export default function InterventionList({
     <>
       <TableInfo style={{ marginBottom: 15 }}>
         <div className="filter-field">
-          <label>Responsável</label>
-          <Select
-            onChange={handleResponsibleChange}
-            placeholder="Filtrar por responsável"
-            allowClear
-            style={{ minWidth: '300px' }}
-            mode="multiple"
-            optionFilterProp="children"
-          >
-            {getResponsibleList().map((p, i) => (
-              <Select.Option value={p} key={i}>
-                {p}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-        <div className="filter-field">
           <label>Situação</label>
           <Select
             onChange={handleStatusChange}
             placeholder="Filtrar por situação"
             allowClear
-            style={{ minWidth: '300px' }}
+            style={{ minWidth: '200px' }}
             optionFilterProp="children"
             defaultValue="all"
           >
@@ -187,6 +228,75 @@ export default function InterventionList({
             <Select.Option value="all" key="all">
               Todas <Tag>{listCount.all}</Tag>
             </Select.Option>
+          </Select>
+        </div>
+        <div className="filter-field">
+          <label>Responsável</label>
+          <Select
+            onChange={handleResponsibleChange}
+            placeholder="Filtrar por responsável"
+            allowClear
+            style={{ minWidth: '250px' }}
+            mode="multiple"
+            optionFilterProp="children"
+          >
+            {getResponsibleList().map((p, i) => (
+              <Select.Option value={p} key={i}>
+                {p}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+        <div className="filter-field">
+          <label>Prescritor</label>
+          <Select
+            onChange={handlePrescriberChange}
+            placeholder="Filtrar por prescritor"
+            allowClear
+            style={{ minWidth: '250px' }}
+            mode="multiple"
+            optionFilterProp="children"
+          >
+            {prescriberList.map((p, i) => (
+              <Select.Option value={p} key={i}>
+                {p}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+        <div className="filter-field">
+          <label>Setor</label>
+          <Select
+            onChange={handleDepartmentChange}
+            placeholder="Filtrar por setor"
+            allowClear
+            style={{ minWidth: '200px' }}
+            mode="multiple"
+            optionFilterProp="children"
+          >
+            {departmentList.map((p, i) => (
+              <Select.Option value={p} key={i}>
+                {p}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+        <div className="filter-field">
+          <label>Motivo</label>
+          <Select
+            onChange={handleReasonChange}
+            placeholder="Filtrar por motivo"
+            allowClear
+            style={{ minWidth: '200px' }}
+            mode="multiple"
+            optionFilterProp="children"
+          >
+            {reasons &&
+              reasons.map(({ id, description }) => (
+                <Select.Option value={id} key={id}>
+                  {description}
+                </Select.Option>
+              ))}
           </Select>
         </div>
       </TableInfo>
