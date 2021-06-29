@@ -38,6 +38,7 @@
     "i18next": "^19.6.2",
     "lodash.debounce": "^4.0.8",
     "lodash.get": "^4.4.2",
+    "lodash.intersection": "^4.4.0",
     "lodash.isempty": "^4.4.0",
     "lodash.uniqby": "^4.7.0",
     "nprogress": "^0.2.0",
