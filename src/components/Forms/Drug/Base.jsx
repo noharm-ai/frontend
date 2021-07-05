@@ -110,7 +110,7 @@ export default function Base() {
                 id="whiteList"
               >
                 <Tooltip
-                  title="Medicamento isento de Validação e Escore (Ex.: Diluentes)"
+                  title="Medicamento isento de Validação e Escore (Ex.: Diluentes, Componentes)"
                   underline
                 >
                   Sem validação

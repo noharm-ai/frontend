@@ -27,7 +27,8 @@
     "medications": "Medicamentos",
     "segments": "Segmentos",
     "knowledgeBase": "Base de Conhecimento",
-    "userConfig": "Usuário"
+    "userConfig": "Usuário",
+    "exams": "Exames"
   },
   "screeningList": {
     "empty": "Nenhum registro encontrado",
@@ -246,7 +247,7 @@
     "exrMedicalNotes": "Observação médica:",
     "exrNotes": "Anotação:",
     "exrPrevIntervention": "Intervenção anterior:",
-    "exrDiluent": "Diluentes (sem validação):"
+    "exrDiluent": "Componentes (sem validação):"
   },
 
   "interventionForm": {
