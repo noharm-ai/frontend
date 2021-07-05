@@ -109,7 +109,21 @@ const routes = [
   },
   {
     exact: true,
+    path: '/exames',
+    component: withAuth({
+      component: Segments
+    })
+  },
+  {
+    exact: true,
     path: '/segmentos/:idSegment/:slug',
+    component: withAuth({
+      component: Segments
+    })
+  },
+  {
+    exact: true,
+    path: '/exames/:idSegment/:slug',
     component: withAuth({
       component: Segments
     })

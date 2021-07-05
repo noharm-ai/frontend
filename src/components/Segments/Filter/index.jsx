@@ -32,7 +32,7 @@ export default function Filter({ segments }) {
     const segment = segments.list.find(item => item.id === params.idSegment);
     const slug = createSlug(segment.description);
 
-    history.push(`/segmentos/${params.idSegment}/${slug}`);
+    history.push(`/exames/${params.idSegment}/${slug}`);
   };
 
   const filterOption = (input, option) =>

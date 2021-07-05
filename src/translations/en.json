@@ -27,7 +27,8 @@
     "medications": "Medications",
     "segments": "Segments",
     "knowledgeBase": "Knowledge Base",
-    "userConfig": "User"
+    "userConfig": "User",
+    "exams": "Lab exams"
   },
   "screeningList": {
     "empty": "No records found",
@@ -246,7 +247,7 @@
     "exrMedicalNotes": "Medical notes:",
     "exrNotes": "Notes:",
     "exrPrevIntervention": "Previous intervention:",
-    "exrDiluent": "Diluent (not validated):"
+    "exrDiluent": "Components (not validated):"
   },
 
   "interventionForm": {

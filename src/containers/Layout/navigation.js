@@ -57,10 +57,10 @@ export default [
         id: 'gtm-lnk-medicamentos'
       },
       {
-        key: '/segmentos',
-        text: 'menu.segments',
+        key: '/exames',
+        text: 'menu.exams',
         icon: 'medicine-box',
-        id: 'gtm-lnk-segmentos'
+        id: 'gtm-lnk-exames'
       },
       {
         key: '/configuracoes/usuario',
