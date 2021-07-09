@@ -47,11 +47,14 @@ export default function Base({ prescription, account, signature }) {
               <Select.Option value="b" key="b">
                 Admissão
               </Select.Option>
-              <Select.Option value="t" key="t">
-                Transferência
-              </Select.Option>
               <Select.Option value="a" key="a">
                 Alta
+              </Select.Option>
+              <Select.Option value="n" key="n">
+                Não realizada
+              </Select.Option>
+              <Select.Option value="t" key="t">
+                Transferência
               </Select.Option>
             </Select>
             {errors.concilia && touched.concilia && <FieldError>{errors.concilia}</FieldError>}
