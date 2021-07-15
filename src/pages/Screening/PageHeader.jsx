@@ -41,7 +41,7 @@ const UnstyledButton = styled.button`
   }
 `;
 
-export default function PageHeader({ match, prescription, type, checkScreening }) {
+export default function PageHeader({ match, prescription, type, checkScreening, security }) {
   const id = parseInt(extractId(match.params.slug));
   const { isChecking, error } = prescription.check;
   const [isClinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
@@ -196,7 +196,7 @@ export default function PageHeader({ match, prescription, type, checkScreening }
             <Icon type="file-add" />
             {t('screeningHeader.btnClinicalNotes')}
           </Button>
-          {type !== 'conciliation' && (
+          {type !== 'conciliation' && security.hasAlertIntegration() && (
             <Button
               type="primary gtm-bt-alert"
               onClick={() => setClinicalAlertVisibility(true)}
