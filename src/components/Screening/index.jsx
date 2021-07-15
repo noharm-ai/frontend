@@ -16,6 +16,7 @@ import BackTop from '@components/BackTop';
 import PrescriptionList from '@containers/Screening/PrescriptionDrug/PrescriptionList';
 import SolutionList from '@containers/Screening/PrescriptionDrug/SolutionList';
 import ProcedureList from '@containers/Screening/PrescriptionDrug/ProcedureList';
+import DietList from '@containers/Screening/PrescriptionDrug/DietList';
 import PreviousInterventionList from '@containers/Screening/PreviousInterventionList';
 import PageHeader from '@containers/Screening/PageHeader';
 import Patient from '@containers/Screening/Patient';
@@ -54,7 +55,8 @@ export default function Screening({
     prescriptionRaw: drugList,
     solutionRaw: solutionList,
     proceduresRaw: proceduresList,
-    interventionsRaw: interventionList
+    interventionsRaw: interventionList,
+    dietRaw: dietList
   } = content;
 
   const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
@@ -77,7 +79,8 @@ export default function Screening({
     prescriptions: drugList ? drugList.length : 0,
     solutions: solutionList ? solutionList.length : 0,
     procedures: proceduresList ? proceduresList.length : 0,
-    interventions: interventionList ? interventionList.length : 0
+    interventions: interventionList ? interventionList.length : 0,
+    diet: dietList ? dietList.length : 0
   };
 
   // fetch data
@@ -136,7 +139,7 @@ export default function Screening({
           style={{ width: '100%', padding: '10px', marginTop: '10px' }}
           type="card gtm-tab-screening"
           onTabClick={onTabClick}
-          className={listCount.procedures > 0 ? 'breaktab-3' : 'breaktab-2'}
+          className={listCount.procedures > 0 ? 'breaktab-4' : 'breaktab-3'}
         >
           <Tabs.TabPane
             tab={<TabTitle title={t('screeningBody.tabDrugs')} count={listCount.prescriptions} />}
@@ -180,19 +183,31 @@ export default function Screening({
             </Tabs.TabPane>
           )}
           <Tabs.TabPane
+            tab={<TabTitle title={t('screeningBody.tabDiet')} count={listCount.diet} />}
+            key="4"
+          >
+            <Col span={24} md={24} style={{ marginTop: '20px' }}>
+              <DietList
+                emptyMessage="Nenhuma dieta encontrada."
+                hasFilter={false}
+                listType="diet"
+              />
+            </Col>
+          </Tabs.TabPane>
+          <Tabs.TabPane
             tab={
               <TabTitle
                 title={t('screeningBody.tabInterventions')}
                 count={listCount.interventions}
               />
             }
-            key="4"
+            key="5"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
               <PreviousInterventionList />
             </Col>
           </Tabs.TabPane>
-          <Tabs.TabPane tab={<TabTitle title={t('screeningBody.tabLabResults')} />} key="5">
+          <Tabs.TabPane tab={<TabTitle title={t('screeningBody.tabLabResults')} />} key="6">
             <ExpandableTable
               title={title}
               columns={examColumns(t)}
@@ -219,7 +234,7 @@ export default function Screening({
                   count={content.clinicalNotes}
                 />
               }
-              key="6"
+              key="7"
             >
               <ClinicalNotes />
             </Tabs.TabPane>

@@ -286,6 +286,9 @@ export default function PrescriptionDrugList({
       case 'procedure':
         return 'procedures';
 
+      case 'diet':
+        return 'diet';
+
       default:
         console.error('invalid source', s);
         return null;
@@ -297,7 +300,7 @@ export default function PrescriptionDrugList({
       return infoIcon('Prescrição checada');
     }
 
-    return summaryTags(header[summarySourceToType(source)]);
+    return summaryTags(header[summarySourceToType(source)] || {});
   };
 
   const groupSummary = groupData => {
@@ -373,6 +376,10 @@ export default function PrescriptionDrugList({
       av: 0,
       controlled: 0
     };
+
+    if (isEmpty(addData)) {
+      return baseData;
+    }
 
     const aggData = {};
     Object.keys(baseData).forEach(k => {

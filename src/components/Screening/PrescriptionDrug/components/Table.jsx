@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { ExpandableTable } from '@components/Table';
 import Empty from '@components/Empty';
 
-import columnsTable, { expandedRowRender, solutionColumns } from '../../columns';
+import columnsTable, { expandedRowRender, solutionColumns, dietColumns } from '../../columns';
 import { rowClassName } from '../PrescriptionDrugList';
 
 function Table({ hasFilter, filter, bag, isFetching, emptyMessage, ds, listType }) {
@@ -26,13 +26,20 @@ function Table({ hasFilter, filter, bag, isFetching, emptyMessage, ds, listType 
     handleRowExpand
   };
 
+  const getColumns = () => {
+    switch (listType) {
+      case 'solution':
+        return solutionColumns(extraBag);
+      case 'diet':
+        return dietColumns(extraBag);
+      default:
+        return columnsTable(hasFilter ? filter : { status: null }, extraBag);
+    }
+  };
+
   return (
     <ExpandableTable
-      columns={
-        listType === 'solution'
-          ? solutionColumns(extraBag)
-          : columnsTable(hasFilter ? filter : { status: null }, extraBag)
-      }
+      columns={getColumns()}
       pagination={false}
       loading={isFetching}
       locale={{

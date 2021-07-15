@@ -108,6 +108,12 @@ export const sourceToStoreType = source => {
     case 'Proced/Exames':
       return 'procedure';
 
+    case 'diet':
+    case 'Diet':
+    case 'Dieta':
+    case 'Dietas':
+      return 'diet';
+
     case 'intervention':
     case 'interventions':
     case 'Intervenções':
@@ -141,6 +147,7 @@ export const transformPrescription = ({
   infusion,
   interventions,
   globalScore,
+  diet,
   ...item
 }) => ({
   ...item,
@@ -183,6 +190,7 @@ export const transformPrescription = ({
   procedures: procedures
     ? groupByPrescription(procedures.map(transformDrug), 'procedures', groupProcedures)
     : [],
+  diet: diet ? groupByPrescription(diet.map(transformDrug), 'diet') : [],
   interventions,
   namePatient,
   idPrescription,
@@ -192,6 +200,7 @@ export const transformPrescription = ({
   solutionRaw: solution,
   proceduresRaw: procedures,
   interventionsRaw: interventions,
+  dietRaw: diet,
   uniqueDrugs: getUniqueDrugs(prescription, solution, procedures)
 });
 

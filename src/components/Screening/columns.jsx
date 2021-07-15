@@ -429,9 +429,9 @@ const dose = bag => ({
   }
 });
 
-const drug = (bag, addkey) => ({
+const drug = (bag, addkey, title) => ({
   key: addkey ? 'idPrescriptionDrug' : null,
-  title: bag.t('tableHeader.drug'),
+  title: title ? title : bag.t('tableHeader.drug'),
   align: 'left',
   render: record => {
     if (bag.concilia) {
@@ -704,6 +704,14 @@ export const isPendingValidation = record =>
 export const solutionColumns = bag => [
   ...drugInfo(bag),
   ...stageAndInfusion(bag),
+  route(bag),
+  tags(bag),
+  ...actionColumns(bag)
+];
+
+export const dietColumns = bag => [
+  drug(bag, true, bag.t('tableHeader.diet')),
+  ...frequencyAndTime(bag),
   route(bag),
   tags(bag),
   ...actionColumns(bag)

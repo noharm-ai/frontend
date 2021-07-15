@@ -161,6 +161,7 @@
     "tabSolutions": "Soluções",
     "tabProcedures": "Procedimentos/Exames",
     "tabInterventions": "Intervenções",
+    "tabDiet": "Dieta",
     "tabLabResults": "Exames",
     "tabClinicalNotes": "Evoluções"
   },
@@ -183,7 +184,8 @@
     "date": "Data",
     "examHistory": "Histórico de exames",
     "min": "Mínimo",
-    "max": "Máximo"
+    "max": "Máximo",
+    "diet": "Dieta"
   },
   "labels": {
     "role": "Cargo",
