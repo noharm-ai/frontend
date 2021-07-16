@@ -83,6 +83,9 @@ export default function Screening({
     diet: dietList ? dietList.length : 0
   };
 
+  const fixedTabs = 2;
+  const tabCount = fixedTabs + (listCount.procedures > 0 ? 1 : 0) + (listCount.diet > 0 ? 1 : 0);
+
   // fetch data
   useEffect(() => {
     fetchScreeningById(id);
@@ -139,7 +142,7 @@ export default function Screening({
           style={{ width: '100%', padding: '10px', marginTop: '10px' }}
           type="card gtm-tab-screening"
           onTabClick={onTabClick}
-          className={listCount.procedures > 0 ? 'breaktab-4' : 'breaktab-3'}
+          className={`breaktab-${tabCount}`}
         >
           <Tabs.TabPane
             tab={<TabTitle title={t('screeningBody.tabDrugs')} count={listCount.prescriptions} />}
@@ -182,18 +185,20 @@ export default function Screening({
               </Col>
             </Tabs.TabPane>
           )}
-          <Tabs.TabPane
-            tab={<TabTitle title={t('screeningBody.tabDiet')} count={listCount.diet} />}
-            key="4"
-          >
-            <Col span={24} md={24} style={{ marginTop: '20px' }}>
-              <DietList
-                emptyMessage="Nenhuma dieta encontrada."
-                hasFilter={false}
-                listType="diet"
-              />
-            </Col>
-          </Tabs.TabPane>
+          {listCount.diet > 0 && (
+            <Tabs.TabPane
+              tab={<TabTitle title={t('screeningBody.tabDiet')} count={listCount.diet} />}
+              key="4"
+            >
+              <Col span={24} md={24} style={{ marginTop: '20px' }}>
+                <DietList
+                  emptyMessage="Nenhuma dieta encontrada."
+                  hasFilter={false}
+                  listType="diet"
+                />
+              </Col>
+            </Tabs.TabPane>
+          )}
           <Tabs.TabPane
             tab={
               <TabTitle
