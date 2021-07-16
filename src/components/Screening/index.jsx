@@ -105,9 +105,9 @@ export default function Screening({
   };
 
   const onTabClick = key => {
-    if (key === '5') {
+    if (key === '6') {
       loadExams();
-    } else if (key === '6') {
+    } else if (key === '7') {
       if (!clinicalNotesLoaded) {
         fetchClinicalNotes(content.admissionNumber);
         setClinicalNotesLoaded(true);
