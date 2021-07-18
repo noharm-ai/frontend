@@ -78,7 +78,7 @@ export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, get
   const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
     ...item,
     idPatient,
-    namePatient: patientsList[idPatient].name
+    namePatient: patientsList[idPatient] ? patientsList[idPatient].name : `Paciente ${idPatient}`
   }));
 
   const list = transformPrescriptions(listAddedPatientName);

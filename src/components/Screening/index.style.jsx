@@ -20,6 +20,18 @@ export const ScreeningTabs = styled(Tabs)`
     }
   }
 
+  &.breaktab-4 {
+    .ant-tabs-nav .ant-tabs-tab:nth-child(5) {
+      margin-left: 100px !important;
+    }
+  }
+
+  &.breaktab-5 {
+    .ant-tabs-nav .ant-tabs-tab:nth-child(6) {
+      margin-left: 100px !important;
+    }
+  }
+
   .ant-tabs-bar {
     margin-bottom: 0;
   }

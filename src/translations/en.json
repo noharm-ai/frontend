@@ -161,6 +161,7 @@
     "tabSolutions": "Solutions",
     "tabProcedures": "Procedures/Exams",
     "tabInterventions": "Interventions",
+    "tabDiet": "Diet",
     "tabLabResults": "Lab results",
     "tabClinicalNotes": "Clinical notes"
   },
@@ -183,7 +184,8 @@
     "date": "Date",
     "examHistory": "Lab exams history",
     "min": "Minimum",
-    "max": "Maximum"
+    "max": "Maximum",
+    "diet": "Diet"
   },
   "labels": {
     "role": "Role",

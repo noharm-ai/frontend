@@ -49,6 +49,12 @@ const getPatients = async (bearerToken, requestConfig) => {
 
       try {
         const { data: patient } = await axios.get(urlRequest, { timeout: 8000 });
+
+        if (patient == null || patient.status === 'error') {
+          console.log('%cRequested patient error: ', 'color: #e67e22;', idPatient, patient);
+          return defaultValue(idPatient);
+        }
+
         return { ...patient, cache };
       } catch (e) {
         return defaultValue(idPatient);

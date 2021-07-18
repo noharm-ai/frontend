@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 
 import Icon from '@components/Icon';
 import LoadBox from '@components/LoadBox';
-import { ExpandableTable } from '@components/Table';
 import Empty from '@components/Empty';
 import Collapse from '@components/Collapse';
 import Tooltip from '@components/Tooltip';
@@ -18,8 +17,9 @@ import { sourceToStoreType } from '@utils/transformers/prescriptions';
 import FormIntervention from '@containers/Forms/Intervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 
-import columnsTable, { expandedRowRender, solutionColumns, isPendingValidation } from '../columns';
+import { isPendingValidation } from '../columns';
 import { GroupPanel, PrescriptionPanel, PrescriptionHeader } from './PrescriptionDrug.style';
+import Table from './components/Table';
 
 const isExpired = date => {
   if (parseISO(date).getTime() < Date.now()) {
@@ -83,7 +83,6 @@ export default function PrescriptionDrugList({
 }) {
   const [visible, setVisibility] = useState(false);
   const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
-  const [expandedRows, setExpandedRows] = useState([]);
   const [filter, setFilter] = useState({
     status: null
   });
@@ -117,21 +116,9 @@ export default function PrescriptionDrugList({
     setOpenPrescriptionDrugModal(true);
   };
 
-  const updateExpandedRows = (list, key) => {
-    if (list.includes(key)) {
-      return list.filter(i => i !== key);
-    }
-    return [...list, key];
-  };
-
-  const handleRowExpand = record => {
-    setExpandedRows(updateExpandedRows(expandedRows, record.key));
-  };
-
   const bag = {
     onShowModal,
     onShowPrescriptionDrugModal,
-    handleRowExpand,
     check: checkPrescriptionDrug,
     savePrescriptionDrugStatus,
     idSegment,
@@ -176,22 +163,14 @@ export default function PrescriptionDrugList({
   );
 
   const table = ds => (
-    <ExpandableTable
-      columns={
-        listType === 'solution'
-          ? solutionColumns(bag)
-          : columnsTable(hasFilter ? filter : { status: null }, bag)
-      }
-      pagination={false}
-      loading={isFetching}
-      locale={{
-        emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={emptyMessage} />
-      }}
-      dataSource={!isFetching ? ds.value : []}
-      expandedRowRender={expandedRowRender(bag)}
-      rowClassName={rowClassName}
-      expandedRowKeys={expandedRows}
-      onExpand={(expanded, record) => handleRowExpand(record)}
+    <Table
+      hasFilter={hasFilter}
+      filter={filter}
+      bag={bag}
+      isFetching={isFetching}
+      emptyMessage={emptyMessage}
+      ds={ds}
+      listType={listType}
     />
   );
 
@@ -307,6 +286,9 @@ export default function PrescriptionDrugList({
       case 'procedure':
         return 'procedures';
 
+      case 'diet':
+        return 'diet';
+
       default:
         console.error('invalid source', s);
         return null;
@@ -318,7 +300,7 @@ export default function PrescriptionDrugList({
       return infoIcon('Prescrição checada');
     }
 
-    return summaryTags(header[summarySourceToType(source)]);
+    return summaryTags(header[summarySourceToType(source)] || {});
   };
 
   const groupSummary = groupData => {
@@ -394,6 +376,10 @@ export default function PrescriptionDrugList({
       av: 0,
       controlled: 0
     };
+
+    if (isEmpty(addData)) {
+      return baseData;
+    }
 
     const aggData = {};
     Object.keys(baseData).forEach(k => {
