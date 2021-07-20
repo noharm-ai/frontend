@@ -73,7 +73,7 @@ function Segments({
   useEffect(() => {
     let errorResponse = null;
     const startOutliersGeneration = async () => {
-      const progressStep = Math.round(100 / generate.data.length);
+      const progressStep = 100 / generate.data.length;
       let progressTotal = 0;
 
       for (let i = 0; i < generate.data.length; i++) {
@@ -296,7 +296,7 @@ function Segments({
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Progress
             type="circle"
-            percent={progressPercentage}
+            percent={Math.round(progressPercentage)}
             strokeColor={{
               '0%': 'rgb(112, 189, 196)',
               '100%': 'rgb(126, 190, 154)'

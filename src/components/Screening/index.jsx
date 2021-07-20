@@ -105,9 +105,9 @@ export default function Screening({
   };
 
   const onTabClick = key => {
-    if (key === '6') {
+    if (key === 'exam') {
       loadExams();
-    } else if (key === '7') {
+    } else if (key === 'clinicalNotes') {
       if (!clinicalNotesLoaded) {
         fetchClinicalNotes(content.admissionNumber);
         setClinicalNotesLoaded(true);
@@ -146,7 +146,7 @@ export default function Screening({
         >
           <Tabs.TabPane
             tab={<TabTitle title={t('screeningBody.tabDrugs')} count={listCount.prescriptions} />}
-            key="1"
+            key="drugs"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
               <PrescriptionList
@@ -159,7 +159,7 @@ export default function Screening({
 
           <Tabs.TabPane
             tab={<TabTitle title={t('screeningBody.tabSolutions')} count={listCount.solutions} />}
-            key="2"
+            key="solutions"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
               <SolutionList
@@ -174,7 +174,7 @@ export default function Screening({
               tab={
                 <TabTitle title={t('screeningBody.tabProcedures')} count={listCount.procedures} />
               }
-              key="3"
+              key="procedures"
             >
               <Col span={24} md={24} style={{ marginTop: '20px' }}>
                 <ProcedureList
@@ -188,7 +188,7 @@ export default function Screening({
           {listCount.diet > 0 && (
             <Tabs.TabPane
               tab={<TabTitle title={t('screeningBody.tabDiet')} count={listCount.diet} />}
-              key="4"
+              key="diet"
             >
               <Col span={24} md={24} style={{ marginTop: '20px' }}>
                 <DietList
@@ -206,13 +206,13 @@ export default function Screening({
                 count={listCount.interventions}
               />
             }
-            key="5"
+            key="intervention"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
               <PreviousInterventionList />
             </Col>
           </Tabs.TabPane>
-          <Tabs.TabPane tab={<TabTitle title={t('screeningBody.tabLabResults')} />} key="6">
+          <Tabs.TabPane tab={<TabTitle title={t('screeningBody.tabLabResults')} />} key="exam">
             <ExpandableTable
               title={title}
               columns={examColumns(t)}
@@ -239,7 +239,7 @@ export default function Screening({
                   count={content.clinicalNotes}
                 />
               }
-              key="7"
+              key="clinicalNotes"
             >
               <ClinicalNotes />
             </Tabs.TabPane>
