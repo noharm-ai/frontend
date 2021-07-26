@@ -203,6 +203,7 @@ export default function InterventionList({
         <div className="filter-field">
           <label>Situação</label>
           <Select
+            id="intervFilterStatus"
             onChange={handleStatusChange}
             placeholder="Filtrar por situação"
             allowClear
@@ -233,6 +234,7 @@ export default function InterventionList({
         <div className="filter-field">
           <label>Responsável</label>
           <Select
+            id="intervFilterUser"
             onChange={handleResponsibleChange}
             placeholder="Filtrar por responsável"
             allowClear
@@ -250,6 +252,7 @@ export default function InterventionList({
         <div className="filter-field">
           <label>Prescritor</label>
           <Select
+            id="intervFilterPrescriber"
             onChange={handlePrescriberChange}
             placeholder="Filtrar por prescritor"
             allowClear
@@ -267,6 +270,7 @@ export default function InterventionList({
         <div className="filter-field">
           <label>Setor</label>
           <Select
+            id="intervFilterDept"
             onChange={handleDepartmentChange}
             placeholder="Filtrar por setor"
             allowClear
@@ -284,6 +288,7 @@ export default function InterventionList({
         <div className="filter-field">
           <label>Motivo</label>
           <Select
+            id="intervFilterOutcome"
             onChange={handleReasonChange}
             placeholder="Filtrar por motivo"
             allowClear
