@@ -386,7 +386,7 @@ export const expandedRowRender = bag => record => {
             <SimpleList>
               {diluents.map((d, i) => (
                 <li key={i}>
-                  {d.drug} ({d.dosage})
+                  {d.drug} ({d.dose ? d.dose.toLocaleString('pt-BR') : ''} {d.measureUnit ? d.measureUnit.value : ''})
                 </li>
               ))}
             </SimpleList>
