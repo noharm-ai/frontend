@@ -10,25 +10,25 @@ export const ScreeningTabs = styled(Tabs)`
 
   &.breaktab-2 {
     .ant-tabs-nav .ant-tabs-tab:nth-child(3) {
-      margin-left: 100px !important;
+      margin-left: 50px !important;
     }
   }
 
   &.breaktab-3 {
     .ant-tabs-nav .ant-tabs-tab:nth-child(4) {
-      margin-left: 100px !important;
+      margin-left: 50px !important;
     }
   }
 
   &.breaktab-4 {
     .ant-tabs-nav .ant-tabs-tab:nth-child(5) {
-      margin-left: 100px !important;
+      margin-left: 50px !important;
     }
   }
 
   &.breaktab-5 {
     .ant-tabs-nav .ant-tabs-tab:nth-child(6) {
-      margin-left: 100px !important;
+      margin-left: 50px !important;
     }
   }
 

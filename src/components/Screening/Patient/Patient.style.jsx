@@ -5,6 +5,7 @@ import Heading from '@components/Heading';
 
 export const Wrapper = styled.div`
   border: 1px solid ${get('colors.detail')};
+  border-radius: 5px;
   overflow: hidden;
 `;
 

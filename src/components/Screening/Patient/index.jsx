@@ -12,12 +12,15 @@ import Tooltip from '@components/Tooltip';
 import FormPatientModal from '@containers/Forms/Patient';
 import RichTextView from '@components/RichTextView';
 import Alert from '@components/Alert';
+import PrescriptionCard from '@components/PrescriptionCard';
 import { getCorporalSurface, getIMC } from '@utils/index';
 
 import FormIntervention from '@containers/Forms/Intervention';
 
 import { Wrapper, Name, NameWrapper, Box } from './Patient.style';
-import ExamsSummary from '../Exam/ExamsSummary';
+import ExamCard from '../Exam/Card';
+import AlertCard from '../AlertCard';
+import ClinicalNotesCard from '../ClinicalNotes/Card';
 
 function Cell({ children, ...props }) {
   return (
@@ -33,13 +36,17 @@ export default function Patient({
   prescription,
   checkPrescriptionDrug,
   selectIntervention,
-  security
+  security,
+  interventionCount,
+  siderCollapsed
 }) {
   const {
     admissionNumber,
+    alertExams,
     department,
     lastDepartment,
     age,
+    birthdate,
     gender,
     weight,
     weightUser,
@@ -62,9 +69,14 @@ export default function Patient({
     notesInfoDate,
     notesSigns,
     notesSignsDate,
-    concilia
+    concilia,
+    alertStats,
+    clinicalNotes,
+    clinicalNotesStats,
+    features
   } = prescription;
   const [interventionVisible, setInterventionVisibility] = useState(false);
+
   const [visible, setVisible] = useState(false);
   const [seeMore, setSeeMore] = useState(false);
   const { t } = useTranslation();
@@ -230,6 +242,7 @@ export default function Patient({
           </Cell>
           <Cell>
             <strong>{t('patientCard.age')}:</strong> {age} {isNaN(age) ? '' : 'anos'}
+            {birthdate ? `(${moment(birthdate).format('DD/MM/YYYY')})` : ''}
           </Cell>
           <Cell>
             <strong>{t('patientCard.gender')}:</strong>{' '}
@@ -274,44 +287,40 @@ export default function Patient({
               </>
             )}
           </Cell>
+          <Cell>
+            <strong>{t('patientCard.skin')}:</strong> {skinColor}
+          </Cell>
+          <Cell>
+            <strong>{t('patientCard.height')}:</strong>{' '}
+            {height ? (
+              <Tooltip title={t('patientCard.manuallyUpdated')}>
+                {height} cm <InfoIcon />
+              </Tooltip>
+            ) : (
+              t('patientCard.notAvailable')
+            )}
+            {hasClinicalNotes && notesInfo && (
+              <>
+                <PopoverWelcome
+                  content={
+                    <AISuggestion notes={notesInfo} action={t('patientCard.editHeight')} t={t} />
+                  }
+                  placement="right"
+                  mouseLeaveDelay={0.02}
+                >
+                  <button
+                    type="button"
+                    className="experimental-text"
+                    onClick={() => setVisible(true)}
+                  >
+                    (NoHarm Care) <InfoIcon />
+                  </button>
+                </PopoverWelcome>
+              </>
+            )}
+          </Cell>
           {seeMore && (
             <>
-              <Cell>
-                <strong>{t('patientCard.skin')}:</strong> {skinColor}
-              </Cell>
-              <Cell>
-                <strong>{t('patientCard.height')}:</strong>{' '}
-                {height ? (
-                  <Tooltip title={t('patientCard.manuallyUpdated')}>
-                    {height} cm <InfoIcon />
-                  </Tooltip>
-                ) : (
-                  t('patientCard.notAvailable')
-                )}
-                {hasClinicalNotes && notesInfo && (
-                  <>
-                    <PopoverWelcome
-                      content={
-                        <AISuggestion
-                          notes={notesInfo}
-                          action={t('patientCard.editHeight')}
-                          t={t}
-                        />
-                      }
-                      placement="right"
-                      mouseLeaveDelay={0.02}
-                    >
-                      <button
-                        type="button"
-                        className="experimental-text"
-                        onClick={() => setVisible(true)}
-                      >
-                        (NoHarm Care) <InfoIcon />
-                      </button>
-                    </PopoverWelcome>
-                  </>
-                )}
-              </Cell>
               <Cell>
                 <strong>{t('patientCard.bodySurface')}: </strong>
                 {weight && height ? (
@@ -422,9 +431,41 @@ export default function Patient({
         </Wrapper>
       </Col>
 
-      <Col md={16}>
-        <ExamsSummary exams={exams}></ExamsSummary>
+      <Col xl={10} xxl={11}>
+        <ExamCard exams={exams} siderCollapsed={siderCollapsed} count={alertExams} />
       </Col>
+      <Col xl={6} xxl={5}>
+        <AlertCard stats={alertStats} />
+        {hasClinicalNotes && (
+          <div style={{ marginTop: '10px' }}>
+            <ClinicalNotesCard stats={clinicalNotesStats} total={clinicalNotes} />
+          </div>
+        )}
+        {!hasClinicalNotes && (
+          <div style={{ marginTop: '10px' }}>
+            <PrescriptionCard style={{ minHeight: '113px' }}>
+              <div className="header">
+                <h3 className="title">{t('tableHeader.interventions')}</h3>
+              </div>
+              <div className="content">
+                <div className="stat-number">{interventionCount}</div>
+              </div>
+              <div className="footer">
+                <div className="stats">
+                  <>
+                    {features.interventions}{' '}
+                    {features.interventions === 1
+                      ? t('tableHeader.pending')
+                      : t('tableHeader.pendingPlural')}
+                  </>
+                </div>
+                <div className="action"></div>
+              </div>
+            </PrescriptionCard>
+          </div>
+        )}
+      </Col>
+
       <FormPatientModal
         visible={visible}
         onCancel={onCancel}

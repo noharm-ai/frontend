@@ -185,7 +185,13 @@
     "examHistory": "Histórico de exames",
     "min": "Mínimo",
     "max": "Máximo",
-    "diet": "Dieta"
+    "diet": "Dieta",
+    "exams": "Exames",
+    "alerts": "Alertas",
+    "clinicalNotes": "Evoluções",
+    "interventions": "Intervenções",
+    "pending": "Pendente",
+    "pendingPlural": "Pendentes"
   },
   "labels": {
     "role": "Cargo",
@@ -283,5 +289,17 @@
     "names": "Nomes",
     "signs": "Sinais",
     "symptoms": "Sintomas"
+  },
+
+  "alerts": {
+    "y": "Incompatibilidade em Y",
+    "interaction": "Interações medicamentosas",
+    "max_dose": "Dose máxima ou de alerta",
+    "exam": "Exames x Medicamentos",
+    "time": "Tempo de tratamento",
+    "elderly": "Medicamentos potencialmente inapropriados para idosos",
+    "alergy": "Alergia",
+    "tube": "Medicamento contraindicado por sonda",
+    "duplicate": "Duplicidade"
   }
 }

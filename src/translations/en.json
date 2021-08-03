@@ -185,7 +185,13 @@
     "examHistory": "Lab exams history",
     "min": "Minimum",
     "max": "Maximum",
-    "diet": "Diet"
+    "diet": "Diet",
+    "exams": "Lab results",
+    "alerts": "Alerts",
+    "clinicalNotes": "Clinical notes",
+    "interventions": "Interventions",
+    "pending": "Pending",
+    "pendingPlural": "Pending"
   },
   "labels": {
     "role": "Role",
@@ -282,5 +288,17 @@
     "names": "Names",
     "signs": "Signs",
     "symptoms": "Symptoms"
+  },
+
+  "alerts": {
+    "y": "Y incompatibility",
+    "interaction": "Drug interactions",
+    "max_dose": "Max dose",
+    "exam": "Lab results x Drugs",
+    "time": "Treatment time",
+    "elderly": "Potentially inappropriate drugs for the elderly",
+    "alergy": "Alergy",
+    "tube": "Drug contraindicate by tube",
+    "duplicate": "Duplicity"
   }
 }
