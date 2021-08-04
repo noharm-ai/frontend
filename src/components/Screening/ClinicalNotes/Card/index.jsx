@@ -36,7 +36,7 @@ export default function ClinicalNotesCard({ stats, total }) {
           ))}
         </div>
         <div className="action">
-          <Button type="link" onClick={() => setClinicalNotesVisibility(true)}>
+          <Button type="link  gtm-notes-all" onClick={() => setClinicalNotesVisibility(true)}>
             Visualizar
           </Button>
         </div>
