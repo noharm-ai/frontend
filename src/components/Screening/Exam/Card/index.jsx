@@ -38,7 +38,7 @@ export default function ExamCard({ exams, siderCollapsed, count }) {
           )}
         </div>
         <div className="action">
-          <Button type="link gtm-exams-all" onClick={() => setExamVisibility(true)}>
+          <Button type="link gtm-btn-exams-all" onClick={() => setExamVisibility(true)}>
             Ver todos
           </Button>
         </div>
