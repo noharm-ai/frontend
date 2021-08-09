@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import isEmpty from 'lodash.isempty';
 import { useTranslation } from 'react-i18next';
 
-import breakpoints from '@styles/breakpoints';
-import { useMedia } from '@lib/hooks';
-import { ExpandableTable } from '@components/Table';
 import Empty from '@components/Empty';
 import LoadBox from '@components/LoadBox';
 import { Row, Col } from '@components/Grid';
@@ -20,37 +17,19 @@ import DietList from '@containers/Screening/PrescriptionDrug/DietList';
 import PreviousInterventionList from '@containers/Screening/PreviousInterventionList';
 import PageHeader from '@containers/Screening/PageHeader';
 import Patient from '@containers/Screening/Patient';
-import ClinicalNotes from '@containers/Screening/ClinicalNotes';
 
-import { toDataSource } from '@utils';
-
-import examColumns, { examRowClassName, expandedExamRowRender } from './Exam/columns';
 import { BoxWrapper, ScreeningTabs } from './index.style';
 
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
-
-const noop = () => {};
-const theTitle = () => 'Deslize para a direita para ver mais conteúdo.';
 
 const errorMessage = {
   message: 'Ops! Algo de errado aconteceu.',
   description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
 };
 
-export default function Screening({
-  match,
-  fetchScreeningById,
-  fetchExams,
-  fetchClinicalNotes,
-  isFetching,
-  content,
-  error,
-  exams,
-  security
-}) {
+export default function Screening({ match, fetchScreeningById, isFetching, content, error }) {
   const id = extractId(match.params.slug);
-  const hasNoHarmCare = security.hasNoHarmCare();
   const {
     prescriptionRaw: drugList,
     solutionRaw: solutionList,
@@ -59,14 +38,7 @@ export default function Screening({
     dietRaw: dietList
   } = content;
 
-  const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
-  const [dsExams, setDsExams] = useState([]);
-  const [clinicalNotesLoaded, setClinicalNotesLoaded] = useState(false);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    setDsExams(toDataSource(exams.list, 'key', {}));
-  }, [exams.list]); // eslint-disable-line
 
   // show message if has error
   useEffect(() => {
@@ -98,23 +70,6 @@ export default function Screening({
     </>
   );
 
-  const loadExams = () => {
-    if (isEmpty(exams.list)) {
-      fetchExams(content.admissionNumber, { idSegment: content.idSegment });
-    }
-  };
-
-  const onTabClick = key => {
-    if (key === 'exam') {
-      loadExams();
-    } else if (key === 'clinicalNotes') {
-      if (!clinicalNotesLoaded) {
-        fetchClinicalNotes(content.admissionNumber);
-        setClinicalNotesLoaded(true);
-      }
-    }
-  };
-
   if (error) {
     return (
       <Empty
@@ -131,7 +86,7 @@ export default function Screening({
         <PageHeader match={match} />
         <Row type="flex" gutter={24}>
           <Col span={24} md={24}>
-            {isFetching ? <LoadBox /> : <Patient />}
+            {isFetching ? <LoadBox /> : <Patient interventionCount={listCount.interventions} />}
           </Col>
         </Row>
       </BoxWrapper>
@@ -141,7 +96,6 @@ export default function Screening({
           defaultActiveKey="1"
           style={{ width: '100%', padding: '10px', marginTop: '10px' }}
           type="card gtm-tab-screening"
-          onTabClick={onTabClick}
           className={`breaktab-${tabCount}`}
         >
           <Tabs.TabPane
@@ -208,42 +162,10 @@ export default function Screening({
             }
             key="intervention"
           >
-            <Col span={24} md={24} style={{ marginTop: '20px' }}>
+            <div style={{ marginTop: '20px' }}>
               <PreviousInterventionList />
-            </Col>
+            </div>
           </Tabs.TabPane>
-          <Tabs.TabPane tab={<TabTitle title={t('screeningBody.tabLabResults')} />} key="exam">
-            <ExpandableTable
-              title={title}
-              columns={examColumns(t)}
-              pagination={false}
-              loading={exams.isFetching}
-              locale={{
-                emptyText: (
-                  <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description="Nenhum exame encontrado."
-                  />
-                )
-              }}
-              dataSource={!exams.isFetching ? dsExams : []}
-              rowClassName={examRowClassName}
-              expandedRowRender={expandedExamRowRender}
-            />
-          </Tabs.TabPane>
-          {!isFetching && hasNoHarmCare && (
-            <Tabs.TabPane
-              tab={
-                <TabTitle
-                  title={t('screeningBody.tabClinicalNotes')}
-                  count={content.clinicalNotes}
-                />
-              }
-              key="clinicalNotes"
-            >
-              <ClinicalNotes />
-            </Tabs.TabPane>
-          )}
         </ScreeningTabs>
       </Row>
 

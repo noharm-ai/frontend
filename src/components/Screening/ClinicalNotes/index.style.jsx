@@ -20,8 +20,9 @@ const createIndicatorClasses = t => {
   return classList.join(' ');
 };
 
-const createIndicatorTagClasses = t => {
-  const classList = ClinicalNotesIndicator.list(t).map(
+export const createIndicatorTagClasses = t => {
+  const translate = t ? t : () => '';
+  const classList = ClinicalNotesIndicator.list(translate).map(
     i => `
     .${i.key} {
       border-width: 1px;

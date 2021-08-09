@@ -6,12 +6,13 @@ import { fetchScreeningThunk } from '@store/ducks/prescriptions/thunk';
 import Patient from '@components/Screening/Patient';
 import security from '@services/security';
 
-const mapStateToProps = ({ prescriptions, auth, user }) => ({
+const mapStateToProps = ({ prescriptions, auth, user, app }) => ({
   isFetching: prescriptions.single.isFetching,
   prescription: prescriptions.single.data,
   checkPrescriptionDrug: prescriptions.single.patient.checkPrescriptionDrug,
   access_token: auth.identify.access_token,
-  security: security(user.account.roles)
+  security: security(user.account.roles),
+  siderCollapsed: app.sider.collapsed
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

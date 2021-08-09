@@ -5,21 +5,22 @@ import { Row, Col } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import api from '@services/api';
-import Popover from '@components/PopoverStyled';
 import { PopoverWelcome } from '@components/Popover';
-import Statistic from '@components/Statistic';
-import Card from '@components/Card';
 import Button from '@components/Button';
 import Icon, { InfoIcon } from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 import FormPatientModal from '@containers/Forms/Patient';
 import RichTextView from '@components/RichTextView';
 import Alert from '@components/Alert';
+import PrescriptionCard from '@components/PrescriptionCard';
 import { getCorporalSurface, getIMC } from '@utils/index';
 
 import FormIntervention from '@containers/Forms/Intervention';
 
-import { Wrapper, Name, NameWrapper, Box, ExamBox } from './Patient.style';
+import { Wrapper, Name, NameWrapper, Box } from './Patient.style';
+import ExamCard from '../Exam/Card';
+import AlertCard from '../AlertCard';
+import ClinicalNotesCard from '../ClinicalNotes/Card';
 
 function Cell({ children, ...props }) {
   return (
@@ -29,67 +30,23 @@ function Cell({ children, ...props }) {
   );
 }
 
-const getExamValue = exam => {
-  if (!exam || !exam.value) {
-    return '--';
-  }
-
-  return `${exam.value} ${exam.unit ? exam.unit : ''}`;
-};
-
-const getExamDelta = delta => {
-  if (delta > 0) {
-    return <Icon type="arrow-up" />;
-  }
-
-  if (delta < 0) {
-    return <Icon type="arrow-down" />;
-  }
-
-  return null;
-};
-
-const refText = text => {
-  return text.split('\n').map(function(item, key) {
-    return (
-      <span key={key}>
-        {item}
-        <br />
-      </span>
-    );
-  });
-};
-
-const ExamData = ({ exam, t }) => (
-  <>
-    {exam && exam.date && (
-      <div>
-        {t('patientCard.examDate')}: {moment(exam.date).format('DD/MM/YYYY hh:mm')}
-      </div>
-    )}
-    {exam && exam.ref && <div>Ref: {refText(exam.ref)}</div>}
-    {exam && exam.delta && (
-      <div>
-        {t('patientCard.examVariation')}: {exam.delta > 0 ? '+' : ''}
-        {exam.delta}%
-      </div>
-    )}
-  </>
-);
-
 export default function Patient({
   fetchScreening,
   access_token,
   prescription,
   checkPrescriptionDrug,
   selectIntervention,
-  security
+  security,
+  interventionCount,
+  siderCollapsed
 }) {
   const {
     admissionNumber,
+    alertExams,
     department,
     lastDepartment,
     age,
+    birthdate,
     gender,
     weight,
     weightUser,
@@ -112,9 +69,14 @@ export default function Patient({
     notesInfoDate,
     notesSigns,
     notesSignsDate,
-    concilia
+    concilia,
+    alertStats,
+    clinicalNotes,
+    clinicalNotesStats,
+    features
   } = prescription;
   const [interventionVisible, setInterventionVisibility] = useState(false);
+
   const [visible, setVisible] = useState(false);
   const [seeMore, setSeeMore] = useState(false);
   const { t } = useTranslation();
@@ -280,6 +242,7 @@ export default function Patient({
           </Cell>
           <Cell>
             <strong>{t('patientCard.age')}:</strong> {age} {isNaN(age) ? '' : 'anos'}
+            {birthdate ? `(${moment(birthdate).format('DD/MM/YYYY')})` : ''}
           </Cell>
           <Cell>
             <strong>{t('patientCard.gender')}:</strong>{' '}
@@ -324,44 +287,40 @@ export default function Patient({
               </>
             )}
           </Cell>
+          <Cell>
+            <strong>{t('patientCard.skin')}:</strong> {skinColor}
+          </Cell>
+          <Cell>
+            <strong>{t('patientCard.height')}:</strong>{' '}
+            {height ? (
+              <Tooltip title={t('patientCard.manuallyUpdated')}>
+                {height} cm <InfoIcon />
+              </Tooltip>
+            ) : (
+              t('patientCard.notAvailable')
+            )}
+            {hasClinicalNotes && notesInfo && (
+              <>
+                <PopoverWelcome
+                  content={
+                    <AISuggestion notes={notesInfo} action={t('patientCard.editHeight')} t={t} />
+                  }
+                  placement="right"
+                  mouseLeaveDelay={0.02}
+                >
+                  <button
+                    type="button"
+                    className="experimental-text"
+                    onClick={() => setVisible(true)}
+                  >
+                    (NoHarm Care) <InfoIcon />
+                  </button>
+                </PopoverWelcome>
+              </>
+            )}
+          </Cell>
           {seeMore && (
             <>
-              <Cell>
-                <strong>{t('patientCard.skin')}:</strong> {skinColor}
-              </Cell>
-              <Cell>
-                <strong>{t('patientCard.height')}:</strong>{' '}
-                {height ? (
-                  <Tooltip title={t('patientCard.manuallyUpdated')}>
-                    {height} cm <InfoIcon />
-                  </Tooltip>
-                ) : (
-                  t('patientCard.notAvailable')
-                )}
-                {hasClinicalNotes && notesInfo && (
-                  <>
-                    <PopoverWelcome
-                      content={
-                        <AISuggestion
-                          notes={notesInfo}
-                          action={t('patientCard.editHeight')}
-                          t={t}
-                        />
-                      }
-                      placement="right"
-                      mouseLeaveDelay={0.02}
-                    >
-                      <button
-                        type="button"
-                        className="experimental-text"
-                        onClick={() => setVisible(true)}
-                      >
-                        (NoHarm Care) <InfoIcon />
-                      </button>
-                    </PopoverWelcome>
-                  </>
-                )}
-              </Cell>
               <Cell>
                 <strong>{t('patientCard.bodySurface')}: </strong>
                 {weight && height ? (
@@ -472,28 +431,41 @@ export default function Patient({
         </Wrapper>
       </Col>
 
-      <Col md={16}>
-        <ExamBox>
-          {exams.map(exam => (
-            <Popover
-              content={<ExamData exam={exam.value} t={t} />}
-              title={exam.value.name}
-              key={exam.key}
-              mouseLeaveDelay={0}
-              mouseEnterDelay={0.5}
-            >
-              <Card.Grid hoverable>
-                <Statistic
-                  title={exam.value.initials}
-                  suffix={getExamDelta(exam.value.delta)}
-                  value={getExamValue(exam.value)}
-                  valueStyle={!exam.value.value || !exam.value.alert ? {} : { color: '#cf1322' }}
-                />
-              </Card.Grid>
-            </Popover>
-          ))}
-        </ExamBox>
+      <Col xl={10} xxl={11}>
+        <ExamCard exams={exams} siderCollapsed={siderCollapsed} count={alertExams} />
       </Col>
+      <Col xl={6} xxl={5}>
+        <AlertCard stats={alertStats} />
+        {hasClinicalNotes && (
+          <div style={{ marginTop: '10px' }}>
+            <ClinicalNotesCard stats={clinicalNotesStats} total={clinicalNotes} />
+          </div>
+        )}
+        {!hasClinicalNotes && (
+          <div style={{ marginTop: '10px' }}>
+            <PrescriptionCard style={{ minHeight: '113px' }}>
+              <div className="header">
+                <h3 className="title">{t('tableHeader.interventions')}</h3>
+              </div>
+              <div className="content">
+                <div className="stat-number">{interventionCount}</div>
+              </div>
+              <div className="footer">
+                <div className="stats">
+                  <>
+                    {features.interventions}{' '}
+                    {features.interventions === 1
+                      ? t('tableHeader.pending')
+                      : t('tableHeader.pendingPlural')}
+                  </>
+                </div>
+                <div className="action"></div>
+              </div>
+            </PrescriptionCard>
+          </div>
+        )}
+      </Col>
+
       <FormPatientModal
         visible={visible}
         onCancel={onCancel}
