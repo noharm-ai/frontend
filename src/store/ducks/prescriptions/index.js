@@ -381,7 +381,7 @@ const checkPrescriptionDrugError = (state = INITIAL_STATE, { error, source }) =>
 });
 
 const checkPrescriptionDrugSuccess = (state = INITIAL_STATE, { success, source }) => {
-  if (success.id === 0) {
+  if (success.id === '0') {
     return {
       ...state,
       single: {
@@ -634,7 +634,7 @@ const updateInterventionData = (
   state = INITIAL_STATE,
   { idPrescriptionDrug, source, intervention }
 ) => {
-  if (idPrescriptionDrug === 0) {
+  if (idPrescriptionDrug === '0') {
     return {
       ...state,
       single: {

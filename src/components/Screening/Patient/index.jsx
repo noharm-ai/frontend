@@ -86,7 +86,7 @@ export default function Patient({
 
   const showInterventionModal = () => {
     selectIntervention({
-      idPrescriptionDrug: 0,
+      idPrescriptionDrug: '0',
       admissionNumber,
       idPrescription: prescription.idPrescription,
       idSegment: prescription.idSegment,
