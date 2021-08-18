@@ -190,7 +190,11 @@ export const transformPrescription = ({
   procedures: procedures
     ? groupByPrescription(procedures.map(transformDrug), 'procedures', groupProcedures)
     : [],
-  diet: diet ? groupByPrescription(diet.map(transformDrug), 'diet') : [],
+  diet: diet
+    ? groupByPrescription(filterWhitelistedChildren(diet.map(transformDrug)), 'diet', null, null, {
+        whitelistedChildren: getWhitelistedChildren(diet)
+      })
+    : [],
   interventions,
   namePatient,
   idPrescription,
