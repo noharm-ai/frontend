@@ -126,20 +126,20 @@ const PanelAction = ({ id, header, source, groupData, checkScreening, isChecking
             href={`/prescricao/${id}`}
             style={{ textDecoration: 'none' }}
           >
-            <Icon type="link" style={{ marginRight: '3px' }} /> Abrir prescrição
+            <Icon type="link" style={{ marginRight: '3px' }} /> {t('labels.openPrescription')}
           </a>
         </Menu.Item>
         <Menu.Divider />
         {header.status !== 's' && (
           <Menu.Item key="check" className="gtm-btn-more-check">
             <Icon type="check" />
-            Checar esta prescrição
+            {t('labels.checkPrescription')}
           </Menu.Item>
         )}
         {header.status === 's' && (
           <Menu.Item key="undo" className="gtm-btn-more-undo">
             <Icon type="rollback" />
-            Desfazer checagem
+            {t('labels.undoCheckPrescription')}
           </Menu.Item>
         )}
       </Menu>
@@ -163,7 +163,7 @@ const PanelAction = ({ id, header, source, groupData, checkScreening, isChecking
     <>
       <div className="info">
         {header.status !== 's' && summaryTags(header[summarySourceToType(source)] || {})}
-        {header.status === 's' && infoIcon('Prescrição checada')}
+        {header.status === 's' && infoIcon(`${t('labels.checkedBy')}: ${header.user}`)}
       </div>
 
       <div ref={wrapperRef}>
