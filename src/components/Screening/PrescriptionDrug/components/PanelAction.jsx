@@ -119,7 +119,7 @@ const PanelAction = ({ id, header, source, groupData, checkScreening, isChecking
   const prescriptionOptions = header => {
     return (
       <Menu onClick={handleMenuClick}>
-        <Menu.Item>
+        <Menu.Item className="gtm-btn-more-open">
           <a
             target="_blank"
             rel="noopener noreferrer"
@@ -131,13 +131,13 @@ const PanelAction = ({ id, header, source, groupData, checkScreening, isChecking
         </Menu.Item>
         <Menu.Divider />
         {header.status !== 's' && (
-          <Menu.Item key="check">
+          <Menu.Item key="check" className="gtm-btn-more-check">
             <Icon type="check" />
             Checar esta prescrição
           </Menu.Item>
         )}
         {header.status === 's' && (
-          <Menu.Item key="undo">
+          <Menu.Item key="undo" className="gtm-btn-more-undo">
             <Icon type="rollback" />
             Desfazer checagem
           </Menu.Item>
