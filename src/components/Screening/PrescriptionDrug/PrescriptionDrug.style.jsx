@@ -55,6 +55,7 @@ export const PrescriptionHeader = styled.div`
 export const PrescriptionPanel = styled(Collapse.Panel)`
   background: #fafafa;
   margin-bottom: 10px;
+  transition: background 0.3s linear;
 
   .ant-collapse-header {
     .panel-header {
@@ -68,6 +69,17 @@ export const PrescriptionPanel = styled(Collapse.Panel)`
     }
 
     .ant-collapse-extra {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+
+      > div {
+        margin-left: 10px;
+      }
+
       .tag-badge {
         margin-right: 0;
       }
@@ -79,6 +91,10 @@ export const PrescriptionPanel = styled(Collapse.Panel)`
       .ant-badge,
       .anticon {
         margin-left: 5px;
+      }
+
+      .ant-btn {
+        color: rgba(0, 0, 0, 0.65);
       }
     }
   }

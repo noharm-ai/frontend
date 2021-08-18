@@ -257,6 +257,7 @@ const checkError = (state = INITIAL_STATE, { error }) => ({
 const checkSuccess = (state = INITIAL_STATE, { success }) => {
   const list = [...state.list];
   const prescriptionIndex = list.findIndex(item => item.idPrescription === success.id);
+  let prescriptionStatus = success.newStatus;
 
   if (list.length > 0) {
     list[prescriptionIndex].status = success.newStatus;
@@ -264,9 +265,26 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
 
   const headers = [];
   if (state.single.data.headers) {
-    Object.keys(state.single.data.headers).forEach(p => {
-      headers[p] = { ...state.single.data.headers[p], status: success.newStatus };
-    });
+    let allChecked = true;
+
+    if (state.single.data.headers[success.id]) {
+      Object.keys(state.single.data.headers).forEach(p => {
+        headers[p] = { ...state.single.data.headers[p] };
+        if (p === success.id) {
+          headers[p].status = success.newStatus;
+        }
+
+        if (headers[p].status !== 's') {
+          allChecked = false;
+        }
+      });
+
+      prescriptionStatus = allChecked ? 's' : '0';
+    } else {
+      Object.keys(state.single.data.headers).forEach(p => {
+        headers[p] = { ...state.single.data.headers[p], status: success.newStatus };
+      });
+    }
   }
 
   return {
@@ -284,7 +302,7 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
       data: {
         ...state.single.data,
         headers,
-        status: success.newStatus
+        status: prescriptionStatus
       }
     }
   };

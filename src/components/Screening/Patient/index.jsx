@@ -453,8 +453,8 @@ export default function Patient({
               <div className="footer">
                 <div className="stats">
                   <>
-                    {features.interventions}{' '}
-                    {features.interventions === 1
+                    {features && features.interventions}{' '}
+                    {features && features.interventions === 1
                       ? t('tableHeader.pending')
                       : t('tableHeader.pendingPlural')}
                   </>

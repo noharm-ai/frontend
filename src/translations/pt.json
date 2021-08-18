@@ -191,7 +191,8 @@
     "clinicalNotes": "Evoluções",
     "interventions": "Intervenções",
     "pending": "Pendente",
-    "pendingPlural": "Pendentes"
+    "pendingPlural": "Pendentes",
+    "options": "Opções"
   },
   "labels": {
     "role": "Cargo",
