@@ -386,7 +386,8 @@ export const expandedRowRender = bag => record => {
             <SimpleList>
               {diluents.map((d, i) => (
                 <li key={i}>
-                  {d.drug} ({d.dose ? d.dose.toLocaleString('pt-BR') : ''} {d.measureUnit ? d.measureUnit.value : ''})
+                  {d.drug} ({d.dose ? d.dose.toLocaleString('pt-BR') : ''}{' '}
+                  {d.measureUnit ? d.measureUnit.value : ''})
                 </li>
               ))}
             </SimpleList>
@@ -711,6 +712,7 @@ export const solutionColumns = bag => [
 
 export const dietColumns = bag => [
   drug(bag, true, bag.t('tableHeader.diet')),
+  dose(bag),
   ...frequencyAndTime(bag),
   route(bag),
   tags(bag),
