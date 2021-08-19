@@ -149,29 +149,8 @@ export const transformPrescription = ({
   globalScore,
   diet,
   ...item
-}) => ({
-  ...item,
-  daysAgo,
-  daysAgoString: `${daysAgo} dia(s)`,
-  prescriptionScore,
-  globalScore,
-  prescriptionRisk: stringify([prescriptionScore]),
-  date,
-  dateFormated: format(new Date(date), 'dd/MM/yyyy HH:mm'),
-  dateOnlyFormated: format(new Date(date), 'dd/MM/yyyy'),
-  expire,
-  expireFormated: expire ? format(new Date(expire), 'dd/MM/yyyy HH:mm') : '',
-  dischargeFormated: dischargeDate ? format(new Date(dischargeDate), 'dd/MM/yyyy HH:mm') : '',
-  shortDateFormat: format(new Date(date), 'dd/MM'),
-  birthdate,
-  age: birthdate ? formatAge(birthdate) : '',
-  birthdays: birthdate ? moment().diff(birthdate, 'day') : '',
-  mdrd,
-  tgo,
-  tgp,
-  patientScore,
-  patientRisk: stringify([mdrd, tgo, tgp, patientScore], ' 0 '),
-  prescription: prescription
+}) => {
+  const prescriptionList = prescription
     ? groupByPrescription(
         filterWhitelistedChildren(prescription.map(transformDrug)),
         'prescriptions',
@@ -183,30 +162,72 @@ export const transformPrescription = ({
           conciliaList: item.conciliaList
         }
       )
-    : [],
-  solution: solution
+    : [];
+  const solutionList = solution
     ? groupByPrescription(solution.map(transformDrug), 'solutions', groupSolutions, infusion)
-    : [],
-  procedures: procedures
+    : [];
+  const proceduresList = procedures
     ? groupByPrescription(procedures.map(transformDrug), 'procedures', groupProcedures)
-    : [],
-  diet: diet
+    : [];
+  const dietList = diet
     ? groupByPrescription(filterWhitelistedChildren(diet.map(transformDrug)), 'diet', null, null, {
         whitelistedChildren: getWhitelistedChildren(diet)
       })
-    : [],
-  interventions,
-  namePatient,
-  idPrescription,
-  slug: idPrescription,
-  infusion,
-  prescriptionRaw: prescription,
-  solutionRaw: solution,
-  proceduresRaw: procedures,
-  interventionsRaw: interventions,
-  dietRaw: diet,
-  uniqueDrugs: getUniqueDrugs(prescription, solution, procedures)
-});
+    : [];
+
+  const countList = list => {
+    let count = 0;
+
+    Object.keys(list).forEach(i => {
+      count += list[i].value.filter(item => !(item.total || item.emptyRow)).length;
+    });
+
+    return count;
+  };
+
+  return {
+    ...item,
+    daysAgo,
+    daysAgoString: `${daysAgo} dia(s)`,
+    prescriptionScore,
+    globalScore,
+    prescriptionRisk: stringify([prescriptionScore]),
+    date,
+    dateFormated: format(new Date(date), 'dd/MM/yyyy HH:mm'),
+    dateOnlyFormated: format(new Date(date), 'dd/MM/yyyy'),
+    expire,
+    expireFormated: expire ? format(new Date(expire), 'dd/MM/yyyy HH:mm') : '',
+    dischargeFormated: dischargeDate ? format(new Date(dischargeDate), 'dd/MM/yyyy HH:mm') : '',
+    shortDateFormat: format(new Date(date), 'dd/MM'),
+    birthdate,
+    age: birthdate ? formatAge(birthdate) : '',
+    birthdays: birthdate ? moment().diff(birthdate, 'day') : '',
+    mdrd,
+    tgo,
+    tgp,
+    patientScore,
+    patientRisk: stringify([mdrd, tgo, tgp, patientScore], ' 0 '),
+    prescription: prescriptionList,
+    solution: solutionList,
+    procedures: proceduresList,
+    diet: dietList,
+    interventions,
+    namePatient,
+    idPrescription,
+    slug: idPrescription,
+    infusion,
+    prescriptionRaw: prescription,
+    solutionRaw: solution,
+    proceduresRaw: procedures,
+    interventionsRaw: interventions,
+    dietRaw: diet,
+    prescriptionCount: countList(prescriptionList),
+    solutionCount: countList(solutionList),
+    proceduresCount: countList(proceduresList),
+    dietCount: countList(dietList),
+    uniqueDrugs: getUniqueDrugs(prescription, solution, procedures)
+  };
+};
 
 export const transformPrescriptions = prescriptions => prescriptions.map(transformPrescription);
 

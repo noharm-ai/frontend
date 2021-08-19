@@ -31,11 +31,11 @@ const errorMessage = {
 export default function Screening({ match, fetchScreeningById, isFetching, content, error }) {
   const id = extractId(match.params.slug);
   const {
-    prescriptionRaw: drugList,
-    solutionRaw: solutionList,
-    proceduresRaw: proceduresList,
-    interventionsRaw: interventionList,
-    dietRaw: dietList
+    prescriptionCount,
+    solutionCount,
+    proceduresCount,
+    dietCount,
+    interventionsRaw: interventionList
   } = content;
 
   const { t } = useTranslation();
@@ -48,11 +48,11 @@ export default function Screening({ match, fetchScreeningById, isFetching, conte
   }, [error]);
 
   const listCount = {
-    prescriptions: drugList ? drugList.length : 0,
-    solutions: solutionList ? solutionList.length : 0,
-    procedures: proceduresList ? proceduresList.length : 0,
-    interventions: interventionList ? interventionList.length : 0,
-    diet: dietList ? dietList.length : 0
+    prescriptions: prescriptionCount,
+    solutions: solutionCount,
+    procedures: proceduresCount,
+    diet: dietCount,
+    interventions: interventionList ? interventionList.length : 0
   };
 
   const fixedTabs = 2;

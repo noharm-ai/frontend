@@ -6,16 +6,11 @@ import { useTranslation } from 'react-i18next';
 import LoadBox from '@components/LoadBox';
 import Empty from '@components/Empty';
 import Collapse from '@components/Collapse';
-import Tooltip from '@components/Tooltip';
-import Button from '@components/Button';
-import TableFilter from '@components/TableFilter';
-import Tag from '@components/Tag';
 import { sourceToStoreType } from '@utils/transformers/prescriptions';
 
 import FormIntervention from '@containers/Forms/Intervention';
 import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 
-import { isPendingValidation } from '../columns';
 import { GroupPanel, PrescriptionPanel, PrescriptionHeader } from './PrescriptionDrug.style';
 import Table from './components/Table';
 import PanelAction from './components/PanelAction';
@@ -59,11 +54,9 @@ export const rowClassName = record => {
 };
 
 export default function PrescriptionDrugList({
-  hasFilter,
   listType,
   isFetching,
   dataSource,
-  listRaw,
   headers,
   aggregated,
   emptyMessage,
@@ -84,28 +77,11 @@ export default function PrescriptionDrugList({
 }) {
   const [visible, setVisibility] = useState(false);
   const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
-  const [filter, setFilter] = useState({
-    status: null
-  });
   const { t } = useTranslation();
 
   if (isFetching) {
     return <LoadBox />;
   }
-
-  const handleFilter = (e, status) => {
-    if (status) {
-      setFilter({ status: status === 'all' ? null : [status] });
-    }
-  };
-
-  const isFilterActive = status => {
-    if (filter.status) {
-      return filter.status[0] === status;
-    }
-
-    return filter.status == null && status == null;
-  };
 
   const onShowModal = data => {
     select(data);
@@ -133,40 +109,10 @@ export default function PrescriptionDrugList({
     t
   };
 
-  const prescriptionCount = {
-    all: listRaw ? listRaw.length : 0,
-    pendingValidation: listRaw ? listRaw.reduce((n, i) => n + isPendingValidation(i), 0) : 0
-  };
-
-  const ListFilter = ({ listCount, handleFilter, isFilterActive }) => (
-    <TableFilter style={{ marginBottom: 15 }}>
-      <Tooltip title={t('prescriptionDrugList.btnPendingValidationHint')}>
-        <Button
-          type="gtm-lnk-filter-presc-pendentevalidacao ant-btn-link-hover"
-          className={isFilterActive('pending-validation') ? 'active' : ''}
-          onClick={e => handleFilter(e, 'pending-validation')}
-        >
-          {t('prescriptionDrugList.btnPendingValidation')}
-          <Tag color="orange">{listCount.pendingValidation}</Tag>
-        </Button>
-      </Tooltip>
-      <Tooltip title={t('prescriptionDrugList.btnAllHint')}>
-        <Button
-          type="gtm-lnk-filter-presc-todos ant-btn-link-hover"
-          className={isFilterActive(null) ? 'active' : ''}
-          onClick={e => handleFilter(e, 'all')}
-        >
-          {t('prescriptionDrugList.btnAll')}
-          <Tag>{listCount.all}</Tag>
-        </Button>
-      </Tooltip>
-    </TableFilter>
-  );
-
   const table = ds => (
     <Table
-      hasFilter={hasFilter}
-      filter={filter}
+      hasFilter={false}
+      filter={null}
       bag={bag}
       isFetching={isFetching}
       emptyMessage={emptyMessage}
@@ -357,14 +303,6 @@ export default function PrescriptionDrugList({
 
   return (
     <>
-      {hasFilter && (
-        <ListFilter
-          listCount={prescriptionCount}
-          handleFilter={handleFilter}
-          isFilterActive={isFilterActive}
-        />
-      )}
-
       {Object.keys(groups).map(g => (
         <Collapse bordered={false} key={g} defaultActiveKey={groups[g].checked ? [] : ['1']}>
           <GroupPanel
