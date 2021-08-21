@@ -191,13 +191,18 @@
     "clinicalNotes": "Evoluções",
     "interventions": "Intervenções",
     "pending": "Pendente",
-    "pendingPlural": "Pendentes"
+    "pendingPlural": "Pendentes",
+    "options": "Opções"
   },
   "labels": {
     "role": "Cargo",
     "rolePlaceholderFilter": "Filtrar por cargo",
     "indicator": "Indicador",
-    "indicatorPlaceholderFilter": "Filtrar por indicadores"
+    "indicatorPlaceholderFilter": "Filtrar por indicadores",
+    "checkedBy": "Checada por",
+    "checkPrescription": "Checar prescrição",
+    "openPrescription": "Abrir prescrição",
+    "undoCheckPrescription": "Desfazer checagem"
   },
   "buttons": {
     "search": "Pesquisar"

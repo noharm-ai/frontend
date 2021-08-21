@@ -191,13 +191,18 @@
     "clinicalNotes": "Clinical notes",
     "interventions": "Interventions",
     "pending": "Pending",
-    "pendingPlural": "Pending"
+    "pendingPlural": "Pending",
+    "options": "Options"
   },
   "labels": {
     "role": "Role",
     "rolePlaceholderFilter": "Filter by role",
     "indicator": "Indicator",
-    "indicatorPlaceholderFilter": "Filter by indicator"
+    "indicatorPlaceholderFilter": "Filter by indicator",
+    "checkedBy": "Checked by",
+    "checkPrescription": "Check prescription",
+    "openPrescription": "Open prescription",
+    "undoCheckPrescription": "Undo check"
   },
   "buttons": {
     "search": "Search"
