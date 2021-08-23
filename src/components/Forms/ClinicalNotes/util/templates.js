@@ -17,18 +17,30 @@ Realizada a conciliação dos medicamentos e não encontrada divergência não i
 `;
 };
 
-const getConciliationDrugList = list => {
-  if (list.length === 0 || (list.length === 1 && list[0].drug === '')) {
+const drugDescription = d => {
+  return `${d.drug}: ${d.dose ? d.dosage : ''} ${d.frequency ? d.frequency.label : ''}`;
+};
+
+const getConciliationDrugList = (list, group) => {
+  const drugList = list.filter(d => !d.suspended);
+
+  if (drugList.length === 0 || (drugList.length === 1 && drugList[0].drug === '')) {
     return `
 Paciente nega uso contínuo de medicamentos.
 `;
   }
 
-  const drugDescription = d => {
-    return `${d.drug}: ${d.dose ? d.dosage : ''} ${d.frequency ? d.frequency.label : ''}`;
-  };
+  if (!group) {
+    const drugs = drugList.map(
+      d => `
+  - ${drugDescription(d)}
+  `
+    );
 
-  const tplWithRelation = list
+    return drugs.join('');
+  }
+
+  const tplWithRelation = drugList
     .map(d => {
       if (d.conciliaRelationId) {
         return `
@@ -40,7 +52,7 @@ Paciente nega uso contínuo de medicamentos.
     })
     .filter(t => t != null);
 
-  const tplWithoutRelation = list
+  const tplWithoutRelation = drugList
     .map(d => {
       if (d.conciliaRelationId == null) {
         return `
@@ -71,7 +83,47 @@ Paciente nega uso contínuo de medicamentos.
   return tpl;
 };
 
-export const conciliationTemplate = (prescription, interventions, signature) => {
+const conciliationNotPerformedTemplate = (prescription, signature) => `Farmácia Clínica
+${prescription.data.namePatient}, ${prescription.data.age}${
+  prescription.data.weight ? `, ${prescription.data.weight}Kg` : ''
+}
+
+Conciliação medicamentosa por farmacêutico não realizada neste internamento; paciente não localizado no momento da visita ao leito ou entrevista realizada anteriormente por outro profissional de saúde.
+
+${signature}
+`;
+
+const conciliationDischargeTemplate = (prescription, signature) => `Farmácia Clínica
+${prescription.data.namePatient}, ${prescription.data.age}${
+  prescription.data.weight ? `, ${prescription.data.weight}Kg` : ''
+}
+
+Realizadas orientações farmacêuticas ao paciente e acompanhante a respeito dos medicamentos prescritos para uso domiciliar:
+${getConciliationDrugList(
+  prescription.prescription.list.length ? prescription.prescription.list[0].value : [],
+  false
+)}
+Orientações:
+
+Oriento quanto a indicação terapêutica e posologia dos medicamentos prescritos para uso domiciliar. 
+Oriento quanto a importância em seguir as posologias recomendadas e da adesão aos tratamentos propostos.
+Oriento a retirada dos medicamentos na farmácia ambulatorial e na UBS.
+Entrego receitas médicas.
+
+Esclareço demais dúvidas apresentadas no momento. 
+
+${signature}
+`;
+
+export const conciliationTemplate = (prescription, interventions, signature, conciliationType) => {
+  if (conciliationType === 'n') {
+    return conciliationNotPerformedTemplate(prescription, signature);
+  }
+
+  if (conciliationType === 'a') {
+    return conciliationDischargeTemplate(prescription, signature);
+  }
+
   return `Farmácia Clínica
 ${prescription.data.namePatient}, ${prescription.data.age}${
     prescription.data.weight ? `, ${prescription.data.weight}Kg` : ''
@@ -84,7 +136,8 @@ Conciliação Medicamentosa realizada com:
 
 2. Conciliação medicamentosa:
 ${getConciliationDrugList(
-  prescription.prescription.list.length ? prescription.prescription.list[0].value : []
+  prescription.prescription.list.length ? prescription.prescription.list[0].value : [],
+  true
 )}
 3. Intervenções:
 ${interventions === '' ? emptyInterventionMessage : interventions}
