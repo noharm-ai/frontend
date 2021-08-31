@@ -43,7 +43,7 @@ const groupByPrescription = list => {
   return items;
 };
 
-export default (prescription, account, signature) => {
+export default (prescription, account, signature, conciliationType) => {
   const list = [
     ...prescription.prescription.list,
     ...prescription.solution.list,
@@ -69,7 +69,8 @@ export default (prescription, account, signature) => {
     return conciliationTemplate(
       prescription,
       tplInterventions.join(''),
-      signatureTemplate(signature, account)
+      signatureTemplate(signature, account),
+      conciliationType
     );
   }
 

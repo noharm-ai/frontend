@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
@@ -19,14 +19,7 @@ const AuthHandler = ({
   component: Component,
   ...props
 }) => {
-  const { isFirstAccess } = session;
-  const { isLogged, keepMeLogged } = user;
-
-  useEffect(() => {
-    if (isFirstAccess && isLogged && !keepMeLogged) {
-      logout({ preventDefault: noop });
-    }
-  }, [isFirstAccess, isLogged, keepMeLogged, logout]);
+  const { isLogged } = user;
 
   if (!isLoginPage && !isLogoutPage && !isLogged) {
     return <Redirect to="/login" />;
