@@ -1,12 +1,7 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import {
-  setScreeningListFilterThunk,
-  saveFilterThunk,
-  removeFilterThunk,
-  setJourneyThunk
-} from '@store/ducks/app/thunk';
+import { setScreeningListFilterThunk, setJourneyThunk } from '@store/ducks/app/thunk';
 import {
   fetchSegmentsListThunk,
   fetchSegmentByIdThunk,
@@ -58,8 +53,6 @@ const mapDispatchToProps = dispatch =>
       checkScreening: checkScreeningThunk,
       updatePrescriptionListStatus: updatePrescriptionStatusThunk,
       setScreeningListFilter: setScreeningListFilterThunk,
-      saveFilter: saveFilterThunk,
-      removeFilter: removeFilterThunk,
       searchDrugs: searchDrugsThunk,
       setJourney: setJourneyThunk,
       fetchMemory: memoryFetchThunk,

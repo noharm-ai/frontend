@@ -129,6 +129,54 @@ export default function Filter({
     };
   }, [updateStatus]);
 
+  const filterSubmenu = (list, type) => {
+    const title = t(`screeningList.${type}Filter`);
+
+    if (isEmpty(list) || isEmpty(list[0].value)) {
+      return (
+        <Menu.SubMenu title={title}>
+          <Menu.Item>
+            {t('screeningList.noFilter')}
+            <br /> {t('screeningList.noFilterHint')}
+          </Menu.Item>
+        </Menu.SubMenu>
+      );
+    }
+
+    return (
+      <Menu.SubMenu title={title}>
+        {list[0].value.map((item, index) => (
+          <Menu.Item key={index} onClick={() => loadFilterAction(item.data)}>
+            {item.name}
+          </Menu.Item>
+        ))}
+      </Menu.SubMenu>
+    );
+  };
+
+  const removeFilterSubmenu = (list, type) => {
+    const title = t(`screeningList.${type}FilterRemove`);
+
+    if (list && list.length && !isEmpty(list[0].value)) {
+      return (
+        <Menu.SubMenu title={title}>
+          {list[0].value.map((item, index) => (
+            <Menu.Item
+              key={index}
+              onClick={() => removeFilterAction(index, type)}
+              style={{ color: '#ff4d4f' }}
+            >
+              <Icon type="delete" style={{ fontSize: 16, color: '#ff4d4f' }} />
+              {item.name}
+            </Menu.Item>
+          ))}
+        </Menu.SubMenu>
+      );
+    }
+
+    return null;
+  };
+
   const filterMenu = () => (
     <Menu forceSubMenuRender={true}>
       <Menu.Item className="gtm-btn-menu-filter-save" onClick={() => setSaveFilterOpen(true)}>
@@ -144,69 +192,19 @@ export default function Filter({
               </Tooltip>
             </Menu.Item>
           ))}
+          <Menu.Item key={999} style={{ color: '#ff4d4f' }}>
+            Os filtros locais serão desativados.
+            <br /> Utilize os filtros privados ou públicos.
+          </Menu.Item>
         </Menu.SubMenu>
       )}
-      <Menu.SubMenu title="Filtros privados">
-        {(isEmpty(privateFilters) || isEmpty(privateFilters[0].value)) && (
-          <Menu.Item>
-            {t('screeningList.noFilter')}
-            <br /> {t('screeningList.noFilterHint')}
-          </Menu.Item>
-        )}
-        {privateFilters &&
-          privateFilters.length &&
-          privateFilters[0].value.map((item, index) => (
-            <Menu.Item key={index} onClick={() => loadFilterAction(item.data)}>
-              {item.name}
-            </Menu.Item>
-          ))}
-      </Menu.SubMenu>
-      <Menu.SubMenu title="Filtros públicos">
-        {(isEmpty(publicFilters) || isEmpty(publicFilters[0].value)) && (
-          <Menu.Item>
-            {t('screeningList.noFilter')}
-            <br /> {t('screeningList.noFilterHint')}
-          </Menu.Item>
-        )}
-        {publicFilters &&
-          publicFilters.length &&
-          publicFilters[0].value.map((item, index) => (
-            <Menu.Item key={index} onClick={() => loadFilterAction(item.data)}>
-              {item.name}
-            </Menu.Item>
-          ))}
-      </Menu.SubMenu>
+      {filterSubmenu(privateFilters, 'private')}
+      {filterSubmenu(publicFilters, 'public')}
+
       <Menu.Divider />
-      {privateFilters && privateFilters.length && !isEmpty(privateFilters[0].value) && (
-        <Menu.SubMenu title="Excluir filtros privados">
-          {privateFilters[0].value.map((item, index) => (
-            <Menu.Item
-              key={index}
-              onClick={() => removeFilterAction(index, 'private')}
-              style={{ color: '#ff4d4f' }}
-            >
-              <Icon type="delete" style={{ fontSize: 16, color: '#ff4d4f' }} />
-              {item.name}
-            </Menu.Item>
-          ))}
-        </Menu.SubMenu>
-      )}
-      {publicFilters && publicFilters.length && !isEmpty(publicFilters[0].value) && (
-        <Menu.SubMenu title="Excluir filtros públicos">
-          {publicFilters &&
-            publicFilters.length &&
-            publicFilters[0].value.map((item, index) => (
-              <Menu.Item
-                key={index}
-                onClick={() => removeFilterAction(index, 'public')}
-                style={{ color: '#ff4d4f' }}
-              >
-                <Icon type="delete" style={{ fontSize: 16, color: '#ff4d4f' }} />
-                {item.name}
-              </Menu.Item>
-            ))}
-        </Menu.SubMenu>
-      )}
+
+      {removeFilterSubmenu(privateFilters, 'private')}
+      {removeFilterSubmenu(publicFilters, 'public')}
     </Menu>
   );
 
