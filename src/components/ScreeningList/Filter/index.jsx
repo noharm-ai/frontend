@@ -20,43 +20,15 @@ import Dropdown from '@components/Dropdown';
 import Modal from '@components/Modal';
 import notification from '@components/notification';
 import LoadBox from '@components/LoadBox';
+import {
+  FILTER_PRIVATE_STORE_ID,
+  FILTER_PRIVATE_MEMORY_TYPE,
+  FILTER_PUBLIC_STORE_ID,
+  FILTER_PUBLIC_MEMORY_TYPE
+} from '@utils/memory';
 
 import { Box, SearchBox } from './Filter.style';
 import './index.css';
-
-const filterMenu = (savedFilters, openSaveModal, loadFilter, removeFilter, t) => (
-  <Menu>
-    <Menu.Item className="gtm-btn-menu-filter-save" onClick={() => openSaveModal(true)}>
-      {t('screeningList.saveFilter')}
-    </Menu.Item>
-
-    <Menu.SubMenu title={t('screeningList.applyFilter')}>
-      {isEmpty(savedFilters) && (
-        <Menu.Item>
-          {t('screeningList.noFilter')}
-          <br /> {t('screeningList.noFilterHint')}
-        </Menu.Item>
-      )}
-      {savedFilters.map((item, index) => (
-        <Menu.Item key={index} onClick={() => loadFilter(item.data)}>
-          {item.name}
-        </Menu.Item>
-      ))}
-    </Menu.SubMenu>
-    <Menu.Item />
-    <Menu.Divider />
-    {!isEmpty(savedFilters) && (
-      <Menu.SubMenu title="Excluir filtro">
-        {savedFilters.map((item, index) => (
-          <Menu.Item key={index} onClick={() => removeFilter(index)} style={{ color: '#ff4d4f' }}>
-            <Icon type="delete" style={{ fontSize: 16, color: '#ff4d4f' }} />
-            {item.name}
-          </Menu.Item>
-        ))}
-      </Menu.SubMenu>
-    )}
-  </Menu>
-);
 
 export default function Filter({
   fetchPrescriptionsList,
@@ -68,17 +40,21 @@ export default function Filter({
   setScreeningListFilter,
   isFetchingPrescription,
   savedFilters,
-  saveFilter,
-  removeFilter,
   drugs,
   searchDrugs,
   match,
   prioritizationType,
-  hasPeriodLimit
+  hasPeriodLimit,
+  fetchMemory,
+  saveMemory,
+  account,
+  privateFilters,
+  publicFilters
 }) {
   const [open, setOpen] = useState(false);
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
   const [filterName, setFilterName] = useState('');
+  const [filterType, setFilterType] = useState('');
   const [date, setDate] = useState([moment(match.params.startDate), null]);
   const { t, i18n } = useTranslation();
 
@@ -118,6 +94,11 @@ export default function Filter({
   );
 
   useEffect(() => {
+    fetchMemory(FILTER_PRIVATE_STORE_ID, `${FILTER_PRIVATE_MEMORY_TYPE}_${account.userId}`);
+    fetchMemory(FILTER_PUBLIC_STORE_ID, FILTER_PUBLIC_MEMORY_TYPE);
+  }, [account.userId, fetchMemory]);
+
+  useEffect(() => {
     if (!isEmpty(segments.error)) {
       message.error(segments.error.message);
     }
@@ -147,6 +128,87 @@ export default function Filter({
       window.removeEventListener('focus', updateStatus);
     };
   }, [updateStatus]);
+
+  const filterMenu = () => (
+    <Menu forceSubMenuRender={true}>
+      <Menu.Item className="gtm-btn-menu-filter-save" onClick={() => setSaveFilterOpen(true)}>
+        {t('screeningList.saveFilter')}
+      </Menu.Item>
+
+      {!isEmpty(savedFilters) && (
+        <Menu.SubMenu title="Filtros locais">
+          {savedFilters.map((item, index) => (
+            <Menu.Item key={index} onClick={() => loadFilterAction(item.data)}>
+              <Tooltip title="Os filtros locais serão desativados. Utilize os filtros privados ou públicos.">
+                {item.name}
+              </Tooltip>
+            </Menu.Item>
+          ))}
+        </Menu.SubMenu>
+      )}
+      <Menu.SubMenu title="Filtros privados">
+        {(isEmpty(privateFilters) || isEmpty(privateFilters[0].value)) && (
+          <Menu.Item>
+            {t('screeningList.noFilter')}
+            <br /> {t('screeningList.noFilterHint')}
+          </Menu.Item>
+        )}
+        {privateFilters &&
+          privateFilters.length &&
+          privateFilters[0].value.map((item, index) => (
+            <Menu.Item key={index} onClick={() => loadFilterAction(item.data)}>
+              {item.name}
+            </Menu.Item>
+          ))}
+      </Menu.SubMenu>
+      <Menu.SubMenu title="Filtros públicos">
+        {(isEmpty(publicFilters) || isEmpty(publicFilters[0].value)) && (
+          <Menu.Item>
+            {t('screeningList.noFilter')}
+            <br /> {t('screeningList.noFilterHint')}
+          </Menu.Item>
+        )}
+        {publicFilters &&
+          publicFilters.length &&
+          publicFilters[0].value.map((item, index) => (
+            <Menu.Item key={index} onClick={() => loadFilterAction(item.data)}>
+              {item.name}
+            </Menu.Item>
+          ))}
+      </Menu.SubMenu>
+      <Menu.Divider />
+      {privateFilters && privateFilters.length && !isEmpty(privateFilters[0].value) && (
+        <Menu.SubMenu title="Excluir filtros privados">
+          {privateFilters[0].value.map((item, index) => (
+            <Menu.Item
+              key={index}
+              onClick={() => removeFilterAction(index, 'private')}
+              style={{ color: '#ff4d4f' }}
+            >
+              <Icon type="delete" style={{ fontSize: 16, color: '#ff4d4f' }} />
+              {item.name}
+            </Menu.Item>
+          ))}
+        </Menu.SubMenu>
+      )}
+      {publicFilters && publicFilters.length && !isEmpty(publicFilters[0].value) && (
+        <Menu.SubMenu title="Excluir filtros públicos">
+          {publicFilters &&
+            publicFilters.length &&
+            publicFilters[0].value.map((item, index) => (
+              <Menu.Item
+                key={index}
+                onClick={() => removeFilterAction(index, 'public')}
+                style={{ color: '#ff4d4f' }}
+              >
+                <Icon type="delete" style={{ fontSize: 16, color: '#ff4d4f' }} />
+                {item.name}
+              </Menu.Item>
+            ))}
+        </Menu.SubMenu>
+      )}
+    </Menu>
+  );
 
   const onDepartmentChange = idDept => {
     setScreeningListFilter({ idDepartment: idDept });
@@ -224,17 +286,58 @@ export default function Filter({
   };
 
   const saveFilterAction = (filterName, currentFilter) => {
-    saveFilter('screeningList', {
-      name: filterName,
-      data: currentFilter
-    });
+    if (filterType === 'public') {
+      const hasFilter = publicFilters && publicFilters.length;
+      const filters = hasFilter ? [...publicFilters[0].value] : [];
+      filters.push({
+        name: filterName,
+        data: currentFilter
+      });
+
+      saveMemory(FILTER_PUBLIC_STORE_ID, {
+        id: hasFilter ? publicFilters[0].key : null,
+        type: FILTER_PUBLIC_MEMORY_TYPE,
+        value: filters
+      });
+    } else {
+      const hasFilter = privateFilters && privateFilters.length;
+      const filters = hasFilter ? [...privateFilters[0].value] : [];
+      filters.push({
+        name: filterName,
+        data: currentFilter
+      });
+
+      saveMemory(FILTER_PRIVATE_STORE_ID, {
+        id: hasFilter ? privateFilters[0].key : null,
+        type: `${FILTER_PRIVATE_MEMORY_TYPE}_${account.userId}`,
+        value: filters
+      });
+    }
+
     setSaveFilterOpen(false);
     setFilterName('');
     notification.success({ message: 'Uhu! Filtro salvo com sucesso!' });
   };
 
-  const removeFilterAction = index => {
-    removeFilter('screeningList', index);
+  const removeFilterAction = (index, type) => {
+    const storeElement = type === 'public' ? publicFilters[0] : privateFilters[0];
+    const filters = [...storeElement.value];
+
+    filters.splice(index, 1);
+
+    if (type === 'public') {
+      saveMemory(FILTER_PUBLIC_STORE_ID, {
+        id: storeElement.key,
+        type: FILTER_PUBLIC_MEMORY_TYPE,
+        value: filters
+      });
+    } else {
+      saveMemory(FILTER_PRIVATE_STORE_ID, {
+        id: storeElement.key,
+        type: `${FILTER_PRIVATE_MEMORY_TYPE}_${account.userId}`,
+        value: filters
+      });
+    }
 
     notification.success({ message: 'Filtro removido com sucesso!' });
   };
@@ -327,15 +430,7 @@ export default function Filter({
                 loading={isFetchingPrescription}
               />
             </Tooltip>
-            <Dropdown
-              overlay={filterMenu(
-                savedFilters,
-                setSaveFilterOpen,
-                loadFilterAction,
-                removeFilterAction,
-                t
-              )}
-            >
+            <Dropdown overlay={filterMenu()}>
               <Button
                 className="gtm-btn-filter"
                 shape="circle"
@@ -470,10 +565,18 @@ export default function Filter({
         okType="primary gtm-bt-save-filter"
         cancelText="Cancelar"
       >
-        <Heading as="label" size="14px" className="fixed" css="margin-top: 12px;">
+        <Heading as="label" size="14px" className="fixed" style={{ marginTop: '12px' }}>
           Nome do filtro:
         </Heading>
         <Input onChange={({ target }) => setFilterName(target.value)} value={filterName} />
+
+        <Heading as="label" size="14px" className="fixed" style={{ marginTop: '12px' }}>
+          Público:
+        </Heading>
+        <Switch
+          onChange={value => setFilterType(value ? 'public' : 'private')}
+          checked={filterType === 'public'}
+        />
       </Modal>
     </SearchBox>
   );
