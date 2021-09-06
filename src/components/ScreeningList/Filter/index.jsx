@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import message from '@components/message';
 import Heading from '@components/Heading';
 import { Row, Col } from '@components/Grid';
-import { Select, RangeDatePicker, Input, Checkbox } from '@components/Inputs';
+import { Select, RangeDatePicker, Checkbox } from '@components/Inputs';
 import Switch from '@components/Switch';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
@@ -17,7 +17,6 @@ import Icon from '@components/Icon';
 import Badge from '@components/Badge';
 import Menu from '@components/Menu';
 import Dropdown from '@components/Dropdown';
-import Modal from '@components/Modal';
 import notification from '@components/notification';
 import LoadBox from '@components/LoadBox';
 import {
@@ -26,6 +25,7 @@ import {
   FILTER_PUBLIC_STORE_ID,
   FILTER_PUBLIC_MEMORY_TYPE
 } from '@utils/memory';
+import SaveFilterModal from './components/SaveFilterModal';
 
 import { Box, SearchBox } from './Filter.style';
 import './index.css';
@@ -53,8 +53,6 @@ export default function Filter({
 }) {
   const [open, setOpen] = useState(false);
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
-  const [filterName, setFilterName] = useState('');
-  const [filterType, setFilterType] = useState('');
   const [date, setDate] = useState([moment(match.params.startDate), null]);
   const { t, i18n } = useTranslation();
 
@@ -283,13 +281,13 @@ export default function Filter({
     return count;
   };
 
-  const saveFilterAction = (filterName, currentFilter) => {
+  const saveFilterAction = (filterName, filterType) => {
     if (filterType === 'public') {
       const hasFilter = publicFilters && publicFilters.length;
       const filters = hasFilter ? [...publicFilters[0].value] : [];
       filters.push({
         name: filterName,
-        data: currentFilter
+        data: filter
       });
 
       saveMemory(FILTER_PUBLIC_STORE_ID, {
@@ -302,7 +300,7 @@ export default function Filter({
       const filters = hasFilter ? [...privateFilters[0].value] : [];
       filters.push({
         name: filterName,
-        data: currentFilter
+        data: filter
       });
 
       saveMemory(FILTER_PRIVATE_STORE_ID, {
@@ -312,8 +310,6 @@ export default function Filter({
       });
     }
 
-    setSaveFilterOpen(false);
-    setFilterName('');
     notification.success({ message: 'Uhu! Filtro salvo com sucesso!' });
   };
 
@@ -552,30 +548,11 @@ export default function Filter({
         </Col>
       </Row>
 
-      <Modal
-        visible={saveFilterOpen}
-        onCancel={() => setSaveFilterOpen(false)}
-        onOk={() => saveFilterAction(filterName, filter)}
-        okButtonProps={{
-          disabled: filterName === ''
-        }}
-        okText="Salvar"
-        okType="primary gtm-bt-save-filter"
-        cancelText="Cancelar"
-      >
-        <Heading as="label" size="14px" className="fixed" style={{ marginTop: '12px' }}>
-          Nome do filtro:
-        </Heading>
-        <Input onChange={({ target }) => setFilterName(target.value)} value={filterName} />
-
-        <Heading as="label" size="14px" className="fixed" style={{ marginTop: '12px' }}>
-          Público:
-        </Heading>
-        <Switch
-          onChange={value => setFilterType(value ? 'public' : 'private')}
-          checked={filterType === 'public'}
-        />
-      </Modal>
+      <SaveFilterModal
+        setSaveFilterOpen={setSaveFilterOpen}
+        saveFilterAction={saveFilterAction}
+        open={saveFilterOpen}
+      />
     </SearchBox>
   );
 }

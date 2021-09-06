@@ -53,3 +53,8 @@ export const SearchBox = styled.div`
     background: #70bdc3;
   }
 `;
+
+export const HelpText = styled.div`
+  font-size: 12px;
+  margin-top: 5px;
+`;
