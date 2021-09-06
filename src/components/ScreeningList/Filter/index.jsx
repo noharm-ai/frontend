@@ -9,54 +9,17 @@ import { useTranslation } from 'react-i18next';
 import message from '@components/message';
 import Heading from '@components/Heading';
 import { Row, Col } from '@components/Grid';
-import { Select, RangeDatePicker, Input, Checkbox } from '@components/Inputs';
+import { Select, RangeDatePicker, Checkbox } from '@components/Inputs';
 import Switch from '@components/Switch';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 import Icon from '@components/Icon';
 import Badge from '@components/Badge';
-import Menu from '@components/Menu';
-import Dropdown from '@components/Dropdown';
-import Modal from '@components/Modal';
-import notification from '@components/notification';
 import LoadBox from '@components/LoadBox';
+import FilterMemory from './components/FilterMemory';
 
 import { Box, SearchBox } from './Filter.style';
 import './index.css';
-
-const filterMenu = (savedFilters, openSaveModal, loadFilter, removeFilter, t) => (
-  <Menu>
-    <Menu.Item className="gtm-btn-menu-filter-save" onClick={() => openSaveModal(true)}>
-      {t('screeningList.saveFilter')}
-    </Menu.Item>
-
-    <Menu.SubMenu title={t('screeningList.applyFilter')}>
-      {isEmpty(savedFilters) && (
-        <Menu.Item>
-          {t('screeningList.noFilter')}
-          <br /> {t('screeningList.noFilterHint')}
-        </Menu.Item>
-      )}
-      {savedFilters.map((item, index) => (
-        <Menu.Item key={index} onClick={() => loadFilter(item.data)}>
-          {item.name}
-        </Menu.Item>
-      ))}
-    </Menu.SubMenu>
-    <Menu.Item />
-    <Menu.Divider />
-    {!isEmpty(savedFilters) && (
-      <Menu.SubMenu title="Excluir filtro">
-        {savedFilters.map((item, index) => (
-          <Menu.Item key={index} onClick={() => removeFilter(index)} style={{ color: '#ff4d4f' }}>
-            <Icon type="delete" style={{ fontSize: 16, color: '#ff4d4f' }} />
-            {item.name}
-          </Menu.Item>
-        ))}
-      </Menu.SubMenu>
-    )}
-  </Menu>
-);
 
 export default function Filter({
   fetchPrescriptionsList,
@@ -68,17 +31,19 @@ export default function Filter({
   setScreeningListFilter,
   isFetchingPrescription,
   savedFilters,
-  saveFilter,
-  removeFilter,
   drugs,
   searchDrugs,
   match,
   prioritizationType,
-  hasPeriodLimit
+  hasPeriodLimit,
+  fetchMemory,
+  saveMemory,
+  account,
+  privateFilters,
+  publicFilters
 }) {
   const [open, setOpen] = useState(false);
-  const [saveFilterOpen, setSaveFilterOpen] = useState(false);
-  const [filterName, setFilterName] = useState('');
+
   const [date, setDate] = useState([moment(match.params.startDate), null]);
   const { t, i18n } = useTranslation();
 
@@ -147,6 +112,14 @@ export default function Filter({
       window.removeEventListener('focus', updateStatus);
     };
   }, [updateStatus]);
+
+  const loadFilter = filterData => {
+    fetchPrescriptionsList(getParams({ ...filterData, idDept: filterData.idDepartment }));
+    if (!isEmpty(filterData.idDrug)) {
+      searchDrugs(filterData.idSegment, { idDrug: filterData.idDrug });
+    }
+    setOpen(false);
+  };
 
   const onDepartmentChange = idDept => {
     setScreeningListFilter({ idDepartment: idDept });
@@ -221,31 +194,6 @@ export default function Filter({
     });
 
     return count;
-  };
-
-  const saveFilterAction = (filterName, currentFilter) => {
-    saveFilter('screeningList', {
-      name: filterName,
-      data: currentFilter
-    });
-    setSaveFilterOpen(false);
-    setFilterName('');
-    notification.success({ message: 'Uhu! Filtro salvo com sucesso!' });
-  };
-
-  const removeFilterAction = index => {
-    removeFilter('screeningList', index);
-
-    notification.success({ message: 'Filtro removido com sucesso!' });
-  };
-
-  const loadFilterAction = filterData => {
-    setScreeningListFilter(filterData);
-    fetchPrescriptionsList(getParams({ ...filterData, idDept: filterData.idDepartment }));
-    if (!isEmpty(filterData.idDrug)) {
-      searchDrugs(filterData.idSegment, { idDrug: filterData.idDrug });
-    }
-    setOpen(false);
   };
 
   const searchDrugsAutocomplete = debounce(value => {
@@ -327,22 +275,17 @@ export default function Filter({
                 loading={isFetchingPrescription}
               />
             </Tooltip>
-            <Dropdown
-              overlay={filterMenu(
-                savedFilters,
-                setSaveFilterOpen,
-                loadFilterAction,
-                removeFilterAction,
-                t
-              )}
-            >
-              <Button
-                className="gtm-btn-filter"
-                shape="circle"
-                icon="filter"
-                style={{ marginTop: '11px', marginLeft: '5px' }}
-              />
-            </Dropdown>
+            <FilterMemory
+              fetchMemory={fetchMemory}
+              account={account}
+              savedFilters={savedFilters}
+              publicFilters={publicFilters}
+              privateFilters={privateFilters}
+              saveMemory={saveMemory}
+              filter={filter}
+              setScreeningListFilter={setScreeningListFilter}
+              loadFilter={loadFilter}
+            />
           </div>
         </Col>
       </Row>
@@ -458,23 +401,6 @@ export default function Filter({
           </Row>
         </Col>
       </Row>
-
-      <Modal
-        visible={saveFilterOpen}
-        onCancel={() => setSaveFilterOpen(false)}
-        onOk={() => saveFilterAction(filterName, filter)}
-        okButtonProps={{
-          disabled: filterName === ''
-        }}
-        okText="Salvar"
-        okType="primary gtm-bt-save-filter"
-        cancelText="Cancelar"
-      >
-        <Heading as="label" size="14px" className="fixed" css="margin-top: 12px;">
-          Nome do filtro:
-        </Heading>
-        <Input onChange={({ target }) => setFilterName(target.value)} value={filterName} />
-      </Modal>
     </SearchBox>
   );
 }
