@@ -1,12 +1,7 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import {
-  setScreeningListFilterThunk,
-  saveFilterThunk,
-  removeFilterThunk,
-  setJourneyThunk
-} from '@store/ducks/app/thunk';
+import { setScreeningListFilterThunk, setJourneyThunk } from '@store/ducks/app/thunk';
 import {
   fetchSegmentsListThunk,
   fetchSegmentByIdThunk,
@@ -18,10 +13,13 @@ import {
   updatePrescriptionStatusThunk
 } from '@store/ducks/prescriptions/thunk';
 import { searchDrugsThunk } from '@store/ducks/drugs/thunk';
+import { memoryFetchThunk, memorySaveThunk } from '@store/ducks/memory/thunk';
+
 import security from '@services/security';
 import ScreeningList from '@components/ScreeningList';
+import { FILTER_PRIVATE_MEMORY_TYPE, FILTER_PUBLIC_MEMORY_TYPE } from '@utils/memory';
 
-const mapStateToProps = ({ segments, prescriptions, app, drugs, user }) => ({
+const mapStateToProps = ({ segments, prescriptions, app, drugs, user, memory }) => ({
   segments: {
     error: segments.error,
     list: segments.list,
@@ -40,7 +38,10 @@ const mapStateToProps = ({ segments, prescriptions, app, drugs, user }) => ({
   savedFilters: app.savedFilters.screeningList,
   drugs: drugs.search,
   currentJourney: app.preferences.journey,
-  security: security(user.account.roles)
+  security: security(user.account.roles),
+  account: user.account,
+  privateFilters: memory[FILTER_PRIVATE_MEMORY_TYPE] ? memory[FILTER_PRIVATE_MEMORY_TYPE].list : [],
+  publicFilters: memory[FILTER_PUBLIC_MEMORY_TYPE] ? memory[FILTER_PUBLIC_MEMORY_TYPE].list : []
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -52,10 +53,10 @@ const mapDispatchToProps = dispatch =>
       checkScreening: checkScreeningThunk,
       updatePrescriptionListStatus: updatePrescriptionStatusThunk,
       setScreeningListFilter: setScreeningListFilterThunk,
-      saveFilter: saveFilterThunk,
-      removeFilter: removeFilterThunk,
       searchDrugs: searchDrugsThunk,
-      setJourney: setJourneyThunk
+      setJourney: setJourneyThunk,
+      fetchMemory: memoryFetchThunk,
+      saveMemory: memorySaveThunk
     },
     dispatch
   );
