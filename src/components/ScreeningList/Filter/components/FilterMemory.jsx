@@ -112,7 +112,11 @@ export default function FilterMemory({
     return (
       <Menu.SubMenu title={title}>
         {list[0].value.map((item, index) => (
-          <Menu.Item key={index} onClick={() => loadFilterAction(item.data)}>
+          <Menu.Item
+            key={index}
+            onClick={() => loadFilterAction(item.data)}
+            className={`gtm-btn-menu-filter-load-${type}`}
+          >
             {item.name}
           </Menu.Item>
         ))}
@@ -131,6 +135,7 @@ export default function FilterMemory({
               key={index}
               onClick={() => removeFilterAction(index, type)}
               style={{ color: '#ff4d4f' }}
+              className={`gtm-btn-menu-filter-remove-${type}`}
             >
               <Icon type="delete" style={{ fontSize: 16, color: '#ff4d4f' }} />
               {item.name}
@@ -152,7 +157,11 @@ export default function FilterMemory({
       {!isEmpty(savedFilters) && (
         <Menu.SubMenu title="Filtros locais">
           {savedFilters.map((item, index) => (
-            <Menu.Item key={index} onClick={() => loadFilterAction(item.data)}>
+            <Menu.Item
+              className="gtm-btn-menu-filter-load-local"
+              key={index}
+              onClick={() => loadFilterAction(item.data)}
+            >
               <Tooltip title="Os filtros locais serão desativados. Utilize os filtros privados ou públicos.">
                 {item.name}
               </Tooltip>
