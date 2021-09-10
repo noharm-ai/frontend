@@ -4,12 +4,14 @@ import { format } from 'date-fns';
 import ValuedExams from './ValuedExams';
 import TextualExams from './TextualExams';
 
-export default t => {
+export default (t, sortedInfo) => {
   return [
     {
       title: t('tableHeader.exam'),
       dataIndex: 'name',
-      align: 'left'
+      align: 'left',
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order
     },
     {
       title: t('tableHeader.percentage'),
@@ -18,7 +20,10 @@ export default t => {
     },
     {
       title: t('tableHeader.value'),
+      dataIndex: 'value',
       align: 'center',
+      sorter: (a, b) => a.value - b.value,
+      sortOrder: sortedInfo.columnKey === 'value' && sortedInfo.order,
       render: (text, record) => {
         if (record.text) {
           return '--';
@@ -33,7 +38,10 @@ export default t => {
     },
     {
       title: t('tableHeader.date'),
+      dataIndex: 'date',
       align: 'center',
+      sorter: (a, b) => a.date.localeCompare(b.date),
+      sortOrder: sortedInfo.columnKey === 'date' && sortedInfo.order,
       render: (text, record) => {
         return format(new Date(record.date), 'dd/MM/yyyy HH:mm');
       }

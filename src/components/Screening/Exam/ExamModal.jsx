@@ -18,6 +18,10 @@ export default function Modal({
   setVisibility
 }) {
   const [dsExams, setDsExams] = useState([]);
+  const [sortOrder, setSortOrder] = useState({
+    order: null,
+    columnKey: null
+  });
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -32,6 +36,10 @@ export default function Modal({
     setDsExams(toDataSource(exams.list, 'key', {}));
   }, [exams.list]); // eslint-disable-line
 
+  const handleTableChange = (pagination, filters, sorter) => {
+    setSortOrder(sorter);
+  };
+
   return (
     <DefaultModal
       title={t('tableHeader.exams')}
@@ -43,7 +51,7 @@ export default function Modal({
       style={{ top: '10px', height: '100vh' }}
     >
       <ExpandableTable
-        columns={examColumns(t)}
+        columns={examColumns(t, sortOrder)}
         pagination={false}
         loading={exams.isFetching}
         locale={{
@@ -54,6 +62,7 @@ export default function Modal({
         dataSource={!exams.isFetching ? dsExams : []}
         rowClassName={examRowClassName}
         expandedRowRender={expandedExamRowRender}
+        onChange={handleTableChange}
       />
     </DefaultModal>
   );
