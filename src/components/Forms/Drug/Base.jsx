@@ -1,7 +1,7 @@
 import React from 'react';
 import 'styled-components/macro';
 import { useFormikContext } from 'formik';
-import { Checkbox } from 'antd';
+import { Checkbox, Popover } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { Col } from '@components/Grid';
@@ -9,6 +9,7 @@ import Heading from '@components/Heading';
 import { InputNumber, Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 import { HelpButton } from '@components/Button';
+import { InfoIcon } from '@components/Icon';
 
 import { Box } from './Drug.style';
 
@@ -33,7 +34,8 @@ export default function Base() {
     useWeight,
     amount,
     amountUnit,
-    whiteList
+    whiteList,
+    defaultNote
   } = values;
 
   return (
@@ -199,6 +201,7 @@ export default function Base() {
           />{' '}
           {unit}
           {useWeight ? '/Kg/dia' : ''}
+          <Popover title="Curadoria Doses" content={defaultNote}> {defaultNote ? <InfoIcon />: ''}</Popover>
         </Box>
       </Col>
       <Col md={24} xs={24}>
