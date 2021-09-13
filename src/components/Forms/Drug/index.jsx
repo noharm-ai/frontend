@@ -55,7 +55,8 @@ export default function Drug({
     outliers,
     amount,
     whiteList,
-    amountUnit
+    amountUnit,
+    defaultNote
   } = outlier;
 
   const initialValues = {
@@ -81,7 +82,8 @@ export default function Drug({
     idSegment,
     amount,
     amountUnit,
-    unit: outliers ? (outliers[0] ? outliers[0].unit : '') : ''
+    unit: outliers ? (outliers[0] ? outliers[0].unit : '') : '',
+    defaultNote
   };
 
   useEffect(() => {

@@ -6,29 +6,53 @@ const emptyInterventionMessage = `
   Nenhuma intervenção registrada.
 `;
 
-const getConduct = interventions => {
+const getConduct = (interventions, conciliationType) => {
   if (interventions !== '') {
+    if (conciliationType === 't') {
+      return `
+Realizada a conciliação dos medicamentos em uso no setor anterior e feitas intervenções pertinentes. Caso as divergências encontradas sejam intencionais, desconsiderar.
+`;
+    }
+
     return `
 Realizada a conciliação dos medicamentos de uso domiciliar e feitas intervenções pertinentes. Caso as divergências encontradas sejam intencionais, desconsiderar.
 `;
   }
+
   return `
 Realizada a conciliação dos medicamentos e não encontrada divergência não intencional.
 `;
 };
 
-const getConciliationDrugList = list => {
-  if (list.length === 0 || (list.length === 1 && list[0].drug === '')) {
+const getConciliationHeader = prescription => `Farmácia Clínica
+${prescription.data.namePatient}, ${prescription.data.age}${
+  prescription.data.weight ? `, ${prescription.data.weight}Kg` : ''
+}`;
+
+const drugDescription = d => {
+  return `${d.drug}: ${d.dose ? d.dosage : ''} ${d.frequency ? d.frequency.label : ''}`;
+};
+
+const getConciliationDrugList = (list, group, conciliationType) => {
+  const drugList = list.filter(d => !d.suspended);
+
+  if (drugList.length === 0 || (drugList.length === 1 && drugList[0].drug === '')) {
     return `
 Paciente nega uso contínuo de medicamentos.
 `;
   }
 
-  const drugDescription = d => {
-    return `${d.drug}: ${d.dose ? d.dosage : ''} ${d.frequency ? d.frequency.label : ''}`;
-  };
+  if (!group) {
+    const drugs = drugList.map(
+      d => `
+  - ${drugDescription(d)}
+  `
+    );
 
-  const tplWithRelation = list
+    return drugs.join('');
+  }
+
+  const tplWithRelation = drugList
     .map(d => {
       if (d.conciliaRelationId) {
         return `
@@ -40,7 +64,7 @@ Paciente nega uso contínuo de medicamentos.
     })
     .filter(t => t != null);
 
-  const tplWithoutRelation = list
+  const tplWithoutRelation = drugList
     .map(d => {
       if (d.conciliaRelationId == null) {
         return `
@@ -56,14 +80,22 @@ Paciente nega uso contínuo de medicamentos.
 
   if (tplWithRelation.length) {
     tpl += `
-*Medicamento ou indicação cobertos em prescrição hospitalar:
+*${
+      conciliationType === 't'
+        ? 'Medicamentos com vínculo na prescrição vigente'
+        : 'Medicamento ou indicação cobertos em prescrição hospitalar'
+    }:
     ${tplWithRelation.join('')}
     `;
   }
 
   if (tplWithoutRelation.length) {
     tpl += `
-*Medicamento ou indicação NÃO cobertos em prescrição hospitalar:
+*${
+      conciliationType === 't'
+        ? 'Medicamentos sem vínculo na prescrição vigente'
+        : 'Medicamento ou indicação NÃO cobertos em prescrição hospitalar'
+    }:
     ${tplWithoutRelation.join('')}
     `;
   }
@@ -71,30 +103,110 @@ Paciente nega uso contínuo de medicamentos.
   return tpl;
 };
 
-export const conciliationTemplate = (prescription, interventions, signature) => {
-  return `Farmácia Clínica
-${prescription.data.namePatient}, ${prescription.data.age}${
-    prescription.data.weight ? `, ${prescription.data.weight}Kg` : ''
-  }
+const conciliationNotPerformedTemplate = (prescription, signature) => `${getConciliationHeader(
+  prescription
+)}
+
+Conciliação medicamentosa por farmacêutico não realizada neste internamento; paciente não localizado no momento da visita ao leito ou entrevista realizada anteriormente por outro profissional de saúde.
+
+${signature}
+`;
+
+const conciliationDischargeTemplate = (prescription, signature) => `${getConciliationHeader(
+  prescription
+)}
+
+Realizadas orientações farmacêuticas ao paciente e acompanhante a respeito dos medicamentos prescritos para uso domiciliar:
+${getConciliationDrugList(
+  prescription.prescription.list.length ? prescription.prescription.list[0].value : [],
+  false
+)}
+Orientações:
+
+Oriento quanto a indicação terapêutica e posologia dos medicamentos prescritos para uso domiciliar. 
+Oriento quanto a importância em seguir as posologias recomendadas e da adesão aos tratamentos propostos.
+Oriento a retirada dos medicamentos na farmácia ambulatorial e na UBS.
+Entrego receitas médicas.
+
+Esclareço demais dúvidas apresentadas no momento. 
+
+${signature}
+`;
+
+const conciliationDefaultBodyTemplate = (
+  prescription,
+  interventions,
+  signature,
+  conciliationType
+) => `2. Conciliação medicamentosa:
+${getConciliationDrugList(
+  prescription.prescription.list.length ? prescription.prescription.list[0].value : [],
+  true,
+  conciliationType
+)}
+3. Intervenções:
+${interventions === '' ? emptyInterventionMessage : interventions}
+4. Conduta:
+${getConduct(interventions, conciliationType)}
+
+Me coloco à disposição.
+
+${signature}`;
+
+const conciliationTransferenceTemplate = (
+  prescription,
+  interventions,
+  signature,
+  conciliationType
+) => `${getConciliationHeader(prescription)}
+
+1. Transferência interna:
+
+  De:
+  Para:
+
+${conciliationDefaultBodyTemplate(prescription, interventions, signature, conciliationType)}
+`;
+
+const conciliationAdmissionTemplate = (
+  prescription,
+  interventions,
+  signature,
+  conciliationType
+) => `${getConciliationHeader(prescription)}
 
 Conciliação Medicamentosa realizada com:
 
 1. Histórico de saúde:
 
 
-2. Conciliação medicamentosa:
-${getConciliationDrugList(
-  prescription.prescription.list.length ? prescription.prescription.list[0].value : []
-)}
-3. Intervenções:
-${interventions === '' ? emptyInterventionMessage : interventions}
-4. Conduta:
-${getConduct(interventions)}
-
-Me coloco à disposição.
-
-${signature}
+${conciliationDefaultBodyTemplate(prescription, interventions, signature, conciliationType)}
 `;
+
+export const conciliationTemplate = (prescription, interventions, signature, conciliationType) => {
+  switch (conciliationType) {
+    case 'n':
+      return conciliationNotPerformedTemplate(prescription, signature);
+
+    case 'a':
+      return conciliationDischargeTemplate(prescription, signature);
+
+    case 't':
+      return conciliationTransferenceTemplate(
+        prescription,
+        interventions,
+        signature,
+        conciliationType
+      );
+
+    default:
+      return conciliationAdmissionTemplate(
+        prescription,
+        interventions,
+        signature,
+        conciliationType
+      );
+  }
 };
 
 export const prescriptionTemplate = (p, i) => {

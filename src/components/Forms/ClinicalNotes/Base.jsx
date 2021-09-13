@@ -19,7 +19,7 @@ export default function Base({ prescription, account, signature }) {
   const layout = { label: 2, input: 20 };
 
   const loadDefaultText = () => {
-    setFieldValue('notes', getInterventionTemplate(prescription, account, signature));
+    setFieldValue('notes', getInterventionTemplate(prescription, account, signature, concilia));
   };
 
   const openUserConfig = () => {
