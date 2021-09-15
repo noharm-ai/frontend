@@ -55,7 +55,8 @@ export default function Drug({
     outliers,
     amount,
     whiteList,
-    amountUnit
+    amountUnit,
+    defaultNote
   } = outlier;
 
   const initialValues = {
@@ -69,6 +70,7 @@ export default function Drug({
     elderly: elderly == null ? false : elderly,
     useWeight: useWeight == null ? false : useWeight,
     whiteList: whiteList == null ? false : whiteList,
+    tube: tube == null ? false : tube,
     maxDose,
     price,
     maxTime,
@@ -76,12 +78,12 @@ export default function Drug({
     division,
     liver,
     platelets,
-    tube,
     idMeasureUnit,
     idSegment,
     amount,
     amountUnit,
-    unit: outliers ? (outliers[0] ? outliers[0].unit : '') : ''
+    unit: outliers ? (outliers[0] ? outliers[0].unit : '') : '',
+    defaultNote
   };
 
   useEffect(() => {

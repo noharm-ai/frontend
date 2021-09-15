@@ -9,10 +9,12 @@ import Heading from '@components/Heading';
 import { InputNumber, Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 import { HelpButton } from '@components/Button';
+import { InfoIcon } from '@components/Icon';
+import Popover from '@components/Popover';
 
 import { Box } from './Drug.style';
 
-export default function Base() {
+export default function Base({ security }) {
   const { values, setFieldValue, errors } = useFormikContext();
   const { t } = useTranslation();
   const {
@@ -33,8 +35,13 @@ export default function Base() {
     useWeight,
     amount,
     amountUnit,
-    whiteList
+    whiteList,
+    defaultNote
   } = values;
+
+  const doseTooltip = (
+    <div style={{ maxWidth: '500px' }} dangerouslySetInnerHTML={{ __html: defaultNote }} />
+  );
 
   return (
     <>
@@ -199,6 +206,17 @@ export default function Base() {
           />{' '}
           {unit}
           {useWeight ? '/Kg/dia' : ''}
+          {security.isSupport() && (
+            <Popover
+              title="Curadoria de doses"
+              content={doseTooltip}
+              trigger="hover"
+              placement="bottom"
+            >
+              {' '}
+              <InfoIcon />
+            </Popover>
+          )}
         </Box>
       </Col>
       <Col md={24} xs={24}>
