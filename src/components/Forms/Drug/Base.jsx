@@ -1,7 +1,7 @@
 import React from 'react';
 import 'styled-components/macro';
 import { useFormikContext } from 'formik';
-import { Checkbox, Popover } from 'antd';
+import { Checkbox } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { Col } from '@components/Grid';
