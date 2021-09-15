@@ -46,7 +46,7 @@ export default function SaveFilterModal({ setSaveFilterOpen, saveFilterAction, o
             onChange={value => setFilterType(value ? 'public' : 'private')}
             checked={filterType === 'public'}
           />
-          <HelpText>* Filtros públicos são acessíveis por todos os usuários.</HelpText>
+          <HelpText>* Filtros públicos são acessíveis por toda a equipe.</HelpText>
         </Col>
       </Row>
     </Modal>
