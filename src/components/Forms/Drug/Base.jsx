@@ -1,7 +1,7 @@
 import React from 'react';
 import 'styled-components/macro';
 import { useFormikContext } from 'formik';
-import { Checkbox } from 'antd';
+import { Checkbox, Popover } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { Col } from '@components/Grid';
@@ -206,7 +206,7 @@ export default function Base({ security }) {
           />{' '}
           {unit}
           {useWeight ? '/Kg/dia' : ''}
-          {security.isSupport() && (
+          {security.isSupport() && defaultNote && (
             <Popover
               title="Curadoria de doses"
               content={doseTooltip}
