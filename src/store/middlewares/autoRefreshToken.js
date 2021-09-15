@@ -5,10 +5,8 @@ import api from '@services/api';
 import { tokenDecode } from '@utils';
 
 import { Creators as AuthCreators } from '../ducks/auth';
-import { Creators as UserCreators } from '../ducks/user';
 
-const { authSetIdentify, authDelIdentify } = AuthCreators;
-const { userLogout } = UserCreators;
+const { authSetIdentify } = AuthCreators;
 
 const autoRefreshToken = ({ dispatch, getState }) => next => async action => {
   if (typeof action !== 'function') {
@@ -22,9 +20,6 @@ const autoRefreshToken = ({ dispatch, getState }) => next => async action => {
     const { exp } = tokenDecode(access_token);
     const expireDate = toDate(exp * 1000);
     const errorHandler = e => {
-      dispatch(userLogout());
-      dispatch(authDelIdentify());
-
       return {
         error: e.response ? e.response.data : 'error',
         status: e.response ? e.response.status : e.code,

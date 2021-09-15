@@ -19,11 +19,16 @@ const security = roles => {
     return hasRole('admin');
   };
 
+  const isSupport = () => {
+    return hasRole('suporte');
+  };
+
   return {
     hasRole,
     hasNoHarmCare,
     hasAlertIntegration,
-    isAdmin
+    isAdmin,
+    isSupport
   };
 };
 
