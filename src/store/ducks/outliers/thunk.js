@@ -203,7 +203,7 @@ export const fetchReferencesListThunk = (idSegment, idDrug, dose, frequency) => 
 
     params = {
       idDrug: drug.idDrug,
-      idSegment: segment.id
+      idSegment: idSegment ? idSegment : segment.id
     };
   }
 
