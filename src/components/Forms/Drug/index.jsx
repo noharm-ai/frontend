@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Formik } from 'formik';
 import isEmpty from 'lodash.isempty';
 
-import { Row } from '@components/Grid';
+import { Row, Col } from '@components/Grid';
 import Button from '@components/Button';
 import notification from '@components/notification';
 import Icon from '@components/Icon';
@@ -116,15 +116,19 @@ export default function Drug({
               <Base units={units.list} security={security} />
             </Row>
           </FormContainer>
-          <Footer>
-            <Button
-              type="primary gtm-bt-save-drug"
-              htmlType="submit"
-              disabled={isSaving || !isValid}
-            >
-              Salvar <Icon type="check" />
-            </Button>
-          </Footer>
+          <Row type="flex" gutter={[16, 24]}>
+            <Col xs={12}>
+              <Footer>
+                <Button
+                  type="primary gtm-bt-save-drug"
+                  htmlType="submit"
+                  disabled={isSaving || !isValid}
+                >
+                  Salvar <Icon type="check" />
+                </Button>
+              </Footer>
+            </Col>
+          </Row>
         </form>
       )}
     </Formik>

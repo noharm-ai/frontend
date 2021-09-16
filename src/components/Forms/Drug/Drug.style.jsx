@@ -7,7 +7,7 @@ export const Footer = styled.div`
   margin-top: 20px;
   padding: 20px 10px;
   text-align: right;
-  width: 720px;
+  width: 100%;
 
   .ant-btn {
     margin-left: 15px;
