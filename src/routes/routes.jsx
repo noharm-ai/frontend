@@ -137,6 +137,13 @@ const routes = [
   },
   {
     exact: true,
+    path: '/medicamentos/:idSegment',
+    component: withAuth({
+      component: References
+    })
+  },
+  {
+    exact: true,
     path: '/medicamentos/:idSegment/:idDrug/:slug',
     component: withAuth({
       component: References

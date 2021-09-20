@@ -160,7 +160,7 @@ export const fetchReferencesListThunk = (idSegment, idDrug, dose, frequency) => 
   if (idSegment == null) {
     idSegment = 1;
   }
-  const { data: drugsData, drugsError } = await api
+  const { data: drugsData, error: drugsError } = await api
     .getDrugsBySegment(access_token, idSegment)
     .catch(errorHandler);
 
@@ -174,7 +174,7 @@ export const fetchReferencesListThunk = (idSegment, idDrug, dose, frequency) => 
   dispatch(drugsFetchListSuccess(drugsList));
 
   // get segments list
-  const { data: segmentsData, segmentsError } = await api
+  const { data: segmentsData, error: segmentsError } = await api
     .getSegments(access_token)
     .catch(errorHandler);
 
@@ -203,7 +203,7 @@ export const fetchReferencesListThunk = (idSegment, idDrug, dose, frequency) => 
 
     params = {
       idDrug: drug.idDrug,
-      idSegment: segment.id
+      idSegment: idSegment ? idSegment : segment.id
     };
   }
 

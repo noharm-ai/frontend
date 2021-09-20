@@ -217,9 +217,9 @@ export default function References({
   };
 
   const rowClassName = (record, index) => {
-    let matchDose = match.params.dose
+    let matchDose = match.params.dose;
     if (drugData.division) {
-      matchDose = Math.ceil(matchDose/drugData.division) * drugData.division;
+      matchDose = Math.ceil(matchDose / drugData.division) * drugData.division;
     }
     if (
       record.dose + '' === matchDose + '' &&

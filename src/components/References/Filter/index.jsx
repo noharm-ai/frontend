@@ -47,10 +47,13 @@ export default function Filter({
       [key]: value
     };
 
-    const drug = drugs.list.find(item => item.idDrug === params.idDrug);
-    const slug = createSlug(drug.name);
-
-    history.push(`/medicamentos/${params.idSegment}/${params.idDrug}/${slug}`);
+    if (key === 'idSegment') {
+      history.push(`/medicamentos/${params.idSegment}`);
+    } else {
+      const drug = drugs.list.find(item => item.idDrug === params.idDrug);
+      const slug = createSlug(drug.name);
+      history.push(`/medicamentos/${params.idSegment}/${params.idDrug}/${slug}`);
+    }
   };
 
   const filterOption = (input, option) =>
@@ -70,7 +73,7 @@ export default function Filter({
               style={{ width: '100%' }}
               placeholder="Selectione um segmento..."
               loading={segments.isFetching}
-              value={values.idSegment}
+              value={values.idSegment ? parseInt(values.idSegment, 10) : ''}
               onChange={val => handleChange('idSegment', val)}
               showSearch
               filterOption={filterOption}

@@ -4,15 +4,16 @@ import { useFormikContext } from 'formik';
 import { Checkbox } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { Col } from '@components/Grid';
+import { Col, Row } from '@components/Grid';
 import Heading from '@components/Heading';
 import { InputNumber, Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 import { HelpButton } from '@components/Button';
+import Collapse from '@components/Collapse';
 
 import { Box } from './Drug.style';
 
-export default function Base() {
+export default function Base({ security }) {
   const { values, setFieldValue, errors } = useFormikContext();
   const { t } = useTranslation();
   const {
@@ -33,8 +34,11 @@ export default function Base() {
     useWeight,
     amount,
     amountUnit,
-    whiteList
+    whiteList,
+    defaultNote
   } = values;
+
+  const doseHints = <div dangerouslySetInnerHTML={{ __html: defaultNote }} />;
 
   return (
     <>
@@ -147,197 +151,215 @@ export default function Base() {
           </div>
         </Box>
       </Col>
-      <Col xs={24}>
-        <Box hasError={errors.price}>
-          <Heading as="label" size="14px" className="fixed">
-            Custo:
-          </Heading>
-          <InputNumber
-            style={{
-              width: 120,
-              marginRight: 5
-            }}
-            min={0}
-            max={99999}
-            value={price}
-            onChange={value => setFieldValue('price', value)}
-          />
-        </Box>
-      </Col>
-      <Col xs={24}>
-        <Box hasError={errors.maxTime}>
-          <Heading as="label" size="14px" className="fixed">
-            Alerta de Tempo de Tratamento
-          </Heading>
-          <InputNumber
-            style={{
-              width: 120,
-              marginRight: 5
-            }}
-            min={0}
-            max={99999}
-            value={maxTime}
-            onChange={value => setFieldValue('maxTime', value)}
-          />
-          {' dias'}
-        </Box>
-      </Col>
-      <Col xs={24}>
-        <Box hasError={errors.maxDose}>
-          <Heading as="label" size="14px" className="fixed">
-            <Tooltip title="Dose de Alerta Diária">Dose de Alerta:</Tooltip>
-          </Heading>
-          <InputNumber
-            style={{
-              width: 120,
-              marginRight: 5
-            }}
-            min={0}
-            max={9999999}
-            value={maxDose}
-            onChange={value => setFieldValue('maxDose', value)}
-          />{' '}
-          {unit}
-          {useWeight ? '/Kg/dia' : ''}
-        </Box>
-      </Col>
-      <Col md={24} xs={24}>
-        <Box hasError={errors.kidney}>
-          <Heading as="label" size="14px" margin="0 0 10px" className="fixed">
-            <Tooltip
-              title="Valor de Taxa de Filtração Glomerular (CKD-EPI) a partir do qual o medicamento deve sofrer ajuste de dose ou frequência."
-              underline
-            >
-              Nefrotóxico:
-            </Tooltip>
-          </Heading>
-          <InputNumber
-            style={{
-              width: 120,
-              marginRight: 5
-            }}
-            min={0}
-            max={100}
-            value={kidney}
-            onChange={value => setFieldValue('kidney', value)}
-          />
-          mL/min
-          <Tooltip title={t('layout.help')}>
-            <div>
-              <HelpButton
-                type="primary gtm-medication-btn-help-nefro"
-                href="https://noharm.octadesk.com/kb/article/ajuste-de-dose-por-funcao-renal"
-              />
-            </div>
-          </Tooltip>
-        </Box>
-      </Col>
-      <Col xs={24}>
-        <Box hasError={errors.liver}>
-          <Heading as="label" size="14px" className="fixed">
-            <Tooltip
-              title="Valor de TGO ou TGP a partir do qual o medicamento deve sofrer ajuste de dose ou frequência."
-              underline
-            >
-              Hepatotóxico:
-            </Tooltip>
-          </Heading>
-          <InputNumber
-            style={{
-              width: 120,
-              marginRight: 5
-            }}
-            min={0}
-            max={99999}
-            value={liver}
-            onChange={value => setFieldValue('liver', value)}
-          />
-          U/L
-          <Tooltip title={t('layout.help')}>
-            <div>
-              <HelpButton
-                type="primary gtm-medication-btn-help-hepa"
-                href="https://noharm.octadesk.com/kb/article/ajuste-de-dose-por-funcao-hepatica"
-              />
-            </div>
-          </Tooltip>
-        </Box>
-      </Col>
-      <Col xs={24}>
-        <Box hasError={errors.platelets}>
-          <Heading as="label" size="14px" className="fixed">
-            <Tooltip
-              title="Valor de Plaquetas/µL abaixo do qual o uso do medicamento é inadequado."
-              underline
-            >
-              Alerta de Plaquetas:
-            </Tooltip>
-          </Heading>
-          <InputNumber
-            style={{
-              width: 120,
-              marginRight: 5
-            }}
-            min={0}
-            max={999999}
-            value={platelets}
-            onChange={value => setFieldValue('platelets', value)}
-          />
-          plaquetas/µL
-        </Box>
-      </Col>
-      <Col xs={24}>
-        <Box hasError={errors.amount}>
-          <Heading as="label" size="14px" className="fixed">
-            <Tooltip title="Informação que será utilizada na calculadora de soluções" underline>
-              Concentração:
-            </Tooltip>
-          </Heading>
-          <InputNumber
-            style={{
-              width: 120,
-              marginRight: '10px'
-            }}
-            min={0}
-            max={99999}
-            value={amount}
-            onChange={value => setFieldValue('amount', value)}
-          />
-        </Box>
-      </Col>
-      <Col md={24} xs={24}>
-        <Box hasError={errors.amountUnit}>
-          <Heading as="label" size="14px" className="fixed">
-            Unidade da concentração:
-          </Heading>
-          <Select
-            placeholder="Selecione a unidade da concentração"
-            onChange={value => setFieldValue('amountUnit', value)}
-            value={amountUnit}
-            identify="amountUnit"
-            allowClear
-            style={{ minWidth: '300px' }}
-          >
-            <Select.Option value="" key=""></Select.Option>
-            <Select.Option value="mEq" key="mEq">
-              mEq
-            </Select.Option>
-            <Select.Option value="mg" key="mg">
-              mg
-            </Select.Option>
-            <Select.Option value="mcg" key="mcg">
-              mcg
-            </Select.Option>
-            <Select.Option value="U" key="U">
-              U
-            </Select.Option>
-            <Select.Option value="UI" key="UI">
-              UI
-            </Select.Option>
-          </Select>{' '}
-          &nbsp; /mL
-        </Box>
-      </Col>
+      <Row style={{ marginTop: '15px' }}>
+        <Col xs={12}>
+          <Row type="flex" gutter={[16, 24]}>
+            <Col xs={24}>
+              <Box hasError={errors.price}>
+                <Heading as="label" size="14px" className="fixed">
+                  Custo:
+                </Heading>
+                <InputNumber
+                  style={{
+                    width: 120,
+                    marginRight: 5
+                  }}
+                  min={0}
+                  max={99999}
+                  value={price}
+                  onChange={value => setFieldValue('price', value)}
+                />
+              </Box>
+            </Col>
+            <Col xs={24}>
+              <Box hasError={errors.maxTime}>
+                <Heading as="label" size="14px" className="fixed">
+                  Alerta de Tempo de Tratamento
+                </Heading>
+                <InputNumber
+                  style={{
+                    width: 120,
+                    marginRight: 5
+                  }}
+                  min={0}
+                  max={99999}
+                  value={maxTime}
+                  onChange={value => setFieldValue('maxTime', value)}
+                />
+                {' dias'}
+              </Box>
+            </Col>
+            <Col xs={24}>
+              <Box hasError={errors.maxDose}>
+                <Heading as="label" size="14px" className="fixed">
+                  <Tooltip title="Dose de Alerta Diária">Dose de Alerta:</Tooltip>
+                </Heading>
+                <InputNumber
+                  style={{
+                    width: 120,
+                    marginRight: 5
+                  }}
+                  min={0}
+                  max={9999999}
+                  value={maxDose}
+                  onChange={value => setFieldValue('maxDose', value)}
+                />{' '}
+                {unit}
+                {useWeight ? '/Kg/dia' : ''}
+              </Box>
+            </Col>
+            <Col md={24} xs={24}>
+              <Box hasError={errors.kidney}>
+                <Heading as="label" size="14px" margin="0 0 10px" className="fixed">
+                  <Tooltip
+                    title="Valor de Taxa de Filtração Glomerular (CKD-EPI) a partir do qual o medicamento deve sofrer ajuste de dose ou frequência."
+                    underline
+                  >
+                    Nefrotóxico:
+                  </Tooltip>
+                </Heading>
+                <InputNumber
+                  style={{
+                    width: 120,
+                    marginRight: 5
+                  }}
+                  min={0}
+                  max={100}
+                  value={kidney}
+                  onChange={value => setFieldValue('kidney', value)}
+                />
+                mL/min
+                <Tooltip title={t('layout.help')}>
+                  <div>
+                    <HelpButton
+                      type="primary gtm-medication-btn-help-nefro"
+                      href="https://noharm.octadesk.com/kb/article/ajuste-de-dose-por-funcao-renal"
+                    />
+                  </div>
+                </Tooltip>
+              </Box>
+            </Col>
+            <Col xs={24}>
+              <Box hasError={errors.liver}>
+                <Heading as="label" size="14px" className="fixed">
+                  <Tooltip
+                    title="Valor de TGO ou TGP a partir do qual o medicamento deve sofrer ajuste de dose ou frequência."
+                    underline
+                  >
+                    Hepatotóxico:
+                  </Tooltip>
+                </Heading>
+                <InputNumber
+                  style={{
+                    width: 120,
+                    marginRight: 5
+                  }}
+                  min={0}
+                  max={99999}
+                  value={liver}
+                  onChange={value => setFieldValue('liver', value)}
+                />
+                U/L
+                <Tooltip title={t('layout.help')}>
+                  <div>
+                    <HelpButton
+                      type="primary gtm-medication-btn-help-hepa"
+                      href="https://noharm.octadesk.com/kb/article/ajuste-de-dose-por-funcao-hepatica"
+                    />
+                  </div>
+                </Tooltip>
+              </Box>
+            </Col>
+            <Col xs={24}>
+              <Box hasError={errors.platelets}>
+                <Heading as="label" size="14px" className="fixed">
+                  <Tooltip
+                    title="Valor de Plaquetas/µL abaixo do qual o uso do medicamento é inadequado."
+                    underline
+                  >
+                    Alerta de Plaquetas:
+                  </Tooltip>
+                </Heading>
+                <InputNumber
+                  style={{
+                    width: 120,
+                    marginRight: 5
+                  }}
+                  min={0}
+                  max={999999}
+                  value={platelets}
+                  onChange={value => setFieldValue('platelets', value)}
+                />
+                plaquetas/µL
+              </Box>
+            </Col>
+            <Col xs={24}>
+              <Box hasError={errors.amount}>
+                <Heading as="label" size="14px" className="fixed">
+                  <Tooltip
+                    title="Informação que será utilizada na calculadora de soluções"
+                    underline
+                  >
+                    Concentração:
+                  </Tooltip>
+                </Heading>
+                <InputNumber
+                  style={{
+                    width: 120,
+                    marginRight: '10px'
+                  }}
+                  min={0}
+                  max={99999}
+                  value={amount}
+                  onChange={value => setFieldValue('amount', value)}
+                />
+              </Box>
+            </Col>
+            <Col md={24} xs={24}>
+              <Box hasError={errors.amountUnit}>
+                <Heading as="label" size="14px" className="fixed">
+                  Unidade da concentração:
+                </Heading>
+                <Select
+                  placeholder="Selecione a unidade da concentração"
+                  onChange={value => setFieldValue('amountUnit', value)}
+                  value={amountUnit}
+                  identify="amountUnit"
+                  allowClear
+                  style={{ minWidth: '300px' }}
+                >
+                  <Select.Option value="" key=""></Select.Option>
+                  <Select.Option value="mEq" key="mEq">
+                    mEq
+                  </Select.Option>
+                  <Select.Option value="mg" key="mg">
+                    mg
+                  </Select.Option>
+                  <Select.Option value="mcg" key="mcg">
+                    mcg
+                  </Select.Option>
+                  <Select.Option value="U" key="U">
+                    U
+                  </Select.Option>
+                  <Select.Option value="UI" key="UI">
+                    UI
+                  </Select.Option>
+                </Select>{' '}
+                &nbsp; /mL
+              </Box>
+            </Col>
+          </Row>
+        </Col>
+        <Col xs={12}>
+          {security.isSupport() && defaultNote && (
+            <Collapse defaultActiveKey={['1']}>
+              <Collapse.Panel header="Curadoria de doses" key="1">
+                {doseHints}
+              </Collapse.Panel>
+            </Collapse>
+          )}
+        </Col>
+      </Row>
     </>
   );
 }
