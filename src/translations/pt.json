@@ -28,7 +28,8 @@
     "segments": "Segmentos",
     "knowledgeBase": "Base de Conhecimento",
     "userConfig": "Usuário",
-    "exams": "Exames"
+    "exams": "Exames",
+    "user-administration": "Cadastro"
   },
   "screeningList": {
     "empty": "Nenhum registro encontrado",

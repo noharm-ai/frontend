@@ -28,7 +28,8 @@
     "segments": "Segments",
     "knowledgeBase": "Knowledge Base",
     "userConfig": "User",
-    "exams": "Lab exams"
+    "exams": "Lab exams",
+    "user-administration": "Registration"
   },
   "screeningList": {
     "empty": "No records found",

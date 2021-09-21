@@ -40,6 +40,7 @@ const endpoints = {
   substance: '/substance',
   memory: '/memory',
   user: '/user',
+  users: '/users',
   clinicalNotes: '/notes'
 };
 
@@ -307,6 +308,9 @@ const resetPassword = (token, password) => {
   );
 };
 
+const getUsers = (bearerToken, params = {}) =>
+  instance.get(endpoints.users, { params, ...setHeaders(bearerToken) });
+
 /**
  * ClinicalNotes.
  *
@@ -393,6 +397,7 @@ const api = {
   updatePassword,
   forgotPassword,
   resetPassword,
+  getUsers,
   updateSegmentExamOrder,
   getClinicalNotes,
   updateClinicalNote
