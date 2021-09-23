@@ -54,6 +54,8 @@ export default function Filter({
         idDept: filter.idDepartment,
         idDrug: filter.idDrug,
         pending: filter.pending,
+        allDrugs: filter.allDrugs,
+        discharged: filter.discharged,
         currentDepartment: prioritizationType === 'patient' ? filter.currentDepartment : 0,
         agg: prioritizationType === 'patient' ? 1 : 0,
         concilia: prioritizationType === 'conciliation' ? 1 : 0,
@@ -76,6 +78,8 @@ export default function Filter({
       filter.idDepartment,
       filter.idDrug,
       filter.pending,
+      filter.allDrugs,
+      filter.discharged,
       filter.currentDepartment,
       prioritizationType,
       date
@@ -129,12 +133,20 @@ export default function Filter({
     setScreeningListFilter({ currentDepartment: e.target.checked ? 1 : 0 });
   };
 
+  const onAllDrugsChange = e => {
+    setScreeningListFilter({ allDrugs: e.target.checked ? 1 : 0 });
+  };
+
   const onDrugChange = idDrug => {
     setScreeningListFilter({ idDrug });
   };
 
   const onPendingChange = pending => {
     setScreeningListFilter({ pending: pending ? 1 : 0 });
+  };
+
+  const onDischargedChange = discharged => {
+    setScreeningListFilter({ discharged: discharged ? 1 : 0 });
   };
 
   const onDateChange = dt => {
@@ -176,7 +188,9 @@ export default function Filter({
       idSegment: segments.list[0].id,
       idDepartment: [],
       idDrug: [],
-      pending: 0
+      pending: 0,
+      allDrugs: 0,
+      discharged: 0
     });
     setDate([moment(), null]);
   };
@@ -338,8 +352,8 @@ export default function Filter({
             </Col>
           </Row>
 
-          <Row gutter={[20, 0]} style={{ marginTop: '10px' }}>
-            <Col>
+          <Row gutter={0} style={{ marginTop: '10px' }}>
+            <Col md={19}>
               <Box>
                 <Heading as="label" htmlFor="drugs-filter" size="14px">
                   {t('screeningList.labelDrug')}:
@@ -365,12 +379,29 @@ export default function Filter({
                 </Select>
               </Box>
             </Col>
+            <Col md={5}>
+              <Checkbox
+                style={{ marginTop: '17px', marginLeft: '10px' }}
+                checked={filter.allDrugs}
+                onChange={onAllDrugsChange}
+                id="gtm-allDrugs-filter"
+              >
+                <Tooltip title={t('screeningList.labelAllDrugsHint')} underline>
+                  {t('screeningList.labelAllDrugs')}
+                </Tooltip>
+              </Checkbox>
+            </Col>
           </Row>
 
           <Row gutter={[20, 0]} style={{ marginTop: '20px' }}>
             <Col>
               <Box flexDirection="row" alignItems="center">
-                <Heading as="label" htmlFor="pending-filter" size="14px">
+                <Heading
+                  as="label"
+                  htmlFor="pending-filter"
+                  size="14px"
+                  style={{ minWidth: '230px' }}
+                >
                   {t('screeningList.labelPendingPrescription')}
                 </Heading>
 
@@ -379,6 +410,27 @@ export default function Filter({
                   onChange={onPendingChange}
                   checked={filter.pending === 1}
                   id="gtm-pending-filter"
+                />
+              </Box>
+            </Col>
+          </Row>
+          <Row gutter={[20, 0]} style={{ marginTop: '20px' }}>
+            <Col>
+              <Box flexDirection="row" alignItems="center">
+                <Heading
+                  as="label"
+                  htmlFor="pending-filter"
+                  size="14px"
+                  style={{ minWidth: '230px' }}
+                >
+                  {t('screeningList.labelDischarged')}
+                </Heading>
+
+                <Switch
+                  style={{ marginLeft: '10px' }}
+                  onChange={onDischargedChange}
+                  checked={filter.discharged === 1}
+                  id="gtm-discharged-filter"
                 />
               </Box>
             </Col>
