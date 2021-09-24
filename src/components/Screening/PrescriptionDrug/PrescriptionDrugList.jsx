@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import LoadBox from '@components/LoadBox';
 import Empty from '@components/Empty';
 import Collapse from '@components/Collapse';
+import Tooltip from '@components/Tooltip';
 import { sourceToStoreType } from '@utils/transformers/prescriptions';
 
 import FormIntervention from '@containers/Forms/Intervention';
@@ -144,7 +145,9 @@ export default function PrescriptionDrugList({
         </span>
         <span>
           <strong>{t('prescriptionDrugList.panelBed')}:</strong> &nbsp;
-          {headers[ds.key].bed}
+          <Tooltip title={headers[ds.key].department} underline>
+            {headers[ds.key].bed}
+          </Tooltip>
         </span>
         <span>
           <strong>{t('prescriptionDrugList.panelPrescriber')}:</strong> &nbsp;
