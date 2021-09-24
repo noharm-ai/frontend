@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { notification } from 'antd';
 import Box from './Box';
 import Menu from './Menu';
+import InfoAlert from './InfoAlert';
 import { Wrapper as Main, Brand, LogOut, UserName } from './Layout.style';
 
 const siderWidth = 250;
@@ -31,7 +32,7 @@ const setTitle = ({ user }) => {
   return user.account.userName;
 };
 
-const Me = ({ user, toggleDrawer, t }) => {
+const Me = ({ user, toggleDrawer, access_token, t }) => {
   const onSearch = value => {
     const reg = /^-?\d*(\.\d*)?$/;
     const searchValue = value.trim();
@@ -52,14 +53,18 @@ const Me = ({ user, toggleDrawer, t }) => {
       justify-content: space-between;
     "
     >
-      <InputSearchNumber
-        placeholder={t('layout.iptSearch')}
-        style={{ width: 300 }}
-        size="large"
-        onSearch={onSearch}
-        id="gtm-search-box"
-        type="number"
-      />
+      <div css="display: flex; align-items: center;">
+        <InputSearchNumber
+          placeholder={t('layout.iptSearch')}
+          style={{ width: 300 }}
+          size="large"
+          onSearch={onSearch}
+          id="gtm-search-box"
+          type="number"
+        />
+
+        <InfoAlert access_token={access_token} userId={user.account.userId} />
+      </div>
 
       <div className="controls">
         <Avatar size={44} icon="user" css="margin-right: 12px !important;" />

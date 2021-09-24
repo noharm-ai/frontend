@@ -8,11 +8,12 @@ import security from '@services/security';
 
 import navigation from './navigation';
 
-const mapStateToProps = ({ user, app }) => ({
+const mapStateToProps = ({ auth, user, app }) => ({
   user,
   navigation,
   app,
-  security: security(user.account.roles)
+  security: security(user.account.roles),
+  access_token: auth.identify.access_token
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
