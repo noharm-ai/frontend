@@ -21,6 +21,7 @@ const {
   usersSaveSingleSuccess,
   usersSaveSingleError,
 
+  usersSelectUser
 } = UsersCreators;
 
 export const fetchUsersListThunk = (params = {}) => async (dispatch, getState) => {
@@ -60,18 +61,25 @@ export const resetSingleUserThunk = () => async (dispatch, getState) => {
   dispatch(usersFetchSingleReset());
 };
 
+export const selectUserThunk = item => dispatch => {
+  dispatch(usersSelectUser(item));
+};
+
+// TODO: adicionar chamada ao endpoint(o mesmo ainda não foi finalizado)
 export const saveUserThunk = (params = {}) => async (dispatch, getState) => {
   dispatch(usersSaveSingleStart());
 
   const { id } = params;
   const { access_token } = getState().auth.identify;
-  const method = id ? 'updateSegment' : 'createSegment';
-  const { status, error } = await api[method](access_token, params).catch(errorHandler);
+  const method = id ? 'updateUser' : 'createUser';
+  // const { status, error } = await api[method](access_token, params).catch(errorHandler);
 
-  if (status !== 200) {
-    dispatch(usersSaveSingleError(error));
-    return;
-  }
+  console.log('thunk params', params);
+  console.log('thunk method', method);
+  // if (status !== 200) {
+  // dispatch(usersSaveSingleError(error));
+  // return;
+  // }
 
   dispatch(usersSaveSingleSuccess());
   dispatch(usersSaveSingleReset());

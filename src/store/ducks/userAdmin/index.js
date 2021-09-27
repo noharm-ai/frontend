@@ -14,6 +14,8 @@ export const { Types, Creators } = createActions({
   usersSaveSingleSuccess: [''],
   usersSaveSingleReset: [''],
   usersSaveSingleError: ['error'],
+
+  usersSelectUser: ['item']
 });
 
 const INITIAL_STATE = {
@@ -29,7 +31,7 @@ const INITIAL_STATE = {
     error: null,
     isFetching: false,
     content: {} //usuario selecionado p/ editar
-  },
+  }
 };
 
 const fetchListStart = (state = INITIAL_STATE) => ({
@@ -106,6 +108,17 @@ const saveSingleReset = (state = INITIAL_STATE) => ({
   ...state,
   save: {
     ...INITIAL_STATE.save
+  },
+  single: {
+    ...INITIAL_STATE.single
+  }
+});
+
+const selectUser = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  single: {
+    ...state.single,
+    content: item
   }
 });
 
@@ -118,7 +131,6 @@ const saveSingleSuccess = (state = INITIAL_STATE) => ({
     isSaving: false
   }
 });
-
 
 const HANDLERS = {
   [Types.USERS_FETCH_LIST_START]: fetchListStart,
@@ -134,6 +146,8 @@ const HANDLERS = {
   [Types.USERS_SAVE_SINGLE_ERROR]: saveSingleError,
   [Types.USERS_SAVE_SINGLE_RESET]: saveSingleReset,
   [Types.USERS_SAVE_SINGLE_SUCCESS]: saveSingleSuccess,
+
+  [Types.USERS_SELECT_USER]: selectUser
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

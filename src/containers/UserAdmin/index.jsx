@@ -1,12 +1,10 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import {
-  fetchUsersListThunk
-} from '@store/ducks/userAdmin/thunk';
+import { fetchUsersListThunk, selectUserThunk } from '@store/ducks/userAdmin/thunk';
 import UserAdmin from '@components/UserAdmin';
 
-const mapStateToProps = ({ users }) => ({ 
+const mapStateToProps = ({ users }) => ({
   error: users.error,
   list: users.list,
   isFetching: users.isFetching
@@ -14,7 +12,8 @@ const mapStateToProps = ({ users }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      fetchUsersList: fetchUsersListThunk
+      fetchUsersList: fetchUsersListThunk,
+      selectUser: selectUserThunk
     },
     dispatch
   );
