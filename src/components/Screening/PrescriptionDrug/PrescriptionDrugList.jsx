@@ -74,7 +74,8 @@ export default function PrescriptionDrugList({
   selectPrescriptionDrug,
   uniqueDrugs,
   checkScreening,
-  isCheckingPrescription
+  isCheckingPrescription,
+  security
 }) {
   const [visible, setVisibility] = useState(false);
   const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
@@ -110,7 +111,7 @@ export default function PrescriptionDrugList({
     t
   };
 
-  const table = ds => (
+  const table = (ds, showHeader) => (
     <Table
       hasFilter={false}
       filter={null}
@@ -119,6 +120,7 @@ export default function PrescriptionDrugList({
       emptyMessage={emptyMessage}
       ds={ds}
       listType={listType}
+      showHeader={showHeader}
     />
   );
 
@@ -220,6 +222,12 @@ export default function PrescriptionDrugList({
       return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={msg} />;
     }
 
+    if (security.hasCpoe()) {
+      return dataSource.map((ds, index) => (
+        <div key={index}>{group.indexOf(`${ds.key}`) !== -1 && table(ds, index === 0)}</div>
+      ));
+    }
+
     return dataSource.map((ds, index) => (
       <div key={index}>
         {group.indexOf(`${ds.key}`) !== -1 && (
@@ -234,7 +242,7 @@ export default function PrescriptionDrugList({
                 isEmpty(ds.value) ? null : ds.value[0].source
               )}
             >
-              {table(ds)}
+              {table(ds, true)}
             </PrescriptionPanel>
           </Collapse>
         )}

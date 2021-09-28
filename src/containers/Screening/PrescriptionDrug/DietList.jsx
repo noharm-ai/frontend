@@ -14,9 +14,11 @@ import {
   fetchPrescriptionDrugPeriodThunk
 } from '@store/ducks/prescriptions/thunk';
 import { selectPrescriptionDrugThunk } from '@store/ducks/prescriptionDrugs/thunk';
+
+import security from '@services/security';
 import PrescriptionDrugList from '@components/Screening/PrescriptionDrug/PrescriptionDrugList';
 
-const mapStateToProps = ({ prescriptions, auth }) => ({
+const mapStateToProps = ({ prescriptions, auth, user }) => ({
   dataSource: prescriptions.single.diet.list,
   listRaw: prescriptions.single.data.dietRaw,
   isFetching: prescriptions.single.isFetching,
@@ -30,7 +32,8 @@ const mapStateToProps = ({ prescriptions, auth }) => ({
   idSegment: prescriptions.single.data.idSegment,
   admissionNumber: prescriptions.single.data.admissionNumber,
   uniqueDrugs: prescriptions.single.data.uniqueDrugs,
-  isCheckingPrescription: prescriptions.single.check.isChecking
+  isCheckingPrescription: prescriptions.single.check.isChecking,
+  security: security(user.account.roles)
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
