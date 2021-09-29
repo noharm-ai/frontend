@@ -108,6 +108,7 @@ export default function PrescriptionDrugList({
     fetchPeriod,
     weight,
     uniqueDrugList: uniqueDrugs,
+    headers,
     t
   };
 
@@ -211,6 +212,12 @@ export default function PrescriptionDrugList({
     if (isEmpty(dataSource)) {
       return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={msg} />;
     }
+
+    if (security.hasCpoe()) {
+      const cpoeListByDate = dataSource[0].value.filter(i => group.indexOf(`${i.cpoe}`) !== -1);
+      return table({ key: dataSource[0].key, value: cpoeListByDate }, true);
+    }
+
     let hasPrescription = false;
     dataSource.forEach(ds => {
       if (group.indexOf(`${ds.key}`) !== -1) {
@@ -220,12 +227,6 @@ export default function PrescriptionDrugList({
 
     if (!hasPrescription) {
       return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={msg} />;
-    }
-
-    if (security.hasCpoe()) {
-      return dataSource.map((ds, index) => (
-        <div key={index}>{group.indexOf(`${ds.key}`) !== -1 && table(ds, index === 0)}</div>
-      ));
     }
 
     return dataSource.map((ds, index) => (
@@ -311,6 +312,7 @@ export default function PrescriptionDrugList({
       };
     }
   });
+  console.log('groups', groups);
 
   return (
     <>
