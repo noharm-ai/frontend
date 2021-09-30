@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { logoutThunk } from '@store/ducks/auth/thunk';
-import { setSiderThunk } from '@store/ducks/app/thunk';
+import { setSiderThunk, setNotificationThunk } from '@store/ducks/app/thunk';
 import Layout from '@components/Layout';
 import security from '@services/security';
 
@@ -19,7 +19,8 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       doLogout: logoutThunk,
-      setAppSider: setSiderThunk
+      setAppSider: setSiderThunk,
+      setNotification: setNotificationThunk
     },
     dispatch
   );

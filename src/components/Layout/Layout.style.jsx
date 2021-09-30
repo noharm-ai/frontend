@@ -5,6 +5,16 @@ import styled from 'styled-components/macro';
 import { get } from '@styles/utils';
 import { ReactComponent as LogoSVG } from '@assets/noHarm-horizontal.svg';
 
+export const MessageLink = styled.a`
+  color: rgba(0, 0, 0, 0.85);
+  text-decoration: none;
+  transition: color 0.3s;
+
+  &:hover {
+    color: rgba(0, 0, 0, 0.65);
+  }
+`;
+
 export const Brand = styled(LogoSVG)`
   display: block;
   min-width: 164px;

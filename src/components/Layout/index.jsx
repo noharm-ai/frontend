@@ -9,7 +9,6 @@ import { InputSearchNumber } from '@components/Inputs';
 import Help from '@components/Help';
 
 import { useTranslation } from 'react-i18next';
-import { notification } from 'antd';
 import Box from './Box';
 import Menu from './Menu';
 import InfoAlert from './InfoAlert';
@@ -32,7 +31,7 @@ const setTitle = ({ user }) => {
   return user.account.userName;
 };
 
-const Me = ({ user, toggleDrawer, access_token, t }) => {
+const Me = ({ user, toggleDrawer, access_token, t, notification, setNotification, match }) => {
   const onSearch = value => {
     const reg = /^-?\d*(\.\d*)?$/;
     const searchValue = value.trim();
@@ -43,6 +42,8 @@ const Me = ({ user, toggleDrawer, access_token, t }) => {
       notification.error({ message: 'Número de prescrição inválido.' });
     }
   };
+
+  const showAlert = match.path.indexOf('priorizacao') !== -1;
 
   return (
     <div
@@ -62,8 +63,14 @@ const Me = ({ user, toggleDrawer, access_token, t }) => {
           id="gtm-search-box"
           type="number"
         />
-
-        <InfoAlert access_token={access_token} userId={user.account.userId} />
+        {showAlert && (
+          <InfoAlert
+            access_token={access_token}
+            userId={user.account.userId}
+            notification={notification}
+            setNotification={setNotification}
+          />
+        )}
       </div>
 
       <div className="controls">
@@ -85,7 +92,7 @@ const Me = ({ user, toggleDrawer, access_token, t }) => {
   );
 };
 
-export default function Layout({ children, theme, app, setAppSider, ...props }) {
+export default function Layout({ match, children, theme, app, setAppSider, ...props }) {
   const [sider, setSider] = useState({
     collapsed: app.sider.collapsed,
     collapsedWidth: 80
@@ -138,7 +145,13 @@ export default function Layout({ children, theme, app, setAppSider, ...props }) 
       </Sider>
       <Main style={{ paddingLeft: sider.collapsed ? sider.collapsedWidth : siderWidth }}>
         <Header>
-          <Me {...props} toggleDrawer={toggleDrawer} t={t} />
+          <Me
+            {...props}
+            toggleDrawer={toggleDrawer}
+            t={t}
+            notification={app.notification}
+            match={match}
+          />
         </Header>
         <Content css="padding: 25px 18px;">
           {theme === 'boxed' ? <Box {...props}>{children}</Box> : children}

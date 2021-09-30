@@ -6,7 +6,8 @@ const {
   appSaveFilter,
   appRemoveFilter,
   appSetConfig,
-  appSetJourney
+  appSetJourney,
+  appSetNotification
 } = AppCreators;
 
 export const setSiderThunk = (state = {}) => dispatch => {
@@ -31,4 +32,8 @@ export const saveFilterThunk = (filterType, filter) => dispatch => {
 
 export const removeFilterThunk = (filterType, index) => dispatch => {
   dispatch(appRemoveFilter(filterType, index));
+};
+
+export const setNotificationThunk = notification => dispatch => {
+  dispatch(appSetNotification(notification));
 };

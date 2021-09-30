@@ -11,7 +11,7 @@ import { Creators as AppCreators } from '../app';
 const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { authSetErrorIdentify, authSetIdentify, authDelIdentify } = AuthCreators;
-const { appSetConfig, appSetCurrentVersion } = AppCreators;
+const { appSetConfig, appSetCurrentVersion, appSetNotification } = AppCreators;
 
 export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch => {
   dispatch(userSetLoginStart());
@@ -24,7 +24,7 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
     return;
   }
 
-  const { userId, userName, email, schema, roles, nameUrl, apiKey, ...identify } = data;
+  const { userId, userName, email, schema, roles, nameUrl, apiKey, notify, ...identify } = data;
   const user = {
     userId,
     userName,
@@ -42,6 +42,7 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
   dispatch(appSetCurrentVersion(appInfo.version));
   dispatch(userSetCurrentUser(user, keepMeLogged));
   dispatch(appSetConfig({ nameUrl, apiKey }));
+  dispatch(appSetNotification(notify));
 };
 
 export const logoutThunk = () => {
