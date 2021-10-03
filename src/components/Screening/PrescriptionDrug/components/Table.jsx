@@ -6,7 +6,7 @@ import Empty from '@components/Empty';
 import columnsTable, { expandedRowRender, solutionColumns, dietColumns } from '../../columns';
 import { rowClassName } from '../PrescriptionDrugList';
 
-function Table({ hasFilter, filter, bag, isFetching, emptyMessage, ds, listType }) {
+function Table({ hasFilter, filter, bag, isFetching, emptyMessage, ds, listType, showHeader }) {
   const [expandedRows, setExpandedRows] = useState([]);
 
   const updateExpandedRows = (list, key) => {
@@ -39,6 +39,7 @@ function Table({ hasFilter, filter, bag, isFetching, emptyMessage, ds, listType 
 
   return (
     <ExpandableTable
+      showHeader={showHeader}
       columns={getColumns()}
       pagination={false}
       loading={isFetching}

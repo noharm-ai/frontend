@@ -32,8 +32,9 @@ export const groupSolutions = (list, infusionList) => {
       source: 'Soluções',
       handleRowExpand: item.handleRowExpand,
       weight: item.weight,
-      infusion: infusionList[item.idPrescription][group],
-      emptyRow: true
+      infusion: infusionList[item.cpoe || item.idPrescription][group],
+      emptyRow: true,
+      cpoe: item.cpoe
     };
   };
 
@@ -48,7 +49,8 @@ export const groupProcedures = list => {
       key: `${key}expand`,
       source: 'Procedimentos',
       dividerRow: true,
-      emptyRow: true
+      emptyRow: true,
+      cpoe: item.cpoe
     };
   };
 

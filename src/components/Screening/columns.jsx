@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/macro';
 import isEmpty from 'lodash.isempty';
+import { format } from 'date-fns';
 
 import Icon, { InfoIcon } from '@components/Icon';
 import Button, { Link } from '@components/Button';
@@ -330,6 +331,22 @@ export const expandedRowRender = bag => record => {
           <Descriptions.Item label={bag.t('prescriptionDrugList.exrAlert')} span={3}>
             {showAlerts(record.alerts)}
           </Descriptions.Item>
+        )}
+        {record.cpoe && (
+          <>
+            <Descriptions.Item label={bag.t('prescriptionDrugList.panelPrescription')} span={3}>
+              {record.cpoe}
+            </Descriptions.Item>
+            <Descriptions.Item label={bag.t('prescriptionDrugList.panelPrescriber')} span={3}>
+              {bag.headers[record.cpoe].prescriber}
+            </Descriptions.Item>
+            <Descriptions.Item label={bag.t('prescriptionDrugList.panelIssueDate')} span={3}>
+              {format(new Date(bag.headers[record.cpoe].date), 'dd/MM/yyyy HH:mm')}
+            </Descriptions.Item>
+            <Descriptions.Item label={bag.t('prescriptionDrugList.panelValidUntil')} span={3}>
+              {format(new Date(bag.headers[record.cpoe].expire), 'dd/MM/yyyy HH:mm')}
+            </Descriptions.Item>
+          </>
         )}
         {!isEmpty(record.period) && (
           <Descriptions.Item label={bag.t('prescriptionDrugList.exrPeriod')} span={3}>

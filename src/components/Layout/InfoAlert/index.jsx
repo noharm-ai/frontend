@@ -1,33 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import Alert from '@components/Alert';
-import infoAlert from '@utils/infoAlert';
+import Icon from '@components/Icon';
+import Tooltip from '@components/Tooltip';
+import api from '@services/api';
+import { INFO_ALERT_MEMORY_TYPE } from '@utils/memory';
 
-export default function InfoAlert({ access_token, userId }) {
-  const [currentAlert, setCurrentAlert] = useState(null);
+import { MessageLink } from '../Layout.style';
 
-  useEffect(() => {
-    const hasAlert = async () => {
-      if (await infoAlert.hasAlert(access_token, userId)) {
-        setCurrentAlert(infoAlert.getAlert());
-      }
-    };
-
-    hasAlert();
-  }, []); // eslint-disable-line
-
+export default function InfoAlert({ access_token, userId, notification, setNotification }) {
   const onClose = () => {
-    infoAlert.gotIt(access_token, userId);
+    api.putMemory(access_token, {
+      type: `${INFO_ALERT_MEMORY_TYPE}-${notification.id}-${userId}`,
+      value: true
+    });
+    setNotification(null);
   };
 
-  if (!currentAlert) {
+  if (!notification) {
     return null;
   }
+
+  const message = (
+    <Tooltip title={notification.tooltip}>
+      <MessageLink
+        href={notification.link}
+        className={notification.classname}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => onClose()}
+      >
+        {notification.title} <Icon type={notification.icon} />
+      </MessageLink>
+    </Tooltip>
+  );
 
   return (
     <div style={{ marginLeft: '10px' }}>
       <Alert
-        message={currentAlert.message(onClose)}
+        message={message}
         type="info"
         closable
         style={{ paddingRight: '50px' }}

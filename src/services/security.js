@@ -15,6 +15,10 @@ const security = roles => {
     return hasRole('alert-bt');
   };
 
+  const hasCpoe = () => {
+    return hasRole('cpoe');
+  };
+
   const isAdmin = () => {
     return hasRole('admin');
   };
@@ -27,6 +31,7 @@ const security = roles => {
     hasRole,
     hasNoHarmCare,
     hasAlertIntegration,
+    hasCpoe,
     isAdmin,
     isSupport
   };
