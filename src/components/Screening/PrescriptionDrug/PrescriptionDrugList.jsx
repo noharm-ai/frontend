@@ -312,7 +312,6 @@ export default function PrescriptionDrugList({
       };
     }
   });
-  console.log('groups', groups);
 
   return (
     <>
