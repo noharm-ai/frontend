@@ -363,9 +363,14 @@ export const expandedRowRender = bag => record => {
           </Descriptions.Item>
         )}
         {record.prescriptionType === 'solutions' && (
-          <Descriptions.Item label={bag.t('prescriptionDrugList.exrTime')} span={3}>
-            {record.time}
-          </Descriptions.Item>
+          <>
+            <Descriptions.Item label={bag.t('prescriptionDrugList.exrTime')} span={3}>
+              {record.time}
+            </Descriptions.Item>
+            <Descriptions.Item label={bag.t('tableHeader.frequency')} span={3}>
+              {!isEmpty(record.frequency) && record.frequency.label}
+            </Descriptions.Item>
+          </>
         )}
         {record.doseWeight && (
           <Descriptions.Item label={bag.t('prescriptionDrugList.exrDoseKg')} span={3}>
