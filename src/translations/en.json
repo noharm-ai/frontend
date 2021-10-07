@@ -16,6 +16,10 @@
     "goBack": "Back",
     "iptSearch": "Search by prescription number"
   },
+  "error": {
+    "title": "Oops! Something wrong happened.",
+    "description": "Something happened that prevented us from showing you the data, please try again."
+  },
   "menu": {
     "prioritization": "Prioritization",
     "prioritization-prescription": "Prescriptions",
