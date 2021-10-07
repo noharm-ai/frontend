@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 
 import Alert from '@components/Alert';
 import { Row } from '@components/Grid';
@@ -11,12 +12,6 @@ import DefaultModal from '@components/Modal';
 
 import Base from './Base';
 import { FormContainer } from './Patient.style';
-
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description:
-    'Aconteceu algo que nos impediu de salvar os dados deste medicamento. Por favor, tente novamente.'
-};
 
 const saveMessage = {
   message: 'Uhu! Dados do paciente salvo com sucesso! :)'
@@ -41,6 +36,7 @@ export default function Patient({
   security,
   ...props
 }) {
+  const { t } = useTranslation();
   const { isSaving, success, error } = saveStatus;
   const hasNoHarmCare = security.hasNoHarmCare();
 
@@ -59,9 +55,12 @@ export default function Patient({
     }
 
     if (error) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [success, error, afterSavePatient]);
+  }, [success, error, afterSavePatient, t]);
 
   return (
     <Formik

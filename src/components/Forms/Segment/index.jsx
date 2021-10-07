@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { useTranslation } from 'react-i18next';
 
 import { Row } from '@components/Grid';
 import Button from '@components/Button';
@@ -9,12 +10,6 @@ import notification from '@components/notification';
 import Departments from './Departments';
 import { Footer } from './Segment.style';
 
-// error message when save has error.
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description:
-    'Aconteceu algo que nos impediu de salvar os dados deste segmento. Por favor, tente novamente.'
-};
 // save message when saved intervention.
 const saveMessage = {
   message: 'Uhu! Segmento salvo com sucesso! :)'
@@ -35,6 +30,7 @@ export default function Segment({
   segmentDepartments,
   firstFilter
 }) {
+  const { t } = useTranslation();
   const { isSaving, success, error } = saveStatus;
   const departmentsList = [...departments.list, ...segmentDepartments];
 
@@ -52,9 +48,12 @@ export default function Segment({
     }
 
     if (error) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [success, error, afterSaveSegment, fetchDepartments]);
+  }, [success, error, afterSaveSegment, fetchDepartments, t]);
 
   return (
     <Formik
@@ -69,7 +68,11 @@ export default function Segment({
             <Departments isFetching={departments.isFetching} list={departmentsList} />
           </Row>
           <Footer>
-            <Button type="primary gtm-bt-save-segment" htmlType="submit" disabled={isSaving || !isValid}>
+            <Button
+              type="primary gtm-bt-save-segment"
+              htmlType="submit"
+              disabled={isSaving || !isValid}
+            >
               Salvar
             </Button>
           </Footer>

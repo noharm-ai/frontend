@@ -18,7 +18,7 @@
   },
   "error": {
     "title": "Ops! Algo de errado aconteceu.",
-    "description": "Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente."
+    "description": "Aconteceu algo que nos impediu de executar esta operação, por favor, tente novamente."
   },
   "menu": {
     "prioritization": "Priorização",

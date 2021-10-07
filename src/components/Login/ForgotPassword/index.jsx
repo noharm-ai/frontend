@@ -45,13 +45,11 @@ export default function ForgotPassword({ forgotPassword, status }) {
   useEffect(() => {
     if (error) {
       notification.error({
-        message: 'Ops! Algo de errado aconteceu.',
-        description:
-          error.message ||
-          'Aconteceu algo que nos impediu de salvar os dados. Por favor, tente novamente.'
+        message: t('error.title'),
+        description: error.message || t('error.description')
       });
     }
-  }, [error]);
+  }, [error, t]);
 
   return (
     <>

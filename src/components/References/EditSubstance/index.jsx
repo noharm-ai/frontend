@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Row, Col } from '@components/Grid';
 import { Select } from '@components/Inputs';
@@ -9,12 +10,6 @@ import Icon from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 
 import FormSubstance from '@containers/Forms/Substance';
-
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description:
-    'Aconteceu algo que nos impediu de salvar os dados deste medicamento. Por favor, tente novamente.'
-};
 
 const saveMessage = {
   message: 'Uhu! Substância alterada com sucesso! :)'
@@ -34,6 +29,7 @@ export default function EditSubstance({
   selectSubstance,
   fetchRelations
 }) {
+  const { t } = useTranslation();
   const [isFormVisible, setFormVisibility] = useState(false);
   const [currentSubstance, setCurrentSubstance] = useState({});
   const { isSaving, error, success } = saveStatus;
@@ -52,9 +48,12 @@ export default function EditSubstance({
     }
 
     if (error) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [success, error, fetchRelations]);
+  }, [success, error, fetchRelations, t]);
 
   const onCancelForm = () => {
     setFormVisibility(false);

@@ -23,11 +23,6 @@ import { BoxWrapper, ScreeningTabs } from './index.style';
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
 
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
-};
-
 export default function Screening({ match, fetchScreeningById, isFetching, content, error }) {
   const id = extractId(match.params.slug);
   const {
@@ -43,9 +38,12 @@ export default function Screening({ match, fetchScreeningById, isFetching, conte
   // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [error]);
+  }, [error, t]);
 
   const listCount = {
     prescriptions: prescriptionCount,

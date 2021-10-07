@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/macro';
 import debounce from 'lodash.debounce';
+import { useTranslation } from 'react-i18next';
 
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
@@ -11,7 +12,6 @@ import notification from '@components/notification';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import Tag from '@components/Tag';
-import { useTranslation } from 'react-i18next';
 import { InfoIcon } from '@components/Icon';
 import BackTop from '@components/BackTop';
 import { Input } from '@components/Inputs';

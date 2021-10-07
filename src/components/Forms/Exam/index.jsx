@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { useTranslation } from 'react-i18next';
 
 import { Row } from '@components/Grid';
 import notification from '@components/notification';
@@ -9,12 +10,6 @@ import DefaultModal from '@components/Modal';
 
 import Base from './Base';
 import { FormContainer } from '../Form.style';
-
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description:
-    'Aconteceu algo que nos impediu de salvar os dados deste exame. Por favor, tente novamente.'
-};
 
 const saveMessage = {
   message: 'Uhu! Exame salvo com sucesso! :)'
@@ -37,6 +32,7 @@ export default function Exam({
   examList,
   ...props
 }) {
+  const { t } = useTranslation();
   const { isSaving, success, error, item } = saveStatus;
   const { order, ...data } = item;
 
@@ -53,9 +49,12 @@ export default function Exam({
     }
 
     if (error) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [success, error, afterSave]);
+  }, [success, error, afterSave, t]);
 
   useEffect(() => {
     fetchExamTypes();

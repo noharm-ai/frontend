@@ -16,12 +16,6 @@ import Base from './Base';
 import PatientData from './PatientData';
 import DrugData from './DrugData';
 
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description:
-    'Aconteceu algo que nos impediu de salvar os dados desta intervenção. Por favor, tente novamente.'
-};
-
 const saveMessage = {
   message: 'Uhu! Intervenção salva com sucesso! :)'
 };
@@ -76,9 +70,12 @@ export default function Intervention({
   // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [error]);
+  }, [error, t]);
 
   useEffect(() => {
     if (visible) {

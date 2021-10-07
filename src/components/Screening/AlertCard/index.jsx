@@ -9,6 +9,11 @@ import { AlertContainer } from './index.style';
 
 export default function AlertCard({ stats }) {
   const { t } = useTranslation();
+
+  if (!stats) {
+    return null;
+  }
+
   const alerts = [
     {
       label: t('alerts.y'),

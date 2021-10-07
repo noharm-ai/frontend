@@ -2,18 +2,15 @@ import React, { useEffect } from 'react';
 import 'styled-components/macro';
 import isEmpty from 'lodash.isempty';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import LoadBox from '@components/LoadBox';
 import notification from '@components/notification';
 import { Row, Col } from '@components/Grid';
 import Widget from './Widget';
 
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
-};
-
 export default function Reports({ reports, select, fetchList }) {
+  const { t } = useTranslation();
   const history = useHistory();
   const { isFetching, list, error } = reports;
   const showReport = reportData => {
@@ -27,9 +24,12 @@ export default function Reports({ reports, select, fetchList }) {
   // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [error]);
+  }, [error, t]);
 
   if (isFetching) {
     return <LoadBox />;
@@ -39,7 +39,13 @@ export default function Reports({ reports, select, fetchList }) {
     <Row type="flex" gutter={[20, 20]}>
       {list.map((reportData, index) => (
         <Col key={index} span={24} md={12} lg={8}>
-          <Widget css="height: 100%;" reportData={reportData} showReport={showReport} id={index} className="gtm-report-item" />
+          <Widget
+            css="height: 100%;"
+            reportData={reportData}
+            showReport={showReport}
+            id={index}
+            className="gtm-report-item"
+          />
         </Col>
       ))}
     </Row>

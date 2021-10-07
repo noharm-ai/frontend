@@ -2,6 +2,7 @@ import 'styled-components/macro';
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useTranslation } from 'react-i18next';
 
 import { setErrorClassName } from '@utils/form';
 
@@ -23,6 +24,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function Password({ resetPassword, match, status }) {
+  const { t } = useTranslation();
   const [passwordChanged, setPasswordChanged] = useState(false);
   const { isSaving, success, error } = status;
   const initialValues = {
@@ -47,13 +49,11 @@ export default function Password({ resetPassword, match, status }) {
   useEffect(() => {
     if (error) {
       notification.error({
-        message: 'Ops! Algo de errado aconteceu.',
-        description:
-          error.message ||
-          'Aconteceu algo que nos impediu de salvar os dados. Por favor, tente novamente.'
+        message: t('error.title'),
+        description: error.message || t('error.description')
       });
     }
-  }, [error]);
+  }, [error, t]);
 
   return (
     <Wrapper as="form">

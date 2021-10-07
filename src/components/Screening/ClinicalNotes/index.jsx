@@ -94,12 +94,11 @@ export default function ClinicalNotes({
 
     if (saveStatus.error) {
       notification.error({
-        message: 'Ops! Algo de errado aconteceu.',
-        description:
-          'Aconteceu algo que nos impediu de salvar os dados desta anotação. Por favor, tente novamente.'
+        message: t('error.title'),
+        description: t('error.description')
       });
     }
-  }, [saveStatus]);
+  }, [saveStatus, t]);
 
   useEffect(() => {
     setFilteredList(filterList(list, false, selectedPositions, selectedIndicators));
