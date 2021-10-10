@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Formik } from 'formik';
 import isEmpty from 'lodash.isempty';
+import { useTranslation } from 'react-i18next';
 
 import { Row, Col } from '@components/Grid';
 import Button from '@components/Button';
@@ -9,12 +10,6 @@ import Icon from '@components/Icon';
 
 import Base from './Base';
 import { Footer, FormContainer } from './Drug.style';
-
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description:
-    'Aconteceu algo que nos impediu de salvar os dados deste medicamento. Por favor, tente novamente.'
-};
 
 const saveMessage = {
   message: 'Uhu! Medicamento salvo com sucesso! :)'
@@ -33,6 +28,7 @@ export default function Drug({
   fetchReferencesList,
   match
 }) {
+  const { t } = useTranslation();
   const { isSaving, success, error } = saveStatus;
   const {
     idDrug,
@@ -103,9 +99,12 @@ export default function Drug({
     }
 
     if (error) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [success, error, afterSaveDrug, fetchReferencesList, match.params]);
+  }, [success, error, afterSaveDrug, fetchReferencesList, match.params, t]);
 
   return (
     <Formik enableReinitialize onSubmit={saveDrug} initialValues={initialValues}>

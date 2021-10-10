@@ -17,11 +17,6 @@ import FormClinicalAlert from '@containers/Forms/ClinicalAlert';
 
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
-// error message when fetch has error.
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
-};
 
 const close = () => {
   window.close();
@@ -133,9 +128,12 @@ export default function PageHeader({ match, prescription, type, checkScreening, 
   // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [error]);
+  }, [error, t]);
 
   if (!prescription.content.idPrescription) {
     return null;

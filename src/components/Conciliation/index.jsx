@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import isEmpty from 'lodash.isempty';
+import { useTranslation } from 'react-i18next';
 
 import Empty from '@components/Empty';
 import LoadBox from '@components/LoadBox';
@@ -13,20 +14,19 @@ import ConciliationDrugList from '@containers/Conciliation/ConciliationDrugList'
 
 import { BoxWrapper } from './index.style';
 
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
-};
-
 export default function Screening({ match, fetchScreeningById, isFetching, error }) {
+  const { t } = useTranslation();
   const { id } = match.params;
 
   // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [error]);
+  }, [error, t]);
 
   // fetch data
   useEffect(() => {

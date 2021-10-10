@@ -45,6 +45,15 @@ const Me = ({ user, toggleDrawer, access_token, t, notification, setNotification
 
   const showAlert = match.path.indexOf('priorizacao') !== -1;
 
+  const openHelp = () => {
+    try {
+      octadesk.chat.toggle();
+    } catch (ex) {
+      console.error('octadesk error', ex);
+      window.open(`mailto:${process.env.REACT_APP_SUPPORT_EMAIL}`);
+    }
+  };
+
   return (
     <div
       css="
@@ -77,11 +86,7 @@ const Me = ({ user, toggleDrawer, access_token, t, notification, setNotification
         <Avatar size={44} icon="user" css="margin-right: 12px !important;" />
         <UserName>{setTitle({ user })}</UserName>
 
-        <LogOut
-          onClick={e => octadesk.chat.toggle()}
-          id="gtm-lnk-ajuda"
-          style={{ marginRight: '12px' }}
-        >
+        <LogOut onClick={openHelp} id="gtm-lnk-ajuda" style={{ marginRight: '12px' }}>
           {t('layout.help')}
         </LogOut>
         <LogOut onClick={e => octadesk.chat.hideApp()} href="/logout" id="gtm-lnk-sair">

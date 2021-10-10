@@ -20,11 +20,12 @@ export default function ExamCard({ exams, siderCollapsed, count }) {
       </div>
       <div className="content">
         <div className="exam-list">
-          {exams.map(exam => (
-            <div className="exam-item" key={exam.key}>
-              <ExamListItem exam={exam} siderCollapsed={siderCollapsed} />
-            </div>
-          ))}
+          {exams &&
+            exams.map(exam => (
+              <div className="exam-item" key={exam.key}>
+                <ExamListItem exam={exam} siderCollapsed={siderCollapsed} />
+              </div>
+            ))}
         </div>
       </div>
       <div className="footer">

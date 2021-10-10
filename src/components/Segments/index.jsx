@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import isEmpty from 'lodash.isempty';
 import { Row, Col } from 'antd';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
+import { useTranslation } from 'react-i18next';
 
 import Tabs from '@components/Tabs';
 import Button from '@components/Button';
@@ -44,6 +45,7 @@ function Segments({
   sortStatus,
   access_token
 }) {
+  const { t } = useTranslation();
   const [enableSortExams, setEnableSortExams] = useState(true);
   const [examModalVisible, setExamModalVisibility] = useState(false);
   const [progressModalVisible, setProgressModalVisibility] = useState(false);
@@ -103,9 +105,8 @@ function Segments({
         }, 1000);
       } else {
         notification.error({
-          message: 'Ops! Algo de errado aconteceu.',
-          description:
-            'Aconteceu algo que nos impediu de gerar os escores. Por favor, tente novamente.'
+          message: t('error.title'),
+          description: t('error.description')
         });
         setProgressModalVisibility(false);
         resetGenerate();
@@ -116,17 +117,16 @@ function Segments({
       setProgressModalVisibility(true);
       startOutliersGeneration();
     }
-  }, [access_token, generate, resetGenerate]);
+  }, [access_token, generate, resetGenerate, t]);
 
   useEffect(() => {
     if (sortStatus.error) {
       notification.error({
-        message: 'Ops! Algo de errado aconteceu.',
-        description:
-          'Aconteceu algo que nos impediu de salvar a ordem dos exames. Por favor, tente novamente.'
+        message: t('error.title'),
+        description: t('error.description')
       });
     }
-  }, [sortStatus.error]);
+  }, [sortStatus.error, t]);
 
   const onShowExamModal = data => {
     selectExam(data);

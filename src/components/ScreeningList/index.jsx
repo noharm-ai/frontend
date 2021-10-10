@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/macro';
 import debounce from 'lodash.debounce';
+import { useTranslation } from 'react-i18next';
 
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
@@ -11,7 +12,6 @@ import notification from '@components/notification';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import Tag from '@components/Tag';
-import { useTranslation } from 'react-i18next';
 import { InfoIcon } from '@components/Icon';
 import BackTop from '@components/BackTop';
 import { Input } from '@components/Inputs';
@@ -61,11 +61,6 @@ const TableInfo = styled.span`
   }
 `;
 
-// error message when fetch has error.
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
-};
 const noop = () => {};
 const theTitle = () => 'Deslize para a direita para ver mais conteúdo.';
 
@@ -103,6 +98,12 @@ export default function ScreeningList({
 
   const { t } = useTranslation();
 
+  // error message when fetch has error.
+  const errorMessage = {
+    message: t('error.title'),
+    description: t('error.description')
+  };
+
   // empty text for table result.
   const emptyText = (
     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('screeningList.empty')} />
@@ -124,11 +125,12 @@ export default function ScreeningList({
   }, [fetchSegmentsList]);
 
   // show message if has error
+
   useEffect(() => {
     if (!isEmpty(error)) {
       notification.error(errorMessage);
     }
-  }, [error]);
+  }, [error]); // eslint-disable-line
 
   useEffect(() => {
     setFilter({ ...filter, searchKey: null });

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { useTranslation } from 'react-i18next';
 
 import { Row } from '@components/Grid';
 import notification from '@components/notification';
@@ -10,12 +11,6 @@ import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from '@utils/memory';
 
 import Base from './Base';
 import { FormContainer } from '../Form.style';
-
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description:
-    'Aconteceu algo que nos impediu de salvar os dados desta evolução. Por favor, tente novamente.'
-};
 
 const saveMessage = {
   message: 'Uhu! Evolução salva com sucesso! :)'
@@ -45,6 +40,7 @@ export default function ClinicalNotes({
   visible,
   ...props
 }) {
+  const { t } = useTranslation();
   const { isSaving, success, error, data } = prescription;
   const initialValues = {
     formId,
@@ -69,7 +65,10 @@ export default function ClinicalNotes({
     }
 
     if (error) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
   }, [success, error]); // eslint-disable-line
 

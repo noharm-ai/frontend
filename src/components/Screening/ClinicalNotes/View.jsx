@@ -72,6 +72,7 @@ export default function View({ selected, update, security, access_token, userId 
     close.appendChild(document.createTextNode('X'));
 
     elm.setAttribute('class', `annotation annotation-${option.key}`);
+    elm.setAttribute('update_by', userId);
     elm.appendChild(content);
     elm.appendChild(close);
 

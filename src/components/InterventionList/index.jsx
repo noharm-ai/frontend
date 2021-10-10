@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/macro';
+import { useTranslation } from 'react-i18next';
 
 import Empty from '@components/Empty';
 import LoadBox from '@components/LoadBox';
@@ -15,11 +16,6 @@ import BackTop from '@components/BackTop';
 import { Select } from '@components/Inputs';
 import { uniqBy, intersection } from '@utils/lodash';
 import { toDataSource } from '@utils';
-
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
-};
 
 const TableInfo = styled.div`
   background: #eff1f4;
@@ -51,6 +47,7 @@ export default function InterventionList({
   fetchReasonsList,
   reasons
 }) {
+  const { t } = useTranslation();
   const [visible, setVisibility] = useState(false);
   const [prescriberList, setPrescriberList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
@@ -100,9 +97,12 @@ export default function InterventionList({
   // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [error]);
+  }, [error, t]);
 
   const afterSaveIntervention = item => {
     updateList(item);

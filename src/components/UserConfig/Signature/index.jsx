@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
@@ -11,6 +12,7 @@ import notification from '@components/notification';
 import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from '@utils/memory';
 
 export default function Signature({ fetchMemory, saveMemory, memory, userId }) {
+  const { t } = useTranslation();
   const [signature, setSignature] = useState('');
   const { isFetching, list: memoryData } = memory;
   const { isSaving, success, error } = memory.save;
@@ -33,12 +35,11 @@ export default function Signature({ fetchMemory, saveMemory, memory, userId }) {
   useEffect(() => {
     if (error) {
       notification.error({
-        message: 'Ops! Algo de errado aconteceu.',
-        description:
-          'Aconteceu algo que nos impediu de salvar os dados desta assinatura. Por favor, tente novamente.'
+        message: t('error.title'),
+        description: t('error.description')
       });
     }
-  }, [error]);
+  }, [error, t]);
 
   const save = () => {
     saveMemory(SIGNATURE_STORE_ID, {

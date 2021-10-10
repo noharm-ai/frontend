@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash.isempty';
 import { Row, Col } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 import breakpoints from '@styles/breakpoints';
 import { useMedia } from '@lib/hooks';
@@ -30,11 +31,7 @@ import DrugForm from '@containers/Forms/Drug';
 const emptyText = (
   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Nenhum dado encontrado." />
 );
-// error message when fetch has error.
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description: 'Aconteceu algo que nos impediu de lhe mostrar os dados, por favor, tente novamente.'
-};
+
 const saveObsMessage = {
   message: 'Uhu! Outlier atualizado com sucesso! :)'
 };
@@ -56,6 +53,7 @@ export default function References({
   updateDrugData,
   ...restProps
 }) {
+  const { t } = useTranslation();
   const {
     isFetching,
     list,
@@ -133,9 +131,12 @@ export default function References({
   // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [error]);
+  }, [error, t]);
 
   useEffect(() => {
     if (!isEmpty(generateStatus.error)) {
@@ -184,9 +185,12 @@ export default function References({
     }
 
     if (outliers.saveStatus.error) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [outliers.saveStatus.success, outliers.saveStatus.error]);
+  }, [outliers.saveStatus.success, outliers.saveStatus.error, t]);
 
   useEffect(() => {
     if (saveRelation.success) {
@@ -195,9 +199,12 @@ export default function References({
     }
 
     if (saveRelation.error) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
     }
-  }, [saveRelation.success, saveRelation.error]);
+  }, [saveRelation.success, saveRelation.error, t]);
 
   const convFreq = frequency => {
     switch (frequency) {

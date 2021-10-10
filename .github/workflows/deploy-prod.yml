@@ -27,6 +27,7 @@ jobs:
         REACT_APP_PRISMIC_API_URL: ${{ secrets.REACT_APP_PRISMIC_API_URL }}
         REACT_APP_PRISMIC_TOKEN: ${{ secrets.REACT_APP_PRISMIC_TOKEN }}
         REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
+        REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
     - name: yarn test
       uses: borales/actions-yarn@v2.0.0
       with:
