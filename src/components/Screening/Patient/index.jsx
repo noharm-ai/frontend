@@ -81,8 +81,8 @@ export default function Patient({
   const [seeMore, setSeeMore] = useState(false);
   const { t } = useTranslation();
 
-  const hasClinicalNotes = security.hasNoHarmCare();
-  const hasAIData = hasClinicalNotes && (notesSigns !== '' || notesInfo !== '');
+  const hasNoHarmCare = security.hasNoHarmCare();
+  const hasAIData = hasNoHarmCare && (notesSigns !== '' || notesInfo !== '');
 
   const showInterventionModal = () => {
     selectIntervention({
@@ -262,7 +262,7 @@ export default function Patient({
               </>
             )}
             {!weight && t('patientCard.notAvailable')}
-            {hasClinicalNotes && notesInfo && (
+            {hasNoHarmCare && notesInfo && (
               <>
                 <PopoverWelcome
                   content={
@@ -299,7 +299,7 @@ export default function Patient({
             ) : (
               t('patientCard.notAvailable')
             )}
-            {hasClinicalNotes && notesInfo && (
+            {hasNoHarmCare && notesInfo && (
               <>
                 <PopoverWelcome
                   content={
@@ -359,7 +359,7 @@ export default function Patient({
                   <RichTextView text={observation} />
                 </div>
               </Cell>
-              {hasClinicalNotes && (
+              {hasNoHarmCare && (
                 <>
                   <Cell className="experimental">
                     <strong>
@@ -436,12 +436,12 @@ export default function Patient({
       </Col>
       <Col xl={6} xxl={5}>
         <AlertCard stats={alertStats} />
-        {hasClinicalNotes && (
+        {clinicalNotes > 0 && (
           <div style={{ marginTop: '10px' }}>
             <ClinicalNotesCard stats={clinicalNotesStats} total={clinicalNotes} />
           </div>
         )}
-        {!hasClinicalNotes && (
+        {!clinicalNotes && (
           <div style={{ marginTop: '10px' }}>
             <PrescriptionCard style={{ minHeight: '113px' }}>
               <div className="header">
