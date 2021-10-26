@@ -29,7 +29,8 @@
     "knowledgeBase": "Knowledge Base",
     "userConfig": "User",
     "exams": "Lab exams",
-    "user-administration": "Registration"
+    "user-administration": "Registration",
+    "reg-administration": "User registration"
   },
   "screeningList": {
     "empty": "No records found",

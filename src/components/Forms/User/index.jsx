@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { useTranslation } from 'react-i18next';
 
 import { Row } from '@components/Grid';
 import notification from '@components/notification';
@@ -21,12 +22,16 @@ const saveMessage = {
 };
 const validationSchema = Yup.object().shape({
   name: Yup.string().required(),
-  email: Yup.string().required()
+  email: Yup.string()
+  .email('Ops! Formato de email inválido.')
+  .required('Você se esqueceu de inserir o seu email.')
 });
+
 
 export default function User({ saveStatus, save, afterSaveUser, user, ...props }) {
   const { isSaving, success, error } = saveStatus;
   const { ...data } = user.content;
+  const { t, i18n } = useTranslation();
 
   const initialValues = {
     ...data
@@ -69,7 +74,7 @@ export default function User({ saveStatus, save, afterSaveUser, user, ...props }
           }}
         >
           <header>
-            <Heading margin="0 0 11px">Exame</Heading>
+            <Heading margin="0 0 11px">{t('menu.userConfig')}</Heading>
           </header>
           <form onSubmit={handleSubmit}>
             <FormContainer>
@@ -86,12 +91,12 @@ export default function User({ saveStatus, save, afterSaveUser, user, ...props }
 
 User.defaultProps = {
   afterSaveUser: () => {
-    console.log('teste');
   },
   initialValues: {
     email: '',
     name: '',
     external: '',
+    id: '',
     active: true
   }
 };

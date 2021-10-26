@@ -29,7 +29,8 @@
     "knowledgeBase": "Base de Conhecimento",
     "userConfig": "Usuário",
     "exams": "Exames",
-    "user-administration": "Cadastro"
+    "user-administration": "Cadastro",
+    "reg-administration": "Cadastro de Usuários"
   },
   "screeningList": {
     "empty": "Nenhum registro encontrado",

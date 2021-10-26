@@ -8,6 +8,7 @@ export { ReactComponent as segments } from './segments.svg';
 export { ReactComponent as star } from './star.svg';
 export { ReactComponent as table } from './table.svg';
 export { ReactComponent as user } from './user.svg';
+//export { ReactComponent as userAdmin } from './userAdmin.svg';
 export { ReactComponent as interactionAlert } from './interactionAlert.svg';
 export { ReactComponent as maxDose } from './max_dose.svg';
 export { ReactComponent as elderly } from './elderly.svg';

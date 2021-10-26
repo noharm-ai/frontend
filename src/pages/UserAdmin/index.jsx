@@ -3,7 +3,7 @@ import UserAdmin from '@containers/UserAdmin';
 
 const layoutProps = {
   theme: 'boxed',
-  pageTitle: 'menu.exams'
+  pageTitle: 'menu.reg-administration'
 };
 
 export default withLayout(UserAdmin, layoutProps);

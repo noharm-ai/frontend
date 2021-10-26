@@ -12,6 +12,7 @@ import './index.css';
 import LoadBox from '@components/LoadBox';
 import { toDataSource } from '@utils';
 import FormUserModal from '@containers/Forms/User';
+import { add } from 'lodash';
 
 const emptyText = (
   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Nenhum dado encontrado." />

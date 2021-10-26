@@ -1,6 +1,7 @@
 import React from 'react';
 import 'styled-components/macro';
 import { useFormikContext } from 'formik';
+import { Alert } from 'antd';
 
 import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
@@ -10,9 +11,9 @@ import Tooltip from '@components/Tooltip';
 
 import { Box } from '../Form.style';
 
-export default function Base({}) {
+export default function Base({ addUser }) {
   const { values, setFieldValue, errors } = useFormikContext();
-  const { name, email, external, active } = values;
+  const { name, email, external, active, id } = values;
   const layout = { label: 8, input: 16 };
 
   return (
@@ -43,13 +44,29 @@ export default function Base({}) {
         </Col>
         <Col xs={layout.input}>
           <Input
+            name="email"
+            type="email"
+            value={values.email}
             style={{
               marginLeft: 10
             }}
             value={email}
             onChange={({ target }) => setFieldValue('email', target.value)}
             maxLength={50}
-          />
+          /> 
+        
+          {
+            id &&
+            <Alert message="Ao alterar o email a senha será resetada"
+              banner
+              closable
+              style={{
+                marginTop: 10,
+                marginLeft: 10
+              }}
+            />
+          }
+
         </Col>
       </Box>
 
