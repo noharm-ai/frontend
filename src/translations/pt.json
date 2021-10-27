@@ -20,6 +20,11 @@
     "title": "Ops! Algo de errado aconteceu.",
     "description": "Aconteceu algo que nos impediu de executar esta operação, por favor, tente novamente."
   },
+  "success": {
+    "intervention": "Uhu! Intervenção salva com sucesso! :)",
+    "defaultObservation": "Uhu! Observação modelo salva com sucesso!",
+    "applyDefaultObservation": "Observação modelo aplicada com sucesso!"
+  },
   "menu": {
     "prioritization": "Priorização",
     "prioritization-prescription": "por Prescrições",
@@ -278,9 +283,14 @@
     "title": "Intervenção",
 
     "labelPrescriptionError": "Possível erro de prescrição",
+    "labelPrescriptionErrorHint": "Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa",
     "labelCostReduction": "Reduz custo",
+    "labelCostReductionHint": "Esta intervenção gera redução de custo?",
     "labelReasons": "Motivos",
+    "labelReasonsPlaceholder": "Selecione os motivos...",
+    "labelReasonsHint": "Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica abrem a opção de informar os medicamentos relacionados",
     "labelRelations": "Relações",
+    "labelRelationsHint": "Lista de medicamentos com Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica",
     "labelObservations": "Observações",
 
     "btnModelEmpty": "Este motivo ainda não possui um modelo salvo",
@@ -317,5 +327,9 @@
     "alergy": "Alergia",
     "tube": "Medicamento contraindicado por sonda",
     "duplicate": "Duplicidade"
+  },
+
+  "validation": {
+    "requiredField": "Campo obrigatório"
   }
 }

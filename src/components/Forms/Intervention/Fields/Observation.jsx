@@ -30,9 +30,9 @@ export default function Observations({
 
   useEffect(() => {
     if (memory.save.success) {
-      notification.success({ message: 'Uhu! Observação modelo salva com sucesso!' });
+      notification.success({ message: t('success.defaultObservation') });
     }
-  }, [memory.save.success]);
+  }, [memory.save.success, t]);
 
   const saveDefaultText = () => {
     const payload = {
@@ -48,7 +48,7 @@ export default function Observations({
 
   const loadDefaultText = () => {
     setFieldValue('observation', memory.list[0].value.text);
-    notification.success({ message: 'Observação modelo aplicada com sucesso!' });
+    notification.success({ message: t('success.applyDefaultObservation') });
   };
 
   const onEdit = observation => {

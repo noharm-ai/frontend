@@ -16,16 +16,6 @@ import Base from './Base';
 import PatientData from './PatientData';
 import DrugData from './DrugData';
 
-const saveMessage = {
-  message: 'Uhu! Intervenção salva com sucesso! :)'
-};
-const requiredFieldMessage = 'Campo obrigatório';
-const validationSchema = Yup.object().shape({
-  idInterventionReason: Yup.string()
-    .nullable()
-    .required(requiredFieldMessage)
-});
-
 export default function Intervention({
   intervention,
   reasons,
@@ -51,13 +41,21 @@ export default function Intervention({
   const { t } = useTranslation();
   const { isSaving, wasSaved, item } = intervention;
 
+  const validationSchema = Yup.object().shape({
+    idInterventionReason: Yup.string()
+      .nullable()
+      .required(t('validation.requiredField'))
+  });
+
   // handle after save intervention.
   useEffect(() => {
     if (wasSaved && visible) {
       reset();
       setVisibility(false);
 
-      notification.success(saveMessage);
+      notification.success({
+        message: t('success.intervention')
+      });
     }
   }, [wasSaved, reset, item, updateInterventionData, setVisibility, visible]); // eslint-disable-line
 
@@ -169,7 +167,7 @@ export default function Intervention({
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">Intervenção</Heading>
+            <Heading margin="0 0 11px">{t('interventionForm.title')}</Heading>
           </header>
           {(item.intervention.id === 0 || item.intervention.idPrescriptionDrug === 0) && (
             <PatientData {...item} />

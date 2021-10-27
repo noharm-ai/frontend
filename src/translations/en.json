@@ -20,6 +20,11 @@
     "title": "Oops! Something wrong happened.",
     "description": "Something happened that prevented us from showing you the data, please try again."
   },
+  "success": {
+    "intervention": "Yeah! Your Intervention has been saved! :)",
+    "defaultObservation": "Yeah! Your Observation has been saved!",
+    "applyDefaultObservation": "Observation applied"
+  },
   "menu": {
     "prioritization": "Prioritization",
     "prioritization-prescription": "Prescriptions",
@@ -278,9 +283,14 @@
     "title": "Intervention",
 
     "labelPrescriptionError": "Prescription error",
+    "labelPrescriptionErrorHint": "Prescribing error with clinical significance is defined as an unintentional decision error that may reduce the likelihood that the treatment will be effective or increase the risk of injury to the patient, when compared to established and accepted clinical practices. Ref: CFF, Prot.: MS and Anvisa",
     "labelCostReduction": "Cost reduction",
+    "labelCostReductionHint": "This intervention reduces cost?",
     "labelReasons": "Reasons",
+    "labelReasonsPlaceholder": "Select reasons...",
+    "labelReasonsHint": "Interactions, Incompatibilities, Duplicity and/or Pharmaceutical Form open the option to inform related drugs",
     "labelRelations": "Relations",
+    "labelRelationsHint": "List of drugs with Interactions, Incompatibilities, Duplicity and/or Pharmaceutical Form",
     "labelObservations": "Observations",
 
     "btnModelEmpty": "No observation saved for this reason",
@@ -316,5 +326,9 @@
     "alergy": "Alergy",
     "tube": "Drug contraindicate by tube",
     "duplicate": "Duplicity"
+  },
+
+  "validation": {
+    "requiredField": "Required field"
   }
 }
