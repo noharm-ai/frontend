@@ -51,8 +51,10 @@ export default function View({ selected, update, security, access_token, userId 
       }
     };
 
-    shouldShowWelcome();
-  }, [access_token, userId]);
+    if (security.hasNoHarmCare()) {
+      shouldShowWelcome();
+    }
+  }, [access_token, userId, security]);
 
   const gotIt = () => {
     annotationManifest.gotIt(access_token, userId);
@@ -236,13 +238,15 @@ export default function View({ selected, update, security, access_token, userId 
         </>
       </PaperContainer>
       <Legend>* Nomes presentes na evolução são substituídos por três asteriscos (***).</Legend>
-      <Legend>
-        * As anotações são geradas pela <strong>NoHarm Care</strong>.{' '}
-        <a href={helpLink} target="_blank" rel="noopener noreferrer" title="Saiba como ajudar">
-          Você pode ajudar a treiná-la
-        </a>
-        .
-      </Legend>
+      {security.hasNoHarmCare() && (
+        <Legend>
+          * As anotações são geradas pela <strong>NoHarm Care</strong>.{' '}
+          <a href={helpLink} target="_blank" rel="noopener noreferrer" title="Saiba como ajudar">
+            Você pode ajudar a treiná-la
+          </a>
+          .
+        </Legend>
+      )}
     </>
   );
 }
