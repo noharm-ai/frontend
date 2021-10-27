@@ -290,6 +290,7 @@
     "labelReasonsPlaceholder": "Selecione os motivos...",
     "labelReasonsHint": "Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica abrem a opção de informar os medicamentos relacionados",
     "labelRelations": "Relações",
+    "labelRelationsPlaceholder": "Selecione as relações...",
     "labelRelationsHint": "Lista de medicamentos com Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica",
     "labelObservations": "Observações",
 

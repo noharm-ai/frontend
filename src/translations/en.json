@@ -290,6 +290,7 @@
     "labelReasonsPlaceholder": "Select reasons...",
     "labelReasonsHint": "Interactions, Incompatibilities, Duplicity and/or Pharmaceutical Form open the option to inform related drugs",
     "labelRelations": "Relations",
+    "labelRelationsPlaceholder": "Select relations...",
     "labelRelationsHint": "List of drugs with Interactions, Incompatibilities, Duplicity and/or Pharmaceutical Form",
     "labelObservations": "Observations",
 
