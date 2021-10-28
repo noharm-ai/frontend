@@ -2,32 +2,32 @@ export default {
   getClosedStatuses: () => {
     return ['a', 'n', 'x', 'j'];
   },
-  translate: status => {
+  translate: (status, t) => {
     switch (status) {
       case 'a':
         return {
-          label: 'Aceita',
+          label: t('interventionStatus.a'),
           color: 'green'
         };
 
       case 'n':
         return {
-          label: 'Não aceita',
+          label: t('interventionStatus.n'),
           color: 'red'
         };
       case 'j':
         return {
-          label: 'Não aceita com Justificativa',
+          label: t('interventionStatus.j'),
           color: 'red'
         };
       case 'x':
         return {
-          label: 'Não se aplica',
+          label: t('interventionStatus.x'),
           color: null
         };
       case 's':
         return {
-          label: 'Pendente',
+          label: t('interventionStatus.s'),
           color: 'orange'
         };
       default:

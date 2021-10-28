@@ -208,9 +208,12 @@
     "interventions": "Interventions",
     "pending": "Pending",
     "pendingPlural": "Pending",
-    "options": "Options"
+    "options": "Options",
+    "prescription": "Prescription"
   },
   "labels": {
+    "yes": "Yes",
+    "no": "No",
     "role": "Role",
     "rolePlaceholderFilter": "Filter by role",
     "indicator": "Indicator",
@@ -218,7 +221,19 @@
     "checkedBy": "Checked by",
     "checkPrescription": "Check prescription",
     "openPrescription": "Open prescription",
-    "undoCheckPrescription": "Undo check"
+    "undoCheckPrescription": "Undo check",
+    "nextPrescription": "Next prescription",
+    "showNextPrescription": "Show next prescription",
+    "potentialPrescriptionError": "Potential prescription error",
+    "reducesCost": "Reduces cost",
+    "reasons": "Reasons",
+    "relations": "Relations",
+    "responsible": "Responsible",
+    "observation": "Observation",
+    "status": "Status"
+  },
+  "tooltips": {
+    "relationsList": "List of Drugs with Interactions, Incompatibilities or Duplicity"
   },
   "buttons": {
     "search": "Search"
@@ -331,5 +346,13 @@
 
   "validation": {
     "requiredField": "Required field"
+  },
+
+  "interventionStatus": {
+    "a": "Accepted",
+    "n": "Not accepted",
+    "j": "Not accepted (justified)",
+    "x": "Not applicable",
+    "s": "Pending"
   }
 }

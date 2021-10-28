@@ -309,7 +309,7 @@ export default function InterventionList({
       <BackTop />
 
       <ExpandableTable
-        columns={interventionColumns(filter, true)}
+        columns={interventionColumns(filter, true, t)}
         pagination={{
           pageSize: 50,
           position: 'both'
