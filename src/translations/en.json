@@ -310,6 +310,7 @@
     "elderly": "Potentially inappropriate drugs for the elderly",
     "alergy": "Alergy",
     "tube": "Drug contraindicate by tube",
-    "duplicate": "Duplicity"
+    "duplicate": "Duplicity",
+    "warning": "When changing the email the password will be reset"
   }
 }

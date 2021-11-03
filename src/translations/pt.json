@@ -311,6 +311,7 @@
     "elderly": "Medicamentos potencialmente inapropriados para idosos",
     "alergy": "Alergia",
     "tube": "Medicamento contraindicado por sonda",
-    "duplicate": "Duplicidade"
+    "duplicate": "Duplicidade",
+    "warning": "Ao alterar o email a senha será redefinida"
   }
 }

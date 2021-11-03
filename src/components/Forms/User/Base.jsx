@@ -2,6 +2,8 @@ import React from 'react';
 import 'styled-components/macro';
 import { useFormikContext } from 'formik';
 import { Alert } from 'antd';
+import { useTranslation } from 'react-i18next';
+
 
 import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
@@ -12,10 +14,10 @@ import Tooltip from '@components/Tooltip';
 import { Box } from '../Form.style';
 
 export default function Base({ addUser }) {
-  const { values, setFieldValue, errors } = useFormikContext();
+  const { values, setFieldValue, errors, touched } = useFormikContext();
   const { name, email, external, active, id } = values;
   const layout = { label: 8, input: 16 };
-
+  const { t } = useTranslation();
   return (
     <>
       <Box hasError={errors.name}>
@@ -53,11 +55,22 @@ export default function Base({ addUser }) {
             value={email}
             onChange={({ target }) => setFieldValue('email', target.value)}
             maxLength={50}
-          /> 
-        
+          />
+          {errors.email &&
+            <Alert message="Ops! Formato de email inválido."
+              type="error"
+              bannder
+              closable
+              style={{
+                marginTop: 10,
+                marginLeft: 10
+              }}
+            >
+            </Alert>}
+              
           {
             id &&
-            <Alert message="Ao alterar o email a senha será resetada"
+            <Alert message={t('alerts.warning')}
               banner
               closable
               style={{

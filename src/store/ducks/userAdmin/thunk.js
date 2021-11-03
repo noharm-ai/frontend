@@ -76,6 +76,7 @@ export const saveUserThunk = (params = {}) => async (dispatch, getState) => {
 
   console.log('thunk params', params);
   console.log('thunk method', method);
+  console.log(access_token);
   // if (status !== 200) {
   // dispatch(usersSaveSingleError(error));
   // return;
