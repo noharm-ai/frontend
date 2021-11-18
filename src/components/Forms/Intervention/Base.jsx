@@ -13,7 +13,7 @@ import Switch from '@components/Switch';
 import Interaction from './Fields/Interaction';
 import Observation from './Fields/Observation';
 
-import { Box, FieldError } from '../Form.style';
+import { Box, FieldError, InternalBox } from '../Form.style';
 
 export default function Base({
   intervention,
@@ -34,6 +34,21 @@ export default function Base({
     if (!selectedReasons) return false;
 
     const reasonsWithRelationshipsRegEx = /duplicidade|interaç|incompatib|apresentaç|forma|subst/g;
+
+    return hasReason(reasonList, selectedReasons, reasonsWithRelationshipsRegEx);
+  };
+
+  const hasTranscription = (reasonList, selectedReasons = []) => {
+    if (!selectedReasons) return false;
+
+    const reasonsWithTranscription = /proto/g;
+
+    return hasReason(reasonList, selectedReasons, reasonsWithTranscription);
+  };
+
+  const hasReason = (reasonList, selectedReasons = [], regex) => {
+    if (!selectedReasons) return false;
+
     let hasRelation = false;
 
     selectedReasons.forEach(itemId => {
@@ -41,7 +56,7 @@ export default function Base({
 
       if (reasonIndex !== -1) {
         const reason = reasonList[reasonIndex].description.toLowerCase();
-        if (reason.match(reasonsWithRelationshipsRegEx)) {
+        if (reason.match(regex)) {
           hasRelation = true;
         }
       }
@@ -156,6 +171,103 @@ export default function Base({
             )}
           </Col>
         </Box>
+      )}
+      {hasTranscription(reasons.list, idInterventionReason) && (
+        <>
+          <Heading as="label" size="14px" style={{ marginLeft: '8px', marginTop: '10px' }}>
+            Transcrição
+          </Heading>
+          <InternalBox>
+            <Box hasError={errors.interactions && touched.interactions}>
+              <Col xs={layout.label}>
+                <Heading as="label" size="14px">
+                  Dose:
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <Select
+                  id="dose"
+                  optionFilterProp="children"
+                  style={{ width: '100%' }}
+                  placeholder=""
+                >
+                  <Select.Option key="1" value="1">
+                    Teste
+                  </Select.Option>
+                </Select>
+                {errors.interactions && touched.interactions && (
+                  <FieldError>{errors.interactions}</FieldError>
+                )}
+              </Col>
+            </Box>
+            <Box hasError={errors.interactions && touched.interactions}>
+              <Col xs={layout.label}>
+                <Heading as="label" size="14px">
+                  Unidade:
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <Select
+                  id="measureUnit"
+                  optionFilterProp="children"
+                  style={{ width: '100%' }}
+                  placeholder=""
+                >
+                  <Select.Option key="1" value="1">
+                    Teste
+                  </Select.Option>
+                </Select>
+                {errors.interactions && touched.interactions && (
+                  <FieldError>{errors.interactions}</FieldError>
+                )}
+              </Col>
+            </Box>
+            <Box hasError={errors.interactions && touched.interactions}>
+              <Col xs={layout.label}>
+                <Heading as="label" size="14px">
+                  Via:
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <Select
+                  id="route"
+                  optionFilterProp="children"
+                  style={{ width: '100%' }}
+                  placeholder=""
+                >
+                  <Select.Option key="1" value="1">
+                    Teste
+                  </Select.Option>
+                </Select>
+                {errors.interactions && touched.interactions && (
+                  <FieldError>{errors.interactions}</FieldError>
+                )}
+              </Col>
+            </Box>
+            <Box hasError={errors.interactions && touched.interactions}>
+              <Col xs={layout.label}>
+                <Heading as="label" size="14px">
+                  Frequência:
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <Select
+                  id="frequency"
+                  optionFilterProp="children"
+                  style={{ width: '100%' }}
+                  placeholder=""
+                >
+                  <Select.Option key="1" value="1">
+                    Teste
+                  </Select.Option>
+                </Select>
+                {errors.interactions && touched.interactions && (
+                  <FieldError>{errors.interactions}</FieldError>
+                )}
+              </Col>
+            </Box>
+          </InternalBox>
+        </>
       )}
       <Box hasError={errors.observation && touched.observation}>
         <Observation
