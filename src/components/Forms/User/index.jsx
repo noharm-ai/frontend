@@ -11,27 +11,18 @@ import DefaultModal from '@components/Modal';
 import Base from './Base';
 import { FormContainer } from '../Form.style';
 
-const errorMessage = {
-  message: 'Ops! Algo de errado aconteceu.',
-  description:
-    'Aconteceu algo que nos impediu de salvar os dados deste usuário. Por favor, tente novamente.'
-};
+export default function User({ saveStatus, save, afterSave, user, ...props }) {
+  const { t } = useTranslation();
 
-const saveMessage = {
-  message: 'Uhu! Usuário salvo com sucesso! :)'
-};
-const validationSchema = Yup.object().shape({
-  name: Yup.string().required(),
-  email: Yup.string()
-  .email('Ops! Formato de email inválido.')
-  .required('Você se esqueceu de inserir o seu email.')
-});
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required(),
+    email: Yup.string()
+      .email(t('userAdminForm.emailError'))
+      .required(t('Você se esqueceu de inserir o seu email.'))
+  });
 
-
-export default function User({ saveStatus, save, afterSaveUser, user, ...props }) {
   const { isSaving, success, error } = saveStatus;
   const { ...data } = user.content;
-  const { t, i18n } = useTranslation();
 
   const initialValues = {
     ...data
@@ -39,16 +30,21 @@ export default function User({ saveStatus, save, afterSaveUser, user, ...props }
 
   useEffect(() => {
     if (success) {
-      notification.success(saveMessage);
-      if (afterSaveUser) {
-        afterSaveUser();
+      notification.success({
+        message: t('alerts.saveMessage')
+      });
+      if (afterSave) {
+        afterSave();
       }
     }
 
     if (error) {
-      notification.error(errorMessage);
+      notification.error({
+        message: t('alerts.errorMessage'),
+        description: t('alerts.errorDescription')
+      });
     }
-  }, [success, error, afterSaveUser]);
+  }, [success, error, afterSave, t]);
 
   return (
     <Formik
@@ -70,7 +66,7 @@ export default function User({ saveStatus, save, afterSaveUser, user, ...props }
           }}
           cancelButtonProps={{
             disabled: isSaving,
-            className: 'gtm-bt-cancel-edit-exam'
+            className: 'gtm-bt-cancel-edit-user'
           }}
         >
           <header>
@@ -90,8 +86,7 @@ export default function User({ saveStatus, save, afterSaveUser, user, ...props }
 }
 
 User.defaultProps = {
-  afterSaveUser: () => {
-  },
+  afterSave: () => {},
   initialValues: {
     email: '',
     name: '',

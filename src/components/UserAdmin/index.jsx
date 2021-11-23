@@ -8,11 +8,10 @@ import Icon from '@components/Icon';
 import BackTop from '@components/BackTop';
 import notification from '@components/notification';
 import userColumns from './User/columns';
-import './index.css';
+import { useTranslation } from 'react-i18next';
 import LoadBox from '@components/LoadBox';
 import { toDataSource } from '@utils';
 import FormUserModal from '@containers/Forms/User';
-import { add } from 'lodash';
 
 const emptyText = (
   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Nenhum dado encontrado." />
@@ -20,6 +19,7 @@ const emptyText = (
 
 function UserAdmin({ error, list, isFetching, fetchUsersList, single, selectUser }) {
   const [userModalVisible, setUserModalVisibility] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchUsersList();
@@ -28,15 +28,13 @@ function UserAdmin({ error, list, isFetching, fetchUsersList, single, selectUser
   useEffect(() => {
     if (error) {
       notification.error({
-        message: 'Ops! Algo de errado aconteceu.',
-        description:
-          'Aconteceu algo que nos impediu de salvar os usuários editados. Por favor, tente novamente.'
+        message: t('alerts.errorMessage'),
+        description: t('alerts.errorDescription')
       });
     }
-  }, [error]);
+  }, [error, t]);
 
   const onShowUserModal = data => {
-    console.log('showUserModal', data);
     selectUser(data);
     setUserModalVisibility(true);
   };
@@ -65,12 +63,12 @@ function UserAdmin({ error, list, isFetching, fetchUsersList, single, selectUser
   return (
     <>
       <Row type="flex" justify="end" style={{ marginBottom: '20px' }}>
-        <Button type="primary gtm-bt-add-exam" onClick={addUserModal}>
-          <Icon type="plus" /> Adicionar
+        <Button type="primary gtm-bt-add-user" onClick={addUserModal}>
+          <Icon type="plus" /> {t('userAdminForm.addIcon')}
         </Button>
       </Row>
       <Table
-        columns={userColumns(false)}
+        columns={userColumns(false, t)}
         pagination={false}
         loading={isFetching}
         locale={{ emptyText }}
@@ -81,9 +79,9 @@ function UserAdmin({ error, list, isFetching, fetchUsersList, single, selectUser
       <FormUserModal
         visible={userModalVisible}
         onCancel={onCancelUserModal}
-        okText="Salvar"
-        okType="primary gtm-bt-save-exam"
-        cancelText="Cancelar"
+        okText={t('userAdminForm.btnSave')}
+        okType="primary gtm-bt-save-user"
+        cancelText={t('userAdminForm.btnCancel')}
         afterSave={onCancelUserModal}
       />
     </>

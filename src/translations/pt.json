@@ -290,6 +290,19 @@
     "btnCancel": "Cancelar"
   },
 
+  "userAdminForm": {
+    "name": "Nome",
+    "email": "Email",
+    "id": "ID Externo",
+    "active": "Ativo",
+    "addIcon": "Adicionar",
+    "userEdit": "Alterar usuario",
+    "passwordResetWarning": "Ao alterar o email a senha será redefinida",
+    "emailError": "Ops! Formato de email inválido.",
+    "btnSave": "Salvar",
+    "btnCancel": "Cancelar"
+  },
+
   "clinicalNotesIndicator": {
     "allergy": "Alergia",
     "conduct": "Conduta",
@@ -312,6 +325,8 @@
     "alergy": "Alergia",
     "tube": "Medicamento contraindicado por sonda",
     "duplicate": "Duplicidade",
-    "warning": "Ao alterar o email a senha será redefinida"
+    "saveMessage": "Uhu! Usuário salvo com sucesso! :)",
+    "errorMessage": "Ops! Algo de errado aconteceu.",
+    "errorDescription": "Aconteceu algo que nos impediu de salvar os dados deste usuário. Por favor, tente novamente"    
   }
 }

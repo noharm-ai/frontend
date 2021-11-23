@@ -1,8 +1,7 @@
 import isEmpty from 'lodash.isempty';
-import arrayMove from 'array-move';
 
 import api from '@services/api';
-import { transformSegments, transformSegment } from '@utils/transformers';
+import { transformSegment } from '@utils/transformers';
 import { errorHandler } from '@utils';
 import { Creators as UsersCreators } from './index';
 
@@ -15,13 +14,15 @@ const {
   usersFetchSingleError,
   usersFetchSingleSuccess,
   usersFetchSingleReset,
-
+  
   usersSaveSingleStart,
   usersSaveSingleReset,
-  usersSaveSingleSuccess,
   usersSaveSingleError,
-
-  usersSelectUser
+  
+  
+  usersUserSelect,
+  usersUserSuccess,
+  
 } = UsersCreators;
 
 export const fetchUsersListThunk = (params = {}) => async (dispatch, getState) => {
@@ -62,7 +63,7 @@ export const resetSingleUserThunk = () => async (dispatch, getState) => {
 };
 
 export const selectUserThunk = item => dispatch => {
-  dispatch(usersSelectUser(item));
+  dispatch(usersUserSelect(item));
 };
 
 // TODO: adicionar chamada ao endpoint(o mesmo ainda não foi finalizado)
@@ -72,16 +73,18 @@ export const saveUserThunk = (params = {}) => async (dispatch, getState) => {
   const { id } = params;
   const { access_token } = getState().auth.identify;
   const method = id ? 'updateUser' : 'createUser';
-  // const { status, error } = await api[method](access_token, params).catch(errorHandler);
+  const { status, error, data } = await api[method](access_token, params).catch(errorHandler);
+  
+  if (status !== 200) {
+    dispatch(usersSaveSingleError(error));
+    return;
+  }
 
-  console.log('thunk params', params);
-  console.log('thunk method', method);
-  console.log(access_token);
-  // if (status !== 200) {
-  // dispatch(usersSaveSingleError(error));
-  // return;
-  // }
-
-  dispatch(usersSaveSingleSuccess());
+  if (method === 'createUser') {
+    params.id = data.data;
+  }
+  
+  
+  dispatch(usersUserSuccess(params));
   dispatch(usersSaveSingleReset());
 };

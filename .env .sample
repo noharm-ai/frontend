@@ -1,0 +1,5 @@
+REACT_APP_API_URL=http://localhost:5000
+REACT_APP_SITE_TITLE='noHarm.Ai'
+REACT_APP_UPDOWN_LINK='https://updown.io/'
+REACT_APP_PRISMIC_API_URL=https://sample.prismic.io/api/v2
+REACT_APP_PRISMIC_TOKEN=prismic-token

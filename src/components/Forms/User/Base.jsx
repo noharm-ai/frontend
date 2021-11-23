@@ -7,15 +7,14 @@ import { useTranslation } from 'react-i18next';
 
 import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
-import { InputNumber, Input, Select } from '@components/Inputs';
+import { Input } from '@components/Inputs';
 import Switch from '@components/Switch';
 import Tooltip from '@components/Tooltip';
-
 import { Box } from '../Form.style';
 
 export default function Base({ addUser }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
-  const { name, email, external, active, id } = values;
+  const { name, external, active, id } = values;
   const layout = { label: 8, input: 16 };
   const { t } = useTranslation();
   return (
@@ -23,7 +22,7 @@ export default function Base({ addUser }) {
       <Box hasError={errors.name}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Nome:</Tooltip>
+            <Tooltip>{t('userAdminForm.name')}</Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>
@@ -38,10 +37,10 @@ export default function Base({ addUser }) {
         </Col>
       </Box>
 
-      <Box hasError={errors.email}>
+      <Box hasError={errors.email && touched.email}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Email:</Tooltip>
+            <Tooltip>{t('userAdminForm.email')}</Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>
@@ -52,12 +51,11 @@ export default function Base({ addUser }) {
             style={{
               marginLeft: 10
             }}
-            value={email}
             onChange={({ target }) => setFieldValue('email', target.value)}
             maxLength={50}
           />
-          {errors.email &&
-            <Alert message="Ops! Formato de email inválido."
+          {errors.email && touched.email &&
+            <Alert message={t('userAdminForm.emailError')}
               type="error"
               bannder
               closable
@@ -65,12 +63,13 @@ export default function Base({ addUser }) {
                 marginTop: 10,
                 marginLeft: 10
               }}
-            >
+              >
+              {errors.email}
             </Alert>}
               
           {
             id &&
-            <Alert message={t('alerts.warning')}
+            <Alert message={t('userAdminForm.passwordResetWarning')}
               banner
               closable
               style={{
@@ -86,7 +85,7 @@ export default function Base({ addUser }) {
       <Box hasError={errors.external}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Id Externo:</Tooltip>
+            <Tooltip>{t('userAdminForm.id')}</Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>
@@ -104,7 +103,7 @@ export default function Base({ addUser }) {
       <Box hasError={errors.active}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Ativo:</Tooltip>
+            <Tooltip>{t('userAdminForm.active')}</Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>

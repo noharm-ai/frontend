@@ -7,7 +7,8 @@ import UserAdmin from '@components/UserAdmin';
 const mapStateToProps = ({ users }) => ({
   error: users.error,
   list: users.list,
-  isFetching: users.isFetching
+  isFetching: users.isFetching,
+  single: users.single
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

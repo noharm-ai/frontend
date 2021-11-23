@@ -7,7 +7,7 @@ export const { Types, Creators } = createActions({
 
   usersFetchSingleStart: [''],
   usersFetchSingleError: ['error'],
-  usersFetchSingleSuccess: ['content', 'firstFilter'],
+  usersFetchSingleSuccess: ['content'],
   usersFetchSingleReset: [''],
 
   usersSaveSingleStart: [''],
@@ -15,7 +15,9 @@ export const { Types, Creators } = createActions({
   usersSaveSingleReset: [''],
   usersSaveSingleError: ['error'],
 
-  usersSelectUser: ['item']
+  usersUserSelect: ['item'],
+  usersUserAdd: ['user'],
+  usersUserSuccess: ['item'],
 });
 
 const INITIAL_STATE = {
@@ -69,9 +71,9 @@ const fetchSingleError = (state = INITIAL_STATE, { error }) => ({
   }
 });
 
-const fetchSingleSuccess = (state = INITIAL_STATE, { content, firstFilter }) => ({
+const fetchSingleSuccess = (state = INITIAL_STATE, { content }) => ({
   ...state,
-  firstFilter,
+  //firstFilter,
   single: {
     ...state.single,
     content,
@@ -114,13 +116,6 @@ const saveSingleReset = (state = INITIAL_STATE) => ({
   }
 });
 
-const selectUser = (state = INITIAL_STATE, { item }) => ({
-  ...state,
-  single: {
-    ...state.single,
-    content: item
-  }
-});
 
 const saveSingleSuccess = (state = INITIAL_STATE) => ({
   ...state,
@@ -131,6 +126,51 @@ const saveSingleSuccess = (state = INITIAL_STATE) => ({
     isSaving: false
   }
 });
+
+
+const userSelect = (state = INITIAL_STATE, { item }) => ({
+  ...state,
+  single: {
+    ...state.single,
+    content: item
+  }
+});
+
+const userAdd = (state = INITIAL_STATE, { user }) => ({
+  ...state,
+  list: [
+    ...state.list,
+    user
+  ]
+});
+
+
+const userSuccess = (state = INITIAL_STATE, { item }) => {
+  const list = [...state.list];
+  const index = list.findIndex(e => item.id === e.id);
+
+  if (index !== -1) {
+    list[index] = { ...list[index], ...item };
+  } else {
+    list.push({ ...item, new: false });
+  }
+
+  return {
+    ...state,
+    list,
+    single: {
+      ...state.single,
+      content: {
+      }
+    },
+    save: {
+      ...state.save,
+      error: null,
+      success: true,
+      isSaving: false
+    }
+  };
+};
 
 const HANDLERS = {
   [Types.USERS_FETCH_LIST_START]: fetchListStart,
@@ -147,7 +187,10 @@ const HANDLERS = {
   [Types.USERS_SAVE_SINGLE_RESET]: saveSingleReset,
   [Types.USERS_SAVE_SINGLE_SUCCESS]: saveSingleSuccess,
 
-  [Types.USERS_SELECT_USER]: selectUser
+
+  [Types.USERS_USER_SELECT]: userSelect,
+  [Types.USERS_USER_ADD]: userAdd,
+  [Types.USERS_USER_SUCCESS]: userSuccess,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);
