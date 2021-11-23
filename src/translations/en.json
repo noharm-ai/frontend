@@ -190,6 +190,7 @@
     "frequency": "Frequency",
     "time": "Time",
     "route": "Route",
+    "measureUnit": "Measure unit",
     "action": "Action",
     "stage": "Stages",
     "infusion": "Infusion",
@@ -230,7 +231,8 @@
     "relations": "Relations",
     "responsible": "Responsible",
     "observation": "Observation",
-    "status": "Status"
+    "status": "Status",
+    "transcription": "Transcription"
   },
   "tooltips": {
     "relationsList": "List of Drugs with Interactions, Incompatibilities or Duplicity"

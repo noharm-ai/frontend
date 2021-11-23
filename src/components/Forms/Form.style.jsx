@@ -77,7 +77,8 @@ export const InternalBox = styled.div`
   margin-top: 5px;
   background: #fafafa;
 
-  .ant-select {
+  .ant-select,
+  .ant-input {
     background: #fff;
   }
 `;
