@@ -13,7 +13,7 @@ import {
   checkInterventionThunk,
   checkPrescriptionDrugThunk
 } from '@store/ducks/prescriptions/thunk';
-import { searchDrugsThunk } from '@store/ducks/drugs/thunk';
+import { searchDrugsThunk, fetchDrugSummaryThunk } from '@store/ducks/drugs/thunk';
 import { memoryFetchReasonTextThunk, memorySaveReasonTextThunk } from '@store/ducks/memory/thunk';
 
 import Intervention from '@components/Forms/Intervention';
@@ -22,6 +22,7 @@ const mapStateToProps = ({ intervention, drugs, memory }) => ({
   intervention: intervention.maybeCreateOrUpdate,
   reasons: intervention.reasons,
   drugs: drugs.search,
+  drugSummary: drugs.summary,
   reasonTextMemory: memory.reasonText
 });
 const mapDispatchToProps = dispatch =>
@@ -36,6 +37,7 @@ const mapDispatchToProps = dispatch =>
       fetchReasonsList: fetchReasonsListThunk,
       updateSelectedItemToSaveIntervention: updateSelectedItemToSaveInterventionThunk,
       searchDrugs: searchDrugsThunk,
+      fetchDrugSummary: fetchDrugSummaryThunk,
       memorySaveReasonText: memorySaveReasonTextThunk,
       memoryFetchReasonText: memoryFetchReasonTextThunk
     },

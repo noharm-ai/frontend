@@ -9,6 +9,10 @@ const {
   drugsFetchListError,
   drugsFetchListSuccess,
 
+  drugsFetchSummaryStart,
+  drugsFetchSummaryError,
+  drugsFetchSummarySuccess,
+
   drugsSearchStart,
   drugsSearchError,
   drugsSearchSuccess,
@@ -96,4 +100,20 @@ export const saveUnitCoeffiecientThunk = (idMeasureUnit, params = {}) => async d
   dispatch(unitCoefficientSaveStart());
   dispatch(unitCoefficientSaveSuccess(idMeasureUnit, params));
   dispatch(unitCoefficientSaveReset());
+};
+
+export const fetchDrugSummaryThunk = (idDrug, idSegment) => async (dispatch, getState) => {
+  dispatch(drugsFetchSummaryStart());
+
+  const { access_token } = getState().auth.identify;
+  const { data, error } = await api
+    .getDrugSummary(access_token, idDrug, idSegment)
+    .catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(drugsFetchSummaryError(error));
+    return;
+  }
+
+  dispatch(drugsFetchSummarySuccess(data.data));
 };

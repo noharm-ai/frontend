@@ -36,6 +36,8 @@ export default function Intervention({
   reasonTextMemory,
   memorySaveReasonText,
   memoryFetchReasonText,
+  drugSummary,
+  fetchDrugSummary,
   ...props
 }) {
   const { t } = useTranslation();
@@ -94,7 +96,11 @@ export default function Intervention({
     idInterventionReason: item.intervention.idInterventionReason,
     reasonDescription: null,
     interactions: item.intervention.interactions,
-    observation: item.intervention.observation || ''
+    observation: item.intervention.observation || '',
+    dose: item.dose,
+    frequency: item.frequency ? item.frequency.value : null,
+    measureUnit: item.measureUnit ? item.measureUnit.value : null,
+    route: item.route
   };
 
   const onCancel = () => {
@@ -103,7 +109,17 @@ export default function Intervention({
   };
 
   const onSave = params => {
-    save(params);
+    const { dose, route, frequency, measureUnit } = params;
+
+    save({
+      ...params,
+      transcription: {
+        dose,
+        route,
+        frequency,
+        measureUnit
+      }
+    });
 
     // move to useeffect
     if (afterSaveIntervention) {
@@ -178,6 +194,9 @@ export default function Intervention({
           <form onSubmit={handleSubmit}>
             <Row type="flex" gutter={[16, 16]}>
               <Base
+                drugData={item}
+                fetchDrugSummary={fetchDrugSummary}
+                drugSummary={drugSummary}
                 intervention={intervention}
                 reasons={reasons}
                 searchDrugs={searchDrugs}

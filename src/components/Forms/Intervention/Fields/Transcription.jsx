@@ -1,15 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Select, InputNumber } from '@components/Inputs';
 import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
+import LoadBox from '@components/LoadBox';
 
 import { Box, FieldError, InternalBox } from '../../Form.style';
 
-export default function Transcription({ setFieldValue, layout, errors, touched, values }) {
+export default function Transcription({
+  fetchDrugSummary,
+  drugSummary,
+  drugData,
+  setFieldValue,
+  layout,
+  errors,
+  touched,
+  values
+}) {
   const { t } = useTranslation();
   const { dose, frequency, route, measureUnit } = values;
+
+  useEffect(() => {
+    fetchDrugSummary(drugData.idDrug, drugData.idSegment);
+  }, [fetchDrugSummary, drugData.idDrug, drugData.idSegment]);
+
+  if (drugSummary.isFetching || !drugSummary.data) {
+    return <LoadBox />;
+  }
+  console.log('drugsummary', drugSummary);
+  const { units, routes, frequencies } = drugSummary.data;
 
   return (
     <>
@@ -47,9 +67,11 @@ export default function Transcription({ setFieldValue, layout, errors, touched, 
               value={measureUnit}
               onChange={value => setFieldValue('measureUnit', value)}
             >
-              <Select.Option key="1" value="1">
-                Teste
-              </Select.Option>
+              {units.map(({ id, description }) => (
+                <Select.Option key={id} value={id}>
+                  {description}
+                </Select.Option>
+              ))}
             </Select>
             {errors.measureUnit && touched.measureUnit && (
               <FieldError>{errors.measureUnit}</FieldError>
@@ -70,9 +92,11 @@ export default function Transcription({ setFieldValue, layout, errors, touched, 
               value={route}
               onChange={value => setFieldValue('route', value)}
             >
-              <Select.Option key="1" value="1">
-                Teste
-              </Select.Option>
+              {routes.map(({ id, description }) => (
+                <Select.Option key={id} value={id}>
+                  {description}
+                </Select.Option>
+              ))}
             </Select>
             {errors.route && touched.route && <FieldError>{errors.route}</FieldError>}
           </Col>
@@ -92,9 +116,11 @@ export default function Transcription({ setFieldValue, layout, errors, touched, 
               value={frequency}
               onChange={value => setFieldValue('frequency', value)}
             >
-              <Select.Option key="1" value="1">
-                Teste
-              </Select.Option>
+              {frequencies.map(({ id, description }) => (
+                <Select.Option key={id} value={id}>
+                  {description}
+                </Select.Option>
+              ))}
             </Select>
             {errors.frequency && touched.frequency && <FieldError>{errors.frequency}</FieldError>}
           </Col>

@@ -17,13 +17,16 @@ import Transcription from './Fields/Transcription';
 import { Box, FieldError } from '../Form.style';
 
 export default function Base({
+  drugData,
   intervention,
   reasons,
   searchDrugs,
   drugs,
   reasonTextMemory,
   memorySaveReasonText,
-  memoryFetchReasonText
+  memoryFetchReasonText,
+  drugSummary,
+  fetchDrugSummary
 }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const { t } = useTranslation();
@@ -175,6 +178,9 @@ export default function Base({
       )}
       {hasTranscription(reasons.list, idInterventionReason) && (
         <Transcription
+          fetchDrugSummary={fetchDrugSummary}
+          drugSummary={drugSummary}
+          drugData={drugData}
           setFieldValue={setFieldValue}
           errors={errors}
           touched={touched}
