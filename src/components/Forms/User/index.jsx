@@ -18,7 +18,7 @@ export default function User({ saveStatus, save, afterSave, user, ...props }) {
     name: Yup.string().required(),
     email: Yup.string()
       .email(t('userAdminForm.emailError'))
-      .required(t('Você se esqueceu de inserir o seu email.'))
+      .required(t('userAdminForm.requiredError'))
   });
 
   const { isSaving, success, error } = saveStatus;
@@ -31,7 +31,7 @@ export default function User({ saveStatus, save, afterSave, user, ...props }) {
   useEffect(() => {
     if (success) {
       notification.success({
-        message: t('alerts.saveMessage')
+        message: t('userAdminForm.saveMessage')
       });
       if (afterSave) {
         afterSave();
@@ -39,9 +39,10 @@ export default function User({ saveStatus, save, afterSave, user, ...props }) {
     }
 
     if (error) {
+      console.log("error", error)
       notification.error({
-        message: t('alerts.errorMessage'),
-        description: t('alerts.errorDescription')
+        message: t('userAdminForm.errorMessage'),
+        description: t( error.code )
       });
     }
   }, [success, error, afterSave, t]);

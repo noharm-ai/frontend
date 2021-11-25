@@ -28,8 +28,8 @@ function UserAdmin({ error, list, isFetching, fetchUsersList, single, selectUser
   useEffect(() => {
     if (error) {
       notification.error({
-        message: t('alerts.errorMessage'),
-        description: t('alerts.errorDescription')
+        message: t('userAdminForm.errorMessage'),
+        description: t('userAdminForm.errorDescription')
       });
     }
   }, [error, t]);

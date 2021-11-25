@@ -16,7 +16,6 @@ export const { Types, Creators } = createActions({
   usersSaveSingleError: ['error'],
 
   usersUserSelect: ['item'],
-  usersUserAdd: ['user'],
   usersUserSuccess: ['item'],
 });
 
@@ -73,7 +72,6 @@ const fetchSingleError = (state = INITIAL_STATE, { error }) => ({
 
 const fetchSingleSuccess = (state = INITIAL_STATE, { content }) => ({
   ...state,
-  //firstFilter,
   single: {
     ...state.single,
     content,
@@ -136,14 +134,6 @@ const userSelect = (state = INITIAL_STATE, { item }) => ({
   }
 });
 
-const userAdd = (state = INITIAL_STATE, { user }) => ({
-  ...state,
-  list: [
-    ...state.list,
-    user
-  ]
-});
-
 
 const userSuccess = (state = INITIAL_STATE, { item }) => {
   const list = [...state.list];
@@ -189,7 +179,6 @@ const HANDLERS = {
 
 
   [Types.USERS_USER_SELECT]: userSelect,
-  [Types.USERS_USER_ADD]: userAdd,
   [Types.USERS_USER_SUCCESS]: userSuccess,
 };
 

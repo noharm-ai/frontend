@@ -297,8 +297,14 @@
     "active": "Ativo",
     "addIcon": "Adicionar",
     "userEdit": "Alterar usuario",
+
     "passwordResetWarning": "Ao alterar o email a senha será redefinida",
     "emailError": "Ops! Formato de email inválido.",
+    "requeridError": "Você se esqueceu de inserir o seu email.",
+    "saveMessage": "Uhu! Usuário salvo com sucesso! :)",
+    "errorMessage": "Ops! Algo de errado aconteceu.",
+    "errorDescription": "Aconteceu algo que nos impediu de salvar os dados deste usuário. Por favor, tente novamente",
+
     "btnSave": "Salvar",
     "btnCancel": "Cancelar"
   },
@@ -324,9 +330,10 @@
     "elderly": "Medicamentos potencialmente inapropriados para idosos",
     "alergy": "Alergia",
     "tube": "Medicamento contraindicado por sonda",
-    "duplicate": "Duplicidade",
-    "saveMessage": "Uhu! Usuário salvo com sucesso! :)",
-    "errorMessage": "Ops! Algo de errado aconteceu.",
-    "errorDescription": "Aconteceu algo que nos impediu de salvar os dados deste usuário. Por favor, tente novamente"    
+    "duplicate": "Duplicidade"
+  },
+
+  "errors": {
+    "invalidUser": "Usuário teste"
   }
 }
