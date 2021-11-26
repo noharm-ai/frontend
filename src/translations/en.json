@@ -296,6 +296,7 @@
     "email": "Email",
     "id": "External ID",
     "active": "Active",
+    "inactive": "Inactive",
     "addIcon": "Add",
     "userEdit": "Change user",
     
@@ -334,6 +335,9 @@
   },
 
   "errors": {
-    "invalidUser": "non-existent user"
+    "invalidUser": "Non-existent user",
+    "unauthorizedUser": "Unauthorized user",
+    "nameExists": "There is already a user with this name!",
+    "emailExists": "There is already a user with this email!"
   }
 }

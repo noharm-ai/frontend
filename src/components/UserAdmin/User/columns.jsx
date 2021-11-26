@@ -25,7 +25,7 @@ const enableSortUsers = ( bool, t ) => {
     {
       title: 'Situação',
       render: (entry, record) => (
-        <Tag color={record.active ? 'green' : null}>{record.active ? 'Ativo' : 'Inativo'}</Tag>
+        <Tag color={record.active ? 'green' : null}>{record.active ? t('userAdminForm.active') : t('userAdminForm.inactive')}</Tag>
         )
     },
     {
