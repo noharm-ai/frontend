@@ -186,6 +186,8 @@ export default function Base({
           touched={touched}
           values={values}
           layout={layout}
+          searchDrugs={searchDrugs}
+          drugs={drugs}
         ></Transcription>
       )}
       <Box hasError={errors.observation && touched.observation}>

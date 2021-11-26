@@ -100,7 +100,8 @@ export default function Intervention({
     dose: item.dose,
     frequency: item.frequency ? item.frequency.value : null,
     measureUnit: item.measureUnit ? item.measureUnit.value : null,
-    route: item.route
+    route: item.route,
+    idDrugTranscription: item.idDrug
   };
 
   const onCancel = () => {
@@ -109,7 +110,7 @@ export default function Intervention({
   };
 
   const onSave = params => {
-    const { dose, route, frequency, measureUnit } = params;
+    const { dose, route, frequency, measureUnit, idDrugTranscription } = params;
 
     save({
       ...params,
@@ -117,7 +118,8 @@ export default function Intervention({
         dose,
         route,
         frequency,
-        measureUnit
+        measureUnit,
+        idDrug: idDrugTranscription
       }
     });
 

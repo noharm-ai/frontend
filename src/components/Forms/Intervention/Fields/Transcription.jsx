@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import debounce from 'lodash.debounce';
 
 import { Select, InputNumber } from '@components/Inputs';
 import { Col } from '@components/Grid';
@@ -16,20 +17,31 @@ export default function Transcription({
   layout,
   errors,
   touched,
-  values
+  values,
+  drugs,
+  searchDrugs
 }) {
   const { t } = useTranslation();
-  const { dose, frequency, route, measureUnit } = values;
+  const { dose, frequency, route, measureUnit, idDrugTranscription } = values;
 
   useEffect(() => {
     fetchDrugSummary(drugData.idDrug, drugData.idSegment);
   }, [fetchDrugSummary, drugData.idDrug, drugData.idSegment]);
 
   if (drugSummary.isFetching || !drugSummary.data) {
-    return <LoadBox />;
+    return (
+      <div style={{ width: '100%' }}>
+        <LoadBox />
+      </div>
+    );
   }
-  console.log('drugsummary', drugSummary);
+
   const { units, routes, frequencies } = drugSummary.data;
+  const search = debounce(value => {
+    if (value.length < 3) return;
+    searchDrugs(drugData.idSegment, { q: value });
+  }, 800);
+  const currentDrug = { idDrug: drugData.idDrug, name: drugData.drug };
 
   return (
     <>
@@ -37,6 +49,36 @@ export default function Transcription({
         {t('labels.transcription')}
       </Heading>
       <InternalBox>
+        <Box hasError={errors.idDrugTranscription && touched.idDrugTranscription}>
+          <Col xs={layout.label}>
+            <Heading as="label" size="14px">
+              {t('tableHeader.drug')}:
+            </Heading>
+          </Col>
+          <Col xs={layout.input}>
+            <Select
+              id="idDrugTranscription"
+              showSearch
+              optionFilterProp="children"
+              style={{ width: '100%' }}
+              defaultValue={idDrugTranscription || undefined}
+              notFoundContent={drugs.isFetching ? <LoadBox /> : null}
+              filterOption={false}
+              onSearch={search}
+              onChange={value => setFieldValue('idDrugTranscription', value)}
+            >
+              {!drugs.isFetching &&
+                drugs.list.concat([currentDrug]).map(({ idDrug, name }) => (
+                  <Select.Option key={idDrug} value={idDrug}>
+                    {name}
+                  </Select.Option>
+                ))}
+            </Select>
+            {errors.idDrugTranscription && touched.idDrugTranscription && (
+              <FieldError>{errors.idDrugTranscription}</FieldError>
+            )}
+          </Col>
+        </Box>
         <Box hasError={errors.dose && touched.dose}>
           <Col xs={layout.label}>
             <Heading as="label" size="14px">
