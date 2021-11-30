@@ -310,6 +310,8 @@
     "labelRelationsPlaceholder": "Select relations...",
     "labelRelationsHint": "List of drugs with Interactions, Incompatibilities, Duplicity and/or Pharmaceutical Form",
     "labelObservations": "Observations",
+    "labelTranscriptionHint": "Enables changes in the current prescription",
+    "labelTranscription": "Transcription",
 
     "btnModelEmpty": "No observation saved for this reason",
     "btnModelSave": "Save observation",

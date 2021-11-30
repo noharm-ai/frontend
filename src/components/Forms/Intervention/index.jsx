@@ -97,6 +97,7 @@ export default function Intervention({
     reasonDescription: null,
     interactions: item.intervention.interactions,
     observation: item.intervention.observation || '',
+    transcription: item.intervention.transcription != null,
     dose: item.dose,
     frequency: item.frequency ? item.frequency.value : null,
     measureUnit: item.measureUnit ? item.measureUnit.value : null,
@@ -104,31 +105,42 @@ export default function Intervention({
     idDrugTranscription: item.idDrug
   };
 
+  if (item.intervention.transcription) {
+    initialValues.dose = item.intervention.transcription.dose;
+    initialValues.frequency = item.intervention.transcription.frequency;
+    initialValues.measureUnit = item.measureUnit ? item.measureUnit.value : null;
+    initialValues.route = item.intervention.transcription.route;
+    initialValues.idDrugTranscription = item.intervention.transcription.idDrug;
+  }
+
   const onCancel = () => {
     select({});
     setVisibility(false);
   };
 
   const onSave = params => {
-    const { dose, route, frequency, measureUnit, idDrugTranscription } = params;
-
-    save({
+    const { dose, route, frequency, measureUnit, idDrugTranscription, transcription } = params;
+    const interventionData = {
       ...params,
-      transcription: {
-        dose,
-        route,
-        frequency,
-        measureUnit,
-        idDrug: idDrugTranscription
-      }
-    });
+      transcription: transcription
+        ? {
+            dose,
+            route,
+            frequency,
+            measureUnit,
+            idDrug: idDrugTranscription
+          }
+        : null
+    };
+
+    save(interventionData);
 
     // move to useeffect
     if (afterSaveIntervention) {
-      afterSaveIntervention(params);
+      afterSaveIntervention(interventionData);
     } else {
       updateInterventionData(item.idPrescriptionDrug, item.source, {
-        ...params,
+        ...interventionData,
         status: 's'
       });
     }

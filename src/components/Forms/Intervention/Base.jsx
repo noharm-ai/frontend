@@ -31,7 +31,7 @@ export default function Base({
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const { t } = useTranslation();
   const { item: itemToSave } = intervention;
-  const { error, cost, idInterventionReason, interactions, observation } = values;
+  const { error, cost, idInterventionReason, interactions, observation, transcription } = values;
   const layout = { label: 8, input: 16 };
 
   const hasRelationships = (reasonList, selectedReasons = []) => {
@@ -40,14 +40,6 @@ export default function Base({
     const reasonsWithRelationshipsRegEx = /duplicidade|interaç|incompatib|apresentaç|forma|subst/g;
 
     return hasReason(reasonList, selectedReasons, reasonsWithRelationshipsRegEx);
-  };
-
-  const hasTranscription = (reasonList, selectedReasons = []) => {
-    if (!selectedReasons) return false;
-
-    const reasonsWithTranscription = /transcrição/g;
-
-    return hasReason(reasonList, selectedReasons, reasonsWithTranscription);
   };
 
   const hasReason = (reasonList, selectedReasons = [], regex) => {
@@ -176,7 +168,25 @@ export default function Base({
           </Col>
         </Box>
       )}
-      {hasTranscription(reasons.list, idInterventionReason) && (
+      <Box hasError={errors.transcription && touched.transcription}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px">
+            <Tooltip title={t('interventionForm.labelTranscriptionHint')} underline>
+              {t('interventionForm.labelTranscription')}:
+            </Tooltip>
+          </Heading>
+        </Col>
+        <Col xs={layout.input}>
+          <Switch
+            onChange={value => setFieldValue('transcription', value)}
+            checked={transcription}
+          />
+          {errors.transcription && touched.transcription && (
+            <FieldError>{errors.transcription}</FieldError>
+          )}
+        </Col>
+      </Box>
+      {transcription && (
         <Transcription
           fetchDrugSummary={fetchDrugSummary}
           drugSummary={drugSummary}

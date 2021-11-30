@@ -310,6 +310,8 @@
     "labelRelationsPlaceholder": "Selecione as relações...",
     "labelRelationsHint": "Lista de medicamentos com Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica",
     "labelObservations": "Observações",
+    "labelTranscriptionHint": "Habilita a possibilidade de alterar a prescrição atual",
+    "labelTranscription": "Transcrição",
 
     "btnModelEmpty": "Este motivo ainda não possui um modelo salvo",
     "btnModelSave": "Salvar observação modelo",
