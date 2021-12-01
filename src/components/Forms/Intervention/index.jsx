@@ -38,6 +38,7 @@ export default function Intervention({
   memoryFetchReasonText,
   drugSummary,
   fetchDrugSummary,
+  security,
   ...props
 }) {
   const { t } = useTranslation();
@@ -108,7 +109,7 @@ export default function Intervention({
   if (item.intervention.transcription) {
     initialValues.dose = item.intervention.transcription.dose;
     initialValues.frequency = item.intervention.transcription.frequency;
-    initialValues.measureUnit = item.measureUnit ? item.measureUnit.value : null;
+    initialValues.measureUnit = item.intervention.transcription.measureUnit;
     initialValues.route = item.intervention.transcription.route;
     initialValues.idDrugTranscription = item.intervention.transcription.idDrug;
   }
@@ -199,12 +200,10 @@ export default function Intervention({
           <header>
             <Heading margin="0 0 11px">{t('interventionForm.title')}</Heading>
           </header>
-          {(item.intervention.id === 0 || item.intervention.idPrescriptionDrug === 0) && (
-            <PatientData {...item} />
-          )}
-          {item.intervention.id !== 0 && item.intervention.idPrescriptionDrug !== 0 && (
-            <DrugData {...item} />
-          )}
+          {(item.intervention.id + '' === '0' ||
+            item.intervention.idPrescriptionDrug + '' === '0') && <PatientData {...item} />}
+          {item.intervention.id + '' !== '0' &&
+            item.intervention.idPrescriptionDrug + '' !== '0' && <DrugData {...item} />}
           <form onSubmit={handleSubmit}>
             <Row type="flex" gutter={[16, 16]}>
               <Base
@@ -218,6 +217,7 @@ export default function Intervention({
                 reasonTextMemory={reasonTextMemory}
                 memorySaveReasonText={memorySaveReasonText}
                 memoryFetchReasonText={memoryFetchReasonText}
+                security={security}
               />
             </Row>
           </form>
