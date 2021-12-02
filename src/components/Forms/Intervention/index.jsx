@@ -99,19 +99,24 @@ export default function Intervention({
     interactions: item.intervention.interactions,
     observation: item.intervention.observation || '',
     transcription: item.intervention.transcription != null,
-    dose: item.dose,
-    frequency: item.frequency ? item.frequency.value : null,
-    measureUnit: item.measureUnit ? item.measureUnit.value : null,
-    route: item.route,
-    idDrugTranscription: item.idDrug
+    transcriptionData: {
+      dose: item.dose,
+      frequency: item.frequency ? item.frequency.value : null,
+      frequencyLabel: item.frequency ? item.frequency.label : null,
+      measureUnit: item.measureUnit ? item.measureUnit.value : null,
+      measureUnitLabel: item.measureUnit ? item.measureUnit.label : null,
+      route: item.route,
+      idDrug: item.idDrug,
+      idDrugLabel: item.drug
+    }
   };
 
   if (item.intervention.transcription) {
-    initialValues.dose = item.intervention.transcription.dose;
-    initialValues.frequency = item.intervention.transcription.frequency;
-    initialValues.measureUnit = item.intervention.transcription.measureUnit;
-    initialValues.route = item.intervention.transcription.route;
-    initialValues.idDrugTranscription = parseInt(item.intervention.transcription.idDrug, 10);
+    initialValues.transcriptionData.dose = item.intervention.transcription.dose;
+    initialValues.transcriptionData.frequency = item.intervention.transcription.frequency;
+    initialValues.transcriptionData.measureUnit = item.intervention.transcription.measureUnit;
+    initialValues.transcriptionData.route = item.intervention.transcription.route;
+    initialValues.transcriptionData.idDrug = parseInt(item.intervention.transcription.idDrug, 10);
   }
 
   const onCancel = () => {
@@ -120,18 +125,10 @@ export default function Intervention({
   };
 
   const onSave = params => {
-    const { dose, route, frequency, measureUnit, idDrugTranscription, transcription } = params;
+    const { transcription, transcriptionData } = params;
     const interventionData = {
       ...params,
-      transcription: transcription
-        ? {
-            dose,
-            route,
-            frequency,
-            measureUnit,
-            idDrug: idDrugTranscription
-          }
-        : null
+      transcription: transcription ? transcriptionData : null
     };
 
     save(interventionData);
