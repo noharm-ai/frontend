@@ -111,7 +111,7 @@ export default function Intervention({
     initialValues.frequency = item.intervention.transcription.frequency;
     initialValues.measureUnit = item.intervention.transcription.measureUnit;
     initialValues.route = item.intervention.transcription.route;
-    initialValues.idDrugTranscription = item.intervention.transcription.idDrug;
+    initialValues.idDrugTranscription = parseInt(item.intervention.transcription.idDrug, 10);
   }
 
   const onCancel = () => {

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import debounce from 'lodash.debounce';
+import uniqBy from 'lodash.uniqby';
 
 import { Select, InputNumber } from '@components/Inputs';
 import { Col } from '@components/Grid';
@@ -36,6 +37,18 @@ export default function Transcription({
     );
   }
 
+  const handleDrugChange = (value, option) => {
+    setFieldValue('idDrugTranscription', value);
+    setFieldValue('drugLabel', option.props.children);
+
+    setFieldValue('dose', null);
+    setFieldValue('frequency', null);
+    setFieldValue('measureUnit', null);
+    setFieldValue('route', null);
+
+    console.log('option', option);
+  };
+
   const { units, routes, frequencies, drug } = drugSummary.data;
   const search = debounce(value => {
     if (value.length < 3) return;
@@ -61,10 +74,10 @@ export default function Transcription({
             notFoundContent={drugs.isFetching ? <LoadBox /> : null}
             filterOption={false}
             onSearch={search}
-            onChange={value => setFieldValue('idDrugTranscription', value)}
+            onChange={(value, option) => handleDrugChange(value, option)}
           >
             {!drugs.isFetching &&
-              drugs.list.concat([currentDrug]).map(({ idDrug, name }) => (
+              uniqBy(drugs.list.concat([currentDrug]), 'idDrug').map(({ idDrug, name }) => (
                 <Select.Option key={idDrug} value={idDrug}>
                   {name}
                 </Select.Option>
