@@ -87,7 +87,16 @@ export default function Intervention({
   if (!item.intervention) {
     return null;
   }
-
+  const transcriptable = {
+    dose: item.dose,
+    frequency: item.frequency ? item.frequency.value : null,
+    frequencyLabel: item.frequency ? item.frequency.label : null,
+    measureUnit: item.measureUnit ? item.measureUnit.value : null,
+    measureUnitLabel: item.measureUnit ? item.measureUnit.label : null,
+    route: item.route,
+    idDrug: item.idDrug,
+    idDrugLabel: item.drug
+  };
   const initialValues = {
     idPrescription: item.idPrescription,
     idPrescriptionDrug: item.idPrescriptionDrug,
@@ -100,23 +109,15 @@ export default function Intervention({
     observation: item.intervention.observation || '',
     transcription: item.intervention.transcription != null,
     transcriptionData: {
-      dose: item.dose,
-      frequency: item.frequency ? item.frequency.value : null,
-      frequencyLabel: item.frequency ? item.frequency.label : null,
-      measureUnit: item.measureUnit ? item.measureUnit.value : null,
-      measureUnitLabel: item.measureUnit ? item.measureUnit.label : null,
-      route: item.route,
-      idDrug: item.idDrug,
-      idDrugLabel: item.drug
+      ...transcriptable
     }
   };
 
   if (item.intervention.transcription) {
-    initialValues.transcriptionData.dose = item.intervention.transcription.dose;
-    initialValues.transcriptionData.frequency = item.intervention.transcription.frequency;
-    initialValues.transcriptionData.measureUnit = item.intervention.transcription.measureUnit;
-    initialValues.transcriptionData.route = item.intervention.transcription.route;
-    initialValues.transcriptionData.idDrug = parseInt(item.intervention.transcription.idDrug, 10);
+    initialValues.transcriptionData = {
+      ...initialValues.transcriptionData,
+      ...item.intervention.transcription
+    };
   }
 
   const onCancel = () => {
@@ -124,12 +125,26 @@ export default function Intervention({
     setVisibility(false);
   };
 
+  const getTranscriptionData = tr => {
+    const trData = {};
+
+    Object.keys(transcriptable).forEach(prop => {
+      if (tr[prop] !== transcriptable[prop]) {
+        trData[prop] = tr[prop];
+      }
+    });
+
+    return trData;
+  };
+
   const onSave = params => {
     const { transcription, transcriptionData } = params;
     const interventionData = {
       ...params,
-      transcription: transcription ? transcriptionData : null
+      transcription: transcription ? getTranscriptionData(transcriptionData) : null
     };
+
+    delete interventionData.transcriptionData;
 
     save(interventionData);
 
