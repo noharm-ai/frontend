@@ -20,6 +20,11 @@
     "title": "Ops! Algo de errado aconteceu.",
     "description": "Aconteceu algo que nos impediu de executar esta operação, por favor, tente novamente."
   },
+  "success": {
+    "intervention": "Uhu! Intervenção salva com sucesso! :)",
+    "defaultObservation": "Uhu! Observação modelo salva com sucesso!",
+    "applyDefaultObservation": "Observação modelo aplicada com sucesso!"
+  },
   "menu": {
     "prioritization": "Priorização",
     "prioritization-prescription": "por Prescrições",
@@ -203,9 +208,12 @@
     "interventions": "Intervenções",
     "pending": "Pendente",
     "pendingPlural": "Pendentes",
-    "options": "Opções"
+    "options": "Opções",
+    "prescription": "Prescrição"
   },
   "labels": {
+    "yes": "Sim",
+    "no": "Não",
     "role": "Cargo",
     "rolePlaceholderFilter": "Filtrar por cargo",
     "indicator": "Indicador",
@@ -213,7 +221,19 @@
     "checkedBy": "Checada por",
     "checkPrescription": "Checar prescrição",
     "openPrescription": "Abrir prescrição",
-    "undoCheckPrescription": "Desfazer checagem"
+    "undoCheckPrescription": "Desfazer checagem",
+    "nextPrescription": "Prescrição posterior",
+    "showNextPrescription": "Visualizar prescrição posterior",
+    "potentialPrescriptionError": "Possível erro de prescrição",
+    "reducesCost": "Gera redução de custo",
+    "reasons": "Motivos",
+    "relations": "Relações",
+    "responsible": "Responsável",
+    "observation": "Observação",
+    "status": "Situação"
+  },
+  "tooltips": {
+    "relationsList": "Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade"
   },
   "buttons": {
     "search": "Pesquisar"
@@ -278,9 +298,15 @@
     "title": "Intervenção",
 
     "labelPrescriptionError": "Possível erro de prescrição",
+    "labelPrescriptionErrorHint": "Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa",
     "labelCostReduction": "Reduz custo",
+    "labelCostReductionHint": "Esta intervenção gera redução de custo?",
     "labelReasons": "Motivos",
+    "labelReasonsPlaceholder": "Selecione os motivos...",
+    "labelReasonsHint": "Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica abrem a opção de informar os medicamentos relacionados",
     "labelRelations": "Relações",
+    "labelRelationsPlaceholder": "Selecione as relações...",
+    "labelRelationsHint": "Lista de medicamentos com Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica",
     "labelObservations": "Observações",
 
     "btnModelEmpty": "Este motivo ainda não possui um modelo salvo",
@@ -317,5 +343,17 @@
     "alergy": "Alergia",
     "tube": "Medicamento contraindicado por sonda",
     "duplicate": "Duplicidade"
+  },
+
+  "validation": {
+    "requiredField": "Campo obrigatório"
+  },
+
+  "interventionStatus": {
+    "a": "Aceita",
+    "n": "Não aceita",
+    "j": "Não aceita com Justificativa",
+    "x": "Não se aplica",
+    "s": "Pendente"
   }
 }

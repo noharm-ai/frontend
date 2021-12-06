@@ -77,10 +77,7 @@ export default function Base({
       <Box hasError={errors.error && touched.error}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
-            <Tooltip
-              title="Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa"
-              underline
-            >
+            <Tooltip title={t('interventionForm.labelPrescriptionErrorHint')} underline>
               {t('interventionForm.labelPrescriptionError')}:
             </Tooltip>
           </Heading>
@@ -94,7 +91,7 @@ export default function Base({
       <Box hasError={errors.cost && touched.cost}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
-            <Tooltip title="Esta intervenção gera redução de custo?" underline>
+            <Tooltip title={t('interventionForm.labelCostReductionHint')} underline>
               {t('interventionForm.labelCostReduction')}:
             </Tooltip>
           </Heading>
@@ -108,10 +105,7 @@ export default function Base({
       <Box hasError={errors.idInterventionReason && touched.idInterventionReason}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
-            <Tooltip
-              title="Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica abrem a opção de informar os medicamentos relacionados"
-              underline
-            >
+            <Tooltip title={t('interventionForm.labelReasonsHint')} underline>
               {t('interventionForm.labelReasons')}:
             </Tooltip>
           </Heading>
@@ -122,7 +116,7 @@ export default function Base({
             mode="multiple"
             optionFilterProp="children"
             style={{ width: '100%' }}
-            placeholder="Selecione os motivos..."
+            placeholder={t('interventionForm.labelReasonsPlaceholder')}
             loading={reasons.isFetching}
             value={idInterventionReason}
             onChange={handleReasonChange}
@@ -142,10 +136,7 @@ export default function Base({
         <Box hasError={errors.interactions && touched.interactions}>
           <Col xs={layout.label}>
             <Heading as="label" size="14px">
-              <Tooltip
-                title="Lista de medicamentos com Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica"
-                underline
-              >
+              <Tooltip title={t('interventionForm.labelRelationsHint')} underline>
                 {t('interventionForm.labelRelations')}:
               </Tooltip>
             </Heading>

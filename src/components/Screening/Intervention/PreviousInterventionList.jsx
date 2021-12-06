@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Empty from '@components/Empty';
 import { ExpandableTable } from '@components/Table';
@@ -12,6 +13,7 @@ export default function PreviousInterventionList({
   saveInterventionStatus,
   checkIntervention
 }) {
+  const { t } = useTranslation();
   const [dsInterventions, setDsInterventions] = useState([]);
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export default function PreviousInterventionList({
 
   return (
     <ExpandableTable
-      columns={interventionColumns({ status: null })}
+      columns={interventionColumns({ status: null }, false, t)}
       pagination={false}
       loading={isFetching}
       locale={{

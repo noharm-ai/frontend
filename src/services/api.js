@@ -99,8 +99,8 @@ const createSegment = (bearerToken, params = {}) =>
 const updateSegment = (bearerToken, { id, ...params }) =>
   instance.put(`${endpoints.segments}/${id}`, params, setHeaders(bearerToken));
 
-const updateSegmentExam = (bearerToken, { idSegment, type, ...params }) =>
-  instance.put(`${endpoints.segments}/${idSegment}/exams/${type}`, params, setHeaders(bearerToken));
+const updateSegmentExam = (bearerToken, { idSegment, ...params }) =>
+  instance.put(`${endpoints.segments}/${idSegment}/exams`, params, setHeaders(bearerToken));
 
 const getExamTypes = (bearerToken, params = {}) =>
   instance.get(`${endpoints.segments}/exams/types`, { params, ...setHeaders(bearerToken) });

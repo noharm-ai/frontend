@@ -338,6 +338,9 @@ export default function Base({ security }) {
                   <Select.Option value="mcg" key="mcg">
                     mcg
                   </Select.Option>
+                  <Select.Option value="mmol" key="mmol">
+                    mmol
+                  </Select.Option>
                   <Select.Option value="U" key="U">
                     U
                   </Select.Option>

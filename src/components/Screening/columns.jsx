@@ -307,7 +307,7 @@ export const expandedRowRender = bag => record => {
 
   let config = {};
   if (record.prevIntervention) {
-    config = InterventionStatus.translate(record.prevIntervention.status);
+    config = InterventionStatus.translate(record.prevIntervention.status, bag.t);
   }
 
   let diluents = [];
@@ -397,7 +397,7 @@ export const expandedRowRender = bag => record => {
               showReasons
               showDate
               status={
-                <Descriptions.Item label="Situação" span={3}>
+                <Descriptions.Item label={`${bag.t('labels.status')}:`} span={3}>
                   <Tag color={config.color}>{config.label}</Tag>{' '}
                   <InterventionAction {...record} {...bag} />
                 </Descriptions.Item>

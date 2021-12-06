@@ -20,6 +20,11 @@
     "title": "Oops! Something wrong happened.",
     "description": "Something happened that prevented us from showing you the data, please try again."
   },
+  "success": {
+    "intervention": "Yeah! Your Intervention has been saved! :)",
+    "defaultObservation": "Yeah! Your Observation has been saved!",
+    "applyDefaultObservation": "Observation applied"
+  },
   "menu": {
     "prioritization": "Prioritization",
     "prioritization-prescription": "Prescriptions",
@@ -203,9 +208,12 @@
     "interventions": "Interventions",
     "pending": "Pending",
     "pendingPlural": "Pending",
-    "options": "Options"
+    "options": "Options",
+    "prescription": "Prescription"
   },
   "labels": {
+    "yes": "Yes",
+    "no": "No",
     "role": "Role",
     "rolePlaceholderFilter": "Filter by role",
     "indicator": "Indicator",
@@ -213,7 +221,19 @@
     "checkedBy": "Checked by",
     "checkPrescription": "Check prescription",
     "openPrescription": "Open prescription",
-    "undoCheckPrescription": "Undo check"
+    "undoCheckPrescription": "Undo check",
+    "nextPrescription": "Next prescription",
+    "showNextPrescription": "Show next prescription",
+    "potentialPrescriptionError": "Potential prescription error",
+    "reducesCost": "Reduces cost",
+    "reasons": "Reasons",
+    "relations": "Relations",
+    "responsible": "Responsible",
+    "observation": "Observation",
+    "status": "Status"
+  },
+  "tooltips": {
+    "relationsList": "List of Drugs with Interactions, Incompatibilities or Duplicity"
   },
   "buttons": {
     "search": "Search"
@@ -278,9 +298,15 @@
     "title": "Intervention",
 
     "labelPrescriptionError": "Prescription error",
+    "labelPrescriptionErrorHint": "Prescribing error with clinical significance is defined as an unintentional decision error that may reduce the likelihood that the treatment will be effective or increase the risk of injury to the patient, when compared to established and accepted clinical practices. Ref: CFF, Prot.: MS and Anvisa",
     "labelCostReduction": "Cost reduction",
+    "labelCostReductionHint": "This intervention reduces cost?",
     "labelReasons": "Reasons",
+    "labelReasonsPlaceholder": "Select reasons...",
+    "labelReasonsHint": "Interactions, Incompatibilities, Duplicity and/or Pharmaceutical Form open the option to inform related drugs",
     "labelRelations": "Relations",
+    "labelRelationsPlaceholder": "Select relations...",
+    "labelRelationsHint": "List of drugs with Interactions, Incompatibilities, Duplicity and/or Pharmaceutical Form",
     "labelObservations": "Observations",
 
     "btnModelEmpty": "No observation saved for this reason",
@@ -316,5 +342,17 @@
     "alergy": "Alergy",
     "tube": "Drug contraindicate by tube",
     "duplicate": "Duplicity"
+  },
+
+  "validation": {
+    "requiredField": "Required field"
+  },
+
+  "interventionStatus": {
+    "a": "Accepted",
+    "n": "Not accepted",
+    "j": "Not accepted (justified)",
+    "x": "Not applicable",
+    "s": "Pending"
   }
 }

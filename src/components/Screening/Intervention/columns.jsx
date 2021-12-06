@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/macro';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 import Icon from '@components/Icon';
 import Button, { Link } from '@components/Button';
@@ -69,63 +70,63 @@ export const PrescriptionInline = ({ dose, measureUnit, frequency, route, time }
   </>
 );
 
-export const InterventionView = ({ intervention, showReasons, showDate, status }) => (
-  <Descriptions bordered>
-    {status}
-    <Descriptions.Item label="Prescrição:" span={3}>
-      <PrescriptionInline {...intervention} />
-    </Descriptions.Item>
-    {intervention.fetchFuturePrescription && (
-      <Descriptions.Item label="Prescrição posterior:" span={3}>
-        {isEmpty(intervention.future) && (
-          <Link
-            onClick={() => intervention.fetchFuturePrescription(intervention.id)}
-            loading={intervention.futurePrescription.isFetching}
-            type="nda gtm-bt-iterv-future"
-          >
-            Visualizar prescrição posterior
-          </Link>
-        )}
-        {!isEmpty(intervention.future) && intervention.future}
-      </Descriptions.Item>
-    )}
+export const InterventionView = ({ intervention, showReasons, showDate, status }) => {
+  const { t } = useTranslation();
 
-    {showDate && (
-      <Descriptions.Item label="Data" span={3}>
-        {format(new Date(intervention.date), 'dd/MM/yyyy HH:mm')}
+  return (
+    <Descriptions bordered>
+      {status}
+      <Descriptions.Item label={`${t('tableHeader.prescription')}:`} span={3}>
+        <PrescriptionInline {...intervention} />
       </Descriptions.Item>
-    )}
-    <Descriptions.Item label="Possível erro de prescrição:" span={3}>
-      {intervention.error ? 'Sim' : 'Não'}
-    </Descriptions.Item>
-    <Descriptions.Item label="Gera redução de custo:" span={3}>
-      {intervention.cost ? 'Sim' : 'Não'}
-    </Descriptions.Item>
-    {showReasons && (
-      <Descriptions.Item label="Motivos:" span={3}>
-        {intervention.reasonDescription}
-      </Descriptions.Item>
-    )}
+      {intervention.fetchFuturePrescription && (
+        <Descriptions.Item label={`${t('labels.nextPrescription')}:`} span={3}>
+          {isEmpty(intervention.future) && (
+            <Link
+              onClick={() => intervention.fetchFuturePrescription(intervention.id)}
+              loading={intervention.futurePrescription.isFetching}
+              type="nda gtm-bt-iterv-future"
+            >
+              {t('labels.showNextPrescription')}
+            </Link>
+          )}
+          {!isEmpty(intervention.future) && intervention.future}
+        </Descriptions.Item>
+      )}
 
-    <Descriptions.Item
-      label={
-        <Tooltip title="Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade">
-          Relações:
-        </Tooltip>
-      }
-      span={3}
-    >
-      {!isEmpty(intervention.interactionsList) &&
-        intervention.interactionsList.map(item => item.name).join(', ')}
-    </Descriptions.Item>
-    <Descriptions.Item label="Responsável:" span={3}>
-      {intervention.user}
-    </Descriptions.Item>
-    <Descriptions.Item label="Observação:" span={3}>
-      <RichTextView text={intervention.observation} />
-    </Descriptions.Item>
-  </Descriptions>
-);
+      {showDate && (
+        <Descriptions.Item label={t('tableHeader.date')} span={3}>
+          {format(new Date(intervention.date), 'dd/MM/yyyy HH:mm')}
+        </Descriptions.Item>
+      )}
+      <Descriptions.Item label={`${t('labels.potentialPrescriptionError')}:`} span={3}>
+        {intervention.error ? t('labels.yes') : t('labels.no')}
+      </Descriptions.Item>
+      <Descriptions.Item label={`${t('labels.reducesCost')}:`} span={3}>
+        {intervention.cost ? t('labels.yes') : t('labels.no')}
+      </Descriptions.Item>
+      {showReasons && (
+        <Descriptions.Item label={`${t('labels.reasons')}:`} span={3}>
+          {intervention.reasonDescription}
+        </Descriptions.Item>
+      )}
+
+      <Descriptions.Item
+        label={<Tooltip title={t('tooltips.relationsList')}>{t('labels.relations')}:</Tooltip>}
+        span={3}
+      >
+        {!isEmpty(intervention.interactionsList) &&
+          intervention.interactionsList.map(item => item.name).join(', ')}
+      </Descriptions.Item>
+      <Descriptions.Item label={`${t('labels.responsible')}:`} span={3}>
+        {intervention.user}
+      </Descriptions.Item>
+      <Descriptions.Item label={`${t('labels.observation')}:`} span={3}>
+        <RichTextView text={intervention.observation} />
+      </Descriptions.Item>
+    </Descriptions>
+  );
+};
 
 export const expandedInterventionRowRender = record => {
   return (
@@ -216,10 +217,10 @@ const Action = ({
   );
 };
 
-const columns = (filteredInfo, name = false) => {
+const columns = (filteredInfo, name = false, t) => {
   const columnsArray = [
     {
-      title: 'Data',
+      title: t('tableHeader.date'),
       dataIndex: 'date',
       align: 'center',
       width: 80,
@@ -231,7 +232,7 @@ const columns = (filteredInfo, name = false) => {
 
   if (name) {
     columnsArray.push({
-      title: 'Responsável',
+      title: t('labels.responsible'),
       dataIndex: 'user',
       width: 80,
       filteredValue: filteredInfo.responsible || [],
@@ -248,7 +249,7 @@ const columns = (filteredInfo, name = false) => {
   return [
     ...columnsArray,
     {
-      title: 'Prescrição',
+      title: t('tableHeader.prescription'),
       dataIndex: 'idPrescription',
       align: 'center',
       width: 80,
@@ -265,32 +266,32 @@ const columns = (filteredInfo, name = false) => {
       }
     },
     {
-      title: 'Medicamento',
+      title: t('tableHeader.drug'),
       dataIndex: 'drugName',
       align: 'left',
       width: 200
     },
     {
-      title: 'Motivo',
+      title: t('labels.reasons'),
       dataIndex: 'reasonDescription',
       align: 'left',
       width: 100
     },
     {
-      title: 'Situação',
+      title: t('labels.status'),
       dataIndex: 'status',
       align: 'center',
       width: 80,
       filteredValue: filteredInfo.status || null,
       onFilter: (value, record) => record.status === value,
       render: (text, record) => {
-        const config = InterventionStatus.translate(record.status);
+        const config = InterventionStatus.translate(record.status, t);
 
         return <Tag color={config.color}>{config.label}</Tag>;
       }
     },
     {
-      title: 'Ações',
+      title: t('tableHeader.action'),
       align: 'center',
       width: 100,
       render: (text, record) => {
