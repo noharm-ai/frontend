@@ -304,7 +304,7 @@
     "emailError": "Ops! Invalid email format",
     "saveMessage": "Wow! User saved successfully! :)",
     "errorMessage": "Ops! something wrong happened.",
-    "errorDescription": "Something happened that didn't prevent this user's data from being saved. Please try again",
+    "errorDescription": "Something prevented this user's data from being saved. Please try again.",
 
     "btnSave": "Save",
     "btnCancel": "Cancel"

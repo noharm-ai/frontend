@@ -335,7 +335,7 @@
   },
 
   "errors": {
-    "invalidUser": "Usuário teste",
+    "invalidUser": "Usuário inválido",
     "unauthorizedUser": "Usuário não autorizado",
     "nameExists": "Já existe um usuário com este nome!",
     "emailExists": "Já existe um usuário com este email!"

@@ -39,7 +39,6 @@ export default function User({ saveStatus, save, afterSave, user, ...props }) {
     }
 
     if (error) {
-      console.log("error", error)
       notification.error({
         message: t('userAdminForm.errorMessage'),
         description: t( error.code )
