@@ -234,6 +234,13 @@
     "status": "Status",
     "transcription": "Transcription"
   },
+  "transcriptionLabels": {
+    "idDrug": "Drug",
+    "dose": "Dose",
+    "route": "Route",
+    "frequency": "Frequency",
+    "measureUnit": "Measure unit"
+  },
   "tooltips": {
     "relationsList": "List of Drugs with Interactions, Incompatibilities or Duplicity"
   },
