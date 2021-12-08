@@ -40,6 +40,14 @@ export const Box = styled.div`
   .ant-select-selection__placeholder {
     color: ${props => (props.hasError ? '#454545;' : 'inherit')};
   }
+
+  &.highlight {
+    input,
+    .ant-select .ant-select-selection,
+    textarea {
+      background: #7ebe9a40;
+    }
+  }
 `;
 
 export const EditorBox = styled.div`

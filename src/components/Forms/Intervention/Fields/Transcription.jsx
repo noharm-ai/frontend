@@ -66,7 +66,10 @@ export default function Transcription({
 
   return (
     <InternalBox>
-      <Box hasError={errors.idDrug && touched.idDrug}>
+      <Box
+        hasError={errors.idDrug && touched.idDrug}
+        className={drugData.idDrug !== idDrug ? 'highlight' : ''}
+      >
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
             {t('tableHeader.drug')}:
@@ -94,7 +97,10 @@ export default function Transcription({
           {errors.idDrug && touched.idDrug && <FieldError>{errors.idDrug}</FieldError>}
         </Col>
       </Box>
-      <Box hasError={errors.dose && touched.dose}>
+      <Box
+        hasError={errors.dose && touched.dose}
+        className={drugData.dose !== dose ? 'highlight' : ''}
+      >
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
             {t('tableHeader.dose')}:
@@ -110,7 +116,12 @@ export default function Transcription({
           {errors.dose && touched.dose && <FieldError>{errors.dose}</FieldError>}
         </Col>
       </Box>
-      <Box hasError={errors.measureUnit && touched.measureUnit}>
+      <Box
+        hasError={errors.measureUnit && touched.measureUnit}
+        className={
+          drugData.measureUnit && drugData.measureUnit.value !== measureUnit ? 'highlight' : ''
+        }
+      >
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
             {t('tableHeader.measureUnit')}:
@@ -135,7 +146,10 @@ export default function Transcription({
           )}
         </Col>
       </Box>
-      <Box hasError={errors.route && touched.route}>
+      <Box
+        hasError={errors.route && touched.route}
+        className={drugData.route !== route ? 'highlight' : ''}
+      >
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
             {t('tableHeader.route')}:
@@ -158,7 +172,10 @@ export default function Transcription({
           {errors.route && touched.route && <FieldError>{errors.route}</FieldError>}
         </Col>
       </Box>
-      <Box hasError={errors.frequency && touched.frequency}>
+      <Box
+        hasError={errors.frequency && touched.frequency}
+        className={drugData.frequency && drugData.frequency.value !== frequency ? 'highlight' : ''}
+      >
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
             {t('tableHeader.frequency')}:
