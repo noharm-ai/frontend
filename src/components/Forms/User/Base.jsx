@@ -53,6 +53,7 @@ export default function Base({ addUser }) {
             }}
             onChange={({ target }) => setFieldValue('email', target.value)}
             maxLength={50}
+            disabled= {id}
           />
           {errors.email && touched.email &&
             <Alert message={t('userAdminForm.emailError')}
@@ -66,19 +67,6 @@ export default function Base({ addUser }) {
               >
               {errors.email}
             </Alert>}
-              
-          {
-            id &&
-            <Alert message={t('userAdminForm.passwordResetWarning')}
-              banner
-              closable
-              style={{
-                marginTop: 10,
-                marginLeft: 10
-              }}
-            />
-          }
-
         </Col>
       </Box>
 
