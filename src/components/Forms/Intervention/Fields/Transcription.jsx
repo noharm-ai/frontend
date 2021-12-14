@@ -23,7 +23,7 @@ export default function Transcription({
   searchDrugs
 }) {
   const { t } = useTranslation();
-  const { dose, frequency, route, measureUnit, idDrug } = values.transcriptionData;
+  const { dose, frequency, route, measureUnit, idDrug, interval } = values.transcriptionData;
 
   useEffect(() => {
     fetchDrugSummary(idDrug, drugData.idSegment);
@@ -45,6 +45,7 @@ export default function Transcription({
     setFieldValue('transcriptionData.frequency', null);
     setFieldValue('transcriptionData.measureUnit', null);
     setFieldValue('transcriptionData.route', null);
+    setFieldValue('transcriptionData.interval', null);
   };
 
   const handleFrequencyChange = (value, option) => {
@@ -57,7 +58,12 @@ export default function Transcription({
     setFieldValue('transcriptionData.measureUnitLabel', option.props.children);
   };
 
-  const { units, routes, frequencies, drug } = drugSummary.data;
+  const handleIntervalChange = (value, option) => {
+    setFieldValue('transcriptionData.interval', value);
+    setFieldValue('transcriptionData.intervalLabel', option.props.children);
+  };
+
+  const { units, routes, frequencies, drug, intervals } = drugSummary.data;
   const search = debounce(value => {
     if (value.length < 3) return;
     searchDrugs(drugData.idSegment, { q: value });
@@ -147,32 +153,6 @@ export default function Transcription({
         </Col>
       </Box>
       <Box
-        hasError={errors.route && touched.route}
-        className={drugData.route !== route ? 'highlight' : ''}
-      >
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px">
-            {t('tableHeader.route')}:
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
-          <Select
-            id="route"
-            optionFilterProp="children"
-            style={{ width: '100%' }}
-            value={route}
-            onChange={value => setFieldValue('transcriptionData.route', value)}
-          >
-            {routes.map(({ id, description }) => (
-              <Select.Option key={id} value={id}>
-                {description}
-              </Select.Option>
-            ))}
-          </Select>
-          {errors.route && touched.route && <FieldError>{errors.route}</FieldError>}
-        </Col>
-      </Box>
-      <Box
         hasError={errors.frequency && touched.frequency}
         className={drugData.frequency && drugData.frequency.value !== frequency ? 'highlight' : ''}
       >
@@ -197,6 +177,58 @@ export default function Transcription({
             ))}
           </Select>
           {errors.frequency && touched.frequency && <FieldError>{errors.frequency}</FieldError>}
+        </Col>
+      </Box>
+      <Box
+        hasError={errors.interval && touched.interval}
+        className={drugData.interval !== interval ? 'highlight' : ''}
+      >
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px">
+            {t('tableHeader.interval')}:
+          </Heading>
+        </Col>
+        <Col xs={layout.input}>
+          <Select
+            id="interval"
+            optionFilterProp="children"
+            style={{ width: '100%' }}
+            value={interval}
+            onChange={(value, option) => handleIntervalChange(value, option)}
+          >
+            {intervals.map(({ id, description }) => (
+              <Select.Option key={id} value={id}>
+                {description}
+              </Select.Option>
+            ))}
+          </Select>
+          {errors.interval && touched.interval && <FieldError>{errors.interval}</FieldError>}
+        </Col>
+      </Box>
+      <Box
+        hasError={errors.route && touched.route}
+        className={drugData.route !== route ? 'highlight' : ''}
+      >
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px">
+            {t('tableHeader.route')}:
+          </Heading>
+        </Col>
+        <Col xs={layout.input}>
+          <Select
+            id="route"
+            optionFilterProp="children"
+            style={{ width: '100%' }}
+            value={route}
+            onChange={value => setFieldValue('transcriptionData.route', value)}
+          >
+            {routes.map(({ id, description }) => (
+              <Select.Option key={id} value={id}>
+                {description}
+              </Select.Option>
+            ))}
+          </Select>
+          {errors.route && touched.route && <FieldError>{errors.route}</FieldError>}
         </Col>
       </Box>
     </InternalBox>

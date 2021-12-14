@@ -95,7 +95,9 @@ export default function Intervention({
     measureUnitLabel: item.measureUnit ? item.measureUnit.label : null,
     route: item.route,
     idDrug: item.idDrug,
-    idDrugLabel: item.drug
+    idDrugLabel: item.drug,
+    interval: item.interval,
+    intervalLabel: item.time
   };
   const initialValues = {
     idPrescription: item.idPrescription,
@@ -133,6 +135,10 @@ export default function Intervention({
         trData[prop] = tr[prop];
       }
     });
+
+    if (isEmpty(trData)) {
+      return null;
+    }
 
     return trData;
   };

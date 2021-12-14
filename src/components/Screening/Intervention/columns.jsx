@@ -148,6 +148,9 @@ const TranscriptionView = ({ transcription }) => {
     frequency: {
       render: record => record.frequencyLabel
     },
+    interval: {
+      render: record => record.intervalLabel
+    },
     route: {
       render: record => record.route
     }

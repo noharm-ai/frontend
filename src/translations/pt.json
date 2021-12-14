@@ -189,6 +189,7 @@
     "dose": "Dose",
     "frequency": "Frequência",
     "time": "Horários",
+    "interval": "Horário",
     "route": "Via",
     "measureUnit": "Unidade de medida",
     "action": "Ações",
@@ -239,7 +240,8 @@
     "dose": "Dose",
     "route": "Via",
     "frequency": "Frequência",
-    "measureUnit": "Unidade de medida"
+    "measureUnit": "Unidade de medida",
+    "interval": "Horário"
   },
   "tooltips": {
     "relationsList": "Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade"
