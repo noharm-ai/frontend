@@ -385,5 +385,17 @@
     "unauthorizedUser": "Unauthorized user",
     "nameExists": "There is already a user with this name!",
     "emailExists": "There is already a user with this email!"
+  },
+
+  "validation": {
+    "requiredField": "Required field"
+  },
+
+  "interventionStatus": {
+    "a": "Accepted",
+    "n": "Not accepted",
+    "j": "Not accepted (justified)",
+    "x": "Not applicable",
+    "s": "Pending"
   }
 }
