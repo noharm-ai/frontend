@@ -189,7 +189,9 @@
     "dose": "Dose",
     "frequency": "Frequency",
     "time": "Time",
+    "interval": "Time",
     "route": "Route",
+    "measureUnit": "Measure unit",
     "action": "Action",
     "stage": "Stages",
     "infusion": "Infusion",
@@ -230,7 +232,16 @@
     "relations": "Relations",
     "responsible": "Responsible",
     "observation": "Observation",
-    "status": "Status"
+    "status": "Status",
+    "transcription": "Transcription"
+  },
+  "transcriptionLabels": {
+    "idDrug": "Drug",
+    "dose": "Dose",
+    "route": "Route",
+    "frequency": "Frequency",
+    "measureUnit": "Measure unit",
+    "interval": "Time"
   },
   "tooltips": {
     "relationsList": "List of Drugs with Interactions, Incompatibilities or Duplicity"
@@ -308,6 +319,8 @@
     "labelRelationsPlaceholder": "Select relations...",
     "labelRelationsHint": "List of drugs with Interactions, Incompatibilities, Duplicity and/or Pharmaceutical Form",
     "labelObservations": "Observations",
+    "labelTranscriptionHint": "Enables changes in the current prescription",
+    "labelTranscription": "Transcription",
 
     "btnModelEmpty": "No observation saved for this reason",
     "btnModelSave": "Save observation",

@@ -19,6 +19,10 @@ const security = roles => {
     return hasRole('cpoe');
   };
 
+  const hasTranscription = () => {
+    return hasRole('transcription');
+  };
+
   const isAdmin = () => {
     return hasRole('admin');
   };
@@ -32,6 +36,7 @@ const security = roles => {
     hasNoHarmCare,
     hasAlertIntegration,
     hasCpoe,
+    hasTranscription,
     isAdmin,
     isSupport
   };

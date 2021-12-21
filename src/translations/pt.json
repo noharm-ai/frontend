@@ -189,7 +189,9 @@
     "dose": "Dose",
     "frequency": "Frequência",
     "time": "Horários",
+    "interval": "Horário",
     "route": "Via",
+    "measureUnit": "Unidade de medida",
     "action": "Ações",
     "stage": "Etapas",
     "infusion": "Infusão",
@@ -230,7 +232,16 @@
     "relations": "Relações",
     "responsible": "Responsável",
     "observation": "Observação",
-    "status": "Situação"
+    "status": "Situação",
+    "transcription": "Transcrição"
+  },
+  "transcriptionLabels": {
+    "idDrug": "Medicamento",
+    "dose": "Dose",
+    "route": "Via",
+    "frequency": "Frequência",
+    "measureUnit": "Unidade de medida",
+    "interval": "Horário"
   },
   "tooltips": {
     "relationsList": "Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade"
@@ -308,6 +319,8 @@
     "labelRelationsPlaceholder": "Selecione as relações...",
     "labelRelationsHint": "Lista de medicamentos com Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica",
     "labelObservations": "Observações",
+    "labelTranscriptionHint": "Habilita a possibilidade de alterar a prescrição atual",
+    "labelTranscription": "Transcrição",
 
     "btnModelEmpty": "Este motivo ainda não possui um modelo salvo",
     "btnModelSave": "Salvar observação modelo",

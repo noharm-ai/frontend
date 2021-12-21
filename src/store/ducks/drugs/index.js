@@ -5,6 +5,10 @@ export const { Types, Creators } = createActions({
   drugsFetchListError: ['error'],
   drugsFetchListSuccess: ['list'],
 
+  drugsFetchSummaryStart: [''],
+  drugsFetchSummaryError: ['error'],
+  drugsFetchSummarySuccess: ['data'],
+
   drugsSearchStart: [''],
   drugsSearchError: ['error'],
   drugsSearchSuccess: ['list'],
@@ -48,6 +52,11 @@ const INITIAL_STATE = {
     isFetching: false,
     error: null,
     list: []
+  },
+  summary: {
+    isFetching: false,
+    error: null,
+    data: null
   }
 };
 
@@ -67,6 +76,33 @@ const fetchListSuccess = (state = INITIAL_STATE, { list }) => ({
   list,
   error: null,
   isFetching: false
+});
+
+const fetchSummaryStart = (state = INITIAL_STATE) => ({
+  ...state,
+  summary: {
+    ...state.summary,
+    isFetching: true
+  }
+});
+
+const fetchSummaryError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  summary: {
+    ...state.summary,
+    isFetching: false,
+    error
+  }
+});
+
+const fetchSummarySuccess = (state = INITIAL_STATE, { data }) => ({
+  ...state,
+  summary: {
+    ...state.summary,
+    isFetching: false,
+    error: null,
+    data
+  }
 });
 
 const searchStart = (state = INITIAL_STATE) => ({
@@ -219,6 +255,10 @@ const HANDLERS = {
   [Types.DRUGS_FETCH_LIST_START]: fetchListStart,
   [Types.DRUGS_FETCH_LIST_ERROR]: fetchListError,
   [Types.DRUGS_FETCH_LIST_SUCCESS]: fetchListSuccess,
+
+  [Types.DRUGS_FETCH_SUMMARY_START]: fetchSummaryStart,
+  [Types.DRUGS_FETCH_SUMMARY_ERROR]: fetchSummaryError,
+  [Types.DRUGS_FETCH_SUMMARY_SUCCESS]: fetchSummarySuccess,
 
   [Types.DRUGS_SEARCH_START]: searchStart,
   [Types.DRUGS_SEARCH_ERROR]: searchError,

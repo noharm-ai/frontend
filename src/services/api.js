@@ -190,6 +190,9 @@ const updateUnitCoefficient = (bearerToken, idDrug, idMeasureUnit, params = {}) 
     setHeaders(bearerToken)
   );
 
+const getDrugSummary = (bearerToken, idDrug, idSegment) =>
+  instance.get(`${endpoints.drugs}/summary/${idSegment}/${idDrug}`, { ...setHeaders(bearerToken) });
+
 /**
  * Departments.
  *
@@ -361,6 +364,7 @@ const api = {
   getPatient,
   getDrugs,
   getDrugsBySegment,
+  getDrugSummary,
   updateDrug,
   getDrugUnits,
   updateUnitCoefficient,

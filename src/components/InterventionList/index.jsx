@@ -65,9 +65,13 @@ export default function InterventionList({
       idPrescriptionDrug: data.idPrescriptionDrug,
       dosage: `${data.dose} ${data.measureUnit.value}`,
       frequency: data.frequency,
+      measureUnit: data.measureUnit,
       drug: data.drugName,
       route: data.route,
-      intervention: data
+      intervention: data,
+      idSegment: data.idSegment,
+      idDrug: data.idDrug,
+      dose: data.dose
     });
     setVisibility(true);
   };
@@ -104,7 +108,15 @@ export default function InterventionList({
     }
   }, [error, t]);
 
-  const afterSaveIntervention = item => {
+  const afterSaveIntervention = ({
+    dose,
+    route,
+    frequency,
+    measureUnit,
+    idDrugTranscription,
+    ...item
+  }) => {
+    //destructuring because we dont want that extra data
     updateList(item);
   };
 

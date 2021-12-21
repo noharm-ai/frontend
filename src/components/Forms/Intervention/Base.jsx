@@ -12,28 +12,44 @@ import Switch from '@components/Switch';
 
 import Interaction from './Fields/Interaction';
 import Observation from './Fields/Observation';
+import Transcription from './Fields/Transcription';
 
 import { Box, FieldError } from '../Form.style';
 
 export default function Base({
+  drugData,
   intervention,
   reasons,
   searchDrugs,
   drugs,
   reasonTextMemory,
   memorySaveReasonText,
-  memoryFetchReasonText
+  memoryFetchReasonText,
+  drugSummary,
+  fetchDrugSummary,
+  security
 }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const { t } = useTranslation();
   const { item: itemToSave } = intervention;
-  const { error, cost, idInterventionReason, interactions, observation } = values;
+  const { error, cost, idInterventionReason, interactions, observation, transcription } = values;
   const layout = { label: 8, input: 16 };
+  const hasTranscription =
+    security.hasTranscription() &&
+    drugData.intervention.id + '' !== '0' &&
+    drugData.intervention.idPrescriptionDrug + '' !== '0';
 
   const hasRelationships = (reasonList, selectedReasons = []) => {
     if (!selectedReasons) return false;
 
     const reasonsWithRelationshipsRegEx = /duplicidade|interaç|incompatib|apresentaç|forma|subst/g;
+
+    return hasReason(reasonList, selectedReasons, reasonsWithRelationshipsRegEx);
+  };
+
+  const hasReason = (reasonList, selectedReasons = [], regex) => {
+    if (!selectedReasons) return false;
+
     let hasRelation = false;
 
     selectedReasons.forEach(itemId => {
@@ -41,7 +57,7 @@ export default function Base({
 
       if (reasonIndex !== -1) {
         const reason = reasonList[reasonIndex].description.toLowerCase();
-        if (reason.match(reasonsWithRelationshipsRegEx)) {
+        if (reason.match(regex)) {
           hasRelation = true;
         }
       }
@@ -156,6 +172,42 @@ export default function Base({
             )}
           </Col>
         </Box>
+      )}
+      {hasTranscription && (
+        <>
+          <Box hasError={errors.transcription && touched.transcription}>
+            <Col xs={layout.label}>
+              <Heading as="label" size="14px">
+                <Tooltip title={t('interventionForm.labelTranscriptionHint')} underline>
+                  {t('interventionForm.labelTranscription')}:
+                </Tooltip>
+              </Heading>
+            </Col>
+            <Col xs={layout.input}>
+              <Switch
+                onChange={value => setFieldValue('transcription', value)}
+                checked={transcription}
+              />
+              {errors.transcription && touched.transcription && (
+                <FieldError>{errors.transcription}</FieldError>
+              )}
+            </Col>
+          </Box>
+          {transcription && (
+            <Transcription
+              fetchDrugSummary={fetchDrugSummary}
+              drugSummary={drugSummary}
+              drugData={drugData}
+              setFieldValue={setFieldValue}
+              errors={errors}
+              touched={touched}
+              values={values}
+              layout={layout}
+              searchDrugs={searchDrugs}
+              drugs={drugs}
+            ></Transcription>
+          )}
+        </>
       )}
       <Box hasError={errors.observation && touched.observation}>
         <Observation
