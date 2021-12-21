@@ -37,7 +37,9 @@
     "segments": "Segmentos",
     "knowledgeBase": "Base de Conhecimento",
     "userConfig": "Usuário",
-    "exams": "Exames"
+    "exams": "Exames",
+    "user-administration": "Cadastro",
+    "reg-administration": "Cadastro de Usuários"
   },
   "screeningList": {
     "empty": "Nenhum registro encontrado",
@@ -334,6 +336,26 @@
     "btnCancel": "Cancelar"
   },
 
+  "userAdminForm": {
+    "name": "Nome",
+    "email": "Email",
+    "id": "ID Externo",
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "addIcon": "Adicionar",
+    "userEdit": "Alterar usuario",
+
+    "passwordResetWarning": "Ao alterar o email a senha será redefinida",
+    "emailError": "Ops! Formato de email inválido.",
+    "requeridError": "Você se esqueceu de inserir o seu email.",
+    "saveMessage": "Uhu! Usuário salvo com sucesso! :)",
+    "errorMessage": "Ops! Algo de errado aconteceu.",
+    "errorDescription": "Aconteceu algo que nos impediu de salvar os dados deste usuário. Por favor, tente novamente",
+
+    "btnSave": "Salvar",
+    "btnCancel": "Cancelar"
+  },
+
   "clinicalNotesIndicator": {
     "allergy": "Alergia",
     "conduct": "Conduta",
@@ -356,5 +378,12 @@
     "alergy": "Alergia",
     "tube": "Medicamento contraindicado por sonda",
     "duplicate": "Duplicidade"
+  },
+
+  "errors": {
+    "invalidUser": "Usuário inválido",
+    "unauthorizedUser": "Usuário não autorizado",
+    "nameExists": "Já existe um usuário com este nome!",
+    "emailExists": "Já existe um usuário com este email!"
   }
 }

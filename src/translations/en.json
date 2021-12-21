@@ -37,7 +37,9 @@
     "segments": "Segments",
     "knowledgeBase": "Knowledge Base",
     "userConfig": "User",
-    "exams": "Lab exams"
+    "exams": "Lab exams",
+    "user-administration": "Registration",
+    "reg-administration": "User registration"
   },
   "screeningList": {
     "empty": "No records found",
@@ -333,6 +335,27 @@
     "btnUndo": "Undo",
     "btnCancel": "Cancel"
   },
+
+
+  "userAdminForm": {
+    "name": "Name",
+    "email": "Email",
+    "id": "External ID",
+    "active": "Active",
+    "inactive": "Inactive",
+    "addIcon": "Add",
+    "userEdit": "Change user",
+    
+    "passwordResetWarning": "When changing the email the password will be reset",
+    "emailError": "Ops! Invalid email format",
+    "saveMessage": "Wow! User saved successfully! :)",
+    "errorMessage": "Ops! something wrong happened.",
+    "errorDescription": "Something prevented this user's data from being saved. Please try again.",
+
+    "btnSave": "Save",
+    "btnCancel": "Cancel"
+  },
+
   "clinicalNotesIndicator": {
     "allergy": "Allergy",
     "conduct": "Conduct",
@@ -355,5 +378,12 @@
     "alergy": "Alergy",
     "tube": "Drug contraindicate by tube",
     "duplicate": "Duplicity"
+  },
+
+  "errors": {
+    "invalidUser": "Non-existent user",
+    "unauthorizedUser": "Unauthorized user",
+    "nameExists": "There is already a user with this name!",
+    "emailExists": "There is already a user with this email!"
   }
 }

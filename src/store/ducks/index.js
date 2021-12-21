@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import appReducer from './app';
 import authReducer from './auth';
 import userReducer from './user';
+import userAdminReducer from './userAdmin';
 import drugsReducer from './drugs';
 import sessionReducer from './session';
 import outliersReducer from './outliers';
@@ -20,6 +21,7 @@ export default combineReducers({
   app: appReducer,
   auth: authReducer,
   user: userReducer,
+  users: userAdminReducer,
   drugs: drugsReducer,
   session: sessionReducer,
   outliers: outliersReducer,
