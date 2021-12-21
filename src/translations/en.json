@@ -355,17 +355,5 @@
     "alergy": "Alergy",
     "tube": "Drug contraindicate by tube",
     "duplicate": "Duplicity"
-  },
-
-  "validation": {
-    "requiredField": "Required field"
-  },
-
-  "interventionStatus": {
-    "a": "Accepted",
-    "n": "Not accepted",
-    "j": "Not accepted (justified)",
-    "x": "Not applicable",
-    "s": "Pending"
   }
 }

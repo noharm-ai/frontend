@@ -356,17 +356,5 @@
     "alergy": "Alergia",
     "tube": "Medicamento contraindicado por sonda",
     "duplicate": "Duplicidade"
-  },
-
-  "validation": {
-    "requiredField": "Campo obrigatório"
-  },
-
-  "interventionStatus": {
-    "a": "Aceita",
-    "n": "Não aceita",
-    "j": "Não aceita com Justificativa",
-    "x": "Não se aplica",
-    "s": "Pendente"
   }
 }
