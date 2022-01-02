@@ -36,6 +36,9 @@ export default function Intervention({
   reasonTextMemory,
   memorySaveReasonText,
   memoryFetchReasonText,
+  drugSummary,
+  fetchDrugSummary,
+  security,
   ...props
 }) {
   const { t } = useTranslation();
@@ -84,7 +87,18 @@ export default function Intervention({
   if (!item.intervention) {
     return null;
   }
-
+  const transcriptable = {
+    dose: item.dose,
+    frequency: item.frequency ? item.frequency.value : null,
+    frequencyLabel: item.frequency ? item.frequency.label : null,
+    measureUnit: item.measureUnit ? item.measureUnit.value : null,
+    measureUnitLabel: item.measureUnit ? item.measureUnit.label : null,
+    route: item.route,
+    idDrug: item.idDrug,
+    idDrugLabel: item.drug,
+    interval: item.interval,
+    intervalLabel: item.time
+  };
   const initialValues = {
     idPrescription: item.idPrescription,
     idPrescriptionDrug: item.idPrescriptionDrug,
@@ -94,23 +108,58 @@ export default function Intervention({
     idInterventionReason: item.intervention.idInterventionReason,
     reasonDescription: null,
     interactions: item.intervention.interactions,
-    observation: item.intervention.observation || ''
+    observation: item.intervention.observation || '',
+    transcription: item.intervention.transcription != null,
+    transcriptionData: {
+      ...transcriptable
+    }
   };
+
+  if (item.intervention.transcription) {
+    initialValues.transcriptionData = {
+      ...initialValues.transcriptionData,
+      ...item.intervention.transcription
+    };
+  }
 
   const onCancel = () => {
     select({});
     setVisibility(false);
   };
 
+  const getTranscriptionData = tr => {
+    const trData = {};
+
+    Object.keys(transcriptable).forEach(prop => {
+      if (tr[prop] !== transcriptable[prop]) {
+        trData[prop] = tr[prop];
+      }
+    });
+
+    if (isEmpty(trData)) {
+      return null;
+    }
+
+    return trData;
+  };
+
   const onSave = params => {
-    save(params);
+    const { transcription, transcriptionData } = params;
+    const interventionData = {
+      ...params,
+      transcription: transcription ? getTranscriptionData(transcriptionData) : null
+    };
+
+    delete interventionData.transcriptionData;
+
+    save(interventionData);
 
     // move to useeffect
     if (afterSaveIntervention) {
-      afterSaveIntervention(params);
+      afterSaveIntervention(interventionData);
     } else {
       updateInterventionData(item.idPrescriptionDrug, item.source, {
-        ...params,
+        ...interventionData,
         status: 's'
       });
     }
@@ -169,15 +218,16 @@ export default function Intervention({
           <header>
             <Heading margin="0 0 11px">{t('interventionForm.title')}</Heading>
           </header>
-          {(item.intervention.id === 0 || item.intervention.idPrescriptionDrug === 0) && (
-            <PatientData {...item} />
-          )}
-          {item.intervention.id !== 0 && item.intervention.idPrescriptionDrug !== 0 && (
-            <DrugData {...item} />
-          )}
+          {(item.intervention.id + '' === '0' ||
+            item.intervention.idPrescriptionDrug + '' === '0') && <PatientData {...item} />}
+          {item.intervention.id + '' !== '0' &&
+            item.intervention.idPrescriptionDrug + '' !== '0' && <DrugData {...item} />}
           <form onSubmit={handleSubmit}>
             <Row type="flex" gutter={[16, 16]}>
               <Base
+                drugData={item}
+                fetchDrugSummary={fetchDrugSummary}
+                drugSummary={drugSummary}
                 intervention={intervention}
                 reasons={reasons}
                 searchDrugs={searchDrugs}
@@ -185,6 +235,7 @@ export default function Intervention({
                 reasonTextMemory={reasonTextMemory}
                 memorySaveReasonText={memorySaveReasonText}
                 memoryFetchReasonText={memoryFetchReasonText}
+                security={security}
               />
             </Row>
           </form>

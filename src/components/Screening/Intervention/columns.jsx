@@ -124,8 +124,51 @@ export const InterventionView = ({ intervention, showReasons, showDate, status }
       <Descriptions.Item label={`${t('labels.observation')}:`} span={3}>
         <RichTextView text={intervention.observation} />
       </Descriptions.Item>
+      {intervention.transcription && (
+        <Descriptions.Item label={`${t('labels.transcription')}:`} span={3}>
+          <TranscriptionView transcription={intervention.transcription} />
+        </Descriptions.Item>
+      )}
     </Descriptions>
   );
+};
+
+const TranscriptionView = ({ transcription }) => {
+  const { t } = useTranslation();
+  const config = {
+    idDrug: {
+      render: record => record.idDrugLabel
+    },
+    dose: {
+      render: record => record.dose
+    },
+    measureUnit: {
+      render: record => record.measureUnitLabel
+    },
+    frequency: {
+      render: record => record.frequencyLabel
+    },
+    interval: {
+      render: record => record.intervalLabel
+    },
+    route: {
+      render: record => record.route
+    }
+  };
+
+  const items = Object.keys(config).map(key => {
+    if (transcription[key]) {
+      return (
+        <Descriptions.Item key={key} label={t(`transcriptionLabels.${key}`)} span={3}>
+          {config[key].render(transcription)}
+        </Descriptions.Item>
+      );
+    }
+
+    return null;
+  });
+
+  return <Descriptions bordered>{items}</Descriptions>;
 };
 
 export const expandedInterventionRowRender = record => {

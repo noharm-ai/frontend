@@ -67,6 +67,13 @@ export default [
         text: 'menu.userConfig',
         icon: 'user',
         id: 'gtm-lnk-usuario'
+      },
+      {
+        key: '/configuracoes/administracao',
+        text: 'menu.user-administration',
+        icon: 'usergroup-add',
+        id: 'gtm-lnk-user-administration',
+        role: 'userAdmin'
       }
     ]
   }

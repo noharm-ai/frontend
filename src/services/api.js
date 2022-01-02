@@ -40,7 +40,9 @@ const endpoints = {
   substance: '/substance',
   memory: '/memory',
   user: '/user',
-  clinicalNotes: '/notes'
+  users: '/users',
+  clinicalNotes: '/notes',
+  editUser: '/editUser'
 };
 
 /**
@@ -50,16 +52,16 @@ const endpoints = {
 const setHeaders = token =>
   token
     ? {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'x-api-key': appInfo.apiKey
-        }
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'x-api-key': appInfo.apiKey
       }
+    }
     : {
-        headers: {
-          'x-api-key': appInfo.apiKey
-        }
-      };
+      headers: {
+        'x-api-key': appInfo.apiKey
+      }
+    };
 
 /**
  * Authentication.
@@ -190,6 +192,9 @@ const updateUnitCoefficient = (bearerToken, idDrug, idMeasureUnit, params = {}) 
     setHeaders(bearerToken)
   );
 
+const getDrugSummary = (bearerToken, idDrug, idSegment) =>
+  instance.get(`${endpoints.drugs}/summary/${idSegment}/${idDrug}`, { ...setHeaders(bearerToken) });
+
 /**
  * Departments.
  *
@@ -289,6 +294,13 @@ const putMemory = (bearerToken, { id, ...params }) => {
  * User.
  *
  */
+const createUser = (bearerToken, params = {}) =>
+  instance.put(endpoints.editUser, params, setHeaders(bearerToken));
+
+const updateUser = (bearerToken, { id,  ...params}) =>
+  instance.put(`${endpoints.editUser}/${id}`, params, setHeaders(bearerToken));
+
+
 const updatePassword = (bearerToken, { ...params }) => {
   return instance.put(`${endpoints.user}`, params, setHeaders(bearerToken));
 };
@@ -306,6 +318,9 @@ const resetPassword = (token, password) => {
     }
   );
 };
+
+const getUsers = (bearerToken, params = {}) =>
+  instance.get(endpoints.users, { params, ...setHeaders(bearerToken) });
 
 /**
  * ClinicalNotes.
@@ -361,6 +376,7 @@ const api = {
   getPatient,
   getDrugs,
   getDrugsBySegment,
+  getDrugSummary,
   updateDrug,
   getDrugUnits,
   updateUnitCoefficient,
@@ -393,9 +409,12 @@ const api = {
   updatePassword,
   forgotPassword,
   resetPassword,
+  getUsers,
   updateSegmentExamOrder,
   getClinicalNotes,
-  updateClinicalNote
+  updateClinicalNote,
+  createUser,
+  updateUser
 };
 
 export default api;

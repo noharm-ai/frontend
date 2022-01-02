@@ -37,7 +37,9 @@
     "segments": "Segments",
     "knowledgeBase": "Knowledge Base",
     "userConfig": "User",
-    "exams": "Lab exams"
+    "exams": "Lab exams",
+    "user-administration": "Registration",
+    "reg-administration": "User registration"
   },
   "screeningList": {
     "empty": "No records found",
@@ -189,7 +191,9 @@
     "dose": "Dose",
     "frequency": "Frequency",
     "time": "Time",
+    "interval": "Time",
     "route": "Route",
+    "measureUnit": "Measure unit",
     "action": "Action",
     "stage": "Stages",
     "infusion": "Infusion",
@@ -230,7 +234,16 @@
     "relations": "Relations",
     "responsible": "Responsible",
     "observation": "Observation",
-    "status": "Status"
+    "status": "Status",
+    "transcription": "Transcription"
+  },
+  "transcriptionLabels": {
+    "idDrug": "Drug",
+    "dose": "Dose",
+    "route": "Route",
+    "frequency": "Frequency",
+    "measureUnit": "Measure unit",
+    "interval": "Time"
   },
   "tooltips": {
     "relationsList": "List of Drugs with Interactions, Incompatibilities or Duplicity"
@@ -308,6 +321,8 @@
     "labelRelationsPlaceholder": "Select relations...",
     "labelRelationsHint": "List of drugs with Interactions, Incompatibilities, Duplicity and/or Pharmaceutical Form",
     "labelObservations": "Observations",
+    "labelTranscriptionHint": "Enables changes in the current prescription",
+    "labelTranscription": "Transcription",
 
     "btnModelEmpty": "No observation saved for this reason",
     "btnModelSave": "Save observation",
@@ -320,6 +335,27 @@
     "btnUndo": "Undo",
     "btnCancel": "Cancel"
   },
+
+
+  "userAdminForm": {
+    "name": "Name",
+    "email": "Email",
+    "id": "External ID",
+    "active": "Active",
+    "inactive": "Inactive",
+    "addIcon": "Add",
+    "userEdit": "Change user",
+    
+    "passwordResetWarning": "When changing the email the password will be reset",
+    "emailError": "Ops! Invalid email format",
+    "saveMessage": "Wow! User saved successfully! :)",
+    "errorMessage": "Ops! something wrong happened.",
+    "errorDescription": "Something prevented this user's data from being saved. Please try again.",
+
+    "btnSave": "Save",
+    "btnCancel": "Cancel"
+  },
+
   "clinicalNotesIndicator": {
     "allergy": "Allergy",
     "conduct": "Conduct",
@@ -342,6 +378,13 @@
     "alergy": "Alergy",
     "tube": "Drug contraindicate by tube",
     "duplicate": "Duplicity"
+  },
+
+  "errors": {
+    "invalidUser": "Non-existent user",
+    "unauthorizedUser": "Unauthorized user",
+    "nameExists": "There is already a user with this name!",
+    "emailExists": "There is already a user with this email!"
   },
 
   "validation": {

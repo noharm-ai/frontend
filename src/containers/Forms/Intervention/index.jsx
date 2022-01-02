@@ -13,16 +13,19 @@ import {
   checkInterventionThunk,
   checkPrescriptionDrugThunk
 } from '@store/ducks/prescriptions/thunk';
-import { searchDrugsThunk } from '@store/ducks/drugs/thunk';
+import { searchDrugsThunk, fetchDrugSummaryThunk } from '@store/ducks/drugs/thunk';
 import { memoryFetchReasonTextThunk, memorySaveReasonTextThunk } from '@store/ducks/memory/thunk';
 
 import Intervention from '@components/Forms/Intervention';
+import security from '@services/security';
 
-const mapStateToProps = ({ intervention, drugs, memory }) => ({
+const mapStateToProps = ({ intervention, drugs, memory, user }) => ({
   intervention: intervention.maybeCreateOrUpdate,
   reasons: intervention.reasons,
   drugs: drugs.search,
-  reasonTextMemory: memory.reasonText
+  drugSummary: drugs.summary,
+  reasonTextMemory: memory.reasonText,
+  security: security(user.account.roles)
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -36,6 +39,7 @@ const mapDispatchToProps = dispatch =>
       fetchReasonsList: fetchReasonsListThunk,
       updateSelectedItemToSaveIntervention: updateSelectedItemToSaveInterventionThunk,
       searchDrugs: searchDrugsThunk,
+      fetchDrugSummary: fetchDrugSummaryThunk,
       memorySaveReasonText: memorySaveReasonTextThunk,
       memoryFetchReasonText: memoryFetchReasonTextThunk
     },

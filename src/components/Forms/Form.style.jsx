@@ -40,6 +40,14 @@ export const Box = styled.div`
   .ant-select-selection__placeholder {
     color: ${props => (props.hasError ? '#454545;' : 'inherit')};
   }
+
+  &.highlight {
+    input,
+    .ant-select .ant-select-selection,
+    textarea {
+      background: #7ebe9a40;
+    }
+  }
 `;
 
 export const EditorBox = styled.div`
@@ -66,4 +74,19 @@ export const FormHeader = styled.div`
   border-bottom: 1px solid ${get('colors.detail')};
   padding: 10px 0;
   margin-bottom: 15px;
+`;
+
+export const InternalBox = styled.div`
+  padding: 10px 50px;
+  width: 100%;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 10px;
+  margin-top: 5px;
+  background: #fafafa;
+
+  .ant-select,
+  .ant-input {
+    background: #fff;
+  }
 `;

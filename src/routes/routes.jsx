@@ -21,6 +21,7 @@ import KnowledgeBaseArticle from '@pages/KnowledgeBase/Article';
 import UserConfig from '@pages/UserConfig';
 import Password from '@pages/Password';
 import Conciliation from '@pages/Conciliation';
+import UserAdmin from '@pages/UserAdmin';
 
 const routes = [
   {
@@ -196,6 +197,13 @@ const routes = [
     path: '/configuracoes/usuario',
     component: withAuth({
       component: UserConfig
+    })
+  },
+  {
+    exact: true,
+    path: '/configuracoes/administracao',
+    component: withAuth({
+      component: UserAdmin
     })
   },
   {
