@@ -172,7 +172,8 @@
     "editWeigth": "Atualizar o peso",
     "editHeight": "Atualizar a altura",
     "examDate": "Data",
-    "examVariation": "Variação em relação ao último exame"
+    "examVariation": "Variação em relação ao último exame",
+    "admissionDate": "Data de internação"
   },
   "screeningBody": {
     "tabDrugs": "Medicamentos",
