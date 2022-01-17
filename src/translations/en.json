@@ -345,6 +345,7 @@
     "inactive": "Inactive",
     "addIcon": "Add",
     "userEdit": "Change user",
+    "roles": "Roles",
 
     "passwordResetWarning": "When changing the email the password will be reset",
     "emailError": "Ops! Invalid email format",
@@ -397,5 +398,17 @@
     "j": "Not accepted (justified)",
     "x": "Not applicable",
     "s": "Pending"
+  },
+
+  "roles": {
+    "admin": "Admin",
+    "concilia": "Conciliation",
+    "care": "NoHarm Care",
+    "suporte": "Support",
+    "transcription": "Transcription",
+    "userAdmin": "User Admin",
+    "nolimit": "No date limit at prioritization",
+    "alert-bt": "Alert Integration",
+    "cpoe": "CPOE"
   }
 }

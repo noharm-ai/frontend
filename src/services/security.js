@@ -1,5 +1,7 @@
 import isEmpty from 'lodash.isempty';
 
+import Role from '@models/Role';
+
 const security = roles => {
   const hasRole = role => {
     if (isEmpty(roles)) return false;
@@ -8,27 +10,27 @@ const security = roles => {
   };
 
   const hasNoHarmCare = () => {
-    return hasRole('care');
+    return hasRole(Role.CARE);
   };
 
   const hasAlertIntegration = () => {
-    return hasRole('alert-bt');
+    return hasRole(Role.ALERT_BT);
   };
 
   const hasCpoe = () => {
-    return hasRole('cpoe');
+    return hasRole(Role.CPOE);
   };
 
   const hasTranscription = () => {
-    return hasRole('transcription');
+    return hasRole(Role.TRANSCRIPTION);
   };
 
   const isAdmin = () => {
-    return hasRole('admin');
+    return hasRole(Role.ADMIN);
   };
 
   const isSupport = () => {
-    return hasRole('suporte');
+    return hasRole(Role.SUPPORT);
   };
 
   return {

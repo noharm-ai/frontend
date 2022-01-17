@@ -4,17 +4,19 @@ import { useFormikContext } from 'formik';
 import { Alert } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-
 import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
 import { Input } from '@components/Inputs';
 import Switch from '@components/Switch';
 import Tooltip from '@components/Tooltip';
+import { Select } from '@components/Inputs';
+import Role from '@models/Role';
+
 import { Box } from '../Form.style';
 
-export default function Base({ addUser }) {
+export default function Base({ security }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
-  const { name, external, active, id } = values;
+  const { name, external, active, id, roles } = values;
   const layout = { label: 8, input: 16 };
   const { t } = useTranslation();
   return (
@@ -53,10 +55,11 @@ export default function Base({ addUser }) {
             }}
             onChange={({ target }) => setFieldValue('email', target.value)}
             maxLength={50}
-            disabled= {id}
+            disabled={id != null}
           />
-          {errors.email && touched.email &&
-            <Alert message={t('userAdminForm.emailError')}
+          {errors.email && touched.email && (
+            <Alert
+              message={t('userAdminForm.emailError')}
               type="error"
               bannder
               closable
@@ -64,9 +67,10 @@ export default function Base({ addUser }) {
                 marginTop: 10,
                 marginLeft: 10
               }}
-              >
+            >
               {errors.email}
-            </Alert>}
+            </Alert>
+          )}
         </Col>
       </Box>
 
@@ -105,6 +109,32 @@ export default function Base({ addUser }) {
           />
         </Col>
       </Box>
+
+      {security.isAdmin() && (
+        <Box hasError={errors.roles}>
+          <Col xs={layout.label}>
+            <Heading as="label" size="14px" textAlign="right">
+              <Tooltip>{t('userAdminForm.roles')}</Tooltip>
+            </Heading>
+          </Col>
+          <Col xs={layout.input}>
+            <Select
+              id="reason"
+              mode="multiple"
+              optionFilterProp="children"
+              style={{ width: '100%' }}
+              value={roles}
+              onChange={roles => setFieldValue('roles', roles)}
+            >
+              {Role.getRoles(t).map(({ id, label }) => (
+                <Select.Option key={id} value={id}>
+                  {label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Col>
+        </Box>
+      )}
     </>
   );
 }
