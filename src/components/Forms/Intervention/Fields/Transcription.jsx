@@ -73,8 +73,6 @@ export default function Transcription({
   }, 800);
   const currentDrug = { idDrug: drug.id, name: drug.name };
 
-  console.log('current value', values.transcriptionData.frequency);
-
   return (
     <InternalBox>
       <Box
