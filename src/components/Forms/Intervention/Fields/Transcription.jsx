@@ -200,9 +200,7 @@ export default function Transcription({
             onChange={(value, option) => handleIntervalChange(value, option)}
           >
             {intervals
-              .filter(
-                i => i.idFrequency == null || i.idFrequency === values.transcriptionData.frequency
-              )
+              .filter(i => i.idFrequency === values.transcriptionData.frequency)
               .map(({ id, description }) => (
                 <Select.Option key={id} value={id}>
                   {description}
