@@ -75,6 +75,44 @@ const interventionMenu = (id, idPrescription, saveInterventionStatus, source) =>
   </Menu>
 );
 
+const prescriptionDrugMenu = ({
+  idPrescriptionDrug,
+  admissionNumber,
+  onShowPrescriptionDrugModal,
+  hasNotes,
+  t,
+  ...data
+}) => {
+  return (
+    <Menu>
+      <Menu.Item
+        onClick={() =>
+          onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber })
+        }
+        className="gtm-btn-notes"
+      >
+        {hasNotes ? t('prescriptionDrugList.updateNotes') : t('prescriptionDrugList.addNotes')}
+      </Menu.Item>
+      <Menu.Item
+        onClick={() =>
+          onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber })
+        }
+        className="gtm-btn-edit-drug"
+      >
+        Alterar
+      </Menu.Item>
+      <Menu.Item
+        onClick={() =>
+          onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber })
+        }
+        className="gtm-btn-edit-drug"
+      >
+        Remover
+      </Menu.Item>
+    </Menu>
+  );
+};
+
 const InterventionAction = ({
   source,
   checkIntervention: check,
@@ -137,6 +175,7 @@ const Action = ({
   admissionNumber,
   emptyRow,
   t,
+  security,
   ...data
 }) => {
   if (emptyRow) return null;
@@ -178,22 +217,49 @@ const Action = ({
         </Button>
       </Tooltip>
 
-      <Tooltip
-        title={
-          hasNotes ? t('prescriptionDrugList.updateNotes') : t('prescriptionDrugList.addNotes')
-        }
-        placement="left"
-      >
-        <Button
-          type="primary gtm-bt-notes"
-          ghost={!hasNotes}
-          onClick={() => {
-            onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber });
-          }}
+      {security.hasPrescriptionEdit() && (
+        <Dropdown
+          overlay={prescriptionDrugMenu({
+            idPrescriptionDrug,
+            admissionNumber,
+            onShowPrescriptionDrugModal,
+            t,
+            hasNotes,
+            ...data
+          })}
+          trigger={['click']}
+          loading={isChecking}
+          disabled={isDisabled}
         >
-          <Icon type="form" style={{ fontSize: 16 }} />
-        </Button>
-      </Tooltip>
+          <Button
+            type="primary"
+            loading={isChecking}
+            disabled={isDisabled}
+            className="gtm-bt-extra-actions"
+          >
+            <Icon type="caret-down" style={{ fontSize: 16 }} />
+          </Button>
+        </Dropdown>
+      )}
+
+      {!security.hasPrescriptionEdit() && (
+        <Tooltip
+          title={
+            hasNotes ? t('prescriptionDrugList.updateNotes') : t('prescriptionDrugList.addNotes')
+          }
+          placement="left"
+        >
+          <Button
+            type="primary gtm-bt-notes"
+            ghost={!hasNotes}
+            onClick={() => {
+              onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber });
+            }}
+          >
+            <Icon type="form" style={{ fontSize: 16 }} />
+          </Button>
+        </Tooltip>
+      )}
     </TableTags>
   );
 };

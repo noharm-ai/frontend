@@ -109,6 +109,7 @@ export default function PrescriptionDrugList({
     weight,
     uniqueDrugList: uniqueDrugs,
     headers,
+    security,
     t
   };
 

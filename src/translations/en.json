@@ -409,6 +409,7 @@
     "userAdmin": "User Admin",
     "nolimit": "No date limit at prioritization",
     "alert-bt": "Alert Integration",
-    "cpoe": "CPOE"
+    "cpoe": "CPOE",
+    "prescriptionEdit": "Prescription Edit"
   }
 }

@@ -410,6 +410,7 @@
     "userAdmin": "Administração de Usuários",
     "nolimit": "Sem limite de data na priorização",
     "alert-bt": "Integração de Alertas",
-    "cpoe": "CPOE"
+    "cpoe": "CPOE",
+    "prescriptionEdit": "Edição de Prescrição"
   }
 }
