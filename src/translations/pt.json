@@ -172,7 +172,8 @@
     "editWeigth": "Atualizar o peso",
     "editHeight": "Atualizar a altura",
     "examDate": "Data",
-    "examVariation": "Variação em relação ao último exame"
+    "examVariation": "Variação em relação ao último exame",
+    "admissionDate": "Data de internação"
   },
   "screeningBody": {
     "tabDrugs": "Medicamentos",
@@ -344,6 +345,7 @@
     "inactive": "Inativo",
     "addIcon": "Adicionar",
     "userEdit": "Alterar usuario",
+    "roles": "Permissões",
 
     "passwordResetWarning": "Ao alterar o email a senha será redefinida",
     "emailError": "Ops! Formato de email inválido.",
@@ -397,5 +399,17 @@
     "j": "Não aceita com Justificativa",
     "x": "Não se aplica",
     "s": "Pendente"
+  },
+
+  "roles": {
+    "admin": "Administrador",
+    "concilia": "Conciliação",
+    "care": "NoHarm Care",
+    "suporte": "Suporte",
+    "transcription": "Transcrição",
+    "userAdmin": "Administração de Usuários",
+    "nolimit": "Sem limite de data na priorização",
+    "alert-bt": "Integração de Alertas",
+    "cpoe": "CPOE"
   }
 }

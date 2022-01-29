@@ -148,6 +148,7 @@ export const transformPrescription = ({
   interventions,
   globalScore,
   diet,
+  admissionDate,
   ...item
 }) => {
   const prescriptionList = prescription
@@ -197,6 +198,7 @@ export const transformPrescription = ({
     dateOnlyFormated: format(new Date(date), 'dd/MM/yyyy'),
     expire,
     expireFormated: expire ? format(new Date(expire), 'dd/MM/yyyy HH:mm') : '',
+    admissionDate: admissionDate ? format(new Date(admissionDate), 'dd/MM/yyyy HH:mm') : '',
     dischargeFormated: dischargeDate ? format(new Date(dischargeDate), 'dd/MM/yyyy HH:mm') : '',
     shortDateFormat: format(new Date(date), 'dd/MM'),
     birthdate,

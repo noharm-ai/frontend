@@ -11,7 +11,7 @@ import DefaultModal from '@components/Modal';
 import Base from './Base';
 import { FormContainer } from '../Form.style';
 
-export default function User({ saveStatus, save, afterSave, user, ...props }) {
+export default function User({ saveStatus, save, afterSave, user, security, ...props }) {
   const { t } = useTranslation();
 
   const validationSchema = Yup.object().shape({
@@ -41,7 +41,7 @@ export default function User({ saveStatus, save, afterSave, user, ...props }) {
     if (error) {
       notification.error({
         message: t('userAdminForm.errorMessage'),
-        description: t( error.code )
+        description: t(error.code)
       });
     }
   }, [success, error, afterSave, t]);
@@ -75,7 +75,7 @@ export default function User({ saveStatus, save, afterSave, user, ...props }) {
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base />
+                <Base security={security} />
               </Row>
             </FormContainer>
           </form>
@@ -92,6 +92,7 @@ User.defaultProps = {
     name: '',
     external: '',
     id: '',
-    active: true
+    active: true,
+    roles: []
   }
 };

@@ -51,6 +51,9 @@ export default function Transcription({
   const handleFrequencyChange = (value, option) => {
     setFieldValue('transcriptionData.frequency', value);
     setFieldValue('transcriptionData.frequencyLabel', option.props.children);
+
+    setFieldValue('transcriptionData.interval', '');
+    setFieldValue('transcriptionData.intervalLabel', '');
   };
 
   const handleMeasureUnitChange = (value, option) => {
@@ -196,11 +199,13 @@ export default function Transcription({
             value={interval}
             onChange={(value, option) => handleIntervalChange(value, option)}
           >
-            {intervals.map(({ id, description }) => (
-              <Select.Option key={id} value={id}>
-                {description}
-              </Select.Option>
-            ))}
+            {intervals
+              .filter(i => i.idFrequency === values.transcriptionData.frequency)
+              .map(({ id, description }) => (
+                <Select.Option key={id} value={id}>
+                  {description}
+                </Select.Option>
+              ))}
           </Select>
           {errors.interval && touched.interval && <FieldError>{errors.interval}</FieldError>}
         </Col>

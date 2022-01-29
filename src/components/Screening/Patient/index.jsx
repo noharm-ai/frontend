@@ -42,6 +42,7 @@ export default function Patient({
 }) {
   const {
     admissionNumber,
+    admissionDate,
     alertExams,
     department,
     lastDepartment,
@@ -345,6 +346,9 @@ export default function Patient({
               </Cell>
               <Cell>
                 <strong>{t('patientCard.prescriber')}:</strong> {prescriber}
+              </Cell>
+              <Cell>
+                <strong>{t('patientCard.admissionDate')}:</strong> {admissionDate}
               </Cell>
               <Cell>
                 <strong>{t('patientCard.notes')}:</strong>

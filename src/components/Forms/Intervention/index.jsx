@@ -45,7 +45,7 @@ export default function Intervention({
   const { isSaving, wasSaved, item } = intervention;
 
   const validationSchema = Yup.object().shape({
-    idInterventionReason: Yup.string()
+    idInterventionReason: Yup.array()
       .nullable()
       .required(t('validation.requiredField'))
   });

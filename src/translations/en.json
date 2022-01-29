@@ -172,7 +172,8 @@
     "editWeigth": "Edit weight",
     "editHeight": "Edit height",
     "examDate": "Date",
-    "examVariation": "Variation compared to last lab result"
+    "examVariation": "Variation compared to last lab result",
+    "admissionDate": "Admission date"
   },
   "screeningBody": {
     "tabDrugs": "Drugs",
@@ -336,7 +337,6 @@
     "btnCancel": "Cancel"
   },
 
-
   "userAdminForm": {
     "name": "Name",
     "email": "Email",
@@ -345,7 +345,8 @@
     "inactive": "Inactive",
     "addIcon": "Add",
     "userEdit": "Change user",
-    
+    "roles": "Roles",
+
     "passwordResetWarning": "When changing the email the password will be reset",
     "emailError": "Ops! Invalid email format",
     "saveMessage": "Wow! User saved successfully! :)",
@@ -397,5 +398,17 @@
     "j": "Not accepted (justified)",
     "x": "Not applicable",
     "s": "Pending"
+  },
+
+  "roles": {
+    "admin": "Admin",
+    "concilia": "Conciliation",
+    "care": "NoHarm Care",
+    "suporte": "Support",
+    "transcription": "Transcription",
+    "userAdmin": "User Admin",
+    "nolimit": "No date limit at prioritization",
+    "alert-bt": "Alert Integration",
+    "cpoe": "CPOE"
   }
 }
