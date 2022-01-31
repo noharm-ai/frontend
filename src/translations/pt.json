@@ -21,6 +21,7 @@
     "description": "Aconteceu algo que nos impediu de executar esta operação, por favor, tente novamente."
   },
   "success": {
+    "generic": "Uhu! Salvo com sucesso! :)",
     "intervention": "Uhu! Intervenção salva com sucesso! :)",
     "defaultObservation": "Uhu! Observação modelo salva com sucesso!",
     "applyDefaultObservation": "Observação modelo aplicada com sucesso!"
@@ -337,6 +338,10 @@
     "btnCancel": "Cancelar"
   },
 
+  "prescriptionDrugForm": {
+    "title": "Alterar prescrição"
+  },
+
   "userAdminForm": {
     "name": "Nome",
     "email": "Email",
@@ -386,7 +391,8 @@
     "invalidUser": "Usuário inválido",
     "unauthorizedUser": "Usuário não autorizado",
     "nameExists": "Já existe um usuário com este nome!",
-    "emailExists": "Já existe um usuário com este email!"
+    "emailExists": "Já existe um usuário com este email!",
+    "invalidRegister": "Registro inválido"
   },
 
   "validation": {

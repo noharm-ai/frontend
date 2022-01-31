@@ -613,7 +613,7 @@ const updatePrescriptionDrugData = (
 
       if (index !== -1) {
         const { key } = group.value[index];
-        group.value[index] = { ...newData, key };
+        group.value[index] = { ...group.value[index], ...newData, key };
         break;
       }
     }
@@ -632,6 +632,7 @@ const updatePrescriptionDrugData = (
 
   switch (sourceToStoreType(source)) {
     case 'prescription':
+      console.log('update prescription');
       updateData(prescriptions, idPrescriptionDrug, data);
       return getUpdatedState(sourceToStoreType(source), prescriptions);
     case 'solution':

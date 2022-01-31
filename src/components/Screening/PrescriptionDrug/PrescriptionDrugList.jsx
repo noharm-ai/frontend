@@ -98,6 +98,7 @@ export default function PrescriptionDrugList({
   const bag = {
     onShowModal,
     onShowPrescriptionDrugModal,
+    selectPrescriptionDrug,
     check: checkPrescriptionDrug,
     savePrescriptionDrugStatus,
     idSegment,
@@ -261,10 +262,10 @@ export default function PrescriptionDrugList({
           setVisibility={setVisibility}
           checkPrescriptionDrug={checkPrescriptionDrug}
         />
-        <ModalPrescriptionDrug
+        {/* <ModalPrescriptionDrug
           visible={openPrescriptionDrugModal}
           setVisibility={setOpenPrescriptionDrugModal}
-        />
+        /> */}
       </>
     );
   }
@@ -333,10 +334,10 @@ export default function PrescriptionDrugList({
         setVisibility={setVisibility}
         checkPrescriptionDrug={checkPrescriptionDrug}
       />
-      <ModalPrescriptionDrug
+      {/* <ModalPrescriptionDrug
         visible={openPrescriptionDrugModal}
         setVisibility={setOpenPrescriptionDrugModal}
-      />
+      /> */}
     </>
   );
 }

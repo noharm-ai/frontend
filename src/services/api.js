@@ -42,7 +42,8 @@ const endpoints = {
   user: '/user',
   users: '/users',
   clinicalNotes: '/notes',
-  editUser: '/editUser'
+  editUser: '/editUser',
+  editPrescription: '/editPrescription'
 };
 
 /**
@@ -52,16 +53,16 @@ const endpoints = {
 const setHeaders = token =>
   token
     ? {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'x-api-key': appInfo.apiKey
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'x-api-key': appInfo.apiKey
+        }
       }
-    }
     : {
-      headers: {
-        'x-api-key': appInfo.apiKey
-      }
-    };
+        headers: {
+          'x-api-key': appInfo.apiKey
+        }
+      };
 
 /**
  * Authentication.
@@ -139,7 +140,7 @@ const getPrescriptionDrugPeriod = (bearerToken, idPrescriptionDrug, params = {})
 const putPrescriptionById = (bearerToken, idPrescription, params = {}) =>
   instance.put(`${endpoints.prescriptions}/${idPrescription}`, params, setHeaders(bearerToken));
 
-const updatePrescriptionDrug = (bearerToken, idPrescriptionDrug, params = {}) =>
+const updatePrescriptionDrugNote = (bearerToken, idPrescriptionDrug, params = {}) =>
   instance.put(
     `${endpoints.prescriptions}/drug/${idPrescriptionDrug}`,
     params,
@@ -151,6 +152,20 @@ const shouldUpdatePrescription = (bearerToken, idPrescription, params = {}) => {
     params,
     ...setHeaders(bearerToken)
   });
+};
+
+/**
+ *
+ * Edit Prescription
+ */
+
+const updatePrescriptionDrug = (bearerToken, idPrescriptionDrug, params = {}) => {
+  console.log('updatePrescriptionDrug', idPrescriptionDrug, params);
+  return instance.put(
+    `${endpoints.editPrescription}/drug/${idPrescriptionDrug}`,
+    params,
+    setHeaders(bearerToken)
+  );
 };
 
 /**
@@ -297,9 +312,8 @@ const putMemory = (bearerToken, { id, ...params }) => {
 const createUser = (bearerToken, params = {}) =>
   instance.put(endpoints.editUser, params, setHeaders(bearerToken));
 
-const updateUser = (bearerToken, { id,  ...params}) =>
+const updateUser = (bearerToken, { id, ...params }) =>
   instance.put(`${endpoints.editUser}/${id}`, params, setHeaders(bearerToken));
-
 
 const updatePassword = (bearerToken, { ...params }) => {
   return instance.put(`${endpoints.user}`, params, setHeaders(bearerToken));
@@ -394,7 +408,7 @@ const api = {
   getInterventions,
   getExams,
   updatePatient,
-  updatePrescriptionDrug,
+  updatePrescriptionDrugNote,
   getSubstances,
   updateSegmentExam,
   getExamTypes,
@@ -414,7 +428,8 @@ const api = {
   getClinicalNotes,
   updateClinicalNote,
   createUser,
-  updateUser
+  updateUser,
+  updatePrescriptionDrug
 };
 
 export default api;

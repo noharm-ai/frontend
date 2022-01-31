@@ -79,6 +79,7 @@ const prescriptionDrugMenu = ({
   idPrescriptionDrug,
   admissionNumber,
   onShowPrescriptionDrugModal,
+  selectPrescriptionDrug,
   hasNotes,
   t,
   ...data
@@ -94,20 +95,16 @@ const prescriptionDrugMenu = ({
         {hasNotes ? t('prescriptionDrugList.updateNotes') : t('prescriptionDrugList.addNotes')}
       </Menu.Item>
       <Menu.Item
-        onClick={() =>
-          onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber })
-        }
+        onClick={() => selectPrescriptionDrug({ ...data, idPrescriptionDrug, admissionNumber })}
         className="gtm-btn-edit-drug"
       >
         Alterar
       </Menu.Item>
       <Menu.Item
-        onClick={() =>
-          onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber })
-        }
-        className="gtm-btn-edit-drug"
+        onClick={() => selectPrescriptionDrug({ ...data, idPrescriptionDrug, admissionNumber })}
+        className="gtm-btn-suspend-drug"
       >
-        Remover
+        Suspender
       </Menu.Item>
     </Menu>
   );

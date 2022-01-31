@@ -21,6 +21,7 @@
     "description": "Something happened that prevented us from showing you the data, please try again."
   },
   "success": {
+    "generic": "Yeah! Saved successfully! :)",
     "intervention": "Yeah! Your Intervention has been saved! :)",
     "defaultObservation": "Yeah! Your Observation has been saved!",
     "applyDefaultObservation": "Observation applied"
@@ -337,6 +338,10 @@
     "btnCancel": "Cancel"
   },
 
+  "prescriptionDrugForm": {
+    "title": "Edit prescription"
+  },
+
   "userAdminForm": {
     "name": "Name",
     "email": "Email",
@@ -385,7 +390,8 @@
     "invalidUser": "Non-existent user",
     "unauthorizedUser": "Unauthorized user",
     "nameExists": "There is already a user with this name!",
-    "emailExists": "There is already a user with this email!"
+    "emailExists": "There is already a user with this email!",
+    "invalidRegister": "Invalid register"
   },
 
   "validation": {

@@ -17,6 +17,7 @@ import DietList from '@containers/Screening/PrescriptionDrug/DietList';
 import PreviousInterventionList from '@containers/Screening/PreviousInterventionList';
 import PageHeader from '@containers/Screening/PageHeader';
 import Patient from '@containers/Screening/Patient';
+import PrescriptionDrugForm from '@containers/Forms/PrescriptionDrug';
 
 import { BoxWrapper, ScreeningTabs } from './index.style';
 
@@ -167,6 +168,7 @@ export default function Screening({ match, fetchScreeningById, isFetching, conte
         </ScreeningTabs>
       </Row>
 
+      <PrescriptionDrugForm />
       <BackTop />
     </>
   );
