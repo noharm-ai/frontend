@@ -2,6 +2,7 @@ import isEmpty from 'lodash.isempty';
 
 import api from '@services/api';
 import { errorHandler } from '@utils';
+import { sourceToStoreType } from '@utils/transformers/prescriptions';
 import { Creators as PrescriptionDrugsCreators } from './index';
 import { Creators as PrescriptionsCreators } from '../prescriptions/index';
 
@@ -38,6 +39,29 @@ export const savePrescriptionDrugNoteThunk = (idPrescriptionDrug, params = {}) =
   dispatch(prescriptionDrugsSaveReset());
 };
 
+const prepareParams = params => {
+  const p = { ...params };
+
+  switch (params.source) {
+    case 'prescription':
+      p.source = 'Medicamentos';
+      break;
+    case 'solution':
+      p.source = 'Soluções';
+      break;
+    case 'procedure':
+      p.source = 'Proced/Exames';
+      break;
+    case 'diet':
+      p.source = 'Dietas';
+      break;
+    default:
+      throw new Error('Undefined source');
+  }
+
+  return p;
+};
+
 export const savePrescriptionDrugThunk = (idPrescriptionDrug, source, params = {}) => async (
   dispatch,
   getState
@@ -46,8 +70,10 @@ export const savePrescriptionDrugThunk = (idPrescriptionDrug, source, params = {
 
   const { access_token } = getState().auth.identify;
 
+  const preparedParams = prepareParams({ ...params, source });
+
   const { error, data: updatedPrescriptionDrug } = await api
-    .updatePrescriptionDrug(access_token, idPrescriptionDrug, params)
+    .savePrescriptionDrug(access_token, idPrescriptionDrug, preparedParams)
     .catch(errorHandler);
 
   if (!isEmpty(error)) {
@@ -59,7 +85,7 @@ export const savePrescriptionDrugThunk = (idPrescriptionDrug, source, params = {
     prescriptionsUpdatePrescriptionDrug(
       idPrescriptionDrug,
       source,
-      transformPrescriptionDrug(params, updatedPrescriptionDrug.data)
+      transformPrescriptionDrug({ ...params, source }, updatedPrescriptionDrug.data)
     )
   );
   dispatch(prescriptionDrugsSaveSuccess());
@@ -75,13 +101,14 @@ export const clientUpdatePrescriptionDrugThunk = item => async dispatch => {
 };
 
 const transformPrescriptionDrug = (data, updatedPrescriptionDrug) => {
-  const transformedData = { ...data };
-
-  transformedData.dosage = `${data.dose} ${data.measureUnit}`;
-  transformedData.measureUnit = updatedPrescriptionDrug.measureUnit;
-  transformedData.frequency = updatedPrescriptionDrug.frequency;
-  transformedData.time = updatedPrescriptionDrug.time;
-  transformedData.score = updatedPrescriptionDrug.score;
+  const transformedData = {
+    ...updatedPrescriptionDrug,
+    ...{
+      dosage: `${data.dose} ${data.measureUnit}`,
+      source: sourceToStoreType(data.source),
+      key: updatedPrescriptionDrug.idPrescriptionDrug
+    }
+  };
 
   return transformedData;
 };

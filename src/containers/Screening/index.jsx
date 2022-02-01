@@ -2,6 +2,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { fetchScreeningThunk } from '@store/ducks/prescriptions/thunk';
+import { selectPrescriptionDrugThunk } from '@store/ducks/prescriptionDrugs/thunk';
+
 import Screening from '@components/Screening';
 
 const mapStateToProps = ({ prescriptions }) => ({
@@ -13,7 +15,8 @@ const mapStateToProps = ({ prescriptions }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      fetchScreeningById: fetchScreeningThunk
+      fetchScreeningById: fetchScreeningThunk,
+      selectPrescriptionDrug: selectPrescriptionDrugThunk
     },
     dispatch
   );

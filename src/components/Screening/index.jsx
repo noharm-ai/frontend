@@ -9,6 +9,7 @@ import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
 import notification from '@components/notification';
 import BackTop from '@components/BackTop';
+import Button from '@components/Button';
 
 import PrescriptionList from '@containers/Screening/PrescriptionDrug/PrescriptionList';
 import SolutionList from '@containers/Screening/PrescriptionDrug/SolutionList';
@@ -24,7 +25,14 @@ import { BoxWrapper, ScreeningTabs } from './index.style';
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
 
-export default function Screening({ match, fetchScreeningById, isFetching, content, error }) {
+export default function Screening({
+  match,
+  fetchScreeningById,
+  isFetching,
+  content,
+  error,
+  selectPrescriptionDrug
+}) {
   const id = extractId(match.params.slug);
   const {
     prescriptionCount,
@@ -69,6 +77,16 @@ export default function Screening({ match, fetchScreeningById, isFetching, conte
     </>
   );
 
+  const addPrescriptionDrug = source => {
+    console.log('source', source);
+    console.log('content', content);
+    selectPrescriptionDrug({
+      idPrescription: content.idPrescription,
+      idSegment: content.idSegment,
+      source
+    });
+  };
+
   if (error) {
     return (
       <Empty
@@ -102,6 +120,12 @@ export default function Screening({ match, fetchScreeningById, isFetching, conte
             key="drugs"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
+              <Button
+                onClick={() => addPrescriptionDrug('prescription')}
+                className="gtm-bt-add-drugEdit"
+              >
+                Adicionar
+              </Button>
               <PrescriptionList
                 emptyMessage="Nenhum medicamento encontrado."
                 hasFilter

@@ -65,16 +65,9 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
     }
   }, [fetchDrugSummary, idDrug, idSegment]);
 
-  if (drugSummary.isFetching || !drugSummary.data) {
-    return (
-      <div style={{ width: '100%' }}>
-        <LoadBox />
-      </div>
-    );
-  }
-
-  const { units, routes, frequencies, drug, intervals } = drugSummary.data;
-  const currentDrug = { idDrug: drug.id, name: drug.name };
+  const { units, routes, frequencies, intervals } = drugSummary.data ? drugSummary.data : {};
+  const currentDrug = { idDrug: item.idDrug, name: item.drug };
+  const drugList = item.idDrug ? uniqBy(drugs.list.concat([currentDrug]), 'idDrug') : drugs.list;
 
   return (
     <>
@@ -111,7 +104,7 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
               onChange={(value, option) => handleDrugChange(value, option)}
             >
               {!drugs.isFetching &&
-                uniqBy(drugs.list.concat([currentDrug]), 'idDrug').map(({ idDrug, name }) => (
+                drugList.map(({ idDrug, name }) => (
                   <Select.Option key={idDrug} value={idDrug}>
                     {name}
                   </Select.Option>
@@ -122,122 +115,134 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
         </Box>
       )}
 
-      <Box hasError={errors.dose && touched.dose}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px">
-            {t('tableHeader.dose')}:
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
-          <InputNumber
-            id="dose"
-            style={{ width: 'min(100%, 115px)' }}
-            value={dose}
-            onChange={value => setFieldValue('dose', value)}
-          />
-          {errors.dose && touched.dose && <FieldError>{errors.dose}</FieldError>}
-        </Col>
-      </Box>
+      {idDrug && (drugSummary.isFetching || !drugSummary.data) ? (
+        <div style={{ width: '100%' }}>
+          <LoadBox />
+        </div>
+      ) : (
+        idDrug && (
+          <>
+            <Box hasError={errors.dose && touched.dose}>
+              <Col xs={layout.label}>
+                <Heading as="label" size="14px">
+                  {t('tableHeader.dose')}:
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <InputNumber
+                  id="dose"
+                  style={{ width: 'min(100%, 115px)' }}
+                  value={dose}
+                  onChange={value => setFieldValue('dose', value)}
+                />
+                {errors.dose && touched.dose && <FieldError>{errors.dose}</FieldError>}
+              </Col>
+            </Box>
 
-      <Box hasError={errors.measureUnit && touched.measureUnit}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px">
-            {t('tableHeader.measureUnit')}:
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
-          <Select
-            id="measureUnit"
-            optionFilterProp="children"
-            style={{ width: '100%' }}
-            value={measureUnit}
-            onChange={(value, option) => handleMeasureUnitChange(value, option)}
-          >
-            {units.map(({ id, description }) => (
-              <Select.Option key={id} value={id}>
-                {description}
-              </Select.Option>
-            ))}
-          </Select>
-          {errors.measureUnit && touched.measureUnit && (
-            <FieldError>{errors.measureUnit}</FieldError>
-          )}
-        </Col>
-      </Box>
+            <Box hasError={errors.measureUnit && touched.measureUnit}>
+              <Col xs={layout.label}>
+                <Heading as="label" size="14px">
+                  {t('tableHeader.measureUnit')}:
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <Select
+                  id="measureUnit"
+                  optionFilterProp="children"
+                  style={{ width: '100%' }}
+                  value={measureUnit}
+                  onChange={(value, option) => handleMeasureUnitChange(value, option)}
+                >
+                  {units.map(({ id, description }) => (
+                    <Select.Option key={id} value={id}>
+                      {description}
+                    </Select.Option>
+                  ))}
+                </Select>
+                {errors.measureUnit && touched.measureUnit && (
+                  <FieldError>{errors.measureUnit}</FieldError>
+                )}
+              </Col>
+            </Box>
 
-      <Box hasError={errors.frequency && touched.frequency}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px">
-            {t('tableHeader.frequency')}:
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
-          <Select
-            id="frequency"
-            optionFilterProp="children"
-            style={{ width: '100%' }}
-            placeholder=""
-            value={frequency}
-            onChange={(value, option) => handleFrequencyChange(value, option)}
-          >
-            {frequencies.map(({ id, description }) => (
-              <Select.Option key={id} value={id}>
-                {description}
-              </Select.Option>
-            ))}
-          </Select>
-          {errors.frequency && touched.frequency && <FieldError>{errors.frequency}</FieldError>}
-        </Col>
-      </Box>
+            <Box hasError={errors.frequency && touched.frequency}>
+              <Col xs={layout.label}>
+                <Heading as="label" size="14px">
+                  {t('tableHeader.frequency')}:
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <Select
+                  id="frequency"
+                  optionFilterProp="children"
+                  style={{ width: '100%' }}
+                  placeholder=""
+                  value={frequency}
+                  onChange={(value, option) => handleFrequencyChange(value, option)}
+                >
+                  {frequencies.map(({ id, description }) => (
+                    <Select.Option key={id} value={id}>
+                      {description}
+                    </Select.Option>
+                  ))}
+                </Select>
+                {errors.frequency && touched.frequency && (
+                  <FieldError>{errors.frequency}</FieldError>
+                )}
+              </Col>
+            </Box>
 
-      <Box hasError={errors.interval && touched.interval}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px">
-            {t('tableHeader.interval')}:
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
-          <Select
-            id="interval"
-            optionFilterProp="children"
-            style={{ width: '100%' }}
-            value={interval}
-            onChange={(value, option) => handleIntervalChange(value, option)}
-          >
-            {intervals
-              .filter(i => i.idFrequency === values.frequency)
-              .map(({ id, description }) => (
-                <Select.Option key={id} value={id}>
-                  {description}
-                </Select.Option>
-              ))}
-          </Select>
-          {errors.interval && touched.interval && <FieldError>{errors.interval}</FieldError>}
-        </Col>
-      </Box>
-      <Box hasError={errors.route && touched.route}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px">
-            {t('tableHeader.route')}:
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
-          <Select
-            id="route"
-            optionFilterProp="children"
-            style={{ width: '100%' }}
-            value={route}
-            onChange={value => setFieldValue('route', value)}
-          >
-            {routes.map(({ id, description }) => (
-              <Select.Option key={id} value={id}>
-                {description}
-              </Select.Option>
-            ))}
-          </Select>
-          {errors.route && touched.route && <FieldError>{errors.route}</FieldError>}
-        </Col>
-      </Box>
+            <Box hasError={errors.interval && touched.interval}>
+              <Col xs={layout.label}>
+                <Heading as="label" size="14px">
+                  {t('tableHeader.interval')}:
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <Select
+                  id="interval"
+                  optionFilterProp="children"
+                  style={{ width: '100%' }}
+                  value={interval}
+                  onChange={(value, option) => handleIntervalChange(value, option)}
+                >
+                  {intervals
+                    .filter(i => i.idFrequency === values.frequency)
+                    .map(({ id, description }) => (
+                      <Select.Option key={id} value={id}>
+                        {description}
+                      </Select.Option>
+                    ))}
+                </Select>
+                {errors.interval && touched.interval && <FieldError>{errors.interval}</FieldError>}
+              </Col>
+            </Box>
+            <Box hasError={errors.route && touched.route}>
+              <Col xs={layout.label}>
+                <Heading as="label" size="14px">
+                  {t('tableHeader.route')}:
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <Select
+                  id="route"
+                  optionFilterProp="children"
+                  style={{ width: '100%' }}
+                  value={route}
+                  onChange={value => setFieldValue('route', value)}
+                >
+                  {routes.map(({ id, description }) => (
+                    <Select.Option key={id} value={id}>
+                      {description}
+                    </Select.Option>
+                  ))}
+                </Select>
+                {errors.route && touched.route && <FieldError>{errors.route}</FieldError>}
+              </Col>
+            </Box>
+          </>
+        )
+      )}
     </>
   );
 }
