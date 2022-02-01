@@ -92,6 +92,34 @@ export const savePrescriptionDrugThunk = (idPrescriptionDrug, source, params = {
   dispatch(prescriptionDrugsSaveReset());
 };
 
+export const suspendPrescriptionDrugThunk = (idPrescriptionDrug, source, suspend) => async (
+  dispatch,
+  getState
+) => {
+  dispatch(prescriptionDrugsSaveStart());
+
+  const { access_token } = getState().auth.identify;
+
+  const { error, data: updatedPrescriptionDrug } = await api
+    .suspendPrescriptionDrug(access_token, idPrescriptionDrug, suspend)
+    .catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(prescriptionDrugsSaveError(error));
+    return;
+  }
+
+  dispatch(
+    prescriptionsUpdatePrescriptionDrug(
+      idPrescriptionDrug,
+      source,
+      transformPrescriptionDrug({ source }, updatedPrescriptionDrug.data)
+    )
+  );
+  dispatch(prescriptionDrugsSaveSuccess());
+  dispatch(prescriptionDrugsSaveReset());
+};
+
 export const selectPrescriptionDrugThunk = item => async dispatch => {
   dispatch(prescriptionDrugsSelect(item));
 };

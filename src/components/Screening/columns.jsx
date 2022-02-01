@@ -100,12 +100,6 @@ const prescriptionDrugMenu = ({
       >
         Alterar
       </Menu.Item>
-      <Menu.Item
-        onClick={() => selectPrescriptionDrug({ ...data, idPrescriptionDrug, admissionNumber })}
-        className="gtm-btn-suspend-drug"
-      >
-        Suspender
-      </Menu.Item>
     </Menu>
   );
 };

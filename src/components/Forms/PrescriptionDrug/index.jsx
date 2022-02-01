@@ -18,6 +18,7 @@ export default function PrescriptionDrug({
   error,
   isSaving,
   save,
+  suspend,
   select,
   searchDrugs,
   fetchDrugSummary,
@@ -27,7 +28,16 @@ export default function PrescriptionDrug({
   const { t } = useTranslation();
 
   const validationSchema = Yup.object().shape({
+    idDrug: Yup.number()
+      .nullable()
+      .required(t('validation.requiredField')),
     dose: Yup.number()
+      .nullable()
+      .required(t('validation.requiredField')),
+    measureUnit: Yup.string()
+      .nullable()
+      .required(t('validation.requiredField')),
+    frequency: Yup.string()
       .nullable()
       .required(t('validation.requiredField'))
   });
@@ -65,12 +75,38 @@ export default function PrescriptionDrug({
     save(item.idPrescriptionDrug, item.source, params);
   };
 
+  const onSuspend = suspension => {
+    suspend(item.idPrescriptionDrug, item.source, suspension);
+  };
+
   const Footer = ({ handleSubmit }) => {
     return (
       <>
         <Button onClick={() => onCancel()} disabled={isSaving} className="gtm-bt-cancel-drugEdit">
           {t('interventionForm.btnCancel')}
         </Button>
+
+        {!item.suspended && (
+          <Button
+            onClick={() => onSuspend(true)}
+            disabled={isSaving}
+            className="gtm-bt-suspend-drugEdit"
+            type="danger"
+            ghost
+          >
+            {t('prescriptionDrugForm.btnSuspend')}
+          </Button>
+        )}
+
+        {item.suspended && (
+          <Button
+            onClick={() => onSuspend(false)}
+            disabled={isSaving}
+            className="gtm-bt-removeSuspension-drugEdit"
+          >
+            {t('prescriptionDrugForm.btnRemoveSuspension')}
+          </Button>
+        )}
 
         <Button
           type="primary gtm-bt-save-drugEdit"
@@ -115,7 +151,11 @@ export default function PrescriptionDrug({
           footer={<Footer handleSubmit={handleSubmit} />}
         >
           <header>
-            <Heading margin="0 0 15px">{t('prescriptionDrugForm.title')}</Heading>
+            <Heading margin="0 0 15px">
+              {t(
+                `prescriptionDrugForm.title${initialValues.idPrescriptionDrug ? 'Edit' : 'Create'}`
+              )}
+            </Heading>
           </header>
           <form onSubmit={handleSubmit}>
             <Row type="flex" gutter={[16, 16]}>

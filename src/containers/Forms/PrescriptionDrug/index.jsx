@@ -3,7 +3,8 @@ import { bindActionCreators } from 'redux';
 
 import {
   selectPrescriptionDrugThunk,
-  savePrescriptionDrugThunk
+  savePrescriptionDrugThunk,
+  suspendPrescriptionDrugThunk
 } from '@store/ducks/prescriptionDrugs/thunk';
 import { searchDrugsThunk, fetchDrugSummaryThunk } from '@store/ducks/drugs/thunk';
 
@@ -22,6 +23,7 @@ const mapDispatchToProps = dispatch =>
     {
       select: selectPrescriptionDrugThunk,
       save: savePrescriptionDrugThunk,
+      suspend: suspendPrescriptionDrugThunk,
       searchDrugs: searchDrugsThunk,
       fetchDrugSummary: fetchDrugSummaryThunk
     },

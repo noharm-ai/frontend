@@ -339,7 +339,10 @@
   },
 
   "prescriptionDrugForm": {
-    "title": "Alterar prescrição"
+    "titleEdit": "Alterar medicamento",
+    "titleCreate": "Criar medicamento",
+    "btnSuspend": "Suspender",
+    "btnRemoveSuspension": "Remover suspensão"
   },
 
   "userAdminForm": {

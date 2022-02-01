@@ -160,7 +160,6 @@ const shouldUpdatePrescription = (bearerToken, idPrescription, params = {}) => {
  */
 
 const savePrescriptionDrug = (bearerToken, idPrescriptionDrug, params = {}) => {
-  console.log('savePrescriptionDrug', idPrescriptionDrug, params);
   if (idPrescriptionDrug) {
     return instance.put(
       `${endpoints.editPrescription}/drug/${idPrescriptionDrug}`,
@@ -170,6 +169,14 @@ const savePrescriptionDrug = (bearerToken, idPrescriptionDrug, params = {}) => {
   }
 
   return instance.post(`${endpoints.editPrescription}/drug`, params, setHeaders(bearerToken));
+};
+
+const suspendPrescriptionDrug = (bearerToken, idPrescriptionDrug, suspend) => {
+  return instance.put(
+    `${endpoints.editPrescription}/drug/${idPrescriptionDrug}/suspend/${suspend ? 1 : 0}`,
+    {},
+    setHeaders(bearerToken)
+  );
 };
 
 /**
@@ -433,7 +440,8 @@ const api = {
   updateClinicalNote,
   createUser,
   updateUser,
-  savePrescriptionDrug
+  savePrescriptionDrug,
+  suspendPrescriptionDrug
 };
 
 export default api;
