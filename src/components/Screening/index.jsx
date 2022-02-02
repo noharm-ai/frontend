@@ -20,7 +20,7 @@ import PageHeader from '@containers/Screening/PageHeader';
 import Patient from '@containers/Screening/Patient';
 import PrescriptionDrugForm from '@containers/Forms/PrescriptionDrug';
 
-import { BoxWrapper, ScreeningTabs } from './index.style';
+import { BoxWrapper, ScreeningTabs, PrescriptionActionContainer } from './index.style';
 
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
@@ -31,7 +31,8 @@ export default function Screening({
   isFetching,
   content,
   error,
-  selectPrescriptionDrug
+  selectPrescriptionDrug,
+  security
 }) {
   const id = extractId(match.params.slug);
   const {
@@ -39,7 +40,8 @@ export default function Screening({
     solutionCount,
     proceduresCount,
     dietCount,
-    interventionsRaw: interventionList
+    interventionsRaw: interventionList,
+    agg
   } = content;
 
   const { t } = useTranslation();
@@ -78,8 +80,6 @@ export default function Screening({
   );
 
   const addPrescriptionDrug = source => {
-    console.log('source', source);
-    console.log('content', content);
     selectPrescriptionDrug({
       idPrescription: content.idPrescription,
       idSegment: content.idSegment,
@@ -120,12 +120,18 @@ export default function Screening({
             key="drugs"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
-              <Button
-                onClick={() => addPrescriptionDrug('prescription')}
-                className="gtm-bt-add-drugEdit"
-              >
-                Adicionar
-              </Button>
+              {!isEmpty(content) && security.hasPrescriptionEdit && !agg && (
+                <PrescriptionActionContainer>
+                  <Button
+                    onClick={() => addPrescriptionDrug('prescription')}
+                    className="gtm-bt-add-drugEdit"
+                    type="primary"
+                  >
+                    Adicionar medicamento
+                  </Button>
+                </PrescriptionActionContainer>
+              )}
+
               <PrescriptionList
                 emptyMessage="Nenhum medicamento encontrado."
                 hasFilter

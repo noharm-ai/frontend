@@ -227,6 +227,7 @@ const Action = ({
             loading={isChecking}
             disabled={isDisabled}
             className="gtm-bt-extra-actions"
+            ghost
           >
             <Icon type="caret-down" style={{ fontSize: 16 }} />
           </Button>

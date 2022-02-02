@@ -110,11 +110,7 @@ export const suspendPrescriptionDrugThunk = (idPrescriptionDrug, source, suspend
   }
 
   dispatch(
-    prescriptionsUpdatePrescriptionDrug(
-      idPrescriptionDrug,
-      source,
-      transformPrescriptionDrug({ source }, updatedPrescriptionDrug.data)
-    )
+    prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, updatedPrescriptionDrug.data)
   );
   dispatch(prescriptionDrugsSaveSuccess());
   dispatch(prescriptionDrugsSaveReset());
@@ -137,6 +133,6 @@ const transformPrescriptionDrug = (data, updatedPrescriptionDrug) => {
       key: updatedPrescriptionDrug.idPrescriptionDrug
     }
   };
-
+  console.log('transformedData', transformedData);
   return transformedData;
 };
