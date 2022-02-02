@@ -88,14 +88,21 @@ const prescriptionDrugMenu = ({
     <Menu>
       <Menu.Item
         onClick={() =>
-          onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber })
+          selectPrescriptionDrug({
+            ...data,
+            idPrescriptionDrug,
+            admissionNumber,
+            updateNotes: true
+          })
         }
         className="gtm-btn-notes"
       >
         {hasNotes ? t('prescriptionDrugList.updateNotes') : t('prescriptionDrugList.addNotes')}
       </Menu.Item>
       <Menu.Item
-        onClick={() => selectPrescriptionDrug({ ...data, idPrescriptionDrug, admissionNumber })}
+        onClick={() =>
+          selectPrescriptionDrug({ ...data, idPrescriptionDrug, admissionNumber, updateDrug: true })
+        }
         className="gtm-btn-edit-drug"
       >
         Alterar

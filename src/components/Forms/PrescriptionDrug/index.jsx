@@ -11,6 +11,7 @@ import Heading from '@components/Heading';
 import DefaultModal from '@components/Modal';
 
 import Base from './Base';
+import BaseNotes from './BaseNotes';
 
 export default function PrescriptionDrug({
   item,
@@ -18,12 +19,14 @@ export default function PrescriptionDrug({
   error,
   isSaving,
   save,
+  saveNotes,
   suspend,
   select,
   searchDrugs,
   fetchDrugSummary,
   drugs,
-  drugSummary
+  drugSummary,
+  admissionNumber
 }) {
   const { t } = useTranslation();
 
@@ -52,7 +55,6 @@ export default function PrescriptionDrug({
     }
   }, [success, select, t]);
 
-  // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
       notification.error({
@@ -72,7 +74,13 @@ export default function PrescriptionDrug({
 
   const onSave = params => {
     console.log('save!', item, params);
-    save(item.idPrescriptionDrug, item.source, params);
+    if (item.updateDrug) {
+      save(item.idPrescriptionDrug, item.source, params);
+    }
+
+    if (item.updateNotes) {
+      saveNotes(item.idPrescriptionDrug, item.source, params);
+    }
   };
 
   const onSuspend = suspension => {
@@ -86,7 +94,7 @@ export default function PrescriptionDrug({
           {t('interventionForm.btnCancel')}
         </Button>
 
-        {!item.suspended && (
+        {item.updateDrug && !item.suspended && (
           <Button
             onClick={() => onSuspend(true)}
             disabled={isSaving}
@@ -98,7 +106,7 @@ export default function PrescriptionDrug({
           </Button>
         )}
 
-        {item.suspended && (
+        {item.updateDrug && item.suspended && (
           <Button
             onClick={() => onSuspend(false)}
             disabled={isSaving}
@@ -131,7 +139,9 @@ export default function PrescriptionDrug({
     frequency: item.frequency ? item.frequency.value : null,
     frequencyLabel: item.frequency ? item.frequency.label : null,
     interval: item.interval,
-    route: item.route
+    route: item.route,
+    notes: item.notes,
+    admissionNumber
   };
 
   return (
@@ -152,20 +162,28 @@ export default function PrescriptionDrug({
         >
           <header>
             <Heading margin="0 0 15px">
-              {t(
-                `prescriptionDrugForm.title${initialValues.idPrescriptionDrug ? 'Edit' : 'Create'}`
-              )}
+              {item.updateDrug
+                ? t(
+                    `prescriptionDrugForm.title${
+                      initialValues.idPrescriptionDrug ? 'Edit' : 'Create'
+                    }`
+                  )
+                : t('prescriptionDrugForm.titleNotes')}
             </Heading>
           </header>
           <form onSubmit={handleSubmit}>
             <Row type="flex" gutter={[16, 16]}>
-              <Base
-                item={item}
-                fetchDrugSummary={fetchDrugSummary}
-                searchDrugs={searchDrugs}
-                drugs={drugs}
-                drugSummary={drugSummary}
-              />
+              {item.updateDrug && (
+                <Base
+                  item={item}
+                  fetchDrugSummary={fetchDrugSummary}
+                  searchDrugs={searchDrugs}
+                  drugs={drugs}
+                  drugSummary={drugSummary}
+                />
+              )}
+
+              {item.updateNotes && <BaseNotes item={item} />}
             </Row>
           </form>
         </DefaultModal>

@@ -341,6 +341,7 @@
   "prescriptionDrugForm": {
     "titleEdit": "Alterar medicamento",
     "titleCreate": "Criar medicamento",
+    "titleNotes": "Anotação",
     "btnSuspend": "Suspender",
     "btnRemoveSuspension": "Remover suspensão"
   },

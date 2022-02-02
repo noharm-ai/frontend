@@ -18,7 +18,7 @@ const {
 
 const { prescriptionsUpdatePrescriptionDrug } = PrescriptionsCreators;
 
-export const savePrescriptionDrugNoteThunk = (idPrescriptionDrug, params = {}) => async (
+export const savePrescriptionDrugNoteThunk = (idPrescriptionDrug, source, params = {}) => async (
   dispatch,
   getState
 ) => {
@@ -35,6 +35,11 @@ export const savePrescriptionDrugNoteThunk = (idPrescriptionDrug, params = {}) =
     return;
   }
 
+  const data = { ...params };
+  delete data.frequency;
+  delete data.measureUnit;
+
+  dispatch(prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data));
   dispatch(prescriptionDrugsSaveSuccess());
   dispatch(prescriptionDrugsSaveReset());
 };
@@ -133,6 +138,6 @@ const transformPrescriptionDrug = (data, updatedPrescriptionDrug) => {
       key: updatedPrescriptionDrug.idPrescriptionDrug
     }
   };
-  console.log('transformedData', transformedData);
+
   return transformedData;
 };

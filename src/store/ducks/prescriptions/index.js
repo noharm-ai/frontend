@@ -611,7 +611,6 @@ const updatePrescriptionDrugData = (
       const group = list[i];
 
       if (group.key === newData.idPrescription) {
-        console.log('group', group);
         const index = group.value.findIndex(item => item.idPrescriptionDrug === idPrescriptionDrug);
 
         if (index !== -1) {
