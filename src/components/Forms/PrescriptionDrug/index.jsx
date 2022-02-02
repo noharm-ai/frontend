@@ -73,7 +73,6 @@ export default function PrescriptionDrug({
   };
 
   const onSave = params => {
-    console.log('save!', item, params);
     if (item.updateDrug) {
       save(item.idPrescriptionDrug, item.source, params);
     }
@@ -149,7 +148,7 @@ export default function PrescriptionDrug({
       enableReinitialize
       onSubmit={onSave}
       initialValues={initialValues}
-      validationSchema={validationSchema}
+      validationSchema={item.updateDrug ? validationSchema : null}
     >
       {({ handleSubmit }) => (
         <DefaultModal

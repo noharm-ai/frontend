@@ -10,7 +10,6 @@ import Tooltip from '@components/Tooltip';
 import { sourceToStoreType } from '@utils/transformers/prescriptions';
 
 import FormIntervention from '@containers/Forms/Intervention';
-import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 
 import { GroupPanel, PrescriptionPanel, PrescriptionHeader } from './PrescriptionDrug.style';
 import Table from './components/Table';
@@ -78,7 +77,6 @@ export default function PrescriptionDrugList({
   security
 }) {
   const [visible, setVisibility] = useState(false);
-  const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
   const { t } = useTranslation();
 
   if (isFetching) {
@@ -90,14 +88,8 @@ export default function PrescriptionDrugList({
     setVisibility(true);
   };
 
-  const onShowPrescriptionDrugModal = data => {
-    selectPrescriptionDrug(data);
-    setOpenPrescriptionDrugModal(true);
-  };
-
   const bag = {
     onShowModal,
-    onShowPrescriptionDrugModal,
     selectPrescriptionDrug,
     check: checkPrescriptionDrug,
     savePrescriptionDrugStatus,
@@ -262,10 +254,6 @@ export default function PrescriptionDrugList({
           setVisibility={setVisibility}
           checkPrescriptionDrug={checkPrescriptionDrug}
         />
-        {/* <ModalPrescriptionDrug
-          visible={openPrescriptionDrugModal}
-          setVisibility={setOpenPrescriptionDrugModal}
-        /> */}
       </>
     );
   }
@@ -334,10 +322,6 @@ export default function PrescriptionDrugList({
         setVisibility={setVisibility}
         checkPrescriptionDrug={checkPrescriptionDrug}
       />
-      {/* <ModalPrescriptionDrug
-        visible={openPrescriptionDrugModal}
-        setVisibility={setOpenPrescriptionDrugModal}
-      /> */}
     </>
   );
 }

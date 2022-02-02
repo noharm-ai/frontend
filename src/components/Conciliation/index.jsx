@@ -11,6 +11,7 @@ import BackTop from '@components/BackTop';
 import PageHeader from '@containers/Conciliation/PageHeader';
 import Patient from '@containers/Screening/Patient';
 import ConciliationDrugList from '@containers/Conciliation/ConciliationDrugList';
+import PrescriptionDrugForm from '@containers/Forms/PrescriptionDrug';
 
 import { BoxWrapper } from './index.style';
 
@@ -58,6 +59,7 @@ export default function Screening({ match, fetchScreeningById, isFetching, error
         <ConciliationDrugList />
       </div>
 
+      <PrescriptionDrugForm />
       <BackTop />
     </>
   );

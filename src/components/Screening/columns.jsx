@@ -78,10 +78,10 @@ const interventionMenu = (id, idPrescription, saveInterventionStatus, source) =>
 const prescriptionDrugMenu = ({
   idPrescriptionDrug,
   admissionNumber,
-  onShowPrescriptionDrugModal,
   selectPrescriptionDrug,
   hasNotes,
   t,
+  concilia,
   ...data
 }) => {
   return (
@@ -99,14 +99,21 @@ const prescriptionDrugMenu = ({
       >
         {hasNotes ? t('prescriptionDrugList.updateNotes') : t('prescriptionDrugList.addNotes')}
       </Menu.Item>
-      <Menu.Item
-        onClick={() =>
-          selectPrescriptionDrug({ ...data, idPrescriptionDrug, admissionNumber, updateDrug: true })
-        }
-        className="gtm-btn-edit-drug"
-      >
-        Alterar
-      </Menu.Item>
+      {!concilia && (
+        <Menu.Item
+          onClick={() =>
+            selectPrescriptionDrug({
+              ...data,
+              idPrescriptionDrug,
+              admissionNumber,
+              updateDrug: true
+            })
+          }
+          className="gtm-btn-edit-drug"
+        >
+          Alterar
+        </Menu.Item>
+      )}
     </Menu>
   );
 };
@@ -168,7 +175,6 @@ const Action = ({
   idPrescriptionDrug,
   prescriptionType,
   onShowModal,
-  onShowPrescriptionDrugModal,
   uniqueDrugList,
   admissionNumber,
   emptyRow,
@@ -220,7 +226,6 @@ const Action = ({
           overlay={prescriptionDrugMenu({
             idPrescriptionDrug,
             admissionNumber,
-            onShowPrescriptionDrugModal,
             t,
             hasNotes,
             ...data
@@ -252,7 +257,12 @@ const Action = ({
             type="primary gtm-bt-notes"
             ghost={!hasNotes}
             onClick={() => {
-              onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber });
+              data.selectPrescriptionDrug({
+                ...data,
+                idPrescriptionDrug,
+                admissionNumber,
+                updateNotes: true
+              });
             }}
           >
             <Icon type="form" style={{ fontSize: 16 }} />

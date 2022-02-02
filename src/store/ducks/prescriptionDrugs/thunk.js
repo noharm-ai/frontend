@@ -8,7 +8,6 @@ import { Creators as PrescriptionsCreators } from '../prescriptions/index';
 
 const {
   prescriptionDrugsSelect,
-  prescriptionDrugsUpdate,
 
   prescriptionDrugsSaveStart,
   prescriptionDrugsSaveError,
@@ -123,10 +122,6 @@ export const suspendPrescriptionDrugThunk = (idPrescriptionDrug, source, suspend
 
 export const selectPrescriptionDrugThunk = item => async dispatch => {
   dispatch(prescriptionDrugsSelect(item));
-};
-
-export const clientUpdatePrescriptionDrugThunk = item => async dispatch => {
-  dispatch(prescriptionDrugsUpdate(item));
 };
 
 const transformPrescriptionDrug = (data, updatedPrescriptionDrug) => {

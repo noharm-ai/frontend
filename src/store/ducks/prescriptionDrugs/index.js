@@ -2,7 +2,6 @@ import { createActions, createReducer } from 'reduxsauce';
 
 export const { Types, Creators } = createActions({
   prescriptionDrugsSelect: ['item'],
-  prescriptionDrugsUpdate: ['item'],
 
   prescriptionDrugsSaveStart: [''],
   prescriptionDrugsSaveError: ['error'],
@@ -27,17 +26,6 @@ const select = (state = INITIAL_STATE, { item }) => ({
   single: {
     ...state.single,
     item
-  }
-});
-
-const update = (state = INITIAL_STATE, { item }) => ({
-  ...state,
-  single: {
-    ...state.single,
-    item: {
-      ...state.single.item,
-      ...item
-    }
   }
 });
 
@@ -79,7 +67,6 @@ const saveReset = (state = INITIAL_STATE) => ({
 
 const HANDLERS = {
   [Types.PRESCRIPTION_DRUGS_SELECT]: select,
-  [Types.PRESCRIPTION_DRUGS_UPDATE]: update,
 
   [Types.PRESCRIPTION_DRUGS_SAVE_START]: saveStart,
   [Types.PRESCRIPTION_DRUGS_SAVE_ERROR]: saveError,
