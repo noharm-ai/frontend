@@ -87,13 +87,15 @@ export default function PrescriptionDrug({
   };
 
   const Footer = ({ handleSubmit }) => {
+    const hasSuspendAction = item.updateDrug && item.idPrescriptionDrug;
+
     return (
       <>
         <Button onClick={() => onCancel()} disabled={isSaving} className="gtm-bt-cancel-drugEdit">
           {t('interventionForm.btnCancel')}
         </Button>
 
-        {item.updateDrug && !item.suspended && (
+        {hasSuspendAction && !item.suspended && (
           <Button
             onClick={() => onSuspend(true)}
             disabled={isSaving}
@@ -105,7 +107,7 @@ export default function PrescriptionDrug({
           </Button>
         )}
 
-        {item.updateDrug && item.suspended && (
+        {hasSuspendAction && item.suspended && (
           <Button
             onClick={() => onSuspend(false)}
             disabled={isSaving}

@@ -638,7 +638,6 @@ const updatePrescriptionDrugData = (
 
   switch (sourceToStoreType(source)) {
     case 'prescription':
-      console.log('update prescription');
       updateData(prescriptions, idPrescriptionDrug, data);
       return getUpdatedState(sourceToStoreType(source), prescriptions);
     case 'solution':

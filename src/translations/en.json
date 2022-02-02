@@ -183,7 +183,8 @@
     "tabInterventions": "Interventions",
     "tabDiet": "Diet",
     "tabLabResults": "Lab results",
-    "tabClinicalNotes": "Clinical notes"
+    "tabClinicalNotes": "Clinical notes",
+    "btnAddDrug": "Add drug"
   },
   "tableHeader": {
     "score": "Score",
@@ -388,6 +389,13 @@
     "alergy": "Alergy",
     "tube": "Drug contraindicate by tube",
     "duplicate": "Duplicity"
+  },
+
+  "actions": {
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "save": "Save",
+    "delete": "Delete"
   },
 
   "errors": {

@@ -111,7 +111,7 @@ const prescriptionDrugMenu = ({
           }
           className="gtm-btn-edit-drug"
         >
-          Alterar
+          {t('actions.edit')}
         </Menu.Item>
       )}
     </Menu>

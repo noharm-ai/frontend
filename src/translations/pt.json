@@ -183,7 +183,8 @@
     "tabInterventions": "Intervenções",
     "tabDiet": "Dieta",
     "tabLabResults": "Exames",
-    "tabClinicalNotes": "Evoluções"
+    "tabClinicalNotes": "Evoluções",
+    "btnAddDrug": "Adicionar medicamento"
   },
   "tableHeader": {
     "score": "Escore",
@@ -377,6 +378,13 @@
     "names": "Nomes",
     "signs": "Sinais",
     "symptoms": "Sintomas"
+  },
+
+  "actions": {
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "save": "Salvar",
+    "delete": "Excluir"
   },
 
   "alerts": {

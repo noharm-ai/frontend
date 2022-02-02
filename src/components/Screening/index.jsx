@@ -10,6 +10,7 @@ import Tag from '@components/Tag';
 import notification from '@components/notification';
 import BackTop from '@components/BackTop';
 import Button from '@components/Button';
+import Icon from '@components/Icon';
 
 import PrescriptionList from '@containers/Screening/PrescriptionDrug/PrescriptionList';
 import SolutionList from '@containers/Screening/PrescriptionDrug/SolutionList';
@@ -83,7 +84,8 @@ export default function Screening({
     selectPrescriptionDrug({
       idPrescription: content.idPrescription,
       idSegment: content.idSegment,
-      source
+      source,
+      updateDrug: true
     });
   };
 
@@ -127,7 +129,8 @@ export default function Screening({
                     className="gtm-bt-add-drugEdit"
                     type="primary"
                   >
-                    Adicionar medicamento
+                    <Icon type="plus" />
+                    {t('screeningBody.btnAddDrug')}
                   </Button>
                 </PrescriptionActionContainer>
               )}
