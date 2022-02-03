@@ -102,6 +102,7 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
               filterOption={false}
               onSearch={search}
               onChange={(value, option) => handleDrugChange(value, option)}
+              autoFocus
             >
               {!drugs.isFetching &&
                 drugList.map(({ idDrug, name }) => (
@@ -192,7 +193,7 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
               </Col>
             </Box>
 
-            <Box hasError={errors.interval && touched.interval}>
+            {/* <Box hasError={errors.interval && touched.interval}>
               <Col xs={layout.label}>
                 <Heading as="label" size="14px">
                   {t('tableHeader.interval')}:
@@ -239,7 +240,7 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
                 </Select>
                 {errors.route && touched.route && <FieldError>{errors.route}</FieldError>}
               </Col>
-            </Box>
+            </Box> */}
           </>
         )
       )}
