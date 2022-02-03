@@ -68,6 +68,7 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
   const { units, routes, frequencies, intervals } = drugSummary.data ? drugSummary.data : {};
   const currentDrug = { idDrug: item.idDrug, name: item.drug };
   const drugList = item.idDrug ? uniqBy(drugs.list.concat([currentDrug]), 'idDrug') : drugs.list;
+  const editIntervalAndRoute = false;
 
   return (
     <>
@@ -193,54 +194,60 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
               </Col>
             </Box>
 
-            {/* <Box hasError={errors.interval && touched.interval}>
-              <Col xs={layout.label}>
-                <Heading as="label" size="14px">
-                  {t('tableHeader.interval')}:
-                </Heading>
-              </Col>
-              <Col xs={layout.input}>
-                <Select
-                  id="interval"
-                  optionFilterProp="children"
-                  style={{ width: '100%' }}
-                  value={interval}
-                  onChange={(value, option) => handleIntervalChange(value, option)}
-                >
-                  {intervals
-                    .filter(i => i.idFrequency === values.frequency)
-                    .map(({ id, description }) => (
-                      <Select.Option key={id} value={id}>
-                        {description}
-                      </Select.Option>
-                    ))}
-                </Select>
-                {errors.interval && touched.interval && <FieldError>{errors.interval}</FieldError>}
-              </Col>
-            </Box>
-            <Box hasError={errors.route && touched.route}>
-              <Col xs={layout.label}>
-                <Heading as="label" size="14px">
-                  {t('tableHeader.route')}:
-                </Heading>
-              </Col>
-              <Col xs={layout.input}>
-                <Select
-                  id="route"
-                  optionFilterProp="children"
-                  style={{ width: '100%' }}
-                  value={route}
-                  onChange={value => setFieldValue('route', value)}
-                >
-                  {routes.map(({ id, description }) => (
-                    <Select.Option key={id} value={id}>
-                      {description}
-                    </Select.Option>
-                  ))}
-                </Select>
-                {errors.route && touched.route && <FieldError>{errors.route}</FieldError>}
-              </Col>
-            </Box> */}
+            {editIntervalAndRoute && (
+              <>
+                <Box hasError={errors.interval && touched.interval}>
+                  <Col xs={layout.label}>
+                    <Heading as="label" size="14px">
+                      {t('tableHeader.interval')}:
+                    </Heading>
+                  </Col>
+                  <Col xs={layout.input}>
+                    <Select
+                      id="interval"
+                      optionFilterProp="children"
+                      style={{ width: '100%' }}
+                      value={interval}
+                      onChange={(value, option) => handleIntervalChange(value, option)}
+                    >
+                      {intervals
+                        .filter(i => i.idFrequency === values.frequency)
+                        .map(({ id, description }) => (
+                          <Select.Option key={id} value={id}>
+                            {description}
+                          </Select.Option>
+                        ))}
+                    </Select>
+                    {errors.interval && touched.interval && (
+                      <FieldError>{errors.interval}</FieldError>
+                    )}
+                  </Col>
+                </Box>
+                <Box hasError={errors.route && touched.route}>
+                  <Col xs={layout.label}>
+                    <Heading as="label" size="14px">
+                      {t('tableHeader.route')}:
+                    </Heading>
+                  </Col>
+                  <Col xs={layout.input}>
+                    <Select
+                      id="route"
+                      optionFilterProp="children"
+                      style={{ width: '100%' }}
+                      value={route}
+                      onChange={value => setFieldValue('route', value)}
+                    >
+                      {routes.map(({ id, description }) => (
+                        <Select.Option key={id} value={id}>
+                          {description}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                    {errors.route && touched.route && <FieldError>{errors.route}</FieldError>}
+                  </Col>
+                </Box>
+              </>
+            )}
           </>
         )
       )}
