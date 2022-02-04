@@ -1,7 +1,7 @@
 export default {
   list: t => [
     {
-      key: 'alergy',
+      key: 'allergy',
       label: t('clinicalNotesIndicator.allergy'),
       value: 'alergia',
       color: '#E65100',
