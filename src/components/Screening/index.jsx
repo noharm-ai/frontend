@@ -84,6 +84,7 @@ export default function Screening({
     selectPrescriptionDrug({
       idPrescription: content.idPrescription,
       idSegment: content.idSegment,
+      idHospital: content.idHospital,
       source,
       updateDrug: true
     });
