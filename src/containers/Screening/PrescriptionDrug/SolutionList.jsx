@@ -30,6 +30,7 @@ const mapStateToProps = ({ prescriptions, auth, user }) => ({
   access_token: auth.identify.access_token,
   weight: prescriptions.single.data.weight,
   idSegment: prescriptions.single.data.idSegment,
+  idHospital: prescriptions.single.data.idHospital,
   admissionNumber: prescriptions.single.data.admissionNumber,
   uniqueDrugs: prescriptions.single.data.uniqueDrugs,
   isCheckingPrescription: prescriptions.single.check.isChecking,

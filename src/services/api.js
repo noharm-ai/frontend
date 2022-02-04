@@ -221,6 +221,11 @@ const updateUnitCoefficient = (bearerToken, idDrug, idMeasureUnit, params = {}) 
 const getDrugSummary = (bearerToken, idDrug, idSegment) =>
   instance.get(`${endpoints.drugs}/summary/${idSegment}/${idDrug}`, { ...setHeaders(bearerToken) });
 
+const getDrugResources = (bearerToken, idDrug, idSegment, idHospital) =>
+  instance.get(`${endpoints.drugs}/resources/${idDrug}/${idSegment}/${idHospital}`, {
+    ...setHeaders(bearerToken)
+  });
+
 /**
  * Departments.
  *
@@ -441,7 +446,8 @@ const api = {
   createUser,
   updateUser,
   savePrescriptionDrug,
-  suspendPrescriptionDrug
+  suspendPrescriptionDrug,
+  getDrugResources
 };
 
 export default api;

@@ -19,6 +19,7 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
     idPrescriptionDrug,
     idDrug,
     idSegment,
+    idHospital,
     dose,
     measureUnit,
     frequency,
@@ -61,9 +62,9 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
 
   useEffect(() => {
     if (idDrug) {
-      fetchDrugSummary(idDrug, idSegment);
+      fetchDrugSummary(idDrug, idSegment, idHospital);
     }
-  }, [fetchDrugSummary, idDrug, idSegment]);
+  }, [fetchDrugSummary, idDrug, idSegment, idHospital]);
 
   const { units, routes, frequencies, intervals } = drugSummary.data ? drugSummary.data : {};
   const currentDrug = { idDrug: item.idDrug, name: item.drug };
@@ -151,11 +152,12 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
                 <Select
                   id="measureUnit"
                   optionFilterProp="children"
+                  showSearch
                   style={{ width: '100%' }}
                   value={measureUnit}
                   onChange={(value, option) => handleMeasureUnitChange(value, option)}
                 >
-                  {units.map(({ id, description }) => (
+                  {uniqBy(units, 'id').map(({ id, description }) => (
                     <Select.Option key={id} value={id}>
                       {description}
                     </Select.Option>
@@ -177,12 +179,13 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
                 <Select
                   id="frequency"
                   optionFilterProp="children"
+                  showSearch
                   style={{ width: '100%' }}
                   placeholder=""
                   value={frequency}
                   onChange={(value, option) => handleFrequencyChange(value, option)}
                 >
-                  {frequencies.map(({ id, description }) => (
+                  {uniqBy(frequencies, 'id').map(({ id, description }) => (
                     <Select.Option key={id} value={id}>
                       {description}
                     </Select.Option>

@@ -7,7 +7,7 @@ import {
   savePrescriptionDrugNoteThunk,
   suspendPrescriptionDrugThunk
 } from '@store/ducks/prescriptionDrugs/thunk';
-import { searchDrugsThunk, fetchDrugSummaryThunk } from '@store/ducks/drugs/thunk';
+import { searchDrugsThunk, fetchDrugResourcesThunk } from '@store/ducks/drugs/thunk';
 
 import PrescriptionDrug from '@components/Forms/PrescriptionDrug';
 
@@ -27,7 +27,7 @@ const mapDispatchToProps = dispatch =>
       saveNotes: savePrescriptionDrugNoteThunk,
       suspend: suspendPrescriptionDrugThunk,
       searchDrugs: searchDrugsThunk,
-      fetchDrugSummary: fetchDrugSummaryThunk
+      fetchDrugSummary: fetchDrugResourcesThunk
     },
     dispatch
   );
