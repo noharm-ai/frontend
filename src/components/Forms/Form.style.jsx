@@ -74,6 +74,7 @@ export const FormHeader = styled.div`
   border-bottom: 1px solid ${get('colors.detail')};
   padding: 10px 0;
   margin-bottom: 15px;
+  width: 100%;
 `;
 
 export const InternalBox = styled.div`

@@ -42,7 +42,8 @@ const endpoints = {
   user: '/user',
   users: '/users',
   clinicalNotes: '/notes',
-  editUser: '/editUser'
+  editUser: '/editUser',
+  editPrescription: '/editPrescription'
 };
 
 /**
@@ -52,16 +53,16 @@ const endpoints = {
 const setHeaders = token =>
   token
     ? {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'x-api-key': appInfo.apiKey
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'x-api-key': appInfo.apiKey
+        }
       }
-    }
     : {
-      headers: {
-        'x-api-key': appInfo.apiKey
-      }
-    };
+        headers: {
+          'x-api-key': appInfo.apiKey
+        }
+      };
 
 /**
  * Authentication.
@@ -139,7 +140,7 @@ const getPrescriptionDrugPeriod = (bearerToken, idPrescriptionDrug, params = {})
 const putPrescriptionById = (bearerToken, idPrescription, params = {}) =>
   instance.put(`${endpoints.prescriptions}/${idPrescription}`, params, setHeaders(bearerToken));
 
-const updatePrescriptionDrug = (bearerToken, idPrescriptionDrug, params = {}) =>
+const updatePrescriptionDrugNote = (bearerToken, idPrescriptionDrug, params = {}) =>
   instance.put(
     `${endpoints.prescriptions}/drug/${idPrescriptionDrug}`,
     params,
@@ -151,6 +152,31 @@ const shouldUpdatePrescription = (bearerToken, idPrescription, params = {}) => {
     params,
     ...setHeaders(bearerToken)
   });
+};
+
+/**
+ *
+ * Edit Prescription
+ */
+
+const savePrescriptionDrug = (bearerToken, idPrescriptionDrug, params = {}) => {
+  if (idPrescriptionDrug) {
+    return instance.put(
+      `${endpoints.editPrescription}/drug/${idPrescriptionDrug}`,
+      params,
+      setHeaders(bearerToken)
+    );
+  }
+
+  return instance.post(`${endpoints.editPrescription}/drug`, params, setHeaders(bearerToken));
+};
+
+const suspendPrescriptionDrug = (bearerToken, idPrescriptionDrug, suspend) => {
+  return instance.put(
+    `${endpoints.editPrescription}/drug/${idPrescriptionDrug}/suspend/${suspend ? 1 : 0}`,
+    {},
+    setHeaders(bearerToken)
+  );
 };
 
 /**
@@ -194,6 +220,11 @@ const updateUnitCoefficient = (bearerToken, idDrug, idMeasureUnit, params = {}) 
 
 const getDrugSummary = (bearerToken, idDrug, idSegment) =>
   instance.get(`${endpoints.drugs}/summary/${idSegment}/${idDrug}`, { ...setHeaders(bearerToken) });
+
+const getDrugResources = (bearerToken, idDrug, idSegment, idHospital) =>
+  instance.get(`${endpoints.drugs}/resources/${idDrug}/${idSegment}/${idHospital}`, {
+    ...setHeaders(bearerToken)
+  });
 
 /**
  * Departments.
@@ -297,9 +328,8 @@ const putMemory = (bearerToken, { id, ...params }) => {
 const createUser = (bearerToken, params = {}) =>
   instance.put(endpoints.editUser, params, setHeaders(bearerToken));
 
-const updateUser = (bearerToken, { id,  ...params}) =>
+const updateUser = (bearerToken, { id, ...params }) =>
   instance.put(`${endpoints.editUser}/${id}`, params, setHeaders(bearerToken));
-
 
 const updatePassword = (bearerToken, { ...params }) => {
   return instance.put(`${endpoints.user}`, params, setHeaders(bearerToken));
@@ -394,7 +424,7 @@ const api = {
   getInterventions,
   getExams,
   updatePatient,
-  updatePrescriptionDrug,
+  updatePrescriptionDrugNote,
   getSubstances,
   updateSegmentExam,
   getExamTypes,
@@ -414,7 +444,10 @@ const api = {
   getClinicalNotes,
   updateClinicalNote,
   createUser,
-  updateUser
+  updateUser,
+  savePrescriptionDrug,
+  suspendPrescriptionDrug,
+  getDrugResources
 };
 
 export default api;

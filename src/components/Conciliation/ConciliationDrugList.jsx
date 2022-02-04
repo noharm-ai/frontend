@@ -7,7 +7,6 @@ import Table from '@components/Table';
 import Empty from '@components/Empty';
 
 import FormIntervention from '@containers/Forms/Intervention';
-import ModalPrescriptionDrug from '@containers/Screening/ModalPrescriptionDrug';
 
 import { conciliationColumns } from '../Screening/columns';
 import { rowClassName } from '../Screening/PrescriptionDrug/PrescriptionDrugList';
@@ -27,10 +26,10 @@ export default function PrescriptionDrugList({
   selectPrescriptionDrug,
   updatePrescriptionDrugData,
   uniqueDrugs,
-  currentPrescription
+  currentPrescription,
+  security
 }) {
   const [openIntervention, setOpenIntervention] = useState(false);
-  const [openPrescriptionDrugModal, setOpenPrescriptionDrugModal] = useState(false);
   const { t } = useTranslation();
 
   if (isFetching) {
@@ -42,15 +41,10 @@ export default function PrescriptionDrugList({
     setOpenIntervention(true);
   };
 
-  const onShowPrescriptionDrugModal = data => {
-    selectPrescriptionDrug(data);
-    setOpenPrescriptionDrugModal(true);
-  };
-
   const bag = {
     concilia: true,
     onShowModal,
-    onShowPrescriptionDrugModal,
+    selectPrescriptionDrug,
     check: checkPrescriptionDrug,
     savePrescriptionDrugStatus,
     updatePrescriptionDrugData,
@@ -60,6 +54,7 @@ export default function PrescriptionDrugList({
     checkIntervention,
     uniqueDrugList: uniqueDrugs,
     currentPrescription,
+    security,
     t
   };
 
@@ -84,10 +79,6 @@ export default function PrescriptionDrugList({
         visible={openIntervention}
         setVisibility={setOpenIntervention}
         checkPrescriptionDrug={checkPrescriptionDrug}
-      />
-      <ModalPrescriptionDrug
-        visible={openPrescriptionDrugModal}
-        setVisibility={setOpenPrescriptionDrugModal}
       />
     </BoxWrapper>
   );

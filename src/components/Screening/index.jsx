@@ -9,6 +9,8 @@ import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
 import notification from '@components/notification';
 import BackTop from '@components/BackTop';
+import Button from '@components/Button';
+import Icon from '@components/Icon';
 
 import PrescriptionList from '@containers/Screening/PrescriptionDrug/PrescriptionList';
 import SolutionList from '@containers/Screening/PrescriptionDrug/SolutionList';
@@ -17,20 +19,30 @@ import DietList from '@containers/Screening/PrescriptionDrug/DietList';
 import PreviousInterventionList from '@containers/Screening/PreviousInterventionList';
 import PageHeader from '@containers/Screening/PageHeader';
 import Patient from '@containers/Screening/Patient';
+import PrescriptionDrugForm from '@containers/Forms/PrescriptionDrug';
 
-import { BoxWrapper, ScreeningTabs } from './index.style';
+import { BoxWrapper, ScreeningTabs, PrescriptionActionContainer } from './index.style';
 
 // extract idPrescription from slug.
 const extractId = slug => slug.match(/([0-9]+)$/)[0];
 
-export default function Screening({ match, fetchScreeningById, isFetching, content, error }) {
+export default function Screening({
+  match,
+  fetchScreeningById,
+  isFetching,
+  content,
+  error,
+  selectPrescriptionDrug,
+  security
+}) {
   const id = extractId(match.params.slug);
   const {
     prescriptionCount,
     solutionCount,
     proceduresCount,
     dietCount,
-    interventionsRaw: interventionList
+    interventionsRaw: interventionList,
+    agg
   } = content;
 
   const { t } = useTranslation();
@@ -68,6 +80,16 @@ export default function Screening({ match, fetchScreeningById, isFetching, conte
     </>
   );
 
+  const addPrescriptionDrug = source => {
+    selectPrescriptionDrug({
+      idPrescription: content.idPrescription,
+      idSegment: content.idSegment,
+      idHospital: content.idHospital,
+      source,
+      updateDrug: true
+    });
+  };
+
   if (error) {
     return (
       <Empty
@@ -101,6 +123,19 @@ export default function Screening({ match, fetchScreeningById, isFetching, conte
             key="drugs"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
+              {!isEmpty(content) && security.hasPrescriptionEdit && !agg && (
+                <PrescriptionActionContainer>
+                  <Button
+                    onClick={() => addPrescriptionDrug('prescription')}
+                    className="gtm-bt-add-drugEdit"
+                    type="primary"
+                  >
+                    <Icon type="plus" />
+                    {t('screeningBody.btnAddDrug')}
+                  </Button>
+                </PrescriptionActionContainer>
+              )}
+
               <PrescriptionList
                 emptyMessage="Nenhum medicamento encontrado."
                 hasFilter
@@ -167,6 +202,7 @@ export default function Screening({ match, fetchScreeningById, isFetching, conte
         </ScreeningTabs>
       </Row>
 
+      <PrescriptionDrugForm />
       <BackTop />
     </>
   );

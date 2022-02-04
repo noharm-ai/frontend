@@ -75,6 +75,49 @@ const interventionMenu = (id, idPrescription, saveInterventionStatus, source) =>
   </Menu>
 );
 
+const prescriptionDrugMenu = ({
+  idPrescriptionDrug,
+  admissionNumber,
+  selectPrescriptionDrug,
+  hasNotes,
+  t,
+  concilia,
+  ...data
+}) => {
+  return (
+    <Menu>
+      <Menu.Item
+        onClick={() =>
+          selectPrescriptionDrug({
+            ...data,
+            idPrescriptionDrug,
+            admissionNumber,
+            updateNotes: true
+          })
+        }
+        className="gtm-btn-notes"
+      >
+        {hasNotes ? t('prescriptionDrugList.updateNotes') : t('prescriptionDrugList.addNotes')}
+      </Menu.Item>
+      {!concilia && (
+        <Menu.Item
+          onClick={() =>
+            selectPrescriptionDrug({
+              ...data,
+              idPrescriptionDrug,
+              admissionNumber,
+              updateDrug: true
+            })
+          }
+          className="gtm-btn-edit-drug"
+        >
+          {t('actions.edit')}
+        </Menu.Item>
+      )}
+    </Menu>
+  );
+};
+
 const InterventionAction = ({
   source,
   checkIntervention: check,
@@ -132,11 +175,11 @@ const Action = ({
   idPrescriptionDrug,
   prescriptionType,
   onShowModal,
-  onShowPrescriptionDrugModal,
   uniqueDrugList,
   admissionNumber,
   emptyRow,
   t,
+  security,
   ...data
 }) => {
   if (emptyRow) return null;
@@ -178,22 +221,54 @@ const Action = ({
         </Button>
       </Tooltip>
 
-      <Tooltip
-        title={
-          hasNotes ? t('prescriptionDrugList.updateNotes') : t('prescriptionDrugList.addNotes')
-        }
-        placement="left"
-      >
-        <Button
-          type="primary gtm-bt-notes"
-          ghost={!hasNotes}
-          onClick={() => {
-            onShowPrescriptionDrugModal({ ...data, idPrescriptionDrug, admissionNumber });
-          }}
+      {security.hasPrescriptionEdit() && (
+        <Dropdown
+          overlay={prescriptionDrugMenu({
+            idPrescriptionDrug,
+            admissionNumber,
+            t,
+            hasNotes,
+            ...data
+          })}
+          trigger={['click']}
+          loading={isChecking}
+          disabled={isDisabled}
         >
-          <Icon type="form" style={{ fontSize: 16 }} />
-        </Button>
-      </Tooltip>
+          <Button
+            type="primary"
+            loading={isChecking}
+            disabled={isDisabled}
+            className="gtm-bt-extra-actions"
+            ghost
+          >
+            <Icon type="caret-down" style={{ fontSize: 16 }} />
+          </Button>
+        </Dropdown>
+      )}
+
+      {!security.hasPrescriptionEdit() && (
+        <Tooltip
+          title={
+            hasNotes ? t('prescriptionDrugList.updateNotes') : t('prescriptionDrugList.addNotes')
+          }
+          placement="left"
+        >
+          <Button
+            type="primary gtm-bt-notes"
+            ghost={!hasNotes}
+            onClick={() => {
+              data.selectPrescriptionDrug({
+                ...data,
+                idPrescriptionDrug,
+                admissionNumber,
+                updateNotes: true
+              });
+            }}
+          >
+            <Icon type="form" style={{ fontSize: 16 }} />
+          </Button>
+        </Tooltip>
+      )}
     </TableTags>
   );
 };
