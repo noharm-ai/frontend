@@ -141,7 +141,7 @@ export default function PrescriptionDrug({
     frequencyLabel: item.frequency ? item.frequency.label : null,
     interval: item.interval,
     route: item.route,
-    notes: item.notes,
+    notes: item.notes || item.prevNotes,
     admissionNumber,
     idHospital: item.idHospital
   };
