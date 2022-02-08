@@ -123,7 +123,7 @@ export default function Screening({
             key="drugs"
           >
             <Col span={24} md={24} style={{ marginTop: '20px' }}>
-              {!isEmpty(content) && security.hasPrescriptionEdit && !agg && (
+              {!isEmpty(content) && security.hasPrescriptionEdit() && !agg && (
                 <PrescriptionActionContainer>
                   <Button
                     onClick={() => addPrescriptionDrug('prescription')}
