@@ -50,3 +50,10 @@ export const BoxWrapper = styled.section`
   box-shadow: 3px 0px 4px rgba(4, 0, 6, 0.15);
   padding: 25px;
 `;
+
+export const PrescriptionActionContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-bottom: 15px;
+`;

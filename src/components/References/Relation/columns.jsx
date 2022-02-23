@@ -22,7 +22,7 @@ const truncateText = text => {
   return text.substring(0, Math.min(max, text.length)) + ellipsis;
 };
 
-export default [
+export default security => [
   {
     title: 'Substância relacionada',
     sorter: (a, b) => a.nameB.localeCompare(b.nameB),
@@ -57,9 +57,19 @@ export default [
     width: 70,
     align: 'center',
     render: (text, record) => {
+      if (security.isSupport() || record.editable) {
+        return (
+          <Tooltip title={'Alterar relação'}>
+            <Button type="primary gtm-bt-view-relation" onClick={() => record.showModal(record)}>
+              <Icon type="edit" />
+            </Button>
+          </Tooltip>
+        );
+      }
+
       return (
-        <Tooltip title={'Alterar relação'}>
-          <Button type="primary gtm-bt-view-relation" onClick={() => record.showModal(record)}>
+        <Tooltip title="Alterações devem ser solicitadas para a equipe de suporte NoHarm">
+          <Button type="primary gtm-bt-view-relation" disabled ghost>
             <Icon type="edit" />
           </Button>
         </Tooltip>

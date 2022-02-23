@@ -609,12 +609,18 @@ const updatePrescriptionDrugData = (
   const updateData = (list, idPrescriptionDrug, newData) => {
     for (let i = 0; i < list.length; i++) {
       const group = list[i];
-      const index = group.value.findIndex(item => item.idPrescriptionDrug === idPrescriptionDrug);
 
-      if (index !== -1) {
-        const { key } = group.value[index];
-        group.value[index] = { ...newData, key };
-        break;
+      if (group.key === newData.idPrescription) {
+        const index = group.value.findIndex(item => item.idPrescriptionDrug === idPrescriptionDrug);
+
+        if (index !== -1) {
+          const { key } = group.value[index];
+          group.value[index] = { ...group.value[index], ...newData, key };
+          break;
+        } else {
+          group.value.push({ ...newData });
+          break;
+        }
       }
     }
   };

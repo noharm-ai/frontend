@@ -117,3 +117,22 @@ export const fetchDrugSummaryThunk = (idDrug, idSegment) => async (dispatch, get
 
   dispatch(drugsFetchSummarySuccess(data.data));
 };
+
+export const fetchDrugResourcesThunk = (idDrug, idSegment, idHospital) => async (
+  dispatch,
+  getState
+) => {
+  dispatch(drugsFetchSummaryStart());
+
+  const { access_token } = getState().auth.identify;
+  const { data, error } = await api
+    .getDrugResources(access_token, idDrug, idSegment, idHospital)
+    .catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(drugsFetchSummaryError(error));
+    return;
+  }
+
+  dispatch(drugsFetchSummarySuccess(data.data));
+};

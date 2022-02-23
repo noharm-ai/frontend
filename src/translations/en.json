@@ -21,6 +21,7 @@
     "description": "Something happened that prevented us from showing you the data, please try again."
   },
   "success": {
+    "generic": "Yeah! Saved successfully! :)",
     "intervention": "Yeah! Your Intervention has been saved! :)",
     "defaultObservation": "Yeah! Your Observation has been saved!",
     "applyDefaultObservation": "Observation applied"
@@ -182,7 +183,8 @@
     "tabInterventions": "Interventions",
     "tabDiet": "Diet",
     "tabLabResults": "Lab results",
-    "tabClinicalNotes": "Clinical notes"
+    "tabClinicalNotes": "Clinical notes",
+    "btnAddDrug": "Add drug"
   },
   "tableHeader": {
     "score": "Score",
@@ -337,6 +339,14 @@
     "btnCancel": "Cancel"
   },
 
+  "prescriptionDrugForm": {
+    "titleEdit": "Edit drug",
+    "titleCreate": "Create drug",
+    "titleNotes": "Annotation",
+    "btnSuspend": "Suspend",
+    "btnRemoveSuspension": "Remove suspension"
+  },
+
   "userAdminForm": {
     "name": "Name",
     "email": "Email",
@@ -381,11 +391,19 @@
     "duplicate": "Duplicity"
   },
 
+  "actions": {
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "save": "Save",
+    "delete": "Delete"
+  },
+
   "errors": {
     "invalidUser": "Non-existent user",
     "unauthorizedUser": "Unauthorized user",
     "nameExists": "There is already a user with this name!",
-    "emailExists": "There is already a user with this email!"
+    "emailExists": "There is already a user with this email!",
+    "invalidRegister": "Invalid register"
   },
 
   "validation": {
@@ -409,6 +427,7 @@
     "userAdmin": "User Admin",
     "nolimit": "No date limit at prioritization",
     "alert-bt": "Alert Integration",
-    "cpoe": "CPOE"
+    "cpoe": "CPOE",
+    "prescriptionEdit": "Prescription Edit"
   }
 }
