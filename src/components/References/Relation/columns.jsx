@@ -69,7 +69,7 @@ export default security => [
 
       return (
         <Tooltip title="Alterações devem ser solicitadas para a equipe de suporte NoHarm">
-          <Button type="primary gtm-bt-view-relation" disabled>
+          <Button type="primary gtm-bt-view-relation" disabled ghost>
             <Icon type="edit" />
           </Button>
         </Tooltip>
