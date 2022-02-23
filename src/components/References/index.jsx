@@ -293,7 +293,7 @@ export default function References({
           </Row>
           <Table
             title={title}
-            columns={relationsColumns}
+            columns={relationsColumns(security)}
             pagination={false}
             loading={isFetching || relationStatus.isFetching}
             locale={{ emptyText }}
