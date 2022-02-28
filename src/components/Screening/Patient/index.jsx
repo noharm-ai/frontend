@@ -18,7 +18,7 @@ import Tabs from '@components/Tabs';
 
 import FormIntervention from '@containers/Forms/Intervention';
 
-import { Wrapper, Name, NameWrapper, PatientBox } from './Patient.style';
+import { PatientBox, SeeMore } from './Patient.style';
 import ExamCard from '../Exam/Card';
 import AlertCard from '../AlertCard';
 import ClinicalNotesCard from '../ClinicalNotes/Card';
@@ -207,7 +207,7 @@ export default function Patient({
             </div>
           </div>
           <div className="patient-body">
-            <Tabs defaultActiveKey="patientData" type="gtm-tab-patient">
+            <Tabs defaultActiveKey="patientData" type="gtm-tab-patient" centered>
               <Tabs.TabPane tab={t('patientCard.patientData')} key="patientData">
                 <div className="patient-data">
                   <div className="patient-data-item">
@@ -229,7 +229,7 @@ export default function Patient({
                     </div>
                   </div>
 
-                  <div className="patient-data-item">
+                  <div className="patient-data-item edit">
                     <div className="patient-data-item-label">{t('patientCard.height')}</div>
                     <div className="patient-data-item-value">
                       {height ? (
@@ -239,12 +239,15 @@ export default function Patient({
                       ) : (
                         t('patientCard.notAvailable')
                       )}
-                      {hasNoHarmCare && notesInfo && (
+                    </div>
+                    <div className="patient-data-item-edit">
+                      {hasNoHarmCare && notesInfo ? (
                         <>
                           <PopoverWelcome
                             content={
                               <AISuggestion
                                 notes={notesInfo}
+                                date={notesInfoDate}
                                 action={t('patientCard.editHeight')}
                                 t={t}
                               />
@@ -252,20 +255,18 @@ export default function Patient({
                             placement="right"
                             mouseLeaveDelay={0.02}
                           >
-                            <button
-                              type="button"
-                              className="experimental-text"
-                              onClick={() => setVisible(true)}
-                            >
-                              (NoHarm Care) <InfoIcon />
-                            </button>
+                            <Button type="link" onClick={() => setVisible(true)}>
+                              <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                            </Button>
                           </PopoverWelcome>
                         </>
+                      ) : (
+                        <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
                       )}
                     </div>
                   </div>
 
-                  <div className="patient-data-item">
+                  <div className="patient-data-item edit">
                     <div className="patient-data-item-label">{t('patientCard.weight')}</div>
                     <div className="patient-data-item-value">
                       {weight && (
@@ -280,7 +281,9 @@ export default function Patient({
                         </>
                       )}
                       {!weight && t('patientCard.notAvailable')}
-                      {hasNoHarmCare && notesInfo && (
+                    </div>
+                    <div className="patient-data-item-edit">
+                      {hasNoHarmCare && notesInfo ? (
                         <>
                           <PopoverWelcome
                             content={
@@ -294,15 +297,13 @@ export default function Patient({
                             placement="right"
                             mouseLeaveDelay={0.02}
                           >
-                            <button
-                              type="button"
-                              className="experimental-text"
-                              onClick={() => setVisible(true)}
-                            >
-                              (NoHarm Care) <InfoIcon />
-                            </button>
+                            <Button type="link" onClick={() => setVisible(true)}>
+                              <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                            </Button>
                           </PopoverWelcome>
                         </>
+                      ) : (
+                        <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
                       )}
                     </div>
                   </div>
@@ -334,10 +335,15 @@ export default function Patient({
                     <div className="patient-data-item-value">{skinColor}</div>
                   </div>
 
-                  <div className="patient-data-item">
+                  <div className="patient-data-item edit">
                     <div className="patient-data-item-label">{t('patientCard.notes')}</div>
                     <div className="patient-data-item-value">
                       {observation ? 'Ver anotações' : 'Adicionar anotação'}
+                      <div className="patient-data-item-edit">
+                        <Button type="link" onClick={() => setVisible(true)}>
+                          <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                        </Button>
+                      </div>
                     </div>
                   </div>
 
@@ -348,7 +354,54 @@ export default function Patient({
                 </div>
               </Tabs.TabPane>
 
-              <Tabs.TabPane tab={t('patientCard.admissionData')} key="admissionData"></Tabs.TabPane>
+              <Tabs.TabPane tab={t('patientCard.admissionData')} key="admissionData">
+                <div className="patient-data">
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.admission')}</div>
+                    <div className="patient-data-item-value">{admissionNumber}</div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.admissionDate')}</div>
+                    <div className="patient-data-item-value">{admissionDate}</div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.department')}</div>
+                    <div className="patient-data-item-value">
+                      {department}
+                      {lastDepartment && department !== lastDepartment && (
+                        <Tooltip
+                          title={`${t('patientCard.previousDepartment')}: ${lastDepartment}`}
+                        >
+                          {' '}
+                          <InfoIcon />
+                        </Tooltip>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.bed')}</div>
+                    <div className="patient-data-item-value">{bed}</div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.segment')}</div>
+                    <div className="patient-data-item-value">{segmentName}</div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.medicalRecord')}</div>
+                    <div className="patient-data-item-value">{record}</div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.prescriber')}</div>
+                    <div className="patient-data-item-value">{prescriber}</div>
+                  </div>
+                </div>
+              </Tabs.TabPane>
             </Tabs>
           </div>
 
@@ -400,6 +453,81 @@ export default function Patient({
             </PrescriptionCard>
           </div>
         )}
+      </Col>
+      {seeMore && (
+        <Col xs={24} style={{ marginTop: '10px' }}>
+          <Col xs={8}>
+            <PrescriptionCard style={{ minHeight: '113px' }}>
+              <div className="header">
+                <h3 className="title">Sinais</h3>
+              </div>
+              <div className="content">
+                <div
+                  style={{
+                    maxHeight: '300px',
+                    overflow: 'auto',
+                    marginTop: '10px',
+                    minHeight: '60px'
+                  }}
+                >
+                  {notesSigns === '' ? '--' : notesSigns}
+                </div>
+              </div>
+            </PrescriptionCard>
+          </Col>
+          <Col xs={8}>
+            <PrescriptionCard style={{ minHeight: '113px' }}>
+              <div className="header">
+                <h3 className="title">Dados</h3>
+              </div>
+              <div className="content">
+                <div
+                  style={{
+                    maxHeight: '300px',
+                    overflow: 'auto',
+                    marginTop: '10px',
+                    minHeight: '60px'
+                  }}
+                >
+                  {notesInfo === '' ? '--' : notesInfo}
+                </div>
+              </div>
+            </PrescriptionCard>
+          </Col>
+          <Col xs={8}>
+            <PrescriptionCard style={{ minHeight: '113px' }}>
+              <div className="header">
+                <h3 className="title">Alergias</h3>
+              </div>
+              <div className="content">
+                <div
+                  style={{
+                    maxHeight: '300px',
+                    overflow: 'auto',
+                    marginTop: '10px',
+                    minHeight: '60px'
+                  }}
+                >
+                  {notesInfo === '' ? '--' : notesInfo}
+                </div>
+              </div>
+            </PrescriptionCard>
+          </Col>
+        </Col>
+      )}
+      <Col xs={24}>
+        <SeeMore onClick={toggleSeeMore}>
+          <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
+            <Icon type={seeMore ? 'up' : 'down'} />{' '}
+            {seeMore ? t('patientCard.less') : t('patientCard.more')}
+          </Button>
+          {hasAIData && (
+            <Tooltip title={t('patientCard.ctaNoHarmCare')}>
+              {'  '}
+              <InfoIcon />
+            </Tooltip>
+          )}
+        </SeeMore>
       </Col>
     </Row>
   );

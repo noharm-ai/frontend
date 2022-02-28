@@ -89,6 +89,15 @@ export const Box = styled.div`
   }
 `;
 
+export const SeeMore = styled.div`
+  text-align: center;
+  margin-top: 10px;
+
+  .ant-btn-link {
+    font-size: 18px;
+  }
+`;
+
 export const PatientBox = styled.div`
   .patient-header {
     display: flex;
@@ -110,17 +119,29 @@ export const PatientBox = styled.div`
       flex-wrap: wrap;
 
       .patient-data-item {
+        position: relative;
         display: flex;
         flex-direction: column;
         width: 50%;
         padding: 5px 0;
         padding-left: 10px;
         border-bottom: 1px solid #e0e0e0;
+        overflow-x: hidden;
 
         &.full {
           width: 100%;
           border-bottom: 0;
           border-right: 0 !important;
+        }
+
+        &.edit {
+          &:hover {
+            .patient-data-item-edit {
+              opacity: 1;
+              pointer-events: all;
+              transform: translateX(0);
+            }
+          }
         }
 
         &:nth-child(odd) {
@@ -134,15 +155,42 @@ export const PatientBox = styled.div`
         }
 
         .patient-data-item-value {
-          font-size: 14px;
+          font-size: 12px;
           font-weight: 500;
           color: ${get('colors.primary')};
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+
+          @media only screen and (min-width: 1400px) {
+            font-size: 14px;
+          }
+        }
+
+        .patient-data-item-edit {
+          position: absolute;
+          right: 0;
+          top: 0;
+          height: 100%;
+          width: 20%;
+          opacity: 0;
+          pointer-events: none;
+          background: rgb(64 169 255);
+          transform: translateX(100%);
+          transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
       }
     }
 
     .ant-tabs-bar {
       margin: 0 0 5px 0;
+    }
+
+    .ant-tabs-nav .ant-tabs-tab {
+      padding: 10px 16px;
     }
   }
 `;
