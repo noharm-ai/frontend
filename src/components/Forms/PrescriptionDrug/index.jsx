@@ -142,7 +142,7 @@ export default function PrescriptionDrug({
     interval: item.interval,
     route: item.route,
     notes: item.notes || item.prevNotes,
-    admissionNumber,
+    admissionNumber: admissionNumber || item.admissionNumber,
     idHospital: item.idHospital
   };
 
