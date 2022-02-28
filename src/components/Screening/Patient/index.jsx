@@ -14,21 +14,14 @@ import RichTextView from '@components/RichTextView';
 import Alert from '@components/Alert';
 import PrescriptionCard from '@components/PrescriptionCard';
 import { getCorporalSurface, getIMC } from '@utils/index';
+import Tabs from '@components/Tabs';
 
 import FormIntervention from '@containers/Forms/Intervention';
 
-import { Wrapper, Name, NameWrapper, Box } from './Patient.style';
+import { Wrapper, Name, NameWrapper, PatientBox } from './Patient.style';
 import ExamCard from '../Exam/Card';
 import AlertCard from '../AlertCard';
 import ClinicalNotesCard from '../ClinicalNotes/Card';
-
-function Cell({ children, ...props }) {
-  return (
-    <Box {...props}>
-      <div className="cell">{children}</div>
-    </Box>
-  );
-}
 
 export default function Patient({
   fetchScreening,
@@ -182,259 +175,198 @@ export default function Patient({
   return (
     <Row gutter={8}>
       <Col md={8}>
-        <Wrapper>
-          <NameWrapper hasIntervention={intervention && intervention.status === 's'}>
-            <Row gutter={8}>
-              <Col xs={20}>
-                <Name as="h3" size="18px">
-                  {namePatient || '-'}
-                  {dischargeMessage(dischargeFormated, dischargeReason)}
-                </Name>
-              </Col>
-              <Col xs={4} className="btn-container">
-                {prevIntervention && (
-                  <Tooltip title="Possui intervenção anterior (consulte a aba Intervenções)">
-                    <Icon type="warning" style={{ fontSize: 18, color: '#fa8c16' }} />
-                  </Tooltip>
-                )}
-                {!prevIntervention && existIntervention && (
-                  <Tooltip title="Possui intervenção anterior já resolvida (consulte a aba Intervenções)">
-                    <Icon type="warning" style={{ fontSize: 18, color: 'gray' }} />
-                  </Tooltip>
-                )}
+        <PatientBox>
+          <div className="patient-header">
+            <div className="patient-header-name">
+              {namePatient || '-'}
+              {dischargeMessage(dischargeFormated, dischargeReason)}
+            </div>
+            <div className="patient-header-action">
+              {prevIntervention && (
+                <Tooltip title="Possui intervenção anterior (consulte a aba Intervenções)">
+                  <Icon type="warning" style={{ fontSize: 18, color: '#fa8c16' }} />
+                </Tooltip>
+              )}
+              {!prevIntervention && existIntervention && (
+                <Tooltip title="Possui intervenção anterior já resolvida (consulte a aba Intervenções)">
+                  <Icon type="warning" style={{ fontSize: 18, color: 'gray' }} />
+                </Tooltip>
+              )}
 
-                <Tooltip title={interventionTooltip}>
-                  <Button
-                    type="primary gtm-bt-patient-intervention"
-                    onClick={() => showInterventionModal()}
-                    style={{ marginRight: '3px' }}
-                    ghost={!intervention || intervention.status !== 's'}
-                    disabled={isInterventionClosed}
-                  >
-                    <Icon type="warning" style={{ fontSize: 16 }} />
-                  </Button>
-                </Tooltip>
-                <Tooltip title={t('patientCard.editPatient')}>
-                  <Button
-                    type="primary gtm-bt-edit-patient"
-                    onClick={() => setVisible(true)}
-                    ghost={!observation}
-                  >
-                    <Icon type="edit" style={{ fontSize: 16 }} />
-                  </Button>
-                </Tooltip>
-              </Col>
-            </Row>
-          </NameWrapper>
-          <Cell>
-            <strong>{t('patientCard.admission')}:</strong> {admissionNumber}
-          </Cell>
-          <Cell>
-            <strong>{t('patientCard.department')}:</strong> {department}
-            {lastDepartment && department !== lastDepartment && (
-              <Tooltip title={`${t('patientCard.previousDepartment')}: ${lastDepartment}`}>
-                {' '}
-                <InfoIcon />
+              <Tooltip title={interventionTooltip}>
+                <Button
+                  type="primary gtm-bt-patient-intervention"
+                  onClick={() => showInterventionModal()}
+                  style={{ marginRight: '3px' }}
+                  ghost={!intervention || intervention.status !== 's'}
+                  disabled={isInterventionClosed}
+                >
+                  <Icon type="warning" style={{ fontSize: 16 }} />
+                </Button>
               </Tooltip>
-            )}
-          </Cell>
-          <Cell>
-            <strong>{t('patientCard.bed')}:</strong> {bed}
-          </Cell>
-          <Cell>
-            <strong>{t('patientCard.age')}:</strong> {age} {isNaN(age) ? '' : 'anos'}
-            {birthdate ? `(${moment(birthdate).format('DD/MM/YYYY')})` : ''}
-          </Cell>
-          <Cell>
-            <strong>{t('patientCard.gender')}:</strong>{' '}
-            {gender ? (gender === 'M' ? t('patientCard.male') : t('patientCard.female')) : ''}
-          </Cell>
-          <Cell>
-            <strong>{t('patientCard.weight')}: </strong>
-            {weight && (
-              <>
-                {weight} Kg ({formatWeightDate(weightDate)})
-                {weightUser && (
-                  <Tooltip title={t('patientCard.manuallyUpdated')}>
-                    {' '}
-                    <InfoIcon />
-                  </Tooltip>
-                )}
-              </>
-            )}
-            {!weight && t('patientCard.notAvailable')}
-            {hasNoHarmCare && notesInfo && (
-              <>
-                <PopoverWelcome
-                  content={
-                    <AISuggestion
-                      notes={notesInfo}
-                      date={notesInfoDate}
-                      action={t('patientCard.editWeigth')}
-                      t={t}
-                    />
-                  }
-                  placement="right"
-                  mouseLeaveDelay={0.02}
-                >
-                  <button
-                    type="button"
-                    className="experimental-text"
-                    onClick={() => setVisible(true)}
-                  >
-                    (NoHarm Care) <InfoIcon />
-                  </button>
-                </PopoverWelcome>
-              </>
-            )}
-          </Cell>
-          <Cell>
-            <strong>{t('patientCard.skin')}:</strong> {skinColor}
-          </Cell>
-          <Cell>
-            <strong>{t('patientCard.height')}:</strong>{' '}
-            {height ? (
-              <Tooltip title={t('patientCard.manuallyUpdated')}>
-                {height} cm <InfoIcon />
-              </Tooltip>
-            ) : (
-              t('patientCard.notAvailable')
-            )}
-            {hasNoHarmCare && notesInfo && (
-              <>
-                <PopoverWelcome
-                  content={
-                    <AISuggestion notes={notesInfo} action={t('patientCard.editHeight')} t={t} />
-                  }
-                  placement="right"
-                  mouseLeaveDelay={0.02}
-                >
-                  <button
-                    type="button"
-                    className="experimental-text"
-                    onClick={() => setVisible(true)}
-                  >
-                    (NoHarm Care) <InfoIcon />
-                  </button>
-                </PopoverWelcome>
-              </>
-            )}
-          </Cell>
-          {seeMore && (
-            <>
-              <Cell>
-                <strong>{t('patientCard.bodySurface')}: </strong>
-                {weight && height ? (
-                  <>{getCorporalSurface(weight, height).toFixed(3)} m²</>
-                ) : (
-                  t('patientCard.notAvailable')
-                )}
-              </Cell>
-              <Cell>
-                <strong>{t('patientCard.bmi')}: </strong>
-                {weight && height ? (
-                  <>{getIMC(weight, height).toFixed(2)} kg/m²</>
-                ) : (
-                  t('patientCard.notAvailable')
-                )}
-              </Cell>
-              <Cell>
-                <strong>{t('patientCard.segment')}:</strong> {segmentName}
-              </Cell>
-              <Cell>
-                <strong>{t('patientCard.medicalRecord')}:</strong> {record}
-              </Cell>
-              <Cell>
-                <strong>{t('patientCard.prescriber')}:</strong> {prescriber}
-              </Cell>
-              <Cell>
-                <strong>{t('patientCard.admissionDate')}:</strong> {admissionDate}
-              </Cell>
-              <Cell>
-                <strong>{t('patientCard.notes')}:</strong>
-                <div
-                  style={{
-                    maxHeight: '300px',
-                    overflow: 'auto',
-                    marginTop: '10px',
-                    minHeight: '60px'
-                  }}
-                >
-                  <RichTextView text={observation} />
+            </div>
+          </div>
+          <div className="patient-body">
+            <Tabs defaultActiveKey="patientData" type="gtm-tab-patient">
+              <Tabs.TabPane tab={t('patientCard.patientData')} key="patientData">
+                <div className="patient-data">
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.age')}</div>
+                    <div className="patient-data-item-value">
+                      {age} {isNaN(age) ? '' : 'anos'}
+                      {birthdate ? `(${moment(birthdate).format('DD/MM/YYYY')})` : ''}
+                    </div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.gender')}</div>
+                    <div className="patient-data-item-value">
+                      {gender
+                        ? gender === 'M'
+                          ? t('patientCard.male')
+                          : t('patientCard.female')
+                        : ''}
+                    </div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.height')}</div>
+                    <div className="patient-data-item-value">
+                      {height ? (
+                        <Tooltip title={t('patientCard.manuallyUpdated')}>
+                          {height} cm <InfoIcon />
+                        </Tooltip>
+                      ) : (
+                        t('patientCard.notAvailable')
+                      )}
+                      {hasNoHarmCare && notesInfo && (
+                        <>
+                          <PopoverWelcome
+                            content={
+                              <AISuggestion
+                                notes={notesInfo}
+                                action={t('patientCard.editHeight')}
+                                t={t}
+                              />
+                            }
+                            placement="right"
+                            mouseLeaveDelay={0.02}
+                          >
+                            <button
+                              type="button"
+                              className="experimental-text"
+                              onClick={() => setVisible(true)}
+                            >
+                              (NoHarm Care) <InfoIcon />
+                            </button>
+                          </PopoverWelcome>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.weight')}</div>
+                    <div className="patient-data-item-value">
+                      {weight && (
+                        <>
+                          {weight} Kg ({formatWeightDate(weightDate)})
+                          {weightUser && (
+                            <Tooltip title={t('patientCard.manuallyUpdated')}>
+                              {' '}
+                              <InfoIcon />
+                            </Tooltip>
+                          )}
+                        </>
+                      )}
+                      {!weight && t('patientCard.notAvailable')}
+                      {hasNoHarmCare && notesInfo && (
+                        <>
+                          <PopoverWelcome
+                            content={
+                              <AISuggestion
+                                notes={notesInfo}
+                                date={notesInfoDate}
+                                action={t('patientCard.editWeigth')}
+                                t={t}
+                              />
+                            }
+                            placement="right"
+                            mouseLeaveDelay={0.02}
+                          >
+                            <button
+                              type="button"
+                              className="experimental-text"
+                              onClick={() => setVisible(true)}
+                            >
+                              (NoHarm Care) <InfoIcon />
+                            </button>
+                          </PopoverWelcome>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.bmi')}</div>
+                    <div className="patient-data-item-value">
+                      {weight && height ? (
+                        <>{getIMC(weight, height).toFixed(2)} kg/m²</>
+                      ) : (
+                        t('patientCard.notAvailable')
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.bodySurface')}</div>
+                    <div className="patient-data-item-value">
+                      {weight && height ? (
+                        <>{getCorporalSurface(weight, height).toFixed(3)} m²</>
+                      ) : (
+                        t('patientCard.notAvailable')
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.skin')}</div>
+                    <div className="patient-data-item-value">{skinColor}</div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">{t('patientCard.notes')}</div>
+                    <div className="patient-data-item-value">
+                      {observation ? 'Ver anotações' : 'Adicionar anotação'}
+                    </div>
+                  </div>
+
+                  <div className="patient-data-item full">
+                    <div className="patient-data-item-label">Tags</div>
+                    <div className="patient-data-item-value"></div>
+                  </div>
                 </div>
-              </Cell>
-              {hasNoHarmCare && (
-                <>
-                  <Cell className="experimental">
-                    <strong>
-                      {t('patientCard.data')}{' '}
-                      <Tooltip
-                        title={aiDataTooltip(t('patientCard.dataExtractedFrom'), notesInfoDate)}
-                      >
-                        {' '}
-                        <InfoIcon />
-                      </Tooltip>{' '}
-                      :
-                    </strong>
-                    <div
-                      style={{
-                        maxHeight: '300px',
-                        overflow: 'auto',
-                        marginTop: '10px',
-                        minHeight: '60px'
-                      }}
-                    >
-                      {notesInfo === '' ? '--' : notesInfo}
-                    </div>
-                  </Cell>
-                  <Cell className="experimental">
-                    <strong>
-                      {t('patientCard.signals')}{' '}
-                      <Tooltip
-                        title={aiDataTooltip(t('patientCard.signalsExtractedFrom'), notesSignsDate)}
-                      >
-                        {' '}
-                        <InfoIcon />
-                      </Tooltip>{' '}
-                      :
-                    </strong>
-                    <div
-                      style={{
-                        maxHeight: '300px',
-                        overflow: 'auto',
-                        marginTop: '10px',
-                        minHeight: '60px'
-                      }}
-                    >
-                      {notesSigns === '' ? '--' : notesSigns}
-                    </div>
-                  </Cell>
-                </>
-              )}
-              {!concilia && (
-                <Cell className="recalc">
-                  <Button type="primary gtm-bt-update" onClick={updatePrescriptionData}>
-                    {t('patientCard.recalculate')}
-                  </Button>
-                </Cell>
-              )}
-            </>
-          )}
-          <Cell className="see-more">
-            <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
-              <Icon type={seeMore ? 'up' : 'down'} />{' '}
-              {seeMore ? t('patientCard.less') : t('patientCard.more')}
-            </Button>
-            {hasAIData && (
-              <Tooltip title={t('patientCard.ctaNoHarmCare')}>
-                {'  '}
-                <InfoIcon />
-              </Tooltip>
-            )}
-          </Cell>
-        </Wrapper>
-      </Col>
+              </Tabs.TabPane>
 
+              <Tabs.TabPane tab={t('patientCard.admissionData')} key="admissionData"></Tabs.TabPane>
+            </Tabs>
+          </div>
+
+          <FormPatientModal
+            visible={visible}
+            onCancel={onCancel}
+            okText="Salvar"
+            okType="primary gtm-bt-save-patient"
+            cancelText="Cancelar"
+            afterSavePatient={afterSavePatient}
+          />
+          <FormIntervention
+            visible={interventionVisible}
+            setVisibility={setInterventionVisibility}
+            checkPrescriptionDrug={checkPrescriptionDrug}
+          />
+        </PatientBox>
+      </Col>
       <Col xl={10} xxl={11}>
         <ExamCard exams={exams} siderCollapsed={siderCollapsed} count={alertExams} />
       </Col>
@@ -469,20 +401,6 @@ export default function Patient({
           </div>
         )}
       </Col>
-
-      <FormPatientModal
-        visible={visible}
-        onCancel={onCancel}
-        okText="Salvar"
-        okType="primary gtm-bt-save-patient"
-        cancelText="Cancelar"
-        afterSavePatient={afterSavePatient}
-      />
-      <FormIntervention
-        visible={interventionVisible}
-        setVisibility={setInterventionVisibility}
-        checkPrescriptionDrug={checkPrescriptionDrug}
-      />
     </Row>
   );
 }

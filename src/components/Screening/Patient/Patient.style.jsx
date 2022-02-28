@@ -88,3 +88,61 @@ export const Box = styled.div`
     background: #fff;
   }
 `;
+
+export const PatientBox = styled.div`
+  .patient-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 5px;
+
+    .patient-header-name {
+      flex: 1;
+      font-size: 18px;
+      font-weight: 500;
+      color: ${get('colors.primary')};
+    }
+  }
+
+  .patient-body {
+    .patient-data {
+      display: flex;
+      flex-wrap: wrap;
+
+      .patient-data-item {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        padding: 5px 0;
+        padding-left: 10px;
+        border-bottom: 1px solid #e0e0e0;
+
+        &.full {
+          width: 100%;
+          border-bottom: 0;
+          border-right: 0 !important;
+        }
+
+        &:nth-child(odd) {
+          border-right: 1px solid #e0e0e0;
+        }
+
+        .patient-data-item-label {
+          font-size: 12px;
+          font-weight: 300;
+          color: ${get('colors.primary')};
+        }
+
+        .patient-data-item-value {
+          font-size: 14px;
+          font-weight: 500;
+          color: ${get('colors.primary')};
+        }
+      }
+    }
+
+    .ant-tabs-bar {
+      margin: 0 0 5px 0;
+    }
+  }
+`;

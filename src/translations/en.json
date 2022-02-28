@@ -137,6 +137,8 @@
     "btnClose": "Close"
   },
   "patientCard": {
+    "patientData": "Patient data",
+    "admissionData": "Admission data",
     "prescription": "Prescription",
     "patient": "Patient",
     "admission": "Admission",
