@@ -338,7 +338,7 @@ export default function Patient({
                   <div className="patient-data-item edit">
                     <div className="patient-data-item-label">{t('patientCard.notes')}</div>
                     <div className="patient-data-item-value">
-                      {observation ? 'Ver anotações' : 'Adicionar anotação'}
+                      {observation ? 'Ver anotação' : 'Adicionar anotação'}
                       <div className="patient-data-item-edit">
                         <Button type="link" onClick={() => setVisible(true)}>
                           <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
@@ -497,36 +497,59 @@ export default function Patient({
       </Col>
       {seeMore && (
         <>
-          <Col xs={8} style={{ marginTop: '10px' }}>
-            <PrescriptionCard className="info">
-              <div className="header">
-                <h3 className="title">Dados</h3>
-              </div>
-              <div className="content">
-                <div className="text-content">{notesInfo === '' ? '--' : notesInfo}</div>
-              </div>
-            </PrescriptionCard>
-          </Col>
-          <Col xs={8} style={{ marginTop: '10px' }}>
-            <PrescriptionCard className="signs">
-              <div className="header">
-                <h3 className="title">Sinais</h3>
-              </div>
-              <div className="content">
-                <div className="text-content">{notesSigns === '' ? '--' : notesSigns}</div>
-              </div>
-            </PrescriptionCard>
-          </Col>
-          <Col xs={8} style={{ marginTop: '10px' }}>
-            <PrescriptionCard className="allergy">
-              <div className="header">
-                <h3 className="title">Alergias</h3>
-              </div>
-              <div className="content">
-                <div className="text-content">{notesInfo === '' ? '--' : notesInfo}</div>
-              </div>
-            </PrescriptionCard>
-          </Col>
+          {hasNoHarmCare && (
+            <>
+              <Col xs={8} style={{ marginTop: '10px' }}>
+                <PrescriptionCard className="full-height info">
+                  <div className="header">
+                    <h3 className="title">Dados</h3>
+                  </div>
+                  <div className="content">
+                    <div className="text-content">{notesInfo === '' ? '--' : notesInfo}</div>
+                  </div>
+                  <div className="footer">
+                    <div className="stats light">
+                      <Tooltip title="Data de extração">
+                        {notesInfoDate ? moment(notesInfoDate).format('DD/MM/YYYY hh:mm') : ''}
+                      </Tooltip>
+                    </div>
+                    <div className="action bold">
+                      <Button type="link gtm-btn-nhc-update-data" onClick={() => setVisible(true)}>
+                        Usar dados
+                      </Button>
+                    </div>
+                  </div>
+                </PrescriptionCard>
+              </Col>
+              <Col xs={8} style={{ marginTop: '10px' }}>
+                <PrescriptionCard className="full-height signs">
+                  <div className="header">
+                    <h3 className="title">Sinais</h3>
+                  </div>
+                  <div className="content">
+                    <div className="text-content">{notesSigns === '' ? '--' : notesSigns}</div>
+                  </div>
+                  <div className="footer">
+                    <div className="stats light">
+                      <Tooltip title="Data de extração">
+                        {notesSignsDate ? moment(notesSignsDate).format('DD/MM/YYYY hh:mm') : ''}
+                      </Tooltip>
+                    </div>
+                  </div>
+                </PrescriptionCard>
+              </Col>
+              <Col xs={8} style={{ marginTop: '10px' }}>
+                <PrescriptionCard className="full-height allergy">
+                  <div className="header">
+                    <h3 className="title">Alergias</h3>
+                  </div>
+                  <div className="content">
+                    <div className="text-content">{notesInfo === '' ? '--' : notesInfo}</div>
+                  </div>
+                </PrescriptionCard>
+              </Col>
+            </>
+          )}
         </>
       )}
       <Col xs={24}>

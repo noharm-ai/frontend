@@ -13,11 +13,16 @@ export default styled.div`
   border-radius: 5px;
   padding: 6px 15px;
 
+  &.full-height {
+    height: 100%;
+  }
+
   h3.title {
     font-size: 18px;
     font-weight: 500;
     color: #2e3c5a;
-    margin-top: 0;
+    margin-top: 5px;
+    margin-bottom: 10px;
   }
 
   .content {
@@ -55,8 +60,15 @@ export default styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+    min-height: 31px;
 
     .action {
+      &.bold {
+        button {
+          font-weight: 500;
+        }
+      }
+
       button {
         padding-right: 0;
       }
@@ -65,6 +77,10 @@ export default styled.div`
     .stats {
       display: flex;
       align-items: center;
+
+      &.light {
+        font-weight: 400;
+      }
 
       ${props => createIndicatorTagClasses(props.t)}
     }

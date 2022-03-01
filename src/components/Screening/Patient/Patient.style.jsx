@@ -129,6 +129,7 @@ export const PatientBox = styled.div`
       border-right: 1px solid #e0e0e0;
       border-radius: 5px;
       border-top-left-radius: 0;
+      height: 100%;
 
       .patient-data-item {
         position: relative;
@@ -138,7 +139,7 @@ export const PatientBox = styled.div`
         padding: 5px 0;
         padding-left: 10px;
         border-bottom: 1px solid #e0e0e0;
-        overflow-x: hidden;
+        overflow-x: clip;
 
         &.full {
           width: 100%;
@@ -221,6 +222,24 @@ export const PatientBox = styled.div`
 
     .ant-tabs-nav .ant-tabs-tab {
       padding: 10px 16px;
+    }
+
+    .ant-tabs {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      .ant-tabs-content {
+        flex: 1;
+
+        .ant-tabs-tabpane {
+          height: 100%;
+
+          &.ant-tabs-tabpane-inactive {
+            height: 0;
+          }
+        }
+      }
     }
   }
 `;
