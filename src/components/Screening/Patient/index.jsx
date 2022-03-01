@@ -1,5 +1,5 @@
 import 'styled-components/macro';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import moment from 'moment';
 import { Row, Col } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -10,11 +10,13 @@ import Button from '@components/Button';
 import Icon, { InfoIcon } from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 import FormPatientModal from '@containers/Forms/Patient';
-import RichTextView from '@components/RichTextView';
 import Alert from '@components/Alert';
 import PrescriptionCard from '@components/PrescriptionCard';
 import { getCorporalSurface, getIMC } from '@utils/index';
 import Tabs from '@components/Tabs';
+import Menu from '@components/Menu';
+import Dropdown from '@components/Dropdown';
+import { useOutsideAlerter } from '@lib/hooks';
 
 import FormIntervention from '@containers/Forms/Intervention';
 
@@ -70,10 +72,14 @@ export default function Patient({
     features
   } = prescription;
   const [interventionVisible, setInterventionVisibility] = useState(false);
-
   const [visible, setVisible] = useState(false);
   const [seeMore, setSeeMore] = useState(false);
+  const [isMenuVisible, setMenuVisibility] = useState(false);
   const { t } = useTranslation();
+  const wrapperRef = useRef(null);
+  useOutsideAlerter(wrapperRef, () => {
+    setMenuVisibility(false);
+  });
 
   const hasNoHarmCare = security.hasNoHarmCare();
   const hasAIData = hasNoHarmCare && (notesSigns !== '' || notesInfo !== '');
@@ -163,6 +169,46 @@ export default function Patient({
     );
   };
 
+  const handleMenuClick = ({ key, domEvent }) => {
+    switch (key) {
+      case 'edit':
+        setVisible(true);
+        break;
+      case 'update':
+        updatePrescriptionData();
+        break;
+      default:
+        console.error('Invalid key', key);
+    }
+
+    domEvent.stopPropagation();
+  };
+
+  const prescriptionOptions = () => {
+    return (
+      <Menu onClick={handleMenuClick}>
+        <Menu.Item key="edit" className="gtm-bt-edit-patient">
+          <Icon type="edit" />
+          {t('actions.edit')}
+        </Menu.Item>
+        {/* <Menu.Item key="exams" className="gtm-bt-exams">
+          <Icon type="experiment" />
+          {t('tableHeader.exams')}
+        </Menu.Item>
+        <Menu.Item key="clinicalNotes" className="gtm-bt-clinicalNotes">
+          <Icon type="book" />
+          {t('tableHeader.clinicalNotes')}
+        </Menu.Item> */}
+        {!concilia && (
+          <Menu.Item key="update" className="gtm-bt-update">
+            <Icon type="redo" />
+            {t('patientCard.recalculate')}
+          </Menu.Item>
+        )}
+      </Menu>
+    );
+  };
+
   const closedStatus = ['a', 'n', 'x'];
   const currentStatus = intervention ? intervention.status : 's';
   const isInterventionClosed = closedStatus.indexOf(currentStatus) !== -1;
@@ -181,7 +227,7 @@ export default function Patient({
               {namePatient || '-'}
               {dischargeMessage(dischargeFormated, dischargeReason)}
             </div>
-            <div className="patient-header-action">
+            <div className="patient-header-action" ref={wrapperRef}>
               {prevIntervention && (
                 <Tooltip title="Possui intervenção anterior (consulte a aba Intervenções)">
                   <Icon type="warning" style={{ fontSize: 18, color: '#fa8c16' }} />
@@ -204,6 +250,17 @@ export default function Patient({
                   <Icon type="warning" style={{ fontSize: 16 }} />
                 </Button>
               </Tooltip>
+
+              <Dropdown overlay={prescriptionOptions()} visible={isMenuVisible} trigger={[]}>
+                <Tooltip title="Menu">
+                  <button
+                    className="patient-menu gtm-bt-patient-menu"
+                    onClick={() => setMenuVisibility(true)}
+                  >
+                    <Icon type="more" style={{ fontSize: 28 }} />
+                  </button>
+                </Tooltip>
+              </Dropdown>
             </div>
           </div>
           <div className="patient-body">

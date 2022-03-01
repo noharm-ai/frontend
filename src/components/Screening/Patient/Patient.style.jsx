@@ -116,6 +116,25 @@ export const PatientBox = styled.div`
       font-weight: 500;
       color: ${get('colors.primary')};
     }
+
+    .patient-header-action {
+      display: flex;
+
+      .patient-menu {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        outline: none;
+        border: 0;
+        padding: 0;
+        cursor: pointer;
+
+        &:hover {
+          color: #1890ff;
+        }
+      }
+    }
   }
 
   .patient-body {
