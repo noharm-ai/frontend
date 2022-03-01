@@ -43,6 +43,22 @@ export const createIndicatorTagClasses = t => {
   return classList.join(' ');
 };
 
+export const createIndicatorCardClasses = t => {
+  const translate = t ? t : () => '';
+  const classList = ClinicalNotesIndicator.list(translate).map(
+    i => `
+    &.${i.key} {
+      border-color: ${i.color};
+      background: ${i.backgroundColor};
+      color: rgba(0, 0, 0, 0.65);
+      font-weight: 500;
+    }
+  `
+  );
+
+  return classList.join(' ');
+};
+
 export const MenuPopup = styled(Menu)`
   &.ant-menu-dark {
     background: rgba(46, 60, 90, 0.9);

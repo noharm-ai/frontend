@@ -175,7 +175,7 @@ export default function Patient({
   return (
     <Row gutter={8} type="flex">
       <Col md={8}>
-        <PatientBox>
+        <PatientBox t={t}>
           <div className="patient-header">
             <div className="patient-header-name">
               {namePatient || '-'}
@@ -207,7 +207,7 @@ export default function Patient({
             </div>
           </div>
           <div className="patient-body">
-            <Tabs defaultActiveKey="patientData" type="gtm-tab-patient" centered>
+            <Tabs defaultActiveKey="patientData" type="card gtm-tab-patient">
               <Tabs.TabPane tab={t('patientCard.patientData')} key="patientData">
                 <div className="patient-data">
                   <div className="patient-data-item">
@@ -348,8 +348,30 @@ export default function Patient({
                   </div>
 
                   <div className="patient-data-item full">
-                    <div className="patient-data-item-label">Tags</div>
-                    <div className="patient-data-item-value"></div>
+                    <div className="patient-data-item-value">
+                      {hasNoHarmCare && notesInfo && (
+                        <Tooltip
+                          title={aiDataTooltip(t('patientCard.dataExtractedFrom'), notesInfoDate)}
+                        >
+                          <div className="tag info" onClick={() => setSeeMore(true)}>
+                            {t('patientCard.data')}
+                          </div>
+                        </Tooltip>
+                      )}
+
+                      {hasNoHarmCare && notesSigns && (
+                        <Tooltip
+                          title={aiDataTooltip(
+                            t('patientCard.signalsExtractedFrom'),
+                            notesSignsDate
+                          )}
+                        >
+                          <div className="tag signs" onClick={() => setSeeMore(true)}>
+                            {t('patientCard.signals')}
+                          </div>
+                        </Tooltip>
+                      )}
+                    </div>
                   </div>
                 </div>
               </Tabs.TabPane>
@@ -399,6 +421,16 @@ export default function Patient({
                   <div className="patient-data-item">
                     <div className="patient-data-item-label">{t('patientCard.prescriber')}</div>
                     <div className="patient-data-item-value">{prescriber}</div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label"></div>
+                    <div className="patient-data-item-value"></div>
+                  </div>
+
+                  <div className="patient-data-item full">
+                    <div className="patient-data-item-label">&nbsp;</div>
+                    <div className="patient-data-item-value"></div>
                   </div>
                 </div>
               </Tabs.TabPane>
@@ -464,19 +496,9 @@ export default function Patient({
         </div>
       </Col>
       {seeMore && (
-        <Col xs={24} style={{ marginTop: '10px' }}>
-          <Col xs={8}>
-            <PrescriptionCard style={{ minHeight: '113px' }} className="signs">
-              <div className="header">
-                <h3 className="title">Sinais</h3>
-              </div>
-              <div className="content">
-                <div className="text-content">{notesSigns === '' ? '--' : notesSigns}</div>
-              </div>
-            </PrescriptionCard>
-          </Col>
-          <Col xs={8}>
-            <PrescriptionCard style={{ minHeight: '113px' }} className="info">
+        <>
+          <Col xs={8} style={{ marginTop: '10px' }}>
+            <PrescriptionCard className="info">
               <div className="header">
                 <h3 className="title">Dados</h3>
               </div>
@@ -485,8 +507,18 @@ export default function Patient({
               </div>
             </PrescriptionCard>
           </Col>
-          <Col xs={8}>
-            <PrescriptionCard style={{ minHeight: '113px' }} className="allergy">
+          <Col xs={8} style={{ marginTop: '10px' }}>
+            <PrescriptionCard className="signs">
+              <div className="header">
+                <h3 className="title">Sinais</h3>
+              </div>
+              <div className="content">
+                <div className="text-content">{notesSigns === '' ? '--' : notesSigns}</div>
+              </div>
+            </PrescriptionCard>
+          </Col>
+          <Col xs={8} style={{ marginTop: '10px' }}>
+            <PrescriptionCard className="allergy">
               <div className="header">
                 <h3 className="title">Alergias</h3>
               </div>
@@ -495,7 +527,7 @@ export default function Patient({
               </div>
             </PrescriptionCard>
           </Col>
-        </Col>
+        </>
       )}
       <Col xs={24}>
         <SeeMore onClick={toggleSeeMore}>

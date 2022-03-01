@@ -1,6 +1,9 @@
 import styled from 'styled-components/macro';
 
-import { createIndicatorTagClasses } from '@components/Screening/ClinicalNotes/index.style';
+import {
+  createIndicatorTagClasses,
+  createIndicatorCardClasses
+} from '@components/Screening/ClinicalNotes/index.style';
 
 export default styled.div`
   position: relative;
@@ -67,18 +70,5 @@ export default styled.div`
     }
   }
 
-  &.allergy {
-    background: rgba(230, 81, 0, 0.1);
-    border-color: #e65100;
-  }
-
-  &.info {
-    background: rgba(25, 25, 224, 0.1);
-    border-color: #1919e0;
-  }
-
-  &.signs {
-    background: rgba(193, 87, 163, 0.1);
-    border-color: #c157a3;
-  }
+  ${props => createIndicatorCardClasses(props.t)}
 `;

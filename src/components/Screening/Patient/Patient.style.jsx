@@ -2,6 +2,7 @@ import styled from 'styled-components/macro';
 
 import { get } from '@styles/utils';
 import Heading from '@components/Heading';
+import { createIndicatorCardClasses } from '@components/Screening/ClinicalNotes/index.style';
 
 export const Wrapper = styled.div`
   border: 1px solid ${get('colors.detail')};
@@ -99,10 +100,14 @@ export const SeeMore = styled.div`
 `;
 
 export const PatientBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+
   .patient-header {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #e0e0e0;
     padding-bottom: 5px;
 
     .patient-header-name {
@@ -114,9 +119,16 @@ export const PatientBox = styled.div`
   }
 
   .patient-body {
+    flex: 1;
+
     .patient-data {
       display: flex;
       flex-wrap: wrap;
+      border-bottom: 1px solid #e0e0e0;
+      border-left: 1px solid #e0e0e0;
+      border-right: 1px solid #e0e0e0;
+      border-radius: 5px;
+      border-top-left-radius: 0;
 
       .patient-data-item {
         position: relative;
@@ -165,6 +177,24 @@ export const PatientBox = styled.div`
           @media only screen and (min-width: 1400px) {
             font-size: 14px;
           }
+
+          .tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 300;
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 5px;
+            padding: 0 5px;
+            margin-left: 5px;
+            cursor: pointer;
+
+            &:first-child {
+              margin-left: 0;
+            }
+
+            ${props => createIndicatorCardClasses(props.t)}
+          }
         }
 
         .patient-data-item-edit {
@@ -186,7 +216,7 @@ export const PatientBox = styled.div`
     }
 
     .ant-tabs-bar {
-      margin: 0 0 5px 0;
+      margin: 0;
     }
 
     .ant-tabs-nav .ant-tabs-tab {
