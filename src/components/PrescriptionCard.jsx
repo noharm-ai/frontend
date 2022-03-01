@@ -38,6 +38,14 @@ export default styled.div`
       font-size: 48px;
       font-weight: 300;
     }
+
+    .text-content {
+      max-height: 300px;
+      overflow: auto;
+      margin-top: 10px;
+      min-height: 60px;
+      font-weight: 500;
+    }
   }
 
   .footer {
@@ -57,5 +65,20 @@ export default styled.div`
 
       ${props => createIndicatorTagClasses(props.t)}
     }
+  }
+
+  &.allergy {
+    background: rgba(230, 81, 0, 0.1);
+    border-color: #e65100;
+  }
+
+  &.info {
+    background: rgba(25, 25, 224, 0.1);
+    border-color: #1919e0;
+  }
+
+  &.signs {
+    background: rgba(193, 87, 163, 0.1);
+    border-color: #c157a3;
   }
 `;

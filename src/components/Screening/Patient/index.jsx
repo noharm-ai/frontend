@@ -173,7 +173,7 @@ export default function Patient({
   }
 
   return (
-    <Row gutter={8}>
+    <Row gutter={8} type="flex">
       <Col md={8}>
         <PatientBox>
           <div className="patient-header">
@@ -424,92 +424,74 @@ export default function Patient({
         <ExamCard exams={exams} siderCollapsed={siderCollapsed} count={alertExams} />
       </Col>
       <Col xl={6} xxl={5}>
-        <AlertCard stats={alertStats} />
-        {clinicalNotes > 0 && (
-          <div style={{ marginTop: '10px' }}>
-            <ClinicalNotesCard stats={clinicalNotesStats} total={clinicalNotes} />
-          </div>
-        )}
-        {!clinicalNotes && (
-          <div style={{ marginTop: '10px' }}>
-            <PrescriptionCard style={{ minHeight: '113px' }}>
-              <div className="header">
-                <h3 className="title">{t('tableHeader.interventions')}</h3>
-              </div>
-              <div className="content">
-                <div className="stat-number">{interventionCount}</div>
-              </div>
-              <div className="footer">
-                <div className="stats">
-                  <>
-                    {features && features.interventions}{' '}
-                    {features && features.interventions === 1
-                      ? t('tableHeader.pending')
-                      : t('tableHeader.pendingPlural')}
-                  </>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            justifyContent: 'space-between'
+          }}
+        >
+          <AlertCard stats={alertStats} />
+          {clinicalNotes > 0 && (
+            <div style={{ marginTop: '10px' }}>
+              <ClinicalNotesCard stats={clinicalNotesStats} total={clinicalNotes} />
+            </div>
+          )}
+          {!clinicalNotes && (
+            <div style={{ marginTop: '10px' }}>
+              <PrescriptionCard style={{ minHeight: '113px' }}>
+                <div className="header">
+                  <h3 className="title">{t('tableHeader.interventions')}</h3>
                 </div>
-                <div className="action"></div>
-              </div>
-            </PrescriptionCard>
-          </div>
-        )}
+                <div className="content">
+                  <div className="stat-number">{interventionCount}</div>
+                </div>
+                <div className="footer">
+                  <div className="stats">
+                    <>
+                      {features && features.interventions}{' '}
+                      {features && features.interventions === 1
+                        ? t('tableHeader.pending')
+                        : t('tableHeader.pendingPlural')}
+                    </>
+                  </div>
+                  <div className="action"></div>
+                </div>
+              </PrescriptionCard>
+            </div>
+          )}
+        </div>
       </Col>
       {seeMore && (
         <Col xs={24} style={{ marginTop: '10px' }}>
           <Col xs={8}>
-            <PrescriptionCard style={{ minHeight: '113px' }}>
+            <PrescriptionCard style={{ minHeight: '113px' }} className="signs">
               <div className="header">
                 <h3 className="title">Sinais</h3>
               </div>
               <div className="content">
-                <div
-                  style={{
-                    maxHeight: '300px',
-                    overflow: 'auto',
-                    marginTop: '10px',
-                    minHeight: '60px'
-                  }}
-                >
-                  {notesSigns === '' ? '--' : notesSigns}
-                </div>
+                <div className="text-content">{notesSigns === '' ? '--' : notesSigns}</div>
               </div>
             </PrescriptionCard>
           </Col>
           <Col xs={8}>
-            <PrescriptionCard style={{ minHeight: '113px' }}>
+            <PrescriptionCard style={{ minHeight: '113px' }} className="info">
               <div className="header">
                 <h3 className="title">Dados</h3>
               </div>
               <div className="content">
-                <div
-                  style={{
-                    maxHeight: '300px',
-                    overflow: 'auto',
-                    marginTop: '10px',
-                    minHeight: '60px'
-                  }}
-                >
-                  {notesInfo === '' ? '--' : notesInfo}
-                </div>
+                <div className="text-content">{notesInfo === '' ? '--' : notesInfo}</div>
               </div>
             </PrescriptionCard>
           </Col>
           <Col xs={8}>
-            <PrescriptionCard style={{ minHeight: '113px' }}>
+            <PrescriptionCard style={{ minHeight: '113px' }} className="allergy">
               <div className="header">
                 <h3 className="title">Alergias</h3>
               </div>
               <div className="content">
-                <div
-                  style={{
-                    maxHeight: '300px',
-                    overflow: 'auto',
-                    marginTop: '10px',
-                    minHeight: '60px'
-                  }}
-                >
-                  {notesInfo === '' ? '--' : notesInfo}
-                </div>
+                <div className="text-content">{notesInfo === '' ? '--' : notesInfo}</div>
               </div>
             </PrescriptionCard>
           </Col>
