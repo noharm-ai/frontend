@@ -223,7 +223,11 @@ export default function Patient({
       <Col md={8}>
         <PatientBox t={t}>
           <div className="patient-header">
-            <div className="patient-header-name">
+            <div
+              className={`patient-header-name ${intervention &&
+                intervention.status === 's' &&
+                'has-intervention'}`}
+            >
               {namePatient || '-'}
               {dischargeMessage(dischargeFormated, dischargeReason)}
             </div>
@@ -318,7 +322,9 @@ export default function Patient({
                           </PopoverWelcome>
                         </>
                       ) : (
-                        <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                        <Button type="link" onClick={() => setVisible(true)}>
+                          <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -327,15 +333,12 @@ export default function Patient({
                     <div className="patient-data-item-label">{t('patientCard.weight')}</div>
                     <div className="patient-data-item-value">
                       {weight && (
-                        <>
-                          {weight} Kg ({formatWeightDate(weightDate)})
-                          {weightUser && (
-                            <Tooltip title={t('patientCard.manuallyUpdated')}>
-                              {' '}
-                              <InfoIcon />
-                            </Tooltip>
-                          )}
-                        </>
+                        <Tooltip title={weightUser ? t('patientCard.manuallyUpdated') : ''}>
+                          <div>
+                            {weight} Kg <span class="small">({formatWeightDate(weightDate)})</span>
+                            {weightUser && <InfoIcon />}
+                          </div>
+                        </Tooltip>
                       )}
                       {!weight && t('patientCard.notAvailable')}
                     </div>
@@ -360,7 +363,9 @@ export default function Patient({
                           </PopoverWelcome>
                         </>
                       ) : (
-                        <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                        <Button type="link" onClick={() => setVisible(true)}>
+                          <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -395,10 +400,13 @@ export default function Patient({
                   <div className="patient-data-item edit">
                     <div className="patient-data-item-label">{t('patientCard.notes')}</div>
                     <div className="patient-data-item-value">
-                      {observation ? 'Ver anotação' : 'Adicionar anotação'}
+                      {observation ? t('actions.showNotes') : '--'}
                       <div className="patient-data-item-edit">
                         <Button type="link" onClick={() => setVisible(true)}>
-                          <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                          <Icon
+                            type={observation ? 'search' : 'edit'}
+                            style={{ fontSize: 18, color: '#fff' }}
+                          />
                         </Button>
                       </div>
                     </div>
@@ -448,14 +456,19 @@ export default function Patient({
                   <div className="patient-data-item">
                     <div className="patient-data-item-label">{t('patientCard.department')}</div>
                     <div className="patient-data-item-value">
-                      {department}
-                      {lastDepartment && department !== lastDepartment && (
-                        <Tooltip
-                          title={`${t('patientCard.previousDepartment')}: ${lastDepartment}`}
-                        >
-                          {' '}
-                          <InfoIcon />
-                        </Tooltip>
+                      <Tooltip title={department}>{department}</Tooltip>
+                    </div>
+                  </div>
+
+                  <div className="patient-data-item">
+                    <div className="patient-data-item-label">
+                      {t('patientCard.previousDepartment')}
+                    </div>
+                    <div className="patient-data-item-value">
+                      {lastDepartment && department !== lastDepartment ? (
+                        <Tooltip title={lastDepartment}>{lastDepartment}</Tooltip>
+                      ) : (
+                        '--'
                       )}
                     </div>
                   </div>
@@ -467,7 +480,9 @@ export default function Patient({
 
                   <div className="patient-data-item">
                     <div className="patient-data-item-label">{t('patientCard.segment')}</div>
-                    <div className="patient-data-item-value">{segmentName}</div>
+                    <div className="patient-data-item-value">
+                      <Tooltip title={segmentName}>{segmentName}</Tooltip>
+                    </div>
                   </div>
 
                   <div className="patient-data-item">
@@ -477,12 +492,9 @@ export default function Patient({
 
                   <div className="patient-data-item">
                     <div className="patient-data-item-label">{t('patientCard.prescriber')}</div>
-                    <div className="patient-data-item-value">{prescriber}</div>
-                  </div>
-
-                  <div className="patient-data-item">
-                    <div className="patient-data-item-label"></div>
-                    <div className="patient-data-item-value"></div>
+                    <div className="patient-data-item-value">
+                      <Tooltip title={prescriber}>{prescriber}</Tooltip>
+                    </div>
                   </div>
 
                   <div className="patient-data-item full">
@@ -559,21 +571,26 @@ export default function Patient({
               <Col xs={8} style={{ marginTop: '10px' }}>
                 <PrescriptionCard className="full-height info">
                   <div className="header">
-                    <h3 className="title">Dados</h3>
+                    <h3 className="title">{t('clinicalNotesIndicator.info')}</h3>
                   </div>
                   <div className="content">
                     <div className="text-content">{notesInfo === '' ? '--' : notesInfo}</div>
                   </div>
                   <div className="footer">
                     <div className="stats light">
-                      <Tooltip title="Data de extração">
+                      <Tooltip title={t('tableHeader.extractionDate')}>
                         {notesInfoDate ? moment(notesInfoDate).format('DD/MM/YYYY hh:mm') : ''}
                       </Tooltip>
                     </div>
                     <div className="action bold">
-                      <Button type="link gtm-btn-nhc-update-data" onClick={() => setVisible(true)}>
-                        Usar dados
-                      </Button>
+                      {notesInfo !== '' && (
+                        <Button
+                          type="link gtm-btn-nhc-update-data"
+                          onClick={() => setVisible(true)}
+                        >
+                          {t('actions.useData')}
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </PrescriptionCard>
@@ -581,14 +598,14 @@ export default function Patient({
               <Col xs={8} style={{ marginTop: '10px' }}>
                 <PrescriptionCard className="full-height signs">
                   <div className="header">
-                    <h3 className="title">Sinais</h3>
+                    <h3 className="title">{t('clinicalNotesIndicator.signs')}</h3>
                   </div>
                   <div className="content">
                     <div className="text-content">{notesSigns === '' ? '--' : notesSigns}</div>
                   </div>
                   <div className="footer">
                     <div className="stats light">
-                      <Tooltip title="Data de extração">
+                      <Tooltip title={t('tableHeader.extractionDate')}>
                         {notesSignsDate ? moment(notesSignsDate).format('DD/MM/YYYY hh:mm') : ''}
                       </Tooltip>
                     </div>
@@ -598,7 +615,7 @@ export default function Patient({
               <Col xs={8} style={{ marginTop: '10px' }}>
                 <PrescriptionCard className="full-height allergy">
                   <div className="header">
-                    <h3 className="title">Alergias</h3>
+                    <h3 className="title">{t('clinicalNotesIndicator.allergy')}</h3>
                   </div>
                   <div className="content">
                     <div className="text-content">{notesInfo === '' ? '--' : notesInfo}</div>
@@ -609,20 +626,24 @@ export default function Patient({
           )}
         </>
       )}
-      <Col xs={24}>
-        <SeeMore onClick={toggleSeeMore}>
-          <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
-            <Icon type={seeMore ? 'up' : 'down'} />{' '}
-            {seeMore ? t('patientCard.less') : t('patientCard.more')}
-          </Button>
-          {hasAIData && (
-            <Tooltip title={t('patientCard.ctaNoHarmCare')}>
-              {'  '}
-              <InfoIcon />
-            </Tooltip>
-          )}
-        </SeeMore>
-      </Col>
+      {hasNoHarmCare ? (
+        <Col xs={24}>
+          <SeeMore onClick={toggleSeeMore}>
+            <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
+              <Icon type={seeMore ? 'up' : 'down'} />{' '}
+              {seeMore ? t('patientCard.less') : t('patientCard.more')}
+            </Button>
+            {hasAIData && (
+              <Tooltip title={t('patientCard.ctaNoHarmCare')}>
+                {'  '}
+                <InfoIcon />
+              </Tooltip>
+            )}
+          </SeeMore>
+        </Col>
+      ) : (
+        <div style={{ height: '15px' }}>&nbsp;</div>
+      )}
     </Row>
   );
 }

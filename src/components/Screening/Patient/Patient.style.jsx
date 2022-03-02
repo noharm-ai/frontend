@@ -107,7 +107,7 @@ export const PatientBox = styled.div`
 
   .patient-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     padding-bottom: 5px;
 
     .patient-header-name {
@@ -115,6 +115,11 @@ export const PatientBox = styled.div`
       font-size: 18px;
       font-weight: 500;
       color: ${get('colors.primary')};
+      transition: color 0.3s linear;
+
+      &.has-intervention {
+        color: rgb(207, 19, 34);
+      }
     }
 
     .patient-header-action {
@@ -133,6 +138,12 @@ export const PatientBox = styled.div`
         &:hover {
           color: #1890ff;
         }
+      }
+
+      > i.anticon {
+        display: flex;
+        align-items: center;
+        margin-right: 5px;
       }
     }
   }
@@ -215,6 +226,11 @@ export const PatientBox = styled.div`
 
             ${props => createIndicatorCardClasses(props.t)}
           }
+
+          .small {
+            font-size: 12px;
+            font-weight: 300;
+          }
         }
 
         .patient-data-item-edit {
@@ -225,7 +241,7 @@ export const PatientBox = styled.div`
           width: 20%;
           opacity: 0;
           pointer-events: none;
-          background: rgb(64 169 255);
+          background: #7ebe9a;
           transform: translateX(100%);
           transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
           display: flex;

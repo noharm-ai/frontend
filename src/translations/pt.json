@@ -218,7 +218,8 @@
     "pending": "Pendente",
     "pendingPlural": "Pendentes",
     "options": "Opções",
-    "prescription": "Prescrição"
+    "prescription": "Prescrição",
+    "extractionDate": "Data de extração"
   },
   "labels": {
     "yes": "Sim",
@@ -386,7 +387,9 @@
     "cancel": "Cancelar",
     "edit": "Editar",
     "save": "Salvar",
-    "delete": "Excluir"
+    "delete": "Excluir",
+    "useData": "Usar dados",
+    "showNotes": "Ver anotação"
   },
 
   "alerts": {
