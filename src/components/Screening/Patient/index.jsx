@@ -275,7 +275,9 @@ export default function Patient({
                     <div className="patient-data-item-label">{t('patientCard.age')}</div>
                     <div className="patient-data-item-value">
                       {age} {isNaN(age) ? '' : 'anos'}
-                      {birthdate ? `(${moment(birthdate).format('DD/MM/YYYY')})` : ''}
+                      <span class="small">
+                        {birthdate ? `(${moment(birthdate).format('DD/MM/YYYY')})` : ''}
+                      </span>
                     </div>
                   </div>
 
