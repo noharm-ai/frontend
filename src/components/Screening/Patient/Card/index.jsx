@@ -248,7 +248,7 @@ export default function PatientCard({
                 <div className="patient-data-item-label">{t('patientCard.age')}</div>
                 <div className="patient-data-item-value">
                   {age} {isNaN(age) ? '' : 'anos'}
-                  <span class="small">
+                  <span className="small">
                     {birthdate ? `(${moment(birthdate).format('DD/MM/YYYY')})` : ''}
                   </span>
                 </div>
@@ -306,7 +306,7 @@ export default function PatientCard({
                   {weight && (
                     <Tooltip title={weightUser ? t('patientCard.manuallyUpdated') : ''}>
                       <div>
-                        {weight} Kg <span class="small">({formatWeightDate(weightDate)})</span>
+                        {weight} Kg <span className="small">({formatWeightDate(weightDate)})</span>
                         {weightUser && <InfoIcon />}
                       </div>
                     </Tooltip>
