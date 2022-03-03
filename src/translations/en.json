@@ -160,6 +160,7 @@
     "dataExtractedFrom": "Data extracted by NoHarm Care",
     "signals": "Signs",
     "signalsExtractedFrom": "Signs extracted by NoHarm Care",
+    "allergiesExtractedFrom": "Allergies extracted by NoHarm Care",
     "extractedFrom": "Extracted by NoHarm Care on",
     "more": "More",
     "less": "Less",

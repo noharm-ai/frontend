@@ -34,6 +34,8 @@ export default function Patient({
     notesInfoDate,
     notesSigns,
     notesSignsDate,
+    notesAllergies,
+    notesAllergiesDate,
     alertStats,
     clinicalNotes,
     clinicalNotesStats,
@@ -167,7 +169,18 @@ export default function Patient({
                     <h3 className="title">{t('clinicalNotesIndicator.allergy')}</h3>
                   </div>
                   <div className="content">
-                    <div className="text-content">{notesInfo === '' ? '--' : notesInfo}</div>
+                    <div className="text-content">
+                      {notesAllergies === '' ? '--' : notesAllergies}
+                    </div>
+                  </div>
+                  <div className="footer">
+                    <div className="stats light">
+                      <Tooltip title={t('tableHeader.extractionDate')}>
+                        {notesAllergiesDate
+                          ? moment(notesAllergiesDate).format('DD/MM/YYYY hh:mm')
+                          : ''}
+                      </Tooltip>
+                    </div>
                   </div>
                 </PrescriptionCard>
               </Col>

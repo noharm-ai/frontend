@@ -66,6 +66,8 @@ export default function PatientCard({
     notesInfoDate,
     notesSigns,
     notesSignsDate,
+    notesAllergies,
+    notesAllergiesDate,
     concilia
   } = prescription;
 
@@ -399,6 +401,16 @@ export default function PatientCard({
                     >
                       <div className="tag signs" onClick={() => setSeeMore(true)}>
                         {t('patientCard.signals')}
+                      </div>
+                    </Tooltip>
+                  )}
+
+                  {hasNoHarmCare && notesAllergies && (
+                    <Tooltip
+                      title={aiDataTooltip(t('patientCard.allergiesExtractedFrom'), notesSignsDate)}
+                    >
+                      <div className="tag allergy" onClick={() => setSeeMore(true)}>
+                        {t('clinicalNotesIndicator.allergy')}
                       </div>
                     </Tooltip>
                   )}
