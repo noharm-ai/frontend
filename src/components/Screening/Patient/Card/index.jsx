@@ -407,7 +407,10 @@ export default function PatientCard({
 
                   {hasNoHarmCare && notesAllergies && (
                     <Tooltip
-                      title={aiDataTooltip(t('patientCard.allergiesExtractedFrom'), notesSignsDate)}
+                      title={aiDataTooltip(
+                        t('patientCard.allergiesExtractedFrom'),
+                        notesAllergiesDate
+                      )}
                     >
                       <div className="tag allergy" onClick={() => setSeeMore(true)}>
                         {t('clinicalNotesIndicator.allergy')}
