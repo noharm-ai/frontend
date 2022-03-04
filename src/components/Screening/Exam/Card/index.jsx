@@ -16,7 +16,7 @@ export default function ExamCard({ exams, siderCollapsed, count }) {
   const { t } = useTranslation();
 
   return (
-    <PrescriptionCard>
+    <PrescriptionCard style={{ height: '100%' }}>
       <div className="header">
         <h3 className="title">{t('tableHeader.exams')}</h3>
       </div>

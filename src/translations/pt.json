@@ -137,6 +137,8 @@
     "btnClose": "Fechar"
   },
   "patientCard": {
+    "patientData": "Dados do paciente",
+    "admissionData": "Dados do atendimento",
     "prescription": "Prescrição",
     "patient": "Paciente",
     "admission": "Atendimento",
@@ -158,6 +160,7 @@
     "dataExtractedFrom": "Dados extraídos pela NoHarm Care",
     "signals": "Sinais",
     "signalsExtractedFrom": "Sinais extraídos pela NoHarm Care",
+    "allergiesExtractedFrom": "Alergias extraídas pela NoHarm Care",
     "extractedFrom": "Extraído pela NoHarm Care em",
     "more": "Ver mais",
     "less": "Ver menos",
@@ -216,7 +219,8 @@
     "pending": "Pendente",
     "pendingPlural": "Pendentes",
     "options": "Opções",
-    "prescription": "Prescrição"
+    "prescription": "Prescrição",
+    "extractionDate": "Data de extração"
   },
   "labels": {
     "yes": "Sim",
@@ -384,7 +388,9 @@
     "cancel": "Cancelar",
     "edit": "Editar",
     "save": "Salvar",
-    "delete": "Excluir"
+    "delete": "Excluir",
+    "useData": "Usar dados",
+    "showNotes": "Ver anotação"
   },
 
   "alerts": {
