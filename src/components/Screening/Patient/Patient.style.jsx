@@ -231,6 +231,10 @@ export const PatientBox = styled.div`
             font-size: 12px;
             font-weight: 300;
           }
+
+          .hint {
+            border-bottom: 2px dotted #999;
+          }
         }
 
         .patient-data-item-edit {
@@ -253,10 +257,6 @@ export const PatientBox = styled.div`
 
     .ant-tabs-bar {
       margin: 0;
-    }
-
-    .ant-tabs-nav .ant-tabs-tab {
-      padding: 10px 16px;
     }
 
     .ant-tabs {

@@ -4,7 +4,7 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 
 import api from '@services/api';
-import { PopoverWelcome } from '@components/Popover';
+import Popover, { PopoverWelcome } from '@components/Popover';
 import Button from '@components/Button';
 import Icon, { InfoIcon } from '@components/Icon';
 import Tooltip from '@components/Tooltip';
@@ -14,6 +14,7 @@ import Tabs from '@components/Tabs';
 import Menu from '@components/Menu';
 import Dropdown from '@components/Dropdown';
 import { useOutsideAlerter } from '@lib/hooks';
+import RichTextView from '@components/RichTextView';
 
 import FormIntervention from '@containers/Forms/Intervention';
 
@@ -144,11 +145,6 @@ export default function PatientCard({
         <div style={{ fontSize: '11px', fontWeight: 300, marginTop: '10px' }}>
           {t('patientCard.extractedFrom')} {moment(date).format('DD/MM/YYYY hh:mm')}
         </div>
-        <div style={{ textAlign: 'center', marginTop: '15px' }}>
-          <Button type="primary gtm-bt-update-weight" onClick={() => setPatientModalVisible(true)}>
-            {action}
-          </Button>
-        </div>
       </>
     );
   };
@@ -265,8 +261,8 @@ export default function PatientCard({
                 <div className="patient-data-item-label">{t('patientCard.height')}</div>
                 <div className="patient-data-item-value">
                   {height ? (
-                    <Tooltip title={t('patientCard.manuallyUpdated')}>
-                      {height} cm <InfoIcon />
+                    <Tooltip title={weightUser ? t('patientCard.manuallyUpdated') : ''}>
+                      <span className={weightUser ? 'hint' : ''}>{height} cm</span>
                     </Tooltip>
                   ) : (
                     t('patientCard.notAvailable')
@@ -304,12 +300,12 @@ export default function PatientCard({
                 <div className="patient-data-item-label">{t('patientCard.weight')}</div>
                 <div className="patient-data-item-value">
                   {weight && (
-                    <Tooltip title={weightUser ? t('patientCard.manuallyUpdated') : ''}>
-                      <div>
-                        {weight} Kg <span className="small">({formatWeightDate(weightDate)})</span>
-                        {weightUser && <InfoIcon />}
-                      </div>
-                    </Tooltip>
+                    <>
+                      <Tooltip title={weightUser ? t('patientCard.manuallyUpdated') : ''}>
+                        <span className={weightUser ? 'hint' : ''}>{weight} Kg</span>
+                      </Tooltip>{' '}
+                      <span className="small">({formatWeightDate(weightDate)})</span>
+                    </>
                   )}
                   {!weight && t('patientCard.notAvailable')}
                 </div>
@@ -371,7 +367,9 @@ export default function PatientCard({
               <div className="patient-data-item edit">
                 <div className="patient-data-item-label">{t('patientCard.notes')}</div>
                 <div className="patient-data-item-value">
-                  {observation ? t('actions.showNotes') : '--'}
+                  <Popover content={<RichTextView text={observation} maxWidth="350px" />}>
+                    {observation ? <span className="hint">{t('actions.showNotes')}</span> : '--'}
+                  </Popover>
                   <div className="patient-data-item-edit">
                     <Button type="link" onClick={() => setPatientModalVisible(true)}>
                       <Icon

@@ -137,8 +137,8 @@
     "btnClose": "Fechar"
   },
   "patientCard": {
-    "patientData": "Dados do paciente",
-    "admissionData": "Dados do atendimento",
+    "patientData": "Paciente",
+    "admissionData": "Atendimento",
     "prescription": "Prescrição",
     "patient": "Paciente",
     "admission": "Atendimento",
