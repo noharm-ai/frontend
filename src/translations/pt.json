@@ -43,6 +43,7 @@
     "reg-administration": "Cadastro de Usuários"
   },
   "screeningList": {
+    "confirm": "Confirma?",
     "empty": "Nenhum registro encontrado",
     "title-prescription": "Priorização por Prescrições",
     "title-patient": "Priorização por Pacientes",

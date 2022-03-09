@@ -43,6 +43,7 @@
     "reg-administration": "User registration"
   },
   "screeningList": {
+    "confirm": "Confirm?",
     "empty": "No records found",
     "title-prescription": "Prescription Prioritization",
     "title-patient": "Patient Prioritization",
