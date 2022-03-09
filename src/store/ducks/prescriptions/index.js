@@ -351,20 +351,23 @@ const saveReset = (state = INITIAL_STATE) => ({
 
 const updateListStatus = (state = INITIAL_STATE, { data }) => {
   const list = [...state.list];
+  const newList = [];
 
-  // TODO: perfomance?
-  data.forEach(st => {
-    const prescriptionIndex = list.findIndex(item => item.idPrescription === st.idPrescription);
+  list.forEach(item => {
+    const prescriptionIndex = data.findIndex(d => item.idPrescription === d.idPrescription);
 
     if (prescriptionIndex !== -1) {
-      delete st.namePatient;
-      list[prescriptionIndex] = { ...list[prescriptionIndex], ...st };
+      delete data[prescriptionIndex].namePatient;
+      newList.push({
+        ...item,
+        ...data[prescriptionIndex]
+      });
     }
   });
 
   return {
     ...state,
-    list
+    list: newList
   };
 };
 
