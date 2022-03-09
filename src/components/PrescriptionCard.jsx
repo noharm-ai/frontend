@@ -48,11 +48,43 @@ export default styled.div`
     }
 
     .text-content {
-      max-height: 300px;
+      max-height: 185px;
       overflow: auto;
       margin-top: 10px;
       min-height: 60px;
       font-weight: 500;
+
+      &::-webkit-scrollbar-track {
+        background-color: #f5f5f5;
+        border-radius: 10px;
+      }
+
+      &::-webkit-scrollbar {
+        width: 10px;
+        background-color: #f5f5f5;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #2e3c5a;
+        border: 2px solid #555555;
+        border-radius: 10px;
+      }
+
+      .list-item {
+        margin-bottom: 5px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #ccc;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .date {
+          font-size: 12px;
+          font-weight: 400;
+          margin-bottom: 2px;
+        }
+      }
     }
   }
 
