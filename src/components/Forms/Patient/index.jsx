@@ -30,6 +30,7 @@ export default function Patient({
   weight,
   height,
   observation,
+  dialysis,
   clinicalNotes,
   notesInfo,
   notesInfoDate,
@@ -45,7 +46,8 @@ export default function Patient({
     admissionNumber,
     weight,
     height,
-    observation
+    observation,
+    dialysis
   };
 
   useEffect(() => {

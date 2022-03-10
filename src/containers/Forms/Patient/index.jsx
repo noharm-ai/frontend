@@ -12,6 +12,7 @@ const mapStateToProps = ({ prescriptions, patients, user }) => ({
   admissionNumber: prescriptions.single.data.admissionNumber,
   weight: prescriptions.single.data.weight,
   height: prescriptions.single.data.height,
+  dialysis: prescriptions.single.data.dialysis,
   observation: prescriptions.single.data.observation,
   clinicalNotes: prescriptions.single.data.clinicalNotes,
   notesInfo: prescriptions.single.data.notesInfo,
