@@ -195,7 +195,7 @@ export default function Patient({
                       <div className="text-content list">
                         {notesDialysis.map(({ text, date }) => (
                           <div key={date} className="list-item">
-                            <div className="date">{moment(date).format('DD/MM/YYYY hh:mm')}</div>
+                            <div className="date">{moment(date).format('DD/MM/YYYY')}</div>
                             <div className="text">{text}</div>
                           </div>
                         ))}

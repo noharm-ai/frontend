@@ -209,6 +209,11 @@ export const PatientBox = styled.div`
             font-size: 14px;
           }
 
+          &.text {
+            white-space: normal;
+            font-weight: 400;
+          }
+
           .tag {
             display: inline-block;
             font-size: 11px;
@@ -251,12 +256,27 @@ export const PatientBox = styled.div`
           display: flex;
           align-items: center;
           justify-content: center;
+
+          &.text {
+            height: 40px;
+            width: 40px;
+          }
         }
+      }
+
+      .notes {
+        padding: 10px;
+        max-height: 220px;
+        overflow: auto;
       }
     }
 
     .ant-tabs-bar {
       margin: 0;
+    }
+
+    .ant-tabs-nav .ant-tabs-tab .anticon {
+      margin-right: 0;
     }
 
     .ant-tabs {
