@@ -4,7 +4,7 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 
 import api from '@services/api';
-import Popover, { PopoverWelcome } from '@components/Popover';
+import { PopoverWelcome } from '@components/Popover';
 import Button from '@components/Button';
 import Icon, { InfoIcon } from '@components/Icon';
 import Tooltip from '@components/Tooltip';
@@ -15,6 +15,7 @@ import Menu from '@components/Menu';
 import Dropdown from '@components/Dropdown';
 import { useOutsideAlerter } from '@lib/hooks';
 import RichTextView from '@components/RichTextView';
+import { translateDialysis } from '@utils/transformers/prescriptions';
 
 import FormIntervention from '@containers/Forms/Intervention';
 
@@ -51,6 +52,7 @@ export default function PatientCard({
     weightUser,
     weightDate,
     skinColor,
+    dialysis,
     dischargeReason,
     dischargeFormated,
     namePatient,
@@ -67,8 +69,8 @@ export default function PatientCard({
     notesInfoDate,
     notesSigns,
     notesSignsDate,
-    notesAllergies,
     notesAllergiesDate,
+    notesDialysisDate,
     concilia
   } = prescription;
 
@@ -238,7 +240,14 @@ export default function PatientCard({
       </div>
       <div className="patient-body">
         <Tabs defaultActiveKey="patientData" type="card gtm-tab-patient">
-          <Tabs.TabPane tab={t('patientCard.patientData')} key="patientData">
+          <Tabs.TabPane
+            tab={
+              <Tooltip title={t('patientCard.patientData')}>
+                <Icon type="user" style={{ fontSize: '18px' }} />
+              </Tooltip>
+            }
+            key="patientData"
+          >
             <div className="patient-data">
               <div className="patient-data-item">
                 <div className="patient-data-item-label">{t('patientCard.age')}</div>
@@ -365,19 +374,12 @@ export default function PatientCard({
               </div>
 
               <div className="patient-data-item edit">
-                <div className="patient-data-item-label">{t('patientCard.notes')}</div>
-                <div className="patient-data-item-value">
-                  <Popover content={<RichTextView text={observation} maxWidth="350px" />}>
-                    {observation ? <span className="hint">{t('actions.showNotes')}</span> : '--'}
-                  </Popover>
-                  <div className="patient-data-item-edit">
-                    <Button type="link" onClick={() => setPatientModalVisible(true)}>
-                      <Icon
-                        type={observation ? 'search' : 'edit'}
-                        style={{ fontSize: 18, color: '#fff' }}
-                      />
-                    </Button>
-                  </div>
+                <div className="patient-data-item-label">{t('labels.dialysis')}</div>
+                <div className="patient-data-item-value">{translateDialysis(dialysis)}</div>
+                <div className="patient-data-item-edit">
+                  <Button type="link" onClick={() => setPatientModalVisible(true)}>
+                    <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                  </Button>
                 </div>
               </div>
 
@@ -403,7 +405,7 @@ export default function PatientCard({
                     </Tooltip>
                   )}
 
-                  {hasNoHarmCare && notesAllergies && (
+                  {hasNoHarmCare && notesAllergiesDate && (
                     <Tooltip
                       title={aiDataTooltip(
                         t('patientCard.allergiesExtractedFrom'),
@@ -415,12 +417,29 @@ export default function PatientCard({
                       </div>
                     </Tooltip>
                   )}
+
+                  {hasNoHarmCare && notesDialysisDate && (
+                    <Tooltip
+                      title={aiDataTooltip(t('patientCard.extractedFrom'), notesDialysisDate)}
+                    >
+                      <div className="tag dialysis" onClick={() => setSeeMore(true)}>
+                        {t('clinicalNotesIndicator.dialysis')}
+                      </div>
+                    </Tooltip>
+                  )}
                 </div>
               </div>
             </div>
           </Tabs.TabPane>
 
-          <Tabs.TabPane tab={t('patientCard.admissionData')} key="admissionData">
+          <Tabs.TabPane
+            tab={
+              <Tooltip title={t('patientCard.admissionData')}>
+                <Icon type="file" style={{ fontSize: '18px' }} />
+              </Tooltip>
+            }
+            key="admissionData"
+          >
             <div className="patient-data">
               <div className="patient-data-item">
                 <div className="patient-data-item-label">{t('patientCard.admission')}</div>
@@ -477,6 +496,30 @@ export default function PatientCard({
               <div className="patient-data-item full">
                 <div className="patient-data-item-label">&nbsp;</div>
                 <div className="patient-data-item-value"></div>
+              </div>
+            </div>
+          </Tabs.TabPane>
+          <Tabs.TabPane
+            tab={
+              <Tooltip title={t('patientCard.notes')}>
+                <Icon type="message" style={{ fontSize: '18px' }} />
+              </Tooltip>
+            }
+            key="patientNotes"
+          >
+            <div className="patient-data">
+              <div className="patient-data-item full edit">
+                <div className="patient-data-item-label">{t('patientCard.notes')}</div>
+                <div className="patient-data-item-value text">
+                  <div className="notes">
+                    <RichTextView text={observation} />
+                  </div>
+                </div>
+                <div className="patient-data-item-edit text">
+                  <Button type="link" onClick={() => setPatientModalVisible(true)}>
+                    <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                  </Button>
+                </div>
               </div>
             </div>
           </Tabs.TabPane>

@@ -36,6 +36,8 @@ export default function Patient({
     notesSignsDate,
     notesAllergies,
     notesAllergiesDate,
+    notesDialysis,
+    notesDialysisDate,
     alertStats,
     clinicalNotes,
     clinicalNotesStats,
@@ -163,27 +165,58 @@ export default function Patient({
                   </div>
                 </PrescriptionCard>
               </Col>
-              <Col xs={8} style={{ marginTop: '10px' }}>
-                <PrescriptionCard className="full-height allergy">
-                  <div className="header">
-                    <h3 className="title">{t('clinicalNotesIndicator.allergy')}</h3>
-                  </div>
-                  <div className="content">
-                    <div className="text-content">
-                      {notesAllergies === '' ? '--' : notesAllergies}
+              {notesAllergiesDate && (
+                <Col xs={8} style={{ marginTop: '10px' }}>
+                  <PrescriptionCard className="full-height allergy">
+                    <div className="header">
+                      <h3 className="title">{t('clinicalNotesIndicator.allergy')}</h3>
                     </div>
-                  </div>
-                  <div className="footer">
-                    <div className="stats light">
-                      <Tooltip title={t('tableHeader.extractionDate')}>
-                        {notesAllergiesDate
-                          ? moment(notesAllergiesDate).format('DD/MM/YYYY hh:mm')
-                          : ''}
-                      </Tooltip>
+                    <div className="content">
+                      <div className="text-content list">
+                        {notesAllergies.map(({ text, date }) => (
+                          <div key={date} className="list-item">
+                            <div className="date">{moment(date).format('DD/MM/YYYY hh:mm')}</div>
+                            <div className="text">{text}</div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </PrescriptionCard>
-              </Col>
+                  </PrescriptionCard>
+                </Col>
+              )}
+
+              {notesDialysisDate && (
+                <Col xs={8} style={{ marginTop: '10px' }}>
+                  <PrescriptionCard className="full-height dialysis">
+                    <div className="header">
+                      <h3 className="title">{t('clinicalNotesIndicator.dialysis')}</h3>
+                    </div>
+                    <div className="content">
+                      <div className="text-content list">
+                        {notesDialysis.map(({ text, date }) => (
+                          <div key={date} className="list-item">
+                            <div className="date">{moment(date).format('DD/MM/YYYY')}</div>
+                            <div className="text">{text}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="footer">
+                      <div className="stats light"></div>
+                      <div className="action bold">
+                        {notesInfo !== '' && (
+                          <Button
+                            type="link gtm-btn-nhc-update-data"
+                            onClick={() => setPatientModalVisible(true)}
+                          >
+                            {t('actions.useData')}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </PrescriptionCard>
+                </Col>
+              )}
             </>
           )}
         </>

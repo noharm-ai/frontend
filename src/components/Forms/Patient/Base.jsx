@@ -1,10 +1,11 @@
 import React from 'react';
 import 'styled-components/macro';
 import { useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
 
 import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
-import { InputNumber } from '@components/Inputs';
+import { InputNumber, Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 import Editor from '@components/Editor';
 
@@ -12,8 +13,9 @@ import { Box, EditorBox } from '../Form.style';
 
 export default function Base() {
   const { values, setFieldValue, errors } = useFormikContext();
-  const { weight, height, observation } = values;
+  const { weight, height, observation, dialysis } = values;
   const layout = { label: 8, input: 16 };
+  const { t } = useTranslation();
 
   return (
     <>
@@ -58,6 +60,30 @@ export default function Base() {
             onChange={value => setFieldValue('height', value)}
           />{' '}
           cm
+        </Col>
+      </Box>
+
+      <Box hasError={errors.dialysis}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
+            <Tooltip title="">{t('labels.dialysis')}:</Tooltip>
+          </Heading>
+        </Col>
+        <Col xs={layout.input}>
+          <Select
+            optionFilterProp="children"
+            style={{
+              marginLeft: 10,
+              width: '100%'
+            }}
+            value={dialysis}
+            onChange={value => setFieldValue('dialysis', value)}
+          >
+            <Select.Option value={null}>Não se aplica</Select.Option>
+            <Select.Option value="c">Contínua</Select.Option>
+            <Select.Option value="x">Estendida</Select.Option>
+            <Select.Option value="v">Convencional</Select.Option>
+          </Select>
         </Col>
       </Box>
 

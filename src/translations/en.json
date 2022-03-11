@@ -243,7 +243,8 @@
     "responsible": "Responsible",
     "observation": "Observation",
     "status": "Status",
-    "transcription": "Transcription"
+    "transcription": "Transcription",
+    "dialysis": "Dialysis"
   },
   "transcriptionLabels": {
     "idDrug": "Drug",
@@ -381,7 +382,8 @@
     "medications": "Drugs",
     "names": "Names",
     "signs": "Signs",
-    "symptoms": "Symptoms"
+    "symptoms": "Symptoms",
+    "dialysis": "Dialysis"
   },
 
   "alerts": {
