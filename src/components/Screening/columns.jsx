@@ -434,7 +434,12 @@ export const expandedRowRender = bag => record => {
         )}
         {record.drugInfoLink && (
           <Descriptions.Item label={bag.t('tableHeader.information')} span={3}>
-            <Micromedex href={record.drugInfoLink} target="_blank" rel="noopener noreferrer">
+            <Micromedex
+              href={record.drugInfoLink}
+              className="gtm-lnk-micromedex"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               IBM Micromedex
             </Micromedex>
           </Descriptions.Item>
