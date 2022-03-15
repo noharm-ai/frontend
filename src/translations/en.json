@@ -221,7 +221,8 @@
     "pendingPlural": "Pending",
     "options": "Options",
     "prescription": "Prescription",
-    "extractionDate": "Extraction date"
+    "extractionDate": "Extraction date",
+    "information": "Information"
   },
   "labels": {
     "yes": "Yes",
