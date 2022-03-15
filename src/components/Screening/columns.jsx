@@ -46,6 +46,31 @@ const TableTags = styled.div`
   }
 `;
 
+const Micromedex = styled.a`
+  color: #291588;
+  text-decoration: none;
+  font-weight: 600;
+  position: relative;
+
+  &::after {
+    content: '®';
+    position: absolute;
+    top: -3px;
+    right: -10px;
+    font-size: 10px;
+    color: #291588;
+  }
+
+  &:hover {
+    color: #2e3c5a;
+    text-decoration: underline;
+
+    &::after {
+      color: #291588;
+    }
+  }
+`;
+
 const interventionMenu = (id, idPrescription, saveInterventionStatus, source) => (
   <Menu>
     <Menu.Item
@@ -405,6 +430,13 @@ export const expandedRowRender = bag => record => {
         {!isEmpty(record.alerts) && (
           <Descriptions.Item label={bag.t('prescriptionDrugList.exrAlert')} span={3}>
             {showAlerts(record.alerts)}
+          </Descriptions.Item>
+        )}
+        {record.drugInfoLink && (
+          <Descriptions.Item label={bag.t('tableHeader.reference')} span={3}>
+            <Micromedex href={record.drugInfoLink} target="_blank" rel="noopener noreferrer">
+              IBM Micromedex
+            </Micromedex>
           </Descriptions.Item>
         )}
         {record.cpoe && (
