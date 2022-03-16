@@ -46,31 +46,6 @@ const TableTags = styled.div`
   }
 `;
 
-const Micromedex = styled.a`
-  color: #291588;
-  text-decoration: none;
-  font-weight: 600;
-  position: relative;
-
-  &::after {
-    content: '®';
-    position: absolute;
-    top: -3px;
-    right: -10px;
-    font-size: 10px;
-    color: #291588;
-  }
-
-  &:hover {
-    color: #2e3c5a;
-    text-decoration: underline;
-
-    &::after {
-      color: #291588;
-    }
-  }
-`;
-
 const interventionMenu = (id, idPrescription, saveInterventionStatus, source) => (
   <Menu>
     <Menu.Item
@@ -305,6 +280,7 @@ const NestedTableContainer = styled.div`
   .ant-descriptions-item-label {
     font-weight: 600;
     color: #2e3c5a;
+    width: 20%;
   }
 `;
 
@@ -433,15 +409,15 @@ export const expandedRowRender = bag => record => {
           </Descriptions.Item>
         )}
         {record.drugInfoLink && bag.featureService.hasMicromedex() && (
-          <Descriptions.Item label={bag.t('tableHeader.information')} span={3}>
-            <Micromedex
-              href={record.drugInfoLink}
-              className="gtm-lnk-micromedex"
+          <Descriptions.Item label={bag.t('tableHeader.clinicalInfo') + ':'} span={3}>
+            <Link
+              to={record.drugInfoLink}
               target="_blank"
               rel="noopener noreferrer"
+              className="gtm-lnk-micromedex"
             >
-              IBM Micromedex
-            </Micromedex>
+              {bag.t('actions.consult') + ' '} Micromedex
+            </Link>
           </Descriptions.Item>
         )}
         {record.cpoe && (

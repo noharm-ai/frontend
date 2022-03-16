@@ -222,7 +222,7 @@
     "options": "Opções",
     "prescription": "Prescrição",
     "extractionDate": "Data de extração",
-    "information": "Informações"
+    "clinicalInfo": "Informações clínicas"
   },
   "labels": {
     "yes": "Sim",
@@ -394,7 +394,8 @@
     "save": "Salvar",
     "delete": "Excluir",
     "useData": "Usar dados",
-    "showNotes": "Ver anotação"
+    "showNotes": "Ver anotação",
+    "consult": "Consultar"
   },
 
   "alerts": {
