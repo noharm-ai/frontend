@@ -75,7 +75,8 @@ export default function PrescriptionDrugList({
   uniqueDrugs,
   checkScreening,
   isCheckingPrescription,
-  security
+  security,
+  featureService
 }) {
   const [visible, setVisibility] = useState(false);
   const { t } = useTranslation();
@@ -105,7 +106,8 @@ export default function PrescriptionDrugList({
     uniqueDrugList: uniqueDrugs,
     headers,
     security,
-    t
+    t,
+    featureService
   };
 
   const table = (ds, showHeader) => (

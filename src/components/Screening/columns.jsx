@@ -432,7 +432,7 @@ export const expandedRowRender = bag => record => {
             {showAlerts(record.alerts)}
           </Descriptions.Item>
         )}
-        {record.drugInfoLink && (
+        {record.drugInfoLink && bag.featureService.hasMicromedex() && (
           <Descriptions.Item label={bag.t('tableHeader.information')} span={3}>
             <Micromedex
               href={record.drugInfoLink}
