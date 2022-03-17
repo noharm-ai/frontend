@@ -192,12 +192,22 @@ const Table = styled(AntTable)`
 `;
 
 export const ExpandableTable = styled(Table)`
+  .ant-table-body {
+    overflow-x: auto;
+  }
+
   .ant-table-title {
     padding: 0;
   }
 
   .ant-table-expanded-row > td {
     border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  }
+
+  .ant-table-expand-icon-th,
+  .ant-table-row-expand-icon-cell {
+    width: 30px;
+    min-width: 30px;
   }
 `;
 

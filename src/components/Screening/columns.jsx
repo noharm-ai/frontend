@@ -415,6 +415,8 @@ export const expandedRowRender = bag => record => {
               target="_blank"
               rel="noopener noreferrer"
               className="gtm-lnk-micromedex"
+              type="primary"
+              ghost
             >
               {bag.t('actions.consult') + ' '} Micromedex
             </Link>
