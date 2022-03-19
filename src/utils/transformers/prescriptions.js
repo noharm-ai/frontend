@@ -256,6 +256,8 @@ export const translateDialysis = dialysis => {
       return 'Estendida';
     case 'v':
       return 'Convencional';
+    case 'p':
+      return 'Peritoneal';
     default:
       return 'Não se aplica';
   }

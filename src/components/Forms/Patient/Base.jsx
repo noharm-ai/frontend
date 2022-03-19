@@ -83,6 +83,7 @@ export default function Base() {
             <Select.Option value="c">Contínua</Select.Option>
             <Select.Option value="x">Estendida</Select.Option>
             <Select.Option value="v">Convencional</Select.Option>
+            <Select.Option value="p">Peritoneal</Select.Option>
           </Select>
         </Col>
       </Box>
