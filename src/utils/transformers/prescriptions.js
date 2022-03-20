@@ -247,3 +247,18 @@ export const transformDrug = ({ dose, measureUnit, route, source, ...drug }) => 
   route,
   source: sourceToStoreType(source)
 });
+
+export const translateDialysis = dialysis => {
+  switch (dialysis) {
+    case 'c':
+      return 'Contínua';
+    case 'x':
+      return 'Estendida';
+    case 'v':
+      return 'Convencional';
+    case 'p':
+      return 'Peritoneal';
+    default:
+      return 'Não se aplica';
+  }
+};

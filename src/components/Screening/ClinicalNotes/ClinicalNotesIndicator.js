@@ -71,6 +71,14 @@ export default {
       color: '#43bccd',
       backgroundColor: 'rgba(67,188,205, 0.1)',
       category: 'priority'
+    },
+    {
+      key: 'dialysis',
+      label: t('clinicalNotesIndicator.dialysis'),
+      value: 'dialise',
+      color: '#3b3b35',
+      backgroundColor: 'rgba(59, 59, 53, 0.1)',
+      category: 'info'
     }
   ],
 

@@ -49,6 +49,7 @@ export const BoxWrapper = styled.section`
   border-radius: 4px;
   box-shadow: 3px 0px 4px rgba(4, 0, 6, 0.15);
   padding: 25px;
+  padding-bottom: 5px;
 `;
 
 export const PrescriptionActionContainer = styled.div`

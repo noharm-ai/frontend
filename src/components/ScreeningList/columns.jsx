@@ -1,10 +1,12 @@
 import React from 'react';
 import styled from 'styled-components/macro';
+import { useTranslation } from 'react-i18next';
+
 import Button, { Link } from '@components/Button';
 import Icon, { InfoIcon } from '@components/Icon';
 import Tooltip from '@components/Tooltip';
 import Table from '@components/Table';
-import { useTranslation } from 'react-i18next';
+import PopConfirm from '@components/PopConfirm';
 
 const setDataIndex = list =>
   list.map(({ key, ...column }) => ({
@@ -81,14 +83,16 @@ const ScreeningActions = ({
     <ActionsBox>
       {!isChecked && (
         <Tooltip title={t('screeningList.btnCheck')} placement="left">
-          <Button
-            type="primary gtm-bt-check"
-            loading={isChecking}
-            disabled={isDisabled}
-            onClick={checkAction}
+          <PopConfirm
+            title={t('screeningList.confirm')}
+            onConfirm={checkAction}
+            okText={t('labels.yes')}
+            cancelText={t('labels.no')}
           >
-            <Icon type="check" />
-          </Button>
+            <Button type="primary gtm-bt-check" loading={isChecking} disabled={isDisabled} ghost>
+              <Icon type="check" />
+            </Button>
+          </PopConfirm>
         </Tooltip>
       )}
       {isChecked && (

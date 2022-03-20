@@ -280,6 +280,7 @@ const NestedTableContainer = styled.div`
   .ant-descriptions-item-label {
     font-weight: 600;
     color: #2e3c5a;
+    width: 20%;
   }
 `;
 
@@ -405,6 +406,20 @@ export const expandedRowRender = bag => record => {
         {!isEmpty(record.alerts) && (
           <Descriptions.Item label={bag.t('prescriptionDrugList.exrAlert')} span={3}>
             {showAlerts(record.alerts)}
+          </Descriptions.Item>
+        )}
+        {record.drugInfoLink && bag.featureService.hasMicromedex() && (
+          <Descriptions.Item label={bag.t('tableHeader.clinicalInfo') + ':'} span={3}>
+            <Link
+              to={record.drugInfoLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="gtm-lnk-micromedex"
+              type="primary"
+              ghost
+            >
+              {bag.t('actions.consult') + ' '} Micromedex
+            </Link>
           </Descriptions.Item>
         )}
         {record.cpoe && (

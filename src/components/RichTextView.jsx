@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components/macro';
+import DOMPurify from 'dompurify';
 
 const Container = styled.div`
   p {
     margin-top: 5px !important;
-    max-width: 700px;
+    max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}` : '700px')};
   }
 `;
 
@@ -16,8 +17,13 @@ const textToHtml = obs => {
   return '--';
 };
 
-const RichTextView = ({ text }) => {
-  return <Container dangerouslySetInnerHTML={{ __html: textToHtml(text) }} />;
+const RichTextView = ({ text, maxWidth }) => {
+  return (
+    <Container
+      maxWidth={maxWidth}
+      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(textToHtml(text)) }}
+    />
+  );
 };
 
 export default RichTextView;

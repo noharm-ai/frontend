@@ -43,6 +43,7 @@
     "reg-administration": "Cadastro de Usuários"
   },
   "screeningList": {
+    "confirm": "Confirma?",
     "empty": "Nenhum registro encontrado",
     "title-prescription": "Priorização por Prescrições",
     "title-patient": "Priorização por Pacientes",
@@ -137,6 +138,8 @@
     "btnClose": "Fechar"
   },
   "patientCard": {
+    "patientData": "Paciente",
+    "admissionData": "Atendimento",
     "prescription": "Prescrição",
     "patient": "Paciente",
     "admission": "Atendimento",
@@ -158,6 +161,7 @@
     "dataExtractedFrom": "Dados extraídos pela NoHarm Care",
     "signals": "Sinais",
     "signalsExtractedFrom": "Sinais extraídos pela NoHarm Care",
+    "allergiesExtractedFrom": "Alergias extraídas pela NoHarm Care",
     "extractedFrom": "Extraído pela NoHarm Care em",
     "more": "Ver mais",
     "less": "Ver menos",
@@ -216,7 +220,9 @@
     "pending": "Pendente",
     "pendingPlural": "Pendentes",
     "options": "Opções",
-    "prescription": "Prescrição"
+    "prescription": "Prescrição",
+    "extractionDate": "Data de extração",
+    "clinicalInfo": "Informações clínicas"
   },
   "labels": {
     "yes": "Sim",
@@ -238,7 +244,8 @@
     "responsible": "Responsável",
     "observation": "Observação",
     "status": "Situação",
-    "transcription": "Transcrição"
+    "transcription": "Transcrição",
+    "dialysis": "Diálise"
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",
@@ -377,14 +384,18 @@
     "medications": "Medicamentos",
     "names": "Nomes",
     "signs": "Sinais",
-    "symptoms": "Sintomas"
+    "symptoms": "Sintomas",
+    "dialysis": "Diálise"
   },
 
   "actions": {
     "cancel": "Cancelar",
     "edit": "Editar",
     "save": "Salvar",
-    "delete": "Excluir"
+    "delete": "Excluir",
+    "useData": "Usar dados",
+    "showNotes": "Ver anotação",
+    "consult": "Consultar"
   },
 
   "alerts": {
