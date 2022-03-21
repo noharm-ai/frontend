@@ -258,7 +258,9 @@ export const translateDialysis = dialysis => {
       return 'Convencional';
     case 'p':
       return 'Peritoneal';
+    case '0':
+      return 'Não realiza';
     default:
-      return 'Não se aplica';
+      return 'Não informado';
   }
 };
