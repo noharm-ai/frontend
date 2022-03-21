@@ -34,8 +34,8 @@ export default function Patient({
     notesInfoDate,
     notesSigns,
     notesSignsDate,
-    // notesAllergies,
-    // notesAllergiesDate,
+    notesAllergies,
+    notesAllergiesDate,
     notesDialysis,
     notesDialysisDate,
     alertStats,
@@ -165,7 +165,7 @@ export default function Patient({
                   </div>
                 </PrescriptionCard>
               </Col>
-              {/* {notesAllergiesDate && (
+              {notesAllergiesDate && (
                 <Col xs={8} style={{ marginTop: '10px' }}>
                   <PrescriptionCard className="full-height allergy">
                     <div className="header">
@@ -183,7 +183,7 @@ export default function Patient({
                     </div>
                   </PrescriptionCard>
                 </Col>
-              )} */}
+              )}
 
               {notesDialysisDate && (
                 <Col xs={8} style={{ marginTop: '10px' }}>

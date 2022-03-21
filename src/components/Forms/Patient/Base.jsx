@@ -79,10 +79,11 @@ export default function Base() {
             value={dialysis}
             onChange={value => setFieldValue('dialysis', value)}
           >
-            <Select.Option value={null}>Não se aplica</Select.Option>
+            <Select.Option value={null}>Não informado</Select.Option>
             <Select.Option value="c">Contínua</Select.Option>
-            <Select.Option value="x">Estendida</Select.Option>
             <Select.Option value="v">Convencional</Select.Option>
+            <Select.Option value="x">Estendida</Select.Option>
+            <Select.Option value="0">Não realiza</Select.Option>
             <Select.Option value="p">Peritoneal</Select.Option>
           </Select>
         </Col>
