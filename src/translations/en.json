@@ -40,7 +40,8 @@
     "userConfig": "User",
     "exams": "Lab exams",
     "user-administration": "Registration",
-    "reg-administration": "User registration"
+    "reg-administration": "User registration",
+    "patients": "Patients"
   },
   "screeningList": {
     "confirm": "Confirm?",

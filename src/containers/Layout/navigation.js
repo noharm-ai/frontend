@@ -27,6 +27,12 @@ export default [
     ]
   },
   {
+    key: '/pacientes',
+    text: 'menu.patients',
+    icon: 'user',
+    id: 'gtm-lnk-patients'
+  },
+  {
     key: '/intervencoes',
     text: 'menu.interventions',
     icon: 'warning',
