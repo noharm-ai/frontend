@@ -223,7 +223,10 @@
     "options": "Opções",
     "prescription": "Prescrição",
     "extractionDate": "Data de extração",
-    "clinicalInfo": "Informações clínicas"
+    "clinicalInfo": "Informações clínicas",
+    "patient": "Paciente",
+    "birthdate": "Data de nascimento",
+    "nextAppointment": "Próxima agenda"
   },
   "labels": {
     "yes": "Sim",
