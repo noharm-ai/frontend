@@ -34,7 +34,6 @@ export default function PatientList({ fetchList, list, error, isFetching }) {
     setSortOrder(sorter);
   };
   const onClientSearch = ev => {
-    console.log('ev', ev);
     ev.persist();
 
     if (ev.target.value === '') {

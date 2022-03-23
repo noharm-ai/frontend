@@ -3,14 +3,14 @@ export default (sortedInfo, filteredInfo, t) => {
 
   return [
     {
-      key: 'id',
+      key: 'idPatient',
       title: t('screeningList.actions'),
       filteredValue: filteredInfo.searchKey || null,
-      onFilter: (value, record) => record.id == value,
+      onFilter: (value, record) => record.idPatient == value, // eslint-disable-line
       sortDirections,
-      sorter: (a, b) => a.id - b.id,
-      sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order,
-      render: record => record.id
+      sorter: (a, b) => a.idPatient - b.idPatient,
+      sortOrder: sortedInfo.columnKey === 'idPatient' && sortedInfo.order,
+      render: record => record.idPatient
     }
   ];
 };
