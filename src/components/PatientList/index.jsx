@@ -13,8 +13,8 @@ import columns from './table/columns';
 export default function PatientList({ list, isFetching }) {
   const [dataSource, setDataSource] = useState([]);
   const [sortOrder, setSortOrder] = useState({
-    order: null,
-    columnKey: null
+    order: 'descend',
+    columnKey: 'admissionDate'
   });
   const [filter, setFilter] = useState({
     searchKey: null

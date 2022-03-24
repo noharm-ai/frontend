@@ -46,6 +46,15 @@ export default (sortedInfo, filteredInfo, t) => {
       render: record => (record.birthdate ? moment(record.birthdate).format('DD/MM/YYYY') : '')
     },
     {
+      key: 'lastAppointment',
+      title: t('tableHeader.lastAppointment'),
+      sortDirections,
+      sorter: (a, b) => moment(a.admissionDate).unix() - moment(b.admissionDate).unix(),
+      sortOrder: sortedInfo.columnKey === 'lastAppointment' && sortedInfo.order,
+      render: record =>
+        record.admissionDate ? moment(record.admissionDate).format('DD/MM/YYYY') : ''
+    },
+    {
       key: 'admissionDate',
       title: t('tableHeader.nextAppointment'),
       sortDirections,

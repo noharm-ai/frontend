@@ -226,7 +226,8 @@
     "clinicalInfo": "Clinical information",
     "patient": "Patient",
     "birthdate": "Birthdate",
-    "nextAppointment": "Next appointment"
+    "nextAppointment": "Next appointment",
+    "lastAppointment": "Last consulta"
   },
   "labels": {
     "yes": "Yes",

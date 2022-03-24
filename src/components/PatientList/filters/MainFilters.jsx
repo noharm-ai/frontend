@@ -6,20 +6,20 @@ import Heading from '@components/Heading';
 import { Col } from '@components/Grid';
 import { AdvancedFilterContext } from '@components/AdvancedFilter';
 
-export default function MainFilters({ segments, fetchDepartmentsList }) {
+export default function MainFilters({ segments, fetchDepartmentsList, resetDepartmentsList }) {
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
   useEffect(() => {
+    resetDepartmentsList();
     if (values.idSegment == null) return;
 
     fetchDepartmentsList(values.idSegment);
-  }, [values.idSegment, fetchDepartmentsList]);
+  }, [values.idSegment, fetchDepartmentsList, resetDepartmentsList]);
 
   console.log('mainfilters', values);
 
   const onChangeSegment = value => {
-    console.log('onChangeSegment', value);
     setFieldValue({
       idSegment: value,
       idDepartment: []
