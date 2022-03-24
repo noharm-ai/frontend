@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import isEmpty from 'lodash.isempty';
 import debounce from 'lodash.debounce';
 import { useTranslation } from 'react-i18next';
 
-import notification from '@components/notification';
-import LoadBox from '@components/LoadBox';
 import Table from '@components/Table';
 import Empty from '@components/Empty';
 import BackTop from '@components/BackTop';
@@ -13,7 +10,7 @@ import { toDataSource } from '@utils';
 
 import columns from './table/columns';
 
-export default function PatientList({ fetchList, list, error, isFetching }) {
+export default function PatientList({ list, isFetching }) {
   const [dataSource, setDataSource] = useState([]);
   const [sortOrder, setSortOrder] = useState({
     order: null,
@@ -23,10 +20,6 @@ export default function PatientList({ fetchList, list, error, isFetching }) {
     searchKey: null
   });
   const { t } = useTranslation();
-  const errorMessage = {
-    message: t('error.title'),
-    description: t('error.description')
-  };
   const emptyText = (
     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('screeningList.empty')} />
   );
@@ -51,22 +44,8 @@ export default function PatientList({ fetchList, list, error, isFetching }) {
   };
 
   useEffect(() => {
-    fetchList();
-  }, [fetchList]);
-
-  useEffect(() => {
     setDataSource(toDataSource(list, null, {}));
   }, [list]); // eslint-disable-line
-
-  useEffect(() => {
-    if (!isEmpty(error)) {
-      notification.error(errorMessage);
-    }
-  }, [error]); // eslint-disable-line
-
-  if (isFetching) {
-    return <LoadBox />;
-  }
 
   return (
     <>
