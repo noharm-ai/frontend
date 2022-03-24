@@ -1,13 +1,14 @@
 import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import moment from 'moment';
 
-import { Select } from '@components/Inputs';
+import { Select, RangeDatePicker } from '@components/Inputs';
 import Heading from '@components/Heading';
 import { Col } from '@components/Grid';
 import { AdvancedFilterContext } from '@components/AdvancedFilter';
 
 export default function MainFilters({ segments, fetchDepartmentsList, resetDepartmentsList }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
   useEffect(() => {
@@ -23,6 +24,15 @@ export default function MainFilters({ segments, fetchDepartmentsList, resetDepar
     setFieldValue({
       idSegment: value,
       idDepartment: []
+    });
+  };
+
+  const onChangeNextAppointment = value => {
+    const startDate = value[0] ? moment(value[0]).format('YYYY-MM-DD') : null;
+    const endDate = value[1] ? moment(value[1]).format('YYYY-MM-DD') : null;
+    setFieldValue({
+      nextAppointmentStartDate: startDate,
+      nextAppointmentEndDate: endDate
     });
   };
 
@@ -69,6 +79,22 @@ export default function MainFilters({ segments, fetchDepartmentsList, resetDepar
               </Select.Option>
             ))}
         </Select>
+      </Col>
+      <Col md={7} lg={7} xxl={5}>
+        <Heading as="label" htmlFor="date" size="14px">
+          {t('tableHeader.nextAppointment')}:
+        </Heading>
+        <RangeDatePicker
+          format="DD/MM/YYYY"
+          value={[
+            values.nextAppointmentStartDate ? moment(values.nextAppointmentStartDate) : null,
+            values.nextAppointmentEndDate ? moment(values.nextAppointmentEndDate) : null
+          ]}
+          onChange={onChangeNextAppointment}
+          dropdownClassName="noArrow"
+          allowClear={false}
+          language={i18n.language}
+        />
       </Col>
     </>
   );

@@ -62,16 +62,18 @@ export default function AdvancedFilter({
           {mainFilters}
           <Col md={4}>
             <div style={{ display: 'flex' }}>
-              <Tooltip title={hiddenFieldCount > 0 ? 'Existem mais filtros aplicados' : ''}>
-                <Button
-                  type="link gtm-btn-adv-search"
-                  onClick={() => setOpen(!open)}
-                  style={{ marginTop: '14px', paddingLeft: 0 }}
-                >
-                  <Badge count={hiddenFieldCount}>{t('screeningList.seeMore')}</Badge>
-                  <Icon type={open ? 'caret-up' : 'caret-down'} />
-                </Button>
-              </Tooltip>
+              {secondaryFilters && (
+                <Tooltip title={hiddenFieldCount > 0 ? 'Existem mais filtros aplicados' : ''}>
+                  <Button
+                    type="link gtm-btn-adv-search"
+                    onClick={() => setOpen(!open)}
+                    style={{ marginTop: '14px', paddingLeft: 0 }}
+                  >
+                    <Badge count={hiddenFieldCount}>{t('screeningList.seeMore')}</Badge>
+                    <Icon type={open ? 'caret-up' : 'caret-down'} />
+                  </Button>
+                </Tooltip>
+              )}
 
               <Tooltip title={t('screeningList.search')}>
                 <Button
@@ -97,7 +99,7 @@ export default function AdvancedFilter({
             </div>
           </Col>
         </Row>
-        <div className="filters">{secondaryFilters}</div>
+        {secondaryFilters && <div className="filters">{secondaryFilters}</div>}
       </AdvancedFilterContext.Provider>
     </SearchBox>
   );

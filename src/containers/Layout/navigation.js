@@ -1,3 +1,5 @@
+import Feature from '@models/Feature';
+
 export default [
   {
     key: 'prioritization',
@@ -30,7 +32,8 @@ export default [
     key: '/pacientes',
     text: 'menu.patients',
     icon: 'user',
-    id: 'gtm-lnk-patients'
+    id: 'gtm-lnk-patients',
+    feature: Feature.PRIMARYCARE
   },
   {
     key: '/intervencoes',

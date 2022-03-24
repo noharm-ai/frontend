@@ -7,7 +7,6 @@ import LoadBox from '@components/LoadBox';
 import AdvancedFilter from '@components/AdvancedFilter';
 
 import MainFilters from './filters/MainFilters';
-import SecondaryFilters from './filters/SecondaryFilters';
 
 export default function Filter({
   error,
@@ -25,7 +24,9 @@ export default function Filter({
   };
   const initialValues = {
     idSegment: !isEmpty(segments.list) ? 1 : null,
-    idDepartment: []
+    idDepartment: [],
+    nextAppointmentStartDate: null,
+    nextAppointmentEndDate: null
   };
 
   // load segments
@@ -64,10 +65,14 @@ export default function Filter({
           resetDepartmentsList={resetDepartmentsList}
         />
       }
-      secondaryFilters={<SecondaryFilters />}
       onSearch={search}
       loading={isFetching || segments.isFetching}
-      skipFilterList={['idSegment', 'idDepartment']}
+      skipFilterList={[
+        'idSegment',
+        'idDepartment',
+        'nextAppointmentStartDate',
+        'nextAppointmentEndDate'
+      ]}
     />
   );
 }
