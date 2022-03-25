@@ -6,7 +6,11 @@ import Icon from '@components/Icon';
 
 const Action = record => {
   return (
-    <Link type="secondary gtm-bt-detail-patient" href="#" target="_blank">
+    <Link
+      type="secondary gtm-bt-detail-patient"
+      href={`/prescricao/${record.idPrescription}`}
+      target="_blank"
+    >
       <Icon type="search" />
     </Link>
   );
@@ -49,19 +53,19 @@ export default (sortedInfo, filteredInfo, t) => {
       key: 'lastAppointment',
       title: t('tableHeader.lastAppointment'),
       sortDirections,
-      sorter: (a, b) => moment(a.admissionDate).unix() - moment(b.admissionDate).unix(),
+      sorter: (a, b) => moment(a.lastAppointment).unix() - moment(b.lastAppointment).unix(),
       sortOrder: sortedInfo.columnKey === 'lastAppointment' && sortedInfo.order,
       render: record =>
-        record.admissionDate ? moment(record.admissionDate).format('DD/MM/YYYY') : ''
+        record.lastAppointment ? moment(record.lastAppointment).format('DD/MM/YYYY') : ''
     },
     {
-      key: 'admissionDate',
+      key: 'nextAppointment',
       title: t('tableHeader.nextAppointment'),
       sortDirections,
-      sorter: (a, b) => moment(a.admissionDate).unix() - moment(b.admissionDate).unix(),
-      sortOrder: sortedInfo.columnKey === 'admissionDate' && sortedInfo.order,
+      sorter: (a, b) => moment(a.nextAppointment).unix() - moment(b.nextAppointment).unix(),
+      sortOrder: sortedInfo.columnKey === 'nextAppointment' && sortedInfo.order,
       render: record =>
-        record.admissionDate ? moment(record.admissionDate).format('DD/MM/YYYY') : ''
+        record.nextAppointment ? moment(record.nextAppointment).format('DD/MM/YYYY') : ''
     },
     {
       title: t('tableHeader.action'),
