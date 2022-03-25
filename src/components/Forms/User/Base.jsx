@@ -110,7 +110,7 @@ export default function Base({ security }) {
         </Col>
       </Box>
 
-      {security.isAdmin() && (
+      {(security.isAdmin() || security.isSupport()) && (
         <Box hasError={errors.roles}>
           <Col xs={layout.label}>
             <Heading as="label" size="14px" textAlign="right">
