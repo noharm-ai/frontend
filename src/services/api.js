@@ -192,6 +192,8 @@ const getPatient = (bearerToken, idPatient) =>
 const updatePatient = (bearerToken, admissionNumber, params = {}) =>
   instance.post(`${endpoints.patient}/${admissionNumber}`, params, setHeaders(bearerToken));
 
+const getPatientList = (bearerToken, params = {}) =>
+  instance.get(endpoints.patient, { params, ...setHeaders(bearerToken) });
 /**
  * Drugs.
  *
@@ -404,6 +406,7 @@ const api = {
   putPrescriptionById,
   getResolveNamesUrl,
   getPatient,
+  getPatientList,
   getDrugs,
   getDrugsBySegment,
   getDrugSummary,

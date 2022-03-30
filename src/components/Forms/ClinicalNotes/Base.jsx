@@ -9,6 +9,9 @@ import { Textarea, Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
 import Heading from '@components/Heading';
+import { CLINICAL_NOTES_STORE_ID, CLINICAL_NOTES_MEMORY_TYPE } from '@utils/memory';
+
+import MemoryText from '@containers/MemoryText';
 
 import getInterventionTemplate from './util/getInterventionTemplate';
 import { Box, EditorBox, FieldError } from '../Form.style';
@@ -68,8 +71,15 @@ export default function Base({ prescription, account, signature }) {
             icon="download"
             onClick={loadDefaultText}
             type="primary gtm-bt-clinicalNotes-applyDefaultText"
+            style={{ marginRight: '5px' }}
           />
         </Tooltip>
+        <MemoryText
+          storeId={CLINICAL_NOTES_STORE_ID}
+          memoryType={CLINICAL_NOTES_MEMORY_TYPE}
+          content={notes}
+          onLoad={value => setFieldValue('notes', value)}
+        />
         {(isEmpty(signature.list) || signature.list[0].value === '') && (
           <Tooltip title="Configurar assinatura padrão">
             <Button
