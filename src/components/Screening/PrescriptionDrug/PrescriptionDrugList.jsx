@@ -249,7 +249,7 @@ export default function PrescriptionDrugList({
     ));
   };
 
-  if (!aggregated) {
+  if (!aggregated || security.hasCpoe()) {
     return (
       <>
         {table(!isEmpty(dataSource) ? dataSource[0] : [])}
