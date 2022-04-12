@@ -40,7 +40,8 @@
     "userConfig": "User",
     "exams": "Lab exams",
     "user-administration": "Registration",
-    "reg-administration": "User registration"
+    "reg-administration": "User registration",
+    "patients": "Patients"
   },
   "screeningList": {
     "confirm": "Confirm?",
@@ -222,7 +223,11 @@
     "options": "Options",
     "prescription": "Prescription",
     "extractionDate": "Extraction date",
-    "clinicalInfo": "Clinical information"
+    "clinicalInfo": "Clinical information",
+    "patient": "Patient",
+    "birthdate": "Birthdate",
+    "nextAppointment": "Next appointment",
+    "lastAppointment": "Last consulta"
   },
   "labels": {
     "yes": "Yes",

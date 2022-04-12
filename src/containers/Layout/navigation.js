@@ -1,3 +1,5 @@
+import Feature from '@models/Feature';
+
 export default [
   {
     key: 'prioritization',
@@ -25,6 +27,13 @@ export default [
         role: 'concilia'
       }
     ]
+  },
+  {
+    key: '/pacientes',
+    text: 'menu.patients',
+    icon: 'user',
+    id: 'gtm-lnk-patients',
+    feature: Feature.PRIMARYCARE
   },
   {
     key: '/intervencoes',

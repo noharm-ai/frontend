@@ -40,7 +40,8 @@
     "userConfig": "Usuário",
     "exams": "Exames",
     "user-administration": "Cadastro",
-    "reg-administration": "Cadastro de Usuários"
+    "reg-administration": "Cadastro de Usuários",
+    "patients": "Pacientes"
   },
   "screeningList": {
     "confirm": "Confirma?",
@@ -222,7 +223,11 @@
     "options": "Opções",
     "prescription": "Prescrição",
     "extractionDate": "Data de extração",
-    "clinicalInfo": "Informações clínicas"
+    "clinicalInfo": "Informações clínicas",
+    "patient": "Paciente",
+    "birthdate": "Data de nascimento",
+    "nextAppointment": "Próxima consulta",
+    "lastAppointment": "Última consulta"
   },
   "labels": {
     "yes": "Sim",

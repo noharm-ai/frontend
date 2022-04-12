@@ -16,6 +16,7 @@ import prescriptionDrugsReducer from './prescriptionDrugs';
 import reportsReducer from './reports';
 import memoryReducer from './memory';
 import clinicalNotesReducer from './clinicalNotes';
+import patientCentral from './patientCentral';
 
 export default combineReducers({
   app: appReducer,
@@ -26,6 +27,7 @@ export default combineReducers({
   session: sessionReducer,
   outliers: outliersReducer,
   patients: patientsReducer,
+  patientCentral: patientCentral,
   segments: segmentsReducer,
   departments: departmentsReducer,
   intervention: interventionReducer,

@@ -22,6 +22,7 @@ import UserConfig from '@pages/UserConfig';
 import Password from '@pages/Password';
 import Conciliation from '@pages/Conciliation';
 import UserAdmin from '@pages/UserAdmin';
+import PatientList from '@pages/PatientList';
 
 const routes = [
   {
@@ -228,6 +229,13 @@ const routes = [
     component: withAuth({
       component: ScreeningList,
       prioritizationType: 'conciliation'
+    })
+  },
+  {
+    exact: true,
+    path: '/pacientes',
+    component: withAuth({
+      component: PatientList
     })
   }
 ];

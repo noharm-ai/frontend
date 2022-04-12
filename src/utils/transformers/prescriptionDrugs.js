@@ -3,19 +3,21 @@ import isEmpty from 'lodash.isempty';
 const groupPrescriptionDrugs = (list, createTotalRowFunction) => {
   const items = [];
   let currentGroup = list[0].grp_solution;
+  let currentCPOEPrescription = list[0].cpoe;
   let currentKey = list[0].key;
   list.forEach((item, index) => {
     if (item.grp_solution !== currentGroup) {
-      items.push(createTotalRowFunction(item, currentGroup, currentKey));
+      items.push(createTotalRowFunction(item, currentGroup, currentKey, currentCPOEPrescription));
       currentGroup = item.grp_solution;
     }
 
     currentKey = item.key;
+    currentCPOEPrescription = item.cpoe;
 
     items.push(item);
 
     if (index === list.length - 1) {
-      items.push(createTotalRowFunction(item, item.grp_solution, item.key));
+      items.push(createTotalRowFunction(item, item.grp_solution, item.key, item.cpoe));
     }
   });
 
@@ -25,16 +27,17 @@ const groupPrescriptionDrugs = (list, createTotalRowFunction) => {
 export const groupSolutions = (list, infusionList) => {
   if (list.length === 0) return list;
 
-  const createTotalRow = (item, group, key) => {
+  const createTotalRow = (item, group, key, cpoePrescription) => {
     return {
       key: `${key}expand`,
       total: true,
       source: 'Soluções',
       handleRowExpand: item.handleRowExpand,
       weight: item.weight,
-      infusion: infusionList[item.cpoe || item.idPrescription][group],
+      infusion: infusionList[cpoePrescription || item.idPrescription][group],
       emptyRow: true,
-      cpoe: item.cpoe
+      cpoe: item.cpoe,
+      group: group
     };
   };
 

@@ -6,7 +6,7 @@ import Icon from '@components/Icon';
 import { Wrapper as Navigator } from './Menu.style';
 import './Menu.css';
 
-export default function Menu({ defaultSelectedKeys, navigation, security }) {
+export default function Menu({ defaultSelectedKeys, navigation, security, featureService }) {
   const location = useLocation();
 
   const { t } = useTranslation();
@@ -18,8 +18,12 @@ export default function Menu({ defaultSelectedKeys, navigation, security }) {
     </>
   );
 
-  const renderItem = ({ text, key, icon, id, role }, t) => {
+  const renderItem = ({ text, key, icon, id, role, feature }, t) => {
     if (role && !security.hasRole(role)) {
+      return;
+    }
+
+    if (feature && !featureService.hasFeature(feature)) {
       return;
     }
 
