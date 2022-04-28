@@ -19,7 +19,7 @@ export default function ClinicalNotesCard({ stats, total }) {
         <h3 className="title">{t('tableHeader.clinicalNotes')}</h3>
       </div>
       <div className="content">
-        <div className="stat-number">{total}</div>
+        <div className="stat-number">{total == null ? 0 : total}</div>
       </div>
       <div className="footer">
         <div className="stats">

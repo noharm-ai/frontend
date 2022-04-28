@@ -38,6 +38,7 @@ export default function ClinicalNotes({
   signature,
   fetchMemory,
   visible,
+  type,
   ...props
 }) {
   const { t } = useTranslation();
@@ -45,9 +46,11 @@ export default function ClinicalNotes({
   const initialValues = {
     formId,
     idPrescription: data.idPrescription,
+    admissionNumber: data.admissionNumber,
     notes: data.notes ? data.notes : '',
     concilia: data.concilia && data.concilia === 's' ? '' : data.concilia,
-    hasConciliation: !!data.concilia
+    hasConciliation: !!data.concilia,
+    visible: type === 'primarycare' ? visible : false //reinitialize formik if primarycare
   };
 
   useEffect(() => {
@@ -57,7 +60,7 @@ export default function ClinicalNotes({
   }, [account.userId, fetchMemory, visible]);
 
   useEffect(() => {
-    if (success === formId) {
+    if (success === formId || success === true) {
       notification.success(saveMessage);
       if (afterSave) {
         afterSave();

@@ -47,7 +47,9 @@ const {
 
   prescriptionsFetchExamsStart,
   prescriptionsFetchExamsError,
-  prescriptionsFetchExamsSuccess
+  prescriptionsFetchExamsSuccess,
+
+  prescriptionsIncrementClinicalNotes
 } = PrescriptionsCreators;
 
 export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, getState) => {
@@ -325,4 +327,8 @@ export const fetchPrescriptionExamsThunk = (admissionNumber, params = {}) => asy
   }
 
   dispatch(prescriptionsFetchExamsSuccess(transformExams(data)));
+};
+
+export const incrementClinicalNotesThunk = () => dispatch => {
+  dispatch(prescriptionsIncrementClinicalNotes());
 };

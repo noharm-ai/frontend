@@ -13,6 +13,7 @@ import Tooltip from '@components/Tooltip';
 import moment from 'moment';
 
 import FormClinicalNotes from '@containers/Forms/ClinicalNotes';
+import FormClinicalNotesPrimaryCare from '@containers/Forms/ClinicalNotes/PrimaryCare';
 import FormClinicalAlert from '@containers/Forms/ClinicalAlert';
 
 // extract idPrescription from slug.
@@ -36,7 +37,15 @@ const UnstyledButton = styled.button`
   }
 `;
 
-export default function PageHeader({ match, prescription, type, checkScreening, security }) {
+export default function PageHeader({
+  match,
+  prescription,
+  type,
+  checkScreening,
+  incrementClinicalNotes,
+  security,
+  featureService
+}) {
   const id = parseInt(extractId(match.params.slug));
   const { isChecking, error } = prescription.check;
   const [isClinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
@@ -49,6 +58,11 @@ export default function PageHeader({ match, prescription, type, checkScreening, 
 
   const afterSaveClinicalNotes = () => {
     setClinicalNotesVisibility(false);
+  };
+
+  const afterSaveClinicalNotesPrimaryCare = () => {
+    setClinicalNotesVisibility(false);
+    incrementClinicalNotes();
   };
 
   const onCancelClinicalAlert = () => {
@@ -211,14 +225,26 @@ export default function PageHeader({ match, prescription, type, checkScreening, 
           </Button>
         </Col>
       </Row>
-      <FormClinicalNotes
-        visible={isClinicalNotesVisible}
-        onCancel={onCancelClinicalNotes}
-        okText="Salvar"
-        okType="primary"
-        cancelText="Cancelar"
-        afterSave={afterSaveClinicalNotes}
-      />
+      {featureService.hasPrimaryCare() ? (
+        <FormClinicalNotesPrimaryCare
+          visible={isClinicalNotesVisible}
+          onCancel={onCancelClinicalNotes}
+          okText="Salvar"
+          okType="primary"
+          cancelText="Cancelar"
+          afterSave={afterSaveClinicalNotesPrimaryCare}
+        />
+      ) : (
+        <FormClinicalNotes
+          visible={isClinicalNotesVisible}
+          onCancel={onCancelClinicalNotes}
+          okText="Salvar"
+          okType="primary"
+          cancelText="Cancelar"
+          afterSave={afterSaveClinicalNotes}
+        />
+      )}
+
       <FormClinicalAlert
         visible={isClinicalAlertVisible}
         onCancel={onCancelClinicalAlert}
