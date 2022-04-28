@@ -32,6 +32,7 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
     roles,
     features,
     nameUrl,
+    nameHeaders,
     apiKey,
     notify,
     ...identify
@@ -44,6 +45,7 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
     roles,
     features,
     nameUrl,
+    nameHeaders,
     apiKey
   };
 
@@ -53,7 +55,7 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
   dispatch(sessionSetFirstAccess());
   dispatch(appSetCurrentVersion(appInfo.version));
   dispatch(userSetCurrentUser(user, keepMeLogged));
-  dispatch(appSetConfig({ nameUrl, apiKey }));
+  dispatch(appSetConfig({ nameUrl, apiKey, nameHeaders }));
   dispatch(appSetNotification(notify));
 };
 

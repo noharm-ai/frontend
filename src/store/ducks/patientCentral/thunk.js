@@ -35,6 +35,7 @@ export const patientCentralFetchListThunk = (params = {}) => async (dispatch, ge
     listToRequest: data,
     listToEscape: listPatients,
     nameUrl: app.config.nameUrl,
+    nameHeaders: app.config.nameHeaders,
     useCache: true,
     userRoles: user.account.roles
   };
