@@ -135,6 +135,7 @@
     "btnUndoCheck": "Undo",
     "btnCheck": "Check",
     "btnClinicalNotes": "Clinical notes",
+    "btnSchedule": "Schedule appointment",
     "btnAlert": "Alert",
     "btnClose": "Close"
   },
