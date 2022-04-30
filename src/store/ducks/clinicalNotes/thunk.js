@@ -59,3 +59,20 @@ export const updateClinicalNoteThunk = clinicalNote => async (dispatch, getState
   dispatch(clinicalNotesSaveSuccess());
   dispatch(clinicalNotesSaveReset());
 };
+
+export const createClinicalNoteThunk = params => async (dispatch, getState) => {
+  dispatch(clinicalNotesSaveStart());
+  const { access_token } = getState().auth.identify;
+
+  console.log('params', params);
+
+  const { error } = await api.createClinicalNote(access_token, params).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(clinicalNotesSaveError(error));
+    return;
+  }
+
+  dispatch(clinicalNotesSaveSuccess());
+  dispatch(clinicalNotesSaveReset());
+};

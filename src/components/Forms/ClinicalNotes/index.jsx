@@ -12,9 +12,6 @@ import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from '@utils/memory';
 import Base from './Base';
 import { FormContainer } from '../Form.style';
 
-const saveMessage = {
-  message: 'Uhu! Evolução salva com sucesso! :)'
-};
 const validationSchema = Yup.object().shape({
   idPrescription: Yup.number().required(),
   notes: Yup.string()
@@ -26,6 +23,14 @@ const validationSchema = Yup.object().shape({
     .when('hasConciliation', {
       is: true,
       then: Yup.string().required('Campo obrigatório')
+    }),
+  date: Yup.string()
+    .nullable()
+    .when('action', {
+      is: 'schedule',
+      then: Yup.string()
+        .nullable()
+        .required('Campo obrigatório')
     })
 });
 const formId = 'clinicalNotes';
@@ -36,8 +41,10 @@ export default function ClinicalNotes({
   afterSave,
   account,
   signature,
+  action,
   fetchMemory,
   visible,
+  type,
   ...props
 }) {
   const { t } = useTranslation();
@@ -45,9 +52,13 @@ export default function ClinicalNotes({
   const initialValues = {
     formId,
     idPrescription: data.idPrescription,
+    admissionNumber: data.admissionNumber,
     notes: data.notes ? data.notes : '',
     concilia: data.concilia && data.concilia === 's' ? '' : data.concilia,
-    hasConciliation: !!data.concilia
+    hasConciliation: !!data.concilia,
+    action,
+    date: null,
+    visible: type === 'primarycare' ? visible : false //reinitialize formik if primarycare
   };
 
   useEffect(() => {
@@ -57,7 +68,13 @@ export default function ClinicalNotes({
   }, [account.userId, fetchMemory, visible]);
 
   useEffect(() => {
-    if (success === formId) {
+    if (success === formId || success === true) {
+      const saveMessage = {
+        message:
+          action === 'schedule'
+            ? 'Uhu! Agendamento efetuado com sucesso! :)'
+            : 'Uhu! Evolução salva com sucesso! :)'
+      };
       notification.success(saveMessage);
       if (afterSave) {
         afterSave();
@@ -111,12 +128,19 @@ export default function ClinicalNotes({
           }}
         >
           <header>
-            <Heading margin="0 0 11px">Evolução</Heading>
+            <Heading margin="0 0 11px">
+              {action === 'schedule' ? 'Agendar consulta' : 'Evolução'}
+            </Heading>
           </header>
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base prescription={prescription} account={account} signature={signature} />
+                <Base
+                  prescription={prescription}
+                  account={account}
+                  signature={signature}
+                  action={action}
+                />
               </Row>
             </FormContainer>
           </form>

@@ -61,6 +61,8 @@ export const toDataSource = (list, uniqKey, toAdd = {}) =>
     : [];
 
 export const getFirstAndLastName = name => {
+  if (!name) return '';
+
   const nameArray = name.split(' ');
 
   if (nameArray.length > 1) {

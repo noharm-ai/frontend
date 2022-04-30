@@ -32,7 +32,7 @@ const defaultValue = idPatient => ({
 const getPatients = async (bearerToken, requestConfig) => {
   const flag = '{idPatient}';
 
-  const { listToRequest, listToEscape, nameUrl, useCache, userRoles } = requestConfig;
+  const { listToRequest, listToEscape, nameUrl, nameHeaders, useCache, userRoles } = requestConfig;
   const security = securityService(userRoles);
   let promises;
 
@@ -48,11 +48,17 @@ const getPatients = async (bearerToken, requestConfig) => {
       const urlRequest = nameUrl.replace(flag, idPatient);
 
       try {
-        const { data: patient } = await axios.get(urlRequest, { timeout: 8000 });
+        const { data: patient } = await axios.get(urlRequest, {
+          timeout: 8000,
+          headers: nameHeaders
+        });
 
         if (patient == null || patient.status === 'error') {
           console.log('%cRequested patient error: ', 'color: #e67e22;', idPatient, patient);
           return defaultValue(idPatient);
+        }
+        if (patient.id) {
+          patient.idPatient = patient.id;
         }
 
         return { ...patient, cache };

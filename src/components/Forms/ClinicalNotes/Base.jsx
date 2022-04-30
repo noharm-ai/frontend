@@ -2,9 +2,10 @@ import React from 'react';
 import 'styled-components/macro';
 import isEmpty from 'lodash.isempty';
 import { useFormikContext } from 'formik';
+import moment from 'moment';
 
 import { Col } from '@components/Grid';
-import { Textarea, Select } from '@components/Inputs';
+import { Textarea, Select, DatePicker } from '@components/Inputs';
 
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
@@ -16,9 +17,9 @@ import MemoryText from '@containers/MemoryText';
 import getInterventionTemplate from './util/getInterventionTemplate';
 import { Box, EditorBox, FieldError } from '../Form.style';
 
-export default function Base({ prescription, account, signature }) {
+export default function Base({ prescription, account, signature, action }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
-  const { notes, concilia } = values;
+  const { notes, concilia, date } = values;
   const layout = { label: 2, input: 20 };
 
   const loadDefaultText = () => {
@@ -27,6 +28,10 @@ export default function Base({ prescription, account, signature }) {
 
   const openUserConfig = () => {
     window.open('/configuracoes/usuario');
+  };
+
+  const disabledDate = current => {
+    return current && current < moment().endOf('day');
   };
 
   return (
@@ -64,16 +69,39 @@ export default function Base({ prescription, account, signature }) {
           </Col>
         </Box>
       )}
+      {action === 'schedule' && (
+        <Box hasError={errors.date && touched.date}>
+          <Col xs={24} style={{ paddingBottom: 0 }}>
+            <Heading as="label" size="14px">
+              Data da consulta:
+            </Heading>
+          </Col>
+          <Col xs={24} style={{ paddingTop: '5px' }}>
+            <DatePicker
+              format="DD/MM/YYYY HH:mm"
+              value={date ? moment(date) : null}
+              onChange={value => setFieldValue('date', value.format('YYYY-MM-DDTHH:mm:00'))}
+              dropdownClassName="noArrow"
+              allowClear={false}
+              disabledDate={disabledDate}
+              showTime
+            />
+            {errors.date && touched.date && <FieldError>{errors.date}</FieldError>}
+          </Col>
+        </Box>
+      )}
       <Col xs={24} style={{ textAlign: 'right', padding: '0 8px' }}>
-        <Tooltip title="Aplicar evolução modelo">
-          <Button
-            shape="circle"
-            icon="download"
-            onClick={loadDefaultText}
-            type="primary gtm-bt-clinicalNotes-applyDefaultText"
-            style={{ marginRight: '5px' }}
-          />
-        </Tooltip>
+        {action !== 'schedule' && (
+          <Tooltip title="Aplicar evolução modelo">
+            <Button
+              shape="circle"
+              icon="download"
+              onClick={loadDefaultText}
+              type="primary gtm-bt-clinicalNotes-applyDefaultText"
+              style={{ marginRight: '5px' }}
+            />
+          </Tooltip>
+        )}
         <MemoryText
           storeId={CLINICAL_NOTES_STORE_ID}
           memoryType={CLINICAL_NOTES_MEMORY_TYPE}

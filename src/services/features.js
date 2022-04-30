@@ -13,9 +13,14 @@ const FeaturesService = features => {
     return hasFeature(Feature.MICROMEDEX);
   };
 
+  const hasPrimaryCare = () => {
+    return hasFeature(Feature.PRIMARYCARE);
+  };
+
   return {
     hasFeature,
-    hasMicromedex
+    hasMicromedex,
+    hasPrimaryCare
   };
 };
 

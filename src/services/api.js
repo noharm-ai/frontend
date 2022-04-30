@@ -361,6 +361,9 @@ const getUsers = (bearerToken, params = {}) =>
 const getClinicalNotes = (bearerToken, admissionNumber) =>
   instance.get(`${endpoints.clinicalNotes}/${admissionNumber}`, { ...setHeaders(bearerToken) });
 
+const createClinicalNote = (bearerToken, params = {}) =>
+  instance.post(`${endpoints.clinicalNotes}`, params, setHeaders(bearerToken));
+
 const updateClinicalNote = (bearerToken, id, text) => {
   return instance.post(
     `${endpoints.clinicalNotes}/${id}`,
@@ -446,6 +449,7 @@ const api = {
   updateSegmentExamOrder,
   getClinicalNotes,
   updateClinicalNote,
+  createClinicalNote,
   createUser,
   updateUser,
   savePrescriptionDrug,

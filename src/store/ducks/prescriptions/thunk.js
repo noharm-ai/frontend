@@ -47,7 +47,9 @@ const {
 
   prescriptionsFetchExamsStart,
   prescriptionsFetchExamsError,
-  prescriptionsFetchExamsSuccess
+  prescriptionsFetchExamsSuccess,
+
+  prescriptionsIncrementClinicalNotes
 } = PrescriptionsCreators;
 
 export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, getState) => {
@@ -70,6 +72,7 @@ export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, get
     listToRequest: data,
     listToEscape: listPatients,
     nameUrl: app.config.nameUrl,
+    nameHeaders: app.config.nameHeaders,
     useCache: true,
     userRoles: user.account.roles
   };
@@ -127,6 +130,7 @@ export const fetchScreeningThunk = idPrescription => async (dispatch, getState) 
     listToRequest: [singlePrescription],
     listToEscape: listPatients,
     nameUrl: app.config.nameUrl,
+    nameHeaders: app.config.nameHeaders,
     useCache: false,
     userRoles: user.account.roles
   };
@@ -325,4 +329,8 @@ export const fetchPrescriptionExamsThunk = (admissionNumber, params = {}) => asy
   }
 
   dispatch(prescriptionsFetchExamsSuccess(transformExams(data)));
+};
+
+export const incrementClinicalNotesThunk = () => dispatch => {
+  dispatch(prescriptionsIncrementClinicalNotes());
 };
