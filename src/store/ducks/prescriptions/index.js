@@ -39,7 +39,9 @@ export const { Types, Creators } = createActions({
 
   prescriptionsFetchExamsStart: [''],
   prescriptionsFetchExamsError: ['error'],
-  prescriptionsFetchExamsSuccess: ['list']
+  prescriptionsFetchExamsSuccess: ['list'],
+
+  prescriptionsIncrementClinicalNotes: ['']
 });
 
 const INITIAL_STATE = {
@@ -160,6 +162,17 @@ const INITIAL_STATE = {
     }
   }
 };
+
+const incrementClinicalNotes = (state = INITIAL_STATE) => ({
+  ...state,
+  single: {
+    ...state.single,
+    data: {
+      ...state.single.data,
+      clinicalNotes: state.single.data.clinicalNotes + 1
+    }
+  }
+});
 
 const fetchListStart = (state = INITIAL_STATE) => ({
   ...state,
@@ -880,7 +893,9 @@ const HANDLERS = {
 
   [Types.PRESCRIPTIONS_FETCH_EXAMS_START]: fetchExamsStart,
   [Types.PRESCRIPTIONS_FETCH_EXAMS_ERROR]: fetchExamsError,
-  [Types.PRESCRIPTIONS_FETCH_EXAMS_SUCCESS]: fetchExamsSuccess
+  [Types.PRESCRIPTIONS_FETCH_EXAMS_SUCCESS]: fetchExamsSuccess,
+
+  [Types.PRESCRIPTIONS_INCREMENT_CLINICAL_NOTES]: incrementClinicalNotes
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

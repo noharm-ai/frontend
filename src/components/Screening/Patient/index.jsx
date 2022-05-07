@@ -24,6 +24,7 @@ export default function Patient({
   checkPrescriptionDrug,
   selectIntervention,
   security,
+  featureService,
   interventionCount,
   siderCollapsed
 }) {
@@ -51,6 +52,7 @@ export default function Patient({
 
   const hasNoHarmCare = security.hasNoHarmCare();
   const hasAIData = hasNoHarmCare && (notesSigns !== '' || notesInfo !== '');
+  const hasClinicalNotes = clinicalNotes > 0 || featureService.hasPrimaryCare();
 
   const toggleSeeMore = () => {
     setSeeMore(!seeMore);
@@ -87,12 +89,12 @@ export default function Patient({
           }}
         >
           <AlertCard stats={alertStats} />
-          {clinicalNotes > 0 && (
+          {hasClinicalNotes && (
             <div style={{ marginTop: '10px' }}>
               <ClinicalNotesCard stats={clinicalNotesStats} total={clinicalNotes} />
             </div>
           )}
-          {!clinicalNotes && (
+          {!hasClinicalNotes && (
             <div style={{ marginTop: '10px' }}>
               <PrescriptionCard style={{ minHeight: '113px' }}>
                 <div className="header">

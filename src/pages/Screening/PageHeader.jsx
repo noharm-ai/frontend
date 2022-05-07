@@ -13,6 +13,7 @@ import Tooltip from '@components/Tooltip';
 import moment from 'moment';
 
 import FormClinicalNotes from '@containers/Forms/ClinicalNotes';
+import FormClinicalNotesPrimaryCare from '@containers/Forms/ClinicalNotes/PrimaryCare';
 import FormClinicalAlert from '@containers/Forms/ClinicalAlert';
 
 // extract idPrescription from slug.
@@ -36,11 +37,20 @@ const UnstyledButton = styled.button`
   }
 `;
 
-export default function PageHeader({ match, prescription, type, checkScreening, security }) {
+export default function PageHeader({
+  match,
+  prescription,
+  type,
+  checkScreening,
+  incrementClinicalNotes,
+  security,
+  featureService
+}) {
   const id = parseInt(extractId(match.params.slug));
   const { isChecking, error } = prescription.check;
   const [isClinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
   const [isClinicalAlertVisible, setClinicalAlertVisibility] = useState(false);
+  const [clinicalNotesAction, setClinicalNotesAction] = useState('clinicalNote');
   const { t } = useTranslation();
 
   const onCancelClinicalNotes = () => {
@@ -51,12 +61,27 @@ export default function PageHeader({ match, prescription, type, checkScreening, 
     setClinicalNotesVisibility(false);
   };
 
+  const afterSaveClinicalNotesPrimaryCare = () => {
+    setClinicalNotesVisibility(false);
+    incrementClinicalNotes();
+  };
+
   const onCancelClinicalAlert = () => {
     setClinicalAlertVisibility(false);
   };
 
   const afterSaveClinicalAlert = () => {
     setClinicalAlertVisibility(false);
+  };
+
+  const openScheduleModal = () => {
+    setClinicalNotesAction('schedule');
+    setClinicalNotesVisibility(true);
+  };
+
+  const openClinicalNotesModal = () => {
+    setClinicalNotesAction('clinicalNote');
+    setClinicalNotesVisibility(true);
   };
 
   const copyToClipboard = text => {
@@ -185,9 +210,20 @@ export default function PageHeader({ match, prescription, type, checkScreening, 
               </Tooltip>
             </>
           )}
+          {featureService.hasPrimaryCare() && (
+            <Button
+              type="primary gtm-bt-clinical-notes-schedule"
+              onClick={() => openScheduleModal()}
+              style={{ marginRight: '5px' }}
+              ghost={!prescription.content.notes}
+            >
+              <Icon type="schedule" />
+              {t('screeningHeader.btnSchedule')}
+            </Button>
+          )}
           <Button
             type="primary gtm-bt-clinical-notes"
-            onClick={() => setClinicalNotesVisibility(true)}
+            onClick={() => openClinicalNotesModal()}
             style={{ marginRight: '5px' }}
             ghost={!prescription.content.notes}
           >
@@ -211,14 +247,27 @@ export default function PageHeader({ match, prescription, type, checkScreening, 
           </Button>
         </Col>
       </Row>
-      <FormClinicalNotes
-        visible={isClinicalNotesVisible}
-        onCancel={onCancelClinicalNotes}
-        okText="Salvar"
-        okType="primary"
-        cancelText="Cancelar"
-        afterSave={afterSaveClinicalNotes}
-      />
+      {featureService.hasPrimaryCare() ? (
+        <FormClinicalNotesPrimaryCare
+          visible={isClinicalNotesVisible}
+          action={clinicalNotesAction}
+          onCancel={onCancelClinicalNotes}
+          okText="Salvar"
+          okType="primary"
+          cancelText="Cancelar"
+          afterSave={afterSaveClinicalNotesPrimaryCare}
+        />
+      ) : (
+        <FormClinicalNotes
+          visible={isClinicalNotesVisible}
+          onCancel={onCancelClinicalNotes}
+          okText="Salvar"
+          okType="primary"
+          cancelText="Cancelar"
+          afterSave={afterSaveClinicalNotes}
+        />
+      )}
+
       <FormClinicalAlert
         visible={isClinicalAlertVisible}
         onCancel={onCancelClinicalAlert}
