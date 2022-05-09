@@ -15,6 +15,7 @@ import {
 import { selectPrescriptionDrugThunk } from '@store/ducks/prescriptionDrugs/thunk';
 
 import security from '@services/security';
+import FeatureService from '@services/features';
 import ConciliationDrugList from '@components/Conciliation/ConciliationDrugList';
 
 const mapStateToProps = ({ prescriptions, user }) => ({
@@ -27,7 +28,8 @@ const mapStateToProps = ({ prescriptions, user }) => ({
   admissionNumber: prescriptions.single.data.admissionNumber,
   uniqueDrugs: prescriptions.single.data.uniqueDrugs,
   currentPrescription: prescriptions.single.data.conciliaList,
-  security: security(user.account.roles)
+  security: security(user.account.roles),
+  featureService: FeatureService(user.account.features)
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
