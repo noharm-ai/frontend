@@ -42,7 +42,7 @@ const getPatients = async (bearerToken, requestConfig) => {
         return listToEscape[idPatient];
       }
 
-      const cache = moment().diff(birthdate, 'years') > 0;
+      const cache = birthdate ? moment().diff(birthdate, 'years') > 0 : useCache;
       console.log('%cRequested patient of id: ', 'color: #e67e22;', idPatient, 'cache:', cache);
       console.log('%cRequested patient of url: ', 'color: #e67e22;', nameUrl);
       const urlRequest = nameUrl.replace(flag, idPatient);

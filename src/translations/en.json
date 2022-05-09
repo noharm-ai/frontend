@@ -228,7 +228,7 @@
     "patient": "Patient",
     "birthdate": "Birthdate",
     "nextAppointment": "Next appointment",
-    "lastAppointment": "Last consulta"
+    "lastAppointment": "Last appointment"
   },
   "labels": {
     "yes": "Yes",

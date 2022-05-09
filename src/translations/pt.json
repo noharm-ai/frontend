@@ -135,7 +135,7 @@
     "btnUndoCheck": "Desfazer checagem",
     "btnCheck": "Checar",
     "btnClinicalNotes": "Evolução",
-    "btnSchedule": "Agendar consulta",
+    "btnSchedule": "Agendar Atendimento",
     "btnAlert": "Alerta",
     "btnClose": "Fechar"
   },
@@ -227,8 +227,8 @@
     "clinicalInfo": "Informações clínicas",
     "patient": "Paciente",
     "birthdate": "Data de nascimento",
-    "nextAppointment": "Próxima consulta",
-    "lastAppointment": "Última consulta"
+    "nextAppointment": "Próximo atendimento",
+    "lastAppointment": "Último atendimento"
   },
   "labels": {
     "yes": "Sim",

@@ -20,14 +20,14 @@ export default (sortedInfo, filteredInfo, t) => {
   const sortDirections = ['descend', 'ascend'];
 
   return [
-    {
+    /*{
       key: 'idPatient',
       title: 'ID',
       sortDirections,
       sorter: (a, b) => a.idPatient - b.idPatient,
       sortOrder: sortedInfo.columnKey === 'idPatient' && sortedInfo.order,
       render: record => record.idPatient
-    },
+    },*/
     {
       key: 'namePatient',
       title: t('tableHeader.patient'),
@@ -41,14 +41,14 @@ export default (sortedInfo, filteredInfo, t) => {
         `${record.admissionNumber}` === value ||
         `${record.idPatient}` === value
     },
-    {
+    /*{
       key: 'birthdate',
       title: t('tableHeader.birthdate'),
       sortDirections,
       sorter: (a, b) => moment(a.birthdate).unix() - moment(b.birthdate).unix(),
       sortOrder: sortedInfo.columnKey === 'birthdate' && sortedInfo.order,
       render: record => (record.birthdate ? moment(record.birthdate).format('DD/MM/YYYY') : '')
-    },
+    },*/
     {
       key: 'lastAppointment',
       title: t('tableHeader.lastAppointment'),
