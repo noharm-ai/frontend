@@ -21,7 +21,7 @@ import {
 
 const helpLink = 'https://noharm.octadesk.com/kb/article/noharm-care';
 
-export default function View({ selected, update, security, access_token, userId }) {
+export default function View({ selected, update, security, access_token, userId, featureService }) {
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
   const [isMenuVisible, setMenuVisibility] = useState(false);
@@ -226,7 +226,9 @@ export default function View({ selected, update, security, access_token, userId 
           <Paper
             t={t}
             dangerouslySetInnerHTML={{
-              __html: selected.text.trim().replaceAll('  ', '<br/>')
+              __html: featureService.hasPrimaryCare()
+                ? selected.text.trim().replaceAll('\n', '<br/>')
+                : selected.text.trim().replaceAll('  ', '<br/>')
             }}
             onMouseUp={e => selectionChange(e)}
             onClick={e => removeAnnotation(e)}
