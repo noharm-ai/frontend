@@ -53,6 +53,8 @@ export default function PageHeader({
   const [clinicalNotesAction, setClinicalNotesAction] = useState('clinicalNote');
   const { t } = useTranslation();
 
+  const hasPrimaryCare = featureService.hasPrimaryCare();
+
   const onCancelClinicalNotes = () => {
     setClinicalNotesVisibility(false);
   };
@@ -181,7 +183,7 @@ export default function PageHeader({
           }
         "
         >
-          {prescription.content.status === '0' && (
+          {prescription.content.status === '0' && !hasPrimaryCare && (
             <Button
               type="primary gtm-bt-check"
               ghost
@@ -193,7 +195,7 @@ export default function PageHeader({
               {t('screeningHeader.btnCheck')}
             </Button>
           )}
-          {prescription.content.status === 's' && (
+          {prescription.content.status === 's' && !hasPrimaryCare && (
             <>
               <span style={{ marginRight: '10px' }}>
                 <Icon type="check" /> {t('screeningHeader.btnChecked')}
@@ -210,7 +212,7 @@ export default function PageHeader({
               </Tooltip>
             </>
           )}
-          {featureService.hasPrimaryCare() && (
+          {hasPrimaryCare && (
             <Button
               type="primary gtm-bt-clinical-notes-schedule"
               onClick={() => openScheduleModal()}
@@ -247,7 +249,7 @@ export default function PageHeader({
           </Button>
         </Col>
       </Row>
-      {featureService.hasPrimaryCare() ? (
+      {hasPrimaryCare ? (
         <FormClinicalNotesPrimaryCare
           visible={isClinicalNotesVisible}
           action={clinicalNotesAction}
