@@ -1,6 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 
+import { TextColumn } from '@components/Table';
+import Tooltip from '@components/Tooltip';
 import { Link } from '@components/Button';
 import Icon from '@components/Icon';
 
@@ -49,6 +51,24 @@ export default (sortedInfo, filteredInfo, t) => {
       sortOrder: sortedInfo.columnKey === 'birthdate' && sortedInfo.order,
       render: record => (record.birthdate ? moment(record.birthdate).format('DD/MM/YYYY') : '')
     },*/
+    {
+      key: 'observation',
+      title: t('tableHeader.observation'),
+      sortDirections,
+      sorter: (a, b) => `${a.observation}`.localeCompare(b.observation),
+      sortOrder: sortedInfo.columnKey === 'observation' && sortedInfo.order,
+      render: record => {
+        const tmp = document.createElement('DIV');
+        tmp.innerHTML = record.observation;
+        const text = tmp.textContent || tmp.innerText || '';
+
+        return (
+          <Tooltip title={text} mouseEnterDelay={0.5}>
+            <TextColumn>{text}</TextColumn>
+          </Tooltip>
+        );
+      }
+    },
     {
       key: 'lastAppointment',
       title: t('tableHeader.lastAppointment'),

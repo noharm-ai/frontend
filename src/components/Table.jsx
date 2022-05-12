@@ -221,4 +221,11 @@ export const NestedTableContainer = styled.div`
   }
 `;
 
+export const TextColumn = styled.div`
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 export default Table;

@@ -228,7 +228,8 @@
     "patient": "Paciente",
     "birthdate": "Data de nascimento",
     "nextAppointment": "Próximo atendimento",
-    "lastAppointment": "Último atendimento"
+    "lastAppointment": "Último atendimento",
+    "observation": "Observação"
   },
   "labels": {
     "yes": "Sim",

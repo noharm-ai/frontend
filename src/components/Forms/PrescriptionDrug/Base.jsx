@@ -100,7 +100,8 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
               optionFilterProp="children"
               style={{ width: '100%' }}
               defaultValue={idDrug || undefined}
-              notFoundContent={drugs.isFetching ? <LoadBox /> : null}
+              notFoundContent={drugs.isFetching ? <LoadBox /> : 'Nenhum resultado encontrado'}
+              loading={drugs.isFetching}
               filterOption={false}
               onSearch={search}
               onChange={(value, option) => handleDrugChange(value, option)}

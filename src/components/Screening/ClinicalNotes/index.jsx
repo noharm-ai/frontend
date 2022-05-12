@@ -27,7 +27,8 @@ export default function ClinicalNotes({
   security,
   saveStatus,
   access_token,
-  userId
+  userId,
+  featureService
 }) {
   const [positions, setPositions] = useState([]);
   const [indicators, setIndicators] = useState([]);
@@ -137,6 +138,7 @@ export default function ClinicalNotes({
             security={security}
             access_token={access_token}
             userId={userId}
+            featureService={featureService}
           />
         </Col>
         <Col md={10} xl={8} className="list-panel">

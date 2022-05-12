@@ -228,7 +228,8 @@
     "patient": "Patient",
     "birthdate": "Birthdate",
     "nextAppointment": "Next appointment",
-    "lastAppointment": "Last appointment"
+    "lastAppointment": "Last appointment",
+    "observation": "Observation"
   },
   "labels": {
     "yes": "Yes",
