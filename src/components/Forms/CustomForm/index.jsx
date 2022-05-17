@@ -35,7 +35,7 @@ const template = [
   }
 ];
 
-export default function CustomForm({}) {
+export default function CustomForm({ onSubmit, onCancel }) {
   const initialValues = { 'questao-2': 'Vegetariano', 'questao-1': 'Sim' };
   const validationShape = {};
 
@@ -53,6 +53,7 @@ export default function CustomForm({}) {
 
   const submit = values => {
     console.log('values', values);
+    onSubmit(values);
   };
 
   return (
@@ -67,9 +68,12 @@ export default function CustomForm({}) {
           <Row type="flex" gutter={[16, 24]}>
             <Base template={template} />
           </Row>
-          <Row type="flex" gutter={[16, 24]}>
-            <Button onClick={() => handleSubmit()}>Salvar</Button>
-          </Row>
+          <div className="actions">
+            <Button onClick={() => onCancel()}>Cancelar</Button>
+            <Button onClick={() => handleSubmit()} type="primary">
+              Salvar
+            </Button>
+          </div>
         </FormContainer>
       )}
     </Formik>

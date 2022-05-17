@@ -11,7 +11,7 @@ import { Box, FieldError } from '../Form.style';
 export default function Base({ template }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
 
-  const layout = { label: 2, input: 20 };
+  const layout = { label: 24, input: 24 };
 
   return (
     <>
@@ -20,12 +20,12 @@ export default function Base({ template }) {
           <Heading>{item.group}</Heading>
           {item.questions.map(question => (
             <Box hasError={errors[question.id] && touched[question.id]} key={question.id}>
-              <Col xs={layout.label}>
-                <Heading as="label" size="14px">
-                  {question.label}
-                </Heading>
-              </Col>
               <Col xs={layout.input}>
+                <div className="label">
+                  <Heading as="label" size="14px">
+                    {question.label}
+                  </Heading>
+                </div>
                 <Select
                   placeholder="Selecione..."
                   onChange={value => setFieldValue(question.id, value)}

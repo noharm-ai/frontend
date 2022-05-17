@@ -14,6 +14,7 @@ import moment from 'moment';
 
 import FormClinicalNotes from '@containers/Forms/ClinicalNotes';
 import FormClinicalNotesPrimaryCare from '@containers/Forms/ClinicalNotes/PrimaryCare';
+import FormClinicalNotesPrimaryCareCustom from '@containers/Forms/ClinicalNotes/PrimaryCareCustom';
 import FormClinicalAlert from '@containers/Forms/ClinicalAlert';
 
 // extract idPrescription from slug.
@@ -250,7 +251,7 @@ export default function PageHeader({
         </Col>
       </Row>
       {hasPrimaryCare ? (
-        <FormClinicalNotesPrimaryCare
+        <FormClinicalNotesPrimaryCareCustom
           visible={isClinicalNotesVisible}
           action={clinicalNotesAction}
           onCancel={onCancelClinicalNotes}

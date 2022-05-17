@@ -17,6 +17,18 @@ export const Footer = styled.div`
 export const FormContainer = styled.div`
   margin-top: 30px;
   padding: 0 15px;
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid ${get('colors.detail')};
+    margin-top: 20px;
+    padding-top: 10px;
+
+    button:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
 `;
 
 export const Box = styled.div`
