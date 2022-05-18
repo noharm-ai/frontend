@@ -1,59 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+
+import MemoryText from '@containers/MemoryText';
 
 import { Row } from '@components/Grid';
 import Button from '@components/Button';
 
+import { CUSTOM_FORM_STORE_ID, CUSTOM_FORM_MEMORY_TYPE } from '@utils/memory';
+
 import Base from './Base';
 import { FormContainer } from '../Form.style';
 
-const template = [
-  {
-    group: 'Geral',
-    questions: [
-      {
-        id: 'questao-1',
-        label: 'Concorda em participar do Programa?',
-        type: 'options',
-        options: ['Sim', 'Não'],
-        required: true
-      }
-    ]
-  },
-  {
-    group: 'Saúde e Bem Estar',
-    questions: [
-      {
-        id: 'questao-2',
-        label: 'Como descreve sua alimentação?',
-        type: 'options',
-        options: ['Saudável', 'Junk food', 'Vegetariano', 'Vegano'],
-        required: false
-      }
-    ]
-  }
-];
-
 export default function CustomForm({ onSubmit, onCancel }) {
-  const initialValues = { 'questao-2': 'Vegetariano', 'questao-1': 'Sim' };
+  const [template, setTemplate] = useState(null);
+  const initialValues = {};
   const validationShape = {};
 
-  template.forEach(group => {
-    group.questions.forEach(question => {
-      if (question.required) {
-        validationShape[question.id] = Yup.string()
-          .nullable()
-          .required('Campo obrigatório');
-      }
+  if (template) {
+    template.forEach(group => {
+      group.questions.forEach(question => {
+        if (question.required) {
+          validationShape[question.id] = Yup.string()
+            .nullable()
+            .required('Campo obrigatório');
+        }
+      });
     });
-  });
+  }
 
   const validationSchema = Yup.object().shape(validationShape);
 
   const submit = values => {
-    console.log('values', values);
-    onSubmit(values);
+    onSubmit({
+      values,
+      template
+    });
   };
 
   return (
@@ -65,15 +47,29 @@ export default function CustomForm({ onSubmit, onCancel }) {
     >
       {({ handleSubmit }) => (
         <FormContainer>
-          <Row type="flex" gutter={[16, 24]}>
-            <Base template={template} />
-          </Row>
-          <div className="actions">
-            <Button onClick={() => onCancel()}>Cancelar</Button>
-            <Button onClick={() => handleSubmit()} type="primary">
-              Salvar
-            </Button>
+          <div className="load-form">
+            <MemoryText
+              storeId={CUSTOM_FORM_STORE_ID}
+              memoryType={CUSTOM_FORM_MEMORY_TYPE}
+              onLoad={value => setTemplate(value)}
+              canSave={false}
+            />
           </div>
+          <Row type="flex" gutter={[16, 24]}>
+            {!template ? (
+              <div className="empty-form">Selecione um formulário para iniciar</div>
+            ) : (
+              <Base template={template} />
+            )}
+          </Row>
+          {template && (
+            <div className="actions">
+              <Button onClick={() => onCancel()}>Cancelar</Button>
+              <Button onClick={() => handleSubmit()} type="primary">
+                Salvar
+              </Button>
+            </div>
+          )}
         </FormContainer>
       )}
     </Formik>

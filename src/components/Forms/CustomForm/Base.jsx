@@ -9,9 +9,7 @@ import Heading from '@components/Heading';
 import { Box, FieldError } from '../Form.style';
 
 export default function Base({ template }) {
-  const { values, setFieldValue, errors, touched } = useFormikContext();
-
-  const layout = { label: 24, input: 24 };
+  const { values, setFieldValue, errors } = useFormikContext();
 
   return (
     <>
@@ -19,8 +17,8 @@ export default function Base({ template }) {
         <React.Fragment key={item.group}>
           <Heading>{item.group}</Heading>
           {item.questions.map(question => (
-            <Box hasError={errors[question.id] && touched[question.id]} key={question.id}>
-              <Col xs={layout.input}>
+            <Box hasError={errors[question.id]} key={question.id}>
+              <Col xs={24}>
                 <div className="label">
                   <Heading as="label" size="14px">
                     {question.label}
@@ -42,9 +40,7 @@ export default function Base({ template }) {
                     </Select.Option>
                   ))}
                 </Select>
-                {errors[question.id] && touched[question.id] && (
-                  <FieldError>{errors[question.id]}</FieldError>
-                )}
+                {errors[question.id] && <FieldError>{errors[question.id]}</FieldError>}
               </Col>
             </Box>
           ))}

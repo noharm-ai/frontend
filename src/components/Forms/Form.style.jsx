@@ -29,6 +29,23 @@ export const FormContainer = styled.div`
       margin-right: 10px;
     }
   }
+
+  .load-form {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+
+  .empty-form {
+    padding: 2rem;
+    background: #edebebcc;
+    display: flex;
+    width: 100%;
+    border-radius: 5px;
+    justify-content: center;
+    font-weight: 500;
+    margin-top: 15px;
+  }
 `;
 
 export const Box = styled.div`
