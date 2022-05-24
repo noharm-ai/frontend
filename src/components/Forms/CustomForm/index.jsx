@@ -7,13 +7,15 @@ import Button from '@components/Button';
 import Base from './Base';
 import { CustomFormContainer } from '../Form.style';
 
-export default function CustomForm({ onSubmit, onCancel, template }) {
+export default function CustomForm({ onSubmit, onCancel, template, isSaving }) {
   const initialValues = {};
   const validationShape = {};
 
   if (template) {
     template.forEach(group => {
       group.questions.forEach(question => {
+        initialValues[question.id] = question.type === 'options-multiple' ? [] : null;
+
         if (question.required) {
           validationShape[question.id] = Yup.string()
             .nullable()
@@ -32,6 +34,10 @@ export default function CustomForm({ onSubmit, onCancel, template }) {
     });
   };
 
+  if (!template) {
+    return null;
+  }
+
   return (
     <Formik
       enableReinitialize
@@ -41,20 +47,16 @@ export default function CustomForm({ onSubmit, onCancel, template }) {
     >
       {({ handleSubmit }) => (
         <CustomFormContainer>
-          {!template ? (
-            <div className="empty-form">Selecione um formulário para iniciar</div>
-          ) : (
-            <Base template={template} />
-          )}
+          <Base template={template} />
 
-          {template && (
-            <div className="actions">
-              <Button onClick={() => onCancel()}>Cancelar</Button>
-              <Button onClick={() => handleSubmit()} type="primary">
-                Salvar
-              </Button>
-            </div>
-          )}
+          <div className="actions">
+            <Button onClick={() => onCancel()} loading={isSaving}>
+              Cancelar
+            </Button>
+            <Button onClick={() => handleSubmit()} type="primary" loading={isSaving}>
+              Salvar
+            </Button>
+          </div>
         </CustomFormContainer>
       )}
     </Formik>

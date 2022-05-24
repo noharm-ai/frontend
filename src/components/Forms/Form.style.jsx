@@ -20,7 +20,7 @@ export const FormContainer = styled.div`
 `;
 
 export const CustomFormContainer = styled.div`
-  margin-top: 30px;
+  margin-top: 15px;
   padding: 0;
 
   .actions {
@@ -33,17 +33,6 @@ export const CustomFormContainer = styled.div`
     button:not(:last-child) {
       margin-right: 10px;
     }
-  }
-
-  .empty-form {
-    padding: 2rem;
-    background: #edebebcc;
-    display: flex;
-    width: 100%;
-    border-radius: 5px;
-    justify-content: center;
-    font-weight: 500;
-    margin-top: 15px;
   }
 
   .question-group {
@@ -121,5 +110,23 @@ export const InternalBox = styled.div`
   .ant-select,
   .ant-input {
     background: #fff;
+  }
+`;
+
+export const ChoicePanel = styled.div`
+  position: relative;
+  background: #edebeb;
+  padding: 15px;
+  border-radius: 5px;
+
+  .panel-title {
+    font-weight: 500;
+  }
+
+  button {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 `;

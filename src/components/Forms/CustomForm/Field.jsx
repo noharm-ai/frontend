@@ -16,9 +16,6 @@ export default function Field({ question, values, setFieldValue }) {
         style={{ minWidth: '300px' }}
         mode={question.type === 'options-multiple' ? 'multiple' : 'default'}
       >
-        <Select.Option value="" key="">
-          &nbsp;
-        </Select.Option>
         {question.options.map(option => (
           <Select.Option value={option} key={option}>
             {option}

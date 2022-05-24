@@ -11,13 +11,13 @@ export default function ChooseForm({ fetchMemory, memory, onChange }) {
   }, [fetchMemory]);
 
   const change = index => {
-    onChange(list[index].value.data);
+    onChange(list[index].value);
   };
 
   return (
     <Select
-      placeholder="Selecione o formulário"
-      style={{ minWidth: '300px' }}
+      placeholder="Pesquisar"
+      style={{ width: '100%' }}
       loading={isFetching}
       showSearch
       optionFilterProp="children"
