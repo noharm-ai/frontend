@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import CustomForm from '@components/Forms/CustomForm';
 import notification from '@components/notification';
 import Heading from '@components/Heading';
 import DefaultModal from '@components/Modal';
+
+import ChooseForm from './ChooseForm';
 
 export default function ClinicalNotes({
   prescription,
@@ -14,11 +16,13 @@ export default function ClinicalNotes({
   signature,
   action,
   fetchMemory,
+  memory,
   visible,
   type,
   onCancel,
   ...props
 }) {
+  const [template, setTemplate] = useState(null);
   const { t } = useTranslation();
   const { isSaving, success, error, data } = prescription;
 
@@ -52,16 +56,26 @@ export default function ClinicalNotes({
       template: form.template
     };
 
-    console.log('modal submit', params);
     save(params);
   };
 
   return (
-    <DefaultModal width={700} centered destroyOnClose visible={visible} {...props} footer={null}>
+    <DefaultModal
+      width={700}
+      centered
+      destroyOnClose
+      visible={visible}
+      onCancel={onCancel}
+      {...props}
+      footer={null}
+    >
       <header>
         <Heading margin="0 0 11px">Evolução</Heading>
       </header>
-      <CustomForm onSubmit={submit} onCancel={onCancel} isSaving={isSaving} />
+      <div className="select-form">
+        <ChooseForm fetchMemory={fetchMemory} memory={memory} onChange={setTemplate} />
+      </div>
+      <CustomForm onSubmit={submit} onCancel={onCancel} isSaving={isSaving} template={template} />
     </DefaultModal>
   );
 }

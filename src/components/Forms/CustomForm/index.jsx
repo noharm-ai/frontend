@@ -1,19 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import MemoryText from '@containers/MemoryText';
-
-import { Row } from '@components/Grid';
 import Button from '@components/Button';
 
-import { CUSTOM_FORM_STORE_ID, CUSTOM_FORM_MEMORY_TYPE } from '@utils/memory';
-
 import Base from './Base';
-import { FormContainer } from '../Form.style';
+import { CustomFormContainer } from '../Form.style';
 
-export default function CustomForm({ onSubmit, onCancel }) {
-  const [template, setTemplate] = useState(null);
+export default function CustomForm({ onSubmit, onCancel, template }) {
   const initialValues = {};
   const validationShape = {};
 
@@ -46,22 +40,13 @@ export default function CustomForm({ onSubmit, onCancel }) {
       validationSchema={validationSchema}
     >
       {({ handleSubmit }) => (
-        <FormContainer>
-          <div className="load-form">
-            <MemoryText
-              storeId={CUSTOM_FORM_STORE_ID}
-              memoryType={CUSTOM_FORM_MEMORY_TYPE}
-              onLoad={value => setTemplate(value)}
-              canSave={false}
-            />
-          </div>
-          <Row type="flex" gutter={[16, 24]}>
-            {!template ? (
-              <div className="empty-form">Selecione um formulário para iniciar</div>
-            ) : (
-              <Base template={template} />
-            )}
-          </Row>
+        <CustomFormContainer>
+          {!template ? (
+            <div className="empty-form">Selecione um formulário para iniciar</div>
+          ) : (
+            <Base template={template} />
+          )}
+
           {template && (
             <div className="actions">
               <Button onClick={() => onCancel()}>Cancelar</Button>
@@ -70,7 +55,7 @@ export default function CustomForm({ onSubmit, onCancel }) {
               </Button>
             </div>
           )}
-        </FormContainer>
+        </CustomFormContainer>
       )}
     </Formik>
   );

@@ -12,9 +12,8 @@ import notification from '@components/notification';
 import Tooltip from '@components/Tooltip';
 import moment from 'moment';
 
-import FormClinicalNotes from '@containers/Forms/ClinicalNotes';
-import FormClinicalNotesPrimaryCare from '@containers/Forms/ClinicalNotes/PrimaryCare';
-import FormClinicalNotesPrimaryCareCustom from '@containers/Forms/ClinicalNotes/PrimaryCareCustom';
+import ClinicalNotes from '@containers/Forms/ClinicalNotes';
+import ClinicalNotesCustomForm from '@containers/Forms/ClinicalNotes/CustomForm';
 import FormClinicalAlert from '@containers/Forms/ClinicalAlert';
 
 // extract idPrescription from slug.
@@ -251,7 +250,7 @@ export default function PageHeader({
         </Col>
       </Row>
       {hasPrimaryCare ? (
-        <FormClinicalNotesPrimaryCareCustom
+        <ClinicalNotesCustomForm
           visible={isClinicalNotesVisible}
           action={clinicalNotesAction}
           onCancel={onCancelClinicalNotes}
@@ -261,7 +260,7 @@ export default function PageHeader({
           afterSave={afterSaveClinicalNotesPrimaryCare}
         />
       ) : (
-        <FormClinicalNotes
+        <ClinicalNotes
           visible={isClinicalNotesVisible}
           onCancel={onCancelClinicalNotes}
           okText="Salvar"

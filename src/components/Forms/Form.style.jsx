@@ -17,6 +17,11 @@ export const Footer = styled.div`
 export const FormContainer = styled.div`
   margin-top: 30px;
   padding: 0 15px;
+`;
+
+export const CustomFormContainer = styled.div`
+  margin-top: 30px;
+  padding: 0;
 
   .actions {
     display: flex;
@@ -30,12 +35,6 @@ export const FormContainer = styled.div`
     }
   }
 
-  .load-form {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 10px;
-  }
-
   .empty-form {
     padding: 2rem;
     background: #edebebcc;
@@ -44,6 +43,10 @@ export const FormContainer = styled.div`
     border-radius: 5px;
     justify-content: center;
     font-weight: 500;
+    margin-top: 15px;
+  }
+
+  .question-group {
     margin-top: 15px;
   }
 `;
