@@ -8,7 +8,16 @@ import Button from '@components/Button';
 
 import SaveModal from './components/SaveModal';
 
-export default function MemoryText({ fetch, save, storeId, memoryType, memory, content, onLoad }) {
+export default function MemoryText({
+  fetch,
+  save,
+  storeId,
+  memoryType,
+  memory,
+  content,
+  onLoad,
+  canSave = true
+}) {
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const { isFetching, list } = memory[storeId] || { isFetching: true, list: [] };
 
@@ -36,15 +45,20 @@ export default function MemoryText({ fetch, save, storeId, memoryType, memory, c
   };
 
   const mainMenu = () => {
-    return (
-      <Menu forceSubMenuRender={true}>
-        {textMenu()}
-        <Menu.Divider />
-        <Menu.Item onClick={() => setSaveModalOpen(true)} disabled={!content}>
-          <span>Salvar texto atual</span>
-        </Menu.Item>
-      </Menu>
-    );
+    if (canSave) {
+      return (
+        <Menu forceSubMenuRender={true}>
+          {textMenu()}
+
+          <Menu.Divider />
+          <Menu.Item onClick={() => setSaveModalOpen(true)} disabled={!content}>
+            <span>Salvar texto atual</span>
+          </Menu.Item>
+        </Menu>
+      );
+    }
+
+    return <Menu forceSubMenuRender={true}>{textMenu()}</Menu>;
   };
 
   const textMenu = () => {
