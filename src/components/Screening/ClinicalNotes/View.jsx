@@ -8,6 +8,7 @@ import { useOutsideAlerter } from '@lib/hooks';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import { PopoverWelcome } from '@components/Popover';
+import CustomFormView from '@components/Forms/CustomForm/View';
 
 import ClinicalNotesIndicator from './ClinicalNotesIndicator';
 import {
@@ -222,22 +223,27 @@ export default function View({ selected, update, security, access_token, userId,
         </div>
       </PaperHeader>
       <PaperContainer ref={paperContainerRef}>
-        <>
-          <Paper
-            t={t}
-            dangerouslySetInnerHTML={{
-              __html: featureService.hasPrimaryCare()
-                ? selected.text.trim().replaceAll('\n', '<br/>')
-                : selected.text.trim().replaceAll('  ', '<br/>')
-            }}
-            onMouseUp={e => selectionChange(e)}
-            onClick={e => removeAnnotation(e)}
-            className={`${isMenuVisible ? 'disabled' : ''} ${
-              annotationManifest.isEnabled(security) ? 'annotation-enabled' : 'annotation-disabled'
-            }`}
-          />
-          {menu}
-        </>
+        {selected.text && (
+          <>
+            <Paper
+              t={t}
+              dangerouslySetInnerHTML={{
+                __html: featureService.hasPrimaryCare()
+                  ? selected.text.trim().replaceAll('\n', '<br/>')
+                  : selected.text.trim().replaceAll('  ', '<br/>')
+              }}
+              onMouseUp={e => selectionChange(e)}
+              onClick={e => removeAnnotation(e)}
+              className={`${isMenuVisible ? 'disabled' : ''} ${
+                annotationManifest.isEnabled(security)
+                  ? 'annotation-enabled'
+                  : 'annotation-disabled'
+              }`}
+            />
+            {menu}
+          </>
+        )}
+        {!selected.text && <CustomFormView template={selected.template} values={selected.form} />}
       </PaperContainer>
       <Legend>* Nomes presentes na evolução são substituídos por três asteriscos (***).</Legend>
       {security.hasNoHarmCare() && (

@@ -19,6 +19,27 @@ export const FormContainer = styled.div`
   padding: 0 15px;
 `;
 
+export const CustomFormContainer = styled.div`
+  margin-top: 15px;
+  padding: 0;
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid ${get('colors.detail')};
+    margin-top: 20px;
+    padding-top: 10px;
+
+    button:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
+
+  .question-group {
+    margin-top: 15px;
+  }
+`;
+
 export const Box = styled.div`
   display: flex;
   flex-direction: ${props => (props.flexDirection ? props.flexDirection : 'row')};
@@ -89,5 +110,23 @@ export const InternalBox = styled.div`
   .ant-select,
   .ant-input {
     background: #fff;
+  }
+`;
+
+export const ChoicePanel = styled.div`
+  position: relative;
+  background: #edebeb;
+  padding: 15px;
+  border-radius: 5px;
+
+  .panel-title {
+    font-weight: 500;
+  }
+
+  button {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 `;

@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { createClinicalNoteThunk } from '@store/ducks/clinicalNotes/thunk';
 import { memoryFetchThunk } from '@store/ducks/memory/thunk';
 
-import FormClinicalNotes from '@components/Forms/ClinicalNotes';
+import FormClinicalNotes from '@components/Forms/ClinicalNotes/CustomForm';
 
 const mapStateToProps = ({ prescriptions, user, memory, clinicalNotes }) => ({
   prescription: {
@@ -14,8 +14,7 @@ const mapStateToProps = ({ prescriptions, user, memory, clinicalNotes }) => ({
     error: clinicalNotes.save.error
   },
   account: user.account,
-  signature: memory.signature,
-  type: 'primarycare'
+  memory
 });
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
