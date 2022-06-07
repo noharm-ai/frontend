@@ -2,6 +2,7 @@ import axios from 'axios';
 import moment from 'moment';
 
 import securityService from '@services/security';
+import appInfo from '@utils/appInfo';
 
 const defaultValue = idPatient => ({
   idPatient,
@@ -32,7 +33,15 @@ const defaultValue = idPatient => ({
 const getPatients = async (bearerToken, requestConfig) => {
   const flag = '{idPatient}';
 
-  const { listToRequest, listToEscape, nameUrl, nameHeaders, useCache, userRoles } = requestConfig;
+  const {
+    listToRequest,
+    listToEscape,
+    nameUrl,
+    nameHeaders,
+    useCache,
+    userRoles,
+    proxy
+  } = requestConfig;
   const security = securityService(userRoles);
   let promises;
 
@@ -46,6 +55,11 @@ const getPatients = async (bearerToken, requestConfig) => {
       console.log('%cRequested patient of id: ', 'color: #e67e22;', idPatient, 'cache:', cache);
       console.log('%cRequested patient of url: ', 'color: #e67e22;', nameUrl);
       const urlRequest = nameUrl.replace(flag, idPatient);
+
+      if (proxy) {
+        nameHeaders['Authorization'] = `Bearer ${bearerToken}`;
+        nameHeaders['x-api-key'] = appInfo.apiKey;
+      }
 
       try {
         const { data: patient } = await axios.get(urlRequest, {
