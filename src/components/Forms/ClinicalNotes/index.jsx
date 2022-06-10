@@ -69,13 +69,6 @@ export default function ClinicalNotes({
 
   useEffect(() => {
     if (success === formId || success === true) {
-      const saveMessage = {
-        message:
-          action === 'schedule'
-            ? 'Uhu! Agendamento efetuado com sucesso! :)'
-            : 'Uhu! Evolução salva com sucesso! :)'
-      };
-      notification.success(saveMessage);
       if (afterSave) {
         afterSave();
       }
