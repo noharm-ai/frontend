@@ -4,6 +4,7 @@ import { Select, InputNumber } from '@components/Inputs';
 import Editor from '@components/Editor';
 
 import MemoryField from './Fields/MemoryField';
+import SubstanceField from './Fields/SubstanceField';
 import { EditorBox } from '../Form.style';
 
 export default function Field({ question, values, setFieldValue }) {
@@ -50,5 +51,9 @@ export default function Field({ question, values, setFieldValue }) {
 
   if (question.type === 'memory-multiple' || question.type === 'memory') {
     return <MemoryField question={question} values={values} setFieldValue={setFieldValue} />;
+  }
+
+  if (question.type === 'substance') {
+    return <SubstanceField question={question} values={values} setFieldValue={setFieldValue} />;
   }
 }

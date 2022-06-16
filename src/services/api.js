@@ -264,6 +264,14 @@ const getSubstances = (bearerToken, params = {}) =>
     ...setHeaders(bearerToken)
   });
 
+const findSubstances = (bearerToken, term) =>
+  instance.get(`${endpoints.substance}/find`, {
+    params: {
+      term
+    },
+    ...setHeaders(bearerToken)
+  });
+
 const getSubstanceRelations = (bearerToken, id, params = {}) =>
   instance.get(`${endpoints.substance}/${id}/relation`, {
     params,
@@ -432,6 +440,7 @@ const api = {
   updatePatient,
   updatePrescriptionDrugNote,
   getSubstances,
+  findSubstances,
   updateSegmentExam,
   getExamTypes,
   getHelp,
