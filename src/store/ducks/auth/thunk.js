@@ -31,6 +31,7 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
     schema,
     roles,
     features,
+    userFeatures,
     nameUrl,
     nameHeaders,
     apiKey,
@@ -44,13 +45,13 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
     email,
     schema,
     roles,
-    features,
     nameUrl,
     proxy,
     nameHeaders,
     apiKey
   };
 
+  user.features = [...features, ...userFeatures];
   appInfo.apiKey = apiKey;
 
   dispatch(authSetIdentify(identify));
