@@ -213,7 +213,7 @@ export default function PageHeader({
           }
         "
         >
-          {prescription.content.status === '0' && !hasPrimaryCare && (
+          {prescription.content.status === '0' && (
             <Button
               type="primary gtm-bt-check"
               ghost
@@ -225,7 +225,7 @@ export default function PageHeader({
               {t('screeningHeader.btnCheck')}
             </Button>
           )}
-          {prescription.content.status === 's' && !hasPrimaryCare && (
+          {prescription.content.status === 's' && (
             <>
               <span style={{ marginRight: '10px' }}>
                 <Icon type="check" /> {t('screeningHeader.btnChecked')}
