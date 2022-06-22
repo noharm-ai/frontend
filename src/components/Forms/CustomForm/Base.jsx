@@ -7,7 +7,7 @@ import Collapse from '@components/Collapse';
 import Heading from '@components/Heading';
 
 import Field from './Field';
-import { Box, FieldError } from '../Form.style';
+import { Box, FieldError, FieldHelp } from '../Form.style';
 
 export default function Base({ template }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
@@ -29,6 +29,7 @@ export default function Base({ template }) {
                   </Heading>
                 </div>
                 <Field question={question} values={values} setFieldValue={setFieldValue} />
+                {question.help && <FieldHelp>{question.help}</FieldHelp>}
                 {errors[question.id] && touched[question.id] && (
                   <FieldError>{errors[question.id]}</FieldError>
                 )}

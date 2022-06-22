@@ -84,6 +84,11 @@ export const FieldError = styled.div`
   margin-top: 3px;
 `;
 
+export const FieldHelp = styled.div`
+  font-size: 12px;
+  margin-top: 3px;
+`;
+
 export const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
