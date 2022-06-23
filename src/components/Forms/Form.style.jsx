@@ -69,6 +69,13 @@ export const Box = styled.div`
       background: #7ebe9a40;
     }
   }
+
+  .label-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
 `;
 
 export const EditorBox = styled.div`
