@@ -252,7 +252,10 @@
     "observation": "Observation",
     "status": "Status",
     "transcription": "Transcription",
-    "dialysis": "Dialysis"
+    "dialysis": "Dialysis",
+    "skinColor": "Skin color",
+    "gender": "Gender",
+    "birthdate": "Birthdate"
   },
   "transcriptionLabels": {
     "idDrug": "Drug",
