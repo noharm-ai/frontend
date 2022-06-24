@@ -286,7 +286,13 @@ export default function PrescriptionDrugList({
   };
 
   const groups = {};
-  Object.keys(headers).forEach(k => {
+  const headerKeys = Object.keys(headers);
+
+  if (featureService.hasPrimaryCare()) {
+    headerKeys.reverse();
+  }
+
+  headerKeys.forEach(k => {
     const dt = headers[k].expire.substr(0, 10);
 
     if (groups[dt]) {
@@ -306,6 +312,7 @@ export default function PrescriptionDrugList({
       };
     }
   });
+  console.log('groups', groups);
 
   return (
     <>
