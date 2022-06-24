@@ -319,6 +319,7 @@
     "exrTime": "Time:",
     "exrDoseKg": "Dose / Kg:",
     "exrMedicalNotes": "Medical notes:",
+    "exrNotesPrevious": "Notes (previous prescription):",
     "exrNotes": "Notes:",
     "exrPrevIntervention": "Previous intervention:",
     "exrDiluent": "Components (not validated):"
