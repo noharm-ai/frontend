@@ -41,7 +41,6 @@ export default function PatientCard({
   });
 
   const hasNoHarmCare = security.hasNoHarmCare();
-  const hasPrimaryCare = featureService.hasPrimaryCare();
   const {
     admissionNumber,
     admissionDate,
@@ -251,35 +250,33 @@ export default function PatientCard({
             key="patientData"
           >
             <div className="patient-data">
-              <div className={'patient-data-item ' + (hasPrimaryCare ? 'edit' : '')}>
+              <div className="patient-data-item edit">
                 <div className="patient-data-item-label">{t('patientCard.age')}</div>
                 <div className="patient-data-item-value">
-                  {age} {isNaN(age) ? '' : 'anos'}
+                  {age} {birthdate ? '' : t('patientCard.notAvailable')}
                   <span className="small">
                     {birthdate ? `(${moment(birthdate).format('DD/MM/YYYY')})` : ''}
                   </span>
                 </div>
-                {hasPrimaryCare && (
-                  <div className="patient-data-item-edit">
-                    <Button type="link" onClick={() => setPatientModalVisible(true)}>
-                      <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
-                    </Button>
-                  </div>
-                )}
+
+                <div className="patient-data-item-edit">
+                  <Button type="link" onClick={() => setPatientModalVisible(true)}>
+                    <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                  </Button>
+                </div>
               </div>
 
-              <div className={'patient-data-item ' + (hasPrimaryCare ? 'edit' : '')}>
+              <div className="patient-data-item edit">
                 <div className="patient-data-item-label">{t('patientCard.gender')}</div>
                 <div className="patient-data-item-value">
                   {gender ? (gender === 'M' ? t('patientCard.male') : t('patientCard.female')) : ''}
                 </div>
-                {hasPrimaryCare && (
-                  <div className="patient-data-item-edit">
-                    <Button type="link" onClick={() => setPatientModalVisible(true)}>
-                      <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
-                    </Button>
-                  </div>
-                )}
+
+                <div className="patient-data-item-edit">
+                  <Button type="link" onClick={() => setPatientModalVisible(true)}>
+                    <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                  </Button>
+                </div>
               </div>
 
               <div className="patient-data-item edit">
@@ -384,16 +381,15 @@ export default function PatientCard({
                 </div>
               </div>
 
-              <div className={'patient-data-item ' + (hasPrimaryCare ? 'edit' : '')}>
+              <div className={'patient-data-item edit'}>
                 <div className="patient-data-item-label">{t('patientCard.skin')}</div>
                 <div className="patient-data-item-value">{skinColor}</div>
-                {hasPrimaryCare && (
-                  <div className="patient-data-item-edit">
-                    <Button type="link" onClick={() => setPatientModalVisible(true)}>
-                      <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
-                    </Button>
-                  </div>
-                )}
+
+                <div className="patient-data-item-edit">
+                  <Button type="link" onClick={() => setPatientModalVisible(true)}>
+                    <Icon type="edit" style={{ fontSize: 18, color: '#fff' }} />
+                  </Button>
+                </div>
               </div>
 
               <div className="patient-data-item edit">
