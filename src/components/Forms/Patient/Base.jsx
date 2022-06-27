@@ -2,18 +2,19 @@ import React from 'react';
 import 'styled-components/macro';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import moment from 'moment';
 
 import { Col } from '@components/Grid';
 import Heading from '@components/Heading';
-import { InputNumber, Select } from '@components/Inputs';
+import { InputNumber, Select, DatePicker } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 import Editor from '@components/Editor';
 
 import { Box, EditorBox } from '../Form.style';
 
-export default function Base() {
+export default function Base({ featureService }) {
   const { values, setFieldValue, errors } = useFormikContext();
-  const { weight, height, observation, dialysis } = values;
+  const { weight, height, observation, dialysis, gender, birthdate, skinColor } = values;
   const layout = { label: 8, input: 16 };
   const { t } = useTranslation();
 
@@ -88,6 +89,81 @@ export default function Base() {
           </Select>
         </Col>
       </Box>
+
+      {featureService.hasPrimaryCare() && (
+        <>
+          <Box hasError={errors.gender}>
+            <Col xs={layout.label}>
+              <Heading as="label" size="14px" textAlign="right">
+                <Tooltip title="">{t('labels.gender')}:</Tooltip>
+              </Heading>
+            </Col>
+            <Col xs={layout.input}>
+              <Select
+                optionFilterProp="children"
+                style={{
+                  marginLeft: 10,
+                  width: '100%'
+                }}
+                value={gender}
+                onChange={value => setFieldValue('gender', value)}
+              >
+                <Select.Option value={null}>Não informado</Select.Option>
+                <Select.Option value="M">Masculino</Select.Option>
+                <Select.Option value="F">Feminino</Select.Option>
+              </Select>
+            </Col>
+          </Box>
+
+          <Box hasError={errors.skinColor}>
+            <Col xs={layout.label}>
+              <Heading as="label" size="14px" textAlign="right">
+                <Tooltip title="">{t('labels.skinColor')}:</Tooltip>
+              </Heading>
+            </Col>
+            <Col xs={layout.input}>
+              <Select
+                optionFilterProp="children"
+                style={{
+                  marginLeft: 10,
+                  width: '100%'
+                }}
+                value={skinColor}
+                onChange={value => setFieldValue('skinColor', value)}
+              >
+                <Select.Option value={null}>Não informado</Select.Option>
+                <Select.Option value="Amarela">Amarela</Select.Option>
+                <Select.Option value="Branca">Branca</Select.Option>
+                <Select.Option value="Índio">Índio</Select.Option>
+                <Select.Option value="Negra">Negra</Select.Option>
+                <Select.Option value="Parda">Parda</Select.Option>
+              </Select>
+            </Col>
+          </Box>
+
+          <Box hasError={errors.birthdate}>
+            <Col xs={layout.label}>
+              <Heading as="label" size="14px" textAlign="right">
+                <Tooltip title="">{t('labels.birthdate')}:</Tooltip>
+              </Heading>
+            </Col>
+            <Col xs={layout.input}>
+              <DatePicker
+                format="DD/MM/YYYY"
+                value={birthdate ? moment(birthdate) : null}
+                onChange={value => setFieldValue('birthdate', value.format('YYYY-MM-DD'))}
+                dropdownClassName="noArrow"
+                allowClear={false}
+                showTime
+                style={{
+                  marginLeft: 10,
+                  width: '100%'
+                }}
+              />
+            </Col>
+          </Box>
+        </>
+      )}
 
       <Box hasError={errors.observation} flexDirection="column">
         <Col xs={24} style={{ paddingBottom: '0' }}>

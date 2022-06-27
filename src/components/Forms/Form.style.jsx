@@ -69,6 +69,13 @@ export const Box = styled.div`
       background: #7ebe9a40;
     }
   }
+
+  .label-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
 `;
 
 export const EditorBox = styled.div`
@@ -81,6 +88,11 @@ export const FieldError = styled.div`
   color: #f5222d;
   font-size: 13px;
   margin-left: 5px;
+  margin-top: 3px;
+`;
+
+export const FieldHelp = styled.div`
+  font-size: 12px;
   margin-top: 3px;
 `;
 

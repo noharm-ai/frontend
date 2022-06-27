@@ -31,10 +31,12 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
     schema,
     roles,
     features,
+    userFeatures,
     nameUrl,
     nameHeaders,
     apiKey,
     notify,
+    proxy,
     ...identify
   } = data;
   const user = {
@@ -43,19 +45,20 @@ export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch
     email,
     schema,
     roles,
-    features,
     nameUrl,
+    proxy,
     nameHeaders,
     apiKey
   };
 
+  user.features = [...features, ...userFeatures];
   appInfo.apiKey = apiKey;
 
   dispatch(authSetIdentify(identify));
   dispatch(sessionSetFirstAccess());
   dispatch(appSetCurrentVersion(appInfo.version));
   dispatch(userSetCurrentUser(user, keepMeLogged));
-  dispatch(appSetConfig({ nameUrl, apiKey, nameHeaders }));
+  dispatch(appSetConfig({ nameUrl, apiKey, nameHeaders, proxy }));
   dispatch(appSetNotification(notify));
 };
 

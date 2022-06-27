@@ -29,12 +29,16 @@ export default function Patient({
   admissionNumber,
   weight,
   height,
+  birthdate,
+  skinColor,
+  gender,
   observation,
   dialysis,
   clinicalNotes,
   notesInfo,
   notesInfoDate,
   security,
+  featureService,
   ...props
 }) {
   const { t } = useTranslation();
@@ -47,7 +51,10 @@ export default function Patient({
     weight,
     height,
     observation,
-    dialysis
+    dialysis,
+    birthdate,
+    skinColor,
+    gender
   };
 
   useEffect(() => {
@@ -100,7 +107,7 @@ export default function Patient({
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base />
+                <Base featureService={featureService} />
               </Row>
             </FormContainer>
           </form>

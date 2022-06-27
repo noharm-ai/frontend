@@ -252,7 +252,10 @@
     "observation": "Observação",
     "status": "Situação",
     "transcription": "Transcrição",
-    "dialysis": "Diálise"
+    "dialysis": "Diálise",
+    "skinColor": "Cor da pele",
+    "gender": "Gênero",
+    "birthdate": "Data de nasc."
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",
@@ -319,6 +322,7 @@
     "exrTime": "Horários:",
     "exrDoseKg": "Dose / Kg:",
     "exrMedicalNotes": "Observação médica:",
+    "exrNotesPrevious": "Anotação (prescrição anterior):",
     "exrNotes": "Anotação:",
     "exrPrevIntervention": "Intervenção anterior:",
     "exrDiluent": "Componentes (sem validação):"

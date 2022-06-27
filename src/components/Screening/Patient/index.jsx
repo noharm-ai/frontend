@@ -74,6 +74,7 @@ export default function Patient({
           access_token={access_token}
           setSeeMore={setSeeMore}
           setPatientModalVisible={setPatientModalVisible}
+          featureService={featureService}
         />
       </Col>
       <Col xl={10} xxl={11}>

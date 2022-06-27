@@ -31,13 +31,6 @@ export default function ClinicalNotes({
 
   useEffect(() => {
     if (success === true) {
-      const saveMessage = {
-        message:
-          action === 'schedule'
-            ? 'Uhu! Agendamento efetuado com sucesso! :)'
-            : 'Uhu! Evolução salva com sucesso! :)'
-      };
-      notification.success(saveMessage);
       if (afterSave) {
         setTemplate(null);
         afterSave();
@@ -75,6 +68,7 @@ export default function ClinicalNotes({
       destroyOnClose
       visible={visible}
       onCancel={cancel}
+      maskClosable={false}
       {...props}
       footer={null}
     >

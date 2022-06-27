@@ -13,6 +13,7 @@ import Tooltip from '@components/Tooltip';
 import moment from 'moment';
 
 import ClinicalNotes from '@containers/Forms/ClinicalNotes';
+import ClinicalNotesSchedule from '@containers/Forms/ClinicalNotes/ScheduleForm';
 import ClinicalNotesCustomForm from '@containers/Forms/ClinicalNotes/CustomForm';
 import FormClinicalAlert from '@containers/Forms/ClinicalAlert';
 
@@ -49,6 +50,7 @@ export default function PageHeader({
   const id = parseInt(extractId(match.params.slug));
   const { isChecking, error } = prescription.check;
   const [isClinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
+  const [isClinicalNotesFormsVisible, setClinicalNotesFormsVisibility] = useState(false);
   const [isClinicalAlertVisible, setClinicalAlertVisibility] = useState(false);
   const [clinicalNotesAction, setClinicalNotesAction] = useState('clinicalNote');
   const { t } = useTranslation();
@@ -59,13 +61,37 @@ export default function PageHeader({
     setClinicalNotesVisibility(false);
   };
 
+  const onCancelClinicalNotesForms = () => {
+    setClinicalNotesFormsVisibility(false);
+  };
+
   const afterSaveClinicalNotes = () => {
     setClinicalNotesVisibility(false);
+
+    const saveMessage = {
+      message: 'Uhu! Evolução salva com sucesso! :)'
+    };
+    notification.success(saveMessage);
+  };
+
+  const afterSaveClinicalNotesSchedule = () => {
+    setClinicalNotesVisibility(false);
+    incrementClinicalNotes();
+
+    const saveMessage = {
+      message: 'Uhu! Agendamento efetuado com sucesso! :)'
+    };
+    notification.success(saveMessage);
   };
 
   const afterSaveClinicalNotesPrimaryCare = () => {
-    setClinicalNotesVisibility(false);
+    setClinicalNotesFormsVisibility(false);
     incrementClinicalNotes();
+
+    const saveMessage = {
+      message: 'Uhu! Evolução salva com sucesso! :)'
+    };
+    notification.success(saveMessage);
   };
 
   const onCancelClinicalAlert = () => {
@@ -82,8 +108,12 @@ export default function PageHeader({
   };
 
   const openClinicalNotesModal = () => {
-    setClinicalNotesAction('clinicalNote');
-    setClinicalNotesVisibility(true);
+    if (hasPrimaryCare) {
+      setClinicalNotesFormsVisibility(true);
+    } else {
+      setClinicalNotesAction('clinicalNote');
+      setClinicalNotesVisibility(true);
+    }
   };
 
   const copyToClipboard = text => {
@@ -183,7 +213,7 @@ export default function PageHeader({
           }
         "
         >
-          {prescription.content.status === '0' && !hasPrimaryCare && (
+          {prescription.content.status === '0' && (
             <Button
               type="primary gtm-bt-check"
               ghost
@@ -195,7 +225,7 @@ export default function PageHeader({
               {t('screeningHeader.btnCheck')}
             </Button>
           )}
-          {prescription.content.status === 's' && !hasPrimaryCare && (
+          {prescription.content.status === 's' && (
             <>
               <span style={{ marginRight: '10px' }}>
                 <Icon type="check" /> {t('screeningHeader.btnChecked')}
@@ -250,18 +280,33 @@ export default function PageHeader({
         </Col>
       </Row>
       {hasPrimaryCare ? (
-        <ClinicalNotesCustomForm
-          visible={isClinicalNotesVisible}
-          action={clinicalNotesAction}
-          onCancel={onCancelClinicalNotes}
-          okText="Salvar"
-          okType="primary"
-          cancelText="Cancelar"
-          afterSave={afterSaveClinicalNotesPrimaryCare}
-        />
+        <>
+          {isClinicalNotesFormsVisible && (
+            <ClinicalNotesCustomForm
+              visible={isClinicalNotesFormsVisible}
+              onCancel={onCancelClinicalNotesForms}
+              okText="Salvar"
+              okType="primary"
+              cancelText="Cancelar"
+              afterSave={afterSaveClinicalNotesPrimaryCare}
+            />
+          )}
+          {isClinicalNotesVisible && (
+            <ClinicalNotesSchedule
+              visible={isClinicalNotesVisible}
+              action={clinicalNotesAction}
+              onCancel={onCancelClinicalNotes}
+              okText="Salvar"
+              okType="primary"
+              cancelText="Cancelar"
+              afterSave={afterSaveClinicalNotesSchedule}
+            />
+          )}
+        </>
       ) : (
         <ClinicalNotes
           visible={isClinicalNotesVisible}
+          action={clinicalNotesAction}
           onCancel={onCancelClinicalNotes}
           okText="Salvar"
           okType="primary"
