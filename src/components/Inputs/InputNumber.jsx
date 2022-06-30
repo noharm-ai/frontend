@@ -1,3 +1,5 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import 'antd/lib/input-number/style/index.css';
 import antInputNumber from 'antd/lib/input-number';
 import styled from 'styled-components/macro';
@@ -5,7 +7,7 @@ import { rgba } from 'polished';
 
 import { get } from '@styles/utils';
 
-export const InputNumber = styled(antInputNumber)`
+const StyledInputNumber = styled(antInputNumber)`
   &.ant-input-number {
     width: 100%;
   }
@@ -25,3 +27,9 @@ export const InputNumber = styled(antInputNumber)`
     opacity: 1;
   }
 `;
+
+export const InputNumber = props => {
+  const { i18n } = useTranslation();
+
+  return <StyledInputNumber decimalSeparator={i18n.language === 'en' ? '.' : ','} {...props} />;
+};
