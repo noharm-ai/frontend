@@ -229,7 +229,8 @@
     "birthdate": "Birthdate",
     "nextAppointment": "Next appointment",
     "lastAppointment": "Last appointment",
-    "observation": "Observation"
+    "observation": "Observation",
+    "medicalObservation": "Medical observation"
   },
   "labels": {
     "yes": "Yes",

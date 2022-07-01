@@ -6,7 +6,7 @@ import debounce from 'lodash.debounce';
 import uniqBy from 'lodash.uniqby';
 
 import { Col, Row } from '@components/Grid';
-import { Select, InputNumber } from '@components/Inputs';
+import { Select, InputNumber, Textarea } from '@components/Inputs';
 import Heading from '@components/Heading';
 import LoadBox from '@components/LoadBox';
 
@@ -24,7 +24,8 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
     measureUnit,
     frequency,
     interval,
-    route
+    route,
+    recommendation
   } = values;
   const layout = { label: 8, input: 16 };
 
@@ -252,6 +253,25 @@ export default function Base({ item, fetchDrugSummary, searchDrugs, drugs, drugS
                 </Box>
               </>
             )}
+
+            <Box hasError={errors.recommendation && touched.recommendation}>
+              <Col xs={layout.label}>
+                <Heading as="label" size="14px">
+                  {t('tableHeader.medicalObservation')}:
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <Textarea
+                  value={recommendation}
+                  onChange={({ target }) => setFieldValue('recommendation', target.value)}
+                  style={{ minHeight: '150px' }}
+                  maxLength={1950}
+                />
+                {errors.recommendation && touched.recommendation && (
+                  <FieldError>{errors.recommendation}</FieldError>
+                )}
+              </Col>
+            </Box>
           </>
         )
       )}

@@ -229,7 +229,8 @@
     "birthdate": "Data de nascimento",
     "nextAppointment": "Próximo atendimento",
     "lastAppointment": "Último atendimento",
-    "observation": "Observação"
+    "observation": "Observação",
+    "medicalObservation": "Observação médica"
   },
   "labels": {
     "yes": "Sim",
