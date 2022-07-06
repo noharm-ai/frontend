@@ -35,7 +35,7 @@ export const SearchBox = styled.div`
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     padding: 6px 10px;
-    z-index: 1;
+    z-index: 2;
     pointer-events: none;
     opacity: 0;
     transform: translateY(-15px);

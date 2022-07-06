@@ -76,7 +76,9 @@ export default (sortedInfo, filteredInfo, t) => {
       key: 'lastAppointment',
       title: t('tableHeader.lastAppointment'),
       sortDirections,
-      sorter: (a, b) => moment(a.lastAppointment).unix() - moment(b.lastAppointment).unix(),
+      sorter: (a, b) =>
+        moment(a.lastAppointment || new Date()).unix() -
+        moment(b.lastAppointment || new Date()).unix(),
       sortOrder: sortedInfo.columnKey === 'lastAppointment' && sortedInfo.order,
       render: record =>
         record.lastAppointment ? moment(record.lastAppointment).format('DD/MM/YYYY') : ''
@@ -85,7 +87,9 @@ export default (sortedInfo, filteredInfo, t) => {
       key: 'nextAppointment',
       title: t('tableHeader.nextAppointment'),
       sortDirections,
-      sorter: (a, b) => moment(a.nextAppointment).unix() - moment(b.nextAppointment).unix(),
+      sorter: (a, b) =>
+        moment(a.nextAppointment || new Date()).unix() -
+        moment(b.nextAppointment || new Date()).unix(),
       sortOrder: sortedInfo.columnKey === 'nextAppointment' && sortedInfo.order,
       render: record =>
         record.nextAppointment ? moment(record.nextAppointment).format('DD/MM/YYYY') : ''

@@ -256,7 +256,9 @@
     "dialysis": "Diálise",
     "skinColor": "Cor da pele",
     "gender": "Gênero",
-    "birthdate": "Data de nasc."
+    "birthdate": "Data de nasc.",
+    "scheduledBy": "Agendado por",
+    "attendedBy": "Atendido por"
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",
