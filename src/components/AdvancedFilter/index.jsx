@@ -50,7 +50,8 @@ export default function AdvancedFilter({
 
   const reset = () => {
     setValues(initialValues);
-    search();
+    setOpen(false);
+    onSearch(initialValues);
   };
 
   const hiddenFieldCount = countHiddenFilters(values);

@@ -362,6 +362,14 @@ const resetPassword = (token, password) => {
 const getUsers = (bearerToken, params = {}) =>
   instance.get(endpoints.users, { params, ...setHeaders(bearerToken) });
 
+const searchUsers = (bearerToken, term) =>
+  instance.get(`${endpoints.users}/search`, {
+    params: {
+      term
+    },
+    ...setHeaders(bearerToken)
+  });
+
 /**
  * ClinicalNotes.
  *
@@ -461,6 +469,7 @@ const api = {
   createClinicalNote,
   createUser,
   updateUser,
+  searchUsers,
   savePrescriptionDrug,
   suspendPrescriptionDrug,
   getDrugResources

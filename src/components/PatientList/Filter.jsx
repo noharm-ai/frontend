@@ -7,6 +7,7 @@ import LoadBox from '@components/LoadBox';
 import AdvancedFilter from '@components/AdvancedFilter';
 
 import MainFilters from './filters/MainFilters';
+import SecondaryFilters from './filters/SecondaryFilters';
 
 export default function Filter({
   error,
@@ -26,7 +27,9 @@ export default function Filter({
     idSegment: !isEmpty(segments.list) ? 1 : null,
     idDepartment: [],
     nextAppointmentStartDate: null,
-    nextAppointmentEndDate: null
+    nextAppointmentEndDate: null,
+    scheduledBy: [],
+    attendedBy: []
   };
 
   // load segments
@@ -65,6 +68,7 @@ export default function Filter({
           resetDepartmentsList={resetDepartmentsList}
         />
       }
+      secondaryFilters={<SecondaryFilters />}
       onSearch={search}
       loading={isFetching || segments.isFetching}
       skipFilterList={[
