@@ -59,12 +59,15 @@ export default (sortedInfo, filteredInfo, t) => {
       sortOrder: sortedInfo.columnKey === 'observation' && sortedInfo.order,
       render: record => {
         const tmp = document.createElement('DIV');
-        tmp.innerHTML = record.observation;
+        tmp.innerHTML = record.observation ? record.observation.split(/(<\/p>|<br>)/)[0] : '';
         const text = tmp.textContent || tmp.innerText || '';
 
+        tmp.innerHTML = record.observation;
+        const textComplete = tmp.textContent || tmp.innerText || '';
+
         return (
-          <Tooltip title={text} mouseEnterDelay={0.5}>
-            <TextColumn>{text}</TextColumn>
+          <Tooltip title={textComplete} mouseEnterDelay={0.5}>
+            <TextColumn>{text ? text.split('\n')[0] : ''}</TextColumn>
           </Tooltip>
         );
       }

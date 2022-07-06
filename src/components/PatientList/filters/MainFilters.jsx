@@ -18,8 +18,6 @@ export default function MainFilters({ segments, fetchDepartmentsList, resetDepar
     fetchDepartmentsList(values.idSegment);
   }, [values.idSegment, fetchDepartmentsList, resetDepartmentsList]);
 
-  console.log('mainfilters', values);
-
   const onChangeSegment = value => {
     setFieldValue({
       idSegment: value,
