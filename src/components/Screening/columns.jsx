@@ -418,7 +418,7 @@ export const expandedRowRender = bag => record => {
               type="primary"
               ghost
             >
-              {bag.t('actions.consult') + ' '} Micromedex
+              {bag.t('actions.consult') + ' '} Bulário Cognys
             </Link>
           </Descriptions.Item>
         )}
