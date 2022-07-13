@@ -47,7 +47,7 @@ export const updateClinicalNoteThunk = clinicalNote => async (dispatch, getState
   const { access_token } = getState().auth.identify;
 
   const { error } = await api
-    .updateClinicalNote(access_token, clinicalNote.id, clinicalNote.text)
+    .updateClinicalNote(access_token, clinicalNote.id, clinicalNote)
     .catch(errorHandler);
 
   if (!isEmpty(error)) {

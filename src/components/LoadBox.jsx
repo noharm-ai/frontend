@@ -11,6 +11,14 @@ const Box = styled.div`
   justify-content: center;
   height: 100%;
   text-align: center;
+
+  ${({ absolute }) =>
+    absolute &&
+    `
+    position: absolute;
+    height: 100%;
+    width: 100%;
+  `}
 `;
 
 const LoadBox = props => (
@@ -18,5 +26,11 @@ const LoadBox = props => (
     <Spin />
   </Box>
 );
+
+export const LoadContainer = styled.div`
+  position: relative;
+  min-height: 300px;
+  width: 100%;
+`;
 
 export default LoadBox;

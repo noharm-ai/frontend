@@ -16,6 +16,15 @@ export const transformClinicalNotes = clinicalNotes => {
   return groups;
 };
 
+export const flatClinicalNotes = groups => {
+  const flatList = [];
+  Object.keys(groups).forEach(key => {
+    groups[key].forEach(i => flatList.push(i));
+  });
+
+  return flatList;
+};
+
 export const getPositionList = clinicalNotes => {
   const positions = [];
 

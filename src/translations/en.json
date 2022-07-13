@@ -258,7 +258,9 @@
     "gender": "Gender",
     "birthdate": "Birthdate",
     "scheduledBy": "Scheduled by",
-    "attendedBy": "Attended by"
+    "attendedBy": "Attended by",
+    "type": "Type",
+    "typePlaceholderFilter": "Filter by type"
   },
   "transcriptionLabels": {
     "idDrug": "Drug",

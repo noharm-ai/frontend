@@ -258,7 +258,9 @@
     "gender": "Gênero",
     "birthdate": "Data de nasc.",
     "scheduledBy": "Agendado por",
-    "attendedBy": "Atendido por"
+    "attendedBy": "Atendido por",
+    "type": "Tipo",
+    "typePlaceholderFilter": "Filtrar por tipo"
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",

@@ -1,5 +1,7 @@
 import { createActions, createReducer } from 'reduxsauce';
 
+import { transformClinicalNotes, flatClinicalNotes } from '@utils/transformers/clinicalNotes';
+
 export const { Types, Creators } = createActions({
   clinicalNotesFetchListStart: [''],
   clinicalNotesFetchListError: ['error'],
@@ -52,19 +54,17 @@ const select = (state = INITIAL_STATE, { clinicalNote }) => ({
 });
 
 const update = (state = INITIAL_STATE, { clinicalNote }) => {
-  const list = { ...state.list };
+  const list = flatClinicalNotes({ ...state.list });
 
-  Object.keys(list).forEach(key => {
-    const noteList = list[key];
-    const index = noteList.findIndex(item => item.id === clinicalNote.id);
-    if (index !== -1) {
-      noteList[index] = { ...noteList[index], ...clinicalNote };
-    }
-  });
+  const index = list.findIndex(item => item.id === clinicalNote.id);
+  if (index !== -1) {
+    list[index] = { ...list[index], ...clinicalNote };
+  }
+  const newList = transformClinicalNotes(list);
 
   return {
     ...state,
-    list,
+    list: newList,
     single: {
       ...state.single,
       ...clinicalNote

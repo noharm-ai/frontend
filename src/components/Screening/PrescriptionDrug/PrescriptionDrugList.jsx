@@ -3,7 +3,7 @@ import isEmpty from 'lodash.isempty';
 import { format, parseISO } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 
-import LoadBox from '@components/LoadBox';
+import LoadBox, { LoadContainer } from '@components/LoadBox';
 import Empty from '@components/Empty';
 import Collapse from '@components/Collapse';
 import Tooltip from '@components/Tooltip';
@@ -82,7 +82,11 @@ export default function PrescriptionDrugList({
   const { t } = useTranslation();
 
   if (isFetching) {
-    return <LoadBox />;
+    return (
+      <LoadContainer>
+        <LoadBox absolute={true} />
+      </LoadContainer>
+    );
   }
 
   const onShowModal = data => {

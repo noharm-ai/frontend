@@ -10,11 +10,11 @@ import Heading from '@components/Heading';
 import Field from './Field';
 import { Box, FieldError, FieldHelp } from '../Form.style';
 
-export default function Base({ template }) {
+export default function Base({ template, startClosed }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
 
   return (
-    <Collapse bordered defaultActiveKey={template[0].group} accordion>
+    <Collapse bordered defaultActiveKey={startClosed ? null : template[0].group} accordion>
       {template.map(item => (
         <Collapse.Panel key={item.group} header={item.group}>
           {item.questions.map(question => (

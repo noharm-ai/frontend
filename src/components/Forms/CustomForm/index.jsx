@@ -7,14 +7,26 @@ import Button from '@components/Button';
 import Base from './Base';
 import { CustomFormContainer } from '../Form.style';
 
-export default function CustomForm({ onSubmit, onCancel, template, isSaving }) {
+export default function CustomForm({
+  onSubmit,
+  onCancel,
+  template,
+  isSaving,
+  values,
+  startClosed
+}) {
   const initialValues = {};
   const validationShape = {};
 
   if (template) {
     template.forEach(group => {
       group.questions.forEach(question => {
-        initialValues[question.id] = question.type === 'options-multiple' ? [] : null;
+        if (values) {
+          initialValues[question.id] =
+            values[question.id] || (question.type === 'options-multiple' ? [] : null);
+        } else {
+          initialValues[question.id] = question.type === 'options-multiple' ? [] : null;
+        }
 
         if (question.required) {
           validationShape[question.id] = Yup.string()
@@ -47,7 +59,7 @@ export default function CustomForm({ onSubmit, onCancel, template, isSaving }) {
     >
       {({ handleSubmit }) => (
         <CustomFormContainer>
-          <Base template={template} />
+          <Base template={template} startClosed={startClosed} />
 
           <div className="actions">
             <Button onClick={() => onCancel()} loading={isSaving}>

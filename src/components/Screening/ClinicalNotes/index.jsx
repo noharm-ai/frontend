@@ -4,12 +4,11 @@ import { useTranslation } from 'react-i18next';
 
 import { annotationManifest } from '@utils/featureManifest';
 import { Row, Col } from '@components/Grid';
-import LoadBox from '@components/LoadBox';
+import LoadBox, { LoadContainer } from '@components/LoadBox';
 import Empty from '@components/Empty';
 import { Select } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
 import Button from '@components/Button';
-import notification from '@components/notification';
 import Tag from '@components/Tag';
 import { getFirstAndLastName } from '@utils';
 
@@ -87,21 +86,6 @@ export default function ClinicalNotes({
   );
 
   useEffect(() => {
-    if (saveStatus.success) {
-      notification.success({
-        message: 'Uhu! Anotação salva com sucesso! :)'
-      });
-    }
-
-    if (saveStatus.error) {
-      notification.error({
-        message: t('error.title'),
-        description: t('error.description')
-      });
-    }
-  }, [saveStatus, t]);
-
-  useEffect(() => {
     setFilteredList(filterList(list, false, selectedPositions, selectedIndicators));
   }, [list]); //eslint-disable-line
 
@@ -122,9 +106,9 @@ export default function ClinicalNotes({
 
   if (isFetching) {
     return (
-      <Container>
-        <LoadBox />
-      </Container>
+      <LoadContainer>
+        <LoadBox absolute={true} />
+      </LoadContainer>
     );
   }
 
@@ -139,15 +123,18 @@ export default function ClinicalNotes({
             access_token={access_token}
             userId={userId}
             featureService={featureService}
+            saveStatus={saveStatus}
           />
         </Col>
         <Col md={10} xl={8} className="list-panel">
           {positionList.length > 0 && (
             <FilterContainer>
               <div>
-                <label>{t('labels.role')}</label>
+                <label>{t(`labels.${featureService.hasPrimaryCare() ? 'type' : 'role'}`)}</label>
                 <Select
-                  placeholder={t('labels.rolePlaceholderFilter')}
+                  placeholder={t(
+                    `labels.${featureService.hasPrimaryCare() ? 'type' : 'role'}PlaceholderFilter`
+                  )}
                   onChange={handlePositionChange}
                   allowClear
                   style={{ width: '90%' }}
@@ -162,7 +149,7 @@ export default function ClinicalNotes({
                   ))}
                 </Select>
               </div>
-              {security.hasNoHarmCare() && (
+              {security.hasNoHarmCare() && !featureService.hasPrimaryCare() && (
                 <div>
                   <label>{t('labels.indicator')}</label>
                   <Select

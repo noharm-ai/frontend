@@ -50,7 +50,8 @@ export default function ClinicalNotes({
       idPrescription: data.idPrescription,
       admissionNumber: data.admissionNumber,
       formValues: form.values,
-      template: form.template
+      template: form.template,
+      tplName: template.name
     };
 
     save(params);
