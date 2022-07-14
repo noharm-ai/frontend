@@ -86,8 +86,6 @@ export const MenuPopup = styled(Menu)`
 `;
 
 export const Container = styled.div`
-  padding: 10px;
-
   .paper-panel {
     display: flex;
     flex-direction: column;
@@ -108,9 +106,15 @@ export const PaperContainer = styled.div`
   max-width: 640px;
   width: 100%;
   margin-bottom: 15px;
+  transition: all 0.3s linear;
 
   @media only screen and (min-width: 1400px) {
     max-width: 720px;
+  }
+
+  &.edit {
+    box-shadow: 0 0 10px rgb(24 144 255 / 30%);
+    border: 1px solid rgb(24 144 255);
   }
 `;
 
@@ -308,7 +312,7 @@ export const List = styled.div`
 `;
 
 export const PaperHeader = styled.div`
-  padding: 5px 15px 10px 15px;
+  padding: 10px 15px;
   width: 100%;
   max-width: 640px;
 
@@ -332,7 +336,7 @@ export const PaperHeader = styled.div`
 
 export const FilterContainer = styled.div`
   display: flex;
-  padding: 5px 5px;
+  padding: 10px;
   background: #fafafa;
   margin-bottom: 5px;
 

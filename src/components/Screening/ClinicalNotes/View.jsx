@@ -5,11 +5,14 @@ import { useTranslation } from 'react-i18next';
 
 import { annotationManifest } from '@utils/featureManifest';
 import { useOutsideAlerter } from '@lib/hooks';
+import LoadBox, { LoadContainer } from '@components/LoadBox';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import { PopoverWelcome } from '@components/Popover';
 import CustomFormView from '@components/Forms/CustomForm/View';
+import notification from '@components/notification';
 
+import Edit from './Edit';
 import ClinicalNotesIndicator from './ClinicalNotesIndicator';
 import {
   Paper,
@@ -22,13 +25,22 @@ import {
 
 const helpLink = 'https://noharm.octadesk.com/kb/article/noharm-care';
 
-export default function View({ selected, update, security, access_token, userId, featureService }) {
+export default function View({
+  selected,
+  update,
+  security,
+  access_token,
+  userId,
+  featureService,
+  saveStatus
+}) {
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
   const [isMenuVisible, setMenuVisibility] = useState(false);
   const [menuPosition, setMenuPosition] = useState({});
   const [selectionRange, setSelectionRange] = useState(null);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [edit, setEdit] = useState(false);
   const { t } = useTranslation();
 
   useOutsideAlerter(menuRef, () => {
@@ -56,6 +68,27 @@ export default function View({ selected, update, security, access_token, userId,
       shouldShowWelcome();
     }
   }, [access_token, userId, security]);
+
+  useEffect(() => {
+    if (saveStatus.success) {
+      notification.success({
+        message: t('success.generic')
+      });
+      setEdit(false);
+    }
+
+    if (saveStatus.error) {
+      notification.error({
+        message: t('error.title'),
+        description: t('error.description')
+      });
+    }
+  }, [saveStatus, t]);
+
+  useEffect(() => {
+    // stop editing on selection change
+    setEdit(false);
+  }, [selected]);
 
   const gotIt = () => {
     annotationManifest.gotIt(access_token, userId);
@@ -201,59 +234,98 @@ export default function View({ selected, update, security, access_token, userId,
             <span className="name">{selected.prescriber}</span>
           </div>
           <div className="help">
-            <Tooltip title={t('layout.help')}>
-              <PopoverWelcome
-                title="Nova funcionalidade!"
-                content={welcomeTooltip}
-                trigger="hover"
-                placement="bottom"
-                visible={showWelcome}
-              >
+            {featureService.hasPrimaryCare() ? (
+              <>
                 <Button
-                  type="primary gtm-annotation-btn-help"
-                  ghost
-                  shape="circle"
-                  icon="question"
-                  style={{ width: '28px', height: '28px', minWidth: '28px' }}
-                  onClick={goToHelp}
-                />
-              </PopoverWelcome>
-            </Tooltip>
+                  type="primary gtm-clinicalnote-edit"
+                  ghost={edit}
+                  onClick={() => setEdit(!edit)}
+                >
+                  {edit ? 'Cancelar' : 'Editar'}
+                </Button>
+              </>
+            ) : (
+              <Tooltip title={t('layout.help')}>
+                <PopoverWelcome
+                  title="Nova funcionalidade!"
+                  content={welcomeTooltip}
+                  trigger="hover"
+                  placement="bottom"
+                  visible={showWelcome}
+                >
+                  <Button
+                    type="primary gtm-annotation-btn-help"
+                    ghost
+                    shape="circle"
+                    icon="question"
+                    style={{ width: '28px', height: '28px', minWidth: '28px' }}
+                    onClick={goToHelp}
+                  />
+                </PopoverWelcome>
+              </Tooltip>
+            )}
           </div>
         </div>
       </PaperHeader>
-      <PaperContainer ref={paperContainerRef}>
-        {selected.text && (
+      <PaperContainer ref={paperContainerRef} className={edit ? 'edit' : ''}>
+        {saveStatus.isSaving ? (
+          <LoadContainer>
+            <LoadBox absolute={true} />
+          </LoadContainer>
+        ) : (
           <>
-            <Paper
-              t={t}
-              dangerouslySetInnerHTML={{
-                __html: featureService.hasPrimaryCare()
-                  ? selected.text.trim().replaceAll('\n', '<br/>')
-                  : selected.text.trim().replaceAll('  ', '<br/>')
-              }}
-              onMouseUp={e => selectionChange(e)}
-              onClick={e => removeAnnotation(e)}
-              className={`${isMenuVisible ? 'disabled' : ''} ${
-                annotationManifest.isEnabled(security)
-                  ? 'annotation-enabled'
-                  : 'annotation-disabled'
-              }`}
-            />
-            {menu}
+            {edit ? (
+              <Paper t={t}>
+                <Edit clinicalNote={selected} update={update} setEdit={setEdit} />
+              </Paper>
+            ) : (
+              <>
+                {selected.text && (
+                  <>
+                    <Paper
+                      t={t}
+                      dangerouslySetInnerHTML={{
+                        __html: featureService.hasPrimaryCare()
+                          ? selected.text.trim().replaceAll('\n', '<br/>')
+                          : selected.text.trim().replaceAll('  ', '<br/>')
+                      }}
+                      onMouseUp={e => selectionChange(e)}
+                      onClick={e => removeAnnotation(e)}
+                      className={`${isMenuVisible ? 'disabled' : ''} ${
+                        annotationManifest.isEnabled(security)
+                          ? 'annotation-enabled'
+                          : 'annotation-disabled'
+                      }`}
+                    />
+                    {menu}
+                  </>
+                )}
+                {!selected.text && (
+                  <CustomFormView template={selected.template} values={selected.form} />
+                )}
+              </>
+            )}
           </>
         )}
-        {!selected.text && <CustomFormView template={selected.template} values={selected.form} />}
       </PaperContainer>
-      <Legend>* Nomes presentes na evolução são substituídos por três asteriscos (***).</Legend>
-      {security.hasNoHarmCare() && (
-        <Legend>
-          * As anotações são geradas pela <strong>NoHarm Care</strong>.{' '}
-          <a href={helpLink} target="_blank" rel="noopener noreferrer" title="Saiba como ajudar">
-            Você pode ajudar a treiná-la
-          </a>
-          .
-        </Legend>
+      {!featureService.hasPrimaryCare() && (
+        <>
+          <Legend>* Nomes presentes na evolução são substituídos por três asteriscos (***).</Legend>
+          {security.hasNoHarmCare() && (
+            <Legend>
+              * As anotações são geradas pela <strong>NoHarm Care</strong>.{' '}
+              <a
+                href={helpLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Saiba como ajudar"
+              >
+                Você pode ajudar a treiná-la
+              </a>
+              .
+            </Legend>
+          )}
+        </>
       )}
     </>
   );

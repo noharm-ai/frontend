@@ -3,7 +3,7 @@ import isEmpty from 'lodash.isempty';
 import { useTranslation } from 'react-i18next';
 
 import Empty from '@components/Empty';
-import LoadBox from '@components/LoadBox';
+import LoadBox, { LoadContainer } from '@components/LoadBox';
 import { Row, Col } from '@components/Grid';
 import Tabs from '@components/Tabs';
 import Tag from '@components/Tag';
@@ -106,7 +106,13 @@ export default function Screening({
         <PageHeader match={match} />
         <Row type="flex" gutter={24}>
           <Col span={24} md={24}>
-            {isFetching ? <LoadBox /> : <Patient interventionCount={listCount.interventions} />}
+            {isFetching ? (
+              <LoadContainer>
+                <LoadBox absolute={true} />
+              </LoadContainer>
+            ) : (
+              <Patient interventionCount={listCount.interventions} />
+            )}
           </Col>
         </Row>
       </BoxWrapper>

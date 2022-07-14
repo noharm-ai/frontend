@@ -380,14 +380,10 @@ const getClinicalNotes = (bearerToken, admissionNumber) =>
 const createClinicalNote = (bearerToken, params = {}) =>
   instance.post(`${endpoints.clinicalNotes}`, params, setHeaders(bearerToken));
 
-const updateClinicalNote = (bearerToken, id, text) => {
-  return instance.post(
-    `${endpoints.clinicalNotes}/${id}`,
-    { text },
-    {
-      ...setHeaders(bearerToken)
-    }
-  );
+const updateClinicalNote = (bearerToken, id, params) => {
+  return instance.post(`${endpoints.clinicalNotes}/${id}`, params, {
+    ...setHeaders(bearerToken)
+  });
 };
 
 /**
