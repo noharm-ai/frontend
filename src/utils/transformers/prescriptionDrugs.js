@@ -75,6 +75,8 @@ export const isWhitelistedChild = (whitelist, groupSolution, idPrescriptionDrug)
 };
 
 export const filterWhitelistedChildren = list => {
+  if (list && list.length === 1) return list;
+
   return list.filter(i => {
     if (isWhitelistedChild(i.whiteList, i.grp_solution, i.idPrescriptionDrug)) {
       console.debug('removed', i);
