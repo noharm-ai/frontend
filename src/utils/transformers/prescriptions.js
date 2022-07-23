@@ -6,7 +6,8 @@ import {
   groupSolutions,
   groupProcedures,
   filterWhitelistedChildren,
-  getWhitelistedChildren
+  getWhitelistedChildren,
+  groupCPOE
 } from '@utils/transformers/prescriptionDrugs';
 import { stringify, formatAge } from './utils';
 import { toDataSource } from '@utils';
@@ -153,7 +154,7 @@ export const transformPrescription = ({
 }) => {
   const prescriptionList = prescription
     ? groupByPrescription(
-        filterWhitelistedChildren(prescription.map(transformDrug)),
+        filterWhitelistedChildren(groupCPOE(prescription.map(transformDrug))),
         'prescriptions',
         null,
         null,
@@ -164,6 +165,7 @@ export const transformPrescription = ({
         }
       )
     : [];
+
   const solutionList = solution
     ? groupByPrescription(solution.map(transformDrug), 'solutions', groupSolutions, infusion)
     : [];

@@ -50,6 +50,22 @@ export const rowClassName = record => {
     classes.push('danger');
   }
 
+  if (record.startRow) {
+    classes.push('start-row');
+  }
+
+  if (record.endRow) {
+    classes.push('end-row');
+  }
+
+  if (record.groupRow) {
+    classes.push('group-row');
+  }
+
+  if (record.groupRowLast) {
+    classes.push('group-row-last');
+  }
+
   return classes.join(' ');
 };
 
