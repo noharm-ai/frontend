@@ -195,10 +195,13 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
       ),
       className: `gtm-th-tempo-int ${oddClass(index++)}`,
       key: 'lengthStay',
-      render: (entry, { lengthStay, dischargeFormated }) => {
+      render: (entry, { lengthStay, dischargeFormated, dischargeReason }) => {
         if (dischargeFormated) {
           return (
-            <Tooltip title={`Paciente com alta em ${dischargeFormated}`} placement="top">
+            <Tooltip
+              title={`Paciente com ${dischargeReason || 'alta'} em ${dischargeFormated}`}
+              placement="top"
+            >
               {lengthStay} <InfoIcon />
             </Tooltip>
           );
