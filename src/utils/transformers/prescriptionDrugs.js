@@ -24,6 +24,55 @@ const groupPrescriptionDrugs = (list, createTotalRowFunction) => {
   return items;
 };
 
+export const groupCPOE = list => {
+  if (!list || list.length < 1) return list;
+  if (!list[0].cpoe_group) return list;
+
+  let items = [];
+  const cpoelist = [...list];
+  const cpoeGroups = {};
+  const order = new Set();
+
+  for (let i = 0; i < cpoelist.length; i++) {
+    const currentGroup = cpoelist[i].cpoe_group;
+    order.add(currentGroup);
+    cpoeGroups[currentGroup] = cpoeGroups[currentGroup]
+      ? [...cpoeGroups[currentGroup], cpoelist[i]]
+      : [cpoelist[i]];
+  }
+
+  order.forEach(key => {
+    if (cpoeGroups[key].length > 1) {
+      const emptyRowStart = {
+        key: `${key}expandStart`,
+        idPrescription: cpoeGroups[key][0].idPrescription,
+        idPrescriptionDrug: `${cpoeGroups[key][0].idPrescriptionDrug}Start`,
+        source: 'Medicamentos',
+        dividerRow: true,
+        emptyRow: true,
+        startRow: true
+      };
+      const emptyRowEnd = {
+        key: `${key}expandEnd`,
+        idPrescription: cpoeGroups[key][0].idPrescription,
+        idPrescriptionDrug: `${cpoeGroups[key][0].idPrescriptionDrug}End`,
+        source: 'Medicamentos',
+        dividerRow: true,
+        emptyRow: true,
+        endRow: true
+      };
+      const groupRows = cpoeGroups[key].map(g => ({ ...g, groupRow: true }));
+      groupRows[groupRows.length - 1].groupRowLast = true;
+
+      items = [...items, emptyRowStart, ...groupRows, emptyRowEnd];
+    } else {
+      items = [...items, ...cpoeGroups[key]];
+    }
+  });
+
+  return items;
+};
+
 export const groupSolutions = (list, infusionList) => {
   if (list.length === 0) return list;
 
@@ -75,6 +124,8 @@ export const isWhitelistedChild = (whitelist, groupSolution, idPrescriptionDrug)
 };
 
 export const filterWhitelistedChildren = list => {
+  if (list && list.length === 1) return list;
+
   return list.filter(i => {
     if (isWhitelistedChild(i.whiteList, i.grp_solution, i.idPrescriptionDrug)) {
       console.debug('removed', i);

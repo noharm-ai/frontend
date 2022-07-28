@@ -120,7 +120,7 @@ const Table = styled(AntTable)`
   }
 
   .suspended {
-    td,
+    td:not(:nth-child(1)),
     a {
       opacity: 0.45;
       text-decoration: line-through;
@@ -128,7 +128,7 @@ const Table = styled(AntTable)`
   }
 
   .checked {
-    td {
+    td:not(:nth-child(1)) {
       opacity: 0.45;
     }
   }
@@ -171,6 +171,65 @@ const Table = styled(AntTable)`
   }
 
   .divider-row {
+    .ant-table-row-expand-icon {
+      display: none;
+    }
+  }
+
+  .start-row {
+    td {
+      padding: 0 !important;
+      border-bottom: 0;
+
+      &:nth-child(1) {
+        background: rgba(16, 142, 233, 0.5);
+      }
+
+      .flag {
+        height: 3px;
+      }
+
+      span {
+        margin-left: 0 !important;
+      }
+    }
+
+    .ant-table-row-expand-icon {
+      display: none;
+    }
+  }
+
+  .group-row {
+    td {
+      &:nth-child(1) {
+        border-left: 3px solid rgba(16, 142, 233, 0.5);
+      }
+    }
+
+    &.group-row-last {
+      td {
+        border-bottom: 0;
+      }
+    }
+  }
+
+  .end-row {
+    td {
+      padding: 0 !important;
+
+      &:nth-child(1) {
+        background: rgba(16, 142, 233, 0.5);
+      }
+
+      .flag {
+        height: 3px;
+      }
+
+      span {
+        margin-left: 0 !important;
+      }
+    }
+
     .ant-table-row-expand-icon {
       display: none;
     }
