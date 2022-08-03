@@ -3,30 +3,30 @@ import isEmpty from 'lodash.isempty';
 const groupPrescriptionDrugs = (list, createTotalRowFunction) => {
   const items = [];
   let currentGroup = list[0].grp_solution;
-  let currentCPOEPrescription = list[0].cpoe;
+  let currentInfusionKey = list[0].infusionKey;
   let currentKey = list[0].key;
   list.forEach((item, index) => {
     if (item.grp_solution !== currentGroup) {
-      items.push(createTotalRowFunction(item, currentGroup, currentKey, currentCPOEPrescription));
+      items.push(createTotalRowFunction(item, currentGroup, currentKey, currentInfusionKey));
       currentGroup = item.grp_solution;
     }
 
     currentKey = item.key;
-    currentCPOEPrescription = item.cpoe;
+    currentInfusionKey = item.infusionKey;
 
     items.push(item);
 
     if (index === list.length - 1) {
-      items.push(createTotalRowFunction(item, item.grp_solution, item.key, item.cpoe));
+      items.push(createTotalRowFunction(item, item.grp_solution, item.key, item.infusionKey));
     }
   });
 
   return items;
 };
 
-export const groupCPOE = list => {
+export const groupComponents = list => {
   if (!list || list.length < 1) return list;
-  if (!list[0].cpoe_group) return list;
+  if (!list[0].grp_solution) return list;
 
   let items = [];
   const cpoelist = [...list];
@@ -34,7 +34,7 @@ export const groupCPOE = list => {
   const order = new Set();
 
   for (let i = 0; i < cpoelist.length; i++) {
-    const currentGroup = cpoelist[i].cpoe_group;
+    const currentGroup = cpoelist[i].grp_solution;
     order.add(currentGroup);
     cpoeGroups[currentGroup] = cpoeGroups[currentGroup]
       ? [...cpoeGroups[currentGroup], cpoelist[i]]
@@ -76,14 +76,14 @@ export const groupCPOE = list => {
 export const groupSolutions = (list, infusionList) => {
   if (list.length === 0) return list;
 
-  const createTotalRow = (item, group, key, cpoePrescription) => {
+  const createTotalRow = (item, group, key, infusionKey) => {
     return {
       key: `${key}expand`,
       total: true,
       source: 'Soluções',
       handleRowExpand: item.handleRowExpand,
       weight: item.weight,
-      infusion: infusionList[cpoePrescription || item.idPrescription][group],
+      infusion: infusionList[infusionKey],
       emptyRow: true,
       cpoe: item.cpoe,
       group: group
