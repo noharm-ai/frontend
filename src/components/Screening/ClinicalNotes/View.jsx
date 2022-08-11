@@ -9,6 +9,7 @@ import LoadBox, { LoadContainer } from '@components/LoadBox';
 import Button from '@components/Button';
 import Tooltip from '@components/Tooltip';
 import { PopoverWelcome } from '@components/Popover';
+import Empty from '@components/Empty';
 import CustomFormView from '@components/Forms/CustomForm/View';
 import notification from '@components/notification';
 
@@ -300,8 +301,14 @@ export default function View({
                     {menu}
                   </>
                 )}
-                {!selected.text && (
+                {!selected.text && selected.template && (
                   <CustomFormView template={selected.template} values={selected.form} />
+                )}
+                {!selected.text && !selected.template && (
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description="Nenhum registro encontrado."
+                  />
                 )}
               </>
             )}
