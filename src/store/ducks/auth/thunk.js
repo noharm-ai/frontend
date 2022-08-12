@@ -1,69 +1,73 @@
-import isEmpty from 'lodash.isempty';
+import isEmpty from "lodash.isempty";
 
-import api from '@services/api';
-import appInfo from '@utils/appInfo';
-import { errorHandler } from '@utils';
-import { Creators as UserCreators } from '../user';
-import { Creators as SessionCreators } from '../session';
-import { Creators as AuthCreators } from './index';
-import { Creators as AppCreators } from '../app';
+import api from "services/api";
+import appInfo from "utils/appInfo";
+import { errorHandler } from "utils";
+import { Creators as UserCreators } from "../user";
+import { Creators as SessionCreators } from "../session";
+import { Creators as AuthCreators } from "./index";
+import { Creators as AppCreators } from "../app";
 
 const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { authSetErrorIdentify, authSetIdentify, authDelIdentify } = AuthCreators;
 const { appSetConfig, appSetCurrentVersion, appSetNotification } = AppCreators;
 
-export const loginThunk = ({ keepMeLogged, ...userIndentify }) => async dispatch => {
-  dispatch(userSetLoginStart());
+export const loginThunk =
+  ({ keepMeLogged, ...userIndentify }) =>
+  async (dispatch) => {
+    dispatch(userSetLoginStart());
 
-  const { data, error } = await api.authenticate(userIndentify).catch(errorHandler);
+    const { data, error } = await api
+      .authenticate(userIndentify)
+      .catch(errorHandler);
 
-  if (!isEmpty(error)) {
-    dispatch(userLogout());
-    dispatch(authSetErrorIdentify(error, error.message));
-    return;
-  }
+    if (!isEmpty(error)) {
+      dispatch(userLogout());
+      dispatch(authSetErrorIdentify(error, error.message));
+      return;
+    }
 
-  const {
-    userId,
-    userName,
-    email,
-    schema,
-    roles,
-    features,
-    userFeatures,
-    nameUrl,
-    nameHeaders,
-    apiKey,
-    notify,
-    proxy,
-    ...identify
-  } = data;
-  const user = {
-    userId,
-    userName,
-    email,
-    schema,
-    roles,
-    nameUrl,
-    proxy,
-    nameHeaders,
-    apiKey
+    const {
+      userId,
+      userName,
+      email,
+      schema,
+      roles,
+      features,
+      userFeatures,
+      nameUrl,
+      nameHeaders,
+      apiKey,
+      notify,
+      proxy,
+      ...identify
+    } = data;
+    const user = {
+      userId,
+      userName,
+      email,
+      schema,
+      roles,
+      nameUrl,
+      proxy,
+      nameHeaders,
+      apiKey,
+    };
+
+    user.features = [...features, ...userFeatures];
+    appInfo.apiKey = apiKey;
+
+    dispatch(authSetIdentify(identify));
+    dispatch(sessionSetFirstAccess());
+    dispatch(appSetCurrentVersion(appInfo.version));
+    dispatch(userSetCurrentUser(user, keepMeLogged));
+    dispatch(appSetConfig({ nameUrl, apiKey, nameHeaders, proxy }));
+    dispatch(appSetNotification(notify));
   };
 
-  user.features = [...features, ...userFeatures];
-  appInfo.apiKey = apiKey;
-
-  dispatch(authSetIdentify(identify));
-  dispatch(sessionSetFirstAccess());
-  dispatch(appSetCurrentVersion(appInfo.version));
-  dispatch(userSetCurrentUser(user, keepMeLogged));
-  dispatch(appSetConfig({ nameUrl, apiKey, nameHeaders, proxy }));
-  dispatch(appSetNotification(notify));
-};
-
 export const logoutThunk = () => {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(userLogout());
     dispatch(authDelIdentify());
   };

@@ -1,8 +1,8 @@
-import withLayout from '@lib/withLayout';
-import Conciliation from '@containers/Conciliation';
+import withLayout from "lib/withLayout";
+import Conciliation from "containers/Conciliation";
 
 const layoutProps = {
-  pageTitle: 'Conciliação'
+  pageTitle: "Conciliação",
 };
 
 export default withLayout(Conciliation, layoutProps);

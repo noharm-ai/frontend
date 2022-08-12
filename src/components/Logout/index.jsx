@@ -1,12 +1,12 @@
-import 'styled-components/macro';
-import React, { useState, useEffect } from 'react';
+import "styled-components/macro";
+import React, { useState, useEffect } from "react";
 
-import appInfo from '@utils/appInfo';
-import { Container, Row, Col } from '@components/Grid';
+import appInfo from "utils/appInfo";
+import { Container, Row, Col } from "components/Grid";
 
-import { Wrapper, Box, ForgotPass } from '../Login/Login.style';
-import { Feedback, Stars, Brand } from './Logout.style';
-import fortuneCookies from './fortuneCookies';
+import { Wrapper, Box, ForgotPass } from "../Login/Login.style";
+import { Feedback, Stars, Brand } from "./Logout.style";
+import fortuneCookies from "./fortuneCookies";
 
 export default function Logout({ doLogout }) {
   const [stars, setStars] = useState(true);
@@ -15,7 +15,7 @@ export default function Logout({ doLogout }) {
     doLogout();
   }, [doLogout]);
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     event.preventDefault();
     setStars(false);
   };
@@ -83,7 +83,7 @@ export default function Logout({ doLogout }) {
         Agradecemos o seu feedback!
         <div className="fortune">{fortuneCookie}</div>
       </Feedback>
-      <div style={{ marginTop: '10px', textAlign: 'center' }}>
+      <div style={{ marginTop: "10px", textAlign: "center" }}>
         <ForgotPass href="/login">Voltar para o login</ForgotPass>
       </div>
     </>

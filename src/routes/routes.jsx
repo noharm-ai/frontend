@@ -1,243 +1,183 @@
 /**
  * Auth verification
  */
-import withAuth from '@lib/withAuth';
-import chooseJourney from '@lib/chooseJourney';
+import WithAuth from "lib/withAuth";
+import chooseJourney from "lib/chooseJourney";
 
 /**
  * Pages
  */
-import Login from '@pages/Login';
-import Logout from '@pages/Logout';
-import ScreeningList from '@pages/ScreeningList';
-import Screening from '@pages/Screening';
-import Segments from '@pages/Segments';
-import References from '@pages/References';
-import Reports from '@pages/Reports';
-import ViewReport from '@pages/Reports/ViewReport';
-import InterventionList from '@pages/InterventionList';
-import KnowledgeBase from '@pages/KnowledgeBase';
-import KnowledgeBaseArticle from '@pages/KnowledgeBase/Article';
-import UserConfig from '@pages/UserConfig';
-import Password from '@pages/Password';
-import Conciliation from '@pages/Conciliation';
-import UserAdmin from '@pages/UserAdmin';
-import PatientList from '@pages/PatientList';
+import Login from "pages/Login";
+import Logout from "pages/Logout";
+import ScreeningList from "pages/ScreeningList";
+import Screening from "pages/Screening";
+import Segments from "pages/Segments";
+import References from "pages/References";
+import Reports from "pages/Reports";
+import ViewReport from "pages/Reports/ViewReport";
+import InterventionList from "pages/InterventionList";
+// import UserConfig from "pages/UserConfig";
+// import Password from "pages/Password";
+// import Conciliation from "pages/Conciliation";
+// import UserAdmin from "pages/UserAdmin";
+import PatientList from "pages/PatientList";
 
 const routes = [
   {
     exact: true,
-    path: '/logout',
-    component: withAuth({
-      component: Logout,
-      isLogoutPage: true
-    })
+    path: "/logout",
+    element: <WithAuth component={Logout} isLogoutPage={true} />,
   },
   {
     exact: true,
-    path: '/login',
-    component: withAuth({
-      component: Login,
-      isLoginPage: true
-    })
+    path: "/login",
+    element: <WithAuth component={Login} isLoginPage={true} />,
+  },
+  // {
+  //   exact: true,
+  //   path: "/reset/:token",
+  //   element: withAuth({
+  //     component: Password,
+  //     isLogoutPage: true,
+  //   }),
+  // },
+  {
+    exact: true,
+    path: "/login/:language",
+    element: <WithAuth component={Login} isLoginPage={true} />,
   },
   {
     exact: true,
-    path: '/reset/:token',
-    component: withAuth({
-      component: Password,
-      isLogoutPage: true
-    })
+    path: "/",
+    element: <WithAuth component={chooseJourney()} />,
   },
   {
     exact: true,
-    path: '/login/:language',
-    component: withAuth({
-      component: Login,
-      isLoginPage: true
-    })
+    path: "/priorizacao/prescricoes",
+    element: (
+      <WithAuth component={ScreeningList} prioritizationType={"prescription"} />
+    ),
   },
   {
     exact: true,
-    path: '/',
-    component: withAuth({
-      component: chooseJourney()
-    })
+    path: "/priorizacao/pacientes",
+    element: (
+      <WithAuth component={ScreeningList} prioritizationType={"patient"} />
+    ),
   },
   {
     exact: true,
-    path: '/priorizacao/prescricoes',
-    component: withAuth({
-      component: ScreeningList,
-      prioritizationType: 'prescription'
-    })
+    path: "/priorizacao/conciliacoes",
+    element: (
+      <WithAuth component={ScreeningList} prioritizationType={"conciliation"} />
+    ),
   },
   {
     exact: true,
-    path: '/priorizacao/pacientes',
-    component: withAuth({
-      component: ScreeningList,
-      prioritizationType: 'patient'
-    })
+    path: "/prescricao/:slug",
+    element: <WithAuth component={Screening} />,
+  },
+  // {
+  //   exact: true,
+  //   path: "/conciliacao/:id",
+  //   element: <WithAuth component={Conciliation} />
+  // },
+  {
+    exact: true,
+    path: "/segmentos",
+    element: <WithAuth component={Segments} />,
   },
   {
     exact: true,
-    path: '/priorizacao/conciliacoes',
-    component: withAuth({
-      component: ScreeningList,
-      prioritizationType: 'conciliation'
-    })
+    path: "/exames",
+    element: <WithAuth component={Segments} />,
   },
   {
     exact: true,
-    path: '/prescricao/:slug',
-    component: withAuth({
-      component: Screening
-    })
+    path: "/segmentos/:idSegment/:slug",
+    element: <WithAuth component={Segments} />,
   },
   {
     exact: true,
-    path: '/conciliacao/:id',
-    component: withAuth({
-      component: Conciliation
-    })
+    path: "/exames/:idSegment/:slug",
+    element: <WithAuth component={Segments} />,
   },
   {
     exact: true,
-    path: '/segmentos',
-    component: withAuth({
-      component: Segments
-    })
+    path: "/medicamentos",
+    element: <WithAuth component={References} />,
   },
   {
     exact: true,
-    path: '/exames',
-    component: withAuth({
-      component: Segments
-    })
+    path: "/medicamentos/:idSegment",
+    element: <WithAuth component={References} />,
   },
   {
     exact: true,
-    path: '/segmentos/:idSegment/:slug',
-    component: withAuth({
-      component: Segments
-    })
+    path: "/medicamentos/:idSegment/:idDrug/:slug",
+    element: <WithAuth component={References} />,
   },
   {
     exact: true,
-    path: '/exames/:idSegment/:slug',
-    component: withAuth({
-      component: Segments
-    })
+    path: "/medicamentos/:idSegment/:idDrug/:slug/:dose/:frequency",
+    element: <WithAuth component={References} />,
   },
   {
     exact: true,
-    path: '/medicamentos',
-    component: withAuth({
-      component: References
-    })
+    path: "/relatorios",
+    element: <WithAuth component={Reports} />,
   },
   {
     exact: true,
-    path: '/medicamentos/:idSegment',
-    component: withAuth({
-      component: References
-    })
+    path: "/relatorios/visualizar",
+    element: <WithAuth component={ViewReport} />,
   },
   {
     exact: true,
-    path: '/medicamentos/:idSegment/:idDrug/:slug',
-    component: withAuth({
-      component: References
-    })
+    path: "/intervencoes",
+    element: <WithAuth component={InterventionList} />,
+  },
+
+  // {
+  //   exact: true,
+  //   path: "/configuracoes/usuario",
+  //   element: withAuth({
+  //     component: UserConfig,
+  //   }),
+  // },
+  // {
+  //   exact: true,
+  //   path: "/configuracoes/administracao",
+  //   element: withAuth({
+  //     component: UserAdmin,
+  //   }),
+  // },
+  {
+    exact: true,
+    path: "/priorizacao/pacientes/:startDate",
+    element: (
+      <WithAuth component={ScreeningList} prioritizationType={"patient"} />
+    ),
   },
   {
     exact: true,
-    path: '/medicamentos/:idSegment/:idDrug/:slug/:dose/:frequency',
-    component: withAuth({
-      component: References
-    })
+    path: "/priorizacao/prescricoes/:startDate",
+    element: (
+      <WithAuth component={ScreeningList} prioritizationType={"prescription"} />
+    ),
   },
   {
     exact: true,
-    path: '/relatorios',
-    component: withAuth({
-      component: Reports
-    })
+    path: "/priorizacao/conciliacoes/:startDate",
+    element: (
+      <WithAuth component={ScreeningList} prioritizationType={"conciliation"} />
+    ),
   },
   {
     exact: true,
-    path: '/relatorios/visualizar',
-    component: withAuth({
-      component: ViewReport
-    })
+    path: "/pacientes",
+    element: <WithAuth component={PatientList} />,
   },
-  {
-    exact: true,
-    path: '/intervencoes',
-    component: withAuth({
-      component: InterventionList
-    })
-  },
-  {
-    exact: true,
-    path: '/base-de-conhecimento',
-    component: withAuth({
-      component: KnowledgeBase
-    })
-  },
-  {
-    exact: true,
-    path: '/base-de-conhecimento/:uid',
-    component: withAuth({
-      component: KnowledgeBaseArticle
-    })
-  },
-  {
-    exact: true,
-    path: '/configuracoes/usuario',
-    component: withAuth({
-      component: UserConfig
-    })
-  },
-  {
-    exact: true,
-    path: '/configuracoes/administracao',
-    component: withAuth({
-      component: UserAdmin
-    })
-  },
-  {
-    exact: true,
-    path: '/priorizacao/pacientes/:startDate',
-    component: withAuth({
-      component: ScreeningList,
-      prioritizationType: 'patient'
-    })
-  },
-  {
-    exact: true,
-    path: '/priorizacao/prescricoes/:startDate',
-    component: withAuth({
-      component: ScreeningList,
-      prioritizationType: 'prescription'
-    })
-  },
-  {
-    exact: true,
-    path: '/priorizacao/conciliacoes/:startDate',
-    component: withAuth({
-      component: ScreeningList,
-      prioritizationType: 'conciliation'
-    })
-  },
-  {
-    exact: true,
-    path: '/pacientes',
-    component: withAuth({
-      component: PatientList
-    })
-  }
 ];
 
 export default routes;

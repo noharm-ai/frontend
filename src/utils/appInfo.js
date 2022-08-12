@@ -1,5 +1,5 @@
-const appName = 'NoHarm.ai';
-const version = 'v1.61-beta';
+const appName = "NoHarm.ai";
+const version = "v2.00-beta";
 const currentYear = new Date().getFullYear();
 const copyright = `${appName} ${currentYear} ${version}`;
 
@@ -8,5 +8,5 @@ export default {
   version,
   currentYear,
   copyright,
-  apiKey: process.env.REACT_APP_API_KEY || null
+  apiKey: process.env.REACT_APP_API_KEY || null,
 };

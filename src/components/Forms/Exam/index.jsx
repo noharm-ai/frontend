@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from "react";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
 
-import { Row } from '@components/Grid';
-import notification from '@components/notification';
-import Heading from '@components/Heading';
-import DefaultModal from '@components/Modal';
+import { Row } from "components/Grid";
+import notification from "components/notification";
+import Heading from "components/Heading";
+import DefaultModal from "components/Modal";
 
-import Base from './Base';
-import { FormContainer } from '../Form.style';
+import Base from "./Base";
+import { FormContainer } from "../Form.style";
 
 const saveMessage = {
-  message: 'Uhu! Exame salvo com sucesso! :)'
+  message: "Uhu! Exame salvo com sucesso! :)",
 };
 const validationSchema = Yup.object().shape({
   type: Yup.string().required(),
@@ -20,7 +20,7 @@ const validationSchema = Yup.object().shape({
   initials: Yup.string().required(),
   ref: Yup.string().required(),
   min: Yup.number().required(),
-  max: Yup.number().required()
+  max: Yup.number().required(),
 });
 
 export default function Exam({
@@ -37,7 +37,7 @@ export default function Exam({
   const { order, ...data } = item;
 
   const initialValues = {
-    ...data
+    ...data,
   };
 
   useEffect(() => {
@@ -50,8 +50,8 @@ export default function Exam({
 
     if (error) {
       notification.error({
-        message: t('error.title'),
-        description: t('error.description')
+        message: t("error.title"),
+        description: t("error.description"),
       });
     }
   }, [success, error, afterSave, t]);
@@ -76,11 +76,11 @@ export default function Exam({
           onOk={handleSubmit}
           confirmLoading={isSaving}
           okButtonProps={{
-            disabled: isSaving
+            disabled: isSaving,
           }}
           cancelButtonProps={{
             disabled: isSaving,
-            className: 'gtm-bt-cancel-edit-exam'
+            className: "gtm-bt-cancel-edit-exam",
           }}
         >
           <header>
@@ -102,8 +102,8 @@ export default function Exam({
 Exam.defaultProps = {
   afterSave: () => {},
   initialValues: {
-    type: '',
-    name: '',
-    active: true
-  }
+    type: "",
+    name: "",
+    active: true,
+  },
 };

@@ -1,12 +1,12 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import security from '@services/security';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import security from "services/security";
 
 import {
   fetchDrugsListThunk,
   fetchDrugsUnitsListThunk,
-  saveUnitCoeffiecientThunk
-} from '@store/ducks/drugs/thunk';
+  saveUnitCoeffiecientThunk,
+} from "store/ducks/drugs/thunk";
 import {
   fetchOutliersListThunk,
   saveOutlierThunk,
@@ -16,17 +16,17 @@ import {
   resetGenerateDrugOutlierThunk,
   selectOutlierRelationThunk,
   saveOutlierRelationThunk,
-  updateDrugDataThunk
-} from '@store/ducks/outliers/thunk';
-import { fetchSegmentsListThunk } from '@store/ducks/segments/thunk';
-import References from '@components/References';
+  updateDrugDataThunk,
+} from "store/ducks/outliers/thunk";
+import { fetchSegmentsListThunk } from "store/ducks/segments/thunk";
+import References from "components/References";
 
 const mapStateToProps = ({ drugs, segments, outliers, user }) => ({
   drugs,
   segments: {
     error: segments.error,
     list: segments.list,
-    isFetching: segments.isFetching
+    isFetching: segments.isFetching,
   },
   outliers: {
     error: outliers.error,
@@ -38,11 +38,11 @@ const mapStateToProps = ({ drugs, segments, outliers, user }) => ({
     generateStatus: outliers.generateDrugOutlier,
     drugData: outliers.drugData,
     saveRelation: outliers.saveRelation,
-    relationStatus: outliers.relation
+    relationStatus: outliers.relation,
   },
-  security: security(user.account.roles)
+  security: security(user.account.roles),
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       selectOutlier: selectItemToSaveThunk,
@@ -57,7 +57,7 @@ const mapDispatchToProps = dispatch =>
       fetchReferencesList: fetchReferencesListThunk,
       generateOutlier: generateDrugOutlierThunk,
       generateOutlierReset: resetGenerateDrugOutlierThunk,
-      updateDrugData: updateDrugDataThunk
+      updateDrugData: updateDrugDataThunk,
     },
     dispatch
   );

@@ -1,11 +1,11 @@
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
-import Menu from '@components/Menu';
-import ClinicalNotesIndicator from './ClinicalNotesIndicator';
+import Menu from "components/Menu";
+import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
 
-const createIndicatorClasses = t => {
+const createIndicatorClasses = (t) => {
   const classList = ClinicalNotesIndicator.list(t).map(
-    i => `
+    (i) => `
     &.annotation-${i.value} {
       border-color: ${i.color};
       background: ${i.backgroundColor};
@@ -17,13 +17,13 @@ const createIndicatorClasses = t => {
   `
   );
 
-  return classList.join(' ');
+  return classList.join(" ");
 };
 
-export const createIndicatorTagClasses = t => {
-  const translate = t ? t : () => '';
+export const createIndicatorTagClasses = (t) => {
+  const translate = t ? t : () => "";
   const classList = ClinicalNotesIndicator.list(translate).map(
-    i => `
+    (i) => `
     .${i.key} {
       border-width: 1px;
       border-color: ${i.color};
@@ -40,13 +40,13 @@ export const createIndicatorTagClasses = t => {
   `
   );
 
-  return classList.join(' ');
+  return classList.join(" ");
 };
 
-export const createIndicatorCardClasses = t => {
-  const translate = t ? t : () => '';
+export const createIndicatorCardClasses = (t) => {
+  const translate = t ? t : () => "";
   const classList = ClinicalNotesIndicator.list(translate).map(
-    i => `
+    (i) => `
     &.${i.key} {
       border-color: ${i.color};
       background: ${i.backgroundColor};
@@ -56,7 +56,7 @@ export const createIndicatorCardClasses = t => {
   `
   );
 
-  return classList.join(' ');
+  return classList.join(" ");
 };
 
 export const MenuPopup = styled(Menu)`
@@ -209,7 +209,7 @@ export const Paper = styled.div`
         font-weight: 500;
       }
 
-      ${props => createIndicatorClasses(props.t)}
+      ${(props) => createIndicatorClasses(props.t)}
     }
   }
 
@@ -301,7 +301,7 @@ export const List = styled.div`
           margin-bottom: 2px;
         }
 
-        ${props => createIndicatorTagClasses(props.t)}
+        ${(props) => createIndicatorTagClasses(props.t)}
       }
     }
 

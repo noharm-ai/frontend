@@ -1,5 +1,5 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 import {
   fetchListThunk,
@@ -9,10 +9,10 @@ import {
   updateInterventionListDataThunk,
   clearSavedInterventionStatusThunk,
   fetchFuturePrescriptionThunk,
-  fetchReasonsListThunk
-} from '@store/ducks/intervention/thunk';
+  fetchReasonsListThunk,
+} from "store/ducks/intervention/thunk";
 
-import InterventionList from '@components/InterventionList';
+import InterventionList from "components/InterventionList";
 
 const mapStateToProps = ({ intervention }) => ({
   isFetching: intervention.isFetching,
@@ -20,9 +20,9 @@ const mapStateToProps = ({ intervention }) => ({
   error: intervention.error,
   checkData: intervention.check,
   futurePrescription: intervention.futurePrescription,
-  reasons: intervention.reasons.list
+  reasons: intervention.reasons.list,
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchList: fetchListThunk,
@@ -32,7 +32,7 @@ const mapDispatchToProps = dispatch =>
       save: saveInterventionThunk,
       reset: clearSavedInterventionStatusThunk,
       updateList: updateInterventionListDataThunk,
-      fetchReasonsList: fetchReasonsListThunk
+      fetchReasonsList: fetchReasonsListThunk,
     },
     dispatch
   );

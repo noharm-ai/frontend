@@ -1,9 +1,9 @@
-import isEmpty from 'lodash.isempty';
+import isEmpty from "lodash.isempty";
 
-import Role from '@models/Role';
+import Role from "models/Role";
 
-const security = roles => {
-  const hasRole = role => {
+const security = (roles) => {
+  const hasRole = (role) => {
     if (isEmpty(roles)) return false;
 
     return roles.indexOf(role) !== -1;
@@ -45,7 +45,7 @@ const security = roles => {
     hasTranscription,
     hasPrescriptionEdit,
     isAdmin,
-    isSupport
+    isSupport,
   };
 };
 

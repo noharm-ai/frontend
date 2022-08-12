@@ -1,8 +1,8 @@
-import isEmpty from 'lodash.isempty';
+import isEmpty from "lodash.isempty";
 
-import api from '@services/api';
-import { errorHandler } from '@utils';
-import { Creators as InterventionCreators } from './index';
+import api from "services/api";
+import { errorHandler } from "utils";
+import { Creators as InterventionCreators } from "./index";
 
 const {
   interventionFetchListStart,
@@ -29,138 +29,152 @@ const {
 
   interventionFetchFuturePrescriptionStart,
   interventionFetchFuturePrescriptionError,
-  interventionFetchFuturePrescriptionSuccess
+  interventionFetchFuturePrescriptionSuccess,
 } = InterventionCreators;
 
-export const fetchListThunk = (params = {}) => async (dispatch, getState) => {
-  dispatch(interventionFetchListStart());
+export const fetchListThunk =
+  (params = {}) =>
+  async (dispatch, getState) => {
+    dispatch(interventionFetchListStart());
 
-  const { access_token } = getState().auth.identify;
-  const {
-    data: { data },
-    error
-  } = await api.getInterventions(access_token, params).catch(errorHandler);
+    const { access_token } = getState().auth.identify;
+    const {
+      data: { data },
+      error,
+    } = await api.getInterventions(access_token, params).catch(errorHandler);
 
-  if (!isEmpty(error)) {
-    dispatch(interventionFetchListError(error));
-    return;
-  }
+    if (!isEmpty(error)) {
+      dispatch(interventionFetchListError(error));
+      return;
+    }
 
-  const list = data;
+    const list = data;
 
-  dispatch(interventionFetchListSuccess(list));
-};
+    dispatch(interventionFetchListSuccess(list));
+  };
 
-export const fetchReasonsListThunk = (params = {}) => async (dispatch, getState) => {
-  if (!isEmpty(getState().intervention.reasons.list)) {
-    return;
-  }
-  dispatch(interventionFetchReasonsListStart());
+export const fetchReasonsListThunk =
+  (params = {}) =>
+  async (dispatch, getState) => {
+    if (!isEmpty(getState().intervention.reasons.list)) {
+      return;
+    }
+    dispatch(interventionFetchReasonsListStart());
 
-  const { access_token } = getState().auth.identify;
-  const {
-    data: { data },
-    error
-  } = await api.getInterventionReasons(access_token, params).catch(errorHandler);
+    const { access_token } = getState().auth.identify;
+    const {
+      data: { data },
+      error,
+    } = await api
+      .getInterventionReasons(access_token, params)
+      .catch(errorHandler);
 
-  if (!isEmpty(error)) {
-    dispatch(interventionFetchReasonsListError(error));
-    return;
-  }
+    if (!isEmpty(error)) {
+      dispatch(interventionFetchReasonsListError(error));
+      return;
+    }
 
-  const list = data;
+    const list = data;
 
-  dispatch(interventionFetchReasonsListSuccess(list));
-};
+    dispatch(interventionFetchReasonsListSuccess(list));
+  };
 
-export const selectItemToSaveThunk = item => dispatch => {
+export const selectItemToSaveThunk = (item) => (dispatch) => {
   dispatch(interventionSetSelectedItem(item));
 };
 
-export const updateSelectedItemToSaveInterventionThunk = intervention => dispatch => {
-  dispatch(interventionUpdateSelectedItemIntervention(intervention));
-};
-
-export const saveInterventionThunk = (params = {}) => async (dispatch, getState) => {
-  dispatch(interventionSetSaveStart());
-
-  const { idPrescriptionDrug, admissionNumber } = params;
-  const defaultArgs = {
-    observation: '',
-    idPrescriptionDrug,
-    admissionNumber,
-    idInterventionReason: null
+export const updateSelectedItemToSaveInterventionThunk =
+  (intervention) => (dispatch) => {
+    dispatch(interventionUpdateSelectedItemIntervention(intervention));
   };
 
-  const args = {
-    ...defaultArgs,
-    ...params,
-    status: 's'
+export const saveInterventionThunk =
+  (params = {}) =>
+  async (dispatch, getState) => {
+    dispatch(interventionSetSaveStart());
+
+    const { idPrescriptionDrug, admissionNumber } = params;
+    const defaultArgs = {
+      observation: "",
+      idPrescriptionDrug,
+      admissionNumber,
+      idInterventionReason: null,
+    };
+
+    const args = {
+      ...defaultArgs,
+      ...params,
+      status: "s",
+    };
+
+    const { access_token } = getState().auth.identify;
+    const { status, error } = await api
+      .updateIntervention(access_token, args)
+      .catch(errorHandler);
+
+    if (status !== 200) {
+      dispatch(interventionSetSaveError(error));
+      return;
+    }
+
+    dispatch(interventionSetSaveSuccess());
   };
 
-  const { access_token } = getState().auth.identify;
-  const { status, error } = await api.updateIntervention(access_token, args).catch(errorHandler);
-
-  if (status !== 200) {
-    dispatch(interventionSetSaveError(error));
-    return;
-  }
-
-  dispatch(interventionSetSaveSuccess());
-};
-
-export const clearSavedInterventionStatusThunk = () => dispatch => {
+export const clearSavedInterventionStatusThunk = () => (dispatch) => {
   dispatch(interventionClearSavedStatus());
 };
 
-export const checkInterventionThunk = (id, idPrescription, status) => async (
-  dispatch,
-  getState
-) => {
-  dispatch(interventionCheckStart(id));
+export const checkInterventionThunk =
+  (id, idPrescription, status) => async (dispatch, getState) => {
+    dispatch(interventionCheckStart(id));
 
-  const { access_token } = getState().auth.identify;
-  const params = {
-    idPrescriptionDrug: id,
-    idPrescription,
-    status
+    const { access_token } = getState().auth.identify;
+    const params = {
+      idPrescriptionDrug: id,
+      idPrescription,
+      status,
+    };
+
+    const { data, error } = await api
+      .updateIntervention(access_token, params)
+      .catch(errorHandler);
+
+    if (!isEmpty(error)) {
+      dispatch(interventionCheckError(error));
+      return;
+    }
+
+    const success = {
+      status: data.status,
+      id,
+      idPrescription,
+      newStatus: status,
+    };
+
+    dispatch(interventionCheckSuccess(success));
   };
 
-  const { data, error } = await api.updateIntervention(access_token, params).catch(errorHandler);
-
-  if (!isEmpty(error)) {
-    dispatch(interventionCheckError(error));
-    return;
-  }
-
-  const success = {
-    status: data.status,
-    id,
-    idPrescription,
-    newStatus: status
-  };
-
-  dispatch(interventionCheckSuccess(success));
-};
-
-export const updateInterventionListDataThunk = intervention => dispatch => {
+export const updateInterventionListDataThunk = (intervention) => (dispatch) => {
   dispatch(interventionUpdateList(intervention));
 };
 
-export const fetchFuturePrescriptionThunk = id => async (dispatch, getState) => {
-  dispatch(interventionFetchFuturePrescriptionStart());
+export const fetchFuturePrescriptionThunk =
+  (id) => async (dispatch, getState) => {
+    dispatch(interventionFetchFuturePrescriptionStart());
 
-  const { auth } = getState();
-  const { access_token } = auth.identify;
-  const {
-    data: { data },
-    error
-  } = await api.getPrescriptionDrugPeriod(access_token, id, { future: 1 }).catch(errorHandler);
+    const { auth } = getState();
+    const { access_token } = auth.identify;
+    const {
+      data: { data },
+      error,
+    } = await api
+      .getPrescriptionDrugPeriod(access_token, id, { future: 1 })
+      .catch(errorHandler);
 
-  if (!isEmpty(error)) {
-    dispatch(interventionFetchFuturePrescriptionError(error));
-    return;
-  }
+    if (!isEmpty(error)) {
+      dispatch(interventionFetchFuturePrescriptionError(error));
+      return;
+    }
 
-  dispatch(interventionFetchFuturePrescriptionSuccess(id, data));
-};
+    dispatch(interventionFetchFuturePrescriptionSuccess(id, data));
+  };

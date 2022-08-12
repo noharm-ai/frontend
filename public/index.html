@@ -3,30 +3,46 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="NoHarm.ai - Triagem de Prescrições com Inteligência Artificial - Foco na Segurança dos Pacientes - Prescrições Hospitalares" />
-    <meta name="robots" content="noindex,nofollow">
+    <meta
+      name="description"
+      content="NoHarm.ai - Triagem de Prescrições com Inteligência Artificial - Foco na Segurança dos Pacientes - Prescrições Hospitalares"
+    />
+    <meta name="robots" content="noindex,nofollow" />
     <link rel="apple-touch-icon" href="logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
     <!-- Google Tag Manager -->
     <script>
-      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-MF5HG22');
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-MF5HG22");
     </script>
     <!-- End Google Tag Manager -->
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-209713-24"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-209713-24"
+    ></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-      gtag('config', 'UA-209713-24');
+      gtag("config", "UA-209713-24");
     </script>
     <!-- End Global site tag (gtag.js) - Google Analytics -->
 
@@ -35,10 +51,15 @@
   <body>
     <!-- Google Tag Manager (noscript) -->
     <noscript>
-      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MF5HG22" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-MF5HG22"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe>
     </noscript>
-      <!-- End Google Tag Manager (noscript) -->
-  
+    <!-- End Google Tag Manager (noscript) -->
+
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--
@@ -57,12 +78,21 @@
         s = c.getElementsByTagName("body")[0];
         k = c.createElement("script");
         k.async = 1;
-        k.src = t + '/' + a + '?showButton=' +  d + '&openOnMessage=' + e;
+        k.src = t + "/" + a + "?showButton=" + d + "&openOnMessage=" + e;
         s.appendChild(k);
-      })(window, document, 'https://chat.octadesk.services/api/widget', 'noharm',  false, true);
+      })(
+        window,
+        document,
+        "https://chat.octadesk.services/api/widget",
+        "noharm",
+        false,
+        true
+      );
     </script>
     <style>
-      .octachatAppClose { pointer-events: none; }
+      .octachatAppClose {
+        pointer-events: none;
+      }
     </style>
   </body>
 </html>

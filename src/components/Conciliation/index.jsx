@@ -1,21 +1,26 @@
-import React, { useEffect } from 'react';
-import isEmpty from 'lodash.isempty';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from "react";
+import isEmpty from "lodash.isempty";
+import { useTranslation } from "react-i18next";
 
-import Empty from '@components/Empty';
-import LoadBox from '@components/LoadBox';
-import { Row, Col } from '@components/Grid';
-import notification from '@components/notification';
-import BackTop from '@components/BackTop';
+import Empty from "components/Empty";
+import LoadBox from "components/LoadBox";
+import { Row, Col } from "components/Grid";
+import notification from "components/notification";
+import BackTop from "components/BackTop";
 
-import PageHeader from '@containers/Conciliation/PageHeader';
-import Patient from '@containers/Screening/Patient';
-import ConciliationDrugList from '@containers/Conciliation/ConciliationDrugList';
-import PrescriptionDrugForm from '@containers/Forms/PrescriptionDrug';
+import PageHeader from "containers/Conciliation/PageHeader";
+import Patient from "containers/Screening/Patient";
+import ConciliationDrugList from "containers/Conciliation/ConciliationDrugList";
+import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
 
-import { BoxWrapper } from './index.style';
+import { BoxWrapper } from "./index.style";
 
-export default function Screening({ match, fetchScreeningById, isFetching, error }) {
+export default function Screening({
+  match,
+  fetchScreeningById,
+  isFetching,
+  error,
+}) {
   const { t } = useTranslation();
   const { id } = match.params;
 
@@ -23,8 +28,8 @@ export default function Screening({ match, fetchScreeningById, isFetching, error
   useEffect(() => {
     if (!isEmpty(error)) {
       notification.error({
-        message: t('error.title'),
-        description: t('error.description')
+        message: t("error.title"),
+        description: t("error.description"),
       });
     }
   }, [error, t]);
@@ -55,7 +60,7 @@ export default function Screening({ match, fetchScreeningById, isFetching, error
         </Row>
       </BoxWrapper>
 
-      <div style={{ marginTop: '15px' }}>
+      <div style={{ marginTop: "15px" }}>
         <ConciliationDrugList />
       </div>
 

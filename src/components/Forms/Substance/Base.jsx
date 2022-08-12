@@ -1,13 +1,13 @@
-import React from 'react';
-import 'styled-components/macro';
-import { useFormikContext } from 'formik';
+import React from "react";
+import "styled-components/macro";
+import { useFormikContext } from "formik";
 
-import { Col } from '@components/Grid';
-import Heading from '@components/Heading';
-import { Input } from '@components/Inputs';
-import Tooltip from '@components/Tooltip';
+import { Col } from "components/Grid";
+import Heading from "components/Heading";
+import { Input } from "components/Inputs";
+import Tooltip from "components/Tooltip";
 
-import { Box } from '../Form.style';
+import { Box } from "../Form.style";
 
 export default function Base() {
   const { values, setFieldValue, errors } = useFormikContext();
@@ -26,7 +26,7 @@ export default function Base() {
           {isAdd && (
             <Input
               value={sctid}
-              onChange={({ target }) => setFieldValue('sctid', target.value)}
+              onChange={({ target }) => setFieldValue("sctid", target.value)}
               maxLength={100}
             />
           )}
@@ -43,7 +43,7 @@ export default function Base() {
         <Col xs={layout.input}>
           <Input
             value={name}
-            onChange={({ target }) => setFieldValue('name', target.value)}
+            onChange={({ target }) => setFieldValue("name", target.value)}
             maxLength={250}
           />
         </Col>

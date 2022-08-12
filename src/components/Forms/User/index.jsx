@@ -1,37 +1,44 @@
-import React, { useEffect } from 'react';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from "react";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
 
-import { Row } from '@components/Grid';
-import notification from '@components/notification';
-import Heading from '@components/Heading';
-import DefaultModal from '@components/Modal';
+import { Row } from "components/Grid";
+import notification from "components/notification";
+import Heading from "components/Heading";
+import DefaultModal from "components/Modal";
 
-import Base from './Base';
-import { FormContainer } from '../Form.style';
+import Base from "./Base";
+import { FormContainer } from "../Form.style";
 
-export default function User({ saveStatus, save, afterSave, user, security, ...props }) {
+export default function User({
+  saveStatus,
+  save,
+  afterSave,
+  user,
+  security,
+  ...props
+}) {
   const { t } = useTranslation();
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required(),
     email: Yup.string()
-      .email(t('userAdminForm.emailError'))
-      .required(t('userAdminForm.requiredError'))
+      .email(t("userAdminForm.emailError"))
+      .required(t("userAdminForm.requiredError")),
   });
 
   const { isSaving, success, error } = saveStatus;
   const { ...data } = user.content;
 
   const initialValues = {
-    ...data
+    ...data,
   };
 
   useEffect(() => {
     if (success) {
       notification.success({
-        message: t('userAdminForm.saveMessage')
+        message: t("userAdminForm.saveMessage"),
       });
       if (afterSave) {
         afterSave();
@@ -40,8 +47,8 @@ export default function User({ saveStatus, save, afterSave, user, security, ...p
 
     if (error) {
       notification.error({
-        message: t('userAdminForm.errorMessage'),
-        description: t(error.code)
+        message: t("userAdminForm.errorMessage"),
+        description: t(error.code),
       });
     }
   }, [success, error, afterSave, t]);
@@ -62,15 +69,15 @@ export default function User({ saveStatus, save, afterSave, user, security, ...p
           onOk={handleSubmit}
           confirmLoading={isSaving}
           okButtonProps={{
-            disabled: isSaving
+            disabled: isSaving,
           }}
           cancelButtonProps={{
             disabled: isSaving,
-            className: 'gtm-bt-cancel-edit-user'
+            className: "gtm-bt-cancel-edit-user",
           }}
         >
           <header>
-            <Heading margin="0 0 11px">{t('menu.userConfig')}</Heading>
+            <Heading margin="0 0 11px">{t("menu.userConfig")}</Heading>
           </header>
           <form onSubmit={handleSubmit}>
             <FormContainer>
@@ -88,11 +95,11 @@ export default function User({ saveStatus, save, afterSave, user, security, ...p
 User.defaultProps = {
   afterSave: () => {},
   initialValues: {
-    email: '',
-    name: '',
-    external: '',
-    id: '',
+    email: "",
+    name: "",
+    external: "",
+    id: "",
     active: true,
-    roles: []
-  }
+    roles: [],
+  },
 };

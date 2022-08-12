@@ -1,16 +1,16 @@
-import React from 'react';
-import moment from 'moment';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import moment from "moment";
+import { useTranslation } from "react-i18next";
 
-import Icon from '@components/Icon';
-import Popover from '@components/PopoverStyled';
+import Icon from "components/Icon";
+import Popover from "components/PopoverStyled";
 
-import { Item } from './ExamListItem.style';
+import { Item } from "./ExamListItem.style";
 
 export default function ExamListItem({ exam, siderCollapsed }) {
   const { t } = useTranslation();
 
-  const getIcon = delta => {
+  const getIcon = (delta) => {
     if (delta > 0) {
       return <Icon type="arrow-up" />;
     }
@@ -22,8 +22,8 @@ export default function ExamListItem({ exam, siderCollapsed }) {
     return <Icon type="minus" />;
   };
 
-  const refText = text => {
-    return text.split('\n').map(function(item, key) {
+  const refText = (text) => {
+    return text.split("\n").map(function (item, key) {
       return (
         <span key={key}>
           {item}
@@ -33,30 +33,31 @@ export default function ExamListItem({ exam, siderCollapsed }) {
     });
   };
 
-  const getExamValue = exam => {
+  const getExamValue = (exam) => {
     if (!exam || !exam.value) {
-      return '--';
+      return "--";
     }
 
-    return `${exam.value} ${exam.unit ? exam.unit : ''}`;
+    return `${exam.value} ${exam.unit ? exam.unit : ""}`;
   };
 
   const ExamData = ({ exam, t }) => (
     <>
       {exam && exam.value && (
         <div>
-          {t('tableHeader.value')}: {getExamValue(exam)}
+          {t("tableHeader.value")}: {getExamValue(exam)}
         </div>
       )}
       {exam && exam.date && (
         <div>
-          {t('patientCard.examDate')}: {moment(exam.date).format('DD/MM/YYYY hh:mm')}
+          {t("patientCard.examDate")}:{" "}
+          {moment(exam.date).format("DD/MM/YYYY hh:mm")}
         </div>
       )}
       {exam && exam.ref && <div>Ref: {refText(exam.ref)}</div>}
       {exam && exam.delta && (
         <div>
-          {t('patientCard.examVariation')}: {exam.delta > 0 ? '+' : ''}
+          {t("patientCard.examVariation")}: {exam.delta > 0 ? "+" : ""}
           {exam.delta}%
         </div>
       )}
@@ -71,7 +72,10 @@ export default function ExamListItem({ exam, siderCollapsed }) {
       mouseLeaveDelay={0}
       mouseEnterDelay={0.5}
     >
-      <Item alert={exam.value.value && exam.value.alert} siderCollapsed={siderCollapsed}>
+      <Item
+        alert={exam.value.value && exam.value.alert}
+        siderCollapsed={siderCollapsed}
+      >
         <div className="name">{exam.value.initials}</div>
         <div className="icon">
           <span>{getExamValue(exam.value)}</span>

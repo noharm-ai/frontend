@@ -1,18 +1,17 @@
-import 'styled-components/macro';
-import React, { useState } from 'react';
+import "styled-components/macro";
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import { UserOutlined } from "@ant-design/icons";
 
-import appInfo from '@utils/appInfo';
-import Avatar from '@components/Avatar';
-import Drawer from '@components/Drawer';
-import { InputSearchNumber } from '@components/Inputs';
+import appInfo from "utils/appInfo";
+import Avatar from "components/Avatar";
+import { InputSearchNumber } from "components/Inputs";
 
-import Help from '@components/Help';
-
-import { useTranslation } from 'react-i18next';
-import Box from './Box';
-import Menu from './Menu';
-import InfoAlert from './InfoAlert';
-import { Wrapper as Main, Brand, LogOut, UserName } from './Layout.style';
+import { useTranslation } from "react-i18next";
+import Box from "./Box";
+import Menu from "./Menu";
+import InfoAlert from "./InfoAlert";
+import { Wrapper as Main, Brand, LogOut, UserName } from "./Layout.style";
 
 const siderWidth = 250;
 const { Sider, Header, Content, Footer } = Main;
@@ -25,31 +24,33 @@ const setTitle = ({ user }) => {
   if (octadesk && octadesk.chat) {
     octadesk.chat.login({
       name: user.account.userName,
-      email: user.account.email
+      email: user.account.email,
     });
   }
   return user.account.userName;
 };
 
-const Me = ({ user, toggleDrawer, access_token, t, notification, setNotification, match }) => {
-  const onSearch = value => {
+const Me = ({ user, access_token, t, notification, setNotification }) => {
+  const location = useLocation();
+
+  const onSearch = (value) => {
     const reg = /^-?\d*(\.\d*)?$/;
     const searchValue = value.trim();
 
-    if (!isNaN(searchValue) && reg.test(searchValue) && searchValue !== '') {
+    if (!isNaN(searchValue) && reg.test(searchValue) && searchValue !== "") {
       window.open(`/prescricao/${searchValue}`);
     } else {
-      notification.error({ message: 'Número de prescrição inválido.' });
+      notification.error({ message: "Número de prescrição inválido." });
     }
   };
 
-  const showAlert = match.path.indexOf('priorizacao') !== -1;
+  const showAlert = location.pathname.indexOf("priorizacao") !== -1;
 
   const openHelp = () => {
     try {
       octadesk.chat.toggle();
     } catch (ex) {
-      console.error('octadesk error', ex);
+      console.error("octadesk error", ex);
       window.open(`mailto:${process.env.REACT_APP_SUPPORT_EMAIL}`);
     }
   };
@@ -65,7 +66,7 @@ const Me = ({ user, toggleDrawer, access_token, t, notification, setNotification
     >
       <div css="display: flex; align-items: center;">
         <InputSearchNumber
-          placeholder={t('layout.iptSearch')}
+          placeholder={t("layout.iptSearch")}
           style={{ width: 300 }}
           size="large"
           onSearch={onSearch}
@@ -83,46 +84,65 @@ const Me = ({ user, toggleDrawer, access_token, t, notification, setNotification
       </div>
 
       <div className="controls">
-        <Avatar size={44} icon="user" css="margin-right: 12px !important;" />
+        <Avatar
+          size={44}
+          icon={<UserOutlined />}
+          css="margin-right: 12px !important;"
+        />
         <UserName>{setTitle({ user })}</UserName>
 
-        <LogOut onClick={openHelp} id="gtm-lnk-ajuda" style={{ marginRight: '12px' }}>
-          {t('layout.help')}
+        <LogOut
+          onClick={openHelp}
+          id="gtm-lnk-ajuda"
+          style={{ marginRight: "12px" }}
+        >
+          {t("layout.help")}
         </LogOut>
-        <LogOut onClick={e => octadesk.chat.hideApp()} href="/logout" id="gtm-lnk-sair">
-          {t('layout.logout')}
+        <LogOut
+          onClick={(e) => octadesk.chat.hideApp()}
+          href="/logout"
+          id="gtm-lnk-sair"
+        >
+          {t("layout.logout")}
         </LogOut>
       </div>
     </div>
   );
 };
 
-export default function Layout({ match, children, theme, app, setAppSider, ...props }) {
+export default function Layout({
+  children,
+  theme,
+  app,
+  setAppSider,
+  ...props
+}) {
   const [sider, setSider] = useState({
     collapsed: app.sider.collapsed,
-    collapsedWidth: 80
+    collapsedWidth: 80,
   });
   const [isDrawerVisible, setDrawerVisibility] = useState(false);
 
-  const onBreakpoint = breaked => {
-    setSider(prevState => ({
+  const onBreakpoint = (breaked) => {
+    setSider((prevState) => ({
       ...prevState,
-      collapsedWidth: breaked ? 0 : 80
+      collapsedWidth: breaked ? 0 : 80,
     }));
   };
 
   const onCollapse = (collapsed, type) => {
-    setSider(prevState => {
-      const isCollapsed = type === 'clickTrigger' ? !prevState.collapsed : prevState.collapsed;
-
-      setAppSider({
-        collapsed: isCollapsed
-      });
+    setSider((prevState) => {
+      const isCollapsed =
+        type === "clickTrigger" ? !prevState.collapsed : prevState.collapsed;
 
       return {
         ...prevState,
-        collapsed: isCollapsed
+        collapsed: isCollapsed,
       };
+    });
+
+    setAppSider({
+      collapsed: !sider.collapsed,
     });
   };
 
@@ -133,7 +153,7 @@ export default function Layout({ match, children, theme, app, setAppSider, ...pr
   const { t } = useTranslation();
 
   return (
-    <Main style={{ minHeight: '100vh' }}>
+    <Main style={{ minHeight: "100vh" }}>
       <Sider
         collapsible
         breakpoint="lg"
@@ -148,34 +168,32 @@ export default function Layout({ match, children, theme, app, setAppSider, ...pr
         </div>
         <Menu {...props} />
       </Sider>
-      <Main style={{ paddingLeft: sider.collapsed ? sider.collapsedWidth : siderWidth }}>
+      <Main
+        style={{
+          paddingLeft: sider.collapsed ? sider.collapsedWidth : siderWidth,
+        }}
+      >
         <Header>
           <Me
             {...props}
             toggleDrawer={toggleDrawer}
             t={t}
             notification={app.notification}
-            match={match}
           />
         </Header>
         <Content css="padding: 25px 18px;">
-          {theme === 'boxed' ? <Box {...props}>{children}</Box> : children}
+          {theme === "boxed" ? <Box {...props}>{children}</Box> : children}
         </Content>
         <Footer>
           {appInfo.copyright} &nbsp;
-          <a href={process.env.REACT_APP_UPDOWN_LINK} target="_blank" rel="noopener noreferrer">
+          <a
+            href={process.env.REACT_APP_UPDOWN_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <img src="/updown.png" width="12px" alt="updown logo" />
           </a>
         </Footer>
-        <Drawer
-          width={640}
-          placement="right"
-          closable={false}
-          onClose={toggleDrawer}
-          visible={isDrawerVisible}
-        >
-          <Help />
-        </Drawer>
       </Main>
     </Main>
   );

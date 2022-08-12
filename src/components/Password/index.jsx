@@ -1,26 +1,33 @@
-import 'styled-components/macro';
-import React, { useEffect, useState } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { useTranslation } from 'react-i18next';
+import "styled-components/macro";
+import React, { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
 
-import { setErrorClassName } from '@utils/form';
+import { setErrorClassName } from "utils/form";
 
-import notification from '@components/notification';
-import Icon from '@components/Icon';
-import Button from '@components/Button';
-import { Input } from '@components/Inputs';
-import { Container, Row, Col } from '@components/Grid';
-import { passwordValidation } from '@utils';
-import { Wrapper, Box, Brand, FieldSet, ForgotPass, FieldError } from '../Login/Login.style';
+import notification from "components/notification";
+import Icon from "components/Icon";
+import Button from "components/Button";
+import { Input } from "components/Inputs";
+import { Container, Row, Col } from "components/Grid";
+import { passwordValidation } from "utils";
+import {
+  Wrapper,
+  Box,
+  Brand,
+  FieldSet,
+  ForgotPass,
+  FieldError,
+} from "../Login/Login.style";
 
 const validationSchema = Yup.object().shape({
   newpassword: Yup.string()
-    .required('Campo obrigatório')
+    .required("Campo obrigatório")
     .matches(passwordValidation.regex, passwordValidation.message),
   confirmPassword: Yup.string()
-    .required('Campo obrigatório')
-    .oneOf([Yup.ref('newpassword'), null], 'Senhas não conferem')
+    .required("Campo obrigatório")
+    .oneOf([Yup.ref("newpassword"), null], "Senhas não conferem"),
 });
 
 export default function Password({ resetPassword, match, status }) {
@@ -29,19 +36,20 @@ export default function Password({ resetPassword, match, status }) {
   const { isSaving, success, error } = status;
   const initialValues = {
     token: match.params.token,
-    newpassword: '',
-    confirmPassword: ''
+    newpassword: "",
+    confirmPassword: "",
   };
 
-  const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
-    initialValues,
-    validationSchema,
-    onSubmit: values => resetPassword(values.token, values.newpassword)
-  });
+  const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
+    useFormik({
+      initialValues,
+      validationSchema,
+      onSubmit: (values) => resetPassword(values.token, values.newpassword),
+    });
 
   useEffect(() => {
     if (success) {
-      notification.success({ message: 'Uhu! Senha alterada com sucesso! :)' });
+      notification.success({ message: "Uhu! Senha alterada com sucesso! :)" });
       setPasswordChanged(true);
     }
   }, [success]);
@@ -49,8 +57,8 @@ export default function Password({ resetPassword, match, status }) {
   useEffect(() => {
     if (error) {
       notification.error({
-        message: t('error.title'),
-        description: error.message || t('error.description')
+        message: t("error.title"),
+        description: error.message || t("error.description"),
       });
     }
   }, [error, t]);
@@ -66,7 +74,9 @@ export default function Password({ resetPassword, match, status }) {
               {!passwordChanged && (
                 <>
                   <FieldSet
-                    className={setErrorClassName(errors.newpassword && touched.newpassword)}
+                    className={setErrorClassName(
+                      errors.newpassword && touched.newpassword
+                    )}
                   >
                     <Input.Password
                       placeholder="Nova senha"
@@ -81,7 +91,9 @@ export default function Password({ resetPassword, match, status }) {
                   </FieldSet>
 
                   <FieldSet
-                    className={setErrorClassName(errors.confirmPassword && touched.confirmPassword)}
+                    className={setErrorClassName(
+                      errors.confirmPassword && touched.confirmPassword
+                    )}
                   >
                     <Input.Password
                       placeholder="Confirme a senha"

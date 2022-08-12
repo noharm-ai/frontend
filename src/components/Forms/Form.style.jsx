@@ -1,9 +1,9 @@
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
-import { get } from '@styles/utils';
+import { get } from "styles/utils";
 
 export const Footer = styled.div`
-  border-top: 1px solid ${get('colors.detail')};
+  border-top: 1px solid ${get("colors.detail")};
   margin-top: 20px;
   padding: 20px 10px;
   text-align: right;
@@ -26,7 +26,7 @@ export const CustomFormContainer = styled.div`
   .actions {
     display: flex;
     justify-content: flex-end;
-    border-top: 1px solid ${get('colors.detail')};
+    border-top: 1px solid ${get("colors.detail")};
     margin-top: 20px;
     padding-top: 10px;
 
@@ -42,7 +42,8 @@ export const CustomFormContainer = styled.div`
 
 export const Box = styled.div`
   display: flex;
-  flex-direction: ${props => (props.flexDirection ? props.flexDirection : 'row')};
+  flex-direction: ${(props) =>
+    props.flexDirection ? props.flexDirection : "row"};
   flex-wrap: wrap;
   align-items: flex-start;
   width: 100%;
@@ -53,18 +54,18 @@ export const Box = styled.div`
   }
 
   input,
-  .ant-select .ant-select-selection,
+  .ant-select .ant-select-selector,
   textarea {
-    background: ${props => (props.hasError ? '#ffcdd2;' : 'inherit')};
+    background: ${(props) => (props.hasError ? "#ffcdd2;" : "inherit")};
   }
 
   .ant-select-selection__placeholder {
-    color: ${props => (props.hasError ? '#454545;' : 'inherit')};
+    color: ${(props) => (props.hasError ? "#454545;" : "inherit")};
   }
 
   &.highlight {
     input,
-    .ant-select .ant-select-selection,
+    .ant-select .ant-select-selector,
     textarea {
       background: #7ebe9a40;
     }
@@ -103,8 +104,8 @@ export const ButtonContainer = styled.div`
 `;
 
 export const FormHeader = styled.div`
-  border-top: 1px solid ${get('colors.detail')};
-  border-bottom: 1px solid ${get('colors.detail')};
+  border-top: 1px solid ${get("colors.detail")};
+  border-bottom: 1px solid ${get("colors.detail")};
   padding: 10px 0;
   margin-bottom: 15px;
   width: 100%;

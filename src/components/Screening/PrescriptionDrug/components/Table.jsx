@@ -1,36 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { ExpandableTable } from '@components/Table';
-import Empty from '@components/Empty';
+import { ExpandableTable } from "components/Table";
+import Empty from "components/Empty";
 
-import columnsTable, { expandedRowRender, solutionColumns, dietColumns } from '../../columns';
-import { rowClassName } from '../PrescriptionDrugList';
+import columnsTable, {
+  expandedRowRender,
+  solutionColumns,
+  dietColumns,
+} from "../../columns";
+import { rowClassName } from "../PrescriptionDrugList";
 
-function Table({ hasFilter, filter, bag, isFetching, emptyMessage, ds, listType, showHeader }) {
+function Table({
+  hasFilter,
+  filter,
+  bag,
+  isFetching,
+  emptyMessage,
+  ds,
+  listType,
+  showHeader,
+}) {
   const [expandedRows, setExpandedRows] = useState([]);
 
   const updateExpandedRows = (list, key) => {
     if (list.includes(key)) {
-      return list.filter(i => i !== key);
+      return list.filter((i) => i !== key);
     }
 
     return [...list, key];
   };
 
-  const handleRowExpand = record => {
+  const handleRowExpand = (record) => {
     setExpandedRows(updateExpandedRows(expandedRows, record.key));
   };
 
   const extraBag = {
     ...bag,
-    handleRowExpand
+    handleRowExpand,
   };
 
   const getColumns = () => {
     switch (listType) {
-      case 'solution':
+      case "solution":
         return solutionColumns(extraBag);
-      case 'diet':
+      case "diet":
         return dietColumns(extraBag);
       default:
         return columnsTable(hasFilter ? filter : { status: null }, extraBag);
@@ -44,7 +57,12 @@ function Table({ hasFilter, filter, bag, isFetching, emptyMessage, ds, listType,
       pagination={false}
       loading={isFetching}
       locale={{
-        emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={emptyMessage} />
+        emptyText: (
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={emptyMessage}
+          />
+        ),
       }}
       dataSource={!isFetching ? ds.value : []}
       expandedRowRender={expandedRowRender(extraBag)}

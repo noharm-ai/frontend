@@ -1,10 +1,10 @@
-import 'styled-components/macro';
-import React from 'react';
-import isEmpty from 'lodash.isempty';
+import "styled-components/macro";
+import React from "react";
+import isEmpty from "lodash.isempty";
 
-import { Link } from '@components/Button';
-import Heading from '@components/Heading';
-import { Row, Col } from '@components/Grid';
+import { Link } from "components/Button";
+import Heading from "components/Heading";
+import { Row, Col } from "components/Grid";
 
 export default function PageHeader({ report }) {
   if (isEmpty(report)) {

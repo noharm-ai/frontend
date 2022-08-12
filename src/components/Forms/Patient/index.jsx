@@ -1,24 +1,24 @@
-import React, { useEffect } from 'react';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import moment from 'moment';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import moment from "moment";
+import { useTranslation } from "react-i18next";
 
-import Alert from '@components/Alert';
-import { Row } from '@components/Grid';
-import notification from '@components/notification';
-import Heading from '@components/Heading';
-import DefaultModal from '@components/Modal';
+import Alert from "components/Alert";
+import { Row } from "components/Grid";
+import notification from "components/notification";
+import Heading from "components/Heading";
+import DefaultModal from "components/Modal";
 
-import Base from './Base';
-import { FormContainer } from './Patient.style';
+import Base from "./Base";
+import { FormContainer } from "./Patient.style";
 
 const saveMessage = {
-  message: 'Uhu! Dados do paciente salvo com sucesso! :)'
+  message: "Uhu! Dados do paciente salvo com sucesso! :)",
 };
 const validationSchema = Yup.object().shape({
   weight: Yup.number().nullable(),
-  height: Yup.number().nullable()
+  height: Yup.number().nullable(),
 });
 
 export default function Patient({
@@ -42,7 +42,7 @@ export default function Patient({
   ...props
 }) {
   const { t } = useTranslation();
-  const { isSaving, success, error } = saveStatus;
+  const { isSaving } = saveStatus;
   const hasNoHarmCare = security.hasNoHarmCare();
 
   const initialValues = {
@@ -54,27 +54,28 @@ export default function Patient({
     dialysis,
     birthdate,
     skinColor,
-    gender
+    gender,
   };
 
-  useEffect(() => {
-    if (success) {
-      notification.success(saveMessage);
-      afterSavePatient();
-    }
-
-    if (error) {
-      notification.error({
-        message: t('error.title'),
-        description: t('error.description')
+  const submit = (params) => {
+    savePatient(params)
+      .then(() => {
+        notification.success(saveMessage);
+        afterSavePatient();
+      })
+      .catch((err) => {
+        console.error("error", err);
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
       });
-    }
-  }, [success, error, afterSavePatient, t]);
+  };
 
   return (
     <Formik
       enableReinitialize
-      onSubmit={savePatient}
+      onSubmit={submit}
       initialValues={initialValues}
       validationSchema={validationSchema}
     >
@@ -85,12 +86,9 @@ export default function Patient({
           {...props}
           onOk={handleSubmit}
           confirmLoading={isSaving}
-          okButtonProps={{
-            disabled: isSaving
-          }}
           cancelButtonProps={{
             disabled: isSaving,
-            className: 'gtm-bt-cancel-edit-patient'
+            className: "gtm-bt-cancel-edit-patient",
           }}
         >
           <header>
@@ -98,7 +96,9 @@ export default function Patient({
           </header>
           {hasNoHarmCare && notesInfo && (
             <Alert
-              message={`NoHarm Care (${moment(notesInfoDate).format('DD/MM/YYYY hh:mm')})`}
+              message={`NoHarm Care (${moment(notesInfoDate).format(
+                "DD/MM/YYYY hh:mm"
+              )})`}
               description={notesInfo}
               type="info"
               showIcon
@@ -120,7 +120,7 @@ export default function Patient({
 Patient.defaultProps = {
   afterSavePatient: () => {},
   initialValues: {
-    weight: '',
-    height: ''
-  }
+    weight: "",
+    height: "",
+  },
 };

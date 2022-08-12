@@ -1,9 +1,9 @@
-import 'antd/lib/table/style/index.css';
-import 'antd/lib/pagination/style/index.css';
-import AntTable from 'antd/lib/table';
-import styled from 'styled-components/macro';
+import "antd/lib/table/style/index.css";
+import "antd/lib/pagination/style/index.css";
+import AntTable from "antd/lib/table";
+import styled from "styled-components/macro";
 
-import { get } from '@styles/utils';
+import { get } from "styles/utils";
 
 const Table = styled(AntTable)`
   .ant-table-title:not(:empty) {
@@ -11,7 +11,7 @@ const Table = styled(AntTable)`
     font-size: 12px;
     padding: 5px 10px;
 
-    @media (max-width: ${get('breakpoints.lg')}) {
+    @media (max-width: ${get("breakpoints.lg")}) {
       margin-top: 20px;
     }
   }
@@ -26,9 +26,9 @@ const Table = styled(AntTable)`
   }
 
   .ant-table-column-title {
-    color: ${get('colors.primary')};
-    font-family: ${get('fonts.primary')};
-    font-weight: ${get('weight.semiBold')};
+    color: ${get("colors.primary")};
+    font-family: ${get("fonts.primary")};
+    font-weight: ${get("weight.semiBold")};
   }
 
   .ant-table-row td:not(:first-child):not(:nth-child(2)),
@@ -54,7 +54,7 @@ const Table = styled(AntTable)`
       padding-top: 1px;
 
       &:before {
-        content: '';
+        content: "";
         position: absolute;
         width: 100%;
         height: 1px;
@@ -90,8 +90,12 @@ const Table = styled(AntTable)`
   .ant-table-tbody
     > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
     > td,
-  .ant-table-thead > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td,
-  .ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
+  .ant-table-thead
+    > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+    > td,
+  .ant-table-tbody
+    > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+    > td {
     background: rgba(244, 244, 244, 0.8);
   }
 

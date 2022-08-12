@@ -1,10 +1,10 @@
-import styled from 'styled-components/macro';
-import { linearGradient } from 'polished';
+import styled from "styled-components/macro";
+import { linearGradient } from "polished";
 
-import { get } from '@styles/utils';
-import { ReactComponent as LogoSVG } from '@assets/noHarm.svg';
+import { get } from "styles/utils";
+import { ReactComponent as LogoSVG } from "assets/noHarm.svg";
 
-const borderSize = '8px';
+const borderSize = "8px";
 
 export const FieldError = styled.span`
   display: block;
@@ -13,26 +13,15 @@ export const FieldError = styled.span`
 
 export const ForgotPass = styled.a`
   color: #6f8bc7;
-  font-weight: ${get('weight.light')};
+  font-weight: ${get("weight.light")};
   text-decoration: none;
 `;
 
 export const FieldSet = styled.div`
   margin-bottom: 18px;
 
-  &.has-error .ant-input,
-  &.has-error .ant-input:hover {
-    border-color: #f5222d !important;
-  }
-
-  &.has-error .ant-input:focus {
-    border-color: #f5222d;
-    box-shadow: 0 0 0 2px rgba(245, 34, 45, 0.2);
-    outline: 0;
-  }
-
   .ant-checkbox-wrapper {
-    color: ${get('colors.commonLighter')};
+    color: ${get("colors.commonLighter")};
   }
 `;
 
@@ -51,8 +40,8 @@ export const Box = styled.div`
 `;
 
 export const Wrapper = styled.div`
-  background-color: ${get('colors.primary')};
-  color: ${get('colors.commonLighter')};
+  background-color: ${get("colors.primary")};
+  color: ${get("colors.commonLighter")};
   display: flex;
   flex-wrap: wrap;
   height: 100vh;
@@ -65,7 +54,7 @@ export const Wrapper = styled.div`
   &:before {
     background: #ddd;
     display: inline-block;
-    content: '';
+    content: "";
     height: ${borderSize};
     left: 0;
     position: absolute;
@@ -73,9 +62,9 @@ export const Wrapper = styled.div`
     z-index: 1;
 
     ${linearGradient({
-      colorStops: ['#70bdc4 0%', '#7ebe9a 100%'],
-      toDirection: 'to right',
-      fallback: '#7ebe9a'
+      colorStops: ["#70bdc4 0%", "#7ebe9a 100%"],
+      toDirection: "to right",
+      fallback: "#7ebe9a",
     })}
   }
 
@@ -96,8 +85,8 @@ export const Wrapper = styled.div`
     align-self: flex-end;
     color: #1d2536;
     flex-grow: 1;
-    font-family: ${get('fonts.secondary')};
-    font-weight: ${get('weight.light')};
+    font-family: ${get("fonts.secondary")};
+    font-weight: ${get("weight.light")};
     font-size: 12px;
     text-align: center;
     width: 100%;

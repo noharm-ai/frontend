@@ -1,11 +1,11 @@
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
-import { get } from '@styles/utils';
-import Heading from '@components/Heading';
-import { createIndicatorCardClasses } from '@components/Screening/ClinicalNotes/index.style';
+import { get } from "styles/utils";
+import Heading from "components/Heading";
+import { createIndicatorCardClasses } from "components/Screening/ClinicalNotes/index.style";
 
 export const Wrapper = styled.div`
-  border: 1px solid ${get('colors.detail')};
+  border: 1px solid ${get("colors.detail")};
   border-radius: 5px;
   overflow: hidden;
 `;
@@ -20,7 +20,7 @@ export const Name = styled(Heading)`
 
 export const NameWrapper = styled.div`
   transition: all 0.5s;
-  background: ${props => (props.hasIntervention ? '#ffcdd2' : '#fff')};
+  background: ${(props) => (props.hasIntervention ? "#ffcdd2" : "#fff")};
 
   .btn-container {
     display: flex;
@@ -35,7 +35,7 @@ export const NameWrapper = styled.div`
 
 export const Box = styled.div`
   align-items: center;
-  border-top: 1px solid ${get('colors.detail')};
+  border-top: 1px solid ${get("colors.detail")};
   display: flex;
   min-height: 30px;
   padding: 3.5px 15px;
@@ -114,7 +114,7 @@ export const PatientBox = styled.div`
       flex: 1;
       font-size: 18px;
       font-weight: 500;
-      color: ${get('colors.primary')};
+      color: ${get("colors.primary")};
       transition: color 0.3s linear;
 
       &.has-intervention {
@@ -194,13 +194,13 @@ export const PatientBox = styled.div`
         .patient-data-item-label {
           font-size: 12px;
           font-weight: 300;
-          color: ${get('colors.primary')};
+          color: ${get("colors.primary")};
         }
 
         .patient-data-item-value {
           font-size: 12px;
           font-weight: 500;
-          color: ${get('colors.primary')};
+          color: ${get("colors.primary")};
           white-space: nowrap;
           text-overflow: ellipsis;
           overflow: hidden;
@@ -229,7 +229,7 @@ export const PatientBox = styled.div`
               margin-left: 0;
             }
 
-            ${props => createIndicatorCardClasses(props.t)}
+            ${(props) => createIndicatorCardClasses(props.t)}
           }
 
           .small {
@@ -283,6 +283,10 @@ export const PatientBox = styled.div`
       display: flex;
       flex-direction: column;
       height: 100%;
+
+      .ant-tabs-nav {
+        margin: 0;
+      }
 
       .ant-tabs-content {
         flex: 1;

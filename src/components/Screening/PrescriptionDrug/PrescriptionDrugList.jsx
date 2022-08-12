@@ -1,21 +1,25 @@
-import React, { useState } from 'react';
-import isEmpty from 'lodash.isempty';
-import { format, parseISO } from 'date-fns';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from "react";
+import isEmpty from "lodash.isempty";
+import { format, parseISO } from "date-fns";
+import { useTranslation } from "react-i18next";
 
-import LoadBox, { LoadContainer } from '@components/LoadBox';
-import Empty from '@components/Empty';
-import Collapse from '@components/Collapse';
-import Tooltip from '@components/Tooltip';
-import { sourceToStoreType } from '@utils/transformers/prescriptions';
+import LoadBox, { LoadContainer } from "components/LoadBox";
+import Empty from "components/Empty";
+import Collapse from "components/Collapse";
+import Tooltip from "components/Tooltip";
+import { sourceToStoreType } from "utils/transformers/prescriptions";
 
-import FormIntervention from '@containers/Forms/Intervention';
+import FormIntervention from "containers/Forms/Intervention";
 
-import { GroupPanel, PrescriptionPanel, PrescriptionHeader } from './PrescriptionDrug.style';
-import Table from './components/Table';
-import PanelAction from './components/PanelAction';
+import {
+  GroupPanel,
+  PrescriptionPanel,
+  PrescriptionHeader,
+} from "./PrescriptionDrug.style";
+import Table from "./components/Table";
+import PanelAction from "./components/PanelAction";
 
-const isExpired = date => {
+const isExpired = (date) => {
   if (parseISO(date).getTime() < Date.now()) {
     return true;
   }
@@ -23,50 +27,50 @@ const isExpired = date => {
   return false;
 };
 
-export const rowClassName = record => {
+export const rowClassName = (record) => {
   const classes = [];
 
   if (record.total) {
-    classes.push('summary-row');
+    classes.push("summary-row");
   }
 
   if (record.dividerRow) {
-    classes.push('divider-row');
+    classes.push("divider-row");
   }
 
   if (record.suspended) {
-    classes.push('suspended');
+    classes.push("suspended");
   }
 
   if (record.checked && isEmpty(record.prevIntervention)) {
-    classes.push('checked');
+    classes.push("checked");
   }
 
   if (record.whiteList && !record.total) {
-    classes.push('checked');
+    classes.push("checked");
   }
 
-  if (record.intervention && record.intervention.status === 's') {
-    classes.push('danger');
+  if (record.intervention && record.intervention.status === "s") {
+    classes.push("danger");
   }
 
   if (record.startRow) {
-    classes.push('start-row');
+    classes.push("start-row");
   }
 
   if (record.endRow) {
-    classes.push('end-row');
+    classes.push("end-row");
   }
 
   if (record.groupRow) {
-    classes.push('group-row');
+    classes.push("group-row");
   }
 
   if (record.groupRowLast) {
-    classes.push('group-row-last');
+    classes.push("group-row-last");
   }
 
-  return classes.join(' ');
+  return classes.join(" ");
 };
 
 export default function PrescriptionDrugList({
@@ -92,7 +96,7 @@ export default function PrescriptionDrugList({
   checkScreening,
   isCheckingPrescription,
   security,
-  featureService
+  featureService,
 }) {
   const [visible, setVisibility] = useState(false);
   const { t } = useTranslation();
@@ -105,7 +109,7 @@ export default function PrescriptionDrugList({
     );
   }
 
-  const onShowModal = data => {
+  const onShowModal = (data) => {
     select(data);
     setVisibility(true);
   };
@@ -127,7 +131,7 @@ export default function PrescriptionDrugList({
     headers,
     security,
     t,
-    featureService
+    featureService,
   };
 
   const table = (ds, showHeader) => (
@@ -143,67 +147,73 @@ export default function PrescriptionDrugList({
     />
   );
 
-  const panelHeader = ds => (
+  const panelHeader = (ds) => (
     <PrescriptionHeader className="panel-header">
       <div className="title">
         <strong className="p-number">
-          {t('prescriptionDrugList.panelPrescription')} &nbsp;
-          <a href={`/prescricao/${ds.key}`} target="_blank" rel="noopener noreferrer">
+          {t("prescriptionDrugList.panelPrescription")} &nbsp;
+          <a
+            href={`/prescricao/${ds.key}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             # {ds.key}
           </a>
         </strong>
       </div>
       <div className="subtitle">
         <span style={{ paddingLeft: 0 }}>
-          <strong>{t('prescriptionDrugList.panelIssueDate')}:</strong> &nbsp;
-          {format(new Date(headers[ds.key].date), 'dd/MM/yyyy HH:mm')}
+          <strong>{t("prescriptionDrugList.panelIssueDate")}:</strong> &nbsp;
+          {format(new Date(headers[ds.key].date), "dd/MM/yyyy HH:mm")}
         </span>
         <span>
-          <strong>{t('prescriptionDrugList.panelValidUntil')}:</strong> &nbsp;
-          <span className={isExpired(headers[ds.key].expire, true) ? 'expired' : ''}>
-            {format(new Date(headers[ds.key].expire), 'dd/MM/yyyy HH:mm')}
+          <strong>{t("prescriptionDrugList.panelValidUntil")}:</strong> &nbsp;
+          <span
+            className={isExpired(headers[ds.key].expire, true) ? "expired" : ""}
+          >
+            {format(new Date(headers[ds.key].expire), "dd/MM/yyyy HH:mm")}
           </span>
         </span>
         <span>
-          <strong>{t('prescriptionDrugList.panelBed')}:</strong> &nbsp;
+          <strong>{t("prescriptionDrugList.panelBed")}:</strong> &nbsp;
           <Tooltip title={headers[ds.key].department} underline>
             {headers[ds.key].bed}
           </Tooltip>
         </span>
         <span>
-          <strong>{t('prescriptionDrugList.panelPrescriber')}:</strong> &nbsp;
+          <strong>{t("prescriptionDrugList.panelPrescriber")}:</strong> &nbsp;
           {headers[ds.key].prescriber}
         </span>
       </div>
     </PrescriptionHeader>
   );
 
-  const groupHeader = dt => (
+  const groupHeader = (dt) => (
     <PrescriptionHeader>
-      <span style={{ fontSize: '16px' }}>
-        <strong>{t('prescriptionDrugList.panelValidUntil')}:</strong> &nbsp;
-        <span className={isExpired(`${dt}T23:59:59`) ? 'expired' : ''}>
-          {format(parseISO(dt), 'dd/MM/yyyy')}
+      <span style={{ fontSize: "16px" }}>
+        <strong>{t("prescriptionDrugList.panelValidUntil")}:</strong> &nbsp;
+        <span className={isExpired(`${dt}T23:59:59`) ? "expired" : ""}>
+          {format(parseISO(dt), "dd/MM/yyyy")}
         </span>
       </span>
     </PrescriptionHeader>
   );
 
-  const summarySourceToType = s => {
+  const summarySourceToType = (s) => {
     switch (sourceToStoreType(s)) {
-      case 'prescription':
-        return 'drugs';
+      case "prescription":
+        return "drugs";
 
-      case 'solution':
-        return 'solutions';
-      case 'procedure':
-        return 'procedures';
+      case "solution":
+        return "solutions";
+      case "procedure":
+        return "procedures";
 
-      case 'diet':
-        return 'diet';
+      case "diet":
+        return "diet";
 
       default:
-        console.error('invalid source', s);
+        console.error("invalid source", s);
         return null;
     }
   };
@@ -220,24 +230,26 @@ export default function PrescriptionDrugList({
     );
   };
 
-  const groupSummary = groupData => {
+  const groupSummary = (groupData) => {
     return <PanelAction groupData={groupData} />;
   };
 
-  const list = group => {
-    const msg = 'Nenhuma prescrição encontrada.';
+  const list = (group) => {
+    const msg = "Nenhuma prescrição encontrada.";
 
     if (isEmpty(dataSource)) {
       return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={msg} />;
     }
 
     if (security.hasCpoe()) {
-      const cpoeListByDate = dataSource[0].value.filter(i => group.indexOf(`${i.cpoe}`) !== -1);
+      const cpoeListByDate = dataSource[0].value.filter(
+        (i) => group.indexOf(`${i.cpoe}`) !== -1
+      );
       return table({ key: dataSource[0].key, value: cpoeListByDate }, true);
     }
 
     let hasPrescription = false;
-    dataSource.forEach(ds => {
+    dataSource.forEach((ds) => {
       if (group.indexOf(`${ds.key}`) !== -1) {
         hasPrescription = true;
       }
@@ -250,11 +262,14 @@ export default function PrescriptionDrugList({
     return dataSource.map((ds, index) => (
       <div key={index}>
         {group.indexOf(`${ds.key}`) !== -1 && (
-          <Collapse bordered defaultActiveKey={headers[ds.key].status === 's' ? [] : ['1']}>
+          <Collapse
+            bordered
+            defaultActiveKey={headers[ds.key].status === "s" ? [] : ["1"]}
+          >
             <PrescriptionPanel
               header={panelHeader(ds)}
               key="1"
-              className={headers[ds.key].status === 's' ? 'checked' : ''}
+              className={headers[ds.key].status === "s" ? "checked" : ""}
               extra={prescriptionSummary(
                 ds.key,
                 headers[ds.key],
@@ -290,7 +305,7 @@ export default function PrescriptionDrugList({
       np: 0,
       am: 0,
       av: 0,
-      controlled: 0
+      controlled: 0,
     };
 
     if (isEmpty(addData)) {
@@ -298,7 +313,7 @@ export default function PrescriptionDrugList({
     }
 
     const aggData = {};
-    Object.keys(baseData).forEach(k => {
+    Object.keys(baseData).forEach((k) => {
       aggData[k] = baseData[k] + addData[k];
     });
 
@@ -312,7 +327,7 @@ export default function PrescriptionDrugList({
     headerKeys.reverse();
   }
 
-  headerKeys.forEach(k => {
+  headerKeys.forEach((k) => {
     const dt = headers[k].expire.substr(0, 10);
 
     if (groups[dt]) {
@@ -321,26 +336,30 @@ export default function PrescriptionDrugList({
         groups[dt].summary,
         headers[k][summarySourceToType(listType)]
       );
-      if (headers[k].status !== 's') {
+      if (headers[k].status !== "s") {
         groups[dt].checked = false;
       }
     } else {
       groups[dt] = {
-        checked: headers[k].status === 's',
+        checked: headers[k].status === "s",
         ids: [k],
-        summary: aggSummary(null, headers[k][summarySourceToType(listType)])
+        summary: aggSummary(null, headers[k][summarySourceToType(listType)]),
       };
     }
   });
 
   return (
     <>
-      {Object.keys(groups).map(g => (
-        <Collapse bordered={false} key={g} defaultActiveKey={groups[g].checked ? [] : ['1']}>
+      {Object.keys(groups).map((g) => (
+        <Collapse
+          bordered={false}
+          key={g}
+          defaultActiveKey={groups[g].checked ? [] : ["1"]}
+        >
           <GroupPanel
             header={groupHeader(g)}
             key="1"
-            className={groups[g].checked ? 'checked' : ''}
+            className={groups[g].checked ? "checked" : ""}
             extra={groupSummary(groups[g])}
           >
             {list(groups[g].ids)}

@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import isEmpty from 'lodash.isempty';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from "react";
+import isEmpty from "lodash.isempty";
+import { useTranslation } from "react-i18next";
 
-import DefaultModal from '@components/Modal';
-import { ExpandableTable } from '@components/Table';
-import Empty from '@components/Empty';
-import { toDataSource } from '@utils';
+import DefaultModal from "components/Modal";
+import { ExpandableTable } from "components/Table";
+import Empty from "components/Empty";
+import { toDataSource } from "utils";
 
-import examColumns, { examRowClassName, expandedExamRowRender } from './columns';
+import examColumns, {
+  examRowClassName,
+  expandedExamRowRender,
+} from "./columns";
 
 export default function Modal({
   fetchExams,
@@ -15,12 +18,12 @@ export default function Modal({
   admissionNumber,
   idSegment,
   visible,
-  setVisibility
+  setVisibility,
 }) {
   const [dsExams, setDsExams] = useState([]);
   const [sortOrder, setSortOrder] = useState({
     order: null,
-    columnKey: null
+    columnKey: null,
   });
   const { t } = useTranslation();
 
@@ -33,7 +36,7 @@ export default function Modal({
   }, [visible, admissionNumber, idSegment]); // eslint-disable-line
 
   useEffect(() => {
-    setDsExams(toDataSource(exams.list, 'key', {}));
+    setDsExams(toDataSource(exams.list, "key", {}));
   }, [exams.list]); // eslint-disable-line
 
   const handleTableChange = (pagination, filters, sorter) => {
@@ -42,13 +45,13 @@ export default function Modal({
 
   return (
     <DefaultModal
-      title={t('tableHeader.exams')}
+      title={t("tableHeader.exams")}
       destroyOnClose
       visible={visible}
       onCancel={() => setVisibility(false)}
       width="90%"
       footer={null}
-      style={{ top: '10px', height: '100vh' }}
+      style={{ top: "10px", height: "100vh" }}
     >
       <ExpandableTable
         columns={examColumns(t, sortOrder)}
@@ -56,8 +59,11 @@ export default function Modal({
         loading={exams.isFetching}
         locale={{
           emptyText: (
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Nenhum exame encontrado." />
-          )
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description="Nenhum exame encontrado."
+            />
+          ),
         }}
         dataSource={!exams.isFetching ? dsExams : []}
         rowClassName={examRowClassName}

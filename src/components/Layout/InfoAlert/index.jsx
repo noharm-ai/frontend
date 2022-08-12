@@ -1,18 +1,23 @@
-import React from 'react';
+import React from "react";
 
-import Alert from '@components/Alert';
-import Icon from '@components/Icon';
-import Tooltip from '@components/Tooltip';
-import api from '@services/api';
-import { INFO_ALERT_MEMORY_TYPE } from '@utils/memory';
+import Alert from "components/Alert";
+import Icon from "components/Icon";
+import Tooltip from "components/Tooltip";
+import api from "services/api";
+import { INFO_ALERT_MEMORY_TYPE } from "utils/memory";
 
-import { MessageLink } from '../Layout.style';
+import { MessageLink } from "../Layout.style";
 
-export default function InfoAlert({ access_token, userId, notification, setNotification }) {
+export default function InfoAlert({
+  access_token,
+  userId,
+  notification,
+  setNotification,
+}) {
   const onClose = () => {
     api.putMemory(access_token, {
       type: `${INFO_ALERT_MEMORY_TYPE}-${notification.id}-${userId}`,
-      value: true
+      value: true,
     });
     setNotification(null);
   };
@@ -36,12 +41,12 @@ export default function InfoAlert({ access_token, userId, notification, setNotif
   );
 
   return (
-    <div style={{ marginLeft: '10px' }}>
+    <div style={{ marginLeft: "10px" }}>
       <Alert
         message={message}
         type="info"
         closable
-        style={{ paddingRight: '50px' }}
+        style={{ paddingRight: "50px" }}
         onClose={onClose}
       />
     </div>

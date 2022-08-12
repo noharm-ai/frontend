@@ -1,22 +1,22 @@
-import 'styled-components/macro';
-import React, { useState } from 'react';
+import "styled-components/macro";
+import React, { useState } from "react";
+import { CheckOutlined, StarOutlined, EditOutlined } from "@ant-design/icons";
 
-import Button from '@components/Button';
-import Icon from '@components/Icon';
-import { InputNumber } from '@components/Inputs';
-import Tooltip from '@components/Tooltip';
+import Button from "components/Button";
+import { InputNumber } from "components/Inputs";
+import Tooltip from "components/Tooltip";
 
 export default function Escore({
   idMeasureUnit,
   fator,
   saveUnitCoefficient,
   updateDrugData,
-  defaultIdMeasureUnit
+  defaultIdMeasureUnit,
 }) {
   const [edit, setEdit] = useState(false);
   const [coefficient, setCoefficient] = useState(fator || 0);
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     event.preventDefault();
     setEdit(true);
   };
@@ -24,7 +24,7 @@ export default function Escore({
   const handleSave = () => {
     setEdit(false);
     saveUnitCoefficient(idMeasureUnit, {
-      fator: coefficient
+      fator: coefficient,
     });
     updateDrugData({ touched: true });
   };
@@ -34,14 +34,16 @@ export default function Escore({
       <InputNumber
         style={{
           marginRight: 8,
-          width: 80
+          width: 80,
         }}
         defaultValue={coefficient}
         onChange={setCoefficient}
       />
-      <Button type="primary gtm-bt-save-factor" onClick={handleSave}>
-        <Icon type="check" />
-      </Button>
+      <Button
+        type="primary gtm-bt-save-factor"
+        onClick={handleSave}
+        icon={<CheckOutlined />}
+      ></Button>
     </>
   ) : (
     <>
@@ -51,13 +53,13 @@ export default function Escore({
         <>
           {/*eslint-disable-next-line*/}
           <a href="#" css="color: inherit;" onClick={handleClick}>
-            <Icon type="edit" />
+            <EditOutlined />
           </a>
         </>
       )}
       {idMeasureUnit === defaultIdMeasureUnit && (
         <Tooltip title="Unidade padrão">
-          <Icon type="star" />
+          <StarOutlined />
         </Tooltip>
       )}
     </>

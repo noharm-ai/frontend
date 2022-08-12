@@ -1,14 +1,14 @@
-import axios from 'axios';
-import moment from 'moment';
+import axios from "axios";
+import moment from "moment";
 
-import securityService from '@services/security';
-import appInfo from '@utils/appInfo';
+import securityService from "services/security";
+import appInfo from "utils/appInfo";
 
-const defaultValue = idPatient => ({
+const defaultValue = (idPatient) => ({
   idPatient,
   name: `Paciente ${idPatient}`,
   cache: false,
-  status: 'success'
+  status: "success",
 });
 
 /**
@@ -31,13 +31,14 @@ const defaultValue = idPatient => ({
  * ]
  */
 const getPatients = async (bearerToken, requestConfig) => {
-  const flag = '{idPatient}';
+  const flag = "{idPatient}";
 
-  const { listToRequest, listToEscape, nameUrl, useCache, userRoles, proxy } = requestConfig;
+  const { listToRequest, listToEscape, nameUrl, useCache, userRoles, proxy } =
+    requestConfig;
   const nameHeaders = proxy
     ? {
         Authorization: `Bearer ${bearerToken}`,
-        'x-api-key': appInfo.apiKey
+        "x-api-key": appInfo.apiKey,
       }
     : requestConfig.nameHeaders;
   const security = securityService(userRoles);
@@ -49,19 +50,32 @@ const getPatients = async (bearerToken, requestConfig) => {
         return listToEscape[idPatient];
       }
 
-      const cache = birthdate ? moment().diff(birthdate, 'years') > 0 : useCache;
-      console.log('%cRequested patient of id: ', 'color: #e67e22;', idPatient, 'cache:', cache);
-      console.log('%cRequested patient of url: ', 'color: #e67e22;', nameUrl);
+      const cache = birthdate
+        ? moment().diff(birthdate, "years") > 0
+        : useCache;
+      console.log(
+        "%cRequested patient of id: ",
+        "color: #e67e22;",
+        idPatient,
+        "cache:",
+        cache
+      );
+      console.log("%cRequested patient of url: ", "color: #e67e22;", nameUrl);
       const urlRequest = nameUrl.replace(flag, idPatient);
 
       try {
         const { data: patient } = await axios.get(urlRequest, {
           timeout: 8000,
-          headers: nameHeaders
+          headers: nameHeaders,
         });
 
-        if (patient == null || patient.status === 'error') {
-          console.log('%cRequested patient error: ', 'color: #e67e22;', idPatient, patient);
+        if (patient == null || patient.status === "error") {
+          console.log(
+            "%cRequested patient error: ",
+            "color: #e67e22;",
+            idPatient,
+            patient
+          );
           return defaultValue(idPatient);
         }
         if (patient.id) {
@@ -74,13 +88,15 @@ const getPatients = async (bearerToken, requestConfig) => {
       }
     });
   } else {
-    console.log('bypass name resolution service');
-    promises = listToRequest.map(async ({ idPatient }) => defaultValue(idPatient));
+    console.log("bypass name resolution service");
+    promises = listToRequest.map(async ({ idPatient }) =>
+      defaultValue(idPatient)
+    );
   }
 
   const patients = await Promise.all(promises);
 
-  patients.forEach(p => {
+  patients.forEach((p) => {
     listToEscape[p.idPatient] = p;
   });
 
@@ -88,7 +104,7 @@ const getPatients = async (bearerToken, requestConfig) => {
 };
 
 const hospital = {
-  getPatients
+  getPatients,
 };
 
 export default hospital;

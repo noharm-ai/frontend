@@ -1,20 +1,20 @@
-import 'styled-components/macro';
-import React, { useState, useRef } from 'react';
+import "styled-components/macro";
+import React, { useState, useRef } from "react";
+import { CheckOutlined, EditOutlined } from "@ant-design/icons";
 
-import Button from '@components/Button';
-import Icon from '@components/Icon';
-import { InputNumber } from '@components/Inputs';
-import { useOutsideAlerter } from '@lib/hooks';
+import Button from "components/Button";
+import { InputNumber } from "components/Inputs";
+import { useOutsideAlerter } from "lib/hooks";
 
 export default function Escore({ idOutlier, manualScore, saveOutlier }) {
   const [edit, setEdit] = useState(false);
-  const [score, setScore] = useState(manualScore === null ? '-' : manualScore);
+  const [score, setScore] = useState(manualScore === null ? "-" : manualScore);
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, () => {
     setEdit(false);
   });
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     event.preventDefault();
     setEdit(true);
   };
@@ -23,7 +23,7 @@ export default function Escore({ idOutlier, manualScore, saveOutlier }) {
     const validValues = [0, 1, 2, 3];
     let manualScore = score;
 
-    if (manualScore === '-') {
+    if (manualScore === "-") {
       manualScore = 0;
       setScore(0);
     }
@@ -41,25 +41,27 @@ export default function Escore({ idOutlier, manualScore, saveOutlier }) {
       <InputNumber
         style={{
           marginRight: 8,
-          width: 60
+          width: 60,
         }}
         min={0}
         max={3}
-        defaultValue={score === '-' ? 0 : score}
+        defaultValue={score === "-" ? 0 : score}
         onChange={setScore}
         autoFocus={true}
         onPressEnter={handleSave}
       />
-      <Button type="primary gtm-bt-change-score" onClick={handleSave}>
-        <Icon type="check" />
-      </Button>
+      <Button
+        type="primary gtm-bt-change-score"
+        onClick={handleSave}
+        icon={<CheckOutlined />}
+      ></Button>
     </span>
   ) : (
     <>
       <span css="margin-right: 10px;">{score}</span>
       {/*eslint-disable-next-line*/}
       <a href="#" css="color: inherit;" onClick={handleClick}>
-        <Icon type="edit" />
+        <EditOutlined />
       </a>
     </>
   );

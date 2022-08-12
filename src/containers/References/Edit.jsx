@@ -1,21 +1,21 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 import {
   selectItemToSaveThunk,
-  updateSelectedItemToSaveOutlierThunk
-} from '@store/ducks/outliers/thunk';
+  updateSelectedItemToSaveOutlierThunk,
+} from "store/ducks/outliers/thunk";
 
-import Edit from '@components/References/Edit';
+import Edit from "components/References/Edit";
 
 const mapStateToProps = ({ outliers }) => ({
-  outlier: outliers.edit
+  outlier: outliers.edit,
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       selectOutlier: selectItemToSaveThunk,
-      updateSelectedOutlier: updateSelectedItemToSaveOutlierThunk
+      updateSelectedOutlier: updateSelectedItemToSaveOutlierThunk,
     },
     dispatch
   );

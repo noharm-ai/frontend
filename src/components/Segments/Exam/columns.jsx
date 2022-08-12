@@ -1,91 +1,97 @@
-import React from 'react';
-import { sortableHandle } from 'react-sortable-hoc';
+import React from "react";
+//import { sortableHandle } from "react-sortable-hoc";
+import { EditOutlined } from "@ant-design/icons";
 
-import Tag from '@components/Tag';
-import Tooltip from '@components/Tooltip';
-import Button from '@components/Button';
-import Icon from '@components/Icon';
+import Tag from "components/Tag";
+import Tooltip from "components/Tooltip";
+import Button from "components/Button";
 
-const sortDirections = ['descend', 'ascend'];
+const sortDirections = ["descend", "ascend"];
 
-const DragHandle = sortableHandle(() => (
-  <Icon
-    type="menu"
-    style={{
-      fontSize: 18,
-      color: '#696766',
-      cursor: 'pointer'
-    }}
-  />
-));
+// const DragHandle = sortableHandle(() => (
+//   <Icon
+//     type="menu"
+//     style={{
+//       fontSize: 18,
+//       color: "#696766",
+//       cursor: "pointer",
+//     }}
+//   />
+// ));
 
 export default (sortedInfo, enableSortExams) => {
   const columns = [];
   if (enableSortExams) {
     columns.push({
-      title: 'Ordenar',
-      dataIndex: 'order',
-      align: 'center',
-      render: (text, record) => <DragHandle />
+      title: "Ordenar",
+      dataIndex: "order",
+      align: "center",
+      render: (text, record) => null,
     });
   }
   return [
     ...columns,
     {
-      title: 'Tipo',
-      dataIndex: 'type',
+      title: "Tipo",
+      dataIndex: "type",
       sortDirections,
       sorter: enableSortExams ? null : (a, b) => a.type.localeCompare(b.type),
-      sortOrder: sortedInfo.columnKey === 'type' && sortedInfo.order
+      sortOrder: sortedInfo.columnKey === "type" && sortedInfo.order,
     },
 
     {
-      title: 'Nome',
-      dataIndex: 'name',
+      title: "Nome",
+      dataIndex: "name",
       width: 350,
       sortDirections,
       sorter: enableSortExams ? null : (a, b) => a.name.localeCompare(b.name),
-      sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order
+      sortOrder: sortedInfo.columnKey === "name" && sortedInfo.order,
     },
     {
-      title: 'Rótulo',
-      dataIndex: 'initials',
+      title: "Rótulo",
+      dataIndex: "initials",
       sortDirections,
-      sorter: enableSortExams ? null : (a, b) => a.initials.localeCompare(b.initials),
-      sortOrder: sortedInfo.columnKey === 'initials' && sortedInfo.order
+      sorter: enableSortExams
+        ? null
+        : (a, b) => a.initials.localeCompare(b.initials),
+      sortOrder: sortedInfo.columnKey === "initials" && sortedInfo.order,
     },
     {
-      title: 'Mínimo',
-      dataIndex: 'min'
+      title: "Mínimo",
+      dataIndex: "min",
     },
     {
-      title: 'Máximo',
-      dataIndex: 'max'
+      title: "Máximo",
+      dataIndex: "max",
     },
     {
-      title: 'Referência',
-      dataIndex: 'ref'
+      title: "Referência",
+      dataIndex: "ref",
     },
     {
-      title: 'Situação',
+      title: "Situação",
       render: (entry, record) => (
-        <Tag color={record.active ? 'green' : null}>{record.active ? 'Ativo' : 'Inativo'}</Tag>
-      )
+        <Tag color={record.active ? "green" : null}>
+          {record.active ? "Ativo" : "Inativo"}
+        </Tag>
+      ),
     },
     {
-      title: 'Ações',
-      key: 'operations',
+      title: "Ações",
+      key: "operations",
       width: 70,
-      align: 'center',
+      align: "center",
       render: (text, record) => {
         return (
           <Tooltip title="Alterar exame">
-            <Button type="primary gtm-bt-view-exam" onClick={() => record.showModal(record)}>
-              <Icon type="edit" />
-            </Button>
+            <Button
+              type="primary gtm-bt-view-exam"
+              onClick={() => record.showModal(record)}
+              icon={<EditOutlined />}
+            ></Button>
           </Tooltip>
         );
-      }
-    }
+      },
+    },
   ];
 };

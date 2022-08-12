@@ -1,19 +1,19 @@
-import 'styled-components/macro';
-import React from 'react';
-import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import "styled-components/macro";
+import React from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
-import Heading from '@components/Heading';
-import { Row, Col } from '@components/Grid';
-import { Select } from '@components/Inputs';
-import { createSlug } from '@utils/transformers/utils';
-import { Box } from './Filter.style';
+import Heading from "components/Heading";
+import { Row, Col } from "components/Grid";
+import { Select } from "components/Inputs";
+import { createSlug } from "utils/transformers/utils";
+import { Box } from "./Filter.style";
 
 const validationSchema = Yup.object().shape({
-  idDrug: Yup.number().required('É necessário escolher um medicamento'),
-  idSegment: Yup.number().required('É necessário escolher um segmento')
+  idDrug: Yup.number().required("É necessário escolher um medicamento"),
+  idSegment: Yup.number().required("É necessário escolher um segmento"),
 });
 
 export default function Filter({
@@ -21,38 +21,42 @@ export default function Filter({
   drugs,
   outliers,
   fetchOutliersList,
-  fetchDrugsUnitsList
+  fetchDrugsUnitsList,
 }) {
   const { values } = useFormik({
     validationSchema,
     enableReinitialize: true,
     initialValues: outliers.selecteds,
-    onSubmit: fetchOutliersList
+    onSubmit: fetchOutliersList,
   });
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (outliers.selecteds.idDrug) {
       fetchDrugsUnitsList({
         id: outliers.selecteds.idDrug,
-        idSegment: outliers.selecteds.idSegment
+        idSegment: outliers.selecteds.idSegment,
       });
     }
-  }, [fetchDrugsUnitsList, outliers.selecteds.idDrug, outliers.selecteds.idSegment]);
+  }, [
+    fetchDrugsUnitsList,
+    outliers.selecteds.idDrug,
+    outliers.selecteds.idSegment,
+  ]);
 
   const handleChange = (key, value) => {
     values[key] = value;
     const params = {
       ...values,
-      [key]: value
+      [key]: value,
     };
 
-    if (key === 'idSegment') {
-      history.push(`/medicamentos/${params.idSegment}`);
+    if (key === "idSegment") {
+      navigate(`/medicamentos/${params.idSegment}`);
     } else {
-      const drug = drugs.list.find(item => item.idDrug === params.idDrug);
+      const drug = drugs.list.find((item) => item.idDrug === params.idDrug);
       const slug = createSlug(drug.name);
-      history.push(`/medicamentos/${params.idSegment}/${params.idDrug}/${slug}`);
+      navigate(`/medicamentos/${params.idSegment}/${params.idDrug}/${slug}`);
     }
   };
 
@@ -64,17 +68,22 @@ export default function Filter({
       <Row type="flex" gutter={24}>
         <Col span={24} md={8}>
           <Box>
-            <Heading as="label" htmlFor="segments" size="16px" margin="0 10px 0 0">
+            <Heading
+              as="label"
+              htmlFor="segments"
+              size="16px"
+              margin="0 10px 0 0"
+            >
               Segmento:
             </Heading>
             <Select
               id="idSegment"
               name="idSegment"
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               placeholder="Selectione um segmento..."
               loading={segments.isFetching}
-              value={values.idSegment ? parseInt(values.idSegment, 10) : ''}
-              onChange={val => handleChange('idSegment', val)}
+              value={values.idSegment ? parseInt(values.idSegment, 10) : ""}
+              onChange={(val) => handleChange("idSegment", val)}
               showSearch
               filterOption={filterOption}
             >
@@ -94,11 +103,11 @@ export default function Filter({
             <Select
               id="idDrug"
               name="idDrug"
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               placeholder="Selectione um medicamento..."
               loading={drugs.isFetching}
               value={values.idDrug}
-              onChange={val => handleChange('idDrug', val)}
+              onChange={(val) => handleChange("idDrug", val)}
               showSearch
               filterOption={filterOption}
             >
