@@ -17,7 +17,7 @@ const Action = (record) => {
   );
 };
 
-export default (sortedInfo, filteredInfo, t) => {
+const columns = (sortedInfo, filteredInfo, t) => {
   const sortDirections = ["descend", "ascend"];
 
   return [
@@ -108,3 +108,5 @@ export default (sortedInfo, filteredInfo, t) => {
     },
   ];
 };
+
+export default columns;

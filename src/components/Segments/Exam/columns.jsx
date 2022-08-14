@@ -19,7 +19,7 @@ const sortDirections = ["descend", "ascend"];
 //   />
 // ));
 
-export default (sortedInfo, enableSortExams) => {
+const columns = (sortedInfo, enableSortExams) => {
   const columns = [];
   // if (enableSortExams) {
   //   columns.push({
@@ -95,3 +95,5 @@ export default (sortedInfo, enableSortExams) => {
     },
   ];
 };
+
+export default columns;

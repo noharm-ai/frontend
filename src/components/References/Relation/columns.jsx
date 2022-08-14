@@ -22,7 +22,7 @@ const truncateText = (text) => {
   return text.substring(0, Math.min(max, text.length)) + ellipsis;
 };
 
-export default (security) => [
+const columns = (security) => [
   {
     title: "Substância relacionada",
     sorter: (a, b) => a.nameB.localeCompare(b.nameB),
@@ -86,3 +86,5 @@ export default (security) => [
     },
   },
 ];
+
+export default columns;

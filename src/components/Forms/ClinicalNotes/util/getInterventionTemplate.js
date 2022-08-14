@@ -3,36 +3,36 @@ import {
   conciliationTemplate,
   interventionTemplate,
   signatureTemplate,
-  layoutTemplate
-} from './templates';
+  layoutTemplate,
+} from "./templates";
 
-const getInterventions = list => {
+const getInterventions = (list) => {
   const interventionList = [];
 
-  list.forEach(group => {
+  list.forEach((group) => {
     interventionList.push(
       ...group.value
-        .map(l => {
-          if (l.intervention && l.intervention.status === 's') {
+        .map((l) => {
+          if (l.intervention && l.intervention.status === "s") {
             return {
               drugName: l.drug,
-              ...l.intervention
+              ...l.intervention,
             };
           }
 
           return null;
         })
-        .filter(i => i != null)
+        .filter((i) => i != null)
     );
   });
 
   return interventionList;
 };
 
-const groupByPrescription = list => {
+const groupByPrescription = (list) => {
   const items = [];
 
-  list.forEach(i => {
+  list.forEach((i) => {
     if (items[i.idPrescription]) {
       items[i.idPrescription].push(i);
     } else {
@@ -43,11 +43,16 @@ const groupByPrescription = list => {
   return items;
 };
 
-export default (prescription, account, signature, conciliationType) => {
+const getInterventionTemplate = (
+  prescription,
+  account,
+  signature,
+  conciliationType
+) => {
   const list = [
     ...prescription.prescription.list,
     ...prescription.solution.list,
-    ...prescription.procedure.list
+    ...prescription.procedure.list,
   ];
 
   if (prescription.data.intervention) {
@@ -56,19 +61,22 @@ export default (prescription, account, signature, conciliationType) => {
       value: [
         {
           status: prescription.data.intervention.status,
-          intervention: { ...prescription.data.intervention, idPrescription: 0 }
-        }
-      ]
+          intervention: {
+            ...prescription.data.intervention,
+            idPrescription: 0,
+          },
+        },
+      ],
     });
   }
 
   if (prescription.data.concilia) {
     const interventions = getInterventions(list);
-    const tplInterventions = interventions.map(i => interventionTemplate(i));
+    const tplInterventions = interventions.map((i) => interventionTemplate(i));
 
     return conciliationTemplate(
       prescription,
-      tplInterventions.join(''),
+      tplInterventions.join(""),
       signatureTemplate(signature, account),
       conciliationType
     );
@@ -76,11 +84,17 @@ export default (prescription, account, signature, conciliationType) => {
 
   const interventions = groupByPrescription(getInterventions(list));
 
-  const tpl = Object.keys(interventions).map(k => {
-    const iTpl = interventions[k].map(i => interventionTemplate(i));
+  const tpl = Object.keys(interventions).map((k) => {
+    const iTpl = interventions[k].map((i) => interventionTemplate(i));
 
-    return prescriptionTemplate(k, iTpl.join(''));
+    return prescriptionTemplate(k, iTpl.join(""));
   });
 
-  return layoutTemplate(prescription.data, tpl.join(''), signatureTemplate(signature, account));
+  return layoutTemplate(
+    prescription.data,
+    tpl.join(""),
+    signatureTemplate(signature, account)
+  );
 };
+
+export default getInterventionTemplate;

@@ -4,7 +4,7 @@ import { Row, Col } from "antd";
 //import { sortableContainer, sortableElement } from "react-sortable-hoc";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { MenuOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 
 import Tabs from "components/Tabs";
 import Button from "components/Button";
@@ -50,7 +50,7 @@ function Segments({
 }) {
   const params = useParams();
   const { t } = useTranslation();
-  const [enableSortExams, setEnableSortExams] = useState(true);
+  //const [enableSortExams, setEnableSortExams] = useState(true);
   const [examModalVisible, setExamModalVisibility] = useState(false);
   const [progressModalVisible, setProgressModalVisibility] = useState(false);
   const [progressPercentage, setProgressPercentage] = useState(0);
@@ -158,28 +158,28 @@ function Segments({
     idSegment: segments.firstFilter.idSegment,
   });
 
-  const onSortEnd = ({ oldIndex, newIndex }) => {
-    if (oldIndex !== newIndex) {
-      updateExamOrder(oldIndex, newIndex);
-    }
-  };
+  // const onSortEnd = ({ oldIndex, newIndex }) => {
+  //   if (oldIndex !== newIndex) {
+  //     updateExamOrder(oldIndex, newIndex);
+  //   }
+  // };
 
   //const SortableItem = sortableElement((props) => <tr {...props} />);
   //const SortableContainer = sortableContainer((props) => <tbody {...props} />);
 
-  const DraggableBodyRow = ({ className, style, ...restProps }) => {
-    return null;
-    //return <SortableItem index={restProps["data-row-key"]} {...restProps} />;
-  };
+  // const DraggableBodyRow = ({ className, style, ...restProps }) => {
+  //   return null;
+  //   //return <SortableItem index={restProps["data-row-key"]} {...restProps} />;
+  // };
 
-  const DraggableContainer = (props) => null;
-  // <SortableContainer
-  //   useDragHandle
-  //   helperClass="row-dragging"
-  //   onSortEnd={onSortEnd}
-  //   {...props}
-  // />
-  //);
+  // const DraggableContainer = (props) => null;
+  // // <SortableContainer
+  // //   useDragHandle
+  // //   helperClass="row-dragging"
+  // //   onSortEnd={onSortEnd}
+  // //   {...props}
+  // // />
+  // //);
 
   const afterSaveSegment = () => {};
 
@@ -197,20 +197,20 @@ function Segments({
       id: segments.firstFilter.idSegment,
     });
 
-  const toggleSortExams = () => {
-    if (enableSortExams) {
-      setEnableSortExams(false);
-    } else {
-      setSortOrder({
-        order: null,
-        columnKey: null,
-      });
-      setEnableSortExams(true);
-      notification.success({
-        message: "Arraste os exames para a ordem desejada",
-      });
-    }
-  };
+  // const toggleSortExams = () => {
+  //   if (enableSortExams) {
+  //     setEnableSortExams(false);
+  //   } else {
+  //     setSortOrder({
+  //       order: null,
+  //       columnKey: null,
+  //     });
+  //     setEnableSortExams(true);
+  //     notification.success({
+  //       message: "Arraste os exames para a ordem desejada",
+  //     });
+  //   }
+  // };
 
   return (
     <>
@@ -280,7 +280,7 @@ function Segments({
             </Tooltip>
           </Row>
           <Table
-            columns={examColumns(sortOrder, enableSortExams)}
+            columns={examColumns(sortOrder, false)}
             pagination={false}
             loading={currentSegment.isFetching || sortStatus.isSaving}
             locale={{ emptyText }}

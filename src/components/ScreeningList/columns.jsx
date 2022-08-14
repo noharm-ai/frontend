@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components/macro";
-import { useTranslation } from "react-i18next";
 import {
   CheckOutlined,
   SearchOutlined,
@@ -188,8 +187,7 @@ const oddClass = (index) => (index % 2 ? "bg-light-gray" : "");
 
 const sortDirections = ["descend", "ascend"];
 
-export default (sortedInfo, filteredInfo, noharmCare) => {
-  const { t } = useTranslation();
+const columns = (sortedInfo, filteredInfo, noharmCare, t) => {
   let index = 0;
 
   const patientRiskColumns = [
@@ -457,3 +455,5 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
     },
   ];
 };
+
+export default columns;

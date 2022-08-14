@@ -73,6 +73,7 @@ export default function ScreeningList({
   security,
   ...restProps
 }) {
+  const { t } = useTranslation();
   const [sortOrder, setSortOrder] = useState({
     order: null,
     columnKey: null,
@@ -88,7 +89,7 @@ export default function ScreeningList({
     prioritizationType,
   };
   const dataSource = toDataSource(list, null, bag);
-  const columns = columnsTable(sortOrder, filter, security.hasRole("care"));
+  const columns = columnsTable(sortOrder, filter, security.hasRole("care"), t);
   const [title] = useMedia(
     [`(max-width: ${breakpoints.lg})`],
     [[theTitle]],
@@ -99,8 +100,6 @@ export default function ScreeningList({
     pending: 0,
     checked: 0,
   };
-
-  const { t } = useTranslation();
 
   // error message when fetch has error.
   const errorMessage = {

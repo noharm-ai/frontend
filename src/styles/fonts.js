@@ -1,4 +1,6 @@
-export default {
-  primary: 'Montserrat',
-  secondary: 'Roboto'
+const fonts = {
+  primary: "Montserrat",
+  secondary: "Roboto",
 };
+
+export default fonts;

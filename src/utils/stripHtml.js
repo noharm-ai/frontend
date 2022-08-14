@@ -1,5 +1,7 @@
-export default html => {
-  const tmp = document.createElement('DIV');
+const stripHtml = (html) => {
+  const tmp = document.createElement("DIV");
   tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || '';
+  return tmp.textContent || tmp.innerText || "";
 };
+
+export default stripHtml;

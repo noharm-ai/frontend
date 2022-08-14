@@ -972,7 +972,7 @@ export const conciliationColumns = (bag) => [
   ...actionColumns(bag),
 ];
 
-export default (filteredInfo, bag) => {
+const columns = (filteredInfo, bag) => {
   const columns = [
     ...drugInfo(bag),
     ...frequencyAndTime(bag),
@@ -998,3 +998,5 @@ export default (filteredInfo, bag) => {
 
   return columns;
 };
+
+export default columns;

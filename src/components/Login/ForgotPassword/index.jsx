@@ -53,8 +53,6 @@ export default function ForgotPassword({ forgotPassword, status }) {
 
   const { t } = useTranslation();
 
-  const submit = (params) => {};
-
   return (
     <>
       <FieldSet>

@@ -13,7 +13,7 @@ import {
 
 import Feature from "models/Feature";
 
-export default [
+const navigation = [
   {
     key: "prioritization",
     text: "menu.prioritization",
@@ -100,3 +100,5 @@ export default [
     ],
   },
 ];
+
+export default navigation;

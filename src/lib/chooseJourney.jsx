@@ -32,6 +32,9 @@ const JourneySwitchComponent = connect(
   mapDispatchToProps
 )(JourneySwitch);
 
-export default () =>
+const chooseJourney =
+  () =>
   (props = {}) =>
     <JourneySwitchComponent {...props} />;
+
+export default chooseJourney;
