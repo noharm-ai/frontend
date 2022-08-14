@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
@@ -28,35 +28,36 @@ export default function User({
       .required(t("userAdminForm.requiredError")),
   });
 
-  const { isSaving, success, error } = saveStatus;
+  const { isSaving } = saveStatus;
   const { ...data } = user.content;
 
   const initialValues = {
     ...data,
   };
 
-  useEffect(() => {
-    if (success) {
-      notification.success({
-        message: t("userAdminForm.saveMessage"),
+  const submit = (params) => {
+    save(params)
+      .then(() => {
+        notification.success({
+          message: t("userAdminForm.saveMessage"),
+        });
+        if (afterSave) {
+          afterSave();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        notification.error({
+          message: t("userAdminForm.errorMessage"),
+          description: t(err.code),
+        });
       });
-      if (afterSave) {
-        afterSave();
-      }
-    }
-
-    if (error) {
-      notification.error({
-        message: t("userAdminForm.errorMessage"),
-        description: t(error.code),
-      });
-    }
-  }, [success, error, afterSave, t]);
+  };
 
   return (
     <Formik
       enableReinitialize
-      onSubmit={save}
+      onSubmit={submit}
       initialValues={initialValues}
       validationSchema={validationSchema}
     >

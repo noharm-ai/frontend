@@ -1,8 +1,9 @@
 import React from "react";
+import { EditOutlined } from "@ant-design/icons";
+
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
-import Icon from "components/Icon";
 
 const enableSortUsers = (bool, t) => {
   const columns = [];
@@ -43,9 +44,8 @@ const enableSortUsers = (bool, t) => {
             <Button
               type="primary gtm-bt-view-exam"
               onClick={() => record.showModal(record)}
-            >
-              <Icon type="edit" />
-            </Button>
+              icon={<EditOutlined />}
+            ></Button>
           </Tooltip>
         );
       },

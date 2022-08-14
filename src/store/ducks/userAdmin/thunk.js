@@ -70,29 +70,32 @@ export const selectUserThunk = (item) => (dispatch) => {
   dispatch(usersUserSelect(item));
 };
 
-// TODO: adicionar chamada ao endpoint(o mesmo ainda não foi finalizado)
 export const saveUserThunk =
   (params = {}) =>
-  async (dispatch, getState) => {
-    dispatch(usersSaveSingleStart());
+  (dispatch, getState) => {
+    return new Promise(async (resolve, reject) => {
+      dispatch(usersSaveSingleStart());
 
-    const { id } = params;
-    const { access_token } = getState().auth.identify;
-    const method = id ? "updateUser" : "createUser";
-    const { status, error, data } = await api[method](
-      access_token,
-      params
-    ).catch(errorHandler);
+      const { id } = params;
+      const { access_token } = getState().auth.identify;
+      const method = id ? "updateUser" : "createUser";
+      const { status, error, data } = await api[method](
+        access_token,
+        params
+      ).catch(errorHandler);
 
-    if (status !== 200) {
-      dispatch(usersSaveSingleError(error));
-      return;
-    }
+      if (status !== 200) {
+        dispatch(usersSaveSingleError(error));
+        reject(error);
+        return;
+      }
 
-    if (method === "createUser") {
-      params.id = data.data;
-    }
+      if (method === "createUser") {
+        params.id = data.data;
+      }
 
-    dispatch(usersUserSuccess(params));
-    dispatch(usersSaveSingleReset());
+      dispatch(usersUserSuccess(params));
+      dispatch(usersSaveSingleReset());
+      resolve(params);
+    });
   };

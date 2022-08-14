@@ -19,7 +19,7 @@ import InterventionList from "pages/InterventionList";
 import UserConfig from "pages/UserConfig";
 // import Password from "pages/Password";
 // import Conciliation from "pages/Conciliation";
-// import UserAdmin from "pages/UserAdmin";
+import UserAdmin from "pages/UserAdmin";
 import PatientList from "pages/PatientList";
 
 const routes = [
@@ -143,13 +143,11 @@ const routes = [
     path: "/configuracoes/usuario",
     element: <WithAuth component={UserConfig} />,
   },
-  // {
-  //   exact: true,
-  //   path: "/configuracoes/administracao",
-  //   element: withAuth({
-  //     component: UserAdmin,
-  //   }),
-  // },
+  {
+    exact: true,
+    path: "/configuracoes/administracao",
+    element: <WithAuth component={UserAdmin} />,
+  },
   {
     exact: true,
     path: "/priorizacao/pacientes/:startDate",

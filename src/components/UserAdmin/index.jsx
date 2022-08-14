@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { PlusOutlined } from "@ant-design/icons";
 
 import Table from "components/Table";
 import { Row } from "antd";
 import Empty from "components/Empty";
 import Button from "components/Button";
-import Icon from "components/Icon";
 import BackTop from "components/BackTop";
 import notification from "components/notification";
 import userColumns from "./User/columns";
@@ -73,8 +73,12 @@ function UserAdmin({
   return (
     <>
       <Row type="flex" justify="end" style={{ marginBottom: "20px" }}>
-        <Button type="primary gtm-bt-add-user" onClick={addUserModal}>
-          <Icon type="plus" /> {t("userAdminForm.addIcon")}
+        <Button
+          type="primary gtm-bt-add-user"
+          onClick={addUserModal}
+          icon={<PlusOutlined />}
+        >
+          {t("userAdminForm.addIcon")}
         </Button>
       </Row>
       <Table
