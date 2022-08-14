@@ -7,21 +7,25 @@ const { userSaveStart, userSaveSuccess, userSaveError, userSaveReset } =
 
 export const updatePasswordThunk =
   ({ ...params }) =>
-  async (dispatch, getState) => {
-    dispatch(userSaveStart());
+  (dispatch, getState) => {
+    return new Promise(async (resolve, reject) => {
+      dispatch(userSaveStart());
 
-    const { access_token } = getState().auth.identify;
-    const { status, error } = await api
-      .updatePassword(access_token, params)
-      .catch(errorHandler);
+      const { access_token } = getState().auth.identify;
+      const { status, error } = await api
+        .updatePassword(access_token, params)
+        .catch(errorHandler);
 
-    if (status !== 200) {
-      dispatch(userSaveError(error));
-      return;
-    }
+      if (status !== 200) {
+        dispatch(userSaveError(error));
+        reject();
+        return;
+      }
 
-    dispatch(userSaveSuccess());
-    dispatch(userSaveReset());
+      dispatch(userSaveSuccess());
+      dispatch(userSaveReset());
+      resolve();
+    });
   };
 
 export const forgotPasswordThunk = (email) => async (dispatch) => {

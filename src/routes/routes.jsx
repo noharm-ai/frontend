@@ -16,7 +16,7 @@ import References from "pages/References";
 import Reports from "pages/Reports";
 import ViewReport from "pages/Reports/ViewReport";
 import InterventionList from "pages/InterventionList";
-// import UserConfig from "pages/UserConfig";
+import UserConfig from "pages/UserConfig";
 // import Password from "pages/Password";
 // import Conciliation from "pages/Conciliation";
 // import UserAdmin from "pages/UserAdmin";
@@ -138,13 +138,11 @@ const routes = [
     element: <WithAuth component={InterventionList} />,
   },
 
-  // {
-  //   exact: true,
-  //   path: "/configuracoes/usuario",
-  //   element: withAuth({
-  //     component: UserConfig,
-  //   }),
-  // },
+  {
+    exact: true,
+    path: "/configuracoes/usuario",
+    element: <WithAuth component={UserConfig} />,
+  },
   // {
   //   exact: true,
   //   path: "/configuracoes/administracao",

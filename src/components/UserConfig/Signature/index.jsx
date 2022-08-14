@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Col } from "components/Grid";
+import { Col, Row } from "components/Grid";
 import Heading from "components/Heading";
 import { Textarea } from "components/Inputs";
 import { Box, EditorBox, ButtonContainer } from "components/Forms/Form.style";
@@ -53,33 +53,35 @@ export default function Signature({ fetchMemory, saveMemory, memory, userId }) {
   };
 
   return (
-    <Box flexDirection="column">
-      <Col xs={24} style={{ paddingBottom: "0" }}>
-        <Heading as="label" size="14px">
-          Assinatura:
-        </Heading>
-      </Col>
-      <Col xs={12} style={{ alignSelf: "flex-start" }}>
-        <EditorBox>
-          <Textarea
-            autoFocus
-            style={{ minHeight: "150px" }}
-            disabled={isFetching}
-            value={signature}
-            onChange={({ target }) => setSignature(target.value)}
-          />
-        </EditorBox>
-        <ButtonContainer>
-          <Button
-            type="primary gtm-btn-save-signature"
-            onClick={() => save()}
-            disabled={isFetching || isSaving}
-            loading={isSaving}
-          >
-            Salvar <Icon type="check" />
-          </Button>
-        </ButtonContainer>
-      </Col>
+    <Box>
+      <Row style={{ width: "100%" }}>
+        <Col xs={24} style={{ paddingBottom: "0" }}>
+          <Heading as="label" size="14px">
+            Assinatura:
+          </Heading>
+        </Col>
+        <Col xs={12} style={{ alignSelf: "flex-start" }}>
+          <EditorBox>
+            <Textarea
+              autoFocus
+              style={{ minHeight: "150px" }}
+              disabled={isFetching}
+              value={signature}
+              onChange={({ target }) => setSignature(target.value)}
+            />
+          </EditorBox>
+          <ButtonContainer>
+            <Button
+              type="primary gtm-btn-save-signature"
+              onClick={() => save()}
+              disabled={isFetching || isSaving}
+              loading={isSaving}
+            >
+              Salvar <Icon type="check" />
+            </Button>
+          </ButtonContainer>
+        </Col>
+      </Row>
     </Box>
   );
 }

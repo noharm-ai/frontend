@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
@@ -34,23 +34,20 @@ export default function ChangePassword({ updatePassword, status }) {
     confirmPassword: "",
   };
 
-  useEffect(() => {
-    if (success) {
-      notification.success({ message: "Uhu! Senha alterada com sucesso! :)" });
-    }
-  }, [success]);
-
-  useEffect(() => {
-    if (error) {
-      notification.error({
-        message: t("error.title"),
-        description: error.message || t("error.description"),
-      });
-    }
-  }, [error, t]);
-
   const save = (values) => {
-    updatePassword(values);
+    updatePassword(values)
+      .then(() => {
+        notification.success({
+          message: "Uhu! Senha alterada com sucesso! :)",
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        notification.error({
+          message: t("error.title"),
+          description: error.message || t("error.description"),
+        });
+      });
   };
 
   return (
