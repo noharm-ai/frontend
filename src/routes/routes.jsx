@@ -18,7 +18,7 @@ import ViewReport from "pages/Reports/ViewReport";
 import InterventionList from "pages/InterventionList";
 import UserConfig from "pages/UserConfig";
 import Password from "pages/Password";
-// import Conciliation from "pages/Conciliation";
+import Conciliation from "pages/Conciliation";
 import UserAdmin from "pages/UserAdmin";
 import PatientList from "pages/PatientList";
 
@@ -74,11 +74,11 @@ const routes = [
     path: "/prescricao/:slug",
     element: <WithAuth component={Screening} />,
   },
-  // {
-  //   exact: true,
-  //   path: "/conciliacao/:id",
-  //   element: <WithAuth component={Conciliation} />
-  // },
+  {
+    exact: true,
+    path: "/conciliacao/:id",
+    element: <WithAuth component={Conciliation} />,
+  },
   {
     exact: true,
     path: "/segmentos",

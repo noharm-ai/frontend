@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 
 import Empty from "components/Empty";
 import LoadBox from "components/LoadBox";
@@ -15,14 +16,9 @@ import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
 
 import { BoxWrapper } from "./index.style";
 
-export default function Screening({
-  match,
-  fetchScreeningById,
-  isFetching,
-  error,
-}) {
+export default function Screening({ fetchScreeningById, isFetching, error }) {
+  const { id } = useParams();
   const { t } = useTranslation();
-  const { id } = match.params;
 
   // show message if has error
   useEffect(() => {
@@ -52,7 +48,7 @@ export default function Screening({
   return (
     <>
       <BoxWrapper>
-        <PageHeader match={{ params: { slug: id } }} />
+        <PageHeader />
         <Row type="flex" gutter={24}>
           <Col span={24} md={24}>
             {isFetching ? <LoadBox /> : <Patient />}
