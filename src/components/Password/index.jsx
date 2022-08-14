@@ -1,13 +1,14 @@
 import "styled-components/macro";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
+import { LockOutlined } from "@ant-design/icons";
+import { useParams } from "react-router-dom";
 
 import { setErrorClassName } from "utils/form";
 
 import notification from "components/notification";
-import Icon from "components/Icon";
 import Button from "components/Button";
 import { Input } from "components/Inputs";
 import { Container, Row, Col } from "components/Grid";
@@ -30,12 +31,13 @@ const validationSchema = Yup.object().shape({
     .oneOf([Yup.ref("newpassword"), null], "Senhas não conferem"),
 });
 
-export default function Password({ resetPassword, match, status }) {
+export default function Password({ resetPassword, status }) {
+  const params = useParams();
   const { t } = useTranslation();
   const [passwordChanged, setPasswordChanged] = useState(false);
-  const { isSaving, success, error } = status;
+  const { isSaving, error } = status;
   const initialValues = {
-    token: match.params.token,
+    token: params.token,
     newpassword: "",
     confirmPassword: "",
   };
@@ -44,24 +46,23 @@ export default function Password({ resetPassword, match, status }) {
     useFormik({
       initialValues,
       validationSchema,
-      onSubmit: (values) => resetPassword(values.token, values.newpassword),
+      onSubmit: (values) => {
+        resetPassword(values.token, values.newpassword)
+          .then(() => {
+            notification.success({
+              message: "Uhu! Senha alterada com sucesso! :)",
+            });
+            setPasswordChanged(true);
+          })
+          .catch((err) => {
+            console.error(err);
+            notification.error({
+              message: t("error.title"),
+              description: error.message || t("error.description"),
+            });
+          });
+      },
     });
-
-  useEffect(() => {
-    if (success) {
-      notification.success({ message: "Uhu! Senha alterada com sucesso! :)" });
-      setPasswordChanged(true);
-    }
-  }, [success]);
-
-  useEffect(() => {
-    if (error) {
-      notification.error({
-        message: t("error.title"),
-        description: error.message || t("error.description"),
-      });
-    }
-  }, [error, t]);
 
   return (
     <Wrapper as="form">
@@ -80,7 +81,7 @@ export default function Password({ resetPassword, match, status }) {
                   >
                     <Input.Password
                       placeholder="Nova senha"
-                      prefix={<Icon type="lock" />}
+                      prefix={<LockOutlined />}
                       name="newpassword"
                       type="newpassword"
                       value={values.newpassword}
@@ -97,7 +98,7 @@ export default function Password({ resetPassword, match, status }) {
                   >
                     <Input.Password
                       placeholder="Confirme a senha"
-                      prefix={<Icon type="lock" />}
+                      prefix={<LockOutlined />}
                       name="confirmPassword"
                       value={values.confirmPassword}
                       onBlur={handleBlur}

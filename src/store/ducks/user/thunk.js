@@ -28,32 +28,42 @@ export const updatePasswordThunk =
     });
   };
 
-export const forgotPasswordThunk = (email) => async (dispatch) => {
-  dispatch(userSaveStart());
+export const forgotPasswordThunk = (email) => (dispatch) => {
+  return new Promise(async (resolve, reject) => {
+    dispatch(userSaveStart());
 
-  const { status, error } = await api.forgotPassword(email).catch(errorHandler);
+    const { status, error } = await api
+      .forgotPassword(email)
+      .catch(errorHandler);
 
-  if (status !== 200) {
-    dispatch(userSaveError(error));
-    return;
-  }
+    if (status !== 200) {
+      dispatch(userSaveError(error));
+      reject(error);
+      return;
+    }
 
-  dispatch(userSaveSuccess());
-  dispatch(userSaveReset());
+    dispatch(userSaveSuccess());
+    dispatch(userSaveReset());
+    resolve(email);
+  });
 };
 
-export const resetPasswordThunk = (token, passsword) => async (dispatch) => {
-  dispatch(userSaveStart());
+export const resetPasswordThunk = (token, passsword) => (dispatch) => {
+  return new Promise(async (resolve, reject) => {
+    dispatch(userSaveStart());
 
-  const { status, error } = await api
-    .resetPassword(token, passsword)
-    .catch(errorHandler);
+    const { status, error } = await api
+      .resetPassword(token, passsword)
+      .catch(errorHandler);
 
-  if (status !== 200) {
-    dispatch(userSaveError(error));
-    return;
-  }
+    if (status !== 200) {
+      dispatch(userSaveError(error));
+      reject(error);
+      return;
+    }
 
-  dispatch(userSaveSuccess());
-  dispatch(userSaveReset());
+    dispatch(userSaveSuccess());
+    dispatch(userSaveReset());
+    resolve();
+  });
 };

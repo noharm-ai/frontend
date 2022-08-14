@@ -1,5 +1,5 @@
 import "styled-components/macro";
-import React, { useEffect } from "react";
+import React from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -21,7 +21,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function ForgotPassword({ forgotPassword, status }) {
-  const { isSaving, success, error } = status;
+  const { isSaving } = status;
   const {
     values,
     errors,
@@ -34,29 +34,26 @@ export default function ForgotPassword({ forgotPassword, status }) {
     initialValues,
     validationSchema,
     onSubmit: (values) => {
-      forgotPassword(values.email);
+      forgotPassword(values.email)
+        .then((email) => {
+          notification.success({
+            message: `Um e-mail foi enviado para ${email} com as instruções para alterar a senha`,
+          });
+          resetForm();
+        })
+        .catch((err) => {
+          console.error(err);
+          notification.error({
+            message: t("error.title"),
+            description: err.message || t("error.description"),
+          });
+        });
     },
   });
 
   const { t } = useTranslation();
 
-  useEffect(() => {
-    if (success) {
-      notification.success({
-        message: `Um e-mail foi enviado para ${values.email} com as instruções para alterar a senha`,
-      });
-      resetForm();
-    }
-  }, [resetForm, success]); //eslint-disable-line
-
-  useEffect(() => {
-    if (error) {
-      notification.error({
-        message: t("error.title"),
-        description: error.message || t("error.description"),
-      });
-    }
-  }, [error, t]);
+  const submit = (params) => {};
 
   return (
     <>

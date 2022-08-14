@@ -17,7 +17,7 @@ import Reports from "pages/Reports";
 import ViewReport from "pages/Reports/ViewReport";
 import InterventionList from "pages/InterventionList";
 import UserConfig from "pages/UserConfig";
-// import Password from "pages/Password";
+import Password from "pages/Password";
 // import Conciliation from "pages/Conciliation";
 import UserAdmin from "pages/UserAdmin";
 import PatientList from "pages/PatientList";
@@ -33,14 +33,11 @@ const routes = [
     path: "/login",
     element: <WithAuth component={Login} isLoginPage={true} />,
   },
-  // {
-  //   exact: true,
-  //   path: "/reset/:token",
-  //   element: withAuth({
-  //     component: Password,
-  //     isLogoutPage: true,
-  //   }),
-  // },
+  {
+    exact: true,
+    path: "/reset/:token",
+    element: <WithAuth component={Password} isLogoutPage={true} />,
+  },
   {
     exact: true,
     path: "/login/:language",
