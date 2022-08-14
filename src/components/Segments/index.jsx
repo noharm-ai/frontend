@@ -252,7 +252,7 @@ function Segments({
 
         <Tabs.TabPane tab="Exames" key="2">
           <Row type="flex" justify="end" style={{ marginBottom: "20px" }}>
-            <Button
+            {/* <Button
               type="gtm-bt-reorder"
               onClick={() => toggleSortExams()}
               style={{ marginRight: "5px" }}
@@ -261,7 +261,7 @@ function Segments({
               {enableSortExams
                 ? "Desligar ordenação de exames"
                 : "Ordenar exames"}
-            </Button>
+            </Button> */}
             <Tooltip
               title={
                 isEmpty(availableExamTypes)
@@ -286,12 +286,12 @@ function Segments({
             locale={{ emptyText }}
             dataSource={!currentSegment.isFetching ? dsExams : []}
             onChange={handleTableChange}
-            components={{
-              body: {
-                wrapper: DraggableContainer,
-                row: DraggableBodyRow,
-              },
-            }}
+            // components={{
+            //   body: {
+            //     wrapper: DraggableContainer,
+            //     row: DraggableBodyRow,
+            //   },
+            // }}
           />
         </Tabs.TabPane>
       </Tabs>

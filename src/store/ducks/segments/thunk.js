@@ -83,23 +83,26 @@ export const resetSingleSegmentThunk = () => async (dispatch, getState) => {
 
 export const saveSegmentThunk =
   (params = {}) =>
-  async (dispatch, getState) => {
-    dispatch(segmentsSaveSingleStart());
+  (dispatch, getState) => {
+    return new Promise(async (resolve, reject) => {
+      dispatch(segmentsSaveSingleStart());
+      const { id } = params;
+      const { access_token } = getState().auth.identify;
+      const method = id ? "updateSegment" : "createSegment";
+      const { status, error } = await api[method](access_token, params).catch(
+        errorHandler
+      );
 
-    const { id } = params;
-    const { access_token } = getState().auth.identify;
-    const method = id ? "updateSegment" : "createSegment";
-    const { status, error } = await api[method](access_token, params).catch(
-      errorHandler
-    );
+      if (status !== 200) {
+        dispatch(segmentsSaveSingleError(error));
+        reject(error);
+        return;
+      }
 
-    if (status !== 200) {
-      dispatch(segmentsSaveSingleError(error));
-      return;
-    }
-
-    dispatch(segmentsSaveSingleSuccess());
-    dispatch(segmentsSaveSingleReset());
+      dispatch(segmentsSaveSingleSuccess());
+      dispatch(segmentsSaveSingleReset());
+      resolve();
+    });
   };
 
 export const selectSegmentExamThunk = (item) => (dispatch) => {
@@ -144,17 +147,24 @@ export const updateSegmentExamOrderThunk =
 export const saveSegmentExamThunk =
   (params = {}) =>
   async (dispatch, getState) => {
-    dispatch(segmentsSaveExamStart());
-    const { access_token } = getState().auth.identify;
-    const { status, error } = await api.updateSegmentExam(access_token, params);
+    return new Promise(async (resolve, reject) => {
+      dispatch(segmentsSaveExamStart());
+      const { access_token } = getState().auth.identify;
+      const { status, error } = await api.updateSegmentExam(
+        access_token,
+        params
+      );
 
-    if (status !== 200) {
-      dispatch(segmentsSaveExamError(error));
-      return;
-    }
+      if (status !== 200) {
+        dispatch(segmentsSaveExamError(error));
+        reject(error);
+        return;
+      }
 
-    dispatch(segmentsSaveExamSuccess(params));
-    dispatch(segmentsSaveExamReset());
+      dispatch(segmentsSaveExamSuccess(params));
+      dispatch(segmentsSaveExamReset());
+      resolve(params);
+    });
   };
 
 export const fetchExamTypesListThunk =

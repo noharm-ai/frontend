@@ -33,7 +33,7 @@ export default function Exam({
   ...props
 }) {
   const { t } = useTranslation();
-  const { isSaving, success, error, item } = saveStatus;
+  const { isSaving, item } = saveStatus;
   const { order, ...data } = item;
 
   const initialValues = {
@@ -41,31 +41,33 @@ export default function Exam({
   };
 
   useEffect(() => {
-    if (success) {
-      notification.success(saveMessage);
-      if (afterSave) {
-        afterSave();
-      }
-    }
-
-    if (error) {
-      notification.error({
-        message: t("error.title"),
-        description: t("error.description"),
-      });
-    }
-  }, [success, error, afterSave, t]);
-
-  useEffect(() => {
     fetchExamTypes();
   }, [fetchExamTypes]);
 
+  const submit = (params) => {
+    save(params)
+      .then(() => {
+        notification.success(saveMessage);
+        if (afterSave) {
+          afterSave();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
+      });
+  };
+
   return (
     <Formik
-      enableReinitialize
-      onSubmit={save}
+      submit
+      onSubmit={submit}
       initialValues={initialValues}
       validationSchema={validationSchema}
+      enableReinitialize={true}
     >
       {({ handleSubmit }) => (
         <DefaultModal

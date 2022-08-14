@@ -31,7 +31,7 @@ export default function Segment({
   firstFilter,
 }) {
   const { t } = useTranslation();
-  const { isSaving, success, error } = saveStatus;
+  const { isSaving } = saveStatus;
   const departmentsList = [...departments.list, ...segmentDepartments];
 
   // fetch departments.
@@ -41,24 +41,25 @@ export default function Segment({
     }
   }, [fetchDepartments, firstFilter.idSegment]);
 
-  useEffect(() => {
-    if (success) {
-      notification.success(saveMessage);
-      afterSaveSegment();
-    }
-
-    if (error) {
-      notification.error({
-        message: t("error.title"),
-        description: t("error.description"),
+  const submit = (params) => {
+    saveSegment(params)
+      .then(() => {
+        notification.success(saveMessage);
+        afterSaveSegment();
+      })
+      .catch((err) => {
+        console.error(err);
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
       });
-    }
-  }, [success, error, afterSaveSegment, fetchDepartments, t]);
+  };
 
   return (
     <Formik
       enableReinitialize
-      onSubmit={saveSegment}
+      onSubmit={submit}
       initialValues={initialValues}
       validationSchema={validationSchema}
     >

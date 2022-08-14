@@ -21,14 +21,14 @@ const sortDirections = ["descend", "ascend"];
 
 export default (sortedInfo, enableSortExams) => {
   const columns = [];
-  if (enableSortExams) {
-    columns.push({
-      title: "Ordenar",
-      dataIndex: "order",
-      align: "center",
-      render: (text, record) => null,
-    });
-  }
+  // if (enableSortExams) {
+  //   columns.push({
+  //     title: "Ordenar",
+  //     dataIndex: "order",
+  //     align: "center",
+  //     render: (text, record) => null,
+  //   });
+  // }
   return [
     ...columns,
     {
