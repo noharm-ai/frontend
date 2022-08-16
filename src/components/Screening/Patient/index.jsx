@@ -199,7 +199,7 @@ export default function Patient({
                     <div className="content">
                       <div className="text-content list">
                         {notesAllergies.map(({ text, date }) => (
-                          <div key={date} className="list-item">
+                          <div key={text} className="list-item">
                             <div className="date">
                               {moment(date).format("DD/MM/YYYY hh:mm")}
                             </div>
