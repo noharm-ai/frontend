@@ -124,6 +124,7 @@ export const PatientBox = styled.div`
 
     .patient-header-action {
       display: flex;
+      align-items: center;
 
       .patient-menu {
         display: flex;

@@ -49,7 +49,12 @@ export default function Menu({
     return (
       <Navigator.Item key={key}>
         {key.pathname ? (
-          <a href={key.pathname} target="_blank" rel="noreferrer noopener">
+          <a
+            href={key.pathname}
+            className="nav-text"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
             <ItemTitle icon={icon} text={t(text)} />
           </a>
         ) : (

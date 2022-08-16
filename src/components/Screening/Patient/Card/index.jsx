@@ -215,12 +215,16 @@ export default function PatientCard({
         <div className="patient-header-action">
           {prevIntervention && (
             <Tooltip title="Possui intervenção anterior (consulte a aba Intervenções)">
-              <WarningOutlined style={{ fontSize: 18, color: "#fa8c16" }} />
+              <WarningOutlined
+                style={{ fontSize: 18, color: "#fa8c16", marginRight: "5px" }}
+              />
             </Tooltip>
           )}
           {!prevIntervention && existIntervention && (
             <Tooltip title="Possui intervenção anterior já resolvida (consulte a aba Intervenções)">
-              <WarningOutlined style={{ fontSize: 18, color: "gray" }} />
+              <WarningOutlined
+                style={{ fontSize: 18, color: "gray", marginRight: "5px" }}
+              />
             </Tooltip>
           )}
 

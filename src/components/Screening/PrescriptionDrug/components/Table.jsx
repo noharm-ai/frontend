@@ -64,7 +64,7 @@ function Table({
           />
         ),
       }}
-      dataSource={!isFetching ? [...ds.value] : []}
+      dataSource={!isFetching ? [...(ds.value || [])] : []}
       expandedRowRender={expandedRowRender(extraBag)}
       rowClassName={rowClassName}
       expandedRowKeys={expandedRows}
