@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import isEmpty from "lodash.isempty";
 import { Row, Col } from "antd";
-//import { sortableContainer, sortableElement } from "react-sortable-hoc";
+import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
@@ -35,6 +36,8 @@ const emptyText = (
   />
 );
 
+const type = "DraggableBodyRow";
+
 function Segments({
   segments,
   outliers,
@@ -50,7 +53,6 @@ function Segments({
 }) {
   const params = useParams();
   const { t } = useTranslation();
-  //const [enableSortExams, setEnableSortExams] = useState(true);
   const [examModalVisible, setExamModalVisibility] = useState(false);
   const [progressModalVisible, setProgressModalVisibility] = useState(false);
   const [progressPercentage, setProgressPercentage] = useState(0);
@@ -58,8 +60,8 @@ function Segments({
   const { single: currentSegment, examTypes } = segments;
   const availableExamTypes = currentSegment.content.exams
     ? examTypes.list.filter(
-        (type) =>
-          currentSegment.content.exams.findIndex((e) => e.type === type) === -1
+        (t) =>
+          currentSegment.content.exams.findIndex((e) => e.type === t) === -1
       )
     : [];
 
@@ -158,28 +160,69 @@ function Segments({
     idSegment: segments.firstFilter.idSegment,
   });
 
-  // const onSortEnd = ({ oldIndex, newIndex }) => {
-  //   if (oldIndex !== newIndex) {
-  //     updateExamOrder(oldIndex, newIndex);
-  //   }
-  // };
+  const DraggableBodyRow = ({
+    index,
+    moveRow,
+    className,
+    style,
+    ...restProps
+  }) => {
+    const ref = useRef(null);
+    const [{ isOver, dropClassName }, drop] = useDrop({
+      accept: type,
+      collect: (monitor) => {
+        const { index: dragIndex } = monitor.getItem() || {};
 
-  //const SortableItem = sortableElement((props) => <tr {...props} />);
-  //const SortableContainer = sortableContainer((props) => <tbody {...props} />);
+        if (dragIndex === index) {
+          return {};
+        }
 
-  // const DraggableBodyRow = ({ className, style, ...restProps }) => {
-  //   return null;
-  //   //return <SortableItem index={restProps["data-row-key"]} {...restProps} />;
-  // };
+        return {
+          isOver: monitor.isOver(),
+          dropClassName:
+            dragIndex < index ? " drop-over-downward" : " drop-over-upward",
+        };
+      },
+      drop: (item) => {
+        moveRow(item.index, index);
+      },
+    });
+    const [, drag] = useDrag({
+      type,
+      item: {
+        index,
+      },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    });
+    drop(drag(ref));
+    return (
+      <tr
+        ref={ref}
+        className={`${className}${isOver ? dropClassName : ""}`}
+        style={{
+          cursor: "move",
+          ...style,
+        }}
+        {...restProps}
+      />
+    );
+  };
 
-  // const DraggableContainer = (props) => null;
-  // // <SortableContainer
-  // //   useDragHandle
-  // //   helperClass="row-dragging"
-  // //   onSortEnd={onSortEnd}
-  // //   {...props}
-  // // />
-  // //);
+  const components = {
+    body: {
+      row: DraggableBodyRow,
+    },
+  };
+  const moveRow = useCallback(
+    (dragIndex, hoverIndex) => {
+      if (dragIndex !== hoverIndex) {
+        updateExamOrder(dragIndex, hoverIndex);
+      }
+    },
+    [updateExamOrder]
+  );
 
   const afterSaveSegment = () => {};
 
@@ -196,21 +239,6 @@ function Segments({
     generateOutlier({
       id: segments.firstFilter.idSegment,
     });
-
-  // const toggleSortExams = () => {
-  //   if (enableSortExams) {
-  //     setEnableSortExams(false);
-  //   } else {
-  //     setSortOrder({
-  //       order: null,
-  //       columnKey: null,
-  //     });
-  //     setEnableSortExams(true);
-  //     notification.success({
-  //       message: "Arraste os exames para a ordem desejada",
-  //     });
-  //   }
-  // };
 
   return (
     <>
@@ -252,16 +280,6 @@ function Segments({
 
         <Tabs.TabPane tab="Exames" key="2">
           <Row type="flex" justify="end" style={{ marginBottom: "20px" }}>
-            {/* <Button
-              type="gtm-bt-reorder"
-              onClick={() => toggleSortExams()}
-              style={{ marginRight: "5px" }}
-              icon={<MenuOutlined />}
-            >
-              {enableSortExams
-                ? "Desligar ordenação de exames"
-                : "Ordenar exames"}
-            </Button> */}
             <Tooltip
               title={
                 isEmpty(availableExamTypes)
@@ -279,20 +297,24 @@ function Segments({
               </Button>
             </Tooltip>
           </Row>
-          <Table
-            columns={examColumns(sortOrder, false)}
-            pagination={false}
-            loading={currentSegment.isFetching || sortStatus.isSaving}
-            locale={{ emptyText }}
-            dataSource={!currentSegment.isFetching ? dsExams : []}
-            onChange={handleTableChange}
-            // components={{
-            //   body: {
-            //     wrapper: DraggableContainer,
-            //     row: DraggableBodyRow,
-            //   },
-            // }}
-          />
+          <DndProvider backend={HTML5Backend}>
+            <Table
+              columns={examColumns(sortOrder, false)}
+              pagination={false}
+              loading={currentSegment.isFetching || sortStatus.isSaving}
+              locale={{ emptyText }}
+              dataSource={!currentSegment.isFetching ? dsExams : []}
+              onChange={handleTableChange}
+              components={components}
+              onRow={(_, index) => {
+                const attr = {
+                  index,
+                  moveRow,
+                };
+                return attr;
+              }}
+            />
+          </DndProvider>
         </Tabs.TabPane>
       </Tabs>
 

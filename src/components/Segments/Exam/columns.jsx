@@ -1,5 +1,4 @@
 import React from "react";
-//import { sortableHandle } from "react-sortable-hoc";
 import { EditOutlined } from "@ant-design/icons";
 
 import Tag from "components/Tag";
@@ -8,27 +7,9 @@ import Button from "components/Button";
 
 const sortDirections = ["descend", "ascend"];
 
-// const DragHandle = sortableHandle(() => (
-//   <Icon
-//     type="menu"
-//     style={{
-//       fontSize: 18,
-//       color: "#696766",
-//       cursor: "pointer",
-//     }}
-//   />
-// ));
-
 const columns = (sortedInfo, enableSortExams) => {
   const columns = [];
-  // if (enableSortExams) {
-  //   columns.push({
-  //     title: "Ordenar",
-  //     dataIndex: "order",
-  //     align: "center",
-  //     render: (text, record) => null,
-  //   });
-  // }
+
   return [
     ...columns,
     {
