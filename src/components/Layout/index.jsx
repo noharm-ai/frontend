@@ -2,10 +2,13 @@ import "styled-components/macro";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { UserOutlined } from "@ant-design/icons";
+import { ErrorBoundary } from "react-error-boundary";
+import { Alert } from "antd";
 
 import appInfo from "utils/appInfo";
 import Avatar from "components/Avatar";
 import { InputSearchNumber } from "components/Inputs";
+import Button from "components/Button";
 
 import { useTranslation } from "react-i18next";
 import Box from "./Box";
@@ -110,6 +113,25 @@ const Me = ({ user, access_token, t, notification, setNotification }) => {
   );
 };
 
+const ErrorFallback = ({ error, resetErrorBoundary }) => {
+  console.error(error);
+  return (
+    <div style={{ maxWidth: "500px" }}>
+      <Alert
+        message="Ocorreu um erro"
+        showIcon
+        description="Por favor, tente novamente. Se o erro persistir, entre em contato com o suporte."
+        type="error"
+        action={
+          <Button size="small" onClick={resetErrorBoundary}>
+            Tentar novamente
+          </Button>
+        }
+      />
+    </div>
+  );
+};
+
 export default function Layout({
   children,
   theme,
@@ -182,7 +204,9 @@ export default function Layout({
           />
         </Header>
         <Content css="padding: 25px 18px;">
-          {theme === "boxed" ? <Box {...props}>{children}</Box> : children}
+          <ErrorBoundary FallbackComponent={ErrorFallback}>
+            {theme === "boxed" ? <Box {...props}>{children}</Box> : children}
+          </ErrorBoundary>
         </Content>
         <Footer>
           {appInfo.copyright} &nbsp;
