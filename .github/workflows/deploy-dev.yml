@@ -8,18 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [16.x]
     steps:
-    - name: checkout
-      uses: actions/checkout@v1
-    - name: yarn install
-      uses: borales/actions-yarn@v2.0.0
-      with:
-        cmd: install
-    - name: yarn build
-      uses: borales/actions-yarn@v2.0.0
-      with:
-        cmd: build
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm ci
+      - run: npm run build
       env: 
         REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL_DEV }}
         REACT_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_DEV }}
@@ -28,16 +24,12 @@ jobs:
         REACT_APP_PRISMIC_TOKEN: ${{ secrets.REACT_APP_PRISMIC_TOKEN }}
         REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
         REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
-    - name: yarn test
-      uses: borales/actions-yarn@v2.0.0
-      with:
-        cmd: test
-    - name: Deploy Test to AWS
-      uses: jakejarvis/s3-sync-action@master
-      with:
-        args: --acl public-read
-      env:
-        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET_DEV }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        SOURCE_DIR: 'build'
+      - name: Deploy Test to AWS
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET_DEV }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SOURCE_DIR: 'build'
