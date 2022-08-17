@@ -20,7 +20,8 @@ jobs:
       env: 
         REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL_TEST }}
         REACT_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_TEST }}
-	@@ -28,16 +24,12 @@ jobs:
+        REACT_APP_UPDOWN_LINK: ${{ secrets.REACT_APP_UPDOWN_LINK }}
+        REACT_APP_PRISMIC_API_URL: ${{ secrets.REACT_APP_PRISMIC_API_URL }}
         REACT_APP_PRISMIC_TOKEN: ${{ secrets.REACT_APP_PRISMIC_TOKEN }}
         REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
         REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
