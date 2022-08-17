@@ -1,10 +1,10 @@
-import isEmpty from 'lodash.isempty';
-import arrayMove from 'array-move';
+import isEmpty from "lodash.isempty";
+import { arrayMoveImmutable } from "array-move";
 
-import api from '@services/api';
-import { transformSegments, transformSegment } from '@utils/transformers';
-import { errorHandler } from '@utils';
-import { Creators as SegmentsCreators } from './index';
+import api from "services/api";
+import { transformSegments, transformSegment } from "utils/transformers";
+import { errorHandler } from "utils";
+import { Creators as SegmentsCreators } from "./index";
 
 const {
   segmentsFetchListStart,
@@ -35,31 +35,37 @@ const {
   segmentsUpdateExamOrderStart,
   segmentsUpdateExamOrderError,
   segmentsUpdateExamOrderSuccess,
-  segmentsUpdateExamOrderReset
+  segmentsUpdateExamOrderReset,
 } = SegmentsCreators;
 
-export const fetchSegmentsListThunk = (params = {}) => async (dispatch, getState) => {
-  dispatch(segmentsFetchListStart());
+export const fetchSegmentsListThunk =
+  (params = {}) =>
+  async (dispatch, getState) => {
+    dispatch(segmentsFetchListStart());
 
-  const { access_token } = getState().auth.identify;
+    const { access_token } = getState().auth.identify;
 
-  const { data, error } = await api.getSegments(access_token, params).catch(errorHandler);
+    const { data, error } = await api
+      .getSegments(access_token, params)
+      .catch(errorHandler);
 
-  if (!isEmpty(error)) {
-    dispatch(segmentsFetchListError(error));
-    return;
-  }
+    if (!isEmpty(error)) {
+      dispatch(segmentsFetchListError(error));
+      return;
+    }
 
-  const list = transformSegments(data.data);
+    const list = transformSegments(data.data);
 
-  dispatch(segmentsFetchListSuccess(list));
-};
+    dispatch(segmentsFetchListSuccess(list));
+  };
 
-export const fetchSegmentByIdThunk = id => async (dispatch, getState) => {
+export const fetchSegmentByIdThunk = (id) => async (dispatch, getState) => {
   dispatch(segmentsFetchSingleStart());
 
   const { access_token } = getState().auth.identify;
-  const { data, error } = await api.getSegmentById(access_token, id).catch(errorHandler);
+  const { data, error } = await api
+    .getSegmentById(access_token, id)
+    .catch(errorHandler);
 
   if (!isEmpty(error)) {
     dispatch(segmentsFetchSingleError(error));
@@ -75,89 +81,112 @@ export const resetSingleSegmentThunk = () => async (dispatch, getState) => {
   dispatch(segmentsFetchSingleReset());
 };
 
-export const saveSegmentThunk = (params = {}) => async (dispatch, getState) => {
-  dispatch(segmentsSaveSingleStart());
+export const saveSegmentThunk =
+  (params = {}) =>
+  (dispatch, getState) => {
+    return new Promise(async (resolve, reject) => {
+      dispatch(segmentsSaveSingleStart());
+      const { id } = params;
+      const { access_token } = getState().auth.identify;
+      const method = id ? "updateSegment" : "createSegment";
+      const { status, error } = await api[method](access_token, params).catch(
+        errorHandler
+      );
 
-  const { id } = params;
-  const { access_token } = getState().auth.identify;
-  const method = id ? 'updateSegment' : 'createSegment';
-  const { status, error } = await api[method](access_token, params).catch(errorHandler);
+      if (status !== 200) {
+        dispatch(segmentsSaveSingleError(error));
+        reject(error);
+        return;
+      }
 
-  if (status !== 200) {
-    dispatch(segmentsSaveSingleError(error));
-    return;
-  }
+      dispatch(segmentsSaveSingleSuccess());
+      dispatch(segmentsSaveSingleReset());
+      resolve();
+    });
+  };
 
-  dispatch(segmentsSaveSingleSuccess());
-  dispatch(segmentsSaveSingleReset());
-};
-
-export const selectSegmentExamThunk = item => dispatch => {
+export const selectSegmentExamThunk = (item) => (dispatch) => {
   dispatch(segmentsSelectExam(item));
 };
 
-export const updateSegmentExamThunk = item => dispatch => {
+export const updateSegmentExamThunk = (item) => (dispatch) => {
   dispatch(segmentsUpdateExam(item));
 };
 
-export const updateSegmentExamOrderThunk = (oldIndex, newIndex) => async (dispatch, getState) => {
-  const currentExamsOrder = getState().segments.single.content.exams;
-  const exams = arrayMove([...getState().segments.single.content.exams], oldIndex, newIndex);
-  dispatch(segmentsUpdateExamOrderSuccess(exams));
+export const updateSegmentExamOrderThunk =
+  (oldIndex, newIndex) => async (dispatch, getState) => {
+    const currentExamsOrder = getState().segments.single.content.exams;
+    const exams = arrayMoveImmutable(
+      [...getState().segments.single.content.exams],
+      oldIndex,
+      newIndex
+    );
+    dispatch(segmentsUpdateExamOrderSuccess(exams));
 
-  dispatch(segmentsUpdateExamOrderStart());
+    dispatch(segmentsUpdateExamOrderStart());
 
-  const { access_token } = getState().auth.identify;
-  const examTypes = exams.map(e => e.type);
-  const { status, error } = await api.updateSegmentExamOrder(
-    access_token,
-    getState().segments.firstFilter.idSegment,
-    {
-      exams: examTypes
+    const { access_token } = getState().auth.identify;
+    const examTypes = exams.map((e) => e.type);
+    const { status, error } = await api.updateSegmentExamOrder(
+      access_token,
+      getState().segments.firstFilter.idSegment,
+      {
+        exams: examTypes,
+      }
+    );
+
+    if (status !== 200) {
+      dispatch(segmentsUpdateExamOrderSuccess(currentExamsOrder));
+      dispatch(segmentsUpdateExamOrderError(error));
+      return;
     }
-  );
 
-  if (status !== 200) {
-    dispatch(segmentsUpdateExamOrderSuccess(currentExamsOrder));
-    dispatch(segmentsUpdateExamOrderError(error));
-    return;
-  }
+    dispatch(segmentsUpdateExamOrderReset());
+  };
 
-  dispatch(segmentsUpdateExamOrderReset());
-};
+export const saveSegmentExamThunk =
+  (params = {}) =>
+  async (dispatch, getState) => {
+    return new Promise(async (resolve, reject) => {
+      dispatch(segmentsSaveExamStart());
+      const { access_token } = getState().auth.identify;
+      const { status, error } = await api.updateSegmentExam(
+        access_token,
+        params
+      );
 
-export const saveSegmentExamThunk = (params = {}) => async (dispatch, getState) => {
-  dispatch(segmentsSaveExamStart());
-  const { access_token } = getState().auth.identify;
-  const { status, error } = await api.updateSegmentExam(access_token, params);
+      if (status !== 200) {
+        dispatch(segmentsSaveExamError(error));
+        reject(error);
+        return;
+      }
 
-  if (status !== 200) {
-    dispatch(segmentsSaveExamError(error));
-    return;
-  }
+      dispatch(segmentsSaveExamSuccess(params));
+      dispatch(segmentsSaveExamReset());
+      resolve(params);
+    });
+  };
 
-  dispatch(segmentsSaveExamSuccess(params));
-  dispatch(segmentsSaveExamReset());
-};
+export const fetchExamTypesListThunk =
+  (params = {}) =>
+  async (dispatch, getState) => {
+    if (!isEmpty(getState().segments.examTypes.list)) {
+      return;
+    }
+    dispatch(segmentsFetchExamTypesListStart());
 
-export const fetchExamTypesListThunk = (params = {}) => async (dispatch, getState) => {
-  if (!isEmpty(getState().segments.examTypes.list)) {
-    return;
-  }
-  dispatch(segmentsFetchExamTypesListStart());
+    const { access_token } = getState().auth.identify;
+    const {
+      data: { data },
+      error,
+    } = await api.getExamTypes(access_token, params).catch(errorHandler);
 
-  const { access_token } = getState().auth.identify;
-  const {
-    data: { data },
-    error
-  } = await api.getExamTypes(access_token, params).catch(errorHandler);
+    if (!isEmpty(error)) {
+      dispatch(segmentsFetchExamTypesListError(error));
+      return;
+    }
 
-  if (!isEmpty(error)) {
-    dispatch(segmentsFetchExamTypesListError(error));
-    return;
-  }
+    const list = data;
 
-  const list = data;
-
-  dispatch(segmentsFetchExamTypesListSuccess(list.types));
-};
+    dispatch(segmentsFetchExamTypesListSuccess(list.types));
+  };

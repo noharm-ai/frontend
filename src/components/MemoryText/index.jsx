@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import isEmpty from 'lodash.isempty';
+import React, { useState, useEffect } from "react";
+import isEmpty from "lodash.isempty";
+import { FileTextOutlined } from "@ant-design/icons";
 
-import Dropdown from '@components/Dropdown';
-import Menu from '@components/Menu';
-import Tooltip from '@components/Tooltip';
-import Button from '@components/Button';
+import Dropdown from "components/Dropdown";
+import Menu from "components/Menu";
+import Tooltip from "components/Tooltip";
+import Button from "components/Button";
 
-import SaveModal from './components/SaveModal';
+import SaveModal from "./components/SaveModal";
 
 export default function MemoryText({
   fetch,
@@ -16,31 +17,34 @@ export default function MemoryText({
   memory,
   content,
   onLoad,
-  canSave = true
+  canSave = true,
 }) {
   const [saveModalOpen, setSaveModalOpen] = useState(false);
-  const { isFetching, list } = memory[storeId] || { isFetching: true, list: [] };
+  const { isFetching, list } = memory[storeId] || {
+    isFetching: true,
+    list: [],
+  };
 
   useEffect(() => {
     fetch(storeId, memoryType);
   }, [fetch, storeId, memoryType]);
 
-  const saveCurrent = name => {
+  const saveCurrent = (name) => {
     const hasMemory = list.length > 0;
     const texts = hasMemory ? [...list[0].value] : [];
     texts.push({
       name,
-      data: content
+      data: content,
     });
 
     save(storeId, {
       id: hasMemory ? list[0].key : null,
       type: memoryType,
-      value: texts
+      value: texts,
     });
   };
 
-  const loadText = text => {
+  const loadText = (text) => {
     onLoad(text);
   };
 
@@ -62,7 +66,7 @@ export default function MemoryText({
   };
 
   const textMenu = () => {
-    const title = 'Aplicar';
+    const title = "Aplicar";
 
     if (isEmpty(list) || isEmpty(list[0].value)) {
       return (
@@ -93,14 +97,18 @@ export default function MemoryText({
         <Dropdown overlay={mainMenu()}>
           <Button
             shape="circle"
-            icon="file-text"
+            icon={<FileTextOutlined />}
             type="primary gtm-bt-memorytext"
             loading={isFetching}
           />
         </Dropdown>
       </Tooltip>
 
-      <SaveModal save={saveCurrent} open={saveModalOpen} setOpen={setSaveModalOpen} />
+      <SaveModal
+        save={saveCurrent}
+        open={saveModalOpen}
+        setOpen={setSaveModalOpen}
+      />
     </>
   );
 }

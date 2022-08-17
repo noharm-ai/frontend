@@ -1,7 +1,9 @@
-export const defaultFontSize = '14px';
+export const defaultFontSize = "14px";
 
-export default {
-  defaultFontSize: '14px',
-  small: '14px',
-  base: '16px'
+const sizes = {
+  defaultFontSize: "14px",
+  small: "14px",
+  base: "16px",
 };
+
+export default sizes;

@@ -1,9 +1,12 @@
-import isEmpty from 'lodash.isempty';
+import isEmpty from "lodash.isempty";
 
-import { transformClinicalNotes, getPositionList } from '@utils/transformers/clinicalNotes';
-import api from '@services/api';
-import { errorHandler } from '@utils';
-import { Creators as ReportsCreators } from './index';
+import {
+  transformClinicalNotes,
+  getPositionList,
+} from "utils/transformers/clinicalNotes";
+import api from "services/api";
+import { errorHandler } from "utils";
+import { Creators as ReportsCreators } from "./index";
 
 const {
   clinicalNotesFetchListStart,
@@ -16,63 +19,66 @@ const {
   clinicalNotesSaveStart,
   clinicalNotesSaveSuccess,
   clinicalNotesSaveReset,
-  clinicalNotesSaveError
+  clinicalNotesSaveError,
 } = ReportsCreators;
 
-export const fetchClinicalNotesListThunk = admissionNumber => async (dispatch, getState) => {
-  dispatch(clinicalNotesFetchListStart());
+export const fetchClinicalNotesListThunk =
+  (admissionNumber) => async (dispatch, getState) => {
+    dispatch(clinicalNotesFetchListStart());
 
-  const { access_token } = getState().auth.identify;
+    const { access_token } = getState().auth.identify;
 
-  const { data, error } = await api
-    .getClinicalNotes(access_token, admissionNumber)
-    .catch(errorHandler);
+    const { data, error } = await api
+      .getClinicalNotes(access_token, admissionNumber)
+      .catch(errorHandler);
 
-  if (!isEmpty(error)) {
-    dispatch(clinicalNotesFetchListError(error));
-    return;
-  }
+    if (!isEmpty(error)) {
+      dispatch(clinicalNotesFetchListError(error));
+      return;
+    }
 
-  const groups = transformClinicalNotes(data.data);
-  dispatch(clinicalNotesFetchListSuccess(groups, getPositionList(data.data)));
-  dispatch(clinicalNotesSelect(data.data[0]));
-};
+    const groups = transformClinicalNotes(data.data);
+    dispatch(clinicalNotesFetchListSuccess(groups, getPositionList(data.data)));
+    dispatch(clinicalNotesSelect(data.data[0]));
+  };
 
-export const selectClinicalNoteThunk = clinicalNote => async dispatch => {
+export const selectClinicalNoteThunk = (clinicalNote) => async (dispatch) => {
   dispatch(clinicalNotesSelect(clinicalNote));
 };
 
-export const updateClinicalNoteThunk = clinicalNote => async (dispatch, getState) => {
-  dispatch(clinicalNotesSaveStart());
-  const { access_token } = getState().auth.identify;
+export const updateClinicalNoteThunk =
+  (clinicalNote) => async (dispatch, getState) => {
+    dispatch(clinicalNotesSaveStart());
+    const { access_token } = getState().auth.identify;
 
-  const { error } = await api
-    .updateClinicalNote(access_token, clinicalNote.id, clinicalNote)
-    .catch(errorHandler);
+    const { error } = await api
+      .updateClinicalNote(access_token, clinicalNote.id, clinicalNote)
+      .catch(errorHandler);
 
-  if (!isEmpty(error)) {
-    dispatch(clinicalNotesSaveError(error));
-    return;
-  }
+    if (!isEmpty(error)) {
+      dispatch(clinicalNotesSaveError(error));
+      return;
+    }
 
-  dispatch(clinicalNotesUpdate(clinicalNote));
-  dispatch(clinicalNotesSaveSuccess());
-  dispatch(clinicalNotesSaveReset());
-};
+    dispatch(clinicalNotesUpdate(clinicalNote));
+    dispatch(clinicalNotesSaveSuccess());
+    dispatch(clinicalNotesSaveReset());
+  };
 
-export const createClinicalNoteThunk = params => async (dispatch, getState) => {
-  dispatch(clinicalNotesSaveStart());
-  const { access_token } = getState().auth.identify;
+export const createClinicalNoteThunk =
+  (params) => async (dispatch, getState) => {
+    dispatch(clinicalNotesSaveStart());
+    const { access_token } = getState().auth.identify;
 
-  console.log('params', params);
+    const { error } = await api
+      .createClinicalNote(access_token, params)
+      .catch(errorHandler);
 
-  const { error } = await api.createClinicalNote(access_token, params).catch(errorHandler);
+    if (!isEmpty(error)) {
+      dispatch(clinicalNotesSaveError(error));
+      return;
+    }
 
-  if (!isEmpty(error)) {
-    dispatch(clinicalNotesSaveError(error));
-    return;
-  }
-
-  dispatch(clinicalNotesSaveSuccess());
-  dispatch(clinicalNotesSaveReset());
-};
+    dispatch(clinicalNotesSaveSuccess());
+    dispatch(clinicalNotesSaveReset());
+  };

@@ -1,27 +1,27 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
-import { createClinicalNoteThunk } from '@store/ducks/clinicalNotes/thunk';
-import { memoryFetchThunk } from '@store/ducks/memory/thunk';
+import { createClinicalNoteThunk } from "store/ducks/clinicalNotes/thunk";
+import { memoryFetchThunk } from "store/ducks/memory/thunk";
 
-import FormClinicalNotes from '@components/Forms/ClinicalNotes';
+import FormClinicalNotes from "components/Forms/ClinicalNotes";
 
 const mapStateToProps = ({ prescriptions, user, memory, clinicalNotes }) => ({
   prescription: {
     data: prescriptions.single.data,
     isSaving: clinicalNotes.save.isSaving,
     success: clinicalNotes.save.success,
-    error: clinicalNotes.save.error
+    error: clinicalNotes.save.error,
   },
   account: user.account,
   signature: memory.signature,
-  type: 'primarycare'
+  type: "primarycare",
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchMemory: memoryFetchThunk,
-      save: createClinicalNoteThunk
+      save: createClinicalNoteThunk,
     },
     dispatch
   );

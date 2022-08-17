@@ -1,20 +1,21 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { format, parseISO } from 'date-fns';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect, useCallback } from "react";
+import { format, parseISO } from "date-fns";
+import { useTranslation } from "react-i18next";
+import { SearchOutlined } from "@ant-design/icons";
 
-import { annotationManifest } from '@utils/featureManifest';
-import { Row, Col } from '@components/Grid';
-import LoadBox, { LoadContainer } from '@components/LoadBox';
-import Empty from '@components/Empty';
-import { Select } from '@components/Inputs';
-import Tooltip from '@components/Tooltip';
-import Button from '@components/Button';
-import Tag from '@components/Tag';
-import { getFirstAndLastName } from '@utils';
+import { annotationManifest } from "utils/featureManifest";
+import { Row, Col } from "components/Grid";
+import LoadBox, { LoadContainer } from "components/LoadBox";
+import Empty from "components/Empty";
+import { Select } from "components/Inputs";
+import Tooltip from "components/Tooltip";
+import Button from "components/Button";
+import Tag from "components/Tag";
+import { getFirstAndLastName } from "utils";
 
-import View from './View';
-import ClinicalNotesIndicator from './ClinicalNotesIndicator';
-import { Container, List, FilterContainer } from './index.style';
+import View from "./View";
+import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
+import { Container, List, FilterContainer } from "./index.style";
 
 export default function ClinicalNotes({
   isFetching,
@@ -27,7 +28,7 @@ export default function ClinicalNotes({
   saveStatus,
   access_token,
   userId,
-  featureService
+  featureService,
 }) {
   const [positions, setPositions] = useState([]);
   const [indicators, setIndicators] = useState([]);
@@ -38,22 +39,24 @@ export default function ClinicalNotes({
   const filterList = useCallback(
     (stateList, selectFirst, positionsArray, indicatorsArray) => {
       const filteredGroup = [];
-      Object.keys(stateList).forEach(g => {
+      Object.keys(stateList).forEach((g) => {
         const clinicalNotes = stateList[g];
 
         if (positionsArray.length === 0 && indicatorsArray.length === 0) {
           filteredGroup.push({
             label: g,
-            value: clinicalNotes
+            value: clinicalNotes,
           });
         } else {
-          const filteredNotes = clinicalNotes.filter(item => {
+          const filteredNotes = clinicalNotes.filter((item) => {
             const hasPosition =
-              positionsArray.length === 0 ? true : positionsArray.indexOf(item.position) !== -1;
+              positionsArray.length === 0
+                ? true
+                : positionsArray.indexOf(item.position) !== -1;
 
             let hasIndicator = false;
             if (indicatorsArray.length > 0) {
-              indicatorsArray.forEach(indicator => {
+              indicatorsArray.forEach((indicator) => {
                 hasIndicator = hasIndicator || item[indicator] > 0;
               });
             } else {
@@ -66,7 +69,7 @@ export default function ClinicalNotes({
           if (filteredNotes.length) {
             filteredGroup.push({
               label: g,
-              value: filteredNotes
+              value: filteredNotes,
             });
           }
         }
@@ -86,14 +89,16 @@ export default function ClinicalNotes({
   );
 
   useEffect(() => {
-    setFilteredList(filterList(list, false, selectedPositions, selectedIndicators));
+    setFilteredList(
+      filterList(list, false, selectedPositions, selectedIndicators)
+    );
   }, [list]); //eslint-disable-line
 
-  const handlePositionChange = p => {
+  const handlePositionChange = (p) => {
     setPositions(p);
   };
 
-  const handleIndicatorsChange = i => {
+  const handleIndicatorsChange = (i) => {
     setIndicators(i);
   };
 
@@ -130,14 +135,22 @@ export default function ClinicalNotes({
           {positionList.length > 0 && (
             <FilterContainer>
               <div>
-                <label>{t(`labels.${featureService.hasPrimaryCare() ? 'type' : 'role'}`)}</label>
+                <label>
+                  {t(
+                    `labels.${
+                      featureService.hasPrimaryCare() ? "type" : "role"
+                    }`
+                  )}
+                </label>
                 <Select
                   placeholder={t(
-                    `labels.${featureService.hasPrimaryCare() ? 'type' : 'role'}PlaceholderFilter`
+                    `labels.${
+                      featureService.hasPrimaryCare() ? "type" : "role"
+                    }PlaceholderFilter`
                   )}
                   onChange={handlePositionChange}
                   allowClear
-                  style={{ width: '90%' }}
+                  style={{ width: "90%" }}
                   mode="multiple"
                   optionFilterProp="children"
                   dropdownMatchSelectWidth={false}
@@ -151,12 +164,12 @@ export default function ClinicalNotes({
               </div>
               {security.hasNoHarmCare() && !featureService.hasPrimaryCare() && (
                 <div>
-                  <label>{t('labels.indicator')}</label>
+                  <label>{t("labels.indicator")}</label>
                   <Select
-                    placeholder={t('labels.indicatorPlaceholderFilter')}
+                    placeholder={t("labels.indicatorPlaceholderFilter")}
                     onChange={handleIndicatorsChange}
                     allowClear
-                    style={{ width: '100%' }}
+                    style={{ width: "100%" }}
                     mode="multiple"
                     optionFilterProp="children"
                     dropdownMatchSelectWidth={false}
@@ -167,12 +180,13 @@ export default function ClinicalNotes({
                           style={{
                             backgroundColor: indicator.backgroundColor,
                             borderColor: indicator.color,
-                            borderWidth: '1px',
-                            borderStyle: 'solid',
-                            borderRadius: '5px',
-                            padding: '0 2px',
-                            display: 'inline-block',
-                            fontWeight: 500
+                            borderWidth: "1px",
+                            borderStyle: "solid",
+                            borderRadius: "5px",
+                            padding: "0 2px",
+                            display: "inline-block",
+                            fontWeight: 500,
+                            lineHeight: 1.3,
                           }}
                         >
                           {indicator.label}
@@ -184,11 +198,11 @@ export default function ClinicalNotes({
               )}
 
               <div className="btn-search">
-                <Tooltip title={t('buttons.search')}>
+                <Tooltip title={t("buttons.search")}>
                   <Button
                     type="secondary gtm-cn-btn-search"
                     shape="circle"
-                    icon="search"
+                    icon={<SearchOutlined />}
                     size="large"
                     onClick={search}
                   />
@@ -205,13 +219,15 @@ export default function ClinicalNotes({
             )}
             {filteredList.length > 0 && (
               <>
-                {filteredList.map(group => (
+                {filteredList.map((group) => (
                   <React.Fragment key={group.label}>
-                    <h2>{format(parseISO(group.label), 'dd/MM/yyyy')}</h2>
+                    <h2>{format(parseISO(group.label), "dd/MM/yyyy")}</h2>
                     <div className="line-group">
                       {group.value.map((c, i) => (
                         <div
-                          className={`line ${selected && c.id === selected.id ? 'active' : ''}`}
+                          className={`line ${
+                            selected && c.id === selected.id ? "active" : ""
+                          }`}
                           key={i}
                           onClick={() => select(c)}
                           aria-hidden="true"
@@ -222,21 +238,24 @@ export default function ClinicalNotes({
                           </div>
                           <div className="name">
                             {getFirstAndLastName(c.prescriber)}
-                            <span>{c.position}</span>
+                            <span>{c.position || "-"}</span>
                           </div>
                           <div className="indicators">
                             {annotationManifest.isEnabled(security) &&
-                              ClinicalNotesIndicator.listByCategory('priority', t).map(
-                                indicator => (
-                                  <React.Fragment key={indicator.key}>
-                                    {c[indicator.key] > 0 && (
-                                      <Tooltip title={indicator.label}>
-                                        <Tag className={indicator.key}>{c[indicator.key]}</Tag>
-                                      </Tooltip>
-                                    )}
-                                  </React.Fragment>
-                                )
-                              )}
+                              ClinicalNotesIndicator.listByCategory(
+                                "priority",
+                                t
+                              ).map((indicator) => (
+                                <React.Fragment key={indicator.key}>
+                                  {c[indicator.key] > 0 && (
+                                    <Tooltip title={indicator.label}>
+                                      <Tag className={indicator.key}>
+                                        {c[indicator.key]}
+                                      </Tag>
+                                    </Tooltip>
+                                  )}
+                                </React.Fragment>
+                              ))}
                           </div>
                         </div>
                       ))}

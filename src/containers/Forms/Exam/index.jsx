@@ -1,20 +1,23 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
-import { saveSegmentExamThunk, fetchExamTypesListThunk } from '@store/ducks/segments/thunk';
+import {
+  saveSegmentExamThunk,
+  fetchExamTypesListThunk,
+} from "store/ducks/segments/thunk";
 
-import FormExam from '@components/Forms/Exam';
+import FormExam from "components/Forms/Exam";
 
 const mapStateToProps = ({ segments }) => ({
   saveStatus: segments.saveExam,
   examTypes: segments.examTypes,
-  examList: segments.single.content.exams
+  examList: segments.single.content.exams,
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       save: saveSegmentExamThunk,
-      fetchExamTypes: fetchExamTypesListThunk
+      fetchExamTypes: fetchExamTypesListThunk,
     },
     dispatch
   );

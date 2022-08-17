@@ -1,9 +1,9 @@
-import React from 'react';
-import { useFormikContext } from 'formik';
+import React from "react";
+import { useFormikContext } from "formik";
 
-import { Col } from '@components/Grid';
+import { Col } from "components/Grid";
 
-import Field from './Field';
+import Field from "./Field";
 
 export default function Base() {
   const { values, setFieldValue } = useFormikContext();

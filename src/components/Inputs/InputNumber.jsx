@@ -1,11 +1,11 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import 'antd/lib/input-number/style/index.css';
-import antInputNumber from 'antd/lib/input-number';
-import styled from 'styled-components/macro';
-import { rgba } from 'polished';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import "antd/lib/input-number/style/index.css";
+import antInputNumber from "antd/lib/input-number";
+import styled from "styled-components/macro";
+import { rgba } from "polished";
 
-import { get } from '@styles/utils';
+import { get } from "styles/utils";
 
 const StyledInputNumber = styled(antInputNumber)`
   &.ant-input-number {
@@ -13,14 +13,14 @@ const StyledInputNumber = styled(antInputNumber)`
   }
 
   &.ant-input-number:hover {
-    border-color: ${get('colors.accentSecondary')};
+    border-color: ${get("colors.accentSecondary")};
   }
 
   &.ant-input-number-focused,
   &.ant-input-number:focus,
   &.ant-input-number:active {
-    border-color: ${get('colors.accentSecondary')};
-    box-shadow: 0 0 0 2px ${rgba('#70bdc3', 0.2)};
+    border-color: ${get("colors.accentSecondary")};
+    box-shadow: 0 0 0 2px ${rgba("#70bdc3", 0.2)};
   }
 
   .ant-input-number-handler-wrap {
@@ -28,8 +28,13 @@ const StyledInputNumber = styled(antInputNumber)`
   }
 `;
 
-export const InputNumber = props => {
+export const InputNumber = (props) => {
   const { i18n } = useTranslation();
 
-  return <StyledInputNumber decimalSeparator={i18n.language === 'en' ? '.' : ','} {...props} />;
+  return (
+    <StyledInputNumber
+      decimalSeparator={i18n.language === "en" ? "." : ","}
+      {...props}
+    />
+  );
 };

@@ -1,10 +1,15 @@
-import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
-import DefaultModal from '@components/Modal';
-import ClinicalNotes from '@containers/Screening/ClinicalNotes';
+import DefaultModal from "components/Modal";
+import ClinicalNotes from "containers/Screening/ClinicalNotes";
 
-export default function Modal({ fetchClinicalNotes, admissionNumber, visible, setVisibility }) {
+export default function Modal({
+  fetchClinicalNotes,
+  admissionNumber,
+  visible,
+  setVisibility,
+}) {
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -15,13 +20,13 @@ export default function Modal({ fetchClinicalNotes, admissionNumber, visible, se
 
   return (
     <DefaultModal
-      title={t('tableHeader.clinicalNotes')}
+      title={t("tableHeader.clinicalNotes")}
       destroyOnClose
       visible={visible}
       onCancel={() => setVisibility(false)}
       width="90%"
       footer={null}
-      style={{ top: '10px', height: '100vh' }}
+      style={{ top: "10px", height: "100vh" }}
       bodyStyle={{ padding: 0 }}
     >
       <ClinicalNotes />

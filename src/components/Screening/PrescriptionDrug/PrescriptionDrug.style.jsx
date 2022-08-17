@@ -1,10 +1,10 @@
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
-import Collapse from '@components/Collapse';
-import { get } from '@styles/utils';
+import Collapse from "components/Collapse";
+import { get } from "styles/utils";
 
 export const Box = styled.div`
-  border-top: 1px solid ${get('colors.detail')};
+  border-top: 1px solid ${get("colors.detail")};
   padding: 10px 0;
 
   label.fixed {
@@ -141,7 +141,7 @@ export const GroupPanel = styled(PrescriptionPanel)`
 
     &::after {
       position: absolute;
-      content: ' ';
+      content: " ";
       width: 20px;
       height: 3px;
       bottom: 0;

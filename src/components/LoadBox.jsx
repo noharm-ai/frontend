@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components/macro';
+import React from "react";
+import styled from "styled-components/macro";
 
-import Spin from '@components/Spin';
+import Spin from "components/Spin";
 
 const Box = styled.div`
   align-items: center;
@@ -21,7 +21,7 @@ const Box = styled.div`
   `}
 `;
 
-const LoadBox = props => (
+const LoadBox = (props) => (
   <Box {...props}>
     <Spin />
   </Box>

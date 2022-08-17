@@ -1,20 +1,23 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
-import { updateOutlierRelationThunk, fetchSubstanceListThunk } from '@store/ducks/outliers/thunk';
+import {
+  updateOutlierRelationThunk,
+  fetchSubstanceListThunk,
+} from "store/ducks/outliers/thunk";
 
-import Relation from '@components/References/Relation';
+import Relation from "components/References/Relation";
 
 const mapStateToProps = ({ outliers }) => ({
   relation: outliers.saveRelation,
   relationTypes: outliers.drugData.relationTypes,
-  substance: outliers.substance
+  substance: outliers.substance,
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       update: updateOutlierRelationThunk,
-      fetchSubstances: fetchSubstanceListThunk
+      fetchSubstances: fetchSubstanceListThunk,
     },
     dispatch
   );

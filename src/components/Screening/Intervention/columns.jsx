@@ -1,18 +1,22 @@
-import React from 'react';
-import styled from 'styled-components/macro';
-import { format } from 'date-fns';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import styled from "styled-components/macro";
+import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
+import {
+  WarningOutlined,
+  RollbackOutlined,
+  CaretDownOutlined,
+} from "@ant-design/icons";
 
-import Icon from '@components/Icon';
-import Button, { Link } from '@components/Button';
-import Descriptions from '@components/Descriptions';
-import Tag from '@components/Tag';
-import Menu from '@components/Menu';
-import Dropdown from '@components/Dropdown';
-import Tooltip from '@components/Tooltip';
-import RichTextView from '@components/RichTextView';
-import isEmpty from 'lodash.isempty';
-import InterventionStatus from '@models/InterventionStatus';
+import Button, { Link } from "components/Button";
+import Descriptions from "components/Descriptions";
+import Tag from "components/Tag";
+import Menu from "components/Menu";
+import Dropdown from "components/Dropdown";
+import Tooltip from "components/Tooltip";
+import RichTextView from "components/RichTextView";
+import isEmpty from "lodash.isempty";
+import InterventionStatus from "models/InterventionStatus";
 
 const NestedTableContainer = styled.div`
   margin-top: 5px;
@@ -36,58 +40,87 @@ const TableLink = styled.a`
 const menu = (id, idPrescription, saveInterventionStatus, onShowModal) => (
   <Menu>
     <Menu.Item
-      onClick={() => saveInterventionStatus(id, idPrescription, 'a')}
-      className={onShowModal ? 'gtm-btn-menu-interv-accept' : 'gtm-btn-tab-interv-accept'}
+      key="accept"
+      onClick={() => saveInterventionStatus(id, idPrescription, "a")}
+      className={
+        onShowModal ? "gtm-btn-menu-interv-accept" : "gtm-btn-tab-interv-accept"
+      }
     >
       Aceita
     </Menu.Item>
     <Menu.Item
-      onClick={() => saveInterventionStatus(id, idPrescription, 'n')}
-      className={onShowModal ? 'gtm-btn-menu-interv-not-accept' : 'gtm-btn-tab-interv-not-accept'}
+      key="not-accept"
+      onClick={() => saveInterventionStatus(id, idPrescription, "n")}
+      className={
+        onShowModal
+          ? "gtm-btn-menu-interv-not-accept"
+          : "gtm-btn-tab-interv-not-accept"
+      }
     >
       Não aceita
     </Menu.Item>
     <Menu.Item
-      onClick={() => saveInterventionStatus(id, idPrescription, 'j')}
+      key="not-accept-justified"
+      onClick={() => saveInterventionStatus(id, idPrescription, "j")}
       className={
-        onShowModal ? 'gtm-btn-menu-interv-not-accept-j' : 'gtm-btn-tab-interv-not-accept-j'
+        onShowModal
+          ? "gtm-btn-menu-interv-not-accept-j"
+          : "gtm-btn-tab-interv-not-accept-j"
       }
     >
       Não aceita com Justificativa
     </Menu.Item>
     <Menu.Item
-      onClick={() => saveInterventionStatus(id, idPrescription, 'x')}
-      className={onShowModal ? 'gtm-btn-menu-interv-not-apply' : 'gtm-btn-tab-interv-not-apply'}
+      key="not-apply"
+      onClick={() => saveInterventionStatus(id, idPrescription, "x")}
+      className={
+        onShowModal
+          ? "gtm-btn-menu-interv-not-apply"
+          : "gtm-btn-tab-interv-not-apply"
+      }
     >
       Não se aplica
     </Menu.Item>
   </Menu>
 );
 
-export const PrescriptionInline = ({ dose, measureUnit, frequency, route, time }) => (
+export const PrescriptionInline = ({
+  dose,
+  measureUnit,
+  frequency,
+  route,
+  time,
+}) => (
   <>
     {frequency.label} x {dose} {measureUnit.label} via {route} ({time})
   </>
 );
 
-export const InterventionView = ({ intervention, showReasons, showDate, status }) => {
+export const InterventionView = ({
+  intervention,
+  showReasons,
+  showDate,
+  status,
+}) => {
   const { t } = useTranslation();
 
   return (
     <Descriptions bordered>
       {status}
-      <Descriptions.Item label={`${t('tableHeader.prescription')}:`} span={3}>
+      <Descriptions.Item label={`${t("tableHeader.prescription")}:`} span={3}>
         <PrescriptionInline {...intervention} />
       </Descriptions.Item>
       {intervention.fetchFuturePrescription && (
-        <Descriptions.Item label={`${t('labels.nextPrescription')}:`} span={3}>
+        <Descriptions.Item label={`${t("labels.nextPrescription")}:`} span={3}>
           {isEmpty(intervention.future) && (
             <Link
-              onClick={() => intervention.fetchFuturePrescription(intervention.id)}
+              onClick={() =>
+                intervention.fetchFuturePrescription(intervention.id)
+              }
               loading={intervention.futurePrescription.isFetching}
               type="nda gtm-bt-iterv-future"
             >
-              {t('labels.showNextPrescription')}
+              {t("labels.showNextPrescription")}
             </Link>
           )}
           {!isEmpty(intervention.future) && intervention.future}
@@ -95,37 +128,44 @@ export const InterventionView = ({ intervention, showReasons, showDate, status }
       )}
 
       {showDate && (
-        <Descriptions.Item label={t('tableHeader.date')} span={3}>
-          {format(new Date(intervention.date), 'dd/MM/yyyy HH:mm')}
+        <Descriptions.Item label={t("tableHeader.date")} span={3}>
+          {format(new Date(intervention.date), "dd/MM/yyyy HH:mm")}
         </Descriptions.Item>
       )}
-      <Descriptions.Item label={`${t('labels.potentialPrescriptionError')}:`} span={3}>
-        {intervention.error ? t('labels.yes') : t('labels.no')}
+      <Descriptions.Item
+        label={`${t("labels.potentialPrescriptionError")}:`}
+        span={3}
+      >
+        {intervention.error ? t("labels.yes") : t("labels.no")}
       </Descriptions.Item>
-      <Descriptions.Item label={`${t('labels.reducesCost')}:`} span={3}>
-        {intervention.cost ? t('labels.yes') : t('labels.no')}
+      <Descriptions.Item label={`${t("labels.reducesCost")}:`} span={3}>
+        {intervention.cost ? t("labels.yes") : t("labels.no")}
       </Descriptions.Item>
       {showReasons && (
-        <Descriptions.Item label={`${t('labels.reasons')}:`} span={3}>
+        <Descriptions.Item label={`${t("labels.reasons")}:`} span={3}>
           {intervention.reasonDescription}
         </Descriptions.Item>
       )}
 
       <Descriptions.Item
-        label={<Tooltip title={t('tooltips.relationsList')}>{t('labels.relations')}:</Tooltip>}
+        label={
+          <Tooltip title={t("tooltips.relationsList")}>
+            {t("labels.relations")}:
+          </Tooltip>
+        }
         span={3}
       >
         {!isEmpty(intervention.interactionsList) &&
-          intervention.interactionsList.map(item => item.name).join(', ')}
+          intervention.interactionsList.map((item) => item.name).join(", ")}
       </Descriptions.Item>
-      <Descriptions.Item label={`${t('labels.responsible')}:`} span={3}>
+      <Descriptions.Item label={`${t("labels.responsible")}:`} span={3}>
         {intervention.user}
       </Descriptions.Item>
-      <Descriptions.Item label={`${t('labels.observation')}:`} span={3}>
+      <Descriptions.Item label={`${t("labels.observation")}:`} span={3}>
         <RichTextView text={intervention.observation} />
       </Descriptions.Item>
       {intervention.transcription && (
-        <Descriptions.Item label={`${t('labels.transcription')}:`} span={3}>
+        <Descriptions.Item label={`${t("labels.transcription")}:`} span={3}>
           <TranscriptionView transcription={intervention.transcription} />
         </Descriptions.Item>
       )}
@@ -137,29 +177,33 @@ const TranscriptionView = ({ transcription }) => {
   const { t } = useTranslation();
   const config = {
     idDrug: {
-      render: record => record.idDrugLabel
+      render: (record) => record.idDrugLabel,
     },
     dose: {
-      render: record => record.dose
+      render: (record) => record.dose,
     },
     measureUnit: {
-      render: record => record.measureUnitLabel
+      render: (record) => record.measureUnitLabel,
     },
     frequency: {
-      render: record => record.frequencyLabel
+      render: (record) => record.frequencyLabel,
     },
     interval: {
-      render: record => record.intervalLabel
+      render: (record) => record.intervalLabel,
     },
     route: {
-      render: record => record.route
-    }
+      render: (record) => record.route,
+    },
   };
 
-  const items = Object.keys(config).map(key => {
+  const items = Object.keys(config).map((key) => {
     if (transcription[key]) {
       return (
-        <Descriptions.Item key={key} label={t(`transcriptionLabels.${key}`)} span={3}>
+        <Descriptions.Item
+          key={key}
+          label={t(`transcriptionLabels.${key}`)}
+          span={3}
+        >
           {config[key].render(transcription)}
         </Descriptions.Item>
       );
@@ -171,7 +215,7 @@ const TranscriptionView = ({ transcription }) => {
   return <Descriptions bordered>{items}</Descriptions>;
 };
 
-export const expandedInterventionRowRender = record => {
+export const expandedInterventionRowRender = (record) => {
   return (
     <NestedTableContainer>
       <InterventionView intervention={record} />
@@ -190,7 +234,7 @@ const Action = ({
 }) => {
   const isDisabled = check.currentId !== id && check.isChecking;
   const isChecking = check.currentId === id && check.isChecking;
-  const isChecked = data.status !== 's';
+  const isChecked = data.status !== "s";
   const closedStatuses = InterventionStatus.getClosedStatuses();
   const isClosed = closedStatuses.indexOf(data.status) !== -1;
 
@@ -201,21 +245,25 @@ const Action = ({
           <Button
             type={
               onShowModal
-                ? 'danger gtm-bt-menu-undo-interv-status'
-                : 'danger gtm-bt-tab-undo-interv-status'
+                ? "danger gtm-bt-menu-undo-interv-status"
+                : "danger gtm-bt-tab-undo-interv-status"
             }
             ghost
-            onClick={() => saveInterventionStatus(id, idPrescription, 's')}
+            onClick={() => saveInterventionStatus(id, idPrescription, "s")}
             loading={isChecking}
             disabled={isDisabled}
-          >
-            <Icon type="rollback" style={{ fontSize: 16 }} />
-          </Button>
+            icon={<RollbackOutlined style={{ fontSize: 16 }} />}
+          ></Button>
         </Tooltip>
       )}
       {!isChecked && (
         <Dropdown
-          overlay={menu(id, idPrescription, saveInterventionStatus, onShowModal)}
+          overlay={menu(
+            id,
+            idPrescription,
+            saveInterventionStatus,
+            onShowModal
+          )}
           loading={isChecking}
           disabled={isDisabled}
         >
@@ -223,24 +271,27 @@ const Action = ({
             type="primary"
             loading={isChecking}
             disabled={isDisabled}
-            className={onShowModal ? 'gtm-bt-menu-interv-status' : 'gtm-bt-tab-interv-status'}
-          >
-            <Icon type="caret-down" style={{ fontSize: 16 }} />
-          </Button>
+            className={
+              onShowModal
+                ? "gtm-bt-menu-interv-status"
+                : "gtm-bt-tab-interv-status"
+            }
+            icon={<CaretDownOutlined style={{ fontSize: 16 }} />}
+          ></Button>
         </Dropdown>
       )}
       {onShowModal && (
         <Tooltip
           title={
             isClosed
-              ? 'Esta intervenção não pode mais ser alterada, pois já foi resolvida.'
-              : 'Alterar intervenção'
+              ? "Esta intervenção não pode mais ser alterada, pois já foi resolvida."
+              : "Alterar intervenção"
           }
           placement="left"
         >
           <Button
             type="primary gtm-bt-menu-interv"
-            style={{ marginLeft: '5px' }}
+            style={{ marginLeft: "5px" }}
             disabled={isClosed}
             onClick={() => {
               onShowModal({
@@ -248,12 +299,11 @@ const Action = ({
                 idPrescriptionDrug: id,
                 idPrescription,
                 uniqueDrugList: [],
-                admissionNumber
+                admissionNumber,
               });
             }}
-          >
-            <Icon type="warning" style={{ fontSize: 16 }} />
-          </Button>
+            icon={<WarningOutlined style={{ fontSize: 16 }} />}
+          ></Button>
         </Tooltip>
       )}
     </>
@@ -263,20 +313,20 @@ const Action = ({
 const columns = (filteredInfo, name = false, t) => {
   const columnsArray = [
     {
-      title: t('tableHeader.date'),
-      dataIndex: 'date',
-      align: 'center',
+      title: t("tableHeader.date"),
+      dataIndex: "date",
+      align: "center",
       width: 80,
       render: (text, record) => {
-        return format(new Date(record.date), 'dd/MM/yyyy HH:mm');
-      }
-    }
+        return format(new Date(record.date), "dd/MM/yyyy HH:mm");
+      },
+    },
   ];
 
   if (name) {
     columnsArray.push({
-      title: t('labels.responsible'),
-      dataIndex: 'user',
+      title: t("labels.responsible"),
+      dataIndex: "user",
       width: 80,
       filteredValue: filteredInfo.responsible || [],
       onFilter: (value, record) => {
@@ -285,16 +335,16 @@ const columns = (filteredInfo, name = false, t) => {
         }
 
         return value.indexOf(record.user) !== -1;
-      }
+      },
     });
   }
 
   return [
     ...columnsArray,
     {
-      title: t('tableHeader.prescription'),
-      dataIndex: 'idPrescription',
-      align: 'center',
+      title: t("tableHeader.prescription"),
+      dataIndex: "idPrescription",
+      align: "center",
       width: 80,
       render: (text, record) => {
         return (
@@ -306,24 +356,24 @@ const columns = (filteredInfo, name = false, t) => {
             # {record.idPrescription}
           </TableLink>
         );
-      }
+      },
     },
     {
-      title: t('tableHeader.drug'),
-      dataIndex: 'drugName',
-      align: 'left',
-      width: 200
+      title: t("tableHeader.drug"),
+      dataIndex: "drugName",
+      align: "left",
+      width: 200,
     },
     {
-      title: t('labels.reasons'),
-      dataIndex: 'reasonDescription',
-      align: 'left',
-      width: 100
+      title: t("labels.reasons"),
+      dataIndex: "reasonDescription",
+      align: "left",
+      width: 100,
     },
     {
-      title: t('labels.status'),
-      dataIndex: 'status',
-      align: 'center',
+      title: t("labels.status"),
+      dataIndex: "status",
+      align: "center",
       width: 80,
       filteredValue: filteredInfo.status || null,
       onFilter: (value, record) => record.status === value,
@@ -331,16 +381,16 @@ const columns = (filteredInfo, name = false, t) => {
         const config = InterventionStatus.translate(record.status, t);
 
         return <Tag color={config.color}>{config.label}</Tag>;
-      }
+      },
     },
     {
-      title: t('tableHeader.action'),
-      align: 'center',
+      title: t("tableHeader.action"),
+      align: "center",
       width: 100,
       render: (text, record) => {
         return <Action {...record} />;
-      }
-    }
+      },
+    },
   ];
 };
 

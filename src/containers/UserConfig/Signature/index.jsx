@@ -1,19 +1,19 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
-import Signature from '@components/UserConfig/Signature';
+import Signature from "components/UserConfig/Signature";
 
-import { memoryFetchThunk, memorySaveThunk } from '@store/ducks/memory/thunk';
+import { memoryFetchThunk, memorySaveThunk } from "store/ducks/memory/thunk";
 
 const mapStateToProps = ({ memory, user }) => ({
   memory: memory.signature,
-  userId: user.account.userId
+  userId: user.account.userId,
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchMemory: memoryFetchThunk,
-      saveMemory: memorySaveThunk
+      saveMemory: memorySaveThunk,
     },
     dispatch
   );

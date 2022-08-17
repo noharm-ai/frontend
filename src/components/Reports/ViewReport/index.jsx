@@ -1,23 +1,23 @@
-import React, { useEffect } from 'react';
-import styled from 'styled-components';
-import isEmpty from 'lodash.isempty';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect } from "react";
+import styled from "styled-components";
+import isEmpty from "lodash.isempty";
+import { useNavigate } from "react-router-dom";
 
-import LoadBox from '@components/LoadBox';
-import { Row } from '@components/Grid';
+import LoadBox from "components/LoadBox";
+import { Row } from "components/Grid";
 
-const DashboardContainer = styled('div')`
+const DashboardContainer = styled("div")`
   width: 100%;
 `;
 
 export default function Reports({ report }) {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isEmpty(report)) {
-      history.push('/relatorios');
+      navigate("/relatorios");
     }
-  }, [report, history]);
+  }, [report, navigate]);
 
   if (isEmpty(report)) {
     return <LoadBox />;

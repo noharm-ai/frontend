@@ -1,81 +1,89 @@
-import React from 'react';
+import React from "react";
+import { FormOutlined } from "@ant-design/icons";
 
-import Button from '@components/Button';
-import Icon from '@components/Icon';
-import Tooltip from '@components/Tooltip';
+import Button from "components/Button";
+import Tooltip from "components/Tooltip";
 
-import Escore from './Escore';
+import Escore from "./Escore";
 
-const flags = ['green', 'yellow', 'orange', 'red'];
+const flags = ["green", "yellow", "orange", "red"];
 
-const convDose = outlier => {
+const convDose = (outlier) => {
   if (outlier.division) {
-    return  Number((outlier.dose-outlier.division).toFixed(2)) + '-' + outlier.dose + ' ' + outlier.unit + (outlier.useWeight ? '/Kg' : '');
+    return (
+      Number((outlier.dose - outlier.division).toFixed(2)) +
+      "-" +
+      outlier.dose +
+      " " +
+      outlier.unit +
+      (outlier.useWeight ? "/Kg" : "")
+    );
   } else {
-    return outlier.dose + ' ' + outlier.unit + (outlier.useWeight ? '/Kg' : '');
+    return outlier.dose + " " + outlier.unit + (outlier.useWeight ? "/Kg" : "");
   }
 };
 
 export default [
   {
-    dataIndex: 'class',
-    key: 'class',
+    dataIndex: "class",
+    key: "class",
     width: 20,
     render: (entry, { score, manualScore }) => (
       <span className={`flag ${flags[parseInt(manualScore || score)]}`} />
-    )
+    ),
   },
   {
-    title: 'Medicamento',
-    dataIndex: 'name',
-    width: 320
+    title: "Medicamento",
+    dataIndex: "name",
+    width: 320,
   },
   {
-    title: 'Dose',
-    dataIndex: 'dose',
+    title: "Dose",
+    dataIndex: "dose",
     width: 90,
-    render: (entry, outlier) => convDose(outlier)
+    render: (entry, outlier) => convDose(outlier),
   },
   {
-    title: 'Frequência diária',
-    dataIndex: 'frequency',
-    width: 65
+    title: "Frequência diária",
+    dataIndex: "frequency",
+    width: 65,
   },
   {
-    title: 'Escore',
-    dataIndex: 'score',
-    width: 60
-  },
-  {
-    title: 'Escore Manual',
-    dataIndex: 'manualScore',
+    title: "Escore",
+    dataIndex: "score",
     width: 60,
-    render: (entry, outlier) => <Escore {...outlier} />
   },
   {
-    title: 'Contagem',
-    dataIndex: 'countNum',
-    width: 60
+    title: "Escore Manual",
+    dataIndex: "manualScore",
+    width: 60,
+    render: (entry, outlier) => <Escore {...outlier} />,
   },
   {
-    title: 'Ações',
-    key: 'operations',
+    title: "Contagem",
+    dataIndex: "countNum",
+    width: 60,
+  },
+  {
+    title: "Ações",
+    key: "operations",
     width: 70,
-    align: 'center',
+    align: "center",
     render: (text, outlier) => {
-      const hasObs = outlier.obs !== '';
+      const hasObs = outlier.obs !== "";
 
       return (
-        <Tooltip title={hasObs ? 'Ver/Editar comentário' : 'Adicionar comentário'}>
+        <Tooltip
+          title={hasObs ? "Ver/Editar comentário" : "Adicionar comentário"}
+        >
           <Button
             type="primary gtm-bt-view-obs"
             ghost={!hasObs}
             onClick={() => outlier.onShowObsModal(outlier)}
-          >
-            <Icon type="form" />
-          </Button>
+            icon={<FormOutlined />}
+          ></Button>
         </Tooltip>
       );
-    }
-  }
-].map(item => ({ ...item, key: item.dataIndex }));
+    },
+  },
+].map((item) => ({ ...item, key: item.dataIndex }));

@@ -1,11 +1,16 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import {
+  ForkOutlined,
+  HourglassOutlined,
+  ExperimentOutlined,
+} from "@ant-design/icons";
 
-import Icon from '@components/Icon';
-import PrescriptionCard from '@components/PrescriptionCard';
-import Tooltip from '@components/Tooltip';
+import CustomIcon from "components/Icon";
+import PrescriptionCard from "components/PrescriptionCard";
+import Tooltip from "components/Tooltip";
 
-import { AlertContainer } from './index.style';
+import { AlertContainer } from "./index.style";
 
 export default function AlertCard({ stats }) {
   const { t } = useTranslation();
@@ -16,63 +21,63 @@ export default function AlertCard({ stats }) {
 
   const alerts = [
     {
-      label: t('alerts.y'),
-      icon: 'fork',
-      value: stats.inc
+      label: t("alerts.y"),
+      icon: () => <ForkOutlined />,
+      value: stats.inc,
     },
     {
-      label: t('alerts.interaction'),
-      icon: 'interactionAlert',
-      value: stats.int
+      label: t("alerts.interaction"),
+      icon: () => <CustomIcon type="interactionAlert" />,
+      value: stats.int,
     },
     {
-      label: t('alerts.max_dose'),
-      icon: 'maxDose',
-      value: stats.maxDose
+      label: t("alerts.max_dose"),
+      icon: () => <CustomIcon type="maxDose" />,
+      value: stats.maxDose,
     },
     {
-      label: t('alerts.exam'),
-      icon: 'experiment',
-      value: stats.exams
+      label: t("alerts.exam"),
+      icon: () => <ExperimentOutlined />,
+      value: stats.exams,
     },
     {
-      label: t('alerts.time'),
-      icon: 'hourglass',
-      value: stats.maxTime
+      label: t("alerts.time"),
+      icon: () => <HourglassOutlined />,
+      value: stats.maxTime,
     },
     {
-      label: t('alerts.elderly'),
-      icon: 'elderly',
-      value: stats.elderly
+      label: t("alerts.elderly"),
+      icon: () => <CustomIcon type="elderly" />,
+      value: stats.elderly,
     },
     {
-      label: t('alerts.alergy'),
-      icon: 'allergy',
-      value: stats.allergy
+      label: t("alerts.alergy"),
+      icon: () => <CustomIcon type="allergy" />,
+      value: stats.allergy,
     },
     {
-      label: t('alerts.tube'),
-      icon: 'tube',
-      value: stats.tube
+      label: t("alerts.tube"),
+      icon: () => <CustomIcon type="tube" />,
+      value: stats.tube,
     },
     {
-      label: t('alerts.duplicate'),
-      icon: 'duplicity',
-      value: stats.dup
-    }
+      label: t("alerts.duplicate"),
+      icon: () => <CustomIcon type="duplicity" />,
+      value: stats.dup,
+    },
   ];
 
   return (
     <PrescriptionCard>
       <div className="header">
-        <h3 className="title">{t('tableHeader.alerts')}</h3>
+        <h3 className="title">{t("tableHeader.alerts")}</h3>
       </div>
       <div className="content">
         <AlertContainer>
-          {alerts.map(a => (
+          {alerts.map((a) => (
             <Tooltip title={a.label} key={a.label}>
-              <div className={a.value > 0 ? 'alert' : ''}>
-                <Icon type={a.icon} /> {a.value}
+              <div className={a.value > 0 ? "alert" : ""}>
+                {a.icon()} {a.value}
               </div>
             </Tooltip>
           ))}

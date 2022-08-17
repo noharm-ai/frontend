@@ -1,89 +1,104 @@
-import Feature from '@models/Feature';
+import {
+  TableOutlined,
+  FileTextOutlined,
+  UserOutlined,
+  ReconciliationOutlined,
+  WarningOutlined,
+  PieChartOutlined,
+  BulbOutlined,
+  SettingOutlined,
+  MedicineBoxOutlined,
+  UsergroupAddOutlined,
+} from "@ant-design/icons";
 
-export default [
+import Feature from "models/Feature";
+
+const navigation = [
   {
-    key: 'prioritization',
-    text: 'menu.prioritization',
-    icon: 'table',
-    id: 'gtm-lnk-priorizacao',
+    key: "prioritization",
+    text: "menu.prioritization",
+    icon: TableOutlined,
+    id: "gtm-lnk-priorizacao",
     children: [
       {
-        key: '/priorizacao/prescricoes',
-        text: 'menu.prioritization-prescription',
-        icon: 'drugPrescription',
-        id: 'gtm-lnk-priorizacao-prescricao'
+        key: "/priorizacao/prescricoes",
+        text: "menu.prioritization-prescription",
+        icon: FileTextOutlined,
+        id: "gtm-lnk-priorizacao-prescricao",
       },
       {
-        key: '/priorizacao/pacientes',
-        text: 'menu.prioritization-patient',
-        icon: 'user',
-        id: 'gtm-lnk-priorizacao-paciente'
+        key: "/priorizacao/pacientes",
+        text: "menu.prioritization-patient",
+        icon: UserOutlined,
+        id: "gtm-lnk-priorizacao-paciente",
       },
       {
-        key: '/priorizacao/conciliacoes',
-        text: 'menu.prioritization-conciliation',
-        icon: 'reconciliation',
-        id: 'gtm-lnk-priorizacao-conciliacao',
-        role: 'concilia'
-      }
-    ]
+        key: "/priorizacao/conciliacoes",
+        text: "menu.prioritization-conciliation",
+        icon: ReconciliationOutlined,
+        id: "gtm-lnk-priorizacao-conciliacao",
+        role: "concilia",
+      },
+    ],
   },
   {
-    key: '/pacientes',
-    text: 'menu.patients',
-    icon: 'user',
-    id: 'gtm-lnk-patients',
-    feature: Feature.PRIMARYCARE
+    key: "/pacientes",
+    text: "menu.patients",
+    icon: UserOutlined,
+    id: "gtm-lnk-patients",
+    feature: Feature.PRIMARYCARE,
   },
   {
-    key: '/intervencoes',
-    text: 'menu.interventions',
-    icon: 'warning',
-    id: 'gtm-lnk-intervencoes'
+    key: "/intervencoes",
+    text: "menu.interventions",
+    icon: WarningOutlined,
+    id: "gtm-lnk-intervencoes",
   },
   {
-    key: '/relatorios',
-    text: 'menu.reports',
-    icon: 'report',
-    id: 'gtm-lnk-report'
+    key: "/relatorios",
+    text: "menu.reports",
+    icon: PieChartOutlined,
+    id: "gtm-lnk-report",
   },
   {
-    key: { pathname: 'https://noharm.octadesk.com/kb' },
-    text: 'menu.knowledgeBase',
-    icon: 'bulb',
-    id: 'gtm-lnk-knowledgeBase'
+    key: { pathname: "https://noharm.octadesk.com/kb" },
+    text: "menu.knowledgeBase",
+    icon: BulbOutlined,
+    id: "gtm-lnk-knowledgeBase",
   },
   {
-    key: 'config',
-    text: 'menu.config',
-    icon: 'setting',
-    id: 'gtm-lnk-config',
+    key: "config",
+    text: "menu.config",
+    icon: SettingOutlined,
+    id: "gtm-lnk-config",
     children: [
       {
-        key: '/medicamentos',
-        text: 'menu.medications',
-        icon: 'drug',
-        id: 'gtm-lnk-medicamentos'
+        key: "/medicamentos",
+        text: "menu.medications",
+        icon: "drug",
+        id: "gtm-lnk-medicamentos",
       },
       {
-        key: '/exames',
-        text: 'menu.exams',
-        icon: 'medicine-box',
-        id: 'gtm-lnk-exames'
+        key: "/exames",
+        text: "menu.exams",
+        icon: MedicineBoxOutlined,
+        id: "gtm-lnk-exames",
       },
       {
-        key: '/configuracoes/usuario',
-        text: 'menu.userConfig',
-        icon: 'user',
-        id: 'gtm-lnk-usuario'
+        key: "/configuracoes/usuario",
+        text: "menu.userConfig",
+        icon: UserOutlined,
+        id: "gtm-lnk-usuario",
       },
       {
-        key: '/configuracoes/administracao',
-        text: 'menu.user-administration',
-        icon: 'usergroup-add',
-        id: 'gtm-lnk-user-administration',
-        role: 'userAdmin'
-      }
-    ]
-  }
+        key: "/configuracoes/administracao",
+        text: "menu.user-administration",
+        icon: UsergroupAddOutlined,
+        id: "gtm-lnk-user-administration",
+        role: "userAdmin",
+      },
+    ],
+  },
 ];
+
+export default navigation;

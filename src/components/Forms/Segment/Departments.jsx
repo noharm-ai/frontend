@@ -1,22 +1,22 @@
-import 'styled-components/macro';
-import React from 'react';
-import { useFormikContext } from 'formik';
+import "styled-components/macro";
+import React from "react";
+import { useFormikContext } from "formik";
 
-import LoadBox from '@components/LoadBox';
-import { Col, Row } from '@components/Grid';
-import { Checkbox } from '@components/Inputs';
+import LoadBox from "components/LoadBox";
+import { Col, Row } from "components/Grid";
+import { Checkbox } from "components/Inputs";
 
 const List = ({ list }) => {
   const { setFieldValue, values } = useFormikContext();
   const { departments } = values;
 
-  const handleChange = checkeds => {
-    setFieldValue('departments', checkeds);
+  const handleChange = (checkeds) => {
+    setFieldValue("departments", checkeds);
   };
 
   return (
     <Checkbox.Group
-      style={{ width: '100%', marginLeft: '20px' }}
+      style={{ width: "100%", marginLeft: "20px" }}
       value={departments}
       onChange={handleChange}
     >

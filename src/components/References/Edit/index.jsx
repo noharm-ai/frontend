@@ -1,13 +1,13 @@
-import React from 'react';
-import styled from 'styled-components/macro';
+import React from "react";
+import styled from "styled-components/macro";
 
-import { Row, Col } from '@components/Grid';
-import Heading from '@components/Heading';
-import Editor from '@components/Editor';
-import { get } from '@styles/utils';
+import { Row, Col } from "components/Grid";
+import Heading from "components/Heading";
+import Editor from "components/Editor";
+import { get } from "styles/utils";
 
 export const Box = styled.div`
-  border-top: 1px solid ${get('colors.detail')};
+  border-top: 1px solid ${get("colors.detail")};
   padding: 20px 0;
 `;
 
@@ -18,7 +18,7 @@ export const EditorBox = styled.div`
 `;
 
 export default function Edit({ outlier, updateSelectedOutlier }) {
-  const onEditObs = obs => {
+  const onEditObs = (obs) => {
     updateSelectedOutlier({ obs });
   };
 
@@ -54,9 +54,9 @@ export default function Edit({ outlier, updateSelectedOutlier }) {
         </Row>
         <EditorBox>
           <Editor
-            content={outlier.item.obs || ''}
+            content={outlier.item.obs || ""}
             onEdit={onEditObs}
-            onInit={editor => {
+            onReady={(editor) => {
               editor.editing.view.focus();
             }}
           />

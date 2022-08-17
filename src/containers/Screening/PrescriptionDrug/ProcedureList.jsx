@@ -1,23 +1,23 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 import {
   selectItemToSaveThunk,
   saveInterventionThunk,
-  clearSavedInterventionStatusThunk
-} from '@store/ducks/intervention/thunk';
+  clearSavedInterventionStatusThunk,
+} from "store/ducks/intervention/thunk";
 import {
   checkScreeningThunk,
   checkPrescriptionDrugThunk,
   updateInterventionDataThunk,
   checkInterventionThunk,
-  fetchPrescriptionDrugPeriodThunk
-} from '@store/ducks/prescriptions/thunk';
-import { selectPrescriptionDrugThunk } from '@store/ducks/prescriptionDrugs/thunk';
+  fetchPrescriptionDrugPeriodThunk,
+} from "store/ducks/prescriptions/thunk";
+import { selectPrescriptionDrugThunk } from "store/ducks/prescriptionDrugs/thunk";
 
-import security from '@services/security';
-import FeatureService from '@services/features';
-import PrescriptionDrugList from '@components/Screening/PrescriptionDrug/PrescriptionDrugList';
+import security from "services/security";
+import FeatureService from "services/features";
+import PrescriptionDrugList from "components/Screening/PrescriptionDrug/PrescriptionDrugList";
 
 const mapStateToProps = ({ prescriptions, auth, user }) => ({
   dataSource: prescriptions.single.procedure.list,
@@ -36,9 +36,9 @@ const mapStateToProps = ({ prescriptions, auth, user }) => ({
   uniqueDrugs: prescriptions.single.data.uniqueDrugs,
   isCheckingPrescription: prescriptions.single.check.isChecking,
   security: security(user.account.roles),
-  featureService: FeatureService(user.account.features)
+  featureService: FeatureService(user.account.features),
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       checkScreening: checkScreeningThunk,
@@ -49,9 +49,12 @@ const mapDispatchToProps = dispatch =>
       savePrescriptionDrugStatus: checkPrescriptionDrugThunk,
       updateInterventionData: updateInterventionDataThunk,
       saveInterventionStatus: checkInterventionThunk,
-      selectPrescriptionDrug: selectPrescriptionDrugThunk
+      selectPrescriptionDrug: selectPrescriptionDrugThunk,
     },
     dispatch
   );
 
-export default connect(mapStateToProps, mapDispatchToProps)(PrescriptionDrugList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PrescriptionDrugList);

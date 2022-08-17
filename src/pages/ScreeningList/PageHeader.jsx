@@ -1,25 +1,29 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Tooltip } from 'antd';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Tooltip } from "antd";
 
-import Heading from '@components/Heading';
-import { Row, Col } from '@components/Grid';
-import Switch from '@components/Switch';
+import Heading from "components/Heading";
+import { Row, Col } from "components/Grid";
+import Switch from "components/Switch";
 
-const getPrioritizationName = type => {
+const getPrioritizationName = (type) => {
   switch (type) {
-    case 'prescription':
-      return 'prescrição';
-    case 'patient':
-      return 'patient';
-    case 'conciliation':
-      return 'conciliação';
+    case "prescription":
+      return "prescrição";
+    case "patient":
+      return "patient";
+    case "conciliation":
+      return "conciliação";
     default:
-      console.error('invalid prioritization type:', type);
+      console.error("invalid prioritization type:", type);
   }
 };
 
-export default function PageHeader({ journey, prioritizationType, setJourney }) {
+export default function PageHeader({
+  journey,
+  prioritizationType,
+  setJourney,
+}) {
   const { t } = useTranslation();
   const [stateChecked, setStateChecked] = useState(false);
   const title = `screeningList.title-${prioritizationType}`;
@@ -27,10 +31,10 @@ export default function PageHeader({ journey, prioritizationType, setJourney }) 
   const name = getPrioritizationName(prioritizationType);
   const msg =
     journey === prioritizationType
-      ? 'Priorização padrão'
+      ? "Priorização padrão"
       : `Definir a priorização por ${name} como tela inicial`;
 
-  const onChangeJourney = checked => {
+  const onChangeJourney = (checked) => {
     if (checked) {
       setJourney(prioritizationType);
       setStateChecked(true);
@@ -41,11 +45,11 @@ export default function PageHeader({ journey, prioritizationType, setJourney }) 
     <>
       <Row type="flex" css="margin-bottom: 15px;">
         <Col span={24} md={10}>
-          <header style={{ marginBottom: '30px' }}>
+          <header style={{ marginBottom: "30px" }}>
             <Heading>{t(title)}</Heading>
           </header>
         </Col>
-        <Col span={24} md={24 - 10} style={{ textAlign: 'right' }}>
+        <Col span={24} md={24 - 10} style={{ textAlign: "right" }}>
           {(journey !== prioritizationType || stateChecked) && (
             <Tooltip title={msg}>
               <Switch

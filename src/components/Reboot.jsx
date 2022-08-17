@@ -1,9 +1,9 @@
-import 'antd/lib/spin/style/index.css';
-import { createGlobalStyle } from 'styled-components/macro';
-import { rgba } from 'polished';
+import "antd/lib/spin/style/index.css";
+import { createGlobalStyle } from "styled-components/macro";
+import { rgba } from "polished";
 
-import { get } from '@styles/utils';
-import { loadingCircle } from '@styles/mixins';
+import { get } from "styles/utils";
+import { loadingCircle } from "styles/mixins";
 
 const ResetStyled = createGlobalStyle`
   :root {
@@ -16,10 +16,10 @@ const ResetStyled = createGlobalStyle`
   }
 
   body {
-    color: ${get('colors.text')};
-    font-family: ${get('fonts.primary')};
-    font-size: ${get('sizes.defaultFontSize')};
-    font-weight: ${get('weight.regular')};
+    color: ${get("colors.text")};
+    font-family: ${get("fonts.primary")};
+    font-size: ${get("sizes.defaultFontSize")};
+    font-weight: ${get("weight.regular")};
     margin: 0;
   }
 
@@ -230,7 +230,7 @@ const ResetStyled = createGlobalStyle`
 
   .ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled),
   .ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled) {
-    background-color: ${rgba('#70bdc3', 0.2)} !important;
+    background-color: ${rgba("#70bdc3", 0.2)} !important;
   }
 
   .ant-spin-dot-item {

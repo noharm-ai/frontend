@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import isEmpty from 'lodash.isempty';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from "react";
+import isEmpty from "lodash.isempty";
+import { useTranslation } from "react-i18next";
 
-import LoadBox from '@components/LoadBox';
-import Table from '@components/Table';
-import Empty from '@components/Empty';
+import LoadBox from "components/LoadBox";
+import Table from "components/Table";
+import Empty from "components/Empty";
 
-import FormIntervention from '@containers/Forms/Intervention';
+import FormIntervention from "containers/Forms/Intervention";
 
-import { conciliationColumns } from '../Screening/columns';
-import { rowClassName } from '../Screening/PrescriptionDrug/PrescriptionDrugList';
+import { conciliationColumns } from "../Screening/columns";
+import { rowClassName } from "../Screening/PrescriptionDrug/PrescriptionDrugList";
 
-import { BoxWrapper } from './index.style';
+import { BoxWrapper } from "./index.style";
 
 export default function PrescriptionDrugList({
   isFetching,
@@ -27,7 +27,7 @@ export default function PrescriptionDrugList({
   updatePrescriptionDrugData,
   uniqueDrugs,
   currentPrescription,
-  security
+  security,
 }) {
   const [openIntervention, setOpenIntervention] = useState(false);
   const { t } = useTranslation();
@@ -36,7 +36,7 @@ export default function PrescriptionDrugList({
     return <LoadBox />;
   }
 
-  const onShowModal = data => {
+  const onShowModal = (data) => {
     select(data);
     setOpenIntervention(true);
   };
@@ -55,7 +55,7 @@ export default function PrescriptionDrugList({
     uniqueDrugList: uniqueDrugs,
     currentPrescription,
     security,
-    t
+    t,
   };
 
   return (
@@ -70,7 +70,7 @@ export default function PrescriptionDrugList({
               image={Empty.PRESENTED_IMAGE_SIMPLE}
               description="Nenhum medicamento encontrado."
             />
-          )
+          ),
         }}
         dataSource={!isEmpty(dataSource) ? dataSource[0].value : []}
         rowClassName={rowClassName}

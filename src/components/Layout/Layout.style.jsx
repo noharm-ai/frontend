@@ -1,9 +1,9 @@
-import 'antd/lib/layout/style/index.css';
-import AntLayout from 'antd/lib/layout';
-import styled from 'styled-components/macro';
+import "antd/lib/layout/style/index.css";
+import { Layout } from "antd";
+import styled from "styled-components/macro";
 
-import { get } from '@styles/utils';
-import { ReactComponent as LogoSVG } from '@assets/noHarm-horizontal.svg';
+import { get } from "styles/utils";
+import { ReactComponent as LogoSVG } from "assets/noHarm-horizontal.svg";
 
 export const MessageLink = styled.a`
   color: rgba(0, 0, 0, 0.85);
@@ -24,43 +24,43 @@ export const Brand = styled(LogoSVG)`
 `;
 
 export const UserName = styled.p`
-  color: ${get('colors.primary')};
-  font-weight: ${get('weight.light')};
+  color: ${get("colors.primary")};
+  font-weight: ${get("weight.light")};
   margin: 0 40px 0 0;
 `;
 
 export const LogOut = styled.a`
-  color: ${get('colors.primary')};
+  color: ${get("colors.primary")};
   cursor: pointer;
-  font-weight: ${get('weight.bold')};
+  font-weight: ${get("weight.bold")};
   transition: color 0.3s ease;
   text-decoration: none;
 
   &:hover {
-    color: ${get('colors.accent')};
+    color: ${get("colors.accent")};
   }
 `;
 
-export const Wrapper = styled(AntLayout)`
+export const Wrapper = styled(Layout)`
   &.ant-layout {
     background: #eff1f4;
     transition: all 0.2s;
   }
 `;
 
-Wrapper.Footer = styled(AntLayout.Footer)`
+Wrapper.Footer = styled(Layout.Footer)`
   &.ant-layout-footer {
     color: #888;
     font-size: 16px;
-    font-family: ${get('fonts.secondary')};
-    font-weight: ${get('weight.light')};
+    font-family: ${get("fonts.secondary")};
+    font-weight: ${get("weight.light")};
     text-align: center;
   }
 `;
 
-Wrapper.Sider = styled(AntLayout.Sider)`
+Wrapper.Sider = styled(Layout.Sider)`
   &.ant-layout-sider {
-    background: ${get('colors.primary')};
+    background: ${get("colors.primary")};
     color: #fff;
     height: 100vh;
     left: 0;
@@ -70,7 +70,7 @@ Wrapper.Sider = styled(AntLayout.Sider)`
   }
 
   .ant-layout-sider-zero-width-trigger {
-    background: ${get('colors.primary')};
+    background: ${get("colors.primary")};
     top: 10px;
   }
 
@@ -89,13 +89,13 @@ Wrapper.Sider = styled(AntLayout.Sider)`
   }
 `;
 
-Wrapper.Header = styled(AntLayout.Header)`
+Wrapper.Header = styled(Layout.Header)`
   align-items: center;
   display: flex;
   width: 100%;
 
   &.ant-layout-header {
-    background: ${get('colors.commonLighter')};
+    background: ${get("colors.commonLighter")};
     padding: 20px;
   }
 

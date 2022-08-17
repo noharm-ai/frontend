@@ -1,12 +1,16 @@
-import isEmpty from 'lodash.isempty';
+import isEmpty from "lodash.isempty";
 
-import api from '@services/api';
-import hospital from '@services/hospital';
-import { transformPrescriptions, transformPrescription, transformExams } from '@utils/transformers';
-import { sourceToStoreType } from '@utils/transformers/prescriptions';
-import { errorHandler } from '@utils';
-import { Creators as PatientsCreators } from '../patients';
-import { Creators as PrescriptionsCreators } from './index';
+import api from "services/api";
+import hospital from "services/hospital";
+import {
+  transformPrescriptions,
+  transformPrescription,
+  transformExams,
+} from "utils/transformers";
+import { sourceToStoreType } from "utils/transformers/prescriptions";
+import { errorHandler } from "utils";
+import { Creators as PatientsCreators } from "../patients";
+import { Creators as PrescriptionsCreators } from "./index";
 
 const { patientsFetchListSuccess } = PatientsCreators;
 
@@ -26,7 +30,6 @@ const {
   prescriptionsSaveStart,
   prescriptionsSaveError,
   prescriptionsSaveSuccess,
-  prescriptionsSaveReset,
 
   prescriptionDrugCheckStart,
   prescriptionDrugCheckError,
@@ -49,290 +52,315 @@ const {
   prescriptionsFetchExamsError,
   prescriptionsFetchExamsSuccess,
 
-  prescriptionsIncrementClinicalNotes
+  prescriptionsIncrementClinicalNotes,
 } = PrescriptionsCreators;
 
-export const fetchPrescriptionsListThunk = (params = {}) => async (dispatch, getState) => {
-  dispatch(prescriptionsFetchListStart());
+export const fetchPrescriptionsListThunk =
+  (params = {}) =>
+  async (dispatch, getState) => {
+    dispatch(prescriptionsFetchListStart());
 
-  const { auth, patients, app, user } = getState();
-  const { list: listPatients } = patients;
-  const { access_token } = auth.identify;
-  const {
-    data: { data },
-    error
-  } = await api.getPrescriptions(access_token, params).catch(errorHandler);
+    const { auth, patients, app, user } = getState();
+    const { list: listPatients } = patients;
+    const { access_token } = auth.identify;
+    const {
+      data: { data },
+      error,
+    } = await api.getPrescriptions(access_token, params).catch(errorHandler);
 
-  if (!isEmpty(error)) {
-    dispatch(prescriptionsFetchListError(error));
-    return;
-  }
+    if (!isEmpty(error)) {
+      dispatch(prescriptionsFetchListError(error));
+      return;
+    }
 
-  const requestConfig = {
-    listToRequest: data,
-    listToEscape: listPatients,
-    nameUrl: app.config.nameUrl,
-    proxy: app.config.proxy,
-    nameHeaders: app.config.nameHeaders,
-    useCache: true,
-    userRoles: user.account.roles
+    const requestConfig = {
+      listToRequest: data,
+      listToEscape: listPatients,
+      nameUrl: app.config.nameUrl,
+      proxy: app.config.proxy,
+      nameHeaders: app.config.nameHeaders,
+      useCache: true,
+      userRoles: user.account.roles,
+    };
+
+    const patientsList = await hospital.getPatients(
+      access_token,
+      requestConfig
+    );
+    const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
+      ...item,
+      idPatient,
+      namePatient: patientsList[idPatient]
+        ? patientsList[idPatient].name
+        : `Paciente ${idPatient}`,
+    }));
+
+    const list = transformPrescriptions(listAddedPatientName);
+
+    dispatch(patientsFetchListSuccess(patientsList));
+    dispatch(prescriptionsFetchListSuccess(list));
   };
 
-  const patientsList = await hospital.getPatients(access_token, requestConfig);
-  const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
-    ...item,
-    idPatient,
-    namePatient: patientsList[idPatient] ? patientsList[idPatient].name : `Paciente ${idPatient}`
-  }));
+export const updatePrescriptionStatusThunk =
+  (params = {}) =>
+  async (dispatch, getState) => {
+    const { auth } = getState();
+    const { access_token } = auth.identify;
+    const {
+      data: { data },
+      error,
+    } = await api.getPrescriptions(access_token, params).catch(errorHandler);
 
-  const list = transformPrescriptions(listAddedPatientName);
+    if (!isEmpty(error)) {
+      dispatch(prescriptionsFetchListError(error));
+      return;
+    }
 
-  dispatch(patientsFetchListSuccess(patientsList));
-  dispatch(prescriptionsFetchListSuccess(list));
-};
-
-export const updatePrescriptionStatusThunk = (params = {}) => async (dispatch, getState) => {
-  const { auth } = getState();
-  const { access_token } = auth.identify;
-  const {
-    data: { data },
-    error
-  } = await api.getPrescriptions(access_token, params).catch(errorHandler);
-
-  if (!isEmpty(error)) {
-    dispatch(prescriptionsFetchListError(error));
-    return;
-  }
-
-  dispatch(prescriptionsUpdateListStatus(transformPrescriptions(data)));
-};
+    dispatch(prescriptionsUpdateListStatus(transformPrescriptions(data)));
+  };
 
 /**
  * Fetch data for Screening page.
  * @param {number} idPrescription
  */
-export const fetchScreeningThunk = idPrescription => async (dispatch, getState) => {
-  dispatch(prescriptionsFetchSingleStart());
+export const fetchScreeningThunk =
+  (idPrescription) => async (dispatch, getState) => {
+    dispatch(prescriptionsFetchSingleStart());
 
-  const { auth, patients, app, user } = getState();
-  const { list: listPatients } = patients;
-  const { access_token } = auth.identify;
-  const {
-    data: { data },
-    error
-  } = await api.getPrescriptionById(access_token, idPrescription).catch(errorHandler);
-  if (!isEmpty(error)) {
-    dispatch(prescriptionsFetchSingleError(error));
-    return;
-  }
+    const { auth, patients, app, user } = getState();
+    const { list: listPatients } = patients;
+    const { access_token } = auth.identify;
+    const {
+      data: { data },
+      error,
+    } = await api
+      .getPrescriptionById(access_token, idPrescription)
+      .catch(errorHandler);
+    if (!isEmpty(error)) {
+      dispatch(prescriptionsFetchSingleError(error));
+      return;
+    }
 
-  const singlePrescription = transformPrescription(data);
-  const requestConfig = {
-    listToRequest: [singlePrescription],
-    listToEscape: listPatients,
-    nameUrl: app.config.nameUrl,
-    proxy: app.config.proxy,
-    nameHeaders: app.config.nameHeaders,
-    useCache: false,
-    userRoles: user.account.roles
+    const singlePrescription = transformPrescription(data);
+    const requestConfig = {
+      listToRequest: [singlePrescription],
+      listToEscape: listPatients,
+      nameUrl: app.config.nameUrl,
+      proxy: app.config.proxy,
+      nameHeaders: app.config.nameHeaders,
+      useCache: false,
+      userRoles: user.account.roles,
+    };
+
+    const patientsList = await hospital.getPatients(
+      access_token,
+      requestConfig
+    );
+
+    const singlePrescriptionAddedPatientName = {
+      ...singlePrescription,
+      namePatient: patientsList[singlePrescription.idPatient]
+        ? patientsList[singlePrescription.idPatient].name
+        : "Paciente",
+    };
+
+    dispatch(patientsFetchListSuccess(patientsList));
+    dispatch(
+      prescriptionsFetchSingleSuccess(singlePrescriptionAddedPatientName)
+    );
   };
 
-  const patientsList = await hospital.getPatients(access_token, requestConfig);
+export const checkScreeningThunk =
+  (idPrescription, status) => async (dispatch, getState) => {
+    dispatch(prescriptionsCheckStart(idPrescription));
 
-  const singlePrescriptionAddedPatientName = {
-    ...singlePrescription,
-    namePatient: patientsList[singlePrescription.idPatient]
-      ? patientsList[singlePrescription.idPatient].name
-      : 'Paciente'
+    const { access_token } = getState().auth.identify;
+    const params = {
+      status,
+    };
+    const { data, error } = await api
+      .putPrescriptionById(access_token, idPrescription, params)
+      .catch(errorHandler);
+
+    if (!isEmpty(error)) {
+      dispatch(prescriptionsCheckError(error));
+      return;
+    }
+
+    const success = {
+      status: data.status,
+      id: data.data,
+      newStatus: status,
+    };
+
+    dispatch(prescriptionsCheckSuccess(success));
   };
 
-  dispatch(patientsFetchListSuccess(patientsList));
-  dispatch(prescriptionsFetchSingleSuccess(singlePrescriptionAddedPatientName));
-};
+export const savePrescriptionThunk =
+  ({ idPrescription, formId, ...params }) =>
+  (dispatch, getState) => {
+    return new Promise(async (resolve, reject) => {
+      dispatch(prescriptionsSaveStart());
 
-export const checkScreeningThunk = (idPrescription, status) => async (dispatch, getState) => {
-  dispatch(prescriptionsCheckStart(idPrescription));
+      const { access_token } = getState().auth.identify;
+      const { error } = await api
+        .putPrescriptionById(access_token, idPrescription, params)
+        .catch(errorHandler);
 
-  const { access_token } = getState().auth.identify;
-  const params = {
-    status
-  };
-  const { data, error } = await api
-    .putPrescriptionById(access_token, idPrescription, params)
-    .catch(errorHandler);
+      if (!isEmpty(error)) {
+        dispatch(prescriptionsSaveError(error));
+        reject(error);
+        return;
+      }
 
-  if (!isEmpty(error)) {
-    dispatch(prescriptionsCheckError(error));
-    return;
-  }
-
-  const success = {
-    status: data.status,
-    id: data.data,
-    newStatus: status
+      dispatch(prescriptionsSaveSuccess(params, formId));
+      resolve(params);
+    });
   };
 
-  dispatch(prescriptionsCheckSuccess(success));
-};
+export const saveAdmissionThunk =
+  ({ admissionNumber, formId, ...params }) =>
+  async (dispatch, getState) => {
+    return new Promise(async (resolve, reject) => {
+      dispatch(prescriptionsSaveStart());
 
-export const savePrescriptionThunk = ({ idPrescription, formId, ...params }) => async (
-  dispatch,
-  getState
-) => {
-  dispatch(prescriptionsSaveStart());
+      const { access_token } = getState().auth.identify;
+      const { error } = await api
+        .updatePatient(access_token, admissionNumber, params)
+        .catch(errorHandler);
 
-  const { access_token } = getState().auth.identify;
-  const { error } = await api
-    .putPrescriptionById(access_token, idPrescription, params)
-    .catch(errorHandler);
+      if (!isEmpty(error)) {
+        dispatch(prescriptionsSaveError(error));
+        reject(error);
+        return;
+      }
 
-  if (!isEmpty(error)) {
-    dispatch(prescriptionsSaveError(error));
-    return;
-  }
-
-  dispatch(prescriptionsSaveSuccess(params, formId));
-  dispatch(prescriptionsSaveReset());
-};
-
-export const saveAdmissionThunk = ({ admissionNumber, formId, ...params }) => async (
-  dispatch,
-  getState
-) => {
-  dispatch(prescriptionsSaveStart());
-
-  const { access_token } = getState().auth.identify;
-  const { error } = await api
-    .updatePatient(access_token, admissionNumber, params)
-    .catch(errorHandler);
-
-  if (!isEmpty(error)) {
-    dispatch(prescriptionsSaveError(error));
-    return;
-  }
-
-  dispatch(prescriptionsSaveSuccess(params, formId));
-  dispatch(prescriptionsSaveReset());
-};
-
-export const checkPrescriptionDrugThunk = (
-  idPrescriptionDrug,
-  idPrescription,
-  status,
-  type
-) => async (dispatch, getState) => {
-  dispatch(prescriptionDrugCheckStart(idPrescriptionDrug, sourceToStoreType(type)));
-
-  const { access_token } = getState().auth.identify;
-  const params = {
-    idPrescriptionDrug,
-    idPrescription,
-    status
+      dispatch(prescriptionsSaveSuccess(params, formId));
+      resolve();
+    });
   };
 
-  const { data, error } = await api.updateIntervention(access_token, params).catch(errorHandler);
+export const checkPrescriptionDrugThunk =
+  (idPrescriptionDrug, idPrescription, status, type) =>
+  async (dispatch, getState) => {
+    dispatch(
+      prescriptionDrugCheckStart(idPrescriptionDrug, sourceToStoreType(type))
+    );
 
-  if (!isEmpty(error)) {
-    dispatch(prescriptionDrugCheckError(error, sourceToStoreType(type)));
-    return;
-  }
+    const { access_token } = getState().auth.identify;
+    const params = {
+      idPrescriptionDrug,
+      idPrescription,
+      status,
+    };
 
-  const success = {
-    status: data.status,
-    id: data.data,
-    newStatus: status,
-    type
+    const { data, error } = await api
+      .updateIntervention(access_token, params)
+      .catch(errorHandler);
+
+    if (!isEmpty(error)) {
+      dispatch(prescriptionDrugCheckError(error, sourceToStoreType(type)));
+      return;
+    }
+
+    const success = {
+      status: data.status,
+      id: data.data,
+      newStatus: status,
+      type,
+    };
+
+    dispatch(prescriptionDrugCheckSuccess(success, sourceToStoreType(type)));
   };
 
-  dispatch(prescriptionDrugCheckSuccess(success, sourceToStoreType(type)));
-};
-
-export const updateInterventionDataThunk = (
-  idPrescriptionDrug,
-  source,
-  intervention
-) => dispatch => {
-  dispatch(prescriptionsUpdateIntervention(idPrescriptionDrug, source, intervention));
-};
-
-export const updatePrescriptionDrugDataThunk = (idPrescriptionDrug, source, data) => dispatch => {
-  dispatch(prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data));
-};
-
-export const checkInterventionThunk = (
-  id,
-  idPrescription,
-  status,
-  source = 'intervention'
-) => async (dispatch, getState) => {
-  dispatch(prescriptionInterventionCheckStart(id, source));
-
-  const { access_token } = getState().auth.identify;
-  const params = {
-    idPrescriptionDrug: id,
-    idPrescription,
-    status
+export const updateInterventionDataThunk =
+  (idPrescriptionDrug, source, intervention) => (dispatch) => {
+    dispatch(
+      prescriptionsUpdateIntervention(idPrescriptionDrug, source, intervention)
+    );
   };
 
-  const { data, error } = await api.updateIntervention(access_token, params).catch(errorHandler);
-
-  if (!isEmpty(error)) {
-    dispatch(prescriptionInterventionCheckError(error, source));
-    return;
-  }
-
-  const success = {
-    status: data.status,
-    id,
-    idPrescription,
-    newStatus: status
+export const updatePrescriptionDrugDataThunk =
+  (idPrescriptionDrug, source, data) => (dispatch) => {
+    dispatch(
+      prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data)
+    );
   };
 
-  dispatch(prescriptionInterventionCheckSuccess(success, source));
-};
+export const checkInterventionThunk =
+  (id, idPrescription, status, source = "intervention") =>
+  async (dispatch, getState) => {
+    dispatch(prescriptionInterventionCheckStart(id, source));
 
-export const fetchPrescriptionDrugPeriodThunk = (idPrescriptionDrug, source) => async (
-  dispatch,
-  getState
-) => {
-  dispatch(prescriptionsFetchPeriodStart(source));
+    const { access_token } = getState().auth.identify;
+    const params = {
+      idPrescriptionDrug: id,
+      idPrescription,
+      status,
+    };
 
-  const { auth } = getState();
-  const { access_token } = auth.identify;
-  const {
-    data: { data },
-    error
-  } = await api.getPrescriptionDrugPeriod(access_token, idPrescriptionDrug).catch(errorHandler);
+    const { data, error } = await api
+      .updateIntervention(access_token, params)
+      .catch(errorHandler);
 
-  if (!isEmpty(error)) {
-    dispatch(prescriptionsFetchPeriodError(error, source));
-    return;
-  }
+    if (!isEmpty(error)) {
+      dispatch(prescriptionInterventionCheckError(error, source));
+      return;
+    }
 
-  dispatch(prescriptionsFetchPeriodSuccess(idPrescriptionDrug, source, data));
-};
+    const success = {
+      status: data.status,
+      id,
+      idPrescription,
+      newStatus: status,
+    };
 
-export const fetchPrescriptionExamsThunk = (admissionNumber, params = {}) => async (
-  dispatch,
-  getState
-) => {
-  dispatch(prescriptionsFetchExamsStart());
+    dispatch(prescriptionInterventionCheckSuccess(success, source));
+  };
 
-  const { auth } = getState();
-  const { access_token } = auth.identify;
-  const {
-    data: { data },
-    error
-  } = await api.getExams(access_token, admissionNumber, params).catch(errorHandler);
+export const fetchPrescriptionDrugPeriodThunk =
+  (idPrescriptionDrug, source) => async (dispatch, getState) => {
+    dispatch(prescriptionsFetchPeriodStart(source));
 
-  if (!isEmpty(error)) {
-    dispatch(prescriptionsFetchExamsError(error));
-    return;
-  }
+    const { auth } = getState();
+    const { access_token } = auth.identify;
+    const {
+      data: { data },
+      error,
+    } = await api
+      .getPrescriptionDrugPeriod(access_token, idPrescriptionDrug)
+      .catch(errorHandler);
 
-  dispatch(prescriptionsFetchExamsSuccess(transformExams(data)));
-};
+    if (!isEmpty(error)) {
+      dispatch(prescriptionsFetchPeriodError(error, source));
+      return;
+    }
 
-export const incrementClinicalNotesThunk = () => dispatch => {
+    dispatch(prescriptionsFetchPeriodSuccess(idPrescriptionDrug, source, data));
+  };
+
+export const fetchPrescriptionExamsThunk =
+  (admissionNumber, params = {}) =>
+  async (dispatch, getState) => {
+    dispatch(prescriptionsFetchExamsStart());
+
+    const { auth } = getState();
+    const { access_token } = auth.identify;
+    const {
+      data: { data },
+      error,
+    } = await api
+      .getExams(access_token, admissionNumber, params)
+      .catch(errorHandler);
+
+    if (!isEmpty(error)) {
+      dispatch(prescriptionsFetchExamsError(error));
+      return;
+    }
+
+    dispatch(prescriptionsFetchExamsSuccess(transformExams(data)));
+  };
+
+export const incrementClinicalNotesThunk = () => (dispatch) => {
   dispatch(prescriptionsIncrementClinicalNotes());
 };

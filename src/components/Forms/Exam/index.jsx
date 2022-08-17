@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from "react";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
 
-import { Row } from '@components/Grid';
-import notification from '@components/notification';
-import Heading from '@components/Heading';
-import DefaultModal from '@components/Modal';
+import { Row } from "components/Grid";
+import notification from "components/notification";
+import Heading from "components/Heading";
+import DefaultModal from "components/Modal";
 
-import Base from './Base';
-import { FormContainer } from '../Form.style';
+import Base from "./Base";
+import { FormContainer } from "../Form.style";
 
 const saveMessage = {
-  message: 'Uhu! Exame salvo com sucesso! :)'
+  message: "Uhu! Exame salvo com sucesso! :)",
 };
 const validationSchema = Yup.object().shape({
   type: Yup.string().required(),
@@ -20,7 +20,7 @@ const validationSchema = Yup.object().shape({
   initials: Yup.string().required(),
   ref: Yup.string().required(),
   min: Yup.number().required(),
-  max: Yup.number().required()
+  max: Yup.number().required(),
 });
 
 export default function Exam({
@@ -33,39 +33,41 @@ export default function Exam({
   ...props
 }) {
   const { t } = useTranslation();
-  const { isSaving, success, error, item } = saveStatus;
+  const { isSaving, item } = saveStatus;
   const { order, ...data } = item;
 
   const initialValues = {
-    ...data
+    ...data,
   };
-
-  useEffect(() => {
-    if (success) {
-      notification.success(saveMessage);
-      if (afterSave) {
-        afterSave();
-      }
-    }
-
-    if (error) {
-      notification.error({
-        message: t('error.title'),
-        description: t('error.description')
-      });
-    }
-  }, [success, error, afterSave, t]);
 
   useEffect(() => {
     fetchExamTypes();
   }, [fetchExamTypes]);
 
+  const submit = (params) => {
+    save(params)
+      .then(() => {
+        notification.success(saveMessage);
+        if (afterSave) {
+          afterSave();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
+      });
+  };
+
   return (
     <Formik
-      enableReinitialize
-      onSubmit={save}
+      submit
+      onSubmit={submit}
       initialValues={initialValues}
       validationSchema={validationSchema}
+      enableReinitialize={true}
     >
       {({ handleSubmit }) => (
         <DefaultModal
@@ -76,11 +78,11 @@ export default function Exam({
           onOk={handleSubmit}
           confirmLoading={isSaving}
           okButtonProps={{
-            disabled: isSaving
+            disabled: isSaving,
           }}
           cancelButtonProps={{
             disabled: isSaving,
-            className: 'gtm-bt-cancel-edit-exam'
+            className: "gtm-bt-cancel-edit-exam",
           }}
         >
           <header>
@@ -102,8 +104,8 @@ export default function Exam({
 Exam.defaultProps = {
   afterSave: () => {},
   initialValues: {
-    type: '',
-    name: '',
-    active: true
-  }
+    type: "",
+    name: "",
+    active: true,
+  },
 };

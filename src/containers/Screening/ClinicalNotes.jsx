@@ -1,15 +1,15 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 import {
   fetchClinicalNotesListThunk,
   selectClinicalNoteThunk,
-  updateClinicalNoteThunk
-} from '@store/ducks/clinicalNotes/thunk';
+  updateClinicalNoteThunk,
+} from "store/ducks/clinicalNotes/thunk";
 
-import security from '@services/security';
-import FeatureService from '@services/features';
-import ClinicalNotes from '@components/Screening/ClinicalNotes';
+import security from "services/security";
+import FeatureService from "services/features";
+import ClinicalNotes from "components/Screening/ClinicalNotes";
 
 const mapStateToProps = ({ clinicalNotes, user, auth }) => ({
   isFetching: clinicalNotes.isFetching,
@@ -21,14 +21,14 @@ const mapStateToProps = ({ clinicalNotes, user, auth }) => ({
   security: security(user.account.roles),
   access_token: auth.identify.access_token,
   userId: user.account.userId,
-  featureService: FeatureService(user.account.features)
+  featureService: FeatureService(user.account.features),
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetch: fetchClinicalNotesListThunk,
       select: selectClinicalNoteThunk,
-      update: updateClinicalNoteThunk
+      update: updateClinicalNoteThunk,
     },
     dispatch
   );

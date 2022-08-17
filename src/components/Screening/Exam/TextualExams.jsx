@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components/macro';
-import { format } from 'date-fns';
-import { Row, Col } from 'antd';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components/macro";
+import { format } from "date-fns";
+import { Row, Col } from "antd";
+import { useTranslation } from "react-i18next";
 
-import Card from '@components/Card';
-import Icon from '@components/Icon';
-import Empty from '@components/Empty';
-import Table, { NestedTableContainer } from '@components/Table';
-import { toDataSource } from '@utils';
+import Card from "components/Card";
+import Icon from "components/Icon";
+import Empty from "components/Empty";
+import Table, { NestedTableContainer } from "components/Table";
+import { toDataSource } from "utils";
 
 export const PaperContainer = styled.div`
   position: relative;
@@ -55,42 +55,45 @@ export default function TextualExams({ record }) {
 
   const expandedColumns = [
     {
-      title: t('tableHeader.examHistory'),
-      align: 'center',
-      key: 'testdata',
+      title: t("tableHeader.examHistory"),
+      align: "center",
+      key: "testdata",
       render: (text, record) => {
-        return format(new Date(record.date), 'dd/MM/yyyy HH:mm');
-      }
+        return format(new Date(record.date), "dd/MM/yyyy HH:mm");
+      },
     },
     {
-      title: '',
-      align: 'right',
+      title: "",
+      align: "right",
       render: (text, record) => {
         return <Icon type="right" style={{ fontSize: 16 }} />;
-      }
-    }
+      },
+    },
   ];
 
   useEffect(() => {
     select(record.history[0]);
   }, [record.history]);
 
-  const history = record.history.map((item, index) => ({ ...item, objKey: index }));
-  const dsHistory = toDataSource(history, 'objKey');
+  const history = record.history.map((item, index) => ({
+    ...item,
+    objKey: index,
+  }));
+  const dsHistory = toDataSource(history, "objKey");
 
-  const rowClassName = record => {
+  const rowClassName = (record) => {
     if (record.date === selected.date) {
-      return 'selectable active';
+      return "selectable active";
     }
 
-    return 'selectable';
+    return "selectable";
   };
 
   return (
     <NestedTableContainer>
       <Card>
         <Row gutter={8} type="flex" justify="center">
-          <Col md={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Col md={6} style={{ display: "flex", justifyContent: "flex-end" }}>
             <Table
               columns={expandedColumns}
               pagination={false}
@@ -100,22 +103,22 @@ export default function TextualExams({ record }) {
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
                     description="Nenhum exame encontrado."
                   />
-                )
+                ),
               }}
               dataSource={dsHistory}
               rowClassName={rowClassName}
-              onRow={r => ({
+              onRow={(r) => ({
                 onClick: () => {
                   select(r);
-                }
+                },
               })}
             />
           </Col>
-          <Col md={18} style={{ display: 'flex', paddingTop: '32px' }}>
+          <Col md={18} style={{ display: "flex", paddingTop: "32px" }}>
             <PaperContainer>
               <Paper
                 dangerouslySetInnerHTML={{
-                  __html: selected.value
+                  __html: selected.value,
                 }}
               />
             </PaperContainer>

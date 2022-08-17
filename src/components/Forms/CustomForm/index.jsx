@@ -1,11 +1,11 @@
-import React from 'react';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
+import React from "react";
+import { Formik } from "formik";
+import * as Yup from "yup";
 
-import Button from '@components/Button';
+import Button from "components/Button";
 
-import Base from './Base';
-import { CustomFormContainer } from '../Form.style';
+import Base from "./Base";
+import { CustomFormContainer } from "../Form.style";
 
 export default function CustomForm({
   onSubmit,
@@ -13,25 +13,27 @@ export default function CustomForm({
   template,
   isSaving,
   values,
-  startClosed
+  startClosed,
 }) {
   const initialValues = {};
   const validationShape = {};
 
   if (template) {
-    template.forEach(group => {
-      group.questions.forEach(question => {
+    template.forEach((group) => {
+      group.questions.forEach((question) => {
         if (values) {
           initialValues[question.id] =
-            values[question.id] || (question.type === 'options-multiple' ? [] : null);
+            values[question.id] ||
+            (question.type === "options-multiple" ? [] : null);
         } else {
-          initialValues[question.id] = question.type === 'options-multiple' ? [] : null;
+          initialValues[question.id] =
+            question.type === "options-multiple" ? [] : null;
         }
 
         if (question.required) {
           validationShape[question.id] = Yup.string()
             .nullable()
-            .required('Campo obrigatório');
+            .required("Campo obrigatório");
         }
       });
     });
@@ -39,10 +41,10 @@ export default function CustomForm({
 
   const validationSchema = Yup.object().shape(validationShape);
 
-  const submit = values => {
+  const submit = (values) => {
     onSubmit({
       values,
-      template
+      template,
     });
   };
 
@@ -65,7 +67,11 @@ export default function CustomForm({
             <Button onClick={() => onCancel()} loading={isSaving}>
               Cancelar
             </Button>
-            <Button onClick={() => handleSubmit()} type="primary" loading={isSaving}>
+            <Button
+              onClick={() => handleSubmit()}
+              type="primary"
+              loading={isSaving}
+            >
               Salvar
             </Button>
           </div>

@@ -1,11 +1,11 @@
-import 'antd/lib/menu/style/index.css';
-import AntMenu from 'antd/lib/menu';
-import styled from 'styled-components/macro';
-import { linearGradient } from 'polished';
+//import "antd/lib/menu/style/index.css";
+import { Menu } from "antd";
+import styled from "styled-components/macro";
+import { linearGradient } from "polished";
 
-import { get } from '@styles/utils';
+import { get } from "styles/utils";
 
-export const Wrapper = styled(AntMenu)`
+export const Wrapper = styled(Menu)`
   &.ant-menu {
     background: transparent;
     border: 0;
@@ -17,8 +17,12 @@ export const Wrapper = styled(AntMenu)`
     }
 
     .nav-text {
-      width: 75px;
-      text-align: center;
+      display: flex;
+      justify-content: center;
+
+      span:last-child {
+        display: none;
+      }
     }
   }
 
@@ -27,12 +31,12 @@ export const Wrapper = styled(AntMenu)`
   }
 `;
 
-Wrapper.Item = styled(AntMenu.Item)`
-  color: ${get('colors.commonLighter')};
-  font-weight: ${get('weight.light')};
+Wrapper.Item = styled(Menu.Item)`
+  color: ${get("colors.commonLighter")};
+  font-weight: ${get("weight.light")};
 
   &:before {
-    content: '';
+    content: "";
     height: 100%;
     left: 0;
     opacity: 0;
@@ -42,9 +46,9 @@ Wrapper.Item = styled(AntMenu.Item)`
     width: 100%;
 
     ${linearGradient({
-      colorStops: ['#70bdc4 0%', '#7ebe9a 100%'],
-      toDirection: 'to right',
-      fallback: '#7ebe9a'
+      colorStops: ["#70bdc4 0%", "#7ebe9a 100%"],
+      toDirection: "to right",
+      fallback: "#7ebe9a",
     })}
   }
 
@@ -54,7 +58,7 @@ Wrapper.Item = styled(AntMenu.Item)`
 
   &.ant-menu-item-selected,
   &.ant-menu-item:hover {
-    color: ${get('colors.commonLighter')};
+    color: ${get("colors.commonLighter")};
 
     &:before {
       opacity: 1;
@@ -62,6 +66,7 @@ Wrapper.Item = styled(AntMenu.Item)`
   }
 
   .nav-text {
+    display: block;
     color: inherit;
     margin-left: 2px;
     position: relative;
@@ -75,9 +80,9 @@ Wrapper.Item = styled(AntMenu.Item)`
   }
 `;
 
-Wrapper.SubMenu = styled(AntMenu.SubMenu)`
-  color: ${get('colors.commonLighter')};
-  font-weight: ${get('weight.light')};
+Wrapper.SubMenu = styled(Menu.SubMenu)`
+  color: ${get("colors.commonLighter")};
+  font-weight: ${get("weight.light")};
 
   .ant-menu {
     background-color: transparent !important;

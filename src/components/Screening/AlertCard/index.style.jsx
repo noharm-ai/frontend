@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
 export const AlertContainer = styled.div`
   display: grid;
@@ -13,7 +13,7 @@ export const AlertContainer = styled.div`
   }
 
   > div {
-    padding: 8px 0;
+    padding: 5px 0;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     text-align: center;
@@ -30,7 +30,7 @@ export const AlertContainer = styled.div`
       background: #f8dee2;
     }
 
-    i {
+    span {
       margin-right: 8px;
       font-size: 16px;
 

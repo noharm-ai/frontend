@@ -1,30 +1,31 @@
-import React, { useState, useRef, useEffect } from 'react';
-import isEmpty from 'lodash.isempty';
-import { format, parseISO } from 'date-fns';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useRef, useEffect } from "react";
+import isEmpty from "lodash.isempty";
+import { format, parseISO } from "date-fns";
+import { useTranslation } from "react-i18next";
+import { QuestionOutlined } from "@ant-design/icons";
 
-import { annotationManifest } from '@utils/featureManifest';
-import { useOutsideAlerter } from '@lib/hooks';
-import LoadBox, { LoadContainer } from '@components/LoadBox';
-import Button from '@components/Button';
-import Tooltip from '@components/Tooltip';
-import { PopoverWelcome } from '@components/Popover';
-import Empty from '@components/Empty';
-import CustomFormView from '@components/Forms/CustomForm/View';
-import notification from '@components/notification';
+import { annotationManifest } from "utils/featureManifest";
+import { useOutsideAlerter } from "lib/hooks";
+import LoadBox, { LoadContainer } from "components/LoadBox";
+import Button from "components/Button";
+import Tooltip from "components/Tooltip";
+import { PopoverWelcome } from "components/Popover";
+import CustomFormView from "components/Forms/CustomForm/View";
+import notification from "components/notification";
+import Empty from "components/Empty";
 
-import Edit from './Edit';
-import ClinicalNotesIndicator from './ClinicalNotesIndicator';
+import Edit from "./Edit";
+import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
 import {
   Paper,
   PaperHeader,
   PaperContainer,
   MenuPopup,
   Legend,
-  WelcomeBubble
-} from './index.style';
+  WelcomeBubble,
+} from "./index.style";
 
-const helpLink = 'https://noharm.octadesk.com/kb/article/noharm-care';
+const helpLink = "https://noharm.octadesk.com/kb/article/noharm-care";
 
 export default function View({
   selected,
@@ -33,7 +34,7 @@ export default function View({
   access_token,
   userId,
   featureService,
-  saveStatus
+  saveStatus,
 }) {
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
@@ -58,7 +59,10 @@ export default function View({
 
   useEffect(() => {
     const shouldShowWelcome = async () => {
-      const show = await annotationManifest.shouldShowWelcome(access_token, userId);
+      const show = await annotationManifest.shouldShowWelcome(
+        access_token,
+        userId
+      );
 
       if (show) {
         setShowWelcome(true);
@@ -73,15 +77,15 @@ export default function View({
   useEffect(() => {
     if (saveStatus.success) {
       notification.success({
-        message: t('success.generic')
+        message: t("success.generic"),
       });
       setEdit(false);
     }
 
     if (saveStatus.error) {
       notification.error({
-        message: t('error.title'),
-        description: t('error.description')
+        message: t("error.title"),
+        description: t("error.description"),
       });
     }
   }, [saveStatus, t]);
@@ -100,16 +104,16 @@ export default function View({
     window.open(helpLink);
   };
 
-  const annotate = option => {
-    const elm = document.createElement('span');
-    const close = document.createElement('a');
+  const annotate = (option) => {
+    const elm = document.createElement("span");
+    const close = document.createElement("a");
     const content = document.createTextNode(selectionRange.toString());
 
-    close.setAttribute('class', 'close-btn');
-    close.appendChild(document.createTextNode('X'));
+    close.setAttribute("class", "close-btn");
+    close.appendChild(document.createTextNode("X"));
 
-    elm.setAttribute('class', `annotation annotation-${option.key}`);
-    elm.setAttribute('update_by', userId);
+    elm.setAttribute("class", `annotation annotation-${option.key}`);
+    elm.setAttribute("update_by", userId);
     elm.appendChild(content);
     elm.appendChild(close);
 
@@ -118,15 +122,21 @@ export default function View({
 
     setSelectionRange(null);
     setMenuVisibility(false);
-    update({ id: selected.id, text: paperContainerRef.current.firstChild.innerHTML });
+    update({
+      id: selected.id,
+      text: paperContainerRef.current.firstChild.innerHTML,
+    });
   };
 
-  const removeAnnotation = e => {
-    const el = e.target.closest('SPAN');
-    if (el && e.target.className === 'close-btn') {
-      el.removeChild(el.getElementsByClassName('close-btn')[0]);
+  const removeAnnotation = (e) => {
+    const el = e.target.closest("SPAN");
+    if (el && e.target.className === "close-btn") {
+      el.removeChild(el.getElementsByClassName("close-btn")[0]);
       el.replaceWith(document.createTextNode(el.innerText));
-      update({ id: selected.id, text: paperContainerRef.current.firstChild.innerHTML });
+      update({
+        id: selected.id,
+        text: paperContainerRef.current.firstChild.innerHTML,
+      });
     }
   };
 
@@ -135,21 +145,24 @@ export default function View({
 
     const selection = window.getSelection();
 
-    if (selection.toString() === '') return false;
+    if (selection.toString() === "") return false;
 
-    if (selection.focusNode.nodeName !== '#text') return false;
+    if (selection.focusNode.nodeName !== "#text") return false;
 
     const range = selection.getRangeAt(0);
 
-    if (range.cloneContents().querySelectorAll('span').length) {
+    if (range.cloneContents().querySelectorAll("span").length) {
       return false;
     }
 
     if (range.commonAncestorContainer.offsetParent !== undefined) {
       const { className } = range.commonAncestorContainer.offsetParent;
-      if (!className.includes('Paper-') && !className.includes('PaperContainer')) {
+      if (
+        !className.includes("Paper-") &&
+        !className.includes("PaperContainer")
+      ) {
         console.log(
-          'invalid selection',
+          "invalid selection",
           range.commonAncestorContainer.offsetParent.className,
           range
         );
@@ -165,7 +178,7 @@ export default function View({
       const selection = window.getSelection();
       const range = selection.getRangeAt(0);
 
-      const elm = document.createElement('span');
+      const elm = document.createElement("span");
       const content = document.createTextNode(window.getSelection().toString());
 
       elm.appendChild(content);
@@ -173,17 +186,19 @@ export default function View({
       range.deleteContents();
       range.insertNode(elm);
 
-      const containerPosition = paperContainerRef.current.getBoundingClientRect();
+      const containerPosition =
+        paperContainerRef.current.getBoundingClientRect();
       const menuContainerPosition = menuRef.current.getBoundingClientRect();
       const elmPosition = elm.getBoundingClientRect();
 
-      const top = elmPosition.top - containerPosition.top - menuContainerPosition.height;
+      const top =
+        elmPosition.top - containerPosition.top - menuContainerPosition.height;
 
       setSelectionRange(range);
       setMenuVisibility(true);
       setMenuPosition({
         left: elmPosition.left - containerPosition.left + elmPosition.width,
-        top: top < 0 ? -20 : top
+        top: top < 0 ? -20 : top,
       });
     }
   };
@@ -191,17 +206,18 @@ export default function View({
   const menu = (
     <div
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: menuPosition.top,
         left: menuPosition.left,
-        visibility: isMenuVisible ? 'visible' : 'hidden'
+        visibility: isMenuVisible ? "visible" : "hidden",
       }}
       ref={menuRef}
     >
-      <MenuPopup theme="dark" onClick={k => annotate(k)} selectable={false}>
-        {ClinicalNotesIndicator.list(t).map(i => (
+      <MenuPopup theme="dark" onClick={(k) => annotate(k)} selectable={false}>
+        {ClinicalNotesIndicator.list(t).map((i) => (
           <MenuPopup.Item key={i.value} className="gtm-indicator">
-            <div className="avatar" style={{ backgroundColor: i.color }} /> {i.label}
+            <div className="avatar" style={{ backgroundColor: i.color }} />{" "}
+            {i.label}
           </MenuPopup.Item>
         ))}
       </MenuPopup>
@@ -210,14 +226,18 @@ export default function View({
 
   const welcomeTooltip = (
     <WelcomeBubble>
-      A <strong>NoHarm Care</strong> é uma Inteligência Artificial que anota os indicadores de risco
-      do paciente nas evoluções.
+      A <strong>NoHarm Care</strong> é uma Inteligência Artificial que anota os
+      indicadores de risco do paciente nas evoluções.
       <br />
       <br />
       <strong>Você pode ajudar a treiná-la!</strong>
       <br /> Clique no ícone de ajuda para mais detalhes.
       <div className="action">
-        <Button type="primary gtm-annotation-btn-help-ok" ghost onClick={() => gotIt()}>
+        <Button
+          type="primary gtm-annotation-btn-help-ok"
+          ghost
+          onClick={() => gotIt()}
+        >
           OK, entendi!
         </Button>
       </div>
@@ -231,7 +251,7 @@ export default function View({
       <PaperHeader>
         <div className="line">
           <div className="info">
-            {format(parseISO(selected.date), 'dd/MM/yyyy HH:mm')} -{' '}
+            {format(parseISO(selected.date), "dd/MM/yyyy HH:mm")} -{" "}
             <span className="name">{selected.prescriber}</span>
           </div>
           <div className="help">
@@ -242,11 +262,11 @@ export default function View({
                   ghost={edit}
                   onClick={() => setEdit(!edit)}
                 >
-                  {edit ? 'Cancelar' : 'Editar'}
+                  {edit ? "Cancelar" : "Editar"}
                 </Button>
               </>
             ) : (
-              <Tooltip title={t('layout.help')}>
+              <Tooltip title={t("layout.help")}>
                 <PopoverWelcome
                   title="Nova funcionalidade!"
                   content={welcomeTooltip}
@@ -256,10 +276,9 @@ export default function View({
                 >
                   <Button
                     type="primary gtm-annotation-btn-help"
-                    ghost
                     shape="circle"
-                    icon="question"
-                    style={{ width: '28px', height: '28px', minWidth: '28px' }}
+                    icon={<QuestionOutlined />}
+                    style={{ width: "28px", height: "28px", minWidth: "28px" }}
                     onClick={goToHelp}
                   />
                 </PopoverWelcome>
@@ -268,7 +287,7 @@ export default function View({
           </div>
         </div>
       </PaperHeader>
-      <PaperContainer ref={paperContainerRef} className={edit ? 'edit' : ''}>
+      <PaperContainer ref={paperContainerRef} className={edit ? "edit" : ""}>
         {saveStatus.isSaving ? (
           <LoadContainer>
             <LoadBox absolute={true} />
@@ -277,7 +296,11 @@ export default function View({
           <>
             {edit ? (
               <Paper t={t}>
-                <Edit clinicalNote={selected} update={update} setEdit={setEdit} />
+                <Edit
+                  clinicalNote={selected}
+                  update={update}
+                  setEdit={setEdit}
+                />
               </Paper>
             ) : (
               <>
@@ -287,22 +310,25 @@ export default function View({
                       t={t}
                       dangerouslySetInnerHTML={{
                         __html: featureService.hasPrimaryCare()
-                          ? selected.text.trim().replaceAll('\n', '<br/>')
-                          : selected.text.trim().replaceAll('  ', '<br/>')
+                          ? selected.text.trim().replaceAll("\n", "<br/>")
+                          : selected.text.trim().replaceAll("  ", "<br/>"),
                       }}
-                      onMouseUp={e => selectionChange(e)}
-                      onClick={e => removeAnnotation(e)}
-                      className={`${isMenuVisible ? 'disabled' : ''} ${
+                      onMouseUp={(e) => selectionChange(e)}
+                      onClick={(e) => removeAnnotation(e)}
+                      className={`${isMenuVisible ? "disabled" : ""} ${
                         annotationManifest.isEnabled(security)
-                          ? 'annotation-enabled'
-                          : 'annotation-disabled'
+                          ? "annotation-enabled"
+                          : "annotation-disabled"
                       }`}
                     />
                     {menu}
                   </>
                 )}
                 {!selected.text && selected.template && (
-                  <CustomFormView template={selected.template} values={selected.form} />
+                  <CustomFormView
+                    template={selected.template}
+                    values={selected.form}
+                  />
                 )}
                 {!selected.text && !selected.template && (
                   <Empty
@@ -317,10 +343,13 @@ export default function View({
       </PaperContainer>
       {!featureService.hasPrimaryCare() && (
         <>
-          <Legend>* Nomes presentes na evolução são substituídos por três asteriscos (***).</Legend>
+          <Legend>
+            * Nomes presentes na evolução são substituídos por três asteriscos
+            (***).
+          </Legend>
           {security.hasNoHarmCare() && (
             <Legend>
-              * As anotações são geradas pela <strong>NoHarm Care</strong>.{' '}
+              * As anotações são geradas pela <strong>NoHarm Care</strong>.{" "}
               <a
                 href={helpLink}
                 target="_blank"

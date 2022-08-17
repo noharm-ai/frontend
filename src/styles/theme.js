@@ -1,9 +1,9 @@
-import colors from './colors';
-import fonts from './fonts';
-import sizes from './sizes';
-import breakpoints from './breakpoints';
+import colors from "./colors";
+import fonts from "./fonts";
+import sizes from "./sizes";
+import breakpoints from "./breakpoints";
 
-export default {
+const theme = {
   colors,
   fonts,
   sizes,
@@ -12,6 +12,8 @@ export default {
     bold: 700,
     light: 300,
     regular: 400,
-    semiBold: 600
-  }
+    semiBold: 600,
+  },
 };
+
+export default theme;

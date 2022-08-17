@@ -1,9 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import Layout from '@containers/Layout';
+import Layout from "containers/Layout";
 
-export default (Component, layoutProps = {}) => (props = {}) => (
-  <Layout {...layoutProps} {...props}>
-    <Component {...props} />
-  </Layout>
-);
+const withLayout =
+  (Component, layoutProps = {}) =>
+  (props = {}) =>
+    (
+      <Layout {...layoutProps} {...props}>
+        <Component {...props} />
+      </Layout>
+    );
+
+export default withLayout;

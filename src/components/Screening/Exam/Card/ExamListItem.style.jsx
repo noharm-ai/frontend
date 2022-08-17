@@ -1,12 +1,12 @@
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
 export const Item = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 8px;
-  border: 1px solid ${props => (props.alert ? '#F68C97' : '#e0e0e0')};
+  padding: 5px;
+  border: 1px solid ${(props) => (props.alert ? "#F68C97" : "#e0e0e0")};
   border-radius: 5px;
-  background: ${props => (props.alert ? '#F8DEE2' : '#fff')};
+  background: ${(props) => (props.alert ? "#F8DEE2" : "#fff")};
 
   .name {
     font-size: 14px;
@@ -15,7 +15,7 @@ export const Item = styled.div`
 
   .icon {
     span {
-      display: ${props => (props.siderCollapsed ? 'inline' : 'none')};
+      display: ${(props) => (props.siderCollapsed ? "inline" : "none")};
       font-size: 12px;
       margin-right: 5px;
 

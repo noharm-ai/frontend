@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Row, Col, Checkbox } from 'antd';
+import React, { useState, useEffect } from "react";
+import { Row, Col, Checkbox } from "antd";
 
-import { toDataSource } from '@utils';
-import Table from '@components/Table';
-import Empty from '@components/Empty';
-import Heading from '@components/Heading';
-import Tooltip from '@components/Tooltip';
-import Steps from '@components/Steps';
-import { InputNumber, Select } from '@components/Inputs';
-import PopConfirm from '@components/PopConfirm';
-import Button from '@components/Button';
+import { toDataSource } from "utils";
+import Table from "components/Table";
+import Empty from "components/Empty";
+import Heading from "components/Heading";
+import Tooltip from "components/Tooltip";
+import Steps from "components/Steps";
+import { InputNumber, Select } from "components/Inputs";
+import PopConfirm from "components/PopConfirm";
+import Button from "components/Button";
 
-import unitConversionColumns from '../UnitConversion/columns';
-import { StepContent, StepBtnContainer } from './index.style';
+import unitConversionColumns from "../UnitConversion/columns";
+import { StepContent, StepBtnContainer } from "./index.style";
 
 const emptyText = (
-  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Nenhum dado encontrado." />
+  <Empty
+    image={Empty.PRESENTED_IMAGE_SIMPLE}
+    description="Nenhum dado encontrado."
+  />
 );
 
 export default function ScoreWizard({
@@ -27,7 +30,6 @@ export default function ScoreWizard({
   generateStatus,
   saveUnitCoefficient,
   security,
-  resetWizard
 }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState({});
@@ -35,10 +37,10 @@ export default function ScoreWizard({
   const maxSteps = 3;
 
   useEffect(() => {
-    if (resetWizard) {
+    if (generateStatus.generated) {
       setCurrentStep(0);
     }
-  }, [resetWizard]);
+  }, [generateStatus]);
 
   const generate = () => {
     generateOutlier({
@@ -47,7 +49,7 @@ export default function ScoreWizard({
       division: drugData.division,
       useWeight: drugData.useWeight,
       idMeasureUnit: drugData.idMeasureUnit,
-      measureUnitList: drugUnits.list
+      measureUnitList: drugUnits.list,
     });
   };
 
@@ -71,11 +73,11 @@ export default function ScoreWizard({
     }
   };
 
-  const isValid = step => {
+  const isValid = (step) => {
     if (step === 1) {
       if (drugData.useWeight && !drugData.division) {
         setValidationErrors({
-          division: 'Este campo é obrigatório quando o peso for considerado'
+          division: "Este campo é obrigatório quando o peso for considerado",
         });
 
         return false;
@@ -86,27 +88,27 @@ export default function ScoreWizard({
     return true;
   };
 
-  const unitsDatasource = toDataSource(drugUnits.list, 'idMeasureUnit', {
+  const unitsDatasource = toDataSource(drugUnits.list, "idMeasureUnit", {
     saveUnitCoefficient,
     idDrug: selecteds.idDrug,
     idSegment: selecteds.idSegment,
     isAdmin,
     updateDrugData,
-    defaultIdMeasureUnit: drugData.idMeasureUnit
+    defaultIdMeasureUnit: drugData.idMeasureUnit,
   });
 
-  const onDefaultMeasureUnitChange = value => {
+  const onDefaultMeasureUnitChange = (value) => {
     updateDrugData({ idMeasureUnit: value, touched: true });
     saveUnitCoefficient(value, { fator: 1 });
   };
 
   const getMeasureUnit = (id, list) => {
-    const mu = list.find(i => i.idMeasureUnit === id);
+    const mu = list.find((i) => i.idMeasureUnit === id);
     if (mu) {
       return mu.description;
     }
 
-    return '';
+    return "";
   };
 
   return (
@@ -120,16 +122,16 @@ export default function ScoreWizard({
       {currentStep === 0 && (
         <StepContent>
           <p>
-            Neste passo você pode alterar a unidade padrão deste medicamento e os fatores de
-            conversão para outras unidades. Lembre-se que a unidade padrão é definida pelo fator de
-            conversão igual a 1.
+            Neste passo você pode alterar a unidade padrão deste medicamento e
+            os fatores de conversão para outras unidades. Lembre-se que a
+            unidade padrão é definida pelo fator de conversão igual a 1.
           </p>
           {drugUnits.list.length > 1 && (
             <Row
               gutter={24}
               align="middle"
               type="flex"
-              style={{ marginTop: '20px', marginBottom: '20px' }}
+              style={{ marginTop: "20px", marginBottom: "20px" }}
             >
               <>
                 <Col md={5} xxl={3}>
@@ -141,11 +143,14 @@ export default function ScoreWizard({
                   <Select
                     placeholder="Selecione a unidade de medida padrão para este medicamento"
                     value={drugData.idMeasureUnit}
-                    style={{ minWidth: '300px' }}
-                    onChange={value => onDefaultMeasureUnitChange(value)}
+                    style={{ minWidth: "300px" }}
+                    onChange={(value) => onDefaultMeasureUnitChange(value)}
                   >
-                    {drugUnits.list.map(unit => (
-                      <Select.Option value={unit.idMeasureUnit} key={unit.idMeasureUnit}>
+                    {drugUnits.list.map((unit) => (
+                      <Select.Option
+                        value={unit.idMeasureUnit}
+                        key={unit.idMeasureUnit}
+                      >
                         {unit.description}
                       </Select.Option>
                     ))}
@@ -167,9 +172,10 @@ export default function ScoreWizard({
       {currentStep === 1 && (
         <StepContent>
           <p>
-            O divisor de faixas define os intervalos de dose que entrarão na mesma faixa. Ex.:
-            Divisor 5 vai definir faixas de dose de "0-5", de "5-10", etc. Caso deva ser considerado
-            o peso do paciente na faixa de doses, selecione essa opção.
+            O divisor de faixas define os intervalos de dose que entrarão na
+            mesma faixa. Ex.: Divisor 5 vai definir faixas de dose de "0-5", de
+            "5-10", etc. Caso deva ser considerado o peso do paciente na faixa
+            de doses, selecione essa opção.
           </p>
           <Row gutter={24} align="middle" type="flex">
             <Col md={5} xxl={3}>
@@ -181,17 +187,19 @@ export default function ScoreWizard({
               <InputNumber
                 style={{
                   width: 120,
-                  marginRight: '10px'
+                  marginRight: "10px",
                 }}
                 min={0}
                 max={99999}
                 value={drugData.division}
-                onChange={value => updateDrugData({ division: value, touched: true })}
-                className={validationErrors.division ? 'error' : ''}
+                onChange={(value) =>
+                  updateDrugData({ division: value, touched: true })
+                }
+                className={validationErrors.division ? "error" : ""}
               />
               <span
                 style={{
-                  marginRight: '10px'
+                  marginRight: "10px",
                 }}
               >
                 {getMeasureUnit(drugData.idMeasureUnit, drugUnits.list)}
@@ -206,7 +214,9 @@ export default function ScoreWizard({
                 </Tooltip>
               </Checkbox>
               {validationErrors.division && (
-                <div className="error-description">{validationErrors.division}</div>
+                <div className="error-description">
+                  {validationErrors.division}
+                </div>
               )}
             </Col>
           </Row>
@@ -218,14 +228,19 @@ export default function ScoreWizard({
           <>
             {drugData.touched && (
               <p>
-                Ok! Para salvar estas alterações você deve clicar no botão "Gerar escores".
+                Ok! Para salvar estas alterações você deve clicar no botão
+                "Gerar escores".
                 <br />
-                Lembre-se que esta ação <strong>excluirá</strong> os escores manuais e os
-                comentários. Será necessário reinseri-los manualmente.
+                Lembre-se que esta ação <strong>excluirá</strong> os escores
+                manuais e os comentários. Será necessário reinseri-los
+                manualmente.
               </p>
             )}
             {!drugData.touched && (
-              <p>Nenhuma informação foi alterada, portanto você não poderá gerar scores.</p>
+              <p>
+                Nenhuma informação foi alterada, portanto você não poderá gerar
+                scores.
+              </p>
             )}
           </>
         </StepContent>
@@ -249,7 +264,10 @@ export default function ScoreWizard({
             okText="Sim"
             cancelText="Não"
           >
-            <Button type="primary gtm-bt-med-generate" loading={generateStatus.isGenerating}>
+            <Button
+              type="primary gtm-bt-med-generate"
+              loading={generateStatus.isGenerating}
+            >
               Gerar escores
             </Button>
           </PopConfirm>

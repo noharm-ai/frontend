@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import Empty from '@components/Empty';
-import { ExpandableTable } from '@components/Table';
-import { toDataSource } from '@utils';
+import Empty from "components/Empty";
+import { ExpandableTable } from "components/Table";
+import { toDataSource } from "utils";
 
-import interventionColumns, { expandedInterventionRowRender } from './columns';
+import interventionColumns, { expandedInterventionRowRender } from "./columns";
 
 export default function PreviousInterventionList({
   isFetching,
   interventions,
   saveInterventionStatus,
-  checkIntervention
+  checkIntervention,
 }) {
   const { t } = useTranslation();
   const [dsInterventions, setDsInterventions] = useState([]);
@@ -20,7 +20,7 @@ export default function PreviousInterventionList({
     setDsInterventions(
       toDataSource(interventions, null, {
         saveInterventionStatus,
-        check: checkIntervention
+        check: checkIntervention,
       })
     );
   }, [interventions, checkIntervention]); // eslint-disable-line
@@ -36,7 +36,7 @@ export default function PreviousInterventionList({
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             description="Nenhuma intervenção encontrada."
           />
-        )
+        ),
       }}
       dataSource={!isFetching ? dsInterventions : []}
       expandedRowRender={expandedInterventionRowRender}

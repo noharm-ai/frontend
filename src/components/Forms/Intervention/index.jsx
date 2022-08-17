@@ -1,20 +1,20 @@
-import React, { useEffect } from 'react';
-import isEmpty from 'lodash.isempty';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from "react";
+import isEmpty from "lodash.isempty";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
+import { RollbackOutlined } from "@ant-design/icons";
 
-import { Row } from '@components/Grid';
-import Button from '@components/Button';
-import Tooltip from '@components/Tooltip';
-import Icon from '@components/Icon';
-import notification from '@components/notification';
-import Heading from '@components/Heading';
-import DefaultModal from '@components/Modal';
+import { Row } from "components/Grid";
+import Button from "components/Button";
+import Tooltip from "components/Tooltip";
+import notification from "components/notification";
+import Heading from "components/Heading";
+import DefaultModal from "components/Modal";
 
-import Base from './Base';
-import PatientData from './PatientData';
-import DrugData from './DrugData';
+import Base from "./Base";
+import PatientData from "./PatientData";
+import DrugData from "./DrugData";
 
 export default function Intervention({
   intervention,
@@ -47,7 +47,7 @@ export default function Intervention({
   const validationSchema = Yup.object().shape({
     idInterventionReason: Yup.array()
       .nullable()
-      .required(t('validation.requiredField'))
+      .required(t("validation.requiredField")),
   });
 
   // handle after save intervention.
@@ -57,7 +57,7 @@ export default function Intervention({
       setVisibility(false);
 
       notification.success({
-        message: t('success.intervention')
+        message: t("success.intervention"),
       });
     }
   }, [wasSaved, reset, item, updateInterventionData, setVisibility, visible]); // eslint-disable-line
@@ -72,8 +72,8 @@ export default function Intervention({
   useEffect(() => {
     if (!isEmpty(error)) {
       notification.error({
-        message: t('error.title'),
-        description: t('error.description')
+        message: t("error.title"),
+        description: t("error.description"),
       });
     }
   }, [error, t]);
@@ -97,7 +97,7 @@ export default function Intervention({
     idDrug: item.idDrug,
     idDrugLabel: item.drug,
     interval: item.interval,
-    intervalLabel: item.time
+    intervalLabel: item.time,
   };
   const initialValues = {
     idPrescription: item.idPrescription,
@@ -108,17 +108,17 @@ export default function Intervention({
     idInterventionReason: item.intervention.idInterventionReason,
     reasonDescription: null,
     interactions: item.intervention.interactions,
-    observation: item.intervention.observation || '',
+    observation: item.intervention.observation || "",
     transcription: item.intervention.transcription != null,
     transcriptionData: {
-      ...transcriptable
-    }
+      ...transcriptable,
+    },
   };
 
   if (item.intervention.transcription) {
     initialValues.transcriptionData = {
       ...initialValues.transcriptionData,
-      ...item.intervention.transcription
+      ...item.intervention.transcription,
     };
   }
 
@@ -127,10 +127,10 @@ export default function Intervention({
     setVisibility(false);
   };
 
-  const getTranscriptionData = tr => {
+  const getTranscriptionData = (tr) => {
     const trData = {};
 
-    Object.keys(transcriptable).forEach(prop => {
+    Object.keys(transcriptable).forEach((prop) => {
       if (tr[prop] !== transcriptable[prop]) {
         trData[prop] = tr[prop];
       }
@@ -143,11 +143,13 @@ export default function Intervention({
     return trData;
   };
 
-  const onSave = params => {
+  const onSave = (params) => {
     const { transcription, transcriptionData } = params;
     const interventionData = {
       ...params,
-      transcription: transcription ? getTranscriptionData(transcriptionData) : null
+      transcription: transcription
+        ? getTranscriptionData(transcriptionData)
+        : null,
     };
 
     delete interventionData.transcriptionData;
@@ -160,39 +162,53 @@ export default function Intervention({
     } else {
       updateInterventionData(item.idPrescriptionDrug, item.source, {
         ...interventionData,
-        status: 's'
+        status: "s",
       });
     }
   };
 
   const InterventionFooter = ({ handleSubmit }) => {
-    const isChecked = item.intervention && item.intervention.status === 's';
+    const isChecked = item.intervention && item.intervention.status === "s";
 
     const undoIntervention = () => {
-      const source = item.idPrescriptionDrug === 0 ? 'patient' : item.source;
-      savePrescriptionDrugStatus(item.idPrescriptionDrug, item.idPrescription, '0', source);
+      const source = item.idPrescriptionDrug === 0 ? "patient" : item.source;
+      savePrescriptionDrugStatus(
+        item.idPrescriptionDrug,
+        item.idPrescription,
+        "0",
+        source
+      );
     };
 
     return (
       <>
-        <Button onClick={() => onCancel()} disabled={isSaving} className="gtm-bt-cancel-interv">
-          {t('interventionForm.btnCancel')}
+        <Button
+          onClick={() => onCancel()}
+          disabled={isSaving}
+          className="gtm-bt-cancel-interv"
+        >
+          {t("interventionForm.btnCancel")}
         </Button>
         {isChecked && !disableUndoIntervention && (
-          <Tooltip title={t('interventionForm.btnUndo')} placement="top">
+          <Tooltip title={t("interventionForm.btnUndo")} placement="top">
             <Button
               type="danger gtm-bt-undo-interv"
+              icon={<RollbackOutlined style={{ fontSize: 16 }} />}
               ghost
-              loading={checkPrescriptionDrug && checkPrescriptionDrug.isChecking}
+              loading={
+                checkPrescriptionDrug && checkPrescriptionDrug.isChecking
+              }
               onClick={() => undoIntervention()}
-            >
-              <Icon type="rollback" style={{ fontSize: 16 }} />
-            </Button>
+            ></Button>
           </Tooltip>
         )}
 
-        <Button type="primary gtm-bt-save-interv" onClick={() => handleSubmit()} loading={isSaving}>
-          {t('interventionForm.btnSave')}
+        <Button
+          type="primary gtm-bt-save-interv"
+          onClick={() => handleSubmit()}
+          loading={isSaving}
+        >
+          {t("interventionForm.btnSave")}
         </Button>
       </>
     );
@@ -216,12 +232,16 @@ export default function Intervention({
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">{t('interventionForm.title')}</Heading>
+            <Heading margin="0 0 11px">{t("interventionForm.title")}</Heading>
           </header>
-          {(item.intervention.id + '' === '0' ||
-            item.intervention.idPrescriptionDrug + '' === '0') && <PatientData {...item} />}
-          {item.intervention.id + '' !== '0' &&
-            item.intervention.idPrescriptionDrug + '' !== '0' && <DrugData {...item} />}
+          {(item.intervention.id + "" === "0" ||
+            item.intervention.idPrescriptionDrug + "" === "0") && (
+            <PatientData {...item} />
+          )}
+          {item.intervention.id + "" !== "0" &&
+            item.intervention.idPrescriptionDrug + "" !== "0" && (
+              <DrugData {...item} />
+            )}
           <form onSubmit={handleSubmit}>
             <Row type="flex" gutter={[16, 16]}>
               <Base

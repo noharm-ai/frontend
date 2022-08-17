@@ -1,59 +1,68 @@
-import 'styled-components/macro';
-import React, { useEffect, useState } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { useTranslation } from 'react-i18next';
+import "styled-components/macro";
+import React, { useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
+import { LockOutlined } from "@ant-design/icons";
+import { useParams } from "react-router-dom";
 
-import { setErrorClassName } from '@utils/form';
+import { setErrorClassName } from "utils/form";
 
-import notification from '@components/notification';
-import Icon from '@components/Icon';
-import Button from '@components/Button';
-import { Input } from '@components/Inputs';
-import { Container, Row, Col } from '@components/Grid';
-import { passwordValidation } from '@utils';
-import { Wrapper, Box, Brand, FieldSet, ForgotPass, FieldError } from '../Login/Login.style';
+import notification from "components/notification";
+import Button from "components/Button";
+import { Input } from "components/Inputs";
+import { Container, Row, Col } from "components/Grid";
+import { passwordValidation } from "utils";
+import {
+  Wrapper,
+  Box,
+  Brand,
+  FieldSet,
+  ForgotPass,
+  FieldError,
+} from "../Login/Login.style";
 
 const validationSchema = Yup.object().shape({
   newpassword: Yup.string()
-    .required('Campo obrigatório')
+    .required("Campo obrigatório")
     .matches(passwordValidation.regex, passwordValidation.message),
   confirmPassword: Yup.string()
-    .required('Campo obrigatório')
-    .oneOf([Yup.ref('newpassword'), null], 'Senhas não conferem')
+    .required("Campo obrigatório")
+    .oneOf([Yup.ref("newpassword"), null], "Senhas não conferem"),
 });
 
-export default function Password({ resetPassword, match, status }) {
+export default function Password({ resetPassword, status }) {
+  const params = useParams();
   const { t } = useTranslation();
   const [passwordChanged, setPasswordChanged] = useState(false);
-  const { isSaving, success, error } = status;
+  const { isSaving, error } = status;
   const initialValues = {
-    token: match.params.token,
-    newpassword: '',
-    confirmPassword: ''
+    token: params.token,
+    newpassword: "",
+    confirmPassword: "",
   };
 
-  const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
-    initialValues,
-    validationSchema,
-    onSubmit: values => resetPassword(values.token, values.newpassword)
-  });
-
-  useEffect(() => {
-    if (success) {
-      notification.success({ message: 'Uhu! Senha alterada com sucesso! :)' });
-      setPasswordChanged(true);
-    }
-  }, [success]);
-
-  useEffect(() => {
-    if (error) {
-      notification.error({
-        message: t('error.title'),
-        description: error.message || t('error.description')
-      });
-    }
-  }, [error, t]);
+  const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
+    useFormik({
+      initialValues,
+      validationSchema,
+      onSubmit: (values) => {
+        resetPassword(values.token, values.newpassword)
+          .then(() => {
+            notification.success({
+              message: "Uhu! Senha alterada com sucesso! :)",
+            });
+            setPasswordChanged(true);
+          })
+          .catch((err) => {
+            console.error(err);
+            notification.error({
+              message: t("error.title"),
+              description: error.message || t("error.description"),
+            });
+          });
+      },
+    });
 
   return (
     <Wrapper as="form">
@@ -66,11 +75,13 @@ export default function Password({ resetPassword, match, status }) {
               {!passwordChanged && (
                 <>
                   <FieldSet
-                    className={setErrorClassName(errors.newpassword && touched.newpassword)}
+                    className={setErrorClassName(
+                      errors.newpassword && touched.newpassword
+                    )}
                   >
                     <Input.Password
                       placeholder="Nova senha"
-                      prefix={<Icon type="lock" />}
+                      prefix={<LockOutlined />}
                       name="newpassword"
                       type="newpassword"
                       value={values.newpassword}
@@ -81,11 +92,13 @@ export default function Password({ resetPassword, match, status }) {
                   </FieldSet>
 
                   <FieldSet
-                    className={setErrorClassName(errors.confirmPassword && touched.confirmPassword)}
+                    className={setErrorClassName(
+                      errors.confirmPassword && touched.confirmPassword
+                    )}
                   >
                     <Input.Password
                       placeholder="Confirme a senha"
-                      prefix={<Icon type="lock" />}
+                      prefix={<LockOutlined />}
                       name="confirmPassword"
                       value={values.confirmPassword}
                       onBlur={handleBlur}

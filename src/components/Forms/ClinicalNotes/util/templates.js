@@ -1,14 +1,14 @@
-import isEmpty from 'lodash.isempty';
+import isEmpty from "lodash.isempty";
 
-import stripHtml from '@utils/stripHtml';
+import stripHtml from "utils/stripHtml";
 
 const emptyInterventionMessage = `
   Nenhuma intervenção registrada.
 `;
 
 const getConduct = (interventions, conciliationType) => {
-  if (interventions !== '') {
-    if (conciliationType === 't') {
+  if (interventions !== "") {
+    if (conciliationType === "t") {
       return `
 Realizada a conciliação dos medicamentos em uso no setor anterior e feitas intervenções pertinentes. Caso as divergências encontradas sejam intencionais, desconsiderar.
 `;
@@ -24,19 +24,24 @@ Realizada a conciliação dos medicamentos e não encontrada divergência não i
 `;
 };
 
-const getConciliationHeader = prescription => `Farmácia Clínica
+const getConciliationHeader = (prescription) => `Farmácia Clínica
 ${prescription.data.namePatient}, ${prescription.data.age}${
-  prescription.data.weight ? `, ${prescription.data.weight}Kg` : ''
+  prescription.data.weight ? `, ${prescription.data.weight}Kg` : ""
 }`;
 
-const drugDescription = d => {
-  return `${d.drug}: ${d.dose ? d.dosage : ''} ${d.frequency ? d.frequency.label : ''}`;
+const drugDescription = (d) => {
+  return `${d.drug}: ${d.dose ? d.dosage : ""} ${
+    d.frequency ? d.frequency.label : ""
+  }`;
 };
 
 const getConciliationDrugList = (list, group, conciliationType) => {
-  const drugList = list.filter(d => !d.suspended);
+  const drugList = list.filter((d) => !d.suspended);
 
-  if (drugList.length === 0 || (drugList.length === 1 && drugList[0].drug === '')) {
+  if (
+    drugList.length === 0 ||
+    (drugList.length === 1 && drugList[0].drug === "")
+  ) {
     return `
 Paciente nega uso contínuo de medicamentos.
 `;
@@ -44,16 +49,16 @@ Paciente nega uso contínuo de medicamentos.
 
   if (!group) {
     const drugs = drugList.map(
-      d => `
+      (d) => `
   - ${drugDescription(d)}
   `
     );
 
-    return drugs.join('');
+    return drugs.join("");
   }
 
   const tplWithRelation = drugList
-    .map(d => {
+    .map((d) => {
       if (d.conciliaRelationId) {
         return `
   - ${drugDescription(d)}
@@ -62,10 +67,10 @@ Paciente nega uso contínuo de medicamentos.
 
       return null;
     })
-    .filter(t => t != null);
+    .filter((t) => t != null);
 
   const tplWithoutRelation = drugList
-    .map(d => {
+    .map((d) => {
       if (d.conciliaRelationId == null) {
         return `
   - ${drugDescription(d)}
@@ -74,51 +79,55 @@ Paciente nega uso contínuo de medicamentos.
 
       return null;
     })
-    .filter(t => t != null);
+    .filter((t) => t != null);
 
-  let tpl = '';
+  let tpl = "";
 
   if (tplWithRelation.length) {
     tpl += `
 *${
-      conciliationType === 't'
-        ? 'Medicamentos com vínculo na prescrição vigente'
-        : 'Medicamento ou indicação cobertos em prescrição hospitalar'
+      conciliationType === "t"
+        ? "Medicamentos com vínculo na prescrição vigente"
+        : "Medicamento ou indicação cobertos em prescrição hospitalar"
     }:
-    ${tplWithRelation.join('')}
+    ${tplWithRelation.join("")}
     `;
   }
 
   if (tplWithoutRelation.length) {
     tpl += `
 *${
-      conciliationType === 't'
-        ? 'Medicamentos sem vínculo na prescrição vigente'
-        : 'Medicamento ou indicação NÃO cobertos em prescrição hospitalar'
+      conciliationType === "t"
+        ? "Medicamentos sem vínculo na prescrição vigente"
+        : "Medicamento ou indicação NÃO cobertos em prescrição hospitalar"
     }:
-    ${tplWithoutRelation.join('')}
+    ${tplWithoutRelation.join("")}
     `;
   }
 
   return tpl;
 };
 
-const conciliationNotPerformedTemplate = (prescription, signature) => `${getConciliationHeader(
-  prescription
-)}
+const conciliationNotPerformedTemplate = (
+  prescription,
+  signature
+) => `${getConciliationHeader(prescription)}
 
 Conciliação medicamentosa por farmacêutico não realizada neste internamento; paciente não localizado no momento da visita ao leito ou entrevista realizada anteriormente por outro profissional de saúde.
 
 ${signature}
 `;
 
-const conciliationDischargeTemplate = (prescription, signature) => `${getConciliationHeader(
-  prescription
-)}
+const conciliationDischargeTemplate = (
+  prescription,
+  signature
+) => `${getConciliationHeader(prescription)}
 
 Realizadas orientações farmacêuticas ao paciente e acompanhante a respeito dos medicamentos prescritos para uso domiciliar:
 ${getConciliationDrugList(
-  prescription.prescription.list.length ? prescription.prescription.list[0].value : [],
+  prescription.prescription.list.length
+    ? prescription.prescription.list[0].value
+    : [],
   false
 )}
 Orientações:
@@ -140,12 +149,14 @@ const conciliationDefaultBodyTemplate = (
   conciliationType
 ) => `2. Conciliação medicamentosa:
 ${getConciliationDrugList(
-  prescription.prescription.list.length ? prescription.prescription.list[0].value : [],
+  prescription.prescription.list.length
+    ? prescription.prescription.list[0].value
+    : [],
   true,
   conciliationType
 )}
 3. Intervenções:
-${interventions === '' ? emptyInterventionMessage : interventions}
+${interventions === "" ? emptyInterventionMessage : interventions}
 4. Conduta:
 ${getConduct(interventions, conciliationType)}
 
@@ -165,7 +176,12 @@ const conciliationTransferenceTemplate = (
   De:
   Para:
 
-${conciliationDefaultBodyTemplate(prescription, interventions, signature, conciliationType)}
+${conciliationDefaultBodyTemplate(
+  prescription,
+  interventions,
+  signature,
+  conciliationType
+)}
 `;
 
 const conciliationAdmissionTemplate = (
@@ -180,18 +196,28 @@ Conciliação Medicamentosa realizada com:
 1. Histórico de saúde:
 
 
-${conciliationDefaultBodyTemplate(prescription, interventions, signature, conciliationType)}
+${conciliationDefaultBodyTemplate(
+  prescription,
+  interventions,
+  signature,
+  conciliationType
+)}
 `;
 
-export const conciliationTemplate = (prescription, interventions, signature, conciliationType) => {
+export const conciliationTemplate = (
+  prescription,
+  interventions,
+  signature,
+  conciliationType
+) => {
   switch (conciliationType) {
-    case 'n':
+    case "n":
       return conciliationNotPerformedTemplate(prescription, signature);
 
-    case 'a':
+    case "a":
       return conciliationDischargeTemplate(prescription, signature);
 
-    case 't':
+    case "t":
       return conciliationTransferenceTemplate(
         prescription,
         interventions,
@@ -210,7 +236,7 @@ export const conciliationTemplate = (prescription, interventions, signature, con
 };
 
 export const prescriptionTemplate = (p, i) => {
-  if (p !== '0') {
+  if (p !== "0") {
     return `
 Prescrição nº ${p}
 
@@ -223,15 +249,15 @@ ${i}
   `;
 };
 
-export const interventionTemplate = i => `
+export const interventionTemplate = (i) => `
   ${i.drugName}
-  ${i.observation ? stripHtml(i.observation) : ''}
+  ${i.observation ? stripHtml(i.observation) : ""}
 `;
 
 const emptyInterventionTemplate = ({ idPrescription, agg, concilia }) => {
   if (concilia) {
     return conciliationTemplate(
-      '',
+      "",
       `
       Nenhuma divergência encontrada.
       `
@@ -257,9 +283,13 @@ const emptyInterventionTemplate = ({ idPrescription, agg, concilia }) => {
   `;
 };
 
-export const layoutTemplate = (prescription, interventions, signature) => `Farmácia Clínica
+export const layoutTemplate = (
+  prescription,
+  interventions,
+  signature
+) => `Farmácia Clínica
 ${prescription.namePatient}, ${prescription.age}${
-  prescription.weight ? `, ${prescription.weight}Kg` : ''
+  prescription.weight ? `, ${prescription.weight}Kg` : ""
 }
 
 ${interventions || emptyInterventionTemplate(prescription)}
@@ -268,7 +298,7 @@ ${signature}
 `;
 
 export const signatureTemplate = (signature, account) => {
-  if (isEmpty(signature.list) || signature.list[0].value === '') {
+  if (isEmpty(signature.list) || signature.list[0].value === "") {
     return `Farm. ${account.userName}
 CRF/UF:
 Ramal:`;
