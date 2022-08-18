@@ -163,9 +163,11 @@ export default function Layout({
       };
     });
 
-    setAppSider({
-      collapsed: !sider.collapsed,
-    });
+    if (type === "clickTrigger") {
+      setAppSider({
+        collapsed,
+      });
+    }
   };
 
   const toggleDrawer = () => {
