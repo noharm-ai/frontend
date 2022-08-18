@@ -115,7 +115,7 @@ const Table = styled(AntTable)`
   .ant-table-row:hover {
     td,
     a {
-      opacity: 1;
+      opacity: 1 !important;
     }
   }
 
