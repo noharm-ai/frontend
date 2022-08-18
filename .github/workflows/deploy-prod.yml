@@ -1,8 +1,8 @@
 name: Deploy Production
 on:
   push:
-    branches: [ master ]    
-    
+    branches: [master]
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -10,20 +10,20 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - run: npm ci
-      - run: npm run build
-      env: 
-        REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL_PROD }}
-        REACT_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_PROD }}
-        REACT_APP_UPDOWN_LINK: ${{ secrets.REACT_APP_UPDOWN_LINK }}
-        REACT_APP_PRISMIC_API_URL: ${{ secrets.REACT_APP_PRISMIC_API_URL }}
-        REACT_APP_PRISMIC_TOKEN: ${{ secrets.REACT_APP_PRISMIC_TOKEN }}
-        REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
-        REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: npm ci
+        run: npm ci
+      - name: npm run build
+        run: npm run build
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL_PROD }}
+          REACT_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_PROD }}
+          REACT_APP_UPDOWN_LINK: ${{ secrets.REACT_APP_UPDOWN_LINK }}
+          REACT_APP_PRISMIC_API_URL: ${{ secrets.REACT_APP_PRISMIC_API_URL }}
+          REACT_APP_PRISMIC_TOKEN: ${{ secrets.REACT_APP_PRISMIC_TOKEN }}
+          REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
+          REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
       - name: Deploy Production to AWS
         uses: jakejarvis/s3-sync-action@master
         with:
@@ -32,4 +32,4 @@ jobs:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET_PROD }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          SOURCE_DIR: 'build'
+          SOURCE_DIR: "build"

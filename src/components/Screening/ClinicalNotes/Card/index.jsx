@@ -13,13 +13,23 @@ export default function ClinicalNotesCard({ stats, total }) {
   const [clinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
   const { t } = useTranslation();
 
+  const prepareValue = (value) => {
+    if (value > 99) {
+      return "99+";
+    }
+
+    return value;
+  };
+
   return (
     <PrescriptionCard style={{ minHeight: "113px" }}>
       <div className="header">
         <h3 className="title">{t("tableHeader.clinicalNotes")}</h3>
       </div>
       <div className="content">
-        <div className="stat-number">{total == null ? 0 : total}</div>
+        <div className="stat-number">
+          {total == null ? 0 : prepareValue(total)}
+        </div>
       </div>
       <div className="footer">
         <div className="stats">
@@ -30,7 +40,7 @@ export default function ClinicalNotesCard({ stats, total }) {
                   <div>
                     <Tooltip title={indicator.label}>
                       <Tag className={indicator.key}>
-                        {stats[indicator.key]}
+                        {prepareValue(stats[indicator.key])}
                       </Tag>
                     </Tooltip>
                   </div>
