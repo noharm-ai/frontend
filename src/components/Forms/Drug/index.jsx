@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Formik } from "formik";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
@@ -28,9 +28,9 @@ export default function Drug({
   security,
   fetchReferencesList,
 }) {
-  const params = useParams();
+  const matchParams = useParams();
   const { t } = useTranslation();
-  const { isSaving, success, error } = saveStatus;
+  const { isSaving } = saveStatus;
   const {
     idDrug,
     idMeasureUnit,
@@ -83,41 +83,17 @@ export default function Drug({
     defaultNote,
   };
 
-  useEffect(() => {
-    if (success === formId) {
-      notification.success(saveMessage);
-      afterSaveDrug();
-      if (!isEmpty(params)) {
-        fetchReferencesList(
-          params.idSegment,
-          params.idDrug,
-          params.dose,
-          params.frequency
-        );
-      } else {
-        fetchReferencesList();
-      }
-    }
-
-    if (error) {
-      notification.error({
-        message: t("error.title"),
-        description: t("error.description"),
-      });
-    }
-  }, [success, error, afterSaveDrug, fetchReferencesList, params, t]);
-
   const submit = (params) => {
     saveDrug(params)
       .then(() => {
         notification.success(saveMessage);
         afterSaveDrug();
-        if (!isEmpty(params)) {
+        if (!isEmpty(matchParams)) {
           fetchReferencesList(
-            params.idSegment,
-            params.idDrug,
-            params.dose,
-            params.frequency
+            matchParams.idSegment,
+            matchParams.idDrug,
+            matchParams.dose,
+            matchParams.frequency
           );
         } else {
           fetchReferencesList();

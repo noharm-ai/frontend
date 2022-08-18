@@ -301,6 +301,7 @@ export default function References({
             loading={isFetching || relationStatus.isFetching}
             locale={{ emptyText }}
             dataSource={!isFetching ? dsRelations : []}
+            showSorterTooltip={false}
           />
         </Tabs.TabPane>
       </Tabs>
