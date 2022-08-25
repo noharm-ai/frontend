@@ -6,8 +6,8 @@ export const PrioritizationPage = styled.div`
 
   .grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-column-gap: 1rem;
-    grid-row-gap: 1rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-column-gap: 2rem;
+    grid-row-gap: 3.5rem;
   }
 `;
