@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useTransition, animated, config } from "@react-spring/web";
+import { useTransition, animated } from "@react-spring/web";
 import { Spin } from "antd";
 
 import Heading from "components/Heading";

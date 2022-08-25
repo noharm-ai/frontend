@@ -24,7 +24,6 @@ export const Card = styled.div`
   border-radius: 5px;
   border-bottom-left-radius: 0;
   transition: all 0.3s ${timingFunctions("easeOutQuint")};
-  will-change: transform;
   cursor: pointer;
 
   &:before {
@@ -39,6 +38,12 @@ export const Card = styled.div`
     background: ${({ alert }) => getAlertColor(alert)};
   }
 
+  &:hover {
+    .name {
+      color: #1890ff;
+    }
+  }
+
   .name {
     font-size: 1.125rem;
     font-weight: 500;
@@ -46,6 +51,7 @@ export const Card = styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: all 0.3s linear;
   }
 
   .attributes {
@@ -114,12 +120,12 @@ export const Card = styled.div`
   .tabs {
     position: absolute;
     left: 0;
-    top: 100%;
+    bottom: -2.2rem;
+    z-index: -1;
     display: flex;
 
     .tab {
-      padding: 0.5rem 0.6rem;
-      background: #fff;
+      padding: 1rem 0.8rem 0.5rem 0.8rem;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -127,17 +133,13 @@ export const Card = styled.div`
       border-bottom-right-radius: 2px;
       margin-right: 0.2rem;
       background: #fafafa;
-      transition: background 0.3s linear;
+      transition: all 0.3s ${timingFunctions("easeOutQuint")};
 
-      &.active {
-        background: #fff;
-
-        .anticon {
-          color: #1890ff;
-        }
-      }
-
+      &.active,
       &:hover {
+        background: #fff;
+        transform: translateY(5px);
+
         .anticon {
           color: #1890ff;
         }
