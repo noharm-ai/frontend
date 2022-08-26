@@ -44,23 +44,55 @@ export const Card = styled.div`
     }
   }
 
-  .name {
-    font-size: 1.125rem;
-    font-weight: 500;
-    padding: 1rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: all 0.3s linear;
+  .card-header {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+
+    .name {
+      flex: 1;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 1rem 0.5rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 0.3s linear;
+    }
+
+    .stamp {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 0.5rem;
+      background: #fafafa;
+
+      .stamp-label {
+        font-size: 12px;
+        font-weight: 300;
+        color: ${get("colors.primary")};
+      }
+
+      .stamp-value {
+        text-align: right;
+        font-size: 14px;
+        font-weight: 500;
+        color: ${get("colors.primary")};
+      }
+    }
   }
 
   .attributes {
     display: flex;
     flex-wrap: wrap;
-    border-top: 1px solid #e0e0e0;
     border-radius: 5px;
     border-top-left-radius: 0;
     height: 100%;
+
+    &.col-3 {
+      .attributes-item {
+        width: 25%;
+      }
+    }
 
     .attributes-item {
       position: relative;
@@ -150,5 +182,23 @@ export const Card = styled.div`
         transition: color 0.3s linear;
       }
     }
+  }
+`;
+
+export const AlertContainer = styled.div`
+  display: flex;
+  padding: 0.5rem 0;
+
+  .alert {
+    padding: 3px 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+    min-width: 60px;
+    font-size: 14px;
+    border: 1px solid #f68c97;
+    background: #f8dee2;
+    margin-right: 0.2rem;
   }
 `;
