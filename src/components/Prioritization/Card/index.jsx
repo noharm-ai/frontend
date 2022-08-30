@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useTransition, animated, config } from "@react-spring/web";
-import { UserOutlined, FileOutlined, NumberOutlined } from "@ant-design/icons";
+import { UserOutlined, NumberOutlined } from "@ant-design/icons";
 
 import Tooltip from "components/Tooltip";
+import Tag from "components/Tag";
 import { getAlerts } from "components/Screening/AlertCard";
 import { Card, AlertContainer } from "./index.style";
 
-const TabContent = ({ tab }) => {
+const TabContent = ({ tab, prescription }) => {
   const { t } = useTranslation();
 
   if (tab === "patient") {
@@ -29,95 +30,81 @@ const TabContent = ({ tab }) => {
     const alerts = getAlerts(stats, t);
 
     return (
-      <div className="attributes">
-        <div className="attributes-item">
-          <div className="attributes-item-label">{t("patientCard.age")}</div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">{t("patientCard.age")}</div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">{t("patientCard.age")}</div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">{t("patientCard.age")}</div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">{t("patientCard.age")}</div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">{t("patientCard.age")}</div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item full">
-          <div className="attributes-item-label">Alertas</div>
-          <div className="attributes-item-value">
-            <AlertContainer>
-              {alerts
-                .filter((a) => a.value > 0)
-                .map((a) => (
-                  <Tooltip title={a.label} key={a.label}>
-                    <div className="alert">
-                      {a.icon()} {a.value}
-                    </div>
-                  </Tooltip>
-                ))}
-            </AlertContainer>
+      <div className="attribute-container">
+        <div className="attributes">
+          <div className="attributes-item col-6">
+            <div className="attributes-item-label">{t("patientCard.age")}</div>
+            <div className="attributes-item-value">{prescription.age}</div>
+          </div>
+          <div className="attributes-item col-6">
+            <div className="attributes-item-label">
+              {t("patientCard.gender")}
+            </div>
+            <div className="attributes-item-value">
+              {prescription.gender
+                ? prescription.gender === "M"
+                  ? t("patientCard.male")
+                  : t("patientCard.female")
+                : ""}
+            </div>
           </div>
         </div>
-      </div>
-    );
-  }
-
-  if (tab === "admission") {
-    return (
-      <div className="attributes">
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
+        <div className="attributes">
+          <div className="attributes-item col-6">
+            <div className="attributes-item-label">
+              {t("patientCard.admission")}
+            </div>
+            <div className="attributes-item-value">
+              {prescription.admissionNumber}
+            </div>
           </div>
-          <div className="attributes-item-value">10</div>
+          <div className="attributes-item col-6">
+            <div className="attributes-item-label">
+              {t("patientCard.prescriptionDate")}
+            </div>
+            <div className="attributes-item-value">
+              {prescription.dateOnlyFormated}
+            </div>
+          </div>
         </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
+        <div className="attributes">
+          <div className="attributes-item col-6">
+            <div className="attributes-item-label">
+              {t("patientCard.department")}
+            </div>
+            <div className="attributes-item-value">
+              <Tooltip title={prescription.department}>
+                {prescription.department}
+              </Tooltip>
+            </div>
           </div>
-          <div className="attributes-item-value">10</div>
+          <div className="attributes-item col-6">
+            <div className="attributes-item-label">Situação</div>
+            <div className="attributes-item-value">
+              {prescription.status === "s" && <Tag color="green">Checada</Tag>}
+              {prescription.status !== "s" && (
+                <Tag color="orange">Pendente</Tag>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
+        <div className="attributes">
+          <div className="attributes-item col-12">
+            <div className="attributes-item-label">Alertas</div>
+            <div className="attributes-item-value">
+              <AlertContainer>
+                {alerts
+                  .filter((a) => a.value > 0)
+                  .map((a) => (
+                    <Tooltip title={a.label} key={a.label}>
+                      <div className="alert">
+                        {a.icon()} {a.value}
+                      </div>
+                    </Tooltip>
+                  ))}
+              </AlertContainer>
+            </div>
           </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item full">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
         </div>
       </div>
     );
@@ -125,78 +112,142 @@ const TabContent = ({ tab }) => {
 
   if (tab === "numbers") {
     return (
-      <div className="attributes col-3">
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
+      <div className="attribute-container">
+        <div className="attributes">
+          <Tooltip
+            title={t("screeningList.clLengthHint")}
+            mouseEnterDelay={0.5}
+          >
+            <div className="attributes-item col-3">
+              <div className="attributes-item-label">
+                {t("screeningList.clLengthHint")}
+              </div>
+              <div className="attributes-item-value">
+                {prescription.lengthStay}
+              </div>
+            </div>
+          </Tooltip>
+
+          <Tooltip title={t("screeningList.clExamHint")} mouseEnterDelay={0.5}>
+            <div className="attributes-item col-3">
+              <div className="attributes-item-label">
+                {t("screeningList.clExamHint")}
+              </div>
+              <div className="attributes-item-value">
+                {prescription.alertExams}
+              </div>
+            </div>
+          </Tooltip>
+
+          <Tooltip title={t("screeningList.clAlertHint")} mouseEnterDelay={0.5}>
+            <div className="attributes-item col-3">
+              <div className="attributes-item-label">
+                {t("screeningList.clAlertHint")}
+              </div>
+              <div className="attributes-item-value">{prescription.alerts}</div>
+            </div>
+          </Tooltip>
+
+          <Tooltip
+            title={t("screeningList.clGlobalScoreHint")}
+            mouseEnterDelay={0.5}
+          >
+            <div className="attributes-item col-3">
+              <div className="attributes-item-label">
+                {t("screeningList.clGlobalScoreHint")}
+              </div>
+              <div className="attributes-item-value">
+                {prescription.globalScore}
+              </div>
+            </div>
+          </Tooltip>
         </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
+        <div className="attributes">
+          <Tooltip title={t("screeningList.clAmHint")} mouseEnterDelay={0.5}>
+            <div className="attributes-item col-3">
+              <div className="attributes-item-label">
+                {t("screeningList.clAmHint")}
+              </div>
+              <div className="attributes-item-value">{prescription.am}</div>
+            </div>
+          </Tooltip>
+
+          <Tooltip title={t("screeningList.clAvHint")} mouseEnterDelay={0.5}>
+            <div className="attributes-item col-3">
+              <div className="attributes-item-label">
+                {t("screeningList.clAvHint")}
+              </div>
+              <div className="attributes-item-value">{prescription.av}</div>
+            </div>
+          </Tooltip>
+
+          <Tooltip title={t("screeningList.clCHint")} mouseEnterDelay={0.5}>
+            <div className="attributes-item col-3">
+              <div className="attributes-item-label">
+                {t("screeningList.clCHint")}
+              </div>
+              <div className="attributes-item-value">
+                {prescription.controlled}
+              </div>
+            </div>
+          </Tooltip>
+
+          <Tooltip title={t("screeningList.clNpHint")} mouseEnterDelay={0.5}>
+            <div className="attributes-item col-3">
+              <div className="attributes-item-label">
+                {t("screeningList.clNpHint")}
+              </div>
+              <div className="attributes-item-value">{prescription.np}</div>
+            </div>
+          </Tooltip>
         </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
-        </div>
-        <div className="attributes-item">
-          <div className="attributes-item-label">
-            {t("patientCard.admission")}
-          </div>
-          <div className="attributes-item-value">10</div>
+
+        <div className="attributes">
+          <Tooltip title={t("screeningList.clTubeHint")} mouseEnterDelay={0.5}>
+            <div className="attributes-item col-3">
+              <div className="attributes-item-label">
+                {t("screeningList.clTubeHint")}
+              </div>
+              <div className="attributes-item-value">{prescription.tube}</div>
+            </div>
+          </Tooltip>
+
+          <Tooltip title={t("screeningList.clDiffHint")} mouseEnterDelay={0.5}>
+            <div className="attributes-item col-3">
+              <div className="attributes-item-label">
+                {t("screeningList.clDiffHint")}
+              </div>
+              <div className="attributes-item-value">{prescription.diff}</div>
+            </div>
+          </Tooltip>
+
+          <Tooltip
+            title={t("screeningList.clInterventionsHint")}
+            mouseEnterDelay={0.5}
+          >
+            <div className="attributes-item col-3">
+              <div className="attributes-item-label">
+                {t("screeningList.clInterventionsHint")}
+              </div>
+              <div className="attributes-item-value">
+                {prescription.interventions}
+              </div>
+            </div>
+          </Tooltip>
+
+          <Tooltip
+            title={t("screeningList.clPrescriptionScoreHint")}
+            mouseEnterDelay={0.5}
+          >
+            <div className="attributes-item col-3">
+              <div className="attributes-item-label">
+                {t("screeningList.clPrescriptionScoreHint")}
+              </div>
+              <div className="attributes-item-value">
+                {prescription.prescriptionScore}
+              </div>
+            </div>
+          </Tooltip>
         </div>
       </div>
     );
@@ -205,7 +256,10 @@ const TabContent = ({ tab }) => {
   return null;
 };
 
-export default function PrioritizationCard({ prescription }) {
+export default function PrioritizationCard({
+  prescription,
+  prioritizationType,
+}) {
   const [activeTab, setActiveTab] = useState("patient");
 
   const transitions = useTransition(activeTab, {
@@ -218,38 +272,49 @@ export default function PrioritizationCard({ prescription }) {
     config: config.slow,
   });
 
+  const open = () => {
+    window.open(
+      prioritizationType === "conciliation"
+        ? `/conciliacao/${prescription.slug}`
+        : `/prescricao/${prescription.slug}`
+    );
+  };
+
+  const tabClick = (tab, event) => {
+    setActiveTab(tab);
+    event.stopPropagation();
+  };
+
   return (
-    <Card alert={prescription.class}>
+    <Card alert={prescription.class} onClick={() => open()}>
       <div className="card-header">
-        <div className="name">{prescription.namePatient}</div>
+        <div className="name">
+          <Tooltip title={prescription.namePatient}>
+            {prescription.namePatient}
+          </Tooltip>
+        </div>
         <div className="stamp">
           <div className="stamp-label">Escore Global</div>
-          <div className="stamp-value">100</div>
+          <div className="stamp-value">{prescription.globalScore}</div>
         </div>
       </div>
 
       {transitions((styles) => (
         <animated.div style={styles}>
-          <TabContent tab={activeTab} />
+          <TabContent tab={activeTab} prescription={prescription} />
         </animated.div>
       ))}
 
       <div className="tabs">
         <div
           className={`tab ${activeTab === "patient" ? "active" : ""}`}
-          onClick={() => setActiveTab("patient")}
+          onClick={(e) => tabClick("patient", e)}
         >
           <UserOutlined />
         </div>
         <div
-          className={`tab ${activeTab === "admission" ? "active" : ""}`}
-          onClick={() => setActiveTab("admission")}
-        >
-          <FileOutlined />
-        </div>
-        <div
           className={`tab ${activeTab === "numbers" ? "active" : ""}`}
-          onClick={() => setActiveTab("numbers")}
+          onClick={(e) => tabClick("numbers", e)}
         >
           <NumberOutlined />
         </div>

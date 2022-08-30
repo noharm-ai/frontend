@@ -9,6 +9,7 @@ import { PrioritizationPage } from "./index.style";
 
 export default function Prioritization({
   prescriptions,
+  prioritizationType,
   fetchPrescriptionsList,
 }) {
   const { isFetching, list, error } = prescriptions;
@@ -52,7 +53,10 @@ export default function Prioritization({
             {list &&
               transitions((props, item) => (
                 <animated.div style={props}>
-                  <PrioritizationCard prescription={item} />
+                  <PrioritizationCard
+                    prescription={item}
+                    prioritizationType={prioritizationType}
+                  />
                 </animated.div>
               ))}
           </div>

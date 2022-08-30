@@ -180,7 +180,8 @@
     "editHeight": "Atualizar a altura",
     "examDate": "Data",
     "examVariation": "Variação em relação ao último exame",
-    "admissionDate": "Data de internação"
+    "admissionDate": "Data de internação",
+    "prescriptionDate": "Data da prescrição"
   },
   "screeningBody": {
     "tabDrugs": "Medicamentos",

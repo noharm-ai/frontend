@@ -180,7 +180,8 @@
     "editHeight": "Edit height",
     "examDate": "Date",
     "examVariation": "Variation compared to last lab result",
-    "admissionDate": "Admission date"
+    "admissionDate": "Admission date",
+    "prescriptionDate": "Prescription date"
   },
   "screeningBody": {
     "tabDrugs": "Drugs",

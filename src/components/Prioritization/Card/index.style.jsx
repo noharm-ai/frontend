@@ -6,13 +6,13 @@ import { get } from "styles/utils";
 const getAlertColor = (type) => {
   switch (type) {
     case "green":
-      return "#7ebe9a";
+      return "#7CB342";
     case "yellow":
-      return "#e4da66";
+      return "#FDD835";
     case "orange":
-      return "orange";
+      return "#FB8C00";
     case "red":
-      return "#e46666";
+      return "#E53935";
     default:
       return "#ccc";
   }
@@ -22,7 +22,7 @@ export const Card = styled.div`
   position: relative;
   background: #fff;
   border-radius: 5px;
-  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
   transition: all 0.3s ${timingFunctions("easeOutQuint")};
   cursor: pointer;
 
@@ -65,6 +65,7 @@ export const Card = styled.div`
       justify-content: center;
       padding: 0 0.5rem;
       background: #fafafa;
+      border-top-right-radius: 5px;
 
       .stamp-label {
         font-size: 12px;
@@ -84,33 +85,36 @@ export const Card = styled.div`
   .attributes {
     display: flex;
     flex-wrap: wrap;
-    border-radius: 5px;
     border-top-left-radius: 0;
+    border-bottom: 1px solid #e0e0e0;
     height: 100%;
 
-    &.col-3 {
-      .attributes-item {
-        width: 25%;
-      }
+    &:last-child {
+      border-bottom: 0;
     }
 
     .attributes-item {
       position: relative;
       display: flex;
       flex-direction: column;
-      width: 50%;
       padding: 5px 0;
       padding-left: 10px;
-      border-bottom: 1px solid #e0e0e0;
+
       overflow-x: clip;
 
-      &.full {
-        width: 100%;
-        border-bottom: 0;
-        border-right: 0 !important;
+      &.col-6 {
+        width: 50%;
       }
 
-      &:nth-child(odd) {
+      &.col-3 {
+        width: 25%;
+      }
+
+      &.col-12 {
+        width: 100%;
+      }
+
+      &:not(:last-child) {
         border-right: 1px solid #e0e0e0;
       }
 
@@ -118,6 +122,9 @@ export const Card = styled.div`
         font-size: 12px;
         font-weight: 300;
         color: ${get("colors.primary")};
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
 
       .attributes-item-value {
@@ -151,7 +158,7 @@ export const Card = styled.div`
 
   .tabs {
     position: absolute;
-    left: 0;
+    right: 0;
     bottom: -2.2rem;
     z-index: -1;
     display: flex;
@@ -166,6 +173,10 @@ export const Card = styled.div`
       margin-right: 0.2rem;
       background: #fafafa;
       transition: all 0.3s ${timingFunctions("easeOutQuint")};
+
+      &:last-child {
+        margin-right: 0;
+      }
 
       &.active,
       &:hover {
