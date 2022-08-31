@@ -12,22 +12,9 @@ const TabContent = ({ tab, prescription }) => {
   const { t } = useTranslation();
 
   if (tab === "patient") {
-    const stats = {
-      allergy: 0,
-      dup: 1,
-      elderly: 0,
-      exams: 0,
-      inc: 0,
-      int: 1,
-      kidney: 0,
-      liver: 0,
-      maxDose: 1,
-      maxTime: 0,
-      platelets: 0,
-      rea: 0,
-      tube: 0,
-    };
-    const alerts = getAlerts(stats, t);
+    const alerts = getAlerts(prescription.alertStats || {}, t).filter(
+      (a) => a.value > 0
+    );
 
     return (
       <div className="attribute-container">
@@ -93,15 +80,17 @@ const TabContent = ({ tab, prescription }) => {
             <div className="attributes-item-label">Alertas</div>
             <div className="attributes-item-value">
               <AlertContainer>
-                {alerts
-                  .filter((a) => a.value > 0)
-                  .map((a) => (
-                    <Tooltip title={a.label} key={a.label}>
-                      <div className="alert">
-                        {a.icon()} {a.value}
-                      </div>
-                    </Tooltip>
-                  ))}
+                {alerts.length
+                  ? alerts
+                      .filter((a) => a.value > 0)
+                      .map((a) => (
+                        <Tooltip title={a.label} key={a.label}>
+                          <div className="alert">
+                            {a.icon()} {a.value}
+                          </div>
+                        </Tooltip>
+                      ))
+                  : "-"}
               </AlertContainer>
             </div>
           </div>
@@ -112,13 +101,13 @@ const TabContent = ({ tab, prescription }) => {
 
   if (tab === "numbers") {
     return (
-      <div className="attribute-container">
+      <div className="attribute-container border-bottom">
         <div className="attributes">
           <Tooltip
             title={t("screeningList.clLengthHint")}
             mouseEnterDelay={0.5}
           >
-            <div className="attributes-item col-3">
+            <div className="attributes-item col-4">
               <div className="attributes-item-label">
                 {t("screeningList.clLengthHint")}
               </div>
@@ -129,7 +118,7 @@ const TabContent = ({ tab, prescription }) => {
           </Tooltip>
 
           <Tooltip title={t("screeningList.clExamHint")} mouseEnterDelay={0.5}>
-            <div className="attributes-item col-3">
+            <div className="attributes-item col-4">
               <div className="attributes-item-label">
                 {t("screeningList.clExamHint")}
               </div>
@@ -140,19 +129,20 @@ const TabContent = ({ tab, prescription }) => {
           </Tooltip>
 
           <Tooltip title={t("screeningList.clAlertHint")} mouseEnterDelay={0.5}>
-            <div className="attributes-item col-3">
+            <div className="attributes-item col-4">
               <div className="attributes-item-label">
                 {t("screeningList.clAlertHint")}
               </div>
               <div className="attributes-item-value">{prescription.alerts}</div>
             </div>
           </Tooltip>
-
+        </div>
+        <div className="attributes">
           <Tooltip
             title={t("screeningList.clGlobalScoreHint")}
             mouseEnterDelay={0.5}
           >
-            <div className="attributes-item col-3">
+            <div className="attributes-item col-4">
               <div className="attributes-item-label">
                 {t("screeningList.clGlobalScoreHint")}
               </div>
@@ -161,10 +151,9 @@ const TabContent = ({ tab, prescription }) => {
               </div>
             </div>
           </Tooltip>
-        </div>
-        <div className="attributes">
+
           <Tooltip title={t("screeningList.clAmHint")} mouseEnterDelay={0.5}>
-            <div className="attributes-item col-3">
+            <div className="attributes-item col-4">
               <div className="attributes-item-label">
                 {t("screeningList.clAmHint")}
               </div>
@@ -173,16 +162,18 @@ const TabContent = ({ tab, prescription }) => {
           </Tooltip>
 
           <Tooltip title={t("screeningList.clAvHint")} mouseEnterDelay={0.5}>
-            <div className="attributes-item col-3">
+            <div className="attributes-item col-4">
               <div className="attributes-item-label">
                 {t("screeningList.clAvHint")}
               </div>
               <div className="attributes-item-value">{prescription.av}</div>
             </div>
           </Tooltip>
+        </div>
 
+        <div className="attributes">
           <Tooltip title={t("screeningList.clCHint")} mouseEnterDelay={0.5}>
-            <div className="attributes-item col-3">
+            <div className="attributes-item col-4">
               <div className="attributes-item-label">
                 {t("screeningList.clCHint")}
               </div>
@@ -193,27 +184,25 @@ const TabContent = ({ tab, prescription }) => {
           </Tooltip>
 
           <Tooltip title={t("screeningList.clNpHint")} mouseEnterDelay={0.5}>
-            <div className="attributes-item col-3">
+            <div className="attributes-item col-4">
               <div className="attributes-item-label">
                 {t("screeningList.clNpHint")}
               </div>
               <div className="attributes-item-value">{prescription.np}</div>
             </div>
           </Tooltip>
-        </div>
-
-        <div className="attributes">
           <Tooltip title={t("screeningList.clTubeHint")} mouseEnterDelay={0.5}>
-            <div className="attributes-item col-3">
+            <div className="attributes-item col-4">
               <div className="attributes-item-label">
                 {t("screeningList.clTubeHint")}
               </div>
               <div className="attributes-item-value">{prescription.tube}</div>
             </div>
           </Tooltip>
-
+        </div>
+        <div className="attributes">
           <Tooltip title={t("screeningList.clDiffHint")} mouseEnterDelay={0.5}>
-            <div className="attributes-item col-3">
+            <div className="attributes-item col-4">
               <div className="attributes-item-label">
                 {t("screeningList.clDiffHint")}
               </div>
@@ -225,7 +214,7 @@ const TabContent = ({ tab, prescription }) => {
             title={t("screeningList.clInterventionsHint")}
             mouseEnterDelay={0.5}
           >
-            <div className="attributes-item col-3">
+            <div className="attributes-item col-4">
               <div className="attributes-item-label">
                 {t("screeningList.clInterventionsHint")}
               </div>
@@ -239,7 +228,7 @@ const TabContent = ({ tab, prescription }) => {
             title={t("screeningList.clPrescriptionScoreHint")}
             mouseEnterDelay={0.5}
           >
-            <div className="attributes-item col-3">
+            <div className="attributes-item col-4">
               <div className="attributes-item-label">
                 {t("screeningList.clPrescriptionScoreHint")}
               </div>

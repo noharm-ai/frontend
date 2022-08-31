@@ -21,10 +21,14 @@ const getAlertColor = (type) => {
 export const Card = styled.div`
   position: relative;
   background: #fff;
-  border-radius: 5px;
-  border-bottom-right-radius: 0;
-  transition: all 0.3s ${timingFunctions("easeOutQuint")};
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  transition: all 1s ${timingFunctions("easeOutQuint")};
+  box-shadow: 0 -1px 7px rgb(0 0 0 / 16%);
   cursor: pointer;
+  min-height: 18.125rem;
 
   &:before {
     content: "";
@@ -39,6 +43,8 @@ export const Card = styled.div`
   }
 
   &:hover {
+    box-shadow: 0px -2px 10px rgb(0 0 0 / 32%);
+
     .name {
       color: #1890ff;
     }
@@ -52,7 +58,7 @@ export const Card = styled.div`
       flex: 1;
       font-size: 1rem;
       font-weight: 500;
-      padding: 1rem 0.5rem;
+      padding: 1rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -82,6 +88,12 @@ export const Card = styled.div`
     }
   }
 
+  .attribute-container {
+    &.border-bottom {
+      border-bottom: 1px solid #e0e0e0;
+    }
+  }
+
   .attributes {
     display: flex;
     flex-wrap: wrap;
@@ -97,8 +109,7 @@ export const Card = styled.div`
       position: relative;
       display: flex;
       flex-direction: column;
-      padding: 5px 0;
-      padding-left: 10px;
+      padding: 5px 1rem;
 
       overflow-x: clip;
 
@@ -108,6 +119,10 @@ export const Card = styled.div`
 
       &.col-3 {
         width: 25%;
+      }
+
+      &.col-4 {
+        width: 33.33333333%;
       }
 
       &.col-12 {
@@ -158,7 +173,7 @@ export const Card = styled.div`
 
   .tabs {
     position: absolute;
-    right: 0;
+    right: 0.5rem;
     bottom: -2.2rem;
     z-index: -1;
     display: flex;
@@ -199,6 +214,7 @@ export const Card = styled.div`
 export const AlertContainer = styled.div`
   display: flex;
   padding: 0.5rem 0;
+  min-height: 2.875rem;
 
   .alert {
     padding: 3px 0;
