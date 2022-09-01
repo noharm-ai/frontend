@@ -21,7 +21,9 @@ const TabContent = ({ tab, prescription }) => {
         <div className="attributes">
           <div className="attributes-item col-6">
             <div className="attributes-item-label">{t("patientCard.age")}</div>
-            <div className="attributes-item-value">{prescription.age}</div>
+            <div className="attributes-item-value">
+              {prescription.age || "-"}
+            </div>
           </div>
           <div className="attributes-item col-6">
             <div className="attributes-item-label">
@@ -32,7 +34,7 @@ const TabContent = ({ tab, prescription }) => {
                 ? prescription.gender === "M"
                   ? t("patientCard.male")
                   : t("patientCard.female")
-                : ""}
+                : "-"}
             </div>
           </div>
         </div>

@@ -149,7 +149,16 @@ const routes = [
   {
     exact: true,
     path: "/priorizacao",
-    element: <WithAuth component={Prioritization} />,
+    element: (
+      <WithAuth component={Prioritization} prioritizationType={"patient"} />
+    ),
+  },
+  {
+    exact: true,
+    path: "/priorizacao/:startDate",
+    element: (
+      <WithAuth component={Prioritization} prioritizationType={"patient"} />
+    ),
   },
   {
     exact: true,
