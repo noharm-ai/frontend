@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer } from "react";
 import isEmpty from "lodash.isempty";
 import { useTransition, animated } from "@react-spring/web";
 import { Spin, Pagination, Tag } from "antd";
@@ -40,6 +40,34 @@ const filterList = (list, filter) => {
   return list;
 };
 
+const initState = () => {
+  return { currentPage: 1, filter: {}, listStats: getListStats([]) };
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "set_page":
+      return { ...state, currentPage: action.payload };
+    case "set_filter":
+      return {
+        ...state,
+        currentPage: 1,
+        filter: { ...state.filter, ...action.payload },
+      };
+    case "after_update_list":
+      return {
+        ...state,
+        currentPage: 1,
+        filter: {},
+        listStats: action.payload,
+      };
+    case "reset":
+      return initState(action.payload);
+    default:
+      throw new Error();
+  }
+};
+
 export default function Prioritization({
   prescriptions,
   fetchSegmentsList,
@@ -49,18 +77,16 @@ export default function Prioritization({
   security,
   ...restProps
 }) {
+  const [state, dispatch] = useReducer(reducer, initState());
   const { isFetching, list, error } = prescriptions;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [listStats, setListStats] = useState(getListStats([]));
-  const [filter, setFilter] = useState({});
   const { t } = useTranslation();
 
-  const filteredList = filterList(list, filter);
+  const filteredList = filterList(list, state.filter);
   const patients = isFetching
     ? []
     : filteredList.slice(
-        (currentPage - 1) * PAGE_SIZE,
-        (currentPage - 1) * PAGE_SIZE + PAGE_SIZE
+        (state.currentPage - 1) * PAGE_SIZE,
+        (state.currentPage - 1) * PAGE_SIZE + PAGE_SIZE
       );
 
   const transitions = useTransition(patients, {
@@ -85,17 +111,22 @@ export default function Prioritization({
   }, [error, t]);
 
   useEffect(() => {
-    setListStats(getListStats(list));
+    dispatch({
+      type: "after_update_list",
+      payload: getListStats(list),
+    });
   }, [list]);
 
   const onChangePage = (page) => {
-    setCurrentPage(page);
+    dispatch({ type: "set_page", payload: page });
   };
 
   const onChangeStatus = (value) => {
-    setFilter({
-      ...filter,
-      status: !value || value === "all" ? null : value,
+    dispatch({
+      type: "set_filter",
+      payload: {
+        status: !value || value === "all" ? null : value,
+      },
     });
   };
 
@@ -119,21 +150,22 @@ export default function Prioritization({
               optionFilterProp="children"
               defaultValue="all"
               onChange={onChangeStatus}
+              value={state.filter.status || "all"}
             >
               <Select.Option value="0" key="pending">
-                Pendentes <Tag color="orange">{listStats.pending}</Tag>
+                Pendentes <Tag color="orange">{state.listStats.pending}</Tag>
               </Select.Option>
               <Select.Option value="s" key="checked">
-                Checadas <Tag color="green">{listStats.checked}</Tag>
+                Checadas <Tag color="green">{state.listStats.checked}</Tag>
               </Select.Option>
               <Select.Option value="all" key="all">
-                Todas <Tag>{listStats.all}</Tag>
+                Todas <Tag>{state.listStats.all}</Tag>
               </Select.Option>
             </Select>
           </div>
           <div className="pagination">
             <Pagination
-              current={currentPage}
+              current={state.currentPage}
               total={filteredList && filteredList.length}
               hideOnSinglePage={true}
               pageSize={PAGE_SIZE}
