@@ -1,3 +1,3 @@
-import Password from '@containers/Password';
+import Password from "containers/Password";
 
 export default Password;

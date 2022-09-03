@@ -1,23 +1,29 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 import {
   selectItemToSaveThunk,
   saveInterventionThunk,
   clearSavedInterventionStatusThunk,
   fetchReasonsListThunk,
-  updateSelectedItemToSaveInterventionThunk
-} from '@store/ducks/intervention/thunk';
+  updateSelectedItemToSaveInterventionThunk,
+} from "store/ducks/intervention/thunk";
 import {
   updateInterventionDataThunk,
   checkInterventionThunk,
-  checkPrescriptionDrugThunk
-} from '@store/ducks/prescriptions/thunk';
-import { searchDrugsThunk, fetchDrugSummaryThunk } from '@store/ducks/drugs/thunk';
-import { memoryFetchReasonTextThunk, memorySaveReasonTextThunk } from '@store/ducks/memory/thunk';
+  checkPrescriptionDrugThunk,
+} from "store/ducks/prescriptions/thunk";
+import {
+  searchDrugsThunk,
+  fetchDrugSummaryThunk,
+} from "store/ducks/drugs/thunk";
+import {
+  memoryFetchReasonTextThunk,
+  memorySaveReasonTextThunk,
+} from "store/ducks/memory/thunk";
 
-import Intervention from '@components/Forms/Intervention';
-import security from '@services/security';
+import Intervention from "components/Forms/Intervention";
+import security from "services/security";
 
 const mapStateToProps = ({ intervention, drugs, memory, user }) => ({
   intervention: intervention.maybeCreateOrUpdate,
@@ -25,9 +31,9 @@ const mapStateToProps = ({ intervention, drugs, memory, user }) => ({
   drugs: drugs.search,
   drugSummary: drugs.summary,
   reasonTextMemory: memory.reasonText,
-  security: security(user.account.roles)
+  security: security(user.account.roles),
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       select: selectItemToSaveThunk,
@@ -37,11 +43,12 @@ const mapDispatchToProps = dispatch =>
       saveInterventionStatus: checkInterventionThunk,
       savePrescriptionDrugStatus: checkPrescriptionDrugThunk,
       fetchReasonsList: fetchReasonsListThunk,
-      updateSelectedItemToSaveIntervention: updateSelectedItemToSaveInterventionThunk,
+      updateSelectedItemToSaveIntervention:
+        updateSelectedItemToSaveInterventionThunk,
       searchDrugs: searchDrugsThunk,
       fetchDrugSummary: fetchDrugSummaryThunk,
       memorySaveReasonText: memorySaveReasonTextThunk,
-      memoryFetchReasonText: memoryFetchReasonTextThunk
+      memoryFetchReasonText: memoryFetchReasonTextThunk,
     },
     dispatch
   );

@@ -1,6 +1,6 @@
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
-import { get } from '@styles/utils';
+import { get } from "styles/utils";
 
 export const FieldSet = styled.div`
   margin-bottom: 18px;
@@ -17,6 +17,6 @@ export const FieldSet = styled.div`
   }
 
   .ant-checkbox-wrapper {
-    color: ${get('colors.commonLighter')};
+    color: ${get("colors.commonLighter")};
   }
 `;

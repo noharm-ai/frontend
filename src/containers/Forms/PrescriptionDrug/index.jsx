@@ -1,15 +1,18 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 import {
   selectPrescriptionDrugThunk,
   savePrescriptionDrugThunk,
   savePrescriptionDrugNoteThunk,
-  suspendPrescriptionDrugThunk
-} from '@store/ducks/prescriptionDrugs/thunk';
-import { searchDrugsThunk, fetchDrugResourcesThunk } from '@store/ducks/drugs/thunk';
+  suspendPrescriptionDrugThunk,
+} from "store/ducks/prescriptionDrugs/thunk";
+import {
+  searchDrugsThunk,
+  fetchDrugResourcesThunk,
+} from "store/ducks/drugs/thunk";
 
-import PrescriptionDrug from '@components/Forms/PrescriptionDrug';
+import PrescriptionDrug from "components/Forms/PrescriptionDrug";
 
 const mapStateToProps = ({ prescriptionDrugs, drugs }) => ({
   isSaving: prescriptionDrugs.single.isSaving,
@@ -17,9 +20,9 @@ const mapStateToProps = ({ prescriptionDrugs, drugs }) => ({
   error: prescriptionDrugs.single.error,
   item: prescriptionDrugs.single.item,
   drugs: drugs.search,
-  drugSummary: drugs.summary
+  drugSummary: drugs.summary,
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       select: selectPrescriptionDrugThunk,
@@ -27,7 +30,7 @@ const mapDispatchToProps = dispatch =>
       saveNotes: savePrescriptionDrugNoteThunk,
       suspend: suspendPrescriptionDrugThunk,
       searchDrugs: searchDrugsThunk,
-      fetchDrugSummary: fetchDrugResourcesThunk
+      fetchDrugSummary: fetchDrugResourcesThunk,
     },
     dispatch
   );

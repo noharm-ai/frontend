@@ -1,21 +1,21 @@
-import React, { useEffect } from 'react';
-import 'styled-components/macro';
-import isEmpty from 'lodash.isempty';
-import { useHistory } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from "react";
+import "styled-components/macro";
+import isEmpty from "lodash.isempty";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-import LoadBox from '@components/LoadBox';
-import notification from '@components/notification';
-import { Row, Col } from '@components/Grid';
-import Widget from './Widget';
+import LoadBox from "components/LoadBox";
+import notification from "components/notification";
+import { Row, Col } from "components/Grid";
+import Widget from "./Widget";
 
 export default function Reports({ reports, select, fetchList }) {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { isFetching, list, error } = reports;
-  const showReport = reportData => {
+  const showReport = (reportData) => {
     select(reportData);
-    history.push('/relatorios/visualizar');
+    navigate("/relatorios/visualizar");
   };
   useEffect(() => {
     fetchList();
@@ -25,8 +25,8 @@ export default function Reports({ reports, select, fetchList }) {
   useEffect(() => {
     if (!isEmpty(error)) {
       notification.error({
-        message: t('error.title'),
-        description: t('error.description')
+        message: t("error.title"),
+        description: t("error.description"),
       });
     }
   }, [error, t]);

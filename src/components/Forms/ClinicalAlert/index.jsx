@@ -1,61 +1,63 @@
-import React, { useEffect } from 'react';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
 
-import { Row } from '@components/Grid';
-import notification from '@components/notification';
-import Heading from '@components/Heading';
-import DefaultModal from '@components/Modal';
+import { Row } from "components/Grid";
+import notification from "components/notification";
+import Heading from "components/Heading";
+import DefaultModal from "components/Modal";
 
-import Base from './Base';
-import { FormContainer } from '../Form.style';
+import Base from "./Base";
+import { FormContainer } from "../Form.style";
 
 const saveMessage = {
-  message: 'Uhu! Alerta salvo com sucesso! :)'
+  message: "Uhu! Alerta salvo com sucesso! :)",
 };
-const requiredFieldMessage = 'Campo obrigatório';
+const requiredFieldMessage = "Campo obrigatório";
 const validationSchema = Yup.object().shape({
-  alert: Yup.string()
-    .nullable()
-    .required(requiredFieldMessage),
-  alertExpire: Yup.string()
-    .nullable()
-    .required(requiredFieldMessage)
+  alert: Yup.string().nullable().required(requiredFieldMessage),
+  alertExpire: Yup.string().nullable().required(requiredFieldMessage),
 });
-const formId = 'clinicalAlert';
+const formId = "clinicalAlert";
 
-export default function ClinicalAlert({ prescription, save, afterSave, ...props }) {
+export default function ClinicalAlert({
+  prescription,
+  save,
+  afterSave,
+  ...props
+}) {
   const { t } = useTranslation();
-  const { isSaving, success, error, data } = prescription;
+  const { isSaving, data } = prescription;
 
   const initialValues = {
     formId,
     admissionNumber: data.admissionNumber,
     alert: data.alert,
-    alertExpire: data.alertExpire
+    alertExpire: data.alertExpire,
   };
 
-  useEffect(() => {
-    if (success === formId) {
-      notification.success(saveMessage);
-      if (afterSave) {
-        afterSave();
-      }
-    }
-
-    if (error) {
-      notification.error({
-        message: t('error.title'),
-        description: t('error.description')
+  const submit = (params) => {
+    save(params)
+      .then(() => {
+        notification.success(saveMessage);
+        if (afterSave) {
+          afterSave();
+        }
+      })
+      .catch((err) => {
+        console.error("err", err);
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
       });
-    }
-  }, [success, error]); // eslint-disable-line
+  };
 
   return (
     <Formik
       enableReinitialize
-      onSubmit={save}
+      onSubmit={submit}
       initialValues={initialValues}
       validationSchema={validationSchema}
     >
@@ -69,11 +71,11 @@ export default function ClinicalAlert({ prescription, save, afterSave, ...props 
           confirmLoading={isSaving}
           okButtonProps={{
             disabled: isSaving,
-            className: 'gtm-bt-save-alert'
+            className: "gtm-bt-save-alert",
           }}
           cancelButtonProps={{
             disabled: isSaving,
-            className: 'gtm-bt-cancel-alert'
+            className: "gtm-bt-cancel-alert",
           }}
         >
           <header>

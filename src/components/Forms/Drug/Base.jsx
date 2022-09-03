@@ -1,17 +1,17 @@
-import React from 'react';
-import 'styled-components/macro';
-import { useFormikContext } from 'formik';
-import { Checkbox } from 'antd';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import "styled-components/macro";
+import { useFormikContext } from "formik";
+import { Checkbox } from "antd";
+import { useTranslation } from "react-i18next";
 
-import { Col, Row } from '@components/Grid';
-import Heading from '@components/Heading';
-import { InputNumber, Select } from '@components/Inputs';
-import Tooltip from '@components/Tooltip';
-import { HelpButton } from '@components/Button';
-import Collapse from '@components/Collapse';
+import { Col, Row } from "components/Grid";
+import Heading from "components/Heading";
+import { InputNumber, Select } from "components/Inputs";
+import Tooltip from "components/Tooltip";
+import { HelpButton } from "components/Button";
+import Collapse from "components/Collapse";
 
-import { Box } from './Drug.style';
+import { Box } from "./Drug.style";
 
 export default function Base({ security }) {
   const { values, setFieldValue, errors } = useFormikContext();
@@ -35,7 +35,7 @@ export default function Base({ security }) {
     amount,
     amountUnit,
     whiteList,
-    defaultNote
+    defaultNote,
   } = values;
 
   const doseHints = <div dangerouslySetInnerHTML={{ __html: defaultNote }} />;
@@ -44,13 +44,20 @@ export default function Base({ security }) {
     <>
       <Col md={24} xs={24}>
         <Box css="align-items: flex-start;">
-          <Heading as="label" size="14px" className="fixed" css="margin-top: 12px;">
+          <Heading
+            as="label"
+            size="14px"
+            className="fixed"
+            css="margin-top: 12px;"
+          >
             Classificação:
           </Heading>
-          <div style={{ width: '535px' }}>
+          <div style={{ width: "535px" }}>
             <Col xs={8}>
               <Checkbox
-                onChange={({ target }) => setFieldValue('antimicro', !target.value)}
+                onChange={({ target }) =>
+                  setFieldValue("antimicro", !target.value)
+                }
                 value={antimicro}
                 checked={antimicro}
                 name="antimicro"
@@ -61,7 +68,7 @@ export default function Base({ security }) {
             </Col>
             <Col xs={8}>
               <Checkbox
-                onChange={({ target }) => setFieldValue('mav', !target.value)}
+                onChange={({ target }) => setFieldValue("mav", !target.value)}
                 value={mav}
                 checked={mav}
                 name="mav"
@@ -72,7 +79,9 @@ export default function Base({ security }) {
             </Col>
             <Col xs={8}>
               <Checkbox
-                onChange={({ target }) => setFieldValue('controlled', !target.value)}
+                onChange={({ target }) =>
+                  setFieldValue("controlled", !target.value)
+                }
                 value={controlled}
                 checked={controlled}
                 name="controlled"
@@ -83,7 +92,9 @@ export default function Base({ security }) {
             </Col>
             <Col xs={8}>
               <Checkbox
-                onChange={({ target }) => setFieldValue('notdefault', !target.value)}
+                onChange={({ target }) =>
+                  setFieldValue("notdefault", !target.value)
+                }
                 value={notdefault}
                 checked={notdefault}
                 name="notdefault"
@@ -94,20 +105,27 @@ export default function Base({ security }) {
             </Col>
             <Col xs={8}>
               <Checkbox
-                onChange={({ target }) => setFieldValue('elderly', !target.value)}
+                onChange={({ target }) =>
+                  setFieldValue("elderly", !target.value)
+                }
                 value={elderly}
                 checked={elderly}
                 name="elderly"
                 id="elderly"
               >
-                <Tooltip title="Medicamento Potencialmente Inapropriado para Idosos" underline>
+                <Tooltip
+                  title="Medicamento Potencialmente Inapropriado para Idosos"
+                  underline
+                >
                   MPI
                 </Tooltip>
               </Checkbox>
             </Col>
             <Col xs={8}>
               <Checkbox
-                onChange={({ target }) => setFieldValue('whiteList', !target.value)}
+                onChange={({ target }) =>
+                  setFieldValue("whiteList", !target.value)
+                }
                 value={whiteList}
                 checked={whiteList}
                 name="whiteList"
@@ -123,7 +141,7 @@ export default function Base({ security }) {
             </Col>
             <Col xs={8}>
               <Checkbox
-                onChange={({ target }) => setFieldValue('tube', !target.value)}
+                onChange={({ target }) => setFieldValue("tube", !target.value)}
                 value={tube}
                 checked={tube}
                 name="tube"
@@ -139,7 +157,7 @@ export default function Base({ security }) {
             </Col>
             <Col xs={8}>
               <Checkbox
-                onChange={({ target }) => setFieldValue('chemo', !target.value)}
+                onChange={({ target }) => setFieldValue("chemo", !target.value)}
                 value={chemo}
                 checked={chemo}
                 name="chemo"
@@ -151,7 +169,7 @@ export default function Base({ security }) {
           </div>
         </Box>
       </Col>
-      <Row style={{ marginTop: '15px' }}>
+      <Row style={{ marginTop: "15px" }}>
         <Col xs={12}>
           <Row type="flex" gutter={[16, 24]}>
             <Col xs={24}>
@@ -162,12 +180,12 @@ export default function Base({ security }) {
                 <InputNumber
                   style={{
                     width: 120,
-                    marginRight: 5
+                    marginRight: 5,
                   }}
                   min={0}
                   max={99999}
                   value={price}
-                  onChange={value => setFieldValue('price', value)}
+                  onChange={(value) => setFieldValue("price", value)}
                 />
               </Box>
             </Col>
@@ -179,38 +197,45 @@ export default function Base({ security }) {
                 <InputNumber
                   style={{
                     width: 120,
-                    marginRight: 5
+                    marginRight: 5,
                   }}
                   min={0}
                   max={99999}
                   value={maxTime}
-                  onChange={value => setFieldValue('maxTime', value)}
+                  onChange={(value) => setFieldValue("maxTime", value)}
                 />
-                {' dias'}
+                {" dias"}
               </Box>
             </Col>
             <Col xs={24}>
               <Box hasError={errors.maxDose}>
                 <Heading as="label" size="14px" className="fixed">
-                  <Tooltip title="Dose de Alerta Diária">Dose de Alerta:</Tooltip>
+                  <Tooltip title="Dose de Alerta Diária">
+                    Dose de Alerta:
+                  </Tooltip>
                 </Heading>
                 <InputNumber
                   style={{
                     width: 120,
-                    marginRight: 5
+                    marginRight: 5,
                   }}
                   min={0}
                   max={9999999}
                   value={maxDose}
-                  onChange={value => setFieldValue('maxDose', value)}
-                />{' '}
+                  onChange={(value) => setFieldValue("maxDose", value)}
+                />{" "}
                 {unit}
-                {useWeight ? '/Kg/dia' : ''}
+                {useWeight ? "/Kg/dia" : ""}
               </Box>
             </Col>
             <Col md={24} xs={24}>
               <Box hasError={errors.kidney}>
-                <Heading as="label" size="14px" margin="0 0 10px" className="fixed">
+                <Heading
+                  as="label"
+                  size="14px"
+                  margin="0 0 10px"
+                  className="fixed"
+                >
                   <Tooltip
                     title="Valor de Taxa de Filtração Glomerular (CKD-EPI) a partir do qual o medicamento deve sofrer ajuste de dose ou frequência."
                     underline
@@ -221,15 +246,15 @@ export default function Base({ security }) {
                 <InputNumber
                   style={{
                     width: 120,
-                    marginRight: 5
+                    marginRight: 5,
                   }}
                   min={0}
                   max={100}
                   value={kidney}
-                  onChange={value => setFieldValue('kidney', value)}
+                  onChange={(value) => setFieldValue("kidney", value)}
                 />
                 mL/min
-                <Tooltip title={t('layout.help')}>
+                <Tooltip title={t("layout.help")}>
                   <div>
                     <HelpButton
                       type="primary gtm-medication-btn-help-nefro"
@@ -252,15 +277,15 @@ export default function Base({ security }) {
                 <InputNumber
                   style={{
                     width: 120,
-                    marginRight: 5
+                    marginRight: 5,
                   }}
                   min={0}
                   max={99999}
                   value={liver}
-                  onChange={value => setFieldValue('liver', value)}
+                  onChange={(value) => setFieldValue("liver", value)}
                 />
                 U/L
-                <Tooltip title={t('layout.help')}>
+                <Tooltip title={t("layout.help")}>
                   <div>
                     <HelpButton
                       type="primary gtm-medication-btn-help-hepa"
@@ -283,12 +308,12 @@ export default function Base({ security }) {
                 <InputNumber
                   style={{
                     width: 120,
-                    marginRight: 5
+                    marginRight: 5,
                   }}
                   min={0}
                   max={999999}
                   value={platelets}
-                  onChange={value => setFieldValue('platelets', value)}
+                  onChange={(value) => setFieldValue("platelets", value)}
                 />
                 plaquetas/µL
               </Box>
@@ -306,12 +331,12 @@ export default function Base({ security }) {
                 <InputNumber
                   style={{
                     width: 120,
-                    marginRight: '10px'
+                    marginRight: "10px",
                   }}
                   min={0}
                   max={99999}
                   value={amount}
-                  onChange={value => setFieldValue('amount', value)}
+                  onChange={(value) => setFieldValue("amount", value)}
                 />
               </Box>
             </Col>
@@ -322,11 +347,11 @@ export default function Base({ security }) {
                 </Heading>
                 <Select
                   placeholder="Selecione a unidade da concentração"
-                  onChange={value => setFieldValue('amountUnit', value)}
+                  onChange={(value) => setFieldValue("amountUnit", value)}
                   value={amountUnit}
                   identify="amountUnit"
                   allowClear
-                  style={{ minWidth: '300px' }}
+                  style={{ minWidth: "300px" }}
                 >
                   <Select.Option value="" key=""></Select.Option>
                   <Select.Option value="mEq" key="mEq">
@@ -347,7 +372,7 @@ export default function Base({ security }) {
                   <Select.Option value="UI" key="UI">
                     UI
                   </Select.Option>
-                </Select>{' '}
+                </Select>{" "}
                 &nbsp; /mL
               </Box>
             </Col>
@@ -355,7 +380,7 @@ export default function Base({ security }) {
         </Col>
         <Col xs={12}>
           {security.isSupport() && defaultNote && (
-            <Collapse defaultActiveKey={['1']}>
+            <Collapse defaultActiveKey={["1"]}>
               <Collapse.Panel header="Curadoria de doses" key="1">
                 {doseHints}
               </Collapse.Panel>

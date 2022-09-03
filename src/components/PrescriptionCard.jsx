@@ -1,9 +1,9 @@
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
 import {
   createIndicatorTagClasses,
-  createIndicatorCardClasses
-} from '@components/Screening/ClinicalNotes/index.style';
+  createIndicatorCardClasses,
+} from "components/Screening/ClinicalNotes/index.style";
 
 export default styled.div`
   position: relative;
@@ -23,6 +23,7 @@ export default styled.div`
     color: #2e3c5a;
     margin-top: 5px;
     margin-bottom: 10px;
+    line-heigth: 1;
   }
 
   .content {
@@ -91,7 +92,7 @@ export default styled.div`
   .footer {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    margin-top: 10px;
     min-height: 31px;
 
     .action {
@@ -114,9 +115,9 @@ export default styled.div`
         font-weight: 400;
       }
 
-      ${props => createIndicatorTagClasses(props.t)}
+      ${(props) => createIndicatorTagClasses(props.t)}
     }
   }
 
-  ${props => createIndicatorCardClasses(props.t)}
+  ${(props) => createIndicatorCardClasses(props.t)}
 `;

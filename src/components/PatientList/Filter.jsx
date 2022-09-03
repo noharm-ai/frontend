@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
-import isEmpty from 'lodash.isempty';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from "react";
+import isEmpty from "lodash.isempty";
+import { useTranslation } from "react-i18next";
 
-import notification from '@components/notification';
-import LoadBox from '@components/LoadBox';
-import AdvancedFilter from '@components/AdvancedFilter';
+import notification from "components/notification";
+import LoadBox from "components/LoadBox";
+import AdvancedFilter from "components/AdvancedFilter";
 
-import MainFilters from './filters/MainFilters';
-import SecondaryFilters from './filters/SecondaryFilters';
+import MainFilters from "./filters/MainFilters";
+import SecondaryFilters from "./filters/SecondaryFilters";
 
 export default function Filter({
   error,
@@ -16,12 +16,12 @@ export default function Filter({
   fetchList,
   fetchSegmentsList,
   fetchDepartmentsList,
-  resetDepartmentsList
+  resetDepartmentsList,
 }) {
   const { t } = useTranslation();
   const errorMessage = {
-    message: t('error.title'),
-    description: t('error.description')
+    message: t("error.title"),
+    description: t("error.description"),
   };
   const initialValues = {
     idSegment: !isEmpty(segments.list) ? 1 : null,
@@ -29,7 +29,7 @@ export default function Filter({
     nextAppointmentStartDate: null,
     nextAppointmentEndDate: null,
     scheduledBy: [],
-    attendedBy: []
+    attendedBy: [],
   };
 
   // load segments
@@ -50,7 +50,7 @@ export default function Filter({
     }
   }, [error]); // eslint-disable-line
 
-  const search = params => {
+  const search = (params) => {
     fetchList(params);
   };
 
@@ -72,10 +72,10 @@ export default function Filter({
       onSearch={search}
       loading={isFetching || segments.isFetching}
       skipFilterList={[
-        'idSegment',
-        'idDepartment',
-        'nextAppointmentStartDate',
-        'nextAppointmentEndDate'
+        "idSegment",
+        "idDepartment",
+        "nextAppointmentStartDate",
+        "nextAppointmentEndDate",
       ]}
     />
   );

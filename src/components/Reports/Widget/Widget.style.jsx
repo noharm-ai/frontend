@@ -1,12 +1,12 @@
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
-import { get } from '@styles/utils';
+import { get } from "styles/utils";
 
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  background: ${get('colors.commonLighter')};
-  border: 1px solid ${get('colors.fifth')};
+  background: ${get("colors.commonLighter")};
+  border: 1px solid ${get("colors.fifth")};
   border-radius: 5px;
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);
   padding: 30px;

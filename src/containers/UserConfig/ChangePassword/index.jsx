@@ -1,15 +1,15 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
-import { updatePasswordThunk } from '@store/ducks/user/thunk';
+import { updatePasswordThunk } from "store/ducks/user/thunk";
 
-import ChangePassword from '@components/UserConfig/ChangePassword';
+import ChangePassword from "components/UserConfig/ChangePassword";
 
 const mapStateToProps = ({ user }) => ({ status: user.save });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      updatePassword: updatePasswordThunk
+      updatePassword: updatePasswordThunk,
     },
     dispatch
   );

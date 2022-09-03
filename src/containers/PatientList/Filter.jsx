@@ -1,14 +1,14 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
-import { patientCentralFetchListThunk } from '@store/ducks/patientCentral/thunk';
+import { patientCentralFetchListThunk } from "store/ducks/patientCentral/thunk";
 import {
   fetchSegmentsListThunk,
   fetchSegmentByIdThunk,
-  resetSingleSegmentThunk
-} from '@store/ducks/segments/thunk';
+  resetSingleSegmentThunk,
+} from "store/ducks/segments/thunk";
 
-import Filter from '@components/PatientList/Filter';
+import Filter from "components/PatientList/Filter";
 
 const mapStateToProps = ({ patientCentral, segments }) => ({
   error: patientCentral.error,
@@ -17,16 +17,16 @@ const mapStateToProps = ({ patientCentral, segments }) => ({
     error: segments.error,
     list: segments.list,
     isFetching: segments.isFetching,
-    single: segments.single
-  }
+    single: segments.single,
+  },
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchList: patientCentralFetchListThunk,
       fetchDepartmentsList: fetchSegmentByIdThunk,
       resetDepartmentsList: resetSingleSegmentThunk,
-      fetchSegmentsList: fetchSegmentsListThunk
+      fetchSegmentsList: fetchSegmentsListThunk,
     },
     dispatch
   );

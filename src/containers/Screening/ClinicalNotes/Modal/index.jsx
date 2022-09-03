@@ -1,17 +1,17 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
-import { fetchClinicalNotesListThunk } from '@store/ducks/clinicalNotes/thunk';
-import ClinicalNotesModal from '@components/Screening/ClinicalNotes/Modal';
+import { fetchClinicalNotesListThunk } from "store/ducks/clinicalNotes/thunk";
+import ClinicalNotesModal from "components/Screening/ClinicalNotes/Modal";
 
 const mapStateToProps = ({ prescriptions, clinicalNotes }) => ({
   admissionNumber: prescriptions.single.data.admissionNumber,
-  clinicalNotesList: clinicalNotes.list
+  clinicalNotesList: clinicalNotes.list,
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchClinicalNotes: fetchClinicalNotesListThunk
+      fetchClinicalNotes: fetchClinicalNotesListThunk,
     },
     dispatch
   );

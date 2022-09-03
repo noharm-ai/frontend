@@ -1,23 +1,33 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from "react";
+import { PlusOutlined } from "@ant-design/icons";
 
-import Table from '@components/Table';
-import { Row } from 'antd';
-import Empty from '@components/Empty';
-import Button from '@components/Button';
-import Icon from '@components/Icon';
-import BackTop from '@components/BackTop';
-import notification from '@components/notification';
-import userColumns from './User/columns';
-import { useTranslation } from 'react-i18next';
-import LoadBox from '@components/LoadBox';
-import { toDataSource } from '@utils';
-import FormUserModal from '@containers/Forms/User';
+import Table from "components/Table";
+import { Row } from "antd";
+import Empty from "components/Empty";
+import Button from "components/Button";
+import BackTop from "components/BackTop";
+import notification from "components/notification";
+import userColumns from "./User/columns";
+import { useTranslation } from "react-i18next";
+import LoadBox from "components/LoadBox";
+import { toDataSource } from "utils";
+import FormUserModal from "containers/Forms/User";
 
 const emptyText = (
-  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Nenhum dado encontrado." />
+  <Empty
+    image={Empty.PRESENTED_IMAGE_SIMPLE}
+    description="Nenhum dado encontrado."
+  />
 );
 
-function UserAdmin({ error, list, isFetching, fetchUsersList, single, selectUser }) {
+function UserAdmin({
+  error,
+  list,
+  isFetching,
+  fetchUsersList,
+  single,
+  selectUser,
+}) {
   const [userModalVisible, setUserModalVisibility] = useState(false);
   const { t } = useTranslation();
 
@@ -28,13 +38,13 @@ function UserAdmin({ error, list, isFetching, fetchUsersList, single, selectUser
   useEffect(() => {
     if (error) {
       notification.error({
-        message: t('userAdminForm.errorMessage'),
-        description: t('userAdminForm.errorDescription')
+        message: t("userAdminForm.errorMessage"),
+        description: t("userAdminForm.errorDescription"),
       });
     }
   }, [error, t]);
 
-  const onShowUserModal = data => {
+  const onShowUserModal = (data) => {
     selectUser(data);
     setUserModalVisibility(true);
   };
@@ -42,7 +52,7 @@ function UserAdmin({ error, list, isFetching, fetchUsersList, single, selectUser
   const addUserModal = () => {
     selectUser({
       new: true,
-      active: true
+      active: true,
     });
     setUserModalVisibility(true);
   };
@@ -53,7 +63,7 @@ function UserAdmin({ error, list, isFetching, fetchUsersList, single, selectUser
 
   const dsUsers = toDataSource(list, null, {
     showModal: onShowUserModal,
-    idUser: single
+    idUser: single,
   });
 
   if (isFetching) {
@@ -62,9 +72,13 @@ function UserAdmin({ error, list, isFetching, fetchUsersList, single, selectUser
 
   return (
     <>
-      <Row type="flex" justify="end" style={{ marginBottom: '20px' }}>
-        <Button type="primary gtm-bt-add-user" onClick={addUserModal}>
-          <Icon type="plus" /> {t('userAdminForm.addIcon')}
+      <Row type="flex" justify="end" style={{ marginBottom: "20px" }}>
+        <Button
+          type="primary gtm-bt-add-user"
+          onClick={addUserModal}
+          icon={<PlusOutlined />}
+        >
+          {t("userAdminForm.addIcon")}
         </Button>
       </Row>
       <Table
@@ -79,9 +93,9 @@ function UserAdmin({ error, list, isFetching, fetchUsersList, single, selectUser
       <FormUserModal
         visible={userModalVisible}
         onCancel={onCancelUserModal}
-        okText={t('userAdminForm.btnSave')}
+        okText={t("userAdminForm.btnSave")}
         okType="primary gtm-bt-save-user"
-        cancelText={t('userAdminForm.btnCancel')}
+        cancelText={t("userAdminForm.btnCancel")}
         afterSave={onCancelUserModal}
       />
     </>

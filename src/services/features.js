@@ -1,9 +1,9 @@
-import isEmpty from 'lodash.isempty';
+import isEmpty from "lodash.isempty";
 
-import Feature from '@models/Feature';
+import Feature from "models/Feature";
 
-const FeaturesService = features => {
-  const hasFeature = f => {
+const FeaturesService = (features) => {
+  const hasFeature = (f) => {
     if (isEmpty(features)) return false;
 
     return features.indexOf(f) !== -1;
@@ -20,7 +20,7 @@ const FeaturesService = features => {
   return {
     hasFeature,
     hasMicromedex,
-    hasPrimaryCare
+    hasPrimaryCare,
   };
 };
 

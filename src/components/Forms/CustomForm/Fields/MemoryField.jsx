@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import { Select } from '@components/Inputs';
-import { store } from '@store/index';
-import api from '@services/api';
+import { Select } from "components/Inputs";
+import { store } from "store/index";
+import api from "services/api";
 
 export default function MemoryField({ question, values, setFieldValue }) {
   const [options, setOptions] = useState([]);
@@ -18,7 +18,7 @@ export default function MemoryField({ question, values, setFieldValue }) {
 
       setLoading(false);
 
-      if (data.status === 'success' && data.data && data.data.length) {
+      if (data.status === "success" && data.data && data.data.length) {
         setOptions(data.data[0].value.sort());
       }
     };
@@ -28,16 +28,16 @@ export default function MemoryField({ question, values, setFieldValue }) {
 
   return (
     <Select
-      placeholder={loading ? 'Carregando...' : 'Selecione...'}
-      onChange={value => setFieldValue(question.id, value)}
+      placeholder={loading ? "Carregando..." : "Selecione..."}
+      onChange={(value) => setFieldValue(question.id, value)}
       value={values[question.id] ? values[question.id] : []}
       allowClear
-      style={{ minWidth: '300px' }}
-      mode={question.type === 'memory-multiple' ? 'multiple' : 'default'}
+      style={{ minWidth: "300px" }}
+      mode={question.type === "memory-multiple" ? "multiple" : "default"}
       loading={loading}
       disabled={loading}
     >
-      {options.map(option => (
+      {options.map((option) => (
         <Select.Option value={option} key={option}>
           {option}
         </Select.Option>

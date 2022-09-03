@@ -1,27 +1,30 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
-import security from '@services/security';
+import security from "services/security";
 
-import { generateDrugOutlierThunk, updateDrugDataThunk } from '@store/ducks/outliers/thunk';
+import {
+  generateDrugOutlierThunk,
+  updateDrugDataThunk,
+} from "store/ducks/outliers/thunk";
 
-import { saveUnitCoeffiecientThunk } from '@store/ducks/drugs/thunk';
+import { saveUnitCoeffiecientThunk } from "store/ducks/drugs/thunk";
 
-import ScoreWizard from '@components/References/ScoreWizard';
+import ScoreWizard from "components/References/ScoreWizard";
 
 const mapStateToProps = ({ outliers, drugs, user }) => ({
   selecteds: outliers.firstFilter,
   drugData: outliers.drugData,
   drugUnits: drugs.units,
   generateStatus: outliers.generateDrugOutlier,
-  security: security(user.account.roles)
+  security: security(user.account.roles),
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       generateOutlier: generateDrugOutlierThunk,
       updateDrugData: updateDrugDataThunk,
-      saveUnitCoefficient: saveUnitCoeffiecientThunk
+      saveUnitCoefficient: saveUnitCoeffiecientThunk,
     },
     dispatch
   );

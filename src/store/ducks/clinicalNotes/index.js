@@ -1,19 +1,22 @@
-import { createActions, createReducer } from 'reduxsauce';
+import { createActions, createReducer } from "reduxsauce";
 
-import { transformClinicalNotes, flatClinicalNotes } from '@utils/transformers/clinicalNotes';
+import {
+  transformClinicalNotes,
+  flatClinicalNotes,
+} from "utils/transformers/clinicalNotes";
 
 export const { Types, Creators } = createActions({
-  clinicalNotesFetchListStart: [''],
-  clinicalNotesFetchListError: ['error'],
-  clinicalNotesFetchListSuccess: ['list', 'positionList'],
+  clinicalNotesFetchListStart: [""],
+  clinicalNotesFetchListError: ["error"],
+  clinicalNotesFetchListSuccess: ["list", "positionList"],
 
-  clinicalNotesSelect: ['clinicalNote'],
-  clinicalNotesUpdate: ['clinicalNote'],
+  clinicalNotesSelect: ["clinicalNote"],
+  clinicalNotesUpdate: ["clinicalNote"],
 
-  clinicalNotesSaveStart: [''],
-  clinicalNotesSaveSuccess: [''],
-  clinicalNotesSaveReset: [''],
-  clinicalNotesSaveError: ['error']
+  clinicalNotesSaveStart: [""],
+  clinicalNotesSaveSuccess: [""],
+  clinicalNotesSaveReset: [""],
+  clinicalNotesSaveError: ["error"],
 });
 
 const INITIAL_STATE = {
@@ -25,19 +28,19 @@ const INITIAL_STATE = {
   save: {
     isSaving: false,
     success: false,
-    error: null
-  }
+    error: null,
+  },
 };
 
 const fetchListStart = (state = INITIAL_STATE) => ({
   ...state,
-  isFetching: true
+  isFetching: true,
 });
 
 const fetchListError = (state = INITIAL_STATE, { error }) => ({
   ...state,
   error,
-  isFetching: false
+  isFetching: false,
 });
 
 const fetchListSuccess = (state = INITIAL_STATE, { list, positionList }) => ({
@@ -45,18 +48,18 @@ const fetchListSuccess = (state = INITIAL_STATE, { list, positionList }) => ({
   list,
   positionList,
   error: null,
-  isFetching: false
+  isFetching: false,
 });
 
 const select = (state = INITIAL_STATE, { clinicalNote }) => ({
   ...state,
-  single: clinicalNote
+  single: clinicalNote,
 });
 
 const update = (state = INITIAL_STATE, { clinicalNote }) => {
   const list = flatClinicalNotes({ ...state.list });
 
-  const index = list.findIndex(item => item.id === clinicalNote.id);
+  const index = list.findIndex((item) => item.id === clinicalNote.id);
   if (index !== -1) {
     list[index] = { ...list[index], ...clinicalNote };
   }
@@ -67,8 +70,8 @@ const update = (state = INITIAL_STATE, { clinicalNote }) => {
     list: newList,
     single: {
       ...state.single,
-      ...clinicalNote
-    }
+      ...clinicalNote,
+    },
   };
 };
 
@@ -76,8 +79,8 @@ const saveStart = (state = INITIAL_STATE) => ({
   ...state,
   save: {
     ...state.save,
-    isSaving: true
-  }
+    isSaving: true,
+  },
 });
 
 const saveError = (state = INITIAL_STATE, { error }) => ({
@@ -85,15 +88,15 @@ const saveError = (state = INITIAL_STATE, { error }) => ({
   save: {
     ...state.save,
     error,
-    isSaving: false
-  }
+    isSaving: false,
+  },
 });
 
 const saveReset = (state = INITIAL_STATE) => ({
   ...state,
   save: {
-    ...INITIAL_STATE.save
-  }
+    ...INITIAL_STATE.save,
+  },
 });
 
 const saveSuccess = (state = INITIAL_STATE) => ({
@@ -102,8 +105,8 @@ const saveSuccess = (state = INITIAL_STATE) => ({
     ...state.save,
     error: null,
     success: true,
-    isSaving: false
-  }
+    isSaving: false,
+  },
 });
 
 const HANDLERS = {
@@ -117,7 +120,7 @@ const HANDLERS = {
   [Types.CLINICAL_NOTES_SAVE_START]: saveStart,
   [Types.CLINICAL_NOTES_SAVE_SUCCESS]: saveSuccess,
   [Types.CLINICAL_NOTES_SAVE_RESET]: saveReset,
-  [Types.CLINICAL_NOTES_SAVE_ERROR]: saveError
+  [Types.CLINICAL_NOTES_SAVE_ERROR]: saveError,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

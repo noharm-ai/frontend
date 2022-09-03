@@ -1,18 +1,18 @@
-import React from 'react';
-import 'styled-components/macro';
-import { useFormikContext } from 'formik';
-import { Alert } from 'antd';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import "styled-components/macro";
+import { useFormikContext } from "formik";
+import { Alert } from "antd";
+import { useTranslation } from "react-i18next";
 
-import { Col } from '@components/Grid';
-import Heading from '@components/Heading';
-import { Input } from '@components/Inputs';
-import Switch from '@components/Switch';
-import Tooltip from '@components/Tooltip';
-import { Select } from '@components/Inputs';
-import Role from '@models/Role';
+import { Col } from "components/Grid";
+import Heading from "components/Heading";
+import { Input } from "components/Inputs";
+import Switch from "components/Switch";
+import Tooltip from "components/Tooltip";
+import { Select } from "components/Inputs";
+import Role from "models/Role";
 
-import { Box } from '../Form.style';
+import { Box } from "../Form.style";
 
 export default function Base({ security }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
@@ -24,16 +24,16 @@ export default function Base({ security }) {
       <Box hasError={errors.name}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
-            <Tooltip>{t('userAdminForm.name')}</Tooltip>
+            <Tooltip>{t("userAdminForm.name")}</Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>
           <Input
             style={{
-              marginLeft: 10
+              marginLeft: 10,
             }}
             value={name}
-            onChange={({ target }) => setFieldValue('name', target.value)}
+            onChange={({ target }) => setFieldValue("name", target.value)}
             maxLength={250}
           />
         </Col>
@@ -42,7 +42,7 @@ export default function Base({ security }) {
       <Box hasError={errors.email && touched.email}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
-            <Tooltip>{t('userAdminForm.email')}</Tooltip>
+            <Tooltip>{t("userAdminForm.email")}</Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>
@@ -51,21 +51,21 @@ export default function Base({ security }) {
             type="email"
             value={values.email}
             style={{
-              marginLeft: 10
+              marginLeft: 10,
             }}
-            onChange={({ target }) => setFieldValue('email', target.value)}
+            onChange={({ target }) => setFieldValue("email", target.value)}
             maxLength={50}
             disabled={id != null}
           />
           {errors.email && touched.email && (
             <Alert
-              message={t('userAdminForm.emailError')}
+              message={t("userAdminForm.emailError")}
               type="error"
               bannder
               closable
               style={{
                 marginTop: 10,
-                marginLeft: 10
+                marginLeft: 10,
               }}
             >
               {errors.email}
@@ -77,16 +77,16 @@ export default function Base({ security }) {
       <Box hasError={errors.external}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
-            <Tooltip>{t('userAdminForm.id')}</Tooltip>
+            <Tooltip>{t("userAdminForm.id")}</Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>
           <Input
             style={{
-              marginLeft: 10
+              marginLeft: 10,
             }}
             value={external}
-            onChange={({ target }) => setFieldValue('external', target.value)}
+            onChange={({ target }) => setFieldValue("external", target.value)}
             maxLength={250}
           />
         </Col>
@@ -95,16 +95,16 @@ export default function Base({ security }) {
       <Box hasError={errors.active}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
-            <Tooltip>{t('userAdminForm.active')}</Tooltip>
+            <Tooltip>{t("userAdminForm.active")}</Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>
           <Switch
-            onChange={active => setFieldValue('active', active)}
+            onChange={(active) => setFieldValue("active", active)}
             checked={active}
             style={{
               marginLeft: 10,
-              marginRight: 5
+              marginRight: 5,
             }}
           />
         </Col>
@@ -114,7 +114,7 @@ export default function Base({ security }) {
         <Box hasError={errors.roles}>
           <Col xs={layout.label}>
             <Heading as="label" size="14px" textAlign="right">
-              <Tooltip>{t('userAdminForm.roles')}</Tooltip>
+              <Tooltip>{t("userAdminForm.roles")}</Tooltip>
             </Heading>
           </Col>
           <Col xs={layout.input}>
@@ -122,9 +122,9 @@ export default function Base({ security }) {
               id="reason"
               mode="multiple"
               optionFilterProp="children"
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               value={roles}
-              onChange={roles => setFieldValue('roles', roles)}
+              onChange={(roles) => setFieldValue("roles", roles)}
             >
               {Role.getRoles(t).map(({ id, label }) => (
                 <Select.Option key={id} value={id}>

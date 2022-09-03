@@ -1,22 +1,12 @@
-import React from 'react';
-import { Switch } from 'react-router-dom';
-
-import App from '@containers/App';
-import FancyRoute from '@components/FancyRoute';
+import { useRoutes } from "react-router-dom";
 
 /**
  * Routes map
  */
-import routes from './routes';
+import routes from "./routes";
 
-const Routes = () => (
-  <App>
-    <Switch>
-      {routes.map(route => (
-        <FancyRoute key={route.path} {...route} />
-      ))}
-    </Switch>
-  </App>
-);
+const App = () => {
+  return useRoutes(routes);
+};
 
-export default Routes;
+export default App;

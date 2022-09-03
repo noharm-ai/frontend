@@ -1,18 +1,22 @@
-import React from 'react';
-import styled from 'styled-components/macro';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import styled from "styled-components/macro";
+import {
+  CheckOutlined,
+  SearchOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 
-import Button, { Link } from '@components/Button';
-import Icon, { InfoIcon } from '@components/Icon';
-import Tooltip from '@components/Tooltip';
-import Table from '@components/Table';
-import PopConfirm from '@components/PopConfirm';
+import { Link, BasicButton } from "components/Button";
+import { InfoIcon } from "components/Icon";
+import Tooltip from "components/Tooltip";
+import Table from "components/Table";
+import PopConfirm from "components/PopConfirm";
 
-const setDataIndex = list =>
+const setDataIndex = (list) =>
   list.map(({ key, ...column }) => ({
     ...column,
     key,
-    dataIndex: key
+    dataIndex: key,
   }));
 
 const Flag = styled.span`
@@ -71,47 +75,56 @@ const ScreeningActions = ({
   checkScreening,
   check,
   prioritizationType,
-  t
+  t,
 }) => {
-  const checkAction = () => checkScreening(idPrescription, 's');
+  const checkAction = () => checkScreening(idPrescription, "s");
 
-  const isDisabled = check.idPrescription !== idPrescription && check.isChecking;
-  const isChecking = check.idPrescription === idPrescription && check.isChecking;
-  const isChecked = status === 's';
+  const isDisabled =
+    check.idPrescription !== idPrescription && check.isChecking;
+  const isChecking =
+    check.idPrescription === idPrescription && check.isChecking;
+  const isChecked = status === "s";
 
   return (
     <ActionsBox>
       {!isChecked && (
-        <Tooltip title={t('screeningList.btnCheck')} placement="left">
+        <Tooltip title={t("screeningList.btnCheck")} placement="left">
           <PopConfirm
-            title={t('screeningList.confirm')}
+            title={t("screeningList.confirm")}
             onConfirm={checkAction}
-            okText={t('labels.yes')}
-            cancelText={t('labels.no')}
+            okText={t("labels.yes")}
+            cancelText={t("labels.no")}
           >
-            <Button type="primary gtm-bt-check" loading={isChecking} disabled={isDisabled} ghost>
-              <Icon type="check" />
-            </Button>
+            <BasicButton
+              type="primary gtm-bt-check"
+              loading={isChecking}
+              disabled={isDisabled}
+              ghost
+            >
+              <CheckOutlined />
+            </BasicButton>
           </PopConfirm>
         </Tooltip>
       )}
       {isChecked && (
-        <Tooltip title={t('screeningList.btnChecked')} placement="left">
+        <Tooltip title={t("screeningList.btnChecked")} placement="left">
           <CheckedBox>
-            <Icon type="check" />
+            <CheckOutlined />
           </CheckedBox>
         </Tooltip>
       )}
-      <Tooltip title={t('screeningList.btnOpen')} placement="left">
+      <Tooltip title={t("screeningList.btnOpen")} placement="left">
         <span>
           <Link
             type="secondary gtm-bt-detail"
             href={
-              prioritizationType === 'conciliation' ? `/conciliacao/${slug}` : `/prescricao/${slug}`
+              prioritizationType === "conciliation"
+                ? `/conciliacao/${slug}`
+                : `/prescricao/${slug}`
             }
             target="_blank"
           >
-            <Icon type="search" />
+            <SearchOutlined />
           </Link>
         </span>
       </Tooltip>
@@ -120,46 +133,46 @@ const ScreeningActions = ({
 };
 
 export const defaultAction = {
-  title: 'Ações',
-  key: 'operations',
+  title: "Ações",
+  key: "operations",
   width: 70,
-  align: 'center',
-  render: (text, prescription) => <ScreeningActions {...prescription} />
+  align: "center",
+  render: (text, prescription) => <ScreeningActions {...prescription} />,
 };
 
 export const desktopAction = {
-  ...defaultAction
+  ...defaultAction,
 };
 
-export const expandedRowRender = t => {
-  return record => {
+export const expandedRowRender = (t) => {
+  return (record) => {
     const columns = setDataIndex([
       {
-        title: t('screeningList.clExName'),
+        title: t("screeningList.clExName"),
         width: 150,
-        key: 'namePatient'
+        key: "namePatient",
       },
       {
-        title: t('screeningList.clExDate'),
+        title: t("screeningList.clExDate"),
         width: 100,
-        key: 'dateFormated',
-        align: 'center'
+        key: "dateFormated",
+        align: "center",
       },
       {
-        title: t('screeningList.clExDepartment'),
+        title: t("screeningList.clExDepartment"),
         width: 150,
-        key: 'department'
+        key: "department",
       },
       {
-        title: t('screeningList.clExAdmissionNumber'),
+        title: t("screeningList.clExAdmissionNumber"),
         width: 100,
-        key: 'admissionNumber'
+        key: "admissionNumber",
       },
       {
-        title: t('screeningList.clExPrescription'),
+        title: t("screeningList.clExPrescription"),
         width: 100,
-        key: 'idPrescription'
-      }
+        key: "idPrescription",
+      },
     ]);
 
     return (
@@ -170,36 +183,43 @@ export const expandedRowRender = t => {
   };
 };
 
-const oddClass = index => (index % 2 ? 'bg-light-gray' : '');
+const oddClass = (index) => (index % 2 ? "bg-light-gray" : "");
 
-const sortDirections = ['descend', 'ascend'];
+const sortDirections = ["descend", "ascend"];
 
-export default (sortedInfo, filteredInfo, noharmCare) => {
-  const { t } = useTranslation();
+const columns = (sortedInfo, filteredInfo, noharmCare, t) => {
   let index = 0;
 
   const patientRiskColumns = [
     {
-      title: <Tooltip title={t('screeningList.clAgeHint')}>{t('screeningList.clAge')}</Tooltip>,
+      title: (
+        <Tooltip title={t("screeningList.clAgeHint")}>
+          {t("screeningList.clAge")}
+        </Tooltip>
+      ),
       className: `gtm-th-idade ${oddClass(index++)}`,
-      key: 'age',
+      key: "age",
       width: 30,
-      align: 'center',
+      align: "center",
       sortDirections,
       sorter: (a, b) => a.birthdays - b.birthdays,
-      sortOrder: sortedInfo.columnKey === 'age' && sortedInfo.order
+      sortOrder: sortedInfo.columnKey === "age" && sortedInfo.order,
     },
     {
       title: (
-        <Tooltip title={t('screeningList.clLengthHint')}>{t('screeningList.clLength')}</Tooltip>
+        <Tooltip title={t("screeningList.clLengthHint")}>
+          {t("screeningList.clLength")}
+        </Tooltip>
       ),
       className: `gtm-th-tempo-int ${oddClass(index++)}`,
-      key: 'lengthStay',
+      key: "lengthStay",
       render: (entry, { lengthStay, dischargeFormated, dischargeReason }) => {
         if (dischargeFormated) {
           return (
             <Tooltip
-              title={`Paciente com ${dischargeReason || 'alta'} em ${dischargeFormated}`}
+              title={`Paciente com ${
+                dischargeReason || "alta"
+              } em ${dischargeFormated}`}
               placement="top"
             >
               {lengthStay} <InfoIcon />
@@ -209,193 +229,231 @@ export default (sortedInfo, filteredInfo, noharmCare) => {
         return lengthStay;
       },
       width: 30,
-      align: 'center',
+      align: "center",
       sortDirections,
       sorter: (a, b) => a.lengthStay - b.lengthStay,
-      sortOrder: sortedInfo.columnKey === 'lengthStay' && sortedInfo.order
+      sortOrder: sortedInfo.columnKey === "lengthStay" && sortedInfo.order,
     },
     {
-      title: <Tooltip title={t('screeningList.clExamHint')}>{t('screeningList.clExam')}</Tooltip>,
+      title: (
+        <Tooltip title={t("screeningList.clExamHint")}>
+          {t("screeningList.clExam")}
+        </Tooltip>
+      ),
       className: `gtm-th-exames ${oddClass(index++)}`,
-      key: 'alertExams',
+      key: "alertExams",
       width: 30,
-      align: 'center',
+      align: "center",
       sortDirections,
       sorter: (a, b) => a.alertExams - b.alertExams,
-      sortOrder: sortedInfo.columnKey === 'alertExams' && sortedInfo.order
+      sortOrder: sortedInfo.columnKey === "alertExams" && sortedInfo.order,
     },
     {
-      title: <Tooltip title={t('screeningList.clAlertHint')}>{t('screeningList.clAlert')}</Tooltip>,
+      title: (
+        <Tooltip title={t("screeningList.clAlertHint")}>
+          {t("screeningList.clAlert")}
+        </Tooltip>
+      ),
       className: `ant-table-right-border gtm-th-alerts ${oddClass(index++)}`,
-      key: 'alerts',
+      key: "alerts",
       width: 30,
-      align: 'center',
+      align: "center",
       sortDirections,
       sorter: (a, b) => a.alerts - b.alerts,
-      sortOrder: sortedInfo.columnKey === 'alerts' && sortedInfo.order
-    }
+      sortOrder: sortedInfo.columnKey === "alerts" && sortedInfo.order,
+    },
   ];
 
   if (noharmCare) {
     patientRiskColumns.push({
       title: (
-        <Tooltip title={t('screeningList.clAdverseEventsHint')}>
-          {t('screeningList.clAdverseEvents')}
+        <Tooltip title={t("screeningList.clAdverseEventsHint")}>
+          {t("screeningList.clAdverseEvents")}
         </Tooltip>
       ),
       className: `ant-table-right-border gtm-th-ea ${oddClass(index++)}`,
-      key: 'complication',
+      key: "complication",
       width: 30,
-      align: 'center',
+      align: "center",
       sortDirections,
       sorter: (a, b) => a.complication - b.complication,
-      sortOrder: sortedInfo.columnKey === 'complication' && sortedInfo.order
+      sortOrder: sortedInfo.columnKey === "complication" && sortedInfo.order,
     });
   }
 
   const prescriptionRiskColumns = [
     {
-      title: <Tooltip title={t('screeningList.clAmHint')}>{t('screeningList.clAm')}</Tooltip>,
+      title: (
+        <Tooltip title={t("screeningList.clAmHint")}>
+          {t("screeningList.clAm")}
+        </Tooltip>
+      ),
       className: `gtm-th-am ${oddClass(index++)}`,
-      key: 'am',
+      key: "am",
       width: 30,
-      align: 'center',
+      align: "center",
       sortDirections,
       sorter: (a, b) => a.am - b.am,
-      sortOrder: sortedInfo.columnKey === 'am' && sortedInfo.order
-    },
-    {
-      title: <Tooltip title={t('screeningList.clAvHint')}>{t('screeningList.clAv')}</Tooltip>,
-      className: `gtm-th-av ${oddClass(index++)}`,
-      key: 'av',
-      width: 30,
-      align: 'center',
-      sortDirections,
-      sorter: (a, b) => a.av - b.av,
-      sortOrder: sortedInfo.columnKey === 'av' && sortedInfo.order
-    },
-    {
-      title: <Tooltip title={t('screeningList.clCHint')}>{t('screeningList.clC')}</Tooltip>,
-      className: `gtm-th-c ${oddClass(index++)}`,
-      key: 'controlled',
-      width: 20,
-      align: 'center',
-      sortDirections,
-      sorter: (a, b) => a.controlled - b.controlled,
-      sortOrder: sortedInfo.columnKey === 'controlled' && sortedInfo.order
-    },
-    {
-      title: <Tooltip title={t('screeningList.clNpHint')}>{t('screeningList.clNp')}</Tooltip>,
-      className: `gtm-th-np ${oddClass(index++)}`,
-      key: 'np',
-      width: 30,
-      align: 'center',
-      sortDirections,
-      sorter: (a, b) => a.np - b.np,
-      sortOrder: sortedInfo.columnKey === 'np' && sortedInfo.order
-    },
-    {
-      title: <Tooltip title={t('screeningList.clTubeHint')}>{t('screeningList.clTube')}</Tooltip>,
-      className: `gtm-th-s ${oddClass(index++)}`,
-      key: 'tube',
-      width: 20,
-      align: 'center',
-      sortDirections,
-      sorter: (a, b) => a.tube - b.tube,
-      sortOrder: sortedInfo.columnKey === 'tube' && sortedInfo.order
-    },
-    {
-      title: <Tooltip title={t('screeningList.clDiffHint')}>{t('screeningList.clDiff')}</Tooltip>,
-      className: `gtm-th-d ${oddClass(index++)}`,
-      key: 'diff',
-      width: 20,
-      align: 'center',
-      sortDirections,
-      sorter: (a, b) => a.diff - b.diff,
-      sortOrder: sortedInfo.columnKey === 'diff' && sortedInfo.order
+      sortOrder: sortedInfo.columnKey === "am" && sortedInfo.order,
     },
     {
       title: (
-        <Tooltip title={t('screeningList.clInterventionsHint')}>
-          {t('screeningList.clInterventions')}
+        <Tooltip title={t("screeningList.clAvHint")}>
+          {t("screeningList.clAv")}
+        </Tooltip>
+      ),
+      className: `gtm-th-av ${oddClass(index++)}`,
+      key: "av",
+      width: 30,
+      align: "center",
+      sortDirections,
+      sorter: (a, b) => a.av - b.av,
+      sortOrder: sortedInfo.columnKey === "av" && sortedInfo.order,
+    },
+    {
+      title: (
+        <Tooltip title={t("screeningList.clCHint")}>
+          {t("screeningList.clC")}
+        </Tooltip>
+      ),
+      className: `gtm-th-c ${oddClass(index++)}`,
+      key: "controlled",
+      width: 20,
+      align: "center",
+      sortDirections,
+      sorter: (a, b) => a.controlled - b.controlled,
+      sortOrder: sortedInfo.columnKey === "controlled" && sortedInfo.order,
+    },
+    {
+      title: (
+        <Tooltip title={t("screeningList.clNpHint")}>
+          {t("screeningList.clNp")}
+        </Tooltip>
+      ),
+      className: `gtm-th-np ${oddClass(index++)}`,
+      key: "np",
+      width: 30,
+      align: "center",
+      sortDirections,
+      sorter: (a, b) => a.np - b.np,
+      sortOrder: sortedInfo.columnKey === "np" && sortedInfo.order,
+    },
+    {
+      title: (
+        <Tooltip title={t("screeningList.clTubeHint")}>
+          {t("screeningList.clTube")}
+        </Tooltip>
+      ),
+      className: `gtm-th-s ${oddClass(index++)}`,
+      key: "tube",
+      width: 20,
+      align: "center",
+      sortDirections,
+      sorter: (a, b) => a.tube - b.tube,
+      sortOrder: sortedInfo.columnKey === "tube" && sortedInfo.order,
+    },
+    {
+      title: (
+        <Tooltip title={t("screeningList.clDiffHint")}>
+          {t("screeningList.clDiff")}
+        </Tooltip>
+      ),
+      className: `gtm-th-d ${oddClass(index++)}`,
+      key: "diff",
+      width: 20,
+      align: "center",
+      sortDirections,
+      sorter: (a, b) => a.diff - b.diff,
+      sortOrder: sortedInfo.columnKey === "diff" && sortedInfo.order,
+    },
+    {
+      title: (
+        <Tooltip title={t("screeningList.clInterventionsHint")}>
+          {t("screeningList.clInterventions")}
         </Tooltip>
       ),
       className: `gtm-th-ip ${oddClass(index++)}`,
-      key: 'interventions',
+      key: "interventions",
       width: 20,
-      align: 'center',
+      align: "center",
       sortDirections,
       sorter: (a, b) => a.interventions - b.interventions,
-      sortOrder: sortedInfo.columnKey === 'interventions' && sortedInfo.order
+      sortOrder: sortedInfo.columnKey === "interventions" && sortedInfo.order,
     },
     {
       title: (
-        <Tooltip title={t('screeningList.clPrescriptionScoreHint')}>
-          {t('screeningList.clPrescriptionScore')}
+        <Tooltip title={t("screeningList.clPrescriptionScoreHint")}>
+          {t("screeningList.clPrescriptionScore")}
         </Tooltip>
       ),
       className: `ant-table-right-border gtm-th-t ${oddClass(index++)}`,
-      key: 'prescriptionScore',
+      key: "prescriptionScore",
       width: 20,
-      align: 'center',
+      align: "center",
       sortDirections,
       sorter: (a, b) => a.prescriptionScore - b.prescriptionScore,
-      sortOrder: sortedInfo.columnKey === 'prescriptionScore' && sortedInfo.order
+      sortOrder:
+        sortedInfo.columnKey === "prescriptionScore" && sortedInfo.order,
     },
     {
       title: (
-        <Tooltip title={t('screeningList.clGlobalScoreHint')} underline>
-          {t('screeningList.clGlobalScore')}
+        <Tooltip title={t("screeningList.clGlobalScoreHint")} underline>
+          {t("screeningList.clGlobalScore")}
         </Tooltip>
       ),
       className: `ant-table-right-border gtm-th-ge ${oddClass(index++)}`,
-      key: 'globalScore',
+      key: "globalScore",
       width: 20,
-      align: 'center',
+      align: "center",
       sortDirections,
       sorter: (a, b) => a.globalScore - b.globalScore,
-      sortOrder: sortedInfo.columnKey === 'globalScore' && sortedInfo.order
-    }
+      sortOrder: sortedInfo.columnKey === "globalScore" && sortedInfo.order,
+    },
   ];
 
   return [
     {
-      key: 'class',
+      key: "class",
       width: 20,
-      align: 'center',
-      className: 'hidden-sorter',
-      render: record => {
+      align: "center",
+      className: "hidden-sorter",
+      render: (record) => {
         if (record.processed) {
-          return <Flag className={record.class || 'green'} />;
+          return <Flag className={record.class || "green"} />;
         }
 
         return (
           <Tooltip title="Os indicadores estão sendo calculados. Aguarde ou atualize a página para visualizá-los.">
-            <Icon type="loading" spin />
+            <LoadingOutlined spin />
           </Tooltip>
         );
       },
       filteredValue: filteredInfo.searchKey || null,
       onFilter: (value, record) =>
-        record.namePatient.toLowerCase().includes(value) || `${record.admissionNumber}` === value
+        record.namePatient.toLowerCase().includes(value) ||
+        `${record.admissionNumber}` === value,
     },
     {
-      title: t('screeningList.patientRisk'),
-      className: 'ant-table-right-border',
-      children: setDataIndex(patientRiskColumns)
+      title: t("screeningList.patientRisk"),
+      className: "ant-table-right-border",
+      children: setDataIndex(patientRiskColumns),
     },
     {
-      title: t('screeningList.prescriptionRisk'),
-      children: setDataIndex(prescriptionRiskColumns)
+      title: t("screeningList.prescriptionRisk"),
+      children: setDataIndex(prescriptionRiskColumns),
     },
     {
-      title: t('screeningList.actions'),
-      key: 'operations',
+      title: t("screeningList.actions"),
+      key: "operations",
       width: 70,
-      align: 'center',
+      align: "center",
       filteredValue: filteredInfo.status || null,
       onFilter: (value, record) => record.status === value,
-      render: (text, prescription) => <ScreeningActions t={t} {...prescription} />
-    }
+      render: (text, prescription) => (
+        <ScreeningActions t={t} {...prescription} />
+      ),
+    },
   ];
 };
+
+export default columns;

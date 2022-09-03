@@ -1,22 +1,20 @@
-import React, { useEffect } from 'react';
-import isEmpty from 'lodash.isempty';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import isEmpty from "lodash.isempty";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
 
-import { Row } from '@components/Grid';
-import Button from '@components/Button';
-import notification from '@components/notification';
-import Heading from '@components/Heading';
-import DefaultModal from '@components/Modal';
+import { Row } from "components/Grid";
+import Button from "components/Button";
+import notification from "components/notification";
+import Heading from "components/Heading";
+import DefaultModal from "components/Modal";
 
-import Base from './Base';
-import BaseNotes from './BaseNotes';
+import Base from "./Base";
+import BaseNotes from "./BaseNotes";
 
 export default function PrescriptionDrug({
   item,
-  success,
-  error,
   isSaving,
   save,
   saveNotes,
@@ -26,43 +24,18 @@ export default function PrescriptionDrug({
   fetchDrugSummary,
   drugs,
   drugSummary,
-  admissionNumber
+  admissionNumber,
 }) {
   const { t } = useTranslation();
 
   const validationSchema = Yup.object().shape({
-    idDrug: Yup.number()
-      .nullable()
-      .required(t('validation.requiredField')),
-    dose: Yup.number()
-      .nullable()
-      .required(t('validation.requiredField')),
+    idDrug: Yup.number().nullable().required(t("validation.requiredField")),
+    dose: Yup.number().nullable().required(t("validation.requiredField")),
     measureUnit: Yup.string()
       .nullable()
-      .required(t('validation.requiredField')),
-    frequency: Yup.string()
-      .nullable()
-      .required(t('validation.requiredField'))
+      .required(t("validation.requiredField")),
+    frequency: Yup.string().nullable().required(t("validation.requiredField")),
   });
-
-  useEffect(() => {
-    if (success) {
-      select({});
-
-      notification.success({
-        message: t('success.generic')
-      });
-    }
-  }, [success, select, t]);
-
-  useEffect(() => {
-    if (!isEmpty(error)) {
-      notification.error({
-        message: t('error.title'),
-        description: t('error.description')
-      });
-    }
-  }, [error, t]);
 
   if (isEmpty(item)) {
     return null;
@@ -72,17 +45,45 @@ export default function PrescriptionDrug({
     select({});
   };
 
-  const onSave = params => {
+  const onSave = (params) => {
     if (item.updateDrug) {
-      save(item.idPrescriptionDrug, item.source, params);
+      save(item.idPrescriptionDrug, item.source, params)
+        .then(() => {
+          select({});
+
+          notification.success({
+            message: t("success.generic"),
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          notification.error({
+            message: t("error.title"),
+            description: t("error.description"),
+          });
+        });
     }
 
     if (item.updateNotes) {
-      saveNotes(item.idPrescriptionDrug, item.source, params);
+      saveNotes(item.idPrescriptionDrug, item.source, params)
+        .then(() => {
+          select({});
+
+          notification.success({
+            message: t("success.generic"),
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          notification.error({
+            message: t("error.title"),
+            description: t("error.description"),
+          });
+        });
     }
   };
 
-  const onSuspend = suspension => {
+  const onSuspend = (suspension) => {
     suspend(item.idPrescriptionDrug, item.source, suspension);
   };
 
@@ -91,8 +92,12 @@ export default function PrescriptionDrug({
 
     return (
       <>
-        <Button onClick={() => onCancel()} disabled={isSaving} className="gtm-bt-cancel-drugEdit">
-          {t('interventionForm.btnCancel')}
+        <Button
+          onClick={() => onCancel()}
+          disabled={isSaving}
+          className="gtm-bt-cancel-drugEdit"
+        >
+          {t("interventionForm.btnCancel")}
         </Button>
 
         {hasSuspendAction && !item.suspended && (
@@ -103,7 +108,7 @@ export default function PrescriptionDrug({
             type="danger"
             ghost
           >
-            {t('prescriptionDrugForm.btnSuspend')}
+            {t("prescriptionDrugForm.btnSuspend")}
           </Button>
         )}
 
@@ -113,7 +118,7 @@ export default function PrescriptionDrug({
             disabled={isSaving}
             className="gtm-bt-removeSuspension-drugEdit"
           >
-            {t('prescriptionDrugForm.btnRemoveSuspension')}
+            {t("prescriptionDrugForm.btnRemoveSuspension")}
           </Button>
         )}
 
@@ -122,7 +127,7 @@ export default function PrescriptionDrug({
           onClick={() => handleSubmit()}
           loading={isSaving}
         >
-          {t('interventionForm.btnSave')}
+          {t("interventionForm.btnSave")}
         </Button>
       </>
     );
@@ -144,7 +149,7 @@ export default function PrescriptionDrug({
     notes: item.notes || item.prevNotes,
     admissionNumber: admissionNumber || item.admissionNumber,
     idHospital: item.idHospital,
-    recommendation: item.recommendation
+    recommendation: item.recommendation,
   };
 
   return (
@@ -168,10 +173,10 @@ export default function PrescriptionDrug({
               {item.updateDrug
                 ? t(
                     `prescriptionDrugForm.title${
-                      initialValues.idPrescriptionDrug ? 'Edit' : 'Create'
+                      initialValues.idPrescriptionDrug ? "Edit" : "Create"
                     }`
                   )
-                : t('prescriptionDrugForm.titleNotes')}
+                : t("prescriptionDrugForm.titleNotes")}
             </Heading>
           </header>
           <form onSubmit={handleSubmit}>

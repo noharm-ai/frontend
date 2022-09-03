@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { CheckOutlined, PlusOutlined, FormOutlined } from "@ant-design/icons";
 
-import { Row, Col } from '@components/Grid';
-import { Select } from '@components/Inputs';
-import Heading from '@components/Heading';
-import notification from '@components/notification';
-import Button from '@components/Button';
-import Icon from '@components/Icon';
-import Tooltip from '@components/Tooltip';
+import { Row, Col } from "components/Grid";
+import { Select } from "components/Inputs";
+import Heading from "components/Heading";
+import notification from "components/notification";
+import Button from "components/Button";
+import Tooltip from "components/Tooltip";
 
-import FormSubstance from '@containers/Forms/Substance';
+import FormSubstance from "containers/Forms/Substance";
 
 const saveMessage = {
-  message: 'Uhu! Substância alterada com sucesso! :)'
+  message: "Uhu! Substância alterada com sucesso! :)",
 };
 
-const formId = 'editSubstance';
+const formId = "editSubstance";
 
 export default function EditSubstance({
   drugData,
@@ -27,7 +27,7 @@ export default function EditSubstance({
   updateDrugData,
   security,
   selectSubstance,
-  fetchRelations
+  fetchRelations,
 }) {
   const { t } = useTranslation();
   const [isFormVisible, setFormVisibility] = useState(false);
@@ -39,7 +39,10 @@ export default function EditSubstance({
   }, [fetchSubstances]);
 
   useEffect(() => {
-    setCurrentSubstance({ sctidA: drugData.sctidA, sctNameA: drugData.sctNameA });
+    setCurrentSubstance({
+      sctidA: drugData.sctidA,
+      sctNameA: drugData.sctNameA,
+    });
   }, [drugData.sctNameA, drugData.sctidA]);
 
   useEffect(() => {
@@ -49,8 +52,8 @@ export default function EditSubstance({
 
     if (error) {
       notification.error({
-        message: t('error.title'),
-        description: t('error.description')
+        message: t("error.title"),
+        description: t("error.description"),
       });
     }
   }, [success, error, fetchRelations, t]);
@@ -63,7 +66,7 @@ export default function EditSubstance({
     setFormVisibility(false);
   };
 
-  const changeSubstance = value => {
+  const changeSubstance = (value) => {
     setCurrentSubstance({ sctidA: value.key, sctNameA: value.label });
 
     fetchRelations(value.key);
@@ -74,26 +77,26 @@ export default function EditSubstance({
 
     updateDrugData({
       sctidA,
-      sctNameA
+      sctNameA,
     });
 
     saveDrug({
       id: idDrug,
       sctid: sctidA,
-      formId
+      formId,
     });
   };
 
   const edit = () => {
     selectSubstance({
       sctid: drugData.sctidA,
-      name: drugData.sctNameA
+      name: drugData.sctNameA,
     });
     setFormVisibility(true);
   };
   const add = () => {
     selectSubstance({
-      isAdd: true
+      isAdd: true,
     });
     setFormVisibility(true);
   };
@@ -110,11 +113,11 @@ export default function EditSubstance({
           <Select
             id="sctidA"
             labelInValue
-            style={{ width: '70%' }}
+            style={{ width: "70%" }}
             showSearch
             optionFilterProp="children"
             placeholder="Selecione a substância..."
-            value={{ key: currentSubstance.sctidA || '' }}
+            value={{ key: currentSubstance.sctidA || "" }}
             loading={substance.isFetching}
             disabled={isSaving}
             onChange={changeSubstance}
@@ -132,13 +135,12 @@ export default function EditSubstance({
             <Tooltip title="Confirmar e Salvar a alteração">
               <Button
                 type="primary gtm-bt-change-substancia"
-                style={{ marginLeft: '5px' }}
+                style={{ marginLeft: "5px" }}
                 onClick={saveSubstance}
                 disabled={isSaving}
                 loading={isSaving}
-              >
-                <Icon type="check" />
-              </Button>
+                icon={<CheckOutlined />}
+              ></Button>
             </Tooltip>
           )}
           {security.isAdmin() && drugData.sctidA === currentSubstance.sctidA && (
@@ -146,20 +148,18 @@ export default function EditSubstance({
               <Tooltip title="Editar substância">
                 <Button
                   type="primary gtm-bt-edit-substancia"
-                  style={{ marginLeft: '5px' }}
+                  style={{ marginLeft: "5px" }}
                   onClick={edit}
-                >
-                  <Icon type="form" />
-                </Button>
+                  icon={<FormOutlined />}
+                ></Button>
               </Tooltip>
               <Tooltip title="Adicionar substância">
                 <Button
                   type="primary gtm-bt-add-substancia"
-                  style={{ marginLeft: '5px' }}
+                  style={{ marginLeft: "5px" }}
                   onClick={add}
-                >
-                  <Icon type="plus" />
-                </Button>
+                  icon={<PlusOutlined />}
+                ></Button>
               </Tooltip>
             </>
           )}

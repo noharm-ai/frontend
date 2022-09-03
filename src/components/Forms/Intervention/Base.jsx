@@ -1,20 +1,20 @@
-import 'styled-components/macro';
-import React from 'react';
-import isEmpty from 'lodash.isempty';
-import { useFormikContext } from 'formik';
-import { useTranslation } from 'react-i18next';
+import "styled-components/macro";
+import React from "react";
+import isEmpty from "lodash.isempty";
+import { useFormikContext } from "formik";
+import { useTranslation } from "react-i18next";
 
-import { Col } from '@components/Grid';
-import { Select } from '@components/Inputs';
-import Heading from '@components/Heading';
-import Tooltip from '@components/Tooltip';
-import Switch from '@components/Switch';
+import { Col } from "components/Grid";
+import { Select } from "components/Inputs";
+import Heading from "components/Heading";
+import Tooltip from "components/Tooltip";
+import Switch from "components/Switch";
 
-import Interaction from './Fields/Interaction';
-import Observation from './Fields/Observation';
-import Transcription from './Fields/Transcription';
+import Interaction from "./Fields/Interaction";
+import Observation from "./Fields/Observation";
+import Transcription from "./Fields/Transcription";
 
-import { Box, FieldError } from '../Form.style';
+import { Box, FieldError } from "../Form.style";
 
 export default function Base({
   drugData,
@@ -27,24 +27,36 @@ export default function Base({
   memoryFetchReasonText,
   drugSummary,
   fetchDrugSummary,
-  security
+  security,
 }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const { t } = useTranslation();
   const { item: itemToSave } = intervention;
-  const { error, cost, idInterventionReason, interactions, observation, transcription } = values;
+  const {
+    error,
+    cost,
+    idInterventionReason,
+    interactions,
+    observation,
+    transcription,
+  } = values;
   const layout = { label: 8, input: 16 };
   const hasTranscription =
     security.hasTranscription() &&
-    drugData.intervention.id + '' !== '0' &&
-    drugData.intervention.idPrescriptionDrug + '' !== '0';
+    drugData.intervention.id + "" !== "0" &&
+    drugData.intervention.idPrescriptionDrug + "" !== "0";
 
   const hasRelationships = (reasonList, selectedReasons = []) => {
     if (!selectedReasons) return false;
 
-    const reasonsWithRelationshipsRegEx = /duplicidade|interaç|incompatib|apresentaç|forma|subst/g;
+    const reasonsWithRelationshipsRegEx =
+      /duplicidade|interaç|incompatib|apresentaç|forma|subst/g;
 
-    return hasReason(reasonList, selectedReasons, reasonsWithRelationshipsRegEx);
+    return hasReason(
+      reasonList,
+      selectedReasons,
+      reasonsWithRelationshipsRegEx
+    );
   };
 
   const hasReason = (reasonList, selectedReasons = [], regex) => {
@@ -52,8 +64,10 @@ export default function Base({
 
     let hasRelation = false;
 
-    selectedReasons.forEach(itemId => {
-      const reasonIndex = reasonList.findIndex(reason => reason.id === itemId);
+    selectedReasons.forEach((itemId) => {
+      const reasonIndex = reasonList.findIndex(
+        (reason) => reason.id === itemId
+      );
 
       if (reasonIndex !== -1) {
         const reason = reasonList[reasonIndex].description.toLowerCase();
@@ -66,25 +80,25 @@ export default function Base({
     return hasRelation;
   };
 
-  const handleReasonChange = idInterventionReason => {
+  const handleReasonChange = (idInterventionReason) => {
     const joinReasons = (ids, reasons) => {
-      if (isEmpty(ids)) return '';
+      if (isEmpty(ids)) return "";
 
-      const selectedReasons = ids.map(id => {
-        const index = reasons.findIndex(item => item.id === id);
+      const selectedReasons = ids.map((id) => {
+        const index = reasons.findIndex((item) => item.id === id);
         return reasons[index].description;
       });
 
-      return selectedReasons.join(', ');
+      return selectedReasons.join(", ");
     };
     const reasonDescription = joinReasons(idInterventionReason, reasons.list);
     if (!hasRelationships(reasons.list, idInterventionReason)) {
-      setFieldValue('idInterventionReason', idInterventionReason);
-      setFieldValue('interactions', null);
-      setFieldValue('reasonDescription', reasonDescription);
+      setFieldValue("idInterventionReason", idInterventionReason);
+      setFieldValue("interactions", null);
+      setFieldValue("reasonDescription", reasonDescription);
     } else {
-      setFieldValue('idInterventionReason', idInterventionReason);
-      setFieldValue('reasonDescription', reasonDescription);
+      setFieldValue("idInterventionReason", idInterventionReason);
+      setFieldValue("reasonDescription", reasonDescription);
     }
   };
 
@@ -93,36 +107,54 @@ export default function Base({
       <Box hasError={errors.error && touched.error}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
-            <Tooltip title={t('interventionForm.labelPrescriptionErrorHint')} underline>
-              {t('interventionForm.labelPrescriptionError')}:
+            <Tooltip
+              title={t("interventionForm.labelPrescriptionErrorHint")}
+              underline
+            >
+              {t("interventionForm.labelPrescriptionError")}:
             </Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>
-          <Switch onChange={value => setFieldValue('error', value)} checked={error} />
-          {errors.error && touched.error && <FieldError>{errors.error}</FieldError>}
+          <Switch
+            onChange={(value) => setFieldValue("error", value)}
+            checked={error}
+          />
+          {errors.error && touched.error && (
+            <FieldError>{errors.error}</FieldError>
+          )}
         </Col>
       </Box>
 
       <Box hasError={errors.cost && touched.cost}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
-            <Tooltip title={t('interventionForm.labelCostReductionHint')} underline>
-              {t('interventionForm.labelCostReduction')}:
+            <Tooltip
+              title={t("interventionForm.labelCostReductionHint")}
+              underline
+            >
+              {t("interventionForm.labelCostReduction")}:
             </Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>
-          <Switch onChange={value => setFieldValue('cost', value)} checked={cost} />
-          {errors.cost && touched.cost && <FieldError>{errors.cost}</FieldError>}
+          <Switch
+            onChange={(value) => setFieldValue("cost", value)}
+            checked={cost}
+          />
+          {errors.cost && touched.cost && (
+            <FieldError>{errors.cost}</FieldError>
+          )}
         </Col>
       </Box>
 
-      <Box hasError={errors.idInterventionReason && touched.idInterventionReason}>
+      <Box
+        hasError={errors.idInterventionReason && touched.idInterventionReason}
+      >
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
-            <Tooltip title={t('interventionForm.labelReasonsHint')} underline>
-              {t('interventionForm.labelReasons')}:
+            <Tooltip title={t("interventionForm.labelReasonsHint")} underline>
+              {t("interventionForm.labelReasons")}:
             </Tooltip>
           </Heading>
         </Col>
@@ -131,8 +163,8 @@ export default function Base({
             id="reason"
             mode="multiple"
             optionFilterProp="children"
-            style={{ width: '100%' }}
-            placeholder={t('interventionForm.labelReasonsPlaceholder')}
+            style={{ width: "100%" }}
+            placeholder={t("interventionForm.labelReasonsPlaceholder")}
             loading={reasons.isFetching}
             value={idInterventionReason}
             onChange={handleReasonChange}
@@ -152,8 +184,11 @@ export default function Base({
         <Box hasError={errors.interactions && touched.interactions}>
           <Col xs={layout.label}>
             <Heading as="label" size="14px">
-              <Tooltip title={t('interventionForm.labelRelationsHint')} underline>
-                {t('interventionForm.labelRelations')}:
+              <Tooltip
+                title={t("interventionForm.labelRelationsHint")}
+                underline
+              >
+                {t("interventionForm.labelRelations")}:
               </Tooltip>
             </Heading>
           </Col>
@@ -163,7 +198,9 @@ export default function Base({
               interactionsList={itemToSave.intervention.interactionsList}
               setFieldValue={setFieldValue}
               searchDrugs={searchDrugs}
-              idSegment={itemToSave.intervention.idSegment || itemToSave.idSegment}
+              idSegment={
+                itemToSave.intervention.idSegment || itemToSave.idSegment
+              }
               drugs={drugs}
               uniqueDrugList={itemToSave.uniqueDrugList}
             />
@@ -178,14 +215,17 @@ export default function Base({
           <Box hasError={errors.transcription && touched.transcription}>
             <Col xs={layout.label}>
               <Heading as="label" size="14px">
-                <Tooltip title={t('interventionForm.labelTranscriptionHint')} underline>
-                  {t('interventionForm.labelTranscription')}:
+                <Tooltip
+                  title={t("interventionForm.labelTranscriptionHint")}
+                  underline
+                >
+                  {t("interventionForm.labelTranscription")}:
                 </Tooltip>
               </Heading>
             </Col>
             <Col xs={layout.input}>
               <Switch
-                onChange={value => setFieldValue('transcription', value)}
+                onChange={(value) => setFieldValue("transcription", value)}
                 checked={transcription}
               />
               {errors.transcription && touched.transcription && (
@@ -218,7 +258,9 @@ export default function Base({
           saveMemory={memorySaveReasonText}
           currentReason={idInterventionReason}
         />
-        {errors.observation && touched.observation && <FieldError>{errors.observation}</FieldError>}
+        {errors.observation && touched.observation && (
+          <FieldError>{errors.observation}</FieldError>
+        )}
       </Box>
     </>
   );

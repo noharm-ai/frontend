@@ -1,11 +1,11 @@
-import React from 'react';
-import isEmpty from 'lodash.isempty';
-import uniqBy from 'lodash.uniqby';
-import debounce from 'lodash.debounce';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import isEmpty from "lodash.isempty";
+import uniqBy from "lodash.uniqby";
+import debounce from "lodash.debounce";
+import { useTranslation } from "react-i18next";
 
-import { Select } from '@components/Inputs';
-import LoadBox from '@components/LoadBox';
+import { Select } from "components/Inputs";
+import LoadBox from "components/LoadBox";
 
 export default function Interaction({
   interactions,
@@ -14,38 +14,38 @@ export default function Interaction({
   drugs,
   searchDrugs,
   idSegment,
-  uniqueDrugList
+  uniqueDrugList,
 }) {
   const { t } = useTranslation();
 
-  const handleChange = interactions => {
+  const handleChange = (interactions) => {
     if (!isEmpty(interactions)) {
-      interactions = interactions.map(item => parseInt(item, 10));
+      interactions = interactions.map((item) => parseInt(item, 10));
     }
 
     const list = drugs.list
       .concat(interactionsList)
-      .map(i => {
+      .map((i) => {
         if (interactions.indexOf(parseInt(i.idDrug, 10)) !== -1) {
-          i.idDrug += '';
+          i.idDrug += "";
           return i;
         }
 
         return null;
       })
-      .filter(i => i != null);
+      .filter((i) => i != null);
 
-    setFieldValue('interactions', interactions);
-    setFieldValue('interactionsList', list);
+    setFieldValue("interactions", interactions);
+    setFieldValue("interactionsList", list);
   };
 
-  const search = debounce(value => {
+  const search = debounce((value) => {
     if (value.length < 3) return;
     searchDrugs(idSegment, { q: value });
   }, 800);
 
   if (!isEmpty(interactions)) {
-    interactions = interactions.map(item => `${item}`);
+    interactions = interactions.map((item) => `${item}`);
   }
 
   interactionsList = interactionsList || [];
@@ -53,8 +53,8 @@ export default function Interaction({
   const normalizedList = drugs.list
     .concat(interactionsList)
     .concat(uniqueDrugList)
-    .map(i => {
-      i.idDrug += '';
+    .map((i) => {
+      i.idDrug += "";
       return i;
     });
 
@@ -63,15 +63,15 @@ export default function Interaction({
       id="interactions"
       mode="multiple"
       optionFilterProp="children"
-      style={{ width: '100%' }}
-      placeholder={t('interventionForm.labelRelationsPlaceholder')}
+      style={{ width: "100%" }}
+      placeholder={t("interventionForm.labelRelationsPlaceholder")}
       defaultValue={interactions || undefined}
       notFoundContent={drugs.isFetching ? <LoadBox /> : null}
       filterOption={false}
       onSearch={search}
       onChange={handleChange}
     >
-      {uniqBy(normalizedList, 'idDrug').map(({ idDrug, name }) => (
+      {uniqBy(normalizedList, "idDrug").map(({ idDrug, name }) => (
         <Select.Option key={idDrug} value={idDrug}>
           {name}
         </Select.Option>

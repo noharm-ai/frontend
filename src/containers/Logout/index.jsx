@@ -1,14 +1,14 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
-import { logoutThunk } from '@store/ducks/auth/thunk';
-import Logout from '@components/Logout';
+import { logoutThunk } from "store/ducks/auth/thunk";
+import Logout from "components/Logout";
 
 const mapStateToProps = () => ({});
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      doLogout: logoutThunk
+      doLogout: logoutThunk,
     },
     dispatch
   );

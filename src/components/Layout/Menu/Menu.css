@@ -5,3 +5,11 @@
 .ant-menu-submenu-hidden {
   display: none;
 }
+
+.ant-zoom-big-leave {
+  opacity: 0;
+}
+
+.ant-tooltip-inner .nav-text span:last-child {
+  margin-left: 10px;
+}

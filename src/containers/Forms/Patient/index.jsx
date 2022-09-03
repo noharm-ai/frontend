@@ -1,11 +1,11 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
-import { savePatientThunk } from '@store/ducks/patients/thunk';
+import { savePatientThunk } from "store/ducks/patients/thunk";
 
-import FormPatient from '@components/Forms/Patient';
-import security from '@services/security';
-import FeatureService from '@services/features';
+import FormPatient from "components/Forms/Patient";
+import security from "services/security";
+import FeatureService from "services/features";
 
 const mapStateToProps = ({ prescriptions, patients, user }) => ({
   saveStatus: patients.save,
@@ -22,12 +22,12 @@ const mapStateToProps = ({ prescriptions, patients, user }) => ({
   notesInfo: prescriptions.single.data.notesInfo,
   notesInfoDate: prescriptions.single.data.notesInfoDate,
   security: security(user.account.roles),
-  featureService: FeatureService(user.account.features)
+  featureService: FeatureService(user.account.features),
 });
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      savePatient: savePatientThunk
+      savePatient: savePatientThunk,
     },
     dispatch
   );

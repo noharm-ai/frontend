@@ -1,21 +1,22 @@
-import React, { useEffect } from 'react';
-import { Formik } from 'formik';
-import isEmpty from 'lodash.isempty';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import { Formik } from "formik";
+import isEmpty from "lodash.isempty";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
+import { CheckOutlined } from "@ant-design/icons";
 
-import { Row, Col } from '@components/Grid';
-import Button from '@components/Button';
-import notification from '@components/notification';
-import Icon from '@components/Icon';
+import { Row, Col } from "components/Grid";
+import Button from "components/Button";
+import notification from "components/notification";
 
-import Base from './Base';
-import { Footer, FormContainer } from './Drug.style';
+import Base from "./Base";
+import { Footer, FormContainer } from "./Drug.style";
 
 const saveMessage = {
-  message: 'Uhu! Medicamento salvo com sucesso! :)'
+  message: "Uhu! Medicamento salvo com sucesso! :)",
 };
 
-const formId = 'drugForm';
+const formId = "drugForm";
 
 export default function Drug({
   saveStatus,
@@ -26,10 +27,10 @@ export default function Drug({
   idSegment,
   security,
   fetchReferencesList,
-  match
 }) {
+  const matchParams = useParams();
   const { t } = useTranslation();
-  const { isSaving, success, error } = saveStatus;
+  const { isSaving } = saveStatus;
   const {
     idDrug,
     idMeasureUnit,
@@ -52,7 +53,7 @@ export default function Drug({
     amount,
     whiteList,
     amountUnit,
-    defaultNote
+    defaultNote,
   } = outlier;
 
   const initialValues = {
@@ -78,36 +79,37 @@ export default function Drug({
     idSegment,
     amount,
     amountUnit,
-    unit: outliers ? (outliers[0] ? outliers[0].unit : '') : '',
-    defaultNote
+    unit: outliers ? (outliers[0] ? outliers[0].unit : "") : "",
+    defaultNote,
   };
 
-  useEffect(() => {
-    if (success === formId) {
-      notification.success(saveMessage);
-      afterSaveDrug();
-      if (!isEmpty(match.params)) {
-        fetchReferencesList(
-          match.params.idSegment,
-          match.params.idDrug,
-          match.params.dose,
-          match.params.frequency
-        );
-      } else {
-        fetchReferencesList();
-      }
-    }
-
-    if (error) {
-      notification.error({
-        message: t('error.title'),
-        description: t('error.description')
+  const submit = (params) => {
+    saveDrug(params)
+      .then(() => {
+        notification.success(saveMessage);
+        afterSaveDrug();
+        if (!isEmpty(matchParams)) {
+          fetchReferencesList(
+            matchParams.idSegment,
+            matchParams.idDrug,
+            matchParams.dose,
+            matchParams.frequency
+          );
+        } else {
+          fetchReferencesList();
+        }
+      })
+      .catch((err) => {
+        console.err(err);
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
       });
-    }
-  }, [success, error, afterSaveDrug, fetchReferencesList, match.params, t]);
+  };
 
   return (
-    <Formik enableReinitialize onSubmit={saveDrug} initialValues={initialValues}>
+    <Formik enableReinitialize onSubmit={submit} initialValues={initialValues}>
       {({ handleSubmit, isValid }) => (
         <form onSubmit={handleSubmit}>
           <FormContainer>
@@ -122,8 +124,10 @@ export default function Drug({
                   type="primary gtm-bt-save-drug"
                   htmlType="submit"
                   disabled={isSaving || !isValid}
+                  loading={isSaving}
+                  icon={<CheckOutlined />}
                 >
-                  Salvar <Icon type="check" />
+                  Salvar
                 </Button>
               </Footer>
             </Col>
@@ -137,11 +141,11 @@ export default function Drug({
 Drug.defaultProps = {
   afterSaveDrug: () => {},
   initialValues: {
-    idMeasureUnit: '',
-    antimicro: '',
-    mav: '',
-    controlled: '',
-    notdefault: '',
-    unit: ''
-  }
+    idMeasureUnit: "",
+    antimicro: "",
+    mav: "",
+    controlled: "",
+    notdefault: "",
+    unit: "",
+  },
 };

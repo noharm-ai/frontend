@@ -1,40 +1,42 @@
-export default {
+const interventionStatus = {
   getClosedStatuses: () => {
-    return ['a', 'n', 'x', 'j'];
+    return ["a", "n", "x", "j"];
   },
   translate: (status, t) => {
     switch (status) {
-      case 'a':
+      case "a":
         return {
-          label: t('interventionStatus.a'),
-          color: 'green'
+          label: t("interventionStatus.a"),
+          color: "green",
         };
 
-      case 'n':
+      case "n":
         return {
-          label: t('interventionStatus.n'),
-          color: 'red'
+          label: t("interventionStatus.n"),
+          color: "red",
         };
-      case 'j':
+      case "j":
         return {
-          label: t('interventionStatus.j'),
-          color: 'red'
+          label: t("interventionStatus.j"),
+          color: "red",
         };
-      case 'x':
+      case "x":
         return {
-          label: t('interventionStatus.x'),
-          color: null
+          label: t("interventionStatus.x"),
+          color: null,
         };
-      case 's':
+      case "s":
         return {
-          label: t('interventionStatus.s'),
-          color: 'orange'
+          label: t("interventionStatus.s"),
+          color: "orange",
         };
       default:
         return {
           label: `Indefinido (${status})`,
-          color: null
+          color: null,
         };
     }
-  }
+  },
 };
+
+export default interventionStatus;

@@ -1,13 +1,15 @@
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
 export const Box = styled.div`
-  align-items: ${props => (props.alignItems ? props.alignItems : 'flex-start')};
+  align-items: ${(props) =>
+    props.alignItems ? props.alignItems : "flex-start"};
   display: flex;
-  flex-direction: ${props => (props.flexDirection ? props.flexDirection : 'column')};
+  flex-direction: ${(props) =>
+    props.flexDirection ? props.flexDirection : "column"};
 `;
 
 export const SearchBox = styled.div`
-  max-height: 62px;
+  max-height: 65px;
   background: #eff1f4;
   margin-bottom: 20px;
   padding: 6px 10px;

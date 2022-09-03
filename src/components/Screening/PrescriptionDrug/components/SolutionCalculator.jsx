@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import styled from 'styled-components/macro';
-import { Row, Col } from 'antd';
+import React, { useState } from "react";
+import styled from "styled-components/macro";
+import { Row, Col } from "antd";
 
-import { InputNumber } from '@components/Inputs';
-import Heading from '@components/Heading';
-import Card from '@components/Card';
-import Descriptions from '@components/Descriptions';
+import { InputNumber } from "components/Inputs";
+import Heading from "components/Heading";
+import Card from "components/Card";
+import Descriptions from "components/Descriptions";
 
 const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
   const gutter = [0, 12];
@@ -28,7 +28,7 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
     }
   `;
 
-  const formatValue = value => {
+  const formatValue = (value) => {
     return value.toFixed(4);
   };
 
@@ -51,12 +51,12 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
                   width: 120,
                   marginLeft: 10,
                   marginRight: 5,
-                  textAlign: 'right'
+                  textAlign: "right",
                 }}
                 min={0}
                 max={999999}
                 value={lAmount}
-                onChange={value => setAmount(value)}
+                onChange={(value) => setAmount(value)}
               />
             </Col>
           </Row>
@@ -71,12 +71,12 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
                 style={{
                   width: 120,
                   marginLeft: 10,
-                  marginRight: 5
+                  marginRight: 5,
                 }}
                 min={0}
                 max={999999}
                 value={lVol}
-                onChange={value => setVol(value)}
+                onChange={(value) => setVol(value)}
               />
             </Col>
           </Row>
@@ -91,12 +91,12 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
                 style={{
                   width: 120,
                   marginLeft: 10,
-                  marginRight: 5
+                  marginRight: 5,
                 }}
                 min={0}
                 max={999999}
                 value={lTotalVol}
-                onChange={value => setTotalVol(value)}
+                onChange={(value) => setTotalVol(value)}
               />
             </Col>
           </Row>
@@ -111,12 +111,12 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
                 style={{
                   width: 120,
                   marginLeft: 10,
-                  marginRight: 5
+                  marginRight: 5,
                 }}
                 min={0}
                 max={999999}
                 value={lSpeed}
-                onChange={value => setSpeed(value)}
+                onChange={(value) => setSpeed(value)}
               />
             </Col>
           </Row>
@@ -131,12 +131,12 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
                 style={{
                   width: 120,
                   marginLeft: 10,
-                  marginRight: 5
+                  marginRight: 5,
                 }}
                 min={0}
                 max={999999}
                 value={lWeight}
-                onChange={value => setWeight(value)}
+                onChange={(value) => setWeight(value)}
               />
             </Col>
           </Row>
@@ -160,7 +160,10 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
             <Descriptions.Item label={formatValue(resultByWeightHour)} span={3}>
               {unit}/Kg/h
             </Descriptions.Item>
-            <Descriptions.Item label={formatValue(resultByWeightMinute)} span={3}>
+            <Descriptions.Item
+              label={formatValue(resultByWeightMinute)}
+              span={3}
+            >
               {unit}/Kg/min
             </Descriptions.Item>
             <Descriptions.Item label={formatValue(solution)} span={3}>

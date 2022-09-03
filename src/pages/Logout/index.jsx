@@ -1,3 +1,3 @@
-import Logout from '@containers/Logout';
+import Logout from "containers/Logout";
 
 export default Logout;

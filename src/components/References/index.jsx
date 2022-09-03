@@ -1,45 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import isEmpty from 'lodash.isempty';
-import { Row, Col } from 'antd';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from "react";
+import isEmpty from "lodash.isempty";
+import { Row, Col } from "antd";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
+import { PlusOutlined } from "@ant-design/icons";
 
-import breakpoints from '@styles/breakpoints';
-import { useMedia } from '@lib/hooks';
-import { toDataSource } from '@utils';
-import Table from '@components/Table';
-import Empty from '@components/Empty';
-import notification from '@components/notification';
-import Heading from '@components/Heading';
-import { FieldSet } from '@components/Inputs';
-import DefaultModal from '@components/Modal';
-import Tabs from '@components/Tabs';
-import Button from '@components/Button';
-import Icon from '@components/Icon';
-import BackTop from '@components/BackTop';
+import breakpoints from "styles/breakpoints";
+import { useMedia } from "lib/hooks";
+import { toDataSource } from "utils";
+import Table from "components/Table";
+import Empty from "components/Empty";
+import notification from "components/notification";
+import Heading from "components/Heading";
+import { FieldSet } from "components/Inputs";
+import DefaultModal from "components/Modal";
+import Tabs from "components/Tabs";
+import Button from "components/Button";
+import BackTop from "components/BackTop";
 
-import Edit from '@containers/References/Edit';
-import EditSubstance from '@containers/References/EditSubstance';
-import Relation from '@containers/References/Relation';
-import ScoreWizard from '@containers/References/ScoreWizard';
-import Filter from './Filter';
-import columns from './columns';
-import relationsColumns from './Relation/columns';
+import Edit from "containers/References/Edit";
+import EditSubstance from "containers/References/EditSubstance";
+import Relation from "containers/References/Relation";
+import ScoreWizard from "containers/References/ScoreWizard";
+import Filter from "./Filter";
+import columns from "./columns";
+import relationsColumns from "./Relation/columns";
 
-import DrugForm from '@containers/Forms/Drug';
+import DrugForm from "containers/Forms/Drug";
 
 // empty text for table result.
 const emptyText = (
-  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Nenhum dado encontrado." />
+  <Empty
+    image={Empty.PRESENTED_IMAGE_SIMPLE}
+    description="Nenhum dado encontrado."
+  />
 );
 
-const saveObsMessage = {
-  message: 'Uhu! Outlier atualizado com sucesso! :)'
-};
 const noop = () => {};
-const theTitle = () => 'Deslize para a direita para ver mais conteúdo.';
+const theTitle = () => "Deslize para a direita para ver mais conteúdo.";
 
 export default function References({
-  match,
   outliers,
   fetchReferencesList,
   saveOutlier,
@@ -53,6 +53,7 @@ export default function References({
   updateDrugData,
   ...restProps
 }) {
+  const params = useParams();
   const { t } = useTranslation();
   const {
     isFetching,
@@ -61,22 +62,35 @@ export default function References({
     generateStatus,
     drugData,
     saveRelation,
-    relationStatus
+    relationStatus,
   } = outliers;
   const [obsModalVisible, setObsModalVisibility] = useState(false);
   const [relationModalVisible, setRelationModalVisibility] = useState(false);
-  const [resetWizard, setResetWizard] = useState(false);
 
-  const [title] = useMedia([`(max-width: ${breakpoints.lg})`], [[theTitle]], [noop]);
+  const [title] = useMedia(
+    [`(max-width: ${breakpoints.lg})`],
+    [[theTitle]],
+    [noop]
+  );
 
   const onSaveObs = () => {
-    saveOutlier(outliers.edit.item.idOutlier, { obs: outliers.edit.item.obs });
+    saveOutlier(outliers.edit.item.idOutlier, { obs: outliers.edit.item.obs })
+      .then(() => {
+        notification.success({ message: "Observação salva com sucesso!" });
+        setObsModalVisibility(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
+      });
   };
   const onCancelObs = () => {
     selectOutlier({});
     setObsModalVisibility(false);
   };
-  const onShowObsModal = data => {
+  const onShowObsModal = (data) => {
     selectOutlier(data);
     setObsModalVisibility(true);
   };
@@ -84,14 +98,25 @@ export default function References({
   const onSaveRelation = () => {
     saveOutlierRelation({
       ...saveRelation.item,
-      new: false
-    });
+      new: false,
+    })
+      .then(() => {
+        notification.success({ message: "Uhu! Relação salva com sucesso." });
+        setRelationModalVisibility(false);
+      })
+      .catch((err) => {
+        console.err(err);
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
+      });
   };
   const onCancelRelation = () => {
     selectOutlierRelation({});
     setRelationModalVisibility(false);
   };
-  const onShowRelationModal = data => {
+  const onShowRelationModal = (data) => {
     selectOutlierRelation(data);
     setRelationModalVisibility(true);
   };
@@ -101,61 +126,65 @@ export default function References({
       editable: true,
       active: true,
       sctidA: drugData.sctidA,
-      sctNameA: drugData.sctNameA
+      sctNameA: drugData.sctNameA,
     };
 
     onShowRelationModal(data);
   };
 
-  const dataSource = toDataSource(list, 'idOutlier', { saveOutlier, onShowObsModal });
+  const dataSource = toDataSource(list, "idOutlier", {
+    saveOutlier,
+    onShowObsModal,
+  });
   const dsRelations = toDataSource(drugData.relations, null, {
     showModal: onShowRelationModal,
     relationTypes: drugData.relationTypes,
     sctidA: drugData.sctidA,
-    sctNameA: drugData.sctNameA
+    sctNameA: drugData.sctNameA,
   });
 
   useEffect(() => {
-    if (!isEmpty(match.params)) {
+    if (!isEmpty(params)) {
       fetchReferencesList(
-        match.params.idSegment,
-        match.params.idDrug,
-        match.params.dose,
-        match.params.frequency
+        params.idSegment,
+        params.idDrug,
+        params.dose,
+        params.frequency
       );
     } else {
       fetchReferencesList();
     }
-  }, [fetchReferencesList, match.params]);
+  }, [fetchReferencesList, params]);
 
   // show message if has error
   useEffect(() => {
     if (!isEmpty(error)) {
       notification.error({
-        message: t('error.title'),
-        description: t('error.description')
+        message: t("error.title"),
+        description: t("error.description"),
       });
     }
   }, [error, t]);
 
   useEffect(() => {
     if (!isEmpty(generateStatus.error)) {
-      notification.error({ message: 'Ops! Algo de errado aconteceu ao gerar os outliers.' });
+      notification.error({
+        message: "Ops! Algo de errado aconteceu ao gerar os outliers.",
+      });
     }
   }, [generateStatus.error]);
 
   useEffect(() => {
     if (generateStatus.generated) {
-      notification.success({ message: 'Escores gerados com sucesso!' });
+      notification.success({ message: "Escores gerados com sucesso!" });
       generateOutlierReset();
-      setResetWizard(true);
 
-      if (!isEmpty(match.params)) {
+      if (!isEmpty(params)) {
         fetchReferencesList(
-          match.params.idSegment,
-          match.params.idDrug,
-          match.params.dose,
-          match.params.frequency
+          params.idSegment,
+          params.idDrug,
+          params.dose,
+          params.frequency
         );
       } else {
         fetchReferencesList();
@@ -163,76 +192,46 @@ export default function References({
 
       restProps.fetchDrugsUnitsList({
         id: outliers.selecteds.idDrug,
-        idSegment: outliers.selecteds.idSegment
+        idSegment: outliers.selecteds.idSegment,
       });
-    } else {
-      setResetWizard(false);
     }
   }, [
     generateStatus.generated,
     generateOutlierReset,
-    match.params,
+    params,
     fetchReferencesList,
     restProps,
     outliers.selecteds.idDrug,
-    outliers.selecteds.idSegment
+    outliers.selecteds.idSegment,
   ]);
 
-  useEffect(() => {
-    if (outliers.saveStatus.success) {
-      notification.success(saveObsMessage);
-      setObsModalVisibility(false);
-    }
-
-    if (outliers.saveStatus.error) {
-      notification.error({
-        message: t('error.title'),
-        description: t('error.description')
-      });
-    }
-  }, [outliers.saveStatus.success, outliers.saveStatus.error, t]);
-
-  useEffect(() => {
-    if (saveRelation.success) {
-      notification.success({ message: 'Uhu! Relação salva com sucesso.' });
-      setRelationModalVisibility(false);
-    }
-
-    if (saveRelation.error) {
-      notification.error({
-        message: t('error.title'),
-        description: t('error.description')
-      });
-    }
-  }, [saveRelation.success, saveRelation.error, t]);
-
-  const convFreq = frequency => {
+  const convFreq = (frequency) => {
     switch (frequency) {
-      case '33':
-        return 'SN';
-      case '44':
-        return 'ACM';
-      case '55':
-        return 'CONT';
-      case '66':
-        return 'AGORA';
-      case '99':
-        return 'N/D';
+      case "33":
+        return "SN";
+      case "44":
+        return "ACM";
+      case "55":
+        return "CONT";
+      case "66":
+        return "AGORA";
+      case "99":
+        return "N/D";
       default:
         return frequency;
     }
   };
 
   const rowClassName = (record, index) => {
-    let matchDose = match.params.dose;
+    let matchDose = params.dose;
     if (drugData.division) {
       matchDose = Math.ceil(matchDose / drugData.division) * drugData.division;
     }
     if (
-      record.dose + '' === matchDose + '' &&
-      record.frequency + '' === convFreq(match.params.frequency)
+      record.dose + "" === matchDose + "" &&
+      record.frequency + "" === convFreq(params.frequency)
     ) {
-      return 'highlight';
+      return "highlight";
     }
   };
 
@@ -241,7 +240,7 @@ export default function References({
       <Filter {...restProps} outliers={outliers} />
       <Tabs
         defaultActiveKey="1"
-        style={{ width: '100%', marginTop: '20px' }}
+        style={{ width: "100%", marginTop: "20px" }}
         type="card gtm-tab-med"
       >
         <Tabs.TabPane tab="Escores" key="1">
@@ -255,15 +254,15 @@ export default function References({
             rowClassName={rowClassName}
           />
 
-          <FieldSet style={{ marginBottom: '25px', marginTop: '25px' }}>
+          <FieldSet style={{ marginBottom: "25px", marginTop: "25px" }}>
             <Heading as="label" size="16px" margin="0 0 10px">
-              Assistente para Geração de Escores{' '}
+              Assistente para Geração de Escores{" "}
               <span
                 style={{
-                  color: 'rgba(0, 0, 0, 0.65)',
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '400'
+                  color: "rgba(0, 0, 0, 0.65)",
+                  display: "block",
+                  fontSize: "14px",
+                  fontWeight: "400",
                 }}
               >
                 Alterações que envolvem a geração de escore
@@ -271,10 +270,10 @@ export default function References({
             </Heading>
           </FieldSet>
 
-          <ScoreWizard resetWizard={resetWizard} />
+          <ScoreWizard />
         </Tabs.TabPane>
         <Tabs.TabPane tab="Atributos" key="2">
-          <DrugForm fetchReferencesList={fetchReferencesList} match={match} />
+          <DrugForm fetchReferencesList={fetchReferencesList} />
         </Tabs.TabPane>
         <Tabs.TabPane tab="Relações" key="3">
           <Row type="flex" justify="end">
@@ -282,10 +281,14 @@ export default function References({
               <EditSubstance />
             </Col>
             <Col xs={12}>
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 {drugData.sctidA && (
-                  <Button type="primary gtm-bt-add-relation" onClick={addRelationModal}>
-                    <Icon type="plus" /> Adicionar
+                  <Button
+                    type="primary gtm-bt-add-relation"
+                    onClick={addRelationModal}
+                    icon={<PlusOutlined />}
+                  >
+                    Adicionar
                   </Button>
                 )}
               </div>
@@ -298,6 +301,7 @@ export default function References({
             loading={isFetching || relationStatus.isFetching}
             locale={{ emptyText }}
             dataSource={!isFetching ? dsRelations : []}
+            showSorterTooltip={false}
           />
         </Tabs.TabPane>
       </Tabs>
@@ -314,12 +318,12 @@ export default function References({
         okText="Salvar"
         okButtonProps={{
           disabled: outliers.saveStatus.isSaving,
-          type: 'primary gtm-bt-save-obs'
+          type: "primary gtm-bt-save-obs",
         }}
         cancelText="Cancelar"
         cancelButtonProps={{
           disabled: outliers.saveStatus.isSaving,
-          type: 'nda gtm-bt-cancel-obs'
+          type: "nda gtm-bt-cancel-obs",
         }}
       >
         <Edit />
@@ -338,12 +342,12 @@ export default function References({
             saveRelation.isSaving ||
             saveRelation.item.sctidB == null ||
             saveRelation.item.type == null,
-          type: 'primary gtm-bt-save-relation'
+          type: "primary gtm-bt-save-relation",
         }}
         cancelText="Cancelar"
         cancelButtonProps={{
           disabled: saveRelation.isSaving,
-          type: 'nda gtm-bt-cancel-relation'
+          type: "nda gtm-bt-cancel-relation",
         }}
       >
         <Relation />

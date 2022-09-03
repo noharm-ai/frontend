@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { CloseOutlined } from "@ant-design/icons";
 
-import CustomForm from '@components/Forms/CustomForm';
-import notification from '@components/notification';
-import Heading from '@components/Heading';
-import DefaultModal from '@components/Modal';
-import Button from '@components/Button';
-import Tooltip from '@components/Tooltip';
+import CustomForm from "components/Forms/CustomForm";
+import notification from "components/notification";
+import Heading from "components/Heading";
+import DefaultModal from "components/Modal";
+import Button from "components/Button";
+import Tooltip from "components/Tooltip";
 
-import ChooseForm from './ChooseForm';
-import { ChoicePanel } from '@components/Forms/Form.style';
+import ChooseForm from "./ChooseForm";
+import { ChoicePanel } from "components/Forms/Form.style";
 
 export default function ClinicalNotes({
   prescription,
@@ -27,34 +28,34 @@ export default function ClinicalNotes({
 }) {
   const [template, setTemplate] = useState(null);
   const { t } = useTranslation();
-  const { isSaving, success, error, data } = prescription;
+  const { isSaving, data } = prescription;
 
-  useEffect(() => {
-    if (success === true) {
-      if (afterSave) {
-        setTemplate(null);
-        afterSave();
-      }
-    }
-
-    if (error) {
-      notification.error({
-        message: t('error.title'),
-        description: t('error.description')
-      });
-    }
-  }, [success, error]); // eslint-disable-line
-
-  const submit = form => {
+  const submit = (form) => {
     const params = {
       idPrescription: data.idPrescription,
       admissionNumber: data.admissionNumber,
       formValues: form.values,
       template: form.template,
-      tplName: template.name
+      tplName: template.name,
     };
 
-    save(params);
+    save(params)
+      .then(() => {
+        notification.success({
+          message: "Uhu! Evolução salva com sucesso! :)",
+        });
+        if (afterSave) {
+          setTemplate(null);
+          afterSave();
+        }
+      })
+      .catch((err) => {
+        console.error("error", err);
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
+      });
   };
 
   const cancel = () => {
@@ -80,13 +81,21 @@ export default function ClinicalNotes({
         {!template ? (
           <>
             <div className="panel-title">Selecione o formulário:</div>
-            <ChooseForm fetchMemory={fetchMemory} memory={memory} onChange={setTemplate} />
+            <ChooseForm
+              fetchMemory={fetchMemory}
+              memory={memory}
+              onChange={setTemplate}
+            />
           </>
         ) : (
           <>
             <div className="panel-title">{template.name}</div>
             <Tooltip title="Alterar formulário">
-              <Button shape="circle" icon="close" onClick={() => setTemplate(null)} />
+              <Button
+                shape="circle"
+                icon={<CloseOutlined />}
+                onClick={() => setTemplate(null)}
+              />
             </Tooltip>
           </>
         )}
