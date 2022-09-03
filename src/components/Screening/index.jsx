@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { PlusOutlined } from "@ant-design/icons";
 
 import Empty from "components/Empty";
 import LoadBox, { LoadContainer } from "components/LoadBox";
@@ -11,7 +12,6 @@ import Tag from "components/Tag";
 import notification from "components/notification";
 import BackTop from "components/BackTop";
 import Button from "components/Button";
-import Icon from "components/Icon";
 
 import PrescriptionList from "containers/Screening/PrescriptionDrug/PrescriptionList";
 import SolutionList from "containers/Screening/PrescriptionDrug/SolutionList";
@@ -146,7 +146,7 @@ export default function Screening({
                     className="gtm-bt-add-drugEdit"
                     type="primary"
                   >
-                    <Icon type="plus" />
+                    <PlusOutlined />
                     {t("screeningBody.btnAddDrug")}
                   </Button>
                 </PrescriptionActionContainer>

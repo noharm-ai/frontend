@@ -1,8 +1,12 @@
 import React from "react";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
+import {
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+  MinusOutlined,
+} from "@ant-design/icons";
 
-import Icon from "components/Icon";
 import Popover from "components/PopoverStyled";
 
 import { Item } from "./ExamListItem.style";
@@ -12,14 +16,14 @@ export default function ExamListItem({ exam, siderCollapsed }) {
 
   const getIcon = (delta) => {
     if (delta > 0) {
-      return <Icon type="arrow-up" />;
+      return <ArrowUpOutlined />;
     }
 
     if (delta < 0) {
-      return <Icon type="arrow-down" />;
+      return <ArrowDownOutlined />;
     }
 
-    return <Icon type="minus" />;
+    return <MinusOutlined />;
   };
 
   const refText = (text) => {
