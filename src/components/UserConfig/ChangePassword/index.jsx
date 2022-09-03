@@ -2,11 +2,11 @@ import React from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
+import { CheckOutlined } from "@ant-design/icons";
 
 import { Col, Row } from "components/Grid";
 import { Box, ButtonContainer } from "components/Forms/Form.style";
 import Button from "components/Button";
-import Icon from "components/Icon";
 import Card from "components/Card";
 import notification from "components/notification";
 import { passwordValidation } from "utils";
@@ -72,8 +72,9 @@ export default function ChangePassword({ updatePassword, status }) {
                       onClick={handleSubmit}
                       loading={isSaving}
                       disabled={isSaving}
+                      icon={<CheckOutlined />}
                     >
-                      Salvar <Icon type="check" />
+                      Salvar
                     </Button>
                   </ButtonContainer>
                 </FormContainer>

@@ -1,7 +1,13 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import {
+  LinkOutlined,
+  CheckOutlined,
+  WarningOutlined,
+  RollbackOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
 
-import Icon from "components/Icon";
 import Badge from "components/Badge";
 import Menu from "components/Menu";
 import Dropdown from "components/Dropdown";
@@ -9,7 +15,6 @@ import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import Tag from "components/Tag";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
-import { useOutsideAlerter } from "lib/hooks";
 
 const PanelAction = ({
   id,
@@ -19,11 +24,6 @@ const PanelAction = ({
   checkScreening,
   isChecking,
 }) => {
-  const [isMenuVisible, setMenuVisibility] = useState(false);
-  const wrapperRef = useRef(null);
-  useOutsideAlerter(wrapperRef, () => {
-    setMenuVisibility(false);
-  });
   const { t } = useTranslation();
 
   const summarySourceToType = (s) => {
@@ -48,8 +48,7 @@ const PanelAction = ({
   const infoIcon = (title) => {
     return (
       <Tooltip title={title}>
-        <Icon
-          type="check"
+        <CheckOutlined
           style={{
             fontSize: 18,
             color: "#52c41a",
@@ -91,8 +90,7 @@ const PanelAction = ({
           title={t("prescriptionDrugTags.intervention")}
           key="interventions"
         >
-          <Icon
-            type="warning"
+          <WarningOutlined
             style={{
               fontSize: 18,
               color: "#fa8c16",
@@ -112,6 +110,7 @@ const PanelAction = ({
   };
 
   const handleMenuClick = ({ key, domEvent }) => {
+    console.log("key", key);
     switch (key) {
       case "check":
         checkScreening(id, "s");
@@ -131,27 +130,27 @@ const PanelAction = ({
   const prescriptionOptions = (header) => {
     return (
       <Menu onClick={handleMenuClick}>
-        <Menu.Item className="gtm-btn-more-open">
+        <Menu.Item className="gtm-btn-more-open" key="more">
           <a
             target="_blank"
             rel="noopener noreferrer"
             href={`/prescricao/${id}`}
             style={{ textDecoration: "none" }}
           >
-            <Icon type="link" style={{ marginRight: "3px" }} />{" "}
+            <LinkOutlined style={{ marginRight: "5px" }} />{" "}
             {t("labels.openPrescription")}
           </a>
         </Menu.Item>
         <Menu.Divider />
         {header.status !== "s" && (
           <Menu.Item key="check" className="gtm-btn-more-check">
-            <Icon type="check" />
+            <CheckOutlined style={{ marginRight: "5px" }} />
             {t("labels.checkPrescription")}
           </Menu.Item>
         )}
         {header.status === "s" && (
           <Menu.Item key="undo" className="gtm-btn-more-undo">
-            <Icon type="rollback" />
+            <RollbackOutlined style={{ marginRight: "5px" }} />
             {t("labels.undoCheckPrescription")}
           </Menu.Item>
         )}
@@ -160,7 +159,6 @@ const PanelAction = ({
   };
 
   const openMenu = (e) => {
-    setMenuVisibility(true);
     e.stopPropagation();
   };
 
@@ -181,12 +179,8 @@ const PanelAction = ({
           infoIcon(`${t("labels.checkedBy")}: ${header.user}`)}
       </div>
 
-      <div ref={wrapperRef}>
-        <Dropdown
-          overlay={prescriptionOptions(header)}
-          visible={isMenuVisible}
-          trigger={[]}
-        >
+      <div>
+        <Dropdown overlay={prescriptionOptions(header)} trigger={["click"]}>
           <Tooltip title="Opções">
             <Button
               type="link gtm-bt-check-single"
@@ -195,7 +189,7 @@ const PanelAction = ({
               loading={isChecking}
             >
               {!isChecking && (
-                <Icon type="more" style={{ marginLeft: 0, fontSize: "30px" }} />
+                <MoreOutlined style={{ marginLeft: 0, fontSize: "30px" }} />
               )}
             </Button>
           </Tooltip>

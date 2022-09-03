@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { CheckOutlined } from "@ant-design/icons";
 
 import { Col, Row } from "components/Grid";
 import Heading from "components/Heading";
 import { Textarea } from "components/Inputs";
 import { Box, EditorBox, ButtonContainer } from "components/Forms/Form.style";
 import Button from "components/Button";
-import Icon from "components/Icon";
 import notification from "components/notification";
 
 import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from "utils/memory";
@@ -76,8 +76,9 @@ export default function Signature({ fetchMemory, saveMemory, memory, userId }) {
               onClick={() => save()}
               disabled={isFetching || isSaving}
               loading={isSaving}
+              icon={<CheckOutlined />}
             >
-              Salvar <Icon type="check" />
+              Salvar
             </Button>
           </ButtonContainer>
         </Col>
