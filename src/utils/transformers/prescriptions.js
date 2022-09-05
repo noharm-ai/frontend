@@ -160,7 +160,9 @@ export const transformPrescription = ({
 }) => {
   const prescriptionList = prescription
     ? groupByPrescription(
-        groupComponents(prescription.map(transformDrug)),
+        groupComponents(
+          filterWhitelistedChildren(prescription.map(transformDrug))
+        ),
         "prescriptions",
         null,
         null,
