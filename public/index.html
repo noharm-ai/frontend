@@ -13,38 +13,9 @@
       content="NoHarm.ai - Triagem de Prescrições com Inteligência Artificial - Foco na Segurança dos Pacientes - Prescrições Hospitalares"
     />
     <meta name="robots" content="noindex,nofollow" />
+    <meta name="google" content="notranslate" />
     <link rel="apple-touch-icon" href="logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-
-    <!-- Google Tag Manager -->
-    <script>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != "dataLayer" ? "&l=" + l : "";
-        j.async = true;
-        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, "script", "dataLayer", "GTM-MF5HG22");
-    </script>
-    <!-- End Google Tag Manager -->
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=UA-209713-24"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "UA-209713-24");
-    </script>
-    <!-- End Global site tag (gtag.js) - Google Analytics -->
 
     <title>%REACT_APP_SITE_TITLE%</title>
   </head>
@@ -72,27 +43,5 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-    <script>
-      (function (o, c, t, a, d, e, s, k) {
-        o.octadesk = o.octadesk || {};
-        s = c.getElementsByTagName("body")[0];
-        k = c.createElement("script");
-        k.async = 1;
-        k.src = t + "/" + a + "?showButton=" + d + "&openOnMessage=" + e;
-        s.appendChild(k);
-      })(
-        window,
-        document,
-        "https://chat.octadesk.services/api/widget",
-        "noharm",
-        false,
-        true
-      );
-    </script>
-    <style>
-      .octachatAppClose {
-        pointer-events: none;
-      }
-    </style>
   </body>
 </html>
