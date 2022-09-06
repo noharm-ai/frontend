@@ -249,6 +249,7 @@ const TabContent = ({ tab, prescription }) => {
 
 export default function PrioritizationCard({
   prescription,
+  prioritization,
   prioritizationType,
 }) {
   const [activeTab, setActiveTab] = useState("patient");
@@ -285,8 +286,10 @@ export default function PrioritizationCard({
           </Tooltip>
         </div>
         <div className="stamp">
-          <div className="stamp-label">Escore Global</div>
-          <div className="stamp-value">{prescription.globalScore}</div>
+          <div className="stamp-label">{prioritization.label}</div>
+          <div className="stamp-value">
+            {prescription[prioritization.formattedKey]}
+          </div>
         </div>
       </div>
 
