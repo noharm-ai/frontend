@@ -21,6 +21,7 @@ import Password from "pages/Password";
 import Conciliation from "pages/Conciliation";
 import UserAdmin from "pages/UserAdmin";
 import PatientList from "pages/PatientList";
+import Prioritization from "pages/Prioritization";
 
 const routes = [
   {
@@ -144,6 +145,20 @@ const routes = [
     exact: true,
     path: "/configuracoes/administracao",
     element: <WithAuth component={UserAdmin} />,
+  },
+  {
+    exact: true,
+    path: "/priorizacao-lab",
+    element: (
+      <WithAuth component={Prioritization} prioritizationType={"patient"} />
+    ),
+  },
+  {
+    exact: true,
+    path: "/priorizacao/:startDate",
+    element: (
+      <WithAuth component={Prioritization} prioritizationType={"patient"} />
+    ),
   },
   {
     exact: true,

@@ -31,6 +31,7 @@
     "prioritization-prescription": "Prescriptions",
     "prioritization-patient": "Patients",
     "prioritization-conciliation": "Conciliation",
+    "prioritization-lab": "Cards (Beta)",
     "interventions": "Interventions",
     "reports": "Reports",
     "config": "Settings",
@@ -180,7 +181,8 @@
     "editHeight": "Edit height",
     "examDate": "Date",
     "examVariation": "Variation compared to last lab result",
-    "admissionDate": "Admission date"
+    "admissionDate": "Admission date",
+    "prescriptionDate": "Prescription date"
   },
   "screeningBody": {
     "tabDrugs": "Drugs",

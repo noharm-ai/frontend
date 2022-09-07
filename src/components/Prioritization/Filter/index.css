@@ -1,0 +1,20 @@
+.noArrow
+  > .ant-calendar
+  > .ant-calendar-panel
+  > .ant-calendar-date-panel
+  > .ant-calendar-header
+  > div
+  > .ant-calendar-prev-year-btn,
+.noArrow
+  > .ant-calendar
+  > .ant-calendar-panel
+  > .ant-calendar-date-panel
+  > .ant-calendar-header
+  > div
+  > .ant-calendar-next-year-btn {
+  display: none;
+}
+
+.ant-dropdown-menu-submenu-hidden {
+  display: none;
+}
