@@ -251,6 +251,7 @@ export default function PrioritizationCard({
   prescription,
   prioritization,
   prioritizationType,
+  highlight,
 }) {
   const [activeTab, setActiveTab] = useState("patient");
 
@@ -285,7 +286,7 @@ export default function PrioritizationCard({
             {prescription.namePatient}
           </Tooltip>
         </div>
-        <div className="stamp">
+        <div className={`stamp ${highlight ? "highlight" : ""}`}>
           <div className="stamp-label">{prioritization.label}</div>
           <div className="stamp-value">
             {prescription[prioritization.formattedKey]}

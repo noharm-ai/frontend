@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from "react";
 import isEmpty from "lodash.isempty";
 import { useTransition, animated } from "@react-spring/web";
-import { Spin, Pagination, Tag } from "antd";
+import { Spin, Pagination, Tag, Empty } from "antd";
 import { useTranslation } from "react-i18next";
 
 import Heading from "components/Heading";
@@ -132,6 +132,7 @@ const initState = () => {
     currentPage: 1,
     filter: {},
     prioritization: "globalScore",
+    highlightPrioritization: false,
     listStats: getListStats([]),
   };
 };
@@ -159,9 +160,13 @@ const reducer = (state, action) => {
     case "after_update_list":
       return {
         ...state,
-        currentPage: 1,
         filter: {},
         listStats: action.payload,
+      };
+    case "highlight_prioritization":
+      return {
+        ...state,
+        highlightPrioritization: action.payload,
       };
     case "reset":
       return initState(action.payload);
@@ -177,6 +182,7 @@ export default function Prioritization({
   checkScreening,
   prioritizationType,
   security,
+  siderCollapsed,
   ...restProps
 }) {
   const [state, dispatch] = useReducer(reducer, initState());
@@ -224,6 +230,13 @@ export default function Prioritization({
     });
   }, [list]);
 
+  useEffect(() => {
+    dispatch({
+      type: "set_page",
+      payload: 1,
+    });
+  }, [list.length]);
+
   const stopLoading = () => {
     setTimeout(() => {
       dispatch({
@@ -260,7 +273,7 @@ export default function Prioritization({
 
   return (
     <>
-      <Heading>Priorização</Heading>
+      <Heading>Priorização (Beta)</Heading>
       <FilterCard>
         <Filter
           {...restProps}
@@ -277,8 +290,21 @@ export default function Prioritization({
               <div className="filters-item-label">Priorizar por:</div>
               <div className="filters-item-value">
                 <Select
+                  className="prioritization-select"
                   optionFilterProp="children"
                   onChange={onChangePrioritization}
+                  onMouseEnter={() =>
+                    dispatch({
+                      type: "highlight_prioritization",
+                      payload: true,
+                    })
+                  }
+                  onMouseLeave={() =>
+                    dispatch({
+                      type: "highlight_prioritization",
+                      payload: false,
+                    })
+                  }
                   value={state.prioritization}
                 >
                   {ORDER_OPTIONS.map((o) => (
@@ -325,21 +351,28 @@ export default function Prioritization({
             />
           </div>
         </ResultActions>
-        <PrioritizationPage>
-          <div className="grid">
-            {list &&
-              transitions((props, item) => (
-                <animated.div style={props}>
-                  <PrioritizationCard
-                    prescription={item}
-                    prioritizationType={prioritizationType}
-                    prioritization={ORDER_OPTIONS.find(
-                      (i) => i.key === state.prioritization
-                    )}
-                  />
-                </animated.div>
-              ))}
-          </div>
+        <PrioritizationPage collapsed={siderCollapsed}>
+          <>
+            {!(isFetching || state.loading) && !list.length && (
+              <Empty description="Nenhum registro encontrado" />
+            )}
+            {list && list.length > 0 && (
+              <div className="grid">
+                {transitions((props, item) => (
+                  <animated.div style={props}>
+                    <PrioritizationCard
+                      prescription={item}
+                      prioritizationType={prioritizationType}
+                      prioritization={ORDER_OPTIONS.find(
+                        (i) => i.key === state.prioritization
+                      )}
+                      highlight={state.highlightPrioritization}
+                    />
+                  </animated.div>
+                ))}
+              </div>
+            )}
+          </>
         </PrioritizationPage>
         <ResultActions>
           <div className="filters"></div>

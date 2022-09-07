@@ -9,6 +9,7 @@ import {
   SettingOutlined,
   MedicineBoxOutlined,
   UsergroupAddOutlined,
+  ExperimentOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -38,6 +39,13 @@ const navigation = [
         icon: ReconciliationOutlined,
         id: "gtm-lnk-priorizacao-conciliacao",
         role: "concilia",
+      },
+      {
+        key: "/priorizacao-lab",
+        text: "menu.prioritization-lab",
+        icon: ExperimentOutlined,
+        id: "gtm-lnk-priorizacao-lab",
+        role: "suporte",
       },
     ],
   },

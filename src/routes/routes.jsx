@@ -148,7 +148,7 @@ const routes = [
   },
   {
     exact: true,
-    path: "/priorizacao",
+    path: "/priorizacao-lab",
     element: (
       <WithAuth component={Prioritization} prioritizationType={"patient"} />
     ),

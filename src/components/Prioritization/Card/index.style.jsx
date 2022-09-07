@@ -1,4 +1,5 @@
 import styled from "styled-components/macro";
+import breakpoints from "styles/breakpoints";
 import { timingFunctions } from "polished";
 
 import { get } from "styles/utils";
@@ -72,11 +73,28 @@ export const Card = styled.div`
       padding: 0 0.5rem;
       background: #fafafa;
       border-top-right-radius: 5px;
+      border-bottom-left-radius: 5px;
+      transition: all 0.3s linear;
+
+      &.highlight {
+        background-color: #70bdc4;
+
+        .stamp-label {
+          font-weight: 400;
+          color: #fff;
+        }
+
+        .stamp-value {
+          font-weight: 600;
+          color: #fff;
+        }
+      }
 
       .stamp-label {
         font-size: 12px;
         font-weight: 300;
         color: ${get("colors.primary")};
+        transition: all 0.3s linear;
       }
 
       .stamp-value {
@@ -84,6 +102,7 @@ export const Card = styled.div`
         font-size: 14px;
         font-weight: 500;
         color: ${get("colors.primary")};
+        transition: all 0.3s linear;
       }
     }
   }
@@ -222,10 +241,16 @@ export const AlertContainer = styled.div`
     border-radius: 5px;
     text-align: center;
     font-weight: 500;
-    min-width: 60px;
-    font-size: 14px;
+    min-width: 50px;
+    font-size: 13px;
     border: 1px solid #f68c97;
     background: #f8dee2;
-    margin-right: 0.2rem;
+    margin-right: 0.3rem;
+
+    @media (min-width: ${breakpoints.xxl}) {
+      font-size: 14px;
+      min-width: 60px;
+      margin-right: 0.4rem;
+    }
   }
 `;

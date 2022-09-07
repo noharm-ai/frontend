@@ -1,4 +1,5 @@
-import styled from "styled-components/macro";
+import styled, { css } from "styled-components/macro";
+import breakpoints from "styles/breakpoints";
 
 export const PrioritizationPage = styled.div`
   position: relative;
@@ -7,9 +8,38 @@ export const PrioritizationPage = styled.div`
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(1, minmax(0, 1fr));
     grid-column-gap: 2rem;
     grid-row-gap: 4rem;
+
+    ${({ collapsed }) =>
+      collapsed
+        ? css`
+            @media (min-width: ${breakpoints.lg}) {
+              grid-template-columns: repeat(3, minmax(0, 1fr));
+              grid-column-gap: 1rem;
+            }
+
+            @media (min-width: ${breakpoints.xxl}) {
+              padding: 0 2rem;
+              grid-template-columns: repeat(3, minmax(0, 1fr));
+              grid-column-gap: 4rem;
+              grid-row-gap: 4rem;
+            }
+          `
+        : css`
+            @media (min-width: ${breakpoints.lg}) {
+              padding: 0 1rem;
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            @media (min-width: ${breakpoints.xxl}) {
+              padding: 0 1rem;
+              grid-template-columns: repeat(3, minmax(0, 1fr));
+              grid-column-gap: 2rem;
+              grid-row-gap: 4rem;
+            }
+          `}
   }
 `;
 
@@ -28,6 +58,10 @@ export const ResultActions = styled.div`
   align-items: flex-end;
   margin-bottom: 2rem;
 
+  @media (min-width: ${breakpoints.xxl}) {
+    padding: 0 1rem;
+  }
+
   .filters {
     display: flex;
 
@@ -45,6 +79,21 @@ export const ResultActions = styled.div`
 
           .ant-tag {
             margin-left: 0.5rem;
+          }
+        }
+
+        .prioritization-select {
+          .ant-select-selector {
+            background-color: #70bdc4;
+          }
+
+          .ant-select-selection-item {
+            color: #fff;
+            font-weight: 500;
+          }
+
+          .ant-select-arrow {
+            color: #fff;
           }
         }
       }

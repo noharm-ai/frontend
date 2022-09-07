@@ -47,6 +47,7 @@ const mapStateToProps = ({
       ...prescriptions.single.check,
     },
   },
+  siderCollapsed: app.sider.collapsed,
   filter: app.filter.screeningList,
   savedFilters: app.savedFilters.screeningList,
   drugs: drugs.search,
