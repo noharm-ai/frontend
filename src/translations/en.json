@@ -231,6 +231,7 @@
     "birthdate": "Birthdate",
     "nextAppointment": "Next appointment",
     "lastAppointment": "Last appointment",
+    "refDate": "Reference date",
     "observation": "Observation",
     "medicalObservation": "Medical observation"
   },

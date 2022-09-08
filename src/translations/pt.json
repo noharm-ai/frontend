@@ -231,6 +231,7 @@
     "birthdate": "Data de nascimento",
     "nextAppointment": "Próximo atendimento",
     "lastAppointment": "Último atendimento",
+    "refDate": "Data referência",
     "observation": "Observação",
     "medicalObservation": "Observação médica"
   },

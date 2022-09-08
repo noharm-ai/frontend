@@ -6,6 +6,7 @@ import { Select, RangeDatePicker } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
+import Tooltip from "components/Tooltip";
 
 export default function MainFilters({
   segments,
@@ -86,7 +87,9 @@ export default function MainFilters({
       </Col>
       <Col md={7} lg={7} xxl={5}>
         <Heading as="label" htmlFor="date" size="14px">
-          {t("tableHeader.nextAppointment")}:
+          <Tooltip title="Data do último ou próximo atendimento">
+            {t("tableHeader.refDate")}:
+          </Tooltip>
         </Heading>
         <RangeDatePicker
           format="DD/MM/YYYY"
