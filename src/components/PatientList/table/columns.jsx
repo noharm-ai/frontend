@@ -74,30 +74,19 @@ const columns = (sortedInfo, filteredInfo, t) => {
       },
     },
     {
-      key: "lastAppointment",
-      title: t("tableHeader.lastAppointment"),
+      key: "refDate",
+      title: (
+        <Tooltip title="Data do último atendimento ou agendamento" underline>
+          {t("tableHeader.refDate")}
+        </Tooltip>
+      ),
       sortDirections,
       sorter: (a, b) =>
-        moment(a.lastAppointment || new Date()).unix() -
-        moment(b.lastAppointment || new Date()).unix(),
-      sortOrder: sortedInfo.columnKey === "lastAppointment" && sortedInfo.order,
+        moment(a.refDate || new Date()).unix() -
+        moment(b.refDate || new Date()).unix(),
+      sortOrder: sortedInfo.columnKey === "refDate" && sortedInfo.order,
       render: (record) =>
-        record.lastAppointment
-          ? moment(record.lastAppointment).format("DD/MM/YYYY")
-          : "",
-    },
-    {
-      key: "nextAppointment",
-      title: t("tableHeader.nextAppointment"),
-      sortDirections,
-      sorter: (a, b) =>
-        moment(a.nextAppointment || new Date()).unix() -
-        moment(b.nextAppointment || new Date()).unix(),
-      sortOrder: sortedInfo.columnKey === "nextAppointment" && sortedInfo.order,
-      render: (record) =>
-        record.nextAppointment
-          ? moment(record.nextAppointment).format("DD/MM/YYYY")
-          : "",
+        record.refDate ? moment(record.refDate).format("DD/MM/YYYY") : "",
     },
     {
       title: t("tableHeader.action"),
