@@ -77,7 +77,7 @@ const routes = [
   },
   {
     exact: true,
-    path: "/conciliacao/:id",
+    path: "/conciliacao/:slug",
     element: <WithAuth component={Conciliation} />,
   },
   {

@@ -17,7 +17,8 @@ import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
 import { BoxWrapper } from "./index.style";
 
 export default function Screening({ fetchScreeningById, isFetching, error }) {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params?.slug;
   const { t } = useTranslation();
 
   // show message if has error
