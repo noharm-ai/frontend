@@ -41,6 +41,8 @@ const {
 export const fetchSegmentsListThunk =
   (params = {}) =>
   async (dispatch, getState) => {
+    if (getState().segments.list.length) return;
+
     dispatch(segmentsFetchListStart());
 
     const { access_token } = getState().auth.identify;

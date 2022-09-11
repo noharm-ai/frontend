@@ -3,6 +3,7 @@ import isEmpty from "lodash.isempty";
 import api from "services/api";
 import appInfo from "utils/appInfo";
 import { errorHandler } from "utils";
+import { Creators as SegmentCreators } from "../segments";
 import { Creators as UserCreators } from "../user";
 import { Creators as SessionCreators } from "../session";
 import { Creators as AuthCreators } from "./index";
@@ -10,6 +11,7 @@ import { Creators as AppCreators } from "../app";
 
 const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
+const { segmentsFetchListSuccess } = SegmentCreators;
 const { authSetErrorIdentify, authSetIdentify, authDelIdentify } = AuthCreators;
 const { appSetConfig, appSetCurrentVersion, appSetNotification } = AppCreators;
 
@@ -41,6 +43,7 @@ export const loginThunk =
       apiKey,
       notify,
       proxy,
+      segments,
       ...identify
     } = data;
     const user = {
@@ -58,6 +61,7 @@ export const loginThunk =
     user.features = [...features, ...userFeatures];
     appInfo.apiKey = apiKey;
 
+    dispatch(segmentsFetchListSuccess(segments));
     dispatch(authSetIdentify(identify));
     dispatch(sessionSetFirstAccess());
     dispatch(appSetCurrentVersion(appInfo.version));

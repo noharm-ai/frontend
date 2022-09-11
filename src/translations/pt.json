@@ -31,6 +31,7 @@
     "prioritization-prescription": "por Prescrições",
     "prioritization-patient": "por Pacientes",
     "prioritization-conciliation": "de Conciliações",
+    "prioritization-lab": "Cards (Beta)",
     "interventions": "Intervenções",
     "reports": "Relatórios",
     "config": "Configurações",
@@ -180,7 +181,8 @@
     "editHeight": "Atualizar a altura",
     "examDate": "Data",
     "examVariation": "Variação em relação ao último exame",
-    "admissionDate": "Data de internação"
+    "admissionDate": "Data de internação",
+    "prescriptionDate": "Data da prescrição"
   },
   "screeningBody": {
     "tabDrugs": "Medicamentos",
@@ -229,6 +231,7 @@
     "birthdate": "Data de nascimento",
     "nextAppointment": "Próximo atendimento",
     "lastAppointment": "Último atendimento",
+    "refDate": "Data referência",
     "observation": "Observação",
     "medicalObservation": "Observação médica"
   },

@@ -1,96 +1,99 @@
-import { createActions, createReducer } from 'reduxsauce';
+import { createActions, createReducer } from "reduxsauce";
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 
 export const { Types, Creators } = createActions({
-  segmentsFetchListStart: [''],
-  segmentsFetchListError: ['error'],
-  segmentsFetchListSuccess: ['list'],
+  segmentsFetchListStart: [""],
+  segmentsFetchListError: ["error"],
+  segmentsFetchListSuccess: ["list"],
 
-  segmentsFetchSingleStart: [''],
-  segmentsFetchSingleError: ['error'],
-  segmentsFetchSingleSuccess: ['content', 'firstFilter'],
-  segmentsFetchSingleReset: [''],
+  segmentsFetchSingleStart: [""],
+  segmentsFetchSingleError: ["error"],
+  segmentsFetchSingleSuccess: ["content", "firstFilter"],
+  segmentsFetchSingleReset: [""],
 
-  segmentsSaveSingleStart: [''],
-  segmentsSaveSingleSuccess: [''],
-  segmentsSaveSingleReset: [''],
-  segmentsSaveSingleError: ['error'],
+  segmentsSaveSingleStart: [""],
+  segmentsSaveSingleSuccess: [""],
+  segmentsSaveSingleReset: [""],
+  segmentsSaveSingleError: ["error"],
 
-  segmentsSelectExam: ['item'],
-  segmentsUpdateExam: ['item'],
-  segmentsSaveExamStart: [''],
-  segmentsSaveExamSuccess: ['item'],
-  segmentsSaveExamReset: [''],
-  segmentsSaveExamError: ['error'],
+  segmentsSelectExam: ["item"],
+  segmentsUpdateExam: ["item"],
+  segmentsSaveExamStart: [""],
+  segmentsSaveExamSuccess: ["item"],
+  segmentsSaveExamReset: [""],
+  segmentsSaveExamError: ["error"],
 
-  segmentsFetchExamTypesListStart: [''],
-  segmentsFetchExamTypesListError: ['error'],
-  segmentsFetchExamTypesListSuccess: ['list'],
+  segmentsFetchExamTypesListStart: [""],
+  segmentsFetchExamTypesListError: ["error"],
+  segmentsFetchExamTypesListSuccess: ["list"],
 
-  segmentsUpdateExamOrderStart: [''],
-  segmentsUpdateExamOrderError: ['error'],
-  segmentsUpdateExamOrderSuccess: ['exams'],
-  segmentsUpdateExamOrderReset: ['']
+  segmentsUpdateExamOrderStart: [""],
+  segmentsUpdateExamOrderError: ["error"],
+  segmentsUpdateExamOrderSuccess: ["exams"],
+  segmentsUpdateExamOrderReset: [""],
 });
 
 const INITIAL_STATE = {
   error: null,
-  isFetching: true,
+  isFetching: false,
   list: [],
   firstFilter: {
-    idSegment: undefined
+    idSegment: undefined,
   },
   save: {
     isSaving: false,
     success: false,
-    error: null
+    error: null,
   },
   single: {
     error: null,
     isFetching: false,
-    content: {}
+    content: {},
   },
   saveExam: {
     isSaving: false,
     success: false,
     error: null,
-    item: {}
+    item: {},
   },
   sortExam: {
     isSaving: false,
     success: false,
-    error: null
+    error: null,
   },
   examTypes: {
     error: null,
     isFetching: true,
-    list: []
-  }
+    list: [],
+  },
 };
 
 const fetchListStart = (state = INITIAL_STATE) => ({
   ...state,
-  isFetching: true
+  isFetching: true,
 });
 
 const fetchListError = (state = INITIAL_STATE, { error }) => ({
   ...state,
   error,
-  isFetching: false
+  isFetching: false,
 });
 
 const fetchListSuccess = (state = INITIAL_STATE, { list }) => ({
   ...state,
   list,
   error: null,
-  isFetching: false
+  isFetching: false,
 });
 
 const fetchSingleStart = (state = INITIAL_STATE) => ({
   ...state,
   single: {
     ...state.single,
-    isFetching: true
-  }
+    isFetching: true,
+  },
 });
 
 const fetchSingleError = (state = INITIAL_STATE, { error }) => ({
@@ -98,34 +101,37 @@ const fetchSingleError = (state = INITIAL_STATE, { error }) => ({
   single: {
     ...state.single,
     error,
-    isFetching: false
-  }
+    isFetching: false,
+  },
 });
 
-const fetchSingleSuccess = (state = INITIAL_STATE, { content, firstFilter }) => ({
+const fetchSingleSuccess = (
+  state = INITIAL_STATE,
+  { content, firstFilter }
+) => ({
   ...state,
   firstFilter,
   single: {
     ...state.single,
     content,
     error: null,
-    isFetching: false
-  }
+    isFetching: false,
+  },
 });
 
 const fetchSingleReset = (state = INITIAL_STATE) => ({
   ...state,
   single: {
-    ...INITIAL_STATE.single
-  }
+    ...INITIAL_STATE.single,
+  },
 });
 
 const saveSingleStart = (state = INITIAL_STATE) => ({
   ...state,
   save: {
     ...state.save,
-    isSaving: true
-  }
+    isSaving: true,
+  },
 });
 
 const saveSingleError = (state = INITIAL_STATE, { error }) => ({
@@ -133,15 +139,15 @@ const saveSingleError = (state = INITIAL_STATE, { error }) => ({
   save: {
     ...state.save,
     error,
-    isSaving: false
-  }
+    isSaving: false,
+  },
 });
 
 const saveSingleReset = (state = INITIAL_STATE) => ({
   ...state,
   save: {
-    ...INITIAL_STATE.save
-  }
+    ...INITIAL_STATE.save,
+  },
 });
 
 const saveSingleSuccess = (state = INITIAL_STATE) => ({
@@ -150,16 +156,16 @@ const saveSingleSuccess = (state = INITIAL_STATE) => ({
     ...state.save,
     error: null,
     success: true,
-    isSaving: false
-  }
+    isSaving: false,
+  },
 });
 
 const selectExam = (state = INITIAL_STATE, { item }) => ({
   ...state,
   saveExam: {
     ...state.saveExam,
-    item
-  }
+    item,
+  },
 });
 
 const updateExam = (state = INITIAL_STATE, { item }) => ({
@@ -168,9 +174,9 @@ const updateExam = (state = INITIAL_STATE, { item }) => ({
     ...state.saveExam,
     item: {
       ...state.saveExam.item,
-      ...item
-    }
-  }
+      ...item,
+    },
+  },
 });
 
 const updateExamOrderSuccess = (state = INITIAL_STATE, { exams }) => ({
@@ -179,17 +185,17 @@ const updateExamOrderSuccess = (state = INITIAL_STATE, { exams }) => ({
     ...state.single,
     content: {
       ...state.single.content,
-      exams
-    }
-  }
+      exams,
+    },
+  },
 });
 
 const updateExamOrderStart = (state = INITIAL_STATE) => ({
   ...state,
   sortExam: {
     ...state.sortExam,
-    isSaving: true
-  }
+    isSaving: true,
+  },
 });
 
 const updateExamOrderError = (state = INITIAL_STATE, { error }) => ({
@@ -197,23 +203,23 @@ const updateExamOrderError = (state = INITIAL_STATE, { error }) => ({
   sortExam: {
     ...state.sortExam,
     error,
-    isSaving: false
-  }
+    isSaving: false,
+  },
 });
 
 const updateExamOrderReset = (state = INITIAL_STATE) => ({
   ...state,
   sortExam: {
-    ...INITIAL_STATE.sortExam
-  }
+    ...INITIAL_STATE.sortExam,
+  },
 });
 
 const saveExamStart = (state = INITIAL_STATE) => ({
   ...state,
   saveExam: {
     ...state.saveExam,
-    isSaving: true
-  }
+    isSaving: true,
+  },
 });
 
 const saveExamError = (state = INITIAL_STATE, { error }) => ({
@@ -221,23 +227,23 @@ const saveExamError = (state = INITIAL_STATE, { error }) => ({
   saveExam: {
     ...state.saveExam,
     error,
-    isSaving: false
-  }
+    isSaving: false,
+  },
 });
 
 const saveExamReset = (state = INITIAL_STATE) => ({
   ...state,
   saveExam: {
-    ...INITIAL_STATE.saveExam
-  }
+    ...INITIAL_STATE.saveExam,
+  },
 });
 
 const fetchExamTypesListStart = (state = INITIAL_STATE) => ({
   ...state,
   examTypes: {
     ...state.examTypes,
-    isFetching: true
-  }
+    isFetching: true,
+  },
 });
 
 const fetchExamTypesListError = (state = INITIAL_STATE, { error }) => ({
@@ -245,8 +251,8 @@ const fetchExamTypesListError = (state = INITIAL_STATE, { error }) => ({
   examTypes: {
     ...state.examTypes,
     isFetching: false,
-    error
-  }
+    error,
+  },
 });
 
 const fetchExamTypesListSuccess = (state = INITIAL_STATE, { list }) => ({
@@ -255,13 +261,13 @@ const fetchExamTypesListSuccess = (state = INITIAL_STATE, { list }) => ({
     ...state.examTypes,
     isFetching: false,
     error: null,
-    list
-  }
+    list,
+  },
 });
 
 const saveExamSuccess = (state = INITIAL_STATE, { item }) => {
   const exams = [...state.single.content.exams];
-  const index = exams.findIndex(e => item.type === e.type);
+  const index = exams.findIndex((e) => item.type === e.type);
 
   if (index !== -1) {
     exams[index] = { ...exams[index], ...item };
@@ -275,15 +281,15 @@ const saveExamSuccess = (state = INITIAL_STATE, { item }) => {
       ...state.single,
       content: {
         ...state.single.content,
-        exams
-      }
+        exams,
+      },
     },
     saveExam: {
       ...state.saveExam,
       error: null,
       success: true,
-      isSaving: false
-    }
+      isSaving: false,
+    },
   };
 };
 
@@ -317,9 +323,16 @@ const HANDLERS = {
 
   [Types.SEGMENTS_FETCH_EXAM_TYPES_LIST_START]: fetchExamTypesListStart,
   [Types.SEGMENTS_FETCH_EXAM_TYPES_LIST_ERROR]: fetchExamTypesListError,
-  [Types.SEGMENTS_FETCH_EXAM_TYPES_LIST_SUCCESS]: fetchExamTypesListSuccess
+  [Types.SEGMENTS_FETCH_EXAM_TYPES_LIST_SUCCESS]: fetchExamTypesListSuccess,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);
 
-export default reducer;
+const persist = {
+  key: "segments",
+  storage,
+  whitelist: ["list"],
+  stateReconciler: autoMergeLevel2,
+};
+
+export default persistReducer(persist, reducer);
