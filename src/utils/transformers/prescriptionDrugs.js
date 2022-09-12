@@ -1,4 +1,4 @@
-import isEmpty from 'lodash.isempty';
+import isEmpty from "lodash.isempty";
 
 const groupPrescriptionDrugs = (list, createTotalRowFunction) => {
   const items = [];
@@ -7,7 +7,14 @@ const groupPrescriptionDrugs = (list, createTotalRowFunction) => {
   let currentKey = list[0].key;
   list.forEach((item, index) => {
     if (item.grp_solution !== currentGroup) {
-      items.push(createTotalRowFunction(item, currentGroup, currentKey, currentInfusionKey));
+      items.push(
+        createTotalRowFunction(
+          item,
+          currentGroup,
+          currentKey,
+          currentInfusionKey
+        )
+      );
       currentGroup = item.grp_solution;
     }
 
@@ -17,14 +24,21 @@ const groupPrescriptionDrugs = (list, createTotalRowFunction) => {
     items.push(item);
 
     if (index === list.length - 1) {
-      items.push(createTotalRowFunction(item, item.grp_solution, item.key, item.infusionKey));
+      items.push(
+        createTotalRowFunction(
+          item,
+          item.grp_solution,
+          item.key,
+          item.infusionKey
+        )
+      );
     }
   });
 
   return items;
 };
 
-export const groupComponents = list => {
+export const groupComponents = (list) => {
   if (!list || list.length < 1) return list;
   if (!list[0].grp_solution) return list;
 
@@ -41,27 +55,27 @@ export const groupComponents = list => {
       : [cpoelist[i]];
   }
 
-  order.forEach(key => {
+  order.forEach((key) => {
     if (cpoeGroups[key].length > 1) {
       const emptyRowStart = {
         key: `${key}expandStart`,
         idPrescription: cpoeGroups[key][0].idPrescription,
         idPrescriptionDrug: `${cpoeGroups[key][0].idPrescriptionDrug}Start`,
-        source: 'Medicamentos',
+        source: "Medicamentos",
         dividerRow: true,
         emptyRow: true,
-        startRow: true
+        startRow: true,
       };
       const emptyRowEnd = {
         key: `${key}expandEnd`,
         idPrescription: cpoeGroups[key][0].idPrescription,
         idPrescriptionDrug: `${cpoeGroups[key][0].idPrescriptionDrug}End`,
-        source: 'Medicamentos',
+        source: "Medicamentos",
         dividerRow: true,
         emptyRow: true,
-        endRow: true
+        endRow: true,
       };
-      const groupRows = cpoeGroups[key].map(g => ({ ...g, groupRow: true }));
+      const groupRows = cpoeGroups[key].map((g) => ({ ...g, groupRow: true }));
       groupRows[groupRows.length - 1].groupRowLast = true;
 
       items = [...items, emptyRowStart, ...groupRows, emptyRowEnd];
@@ -80,36 +94,40 @@ export const groupSolutions = (list, infusionList) => {
     return {
       key: `${key}expand`,
       total: true,
-      source: 'Soluções',
+      source: "Soluções",
       handleRowExpand: item.handleRowExpand,
       weight: item.weight,
       infusion: infusionList[infusionKey],
       emptyRow: true,
       cpoe: item.cpoe,
-      group: group
+      group: group,
     };
   };
 
   return groupPrescriptionDrugs(list, createTotalRow);
 };
 
-export const groupProcedures = list => {
+export const groupProcedures = (list) => {
   if (list.length === 0) return list;
 
   const createTotalRow = (item, group, key) => {
     return {
       key: `${key}expand`,
-      source: 'Procedimentos',
+      source: "Procedimentos",
       dividerRow: true,
       emptyRow: true,
-      cpoe: item.cpoe
+      cpoe: item.cpoe,
     };
   };
 
   return groupPrescriptionDrugs(list, createTotalRow);
 };
 
-export const isWhitelistedChild = (whitelist, groupSolution, idPrescriptionDrug) => {
+export const isWhitelistedChild = (
+  whitelist,
+  groupSolution,
+  idPrescriptionDrug
+) => {
   if (!whitelist) {
     return false;
   }
@@ -123,12 +141,15 @@ export const isWhitelistedChild = (whitelist, groupSolution, idPrescriptionDrug)
   return parent !== `${idPrescriptionDrug}`;
 };
 
-export const filterWhitelistedChildren = list => {
+export const filterWhitelistedChildren = (list) => {
   if (list && list.length === 1) return list;
 
-  return list.filter(i => {
+  // do not apply to cpoe
+  if (list && list.length > 0 && list[0].cpoe_group) return list;
+
+  return list.filter((i) => {
     if (isWhitelistedChild(i.whiteList, i.grp_solution, i.idPrescriptionDrug)) {
-      console.debug('removed', i);
+      console.debug("removed", i);
       return false;
     }
 
@@ -136,12 +157,12 @@ export const filterWhitelistedChildren = list => {
   });
 };
 
-export const getWhitelistedChildren = list => {
+export const getWhitelistedChildren = (list) => {
   if (isEmpty(list)) {
     return [];
   }
 
-  return list.filter(i => {
+  return list.filter((i) => {
     if (isWhitelistedChild(i.whiteList, i.grp_solution, i.idPrescriptionDrug)) {
       return true;
     }
