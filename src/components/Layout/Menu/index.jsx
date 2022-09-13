@@ -11,7 +11,6 @@ export default function Menu({
   navigation,
   security,
   featureService,
-  collapsed,
 }) {
   const location = useLocation();
 
@@ -38,7 +37,7 @@ export default function Menu({
   };
 
   const renderItem = ({ text, key, icon, id, role, feature }, t) => {
-    if (role && !security.hasRole(role)) {
+    if (role && !security.hasAnyRole(role)) {
       return;
     }
 

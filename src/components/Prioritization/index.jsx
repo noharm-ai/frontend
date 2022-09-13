@@ -273,7 +273,7 @@ export default function Prioritization({
 
   return (
     <>
-      <Heading>Priorização (Beta)</Heading>
+      <Heading>Priorização por Pacientes (Beta)</Heading>
       <FilterCard>
         <Filter
           {...restProps}
