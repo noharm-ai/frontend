@@ -1,5 +1,6 @@
 import React, { useEffect, useReducer } from "react";
 import isEmpty from "lodash.isempty";
+import debounce from "lodash.debounce";
 import { useTransition, animated } from "@react-spring/web";
 import { Spin, Pagination, Tag, Empty } from "antd";
 import { useTranslation } from "react-i18next";
@@ -8,6 +9,7 @@ import Heading from "components/Heading";
 import notification from "components/notification";
 import { Select } from "components/Inputs";
 import BackTop from "components/BackTop";
+import { Input } from "components/Inputs";
 
 import Filter from "./Filter";
 import PrioritizationCard from "./Card";
@@ -115,11 +117,20 @@ const getListStats = (list) => {
 };
 
 const filterList = (list, filter) => {
+  let newList = [...list];
   if (filter.status) {
-    return list.filter((i) => i.status === filter.status);
+    newList = newList.filter((i) => i.status === filter.status);
   }
 
-  return list;
+  if (filter.searchKey) {
+    newList = newList.filter(
+      (i) =>
+        i.namePatient.toLowerCase().includes(filter.searchKey) ||
+        `${i.admissionNumber}`.includes(filter.searchKey)
+    );
+  }
+
+  return newList;
 };
 
 const sortList = (list, orderBy) => {
@@ -147,6 +158,12 @@ const reducer = (state, action) => {
       return {
         ...state,
         loading: true,
+        currentPage: 1,
+        filter: { ...state.filter, ...action.payload },
+      };
+    case "set_filter_direct":
+      return {
+        ...state,
         currentPage: 1,
         filter: { ...state.filter, ...action.payload },
       };
@@ -271,6 +288,39 @@ export default function Prioritization({
     stopLoading();
   };
 
+  const onClientSearch = (ev) => {
+    ev.persist();
+
+    if (ev.target.value === "") {
+      dispatch({
+        type: "set_filter_direct",
+        payload: {
+          searchKey: null,
+        },
+      });
+
+      return;
+    }
+
+    debounce((e) => {
+      if (e.target.value !== "" && e.target.value.length > 3) {
+        dispatch({
+          type: "set_filter_direct",
+          payload: {
+            searchKey: e.target.value.toLowerCase(),
+          },
+        });
+      } else if (state.filter.searchKey) {
+        dispatch({
+          type: "set_filter_direct",
+          payload: {
+            searchKey: null,
+          },
+        });
+      }
+    }, 800)(ev);
+  };
+
   return (
     <>
       <Heading>Priorização por Pacientes (Beta)</Heading>
@@ -339,6 +389,20 @@ export default function Prioritization({
                 </Select>
               </div>
             </div>
+
+            <div className="filters-item">
+              <div className="filters-item-label">
+                Buscar por atendimento/nome:
+              </div>
+              <div className="filters-item-value">
+                <Input
+                  style={{ width: 300 }}
+                  allowClear
+                  onChange={onClientSearch}
+                  // className={filter.searchKey ? "active" : ""}
+                />
+              </div>
+            </div>
           </div>
           <div className="pagination">
             <Pagination
@@ -353,10 +417,10 @@ export default function Prioritization({
         </ResultActions>
         <PrioritizationPage collapsed={siderCollapsed}>
           <>
-            {!(isFetching || state.loading) && !list.length && (
+            {!(isFetching || state.loading) && !filteredList.length && (
               <Empty description="Nenhum registro encontrado" />
             )}
-            {list && list.length > 0 && (
+            {filteredList && filteredList.length > 0 && (
               <div className="grid">
                 {transitions((props, item) => (
                   <animated.div style={props}>
