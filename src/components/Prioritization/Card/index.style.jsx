@@ -15,7 +15,7 @@ const getAlertColor = (type) => {
     case "red":
       return "#E53935";
     default:
-      return "#ccc";
+      return "#959595";
   }
 };
 
@@ -64,6 +64,19 @@ export const Card = styled.div`
       overflow: hidden;
       text-overflow: ellipsis;
       transition: all 0.3s linear;
+
+      &.discharged {
+        padding-bottom: 0.2rem;
+        padding-top: 0.7rem;
+      }
+
+      .discharge {
+        font-size: 0.75rem;
+        font-weight: 400;r
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
 
     .stamp {

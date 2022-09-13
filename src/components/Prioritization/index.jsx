@@ -96,6 +96,12 @@ const ORDER_OPTIONS = [
     formattedKey: "prescriptionScore",
     type: "number",
   },
+  {
+    label: "Tempo de internação",
+    key: "lengthStay",
+    formattedKey: "lengthStay",
+    type: "number",
+  },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
 const getListStats = (list) => {
@@ -399,7 +405,6 @@ export default function Prioritization({
                   style={{ width: 300 }}
                   allowClear
                   onChange={onClientSearch}
-                  // className={filter.searchKey ? "active" : ""}
                 />
               </div>
             </div>

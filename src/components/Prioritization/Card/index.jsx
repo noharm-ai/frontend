@@ -279,12 +279,32 @@ export default function PrioritizationCard({
   };
 
   return (
-    <Card alert={prescription.class} onClick={() => open()}>
+    <Card
+      alert={prescription.dischargeReason ? "" : prescription.class}
+      onClick={() => open()}
+    >
       <div className="card-header">
-        <div className="name">
+        <div
+          className={`name ${
+            prescription.dischargeFormated ? "discharged" : ""
+          }`}
+        >
           <Tooltip title={prescription.namePatient}>
             {prescription.namePatient}
           </Tooltip>
+          {prescription.dischargeFormated && (
+            <Tooltip
+              title={`Paciente com ${
+                prescription.dischargeReason || "alta"
+              } em ${prescription.dischargeFormated}`}
+            >
+              <div className="discharge">
+                {`Paciente com ${prescription.dischargeReason || "alta"} em ${
+                  prescription.dischargeFormated
+                }`}
+              </div>
+            </Tooltip>
+          )}
         </div>
         <div className={`stamp ${highlight ? "highlight" : ""}`}>
           <div className="stamp-label">{prioritization.label}</div>
