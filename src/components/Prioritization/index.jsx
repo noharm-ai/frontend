@@ -210,7 +210,6 @@ export default function Prioritization({
   const [state, dispatch] = useReducer(reducer, initState());
   const { isFetching, list, error } = prescriptions;
   const { t } = useTranslation();
-  console.log("filter", state.filter);
 
   const filteredList = sortList(
     filterList(list, state.filter),
