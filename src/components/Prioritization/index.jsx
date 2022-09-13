@@ -183,7 +183,6 @@ const reducer = (state, action) => {
     case "after_update_list":
       return {
         ...state,
-        filter: {},
         listStats: action.payload,
       };
     case "highlight_prioritization":
@@ -211,6 +210,7 @@ export default function Prioritization({
   const [state, dispatch] = useReducer(reducer, initState());
   const { isFetching, list, error } = prescriptions;
   const { t } = useTranslation();
+  console.log("filter", state.filter);
 
   const filteredList = sortList(
     filterList(list, state.filter),
@@ -269,9 +269,11 @@ export default function Prioritization({
     }, 150);
   };
 
-  const onChangePage = (page) => {
+  const onChangePage = (page, scroll) => {
     dispatch({ type: "set_page", payload: page });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (scroll) {
+      window.scrollTo({ top: 250, behavior: "smooth" });
+    }
   };
 
   const onChangeStatus = (value) => {
@@ -416,7 +418,7 @@ export default function Prioritization({
               hideOnSinglePage={true}
               pageSize={PAGE_SIZE}
               showSizeChanger={false}
-              onChange={(page) => onChangePage(page)}
+              onChange={(page) => onChangePage(page, false)}
             />
           </div>
         </ResultActions>
@@ -452,7 +454,7 @@ export default function Prioritization({
               hideOnSinglePage={true}
               pageSize={PAGE_SIZE}
               showSizeChanger={false}
-              onChange={(page) => onChangePage(page)}
+              onChange={(page) => onChangePage(page, true)}
             />
           </div>
         </ResultActions>
