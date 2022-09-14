@@ -317,6 +317,7 @@
     "panelPrescription": "Prescription",
     "panelIssueDate": "Issue date",
     "panelValidUntil": "Valid until",
+    "panelSuspensionDate": "Suspended in",
     "panelBed": "Bed",
     "panelPrescriber": "Prescriber",
 
