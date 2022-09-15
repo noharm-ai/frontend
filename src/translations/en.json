@@ -459,6 +459,7 @@
     "nolimit": "No date limit at prioritization",
     "alert-bt": "Alert Integration",
     "cpoe": "CPOE",
-    "prescriptionEdit": "Prescription Edit"
+    "prescriptionEdit": "Prescription Edit",
+    "beta-cards": "Prioritization Cards (Beta)"
   }
 }
