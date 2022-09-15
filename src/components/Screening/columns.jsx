@@ -489,6 +489,14 @@ export const expandedRowRender = (bag) => (record) => {
                 "dd/MM/yyyy HH:mm"
               )}
             </Descriptions.Item>
+            {record.suspensionDate && (
+              <Descriptions.Item
+                label={bag.t("prescriptionDrugList.panelSuspensionDate")}
+                span={3}
+              >
+                {format(new Date(record.suspensionDate), "dd/MM/yyyy HH:mm")}
+              </Descriptions.Item>
+            )}
           </>
         )}
         {!isEmpty(record.period) && (

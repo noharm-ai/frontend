@@ -31,7 +31,7 @@
     "prioritization-prescription": "por Prescrições",
     "prioritization-patient": "por Pacientes",
     "prioritization-conciliation": "de Conciliações",
-    "prioritization-lab": "Cards (Beta)",
+    "prioritization-lab": "por Pacientes (Beta)",
     "interventions": "Intervenções",
     "reports": "Relatórios",
     "config": "Configurações",
@@ -317,6 +317,7 @@
     "panelPrescription": "Prescrição",
     "panelIssueDate": "Liberação",
     "panelValidUntil": "Vigência",
+    "panelSuspensionDate": "Suspenso em",
     "panelBed": "Leito",
     "panelPrescriber": "Prescritor",
 
@@ -459,6 +460,7 @@
     "nolimit": "Sem limite de data na priorização",
     "alert-bt": "Integração de Alertas",
     "cpoe": "CPOE",
-    "prescriptionEdit": "Edição de Prescrição"
+    "prescriptionEdit": "Edição de Prescrição",
+    "beta-cards": "Priorização Cards (Beta)"
   }
 }

@@ -317,6 +317,7 @@
     "panelPrescription": "Prescription",
     "panelIssueDate": "Issue date",
     "panelValidUntil": "Valid until",
+    "panelSuspensionDate": "Suspended in",
     "panelBed": "Bed",
     "panelPrescriber": "Prescriber",
 
@@ -458,6 +459,7 @@
     "nolimit": "No date limit at prioritization",
     "alert-bt": "Alert Integration",
     "cpoe": "CPOE",
-    "prescriptionEdit": "Prescription Edit"
+    "prescriptionEdit": "Prescription Edit",
+    "beta-cards": "Prioritization Cards (Beta)"
   }
 }

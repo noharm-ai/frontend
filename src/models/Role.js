@@ -1,14 +1,15 @@
 export default class Role {
-  static ADMIN = 'admin';
-  static CONCILIATION = 'concilia';
-  static CARE = 'care';
-  static SUPPORT = 'suporte';
-  static TRANSCRIPTION = 'transcription';
-  static USER_ADMIN = 'userAdmin';
-  static NOLIMIT = 'nolimit';
-  static ALERT_BT = 'alert-bt';
-  static CPOE = 'cpoe';
-  static PRESCRIPTION_EDIT = 'prescriptionEdit';
+  static ADMIN = "admin";
+  static CONCILIATION = "concilia";
+  static CARE = "care";
+  static SUPPORT = "suporte";
+  static TRANSCRIPTION = "transcription";
+  static USER_ADMIN = "userAdmin";
+  static NOLIMIT = "nolimit";
+  static ALERT_BT = "alert-bt";
+  static CPOE = "cpoe";
+  static PRESCRIPTION_EDIT = "prescriptionEdit";
+  static BETA_CARDS = "beta-cards";
 
   static getRoles(t) {
     return [
@@ -21,7 +22,11 @@ export default class Role {
       { id: Role.NOLIMIT, label: t(`roles.${Role.NOLIMIT}`) },
       { id: Role.ALERT_BT, label: t(`roles.${Role.ALERT_BT}`) },
       { id: Role.CPOE, label: t(`roles.${Role.CPOE}`) },
-      { id: Role.PRESCRIPTION_EDIT, label: t(`roles.${Role.PRESCRIPTION_EDIT}`) }
+      {
+        id: Role.PRESCRIPTION_EDIT,
+        label: t(`roles.${Role.PRESCRIPTION_EDIT}`),
+      },
+      { id: Role.BETA_CARDS, label: t(`roles.${Role.BETA_CARDS}`) },
     ];
   }
 }

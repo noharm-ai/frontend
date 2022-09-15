@@ -1,4 +1,5 @@
 import isEmpty from "lodash.isempty";
+import intersection from "lodash.intersection";
 
 import Role from "models/Role";
 
@@ -7,6 +8,12 @@ const security = (roles) => {
     if (isEmpty(roles)) return false;
 
     return roles.indexOf(role) !== -1;
+  };
+
+  const hasAnyRole = (roleArray) => {
+    if (isEmpty(roles)) return false;
+
+    return intersection(roles, roleArray).length > 0;
   };
 
   const hasNoHarmCare = () => {
@@ -39,6 +46,7 @@ const security = (roles) => {
 
   return {
     hasRole,
+    hasAnyRole,
     hasNoHarmCare,
     hasAlertIntegration,
     hasCpoe,

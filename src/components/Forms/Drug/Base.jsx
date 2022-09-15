@@ -42,7 +42,7 @@ export default function Base({ security }) {
 
   return (
     <>
-      <Col md={24} xs={24}>
+      <Col md={12} xs={12}>
         <Box css="align-items: flex-start;">
           <Heading
             as="label"
@@ -168,6 +168,15 @@ export default function Base({ security }) {
             </Col>
           </div>
         </Box>
+      </Col>
+      <Col xs={12}>
+        {security.isSupport() && defaultNote && (
+          <Collapse defaultActiveKey={["1"]}>
+            <Collapse.Panel header="Curadoria de doses" key="1">
+              {doseHints}
+            </Collapse.Panel>
+          </Collapse>
+        )}
       </Col>
       <Row style={{ marginTop: "15px" }}>
         <Col xs={12}>
@@ -377,15 +386,6 @@ export default function Base({ security }) {
               </Box>
             </Col>
           </Row>
-        </Col>
-        <Col xs={12}>
-          {security.isSupport() && defaultNote && (
-            <Collapse defaultActiveKey={["1"]}>
-              <Collapse.Panel header="Curadoria de doses" key="1">
-                {doseHints}
-              </Collapse.Panel>
-            </Collapse>
-          )}
         </Col>
       </Row>
     </>
