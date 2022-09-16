@@ -59,3 +59,13 @@ export const PrescriptionActionContainer = styled.div`
   width: 100%;
   padding-bottom: 15px;
 `;
+
+export const PeriodTags = styled.div`
+  span {
+    &:hover {
+      background: #fff;
+      font-weight: 700;
+      transition: all 0.2s linear;
+    }
+  }
+`;

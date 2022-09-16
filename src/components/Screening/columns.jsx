@@ -28,6 +28,7 @@ import InterventionStatus from "models/InterventionStatus";
 import { Select } from "components/Inputs";
 import Badge from "components/Badge";
 
+import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
 
 import { InterventionView } from "./Intervention/columns";
@@ -324,11 +325,11 @@ const periodDates = (dates) => {
   }
 
   return (
-    <div>
+    <PeriodTags>
       {dates.map((item, index) => (
         <span key={index}>{item}, </span>
       ))}
-    </div>
+    </PeriodTags>
   );
 };
 
