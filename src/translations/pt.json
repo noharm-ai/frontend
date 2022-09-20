@@ -263,7 +263,8 @@
     "scheduledBy": "Agendado por",
     "attendedBy": "Atendido por",
     "type": "Tipo",
-    "typePlaceholderFilter": "Filtrar por tipo"
+    "typePlaceholderFilter": "Filtrar por tipo",
+    "insurance": "Convênio"
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",

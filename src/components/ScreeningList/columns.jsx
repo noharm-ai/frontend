@@ -173,6 +173,11 @@ export const expandedRowRender = (t) => {
         width: 100,
         key: "idPrescription",
       },
+      {
+        title: t("labels.insurance"),
+        width: 100,
+        key: "insurance",
+      },
     ]);
 
     return (

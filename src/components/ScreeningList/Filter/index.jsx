@@ -16,7 +16,7 @@ import {
 import message from "components/message";
 import Heading from "components/Heading";
 import { Row, Col } from "components/Grid";
-import { Select, RangeDatePicker, Checkbox } from "components/Inputs";
+import { Select, RangeDatePicker, Checkbox, Input } from "components/Inputs";
 import Switch from "components/Switch";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
@@ -68,6 +68,7 @@ export default function Filter({
         concilia: prioritizationType === "conciliation" ? 1 : 0,
         startDate: date[0] ? date[0].format("YYYY-MM-DD") : "all",
         endDate: date[1] ? date[1].format("YYYY-MM-DD") : "all",
+        insurance: filter.insurance,
       };
       const mixedParams = { ...params, ...forceParams };
       const finalParams = {};
@@ -88,6 +89,7 @@ export default function Filter({
       filter.allDrugs,
       filter.discharged,
       filter.currentDepartment,
+      filter.insurance,
       prioritizationType,
       date,
     ]
@@ -158,6 +160,10 @@ export default function Filter({
     setScreeningListFilter({ discharged: discharged ? 1 : 0 });
   };
 
+  const onInsuranceChange = (value) => {
+    setScreeningListFilter({ insurance: value });
+  };
+
   const onDateChange = (dt) => {
     setDate(dt);
   };
@@ -203,6 +209,7 @@ export default function Filter({
       idSegment: segments.list[0].id,
       idDepartment: [],
       idDrug: [],
+      insurance: null,
       pending: 0,
       allDrugs: 0,
       discharged: 0,
@@ -423,6 +430,21 @@ export default function Filter({
                   {t("screeningList.labelAllDrugs")}
                 </Tooltip>
               </Checkbox>
+            </Col>
+          </Row>
+
+          <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={19}>
+              <Box>
+                <Heading as="label" size="14px">
+                  Convênio:
+                </Heading>
+                <Input
+                  style={{ width: "100%" }}
+                  value={filter.insurance}
+                  onChange={({ target }) => onInsuranceChange(target.value)}
+                ></Input>
+              </Box>
             </Col>
           </Row>
 

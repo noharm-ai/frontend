@@ -59,11 +59,17 @@ const TabContent = ({ tab, prescription }) => {
         <div className="attributes">
           <div className="attributes-item col-6">
             <div className="attributes-item-label">
-              {t("patientCard.department")}
+              Setor | Leito | Convênio
             </div>
             <div className="attributes-item-value">
-              <Tooltip title={prescription.department}>
-                {prescription.department}
+              <Tooltip
+                title={`${prescription.department} | ${
+                  prescription.bed || " - "
+                } | 
+                ${prescription.insurance || " - "}`}
+              >
+                {prescription.department} | {prescription.bed || " - "} |{" "}
+                {prescription.insurance || " - "}
               </Tooltip>
             </div>
           </div>
