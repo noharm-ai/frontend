@@ -19,13 +19,21 @@ const TabContent = ({ tab, prescription }) => {
     return (
       <div className="attribute-container">
         <div className="attributes">
-          <div className="attributes-item col-6">
+          <div className="attributes-item col-4">
+            <div className="attributes-item-label">
+              {t("patientCard.admission")}
+            </div>
+            <div className="attributes-item-value">
+              {prescription.admissionNumber}
+            </div>
+          </div>
+          <div className="attributes-item col-4">
             <div className="attributes-item-label">{t("patientCard.age")}</div>
             <div className="attributes-item-value">
               {prescription.age || "-"}
             </div>
           </div>
-          <div className="attributes-item col-6">
+          <div className="attributes-item col-4">
             <div className="attributes-item-label">
               {t("patientCard.gender")}
             </div>
@@ -39,15 +47,43 @@ const TabContent = ({ tab, prescription }) => {
           </div>
         </div>
         <div className="attributes">
-          <div className="attributes-item col-6">
-            <div className="attributes-item-label">
-              {t("patientCard.admission")}
-            </div>
+          <div className="attributes-item col-4">
+            <div className="attributes-item-label">Setor</div>
             <div className="attributes-item-value">
-              {prescription.admissionNumber}
+              <Tooltip title={`${prescription.department}`}>
+                {prescription.department}
+              </Tooltip>
             </div>
           </div>
-          <div className="attributes-item col-6">
+          <div className="attributes-item col-4">
+            <div className="attributes-item-label">Leito</div>
+            <div className="attributes-item-value">
+              <Tooltip title={`${prescription.bed || " - "}`}>
+                {prescription.bed || " - "}
+              </Tooltip>
+            </div>
+          </div>
+          <div className="attributes-item col-4">
+            <div className="attributes-item-label">Convênio</div>
+            <div className="attributes-item-value">
+              <Tooltip title={`${prescription.insurance}`}>
+                {prescription.insurance}
+              </Tooltip>
+            </div>
+          </div>
+        </div>
+        <div className="attributes">
+          <div className="attributes-item col-4">
+            <div className="attributes-item-label">
+              <Tooltip title={t("screeningList.clInterventionsHint")}>
+                {t("screeningList.clInterventionsHint")}
+              </Tooltip>
+            </div>
+            <div className="attributes-item-value">
+              {prescription.interventions}
+            </div>
+          </div>
+          <div className="attributes-item col-4">
             <div className="attributes-item-label">
               {t("patientCard.prescriptionDate")}
             </div>
@@ -55,25 +91,7 @@ const TabContent = ({ tab, prescription }) => {
               {prescription.dateOnlyFormated}
             </div>
           </div>
-        </div>
-        <div className="attributes">
-          <div className="attributes-item col-6">
-            <div className="attributes-item-label">
-              Setor | Leito | Convênio
-            </div>
-            <div className="attributes-item-value">
-              <Tooltip
-                title={`${prescription.department} | ${
-                  prescription.bed || " - "
-                } | 
-                ${prescription.insurance || " - "}`}
-              >
-                {prescription.department} | {prescription.bed || " - "} |{" "}
-                {prescription.insurance || " - "}
-              </Tooltip>
-            </div>
-          </div>
-          <div className="attributes-item col-6">
+          <div className="attributes-item col-4">
             <div className="attributes-item-label">Situação</div>
             <div className="attributes-item-value">
               {prescription.status === "s" && <Tag color="green">Checada</Tag>}
