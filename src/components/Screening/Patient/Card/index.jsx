@@ -62,7 +62,7 @@ export default function PatientCard({
     segmentName,
     bed,
     prescriber,
-    record,
+    insurance,
     height,
     observation,
     intervention,
@@ -616,9 +616,11 @@ export default function PatientCard({
 
               <div className="patient-data-item">
                 <div className="patient-data-item-label">
-                  {t("patientCard.medicalRecord")}
+                  {t("labels.insurance")}
                 </div>
-                <div className="patient-data-item-value">{record}</div>
+                <div className="patient-data-item-value">
+                  <Tooltip title={insurance}>{insurance}</Tooltip>
+                </div>
               </div>
 
               <div className="patient-data-item">
