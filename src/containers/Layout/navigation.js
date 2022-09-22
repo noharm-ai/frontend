@@ -45,7 +45,6 @@ const navigation = [
         text: "menu.prioritization-lab",
         icon: ExperimentOutlined,
         id: "gtm-lnk-priorizacao-cards",
-        role: ["suporte", "beta-cards"],
       },
     ],
   },

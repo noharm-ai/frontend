@@ -263,7 +263,8 @@
     "scheduledBy": "Scheduled by",
     "attendedBy": "Attended by",
     "type": "Type",
-    "typePlaceholderFilter": "Filter by type"
+    "typePlaceholderFilter": "Filter by type",
+    "insurance": "Insurance"
   },
   "transcriptionLabels": {
     "idDrug": "Drug",

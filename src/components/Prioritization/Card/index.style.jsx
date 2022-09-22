@@ -245,7 +245,8 @@ export const Card = styled.div`
 
 export const AlertContainer = styled.div`
   display: flex;
-  padding: 0.5rem 0;
+  flex-wrap: wrap;
+  padding-bottom: 0.5rem;
   min-height: 2.875rem;
 
   .alert {
@@ -259,6 +260,7 @@ export const AlertContainer = styled.div`
     border: 1px solid #f68c97;
     background: #f8dee2;
     margin-right: 0.3rem;
+    margin-top: 0.5rem;
 
     @media (min-width: ${breakpoints.xxl}) {
       font-size: 14px;
