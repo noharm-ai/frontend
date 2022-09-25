@@ -6,7 +6,6 @@ import { Select, RangeDatePicker } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import Tooltip from "components/Tooltip";
 
 export default function MainFilters({
   segments,
