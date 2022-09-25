@@ -20,6 +20,8 @@ import Table from "./components/Table";
 import PanelAction from "./components/PanelAction";
 
 const isExpired = (date) => {
+  if (!date) return false;
+
   if (parseISO(date).getTime() < Date.now()) {
     return true;
   }
@@ -171,7 +173,9 @@ export default function PrescriptionDrugList({
           <span
             className={isExpired(headers[ds.key].expire, true) ? "expired" : ""}
           >
-            {format(new Date(headers[ds.key].expire), "dd/MM/yyyy HH:mm")}
+            {headers[ds.key].expire
+              ? format(new Date(headers[ds.key].expire), "dd/MM/yyyy HH:mm")
+              : " - "}
           </span>
         </span>
         <span>
@@ -328,7 +332,9 @@ export default function PrescriptionDrugList({
   }
 
   headerKeys.forEach((k) => {
-    const dt = headers[k].expire.substr(0, 10);
+    const dt = headers[k].expire
+      ? headers[k].expire.substr(0, 10)
+      : headers[k].date.substr(0, 10);
 
     if (groups[dt]) {
       groups[dt].ids.push(k);
