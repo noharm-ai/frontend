@@ -233,7 +233,8 @@
     "lastAppointment": "Último atendimento",
     "refDate": "Data referência",
     "observation": "Observação",
-    "medicalObservation": "Observação médica"
+    "medicalObservation": "Observação médica",
+    "scheduledDate": "Data de agendamento"
   },
   "labels": {
     "yes": "Sim",

@@ -87,9 +87,7 @@ export default function MainFilters({
       </Col>
       <Col md={7} lg={7} xxl={5}>
         <Heading as="label" htmlFor="date" size="14px">
-          <Tooltip title="Data do último atendimento ou agendamento">
-            {t("tableHeader.refDate")}:
-          </Tooltip>
+          {t("tableHeader.scheduledDate")}:
         </Heading>
         <RangeDatePicker
           format="DD/MM/YYYY"

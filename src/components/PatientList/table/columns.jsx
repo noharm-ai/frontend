@@ -75,11 +75,7 @@ const columns = (sortedInfo, filteredInfo, t) => {
     },
     {
       key: "refDate",
-      title: (
-        <Tooltip title="Data do último atendimento ou agendamento" underline>
-          {t("tableHeader.refDate")}
-        </Tooltip>
-      ),
+      title: t("tableHeader.scheduledDate"),
       sortDirections,
       sorter: (a, b) =>
         moment(a.refDate || new Date()).unix() -
