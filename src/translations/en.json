@@ -233,7 +233,8 @@
     "lastAppointment": "Last appointment",
     "refDate": "Reference date",
     "observation": "Observation",
-    "medicalObservation": "Medical observation"
+    "medicalObservation": "Medical observation",
+    "scheduledDate": "Data de agendamento"
   },
   "labels": {
     "yes": "Yes",

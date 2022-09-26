@@ -485,10 +485,12 @@ export const expandedRowRender = (bag) => (record) => {
               label={bag.t("prescriptionDrugList.panelValidUntil")}
               span={3}
             >
-              {format(
-                new Date(bag.headers[record.cpoe].expire),
-                "dd/MM/yyyy HH:mm"
-              )}
+              {bag.headers[record.cpoe].expire
+                ? format(
+                    new Date(bag.headers[record.cpoe].expire),
+                    "dd/MM/yyyy HH:mm"
+                  )
+                : "Manter até 2º ordem"}
             </Descriptions.Item>
             {record.suspensionDate && (
               <Descriptions.Item
