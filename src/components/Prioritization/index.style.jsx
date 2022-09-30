@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components/macro";
 import breakpoints from "styles/breakpoints";
+import { timingFunctions } from "polished";
 
 export const PrioritizationPage = styled.div`
   position: relative;
@@ -74,6 +75,10 @@ export const ResultActions = styled.div`
       }
 
       .filters-item-value {
+        &.flex {
+          display: flex;
+        }
+
         .ant-select {
           width: 100%;
 
@@ -95,6 +100,15 @@ export const ResultActions = styled.div`
           .ant-select-arrow {
             color: #fff;
           }
+        }
+
+        .order-desc,
+        .order-asc {
+          transition: transform 0.3s ${timingFunctions("easeOutQuint")};
+        }
+
+        .order-desc {
+          transform: rotate(180deg);
         }
       }
     }
