@@ -4,12 +4,15 @@ import debounce from "lodash.debounce";
 import { useTransition, animated } from "@react-spring/web";
 import { Spin, Pagination, Tag, Empty } from "antd";
 import { useTranslation } from "react-i18next";
+import { CaretUpOutlined } from "@ant-design/icons";
 
 import Heading from "components/Heading";
 import notification from "components/notification";
 import { Select } from "components/Inputs";
 import BackTop from "components/BackTop";
 import { Input } from "components/Inputs";
+import Tooltip from "components/Tooltip";
+import Button from "components/Button";
 
 import Filter from "./Filter";
 import PrioritizationCard from "./Card";
@@ -139,8 +142,12 @@ const filterList = (list, filter) => {
   return newList;
 };
 
-const sortList = (list, orderBy) => {
-  return list.sort((a, b) => b[orderBy] - a[orderBy]);
+const sortList = (list, orderBy, orderDirection) => {
+  if (orderDirection === "desc") {
+    return list.sort((a, b) => b[orderBy] - a[orderBy]);
+  }
+
+  return list.sort((a, b) => a[orderBy] - b[orderBy]);
 };
 
 const initState = () => {
@@ -149,6 +156,7 @@ const initState = () => {
     currentPage: 1,
     filter: {},
     prioritization: "globalScore",
+    prioritizationOrder: "desc",
     highlightPrioritization: false,
     listStats: getListStats([]),
   };
@@ -179,6 +187,14 @@ const reducer = (state, action) => {
         loading: true,
         currentPage: 1,
         prioritization: action.payload,
+      };
+
+    case "set_prioritization_order":
+      return {
+        ...state,
+        loading: true,
+        currentPage: 1,
+        prioritizationOrder: action.payload,
       };
     case "after_update_list":
       return {
@@ -213,7 +229,8 @@ export default function Prioritization({
 
   const filteredList = sortList(
     filterList(list, state.filter),
-    state.prioritization
+    state.prioritization,
+    state.prioritizationOrder
   );
 
   const patients =
@@ -295,6 +312,15 @@ export default function Prioritization({
     stopLoading();
   };
 
+  const toggleOrder = () => {
+    dispatch({
+      type: "set_prioritization_order",
+      payload: state.prioritizationOrder === "desc" ? "asc" : "desc",
+    });
+
+    stopLoading();
+  };
+
   const onClientSearch = (ev) => {
     ev.persist();
 
@@ -345,7 +371,7 @@ export default function Prioritization({
           <div className="filters">
             <div className="filters-item">
               <div className="filters-item-label">Priorizar por:</div>
-              <div className="filters-item-value">
+              <div className="filters-item-value flex">
                 <Select
                   className="prioritization-select"
                   optionFilterProp="children"
@@ -363,6 +389,7 @@ export default function Prioritization({
                     })
                   }
                   value={state.prioritization}
+                  style={{ width: 200 }}
                 >
                   {ORDER_OPTIONS.map((o) => (
                     <Select.Option value={o.key} key={o.key}>
@@ -370,6 +397,21 @@ export default function Prioritization({
                     </Select.Option>
                   ))}
                 </Select>
+                <div>
+                  <Tooltip title="Alterar ordem">
+                    <Button
+                      className={`gtm-btn-change-order ${
+                        state.prioritizationOrder === "desc"
+                          ? "order-desc"
+                          : "order-asc"
+                      }`}
+                      shape="circle"
+                      icon={<CaretUpOutlined />}
+                      onClick={toggleOrder}
+                      style={{ marginLeft: "5px" }}
+                    />
+                  </Tooltip>
+                </div>
               </div>
             </div>
 
