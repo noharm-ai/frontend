@@ -700,8 +700,8 @@ const drugInfo = (bag) => [
     dataIndex: "score",
     width: 20,
     align: "center",
-    render: (entry, { score, near, total }) => {
-      if (total) {
+    render: (entry, { score, near, total, emptyRow }) => {
+      if (total || emptyRow) {
         return "";
       }
 
