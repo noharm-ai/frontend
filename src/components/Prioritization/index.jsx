@@ -13,6 +13,7 @@ import BackTop from "components/BackTop";
 import { Input } from "components/Inputs";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
+import { Row, Col } from "components/Grid";
 
 import Filter from "./Filter";
 import PrioritizationCard from "./Card";
@@ -221,11 +222,18 @@ export default function Prioritization({
   prioritizationType,
   security,
   siderCollapsed,
+  setJourney,
+  currentJourney,
   ...restProps
 }) {
   const [state, dispatch] = useReducer(reducer, initState());
   const { isFetching, list, error } = prescriptions;
   const { t } = useTranslation();
+
+  const msgJourney =
+    currentJourney === prioritizationType
+      ? "Priorização padrão"
+      : `Definir a priorização por Pacientes (Beta) como tela inicial`;
 
   const filteredList = sortList(
     filterList(list, state.filter),
@@ -354,9 +362,34 @@ export default function Prioritization({
     }, 800)(ev);
   };
 
+  const setDefault = () => {
+    setJourney(prioritizationType);
+
+    notification.success({
+      message:
+        "Agora a Priorização por Pacientes (Beta) é a sua tela inicial de priorização.",
+    });
+  };
+
   return (
     <>
-      <Heading>Priorização por Pacientes (Beta)</Heading>
+      <Row align="middle">
+        <Col span={24} md={10}>
+          <header>
+            <Heading>Priorização por Pacientes (Beta)</Heading>
+          </header>
+        </Col>
+        <Col span={24} md={24 - 10} style={{ textAlign: "right" }}>
+          {currentJourney !== prioritizationType && (
+            <Tooltip title={msgJourney}>
+              <Button onClick={() => setDefault()}>
+                Definir como tela inicial
+              </Button>
+            </Tooltip>
+          )}
+        </Col>
+      </Row>
+
       <FilterCard>
         <Filter
           {...restProps}
