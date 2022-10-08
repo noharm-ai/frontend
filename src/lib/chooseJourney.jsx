@@ -18,6 +18,10 @@ const JourneySwitch = ({ journey, featureService }) => {
     return <Navigate to="/priorizacao/conciliacoes" />;
   }
 
+  if (journey === "cards") {
+    return <Navigate to="/priorizacao/pacientes/cards" />;
+  }
+
   return <Navigate to="/priorizacao/pacientes" />;
 };
 
