@@ -17,202 +17,15 @@ import { Row, Col } from "components/Grid";
 
 import Filter from "./Filter";
 import PrioritizationCard from "./Card";
+import { reducer, initState } from "./Store";
+import {
+  sortList,
+  filterList,
+  getListStats,
+  PAGE_SIZE,
+  ORDER_OPTIONS,
+} from "./Util";
 import { PrioritizationPage, FilterCard, ResultActions } from "./index.style";
-
-const PAGE_SIZE = 24;
-const ORDER_OPTIONS = [
-  {
-    label: "Escore global",
-    key: "globalScore",
-    formattedKey: "globalScore",
-    type: "number",
-  },
-  {
-    label: "Idade",
-    key: "birthdays",
-    formattedKey: "age",
-    type: "number",
-  },
-  {
-    label: "Exames alterados",
-    key: "alertExams",
-    formattedKey: "alertExams",
-    type: "number",
-  },
-  {
-    label: "Alertas na prescrição",
-    key: "alerts",
-    formattedKey: "alerts",
-    type: "number",
-  },
-  // TODO: only for noharmcare
-  {
-    label: "Eventos adversos",
-    key: "complication",
-    formattedKey: "complication",
-    type: "number",
-  },
-  {
-    label: "Antimicrobianos",
-    key: "am",
-    formattedKey: "am",
-    type: "number",
-  },
-  {
-    label: "Alta vigilância",
-    key: "av",
-    formattedKey: "av",
-    type: "number",
-  },
-  {
-    label: "Controlados",
-    key: "controlled",
-    formattedKey: "controlled",
-    type: "number",
-  },
-  {
-    label: "Não padronizados",
-    key: "np",
-    formattedKey: "np",
-    type: "number",
-  },
-  {
-    label: "Alerta de sonda",
-    key: "tube",
-    formattedKey: "tube",
-    type: "number",
-  },
-  {
-    label: "Diferentes",
-    key: "diff",
-    formattedKey: "diff",
-    type: "number",
-  },
-  {
-    label: "Intervenções pendente",
-    key: "interventions",
-    formattedKey: "interventions",
-    type: "number",
-  },
-  {
-    label: "Escore prescrição",
-    key: "prescriptionScore",
-    formattedKey: "prescriptionScore",
-    type: "number",
-  },
-  {
-    label: "Tempo de internação",
-    key: "lengthStay",
-    formattedKey: "lengthStay",
-    type: "number",
-  },
-].sort((a, b) => a.label.localeCompare(b.label));
-
-const getListStats = (list) => {
-  const listStats = {
-    checked: 0,
-    pending: 0,
-    all: list.length,
-  };
-
-  list.forEach((item) => {
-    if (item.status === "s") {
-      listStats.checked += 1;
-    } else {
-      listStats.pending += 1;
-    }
-  });
-
-  return listStats;
-};
-
-const filterList = (list, filter) => {
-  let newList = [...list];
-  if (filter.status) {
-    newList = newList.filter((i) => i.status === filter.status);
-  }
-
-  if (filter.searchKey) {
-    newList = newList.filter(
-      (i) =>
-        i.namePatient.toLowerCase().includes(filter.searchKey) ||
-        `${i.admissionNumber}`.includes(filter.searchKey)
-    );
-  }
-
-  return newList;
-};
-
-const sortList = (list, orderBy, orderDirection) => {
-  if (orderDirection === "desc") {
-    return list.sort((a, b) => b[orderBy] - a[orderBy]);
-  }
-
-  return list.sort((a, b) => a[orderBy] - b[orderBy]);
-};
-
-const initState = () => {
-  return {
-    loading: false,
-    currentPage: 1,
-    filter: {},
-    prioritization: "globalScore",
-    prioritizationOrder: "desc",
-    highlightPrioritization: false,
-    listStats: getListStats([]),
-  };
-};
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "set_loading":
-      return { ...state, loading: action.payload };
-    case "set_page":
-      return { ...state, currentPage: action.payload };
-    case "set_filter":
-      return {
-        ...state,
-        loading: true,
-        currentPage: 1,
-        filter: { ...state.filter, ...action.payload },
-      };
-    case "set_filter_direct":
-      return {
-        ...state,
-        currentPage: 1,
-        filter: { ...state.filter, ...action.payload },
-      };
-    case "set_prioritization":
-      return {
-        ...state,
-        loading: true,
-        currentPage: 1,
-        prioritization: action.payload,
-      };
-
-    case "set_prioritization_order":
-      return {
-        ...state,
-        loading: true,
-        currentPage: 1,
-        prioritizationOrder: action.payload,
-      };
-    case "after_update_list":
-      return {
-        ...state,
-        listStats: action.payload,
-      };
-    case "highlight_prioritization":
-      return {
-        ...state,
-        highlightPrioritization: action.payload,
-      };
-    case "reset":
-      return initState(action.payload);
-    default:
-      throw new Error();
-  }
-};
 
 export default function Prioritization({
   prescriptions,
@@ -229,11 +42,6 @@ export default function Prioritization({
   const [state, dispatch] = useReducer(reducer, initState());
   const { isFetching, list, error } = prescriptions;
   const { t } = useTranslation();
-
-  const msgJourney =
-    currentJourney === prioritizationType
-      ? "Priorização padrão"
-      : `Definir a priorização por Pacientes (Beta) como tela inicial`;
 
   const filteredList = sortList(
     filterList(list, state.filter),
@@ -381,7 +189,7 @@ export default function Prioritization({
         </Col>
         <Col span={24} md={24 - 10} style={{ textAlign: "right" }}>
           {currentJourney !== prioritizationType && (
-            <Tooltip title={msgJourney}>
+            <Tooltip title="Definir a priorização por Pacientes (Beta) como tela inicial">
               <Button onClick={() => setDefault()}>
                 Definir como tela inicial
               </Button>
