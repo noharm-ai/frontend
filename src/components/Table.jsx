@@ -181,6 +181,8 @@ const Table = styled(AntTable)`
   }
 
   .start-row {
+    height: 3px;
+
     td {
       padding: 0 !important;
       border-bottom: 0;
@@ -218,6 +220,8 @@ const Table = styled(AntTable)`
   }
 
   .end-row {
+    height: 3px;
+
     td {
       padding: 0 !important;
 

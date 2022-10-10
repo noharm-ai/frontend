@@ -53,7 +53,7 @@ export default function Base({ security }) {
             Classificação:
           </Heading>
           <div style={{ width: "535px" }}>
-            <Col xs={8}>
+            <Col xs={12}>
               <Checkbox
                 onChange={({ target }) =>
                   setFieldValue("antimicro", !target.value)
@@ -66,7 +66,7 @@ export default function Base({ security }) {
                 Antimicrobiano
               </Checkbox>
             </Col>
-            <Col xs={8}>
+            <Col xs={12}>
               <Checkbox
                 onChange={({ target }) => setFieldValue("mav", !target.value)}
                 value={mav}
@@ -77,7 +77,7 @@ export default function Base({ security }) {
                 Alta vigilância
               </Checkbox>
             </Col>
-            <Col xs={8}>
+            <Col xs={12}>
               <Checkbox
                 onChange={({ target }) =>
                   setFieldValue("controlled", !target.value)
@@ -90,7 +90,7 @@ export default function Base({ security }) {
                 Controlados
               </Checkbox>
             </Col>
-            <Col xs={8}>
+            <Col xs={12}>
               <Checkbox
                 onChange={({ target }) =>
                   setFieldValue("notdefault", !target.value)
@@ -103,7 +103,7 @@ export default function Base({ security }) {
                 Não padronizado
               </Checkbox>
             </Col>
-            <Col xs={8}>
+            <Col xs={12}>
               <Checkbox
                 onChange={({ target }) =>
                   setFieldValue("elderly", !target.value)
@@ -121,7 +121,7 @@ export default function Base({ security }) {
                 </Tooltip>
               </Checkbox>
             </Col>
-            <Col xs={8}>
+            <Col xs={12}>
               <Checkbox
                 onChange={({ target }) =>
                   setFieldValue("whiteList", !target.value)
@@ -139,7 +139,7 @@ export default function Base({ security }) {
                 </Tooltip>
               </Checkbox>
             </Col>
-            <Col xs={8}>
+            <Col xs={12}>
               <Checkbox
                 onChange={({ target }) => setFieldValue("tube", !target.value)}
                 value={tube}
@@ -155,7 +155,7 @@ export default function Base({ security }) {
                 </Tooltip>
               </Checkbox>
             </Col>
-            <Col xs={8}>
+            <Col xs={12}>
               <Checkbox
                 onChange={({ target }) => setFieldValue("chemo", !target.value)}
                 value={chemo}
@@ -168,18 +168,7 @@ export default function Base({ security }) {
             </Col>
           </div>
         </Box>
-      </Col>
-      <Col xs={12}>
-        {security.isSupport() && defaultNote && (
-          <Collapse defaultActiveKey={["1"]}>
-            <Collapse.Panel header="Curadoria de doses" key="1">
-              {doseHints}
-            </Collapse.Panel>
-          </Collapse>
-        )}
-      </Col>
-      <Row style={{ marginTop: "15px" }}>
-        <Col xs={12}>
+        <Box style={{ marginTop: "30px" }}>
           <Row type="flex" gutter={[16, 24]}>
             <Col xs={24}>
               <Box hasError={errors.price}>
@@ -386,8 +375,18 @@ export default function Base({ security }) {
               </Box>
             </Col>
           </Row>
-        </Col>
-      </Row>
+        </Box>
+      </Col>
+      <Col xs={12}>
+        {security.isSupport() && defaultNote && (
+          <Collapse defaultActiveKey={["1"]}>
+            <Collapse.Panel header="Curadoria de doses" key="1">
+              {doseHints}
+            </Collapse.Panel>
+          </Collapse>
+        )}
+      </Col>
+      <Row style={{ marginTop: "15px" }}></Row>
     </>
   );
 }
