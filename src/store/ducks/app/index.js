@@ -1,70 +1,70 @@
-import { createActions, createReducer } from 'reduxsauce';
-import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
+import { createActions, createReducer } from "reduxsauce";
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 
 export const { Types, Creators } = createActions({
-  appSetConfig: ['config'],
-  appSetSider: ['sider'],
-  appSetScreeningListFilter: ['params'],
-  appSaveFilter: ['filterType', 'filter'],
-  appRemoveFilter: ['filterType', 'index'],
-  appSetJourney: ['journey'],
-  appSetCurrentVersion: ['version'],
-  appSetNotification: ['notification']
+  appSetConfig: ["config"],
+  appSetSider: ["sider"],
+  appSetScreeningListFilter: ["params"],
+  appSaveFilter: ["filterType", "filter"],
+  appRemoveFilter: ["filterType", "index"],
+  appSetJourney: ["journey"],
+  appSetCurrentVersion: ["version"],
+  appSetNotification: ["notification"],
 });
 
 const INITIAL_STATE = {
   config: {
     nameUrl: null,
     nameHeaders: [],
-    apiKey: process.env.REACT_APP_API_KEY || null
+    apiKey: process.env.REACT_APP_API_KEY || null,
   },
   sider: {
-    collapsed: false
+    collapsed: false,
   },
   filter: {
     screeningList: {
       idSegment: null,
       idDepartment: [],
       idDrug: [],
-      pending: 0
-    }
+      pending: 0,
+    },
   },
   savedFilters: {
-    screeningList: []
+    screeningList: [],
   },
   help: {
-    section: null
+    section: null,
   },
   preferences: {
-    journey: 'patient'
+    journey: "cards",
   },
   notification: null,
-  currentVersion: '0'
+  currentVersion: "0",
 };
 
 const saveFilter = (state = INITIAL_STATE, { filterType, filter }) => {
-  const getListByType = type => {
+  const getListByType = (type) => {
     switch (type) {
-      case 'screeningList':
+      case "screeningList":
         return [...state.savedFilters.screeningList];
       default:
-        console.log('invalid filter type');
+        console.log("invalid filter type");
     }
   };
   const updateListByType = (type, newList) => {
     switch (type) {
-      case 'screeningList':
+      case "screeningList":
         return {
           ...state,
           savedFilters: {
             ...state.savedFilters,
-            screeningList: newList
-          }
+            screeningList: newList,
+          },
         };
       default:
-        console.log('invalid filter type');
+        console.log("invalid filter type");
     }
   };
 
@@ -74,26 +74,26 @@ const saveFilter = (state = INITIAL_STATE, { filterType, filter }) => {
 };
 
 const removeFilter = (state = INITIAL_STATE, { filterType, index }) => {
-  const getListByType = type => {
+  const getListByType = (type) => {
     switch (type) {
-      case 'screeningList':
+      case "screeningList":
         return [...state.savedFilters.screeningList];
       default:
-        console.log('invalid filter type');
+        console.log("invalid filter type");
     }
   };
   const updateListByType = (type, newList) => {
     switch (type) {
-      case 'screeningList':
+      case "screeningList":
         return {
           ...state,
           savedFilters: {
             ...state.savedFilters,
-            screeningList: newList
-          }
+            screeningList: newList,
+          },
         };
       default:
-        console.log('invalid filter type');
+        console.log("invalid filter type");
     }
   };
 
@@ -104,28 +104,28 @@ const removeFilter = (state = INITIAL_STATE, { filterType, index }) => {
 
 const setCurrentVersion = (state = INITIAL_STATE, { version }) => ({
   ...state,
-  currentVersion: version
+  currentVersion: version,
 });
 
 const setNotification = (state = INITIAL_STATE, { notification }) => ({
   ...state,
-  notification
+  notification,
 });
 
 const setSider = (state = INITIAL_STATE, { sider }) => ({
   ...state,
   sider: {
     ...state.sider,
-    ...sider
-  }
+    ...sider,
+  },
 });
 
 const setConfig = (state = INITIAL_STATE, { config }) => ({
   ...state,
   config: {
     ...state.config,
-    ...config
-  }
+    ...config,
+  },
 });
 
 const setScreeningListFilter = (state = INITIAL_STATE, { params }) => ({
@@ -134,17 +134,17 @@ const setScreeningListFilter = (state = INITIAL_STATE, { params }) => ({
     ...state.filter,
     screeningList: {
       ...state.filter.screeningList,
-      ...params
-    }
-  }
+      ...params,
+    },
+  },
 });
 
 const setJourney = (state = INITIAL_STATE, { journey }) => ({
   ...state,
   preferences: {
     ...state.preferences,
-    journey
-  }
+    journey,
+  },
 });
 
 const HANDLERS = {
@@ -155,15 +155,15 @@ const HANDLERS = {
   [Types.APP_SAVE_FILTER]: saveFilter,
   [Types.APP_REMOVE_FILTER]: removeFilter,
   [Types.APP_SET_CURRENT_VERSION]: setCurrentVersion,
-  [Types.APP_SET_NOTIFICATION]: setNotification
+  [Types.APP_SET_NOTIFICATION]: setNotification,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);
 
 const persist = {
   storage,
-  key: 'app',
-  stateReconciler: autoMergeLevel2
+  key: "app",
+  stateReconciler: autoMergeLevel2,
 };
 
 export default persistReducer(persist, reducer);
