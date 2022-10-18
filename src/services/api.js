@@ -9,7 +9,7 @@ const requestConfig = {
   baseURL: process.env.REACT_APP_API_URL,
 };
 
-const instance = axios.create(requestConfig);
+export const instance = axios.create(requestConfig);
 
 /**
  * Endpoints.
@@ -46,7 +46,7 @@ const endpoints = {
  * Request config.
  * Set Authorization for API requests.
  */
-const setHeaders = (token) =>
+export const setHeaders = (token) =>
   token
     ? {
         headers: {

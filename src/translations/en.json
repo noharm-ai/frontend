@@ -42,7 +42,8 @@
     "exams": "Lab exams",
     "user-administration": "Registration",
     "reg-administration": "User registration",
-    "patients": "Patients"
+    "patients": "Patients",
+    "frequency": "Frequency"
   },
   "screeningList": {
     "confirm": "Confirm?",
