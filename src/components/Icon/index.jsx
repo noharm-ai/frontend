@@ -6,6 +6,7 @@ import Icon, { InfoCircleFilled } from "@ant-design/icons";
 import * as icons from "./svgs";
 
 const CustomIcon = ({ type, ...props }) => {
+  console.log("type", type);
   const component = icons[type];
 
   if (isEmpty(component)) {

@@ -10,6 +10,7 @@ import {
   MedicineBoxOutlined,
   UsergroupAddOutlined,
   ExperimentOutlined,
+  HourglassOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -79,6 +80,13 @@ const navigation = [
     icon: SettingOutlined,
     id: "gtm-lnk-config",
     children: [
+      {
+        key: "/admin/frequencias",
+        text: "menu.frequency",
+        icon: HourglassOutlined,
+        id: "gtm-lnk-frequencias",
+        role: ["suporte"],
+      },
       {
         key: "/medicamentos",
         text: "menu.medications",

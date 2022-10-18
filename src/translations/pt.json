@@ -42,7 +42,8 @@
     "exams": "Exames",
     "user-administration": "Cadastro",
     "reg-administration": "Cadastro de Usuários",
-    "patients": "Pacientes"
+    "patients": "Pacientes",
+    "frequency": "Frequências"
   },
   "screeningList": {
     "confirm": "Confirma?",

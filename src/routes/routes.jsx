@@ -23,6 +23,8 @@ import UserAdmin from "pages/UserAdmin";
 import PatientList from "pages/PatientList";
 import Prioritization from "pages/Prioritization";
 
+import AdminFrequency from "pages/Admin/Frequency";
+
 const routes = [
   {
     exact: true,
@@ -185,6 +187,11 @@ const routes = [
     exact: true,
     path: "/pacientes",
     element: <WithAuth component={PatientList} />,
+  },
+  {
+    exact: true,
+    path: "/admin/frequencias",
+    element: <WithAuth component={AdminFrequency} />,
   },
 ];
 

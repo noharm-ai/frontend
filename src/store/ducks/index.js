@@ -1,24 +1,31 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from "redux";
 
-import appReducer from './app';
-import authReducer from './auth';
-import userReducer from './user';
-import userAdminReducer from './userAdmin';
-import drugsReducer from './drugs';
-import sessionReducer from './session';
-import outliersReducer from './outliers';
-import patientsReducer from './patients';
-import segmentsReducer from './segments';
-import interventionReducer from './intervention';
-import departmentsReducer from './departments';
-import prescriptionsReducer from './prescriptions';
-import prescriptionDrugsReducer from './prescriptionDrugs';
-import reportsReducer from './reports';
-import memoryReducer from './memory';
-import clinicalNotesReducer from './clinicalNotes';
-import patientCentral from './patientCentral';
+import appReducer from "./app";
+import authReducer from "./auth";
+import userReducer from "./user";
+import userAdminReducer from "./userAdmin";
+import drugsReducer from "./drugs";
+import sessionReducer from "./session";
+import outliersReducer from "./outliers";
+import patientsReducer from "./patients";
+import segmentsReducer from "./segments";
+import interventionReducer from "./intervention";
+import departmentsReducer from "./departments";
+import prescriptionsReducer from "./prescriptions";
+import prescriptionDrugsReducer from "./prescriptionDrugs";
+import reportsReducer from "./reports";
+import memoryReducer from "./memory";
+import clinicalNotesReducer from "./clinicalNotes";
+import patientCentral from "./patientCentral";
+
+import adminFrequencyReducer from "./admin/frequency";
+
+const adminReducers = combineReducers({
+  frequency: adminFrequencyReducer,
+});
 
 export default combineReducers({
+  admin: adminReducers,
   app: appReducer,
   auth: authReducer,
   user: userReducer,
@@ -35,5 +42,5 @@ export default combineReducers({
   prescriptionDrugs: prescriptionDrugsReducer,
   reports: reportsReducer,
   memory: memoryReducer,
-  clinicalNotes: clinicalNotesReducer
+  clinicalNotes: clinicalNotesReducer,
 });
