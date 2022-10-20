@@ -32,7 +32,7 @@ export default function EditSubstance({
   const { t } = useTranslation();
   const [isFormVisible, setFormVisibility] = useState(false);
   const [currentSubstance, setCurrentSubstance] = useState({});
-  const { isSaving, error, success } = saveStatus;
+  const { isSaving } = saveStatus;
 
   useEffect(() => {
     fetchSubstances();
