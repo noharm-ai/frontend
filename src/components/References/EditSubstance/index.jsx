@@ -32,7 +32,7 @@ export default function EditSubstance({
   const { t } = useTranslation();
   const [isFormVisible, setFormVisibility] = useState(false);
   const [currentSubstance, setCurrentSubstance] = useState({});
-  const { isSaving, error, success } = saveStatus;
+  const { isSaving } = saveStatus;
 
   useEffect(() => {
     fetchSubstances();
@@ -45,19 +45,6 @@ export default function EditSubstance({
     });
   }, [drugData.sctNameA, drugData.sctidA]);
 
-  useEffect(() => {
-    if (success === formId) {
-      notification.success(saveMessage);
-    }
-
-    if (error) {
-      notification.error({
-        message: t("error.title"),
-        description: t("error.description"),
-      });
-    }
-  }, [success, error, fetchRelations, t]);
-
   const onCancelForm = () => {
     setFormVisibility(false);
   };
@@ -67,9 +54,9 @@ export default function EditSubstance({
   };
 
   const changeSubstance = (value) => {
-    setCurrentSubstance({ sctidA: value.key, sctNameA: value.label });
+    setCurrentSubstance({ sctidA: value.value, sctNameA: value.label });
 
-    fetchRelations(value.key);
+    fetchRelations(value.value);
   };
 
   const saveSubstance = () => {
@@ -84,7 +71,17 @@ export default function EditSubstance({
       id: idDrug,
       sctid: sctidA,
       formId,
-    });
+    })
+      .then(() => {
+        notification.success(saveMessage);
+      })
+      .catch((err) => {
+        console.error("err", err);
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
+      });
   };
 
   const edit = () => {
@@ -117,7 +114,7 @@ export default function EditSubstance({
             showSearch
             optionFilterProp="children"
             placeholder="Selecione a substância..."
-            value={{ key: currentSubstance.sctidA || "" }}
+            value={{ value: currentSubstance.sctidA || "" }}
             loading={substance.isFetching}
             disabled={isSaving}
             onChange={changeSubstance}

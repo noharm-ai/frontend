@@ -38,7 +38,7 @@ export default function Relation({
   };
 
   const onChangeSctidB = (obj) => {
-    update({ sctidB: obj.key, nameB: obj.label });
+    update({ sctidB: obj.value, nameB: obj.label });
   };
 
   return (
@@ -72,7 +72,7 @@ export default function Relation({
                   style={{ width: "100%" }}
                   placeholder="Selecione o medicamento..."
                   onChange={onChangeSctidB}
-                  value={{ key: relation.item.sctidB || "" }}
+                  value={{ value: relation.item.sctidB || "" }}
                   loading={substance.isFetching}
                 >
                   {substance.list.map(({ sctid, name }) => (
