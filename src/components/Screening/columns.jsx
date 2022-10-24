@@ -548,10 +548,7 @@ export const expandedRowRender = (bag) => (record) => {
           </Descriptions.Item>
         )}
         {record.recommendation && (
-          <Descriptions.Item
-            label={bag.t("prescriptionDrugList.exrMedicalNotes")}
-            span={3}
-          >
+          <Descriptions.Item label={bag.t("tableHeader.observation")} span={3}>
             <RichTextView text={record.recommendation} />
           </Descriptions.Item>
         )}
