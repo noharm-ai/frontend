@@ -4,7 +4,6 @@ import { uniqBy } from "utils/lodash";
 import moment from "moment";
 import {
   groupSolutions,
-  groupProcedures,
   filterWhitelistedChildren,
   getWhitelistedChildren,
   groupComponents,
@@ -184,9 +183,9 @@ export const transformPrescription = ({
     : [];
   const proceduresList = procedures
     ? groupByPrescription(
-        procedures.map(transformDrug),
+        groupComponents(procedures.map(transformDrug)),
         "procedures",
-        groupProcedures
+        null
       )
     : [];
   const dietList = diet
