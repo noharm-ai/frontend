@@ -344,7 +344,14 @@ export default function Filter({
             <Col md={24}>
               <Box>
                 <Row gutter={0} style={{ width: "100%" }}>
-                  <Col md={prioritizationType === "patient" ? 19 : 24}>
+                  <Col
+                    md={
+                      prioritizationType === "patient" ||
+                      prioritizationType === "cards"
+                        ? 19
+                        : 24
+                    }
+                  >
                     <Heading as="label" htmlFor="departments" size="14px">
                       {t("screeningList.labelDepartment")}:
                     </Heading>
@@ -375,23 +382,26 @@ export default function Filter({
                         )}
                     </Select>
                   </Col>
-                  {prioritizationType === "patient" && (
-                    <Col md={5}>
-                      <Checkbox
-                        style={{ marginTop: "17px", marginLeft: "10px" }}
-                        checked={filter.currentDepartment}
-                        onChange={onCurrentDepartmentChange}
-                        id="gtm-currentDepartment-filter"
-                      >
-                        <Tooltip
-                          title={t("screeningList.labelCurrentDepartmentHint")}
-                          underline
+                  {prioritizationType === "patient" ||
+                    (prioritizationType === "cards" && (
+                      <Col md={5}>
+                        <Checkbox
+                          style={{ marginTop: "17px", marginLeft: "10px" }}
+                          checked={filter.currentDepartment}
+                          onChange={onCurrentDepartmentChange}
+                          id="gtm-currentDepartment-filter"
                         >
-                          {t("screeningList.labelCurrentDepartment")}
-                        </Tooltip>
-                      </Checkbox>
-                    </Col>
-                  )}
+                          <Tooltip
+                            title={t(
+                              "screeningList.labelCurrentDepartmentHint"
+                            )}
+                            underline
+                          >
+                            {t("screeningList.labelCurrentDepartment")}
+                          </Tooltip>
+                        </Checkbox>
+                      </Col>
+                    ))}
                 </Row>
               </Box>
             </Col>

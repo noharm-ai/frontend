@@ -220,13 +220,14 @@ const Table = styled(AntTable)`
   }
 
   .end-row {
-    height: 3px;
+    height: 7px;
 
     td {
       padding: 0 !important;
 
       &:nth-child(1) {
         background: rgba(16, 142, 233, 0.5);
+        border-bottom: 4px solid #fff;
       }
 
       .flag {
@@ -240,6 +241,16 @@ const Table = styled(AntTable)`
 
     .ant-table-row-expand-icon {
       display: none;
+    }
+
+    &:hover {
+      td:first-child {
+        background: rgba(16, 142, 233, 0.5) !important;
+      }
+
+      td:not(:first-child) {
+        background: #fff !important;
+      }
     }
   }
 
