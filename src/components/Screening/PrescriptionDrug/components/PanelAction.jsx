@@ -110,7 +110,6 @@ const PanelAction = ({
   };
 
   const handleMenuClick = ({ key, domEvent }) => {
-    console.log("key", key);
     switch (key) {
       case "check":
         checkScreening(id, "s");

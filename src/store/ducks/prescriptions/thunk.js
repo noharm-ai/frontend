@@ -191,6 +191,7 @@ export const checkScreeningThunk =
       status: data.status,
       id: data.data,
       newStatus: status,
+      user: getState().user.account.userName,
     };
 
     dispatch(prescriptionsCheckSuccess(success));

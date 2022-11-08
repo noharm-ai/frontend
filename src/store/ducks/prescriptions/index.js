@@ -298,6 +298,7 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
         headers[p] = { ...state.single.data.headers[p] };
         if (p === success.id) {
           headers[p].status = success.newStatus;
+          headers[p].user = success.user;
         }
 
         if (headers[p].status !== "s") {
