@@ -110,7 +110,6 @@ const PanelAction = ({
   };
 
   const handleMenuClick = ({ key, domEvent }) => {
-    console.log("key", key);
     switch (key) {
       case "check":
         checkScreening(id, "s");
@@ -176,7 +175,11 @@ const PanelAction = ({
         {header.status !== "s" &&
           summaryTags(header[summarySourceToType(source)] || {})}
         {header.status === "s" &&
+          header.user &&
           infoIcon(`${t("labels.checkedBy")}: ${header.user}`)}
+        {header.status === "s" &&
+          !header.user &&
+          infoIcon(`${t("screeningHeader.btnChecked")}`)}
       </div>
 
       <div>
