@@ -175,7 +175,11 @@ const PanelAction = ({
         {header.status !== "s" &&
           summaryTags(header[summarySourceToType(source)] || {})}
         {header.status === "s" &&
+          header.user &&
           infoIcon(`${t("labels.checkedBy")}: ${header.user}`)}
+        {header.status === "s" &&
+          !header.user &&
+          infoIcon(`${t("screeningHeader.btnChecked")}`)}
       </div>
 
       <div>
