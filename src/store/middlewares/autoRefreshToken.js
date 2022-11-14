@@ -5,8 +5,11 @@ import api from "services/api";
 import { tokenDecode } from "utils";
 
 import { Creators as AuthCreators } from "../ducks/auth";
+import { Creators as UserCreators } from "../ducks/user";
 
-const { authSetIdentify } = AuthCreators;
+const { authSetIdentify, authSetRefreshTokenPromise, authDelIdentify } =
+  AuthCreators;
+const { userLogout } = UserCreators;
 
 const autoRefreshToken =
   ({ dispatch, getState }) =>
@@ -34,15 +37,45 @@ const autoRefreshToken =
         return next(action);
       }
 
-      const { data: identify } = await api
-        .refreshToken(refresh_token)
-        .catch(errorHandler);
+      if (!auth.refreshTokenPromise) {
+        return refreshToken(dispatch, refresh_token)
+          .then(() => next(action))
+          .catch((e) => {
+            dispatch(authDelIdentify());
+            dispatch(userLogout());
 
-      dispatch(authSetIdentify(identify));
-
-      return next(action);
+            return errorHandler(e);
+          });
+      } else {
+        return getState().auth.refreshTokenPromise.then(() => next(action));
+      }
     }
     return next(action);
   };
+
+const refreshToken = (dispatch, refreshToken) => {
+  const refreshTokenPromise = api
+    .refreshToken(refreshToken)
+    .then((response) => {
+      dispatch(authSetRefreshTokenPromise(null));
+      dispatch(authSetIdentify(response.data));
+
+      return response.data
+        ? Promise.resolve(response.data)
+        : Promise.reject({
+            message: "could not refresh token",
+          });
+    })
+    .catch((e) => {
+      console.error("error refreshing token", e);
+
+      dispatch(authSetRefreshTokenPromise(null));
+      return Promise.reject(e);
+    });
+
+  dispatch(authSetRefreshTokenPromise(refreshTokenPromise));
+
+  return refreshTokenPromise;
+};
 
 export default autoRefreshToken;
