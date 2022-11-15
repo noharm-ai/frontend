@@ -117,6 +117,11 @@ const getExamTypes = (bearerToken, params = {}) =>
     ...setHeaders(bearerToken),
   });
 
+const getExamRefs = (bearerToken) =>
+  instance.get(`${endpoints.segments}/exams/refs`, {
+    ...setHeaders(bearerToken),
+  });
+
 const updateSegmentExamOrder = (bearerToken, idSegment, params = {}) =>
   instance.put(
     `${endpoints.segments}/${idSegment}/exams-order`,
@@ -532,6 +537,7 @@ const api = {
   savePrescriptionDrug,
   suspendPrescriptionDrug,
   getDrugResources,
+  getExamRefs,
 };
 
 export default api;
