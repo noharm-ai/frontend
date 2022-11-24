@@ -71,6 +71,7 @@ export default function ScreeningList({
   checkScreening,
   prioritizationType,
   security,
+  featureService,
   ...restProps
 }) {
   const { t } = useTranslation();
@@ -89,7 +90,12 @@ export default function ScreeningList({
     prioritizationType,
   };
   const dataSource = toDataSource(list, null, bag);
-  const columns = columnsTable(sortOrder, filter, security.hasRole("care"), t);
+  const columns = columnsTable(
+    sortOrder,
+    filter,
+    featureService.hasNoHarmCare(),
+    t
+  );
   const [title] = useMedia(
     [`(max-width: ${breakpoints.lg})`],
     [[theTitle]],
