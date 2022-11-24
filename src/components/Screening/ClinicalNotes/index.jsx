@@ -162,40 +162,44 @@ export default function ClinicalNotes({
                   ))}
                 </Select>
               </div>
-              {security.hasNoHarmCare() && !featureService.hasPrimaryCare() && (
-                <div>
-                  <label>{t("labels.indicator")}</label>
-                  <Select
-                    placeholder={t("labels.indicatorPlaceholderFilter")}
-                    onChange={handleIndicatorsChange}
-                    allowClear
-                    style={{ width: "100%" }}
-                    mode="multiple"
-                    optionFilterProp="children"
-                    dropdownMatchSelectWidth={false}
-                  >
-                    {ClinicalNotesIndicator.list(t).map((indicator, i) => (
-                      <Select.Option value={indicator.key} key={indicator.key}>
-                        <span
-                          style={{
-                            backgroundColor: indicator.backgroundColor,
-                            borderColor: indicator.color,
-                            borderWidth: "1px",
-                            borderStyle: "solid",
-                            borderRadius: "5px",
-                            padding: "0 2px",
-                            display: "inline-block",
-                            fontWeight: 500,
-                            lineHeight: 1.3,
-                          }}
+              {featureService.hasNoHarmCare() &&
+                !featureService.hasPrimaryCare() && (
+                  <div>
+                    <label>{t("labels.indicator")}</label>
+                    <Select
+                      placeholder={t("labels.indicatorPlaceholderFilter")}
+                      onChange={handleIndicatorsChange}
+                      allowClear
+                      style={{ width: "100%" }}
+                      mode="multiple"
+                      optionFilterProp="children"
+                      dropdownMatchSelectWidth={false}
+                    >
+                      {ClinicalNotesIndicator.list(t).map((indicator, i) => (
+                        <Select.Option
+                          value={indicator.key}
+                          key={indicator.key}
                         >
-                          {indicator.label}
-                        </span>
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-              )}
+                          <span
+                            style={{
+                              backgroundColor: indicator.backgroundColor,
+                              borderColor: indicator.color,
+                              borderWidth: "1px",
+                              borderStyle: "solid",
+                              borderRadius: "5px",
+                              padding: "0 2px",
+                              display: "inline-block",
+                              fontWeight: 500,
+                              lineHeight: 1.3,
+                            }}
+                          >
+                            {indicator.label}
+                          </span>
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                )}
 
               <div className="btn-search">
                 <Tooltip title={t("buttons.search")}>

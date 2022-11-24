@@ -33,16 +33,16 @@ export default function PatientCard({
   prescription,
   checkPrescriptionDrug,
   selectIntervention,
-  security,
   access_token,
   setSeeMore,
   fetchScreening,
   setPatientModalVisible,
+  featureService,
 }) {
   const [interventionVisible, setInterventionVisibility] = useState(false);
   const { t } = useTranslation();
 
-  const hasNoHarmCare = security.hasNoHarmCare();
+  const hasNoHarmCare = featureService.hasNoHarmCare();
   const {
     admissionNumber,
     admissionDate,
