@@ -43,7 +43,7 @@ export default function Patient({
 }) {
   const { t } = useTranslation();
   const { isSaving } = saveStatus;
-  const hasNoHarmCare = security.hasNoHarmCare();
+  const hasNoHarmCare = featureService.hasNoHarmCare();
 
   const initialValues = {
     idPrescription,

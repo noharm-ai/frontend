@@ -69,10 +69,10 @@ export default function View({
       }
     };
 
-    if (security.hasNoHarmCare()) {
+    if (featureService.hasNoHarmCare()) {
       shouldShowWelcome();
     }
-  }, [access_token, userId, security]);
+  }, [access_token, userId, featureService]);
 
   useEffect(() => {
     if (saveStatus.success) {
@@ -347,7 +347,7 @@ export default function View({
             * Nomes presentes na evolução são substituídos por três asteriscos
             (***).
           </Legend>
-          {security.hasNoHarmCare() && (
+          {featureService.hasNoHarmCare() && (
             <Legend>
               * As anotações são geradas pela <strong>NoHarm Care</strong>.{" "}
               <a

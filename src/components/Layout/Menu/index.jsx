@@ -36,8 +36,12 @@ export default function Menu({
     );
   };
 
-  const renderItem = ({ text, key, icon, id, role, feature }, t) => {
+  const renderItem = ({ text, key, icon, id, role, notRole, feature }, t) => {
     if (role && !security.hasAnyRole(role)) {
+      return;
+    }
+
+    if (notRole && security.hasAnyRole(notRole)) {
       return;
     }
 
