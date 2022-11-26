@@ -27,6 +27,7 @@ const navigation = [
         text: "menu.prioritization-prescription",
         icon: FileTextOutlined,
         id: "gtm-lnk-priorizacao-prescricao",
+        notRole: ["cpoe"],
       },
       {
         key: "/priorizacao/pacientes",
@@ -39,7 +40,7 @@ const navigation = [
         text: "menu.prioritization-conciliation",
         icon: ReconciliationOutlined,
         id: "gtm-lnk-priorizacao-conciliacao",
-        role: ["concilia"],
+        feature: Feature.CONCILIATION,
       },
       {
         key: "/priorizacao/pacientes/cards",

@@ -50,7 +50,7 @@ export default function Patient({
 
   const { t } = useTranslation();
 
-  const hasNoHarmCare = security.hasNoHarmCare();
+  const hasNoHarmCare = featureService.hasNoHarmCare();
   const hasAIData = hasNoHarmCare && (notesSigns !== "" || notesInfo !== "");
   const hasClinicalNotes = clinicalNotes > 0 || featureService.hasPrimaryCare();
 
