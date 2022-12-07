@@ -7,8 +7,6 @@ export const { Types, Creators } = createActions({
   appSetConfig: ["config"],
   appSetSider: ["sider"],
   appSetScreeningListFilter: ["params"],
-  appSaveFilter: ["filterType", "filter"],
-  appRemoveFilter: ["filterType", "index"],
   appSetJourney: ["journey"],
   appSetCurrentVersion: ["version"],
   appSetNotification: ["notification"],
