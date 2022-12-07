@@ -36,7 +36,6 @@ export default function Filter({
   filter,
   setScreeningListFilter,
   isFetchingPrescription,
-  savedFilters,
   drugs,
   searchDrugs,
   prioritizationType,
@@ -322,7 +321,6 @@ export default function Filter({
             <FilterMemory
               fetchMemory={fetchMemory}
               account={account}
-              savedFilters={savedFilters}
               publicFilters={publicFilters}
               privateFilters={privateFilters}
               saveMemory={saveMemory}

@@ -5,7 +5,6 @@ import { FilterOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import Dropdown from "components/Dropdown";
 import Menu from "components/Menu";
-import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import {
   FILTER_PRIVATE_STORE_ID,
@@ -21,7 +20,6 @@ export default function FilterMemory({
   account,
   publicFilters,
   privateFilters,
-  savedFilters,
   saveMemory,
   filter,
   setScreeningListFilter,
@@ -162,25 +160,6 @@ export default function FilterMemory({
         {t("screeningList.saveFilter")}
       </Menu.Item>
 
-      {!isEmpty(savedFilters) && (
-        <Menu.SubMenu title="Filtros locais" key="local-filters">
-          {savedFilters.map((item) => (
-            <Menu.Item
-              className="gtm-btn-menu-filter-load-local"
-              key={`local_${item.name}`}
-              onClick={() => loadFilterAction(item.data)}
-            >
-              <Tooltip title="Os filtros locais serão desativados. Utilize os filtros privados ou públicos.">
-                {item.name}
-              </Tooltip>
-            </Menu.Item>
-          ))}
-          <Menu.Item key={`local_empty`} style={{ color: "#ff4d4f" }}>
-            Os filtros locais serão desativados.
-            <br /> Utilize os filtros privados ou públicos.
-          </Menu.Item>
-        </Menu.SubMenu>
-      )}
       {filterSubmenu(privateFilters, "private")}
       {filterSubmenu(publicFilters, "public")}
 

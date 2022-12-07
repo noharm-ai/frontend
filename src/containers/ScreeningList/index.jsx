@@ -49,7 +49,6 @@ const mapStateToProps = ({
     },
   },
   filter: app.filter.screeningList,
-  savedFilters: app.savedFilters.screeningList,
   drugs: drugs.search,
   currentJourney: app.preferences.journey,
   security: security(user.account.roles),
