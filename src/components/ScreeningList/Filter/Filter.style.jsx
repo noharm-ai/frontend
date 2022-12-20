@@ -18,7 +18,7 @@ export const SearchBox = styled.div`
   transition: all 0.5s ease;
 
   &.open {
-    max-height: 1000px;
+    max-height: 2000px;
   }
 
   .ant-btn-link {
