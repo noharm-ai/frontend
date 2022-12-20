@@ -3,4 +3,5 @@ export default class Feature {
   static PRIMARYCARE = "PRIMARYCARE";
   static NOHARMCARE = "NOHARMCARE";
   static CONCILIATION = "CONCILIATION";
+  static PRESCRIPTION_EXPIRATION_TAG = "PRESCRIPTION_EXPIRATION_TAG"; //temp
 }

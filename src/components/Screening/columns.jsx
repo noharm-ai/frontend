@@ -375,7 +375,7 @@ const periodDatesList = (dates) => {
   );
 };
 
-const DrugTags = ({ drug, t, expiresIn }) => (
+const DrugTags = ({ drug, t }) => (
   <span style={{ marginLeft: "10px" }}>
     {drug.np && (
       <Tooltip title={t("drugTags.npHint")}>
@@ -400,16 +400,6 @@ const DrugTags = ({ drug, t, expiresIn }) => (
     {drug.q && (
       <Tooltip title={t("drugTags.qHint")}>
         <Tag color="cyan">{t("drugTags.q")}</Tag>
-      </Tooltip>
-    )}
-    {expiresIn < 0 && (
-      <Tooltip title="Expirado">
-        <Tag color="red">Expirado</Tag>
-      </Tooltip>
-    )}
-    {expiresIn > 0 && expiresIn <= 24 && (
-      <Tooltip title={`Expira em ${expiresIn}h`}>
-        <Tag color="orange">EXP {expiresIn}</Tag>
       </Tooltip>
     )}
   </span>
@@ -691,15 +681,6 @@ const drug = (bag, addkey, title) => ({
       );
     }
 
-    let expiresIn = null;
-    if (record.cpoe && !record.suspended) {
-      if (bag.headers[record.cpoe].expire) {
-        const expirationDate = parseISO(bag.headers[record.cpoe].expire);
-        const currentDate = new Date();
-        expiresIn = differenceInHours(expirationDate, currentDate);
-      }
-    }
-
     const href = `/medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(
       record.drug
     )}/${record.doseconv}/${record.dayFrequency}`;
@@ -710,7 +691,7 @@ const drug = (bag, addkey, title) => ({
             {record.drug}
           </TableLink>
         </Tooltip>
-        <DrugTags drug={record} t={bag.t} expiresIn={expiresIn} />
+        <DrugTags drug={record} t={bag.t} />
       </>
     );
   },
@@ -839,7 +820,9 @@ const tags = (bag) => ({
   align: "center",
   render: (text, prescription) => {
     let expiresIn = null;
-    if (prescription.cpoe && !prescription.suspended) {
+    const hasExpireInfo =
+      prescription.cpoe && bag.featureService.hasPrescriptionExpirationTag();
+    if (hasExpireInfo && !prescription.suspended) {
       if (bag.headers[prescription.cpoe].expire) {
         const expirationDate = parseISO(bag.headers[prescription.cpoe].expire);
         const currentDate = new Date();
@@ -907,18 +890,22 @@ const tags = (bag) => ({
             </Tooltip>
           )}
         </span>
-        {prescription.cpoe && (
+        {hasExpireInfo && (
           <span
             className="tag gtm-tag-expires"
             onClick={() => bag.handleRowExpand(prescription)}
           >
             {expiresIn < 0 && (
-              <Tooltip title="Expirado">
+              <Tooltip title={bag.t("prescriptionDrugTags.expired")}>
                 <HourglassOutlined style={{ fontSize: 18, color: "#f5222d" }} />
               </Tooltip>
             )}
             {expiresIn > 0 && expiresIn < 24 && (
-              <Tooltip title={`Expira em ${expiresIn}h`}>
+              <Tooltip
+                title={`${bag.t(
+                  "prescriptionDrugTags.expiresIn"
+                )} ${expiresIn}h`}
+              >
                 <HourglassOutlined style={{ fontSize: 18, color: "#ff9f1c" }} />
               </Tooltip>
             )}

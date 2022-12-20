@@ -291,7 +291,9 @@
     "suspended": "Suspended",
     "alerts": "Alerts",
     "alertsAllergy": "Alerts (** has allergies)",
-    "intervention": "Has intervention"
+    "intervention": "Has intervention",
+    "expired": "Expired",
+    "expiresIn": "Expires in"
   },
   "drugTags": {
     "np": "NS",
