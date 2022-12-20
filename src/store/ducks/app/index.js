@@ -7,8 +7,6 @@ export const { Types, Creators } = createActions({
   appSetConfig: ["config"],
   appSetSider: ["sider"],
   appSetScreeningListFilter: ["params"],
-  appSaveFilter: ["filterType", "filter"],
-  appRemoveFilter: ["filterType", "index"],
   appSetJourney: ["journey"],
   appSetCurrentVersion: ["version"],
   appSetNotification: ["notification"],
@@ -31,9 +29,6 @@ const INITIAL_STATE = {
       pending: 0,
     },
   },
-  savedFilters: {
-    screeningList: [],
-  },
   help: {
     section: null,
   },
@@ -42,64 +37,6 @@ const INITIAL_STATE = {
   },
   notification: null,
   currentVersion: "0",
-};
-
-const saveFilter = (state = INITIAL_STATE, { filterType, filter }) => {
-  const getListByType = (type) => {
-    switch (type) {
-      case "screeningList":
-        return [...state.savedFilters.screeningList];
-      default:
-        console.log("invalid filter type");
-    }
-  };
-  const updateListByType = (type, newList) => {
-    switch (type) {
-      case "screeningList":
-        return {
-          ...state,
-          savedFilters: {
-            ...state.savedFilters,
-            screeningList: newList,
-          },
-        };
-      default:
-        console.log("invalid filter type");
-    }
-  };
-
-  const list = getListByType(filterType);
-  list.push(filter);
-  return updateListByType(filterType, list);
-};
-
-const removeFilter = (state = INITIAL_STATE, { filterType, index }) => {
-  const getListByType = (type) => {
-    switch (type) {
-      case "screeningList":
-        return [...state.savedFilters.screeningList];
-      default:
-        console.log("invalid filter type");
-    }
-  };
-  const updateListByType = (type, newList) => {
-    switch (type) {
-      case "screeningList":
-        return {
-          ...state,
-          savedFilters: {
-            ...state.savedFilters,
-            screeningList: newList,
-          },
-        };
-      default:
-        console.log("invalid filter type");
-    }
-  };
-
-  const list = getListByType(filterType);
-  list.splice(index, 1);
-  return updateListByType(filterType, list);
 };
 
 const setCurrentVersion = (state = INITIAL_STATE, { version }) => ({
@@ -152,8 +89,6 @@ const HANDLERS = {
   [Types.APP_SET_SIDER]: setSider,
   [Types.APP_SET_JOURNEY]: setJourney,
   [Types.APP_SET_SCREENING_LIST_FILTER]: setScreeningListFilter,
-  [Types.APP_SAVE_FILTER]: saveFilter,
-  [Types.APP_REMOVE_FILTER]: removeFilter,
   [Types.APP_SET_CURRENT_VERSION]: setCurrentVersion,
   [Types.APP_SET_NOTIFICATION]: setNotification,
 };

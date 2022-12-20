@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components/macro";
 import isEmpty from "lodash.isempty";
-import { format } from "date-fns";
+import { format, parseISO, differenceInHours } from "date-fns";
 import {
   WarningOutlined,
   CheckOutlined,
@@ -11,6 +11,7 @@ import {
   StopOutlined,
   CalculatorOutlined,
   MessageOutlined,
+  HourglassOutlined,
 } from "@ant-design/icons";
 
 import { InfoIcon } from "components/Icon";
@@ -47,9 +48,14 @@ const TableTags = styled.div`
   justify-content: space-evenly;
 
   span.tag {
-    display: inline-block;
+    display: flex;
+    align-items: center;
     width: 20px;
     cursor: pointer;
+
+    &.gtm-tag-alert {
+      width: 30px;
+    }
   }
 `;
 
@@ -812,88 +818,122 @@ const tags = (bag) => ({
   title: "Tags",
   width: 50,
   align: "center",
-  render: (text, prescription) => (
-    <TableTags>
-      <span
-        className="tag gtm-tag-check"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {prescription.checked && (
-          <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
-            <CheckOutlined style={{ fontSize: 18, color: "#52c41a" }} />
-          </Tooltip>
-        )}
-      </span>
-      <span
-        className="tag gtm-tag-msg"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {prescription.recommendation && prescription.recommendation !== "None" && (
-          <Tooltip title={bag.t("prescriptionDrugTags.recommendation")}>
-            <MessageOutlined style={{ fontSize: 18, color: "#108ee9" }} />
-          </Tooltip>
-        )}
-      </span>
-      <span
-        className="tag gtm-ico-form"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {prescription.prevNotes && prescription.prevNotes !== "None" && (
-          <Tooltip title={bag.t("prescriptionDrugTags.prevNotes")}>
-            <FormOutlined style={{ fontSize: 18, color: "#108ee9" }} />
-          </Tooltip>
-        )}
-      </span>
-      <span
-        className="tag gtm-tag-warn"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {!isEmpty(prescription.prevIntervention) && (
-          <Tooltip title={bag.t("prescriptionDrugTags.prevIntervention")}>
-            <WarningOutlined style={{ fontSize: 18, color: "#fa8c16" }} />
-          </Tooltip>
-        )}
-        {isEmpty(prescription.prevIntervention) &&
-          prescription.existIntervention && (
-            <Tooltip
-              title={bag.t("prescriptionDrugTags.prevInterventionSolved")}
-            >
-              <WarningOutlined style={{ fontSize: 18, color: "gray" }} />
+  render: (text, prescription) => {
+    let expiresIn = null;
+    const hasExpireInfo =
+      prescription.cpoe && bag.featureService.hasPrescriptionExpirationTag();
+    if (hasExpireInfo && !prescription.suspended) {
+      if (bag.headers[prescription.cpoe].expire) {
+        const expirationDate = parseISO(bag.headers[prescription.cpoe].expire);
+        const currentDate = new Date();
+        expiresIn = differenceInHours(expirationDate, currentDate);
+      }
+    }
+    return (
+      <TableTags>
+        <span
+          className="tag gtm-tag-check"
+          onClick={() => bag.handleRowExpand(prescription)}
+        >
+          {prescription.checked && (
+            <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
+              <CheckOutlined style={{ fontSize: 18, color: "#52c41a" }} />
             </Tooltip>
           )}
-      </span>
-      <span
-        className="tag gtm-tag-stop"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {prescription.suspended && (
-          <Tooltip title={bag.t("prescriptionDrugTags.suspended")}>
-            <StopOutlined style={{ fontSize: 18, color: "#f5222d" }} />
-          </Tooltip>
-        )}
-      </span>
-      <span
-        className="tag gtm-tag-alert"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {!isEmpty(prescription.alerts) && (
-          <Tooltip
-            title={
-              prescription.alergy
-                ? bag.t("prescriptionDrugTags.alertsAllergy")
-                : bag.t("prescriptionDrugTags.alerts")
-            }
+        </span>
+        <span
+          className="tag gtm-tag-msg"
+          onClick={() => bag.handleRowExpand(prescription)}
+        >
+          {prescription.recommendation &&
+            prescription.recommendation !== "None" && (
+              <Tooltip title={bag.t("prescriptionDrugTags.recommendation")}>
+                <MessageOutlined style={{ fontSize: 18, color: "#108ee9" }} />
+              </Tooltip>
+            )}
+        </span>
+        <span
+          className="tag gtm-ico-form"
+          onClick={() => bag.handleRowExpand(prescription)}
+        >
+          {prescription.prevNotes && prescription.prevNotes !== "None" && (
+            <Tooltip title={bag.t("prescriptionDrugTags.prevNotes")}>
+              <FormOutlined style={{ fontSize: 18, color: "#108ee9" }} />
+            </Tooltip>
+          )}
+        </span>
+        <span
+          className="tag gtm-tag-warn"
+          onClick={() => bag.handleRowExpand(prescription)}
+        >
+          {!isEmpty(prescription.prevIntervention) && (
+            <Tooltip title={bag.t("prescriptionDrugTags.prevIntervention")}>
+              <WarningOutlined style={{ fontSize: 18, color: "#fa8c16" }} />
+            </Tooltip>
+          )}
+          {isEmpty(prescription.prevIntervention) &&
+            prescription.existIntervention && (
+              <Tooltip
+                title={bag.t("prescriptionDrugTags.prevInterventionSolved")}
+              >
+                <WarningOutlined style={{ fontSize: 18, color: "gray" }} />
+              </Tooltip>
+            )}
+        </span>
+        <span
+          className="tag gtm-tag-stop"
+          onClick={() => bag.handleRowExpand(prescription)}
+        >
+          {prescription.suspended && (
+            <Tooltip title={bag.t("prescriptionDrugTags.suspended")}>
+              <StopOutlined style={{ fontSize: 18, color: "#f5222d" }} />
+            </Tooltip>
+          )}
+        </span>
+        {hasExpireInfo && (
+          <span
+            className="tag gtm-tag-expires"
+            onClick={() => bag.handleRowExpand(prescription)}
           >
-            <Badge dot count={prescription.alergy ? 1 : 0}>
-              <Tag color="red" style={{ marginLeft: "2px" }}>
-                {prescription.alerts.length}
-              </Tag>
-            </Badge>
-          </Tooltip>
+            {expiresIn < 0 && (
+              <Tooltip title={bag.t("prescriptionDrugTags.expired")}>
+                <HourglassOutlined style={{ fontSize: 18, color: "#f5222d" }} />
+              </Tooltip>
+            )}
+            {expiresIn > 0 && expiresIn < 24 && (
+              <Tooltip
+                title={`${bag.t(
+                  "prescriptionDrugTags.expiresIn"
+                )} ${expiresIn}h`}
+              >
+                <HourglassOutlined style={{ fontSize: 18, color: "#ff9f1c" }} />
+              </Tooltip>
+            )}
+          </span>
         )}
-      </span>
-    </TableTags>
-  ),
+        <span
+          className="tag gtm-tag-alert"
+          onClick={() => bag.handleRowExpand(prescription)}
+        >
+          {!isEmpty(prescription.alerts) && (
+            <Tooltip
+              title={
+                prescription.alergy
+                  ? bag.t("prescriptionDrugTags.alertsAllergy")
+                  : bag.t("prescriptionDrugTags.alerts")
+              }
+            >
+              <Badge dot count={prescription.alergy ? 1 : 0}>
+                <Tag color="red" style={{ marginLeft: "2px" }}>
+                  {prescription.alerts.length}
+                </Tag>
+              </Badge>
+            </Tooltip>
+          )}
+        </span>
+      </TableTags>
+    );
+  },
 });
 
 const actionColumns = (bag) => [
