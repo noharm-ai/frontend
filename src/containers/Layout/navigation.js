@@ -30,6 +30,12 @@ const navigation = [
         notRole: ["cpoe"],
       },
       {
+        key: "/priorizacao/pacientes/cards",
+        text: "menu.prioritization-lab",
+        icon: ExperimentOutlined,
+        id: "gtm-lnk-priorizacao-cards",
+      },
+      {
         key: "/priorizacao/pacientes",
         text: "menu.prioritization-patient",
         icon: UserOutlined,
@@ -41,12 +47,6 @@ const navigation = [
         icon: ReconciliationOutlined,
         id: "gtm-lnk-priorizacao-conciliacao",
         feature: Feature.CONCILIATION,
-      },
-      {
-        key: "/priorizacao/pacientes/cards",
-        text: "menu.prioritization-lab",
-        icon: ExperimentOutlined,
-        id: "gtm-lnk-priorizacao-cards",
       },
     ],
   },

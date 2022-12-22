@@ -4,6 +4,7 @@ import { Row, Col } from "antd";
 import Chart from "react-google-charts";
 import { useTranslation } from "react-i18next";
 
+import NumericValue from "components/NumericValue";
 import LoadBox from "components/LoadBox";
 import Empty from "components/Empty";
 import Table, { NestedTableContainer } from "components/Table";
@@ -25,7 +26,12 @@ export default function ValuedExams({ record }) {
           align: "center",
           key: "key",
           render: (text, record) => {
-            return `${record.value} ${record.unit}`;
+            return (
+              <NumericValue
+                suffix={record.unit ? ` ${record.unit}` : ""}
+                value={record.value}
+              />
+            );
           },
         },
         {

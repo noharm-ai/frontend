@@ -1,6 +1,8 @@
 import React from "react";
 import { format } from "date-fns";
 
+import NumericValue from "components/NumericValue";
+
 import ValuedExams from "./ValuedExams";
 import TextualExams from "./TextualExams";
 
@@ -28,7 +30,12 @@ const columns = (t, sortedInfo) => {
         if (record.text) {
           return "--";
         }
-        return `${record.value} ${record.unit}`;
+        return (
+          <NumericValue
+            suffix={record.unit ? ` ${record.unit}` : ""}
+            value={record.value}
+          />
+        );
       },
     },
     {

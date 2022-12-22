@@ -14,7 +14,7 @@ export const Item = styled.div`
   }
 
   .icon {
-    span {
+    > span {
       display: ${(props) => (props.siderCollapsed ? "inline" : "none")};
       font-size: 12px;
       margin-right: 5px;

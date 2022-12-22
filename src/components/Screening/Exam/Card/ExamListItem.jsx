@@ -8,6 +8,7 @@ import {
 } from "@ant-design/icons";
 
 import Popover from "components/PopoverStyled";
+import NumericValue from "components/NumericValue";
 
 import { Item } from "./ExamListItem.style";
 
@@ -42,7 +43,12 @@ export default function ExamListItem({ exam, siderCollapsed }) {
       return "--";
     }
 
-    return `${exam.value} ${exam.unit ? exam.unit : ""}`;
+    return (
+      <NumericValue
+        suffix={exam.unit ? ` ${exam.unit}` : ""}
+        value={exam.value}
+      />
+    );
   };
 
   const ExamData = ({ exam, t }) => (
