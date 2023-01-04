@@ -23,6 +23,7 @@ import Tabs from "components/Tabs";
 import Menu from "components/Menu";
 import Dropdown from "components/Dropdown";
 import RichTextView from "components/RichTextView";
+import Badge from "components/Badge";
 import { translateDialysis } from "utils/transformers/prescriptions";
 
 import FormIntervention from "containers/Forms/Intervention";
@@ -641,7 +642,13 @@ export default function PatientCard({
           <Tabs.TabPane
             tab={
               <Tooltip title={t("patientCard.notes")}>
-                <MessageOutlined style={{ fontSize: "18px" }} />
+                {observation ? (
+                  <Badge dot>
+                    <MessageOutlined style={{ fontSize: "18px" }} />
+                  </Badge>
+                ) : (
+                  <MessageOutlined style={{ fontSize: "18px" }} />
+                )}
               </Tooltip>
             }
             key="patientNotes"
