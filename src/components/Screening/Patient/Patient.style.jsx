@@ -301,5 +301,12 @@ export const PatientBox = styled.div`
         }
       }
     }
+
+    .ant-tabs-tab.ant-tabs-tab-active,
+    .ant-tabs-tab:hover {
+      .anticon {
+        color: #1890ff;
+      }
+    }
   }
 `;
