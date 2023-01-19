@@ -55,6 +55,7 @@ export default function Modal({
     >
       <ExpandableTable
         columns={examColumns(t, sortOrder)}
+        showSorterTooltip={false}
         pagination={false}
         loading={exams.isFetching}
         locale={{
