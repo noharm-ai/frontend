@@ -667,10 +667,13 @@ const updatePrescriptionDrugData = (
 
         if (index !== -1) {
           const { key } = group.value[index];
+
           group.value[index] = { ...group.value[index], ...newData, key };
+          group.value = [...group.value];
           break;
         } else {
           group.value.push({ ...newData });
+          group.value = [...group.value];
           break;
         }
       }
