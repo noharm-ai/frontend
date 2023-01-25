@@ -13,7 +13,7 @@ const columns = (t, sortedInfo) => {
       dataIndex: "name",
       align: "left",
       sorter: (a, b) => a.name.localeCompare(b.name),
-      sortOrder: sortedInfo.columnKey === "name" && sortedInfo.order,
+      sortOrder: sortedInfo.column?.dataIndex === "name" && sortedInfo.order,
     },
     {
       title: t("tableHeader.percentage"),
@@ -25,7 +25,7 @@ const columns = (t, sortedInfo) => {
       dataIndex: "value",
       align: "center",
       sorter: (a, b) => a.value - b.value,
-      sortOrder: sortedInfo.columnKey === "value" && sortedInfo.order,
+      sortOrder: sortedInfo.column?.dataIndex === "value" && sortedInfo.order,
       render: (text, record) => {
         if (record.text) {
           return "--";
@@ -48,7 +48,7 @@ const columns = (t, sortedInfo) => {
       dataIndex: "date",
       align: "center",
       sorter: (a, b) => a.date.localeCompare(b.date),
-      sortOrder: sortedInfo.columnKey === "date" && sortedInfo.order,
+      sortOrder: sortedInfo.column?.dataIndex === "date" && sortedInfo.order,
       render: (text, record) => {
         return format(new Date(record.date), "dd/MM/yyyy HH:mm");
       },
