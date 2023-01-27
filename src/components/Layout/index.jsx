@@ -7,13 +7,13 @@ import { Alert } from "antd";
 
 import appInfo from "utils/appInfo";
 import Avatar from "components/Avatar";
-import { InputSearchNumber } from "components/Inputs";
 import Button from "components/Button";
 
 import { useTranslation } from "react-i18next";
 import Box from "./Box";
 import Menu from "./Menu";
 import InfoAlert from "./InfoAlert";
+import SearchPrescription from "./SearchPrescription";
 import { Wrapper as Main, Brand, LogOut, UserName } from "./Layout.style";
 
 const siderWidth = 250;
@@ -36,17 +36,6 @@ const setTitle = ({ user }) => {
 const Me = ({ user, access_token, t, notification, setNotification }) => {
   const location = useLocation();
 
-  const onSearch = (value) => {
-    const reg = /^-?\d*(\.\d*)?$/;
-    const searchValue = value.trim();
-
-    if (!isNaN(searchValue) && reg.test(searchValue) && searchValue !== "") {
-      window.open(`/prescricao/${searchValue}`);
-    } else {
-      notification.error({ message: "Número de prescrição inválido." });
-    }
-  };
-
   const showAlert = location.pathname.indexOf("priorizacao") !== -1;
 
   const openHelp = () => {
@@ -67,15 +56,8 @@ const Me = ({ user, access_token, t, notification, setNotification }) => {
       justify-content: space-between;
     "
     >
-      <div css="display: flex; align-items: center;">
-        <InputSearchNumber
-          placeholder={t("layout.iptSearch")}
-          style={{ width: 300 }}
-          size="large"
-          onSearch={onSearch}
-          id="gtm-search-box"
-          type="number"
-        />
+      <div css="display: flex; align-items: center; width: 50%;">
+        <SearchPrescription />
         {showAlert && (
           <InfoAlert
             access_token={access_token}
