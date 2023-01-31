@@ -8,8 +8,19 @@ export const SearchPrescriptionContainer = styled.div`
   display: flex;
   align-items: center;
 
-  .ant-select {
-    width: 100%;
+  .ant-input-wrapper {
+    .ant-input-affix-wrapper {
+      background: #fafafa;
+
+      input {
+        background: #fafafa;
+
+        &::placeholder {
+          color: #2e3c5a;
+          font-weight: 300;
+        }
+      }
+    }
   }
 
   .search-result {
@@ -44,7 +55,11 @@ export const SearchPrescriptionContainer = styled.div`
       padding: 5px 15px;
       cursor: pointer;
 
-      &:hover {
+      &:focus {
+        outline: none;
+      }
+
+      &.active {
         background: #e6f7ff;
 
         .search-result-info-primary {
