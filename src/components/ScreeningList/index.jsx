@@ -279,24 +279,24 @@ export default function ScreeningList({
         onChange={onClientSearch}
         className={filter.searchKey ? "active" : ""}
       />
-      <Tooltip title={t("screeningList.pendingHint")}>
+      <Tooltip title={t("screeningList.pendingHint-" + prioritizationType)}>
         <Button
           type="gtm-lnk-filter-presc-pendente ant-btn-link-hover"
           className={isFilterActive("0") ? "active" : ""}
           onClick={(e) => handleFilter(e, "0")}
         >
-          {t("screeningList.pending")}
+          {t("screeningList.pending-" + prioritizationType)}
           <Tag color="orange">{listCount.pending}</Tag>
         </Button>
       </Tooltip>
 
-      <Tooltip title={t("screeningList.checkedHint")}>
+      <Tooltip title={t("screeningList.checkedHint-" + prioritizationType)}>
         <Button
           type="gtm-lnk-filter-presc-checada ant-btn-link-hover"
           className={isFilterActive("s") ? "active" : ""}
           onClick={(e) => handleFilter(e, "s")}
         >
-          {t("screeningList.checked")}{" "}
+          {t("screeningList.checked-" + prioritizationType)}{" "}
           <Tag color="green">{listCount.checked}</Tag>
         </Button>
       </Tooltip>
@@ -305,7 +305,7 @@ export default function ScreeningList({
         title={
           listCount.all === 500
             ? t("screeningList.allHintLimit")
-            : t("screeningList.allHint")
+            : t("screeningList.allHint-" + prioritizationType)
         }
       >
         <Button
@@ -313,7 +313,8 @@ export default function ScreeningList({
           className={isFilterActive(null) ? "active" : ""}
           onClick={(e) => handleFilter(e, "all")}
         >
-          {t("screeningList.all")} {listCount.all === 500 ? <InfoIcon /> : ""}
+          {t("screeningList.all-" + prioritizationType)}{" "}
+          {listCount.all === 500 ? <InfoIcon /> : ""}
           <Tag>{listCount.all}</Tag>
         </Button>
       </Tooltip>
