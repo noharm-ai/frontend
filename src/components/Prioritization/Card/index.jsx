@@ -28,9 +28,9 @@ const TabContent = ({ tab, prescription }) => {
             </div>
           </div>
           <div className="attributes-item col-4">
-            <div className="attributes-item-label">{t("patientCard.age")}</div>
+            <div className="attributes-item-label">{t("labels.birthdate")}</div>
             <div className="attributes-item-value">
-              {prescription.age || "-"}
+              {prescription.birthdateFormat || "-"}
             </div>
           </div>
           <div className="attributes-item col-4">

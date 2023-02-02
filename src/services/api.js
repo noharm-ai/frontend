@@ -187,6 +187,14 @@ const shouldUpdatePrescription = (bearerToken, idPrescription, params = {}) => {
   });
 };
 
+const searchPrescriptions = (bearerToken, term) =>
+  instance.get(`${endpoints.prescriptions}/search`, {
+    params: {
+      term,
+    },
+    ...setHeaders(bearerToken),
+  });
+
 /**
  *
  * Edit Prescription
@@ -538,6 +546,7 @@ const api = {
   suspendPrescriptionDrug,
   getDrugResources,
   getExamRefs,
+  searchPrescriptions,
 };
 
 export default api;
