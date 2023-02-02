@@ -232,6 +232,7 @@ export const transformPrescription = ({
       : "",
     shortDateFormat: format(new Date(date), "dd/MM"),
     birthdate,
+    birthdateFormat: birthdate ? format(new Date(birthdate), "dd/MM/yyyy") : "",
     age: birthdate ? formatAge(birthdate) : "",
     birthdays: birthdate ? moment().diff(birthdate, "day") : "",
     mdrd,
