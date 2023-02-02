@@ -79,7 +79,7 @@ export default function AlertCard({ stats }) {
           {alerts.map((a) => (
             <Tooltip title={a.label} key={a.label}>
               <div className={a.value > 0 ? "alert" : ""}>
-                {a.icon()} {a.value}
+                {a.icon()} <span>{a.value}</span>
               </div>
             </Tooltip>
           ))}

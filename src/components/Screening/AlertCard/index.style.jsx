@@ -13,13 +13,16 @@ export const AlertContainer = styled.div`
   }
 
   > div {
-    padding: 5px 0;
+    padding: 5px;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     text-align: center;
     font-weight: 500;
     min-width: 65px;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
     @media only screen and (min-width: 1515px) {
       font-size: 16px;
@@ -30,13 +33,9 @@ export const AlertContainer = styled.div`
       background: #f8dee2;
     }
 
-    span {
+    span:first-child {
       margin-right: 8px;
-      font-size: 16px;
-
-      @media only screen and (min-width: 1515px) {
-        font-size: 18px;
-      }
+      font-size: 20px;
     }
 
     &:hover {
