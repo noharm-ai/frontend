@@ -50,7 +50,7 @@ export default function Base({
     if (!selectedReasons) return false;
 
     const reasonsWithRelationshipsRegEx =
-      /duplicidade|interaç|incompatib|apresentaç|forma|subst/g;
+      /duplicidade|interaç|incompatib|apresentaç|forma|subst|alterna/g;
 
     return hasReason(
       reasonList,
