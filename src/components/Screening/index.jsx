@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, CopyOutlined } from "@ant-design/icons";
 
 import Empty from "components/Empty";
 import LoadBox, { LoadContainer } from "components/LoadBox";
@@ -11,7 +11,8 @@ import Tabs from "components/Tabs";
 import Tag from "components/Tag";
 import notification from "components/notification";
 import BackTop from "components/BackTop";
-import Button from "components/Button";
+import Dropdown from "components/Dropdown";
+import Menu from "components/Menu";
 
 import PrescriptionList from "containers/Screening/PrescriptionDrug/PrescriptionList";
 import SolutionList from "containers/Screening/PrescriptionDrug/SolutionList";
@@ -95,6 +96,34 @@ export default function Screening({
     });
   };
 
+  const copyPrescriptionDrug = (e, source) => {
+    selectPrescriptionDrug({
+      idPrescription: content.idPrescription,
+      idSegment: content.idSegment,
+      idHospital: content.idHospital,
+      source,
+      copyDrugs: true,
+    });
+
+    e.preventDefault();
+  };
+
+  const menu = (
+    <Menu
+      items={[
+        {
+          label: (
+            <div onClick={(e) => copyPrescriptionDrug(e, "prescription")}>
+              Copiar de prescrições anteriores
+            </div>
+          ),
+          key: "1",
+          icon: <CopyOutlined />,
+        },
+      ]}
+    ></Menu>
+  );
+
   if (error) {
     return (
       <Empty
@@ -141,14 +170,14 @@ export default function Screening({
             <Col span={24} md={24} style={{ marginTop: "20px" }}>
               {!isEmpty(content) && security.hasPrescriptionEdit() && !agg && (
                 <PrescriptionActionContainer>
-                  <Button
+                  <Dropdown.Button
+                    overlay={menu}
                     onClick={() => addPrescriptionDrug("prescription")}
                     className="gtm-bt-add-drugEdit"
-                    type="primary"
                   >
                     <PlusOutlined />
                     {t("screeningBody.btnAddDrug")}
-                  </Button>
+                  </Dropdown.Button>
                 </PrescriptionActionContainer>
               )}
 

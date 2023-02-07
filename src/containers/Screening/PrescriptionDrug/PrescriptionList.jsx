@@ -31,6 +31,7 @@ const mapStateToProps = ({ prescriptions, auth, user }) => ({
   periodObject: prescriptions.single.prescription.period,
   access_token: auth.identify.access_token,
   weight: prescriptions.single.data.weight,
+  idPrescription: prescriptions.single.data.idPrescription,
   idSegment: prescriptions.single.data.idSegment,
   idHospital: prescriptions.single.data.idHospital,
   admissionNumber: prescriptions.single.data.admissionNumber,

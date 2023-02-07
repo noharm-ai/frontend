@@ -6,6 +6,7 @@ import {
   savePrescriptionDrugThunk,
   savePrescriptionDrugNoteThunk,
   suspendPrescriptionDrugThunk,
+  copyPrescriptionDrugThunk,
 } from "store/ducks/prescriptionDrugs/thunk";
 import {
   searchDrugsThunk,
@@ -28,6 +29,7 @@ const mapDispatchToProps = (dispatch) =>
       select: selectPrescriptionDrugThunk,
       save: savePrescriptionDrugThunk,
       saveNotes: savePrescriptionDrugNoteThunk,
+      copy: copyPrescriptionDrugThunk,
       suspend: suspendPrescriptionDrugThunk,
       searchDrugs: searchDrugsThunk,
       fetchDrugSummary: fetchDrugResourcesThunk,

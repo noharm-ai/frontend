@@ -90,6 +90,7 @@ export default function PrescriptionDrugList({
   admissionNumber,
   checkPrescriptionDrug,
   savePrescriptionDrugStatus,
+  idPrescription,
   idSegment,
   idHospital,
   select,
@@ -226,10 +227,13 @@ export default function PrescriptionDrugList({
     return (
       <PanelAction
         id={id}
+        aggId={aggregated ? idPrescription : null}
         header={header}
         source={source}
         checkScreening={checkScreening}
         isChecking={isCheckingPrescription}
+        selectPrescriptionDrug={selectPrescriptionDrug}
+        hasPrescriptionEdit={security.hasPrescriptionEdit()}
       />
     );
   };
