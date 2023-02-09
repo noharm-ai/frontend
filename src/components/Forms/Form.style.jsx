@@ -143,3 +143,31 @@ export const ChoicePanel = styled.div`
     transform: translateY(-50%);
   }
 `;
+
+export const CheckboxContainer = styled.div`
+  width: 100%;
+  padding: 0 1rem;
+
+  .checkbox-container__label {
+    display: block;
+    padding-bottom: 0.5rem;
+  }
+
+  .checkbox-container__item {
+    border-bottom: 1px solid #e0e0e0;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    .ant-checkbox-wrapper {
+      width: 100%;
+      padding: 0.35rem;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: rgba(244, 244, 244, 0.8);
+      }
+    }
+  }
+`;

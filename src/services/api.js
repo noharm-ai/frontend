@@ -226,6 +226,23 @@ const suspendPrescriptionDrug = (bearerToken, idPrescriptionDrug, suspend) => {
   );
 };
 
+const getPrescriptionMissingDrugs = (bearerToken, idPrescription) => {
+  return instance.get(
+    `${endpoints.editPrescription}/${idPrescription}/missing-drugs`,
+    {
+      ...setHeaders(bearerToken),
+    }
+  );
+};
+
+const copyPrescriptionMissingDrugs = (bearerToken, idPrescription, idDrugs) => {
+  return instance.post(
+    `${endpoints.editPrescription}/${idPrescription}/missing-drugs/copy`,
+    { idDrugs },
+    setHeaders(bearerToken)
+  );
+};
+
 /**
  * Patients.
  *
@@ -547,6 +564,8 @@ const api = {
   getDrugResources,
   getExamRefs,
   searchPrescriptions,
+  getPrescriptionMissingDrugs,
+  copyPrescriptionMissingDrugs,
 };
 
 export default api;

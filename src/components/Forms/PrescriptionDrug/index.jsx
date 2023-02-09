@@ -12,12 +12,14 @@ import DefaultModal from "components/Modal";
 
 import Base from "./Base";
 import BaseNotes from "./BaseNotes";
+import BaseCopy from "./BaseCopy";
 
 export default function PrescriptionDrug({
   item,
   isSaving,
   save,
   saveNotes,
+  copy,
   suspend,
   select,
   searchDrugs,
@@ -28,14 +30,26 @@ export default function PrescriptionDrug({
 }) {
   const { t } = useTranslation();
 
-  const validationSchema = Yup.object().shape({
-    idDrug: Yup.number().nullable().required(t("validation.requiredField")),
-    dose: Yup.number().nullable().required(t("validation.requiredField")),
-    measureUnit: Yup.string()
-      .nullable()
-      .required(t("validation.requiredField")),
-    frequency: Yup.string().nullable().required(t("validation.requiredField")),
-  });
+  let validationSchema;
+
+  if (item.updateDrug) {
+    validationSchema = Yup.object().shape({
+      idDrug: Yup.number().nullable().required(t("validation.requiredField")),
+      dose: Yup.number().nullable().required(t("validation.requiredField")),
+      measureUnit: Yup.string()
+        .nullable()
+        .required(t("validation.requiredField")),
+      frequency: Yup.string()
+        .nullable()
+        .required(t("validation.requiredField")),
+    });
+  }
+
+  if (item.copyDrugs) {
+    validationSchema = Yup.object().shape({
+      selectedDrugs: Yup.array().min(1, t("validation.requiredField")),
+    });
+  }
 
   if (isEmpty(item)) {
     return null;
@@ -47,7 +61,7 @@ export default function PrescriptionDrug({
 
   const onSave = (params) => {
     if (item.updateDrug) {
-      save(item.idPrescriptionDrug, item.source, params)
+      save(item.idPrescriptionDrug, item.aggId, item.source, params)
         .then(() => {
           select({});
 
@@ -66,6 +80,24 @@ export default function PrescriptionDrug({
 
     if (item.updateNotes) {
       saveNotes(item.idPrescriptionDrug, item.source, params)
+        .then(() => {
+          select({});
+
+          notification.success({
+            message: t("success.generic"),
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          notification.error({
+            message: t("error.title"),
+            description: t("error.description"),
+          });
+        });
+    }
+
+    if (item.copyDrugs) {
+      copy(item.idPrescription, item.aggId, params.selectedDrugs)
         .then(() => {
           select({});
 
@@ -150,6 +182,7 @@ export default function PrescriptionDrug({
     admissionNumber: admissionNumber || item.admissionNumber,
     idHospital: item.idHospital,
     recommendation: item.recommendation,
+    selectedDrugs: [],
   };
 
   return (
@@ -157,7 +190,7 @@ export default function PrescriptionDrug({
       enableReinitialize
       onSubmit={onSave}
       initialValues={initialValues}
-      validationSchema={item.updateDrug ? validationSchema : null}
+      validationSchema={validationSchema}
     >
       {({ handleSubmit }) => (
         <DefaultModal
@@ -170,13 +203,14 @@ export default function PrescriptionDrug({
         >
           <header>
             <Heading margin="0 0 15px">
-              {item.updateDrug
-                ? t(
-                    `prescriptionDrugForm.title${
-                      initialValues.idPrescriptionDrug ? "Edit" : "Create"
-                    }`
-                  )
-                : t("prescriptionDrugForm.titleNotes")}
+              {item.updateDrug &&
+                t(
+                  `prescriptionDrugForm.title${
+                    initialValues.idPrescriptionDrug ? "Edit" : "Create"
+                  }`
+                )}
+              {item.updateNotes && t("prescriptionDrugForm.titleNotes")}
+              {item.copyDrugs && t("prescriptionDrugForm.titleCopy")}
             </Heading>
           </header>
           <form onSubmit={handleSubmit}>
@@ -192,6 +226,8 @@ export default function PrescriptionDrug({
               )}
 
               {item.updateNotes && <BaseNotes item={item} />}
+
+              {item.copyDrugs && <BaseCopy item={item} />}
             </Row>
           </form>
         </DefaultModal>

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 
 import { InputSearchNumber } from "components/Inputs";
+import notification from "components/notification";
 import Tag from "components/Tag";
 import Empty from "components/Empty";
 import { store } from "store/index";
@@ -132,7 +133,15 @@ export default function SearchPrescription() {
 
   const search = (value) => {
     if (value.length < 3) return;
-    fetchData(value);
+
+    const reg = /^\d*$/;
+    const searchValue = value.trim();
+
+    if (!isNaN(searchValue) && reg.test(searchValue) && searchValue !== "") {
+      fetchData(searchValue);
+    } else {
+      notification.error({ message: "Número inválido." });
+    }
   };
 
   const navigateTo = (idPrescription) => {

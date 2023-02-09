@@ -385,7 +385,8 @@
 
   "prescriptionDrugForm": {
     "titleEdit": "Alterar medicamento",
-    "titleCreate": "Criar medicamento",
+    "titleCreate": "Adicionar medicamento",
+    "titleCopy": "Copiar de prescrições anteriores",
     "titleNotes": "Anotação",
     "btnSuspend": "Suspender",
     "btnRemoveSuspension": "Remover suspensão"

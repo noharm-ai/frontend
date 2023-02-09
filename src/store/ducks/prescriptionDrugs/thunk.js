@@ -3,6 +3,7 @@ import isEmpty from "lodash.isempty";
 import api from "services/api";
 import { errorHandler } from "utils";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
+import { fetchScreeningThunk } from "store/ducks/prescriptions/thunk";
 import { Creators as PrescriptionDrugsCreators } from "./index";
 import { Creators as PrescriptionsCreators } from "../prescriptions/index";
 
@@ -73,7 +74,7 @@ const prepareParams = (params) => {
 };
 
 export const savePrescriptionDrugThunk =
-  (idPrescriptionDrug, source, params = {}) =>
+  (idPrescriptionDrug, aggId, source, params = {}) =>
   (dispatch, getState) => {
     return new Promise(async (resolve, reject) => {
       dispatch(prescriptionDrugsSaveStart());
@@ -92,16 +93,55 @@ export const savePrescriptionDrugThunk =
         return;
       }
 
-      dispatch(
-        prescriptionsUpdatePrescriptionDrug(
-          idPrescriptionDrug,
-          source,
-          transformPrescriptionDrug(
-            { ...params, source },
-            updatedPrescriptionDrug.data
+      if (idPrescriptionDrug) {
+        //updating
+        dispatch(
+          prescriptionsUpdatePrescriptionDrug(
+            idPrescriptionDrug,
+            source,
+            transformPrescriptionDrug(
+              { ...params, source },
+              updatedPrescriptionDrug.data
+            )
           )
-        )
-      );
+        );
+      } else {
+        // adding new
+        if (aggId) {
+          dispatch(fetchScreeningThunk(aggId));
+        } else {
+          dispatch(fetchScreeningThunk(params.idPrescription));
+        }
+      }
+
+      dispatch(prescriptionDrugsSaveSuccess());
+      resolve();
+    });
+  };
+
+export const copyPrescriptionDrugThunk =
+  (idPrescription, aggId, idDrugs) => (dispatch, getState) => {
+    return new Promise(async (resolve, reject) => {
+      dispatch(prescriptionDrugsSaveStart());
+
+      const { access_token } = getState().auth.identify;
+
+      const { error } = await api
+        .copyPrescriptionMissingDrugs(access_token, idPrescription, idDrugs)
+        .catch(errorHandler);
+
+      if (!isEmpty(error)) {
+        dispatch(prescriptionDrugsSaveError(error));
+        reject(error);
+        return;
+      }
+
+      if (aggId) {
+        dispatch(fetchScreeningThunk(aggId));
+      } else {
+        dispatch(fetchScreeningThunk(idPrescription));
+      }
+
       dispatch(prescriptionDrugsSaveSuccess());
       resolve();
     });

@@ -20,11 +20,9 @@ const TabContent = ({ tab, prescription }) => {
       <div className="attribute-container">
         <div className="attributes">
           <div className="attributes-item col-4">
-            <div className="attributes-item-label">
-              {t("patientCard.admission")}
-            </div>
+            <div className="attributes-item-label">{t("patientCard.age")}</div>
             <div className="attributes-item-value">
-              {prescription.admissionNumber}
+              {prescription.age || "-"}
             </div>
           </div>
           <div className="attributes-item col-4">
@@ -33,6 +31,7 @@ const TabContent = ({ tab, prescription }) => {
               {prescription.birthdateFormat || "-"}
             </div>
           </div>
+
           <div className="attributes-item col-4">
             <div className="attributes-item-label">
               {t("patientCard.gender")}
@@ -47,6 +46,14 @@ const TabContent = ({ tab, prescription }) => {
           </div>
         </div>
         <div className="attributes">
+          <div className="attributes-item col-4">
+            <div className="attributes-item-label">
+              {t("patientCard.admission")}
+            </div>
+            <div className="attributes-item-value">
+              {prescription.admissionNumber}
+            </div>
+          </div>
           <div className="attributes-item col-4">
             <div className="attributes-item-label">Setor</div>
             <div className="attributes-item-value">
@@ -63,24 +70,14 @@ const TabContent = ({ tab, prescription }) => {
               </Tooltip>
             </div>
           </div>
+        </div>
+        <div className="attributes">
           <div className="attributes-item col-4">
             <div className="attributes-item-label">Convênio</div>
             <div className="attributes-item-value">
               <Tooltip title={`${prescription.insurance}`}>
                 {prescription.insurance}
               </Tooltip>
-            </div>
-          </div>
-        </div>
-        <div className="attributes">
-          <div className="attributes-item col-4">
-            <div className="attributes-item-label">
-              <Tooltip title={t("screeningList.clInterventionsHint")}>
-                {t("screeningList.clInterventionsHint")}
-              </Tooltip>
-            </div>
-            <div className="attributes-item-value">
-              {prescription.interventions}
             </div>
           </div>
           <div className="attributes-item col-4">

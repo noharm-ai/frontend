@@ -6,6 +6,8 @@ import {
   WarningOutlined,
   RollbackOutlined,
   MoreOutlined,
+  PlusOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
 
 import Badge from "components/Badge";
@@ -18,11 +20,14 @@ import { sourceToStoreType } from "utils/transformers/prescriptions";
 
 const PanelAction = ({
   id,
+  aggId,
   header,
   source,
   groupData,
   checkScreening,
   isChecking,
+  selectPrescriptionDrug,
+  hasPrescriptionEdit,
 }) => {
   const { t } = useTranslation();
 
@@ -119,6 +124,28 @@ const PanelAction = ({
         checkScreening(id, "0");
         break;
 
+      case "add":
+        selectPrescriptionDrug({
+          idPrescription: id,
+          idSegment: header.idSegment,
+          idHospital: header.idHospital,
+          source,
+          aggId,
+          updateDrug: true,
+        });
+        break;
+
+      case "copy":
+        selectPrescriptionDrug({
+          idPrescription: id,
+          idSegment: header.idSegment,
+          idHospital: header.idHospital,
+          source,
+          aggId,
+          copyDrugs: true,
+        });
+        break;
+
       default:
         console.error("event not defined");
     }
@@ -152,6 +179,18 @@ const PanelAction = ({
             <RollbackOutlined style={{ marginRight: "5px" }} />
             {t("labels.undoCheckPrescription")}
           </Menu.Item>
+        )}
+        {hasPrescriptionEdit && (
+          <>
+            <Menu.Item key="add" className="gtm-btn-more-add">
+              <PlusOutlined style={{ marginRight: "5px" }} />
+              {t("screeningBody.btnAddDrug")}
+            </Menu.Item>
+            <Menu.Item key="copy" className="gtm-btn-more-copy">
+              <CopyOutlined style={{ marginRight: "5px" }} />
+              Copiar medicamentos de prescrições anteriores
+            </Menu.Item>
+          </>
         )}
       </Menu>
     );
