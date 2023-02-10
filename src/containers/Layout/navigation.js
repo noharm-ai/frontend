@@ -89,6 +89,13 @@ const navigation = [
         role: ["suporte"],
       },
       {
+        key: "/admin/motivo-intervencao",
+        text: "menu.interventionReasons",
+        icon: WarningOutlined,
+        id: "gtm-lnk-intv-reason",
+        role: ["suporte"],
+      },
+      {
         key: "/medicamentos",
         text: "menu.medications",
         icon: "drug",
