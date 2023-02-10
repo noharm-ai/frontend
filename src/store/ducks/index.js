@@ -19,9 +19,11 @@ import clinicalNotesReducer from "./clinicalNotes";
 import patientCentral from "./patientCentral";
 
 import adminFrequencyReducer from "./admin/frequency";
+import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 
 const adminReducers = combineReducers({
   frequency: adminFrequencyReducer,
+  interventionReason: adminInterventionReasonReducer,
 });
 
 export default combineReducers({

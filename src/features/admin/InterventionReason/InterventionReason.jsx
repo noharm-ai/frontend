@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-import Table from "components/Table";
+//import Table from "components/Table";
 import Empty from "components/Empty";
 import BackTop from "components/BackTop";
 import notification from "components/notification";
@@ -8,6 +9,10 @@ import notification from "components/notification";
 import { useTranslation } from "react-i18next";
 import LoadBox from "components/LoadBox";
 import { toDataSource } from "utils";
+import {
+  fetchInterventionReasons,
+  selectAllInterventionReasons,
+} from "./InterventionReasonSlice";
 
 const emptyText = (
   <Empty
@@ -18,6 +23,30 @@ const emptyText = (
 
 function InterventionReason() {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const list = useSelector(selectAllInterventionReasons);
+  const status = useSelector((state) => state.admin.interventionReason.status);
+
+  useEffect(() => {
+    if (status === "idle") {
+      dispatch(fetchInterventionReasons());
+    }
+
+    if (status === "error") {
+      notification.error({
+        message: t("userAdminForm.errorMessage"),
+        description: t("userAdminForm.errorDescription"),
+      });
+    }
+  }, [status, dispatch, t]);
+
+  if (status === "loading") {
+    return <LoadBox />;
+  }
+
+  if (status === "succeeded") {
+    console.log("succeeded");
+  }
 
   // useEffect(() => {
   //   fetchList();
