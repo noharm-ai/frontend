@@ -44,7 +44,7 @@
     "reg-administration": "Cadastro de Usuários",
     "patients": "Pacientes",
     "frequency": "Frequências",
-    "interventionReasons": "Intervenções"
+    "interventionReasons": "Motivos de Intervenções"
   },
   "screeningList": {
     "confirm": "Confirma?",
@@ -279,7 +279,9 @@
     "attendedBy": "Atendido por",
     "type": "Tipo",
     "typePlaceholderFilter": "Filtrar por tipo",
-    "insurance": "Convênio"
+    "insurance": "Convênio",
+    "active": "Ativo",
+    "inactive": "Inativo"
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",

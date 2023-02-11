@@ -279,7 +279,9 @@
     "attendedBy": "Attended by",
     "type": "Type",
     "typePlaceholderFilter": "Filter by type",
-    "insurance": "Insurance"
+    "insurance": "Insurance",
+    "active": "Active",
+    "inactive": "Inactive"
   },
   "transcriptionLabels": {
     "idDrug": "Drug",

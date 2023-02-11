@@ -12,6 +12,8 @@ import { toDataSource } from "utils";
 import {
   fetchInterventionReasons,
   selectAllInterventionReasons,
+  selectInterventionReason,
+  setInterventionReason,
 } from "./InterventionReasonSlice";
 
 const emptyText = (
@@ -45,12 +47,14 @@ function InterventionReason() {
   }
 
   if (status === "succeeded") {
-    const ds = toDataSource(list, null, {});
+    const ds = toDataSource(list, null, {
+      setInterventionReason,
+    });
 
     return (
       <>
         <Table
-          columns={columns(t)}
+          columns={columns(t, dispatch)}
           pagination={false}
           loading={status === "loading"}
           locale={{ emptyText }}

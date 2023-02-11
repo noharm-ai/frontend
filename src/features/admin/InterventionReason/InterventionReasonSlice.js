@@ -5,6 +5,9 @@ const initialState = {
   list: [],
   status: "idle",
   error: null,
+  single: {
+    data: {},
+  },
 };
 
 export const fetchInterventionReasons = createAsyncThunk(
@@ -28,7 +31,11 @@ export const fetchInterventionReasons = createAsyncThunk(
 const interventionReasonSlice = createSlice({
   name: "interventionReason",
   initialState,
-  reducers: {},
+  reducers: {
+    setInterventionReason(state, action) {
+      state.single.data = action.payload;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchInterventionReasons.pending, (state, action) => {
@@ -48,12 +55,12 @@ const interventionReasonSlice = createSlice({
   },
 });
 
-//export const { postAdded, postUpdated, reactionAdded } = postsSlice.actions
+export const { setInterventionReason } = interventionReasonSlice.actions;
 
 export default interventionReasonSlice.reducer;
 
 export const selectAllInterventionReasons = (state) =>
   state.admin.interventionReason.list;
 
-// export const selectPostById = (state, postId) =>
-//   state.posts.posts.find((post) => post.id === postId)
+export const selectInterventionReason = (state) =>
+  state.admin.interventionReason.single.data;
