@@ -29,10 +29,12 @@ const store = configureStore({
   reducer: persisted,
   preloadedState: initialState,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      immutableCheck: false,
-      serializableCheck: false,
-    }).concat(middlewares),
+    middlewares.concat(
+      getDefaultMiddleware({
+        immutableCheck: false,
+        serializableCheck: false,
+      })
+    ),
 });
 
 const persistor = persistStore(store);

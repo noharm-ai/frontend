@@ -36,7 +36,7 @@ const interventionReasonSlice = createSlice({
       })
       .addCase(fetchInterventionReasons.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.list = action.payload;
+        state.list = action.payload.data;
       })
       .addCase(fetchInterventionReasons.rejected, (state, action) => {
         state.status = "failed";
@@ -52,7 +52,8 @@ const interventionReasonSlice = createSlice({
 
 export default interventionReasonSlice.reducer;
 
-export const selectAllInterventionReasons = (state) => state.list;
+export const selectAllInterventionReasons = (state) =>
+  state.admin.interventionReason.list;
 
 // export const selectPostById = (state, postId) =>
 //   state.posts.posts.find((post) => post.id === postId)
