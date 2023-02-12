@@ -6,7 +6,8 @@ const initialState = {
   status: "idle",
   error: null,
   single: {
-    data: {},
+    data: null,
+    status: "idle",
   },
 };
 

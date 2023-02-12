@@ -266,6 +266,7 @@
     "potentialPrescriptionError": "Possível erro de prescrição",
     "reducesCost": "Gera redução de custo",
     "reasons": "Motivos",
+    "reason": "Motivo",
     "relations": "Relações",
     "responsible": "Responsável",
     "observation": "Observação",
@@ -456,7 +457,8 @@
     "unauthorizedUser": "Usuário não autorizado",
     "nameExists": "Já existe um usuário com este nome!",
     "emailExists": "Já existe um usuário com este email!",
-    "invalidRegister": "Registro inválido"
+    "invalidRegister": "Registro inválido",
+    "empty": "Nenhum registro encontrado"
   },
 
   "validation": {

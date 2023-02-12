@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import Table from "components/Table";
@@ -13,24 +13,22 @@ import { toDataSource } from "utils";
 import {
   fetchInterventionReasons,
   selectAllInterventionReasons,
-  selectInterventionReason,
   setInterventionReason,
 } from "./InterventionReasonSlice";
 import InterventionReasonForm from "./Form/InterventionReasonForm";
 
-const emptyText = (
-  <Empty
-    image={Empty.PRESENTED_IMAGE_SIMPLE}
-    description="Nenhum dado encontrado."
-  />
-);
-
 function InterventionReason() {
   const { t } = useTranslation();
-  const [formVisible, setFormVisible] = useState(false);
   const dispatch = useDispatch();
   const list = useSelector(selectAllInterventionReasons);
   const status = useSelector((state) => state.admin.interventionReason.status);
+
+  const emptyText = (
+    <Empty
+      image={Empty.PRESENTED_IMAGE_SIMPLE}
+      description={t("errors.empty")}
+    />
+  );
 
   useEffect(() => {
     if (status === "idle") {
@@ -44,8 +42,8 @@ function InterventionReason() {
 
   if (status === "failed") {
     notification.error({
-      message: t("userAdminForm.errorMessage"),
-      description: t("userAdminForm.errorDescription"),
+      message: t("error.title"),
+      description: t("error.description"),
     });
   }
 
@@ -55,13 +53,13 @@ function InterventionReason() {
     return (
       <>
         <Table
-          columns={columns(t, dispatch, setFormVisible, setInterventionReason)}
+          columns={columns(t, dispatch, setInterventionReason)}
           pagination={false}
           loading={status === "loading"}
           locale={{ emptyText }}
           dataSource={ds || []}
         />
-        <InterventionReasonForm visible={formVisible} />
+        <InterventionReasonForm />
         <BackTop />
       </>
     );

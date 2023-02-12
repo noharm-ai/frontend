@@ -266,6 +266,7 @@
     "potentialPrescriptionError": "Potential prescription error",
     "reducesCost": "Reduces cost",
     "reasons": "Reasons",
+    "reason": "Reason",
     "relations": "Relations",
     "responsible": "Responsible",
     "observation": "Observation",
@@ -455,7 +456,8 @@
     "unauthorizedUser": "Unauthorized user",
     "nameExists": "There is already a user with this name!",
     "emailExists": "There is already a user with this email!",
-    "invalidRegister": "Invalid register"
+    "invalidRegister": "Invalid register",
+    "empty": "No records found"
   },
 
   "validation": {

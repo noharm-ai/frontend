@@ -5,9 +5,8 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 
-const columns = (t, dispatch, setFormVisible, setInterventionReason) => {
+const columns = (t, dispatch, setInterventionReason) => {
   const openForm = (record) => {
-    setFormVisible(true);
     dispatch(setInterventionReason(record));
   };
 
