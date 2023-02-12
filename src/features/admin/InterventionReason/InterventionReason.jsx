@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import Table from "components/Table";
@@ -9,12 +9,14 @@ import columns from "./columns";
 import { useTranslation } from "react-i18next";
 import LoadBox from "components/LoadBox";
 import { toDataSource } from "utils";
+
 import {
   fetchInterventionReasons,
   selectAllInterventionReasons,
   selectInterventionReason,
   setInterventionReason,
 } from "./InterventionReasonSlice";
+import InterventionReasonForm from "./Form/InterventionReasonForm";
 
 const emptyText = (
   <Empty
@@ -25,6 +27,7 @@ const emptyText = (
 
 function InterventionReason() {
   const { t } = useTranslation();
+  const [formVisible, setFormVisible] = useState(false);
   const dispatch = useDispatch();
   const list = useSelector(selectAllInterventionReasons);
   const status = useSelector((state) => state.admin.interventionReason.status);
@@ -33,70 +36,36 @@ function InterventionReason() {
     if (status === "idle") {
       dispatch(fetchInterventionReasons());
     }
-
-    if (status === "failed") {
-      notification.error({
-        message: t("userAdminForm.errorMessage"),
-        description: t("userAdminForm.errorDescription"),
-      });
-    }
-  }, [status, dispatch, t]);
+  }, [status, dispatch]);
 
   if (status === "loading") {
     return <LoadBox />;
   }
 
-  if (status === "succeeded") {
-    const ds = toDataSource(list, null, {
-      setInterventionReason,
+  if (status === "failed") {
+    notification.error({
+      message: t("userAdminForm.errorMessage"),
+      description: t("userAdminForm.errorDescription"),
     });
+  }
+
+  if (status === "succeeded") {
+    const ds = toDataSource(list, null, {});
 
     return (
       <>
         <Table
-          columns={columns(t, dispatch)}
+          columns={columns(t, dispatch, setFormVisible, setInterventionReason)}
           pagination={false}
           loading={status === "loading"}
           locale={{ emptyText }}
           dataSource={ds || []}
         />
+        <InterventionReasonForm visible={formVisible} />
         <BackTop />
       </>
     );
   }
-
-  // useEffect(() => {
-  //   fetchList();
-  // }, [fetchList]);
-
-  // useEffect(() => {
-  //   if (error) {
-  //     notification.error({
-  //       message: t("userAdminForm.errorMessage"),
-  //       description: t("userAdminForm.errorDescription"),
-  //     });
-  //   }
-  // }, [error, t]);
-
-  // const ds = toDataSource(list, null, {});
-
-  // if (isFetching) {
-  //   return <LoadBox />;
-  // }
-
-  return (
-    <>
-      <strong>Lista de intervenções</strong>
-      {/* <Table
-        columns={columns(false, t)}
-        pagination={false}
-        loading={isFetching}
-        locale={{ emptyText }}
-        dataSource={!isFetching ? ds : []}
-      /> */}
-      <BackTop />
-    </>
-  );
 }
 
 export default InterventionReason;

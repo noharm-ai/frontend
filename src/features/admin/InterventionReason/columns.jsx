@@ -5,7 +5,12 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 
-const columns = (t, dispatch) => {
+const columns = (t, dispatch, setFormVisible, setInterventionReason) => {
+  const openForm = (record) => {
+    setFormVisible(true);
+    dispatch(setInterventionReason(record));
+  };
+
   return [
     {
       title: t("labels.reasons"),
@@ -38,7 +43,7 @@ const columns = (t, dispatch) => {
             <Button
               type="primary"
               icon={<EditOutlined />}
-              onClick={() => dispatch(record.setInterventionReason(record))}
+              onClick={() => openForm(record)}
             ></Button>
           </Tooltip>
         );
