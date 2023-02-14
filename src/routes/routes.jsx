@@ -24,6 +24,7 @@ import PatientList from "pages/PatientList";
 import Prioritization from "pages/Prioritization";
 
 import AdminFrequency from "pages/Admin/Frequency";
+import AdminInterventionReason from "pages/Admin/InterventionReason";
 
 const routes = [
   {
@@ -192,6 +193,11 @@ const routes = [
     exact: true,
     path: "/admin/frequencias",
     element: <WithAuth component={AdminFrequency} />,
+  },
+  {
+    exact: true,
+    path: "/admin/motivo-intervencao",
+    element: <WithAuth component={AdminInterventionReason} />,
   },
 ];
 

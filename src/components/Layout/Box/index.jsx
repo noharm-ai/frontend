@@ -10,13 +10,13 @@ export default function Box({ renderHeader, children, pageTitle, ...props }) {
   const { t } = useTranslation();
   return (
     <Wrapper>
-      {renderHeader ? (
-        renderHeader({ ...props, pageTitle, t })
-      ) : (
-        <header css="margin-bottom: 30px;">
-          <Heading>{t(pageTitle)}</Heading>
-        </header>
-      )}
+      {renderHeader
+        ? renderHeader({ ...props, pageTitle, t })
+        : pageTitle && (
+            <header css="margin-bottom: 30px;">
+              <Heading>{t(pageTitle)}</Heading>
+            </header>
+          )}
 
       {children}
     </Wrapper>
@@ -25,7 +25,7 @@ export default function Box({ renderHeader, children, pageTitle, ...props }) {
 
 Box.propTypes = {
   renderHeader: PropTypes.func,
-  pageTitle: PropTypes.string.isRequired,
+  pageTitle: PropTypes.string,
   children: PropTypes.node.isRequired,
 };
 
