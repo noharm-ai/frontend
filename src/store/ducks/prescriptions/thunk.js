@@ -97,7 +97,7 @@ export const fetchPrescriptionsListThunk =
 
     const list = transformPrescriptions(listAddedPatientName);
 
-    //dispatch(patientsFetchListSuccess(patientsList));
+    dispatch(patientsFetchListSuccess(patientsList));
     dispatch(prescriptionsFetchListSuccess(list));
   };
 
