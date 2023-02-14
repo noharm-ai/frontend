@@ -3,7 +3,7 @@
   "version": "2.0.2",
   "private": true,
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^35.0.1",
+    "@ckeditor/ckeditor5-build-classic": "^36.0.1",
     "@ckeditor/ckeditor5-react": "^5.0.2",
     "@react-spring/web": "^9.5.2",
     "@reduxjs/toolkit": "^1.9.2",
