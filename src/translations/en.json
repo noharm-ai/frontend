@@ -295,7 +295,8 @@
     "interval": "Time"
   },
   "tooltips": {
-    "relationsList": "List of Drugs with Interactions, Incompatibilities or Duplicity"
+    "relationsList": "List of Drugs with Interactions, Incompatibilities or Duplicity",
+    "cantEditBeingUsed": "You can't edit this item because it is already referenced"
   },
   "buttons": {
     "search": "Search"
@@ -454,11 +455,13 @@
   },
 
   "errors": {
+    "generic": "Unexpected error",
     "invalidUser": "Non-existent user",
     "unauthorizedUser": "Unauthorized user",
     "nameExists": "There is already a user with this name!",
     "emailExists": "There is already a user with this email!",
     "invalidRegister": "Invalid register",
+    "invalidRecord": "Invalid register",
     "empty": "No records found"
   },
 

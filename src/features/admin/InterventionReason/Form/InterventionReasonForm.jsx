@@ -32,22 +32,30 @@ function InterventionReasonForm({ ...props }) {
   const initialValues = { ...formData };
 
   const onSave = (params) => {
-    console.log("save", params);
-    dispatch(upsertInterventionReason(params))
-      .then(() => {
+    dispatch(upsertInterventionReason(params)).then((response) => {
+      if (response.error) {
+        if (response.payload?.code) {
+          notification.error({
+            message: t(response.payload.code),
+          });
+        } else if (response.payload?.message) {
+          notification.error({
+            message: response.payload.message,
+          });
+        } else {
+          notification.error({
+            message: t("errors.generic"),
+          });
+        }
+        console.error(response);
+      } else {
         dispatch(setInterventionReason(null));
 
         notification.success({
           message: t("success.generic"),
         });
-      })
-      .catch((error) => {
-        console.error(error);
-        notification.error({
-          message: t("error.title"),
-          description: t("error.description"),
-        });
-      });
+      }
+    });
   };
 
   const onCancel = () => {

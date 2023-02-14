@@ -33,6 +33,7 @@ function BaseForm() {
             value={values.parentId}
             status={errors.parentId && touched.parentId ? "error" : null}
             optionFilterProp="children"
+            disabled={values.protected}
             showSearch
             autoFocus
             allowClear
@@ -57,6 +58,7 @@ function BaseForm() {
           <Input
             id="name"
             name="name"
+            disabled={values.protected}
             value={values.name}
             onChange={handleChange}
             onBlur={handleBlur}
@@ -65,6 +67,9 @@ function BaseForm() {
         </div>
         {errors.name && touched.name && (
           <div className="form-error">{errors.name}</div>
+        )}
+        {values.protected && (
+          <div className="form-info">{t("tooltips.cantEditBeingUsed")}</div>
         )}
       </div>
       <div

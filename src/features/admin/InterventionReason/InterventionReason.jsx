@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 import Table from "components/Table";
 import Empty from "components/Empty";
 import BackTop from "components/BackTop";
 import notification from "components/notification";
 import Button from "components/Button";
-import columns from "./columns";
-import { useTranslation } from "react-i18next";
-import LoadBox from "components/LoadBox";
 import { toDataSource } from "utils";
+
+import columns from "./columns";
 
 import {
   fetchInterventionReasons,
@@ -40,10 +40,6 @@ function InterventionReason() {
     }
   }, [status, dispatch]);
 
-  if (status === "loading") {
-    return <LoadBox />;
-  }
-
   if (status === "failed") {
     notification.error({
       message: t("error.title"),
@@ -51,38 +47,36 @@ function InterventionReason() {
     });
   }
 
-  if (status === "succeeded") {
-    const ds = toDataSource(list, null, {});
+  const ds = toDataSource(list, null, {});
 
-    return (
-      <>
-        <PageHeader>
-          <h1 className="page-header-title">{t("menu.interventionReasons")}</h1>
-          <div className="page-header-actions">
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              ghost
-              onClick={() =>
-                dispatch(setInterventionReason({ name: "", active: true }))
-              }
-            >
-              {t("labels.add")}
-            </Button>
-          </div>
-        </PageHeader>
-        <Table
-          columns={columns(t, dispatch, setInterventionReason)}
-          pagination={false}
-          loading={status === "loading"}
-          locale={{ emptyText }}
-          dataSource={ds || []}
-        />
-        <InterventionReasonForm />
-        <BackTop />
-      </>
-    );
-  }
+  return (
+    <>
+      <PageHeader>
+        <h1 className="page-header-title">{t("menu.interventionReasons")}</h1>
+        <div className="page-header-actions">
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            ghost
+            onClick={() =>
+              dispatch(setInterventionReason({ name: "", active: true }))
+            }
+          >
+            {t("labels.add")}
+          </Button>
+        </div>
+      </PageHeader>
+      <Table
+        columns={columns(t, dispatch, setInterventionReason)}
+        pagination={false}
+        loading={status === "loading"}
+        locale={{ emptyText }}
+        dataSource={ds || []}
+      />
+      <InterventionReasonForm />
+      <BackTop />
+    </>
+  );
 }
 
 export default InterventionReason;

@@ -16,6 +16,13 @@ export const Form = styled.form`
     margin-top: 3px;
   }
 
+  .form-info {
+    font-size: 13px;
+    margin-left: 5px;
+    margin-top: 3px;
+    opacity: 0.8;
+  }
+
   .form-input {
     .ant-select {
       width: 100%;

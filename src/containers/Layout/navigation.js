@@ -86,14 +86,14 @@ const navigation = [
         text: "menu.frequency",
         icon: HourglassOutlined,
         id: "gtm-lnk-frequencias",
-        role: ["suporte"],
+        role: ["admin"],
       },
       {
         key: "/admin/motivo-intervencao",
         text: "menu.interventionReasons",
         icon: WarningOutlined,
         id: "gtm-lnk-intv-reason",
-        role: ["suporte"],
+        role: ["admin"],
       },
       {
         key: "/medicamentos",

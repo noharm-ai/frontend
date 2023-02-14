@@ -26,11 +26,16 @@ export const upsertInterventionReason = createAsyncThunk(
   "intervention-reason/upsert",
   async (interventionReason, thunkAPI) => {
     const { access_token } = thunkAPI.getState().auth.identify;
-    const response = await api.upsertIntervReason(
-      access_token,
-      interventionReason
-    );
-    return response.data;
+
+    try {
+      const response = await api.upsertIntervReason(
+        access_token,
+        interventionReason
+      );
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
   }
 );
 
