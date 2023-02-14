@@ -3,7 +3,7 @@ import InterventionReason from "features/admin/InterventionReason/InterventionRe
 
 const layoutProps = {
   theme: "boxed",
-  pageTitle: "menu.interventionReasons",
+  renderHeader: false,
 };
 
 export default withLayout(InterventionReason, layoutProps);

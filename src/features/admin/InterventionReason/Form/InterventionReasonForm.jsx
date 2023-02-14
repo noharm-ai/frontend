@@ -13,6 +13,7 @@ import { Form } from "styles/Form.style";
 import {
   selectInterventionReason,
   setInterventionReason,
+  upsertInterventionReason,
 } from "../InterventionReasonSlice";
 import Base from "./Base";
 
@@ -32,18 +33,26 @@ function InterventionReasonForm({ ...props }) {
 
   const onSave = (params) => {
     console.log("save", params);
+    dispatch(upsertInterventionReason(params))
+      .then(() => {
+        dispatch(setInterventionReason(null));
+
+        notification.success({
+          message: t("success.generic"),
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
+      });
   };
 
   const onCancel = () => {
     dispatch(setInterventionReason(null));
   };
-
-  if (status === "failed") {
-    notification.error({
-      message: t("error.title"),
-      description: t("error.description"),
-    });
-  }
 
   return (
     <Formik
@@ -59,6 +68,7 @@ function InterventionReasonForm({ ...props }) {
           centered
           destroyOnClose
           onCancel={onCancel}
+          onOk={handleSubmit}
           okText={t("actions.save")}
           cancelText={t("actions.cancel")}
           confirmLoading={isSaving}
@@ -71,7 +81,7 @@ function InterventionReasonForm({ ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">{t("interventionForm.title")}</Heading>
+            <Heading margin="0 0 11px">{t("labels.reason")}</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

@@ -8,6 +8,7 @@ const initialState = {
   single: {
     data: null,
     status: "idle",
+    error: null,
   },
 };
 
@@ -21,13 +22,17 @@ export const fetchInterventionReasons = createAsyncThunk(
   }
 );
 
-// export const addNewPost = createAsyncThunk(
-//   'posts/addNewPost',
-//   async (initialPost) => {
-//     const response = await client.post('/fakeApi/posts', initialPost)
-//     return response.data
-//   }
-// )
+export const upsertInterventionReason = createAsyncThunk(
+  "intervention-reason/upsert",
+  async (interventionReason, thunkAPI) => {
+    const { access_token } = thunkAPI.getState().auth.identify;
+    const response = await api.upsertIntervReason(
+      access_token,
+      interventionReason
+    );
+    return response.data;
+  }
+);
 
 const interventionReasonSlice = createSlice({
   name: "interventionReason",
@@ -49,10 +54,25 @@ const interventionReasonSlice = createSlice({
       .addCase(fetchInterventionReasons.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(upsertInterventionReason.pending, (state, action) => {
+        state.single.status = "loading";
+      })
+      .addCase(upsertInterventionReason.fulfilled, (state, action) => {
+        state.single.status = "succeeded";
+        const intv = action.payload.data[0];
+
+        const index = state.list.findIndex((i) => i.id === intv.id);
+        if (index !== -1) {
+          state.list[index] = intv;
+        } else {
+          state.list.push(intv);
+        }
+      })
+      .addCase(upsertInterventionReason.rejected, (state, action) => {
+        state.single.status = "failed";
+        state.single.error = action.error.message;
       });
-    // .addCase(addNewPost.fulfilled, (state, action) => {
-    //   state.posts.push(action.payload)
-    // })
   },
 });
 
@@ -62,6 +82,9 @@ export default interventionReasonSlice.reducer;
 
 export const selectAllInterventionReasons = (state) =>
   state.admin.interventionReason.list;
+
+export const selectParentInterventionReasons = (state) =>
+  state.admin.interventionReason.list.filter((i) => !i.parentId);
 
 export const selectInterventionReason = (state) =>
   state.admin.interventionReason.single.data;

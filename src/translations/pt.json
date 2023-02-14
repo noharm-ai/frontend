@@ -267,6 +267,7 @@
     "reducesCost": "Gera redução de custo",
     "reasons": "Motivos",
     "reason": "Motivo",
+    "parentReason": "Motivo Pai",
     "relations": "Relações",
     "responsible": "Responsável",
     "observation": "Observação",
@@ -282,7 +283,8 @@
     "typePlaceholderFilter": "Filtrar por tipo",
     "insurance": "Convênio",
     "active": "Ativo",
-    "inactive": "Inativo"
+    "inactive": "Inativo",
+    "add": "Adicionar"
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",

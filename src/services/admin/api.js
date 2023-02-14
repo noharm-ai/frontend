@@ -27,10 +27,17 @@ const getIntervReasonList = (bearerToken, params = {}) =>
     ...setHeaders(bearerToken),
   });
 
+const upsertIntervReason = (bearerToken, params = {}) => {
+  return instance.post(`${endpoints.interventionReason}`, params, {
+    ...setHeaders(bearerToken),
+  });
+};
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
   getIntervReasonList,
+  upsertIntervReason,
 };
 
 export default api;

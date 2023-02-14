@@ -267,6 +267,7 @@
     "reducesCost": "Reduces cost",
     "reasons": "Reasons",
     "reason": "Reason",
+    "parentReason": "Parent Reason",
     "relations": "Relations",
     "responsible": "Responsible",
     "observation": "Observation",
@@ -282,7 +283,8 @@
     "typePlaceholderFilter": "Filter by type",
     "insurance": "Insurance",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "add": "Add"
   },
   "transcriptionLabels": {
     "idDrug": "Drug",
