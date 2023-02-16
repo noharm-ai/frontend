@@ -72,9 +72,75 @@ function BaseForm() {
           <div className="form-info">{t("tooltips.cantEditBeingUsed")}</div>
         )}
       </div>
+
+      <div
+        className={`form-row ${
+          errors.relationType && touched.relationType ? "error" : ""
+        }`}
+      >
+        <div className="form-label">
+          <label>{t("labels.relations")}:</label>
+        </div>
+        <div className="form-input">
+          <Select
+            id="relationType"
+            name="relationType"
+            onChange={(value) => setFieldValue("relationType", value)}
+            onBlur={handleBlur}
+            value={values.relationType}
+            status={
+              errors.relationType && touched.relationType ? "error" : null
+            }
+            optionFilterProp="children"
+            showSearch
+          >
+            <Select.Option key={0} value={0}>
+              Não habilita relações
+            </Select.Option>
+            <Select.Option key={1} value={1}>
+              Habilita relações (opcional)
+            </Select.Option>
+            <Select.Option key={2} value={2}>
+              Habilita relações (obrigatório)
+            </Select.Option>
+          </Select>
+        </div>
+        {errors.relationType && touched.relationType && (
+          <div className="form-error">{errors.relationType}</div>
+        )}
+      </div>
+
+      <div
+        className={`form-row ${
+          errors.suspension && touched.suspension ? "error" : ""
+        }`}
+      >
+        <div className="form-label">
+          <label>Suspende medicamento:</label>
+        </div>
+        <div className="form-input">
+          <Switch
+            id="suspension"
+            name="suspension"
+            checked={values.suspension}
+            onChange={(value) => setFieldValue("suspension", value)}
+            onBlur={handleBlur}
+            status={errors.suspension && touched.suspension ? "error" : null}
+            checkedChildren={t("labels.yes")}
+            unCheckedChildren={t("labels.no")}
+          />
+        </div>
+        {errors.suspension && touched.suspension && (
+          <div className="form-error">{errors.suspension}</div>
+        )}
+      </div>
+
       <div
         className={`form-row ${errors.active && touched.active ? "error" : ""}`}
       >
+        <div className="form-label">
+          <label>Ativo:</label>
+        </div>
         <div className="form-input">
           <Switch
             id="active"
@@ -83,8 +149,8 @@ function BaseForm() {
             onChange={(value) => setFieldValue("active", value)}
             onBlur={handleBlur}
             status={errors.active && touched.active ? "error" : null}
-            checkedChildren={t("labels.active")}
-            unCheckedChildren={t("labels.inactive")}
+            checkedChildren={t("labels.yes")}
+            unCheckedChildren={t("labels.no")}
           />
         </div>
         {errors.active && touched.active && (

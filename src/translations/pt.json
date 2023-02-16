@@ -296,7 +296,7 @@
   },
   "tooltips": {
     "relationsList": "Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade",
-    "cantEditBeingUsed": "Este item não pode ser alterado, pois já foi utilizado"
+    "cantEditBeingUsed": "Este campo não pode ser alterado, pois já foi utilizado"
   },
   "buttons": {
     "search": "Pesquisar"
