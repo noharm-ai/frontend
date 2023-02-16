@@ -284,7 +284,9 @@
     "insurance": "Convênio",
     "active": "Ativo",
     "inactive": "Inativo",
-    "add": "Adicionar"
+    "add": "Adicionar",
+    "substitution": "Substituição",
+    "suspension": "Suspensão"
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",

@@ -33,7 +33,7 @@ function InterventionReasonForm({ ...props }) {
       .required(t("validation.requiredField")),
   });
   const initialValues = {
-    ...{ suspension: false, relationType: null },
+    ...{ suspension: false, substitution: false, relationType: null },
     ...formData,
   };
 

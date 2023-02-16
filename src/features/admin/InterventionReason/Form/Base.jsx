@@ -116,7 +116,7 @@ function BaseForm() {
         }`}
       >
         <div className="form-label">
-          <label>Suspende medicamento:</label>
+          <label>{t("labels.suspension")}:</label>
         </div>
         <div className="form-input">
           <Switch
@@ -136,10 +136,37 @@ function BaseForm() {
       </div>
 
       <div
+        className={`form-row ${
+          errors.substitution && touched.substitution ? "error" : ""
+        }`}
+      >
+        <div className="form-label">
+          <label>{t("labels.substitution")}:</label>
+        </div>
+        <div className="form-input">
+          <Switch
+            id="substitution"
+            name="substitution"
+            checked={values.substitution}
+            onChange={(value) => setFieldValue("substitution", value)}
+            onBlur={handleBlur}
+            status={
+              errors.substitution && touched.substitution ? "error" : null
+            }
+            checkedChildren={t("labels.yes")}
+            unCheckedChildren={t("labels.no")}
+          />
+        </div>
+        {errors.substitution && touched.substitution && (
+          <div className="form-error">{errors.substitution}</div>
+        )}
+      </div>
+
+      <div
         className={`form-row ${errors.active && touched.active ? "error" : ""}`}
       >
         <div className="form-label">
-          <label>Ativo:</label>
+          <label>{t("labels.active")}:</label>
         </div>
         <div className="form-input">
           <Switch
