@@ -13,6 +13,7 @@ import Switch from "components/Switch";
 import Interaction from "./Fields/Interaction";
 import Observation from "./Fields/Observation";
 import Transcription from "./Fields/Transcription";
+import InterventionReasonRelationType from "models/InterventionReasonRelationType";
 
 import { Box, FieldError } from "../Form.style";
 
@@ -59,6 +60,10 @@ export default function Base({
     );
   };
 
+  const getIntvDescription = (intv) => {
+    return intv.parenName ? `${intv.parenName} = ${intv.name}` : intv.name;
+  };
+
   const hasReason = (reasonList, selectedReasons = [], regex) => {
     if (!selectedReasons) return false;
 
@@ -70,8 +75,19 @@ export default function Base({
       );
 
       if (reasonIndex !== -1) {
-        const reason = reasonList[reasonIndex].description.toLowerCase();
+        // TODO: remove regex test after review
+        const reason = getIntvDescription(
+          reasonList[reasonIndex]
+        ).toLowerCase();
         if (reason.match(regex)) {
+          hasRelation = true;
+        }
+
+        if (
+          InterventionReasonRelationType.getTypesWithRelation().indexOf(
+            reasonList[reasonIndex].relationType
+          ) !== -1
+        ) {
           hasRelation = true;
         }
       }
@@ -86,7 +102,7 @@ export default function Base({
 
       const selectedReasons = ids.map((id) => {
         const index = reasons.findIndex((item) => item.id === id);
-        return reasons[index].description;
+        return getIntvDescription(reasons[index]);
       });
 
       return selectedReasons.join(", ");
@@ -169,9 +185,9 @@ export default function Base({
             value={idInterventionReason}
             onChange={handleReasonChange}
           >
-            {reasons.list.map(({ id, description }) => (
+            {reasons.list.map(({ id, parentName, name }) => (
               <Select.Option key={id} value={id}>
-                {description}
+                {parentName ? `${parentName} - ${name}` : name}
               </Select.Option>
             ))}
           </Select>

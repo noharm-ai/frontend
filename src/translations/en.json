@@ -468,7 +468,8 @@
   },
 
   "validation": {
-    "requiredField": "Required field"
+    "requiredField": "Required field",
+    "atLeastOne": "At least one item must be selected"
   },
 
   "interventionStatus": {

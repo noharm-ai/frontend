@@ -469,7 +469,8 @@
   },
 
   "validation": {
-    "requiredField": "Campo obrigatório"
+    "requiredField": "Campo obrigatório",
+    "atLeastOne": "Pelo menos um item deve ser selecionado"
   },
 
   "interventionStatus": {
