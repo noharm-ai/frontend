@@ -284,7 +284,9 @@
     "insurance": "Convênio",
     "active": "Ativo",
     "inactive": "Inativo",
-    "add": "Adicionar"
+    "add": "Adicionar",
+    "substitution": "Substituição",
+    "suspension": "Suspensão"
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",
@@ -296,7 +298,7 @@
   },
   "tooltips": {
     "relationsList": "Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade",
-    "cantEditBeingUsed": "Este item não pode ser alterado, pois já foi utilizado"
+    "cantEditBeingUsed": "Este campo não pode ser alterado, pois já foi utilizado"
   },
   "buttons": {
     "search": "Pesquisar"
@@ -467,7 +469,8 @@
   },
 
   "validation": {
-    "requiredField": "Campo obrigatório"
+    "requiredField": "Campo obrigatório",
+    "atLeastOne": "Pelo menos um item deve ser selecionado"
   },
 
   "interventionStatus": {

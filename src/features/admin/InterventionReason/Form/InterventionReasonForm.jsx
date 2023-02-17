@@ -28,8 +28,14 @@ function InterventionReasonForm({ ...props }) {
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().nullable().required(t("validation.requiredField")),
+    relationType: Yup.string()
+      .nullable()
+      .required(t("validation.requiredField")),
   });
-  const initialValues = { ...formData };
+  const initialValues = {
+    ...{ suspension: false, substitution: false, relationType: null },
+    ...formData,
+  };
 
   const onSave = (params) => {
     dispatch(upsertInterventionReason(params)).then((response) => {

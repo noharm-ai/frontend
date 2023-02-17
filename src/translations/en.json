@@ -284,7 +284,9 @@
     "insurance": "Insurance",
     "active": "Active",
     "inactive": "Inactive",
-    "add": "Add"
+    "add": "Add",
+    "substitution": "Substitution",
+    "suspension": "Suspension"
   },
   "transcriptionLabels": {
     "idDrug": "Drug",
@@ -466,7 +468,8 @@
   },
 
   "validation": {
-    "requiredField": "Required field"
+    "requiredField": "Required field",
+    "atLeastOne": "At least one item must be selected"
   },
 
   "interventionStatus": {
