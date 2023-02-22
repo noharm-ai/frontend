@@ -142,6 +142,7 @@ export default function Intervention({
     interactions: item.intervention.interactions,
     observation: item.intervention.observation || "",
     transcription: item.intervention.transcription != null,
+    economyDays: item.intervention.economyDays,
     transcriptionData: {
       ...transcriptable,
     },

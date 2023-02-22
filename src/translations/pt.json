@@ -379,6 +379,8 @@
     "labelObservations": "Observações",
     "labelTranscriptionHint": "Habilita a possibilidade de alterar a prescrição atual",
     "labelTranscription": "Transcrição",
+    "labelEconomyDays": "Dias de economia",
+    "labelEconomyDaysHint": "Quantidade de dias de economia que serão considerados no Relatório de Farmacoeconomia caso a intervenção seja aceita. Se não for informado, a quantidade de dias será calculada considerando a data da intervenção até o dia da alta do paciente.",
 
     "btnModelEmpty": "Este motivo ainda não possui um modelo salvo",
     "btnModelSave": "Salvar observação modelo",

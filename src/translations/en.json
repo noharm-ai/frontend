@@ -379,6 +379,8 @@
     "labelObservations": "Observations",
     "labelTranscriptionHint": "Enables changes in the current prescription",
     "labelTranscription": "Transcription",
+    "labelEconomyDays": "Economy days",
+    "labelEconomyDaysHint": "Amount of days to be considered in the economy report",
 
     "btnModelEmpty": "No observation saved for this reason",
     "btnModelSave": "Save observation",

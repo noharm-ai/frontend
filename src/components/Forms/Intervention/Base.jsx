@@ -5,7 +5,7 @@ import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 
 import { Col } from "components/Grid";
-import { Select } from "components/Inputs";
+import { Select, InputNumber } from "components/Inputs";
 import Heading from "components/Heading";
 import Tooltip from "components/Tooltip";
 import Switch from "components/Switch";
@@ -96,6 +96,29 @@ export default function Base({
     return hasRelation;
   };
 
+  const hasSuspOrSubst = (reasonList, selectedReasons = []) => {
+    if (!selectedReasons) return false;
+
+    let result = false;
+
+    selectedReasons.forEach((itemId) => {
+      const reasonIndex = reasonList.findIndex(
+        (reason) => reason.id === itemId
+      );
+
+      if (reasonIndex !== -1) {
+        if (
+          reasonList[reasonIndex].suspension ||
+          reasonList[reasonIndex].substitution
+        ) {
+          result = true;
+        }
+      }
+    });
+
+    return result;
+  };
+
   const handleReasonChange = (idInterventionReason) => {
     const joinReasons = (ids, reasons) => {
       if (isEmpty(ids)) return "";
@@ -115,6 +138,10 @@ export default function Base({
     } else {
       setFieldValue("idInterventionReason", idInterventionReason);
       setFieldValue("reasonDescription", reasonDescription);
+    }
+
+    if (!hasSuspOrSubst(reasons.list, idInterventionReason)) {
+      setFieldValue("economyDays", null);
     }
   };
 
@@ -222,6 +249,31 @@ export default function Base({
             />
             {errors.interactions && touched.interactions && (
               <FieldError>{errors.interactions}</FieldError>
+            )}
+          </Col>
+        </Box>
+      )}
+      {hasSuspOrSubst(reasons.list, idInterventionReason) && (
+        <Box hasError={errors.economyDays && touched.economyDays}>
+          <Col xs={layout.label}>
+            <Heading as="label" size="14px">
+              <Tooltip
+                title={t("interventionForm.labelEconomyDaysHint")}
+                underline
+              >
+                {t("interventionForm.labelEconomyDays")}:
+              </Tooltip>
+            </Heading>
+          </Col>
+          <Col xs={layout.input}>
+            <InputNumber
+              id="economyDays"
+              value={values.economyDays}
+              style={{ width: "100%", maxWidth: "100px" }}
+              onChange={(value) => setFieldValue("economyDays", value)}
+            />
+            {errors.economyDays && touched.economyDays && (
+              <FieldError>{errors.economyDays}</FieldError>
             )}
           </Col>
         </Box>
