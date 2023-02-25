@@ -315,9 +315,9 @@ export default function InterventionList({
             optionFilterProp="children"
           >
             {reasons &&
-              reasons.map(({ id, description }) => (
-                <Select.Option value={id} key={id}>
-                  {description}
+              reasons.map(({ id, parentName, name }) => (
+                <Select.Option key={id} value={id}>
+                  {parentName ? `${parentName} - ${name}` : name}
                 </Select.Option>
               ))}
           </Select>
