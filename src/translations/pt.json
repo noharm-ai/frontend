@@ -43,7 +43,8 @@
     "user-administration": "Cadastro",
     "reg-administration": "Cadastro de Usuários",
     "patients": "Pacientes",
-    "frequency": "Frequências"
+    "frequency": "Frequências",
+    "interventionReasons": "Motivos de Intervenções"
   },
   "screeningList": {
     "confirm": "Confirma?",
@@ -265,6 +266,8 @@
     "potentialPrescriptionError": "Possível erro de prescrição",
     "reducesCost": "Gera redução de custo",
     "reasons": "Motivos",
+    "reason": "Motivo",
+    "parentReason": "Motivo Pai",
     "relations": "Relações",
     "responsible": "Responsável",
     "observation": "Observação",
@@ -278,7 +281,12 @@
     "attendedBy": "Atendido por",
     "type": "Tipo",
     "typePlaceholderFilter": "Filtrar por tipo",
-    "insurance": "Convênio"
+    "insurance": "Convênio",
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "add": "Adicionar",
+    "substitution": "Substituição",
+    "suspension": "Suspensão"
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",
@@ -289,7 +297,8 @@
     "interval": "Horário"
   },
   "tooltips": {
-    "relationsList": "Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade"
+    "relationsList": "Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade",
+    "cantEditBeingUsed": "Este campo não pode ser alterado, pois já foi utilizado"
   },
   "buttons": {
     "search": "Pesquisar"
@@ -370,6 +379,8 @@
     "labelObservations": "Observações",
     "labelTranscriptionHint": "Habilita a possibilidade de alterar a prescrição atual",
     "labelTranscription": "Transcrição",
+    "labelEconomyDays": "Dias de economia",
+    "labelEconomyDaysHint": "Quantidade de dias de economia que serão considerados no Relatório de Farmacoeconomia caso a intervenção seja aceita. Se não for informado, a quantidade de dias será calculada considerando a data da intervenção até o dia da alta do paciente.",
 
     "btnModelEmpty": "Este motivo ainda não possui um modelo salvo",
     "btnModelSave": "Salvar observação modelo",
@@ -449,15 +460,19 @@
   },
 
   "errors": {
+    "generic": "Ocorreu um erro inesperado",
     "invalidUser": "Usuário inválido",
     "unauthorizedUser": "Usuário não autorizado",
     "nameExists": "Já existe um usuário com este nome!",
     "emailExists": "Já existe um usuário com este email!",
-    "invalidRegister": "Registro inválido"
+    "invalidRegister": "Registro inválido",
+    "invalidRecord": "Registro inválido",
+    "empty": "Nenhum registro encontrado"
   },
 
   "validation": {
-    "requiredField": "Campo obrigatório"
+    "requiredField": "Campo obrigatório",
+    "atLeastOne": "Pelo menos um item deve ser selecionado"
   },
 
   "interventionStatus": {

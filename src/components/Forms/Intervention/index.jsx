@@ -11,6 +11,7 @@ import Tooltip from "components/Tooltip";
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
+import InterventionReasonRelationType from "models/InterventionReasonRelationType";
 
 import Base from "./Base";
 import PatientData from "./PatientData";
@@ -47,7 +48,38 @@ export default function Intervention({
   const validationSchema = Yup.object().shape({
     idInterventionReason: Yup.array()
       .nullable()
+      .min(1, t("validation.atLeastOne"))
       .required(t("validation.requiredField")),
+    interactions: Yup.array()
+      .nullable()
+      .when("idInterventionReason", {
+        is: (selectedReasons) => {
+          if (isEmpty(selectedReasons)) return false;
+
+          let isRequired = false;
+
+          selectedReasons.forEach((itemId) => {
+            const reasonIndex = reasons.list.findIndex(
+              (reason) => reason.id === itemId
+            );
+
+            if (
+              reasonIndex !== -1 &&
+              InterventionReasonRelationType.isRequired(
+                reasons.list[reasonIndex].relationType
+              )
+            ) {
+              isRequired = true;
+            }
+          });
+
+          return isRequired;
+        },
+        then: Yup.array()
+          .nullable()
+          .min(1, t("validation.atLeastOne"))
+          .required(t("validation.requiredField")),
+      }),
   });
 
   // handle after save intervention.
@@ -110,6 +142,7 @@ export default function Intervention({
     interactions: item.intervention.interactions,
     observation: item.intervention.observation || "",
     transcription: item.intervention.transcription != null,
+    economyDays: item.intervention.economyDays,
     transcriptionData: {
       ...transcriptable,
     },
