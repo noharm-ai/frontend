@@ -44,7 +44,8 @@ const columns = (security) => [
     title: "Efeito",
     render: (entry, { text }) => {
       const regex = /(<([^>]+)>)/gi;
-      return text ? truncateText(text.replace(regex, "")) : "";
+      const cleanText = text ? text.replace(regex, "") : "";
+      return <Tooltip title={cleanText}>{truncateText(cleanText)}</Tooltip>;
     },
   },
   {
