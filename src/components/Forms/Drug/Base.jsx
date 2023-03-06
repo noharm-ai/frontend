@@ -214,11 +214,11 @@ export default function Base({ security }) {
                 </Heading>
                 <InputNumber
                   style={{
-                    width: 120,
+                    width: 150,
                     marginRight: 5,
                   }}
                   min={0}
-                  max={9999999}
+                  max={999999999}
                   value={maxDose}
                   onChange={(value) => setFieldValue("maxDose", value)}
                 />{" "}
