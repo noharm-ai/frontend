@@ -298,7 +298,8 @@
   },
   "tooltips": {
     "relationsList": "Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade",
-    "cantEditBeingUsed": "Este campo não pode ser alterado, pois já foi utilizado"
+    "cantEditBeingUsed": "Este campo não pode ser alterado, pois já foi utilizado",
+    "recentExams": "Principais exames dos últimos 15 dias. Para ver mais, clique em \"Ver Todos\""
   },
   "buttons": {
     "search": "Pesquisar"

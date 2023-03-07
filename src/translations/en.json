@@ -298,7 +298,8 @@
   },
   "tooltips": {
     "relationsList": "List of Drugs with Interactions, Incompatibilities or Duplicity",
-    "cantEditBeingUsed": "You can't edit this item because it is already referenced"
+    "cantEditBeingUsed": "You can't edit this item because it is already referenced",
+    "recentExams": "Main exams of the last 15 days. For all exams, click on See More."
   },
   "buttons": {
     "search": "Search"
