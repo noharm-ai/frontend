@@ -4,7 +4,7 @@ import { QuestionOutlined } from "@ant-design/icons";
 
 import Tooltip from "./Tooltip";
 
-export default function ({ text }) {
+export default function Help({ text }) {
   return (
     <Container>
       <Tooltip title={text}>
