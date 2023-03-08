@@ -114,7 +114,7 @@ export default function Drug({
         <form onSubmit={handleSubmit}>
           <FormContainer>
             <Row type="flex" gutter={[16, 24]}>
-              <Base units={units.list} security={security} />
+              <Base units={units.list} security={security} data={outlier} />
             </Row>
           </FormContainer>
           <Row type="flex" gutter={[16, 24]}>
