@@ -13,7 +13,8 @@ const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { segmentsFetchListSuccess } = SegmentCreators;
 const { authSetErrorIdentify, authSetIdentify, authDelIdentify } = AuthCreators;
-const { appSetConfig, appSetCurrentVersion, appSetNotification } = AppCreators;
+const { appSetData, appSetConfig, appSetCurrentVersion, appSetNotification } =
+  AppCreators;
 
 export const loginThunk =
   ({ keepMeLogged, ...userIndentify }) =>
@@ -67,6 +68,11 @@ export const loginThunk =
     dispatch(appSetCurrentVersion(appInfo.version));
     dispatch(userSetCurrentUser(user, keepMeLogged));
     dispatch(appSetConfig({ nameUrl, apiKey, nameHeaders, proxy }));
+    dispatch(
+      appSetData({
+        hospitals: data.hospitals,
+      })
+    );
     dispatch(appSetNotification(notify));
   };
 

@@ -77,11 +77,16 @@ const refreshToken = (token) =>
 const getSegments = (bearerToken, params = {}) =>
   instance.get(endpoints.segments, { params, ...setHeaders(bearerToken) });
 
-const getSegmentById = (bearerToken, idSegment, params = {}) =>
-  instance.get(`${endpoints.segments}/${idSegment}`, {
+const getSegmentById = (bearerToken, idSegment, idHospital, params = {}) => {
+  const url = idHospital
+    ? `${endpoints.segments}/${idSegment}/${idHospital}`
+    : `${endpoints.segments}/${idSegment}`;
+
+  return instance.get(url, {
     params,
     ...setHeaders(bearerToken),
   });
+};
 
 const generateOutlier = (bearerToken, idSegment) =>
   instance.get(`${endpoints.segments}/${idSegment}/outliers/generate`, {
@@ -101,8 +106,12 @@ const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
 const createSegment = (bearerToken, params = {}) =>
   instance.post(endpoints.segments, params, setHeaders(bearerToken));
 
-const updateSegment = (bearerToken, { id, ...params }) =>
-  instance.put(`${endpoints.segments}/${id}`, params, setHeaders(bearerToken));
+const updateSegment = (bearerToken, { id, idHospital, ...params }) =>
+  instance.put(
+    `${endpoints.segments}/${id}/${idHospital}`,
+    params,
+    setHeaders(bearerToken)
+  );
 
 const updateSegmentExam = (bearerToken, { idSegment, ...params }) =>
   instance.put(
@@ -315,11 +324,6 @@ const getDrugResources = (bearerToken, idDrug, idSegment, idHospital) =>
  * Departments.
  *
  */
-const getFreeDepartments = (bearerToken, params = {}) =>
-  instance.get(`${endpoints.departments}/free`, {
-    params,
-    ...setHeaders(bearerToken),
-  });
 
 const getDepartmentsBySegment = (bearerToken, idSegment, params = {}) =>
   instance.get(`${endpoints.segments}/${idSegment}`, {
@@ -527,7 +531,6 @@ const api = {
   generateOutlier,
   generateOutlierFold,
   generateDrugOutlier,
-  getFreeDepartments,
   getDepartmentsBySegment,
   getOutliersBySegmentAndDrug,
   updateOutlier,
