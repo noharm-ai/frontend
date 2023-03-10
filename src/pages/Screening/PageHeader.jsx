@@ -216,11 +216,9 @@ export default function PageHeader({
           span={24}
           md={24 - 10}
           css="
-          text-align: right;
-
-          @media(max-width: 992px) {
-            text-align: left;
-          }
+          display:flex;
+          align-items: center;
+          justify-content: flex-end;
         "
         >
           {prescription.content.status === "0" && (
@@ -237,8 +235,18 @@ export default function PageHeader({
           )}
           {prescription.content.status === "s" && (
             <>
-              <span style={{ marginRight: "10px" }}>
-                <CheckOutlined /> {t("screeningHeader.btnChecked")}
+              <span style={{ marginRight: "10px", lineHeight: 1.4 }}>
+                {prescription.content.user ? (
+                  <>
+                    {t("labels.checkedBy")}
+                    <br />
+                    {prescription.content.user}
+                  </>
+                ) : (
+                  <>
+                    {t("screeningHeader.btnChecked")} <CheckOutlined />
+                  </>
+                )}
               </span>
               <Tooltip title={t("screeningHeader.btnUndoCheck")}>
                 <Button
