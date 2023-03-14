@@ -7,6 +7,7 @@ export const ScreeningTabs = styled(Tabs)`
   .ant-tabs-nav {
     width: 100%;
     margin: 0;
+    z-index: 1;
   }
 
   &.breaktab-2 {

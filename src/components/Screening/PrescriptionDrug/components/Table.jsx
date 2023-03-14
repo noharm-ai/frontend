@@ -34,6 +34,16 @@ function Table({
     setExpandedRows(updateExpandedRows(expandedRows, record.key));
   };
 
+  const toggleExpansion = () => {
+    if (expandedRows.length) {
+      setExpandedRows([]);
+    } else {
+      setExpandedRows(
+        ds.value.filter((i) => /^[0-9]*$/g.test(i.key)).map((i) => i.key)
+      );
+    }
+  };
+
   const extraBag = {
     ...bag,
     handleRowExpand,
@@ -48,6 +58,20 @@ function Table({
       default:
         return columnsTable(hasFilter ? filter : { status: null }, extraBag);
     }
+  };
+
+  const ExpandColumn = ({ expand }) => {
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <button
+          type="button"
+          className={`ant-table-row-expand-icon ${
+            expand ? "ant-table-row-expand-icon-collapsed" : ""
+          }`}
+          onClick={toggleExpansion}
+        ></button>
+      </div>
+    );
   };
 
   return (
@@ -69,6 +93,7 @@ function Table({
       rowClassName={rowClassName}
       expandedRowKeys={expandedRows}
       onExpand={(expanded, record) => handleRowExpand(record)}
+      columnTitle={<ExpandColumn expand={!expandedRows.length} />}
     />
   );
 }
