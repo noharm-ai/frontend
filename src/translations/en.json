@@ -44,7 +44,8 @@
     "reg-administration": "User registration",
     "patients": "Patients",
     "frequency": "Frequency",
-    "interventionReasons": "Intervenções"
+    "interventionReasons": "Intervenções",
+    "news": "News"
   },
   "screeningList": {
     "confirm": "Confirm?",
