@@ -75,6 +75,7 @@ export default function ScreeningList({
   ...restProps
 }) {
   const { t } = useTranslation();
+  const [expandedRows, setExpandedRows] = useState([]);
   const [sortOrder, setSortOrder] = useState({
     order: null,
     columnKey: null,
@@ -226,6 +227,18 @@ export default function ScreeningList({
     };
   }, []);
 
+  const updateExpandedRows = (list, key) => {
+    if (list.includes(key)) {
+      return list.filter((i) => i !== key);
+    }
+
+    return [...list, key];
+  };
+
+  const handleRowExpand = (record) => {
+    setExpandedRows(updateExpandedRows(expandedRows, record.key));
+  };
+
   const handleFilter = (e, status) => {
     if (status) {
       setFilter({ status: status === "all" ? null : [status] });
@@ -262,12 +275,34 @@ export default function ScreeningList({
     setSortOrder(sorter);
   };
 
+  const toggleExpansion = () => {
+    if (expandedRows.length) {
+      setExpandedRows([]);
+    } else {
+      setExpandedRows(dataSource.map((i) => i.key));
+    }
+  };
+
   const isFilterActive = (status) => {
     if (filter.status) {
       return filter.status[0] === status;
     }
 
     return filter.status == null && status == null;
+  };
+
+  const ExpandColumn = ({ expand }) => {
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <button
+          type="button"
+          className={`ant-table-row-expand-icon ${
+            expand ? "ant-table-row-expand-icon-collapsed" : ""
+          }`}
+          onClick={toggleExpansion}
+        ></button>
+      </div>
+    );
   };
 
   const info = (
@@ -345,6 +380,9 @@ export default function ScreeningList({
         dataSource={!isFetching ? dataSource : []}
         onChange={handleTableChange}
         showSorterTooltip={false}
+        columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+        expandedRowKeys={expandedRows}
+        onExpand={(expanded, record) => handleRowExpand(record)}
       />
 
       <BackTop />

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
@@ -22,24 +22,15 @@ const validationSchema = Yup.object().shape({
 
 export default function Segment({
   initialValues,
-  departments,
+  isFetching,
   saveStatus,
   saveSegment,
-  fetchDepartments,
   afterSaveSegment,
   segmentDepartments,
-  firstFilter,
 }) {
   const { t } = useTranslation();
   const { isSaving } = saveStatus;
-  const departmentsList = [...departments.list, ...segmentDepartments];
-
-  // fetch departments.
-  useEffect(() => {
-    if (firstFilter.idSegment) {
-      fetchDepartments();
-    }
-  }, [fetchDepartments, firstFilter.idSegment]);
+  const departmentsList = [...segmentDepartments];
 
   const submit = (params) => {
     saveSegment(params)
@@ -66,10 +57,7 @@ export default function Segment({
       {({ handleSubmit, isValid }) => (
         <form onSubmit={handleSubmit}>
           <Row type="flex" gutter={24}>
-            <Departments
-              isFetching={departments.isFetching}
-              list={departmentsList}
-            />
+            <Departments isFetching={isFetching} list={departmentsList} />
           </Row>
           <Footer>
             <Button

@@ -13,7 +13,7 @@ import Collapse from "components/Collapse";
 
 import { Box } from "./Drug.style";
 
-export default function Base({ security }) {
+export default function Base({ security, data }) {
   const { values, setFieldValue, errors } = useFormikContext();
   const { t } = useTranslation();
   const {
@@ -185,6 +185,9 @@ export default function Base({ security }) {
                   value={price}
                   onChange={(value) => setFieldValue("price", value)}
                 />
+                {data.idMeasureUnitPrice
+                  ? data.idMeasureUnitPrice
+                  : "Sem unidade definida"}
               </Box>
             </Col>
             <Col xs={24}>

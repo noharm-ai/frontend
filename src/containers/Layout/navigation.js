@@ -6,6 +6,7 @@ import {
   WarningOutlined,
   PieChartOutlined,
   BulbOutlined,
+  ThunderboltOutlined,
   SettingOutlined,
   MedicineBoxOutlined,
   UsergroupAddOutlined,
@@ -74,6 +75,12 @@ const navigation = [
     text: "menu.knowledgeBase",
     icon: BulbOutlined,
     id: "gtm-lnk-knowledgeBase",
+  },
+  {
+    key: { pathname: "https://noharm.octadesk.com/kb/article/novidades" },
+    text: "menu.news",
+    icon: ThunderboltOutlined,
+    id: "gtm-lnk-news",
   },
   {
     key: "config",

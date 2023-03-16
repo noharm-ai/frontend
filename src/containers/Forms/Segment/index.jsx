@@ -5,20 +5,19 @@ import { saveSegmentThunk } from "store/ducks/segments/thunk";
 import { fetchDepartmentsListThunk } from "store/ducks/departments/thunk";
 import FormSegment from "components/Forms/Segment";
 
-const mapStateToProps = ({ departments, segments }) => ({
+const mapStateToProps = ({ segments }) => ({
   saveStatus: segments.save,
-  departments: {
-    error: departments.error,
-    list: departments.list,
-    isFetching: departments.isFetching,
-  },
+  isFetching: segments.single.isFetching,
   firstFilter: segments.firstFilter,
   segmentDepartments: segments.single.content.departments || [],
   initialValues: {
     id: segments.single.content.id,
+    idHospital: segments.single.content.idHospital,
     description: segments.single.content.description || "",
     departments: segments.single.content.departments
-      ? segments.single.content.departments.map((i) => i.idDepartment)
+      ? segments.single.content.departments
+          .filter((i) => i.checked)
+          .map((i) => i.idDepartment)
       : [],
   },
 });

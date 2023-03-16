@@ -1,5 +1,6 @@
 import React from "react";
 import { FormOutlined } from "@ant-design/icons";
+import moment from "moment";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
@@ -63,6 +64,15 @@ export default [
     title: "Contagem",
     dataIndex: "countNum",
     width: 60,
+  },
+  {
+    title: "Atualizado em",
+    dataIndex: "countNum",
+    width: 60,
+    render: (entry, outlier) =>
+      outlier.updatedAt
+        ? moment(outlier.updatedAt).format("DD/MM/YYYY HH:mm")
+        : "",
   },
   {
     title: "Ações",

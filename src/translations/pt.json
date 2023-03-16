@@ -44,7 +44,8 @@
     "reg-administration": "Cadastro de Usuários",
     "patients": "Pacientes",
     "frequency": "Frequências",
-    "interventionReasons": "Motivos de Intervenções"
+    "interventionReasons": "Motivos de Intervenções",
+    "news": "Novidades"
   },
   "screeningList": {
     "confirm": "Confirma?",
@@ -298,7 +299,8 @@
   },
   "tooltips": {
     "relationsList": "Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade",
-    "cantEditBeingUsed": "Este campo não pode ser alterado, pois já foi utilizado"
+    "cantEditBeingUsed": "Este campo não pode ser alterado, pois já foi utilizado",
+    "recentExams": "Principais exames dos últimos 15 dias. Para ver mais, clique em \"Ver Todos\""
   },
   "buttons": {
     "search": "Pesquisar"

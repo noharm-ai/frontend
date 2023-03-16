@@ -336,6 +336,7 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
         ...state.single.data,
         headers,
         status: prescriptionStatus,
+        user: success.user,
       },
     },
   };

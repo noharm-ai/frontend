@@ -4,6 +4,7 @@ import storage from "redux-persist/lib/storage";
 import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 
 export const { Types, Creators } = createActions({
+  appSetData: ["data"],
   appSetConfig: ["config"],
   appSetSider: ["sider"],
   appSetScreeningListFilter: ["params"],
@@ -13,6 +14,9 @@ export const { Types, Creators } = createActions({
 });
 
 const INITIAL_STATE = {
+  data: {
+    hospitals: [],
+  },
   config: {
     nameUrl: null,
     nameHeaders: [],
@@ -57,6 +61,14 @@ const setSider = (state = INITIAL_STATE, { sider }) => ({
   },
 });
 
+const setData = (state = INITIAL_STATE, { data }) => ({
+  ...state,
+  data: {
+    ...state.data,
+    ...data,
+  },
+});
+
 const setConfig = (state = INITIAL_STATE, { config }) => ({
   ...state,
   config: {
@@ -85,6 +97,7 @@ const setJourney = (state = INITIAL_STATE, { journey }) => ({
 });
 
 const HANDLERS = {
+  [Types.APP_SET_DATA]: setData,
   [Types.APP_SET_CONFIG]: setConfig,
   [Types.APP_SET_SIDER]: setSider,
   [Types.APP_SET_JOURNEY]: setJourney,

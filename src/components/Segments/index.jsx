@@ -4,7 +4,6 @@ import { Row, Col } from "antd";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
 
 import Tabs from "components/Tabs";
@@ -43,15 +42,14 @@ function Segments({
   outliers,
   generateOutlier,
   resetGenerate,
-  fetchSegmentsList,
   fetchSegmentById,
   security,
   selectExam,
   updateExamOrder,
   sortStatus,
   access_token,
+  hospitals,
 }) {
-  const params = useParams();
   const { t } = useTranslation();
   const [examModalVisible, setExamModalVisibility] = useState(false);
   const [progressModalVisible, setProgressModalVisibility] = useState(false);
@@ -66,18 +64,9 @@ function Segments({
     : [];
 
   useEffect(() => {
-    fetchSegmentsList();
-  }, [fetchSegmentsList]);
-
-  useEffect(() => {
-    if (!isEmpty(segments.list)) {
-      if (!isEmpty(params)) {
-        fetchSegmentById(params.idSegment);
-      } else {
-        fetchSegmentById(segments.list[0].id);
-      }
-    }
-  }, [fetchSegmentById, params, segments.list]);
+    // initial load
+    fetchSegmentById(1, 1);
+  }, [fetchSegmentById]);
 
   useEffect(() => {
     let errorResponse = null;
@@ -145,7 +134,7 @@ function Segments({
   const addExamModal = () => {
     selectExam({
       new: true,
-      idSegment: segments.firstFilter.idSegment,
+      idSegment: currentSegment.content.id,
       active: true,
     });
     setExamModalVisibility(true);
@@ -157,7 +146,7 @@ function Segments({
 
   const dsExams = toDataSource(currentSegment.content.exams, null, {
     showModal: onShowExamModal,
-    idSegment: segments.firstFilter.idSegment,
+    idSegment: currentSegment.content.id,
   });
 
   const DraggableBodyRow = ({
@@ -237,16 +226,21 @@ function Segments({
 
   const generateOutlierClick = () =>
     generateOutlier({
-      id: segments.firstFilter.idSegment,
+      id: currentSegment.content.id,
     });
 
   return (
     <>
       <Row>
-        <Col xs={12}>
-          <Filter segments={segments} />
+        <Col xs={24}>
+          <Filter
+            segments={segments}
+            hospitals={hospitals}
+            isFetching={currentSegment.isFetching}
+            fetchList={fetchSegmentById}
+          />
         </Col>
-        <Col xs={12} style={{ textAlign: "right" }}>
+        <Col xs={24} style={{ textAlign: "right" }}>
           {security.isAdmin() && (
             <PopConfirm
               title="Essa ação irá recalcular os escores de todo o segmento. Deseja continuar?"
@@ -260,7 +254,7 @@ function Segments({
                 loading={outliers.generate.isGenerating}
                 disabled={outliers.generate.isGenerating}
               >
-                Gerar Escores
+                Gerar Escores ({currentSegment.content.description})
               </Button>
             </PopConfirm>
           )}

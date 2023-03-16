@@ -8,6 +8,7 @@ import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import PrescriptionCard from "components/PrescriptionCard";
 import Empty from "components/Empty";
+import Help from "components/Help";
 
 import ExamModal from "containers/Screening/Exam/ExamModal";
 
@@ -18,7 +19,10 @@ export default function ExamCard({ exams, siderCollapsed, count }) {
   return (
     <PrescriptionCard style={{ height: "100%" }}>
       <div className="header">
-        <h3 className="title">{t("tableHeader.exams")}</h3>
+        <h3 className="title">
+          {t("tableHeader.exams")}
+          <Help text={t("tooltips.recentExams")} />
+        </h3>
       </div>
       <div className="content">
         <div className="exam-list">

@@ -61,23 +61,26 @@ export const fetchSegmentsListThunk =
     dispatch(segmentsFetchListSuccess(list));
   };
 
-export const fetchSegmentByIdThunk = (id) => async (dispatch, getState) => {
-  dispatch(segmentsFetchSingleStart());
+export const fetchSegmentByIdThunk =
+  (id, idHospital) => async (dispatch, getState) => {
+    dispatch(segmentsFetchSingleStart());
 
-  const { access_token } = getState().auth.identify;
-  const { data, error } = await api
-    .getSegmentById(access_token, id)
-    .catch(errorHandler);
+    const { access_token } = getState().auth.identify;
+    const { data, error } = await api
+      .getSegmentById(access_token, id, idHospital)
+      .catch(errorHandler);
 
-  if (!isEmpty(error)) {
-    dispatch(segmentsFetchSingleError(error));
-    return;
-  }
+    if (!isEmpty(error)) {
+      dispatch(segmentsFetchSingleError(error));
+      return;
+    }
 
-  const single = transformSegment(data.data);
+    const single = transformSegment(data.data);
 
-  dispatch(segmentsFetchSingleSuccess(single, { idSegment: parseInt(id, 10) }));
-};
+    dispatch(
+      segmentsFetchSingleSuccess(single, { idSegment: parseInt(id, 10) })
+    );
+  };
 
 export const resetSingleSegmentThunk = () => async (dispatch, getState) => {
   dispatch(segmentsFetchSingleReset());

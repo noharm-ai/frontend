@@ -167,7 +167,7 @@ export default function Screening({
             }
             key="drugs"
           >
-            <Col span={24} md={24} style={{ marginTop: "20px" }}>
+            <Col span={24} md={24} style={{ paddingTop: "20px" }}>
               {!isEmpty(content) && security.hasPrescriptionEdit() && !agg && (
                 <PrescriptionActionContainer>
                   <Dropdown.Button
@@ -198,7 +198,7 @@ export default function Screening({
             }
             key="solutions"
           >
-            <Col span={24} md={24} style={{ marginTop: "20px" }}>
+            <Col span={24} md={24} style={{ paddingTop: "20px" }}>
               <SolutionList
                 emptyMessage="Nenhuma solução encontrada."
                 hasFilter={false}
@@ -216,7 +216,7 @@ export default function Screening({
               }
               key="procedures"
             >
-              <Col span={24} md={24} style={{ marginTop: "20px" }}>
+              <Col span={24} md={24} style={{ paddingTop: "20px" }}>
                 <ProcedureList
                   emptyMessage="Nenhuma solução encontrada."
                   hasFilter={false}
@@ -235,7 +235,7 @@ export default function Screening({
               }
               key="diet"
             >
-              <Col span={24} md={24} style={{ marginTop: "20px" }}>
+              <Col span={24} md={24} style={{ paddingTop: "20px" }}>
                 <DietList
                   emptyMessage="Nenhuma dieta encontrada."
                   hasFilter={false}
@@ -253,7 +253,7 @@ export default function Screening({
             }
             key="intervention"
           >
-            <div style={{ marginTop: "20px" }}>
+            <div style={{ paddingTop: "20px" }}>
               <PreviousInterventionList />
             </div>
           </Tabs.TabPane>

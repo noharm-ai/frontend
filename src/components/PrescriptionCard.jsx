@@ -18,6 +18,9 @@ export default styled.div`
   }
 
   h3.title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: 18px;
     font-weight: 500;
     color: #2e3c5a;
