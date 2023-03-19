@@ -50,7 +50,7 @@ export default function Menu({
     }
 
     return (
-      <Navigator.Item key={key}>
+      <Navigator.Item key={key.pathname ? key.pathname : key}>
         {key.pathname ? (
           <a
             href={key.pathname}
