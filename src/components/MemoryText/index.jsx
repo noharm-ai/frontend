@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import isEmpty from "lodash.isempty";
-import { FileTextOutlined } from "@ant-design/icons";
+import {
+  FileTextOutlined,
+  SaveOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 
 import Dropdown from "components/Dropdown";
 import Menu from "components/Menu";
@@ -73,6 +77,7 @@ export default function MemoryText({
             onClick={() => setSaveModalOpen(true)}
             disabled={!content}
             key="save"
+            icon={<SaveOutlined />}
           >
             <span>Salvar texto atual</span>
           </Menu.Item>
@@ -80,6 +85,7 @@ export default function MemoryText({
             onClick={() => setConfigModalOpen(true)}
             disabled={isEmpty(list) || isEmpty(list[0].value)}
             key="admin"
+            icon={<SettingOutlined />}
           >
             <span>Gerenciar</span>
           </Menu.Item>
