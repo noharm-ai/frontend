@@ -98,6 +98,7 @@
     "labelAllDrugsHint": "Prescrição deve conter todos medicamentos selecionados",
     "labelDischarged": "Somente pacientes com alta",
     "labelPendingPrescription": "Somente prescrições pendentes",
+    "labelAlertsPlaceholder": "Selecione os alertas",
     "iptSearchPlaceholder": "Buscar por paciente ou nº atendimento",
     "clAge": "ID",
     "clAgeHint": "Idade",

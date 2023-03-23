@@ -98,6 +98,7 @@
     "labelAllDrugsHint": "Must have all drugs in the prescription",
     "labelDischarged": "Only discharged patients",
     "labelPendingPrescription": "Pending prescriptions (only)",
+    "labelAlertsPlaceholder": "Select alerts",
     "iptSearchPlaceholder": "Search by patient or admission number",
     "clAge": "AG",
     "clAgeHint": "Age",
