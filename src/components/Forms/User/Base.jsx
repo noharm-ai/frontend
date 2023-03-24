@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "styled-components/macro";
 import { useFormikContext } from "formik";
 import { Alert } from "antd";
@@ -10,13 +10,15 @@ import { Input } from "components/Inputs";
 import Switch from "components/Switch";
 import Tooltip from "components/Tooltip";
 import { Select } from "components/Inputs";
+import Button from "components/Button";
 import Role from "models/Role";
 
 import { Box } from "../Form.style";
 
 export default function Base({ security }) {
+  const [forcePassword, setForcePassword] = useState(false);
   const { values, setFieldValue, errors, touched } = useFormikContext();
-  const { name, external, active, id, roles } = values;
+  const { name, external, active, id, roles, password } = values;
   const layout = { label: 8, input: 16 };
   const { t } = useTranslation();
   return (
@@ -110,30 +112,70 @@ export default function Base({ security }) {
         </Col>
       </Box>
 
-      {(security.isAdmin() || security.isSupport()) && (
-        <Box hasError={errors.roles}>
-          <Col xs={layout.label}>
-            <Heading as="label" size="14px" textAlign="right">
-              <Tooltip>{t("userAdminForm.roles")}</Tooltip>
-            </Heading>
-          </Col>
-          <Col xs={layout.input}>
-            <Select
-              id="reason"
-              mode="multiple"
-              optionFilterProp="children"
-              style={{ width: "100%" }}
-              value={roles}
-              onChange={(roles) => setFieldValue("roles", roles)}
-            >
-              {Role.getRoles(t).map(({ id, label }) => (
-                <Select.Option key={id} value={id}>
-                  {label}
-                </Select.Option>
-              ))}
-            </Select>
-          </Col>
-        </Box>
+      {security.isAdmin() && (
+        <>
+          <Box hasError={errors.roles}>
+            <Col xs={layout.label}>
+              <Heading as="label" size="14px" textAlign="right">
+                <Tooltip>{t("userAdminForm.roles")}</Tooltip>
+              </Heading>
+            </Col>
+            <Col xs={layout.input}>
+              <Select
+                id="reason"
+                mode="multiple"
+                optionFilterProp="children"
+                style={{ width: "100%" }}
+                value={roles}
+                onChange={(roles) => setFieldValue("roles", roles)}
+              >
+                {Role.getRoles(t).map(({ id, label }) => (
+                  <Select.Option key={id} value={id}>
+                    {label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Col>
+          </Box>
+          <Box hasError={errors.password}>
+            <Col xs={layout.label}>
+              {forcePassword && (
+                <Heading
+                  as="label"
+                  size="14px"
+                  textAlign="right"
+                  style={{ color: "rgb(207, 19, 34)", fontWeight: 500 }}
+                >
+                  <Tooltip>Senha inicial</Tooltip>
+                </Heading>
+              )}
+            </Col>
+            <Col xs={layout.input}>
+              {forcePassword ? (
+                <Input
+                  style={{
+                    marginLeft: 10,
+                    background: "rgba(255, 0, 0, 0.1)",
+                  }}
+                  value={password}
+                  onChange={({ target }) =>
+                    setFieldValue("password", target.value)
+                  }
+                  maxLength={10}
+                />
+              ) : (
+                <Button
+                  type="link"
+                  danger
+                  onClick={() => setForcePassword(true)}
+                  style={{ padding: 0 }}
+                >
+                  Configurar senha inicial
+                </Button>
+              )}
+            </Col>
+          </Box>
+        </>
       )}
     </>
   );
