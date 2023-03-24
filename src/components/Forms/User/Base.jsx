@@ -137,44 +137,46 @@ export default function Base({ security }) {
               </Select>
             </Col>
           </Box>
-          <Box hasError={errors.password}>
-            <Col xs={layout.label}>
-              {forcePassword && (
-                <Heading
-                  as="label"
-                  size="14px"
-                  textAlign="right"
-                  style={{ color: "rgb(207, 19, 34)", fontWeight: 500 }}
-                >
-                  <Tooltip>Senha inicial</Tooltip>
-                </Heading>
-              )}
-            </Col>
-            <Col xs={layout.input}>
-              {forcePassword ? (
-                <Input
-                  style={{
-                    marginLeft: 10,
-                    background: "rgba(255, 0, 0, 0.1)",
-                  }}
-                  value={password}
-                  onChange={({ target }) =>
-                    setFieldValue("password", target.value)
-                  }
-                  maxLength={10}
-                />
-              ) : (
-                <Button
-                  type="link"
-                  danger
-                  onClick={() => setForcePassword(true)}
-                  style={{ padding: 0 }}
-                >
-                  Configurar senha inicial
-                </Button>
-              )}
-            </Col>
-          </Box>
+          {id && (
+            <Box hasError={errors.password}>
+              <Col xs={layout.label}>
+                {forcePassword && (
+                  <Heading
+                    as="label"
+                    size="14px"
+                    textAlign="right"
+                    style={{ color: "rgb(207, 19, 34)", fontWeight: 500 }}
+                  >
+                    <Tooltip>Senha inicial</Tooltip>
+                  </Heading>
+                )}
+              </Col>
+              <Col xs={layout.input}>
+                {forcePassword ? (
+                  <Input
+                    style={{
+                      marginLeft: 10,
+                      background: "rgba(255, 0, 0, 0.1)",
+                    }}
+                    value={password}
+                    onChange={({ target }) =>
+                      setFieldValue("password", target.value)
+                    }
+                    maxLength={10}
+                  />
+                ) : (
+                  <Button
+                    type="link"
+                    danger
+                    onClick={() => setForcePassword(true)}
+                    style={{ padding: 0 }}
+                  >
+                    Configurar senha inicial
+                  </Button>
+                )}
+              </Col>
+            </Box>
+          )}
         </>
       )}
     </>
