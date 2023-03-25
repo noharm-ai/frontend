@@ -36,6 +36,8 @@ export default function FilterMemory({
     fetchMemory(FILTER_PUBLIC_STORE_ID, FILTER_PUBLIC_MEMORY_TYPE);
   }, [account.userId, fetchMemory]);
 
+  const filterActive = (item) => item.active || !item.hasOwnProperty("active");
+
   const saveFilterAction = (filterName, filterType) => {
     if (filterType === "public") {
       const hasFilter = publicFilters && publicFilters.length;
@@ -73,7 +75,7 @@ export default function FilterMemory({
       type === "public" ? publicFilters[0] : privateFilters[0];
     const filters = [...storeElement.value];
 
-    filters.splice(index, 1);
+    filters[index].active = false;
 
     if (type === "public") {
       saveMemory(FILTER_PUBLIC_STORE_ID, {
@@ -100,7 +102,11 @@ export default function FilterMemory({
   const filterSubmenu = (list, type) => {
     const title = t(`screeningList.${type}Filter`);
 
-    if (isEmpty(list) || isEmpty(list[0].value)) {
+    if (
+      isEmpty(list) ||
+      isEmpty(list[0].value) ||
+      isEmpty(list[0].value.filter(filterActive))
+    ) {
       return (
         <Menu.SubMenu title={title} key={`nofilter_${type}`}>
           <Menu.Item key={`nofilteritem_${type}`}>
@@ -113,7 +119,7 @@ export default function FilterMemory({
 
     return (
       <Menu.SubMenu title={title} key={`sub_${type}`}>
-        {list[0].value.map((item) => (
+        {list[0].value.filter(filterActive).map((item) => (
           <Menu.Item
             key={`${type}_${item.name}`}
             onClick={() => loadFilterAction(item.data)}
@@ -133,15 +139,19 @@ export default function FilterMemory({
       return (
         <Menu.SubMenu title={title} key={`remove_${type}`}>
           {list[0].value.map((item, index) => (
-            <Menu.Item
-              key={`remove_${type}_${item.name}`}
-              onClick={() => removeFilterAction(index, type)}
-              style={{ color: "#ff4d4f" }}
-              className={`gtm-btn-menu-filter-remove-${type}`}
-            >
-              <DeleteOutlined style={{ fontSize: 16, color: "#ff4d4f" }} />
-              {item.name}
-            </Menu.Item>
+            <>
+              {(item.active || !item.hasOwnProperty("active")) && (
+                <Menu.Item
+                  key={`remove_${type}_${item.name}`}
+                  onClick={() => removeFilterAction(index, type)}
+                  style={{ color: "#ff4d4f" }}
+                  className={`gtm-btn-menu-filter-remove-${type}`}
+                >
+                  <DeleteOutlined style={{ fontSize: 16, color: "#ff4d4f" }} />
+                  {item.name}
+                </Menu.Item>
+              )}
+            </>
           ))}
         </Menu.SubMenu>
       );

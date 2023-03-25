@@ -33,6 +33,7 @@ export default function User({
 
   const initialValues = {
     ...data,
+    password: null,
   };
 
   const submit = (params) => {

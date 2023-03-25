@@ -73,6 +73,7 @@ export default function Filter({
         startDate: date[0] ? date[0].format("YYYY-MM-DD") : "all",
         endDate: date[1] ? date[1].format("YYYY-MM-DD") : "all",
         insurance: filter.insurance,
+        indicators: filter.indicators,
       };
       const mixedParams = { ...params, ...forceParams };
       const finalParams = {};
@@ -94,6 +95,7 @@ export default function Filter({
       filter.discharged,
       filter.currentDepartment,
       filter.insurance,
+      filter.indicators,
       prioritizationType,
       date,
     ]
@@ -142,6 +144,10 @@ export default function Filter({
 
   const onDepartmentChange = (idDept) => {
     setScreeningListFilter({ idDepartment: idDept });
+  };
+
+  const onIndicatorsChange = (indicators) => {
+    setScreeningListFilter({ indicators: indicators });
   };
 
   const onCurrentDepartmentChange = (e) => {
@@ -217,6 +223,7 @@ export default function Filter({
       pending: 0,
       allDrugs: 0,
       discharged: 0,
+      indicators: [],
     });
     setDate([moment(), null]);
   };
@@ -443,6 +450,68 @@ export default function Filter({
                   {t("screeningList.labelAllDrugs")}
                 </Tooltip>
               </Checkbox>
+            </Col>
+          </Row>
+
+          <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={24}>
+              <Box>
+                <Row gutter={0} style={{ width: "100%" }}>
+                  <Col md={19}>
+                    <Heading as="label" htmlFor="indicators" size="14px">
+                      {t("tableHeader.alerts")}:
+                    </Heading>
+                    <Select
+                      id="indicators"
+                      mode="multiple"
+                      optionFilterProp="children"
+                      style={{ width: "100%" }}
+                      placeholder={t("screeningList.labelAlertsPlaceholder")}
+                      loading={segments.single.isFetching}
+                      value={filter.indicators}
+                      onChange={onIndicatorsChange}
+                      autoClearSearchValue={false}
+                      allowClear
+                    >
+                      <Select.Option key={"allergy"} value={"allergy"}>
+                        {t("alerts.alergy")}
+                      </Select.Option>
+
+                      <Select.Option key={"maxDose"} value={"maxDose"}>
+                        {t("alerts.max_dose")}
+                      </Select.Option>
+
+                      <Select.Option key={"dup"} value={"dup"}>
+                        {t("alerts.duplicate")}
+                      </Select.Option>
+
+                      <Select.Option key={"exams"} value={"exams"}>
+                        {t("alerts.exam")}
+                      </Select.Option>
+
+                      <Select.Option key={"inc"} value={"inc"}>
+                        {t("alerts.y")}
+                      </Select.Option>
+
+                      <Select.Option key={"int"} value={"int"}>
+                        {t("alerts.interaction")}
+                      </Select.Option>
+
+                      <Select.Option key={"tube"} value={"tube"}>
+                        {t("alerts.tube")}
+                      </Select.Option>
+
+                      <Select.Option key={"elderly"} value={"elderly"}>
+                        {t("alerts.elderly")}
+                      </Select.Option>
+
+                      <Select.Option key={"maxTime"} value={"maxTime"}>
+                        {t("alerts.time")}
+                      </Select.Option>
+                    </Select>
+                  </Col>
+                </Row>
+              </Box>
             </Col>
           </Row>
 
