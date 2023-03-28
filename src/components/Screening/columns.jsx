@@ -12,6 +12,7 @@ import {
   CalculatorOutlined,
   MessageOutlined,
   HourglassOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
 
 import { InfoIcon } from "components/Icon";
@@ -820,6 +821,7 @@ const tags = (bag) => ({
   align: "center",
   render: (text, prescription) => {
     let expiresIn = null;
+    let prescribedTo = null;
     const hasExpireInfo =
       prescription.cpoe && bag.featureService.hasPrescriptionExpirationTag();
     if (hasExpireInfo && !prescription.suspended) {
@@ -827,6 +829,12 @@ const tags = (bag) => ({
         const expirationDate = parseISO(bag.headers[prescription.cpoe].expire);
         const currentDate = new Date();
         expiresIn = differenceInHours(expirationDate, currentDate);
+      }
+
+      if (bag.headers[prescription.cpoe].date) {
+        const prescriptionDate = parseISO(bag.headers[prescription.cpoe].date);
+        const currentDate = new Date();
+        prescribedTo = differenceInHours(currentDate, prescriptionDate);
       }
     }
     return (
@@ -891,25 +899,48 @@ const tags = (bag) => ({
           )}
         </span>
         {hasExpireInfo && (
-          <span
-            className="tag gtm-tag-expires"
-            onClick={() => bag.handleRowExpand(prescription)}
-          >
-            {expiresIn < 0 && (
-              <Tooltip title={bag.t("prescriptionDrugTags.expired")}>
-                <HourglassOutlined style={{ fontSize: 18, color: "#f5222d" }} />
-              </Tooltip>
-            )}
-            {expiresIn > 0 && expiresIn < 24 && (
-              <Tooltip
-                title={`${bag.t(
-                  "prescriptionDrugTags.expiresIn"
-                )} ${expiresIn}h`}
-              >
-                <HourglassOutlined style={{ fontSize: 18, color: "#ff9f1c" }} />
-              </Tooltip>
-            )}
-          </span>
+          <>
+            <span
+              className="tag gtm-tag-expires"
+              onClick={() => bag.handleRowExpand(prescription)}
+            >
+              {expiresIn < 0 && (
+                <Tooltip title={bag.t("prescriptionDrugTags.expired")}>
+                  <HourglassOutlined
+                    style={{ fontSize: 18, color: "#f5222d" }}
+                  />
+                </Tooltip>
+              )}
+              {expiresIn > 0 && expiresIn < 24 && (
+                <Tooltip
+                  title={`${bag.t(
+                    "prescriptionDrugTags.expiresIn"
+                  )} ${expiresIn}h`}
+                >
+                  <HourglassOutlined
+                    style={{ fontSize: 18, color: "#ff9f1c" }}
+                  />
+                </Tooltip>
+              )}
+            </span>
+            <span
+              className="tag gtm-tag-prescribedTo"
+              onClick={() => bag.handleRowExpand(prescription)}
+            >
+              {prescribedTo < 0 && (
+                <Tooltip
+                  title={`Agendado para ${format(
+                    new Date(bag.headers[prescription.cpoe].date),
+                    "dd/MM/yyyy HH:mm"
+                  )}`}
+                >
+                  <CalendarOutlined
+                    style={{ fontSize: 18, color: "#01579B" }}
+                  />
+                </Tooltip>
+              )}
+            </span>
+          </>
         )}
         <span
           className="tag gtm-tag-alert"
