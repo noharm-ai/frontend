@@ -288,7 +288,11 @@
     "inactive": "Inactive",
     "add": "Add",
     "substitution": "Substitution",
-    "suspension": "Suspension"
+    "suspension": "Suspension",
+    "factor": "Factor"
+  },
+  "titles": {
+    "addDrugMeasureUnit": "Add Drug Unit"
   },
   "transcriptionLabels": {
     "idDrug": "Drug",
