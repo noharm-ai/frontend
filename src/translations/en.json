@@ -388,6 +388,8 @@
     "labelTranscription": "Transcription",
     "labelEconomyDays": "Economy days",
     "labelEconomyDaysHint": "Amount of days to be considered in the economy report",
+    "labelSavedDose": "Saved dose",
+    "labelSavedDoseHint": "Amount of saved dose.",
 
     "btnModelEmpty": "No observation saved for this reason",
     "btnModelSave": "Save observation",
