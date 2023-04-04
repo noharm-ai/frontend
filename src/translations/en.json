@@ -388,8 +388,8 @@
     "labelTranscription": "Transcription",
     "labelEconomyDays": "Economy days",
     "labelEconomyDaysHint": "Amount of days to be considered in the economy report",
-    "labelSavedDose": "Saved dose",
-    "labelSavedDoseHint": "Amount of saved dose.",
+    "labelExpendedDose": "Expended dose",
+    "labelExpendedDoseHint": "When it is not possible to take advantage of the dose, fill in the dose spent for the administration of each schedule. Ex.: Prescribed 250 mg of a 500 mg product that has no possibility of using the remaining dose, fill in 500 mg.",
 
     "btnModelEmpty": "No observation saved for this reason",
     "btnModelSave": "Save observation",

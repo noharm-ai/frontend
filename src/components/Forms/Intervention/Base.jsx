@@ -278,29 +278,29 @@ export default function Base({
               )}
             </Col>
           </Box>
-          <Box hasError={errors.savedDose && touched.savedDose}>
+          <Box hasError={errors.expendedDose && touched.expendedDose}>
             <Col xs={layout.label}>
               <Heading as="label" size="14px">
                 <Tooltip
-                  title={t("interventionForm.labelSavedDoseHint")}
+                  title={t("interventionForm.labelExpendedDoseHint")}
                   underline
                 >
-                  {t("interventionForm.labelSavedDose")}:
+                  {t("interventionForm.labelExpendedDose")}:
                 </Tooltip>
               </Heading>
             </Col>
             <Col xs={layout.input}>
               <InputNumber
-                id="savedDose"
-                value={values.savedDose}
+                id="expendedDose"
+                value={values.expendedDose}
                 style={{ width: "100%", maxWidth: "100px" }}
-                onChange={(value) => setFieldValue("savedDose", value)}
+                onChange={(value) => setFieldValue("expendedDose", value)}
               />
               <span style={{ marginLeft: "10px" }}>
                 {drugData.measureUnit ? drugData.measureUnit.value : ""}
               </span>
-              {errors.savedDose && touched.savedDose && (
-                <FieldError>{errors.savedDose}</FieldError>
+              {errors.expendedDose && touched.expendedDose && (
+                <FieldError>{errors.expendedDose}</FieldError>
               )}
             </Col>
           </Box>
