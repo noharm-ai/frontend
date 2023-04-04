@@ -17,6 +17,7 @@ import reportsReducer from "./reports";
 import memoryReducer from "./memory";
 import clinicalNotesReducer from "./clinicalNotes";
 import patientCentral from "./patientCentral";
+import drugMeasureUnits from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSlice";
 
 import adminFrequencyReducer from "./admin/frequency";
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
@@ -45,4 +46,5 @@ export default combineReducers({
   reports: reportsReducer,
   memory: memoryReducer,
   clinicalNotes: clinicalNotesReducer,
+  drugMeasureUnits: drugMeasureUnits,
 });

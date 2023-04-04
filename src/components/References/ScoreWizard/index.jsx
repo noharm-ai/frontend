@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Checkbox } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 import { toDataSource } from "utils";
 import Table from "components/Table";
@@ -10,6 +12,7 @@ import Steps from "components/Steps";
 import { InputNumber, Select } from "components/Inputs";
 import PopConfirm from "components/PopConfirm";
 import Button from "components/Button";
+import DrugMeasureUnitsForm from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsForm";
 
 import unitConversionColumns from "../UnitConversion/columns";
 import { StepContent, StepBtnContainer } from "./index.style";
@@ -33,6 +36,8 @@ export default function ScoreWizard({
 }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState({});
+  const [editDrugMeasureUnits, setEditDrugMeasureUnits] = useState(false);
+  const { t } = useTranslation();
   const isAdmin = security.isAdmin();
   const maxSteps = 3;
 
@@ -126,39 +131,55 @@ export default function ScoreWizard({
             os fatores de conversão para outras unidades. Lembre-se que a
             unidade padrão é definida pelo fator de conversão igual a 1.
           </p>
-          {drugUnits.list.length > 1 && (
-            <Row
-              gutter={24}
-              align="middle"
-              type="flex"
-              style={{ marginTop: "20px", marginBottom: "20px" }}
-            >
-              <>
-                <Col md={5} xxl={3}>
-                  <Heading as="label" size="14px" textAlign="right">
-                    Unidade padrão:
-                  </Heading>
-                </Col>
-                <Col md={24 - 5} xxl={24 - 3}>
-                  <Select
-                    placeholder="Selecione a unidade de medida padrão para este medicamento"
-                    value={drugData.idMeasureUnit}
-                    style={{ minWidth: "300px" }}
-                    onChange={(value) => onDefaultMeasureUnitChange(value)}
-                  >
-                    {drugUnits.list.map((unit) => (
-                      <Select.Option
-                        value={unit.idMeasureUnit}
-                        key={unit.idMeasureUnit}
-                      >
-                        {unit.description}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Col>
-              </>
-            </Row>
-          )}
+
+          <Row
+            gutter={24}
+            align="middle"
+            type="flex"
+            style={{ marginTop: "20px", marginBottom: "20px" }}
+          >
+            <>
+              <Col md={5} xxl={3}>
+                <Heading as="label" size="14px" textAlign="right">
+                  Unidade padrão:
+                </Heading>
+              </Col>
+              <Col md={24 - 5} xxl={24 - 3}>
+                <Select
+                  placeholder="Selecione a unidade de medida padrão para este medicamento"
+                  value={drugData.idMeasureUnit}
+                  style={{ minWidth: "300px" }}
+                  onChange={(value) => onDefaultMeasureUnitChange(value)}
+                  disabled={!drugUnits.list.length}
+                >
+                  {drugUnits.list.map((unit) => (
+                    <Select.Option
+                      value={unit.idMeasureUnit}
+                      key={unit.idMeasureUnit}
+                    >
+                      {unit.description}
+                    </Select.Option>
+                  ))}
+                </Select>
+                {isAdmin && (
+                  <Tooltip title={t("titles.addDrugMeasureUnit")}>
+                    <Button
+                      type="primary"
+                      onClick={() => setEditDrugMeasureUnits(true)}
+                      icon={<PlusOutlined />}
+                      style={{ marginLeft: "5px" }}
+                    ></Button>
+                  </Tooltip>
+                )}
+              </Col>
+            </>
+          </Row>
+
+          <DrugMeasureUnitsForm
+            visible={editDrugMeasureUnits}
+            setVisible={setEditDrugMeasureUnits}
+          />
+
           <Table
             columns={unitConversionColumns}
             pagination={false}

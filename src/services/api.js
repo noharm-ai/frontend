@@ -295,14 +295,9 @@ const getDrugUnits = (bearerToken, { id, ...params }) =>
     ...setHeaders(bearerToken),
   });
 
-const updateUnitCoefficient = (
-  bearerToken,
-  idDrug,
-  idMeasureUnit,
-  params = {}
-) =>
+const updateDrugUnits = (bearerToken, idSegment, idDrug, params = {}) =>
   instance.post(
-    `${endpoints.drugs}/${idDrug}/convertunit/${idMeasureUnit}`,
+    `${endpoints.drugs}/${idSegment}/${idDrug}/convertunit`,
     params,
     setHeaders(bearerToken)
   );
@@ -527,7 +522,7 @@ const api = {
   getDrugSummary,
   updateDrug,
   getDrugUnits,
-  updateUnitCoefficient,
+  updateDrugUnits,
   generateOutlier,
   generateOutlierFold,
   generateDrugOutlier,
