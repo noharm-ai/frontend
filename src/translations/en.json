@@ -94,6 +94,7 @@
     "labelCurrentDepartmentHint": "Filter patient`s current department",
     "labelDrug": "Drugs",
     "labelDrugPlaceholder": "Select drugs",
+    "labelFrequenciesPlaceholder": "Select frequencies",
     "labelAllDrugs": "All",
     "labelAllDrugsHint": "Must have all drugs in the prescription",
     "labelDischarged": "Only discharged patients",
@@ -289,7 +290,8 @@
     "add": "Add",
     "substitution": "Substitution",
     "suspension": "Suspension",
-    "factor": "Factor"
+    "factor": "Factor",
+    "frequencies": "Frequencies"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"

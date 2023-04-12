@@ -21,6 +21,10 @@ const {
   drugsUnitsFetchListError,
   drugsUnitsFetchListSuccess,
 
+  drugsFrequenciesFetchListStart,
+  drugsFrequenciesFetchListError,
+  drugsFrequenciesFetchListSuccess,
+
   drugsSaveSingleStart,
   drugsSaveSingleReset,
   drugsSaveSingleSuccess,
@@ -112,6 +116,26 @@ export const fetchDrugsUnitsListThunk =
     const list = data.data;
 
     dispatch(drugsUnitsFetchListSuccess(list));
+  };
+
+export const fetchDrugsFrequenciesListThunk =
+  (params = {}) =>
+  async (dispatch, getState) => {
+    dispatch(drugsFrequenciesFetchListStart());
+
+    const { access_token } = getState().auth.identify;
+    const { data, error } = await api
+      .getDrugFrequencies(access_token, params)
+      .catch(errorHandler);
+
+    if (!isEmpty(error)) {
+      dispatch(drugsFrequenciesFetchListError(error));
+      return;
+    }
+
+    const list = data.data;
+
+    dispatch(drugsFrequenciesFetchListSuccess(list));
   };
 
 export const saveUnitCoeffiecientThunk =

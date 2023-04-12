@@ -15,10 +15,12 @@ import Tag from "components/Tag";
 import { InfoIcon } from "components/Icon";
 import BackTop from "components/BackTop";
 import { Input } from "components/Inputs";
-import Filter from "./Filter";
+
 import { toDataSource } from "utils";
 
 import columnsTable, { expandedRowRender } from "./columns";
+import Filter from "../Prioritization/Filter";
+import { FilterCard } from "../Prioritization/index.style";
 
 const ScreeningTable = styled(Table)`
   .ant-table-title {
@@ -68,6 +70,7 @@ export default function ScreeningList({
   prescriptions,
   fetchSegmentsList,
   fetchPrescriptionsList,
+  fetchFrequencies,
   checkScreening,
   prioritizationType,
   security,
@@ -358,13 +361,15 @@ export default function ScreeningList({
 
   return (
     <>
-      <Filter
-        {...restProps}
-        prioritizationType={prioritizationType}
-        fetchPrescriptionsList={fetchPrescriptionsList}
-        isFetchingPrescription={isFetching}
-        hasPeriodLimit={!security.hasRole("nolimit")}
-      />
+      <FilterCard>
+        <Filter
+          {...restProps}
+          prioritizationType={prioritizationType}
+          fetchFrequencies={fetchFrequencies}
+          fetchPrescriptionsList={fetchPrescriptionsList}
+          isFetchingPrescription={isFetching}
+        />
+      </FilterCard>
       {!isFetching && info}
       <ScreeningTable
         title={title}

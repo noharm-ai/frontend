@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import isEmpty from "lodash.isempty";
 import moment from "moment";
 import "moment/locale/pt-br";
-import { subDays } from "date-fns";
 import debounce from "lodash.debounce";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -30,6 +29,7 @@ import "./index.css";
 export default function Filter({
   fetchPrescriptionsList,
   segments,
+  fetchFrequencies,
   fetchDepartmentsList,
   resetDepartmentsLst,
   updatePrescriptionListStatus,
@@ -37,9 +37,9 @@ export default function Filter({
   setScreeningListFilter,
   isFetchingPrescription,
   drugs,
+  frequencies,
   searchDrugs,
   prioritizationType,
-  hasPeriodLimit,
   fetchMemory,
   saveMemory,
   account,
@@ -74,6 +74,7 @@ export default function Filter({
         endDate: date[1] ? date[1].format("YYYY-MM-DD") : "all",
         insurance: filter.insurance,
         indicators: filter.indicators,
+        frequencies: filter.frequencies,
       };
       const mixedParams = { ...params, ...forceParams };
       const finalParams = {};
@@ -96,6 +97,7 @@ export default function Filter({
       filter.currentDepartment,
       filter.insurance,
       filter.indicators,
+      filter.frequencies,
       prioritizationType,
       date,
     ]
@@ -162,6 +164,10 @@ export default function Filter({
     setScreeningListFilter({ idDrug });
   };
 
+  const onFrequenciesChange = (id) => {
+    setScreeningListFilter({ frequencies: id });
+  };
+
   const onPendingChange = (pending) => {
     setScreeningListFilter({ pending: pending ? 1 : 0 });
   };
@@ -202,11 +208,13 @@ export default function Filter({
   }, []); // eslint-disable-line
 
   const disabledDate = (current) => {
-    if (hasPeriodLimit) {
-      return current < subDays(new Date(), 8) || current > new Date();
-    }
-
     return false;
+  };
+
+  const loadFrequencies = () => {
+    if (isEmpty(frequencies.list)) {
+      fetchFrequencies();
+    }
   };
 
   const search = () => {
@@ -224,6 +232,7 @@ export default function Filter({
       allDrugs: 0,
       discharged: 0,
       indicators: [],
+      frequencies: [],
     });
     setDate([moment(), null]);
   };
@@ -450,6 +459,36 @@ export default function Filter({
                   {t("screeningList.labelAllDrugs")}
                 </Tooltip>
               </Checkbox>
+            </Col>
+          </Row>
+
+          <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={19}>
+              <Box>
+                <Heading as="label" htmlFor="drugs-filter" size="14px">
+                  {t("labels.frequencies")}:
+                </Heading>
+                <Select
+                  id="frequencies-filter"
+                  mode="multiple"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  placeholder={t("screeningList.labelFrequenciesPlaceholder")}
+                  value={filter.frequencies}
+                  notFoundContent={frequencies.isFetching ? <LoadBox /> : null}
+                  loading={frequencies.isFetching}
+                  allowClear
+                  autoClearSearchValue={false}
+                  onClick={() => loadFrequencies()}
+                  onChange={onFrequenciesChange}
+                >
+                  {frequencies.list.map(({ id, description }) => (
+                    <Select.Option key={id} value={id}>
+                      {description} ({id})
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Box>
             </Col>
           </Row>
 

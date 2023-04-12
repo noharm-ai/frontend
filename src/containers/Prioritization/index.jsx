@@ -15,7 +15,10 @@ import {
   checkScreeningThunk,
   updatePrescriptionStatusThunk,
 } from "store/ducks/prescriptions/thunk";
-import { searchDrugsThunk } from "store/ducks/drugs/thunk";
+import {
+  searchDrugsThunk,
+  fetchDrugsFrequenciesListThunk,
+} from "store/ducks/drugs/thunk";
 import { memoryFetchThunk, memorySaveThunk } from "store/ducks/memory/thunk";
 
 import security from "services/security";
@@ -50,6 +53,7 @@ const mapStateToProps = ({
   siderCollapsed: app.sider.collapsed,
   filter: app.filter.screeningList,
   drugs: drugs.search,
+  frequencies: drugs.frequencies,
   prioritizationType: "cards",
   currentJourney: app.preferences.journey,
   security: security(user.account.roles),
@@ -72,6 +76,7 @@ const mapDispatchToProps = (dispatch) =>
       updatePrescriptionListStatus: updatePrescriptionStatusThunk,
       setScreeningListFilter: setScreeningListFilterThunk,
       searchDrugs: searchDrugsThunk,
+      fetchFrequencies: fetchDrugsFrequenciesListThunk,
       setJourney: setJourneyThunk,
       fetchMemory: memoryFetchThunk,
       saveMemory: memorySaveThunk,

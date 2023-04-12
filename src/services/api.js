@@ -295,6 +295,12 @@ const getDrugUnits = (bearerToken, { id, ...params }) =>
     ...setHeaders(bearerToken),
   });
 
+const getDrugFrequencies = (bearerToken, { ...params }) =>
+  instance.get(`${endpoints.drugs}/frequencies`, {
+    params,
+    ...setHeaders(bearerToken),
+  });
+
 const updateDrugUnits = (bearerToken, idSegment, idDrug, params = {}) =>
   instance.post(
     `${endpoints.drugs}/${idSegment}/${idDrug}/convertunit`,
@@ -520,6 +526,7 @@ const api = {
   getDrugs,
   getDrugsBySegment,
   getDrugSummary,
+  getDrugFrequencies,
   updateDrug,
   getDrugUnits,
   updateDrugUnits,

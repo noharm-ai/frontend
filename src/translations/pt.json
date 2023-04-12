@@ -94,6 +94,7 @@
     "labelCurrentDepartmentHint": "Considerar somente o setor atual do paciente",
     "labelDrug": "Medicamentos",
     "labelDrugPlaceholder": "Selecione os medicamentos",
+    "labelFrequenciesPlaceholder": "Selecione as frequências",
     "labelAllDrugs": "Todos",
     "labelAllDrugsHint": "Prescrição deve conter todos medicamentos selecionados",
     "labelDischarged": "Somente pacientes com alta",
@@ -289,7 +290,8 @@
     "add": "Adicionar",
     "substitution": "Substituição",
     "suspension": "Suspensão",
-    "factor": "Fator"
+    "factor": "Fator",
+    "frequencies": "Frequências"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"

@@ -31,6 +31,7 @@ export default function Prioritization({
   prescriptions,
   fetchSegmentsList,
   fetchPrescriptionsList,
+  fetchFrequencies,
   checkScreening,
   prioritizationType,
   security,
@@ -201,10 +202,10 @@ export default function Prioritization({
       <FilterCard>
         <Filter
           {...restProps}
+          fetchFrequencies={fetchFrequencies}
           prioritizationType={prioritizationType}
           fetchPrescriptionsList={fetchPrescriptionsList}
           isFetchingPrescription={isFetching}
-          hasPeriodLimit={!security.hasRole("nolimit")}
         />
       </FilterCard>
       <Spin spinning={isFetching || state.loading}>
