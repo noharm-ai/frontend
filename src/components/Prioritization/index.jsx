@@ -206,7 +206,6 @@ export default function Prioritization({
           prioritizationType={prioritizationType}
           fetchPrescriptionsList={fetchPrescriptionsList}
           isFetchingPrescription={isFetching}
-          hasPeriodLimit={!security.hasRole("nolimit")}
         />
       </FilterCard>
       <Spin spinning={isFetching || state.loading}>

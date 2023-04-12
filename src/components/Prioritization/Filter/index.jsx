@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import isEmpty from "lodash.isempty";
 import moment from "moment";
 import "moment/locale/pt-br";
-import { subDays } from "date-fns";
 import debounce from "lodash.debounce";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -41,7 +40,6 @@ export default function Filter({
   frequencies,
   searchDrugs,
   prioritizationType,
-  hasPeriodLimit,
   fetchMemory,
   saveMemory,
   account,
@@ -210,10 +208,6 @@ export default function Filter({
   }, []); // eslint-disable-line
 
   const disabledDate = (current) => {
-    if (hasPeriodLimit) {
-      return current < subDays(new Date(), 8) || current > new Date();
-    }
-
     return false;
   };
 

@@ -368,7 +368,6 @@ export default function ScreeningList({
           fetchFrequencies={fetchFrequencies}
           fetchPrescriptionsList={fetchPrescriptionsList}
           isFetchingPrescription={isFetching}
-          hasPeriodLimit={!security.hasRole("nolimit")}
         />
       </FilterCard>
       {!isFetching && info}
