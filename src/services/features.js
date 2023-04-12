@@ -25,17 +25,12 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.CONCILIATION);
   };
 
-  const hasPrescriptionExpirationTag = () => {
-    return hasFeature(Feature.PRESCRIPTION_EXPIRATION_TAG);
-  };
-
   return {
     hasFeature,
     hasMicromedex,
     hasPrimaryCare,
     hasNoHarmCare,
     hasConciliation,
-    hasPrescriptionExpirationTag,
   };
 };
 

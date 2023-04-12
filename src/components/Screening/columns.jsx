@@ -822,8 +822,7 @@ const tags = (bag) => ({
   render: (text, prescription) => {
     let expiresIn = null;
     let prescribedTo = null;
-    const hasExpireInfo =
-      prescription.cpoe && bag.featureService.hasPrescriptionExpirationTag();
+    const hasExpireInfo = prescription.cpoe;
     if (hasExpireInfo && !prescription.suspended) {
       if (bag.headers[prescription.cpoe].expire) {
         const expirationDate = parseISO(bag.headers[prescription.cpoe].expire);
