@@ -3,6 +3,7 @@ import { instance, setHeaders } from "services/api";
 const endpoints = {
   frequency: "/admin/frequency",
   interventionReason: "/admin/intervention-reason",
+  memory: "/admin/memory",
 };
 
 const getFrequencyList = (bearerToken, params = {}) =>
@@ -33,11 +34,25 @@ const upsertIntervReason = (bearerToken, params = {}) => {
   });
 };
 
+const getMemoryItems = (bearerToken, params = {}) =>
+  instance.get(endpoints.memory, {
+    params,
+    ...setHeaders(bearerToken),
+  });
+
+const updateMemoryItem = (bearerToken, params = {}) => {
+  return instance.put(`${endpoints.memory}`, params, {
+    ...setHeaders(bearerToken),
+  });
+};
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
   getIntervReasonList,
   upsertIntervReason,
+  getMemoryItems,
+  updateMemoryItem,
 };
 
 export default api;

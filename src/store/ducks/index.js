@@ -21,10 +21,12 @@ import drugMeasureUnits from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSl
 
 import adminFrequencyReducer from "./admin/frequency";
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
+import adminMemory from "features/admin/Memory/MemorySlice";
 
 const adminReducers = combineReducers({
   frequency: adminFrequencyReducer,
   interventionReason: adminInterventionReasonReducer,
+  memory: adminMemory,
 });
 
 export default combineReducers({
