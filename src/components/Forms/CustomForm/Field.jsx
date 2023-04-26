@@ -17,6 +17,7 @@ export default function Field({ question, values, setFieldValue }) {
         allowClear
         style={{ minWidth: "300px" }}
         mode={question.type === "options-multiple" ? "multiple" : "default"}
+        disabled={question.disabled}
       >
         {question.options.map((option) => (
           <Select.Option value={option} key={option}>
@@ -35,6 +36,7 @@ export default function Field({ question, values, setFieldValue }) {
         }}
         min={0}
         max={99999}
+        disabled={question.disabled}
         value={values[question.id]}
         onChange={(value) => setFieldValue(question.id, value)}
       />

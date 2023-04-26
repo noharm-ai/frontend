@@ -41,6 +41,7 @@ export default function SubstanceField({ question, setFieldValue }) {
       onChange={(value) => setFieldValue(question.id, value)}
       placeholder={loading ? "Carregando..." : "Selecione..."}
       mode="multiple"
+      disabled={question.disabled}
     >
       {options.map((option) => (
         <Select.Option value={option.name} key={option.name}>

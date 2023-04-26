@@ -34,6 +34,7 @@ import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
 
 import { InterventionView } from "./Intervention/columns";
+import DrugForm from "./Form";
 
 const TableLink = styled.a`
   color: rgba(0, 0, 0, 0.65);
@@ -612,6 +613,17 @@ export const expandedRowRender = (bag) => (record) => {
             </SimpleList>
           </Descriptions.Item>
         )}
+
+        <Descriptions.Item label="Formulário" span={3}>
+          <div className="limit-width">
+            <DrugForm
+              savePrescriptionDrugForm={bag.savePrescriptionDrugForm}
+              idPrescriptionDrug={record.idPrescriptionDrug}
+              template={bag.formTemplate}
+              values={record.formValues}
+            />
+          </div>
+        </Descriptions.Item>
       </Descriptions>
     </NestedTableContainer>
   );

@@ -64,9 +64,12 @@ export default function CustomForm({
           <Base template={template} startClosed={startClosed} />
 
           <div className="actions">
-            <Button onClick={() => onCancel()} loading={isSaving}>
-              Cancelar
-            </Button>
+            {onCancel && (
+              <Button onClick={() => onCancel()} loading={isSaving}>
+                Cancelar
+              </Button>
+            )}
+
             <Button
               onClick={() => handleSubmit()}
               type="primary"

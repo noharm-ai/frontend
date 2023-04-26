@@ -50,6 +50,25 @@ export const savePrescriptionDrugNoteThunk =
     });
   };
 
+export const savePrescriptionDrugFormThunk =
+  (idPrescriptionDrug, params = {}) =>
+  (dispatch, getState) => {
+    return new Promise(async (resolve, reject) => {
+      const { access_token } = getState().auth.identify;
+
+      const { error } = await api
+        .updatePrescriptionDrugNote(access_token, idPrescriptionDrug, params)
+        .catch(errorHandler);
+
+      if (!isEmpty(error)) {
+        reject(error);
+        return;
+      }
+
+      resolve();
+    });
+  };
+
 const prepareParams = (params) => {
   const p = { ...params };
 

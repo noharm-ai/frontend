@@ -85,10 +85,14 @@ const Table = styled(AntTable)`
   }
 
   .ant-table-thead
-    > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+    > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(
+      .ant-table-row-selected
+    )
     > td,
   .ant-table-tbody
-    > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+    > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(
+      .ant-table-row-selected
+    )
     > td,
   .ant-table-thead
     > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
@@ -286,6 +290,10 @@ export const ExpandableTable = styled(Table)`
   .ant-table-row-expand-icon-cell {
     width: 30px;
     min-width: 30px;
+  }
+
+  .limit-width {
+    max-width: 700px;
   }
 `;
 
