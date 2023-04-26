@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import isEmpty from "lodash.isempty";
 import { format, parseISO } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -105,6 +105,100 @@ export default function PrescriptionDrugList({
 }) {
   const [visible, setVisibility] = useState(false);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const getNextSibling = (elm) => {
+      if (!elm.nextElementSibling) {
+        return elm;
+      }
+
+      if (elm.nextElementSibling.classList.contains("ant-table-expanded-row")) {
+        return getNextSibling(elm.nextElementSibling);
+      }
+
+      return elm.nextElementSibling;
+    };
+
+    const getPreviousSibling = (elm) => {
+      if (!elm.previousElementSibling) {
+        return elm;
+      }
+
+      if (
+        elm.previousElementSibling.classList.contains("ant-table-expanded-row")
+      ) {
+        return getPreviousSibling(elm.previousElementSibling);
+      }
+
+      return elm.previousElementSibling;
+    };
+
+    const handleArrowNav = (e) => {
+      const keyCode = e.keyCode || e.which;
+      const actionKey = {
+        left: 37,
+        up: 38,
+        right: 39,
+        down: 40,
+        space: 32,
+        enter: 13,
+      };
+
+      if (e.ctrlKey) {
+        let activeRow = document.querySelectorAll(
+          ".ant-table-tbody tr.highlight"
+        )[0];
+        if (!activeRow) {
+          activeRow = document.querySelectorAll(".ant-table-tbody tr")[0];
+          activeRow.classList.add("highlight");
+        }
+
+        switch (keyCode) {
+          case actionKey.up:
+            activeRow.classList.remove("highlight");
+            const previousElm = getPreviousSibling(activeRow);
+            previousElm.classList.add("highlight");
+            previousElm.scrollIntoView({ behavior: "smooth" });
+
+            break;
+          case actionKey.down:
+            activeRow.classList.remove("highlight");
+            const nextElm = getNextSibling(activeRow);
+            nextElm.classList.add("highlight");
+            nextElm.scrollIntoView({ behavior: "smooth" });
+
+            break;
+          case actionKey.space:
+            activeRow.querySelector(".ant-table-row-expand-icon").click();
+
+            setTimeout(() => {
+              console.log(
+                "nextelm",
+                activeRow.nextElementSibling.querySelector(
+                  "input:not(:disabled)"
+                )
+              );
+              activeRow.nextElementSibling
+                .querySelector("input:not(:disabled)")
+                ?.focus();
+            }, 500);
+
+            break;
+          case actionKey.enter:
+            activeRow.querySelector(".gtm-bt-detail").click();
+
+            break;
+          default:
+            console.debug("keyCode", keyCode);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleArrowNav);
+    return () => {
+      window.removeEventListener("keydown", handleArrowNav);
+    };
+  }, []);
 
   if (isFetching) {
     return (

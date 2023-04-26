@@ -449,6 +449,18 @@ export const expandedRowRender = (bag) => (record) => {
             {showAlerts(record.alerts)}
           </Descriptions.Item>
         )}
+        {bag.formTemplate && (
+          <Descriptions.Item label={bag.formTemplate.name} span={3}>
+            <div className="limit-width">
+              <DrugForm
+                savePrescriptionDrugForm={bag.savePrescriptionDrugForm}
+                idPrescriptionDrug={record.idPrescriptionDrug}
+                template={bag.formTemplate}
+                values={record.formValues}
+              />
+            </div>
+          </Descriptions.Item>
+        )}
         {record.drugInfoLink && bag.featureService.hasMicromedex() && (
           <Descriptions.Item
             label={bag.t("tableHeader.clinicalInfo") + ":"}
@@ -613,17 +625,6 @@ export const expandedRowRender = (bag) => (record) => {
             </SimpleList>
           </Descriptions.Item>
         )}
-
-        <Descriptions.Item label="Formulário" span={3}>
-          <div className="limit-width">
-            <DrugForm
-              savePrescriptionDrugForm={bag.savePrescriptionDrugForm}
-              idPrescriptionDrug={record.idPrescriptionDrug}
-              template={bag.formTemplate}
-              values={record.formValues}
-            />
-          </div>
-        </Descriptions.Item>
       </Descriptions>
     </NestedTableContainer>
   );
