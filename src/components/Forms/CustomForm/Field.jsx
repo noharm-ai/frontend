@@ -43,6 +43,22 @@ export default function Field({ question, values, setFieldValue }) {
     );
   }
 
+  if (question.type === "number-no-key-event") {
+    return (
+      <InputNumber
+        style={{
+          width: 120,
+        }}
+        min={0}
+        max={99999}
+        disabled={question.disabled}
+        value={values[question.id]}
+        onChange={(value) => setFieldValue(question.id, value)}
+        keyboard={false}
+      />
+    );
+  }
+
   if (question.type === "text") {
     return (
       <EditorBox>

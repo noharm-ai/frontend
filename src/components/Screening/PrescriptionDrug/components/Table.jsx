@@ -65,7 +65,7 @@ function Table({
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button
           type="button"
-          className={`ant-table-row-expand-icon ${
+          className={`expand-all ant-table-row-expand-icon ${
             expand ? "ant-table-row-expand-icon-collapsed" : ""
           }`}
           onClick={toggleExpansion}
