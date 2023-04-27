@@ -12,6 +12,7 @@ import {
   UsergroupAddOutlined,
   ExperimentOutlined,
   HourglassOutlined,
+  SaveOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -93,6 +94,13 @@ const navigation = [
         text: "menu.frequency",
         icon: HourglassOutlined,
         id: "gtm-lnk-frequencias",
+        role: ["admin"],
+      },
+      {
+        key: "/admin/memoria",
+        text: "menu.memory",
+        icon: SaveOutlined,
+        id: "gtm-lnk-memory",
         role: ["admin"],
       },
       {

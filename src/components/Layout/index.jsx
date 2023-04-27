@@ -19,17 +19,10 @@ import { Wrapper as Main, Brand, LogOut, UserName } from "./Layout.style";
 const siderWidth = 250;
 const { Sider, Header, Content, Footer } = Main;
 
-const { octadesk } = window;
-
 const setTitle = ({ user }) => {
   document.title = `${process.env.REACT_APP_SITE_TITLE} - ${user.account.schema}`;
   appInfo.apiKey = user.account.apiKey;
-  if (octadesk && octadesk.chat) {
-    octadesk.chat.login({
-      name: user.account.userName,
-      email: user.account.email,
-    });
-  }
+
   return user.account.userName;
 };
 
@@ -40,7 +33,11 @@ const Me = ({ user, access_token, t, notification, setNotification }) => {
 
   const openHelp = () => {
     try {
-      octadesk.chat.toggle();
+      window.octadesk.chat.login({
+        name: user.account.userName,
+        email: user.account.email,
+      });
+      window.octadesk.chat.toggle();
     } catch (ex) {
       console.error("octadesk error", ex);
       window.open(`mailto:${process.env.REACT_APP_SUPPORT_EMAIL}`);
@@ -84,7 +81,7 @@ const Me = ({ user, access_token, t, notification, setNotification }) => {
           {t("layout.help")}
         </LogOut>
         <LogOut
-          onClick={(e) => octadesk.chat.hideApp()}
+          onClick={(e) => window.octadesk.chat.hideApp()}
           href="/logout"
           id="gtm-lnk-sair"
         >

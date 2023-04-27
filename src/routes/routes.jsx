@@ -25,6 +25,7 @@ import Prioritization from "pages/Prioritization";
 
 import AdminFrequency from "pages/Admin/Frequency";
 import AdminInterventionReason from "pages/Admin/InterventionReason";
+import AdminMemory from "pages/Admin/Memory";
 
 const routes = [
   {
@@ -198,6 +199,11 @@ const routes = [
     exact: true,
     path: "/admin/motivo-intervencao",
     element: <WithAuth component={AdminInterventionReason} />,
+  },
+  {
+    exact: true,
+    path: "/admin/memoria",
+    element: <WithAuth component={AdminMemory} />,
   },
 ];
 
