@@ -28,6 +28,33 @@ export default function Field({ question, values, setFieldValue }) {
     );
   }
 
+  if (
+    question.type === "options-key-value" ||
+    question.type === "options-key-value-multiple"
+  ) {
+    return (
+      <Select
+        placeholder="Selecione..."
+        onChange={(value) => setFieldValue(question.id, value)}
+        value={values[question.id]}
+        allowClear
+        style={{ minWidth: "300px" }}
+        mode={
+          question.type === "options-key-value-multiple"
+            ? "multiple"
+            : "default"
+        }
+        disabled={question.disabled}
+      >
+        {question.options.map((option) => (
+          <Select.Option value={option.id} key={option.id}>
+            {option.value}
+          </Select.Option>
+        ))}
+      </Select>
+    );
+  }
+
   if (question.type === "number") {
     return (
       <InputNumber

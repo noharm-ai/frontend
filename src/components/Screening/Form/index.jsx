@@ -17,7 +17,7 @@ export default function DrugForm({
     setLoading(true);
 
     savePrescriptionDrugForm(idPrescriptionDrug, {
-      form: data.values,
+      form: { ...data.values, updated: true },
     })
       .then(() => {
         setLoading(false);
