@@ -76,18 +76,25 @@
     <script>
       (function (o, c, t, a, d, e, s, k) {
         o.octadesk = o.octadesk || {};
-        s = c.getElementsByTagName("body")[0];
-        k = c.createElement("script");
-        k.async = 1;
-        k.src = t + "/" + a + "?showButton=" + d + "&openOnMessage=" + e;
-        s.appendChild(k);
+        o.octadesk.chatOptions = {
+          subDomain: a,
+          showButton: d,
+          openOnMessage: e,
+          hide: s,
+        };
+        var bd = c.getElementsByTagName("body")[0];
+        var sc = c.createElement("script");
+        sc.async = 1;
+        sc.src = t;
+        bd.appendChild(sc);
       })(
         window,
         document,
-        "https://chat.octadesk.services/api/widget",
+        "https://cdn.octadesk.com/embed.js",
         "noharm",
-        false,
-        true
+        "false",
+        "true",
+        "false"
       );
     </script>
     <style>
