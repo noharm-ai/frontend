@@ -157,7 +157,7 @@ export default function Screening({
             ) {
               activeRow.nextElementSibling
                 .querySelector("input:not(:disabled)")
-                ?.focus();
+                ?.select();
             } else {
               expandRowClick(activeRow);
             }
@@ -205,7 +205,7 @@ export default function Screening({
     setTimeout(() => {
       activeRow.nextElementSibling
         .querySelector("input:not(:disabled)")
-        ?.focus();
+        ?.select();
     }, 100);
   };
 
