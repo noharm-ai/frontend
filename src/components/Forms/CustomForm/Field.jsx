@@ -8,6 +8,12 @@ import SubstanceField from "./Fields/SubstanceField";
 import { EditorBox } from "../Form.style";
 
 export default function Field({ question, values, setFieldValue }) {
+  const keydownEvent = (e) => {
+    if (e.ctrlKey) {
+      e.target.blur();
+    }
+  };
+
   if (question.type === "options" || question.type === "options-multiple") {
     return (
       <Select
@@ -82,6 +88,7 @@ export default function Field({ question, values, setFieldValue }) {
         value={values[question.id]}
         onChange={(value) => setFieldValue(question.id, value)}
         keyboard={false}
+        onKeyDown={keydownEvent}
       />
     );
   }
