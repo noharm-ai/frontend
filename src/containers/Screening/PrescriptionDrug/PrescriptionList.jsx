@@ -13,7 +13,10 @@ import {
   checkInterventionThunk,
   fetchPrescriptionDrugPeriodThunk,
 } from "store/ducks/prescriptions/thunk";
-import { selectPrescriptionDrugThunk } from "store/ducks/prescriptionDrugs/thunk";
+import {
+  selectPrescriptionDrugThunk,
+  savePrescriptionDrugFormThunk,
+} from "store/ducks/prescriptionDrugs/thunk";
 
 import security from "services/security";
 import FeatureService from "services/features";
@@ -35,6 +38,7 @@ const mapStateToProps = ({ prescriptions, auth, user }) => ({
   idSegment: prescriptions.single.data.idSegment,
   idHospital: prescriptions.single.data.idHospital,
   admissionNumber: prescriptions.single.data.admissionNumber,
+  formTemplate: prescriptions.single.data.formTemplate,
   uniqueDrugs: prescriptions.single.data.uniqueDrugs,
   isCheckingPrescription: prescriptions.single.check.isChecking,
   security: security(user.account.roles),
@@ -52,6 +56,7 @@ const mapDispatchToProps = (dispatch) =>
       updateInterventionData: updateInterventionDataThunk,
       saveInterventionStatus: checkInterventionThunk,
       selectPrescriptionDrug: selectPrescriptionDrugThunk,
+      savePrescriptionDrugForm: savePrescriptionDrugFormThunk,
     },
     dispatch
   );

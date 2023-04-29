@@ -35,7 +35,7 @@ export default function MemoryField({ question, values, setFieldValue }) {
       style={{ minWidth: "300px" }}
       mode={question.type === "memory-multiple" ? "multiple" : "default"}
       loading={loading}
-      disabled={loading}
+      disabled={loading || question.disabled}
     >
       {options.map((option) => (
         <Select.Option value={option} key={option}>

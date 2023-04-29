@@ -90,9 +90,11 @@ export default function PrescriptionDrugList({
   admissionNumber,
   checkPrescriptionDrug,
   savePrescriptionDrugStatus,
+  savePrescriptionDrugForm,
   idPrescription,
   idSegment,
   idHospital,
+  formTemplate,
   select,
   selectPrescriptionDrug,
   uniqueDrugs,
@@ -135,6 +137,8 @@ export default function PrescriptionDrugList({
     security,
     t,
     featureService,
+    savePrescriptionDrugForm,
+    formTemplate,
   };
 
   const table = (ds, showHeader) => (

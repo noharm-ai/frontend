@@ -60,6 +60,168 @@ export default function Screening({
     }
   }, [error, t]);
 
+  useEffect(() => {
+    const getNextSibling = (elm) => {
+      const allRows = document.querySelectorAll(
+        ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row):not(.divider-row)"
+      );
+
+      let currentIndex = -1;
+      allRows.forEach((i, index) => {
+        if (
+          i.getAttribute("data-row-key") === elm.getAttribute("data-row-key")
+        ) {
+          currentIndex = index;
+        }
+      });
+
+      if (currentIndex !== -1) {
+        return allRows[currentIndex + 1] || elm;
+      }
+
+      return elm;
+    };
+
+    const getPreviousSibling = (elm) => {
+      const allRows = document.querySelectorAll(
+        ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row):not(.divider-row)"
+      );
+
+      let currentIndex = -1;
+      allRows.forEach((i, index) => {
+        if (
+          i.getAttribute("data-row-key") === elm.getAttribute("data-row-key")
+        ) {
+          currentIndex = index;
+        }
+      });
+
+      if (currentIndex !== -1) {
+        return allRows[currentIndex - 1] || elm;
+      }
+
+      return elm;
+    };
+
+    const handleArrowNav = (e) => {
+      const keyCode = e.keyCode || e.which;
+      const actionKey = {
+        left: 37,
+        up: 38,
+        right: 39,
+        down: 40,
+        space: 32,
+        enter: 13,
+        plus: 107,
+        backspace: 8,
+      };
+
+      if (e.ctrlKey) {
+        let activeRow = document.querySelectorAll(
+          ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr.highlight"
+        )[0];
+        if (!activeRow) {
+          activeRow = document.querySelectorAll(
+            ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr"
+          )[0];
+          activeRow.classList.add("highlight");
+
+          return;
+        }
+
+        const expandBtn = activeRow.querySelector(".ant-table-row-expand-icon");
+
+        switch (keyCode) {
+          case actionKey.up:
+            activeRow.classList.remove("highlight");
+            const previousElm = getPreviousSibling(activeRow);
+            previousElm.classList.add("highlight");
+            previousElm.scrollIntoView({ behavior: "smooth" });
+            previousElm
+              .querySelector(".ant-table-row-expand-icon")
+              ?.focus({ preventScroll: true });
+
+            break;
+          case actionKey.down:
+            activeRow.classList.remove("highlight");
+            const nextElm = getNextSibling(activeRow);
+            nextElm.classList.add("highlight");
+            nextElm.scrollIntoView({ behavior: "smooth" });
+            nextElm
+              .querySelector(".ant-table-row-expand-icon")
+              ?.focus({ preventScroll: true });
+
+            break;
+          case actionKey.right:
+            if (
+              expandBtn.classList.contains("ant-table-row-expand-icon-expanded")
+            ) {
+              activeRow.nextElementSibling
+                .querySelector("input:not(:disabled)")
+                ?.select();
+            } else {
+              expandRowClick(activeRow);
+            }
+
+            break;
+          case actionKey.left:
+            if (
+              expandBtn.classList.contains("ant-table-row-expand-icon-expanded")
+            ) {
+              expandBtn.click();
+            }
+
+            break;
+          case actionKey.backspace:
+            activeRow.classList.remove("highlight");
+            const first = document.querySelectorAll(
+              ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr"
+            )[0];
+            first.classList.add("highlight");
+            first.scrollIntoView({ behavior: "smooth" });
+            first
+              .querySelector(".ant-table-row-expand-icon")
+              ?.focus({ preventScroll: true });
+
+            break;
+          case actionKey.enter:
+            document
+              .querySelectorAll(
+                ".ant-collapse-item:not(.ant-collapse-item-active)"
+              )
+              .forEach((p) => p.children[0].click());
+
+            setTimeout(() => {
+              document
+                .querySelectorAll(
+                  ".expand-all.ant-table-row-expand-icon-collapsed"
+                )
+                .forEach((p) => p.click());
+            }, 100);
+
+            break;
+          default:
+            console.debug("keyCode", keyCode);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleArrowNav);
+    return () => {
+      window.removeEventListener("keydown", handleArrowNav);
+    };
+  }, []);
+
+  const expandRowClick = (activeRow) => {
+    activeRow.querySelector(".ant-table-row-expand-icon").click();
+
+    setTimeout(() => {
+      activeRow.nextElementSibling
+        .querySelector("input:not(:disabled)")
+        ?.select();
+    }, 100);
+  };
+
   const listCount = {
     prescriptions: prescriptionCount,
     solutions: solutionCount,
