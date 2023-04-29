@@ -63,7 +63,7 @@ export default function Screening({
   useEffect(() => {
     const getNextSibling = (elm) => {
       const allRows = document.querySelectorAll(
-        ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row)"
+        ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row):not(.divider-row)"
       );
 
       let currentIndex = -1;
@@ -84,7 +84,7 @@ export default function Screening({
 
     const getPreviousSibling = (elm) => {
       const allRows = document.querySelectorAll(
-        ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row)"
+        ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row):not(.divider-row)"
       );
 
       let currentIndex = -1;
@@ -113,6 +113,7 @@ export default function Screening({
         space: 32,
         enter: 13,
         plus: 107,
+        backspace: 8,
       };
 
       if (e.ctrlKey) {
@@ -169,6 +170,18 @@ export default function Screening({
             ) {
               expandBtn.click();
             }
+
+            break;
+          case actionKey.backspace:
+            activeRow.classList.remove("highlight");
+            const first = document.querySelectorAll(
+              ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr"
+            )[0];
+            first.classList.add("highlight");
+            first.scrollIntoView({ behavior: "smooth" });
+            first
+              .querySelector(".ant-table-row-expand-icon")
+              ?.focus({ preventScroll: true });
 
             break;
           case actionKey.enter:
