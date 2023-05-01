@@ -10,4 +10,8 @@ export const Wrapper = styled(Menu)`
   .ant-menu-submenu-selected {
     color: #70bdc3 !important;
   }
+
+  .ant-menu-title-content {
+    font-weight: 500;
+  }
 `;

@@ -15,6 +15,7 @@ import Menu from "./Menu";
 import InfoAlert from "./InfoAlert";
 import SearchPrescription from "./SearchPrescription";
 import { Wrapper as Main, Brand, LogOut, UserName } from "./Layout.style";
+import "styles/base.css";
 
 const siderWidth = 250;
 const { Sider, Header, Content, Footer } = Main;

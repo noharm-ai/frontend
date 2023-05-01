@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
@@ -19,7 +19,6 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 
-import Icon from "components/Icon";
 import Feature from "models/Feature";
 import { Wrapper as Navigator } from "./Menu.style";
 
@@ -28,82 +27,43 @@ export default function Menu({ security, featureService }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const ItemTitle = ({ icon, text }) => {
-    if (icon.render) {
-      const CustomIcon = icon;
-
-      return (
-        <>
-          {icon && <CustomIcon style={{ fontSize: 14 }} />}
-          <span>{text}</span>
-        </>
-      );
-    }
-
-    return (
-      <>
-        {icon && <Icon type={icon} style={{ fontSize: 14 }} />}
-        <span>{text}</span>
-      </>
-    );
-  };
-
-  const renderItem = ({ text, key, icon, id, role, notRole, feature }, t) => {
-    if (role && !security.hasAnyRole(role)) {
-      return;
-    }
-
-    if (notRole && security.hasAnyRole(notRole)) {
-      return;
-    }
-
-    if (feature && !featureService.hasFeature(feature)) {
-      return;
-    }
-
-    return (
-      <Navigator.Item key={key.pathname ? key.pathname : key}>
-        {key.pathname ? (
-          <a
-            href={key.pathname}
-            className="nav-text"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            <ItemTitle icon={icon} text={t(text)} />
-          </a>
-        ) : (
-          <Link className="nav-text" id={id} to={key} target="_blank">
-            <ItemTitle icon={icon} text={t(text)} />
-          </Link>
-        )}
-      </Navigator.Item>
-    );
-  };
-
-  const renderMenu = (navigation, t) => {
-    return navigation.map((item) => {
-      if (item.children) {
-        return (
-          <Navigator.SubMenu
-            key={item.key}
-            title={<ItemTitle icon={item.icon} text={t(item.text)} />}
-          >
-            <>{item.children.map((item) => renderItem(item, t))}</>
-          </Navigator.SubMenu>
-        );
-      }
-
-      return renderItem(item, t);
-    });
-  };
-
   const linkTo = (item) => {
     if (item.key.indexOf("https") !== -1) {
       window.open(item.key, "_blank");
     } else {
       navigate(item.key);
     }
+  };
+
+  const hasPermission = (item) => {
+    if (item.role && !security.hasAnyRole(item.role)) {
+      return;
+    }
+
+    if (item.notrole && security.hasAnyRole(item.notrole)) {
+      return;
+    }
+
+    if (item.feature && !featureService.hasFeature(item.feature)) {
+      return;
+    }
+
+    return item;
+  };
+
+  const getItems = (items) => {
+    return items.map((i) => {
+      if (hasPermission(i)) {
+        if (i.children) {
+          const children = [...i.children].map((c) => hasPermission(c));
+          i.children = children;
+        }
+
+        return i;
+      }
+
+      return null;
+    });
   };
 
   const items = [
@@ -118,7 +78,7 @@ export default function Menu({ security, featureService }) {
           label: t("menu.prioritization-prescription"),
           icon: <FileTextOutlined />,
           id: "gtm-lnk-priorizacao-prescricao",
-          //notRole: ["cpoe"],
+          notrole: ["cpoe"],
         },
         {
           key: "/priorizacao/pacientes/cards",
@@ -137,7 +97,7 @@ export default function Menu({ security, featureService }) {
           label: t("menu.prioritization-conciliation"),
           icon: <ReconciliationOutlined />,
           id: "gtm-lnk-priorizacao-conciliacao",
-          //feature: Feature.CONCILIATION,
+          feature: Feature.CONCILIATION,
         },
       ],
     },
@@ -234,7 +194,7 @@ export default function Menu({ security, featureService }) {
       mode="vertical"
       theme="dark"
       selectedKeys={[location.pathname]}
-      items={items}
+      items={getItems(items)}
       onClick={linkTo}
     ></Navigator>
   );
