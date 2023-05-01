@@ -293,7 +293,7 @@ export default function Filter({
               disabledDate={disabledDate}
               value={date}
               onChange={onDateChange}
-              dropdownClassName="noArrow"
+              popupClassName="noArrow"
               allowClear={false}
               language={i18n.language}
             />
