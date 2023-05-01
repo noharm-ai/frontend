@@ -23,7 +23,7 @@ const INITIAL_STATE = {
     apiKey: process.env.REACT_APP_API_KEY || null,
   },
   sider: {
-    collapsed: false,
+    collapsed: true,
   },
   filter: {
     screeningList: {

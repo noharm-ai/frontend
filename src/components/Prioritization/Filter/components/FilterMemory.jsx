@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { FilterOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import Dropdown from "components/Dropdown";
-import Menu from "components/Menu";
 import Button from "components/Button";
 import {
   FILTER_PRIVATE_STORE_ID,
@@ -71,6 +70,8 @@ export default function FilterMemory({
   };
 
   const removeFilterAction = (index, type) => {
+    console.log("remove", index, type);
+
     const storeElement =
       type === "public" ? publicFilters[0] : privateFilters[0];
     const filters = [...storeElement.value];
@@ -107,82 +108,102 @@ export default function FilterMemory({
       isEmpty(list[0].value) ||
       isEmpty(list[0].value.filter(filterActive))
     ) {
-      return (
-        <Menu.SubMenu title={title} key={`nofilter_${type}`}>
-          <Menu.Item key={`nofilteritem_${type}`}>
-            {t("screeningList.noFilter")}
-            <br /> {t("screeningList.noFilterHint")}
-          </Menu.Item>
-        </Menu.SubMenu>
-      );
+      return {
+        key: `filter_${type}`,
+        label: title,
+        children: [
+          {
+            key: `filter_empty_${type}`,
+            label: t("screeningList.noFilter"),
+          },
+        ],
+      };
     }
 
-    return (
-      <Menu.SubMenu title={title} key={`sub_${type}`}>
-        {list[0].value.filter(filterActive).map((item) => (
-          <Menu.Item
-            key={`${type}_${item.name}`}
-            onClick={() => loadFilterAction(item.data)}
-            className={`gtm-btn-menu-filter-load-${type}`}
-          >
-            {item.name}
-          </Menu.Item>
-        ))}
-      </Menu.SubMenu>
-    );
+    return {
+      key: `filter_${type}`,
+      label: title,
+      children: list[0].value.filter(filterActive).map((item, index) => ({
+        key: `${type}_${item.name}_${index}`,
+        label: item.name,
+        id: `gtm-btn-menu-filter-load-${type}`,
+        data: item.data,
+      })),
+    };
   };
 
   const removeFilterSubmenu = (list, type) => {
     const title = t(`screeningList.${type}FilterRemove`);
+    const children = [];
 
     if (list && list.length && !isEmpty(list[0].value)) {
-      return (
-        <Menu.SubMenu title={title} key={`remove_${type}`}>
-          {list[0].value.map((item, index) => (
-            <>
-              {(item.active || !item.hasOwnProperty("active")) && (
-                <Menu.Item
-                  key={`remove_${type}_${item.name}`}
-                  onClick={() => removeFilterAction(index, type)}
-                  style={{ color: "#ff4d4f" }}
-                  className={`gtm-btn-menu-filter-remove-${type}`}
-                >
-                  <DeleteOutlined style={{ fontSize: 16, color: "#ff4d4f" }} />
-                  {item.name}
-                </Menu.Item>
-              )}
-            </>
-          ))}
-        </Menu.SubMenu>
-      );
+      list[0].value.forEach((item, index) => {
+        if (filterActive(item)) {
+          children.push({
+            key: `remove_${type}_${item.name}_${index}`,
+            label: item.name,
+            icon: <DeleteOutlined style={{ fontSize: 16 }} />,
+            id: `gtm-btn-menu-filter-remove-${type}`,
+            danger: true,
+            index: index,
+            filtertype: type,
+          });
+        }
+      });
+
+      return {
+        key: `remove_${type}`,
+        label: title,
+        children,
+      };
     }
 
     return null;
   };
 
-  const filterMenu = () => (
-    <Menu forceSubMenuRender={true}>
-      <Menu.Item
-        key="save-filter"
-        className="gtm-btn-menu-filter-save"
-        onClick={() => setSaveFilterOpen(true)}
-      >
-        {t("screeningList.saveFilter")}
-      </Menu.Item>
+  const filterMenu = () => {
+    const items = [
+      {
+        key: "save",
+        label: t("screeningList.saveFilter"),
+        id: "gtm-btn-menu-filter-save",
+      },
+    ];
 
-      {filterSubmenu(privateFilters, "private")}
-      {filterSubmenu(publicFilters, "public")}
+    items.push(filterSubmenu(privateFilters, "private"));
+    items.push(filterSubmenu(publicFilters, "public"));
 
-      <Menu.Divider />
+    items.push({ type: "divider" });
 
-      {removeFilterSubmenu(privateFilters, "private")}
-      {removeFilterSubmenu(publicFilters, "public")}
-    </Menu>
-  );
+    items.push(removeFilterSubmenu(privateFilters, "private"));
+    items.push(removeFilterSubmenu(publicFilters, "public"));
+
+    return items;
+  };
+
+  const handleMenu = (item) => {
+    switch (item.key) {
+      case "save":
+        setSaveFilterOpen(true);
+
+        break;
+      default:
+        if (item?.item?.props?.data) {
+          loadFilterAction(item?.item?.props?.data);
+        }
+
+        if (item?.item?.props?.filtertype) {
+          removeFilterAction(
+            item?.item?.props?.index,
+            item?.item?.props?.filtertype
+          );
+        }
+    }
+  };
 
   return (
     <>
-      <Dropdown overlay={filterMenu()}>
+      <Dropdown menu={{ items: filterMenu(), onClick: handleMenu }}>
         <Button
           className="gtm-btn-filter"
           shape="circle"
