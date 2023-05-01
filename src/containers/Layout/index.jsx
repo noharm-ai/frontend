@@ -7,11 +7,8 @@ import Layout from "components/Layout";
 import security from "services/security";
 import FeatureService from "services/features";
 
-import navigation from "./navigation";
-
 const mapStateToProps = ({ auth, user, app }) => ({
   user,
-  navigation,
   app,
   security: security(user.account.roles),
   featureService: FeatureService(user.account.features),

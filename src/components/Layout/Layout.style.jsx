@@ -21,6 +21,7 @@ export const Brand = styled(LogoSVG)`
   max-width: 164px;
   width: 100%;
   // filter: hue-rotate(150deg); // outubro rosa
+  pointer-events: none;
 `;
 
 export const UserName = styled.p`
