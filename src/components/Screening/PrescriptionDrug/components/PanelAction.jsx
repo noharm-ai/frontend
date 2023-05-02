@@ -11,7 +11,6 @@ import {
 } from "@ant-design/icons";
 
 import Badge from "components/Badge";
-import Menu from "components/Menu";
 import Dropdown from "components/Dropdown";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
@@ -116,6 +115,10 @@ const PanelAction = ({
 
   const handleMenuClick = ({ key, domEvent }) => {
     switch (key) {
+      case "more":
+        window.open(`/prescricao/${id}`);
+        break;
+
       case "check":
         checkScreening(id, "s");
         break;
@@ -154,46 +157,56 @@ const PanelAction = ({
   };
 
   const prescriptionOptions = (header) => {
-    return (
-      <Menu onClick={handleMenuClick}>
-        <Menu.Item className="gtm-btn-more-open" key="more">
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={`/prescricao/${id}`}
-            style={{ textDecoration: "none" }}
-          >
-            <LinkOutlined style={{ marginRight: "5px" }} />{" "}
-            {t("labels.openPrescription")}
-          </a>
-        </Menu.Item>
-        <Menu.Divider />
-        {header.status !== "s" && (
-          <Menu.Item key="check" className="gtm-btn-more-check">
-            <CheckOutlined style={{ marginRight: "5px" }} />
-            {t("labels.checkPrescription")}
-          </Menu.Item>
-        )}
-        {header.status === "s" && (
-          <Menu.Item key="undo" className="gtm-btn-more-undo">
-            <RollbackOutlined style={{ marginRight: "5px" }} />
-            {t("labels.undoCheckPrescription")}
-          </Menu.Item>
-        )}
-        {hasPrescriptionEdit && (
-          <>
-            <Menu.Item key="add" className="gtm-btn-more-add">
-              <PlusOutlined style={{ marginRight: "5px" }} />
-              {t("screeningBody.btnAddDrug")}
-            </Menu.Item>
-            <Menu.Item key="copy" className="gtm-btn-more-copy">
-              <CopyOutlined style={{ marginRight: "5px" }} />
-              Copiar medicamentos de prescrições anteriores
-            </Menu.Item>
-          </>
-        )}
-      </Menu>
-    );
+    const items = [
+      {
+        key: "more",
+        label: t("labels.openPrescription"),
+        icon: <LinkOutlined />,
+        id: "gtm-btn-more-open",
+      },
+      {
+        type: "divider",
+      },
+    ];
+
+    if (header.status !== "s") {
+      items.push({
+        key: "check",
+        label: t("labels.checkPrescription"),
+        icon: <CheckOutlined />,
+        id: "gtm-btn-more-check",
+      });
+    }
+
+    if (header.status === "s") {
+      items.push({
+        key: "undo",
+        label: t("labels.undoCheckPrescription"),
+        icon: <RollbackOutlined />,
+        id: "gtm-btn-more-undo",
+      });
+    }
+
+    if (hasPrescriptionEdit) {
+      items.push({
+        key: "add",
+        label: t("screeningBody.btnAddDrug"),
+        icon: <PlusOutlined />,
+        id: "gtm-btn-more-add",
+      });
+
+      items.push({
+        key: "copy",
+        label: "Copiar medicamentos de prescrições anteriores",
+        icon: <CopyOutlined />,
+        id: "gtm-btn-more-copy",
+      });
+    }
+
+    return {
+      items,
+      onClick: handleMenuClick,
+    };
   };
 
   const openMenu = (e) => {
@@ -222,7 +235,7 @@ const PanelAction = ({
       </div>
 
       <div>
-        <Dropdown overlay={prescriptionOptions(header)} trigger={["click"]}>
+        <Dropdown menu={prescriptionOptions(header)} trigger={["click"]}>
           <Tooltip title="Opções">
             <Button
               type="link gtm-bt-check-single"

@@ -20,7 +20,6 @@ import Tooltip from "components/Tooltip";
 import Alert from "components/Alert";
 import { getCorporalSurface, getIMC } from "utils/index";
 import Tabs from "components/Tabs";
-import Menu from "components/Menu";
 import Dropdown from "components/Dropdown";
 import RichTextView from "components/RichTextView";
 import Badge from "components/Badge";
@@ -178,28 +177,28 @@ export default function PatientCard({
   };
 
   const prescriptionOptions = () => {
-    return (
-      <Menu onClick={handleMenuClick}>
-        <Menu.Item key="edit" className="gtm-bt-edit-patient">
-          <EditOutlined />
-          {t("actions.edit")}
-        </Menu.Item>
-        {/* <Menu.Item key="exams" className="gtm-bt-exams">
-          <Icon type="experiment" />
-          {t('tableHeader.exams')}
-        </Menu.Item>
-        <Menu.Item key="clinicalNotes" className="gtm-bt-clinicalNotes">
-          <Icon type="book" />
-          {t('tableHeader.clinicalNotes')}
-        </Menu.Item> */}
-        {!concilia && (
-          <Menu.Item key="update" className="gtm-bt-update">
-            <RedoOutlined />
-            {t("patientCard.recalculate")}
-          </Menu.Item>
-        )}
-      </Menu>
-    );
+    const items = [
+      {
+        key: "edit",
+        label: t("actions.edit"),
+        icon: <EditOutlined />,
+        id: "gtm-bt-edit-patient",
+      },
+    ];
+
+    if (!concilia) {
+      items.push({
+        key: "update",
+        label: t("patientCard.recalculate"),
+        id: "gtm-bt-update",
+        icon: <RedoOutlined />,
+      });
+    }
+
+    return {
+      items,
+      onClick: handleMenuClick,
+    };
   };
 
   return (
@@ -240,7 +239,7 @@ export default function PatientCard({
             ></Button>
           </Tooltip>
 
-          <Dropdown overlay={prescriptionOptions()} trigger={["click"]}>
+          <Dropdown menu={prescriptionOptions()} trigger={["click"]}>
             <Tooltip title="Menu">
               <button className="patient-menu gtm-bt-patient-menu">
                 <MoreOutlined style={{ fontSize: 28 }} />
