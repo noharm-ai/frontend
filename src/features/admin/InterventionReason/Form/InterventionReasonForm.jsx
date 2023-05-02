@@ -77,7 +77,7 @@ function InterventionReasonForm({ ...props }) {
     >
       {({ handleSubmit }) => (
         <DefaultModal
-          visible={formData}
+          open={formData}
           width={700}
           centered
           destroyOnClose

@@ -301,7 +301,7 @@ export default function PrescriptionDrugList({
       <>
         {table(!isEmpty(dataSource) ? dataSource[0] : [])}
         <FormIntervention
-          visible={visible}
+          open={visible}
           setVisibility={setVisibility}
           checkPrescriptionDrug={checkPrescriptionDrug}
         />
@@ -381,7 +381,7 @@ export default function PrescriptionDrugList({
         </Collapse>
       ))}
       <FormIntervention
-        visible={visible}
+        open={visible}
         setVisibility={setVisibility}
         checkPrescriptionDrug={checkPrescriptionDrug}
       />

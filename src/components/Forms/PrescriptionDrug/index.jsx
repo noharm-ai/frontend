@@ -194,7 +194,7 @@ export default function PrescriptionDrug({
     >
       {({ handleSubmit }) => (
         <DefaultModal
-          visible={!isEmpty(item)}
+          open={!isEmpty(item)}
           width={700}
           centered
           destroyOnClose

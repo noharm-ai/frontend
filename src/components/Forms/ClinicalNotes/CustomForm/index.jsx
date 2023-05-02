@@ -68,7 +68,7 @@ export default function ClinicalNotes({
       width={700}
       centered
       destroyOnClose
-      visible={visible}
+      open={visible}
       onCancel={cancel}
       maskClosable={false}
       {...props}

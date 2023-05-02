@@ -300,7 +300,7 @@ export default function PageHeader({
         <>
           {isClinicalNotesFormsVisible && (
             <ClinicalNotesCustomForm
-              visible={isClinicalNotesFormsVisible}
+              open={isClinicalNotesFormsVisible}
               onCancel={onCancelClinicalNotesForms}
               okText="Salvar"
               okType="primary"
@@ -310,7 +310,7 @@ export default function PageHeader({
           )}
           {isClinicalNotesVisible && (
             <ClinicalNotesSchedule
-              visible={isClinicalNotesVisible}
+              open={isClinicalNotesVisible}
               action={clinicalNotesAction}
               onCancel={onCancelClinicalNotes}
               okText="Salvar"
@@ -322,7 +322,7 @@ export default function PageHeader({
         </>
       ) : (
         <ClinicalNotes
-          visible={isClinicalNotesVisible}
+          open={isClinicalNotesVisible}
           action={clinicalNotesAction}
           onCancel={onCancelClinicalNotes}
           okText="Salvar"
@@ -333,7 +333,7 @@ export default function PageHeader({
       )}
 
       <FormClinicalAlert
-        visible={isClinicalAlertVisible}
+        open={isClinicalAlertVisible}
         onCancel={onCancelClinicalAlert}
         okText="Salvar"
         okType="primary"

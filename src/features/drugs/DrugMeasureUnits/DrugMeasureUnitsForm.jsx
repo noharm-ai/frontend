@@ -96,7 +96,7 @@ function DrugMeasureUnitsForm({ visible, setVisible, ...props }) {
     >
       {({ handleSubmit }) => (
         <DefaultModal
-          visible={visible}
+          open={visible}
           width={400}
           centered
           destroyOnClose

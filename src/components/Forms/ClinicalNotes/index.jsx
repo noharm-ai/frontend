@@ -39,7 +39,7 @@ export default function ClinicalNotes({
   signature,
   action,
   fetchMemory,
-  visible,
+  open,
   type,
   ...props
 }) {
@@ -54,17 +54,17 @@ export default function ClinicalNotes({
     hasConciliation: !!data.concilia,
     action,
     date: null,
-    visible: type === "primarycare" ? visible : false, //reinitialize formik if primarycare
+    open: type === "primarycare" ? open : false, //reinitialize formik if primarycare
   };
 
   useEffect(() => {
-    if (visible) {
+    if (open) {
       fetchMemory(
         SIGNATURE_STORE_ID,
         `${SIGNATURE_MEMORY_TYPE}_${account.userId}`
       );
     }
-  }, [account.userId, fetchMemory, visible]);
+  }, [account.userId, fetchMemory, open]);
 
   const submit = (formData) => {
     const params = { ...formData };
@@ -110,7 +110,7 @@ export default function ClinicalNotes({
           width={700}
           centered
           destroyOnClose
-          visible={visible}
+          open={open}
           {...props}
           onOk={handleSubmit}
           confirmLoading={isSaving}

@@ -678,7 +678,7 @@ export default function PatientCard({
       </div>
 
       <FormIntervention
-        visible={interventionVisible}
+        open={interventionVisible}
         setVisibility={setInterventionVisibility}
         checkPrescriptionDrug={checkPrescriptionDrug}
       />

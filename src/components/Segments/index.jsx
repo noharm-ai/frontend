@@ -327,7 +327,7 @@ function Segments({
         width={210}
         centered
         destroyOnClose
-        visible={progressModalVisible}
+        open={progressModalVisible}
         footer={null}
         closable={false}
       >
