@@ -7,7 +7,6 @@ import { PlusOutlined, CopyOutlined } from "@ant-design/icons";
 import Empty from "components/Empty";
 import LoadBox, { LoadContainer } from "components/LoadBox";
 import { Row, Col } from "components/Grid";
-import Tabs from "components/Tabs";
 import Tag from "components/Tag";
 import notification from "components/notification";
 import BackTop from "components/BackTop";
@@ -296,6 +295,112 @@ export default function Screening({
     );
   }
 
+  const tabs = [
+    {
+      key: "drugs",
+      label: (
+        <TabTitle
+          title={t("screeningBody.tabDrugs")}
+          count={listCount.prescriptions}
+        />
+      ),
+      children: (
+        <Col span={24} md={24} style={{ paddingTop: "20px" }}>
+          {!isEmpty(content) && security.hasPrescriptionEdit() && !agg && (
+            <PrescriptionActionContainer>
+              <Dropdown.Button
+                overlay={menu}
+                onClick={() => addPrescriptionDrug("prescription")}
+                className="gtm-bt-add-drugEdit"
+              >
+                <PlusOutlined />
+                {t("screeningBody.btnAddDrug")}
+              </Dropdown.Button>
+            </PrescriptionActionContainer>
+          )}
+
+          <PrescriptionList
+            emptyMessage="Nenhum medicamento encontrado."
+            hasFilter
+            listType="prescription"
+          />
+        </Col>
+      ),
+    },
+    {
+      key: "solutions",
+      label: (
+        <TabTitle
+          title={t("screeningBody.tabSolutions")}
+          count={listCount.solutions}
+        />
+      ),
+      children: (
+        <Col span={24} md={24} style={{ paddingTop: "20px" }}>
+          <SolutionList
+            emptyMessage="Nenhuma solução encontrada."
+            hasFilter={false}
+            listType="solution"
+          />
+        </Col>
+      ),
+    },
+  ];
+
+  if (listCount.procedures > 0) {
+    tabs.push({
+      key: "procedures",
+      label: (
+        <TabTitle
+          title={t("screeningBody.tabProcedures")}
+          count={listCount.procedures}
+        />
+      ),
+      children: (
+        <Col span={24} md={24} style={{ paddingTop: "20px" }}>
+          <ProcedureList
+            emptyMessage="Nenhum procedimento encontrado."
+            hasFilter={false}
+            listType="procedure"
+          />
+        </Col>
+      ),
+    });
+  }
+
+  if (listCount.diet > 0) {
+    tabs.push({
+      key: "diet",
+      label: (
+        <TabTitle title={t("screeningBody.tabDiet")} count={listCount.diet} />
+      ),
+      children: (
+        <Col span={24} md={24} style={{ paddingTop: "20px" }}>
+          <DietList
+            emptyMessage="Nenhuma dieta encontrada."
+            hasFilter={false}
+            listType="diet"
+          />
+        </Col>
+      ),
+    });
+  }
+
+  tabs.push({
+    key: "intervention",
+    label: (
+      <TabTitle
+        title={t("screeningBody.tabInterventions")}
+        count={listCount.interventions}
+      />
+    ),
+    children: (
+      <div style={{ paddingTop: "20px" }}>
+        <PreviousInterventionList />
+      </div>
+    ),
+  });
+
   return (
     <>
       <BoxWrapper>
@@ -319,107 +424,8 @@ export default function Screening({
           style={{ width: "100%", padding: "10px", marginTop: "10px" }}
           type="card"
           className={`breaktab-${tabCount}`}
-        >
-          <Tabs.TabPane
-            tab={
-              <TabTitle
-                title={t("screeningBody.tabDrugs")}
-                count={listCount.prescriptions}
-              />
-            }
-            key="drugs"
-          >
-            <Col span={24} md={24} style={{ paddingTop: "20px" }}>
-              {!isEmpty(content) && security.hasPrescriptionEdit() && !agg && (
-                <PrescriptionActionContainer>
-                  <Dropdown.Button
-                    overlay={menu}
-                    onClick={() => addPrescriptionDrug("prescription")}
-                    className="gtm-bt-add-drugEdit"
-                  >
-                    <PlusOutlined />
-                    {t("screeningBody.btnAddDrug")}
-                  </Dropdown.Button>
-                </PrescriptionActionContainer>
-              )}
-
-              <PrescriptionList
-                emptyMessage="Nenhum medicamento encontrado."
-                hasFilter
-                listType="prescription"
-              />
-            </Col>
-          </Tabs.TabPane>
-
-          <Tabs.TabPane
-            tab={
-              <TabTitle
-                title={t("screeningBody.tabSolutions")}
-                count={listCount.solutions}
-              />
-            }
-            key="solutions"
-          >
-            <Col span={24} md={24} style={{ paddingTop: "20px" }}>
-              <SolutionList
-                emptyMessage="Nenhuma solução encontrada."
-                hasFilter={false}
-                listType="solution"
-              />
-            </Col>
-          </Tabs.TabPane>
-          {listCount.procedures > 0 && (
-            <Tabs.TabPane
-              tab={
-                <TabTitle
-                  title={t("screeningBody.tabProcedures")}
-                  count={listCount.procedures}
-                />
-              }
-              key="procedures"
-            >
-              <Col span={24} md={24} style={{ paddingTop: "20px" }}>
-                <ProcedureList
-                  emptyMessage="Nenhuma solução encontrada."
-                  hasFilter={false}
-                  listType="procedure"
-                />
-              </Col>
-            </Tabs.TabPane>
-          )}
-          {listCount.diet > 0 && (
-            <Tabs.TabPane
-              tab={
-                <TabTitle
-                  title={t("screeningBody.tabDiet")}
-                  count={listCount.diet}
-                />
-              }
-              key="diet"
-            >
-              <Col span={24} md={24} style={{ paddingTop: "20px" }}>
-                <DietList
-                  emptyMessage="Nenhuma dieta encontrada."
-                  hasFilter={false}
-                  listType="diet"
-                />
-              </Col>
-            </Tabs.TabPane>
-          )}
-          <Tabs.TabPane
-            tab={
-              <TabTitle
-                title={t("screeningBody.tabInterventions")}
-                count={listCount.interventions}
-              />
-            }
-            key="intervention"
-          >
-            <div style={{ paddingTop: "20px" }}>
-              <PreviousInterventionList />
-            </div>
-          </Tabs.TabPane>
-        </ScreeningTabs>
+          items={tabs}
+        ></ScreeningTabs>
       </Row>
 
       <PrescriptionDrugForm />
