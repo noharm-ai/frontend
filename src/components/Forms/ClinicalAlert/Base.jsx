@@ -32,7 +32,7 @@ export default function Base() {
             onChange={(value) =>
               setFieldValue("alertExpire", value.format("YYYY-MM-DDTHH:mm:00"))
             }
-            dropdownClassName="noArrow"
+            popupClassName="noArrow"
             allowClear={false}
             showTime
             status={errors.alertExpire && touched.alertExpire ? "error" : null}
