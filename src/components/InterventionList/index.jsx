@@ -347,7 +347,7 @@ export default function InterventionList({
         showSorterTooltip={false}
       />
       <FormIntervention
-        visible={visible}
+        open={visible}
         setVisibility={setVisibility}
         afterSaveIntervention={afterSaveIntervention}
         disableUndoIntervention

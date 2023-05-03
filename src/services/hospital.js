@@ -4,6 +4,8 @@ import moment from "moment";
 import securityService from "services/security";
 import appInfo from "utils/appInfo";
 
+const FLAG = "{idPatient}";
+
 const defaultValue = (idPatient) => ({
   idPatient,
   name: `Paciente ${idPatient}`,
@@ -31,8 +33,6 @@ const defaultValue = (idPatient) => ({
  * ]
  */
 const getPatients = async (bearerToken, requestConfig) => {
-  const flag = "{idPatient}";
-
   const { listToRequest, listToEscape, nameUrl, useCache, userRoles, proxy } =
     requestConfig;
   const nameHeaders = proxy
@@ -61,7 +61,7 @@ const getPatients = async (bearerToken, requestConfig) => {
         cache
       );
       console.log("%cRequested patient of url: ", "color: #e67e22;", nameUrl);
-      const urlRequest = nameUrl.replace(flag, idPatient);
+      const urlRequest = nameUrl.replace(FLAG, idPatient);
 
       try {
         const { data: patient } = await axios.get(urlRequest, {
@@ -103,8 +103,32 @@ const getPatients = async (bearerToken, requestConfig) => {
   return listToEscape;
 };
 
+const getSinglePatient = async (bearerToken, requestConfig) => {
+  const { idPatient, nameUrl, proxy } = requestConfig;
+  const nameHeaders = proxy
+    ? {
+        Authorization: `Bearer ${bearerToken}`,
+        "x-api-key": appInfo.apiKey,
+      }
+    : requestConfig.nameHeaders;
+
+  const urlRequest = nameUrl.replace(FLAG, idPatient);
+
+  const { data: patient } = await axios.get(urlRequest, {
+    timeout: 8000,
+    headers: nameHeaders,
+  });
+
+  if (patient.id) {
+    patient.idPatient = patient.id;
+  }
+
+  return { ...patient };
+};
+
 const hospital = {
   getPatients,
+  getSinglePatient,
 };
 
 export default hospital;

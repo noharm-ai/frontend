@@ -272,7 +272,7 @@ export default function Patient({
       )}
 
       <FormPatientModal
-        visible={patientModalVisible}
+        open={patientModalVisible}
         onCancel={() => setPatientModalVisible(false)}
         okText="Salvar"
         okType="primary gtm-bt-save-patient"

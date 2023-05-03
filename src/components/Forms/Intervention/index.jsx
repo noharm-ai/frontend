@@ -30,7 +30,7 @@ export default function Intervention({
   setVisibility,
   afterSaveIntervention,
   disableUndoIntervention,
-  visible,
+  open,
   fetchReasonsList,
   searchDrugs,
   drugs,
@@ -84,7 +84,7 @@ export default function Intervention({
 
   // handle after save intervention.
   useEffect(() => {
-    if (wasSaved && visible) {
+    if (wasSaved && open) {
       reset();
       setVisibility(false);
 
@@ -92,7 +92,7 @@ export default function Intervention({
         message: t("success.intervention"),
       });
     }
-  }, [wasSaved, reset, item, updateInterventionData, setVisibility, visible]); // eslint-disable-line
+  }, [wasSaved, reset, item, updateInterventionData, setVisibility, open]); // eslint-disable-line
 
   useEffect(() => {
     if (checkPrescriptionDrug && checkPrescriptionDrug.success) {
@@ -111,10 +111,10 @@ export default function Intervention({
   }, [error, t]);
 
   useEffect(() => {
-    if (visible) {
+    if (open) {
       fetchReasonsList();
     }
-  }, [fetchReasonsList, visible]);
+  }, [fetchReasonsList, open]);
 
   if (!item.intervention) {
     return null;
@@ -257,7 +257,7 @@ export default function Intervention({
     >
       {({ handleSubmit }) => (
         <DefaultModal
-          visible={visible}
+          open={open}
           width={700}
           centered
           destroyOnClose

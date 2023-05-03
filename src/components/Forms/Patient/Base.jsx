@@ -163,7 +163,7 @@ export default function Base({ featureService }) {
                 value ? value.format("YYYY-MM-DD") : null
               )
             }
-            dropdownClassName="noArrow"
+            popupClassName="noArrow"
             allowClear={true}
             showTime
             style={{

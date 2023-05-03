@@ -24,7 +24,7 @@ export default function SaveFilterModal({
 
   return (
     <Modal
-      visible={open}
+      open={open}
       onCancel={() => setSaveFilterOpen(false)}
       onOk={() => save()}
       okButtonProps={{

@@ -22,7 +22,7 @@ export default function Modal({
     <DefaultModal
       title={t("tableHeader.clinicalNotes")}
       destroyOnClose
-      visible={visible}
+      open={visible}
       onCancel={() => setVisibility(false)}
       width="90%"
       footer={null}

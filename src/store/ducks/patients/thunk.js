@@ -6,6 +6,7 @@ const {
   patientsSaveSingleStart,
   patientsSaveSingleSuccess,
   patientsSaveSingleError,
+  patientsSetName,
 } = PatientCreators;
 
 export const savePatientThunk =
@@ -29,3 +30,7 @@ export const savePatientThunk =
       resolve();
     });
   };
+
+export const setNameThunk = (item) => async (dispatch) => {
+  dispatch(patientsSetName(item));
+};

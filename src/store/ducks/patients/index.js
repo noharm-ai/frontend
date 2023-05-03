@@ -8,6 +8,8 @@ export const { Types, Creators } = createActions({
   patientsFetchListError: ["error"],
   patientsFetchListSuccess: ["list"],
 
+  patientsSetName: ["data"],
+
   patientsSaveSingleStart: [""],
   patientsSaveSingleError: ["error"],
   patientsSaveSingleSuccess: [""],
@@ -45,6 +47,21 @@ const fetchListSuccess = (state = INITIAL_STATE, { list }) => {
     }
     return false;
   });
+
+  return {
+    ...state,
+    list: cachedList,
+    error: null,
+    isFetching: false,
+  };
+};
+
+const setName = (state = INITIAL_STATE, { data }) => {
+  const cachedList = { ...state.list };
+
+  cachedList[data.idPatient] = {
+    ...data,
+  };
 
   return {
     ...state,
@@ -92,6 +109,8 @@ const HANDLERS = {
   [Types.PATIENTS_FETCH_LIST_START]: fetchListStart,
   [Types.PATIENTS_FETCH_LIST_ERROR]: fetchListError,
   [Types.PATIENTS_FETCH_LIST_SUCCESS]: fetchListSuccess,
+
+  [Types.PATIENTS_SET_NAME]: setName,
 
   [Types.PATIENTS_SAVE_SINGLE_START]: saveSingleStart,
   [Types.PATIENTS_SAVE_SINGLE_ERROR]: saveSingleError,

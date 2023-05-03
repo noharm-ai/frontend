@@ -76,7 +76,7 @@ export default function PrescriptionDrugList({
         rowClassName={rowClassName}
       />
       <FormIntervention
-        visible={openIntervention}
+        open={openIntervention}
         setVisibility={setOpenIntervention}
         checkPrescriptionDrug={checkPrescriptionDrug}
       />

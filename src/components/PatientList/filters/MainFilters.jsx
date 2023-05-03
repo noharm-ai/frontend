@@ -99,7 +99,7 @@ export default function MainFilters({
               : null,
           ]}
           onChange={onChangeNextAppointment}
-          dropdownClassName="noArrow"
+          popupClassName="noArrow"
           allowClear={false}
           language={i18n.language}
         />

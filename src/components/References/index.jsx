@@ -312,7 +312,7 @@ export default function References({
         centered
         destroyOnClose
         onOk={onSaveObs}
-        visible={obsModalVisible}
+        open={obsModalVisible}
         onCancel={onCancelObs}
         confirmLoading={outliers.saveStatus.isSaving}
         okText="Salvar"
@@ -333,7 +333,7 @@ export default function References({
         centered
         destroyOnClose
         onOk={onSaveRelation}
-        visible={relationModalVisible}
+        open={relationModalVisible}
         onCancel={onCancelRelation}
         confirmLoading={saveRelation.isSaving}
         okText="Salvar"
