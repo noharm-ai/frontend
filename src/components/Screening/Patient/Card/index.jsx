@@ -20,6 +20,7 @@ import Dropdown from "components/Dropdown";
 import Badge from "components/Badge";
 
 import FormIntervention from "containers/Forms/Intervention";
+import PatientName from "containers/PatientName";
 
 import PatientTab from "./PatientTab";
 import AdmissionTab from "./AdmissionData";
@@ -204,7 +205,7 @@ export default function PatientCard({
             intervention && intervention.status === "s" && "has-intervention"
           }`}
         >
-          {namePatient || "-"}
+          <PatientName idPatient={prescription.idPatient} name={namePatient} />
           {dischargeMessage(dischargeFormated, dischargeReason)}
         </div>
         <div className="patient-header-action">
