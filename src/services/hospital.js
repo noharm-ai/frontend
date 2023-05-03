@@ -8,7 +8,7 @@ const defaultValue = (idPatient) => ({
   idPatient,
   name: `Paciente ${idPatient}`,
   cache: false,
-  status: "success",
+  status: "error",
 });
 
 /**
@@ -45,8 +45,12 @@ const getPatients = async (bearerToken, requestConfig) => {
   let promises;
 
   if (!security.isAdmin()) {
-    promises = await listToRequest.map(async ({ idPatient, birthdate }) => {
-      if (listToEscape[idPatient] && useCache) {
+    promises = listToRequest.map(async ({ idPatient, birthdate }) => {
+      if (
+        listToEscape[idPatient] &&
+        listToEscape[idPatient].status === "success" &&
+        useCache
+      ) {
         return listToEscape[idPatient];
       }
 
@@ -84,6 +88,7 @@ const getPatients = async (bearerToken, requestConfig) => {
 
         return { ...patient, cache };
       } catch (e) {
+        console.log("error", idPatient);
         return defaultValue(idPatient);
       }
     });

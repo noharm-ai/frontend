@@ -40,9 +40,8 @@ const fetchListError = (state = INITIAL_STATE, { error }) => ({
 const fetchListSuccess = (state = INITIAL_STATE, { list }) => {
   const cachedList = {};
   Object.keys(list).map((i) => {
-    if (list[i].cache) {
-      cachedList[i] = list[i];
-    }
+    cachedList[i] = list[i];
+
     return false;
   });
 

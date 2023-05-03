@@ -6,6 +6,8 @@ import { TextColumn } from "components/Table";
 import Tooltip from "components/Tooltip";
 import { Link } from "components/Button";
 
+import PatientName from "features/patients/PatientName/PatientName";
+
 const Action = (record) => {
   return (
     <Link
@@ -35,7 +37,7 @@ const columns = (sortedInfo, filteredInfo, t) => {
       sortDirections,
       sorter: (a, b) => a.namePatient.localeCompare(b.namePatient),
       sortOrder: sortedInfo.columnKey === "namePatient" && sortedInfo.order,
-      render: (record) => record.namePatient,
+      render: (record) => <PatientName idPatient={record.idPatient} />,
       filteredValue: filteredInfo.searchKey || null,
       onFilter: (value, record) =>
         record.namePatient.toLowerCase().includes(value) ||

@@ -83,22 +83,25 @@ export const fetchPrescriptionsListThunk =
       userRoles: user.account.roles,
     };
 
-    const patientsList = await hospital.getPatients(
-      access_token,
-      requestConfig
-    );
-    const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
-      ...item,
-      idPatient,
-      namePatient: patientsList[idPatient]
-        ? patientsList[idPatient].name
-        : `Paciente ${idPatient}`,
-    }));
+    hospital.getPatients(access_token, requestConfig).then((patientsList) => {
+      dispatch(patientsFetchListSuccess(patientsList));
+      const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
+        ...item,
+        idPatient,
+        namePatient:
+          patientsList[idPatient].status === "success"
+            ? patientsList[idPatient].name
+            : `Paciente ${idPatient}`,
+      }));
 
-    const list = transformPrescriptions(listAddedPatientName);
+      dispatch(
+        prescriptionsFetchListSuccess(
+          transformPrescriptions(listAddedPatientName)
+        )
+      );
+    });
 
-    dispatch(patientsFetchListSuccess(patientsList));
-    dispatch(prescriptionsFetchListSuccess(list));
+    dispatch(prescriptionsFetchListSuccess(transformPrescriptions(data)));
   };
 
 export const updatePrescriptionStatusThunk =

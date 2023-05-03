@@ -43,18 +43,19 @@ export const patientCentralFetchListThunk =
       userRoles: user.account.roles,
     };
 
-    const patientsList = await hospital.getPatients(
-      access_token,
-      requestConfig
-    );
-    const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
-      ...item,
-      idPatient,
-      namePatient: patientsList[idPatient]
-        ? patientsList[idPatient].name
-        : `Paciente ${idPatient}`,
-    }));
+    hospital.getPatients(access_token, requestConfig).then((patientsList) => {
+      dispatch(patientsFetchListSuccess(patientsList));
+      const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
+        ...item,
+        idPatient,
+        namePatient:
+          patientsList[idPatient].status === "success"
+            ? patientsList[idPatient].name
+            : `Paciente ${idPatient}`,
+      }));
 
-    dispatch(patientsFetchListSuccess(patientsList));
-    dispatch(patientCentralFetchListSuccess(listAddedPatientName));
+      dispatch(patientCentralFetchListSuccess(listAddedPatientName));
+    });
+
+    dispatch(patientCentralFetchListSuccess(data));
   };
