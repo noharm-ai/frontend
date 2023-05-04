@@ -40,6 +40,7 @@ export const loginThunk =
       features,
       userFeatures,
       nameUrl,
+      multipleNameUrl,
       nameHeaders,
       apiKey,
       notify,
@@ -54,6 +55,7 @@ export const loginThunk =
       schema,
       roles,
       nameUrl,
+      multipleNameUrl,
       proxy,
       nameHeaders,
       apiKey,
@@ -67,7 +69,9 @@ export const loginThunk =
     dispatch(sessionSetFirstAccess());
     dispatch(appSetCurrentVersion(appInfo.version));
     dispatch(userSetCurrentUser(user, keepMeLogged));
-    dispatch(appSetConfig({ nameUrl, apiKey, nameHeaders, proxy }));
+    dispatch(
+      appSetConfig({ nameUrl, multipleNameUrl, apiKey, nameHeaders, proxy })
+    );
     dispatch(
       appSetData({
         hospitals: data.hospitals,

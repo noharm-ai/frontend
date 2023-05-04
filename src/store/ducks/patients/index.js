@@ -10,6 +10,8 @@ export const { Types, Creators } = createActions({
 
   patientsSetName: ["data"],
 
+  patientsCleanCache: [""],
+
   patientsSaveSingleStart: [""],
   patientsSaveSingleError: ["error"],
   patientsSaveSingleSuccess: [""],
@@ -27,6 +29,11 @@ const INITIAL_STATE = {
     error: null,
   },
 };
+
+const cleanCache = (state = INITIAL_STATE) => ({
+  ...state,
+  list: {},
+});
 
 const fetchListStart = (state = INITIAL_STATE) => ({
   ...state,
@@ -111,6 +118,7 @@ const HANDLERS = {
   [Types.PATIENTS_FETCH_LIST_SUCCESS]: fetchListSuccess,
 
   [Types.PATIENTS_SET_NAME]: setName,
+  [Types.PATIENTS_CLEAN_CACHE]: cleanCache,
 
   [Types.PATIENTS_SAVE_SINGLE_START]: saveSingleStart,
   [Types.PATIENTS_SAVE_SINGLE_ERROR]: saveSingleError,

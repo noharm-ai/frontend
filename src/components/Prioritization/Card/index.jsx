@@ -6,7 +6,7 @@ import { UserOutlined, NumberOutlined } from "@ant-design/icons";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import { getAlerts } from "components/Screening/AlertCard";
-//import PatientName from "containers/PatientName";
+import PatientName from "containers/PatientName";
 import { Card, AlertContainer } from "./index.style";
 
 const TabContent = ({ tab, prescription }) => {
@@ -312,7 +312,10 @@ export default function PrioritizationCard({
           }`}
         >
           <Tooltip title={prescription.namePatient}>
-            {prescription.namePatient}
+            <PatientName
+              idPatient={prescription.idPatient}
+              name={prescription.namePatient}
+            />
           </Tooltip>
           {prescription.dischargeFormated && (
             <Tooltip
