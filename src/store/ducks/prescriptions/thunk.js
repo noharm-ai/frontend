@@ -77,6 +77,7 @@ export const fetchPrescriptionsListThunk =
       listToRequest: data,
       listToEscape: listPatients,
       nameUrl: app.config.nameUrl,
+      multipleNameUrl: app.config.multipleNameUrl,
       proxy: app.config.proxy,
       nameHeaders: app.config.nameHeaders,
       useCache: true,
