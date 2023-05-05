@@ -61,7 +61,7 @@ const getPatients = async (bearerToken, requestConfig) => {
             {
               patients: requestIds,
             },
-            { headers: nameHeaders }
+            { headers: nameHeaders, timeout: 30000 }
           );
 
           promises = patientList
