@@ -32,6 +32,10 @@ const security = (roles) => {
     return hasRole(Role.PRESCRIPTION_EDIT);
   };
 
+  const hasPresmedForm = () => {
+    return hasRole(Role.PRESMED_FORM);
+  };
+
   const isAdmin = () => {
     return hasRole(Role.ADMIN);
   };
@@ -47,6 +51,7 @@ const security = (roles) => {
     hasCpoe,
     hasTranscription,
     hasPrescriptionEdit,
+    hasPresmedForm,
     isAdmin,
     isSupport,
   };

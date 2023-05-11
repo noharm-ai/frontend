@@ -449,7 +449,7 @@ export const expandedRowRender = (bag) => (record) => {
             {showAlerts(record.alerts)}
           </Descriptions.Item>
         )}
-        {bag.formTemplate && (
+        {bag.security.hasPresmedForm() && bag.formTemplate && (
           <Descriptions.Item label={bag.formTemplate.name} span={3}>
             <div className="limit-width">
               <DrugForm
