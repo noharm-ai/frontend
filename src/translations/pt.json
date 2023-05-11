@@ -101,6 +101,7 @@
     "labelDischarged": "Somente pacientes com alta",
     "labelPendingPrescription": "Somente prescrições pendentes",
     "labelAlertsPlaceholder": "Selecione os alertas",
+    "labelPatientStatusPlaceholder": "Selecione a situação do paciente",
     "iptSearchPlaceholder": "Buscar por paciente ou nº atendimento",
     "clAge": "ID",
     "clAgeHint": "Idade",
@@ -252,7 +253,8 @@
     "refDate": "Data referência",
     "observation": "Observação",
     "medicalObservation": "Observação médica",
-    "scheduledDate": "Data de agendamento"
+    "scheduledDate": "Data de agendamento",
+    "patientStatus": "Situação do paciente"
   },
   "labels": {
     "yes": "Sim",

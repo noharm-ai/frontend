@@ -75,6 +75,7 @@ export default function Filter({
         insurance: filter.insurance,
         indicators: filter.indicators,
         frequencies: filter.frequencies,
+        patientStatus: filter.patientStatus,
       };
       const mixedParams = { ...params, ...forceParams };
       const finalParams = {};
@@ -98,6 +99,7 @@ export default function Filter({
       filter.insurance,
       filter.indicators,
       filter.frequencies,
+      filter.patientStatus,
       prioritizationType,
       date,
     ]
@@ -152,6 +154,10 @@ export default function Filter({
     setScreeningListFilter({ indicators: indicators });
   };
 
+  const onPatientStatusChange = (status) => {
+    setScreeningListFilter({ patientStatus: status });
+  };
+
   const onCurrentDepartmentChange = (e) => {
     setScreeningListFilter({ currentDepartment: e.target.checked ? 1 : 0 });
   };
@@ -170,10 +176,6 @@ export default function Filter({
 
   const onPendingChange = (pending) => {
     setScreeningListFilter({ pending: pending ? 1 : 0 });
-  };
-
-  const onDischargedChange = (discharged) => {
-    setScreeningListFilter({ discharged: discharged ? 1 : 0 });
   };
 
   const onInsuranceChange = (value) => {
@@ -233,6 +235,7 @@ export default function Filter({
       discharged: 0,
       indicators: [],
       frequencies: [],
+      patientStatus: null,
     });
     setDate([moment(), null]);
   };
@@ -569,6 +572,41 @@ export default function Filter({
             </Col>
           </Row>
 
+          <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={24}>
+              <Box>
+                <Row gutter={0} style={{ width: "100%" }}>
+                  <Col md={19}>
+                    <Heading as="label" htmlFor="patientStatus" size="14px">
+                      {t("tableHeader.patientStatus")}:
+                    </Heading>
+                    <Select
+                      id="patientStatus"
+                      optionFilterProp="children"
+                      style={{ width: "100%" }}
+                      placeholder={t(
+                        "screeningList.labelPatientStatusPlaceholder"
+                      )}
+                      loading={segments.single.isFetching}
+                      value={filter.patientStatus}
+                      onChange={onPatientStatusChange}
+                      autoClearSearchValue={false}
+                      allowClear
+                    >
+                      <Select.Option value="DISCHARGED">
+                        Paciente com alta
+                      </Select.Option>
+
+                      <Select.Option value="ACTIVE">
+                        Paciente internado
+                      </Select.Option>
+                    </Select>
+                  </Col>
+                </Row>
+              </Box>
+            </Col>
+          </Row>
+
           <Row gutter={[20, 0]} style={{ marginTop: "20px" }}>
             <Col>
               <Box flexDirection="row" alignItems="center">
@@ -586,27 +624,6 @@ export default function Filter({
                   onChange={onPendingChange}
                   checked={filter.pending === 1}
                   id="gtm-pending-filter"
-                />
-              </Box>
-            </Col>
-          </Row>
-          <Row gutter={[20, 0]} style={{ marginTop: "20px" }}>
-            <Col>
-              <Box flexDirection="row" alignItems="center">
-                <Heading
-                  as="label"
-                  htmlFor="pending-filter"
-                  size="14px"
-                  style={{ minWidth: "230px" }}
-                >
-                  {t("screeningList.labelDischarged")}
-                </Heading>
-
-                <Switch
-                  style={{ marginLeft: "10px" }}
-                  onChange={onDischargedChange}
-                  checked={filter.discharged === 1}
-                  id="gtm-discharged-filter"
                 />
               </Box>
             </Col>

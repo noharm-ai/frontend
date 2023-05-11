@@ -101,6 +101,7 @@
     "labelDischarged": "Only discharged patients",
     "labelPendingPrescription": "Pending prescriptions (only)",
     "labelAlertsPlaceholder": "Select alerts",
+    "labelPatientStatusPlaceholder": "Select patient status",
     "iptSearchPlaceholder": "Search by patient or admission number",
     "clAge": "AG",
     "clAgeHint": "Age",
@@ -252,7 +253,8 @@
     "refDate": "Reference date",
     "observation": "Observation",
     "medicalObservation": "Medical observation",
-    "scheduledDate": "Data de agendamento"
+    "scheduledDate": "Schedule date",
+    "patientStatus": "Patient status"
   },
   "labels": {
     "yes": "Yes",
