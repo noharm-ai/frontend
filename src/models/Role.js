@@ -7,6 +7,7 @@ export default class Role {
   static ALERT_BT = "alert-bt";
   static CPOE = "cpoe";
   static PRESCRIPTION_EDIT = "prescriptionEdit";
+  static PRESMED_FORM = "presmed-form";
 
   static getRoles(t) {
     return [
@@ -20,6 +21,10 @@ export default class Role {
       {
         id: Role.PRESCRIPTION_EDIT,
         label: t(`roles.${Role.PRESCRIPTION_EDIT}`),
+      },
+      {
+        id: Role.PRESMED_FORM,
+        label: t(`roles.${Role.PRESMED_FORM}`),
       },
     ];
   }

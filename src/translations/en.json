@@ -507,6 +507,7 @@
     "alert-bt": "Alert Integration",
     "cpoe": "CPOE",
     "prescriptionEdit": "Prescription Edit",
-    "beta-cards": "Prioritization Cards (Beta)"
+    "beta-cards": "Prioritization Cards (Beta)",
+    "presmed-form": "Presmed Form"
   }
 }
