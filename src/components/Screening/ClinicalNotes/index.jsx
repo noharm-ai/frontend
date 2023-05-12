@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { format, parseISO } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, CloudDownloadOutlined } from "@ant-design/icons";
 
-import { annotationManifest } from "utils/featureManifest";
 import { Row, Col } from "components/Grid";
 import LoadBox, { LoadContainer } from "components/LoadBox";
 import Empty from "components/Empty";
@@ -19,6 +18,7 @@ import { Container, List, FilterContainer } from "./index.style";
 
 export default function ClinicalNotes({
   isFetching,
+  isFetchingExtra,
   list,
   selected,
   select,
@@ -29,6 +29,9 @@ export default function ClinicalNotes({
   access_token,
   userId,
   featureService,
+  fetchByDate,
+  admissionNumber,
+  dates,
 }) {
   const [positions, setPositions] = useState([]);
   const [indicators, setIndicators] = useState([]);
@@ -107,6 +110,10 @@ export default function ClinicalNotes({
     selectIndicators(indicators);
 
     setFilteredList(filterList(list, true, positions, indicators));
+  };
+
+  const fetchExtra = (date) => {
+    fetchByDate(admissionNumber, date);
   };
 
   if (isFetching) {
@@ -227,26 +234,26 @@ export default function ClinicalNotes({
                   <React.Fragment key={group.label}>
                     <h2>{format(parseISO(group.label), "dd/MM/yyyy")}</h2>
                     <div className="line-group">
-                      {group.value.map((c, i) => (
-                        <div
-                          className={`line ${
-                            selected && c.id === selected.id ? "active" : ""
-                          }`}
-                          key={i}
-                          onClick={() => select(c)}
-                          aria-hidden="true"
-                        >
-                          <div className="time">
-                            {c.date.substr(11, 5)}
-                            <div>&nbsp;</div>
-                          </div>
-                          <div className="name">
-                            {getFirstAndLastName(c.prescriber)}
-                            <span>{c.position || "-"}</span>
-                          </div>
-                          <div className="indicators">
-                            {annotationManifest.isEnabled(security) &&
-                              ClinicalNotesIndicator.listByCategory(
+                      {group.value.length ? (
+                        group.value.map((c, i) => (
+                          <div
+                            className={`line ${
+                              selected && c.id === selected.id ? "active" : ""
+                            }`}
+                            key={i}
+                            onClick={() => select(c)}
+                            aria-hidden="true"
+                          >
+                            <div className="time">
+                              {c.date.substr(11, 5)}
+                              <div>&nbsp;</div>
+                            </div>
+                            <div className="name">
+                              {getFirstAndLastName(c.prescriber)}
+                              <span>{c.position || "-"}</span>
+                            </div>
+                            <div className="indicators">
+                              {ClinicalNotesIndicator.listByCategory(
                                 "priority",
                                 t
                               ).map((indicator) => (
@@ -260,9 +267,43 @@ export default function ClinicalNotes({
                                   )}
                                 </React.Fragment>
                               ))}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="day-info ">
+                          <div>
+                            <Button
+                              onClick={() => fetchExtra(group.label)}
+                              icon={
+                                <CloudDownloadOutlined
+                                  style={{ fontSize: "18px" }}
+                                />
+                              }
+                              loading={isFetchingExtra === group.label}
+                            >
+                              Abrir evoluções ({dates[group.label].count})
+                            </Button>
+                          </div>
+                          <div className="indicators">
+                            {ClinicalNotesIndicator.listByCategory(
+                              "priority",
+                              t
+                            ).map((indicator) => (
+                              <React.Fragment key={indicator.key}>
+                                {dates[group.label] &&
+                                  dates[group.label][indicator.key] > 0 && (
+                                    <Tooltip title={indicator.label}>
+                                      <Tag className={indicator.key}>
+                                        {dates[group.label][indicator.key]}
+                                      </Tag>
+                                    </Tooltip>
+                                  )}
+                              </React.Fragment>
+                            ))}
                           </div>
                         </div>
-                      ))}
+                      )}
                     </div>
                   </React.Fragment>
                 ))}

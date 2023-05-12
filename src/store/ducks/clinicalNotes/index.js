@@ -3,12 +3,16 @@ import { createActions, createReducer } from "reduxsauce";
 import {
   transformClinicalNotes,
   flatClinicalNotes,
+  getPositionList,
 } from "utils/transformers/clinicalNotes";
 
 export const { Types, Creators } = createActions({
   clinicalNotesFetchListStart: [""],
   clinicalNotesFetchListError: ["error"],
-  clinicalNotesFetchListSuccess: ["list", "positionList"],
+  clinicalNotesFetchListSuccess: ["list", "dates"],
+
+  clinicalNotesFetchListExtraStart: ["date"],
+  clinicalNotesFetchListExtraSuccess: ["list"],
 
   clinicalNotesSelect: ["clinicalNote"],
   clinicalNotesUpdate: ["clinicalNote"],
@@ -22,7 +26,9 @@ export const { Types, Creators } = createActions({
 const INITIAL_STATE = {
   error: null,
   isFetching: true,
+  isFetchingExtra: false,
   list: [],
+  dates: {},
   positionList: [],
   single: null,
   save: {
@@ -43,13 +49,37 @@ const fetchListError = (state = INITIAL_STATE, { error }) => ({
   isFetching: false,
 });
 
-const fetchListSuccess = (state = INITIAL_STATE, { list, positionList }) => ({
+const fetchListSuccess = (state = INITIAL_STATE, { list, dates }) => {
+  return {
+    ...state,
+    list,
+    dates,
+    positionList: getPositionList(flatClinicalNotes(list)),
+    error: null,
+    isFetching: false,
+  };
+};
+
+const fetchListExtraStart = (state = INITIAL_STATE, { date }) => ({
   ...state,
-  list,
-  positionList,
-  error: null,
-  isFetching: false,
+  isFetchingExtra: date,
 });
+
+const fetchListExtraSuccess = (state = INITIAL_STATE, { list }) => {
+  const newList = { ...state.list };
+
+  list.forEach((n) => {
+    newList[n.date.substr(0, 10)].push(n);
+  });
+
+  return {
+    ...state,
+    list: newList,
+    positionList: getPositionList(flatClinicalNotes(newList)),
+    error: null,
+    isFetchingExtra: false,
+  };
+};
 
 const select = (state = INITIAL_STATE, { clinicalNote }) => ({
   ...state,
@@ -113,6 +143,8 @@ const HANDLERS = {
   [Types.CLINICAL_NOTES_FETCH_LIST_START]: fetchListStart,
   [Types.CLINICAL_NOTES_FETCH_LIST_ERROR]: fetchListError,
   [Types.CLINICAL_NOTES_FETCH_LIST_SUCCESS]: fetchListSuccess,
+  [Types.CLINICAL_NOTES_FETCH_LIST_EXTRA_START]: fetchListExtraStart,
+  [Types.CLINICAL_NOTES_FETCH_LIST_EXTRA_SUCCESS]: fetchListExtraSuccess,
 
   [Types.CLINICAL_NOTES_SELECT]: select,
   [Types.CLINICAL_NOTES_UPDATE]: update,

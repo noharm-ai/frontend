@@ -491,8 +491,9 @@ const searchUsers = (bearerToken, term) =>
  * ClinicalNotes.
  *
  */
-const getClinicalNotes = (bearerToken, admissionNumber) =>
-  instance.get(`${endpoints.clinicalNotes}/${admissionNumber}`, {
+const getClinicalNotes = (bearerToken, admissionNumber, params) =>
+  instance.get(`${endpoints.clinicalNotes}/${admissionNumber}/v2`, {
+    params,
     ...setHeaders(bearerToken),
   });
 

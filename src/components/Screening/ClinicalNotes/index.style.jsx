@@ -289,24 +289,43 @@ export const List = styled.div`
           text-transform: none;
         }
       }
-
-      .indicators {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-        max-width: 75px;
-        align-items: center;
-
-        .ant-tag {
-          margin-bottom: 2px;
-        }
-
-        ${(props) => createIndicatorTagClasses(props.t)}
-      }
     }
 
     .line:last-child {
+      margin-bottom: 10px;
       border-bottom: 1px solid #e0e0e0;
+    }
+  }
+
+  .indicators {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: 75px;
+    align-items: center;
+
+    .ant-tag {
+      margin-bottom: 2px;
+    }
+
+    ${(props) => createIndicatorTagClasses(props.t)}
+  }
+
+  .day-info {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 5px 0;
+    margin-bottom: 10px;
+
+    .indicators {
+      min-width: 70px;
+    }
+
+    button {
+      height: 50px;
     }
   }
 `;
