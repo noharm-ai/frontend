@@ -294,7 +294,9 @@
     "substitution": "Substitution",
     "suspension": "Suspension",
     "factor": "Factor",
-    "frequencies": "Frequencies"
+    "frequencies": "Frequencies",
+    "interventionDate": "Intervention date",
+    "admissionNumber": "Admission number"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"

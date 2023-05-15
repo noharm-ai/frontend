@@ -14,4 +14,14 @@ export const PageHeader = styled.div`
     margin: 0;
     text-align: left;
   }
+
+  .page-header-legend {
+    color: #2e3c5a;
+    display: block;
+    font-family: Montserrat;
+    font-size: 0.875rem;
+    font-weight: 400;
+    margin: 0;
+    text-align: left;
+  }
 `;

@@ -399,6 +399,13 @@ const getInterventions = (bearerToken, params) =>
     ...setHeaders(bearerToken),
   });
 
+const searchInterventions = (bearerToken, params) =>
+  instance.post(
+    `${endpoints.intervention.base}/search`,
+    params,
+    setHeaders(bearerToken)
+  );
+
 const getInterventionReasons = (
   bearerToken,
   { idSegment, idDrug, ...params }
@@ -542,6 +549,7 @@ const api = {
   updateIntervention,
   getReports,
   getInterventions,
+  searchInterventions,
   getExams,
   updatePatient,
   updatePrescriptionDrugNote,
