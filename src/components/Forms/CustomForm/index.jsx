@@ -22,9 +22,12 @@ export default function CustomForm({
     template.forEach((group) => {
       group.questions.forEach((question) => {
         if (values) {
-          initialValues[question.id] =
-            values[question.id] ||
-            (question.type === "options-multiple" ? [] : null);
+          if (values[question.id] !== null) {
+            initialValues[question.id] = values[question.id];
+          } else {
+            initialValues[question.id] =
+              question.type === "options-multiple" ? [] : null;
+          }
         } else {
           initialValues[question.id] =
             question.type === "options-multiple" ? [] : null;
