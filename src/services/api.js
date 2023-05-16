@@ -399,6 +399,13 @@ const getInterventions = (bearerToken, params) =>
     ...setHeaders(bearerToken),
   });
 
+const searchInterventions = (bearerToken, params) =>
+  instance.post(
+    `${endpoints.intervention.base}/search`,
+    params,
+    setHeaders(bearerToken)
+  );
+
 const getInterventionReasons = (
   bearerToken,
   { idSegment, idDrug, ...params }
@@ -491,8 +498,9 @@ const searchUsers = (bearerToken, term) =>
  * ClinicalNotes.
  *
  */
-const getClinicalNotes = (bearerToken, admissionNumber) =>
-  instance.get(`${endpoints.clinicalNotes}/${admissionNumber}`, {
+const getClinicalNotes = (bearerToken, admissionNumber, params) =>
+  instance.get(`${endpoints.clinicalNotes}/${admissionNumber}/v2`, {
+    params,
     ...setHeaders(bearerToken),
   });
 
@@ -541,6 +549,7 @@ const api = {
   updateIntervention,
   getReports,
   getInterventions,
+  searchInterventions,
   getExams,
   updatePatient,
   updatePrescriptionDrugNote,

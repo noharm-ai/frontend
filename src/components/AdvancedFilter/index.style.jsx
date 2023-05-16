@@ -1,17 +1,16 @@
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
 export const Box = styled.div`
-  align-items: ${props => (props.alignItems ? props.alignItems : 'flex-start')};
+  align-items: ${(props) =>
+    props.alignItems ? props.alignItems : "flex-start"};
   display: flex;
-  flex-direction: ${props => (props.flexDirection ? props.flexDirection : 'column')};
+  flex-direction: ${(props) =>
+    props.flexDirection ? props.flexDirection : "column"};
 `;
 
 export const SearchBox = styled.div`
   position: relative;
-  background: #eff1f4;
-  margin-bottom: 20px;
   padding: 6px 10px;
-  border-radius: 4px;
   transition: all 0.5s ease;
 
   &.open {
@@ -31,10 +30,9 @@ export const SearchBox = styled.div`
     left: 0;
     width: 100%;
     background: #eff1f4;
-    border-radius: 4px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    padding: 6px 10px;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 4px 4px 7px rgb(0 0 0 / 21%);
     z-index: 2;
     pointer-events: none;
     opacity: 0;
@@ -80,4 +78,13 @@ export const SearchBox = styled.div`
 export const HelpText = styled.div`
   font-size: 12px;
   margin-top: 5px;
+`;
+
+export const FilterCard = styled.div`
+  background: #fff;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  box-shadow: 0 -1px 7px rgb(0 0 0 / 16%);
 `;

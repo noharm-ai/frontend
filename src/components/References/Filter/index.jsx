@@ -106,7 +106,7 @@ export default function Filter({
               style={{ width: "100%" }}
               placeholder="Selectione um medicamento..."
               loading={drugs.isFetching}
-              value={values.idDrug}
+              value={`${values.idDrug}`}
               onChange={(val) => handleChange("idDrug", val)}
               showSearch
               filterOption={filterOption}

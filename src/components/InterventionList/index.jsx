@@ -4,7 +4,6 @@ import styled from "styled-components/macro";
 import { useTranslation } from "react-i18next";
 
 import Empty from "components/Empty";
-import LoadBox from "components/LoadBox";
 import notification from "components/notification";
 import { ExpandableTable } from "components/Table";
 import interventionColumns, {
@@ -16,11 +15,14 @@ import BackTop from "components/BackTop";
 import { Select } from "components/Inputs";
 import { uniqBy, intersection } from "utils/lodash";
 import { toDataSource } from "utils";
+import LoadBox from "components/LoadBox";
+
+import Filter from "./filters/Filter";
+
+import { PageCard } from "styles/Utils.style";
+import { PageHeader } from "styles/PageHeader.style";
 
 const TableInfo = styled.div`
-  background: #eff1f4;
-  padding: 10px;
-
   .filter-field {
     display: inline-block;
     margin-right: 10px;
@@ -31,10 +33,15 @@ const TableInfo = styled.div`
       color: #2e3c5a;
     }
   }
+
+  .obs {
+    padding-top: 5px;
+    font-size: 13px;
+  }
 `;
 
 export default function InterventionList({
-  fetchList,
+  searchList,
   checkData,
   checkIntervention,
   select,
@@ -59,6 +66,16 @@ export default function InterventionList({
     reason: [],
   });
 
+  const resetLocalFilters = () => {
+    setFilter({
+      status: null,
+      responsible: [],
+      prescriber: [],
+      department: [],
+      reason: [],
+    });
+  };
+
   const onShowModal = (data) => {
     select({
       idPrescription: data.idPrescription,
@@ -75,10 +92,6 @@ export default function InterventionList({
     });
     setVisibility(true);
   };
-
-  useEffect(() => {
-    fetchList();
-  }, [fetchList]);
 
   useEffect(() => {
     fetchReasonsList();
@@ -120,10 +133,6 @@ export default function InterventionList({
     updateList(item);
   };
 
-  if (isFetching) {
-    return <LoadBox />;
-  }
-
   const getResponsibleList = () => {
     if (!list) return [];
 
@@ -156,6 +165,8 @@ export default function InterventionList({
   };
 
   const filterList = (filter) => {
+    if (!list) return [];
+
     return list.filter((i) => {
       let show = true;
 
@@ -216,136 +227,164 @@ export default function InterventionList({
 
   return (
     <>
-      <TableInfo style={{ marginBottom: 15 }}>
-        <div className="filter-field">
-          <label>Situação</label>
-          <Select
-            id="intervFilterStatus"
-            onChange={handleStatusChange}
-            placeholder="Filtrar por situação"
-            allowClear
-            style={{ minWidth: "200px" }}
-            optionFilterProp="children"
-            defaultValue="all"
-          >
-            <Select.Option value="s" key="s">
-              Pendentes <Tag color="orange">{listCount.pending}</Tag>
-            </Select.Option>
-            <Select.Option value="a" key="a">
-              Aceitas <Tag color="green">{listCount.accepted}</Tag>
-            </Select.Option>
-            <Select.Option value="n" key="n">
-              Não aceitas <Tag color="red">{listCount.notAccepted}</Tag>
-            </Select.Option>
-            <Select.Option value="j" key="j">
-              Não aceitas (Justificadas){" "}
-              <Tag color="red">{listCount.notAcceptedJustified}</Tag>
-            </Select.Option>
-            <Select.Option value="x" key="x">
-              Não se aplica <Tag>{listCount.notApplicable}</Tag>
-            </Select.Option>
-            <Select.Option value="all" key="all">
-              Todas <Tag>{listCount.all}</Tag>
-            </Select.Option>
-          </Select>
+      <PageHeader>
+        <div>
+          <h1 className="page-header-title">{t("menu.interventions")}</h1>
+          <div className="page-header-legend">
+            Lista de intervenções registradas.
+          </div>
         </div>
-        <div className="filter-field">
-          <label>Responsável</label>
-          <Select
-            id="intervFilterUser"
-            onChange={handleResponsibleChange}
-            placeholder="Filtrar por responsável"
-            allowClear
-            style={{ minWidth: "250px" }}
-            mode="multiple"
-            optionFilterProp="children"
-          >
-            {getResponsibleList().map((p, i) => (
-              <Select.Option value={p} key={i}>
-                {p}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-        <div className="filter-field">
-          <label>Prescritor</label>
-          <Select
-            id="intervFilterPrescriber"
-            onChange={handlePrescriberChange}
-            placeholder="Filtrar por prescritor"
-            allowClear
-            style={{ minWidth: "250px" }}
-            mode="multiple"
-            optionFilterProp="children"
-          >
-            {prescriberList.map((p, i) => (
-              <Select.Option value={p} key={i}>
-                {p}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-        <div className="filter-field">
-          <label>Setor</label>
-          <Select
-            id="intervFilterDept"
-            onChange={handleDepartmentChange}
-            placeholder="Filtrar por setor"
-            allowClear
-            style={{ minWidth: "200px" }}
-            mode="multiple"
-            optionFilterProp="children"
-          >
-            {departmentList.map((p, i) => (
-              <Select.Option value={p} key={i}>
-                {p}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-        <div className="filter-field">
-          <label>Motivo</label>
-          <Select
-            id="intervFilterOutcome"
-            onChange={handleReasonChange}
-            placeholder="Filtrar por motivo"
-            allowClear
-            style={{ minWidth: "200px" }}
-            mode="multiple"
-            optionFilterProp="children"
-          >
-            {reasons &&
-              reasons.map(({ id, parentName, name }) => (
-                <Select.Option key={id} value={id}>
-                  {parentName ? `${parentName} - ${name}` : name}
+      </PageHeader>
+      <Filter
+        isFetching={isFetching}
+        error={error}
+        searchList={searchList}
+        resetLocalFilters={resetLocalFilters}
+      />
+      <TableInfo>
+        {isFetching ? (
+          <div style={{ minHeight: "100px", position: "relative" }}>
+            <LoadBox absolute />
+          </div>
+        ) : (
+          <>
+            <div className="filter-field">
+              <label>Situação</label>
+              <Select
+                id="intervFilterStatus"
+                onChange={handleStatusChange}
+                placeholder="Filtrar por situação"
+                allowClear
+                style={{ minWidth: "200px" }}
+                optionFilterProp="children"
+                defaultValue="all"
+                loading={isFetching}
+              >
+                <Select.Option value="s" key="s">
+                  Pendentes <Tag color="orange">{listCount.pending}</Tag>
                 </Select.Option>
-              ))}
-          </Select>
-        </div>
+                <Select.Option value="a" key="a">
+                  Aceitas <Tag color="green">{listCount.accepted}</Tag>
+                </Select.Option>
+                <Select.Option value="n" key="n">
+                  Não aceitas <Tag color="red">{listCount.notAccepted}</Tag>
+                </Select.Option>
+                <Select.Option value="j" key="j">
+                  Não aceitas (Justificadas){" "}
+                  <Tag color="red">{listCount.notAcceptedJustified}</Tag>
+                </Select.Option>
+                <Select.Option value="x" key="x">
+                  Não se aplica <Tag>{listCount.notApplicable}</Tag>
+                </Select.Option>
+                <Select.Option value="all" key="all">
+                  Todas <Tag>{listCount.all}</Tag>
+                </Select.Option>
+              </Select>
+            </div>
+            <div className="filter-field">
+              <label>Responsável</label>
+              <Select
+                id="intervFilterUser"
+                onChange={handleResponsibleChange}
+                placeholder="Filtrar por responsável"
+                allowClear
+                style={{ minWidth: "250px" }}
+                mode="multiple"
+                optionFilterProp="children"
+              >
+                {getResponsibleList().map((p, i) => (
+                  <Select.Option value={p} key={i}>
+                    {p}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+            <div className="filter-field">
+              <label>Prescritor</label>
+              <Select
+                id="intervFilterPrescriber"
+                onChange={handlePrescriberChange}
+                placeholder="Filtrar por prescritor"
+                allowClear
+                style={{ minWidth: "250px" }}
+                mode="multiple"
+                optionFilterProp="children"
+              >
+                {prescriberList.map((p, i) => (
+                  <Select.Option value={p} key={i}>
+                    {p}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+            <div className="filter-field">
+              <label>Setor</label>
+              <Select
+                id="intervFilterDept"
+                onChange={handleDepartmentChange}
+                placeholder="Filtrar por setor"
+                allowClear
+                style={{ minWidth: "200px" }}
+                mode="multiple"
+                optionFilterProp="children"
+              >
+                {departmentList.map((p, i) => (
+                  <Select.Option value={p} key={i}>
+                    {p}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+            <div className="filter-field">
+              <label>Motivo</label>
+              <Select
+                id="intervFilterOutcome"
+                onChange={handleReasonChange}
+                placeholder="Filtrar por motivo"
+                allowClear
+                style={{ minWidth: "200px" }}
+                mode="multiple"
+                optionFilterProp="children"
+              >
+                {reasons &&
+                  reasons.map(({ id, parentName, name }) => (
+                    <Select.Option key={id} value={id}>
+                      {parentName ? `${parentName} - ${name}` : name}
+                    </Select.Option>
+                  ))}
+              </Select>
+            </div>
+            <div className="obs">
+              A consulta de intervenções é limitada em 1500 registros.
+            </div>
+          </>
+        )}
       </TableInfo>
 
       <BackTop />
 
-      <ExpandableTable
-        columns={interventionColumns(filter, true, t)}
-        pagination={{
-          pageSize: 50,
-          position: ["topRight", "bottomRight"],
-          showSizeChanger: false,
-        }}
-        loading={isFetching}
-        locale={{
-          emptyText: (
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="Nenhuma intervenção encontrada."
-            />
-          ),
-        }}
-        dataSource={!isFetching ? dsInterventions : []}
-        expandedRowRender={expandedInterventionRowRender}
-        showSorterTooltip={false}
-      />
+      <PageCard>
+        <ExpandableTable
+          columns={interventionColumns(filter, true, t)}
+          pagination={{
+            pageSize: 50,
+            position: ["topRight", "bottomRight"],
+            showSizeChanger: false,
+          }}
+          loading={isFetching}
+          locale={{
+            emptyText: (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description="Nenhuma intervenção encontrada."
+              />
+            ),
+          }}
+          dataSource={!isFetching ? dsInterventions : []}
+          expandedRowRender={expandedInterventionRowRender}
+          showSorterTooltip={false}
+        />
+      </PageCard>
       <FormIntervention
         open={visible}
         setVisibility={setVisibility}

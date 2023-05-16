@@ -53,6 +53,27 @@ export const fetchListThunk =
     dispatch(interventionFetchListSuccess(list));
   };
 
+export const searchListThunk =
+  (params = {}) =>
+  async (dispatch, getState) => {
+    dispatch(interventionFetchListStart());
+
+    const { access_token } = getState().auth.identify;
+    const {
+      data: { data },
+      error,
+    } = await api.searchInterventions(access_token, params).catch(errorHandler);
+
+    if (!isEmpty(error)) {
+      dispatch(interventionFetchListError(error));
+      return;
+    }
+
+    const list = data;
+
+    dispatch(interventionFetchListSuccess(list));
+  };
+
 export const fetchReasonsListThunk =
   (params = {}) =>
   async (dispatch, getState) => {

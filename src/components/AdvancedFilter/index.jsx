@@ -13,7 +13,7 @@ import Button from "components/Button";
 import { Row, Col } from "components/Grid";
 import Badge from "components/Badge";
 
-import { SearchBox } from "./index.style";
+import { SearchBox, FilterCard } from "./index.style";
 
 export const AdvancedFilterContext = React.createContext({});
 
@@ -66,57 +66,63 @@ export default function AdvancedFilter({
   const hiddenFieldCount = countHiddenFilters(values);
 
   return (
-    <SearchBox className={open ? "open" : ""}>
-      <AdvancedFilterContext.Provider value={{ values, setFieldValue }}>
-        <Row gutter={[16, 16]} type="flex">
-          {mainFilters}
-          <Col md={4}>
-            <div style={{ display: "flex" }}>
-              {secondaryFilters && (
-                <Tooltip
-                  title={
-                    hiddenFieldCount > 0 ? "Existem mais filtros aplicados" : ""
-                  }
-                >
-                  <Button
-                    type="link gtm-btn-adv-search"
-                    onClick={() => setOpen(!open)}
-                    style={{ marginTop: "14px", paddingLeft: 0 }}
+    <FilterCard>
+      <SearchBox className={open ? "open" : ""}>
+        <AdvancedFilterContext.Provider value={{ values, setFieldValue }}>
+          <Row gutter={[16, 16]} type="flex">
+            {mainFilters}
+            <Col md={4}>
+              <div style={{ display: "flex" }}>
+                {secondaryFilters && (
+                  <Tooltip
+                    title={
+                      hiddenFieldCount > 0
+                        ? "Existem mais filtros aplicados"
+                        : ""
+                    }
                   >
-                    <Badge count={hiddenFieldCount}>
-                      {t("screeningList.seeMore")}
-                    </Badge>
-                    {open ? <CaretUpOutlined /> : <CaretDownOutlined />}
-                  </Button>
-                </Tooltip>
-              )}
+                    <Button
+                      type="link gtm-btn-adv-search"
+                      onClick={() => setOpen(!open)}
+                      style={{ marginTop: "14px", paddingLeft: 0 }}
+                    >
+                      <Badge count={hiddenFieldCount}>
+                        {t("screeningList.seeMore")}
+                      </Badge>
+                      {open ? <CaretUpOutlined /> : <CaretDownOutlined />}
+                    </Button>
+                  </Tooltip>
+                )}
 
-              <Tooltip title={t("screeningList.search")}>
-                <Button
-                  type="secondary gtm-btn-search"
-                  shape="circle"
-                  icon={<SearchOutlined />}
-                  onClick={search}
-                  size="large"
-                  style={{ marginTop: "7px" }}
-                  loading={loading}
-                />
-              </Tooltip>
-              <Tooltip title={t("screeningList.resetFilter")}>
-                <Button
-                  className="gtm-btn-reset"
-                  shape="circle"
-                  icon={<DeleteOutlined />}
-                  onClick={reset}
-                  style={{ marginTop: "11px", marginLeft: "5px" }}
-                  loading={loading}
-                />
-              </Tooltip>
-            </div>
-          </Col>
-        </Row>
-        {secondaryFilters && <div className="filters">{secondaryFilters}</div>}
-      </AdvancedFilterContext.Provider>
-    </SearchBox>
+                <Tooltip title={t("screeningList.search")}>
+                  <Button
+                    type="secondary gtm-btn-search"
+                    shape="circle"
+                    icon={<SearchOutlined />}
+                    onClick={search}
+                    size="large"
+                    style={{ marginTop: "7px" }}
+                    loading={loading}
+                  />
+                </Tooltip>
+                <Tooltip title={t("screeningList.resetFilter")}>
+                  <Button
+                    className="gtm-btn-reset"
+                    shape="circle"
+                    icon={<DeleteOutlined />}
+                    onClick={reset}
+                    style={{ marginTop: "11px", marginLeft: "5px" }}
+                    loading={loading}
+                  />
+                </Tooltip>
+              </div>
+            </Col>
+          </Row>
+          {secondaryFilters && (
+            <div className="filters">{secondaryFilters}</div>
+          )}
+        </AdvancedFilterContext.Provider>
+      </SearchBox>
+    </FilterCard>
   );
 }

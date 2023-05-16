@@ -125,7 +125,9 @@ export const fetchOutliersListThunk =
     }
 
     const { list: drugs } = getState().drugs;
-    const [drug] = drugs.filter(({ idDrug }) => idDrug === params.idDrug);
+    const [drug] = drugs.filter(
+      ({ idDrug }) => `${idDrug}` === `${params.idDrug}`
+    );
     const list = data.map((item) => ({ ...item, ...drug }));
 
     dispatch(outliersFetchListSuccess(list, params));
@@ -207,7 +209,7 @@ export const fetchReferencesListThunk =
         idDrug: parseInt(idDrug, 10),
         idSegment: parseInt(idSegment, 10),
       };
-      drug = drugsList.find((item) => item.idDrug === params.idDrug);
+      drug = drugsList.find((item) => `${item.idDrug}` === `${params.idDrug}`);
     } else {
       const [segment] = segmentsList;
       drug = drugsList[0];
