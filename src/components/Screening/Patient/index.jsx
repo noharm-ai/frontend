@@ -36,7 +36,6 @@ export default function Patient({
     notesSigns,
     notesSignsDate,
     notesAllergies,
-    notesAllergiesDate,
     notesDialysis,
     notesDialysisDate,
     alertStats,
@@ -188,7 +187,7 @@ export default function Patient({
                   </div>
                 </PrescriptionCard>
               </Col>
-              {notesAllergiesDate && (
+              {notesAllergies && notesAllergies.length > 0 && (
                 <Col xs={8} style={{ marginTop: "10px" }}>
                   <PrescriptionCard className="full-height allergy">
                     <div className="header">
@@ -198,10 +197,11 @@ export default function Patient({
                     </div>
                     <div className="content">
                       <div className="text-content list">
-                        {notesAllergies.map(({ text, date }) => (
+                        {notesAllergies.map(({ text, date, source }) => (
                           <div key={text} className="list-item">
                             <div className="date">
                               {moment(date).format("DD/MM/YYYY hh:mm")}
+                              {source === "care" ? " (NoHarm Care)" : ""}
                             </div>
                             <div className="text">{text}</div>
                           </div>

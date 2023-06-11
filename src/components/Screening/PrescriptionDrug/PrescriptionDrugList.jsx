@@ -335,10 +335,6 @@ export default function PrescriptionDrugList({
   const groups = {};
   const headerKeys = Object.keys(headers);
 
-  if (featureService.hasPrimaryCare()) {
-    headerKeys.reverse();
-  }
-
   headerKeys.forEach((k) => {
     const dt = headers[k].expire
       ? headers[k].expire.substr(0, 10)
@@ -362,9 +358,17 @@ export default function PrescriptionDrugList({
     }
   });
 
+  const getGroups = (groups) => {
+    if (featureService.hasPrimaryCare()) {
+      return Object.keys(groups).sort().reverse();
+    }
+
+    return Object.keys(groups).sort();
+  };
+
   return (
     <>
-      {Object.keys(groups).map((g) => (
+      {getGroups(groups).map((g) => (
         <Collapse
           bordered={false}
           key={g}

@@ -3,6 +3,7 @@ import isEmpty from "lodash.isempty";
 import styled from "styled-components/macro";
 import debounce from "lodash.debounce";
 import { useTranslation } from "react-i18next";
+import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
 
 import breakpoints from "styles/breakpoints";
 import { useMedia } from "lib/hooks";
@@ -309,55 +310,90 @@ export default function ScreeningList({
   };
 
   const info = (
-    <TableInfo>
-      <Input
-        placeholder={t("screeningList.iptSearchPlaceholder")}
-        style={{ width: 300 }}
-        allowClear
-        onChange={onClientSearch}
-        className={filter.searchKey ? "active" : ""}
-      />
-      <Tooltip title={t("screeningList.pendingHint-" + prioritizationType)}>
-        <Button
-          type="gtm-lnk-filter-presc-pendente ant-btn-link-hover"
-          className={isFilterActive("0") ? "active" : ""}
-          onClick={(e) => handleFilter(e, "0")}
-        >
-          {t("screeningList.pending-" + prioritizationType)}
-          <Tag color="orange">{listCount.pending}</Tag>
-        </Button>
-      </Tooltip>
+    <>
+      <TableInfo>
+        <Input
+          placeholder={t("screeningList.iptSearchPlaceholder")}
+          style={{ width: 300 }}
+          allowClear
+          onChange={onClientSearch}
+          className={filter.searchKey ? "active" : ""}
+        />
+        <Tooltip title={t("screeningList.pendingHint-" + prioritizationType)}>
+          <Button
+            type="gtm-lnk-filter-presc-pendente ant-btn-link-hover"
+            className={isFilterActive("0") ? "active" : ""}
+            onClick={(e) => handleFilter(e, "0")}
+          >
+            {t("screeningList.pending-" + prioritizationType)}
+            <Tag color="orange">{listCount.pending}</Tag>
+          </Button>
+        </Tooltip>
 
-      <Tooltip title={t("screeningList.checkedHint-" + prioritizationType)}>
-        <Button
-          type="gtm-lnk-filter-presc-checada ant-btn-link-hover"
-          className={isFilterActive("s") ? "active" : ""}
-          onClick={(e) => handleFilter(e, "s")}
-        >
-          {t("screeningList.checked-" + prioritizationType)}{" "}
-          <Tag color="green">{listCount.checked}</Tag>
-        </Button>
-      </Tooltip>
+        <Tooltip title={t("screeningList.checkedHint-" + prioritizationType)}>
+          <Button
+            type="gtm-lnk-filter-presc-checada ant-btn-link-hover"
+            className={isFilterActive("s") ? "active" : ""}
+            onClick={(e) => handleFilter(e, "s")}
+          >
+            {t("screeningList.checked-" + prioritizationType)}{" "}
+            <Tag color="green">{listCount.checked}</Tag>
+          </Button>
+        </Tooltip>
 
-      <Tooltip
-        title={
-          listCount.all === 500
-            ? t("screeningList.allHintLimit")
-            : t("screeningList.allHint-" + prioritizationType)
-        }
-      >
-        <Button
-          type="gtm-lnk-filter-presc-todas ant-btn-link-hover"
-          className={isFilterActive(null) ? "active" : ""}
-          onClick={(e) => handleFilter(e, "all")}
+        <Tooltip
+          title={
+            listCount.all === 500
+              ? t("screeningList.allHintLimit")
+              : t("screeningList.allHint-" + prioritizationType)
+          }
         >
-          {t("screeningList.all-" + prioritizationType)}{" "}
-          {listCount.all === 500 ? <InfoIcon /> : ""}
-          <Tag>{listCount.all}</Tag>
-        </Button>
-      </Tooltip>
-    </TableInfo>
+          <Button
+            type="gtm-lnk-filter-presc-todas ant-btn-link-hover"
+            className={isFilterActive(null) ? "active" : ""}
+            onClick={(e) => handleFilter(e, "all")}
+          >
+            {t("screeningList.all-" + prioritizationType)}{" "}
+            {listCount.all === 500 ? <InfoIcon /> : ""}
+            <Tag>{listCount.all}</Tag>
+          </Button>
+        </Tooltip>
+      </TableInfo>
+      {prioritizationType === "prescription" && (
+        <div>
+          <Button
+            onClick={(e) => orderByDate()}
+            type={sortOrder.columnKey === "date" ? "primary" : "default"}
+            icon={
+              sortOrder.columnKey === "date" ? (
+                sortOrder.order === "ascend" ? (
+                  <CaretUpOutlined />
+                ) : (
+                  <CaretDownOutlined />
+                )
+              ) : null
+            }
+            style={{ marginLeft: "10px" }}
+          >
+            Priorizar por data
+          </Button>
+        </div>
+      )}
+    </>
   );
+
+  const orderByDate = () => {
+    if (sortOrder.columnKey === "date" && sortOrder.order === "ascend") {
+      setSortOrder({ columnKey: "date", order: "descend" });
+    } else if (
+      sortOrder.columnKey === "date" &&
+      sortOrder.order === "descend"
+    ) {
+      setSortOrder({ order: undefined });
+    } else if (sortOrder.columnKey !== "date") {
+      setSortOrder({ columnKey: "date", order: "ascend" });
+    }
+  };
 
   return (
     <>
