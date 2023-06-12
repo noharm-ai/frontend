@@ -1,50 +1,54 @@
-import { createActions, createReducer } from 'reduxsauce';
+import { createActions, createReducer } from "reduxsauce";
 
 export const { Types, Creators } = createActions({
-  outliersGenerateStart: ['segment'],
-  outliersGenerateStop: ['status', 'data'],
-  outliersResetGenerate: [''],
+  outliersGenerateStart: ["segment"],
+  outliersGenerateStop: ["status", "data"],
+  outliersResetGenerate: [""],
 
-  outliersGenerateDrugStart: [''],
-  outliersGenerateDrugError: ['error'],
-  outliersGenerateDrugSuccess: [''],
-  outliersGenerateDrugReset: [''],
+  outliersGenerateDrugStart: [""],
+  outliersGenerateDrugError: ["error"],
+  outliersGenerateDrugSuccess: [""],
+  outliersGenerateDrugReset: [""],
 
-  outliersFetchListStart: [''],
-  outliersFetchListError: ['error'],
-  outliersFetchListSuccess: ['list', 'drugData', 'firstFilter'],
+  outliersFetchListStart: [""],
+  outliersFetchListError: ["error"],
+  outliersFetchListSuccess: ["list", "drugData", "firstFilter"],
 
-  outliersFetchSubstanceListStart: [''],
-  outliersFetchSubstanceListError: ['error'],
-  outliersFetchSubstanceListSuccess: ['list'],
+  outliersFetchSubstanceListStart: [""],
+  outliersFetchSubstanceListError: ["error"],
+  outliersFetchSubstanceListSuccess: ["list"],
 
-  outliersSaveStart: [''],
-  outliersSaveSuccess: ['idOutlier', 'params'],
-  outliersSaveReset: [''],
-  outliersSaveError: ['error'],
+  outliersFetchSubstanceSingleStart: [""],
+  outliersFetchSubstanceSingleError: ["error"],
+  outliersFetchSubstanceSingleSuccess: ["data"],
 
-  outliersSetSelectedItem: ['item'],
-  outliersUpdateSelectedItem: ['item'],
+  outliersSaveStart: [""],
+  outliersSaveSuccess: ["idOutlier", "params"],
+  outliersSaveReset: [""],
+  outliersSaveError: ["error"],
 
-  outliersSelectRelation: ['item'],
-  outliersUpdateRelation: ['item'],
-  outliersSaveRelationStart: [''],
-  outliersSaveRelationSuccess: ['item'],
-  outliersSaveRelationReset: [''],
-  outliersSaveRelationError: ['error'],
+  outliersSetSelectedItem: ["item"],
+  outliersUpdateSelectedItem: ["item"],
 
-  outliersSelectSubstance: ['item'],
-  outliersUpdateSubstance: ['item'],
-  outliersSaveSubstanceStart: [''],
-  outliersSaveSubstanceSuccess: ['item'],
-  outliersSaveSubstanceReset: [''],
-  outliersSaveSubstanceError: ['error'],
+  outliersSelectRelation: ["item"],
+  outliersUpdateRelation: ["item"],
+  outliersSaveRelationStart: [""],
+  outliersSaveRelationSuccess: ["item"],
+  outliersSaveRelationReset: [""],
+  outliersSaveRelationError: ["error"],
 
-  outliersUpdateDrugData: ['item'],
+  outliersSelectSubstance: ["item"],
+  outliersUpdateSubstance: ["item"],
+  outliersSaveSubstanceStart: [""],
+  outliersSaveSubstanceSuccess: ["item"],
+  outliersSaveSubstanceReset: [""],
+  outliersSaveSubstanceError: ["error"],
 
-  outliersFetchRelationStart: [''],
-  outliersFetchRelationError: ['error'],
-  outliersFetchRelationSuccess: ['list']
+  outliersUpdateDrugData: ["item"],
+
+  outliersFetchRelationStart: [""],
+  outliersFetchRelationError: ["error"],
+  outliersFetchRelationSuccess: ["list"],
 });
 
 const INITIAL_STATE = {
@@ -54,58 +58,59 @@ const INITIAL_STATE = {
   list: [],
   firstFilter: {
     idDrug: undefined,
-    idSegment: undefined
+    idSegment: undefined,
   },
   generate: {
     idSegment: null,
-    nameSegment: '',
+    nameSegment: "",
     isGenerating: false,
     status: null,
-    data: null
+    data: null,
   },
   generateDrugOutlier: {
     isGenerating: false,
     generated: false,
-    error: null
+    error: null,
   },
   save: {
     isSaving: false,
     success: false,
-    error: null
+    error: null,
   },
   edit: {
     isSaving: false,
     error: null,
-    item: {}
+    item: {},
   },
   relation: {
     isFetching: false,
-    error: null
+    error: null,
   },
   saveRelation: {
     isSaving: false,
     success: false,
     error: null,
-    item: {}
+    item: {},
   },
   substance: {
     error: null,
     isFetching: true,
     list: [],
     single: {
+      isFetching: false,
       isSaving: false,
       error: null,
-      item: {}
-    }
-  }
+      item: {},
+    },
+  },
 };
 
 const generateStart = (state = INITIAL_STATE, { segment }) => ({
   ...state,
   generate: {
     ...segment,
-    isGenerating: true
-  }
+    isGenerating: true,
+  },
 });
 
 const generateStop = (state = INITIAL_STATE, { status, data }) => ({
@@ -114,23 +119,23 @@ const generateStop = (state = INITIAL_STATE, { status, data }) => ({
     ...state.generate,
     status,
     isGenerating: false,
-    data
-  }
+    data,
+  },
 });
 
 const resetGenerate = (state = INITIAL_STATE) => ({
   ...state,
   generate: {
-    ...INITIAL_STATE.generate
-  }
+    ...INITIAL_STATE.generate,
+  },
 });
 
 const generateDrugStart = (state = INITIAL_STATE) => ({
   ...state,
   generateDrugOutlier: {
     ...state.generateDrugOutlier,
-    isGenerating: true
-  }
+    isGenerating: true,
+  },
 });
 
 const generateDrugError = (state = INITIAL_STATE, { error }) => ({
@@ -138,8 +143,8 @@ const generateDrugError = (state = INITIAL_STATE, { error }) => ({
   generateDrugOutlier: {
     ...state.generateDrugOutlier,
     isGenerating: false,
-    error
-  }
+    error,
+  },
 });
 
 const generateDrugSuccess = (state = INITIAL_STATE) => ({
@@ -148,8 +153,8 @@ const generateDrugSuccess = (state = INITIAL_STATE) => ({
     ...state.generateDrugOutlier,
     isGenerating: false,
     generated: true,
-    error: null
-  }
+    error: null,
+  },
 });
 
 const generateDrugReset = (state = INITIAL_STATE) => ({
@@ -158,36 +163,39 @@ const generateDrugReset = (state = INITIAL_STATE) => ({
     ...state.generateDrugOutlier,
     isGenerating: false,
     generated: false,
-    error: null
-  }
+    error: null,
+  },
 });
 
 const fetchListStart = (state = INITIAL_STATE) => ({
   ...state,
-  isFetching: true
+  isFetching: true,
 });
 
 const fetchListError = (state = INITIAL_STATE, { error }) => ({
   ...state,
   error,
-  isFetching: false
+  isFetching: false,
 });
 
-const fetchListSuccess = (state = INITIAL_STATE, { list, drugData, firstFilter }) => ({
+const fetchListSuccess = (
+  state = INITIAL_STATE,
+  { list, drugData, firstFilter }
+) => ({
   ...state,
   list,
   drugData,
   firstFilter,
   error: null,
-  isFetching: false
+  isFetching: false,
 });
 
 const fetchSubstanceListStart = (state = INITIAL_STATE) => ({
   ...state,
   substance: {
     ...state.substance,
-    isFetching: true
-  }
+    isFetching: true,
+  },
 });
 
 const fetchSubstanceListError = (state = INITIAL_STATE, { error }) => ({
@@ -195,8 +203,8 @@ const fetchSubstanceListError = (state = INITIAL_STATE, { error }) => ({
   substance: {
     ...state.substance,
     isFetching: false,
-    error
-  }
+    error,
+  },
 });
 
 const fetchSubstanceListSuccess = (state = INITIAL_STATE, { list }) => ({
@@ -205,16 +213,52 @@ const fetchSubstanceListSuccess = (state = INITIAL_STATE, { list }) => ({
     ...state.substance,
     isFetching: false,
     error: null,
-    list
-  }
+    list,
+  },
+});
+
+const fetchSubstanceSingleStart = (state = INITIAL_STATE) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...state.substance.single,
+      isFetching: true,
+    },
+  },
+});
+
+const fetchSubstanceSingleError = (state = INITIAL_STATE, { error }) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...state.substance.single,
+      isFetching: false,
+      error,
+    },
+  },
+});
+
+const fetchSubstanceSingleSuccess = (state = INITIAL_STATE, { data }) => ({
+  ...state,
+  substance: {
+    ...state.substance,
+    single: {
+      ...state.substance.single,
+      isFetching: false,
+      error: null,
+      item: data,
+    },
+  },
 });
 
 const saveStart = (state = INITIAL_STATE) => ({
   ...state,
   save: {
     ...state.save,
-    isSaving: true
-  }
+    isSaving: true,
+  },
 });
 
 const saveError = (state = INITIAL_STATE, { error }) => ({
@@ -222,20 +266,20 @@ const saveError = (state = INITIAL_STATE, { error }) => ({
   save: {
     ...state.save,
     error,
-    isSaving: false
-  }
+    isSaving: false,
+  },
 });
 
 const saveReset = (state = INITIAL_STATE) => ({
   ...state,
   save: {
-    ...INITIAL_STATE.save
-  }
+    ...INITIAL_STATE.save,
+  },
 });
 
 const saveSuccess = (state = INITIAL_STATE, { idOutlier, params }) => {
   const list = [...state.list];
-  const outlierIndex = list.findIndex(item => item.idOutlier === idOutlier);
+  const outlierIndex = list.findIndex((item) => item.idOutlier === idOutlier);
 
   if (outlierIndex !== -1) {
     list[outlierIndex] = { ...list[outlierIndex], ...params };
@@ -248,8 +292,8 @@ const saveSuccess = (state = INITIAL_STATE, { idOutlier, params }) => {
       ...state.save,
       error: null,
       success: true,
-      isSaving: false
-    }
+      isSaving: false,
+    },
   };
 };
 
@@ -257,8 +301,8 @@ const setSelectedItem = (state = INITIAL_STATE, { item }) => ({
   ...state,
   edit: {
     ...state.edit,
-    item
-  }
+    item,
+  },
 });
 
 const updateSelectedItem = (state = INITIAL_STATE, { item }) => ({
@@ -267,17 +311,17 @@ const updateSelectedItem = (state = INITIAL_STATE, { item }) => ({
     ...state.edit,
     item: {
       ...state.edit.item,
-      ...item
-    }
-  }
+      ...item,
+    },
+  },
 });
 
 const selectRelation = (state = INITIAL_STATE, { item }) => ({
   ...state,
   saveRelation: {
     ...state.saveRelation,
-    item
-  }
+    item,
+  },
 });
 
 const updateRelation = (state = INITIAL_STATE, { item }) => ({
@@ -286,17 +330,17 @@ const updateRelation = (state = INITIAL_STATE, { item }) => ({
     ...state.saveRelation,
     item: {
       ...state.saveRelation.item,
-      ...item
-    }
-  }
+      ...item,
+    },
+  },
 });
 
 const saveRelationStart = (state = INITIAL_STATE) => ({
   ...state,
   saveRelation: {
     ...state.saveRelation,
-    isSaving: true
-  }
+    isSaving: true,
+  },
 });
 
 const saveRelationError = (state = INITIAL_STATE, { error }) => ({
@@ -304,20 +348,22 @@ const saveRelationError = (state = INITIAL_STATE, { error }) => ({
   saveRelation: {
     ...state.saveRelation,
     error,
-    isSaving: false
-  }
+    isSaving: false,
+  },
 });
 
 const saveRelationReset = (state = INITIAL_STATE) => ({
   ...state,
   saveRelation: {
-    ...INITIAL_STATE.saveRelation
-  }
+    ...INITIAL_STATE.saveRelation,
+  },
 });
 
 const saveRelationSuccess = (state = INITIAL_STATE, { item }) => {
   const relations = [...state.drugData.relations];
-  const index = relations.findIndex(r => item.sctidB === r.sctidB && item.type === r.type);
+  const index = relations.findIndex(
+    (r) => item.sctidB === r.sctidB && item.type === r.type
+  );
 
   if (index !== -1) {
     relations[index] = { ...relations[index], ...item };
@@ -329,14 +375,14 @@ const saveRelationSuccess = (state = INITIAL_STATE, { item }) => {
     ...state,
     drugData: {
       ...state.drugData,
-      relations
+      relations,
     },
     saveRelation: {
       ...state.saveRelation,
       error: null,
       success: true,
-      isSaving: false
-    }
+      isSaving: false,
+    },
   };
 };
 
@@ -346,9 +392,9 @@ const selectSubstance = (state = INITIAL_STATE, { item }) => ({
     ...state.substance,
     single: {
       ...state.substance.single,
-      item
-    }
-  }
+      item,
+    },
+  },
 });
 
 const updateSubstance = (state = INITIAL_STATE, { item }) => ({
@@ -359,10 +405,10 @@ const updateSubstance = (state = INITIAL_STATE, { item }) => ({
       ...state.substance.single,
       item: {
         ...state.substance.single.item,
-        ...item
-      }
-    }
-  }
+        ...item,
+      },
+    },
+  },
 });
 
 const saveSubstanceStart = (state = INITIAL_STATE) => ({
@@ -371,9 +417,9 @@ const saveSubstanceStart = (state = INITIAL_STATE) => ({
     ...state.substance,
     single: {
       ...state.substance.single,
-      isSaving: true
-    }
-  }
+      isSaving: true,
+    },
+  },
 });
 
 const saveSubstanceError = (state = INITIAL_STATE, { error }) => ({
@@ -383,9 +429,9 @@ const saveSubstanceError = (state = INITIAL_STATE, { error }) => ({
     single: {
       ...state.substance.single,
       isSaving: false,
-      error
-    }
-  }
+      error,
+    },
+  },
 });
 
 const saveSubstanceReset = (state = INITIAL_STATE) => ({
@@ -393,14 +439,14 @@ const saveSubstanceReset = (state = INITIAL_STATE) => ({
   substance: {
     ...state.substance,
     single: {
-      ...INITIAL_STATE.substance.single
-    }
-  }
+      ...INITIAL_STATE.substance.single,
+    },
+  },
 });
 
 const saveSubstanceSuccess = (state = INITIAL_STATE, { item }) => {
   const list = [...state.substance.list];
-  const index = list.findIndex(r => item.sctid === r.sctid);
+  const index = list.findIndex((r) => item.sctid === r.sctid);
 
   if (index !== -1) {
     list[index] = { ...list[index], ...item };
@@ -417,9 +463,9 @@ const saveSubstanceSuccess = (state = INITIAL_STATE, { item }) => {
         ...state.substance.single,
         error: null,
         success: true,
-        isSaving: false
-      }
-    }
+        isSaving: false,
+      },
+    },
   };
 };
 
@@ -427,15 +473,15 @@ const updateDrugData = (state = INITIAL_STATE, { item }) => ({
   ...state,
   drugData: {
     ...state.drugData,
-    ...item
-  }
+    ...item,
+  },
 });
 
 const fetchRelationStart = (state = INITIAL_STATE) => ({
   ...state,
   relation: {
-    isFetching: true
-  }
+    isFetching: true,
+  },
 });
 
 const fetchRelationError = (state = INITIAL_STATE, { error }) => ({
@@ -443,21 +489,21 @@ const fetchRelationError = (state = INITIAL_STATE, { error }) => ({
   relation: {
     ...state.relation,
     error,
-    isFetching: false
-  }
+    isFetching: false,
+  },
 });
 
 const fetchRelationSuccess = (state = INITIAL_STATE, { list }) => ({
   ...state,
   drugData: {
     ...state.drugData,
-    relations: list
+    relations: list,
   },
   relation: {
     ...state.relation,
     isFetching: false,
-    error: null
-  }
+    error: null,
+  },
 });
 
 const HANDLERS = {
@@ -477,6 +523,10 @@ const HANDLERS = {
   [Types.OUTLIERS_FETCH_SUBSTANCE_LIST_START]: fetchSubstanceListStart,
   [Types.OUTLIERS_FETCH_SUBSTANCE_LIST_ERROR]: fetchSubstanceListError,
   [Types.OUTLIERS_FETCH_SUBSTANCE_LIST_SUCCESS]: fetchSubstanceListSuccess,
+
+  [Types.OUTLIERS_FETCH_SUBSTANCE_SINGLE_START]: fetchSubstanceSingleStart,
+  [Types.OUTLIERS_FETCH_SUBSTANCE_SINGLE_ERROR]: fetchSubstanceSingleError,
+  [Types.OUTLIERS_FETCH_SUBSTANCE_SINGLE_SUCCESS]: fetchSubstanceSingleSuccess,
 
   [Types.OUTLIERS_SAVE_START]: saveStart,
   [Types.OUTLIERS_SAVE_ERROR]: saveError,
@@ -505,7 +555,7 @@ const HANDLERS = {
 
   [Types.OUTLIERS_FETCH_RELATION_START]: fetchRelationStart,
   [Types.OUTLIERS_FETCH_RELATION_ERROR]: fetchRelationError,
-  [Types.OUTLIERS_FETCH_RELATION_SUCCESS]: fetchRelationSuccess
+  [Types.OUTLIERS_FETCH_RELATION_SUCCESS]: fetchRelationSuccess,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Formik } from "formik";
+import { useSelector, useDispatch } from "react-redux";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 
@@ -7,7 +8,9 @@ import { Row } from "components/Grid";
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
+import LoadBox from "components/LoadBox";
 
+import { fetchSubstanceClasses } from "features/lists/ListsSlice";
 import Base from "./Base";
 import { FormContainer } from "../Form.style";
 
@@ -19,9 +22,46 @@ const validationSchema = Yup.object().shape({
   name: Yup.string().required(),
 });
 
-export default function Substance({ saveStatus, save, afterSave, ...props }) {
+export default function Substance({
+  saveStatus,
+  save,
+  fetchSubstance,
+  afterSave,
+  visible,
+  ...props
+}) {
   const { t } = useTranslation();
-  const { isSaving, item } = saveStatus;
+  const dispatch = useDispatch();
+  const substanceClasses = useSelector(
+    (state) => state.lists.substanceClasses.list
+  );
+  const fetchStatus = useSelector(
+    (state) => state.lists.substanceClasses.status
+  );
+  const { isSaving, isFetching, item } = saveStatus;
+
+  useEffect(() => {
+    if (item.sctid && visible) {
+      fetchSubstance(item.sctid);
+    }
+  }, [item.sctid, fetchSubstance, visible]);
+
+  useEffect(() => {
+    if (fetchStatus === "idle" && substanceClasses.length === 0) {
+      dispatch(fetchSubstanceClasses());
+    }
+  }, [fetchStatus, dispatch, substanceClasses]);
+
+  if (fetchStatus === "failed") {
+    notification.error({
+      message: t("error.title"),
+      description: t("error.description"),
+    });
+  }
+
+  if (isFetching) {
+    return <LoadBox />;
+  }
 
   const initialValues = {
     ...item,
@@ -55,6 +95,7 @@ export default function Substance({ saveStatus, save, afterSave, ...props }) {
         <DefaultModal
           centered
           destroyOnClose
+          open={visible}
           {...props}
           onOk={handleSubmit}
           confirmLoading={isSaving}
