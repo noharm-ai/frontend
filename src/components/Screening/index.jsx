@@ -115,7 +115,8 @@ export default function Screening({
         backspace: 8,
       };
 
-      if (e.ctrlKey) {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
         let activeRow = document.querySelectorAll(
           ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr.highlight"
         )[0];
