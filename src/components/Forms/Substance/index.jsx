@@ -12,7 +12,7 @@ import LoadBox from "components/LoadBox";
 
 import { fetchSubstanceClasses } from "features/lists/ListsSlice";
 import Base from "./Base";
-import { FormContainer } from "../Form.style";
+import { Form } from "styles/Form.style";
 
 const saveMessage = {
   message: "Uhu! Substância salva com sucesso! :)",
@@ -110,13 +110,9 @@ export default function Substance({
           <header>
             <Heading margin="0 0 11px">Substância</Heading>
           </header>
-          <form onSubmit={handleSubmit}>
-            <FormContainer>
-              <Row type="flex" gutter={[16, 24]}>
-                <Base />
-              </Row>
-            </FormContainer>
-          </form>
+          <Form onSubmit={handleSubmit}>
+            <Base />
+          </Form>
         </DefaultModal>
       )}
     </Formik>

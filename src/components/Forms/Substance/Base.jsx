@@ -3,15 +3,10 @@ import "styled-components/macro";
 import { useFormikContext } from "formik";
 import { useSelector } from "react-redux";
 
-import { Col } from "components/Grid";
-import Heading from "components/Heading";
 import { Input, Select } from "components/Inputs";
-import Tooltip from "components/Tooltip";
-
-import { Box } from "../Form.style";
 
 export default function Base() {
-  const { values, setFieldValue, errors } = useFormikContext();
+  const { values, setFieldValue, errors, touched } = useFormikContext();
   const substanceClasses = useSelector(
     (state) => state.lists.substanceClasses.list
   );
@@ -19,17 +14,16 @@ export default function Base() {
     (state) => state.lists.substanceClasses.status
   );
   const { sctid, name, isAdd, idclass } = values;
-  const layout = { label: 8, input: 16 };
 
   return (
     <>
-      <Box hasError={errors.sctid}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">SCTID:</Tooltip>
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
+      <div
+        className={`form-row ${errors.sctid && touched.sctid ? "error" : ""}`}
+      >
+        <div className="form-label">
+          <label>SCTID:</label>
+        </div>
+        <div className="form-input">
           {isAdd && (
             <Input
               value={sctid}
@@ -38,31 +32,37 @@ export default function Base() {
             />
           )}
           {!isAdd && sctid}
-        </Col>
-      </Box>
+        </div>
+        {errors.sctid && touched.sctid && (
+          <div className="form-error">{errors.sctid}</div>
+        )}
+      </div>
 
-      <Box hasError={errors.name}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Nome:</Tooltip>
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
+      <div className={`form-row ${errors.name && touched.name ? "error" : ""}`}>
+        <div className="form-label">
+          <label>Nome:</label>
+        </div>
+        <div className="form-input">
           <Input
             value={name}
             onChange={({ target }) => setFieldValue("name", target.value)}
             maxLength={250}
           />
-        </Col>
-      </Box>
+        </div>
+        {errors.name && touched.name && (
+          <div className="form-error">{errors.name}</div>
+        )}
+      </div>
 
-      <Box hasError={errors.idclass}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Classe:</Tooltip>
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
+      <div
+        className={`form-row ${
+          errors.idclass && touched.idclass ? "error" : ""
+        }`}
+      >
+        <div className="form-label">
+          <label>Classe:</label>
+        </div>
+        <div className="form-input">
           <Select
             id="idclass"
             optionFilterProp="children"
@@ -78,8 +78,11 @@ export default function Base() {
               </Select.Option>
             ))}
           </Select>
-        </Col>
-      </Box>
+        </div>
+        {errors.idclass && touched.idclass && (
+          <div className="form-error">{errors.idclass}</div>
+        )}
+      </div>
     </>
   );
 }
