@@ -41,6 +41,7 @@ export default function DrugForm({
       template={template.data}
       isSaving={loading}
       values={values}
+      horizontal
     />
   );
 }

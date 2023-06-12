@@ -451,7 +451,7 @@ export const expandedRowRender = (bag) => (record) => {
         )}
         {bag.security.hasPresmedForm() && bag.formTemplate && (
           <Descriptions.Item label={bag.formTemplate.name} span={3}>
-            <div className="limit-width">
+            <div>
               <DrugForm
                 savePrescriptionDrugForm={bag.savePrescriptionDrugForm}
                 idPrescriptionDrug={record.idPrescriptionDrug}

@@ -33,10 +33,19 @@ export const CustomFormContainer = styled.div`
     button:not(:last-child) {
       margin-right: 10px;
     }
+
+    &.horizontal {
+      justify-content: flex-start;
+    }
   }
 
   .question-group {
     margin-top: 15px;
+  }
+
+  .single-panel {
+    background: #fff;
+    padding: 0 1rem 1rem;
   }
 `;
 
@@ -46,7 +55,8 @@ export const Box = styled.div`
     props.flexDirection ? props.flexDirection : "row"};
   flex-wrap: wrap;
   align-items: flex-start;
-  width: 100%;
+  width: ${(props) => (props.horizontal ? "auto" : "100%")};
+  margin-right: ${(props) => (props.horizontal ? "30px" : "0")};
 
   label.fixed {
     width: 140px;
