@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from "react-redux";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 
-import { Row } from "components/Grid";
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
