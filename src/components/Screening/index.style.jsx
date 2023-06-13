@@ -70,3 +70,9 @@ export const PeriodTags = styled.div`
     }
   }
 `;
+
+export const DrugFormStatusBox = styled.div`
+  position: fixed;
+  right: 10rem;
+  bottom: 1rem;
+`;

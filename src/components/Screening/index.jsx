@@ -21,11 +21,13 @@ import PreviousInterventionList from "containers/Screening/PreviousInterventionL
 import PageHeader from "containers/Screening/PageHeader";
 import Patient from "containers/Screening/Patient";
 import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
+import DrugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatus";
 
 import {
   BoxWrapper,
   ScreeningTabs,
   PrescriptionActionContainer,
+  DrugFormStatusBox,
 } from "./index.style";
 
 export default function Screening({
@@ -430,6 +432,12 @@ export default function Screening({
       </Row>
 
       <PrescriptionDrugForm />
+      {security.hasPresmedForm() && !isFetching && (
+        <DrugFormStatusBox>
+          <DrugFormStatus title={content.formTemplate?.name} />
+        </DrugFormStatusBox>
+      )}
+
       <BackTop />
     </>
   );
