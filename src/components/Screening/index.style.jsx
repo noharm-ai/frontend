@@ -76,3 +76,28 @@ export const DrugFormStatusBox = styled.div`
   right: 10rem;
   bottom: 1rem;
 `;
+
+export const TableLink = styled.a`
+  color: rgba(0, 0, 0, 0.65);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+export const TableTags = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+
+  span.tag {
+    display: flex;
+    align-items: center;
+    width: 20px;
+    cursor: pointer;
+
+    &.gtm-tag-alert {
+      width: 30px;
+    }
+  }
+`;
