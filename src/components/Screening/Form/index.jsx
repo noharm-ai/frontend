@@ -45,6 +45,15 @@ export default function DrugForm({
       });
   };
 
+  const onChangeForm = (values) => {
+    dispatch(
+      updateDrugForm({
+        id: idPrescriptionDrug,
+        data: { ...values, updated: false },
+      })
+    );
+  };
+
   return (
     <CustomForm
       onSubmit={saveForm}
@@ -52,6 +61,7 @@ export default function DrugForm({
       isSaving={loading}
       values={values}
       horizontal
+      onChange={onChangeForm}
     />
   );
 }

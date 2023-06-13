@@ -16,6 +16,7 @@ export default function CustomForm({
   values,
   startClosed,
   horizontal = false,
+  onChange,
 }) {
   const initialValues = {};
   const validationShape = {};
@@ -74,13 +75,21 @@ export default function CustomForm({
             >
               {template.map((item) => (
                 <Collapse.Panel key={item.group} header={item.group}>
-                  <Base horizontal={horizontal} item={item} />
+                  <Base
+                    horizontal={horizontal}
+                    item={item}
+                    onChange={onChange}
+                  />
                 </Collapse.Panel>
               ))}
             </Collapse>
           ) : (
             <div className="single-panel">
-              <Base horizontal={horizontal} item={template[0]} />
+              <Base
+                horizontal={horizontal}
+                item={template[0]}
+                onChange={onChange}
+              />
             </div>
           )}
 

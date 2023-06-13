@@ -7,8 +7,16 @@ import Heading from "components/Heading";
 import Field from "./Field";
 import { Box, FieldError, FieldHelp } from "../Form.style";
 
-export default function Base({ item, horizontal }) {
+export default function Base({ item, horizontal, onChange }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
+
+  const setValue = (id, value) => {
+    setFieldValue(id, value);
+
+    if (onChange) {
+      onChange({ ...values, [id]: value });
+    }
+  };
 
   return (
     <div style={{ display: horizontal ? "flex" : "block" }}>
@@ -32,7 +40,7 @@ export default function Base({ item, horizontal }) {
                   storeId={`cf-text-${question.id}`}
                   memoryType={`cf-text-${question.id}`}
                   content={values[question.id]}
-                  onLoad={(value) => setFieldValue(question.id, value)}
+                  onLoad={(value) => setValue(question.id, value)}
                 />
               )}
             </div>
@@ -40,7 +48,7 @@ export default function Base({ item, horizontal }) {
             <Field
               question={question}
               values={values}
-              setFieldValue={setFieldValue}
+              setFieldValue={setValue}
             />
             {question.help && <FieldHelp>{question.help}</FieldHelp>}
             {errors[question.id] && touched[question.id] && (
