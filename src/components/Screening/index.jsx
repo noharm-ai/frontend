@@ -434,7 +434,10 @@ export default function Screening({
       <PrescriptionDrugForm />
       {security.hasPresmedForm() && !isFetching && (
         <DrugFormStatusBox>
-          <DrugFormStatus title={content.formTemplate?.name} />
+          <DrugFormStatus
+            title={content.formTemplate?.name}
+            template={content.formTemplate}
+          />
         </DrugFormStatusBox>
       )}
 

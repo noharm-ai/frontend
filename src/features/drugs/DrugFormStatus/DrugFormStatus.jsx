@@ -11,7 +11,7 @@ import { updateAllDrugForms, setDrugFormList } from "./DrugFormStatusSlice";
 
 import { DrugFormStatusContainer } from "./DrugFormStatus.style";
 
-function DrugFormStatus({ title }) {
+function DrugFormStatus({ title, template }) {
   const { t } = useTranslation();
   const list = useSelector((state) => state.drugFormStatus.list);
   const status = useSelector((state) => state.drugFormStatus.status);
@@ -29,13 +29,41 @@ function DrugFormStatus({ title }) {
   });
 
   const saveAll = () => {
+    const errors = [];
+    const requiredQuestions = {};
+    template.data.forEach((g) => {
+      g.questions.forEach((q) => {
+        if (q.required) {
+          requiredQuestions[q.id] = true;
+        }
+      });
+    });
+
     const pdList = { ...list };
     Object.keys(pdList).forEach((k) => {
       pdList[k] = {
         ...(pdList[k] || {}),
         updated: true,
       };
+
+      Object.keys(requiredQuestions).forEach((rq) => {
+        console.log("test", pdList[k][rq]);
+        if (
+          pdList[k][rq] === null ||
+          pdList[k][rq] === undefined ||
+          pdList[k][rq] === ""
+        ) {
+          errors.push(k);
+        }
+      });
     });
+
+    if (errors.length) {
+      notification.error({
+        message: "Existem campos obrigatórios que não foram preenchidos.",
+      });
+      return;
+    }
 
     dispatch(updateAllDrugForms(pdList)).then((response) => {
       if (response.error) {
