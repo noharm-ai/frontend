@@ -189,6 +189,13 @@ const updatePrescriptionDrugNote = (
     setHeaders(bearerToken)
   );
 
+const updatePrescriptionDrugForm = (bearerToken, params = {}) =>
+  instance.put(
+    `${endpoints.prescriptions}/drug/form`,
+    params,
+    setHeaders(bearerToken)
+  );
+
 const shouldUpdatePrescription = (bearerToken, idPrescription, params = {}) => {
   return instance.get(`${endpoints.prescriptions}/${idPrescription}/update`, {
     params,
@@ -565,6 +572,7 @@ const api = {
   getExams,
   updatePatient,
   updatePrescriptionDrugNote,
+  updatePrescriptionDrugForm,
   getSubstances,
   getSubstanceSingle,
   findSubstances,

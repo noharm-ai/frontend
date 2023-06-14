@@ -1,14 +1,21 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { SaveOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
+import notification from "components/notification";
+
+import { updateAllDrugForms, setDrugFormList } from "./DrugFormStatusSlice";
 
 import { DrugFormStatusContainer } from "./DrugFormStatus.style";
 
 function DrugFormStatus({ title }) {
+  const { t } = useTranslation();
   const list = useSelector((state) => state.drugFormStatus.list);
+  const status = useSelector((state) => state.drugFormStatus.status);
+  const dispatch = useDispatch();
 
   const count = {
     updated: 0,
@@ -22,7 +29,37 @@ function DrugFormStatus({ title }) {
   });
 
   const saveAll = () => {
-    console.log("values", list);
+    const pdList = { ...list };
+    Object.keys(pdList).forEach((k) => {
+      pdList[k] = {
+        ...(pdList[k] || {}),
+        updated: true,
+      };
+    });
+
+    dispatch(updateAllDrugForms(pdList)).then((response) => {
+      if (response.error) {
+        if (response.payload?.code) {
+          notification.error({
+            message: t(response.payload.code),
+          });
+        } else if (response.payload?.message) {
+          notification.error({
+            message: response.payload.message,
+          });
+        } else {
+          notification.error({
+            message: t("errors.generic"),
+          });
+        }
+        console.error(response);
+      } else {
+        dispatch(setDrugFormList(pdList));
+        notification.success({
+          message: t("success.generic"),
+        });
+      }
+    });
   };
 
   return (
@@ -41,6 +78,7 @@ function DrugFormStatus({ title }) {
             size="large"
             icon={<SaveOutlined />}
             disabled={count.updated === count.total}
+            loading={status === "loading"}
             onClick={saveAll}
           />
         </Tooltip>
