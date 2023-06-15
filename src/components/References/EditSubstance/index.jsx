@@ -140,26 +140,27 @@ export default function EditSubstance({
               ></Button>
             </Tooltip>
           )}
-          {security.isAdmin() && drugData.sctidA === currentSubstance.sctidA && (
-            <>
-              <Tooltip title="Editar substância">
-                <Button
-                  type="primary gtm-bt-edit-substancia"
-                  style={{ marginLeft: "5px" }}
-                  onClick={edit}
-                  icon={<FormOutlined />}
-                ></Button>
-              </Tooltip>
-              <Tooltip title="Adicionar substância">
-                <Button
-                  type="primary gtm-bt-add-substancia"
-                  style={{ marginLeft: "5px" }}
-                  onClick={add}
-                  icon={<PlusOutlined />}
-                ></Button>
-              </Tooltip>
-            </>
-          )}
+          {security.isAdmin() &&
+            drugData.sctidA === currentSubstance.sctidA && (
+              <>
+                <Tooltip title="Editar substância">
+                  <Button
+                    type="primary gtm-bt-edit-substancia"
+                    style={{ marginLeft: "5px" }}
+                    onClick={edit}
+                    icon={<FormOutlined />}
+                  ></Button>
+                </Tooltip>
+                <Tooltip title="Adicionar substância">
+                  <Button
+                    type="primary gtm-bt-add-substancia"
+                    style={{ marginLeft: "5px" }}
+                    onClick={add}
+                    icon={<PlusOutlined />}
+                  ></Button>
+                </Tooltip>
+              </>
+            )}
         </Col>
       </Row>
       <FormSubstance

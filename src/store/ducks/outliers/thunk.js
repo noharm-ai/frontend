@@ -25,6 +25,10 @@ const {
   outliersFetchSubstanceListError,
   outliersFetchSubstanceListSuccess,
 
+  outliersFetchSubstanceSingleStart,
+  outliersFetchSubstanceSingleError,
+  outliersFetchSubstanceSingleSuccess,
+
   outliersSaveStart,
   outliersSaveSuccess,
   outliersSaveReset,
@@ -309,6 +313,22 @@ export const fetchSubstanceListThunk =
 
     dispatch(outliersFetchSubstanceListSuccess(list));
   };
+
+export const fetchSubstanceSingleThunk = (id) => async (dispatch, getState) => {
+  dispatch(outliersFetchSubstanceSingleStart());
+
+  const { access_token } = getState().auth.identify;
+  const {
+    data: { data },
+    error,
+  } = await api.getSubstanceSingle(access_token, id).catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(outliersFetchSubstanceSingleError(error));
+    return;
+  }
+  dispatch(outliersFetchSubstanceSingleSuccess(data));
+};
 
 export const updateDrugDataThunk = (item) => (dispatch) => {
   dispatch(outliersUpdateDrugData(item));

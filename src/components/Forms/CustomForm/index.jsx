@@ -3,6 +3,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 
 import Button from "components/Button";
+import Collapse from "components/Collapse";
 
 import Base from "./Base";
 import { CustomFormContainer } from "../Form.style";
@@ -14,6 +15,8 @@ export default function CustomForm({
   isSaving,
   values,
   startClosed,
+  horizontal = false,
+  onChange,
 }) {
   const initialValues = {};
   const validationShape = {};
@@ -64,9 +67,33 @@ export default function CustomForm({
     >
       {({ handleSubmit }) => (
         <CustomFormContainer>
-          <Base template={template} startClosed={startClosed} />
+          {template.length > 1 ? (
+            <Collapse
+              bordered
+              defaultActiveKey={startClosed ? null : template[0].group}
+              accordion
+            >
+              {template.map((item) => (
+                <Collapse.Panel key={item.group} header={item.group}>
+                  <Base
+                    horizontal={horizontal}
+                    item={item}
+                    onChange={onChange}
+                  />
+                </Collapse.Panel>
+              ))}
+            </Collapse>
+          ) : (
+            <div className="single-panel">
+              <Base
+                horizontal={horizontal}
+                item={template[0]}
+                onChange={onChange}
+              />
+            </div>
+          )}
 
-          <div className="actions">
+          <div className={`actions ${horizontal ? "horizontal" : ""}`}>
             {onCancel && (
               <Button onClick={() => onCancel()} loading={isSaving}>
                 Cancelar

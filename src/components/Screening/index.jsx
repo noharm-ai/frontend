@@ -21,11 +21,13 @@ import PreviousInterventionList from "containers/Screening/PreviousInterventionL
 import PageHeader from "containers/Screening/PageHeader";
 import Patient from "containers/Screening/Patient";
 import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
+import DrugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatus";
 
 import {
   BoxWrapper,
   ScreeningTabs,
   PrescriptionActionContainer,
+  DrugFormStatusBox,
 } from "./index.style";
 
 export default function Screening({
@@ -115,7 +117,7 @@ export default function Screening({
         backspace: 8,
       };
 
-      if (e.ctrlKey) {
+      if (e.ctrlKey || e.metaKey) {
         let activeRow = document.querySelectorAll(
           ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr.highlight"
         )[0];
@@ -132,26 +134,36 @@ export default function Screening({
 
         switch (keyCode) {
           case actionKey.up:
+            e.preventDefault();
             activeRow.classList.remove("highlight");
             const previousElm = getPreviousSibling(activeRow);
             previousElm.classList.add("highlight");
-            previousElm.scrollIntoView({ behavior: "smooth" });
             previousElm
               .querySelector(".ant-table-row-expand-icon")
               ?.focus({ preventScroll: true });
 
+            setTimeout(() => {
+              previousElm.scrollIntoView({ behavior: "smooth" });
+            }, 50);
+
             break;
           case actionKey.down:
+            e.preventDefault();
             activeRow.classList.remove("highlight");
             const nextElm = getNextSibling(activeRow);
             nextElm.classList.add("highlight");
-            nextElm.scrollIntoView({ behavior: "smooth" });
+
             nextElm
               .querySelector(".ant-table-row-expand-icon")
               ?.focus({ preventScroll: true });
 
+            setTimeout(() => {
+              nextElm.scrollIntoView({ behavior: "smooth" });
+            }, 50);
+
             break;
           case actionKey.right:
+            e.preventDefault();
             if (
               expandBtn.classList.contains("ant-table-row-expand-icon-expanded")
             ) {
@@ -164,6 +176,7 @@ export default function Screening({
 
             break;
           case actionKey.left:
+            e.preventDefault();
             if (
               expandBtn.classList.contains("ant-table-row-expand-icon-expanded")
             ) {
@@ -172,6 +185,7 @@ export default function Screening({
 
             break;
           case actionKey.backspace:
+            e.preventDefault();
             activeRow.classList.remove("highlight");
             const first = document.querySelectorAll(
               ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr"
@@ -184,6 +198,7 @@ export default function Screening({
 
             break;
           case actionKey.enter:
+            e.preventDefault();
             document
               .querySelectorAll(
                 ".ant-collapse-item:not(.ant-collapse-item-active)"
@@ -429,6 +444,15 @@ export default function Screening({
       </Row>
 
       <PrescriptionDrugForm />
+      {security.hasPresmedForm() && !isFetching && (
+        <DrugFormStatusBox>
+          <DrugFormStatus
+            title={content.formTemplate?.name}
+            template={content.formTemplate}
+          />
+        </DrugFormStatusBox>
+      )}
+
       <BackTop />
     </>
   );

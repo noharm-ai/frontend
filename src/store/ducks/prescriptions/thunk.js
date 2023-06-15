@@ -12,6 +12,8 @@ import { errorHandler } from "utils";
 import { Creators as PatientsCreators } from "../patients";
 import { Creators as PrescriptionsCreators } from "./index";
 
+import { setDrugFormList } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
+
 const { patientsFetchListSuccess } = PatientsCreators;
 
 const {
@@ -164,6 +166,17 @@ export const fetchScreeningThunk =
         ? patientsList[singlePrescription.idPatient].name
         : "Paciente",
     };
+
+    const prescriptionDrugFormStatus = {};
+    [
+      ...singlePrescription.prescriptionRaw,
+      ...singlePrescription.proceduresRaw,
+      ...singlePrescription.solutionRaw,
+    ].forEach((i) => {
+      prescriptionDrugFormStatus[i.idPrescriptionDrug] = i.formValues;
+    });
+
+    dispatch(setDrugFormList(prescriptionDrugFormStatus));
 
     dispatch(patientsFetchListSuccess(patientsList));
     dispatch(

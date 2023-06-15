@@ -58,6 +58,16 @@ export default function PrescriptionDrugList({
     t,
   };
 
+  const filteredDataSource = () => {
+    if (isEmpty(dataSource)) {
+      return [];
+    }
+
+    return dataSource[0].value.filter((i) => {
+      return !i.suspended;
+    });
+  };
+
   return (
     <BoxWrapper>
       <Table
@@ -72,7 +82,7 @@ export default function PrescriptionDrugList({
             />
           ),
         }}
-        dataSource={!isEmpty(dataSource) ? dataSource[0].value : []}
+        dataSource={filteredDataSource()}
         rowClassName={rowClassName}
       />
       <FormIntervention

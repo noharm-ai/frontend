@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 
 import notification from "components/notification";
 import CustomForm from "components/Forms/CustomForm";
+
+import { updateDrugForm } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 
 export default function DrugForm({
   savePrescriptionDrugForm,
@@ -12,6 +15,7 @@ export default function DrugForm({
 }) {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const saveForm = (data) => {
     setLoading(true);
@@ -21,6 +25,12 @@ export default function DrugForm({
     })
       .then(() => {
         setLoading(false);
+        dispatch(
+          updateDrugForm({
+            id: idPrescriptionDrug,
+            data: { ...data.values, updated: true },
+          })
+        );
         notification.success({
           message: t("success.generic"),
         });
@@ -35,12 +45,23 @@ export default function DrugForm({
       });
   };
 
+  const onChangeForm = (values) => {
+    dispatch(
+      updateDrugForm({
+        id: idPrescriptionDrug,
+        data: { ...values, updated: false },
+      })
+    );
+  };
+
   return (
     <CustomForm
       onSubmit={saveForm}
       template={template.data}
       isSaving={loading}
       values={values}
+      horizontal
+      onChange={onChangeForm}
     />
   );
 }

@@ -1,7 +1,10 @@
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { saveOutlierSubstanceThunk } from "store/ducks/outliers/thunk";
+import {
+  saveOutlierSubstanceThunk,
+  fetchSubstanceSingleThunk,
+} from "store/ducks/outliers/thunk";
 
 import FormSubstance from "components/Forms/Substance";
 
@@ -12,6 +15,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       save: saveOutlierSubstanceThunk,
+      fetchSubstance: fetchSubstanceSingleThunk,
     },
     dispatch
   );
