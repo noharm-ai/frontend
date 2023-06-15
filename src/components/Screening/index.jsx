@@ -138,20 +138,27 @@ export default function Screening({
             activeRow.classList.remove("highlight");
             const previousElm = getPreviousSibling(activeRow);
             previousElm.classList.add("highlight");
-            previousElm.scrollIntoView({ behavior: "smooth" });
             previousElm
               .querySelector(".ant-table-row-expand-icon")
               ?.focus({ preventScroll: true });
+
+            setTimeout(() => {
+              previousElm.scrollIntoView({ behavior: "smooth" });
+            }, 50);
 
             break;
           case actionKey.down:
             activeRow.classList.remove("highlight");
             const nextElm = getNextSibling(activeRow);
             nextElm.classList.add("highlight");
-            nextElm.scrollIntoView({ behavior: "smooth" });
+
             nextElm
               .querySelector(".ant-table-row-expand-icon")
               ?.focus({ preventScroll: true });
+
+            setTimeout(() => {
+              nextElm.scrollIntoView({ behavior: "smooth" });
+            }, 50);
 
             break;
           case actionKey.right:

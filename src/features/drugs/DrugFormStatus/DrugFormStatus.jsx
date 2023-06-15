@@ -47,7 +47,6 @@ function DrugFormStatus({ title, template }) {
       };
 
       Object.keys(requiredQuestions).forEach((rq) => {
-        console.log("test", pdList[k][rq]);
         if (
           pdList[k][rq] === null ||
           pdList[k][rq] === undefined ||
@@ -59,6 +58,13 @@ function DrugFormStatus({ title, template }) {
     });
 
     if (errors.length) {
+      const elm = document.querySelector(`tr[data-row-key="${errors[0]}"]`);
+
+      if (elm) {
+        elm.classList.add("highlight");
+        elm.scrollIntoView({ behavior: "smooth" });
+      }
+
       notification.error({
         message: "Existem campos obrigatórios que não foram preenchidos.",
       });
