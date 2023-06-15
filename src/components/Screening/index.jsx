@@ -118,7 +118,6 @@ export default function Screening({
       };
 
       if (e.ctrlKey || e.metaKey) {
-        e.preventDefault();
         let activeRow = document.querySelectorAll(
           ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr.highlight"
         )[0];
@@ -135,6 +134,7 @@ export default function Screening({
 
         switch (keyCode) {
           case actionKey.up:
+            e.preventDefault();
             activeRow.classList.remove("highlight");
             const previousElm = getPreviousSibling(activeRow);
             previousElm.classList.add("highlight");
@@ -148,6 +148,7 @@ export default function Screening({
 
             break;
           case actionKey.down:
+            e.preventDefault();
             activeRow.classList.remove("highlight");
             const nextElm = getNextSibling(activeRow);
             nextElm.classList.add("highlight");
@@ -162,6 +163,7 @@ export default function Screening({
 
             break;
           case actionKey.right:
+            e.preventDefault();
             if (
               expandBtn.classList.contains("ant-table-row-expand-icon-expanded")
             ) {
@@ -174,6 +176,7 @@ export default function Screening({
 
             break;
           case actionKey.left:
+            e.preventDefault();
             if (
               expandBtn.classList.contains("ant-table-row-expand-icon-expanded")
             ) {
@@ -182,6 +185,7 @@ export default function Screening({
 
             break;
           case actionKey.backspace:
+            e.preventDefault();
             activeRow.classList.remove("highlight");
             const first = document.querySelectorAll(
               ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr"
@@ -194,6 +198,7 @@ export default function Screening({
 
             break;
           case actionKey.enter:
+            e.preventDefault();
             document
               .querySelectorAll(
                 ".ant-collapse-item:not(.ant-collapse-item-active)"

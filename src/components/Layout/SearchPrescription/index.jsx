@@ -97,7 +97,7 @@ export default function SearchPrescription() {
     const handleShortcut = (e) => {
       const keyCode = e.keyCode || e.which;
 
-      if (e.ctrlKey) {
+      if (e.ctrlKey || e.metaKey) {
         if (keyCode === 75) {
           inputRef.current?.focus();
           e.preventDefault();
