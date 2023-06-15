@@ -99,9 +99,28 @@ function DrugFormStatus({ title, template }) {
     });
   };
 
+  const focusPending = () => {
+    let pending = null;
+    Object.keys(list).forEach((k) => {
+      if (!pending && (!list[k] || !list[k].updated)) {
+        pending = k;
+      }
+    });
+
+    const elm = document.querySelector(`tr[data-row-key="${pending}"]`);
+
+    if (elm) {
+      document
+        .querySelector(`tr[data-row-key].highlight`)
+        ?.classList.remove("highlight");
+      elm.classList.add("highlight");
+      elm.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <DrugFormStatusContainer completed={count.updated === count.total}>
-      <div className="drug-form-status">
+      <div className="drug-form-status" onClick={focusPending}>
         <div className="drug-form-status-header">{title}</div>
         <div className="drug-form-status-content">
           {count.updated} / {count.total}
