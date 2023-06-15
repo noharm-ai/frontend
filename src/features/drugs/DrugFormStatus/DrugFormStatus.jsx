@@ -61,6 +61,9 @@ function DrugFormStatus({ title, template }) {
       const elm = document.querySelector(`tr[data-row-key="${errors[0]}"]`);
 
       if (elm) {
+        document
+          .querySelector(`tr[data-row-key].highlight`)
+          ?.classList.remove("highlight");
         elm.classList.add("highlight");
         elm.scrollIntoView({ behavior: "smooth" });
       }
