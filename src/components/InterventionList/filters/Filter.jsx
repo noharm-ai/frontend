@@ -13,6 +13,7 @@ export default function Filter({
   isFetching,
   searchList,
   resetLocalFilters,
+  segments,
 }) {
   const { t } = useTranslation();
   const errorMessage = {
@@ -22,6 +23,7 @@ export default function Filter({
   const initialValues = {
     startDate: moment().subtract(15, "days").format("YYYY-MM-DD"),
     endDate: null,
+    idSegment: null,
   };
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export default function Filter({
   return (
     <AdvancedFilter
       initialValues={initialValues}
-      mainFilters={<MainFilters />}
+      mainFilters={<MainFilters segments={segments} />}
       onSearch={search}
       loading={isFetching}
       skipFilterList={["startDate", "endDate"]}
