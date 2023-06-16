@@ -17,7 +17,6 @@ import Popover from "components/PopoverStyled";
 import Descriptions from "components/Descriptions";
 import Tag from "components/Tag";
 import { createSlug } from "utils/transformers/utils";
-import Menu from "components/Menu";
 import Dropdown from "components/Dropdown";
 import Alert from "components/Alert";
 import RichTextView from "components/RichTextView";
@@ -79,41 +78,97 @@ const prescriptionDrugMenu = ({
   concilia,
   ...data
 }) => {
-  return (
-    <Menu>
-      <Menu.Item
-        onClick={() =>
+  const items = [
+    {
+      key: "notes",
+      label: hasNotes
+        ? t("prescriptionDrugList.updateNotes")
+        : t("prescriptionDrugList.addNotes"),
+      id: "gtm-btn-notes",
+    },
+  ];
+
+  if (!concilia) {
+    items.push({
+      key: "edit",
+      label: t("actions.edit"),
+      id: "gtm-btn-edit-drug",
+    });
+  }
+
+  return {
+    items,
+    onClick: ({ key }) => {
+      switch (key) {
+        case "notes":
           selectPrescriptionDrug({
             ...data,
             idPrescriptionDrug,
             admissionNumber,
             updateNotes: true,
-          })
-        }
-        className="gtm-btn-notes"
-      >
-        {hasNotes
-          ? t("prescriptionDrugList.updateNotes")
-          : t("prescriptionDrugList.addNotes")}
-      </Menu.Item>
-      {!concilia && (
-        <Menu.Item
-          onClick={() =>
-            selectPrescriptionDrug({
-              ...data,
-              idPrescriptionDrug,
-              admissionNumber,
-              updateDrug: true,
-            })
-          }
-          className="gtm-btn-edit-drug"
-        >
-          {t("actions.edit")}
-        </Menu.Item>
-      )}
-    </Menu>
-  );
+          });
+          break;
+
+        case "edit":
+          selectPrescriptionDrug({
+            ...data,
+            idPrescriptionDrug,
+            admissionNumber,
+            updateDrug: true,
+          });
+          break;
+
+        default:
+          console.error("undefined key: ", key);
+      }
+    },
+  };
 };
+
+//const prescriptionDrugMenu = ({
+//   idPrescriptionDrug,
+//   admissionNumber,
+//   selectPrescriptionDrug,
+//   hasNotes,
+//   t,
+//   concilia,
+//   ...data
+// }) => {
+//   return (
+//     <Menu>
+//       <Menu.Item
+//         onClick={() =>
+//           selectPrescriptionDrug({
+//             ...data,
+//             idPrescriptionDrug,
+//             admissionNumber,
+//             updateNotes: true,
+//           })
+//         }
+//         className="gtm-btn-notes"
+//       >
+//         {hasNotes
+//           ? t("prescriptionDrugList.updateNotes")
+//           : t("prescriptionDrugList.addNotes")}
+//       </Menu.Item>
+//       {!concilia && (
+//         <Menu.Item
+//           onClick={() =>
+//             selectPrescriptionDrug({
+//               ...data,
+//               idPrescriptionDrug,
+//               admissionNumber,
+//               updateDrug: true,
+//             })
+//           }
+//           className="gtm-btn-edit-drug"
+//         >
+//           {t("actions.edit")}
+//         </Menu.Item>
+//       )}
+//     </Menu>
+//   );
+// };
 
 const InterventionAction = ({
   source,
@@ -233,7 +288,7 @@ const Action = ({
 
       {security.hasPrescriptionEdit() && (
         <Dropdown
-          overlay={prescriptionDrugMenu({
+          menu={prescriptionDrugMenu({
             idPrescriptionDrug,
             admissionNumber,
             t,
