@@ -33,39 +33,42 @@ import DrugForm from "./Form";
 
 import { TableTags, TableLink } from "./index.style";
 
-const interventionMenu = (
+const interventionOptions = (
   id,
   idPrescription,
   saveInterventionStatus,
   source
-) => (
-  <Menu>
-    <Menu.Item
-      onClick={() => saveInterventionStatus(id, idPrescription, "a", source)}
-      className="gtm-btn-interv-accept"
-    >
-      Aceita
-    </Menu.Item>
-    <Menu.Item
-      onClick={() => saveInterventionStatus(id, idPrescription, "n", source)}
-      className="gtm-btn-interv-not-accept"
-    >
-      Não aceita
-    </Menu.Item>
-    <Menu.Item
-      onClick={() => saveInterventionStatus(id, idPrescription, "j", source)}
-      className="gtm-btn-interv-not-accept-j"
-    >
-      Não aceita com Justificativa
-    </Menu.Item>
-    <Menu.Item
-      onClick={() => saveInterventionStatus(id, idPrescription, "x", source)}
-      className="gtm-btn-interv-not-apply"
-    >
-      Não se aplica
-    </Menu.Item>
-  </Menu>
-);
+) => {
+  const items = [
+    {
+      key: "a",
+      label: "Aceita",
+      id: "gtm-btn-interv-accept",
+    },
+    {
+      key: "n",
+      label: "Não aceita",
+      id: "gtm-btn-interv-not-accept",
+    },
+    {
+      key: "j",
+      label: "Não aceita com Justificativa",
+      id: "gtm-btn-interv-not-accept-j",
+    },
+    {
+      key: "x",
+      label: "Não se aplica",
+      id: "gtm-btn-interv-not-apply",
+    },
+  ];
+
+  return {
+    items,
+    onClick: ({ key }) => {
+      saveInterventionStatus(id, idPrescription, key, source);
+    },
+  };
+};
 
 const prescriptionDrugMenu = ({
   idPrescriptionDrug,
@@ -146,7 +149,7 @@ const InterventionAction = ({
       )}
       {!isChecked && (
         <Dropdown
-          overlay={interventionMenu(
+          menu={interventionOptions(
             id,
             prevIntervention.idPrescription,
             saveInterventionStatus,
