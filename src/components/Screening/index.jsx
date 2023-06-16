@@ -117,6 +117,11 @@ export default function Screening({
         backspace: 8,
       };
 
+      if (document.querySelectorAll(".ant-modal-mask").length) {
+        // if modal active, do nothing
+        return;
+      }
+
       if (e.ctrlKey || e.metaKey) {
         let activeRow = document.querySelectorAll(
           ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr.highlight"
