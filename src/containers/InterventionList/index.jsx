@@ -15,13 +15,14 @@ import {
 
 import InterventionList from "components/InterventionList";
 
-const mapStateToProps = ({ intervention }) => ({
+const mapStateToProps = ({ intervention, segments }) => ({
   isFetching: intervention.isFetching,
   list: intervention.list,
   error: intervention.error,
   checkData: intervention.check,
   futurePrescription: intervention.futurePrescription,
   reasons: intervention.reasons.list,
+  segments: segments.list,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

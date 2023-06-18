@@ -11,7 +11,6 @@ import {
 import Button, { Link } from "components/Button";
 import Descriptions from "components/Descriptions";
 import Tag from "components/Tag";
-import Menu from "components/Menu";
 import Dropdown from "components/Dropdown";
 import Tooltip from "components/Tooltip";
 import RichTextView from "components/RichTextView";
@@ -37,52 +36,50 @@ const TableLink = styled.a`
   }
 `;
 
-const menu = (id, idPrescription, saveInterventionStatus, onShowModal) => (
-  <Menu>
-    <Menu.Item
-      key="accept"
-      onClick={() => saveInterventionStatus(id, idPrescription, "a")}
-      className={
-        onShowModal ? "gtm-btn-menu-interv-accept" : "gtm-btn-tab-interv-accept"
-      }
-    >
-      Aceita
-    </Menu.Item>
-    <Menu.Item
-      key="not-accept"
-      onClick={() => saveInterventionStatus(id, idPrescription, "n")}
-      className={
-        onShowModal
-          ? "gtm-btn-menu-interv-not-accept"
-          : "gtm-btn-tab-interv-not-accept"
-      }
-    >
-      Não aceita
-    </Menu.Item>
-    <Menu.Item
-      key="not-accept-justified"
-      onClick={() => saveInterventionStatus(id, idPrescription, "j")}
-      className={
-        onShowModal
-          ? "gtm-btn-menu-interv-not-accept-j"
-          : "gtm-btn-tab-interv-not-accept-j"
-      }
-    >
-      Não aceita com Justificativa
-    </Menu.Item>
-    <Menu.Item
-      key="not-apply"
-      onClick={() => saveInterventionStatus(id, idPrescription, "x")}
-      className={
-        onShowModal
-          ? "gtm-btn-menu-interv-not-apply"
-          : "gtm-btn-tab-interv-not-apply"
-      }
-    >
-      Não se aplica
-    </Menu.Item>
-  </Menu>
-);
+const interventionMenu = (
+  id,
+  idPrescription,
+  saveInterventionStatus,
+  onShowModal
+) => {
+  const items = [
+    {
+      key: "a",
+      label: "Aceita",
+      id: onShowModal
+        ? "gtm-btn-menu-interv-accept"
+        : "gtm-btn-tab-interv-accept",
+    },
+    {
+      key: "n",
+      label: "Não aceita",
+      id: onShowModal
+        ? "gtm-btn-menu-interv-not-accept"
+        : "gtm-btn-tab-interv-not-accept",
+    },
+    {
+      key: "j",
+      label: "Não aceita com Justificativa",
+      id: onShowModal
+        ? "gtm-btn-menu-interv-not-accept-j"
+        : "gtm-btn-tab-interv-not-accept-j",
+    },
+    {
+      key: "x",
+      label: "Não se aplica",
+      id: onShowModal
+        ? "gtm-btn-menu-interv-not-apply"
+        : "gtm-btn-tab-interv-not-apply",
+    },
+  ];
+
+  return {
+    items,
+    onClick: ({ key }) => {
+      saveInterventionStatus(id, idPrescription, key);
+    },
+  };
+};
 
 export const PrescriptionInline = ({
   dose,
@@ -258,7 +255,7 @@ const Action = ({
       )}
       {!isChecked && (
         <Dropdown
-          overlay={menu(
+          menu={interventionMenu(
             id,
             idPrescription,
             saveInterventionStatus,

@@ -53,6 +53,7 @@ export default function InterventionList({
   error,
   fetchReasonsList,
   reasons,
+  segments,
 }) {
   const { t } = useTranslation();
   const [visible, setVisibility] = useState(false);
@@ -240,6 +241,7 @@ export default function InterventionList({
         error={error}
         searchList={searchList}
         resetLocalFilters={resetLocalFilters}
+        segments={segments}
       />
       <TableInfo>
         {isFetching ? (

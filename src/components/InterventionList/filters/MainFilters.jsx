@@ -2,12 +2,12 @@ import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 
-import { RangeDatePicker, Input } from "components/Inputs";
+import { RangeDatePicker, Input, Select } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 
-export default function MainFilters() {
+export default function MainFilters({ segments }) {
   const { t, i18n } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
@@ -22,7 +22,7 @@ export default function MainFilters() {
 
   return (
     <>
-      <Col md={7} lg={7} xxl={5}>
+      <Col md={7} lg={6} xxl={4}>
         <Heading as="label" htmlFor="date" size="14px">
           {t("labels.interventionDate")}:
         </Heading>
@@ -37,6 +37,24 @@ export default function MainFilters() {
           allowClear={false}
           language={i18n.language}
         />
+      </Col>
+      <Col md={7} lg={5} xxl={4}>
+        <Heading as="label" htmlFor="date" size="14px">
+          {t("patientCard.segment")}:
+        </Heading>
+        <Select
+          id="segments"
+          style={{ width: "100%" }}
+          onChange={(idSegment) => setFieldValue({ idSegment })}
+          value={values.idSegment}
+          allowClear
+        >
+          {segments.map(({ id, description: text }) => (
+            <Select.Option key={id} value={id}>
+              {text}
+            </Select.Option>
+          ))}
+        </Select>
       </Col>
       <Col md={7} lg={3} xxl={3}>
         <Heading as="label" htmlFor="date" size="14px">
