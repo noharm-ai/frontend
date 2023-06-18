@@ -125,51 +125,6 @@ const prescriptionDrugMenu = ({
   };
 };
 
-//const prescriptionDrugMenu = ({
-//   idPrescriptionDrug,
-//   admissionNumber,
-//   selectPrescriptionDrug,
-//   hasNotes,
-//   t,
-//   concilia,
-//   ...data
-// }) => {
-//   return (
-//     <Menu>
-//       <Menu.Item
-//         onClick={() =>
-//           selectPrescriptionDrug({
-//             ...data,
-//             idPrescriptionDrug,
-//             admissionNumber,
-//             updateNotes: true,
-//           })
-//         }
-//         className="gtm-btn-notes"
-//       >
-//         {hasNotes
-//           ? t("prescriptionDrugList.updateNotes")
-//           : t("prescriptionDrugList.addNotes")}
-//       </Menu.Item>
-//       {!concilia && (
-//         <Menu.Item
-//           onClick={() =>
-//             selectPrescriptionDrug({
-//               ...data,
-//               idPrescriptionDrug,
-//               admissionNumber,
-//               updateDrug: true,
-//             })
-//           }
-//           className="gtm-btn-edit-drug"
-//         >
-//           {t("actions.edit")}
-//         </Menu.Item>
-//       )}
-//     </Menu>
-//   );
-// };
-
 const InterventionAction = ({
   source,
   checkIntervention: check,
