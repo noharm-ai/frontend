@@ -40,6 +40,11 @@ const routes = [
   },
   {
     exact: true,
+    path: "/login/:schema",
+    element: <WithAuth component={Login} isLoginPage={true} />,
+  },
+  {
+    exact: true,
     path: "/reset/:token",
     element: <WithAuth component={Password} isLogoutPage={true} />,
   },

@@ -81,6 +81,27 @@ export const Wrapper = styled.div`
     width: 100%;
   }
 
+  .loader {
+    display: flex;
+    justify-content: center;
+
+    .ant-spin-dot-item {
+      background-color: #fff;
+    }
+  }
+
+  .company-name {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .description {
+    font-weight: 300;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+
   .copyright {
     align-self: flex-end;
     color: #1d2536;
