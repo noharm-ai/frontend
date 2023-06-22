@@ -14,7 +14,8 @@ import message from "components/message";
 import Button from "components/Button";
 import { Input, Checkbox } from "components/Inputs";
 import { Container, Row, Col } from "components/Grid";
-import { Spin, notification } from "antd";
+import Spin from "components/Spin";
+import notification from "components/notification";
 
 import ForgotPassword from "containers/Login/ForgotPassword";
 import api from "services/api";

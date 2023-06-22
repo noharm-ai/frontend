@@ -83,7 +83,9 @@ export const Wrapper = styled.div`
 
   .loader {
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
 
     .ant-spin-dot-item {
       background-color: #fff;

@@ -68,6 +68,9 @@ export const setHeaders = (token) =>
 const authenticate = (params) =>
   instance.post(endpoints.authentication, params, setHeaders());
 
+const authenticateOAuth = (params) =>
+  instance.post(endpoints.oauth, params, setHeaders());
+
 const refreshToken = (token) =>
   instance.post(endpoints.refreshToken, {}, setHeaders(token));
 
@@ -542,6 +545,7 @@ const updateClinicalNote = (bearerToken, id, params) => {
  */
 const api = {
   authenticate,
+  authenticateOAuth,
   refreshToken,
   getAuthProvider,
   getSegments,
