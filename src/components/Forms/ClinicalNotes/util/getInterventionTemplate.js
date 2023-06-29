@@ -2,11 +2,33 @@ import {
   prescriptionTemplate,
   conciliationTemplate,
   interventionTemplate,
+  interventionCompleteTemplate,
   signatureTemplate,
   layoutTemplate,
 } from "./templates";
 
-const getInterventions = (list) => {
+const getInterventions = (prescription) => {
+  const list = [
+    ...prescription.prescription.list,
+    ...prescription.solution.list,
+    ...prescription.procedure.list,
+  ];
+
+  if (prescription.data.intervention) {
+    list.push({
+      key: 0,
+      value: [
+        {
+          status: prescription.data.intervention.status,
+          intervention: {
+            ...prescription.data.intervention,
+            idPrescription: 0,
+          },
+        },
+      ],
+    });
+  }
+
   const interventionList = [];
 
   list.forEach((group) => {
@@ -49,29 +71,8 @@ const getInterventionTemplate = (
   signature,
   conciliationType
 ) => {
-  const list = [
-    ...prescription.prescription.list,
-    ...prescription.solution.list,
-    ...prescription.procedure.list,
-  ];
-
-  if (prescription.data.intervention) {
-    list.push({
-      key: 0,
-      value: [
-        {
-          status: prescription.data.intervention.status,
-          intervention: {
-            ...prescription.data.intervention,
-            idPrescription: 0,
-          },
-        },
-      ],
-    });
-  }
-
   if (prescription.data.concilia) {
-    const interventions = getInterventions(list);
+    const interventions = getInterventions(prescription);
     const tplInterventions = interventions.map((i) => interventionTemplate(i));
 
     return conciliationTemplate(
@@ -82,7 +83,7 @@ const getInterventionTemplate = (
     );
   }
 
-  const interventions = groupByPrescription(getInterventions(list));
+  const interventions = groupByPrescription(getInterventions(prescription));
 
   const tpl = Object.keys(interventions).map((k) => {
     const iTpl = interventions[k].map((i) => interventionTemplate(i));
@@ -95,6 +96,17 @@ const getInterventionTemplate = (
     tpl.join(""),
     signatureTemplate(signature, account)
   );
+};
+
+export const getInterventionList = (prescription) => {
+  const interventions = getInterventions(prescription);
+
+  const tpl = interventions.map((i) => {
+    const iTpl = interventionCompleteTemplate(i);
+    return iTpl;
+  });
+
+  return tpl.join("");
 };
 
 export default getInterventionTemplate;

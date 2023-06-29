@@ -107,7 +107,7 @@ export default function ClinicalNotes({
     >
       {({ handleSubmit }) => (
         <DefaultModal
-          width={700}
+          width={"50vw"}
           centered
           destroyOnClose
           open={open}
