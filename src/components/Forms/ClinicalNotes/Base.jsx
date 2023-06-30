@@ -18,7 +18,10 @@ import {
 
 import MemoryText from "containers/MemoryText";
 
-import getInterventionTemplate from "./util/getInterventionTemplate";
+import getInterventionTemplate, {
+  getInterventionList,
+} from "./util/getInterventionTemplate";
+import { signatureTemplate } from "./util/templates";
 import { Box, EditorBox, FieldError } from "../Form.style";
 
 export default function Base({ prescription, account, signature, action }) {
@@ -39,6 +42,16 @@ export default function Base({ prescription, account, signature, action }) {
 
   const disabledDate = (current) => {
     return current && current < moment().subtract(1, "days").endOf("day");
+  };
+
+  const loadNote = (value) => {
+    const interventions = getInterventionList(prescription);
+
+    const replaced = value
+      .replace("{{intervencoes}}", interventions)
+      .replace("{{assinatura}}", signatureTemplate(signature, account));
+
+    setFieldValue("notes", replaced);
   };
 
   return (
@@ -121,7 +134,7 @@ export default function Base({ prescription, account, signature, action }) {
           storeId={CLINICAL_NOTES_STORE_ID}
           memoryType={CLINICAL_NOTES_MEMORY_TYPE}
           content={notes}
-          onLoad={(value) => setFieldValue("notes", value)}
+          onLoad={(value) => loadNote(value)}
         />
         {(isEmpty(signature.list) || signature.list[0].value === "") && (
           <Tooltip title="Configurar assinatura padrão">
@@ -142,7 +155,7 @@ export default function Base({ prescription, account, signature, action }) {
               autoFocus
               value={notes}
               onChange={({ target }) => setFieldValue("notes", target.value)}
-              style={{ minHeight: "300px" }}
+              style={{ minHeight: "60vh" }}
               status={errors.notes && touched.notes ? "error" : null}
             />
             {errors.notes && touched.notes && (

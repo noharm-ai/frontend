@@ -254,6 +254,16 @@ export const interventionTemplate = (i) => `
   ${i.observation ? stripHtml(i.observation) : ""}
 `;
 
+export const interventionCompleteTemplate = (i) => `
+  -- ${i.drugName}
+  (${i.dose} ${i.measureUnit ? i.measureUnit.label : ""} X ${
+  i.frequency ? i.frequency.label : "Frequência não informada"
+})
+  Intervenção: ${
+    i.observation ? stripHtml(i.observation) : "Nenhuma observação registrada"
+  }
+`;
+
 const emptyInterventionTemplate = ({ idPrescription, agg, concilia }) => {
   if (concilia) {
     return conciliationTemplate(

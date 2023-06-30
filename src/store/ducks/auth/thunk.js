@@ -16,6 +16,22 @@ const { authSetErrorIdentify, authSetIdentify, authDelIdentify } = AuthCreators;
 const { appSetData, appSetConfig, appSetCurrentVersion, appSetNotification } =
   AppCreators;
 
+export const oauthLoginThunk = (params) => async (dispatch) => {
+  dispatch(userSetLoginStart());
+
+  const { data, error } = await api
+    .authenticateOAuth(params)
+    .catch(errorHandler);
+
+  if (!isEmpty(error)) {
+    dispatch(userLogout());
+    dispatch(authSetErrorIdentify(error, error.message));
+    return;
+  }
+
+  setUser(data.data, true, dispatch);
+};
+
 export const loginThunk =
   ({ keepMeLogged, ...userIndentify }) =>
   async (dispatch) => {
@@ -31,53 +47,7 @@ export const loginThunk =
       return;
     }
 
-    const {
-      userId,
-      userName,
-      email,
-      schema,
-      roles,
-      features,
-      userFeatures,
-      nameUrl,
-      multipleNameUrl,
-      nameHeaders,
-      apiKey,
-      notify,
-      proxy,
-      segments,
-      ...identify
-    } = data;
-    const user = {
-      userId,
-      userName,
-      email,
-      schema,
-      roles,
-      nameUrl,
-      multipleNameUrl,
-      proxy,
-      nameHeaders,
-      apiKey,
-    };
-
-    user.features = [...features, ...userFeatures];
-    appInfo.apiKey = apiKey;
-
-    dispatch(segmentsFetchListSuccess(segments));
-    dispatch(authSetIdentify(identify));
-    dispatch(sessionSetFirstAccess());
-    dispatch(appSetCurrentVersion(appInfo.version));
-    dispatch(userSetCurrentUser(user, keepMeLogged));
-    dispatch(
-      appSetConfig({ nameUrl, multipleNameUrl, apiKey, nameHeaders, proxy })
-    );
-    dispatch(
-      appSetData({
-        hospitals: data.hospitals,
-      })
-    );
-    dispatch(appSetNotification(notify));
+    setUser(data, keepMeLogged, dispatch);
   };
 
 export const logoutThunk = () => {
@@ -85,4 +55,54 @@ export const logoutThunk = () => {
     dispatch(userLogout());
     dispatch(authDelIdentify());
   };
+};
+
+const setUser = (userData, keepMeLogged, dispatch) => {
+  const {
+    userId,
+    userName,
+    email,
+    schema,
+    roles,
+    features,
+    userFeatures,
+    nameUrl,
+    multipleNameUrl,
+    nameHeaders,
+    apiKey,
+    notify,
+    proxy,
+    segments,
+    ...identify
+  } = userData;
+  const user = {
+    userId,
+    userName,
+    email,
+    schema,
+    roles,
+    nameUrl,
+    multipleNameUrl,
+    proxy,
+    nameHeaders,
+    apiKey,
+  };
+
+  user.features = [...features, ...userFeatures];
+  appInfo.apiKey = apiKey;
+
+  dispatch(segmentsFetchListSuccess(segments));
+  dispatch(authSetIdentify(identify));
+  dispatch(sessionSetFirstAccess());
+  dispatch(appSetCurrentVersion(appInfo.version));
+  dispatch(userSetCurrentUser(user, keepMeLogged));
+  dispatch(
+    appSetConfig({ nameUrl, multipleNameUrl, apiKey, nameHeaders, proxy })
+  );
+  dispatch(
+    appSetData({
+      hospitals: userData.hospitals,
+    })
+  );
+  dispatch(appSetNotification(notify));
 };

@@ -8,6 +8,7 @@ import chooseJourney from "lib/chooseJourney";
  * Pages
  */
 import Login from "pages/Login";
+import LoginCallback from "pages/Login/LoginCallback";
 import Logout from "pages/Logout";
 import ScreeningList from "pages/ScreeningList";
 import Screening from "pages/Screening";
@@ -40,6 +41,11 @@ const routes = [
   },
   {
     exact: true,
+    path: "/login/:schema",
+    element: <WithAuth component={Login} isLoginPage={true} />,
+  },
+  {
+    exact: true,
     path: "/reset/:token",
     element: <WithAuth component={Password} isLogoutPage={true} />,
   },
@@ -47,6 +53,11 @@ const routes = [
     exact: true,
     path: "/login/:language",
     element: <WithAuth component={Login} isLoginPage={true} />,
+  },
+  {
+    exact: true,
+    path: "/login-callback/:schema",
+    element: <WithAuth component={LoginCallback} isLoginPage={true} />,
   },
   {
     exact: true,

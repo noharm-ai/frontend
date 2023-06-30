@@ -22,6 +22,7 @@ const endpoints = {
   patientName: "/patient-name",
   refreshToken: "/refresh-token",
   authentication: "/authenticate",
+  oauth: "/auth-provider",
   prescriptions: "/prescriptions",
   drugs: "/drugs",
   departments: "/departments",
@@ -67,8 +68,14 @@ export const setHeaders = (token) =>
 const authenticate = (params) =>
   instance.post(endpoints.authentication, params, setHeaders());
 
+const authenticateOAuth = (params) =>
+  instance.post(endpoints.oauth, params, setHeaders());
+
 const refreshToken = (token) =>
   instance.post(endpoints.refreshToken, {}, setHeaders(token));
+
+const getAuthProvider = (schema) =>
+  instance.get(`${endpoints.oauth}/${schema}`, { ...setHeaders() });
 
 /**
  * Segments.
@@ -538,7 +545,9 @@ const updateClinicalNote = (bearerToken, id, params) => {
  */
 const api = {
   authenticate,
+  authenticateOAuth,
   refreshToken,
+  getAuthProvider,
   getSegments,
   getSegmentById,
   createSegment,

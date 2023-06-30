@@ -62,6 +62,18 @@ export default function Patient({
     setPatientModalVisible(false);
   };
 
+  const sortAllergies = (a, b) => {
+    try {
+      return Date.parse(a.date) < Date.parse(b.date)
+        ? 1
+        : Date.parse(a.date) > Date.parse(b.date)
+        ? -1
+        : 0;
+    } catch {
+      return 0;
+    }
+  };
+
   return (
     <Row gutter={8} type="flex">
       <Col md={8}>
@@ -197,15 +209,17 @@ export default function Patient({
                     </div>
                     <div className="content">
                       <div className="text-content list">
-                        {notesAllergies.map(({ text, date, source }) => (
-                          <div key={text} className="list-item">
-                            <div className="date">
-                              {moment(date).format("DD/MM/YYYY hh:mm")}
-                              {source === "care" ? " (NoHarm Care)" : ""}
+                        {notesAllergies
+                          .sort(sortAllergies)
+                          .map(({ text, date, source }) => (
+                            <div key={text} className="list-item">
+                              <div className="date">
+                                {moment(date).format("DD/MM/YYYY hh:mm")}
+                                {source === "care" ? " (NoHarm Care)" : ""}
+                              </div>
+                              <div className="text">{text}</div>
                             </div>
-                            <div className="text">{text}</div>
-                          </div>
-                        ))}
+                          ))}
                       </div>
                     </div>
                   </PrescriptionCard>
