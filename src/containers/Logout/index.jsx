@@ -4,7 +4,9 @@ import { bindActionCreators } from "redux";
 import { logoutThunk } from "store/ducks/auth/thunk";
 import Logout from "components/Logout";
 
-const mapStateToProps = () => ({});
+const mapStateToProps = ({ app }) => ({
+  logoutUrl: app.config.logoutUrl,
+});
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {

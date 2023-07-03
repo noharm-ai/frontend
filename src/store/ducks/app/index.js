@@ -19,6 +19,7 @@ const INITIAL_STATE = {
   },
   config: {
     nameUrl: null,
+    logoutUrl: null,
     nameHeaders: [],
     apiKey: process.env.REACT_APP_API_KEY || null,
   },

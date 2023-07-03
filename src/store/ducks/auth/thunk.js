@@ -73,6 +73,7 @@ const setUser = (userData, keepMeLogged, dispatch) => {
     notify,
     proxy,
     segments,
+    logoutUrl,
     ...identify
   } = userData;
   const user = {
@@ -97,7 +98,14 @@ const setUser = (userData, keepMeLogged, dispatch) => {
   dispatch(appSetCurrentVersion(appInfo.version));
   dispatch(userSetCurrentUser(user, keepMeLogged));
   dispatch(
-    appSetConfig({ nameUrl, multipleNameUrl, apiKey, nameHeaders, proxy })
+    appSetConfig({
+      nameUrl,
+      multipleNameUrl,
+      apiKey,
+      nameHeaders,
+      proxy,
+      logoutUrl,
+    })
   );
   dispatch(
     appSetData({
