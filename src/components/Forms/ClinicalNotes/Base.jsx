@@ -21,7 +21,7 @@ import MemoryText from "containers/MemoryText";
 import getInterventionTemplate, {
   getInterventionList,
 } from "./util/getInterventionTemplate";
-import { signatureTemplate } from "./util/templates";
+import { signatureTemplate, alertsTemplate } from "./util/templates";
 import { Box, EditorBox, FieldError } from "../Form.style";
 
 export default function Base({ prescription, account, signature, action }) {
@@ -47,9 +47,12 @@ export default function Base({ prescription, account, signature, action }) {
   const loadNote = (value) => {
     const interventions = getInterventionList(prescription);
 
+    const alerts = alertsTemplate(prescription);
+
     const replaced = value
       .replace("{{nome_paciente}}", prescription.data.namePatient)
       .replace("{{intervencoes}}", interventions)
+      .replace("{{alertas}}", alerts)
       .replace("{{assinatura}}", signatureTemplate(signature, account));
 
     setFieldValue("notes", replaced);

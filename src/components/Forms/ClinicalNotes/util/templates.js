@@ -316,3 +316,20 @@ Ramal:`;
 
   return signature.list[0].value;
 };
+
+export const alertsTemplate = (prescription) => {
+  const list = [
+    ...prescription.data.prescriptionRaw,
+    ...prescription.data.solutionRaw,
+    ...prescription.data.proceduresRaw,
+  ];
+
+  let alerts = [];
+  list.forEach((i) => {
+    if (i.alerts) {
+      alerts = [...alerts, ...i.alerts];
+    }
+  });
+
+  return alerts.map((a) => `- ${stripHtml(a)}`).join("\r\n");
+};

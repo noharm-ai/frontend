@@ -110,6 +110,12 @@ export default function SaveModal({
             Intervenções
           </Tag>
           <Tag
+            onClick={() => addVariable("{{alertas}}")}
+            style={{ cursor: "pointer" }}
+          >
+            Alertas
+          </Tag>
+          <Tag
             onClick={() => addVariable("{{assinatura}}")}
             style={{ cursor: "pointer" }}
           >
