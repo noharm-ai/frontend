@@ -49,6 +49,11 @@ export default function Login({ isLogging, error, doLogin, match }) {
 
   useEffect(() => {
     if (!isEmpty(error)) {
+      if (error.code && error.code.indexOf("http") !== -1) {
+        message.info("Redirecionando");
+        window.location.href = error.code;
+      }
+
       message.error(error.message);
     }
   }, [error]);
