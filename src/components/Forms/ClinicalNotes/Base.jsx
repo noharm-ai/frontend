@@ -48,6 +48,7 @@ export default function Base({ prescription, account, signature, action }) {
     const interventions = getInterventionList(prescription);
 
     const replaced = value
+      .replace("{{nome_paciente}}", prescription.data.namePatient)
       .replace("{{intervencoes}}", interventions)
       .replace("{{assinatura}}", signatureTemplate(signature, account));
 
