@@ -50,6 +50,7 @@ export default function SaveModal({
   return (
     <Modal
       visible={open}
+      width={"30vw"}
       onCancel={() => setOpen(false)}
       onOk={() => saveAction()}
       okButtonProps={{
