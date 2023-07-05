@@ -97,30 +97,38 @@ export default function SaveModal({
               Váriáveis:
             </Tooltip>
           </span>
-          <Tag
-            onClick={() => addVariable("{{nome_paciente}}")}
-            style={{ cursor: "pointer" }}
-          >
-            Nome do paciente
-          </Tag>
-          <Tag
-            onClick={() => addVariable("{{intervencoes}}")}
-            style={{ cursor: "pointer" }}
-          >
-            Intervenções
-          </Tag>
-          <Tag
-            onClick={() => addVariable("{{alertas}}")}
-            style={{ cursor: "pointer" }}
-          >
-            Alertas
-          </Tag>
-          <Tag
-            onClick={() => addVariable("{{assinatura}}")}
-            style={{ cursor: "pointer" }}
-          >
-            Assinatura
-          </Tag>
+          <Tooltip title="Clique para adicionar o Nome do Paciente">
+            <Tag
+              onClick={() => addVariable("{{nome_paciente}}")}
+              style={{ cursor: "pointer" }}
+            >
+              Nome do paciente
+            </Tag>
+          </Tooltip>
+          <Tooltip title="Clique para adicionar a lista de Intervenções realizadas nesta prescrição">
+            <Tag
+              onClick={() => addVariable("{{intervencoes}}")}
+              style={{ cursor: "pointer" }}
+            >
+              Intervenções
+            </Tag>
+          </Tooltip>
+          <Tooltip title="Clique para adicionar a lista de Alertas presentes nesta prescrição">
+            <Tag
+              onClick={() => addVariable("{{alertas}}")}
+              style={{ cursor: "pointer" }}
+            >
+              Alertas
+            </Tag>
+          </Tooltip>
+          <Tooltip title="Clique para adicionar a sua assinatura">
+            <Tag
+              onClick={() => addVariable("{{assinatura}}")}
+              style={{ cursor: "pointer" }}
+            >
+              Assinatura
+            </Tag>
+          </Tooltip>
         </div>
       )}
     </Modal>
