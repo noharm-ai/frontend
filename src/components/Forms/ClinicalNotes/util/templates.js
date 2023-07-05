@@ -326,10 +326,15 @@ export const alertsTemplate = (prescription) => {
 
   let alerts = [];
   list.forEach((i) => {
-    if (i.alerts) {
-      alerts = [...alerts, ...i.alerts];
+    if (i.alerts && i.alerts.length) {
+      const tpl = `
+        Medicamento: ${i.drug}
+        Alertas:
+        -- ${i.alerts.join("\r\n        -- ")}
+      `;
+      alerts = [...alerts, tpl];
     }
   });
 
-  return alerts.map((a) => `- ${stripHtml(a)}`).join("\r\n");
+  return alerts.map((a) => `${stripHtml(a)}`).join("");
 };
