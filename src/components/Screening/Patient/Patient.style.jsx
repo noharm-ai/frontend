@@ -270,6 +270,42 @@ export const PatientBox = styled.div`
         max-height: 220px;
         overflow: auto;
       }
+
+      .report-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        column-gap: 5px;
+        row-gap: 5px;
+        max-height: 200px;
+        overflow: auto;
+        padding: 10px 15px 10px 5px;
+
+        @media only screen and (min-width: 1400px) {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        li {
+          display: flex;
+          align-items: center;
+          line-height: 1;
+          list-style-type: none;
+          border: 1px solid #e0e0e0;
+          border-radius: 5px;
+          background: #fff;
+          font-size: 14px;
+          padding: 10px;
+          cursor: pointer;
+          white-space: normal;
+
+          &:hover {
+            box-shadow: 0px 1px 4px 0px rgb(0 0 0 / 16%);
+          }
+
+          span {
+            margin-right: 10px;
+          }
+        }
+      }
     }
 
     .ant-tabs-bar {

@@ -9,6 +9,7 @@ import {
   MoreOutlined,
   FileOutlined,
   MessageOutlined,
+  PieChartOutlined,
 } from "@ant-design/icons";
 
 import api from "services/api";
@@ -25,6 +26,7 @@ import PatientName from "containers/PatientName";
 import PatientTab from "./PatientTab";
 import AdmissionTab from "./AdmissionData";
 import NotesTab from "./NotesTab";
+import ReportsTab from "./ReportsTab";
 import { PatientBox } from "../Patient.style";
 
 export default function PatientCard({
@@ -196,6 +198,18 @@ export default function PatientCard({
       ),
     },
   ];
+
+  if (prescription.admissionReports) {
+    tabs.push({
+      key: "reports",
+      label: (
+        <Tooltip title={t("patientCard.reports")}>
+          <PieChartOutlined style={{ fontSize: "18px" }} />
+        </Tooltip>
+      ),
+      children: <ReportsTab prescription={prescription} />,
+    });
+  }
 
   return (
     <PatientBox t={t}>

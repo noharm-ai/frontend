@@ -201,7 +201,8 @@
     "examDate": "Date",
     "examVariation": "Variation compared to last lab result",
     "admissionDate": "Admission date",
-    "prescriptionDate": "Prescription date"
+    "prescriptionDate": "Prescription date",
+    "reports": "Reports"
   },
   "screeningBody": {
     "tabDrugs": "Drugs",

@@ -201,7 +201,8 @@
     "examDate": "Data",
     "examVariation": "Variação em relação ao último exame",
     "admissionDate": "Data de internação",
-    "prescriptionDate": "Data da prescrição"
+    "prescriptionDate": "Data da prescrição",
+    "reports": "Relatórios"
   },
   "screeningBody": {
     "tabDrugs": "Medicamentos",
