@@ -316,3 +316,25 @@ Ramal:`;
 
   return signature.list[0].value;
 };
+
+export const alertsTemplate = (prescription) => {
+  const list = [
+    ...prescription.data.prescriptionRaw,
+    ...prescription.data.solutionRaw,
+    ...prescription.data.proceduresRaw,
+  ];
+
+  let alerts = [];
+  list.forEach((i) => {
+    if (i.alerts && i.alerts.length) {
+      const tpl = `
+        Medicamento: ${i.drug}
+        Alertas:
+        -- ${i.alerts.join("\r\n        -- ")}
+      `;
+      alerts = [...alerts, tpl];
+    }
+  });
+
+  return alerts.map((a) => `${stripHtml(a)}`).join("");
+};

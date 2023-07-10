@@ -20,7 +20,6 @@ export default function MemoryText({
   storeId,
   memoryType,
   memory,
-  content,
   onLoad,
   canSave = true,
 }) {
@@ -35,12 +34,12 @@ export default function MemoryText({
     fetch(storeId, memoryType);
   }, [fetch, storeId, memoryType]);
 
-  const saveCurrent = (name) => {
+  const saveCurrent = (name, newText) => {
     const hasMemory = list.length > 0;
     const texts = hasMemory ? [...list[0].value] : [];
     texts.push({
       name,
-      data: content,
+      data: newText,
     });
 
     save(storeId, {
@@ -75,11 +74,10 @@ export default function MemoryText({
           <Menu.Divider />
           <Menu.Item
             onClick={() => setSaveModalOpen(true)}
-            disabled={!content}
             key="save"
             icon={<SaveOutlined />}
           >
-            <span>Salvar texto atual</span>
+            <span>Novo</span>
           </Menu.Item>
           <Menu.Item
             onClick={() => setConfigModalOpen(true)}
@@ -141,6 +139,8 @@ export default function MemoryText({
         save={saveCurrent}
         open={saveModalOpen}
         setOpen={setSaveModalOpen}
+        loadText={loadText}
+        memoryType={memoryType}
       />
 
       <ConfigModal

@@ -8,12 +8,15 @@ import { Wrapper, Box, ForgotPass } from "../Login/Login.style";
 import { Feedback, Stars, Brand } from "./Logout.style";
 import fortuneCookies from "./fortuneCookies";
 
-export default function Logout({ doLogout }) {
+export default function Logout({ doLogout, logoutUrl }) {
   const [stars, setStars] = useState(true);
 
   useEffect(() => {
     doLogout();
-  }, [doLogout]);
+    if (logoutUrl) {
+      window.location.href = logoutUrl;
+    }
+  }, [doLogout, logoutUrl]);
 
   const handleClick = (event) => {
     event.preventDefault();
