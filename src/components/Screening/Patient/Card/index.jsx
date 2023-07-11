@@ -199,7 +199,7 @@ export default function PatientCard({
     },
   ];
 
-  if (prescription.admissionReports) {
+  if (prescription.admissionReports && prescription.admissionReports.length) {
     tabs.push({
       key: "reports",
       label: (
