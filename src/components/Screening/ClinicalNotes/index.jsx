@@ -31,7 +31,9 @@ export default function ClinicalNotes({
   featureService,
   fetchByDate,
   admissionNumber,
+  admissionNumberPopup,
   dates,
+  popup,
 }) {
   const [positions, setPositions] = useState([]);
   const [indicators, setIndicators] = useState([]);
@@ -90,6 +92,7 @@ export default function ClinicalNotes({
     },
     [select]
   );
+  const localAdmissionNumber = admissionNumber || admissionNumberPopup;
 
   useEffect(() => {
     setFilteredList(
@@ -113,7 +116,7 @@ export default function ClinicalNotes({
   };
 
   const fetchExtra = (date) => {
-    fetchByDate(admissionNumber, date);
+    fetchByDate(localAdmissionNumber, date);
   };
 
   if (isFetching) {
@@ -136,6 +139,8 @@ export default function ClinicalNotes({
             userId={userId}
             featureService={featureService}
             saveStatus={saveStatus}
+            popup={popup}
+            admissionNumber={localAdmissionNumber}
           />
         </Col>
         <Col md={10} xl={8} className="list-panel">

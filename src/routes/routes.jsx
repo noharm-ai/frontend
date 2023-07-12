@@ -23,6 +23,7 @@ import Conciliation from "pages/Conciliation";
 import UserAdmin from "pages/UserAdmin";
 import PatientList from "pages/PatientList";
 import Prioritization from "pages/Prioritization";
+import ClinicalNotes from "pages/Screening/ClinicalNotes";
 
 import AdminFrequency from "pages/Admin/Frequency";
 import AdminInterventionReason from "pages/Admin/InterventionReason";
@@ -94,6 +95,11 @@ const routes = [
     exact: true,
     path: "/conciliacao/:slug",
     element: <WithAuth component={Conciliation} />,
+  },
+  {
+    exact: true,
+    path: "/prescricao/evolucao/:admissionNumber",
+    element: <WithAuth component={ClinicalNotes} />,
   },
   {
     exact: true,
