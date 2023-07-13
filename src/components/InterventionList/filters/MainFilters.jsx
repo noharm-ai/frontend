@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 
-import { RangeDatePicker, Input, Select } from "components/Inputs";
+import { RangeDatePicker, InputNumber, Select } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
@@ -60,11 +60,10 @@ export default function MainFilters({ segments }) {
         <Heading as="label" htmlFor="date" size="14px">
           {t("labels.admissionNumber")}:
         </Heading>
-        <Input
+        <InputNumber
+          controls={false}
           value={values.admissionNumber}
-          onChange={({ target }) =>
-            setFieldValue({ admissionNumber: target.value })
-          }
+          onChange={(value) => setFieldValue({ admissionNumber: value })}
         />
       </Col>
     </>
