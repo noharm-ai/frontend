@@ -1,7 +1,6 @@
 import { createActions, createReducer } from "reduxsauce";
 
 import {
-  transformClinicalNotes,
   flatClinicalNotes,
   getPositionList,
 } from "utils/transformers/clinicalNotes";
@@ -93,11 +92,19 @@ const update = (state = INITIAL_STATE, { clinicalNote }) => {
   if (index !== -1) {
     list[index] = { ...list[index], ...clinicalNote };
   }
-  const newList = transformClinicalNotes(list);
+
+  const groups = {};
+  Object.keys(state.dates).forEach((k) => {
+    groups[k] = [];
+  });
+
+  list.forEach((n) => {
+    groups[n.date.substr(0, 10)].push(n);
+  });
 
   return {
     ...state,
-    list: newList,
+    list: groups,
     single: {
       ...state.single,
       ...clinicalNote,

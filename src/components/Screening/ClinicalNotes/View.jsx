@@ -205,26 +205,41 @@ export default function View({
     }
   };
 
-  const menu = (
-    <div
-      style={{
-        position: "absolute",
-        top: menuPosition.top,
-        left: menuPosition.left,
-        visibility: isMenuVisible ? "visible" : "hidden",
-      }}
-      ref={menuRef}
-    >
-      <MenuPopup theme="dark" onClick={(k) => annotate(k)} selectable={false}>
-        {ClinicalNotesIndicator.list(t).map((i) => (
-          <MenuPopup.Item key={i.value} className="gtm-indicator">
-            <div className="avatar" style={{ backgroundColor: i.color }} />{" "}
-            {i.label}
-          </MenuPopup.Item>
-        ))}
-      </MenuPopup>
-    </div>
-  );
+  const menuOptions = () => {
+    const items = ClinicalNotesIndicator.list(t).map((i) => ({
+      key: i.value,
+      id: "gtm-indicator",
+      label: (
+        <>
+          <div className="avatar" style={{ backgroundColor: i.color }} />{" "}
+          {i.label}
+        </>
+      ),
+    }));
+
+    return items;
+  };
+
+  const menu = () => {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: menuPosition.top,
+          left: menuPosition.left,
+          visibility: isMenuVisible ? "visible" : "hidden",
+        }}
+        ref={menuRef}
+      >
+        <MenuPopup
+          theme="dark"
+          selectable={false}
+          items={menuOptions()}
+          onClick={(k) => annotate(k)}
+        ></MenuPopup>
+      </div>
+    );
+  };
 
   const openPopup = () => {
     const padding = 200;
@@ -310,7 +325,7 @@ export default function View({
                     content={welcomeTooltip}
                     trigger="hover"
                     placement="bottom"
-                    visible={showWelcome}
+                    open={showWelcome}
                   >
                     <Button
                       type="primary gtm-annotation-btn-help"
@@ -364,7 +379,7 @@ export default function View({
                           : "annotation-disabled"
                       }`}
                     />
-                    {menu}
+                    {menu()}
                   </>
                 )}
                 {!selected.text && selected.template && (
