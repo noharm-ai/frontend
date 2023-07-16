@@ -53,7 +53,7 @@ export default function ConfigModal({ save, open, setOpen, list }) {
 
   return (
     <Modal
-      visible={open}
+      open={open}
       width={700}
       onCancel={() => setOpen(false)}
       onOk={() => saveAction()}
@@ -68,7 +68,7 @@ export default function ConfigModal({ save, open, setOpen, list }) {
       <ConfigModalContainer>
         {dataSource.map((item, index) => (
           <div key={index}>
-            <div class="main">
+            <div className="main">
               <div>
                 <Input
                   value={item.name}

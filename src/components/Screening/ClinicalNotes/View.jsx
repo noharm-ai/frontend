@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import isEmpty from "lodash.isempty";
 import { format, parseISO } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { QuestionOutlined } from "@ant-design/icons";
+import { QuestionOutlined, FullscreenOutlined } from "@ant-design/icons";
 
 import { annotationManifest } from "utils/featureManifest";
 import { useOutsideAlerter } from "lib/hooks";
@@ -35,6 +35,8 @@ export default function View({
   userId,
   featureService,
   saveStatus,
+  popup,
+  admissionNumber,
 }) {
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
@@ -203,26 +205,59 @@ export default function View({
     }
   };
 
-  const menu = (
-    <div
-      style={{
-        position: "absolute",
-        top: menuPosition.top,
-        left: menuPosition.left,
-        visibility: isMenuVisible ? "visible" : "hidden",
-      }}
-      ref={menuRef}
-    >
-      <MenuPopup theme="dark" onClick={(k) => annotate(k)} selectable={false}>
-        {ClinicalNotesIndicator.list(t).map((i) => (
-          <MenuPopup.Item key={i.value} className="gtm-indicator">
-            <div className="avatar" style={{ backgroundColor: i.color }} />{" "}
-            {i.label}
-          </MenuPopup.Item>
-        ))}
-      </MenuPopup>
-    </div>
-  );
+  const menuOptions = () => {
+    const items = ClinicalNotesIndicator.list(t).map((i) => ({
+      key: i.value,
+      id: "gtm-indicator",
+      label: (
+        <>
+          <div className="avatar" style={{ backgroundColor: i.color }} />{" "}
+          {i.label}
+        </>
+      ),
+    }));
+
+    return items;
+  };
+
+  const menu = () => {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: menuPosition.top,
+          left: menuPosition.left,
+          visibility: isMenuVisible ? "visible" : "hidden",
+        }}
+        ref={menuRef}
+      >
+        <MenuPopup
+          theme="dark"
+          selectable={false}
+          items={menuOptions()}
+          onClick={(k) => annotate(k)}
+        ></MenuPopup>
+      </div>
+    );
+  };
+
+  const openPopup = () => {
+    const padding = 200;
+    const width = Math.round(window.innerWidth - padding);
+    const height = Math.round(window.innerHeight - padding);
+
+    const popup = window.open(
+      `/prescricao/evolucao/${admissionNumber}`,
+      "clinicalNotesPopup",
+      `height=${height},width=${width}`
+    );
+
+    if (!popup) {
+      notification.error({
+        message: "Desative o bloqueador de popups",
+      });
+    }
+  };
 
   const welcomeTooltip = (
     <WelcomeBubble>
@@ -255,35 +290,58 @@ export default function View({
             <span className="name">{selected.prescriber}</span>
           </div>
           <div className="help">
-            {featureService.hasPrimaryCare() ? (
-              <>
-                <Button
-                  type="primary gtm-clinicalnote-edit"
-                  ghost={edit}
-                  onClick={() => setEdit(!edit)}
-                >
-                  {edit ? "Cancelar" : "Editar"}
-                </Button>
-              </>
-            ) : (
-              <Tooltip title={t("layout.help")}>
-                <PopoverWelcome
-                  title="Nova funcionalidade!"
-                  content={welcomeTooltip}
-                  trigger="hover"
-                  placement="bottom"
-                  visible={showWelcome}
-                >
+            <>
+              {!popup && (
+                <Tooltip title="Abrir em nova janela">
                   <Button
-                    type="primary gtm-annotation-btn-help"
+                    type="primary gtm-clinicalnote-btn-popup"
                     shape="circle"
-                    icon={<QuestionOutlined />}
-                    style={{ width: "28px", height: "28px", minWidth: "28px" }}
-                    onClick={goToHelp}
+                    ghost
+                    icon={<FullscreenOutlined />}
+                    style={{
+                      width: "28px",
+                      height: "28px",
+                      minWidth: "28px",
+                      marginRight: "10px",
+                    }}
+                    onClick={openPopup}
                   />
-                </PopoverWelcome>
-              </Tooltip>
-            )}
+                </Tooltip>
+              )}
+              {featureService.hasPrimaryCare() ? (
+                <>
+                  <Button
+                    type="primary gtm-clinicalnote-edit"
+                    ghost={edit}
+                    onClick={() => setEdit(!edit)}
+                  >
+                    {edit ? "Cancelar" : "Editar"}
+                  </Button>
+                </>
+              ) : (
+                <Tooltip title={t("layout.help")}>
+                  <PopoverWelcome
+                    title="Nova funcionalidade!"
+                    content={welcomeTooltip}
+                    trigger="hover"
+                    placement="bottom"
+                    open={showWelcome}
+                  >
+                    <Button
+                      type="primary gtm-annotation-btn-help"
+                      shape="circle"
+                      icon={<QuestionOutlined />}
+                      style={{
+                        width: "28px",
+                        height: "28px",
+                        minWidth: "28px",
+                      }}
+                      onClick={goToHelp}
+                    />
+                  </PopoverWelcome>
+                </Tooltip>
+              )}
+            </>
           </div>
         </div>
       </PaperHeader>
@@ -321,7 +379,7 @@ export default function View({
                           : "annotation-disabled"
                       }`}
                     />
-                    {menu}
+                    {menu()}
                   </>
                 )}
                 {!selected.text && selected.template && (

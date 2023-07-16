@@ -49,7 +49,7 @@ export default function SaveModal({
 
   return (
     <Modal
-      visible={open}
+      open={open}
       width={"30vw"}
       onCancel={() => setOpen(false)}
       onOk={() => saveAction()}

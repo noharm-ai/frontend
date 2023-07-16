@@ -5,9 +5,9 @@ import {
   SaveOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 import Dropdown from "components/Dropdown";
-import Menu from "components/Menu";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 
@@ -23,6 +23,7 @@ export default function MemoryText({
   onLoad,
   canSave = true,
 }) {
+  const { t } = useTranslation();
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [configModalOpen, setConfigModalOpen] = useState(false);
   const { isFetching, list } = memory[storeId] || {
@@ -65,67 +66,84 @@ export default function MemoryText({
     onLoad(text);
   };
 
-  const mainMenu = () => {
-    if (canSave) {
-      return (
-        <Menu forceSubMenuRender={true}>
-          {textMenu()}
+  const menuOptions = () => {
+    const textOptions = textMenu();
 
-          <Menu.Divider />
-          <Menu.Item
-            onClick={() => setSaveModalOpen(true)}
-            key="save"
-            icon={<SaveOutlined />}
-          >
-            <span>Novo</span>
-          </Menu.Item>
-          <Menu.Item
-            onClick={() => setConfigModalOpen(true)}
-            disabled={isEmpty(list) || isEmpty(list[0].value)}
-            key="admin"
-            icon={<SettingOutlined />}
-          >
-            <span>Gerenciar</span>
-          </Menu.Item>
-        </Menu>
-      );
+    const items = [
+      {
+        key: "apply",
+        label: t("labels.apply"),
+        id: "gtm-bt-clinicalnotes-apply",
+        children: textOptions,
+      },
+      {
+        type: "divider",
+      },
+      {
+        key: "save",
+        label: t("labels.new"),
+        icon: <SaveOutlined />,
+        id: "gtm-bt-clinicalnotes-new",
+        disabled: !canSave,
+      },
+      {
+        key: "admin",
+        label: t("labels.manage"),
+        icon: <SettingOutlined />,
+        id: "gtm-bt-clinicalnotes-manage",
+        disabled: !canSave,
+      },
+    ];
+
+    return {
+      items,
+      onClick: handleMenuClick,
+    };
+  };
+
+  const handleMenuClick = ({ key }) => {
+    switch (key) {
+      case "save":
+        setSaveModalOpen(true);
+        break;
+
+      case "admin":
+        setConfigModalOpen(true);
+        break;
+
+      default:
+        loadText(
+          list[0].value.filter(
+            (item) => item.active || !item.hasOwnProperty("active")
+          )[key]?.data
+        );
     }
-
-    return <Menu forceSubMenuRender={true}>{textMenu()}</Menu>;
   };
 
   const textMenu = () => {
-    const title = "Aplicar";
-
     if (isEmpty(list) || isEmpty(list[0].value)) {
-      return (
-        <Menu.SubMenu title={title} key="empty">
-          <Menu.Item disabled>Nenhum texto padrão encontrado.</Menu.Item>
-        </Menu.SubMenu>
-      );
+      return {
+        key: "empty",
+        label: "Nenhum texto padrão encontrado.",
+        disabled: true,
+      };
     }
 
-    return (
-      <Menu.SubMenu title={title} key="list">
-        {list[0].value
-          .filter((item) => item.active || !item.hasOwnProperty("active"))
-          .map((item, index) => (
-            <Menu.Item
-              key={index}
-              onClick={() => loadText(item.data)}
-              className={`gtm-btn-memorytext-load`}
-            >
-              {item.name}
-            </Menu.Item>
-          ))}
-      </Menu.SubMenu>
-    );
+    return list[0].value
+      .filter((item) => item.active || !item.hasOwnProperty("active"))
+      .map((item, index) => {
+        return {
+          key: index,
+          id: "gtm-btn-memorytext-load",
+          label: item.name,
+        };
+      });
   };
 
   return (
     <>
       <Tooltip title="Texto padrão">
-        <Dropdown overlay={mainMenu()}>
+        <Dropdown menu={menuOptions()}>
           <Button
             shape="circle"
             icon={<FileTextOutlined />}

@@ -66,6 +66,15 @@ function Memory() {
 
           <Form memory={data["features"]} />
         </div>
+
+        <div className="box">
+          <div className={`loader ${loading ? "loading" : ""}`}>
+            <LoadBox />
+          </div>
+          <h3>Relatórios do Paciente</h3>
+
+          <Form memory={data["admission-reports"]} />
+        </div>
       </MemoryContainer>
 
       <BackTop />

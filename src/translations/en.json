@@ -297,7 +297,10 @@
     "factor": "Factor",
     "frequencies": "Frequencies",
     "interventionDate": "Intervention date",
-    "admissionNumber": "Admission number"
+    "admissionNumber": "Admission number",
+    "new": "New",
+    "manage": "Manage",
+    "apply": "Aplicar"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
