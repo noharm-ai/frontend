@@ -12,18 +12,18 @@ import { Wrapper, Box, Brand } from "./Login.style";
 
 export default function LoginCallback({ doLogin, error }) {
   const params = useParams();
-  const { search } = useLocation();
+  const { hash } = useLocation();
 
   useEffect(() => {
     const schema = params.schema;
-    const queryString = new URLSearchParams(search);
-    const code = queryString.get("code");
+    const queryString = new URLSearchParams(hash);
+    const code = queryString.get("id_token");
 
     doLogin({
       schema,
       code,
     });
-  }, [params.schema, search, doLogin]);
+  }, [params.schema, hash, doLogin]);
 
   useEffect(() => {
     if (!isEmpty(error)) {

@@ -27,7 +27,7 @@ export default function ReportsTab({ prescription }) {
           <ul className="report-list">
             {admissionReports &&
               admissionReports.map((r) => (
-                <Tooltip title={r.description}>
+                <Tooltip title={r.description} key={r.description}>
                   <li onClick={() => reportClick(r)}>
                     <PieChartOutlined style={{ fontSize: "18px" }} /> {r.title}
                   </li>
