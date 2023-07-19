@@ -90,7 +90,7 @@ function Table({
       }}
       dataSource={!isFetching ? [...(ds.value || [])] : []}
       expandedRowRender={expandedRowRender(extraBag)}
-      rowClassName={rowClassName}
+      rowClassName={(record) => rowClassName(record, bag)}
       expandedRowKeys={expandedRows}
       onExpand={(expanded, record) => handleRowExpand(record)}
       columnTitle={<ExpandColumn expand={!expandedRows.length} />}
