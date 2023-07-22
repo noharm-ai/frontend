@@ -122,11 +122,13 @@ export default function MemoryText({
 
   const textMenu = () => {
     if (isEmpty(list) || isEmpty(list[0].value)) {
-      return {
-        key: "empty",
-        label: "Nenhum texto padrão encontrado.",
-        disabled: true,
-      };
+      return [
+        {
+          key: "empty",
+          label: "Nenhum texto padrão encontrado.",
+          disabled: true,
+        },
+      ];
     }
 
     return list[0].value
