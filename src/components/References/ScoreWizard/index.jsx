@@ -116,13 +116,21 @@ export default function ScoreWizard({
     return "";
   };
 
+  const steps = [
+    {
+      title: "Conversão de unidades",
+    },
+    {
+      title: "Divisor de faixas",
+    },
+    {
+      title: "Gerar escores",
+    },
+  ];
+
   return (
     <>
-      <Steps current={currentStep}>
-        <Steps.Step key={0} title="Conversão de unidades" />
-        <Steps.Step key={1} title="Divisor de faixas" />
-        <Steps.Step key={2} title="Gerar escores" />
-      </Steps>
+      <Steps current={currentStep} items={steps}></Steps>
 
       {currentStep === 0 && (
         <StepContent>
