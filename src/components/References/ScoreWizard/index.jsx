@@ -161,7 +161,7 @@ export default function ScoreWizard({
                     </Select.Option>
                   ))}
                 </Select>
-                {isAdmin && (
+                {(isAdmin || security.isTraining()) && (
                   <Tooltip title={t("titles.addDrugMeasureUnit")}>
                     <Button
                       type="primary"
