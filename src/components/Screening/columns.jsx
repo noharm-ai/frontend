@@ -30,7 +30,7 @@ import PresmedTags from "./PrescriptionDrug/components/PresmedTags";
 import { InterventionView } from "./Intervention/columns";
 import DrugForm from "./Form";
 
-import { TableTags, TableLink } from "./index.style";
+import { TableTags, TableLink, TablePeriod } from "./index.style";
 
 const interventionOptions = (
   id,
@@ -742,6 +742,22 @@ const drugInfo = (bag) => [
           </Tooltip>
         );
       }
+
+      if (
+        bag.featureService.hasTempCpoePeriod() &&
+        record.periodFixed &&
+        !record.whiteList
+      ) {
+        return (
+          <TablePeriod>
+            {record.period} +{" "}
+            <Tooltip title="Período de uso em prescrições anteriores (período aproximado)">
+              <span>{record.periodFixed}D</span>
+            </Tooltip>
+          </TablePeriod>
+        );
+      }
+
       if (record.periodDates == null || record.periodDates.length === 0) {
         return record.period;
       }
