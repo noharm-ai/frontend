@@ -229,6 +229,65 @@ function Segments({
       id: currentSegment.content.id,
     });
 
+  const tabs = [];
+
+  if (security.isAdmin()) {
+    tabs.push({
+      key: "1",
+      label: "Setores",
+      children: <FormSegment afterSaveSegment={afterSaveSegment} />,
+    });
+  }
+
+  tabs.push(
+    ...[
+      {
+        key: "2",
+        label: "Exames",
+        children: (
+          <>
+            <Row type="flex" justify="end" style={{ marginBottom: "20px" }}>
+              <Tooltip
+                title={
+                  isEmpty(availableExamTypes)
+                    ? "Não há exames disponíves para cadastro"
+                    : ""
+                }
+              >
+                <Button
+                  type="primary gtm-bt-add-exam"
+                  onClick={addExamModal}
+                  disabled={isEmpty(availableExamTypes)}
+                  icon={<PlusOutlined />}
+                >
+                  Adicionar
+                </Button>
+              </Tooltip>
+            </Row>
+            <DndProvider backend={HTML5Backend}>
+              <Table
+                columns={examColumns(sortOrder, false)}
+                pagination={false}
+                loading={currentSegment.isFetching || sortStatus.isSaving}
+                locale={{ emptyText }}
+                dataSource={!currentSegment.isFetching ? dsExams : []}
+                onChange={handleTableChange}
+                components={components}
+                onRow={(_, index) => {
+                  const attr = {
+                    index,
+                    moveRow,
+                  };
+                  return attr;
+                }}
+              />
+            </DndProvider>
+          </>
+        ),
+      },
+    ]
+  );
+
   return (
     <>
       <Row>
@@ -265,57 +324,13 @@ function Segments({
         defaultActiveKey="1"
         style={{ width: "100%", marginTop: "20px" }}
         type="card gtm-tab-segments"
-      >
-        {security.isAdmin() && (
-          <Tabs.TabPane tab="Setores" key="1">
-            <FormSegment afterSaveSegment={afterSaveSegment} />
-          </Tabs.TabPane>
-        )}
-
-        <Tabs.TabPane tab="Exames" key="2">
-          <Row type="flex" justify="end" style={{ marginBottom: "20px" }}>
-            <Tooltip
-              title={
-                isEmpty(availableExamTypes)
-                  ? "Não há exames disponíves para cadastro"
-                  : ""
-              }
-            >
-              <Button
-                type="primary gtm-bt-add-exam"
-                onClick={addExamModal}
-                disabled={isEmpty(availableExamTypes)}
-                icon={<PlusOutlined />}
-              >
-                Adicionar
-              </Button>
-            </Tooltip>
-          </Row>
-          <DndProvider backend={HTML5Backend}>
-            <Table
-              columns={examColumns(sortOrder, false)}
-              pagination={false}
-              loading={currentSegment.isFetching || sortStatus.isSaving}
-              locale={{ emptyText }}
-              dataSource={!currentSegment.isFetching ? dsExams : []}
-              onChange={handleTableChange}
-              components={components}
-              onRow={(_, index) => {
-                const attr = {
-                  index,
-                  moveRow,
-                };
-                return attr;
-              }}
-            />
-          </DndProvider>
-        </Tabs.TabPane>
-      </Tabs>
+        items={tabs}
+      ></Tabs>
 
       <BackTop />
 
       <FormExamModal
-        visible={examModalVisible}
+        open={examModalVisible}
         onCancel={onCancelExamModal}
         okText="Salvar"
         okType="primary gtm-bt-save-exam"
