@@ -3,4 +3,5 @@ export default class Feature {
   static PRIMARYCARE = "PRIMARYCARE";
   static NOHARMCARE = "NOHARMCARE";
   static CONCILIATION = "CONCILIATION";
+  static TEMP_CPOE_PERIOD = "TEMP_CPOE_PERIOD";
 }

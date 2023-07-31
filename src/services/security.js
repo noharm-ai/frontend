@@ -44,6 +44,10 @@ const security = (roles) => {
     return hasRole(Role.SUPPORT);
   };
 
+  const isTraining = () => {
+    return hasRole(Role.TRAINING);
+  };
+
   return {
     hasRole,
     hasAnyRole,
@@ -54,6 +58,7 @@ const security = (roles) => {
     hasPresmedForm,
     isAdmin,
     isSupport,
+    isTraining,
   };
 };
 

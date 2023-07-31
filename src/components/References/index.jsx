@@ -235,15 +235,12 @@ export default function References({
     }
   };
 
-  return (
-    <>
-      <Filter {...restProps} outliers={outliers} />
-      <Tabs
-        defaultActiveKey="1"
-        style={{ width: "100%", marginTop: "20px" }}
-        type="card gtm-tab-med"
-      >
-        <Tabs.TabPane tab="Escores" key="1">
+  const items = [
+    {
+      key: "1",
+      label: "Escores",
+      children: (
+        <>
           <Table
             title={title}
             columns={columns}
@@ -271,11 +268,19 @@ export default function References({
           </FieldSet>
 
           <ScoreWizard />
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="Atributos" key="2">
-          <DrugForm fetchReferencesList={fetchReferencesList} />
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="Relações" key="3">
+        </>
+      ),
+    },
+    {
+      key: "2",
+      label: "Atributos",
+      children: <DrugForm fetchReferencesList={fetchReferencesList} />,
+    },
+    {
+      key: "3",
+      label: "Relações",
+      children: (
+        <>
           <Row type="flex" justify="end">
             <Col xs={12}>
               <EditSubstance />
@@ -303,8 +308,20 @@ export default function References({
             dataSource={!isFetching ? dsRelations : []}
             showSorterTooltip={false}
           />
-        </Tabs.TabPane>
-      </Tabs>
+        </>
+      ),
+    },
+  ];
+
+  return (
+    <>
+      <Filter {...restProps} outliers={outliers} />
+      <Tabs
+        defaultActiveKey="1"
+        style={{ width: "100%", marginTop: "20px" }}
+        type="card gtm-tab-med"
+        items={items}
+      ></Tabs>
 
       <BackTop />
 

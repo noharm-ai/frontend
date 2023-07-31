@@ -91,7 +91,7 @@ function UserAdmin({
       <BackTop />
 
       <FormUserModal
-        visible={userModalVisible}
+        open={userModalVisible}
         onCancel={onCancelUserModal}
         okText={t("userAdminForm.btnSave")}
         okType="primary gtm-bt-save-user"
