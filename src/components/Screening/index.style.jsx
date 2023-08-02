@@ -101,12 +101,3 @@ export const TableTags = styled.div`
     }
   }
 `;
-
-export const TablePeriod = styled.div`
-  span {
-    &:hover {
-      font-weight: 600;
-      text-decoration: underline;
-    }
-  }
-`;

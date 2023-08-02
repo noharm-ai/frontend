@@ -30,7 +30,7 @@ import PresmedTags from "./PrescriptionDrug/components/PresmedTags";
 import { InterventionView } from "./Intervention/columns";
 import DrugForm from "./Form";
 
-import { TableTags, TableLink, TablePeriod } from "./index.style";
+import { TableTags, TableLink } from "./index.style";
 
 const interventionOptions = (
   id,
@@ -179,6 +179,20 @@ const InterventionAction = ({
       )}
     </>
   );
+};
+
+const formatCPOEPeriod = (record) => {
+  if (record.period) {
+    return `${
+      parseInt(record.period.replace("D", ""), 10) + (record.periodFixed || 0)
+    }D`;
+  }
+
+  if (record.periodFixed) {
+    return `${record.periodFixed}D`;
+  }
+
+  return "-";
 };
 
 const Action = ({
@@ -507,7 +521,8 @@ export const expandedRowRender = (bag) => (record) => {
             )}
           </>
         )}
-        {!isEmpty(record.period) && (
+        {(!isEmpty(record.period) ||
+          (bag.featureService.hasTempCpoePeriod() && !record.whiteList)) && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrPeriod")}
             span={3}
@@ -749,12 +764,9 @@ const drugInfo = (bag) => [
         !record.whiteList
       ) {
         return (
-          <TablePeriod>
-            {record.period} +{" "}
-            <Tooltip title="Período de uso em prescrições anteriores (período aproximado)">
-              <span>{record.periodFixed}D</span>
-            </Tooltip>
-          </TablePeriod>
+          <Tooltip title='Confira o período completo no botão "Visualizar período de uso" presente na linha extendida'>
+            {formatCPOEPeriod(record)}
+          </Tooltip>
         );
       }
 
