@@ -24,6 +24,7 @@ import UserAdmin from "pages/UserAdmin";
 import PatientList from "pages/PatientList";
 import Prioritization from "pages/Prioritization";
 import ClinicalNotes from "pages/Screening/ClinicalNotes";
+import Summary from "pages/Summary";
 
 import AdminFrequency from "pages/Admin/Frequency";
 import AdminInterventionReason from "pages/Admin/InterventionReason";
@@ -206,6 +207,11 @@ const routes = [
     exact: true,
     path: "/pacientes",
     element: <WithAuth component={PatientList} />,
+  },
+  {
+    exact: true,
+    path: "/summary/:admissionNumber",
+    element: <WithAuth component={Summary} />,
   },
   {
     exact: true,
