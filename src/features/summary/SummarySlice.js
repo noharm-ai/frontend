@@ -3,6 +3,7 @@ import api from "services/api";
 
 const initialState = {
   data: {},
+  blocks: [],
   status: "idle",
   error: null,
 };
@@ -20,6 +21,11 @@ export const fetchSummary = createAsyncThunk(
 const summarySlice = createSlice({
   name: "summary",
   initialState,
+  reducers: {
+    setBlock(state, action) {
+      state.blocks[action.payload.id] = action.payload.data;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchSummary.pending, (state, action) => {
@@ -37,3 +43,5 @@ const summarySlice = createSlice({
 });
 
 export default summarySlice.reducer;
+
+export const { setBlock } = summarySlice.actions;

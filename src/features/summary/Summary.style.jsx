@@ -6,6 +6,7 @@ export const SummaryContainer = styled.div`
 `;
 
 export const SummaryPanel = styled.div`
+  position: relative;
   background: #fff;
   padding: 2em;
   border-radius: 10px;
@@ -21,6 +22,19 @@ export const SummaryPanel = styled.div`
     min-height: 4em;
     align-items: center;
     opacity: 0.5;
+  }
+
+  &.edit {
+    display: inline-grid;
+    border-color: #70bdc3;
+    box-shadow: 0 0 0 5px rgba(112, 189, 195, 0.4);
+
+    &::after {
+      content: attr(data-value) " ";
+      visibility: hidden;
+      white-space: pre-wrap;
+      grid-area: 2/1;
+    }
   }
 
   &.error {
@@ -50,6 +64,30 @@ export const SummaryPanel = styled.div`
 
     span {
       font-size: 1em;
+    }
+  }
+
+  textarea {
+    grid-area: 2/1;
+    padding: 0;
+    font-size: 1em;
+    border: 0;
+    outline: 0;
+    resize: none;
+
+    &:focus {
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+  }
+
+  .actions {
+    position: absolute;
+    bottom: -1em;
+    right: 2em;
+
+    button {
+      margin-left: 0.5em;
     }
   }
 `;

@@ -7,6 +7,8 @@ import notification from "components/notification";
 import LoadBox, { LoadContainer } from "components/LoadBox";
 
 import SummaryPanelAI from "./SummaryPanelAI/SummaryPanelAI";
+import SummaryPanelPatient from "./SummaryPanel/SummayPanelPatient";
+import SummaryPanelAdmission from "./SummaryPanel/SummayPanelAdmission";
 import { PageHeader } from "styles/PageHeader.style";
 import { SummaryPanel, SummaryHeader, SummaryContainer } from "./Summary.style";
 import { fetchSummary } from "./SummarySlice";
@@ -46,55 +48,23 @@ function Summary() {
       ) : (
         <SummaryContainer>
           <SummaryHeader>1) Identificação do Paciente</SummaryHeader>
-          <SummaryPanel>
-            <div className="attribute">
-              <label>Nome do Paciente:</label> <span>Paciente1</span>
-            </div>
-
-            <div className="group">
-              <div className="attribute">
-                <label>Data de Nascimento:</label> 01/01/2023
-              </div>
-
-              <div className="attribute">
-                <label>Sexo:</label> Masculino
-              </div>
-            </div>
-
-            <div className="attribute">
-              <label>Cor:</label>
-              <span>Não informado</span>
-            </div>
-
-            <div className="group">
-              <div className="attribute">
-                <label>Ocupação:</label> <span>Não informado</span>
-              </div>
-
-              <div className="attribute">
-                <label>Estado Civil:</label> <span>Não informado</span>
-              </div>
-            </div>
-          </SummaryPanel>
+          <SummaryPanelPatient
+            position={0}
+            patient={summaryData.patient}
+          ></SummaryPanelPatient>
 
           <SummaryHeader>2) Dados da Internação</SummaryHeader>
-          <SummaryPanel>
-            <div className="group">
-              <div className="attribute">
-                <label>Data da Internação:</label> 01/01/2023
-              </div>
-
-              <div className="attribute">
-                <label>Data da Alta:</label> 01/01/2023
-              </div>
-            </div>
-          </SummaryPanel>
+          <SummaryPanelAdmission
+            position={1}
+            patient={summaryData.patient}
+          ></SummaryPanelAdmission>
 
           <SummaryHeader>2.1) Admissão</SummaryHeader>
           <SummaryPanelAI
             url={summaryData.summaryConfig?.url}
             apikey={summaryData.summaryConfig?.apikey}
             payload={summaryData.summaryConfig?.reason}
+            position={2}
           />
 
           <SummaryPanel className="loading">
@@ -108,6 +78,7 @@ function Summary() {
             apikey={summaryData.summaryConfig?.apikey}
             payload={summaryData.summaryConfig?.previousDrugs}
             introduction="Medicamentos de uso prévio:"
+            position={5}
           />
 
           <SummaryHeader>2.2) Resumo Clínico</SummaryHeader>
