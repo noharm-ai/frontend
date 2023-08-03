@@ -184,7 +184,8 @@ const InterventionAction = ({
 const formatCPOEPeriod = (record) => {
   if (record.period) {
     return `${
-      parseInt(record.period.replace("D", ""), 10) + (record.periodFixed || 0)
+      parseInt(`${record.period}`.replace("D", ""), 10) +
+      (record.periodFixed || 0)
     }D`;
   }
 
