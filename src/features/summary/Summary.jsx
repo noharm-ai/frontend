@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { Anchor } from "antd";
 
 import notification from "components/notification";
 import LoadBox, { LoadContainer } from "components/LoadBox";
@@ -10,7 +11,7 @@ import SummaryPanelAI from "./SummaryPanelAI/SummaryPanelAI";
 import SummaryPanelPatient from "./SummaryPanel/SummayPanelPatient";
 import SummaryPanelAdmission from "./SummaryPanel/SummayPanelAdmission";
 import { PageHeader } from "styles/PageHeader.style";
-import { SummaryPanel, SummaryHeader, SummaryContainer } from "./Summary.style";
+import { SummaryPanel, SummaryContainer } from "./Summary.style";
 import { fetchSummary } from "./SummarySlice";
 
 function Summary() {
@@ -62,97 +63,190 @@ ${summaryBlocks[2]}
         </LoadContainer>
       ) : (
         <SummaryContainer>
-          <SummaryHeader>1) Identificação do Paciente</SummaryHeader>
-          <SummaryPanelPatient
-            position={0}
-            patient={summaryData.patient}
-          ></SummaryPanelPatient>
+          <div>
+            <h2 id="id-paciente">1) Identificação do Paciente</h2>
+            <div className="sub_level">
+              <SummaryPanelPatient
+                position={0}
+                patient={summaryData.patient}
+              ></SummaryPanelPatient>
+            </div>
 
-          <SummaryHeader>2) Dados da Internação</SummaryHeader>
-          <SummaryPanelAdmission
-            position={1}
-            patient={summaryData.patient}
-          ></SummaryPanelAdmission>
+            <h2 id="dados-internacao">2) Dados da Internação</h2>
 
-          <SummaryHeader>2.1) Admissão</SummaryHeader>
-          <SummaryPanelAI
-            url={summaryData.summaryConfig?.url}
-            apikey={summaryData.summaryConfig?.apikey}
-            payload={summaryData.summaryConfig?.reason}
-            position={2}
-          />
+            <div className="sub_level">
+              <SummaryPanelAdmission
+                position={1}
+                patient={summaryData.patient}
+              ></SummaryPanelAdmission>
 
-          <SummaryPanel className="loading">
-            Carregando Diagnósticos/Comorbidades/Fatores de riscos...
-          </SummaryPanel>
+              <h3 id="admissao">2.1) Admissão</h3>
 
-          <SummaryPanel>Alergias</SummaryPanel>
+              <div className="sub_level">
+                <h4 id="motivo-admissao">2.1.1) Motivo da Admissão</h4>
+                <SummaryPanelAI
+                  url={summaryData.summaryConfig?.url}
+                  apikey={summaryData.summaryConfig?.apikey}
+                  payload={summaryData.summaryConfig?.reason}
+                  position={2}
+                />
 
-          <SummaryPanelAI
-            url={summaryData.summaryConfig?.url}
-            apikey={summaryData.summaryConfig?.apikey}
-            payload={summaryData.summaryConfig?.previousDrugs}
-            introduction="Medicamentos de uso prévio:"
-            position={5}
-          />
+                <h4 id="diagnosticos">
+                  2.1.2) Diagnósticos (primário e secundário)
+                </h4>
+                <SummaryPanel className="loading">
+                  Carregando Diagnósticos/Comorbidades/Fatores de riscos...
+                </SummaryPanel>
 
-          <SummaryHeader>2.2) Resumo Clínico</SummaryHeader>
-          <SummaryPanel className="loading">Resumindo...</SummaryPanel>
+                <h4 id="alergias">2.1.3) Alergias</h4>
+                <SummaryPanel>Alergias</SummaryPanel>
 
-          <SummaryPanel className="loading">
-            Exames complementares...
-          </SummaryPanel>
-
-          <SummaryPanel className="loading">
-            Procedimentos realizados...
-          </SummaryPanel>
-
-          <SummaryPanel className="loading">
-            Medicamentos utilizados na internação...
-          </SummaryPanel>
-
-          <SummaryPanel className="loading">
-            Medicamentos interrompidos...
-          </SummaryPanel>
-
-          <SummaryHeader>2.3) Condição de Alta</SummaryHeader>
-          <SummaryPanel className="loading">Resumindo...</SummaryPanel>
-
-          <SummaryPanel>
-            <div className="group">
-              <div className="attribute">
-                <label>Peso:</label> <span>70Kg</span>
+                <h4 id="medicamentos-uso-previo">
+                  2.1.4) Medicamentos de uso prévio
+                </h4>
+                <SummaryPanelAI
+                  url={summaryData.summaryConfig?.url}
+                  apikey={summaryData.summaryConfig?.apikey}
+                  payload={summaryData.summaryConfig?.previousDrugs}
+                  position={5}
+                />
               </div>
 
-              <div className="attribute">
-                <label>Altura:</label> <span>170cm</span>
+              <h3 id="resumo-clinico">2.2) Resumo Clínico</h3>
+
+              <div className="sub_level">
+                <SummaryPanel className="loading">Resumindo...</SummaryPanel>
+
+                <h4 id="exames-complementares">2.2.1) Exames complementares</h4>
+                <SummaryPanel>Exames complementares (estruturado)</SummaryPanel>
+                <SummaryPanel className="loading">
+                  Exames complementares IA...
+                </SummaryPanel>
+
+                <h4 id="procedimentos">2.2.2) Procedimentos realizados</h4>
+                <SummaryPanel className="loading">
+                  Procedimentos realizados...
+                </SummaryPanel>
+
+                <h4 id="medicamentos-internacao">
+                  2.2.3) Medicamentos utilizados na internação
+                </h4>
+                <SummaryPanel>
+                  Medicamentos utilizados na internação...
+                </SummaryPanel>
+
+                <h4 id="medicamentos-interrompidos">
+                  2.2.4) Medicamentos interrompidos
+                </h4>
+                <SummaryPanel>Medicamentos interrompidos...</SummaryPanel>
               </div>
 
-              <div className="attribute">
-                <label>IMC:</label> <span>24,22</span>
+              <h3 id="condicoes-alta">2.3) Condição de Alta</h3>
+
+              <div className="sub_level">
+                <SummaryPanel className="loading">Resumindo...</SummaryPanel>
+
+                <SummaryPanel>
+                  <div className="group">
+                    <div className="attribute">
+                      <label>Peso:</label> <span>70Kg</span>
+                    </div>
+
+                    <div className="attribute">
+                      <label>Altura:</label> <span>170cm</span>
+                    </div>
+
+                    <div className="attribute">
+                      <label>IMC:</label> <span>24,22</span>
+                    </div>
+                  </div>
+                </SummaryPanel>
               </div>
             </div>
-          </SummaryPanel>
 
-          <SummaryHeader>3) Plano Terapêutico</SummaryHeader>
-          <SummaryPanel className="loading">Resumindo...</SummaryPanel>
+            <h2 id="plano-terapeutico">3) Plano Terapêutico</h2>
 
-          <SummaryPanel>Receita</SummaryPanel>
+            <div className="sub_level">
+              <h3 id="receita">3.1) Receita</h3>
+              <SummaryPanel>Receita</SummaryPanel>
 
-          <SummaryPanel>Exames pendentes...</SummaryPanel>
+              <h3 id="plano-alta">3.2) Plano de Alta</h3>
 
-          <SummaryPanel className="loading">Orientações...</SummaryPanel>
+              <SummaryPanel className="loading">Plano...</SummaryPanel>
+            </div>
 
-          <SummaryPanel className="loading">Encaminhamentos...</SummaryPanel>
+            {/* <textarea
+              style={{ width: "100%", height: "500px" }}
+              value={blocksToText()}
+            ></textarea> */}
+          </div>
+          <div>
+            <Anchor offsetTop={50}>
+              <Anchor.Link
+                href="#id-paciente"
+                title="1) IDENTIFICAÇÃO DO PACIENTE"
+              />
+              <Anchor.Link
+                href="#dados-internacao"
+                title="2) DADOS DA INTERNAÇÃO"
+              >
+                <Anchor.Link href="#admissao" title="2.1) Admissão">
+                  <Anchor.Link
+                    href="#motivo-admissao"
+                    title="2.1.1) Motivo da Admissão"
+                  />
+                  <Anchor.Link
+                    href="#diagnosticos"
+                    title="2.1.2) Diagnósticos (primário e secundário)"
+                  />
+                  <Anchor.Link href="#alergias" title="2.1.3) Alergias" />
+                  <Anchor.Link
+                    href="#medicamentos-uso-previo"
+                    title="2.1.4) Medicamentos de uso prévio"
+                  />
+                </Anchor.Link>
 
-          <SummaryPanel className="loading">
-            Retorno/Orientações de intercorrência
-          </SummaryPanel>
+                <Anchor.Link href="#resumo-clinico" title="2.2) Resumo Clínico">
+                  <Anchor.Link
+                    href="#exames-complementares"
+                    title="2.2.1) Exames Complementares"
+                  />
 
-          <textarea
-            style={{ width: "100%", height: "500px" }}
-            value={blocksToText()}
-          ></textarea>
+                  <Anchor.Link
+                    href="#procedimentos"
+                    title="2.2.2) Procedimentos Realizados"
+                  />
+
+                  <Anchor.Link
+                    href="#medicamentos-internacao"
+                    title="2.2.3) Medicamentos utilizados na internação"
+                  />
+
+                  <Anchor.Link
+                    href="#medicamentos-interrompidos"
+                    title="2.2.4) Medicamentos interrompidos"
+                  />
+                </Anchor.Link>
+
+                <Anchor.Link
+                  href="#condicoes-alta"
+                  title="2.3) Condições de Alta"
+                ></Anchor.Link>
+              </Anchor.Link>
+
+              <Anchor.Link
+                href="#plano-terapeutico"
+                title="3) PLANO TERAPÊUTICO"
+              >
+                <Anchor.Link href="#receita" title="3.1) Receita"></Anchor.Link>
+
+                <Anchor.Link
+                  href="#plano-alta"
+                  title="3.2) Plano de Alta"
+                ></Anchor.Link>
+              </Anchor.Link>
+            </Anchor>
+          </div>
         </SummaryContainer>
       )}
     </>

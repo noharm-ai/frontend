@@ -96,7 +96,7 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
 
       {!loading && (
         <div className="actions">
-          <Tooltip title="Solicitar nova resposta">
+          <Tooltip title="Atualizar">
             <Button
               shape="circle"
               icon={<ReloadOutlined />}

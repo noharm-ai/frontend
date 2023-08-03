@@ -1,8 +1,68 @@
 import styled from "styled-components/macro";
 
 export const SummaryContainer = styled.div`
-  width: max(50vw, 700px);
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+
+  > div:first-child {
+    width: 1000px;
+    margin-right: 4em;
+  }
+
+  .sub_level {
+    position: relative;
+    padding: 2em 0 1em 2em;
+    margin-bottom: 3em;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: #70bdc3;
+    }
+
+    .sub_level {
+      &:before {
+        width: 3px;
+        background: #a991d6;
+      }
+    }
+  }
+
+  h2,
+  h3,
+  h4 {
+    color: #2e3c5a;
+  }
+
+  h2 {
+    text-transform: uppercase;
+    font-size: 1.3em;
+  }
+
+  h3 {
+    font-size: 1.2em;
+  }
+
+  h4 {
+    font-size: 1em;
+  }
+
+  .ant-anchor-wrapper {
+    padding: 2em 2em;
+  }
+
+  .ant-anchor-link-title {
+    font-size: 16px;
+  }
+
+  .ant-anchor-ink:before {
+    background-color: #70bdc3;
+  }
 `;
 
 export const SummaryPanel = styled.div`
@@ -90,8 +150,4 @@ export const SummaryPanel = styled.div`
       margin-left: 0.5em;
     }
   }
-`;
-
-export const SummaryHeader = styled.h2`
-  color: #2e3c5a;
 `;
