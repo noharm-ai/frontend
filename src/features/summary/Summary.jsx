@@ -18,6 +18,7 @@ function Summary() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const summaryData = useSelector((state) => state.summary.data);
+  const summaryBlocks = useSelector((state) => state.summary.blocks);
   const status = useSelector((state) => state.summary.status);
 
   useEffect(() => {
@@ -32,6 +33,20 @@ function Summary() {
       description: t("error.description"),
     });
   }
+
+  const blocksToText = () => {
+    return `1) Identificação do Paciente
+${summaryBlocks[0]}
+
+2) Dados da Internação
+${summaryBlocks[1]}
+
+2.1) Admissão
+
+2.1.1) Motivo
+${summaryBlocks[2]}
+`;
+  };
 
   return (
     <>
@@ -133,6 +148,11 @@ function Summary() {
           <SummaryPanel className="loading">
             Retorno/Orientações de intercorrência
           </SummaryPanel>
+
+          <textarea
+            style={{ width: "100%", height: "500px" }}
+            value={blocksToText()}
+          ></textarea>
         </SummaryContainer>
       )}
     </>
