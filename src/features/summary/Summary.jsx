@@ -10,6 +10,7 @@ import LoadBox, { LoadContainer } from "components/LoadBox";
 import SummaryPanelAI from "./SummaryPanelAI/SummaryPanelAI";
 import SummaryPanelPatient from "./SummaryPanel/SummayPanelPatient";
 import SummaryPanelAdmission from "./SummaryPanel/SummayPanelAdmission";
+import SummaryPanelAttributes from "./SummaryPanel/SummayPanelPatientAttributes";
 import { PageHeader } from "styles/PageHeader.style";
 import { SummaryPanel, SummaryContainer } from "./Summary.style";
 import { fetchSummary } from "./SummarySlice";
@@ -94,9 +95,12 @@ ${summaryBlocks[2]}
                 <h4 id="diagnosticos">
                   2.1.2) Diagnósticos (primário e secundário)
                 </h4>
-                <SummaryPanel className="loading">
-                  Carregando Diagnósticos/Comorbidades/Fatores de riscos...
-                </SummaryPanel>
+                <SummaryPanelAI
+                  url={summaryData.summaryConfig?.url}
+                  apikey={summaryData.summaryConfig?.apikey}
+                  payload={summaryData.summaryConfig?.diagnosis}
+                  position={3}
+                />
 
                 <h4 id="alergias">2.1.3) Alergias</h4>
                 <SummaryPanel>Alergias</SummaryPanel>
@@ -124,9 +128,12 @@ ${summaryBlocks[2]}
                 </SummaryPanel>
 
                 <h4 id="procedimentos">2.2.2) Procedimentos realizados</h4>
-                <SummaryPanel className="loading">
-                  Procedimentos realizados...
-                </SummaryPanel>
+                <SummaryPanelAI
+                  url={summaryData.summaryConfig?.url}
+                  apikey={summaryData.summaryConfig?.apikey}
+                  payload={summaryData.summaryConfig?.procedures}
+                  position={9}
+                />
 
                 <h4 id="medicamentos-internacao">
                   2.2.3) Medicamentos utilizados na internação
@@ -144,23 +151,17 @@ ${summaryBlocks[2]}
               <h3 id="condicoes-alta">2.3) Condição de Alta</h3>
 
               <div className="sub_level">
-                <SummaryPanel className="loading">Resumindo...</SummaryPanel>
+                <SummaryPanelAI
+                  url={summaryData.summaryConfig?.url}
+                  apikey={summaryData.summaryConfig?.apikey}
+                  payload={summaryData.summaryConfig?.dischargeCondition}
+                  position={12}
+                />
 
-                <SummaryPanel>
-                  <div className="group">
-                    <div className="attribute">
-                      <label>Peso:</label> <span>70Kg</span>
-                    </div>
-
-                    <div className="attribute">
-                      <label>Altura:</label> <span>170cm</span>
-                    </div>
-
-                    <div className="attribute">
-                      <label>IMC:</label> <span>24,22</span>
-                    </div>
-                  </div>
-                </SummaryPanel>
+                <SummaryPanelAttributes
+                  position={13}
+                  patient={summaryData.patient}
+                ></SummaryPanelAttributes>
               </div>
             </div>
 

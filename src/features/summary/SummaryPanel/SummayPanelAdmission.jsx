@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import moment from "moment";
 
 import { setBlock } from "../SummarySlice";
 import { SummaryPanel } from "../Summary.style";
@@ -20,11 +21,21 @@ function SummaryPanelAdmission({ patient, position }) {
     <SummaryPanel>
       <div className="group">
         <div className="attribute">
-          <label>Data da Internação:</label> 01/01/2023
+          <label>Data da Internação:</label>
+          <span>
+            {patient.admissionDate
+              ? `${moment(patient.admissionDate).format("DD/MM/YYYY")}`
+              : "Não informado"}
+          </span>
         </div>
 
         <div className="attribute">
-          <label>Data da Alta:</label> 01/01/2023
+          <label>Data da Alta:</label>
+          <span>
+            {patient.dischargeDate
+              ? `${moment(patient.dischargeDate).format("DD/MM/YYYY")}`
+              : "Não informado"}
+          </span>
         </div>
       </div>
     </SummaryPanel>
