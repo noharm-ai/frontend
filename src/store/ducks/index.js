@@ -20,6 +20,7 @@ import patientCentral from "./patientCentral";
 import drugMeasureUnits from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSlice";
 import drugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import lists from "features/lists/ListsSlice";
+import summaryReducer from "features/summary/SummarySlice";
 
 import adminFrequencyReducer from "./admin/frequency";
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
@@ -53,4 +54,5 @@ export default combineReducers({
   drugMeasureUnits: drugMeasureUnits,
   drugFormStatus: drugFormStatus,
   lists: lists,
+  summary: summaryReducer,
 });
