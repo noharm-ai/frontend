@@ -11,16 +11,23 @@ import SummaryPanelAI from "./SummaryPanelAI/SummaryPanelAI";
 import SummaryPanelPatient from "./SummaryPanel/SummayPanelPatient";
 import SummaryPanelAdmission from "./SummaryPanel/SummayPanelAdmission";
 import SummaryPanelAttributes from "./SummaryPanel/SummayPanelPatientAttributes";
+import SummaryPanelText from "./SummaryPanel/SummaryPanelText";
 import { PageHeader } from "styles/PageHeader.style";
 import { SummaryPanel, SummaryContainer } from "./Summary.style";
 import { fetchSummary } from "./SummarySlice";
+import {
+  examsToText,
+  allergiesToText,
+  listToText,
+  receiptToText,
+} from "./verbalizers";
 
 function Summary() {
   const params = useParams();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const summaryData = useSelector((state) => state.summary.data);
-  const summaryBlocks = useSelector((state) => state.summary.blocks);
+  //const summaryBlocks = useSelector((state) => state.summary.blocks);
   const status = useSelector((state) => state.summary.status);
 
   useEffect(() => {
@@ -36,19 +43,19 @@ function Summary() {
     });
   }
 
-  const blocksToText = () => {
-    return `1) Identificação do Paciente
-${summaryBlocks[0]}
+  //   const blocksToText = () => {
+  //     return `1) Identificação do Paciente
+  // ${summaryBlocks[0]}
 
-2) Dados da Internação
-${summaryBlocks[1]}
+  // 2) Dados da Internação
+  // ${summaryBlocks[1]}
 
-2.1) Admissão
+  // 2.1) Admissão
 
-2.1.1) Motivo
-${summaryBlocks[2]}
-`;
-  };
+  // 2.1.1) Motivo
+  // ${summaryBlocks[2]}
+  // `;
+  //   };
 
   return (
     <>
@@ -103,7 +110,10 @@ ${summaryBlocks[2]}
                 />
 
                 <h4 id="alergias">2.1.3) Alergias</h4>
-                <SummaryPanel>Alergias</SummaryPanel>
+                <SummaryPanelText
+                  text={allergiesToText(summaryData.allergies)}
+                  position={4}
+                ></SummaryPanelText>
 
                 <h4 id="medicamentos-uso-previo">
                   2.1.4) Medicamentos de uso prévio
@@ -122,7 +132,12 @@ ${summaryBlocks[2]}
                 <SummaryPanel className="loading">Resumindo...</SummaryPanel>
 
                 <h4 id="exames-complementares">2.2.1) Exames complementares</h4>
-                <SummaryPanel>Exames complementares (estruturado)</SummaryPanel>
+
+                <SummaryPanelText
+                  text={examsToText(summaryData.exams)}
+                  position={7}
+                ></SummaryPanelText>
+
                 <SummaryPanel className="loading">
                   Exames complementares IA...
                 </SummaryPanel>
@@ -138,14 +153,18 @@ ${summaryBlocks[2]}
                 <h4 id="medicamentos-internacao">
                   2.2.3) Medicamentos utilizados na internação
                 </h4>
-                <SummaryPanel>
-                  Medicamentos utilizados na internação...
-                </SummaryPanel>
+                <SummaryPanelText
+                  text={listToText(summaryData.drugsUsed, "name")}
+                  position={10}
+                ></SummaryPanelText>
 
                 <h4 id="medicamentos-interrompidos">
                   2.2.4) Medicamentos interrompidos
                 </h4>
-                <SummaryPanel>Medicamentos interrompidos...</SummaryPanel>
+                <SummaryPanelText
+                  text={listToText(summaryData.drugsSuspended, "name")}
+                  position={11}
+                ></SummaryPanelText>
               </div>
 
               <h3 id="condicoes-alta">2.3) Condição de Alta</h3>
@@ -169,7 +188,10 @@ ${summaryBlocks[2]}
 
             <div className="sub_level">
               <h3 id="receita">3.1) Receita</h3>
-              <SummaryPanel>Receita</SummaryPanel>
+              <SummaryPanelText
+                text={receiptToText(summaryData.receipt)}
+                position={14}
+              ></SummaryPanelText>
 
               <h3 id="plano-alta">3.2) Plano de Alta</h3>
 

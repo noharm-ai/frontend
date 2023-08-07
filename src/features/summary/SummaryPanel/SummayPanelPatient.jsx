@@ -34,7 +34,13 @@ function SummaryPanelPatient({ patient, position }) {
               : "Não informado"}
           </span>
         </div>
+        <div className="attribute">
+          <label>Atendimento:</label>
+          <span>{patient.admissionNumber}</span>
+        </div>
+      </div>
 
+      <div className="group">
         <div className="attribute">
           <label>Sexo:</label>
           <span>
@@ -45,11 +51,10 @@ function SummaryPanelPatient({ patient, position }) {
               : "Não informado"}
           </span>
         </div>
-      </div>
-
-      <div className="attribute">
-        <label>Cor:</label>
-        <span>{patient.color || "Não informado"}</span>
+        <div className="attribute">
+          <label>Cor:</label>
+          <span>{patient.color || "Não informado"}</span>
+        </div>
       </div>
     </SummaryPanel>
   );

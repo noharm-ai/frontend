@@ -210,7 +210,7 @@ const routes = [
   },
   {
     exact: true,
-    path: "/summary/:admissionNumber",
+    path: "/sumario-alta/:admissionNumber",
     element: <WithAuth component={Summary} />,
   },
   {

@@ -86,6 +86,7 @@ export const SummaryPanel = styled.div`
 
   &.edit {
     display: inline-grid;
+    width: 100%;
     border-color: #70bdc3;
     box-shadow: 0 0 0 5px rgba(112, 189, 195, 0.4);
 
