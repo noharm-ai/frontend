@@ -1,9 +1,16 @@
 import React, { useState } from "react";
+import {
+  UserAddOutlined,
+  AppstoreAddOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 
 import DefaultModal from "components/Modal";
 import { Textarea, Input } from "components/Inputs";
 import { Form } from "styles/Form.style";
+import Button from "components/Button";
 import Switch from "components/Switch";
+import Tooltip from "components/Tooltip";
 
 function SummaryPanelAIConfig({ open, setOpen, payload, reload }) {
   const [currentConfig, setCurrentConfig] = useState({
@@ -21,6 +28,25 @@ function SummaryPanelAIConfig({ open, setOpen, payload, reload }) {
     config.messages = [...currentConfig.messages];
     config.messages[index] = { ...config.messages[index] };
     config.messages[index].content = value;
+
+    setCurrentConfig(config);
+  };
+
+  const addMessage = (type) => {
+    const config = { ...currentConfig };
+    config.messages = [...currentConfig.messages];
+    config.messages.push({
+      role: type,
+      content: "",
+    });
+
+    setCurrentConfig(config);
+  };
+
+  const removeMessage = (index) => {
+    const config = { ...currentConfig };
+    config.messages = [...currentConfig.messages];
+    config.messages.splice(index, 1);
 
     setCurrentConfig(config);
   };
@@ -50,8 +76,38 @@ function SummaryPanelAIConfig({ open, setOpen, payload, reload }) {
                   }
                 ></Textarea>
               </div>
+              <div className="form-action">
+                <Tooltip title="Remover">
+                  <Button
+                    shape="circle"
+                    icon={<DeleteOutlined />}
+                    onClick={() => removeMessage(index)}
+                  />
+                </Tooltip>
+              </div>
             </div>
           ))}
+
+        <div className="form-row">
+          <div className="form-action">
+            <Tooltip title="Adicionar user">
+              <Button
+                shape="circle"
+                icon={<UserAddOutlined />}
+                onClick={() => addMessage("user")}
+                type="primary"
+              />
+            </Tooltip>
+            <Tooltip title="Adicionar assistant">
+              <Button
+                shape="circle"
+                icon={<AppstoreAddOutlined />}
+                onClick={() => addMessage("assistant")}
+                type="primary"
+              />
+            </Tooltip>
+          </div>
+        </div>
 
         <div className={`form-row`}>
           <div className="form-label">
