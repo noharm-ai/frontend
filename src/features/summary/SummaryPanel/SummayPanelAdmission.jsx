@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import moment from "moment";
 
+import { admissionAttrToText } from "../verbalizers";
 import { setBlock } from "../SummarySlice";
 import { SummaryPanel } from "../Summary.style";
 
@@ -12,7 +13,7 @@ function SummaryPanelAdmission({ patient, position }) {
     dispatch(
       setBlock({
         id: position,
-        data: `Data de internacao: ....`,
+        data: admissionAttrToText(patient),
       })
     );
   }, [patient, dispatch, position]);

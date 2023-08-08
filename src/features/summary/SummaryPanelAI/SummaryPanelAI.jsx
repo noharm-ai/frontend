@@ -53,6 +53,16 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
       });
   };
 
+  const onChange = (value) => {
+    setResult(value);
+    dispatch(
+      setBlock({
+        id: position,
+        data: value,
+      })
+    );
+  };
+
   if (error) {
     return (
       <SummaryPanel className="error">
@@ -87,7 +97,7 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
               <Textarea
                 autoFocus
                 value={result}
-                onChange={({ target }) => setResult(target.value)}
+                onChange={({ target }) => onChange(target.value)}
               />
             </>
           ) : (

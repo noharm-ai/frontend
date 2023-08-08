@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import NumericValue from "components/NumericValue";
+import { patientAttrToText } from "../verbalizers";
 import { setBlock } from "../SummarySlice";
 import { SummaryPanel } from "../Summary.style";
 
@@ -14,7 +15,7 @@ function SummaryPanelAttributes({ patient, position }) {
     dispatch(
       setBlock({
         id: position,
-        data: `Nome do paciente: ....`,
+        data: patientAttrToText(patient),
       })
     );
   }, [patient, dispatch, position]);
