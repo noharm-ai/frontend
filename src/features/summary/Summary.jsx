@@ -138,9 +138,12 @@ function Summary() {
                   position={7}
                 ></SummaryPanelText>
 
-                <SummaryPanel className="loading">
-                  Exames complementares IA...
-                </SummaryPanel>
+                <SummaryPanelAI
+                  url={summaryData.summaryConfig?.url}
+                  apikey={summaryData.summaryConfig?.apikey}
+                  payload={summaryData.summaryConfig?.exams}
+                  position={8}
+                />
 
                 <h4 id="procedimentos">2.2.2) Procedimentos realizados</h4>
                 <SummaryPanelAI
@@ -195,7 +198,12 @@ function Summary() {
 
               <h3 id="plano-alta">3.2) Plano de Alta</h3>
 
-              <SummaryPanel className="loading">Plano...</SummaryPanel>
+              <SummaryPanelAI
+                url={summaryData.summaryConfig?.url}
+                apikey={summaryData.summaryConfig?.apikey}
+                payload={summaryData.summaryConfig?.dischargePlan}
+                position={15}
+              />
             </div>
 
             {/* <textarea
