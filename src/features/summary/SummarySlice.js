@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/api";
+import hospital from "services/hospital";
 
 const initialState = {
   data: {},
@@ -13,12 +14,30 @@ export const fetchSummary = createAsyncThunk(
   async (params, thunkAPI) => {
     const { access_token } = thunkAPI.getState().auth.identify;
 
-    const response = await api.getSummary(
+    const { data } = await api.getSummary(
       access_token,
       params.admissionNumber,
       params.mock
     );
-    return response.data;
+
+    const requestConfig = {
+      listToRequest: [{ idPatient: data.data.patient.idPatient }],
+      listToEscape: [],
+      nameUrl: thunkAPI.getState().app.config.nameUrl,
+      proxy: thunkAPI.getState().app.config.proxy,
+      nameHeaders: thunkAPI.getState().app.config.nameHeaders,
+      useCache: false,
+      userRoles: thunkAPI.getState().user.account.roles,
+    };
+
+    const patientsList = await hospital.getPatients(
+      access_token,
+      requestConfig
+    );
+
+    data.data.patient.name = patientsList[data.data.patient.idPatient].name;
+
+    return data;
   }
 );
 
