@@ -3,6 +3,7 @@ import {
   UserAddOutlined,
   AppstoreAddOutlined,
   DeleteOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
 
 import DefaultModal from "components/Modal";
@@ -34,7 +35,7 @@ function SummaryPanelAIConfig({ open, setOpen, payload, reload }) {
 
   const addMessage = (type) => {
     const config = { ...currentConfig };
-    config.messages = [...currentConfig.messages];
+    config.messages = [...(currentConfig.messages || [])];
     config.messages.push({
       role: type,
       content: "",
@@ -45,10 +46,14 @@ function SummaryPanelAIConfig({ open, setOpen, payload, reload }) {
 
   const removeMessage = (index) => {
     const config = { ...currentConfig };
-    config.messages = [...currentConfig.messages];
+    config.messages = [...(currentConfig.messages || [])];
     config.messages.splice(index, 1);
 
     setCurrentConfig(config);
+  };
+
+  const copyConfig = () => {
+    navigator.clipboard.writeText(JSON.stringify(currentConfig));
   };
 
   return (
@@ -61,7 +66,7 @@ function SummaryPanelAIConfig({ open, setOpen, payload, reload }) {
       open={open}
     >
       <Form>
-        {currentConfig &&
+        {currentConfig?.messages &&
           currentConfig.messages.map((m, index) => (
             <div className={`form-row`} key={index}>
               <div className="form-label">
@@ -104,6 +109,14 @@ function SummaryPanelAIConfig({ open, setOpen, payload, reload }) {
                 icon={<AppstoreAddOutlined />}
                 onClick={() => addMessage("assistant")}
                 type="primary"
+              />
+            </Tooltip>
+
+            <Tooltip title="Copiar configuração para a área de trabalho">
+              <Button
+                shape="circle"
+                icon={<CopyOutlined />}
+                onClick={() => copyConfig()}
               />
             </Tooltip>
           </div>

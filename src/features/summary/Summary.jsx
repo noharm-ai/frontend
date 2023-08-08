@@ -13,7 +13,7 @@ import SummaryPanelAdmission from "./SummaryPanel/SummayPanelAdmission";
 import SummaryPanelAttributes from "./SummaryPanel/SummayPanelPatientAttributes";
 import SummaryPanelText from "./SummaryPanel/SummaryPanelText";
 import { PageHeader } from "styles/PageHeader.style";
-import { SummaryPanel, SummaryContainer } from "./Summary.style";
+import { SummaryContainer } from "./Summary.style";
 import { fetchSummary } from "./SummarySlice";
 import {
   examsToText,
@@ -116,7 +116,12 @@ function Summary() {
               <h3 id="resumo-clinico">2.2) Resumo Clínico</h3>
 
               <div className="sub_level">
-                <SummaryPanel className="loading">Resumindo...</SummaryPanel>
+                <SummaryPanelAI
+                  url={summaryData.summaryConfig?.url}
+                  apikey={summaryData.summaryConfig?.apikey}
+                  payload={summaryData.summaryConfig?.clinicalSummary}
+                  position={6}
+                />
 
                 <h4 id="exames-complementares">2.2.1) Exames complementares</h4>
 
