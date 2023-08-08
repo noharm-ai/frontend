@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { Spin } from "antd";
-import { ReloadOutlined, EditOutlined, SaveOutlined } from "@ant-design/icons";
+import {
+  ReloadOutlined,
+  EditOutlined,
+  SaveOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
 import Button from "components/Button";
@@ -11,6 +16,7 @@ import { Textarea } from "components/Inputs";
 import { textToHtml } from "utils/transformers/utils";
 
 import { setBlock } from "../SummarySlice";
+import SummaryPanelAIConfig from "./SummaryPanelAIConfig";
 import { SummaryPanel } from "../Summary.style";
 
 function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
@@ -19,13 +25,14 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
   const [edit, setEdit] = useState(false);
   const [error, setError] = useState(false);
   const [result, setResult] = useState(null);
+  const [modalConfig, setModalConfig] = useState(false);
 
-  const reload = () => {
+  const reload = (forcePayload) => {
     setLoading(true);
     setError(false);
 
     axios
-      .post(url, payload, {
+      .post(url, forcePayload || payload, {
         headers: {
           authorization: `Key ${apikey}`,
         },
@@ -100,7 +107,17 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
             <Button
               shape="circle"
               icon={<ReloadOutlined />}
-              onClick={reload}
+              onClick={() => reload()}
+              size="large"
+              disabled={edit || loading}
+            />
+          </Tooltip>
+
+          <Tooltip title="Configurar">
+            <Button
+              shape="circle"
+              icon={<SettingOutlined />}
+              onClick={() => setModalConfig(true)}
               size="large"
               disabled={edit || loading}
             />
@@ -126,6 +143,12 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
               />
             </Tooltip>
           )}
+          <SummaryPanelAIConfig
+            open={modalConfig}
+            setOpen={setModalConfig}
+            payload={payload}
+            reload={reload}
+          ></SummaryPanelAIConfig>
         </div>
       )}
     </SummaryPanel>

@@ -205,11 +205,6 @@ function Summary() {
                 position={15}
               />
             </div>
-
-            {/* <textarea
-              style={{ width: "100%", height: "500px" }}
-              value={blocksToText()}
-            ></textarea> */}
           </div>
           <div>
             <Anchor offsetTop={50}>
