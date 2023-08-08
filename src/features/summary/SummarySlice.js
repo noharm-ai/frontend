@@ -10,10 +10,14 @@ const initialState = {
 
 export const fetchSummary = createAsyncThunk(
   "summary/fetch",
-  async (admissionNumber, thunkAPI) => {
+  async (params, thunkAPI) => {
     const { access_token } = thunkAPI.getState().auth.identify;
 
-    const response = await api.getSummary(access_token, admissionNumber);
+    const response = await api.getSummary(
+      access_token,
+      params.admissionNumber,
+      params.mock
+    );
     return response.data;
   }
 );
