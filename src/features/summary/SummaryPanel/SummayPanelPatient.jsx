@@ -23,7 +23,7 @@ function SummaryPanelPatient({ patient, position }) {
   return (
     <SummaryPanel>
       <div className="attribute">
-        <label>Nome do Paciente:</label> <span>Paciente1</span>
+        <label>Nome do Paciente:</label> <span>{patient.name}</span>
       </div>
 
       <div className="group">
