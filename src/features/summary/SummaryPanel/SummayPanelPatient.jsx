@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 
+import { patientToText } from "../verbalizers";
 import { setBlock } from "../SummarySlice";
 import { SummaryPanel } from "../Summary.style";
 
@@ -14,7 +15,7 @@ function SummaryPanelPatient({ patient, position }) {
     dispatch(
       setBlock({
         id: position,
-        data: `Nome do paciente: ....`,
+        data: patientToText(patient),
       })
     );
   }, [patient, dispatch, position]);

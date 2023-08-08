@@ -13,13 +13,14 @@ import SummaryPanelAdmission from "./SummaryPanel/SummayPanelAdmission";
 import SummaryPanelAttributes from "./SummaryPanel/SummayPanelPatientAttributes";
 import SummaryPanelText from "./SummaryPanel/SummaryPanelText";
 import { PageHeader } from "styles/PageHeader.style";
-import { SummaryPanel, SummaryContainer } from "./Summary.style";
+import { SummaryContainer } from "./Summary.style";
 import { fetchSummary } from "./SummarySlice";
 import {
   examsToText,
   allergiesToText,
   listToText,
   receiptToText,
+  blocksToText,
 } from "./verbalizers";
 
 function Summary() {
@@ -27,7 +28,7 @@ function Summary() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const summaryData = useSelector((state) => state.summary.data);
-  //const summaryBlocks = useSelector((state) => state.summary.blocks);
+  const summaryBlocks = useSelector((state) => state.summary.blocks);
   const status = useSelector((state) => state.summary.status);
 
   useEffect(() => {
@@ -42,20 +43,6 @@ function Summary() {
       description: t("error.description"),
     });
   }
-
-  //   const blocksToText = () => {
-  //     return `1) Identificação do Paciente
-  // ${summaryBlocks[0]}
-
-  // 2) Dados da Internação
-  // ${summaryBlocks[1]}
-
-  // 2.1) Admissão
-
-  // 2.1.1) Motivo
-  // ${summaryBlocks[2]}
-  // `;
-  //   };
 
   return (
     <>
@@ -129,7 +116,12 @@ function Summary() {
               <h3 id="resumo-clinico">2.2) Resumo Clínico</h3>
 
               <div className="sub_level">
-                <SummaryPanel className="loading">Resumindo...</SummaryPanel>
+                <SummaryPanelAI
+                  url={summaryData.summaryConfig?.url}
+                  apikey={summaryData.summaryConfig?.apikey}
+                  payload={summaryData.summaryConfig?.clinicalSummary}
+                  position={6}
+                />
 
                 <h4 id="exames-complementares">2.2.1) Exames complementares</h4>
 
@@ -206,10 +198,10 @@ function Summary() {
               />
             </div>
 
-            {/* <textarea
+            <textarea
               style={{ width: "100%", height: "500px" }}
-              value={blocksToText()}
-            ></textarea> */}
+              value={blocksToText(summaryBlocks)}
+            ></textarea>
           </div>
           <div>
             <Anchor offsetTop={50}>
