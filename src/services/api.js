@@ -544,8 +544,11 @@ const updateClinicalNote = (bearerToken, id, params) => {
  * Summary
  */
 
-const getSummary = (bearerToken, admissionNumber) =>
+const getSummary = (bearerToken, admissionNumber, mock) =>
   instance.get(`${endpoints.summary}/${admissionNumber}`, {
+    params: {
+      mock,
+    },
     ...setHeaders(bearerToken),
   });
 

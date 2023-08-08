@@ -215,6 +215,11 @@ const routes = [
   },
   {
     exact: true,
+    path: "/sumario-alta/:admissionNumber/mock",
+    element: <WithAuth component={Summary} mock={true} />,
+  },
+  {
+    exact: true,
     path: "/admin/frequencias",
     element: <WithAuth component={AdminFrequency} />,
   },

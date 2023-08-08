@@ -23,7 +23,7 @@ import {
   blocksToText,
 } from "./verbalizers";
 
-function Summary() {
+function Summary({ mock }) {
   const params = useParams();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -33,9 +33,14 @@ function Summary() {
 
   useEffect(() => {
     if (status === "idle") {
-      dispatch(fetchSummary(params.admissionNumber));
+      dispatch(
+        fetchSummary({
+          admissionNumber: params.admissionNumber,
+          mock,
+        })
+      );
     }
-  }, [status, dispatch, params.admissionNumber]);
+  }, [status, dispatch, params.admissionNumber, mock]);
 
   if (status === "failed") {
     notification.error({
