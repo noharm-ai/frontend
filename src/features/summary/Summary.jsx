@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -6,12 +6,14 @@ import { Anchor } from "antd";
 
 import notification from "components/notification";
 import LoadBox, { LoadContainer } from "components/LoadBox";
+import Button from "components/Button";
 
 import SummaryPanelAI from "./SummaryPanelAI/SummaryPanelAI";
 import SummaryPanelPatient from "./SummaryPanel/SummayPanelPatient";
 import SummaryPanelAdmission from "./SummaryPanel/SummayPanelAdmission";
 import SummaryPanelAttributes from "./SummaryPanel/SummayPanelPatientAttributes";
 import SummaryPanelText from "./SummaryPanel/SummaryPanelText";
+import SummaryText from "./SummaryText/SummaryText";
 import { PageHeader } from "styles/PageHeader.style";
 import { SummaryContainer } from "./Summary.style";
 import { fetchSummary } from "./SummarySlice";
@@ -20,7 +22,6 @@ import {
   allergiesToText,
   listToText,
   receiptToText,
-  blocksToText,
 } from "./verbalizers";
 
 function Summary({ mock }) {
@@ -28,8 +29,8 @@ function Summary({ mock }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const summaryData = useSelector((state) => state.summary.data);
-  const summaryBlocks = useSelector((state) => state.summary.blocks);
   const status = useSelector((state) => state.summary.status);
+  const [modalText, setModalText] = useState(false);
 
   useEffect(() => {
     if (status === "idle") {
@@ -55,6 +56,11 @@ function Summary({ mock }) {
         <div>
           <h1 className="page-header-title">Sumário de Alta</h1>
           <div className="page-header-legend">Sumário de alta do paciente.</div>
+        </div>
+        <div className="page-header-actions">
+          <Button type="primary" ghost onClick={() => setModalText(true)}>
+            Gerar texto
+          </Button>
         </div>
       </PageHeader>
       {status !== "succeeded" ? (
@@ -202,11 +208,6 @@ function Summary({ mock }) {
                 position={15}
               />
             </div>
-
-            <textarea
-              style={{ width: "100%", height: "500px" }}
-              value={blocksToText(summaryBlocks)}
-            ></textarea>
           </div>
           <div>
             <Anchor offsetTop={50}>
@@ -275,6 +276,7 @@ function Summary({ mock }) {
               </Anchor.Link>
             </Anchor>
           </div>
+          <SummaryText open={modalText} setOpen={setModalText}></SummaryText>
         </SummaryContainer>
       )}
     </>

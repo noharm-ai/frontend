@@ -86,6 +86,7 @@ IMC: ${patient.imc ? `${patient.imc} kg/m²` : "Não informado"}
 `;
 };
 
+// todo: add config
 export const blocksToText = (summaryBlocks) => {
   return `1) Identificação do Paciente
 
