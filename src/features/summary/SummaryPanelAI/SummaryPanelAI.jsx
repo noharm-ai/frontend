@@ -26,13 +26,18 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
   const [error, setError] = useState(false);
   const [result, setResult] = useState(null);
   const [modalConfig, setModalConfig] = useState(false);
+  const [aiPrompt, setAIPrompt] = useState(payload);
 
   const reload = (forcePayload) => {
     setLoading(true);
     setError(false);
 
+    if (forcePayload) {
+      setAIPrompt(forcePayload);
+    }
+
     axios
-      .post(url, forcePayload || payload, {
+      .post(url, forcePayload || aiPrompt, {
         headers: {
           authorization: `Key ${apikey}`,
         },
@@ -156,7 +161,7 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
           <SummaryPanelAIConfig
             open={modalConfig}
             setOpen={setModalConfig}
-            payload={payload}
+            payload={aiPrompt}
             reload={reload}
           ></SummaryPanelAIConfig>
         </div>
