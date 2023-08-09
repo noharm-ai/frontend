@@ -32,7 +32,7 @@ export const Form = styled.form`
   .form-action {
     display: flex;
     justify-content: flex-end;
-    margin-top: 5px;
+    margin: 5px 0;
 
     button {
       margin-left: 10px;

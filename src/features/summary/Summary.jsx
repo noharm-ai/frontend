@@ -58,7 +58,7 @@ function Summary({ mock }) {
           <div className="page-header-legend">Sumário de alta do paciente.</div>
         </div>
         <div className="page-header-actions">
-          <Button type="primary" ghost onClick={() => setModalText(true)}>
+          <Button type="primary" onClick={() => setModalText(true)}>
             Gerar texto
           </Button>
         </div>
