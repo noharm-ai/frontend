@@ -130,7 +130,7 @@
     "clPrescriptionScore": "T",
     "clPrescriptionScoreHint": "Escore total da prescrição",
     "clGlobalScore": "EG",
-    "clGlobalScoreHint": "Escore Global: Exames + Alertas + Alta Vigilância + Diferentes + Escore Total da Prescrição.",
+    "clGlobalScoreHint": "Escore Global: Exames + Alertas + Alta Vigilância + Antimicrobianos + Diferentes + Escore Total da Prescrição.",
 
     "clExName": "Nome",
     "clExDate": "Data/Hora",
