@@ -4,12 +4,13 @@ import { useLocation } from "react-router-dom";
 import { UserOutlined } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
 import { Alert } from "antd";
+import { useTranslation } from "react-i18next";
 
 import appInfo from "utils/appInfo";
 import Avatar from "components/Avatar";
 import Button from "components/Button";
+import security from "services/security";
 
-import { useTranslation } from "react-i18next";
 import Box from "./Box";
 import Menu from "./Menu";
 import InfoAlert from "./InfoAlert";
@@ -29,6 +30,7 @@ const setTitle = ({ user }) => {
 
 const Me = ({ user, access_token, t, notification, setNotification }) => {
   const location = useLocation();
+  const sec = security(user.account.roles);
 
   const showAlert = location.pathname.indexOf("priorizacao") !== -1;
 
@@ -55,7 +57,10 @@ const Me = ({ user, access_token, t, notification, setNotification }) => {
     "
     >
       <div css="display: flex; align-items: center; width: 50%;">
-        <SearchPrescription />
+        {location.pathname !== "/sumario-alta" && (
+          <SearchPrescription type={sec.isDoctor() ? "summary" : "default"} />
+        )}
+
         {showAlert && (
           <InfoAlert
             access_token={access_token}

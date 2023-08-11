@@ -36,6 +36,10 @@ const security = (roles) => {
     return hasRole(Role.PRESMED_FORM);
   };
 
+  const hasSummary = () => {
+    return hasRole(Role.SUMMARY);
+  };
+
   const isAdmin = () => {
     return hasRole(Role.ADMIN);
   };
@@ -48,6 +52,10 @@ const security = (roles) => {
     return hasRole(Role.TRAINING);
   };
 
+  const isDoctor = () => {
+    return hasRole(Role.DOCTOR);
+  };
+
   return {
     hasRole,
     hasAnyRole,
@@ -56,9 +64,11 @@ const security = (roles) => {
     hasTranscription,
     hasPrescriptionEdit,
     hasPresmedForm,
+    hasSummary,
     isAdmin,
     isSupport,
     isTraining,
+    isDoctor,
   };
 };
 

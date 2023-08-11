@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 
@@ -6,25 +7,39 @@ import { InputSearchNumber } from "components/Inputs";
 import notification from "components/notification";
 import Tag from "components/Tag";
 import Empty from "components/Empty";
-import { store } from "store/index";
-import api from "services/api";
 import { formatAge } from "utils/transformers/utils";
 import { useOutsideAlerter } from "lib/hooks";
 
+import { searchPrescriptions } from "features/lists/ListsSlice";
+
 import { SearchPrescriptionContainer } from "./index.style";
 
-export default function SearchPrescription() {
+export default function SearchPrescription({ type, size }) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const wrapperRef = useRef(null);
   const inputRef = useRef(null);
   useOutsideAlerter(wrapperRef, () => {
     setOpen(false);
   });
+  const navigateTo = useCallback(
+    (idPrescription, admissionNumber) => {
+      setOpen(false);
+      if (type === "summary") {
+        window.open(`/sumario-alta/${admissionNumber}`);
+      } else {
+        window.open(`/prescricao/${idPrescription}`);
+      }
+    },
+    [type]
+  );
 
-  const [options, setOptions] = useState([]);
   const [open, setOpen] = useState(false);
   const [itemActive, setItemActive] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const loadStatus = useSelector(
+    (state) => state.lists.searchPrescriptions.status
+  );
+  const options = useSelector((state) => state.lists.searchPrescriptions.list);
 
   useEffect(() => {
     const focusActiveItem = () => {
@@ -74,7 +89,13 @@ export default function SearchPrescription() {
             break;
           case actionKey.space:
           case actionKey.enter:
-            navigateTo(itemActive);
+            const index = options.findIndex(
+              (i) => i.idPrescription === itemActive
+            );
+            navigateTo(
+              options[index].idPrescription,
+              options[index].admissionNumber
+            );
 
             break;
           default:
@@ -91,7 +112,7 @@ export default function SearchPrescription() {
     return () => {
       window.removeEventListener("keydown", handleArrowNav);
     };
-  }, [open, itemActive, options]);
+  }, [open, itemActive, options, navigateTo]);
 
   useEffect(() => {
     const handleShortcut = (e) => {
@@ -112,23 +133,17 @@ export default function SearchPrescription() {
     };
   }, []);
 
-  const fetchData = async (value) => {
-    setLoading(true);
-
-    const state = store.getState();
-    const access_token = state.auth.identify.access_token;
-    const { data } = await api.searchPrescriptions(access_token, value);
-
-    setLoading(false);
-
-    if (data.status === "success") {
-      setOptions(data.data);
+  useEffect(() => {
+    if (loadStatus === "succeeded") {
       setOpen(true);
-
-      if (data.data.length) {
-        setItemActive(data.data[0].idPrescription);
+      if (options.length) {
+        setItemActive(options[0].idPrescription);
       }
     }
+  }, [options, loadStatus]);
+
+  const fetchData = async (value) => {
+    dispatch(searchPrescriptions({ term: value }));
   };
 
   const search = (value) => {
@@ -144,27 +159,24 @@ export default function SearchPrescription() {
     }
   };
 
-  const navigateTo = (idPrescription) => {
-    setOpen(false);
-    window.open(`/prescricao/${idPrescription}`);
-  };
-
   return (
-    <SearchPrescriptionContainer ref={wrapperRef}>
+    <SearchPrescriptionContainer ref={wrapperRef} className={`${type} ${size}`}>
       <InputSearchNumber
         placeholder={t("layout.iptSearch") + " (Ctrl + k)"}
         size="large"
         onSearch={search}
         id="gtm-search-box"
         type="number"
-        loading={loading}
+        loading={loadStatus === "loading"}
         allowClear
         ref={inputRef}
       />
       <div className={`search-result ${open ? "open" : ""}`}>
         {options.map((option, index) => (
           <div
-            onClick={() => navigateTo(option.idPrescription)}
+            onClick={() =>
+              navigateTo(option.idPrescription, option.admissionNumber)
+            }
             key={option.idPrescription}
             className={option.idPrescription === itemActive ? "active" : ""}
             onMouseEnter={() => setItemActive(option.idPrescription)}
@@ -191,10 +203,12 @@ export default function SearchPrescription() {
                 {option.department && <Tag>{option.department}</Tag>}
               </div>
             </div>
-            <div>
-              {option.status === "s" && <Tag color="green">Checada</Tag>}
-              {option.status !== "s" && <Tag color="orange">Pendente</Tag>}
-            </div>
+            {type !== "summary" && (
+              <div>
+                {option.status === "s" && <Tag color="green">Checada</Tag>}
+                {option.status !== "s" && <Tag color="orange">Pendente</Tag>}
+              </div>
+            )}
           </div>
         ))}
         {!options.length && (

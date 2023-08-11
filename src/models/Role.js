@@ -9,6 +9,9 @@ export default class Role {
   static CPOE = "cpoe";
   static PRESCRIPTION_EDIT = "prescriptionEdit";
   static PRESMED_FORM = "presmed-form";
+  static DOCTOR = "doctor";
+  static SUMMARY = "summary";
+  static READONLY = "readonly";
 
   static getRoles(t) {
     return [
@@ -27,6 +30,19 @@ export default class Role {
       {
         id: Role.PRESMED_FORM,
         label: t(`roles.${Role.PRESMED_FORM}`),
+      },
+      {
+        id: Role.DOCTOR,
+        label: t(`roles.${Role.DOCTOR}`),
+      },
+
+      {
+        id: Role.SUMMARY,
+        label: t(`roles.${Role.SUMMARY}`),
+      },
+      {
+        id: Role.READONLY,
+        label: t(`roles.${Role.READONLY}`),
       },
     ];
   }

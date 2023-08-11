@@ -4,8 +4,15 @@ import { bindActionCreators } from "redux";
 import { Navigate } from "react-router-dom";
 
 import FeatureService from "services/features";
+import security from "services/security";
 
-const JourneySwitch = ({ journey, featureService }) => {
+const JourneySwitch = ({ journey, featureService, roles }) => {
+  const sec = security(roles);
+
+  if (sec.isDoctor()) {
+    return <Navigate to="/sumario-alta" />;
+  }
+
   if (featureService.hasPrimaryCare()) {
     return <Navigate to="/pacientes" />;
   }
@@ -28,6 +35,7 @@ const JourneySwitch = ({ journey, featureService }) => {
 const mapStateToProps = ({ app, user }) => ({
   journey: app.preferences.journey,
   featureService: FeatureService(user.account.features),
+  roles: user.account.roles,
 });
 const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch);
 

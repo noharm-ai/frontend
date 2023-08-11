@@ -25,6 +25,7 @@ import PatientList from "pages/PatientList";
 import Prioritization from "pages/Prioritization";
 import ClinicalNotes from "pages/Screening/ClinicalNotes";
 import Summary from "pages/Summary";
+import SummarySearch from "pages/Summary/SummarySearch";
 
 import AdminFrequency from "pages/Admin/Frequency";
 import AdminInterventionReason from "pages/Admin/InterventionReason";
@@ -207,6 +208,11 @@ const routes = [
     exact: true,
     path: "/pacientes",
     element: <WithAuth component={PatientList} />,
+  },
+  {
+    exact: true,
+    path: "/sumario-alta",
+    element: <WithAuth component={SummarySearch} />,
   },
   {
     exact: true,

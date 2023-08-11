@@ -59,7 +59,7 @@ function Summary({ mock }) {
         </div>
         <div className="page-header-actions">
           <Button type="primary" onClick={() => setModalText(true)}>
-            Gerar texto
+            Gerar Texto
           </Button>
         </div>
       </PageHeader>

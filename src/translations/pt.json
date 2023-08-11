@@ -46,7 +46,8 @@
     "frequency": "Frequências",
     "interventionReasons": "Motivos de Intervenções",
     "news": "Novidades",
-    "memory": "Memória"
+    "memory": "Memória",
+    "summary": "Sumário de Alta"
   },
   "screeningList": {
     "confirm": "Confirma?",
@@ -516,6 +517,9 @@
     "cpoe": "CPOE",
     "prescriptionEdit": "Edição de Prescrição",
     "beta-cards": "Priorização Cards (Beta)",
-    "presmed-form": "Formulário Presmed"
+    "presmed-form": "Formulário Presmed",
+    "doctor": "Médico",
+    "summary": "Sumário de Alta",
+    "readonly": "Somente leitura"
   }
 }
