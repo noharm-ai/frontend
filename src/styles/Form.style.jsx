@@ -28,4 +28,14 @@ export const Form = styled.form`
       width: 100%;
     }
   }
+
+  .form-action {
+    display: flex;
+    justify-content: flex-end;
+    margin: 5px 0;
+
+    button {
+      margin-left: 10px;
+    }
+  }
 `;

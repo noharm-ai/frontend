@@ -515,6 +515,9 @@
     "cpoe": "CPOE",
     "prescriptionEdit": "Prescription Edit",
     "beta-cards": "Prioritization Cards (Beta)",
-    "presmed-form": "Presmed Form"
+    "presmed-form": "Presmed Form",
+    "doctor": "Doctor",
+    "summary": "Discharge Summary",
+    "readonly": "Readonly"
   }
 }

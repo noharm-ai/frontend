@@ -17,6 +17,7 @@ import {
   ExperimentOutlined,
   HourglassOutlined,
   SaveOutlined,
+  FileDoneOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -68,10 +69,18 @@ export default function Menu({ security, featureService }) {
 
   const items = [
     {
+      key: "/sumario-alta",
+      label: t("menu.summary"),
+      icon: <FileDoneOutlined />,
+      id: "gtm-lnk-summary",
+      role: ["summary"],
+    },
+    {
       key: "prioritization",
       label: t("menu.prioritization"),
       icon: <TableOutlined />,
       id: "gtm-lnk-priorizacao",
+      notrole: ["doctor"],
       children: [
         {
           key: "/priorizacao/prescricoes",
@@ -108,18 +117,21 @@ export default function Menu({ security, featureService }) {
       icon: <UserOutlined />,
       id: "gtm-lnk-patients",
       feature: Feature.PRIMARYCARE,
+      notrole: ["doctor"],
     },
     {
       key: "/intervencoes",
       label: t("menu.interventions"),
       icon: <WarningOutlined />,
       id: "gtm-lnk-intervencoes",
+      notrole: ["doctor"],
     },
     {
       key: "/relatorios",
       label: t("menu.reports"),
       icon: <PieChartOutlined />,
       id: "gtm-lnk-report",
+      notrole: ["doctor"],
     },
     {
       key: "https://noharm.octadesk.com/kb",
@@ -165,12 +177,14 @@ export default function Menu({ security, featureService }) {
           label: t("menu.medications"),
           icon: <MedicineBoxOutlined />,
           id: "gtm-lnk-medicamentos",
+          notrole: ["doctor"],
         },
         {
           key: "/exames",
           label: t("menu.exams"),
           icon: <MedicineBoxOutlined />,
           id: "gtm-lnk-exames",
+          notrole: ["doctor"],
         },
         {
           key: "/configuracoes/usuario",

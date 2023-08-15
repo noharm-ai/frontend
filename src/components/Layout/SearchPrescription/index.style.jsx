@@ -8,6 +8,23 @@ export const SearchPrescriptionContainer = styled.div`
   display: flex;
   align-items: center;
 
+  &.big {
+    max-width: none;
+
+    .ant-input-wrapper {
+      .ant-input-affix-wrapper {
+        input {
+          font-size: 24px;
+        }
+      }
+    }
+
+    .ant-input-search-button {
+      height: 53px;
+      width: 53px;
+    }
+  }
+
   .ant-input-wrapper {
     .ant-input-affix-wrapper {
       background: #fafafa;

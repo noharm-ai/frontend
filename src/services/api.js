@@ -41,6 +41,7 @@ const endpoints = {
   clinicalNotes: "/notes",
   editUser: "/editUser",
   editPrescription: "/editPrescription",
+  summary: "/summary",
 };
 
 /**
@@ -540,6 +541,18 @@ const updateClinicalNote = (bearerToken, id, params) => {
 };
 
 /**
+ * Summary
+ */
+
+const getSummary = (bearerToken, admissionNumber, mock) =>
+  instance.get(`${endpoints.summary}/${admissionNumber}`, {
+    params: {
+      mock,
+    },
+    ...setHeaders(bearerToken),
+  });
+
+/**
  * API
  * all functions that can be user in API.
  */
@@ -611,6 +624,7 @@ const api = {
   searchPrescriptions,
   getPrescriptionMissingDrugs,
   copyPrescriptionMissingDrugs,
+  getSummary,
 };
 
 export default api;
