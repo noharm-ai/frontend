@@ -118,20 +118,23 @@ ${summaryBlocks[5] || ""}
 
 ${summaryBlocks[6] || ""}
 
-2.2.1) Exames complementares
+2.2.1) Exames Laboratoriais
 
 ${summaryBlocks[7] || ""}
+
+2.2.2) Exames Textuais
+
 ${summaryBlocks[8] || ""}
 
-2.2.2) Procedimentos realizados
+2.2.3) Procedimentos realizados
 
 ${summaryBlocks[9] || ""}
 
-2.2.3) Medicamentos utilizados na internação
+2.2.4) Medicamentos utilizados na internação
 
 ${summaryBlocks[10] || ""}
 
-2.2.4) Medicamentos interrompidos
+2.2.5) Medicamentos Contínuos Interrompidos Durante a Internação
 
 ${summaryBlocks[11] || ""}
 
@@ -142,11 +145,11 @@ ${summaryBlocks[13] || ""}
 
 3) PLANO TERAPÊUTICO
 
-3.1) Receita
+3.1) Plano de Alta
 
 ${summaryBlocks[14] || ""}
 
-3.2) Plano de Alta
+3.2) Receita
 
 ${summaryBlocks[15] || ""}
 `;
