@@ -480,6 +480,14 @@ const putMemory = (bearerToken, { id, ...params }) => {
   return instance.put(`${endpoints.memory}`, params, setHeaders(bearerToken));
 };
 
+const putMemoryUnique = (bearerToken, { type, ...params }) => {
+  return instance.put(
+    `${endpoints.memory}/unique/${type}`,
+    params,
+    setHeaders(bearerToken)
+  );
+};
+
 /**
  * User.
  *
@@ -606,6 +614,7 @@ const api = {
   shouldUpdatePrescription,
   getMemory,
   putMemory,
+  putMemoryUnique,
   updatePassword,
   forgotPassword,
   resetPassword,

@@ -300,7 +300,10 @@
     "admissionNumber": "Admission number",
     "new": "New",
     "manage": "Manage",
-    "apply": "Aplicar"
+    "apply": "Aplicar",
+    "draft": "Draft",
+    "saveDraft": "Save draft",
+    "loadDraft": "Load draft"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
@@ -466,6 +469,10 @@
     "alergy": "Alergy",
     "tube": "Drug contraindicate by tube",
     "duplicate": "Duplicity"
+  },
+
+  "messages": {
+    "draftApplied": "Draft applied"
   },
 
   "actions": {
