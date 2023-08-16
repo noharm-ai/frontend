@@ -7,9 +7,12 @@ import {
   EditOutlined,
   SaveOutlined,
   SettingOutlined,
+  FileSearchOutlined,
+  RobotOutlined,
 } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
+import Dropdown from "components/Dropdown";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import { Textarea } from "components/Inputs";
@@ -17,6 +20,7 @@ import { textToHtml } from "utils/transformers/utils";
 
 import { setBlock } from "../SummarySlice";
 import SummaryPanelAIConfig from "./SummaryPanelAIConfig";
+import SummaryPanelAIAudit from "./SummaryPanelAIAudit";
 import { SummaryPanel } from "../Summary.style";
 
 function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
@@ -24,11 +28,19 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
   const [error, setError] = useState(false);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState(
+    !payload?.audit?.length ? "Nada consta" : null
+  );
   const [modalConfig, setModalConfig] = useState(false);
-  const [aiPrompt, setAIPrompt] = useState(payload);
+  const [modalAudit, setModalAudit] = useState(false);
+  const [aiPrompt, setAIPrompt] = useState(payload?.prompt);
 
   const reload = (forcePayload) => {
+    if (!forcePayload && !payload.audit?.length) {
+      setResult("Nada consta");
+      return;
+    }
+
     setLoading(true);
     setError(false);
 
@@ -66,6 +78,33 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
         data: value,
       })
     );
+  };
+
+  const items = [
+    {
+      key: "prompt",
+      label: "Configurar prompt",
+      icon: <RobotOutlined />,
+    },
+    {
+      key: "audit",
+      label: "Auditoria",
+      icon: <FileSearchOutlined />,
+    },
+  ];
+
+  const onMenuClick = ({ key }) => {
+    switch (key) {
+      case "prompt":
+        setModalConfig(true);
+        break;
+
+      case "audit":
+        setModalAudit(true);
+        break;
+      default:
+        console.error("not implemented", key);
+    }
   };
 
   if (error) {
@@ -124,17 +163,7 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
               icon={<ReloadOutlined />}
               onClick={() => reload()}
               size="large"
-              disabled={edit || loading}
-            />
-          </Tooltip>
-
-          <Tooltip title="Configurar">
-            <Button
-              shape="circle"
-              icon={<SettingOutlined />}
-              onClick={() => setModalConfig(true)}
-              size="large"
-              disabled={edit || loading}
+              disabled={edit || loading || !payload?.audit?.length}
             />
           </Tooltip>
 
@@ -158,12 +187,26 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
               />
             </Tooltip>
           )}
+
+          <Dropdown
+            menu={{ items, onClick: onMenuClick }}
+            loading={edit || loading}
+            disabled={edit || loading}
+          >
+            <Button shape="circle" icon={<SettingOutlined />} size="large" />
+          </Dropdown>
           <SummaryPanelAIConfig
             open={modalConfig}
             setOpen={setModalConfig}
             payload={aiPrompt}
             reload={reload}
           ></SummaryPanelAIConfig>
+
+          <SummaryPanelAIAudit
+            open={modalAudit}
+            setOpen={setModalAudit}
+            audit={payload?.audit}
+          ></SummaryPanelAIAudit>
         </div>
       )}
     </SummaryPanel>
