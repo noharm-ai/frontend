@@ -16,7 +16,7 @@ import SummaryPanelText from "./SummaryPanel/SummaryPanelText";
 import SummaryText from "./SummaryText/SummaryText";
 import { PageHeader } from "styles/PageHeader.style";
 import { SummaryContainer } from "./Summary.style";
-import { fetchSummary } from "./SummarySlice";
+import { fetchSummary, startBlock } from "./SummarySlice";
 import {
   examsToText,
   allergiesToText,
@@ -30,6 +30,7 @@ function Summary({ mock }) {
   const dispatch = useDispatch();
   const summaryData = useSelector((state) => state.summary.data);
   const status = useSelector((state) => state.summary.status);
+
   const [modalText, setModalText] = useState(false);
 
   useEffect(() => {
@@ -39,7 +40,26 @@ function Summary({ mock }) {
           admissionNumber: params.admissionNumber,
           mock,
         })
-      );
+      ).then(() => {
+        //todo add config
+        const aiBlocks = [
+          "reason",
+          "diagnosis",
+          "previousDrugs",
+          "clinicalSummary",
+          "textExams",
+          "procedures",
+          "dischargeCondition",
+          "dischargePlan",
+        ];
+        let timeout = 1000;
+        aiBlocks.forEach((k) => {
+          setTimeout(() => {
+            dispatch(startBlock({ id: k }));
+          }, timeout);
+          timeout += 1500;
+        });
+      });
     }
   }, [status, dispatch, params.admissionNumber, mock]);
 
@@ -73,7 +93,7 @@ function Summary({ mock }) {
             <h2 id="id-paciente">1) Identificação do Paciente</h2>
             <div className="sub_level">
               <SummaryPanelPatient
-                position={0}
+                position="patient"
                 patient={summaryData.patient}
               ></SummaryPanelPatient>
             </div>
@@ -82,7 +102,7 @@ function Summary({ mock }) {
 
             <div className="sub_level">
               <SummaryPanelAdmission
-                position={1}
+                position="admission"
                 patient={summaryData.patient}
               ></SummaryPanelAdmission>
 
@@ -94,7 +114,7 @@ function Summary({ mock }) {
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.reason}
-                  position={2}
+                  position="reason"
                 />
 
                 <h4 id="diagnosticos">
@@ -104,13 +124,13 @@ function Summary({ mock }) {
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.diagnosis}
-                  position={3}
+                  position="diagnosis"
                 />
 
                 <h4 id="alergias">2.1.3) Alergias</h4>
                 <SummaryPanelText
                   text={allergiesToText(summaryData.allergies)}
-                  position={4}
+                  position="allergies"
                 ></SummaryPanelText>
 
                 <h4 id="medicamentos-uso-previo">
@@ -120,7 +140,7 @@ function Summary({ mock }) {
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.previousDrugs}
-                  position={5}
+                  position="previousDrugs"
                 />
               </div>
 
@@ -131,14 +151,14 @@ function Summary({ mock }) {
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.clinicalSummary}
-                  position={6}
+                  position="clinicalSummary"
                 />
 
                 <h4 id="exames-lab">2.2.1) Exames Laboratoriais</h4>
 
                 <SummaryPanelText
                   text={examsToText(summaryData.exams)}
-                  position={7}
+                  position="labExams"
                 ></SummaryPanelText>
 
                 <h4 id="exames-textuais">2.2.2) Exames Textuais</h4>
@@ -146,7 +166,7 @@ function Summary({ mock }) {
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.exams}
-                  position={8}
+                  position="textExams"
                 />
 
                 <h4 id="procedimentos">2.2.3) Procedimentos realizados</h4>
@@ -154,7 +174,7 @@ function Summary({ mock }) {
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.procedures}
-                  position={9}
+                  position="procedures"
                 />
 
                 <h4 id="medicamentos-internacao">
@@ -162,7 +182,7 @@ function Summary({ mock }) {
                 </h4>
                 <SummaryPanelText
                   text={listToText(summaryData.drugsUsed, "name")}
-                  position={10}
+                  position="drugsUsed"
                 ></SummaryPanelText>
 
                 <h4 id="medicamentos-interrompidos">
@@ -171,7 +191,7 @@ function Summary({ mock }) {
                 </h4>
                 <SummaryPanelText
                   text={listToText(summaryData.drugsSuspended, "name")}
-                  position={11}
+                  position="drugsSuspended"
                 ></SummaryPanelText>
               </div>
 
@@ -182,11 +202,11 @@ function Summary({ mock }) {
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.dischargeCondition}
-                  position={12}
+                  position="dischargeCondition"
                 />
 
                 <SummaryPanelAttributes
-                  position={13}
+                  position="dischargeStats"
                   patient={summaryData.patient}
                 ></SummaryPanelAttributes>
               </div>
@@ -200,13 +220,13 @@ function Summary({ mock }) {
                 url={summaryData.summaryConfig?.url}
                 apikey={summaryData.summaryConfig?.apikey}
                 payload={summaryData.summaryConfig?.dischargePlan}
-                position={14}
+                position="dischargePlan"
               />
 
               <h3 id="receita">3.2) Receita</h3>
               <SummaryPanelText
                 text={receiptToText(summaryData.receipt)}
-                position={15}
+                position="recipe"
               ></SummaryPanelText>
             </div>
           </div>

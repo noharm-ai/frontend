@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { Spin } from "antd";
 import {
@@ -23,8 +23,11 @@ import SummaryPanelAIConfig from "./SummaryPanelAIConfig";
 import SummaryPanelAIAudit from "./SummaryPanelAIAudit";
 import { SummaryPanel } from "../Summary.style";
 
-function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
+function SummaryPanelAI({ url, apikey, payload, position }) {
   const dispatch = useDispatch();
+  const status = useSelector(
+    (state) => state.summary.blocks[position]?.aiStatus
+  );
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
   const [error, setError] = useState(false);
@@ -34,41 +37,56 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
   const [modalConfig, setModalConfig] = useState(false);
   const [modalAudit, setModalAudit] = useState(false);
   const [aiPrompt, setAIPrompt] = useState(payload?.prompt);
-
-  const reload = (forcePayload) => {
-    if (!forcePayload && !payload.audit?.length) {
-      setResult("Nada consta");
-      return;
-    }
-
-    setLoading(true);
-    setError(false);
-
-    if (forcePayload) {
-      setAIPrompt(forcePayload);
-    }
-
-    axios
-      .post(url, forcePayload || aiPrompt, {
-        headers: {
-          authorization: `Key ${apikey}`,
-        },
-      })
-      .then((response) => {
-        setResult(response.data?.answer);
-        setLoading(false);
+  const reload = useCallback(
+    (forcePayload) => {
+      if (!forcePayload && !payload?.audit?.length) {
+        const msg = "Nada consta";
+        setResult(msg);
         dispatch(
           setBlock({
             id: position,
-            data: response.data?.answer,
+            data: msg,
           })
         );
-      })
-      .catch(() => {
-        console.log("error");
-        setError(true);
-      });
-  };
+        return;
+      }
+
+      setLoading(true);
+      setError(false);
+
+      if (forcePayload) {
+        setAIPrompt(forcePayload);
+      }
+
+      axios
+        .post(url, forcePayload || aiPrompt, {
+          headers: {
+            authorization: `Key ${apikey}`,
+          },
+        })
+        .then((response) => {
+          setResult(response.data?.answer);
+          setLoading(false);
+          dispatch(
+            setBlock({
+              id: position,
+              data: response.data?.answer,
+            })
+          );
+        })
+        .catch(() => {
+          console.log("error");
+          setError(true);
+        });
+    },
+    [dispatch, apikey, aiPrompt, payload?.audit, position, url]
+  );
+
+  useEffect(() => {
+    if (status === "started") {
+      reload();
+    }
+  }, [status, reload]);
 
   const onChange = (value) => {
     setResult(value);
@@ -115,7 +133,7 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
             shape="circle"
             danger
             icon={<ReloadOutlined />}
-            onClick={reload}
+            onClick={() => reload()}
             size="large"
           />
         </div>
@@ -134,8 +152,6 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
         </div>
       ) : (
         <>
-          {introduction && <div className="intro">{introduction}</div>}
-
           {edit ? (
             <>
               <Textarea

@@ -4,7 +4,80 @@ import hospital from "services/hospital";
 
 const initialState = {
   data: {},
-  blocks: [],
+  blocks: {
+    patient: {
+      text: null,
+      ai: false,
+    },
+    admission: {
+      text: null,
+      ai: false,
+    },
+    reason: {
+      text: null,
+      ai: true,
+      aiStatus: "paused",
+    },
+    diagnosis: {
+      text: null,
+      ai: true,
+      aiStatus: "paused",
+    },
+    allergies: {
+      text: null,
+      ai: false,
+    },
+    previousDrugs: {
+      text: null,
+      ai: true,
+      aiStatus: "paused",
+    },
+    clinicalSummary: {
+      text: null,
+      ai: true,
+      aiStatus: "paused",
+    },
+    labExams: {
+      text: null,
+      ai: false,
+    },
+    textExams: {
+      text: null,
+      ai: true,
+      aiStatus: "paused",
+    },
+    procedures: {
+      text: null,
+      ai: true,
+      aiStatus: "paused",
+    },
+    drugsUsed: {
+      text: null,
+      ai: false,
+    },
+    drugsSuspended: {
+      text: null,
+      ai: false,
+    },
+    dischargeCondition: {
+      text: null,
+      ai: true,
+      aiStatus: "paused",
+    },
+    dischargeStats: {
+      text: null,
+      ai: false,
+    },
+    dischargePlan: {
+      text: null,
+      ai: true,
+      aiStatus: "paused",
+    },
+    recipe: {
+      text: null,
+      ai: false,
+    },
+  },
   status: "idle",
   error: null,
 };
@@ -46,7 +119,10 @@ const summarySlice = createSlice({
   initialState,
   reducers: {
     setBlock(state, action) {
-      state.blocks[action.payload.id] = action.payload.data;
+      state.blocks[action.payload.id].text = action.payload.data;
+    },
+    startBlock(state, action) {
+      state.blocks[action.payload.id].aiStatus = "started";
     },
   },
   extraReducers(builder) {
@@ -67,4 +143,4 @@ const summarySlice = createSlice({
 
 export default summarySlice.reducer;
 
-export const { setBlock } = summarySlice.actions;
+export const { setBlock, startBlock } = summarySlice.actions;

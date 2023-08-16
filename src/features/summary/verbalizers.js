@@ -90,67 +90,67 @@ IMC: ${patient.imc ? `${patient.imc} kg/m²` : "Não informado"}
 export const blocksToText = (summaryBlocks) => {
   return `1) Identificação do Paciente
 
-${summaryBlocks[0] || ""}
+${summaryBlocks["patient"]?.text || ""}
 
 2) Dados da Internação
 
-${summaryBlocks[1] || ""}
+${summaryBlocks["admission"]?.text || ""}
 
 2.1) Admissão
 
 2.1.1) Motivo
 
-${summaryBlocks[2] || ""}
+${summaryBlocks["reason"]?.text || ""}
 
 2.1.2) Diagnósticos (primário e secundário)
 
-${summaryBlocks[3] || ""}
+${summaryBlocks["diagnosis"]?.text || ""}
 
 2.1.3) Alergias
 
-${summaryBlocks[4] || ""}
+${summaryBlocks["allergies"]?.text || ""}
 
 2.1.4) Medicamentos de uso prévio
 
-${summaryBlocks[5] || ""}
+${summaryBlocks["previousDrugs"]?.text || ""}
 
 2.2) Resumo Clínico
 
-${summaryBlocks[6] || ""}
+${summaryBlocks["clinicalSummary"]?.text || ""}
 
 2.2.1) Exames Laboratoriais
 
-${summaryBlocks[7] || ""}
+${summaryBlocks["labExams"]?.text || ""}
 
 2.2.2) Exames Textuais
 
-${summaryBlocks[8] || ""}
+${summaryBlocks["textExams"]?.text || ""}
 
 2.2.3) Procedimentos realizados
 
-${summaryBlocks[9] || ""}
+${summaryBlocks["procedures"]?.text || ""}
 
 2.2.4) Medicamentos utilizados na internação
 
-${summaryBlocks[10] || ""}
+${summaryBlocks["drugsUsed"]?.text || ""}
 
 2.2.5) Medicamentos Contínuos Interrompidos Durante a Internação
 
-${summaryBlocks[11] || ""}
+${summaryBlocks["drugsSuspended"]?.text || ""}
 
 2.3) Condição de Alta
 
-${summaryBlocks[12] || ""}
-${summaryBlocks[13] || ""}
+${summaryBlocks["dischargeCondition"]?.text || ""}
+${summaryBlocks["dischargeStats"]?.text || ""}
 
 3) PLANO TERAPÊUTICO
 
 3.1) Plano de Alta
 
-${summaryBlocks[14] || ""}
+${summaryBlocks["dischargePlan"]?.text || ""}
 
 3.2) Receita
 
-${summaryBlocks[15] || ""}
+${summaryBlocks["recipe"]?.text || ""}
 `;
 };
