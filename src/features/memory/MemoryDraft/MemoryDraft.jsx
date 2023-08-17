@@ -77,9 +77,15 @@ function MemoryDraft({ type, currentValue, setValue }) {
     <Dropdown
       menu={{ items, onClick: onMenuClick }}
       loading={status === "loading"}
+      disabled={!(draft && draft.length) && !currentValue}
     >
       <Badge count={draft && draft.length ? 1 : 0} size="small">
-        <Button loading={status === "loading"}>{t("labels.draft")}</Button>
+        <Button
+          loading={status === "loading"}
+          disabled={!(draft && draft.length) && !currentValue}
+        >
+          {t("labels.draft")}
+        </Button>
       </Badge>
     </Dropdown>
   );
