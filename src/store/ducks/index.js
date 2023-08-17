@@ -21,6 +21,7 @@ import drugMeasureUnits from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSl
 import drugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import lists from "features/lists/ListsSlice";
 import summaryReducer from "features/summary/SummarySlice";
+import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
 
 import adminFrequencyReducer from "./admin/frequency";
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
@@ -50,6 +51,7 @@ export default combineReducers({
   prescriptionDrugs: prescriptionDrugsReducer,
   reports: reportsReducer,
   memory: memoryReducer,
+  memoryDraft: memoryDraftSlice,
   clinicalNotes: clinicalNotesReducer,
   drugMeasureUnits: drugMeasureUnits,
   drugFormStatus: drugFormStatus,

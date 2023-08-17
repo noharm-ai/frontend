@@ -16,7 +16,7 @@ import SummaryPanelText from "./SummaryPanel/SummaryPanelText";
 import SummaryText from "./SummaryText/SummaryText";
 import { PageHeader } from "styles/PageHeader.style";
 import { SummaryContainer } from "./Summary.style";
-import { fetchSummary } from "./SummarySlice";
+import { fetchSummary, startBlock } from "./SummarySlice";
 import {
   examsToText,
   allergiesToText,
@@ -30,6 +30,7 @@ function Summary({ mock }) {
   const dispatch = useDispatch();
   const summaryData = useSelector((state) => state.summary.data);
   const status = useSelector((state) => state.summary.status);
+
   const [modalText, setModalText] = useState(false);
 
   useEffect(() => {
@@ -39,7 +40,26 @@ function Summary({ mock }) {
           admissionNumber: params.admissionNumber,
           mock,
         })
-      );
+      ).then(() => {
+        //todo add config
+        const aiBlocks = [
+          "reason",
+          "diagnosis",
+          "previousDrugs",
+          "clinicalSummary",
+          "textExams",
+          "procedures",
+          "dischargeCondition",
+          "dischargePlan",
+        ];
+        let timeout = 1000;
+        aiBlocks.forEach((k) => {
+          setTimeout(() => {
+            dispatch(startBlock({ id: k }));
+          }, timeout);
+          timeout += 1500;
+        });
+      });
     }
   }, [status, dispatch, params.admissionNumber, mock]);
 
@@ -73,7 +93,7 @@ function Summary({ mock }) {
             <h2 id="id-paciente">1) Identificação do Paciente</h2>
             <div className="sub_level">
               <SummaryPanelPatient
-                position={0}
+                position="patient"
                 patient={summaryData.patient}
               ></SummaryPanelPatient>
             </div>
@@ -82,7 +102,7 @@ function Summary({ mock }) {
 
             <div className="sub_level">
               <SummaryPanelAdmission
-                position={1}
+                position="admission"
                 patient={summaryData.patient}
               ></SummaryPanelAdmission>
 
@@ -94,7 +114,7 @@ function Summary({ mock }) {
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.reason}
-                  position={2}
+                  position="reason"
                 />
 
                 <h4 id="diagnosticos">
@@ -104,13 +124,13 @@ function Summary({ mock }) {
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.diagnosis}
-                  position={3}
+                  position="diagnosis"
                 />
 
                 <h4 id="alergias">2.1.3) Alergias</h4>
                 <SummaryPanelText
                   text={allergiesToText(summaryData.allergies)}
-                  position={4}
+                  position="allergies"
                 ></SummaryPanelText>
 
                 <h4 id="medicamentos-uso-previo">
@@ -120,7 +140,7 @@ function Summary({ mock }) {
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.previousDrugs}
-                  position={5}
+                  position="previousDrugs"
                 />
               </div>
 
@@ -131,45 +151,47 @@ function Summary({ mock }) {
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.clinicalSummary}
-                  position={6}
+                  position="clinicalSummary"
                 />
 
-                <h4 id="exames-complementares">2.2.1) Exames complementares</h4>
+                <h4 id="exames-lab">2.2.1) Exames Laboratoriais</h4>
 
                 <SummaryPanelText
                   text={examsToText(summaryData.exams)}
-                  position={7}
+                  position="labExams"
                 ></SummaryPanelText>
 
+                <h4 id="exames-textuais">2.2.2) Exames Textuais</h4>
                 <SummaryPanelAI
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.exams}
-                  position={8}
+                  position="textExams"
                 />
 
-                <h4 id="procedimentos">2.2.2) Procedimentos realizados</h4>
+                <h4 id="procedimentos">2.2.3) Procedimentos realizados</h4>
                 <SummaryPanelAI
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.procedures}
-                  position={9}
+                  position="procedures"
                 />
 
                 <h4 id="medicamentos-internacao">
-                  2.2.3) Medicamentos utilizados na internação
+                  2.2.4) Medicamentos utilizados na internação
                 </h4>
                 <SummaryPanelText
                   text={listToText(summaryData.drugsUsed, "name")}
-                  position={10}
+                  position="drugsUsed"
                 ></SummaryPanelText>
 
                 <h4 id="medicamentos-interrompidos">
-                  2.2.4) Medicamentos interrompidos
+                  2.2.5) Medicamentos Contínuos Interrompidos Durante a
+                  Internação
                 </h4>
                 <SummaryPanelText
                   text={listToText(summaryData.drugsSuspended, "name")}
-                  position={11}
+                  position="drugsSuspended"
                 ></SummaryPanelText>
               </div>
 
@@ -180,11 +202,11 @@ function Summary({ mock }) {
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.dischargeCondition}
-                  position={12}
+                  position="dischargeCondition"
                 />
 
                 <SummaryPanelAttributes
-                  position={13}
+                  position="dischargeStats"
                   patient={summaryData.patient}
                 ></SummaryPanelAttributes>
               </div>
@@ -193,20 +215,19 @@ function Summary({ mock }) {
             <h2 id="plano-terapeutico">3) Plano Terapêutico</h2>
 
             <div className="sub_level">
-              <h3 id="receita">3.1) Receita</h3>
-              <SummaryPanelText
-                text={receiptToText(summaryData.receipt)}
-                position={14}
-              ></SummaryPanelText>
-
-              <h3 id="plano-alta">3.2) Plano de Alta</h3>
-
+              <h3 id="plano-alta">3.1) Plano de Alta</h3>
               <SummaryPanelAI
                 url={summaryData.summaryConfig?.url}
                 apikey={summaryData.summaryConfig?.apikey}
                 payload={summaryData.summaryConfig?.dischargePlan}
-                position={15}
+                position="dischargePlan"
               />
+
+              <h3 id="receita">3.2) Receita</h3>
+              <SummaryPanelText
+                text={receiptToText(summaryData.receipt)}
+                position="recipe"
+              ></SummaryPanelText>
             </div>
           </div>
           <div>
@@ -237,23 +258,28 @@ function Summary({ mock }) {
 
                 <Anchor.Link href="#resumo-clinico" title="2.2) Resumo Clínico">
                   <Anchor.Link
-                    href="#exames-complementares"
-                    title="2.2.1) Exames Complementares"
+                    href="#exames-lab"
+                    title="2.2.1) Exames Laboratoriais"
+                  />
+
+                  <Anchor.Link
+                    href="#exames-textuais"
+                    title="2.2.2) Exames Textuais"
                   />
 
                   <Anchor.Link
                     href="#procedimentos"
-                    title="2.2.2) Procedimentos Realizados"
+                    title="2.2.3) Procedimentos Realizados"
                   />
 
                   <Anchor.Link
                     href="#medicamentos-internacao"
-                    title="2.2.3) Medicamentos utilizados na internação"
+                    title="2.2.4) Medicamentos utilizados na internação"
                   />
 
                   <Anchor.Link
                     href="#medicamentos-interrompidos"
-                    title="2.2.4) Medicamentos interrompidos"
+                    title="2.2.5) Medicamentos interrompidos"
                   />
                 </Anchor.Link>
 
@@ -267,12 +293,12 @@ function Summary({ mock }) {
                 href="#plano-terapeutico"
                 title="3) PLANO TERAPÊUTICO"
               >
-                <Anchor.Link href="#receita" title="3.1) Receita"></Anchor.Link>
-
                 <Anchor.Link
                   href="#plano-alta"
-                  title="3.2) Plano de Alta"
+                  title="3.1) Plano de Alta"
                 ></Anchor.Link>
+
+                <Anchor.Link href="#receita" title="3.2) Receita"></Anchor.Link>
               </Anchor.Link>
             </Anchor>
           </div>

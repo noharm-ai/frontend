@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { Spin } from "antd";
 import {
@@ -7,9 +7,12 @@ import {
   EditOutlined,
   SaveOutlined,
   SettingOutlined,
+  FileSearchOutlined,
+  RobotOutlined,
 } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
+import Dropdown from "components/Dropdown";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import { Textarea } from "components/Inputs";
@@ -17,46 +20,73 @@ import { textToHtml } from "utils/transformers/utils";
 
 import { setBlock } from "../SummarySlice";
 import SummaryPanelAIConfig from "./SummaryPanelAIConfig";
+import SummaryPanelAIAudit from "./SummaryPanelAIAudit";
 import { SummaryPanel } from "../Summary.style";
 
-function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
+function SummaryPanelAI({ url, apikey, payload, position }) {
   const dispatch = useDispatch();
+  const status = useSelector(
+    (state) => state.summary.blocks[position]?.aiStatus
+  );
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
   const [error, setError] = useState(false);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState(
+    !payload?.audit?.length ? "Nada consta" : null
+  );
   const [modalConfig, setModalConfig] = useState(false);
-  const [aiPrompt, setAIPrompt] = useState(payload);
-
-  const reload = (forcePayload) => {
-    setLoading(true);
-    setError(false);
-
-    if (forcePayload) {
-      setAIPrompt(forcePayload);
-    }
-
-    axios
-      .post(url, forcePayload || aiPrompt, {
-        headers: {
-          authorization: `Key ${apikey}`,
-        },
-      })
-      .then((response) => {
-        setResult(response.data?.answer);
-        setLoading(false);
+  const [modalAudit, setModalAudit] = useState(false);
+  const [aiPrompt, setAIPrompt] = useState(payload?.prompt);
+  const reload = useCallback(
+    (forcePayload) => {
+      if (!forcePayload && !payload?.audit?.length) {
+        const msg = "Nada consta";
+        setResult(msg);
         dispatch(
           setBlock({
             id: position,
-            data: response.data?.answer,
+            data: msg,
           })
         );
-      })
-      .catch(() => {
-        console.log("error");
-        setError(true);
-      });
-  };
+        return;
+      }
+
+      setLoading(true);
+      setError(false);
+
+      if (forcePayload) {
+        setAIPrompt(forcePayload);
+      }
+
+      axios
+        .post(url, forcePayload || aiPrompt, {
+          headers: {
+            authorization: `Key ${apikey}`,
+          },
+        })
+        .then((response) => {
+          setResult(response.data?.answer);
+          setLoading(false);
+          dispatch(
+            setBlock({
+              id: position,
+              data: response.data?.answer,
+            })
+          );
+        })
+        .catch(() => {
+          console.log("error");
+          setError(true);
+        });
+    },
+    [dispatch, apikey, aiPrompt, payload?.audit, position, url]
+  );
+
+  useEffect(() => {
+    if (status === "started") {
+      reload();
+    }
+  }, [status, reload]);
 
   const onChange = (value) => {
     setResult(value);
@@ -68,6 +98,33 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
     );
   };
 
+  const items = [
+    {
+      key: "prompt",
+      label: "Configurar prompt",
+      icon: <RobotOutlined />,
+    },
+    {
+      key: "audit",
+      label: "Auditoria",
+      icon: <FileSearchOutlined />,
+    },
+  ];
+
+  const onMenuClick = ({ key }) => {
+    switch (key) {
+      case "prompt":
+        setModalConfig(true);
+        break;
+
+      case "audit":
+        setModalAudit(true);
+        break;
+      default:
+        console.error("not implemented", key);
+    }
+  };
+
   if (error) {
     return (
       <SummaryPanel className="error">
@@ -76,7 +133,7 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
             shape="circle"
             danger
             icon={<ReloadOutlined />}
-            onClick={reload}
+            onClick={() => reload()}
             size="large"
           />
         </div>
@@ -95,8 +152,6 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
         </div>
       ) : (
         <>
-          {introduction && <div className="intro">{introduction}</div>}
-
           {edit ? (
             <>
               <Textarea
@@ -124,17 +179,7 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
               icon={<ReloadOutlined />}
               onClick={() => reload()}
               size="large"
-              disabled={edit || loading}
-            />
-          </Tooltip>
-
-          <Tooltip title="Configurar">
-            <Button
-              shape="circle"
-              icon={<SettingOutlined />}
-              onClick={() => setModalConfig(true)}
-              size="large"
-              disabled={edit || loading}
+              disabled={edit || loading || !payload?.audit?.length}
             />
           </Tooltip>
 
@@ -158,12 +203,26 @@ function SummaryPanelAI({ url, apikey, payload, introduction, position }) {
               />
             </Tooltip>
           )}
+
+          <Dropdown
+            menu={{ items, onClick: onMenuClick }}
+            loading={edit || loading}
+            disabled={edit || loading}
+          >
+            <Button shape="circle" icon={<SettingOutlined />} size="large" />
+          </Dropdown>
           <SummaryPanelAIConfig
             open={modalConfig}
             setOpen={setModalConfig}
             payload={aiPrompt}
             reload={reload}
           ></SummaryPanelAIConfig>
+
+          <SummaryPanelAIAudit
+            open={modalAudit}
+            setOpen={setModalAudit}
+            audit={payload?.audit}
+          ></SummaryPanelAIAudit>
         </div>
       )}
     </SummaryPanel>

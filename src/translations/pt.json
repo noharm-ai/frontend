@@ -301,7 +301,10 @@
     "admissionNumber": "Atendimento",
     "new": "Novo",
     "manage": "Gerenciar",
-    "apply": "Aplicar"
+    "apply": "Aplicar",
+    "draft": "Rascunho",
+    "saveDraft": "Salvar rascunho",
+    "loadDraft": "Carregar rascunho"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
@@ -478,6 +481,10 @@
     "alergy": "Alergia",
     "tube": "Medicamento contraindicado por sonda",
     "duplicate": "Duplicidade"
+  },
+
+  "messages": {
+    "draftApplied": "Rascunho aplicado"
   },
 
   "errors": {

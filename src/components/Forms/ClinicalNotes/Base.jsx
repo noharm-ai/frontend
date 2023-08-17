@@ -17,6 +17,7 @@ import {
 } from "utils/memory";
 
 import MemoryText from "containers/MemoryText";
+import MemoryDraft from "features/memory/MemoryDraft/MemoryDraft";
 
 import getInterventionTemplate, {
   getInterventionList,
@@ -162,6 +163,11 @@ export default function Base({ prescription, account, signature, action }) {
               style={{ minHeight: "60vh" }}
               status={errors.notes && touched.notes ? "error" : null}
             />
+            <MemoryDraft
+              type={`draft_cn_${values.idPrescription}`}
+              currentValue={values.notes}
+              setValue={(value) => setFieldValue("notes", value)}
+            ></MemoryDraft>
             {errors.notes && touched.notes && (
               <FieldError>{errors.notes}</FieldError>
             )}
