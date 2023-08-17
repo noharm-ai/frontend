@@ -24,4 +24,10 @@ export const PageHeader = styled.div`
     margin: 0;
     text-align: left;
   }
+
+  .page-header-actions {
+    > * {
+      margin-left: 15px;
+    }
+  }
 `;

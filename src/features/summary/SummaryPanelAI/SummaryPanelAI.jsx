@@ -28,12 +28,12 @@ function SummaryPanelAI({ url, apikey, payload, position }) {
   const status = useSelector(
     (state) => state.summary.blocks[position]?.aiStatus
   );
+  const result = useSelector(
+    (state) => state.summary.blocks[position]?.text || "Nada consta"
+  );
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
   const [error, setError] = useState(false);
-  const [result, setResult] = useState(
-    !payload?.audit?.length ? "Nada consta" : null
-  );
   const [modalConfig, setModalConfig] = useState(false);
   const [modalAudit, setModalAudit] = useState(false);
   const [aiPrompt, setAIPrompt] = useState(payload?.prompt);
@@ -41,7 +41,6 @@ function SummaryPanelAI({ url, apikey, payload, position }) {
     (forcePayload) => {
       if (!forcePayload && !payload?.audit?.length) {
         const msg = "Nada consta";
-        setResult(msg);
         dispatch(
           setBlock({
             id: position,
@@ -65,7 +64,6 @@ function SummaryPanelAI({ url, apikey, payload, position }) {
           },
         })
         .then((response) => {
-          setResult(response.data?.answer);
           setLoading(false);
           dispatch(
             setBlock({
@@ -88,8 +86,12 @@ function SummaryPanelAI({ url, apikey, payload, position }) {
     }
   }, [status, reload]);
 
+  useEffect(() => {
+    setError(false);
+    setLoading(false);
+  }, [result]);
+
   const onChange = (value) => {
-    setResult(value);
     dispatch(
       setBlock({
         id: position,

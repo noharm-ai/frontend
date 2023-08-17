@@ -7,6 +7,9 @@ import { Anchor } from "antd";
 import notification from "components/notification";
 import LoadBox, { LoadContainer } from "components/LoadBox";
 import Button from "components/Button";
+import DefaultModal from "components/Modal";
+import BackTop from "components/BackTop";
+import MemoryDraft from "features/memory/MemoryDraft/MemoryDraft";
 
 import SummaryPanelAI from "./SummaryPanelAI/SummaryPanelAI";
 import SummaryPanelPatient from "./SummaryPanel/SummayPanelPatient";
@@ -16,7 +19,7 @@ import SummaryPanelText from "./SummaryPanel/SummaryPanelText";
 import SummaryText from "./SummaryText/SummaryText";
 import { PageHeader } from "styles/PageHeader.style";
 import { SummaryContainer } from "./Summary.style";
-import { fetchSummary, startBlock } from "./SummarySlice";
+import { fetchSummary, startBlock, setBlock } from "./SummarySlice";
 import {
   examsToText,
   allergiesToText,
@@ -30,6 +33,7 @@ function Summary({ mock }) {
   const dispatch = useDispatch();
   const summaryData = useSelector((state) => state.summary.data);
   const status = useSelector((state) => state.summary.status);
+  const blocks = useSelector((state) => state.summary.blocks);
 
   const [modalText, setModalText] = useState(false);
 
@@ -40,28 +44,20 @@ function Summary({ mock }) {
           admissionNumber: params.admissionNumber,
           mock,
         })
-      ).then(() => {
-        //todo add config
-        const aiBlocks = [
-          "reason",
-          "diagnosis",
-          "previousDrugs",
-          "clinicalSummary",
-          "textExams",
-          "procedures",
-          "dischargeCondition",
-          "dischargePlan",
-        ];
-        let timeout = 1000;
-        aiBlocks.forEach((k) => {
-          setTimeout(() => {
-            dispatch(startBlock({ id: k }));
-          }, timeout);
-          timeout += 1500;
-        });
-      });
+      );
     }
   }, [status, dispatch, params.admissionNumber, mock]);
+
+  useEffect(() => {
+    if (status === "succeeded") {
+      if (summaryData.draft) {
+        chooseLoadOption();
+      } else {
+        startLoadingBlocks();
+      }
+    }
+  }, [status]); // eslint-disable-line
+  // eslint disabled (must happen only after loaded)
 
   if (status === "failed") {
     notification.error({
@@ -69,6 +65,54 @@ function Summary({ mock }) {
       description: t("error.description"),
     });
   }
+
+  const chooseLoadOption = () => {
+    DefaultModal.confirm({
+      title: "Rascunho",
+      content: <p>Existe um rascunho para este sumário. Deseja carregá-lo?</p>,
+      onOk: () => {
+        loadDraft(summaryData.draft);
+      },
+      onCancel: () => {
+        startLoadingBlocks();
+      },
+      okText: "Sim",
+      cancelText: "Não",
+      width: 550,
+    });
+  };
+
+  const loadDraft = (value) => {
+    Object.keys(value).forEach((k) => {
+      dispatch(
+        setBlock({
+          id: k,
+          data: value[k].text,
+        })
+      );
+    });
+  };
+
+  const startLoadingBlocks = () => {
+    //todo add config
+    const aiBlocks = [
+      "reason",
+      "diagnosis",
+      "previousDrugs",
+      "clinicalSummary",
+      "textExams",
+      "procedures",
+      "dischargeCondition",
+      "dischargePlan",
+    ];
+    let timeout = 1000;
+    aiBlocks.forEach((k) => {
+      setTimeout(() => {
+        dispatch(startBlock({ id: k }));
+      }, timeout);
+      timeout += 1500;
+    });
+  };
 
   return (
     <>
@@ -78,6 +122,12 @@ function Summary({ mock }) {
           <div className="page-header-legend">Sumário de alta do paciente.</div>
         </div>
         <div className="page-header-actions">
+          <MemoryDraft
+            type={`draft_summary_${params.admissionNumber}`}
+            currentValue={blocks}
+            setValue={loadDraft}
+          ></MemoryDraft>
+
           <Button type="primary" onClick={() => setModalText(true)}>
             Gerar Texto
           </Button>
@@ -305,6 +355,7 @@ function Summary({ mock }) {
           <SummaryText open={modalText} setOpen={setModalText}></SummaryText>
         </SummaryContainer>
       )}
+      <BackTop />
     </>
   );
 }

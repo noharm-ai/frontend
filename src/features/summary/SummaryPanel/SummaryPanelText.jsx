@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
@@ -14,7 +14,7 @@ import { SummaryPanel } from "../Summary.style";
 function SummaryPanelText({ text, position }) {
   const dispatch = useDispatch();
   const [edit, setEdit] = useState(false);
-  const [result, setResult] = useState(text);
+  const result = useSelector((state) => state.summary.blocks[position]?.text);
 
   useEffect(() => {
     dispatch(
@@ -25,6 +25,15 @@ function SummaryPanelText({ text, position }) {
     );
   }, [result, position, dispatch]);
 
+  useEffect(() => {
+    dispatch(
+      setBlock({
+        id: position,
+        data: text,
+      })
+    );
+  }, [text, position, dispatch]);
+
   return (
     <SummaryPanel className={edit ? "edit" : ""} data-value={result}>
       {edit ? (
@@ -32,7 +41,14 @@ function SummaryPanelText({ text, position }) {
           <Textarea
             autoFocus
             value={result}
-            onChange={({ target }) => setResult(target.value)}
+            onChange={({ target }) =>
+              dispatch(
+                setBlock({
+                  id: position,
+                  data: target.value,
+                })
+              )
+            }
           />
         </>
       ) : (
