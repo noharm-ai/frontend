@@ -7,6 +7,7 @@ import LoadBox, { LoadContainer } from "components/LoadBox";
 import Empty from "components/Empty";
 import Collapse from "components/Collapse";
 import Tooltip from "components/Tooltip";
+import DefaultModal from "components/Modal";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
 
 import FormIntervention from "containers/Forms/Intervention";
@@ -18,6 +19,7 @@ import {
 } from "./PrescriptionDrug.style";
 import Table from "./components/Table";
 import PanelAction from "./components/PanelAction";
+import ChooseInterventionModal from "./components/ChooseInterventionModal";
 
 const isExpired = (date) => {
   if (!date) return false;
@@ -66,8 +68,17 @@ export const rowClassName = (record, bag) => {
     classes.push("checked");
   }
 
-  if (record.intervention && record.intervention.status === "s") {
-    classes.push("danger");
+  if (record.intervention) {
+    let hasIntervention = false;
+    record.intervention.forEach((i) => {
+      if (i.status === "s") {
+        hasIntervention = true;
+      }
+    });
+
+    if (hasIntervention) {
+      classes.push("danger");
+    }
   }
 
   if (record.startRow) {
@@ -128,9 +139,36 @@ export default function PrescriptionDrugList({
     );
   }
 
-  const onShowModal = (data) => {
-    select(data);
+  const selectIntervention = (int, data) => {
+    select({
+      ...data,
+      intervention: {
+        ...int,
+      },
+    });
     setVisibility(true);
+  };
+
+  const onShowModal = (data) => {
+    console.log("data", data.intervention);
+
+    if (data.intervention.length > 1) {
+      DefaultModal.info({
+        title: "Escolha a Intervenção",
+        content: (
+          <ChooseInterventionModal
+            selectIntervention={selectIntervention}
+            interventions={data.intervention}
+            completeData={data}
+          />
+        ),
+        width: 500,
+        okText: "Fechar",
+      });
+    } else {
+      select(data);
+      setVisibility(true);
+    }
   };
 
   const bag = {
