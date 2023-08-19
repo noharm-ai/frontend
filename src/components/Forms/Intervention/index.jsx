@@ -135,6 +135,7 @@ export default function Intervention({
     idPrescription: item.idPrescription,
     idPrescriptionDrug: item.idPrescriptionDrug,
     admissionNumber: item.admissionNumber,
+    idIntervention: item.intervention.idIntervention,
     error: item.intervention.error,
     cost: item.intervention.cost,
     idInterventionReason: item.intervention.idInterventionReason,
@@ -188,17 +189,22 @@ export default function Intervention({
 
     delete interventionData.transcriptionData;
 
-    save(interventionData);
+    save(interventionData)
+      .then((response) => {
+        console.log("response", response);
 
-    // move to useeffect
-    if (afterSaveIntervention) {
-      afterSaveIntervention(interventionData);
-    } else {
-      updateInterventionData(item.idPrescriptionDrug, item.source, {
-        ...interventionData,
-        status: "s",
+        // if (afterSaveIntervention) {
+        //   afterSaveIntervention(interventionData);
+        // } else {
+        //   updateInterventionData(item.idPrescriptionDrug, item.source, {
+        //     ...interventionData,
+        //     status: "s",
+        //   });
+        // }
+      })
+      .catch((error) => {
+        console.log("error", error);
       });
-    }
   };
 
   const InterventionFooter = ({ handleSubmit }) => {

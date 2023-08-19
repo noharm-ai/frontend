@@ -150,11 +150,9 @@ export default function PrescriptionDrugList({
   };
 
   const onShowModal = (data) => {
-    console.log("data", data.intervention);
-
-    if (data.intervention.length > 1) {
+    if (data.intervention.length > 0) {
       DefaultModal.info({
-        title: "Escolha a Intervenção",
+        title: "Intervenções",
         content: (
           <ChooseInterventionModal
             selectIntervention={selectIntervention}
@@ -162,8 +160,10 @@ export default function PrescriptionDrugList({
             completeData={data}
           />
         ),
+        icon: null,
         width: 500,
         okText: "Fechar",
+        okButtonProps: { type: "default" },
       });
     } else {
       select(data);

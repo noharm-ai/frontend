@@ -1,4 +1,5 @@
 import styled from "styled-components/macro";
+import { timingFunctions } from "polished";
 
 import Collapse from "components/Collapse";
 import { get } from "styles/utils";
@@ -154,5 +155,39 @@ export const GroupPanel = styled(PrescriptionPanel)`
     background: #fff !important;
     border-left: 3px solid #e0e8ec;
     border-radius: 0;
+  }
+`;
+
+export const InterventionListContainer = styled.div`
+  .intervention {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #e0e8ec;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: all 1s ${timingFunctions("easeOutQuint")};
+
+    &:hover {
+      box-shadow: 0px 1px 4px 0px rgb(0 0 0 / 16%);
+      border-color: #40a9ff;
+
+      .anticon {
+        color: #40a9ff;
+      }
+    }
+
+    .date {
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+  }
+
+  .action {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
   }
 `;
