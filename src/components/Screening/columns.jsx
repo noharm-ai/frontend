@@ -211,14 +211,11 @@ const Action = ({
 }) => {
   if (emptyRow) return null;
 
-  const closedStatuses = InterventionStatus.getClosedStatuses();
-  const isClosed = closedStatuses.indexOf(data.status) !== -1;
   const isDisabled =
-    (check.idPrescriptionDrug !== idPrescriptionDrug && check.isChecking) ||
-    isClosed;
+    check.idPrescriptionDrug !== idPrescriptionDrug && check.isChecking;
   const isChecking =
     check.idPrescriptionDrug === idPrescriptionDrug && check.isChecking;
-  const isChecked = data.intervention && data.intervention.status === "s";
+  let isChecked = data.intervention && data.intervention.status === "s";
   const isIntervened = data.intervened;
   const hasNotes =
     (data.notes !== "" && data.notes != null) ||
@@ -228,12 +225,16 @@ const Action = ({
     ? t("prescriptionDrugList.updateIntervention")
     : t("prescriptionDrugList.addIntervention");
 
-  if (isIntervened && !isChecked) {
-    btnTitle = t("prescriptionDrugList.addInterventionAgain");
+  if (data.interventionList) {
+    data.interventionList.forEach((i) => {
+      if (i.status === "s") {
+        isChecked = true;
+      }
+    });
   }
 
-  if (isClosed) {
-    btnTitle = t("prescriptionDrugList.addInterventionDisabled");
+  if (isIntervened && !isChecked) {
+    btnTitle = t("prescriptionDrugList.addInterventionAgain");
   }
 
   return (

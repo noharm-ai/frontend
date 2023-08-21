@@ -150,33 +150,31 @@ export const clearSavedInterventionStatusThunk = () => (dispatch) => {
 };
 
 export const checkInterventionThunk =
-  (id, idPrescription, status) => async (dispatch, getState) => {
-    dispatch(interventionCheckStart(id));
+  (idIntervention, status) => async (dispatch, getState) => {
+    return new Promise(async (resolve, reject) => {
+      dispatch(interventionCheckStart(idIntervention));
 
-    const { access_token } = getState().auth.identify;
-    const params = {
-      idPrescriptionDrug: id,
-      idPrescription,
-      status,
-    };
+      const { access_token } = getState().auth.identify;
+      const params = {
+        idIntervention,
+        status,
+      };
 
-    const { data, error } = await api
-      .updateIntervention(access_token, params)
-      .catch(errorHandler);
+      const { data, error } = await api
+        .updateIntervention(access_token, params)
+        .catch(errorHandler);
 
-    if (!isEmpty(error)) {
-      dispatch(interventionCheckError(error));
-      return;
-    }
+      if (!isEmpty(error)) {
+        dispatch(interventionCheckError(error));
+        reject(error);
+        return;
+      }
 
-    const success = {
-      status: data.status,
-      id,
-      idPrescription,
-      newStatus: status,
-    };
+      const newData = data.data[0];
 
-    dispatch(interventionCheckSuccess(success));
+      dispatch(interventionCheckSuccess(newData));
+      resolve(newData);
+    });
   };
 
 export const updateInterventionListDataThunk = (intervention) => (dispatch) => {

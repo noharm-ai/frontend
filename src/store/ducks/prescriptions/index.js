@@ -477,17 +477,33 @@ const checkPrescriptionDrugSuccess = (
   const procedures = [...state.single.procedure.list];
   const diet = [...state.single.diet.list];
 
-  const updateStatus = (list, id, newStatus) => {
+  const updateStatus = (
+    list,
+    idPrescriptionDrug,
+    idIntervention,
+    newStatus
+  ) => {
     for (let i = 0; i < list.length; i++) {
       const group = list[i];
       const index = group.value.findIndex(
-        (item) => item.idPrescriptionDrug === id
+        (item) => item.idPrescriptionDrug === idPrescriptionDrug
       );
 
       if (index !== -1) {
         group.value[index].intervention.status = newStatus;
         // deprecated
         group.value[index].status = newStatus;
+
+        if (group.value[index].interventionList) {
+          const intvIndex = group.value[index].interventionList.findIndex(
+            (item) => item.idIntervention === idIntervention
+          );
+
+          if (intvIndex !== -1) {
+            group.value[index].interventionList[intvIndex].status = newStatus;
+          }
+        }
+
         break;
       }
     }
@@ -511,19 +527,34 @@ const checkPrescriptionDrugSuccess = (
     },
   });
 
-  switch (sourceToStoreType(success.type)) {
+  switch (sourceToStoreType(source)) {
     case "prescription":
-      updateStatus(prescriptions, success.id, success.newStatus);
-      return getUpdatedState(sourceToStoreType(success.type), prescriptions);
+      updateStatus(
+        prescriptions,
+        success.id,
+        success.idIntervention,
+        success.status
+      );
+      return getUpdatedState(sourceToStoreType(source), prescriptions);
     case "solution":
-      updateStatus(solutions, success.id, success.newStatus);
-      return getUpdatedState(sourceToStoreType(success.type), solutions);
+      updateStatus(
+        solutions,
+        success.id,
+        success.idIntervention,
+        success.status
+      );
+      return getUpdatedState(sourceToStoreType(source), solutions);
     case "procedure":
-      updateStatus(procedures, success.id, success.newStatus);
-      return getUpdatedState(sourceToStoreType(success.type), procedures);
+      updateStatus(
+        procedures,
+        success.id,
+        success.idIntervention,
+        success.status
+      );
+      return getUpdatedState(sourceToStoreType(source), procedures);
     case "diet":
-      updateStatus(diet, success.id, success.newStatus);
-      return getUpdatedState(sourceToStoreType(success.type), diet);
+      updateStatus(diet, success.id, success.idIntervention, success.status);
+      return getUpdatedState(sourceToStoreType(source), diet);
     default:
       break;
   }
@@ -742,6 +773,19 @@ const updateInterventionData = (
       if (index !== -1) {
         group.value[index].intervention = newData;
         group.value[index].status = "s";
+
+        if (group.value[index].interventionList) {
+          const intvIndex = group.value[index].interventionList.findIndex(
+            (item) => item.idIntervention === newData.idIntervention
+          );
+
+          if (intvIndex !== -1) {
+            group.value[index].interventionList[intvIndex] = newData;
+          } else {
+            group.value[index].interventionList.push(newData);
+          }
+        }
+
         break;
       }
     }

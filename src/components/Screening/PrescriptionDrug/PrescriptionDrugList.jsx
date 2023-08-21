@@ -68,9 +68,9 @@ export const rowClassName = (record, bag) => {
     classes.push("checked");
   }
 
-  if (record.intervention) {
+  if (record.interventionList) {
     let hasIntervention = false;
-    record.intervention.forEach((i) => {
+    record.interventionList.forEach((i) => {
       if (i.status === "s") {
         hasIntervention = true;
       }
@@ -79,6 +79,11 @@ export const rowClassName = (record, bag) => {
     if (hasIntervention) {
       classes.push("danger");
     }
+  }
+
+  // TODO: remove after transition
+  if (record.intervention && record.intervention.status === "s") {
+    classes.push("danger");
   }
 
   if (record.startRow) {
@@ -150,13 +155,22 @@ export default function PrescriptionDrugList({
   };
 
   const onShowModal = (data) => {
-    if (data.intervention.length > 0) {
-      DefaultModal.info({
+    if (!data.interventionList || !featureService.hasMultipleIntervention()) {
+      select(data);
+      setVisibility(true);
+      return;
+    }
+
+    if (
+      data.interventionList &&
+      data.interventionList.filter((i) => i.status !== "0").length > 0
+    ) {
+      const modal = DefaultModal.info({
         title: "Intervenções",
         content: (
           <ChooseInterventionModal
             selectIntervention={selectIntervention}
-            interventions={data.intervention}
+            interventions={data.interventionList}
             completeData={data}
           />
         ),
@@ -164,6 +178,17 @@ export default function PrescriptionDrugList({
         width: 500,
         okText: "Fechar",
         okButtonProps: { type: "default" },
+      });
+
+      modal.update({
+        content: (
+          <ChooseInterventionModal
+            selectIntervention={selectIntervention}
+            interventions={data.interventionList}
+            completeData={data}
+            modalRef={modal}
+          />
+        ),
       });
     } else {
       select(data);

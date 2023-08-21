@@ -191,19 +191,25 @@ export default function Intervention({
 
     save(interventionData)
       .then((response) => {
-        console.log("response", response);
+        let intv = interventionData;
+        // new way (remove variable interventionData after transition)
+        if (response.data && response.data[0]) {
+          intv = response.data[0];
+        }
 
-        // if (afterSaveIntervention) {
-        //   afterSaveIntervention(interventionData);
-        // } else {
-        //   updateInterventionData(item.idPrescriptionDrug, item.source, {
-        //     ...interventionData,
-        //     status: "s",
-        //   });
-        // }
+        if (afterSaveIntervention) {
+          afterSaveIntervention(intv);
+        } else {
+          updateInterventionData(item.idPrescriptionDrug, item.source, {
+            ...intv,
+          });
+        }
       })
-      .catch((error) => {
-        console.log("error", error);
+      .catch(() => {
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
       });
   };
 
@@ -214,10 +220,21 @@ export default function Intervention({
       const source = item.idPrescriptionDrug === 0 ? "patient" : item.source;
       savePrescriptionDrugStatus(
         item.idPrescriptionDrug,
-        item.idPrescription,
+        item.intervention.idIntervention,
         "0",
         source
-      );
+      )
+        .then(() => {
+          notification.success({
+            message: "Intervenção desfeita com sucesso!",
+          });
+        })
+        .catch(() => {
+          notification.error({
+            message: t("error.title"),
+            description: t("error.description"),
+          });
+        });
     };
 
     return (

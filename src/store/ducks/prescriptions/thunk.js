@@ -256,36 +256,35 @@ export const saveAdmissionThunk =
   };
 
 export const checkPrescriptionDrugThunk =
-  (idPrescriptionDrug, idPrescription, status, type) =>
+  (idPrescriptionDrug, idIntervention, status, type) =>
   async (dispatch, getState) => {
-    dispatch(
-      prescriptionDrugCheckStart(idPrescriptionDrug, sourceToStoreType(type))
-    );
+    return new Promise(async (resolve, reject) => {
+      dispatch(
+        prescriptionDrugCheckStart(idPrescriptionDrug, sourceToStoreType(type))
+      );
 
-    const { access_token } = getState().auth.identify;
-    const params = {
-      idPrescriptionDrug,
-      idPrescription,
-      status,
-    };
+      const { access_token } = getState().auth.identify;
+      const params = {
+        idIntervention,
+        idPrescriptionDrug,
+        status,
+      };
 
-    const { data, error } = await api
-      .updateIntervention(access_token, params)
-      .catch(errorHandler);
+      const { data, error } = await api
+        .updateIntervention(access_token, params)
+        .catch(errorHandler);
 
-    if (!isEmpty(error)) {
-      dispatch(prescriptionDrugCheckError(error, sourceToStoreType(type)));
-      return;
-    }
+      if (!isEmpty(error)) {
+        dispatch(prescriptionDrugCheckError(error, sourceToStoreType(type)));
+        reject(error);
+        return;
+      }
 
-    const success = {
-      status: data.status,
-      id: data.data,
-      newStatus: status,
-      type,
-    };
-
-    dispatch(prescriptionDrugCheckSuccess(success, sourceToStoreType(type)));
+      dispatch(
+        prescriptionDrugCheckSuccess(data.data[0], sourceToStoreType(type))
+      );
+      resolve(data.data[0]);
+    });
   };
 
 export const updateInterventionDataThunk =

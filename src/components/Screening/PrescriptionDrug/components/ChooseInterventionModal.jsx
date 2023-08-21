@@ -10,33 +10,46 @@ function ChooseInterventionModal({
   interventions,
   completeData,
   selectIntervention,
+  modalRef,
 }) {
+  const select = (intvData) => {
+    selectIntervention(intvData, completeData);
+    if (modalRef) {
+      modalRef.update({ transitionName: "" });
+      setTimeout(() => {
+        modalRef.destroy();
+      }, 500);
+    }
+  };
+
   return (
     <InterventionListContainer>
       <div className="action">
         <Button
-          onClick={() => selectIntervention({}, completeData)}
+          onClick={() => select({})}
           icon={<PlusOutlined />}
           type="primary"
         >
           Nova intervenção
         </Button>
       </div>
-      {interventions.map((i) => (
-        <div
-          className="intervention"
-          key={i.idIntervention}
-          onClick={() => selectIntervention(i, completeData)}
-        >
-          <div>
-            <div className="date">
-              {moment(i.date).format("DD/MM/YYYY hh:mm")}
+      {interventions
+        .filter((i) => i.status !== "0")
+        .map((i) => (
+          <div
+            className="intervention"
+            key={i.idIntervention}
+            onClick={() => select(i)}
+          >
+            <div>
+              <div className="date">
+                {moment(i.date).format("DD/MM/YYYY hh:mm")}
+              </div>
+              <div className="description">{i.reasonDescription}</div>
             </div>
-            <div className="description">{i.reasonDescription}</div>
+            <RightOutlined />
           </div>
-          <RightOutlined />
-        </div>
-      ))}
+        ))}
     </InterventionListContainer>
   );
 }
