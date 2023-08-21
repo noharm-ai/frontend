@@ -25,6 +25,7 @@ function ChooseInterventionModal({
       {interventions.map((i) => (
         <div
           className="intervention"
+          key={i.idIntervention}
           onClick={() => selectIntervention(i, completeData)}
         >
           <div>
