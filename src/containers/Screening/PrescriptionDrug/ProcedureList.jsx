@@ -8,7 +8,6 @@ import {
 } from "store/ducks/intervention/thunk";
 import {
   checkScreeningThunk,
-  checkPrescriptionDrugThunk,
   updateInterventionDataThunk,
   checkInterventionThunk,
   fetchPrescriptionDrugPeriodThunk,
@@ -42,6 +41,7 @@ const mapStateToProps = ({ prescriptions, auth, user }) => ({
   isCheckingPrescription: prescriptions.single.check.isChecking,
   security: security(user.account.roles),
   featureService: FeatureService(user.account.features),
+  interventions: prescriptions.single.intervention.list,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
@@ -51,7 +51,6 @@ const mapDispatchToProps = (dispatch) =>
       select: selectItemToSaveThunk,
       save: saveInterventionThunk,
       reset: clearSavedInterventionStatusThunk,
-      savePrescriptionDrugStatus: checkPrescriptionDrugThunk,
       updateInterventionData: updateInterventionDataThunk,
       saveInterventionStatus: checkInterventionThunk,
       selectPrescriptionDrug: selectPrescriptionDrugThunk,

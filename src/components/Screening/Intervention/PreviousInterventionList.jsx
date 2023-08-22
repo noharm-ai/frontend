@@ -18,10 +18,14 @@ export default function PreviousInterventionList({
 
   useEffect(() => {
     setDsInterventions(
-      toDataSource(interventions, null, {
-        saveInterventionStatus,
-        check: checkIntervention,
-      })
+      toDataSource(
+        interventions.filter((i) => i.status !== "0"),
+        null,
+        {
+          saveInterventionStatus,
+          check: checkIntervention,
+        }
+      )
     );
   }, [interventions, checkIntervention]); // eslint-disable-line
 

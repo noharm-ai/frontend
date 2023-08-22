@@ -9,6 +9,7 @@ import Collapse from "components/Collapse";
 import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
+import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 
 import FormIntervention from "containers/Forms/Intervention";
 
@@ -68,22 +69,14 @@ export const rowClassName = (record, bag) => {
     classes.push("checked");
   }
 
-  if (record.interventionList) {
-    let hasIntervention = false;
-    record.interventionList.forEach((i) => {
-      if (i.status === "s") {
-        hasIntervention = true;
-      }
-    });
+  if (bag.interventions) {
+    const intvList = bag.interventions.filter(
+      filterInterventionByPrescriptionDrug(record.idPrescriptionDrug)
+    );
 
-    if (hasIntervention) {
+    if (intvList.length) {
       classes.push("danger");
     }
-  }
-
-  // TODO: remove after transition
-  if (record.intervention && record.intervention.status === "s") {
-    classes.push("danger");
   }
 
   if (record.startRow) {
@@ -119,7 +112,6 @@ export default function PrescriptionDrugList({
   weight,
   admissionNumber,
   checkPrescriptionDrug,
-  savePrescriptionDrugStatus,
   savePrescriptionDrugForm,
   idPrescription,
   idSegment,
@@ -132,6 +124,7 @@ export default function PrescriptionDrugList({
   isCheckingPrescription,
   security,
   featureService,
+  interventions,
 }) {
   const [visible, setVisibility] = useState(false);
   const { t } = useTranslation();
@@ -155,25 +148,20 @@ export default function PrescriptionDrugList({
   };
 
   const onShowModal = (data) => {
-    if (!data.interventionList || !featureService.hasMultipleIntervention()) {
+    if (!featureService.hasMultipleIntervention()) {
       select(data);
       setVisibility(true);
       return;
     }
 
-    if (
-      data.interventionList &&
-      data.interventionList.filter((i) => i.status !== "0").length > 0
-    ) {
+    const intvList = interventions.filter(
+      filterInterventionByPrescriptionDrug(data.idPrescriptionDrug)
+    );
+
+    if (intvList.length > 0) {
       const modal = DefaultModal.info({
         title: "Intervenções",
-        content: (
-          <ChooseInterventionModal
-            selectIntervention={selectIntervention}
-            interventions={data.interventionList}
-            completeData={data}
-          />
-        ),
+        content: null,
         icon: null,
         width: 500,
         okText: "Fechar",
@@ -184,14 +172,17 @@ export default function PrescriptionDrugList({
         content: (
           <ChooseInterventionModal
             selectIntervention={selectIntervention}
-            interventions={data.interventionList}
+            interventions={intvList}
             completeData={data}
             modalRef={modal}
           />
         ),
       });
     } else {
-      select(data);
+      select({
+        ...data,
+        intervention: {},
+      });
       setVisibility(true);
     }
   };
@@ -200,7 +191,6 @@ export default function PrescriptionDrugList({
     onShowModal,
     selectPrescriptionDrug,
     check: checkPrescriptionDrug,
-    savePrescriptionDrugStatus,
     idSegment,
     idHospital,
     admissionNumber,
@@ -216,6 +206,7 @@ export default function PrescriptionDrugList({
     featureService,
     savePrescriptionDrugForm,
     formTemplate,
+    interventions,
   };
 
   const table = (ds, showHeader) => (

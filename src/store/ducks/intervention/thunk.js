@@ -115,23 +115,9 @@ export const saveInterventionThunk =
     return new Promise(async (resolve, reject) => {
       dispatch(interventionSetSaveStart());
 
-      const { idPrescriptionDrug, admissionNumber } = params;
-      const defaultArgs = {
-        observation: "",
-        idPrescriptionDrug,
-        admissionNumber,
-        idInterventionReason: null,
-      };
-
-      const args = {
-        ...defaultArgs,
-        ...params,
-        status: "s",
-      };
-
       const { access_token } = getState().auth.identify;
       const { status, error, data } = await api
-        .updateIntervention(access_token, args)
+        .updateIntervention(access_token, params)
         .catch(errorHandler);
 
       if (status !== 200) {

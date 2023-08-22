@@ -7,7 +7,6 @@ import {
   clearSavedInterventionStatusThunk,
 } from "store/ducks/intervention/thunk";
 import {
-  checkPrescriptionDrugThunk,
   updateInterventionDataThunk,
   checkInterventionThunk,
   updatePrescriptionDrugDataThunk,
@@ -38,7 +37,6 @@ const mapDispatchToProps = (dispatch) =>
       select: selectItemToSaveThunk,
       save: saveInterventionThunk,
       reset: clearSavedInterventionStatusThunk,
-      savePrescriptionDrugStatus: checkPrescriptionDrugThunk,
       updateInterventionData: updateInterventionDataThunk,
       saveInterventionStatus: checkInterventionThunk,
       selectPrescriptionDrug: selectPrescriptionDrugThunk,

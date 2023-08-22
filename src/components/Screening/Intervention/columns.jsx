@@ -38,7 +38,7 @@ const TableLink = styled.a`
 
 const interventionMenu = (
   id,
-  idPrescription,
+  idIntervention,
   saveInterventionStatus,
   onShowModal
 ) => {
@@ -76,7 +76,7 @@ const interventionMenu = (
   return {
     items,
     onClick: ({ key }) => {
-      saveInterventionStatus(id, idPrescription, key);
+      saveInterventionStatus(id, idIntervention, key);
     },
   };
 };
@@ -246,7 +246,7 @@ const Action = ({
                 : "danger gtm-bt-tab-undo-interv-status"
             }
             ghost
-            onClick={() => saveInterventionStatus(id, idPrescription, "s")}
+            onClick={() => saveInterventionStatus(id, data.idIntervention, "s")}
             loading={isChecking}
             disabled={isDisabled}
             icon={<RollbackOutlined style={{ fontSize: 16 }} />}
@@ -257,7 +257,7 @@ const Action = ({
         <Dropdown
           menu={interventionMenu(
             id,
-            idPrescription,
+            data.idIntervention,
             saveInterventionStatus,
             onShowModal
           )}

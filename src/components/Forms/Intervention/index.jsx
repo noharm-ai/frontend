@@ -12,6 +12,7 @@ import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import InterventionReasonRelationType from "models/InterventionReasonRelationType";
+import interventionStatus from "models/InterventionStatus";
 
 import Base from "./Base";
 import PatientData from "./PatientData";
@@ -25,7 +26,6 @@ export default function Intervention({
   error,
   save,
   select,
-  savePrescriptionDrugStatus,
   checkPrescriptionDrug,
   setVisibility,
   afterSaveIntervention,
@@ -43,7 +43,7 @@ export default function Intervention({
   ...props
 }) {
   const { t } = useTranslation();
-  const { isSaving, wasSaved, item } = intervention;
+  const { isSaving, item } = intervention;
 
   const validationSchema = Yup.object().shape({
     idInterventionReason: Yup.array()
@@ -81,18 +81,6 @@ export default function Intervention({
           .required(t("validation.requiredField")),
       }),
   });
-
-  // handle after save intervention.
-  useEffect(() => {
-    if (wasSaved && open) {
-      reset();
-      setVisibility(false);
-
-      notification.success({
-        message: t("success.intervention"),
-      });
-    }
-  }, [wasSaved, reset, item, updateInterventionData, setVisibility, open]); // eslint-disable-line
 
   useEffect(() => {
     if (checkPrescriptionDrug && checkPrescriptionDrug.success) {
@@ -200,10 +188,15 @@ export default function Intervention({
         if (afterSaveIntervention) {
           afterSaveIntervention(intv);
         } else {
-          updateInterventionData(item.idPrescriptionDrug, item.source, {
-            ...intv,
-          });
+          updateInterventionData(intv);
         }
+
+        reset();
+        setVisibility(false);
+
+        notification.success({
+          message: t("success.intervention"),
+        });
       })
       .catch(() => {
         notification.error({
@@ -215,19 +208,28 @@ export default function Intervention({
 
   const InterventionFooter = ({ handleSubmit }) => {
     const isChecked = item.intervention && item.intervention.status === "s";
+    const closedStatuses = interventionStatus.getClosedStatuses();
+    const isClosed = closedStatuses.indexOf(item.intervention.status) !== -1;
 
     const undoIntervention = () => {
-      const source = item.idPrescriptionDrug === 0 ? "patient" : item.source;
-      savePrescriptionDrugStatus(
-        item.idPrescriptionDrug,
-        item.intervention.idIntervention,
-        "0",
-        source
-      )
-        .then(() => {
+      save({
+        idIntervention: item.intervention.idIntervention,
+        status: "0",
+      })
+        .then((response) => {
+          const intv = response.data[0];
+
+          if (afterSaveIntervention) {
+            afterSaveIntervention(intv);
+          } else {
+            updateInterventionData(intv);
+          }
           notification.success({
             message: "Intervenção desfeita com sucesso!",
           });
+
+          reset();
+          setVisibility(false);
         })
         .catch(() => {
           notification.error({
@@ -260,13 +262,22 @@ export default function Intervention({
           </Tooltip>
         )}
 
-        <Button
-          type="primary gtm-bt-save-interv"
-          onClick={() => handleSubmit()}
-          loading={isSaving}
+        <Tooltip
+          title={
+            isClosed
+              ? "Esta intervenção não pode ser alterada, pois já possui desfecho cadastrado"
+              : ""
+          }
         >
-          {t("interventionForm.btnSave")}
-        </Button>
+          <Button
+            onClick={() => handleSubmit()}
+            loading={isSaving}
+            type={isClosed ? "default" : "primary gtm-bt-save-interv"}
+            disabled={isClosed}
+          >
+            {t("interventionForm.btnSave")}
+          </Button>
+        </Tooltip>
       </>
     );
   };

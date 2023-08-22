@@ -22,6 +22,7 @@ import Alert from "components/Alert";
 import RichTextView from "components/RichTextView";
 import InterventionStatus from "models/InterventionStatus";
 import { Select } from "components/Inputs";
+import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
@@ -198,7 +199,6 @@ const formatCPOEPeriod = (record) => {
 
 const Action = ({
   check,
-  savePrescriptionDrugStatus,
   idPrescriptionDrug,
   prescriptionType,
   onShowModal,
@@ -225,12 +225,14 @@ const Action = ({
     ? t("prescriptionDrugList.updateIntervention")
     : t("prescriptionDrugList.addIntervention");
 
-  if (data.interventionList) {
-    data.interventionList.forEach((i) => {
-      if (i.status === "s") {
-        isChecked = true;
-      }
-    });
+  if (data.interventions) {
+    const intvList = data.interventions.filter(
+      filterInterventionByPrescriptionDrug(idPrescriptionDrug)
+    );
+
+    if (intvList.length) {
+      isChecked = true;
+    }
   }
 
   if (isIntervened && !isChecked) {
