@@ -37,10 +37,6 @@ const {
   prescriptionsUpdateIntervention,
   prescriptionsUpdatePrescriptionDrug,
 
-  prescriptionInterventionCheckStart,
-  prescriptionInterventionCheckError,
-  prescriptionInterventionCheckSuccess,
-
   prescriptionsFetchPeriodStart,
   prescriptionsFetchPeriodError,
   prescriptionsFetchPeriodSuccess,
@@ -259,34 +255,6 @@ export const updatePrescriptionDrugDataThunk =
     dispatch(
       prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data)
     );
-  };
-
-export const checkInterventionThunk =
-  (idPrescriptionDrug, idIntervention, status, source = "intervention") =>
-  async (dispatch, getState) => {
-    return new Promise(async (resolve, reject) => {
-      dispatch(prescriptionInterventionCheckStart(idPrescriptionDrug, source));
-
-      const { access_token } = getState().auth.identify;
-      const params = {
-        idPrescriptionDrug,
-        idIntervention,
-        status,
-      };
-
-      const { data, error } = await api
-        .updateIntervention(access_token, params)
-        .catch(errorHandler);
-
-      if (!isEmpty(error)) {
-        dispatch(prescriptionInterventionCheckError(error, source));
-        reject(error);
-        return;
-      }
-
-      dispatch(prescriptionInterventionCheckSuccess(data.data[0], source));
-      resolve(data.data[0]);
-    });
   };
 
 export const fetchPrescriptionDrugPeriodThunk =

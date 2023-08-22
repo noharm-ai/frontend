@@ -8,7 +8,6 @@ import {
 } from "store/ducks/intervention/thunk";
 import {
   updateInterventionDataThunk,
-  checkInterventionThunk,
   updatePrescriptionDrugDataThunk,
 } from "store/ducks/prescriptions/thunk";
 import { selectPrescriptionDrugThunk } from "store/ducks/prescriptionDrugs/thunk";
@@ -23,7 +22,6 @@ const mapStateToProps = ({ prescriptions, user }) => ({
   isFetching: prescriptions.single.isFetching,
   checkPrescriptionDrug:
     prescriptions.single.prescription.checkPrescriptionDrug,
-  checkIntervention: prescriptions.single.prescription.checkIntervention,
   idSegment: prescriptions.single.data.idSegment,
   admissionNumber: prescriptions.single.data.admissionNumber,
   uniqueDrugs: prescriptions.single.data.uniqueDrugs,
@@ -38,7 +36,6 @@ const mapDispatchToProps = (dispatch) =>
       save: saveInterventionThunk,
       reset: clearSavedInterventionStatusThunk,
       updateInterventionData: updateInterventionDataThunk,
-      saveInterventionStatus: checkInterventionThunk,
       selectPrescriptionDrug: selectPrescriptionDrugThunk,
       updatePrescriptionDrugData: updatePrescriptionDrugDataThunk,
     },

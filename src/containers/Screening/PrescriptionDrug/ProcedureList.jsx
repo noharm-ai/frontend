@@ -9,7 +9,6 @@ import {
 import {
   checkScreeningThunk,
   updateInterventionDataThunk,
-  checkInterventionThunk,
   fetchPrescriptionDrugPeriodThunk,
 } from "store/ducks/prescriptions/thunk";
 import {
@@ -28,7 +27,6 @@ const mapStateToProps = ({ prescriptions, auth, user }) => ({
   headers: prescriptions.single.data.headers,
   aggregated: prescriptions.single.data.agg,
   checkPrescriptionDrug: prescriptions.single.procedure.checkPrescriptionDrug,
-  checkIntervention: prescriptions.single.procedure.checkIntervention,
   periodObject: prescriptions.single.procedure.period,
   access_token: auth.identify.access_token,
   weight: prescriptions.single.data.weight,
@@ -52,7 +50,6 @@ const mapDispatchToProps = (dispatch) =>
       save: saveInterventionThunk,
       reset: clearSavedInterventionStatusThunk,
       updateInterventionData: updateInterventionDataThunk,
-      saveInterventionStatus: checkInterventionThunk,
       selectPrescriptionDrug: selectPrescriptionDrugThunk,
       savePrescriptionDrugForm: savePrescriptionDrugFormThunk,
     },
