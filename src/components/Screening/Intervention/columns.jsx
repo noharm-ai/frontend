@@ -36,12 +36,7 @@ const TableLink = styled.a`
   }
 `;
 
-const interventionMenu = (
-  id,
-  idIntervention,
-  saveInterventionStatus,
-  onShowModal
-) => {
+const interventionMenu = (idIntervention, saveIntervention, onShowModal) => {
   const items = [
     {
       key: "a",
@@ -76,7 +71,10 @@ const interventionMenu = (
   return {
     items,
     onClick: ({ key }) => {
-      saveInterventionStatus(id, idIntervention, key);
+      saveIntervention({
+        idIntervention,
+        status: key,
+      });
     },
   };
 };
@@ -221,16 +219,14 @@ export const expandedInterventionRowRender = (record) => {
 };
 
 const Action = ({
-  check,
+  isSaving,
   id,
   idPrescription,
-  saveInterventionStatus,
+  saveIntervention,
   onShowModal,
   admissionNumber,
   ...data
 }) => {
-  const isDisabled = check.currentId !== id && check.isChecking;
-  const isChecking = check.currentId === id && check.isChecking;
   const isChecked = data.status !== "s";
   const closedStatuses = InterventionStatus.getClosedStatuses();
   const isClosed = closedStatuses.indexOf(data.status) !== -1;
@@ -246,9 +242,13 @@ const Action = ({
                 : "danger gtm-bt-tab-undo-interv-status"
             }
             ghost
-            onClick={() => saveInterventionStatus(id, data.idIntervention, "s")}
-            loading={isChecking}
-            disabled={isDisabled}
+            onClick={() =>
+              saveIntervention({
+                idIntervention: data.idIntervention,
+                status: "s",
+              })
+            }
+            loading={isSaving}
             icon={<RollbackOutlined style={{ fontSize: 16 }} />}
           ></Button>
         </Tooltip>
@@ -256,18 +256,15 @@ const Action = ({
       {!isChecked && (
         <Dropdown
           menu={interventionMenu(
-            id,
             data.idIntervention,
-            saveInterventionStatus,
+            saveIntervention,
             onShowModal
           )}
-          loading={isChecking}
-          disabled={isDisabled}
+          loading={isSaving}
         >
           <Button
             type="primary"
-            loading={isChecking}
-            disabled={isDisabled}
+            loading={isSaving}
             className={
               onShowModal
                 ? "gtm-bt-menu-interv-status"

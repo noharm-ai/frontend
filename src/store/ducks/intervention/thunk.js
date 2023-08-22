@@ -21,10 +21,6 @@ const {
   interventionSetSaveSuccess,
   interventionClearSavedStatus,
 
-  interventionCheckStart,
-  interventionCheckError,
-  interventionCheckSuccess,
-
   interventionUpdateList,
 
   interventionFetchFuturePrescriptionStart,
@@ -134,34 +130,6 @@ export const saveInterventionThunk =
 export const clearSavedInterventionStatusThunk = () => (dispatch) => {
   dispatch(interventionClearSavedStatus());
 };
-
-export const checkInterventionThunk =
-  (idIntervention, status) => async (dispatch, getState) => {
-    return new Promise(async (resolve, reject) => {
-      dispatch(interventionCheckStart(idIntervention));
-
-      const { access_token } = getState().auth.identify;
-      const params = {
-        idIntervention,
-        status,
-      };
-
-      const { data, error } = await api
-        .updateIntervention(access_token, params)
-        .catch(errorHandler);
-
-      if (!isEmpty(error)) {
-        dispatch(interventionCheckError(error));
-        reject(error);
-        return;
-      }
-
-      const newData = data.data[0];
-
-      dispatch(interventionCheckSuccess(newData));
-      resolve(newData);
-    });
-  };
 
 export const updateInterventionListDataThunk = (intervention) => (dispatch) => {
   dispatch(interventionUpdateList(intervention));
