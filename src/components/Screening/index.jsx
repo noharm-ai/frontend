@@ -37,17 +37,12 @@ export default function Screening({
   error,
   selectPrescriptionDrug,
   security,
+  interventions,
 }) {
   const params = useParams();
   const id = params?.slug;
-  const {
-    prescriptionCount,
-    solutionCount,
-    proceduresCount,
-    dietCount,
-    interventionsRaw: interventionList,
-    agg,
-  } = content;
+  const { prescriptionCount, solutionCount, proceduresCount, dietCount, agg } =
+    content;
 
   const { t } = useTranslation();
 
@@ -246,7 +241,9 @@ export default function Screening({
     solutions: solutionCount,
     procedures: proceduresCount,
     diet: dietCount,
-    interventions: interventionList ? interventionList.length : 0,
+    interventions: interventions
+      ? interventions.filter((i) => i.status !== "0").length
+      : 0,
   };
 
   const fixedTabs = 2;
