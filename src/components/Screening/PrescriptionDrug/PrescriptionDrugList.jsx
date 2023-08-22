@@ -10,6 +10,7 @@ import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
+import notification from "components/notification";
 
 import FormIntervention from "containers/Forms/Intervention";
 
@@ -105,7 +106,9 @@ export default function PrescriptionDrugList({
   headers,
   aggregated,
   emptyMessage,
-  saveInterventionStatus,
+  saveIntervention,
+  isSavingIntervention,
+  updateInterventionData,
   periodObject,
   fetchPeriod,
   weight,
@@ -186,6 +189,19 @@ export default function PrescriptionDrugList({
     }
   };
 
+  const saveInterventionAndUpdateData = (params) => {
+    saveIntervention(params)
+      .then((response) => {
+        updateInterventionData(response.data[0]);
+      })
+      .catch(() => {
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
+      });
+  };
+
   const bag = {
     onShowModal,
     selectPrescriptionDrug,
@@ -193,7 +209,8 @@ export default function PrescriptionDrugList({
     idSegment,
     idHospital,
     admissionNumber,
-    saveInterventionStatus,
+    saveIntervention: saveInterventionAndUpdateData,
+    isSavingIntervention,
     periodObject,
     fetchPeriod,
     weight,

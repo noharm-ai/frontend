@@ -4,7 +4,6 @@ import { bindActionCreators } from "redux";
 import {
   selectItemToSaveThunk,
   saveInterventionThunk,
-  clearSavedInterventionStatusThunk,
 } from "store/ducks/intervention/thunk";
 import {
   checkScreeningThunk,
@@ -17,7 +16,7 @@ import security from "services/security";
 import FeatureService from "services/features";
 import PrescriptionDrugList from "components/Screening/PrescriptionDrug/PrescriptionDrugList";
 
-const mapStateToProps = ({ prescriptions, auth, user }) => ({
+const mapStateToProps = ({ prescriptions, auth, user, intervention }) => ({
   dataSource: prescriptions.single.diet.list,
   listRaw: prescriptions.single.data.dietRaw,
   isFetching: prescriptions.single.isFetching,
@@ -36,6 +35,7 @@ const mapStateToProps = ({ prescriptions, auth, user }) => ({
   security: security(user.account.roles),
   featureService: FeatureService(user.account.features),
   interventions: prescriptions.single.intervention.list,
+  isSavingIntervention: intervention.maybeCreateOrUpdate.isSaving,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
@@ -43,8 +43,7 @@ const mapDispatchToProps = (dispatch) =>
       checkScreening: checkScreeningThunk,
       fetchPeriod: fetchPrescriptionDrugPeriodThunk,
       select: selectItemToSaveThunk,
-      save: saveInterventionThunk,
-      reset: clearSavedInterventionStatusThunk,
+      saveIntervention: saveInterventionThunk,
       updateInterventionData: updateInterventionDataThunk,
       selectPrescriptionDrug: selectPrescriptionDrugThunk,
     },

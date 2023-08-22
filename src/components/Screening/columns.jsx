@@ -33,12 +33,7 @@ import DrugForm from "./Form";
 
 import { TableTags, TableLink } from "./index.style";
 
-const interventionOptions = (
-  id,
-  idPrescription,
-  saveInterventionStatus,
-  source
-) => {
+const interventionOptions = (idIntervention, saveIntervention) => {
   const items = [
     {
       key: "a",
@@ -65,7 +60,10 @@ const interventionOptions = (
   return {
     items,
     onClick: ({ key }) => {
-      saveInterventionStatus(id, idPrescription, key, source);
+      saveIntervention({
+        idIntervention,
+        status: key,
+      });
     },
   };
 };
@@ -127,15 +125,12 @@ const prescriptionDrugMenu = ({
 };
 
 const InterventionAction = ({
-  source,
-  checkIntervention: check,
-  prevIntervention,
-  saveInterventionStatus,
+  intv,
+  saveIntervention,
+  isSavingIntervention,
 }) => {
-  const { id } = prevIntervention;
-  const isDisabled = check.currentId !== id && check.isChecking;
-  const isChecking = check.currentId === id && check.isChecking;
-  const isChecked = prevIntervention.status !== "s";
+  const { idIntervention } = intv;
+  const isChecked = intv.status !== "s";
 
   return (
     <>
@@ -144,35 +139,20 @@ const InterventionAction = ({
           <Button
             type="danger gtm-bt-undo-interv-status"
             ghost
-            onClick={() =>
-              saveInterventionStatus(
-                id,
-                prevIntervention.idPrescription,
-                "s",
-                source
-              )
-            }
-            loading={isChecking}
-            disabled={isDisabled}
+            onClick={() => saveIntervention({ idIntervention, status: "s" })}
+            loading={isSavingIntervention}
             icon={<RollbackOutlined style={{ fontSize: 16 }} />}
           ></Button>
         </Tooltip>
       )}
       {!isChecked && (
         <Dropdown
-          menu={interventionOptions(
-            id,
-            prevIntervention.idPrescription,
-            saveInterventionStatus,
-            source
-          )}
-          loading={isChecking}
-          disabled={isDisabled}
+          menu={interventionOptions(idIntervention, saveIntervention)}
+          loading={isSavingIntervention}
         >
           <Button
             type="primary"
-            loading={isChecking}
-            disabled={isDisabled}
+            loading={isSavingIntervention}
             className="gtm-bt-interv-status"
             icon={<CaretDownOutlined style={{ fontSize: 16 }} />}
           ></Button>
@@ -420,11 +400,15 @@ export const expandedRowRender = (bag) => (record) => {
   }
 
   let config = {};
+  let prevIntervention = null;
   if (record.prevIntervention) {
-    config = InterventionStatus.translate(
-      record.prevIntervention.status,
-      bag.t
+    prevIntervention = bag.interventions.find(
+      (i) => i.idIntervention === record.prevIntervention.idIntervention
     );
+
+    if (prevIntervention) {
+      config = InterventionStatus.translate(prevIntervention.status, bag.t);
+    }
   }
 
   let diluents = [];
@@ -593,13 +577,13 @@ export const expandedRowRender = (bag) => (record) => {
           </Descriptions.Item>
         )}
 
-        {!isEmpty(record.prevIntervention) && (
+        {!isEmpty(prevIntervention) && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrPrevIntervention")}
             span={3}
           >
             <InterventionView
-              intervention={record.prevIntervention}
+              intervention={prevIntervention}
               showReasons
               showDate
               status={
@@ -608,7 +592,11 @@ export const expandedRowRender = (bag) => (record) => {
                   span={3}
                 >
                   <Tag color={config.color}>{config.label}</Tag>{" "}
-                  <InterventionAction {...record} {...bag} />
+                  <InterventionAction
+                    {...record}
+                    {...bag}
+                    intv={prevIntervention}
+                  />
                 </Descriptions.Item>
               }
             />
