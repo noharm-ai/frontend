@@ -15,6 +15,7 @@ const mapStateToProps = ({ prescriptions, auth, user, app }) => ({
   security: security(user.account.roles),
   featureService: FeatureService(user.account.features),
   siderCollapsed: app.sider.collapsed,
+  interventions: prescriptions.single.intervention.list,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

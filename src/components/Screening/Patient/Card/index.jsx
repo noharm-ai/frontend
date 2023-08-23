@@ -19,6 +19,9 @@ import Tooltip from "components/Tooltip";
 import Tabs from "components/Tabs";
 import Dropdown from "components/Dropdown";
 import Badge from "components/Badge";
+import DefaultModal from "components/Modal";
+import { filterInterventionByPrescription } from "utils/transformers/intervention";
+import ChooseInterventionModal from "components/Screening/PrescriptionDrug/components/ChooseInterventionModal";
 
 import FormIntervention from "containers/Forms/Intervention";
 import PatientName from "containers/PatientName";
@@ -38,6 +41,7 @@ export default function PatientCard({
   fetchScreening,
   setPatientModalVisible,
   featureService,
+  interventions,
 }) {
   const [interventionVisible, setInterventionVisibility] = useState(false);
   const { t } = useTranslation();
@@ -50,36 +54,75 @@ export default function PatientCard({
     dischargeFormated,
     namePatient,
     observation,
-    intervention,
     prevIntervention,
     existIntervention,
     concilia,
   } = prescription;
 
-  const closedStatus = ["a", "n", "x"];
-  const currentStatus = intervention ? intervention.status : "s";
-  const isInterventionClosed = closedStatus.indexOf(currentStatus) !== -1;
   let interventionTooltip = t("patientCard.patientIntervention");
+  const hasIntervention =
+    interventions.filter(
+      filterInterventionByPrescription(prescription.idPrescription)
+    ).length > 0;
 
-  if (isInterventionClosed) {
-    interventionTooltip = t("patientCard.patientInterventionDisabled");
-  }
+  const selectInterventionData = (int, data) => {
+    selectIntervention({
+      ...data,
+      intervention: {
+        ...int,
+      },
+    });
+    setInterventionVisibility(true);
+  };
 
   const showInterventionModal = () => {
-    selectIntervention({
+    const data = {
       idPrescriptionDrug: "0",
       admissionNumber,
       idPrescription: prescription.idPrescription,
       idSegment: prescription.idSegment,
       patientName: namePatient,
       age,
-      status: intervention ? intervention.status : "0",
-      intervention: intervention || {
-        id: 0,
-        idPrescription: prescription.idPrescription,
-      },
-    });
-    setInterventionVisibility(true);
+      intervention: {},
+    };
+
+    if (!featureService.hasMultipleIntervention()) {
+      selectIntervention(data);
+      setInterventionVisibility(true);
+      return;
+    }
+
+    const intvList = interventions.filter(
+      filterInterventionByPrescription(data.idPrescription)
+    );
+
+    if (intvList.length > 0) {
+      const modal = DefaultModal.info({
+        title: "Intervenções",
+        content: null,
+        icon: null,
+        width: 500,
+        okText: "Fechar",
+        okButtonProps: { type: "default" },
+      });
+
+      modal.update({
+        content: (
+          <ChooseInterventionModal
+            selectIntervention={selectInterventionData}
+            interventions={intvList}
+            completeData={data}
+            modalRef={modal}
+          />
+        ),
+      });
+    } else {
+      selectIntervention({
+        ...data,
+        intervention: {},
+      });
+      setInterventionVisibility(true);
+    }
   };
 
   const updatePrescriptionData = useCallback(async () => {
@@ -216,7 +259,7 @@ export default function PatientCard({
       <div className="patient-header">
         <div
           className={`patient-header-name ${
-            intervention && intervention.status === "s" && "has-intervention"
+            hasIntervention && "has-intervention"
           }`}
         >
           <PatientName idPatient={prescription.idPatient} name={namePatient} />
@@ -243,8 +286,7 @@ export default function PatientCard({
               type="primary gtm-bt-patient-intervention"
               onClick={() => showInterventionModal()}
               style={{ marginRight: "3px" }}
-              ghost={!intervention || intervention.status !== "s"}
-              disabled={isInterventionClosed}
+              ghost={!hasIntervention}
               icon={<WarningOutlined style={{ fontSize: 16 }} />}
             ></Button>
           </Tooltip>

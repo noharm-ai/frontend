@@ -302,14 +302,8 @@ export default function Intervention({
           <header>
             <Heading margin="0 0 11px">{t("interventionForm.title")}</Heading>
           </header>
-          {(item.intervention.id + "" === "0" ||
-            item.intervention.idPrescriptionDrug + "" === "0") && (
-            <PatientData {...item} />
-          )}
-          {item.intervention.id + "" !== "0" &&
-            item.intervention.idPrescriptionDrug + "" !== "0" && (
-              <DrugData {...item} />
-            )}
+          {item.idPrescriptionDrug + "" === "0" && <PatientData {...item} />}
+          {item.idPrescriptionDrug + "" !== "0" && <DrugData {...item} />}
           <form onSubmit={handleSubmit}>
             <Row type="flex" gutter={[16, 16]}>
               <Base
