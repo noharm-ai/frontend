@@ -91,6 +91,7 @@ export default function PrescriptionDrugList({
             interventions={intvList}
             completeData={data}
             modalRef={modal}
+            translate={t}
           />
         ),
       });

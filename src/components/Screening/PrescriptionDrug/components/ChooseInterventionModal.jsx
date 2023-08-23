@@ -3,6 +3,8 @@ import moment from "moment";
 import { RightOutlined, PlusOutlined } from "@ant-design/icons";
 
 import Button from "components/Button";
+import Tag from "components/Tag";
+import interventionStatus from "models/InterventionStatus";
 
 import { InterventionListContainer } from "../PrescriptionDrug.style";
 
@@ -11,6 +13,7 @@ function ChooseInterventionModal({
   completeData,
   selectIntervention,
   modalRef,
+  translate,
 }) {
   const select = (intvData) => {
     selectIntervention(intvData, completeData);
@@ -19,6 +22,14 @@ function ChooseInterventionModal({
       setTimeout(() => {
         modalRef.destroy();
       }, 500);
+    }
+  };
+
+  const getConfig = (i) => {
+    const config = interventionStatus.translate(i.status, translate);
+
+    if (config) {
+      return <Tag color={config.color}>{config.label}</Tag>;
     }
   };
 
@@ -46,6 +57,7 @@ function ChooseInterventionModal({
                 {moment(i.date).format("DD/MM/YYYY hh:mm")}
               </div>
               <div className="description">{i.reasonDescription}</div>
+              <div className="tag">{getConfig(i)}</div>
             </div>
             <RightOutlined />
           </div>

@@ -123,6 +123,7 @@ export default function PatientCard({
             interventions={intvList}
             completeData={data}
             modalRef={modal}
+            translate={t}
           />
         ),
       });

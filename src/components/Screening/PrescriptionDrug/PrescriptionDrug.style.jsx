@@ -183,6 +183,10 @@ export const InterventionListContainer = styled.div`
       font-size: 12px;
       margin-bottom: 5px;
     }
+
+    .tag {
+      margin-top: 10px;
+    }
   }
 
   .action {
