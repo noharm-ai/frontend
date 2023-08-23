@@ -83,18 +83,28 @@ export default function PatientCard({
       idSegment: prescription.idSegment,
       patientName: namePatient,
       age,
-      intervention: {},
+      intervention: {
+        nonce: Math.random(),
+      },
     };
-
-    if (!featureService.hasMultipleIntervention()) {
-      selectIntervention(data);
-      setInterventionVisibility(true);
-      return;
-    }
 
     const intvList = interventions.filter(
       filterInterventionByPrescription(data.idPrescription)
     );
+
+    if (!featureService.hasMultipleIntervention()) {
+      if (intvList.length > 0) {
+        selectIntervention({
+          ...data,
+          intervention: intvList[0],
+        });
+      } else {
+        selectIntervention(data);
+      }
+
+      setInterventionVisibility(true);
+      return;
+    }
 
     if (intvList.length > 0) {
       const modal = DefaultModal.info({

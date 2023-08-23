@@ -150,15 +150,28 @@ export default function PrescriptionDrugList({
   };
 
   const onShowModal = (data) => {
-    if (!featureService.hasMultipleIntervention()) {
-      select(data);
-      setVisibility(true);
-      return;
-    }
-
     const intvList = interventions.filter(
       filterInterventionByPrescriptionDrug(data.idPrescriptionDrug)
     );
+
+    if (!featureService.hasMultipleIntervention()) {
+      if (intvList.length > 0) {
+        select({
+          ...data,
+          intervention: intvList[0],
+        });
+      } else {
+        select({
+          ...data,
+          intervention: {
+            nonce: Math.random(),
+          },
+        });
+      }
+
+      setVisibility(true);
+      return;
+    }
 
     if (intvList.length > 0) {
       const modal = DefaultModal.info({
@@ -183,7 +196,9 @@ export default function PrescriptionDrugList({
     } else {
       select({
         ...data,
-        intervention: {},
+        intervention: {
+          nonce: Math.random(),
+        },
       });
       setVisibility(true);
     }

@@ -195,7 +195,7 @@ const Action = ({
     check.idPrescriptionDrug !== idPrescriptionDrug && check.isChecking;
   const isChecking =
     check.idPrescriptionDrug === idPrescriptionDrug && check.isChecking;
-  let isChecked = data.intervention && data.intervention.status === "s";
+  let isChecked = false;
   const isIntervened = data.intervened;
   const hasNotes =
     (data.notes !== "" && data.notes != null) ||

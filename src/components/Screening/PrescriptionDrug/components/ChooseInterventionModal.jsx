@@ -26,7 +26,7 @@ function ChooseInterventionModal({
     <InterventionListContainer>
       <div className="action">
         <Button
-          onClick={() => select({})}
+          onClick={() => select({ nonce: Math.random() })}
           icon={<PlusOutlined />}
           type="primary"
         >
