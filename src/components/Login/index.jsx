@@ -16,6 +16,7 @@ import { Input, Checkbox } from "components/Inputs";
 import { Container, Row, Col } from "components/Grid";
 import Spin from "components/Spin";
 import notification from "components/notification";
+import { generateRandomString, getCodeChallenge } from "utils/auth";
 
 import ForgotPassword from "containers/Login/ForgotPassword";
 import api from "services/api";
@@ -62,7 +63,17 @@ export default function Login({ isLogging, error, doLogin, match }) {
     const getAuthProvider = async (schema) => {
       try {
         const { data } = await api.getAuthProvider(schema);
-        setOauthData(data.data);
+        const config = { ...data.data };
+
+        if (config.flow === "pkce") {
+          const verifier = generateRandomString();
+          localStorage.setItem("oauth_verifier", verifier);
+          const codeChallenge = await getCodeChallenge(verifier);
+
+          config.url = `${config.url}&code_challenge=${codeChallenge}&code_challenge_method=${config.codeChallengeMethod}`;
+        }
+
+        setOauthData(config);
         setLoading(false);
       } catch (e) {
         notification.error({
