@@ -442,9 +442,9 @@ const getInterventionReasons = (
     ...setHeaders(bearerToken),
   });
 
-const updateIntervention = (bearerToken, { idPrescriptionDrug, ...params }) =>
+const updateIntervention = (bearerToken, params) =>
   instance.put(
-    `${endpoints.intervention.base}/${idPrescriptionDrug}`,
+    `${endpoints.intervention.base}`,
     params,
     setHeaders(bearerToken)
   );

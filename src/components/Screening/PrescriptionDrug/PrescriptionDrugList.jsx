@@ -7,7 +7,10 @@ import LoadBox, { LoadContainer } from "components/LoadBox";
 import Empty from "components/Empty";
 import Collapse from "components/Collapse";
 import Tooltip from "components/Tooltip";
+import DefaultModal from "components/Modal";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
+import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
+import notification from "components/notification";
 
 import FormIntervention from "containers/Forms/Intervention";
 
@@ -18,6 +21,7 @@ import {
 } from "./PrescriptionDrug.style";
 import Table from "./components/Table";
 import PanelAction from "./components/PanelAction";
+import ChooseInterventionModal from "./components/ChooseInterventionModal";
 
 const isExpired = (date) => {
   if (!date) return false;
@@ -66,8 +70,14 @@ export const rowClassName = (record, bag) => {
     classes.push("checked");
   }
 
-  if (record.intervention && record.intervention.status === "s") {
-    classes.push("danger");
+  if (bag.interventions) {
+    const intvList = bag.interventions.filter(
+      filterInterventionByPrescriptionDrug(record.idPrescriptionDrug)
+    );
+
+    if (intvList.length) {
+      classes.push("danger");
+    }
   }
 
   if (record.startRow) {
@@ -96,14 +106,14 @@ export default function PrescriptionDrugList({
   headers,
   aggregated,
   emptyMessage,
-  saveInterventionStatus,
-  checkIntervention,
+  saveIntervention,
+  isSavingIntervention,
+  updateInterventionData,
   periodObject,
   fetchPeriod,
   weight,
   admissionNumber,
   checkPrescriptionDrug,
-  savePrescriptionDrugStatus,
   savePrescriptionDrugForm,
   idPrescription,
   idSegment,
@@ -116,6 +126,7 @@ export default function PrescriptionDrugList({
   isCheckingPrescription,
   security,
   featureService,
+  interventions,
 }) {
   const [visible, setVisibility] = useState(false);
   const { t } = useTranslation();
@@ -128,21 +139,94 @@ export default function PrescriptionDrugList({
     );
   }
 
-  const onShowModal = (data) => {
-    select(data);
+  const selectIntervention = (int, data) => {
+    select({
+      ...data,
+      intervention: {
+        ...int,
+      },
+    });
     setVisibility(true);
+  };
+
+  const onShowModal = (data) => {
+    const intvList = interventions.filter(
+      filterInterventionByPrescriptionDrug(data.idPrescriptionDrug)
+    );
+
+    if (!featureService.hasMultipleIntervention()) {
+      if (intvList.length > 0) {
+        select({
+          ...data,
+          intervention: intvList[0],
+        });
+      } else {
+        select({
+          ...data,
+          intervention: {
+            nonce: Math.random(),
+          },
+        });
+      }
+
+      setVisibility(true);
+      return;
+    }
+
+    if (intvList.length > 0) {
+      const modal = DefaultModal.info({
+        title: "Intervenções",
+        content: null,
+        icon: null,
+        width: 500,
+        okText: "Fechar",
+        okButtonProps: { type: "default" },
+      });
+
+      modal.update({
+        content: (
+          <ChooseInterventionModal
+            selectIntervention={selectIntervention}
+            interventions={intvList}
+            completeData={data}
+            modalRef={modal}
+            translate={t}
+          />
+        ),
+      });
+    } else {
+      select({
+        ...data,
+        intervention: {
+          nonce: Math.random(),
+        },
+      });
+      setVisibility(true);
+    }
+  };
+
+  const saveInterventionAndUpdateData = (params) => {
+    saveIntervention(params)
+      .then((response) => {
+        updateInterventionData(response.data[0]);
+      })
+      .catch(() => {
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
+      });
   };
 
   const bag = {
     onShowModal,
     selectPrescriptionDrug,
     check: checkPrescriptionDrug,
-    savePrescriptionDrugStatus,
     idSegment,
     idHospital,
     admissionNumber,
-    saveInterventionStatus,
-    checkIntervention,
+    saveIntervention: saveInterventionAndUpdateData,
+    isSavingIntervention,
     periodObject,
     fetchPeriod,
     weight,
@@ -153,6 +237,7 @@ export default function PrescriptionDrugList({
     featureService,
     savePrescriptionDrugForm,
     formTemplate,
+    interventions,
   };
 
   const table = (ds, showHeader) => (

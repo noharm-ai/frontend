@@ -27,6 +27,7 @@ export default function Patient({
   featureService,
   interventionCount,
   siderCollapsed,
+  interventions,
 }) {
   const {
     alertExams,
@@ -87,6 +88,7 @@ export default function Patient({
           setSeeMore={setSeeMore}
           setPatientModalVisible={setPatientModalVisible}
           featureService={featureService}
+          interventions={interventions}
         />
       </Col>
       <Col xl={10} xxl={11}>

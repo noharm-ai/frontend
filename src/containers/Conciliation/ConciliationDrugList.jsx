@@ -4,12 +4,9 @@ import { bindActionCreators } from "redux";
 import {
   selectItemToSaveThunk,
   saveInterventionThunk,
-  clearSavedInterventionStatusThunk,
 } from "store/ducks/intervention/thunk";
 import {
-  checkPrescriptionDrugThunk,
   updateInterventionDataThunk,
-  checkInterventionThunk,
   updatePrescriptionDrugDataThunk,
 } from "store/ducks/prescriptions/thunk";
 import { selectPrescriptionDrugThunk } from "store/ducks/prescriptionDrugs/thunk";
@@ -18,29 +15,27 @@ import security from "services/security";
 import FeatureService from "services/features";
 import ConciliationDrugList from "components/Conciliation/ConciliationDrugList";
 
-const mapStateToProps = ({ prescriptions, user }) => ({
+const mapStateToProps = ({ prescriptions, user, intervention }) => ({
   dataSource: prescriptions.single.prescription.list,
   listRaw: prescriptions.single.data.prescriptionRaw,
   isFetching: prescriptions.single.isFetching,
   checkPrescriptionDrug:
     prescriptions.single.prescription.checkPrescriptionDrug,
-  checkIntervention: prescriptions.single.prescription.checkIntervention,
   idSegment: prescriptions.single.data.idSegment,
   admissionNumber: prescriptions.single.data.admissionNumber,
   uniqueDrugs: prescriptions.single.data.uniqueDrugs,
   currentPrescription: prescriptions.single.data.conciliaList,
   security: security(user.account.roles),
   featureService: FeatureService(user.account.features),
+  interventions: prescriptions.single.intervention.list,
+  isSavingIntervention: intervention.maybeCreateOrUpdate.isSaving,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       select: selectItemToSaveThunk,
-      save: saveInterventionThunk,
-      reset: clearSavedInterventionStatusThunk,
-      savePrescriptionDrugStatus: checkPrescriptionDrugThunk,
+      saveIntervention: saveInterventionThunk,
       updateInterventionData: updateInterventionDataThunk,
-      saveInterventionStatus: checkInterventionThunk,
       selectPrescriptionDrug: selectPrescriptionDrugThunk,
       updatePrescriptionDrugData: updatePrescriptionDrugDataThunk,
     },

@@ -7,7 +7,6 @@ import {
   transformPrescription,
   transformExams,
 } from "utils/transformers";
-import { sourceToStoreType } from "utils/transformers/prescriptions";
 import { errorHandler } from "utils";
 import { Creators as PatientsCreators } from "../patients";
 import { Creators as PrescriptionsCreators } from "./index";
@@ -33,18 +32,10 @@ const {
   prescriptionsSaveError,
   prescriptionsSaveSuccess,
 
-  prescriptionDrugCheckStart,
-  prescriptionDrugCheckError,
-  prescriptionDrugCheckSuccess,
-
   prescriptionsUpdateListStatus,
 
   prescriptionsUpdateIntervention,
   prescriptionsUpdatePrescriptionDrug,
-
-  prescriptionInterventionCheckStart,
-  prescriptionInterventionCheckError,
-  prescriptionInterventionCheckSuccess,
 
   prescriptionsFetchPeriodStart,
   prescriptionsFetchPeriodError,
@@ -255,82 +246,15 @@ export const saveAdmissionThunk =
     });
   };
 
-export const checkPrescriptionDrugThunk =
-  (idPrescriptionDrug, idPrescription, status, type) =>
-  async (dispatch, getState) => {
-    dispatch(
-      prescriptionDrugCheckStart(idPrescriptionDrug, sourceToStoreType(type))
-    );
-
-    const { access_token } = getState().auth.identify;
-    const params = {
-      idPrescriptionDrug,
-      idPrescription,
-      status,
-    };
-
-    const { data, error } = await api
-      .updateIntervention(access_token, params)
-      .catch(errorHandler);
-
-    if (!isEmpty(error)) {
-      dispatch(prescriptionDrugCheckError(error, sourceToStoreType(type)));
-      return;
-    }
-
-    const success = {
-      status: data.status,
-      id: data.data,
-      newStatus: status,
-      type,
-    };
-
-    dispatch(prescriptionDrugCheckSuccess(success, sourceToStoreType(type)));
-  };
-
-export const updateInterventionDataThunk =
-  (idPrescriptionDrug, source, intervention) => (dispatch) => {
-    dispatch(
-      prescriptionsUpdateIntervention(idPrescriptionDrug, source, intervention)
-    );
-  };
+export const updateInterventionDataThunk = (intervention) => (dispatch) => {
+  dispatch(prescriptionsUpdateIntervention(intervention));
+};
 
 export const updatePrescriptionDrugDataThunk =
   (idPrescriptionDrug, source, data) => (dispatch) => {
     dispatch(
       prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data)
     );
-  };
-
-export const checkInterventionThunk =
-  (id, idPrescription, status, source = "intervention") =>
-  async (dispatch, getState) => {
-    dispatch(prescriptionInterventionCheckStart(id, source));
-
-    const { access_token } = getState().auth.identify;
-    const params = {
-      idPrescriptionDrug: id,
-      idPrescription,
-      status,
-    };
-
-    const { data, error } = await api
-      .updateIntervention(access_token, params)
-      .catch(errorHandler);
-
-    if (!isEmpty(error)) {
-      dispatch(prescriptionInterventionCheckError(error, source));
-      return;
-    }
-
-    const success = {
-      status: data.status,
-      id,
-      idPrescription,
-      newStatus: status,
-    };
-
-    dispatch(prescriptionInterventionCheckSuccess(success, source));
   };
 
 export const fetchPrescriptionDrugPeriodThunk =

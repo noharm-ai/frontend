@@ -19,23 +19,11 @@ export const { Types, Creators } = createActions({
   prescriptionsSaveSuccess: ["data", "success"],
   prescriptionsSaveReset: [""],
 
-  prescriptionDrugCheckStart: ["idPrescriptionDrug", "source"],
-  prescriptionDrugCheckError: ["error", "source"],
-  prescriptionDrugCheckSuccess: ["success", "source"],
-
   prescriptionsUpdateListStatus: ["data"],
 
-  prescriptionsUpdateIntervention: [
-    "idPrescriptionDrug",
-    "source",
-    "intervention",
-  ],
+  prescriptionsUpdateIntervention: ["intervention"],
 
   prescriptionsUpdatePrescriptionDrug: ["idPrescriptionDrug", "source", "data"],
-
-  prescriptionInterventionCheckStart: ["id", "source"],
-  prescriptionInterventionCheckError: ["error", "source"],
-  prescriptionInterventionCheckSuccess: ["success", "source"],
 
   prescriptionsFetchPeriodStart: ["source"],
   prescriptionsFetchPeriodError: ["error", "source"],
@@ -87,12 +75,6 @@ const INITIAL_STATE = {
         isChecking: false,
         idPrescriptionDrug: null,
       },
-      checkIntervention: {
-        error: null,
-        success: {},
-        isChecking: false,
-        currentId: null,
-      },
       period: {
         error: null,
         isFetching: false,
@@ -105,12 +87,6 @@ const INITIAL_STATE = {
         success: {},
         isChecking: false,
         idPrescriptionDrug: null,
-      },
-      checkIntervention: {
-        error: null,
-        success: {},
-        isChecking: false,
-        currentId: null,
       },
       period: {
         error: null,
@@ -125,12 +101,6 @@ const INITIAL_STATE = {
         isChecking: false,
         idPrescriptionDrug: null,
       },
-      checkIntervention: {
-        error: null,
-        success: {},
-        isChecking: false,
-        currentId: null,
-      },
       period: {
         error: null,
         isFetching: false,
@@ -144,12 +114,6 @@ const INITIAL_STATE = {
         isChecking: false,
         idPrescriptionDrug: null,
       },
-      checkIntervention: {
-        error: null,
-        success: {},
-        isChecking: false,
-        currentId: null,
-      },
       period: {
         error: null,
         isFetching: false,
@@ -157,12 +121,6 @@ const INITIAL_STATE = {
     },
     intervention: {
       list: [],
-      checkIntervention: {
-        error: null,
-        success: {},
-        isChecking: false,
-        currentId: null,
-      },
     },
   },
 };
@@ -407,247 +365,6 @@ const updateListStatus = (state = INITIAL_STATE, { data }) => {
   };
 };
 
-const checkPrescriptionDrugStart = (
-  state = INITIAL_STATE,
-  { idPrescriptionDrug, source }
-) => ({
-  ...state,
-  single: {
-    ...state.single,
-    [source]: {
-      ...state.single[source],
-      checkPrescriptionDrug: {
-        ...state.single.checkPrescriptionDrug,
-        isChecking: true,
-        idPrescriptionDrug,
-      },
-    },
-  },
-});
-
-const checkPrescriptionDrugError = (
-  state = INITIAL_STATE,
-  { error, source }
-) => ({
-  ...state,
-  single: {
-    ...state.single,
-    [source]: {
-      ...state.single[source],
-      checkPrescriptionDrug: {
-        ...state.single.checkPrescriptionDrug,
-        isChecking: false,
-        error,
-      },
-    },
-  },
-});
-
-const checkPrescriptionDrugSuccess = (
-  state = INITIAL_STATE,
-  { success, source }
-) => {
-  if (success.id === "0") {
-    return {
-      ...state,
-      single: {
-        ...state.single,
-        data: {
-          ...state.single.data,
-          intervention: {
-            ...state.single.data.intervention,
-            status: success.status,
-          },
-        },
-        patient: {
-          ...state.single.patient,
-          checkPrescriptionDrug: {
-            ...state.single.patient.checkPrescriptionDrug,
-            error: null,
-            isChecking: false,
-            success,
-          },
-        },
-      },
-    };
-  }
-
-  const prescriptions = [...state.single.prescription.list];
-  const solutions = [...state.single.solution.list];
-  const procedures = [...state.single.procedure.list];
-  const diet = [...state.single.diet.list];
-
-  const updateStatus = (list, id, newStatus) => {
-    for (let i = 0; i < list.length; i++) {
-      const group = list[i];
-      const index = group.value.findIndex(
-        (item) => item.idPrescriptionDrug === id
-      );
-
-      if (index !== -1) {
-        group.value[index].intervention.status = newStatus;
-        // deprecated
-        group.value[index].status = newStatus;
-        break;
-      }
-    }
-  };
-
-  const getUpdatedState = (storeType, list) => ({
-    ...state,
-    single: {
-      ...state.single,
-
-      [storeType]: {
-        ...state.single[storeType],
-        list: list,
-        checkPrescriptionDrug: {
-          ...state.single[storeType].checkPrescriptionDrug,
-          error: null,
-          isChecking: false,
-          success,
-        },
-      },
-    },
-  });
-
-  switch (sourceToStoreType(success.type)) {
-    case "prescription":
-      updateStatus(prescriptions, success.id, success.newStatus);
-      return getUpdatedState(sourceToStoreType(success.type), prescriptions);
-    case "solution":
-      updateStatus(solutions, success.id, success.newStatus);
-      return getUpdatedState(sourceToStoreType(success.type), solutions);
-    case "procedure":
-      updateStatus(procedures, success.id, success.newStatus);
-      return getUpdatedState(sourceToStoreType(success.type), procedures);
-    case "diet":
-      updateStatus(diet, success.id, success.newStatus);
-      return getUpdatedState(sourceToStoreType(success.type), diet);
-    default:
-      break;
-  }
-};
-
-const checkInterventionStart = (state = INITIAL_STATE, { id, source }) => ({
-  ...state,
-  single: {
-    ...state.single,
-    [sourceToStoreType(source)]: {
-      ...state.single[sourceToStoreType(source)],
-      checkIntervention: {
-        ...state.single.checkIntervention,
-        isChecking: true,
-        currentId: id,
-      },
-    },
-  },
-});
-
-const checkInterventionError = (state = INITIAL_STATE, { error, source }) => ({
-  ...state,
-  single: {
-    ...state.single,
-    [sourceToStoreType(source)]: {
-      ...state.single[sourceToStoreType(source)],
-      checkIntervention: {
-        ...state.single.checkIntervention,
-        isChecking: false,
-        error,
-      },
-    },
-  },
-});
-
-const checkInterventionSuccess = (state = INITIAL_STATE, { success }) => {
-  const interventions = [...state.single.intervention.list];
-  const prescriptions = [...state.single.prescription.list];
-  const solutions = [...state.single.solution.list];
-  const procedures = [...state.single.procedure.list];
-  const diet = [...state.single.diet.list];
-
-  const index = interventions.findIndex(
-    (item) =>
-      item.id === success.id && item.idPrescription === success.idPrescription
-  );
-  interventions[index].status = success.newStatus;
-
-  const updatePrevIntervention = (list, id, newStatus) => {
-    for (let i = 0; i < list.length; i++) {
-      const group = list[i];
-      const itemIndex = group.value.findIndex(
-        (item) => item.prevIntervention && item.prevIntervention.id === id
-      );
-
-      if (itemIndex !== -1) {
-        group.value[itemIndex].prevIntervention.status = newStatus;
-        return true;
-      }
-    }
-
-    return false;
-  };
-
-  const getUpdatedState = (storeType, list, interventionList) => ({
-    ...state,
-    single: {
-      ...state.single,
-      [storeType]: {
-        ...state.single.procedure,
-        list: list,
-        checkIntervention: {
-          ...state.single[storeType].checkIntervention,
-          error: null,
-          isChecking: false,
-          success,
-        },
-      },
-      intervention: {
-        ...state.single.intervention,
-        list: interventionList,
-        checkIntervention: {
-          ...state.single.intervention.checkIntervention,
-          error: null,
-          isChecking: false,
-          success,
-        },
-      },
-    },
-  });
-
-  if (updatePrevIntervention(prescriptions, success.id, success.newStatus)) {
-    return getUpdatedState("prescription", prescriptions, interventions);
-  }
-  if (updatePrevIntervention(solutions, success.id, success.newStatus)) {
-    return getUpdatedState("solution", solutions, interventions);
-  }
-
-  if (updatePrevIntervention(procedures, success.id, success.newStatus)) {
-    return getUpdatedState("procedure", procedures, interventions);
-  }
-
-  if (updatePrevIntervention(diet, success.id, success.newStatus)) {
-    return getUpdatedState("diet", diet, interventions);
-  }
-
-  return {
-    ...state,
-    single: {
-      ...state.single,
-      intervention: {
-        ...state.single.intervention,
-        list: interventions,
-        checkIntervention: {
-          ...state.single.intervention.checkIntervention,
-          error: null,
-          isChecking: false,
-          success,
-        },
-      },
-    },
-  };
-};
-
 const updatePrescriptionDrugData = (
   state = INITIAL_STATE,
   { idPrescriptionDrug, source, data }
@@ -710,70 +427,29 @@ const updatePrescriptionDrugData = (
   }
 };
 
-const updateInterventionData = (
-  state = INITIAL_STATE,
-  { idPrescriptionDrug, source, intervention }
-) => {
-  if (idPrescriptionDrug === "0") {
-    return {
-      ...state,
-      single: {
-        ...state.single,
-        data: {
-          ...state.single.data,
-          intervention,
-        },
-      },
-    };
+const updateInterventionData = (state = INITIAL_STATE, { intervention }) => {
+  const interventionList = [...state.single.intervention.list];
+
+  const index = interventionList.findIndex(
+    (i) => i.idIntervention === intervention.idIntervention
+  );
+
+  if (index !== -1) {
+    interventionList[index] = intervention;
+  } else {
+    interventionList.push(intervention);
   }
 
-  const prescriptions = [...state.single.prescription.list];
-  const solutions = [...state.single.solution.list];
-  const procedures = [...state.single.procedure.list];
-  const diet = [...state.single.diet.list];
-
-  const updateData = (list, idPrescriptionDrug, newData) => {
-    for (let i = 0; i < list.length; i++) {
-      const group = list[i];
-      const index = group.value.findIndex(
-        (item) => item.idPrescriptionDrug === idPrescriptionDrug
-      );
-
-      if (index !== -1) {
-        group.value[index].intervention = newData;
-        group.value[index].status = "s";
-        break;
-      }
-    }
-  };
-
-  const getUpdatedState = (storeType, list) => ({
+  return {
     ...state,
     single: {
       ...state.single,
-      [storeType]: {
-        ...state.single[storeType],
-        list: list,
+      intervention: {
+        ...state.single.intervention,
+        list: interventionList,
       },
     },
-  });
-
-  switch (sourceToStoreType(source)) {
-    case "prescription":
-      updateData(prescriptions, idPrescriptionDrug, intervention);
-      return getUpdatedState(sourceToStoreType(source), prescriptions);
-    case "solution":
-      updateData(solutions, idPrescriptionDrug, intervention);
-      return getUpdatedState(sourceToStoreType(source), solutions);
-    case "procedure":
-      updateData(procedures, idPrescriptionDrug, intervention);
-      return getUpdatedState(sourceToStoreType(source), procedures);
-    case "diet":
-      updateData(diet, idPrescriptionDrug, intervention);
-      return getUpdatedState(sourceToStoreType(source), diet);
-    default:
-      console.error("prescription type not found", source);
-  }
+  };
 };
 
 const fetchPeriodStart = (state = INITIAL_STATE, { source }) => ({
@@ -921,18 +597,10 @@ const HANDLERS = {
   [Types.PRESCRIPTIONS_SAVE_SUCCESS]: saveSuccess,
   [Types.PRESCRIPTIONS_SAVE_RESET]: saveReset,
 
-  [Types.PRESCRIPTION_DRUG_CHECK_START]: checkPrescriptionDrugStart,
-  [Types.PRESCRIPTION_DRUG_CHECK_ERROR]: checkPrescriptionDrugError,
-  [Types.PRESCRIPTION_DRUG_CHECK_SUCCESS]: checkPrescriptionDrugSuccess,
-
   [Types.PRESCRIPTIONS_UPDATE_LIST_STATUS]: updateListStatus,
 
   [Types.PRESCRIPTIONS_UPDATE_INTERVENTION]: updateInterventionData,
   [Types.PRESCRIPTIONS_UPDATE_PRESCRIPTION_DRUG]: updatePrescriptionDrugData,
-
-  [Types.PRESCRIPTION_INTERVENTION_CHECK_START]: checkInterventionStart,
-  [Types.PRESCRIPTION_INTERVENTION_CHECK_ERROR]: checkInterventionError,
-  [Types.PRESCRIPTION_INTERVENTION_CHECK_SUCCESS]: checkInterventionSuccess,
 
   [Types.PRESCRIPTIONS_FETCH_PERIOD_START]: fetchPeriodStart,
   [Types.PRESCRIPTIONS_FETCH_PERIOD_ERROR]: fetchPeriodError,

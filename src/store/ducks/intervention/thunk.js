@@ -21,10 +21,6 @@ const {
   interventionSetSaveSuccess,
   interventionClearSavedStatus,
 
-  interventionCheckStart,
-  interventionCheckError,
-  interventionCheckSuccess,
-
   interventionUpdateList,
 
   interventionFetchFuturePrescriptionStart,
@@ -112,68 +108,28 @@ export const updateSelectedItemToSaveInterventionThunk =
 export const saveInterventionThunk =
   (params = {}) =>
   async (dispatch, getState) => {
-    dispatch(interventionSetSaveStart());
+    return new Promise(async (resolve, reject) => {
+      dispatch(interventionSetSaveStart());
 
-    const { idPrescriptionDrug, admissionNumber } = params;
-    const defaultArgs = {
-      observation: "",
-      idPrescriptionDrug,
-      admissionNumber,
-      idInterventionReason: null,
-    };
+      const { access_token } = getState().auth.identify;
+      const { status, error, data } = await api
+        .updateIntervention(access_token, params)
+        .catch(errorHandler);
 
-    const args = {
-      ...defaultArgs,
-      ...params,
-      status: "s",
-    };
+      if (status !== 200) {
+        dispatch(interventionSetSaveError(error));
+        reject(error);
+        return;
+      }
 
-    const { access_token } = getState().auth.identify;
-    const { status, error } = await api
-      .updateIntervention(access_token, args)
-      .catch(errorHandler);
-
-    if (status !== 200) {
-      dispatch(interventionSetSaveError(error));
-      return;
-    }
-
-    dispatch(interventionSetSaveSuccess());
+      dispatch(interventionSetSaveSuccess());
+      resolve(data);
+    });
   };
 
 export const clearSavedInterventionStatusThunk = () => (dispatch) => {
   dispatch(interventionClearSavedStatus());
 };
-
-export const checkInterventionThunk =
-  (id, idPrescription, status) => async (dispatch, getState) => {
-    dispatch(interventionCheckStart(id));
-
-    const { access_token } = getState().auth.identify;
-    const params = {
-      idPrescriptionDrug: id,
-      idPrescription,
-      status,
-    };
-
-    const { data, error } = await api
-      .updateIntervention(access_token, params)
-      .catch(errorHandler);
-
-    if (!isEmpty(error)) {
-      dispatch(interventionCheckError(error));
-      return;
-    }
-
-    const success = {
-      status: data.status,
-      id,
-      idPrescription,
-      newStatus: status,
-    };
-
-    dispatch(interventionCheckSuccess(success));
-  };
 
 export const updateInterventionListDataThunk = (intervention) => (dispatch) => {
   dispatch(interventionUpdateList(intervention));

@@ -4,13 +4,10 @@ import { bindActionCreators } from "redux";
 import {
   selectItemToSaveThunk,
   saveInterventionThunk,
-  clearSavedInterventionStatusThunk,
 } from "store/ducks/intervention/thunk";
 import {
   checkScreeningThunk,
-  checkPrescriptionDrugThunk,
   updateInterventionDataThunk,
-  checkInterventionThunk,
   fetchPrescriptionDrugPeriodThunk,
 } from "store/ducks/prescriptions/thunk";
 import {
@@ -22,7 +19,7 @@ import security from "services/security";
 import FeatureService from "services/features";
 import PrescriptionDrugList from "components/Screening/PrescriptionDrug/PrescriptionDrugList";
 
-const mapStateToProps = ({ prescriptions, auth, user }) => ({
+const mapStateToProps = ({ prescriptions, auth, user, intervention }) => ({
   dataSource: prescriptions.single.prescription.list,
   listRaw: prescriptions.single.data.prescriptionRaw,
   isFetching: prescriptions.single.isFetching,
@@ -30,7 +27,6 @@ const mapStateToProps = ({ prescriptions, auth, user }) => ({
   aggregated: prescriptions.single.data.agg,
   checkPrescriptionDrug:
     prescriptions.single.prescription.checkPrescriptionDrug,
-  checkIntervention: prescriptions.single.prescription.checkIntervention,
   periodObject: prescriptions.single.prescription.period,
   access_token: auth.identify.access_token,
   weight: prescriptions.single.data.weight,
@@ -43,6 +39,8 @@ const mapStateToProps = ({ prescriptions, auth, user }) => ({
   isCheckingPrescription: prescriptions.single.check.isChecking,
   security: security(user.account.roles),
   featureService: FeatureService(user.account.features),
+  interventions: prescriptions.single.intervention.list,
+  isSavingIntervention: intervention.maybeCreateOrUpdate.isSaving,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
@@ -50,11 +48,8 @@ const mapDispatchToProps = (dispatch) =>
       checkScreening: checkScreeningThunk,
       fetchPeriod: fetchPrescriptionDrugPeriodThunk,
       select: selectItemToSaveThunk,
-      save: saveInterventionThunk,
-      reset: clearSavedInterventionStatusThunk,
-      savePrescriptionDrugStatus: checkPrescriptionDrugThunk,
+      saveIntervention: saveInterventionThunk,
       updateInterventionData: updateInterventionDataThunk,
-      saveInterventionStatus: checkInterventionThunk,
       selectPrescriptionDrug: selectPrescriptionDrugThunk,
       savePrescriptionDrugForm: savePrescriptionDrugFormThunk,
     },

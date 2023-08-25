@@ -8,11 +8,7 @@ import {
   fetchReasonsListThunk,
   updateSelectedItemToSaveInterventionThunk,
 } from "store/ducks/intervention/thunk";
-import {
-  updateInterventionDataThunk,
-  checkInterventionThunk,
-  checkPrescriptionDrugThunk,
-} from "store/ducks/prescriptions/thunk";
+import { updateInterventionDataThunk } from "store/ducks/prescriptions/thunk";
 import {
   searchDrugsThunk,
   fetchDrugSummaryThunk,
@@ -40,8 +36,6 @@ const mapDispatchToProps = (dispatch) =>
       save: saveInterventionThunk,
       reset: clearSavedInterventionStatusThunk,
       updateInterventionData: updateInterventionDataThunk,
-      saveInterventionStatus: checkInterventionThunk,
-      savePrescriptionDrugStatus: checkPrescriptionDrugThunk,
       fetchReasonsList: fetchReasonsListThunk,
       updateSelectedItemToSaveIntervention:
         updateSelectedItemToSaveInterventionThunk,
