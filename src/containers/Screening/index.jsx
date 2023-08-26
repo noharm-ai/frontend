@@ -12,6 +12,7 @@ const mapStateToProps = ({ prescriptions, user }) => ({
   message: prescriptions.single.message,
   isFetching: prescriptions.single.isFetching,
   content: prescriptions.single.data,
+  interventions: prescriptions.single.intervention.list,
   security: security(user.account.roles),
 });
 const mapDispatchToProps = (dispatch) =>

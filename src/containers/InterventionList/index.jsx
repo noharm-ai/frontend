@@ -3,7 +3,6 @@ import { bindActionCreators } from "redux";
 
 import {
   fetchListThunk,
-  checkInterventionThunk,
   selectItemToSaveThunk,
   saveInterventionThunk,
   updateInterventionListDataThunk,
@@ -19,10 +18,10 @@ const mapStateToProps = ({ intervention, segments }) => ({
   isFetching: intervention.isFetching,
   list: intervention.list,
   error: intervention.error,
-  checkData: intervention.check,
   futurePrescription: intervention.futurePrescription,
   reasons: intervention.reasons.list,
   segments: segments.list,
+  isSaving: intervention.maybeCreateOrUpdate.isSaving,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
@@ -30,7 +29,6 @@ const mapDispatchToProps = (dispatch) =>
       fetchList: fetchListThunk,
       searchList: searchListThunk,
       fetchFuturePrescription: fetchFuturePrescriptionThunk,
-      checkIntervention: checkInterventionThunk,
       select: selectItemToSaveThunk,
       save: saveInterventionThunk,
       reset: clearSavedInterventionStatusThunk,

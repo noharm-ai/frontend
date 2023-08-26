@@ -26,6 +26,10 @@ export default function DailyFrequency({ id, dailyFrequency }) {
   };
 
   const handleSave = () => {
+    if (value === null || isNaN(value)) {
+      notification.error({ message: "Valor inválido" });
+      return;
+    }
     setSaving(true);
 
     const state = store.getState();

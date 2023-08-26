@@ -1,18 +1,20 @@
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { checkInterventionThunk } from "store/ducks/prescriptions/thunk";
+import { updateInterventionDataThunk } from "store/ducks/prescriptions/thunk";
+import { saveInterventionThunk } from "store/ducks/intervention/thunk";
 import PreviousInterventionList from "components/Screening/Intervention/PreviousInterventionList";
 
-const mapStateToProps = ({ prescriptions }) => ({
+const mapStateToProps = ({ prescriptions, intervention }) => ({
   interventions: prescriptions.single.intervention.list,
   isFetching: prescriptions.single.isFetching,
-  checkIntervention: prescriptions.single.intervention.checkIntervention,
+  isSaving: intervention.maybeCreateOrUpdate.isSaving,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      saveInterventionStatus: checkInterventionThunk,
+      save: saveInterventionThunk,
+      updateList: updateInterventionDataThunk,
     },
     dispatch
   );

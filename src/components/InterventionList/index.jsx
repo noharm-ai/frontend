@@ -42,8 +42,7 @@ const TableInfo = styled.div`
 
 export default function InterventionList({
   searchList,
-  checkData,
-  checkIntervention,
+  save,
   select,
   updateList,
   futurePrescription,
@@ -51,6 +50,7 @@ export default function InterventionList({
   isFetching,
   list,
   error,
+  isSaving,
   fetchReasonsList,
   reasons,
   segments,
@@ -122,16 +122,8 @@ export default function InterventionList({
     }
   }, [error, t]);
 
-  const afterSaveIntervention = ({
-    dose,
-    route,
-    frequency,
-    measureUnit,
-    idDrugTranscription,
-    ...item
-  }) => {
-    //destructuring because we dont want that extra data
-    updateList(item);
+  const afterSaveIntervention = (data) => {
+    updateList(data);
   };
 
   const getResponsibleList = () => {
@@ -189,9 +181,25 @@ export default function InterventionList({
     });
   };
 
+  const saveIntervention = (data) => {
+    save(data)
+      .then((response) => {
+        updateList(response.data[0]);
+        notification.success({
+          message: t("success.generic"),
+        });
+      })
+      .catch(() => {
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
+      });
+  };
+
   const dsInterventions = toDataSource(filterList(filter), null, {
-    check: checkData,
-    saveInterventionStatus: checkIntervention,
+    isSaving,
+    saveIntervention,
     onShowModal,
     futurePrescription,
     fetchFuturePrescription,
