@@ -46,9 +46,20 @@ const getPatients = async (bearerToken, requestConfig) => {
 
   if (!security.isAdmin()) {
     if (requestConfig.multipleNameUrl && listToRequest.length > 1) {
-      const requestIds = listToRequest
-        .filter((p) => !listToEscape[p.idPatient])
-        .map((p) => p.idPatient);
+      const cacheConfig = {};
+      const requestIds = [];
+
+      listToRequest.forEach((p) => {
+        if (!listToEscape[p.idPatient]) {
+          requestIds.push(p.idPatient);
+
+          if (p.birthdate && moment().diff(p.birthdate, "years") > 0) {
+            cacheConfig[p.idPatient] = true;
+          } else {
+            cacheConfig[p.idPatient] = false;
+          }
+        }
+      });
 
       if (!requestIds.length) {
         promises = listToRequest
@@ -65,7 +76,7 @@ const getPatients = async (bearerToken, requestConfig) => {
           );
 
           promises = patientList
-            .map((p) => ({ ...p, cache: true }))
+            .map((p) => ({ ...p, cache: cacheConfig[p.idPatient] || false }))
             .concat(
               listToRequest
                 .filter((p) => listToEscape[p.idPatient])
