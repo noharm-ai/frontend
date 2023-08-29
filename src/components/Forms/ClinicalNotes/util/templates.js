@@ -235,8 +235,8 @@ export const conciliationTemplate = (
   }
 };
 
-export const prescriptionTemplate = (p, i) => {
-  if (p !== "0") {
+export const prescriptionTemplate = (p, i, id) => {
+  if (id !== "0") {
     return `
 Prescrição nº ${p}
 
@@ -256,9 +256,11 @@ export const interventionTemplate = (i) => `
 
 export const interventionCompleteTemplate = (i) => `
   -- ${i.drugName}
-  (${i.dose} ${i.measureUnit ? i.measureUnit.label : ""} X ${
-  i.frequency ? i.frequency.label : "Frequência não informada"
-})
+  (${
+    i.dose !== null
+      ? `${i.dose} ${i.measureUnit ? i.measureUnit.label : ""}`
+      : "Dose não informada"
+  }  X ${i.frequency ? i.frequency.label : "Frequência não informada"})
   Intervenção: ${
     i.observation ? stripHtml(i.observation) : "Nenhuma observação registrada"
   }

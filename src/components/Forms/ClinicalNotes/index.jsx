@@ -41,6 +41,7 @@ export default function ClinicalNotes({
   fetchMemory,
   open,
   type,
+  security,
   ...props
 }) {
   const { t } = useTranslation();
@@ -136,6 +137,7 @@ export default function ClinicalNotes({
                   account={account}
                   signature={signature}
                   action={action}
+                  security={security}
                 />
               </Row>
             </FormContainer>
