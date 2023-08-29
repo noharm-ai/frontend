@@ -7,7 +7,10 @@ import Empty from "components/Empty";
 import BackTop from "components/BackTop";
 import { Input } from "components/Inputs";
 import { toDataSource } from "utils";
+import { PageCard } from "styles/Utils.style";
+import { PageHeader, ExtraFilters } from "styles/PageHeader.style";
 
+import Filter from "containers/PatientList/Filter";
 import columns from "./table/columns";
 
 export default function PatientList({ list, isFetching }) {
@@ -52,26 +55,39 @@ export default function PatientList({ list, isFetching }) {
 
   return (
     <>
-      <Input
-        placeholder={t("screeningList.iptSearchPlaceholder")}
-        style={{ width: 300 }}
-        allowClear
-        onChange={onClientSearch}
-        className={filter.searchKey ? "active" : ""}
-      />
-      <Table
-        columns={columns(sortOrder, filter, t)}
-        pagination={{
-          pageSize: 50,
-          position: "both",
-        }}
-        loading={isFetching}
-        locale={{ emptyText }}
-        dataSource={!isFetching ? dataSource : []}
-        onChange={handleTableChange}
-        showSorterTooltip={false}
-        style={{ marginTop: "25px" }}
-      />
+      <PageHeader>
+        <div>
+          <h1 className="page-header-title">{t("menu.patients")}</h1>
+          <div className="page-header-legend">Lista de pacientes.</div>
+        </div>
+      </PageHeader>
+      <Filter />
+      <ExtraFilters>
+        <div className="filter-field">
+          <Input
+            placeholder={t("screeningList.iptSearchPlaceholder")}
+            style={{ width: 300 }}
+            allowClear
+            onChange={onClientSearch}
+            className={filter.searchKey ? "active" : ""}
+          />
+        </div>
+      </ExtraFilters>
+      <PageCard>
+        <Table
+          columns={columns(sortOrder, filter, t)}
+          pagination={{
+            pageSize: 50,
+            position: "both",
+          }}
+          loading={isFetching}
+          locale={{ emptyText }}
+          dataSource={!isFetching ? dataSource : []}
+          onChange={handleTableChange}
+          showSorterTooltip={false}
+          style={{ marginTop: "25px" }}
+        />
+      </PageCard>
 
       <BackTop />
     </>

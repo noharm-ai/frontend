@@ -31,3 +31,21 @@ export const PageHeader = styled.div`
     }
   }
 `;
+
+export const ExtraFilters = styled.div`
+  .filter-field {
+    display: inline-block;
+    margin-right: 10px;
+
+    label {
+      display: block;
+      margin-bottom: 2px;
+      color: #2e3c5a;
+    }
+  }
+
+  .obs {
+    padding-top: 5px;
+    font-size: 13px;
+  }
+`;

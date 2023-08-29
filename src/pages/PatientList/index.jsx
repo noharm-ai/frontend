@@ -1,20 +1,6 @@
-import React from "react";
-
 import withLayout from "lib/withLayout";
 import PatientList from "containers/PatientList";
-import Filter from "containers/PatientList/Filter";
 
-const layoutProps = {
-  theme: "boxed",
-  pageTitle: "menu.patients",
-};
+const layoutProps = {};
 
-export default withLayout(
-  () => (
-    <>
-      <Filter />
-      <PatientList />
-    </>
-  ),
-  layoutProps
-);
+export default withLayout(PatientList, layoutProps);
