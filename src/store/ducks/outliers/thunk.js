@@ -224,7 +224,12 @@ export const fetchReferencesListThunk =
       };
     }
 
-    if (dose != null && frequency != null) {
+    if (
+      dose != null &&
+      frequency != null &&
+      !isNaN(dose) &&
+      !isNaN(frequency)
+    ) {
       params.d = dose;
       params.f = frequency;
     }

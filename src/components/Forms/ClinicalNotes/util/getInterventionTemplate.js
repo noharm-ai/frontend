@@ -24,7 +24,7 @@ const getInterventions = (prescription) => {
   });
 
   return interventions
-    .filter((i) => i.status !== "0")
+    .filter((i) => i.status === "s")
     .filter((i) => {
       return flatItems.find(
         (item) =>
