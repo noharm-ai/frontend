@@ -30,6 +30,7 @@ export default function Filter({
     nextAppointmentEndDate: null,
     scheduledBy: [],
     attendedBy: [],
+    appointment: null,
   };
 
   // load segments

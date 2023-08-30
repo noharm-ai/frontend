@@ -18,25 +18,14 @@ export const SearchBox = styled.div`
     border-bottom-right-radius: 0;
 
     .filters {
-      pointer-events: all;
-      opacity: 1;
-      transform: translateY(0);
+      max-height: 2000px;
     }
   }
 
   .filters {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: #eff1f4;
-    border-radius: 10px;
-    padding: 1rem;
-    box-shadow: 4px 4px 7px rgb(0 0 0 / 21%);
-    z-index: 2;
-    pointer-events: none;
-    opacity: 0;
-    transform: translateY(-15px);
+    max-height: 0;
+    padding: 0 8px;
+    overflow: hidden;
     transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
