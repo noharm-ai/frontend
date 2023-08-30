@@ -25,7 +25,13 @@ import getInterventionTemplate, {
 import { signatureTemplate, alertsTemplate } from "./util/templates";
 import { Box, EditorBox, FieldError } from "../Form.style";
 
-export default function Base({ prescription, account, signature, action }) {
+export default function Base({
+  prescription,
+  account,
+  signature,
+  action,
+  security,
+}) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const { notes, concilia, date } = values;
   const layout = { label: 2, input: 20 };
@@ -33,7 +39,13 @@ export default function Base({ prescription, account, signature, action }) {
   const loadDefaultText = () => {
     setFieldValue(
       "notes",
-      getInterventionTemplate(prescription, account, signature, concilia)
+      getInterventionTemplate(
+        prescription,
+        account,
+        signature,
+        concilia,
+        security.hasCpoe()
+      )
     );
   };
 

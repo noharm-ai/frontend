@@ -76,7 +76,13 @@ const getPatients = async (bearerToken, requestConfig) => {
           );
 
           promises = patientList
-            .map((p) => ({ ...p, cache: cacheConfig[p.idPatient] || false }))
+            .map((p) => ({
+              ...p,
+              cache:
+                p.status === "success"
+                  ? cacheConfig[p.idPatient] || false
+                  : false,
+            }))
             .concat(
               listToRequest
                 .filter((p) => listToEscape[p.idPatient])

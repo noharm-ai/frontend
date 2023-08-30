@@ -7,48 +7,31 @@ import {
   layoutTemplate,
 } from "./templates";
 
+export const getCurrentInterventions = (interventions, headers) => {
+  return interventions.filter((i) => headers[i.idPrescription]);
+};
+
 const getInterventions = (prescription) => {
-  const list = [
+  const interventions = prescription.intervention.list;
+  const items = [
     ...prescription.prescription.list,
     ...prescription.solution.list,
     ...prescription.procedure.list,
   ];
-
-  if (prescription.data.intervention) {
-    list.push({
-      key: 0,
-      value: [
-        {
-          status: prescription.data.intervention.status,
-          intervention: {
-            ...prescription.data.intervention,
-            idPrescription: 0,
-          },
-        },
-      ],
-    });
-  }
-
-  const interventionList = [];
-
-  list.forEach((group) => {
-    interventionList.push(
-      ...group.value
-        .map((l) => {
-          if (l.intervention && l.intervention.status === "s") {
-            return {
-              drugName: l.drug,
-              ...l.intervention,
-            };
-          }
-
-          return null;
-        })
-        .filter((i) => i != null)
-    );
+  const flatItems = [];
+  items.forEach((g) => {
+    flatItems.push(...g.value);
   });
 
-  return interventionList;
+  return interventions
+    .filter((i) => i.status !== "0")
+    .filter((i) => {
+      return flatItems.find(
+        (item) =>
+          item.idPrescriptionDrug === i.id ||
+          i.idPrescription === prescription.data.idPrescription
+      );
+    });
 };
 
 const groupByPrescription = (list) => {
@@ -61,7 +44,6 @@ const groupByPrescription = (list) => {
       items[i.idPrescription] = [i];
     }
   });
-
   return items;
 };
 
@@ -69,7 +51,8 @@ const getInterventionTemplate = (
   prescription,
   account,
   signature,
-  conciliationType
+  conciliationType,
+  cpoe
 ) => {
   if (prescription.data.concilia) {
     const interventions = getInterventions(prescription);
@@ -88,7 +71,11 @@ const getInterventionTemplate = (
   const tpl = Object.keys(interventions).map((k) => {
     const iTpl = interventions[k].map((i) => interventionTemplate(i));
 
-    return prescriptionTemplate(k, iTpl.join(""));
+    if (cpoe) {
+      return iTpl;
+    }
+
+    return prescriptionTemplate(k, iTpl.join(""), interventions[k][0]?.id);
   });
 
   return layoutTemplate(

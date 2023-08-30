@@ -303,7 +303,8 @@
     "apply": "Aplicar",
     "draft": "Draft",
     "saveDraft": "Save draft",
-    "loadDraft": "Load draft"
+    "loadDraft": "Load draft",
+    "appointment": "Appointment"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
