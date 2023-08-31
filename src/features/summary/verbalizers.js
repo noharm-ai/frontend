@@ -80,7 +80,12 @@ Data da alta: ${
 };
 
 export const patientAttrToText = (patient) => {
-  return `Peso: ${patient.weight ? `${patient.weight} Kg` : "Não informado"}
+  return `Peso: ${patient.weight ? `${patient.weight} Kg ` : "Não informado"}
+Data do Peso: ${
+    patient.weightDate
+      ? moment(patient.weightDate).format("DD/MM/YYYY")
+      : "Não informado"
+  }
 Altura: ${patient.height ? `${patient.height} cm` : "Não informado"}  
 IMC: ${patient.imc ? `${patient.imc} kg/m²` : "Não informado"}  
 `;
