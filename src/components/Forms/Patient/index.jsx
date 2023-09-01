@@ -39,6 +39,7 @@ export default function Patient({
   notesInfoDate,
   security,
   featureService,
+  dischargeDate,
   ...props
 }) {
   const { t } = useTranslation();
@@ -55,6 +56,7 @@ export default function Patient({
     birthdate,
     skinColor,
     gender,
+    dischargeDate,
   };
 
   const submit = (params) => {
@@ -107,7 +109,7 @@ export default function Patient({
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base featureService={featureService} />
+                <Base security={security} />
               </Row>
             </FormContainer>
           </form>

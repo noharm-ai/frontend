@@ -21,6 +21,7 @@ const mapStateToProps = ({ prescriptions, patients, user }) => ({
   clinicalNotes: prescriptions.single.data.clinicalNotes,
   notesInfo: prescriptions.single.data.notesInfo,
   notesInfoDate: prescriptions.single.data.notesInfoDate,
+  dischargeDate: prescriptions.single.data.dischargeDate,
   security: security(user.account.roles),
   featureService: FeatureService(user.account.features),
 });

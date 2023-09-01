@@ -304,7 +304,8 @@
     "draft": "Draft",
     "saveDraft": "Save draft",
     "loadDraft": "Load draft",
-    "appointment": "Appointment"
+    "appointment": "Appointment",
+    "dischargeDate": "Data de alta"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"

@@ -12,7 +12,7 @@ import Editor from "components/Editor";
 
 import { Box, EditorBox } from "../Form.style";
 
-export default function Base({ featureService }) {
+export default function Base({ security }) {
   const { values, setFieldValue, errors } = useFormikContext();
   const {
     weight,
@@ -22,6 +22,7 @@ export default function Base({ featureService }) {
     gender,
     birthdate,
     skinColor,
+    dischargeDate,
   } = values;
   const layout = { label: 8, input: 16 };
   const { t } = useTranslation();
@@ -173,6 +174,43 @@ export default function Base({ featureService }) {
           />
         </Col>
       </Box>
+
+      {(security.isAdmin() || security.isTraining()) && (
+        <Box hasError={errors.dischargeDate}>
+          <Col xs={layout.label}>
+            <Heading as="label" size="14px" textAlign="right">
+              <Tooltip title="">{t("labels.dischargeDate")}:</Tooltip>
+            </Heading>
+          </Col>
+          <Col xs={layout.input}>
+            <DatePicker
+              format="DD/MM/YYYY HH:mm"
+              value={dischargeDate ? moment(dischargeDate) : null}
+              onChange={(value) =>
+                setFieldValue(
+                  "dischargeDate",
+                  value ? value.format("YYYY-MM-DD HH:mm") : null
+                )
+              }
+              popupClassName="noArrow"
+              allowClear={true}
+              showTime
+              style={{
+                marginLeft: 10,
+                width: "100%",
+              }}
+            />
+            <span
+              style={{
+                marginLeft: 10,
+                fontSize: "10px",
+              }}
+            >
+              *Campo editável somente para equipe NoHarm
+            </span>
+          </Col>
+        </Box>
+      )}
 
       <Box hasError={errors.observation}>
         <Col xs={24} style={{ paddingBottom: "0" }}>
