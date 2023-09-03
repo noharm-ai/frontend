@@ -230,6 +230,7 @@ export const transformPrescription = ({
     dischargeFormated: dischargeDate
       ? format(new Date(dischargeDate), "dd/MM/yyyy HH:mm")
       : "",
+    dischargeDate,
     shortDateFormat: format(new Date(date), "dd/MM"),
     birthdate,
     birthdateFormat: birthdate ? moment(birthdate).format("DD/MM/YYYY") : "",

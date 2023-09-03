@@ -305,7 +305,8 @@
     "draft": "Rascunho",
     "saveDraft": "Salvar rascunho",
     "loadDraft": "Carregar rascunho",
-    "appointment": "Agendamento"
+    "appointment": "Agendamento",
+    "dischargeDate": "Data de alta"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"

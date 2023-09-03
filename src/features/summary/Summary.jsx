@@ -25,6 +25,7 @@ import {
   allergiesToText,
   listToText,
   receiptToText,
+  drugsUsedTotext,
 } from "./verbalizers";
 
 function Summary({ mock }) {
@@ -231,7 +232,7 @@ function Summary({ mock }) {
                   2.2.4) Medicamentos utilizados na internação
                 </h4>
                 <SummaryPanelText
-                  text={listToText(summaryData.drugsUsed, "name")}
+                  text={drugsUsedTotext(summaryData.drugsUsed)}
                   position="drugsUsed"
                 ></SummaryPanelText>
 

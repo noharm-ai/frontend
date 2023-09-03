@@ -34,6 +34,42 @@ export const listToText = (list, prop) => {
   return list.map((e) => `* ${e[prop]}`).join("\n");
 };
 
+export const drugsUsedTotext = (list) => {
+  if (!list || !list.length) {
+    return "Nenhum registro encontrado";
+  }
+
+  const periodKeys = ["J1"];
+
+  const groups = [];
+  list.forEach((item) => {
+    const idClass = item.idClass || "empty";
+
+    if (!groups[idClass]) {
+      groups[idClass] = [item];
+    } else {
+      groups[idClass].push(item);
+    }
+  });
+
+  const result = [];
+  Object.keys(groups).forEach((g) => {
+    const drugs = [];
+    groups[g].forEach((d) => {
+      let drug = d.name;
+
+      if (periodKeys.indexOf(g) !== -1) {
+        drug = `\n- ${d.name} -- ${d.period}`;
+      }
+
+      drugs.push(drug);
+    });
+    result.push(`* ${groups[g][0].nameClass || "Outros"}: ${drugs.join(", ")}`);
+  });
+
+  return result.join("\n");
+};
+
 export const receiptToText = (drugs) => {
   if (!drugs || !drugs.length) {
     return "Nenhum medicamento encontrado";
@@ -80,7 +116,12 @@ Data da alta: ${
 };
 
 export const patientAttrToText = (patient) => {
-  return `Peso: ${patient.weight ? `${patient.weight} Kg` : "Não informado"}
+  return `Peso: ${patient.weight ? `${patient.weight} Kg ` : "Não informado"}
+Data do Peso: ${
+    patient.weightDate
+      ? moment(patient.weightDate).format("DD/MM/YYYY")
+      : "Não informado"
+  }
 Altura: ${patient.height ? `${patient.height} cm` : "Não informado"}  
 IMC: ${patient.imc ? `${patient.imc} kg/m²` : "Não informado"}  
 `;

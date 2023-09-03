@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import moment from "moment";
 
 import NumericValue from "components/NumericValue";
 import { patientAttrToText } from "../verbalizers";
@@ -26,11 +27,19 @@ function SummaryPanelAttributes({ patient, position }) {
         <div className="attribute">
           <label>Peso:</label>{" "}
           <span>
-            {patient.weight ? (
-              <NumericValue value={patient.weight} suffix="Kg" />
-            ) : (
-              t("patientCard.notAvailable")
-            )}
+            <>
+              {patient.weight ? (
+                <NumericValue value={patient.weight} suffix="Kg" />
+              ) : (
+                t("patientCard.notAvailable")
+              )}
+              {patient.weightDate ? (
+                <span>
+                  {" "}
+                  ({moment(patient.weightDate).format("DD/MM/YYYY")})
+                </span>
+              ) : null}
+            </>
           </span>
         </div>
 
