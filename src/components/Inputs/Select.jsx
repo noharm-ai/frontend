@@ -1,4 +1,3 @@
-import "antd/lib/select/style/index.css";
 import AntSelect from "antd/lib/select";
 import styled from "styled-components/macro";
 import { rgba } from "polished";

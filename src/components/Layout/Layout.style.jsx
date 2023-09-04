@@ -1,4 +1,3 @@
-import "antd/lib/layout/style/index.css";
 import { Layout } from "antd";
 import styled from "styled-components/macro";
 

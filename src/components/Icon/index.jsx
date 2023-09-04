@@ -1,4 +1,3 @@
-import "antd/lib/icon/style/index.css";
 import React from "react";
 import isEmpty from "lodash.isempty";
 import Icon, { InfoCircleFilled } from "@ant-design/icons";

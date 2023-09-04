@@ -1,6 +1,5 @@
-import 'antd/lib/grid/style/index.css';
-import styled from 'styled-components/macro';
-import { Col as AntCol, Row as AntRow } from 'antd/lib/grid';
+import styled from "styled-components/macro";
+import { Col as AntCol, Row as AntRow } from "antd/lib/grid";
 
 const Container = styled.div`
   max-width: 1198px;

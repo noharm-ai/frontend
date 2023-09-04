@@ -1,4 +1,3 @@
-import "antd/lib/spin/style/index.css";
 import { createGlobalStyle } from "styled-components/macro";
 import { rgba } from "polished";
 
