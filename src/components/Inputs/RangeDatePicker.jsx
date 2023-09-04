@@ -1,7 +1,7 @@
 import React from "react";
 import AntDatePicker from "antd/lib/date-picker";
-import localePtBr from "antd/lib/date-picker/locale/pt_BR";
-import localeEnUs from "antd/lib/date-picker/locale/en_US";
+import localePtBr from "dayjs/locale/pt-br";
+import localeEnUs from "dayjs/locale/en";
 
 export const RangeDatePicker = (props) => (
   <AntDatePicker.RangePicker
