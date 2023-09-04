@@ -169,16 +169,15 @@ export default function ScoreWizard({
                     </Select.Option>
                   ))}
                 </Select>
-                {(isAdmin || security.isTraining()) && (
-                  <Tooltip title={t("titles.addDrugMeasureUnit")}>
-                    <Button
-                      type="primary"
-                      onClick={() => setEditDrugMeasureUnits(true)}
-                      icon={<PlusOutlined />}
-                      style={{ marginLeft: "5px" }}
-                    ></Button>
-                  </Tooltip>
-                )}
+
+                <Tooltip title={t("titles.addDrugMeasureUnit")}>
+                  <Button
+                    type="primary"
+                    onClick={() => setEditDrugMeasureUnits(true)}
+                    icon={<PlusOutlined />}
+                    style={{ marginLeft: "5px" }}
+                  ></Button>
+                </Tooltip>
               </Col>
             </>
           </Row>
