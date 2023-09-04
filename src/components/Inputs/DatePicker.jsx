@@ -1,7 +1,4 @@
 import React from "react";
-import AntDatePicker from "antd/lib/date-picker";
-import locale from "dayjs/locale/pt-br";
+import { DatePicker as AntDatePicker } from "antd";
 
-export const DatePicker = (props) => (
-  <AntDatePicker locale={locale} {...props} />
-);
+export const DatePicker = (props) => <AntDatePicker {...props} />;

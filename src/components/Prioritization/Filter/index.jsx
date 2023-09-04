@@ -297,7 +297,6 @@ export default function Filter({
               onChange={onDateChange}
               popupClassName="noArrow"
               allowClear={false}
-              language={i18n.language}
             />
           </Box>
         </Col>

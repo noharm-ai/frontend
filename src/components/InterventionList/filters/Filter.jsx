@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
-import moment from "moment";
+import dayjs from "dayjs";
 
 import notification from "components/notification";
 import AdvancedFilter from "components/AdvancedFilter";
@@ -21,14 +21,14 @@ export default function Filter({
     description: t("error.description"),
   };
   const initialValues = {
-    startDate: moment().subtract(15, "days").format("YYYY-MM-DD"),
+    startDate: dayjs().subtract(15, "days").format("YYYY-MM-DD"),
     endDate: null,
     idSegment: null,
   };
 
   useEffect(() => {
     searchList({
-      startDate: moment().subtract(15, "days").format("YYYY-MM-DD"),
+      startDate: dayjs().subtract(15, "days").format("YYYY-MM-DD"),
     });
   }, [searchList]);
 
