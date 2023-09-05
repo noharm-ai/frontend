@@ -106,8 +106,11 @@ export const Wrapper = styled.div`
 
   .copyright {
     align-self: flex-end;
-    color: #1d2536;
+    color: #fff;
     flex-grow: 1;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     font-weight: ${get("weight.light")};
     font-size: 12px;
     text-align: center;
