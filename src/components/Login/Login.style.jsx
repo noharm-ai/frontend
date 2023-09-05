@@ -108,7 +108,6 @@ export const Wrapper = styled.div`
     align-self: flex-end;
     color: #1d2536;
     flex-grow: 1;
-    font-family: ${get("fonts.secondary")};
     font-weight: ${get("weight.light")};
     font-size: 12px;
     text-align: center;

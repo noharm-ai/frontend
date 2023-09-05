@@ -8,7 +8,6 @@ export const PageHeader = styled.div`
   .page-header-title {
     color: #2e3c5a;
     display: block;
-    font-family: Montserrat;
     font-size: 24px;
     font-weight: 600;
     margin: 0;
@@ -18,7 +17,6 @@ export const PageHeader = styled.div`
   .page-header-legend {
     color: #2e3c5a;
     display: block;
-    font-family: Montserrat;
     font-size: 0.875rem;
     font-weight: 400;
     margin: 0;

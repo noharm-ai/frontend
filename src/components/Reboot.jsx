@@ -16,9 +16,9 @@ const ResetStyled = createGlobalStyle`
 
   body {
     color: ${get("colors.text")};
-    font-family: ${get("fonts.primary")};
     font-size: ${get("sizes.defaultFontSize")};
     font-weight: ${get("weight.regular")};
+    font-variant-numeric: tabular-nums;
     margin: 0;
   }
 

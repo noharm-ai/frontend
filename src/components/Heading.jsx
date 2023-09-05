@@ -5,7 +5,6 @@ import { get } from "styles/utils";
 const Heading = styled.h1`
   color: ${get("colors.primary")};
   display: block;
-  font-family: ${get("fonts.primary")};
   font-size: ${({ size }) => size || "24px"};
   font-weight: ${get("weight.semiBold")};
   margin: ${({ margin }) => margin || 0};

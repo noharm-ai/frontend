@@ -7,14 +7,6 @@ const WrappedPopover = (props: PopoverProps) => {
   return <Popover {...props} overlayClassName={props.className} />;
 };
 
-const PopoverStyled = styled(WrappedPopover)`
-  .ant-popover-content,
-  .ant-popover-title,
-  .ant-popover-inner-content {
-    background-color: rgba(0, 0, 0, 0.75);
-    color: #fff;
-    border-radius: 4px;
-  }
-`;
+const PopoverStyled = styled(WrappedPopover)``;
 
 export default PopoverStyled;

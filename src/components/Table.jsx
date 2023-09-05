@@ -25,7 +25,6 @@ const Table = styled(AntTable)`
 
   .ant-table-column-title {
     color: ${get("colors.primary")};
-    font-family: ${get("fonts.primary")};
     font-weight: ${get("weight.semiBold")};
   }
 

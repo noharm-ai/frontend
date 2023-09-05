@@ -52,7 +52,6 @@ Wrapper.Footer = styled(Layout.Footer)`
   &.ant-layout-footer {
     color: #888;
     font-size: 16px;
-    font-family: ${get("fonts.secondary")};
     font-weight: ${get("weight.light")};
     text-align: center;
   }
