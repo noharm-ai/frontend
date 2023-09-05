@@ -3,14 +3,14 @@ import styled from "styled-components/macro";
 export const Item = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 10px 5px;
+  padding: 8px 5px;
   border: 1px solid ${(props) => (props.alert ? "#F68C97" : "#e0e0e0")};
   border-radius: 5px;
   background: ${(props) => (props.alert ? "#F8DEE2" : "#fff")};
 
   .name {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
   }
 
   .icon {

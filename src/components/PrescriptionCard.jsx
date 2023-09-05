@@ -22,7 +22,7 @@ export default styled.div`
     align-items: center;
     justify-content: space-between;
     font-size: 18px;
-    font-weight: 500;
+    font-weight: 400;
     color: #2e3c5a;
     margin-top: 5px;
     margin-bottom: 10px;

@@ -200,7 +200,7 @@ export const PatientBox = styled.div`
 
         .patient-data-item-value {
           font-size: 12px;
-          font-weight: 500;
+          font-weight: 400;
           color: ${get("colors.primary")};
           white-space: nowrap;
           text-overflow: ellipsis;
