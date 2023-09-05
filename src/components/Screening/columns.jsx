@@ -521,7 +521,8 @@ export const expandedRowRender = (bag) => (record) => {
                   bag.fetchPeriod(record.idPrescriptionDrug, record.source)
                 }
                 loading={bag.periodObject.isFetching}
-                type="nda gtm-bt-period"
+                type="default"
+                className="nda gtm-bt-period"
               >
                 {bag.t("prescriptionDrugList.exrPeriodBtn")}
               </Link>

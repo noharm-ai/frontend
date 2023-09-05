@@ -236,11 +236,12 @@ const Action = ({
       {isChecked && (
         <Tooltip title="Desfazer situação" placement="left">
           <Button
-            type={
+            className={
               onShowModal
-                ? "danger gtm-bt-menu-undo-interv-status"
-                : "danger gtm-bt-tab-undo-interv-status"
+                ? " gtm-bt-menu-undo-interv-status"
+                : " gtm-bt-tab-undo-interv-status"
             }
+            danger
             ghost
             onClick={() =>
               saveIntervention({

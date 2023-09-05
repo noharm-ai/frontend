@@ -243,6 +243,12 @@ const ResetStyled = createGlobalStyle`
   .ant-menu-inline-collapsed-tooltip a {
     text-decoration: none;
   }
+
+  .default-modal {
+    .ant-modal-confirm-content {
+      max-width: none !important;
+    }
+  }
 `;
 
 export default ResetStyled;
