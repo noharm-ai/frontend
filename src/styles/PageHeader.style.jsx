@@ -8,7 +8,7 @@ export const PageHeader = styled.div`
   .page-header-title {
     color: #2e3c5a;
     display: block;
-    font-size: 24px;
+    font-size: 30px;
     font-weight: 600;
     margin: 0;
     text-align: left;

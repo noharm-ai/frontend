@@ -113,7 +113,7 @@ export const InterventionView = ({
                 intervention.fetchFuturePrescription(intervention.id)
               }
               loading={intervention.futurePrescription.isFetching}
-              type="nda gtm-bt-iterv-future"
+              className="nda gtm-bt-iterv-future"
             >
               {t("labels.showNextPrescription")}
             </Link>

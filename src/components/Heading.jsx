@@ -5,7 +5,7 @@ import { get } from "styles/utils";
 const Heading = styled.h1`
   color: ${get("colors.primary")};
   display: block;
-  font-size: ${({ size }) => size || "24px"};
+  font-size: ${({ size }) => size || "30px"};
   font-weight: ${get("weight.semiBold")};
   margin: ${({ margin }) => margin || 0};
   text-align: ${({ textAlign }) => textAlign || "left"};

@@ -44,6 +44,14 @@ export const ScreeningTabs = styled(Tabs)`
     box-shadow: 3px 0px 4px rgba(4, 0, 6, 0.15);
     min-height: 100px;
   }
+
+  .ant-tabs-tab {
+    background: rgba(255, 255, 255, 0.5) !important;
+
+    &.ant-tabs-tab-active {
+      background: rgba(255, 255, 255, 1) !important;
+    }
+  }
 `;
 
 export const BoxWrapper = styled.section`
