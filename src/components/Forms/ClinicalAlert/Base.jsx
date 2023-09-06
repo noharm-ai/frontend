@@ -1,5 +1,5 @@
 import React from "react";
-import moment from "moment";
+import dayjs from "dayjs";
 import "styled-components/macro";
 import { useFormikContext } from "formik";
 
@@ -28,7 +28,7 @@ export default function Base() {
         <Col xs={layout.input}>
           <DatePicker
             format="DD/MM/YYYY HH:mm"
-            value={alertExpire ? moment(alertExpire) : null}
+            value={alertExpire ? dayjs(alertExpire) : null}
             onChange={(value) =>
               setFieldValue("alertExpire", value.format("YYYY-MM-DDTHH:mm:00"))
             }

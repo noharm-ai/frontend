@@ -2,7 +2,7 @@ import React from "react";
 import "styled-components/macro";
 import isEmpty from "lodash.isempty";
 import { useFormikContext } from "formik";
-import moment from "moment";
+import dayjs from "dayjs";
 import { SettingOutlined, DownloadOutlined } from "@ant-design/icons";
 
 import { Col } from "components/Grid";
@@ -54,7 +54,7 @@ export default function Base({
   };
 
   const disabledDate = (current) => {
-    return current && current < moment().subtract(1, "days").endOf("day");
+    return current && current < dayjs().subtract(1, "days").endOf("day");
   };
 
   const loadNote = (value) => {
@@ -119,7 +119,7 @@ export default function Base({
           <Col xs={24}>
             <DatePicker
               format="DD/MM/YYYY HH:mm"
-              value={date ? moment(date) : null}
+              value={date ? dayjs(date) : null}
               onChange={(value) =>
                 setFieldValue("date", value.format("YYYY-MM-DDTHH:mm:00"))
               }
