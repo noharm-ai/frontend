@@ -9,6 +9,8 @@ import {
   SettingOutlined,
   FileSearchOutlined,
   RobotOutlined,
+  LikeOutlined,
+  DislikeOutlined,
 } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
@@ -18,15 +20,18 @@ import Tooltip from "components/Tooltip";
 import { Textarea } from "components/Inputs";
 import { textToHtml } from "utils/transformers/utils";
 
-import { setBlock } from "../SummarySlice";
+import { setBlock, setLike } from "../SummarySlice";
 import SummaryPanelAIConfig from "./SummaryPanelAIConfig";
 import SummaryPanelAIAudit from "./SummaryPanelAIAudit";
 import { SummaryPanel } from "../Summary.style";
 
-function SummaryPanelAI({ url, apikey, payload, position }) {
+function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
   const dispatch = useDispatch();
   const status = useSelector(
     (state) => state.summary.blocks[position]?.aiStatus
+  );
+  const likeStatus = useSelector(
+    (state) => state.summary.blocks[position]?.like
   );
   const result = useSelector(
     (state) => state.summary.blocks[position]?.text || "Nada consta"
@@ -96,6 +101,21 @@ function SummaryPanelAI({ url, apikey, payload, position }) {
       setBlock({
         id: position,
         data: value,
+      })
+    );
+  };
+
+  const likeAction = (type) => {
+    dispatch(
+      setLike({
+        type: `summary-${type}`,
+        block: position,
+        status: type,
+        value: {
+          admissionNumber,
+          block: position,
+          text: result,
+        },
       })
     );
   };
@@ -205,6 +225,28 @@ function SummaryPanelAI({ url, apikey, payload, position }) {
               />
             </Tooltip>
           )}
+
+          <Tooltip title="Útil">
+            <Button
+              shape="circle"
+              icon={<LikeOutlined />}
+              onClick={() => likeAction("like")}
+              size="large"
+              type={likeStatus === "like" ? "primary" : "default"}
+              loading={likeStatus === "loading"}
+            />
+          </Tooltip>
+
+          <Tooltip title="Inútil">
+            <Button
+              shape="circle"
+              icon={<DislikeOutlined />}
+              onClick={() => likeAction("dislike")}
+              size="large"
+              type={likeStatus === "dislike" ? "primary" : "default"}
+              loading={likeStatus === "loading"}
+            />
+          </Tooltip>
 
           <Dropdown
             menu={{ items, onClick: onMenuClick }}

@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { EditOutlined, SaveOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  SaveOutlined,
+  LikeOutlined,
+  DislikeOutlined,
+} from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
 import Button from "components/Button";
@@ -8,13 +13,16 @@ import Tooltip from "components/Tooltip";
 import { Textarea } from "components/Inputs";
 import { textToHtml } from "utils/transformers/utils";
 
-import { setBlock } from "../SummarySlice";
+import { setBlock, setLike } from "../SummarySlice";
 import { SummaryPanel } from "../Summary.style";
 
-function SummaryPanelText({ text, position }) {
+function SummaryPanelText({ text, position, admissionNumber }) {
   const dispatch = useDispatch();
   const [edit, setEdit] = useState(false);
   const result = useSelector((state) => state.summary.blocks[position]?.text);
+  const likeStatus = useSelector(
+    (state) => state.summary.blocks[position]?.like
+  );
 
   useEffect(() => {
     dispatch(
@@ -33,6 +41,21 @@ function SummaryPanelText({ text, position }) {
       })
     );
   }, [text, position, dispatch]);
+
+  const likeAction = (type) => {
+    dispatch(
+      setLike({
+        type: `summary-${type}`,
+        block: position,
+        status: type,
+        value: {
+          admissionNumber,
+          block: position,
+          text: result,
+        },
+      })
+    );
+  };
 
   return (
     <SummaryPanel className={edit ? "edit" : ""} data-value={result}>
@@ -81,6 +104,28 @@ function SummaryPanelText({ text, position }) {
             />
           </Tooltip>
         )}
+
+        <Tooltip title="Útil">
+          <Button
+            shape="circle"
+            icon={<LikeOutlined />}
+            onClick={() => likeAction("like")}
+            size="large"
+            type={likeStatus === "like" ? "primary" : "default"}
+            loading={likeStatus === "loading"}
+          />
+        </Tooltip>
+
+        <Tooltip title="Inútil">
+          <Button
+            shape="circle"
+            icon={<DislikeOutlined />}
+            onClick={() => likeAction("dislike")}
+            size="large"
+            type={likeStatus === "dislike" ? "primary" : "default"}
+            loading={likeStatus === "loading"}
+          />
+        </Tooltip>
       </div>
     </SummaryPanel>
   );
