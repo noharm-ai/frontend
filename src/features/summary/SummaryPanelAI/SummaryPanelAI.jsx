@@ -243,7 +243,7 @@ function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
               icon={<DislikeOutlined />}
               onClick={() => likeAction("dislike")}
               size="large"
-              type={likeStatus === "dislike" ? "primary" : "default"}
+              type={likeStatus === "dislike" ? "danger" : "default"}
               loading={likeStatus === "loading"}
             />
           </Tooltip>
