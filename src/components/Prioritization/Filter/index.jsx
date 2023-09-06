@@ -49,7 +49,7 @@ export default function Filter({
   const [open, setOpen] = useState(false);
 
   const [date, setDate] = useState([dayjs(params?.startDate), null]);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const getParams = useCallback(
     (forceParams) => {
