@@ -8,74 +8,90 @@ const initialState = {
     patient: {
       text: null,
       ai: false,
+      like: "idle",
     },
     admission: {
       text: null,
       ai: false,
+      like: "idle",
     },
     reason: {
       text: null,
       ai: true,
       aiStatus: "paused",
+      like: "idle",
     },
     diagnosis: {
       text: null,
       ai: true,
       aiStatus: "paused",
+      like: "idle",
     },
     allergies: {
       text: null,
       ai: false,
+      like: "idle",
     },
     previousDrugs: {
       text: null,
       ai: true,
       aiStatus: "paused",
+      like: "idle",
     },
     clinicalSummary: {
       text: null,
       ai: true,
       aiStatus: "paused",
+      like: "idle",
     },
     labExams: {
       text: null,
       ai: false,
+      like: "idle",
     },
     textExams: {
       text: null,
       ai: true,
       aiStatus: "paused",
+      like: "idle",
     },
     procedures: {
       text: null,
       ai: true,
       aiStatus: "paused",
+      like: "idle",
     },
     drugsUsed: {
       text: null,
       ai: false,
+      like: "idle",
     },
     drugsSuspended: {
       text: null,
       ai: false,
+      like: "idle",
     },
     dischargeCondition: {
       text: null,
       ai: true,
       aiStatus: "paused",
+      like: "idle",
     },
     dischargeStats: {
       text: null,
       ai: false,
+      like: "idle",
     },
     dischargePlan: {
       text: null,
       ai: true,
       aiStatus: "paused",
+      like: "idle",
     },
     recipe: {
       text: null,
       ai: false,
+      like: "idle",
     },
   },
   status: "idle",
@@ -114,6 +130,17 @@ export const fetchSummary = createAsyncThunk(
   }
 );
 
+export const setLike = createAsyncThunk(
+  "summary/setLike",
+  async (params, thunkAPI) => {
+    const { access_token } = thunkAPI.getState().auth.identify;
+
+    const { data } = await api.putMemory(access_token, params);
+
+    return data;
+  }
+);
+
 const summarySlice = createSlice({
   name: "summary",
   initialState,
@@ -137,6 +164,12 @@ const summarySlice = createSlice({
       .addCase(fetchSummary.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(setLike.pending, (state, action) => {
+        state.blocks[action.meta.arg.block].like = "loading";
+      })
+      .addCase(setLike.fulfilled, (state, action) => {
+        state.blocks[action.meta.arg.block].like = action.meta.arg.status;
       });
   },
 });

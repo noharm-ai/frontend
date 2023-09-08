@@ -162,6 +162,7 @@ function Summary({ mock }) {
               <div className="sub_level">
                 <h4 id="motivo-admissao">2.1.1) Motivo da Admissão</h4>
                 <SummaryPanelAI
+                  admissionNumber={params.admissionNumber}
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.reason}
@@ -172,6 +173,7 @@ function Summary({ mock }) {
                   2.1.2) Diagnósticos (primário e secundário)
                 </h4>
                 <SummaryPanelAI
+                  admissionNumber={params.admissionNumber}
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.diagnosis}
@@ -180,6 +182,7 @@ function Summary({ mock }) {
 
                 <h4 id="alergias">2.1.3) Alergias</h4>
                 <SummaryPanelText
+                  admissionNumber={params.admissionNumber}
                   text={allergiesToText(summaryData.allergies)}
                   position="allergies"
                 ></SummaryPanelText>
@@ -188,6 +191,7 @@ function Summary({ mock }) {
                   2.1.4) Medicamentos de uso prévio
                 </h4>
                 <SummaryPanelAI
+                  admissionNumber={params.admissionNumber}
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.previousDrugs}
@@ -199,6 +203,7 @@ function Summary({ mock }) {
 
               <div className="sub_level">
                 <SummaryPanelAI
+                  admissionNumber={params.admissionNumber}
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.clinicalSummary}
@@ -208,12 +213,14 @@ function Summary({ mock }) {
                 <h4 id="exames-lab">2.2.1) Exames Laboratoriais</h4>
 
                 <SummaryPanelText
+                  admissionNumber={params.admissionNumber}
                   text={examsToText(summaryData.exams)}
                   position="labExams"
                 ></SummaryPanelText>
 
                 <h4 id="exames-textuais">2.2.2) Exames Textuais</h4>
                 <SummaryPanelAI
+                  admissionNumber={params.admissionNumber}
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.exams}
@@ -222,6 +229,7 @@ function Summary({ mock }) {
 
                 <h4 id="procedimentos">2.2.3) Procedimentos realizados</h4>
                 <SummaryPanelAI
+                  admissionNumber={params.admissionNumber}
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.procedures}
@@ -232,6 +240,7 @@ function Summary({ mock }) {
                   2.2.4) Medicamentos utilizados na internação
                 </h4>
                 <SummaryPanelText
+                  admissionNumber={params.admissionNumber}
                   text={drugsUsedTotext(summaryData.drugsUsed)}
                   position="drugsUsed"
                 ></SummaryPanelText>
@@ -241,6 +250,7 @@ function Summary({ mock }) {
                   Internação
                 </h4>
                 <SummaryPanelText
+                  admissionNumber={params.admissionNumber}
                   text={listToText(summaryData.drugsSuspended, "name")}
                   position="drugsSuspended"
                 ></SummaryPanelText>
@@ -250,6 +260,7 @@ function Summary({ mock }) {
 
               <div className="sub_level">
                 <SummaryPanelAI
+                  admissionNumber={params.admissionNumber}
                   url={summaryData.summaryConfig?.url}
                   apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.dischargeCondition}
@@ -268,6 +279,7 @@ function Summary({ mock }) {
             <div className="sub_level">
               <h3 id="plano-alta">3.1) Plano de Alta</h3>
               <SummaryPanelAI
+                admissionNumber={params.admissionNumber}
                 url={summaryData.summaryConfig?.url}
                 apikey={summaryData.summaryConfig?.apikey}
                 payload={summaryData.summaryConfig?.dischargePlan}
@@ -276,6 +288,7 @@ function Summary({ mock }) {
 
               <h3 id="receita">3.2) Receita</h3>
               <SummaryPanelText
+                admissionNumber={params.admissionNumber}
                 text={receiptToText(summaryData.receipt)}
                 position="recipe"
               ></SummaryPanelText>
