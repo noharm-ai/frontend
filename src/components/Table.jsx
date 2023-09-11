@@ -19,7 +19,8 @@ const Table = styled(AntTable)`
     padding: 5px;
   }
 
-  .ant-table-thead > tr > th {
+  .ant-table-thead > tr > th,
+  .ant-table-thead > tr > td {
     background: transparent;
   }
 
@@ -81,18 +82,10 @@ const Table = styled(AntTable)`
     }
   }
 
-  .ant-table-thead
-    > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(
-      .ant-table-row-selected
-    )
-    > td,
   .ant-table-tbody
     > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(
       .ant-table-row-selected
     )
-    > td,
-  .ant-table-thead
-    > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
     > td,
   .ant-table-tbody
     > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)

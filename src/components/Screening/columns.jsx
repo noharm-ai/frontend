@@ -137,7 +137,8 @@ const InterventionAction = ({
       {isChecked && (
         <Tooltip title="Desfazer situação" placement="left">
           <Button
-            type="danger gtm-bt-undo-interv-status"
+            className="gtm-bt-undo-interv-status"
+            danger
             ghost
             onClick={() => saveIntervention({ idIntervention, status: "s" })}
             loading={isSavingIntervention}
