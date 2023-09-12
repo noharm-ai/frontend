@@ -472,7 +472,13 @@ export const expandedRowRender = (bag) => (record) => {
               label={bag.t("prescriptionDrugList.panelPrescription")}
               span={3}
             >
-              {record.cpoe}
+              <Button
+                type="link"
+                href={`/prescricao/${record.cpoe}`}
+                target="_blank"
+              >
+                {record.cpoe}
+              </Button>
             </Descriptions.Item>
             <Descriptions.Item
               label={bag.t("prescriptionDrugList.panelPrescriber")}
