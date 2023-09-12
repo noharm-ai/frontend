@@ -28,7 +28,15 @@ const setTitle = ({ user }) => {
   return user.account.userName;
 };
 
-const Me = ({ user, access_token, t, notification, setNotification }) => {
+const Me = ({
+  user,
+  access_token,
+  t,
+  notification,
+  setNotification,
+  doLogout,
+  logoutUrl,
+}) => {
   const location = useLocation();
   const sec = security(user.account.roles);
 
@@ -44,6 +52,19 @@ const Me = ({ user, access_token, t, notification, setNotification }) => {
     } catch (ex) {
       console.error("octadesk error", ex);
       window.open(`mailto:${process.env.REACT_APP_SUPPORT_EMAIL}`);
+    }
+  };
+
+  const logout = () => {
+    try {
+      window.octadesk.chat.hideApp();
+    } catch (ex) {
+      console.error("octadesk error", ex);
+    }
+
+    doLogout();
+    if (logoutUrl) {
+      window.location.href = logoutUrl;
     }
   };
 
@@ -86,11 +107,7 @@ const Me = ({ user, access_token, t, notification, setNotification }) => {
         >
           {t("layout.help")}
         </LogOut>
-        <LogOut
-          onClick={(e) => window.octadesk.chat.hideApp()}
-          href="/logout"
-          id="gtm-lnk-sair"
-        >
+        <LogOut onClick={(e) => logout()} id="gtm-lnk-sair">
           {t("layout.logout")}
         </LogOut>
       </div>

@@ -13,6 +13,7 @@ const mapStateToProps = ({ auth, user, app }) => ({
   security: security(user.account.roles),
   featureService: FeatureService(user.account.features),
   access_token: auth.identify.access_token,
+  logoutUrl: app.config.logoutUrl,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

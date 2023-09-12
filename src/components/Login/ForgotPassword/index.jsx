@@ -64,6 +64,7 @@ export default function ForgotPassword({ forgotPassword, status }) {
         onChange={handleChange}
         status={errors.email && touched.email ? "error" : ""}
         size="large"
+        className="input"
       />
 
       <Button
