@@ -18,6 +18,7 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
   const result = ((lAmount * lVol) / lTotalVol) * lSpeed;
   const resultByMinute = result / 60;
   const resultByWeightHour = result / lWeight;
+  const resultByWeightDay = (result / lWeight) * 24;
   const resultByWeightMinute = resultByWeightHour / 60;
   const solution = (lAmount * lVol) / lTotalVol;
 
@@ -156,6 +157,9 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
             </Descriptions.Item>
             <Descriptions.Item label={formatValue(resultByMinute)} span={3}>
               {unit}/min
+            </Descriptions.Item>
+            <Descriptions.Item label={formatValue(resultByWeightDay)} span={3}>
+              {unit}/Kg/dia
             </Descriptions.Item>
             <Descriptions.Item label={formatValue(resultByWeightHour)} span={3}>
               {unit}/Kg/h
