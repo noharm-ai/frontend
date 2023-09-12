@@ -9,7 +9,6 @@ import Button from "components/Button";
 import { Input } from "components/Inputs";
 
 import { useTranslation } from "react-i18next";
-import { FieldSet } from "../Login.style";
 
 const initialValues = {
   email: "",
@@ -55,18 +54,17 @@ export default function ForgotPassword({ forgotPassword, status }) {
 
   return (
     <>
-      <FieldSet>
-        <Input
-          placeholder={t("login.email")}
-          prefix={<UserOutlined />}
-          name="email"
-          type="email"
-          value={values.email}
-          onBlur={handleBlur}
-          onChange={handleChange}
-          status={errors.email && touched.email ? "error" : ""}
-        />
-      </FieldSet>
+      <Input
+        placeholder={t("login.email")}
+        prefix={<UserOutlined />}
+        name="email"
+        type="email"
+        value={values.email}
+        onBlur={handleBlur}
+        onChange={handleChange}
+        status={errors.email && touched.email ? "error" : ""}
+        size="large"
+      />
 
       <Button
         type="primary gtm-btn-login"
@@ -74,6 +72,7 @@ export default function ForgotPassword({ forgotPassword, status }) {
         onClick={handleSubmit}
         loading={isSaving}
         disabled={isSaving}
+        size="large"
       >
         Enviar
       </Button>

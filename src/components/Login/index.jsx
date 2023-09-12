@@ -13,14 +13,13 @@ import { isEmpty } from "utils/lodash";
 import message from "components/message";
 import Button from "components/Button";
 import { Input, Checkbox } from "components/Inputs";
-import { Container, Row, Col } from "components/Grid";
 import Spin from "components/Spin";
 import notification from "components/notification";
 import { generateRandomString, getCodeChallenge } from "utils/auth";
 
 import ForgotPassword from "containers/Login/ForgotPassword";
 import api from "services/api";
-import { Wrapper, Box, Brand, FieldSet, ForgotPass } from "./Login.style";
+import { LoginContainer, Brand } from "./Login.style";
 
 const initialValues = {
   email: "",
@@ -102,136 +101,124 @@ export default function Login({ isLogging, error, doLogin, match }) {
   };
 
   return (
-    <Wrapper as="form">
-      <Container>
-        <Row type="flex" justify="center">
-          <Col span={24} md={8}>
-            <Box>
-              <Brand title="noHarm.ai | Cuidando dos pacientes" />
+    <LoginContainer>
+      <div className="form">
+        <Brand title="noHarm.ai | Cuidando dos pacientes" />
 
-              {params.schema ? (
-                <>
-                  {loading ? (
-                    <div className="loader">
-                      <Spin size="large" />
-                    </div>
-                  ) : (
-                    <>
-                      <div className="company-name">{oauthData?.company}</div>
-                      <Button
-                        type="primary gtm-btn-oauthlogin"
-                        block
-                        onClick={openOauthLogin}
-                      >
-                        {t("login.login")}
-                      </Button>
-                      <p className="description">
-                        Você será redirecionado para a página de login da sua
-                        empresa.
-                      </p>
-                    </>
-                  )}
-                </>
-              ) : (
-                <>
-                  {!forgotPassTabActive && (
-                    <>
-                      <FieldSet>
-                        <Input
-                          placeholder={t("login.email")}
-                          prefix={<UserOutlined />}
-                          name="email"
-                          type="email"
-                          value={values.email}
-                          status={
-                            (errors.email && touched.email) || !isEmpty(error)
-                              ? "error"
-                              : ""
-                          }
-                          onBlur={handleBlur}
-                          onChange={handleChange}
-                        />
-                      </FieldSet>
+        {params.schema ? (
+          <div className="form-container">
+            {loading ? (
+              <div className="loader">
+                <Spin size="large" />
+              </div>
+            ) : (
+              <>
+                <div className="company-name">{oauthData?.company}</div>
+                <Button
+                  type="primary gtm-btn-oauthlogin"
+                  block
+                  onClick={openOauthLogin}
+                >
+                  {t("login.login")}
+                </Button>
+                <p className="description">
+                  Você será redirecionado para a página de login da sua empresa.
+                </p>
+              </>
+            )}
+          </div>
+        ) : (
+          <>
+            {!forgotPassTabActive && (
+              <div className="form-container">
+                <Input
+                  placeholder={t("login.email")}
+                  prefix={<UserOutlined />}
+                  name="email"
+                  type="email"
+                  value={values.email}
+                  status={
+                    (errors.email && touched.email) || !isEmpty(error)
+                      ? "error"
+                      : ""
+                  }
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  size="large"
+                  className="input"
+                />
 
-                      <FieldSet>
-                        <Input.Password
-                          placeholder={t("login.password")}
-                          prefix={<LockOutlined />}
-                          name="password"
-                          value={values.password}
-                          onBlur={handleBlur}
-                          onChange={handleChange}
-                          status={
-                            (errors.password && touched.password) ||
-                            !isEmpty(error)
-                              ? "error"
-                              : ""
-                          }
-                        />
-                      </FieldSet>
+                <Input.Password
+                  placeholder={t("login.password")}
+                  prefix={<LockOutlined />}
+                  name="password"
+                  value={values.password}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  status={
+                    (errors.password && touched.password) || !isEmpty(error)
+                      ? "error"
+                      : ""
+                  }
+                  size="large"
+                  className="input"
+                />
 
-                      <Row>
-                        <Col span={12}>
-                          <FieldSet>
-                            <Checkbox
-                              name="keepMeLogged"
-                              checked={values.keepMeLogged}
-                              onChange={handleChange}
-                            >
-                              {t("login.keepMeLogged")}
-                            </Checkbox>
-                          </FieldSet>
-                        </Col>
-                        <Col span={12} css="text-align: right">
-                          <ForgotPass
-                            href="#"
-                            className="gtm-lnk-forgotpass"
-                            onClick={() => setForgotPassTab(true)}
-                          >
-                            {t("login.forgotPass")}
-                          </ForgotPass>
-                        </Col>
-                      </Row>
+                <div className="checkbox">
+                  <Checkbox
+                    name="keepMeLogged"
+                    checked={values.keepMeLogged}
+                    onChange={handleChange}
+                  >
+                    {t("login.keepMeLogged")}
+                  </Checkbox>
+                </div>
 
-                      <Button
-                        type="primary gtm-btn-login"
-                        htmlType="submit"
-                        block
-                        loading={isLogging}
-                        onClick={handleSubmit}
-                      >
-                        {t("login.login")}
-                      </Button>
-                    </>
-                  )}
-                  {forgotPassTabActive && (
-                    <>
-                      <ForgotPassword />
-                      <Row>
-                        <Col
-                          span={24}
-                          css="text-align: center; margin-top: 15px"
-                        >
-                          <ForgotPass
-                            href="#"
-                            className="gtm-lnk-backtologin"
-                            onClick={() => setForgotPassTab(false)}
-                          >
-                            Voltar
-                          </ForgotPass>
-                        </Col>
-                      </Row>
-                    </>
-                  )}
-                </>
-              )}
-            </Box>
-          </Col>
-        </Row>
-      </Container>
+                <Button
+                  type="primary gtm-btn-login"
+                  htmlType="submit"
+                  block
+                  loading={isLogging}
+                  onClick={handleSubmit}
+                  size="large"
+                >
+                  {t("login.login")}
+                </Button>
 
+                <Button
+                  type="text"
+                  block
+                  className="gtm-lnk-forgotpass small"
+                  size="large"
+                  onClick={() => setForgotPassTab(true)}
+                >
+                  {t("login.forgotPass")}
+                </Button>
+              </div>
+            )}
+            {forgotPassTabActive && (
+              <div className="form-container">
+                <ForgotPassword />
+
+                <Button
+                  type="text"
+                  block
+                  className="gtm-lnk-backtologin small"
+                  onClick={() => setForgotPassTab(false)}
+                >
+                  Voltar
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      <div className="bg">
+        <div className="gradient"></div>
+      </div>
       <p className="copyright">{appInfo.copyright}</p>
-    </Wrapper>
+    </LoginContainer>
   );
 }
 
