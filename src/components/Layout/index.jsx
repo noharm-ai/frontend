@@ -67,6 +67,8 @@ const Me = ({
       message: "Obrigado por usar a NoHarm!",
       description: "Até breve ;)",
     });
+    document.title = `${process.env.REACT_APP_SITE_TITLE}`;
+
     doLogout();
     if (logoutUrl) {
       window.location.href = logoutUrl;

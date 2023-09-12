@@ -41,7 +41,6 @@
     "slugify": "^1.6.5",
     "styled-components": "^5.3.5",
     "web-vitals": "^2.1.4",
-    "webfontloader": "^1.6.28",
     "yup": "^0.32.11"
   },
   "scripts": {
