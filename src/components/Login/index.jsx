@@ -29,8 +29,8 @@ const initialValues = {
 const validationSchema = Yup.object().shape({
   email: Yup.string()
     .email("Ops! Formato de email inválido.")
-    .required("Você se esqueceu de inserir o seu email."),
-  password: Yup.string().required("Você se esquecei de inserir a sua senha."),
+    .required("Você esqueceu de inserir o seu email."),
+  password: Yup.string().required("Você esqueceu de inserir a sua senha."),
 });
 
 export default function Login({ isLogging, error, doLogin, match }) {
@@ -130,7 +130,7 @@ export default function Login({ isLogging, error, doLogin, match }) {
         ) : (
           <>
             {!forgotPassTabActive && (
-              <div className="form-container">
+              <form className="form-container">
                 <Input
                   placeholder={t("login.email")}
                   prefix={<UserOutlined />}
@@ -194,7 +194,7 @@ export default function Login({ isLogging, error, doLogin, match }) {
                 >
                   {t("login.forgotPass")}
                 </Button>
-              </div>
+              </form>
             )}
             {forgotPassTabActive && (
               <div className="form-container">

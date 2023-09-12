@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import appInfo from "utils/appInfo";
 import Avatar from "components/Avatar";
 import Button from "components/Button";
+import toast from "components/notification";
 import security from "services/security";
 
 import Box from "./Box";
@@ -62,6 +63,10 @@ const Me = ({
       console.error("octadesk error", ex);
     }
 
+    toast.success({
+      message: "Obrigado por usar a NoHarm!",
+      description: "Até breve ;)",
+    });
     doLogout();
     if (logoutUrl) {
       window.location.href = logoutUrl;
