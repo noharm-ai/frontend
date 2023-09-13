@@ -29,10 +29,6 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.TEMP_CPOE_PERIOD);
   };
 
-  const hasMultipleIntervention = () => {
-    return hasFeature(Feature.MULTIPLE_INTERVENTION);
-  };
-
   return {
     hasFeature,
     hasMicromedex,
@@ -40,7 +36,6 @@ const FeaturesService = (features) => {
     hasNoHarmCare,
     hasConciliation,
     hasTempCpoePeriod,
-    hasMultipleIntervention,
   };
 };
 
