@@ -71,7 +71,9 @@ const Me = ({
 
     doLogout();
     if (logoutUrl) {
-      window.location.href = logoutUrl;
+      setTimeout(() => {
+        window.location.href = logoutUrl;
+      }, 100);
     }
   };
 
