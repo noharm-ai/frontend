@@ -61,7 +61,7 @@ export default function ExamListItem({ exam, siderCollapsed }) {
       {exam && exam.date && (
         <div>
           {t("patientCard.examDate")}:{" "}
-          {moment(exam.date).format("DD/MM/YYYY hh:mm")}
+          {moment(exam.date).format("DD/MM/YYYY HH:mm")}
         </div>
       )}
       {exam && exam.ref && <div>Ref: {refText(exam.ref)}</div>}

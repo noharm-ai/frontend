@@ -99,7 +99,7 @@ export default function Patient({
           {hasNoHarmCare && notesInfo && (
             <Alert
               message={`NoHarm Care (${moment(notesInfoDate).format(
-                "DD/MM/YYYY hh:mm"
+                "DD/MM/YYYY HH:mm"
               )})`}
               description={notesInfo}
               type="info"
