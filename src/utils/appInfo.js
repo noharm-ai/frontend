@@ -1,7 +1,9 @@
 const appName = "NoHarm.ai";
-const version = "v2.01-beta";
+const version = "v2.01-beta"; // logoff users when version change
 const currentYear = new Date().getFullYear();
-const copyright = `${appName} ${currentYear} ${version}`;
+const copyright = `${appName} ${currentYear} | v${
+  process.env.REACT_APP_VERSION || version
+}-beta`;
 
 const appInfo = {
   appName,
