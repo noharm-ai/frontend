@@ -114,6 +114,7 @@ export default function PatientCard({
         width: 500,
         okText: "Fechar",
         okButtonProps: { type: "default" },
+        wrapClassName: "default-modal",
       });
 
       modal.update({

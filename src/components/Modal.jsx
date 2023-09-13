@@ -1,4 +1,3 @@
-import "antd/lib/modal/style/index.css";
 import styled from "styled-components/macro";
 import AntModal from "antd/lib/modal";
 

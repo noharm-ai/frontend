@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import isEmpty from "lodash.isempty";
-import moment from "moment";
-import "moment/locale/pt-br";
+import dayjs from "dayjs";
 import debounce from "lodash.debounce";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -49,8 +48,8 @@ export default function Filter({
   const params = useParams();
   const [open, setOpen] = useState(false);
 
-  const [date, setDate] = useState([moment(params?.startDate), null]);
-  const { t, i18n } = useTranslation();
+  const [date, setDate] = useState([dayjs(params?.startDate), null]);
+  const { t } = useTranslation();
 
   const getParams = useCallback(
     (forceParams) => {
@@ -237,7 +236,7 @@ export default function Filter({
       frequencies: [],
       patientStatus: null,
     });
-    setDate([moment(), null]);
+    setDate([dayjs(), null]);
   };
 
   const countHiddenFilters = (filters) => {
@@ -298,7 +297,6 @@ export default function Filter({
               onChange={onDateChange}
               popupClassName="noArrow"
               allowClear={false}
-              language={i18n.language}
             />
           </Box>
         </Col>

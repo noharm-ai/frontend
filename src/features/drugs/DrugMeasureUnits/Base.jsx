@@ -65,7 +65,7 @@ function BaseForm() {
             id="factor"
             name="factor"
             min={0}
-            max={99999}
+            max={99999999}
             value={values.factor}
             onBlur={handleBlur}
             onChange={(value) => setFieldValue("factor", value)}

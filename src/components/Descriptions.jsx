@@ -1,6 +1,5 @@
-import styled from 'styled-components/macro';
-import 'antd/lib/descriptions/style/index.css';
-import Descriptions from 'antd/lib/descriptions';
+import styled from "styled-components/macro";
+import Descriptions from "antd/lib/descriptions";
 
 export default styled(Descriptions)`
   &.ant-descriptions-bordered {

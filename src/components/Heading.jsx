@@ -5,8 +5,7 @@ import { get } from "styles/utils";
 const Heading = styled.h1`
   color: ${get("colors.primary")};
   display: block;
-  font-family: ${get("fonts.primary")};
-  font-size: ${({ size }) => size || "24px"};
+  font-size: ${({ size }) => size || "30px"};
   font-weight: ${get("weight.semiBold")};
   margin: ${({ margin }) => margin || 0};
   text-align: ${({ textAlign }) => textAlign || "left"};
@@ -18,11 +17,10 @@ const Heading = styled.h1`
   }
 
   .legend {
-    font-size: 15px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 400;
     display: block;
     margin-top: 2px;
-    margin-left: 2px;
   }
 
   .red {

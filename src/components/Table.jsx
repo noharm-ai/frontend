@@ -1,5 +1,3 @@
-import "antd/lib/table/style/index.css";
-import "antd/lib/pagination/style/index.css";
 import AntTable from "antd/lib/table";
 import styled from "styled-components/macro";
 
@@ -21,13 +19,13 @@ const Table = styled(AntTable)`
     padding: 5px;
   }
 
-  .ant-table-thead > tr > th {
+  .ant-table-thead > tr > th,
+  .ant-table-thead > tr > td {
     background: transparent;
   }
 
   .ant-table-column-title {
     color: ${get("colors.primary")};
-    font-family: ${get("fonts.primary")};
     font-weight: ${get("weight.semiBold")};
   }
 
@@ -84,18 +82,10 @@ const Table = styled(AntTable)`
     }
   }
 
-  .ant-table-thead
-    > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(
-      .ant-table-row-selected
-    )
-    > td,
   .ant-table-tbody
     > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(
       .ant-table-row-selected
     )
-    > td,
-  .ant-table-thead
-    > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
     > td,
   .ant-table-tbody
     > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)

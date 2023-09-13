@@ -1,4 +1,3 @@
-import "antd/lib/input/style/index.css";
 import AntInput from "antd/lib/input";
 import styled from "styled-components/macro";
 import { rgba } from "polished";

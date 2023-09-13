@@ -1,4 +1,3 @@
-import "antd/lib/layout/style/index.css";
 import { Layout } from "antd";
 import styled from "styled-components/macro";
 
@@ -30,12 +29,14 @@ export const UserName = styled.p`
   margin: 0 40px 0 0;
 `;
 
-export const LogOut = styled.a`
+export const LogOut = styled.button`
   color: ${get("colors.primary")};
   cursor: pointer;
   font-weight: ${get("weight.bold")};
   transition: color 0.3s ease;
   text-decoration: none;
+  border: 0;
+  background: #fff;
 
   &:hover {
     color: ${get("colors.accent")};
@@ -53,7 +54,6 @@ Wrapper.Footer = styled(Layout.Footer)`
   &.ant-layout-footer {
     color: #888;
     font-size: 16px;
-    font-family: ${get("fonts.secondary")};
     font-weight: ${get("weight.light")};
     text-align: center;
   }

@@ -181,6 +181,7 @@ export default function PrescriptionDrugList({
         width: 500,
         okText: "Fechar",
         okButtonProps: { type: "default" },
+        wrapClassName: "default-modal",
       });
 
       modal.update({

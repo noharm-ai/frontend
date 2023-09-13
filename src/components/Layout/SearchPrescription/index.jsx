@@ -192,15 +192,19 @@ export default function SearchPrescription({ type, size }) {
                 <span>{format(new Date(option.date), "dd/MM/yyyy")}</span>
               </div>
               <div className="search-result-info-secondary">
-                {option.birthdate && <Tag>{formatAge(option.birthdate)}</Tag>}
+                {option.birthdate && (
+                  <Tag color="#a991d6">{formatAge(option.birthdate)}</Tag>
+                )}
                 {option.gender && (
-                  <Tag>
+                  <Tag color="#a991d6">
                     {option.gender === "M"
                       ? t("patientCard.male")
                       : t("patientCard.female")}
                   </Tag>
                 )}
-                {option.department && <Tag>{option.department}</Tag>}
+                {option.department && (
+                  <Tag color="#a991d6">{option.department}</Tag>
+                )}
               </div>
             </div>
             {type !== "summary" && (

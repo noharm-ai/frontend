@@ -1,4 +1,3 @@
-import "antd/lib/switch/style/index.css";
 import AntSwitch from "antd/lib/switch";
 import styled from "styled-components";
 

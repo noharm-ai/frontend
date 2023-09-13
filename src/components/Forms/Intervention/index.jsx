@@ -252,7 +252,8 @@ export default function Intervention({
         {isChecked && !disableUndoIntervention && (
           <Tooltip title={t("interventionForm.btnUndo")} placement="top">
             <Button
-              type="danger gtm-bt-undo-interv"
+              className="gtm-bt-undo-interv"
+              danger
               icon={<RollbackOutlined style={{ fontSize: 16 }} />}
               ghost
               loading={

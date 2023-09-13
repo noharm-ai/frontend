@@ -70,17 +70,32 @@ export const drugsUsedTotext = (list) => {
   return result.join("\n");
 };
 
-export const receiptToText = (drugs) => {
-  if (!drugs || !drugs.length) {
+export const receiptToText = (list) => {
+  if (!list || !list.length) {
     return "Nenhum medicamento encontrado";
   }
 
-  const list = drugs.map(
-    (e) =>
-      `* ${e.name}: ${e.dose} ${e.measureUnit} ${e.frequency} (Via ${e.route})`
-  );
+  const groups = [];
+  list.forEach((item) => {
+    const idClass = item.route || "empty";
 
-  return list.join("\n");
+    if (!groups[idClass]) {
+      groups[idClass] = [item];
+    } else {
+      groups[idClass].push(item);
+    }
+  });
+
+  const result = [];
+  Object.keys(groups).forEach((g) => {
+    const drugs = [];
+    groups[g].forEach((d) => {
+      drugs.push(`* ${d.name}: ${d.dose} ${d.measureUnit} ${d.frequency}`);
+    });
+    result.push(`\nVia ${groups[g][0].route || ""}: \n${drugs.join("\n")}`);
+  });
+
+  return result.join("\n").trim();
 };
 
 export const patientToText = (patient) => {

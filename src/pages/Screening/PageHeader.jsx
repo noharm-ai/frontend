@@ -250,7 +250,8 @@ export default function PageHeader({
               </span>
               <Tooltip title={t("screeningHeader.btnUndoCheck")}>
                 <Button
-                  type="danger gtm-bt-undo-check"
+                  className="gtm-bt-undo-check"
+                  danger
                   onClick={() => checkScreening(id, "0")}
                   icon={<RollbackOutlined style={{ fontSize: 16 }} />}
                   loading={isChecking}
