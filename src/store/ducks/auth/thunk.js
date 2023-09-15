@@ -99,7 +99,6 @@ const setUser = (userData, keepMeLogged, dispatch) => {
   appInfo.apiKey = apiKey;
 
   dispatch(segmentsFetchListSuccess(segments));
-  dispatch(authSetIdentify(identify));
   dispatch(sessionSetFirstAccess());
   dispatch(appSetCurrentVersion(appInfo.version));
   dispatch(userSetCurrentUser(user, keepMeLogged));

@@ -65,7 +65,6 @@ const refreshToken = (dispatch) => {
       localStorage.setItem("ac2", response.data.access_token.substring(10));
 
       dispatch(authSetRefreshTokenPromise(null));
-      dispatch(authSetIdentify(response.data));
 
       return response.data
         ? Promise.resolve(response.data)
