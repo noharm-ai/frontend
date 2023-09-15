@@ -12,7 +12,7 @@ import { Creators as AppCreators } from "../app";
 const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { segmentsFetchListSuccess } = SegmentCreators;
-const { authSetErrorIdentify, authSetIdentify, authDelIdentify } = AuthCreators;
+const { authSetErrorIdentify, authDelIdentify } = AuthCreators;
 const { appSetData, appSetConfig, appSetCurrentVersion, appSetNotification } =
   AppCreators;
 

@@ -7,8 +7,7 @@ import { tokenDecode } from "utils";
 import { Creators as AuthCreators } from "../ducks/auth";
 import { Creators as UserCreators } from "../ducks/user";
 
-const { authSetIdentify, authSetRefreshTokenPromise, authDelIdentify } =
-  AuthCreators;
+const { authSetRefreshTokenPromise, authDelIdentify } = AuthCreators;
 const { userLogout } = UserCreators;
 
 const autoRefreshToken =
