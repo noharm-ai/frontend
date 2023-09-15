@@ -117,10 +117,10 @@ export default function AdvancedFilter({
                 </Tooltip>
               </div>
             </Col>
-            {secondaryFilters && (
-              <div className="filters">{secondaryFilters}</div>
-            )}
           </Row>
+          {secondaryFilters && (
+            <div className="filters">{secondaryFilters}</div>
+          )}
         </AdvancedFilterContext.Provider>
       </SearchBox>
     </FilterCard>

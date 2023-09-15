@@ -15,6 +15,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  searchDrugs: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
 };
 
 export const searchPrescriptions = createAsyncThunk(
@@ -39,6 +44,25 @@ export const fetchSubstanceClasses = createAsyncThunk(
 
     try {
       const response = await api.getSubstanceClasses(access_token, {});
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const searchDrugs = createAsyncThunk(
+  "lists/search-drugs",
+  async (params, thunkAPI) => {
+    const { access_token } = thunkAPI.getState().auth.identify;
+
+    try {
+      const response = await api.getDrugsBySegment(
+        access_token,
+        params.idSegment,
+        params
+      );
 
       return response.data;
     } catch (err) {
@@ -74,6 +98,17 @@ const listsSlice = createSlice({
       .addCase(searchPrescriptions.rejected, (state, action) => {
         state.searchPrescriptions.status = "failed";
         state.searchPrescriptions.error = action.error.message;
+      })
+      .addCase(searchDrugs.pending, (state, action) => {
+        state.searchDrugs.status = "loading";
+      })
+      .addCase(searchDrugs.fulfilled, (state, action) => {
+        state.searchDrugs.status = "succeeded";
+        state.searchDrugs.list = action.payload.data;
+      })
+      .addCase(searchDrugs.rejected, (state, action) => {
+        state.searchDrugs.status = "failed";
+        state.searchDrugs.error = action.error.message;
       });
   },
 });

@@ -19,13 +19,16 @@ export const SearchBox = styled.div`
 
     .filters {
       max-height: 2000px;
+      padding: 15px 0;
+      opacity: 1;
     }
   }
 
   .filters {
     max-height: 0;
-    padding: 0 8px;
+    padding: 0;
     overflow: hidden;
+    opacity: 0;
     transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
 

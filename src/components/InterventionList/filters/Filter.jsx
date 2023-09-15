@@ -7,6 +7,7 @@ import notification from "components/notification";
 import AdvancedFilter from "components/AdvancedFilter";
 
 import MainFilters from "./MainFilters";
+import SecondaryFilters from "./SecondaryFilters";
 
 export default function Filter({
   error,
@@ -24,6 +25,7 @@ export default function Filter({
     startDate: dayjs().subtract(15, "days").format("YYYY-MM-DD"),
     endDate: null,
     idSegment: null,
+    idDrug: [],
   };
 
   useEffect(() => {
@@ -47,9 +49,10 @@ export default function Filter({
     <AdvancedFilter
       initialValues={initialValues}
       mainFilters={<MainFilters segments={segments} />}
+      secondaryFilters={<SecondaryFilters />}
       onSearch={search}
       loading={isFetching}
-      skipFilterList={["startDate", "endDate"]}
+      skipFilterList={["startDate", "endDate", "idSegment"]}
     />
   );
 }
