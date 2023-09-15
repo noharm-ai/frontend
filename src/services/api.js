@@ -48,8 +48,10 @@ const endpoints = {
  * Request config.
  * Set Authorization for API requests.
  */
-export const setHeaders = (token) =>
-  token
+export const setHeaders = () => {
+  const token = localStorage.getItem("ac1") + localStorage.getItem("ac2");
+
+  return token
     ? {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -61,19 +63,46 @@ export const setHeaders = (token) =>
           "x-api-key": appInfo.apiKey,
         },
       };
+};
 
 /**
  * Authentication.
  * Loggin and refresh token...
  */
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+};
+
 const authenticate = (params) =>
-  instance.post(endpoints.authentication, params, setHeaders());
+  instance.post(endpoints.authentication, params, {
+    withCredentials: true,
+    headers: {
+      "x-api-key": appInfo.apiKey,
+    },
+  });
 
 const authenticateOAuth = (params) =>
-  instance.post(endpoints.oauth, params, setHeaders());
+  instance.post(endpoints.oauth, params, {
+    withCredentials: true,
+    headers: {
+      "x-api-key": appInfo.apiKey,
+    },
+  });
 
-const refreshToken = (token) =>
-  instance.post(endpoints.refreshToken, {}, setHeaders(token));
+const refreshToken = () =>
+  instance.post(
+    endpoints.refreshToken,
+    {},
+    {
+      withCredentials: true,
+      headers: {
+        "x-api-key": appInfo.apiKey,
+        "X-CSRF-TOKEN": getCookie("csrf_access_token"),
+      },
+    }
+  );
 
 const getAuthProvider = (schema) =>
   instance.get(`${endpoints.oauth}/${schema}`, { ...setHeaders() });

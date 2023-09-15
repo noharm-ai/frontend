@@ -19,10 +19,11 @@ const autoRefreshToken =
       return next(action);
     }
 
+    const access_token =
+      localStorage.getItem("ac1") + localStorage.getItem("ac2");
     const { auth } = getState();
 
-    if (!isEmpty(auth) && !isEmpty(auth.identify)) {
-      const { access_token, refresh_token } = auth.identify;
+    if (!isEmpty(access_token)) {
       const { exp } = tokenDecode(access_token);
       const expireDate = toDate(exp * 1000);
       const errorHandler = (e) => {
@@ -38,9 +39,12 @@ const autoRefreshToken =
       }
 
       if (!auth.refreshTokenPromise) {
-        return refreshToken(dispatch, refresh_token)
+        return refreshToken(dispatch)
           .then(() => next(action))
           .catch((e) => {
+            localStorage.removeItem("ac1");
+            localStorage.removeItem("ac2");
+
             dispatch(authDelIdentify());
             dispatch(userLogout());
 
@@ -53,10 +57,13 @@ const autoRefreshToken =
     return next(action);
   };
 
-const refreshToken = (dispatch, refreshToken) => {
+const refreshToken = (dispatch) => {
   const refreshTokenPromise = api
-    .refreshToken(refreshToken)
+    .refreshToken()
     .then((response) => {
+      localStorage.setItem("ac1", response.data.access_token.substring(0, 10));
+      localStorage.setItem("ac2", response.data.access_token.substring(10));
+
       dispatch(authSetRefreshTokenPromise(null));
       dispatch(authSetIdentify(response.data));
 

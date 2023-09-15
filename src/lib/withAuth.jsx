@@ -19,7 +19,7 @@ const AuthHandler = ({
   component: Component,
   ...props
 }) => {
-  const { isLogged } = user;
+  const isLogged = localStorage.getItem("ac1") != null;
 
   if (!isLoginPage && !isLogoutPage && !isLogged) {
     return <Navigate to="/login" />;
