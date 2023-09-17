@@ -69,11 +69,6 @@ export const setHeaders = () => {
  * Authentication.
  * Loggin and refresh token...
  */
-// const getCookie = (name) => {
-//   const value = `; ${document.cookie}`;
-//   const parts = value.split(`; ${name}=`);
-//   if (parts.length === 2) return parts.pop().split(";").shift();
-// };
 
 const authenticate = (params) =>
   instance.post(endpoints.authentication, params, {
@@ -99,7 +94,6 @@ const refreshToken = () =>
       withCredentials: true,
       headers: {
         "x-api-key": appInfo.apiKey,
-        //"X-CSRF-TOKEN": getCookie("csrf_access_token"),
       },
     }
   );
