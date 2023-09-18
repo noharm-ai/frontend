@@ -31,7 +31,6 @@ const setTitle = ({ user }) => {
 
 const Me = ({
   user,
-  access_token,
   t,
   notification,
   setNotification,
@@ -93,7 +92,6 @@ const Me = ({
 
         {showAlert && (
           <InfoAlert
-            access_token={access_token}
             userId={user.account.userId}
             notification={notification}
             setNotification={setNotification}

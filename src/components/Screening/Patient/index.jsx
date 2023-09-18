@@ -19,7 +19,6 @@ import PatientCard from "./Card";
 
 export default function Patient({
   fetchScreening,
-  access_token,
   prescription,
   checkPrescriptionDrug,
   selectIntervention,
@@ -84,7 +83,6 @@ export default function Patient({
           fetchScreening={fetchScreening}
           selectIntervention={selectIntervention}
           security={security}
-          access_token={access_token}
           setSeeMore={setSeeMore}
           setPatientModalVisible={setPatientModalVisible}
           featureService={featureService}

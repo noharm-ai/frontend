@@ -1,5 +1,7 @@
 import "styled-components/macro";
-import React, { useState, useCallback } from "react";
+
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
   EditOutlined,
@@ -12,7 +14,6 @@ import {
   PieChartOutlined,
 } from "@ant-design/icons";
 
-import api from "services/api";
 import Button from "components/Button";
 import { InfoIcon } from "components/Icon";
 import Tooltip from "components/Tooltip";
@@ -22,6 +23,9 @@ import Badge from "components/Badge";
 import DefaultModal from "components/Modal";
 import { filterInterventionByPrescription } from "utils/transformers/intervention";
 import ChooseInterventionModal from "components/Screening/PrescriptionDrug/components/ChooseInterventionModal";
+import notification from "components/notification";
+import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSlice";
+import { getErrorMessage } from "utils/errorHandler";
 
 import FormIntervention from "containers/Forms/Intervention";
 import PatientName from "containers/PatientName";
@@ -36,13 +40,13 @@ export default function PatientCard({
   prescription,
   checkPrescriptionDrug,
   selectIntervention,
-  access_token,
   setSeeMore,
   fetchScreening,
   setPatientModalVisible,
   featureService,
   interventions,
 }) {
+  const dispatch = useDispatch();
   const [interventionVisible, setInterventionVisibility] = useState(false);
   const { t } = useTranslation();
 
@@ -123,13 +127,23 @@ export default function PatientCard({
     }
   };
 
-  const updatePrescriptionData = useCallback(async () => {
-    await api.shouldUpdatePrescription(
-      access_token,
-      prescription.idPrescription
-    );
-    fetchScreening(prescription.idPrescription);
-  }, [access_token, fetchScreening, prescription.idPrescription]);
+  const updatePrescriptionData = () => {
+    dispatch(
+      shouldUpdatePrescription({ idPrescription: prescription.idPrescription })
+    ).then((response) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        notification.success({
+          message: "Prescrição atualizada",
+        });
+
+        fetchScreening(prescription.idPrescription);
+      }
+    });
+  };
 
   const dischargeMessage = (dischargeFormated, dischargeReason) => {
     if (dischargeFormated) {

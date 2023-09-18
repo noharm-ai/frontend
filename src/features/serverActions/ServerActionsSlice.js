@@ -12,6 +12,10 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  shouldUpdatePrescription: {
+    status: "idle",
+    error: null,
+  },
 };
 
 export const updateDailyFrequency = createAsyncThunk(
@@ -22,6 +26,22 @@ export const updateDailyFrequency = createAsyncThunk(
         null,
         params.id,
         params.value
+      );
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const shouldUpdatePrescription = createAsyncThunk(
+  "serverActions/should-update-presc",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.shouldUpdatePrescription(
+        null,
+        params.idPrescription
       );
 
       return response.data;
@@ -67,6 +87,15 @@ const serverActionsSlice = createSlice({
       })
       .addCase(putMemory.rejected, (state, action) => {
         state.putMemory.status = "failed";
+      })
+      .addCase(shouldUpdatePrescription.pending, (state, action) => {
+        state.shouldUpdatePrescription.status = "loading";
+      })
+      .addCase(shouldUpdatePrescription.fulfilled, (state, action) => {
+        state.shouldUpdatePrescription.status = "succeeded";
+      })
+      .addCase(shouldUpdatePrescription.rejected, (state, action) => {
+        state.shouldUpdatePrescription.status = "failed";
       });
   },
 });
