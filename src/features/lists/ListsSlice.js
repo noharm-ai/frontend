@@ -25,6 +25,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  searchSubstances: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
 };
 
 export const searchPrescriptions = createAsyncThunk(
@@ -49,6 +54,19 @@ export const fetchSubstanceClasses = createAsyncThunk(
 
     try {
       const response = await api.getSubstanceClasses(access_token, {});
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const searchSubstances = createAsyncThunk(
+  "lists/search-substances",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.findSubstances(null, params.term);
 
       return response.data;
     } catch (err) {
@@ -138,6 +156,17 @@ const listsSlice = createSlice({
       .addCase(getMemory.rejected, (state, action) => {
         state.getMemory.status = "failed";
         state.getMemory.error = action.error.message;
+      })
+      .addCase(searchSubstances.pending, (state, action) => {
+        state.searchSubstances.status = "loading";
+      })
+      .addCase(searchSubstances.fulfilled, (state, action) => {
+        state.searchSubstances.status = "succeeded";
+        state.searchSubstances.list = action.payload.data;
+      })
+      .addCase(searchSubstances.rejected, (state, action) => {
+        state.searchSubstances.status = "failed";
+        state.searchSubstances.error = action.error.message;
       });
   },
 });
