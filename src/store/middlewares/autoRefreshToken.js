@@ -3,6 +3,7 @@ import { toDate, isPast } from "date-fns";
 
 import api from "services/api";
 import { tokenDecode } from "utils";
+import notification from "components/notification";
 
 import { Creators as AuthCreators } from "../ducks/auth";
 import { Creators as UserCreators } from "../ducks/user";
@@ -43,6 +44,11 @@ const autoRefreshToken =
           .catch((e) => {
             localStorage.removeItem("ac1");
             localStorage.removeItem("ac2");
+
+            notification.warning({
+              message: "Sessão expirada.",
+              description: "Faça login novamente para continuar.",
+            });
 
             dispatch(authDelIdentify());
             dispatch(userLogout());
