@@ -1,12 +1,5 @@
 import isEmpty from "lodash.isempty";
 
-import { store } from "store";
-import { Creators as AuthCreators } from "../store/ducks/auth";
-import { Creators as UserCreators } from "../store/ducks/user";
-
-const { authDelIdentify } = AuthCreators;
-const { userLogout } = UserCreators;
-
 export const passwordValidation = {
   regex: /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$/,
   message:
@@ -15,11 +8,6 @@ export const passwordValidation = {
 
 export const errorHandler = (e) => {
   const status = e.response ? e.response.status : e.code;
-
-  if (status === 401) {
-    store.dispatch(userLogout());
-    store.dispatch(authDelIdentify());
-  }
 
   return {
     error: e.response ? e.response.data : "error",
