@@ -1,25 +1,36 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 import Alert from "components/Alert";
 import Icon from "components/Icon";
 import Tooltip from "components/Tooltip";
-import api from "services/api";
+import toast from "components/notification";
+import { getErrorMessage } from "utils/errorHandler";
 import { INFO_ALERT_MEMORY_TYPE } from "utils/memory";
+import { putMemory } from "features/serverActions/ServerActionsSlice";
 
 import { MessageLink } from "../Layout.style";
 
-export default function InfoAlert({
-  access_token,
-  userId,
-  notification,
-  setNotification,
-}) {
+export default function InfoAlert({ userId, notification, setNotification }) {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const onClose = () => {
-    api.putMemory(access_token, {
-      type: `${INFO_ALERT_MEMORY_TYPE}-${notification.id}-${userId}`,
-      value: true,
+    dispatch(
+      putMemory({
+        type: `${INFO_ALERT_MEMORY_TYPE}-${notification.id}-${userId}`,
+        value: true,
+      })
+    ).then((response) => {
+      if (response.error) {
+        toast.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        setNotification(null);
+      }
     });
-    setNotification(null);
   };
 
   if (!notification) {
