@@ -94,6 +94,10 @@ const refreshToken = () =>
       withCredentials: true,
       headers: {
         "x-api-key": appInfo.apiKey,
+        // remove after transition
+        // Authorization: `Bearer ${
+        //   localStorage.getItem("rt1") + localStorage.getItem("rt2")
+        // }`,
       },
     }
   );

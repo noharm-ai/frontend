@@ -45,6 +45,10 @@ const autoRefreshToken =
             localStorage.removeItem("ac1");
             localStorage.removeItem("ac2");
 
+            // remove after transition
+            // localStorage.removeItem("rt1");
+            // localStorage.removeItem("rt2");
+
             notification.warning({
               message: "Sessão expirada.",
               description: "Faça login novamente para continuar.",
