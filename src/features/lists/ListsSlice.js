@@ -30,6 +30,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  searchUsers: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
   getExamRefs: {
     list: [],
     status: "idle",
@@ -72,6 +77,19 @@ export const searchSubstances = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.findSubstances(null, params.term);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const searchUsers = createAsyncThunk(
+  "lists/search-users",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.searchUsers(null, params.term);
 
       return response.data;
     } catch (err) {
@@ -185,6 +203,17 @@ const listsSlice = createSlice({
       .addCase(searchSubstances.rejected, (state, action) => {
         state.searchSubstances.status = "failed";
         state.searchSubstances.error = action.error.message;
+      })
+      .addCase(searchUsers.pending, (state, action) => {
+        state.searchUsers.status = "loading";
+      })
+      .addCase(searchUsers.fulfilled, (state, action) => {
+        state.searchUsers.status = "succeeded";
+        state.searchUsers.list = action.payload.data;
+      })
+      .addCase(searchUsers.rejected, (state, action) => {
+        state.searchUsers.status = "failed";
+        state.searchUsers.error = action.error.message;
       })
       .addCase(getExamRefs.pending, (state, action) => {
         state.getExamRefs.status = "loading";
