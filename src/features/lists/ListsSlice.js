@@ -30,6 +30,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  getExamRefs: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
 };
 
 export const searchPrescriptions = createAsyncThunk(
@@ -107,6 +112,19 @@ export const getMemory = createAsyncThunk(
   }
 );
 
+export const getExamRefs = createAsyncThunk(
+  "lists/get-examRefs",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.getExamRefs(null);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const listsSlice = createSlice({
   name: "lists",
   initialState,
@@ -167,6 +185,17 @@ const listsSlice = createSlice({
       .addCase(searchSubstances.rejected, (state, action) => {
         state.searchSubstances.status = "failed";
         state.searchSubstances.error = action.error.message;
+      })
+      .addCase(getExamRefs.pending, (state, action) => {
+        state.getExamRefs.status = "loading";
+      })
+      .addCase(getExamRefs.fulfilled, (state, action) => {
+        state.getExamRefs.status = "succeeded";
+        state.getExamRefs.list = action.payload.data;
+      })
+      .addCase(getExamRefs.rejected, (state, action) => {
+        state.getExamRefs.status = "failed";
+        state.getExamRefs.error = action.error.message;
       });
   },
 });
