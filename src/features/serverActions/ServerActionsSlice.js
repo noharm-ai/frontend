@@ -20,8 +20,6 @@ export const updateDailyFrequency = createAsyncThunk(
         params.value
       );
 
-      console.log(`response`, response);
-
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);

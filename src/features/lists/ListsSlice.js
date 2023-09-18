@@ -20,6 +20,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  getMemory: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
 };
 
 export const searchPrescriptions = createAsyncThunk(
@@ -71,6 +76,19 @@ export const searchDrugs = createAsyncThunk(
   }
 );
 
+export const getMemory = createAsyncThunk(
+  "lists/get-memory",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.getMemory(null, params.type);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const listsSlice = createSlice({
   name: "lists",
   initialState,
@@ -109,6 +127,17 @@ const listsSlice = createSlice({
       .addCase(searchDrugs.rejected, (state, action) => {
         state.searchDrugs.status = "failed";
         state.searchDrugs.error = action.error.message;
+      })
+      .addCase(getMemory.pending, (state, action) => {
+        state.getMemory.status = "loading";
+      })
+      .addCase(getMemory.fulfilled, (state, action) => {
+        state.getMemory.status = "succeeded";
+        state.getMemory.list = action.payload.data;
+      })
+      .addCase(getMemory.rejected, (state, action) => {
+        state.getMemory.status = "failed";
+        state.getMemory.error = action.error.message;
       });
   },
 });
