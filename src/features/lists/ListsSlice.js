@@ -40,6 +40,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  getPrescriptionMissingDrugs: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
 };
 
 export const searchPrescriptions = createAsyncThunk(
@@ -122,6 +127,22 @@ export const getMemory = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.getMemory(null, params.type);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getPrescriptionMissingDrugs = createAsyncThunk(
+  "lists/get-presc-missing-drugs",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.getPrescriptionMissingDrugs(
+        null,
+        params.idPrescription
+      );
 
       return response.data;
     } catch (err) {
@@ -225,6 +246,17 @@ const listsSlice = createSlice({
       .addCase(getExamRefs.rejected, (state, action) => {
         state.getExamRefs.status = "failed";
         state.getExamRefs.error = action.error.message;
+      })
+      .addCase(getPrescriptionMissingDrugs.pending, (state, action) => {
+        state.getPrescriptionMissingDrugs.status = "loading";
+      })
+      .addCase(getPrescriptionMissingDrugs.fulfilled, (state, action) => {
+        state.getPrescriptionMissingDrugs.status = "succeeded";
+        state.getPrescriptionMissingDrugs.list = action.payload.data;
+      })
+      .addCase(getPrescriptionMissingDrugs.rejected, (state, action) => {
+        state.getPrescriptionMissingDrugs.status = "failed";
+        state.getPrescriptionMissingDrugs.error = action.error.message;
       });
   },
 });

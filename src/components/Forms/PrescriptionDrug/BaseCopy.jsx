@@ -1,16 +1,19 @@
 import "styled-components/macro";
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 
 import LoadBox, { LoadContainer } from "components/LoadBox";
 import { Checkbox } from "components/Inputs";
 import Empty from "components/Empty";
-import { store } from "store/index";
-import api from "services/api";
+import notification from "components/notification";
+import { getErrorMessage } from "utils/errorHandler";
+import { getPrescriptionMissingDrugs } from "features/lists/ListsSlice";
 import { Box, FieldError, CheckboxContainer } from "../Form.style";
 
 export default function BaseNotes({ item }) {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState([]);
   const { t } = useTranslation();
@@ -18,20 +21,27 @@ export default function BaseNotes({ item }) {
   const { selectedDrugs, idPrescription } = values;
 
   useEffect(() => {
-    const state = store.getState();
-    const access_token = state.auth.identify.access_token;
-    api
-      .getPrescriptionMissingDrugs(access_token, idPrescription)
-      .then((response) => {
+    dispatch(getPrescriptionMissingDrugs({ idPrescription })).then(
+      (response) => {
         setLoading(false);
 
-        setOptions(
-          response.data.data.map((i) => {
-            return { label: i.name, idDrug: i.idDrug };
-          })
-        );
-      });
-  }, [idPrescription]);
+        if (response.error) {
+          notification.error({
+            message: getErrorMessage(response, t),
+          });
+        } else {
+          const { data } = response.payload;
+          if (data.length) {
+            setOptions(
+              data.map((i) => {
+                return { label: i.name, idDrug: i.idDrug };
+              })
+            );
+          }
+        }
+      }
+    );
+  }, []); //eslint-disable-line
 
   const onChange = (idDrug, checked) => {
     const drugs = new Set(selectedDrugs);
