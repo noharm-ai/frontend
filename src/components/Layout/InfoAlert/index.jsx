@@ -1,9 +1,13 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import {
+  GiftOutlined,
+  ReadOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
 
 import Alert from "components/Alert";
-import Icon from "components/Icon";
 import Tooltip from "components/Tooltip";
 import toast from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
@@ -33,6 +37,20 @@ export default function InfoAlert({ userId, notification, setNotification }) {
     });
   };
 
+  const getIcon = () => {
+    const style = { fontSize: "18px", marginRight: "5px" };
+    switch (notification.icon) {
+      case "gift":
+        return <GiftOutlined style={style} />;
+
+      case "read":
+        return <ReadOutlined style={style} />;
+
+      default:
+        return <InfoCircleOutlined style={style} />;
+    }
+  };
+
   if (!notification) {
     return null;
   }
@@ -46,20 +64,14 @@ export default function InfoAlert({ userId, notification, setNotification }) {
         rel="noopener noreferrer"
         onClick={() => onClose()}
       >
-        {notification.title} <Icon type={notification.icon} />
+        {getIcon()} {notification.title}
       </MessageLink>
     </Tooltip>
   );
 
   return (
     <div style={{ marginLeft: "10px" }}>
-      <Alert
-        message={message}
-        type="info"
-        closable
-        style={{ paddingRight: "50px" }}
-        onClose={onClose}
-      />
+      <Alert message={message} type="info" closable onClose={onClose} />
     </div>
   );
 }
