@@ -95,6 +95,13 @@ const setUser = (userData, keepMeLogged, dispatch) => {
     apiKey,
   };
 
+  localStorage.setItem("schema", schema);
+  if (userData.oauth) {
+    localStorage.setItem("oauth", "active");
+  } else {
+    localStorage.removeItem("oauth");
+  }
+
   localStorage.setItem("ac1", identify.access_token.substring(0, 10));
   localStorage.setItem("ac2", identify.access_token.substring(10));
   // localStorage.setItem("rt1", identify.refresh_token.substring(0, 10));
