@@ -12,7 +12,7 @@ import { Creators as AppCreators } from "../app";
 const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { segmentsFetchListSuccess } = SegmentCreators;
-const { authSetErrorIdentify, authSetIdentify, authDelIdentify } = AuthCreators;
+const { authSetErrorIdentify, authDelIdentify } = AuthCreators;
 const { appSetData, appSetConfig, appSetCurrentVersion, appSetNotification } =
   AppCreators;
 
@@ -52,6 +52,12 @@ export const loginThunk =
 
 export const logoutThunk = () => {
   return (dispatch) => {
+    localStorage.removeItem("ac1");
+    localStorage.removeItem("ac2");
+    // remove after transition
+    // localStorage.removeItem("rt1");
+    // localStorage.removeItem("rt2");
+
     dispatch(userLogout());
     dispatch(authDelIdentify());
   };
@@ -89,11 +95,15 @@ const setUser = (userData, keepMeLogged, dispatch) => {
     apiKey,
   };
 
+  localStorage.setItem("ac1", identify.access_token.substring(0, 10));
+  localStorage.setItem("ac2", identify.access_token.substring(10));
+  // localStorage.setItem("rt1", identify.refresh_token.substring(0, 10));
+  // localStorage.setItem("rt2", identify.refresh_token.substring(10));
+
   user.features = [...features, ...userFeatures];
   appInfo.apiKey = apiKey;
 
   dispatch(segmentsFetchListSuccess(segments));
-  dispatch(authSetIdentify(identify));
   dispatch(sessionSetFirstAccess());
   dispatch(appSetCurrentVersion(appInfo.version));
   dispatch(userSetCurrentUser(user, keepMeLogged));

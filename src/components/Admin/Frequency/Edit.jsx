@@ -1,15 +1,19 @@
 import "styled-components/macro";
 import React, { useState, useRef } from "react";
 import { CheckOutlined, EditOutlined } from "@ant-design/icons";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 import Button from "components/Button";
 import { InputNumber } from "components/Inputs";
 import notification from "components/notification";
 import { useOutsideAlerter } from "lib/hooks";
-import { store } from "store/index";
-import api from "services/admin/api";
+import { updateDailyFrequency } from "features/serverActions/ServerActionsSlice";
+import { getErrorMessage } from "utils/errorHandler";
 
 export default function DailyFrequency({ id, dailyFrequency }) {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [edit, setEdit] = useState(false);
   const [value, setValue] = useState(
@@ -32,23 +36,20 @@ export default function DailyFrequency({ id, dailyFrequency }) {
     }
     setSaving(true);
 
-    const state = store.getState();
-    const access_token = state.auth.identify.access_token;
-    api
-      .updateDailyFrequency(access_token, id, value)
-      .then(() => {
-        setSaving(false);
-        setEdit(false);
+    dispatch(updateDailyFrequency({ id, value })).then((response) => {
+      setSaving(false);
+      setEdit(false);
 
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
         notification.success({
           message: "Frequência atualizada",
         });
-      })
-      .catch((e) => {
-        notification.error({
-          message: e.response.data.message,
-        });
-      });
+      }
+    });
   };
 
   return edit ? (

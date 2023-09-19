@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import "styled-components/macro";
 import { useFormikContext } from "formik";
 import { CopyOutlined } from "@ant-design/icons";
@@ -9,12 +11,15 @@ import { InputNumber, Input, Select } from "components/Inputs";
 import Button from "components/Button";
 import Switch from "components/Switch";
 import Tooltip from "components/Tooltip";
-import { store } from "store/index";
-import api from "services/api";
+import notification from "components/notification";
+import { getErrorMessage } from "utils/errorHandler";
+import { getExamRefs } from "features/lists/ListsSlice";
 
 import { Box } from "../Form.style";
 
 export default function Base({ examTypes, examList }) {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { values, setFieldValue, errors } = useFormikContext();
   const [refActive, setRefActive] = useState(false);
   const [refs, setRefs] = useState([]);
@@ -26,13 +31,18 @@ export default function Base({ examTypes, examList }) {
 
   useEffect(() => {
     if (refActive) {
-      const state = store.getState();
-      const access_token = state.auth.identify.access_token;
-      api.getExamRefs(access_token).then((response) => {
-        setRefs(response.data.data);
+      dispatch(getExamRefs()).then((response) => {
+        if (response.error) {
+          notification.error({
+            message: getErrorMessage(response, t),
+          });
+        } else {
+          const { data } = response.payload;
+          setRefs(data);
+        }
       });
     }
-  }, [refActive]);
+  }, [refActive, dispatch, t]);
 
   const applyRef = (index) => {
     setFieldValue("name", refs[index].name);

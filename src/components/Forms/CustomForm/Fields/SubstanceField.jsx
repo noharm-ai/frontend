@@ -1,27 +1,37 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import debounce from "lodash.debounce";
 
 import { Select } from "components/Inputs";
 import LoadBox from "components/LoadBox";
-import { store } from "store/index";
-import api from "services/api";
+import { searchSubstances } from "features/lists/ListsSlice";
+import notification from "components/notification";
+import { getErrorMessage } from "utils/errorHandler";
 
 export default function SubstanceField({ question, setFieldValue }) {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchData = async (value) => {
     setLoading(true);
 
-    const state = store.getState();
-    const access_token = state.auth.identify.access_token;
-    const { data } = await api.findSubstances(access_token, value);
+    dispatch(searchSubstances({ term: value })).then((response) => {
+      setLoading(false);
 
-    setLoading(false);
-
-    if (data.status === "success" && data.data && data.data.length) {
-      setOptions(data.data);
-    }
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        const { data } = response.payload;
+        if (data.length) {
+          setOptions(data);
+        }
+      }
+    });
   };
 
   const search = debounce((value) => {
@@ -42,6 +52,7 @@ export default function SubstanceField({ question, setFieldValue }) {
       placeholder={loading ? "Carregando..." : "Selecione..."}
       mode="multiple"
       disabled={question.disabled}
+      loading={loading}
     >
       {options.map((option) => (
         <Select.Option value={option.name} key={option.name}>
