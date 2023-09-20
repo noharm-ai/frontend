@@ -1,4 +1,3 @@
-import "antd/lib/spin/style/index.css";
 import { createGlobalStyle } from "styled-components/macro";
 import { rgba } from "polished";
 
@@ -17,9 +16,9 @@ const ResetStyled = createGlobalStyle`
 
   body {
     color: ${get("colors.text")};
-    font-family: ${get("fonts.primary")};
     font-size: ${get("sizes.defaultFontSize")};
     font-weight: ${get("weight.regular")};
+    font-variant-numeric: tabular-nums;
     margin: 0;
   }
 
@@ -243,6 +242,12 @@ const ResetStyled = createGlobalStyle`
 
   .ant-menu-inline-collapsed-tooltip a {
     text-decoration: none;
+  }
+
+  .default-modal {
+    .ant-modal-confirm-content {
+      max-width: none !important;
+    }
   }
 `;
 

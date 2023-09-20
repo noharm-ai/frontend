@@ -42,14 +42,17 @@ export const SummaryContainer = styled.div`
   h2 {
     text-transform: uppercase;
     font-size: 1.3em;
+    font-weight: 500;
   }
 
   h3 {
     font-size: 1.2em;
+    font-weight: 500;
   }
 
   h4 {
     font-size: 1em;
+    font-weight: 500;
   }
 
   .ant-anchor-wrapper {
@@ -76,6 +79,10 @@ export const SummaryPanel = styled.div`
   transition: all 0.5s linear;
   min-height: 4em;
 
+  .answer {
+    line-height: 1.3;
+  }
+
   &.loading {
     display: flex;
     justify-content: center;
@@ -95,6 +102,7 @@ export const SummaryPanel = styled.div`
       visibility: hidden;
       white-space: pre-wrap;
       grid-area: 2/1;
+      line-height: 1.3;
     }
   }
 
@@ -125,6 +133,8 @@ export const SummaryPanel = styled.div`
 
     span {
       font-size: 1em;
+      font-weight: 300;
+      margin-top: 0.2em;
     }
   }
 
@@ -135,6 +145,7 @@ export const SummaryPanel = styled.div`
     border: 0;
     outline: 0;
     resize: none;
+    line-height: 1.3;
 
     &:focus {
       border: 0 !important;

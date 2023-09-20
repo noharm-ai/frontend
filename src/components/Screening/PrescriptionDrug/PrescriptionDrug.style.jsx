@@ -165,6 +165,7 @@ export const InterventionListContainer = styled.div`
     align-items: center;
     padding: 10px;
     border: 1px solid #e0e8ec;
+    border-radius: 6px;
     margin-top: 15px;
     cursor: pointer;
     transition: all 1s ${timingFunctions("easeOutQuint")};
@@ -179,9 +180,13 @@ export const InterventionListContainer = styled.div`
     }
 
     .date {
-      font-weight: 600;
-      font-size: 12px;
+      font-weight: 500;
+      font-size: 13px;
       margin-bottom: 5px;
+    }
+
+    .description {
+      font-size: 14px;
     }
 
     .tag {

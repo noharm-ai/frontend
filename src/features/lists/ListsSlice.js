@@ -15,6 +15,36 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  searchDrugs: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
+  getMemory: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
+  searchSubstances: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
+  searchUsers: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
+  getExamRefs: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
+  getPrescriptionMissingDrugs: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
 };
 
 export const searchPrescriptions = createAsyncThunk(
@@ -39,6 +69,93 @@ export const fetchSubstanceClasses = createAsyncThunk(
 
     try {
       const response = await api.getSubstanceClasses(access_token, {});
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const searchSubstances = createAsyncThunk(
+  "lists/search-substances",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.findSubstances(null, params.term);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const searchUsers = createAsyncThunk(
+  "lists/search-users",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.searchUsers(null, params.term);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const searchDrugs = createAsyncThunk(
+  "lists/search-drugs",
+  async (params, thunkAPI) => {
+    const { access_token } = thunkAPI.getState().auth.identify;
+
+    try {
+      const response = await api.getDrugsBySegment(
+        access_token,
+        params.idSegment,
+        params
+      );
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getMemory = createAsyncThunk(
+  "lists/get-memory",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.getMemory(null, params.type);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getPrescriptionMissingDrugs = createAsyncThunk(
+  "lists/get-presc-missing-drugs",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.getPrescriptionMissingDrugs(
+        null,
+        params.idPrescription
+      );
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getExamRefs = createAsyncThunk(
+  "lists/get-examRefs",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.getExamRefs(null);
 
       return response.data;
     } catch (err) {
@@ -74,6 +191,72 @@ const listsSlice = createSlice({
       .addCase(searchPrescriptions.rejected, (state, action) => {
         state.searchPrescriptions.status = "failed";
         state.searchPrescriptions.error = action.error.message;
+      })
+      .addCase(searchDrugs.pending, (state, action) => {
+        state.searchDrugs.status = "loading";
+      })
+      .addCase(searchDrugs.fulfilled, (state, action) => {
+        state.searchDrugs.status = "succeeded";
+        state.searchDrugs.list = action.payload.data;
+      })
+      .addCase(searchDrugs.rejected, (state, action) => {
+        state.searchDrugs.status = "failed";
+        state.searchDrugs.error = action.error.message;
+      })
+      .addCase(getMemory.pending, (state, action) => {
+        state.getMemory.status = "loading";
+      })
+      .addCase(getMemory.fulfilled, (state, action) => {
+        state.getMemory.status = "succeeded";
+        state.getMemory.list = action.payload.data;
+      })
+      .addCase(getMemory.rejected, (state, action) => {
+        state.getMemory.status = "failed";
+        state.getMemory.error = action.error.message;
+      })
+      .addCase(searchSubstances.pending, (state, action) => {
+        state.searchSubstances.status = "loading";
+      })
+      .addCase(searchSubstances.fulfilled, (state, action) => {
+        state.searchSubstances.status = "succeeded";
+        state.searchSubstances.list = action.payload.data;
+      })
+      .addCase(searchSubstances.rejected, (state, action) => {
+        state.searchSubstances.status = "failed";
+        state.searchSubstances.error = action.error.message;
+      })
+      .addCase(searchUsers.pending, (state, action) => {
+        state.searchUsers.status = "loading";
+      })
+      .addCase(searchUsers.fulfilled, (state, action) => {
+        state.searchUsers.status = "succeeded";
+        state.searchUsers.list = action.payload.data;
+      })
+      .addCase(searchUsers.rejected, (state, action) => {
+        state.searchUsers.status = "failed";
+        state.searchUsers.error = action.error.message;
+      })
+      .addCase(getExamRefs.pending, (state, action) => {
+        state.getExamRefs.status = "loading";
+      })
+      .addCase(getExamRefs.fulfilled, (state, action) => {
+        state.getExamRefs.status = "succeeded";
+        state.getExamRefs.list = action.payload.data;
+      })
+      .addCase(getExamRefs.rejected, (state, action) => {
+        state.getExamRefs.status = "failed";
+        state.getExamRefs.error = action.error.message;
+      })
+      .addCase(getPrescriptionMissingDrugs.pending, (state, action) => {
+        state.getPrescriptionMissingDrugs.status = "loading";
+      })
+      .addCase(getPrescriptionMissingDrugs.fulfilled, (state, action) => {
+        state.getPrescriptionMissingDrugs.status = "succeeded";
+        state.getPrescriptionMissingDrugs.list = action.payload.data;
+      })
+      .addCase(getPrescriptionMissingDrugs.rejected, (state, action) => {
+        state.getPrescriptionMissingDrugs.status = "failed";
+        state.getPrescriptionMissingDrugs.error = action.error.message;
       });
   },
 });

@@ -113,7 +113,7 @@ export const InterventionView = ({
                 intervention.fetchFuturePrescription(intervention.id)
               }
               loading={intervention.futurePrescription.isFetching}
-              type="nda gtm-bt-iterv-future"
+              className="nda gtm-bt-iterv-future"
             >
               {t("labels.showNextPrescription")}
             </Link>
@@ -236,11 +236,12 @@ const Action = ({
       {isChecked && (
         <Tooltip title="Desfazer situação" placement="left">
           <Button
-            type={
+            className={
               onShowModal
-                ? "danger gtm-bt-menu-undo-interv-status"
-                : "danger gtm-bt-tab-undo-interv-status"
+                ? " gtm-bt-menu-undo-interv-status"
+                : " gtm-bt-tab-undo-interv-status"
             }
+            danger
             ghost
             onClick={() =>
               saveIntervention({

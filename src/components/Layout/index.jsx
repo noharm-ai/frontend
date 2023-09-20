@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import appInfo from "utils/appInfo";
 import Avatar from "components/Avatar";
 import Button from "components/Button";
+import toast from "components/notification";
 import security from "services/security";
 
 import Box from "./Box";
@@ -28,7 +29,14 @@ const setTitle = ({ user }) => {
   return user.account.userName;
 };
 
-const Me = ({ user, access_token, t, notification, setNotification }) => {
+const Me = ({
+  user,
+  t,
+  notification,
+  setNotification,
+  doLogout,
+  logoutUrl,
+}) => {
   const location = useLocation();
   const sec = security(user.account.roles);
 
@@ -44,6 +52,27 @@ const Me = ({ user, access_token, t, notification, setNotification }) => {
     } catch (ex) {
       console.error("octadesk error", ex);
       window.open(`mailto:${process.env.REACT_APP_SUPPORT_EMAIL}`);
+    }
+  };
+
+  const logout = () => {
+    try {
+      window.octadesk.chat.hideApp();
+    } catch (ex) {
+      console.error("octadesk error", ex);
+    }
+
+    toast.success({
+      message: "Obrigado por usar a NoHarm!",
+      description: "Até breve ;)",
+    });
+    document.title = `${process.env.REACT_APP_SITE_TITLE}`;
+
+    doLogout();
+    if (logoutUrl) {
+      setTimeout(() => {
+        window.location.href = logoutUrl;
+      }, 100);
     }
   };
 
@@ -63,7 +92,6 @@ const Me = ({ user, access_token, t, notification, setNotification }) => {
 
         {showAlert && (
           <InfoAlert
-            access_token={access_token}
             userId={user.account.userId}
             notification={notification}
             setNotification={setNotification}
@@ -86,11 +114,7 @@ const Me = ({ user, access_token, t, notification, setNotification }) => {
         >
           {t("layout.help")}
         </LogOut>
-        <LogOut
-          onClick={(e) => window.octadesk.chat.hideApp()}
-          href="/logout"
-          id="gtm-lnk-sair"
-        >
+        <LogOut onClick={(e) => logout()} id="gtm-lnk-sair">
           {t("layout.logout")}
         </LogOut>
       </div>

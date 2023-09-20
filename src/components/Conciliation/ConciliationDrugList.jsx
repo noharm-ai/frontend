@@ -56,24 +56,6 @@ export default function PrescriptionDrugList({
       filterInterventionByPrescriptionDrug(data.idPrescriptionDrug)
     );
 
-    if (!featureService.hasMultipleIntervention()) {
-      if (intvList.length > 0) {
-        select({
-          ...data,
-          intervention: intvList[0],
-        });
-      } else {
-        select({
-          ...data,
-          intervention: {
-            nonce: Math.random(),
-          },
-        });
-      }
-      setOpenIntervention(true);
-      return;
-    }
-
     if (intvList.length > 0) {
       const modal = DefaultModal.info({
         title: "Intervenções",
@@ -82,6 +64,7 @@ export default function PrescriptionDrugList({
         width: 500,
         okText: "Fechar",
         okButtonProps: { type: "default" },
+        wrapClassName: "default-modal",
       });
 
       modal.update({

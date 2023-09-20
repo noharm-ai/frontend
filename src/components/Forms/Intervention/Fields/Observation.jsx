@@ -109,7 +109,7 @@ export default function Observations({
               onClick={saveDefaultText}
               disabled={isMemoryDisabled || !content}
               style={{ marginRight: "5px" }}
-              type="nda gtm-bt-interv-mem-save"
+              type="primary nda gtm-bt-interv-mem-save"
             />
           </Tooltip>
           <Tooltip title={memoryTooltip.apply}>
@@ -119,9 +119,10 @@ export default function Observations({
               loading={memory.isFetching || memory.save.isSaving}
               onClick={loadDefaultText}
               disabled={isMemoryDisabled || isEmpty(memory.list)}
-              type={
+              className={
                 !isEmpty(memory.list) ? "primary gtm-bt-interv-mem-apply" : ""
               }
+              type="primary"
             />
           </Tooltip>
         </div>

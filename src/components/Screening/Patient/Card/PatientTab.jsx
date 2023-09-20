@@ -37,7 +37,7 @@ export default function PatientTab({
 
   const aiDataTooltip = (msg, date) => {
     if (date) {
-      return `${msg} (${moment(date).format("DD/MM/YYYY hh:mm")})`;
+      return `${msg} (${moment(date).format("DD/MM/YYYY HH:mm")})`;
     }
 
     return msg;
@@ -51,7 +51,7 @@ export default function PatientTab({
         </div>
         <div style={{ fontSize: "11px", fontWeight: 300, marginTop: "10px" }}>
           {t("patientCard.extractedFrom")}{" "}
-          {moment(date).format("DD/MM/YYYY hh:mm")}
+          {moment(date).format("DD/MM/YYYY HH:mm")}
         </div>
       </>
     );

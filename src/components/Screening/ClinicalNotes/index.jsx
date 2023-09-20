@@ -26,7 +26,6 @@ export default function ClinicalNotes({
   positionList,
   security,
   saveStatus,
-  access_token,
   userId,
   featureService,
   fetchByDate,
@@ -135,7 +134,6 @@ export default function ClinicalNotes({
             selected={selected}
             update={update}
             security={security}
-            access_token={access_token}
             userId={userId}
             featureService={featureService}
             saveStatus={saveStatus}

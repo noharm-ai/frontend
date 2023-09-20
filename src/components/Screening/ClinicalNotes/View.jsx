@@ -4,12 +4,10 @@ import { format, parseISO } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { QuestionOutlined, FullscreenOutlined } from "@ant-design/icons";
 
-import { annotationManifest } from "utils/featureManifest";
 import { useOutsideAlerter } from "lib/hooks";
 import LoadBox, { LoadContainer } from "components/LoadBox";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
-import { PopoverWelcome } from "components/Popover";
 import CustomFormView from "components/Forms/CustomForm/View";
 import notification from "components/notification";
 import Empty from "components/Empty";
@@ -22,7 +20,6 @@ import {
   PaperContainer,
   MenuPopup,
   Legend,
-  WelcomeBubble,
 } from "./index.style";
 
 const helpLink = "https://noharm.octadesk.com/kb/article/noharm-care";
@@ -31,7 +28,6 @@ export default function View({
   selected,
   update,
   security,
-  access_token,
   userId,
   featureService,
   saveStatus,
@@ -43,7 +39,6 @@ export default function View({
   const [isMenuVisible, setMenuVisibility] = useState(false);
   const [menuPosition, setMenuPosition] = useState({});
   const [selectionRange, setSelectionRange] = useState(null);
-  const [showWelcome, setShowWelcome] = useState(false);
   const [edit, setEdit] = useState(false);
   const { t } = useTranslation();
 
@@ -58,23 +53,6 @@ export default function View({
       selectionRange.insertNode(textNode);
     }
   }, [isMenuVisible]); //eslint-disable-line
-
-  useEffect(() => {
-    const shouldShowWelcome = async () => {
-      const show = await annotationManifest.shouldShowWelcome(
-        access_token,
-        userId
-      );
-
-      if (show) {
-        setShowWelcome(true);
-      }
-    };
-
-    if (featureService.hasNoHarmCare()) {
-      shouldShowWelcome();
-    }
-  }, [access_token, userId, featureService]);
 
   useEffect(() => {
     if (saveStatus.success) {
@@ -96,11 +74,6 @@ export default function View({
     // stop editing on selection change
     setEdit(false);
   }, [selected]);
-
-  const gotIt = () => {
-    annotationManifest.gotIt(access_token, userId);
-    setShowWelcome(false);
-  };
 
   const goToHelp = () => {
     window.open(helpLink);
@@ -143,8 +116,6 @@ export default function View({
   };
 
   const isValidSelection = () => {
-    if (!annotationManifest.isEnabled()) return false;
-
     const selection = window.getSelection();
 
     if (selection.toString() === "") return false;
@@ -259,26 +230,6 @@ export default function View({
     }
   };
 
-  const welcomeTooltip = (
-    <WelcomeBubble>
-      A <strong>NoHarm Care</strong> é uma Inteligência Artificial que anota os
-      indicadores de risco do paciente nas evoluções.
-      <br />
-      <br />
-      <strong>Você pode ajudar a treiná-la!</strong>
-      <br /> Clique no ícone de ajuda para mais detalhes.
-      <div className="action">
-        <Button
-          type="primary gtm-annotation-btn-help-ok"
-          ghost
-          onClick={() => gotIt()}
-        >
-          OK, entendi!
-        </Button>
-      </div>
-    </WelcomeBubble>
-  );
-
   if (isEmpty(selected)) return null;
 
   return (
@@ -320,25 +271,17 @@ export default function View({
                 </>
               ) : (
                 <Tooltip title={t("layout.help")}>
-                  <PopoverWelcome
-                    title="Nova funcionalidade!"
-                    content={welcomeTooltip}
-                    trigger="hover"
-                    placement="bottom"
-                    open={showWelcome}
-                  >
-                    <Button
-                      type="primary gtm-annotation-btn-help"
-                      shape="circle"
-                      icon={<QuestionOutlined />}
-                      style={{
-                        width: "28px",
-                        height: "28px",
-                        minWidth: "28px",
-                      }}
-                      onClick={goToHelp}
-                    />
-                  </PopoverWelcome>
+                  <Button
+                    type="primary gtm-annotation-btn-help"
+                    shape="circle"
+                    icon={<QuestionOutlined />}
+                    style={{
+                      width: "28px",
+                      height: "28px",
+                      minWidth: "28px",
+                    }}
+                    onClick={goToHelp}
+                  />
                 </Tooltip>
               )}
             </>
@@ -373,11 +316,9 @@ export default function View({
                       }}
                       onMouseUp={(e) => selectionChange(e)}
                       onClick={(e) => removeAnnotation(e)}
-                      className={`${isMenuVisible ? "disabled" : ""} ${
-                        annotationManifest.isEnabled(security)
-                          ? "annotation-enabled"
-                          : "annotation-disabled"
-                      }`}
+                      className={`${
+                        isMenuVisible ? "disabled" : ""
+                      } ${"annotation-enabled"}`}
                     />
                     {menu()}
                   </>

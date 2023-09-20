@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
       - name: npm ci
         run: npm ci
       - name: npm run build
@@ -24,6 +27,7 @@ jobs:
           REACT_APP_PRISMIC_TOKEN: ${{ secrets.REACT_APP_PRISMIC_TOKEN }}
           REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
           REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
+          REACT_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
       - name: Deploy Production to AWS
         uses: jakejarvis/s3-sync-action@master
         with:

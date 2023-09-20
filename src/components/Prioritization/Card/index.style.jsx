@@ -30,6 +30,7 @@ export const Card = styled.div`
   box-shadow: 0 -1px 7px rgb(0 0 0 / 16%);
   cursor: pointer;
   min-height: 18.125rem;
+  font-size: 10px;
 
   &:before {
     content: "";
@@ -57,7 +58,7 @@ export const Card = styled.div`
 
     .name {
       flex: 1;
-      font-size: 1rem;
+      font-size: 1.6em;
       font-weight: 500;
       padding: 1rem;
       white-space: nowrap;
@@ -71,7 +72,7 @@ export const Card = styled.div`
       }
 
       .discharge {
-        font-size: 0.75rem;
+        font-size: 0.75em;
         font-weight: 400;r
         white-space: nowrap;
         overflow: hidden;
@@ -104,7 +105,7 @@ export const Card = styled.div`
       }
 
       .stamp-label {
-        font-size: 12px;
+        font-size: 1.2em;
         font-weight: 300;
         color: ${get("colors.primary")};
         transition: all 0.3s linear;
@@ -112,7 +113,7 @@ export const Card = styled.div`
 
       .stamp-value {
         text-align: right;
-        font-size: 14px;
+        font-size: 1.4em;
         font-weight: 500;
         color: ${get("colors.primary")};
         transition: all 0.3s linear;
@@ -141,7 +142,7 @@ export const Card = styled.div`
       position: relative;
       display: flex;
       flex-direction: column;
-      padding: 5px 1rem;
+      padding: 0.5rem 1rem;
 
       overflow-x: clip;
 
@@ -166,16 +167,17 @@ export const Card = styled.div`
       }
 
       .attributes-item-label {
-        font-size: 12px;
+        font-size: 1.2em;
         font-weight: 300;
         color: ${get("colors.primary")};
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+        margin-bottom: 0.2em;
       }
 
       .attributes-item-value {
-        font-size: 12px;
+        font-size: 1.2em;
         font-weight: 500;
         color: ${get("colors.primary")};
         white-space: nowrap;
@@ -183,7 +185,7 @@ export const Card = styled.div`
         overflow: hidden;
 
         @media only screen and (min-width: 1400px) {
-          font-size: 14px;
+          font-size: 1.4em;
         }
 
         &.text {
@@ -192,7 +194,7 @@ export const Card = styled.div`
         }
 
         .small {
-          font-size: 12px;
+          font-size: 1.2em;
           font-weight: 300;
         }
 
@@ -250,6 +252,9 @@ export const AlertContainer = styled.div`
   min-height: 2.875rem;
 
   .alert {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 3px 0;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
@@ -266,6 +271,10 @@ export const AlertContainer = styled.div`
       font-size: 14px;
       min-width: 60px;
       margin-right: 0.4rem;
+    }
+
+    span {
+      margin-right: 2px;
     }
   }
 `;

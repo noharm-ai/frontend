@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import moment from "moment";
+import dayjs from "dayjs";
 
 import { RangeDatePicker, InputNumber, Select } from "components/Inputs";
 import Heading from "components/Heading";
@@ -12,8 +12,8 @@ export default function MainFilters({ segments }) {
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
   const onChangeDates = (value) => {
-    const startDate = value[0] ? moment(value[0]).format("YYYY-MM-DD") : null;
-    const endDate = value[1] ? moment(value[1]).format("YYYY-MM-DD") : null;
+    const startDate = value[0] ? dayjs(value[0]).format("YYYY-MM-DD") : null;
+    const endDate = value[1] ? dayjs(value[1]).format("YYYY-MM-DD") : null;
     setFieldValue({
       startDate,
       endDate,
@@ -29,8 +29,8 @@ export default function MainFilters({ segments }) {
         <RangeDatePicker
           format="DD/MM/YYYY"
           value={[
-            values.startDate ? moment(values.startDate) : null,
-            values.endDate ? moment(values.endDate) : null,
+            values.startDate ? dayjs(values.startDate) : null,
+            values.endDate ? dayjs(values.endDate) : null,
           ]}
           onChange={onChangeDates}
           popupClassName="noArrow"

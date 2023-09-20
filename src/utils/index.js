@@ -16,7 +16,9 @@ export const passwordValidation = {
 export const errorHandler = (e) => {
   const status = e.response ? e.response.status : e.code;
 
-  if (status === 401) {
+  const isLogged = localStorage.getItem("ac1") != null;
+
+  if (status === 401 && !isLogged) {
     store.dispatch(userLogout());
     store.dispatch(authDelIdentify());
   }

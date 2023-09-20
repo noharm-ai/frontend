@@ -4,14 +4,13 @@ import axios from "axios";
 import { Spin } from "antd";
 import { useParams, useLocation } from "react-router-dom";
 
-import { Container, Row, Col } from "components/Grid";
 import message from "components/message";
 import appInfo from "utils/appInfo";
 import { isEmpty } from "utils/lodash";
 import notification from "components/notification";
 import api from "services/api";
 
-import { Wrapper, Box, Brand } from "./Login.style";
+import { LoginContainer, Brand } from "./Login.style";
 
 export default function LoginCallback({ doLogin, error }) {
   const params = useParams();
@@ -68,23 +67,20 @@ export default function LoginCallback({ doLogin, error }) {
   }, [error]);
 
   return (
-    <Wrapper as="form">
-      <Container>
-        <Row type="flex" justify="center">
-          <Col span={24} md={8}>
-            <Box>
-              <Brand title="noHarm.ai | Cuidando dos pacientes" />
+    <LoginContainer>
+      <div className="form">
+        <Brand title="noHarm.ai | Cuidando dos pacientes" />
 
-              <div className="loader">
-                <Spin size="large" />
-                Efetuando login...
-              </div>
-            </Box>
-          </Col>
-        </Row>
-      </Container>
-
+        <div className="form-container">
+          <div className="loader">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+      <div className="bg">
+        <div className="gradient"></div>
+      </div>
       <p className="copyright">{appInfo.copyright}</p>
-    </Wrapper>
+    </LoginContainer>
   );
 }

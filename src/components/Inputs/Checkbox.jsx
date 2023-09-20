@@ -1,4 +1,3 @@
-import "antd/lib/checkbox/style/index.css";
 import AntCheckbox from "antd/lib/checkbox";
 import styled from "styled-components/macro";
 

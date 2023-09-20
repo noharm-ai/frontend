@@ -2,7 +2,7 @@ import React from "react";
 import "styled-components/macro";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import moment from "moment";
+import dayjs from "dayjs";
 
 import { Col } from "components/Grid";
 import Heading from "components/Heading";
@@ -157,7 +157,7 @@ export default function Base({ security }) {
         <Col xs={layout.input}>
           <DatePicker
             format="DD/MM/YYYY"
-            value={birthdate ? moment(birthdate) : null}
+            value={birthdate ? dayjs(birthdate) : null}
             onChange={(value) =>
               setFieldValue(
                 "birthdate",
@@ -185,7 +185,7 @@ export default function Base({ security }) {
           <Col xs={layout.input}>
             <DatePicker
               format="DD/MM/YYYY HH:mm"
-              value={dischargeDate ? moment(dischargeDate) : null}
+              value={dischargeDate ? dayjs(dischargeDate) : null}
               onChange={(value) =>
                 setFieldValue(
                   "dischargeDate",

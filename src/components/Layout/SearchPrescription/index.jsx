@@ -133,17 +133,14 @@ export default function SearchPrescription({ type, size }) {
     };
   }, []);
 
-  useEffect(() => {
-    if (loadStatus === "succeeded") {
+  const fetchData = async (value) => {
+    dispatch(searchPrescriptions({ term: value })).then((response) => {
       setOpen(true);
+
       if (options.length) {
         setItemActive(options[0].idPrescription);
       }
-    }
-  }, [options, loadStatus]);
-
-  const fetchData = async (value) => {
-    dispatch(searchPrescriptions({ term: value }));
+    });
   };
 
   const search = (value) => {
@@ -192,15 +189,19 @@ export default function SearchPrescription({ type, size }) {
                 <span>{format(new Date(option.date), "dd/MM/yyyy")}</span>
               </div>
               <div className="search-result-info-secondary">
-                {option.birthdate && <Tag>{formatAge(option.birthdate)}</Tag>}
+                {option.birthdate && (
+                  <Tag color="#a991d6">{formatAge(option.birthdate)}</Tag>
+                )}
                 {option.gender && (
-                  <Tag>
+                  <Tag color="#a991d6">
                     {option.gender === "M"
                       ? t("patientCard.male")
                       : t("patientCard.female")}
                   </Tag>
                 )}
-                {option.department && <Tag>{option.department}</Tag>}
+                {option.department && (
+                  <Tag color="#a991d6">{option.department}</Tag>
+                )}
               </div>
             </div>
             {type !== "summary" && (

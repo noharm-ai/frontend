@@ -9,7 +9,6 @@ import chooseJourney from "lib/chooseJourney";
  */
 import Login from "pages/Login";
 import LoginCallback from "pages/Login/LoginCallback";
-import Logout from "pages/Logout";
 import ScreeningList from "pages/ScreeningList";
 import Screening from "pages/Screening";
 import Segments from "pages/Segments";
@@ -32,11 +31,6 @@ import AdminInterventionReason from "pages/Admin/InterventionReason";
 import AdminMemory from "pages/Admin/Memory";
 
 const routes = [
-  {
-    exact: true,
-    path: "/logout",
-    element: <WithAuth component={Logout} isLogoutPage={true} />,
-  },
   {
     exact: true,
     path: "/login",

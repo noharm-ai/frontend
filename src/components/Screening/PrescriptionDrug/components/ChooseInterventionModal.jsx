@@ -54,7 +54,7 @@ function ChooseInterventionModal({
           >
             <div>
               <div className="date">
-                {moment(i.date).format("DD/MM/YYYY hh:mm")}
+                {moment(i.date).format("DD/MM/YYYY HH:mm")}
               </div>
               <div className="description">{i.reasonDescription}</div>
               <div className="tag">{getConfig(i)}</div>

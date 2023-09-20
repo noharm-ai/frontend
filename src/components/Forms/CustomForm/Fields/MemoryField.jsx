@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 import { Select } from "components/Inputs";
-import { store } from "store/index";
-import api from "services/api";
+import { getMemory } from "features/lists/ListsSlice";
+import notification from "components/notification";
+import { getErrorMessage } from "utils/errorHandler";
 
 export default function MemoryField({ question, values, setFieldValue }) {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -12,19 +17,24 @@ export default function MemoryField({ question, values, setFieldValue }) {
     const fetchData = async () => {
       setLoading(true);
 
-      const state = store.getState();
-      const access_token = state.auth.identify.access_token;
-      const { data } = await api.getMemory(access_token, `cf-${question.id}`);
+      dispatch(getMemory({ type: `cf-${question.id}` })).then((response) => {
+        setLoading(false);
 
-      setLoading(false);
-
-      if (data.status === "success" && data.data && data.data.length) {
-        setOptions(data.data[0].value.sort());
-      }
+        if (response.error) {
+          notification.error({
+            message: getErrorMessage(response, t),
+          });
+        } else {
+          const { data } = response.payload;
+          if (data.length) {
+            setOptions([...data[0].value].sort());
+          }
+        }
+      });
     };
 
     fetchData();
-  }, [question.id]);
+  }, [question.id, dispatch, t]);
 
   return (
     <Select

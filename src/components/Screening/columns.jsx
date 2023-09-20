@@ -137,7 +137,8 @@ const InterventionAction = ({
       {isChecked && (
         <Tooltip title="Desfazer situação" placement="left">
           <Button
-            type="danger gtm-bt-undo-interv-status"
+            className="gtm-bt-undo-interv-status"
+            danger
             ghost
             onClick={() => saveIntervention({ idIntervention, status: "s" })}
             loading={isSavingIntervention}
@@ -471,7 +472,13 @@ export const expandedRowRender = (bag) => (record) => {
               label={bag.t("prescriptionDrugList.panelPrescription")}
               span={3}
             >
-              {record.cpoe}
+              <Button
+                type="link"
+                href={`/prescricao/${record.cpoe}`}
+                target="_blank"
+              >
+                {record.cpoe}
+              </Button>
             </Descriptions.Item>
             <Descriptions.Item
               label={bag.t("prescriptionDrugList.panelPrescriber")}
@@ -521,7 +528,8 @@ export const expandedRowRender = (bag) => (record) => {
                   bag.fetchPeriod(record.idPrescriptionDrug, record.source)
                 }
                 loading={bag.periodObject.isFetching}
-                type="nda gtm-bt-period"
+                type="default"
+                className="nda gtm-bt-period"
               >
                 {bag.t("prescriptionDrugList.exrPeriodBtn")}
               </Link>

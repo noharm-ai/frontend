@@ -19,7 +19,6 @@ import PatientCard from "./Card";
 
 export default function Patient({
   fetchScreening,
-  access_token,
   prescription,
   checkPrescriptionDrug,
   selectIntervention,
@@ -84,7 +83,6 @@ export default function Patient({
           fetchScreening={fetchScreening}
           selectIntervention={selectIntervention}
           security={security}
-          access_token={access_token}
           setSeeMore={setSeeMore}
           setPatientModalVisible={setPatientModalVisible}
           featureService={featureService}
@@ -161,7 +159,7 @@ export default function Patient({
                     <div className="stats light">
                       <Tooltip title={t("tableHeader.extractionDate")}>
                         {notesInfoDate
-                          ? moment(notesInfoDate).format("DD/MM/YYYY hh:mm")
+                          ? moment(notesInfoDate).format("DD/MM/YYYY HH:mm")
                           : ""}
                       </Tooltip>
                     </div>
@@ -194,7 +192,7 @@ export default function Patient({
                     <div className="stats light">
                       <Tooltip title={t("tableHeader.extractionDate")}>
                         {notesSignsDate
-                          ? moment(notesSignsDate).format("DD/MM/YYYY hh:mm")
+                          ? moment(notesSignsDate).format("DD/MM/YYYY HH:mm")
                           : ""}
                       </Tooltip>
                     </div>
@@ -216,7 +214,7 @@ export default function Patient({
                           .map(({ text, date, source }) => (
                             <div key={text} className="list-item">
                               <div className="date">
-                                {moment(date).format("DD/MM/YYYY hh:mm")}
+                                {moment(date).format("DD/MM/YYYY HH:mm")}
                                 {source === "care" ? " (NoHarm Care)" : ""}
                               </div>
                               <div className="text">{text}</div>
@@ -241,7 +239,7 @@ export default function Patient({
                         {notesDialysis.map(({ text, date }) => (
                           <div key={date} className="list-item">
                             <div className="date">
-                              {moment(date).format("DD/MM/YYYY")}
+                              {moment(date).format("DD/MM/YYYY HH:mm")}
                             </div>
                             <div className="text">{text}</div>
                           </div>

@@ -46,6 +46,7 @@ const TableInfo = styled.span`
   button {
     margin-right: 10px;
     margin-bottom: 15px;
+    border: 1px solid #d9d9d9;
   }
 
   button.active {

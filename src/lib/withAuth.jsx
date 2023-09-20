@@ -19,9 +19,16 @@ const AuthHandler = ({
   component: Component,
   ...props
 }) => {
-  const { isLogged } = user;
+  const isLogged = localStorage.getItem("ac1") != null;
 
   if (!isLoginPage && !isLogoutPage && !isLogged) {
+    const schema = localStorage.getItem("schema");
+    const oauth = localStorage.getItem("oauth");
+
+    if (schema && oauth) {
+      return <Navigate to={`/login/${schema}`} />;
+    }
+
     return <Navigate to="/login" />;
   }
 
