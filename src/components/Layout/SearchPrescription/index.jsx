@@ -133,17 +133,14 @@ export default function SearchPrescription({ type, size }) {
     };
   }, []);
 
-  useEffect(() => {
-    if (loadStatus === "succeeded") {
+  const fetchData = async (value) => {
+    dispatch(searchPrescriptions({ term: value })).then((response) => {
       setOpen(true);
+
       if (options.length) {
         setItemActive(options[0].idPrescription);
       }
-    }
-  }, [options, loadStatus]);
-
-  const fetchData = async (value) => {
-    dispatch(searchPrescriptions({ term: value }));
+    });
   };
 
   const search = (value) => {
