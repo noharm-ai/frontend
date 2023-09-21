@@ -17,6 +17,44 @@
     <link rel="apple-touch-icon" href="logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
+    <script src="/ua-parser.min.js"></script>
+
+    <script>
+      window.addEventListener("load", function () {
+        var uap = new UAParser();
+        var uapResult = uap.getResult();
+        console.info(uapResult);
+        var elm = document.getElementById("update-browser");
+        var close = document.getElementById("update-browser-close");
+
+        if (!close || !elm) {
+          return;
+        }
+
+        close.addEventListener("click", function () {
+          elm.style.display = "none";
+          close.style.display = "none";
+        });
+
+        switch (uapResult.browser.name) {
+          case "Chrome":
+            if (uapResult.browser.major < 90) {
+              elm.innerHTML =
+                "<div><strong>Por favor, atualize a versão do seu navegador.</strong> </div><div>A versão que você está utilizando está desatualizada e não é compatível com a NoHarm.</div>";
+              elm.style.display = "flex";
+              close.style.display = "block";
+            }
+            break;
+          case "IE":
+            elm.innerHTML =
+              "<div>O navegador <strong>Internet Explorer</strong> não é suportado.</div> <div>Por favor, utilize um dos seguintes navegadores: Chrome, Firefox, Edge ou Safari.</div>";
+            elm.style.display = "flex";
+            close.style.display = "block";
+            break;
+        }
+      });
+    </script>
+
     <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
@@ -62,6 +100,8 @@
     <!-- End Google Tag Manager (noscript) -->
 
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="update-browser" style="display: none"></div>
+    <button id="update-browser-close" style="display: none">Fechar</button>
     <div id="root"></div>
     <!--
       This HTML file is a template.
@@ -100,6 +140,31 @@
     <style>
       .octachatAppClose {
         pointer-events: none;
+      }
+      #update-browser {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: #fff2f0;
+        border-bottom: 1px solid #ffccc7;
+        z-index: 99;
+        font-size: 18px;
+      }
+      #update-browser-close {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        z-index: 100;
+        background: transparent;
+        color: #ff4d4f;
+        border: 1px solid #ff4d4f;
+        border-radius: 4px;
       }
     </style>
   </body>
