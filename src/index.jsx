@@ -7,6 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import { I18nextProvider } from "react-i18next";
 import i18next from "i18next";
 import { ConfigProvider } from "antd";
+import { StyleProvider } from "@ant-design/cssinjs";
 import localePtBr from "antd/locale/pt_BR";
 import localeEnUs from "antd/locale/en_US";
 import dayjs from "dayjs";
@@ -44,6 +45,20 @@ if (i18next.language === "en") {
   dayjs.locale(dayjsLocalePtBr);
 }
 
+let hashPriority = "low";
+window.nh_compatibility = false;
+if (window.UAParser) {
+  const uap = new window.UAParser();
+  const uapResult = uap ? uap.getResult() : null;
+
+  if (uapResult) {
+    if (uapResult.browser.name === "Chrome" && uapResult.browser.major <= 87) {
+      window.nh_compatibility = true;
+      hashPriority = "high";
+    }
+  }
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -53,11 +68,13 @@ root.render(
           <ConfigProvider
             locale={i18next.language === "en" ? localeEnUs : localePtBr}
           >
-            <App>
-              <BrowserRouter>
-                <RoutedComponent />
-              </BrowserRouter>
-            </App>
+            <StyleProvider hashPriority={hashPriority}>
+              <App>
+                <BrowserRouter>
+                  <RoutedComponent />
+                </BrowserRouter>
+              </App>
+            </StyleProvider>
           </ConfigProvider>
         </PersistGate>
       </I18nextProvider>
