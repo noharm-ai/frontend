@@ -203,7 +203,11 @@ export default function Layout({
       </Sider>
       <Main
         style={{
-          paddingLeft: sider.collapsed ? sider.collapsedWidth : siderWidth,
+          paddingLeft: window.nh_compatibility
+            ? 0
+            : sider.collapsed
+            ? sider.collapsedWidth
+            : siderWidth,
         }}
       >
         <Header>
