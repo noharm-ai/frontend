@@ -5,18 +5,7 @@ export const { Types, Creators } = createActions({
   frequencyFetchListError: ["error"],
   frequencyFetchListSuccess: ["list"],
 
-  // usersFetchSingleStart: [''],
-  // usersFetchSingleError: ['error'],
-  // usersFetchSingleSuccess: ['content'],
-  // usersFetchSingleReset: [''],
-
-  // usersSaveSingleStart: [''],
-  // usersSaveSingleSuccess: [''],
-  // usersSaveSingleReset: [''],
-  // usersSaveSingleError: ['error'],
-
-  // usersUserSelect: ['item'],
-  // usersUserSuccess: ['item'],
+  frequencyReset: [],
 });
 
 const INITIAL_STATE = {
@@ -34,6 +23,8 @@ const INITIAL_STATE = {
     content: {},
   },
 };
+
+const reset = () => INITIAL_STATE;
 
 const fetchListStart = (state = INITIAL_STATE) => ({
   ...state,
@@ -53,129 +44,12 @@ const fetchListSuccess = (state = INITIAL_STATE, { list }) => ({
   isFetching: false,
 });
 
-// const fetchSingleStart = (state = INITIAL_STATE) => ({
-//   ...state,
-//   single: {
-//     ...state.single,
-//     isFetching: true
-//   }
-// });
-
-// const fetchSingleError = (state = INITIAL_STATE, { error }) => ({
-//   ...state,
-//   single: {
-//     ...state.single,
-//     error,
-//     isFetching: false
-//   }
-// });
-
-// const fetchSingleSuccess = (state = INITIAL_STATE, { content }) => ({
-//   ...state,
-//   single: {
-//     ...state.single,
-//     content,
-//     error: null,
-//     isFetching: false
-//   }
-// });
-
-// const fetchSingleReset = (state = INITIAL_STATE) => ({
-//   ...state,
-//   single: {
-//     ...INITIAL_STATE.single
-//   }
-// });
-
-// const saveSingleStart = (state = INITIAL_STATE) => ({
-//   ...state,
-//   save: {
-//     ...state.save,
-//     isSaving: true
-//   }
-// });
-
-// const saveSingleError = (state = INITIAL_STATE, { error }) => ({
-//   ...state,
-//   save: {
-//     ...state.save,
-//     error,
-//     isSaving: false
-//   }
-// });
-
-// const saveSingleReset = (state = INITIAL_STATE) => ({
-//   ...state,
-//   save: {
-//     ...INITIAL_STATE.save
-//   },
-//   single: {
-//     ...INITIAL_STATE.single
-//   }
-// });
-
-// const saveSingleSuccess = (state = INITIAL_STATE) => ({
-//   ...state,
-//   save: {
-//     ...state.save,
-//     error: null,
-//     success: true,
-//     isSaving: false
-//   }
-// });
-
-// const userSelect = (state = INITIAL_STATE, { item }) => ({
-//   ...state,
-//   single: {
-//     ...state.single,
-//     content: item
-//   }
-// });
-
-// const userSuccess = (state = INITIAL_STATE, { item }) => {
-//   const list = [...state.list];
-//   const index = list.findIndex(e => item.id === e.id);
-
-//   if (index !== -1) {
-//     list[index] = { ...list[index], ...item };
-//   } else {
-//     list.push({ ...item, new: false });
-//   }
-
-//   return {
-//     ...state,
-//     list,
-//     single: {
-//       ...state.single,
-//       content: {
-//       }
-//     },
-//     save: {
-//       ...state.save,
-//       error: null,
-//       success: true,
-//       isSaving: false
-//     }
-//   };
-// };
-
 const HANDLERS = {
   [Types.FREQUENCY_FETCH_LIST_START]: fetchListStart,
   [Types.FREQUENCY_FETCH_LIST_ERROR]: fetchListError,
   [Types.FREQUENCY_FETCH_LIST_SUCCESS]: fetchListSuccess,
 
-  // [Types.FREQUENCY_FETCH_SINGLE_START]: fetchSingleStart,
-  // [Types.FREQUENCY_FETCH_SINGLE_ERROR]: fetchSingleError,
-  // [Types.FREQUENCY_FETCH_SINGLE_SUCCESS]: fetchSingleSuccess,
-  // [Types.FREQUENCY_FETCH_SINGLE_RESET]: fetchSingleReset,
-
-  // [Types.FREQUENCY_SAVE_SINGLE_START]: saveSingleStart,
-  // [Types.FREQUENCY_SAVE_SINGLE_ERROR]: saveSingleError,
-  // [Types.FREQUENCY_SAVE_SINGLE_RESET]: saveSingleReset,
-  // [Types.FREQUENCY_SAVE_SINGLE_SUCCESS]: saveSingleSuccess,
-
-  // [Types.FREQUENCY_USER_SELECT]: FREQUENCYelect,
-  // [Types.FREQUENCY_USER_SUCCESS]: FREQUENCYuccess,
+  [Types.FREQUENCY_RESET]: reset,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);
