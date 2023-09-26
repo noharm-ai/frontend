@@ -9,6 +9,8 @@ import { Creators as SessionCreators } from "../session";
 import { Creators as AuthCreators } from "./index";
 import { Creators as AppCreators } from "../app";
 
+import { reset as adminMemoryReset } from "features/admin/Memory/MemorySlice";
+
 const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { segmentsFetchListSuccess } = SegmentCreators;
@@ -36,6 +38,7 @@ export const loginThunk =
   ({ keepMeLogged, ...userIndentify }) =>
   async (dispatch) => {
     dispatch(userSetLoginStart());
+    dispatch(adminMemoryReset());
 
     const { data, error } = await api
       .authenticate(userIndentify)

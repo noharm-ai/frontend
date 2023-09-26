@@ -35,10 +35,8 @@ function InterventionReason() {
   );
 
   useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchInterventionReasons());
-    }
-  }, [status, dispatch]);
+    dispatch(fetchInterventionReasons());
+  }, []); //eslint-disable-line
 
   if (status === "failed") {
     notification.error({

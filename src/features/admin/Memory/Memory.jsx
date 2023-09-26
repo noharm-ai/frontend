@@ -20,10 +20,8 @@ function Memory() {
   const loading = status === "loading" || statusSaving === "loading";
 
   useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchMemory());
-    }
-  }, [status, dispatch]);
+    dispatch(fetchMemory());
+  }, []); //eslint-disable-line
 
   if (status === "failed") {
     notification.error({
