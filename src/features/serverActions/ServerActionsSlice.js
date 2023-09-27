@@ -67,7 +67,11 @@ export const putMemory = createAsyncThunk(
 const serverActionsSlice = createSlice({
   name: "serverActions",
   initialState,
-  reducers: {},
+  reducers: {
+    reset() {
+      return initialState;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(updateDailyFrequency.pending, (state, action) => {
@@ -99,5 +103,7 @@ const serverActionsSlice = createSlice({
       });
   },
 });
+
+export const { reset } = serverActionsSlice.actions;
 
 export default serverActionsSlice.reducer;

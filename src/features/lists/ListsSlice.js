@@ -167,7 +167,11 @@ export const getExamRefs = createAsyncThunk(
 const listsSlice = createSlice({
   name: "lists",
   initialState,
-  reducers: {},
+  reducers: {
+    reset() {
+      return initialState;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchSubstanceClasses.pending, (state, action) => {
@@ -260,5 +264,7 @@ const listsSlice = createSlice({
       });
   },
 });
+
+export const { reset } = listsSlice.actions;
 
 export default listsSlice.reducer;

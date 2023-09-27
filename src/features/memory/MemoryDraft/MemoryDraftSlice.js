@@ -37,7 +37,11 @@ export const saveDraft = createAsyncThunk(
 const memoryDraftSlice = createSlice({
   name: "memory-draft",
   initialState,
-  reducers: {},
+  reducers: {
+    reset() {
+      return initialState;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchDraft.pending, (state, action) => {
@@ -76,5 +80,7 @@ const memoryDraftSlice = createSlice({
       });
   },
 });
+
+export const { reset } = memoryDraftSlice.actions;
 
 export default memoryDraftSlice.reducer;

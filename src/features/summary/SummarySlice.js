@@ -151,6 +151,9 @@ const summarySlice = createSlice({
     startBlock(state, action) {
       state.blocks[action.payload.id].aiStatus = "started";
     },
+    reset() {
+      return initialState;
+    },
   },
   extraReducers(builder) {
     builder
@@ -176,4 +179,4 @@ const summarySlice = createSlice({
 
 export default summarySlice.reducer;
 
-export const { setBlock, startBlock } = summarySlice.actions;
+export const { setBlock, startBlock, reset } = summarySlice.actions;

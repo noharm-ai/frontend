@@ -35,6 +35,9 @@ const drugFormStatusSlice = createSlice({
     updateDrugForm(state, action) {
       state.list[action.payload.id] = action.payload.data;
     },
+    reset() {
+      return initialState;
+    },
   },
   extraReducers(builder) {
     builder
@@ -51,6 +54,7 @@ const drugFormStatusSlice = createSlice({
   },
 });
 
-export const { setDrugFormList, updateDrugForm } = drugFormStatusSlice.actions;
+export const { setDrugFormList, updateDrugForm, reset } =
+  drugFormStatusSlice.actions;
 
 export default drugFormStatusSlice.reducer;
