@@ -19,6 +19,7 @@ import { SummaryPanel } from "../Summary.style";
 function SummaryPanelText({ text, position, admissionNumber }) {
   const dispatch = useDispatch();
   const [edit, setEdit] = useState(false);
+  const [editText, setEditText] = useState("");
   const result = useSelector((state) => state.summary.blocks[position]?.text);
   const likeStatus = useSelector(
     (state) => state.summary.blocks[position]?.like
@@ -42,6 +43,12 @@ function SummaryPanelText({ text, position, admissionNumber }) {
     );
   }, [text, position, dispatch]);
 
+  useEffect(() => {
+    if (edit) {
+      setEditText(result);
+    }
+  }, [edit, result]);
+
   const likeAction = (type) => {
     dispatch(
       setLike({
@@ -58,20 +65,21 @@ function SummaryPanelText({ text, position, admissionNumber }) {
   };
 
   return (
-    <SummaryPanel className={edit ? "edit" : ""} data-value={result}>
+    <SummaryPanel className={edit ? "edit" : ""} data-value={editText}>
       {edit ? (
         <>
           <Textarea
             autoFocus
-            value={result}
-            onChange={({ target }) =>
+            value={editText}
+            onChange={({ target }) => {
+              setEditText(target.value);
               dispatch(
                 setBlock({
                   id: position,
                   data: target.value,
                 })
-              )
-            }
+              );
+            }}
           />
         </>
       ) : (
