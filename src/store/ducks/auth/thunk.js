@@ -8,21 +8,17 @@ import { Creators as UserCreators } from "../user";
 import { Creators as SessionCreators } from "../session";
 import { Creators as AuthCreators } from "./index";
 import { Creators as AppCreators } from "../app";
-import { Creators as AdminFrequencyCreators } from "../admin/frequency";
-
-import { reset as adminMemoryReset } from "features/admin/Memory/MemorySlice";
-import { reset as adminInterventionReasonsReset } from "features/admin/InterventionReason/InterventionReasonSlice";
+import { resetReduxState } from "../reset";
 
 const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { segmentsFetchListSuccess } = SegmentCreators;
 const { authSetErrorIdentify, authDelIdentify } = AuthCreators;
-const { frequencyReset: adminFrequencyReset } = AdminFrequencyCreators;
 const { appSetData, appSetConfig, appSetCurrentVersion, appSetNotification } =
   AppCreators;
 
 export const oauthLoginThunk = (params) => async (dispatch) => {
-  resetState(dispatch);
+  resetReduxState(dispatch);
   dispatch(userSetLoginStart());
 
   const { data, error } = await api
@@ -41,7 +37,7 @@ export const oauthLoginThunk = (params) => async (dispatch) => {
 export const loginThunk =
   ({ keepMeLogged, ...userIndentify }) =>
   async (dispatch) => {
-    resetState(dispatch);
+    resetReduxState(dispatch);
     dispatch(userSetLoginStart());
 
     const { data, error } = await api
@@ -68,12 +64,6 @@ export const logoutThunk = () => {
     dispatch(userLogout());
     dispatch(authDelIdentify());
   };
-};
-
-const resetState = (dispatch) => {
-  dispatch(adminInterventionReasonsReset());
-  dispatch(adminMemoryReset());
-  dispatch(adminFrequencyReset());
 };
 
 const setUser = (userData, keepMeLogged, dispatch) => {

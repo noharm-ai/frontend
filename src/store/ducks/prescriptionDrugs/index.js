@@ -1,12 +1,14 @@
-import { createActions, createReducer } from 'reduxsauce';
+import { createActions, createReducer } from "reduxsauce";
 
 export const { Types, Creators } = createActions({
-  prescriptionDrugsSelect: ['item'],
+  prescriptionDrugsSelect: ["item"],
 
-  prescriptionDrugsSaveStart: [''],
-  prescriptionDrugsSaveError: ['error'],
-  prescriptionDrugsSaveSuccess: [''],
-  prescriptionDrugsSaveReset: ['']
+  prescriptionDrugsSaveStart: [""],
+  prescriptionDrugsSaveError: ["error"],
+  prescriptionDrugsSaveSuccess: [""],
+  prescriptionDrugsSaveReset: [""],
+
+  prescriptionDrugsReset: [],
 });
 
 const INITIAL_STATE = {
@@ -17,24 +19,26 @@ const INITIAL_STATE = {
     isSaving: false,
     success: false,
     error: null,
-    item: {}
-  }
+    item: {},
+  },
 };
+
+const reset = () => INITIAL_STATE;
 
 const select = (state = INITIAL_STATE, { item }) => ({
   ...state,
   single: {
     ...state.single,
-    item
-  }
+    item,
+  },
 });
 
 const saveStart = (state = INITIAL_STATE) => ({
   ...state,
   single: {
     ...state.single,
-    isSaving: true
-  }
+    isSaving: true,
+  },
 });
 
 const saveError = (state = INITIAL_STATE, { error }) => ({
@@ -42,8 +46,8 @@ const saveError = (state = INITIAL_STATE, { error }) => ({
   single: {
     ...state.single,
     isSaving: false,
-    error
-  }
+    error,
+  },
 });
 
 const saveSuccess = (state = INITIAL_STATE) => ({
@@ -51,8 +55,8 @@ const saveSuccess = (state = INITIAL_STATE) => ({
   single: {
     ...state.single,
     isSaving: false,
-    success: true
-  }
+    success: true,
+  },
 });
 
 const saveReset = (state = INITIAL_STATE) => ({
@@ -61,8 +65,8 @@ const saveReset = (state = INITIAL_STATE) => ({
     ...state.single,
     isSaving: false,
     success: false,
-    error: null
-  }
+    error: null,
+  },
 });
 
 const HANDLERS = {
@@ -71,7 +75,9 @@ const HANDLERS = {
   [Types.PRESCRIPTION_DRUGS_SAVE_START]: saveStart,
   [Types.PRESCRIPTION_DRUGS_SAVE_ERROR]: saveError,
   [Types.PRESCRIPTION_DRUGS_SAVE_SUCCESS]: saveSuccess,
-  [Types.PRESCRIPTION_DRUGS_SAVE_RESET]: saveReset
+  [Types.PRESCRIPTION_DRUGS_SAVE_RESET]: saveReset,
+
+  [Types.PRESCRIPTION_DRUGS_RESET]: reset,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

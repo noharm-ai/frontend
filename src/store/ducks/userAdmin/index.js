@@ -1,22 +1,24 @@
-import { createActions, createReducer } from 'reduxsauce';
+import { createActions, createReducer } from "reduxsauce";
 
 export const { Types, Creators } = createActions({
-  usersFetchListStart: [''],
-  usersFetchListError: ['error'],
-  usersFetchListSuccess: ['list'],
+  usersFetchListStart: [""],
+  usersFetchListError: ["error"],
+  usersFetchListSuccess: ["list"],
 
-  usersFetchSingleStart: [''],
-  usersFetchSingleError: ['error'],
-  usersFetchSingleSuccess: ['content'],
-  usersFetchSingleReset: [''],
+  usersFetchSingleStart: [""],
+  usersFetchSingleError: ["error"],
+  usersFetchSingleSuccess: ["content"],
+  usersFetchSingleReset: [""],
 
-  usersSaveSingleStart: [''],
-  usersSaveSingleSuccess: [''],
-  usersSaveSingleReset: [''],
-  usersSaveSingleError: ['error'],
+  usersSaveSingleStart: [""],
+  usersSaveSingleSuccess: [""],
+  usersSaveSingleReset: [""],
+  usersSaveSingleError: ["error"],
 
-  usersUserSelect: ['item'],
-  usersUserSuccess: ['item'],
+  usersUserSelect: ["item"],
+  usersUserSuccess: ["item"],
+
+  userAdminReset: [],
 });
 
 const INITIAL_STATE = {
@@ -26,39 +28,41 @@ const INITIAL_STATE = {
   save: {
     isSaving: false,
     success: false,
-    error: null
+    error: null,
   },
   single: {
     error: null,
     isFetching: false,
-    content: {} //usuario selecionado p/ editar
-  }
+    content: {}, //usuario selecionado p/ editar
+  },
 };
+
+const reset = () => INITIAL_STATE;
 
 const fetchListStart = (state = INITIAL_STATE) => ({
   ...state,
-  isFetching: true
+  isFetching: true,
 });
 
 const fetchListError = (state = INITIAL_STATE, { error }) => ({
   ...state,
   error,
-  isFetching: false
+  isFetching: false,
 });
 
 const fetchListSuccess = (state = INITIAL_STATE, { list }) => ({
   ...state,
   list,
   error: null,
-  isFetching: false
+  isFetching: false,
 });
 
 const fetchSingleStart = (state = INITIAL_STATE) => ({
   ...state,
   single: {
     ...state.single,
-    isFetching: true
-  }
+    isFetching: true,
+  },
 });
 
 const fetchSingleError = (state = INITIAL_STATE, { error }) => ({
@@ -66,8 +70,8 @@ const fetchSingleError = (state = INITIAL_STATE, { error }) => ({
   single: {
     ...state.single,
     error,
-    isFetching: false
-  }
+    isFetching: false,
+  },
 });
 
 const fetchSingleSuccess = (state = INITIAL_STATE, { content }) => ({
@@ -76,23 +80,23 @@ const fetchSingleSuccess = (state = INITIAL_STATE, { content }) => ({
     ...state.single,
     content,
     error: null,
-    isFetching: false
-  }
+    isFetching: false,
+  },
 });
 
 const fetchSingleReset = (state = INITIAL_STATE) => ({
   ...state,
   single: {
-    ...INITIAL_STATE.single
-  }
+    ...INITIAL_STATE.single,
+  },
 });
 
 const saveSingleStart = (state = INITIAL_STATE) => ({
   ...state,
   save: {
     ...state.save,
-    isSaving: true
-  }
+    isSaving: true,
+  },
 });
 
 const saveSingleError = (state = INITIAL_STATE, { error }) => ({
@@ -100,20 +104,19 @@ const saveSingleError = (state = INITIAL_STATE, { error }) => ({
   save: {
     ...state.save,
     error,
-    isSaving: false
-  }
+    isSaving: false,
+  },
 });
 
 const saveSingleReset = (state = INITIAL_STATE) => ({
   ...state,
   save: {
-    ...INITIAL_STATE.save
+    ...INITIAL_STATE.save,
   },
   single: {
-    ...INITIAL_STATE.single
-  }
+    ...INITIAL_STATE.single,
+  },
 });
-
 
 const saveSingleSuccess = (state = INITIAL_STATE) => ({
   ...state,
@@ -121,23 +124,21 @@ const saveSingleSuccess = (state = INITIAL_STATE) => ({
     ...state.save,
     error: null,
     success: true,
-    isSaving: false
-  }
+    isSaving: false,
+  },
 });
-
 
 const userSelect = (state = INITIAL_STATE, { item }) => ({
   ...state,
   single: {
     ...state.single,
-    content: item
-  }
+    content: item,
+  },
 });
-
 
 const userSuccess = (state = INITIAL_STATE, { item }) => {
   const list = [...state.list];
-  const index = list.findIndex(e => item.id === e.id);
+  const index = list.findIndex((e) => item.id === e.id);
 
   if (index !== -1) {
     list[index] = { ...list[index], ...item };
@@ -150,15 +151,14 @@ const userSuccess = (state = INITIAL_STATE, { item }) => {
     list,
     single: {
       ...state.single,
-      content: {
-      }
+      content: {},
     },
     save: {
       ...state.save,
       error: null,
       success: true,
-      isSaving: false
-    }
+      isSaving: false,
+    },
   };
 };
 
@@ -177,9 +177,10 @@ const HANDLERS = {
   [Types.USERS_SAVE_SINGLE_RESET]: saveSingleReset,
   [Types.USERS_SAVE_SINGLE_SUCCESS]: saveSingleSuccess,
 
-
   [Types.USERS_USER_SELECT]: userSelect,
   [Types.USERS_USER_SUCCESS]: userSuccess,
+
+  [Types.USER_ADMIN_RESET]: reset,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

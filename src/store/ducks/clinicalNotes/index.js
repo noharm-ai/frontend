@@ -20,6 +20,8 @@ export const { Types, Creators } = createActions({
   clinicalNotesSaveSuccess: [""],
   clinicalNotesSaveReset: [""],
   clinicalNotesSaveError: ["error"],
+
+  clinicalNotesReset: [],
 });
 
 const INITIAL_STATE = {
@@ -36,6 +38,8 @@ const INITIAL_STATE = {
     error: null,
   },
 };
+
+const reset = () => INITIAL_STATE;
 
 const fetchListStart = (state = INITIAL_STATE) => ({
   ...state,
@@ -160,6 +164,8 @@ const HANDLERS = {
   [Types.CLINICAL_NOTES_SAVE_SUCCESS]: saveSuccess,
   [Types.CLINICAL_NOTES_SAVE_RESET]: saveReset,
   [Types.CLINICAL_NOTES_SAVE_ERROR]: saveError,
+
+  [Types.CLINICAL_NOTES_RESET]: reset,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

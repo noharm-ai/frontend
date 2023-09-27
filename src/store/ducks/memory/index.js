@@ -1,23 +1,25 @@
-import { createActions, createReducer } from 'reduxsauce';
+import { createActions, createReducer } from "reduxsauce";
 
 export const { Types, Creators } = createActions({
-  memoryFetchStart: ['storeId'],
-  memoryFetchError: ['storeId', 'error'],
-  memoryFetchSuccess: ['storeId', 'list'],
+  memoryFetchStart: ["storeId"],
+  memoryFetchError: ["storeId", "error"],
+  memoryFetchSuccess: ["storeId", "list"],
 
-  memorySaveStart: ['storeId'],
-  memorySaveError: ['storeId', 'error'],
-  memorySaveSuccess: ['storeId', 'item'],
-  memorySaveReset: ['storeId'],
+  memorySaveStart: ["storeId"],
+  memorySaveError: ["storeId", "error"],
+  memorySaveSuccess: ["storeId", "item"],
+  memorySaveReset: ["storeId"],
 
-  memoryFetchReasonTextStart: [''],
-  memoryFetchReasonTextError: ['error'],
-  memoryFetchReasonTextSuccess: ['list'],
+  memoryFetchReasonTextStart: [""],
+  memoryFetchReasonTextError: ["error"],
+  memoryFetchReasonTextSuccess: ["list"],
 
-  memorySaveReasonTextStart: [''],
-  memorySaveReasonTextError: ['error'],
-  memorySaveReasonTextSuccess: ['item'],
-  memorySaveReasonTextReset: ['']
+  memorySaveReasonTextStart: [""],
+  memorySaveReasonTextError: ["error"],
+  memorySaveReasonTextSuccess: ["item"],
+  memorySaveReasonTextReset: [""],
+
+  memoryReset: [],
 });
 
 const INITIAL_STATE = {
@@ -28,8 +30,8 @@ const INITIAL_STATE = {
     save: {
       isSaving: false,
       success: false,
-      error: null
-    }
+      error: null,
+    },
   },
   signature: {
     isFetching: false,
@@ -38,17 +40,19 @@ const INITIAL_STATE = {
     save: {
       isSaving: false,
       success: false,
-      error: null
-    }
-  }
+      error: null,
+    },
+  },
 };
+
+const reset = () => INITIAL_STATE;
 
 const fetchStart = (state = INITIAL_STATE, { storeId }) => ({
   ...state,
   [storeId]: {
     ...state[storeId],
-    isFetching: true
-  }
+    isFetching: true,
+  },
 });
 
 const fetchError = (state = INITIAL_STATE, { storeId, error }) => ({
@@ -56,8 +60,8 @@ const fetchError = (state = INITIAL_STATE, { storeId, error }) => ({
   [storeId]: {
     ...state[storeId],
     isFetching: false,
-    error
-  }
+    error,
+  },
 });
 
 const fetchSuccess = (state = INITIAL_STATE, { storeId, list }) => ({
@@ -66,8 +70,8 @@ const fetchSuccess = (state = INITIAL_STATE, { storeId, list }) => ({
     ...state[storeId],
     isFetching: false,
     error: null,
-    list
-  }
+    list,
+  },
 });
 
 const saveStart = (state = INITIAL_STATE, { storeId }) => ({
@@ -76,9 +80,9 @@ const saveStart = (state = INITIAL_STATE, { storeId }) => ({
     ...state[storeId],
     save: {
       ...state[storeId].save,
-      isSaving: true
-    }
-  }
+      isSaving: true,
+    },
+  },
 });
 
 const saveError = (state = INITIAL_STATE, { storeId, error }) => ({
@@ -88,9 +92,9 @@ const saveError = (state = INITIAL_STATE, { storeId, error }) => ({
     save: {
       ...state[storeId].save,
       isSaving: false,
-      error
-    }
-  }
+      error,
+    },
+  },
 });
 
 const saveSuccess = (state = INITIAL_STATE, { storeId, item }) => ({
@@ -102,9 +106,9 @@ const saveSuccess = (state = INITIAL_STATE, { storeId, item }) => ({
       ...state[storeId].save,
       isSaving: false,
       error: null,
-      success: true
-    }
-  }
+      success: true,
+    },
+  },
 });
 
 const saveReset = (state = INITIAL_STATE) => ({
@@ -112,17 +116,17 @@ const saveReset = (state = INITIAL_STATE) => ({
   reasonText: {
     ...state.reasonText,
     save: {
-      ...INITIAL_STATE.reasonText.save
-    }
-  }
+      ...INITIAL_STATE.reasonText.save,
+    },
+  },
 });
 
 const fetchReasonTextStart = (state = INITIAL_STATE) => ({
   ...state,
   reasonText: {
     ...state.reasonText,
-    isFetching: true
-  }
+    isFetching: true,
+  },
 });
 
 const fetchReasonTextError = (state = INITIAL_STATE, { error }) => ({
@@ -130,8 +134,8 @@ const fetchReasonTextError = (state = INITIAL_STATE, { error }) => ({
   reasonText: {
     ...state.reasonText,
     isFetching: false,
-    error
-  }
+    error,
+  },
 });
 
 const fetchReasonTextSuccess = (state = INITIAL_STATE, { list }) => ({
@@ -140,8 +144,8 @@ const fetchReasonTextSuccess = (state = INITIAL_STATE, { list }) => ({
     ...state.reasonText,
     isFetching: false,
     error: null,
-    list
-  }
+    list,
+  },
 });
 
 const saveReasonTextStart = (state = INITIAL_STATE) => ({
@@ -150,9 +154,9 @@ const saveReasonTextStart = (state = INITIAL_STATE) => ({
     ...state.reasonText,
     save: {
       ...state.reasonText.save,
-      isSaving: true
-    }
-  }
+      isSaving: true,
+    },
+  },
 });
 
 const saveReasonTextError = (state = INITIAL_STATE, { error }) => ({
@@ -162,9 +166,9 @@ const saveReasonTextError = (state = INITIAL_STATE, { error }) => ({
     save: {
       ...state.reasonText.save,
       isSaving: false,
-      error
-    }
-  }
+      error,
+    },
+  },
 });
 
 const saveReasonTextSuccess = (state = INITIAL_STATE, { item }) => ({
@@ -176,9 +180,9 @@ const saveReasonTextSuccess = (state = INITIAL_STATE, { item }) => ({
       ...state.reasonText.save,
       isSaving: false,
       error: null,
-      success: true
-    }
-  }
+      success: true,
+    },
+  },
 });
 
 const saveReasonTextReset = (state = INITIAL_STATE) => ({
@@ -186,9 +190,9 @@ const saveReasonTextReset = (state = INITIAL_STATE) => ({
   reasonText: {
     ...state.reasonText,
     save: {
-      ...INITIAL_STATE.reasonText.save
-    }
-  }
+      ...INITIAL_STATE.reasonText.save,
+    },
+  },
 });
 
 const HANDLERS = {
@@ -208,7 +212,9 @@ const HANDLERS = {
   [Types.MEMORY_SAVE_REASON_TEXT_START]: saveReasonTextStart,
   [Types.MEMORY_SAVE_REASON_TEXT_ERROR]: saveReasonTextError,
   [Types.MEMORY_SAVE_REASON_TEXT_SUCCESS]: saveReasonTextSuccess,
-  [Types.MEMORY_SAVE_REASON_TEXT_RESET]: saveReasonTextReset
+  [Types.MEMORY_SAVE_REASON_TEXT_RESET]: saveReasonTextReset,
+
+  [Types.MEMORY_RESET]: reset,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

@@ -22,6 +22,8 @@ export const { Types, Creators } = createActions({
   interventionFetchFuturePrescriptionStart: [""],
   interventionFetchFuturePrescriptionError: ["error"],
   interventionFetchFuturePrescriptionSuccess: ["id", "data"],
+
+  interventionReset: [],
 });
 
 const INITIAL_STATE = {
@@ -44,6 +46,8 @@ const INITIAL_STATE = {
     isFetching: false,
   },
 };
+
+const reset = () => INITIAL_STATE;
 
 const setSaveStart = (state = INITIAL_STATE) => ({
   ...state,
@@ -229,6 +233,8 @@ const HANDLERS = {
     fetchFuturePrescriptionError,
   [Types.INTERVENTION_FETCH_FUTURE_PRESCRIPTION_SUCCESS]:
     fetchFuturePrescriptionSuccess,
+
+  [Types.INTERVENTION_RESET]: reset,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);
