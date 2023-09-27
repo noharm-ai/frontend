@@ -50,7 +50,6 @@ export default function PatientCard({
   const [interventionVisible, setInterventionVisibility] = useState(false);
   const { t } = useTranslation();
 
-  const hasNoHarmCare = featureService.hasNoHarmCare();
   const {
     admissionNumber,
     age,
@@ -210,7 +209,6 @@ export default function PatientCard({
           prescription={prescription}
           setPatientModalVisible={setPatientModalVisible}
           setSeeMore={setSeeMore}
-          hasNoHarmCare={hasNoHarmCare}
         />
       ),
     },
@@ -226,7 +224,6 @@ export default function PatientCard({
           prescription={prescription}
           setPatientModalVisible={setPatientModalVisible}
           setSeeMore={setSeeMore}
-          hasNoHarmCare={hasNoHarmCare}
         />
       ),
     },
@@ -248,7 +245,6 @@ export default function PatientCard({
           prescription={prescription}
           setPatientModalVisible={setPatientModalVisible}
           setSeeMore={setSeeMore}
-          hasNoHarmCare={hasNoHarmCare}
         />
       ),
     },

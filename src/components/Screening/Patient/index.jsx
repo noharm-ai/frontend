@@ -49,8 +49,7 @@ export default function Patient({
 
   const { t } = useTranslation();
 
-  const hasNoHarmCare = featureService.hasNoHarmCare();
-  const hasAIData = hasNoHarmCare && (notesSigns !== "" || notesInfo !== "");
+  const hasAIData = notesSigns !== "" || notesInfo !== "";
   const hasClinicalNotes = clinicalNotes > 0 || featureService.hasPrimaryCare();
 
   const toggleSeeMore = () => {
@@ -141,149 +140,138 @@ export default function Patient({
       </Col>
       {seeMore && (
         <>
-          {hasNoHarmCare && (
-            <>
-              <Col xs={8} style={{ marginTop: "10px" }}>
-                <PrescriptionCard className="full-height info">
-                  <div className="header">
-                    <h3 className="title">
-                      {t("clinicalNotesIndicator.info")}
-                    </h3>
-                  </div>
-                  <div className="content">
-                    <div className="text-content">
-                      {notesInfo === "" ? "--" : notesInfo}
-                    </div>
-                  </div>
-                  <div className="footer">
-                    <div className="stats light">
-                      <Tooltip title={t("tableHeader.extractionDate")}>
-                        {notesInfoDate
-                          ? moment(notesInfoDate).format("DD/MM/YYYY HH:mm")
-                          : ""}
-                      </Tooltip>
-                    </div>
-                    <div className="action bold">
-                      {notesInfo !== "" && (
-                        <Button
-                          type="link gtm-btn-nhc-update-data"
-                          onClick={() => setPatientModalVisible(true)}
-                        >
-                          {t("actions.useData")}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </PrescriptionCard>
-              </Col>
-              <Col xs={8} style={{ marginTop: "10px" }}>
-                <PrescriptionCard className="full-height signs">
-                  <div className="header">
-                    <h3 className="title">
-                      {t("clinicalNotesIndicator.signs")}
-                    </h3>
-                  </div>
-                  <div className="content">
-                    <div className="text-content">
-                      {notesSigns === "" ? "--" : notesSigns}
-                    </div>
-                  </div>
-                  <div className="footer">
-                    <div className="stats light">
-                      <Tooltip title={t("tableHeader.extractionDate")}>
-                        {notesSignsDate
-                          ? moment(notesSignsDate).format("DD/MM/YYYY HH:mm")
-                          : ""}
-                      </Tooltip>
-                    </div>
-                  </div>
-                </PrescriptionCard>
-              </Col>
-              {notesAllergies && notesAllergies.length > 0 && (
-                <Col xs={8} style={{ marginTop: "10px" }}>
-                  <PrescriptionCard className="full-height allergy">
-                    <div className="header">
-                      <h3 className="title">
-                        {t("clinicalNotesIndicator.allergy")}
-                      </h3>
-                    </div>
-                    <div className="content">
-                      <div className="text-content list">
-                        {notesAllergies
-                          .sort(sortAllergies)
-                          .map(({ text, date, source }) => (
-                            <div key={text} className="list-item">
-                              <div className="date">
-                                {moment(date).format("DD/MM/YYYY HH:mm")}
-                                {source === "care" ? " (NoHarm Care)" : ""}
-                              </div>
-                              <div className="text">{text}</div>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  </PrescriptionCard>
-                </Col>
-              )}
-
-              {notesDialysisDate && (
-                <Col xs={8} style={{ marginTop: "10px" }}>
-                  <PrescriptionCard className="full-height dialysis">
-                    <div className="header">
-                      <h3 className="title">
-                        {t("clinicalNotesIndicator.dialysis")}
-                      </h3>
-                    </div>
-                    <div className="content">
-                      <div className="text-content list">
-                        {notesDialysis.map(({ text, date }) => (
-                          <div key={date} className="list-item">
-                            <div className="date">
-                              {moment(date).format("DD/MM/YYYY HH:mm")}
-                            </div>
-                            <div className="text">{text}</div>
+          <Col xs={8} style={{ marginTop: "10px" }}>
+            <PrescriptionCard className="full-height info">
+              <div className="header">
+                <h3 className="title">{t("clinicalNotesIndicator.info")}</h3>
+              </div>
+              <div className="content">
+                <div className="text-content">
+                  {notesInfo === "" ? "--" : notesInfo}
+                </div>
+              </div>
+              <div className="footer">
+                <div className="stats light">
+                  <Tooltip title={t("tableHeader.extractionDate")}>
+                    {notesInfoDate
+                      ? moment(notesInfoDate).format("DD/MM/YYYY HH:mm")
+                      : ""}
+                  </Tooltip>
+                </div>
+                <div className="action bold">
+                  {notesInfo !== "" && (
+                    <Button
+                      type="link gtm-btn-nhc-update-data"
+                      onClick={() => setPatientModalVisible(true)}
+                    >
+                      {t("actions.useData")}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </PrescriptionCard>
+          </Col>
+          <Col xs={8} style={{ marginTop: "10px" }}>
+            <PrescriptionCard className="full-height signs">
+              <div className="header">
+                <h3 className="title">{t("clinicalNotesIndicator.signs")}</h3>
+              </div>
+              <div className="content">
+                <div className="text-content">
+                  {notesSigns === "" ? "--" : notesSigns}
+                </div>
+              </div>
+              <div className="footer">
+                <div className="stats light">
+                  <Tooltip title={t("tableHeader.extractionDate")}>
+                    {notesSignsDate
+                      ? moment(notesSignsDate).format("DD/MM/YYYY HH:mm")
+                      : ""}
+                  </Tooltip>
+                </div>
+              </div>
+            </PrescriptionCard>
+          </Col>
+          {notesAllergies && notesAllergies.length > 0 && (
+            <Col xs={8} style={{ marginTop: "10px" }}>
+              <PrescriptionCard className="full-height allergy">
+                <div className="header">
+                  <h3 className="title">
+                    {t("clinicalNotesIndicator.allergy")}
+                  </h3>
+                </div>
+                <div className="content">
+                  <div className="text-content list">
+                    {notesAllergies
+                      .sort(sortAllergies)
+                      .map(({ text, date, source }) => (
+                        <div key={text} className="list-item">
+                          <div className="date">
+                            {moment(date).format("DD/MM/YYYY HH:mm")}
+                            {source === "care" ? " (NoHarm Care)" : ""}
                           </div>
-                        ))}
+                          <div className="text">{text}</div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </PrescriptionCard>
+            </Col>
+          )}
+
+          {notesDialysisDate && (
+            <Col xs={8} style={{ marginTop: "10px" }}>
+              <PrescriptionCard className="full-height dialysis">
+                <div className="header">
+                  <h3 className="title">
+                    {t("clinicalNotesIndicator.dialysis")}
+                  </h3>
+                </div>
+                <div className="content">
+                  <div className="text-content list">
+                    {notesDialysis.map(({ text, date }) => (
+                      <div key={date} className="list-item">
+                        <div className="date">
+                          {moment(date).format("DD/MM/YYYY HH:mm")}
+                        </div>
+                        <div className="text">{text}</div>
                       </div>
-                    </div>
-                    <div className="footer">
-                      <div className="stats light"></div>
-                      <div className="action bold">
-                        {notesInfo !== "" && (
-                          <Button
-                            type="link gtm-btn-nhc-update-data"
-                            onClick={() => setPatientModalVisible(true)}
-                          >
-                            {t("actions.useData")}
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </PrescriptionCard>
-                </Col>
-              )}
-            </>
+                    ))}
+                  </div>
+                </div>
+                <div className="footer">
+                  <div className="stats light"></div>
+                  <div className="action bold">
+                    {notesInfo !== "" && (
+                      <Button
+                        type="link gtm-btn-nhc-update-data"
+                        onClick={() => setPatientModalVisible(true)}
+                      >
+                        {t("actions.useData")}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </PrescriptionCard>
+            </Col>
           )}
         </>
       )}
-      {hasNoHarmCare ? (
-        <Col xs={24}>
-          <SeeMore onClick={toggleSeeMore}>
-            <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
-              <Icon type={seeMore ? "up" : "down"} />{" "}
-              {seeMore ? t("patientCard.less") : t("patientCard.more")}
-            </Button>
-            {hasAIData && (
-              <Tooltip title={t("patientCard.ctaNoHarmCare")}>
-                {"  "}
-                <InfoIcon />
-              </Tooltip>
-            )}
-          </SeeMore>
-        </Col>
-      ) : (
-        <div style={{ height: "15px" }}>&nbsp;</div>
-      )}
+
+      <Col xs={24}>
+        <SeeMore onClick={toggleSeeMore}>
+          <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
+            <Icon type={seeMore ? "up" : "down"} />{" "}
+            {seeMore ? t("patientCard.less") : t("patientCard.more")}
+          </Button>
+          {hasAIData && (
+            <Tooltip title={t("patientCard.ctaNoHarmCare")}>
+              {"  "}
+              <InfoIcon />
+            </Tooltip>
+          )}
+        </SeeMore>
+      </Col>
 
       <FormPatientModal
         open={patientModalVisible}

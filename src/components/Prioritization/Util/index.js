@@ -24,7 +24,6 @@ export const ORDER_OPTIONS = [
     formattedKey: "alerts",
     type: "number",
   },
-  // TODO: only for noharmcare
   {
     label: "Eventos adversos",
     key: "complication",

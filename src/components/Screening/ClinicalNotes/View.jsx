@@ -346,20 +346,19 @@ export default function View({
             * Nomes presentes na evolução são substituídos por três asteriscos
             (***).
           </Legend>
-          {featureService.hasNoHarmCare() && (
-            <Legend>
-              * As anotações são geradas pela <strong>NoHarm Care</strong>.{" "}
-              <a
-                href={helpLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Saiba como ajudar"
-              >
-                Você pode ajudar a treiná-la
-              </a>
-              .
-            </Legend>
-          )}
+
+          <Legend>
+            * As anotações são geradas pela <strong>NoHarm Care</strong>.{" "}
+            <a
+              href={helpLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Saiba como ajudar"
+            >
+              Você pode ajudar a treiná-la
+            </a>
+            .
+          </Legend>
         </>
       )}
     </>

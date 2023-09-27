@@ -44,7 +44,6 @@ export default function Patient({
 }) {
   const { t } = useTranslation();
   const { isSaving } = saveStatus;
-  const hasNoHarmCare = featureService.hasNoHarmCare();
 
   const initialValues = {
     idPrescription,
@@ -96,7 +95,7 @@ export default function Patient({
           <header>
             <Heading margin="0 0 11px">Dados do paciente</Heading>
           </header>
-          {hasNoHarmCare && notesInfo && (
+          {notesInfo && (
             <Alert
               message={`NoHarm Care (${moment(notesInfoDate).format(
                 "DD/MM/YYYY HH:mm"

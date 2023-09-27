@@ -192,7 +192,7 @@ const oddClass = (index) => (index % 2 ? "bg-light-gray" : "");
 
 const sortDirections = ["descend", "ascend"];
 
-const columns = (sortedInfo, filteredInfo, noharmCare, t) => {
+const columns = (sortedInfo, filteredInfo, t) => {
   let index = 0;
 
   const patientRiskColumns = [
@@ -269,22 +269,20 @@ const columns = (sortedInfo, filteredInfo, noharmCare, t) => {
     },
   ];
 
-  if (noharmCare) {
-    patientRiskColumns.push({
-      title: (
-        <Tooltip title={t("screeningList.clAdverseEventsHint")}>
-          {t("screeningList.clAdverseEvents")}
-        </Tooltip>
-      ),
-      className: `ant-table-right-border gtm-th-ea ${oddClass(index++)}`,
-      key: "complication",
-      width: 30,
-      align: "center",
-      sortDirections,
-      sorter: (a, b) => a.complication - b.complication,
-      sortOrder: sortedInfo.columnKey === "complication" && sortedInfo.order,
-    });
-  }
+  patientRiskColumns.push({
+    title: (
+      <Tooltip title={t("screeningList.clAdverseEventsHint")}>
+        {t("screeningList.clAdverseEvents")}
+      </Tooltip>
+    ),
+    className: `ant-table-right-border gtm-th-ea ${oddClass(index++)}`,
+    key: "complication",
+    width: 30,
+    align: "center",
+    sortDirections,
+    sorter: (a, b) => a.complication - b.complication,
+    sortOrder: sortedInfo.columnKey === "complication" && sortedInfo.order,
+  });
 
   const prescriptionRiskColumns = [
     {

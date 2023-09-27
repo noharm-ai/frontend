@@ -96,12 +96,7 @@ export default function ScreeningList({
     prioritizationType,
   };
   const dataSource = toDataSource(list, null, bag);
-  const columns = columnsTable(
-    sortOrder,
-    filter,
-    featureService.hasNoHarmCare(),
-    t
-  );
+  const columns = columnsTable(sortOrder, filter, t);
   const [title] = useMedia(
     [`(max-width: ${breakpoints.lg})`],
     [[theTitle]],
