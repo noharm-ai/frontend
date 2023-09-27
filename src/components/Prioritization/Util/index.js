@@ -84,6 +84,12 @@ export const ORDER_OPTIONS = [
     formattedKey: "lengthStay",
     type: "number",
   },
+  {
+    label: "Leito",
+    key: "bed",
+    formattedKey: "bed",
+    type: "string",
+  },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
 export const getListStats = (list) => {
@@ -122,9 +128,19 @@ export const filterList = (list, filter) => {
 };
 
 export const sortList = (list, orderBy, orderDirection) => {
-  if (orderDirection === "desc") {
-    return list.sort((a, b) => b[orderBy] - a[orderBy]);
+  const orderConfig = ORDER_OPTIONS.find((o) => o.key === orderBy);
+
+  if (orderConfig.type === "number") {
+    if (orderDirection === "desc") {
+      return list.sort((a, b) => b[orderBy] - a[orderBy]);
+    }
+
+    return list.sort((a, b) => a[orderBy] - b[orderBy]);
   }
 
-  return list.sort((a, b) => a[orderBy] - b[orderBy]);
+  if (orderDirection === "desc") {
+    return list.sort((a, b) => `${a[orderBy]}`.localeCompare(`${b[orderBy]}`));
+  }
+
+  return list.sort((a, b) => `${b[orderBy]}`.localeCompare(`${a[orderBy]}`));
 };
