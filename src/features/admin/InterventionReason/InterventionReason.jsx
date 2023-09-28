@@ -16,6 +16,7 @@ import {
   fetchInterventionReasons,
   selectAllInterventionReasons,
   setInterventionReason,
+  reset,
 } from "./InterventionReasonSlice";
 import InterventionReasonForm from "./Form/InterventionReasonForm";
 
@@ -35,6 +36,7 @@ function InterventionReason() {
   );
 
   useEffect(() => {
+    dispatch(reset());
     dispatch(fetchInterventionReasons());
   }, []); //eslint-disable-line
 
