@@ -156,6 +156,18 @@ export const InterventionView = ({
       <Descriptions.Item label={`${t("labels.responsible")}:`} span={3}>
         {intervention.user}
       </Descriptions.Item>
+      <Descriptions.Item
+        label={`${t("interventionForm.labelEconomyDays")}:`}
+        span={3}
+      >
+        {intervention.economyDays ? intervention.economyDays : "--"}
+      </Descriptions.Item>
+      <Descriptions.Item
+        label={`${t("interventionForm.labelExpendedDose")}:`}
+        span={3}
+      >
+        {intervention.expendedDose ? intervention.expendedDose : "--"}
+      </Descriptions.Item>
       <Descriptions.Item label={`${t("labels.observation")}:`} span={3}>
         <RichTextView text={intervention.observation} />
       </Descriptions.Item>
