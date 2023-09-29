@@ -24,7 +24,7 @@ export default function Base({ security }) {
     skinColor,
     dischargeDate,
   } = values;
-  const layout = { label: 8, input: 16 };
+  const layout = { label: 6, input: 16 };
   const { t } = useTranslation();
 
   return (
