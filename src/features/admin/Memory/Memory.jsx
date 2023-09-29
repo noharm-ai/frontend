@@ -20,9 +20,12 @@ function Memory() {
   const loading = status === "loading" || statusSaving === "loading";
 
   useEffect(() => {
-    dispatch(reset());
     dispatch(fetchMemory());
-  }, []); //eslint-disable-line
+
+    return () => {
+      dispatch(reset());
+    };
+  }, [dispatch]);
 
   if (status === "failed") {
     notification.error({

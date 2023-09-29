@@ -36,9 +36,12 @@ function InterventionReason() {
   );
 
   useEffect(() => {
-    dispatch(reset());
     dispatch(fetchInterventionReasons());
-  }, []); //eslint-disable-line
+
+    return () => {
+      dispatch(reset());
+    };
+  }, [dispatch]);
 
   if (status === "failed") {
     notification.error({
