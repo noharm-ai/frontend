@@ -16,7 +16,7 @@ const emptyText = (
   />
 );
 
-function Frequency({ security, fetchList, error, list, isFetching }) {
+function Frequency({ fetchList, error, list, isFetching }) {
   const { t } = useTranslation();
 
   useEffect(() => {

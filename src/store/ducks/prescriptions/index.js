@@ -34,6 +34,8 @@ export const { Types, Creators } = createActions({
   prescriptionsFetchExamsSuccess: ["list"],
 
   prescriptionsIncrementClinicalNotes: [""],
+
+  prescriptionsReset: [],
 });
 
 const INITIAL_STATE = {
@@ -124,6 +126,8 @@ const INITIAL_STATE = {
     },
   },
 };
+
+const reset = () => INITIAL_STATE;
 
 const incrementClinicalNotes = (state = INITIAL_STATE) => ({
   ...state,
@@ -611,6 +615,8 @@ const HANDLERS = {
   [Types.PRESCRIPTIONS_FETCH_EXAMS_SUCCESS]: fetchExamsSuccess,
 
   [Types.PRESCRIPTIONS_INCREMENT_CLINICAL_NOTES]: incrementClinicalNotes,
+
+  [Types.PRESCRIPTIONS_RESET]: reset,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

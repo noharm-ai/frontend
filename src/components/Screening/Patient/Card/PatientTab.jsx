@@ -13,7 +13,6 @@ import { translateDialysis } from "utils/transformers/prescriptions";
 export default function PatientTab({
   prescription,
   setSeeMore,
-  hasNoHarmCare,
   setPatientModalVisible,
 }) {
   const { t } = useTranslation();
@@ -124,7 +123,7 @@ export default function PatientTab({
           )}
         </div>
         <div className="patient-data-item-edit">
-          {hasNoHarmCare && notesInfo ? (
+          {notesInfo ? (
             <>
               <PopoverWelcome
                 content={
@@ -173,7 +172,7 @@ export default function PatientTab({
           {!weight && t("patientCard.notAvailable")}
         </div>
         <div className="patient-data-item-edit">
-          {hasNoHarmCare && notesInfo ? (
+          {notesInfo ? (
             <>
               <PopoverWelcome
                 content={
@@ -259,7 +258,7 @@ export default function PatientTab({
 
       <div className="patient-data-item full">
         <div className="patient-data-item-value">
-          {hasNoHarmCare && notesInfo && (
+          {notesInfo && (
             <Tooltip
               title={aiDataTooltip(
                 t("patientCard.dataExtractedFrom"),
@@ -272,7 +271,7 @@ export default function PatientTab({
             </Tooltip>
           )}
 
-          {hasNoHarmCare && notesSigns && (
+          {notesSigns && (
             <Tooltip
               title={aiDataTooltip(
                 t("patientCard.signalsExtractedFrom"),
@@ -285,7 +284,7 @@ export default function PatientTab({
             </Tooltip>
           )}
 
-          {hasNoHarmCare && notesAllergiesDate && (
+          {notesAllergiesDate && (
             <Tooltip
               title={aiDataTooltip(
                 t("patientCard.allergiesExtractedFrom"),
@@ -298,7 +297,7 @@ export default function PatientTab({
             </Tooltip>
           )}
 
-          {hasNoHarmCare && notesDialysisDate && (
+          {notesDialysisDate && (
             <Tooltip
               title={aiDataTooltip(
                 t("patientCard.extractedFrom"),

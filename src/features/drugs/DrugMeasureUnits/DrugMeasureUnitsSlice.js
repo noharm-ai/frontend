@@ -57,7 +57,11 @@ export const upsertDrugMeasureUnit = createAsyncThunk(
 const drugMeasureUnitsSlice = createSlice({
   name: "drugMeasureUnits",
   initialState,
-  reducers: {},
+  reducers: {
+    reset() {
+      return initialState;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchUnits.pending, (state, action) => {
@@ -83,5 +87,7 @@ const drugMeasureUnitsSlice = createSlice({
       });
   },
 });
+
+export const { reset } = drugMeasureUnitsSlice.actions;
 
 export default drugMeasureUnitsSlice.reducer;

@@ -49,6 +49,8 @@ export const { Types, Creators } = createActions({
   outliersFetchRelationStart: [""],
   outliersFetchRelationError: ["error"],
   outliersFetchRelationSuccess: ["list"],
+
+  outliersReset: [],
 });
 
 const INITIAL_STATE = {
@@ -104,6 +106,8 @@ const INITIAL_STATE = {
     },
   },
 };
+
+const reset = () => INITIAL_STATE;
 
 const generateStart = (state = INITIAL_STATE, { segment }) => ({
   ...state,
@@ -556,6 +560,8 @@ const HANDLERS = {
   [Types.OUTLIERS_FETCH_RELATION_START]: fetchRelationStart,
   [Types.OUTLIERS_FETCH_RELATION_ERROR]: fetchRelationError,
   [Types.OUTLIERS_FETCH_RELATION_SUCCESS]: fetchRelationSuccess,
+
+  [Types.OUTLIERS_RESET]: reset,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

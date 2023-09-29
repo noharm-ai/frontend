@@ -16,6 +16,7 @@ import {
   fetchInterventionReasons,
   selectAllInterventionReasons,
   setInterventionReason,
+  reset,
 } from "./InterventionReasonSlice";
 import InterventionReasonForm from "./Form/InterventionReasonForm";
 
@@ -35,10 +36,12 @@ function InterventionReason() {
   );
 
   useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchInterventionReasons());
-    }
-  }, [status, dispatch]);
+    dispatch(fetchInterventionReasons());
+
+    return () => {
+      dispatch(reset());
+    };
+  }, [dispatch]);
 
   if (status === "failed") {
     notification.error({

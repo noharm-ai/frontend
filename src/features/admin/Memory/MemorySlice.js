@@ -43,6 +43,9 @@ const memorySlice = createSlice({
     setMemoryValue(state, action) {
       state.data[action.payload.kind] = action.payload;
     },
+    reset() {
+      return initialState;
+    },
   },
   extraReducers(builder) {
     builder
@@ -79,6 +82,6 @@ const memorySlice = createSlice({
   },
 });
 
-export const { setMemoryValue } = memorySlice.actions;
+export const { setMemoryValue, reset } = memorySlice.actions;
 
 export default memorySlice.reducer;

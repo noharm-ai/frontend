@@ -38,6 +38,7 @@ function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
   );
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
+  const [editText, setEditText] = useState("");
   const [error, setError] = useState(false);
   const [modalConfig, setModalConfig] = useState(false);
   const [modalAudit, setModalAudit] = useState(false);
@@ -96,7 +97,14 @@ function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
     setLoading(false);
   }, [result]);
 
+  useEffect(() => {
+    if (edit) {
+      setEditText(result);
+    }
+  }, [edit, result]);
+
   const onChange = (value) => {
+    setEditText(value);
     dispatch(
       setBlock({
         id: position,
@@ -166,7 +174,7 @@ function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
   return (
     <SummaryPanel
       className={loading ? "loading" : edit ? "edit" : ""}
-      data-value={result}
+      data-value={editText}
     >
       {loading ? (
         <div className="loader">
@@ -178,7 +186,7 @@ function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
             <>
               <Textarea
                 autoFocus
-                value={result}
+                value={editText}
                 onChange={({ target }) => onChange(target.value)}
               />
             </>

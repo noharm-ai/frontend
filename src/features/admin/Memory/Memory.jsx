@@ -6,7 +6,7 @@ import BackTop from "components/BackTop";
 import notification from "components/notification";
 import LoadBox from "components/LoadBox";
 
-import { fetchMemory } from "./MemorySlice";
+import { fetchMemory, reset } from "./MemorySlice";
 import Form from "./Form";
 import { MemoryContainer } from "./Memory.style";
 import { PageHeader } from "styles/PageHeader.style";
@@ -20,10 +20,12 @@ function Memory() {
   const loading = status === "loading" || statusSaving === "loading";
 
   useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchMemory());
-    }
-  }, [status, dispatch]);
+    dispatch(fetchMemory());
+
+    return () => {
+      dispatch(reset());
+    };
+  }, [dispatch]);
 
   if (status === "failed") {
     notification.error({

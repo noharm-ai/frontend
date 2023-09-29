@@ -46,6 +46,9 @@ const interventionReasonSlice = createSlice({
     setInterventionReason(state, action) {
       state.single.data = action.payload;
     },
+    reset() {
+      return initialState;
+    },
   },
   extraReducers(builder) {
     builder
@@ -81,7 +84,7 @@ const interventionReasonSlice = createSlice({
   },
 });
 
-export const { setInterventionReason } = interventionReasonSlice.actions;
+export const { setInterventionReason, reset } = interventionReasonSlice.actions;
 
 export default interventionReasonSlice.reducer;
 

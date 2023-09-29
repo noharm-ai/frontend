@@ -17,10 +17,6 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.PRIMARYCARE);
   };
 
-  const hasNoHarmCare = () => {
-    return hasFeature(Feature.NOHARMCARE);
-  };
-
   const hasConciliation = () => {
     return hasFeature(Feature.CONCILIATION);
   };
@@ -33,7 +29,6 @@ const FeaturesService = (features) => {
     hasFeature,
     hasMicromedex,
     hasPrimaryCare,
-    hasNoHarmCare,
     hasConciliation,
     hasTempCpoePeriod,
   };

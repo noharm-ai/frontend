@@ -30,6 +30,8 @@ export const { Types, Creators } = createActions({
   unitCoefficientSaveSuccess: ["idMeasureUnit", "item"],
   unitCoefficientSaveReset: [""],
   unitCoefficientSaveError: ["error"],
+
+  drugsReset: [],
 });
 
 const INITIAL_STATE = {
@@ -68,6 +70,8 @@ const INITIAL_STATE = {
     data: null,
   },
 };
+
+const reset = () => INITIAL_STATE;
 
 const fetchListStart = (state = INITIAL_STATE) => ({
   ...state,
@@ -320,6 +324,8 @@ const HANDLERS = {
   [Types.UNIT_COEFFICIENT_SAVE_ERROR]: unitCoefficientSaveError,
   [Types.UNIT_COEFFICIENT_SAVE_RESET]: unitCoefficientSaveReset,
   [Types.UNIT_COEFFICIENT_SAVE_SUCCESS]: unitCoefficientSaveSuccess,
+
+  [Types.DRUGS_RESET]: reset,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

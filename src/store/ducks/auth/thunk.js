@@ -8,6 +8,7 @@ import { Creators as UserCreators } from "../user";
 import { Creators as SessionCreators } from "../session";
 import { Creators as AuthCreators } from "./index";
 import { Creators as AppCreators } from "../app";
+import { resetReduxState } from "../reset";
 
 const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
@@ -17,6 +18,7 @@ const { appSetData, appSetConfig, appSetCurrentVersion, appSetNotification } =
   AppCreators;
 
 export const oauthLoginThunk = (params) => async (dispatch) => {
+  resetReduxState(dispatch);
   dispatch(userSetLoginStart());
 
   const { data, error } = await api
@@ -35,6 +37,7 @@ export const oauthLoginThunk = (params) => async (dispatch) => {
 export const loginThunk =
   ({ keepMeLogged, ...userIndentify }) =>
   async (dispatch) => {
+    resetReduxState(dispatch);
     dispatch(userSetLoginStart());
 
     const { data, error } = await api
