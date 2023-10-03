@@ -46,6 +46,8 @@ const {
   prescriptionsFetchExamsSuccess,
 
   prescriptionsIncrementClinicalNotes,
+
+  prescriptionsActionsSetModalVisibility,
 } = PrescriptionsCreators;
 
 export const fetchPrescriptionsListThunk =
@@ -302,4 +304,8 @@ export const fetchPrescriptionExamsThunk =
 
 export const incrementClinicalNotesThunk = () => (dispatch) => {
   dispatch(prescriptionsIncrementClinicalNotes());
+};
+
+export const setModalVisibilityThunk = (modalKey, visible) => (dispatch) => {
+  dispatch(prescriptionsActionsSetModalVisibility(modalKey, visible));
 };

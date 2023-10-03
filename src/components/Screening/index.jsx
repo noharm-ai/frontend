@@ -3,13 +3,13 @@ import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { PlusOutlined, CopyOutlined } from "@ant-design/icons";
+import { FloatButton } from "antd";
 
 import Empty from "components/Empty";
 import LoadBox, { LoadContainer } from "components/LoadBox";
 import { Row, Col } from "components/Grid";
 import Tag from "components/Tag";
 import notification from "components/notification";
-import BackTop from "components/BackTop";
 import Dropdown from "components/Dropdown";
 import Menu from "components/Menu";
 
@@ -22,6 +22,7 @@ import PageHeader from "containers/Screening/PageHeader";
 import Patient from "containers/Screening/Patient";
 import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
 import DrugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatus";
+import ScreeningActions from "containers/Screening/ScreeningActions";
 
 import {
   BoxWrapper,
@@ -455,7 +456,12 @@ export default function Screening({
         </DrugFormStatusBox>
       )}
 
-      <BackTop />
+      {!isFetching && <ScreeningActions />}
+
+      <FloatButton.BackTop
+        style={{ right: 80, bottom: 25 }}
+        tooltip="Voltar ao topo"
+      />
     </>
   );
 }

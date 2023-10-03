@@ -5,7 +5,7 @@ import { EditOutlined } from "@ant-design/icons";
 import Button from "components/Button";
 import RichTextView from "components/RichTextView";
 
-export default function NotesTab({ prescription, setPatientModalVisible }) {
+export default function NotesTab({ prescription, setModalVisibility }) {
   const { t } = useTranslation();
   const { observation } = prescription;
 
@@ -21,7 +21,7 @@ export default function NotesTab({ prescription, setPatientModalVisible }) {
         <div className="patient-data-item-edit text">
           <Button
             type="link"
-            onClick={() => setPatientModalVisible(true)}
+            onClick={() => setModalVisibility("patientEdit", true)}
             icon={<EditOutlined style={{ fontSize: 18, color: "#fff" }} />}
           ></Button>
         </div>
