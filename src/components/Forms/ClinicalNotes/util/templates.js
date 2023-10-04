@@ -35,6 +35,24 @@ const drugDescription = (d) => {
   }`;
 };
 
+export const getConciliationDrugs = (list, hasRelation) => {
+  let drugList;
+  if (hasRelation) {
+    drugList = list.filter((d) => !d.suspended && d.conciliaRelationId);
+  } else {
+    drugList = list.filter((d) => !d.suspended && !d.conciliaRelationId);
+  }
+
+  return drugList
+    .map(
+      (d) => `
+- ${drugDescription(d)}
+  `
+    )
+    .filter((t) => t != null)
+    .join("");
+};
+
 const getConciliationDrugList = (list, group, conciliationType) => {
   const drugList = list.filter((d) => !d.suspended);
 

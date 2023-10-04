@@ -101,7 +101,7 @@ export default function SaveModal({
           <Tooltip title="Clique para adicionar o Nome do Paciente">
             <Tag
               onClick={() => addVariable("{{nome_paciente}}")}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", marginBottom: "5px" }}
             >
               Nome do paciente
             </Tag>
@@ -120,6 +120,22 @@ export default function SaveModal({
               style={{ cursor: "pointer" }}
             >
               Alertas
+            </Tag>
+          </Tooltip>
+          <Tooltip title="Clique para adicionar a lista de Medicamentos Conciliados">
+            <Tag
+              onClick={() => addVariable("{{medicamentos_conciliados}}")}
+              style={{ cursor: "pointer" }}
+            >
+              Medicamentos conciliados
+            </Tag>
+          </Tooltip>
+          <Tooltip title="Clique para adicionar a lista de Medicamentos Não Conciliados">
+            <Tag
+              onClick={() => addVariable("{{medicamentos_nao_conciliados}}")}
+              style={{ cursor: "pointer" }}
+            >
+              Medicamentos NÃO conciliados
             </Tag>
           </Tooltip>
           <Tooltip title="Clique para adicionar a sua assinatura">
