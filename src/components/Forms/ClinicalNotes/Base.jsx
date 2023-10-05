@@ -22,7 +22,11 @@ import MemoryDraft from "features/memory/MemoryDraft/MemoryDraft";
 import getInterventionTemplate, {
   getInterventionList,
 } from "./util/getInterventionTemplate";
-import { signatureTemplate, alertsTemplate } from "./util/templates";
+import {
+  signatureTemplate,
+  alertsTemplate,
+  getConciliationDrugs,
+} from "./util/templates";
 import { Box, EditorBox, FieldError } from "../Form.style";
 
 export default function Base({
@@ -62,10 +66,35 @@ export default function Base({
 
     const alerts = alertsTemplate(prescription);
 
+    const conciliationDrugsWithRelation = getConciliationDrugs(
+      prescription.prescription.list.length
+        ? prescription.prescription.list[0].value
+        : [],
+      true
+    );
+
+    const conciliationDrugsWithoutRelation = getConciliationDrugs(
+      prescription.prescription.list.length
+        ? prescription.prescription.list[0].value
+        : [],
+      false
+    );
+
     const replaced = value
       .replace("{{nome_paciente}}", prescription.data.namePatient)
-      .replace("{{intervencoes}}", interventions)
-      .replace("{{alertas}}", alerts)
+      .replace(
+        "{{intervencoes}}",
+        interventions || "Nenhuma intervenção registrada"
+      )
+      .replace("{{alertas}}", alerts || "Nenhum alerta registrado")
+      .replace(
+        "{{medicamentos_conciliados}}",
+        conciliationDrugsWithRelation || "--"
+      )
+      .replace(
+        "{{medicamentos_nao_conciliados}}",
+        conciliationDrugsWithoutRelation || "--"
+      )
       .replace("{{assinatura}}", signatureTemplate(signature, account));
 
     setFieldValue("notes", replaced);

@@ -35,6 +35,8 @@ export const { Types, Creators } = createActions({
 
   prescriptionsIncrementClinicalNotes: [""],
 
+  prescriptionsActionsSetModalVisibility: ["modalKey", "visible"],
+
   prescriptionsReset: [],
 });
 
@@ -47,6 +49,11 @@ const INITIAL_STATE = {
     isFetching: true,
     isSaving: false,
     success: false,
+    actions: {
+      modalVisibility: {
+        patientEdit: false,
+      },
+    },
     check: {
       error: null,
       success: {},
@@ -128,6 +135,20 @@ const INITIAL_STATE = {
 };
 
 const reset = () => INITIAL_STATE;
+
+const setModalVisibility = (state = INITIAL_STATE, { modalKey, visible }) => ({
+  ...state,
+  single: {
+    ...state.single,
+    actions: {
+      ...state.single.actions,
+      modalVisibility: {
+        ...state.single.actions.modalVisibility,
+        [modalKey]: visible,
+      },
+    },
+  },
+});
 
 const incrementClinicalNotes = (state = INITIAL_STATE) => ({
   ...state,
@@ -615,6 +636,8 @@ const HANDLERS = {
   [Types.PRESCRIPTIONS_FETCH_EXAMS_SUCCESS]: fetchExamsSuccess,
 
   [Types.PRESCRIPTIONS_INCREMENT_CLINICAL_NOTES]: incrementClinicalNotes,
+
+  [Types.PRESCRIPTIONS_ACTIONS_SET_MODAL_VISIBILITY]: setModalVisibility,
 
   [Types.PRESCRIPTIONS_RESET]: reset,
 };

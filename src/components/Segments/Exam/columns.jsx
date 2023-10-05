@@ -16,7 +16,7 @@ const columns = (sortedInfo, enableSortExams) => {
       title: "Tipo",
       dataIndex: "type",
       sortDirections,
-      sorter: enableSortExams ? null : (a, b) => a.type.localeCompare(b.type),
+      //sorter: enableSortExams ? false : (a, b) => a.type.localeCompare(b.type),
       sortOrder: sortedInfo.columnKey === "type" && sortedInfo.order,
     },
 
@@ -25,16 +25,16 @@ const columns = (sortedInfo, enableSortExams) => {
       dataIndex: "name",
       width: 350,
       sortDirections,
-      sorter: enableSortExams ? null : (a, b) => a.name.localeCompare(b.name),
+      //sorter: enableSortExams ? null : (a, b) => a.name.localeCompare(b.name),
       sortOrder: sortedInfo.columnKey === "name" && sortedInfo.order,
     },
     {
       title: "Rótulo",
       dataIndex: "initials",
       sortDirections,
-      sorter: enableSortExams
-        ? null
-        : (a, b) => a.initials.localeCompare(b.initials),
+      //sorter: enableSortExams
+      //  ? null
+      //  : (a, b) => a.initials.localeCompare(b.initials),
       sortOrder: sortedInfo.columnKey === "initials" && sortedInfo.order,
     },
     {

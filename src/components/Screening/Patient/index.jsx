@@ -4,8 +4,6 @@ import moment from "moment";
 import { Row, Col } from "antd";
 import { useTranslation } from "react-i18next";
 
-import FormPatientModal from "containers/Forms/Patient";
-
 import Button from "components/Button";
 import Icon, { InfoIcon } from "components/Icon";
 import Tooltip from "components/Tooltip";
@@ -27,6 +25,7 @@ export default function Patient({
   interventionCount,
   siderCollapsed,
   interventions,
+  setModalVisibility,
 }) {
   const {
     alertExams,
@@ -45,7 +44,6 @@ export default function Patient({
   } = prescription;
 
   const [seeMore, setSeeMore] = useState(false);
-  const [patientModalVisible, setPatientModalVisible] = useState(false);
 
   const { t } = useTranslation();
 
@@ -54,11 +52,6 @@ export default function Patient({
 
   const toggleSeeMore = () => {
     setSeeMore(!seeMore);
-  };
-
-  const afterSavePatient = () => {
-    fetchScreening(prescription.idPrescription);
-    setPatientModalVisible(false);
   };
 
   const sortAllergies = (a, b) => {
@@ -83,7 +76,7 @@ export default function Patient({
           selectIntervention={selectIntervention}
           security={security}
           setSeeMore={setSeeMore}
-          setPatientModalVisible={setPatientModalVisible}
+          setModalVisibility={setModalVisibility}
           featureService={featureService}
           interventions={interventions}
         />
@@ -162,7 +155,7 @@ export default function Patient({
                   {notesInfo !== "" && (
                     <Button
                       type="link gtm-btn-nhc-update-data"
-                      onClick={() => setPatientModalVisible(true)}
+                      onClick={() => setModalVisibility("patientEdit", true)}
                     >
                       {t("actions.useData")}
                     </Button>
@@ -245,7 +238,7 @@ export default function Patient({
                     {notesInfo !== "" && (
                       <Button
                         type="link gtm-btn-nhc-update-data"
-                        onClick={() => setPatientModalVisible(true)}
+                        onClick={() => setModalVisibility("patientEdit", true)}
                       >
                         {t("actions.useData")}
                       </Button>
@@ -272,15 +265,6 @@ export default function Patient({
           )}
         </SeeMore>
       </Col>
-
-      <FormPatientModal
-        open={patientModalVisible}
-        onCancel={() => setPatientModalVisible(false)}
-        okText="Salvar"
-        okType="primary gtm-bt-save-patient"
-        cancelText="Cancelar"
-        afterSavePatient={afterSavePatient}
-      />
     </Row>
   );
 }

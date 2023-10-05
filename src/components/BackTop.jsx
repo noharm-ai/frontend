@@ -1,3 +1,3 @@
-import BackTop from "antd/lib/back-top";
+import { FloatButton } from "antd";
 
-export default BackTop;
+export default FloatButton.BackTop;

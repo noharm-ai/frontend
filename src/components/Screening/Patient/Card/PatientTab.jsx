@@ -13,7 +13,7 @@ import { translateDialysis } from "utils/transformers/prescriptions";
 export default function PatientTab({
   prescription,
   setSeeMore,
-  setPatientModalVisible,
+  setModalVisibility,
 }) {
   const { t } = useTranslation();
   const {
@@ -86,7 +86,7 @@ export default function PatientTab({
         <div className="patient-data-item-edit">
           <Button
             type="link"
-            onClick={() => setPatientModalVisible(true)}
+            onClick={() => setModalVisibility("patientEdit", true)}
             icon={<EditOutlined style={{ fontSize: 18, color: "#fff" }} />}
           ></Button>
         </div>
@@ -105,7 +105,7 @@ export default function PatientTab({
         <div className="patient-data-item-edit">
           <Button
             type="link"
-            onClick={() => setPatientModalVisible(true)}
+            onClick={() => setModalVisibility("patientEdit", true)}
             icon={<EditOutlined style={{ fontSize: 18, color: "#fff" }} />}
           ></Button>
         </div>
@@ -139,7 +139,7 @@ export default function PatientTab({
               >
                 <Button
                   type="link"
-                  onClick={() => setPatientModalVisible(true)}
+                  onClick={() => setModalVisibility("patientEdit", true)}
                   icon={
                     <EditOutlined style={{ fontSize: 18, color: "#fff" }} />
                   }
@@ -150,7 +150,7 @@ export default function PatientTab({
             <Button
               type="link"
               icon={<EditOutlined style={{ fontSize: 18, color: "#fff" }} />}
-              onClick={() => setPatientModalVisible(true)}
+              onClick={() => setModalVisibility("patientEdit", true)}
             ></Button>
           )}
         </div>
@@ -188,7 +188,7 @@ export default function PatientTab({
               >
                 <Button
                   type="link"
-                  onClick={() => setPatientModalVisible(true)}
+                  onClick={() => setModalVisibility("patientEdit", true)}
                   icon={
                     <EditOutlined style={{ fontSize: 18, color: "#fff" }} />
                   }
@@ -198,7 +198,7 @@ export default function PatientTab({
           ) : (
             <Button
               type="link"
-              onClick={() => setPatientModalVisible(true)}
+              onClick={() => setModalVisibility("patientEdit", true)}
               icon={<EditOutlined style={{ fontSize: 18, color: "#fff" }} />}
             ></Button>
           )}
@@ -236,7 +236,7 @@ export default function PatientTab({
         <div className="patient-data-item-edit">
           <Button
             type="link"
-            onClick={() => setPatientModalVisible(true)}
+            onClick={() => setModalVisibility("patientEdit", true)}
             icon={<EditOutlined style={{ fontSize: 18, color: "#fff" }} />}
           ></Button>
         </div>
@@ -250,7 +250,7 @@ export default function PatientTab({
         <div className="patient-data-item-edit">
           <Button
             type="link"
-            onClick={() => setPatientModalVisible(true)}
+            onClick={() => setModalVisibility("patientEdit", true)}
             icon={<EditOutlined style={{ fontSize: 18, color: "#fff" }} />}
           ></Button>
         </div>

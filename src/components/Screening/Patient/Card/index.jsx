@@ -42,8 +42,7 @@ export default function PatientCard({
   selectIntervention,
   setSeeMore,
   fetchScreening,
-  setPatientModalVisible,
-  featureService,
+  setModalVisibility,
   interventions,
 }) {
   const dispatch = useDispatch();
@@ -159,7 +158,7 @@ export default function PatientCard({
   const handleMenuClick = ({ key, domEvent }) => {
     switch (key) {
       case "edit":
-        setPatientModalVisible(true);
+        setModalVisibility("patientEdit", true);
         break;
       case "update":
         updatePrescriptionData();
@@ -207,7 +206,7 @@ export default function PatientCard({
       children: (
         <PatientTab
           prescription={prescription}
-          setPatientModalVisible={setPatientModalVisible}
+          setModalVisibility={setModalVisibility}
           setSeeMore={setSeeMore}
         />
       ),
@@ -222,7 +221,7 @@ export default function PatientCard({
       children: (
         <AdmissionTab
           prescription={prescription}
-          setPatientModalVisible={setPatientModalVisible}
+          setModalVisibility={setModalVisibility}
           setSeeMore={setSeeMore}
         />
       ),
@@ -243,7 +242,7 @@ export default function PatientCard({
       children: (
         <NotesTab
           prescription={prescription}
-          setPatientModalVisible={setPatientModalVisible}
+          setModalVisibility={setModalVisibility}
           setSeeMore={setSeeMore}
         />
       ),

@@ -1,7 +1,16 @@
 import styled from "styled-components/macro";
+import { FloatButton } from "antd";
 
 import Tabs from "components/Tabs";
 import { get } from "styles/utils";
+
+export const ScreeningFloatButtonGroup = styled(FloatButton.Group)`
+  > button {
+    .ant-float-btn-body {
+      background: #a991d6;
+    }
+  }
+`;
 
 export const ScreeningTabs = styled(Tabs)`
   .ant-tabs-nav {
