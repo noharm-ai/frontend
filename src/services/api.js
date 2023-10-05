@@ -128,8 +128,7 @@ const generateOutlier = (bearerToken, idSegment) =>
     ...setHeaders(bearerToken),
   });
 
-const generateOutlierFold = (bearerToken, url) =>
-  instance.get(url, { ...setHeaders(bearerToken) });
+const generateOutlierFold = (url) => instance.get(url, { ...setHeaders() });
 
 const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
   instance.post(

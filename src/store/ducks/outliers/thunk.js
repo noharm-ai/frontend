@@ -69,15 +69,17 @@ const {
 export const generateOutlierThunk =
   ({ id: idSegment, nameSegment }) =>
   async (dispatch, getState) => {
-    dispatch(outliersGenerateStart({ idSegment, nameSegment }));
+    return new Promise(async (resolve, reject) => {
+      dispatch(outliersGenerateStart({ idSegment, nameSegment }));
 
-    const { access_token } = getState().auth.identify;
-    const {
-      status,
-      data: { data },
-    } = await api.generateOutlier(access_token, idSegment);
+      const {
+        status,
+        data: { data },
+      } = await api.generateOutlier(null, idSegment);
 
-    dispatch(outliersGenerateStop(status, data));
+      dispatch(outliersGenerateStop(status, data));
+      resolve(data);
+    });
   };
 
 export const generateDrugOutlierThunk =

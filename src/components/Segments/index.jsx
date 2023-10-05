@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
+import { useDispatch } from "react-redux";
 import isEmpty from "lodash.isempty";
 import { Row, Col } from "antd";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
@@ -20,10 +21,9 @@ import Heading from "components/Heading";
 
 import FormSegment from "containers/Forms/Segment";
 import FormExamModal from "containers/Forms/Exam";
-import api from "services/api";
-import { toDataSource, errorHandler } from "utils";
+import { toDataSource } from "utils";
+import { generateOutlierFold } from "features/serverActions/ServerActionsSlice";
 
-import feedback from "./feedback";
 import Filter from "./Filter";
 import examColumns from "./Exam/columns";
 import "./index.css";
@@ -47,14 +47,13 @@ function Segments({
   selectExam,
   updateExamOrder,
   sortStatus,
-  access_token,
   hospitals,
 }) {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const [examModalVisible, setExamModalVisibility] = useState(false);
   const [progressModalVisible, setProgressModalVisibility] = useState(false);
   const [progressPercentage, setProgressPercentage] = useState(0);
-  const { generate } = outliers;
   const { single: currentSegment, examTypes } = segments;
   const availableExamTypes = currentSegment.content.exams
     ? examTypes.list.filter(
@@ -67,55 +66,6 @@ function Segments({
     // initial load
     fetchSegmentById(1, 1);
   }, [fetchSegmentById]);
-
-  useEffect(() => {
-    let errorResponse = null;
-    const startOutliersGeneration = async () => {
-      const progressStep = 100 / generate.data.length;
-      let progressTotal = 0;
-
-      for (let i = 0; i < generate.data.length; i++) {
-        const url = generate.data[i];
-
-        const { error } = await api
-          .generateOutlierFold(access_token, url)
-          .catch(errorHandler);
-        if (error) {
-          errorResponse = error;
-          break;
-        }
-
-        if (i === generate.data.length - 1) {
-          progressTotal = 100;
-        } else {
-          progressTotal += progressStep;
-        }
-
-        setProgressPercentage(progressTotal);
-      }
-
-      if (!errorResponse) {
-        setTimeout(() => {
-          setProgressModalVisibility(false);
-          feedback(generate.status, generate);
-          setProgressPercentage(0);
-          resetGenerate();
-        }, 1000);
-      } else {
-        notification.error({
-          message: t("error.title"),
-          description: t("error.description"),
-        });
-        setProgressModalVisibility(false);
-        resetGenerate();
-      }
-    };
-
-    if (generate.status) {
-      setProgressModalVisibility(true);
-      startOutliersGeneration();
-    }
-  }, [access_token, generate, resetGenerate, t]);
 
   useEffect(() => {
     if (sortStatus.error) {
@@ -224,10 +174,66 @@ function Segments({
     setSortOrder(sorter);
   };
 
-  const generateOutlierClick = () =>
+  const startOutliersGeneration = async (data) => {
+    const progressStep = 100 / data.length;
+    let progressTotal = 0;
+    let error = false;
+
+    for (let i = 0; i < data.length; i++) {
+      const url = data[i];
+
+      const response = await dispatch(generateOutlierFold({ url }));
+
+      if (response.payload?.status !== "success") {
+        error = true;
+        break;
+      }
+
+      if (i === data.length - 1) {
+        progressTotal = 100;
+      } else {
+        progressTotal += progressStep;
+      }
+
+      setProgressPercentage(progressTotal);
+    }
+
+    if (!error) {
+      setTimeout(() => {
+        setProgressModalVisibility(false);
+
+        DefaultModal.success({
+          title: "Escores gerados com sucesso!",
+          content: null,
+          okText: "Ok",
+          cancelText: "Fechar",
+          width: 500,
+        });
+
+        setProgressPercentage(0);
+        resetGenerate();
+      }, 1000);
+    } else {
+      DefaultModal.error({
+        title: "Ocorreu um erro ao gerar os escores. Confira os logs.",
+        content: null,
+        okText: "Ok",
+        cancelText: "Fechar",
+        width: 500,
+      });
+      setProgressModalVisibility(false);
+      resetGenerate();
+    }
+  };
+
+  const generateOutlierClick = () => {
     generateOutlier({
       id: currentSegment.content.id,
+    }).then((data) => {
+      setProgressModalVisibility(true);
+      startOutliersGeneration(data);
     });
+  };
 
   const tabs = [];
 
