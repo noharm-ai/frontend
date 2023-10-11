@@ -163,7 +163,7 @@ export default function ClinicalNotes({
                   style={{ width: "90%" }}
                   mode="multiple"
                   optionFilterProp="children"
-                  dropdownMatchSelectWidth={false}
+                  popupMatchSelectWidth={false}
                 >
                   {positionList.map((p, i) => (
                     <Select.Option value={p} key={i}>
@@ -182,7 +182,7 @@ export default function ClinicalNotes({
                     style={{ width: "100%" }}
                     mode="multiple"
                     optionFilterProp="children"
-                    dropdownMatchSelectWidth={false}
+                    popupMatchSelectWidth={false}
                   >
                     {ClinicalNotesIndicator.list(t).map((indicator, i) => (
                       <Select.Option value={indicator.key} key={indicator.key}>
