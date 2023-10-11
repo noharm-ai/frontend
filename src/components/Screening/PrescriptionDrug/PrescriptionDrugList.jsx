@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 
 import LoadBox, { LoadContainer } from "components/LoadBox";
 import Empty from "components/Empty";
-import Collapse from "components/Collapse";
 import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
@@ -15,9 +14,9 @@ import notification from "components/notification";
 import FormIntervention from "containers/Forms/Intervention";
 
 import {
-  GroupPanel,
-  PrescriptionPanel,
+  PrescriptionCollapse,
   PrescriptionHeader,
+  GroupCollapse,
 } from "./PrescriptionDrug.style";
 import Table from "./components/Table";
 import PanelAction from "./components/PanelAction";
@@ -352,26 +351,28 @@ export default function PrescriptionDrugList({
       return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={msg} />;
     }
 
+    const getCollapsePrescriptionItems = (ds) => [
+      {
+        key: "1",
+        label: panelHeader(ds),
+        extra: prescriptionSummary(
+          ds.key,
+          headers[ds.key],
+          isEmpty(ds.value) ? null : ds.value[0].source
+        ),
+        className: headers[ds.key].status === "s" ? "checked" : "",
+        children: table(ds, true),
+      },
+    ];
+
     return dataSource.map((ds, index) => (
       <div key={index}>
         {group.indexOf(`${ds.key}`) !== -1 && (
-          <Collapse
+          <PrescriptionCollapse
             bordered
             defaultActiveKey={headers[ds.key].status === "s" ? [] : ["1"]}
-          >
-            <PrescriptionPanel
-              header={panelHeader(ds)}
-              key="1"
-              className={headers[ds.key].status === "s" ? "checked" : ""}
-              extra={prescriptionSummary(
-                ds.key,
-                headers[ds.key],
-                isEmpty(ds.value) ? null : ds.value[0].source
-              )}
-            >
-              {table(ds, true)}
-            </PrescriptionPanel>
-          </Collapse>
+            items={getCollapsePrescriptionItems(ds)}
+          ></PrescriptionCollapse>
         )}
       </div>
     ));
@@ -447,23 +448,25 @@ export default function PrescriptionDrugList({
     return Object.keys(groups).sort();
   };
 
+  const getCollapseItems = (g) => [
+    {
+      key: "1",
+      label: groupHeader(g),
+      extra: groupSummary(groups[g]),
+      className: groups[g].checked ? "checked" : "",
+      children: list(groups[g].ids),
+    },
+  ];
+
   return (
     <>
       {getGroups(groups).map((g) => (
-        <Collapse
+        <GroupCollapse
           bordered={false}
           key={g}
           defaultActiveKey={groups[g].checked ? [] : ["1"]}
-        >
-          <GroupPanel
-            header={groupHeader(g)}
-            key="1"
-            className={groups[g].checked ? "checked" : ""}
-            extra={groupSummary(groups[g])}
-          >
-            {list(groups[g].ids)}
-          </GroupPanel>
-        </Collapse>
+          items={getCollapseItems(g)}
+        ></GroupCollapse>
       ))}
       <FormIntervention
         open={visible}
