@@ -4,6 +4,7 @@ const endpoints = {
   frequency: "/admin/frequency",
   interventionReason: "/admin/intervention-reason",
   memory: "/admin/memory",
+  drug: "/admin/drug",
 };
 
 const getFrequencyList = (bearerToken, params = {}) =>
@@ -46,6 +47,18 @@ const updateMemoryItem = (bearerToken, params = {}) => {
   });
 };
 
+const getDrugAttributes = (params = {}) => {
+  return instance.post(`${endpoints.drug}/attributes-list`, params, {
+    ...setHeaders(),
+  });
+};
+
+const updatePriceFactor = (params = {}) => {
+  return instance.post(`${endpoints.drug}/price-factor`, params, {
+    ...setHeaders(),
+  });
+};
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -53,6 +66,8 @@ const api = {
   upsertIntervReason,
   getMemoryItems,
   updateMemoryItem,
+  getDrugAttributes,
+  updatePriceFactor,
 };
 
 export default api;

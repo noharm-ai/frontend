@@ -8,3 +8,8 @@ export const PageCard = styled.div`
   margin-top: 2rem;
   box-shadow: 0 -1px 7px rgb(0 0 0 / 16%);
 `;
+
+export const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;

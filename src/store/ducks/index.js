@@ -27,11 +27,13 @@ import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
 import adminFrequencyReducer from "./admin/frequency";
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
+import adminDrugAttributes from "features/admin/DrugAttributes/DrugAttributesSlice";
 
 const adminReducers = combineReducers({
   frequency: adminFrequencyReducer,
   interventionReason: adminInterventionReasonReducer,
   memory: adminMemory,
+  drugAttributes: adminDrugAttributes,
 });
 
 export default combineReducers({

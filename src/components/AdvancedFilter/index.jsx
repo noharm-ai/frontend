@@ -22,6 +22,7 @@ export default function AdvancedFilter({
   secondaryFilters,
   initialValues,
   onSearch,
+  onChangeValues,
   loading,
   skipFilterList,
 }) {
@@ -31,6 +32,9 @@ export default function AdvancedFilter({
 
   const setFieldValue = (newValues) => {
     setValues({ ...values, ...newValues });
+    if (onChangeValues) {
+      onChangeValues({ ...values, ...newValues });
+    }
   };
 
   const countHiddenFilters = (filters) => {
@@ -59,6 +63,10 @@ export default function AdvancedFilter({
 
   const reset = () => {
     setValues(initialValues);
+    if (onChangeValues) {
+      onChangeValues(initialValues);
+    }
+
     setOpen(false);
     onSearch(initialValues);
   };

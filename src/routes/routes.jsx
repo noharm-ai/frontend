@@ -29,6 +29,7 @@ import SummarySearch from "pages/Summary/SummarySearch";
 import AdminFrequency from "pages/Admin/Frequency";
 import AdminInterventionReason from "pages/Admin/InterventionReason";
 import AdminMemory from "pages/Admin/Memory";
+import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 
 const routes = [
   {
@@ -232,6 +233,12 @@ const routes = [
     exact: true,
     path: "/admin/memoria",
     element: <WithAuth component={AdminMemory} />,
+  },
+
+  {
+    exact: true,
+    path: "/admin/atributos-medicamentos",
+    element: <WithAuth component={AdminDrugAttributes} />,
   },
 ];
 
