@@ -15,7 +15,7 @@ export default function MainFilters() {
 
   return (
     <>
-      <Col md={7} lg={5} xxl={4}>
+      <Col md={7} lg={4} xxl={4}>
         <Heading as="label" size="14px">
           {t("screeningList.segment")}:
         </Heading>
@@ -36,7 +36,7 @@ export default function MainFilters() {
           ))}
         </Select>
       </Col>
-      <Col md={7} lg={5} xxl={4}>
+      <Col md={7} lg={4} xxl={4}>
         <Heading as="label" htmlFor="date" size="14px">
           {t("tableHeader.drug")}:
         </Heading>
@@ -89,7 +89,7 @@ export default function MainFilters() {
       </Col>
       <Col md={5} lg={3} xxl={2}>
         <Heading as="label" size="14px">
-          Conversão Unid. Preço:
+          Unid. Preço:
         </Heading>
         <Select
           style={{ width: "100%" }}

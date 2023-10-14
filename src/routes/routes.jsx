@@ -237,7 +237,7 @@ const routes = [
 
   {
     exact: true,
-    path: "/admin/atributos-medicamentos",
+    path: "/admin/curadoria-medicamentos",
     element: <WithAuth component={AdminDrugAttributes} />,
   },
 ];

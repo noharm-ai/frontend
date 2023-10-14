@@ -59,6 +59,12 @@ const updatePriceFactor = (params = {}) => {
   });
 };
 
+const addDefaultUnits = (params = {}) => {
+  return instance.post(`${endpoints.drug}/add-default-units`, params, {
+    ...setHeaders(),
+  });
+};
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -68,6 +74,7 @@ const api = {
   updateMemoryItem,
   getDrugAttributes,
   updatePriceFactor,
+  addDefaultUnits,
 };
 
 export default api;

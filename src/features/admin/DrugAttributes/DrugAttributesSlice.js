@@ -14,6 +14,10 @@ const initialState = {
   },
   currentPage: 1,
   count: 0,
+  addDefaultUnits: {
+    status: "idle",
+    error: null,
+  },
 };
 
 export const fetchDrugAttributes = createAsyncThunk(
@@ -34,6 +38,19 @@ export const updatePriceFactor = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.updatePriceFactor(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const addDefaultUnits = createAsyncThunk(
+  "admin-drug-attributes/add-default-units",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.addDefaultUnits(params);
 
       return response;
     } catch (err) {
@@ -78,6 +95,15 @@ const drugAttributesSlice = createSlice({
             d.measureUnitPriceFactor = data.factor;
           }
         });
+      })
+      .addCase(addDefaultUnits.pending, (state, action) => {
+        state.addDefaultUnits.status = "loading";
+      })
+      .addCase(addDefaultUnits.fulfilled, (state, action) => {
+        state.addDefaultUnits.status = "succeeded";
+      })
+      .addCase(addDefaultUnits.rejected, (state, action) => {
+        state.addDefaultUnits.status = "failed";
       });
   },
 });
