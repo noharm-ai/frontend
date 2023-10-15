@@ -9,6 +9,7 @@ const initialState = {
     hasPriceConversion: null,
     hasSubstance: null,
     hasDefaultUnit: null,
+    hasPrescription: true,
     term: null,
     idSegmentList: [],
   },
@@ -86,6 +87,7 @@ const drugAttributesSlice = createSlice({
       .addCase(fetchDrugAttributes.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+        state.list = [];
       })
       .addCase(updatePriceFactor.fulfilled, (state, action) => {
         const data = action.payload.data.data;

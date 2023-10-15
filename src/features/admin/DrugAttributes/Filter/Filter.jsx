@@ -28,14 +28,19 @@ export default function Filter({ limit }) {
     hasPriceConversion: null,
     hasSubstance: null,
     hasDefaultUnit: null,
+    hasPrescription: true,
     term: null,
     idSegmentList: [],
   };
 
   useEffect(() => {
-    dispatch(fetchDrugAttributes({ limit, offset: 0 })).catch(() => {
-      notification.error(errorMessage);
-    });
+    dispatch(fetchDrugAttributes({ ...initialValues, limit, offset: 0 })).then(
+      (response) => {
+        if (response.error) {
+          notification.error(errorMessage);
+        }
+      }
+    );
 
     return () => {
       dispatch(reset());
@@ -44,7 +49,13 @@ export default function Filter({ limit }) {
 
   const search = (params) => {
     dispatch(setCurrentPage(1));
-    dispatch(fetchDrugAttributes({ ...params, limit, offset: 0 }));
+    dispatch(fetchDrugAttributes({ ...params, limit, offset: 0 })).then(
+      (response) => {
+        if (response.error) {
+          notification.error(errorMessage);
+        }
+      }
+    );
   };
 
   const onChangeValues = (params) => {

@@ -7,6 +7,7 @@ import Tag from "components/Tag";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
+import { Tooltip } from "antd";
 
 export default function MainFilters() {
   const { t } = useTranslation();
@@ -46,6 +47,28 @@ export default function MainFilters() {
             setFieldValue({ term: target.value !== "" ? target.value : null })
           }
         />
+      </Col>
+      <Col md={5} lg={3} xxl={2}>
+        <Heading as="label" size="14px">
+          <Tooltip title="Indica se o medicamento já foi prescrito na NoHarm">
+            Prescrito:
+          </Tooltip>
+        </Heading>
+        <Select
+          style={{ width: "100%" }}
+          value={values.hasPrescription}
+          onChange={(val) => setFieldValue({ hasPrescription: val })}
+          showSearch
+          optionFilterProp="children"
+          allowClear
+        >
+          <Select.Option key={0} value={true}>
+            <Tag color="green">Sim</Tag>
+          </Select.Option>
+          <Select.Option key={1} value={false}>
+            <Tag color="red">Não</Tag>
+          </Select.Option>
+        </Select>
       </Col>
       <Col md={5} lg={3} xxl={2}>
         <Heading as="label" size="14px">
