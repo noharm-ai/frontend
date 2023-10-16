@@ -13,6 +13,7 @@ import { Creators as UserAdminCreators } from "./userAdmin";
 
 import { reset as adminMemoryReset } from "features/admin/Memory/MemorySlice";
 import { reset as adminInterventionReasonsReset } from "features/admin/InterventionReason/InterventionReasonSlice";
+import { reset as adminDrugAttributesReset } from "features/admin/DrugAttributes/DrugAttributesSlice";
 import { reset as drugFormStatusReset } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import { reset as listsReset } from "features/lists/ListsSlice";
 import { reset as memoryDraftReset } from "features/memory/MemoryDraft/MemoryDraftSlice";
@@ -37,6 +38,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(adminInterventionReasonsReset());
   dispatch(adminMemoryReset());
   dispatch(adminFrequencyReset());
+  dispatch(adminDrugAttributesReset());
 
   dispatch(clinicalNotesReset());
   dispatch(departmentsReset());

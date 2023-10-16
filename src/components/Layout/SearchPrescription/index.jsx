@@ -23,12 +23,16 @@ export default function SearchPrescription({ type, size }) {
     setOpen(false);
   });
   const navigateTo = useCallback(
-    (idPrescription, admissionNumber) => {
+    (idPrescription, admissionNumber, concilia) => {
       setOpen(false);
       if (type === "summary") {
         window.open(`/sumario-alta/${admissionNumber}`);
       } else {
-        window.open(`/prescricao/${idPrescription}`);
+        if (concilia) {
+          window.open(`/conciliacao/${idPrescription}`);
+        } else {
+          window.open(`/prescricao/${idPrescription}`);
+        }
       }
     },
     [type]
@@ -94,7 +98,8 @@ export default function SearchPrescription({ type, size }) {
             );
             navigateTo(
               options[index].idPrescription,
-              options[index].admissionNumber
+              options[index].admissionNumber,
+              options[index].concilia
             );
 
             break;
@@ -156,6 +161,20 @@ export default function SearchPrescription({ type, size }) {
     }
   };
 
+  const getDate = (option) => {
+    const dtFormat = "dd/MM/yyyy";
+
+    if (option.concilia && option.admissionDate) {
+      return format(new Date(option.admissionDate), dtFormat);
+    }
+
+    if (option.date) {
+      return format(new Date(option.date), dtFormat);
+    }
+
+    return "--";
+  };
+
   return (
     <SearchPrescriptionContainer ref={wrapperRef} className={`${type} ${size}`}>
       <InputSearchNumber
@@ -172,7 +191,11 @@ export default function SearchPrescription({ type, size }) {
         {options.map((option, index) => (
           <div
             onClick={() =>
-              navigateTo(option.idPrescription, option.admissionNumber)
+              navigateTo(
+                option.idPrescription,
+                option.admissionNumber,
+                option.concilia
+              )
             }
             key={option.idPrescription}
             className={option.idPrescription === itemActive ? "active" : ""}
@@ -182,11 +205,15 @@ export default function SearchPrescription({ type, size }) {
           >
             <div className="search-result-info">
               <div className="search-result-info-primary">
-                {option.agg
-                  ? `${t("patientCard.admission")} ${option.admissionNumber}`
+                {option.agg || option.concilia
+                  ? `${t(
+                      option.concilia
+                        ? "labels.conciliation"
+                        : "patientCard.admission"
+                    )} ${option.admissionNumber}`
                   : `${t("patientCard.prescription")} ${option.idPrescription}`}
                 {" - "}
-                <span>{format(new Date(option.date), "dd/MM/yyyy")}</span>
+                <span>{getDate(option)}</span>
               </div>
               <div className="search-result-info-secondary">
                 {option.birthdate && (

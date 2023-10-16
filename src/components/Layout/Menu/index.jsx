@@ -173,6 +173,13 @@ export default function Menu({ security, featureService }) {
           role: ["admin"],
         },
         {
+          key: "/admin/curadoria-medicamentos",
+          label: "Curadoria medicamentos",
+          icon: <TableOutlined />,
+          id: "gtm-lnk-attr-drugs",
+          role: ["admin", "training"],
+        },
+        {
           key: "/medicamentos",
           label: t("menu.medications"),
           icon: <MedicineBoxOutlined />,

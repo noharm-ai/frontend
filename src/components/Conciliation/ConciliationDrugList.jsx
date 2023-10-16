@@ -14,6 +14,7 @@ import FormIntervention from "containers/Forms/Intervention";
 import { conciliationColumns } from "../Screening/columns";
 import { rowClassName } from "../Screening/PrescriptionDrug/PrescriptionDrugList";
 import ChooseInterventionModal from "components/Screening/PrescriptionDrug/components/ChooseInterventionModal";
+import expandedRowRender from "./table/expandedRowRender";
 
 import { BoxWrapper } from "./index.style";
 
@@ -144,6 +145,7 @@ export default function PrescriptionDrugList({
         }}
         dataSource={filteredDataSource()}
         rowClassName={rowClassName}
+        expandedRowRender={expandedRowRender({ t })}
       />
       <FormIntervention
         open={openIntervention}

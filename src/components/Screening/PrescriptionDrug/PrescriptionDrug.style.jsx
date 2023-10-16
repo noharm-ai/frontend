@@ -53,108 +53,112 @@ export const PrescriptionHeader = styled.div`
   }
 `;
 
-export const PrescriptionPanel = styled(Collapse.Panel)`
-  background: #fafafa;
-  margin-bottom: 10px;
-  transition: background 0.3s linear;
+export const PrescriptionCollapse = styled(Collapse)`
+  > .ant-collapse-item {
+    background: #fafafa;
+    margin-bottom: 10px;
+    transition: background 0.3s linear;
 
-  .ant-collapse-header {
-    .panel-header {
-      transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
-    }
-
-    &:hover {
+    .ant-collapse-header {
       .panel-header {
-        transform: translateX(2px);
+        transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+      }
+
+      &:hover {
+        .panel-header {
+          transform: translateX(2px);
+        }
+      }
+
+      .ant-collapse-extra {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+
+        > div {
+          margin-left: 10px;
+        }
+
+        .tag-badge {
+          margin-right: 0;
+        }
+
+        .ant-badge-dot {
+          background: #f57f17;
+        }
+
+        .ant-badge,
+        .anticon {
+          margin-left: 5px;
+        }
+
+        .ant-btn {
+          color: rgba(0, 0, 0, 0.65);
+        }
       }
     }
 
-    .ant-collapse-extra {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      align-items: center;
-
-      > div {
-        margin-left: 10px;
-      }
-
-      .tag-badge {
-        margin-right: 0;
-      }
-
-      .ant-badge-dot {
-        background: #f57f17;
-      }
-
-      .ant-badge,
-      .anticon {
-        margin-left: 5px;
-      }
-
-      .ant-btn {
-        color: rgba(0, 0, 0, 0.65);
-      }
+    &.checked {
+      background: #dcedc8;
     }
-  }
 
-  &.checked {
-    background: #dcedc8;
-  }
-
-  .ant-collapse-content {
-    background: #fff !important;
-  }
-
-  & > .ant-collapse-content > .ant-collapse-content-box {
-    padding-right: 2px;
-    padding-left: 2px;
-  }
-`;
-
-export const GroupPanel = styled(PrescriptionPanel)`
-  background: #e0e8ec;
-  border-bottom: 0 !important;
-
-  &.checked {
-    & > .ant-collapse-content {
-      border-left: 2px solid #dcedc8;
+    .ant-collapse-content {
+      background: #fff !important;
     }
 
     & > .ant-collapse-content > .ant-collapse-content-box {
-      &::after {
-        background: #dcedc8;
+      padding-right: 2px;
+      padding-left: 2px;
+    }
+  }
+`;
+
+export const GroupCollapse = styled(PrescriptionCollapse)`
+  > .ant-collapse-item {
+    background: #e0e8ec;
+    border-bottom: 0 !important;
+
+    &.checked {
+      & > .ant-collapse-content {
+        border-left: 2px solid #dcedc8;
+      }
+
+      & > .ant-collapse-content > .ant-collapse-content-box {
+        &::after {
+          background: #dcedc8;
+        }
       }
     }
-  }
 
-  .ant-collapse-content-active {
-    padding-top: 15px;
-  }
-
-  & > .ant-collapse-content > .ant-collapse-content-box {
-    padding-right: 0;
-    padding-left: 10px;
-
-    position: relative;
-
-    &::after {
-      position: absolute;
-      content: " ";
-      width: 20px;
-      height: 3px;
-      bottom: 0;
-      left: -10px;
-      background: #e0e8ec;
+    .ant-collapse-content-active {
+      padding-top: 15px;
     }
-  }
 
-  & > .ant-collapse-content {
-    background: #fff !important;
-    border-left: 3px solid #e0e8ec;
-    border-radius: 0;
+    & > .ant-collapse-content > .ant-collapse-content-box {
+      padding-right: 0;
+      padding-left: 10px;
+
+      position: relative;
+
+      &::after {
+        position: absolute;
+        content: " ";
+        width: 20px;
+        height: 3px;
+        bottom: 0;
+        left: -10px;
+        background: #e0e8ec;
+      }
+    }
+
+    & > .ant-collapse-content {
+      background: #fff !important;
+      border-left: 3px solid #e0e8ec;
+      border-radius: 0;
+    }
   }
 `;
 
