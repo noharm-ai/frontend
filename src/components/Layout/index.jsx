@@ -67,9 +67,10 @@ const Me = ({
       description: "Até breve ;)",
     });
     document.title = `${process.env.REACT_APP_SITE_TITLE}`;
+    const redirect = !sec.isAdmin() && !sec.isSupport() && !sec.isTraining();
 
     doLogout();
-    if (logoutUrl) {
+    if (logoutUrl && redirect) {
       setTimeout(() => {
         window.location.href = logoutUrl;
       }, 100);
