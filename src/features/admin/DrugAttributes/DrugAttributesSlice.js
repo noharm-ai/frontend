@@ -19,6 +19,10 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  copyConversion: {
+    status: "idle",
+    error: null,
+  },
 };
 
 export const fetchDrugAttributes = createAsyncThunk(
@@ -52,6 +56,19 @@ export const addDefaultUnits = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.addDefaultUnits(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const copyConversion = createAsyncThunk(
+  "admin-drug-attributes/copy-conversion",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.copyConversion(params);
 
       return response;
     } catch (err) {
@@ -106,6 +123,15 @@ const drugAttributesSlice = createSlice({
       })
       .addCase(addDefaultUnits.rejected, (state, action) => {
         state.addDefaultUnits.status = "failed";
+      })
+      .addCase(copyConversion.pending, (state, action) => {
+        state.copyConversion.status = "loading";
+      })
+      .addCase(copyConversion.fulfilled, (state, action) => {
+        state.copyConversion.status = "succeeded";
+      })
+      .addCase(copyConversion.rejected, (state, action) => {
+        state.copyConversion.status = "failed";
       });
   },
 });

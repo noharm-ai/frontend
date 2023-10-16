@@ -65,6 +65,12 @@ const addDefaultUnits = (params = {}) => {
   });
 };
 
+const copyConversion = (params = {}) => {
+  return instance.post(`${endpoints.drug}/copy-unit-conversion`, params, {
+    ...setHeaders(),
+  });
+};
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -75,6 +81,7 @@ const api = {
   getDrugAttributes,
   updatePriceFactor,
   addDefaultUnits,
+  copyConversion,
 };
 
 export default api;
