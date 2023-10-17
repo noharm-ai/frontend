@@ -9,6 +9,7 @@ const initialState = {
     hasPriceConversion: null,
     hasSubstance: null,
     hasDefaultUnit: null,
+    hasPriceUnit: null,
     hasPrescription: true,
     term: null,
     idSegmentList: [],
