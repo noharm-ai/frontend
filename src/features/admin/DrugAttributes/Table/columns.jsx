@@ -13,6 +13,8 @@ const columns = (t) => {
     {
       title: "Segmento",
       dataIndex: "segment",
+      width: 150,
+      align: "left",
       ellipsis: {
         showTitle: false,
       },
@@ -23,9 +25,7 @@ const columns = (t) => {
     {
       title: "Medicamento",
       dataIndex: "name",
-      ellipsis: {
-        showTitle: false,
-      },
+      align: "left",
       render: (entry, record) => {
         return <Tooltip title={record.name}>{record.name}</Tooltip>;
       },
@@ -33,6 +33,7 @@ const columns = (t) => {
     {
       title: "Unidade Padrão",
       dataIndex: "idMeasureUnitDefault",
+      width: 180,
       render: (entry, record) => {
         if (!record.idMeasureUnitDefault) {
           return <Tag color="red">Vazio</Tag>;
@@ -44,6 +45,7 @@ const columns = (t) => {
     {
       title: "Unidade Custo",
       dataIndex: "idMeasureUnitPrice",
+      width: 180,
       render: (entry, record) => {
         if (!record.idMeasureUnitPrice) {
           return <Tag color="red">Vazio</Tag>;
@@ -55,6 +57,7 @@ const columns = (t) => {
     {
       title: "Fator Unidade Custo",
       dataIndex: "measureUnitPriceFactor",
+      width: 250,
       render: (entry, record) => {
         if (
           record.idMeasureUnitDefault === record.idMeasureUnitPrice &&
