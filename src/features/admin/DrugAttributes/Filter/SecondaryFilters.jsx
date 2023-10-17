@@ -1,41 +1,30 @@
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Select } from "components/Inputs";
+import { Input, Select } from "components/Inputs";
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
 
 export default function SecondaryFilters() {
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
-  const segmentList = useSelector((state) => state.segments.list);
 
   return (
     <Row gutter={[20, 20]}>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
-          {t("screeningList.segment")}:
+        <Heading as="label" htmlFor="date" size="14px">
+          {t("tableHeader.drug")}:
         </Heading>
-        <Select
-          style={{ width: "100%", maxWidth: "400px" }}
-          placeholder="Selecione segmentos..."
-          value={values.idSegmentList}
-          onChange={(val) => setFieldValue({ idSegmentList: val })}
-          showSearch
-          optionFilterProp="children"
-          mode="multiple"
-          allowClear
-        >
-          {segmentList.map(({ id, description: text }) => (
-            <Select.Option key={id} value={id}>
-              {text}
-            </Select.Option>
-          ))}
-        </Select>
+        <Input
+          style={{ width: "400px" }}
+          value={values.term}
+          onChange={({ target }) =>
+            setFieldValue({ term: target.value !== "" ? target.value : null })
+          }
+        />
       </Col>
 
       <Col md={24} xl={16} xxl={14}>

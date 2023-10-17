@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
-import { Input, Select } from "components/Inputs";
+import { Select } from "components/Inputs";
 import Tag from "components/Tag";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
@@ -10,21 +11,30 @@ import { Tooltip } from "antd";
 
 export default function MainFilters() {
   const { t } = useTranslation();
-
+  const segmentList = useSelector((state) => state.segments.list);
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
   return (
     <>
       <Col md={7} lg={4} xxl={4}>
-        <Heading as="label" htmlFor="date" size="14px">
-          {t("tableHeader.drug")}:
+        <Heading as="label" size="14px">
+          {t("screeningList.segment")}:
         </Heading>
-        <Input
-          value={values.term}
-          onChange={({ target }) =>
-            setFieldValue({ term: target.value !== "" ? target.value : null })
-          }
-        />
+        <Select
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.idSegmentList}
+          onChange={(val) => setFieldValue({ idSegmentList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+        >
+          {segmentList.map(({ id, description: text }) => (
+            <Select.Option key={id} value={id}>
+              {text}
+            </Select.Option>
+          ))}
+        </Select>
       </Col>
       <Col md={5} lg={3} xxl={2}>
         <Heading as="label" size="14px">

@@ -72,7 +72,7 @@ export default function Filter({ limit }) {
         "hasPriceConversion",
         "hasSubstance",
         "hasDefaultUnit",
-        "term",
+        "idSegmentList",
       ]}
     />
   );
