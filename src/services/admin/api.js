@@ -59,6 +59,12 @@ const updatePriceFactor = (params = {}) => {
   });
 };
 
+const updateSubstance = (params = {}) => {
+  return instance.post(`${endpoints.drug}/substance`, params, {
+    ...setHeaders(),
+  });
+};
+
 const addDefaultUnits = (params = {}) => {
   return instance.post(`${endpoints.drug}/add-default-units`, params, {
     ...setHeaders(),
@@ -82,6 +88,7 @@ const api = {
   updatePriceFactor,
   addDefaultUnits,
   copyConversion,
+  updateSubstance,
 };
 
 export default api;

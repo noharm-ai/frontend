@@ -13,8 +13,11 @@ const columns = (t) => {
     {
       title: "Segmento",
       dataIndex: "segment",
+      ellipsis: {
+        showTitle: false,
+      },
       render: (entry, record) => {
-        return record.segment;
+        return <Tooltip title={record.segment}>{record.segment}</Tooltip>;
       },
     },
     {
@@ -25,20 +28,6 @@ const columns = (t) => {
       },
       render: (entry, record) => {
         return <Tooltip title={record.name}>{record.name}</Tooltip>;
-      },
-    },
-    {
-      title: "Substância",
-      dataIndex: "name",
-      ellipsis: {
-        showTitle: false,
-      },
-      render: (entry, record) => {
-        if (!record.substance) {
-          return <Tag color="red">Vazio</Tag>;
-        }
-
-        return <Tooltip title={record.substance}>{record.substance}</Tooltip>;
       },
     },
     {
