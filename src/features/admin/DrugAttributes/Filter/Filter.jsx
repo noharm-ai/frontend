@@ -72,6 +72,7 @@ export default function Filter({ limit }) {
         "hasPriceConversion",
         "hasSubstance",
         "hasDefaultUnit",
+        "hasPriceUnit",
         "idSegmentList",
       ]}
     />
