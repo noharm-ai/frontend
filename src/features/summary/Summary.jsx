@@ -21,7 +21,7 @@ import SummaryText from "./SummaryText/SummaryText";
 import SummarySave from "./SummarySave/SummarySave";
 import { PageHeader } from "styles/PageHeader.style";
 import { SummaryContainer } from "./Summary.style";
-import { fetchSummary, startBlock, setBlock } from "./SummarySlice";
+import { fetchSummary, startBlock, setBlock, reset } from "./SummarySlice";
 import {
   examsToText,
   allergiesToText,
@@ -29,6 +29,7 @@ import {
   receiptToText,
   drugsUsedTotext,
 } from "./verbalizers";
+import pageTimer from "utils/pageTimer";
 
 function Summary({ mock }) {
   const params = useParams();
@@ -42,40 +43,50 @@ function Summary({ mock }) {
   const [modalSave, setModalSave] = useState(false);
 
   useEffect(() => {
-    if (status === "idle") {
-      dispatch(
-        fetchSummary({
-          admissionNumber: params.admissionNumber,
-          mock,
-        })
-      );
-    }
-  }, [status, dispatch, params.admissionNumber, mock]);
-
-  useEffect(() => {
-    if (status === "succeeded") {
-      if (summaryData.draft) {
-        chooseLoadOption();
+    dispatch(
+      fetchSummary({
+        admissionNumber: params.admissionNumber,
+        mock,
+      })
+    ).then((response) => {
+      if (response.error) {
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
       } else {
-        startLoadingBlocks();
+        if (!window.noharm) {
+          window.noharm = {};
+        }
+        if (!window.noharm.pageTimer) {
+          window.noharm.pageTimer = pageTimer({ debug: false });
+        }
+
+        window.noharm.pageTimer.start();
+
+        if (response.payload.data.draft) {
+          chooseLoadOption(response.payload.data.draft);
+        } else {
+          startLoadingBlocks();
+        }
       }
-    }
-  }, [status]); // eslint-disable-line
-  // eslint disabled (must happen only after loaded)
-
-  if (status === "failed") {
-    notification.error({
-      message: t("error.title"),
-      description: t("error.description"),
     });
-  }
 
-  const chooseLoadOption = () => {
+    return () => {
+      if (window.noharm?.pageTimer) {
+        window.noharm.pageTimer.stop();
+      }
+
+      dispatch(reset());
+    };
+  }, []); // eslint-disable-line
+
+  const chooseLoadOption = (draft) => {
     DefaultModal.confirm({
       title: "Rascunho",
       content: <p>Existe um rascunho para este sumário. Deseja carregá-lo?</p>,
       onOk: () => {
-        loadDraft(summaryData.draft);
+        loadDraft(draft);
       },
       onCancel: () => {
         startLoadingBlocks();

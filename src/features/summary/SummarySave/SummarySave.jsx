@@ -32,6 +32,7 @@ function SummaryText({ open, setOpen, admissionNumber }) {
 
   const save = (params) => {
     setLoading(true);
+    const pageTimer = window.noharm?.pageTimer;
 
     dispatch(
       saveDraft({
@@ -40,6 +41,7 @@ function SummaryText({ open, setOpen, admissionNumber }) {
           admissionNumber,
           rate: params.rate,
           obs: params.obs,
+          time: pageTimer?.getCurrentTime(),
           blocks,
         },
       })
@@ -55,6 +57,7 @@ function SummaryText({ open, setOpen, admissionNumber }) {
           message: "Sumário finalizado com sucesso! Obrigado!",
         });
 
+        pageTimer?.reset();
         setOpen(false);
       }
     });
