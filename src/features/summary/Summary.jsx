@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Anchor } from "antd";
+import { CheckOutlined } from "@ant-design/icons";
 
 import notification from "components/notification";
 import LoadBox, { LoadContainer } from "components/LoadBox";
@@ -17,6 +18,7 @@ import SummaryPanelAdmission from "./SummaryPanel/SummayPanelAdmission";
 import SummaryPanelAttributes from "./SummaryPanel/SummayPanelPatientAttributes";
 import SummaryPanelText from "./SummaryPanel/SummaryPanelText";
 import SummaryText from "./SummaryText/SummaryText";
+import SummarySave from "./SummarySave/SummarySave";
 import { PageHeader } from "styles/PageHeader.style";
 import { SummaryContainer } from "./Summary.style";
 import { fetchSummary, startBlock, setBlock } from "./SummarySlice";
@@ -37,6 +39,7 @@ function Summary({ mock }) {
   const blocks = useSelector((state) => state.summary.blocks);
 
   const [modalText, setModalText] = useState(false);
+  const [modalSave, setModalSave] = useState(false);
 
   useEffect(() => {
     if (status === "idle") {
@@ -129,8 +132,15 @@ function Summary({ mock }) {
             setValue={loadDraft}
           ></MemoryDraft>
 
-          <Button type="primary" onClick={() => setModalText(true)}>
+          <Button type="default" onClick={() => setModalText(true)}>
             Gerar Texto
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => setModalSave(true)}
+            icon={<CheckOutlined />}
+          >
+            Finalizar Sumário
           </Button>
         </div>
       </PageHeader>
@@ -367,6 +377,11 @@ function Summary({ mock }) {
             </Anchor>
           </div>
           <SummaryText open={modalText} setOpen={setModalText}></SummaryText>
+          <SummarySave
+            open={modalSave}
+            setOpen={setModalSave}
+            admissionNumber={params.admissionNumber}
+          ></SummarySave>
         </SummaryContainer>
       )}
       <BackTop />

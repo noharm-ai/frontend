@@ -7,89 +7,105 @@ const initialState = {
   blocks: {
     patient: {
       text: null,
+      original: null,
       ai: false,
       like: "idle",
     },
     admission: {
       text: null,
+      original: null,
       ai: false,
       like: "idle",
     },
     reason: {
       text: null,
+      original: null,
       ai: true,
       aiStatus: "paused",
       like: "idle",
     },
     diagnosis: {
       text: null,
+      original: null,
       ai: true,
       aiStatus: "paused",
       like: "idle",
     },
     allergies: {
       text: null,
+      original: null,
       ai: false,
       like: "idle",
     },
     previousDrugs: {
       text: null,
+      original: null,
       ai: true,
       aiStatus: "paused",
       like: "idle",
     },
     clinicalSummary: {
       text: null,
+      original: null,
       ai: true,
       aiStatus: "paused",
       like: "idle",
     },
     labExams: {
       text: null,
+      original: null,
       ai: false,
       like: "idle",
     },
     textExams: {
       text: null,
+      original: null,
       ai: true,
       aiStatus: "paused",
       like: "idle",
     },
     procedures: {
       text: null,
+      original: null,
       ai: true,
       aiStatus: "paused",
       like: "idle",
     },
     drugsUsed: {
       text: null,
+      original: null,
       ai: false,
       like: "idle",
     },
     drugsSuspended: {
       text: null,
+      original: null,
       ai: false,
       like: "idle",
     },
     dischargeCondition: {
       text: null,
+      original: null,
       ai: true,
       aiStatus: "paused",
       like: "idle",
     },
     dischargeStats: {
       text: null,
+      original: null,
       ai: false,
       like: "idle",
     },
     dischargePlan: {
       text: null,
+      original: null,
       ai: true,
       aiStatus: "paused",
       like: "idle",
     },
     recipe: {
       text: null,
+      original: null,
       ai: false,
       like: "idle",
     },
@@ -147,6 +163,9 @@ const summarySlice = createSlice({
   reducers: {
     setBlock(state, action) {
       state.blocks[action.payload.id].text = action.payload.data;
+      if (action.payload.original) {
+        state.blocks[action.payload.id].original = action.payload.original;
+      }
     },
     startBlock(state, action) {
       state.blocks[action.payload.id].aiStatus = "started";

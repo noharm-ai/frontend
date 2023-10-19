@@ -32,6 +32,7 @@ function SummaryPanelText({ text, position, admissionNumber }) {
       setBlock({
         id: position,
         data: text,
+        original: text,
       })
     );
   }, [text, position, dispatch]);

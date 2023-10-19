@@ -71,6 +71,7 @@ function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
             setBlock({
               id: position,
               data: response.data?.answer,
+              original: response.data?.answer,
             })
           );
         })
