@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Pagination } from "antd";
@@ -11,7 +11,9 @@ import { PageHeader } from "styles/PageHeader.style";
 
 import Filter from "./Filter/Filter";
 import columns from "./Table/columns";
+import expandedRowRender from "./Table/expandedRowRender";
 import { setCurrentPage, fetchDrugAttributes } from "./DrugAttributesSlice";
+import { getSubstances } from "features/lists/ListsSlice";
 import Actions from "./Actions/Actions";
 
 export default function DrugAttributes() {
@@ -20,22 +22,62 @@ export default function DrugAttributes() {
   const isFetching =
     useSelector((state) => state.admin.drugAttributes.status) === "loading";
 
+  const [expandedRows, setExpandedRows] = useState([]);
   const page = useSelector((state) => state.admin.drugAttributes.currentPage);
   const count = useSelector((state) => state.admin.drugAttributes.count);
   const filters = useSelector((state) => state.admin.drugAttributes.filters);
   const drugList = useSelector((state) => state.admin.drugAttributes.list);
-  const limit = 50;
+  const limit = 30;
+
+  useEffect(() => {
+    dispatch(getSubstances({ useCache: true }));
+  }, [dispatch]);
 
   const onPageChange = (newPage) => {
     dispatch(setCurrentPage(newPage));
 
     const params = { ...filters, limit, offset: (newPage - 1) * limit };
+    setExpandedRows([]);
 
     dispatch(fetchDrugAttributes(params));
   };
 
   const reload = () => {
     onPageChange(1);
+  };
+
+  const updateExpandedRows = (list, key) => {
+    if (list.includes(key)) {
+      return list.filter((i) => i !== key);
+    }
+
+    return [...list, key];
+  };
+
+  const handleRowExpand = (record) => {
+    setExpandedRows(updateExpandedRows(expandedRows, record.key));
+  };
+
+  const ExpandColumn = ({ expand }) => {
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <button
+          type="button"
+          className={`expand-all ant-table-row-expand-icon ${
+            expand ? "ant-table-row-expand-icon-collapsed" : ""
+          }`}
+          onClick={toggleExpansion}
+        ></button>
+      </div>
+    );
+  };
+
+  const toggleExpansion = () => {
+    if (expandedRows.length) {
+      setExpandedRows([]);
+    } else {
+      setExpandedRows(drugList.map((d) => `${d.idSegment}-${d.idDrug}`));
+    }
   };
 
   const datasource = drugList.map((d) => ({
@@ -82,6 +124,10 @@ export default function DrugAttributes() {
           }}
           dataSource={!isFetching ? datasource : []}
           showSorterTooltip={false}
+          expandedRowRender={expandedRowRender}
+          expandedRowKeys={expandedRows}
+          columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+          onExpand={(expanded, record) => handleRowExpand(record)}
         />
       </PageCard>
       <PaginationContainer>

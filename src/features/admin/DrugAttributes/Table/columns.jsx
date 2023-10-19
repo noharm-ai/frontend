@@ -13,37 +13,27 @@ const columns = (t) => {
     {
       title: "Segmento",
       dataIndex: "segment",
+      width: 150,
+      align: "left",
+      ellipsis: {
+        showTitle: false,
+      },
       render: (entry, record) => {
-        return record.segment;
+        return <Tooltip title={record.segment}>{record.segment}</Tooltip>;
       },
     },
     {
       title: "Medicamento",
       dataIndex: "name",
-      ellipsis: {
-        showTitle: false,
-      },
+      align: "left",
       render: (entry, record) => {
         return <Tooltip title={record.name}>{record.name}</Tooltip>;
       },
     },
     {
-      title: "Substância",
-      dataIndex: "name",
-      ellipsis: {
-        showTitle: false,
-      },
-      render: (entry, record) => {
-        if (!record.substance) {
-          return <Tag color="red">Vazio</Tag>;
-        }
-
-        return <Tooltip title={record.substance}>{record.substance}</Tooltip>;
-      },
-    },
-    {
       title: "Unidade Padrão",
       dataIndex: "idMeasureUnitDefault",
+      width: 180,
       render: (entry, record) => {
         if (!record.idMeasureUnitDefault) {
           return <Tag color="red">Vazio</Tag>;
@@ -55,6 +45,7 @@ const columns = (t) => {
     {
       title: "Unidade Custo",
       dataIndex: "idMeasureUnitPrice",
+      width: 180,
       render: (entry, record) => {
         if (!record.idMeasureUnitPrice) {
           return <Tag color="red">Vazio</Tag>;
@@ -66,6 +57,7 @@ const columns = (t) => {
     {
       title: "Fator Unidade Custo",
       dataIndex: "measureUnitPriceFactor",
+      width: 250,
       render: (entry, record) => {
         if (
           record.idMeasureUnitDefault === record.idMeasureUnitPrice &&

@@ -9,6 +9,7 @@ const initialState = {
     hasPriceConversion: null,
     hasSubstance: null,
     hasDefaultUnit: null,
+    hasPriceUnit: null,
     hasPrescription: true,
     term: null,
     idSegmentList: [],
@@ -20,6 +21,10 @@ const initialState = {
     error: null,
   },
   copyConversion: {
+    status: "idle",
+    error: null,
+  },
+  updateSubstance: {
     status: "idle",
     error: null,
   },
@@ -43,6 +48,19 @@ export const updatePriceFactor = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.updatePriceFactor(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const updateSubstance = createAsyncThunk(
+  "admin-drug-attributes/update-substance",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.updateSubstance(params);
 
       return response;
     } catch (err) {
@@ -132,6 +150,24 @@ const drugAttributesSlice = createSlice({
       })
       .addCase(copyConversion.rejected, (state, action) => {
         state.copyConversion.status = "failed";
+      })
+      .addCase(updateSubstance.pending, (state, action) => {
+        state.updateSubstance.status = "loading";
+      })
+      .addCase(updateSubstance.fulfilled, (state, action) => {
+        state.updateSubstance.status = "succeeded";
+
+        const idDrug = action.payload.data.data.idDrug;
+        const sctid = action.payload.data.data.sctid;
+
+        state.list.forEach((d) => {
+          if (d.idDrug === idDrug) {
+            d.sctid = sctid;
+          }
+        });
+      })
+      .addCase(updateSubstance.rejected, (state, action) => {
+        state.updateSubstance.status = "failed";
       });
   },
 });

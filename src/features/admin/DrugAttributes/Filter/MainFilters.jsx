@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
-import { Input, Select } from "components/Inputs";
+import { Select } from "components/Inputs";
 import Tag from "components/Tag";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
@@ -21,8 +21,7 @@ export default function MainFilters() {
           {t("screeningList.segment")}:
         </Heading>
         <Select
-          style={{ width: "100%" }}
-          placeholder="Selecione um segmento..."
+          style={{ width: "100%", maxWidth: "400px" }}
           value={values.idSegmentList}
           onChange={(val) => setFieldValue({ idSegmentList: val })}
           showSearch
@@ -35,39 +34,6 @@ export default function MainFilters() {
               {text}
             </Select.Option>
           ))}
-        </Select>
-      </Col>
-      <Col md={7} lg={4} xxl={4}>
-        <Heading as="label" htmlFor="date" size="14px">
-          {t("tableHeader.drug")}:
-        </Heading>
-        <Input
-          value={values.term}
-          onChange={({ target }) =>
-            setFieldValue({ term: target.value !== "" ? target.value : null })
-          }
-        />
-      </Col>
-      <Col md={5} lg={3} xxl={2}>
-        <Heading as="label" size="14px">
-          <Tooltip title="Indica se o medicamento já foi prescrito na NoHarm">
-            Prescrito:
-          </Tooltip>
-        </Heading>
-        <Select
-          style={{ width: "100%" }}
-          value={values.hasPrescription}
-          onChange={(val) => setFieldValue({ hasPrescription: val })}
-          showSearch
-          optionFilterProp="children"
-          allowClear
-        >
-          <Select.Option key={0} value={true}>
-            <Tag color="green">Sim</Tag>
-          </Select.Option>
-          <Select.Option key={1} value={false}>
-            <Tag color="red">Não</Tag>
-          </Select.Option>
         </Select>
       </Col>
       <Col md={5} lg={3} xxl={2}>
@@ -112,7 +78,29 @@ export default function MainFilters() {
       </Col>
       <Col md={5} lg={3} xxl={2}>
         <Heading as="label" size="14px">
-          Unid. Preço:
+          Unidade Custo:
+        </Heading>
+        <Select
+          style={{ width: "100%" }}
+          value={values.hasPriceUnit}
+          onChange={(val) => setFieldValue({ hasPriceUnit: val })}
+          showSearch
+          optionFilterProp="children"
+          allowClear
+        >
+          <Select.Option key={0} value={true}>
+            <Tag color="green">Preenchido</Tag>
+          </Select.Option>
+          <Select.Option key={1} value={false}>
+            <Tag color="red">Vazio</Tag>
+          </Select.Option>
+        </Select>
+      </Col>
+      <Col md={5} lg={3} xxl={2}>
+        <Heading as="label" size="14px">
+          <Tooltip title="Possui fator de conversão para unidade de custo?">
+            Fat. Unid. Custo:
+          </Tooltip>
         </Heading>
         <Select
           style={{ width: "100%" }}

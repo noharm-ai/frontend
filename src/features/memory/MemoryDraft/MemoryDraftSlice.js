@@ -63,20 +63,25 @@ const memoryDraftSlice = createSlice({
         state[action.meta.arg].error = action.error.message;
       })
       .addCase(saveDraft.pending, (state, action) => {
-        console.log("action save", action);
-        state[action.meta.arg.type].status = "loading";
+        if (state[action.meta.arg.type]) {
+          state[action.meta.arg.type].status = "loading";
+        }
       })
       .addCase(saveDraft.rejected, (state, action) => {
-        state[action.meta.arg.type].status = "failed";
+        if (state[action.meta.arg.type]) {
+          state[action.meta.arg.type].status = "failed";
+        }
       })
       .addCase(saveDraft.fulfilled, (state, action) => {
-        state[action.meta.arg.type].status = "succeeded";
+        if (state[action.meta.arg.type]) {
+          state[action.meta.arg.type].status = "succeeded";
 
-        state[action.meta.arg.type].data = [
-          {
-            value: action.meta.arg.value,
-          },
-        ];
+          state[action.meta.arg.type].data = [
+            {
+              value: action.meta.arg.value,
+            },
+          ];
+        }
       });
   },
 });

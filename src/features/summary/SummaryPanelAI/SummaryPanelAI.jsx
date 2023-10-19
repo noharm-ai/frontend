@@ -9,8 +9,6 @@ import {
   SettingOutlined,
   FileSearchOutlined,
   RobotOutlined,
-  LikeOutlined,
-  DislikeOutlined,
 } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
@@ -20,18 +18,16 @@ import Tooltip from "components/Tooltip";
 import { Textarea } from "components/Inputs";
 import { textToHtml } from "utils/transformers/utils";
 
-import { setBlock, setLike } from "../SummarySlice";
+import { setBlock } from "../SummarySlice";
 import SummaryPanelAIConfig from "./SummaryPanelAIConfig";
 import SummaryPanelAIAudit from "./SummaryPanelAIAudit";
+import SummaryReactions from "../SummaryReactions/SummaryReactions";
 import { SummaryPanel } from "../Summary.style";
 
 function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
   const dispatch = useDispatch();
   const status = useSelector(
     (state) => state.summary.blocks[position]?.aiStatus
-  );
-  const likeStatus = useSelector(
-    (state) => state.summary.blocks[position]?.like
   );
   const result = useSelector(
     (state) => state.summary.blocks[position]?.text || "Nada consta"
@@ -75,6 +71,7 @@ function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
             setBlock({
               id: position,
               data: response.data?.answer,
+              original: response.data?.answer,
             })
           );
         })
@@ -109,21 +106,6 @@ function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
       setBlock({
         id: position,
         data: value,
-      })
-    );
-  };
-
-  const likeAction = (type) => {
-    dispatch(
-      setLike({
-        type: `summary-${type}`,
-        block: position,
-        status: type,
-        value: {
-          admissionNumber,
-          block: position,
-          text: result,
-        },
       })
     );
   };
@@ -234,27 +216,10 @@ function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
             </Tooltip>
           )}
 
-          <Tooltip title="Útil">
-            <Button
-              shape="circle"
-              icon={<LikeOutlined />}
-              onClick={() => likeAction("like")}
-              size="large"
-              type={likeStatus === "like" ? "primary" : "default"}
-              loading={likeStatus === "loading"}
-            />
-          </Tooltip>
-
-          <Tooltip title="Inútil">
-            <Button
-              shape="circle"
-              icon={<DislikeOutlined />}
-              onClick={() => likeAction("dislike")}
-              size="large"
-              type={likeStatus === "dislike" ? "danger" : "default"}
-              loading={likeStatus === "loading"}
-            />
-          </Tooltip>
+          <SummaryReactions
+            position={position}
+            admissionNumber={admissionNumber}
+          />
 
           <Dropdown
             menu={{ items, onClick: onMenuClick }}

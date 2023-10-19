@@ -1,6 +1,6 @@
 {
   "name": "noharm-app",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "private": true,
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^35.0.1",
@@ -17,6 +17,7 @@
     "dayjs": "^1.11.9",
     "dompurify": "^2.3.10",
     "formik": "^2.2.9",
+    "ifvisible.js": "^1.0.6",
     "lodash.get": "^4.4.2",
     "lodash.intersection": "^4.4.0",
     "lodash.isempty": "^4.4.0",

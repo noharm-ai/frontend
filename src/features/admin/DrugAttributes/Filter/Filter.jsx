@@ -13,6 +13,7 @@ import {
 } from "../DrugAttributesSlice";
 
 import MainFilters from "./MainFilters";
+import SecondaryFilters from "./SecondaryFilters";
 
 export default function Filter({ limit }) {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ export default function Filter({ limit }) {
     hasPriceConversion: null,
     hasSubstance: null,
     hasDefaultUnit: null,
+    hasPriceUnit: null,
     hasPrescription: true,
     term: null,
     idSegmentList: [],
@@ -49,6 +51,7 @@ export default function Filter({ limit }) {
 
   const search = (params) => {
     dispatch(setCurrentPage(1));
+    dispatch(setFilters(params));
     dispatch(fetchDrugAttributes({ ...params, limit, offset: 0 })).then(
       (response) => {
         if (response.error) {
@@ -58,18 +61,20 @@ export default function Filter({ limit }) {
     );
   };
 
-  const onChangeValues = (params) => {
-    dispatch(setFilters(params));
-  };
-
   return (
     <AdvancedFilter
       initialValues={initialValues}
       mainFilters={<MainFilters />}
+      secondaryFilters={<SecondaryFilters />}
       onSearch={search}
-      onChangeValues={onChangeValues}
       loading={isFetching}
-      skipFilterList={[]}
+      skipFilterList={[
+        "hasPriceConversion",
+        "hasSubstance",
+        "hasDefaultUnit",
+        "hasPriceUnit",
+        "idSegmentList",
+      ]}
     />
   );
 }

@@ -40,7 +40,6 @@ const groupPrescriptionDrugs = (list, createTotalRowFunction) => {
 
 export const groupComponents = (list) => {
   if (!list || list.length < 1) return list;
-  if (!list[0].grp_solution) return list;
 
   let items = [];
   const cpoelist = [...list];
@@ -48,7 +47,8 @@ export const groupComponents = (list) => {
   const order = new Set();
 
   for (let i = 0; i < cpoelist.length; i++) {
-    const currentGroup = cpoelist[i].grp_solution;
+    const currentGroup =
+      cpoelist[i].grp_solution || cpoelist[i].idPrescriptionDrug;
     order.add(currentGroup);
     cpoeGroups[currentGroup] = cpoeGroups[currentGroup]
       ? [...cpoeGroups[currentGroup], cpoelist[i]]
