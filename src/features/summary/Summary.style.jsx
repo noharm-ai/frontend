@@ -163,3 +163,37 @@ export const SummaryPanel = styled.div`
     }
   }
 `;
+
+export const SummaryStatusContainer = styled.div`
+  position: fixed;
+  bottom: 10px;
+  right: 137px;
+  width: 200px;
+  height: 69px;
+  display: flex;
+  padding: 0.5rem 1rem;
+  border: 2px solid;
+  font-weight: 500;
+  background: ${(props) => (props.completed ? "#f6ffed" : "#fff7e6")};
+  border-color: ${(props) => (props.completed ? "#b7eb8f" : "#ffd591")};
+  color: ${(props) => (props.completed ? "#389e0d" : "#d46b08")};
+  transition: all 0.3s linear;
+
+  .summary-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-right: 10px;
+    justify-content: center;
+    flex: 1;
+  }
+
+  .summary-status-action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 10px;
+    border-left: 1px solid;
+    border-color: ${(props) => (props.completed ? "#b7eb8f" : "#ffd591")};
+  }
+`;

@@ -8,9 +8,11 @@ import {
 import { FloatButton } from "antd";
 
 import Button from "components/Button";
+import BackTop from "components/BackTop";
 import MemoryDraft from "features/memory/MemoryDraft/MemoryDraft";
 import SummaryText from "../SummaryText/SummaryText";
 import SummarySave from "../SummarySave/SummarySave";
+import SummaryStatus from "../SummaryStatus/SummaryStatus";
 
 export default function SummaryActions({ admissionNumber, loadDraft }) {
   const blocks = useSelector((state) => state.summary.blocks);
@@ -53,7 +55,7 @@ export default function SummaryActions({ admissionNumber, loadDraft }) {
         type="primary"
         icon={<MenuOutlined />}
         tooltip="Menu"
-        style={{ bottom: 25 }}
+        style={{ bottom: 25, right: 80 }}
       >
         <FloatButton
           icon={<FileTextOutlined />}
@@ -66,6 +68,8 @@ export default function SummaryActions({ admissionNumber, loadDraft }) {
           tooltip="Finalizar Sumário"
         />
       </FloatButton.Group>
+      <BackTop style={{ bottom: 25 }} tooltip="Voltar ao topo" />
+      <SummaryStatus setModalSave={setModalSave} />
     </>
   );
 }

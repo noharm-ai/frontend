@@ -7,7 +7,6 @@ import notification from "components/notification";
 import LoadBox, { LoadContainer } from "components/LoadBox";
 
 import DefaultModal from "components/Modal";
-import BackTop from "components/BackTop";
 
 import SummaryPanelAI from "./SummaryPanelAI/SummaryPanelAI";
 import SummaryPanelPatient from "./SummaryPanel/SummayPanelPatient";
@@ -302,7 +301,6 @@ function Summary({ mock }) {
           </div>
         </SummaryContainer>
       )}
-      <BackTop style={{ right: 80, bottom: 25 }} />
     </>
   );
 }
