@@ -22,7 +22,6 @@ export default function SummaryStatus({ setModalSave }) {
     if (saveStatus === "saved") {
       window.removeEventListener("beforeunload", beforeunloadHandler);
     } else {
-      console.log("add event");
       window.addEventListener("beforeunload", beforeunloadHandler);
     }
 

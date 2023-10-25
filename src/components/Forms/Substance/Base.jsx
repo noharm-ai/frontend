@@ -4,6 +4,7 @@ import { useFormikContext } from "formik";
 import { useSelector } from "react-redux";
 
 import { Input, Select } from "components/Inputs";
+import Switch from "components/Switch";
 
 export default function Base() {
   const { values, setFieldValue, errors, touched } = useFormikContext();
@@ -13,7 +14,7 @@ export default function Base() {
   const fetchStatus = useSelector(
     (state) => state.lists.substanceClasses.status
   );
-  const { sctid, name, isAdd, idclass } = values;
+  const { sctid, name, isAdd, idclass, active } = values;
 
   return (
     <>
@@ -82,6 +83,24 @@ export default function Base() {
         {errors.idclass && touched.idclass && (
           <div className="form-error">{errors.idclass}</div>
         )}
+      </div>
+
+      <div
+        className={`form-row ${errors.active && touched.active ? "error" : ""}`}
+      >
+        <div className="form-label">
+          <label>Ativo:</label>
+        </div>
+        <div className="form-input">
+          <Switch
+            onChange={(active) => setFieldValue("active", active)}
+            checked={active}
+            style={{
+              marginLeft: 10,
+              marginRight: 5,
+            }}
+          />
+        </div>
       </div>
     </>
   );
