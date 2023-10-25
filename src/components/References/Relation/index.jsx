@@ -75,8 +75,9 @@ export default function Relation({
                   value={{ value: relation.item.sctidB || "" }}
                   loading={substance.isFetching}
                 >
-                  {substance.list.map(({ sctid, name }) => (
+                  {substance.list.map(({ sctid, name, active }) => (
                     <Select.Option key={sctid} value={sctid}>
+                      {`${active ? "" : "(INATIVO) "}`}
                       {name}
                     </Select.Option>
                   ))}
