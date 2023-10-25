@@ -141,6 +141,14 @@ export const isWhitelistedChild = (
   return parent !== `${idPrescriptionDrug}`;
 };
 
+const hasParent = (list, groupSolution) => {
+  const obj = list.find(
+    (i) => `${i.idPrescriptionDrug}` === `${groupSolution}000`
+  );
+
+  return obj != null;
+};
+
 export const filterWhitelistedChildren = (list) => {
   if (list && list.length === 1) return list;
 
@@ -148,7 +156,10 @@ export const filterWhitelistedChildren = (list) => {
   if (list && list.length > 0 && list[0].cpoe_group) return list;
 
   return list.filter((i) => {
-    if (isWhitelistedChild(i.whiteList, i.grp_solution, i.idPrescriptionDrug)) {
+    if (
+      isWhitelistedChild(i.whiteList, i.grp_solution, i.idPrescriptionDrug) &&
+      hasParent(list, i.grp_solution)
+    ) {
       console.debug("removed", i);
       return false;
     }
