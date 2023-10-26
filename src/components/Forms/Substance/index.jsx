@@ -63,6 +63,7 @@ export default function Substance({
   }
 
   const initialValues = {
+    active: true,
     ...item,
   };
 

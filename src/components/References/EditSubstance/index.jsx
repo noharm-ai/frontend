@@ -122,8 +122,9 @@ export default function EditSubstance({
             <Select.Option key="0" value="0">
               &nbsp;
             </Select.Option>
-            {substance.list.map(({ sctid, name }) => (
+            {substance.list.map(({ sctid, name, active }) => (
               <Select.Option key={sctid} value={sctid}>
+                {`${active ? "" : "(INATIVO) "}`}
                 {name}
               </Select.Option>
             ))}

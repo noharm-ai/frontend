@@ -127,7 +127,7 @@ function DrugFormStatus({ title, template }) {
         </div>
       </div>
       <div className="drug-form-status-action">
-        <Tooltip title="Salvar todos">
+        <Tooltip title="Avaliar todos">
           <Button
             type="primary"
             shape="circle"

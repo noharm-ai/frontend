@@ -14,6 +14,7 @@ import { getErrorMessage } from "utils/errorHandler";
 import { Form } from "styles/Form.style";
 
 import { saveDraft } from "features/memory/MemoryDraft/MemoryDraftSlice";
+import { setSaveStatus } from "../SummarySlice";
 
 function SummaryText({ open, setOpen, admissionNumber }) {
   const { t } = useTranslation();
@@ -59,6 +60,7 @@ function SummaryText({ open, setOpen, admissionNumber }) {
 
         pageTimer?.reset();
         setOpen(false);
+        dispatch(setSaveStatus({ saveStatus: "saved" }));
       }
     });
   };

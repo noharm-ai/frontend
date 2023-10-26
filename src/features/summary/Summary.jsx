@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Anchor } from "antd";
-import { CheckOutlined } from "@ant-design/icons";
 
 import notification from "components/notification";
 import LoadBox, { LoadContainer } from "components/LoadBox";
-import Button from "components/Button";
+
 import DefaultModal from "components/Modal";
-import BackTop from "components/BackTop";
-import MemoryDraft from "features/memory/MemoryDraft/MemoryDraft";
 
 import SummaryPanelAI from "./SummaryPanelAI/SummaryPanelAI";
 import SummaryPanelPatient from "./SummaryPanel/SummayPanelPatient";
 import SummaryPanelAdmission from "./SummaryPanel/SummayPanelAdmission";
 import SummaryPanelAttributes from "./SummaryPanel/SummayPanelPatientAttributes";
 import SummaryPanelText from "./SummaryPanel/SummaryPanelText";
-import SummaryText from "./SummaryText/SummaryText";
-import SummarySave from "./SummarySave/SummarySave";
+
+import SummaryTopics from "./SummaryTopics/SummaryTopics";
+import SummaryActions from "./SummaryActions/SummaryActions";
 import { PageHeader } from "styles/PageHeader.style";
 import { SummaryContainer } from "./Summary.style";
 import { fetchSummary, startBlock, setBlock, reset } from "./SummarySlice";
@@ -37,10 +34,6 @@ function Summary({ mock }) {
   const dispatch = useDispatch();
   const summaryData = useSelector((state) => state.summary.data);
   const status = useSelector((state) => state.summary.status);
-  const blocks = useSelector((state) => state.summary.blocks);
-
-  const [modalText, setModalText] = useState(false);
-  const [modalSave, setModalSave] = useState(false);
 
   useEffect(() => {
     dispatch(
@@ -137,22 +130,10 @@ function Summary({ mock }) {
           <div className="page-header-legend">Sumário de alta do paciente.</div>
         </div>
         <div className="page-header-actions">
-          <MemoryDraft
-            type={`draft_summary_${params.admissionNumber}`}
-            currentValue={blocks}
-            setValue={loadDraft}
-          ></MemoryDraft>
-
-          <Button type="default" onClick={() => setModalText(true)}>
-            Gerar Texto
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => setModalSave(true)}
-            icon={<CheckOutlined />}
-          >
-            Finalizar Sumário
-          </Button>
+          <SummaryActions
+            admissionNumber={params.admissionNumber}
+            loadDraft={loadDraft}
+          />
         </div>
       </PageHeader>
       {status !== "succeeded" ? (
@@ -316,86 +297,10 @@ function Summary({ mock }) {
             </div>
           </div>
           <div>
-            <Anchor offsetTop={50}>
-              <Anchor.Link
-                href="#id-paciente"
-                title="1) IDENTIFICAÇÃO DO PACIENTE"
-              />
-              <Anchor.Link
-                href="#dados-internacao"
-                title="2) DADOS DA INTERNAÇÃO"
-              >
-                <Anchor.Link href="#admissao" title="2.1) Admissão">
-                  <Anchor.Link
-                    href="#motivo-admissao"
-                    title="2.1.1) Motivo da Admissão"
-                  />
-                  <Anchor.Link
-                    href="#diagnosticos"
-                    title="2.1.2) Diagnósticos (primário e secundário)"
-                  />
-                  <Anchor.Link href="#alergias" title="2.1.3) Alergias" />
-                  <Anchor.Link
-                    href="#medicamentos-uso-previo"
-                    title="2.1.4) Medicamentos de uso prévio"
-                  />
-                </Anchor.Link>
-
-                <Anchor.Link href="#resumo-clinico" title="2.2) Resumo Clínico">
-                  <Anchor.Link
-                    href="#exames-lab"
-                    title="2.2.1) Exames Laboratoriais"
-                  />
-
-                  <Anchor.Link
-                    href="#exames-textuais"
-                    title="2.2.2) Exames Textuais"
-                  />
-
-                  <Anchor.Link
-                    href="#procedimentos"
-                    title="2.2.3) Procedimentos Realizados"
-                  />
-
-                  <Anchor.Link
-                    href="#medicamentos-internacao"
-                    title="2.2.4) Medicamentos utilizados na internação"
-                  />
-
-                  <Anchor.Link
-                    href="#medicamentos-interrompidos"
-                    title="2.2.5) Medicamentos interrompidos"
-                  />
-                </Anchor.Link>
-
-                <Anchor.Link
-                  href="#condicoes-alta"
-                  title="2.3) Condições de Alta"
-                ></Anchor.Link>
-              </Anchor.Link>
-
-              <Anchor.Link
-                href="#plano-terapeutico"
-                title="3) PLANO TERAPÊUTICO"
-              >
-                <Anchor.Link
-                  href="#plano-alta"
-                  title="3.1) Plano de Alta"
-                ></Anchor.Link>
-
-                <Anchor.Link href="#receita" title="3.2) Receita"></Anchor.Link>
-              </Anchor.Link>
-            </Anchor>
+            <SummaryTopics />
           </div>
-          <SummaryText open={modalText} setOpen={setModalText}></SummaryText>
-          <SummarySave
-            open={modalSave}
-            setOpen={setModalSave}
-            admissionNumber={params.admissionNumber}
-          ></SummarySave>
         </SummaryContainer>
       )}
-      <BackTop />
     </>
   );
 }

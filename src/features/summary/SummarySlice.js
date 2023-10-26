@@ -111,6 +111,7 @@ const initialState = {
     },
   },
   status: "idle",
+  saveStatus: "pending",
   error: null,
 };
 
@@ -166,9 +167,14 @@ const summarySlice = createSlice({
       if (action.payload.original) {
         state.blocks[action.payload.id].original = action.payload.original;
       }
+
+      state.saveStatus = "pending";
     },
     startBlock(state, action) {
       state.blocks[action.payload.id].aiStatus = "started";
+    },
+    setSaveStatus(state, action) {
+      state.saveStatus = action.payload.saveStatus;
     },
     reset() {
       return initialState;
@@ -198,4 +204,5 @@ const summarySlice = createSlice({
 
 export default summarySlice.reducer;
 
-export const { setBlock, startBlock, reset } = summarySlice.actions;
+export const { setBlock, startBlock, reset, setSaveStatus } =
+  summarySlice.actions;
