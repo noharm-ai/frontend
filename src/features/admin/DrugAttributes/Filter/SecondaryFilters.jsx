@@ -29,14 +29,14 @@ export default function SecondaryFilters() {
 
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" size="14px">
-          <Tooltip title="Indica se o medicamento já foi prescrito na NoHarm">
-            Somente medicamentos prescritos
+          <Tooltip title="Indica medicamentos que possuem inconsistências no banco de dados">
+            Mostrar somente medicamentos inconsistentes
           </Tooltip>
         </Heading>
         <Select
           style={{ width: "150px" }}
-          value={values.hasPrescription}
-          onChange={(val) => setFieldValue({ hasPrescription: val })}
+          value={values.hasInconsistency}
+          onChange={(val) => setFieldValue({ hasInconsistency: val })}
           showSearch
           optionFilterProp="children"
           allowClear
@@ -46,6 +46,26 @@ export default function SecondaryFilters() {
           </Select.Option>
           <Select.Option key={1} value={false}>
             <Tag color="red">Não</Tag>
+          </Select.Option>
+        </Select>
+      </Col>
+
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          <Tooltip title="Indica medicamentos que ainda não possuem atributos definidos. Experimental: o resultado ainda não é confiável.">
+            Mostrar somente medicamentos sem atributos (Experimental)
+          </Tooltip>
+        </Heading>
+        <Select
+          style={{ width: "150px" }}
+          value={values.missingAttributes}
+          onChange={(val) => setFieldValue({ missingAttributes: val })}
+          showSearch
+          optionFilterProp="children"
+          allowClear
+        >
+          <Select.Option key={0} value={true}>
+            <Tag color="green">Sim</Tag>
           </Select.Option>
         </Select>
       </Col>

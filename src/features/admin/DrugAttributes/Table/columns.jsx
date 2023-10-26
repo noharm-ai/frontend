@@ -19,6 +19,17 @@ const columns = (t) => {
         showTitle: false,
       },
       render: (entry, record) => {
+        if (!record.segment) {
+          return (
+            <Tooltip
+              title={`Este medicamento está inconsistente. Segmento outlier: ${record.segmentOutlier}`}
+            >
+              {" "}
+              <Tag color="orange">Inconsistente</Tag>
+            </Tooltip>
+          );
+        }
+
         return <Tooltip title={record.segment}>{record.segment}</Tooltip>;
       },
     },
@@ -83,10 +94,17 @@ const columns = (t) => {
       align: "center",
       render: (text, record) => {
         return (
-          <Tooltip title="Editar medicamento">
+          <Tooltip
+            title={
+              !record.idSegment
+                ? 'Este medicamento está inconsistente. Utilize o botão "Ajustar inconsistências".'
+                : "Editar medicamento"
+            }
+          >
             <Button
               type="primary"
               icon={<EditOutlined />}
+              disabled={!record.idSegment}
               onClick={() =>
                 window.open(
                   `/medicamentos/${record.idSegment}/${

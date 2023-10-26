@@ -28,6 +28,10 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  fixDrugInconsistency: {
+    status: "idle",
+    error: null,
+  },
 };
 
 export const fetchDrugAttributes = createAsyncThunk(
@@ -74,6 +78,19 @@ export const addDefaultUnits = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.addDefaultUnits(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const fixDrugInconsistency = createAsyncThunk(
+  "admin-drug-attributes/fix-inconsistency",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.fixDrugInconsistency(params);
 
       return response;
     } catch (err) {
@@ -150,6 +167,15 @@ const drugAttributesSlice = createSlice({
       })
       .addCase(copyConversion.rejected, (state, action) => {
         state.copyConversion.status = "failed";
+      })
+      .addCase(fixDrugInconsistency.pending, (state, action) => {
+        state.fixDrugInconsistency.status = "loading";
+      })
+      .addCase(fixDrugInconsistency.fulfilled, (state, action) => {
+        state.fixDrugInconsistency.status = "succeeded";
+      })
+      .addCase(fixDrugInconsistency.rejected, (state, action) => {
+        state.fixDrugInconsistency.status = "failed";
       })
       .addCase(updateSubstance.pending, (state, action) => {
         state.updateSubstance.status = "loading";

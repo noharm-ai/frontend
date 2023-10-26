@@ -101,12 +101,12 @@ export default function EditSubstance({
   return (
     <>
       <Row type="flex" gutter={24} align="middle">
-        <Col md={7} xxl={4}>
+        <Col md={4} xxl={2}>
           <Heading as="h3" size="16px" textAlign="right">
             Substância:
           </Heading>
         </Col>
-        <Col md={24 - 7} xxl={24 - 4}>
+        <Col md={24 - 4} xxl={24 - 8}>
           <Select
             id="sctidA"
             labelInValue
@@ -123,7 +123,7 @@ export default function EditSubstance({
               &nbsp;
             </Select.Option>
             {substance.list.map(({ sctid, name, active }) => (
-              <Select.Option key={sctid} value={sctid}>
+              <Select.Option key={sctid} value={sctid} title={name}>
                 {`${active ? "" : "(INATIVO) "}`}
                 {name}
               </Select.Option>

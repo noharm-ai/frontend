@@ -30,7 +30,8 @@ export default function Filter({ limit }) {
     hasSubstance: null,
     hasDefaultUnit: null,
     hasPriceUnit: null,
-    hasPrescription: true,
+    hasInconsistency: null,
+    missingAttributes: null,
     term: null,
     idSegmentList: [],
   };
