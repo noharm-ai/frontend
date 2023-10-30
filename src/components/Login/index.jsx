@@ -88,13 +88,17 @@ export default function Login({ isLogging, error, doLogin, match }) {
   }, [params.schema]);
 
   useEffect(() => {
-    if (match && match.params.language) {
-      i18n.changeLanguage(match.params.language);
-      localStorage.setItem("language", match.params.language);
+    const queryString = new URLSearchParams(window.location.search);
+
+    const language = queryString.get("language");
+
+    if (language) {
+      i18n.changeLanguage(language);
+      localStorage.setItem("language", language);
     } else {
       localStorage.setItem("language", "pt");
     }
-  }, [match, i18n]);
+  }, []); //eslint-disable-line
 
   const openOauthLogin = () => {
     window.location.href = oauthData.url;

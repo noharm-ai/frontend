@@ -49,11 +49,6 @@ const routes = [
   },
   {
     exact: true,
-    path: "/login/:language",
-    element: <WithAuth component={Login} isLoginPage={true} />,
-  },
-  {
-    exact: true,
     path: "/login-callback/:schema",
     element: <WithAuth component={LoginCallback} isLoginPage={true} />,
   },
