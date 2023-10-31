@@ -15,17 +15,22 @@ import { getErrorMessage } from "utils/errorHandler";
 
 import { addDefaultUnits, fixDrugInconsistency } from "../DrugAttributesSlice";
 import CopyConversion from "../CopyConversion/CopyConversion";
+import CopyAttributes from "../CopyAttributes/CopyAttributes";
 
 export default function Actions({ reload }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [copyConversionVisible, setCopyConversionVisible] = useState(false);
+  const [copyAttributesVisible, setCopyAttributesVisible] = useState(false);
   const isAddingDefaultUnits =
     useSelector(
       (state) => state.admin.drugAttributes.addDefaultUnits.status
     ) === "loading";
   const isCopyingConversion =
     useSelector((state) => state.admin.drugAttributes.copyConversion.status) ===
+    "loading";
+  const isCopyingAttributes =
+    useSelector((state) => state.admin.drugAttributes.copyAttributes.status) ===
     "loading";
   const isFixingInconsistency =
     useSelector(
@@ -152,9 +157,26 @@ export default function Actions({ reload }) {
         </Button>
       </Tooltip>
 
+      <Tooltip title="Clique para mais informações">
+        <Button
+          type="primary"
+          icon={<RetweetOutlined />}
+          loading={isCopyingAttributes}
+          onClick={() => setCopyAttributesVisible(true)}
+        >
+          Copiar Atributos
+        </Button>
+      </Tooltip>
+
       <CopyConversion
         open={copyConversionVisible}
         setOpen={setCopyConversionVisible}
+        reload={reload}
+      />
+
+      <CopyAttributes
+        open={copyAttributesVisible}
+        setOpen={setCopyAttributesVisible}
         reload={reload}
       />
     </>

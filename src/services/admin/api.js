@@ -83,6 +83,12 @@ const copyConversion = (params = {}) => {
   });
 };
 
+const copyDrugAttributes = (params = {}) => {
+  return instance.post(`${endpoints.drug}/copy-attributes`, params, {
+    ...setHeaders(),
+  });
+};
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -94,6 +100,7 @@ const api = {
   updatePriceFactor,
   addDefaultUnits,
   copyConversion,
+  copyDrugAttributes,
   updateSubstance,
   fixDrugInconsistency,
 };
