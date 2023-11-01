@@ -6,6 +6,10 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  refreshPrescription: {
+    status: "idle",
+    error: null,
+  },
 };
 
 export const refreshAgg = createAsyncThunk(
@@ -13,6 +17,19 @@ export const refreshAgg = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.refreshAggPrescription(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const refreshPrescription = createAsyncThunk(
+  "admin-integration/refresh-prescription",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.refreshPrescription(params);
 
       return response;
     } catch (err) {
@@ -39,6 +56,15 @@ const integrationSlice = createSlice({
       })
       .addCase(refreshAgg.rejected, (state, action) => {
         state.refreshAgg.status = "failed";
+      })
+      .addCase(refreshPrescription.pending, (state, action) => {
+        state.refreshPrescription.status = "loading";
+      })
+      .addCase(refreshPrescription.fulfilled, (state, action) => {
+        state.refreshPrescription.status = "succeeded";
+      })
+      .addCase(refreshPrescription.rejected, (state, action) => {
+        state.refreshPrescription.status = "failed";
       });
   },
 });

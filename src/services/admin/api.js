@@ -96,6 +96,16 @@ const refreshAggPrescription = (params = {}) => {
   });
 };
 
+const refreshPrescription = (params = {}) => {
+  return instance.post(
+    `${endpoints.integration}/refresh-prescription`,
+    params,
+    {
+      ...setHeaders(),
+    }
+  );
+};
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -111,6 +121,7 @@ const api = {
   updateSubstance,
   fixDrugInconsistency,
   refreshAggPrescription,
+  refreshPrescription,
 };
 
 export default api;
