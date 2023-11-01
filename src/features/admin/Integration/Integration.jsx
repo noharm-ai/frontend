@@ -35,7 +35,6 @@ function IntegrationAdmin() {
       } else {
         notification.success({
           message: "Prescricaoagg recalculada!",
-          description: `${response.payload.data.data} registros atualizados`,
         });
       }
     });
