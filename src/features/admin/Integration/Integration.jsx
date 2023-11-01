@@ -50,7 +50,7 @@ function IntegrationAdmin() {
       </PageHeader>
       <IntegrationContainer>
         <Row gutter={16}>
-          <Col span={8}>
+          <Col xs={{ span: 24 }} lg={{ span: 8 }} xxl={{ span: 6 }}>
             <Card
               actions={[
                 <Tooltip title="Executar">
@@ -76,7 +76,7 @@ function IntegrationAdmin() {
               />
             </Card>
           </Col>
-          <Col span={8}>
+          <Col xs={{ span: 24 }} lg={{ span: 8 }} xxl={{ span: 6 }}>
             <Card
               actions={[
                 <Tooltip title="Executar">
@@ -101,7 +101,7 @@ function IntegrationAdmin() {
               />
             </Card>
           </Col>
-          <Col span={8}></Col>
+          <Col xs={{ span: 24 }} lg={{ span: 8 }} xxl={{ span: 6 }}></Col>
         </Row>
       </IntegrationContainer>
     </>
