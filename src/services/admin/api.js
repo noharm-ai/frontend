@@ -106,6 +106,16 @@ const refreshPrescription = (params = {}) => {
   );
 };
 
+const initInterventionReason = (params = {}) => {
+  return instance.post(
+    `${endpoints.integration}/init-intervention-reason`,
+    params,
+    {
+      ...setHeaders(),
+    }
+  );
+};
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -122,6 +132,7 @@ const api = {
   fixDrugInconsistency,
   refreshAggPrescription,
   refreshPrescription,
+  initInterventionReason,
 };
 
 export default api;
