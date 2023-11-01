@@ -46,7 +46,9 @@
     "frequency": "Frequency",
     "interventionReasons": "Intervenções",
     "news": "News",
-    "memory": "Memory"
+    "memory": "Memory",
+    "summary": "Sumário de Alta",
+    "integration": "Integração"
   },
   "screeningList": {
     "confirm": "Confirm?",

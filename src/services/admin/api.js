@@ -5,6 +5,7 @@ const endpoints = {
   interventionReason: "/admin/intervention-reason",
   memory: "/admin/memory",
   drug: "/admin/drug",
+  integration: "/admin/integration",
 };
 
 const getFrequencyList = (bearerToken, params = {}) =>
@@ -89,6 +90,12 @@ const copyDrugAttributes = (params = {}) => {
   });
 };
 
+const refreshAggPrescription = (params = {}) => {
+  return instance.post(`${endpoints.integration}/refresh-agg`, params, {
+    ...setHeaders(),
+  });
+};
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -103,6 +110,7 @@ const api = {
   copyDrugAttributes,
   updateSubstance,
   fixDrugInconsistency,
+  refreshAggPrescription,
 };
 
 export default api;

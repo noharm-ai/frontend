@@ -18,6 +18,7 @@ import {
   HourglassOutlined,
   SaveOutlined,
   FileDoneOutlined,
+  ApiOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -207,6 +208,13 @@ export default function Menu({ security, featureService }) {
           role: ["userAdmin"],
         },
       ],
+    },
+    {
+      key: "/admin/integracao",
+      label: t("menu.integration"),
+      icon: <ApiOutlined />,
+      id: "gtm-lnk-integration",
+      role: ["admin"],
     },
   ];
 
