@@ -72,12 +72,6 @@ const addDefaultUnits = (params = {}) => {
   });
 };
 
-const fixDrugInconsistency = (params = {}) => {
-  return instance.post(`${endpoints.drug}/fix-inconsistency`, params, {
-    ...setHeaders(),
-  });
-};
-
 const copyConversion = (params = {}) => {
   return instance.post(`${endpoints.drug}/copy-unit-conversion`, params, {
     ...setHeaders(),
@@ -129,7 +123,6 @@ const api = {
   copyConversion,
   copyDrugAttributes,
   updateSubstance,
-  fixDrugInconsistency,
   refreshAggPrescription,
   refreshPrescription,
   initInterventionReason,

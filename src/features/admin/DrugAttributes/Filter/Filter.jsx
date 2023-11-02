@@ -31,6 +31,7 @@ export default function Filter({ limit }) {
     hasDefaultUnit: null,
     hasPriceUnit: null,
     hasInconsistency: null,
+    hasMissingConversion: null,
     missingAttributes: null,
     term: null,
     idSegmentList: [],

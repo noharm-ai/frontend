@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import {
-  ReloadOutlined,
-  RetweetOutlined,
-  ToolOutlined,
-} from "@ant-design/icons";
+import { ReloadOutlined, RetweetOutlined } from "@ant-design/icons";
 
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
@@ -13,7 +9,7 @@ import DefaultModal from "components/Modal";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 
-import { addDefaultUnits, fixDrugInconsistency } from "../DrugAttributesSlice";
+import { addDefaultUnits } from "../DrugAttributesSlice";
 import CopyConversion from "../CopyConversion/CopyConversion";
 import CopyAttributes from "../CopyAttributes/CopyAttributes";
 
@@ -32,10 +28,6 @@ export default function Actions({ reload }) {
   const isCopyingAttributes =
     useSelector((state) => state.admin.drugAttributes.copyAttributes.status) ===
     "loading";
-  const isFixingInconsistency =
-    useSelector(
-      (state) => state.admin.drugAttributes.fixDrugInconsistency.status
-    ) === "loading";
 
   const showDefaultUnitDialog = () => {
     DefaultModal.confirm({
@@ -52,36 +44,13 @@ export default function Actions({ reload }) {
             unidade de medida no histórico de prescrição ou nunca foram
             prescritos.
           </p>
-
           <p>
-            * É recomendado utilizar o botão "Ajustar inconsistências" antes
-            para garantir que os registros estão coerentes.
-          </p>
-        </>
-      ),
-      onOk: executeAddDefaultUnits,
-      okText: "Confirmar",
-      cancelText: "Cancelar",
-      width: 500,
-    });
-  };
-
-  const showFixDrugInconsistencyDialog = () => {
-    DefaultModal.confirm({
-      title: "Confirma o ajuste de inconsistências?",
-      content: (
-        <>
-          <p>
-            Esta operação atualizará o registro de medicamentos para garantir
-            que os registros estão consistentes.
-          </p>
-          <p>
-            Consistência entre as tabelas{" "}
+            Esta ação também ajusta inconsistências entre as tabelas{" "}
             <strong>outlier - medatributos - medicamento</strong>.
           </p>
         </>
       ),
-      onOk: executeFixDrugInconsistency,
+      onOk: executeAddDefaultUnits,
       okText: "Confirmar",
       cancelText: "Cancelar",
       width: 500,
@@ -105,36 +74,8 @@ export default function Actions({ reload }) {
     });
   };
 
-  const executeFixDrugInconsistency = () => {
-    dispatch(fixDrugInconsistency()).then((response) => {
-      if (response.error) {
-        notification.error({
-          message: getErrorMessage(response, t),
-        });
-      } else {
-        notification.success({
-          message: "Inconsistências ajustadas!",
-          description: `${response.payload.data.data} inconsistências ajustadas`,
-        });
-
-        reload();
-      }
-    });
-  };
-
   return (
     <>
-      <Tooltip title="Clique para mais informações">
-        <Button
-          type="primary"
-          icon={<ToolOutlined />}
-          loading={isFixingInconsistency}
-          onClick={() => showFixDrugInconsistencyDialog()}
-        >
-          Ajustar Inconsistências
-        </Button>
-      </Tooltip>
-
       <Tooltip title="Clique para mais informações">
         <Button
           type="primary"

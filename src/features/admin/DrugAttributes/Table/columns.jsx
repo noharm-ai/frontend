@@ -22,7 +22,7 @@ const columns = (t) => {
         if (!record.segment) {
           return (
             <Tooltip
-              title={`Este medicamento está inconsistente. Segmento outlier: ${record.segmentOutlier}`}
+              title={`Este medicamento está inconsistente. Utilize o botão "Atualizar Unidade Padrão" para ajustar. Segmento outlier: ${record.segmentOutlier}`}
             >
               {" "}
               <Tag color="orange">Inconsistente</Tag>
@@ -97,7 +97,7 @@ const columns = (t) => {
           <Tooltip
             title={
               !record.idSegment
-                ? 'Este medicamento está inconsistente. Utilize o botão "Ajustar inconsistências".'
+                ? 'Este medicamento está inconsistente. Utilize o botão "Atualizar Unidade Padrão".'
                 : "Editar medicamento"
             }
           >

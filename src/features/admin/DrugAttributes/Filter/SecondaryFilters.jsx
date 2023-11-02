@@ -95,6 +95,27 @@ export default function SecondaryFilters() {
 
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" size="14px">
+          Mostrar medicamentos com conversões pendentes
+        </Heading>
+        <Select
+          style={{ width: "150px" }}
+          value={values.hasMissingConversion}
+          onChange={(val) => setFieldValue({ hasMissingConversion: val })}
+          showSearch
+          optionFilterProp="children"
+          allowClear
+        >
+          <Select.Option key={0} value={true}>
+            <Tag color="green">Sim</Tag>
+          </Select.Option>
+        </Select>
+        <div style={{ marginTop: "4px", fontSize: "12px" }}>
+          *Atualizar Unidade Padrão antes de buscar as conversões pendentes
+        </div>
+      </Col>
+
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
           <Tooltip title="Indica medicamentos que possuem inconsistências no banco de dados">
             Mostrar somente medicamentos inconsistentes
           </Tooltip>
