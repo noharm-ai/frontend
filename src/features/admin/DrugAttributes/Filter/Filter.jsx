@@ -34,6 +34,7 @@ export default function Filter({ limit }) {
     missingAttributes: null,
     term: null,
     idSegmentList: [],
+    attributeList: [],
   };
 
   useEffect(() => {

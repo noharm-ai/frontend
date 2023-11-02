@@ -29,6 +29,72 @@ export default function SecondaryFilters() {
 
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" size="14px">
+          Filtrar por atributo
+        </Heading>
+        <Select
+          onChange={(value) => setFieldValue({ attributeList: value })}
+          value={values.attributeList}
+          optionFilterProp="children"
+          showSearch
+          autoFocus
+          allowClear
+          mode="multiple"
+          style={{ width: "400px" }}
+        >
+          <Select.OptGroup label="Classificação">
+            <Select.Option key="mav" value="mav">
+              Alta Vigilância
+            </Select.Option>
+
+            <Select.Option key="antimicro" value="antimicro">
+              Antimicrobiano
+            </Select.Option>
+
+            <Select.Option key="controlados" value="controlados">
+              Controlados
+            </Select.Option>
+
+            <Select.Option key="idoso" value="idoso">
+              MPI
+            </Select.Option>
+
+            <Select.Option key="naopadronizado" value="naopadronizado">
+              Não Padronizado
+            </Select.Option>
+
+            <Select.Option key="quimio" value="quimio">
+              Quimioterápico
+            </Select.Option>
+
+            <Select.Option key="linhabranca" value="linhabranca">
+              Sem validação
+            </Select.Option>
+
+            <Select.Option key="sonda" value="sonda">
+              Sonda
+            </Select.Option>
+          </Select.OptGroup>
+
+          <Select.OptGroup label="Valores">
+            <Select.Option key="plaquetas" value="plaquetas">
+              Alerta de Plaquetas
+            </Select.Option>
+
+            <Select.Option key="dosemaxima" value="dosemaxima">
+              Dose de Alerta
+            </Select.Option>
+            <Select.Option key="hepatico" value="hepatico">
+              Hepatotóxico
+            </Select.Option>
+            <Select.Option key="renal" value="renal">
+              Nefrotóxico
+            </Select.Option>
+          </Select.OptGroup>
+        </Select>
+      </Col>
+
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
           <Tooltip title="Indica medicamentos que possuem inconsistências no banco de dados">
             Mostrar somente medicamentos inconsistentes
           </Tooltip>
@@ -46,26 +112,6 @@ export default function SecondaryFilters() {
           </Select.Option>
           <Select.Option key={1} value={false}>
             <Tag color="red">Não</Tag>
-          </Select.Option>
-        </Select>
-      </Col>
-
-      <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
-          <Tooltip title="Indica medicamentos que ainda não possuem atributos definidos. Experimental: o resultado ainda não é confiável.">
-            Mostrar somente medicamentos sem atributos (Experimental)
-          </Tooltip>
-        </Heading>
-        <Select
-          style={{ width: "150px" }}
-          value={values.missingAttributes}
-          onChange={(val) => setFieldValue({ missingAttributes: val })}
-          showSearch
-          optionFilterProp="children"
-          allowClear
-        >
-          <Select.Option key={0} value={true}>
-            <Tag color="green">Sim</Tag>
           </Select.Option>
         </Select>
       </Col>
