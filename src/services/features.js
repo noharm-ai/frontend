@@ -21,16 +21,11 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.CONCILIATION);
   };
 
-  const hasTempCpoePeriod = () => {
-    return hasFeature(Feature.TEMP_CPOE_PERIOD);
-  };
-
   return {
     hasFeature,
     hasMicromedex,
     hasPrimaryCare,
     hasConciliation,
-    hasTempCpoePeriod,
   };
 };
 
