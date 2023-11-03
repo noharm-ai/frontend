@@ -12,6 +12,15 @@ export const MemoryContainer = styled.div`
     border-radius: 5px;
     padding: 1rem;
 
+    h3 {
+      margin-bottom: 5px;
+      margin-top: 5px;
+    }
+
+    .box-legend {
+      margin-bottom: 15px;
+    }
+
     .loader {
       position: absolute;
       top: 0;
@@ -31,7 +40,7 @@ export const MemoryContainer = styled.div`
 
     textarea {
       width: 100%;
-      height: 25rem;
+      height: 15rem;
       padding: 0.5rem;
 
       &:focus {

@@ -38,7 +38,9 @@ function Memory() {
     <>
       <PageHeader>
         <h1 className="page-header-title">Memória</h1>
-        <div className="page-header-actions"></div>
+        <div className="page-header-legend">
+          Configurações gerais da aplicação
+        </div>
       </PageHeader>
 
       <MemoryContainer>
@@ -47,6 +49,7 @@ function Memory() {
             <LoadBox />
           </div>
           <h3>Relatórios</h3>
+          <div className="box-legend">Lista de relatórios geral.</div>
 
           <Form memory={data["reports"]} />
         </div>
@@ -55,7 +58,23 @@ function Memory() {
           <div className={`loader ${loading ? "loading" : ""}`}>
             <LoadBox />
           </div>
+          <h3>Relatórios do Paciente</h3>
+          <div className="box-legend">
+            Lista de relatórios exibidos no card do paciente.
+          </div>
+
+          <Form memory={data["admission-reports"]} />
+        </div>
+
+        <div className="box">
+          <div className={`loader ${loading ? "loading" : ""}`}>
+            <LoadBox />
+          </div>
           <h3>Serviço de Nomes</h3>
+          <div className="box-legend">
+            Configuração do serviço de nomes. Formato: JSON. Atributos: "value"
+            e "multiple".
+          </div>
 
           <Form memory={data["getnameurl"]} />
         </div>
@@ -65,6 +84,9 @@ function Memory() {
             <LoadBox />
           </div>
           <h3>Features</h3>
+          <div className="box-legend">
+            Array com a lista de features ativas.
+          </div>
 
           <Form memory={data["features"]} />
         </div>
@@ -73,9 +95,84 @@ function Memory() {
           <div className={`loader ${loading ? "loading" : ""}`}>
             <LoadBox />
           </div>
-          <h3>Relatórios do Paciente</h3>
+          <h3>Vias: Sonda</h3>
+          <div className="box-legend">
+            Lista com as vias que ativam a flag SONDA.
+          </div>
 
-          <Form memory={data["admission-reports"]} />
+          <Form memory={data["map-tube"]} />
+        </div>
+
+        <div className="box">
+          <div className={`loader ${loading ? "loading" : ""}`}>
+            <LoadBox />
+          </div>
+          <h3>Vias: Intravenosa</h3>
+          <div className="box-legend">
+            Lista com as vias que ativam a flag SONDA.
+          </div>
+
+          <Form memory={data["map-iv"]} />
+        </div>
+
+        <div className="box">
+          <div className={`loader ${loading ? "loading" : ""}`}>
+            <LoadBox />
+          </div>
+          <h3>Origem: Medicamentos</h3>
+          <div className="box-legend">
+            Lista com as origens que mapeiam para o tipo "Medicamentos"
+          </div>
+
+          <Form memory={data["map-origin-drug"]} />
+        </div>
+
+        <div className="box">
+          <div className={`loader ${loading ? "loading" : ""}`}>
+            <LoadBox />
+          </div>
+          <h3>Origem: Soluções</h3>
+          <div className="box-legend">
+            Lista com as origens que mapeiam para o tipo "Soluções"
+          </div>
+
+          <Form memory={data["map-origin-solution"]} />
+        </div>
+
+        <div className="box">
+          <div className={`loader ${loading ? "loading" : ""}`}>
+            <LoadBox />
+          </div>
+          <h3>Origem: Procedimentos/Exames</h3>
+          <div className="box-legend">
+            Lista com as origens que mapeiam para o tipo "Procedimentos/Exames"
+          </div>
+
+          <Form memory={data["map-origin-procedure"]} />
+        </div>
+
+        <div className="box">
+          <div className={`loader ${loading ? "loading" : ""}`}>
+            <LoadBox />
+          </div>
+          <h3>Origem: Dietas</h3>
+          <div className="box-legend">
+            Lista com as origens que mapeiam para o tipo "Dietas"
+          </div>
+
+          <Form memory={data["map-origin-diet"]} />
+        </div>
+
+        <div className="box">
+          <div className={`loader ${loading ? "loading" : ""}`}>
+            <LoadBox />
+          </div>
+          <h3>Origem: Custom</h3>
+          <div className="box-legend">
+            Valores listados aqui serão aceitados como origem válida.
+          </div>
+
+          <Form memory={data["map-origin-custom"]} />
         </div>
       </MemoryContainer>
 
