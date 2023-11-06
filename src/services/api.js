@@ -70,6 +70,13 @@ export const setHeaders = () => {
  * Loggin and refresh token...
  */
 
+const preAuth = (params) =>
+  instance.post("/pre-auth", params, {
+    headers: {
+      "x-api-key": appInfo.apiKey,
+    },
+  });
+
 const authenticate = (params) =>
   instance.post(endpoints.authentication, params, {
     withCredentials: true,
@@ -592,6 +599,7 @@ const getSummary = (bearerToken, admissionNumber, mock) =>
  */
 const api = {
   authenticate,
+  preAuth,
   authenticateOAuth,
   refreshToken,
   getAuthProvider,

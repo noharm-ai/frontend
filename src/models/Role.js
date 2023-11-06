@@ -12,6 +12,7 @@ export default class Role {
   static DOCTOR = "doctor";
   static SUMMARY = "summary";
   static READONLY = "readonly";
+  static MULTI_SCHEMA = "multi-schema";
 
   static getRoles(t) {
     return [

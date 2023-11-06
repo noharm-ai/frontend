@@ -37,9 +37,11 @@ function Memory() {
   return (
     <>
       <PageHeader>
-        <h1 className="page-header-title">Memória</h1>
-        <div className="page-header-legend">
-          Configurações gerais da aplicação
+        <div>
+          <h1 className="page-header-title">Memória</h1>
+          <div className="page-header-legend">
+            Configurações gerais da aplicação
+          </div>
         </div>
       </PageHeader>
 

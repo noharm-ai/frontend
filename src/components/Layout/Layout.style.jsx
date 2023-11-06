@@ -23,10 +23,23 @@ export const Brand = styled(LogoSVG)`
   pointer-events: none;
 `;
 
-export const UserName = styled.p`
-  color: ${get("colors.primary")};
-  font-weight: ${get("weight.light")};
-  margin: 0 40px 0 0;
+export const UserName = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+  align-items: flex-start;
+  justify-content: center;
+
+  .name {
+    color: ${get("colors.primary")};
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .schema {
+    line-height: 1;
+    margin-top: 3px;
+  }
 `;
 
 export const LogOut = styled.button`
