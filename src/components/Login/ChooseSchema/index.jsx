@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -10,10 +10,10 @@ import { Form } from "styles/Form.style";
 function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
   const { t } = useTranslation();
   const iptRef = useRef();
+  const [defaultRolesOptions, setDefaultRolesOptions] = useState([]);
 
   useEffect(() => {
     if (open) {
-      console.log("ref", iptRef);
       if (iptRef && iptRef.current) {
         setTimeout(() => {
           iptRef.current.focus();
@@ -33,12 +33,33 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
     doLogin({
       ...preAuthConfig.params,
       schema: params.schema,
+      defaultRoles: params.defaultRoles,
     });
     setOpen(false);
   };
 
   const onCancel = () => {
     setOpen(false);
+  };
+
+  const onChangeSchema = (schema, setFieldValue) => {
+    setFieldValue("schema", schema);
+    const schemaConfig = preAuthConfig.schemas.find((i) => i.name === schema);
+
+    if (schemaConfig.defaultRoles.length) {
+      setDefaultRolesOptions(
+        schemaConfig.defaultRoles.concat(schemaConfig.extraRoles || [])
+      );
+      setFieldValue("defaultRoles", schemaConfig.defaultRoles);
+    } else {
+      setDefaultRolesOptions([]);
+      setFieldValue("defaultRoles", []);
+
+      onSave({
+        schema,
+        defaultRoles: schemaConfig.defaultRoles,
+      });
+    }
   };
 
   if (!open) {
@@ -82,10 +103,7 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
               <div className="form-input">
                 <Select
                   onChange={(value) => {
-                    setFieldValue("schema", value);
-                    setTimeout(() => {
-                      handleSubmit();
-                    }, 50);
+                    onChangeSchema(value, setFieldValue);
                   }}
                   value={values.schema}
                   status={errors.schema && touched.schema ? "error" : null}
@@ -94,9 +112,9 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
                   ref={iptRef}
                 >
                   {preAuthConfig?.schemas &&
-                    preAuthConfig.schemas.map((item) => (
-                      <Select.Option key={item} value={item}>
-                        {item}
+                    preAuthConfig.schemas.map(({ name }) => (
+                      <Select.Option key={name} value={name}>
+                        {name}
                       </Select.Option>
                     ))}
                 </Select>
@@ -105,6 +123,32 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
                 <div className="form-error">{errors.schema}</div>
               )}
             </div>
+
+            {defaultRolesOptions.length > 0 && (
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>Roles:</label>
+                </div>
+                <div className="form-input">
+                  <Select
+                    onChange={(value) => {
+                      setFieldValue("defaultRoles", value);
+                    }}
+                    value={values.defaultRoles}
+                    optionFilterProp="children"
+                    showSearch
+                    mode="multiple"
+                  >
+                    {values.schema &&
+                      defaultRolesOptions.map((role) => (
+                        <Select.Option key={role} value={role}>
+                          {role}
+                        </Select.Option>
+                      ))}
+                  </Select>
+                </div>
+              </div>
+            )}
           </Form>
         </DefaultModal>
       )}
