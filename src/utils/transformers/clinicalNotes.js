@@ -2,21 +2,16 @@ import { uniq } from "utils/lodash";
 
 export const flatClinicalNotes = (groups) => {
   const flatList = [];
+
   Object.keys(groups).forEach((key) => {
-    groups[key].forEach((i) => flatList.push(i));
+    if (groups[key]?.roles) {
+      flatList.push(...groups[key].roles);
+    }
   });
 
   return flatList;
 };
 
-export const getPositionList = (clinicalNotes) => {
-  const positions = [];
-
-  clinicalNotes.forEach((c) => {
-    if (c.position && c.position !== "") {
-      positions.push(c.position);
-    }
-  });
-
-  return uniq(positions).sort();
+export const getPositionList = (list) => {
+  return uniq(list).sort();
 };

@@ -57,7 +57,7 @@ const fetchListSuccess = (state = INITIAL_STATE, { list, dates }) => {
     ...state,
     list,
     dates,
-    positionList: getPositionList(flatClinicalNotes(list)),
+    positionList: getPositionList(flatClinicalNotes(dates)),
     error: null,
     isFetching: false,
   };
@@ -78,7 +78,6 @@ const fetchListExtraSuccess = (state = INITIAL_STATE, { list }) => {
   return {
     ...state,
     list: newList,
-    positionList: getPositionList(flatClinicalNotes(newList)),
     error: null,
     isFetchingExtra: false,
   };
