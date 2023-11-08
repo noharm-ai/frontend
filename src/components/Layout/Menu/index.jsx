@@ -228,7 +228,7 @@ export default function Menu({ security, featureService }) {
           label: t("menu.frequency"),
           icon: <HourglassOutlined />,
           id: "gtm-lnk-frequencias",
-          role: ["admin"],
+          role: ["admin", "training"],
         },
         {
           key: "/medicamentos2",
@@ -244,7 +244,7 @@ export default function Menu({ security, featureService }) {
           label: t("menu.interventionReasons"),
           icon: <WarningOutlined />,
           id: "gtm-lnk-intv-reason",
-          role: ["admin"],
+          role: ["admin", "training"],
         },
         {
           key: "/exames2",
