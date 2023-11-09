@@ -4,12 +4,18 @@ import {
   getConciliationDrugs,
   signatureTemplate,
 } from "./templates";
+import { uniq } from "utils/lodash";
 
 export const getCustomClinicalNote = (
   prescription,
   clinicalNote,
   params = {}
 ) => {
+  const drugs = [
+    ...prescription.data.prescriptionRaw,
+    ...prescription.data.solutionRaw,
+    ...prescription.data.proceduresRaw,
+  ];
   const interventions = getInterventionList(prescription);
 
   const alerts = alertsTemplate(prescription);
@@ -47,6 +53,25 @@ export const getCustomClinicalNote = (
     .replace(
       "{{medicamentos_nao_conciliados}}",
       conciliationDrugsWithoutRelation || "--"
+    )
+    .replace(
+      "{{antimicrobianos}}",
+      getDrugsByAttribute(drugs, "am", {
+        period: true,
+        empty: "Nenhum Antimicrobiano encontrado.",
+      })
+    )
+    .replace(
+      "{{alta_vigilancia}}",
+      getDrugsByAttribute(drugs, "av", {
+        empty: "Nenhum medicamento de Alta Vigilância encontrado",
+      })
+    )
+    .replace(
+      "{{controlados}}",
+      getDrugsByAttribute(drugs, "c", {
+        empty: "Nenhum medicamento Controlado encontrado.",
+      })
     )
     .replace(
       "{{assinatura}}",
@@ -105,9 +130,35 @@ const getAllergies = (allergies) => {
     return "Nenhum registro de alergia encontrado";
   }
 
-  const list = allergies.map(({ text }) => {
-    return `- ${text}`;
-  });
+  const list = uniq(
+    allergies.map(({ text }) => {
+      return `- ${text}`;
+    })
+  ).sort();
+
+  return list.join("\n");
+};
+
+const getDrugsByAttribute = (drugs, attr, params = {}) => {
+  if (!drugs || (drugs && !drugs.length)) {
+    return params.empty;
+  }
+
+  const list = uniq(
+    drugs
+      .filter((d) => d[attr])
+      .map((d) => {
+        if (params.period) {
+          return `- ${d.drug} (Período: ${d.totalPeriod || 0}D)`;
+        }
+
+        return `- ${d.drug}`;
+      })
+  ).sort();
+
+  if (!list.length) {
+    return params.empty;
+  }
 
   return list.join("\n");
 };
