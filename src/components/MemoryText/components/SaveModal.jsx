@@ -103,7 +103,31 @@ export default function SaveModal({
               onClick={() => addVariable("{{nome_paciente}}")}
               style={{ cursor: "pointer", marginBottom: "5px" }}
             >
-              Nome do paciente
+              Nome
+            </Tag>
+          </Tooltip>
+          <Tooltip title="Clique para adicionar a Idade do Paciente">
+            <Tag
+              onClick={() => addVariable("{{idade_paciente}}")}
+              style={{ cursor: "pointer", marginBottom: "5px" }}
+            >
+              Idade
+            </Tag>
+          </Tooltip>
+          <Tooltip title="Clique para adicionar a Peso do Paciente">
+            <Tag
+              onClick={() => addVariable("{{peso_paciente}}")}
+              style={{ cursor: "pointer", marginBottom: "5px" }}
+            >
+              Peso
+            </Tag>
+          </Tooltip>
+          <Tooltip title="Clique para adicionar a Altura do Paciente">
+            <Tag
+              onClick={() => addVariable("{{altura_paciente}}")}
+              style={{ cursor: "pointer", marginBottom: "5px" }}
+            >
+              Altura
             </Tag>
           </Tooltip>
           <Tooltip title="Clique para adicionar a lista de Intervenções realizadas nesta prescrição">
@@ -122,6 +146,22 @@ export default function SaveModal({
               Alertas
             </Tag>
           </Tooltip>
+          <Tooltip title="Clique para adicionar a lista de Alergias do paciente">
+            <Tag
+              onClick={() => addVariable("{{alergias}}")}
+              style={{ cursor: "pointer" }}
+            >
+              Alergias
+            </Tag>
+          </Tooltip>
+          <Tooltip title="Clique para adicionar a lista de Exames exibidos na prescrição.">
+            <Tag
+              onClick={() => addVariable("{{exames}}")}
+              style={{ cursor: "pointer", marginBottom: "5px" }}
+            >
+              Exames
+            </Tag>
+          </Tooltip>
           <Tooltip title="Clique para adicionar a lista de Medicamentos Conciliados">
             <Tag
               onClick={() => addVariable("{{medicamentos_conciliados}}")}
@@ -133,7 +173,7 @@ export default function SaveModal({
           <Tooltip title="Clique para adicionar a lista de Medicamentos Não Conciliados">
             <Tag
               onClick={() => addVariable("{{medicamentos_nao_conciliados}}")}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", marginBottom: "5px" }}
             >
               Medicamentos NÃO conciliados
             </Tag>
