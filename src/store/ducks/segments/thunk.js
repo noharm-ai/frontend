@@ -16,11 +16,6 @@ const {
   segmentsFetchSingleSuccess,
   segmentsFetchSingleReset,
 
-  segmentsSaveSingleStart,
-  segmentsSaveSingleReset,
-  segmentsSaveSingleSuccess,
-  segmentsSaveSingleError,
-
   segmentsSelectExam,
   segmentsUpdateExam,
   segmentsSaveExamStart,
@@ -85,30 +80,6 @@ export const fetchSegmentByIdThunk =
 export const resetSingleSegmentThunk = () => async (dispatch, getState) => {
   dispatch(segmentsFetchSingleReset());
 };
-
-export const saveSegmentThunk =
-  (params = {}) =>
-  (dispatch, getState) => {
-    return new Promise(async (resolve, reject) => {
-      dispatch(segmentsSaveSingleStart());
-      const { id } = params;
-      const { access_token } = getState().auth.identify;
-      const method = id ? "updateSegment" : "createSegment";
-      const { status, error } = await api[method](access_token, params).catch(
-        errorHandler
-      );
-
-      if (status !== 200) {
-        dispatch(segmentsSaveSingleError(error));
-        reject(error);
-        return;
-      }
-
-      dispatch(segmentsSaveSingleSuccess());
-      dispatch(segmentsSaveSingleReset());
-      resolve();
-    });
-  };
 
 export const selectSegmentExamThunk = (item) => (dispatch) => {
   dispatch(segmentsSelectExam(item));

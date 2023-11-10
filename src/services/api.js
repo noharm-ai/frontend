@@ -135,22 +135,9 @@ const generateOutlier = (bearerToken, idSegment) =>
     ...setHeaders(bearerToken),
   });
 
-//deprecated
-const generateOutlierFold = (url) => instance.get(url, { ...setHeaders() });
-
 const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
   instance.post(
     `/segments/${idSegment}/outliers/generate/drug/${idDrug}/clean/1`,
-    params,
-    setHeaders(bearerToken)
-  );
-
-const createSegment = (bearerToken, params = {}) =>
-  instance.post(endpoints.segments, params, setHeaders(bearerToken));
-
-const updateSegment = (bearerToken, { id, idHospital, ...params }) =>
-  instance.put(
-    `${endpoints.segments}/${id}/${idHospital}`,
     params,
     setHeaders(bearerToken)
   );
@@ -369,17 +356,6 @@ const getDrugResources = (bearerToken, idDrug, idSegment, idHospital) =>
       ...setHeaders(bearerToken),
     }
   );
-
-/**
- * Departments.
- *
- */
-
-const getDepartmentsBySegment = (bearerToken, idSegment, params = {}) =>
-  instance.get(`${endpoints.segments}/${idSegment}`, {
-    params,
-    ...setHeaders(bearerToken),
-  });
 
 /**
  * Outliers.
@@ -606,8 +582,6 @@ const api = {
   getAuthProvider,
   getSegments,
   getSegmentById,
-  createSegment,
-  updateSegment,
   getPrescriptions,
   getPrescriptionById,
   getPrescriptionDrugPeriod,
@@ -623,9 +597,7 @@ const api = {
   getDrugUnits,
   updateDrugUnits,
   generateOutlier,
-  generateOutlierFold,
   generateDrugOutlier,
-  getDepartmentsBySegment,
   getOutliersBySegmentAndDrug,
   updateOutlier,
   updateOutlierRelation,

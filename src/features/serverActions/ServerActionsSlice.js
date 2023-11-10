@@ -16,10 +16,6 @@ const initialState = {
     status: "idle",
     error: null,
   },
-  generateOutlierFold: {
-    status: "idle",
-    error: null,
-  },
 };
 
 export const updateDailyFrequency = createAsyncThunk(
@@ -68,19 +64,6 @@ export const putMemory = createAsyncThunk(
   }
 );
 
-export const generateOutlierFold = createAsyncThunk(
-  "serverActions/generate-outlier-fold",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.generateOutlierFold(params.url);
-
-      return response.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
 const serverActionsSlice = createSlice({
   name: "serverActions",
   initialState,
@@ -117,15 +100,6 @@ const serverActionsSlice = createSlice({
       })
       .addCase(shouldUpdatePrescription.rejected, (state, action) => {
         state.shouldUpdatePrescription.status = "failed";
-      })
-      .addCase(generateOutlierFold.pending, (state, action) => {
-        state.generateOutlierFold.status = "loading";
-      })
-      .addCase(generateOutlierFold.fulfilled, (state, action) => {
-        state.generateOutlierFold.status = "succeeded";
-      })
-      .addCase(generateOutlierFold.rejected, (state, action) => {
-        state.generateOutlierFold.status = "failed";
       });
   },
 });
