@@ -164,7 +164,7 @@ function DepartmentsForm({ open, setOpen }) {
       {({ handleSubmit, values, setFieldValue }) => (
         <DefaultModal
           open={open}
-          width={"50vw"}
+          width={"60vw"}
           centered
           destroyOnClose
           onCancel={onCancel}

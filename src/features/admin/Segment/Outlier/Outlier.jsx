@@ -141,7 +141,14 @@ function OutliersForm({ open, setOpen }) {
             Confirma a geração de escores para o segmento{" "}
             <strong>{segment.description}</strong> ?
           </p>
-          <p>*Esta ação removerá todos os escores manuais.</p>
+          <p>Observações:</p>
+          <ul style={{ marginBottom: "30px" }}>
+            <li>
+              Esta ação recalcula a tabela prescricaoagg quando possui menos de
+              500mil registros.
+            </li>
+            <li>Os escores manuais serão removidos</li>
+          </ul>
         </>
       )}
 

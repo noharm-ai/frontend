@@ -6,7 +6,7 @@ import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 
-export default function MainFilters({ segments, hospitals }) {
+export default function MainFilters({ segments }) {
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
@@ -16,7 +16,7 @@ export default function MainFilters({ segments, hospitals }) {
   return (
     <>
       <Col md={6}>
-        <Heading as="label" htmlFor="segments" size="16px" margin="0 10px 0 0">
+        <Heading as="label" htmlFor="segments" size="16px">
           {t("screeningList.segment")}:
         </Heading>
         <Select
@@ -33,31 +33,6 @@ export default function MainFilters({ segments, hospitals }) {
           {segments.list.map(({ id, description: text }) => (
             <Select.Option key={id} value={id}>
               {text}
-            </Select.Option>
-          ))}
-        </Select>
-      </Col>
-      <Col md={6}>
-        <Heading
-          as="label"
-          htmlFor="idHospital"
-          size="16px"
-          margin="0 10px 0 0"
-        >
-          Hospital:
-        </Heading>
-        <Select
-          id="idHospital"
-          name="idHospital"
-          style={{ width: "100%" }}
-          value={values.idHospital}
-          onChange={(val) => setFieldValue({ idHospital: val })}
-          showSearch
-          filterOption={filterOption}
-        >
-          {hospitals.map(({ id, name }) => (
-            <Select.Option key={id} value={id}>
-              {name}
             </Select.Option>
           ))}
         </Select>

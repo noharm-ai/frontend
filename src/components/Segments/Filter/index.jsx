@@ -8,7 +8,6 @@ import MainFilters from "./MainFilters";
 export default function Filter({ segments, hospitals, isFetching, fetchList }) {
   const initialValues = {
     idSegment: 1,
-    idHospital: 1,
   };
 
   const search = (params) => {
@@ -21,7 +20,7 @@ export default function Filter({ segments, hospitals, isFetching, fetchList }) {
       mainFilters={<MainFilters segments={segments} hospitals={hospitals} />}
       onSearch={search}
       loading={isFetching}
-      skipFilterList={["idSegment", "idHospital"]}
+      skipFilterList={["idSegment"]}
     />
   );
 }
