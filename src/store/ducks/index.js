@@ -29,6 +29,7 @@ import adminInterventionReasonReducer from "features/admin/InterventionReason/In
 import adminMemory from "features/admin/Memory/MemorySlice";
 import adminDrugAttributes from "features/admin/DrugAttributes/DrugAttributesSlice";
 import adminIntegration from "features/admin/Integration/IntegrationSlice";
+import adminSegment from "features/admin/Segment/SegmentSlice";
 
 const adminReducers = combineReducers({
   frequency: adminFrequencyReducer,
@@ -36,6 +37,7 @@ const adminReducers = combineReducers({
   memory: adminMemory,
   drugAttributes: adminDrugAttributes,
   integration: adminIntegration,
+  segment: adminSegment,
 });
 
 export default combineReducers({

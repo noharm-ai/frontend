@@ -254,6 +254,14 @@ export default function Menu({ security, featureService }) {
           id: "gtm-lnk-exames",
           notrole: ["doctor"],
         },
+        // {
+        //   key: "/admin/segmentos",
+        //   link: "/admin/segmentos",
+        //   label: "Segmentos",
+        //   icon: <ExperimentOutlined />,
+        //   id: "gtm-lnk-segmentos",
+        //   role: ["admin", "training"],
+        // },
       ],
     },
     {

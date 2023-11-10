@@ -31,6 +31,7 @@ import AdminInterventionReason from "pages/Admin/InterventionReason";
 import AdminMemory from "pages/Admin/Memory";
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
+import AdminSegment from "pages/Admin/Segment";
 
 const routes = [
   {
@@ -239,6 +240,11 @@ const routes = [
     exact: true,
     path: "/admin/integracao",
     element: <WithAuth component={AdminIntegration} />,
+  },
+  {
+    exact: true,
+    path: "/admin/segmentos",
+    element: <WithAuth component={AdminSegment} />,
   },
 ];
 

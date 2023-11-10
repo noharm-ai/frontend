@@ -6,6 +6,7 @@ const endpoints = {
   memory: "/admin/memory",
   drug: "/admin/drug",
   integration: "/admin/integration",
+  segment: "/admin/segments",
 };
 
 const getFrequencyList = (bearerToken, params = {}) =>
@@ -110,6 +111,16 @@ const initInterventionReason = (params = {}) => {
   );
 };
 
+const getSegmentDepartments = (params) =>
+  instance.get(`${endpoints.segment}/departments/${params.idSegment}`, {
+    ...setHeaders(),
+  });
+
+const updateSegmentDepartments = (params) =>
+  instance.post(`${endpoints.segment}/departments`, params, {
+    ...setHeaders(),
+  });
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -126,6 +137,8 @@ const api = {
   refreshAggPrescription,
   refreshPrescription,
   initInterventionReason,
+  getSegmentDepartments,
+  updateSegmentDepartments,
 };
 
 export default api;

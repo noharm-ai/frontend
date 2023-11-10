@@ -15,6 +15,7 @@ import { reset as adminMemoryReset } from "features/admin/Memory/MemorySlice";
 import { reset as adminInterventionReasonsReset } from "features/admin/InterventionReason/InterventionReasonSlice";
 import { reset as adminDrugAttributesReset } from "features/admin/DrugAttributes/DrugAttributesSlice";
 import { reset as adminIntegrationReset } from "features/admin/Integration/IntegrationSlice";
+import { reset as adminSegmentReset } from "features/admin/Segment/SegmentSlice";
 import { reset as drugFormStatusReset } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import { reset as listsReset } from "features/lists/ListsSlice";
 import { reset as memoryDraftReset } from "features/memory/MemoryDraft/MemoryDraftSlice";
@@ -41,6 +42,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(adminFrequencyReset());
   dispatch(adminDrugAttributesReset());
   dispatch(adminIntegrationReset());
+  dispatch(adminSegmentReset());
 
   dispatch(clinicalNotesReset());
   dispatch(departmentsReset());

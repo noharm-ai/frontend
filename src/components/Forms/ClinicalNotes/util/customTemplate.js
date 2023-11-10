@@ -149,7 +149,9 @@ const getDrugsByAttribute = (drugs, attr, params = {}) => {
       .filter((d) => d[attr])
       .map((d) => {
         if (params.period) {
-          return `- ${d.drug} (Período: ${d.totalPeriod || 0}D)`;
+          return `- ${d.drug} (Período: ${
+            d.totalPeriod || 0
+          }D **Revisar período)`;
         }
 
         return `- ${d.drug}`;
