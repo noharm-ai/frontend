@@ -37,6 +37,11 @@ function DepartmentsForm({ open, setOpen }) {
   useEffect(() => {
     if (open) {
       dispatch(fetchDepartments({ idSegment: segment.id }));
+    } else {
+      setFilter({
+        departmentName: null,
+        onlySelected: false,
+      });
     }
   }, [open, segment, dispatch]);
 
@@ -176,7 +181,9 @@ function DepartmentsForm({ open, setOpen }) {
           maskClosable={false}
         >
           <header>
-            <Heading margin="0 0 11px">Setores - {segment.description}</Heading>
+            <Heading style={{ fontSize: "20px" }}>
+              Setores - {segment.description}
+            </Heading>
           </header>
 
           <FilterContainer>

@@ -121,6 +121,19 @@ const updateSegmentDepartments = (params) =>
     ...setHeaders(),
   });
 
+const getOutlierProcessList = (params) =>
+  instance.post(`${endpoints.segment}/outliers/process-list`, params, {
+    ...setHeaders(),
+  });
+
+const generateOutlierFold = (params) => {
+  if (params.method === "POST") {
+    return instance.post(params.url, params.params, setHeaders());
+  }
+
+  return instance.get(params.url, { ...setHeaders() });
+};
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -139,6 +152,8 @@ const api = {
   initInterventionReason,
   getSegmentDepartments,
   updateSegmentDepartments,
+  getOutlierProcessList,
+  generateOutlierFold,
 };
 
 export default api;

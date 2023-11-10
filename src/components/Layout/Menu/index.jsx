@@ -21,6 +21,7 @@ import {
   ApiOutlined,
   CodeOutlined,
   ControlOutlined,
+  AppstoreOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -249,19 +250,19 @@ export default function Menu({ security, featureService }) {
         {
           key: "/exames2",
           link: "/exames",
-          label: "Setores/Exames",
+          label: "Exames",
           icon: <ExperimentOutlined />,
           id: "gtm-lnk-exames",
           notrole: ["doctor"],
         },
-        // {
-        //   key: "/admin/segmentos",
-        //   link: "/admin/segmentos",
-        //   label: "Segmentos",
-        //   icon: <ExperimentOutlined />,
-        //   id: "gtm-lnk-segmentos",
-        //   role: ["admin", "training"],
-        // },
+        {
+          key: "/admin/segmentos",
+          link: "/admin/segmentos",
+          label: "Segmentos",
+          icon: <AppstoreOutlined />,
+          id: "gtm-lnk-segmentos",
+          role: ["admin", "training"],
+        },
       ],
     },
     {

@@ -487,7 +487,8 @@
     "delete": "Delete",
     "useData": "Use this data",
     "showNotes": "View notes",
-    "consult": "Open"
+    "consult": "Open",
+    "close": "Close"
   },
 
   "errors": {

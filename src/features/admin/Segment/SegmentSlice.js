@@ -44,6 +44,32 @@ export const saveDepartments = createAsyncThunk(
   }
 );
 
+export const getOutlierProcessList = createAsyncThunk(
+  "admin-segment/get-outliers-process-list",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.getOutlierProcessList(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const generateOutlierFold = createAsyncThunk(
+  "admin-segment/generate-outlier-fold",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.generateOutlierFold(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const segmentSlice = createSlice({
   name: "adminSegment",
   initialState,

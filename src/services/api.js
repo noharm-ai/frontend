@@ -135,6 +135,7 @@ const generateOutlier = (bearerToken, idSegment) =>
     ...setHeaders(bearerToken),
   });
 
+//deprecated
 const generateOutlierFold = (url) => instance.get(url, { ...setHeaders() });
 
 const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>

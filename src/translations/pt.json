@@ -472,7 +472,8 @@
     "delete": "Excluir",
     "useData": "Usar dados",
     "showNotes": "Ver anotação",
-    "consult": "Consultar"
+    "consult": "Consultar",
+    "close": "Fechar"
   },
 
   "alerts": {
