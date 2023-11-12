@@ -18,6 +18,7 @@ import notification from "components/notification";
 import { generateRandomString, getCodeChallenge } from "utils/auth";
 
 import ForgotPassword from "containers/Login/ForgotPassword";
+import ChooseSchema from "./ChooseSchema";
 import api from "services/api";
 import { LoginContainer, Brand } from "./Login.style";
 
@@ -33,16 +34,20 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required("Você esqueceu de inserir a sua senha."),
 });
 
-export default function Login({ isLogging, error, doLogin, match }) {
+export default function Login({ isLogging, error, doLogin }) {
   const params = useParams();
   const [loading, setLoading] = useState(false);
   const [oauthData, setOauthData] = useState(null);
   const [forgotPassTabActive, setForgotPassTab] = useState(false);
+  const [preAuthError, setPreAuthError] = useState(false);
+  const [preAuthLoading, setPreAuthLoading] = useState(false);
+  const [preAuthModal, setPreAuthModal] = useState(null);
+  const [preAuthConfig, setpreAuthConfig] = useState(null);
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
     useFormik({
       initialValues,
       validationSchema,
-      onSubmit: (values) => doLogin(values),
+      onSubmit: (values) => preLogin(values),
     });
 
   const { t, i18n } = useTranslation();
@@ -88,13 +93,38 @@ export default function Login({ isLogging, error, doLogin, match }) {
   }, [params.schema]);
 
   useEffect(() => {
-    if (match && match.params.language) {
-      i18n.changeLanguage(match.params.language);
-      localStorage.setItem("language", match.params.language);
+    const queryString = new URLSearchParams(window.location.search);
+
+    const language = queryString.get("language");
+
+    if (language) {
+      i18n.changeLanguage(language);
+      localStorage.setItem("language", language);
     } else {
       localStorage.setItem("language", "pt");
     }
-  }, [match, i18n]);
+  }, []); //eslint-disable-line
+
+  const preLogin = async (params) => {
+    setPreAuthError(false);
+    setPreAuthLoading(true);
+
+    try {
+      const { data } = await api.preAuth(params);
+      setPreAuthLoading(false);
+
+      if (data.maintainer) {
+        setpreAuthConfig({ schemas: data.schemas, params });
+        setPreAuthModal(true);
+      } else {
+        doLogin(params);
+      }
+    } catch (e) {
+      setPreAuthError(true);
+      setPreAuthLoading(false);
+      message.error(e.response?.data?.message);
+    }
+  };
 
   const openOauthLogin = () => {
     window.location.href = oauthData.url;
@@ -138,7 +168,9 @@ export default function Login({ isLogging, error, doLogin, match }) {
                   type="email"
                   value={values.email}
                   status={
-                    (errors.email && touched.email) || !isEmpty(error)
+                    (errors.email && touched.email) ||
+                    !isEmpty(error) ||
+                    preAuthError
                       ? "error"
                       : ""
                   }
@@ -156,7 +188,9 @@ export default function Login({ isLogging, error, doLogin, match }) {
                   onBlur={handleBlur}
                   onChange={handleChange}
                   status={
-                    (errors.password && touched.password) || !isEmpty(error)
+                    (errors.password && touched.password) ||
+                    !isEmpty(error) ||
+                    preAuthError
                       ? "error"
                       : ""
                   }
@@ -178,7 +212,7 @@ export default function Login({ isLogging, error, doLogin, match }) {
                   type="primary gtm-btn-login"
                   htmlType="submit"
                   block
-                  loading={isLogging}
+                  loading={isLogging || preAuthLoading}
                   onClick={handleSubmit}
                   size="large"
                 >
@@ -218,6 +252,13 @@ export default function Login({ isLogging, error, doLogin, match }) {
         <div className="gradient"></div>
       </div>
       <p className="copyright">{appInfo.copyright}</p>
+      <ChooseSchema
+        preAuthConfig={preAuthConfig}
+        doLogin={doLogin}
+        open={preAuthModal}
+        setOpen={setPreAuthModal}
+        isLogging={isLogging}
+      />
     </LoginContainer>
   );
 }

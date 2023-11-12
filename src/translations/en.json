@@ -46,7 +46,9 @@
     "frequency": "Frequency",
     "interventionReasons": "Intervenções",
     "news": "News",
-    "memory": "Memory"
+    "memory": "Memory",
+    "summary": "Sumário de Alta",
+    "integration": "Integração"
   },
   "screeningList": {
     "confirm": "Confirm?",
@@ -485,7 +487,8 @@
     "delete": "Delete",
     "useData": "Use this data",
     "showNotes": "View notes",
-    "consult": "Open"
+    "consult": "Open",
+    "close": "Close"
   },
 
   "errors": {

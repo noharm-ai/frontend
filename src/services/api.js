@@ -70,6 +70,13 @@ export const setHeaders = () => {
  * Loggin and refresh token...
  */
 
+const preAuth = (params) =>
+  instance.post("/pre-auth", params, {
+    headers: {
+      "x-api-key": appInfo.apiKey,
+    },
+  });
+
 const authenticate = (params) =>
   instance.post(endpoints.authentication, params, {
     withCredentials: true,
@@ -123,26 +130,9 @@ const getSegmentById = (bearerToken, idSegment, idHospital, params = {}) => {
   });
 };
 
-const generateOutlier = (bearerToken, idSegment) =>
-  instance.get(`${endpoints.segments}/${idSegment}/outliers/generate`, {
-    ...setHeaders(bearerToken),
-  });
-
-const generateOutlierFold = (url) => instance.get(url, { ...setHeaders() });
-
 const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
   instance.post(
     `/segments/${idSegment}/outliers/generate/drug/${idDrug}/clean/1`,
-    params,
-    setHeaders(bearerToken)
-  );
-
-const createSegment = (bearerToken, params = {}) =>
-  instance.post(endpoints.segments, params, setHeaders(bearerToken));
-
-const updateSegment = (bearerToken, { id, idHospital, ...params }) =>
-  instance.put(
-    `${endpoints.segments}/${id}/${idHospital}`,
     params,
     setHeaders(bearerToken)
   );
@@ -363,17 +353,6 @@ const getDrugResources = (bearerToken, idDrug, idSegment, idHospital) =>
   );
 
 /**
- * Departments.
- *
- */
-
-const getDepartmentsBySegment = (bearerToken, idSegment, params = {}) =>
-  instance.get(`${endpoints.segments}/${idSegment}`, {
-    params,
-    ...setHeaders(bearerToken),
-  });
-
-/**
  * Outliers.
  *
  */
@@ -592,13 +571,12 @@ const getSummary = (bearerToken, admissionNumber, mock) =>
  */
 const api = {
   authenticate,
+  preAuth,
   authenticateOAuth,
   refreshToken,
   getAuthProvider,
   getSegments,
   getSegmentById,
-  createSegment,
-  updateSegment,
   getPrescriptions,
   getPrescriptionById,
   getPrescriptionDrugPeriod,
@@ -613,10 +591,7 @@ const api = {
   updateDrug,
   getDrugUnits,
   updateDrugUnits,
-  generateOutlier,
-  generateOutlierFold,
   generateDrugOutlier,
-  getDepartmentsBySegment,
   getOutliersBySegmentAndDrug,
   updateOutlier,
   updateOutlierRelation,

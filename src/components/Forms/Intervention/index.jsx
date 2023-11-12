@@ -7,6 +7,7 @@ import { RollbackOutlined } from "@ant-design/icons";
 
 import { Row } from "components/Grid";
 import Button from "components/Button";
+import Dropdown from "components/Dropdown";
 import Tooltip from "components/Tooltip";
 import notification from "components/notification";
 import Heading from "components/Heading";
@@ -17,6 +18,7 @@ import interventionStatus from "models/InterventionStatus";
 import Base from "./Base";
 import PatientData from "./PatientData";
 import DrugData from "./DrugData";
+import { FooterContainer } from "./Intervention.style";
 
 export default function Intervention({
   intervention,
@@ -134,6 +136,7 @@ export default function Intervention({
     economyDays: item.intervention.economyDays,
     expendedDose: item.intervention.expendedDose,
     nonce: item.intervention.nonce,
+    status: item.intervention.status,
     transcriptionData: {
       ...transcriptable,
     },
@@ -207,10 +210,34 @@ export default function Intervention({
       });
   };
 
-  const InterventionFooter = ({ handleSubmit }) => {
+  const InterventionFooter = ({ handleSubmit, setFieldValue }) => {
     const isChecked = item.intervention && item.intervention.status === "s";
     const closedStatuses = interventionStatus.getClosedStatuses();
     const isClosed = closedStatuses.indexOf(item.intervention.status) !== -1;
+
+    const saveItems = [
+      {
+        label: "Salvar e marcar como Aceita",
+        key: "a",
+      },
+      {
+        label: "Salvar e marcar como Não Aceita",
+        key: "n",
+      },
+      {
+        label: "Salvar e marcar como Não Aceita com Justificativa",
+        key: "j",
+      },
+      {
+        label: "Salvar e marcar como Não se Aplica",
+        key: "x",
+      },
+    ];
+
+    const onMenuClick = ({ key }) => {
+      setFieldValue("status", key);
+      handleSubmit();
+    };
 
     const undoIntervention = () => {
       save({
@@ -241,7 +268,7 @@ export default function Intervention({
     };
 
     return (
-      <>
+      <FooterContainer>
         <Button
           onClick={() => onCancel()}
           disabled={isSaving}
@@ -271,16 +298,20 @@ export default function Intervention({
               : ""
           }
         >
-          <Button
-            onClick={() => handleSubmit()}
+          <Dropdown.Button
             loading={isSaving}
-            type={isClosed ? "default" : "primary gtm-bt-save-interv"}
             disabled={isClosed}
+            type="primary"
+            onClick={() => handleSubmit()}
+            menu={{
+              items: saveItems,
+              onClick: onMenuClick,
+            }}
           >
             {t("interventionForm.btnSave")}
-          </Button>
+          </Dropdown.Button>
         </Tooltip>
-      </>
+      </FooterContainer>
     );
   };
 
@@ -291,14 +322,19 @@ export default function Intervention({
       initialValues={initialValues}
       validationSchema={validationSchema}
     >
-      {({ handleSubmit }) => (
+      {({ handleSubmit, setFieldValue }) => (
         <DefaultModal
           open={open}
           width={700}
           centered
           destroyOnClose
           onCancel={onCancel}
-          footer={<InterventionFooter handleSubmit={handleSubmit} />}
+          footer={
+            <InterventionFooter
+              handleSubmit={handleSubmit}
+              setFieldValue={setFieldValue}
+            />
+          }
           {...props}
         >
           <header>

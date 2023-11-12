@@ -11,6 +11,7 @@ import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import Tag from "components/Tag";
 import { getFirstAndLastName } from "utils";
+import { intersection } from "utils/lodash";
 
 import View from "./View";
 import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
@@ -52,29 +53,51 @@ export default function ClinicalNotes({
             value: clinicalNotes,
           });
         } else {
-          const filteredNotes = clinicalNotes.filter((item) => {
-            const hasPosition =
-              positionsArray.length === 0
-                ? true
-                : positionsArray.indexOf(item.position) !== -1;
+          if (!clinicalNotes.length) {
+            const hasPosition = positionsArray.length
+              ? intersection(dates[g].roles, positionsArray).length
+              : true;
 
             let hasIndicator = false;
             if (indicatorsArray.length > 0) {
               indicatorsArray.forEach((indicator) => {
-                hasIndicator = hasIndicator || item[indicator] > 0;
+                hasIndicator = hasIndicator || dates[g][indicator] > 0;
               });
             } else {
               hasIndicator = true;
             }
 
-            return hasPosition && hasIndicator;
-          });
+            if (hasPosition && hasIndicator) {
+              filteredGroup.push({
+                label: g,
+                value: [],
+              });
+            }
+          } else {
+            const filteredNotes = clinicalNotes.filter((item) => {
+              const hasPosition =
+                positionsArray.length === 0
+                  ? true
+                  : positionsArray.indexOf(item.position) !== -1;
 
-          if (filteredNotes.length) {
-            filteredGroup.push({
-              label: g,
-              value: filteredNotes,
+              let hasIndicator = false;
+              if (indicatorsArray.length > 0) {
+                indicatorsArray.forEach((indicator) => {
+                  hasIndicator = hasIndicator || item[indicator] > 0;
+                });
+              } else {
+                hasIndicator = true;
+              }
+
+              return hasPosition && hasIndicator;
             });
+
+            if (filteredNotes.length) {
+              filteredGroup.push({
+                label: g,
+                value: filteredNotes,
+              });
+            }
           }
         }
       });
@@ -89,7 +112,7 @@ export default function ClinicalNotes({
 
       return filteredGroup;
     },
-    [select]
+    [select, dates]
   );
   const localAdmissionNumber = admissionNumber || admissionNumberPopup;
 
@@ -167,7 +190,7 @@ export default function ClinicalNotes({
                 >
                   {positionList.map((p, i) => (
                     <Select.Option value={p} key={i}>
-                      {p}
+                      {p ? p : "-"}
                     </Select.Option>
                   ))}
                 </Select>

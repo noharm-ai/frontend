@@ -1,6 +1,5 @@
 export default class Role {
   static ADMIN = "admin";
-  static CONCILIATION = "concilia";
   static SUPPORT = "suporte";
   static TRAINING = "training";
   static TRANSCRIPTION = "transcription";
@@ -12,13 +11,10 @@ export default class Role {
   static DOCTOR = "doctor";
   static SUMMARY = "summary";
   static READONLY = "readonly";
+  static MULTI_SCHEMA = "multi-schema";
 
   static getRoles(t) {
     return [
-      { id: Role.ADMIN, label: t(`roles.${Role.ADMIN}`) },
-      { id: Role.CONCILIATION, label: t(`roles.${Role.CONCILIATION}`) },
-      { id: Role.SUPPORT, label: t(`roles.${Role.SUPPORT}`) },
-      { id: Role.TRAINING, label: t(`roles.${Role.TRAINING}`) },
       { id: Role.TRANSCRIPTION, label: t(`roles.${Role.TRANSCRIPTION}`) },
       { id: Role.USER_ADMIN, label: t(`roles.${Role.USER_ADMIN}`) },
       { id: Role.ALERT_BT, label: t(`roles.${Role.ALERT_BT}`) },

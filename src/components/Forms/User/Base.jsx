@@ -112,72 +112,70 @@ export default function Base({ security }) {
         </Col>
       </Box>
 
-      {security.isAdmin() && (
-        <>
-          <Box hasError={errors.roles}>
-            <Col xs={layout.label}>
-              <Heading as="label" size="14px" textAlign="right">
-                <Tooltip>{t("userAdminForm.roles")}</Tooltip>
-              </Heading>
-            </Col>
-            <Col xs={layout.input}>
-              <Select
-                id="reason"
-                mode="multiple"
-                optionFilterProp="children"
-                style={{ width: "100%" }}
-                value={roles}
-                onChange={(roles) => setFieldValue("roles", roles)}
+      {(security.isAdmin() || security.isTraining()) && (
+        <Box hasError={errors.roles}>
+          <Col xs={layout.label}>
+            <Heading as="label" size="14px" textAlign="right">
+              <Tooltip>{t("userAdminForm.roles")}</Tooltip>
+            </Heading>
+          </Col>
+          <Col xs={layout.input}>
+            <Select
+              id="reason"
+              mode="multiple"
+              optionFilterProp="children"
+              style={{ width: "100%" }}
+              value={roles}
+              onChange={(roles) => setFieldValue("roles", roles)}
+            >
+              {Role.getRoles(t).map(({ id, label }) => (
+                <Select.Option key={id} value={id}>
+                  {label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Col>
+        </Box>
+      )}
+      {security.isAdmin() && id && (
+        <Box hasError={errors.password}>
+          <Col xs={layout.label}>
+            {forcePassword && (
+              <Heading
+                as="label"
+                size="14px"
+                textAlign="right"
+                style={{ color: "rgb(207, 19, 34)", fontWeight: 500 }}
               >
-                {Role.getRoles(t).map(({ id, label }) => (
-                  <Select.Option key={id} value={id}>
-                    {label}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Col>
-          </Box>
-          {id && (
-            <Box hasError={errors.password}>
-              <Col xs={layout.label}>
-                {forcePassword && (
-                  <Heading
-                    as="label"
-                    size="14px"
-                    textAlign="right"
-                    style={{ color: "rgb(207, 19, 34)", fontWeight: 500 }}
-                  >
-                    <Tooltip>Senha inicial</Tooltip>
-                  </Heading>
-                )}
-              </Col>
-              <Col xs={layout.input}>
-                {forcePassword ? (
-                  <Input
-                    style={{
-                      marginLeft: 10,
-                      background: "rgba(255, 0, 0, 0.1)",
-                    }}
-                    value={password}
-                    onChange={({ target }) =>
-                      setFieldValue("password", target.value)
-                    }
-                    maxLength={10}
-                  />
-                ) : (
-                  <Button
-                    type="link"
-                    danger
-                    onClick={() => setForcePassword(true)}
-                    style={{ padding: 0 }}
-                  >
-                    Configurar senha inicial
-                  </Button>
-                )}
-              </Col>
-            </Box>
-          )}
-        </>
+                <Tooltip>Senha inicial</Tooltip>
+              </Heading>
+            )}
+          </Col>
+          <Col xs={layout.input}>
+            {forcePassword ? (
+              <Input
+                style={{
+                  marginLeft: 10,
+                  background: "rgba(255, 0, 0, 0.1)",
+                }}
+                value={password}
+                onChange={({ target }) =>
+                  setFieldValue("password", target.value)
+                }
+                maxLength={10}
+              />
+            ) : (
+              <Button
+                type="link"
+                danger
+                onClick={() => setForcePassword(true)}
+                style={{ padding: 0 }}
+              >
+                Configurar senha inicial
+              </Button>
+            )}
+          </Col>
+        </Box>
       )}
     </>
   );

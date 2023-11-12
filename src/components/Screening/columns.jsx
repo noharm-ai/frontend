@@ -516,8 +516,7 @@ export const expandedRowRender = (bag) => (record) => {
             )}
           </>
         )}
-        {(!isEmpty(record.period) ||
-          (bag.featureService.hasTempCpoePeriod() && !record.whiteList)) && (
+        {(!isEmpty(record.period) || (record.cpoe && !record.whiteList)) && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrPeriod")}
             span={3}
@@ -758,11 +757,7 @@ const drugInfo = (bag) => [
         );
       }
 
-      if (
-        bag.featureService.hasTempCpoePeriod() &&
-        record.periodFixed &&
-        !record.whiteList
-      ) {
+      if (record.cpoe && record.periodFixed && !record.whiteList) {
         return (
           <Tooltip title='Confira o período completo no botão "Visualizar período de uso" presente na linha extendida'>
             {formatCPOEPeriod(record)}

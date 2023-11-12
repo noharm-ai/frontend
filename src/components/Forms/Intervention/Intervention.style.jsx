@@ -17,3 +17,16 @@ export const EditorBox = styled.div`
     min-height: 100px;
   }
 `;
+
+export const FooterContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+
+  > * {
+    margin-left: 5px;
+  }
+
+  .ant-dropdown-button {
+    width: auto;
+  }
+`;

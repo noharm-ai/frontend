@@ -24,6 +24,10 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  copyAttributes: {
+    status: "idle",
+    error: null,
+  },
   updateSubstance: {
     status: "idle",
     error: null,
@@ -95,6 +99,19 @@ export const copyConversion = createAsyncThunk(
   }
 );
 
+export const copyAttributes = createAsyncThunk(
+  "admin-drug-attributes/copy-attributes",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.copyDrugAttributes(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const drugAttributesSlice = createSlice({
   name: "drugAttributesSlice",
   initialState,
@@ -150,6 +167,15 @@ const drugAttributesSlice = createSlice({
       })
       .addCase(copyConversion.rejected, (state, action) => {
         state.copyConversion.status = "failed";
+      })
+      .addCase(copyAttributes.pending, (state, action) => {
+        state.copyAttributes.status = "loading";
+      })
+      .addCase(copyAttributes.fulfilled, (state, action) => {
+        state.copyAttributes.status = "succeeded";
+      })
+      .addCase(copyAttributes.rejected, (state, action) => {
+        state.copyAttributes.status = "failed";
       })
       .addCase(updateSubstance.pending, (state, action) => {
         state.updateSubstance.status = "loading";

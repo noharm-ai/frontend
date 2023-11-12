@@ -56,6 +56,10 @@ const security = (roles) => {
     return hasRole(Role.DOCTOR);
   };
 
+  const isMultiSchema = () => {
+    return hasRole(Role.MULTI_SCHEMA);
+  };
+
   return {
     hasRole,
     hasAnyRole,
@@ -69,6 +73,7 @@ const security = (roles) => {
     isSupport,
     isTraining,
     isDoctor,
+    isMultiSchema,
   };
 };
 

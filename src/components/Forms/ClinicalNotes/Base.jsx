@@ -19,15 +19,9 @@ import {
 import MemoryText from "containers/MemoryText";
 import MemoryDraft from "features/memory/MemoryDraft/MemoryDraft";
 
-import getInterventionTemplate, {
-  getInterventionList,
-} from "./util/getInterventionTemplate";
-import {
-  signatureTemplate,
-  alertsTemplate,
-  getConciliationDrugs,
-} from "./util/templates";
+import getInterventionTemplate from "./util/getInterventionTemplate";
 import { Box, EditorBox, FieldError } from "../Form.style";
+import { getCustomClinicalNote } from "./util/customTemplate";
 
 export default function Base({
   prescription,
@@ -61,43 +55,11 @@ export default function Base({
     return current && current < dayjs().subtract(1, "days").endOf("day");
   };
 
-  const loadNote = (value) => {
-    const interventions = getInterventionList(prescription);
-
-    const alerts = alertsTemplate(prescription);
-
-    const conciliationDrugsWithRelation = getConciliationDrugs(
-      prescription.prescription.list.length
-        ? prescription.prescription.list[0].value
-        : [],
-      true
+  const loadNote = (clinicalNote) => {
+    setFieldValue(
+      "notes",
+      getCustomClinicalNote(prescription, clinicalNote, { signature, account })
     );
-
-    const conciliationDrugsWithoutRelation = getConciliationDrugs(
-      prescription.prescription.list.length
-        ? prescription.prescription.list[0].value
-        : [],
-      false
-    );
-
-    const replaced = value
-      .replace("{{nome_paciente}}", prescription.data.namePatient)
-      .replace(
-        "{{intervencoes}}",
-        interventions || "Nenhuma intervenção registrada"
-      )
-      .replace("{{alertas}}", alerts || "Nenhum alerta registrado")
-      .replace(
-        "{{medicamentos_conciliados}}",
-        conciliationDrugsWithRelation || "--"
-      )
-      .replace(
-        "{{medicamentos_nao_conciliados}}",
-        conciliationDrugsWithoutRelation || "--"
-      )
-      .replace("{{assinatura}}", signatureTemplate(signature, account));
-
-    setFieldValue("notes", replaced);
   };
 
   return (

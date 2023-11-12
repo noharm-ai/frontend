@@ -282,10 +282,10 @@ export default function References({
       children: (
         <>
           <Row type="flex" justify="end">
-            <Col xs={12}>
+            <Col xs={24 - 6}>
               <EditSubstance />
             </Col>
-            <Col xs={12}>
+            <Col xs={6}>
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 {drugData.sctidA && (
                   <Button

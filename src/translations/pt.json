@@ -40,14 +40,15 @@
     "knowledgeBase": "Base de Conhecimento",
     "userConfig": "Usuário",
     "exams": "Exames",
-    "user-administration": "Cadastro",
+    "user-administration": "Cadastro Usuários",
     "reg-administration": "Cadastro de Usuários",
     "patients": "Pacientes",
     "frequency": "Frequências",
     "interventionReasons": "Motivos de Intervenções",
     "news": "Novidades",
     "memory": "Memória",
-    "summary": "Sumário de Alta"
+    "summary": "Sumário de Alta",
+    "integration": "Integração"
   },
   "screeningList": {
     "confirm": "Confirma?",
@@ -471,7 +472,8 @@
     "delete": "Excluir",
     "useData": "Usar dados",
     "showNotes": "Ver anotação",
-    "consult": "Consultar"
+    "consult": "Consultar",
+    "close": "Fechar"
   },
 
   "alerts": {

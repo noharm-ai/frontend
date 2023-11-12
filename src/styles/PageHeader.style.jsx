@@ -19,7 +19,7 @@ export const PageHeader = styled.div`
     display: block;
     font-size: 0.875rem;
     font-weight: 400;
-    margin: 0;
+    margin: 3px 0 0 0;
     text-align: left;
   }
 

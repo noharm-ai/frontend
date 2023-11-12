@@ -30,6 +30,8 @@ import AdminFrequency from "pages/Admin/Frequency";
 import AdminInterventionReason from "pages/Admin/InterventionReason";
 import AdminMemory from "pages/Admin/Memory";
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
+import AdminIntegration from "pages/Admin/Integration";
+import AdminSegment from "pages/Admin/Segment";
 
 const routes = [
   {
@@ -46,11 +48,6 @@ const routes = [
     exact: true,
     path: "/reset/:token",
     element: <WithAuth component={Password} isLogoutPage={true} />,
-  },
-  {
-    exact: true,
-    path: "/login/:language",
-    element: <WithAuth component={Login} isLoginPage={true} />,
   },
   {
     exact: true,
@@ -234,11 +231,20 @@ const routes = [
     path: "/admin/memoria",
     element: <WithAuth component={AdminMemory} />,
   },
-
   {
     exact: true,
     path: "/admin/curadoria-medicamentos",
     element: <WithAuth component={AdminDrugAttributes} />,
+  },
+  {
+    exact: true,
+    path: "/admin/integracao",
+    element: <WithAuth component={AdminIntegration} />,
+  },
+  {
+    exact: true,
+    path: "/admin/segmentos",
+    element: <WithAuth component={AdminSegment} />,
   },
 ];
 

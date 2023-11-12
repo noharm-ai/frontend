@@ -5,6 +5,8 @@ const endpoints = {
   interventionReason: "/admin/intervention-reason",
   memory: "/admin/memory",
   drug: "/admin/drug",
+  integration: "/admin/integration",
+  segment: "/admin/segments",
 };
 
 const getFrequencyList = (bearerToken, params = {}) =>
@@ -77,6 +79,61 @@ const copyConversion = (params = {}) => {
   });
 };
 
+const copyDrugAttributes = (params = {}) => {
+  return instance.post(`${endpoints.drug}/copy-attributes`, params, {
+    ...setHeaders(),
+  });
+};
+
+const refreshAggPrescription = (params = {}) => {
+  return instance.post(`${endpoints.integration}/refresh-agg`, params, {
+    ...setHeaders(),
+  });
+};
+
+const refreshPrescription = (params = {}) => {
+  return instance.post(
+    `${endpoints.integration}/refresh-prescription`,
+    params,
+    {
+      ...setHeaders(),
+    }
+  );
+};
+
+const initInterventionReason = (params = {}) => {
+  return instance.post(
+    `${endpoints.integration}/init-intervention-reason`,
+    params,
+    {
+      ...setHeaders(),
+    }
+  );
+};
+
+const getSegmentDepartments = (params) =>
+  instance.get(`${endpoints.segment}/departments/${params.idSegment}`, {
+    ...setHeaders(),
+  });
+
+const updateSegmentDepartments = (params) =>
+  instance.post(`${endpoints.segment}/departments`, params, {
+    ...setHeaders(),
+  });
+
+const getOutlierProcessList = (params) =>
+  instance.post(`${endpoints.segment}/outliers/process-list`, params, {
+    ...setHeaders(),
+  });
+
+const generateOutlierFold = (params) => {
+  if (params.method === "POST") {
+    return instance.post(params.url, params.params, setHeaders());
+  }
+
+  return instance.get(params.url, { ...setHeaders() });
+};
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -88,7 +145,15 @@ const api = {
   updatePriceFactor,
   addDefaultUnits,
   copyConversion,
+  copyDrugAttributes,
   updateSubstance,
+  refreshAggPrescription,
+  refreshPrescription,
+  initInterventionReason,
+  getSegmentDepartments,
+  updateSegmentDepartments,
+  getOutlierProcessList,
+  generateOutlierFold,
 };
 
 export default api;

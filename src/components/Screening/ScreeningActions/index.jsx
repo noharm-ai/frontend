@@ -1,8 +1,10 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { MenuOutlined, UserOutlined, CloseOutlined } from "@ant-design/icons";
 import { FloatButton } from "antd";
 
 import FormPatientModal from "containers/Forms/Patient";
+import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSlice";
 
 import { ScreeningFloatButtonGroup } from "../index.style";
 
@@ -12,9 +14,15 @@ export default function ScreeningActions({
   setModalVisibility,
   patientEditVisible,
 }) {
+  const dispatch = useDispatch();
+
   const afterSavePatient = () => {
-    fetchScreening(prescription.idPrescription);
-    setModalVisibility("patientEdit", false);
+    dispatch(
+      shouldUpdatePrescription({ idPrescription: prescription.idPrescription })
+    ).then(() => {
+      fetchScreening(prescription.idPrescription);
+      setModalVisibility("patientEdit", false);
+    });
   };
 
   return (

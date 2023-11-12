@@ -8,10 +8,6 @@ import { Creators as SegmentsCreators } from "../segments";
 import { Creators as OutliersCreators } from "./index";
 
 const {
-  outliersGenerateStop,
-  outliersResetGenerate,
-  outliersGenerateStart,
-
   outliersGenerateDrugStart,
   outliersGenerateDrugError,
   outliersGenerateDrugSuccess,
@@ -66,22 +62,6 @@ const {
   segmentsFetchListSuccess,
 } = SegmentsCreators;
 
-export const generateOutlierThunk =
-  ({ id: idSegment, nameSegment }) =>
-  async (dispatch, getState) => {
-    return new Promise(async (resolve, reject) => {
-      dispatch(outliersGenerateStart({ idSegment, nameSegment }));
-
-      const {
-        status,
-        data: { data },
-      } = await api.generateOutlier(null, idSegment);
-
-      dispatch(outliersGenerateStop(status, data));
-      resolve(data);
-    });
-  };
-
 export const generateDrugOutlierThunk =
   (params) => async (dispatch, getState) => {
     dispatch(outliersGenerateDrugStart());
@@ -99,10 +79,6 @@ export const generateDrugOutlierThunk =
 
     dispatch(outliersGenerateDrugSuccess(data));
   };
-
-export const resetGenerateThunk = () => (dispatch) => {
-  dispatch(outliersResetGenerate());
-};
 
 export const resetGenerateDrugOutlierThunk = () => (dispatch) => {
   dispatch(outliersGenerateDrugReset());

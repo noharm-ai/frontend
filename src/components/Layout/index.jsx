@@ -11,6 +11,7 @@ import Avatar from "components/Avatar";
 import Button from "components/Button";
 import toast from "components/notification";
 import security from "services/security";
+import Tag from "components/Tag";
 
 import Box from "./Box";
 import Menu from "./Menu";
@@ -106,7 +107,15 @@ const Me = ({
           icon={<UserOutlined />}
           css="margin-right: 12px !important;"
         />
-        <UserName>{setTitle({ user })}</UserName>
+
+        <UserName>
+          <div className="name">{setTitle({ user })}</div>
+          {sec.isMultiSchema() && (
+            <div className="schema">
+              <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
+            </div>
+          )}
+        </UserName>
 
         <LogOut
           onClick={openHelp}
