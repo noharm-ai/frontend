@@ -4,7 +4,7 @@ import { Row, Col } from "antd";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useTranslation } from "react-i18next";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, RetweetOutlined } from "@ant-design/icons";
 
 import Button from "components/Button";
 import Table from "components/Table";
@@ -16,6 +16,7 @@ import { PageHeader } from "styles/PageHeader.style";
 import { PageCard } from "styles/Utils.style";
 
 import FormExamModal from "containers/Forms/Exam";
+import CopyExamsModal from "features/admin/Exam/CopyExams/CopyExams";
 import { toDataSource } from "utils";
 
 import Filter from "./Filter";
@@ -38,9 +39,11 @@ function Segments({
   updateExamOrder,
   sortStatus,
   hospitals,
+  security,
 }) {
   const { t } = useTranslation();
   const [examModalVisible, setExamModalVisibility] = useState(false);
+  const [copyExamsVisible, setCopyExamsVisible] = useState(false);
   const { single: currentSegment, examTypes } = segments;
   const availableExamTypes = currentSegment.content.exams
     ? examTypes.list.filter(
@@ -166,6 +169,19 @@ function Segments({
           <h1 className="page-header-title">Exames</h1>
           <div className="page-header-legend">Configuração de exames</div>
         </div>
+        <div className="page-header-actions">
+          {(security.isAdmin() || security.isTraining()) && (
+            <Tooltip title="Clique para mais informações">
+              <Button
+                type="primary"
+                icon={<RetweetOutlined />}
+                onClick={() => setCopyExamsVisible(true)}
+              >
+                Copiar Exames
+              </Button>
+            </Tooltip>
+          )}
+        </div>
       </PageHeader>
 
       <Filter
@@ -233,6 +249,7 @@ function Segments({
         cancelText="Cancelar"
         afterSave={onCancelExamModal}
       />
+      <CopyExamsModal open={copyExamsVisible} setOpen={setCopyExamsVisible} />
     </>
   );
 }
