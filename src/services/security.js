@@ -60,6 +60,10 @@ const security = (roles) => {
     return hasRole(Role.MULTI_SCHEMA);
   };
 
+  const isGetnameEnabled = () => {
+    return !hasRole(Role.GETNAME_DISABLED);
+  };
+
   return {
     hasRole,
     hasAnyRole,
@@ -74,6 +78,7 @@ const security = (roles) => {
     isTraining,
     isDoctor,
     isMultiSchema,
+    isGetnameEnabled,
   };
 };
 

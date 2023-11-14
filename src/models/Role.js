@@ -12,6 +12,7 @@ export default class Role {
   static SUMMARY = "summary";
   static READONLY = "readonly";
   static MULTI_SCHEMA = "multi-schema";
+  static GETNAME_DISABLED = "getname-disabled";
 
   static getRoles(t) {
     return [

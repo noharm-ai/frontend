@@ -4,6 +4,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 
 import { Select } from "components/Inputs";
+import Switch from "components/Switch";
 import DefaultModal from "components/Modal";
 import { Form } from "styles/Form.style";
 
@@ -27,13 +28,19 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
   });
   const initialValues = {
     schema: null,
+    getname: false,
   };
 
   const onSave = (params) => {
+    const roles = [...params.defaultRoles];
+    if (!params.getname) {
+      roles.push("getname-disabled");
+    }
+
     doLogin({
       ...preAuthConfig.params,
       schema: params.schema,
-      defaultRoles: params.defaultRoles,
+      defaultRoles: roles,
     });
     setOpen(false);
   };
@@ -54,11 +61,6 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
     } else {
       setDefaultRolesOptions([]);
       setFieldValue("defaultRoles", []);
-
-      onSave({
-        schema,
-        defaultRoles: schemaConfig.defaultRoles,
-      });
     }
   };
 
@@ -149,6 +151,20 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
                 </div>
               </div>
             )}
+
+            <div className={`form-row`}>
+              <div className="form-label">
+                <label>Ativar Getname:</label>
+              </div>
+              <div className="form-input">
+                <Switch
+                  onChange={(value) => {
+                    setFieldValue("getname", value);
+                  }}
+                  checked={values.getname}
+                />
+              </div>
+            </div>
           </Form>
         </DefaultModal>
       )}
