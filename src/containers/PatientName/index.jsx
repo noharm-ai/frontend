@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { setNameThunk } from "store/ducks/patients/thunk";
+import { setNameThunk, cleanCacheThunk } from "store/ducks/patients/thunk";
 
 import PatientName from "components/PatientName";
 
@@ -13,6 +13,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setName: setNameThunk,
+      cleanCache: cleanCacheThunk,
     },
     dispatch
   );

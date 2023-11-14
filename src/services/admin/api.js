@@ -7,6 +7,7 @@ const endpoints = {
   drug: "/admin/drug",
   integration: "/admin/integration",
   segment: "/admin/segments",
+  exam: "/admin/exam",
 };
 
 const getFrequencyList = (bearerToken, params = {}) =>
@@ -134,6 +135,11 @@ const generateOutlierFold = (params) => {
   return instance.get(params.url, { ...setHeaders() });
 };
 
+const copyExams = (params) =>
+  instance.post(`${endpoints.exam}/copy`, params, {
+    ...setHeaders(),
+  });
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -154,6 +160,7 @@ const api = {
   updateSegmentDepartments,
   getOutlierProcessList,
   generateOutlierFold,
+  copyExams,
 };
 
 export default api;
