@@ -17,6 +17,7 @@ export default function CustomForm({
   startClosed,
   horizontal = false,
   onChange,
+  btnSaveText,
 }) {
   const initialValues = {};
   const validationShape = {};
@@ -105,7 +106,7 @@ export default function CustomForm({
               type="primary"
               loading={isSaving}
             >
-              Salvar
+              {btnSaveText || "Salvar"}
             </Button>
           </div>
         </CustomFormContainer>
