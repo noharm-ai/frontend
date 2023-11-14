@@ -96,8 +96,6 @@ export default function PatientName({
       userRoles: [],
     };
 
-    await executeCacheClear();
-
     try {
       const patient = await hospital.getSinglePatient(
         access_token,
@@ -146,20 +144,20 @@ export default function PatientName({
     }
   };
 
-  const executeCacheClear = async () => {
-    cleanCache();
+  // const executeCacheClear = async () => {
+  //   cleanCache();
 
-    const urlRequest = endpointConfig.nameUrl.replace("{idPatient}", "clear");
+  //   const urlRequest = endpointConfig.nameUrl.replace("{idPatient}", "clear");
 
-    try {
-      await axios.get(urlRequest, {
-        timeout: 8000,
-        headers: endpointConfig.nameHeaders,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //   try {
+  //     await axios.get(urlRequest, {
+  //       timeout: 8000,
+  //       headers: endpointConfig.nameHeaders,
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   return (
     <>
