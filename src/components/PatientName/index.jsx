@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { ReloadOutlined } from "@ant-design/icons";
+import axios from "axios";
 
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
@@ -14,9 +16,15 @@ export default function PatientName({
   setName,
   app,
   access_token,
+  cleanCache,
 }) {
   const [loading, setLoading] = useState(false);
   const [currentName, setCurrentName] = useState(null);
+  const endpointConfig = useSelector((state) => state.app.config);
+  const baseUrl = `${endpointConfig.nameUrl}`.replace(
+    "patient-name/{idPatient}",
+    ""
+  );
 
   const modalOk = () => {
     document.querySelector("#gtm-lnk-ajuda").click();
@@ -25,6 +33,50 @@ export default function PatientName({
   const copyError = (error) => {
     navigator.clipboard.writeText(JSON.stringify(error));
     notification.success({ message: "Descrição do erro copiada!" });
+  };
+
+  const httpErrorHandler = (error) => {
+    const log = [];
+    if (error === null) {
+      log.push("Error is null!");
+      return log;
+    }
+
+    if (axios.isAxiosError(error)) {
+      const response = error?.response;
+      const request = error?.request;
+
+      log.push("Código do erro: " + error.code);
+
+      if (error.code === "ERR_NETWORK") {
+        log.push(
+          ">>>> O serviço está offline ou é inacessível a partir deste computador"
+        );
+      }
+
+      if (error.code === "ERR_CANCELED") {
+        log.push(">>>> Requisição cancelada pelo usuário");
+      }
+
+      if (error.code === "ECONNABORTED" || error.code === "ETIMEDOUT") {
+        log.push(">>>> A requisição passou do tempo limite");
+      }
+
+      log.push("- RESPONSE INFO");
+      if (response) {
+        log.push("Status: " + response.status);
+        log.push("Data: " + JSON.stringify(response.data));
+      } else {
+        log.push("O serviço não respondeu");
+      }
+
+      log.push("- REQUEST INFO");
+      if (request) {
+        log.push("Object:" + JSON.stringify(request));
+      }
+    }
+
+    return log.join("\n");
   };
 
   const reload = async (e) => {
@@ -43,6 +95,8 @@ export default function PatientName({
       useCache: false,
       userRoles: [],
     };
+
+    await executeCacheClear();
 
     try {
       const patient = await hospital.getSinglePatient(
@@ -63,12 +117,24 @@ export default function PatientName({
             </p>
             <Tooltip title="Clique para copiar a descrição do erro">
               <Textarea
-                value={JSON.stringify(error)}
+                value={httpErrorHandler(error)}
                 style={{ minHeight: "200px" }}
                 readOnly={true}
                 onClick={() => copyError(error)}
               />
             </Tooltip>
+            <p>Além disso, informe o conteúdo da janela abaixo:</p>
+            <iframe
+              id="status_iframe"
+              title="getname"
+              style={{
+                border: 0,
+                width: "100%",
+                height: "100px",
+                background: "#fafafa",
+              }}
+              src={baseUrl}
+            ></iframe>
           </>
         ),
         onOk: modalOk,
@@ -77,6 +143,21 @@ export default function PatientName({
         width: 500,
       });
       setLoading(false);
+    }
+  };
+
+  const executeCacheClear = async () => {
+    cleanCache();
+
+    const urlRequest = endpointConfig.nameUrl.replace("{idPatient}", "clear");
+
+    try {
+      await axios.get(urlRequest, {
+        timeout: 8000,
+        headers: endpointConfig.nameHeaders,
+      });
+    } catch (error) {
+      console.error(error);
     }
   };
 

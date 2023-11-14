@@ -1,4 +1,6 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 import Tabs from "components/Tabs";
 import Button from "components/Button";
@@ -8,8 +10,22 @@ import Signature from "containers/UserConfig/Signature";
 import ChangePassword from "containers/UserConfig/ChangePassword";
 
 export default function UserConfig({ cleanCache }) {
-  const executeCleanCache = () => {
+  const endpointConfig = useSelector((state) => state.app.config);
+
+  const executeCleanCache = async () => {
     cleanCache();
+
+    const urlRequest = endpointConfig.nameUrl.replace("{idPatient}", "clear");
+
+    try {
+      await axios.get(urlRequest, {
+        timeout: 8000,
+        headers: endpointConfig.nameHeaders,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+
     notification.success({
       message: "Cache limpo com sucesso!",
     });
