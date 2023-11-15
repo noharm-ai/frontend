@@ -44,7 +44,7 @@ export default function Field({ question, values, setFieldValue }) {
         onChange={(value) => setFieldValue(question.id, value)}
         value={values[question.id]}
         allowClear
-        style={{ minWidth: "300px" }}
+        style={{ minWidth: "300px", ...(question.style || {}) }}
         mode={
           question.type === "options-key-value-multiple"
             ? "multiple"

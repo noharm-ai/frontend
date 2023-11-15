@@ -38,11 +38,8 @@ const upsertIntervReason = (bearerToken, params = {}) => {
   });
 };
 
-const getMemoryItems = (bearerToken, params = {}) =>
-  instance.get(endpoints.memory, {
-    params,
-    ...setHeaders(bearerToken),
-  });
+const getMemoryItems = (params = {}) =>
+  instance.post(`${endpoints.memory}/list`, params, setHeaders());
 
 const updateMemoryItem = (bearerToken, params = {}) => {
   return instance.put(`${endpoints.memory}`, params, {

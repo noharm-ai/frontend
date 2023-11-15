@@ -22,6 +22,7 @@ import {
   CodeOutlined,
   ControlOutlined,
   AppstoreOutlined,
+  BranchesOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -261,6 +262,14 @@ export default function Menu({ security, featureService }) {
           label: "Segmentos",
           icon: <AppstoreOutlined />,
           id: "gtm-lnk-segmentos",
+          role: ["admin", "training"],
+        },
+        {
+          key: "/admin/vias",
+          link: "/admin/vias",
+          label: "Vias",
+          icon: <BranchesOutlined />,
+          id: "gtm-lnk-vias",
           role: ["admin", "training"],
         },
       ],
