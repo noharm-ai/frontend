@@ -10,8 +10,8 @@ const endpoints = {
   exam: "/admin/exam",
 };
 
-const getFrequencyList = (bearerToken, params = {}) =>
-  instance.get(endpoints.frequency, { params, ...setHeaders(bearerToken) });
+const getFrequencyList = (params = {}) =>
+  instance.post(`${endpoints.frequency}/list`, params, setHeaders());
 
 const updateDailyFrequency = (bearerToken, id, dailyFrequency) => {
   return instance.put(

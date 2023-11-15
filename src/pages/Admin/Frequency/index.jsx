@@ -1,9 +1,6 @@
 import withLayout from "lib/withLayout";
-import Frequency from "containers/Admin/Frequency";
+import Frequency from "features/admin/Frequency/Frequency";
 
-const layoutProps = {
-  theme: "boxed",
-  pageTitle: "menu.frequency",
-};
+const layoutProps = {};
 
 export default withLayout(Frequency, layoutProps);
