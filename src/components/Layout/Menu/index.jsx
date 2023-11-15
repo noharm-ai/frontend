@@ -235,7 +235,7 @@ export default function Menu({ security, featureService }) {
         {
           key: "/medicamentos2",
           link: "/medicamentos",
-          label: "Medicamentos (Antigo)",
+          label: "Medicamentos",
           icon: <MedicineBoxOutlined />,
           id: "gtm-lnk-medicamentos",
           notrole: ["doctor"],

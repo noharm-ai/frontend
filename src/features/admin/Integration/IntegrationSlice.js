@@ -10,10 +10,6 @@ const initialState = {
     status: "idle",
     error: null,
   },
-  initInterventionReason: {
-    status: "idle",
-    error: null,
-  },
 };
 
 export const refreshAgg = createAsyncThunk(
@@ -42,19 +38,6 @@ export const refreshPrescription = createAsyncThunk(
   }
 );
 
-export const initInterventionReason = createAsyncThunk(
-  "admin-integration/init-intervention-reason",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.initInterventionReason(params);
-
-      return response;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
 const integrationSlice = createSlice({
   name: "integration",
   initialState,
@@ -73,15 +56,6 @@ const integrationSlice = createSlice({
       })
       .addCase(refreshAgg.rejected, (state, action) => {
         state.refreshAgg.status = "failed";
-      })
-      .addCase(initInterventionReason.pending, (state, action) => {
-        state.initInterventionReason.status = "loading";
-      })
-      .addCase(initInterventionReason.fulfilled, (state, action) => {
-        state.initInterventionReason.status = "succeeded";
-      })
-      .addCase(initInterventionReason.rejected, (state, action) => {
-        state.initInterventionReason.status = "failed";
       })
       .addCase(refreshPrescription.pending, (state, action) => {
         state.refreshPrescription.status = "loading";

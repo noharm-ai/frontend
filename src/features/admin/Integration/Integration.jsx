@@ -2,11 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Card, Col, Row, Avatar } from "antd";
-import {
-  RetweetOutlined,
-  ThunderboltOutlined,
-  CopyOutlined,
-} from "@ant-design/icons";
+import { RetweetOutlined, ThunderboltOutlined } from "@ant-design/icons";
 
 import notification from "components/notification";
 import Tooltip from "components/Tooltip";
@@ -14,12 +10,7 @@ import Button from "components/Button";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
 
-import {
-  refreshAgg,
-  refreshPrescription,
-  initInterventionReason,
-  reset,
-} from "./IntegrationSlice";
+import { refreshAgg, refreshPrescription, reset } from "./IntegrationSlice";
 import { PageHeader } from "styles/PageHeader.style";
 import { IntegrationContainer } from "./Integration.style";
 
@@ -31,9 +22,6 @@ function IntegrationAdmin() {
   );
   const refreshPrescriptionStatus = useSelector(
     (state) => state.admin.integration.refreshPrescription.status
-  );
-  const initInterventionReasonStatus = useSelector(
-    (state) => state.admin.integration.initInterventionReason.status
   );
 
   useEffect(() => {
@@ -143,41 +131,6 @@ function IntegrationAdmin() {
             </Card>
           </Col>
           <Col xs={{ span: 24 }} lg={{ span: 8 }} xxl={{ span: 6 }}></Col>
-        </Row>
-
-        <Row gutter={[16, 24]} style={{ marginTop: "20px" }}>
-          <Col xs={{ span: 24 }} lg={{ span: 8 }} xxl={{ span: 6 }}>
-            <Card
-              className={`process-card ${initInterventionReasonStatus}`}
-              actions={[
-                <Tooltip title="Executar">
-                  <Button
-                    shape="circle"
-                    icon={<ThunderboltOutlined />}
-                    size="large"
-                    loading={initInterventionReasonStatus === "loading"}
-                    onClick={() =>
-                      confirmAction(
-                        initInterventionReason,
-                        "Copiar motivos de intervenção"
-                      )()
-                    }
-                  ></Button>
-                </Tooltip>,
-              ]}
-            >
-              <Card.Meta
-                avatar={
-                  <Avatar
-                    icon={<CopyOutlined />}
-                    style={{ backgroundColor: "#FF8759", color: "#fff" }}
-                  />
-                }
-                title="Copiar Motivos de Intervenção"
-                description="Copia os motivos de intervenção do schema da curadoria. Só é possível copiar se a tabela motivointervencao estiver vazia."
-              />
-            </Card>
-          </Col>
         </Row>
       </IntegrationContainer>
     </>

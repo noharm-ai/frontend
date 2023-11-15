@@ -13,7 +13,6 @@ import Button from "components/Button";
 import { setSegment } from "./SegmentSlice";
 import DepartmentsForm from "./Departments/Departments";
 import OutliersForm from "./Outlier/Outlier";
-import security from "services/security";
 
 //todo tornar geral
 import { IntegrationContainer } from "../Integration/Integration.style";
@@ -21,8 +20,6 @@ import { IntegrationContainer } from "../Integration/Integration.style";
 export default function AdminSegment() {
   const dispatch = useDispatch();
   const segments = useSelector((state) => state.segments.list);
-  const roles = useSelector((state) => state.user.account.roles);
-  const sec = security(roles);
   const [departmentsModal, setDepartmentsModal] = useState(false);
   const [outliersModal, setOutliersModal] = useState(false);
 
@@ -48,18 +45,17 @@ export default function AdminSegment() {
         ></Button>
       </Tooltip>
     );
-    if (sec.isAdmin()) {
-      actions.push(
-        <Tooltip title="Gerar Escores">
-          <Button
-            shape="circle"
-            icon={<RobotOutlined />}
-            size="large"
-            onClick={() => showOutliers(s)}
-          ></Button>
-        </Tooltip>
-      );
-    }
+
+    actions.push(
+      <Tooltip title="Gerar Escores">
+        <Button
+          shape="circle"
+          icon={<RobotOutlined />}
+          size="large"
+          onClick={() => showOutliers(s)}
+        ></Button>
+      </Tooltip>
+    );
 
     return actions;
   };
