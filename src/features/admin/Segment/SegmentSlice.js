@@ -12,11 +12,28 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  upsertSegment: {
+    status: "idle",
+    error: null,
+  },
   saveDepartments: {
     status: "idle",
     error: null,
   },
 };
+
+export const upsertSegment = createAsyncThunk(
+  "admin-segment/upsert-segment",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.upsertSegment(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
 
 export const fetchDepartments = createAsyncThunk(
   "admin-segment/fetch-departments",
@@ -103,6 +120,15 @@ const segmentSlice = createSlice({
       })
       .addCase(saveDepartments.rejected, (state, action) => {
         state.saveDepartments.status = "failed";
+      })
+      .addCase(upsertSegment.pending, (state, action) => {
+        state.upsertSegment.status = "loading";
+      })
+      .addCase(upsertSegment.fulfilled, (state, action) => {
+        state.upsertSegment.status = "succeeded";
+      })
+      .addCase(upsertSegment.rejected, (state, action) => {
+        state.upsertSegment.status = "failed";
       });
   },
 });

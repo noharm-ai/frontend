@@ -137,6 +137,12 @@ const copyExams = (params) =>
     ...setHeaders(),
   });
 
+const upsertSegment = (params = {}) => {
+  return instance.post(`${endpoints.segment}`, params, {
+    ...setHeaders(),
+  });
+};
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -158,6 +164,7 @@ const api = {
   getOutlierProcessList,
   generateOutlierFold,
   copyExams,
+  upsertSegment,
 };
 
 export default api;
