@@ -9,6 +9,7 @@ import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
 import { Form } from "styles/Form.style";
+import { fetchSegmentsListThunk } from "store/ducks/segments/thunk";
 
 import { setSegment, upsertSegment } from "../SegmentSlice";
 import Base from "./Base";
@@ -32,7 +33,6 @@ function SegmentForm({ open, setOpen }) {
   };
 
   const onSave = (params) => {
-    console.log("params", params);
     dispatch(upsertSegment(params)).then((response) => {
       if (response.error) {
         notification.error({
@@ -40,6 +40,7 @@ function SegmentForm({ open, setOpen }) {
         });
       } else {
         dispatch(setSegment(null));
+        dispatch(fetchSegmentsListThunk({ clearCache: true }));
         setOpen(false);
 
         notification.success({
