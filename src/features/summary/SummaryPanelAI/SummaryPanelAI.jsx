@@ -29,9 +29,7 @@ function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
   const status = useSelector(
     (state) => state.summary.blocks[position]?.aiStatus
   );
-  const result = useSelector(
-    (state) => state.summary.blocks[position]?.text || "Nada consta"
-  );
+  const result = useSelector((state) => state.summary.blocks[position]?.text);
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
   const [editText, setEditText] = useState("");
