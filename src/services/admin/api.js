@@ -143,6 +143,17 @@ const upsertSegment = (params = {}) => {
   });
 };
 
+const getMostFrequentExams = (params) =>
+  instance.get(`${endpoints.exam}/most-frequent`, {
+    params,
+    ...setHeaders(),
+  });
+
+const addMostFrequentExams = (params) =>
+  instance.post(`${endpoints.exam}/most-frequent/add`, params, {
+    ...setHeaders(),
+  });
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -165,6 +176,8 @@ const api = {
   generateOutlierFold,
   copyExams,
   upsertSegment,
+  getMostFrequentExams,
+  addMostFrequentExams,
 };
 
 export default api;
