@@ -48,7 +48,7 @@ function MostFrequentForm({ open, setOpen }) {
         type: null,
       });
     }
-  }, [open, dispatch]);
+  }, [open, dispatch, t]);
 
   const validationSchema = Yup.object().shape({
     idSegment: Yup.string().nullable().required(t("validation.requiredField")),
