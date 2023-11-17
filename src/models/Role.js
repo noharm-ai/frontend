@@ -43,4 +43,24 @@ export default class Role {
       },
     ];
   }
+
+  static getLoginRoles(t) {
+    return [
+      { id: Role.TRANSCRIPTION, label: t(`roles.${Role.TRANSCRIPTION}`) },
+      { id: Role.ALERT_BT, label: t(`roles.${Role.ALERT_BT}`) },
+      { id: Role.CPOE, label: t(`roles.${Role.CPOE}`) },
+      {
+        id: Role.PRESCRIPTION_EDIT,
+        label: t(`roles.${Role.PRESCRIPTION_EDIT}`),
+      },
+      {
+        id: Role.PRESMED_FORM,
+        label: t(`roles.${Role.PRESMED_FORM}`),
+      },
+      {
+        id: Role.DOCTOR,
+        label: t(`roles.${Role.DOCTOR}`),
+      },
+    ];
+  }
 }

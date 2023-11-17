@@ -7,6 +7,7 @@ import { Select } from "components/Inputs";
 import Switch from "components/Switch";
 import DefaultModal from "components/Modal";
 import { Form } from "styles/Form.style";
+import Role from "models/Role";
 
 function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
   const { t } = useTranslation();
@@ -52,14 +53,13 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
   const onChangeSchema = (schema, setFieldValue) => {
     setFieldValue("schema", schema);
     const schemaConfig = preAuthConfig.schemas.find((i) => i.name === schema);
+    const extraRoles = Role.getLoginRoles(t).map((r) => r.id);
 
     if (schemaConfig.defaultRoles.length) {
-      setDefaultRolesOptions(
-        schemaConfig.defaultRoles.concat(schemaConfig.extraRoles || [])
-      );
+      setDefaultRolesOptions(schemaConfig.defaultRoles.concat(extraRoles));
       setFieldValue("defaultRoles", schemaConfig.defaultRoles);
     } else {
-      setDefaultRolesOptions([]);
+      setDefaultRolesOptions(extraRoles);
       setFieldValue("defaultRoles", []);
     }
   };
@@ -144,7 +144,7 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
                     {values.schema &&
                       defaultRolesOptions.map((role) => (
                         <Select.Option key={role} value={role}>
-                          {role}
+                          {t(`roles.${role}`)}
                         </Select.Option>
                       ))}
                   </Select>
