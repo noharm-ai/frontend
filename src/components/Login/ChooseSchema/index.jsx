@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { Select } from "components/Inputs";
 import Switch from "components/Switch";
 import DefaultModal from "components/Modal";
+import Tooltip from "components/Tooltip";
 import { Form } from "styles/Form.style";
 import Role from "models/Role";
 
@@ -30,6 +31,7 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
   const initialValues = {
     schema: null,
     getname: false,
+    runAsBasicUser: false,
   };
 
   const onSave = (params) => {
@@ -42,6 +44,7 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
       ...preAuthConfig.params,
       schema: params.schema,
       defaultRoles: roles,
+      runAsBasicUser: params.runAsBasicUser,
     });
     setOpen(false);
   };
@@ -162,6 +165,24 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
                     setFieldValue("getname", value);
                   }}
                   checked={values.getname}
+                />
+              </div>
+            </div>
+            <div className={`form-row`}>
+              <div className="form-label">
+                <Tooltip
+                  title="Remove as permissões especiais para simular a visão de um usuário normal da NoHarm"
+                  underline
+                >
+                  <label>Simular Usuário Comum:</label>
+                </Tooltip>
+              </div>
+              <div className="form-input">
+                <Switch
+                  onChange={(value) => {
+                    setFieldValue("runAsBasicUser", value);
+                  }}
+                  checked={values.runAsBasicUser}
                 />
               </div>
             </div>
