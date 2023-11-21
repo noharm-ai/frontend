@@ -25,6 +25,7 @@ import Prioritization from "pages/Prioritization";
 import ClinicalNotes from "pages/Screening/ClinicalNotes";
 import Summary from "pages/Summary";
 import SummarySearch from "pages/Summary/SummarySearch";
+import Help from "pages/Help";
 
 import AdminFrequency from "pages/Admin/Frequency";
 import AdminInterventionReason from "pages/Admin/InterventionReason";
@@ -216,6 +217,11 @@ const routes = [
     exact: true,
     path: "/sumario-alta/:admissionNumber/mock",
     element: <WithAuth component={Summary} mock={true} />,
+  },
+  {
+    exact: true,
+    path: "/suporte",
+    element: <WithAuth component={Help} />,
   },
   {
     exact: true,

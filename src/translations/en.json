@@ -48,7 +48,8 @@
     "news": "News",
     "memory": "Memory",
     "summary": "Sumário de Alta",
-    "integration": "Integração"
+    "integration": "Integração",
+    "help": "Support"
   },
   "screeningList": {
     "confirm": "Confirm?",

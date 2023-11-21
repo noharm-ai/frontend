@@ -148,15 +148,15 @@ export default function Menu({ security, featureService }) {
       notrole: ["doctor"],
     },
     {
-      key: "https://noharm.octadesk.com/kb",
-      link: "https://noharm.octadesk.com/kb",
+      key: `${process.env.REACT_APP_SUPPORT_LINK}/kb`,
+      link: `${process.env.REACT_APP_SUPPORT_LINK}/kb`,
       label: t("menu.knowledgeBase"),
       icon: <BulbOutlined />,
       id: "gtm-lnk-knowledgeBase",
     },
     {
-      key: "https://noharm.octadesk.com/kb/article/novidades",
-      link: "https://noharm.octadesk.com/kb/article/novidades",
+      key: `${process.env.REACT_APP_SUPPORT_LINK}/kb/article/novidades`,
+      link: `${process.env.REACT_APP_SUPPORT_LINK}/kb/article/novidades`,
       label: t("menu.news"),
       icon: <ThunderboltOutlined />,
       id: "gtm-lnk-news",
@@ -298,6 +298,13 @@ export default function Menu({ security, featureService }) {
         },
       ],
     },
+    // {
+    //   key: "help",
+    //   link: "/suporte",
+    //   label: t("menu.help"),
+    //   icon: <CustomerServiceOutlined />,
+    //   id: "gtm-lnk-help",
+    // },
   ];
 
   return (

@@ -22,7 +22,7 @@ import {
   Legend,
 } from "./index.style";
 
-const helpLink = "https://noharm.octadesk.com/kb/article/noharm-care";
+const helpLink = `${process.env.REACT_APP_SUPPORT_LINK}/kb/article/noharm-care`;
 
 export default function View({
   selected,
