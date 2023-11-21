@@ -44,7 +44,7 @@ const getPatients = async (bearerToken, requestConfig) => {
   const security = securityService(userRoles);
   let promises;
 
-  if (!security.isAdmin()) {
+  if (security.isGetnameEnabled()) {
     if (requestConfig.multipleNameUrl && listToRequest.length > 1) {
       const cacheConfig = {};
       const requestIds = [];
