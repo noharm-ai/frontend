@@ -15,9 +15,7 @@ const initialState = {
 export const fetchMemory = createAsyncThunk(
   "memory/fetch",
   async (params, thunkAPI) => {
-    const { access_token } = thunkAPI.getState().auth.identify;
-
-    const response = await api.getMemoryItems(access_token);
+    const response = await api.getMemoryItems(params);
     return response.data;
   }
 );

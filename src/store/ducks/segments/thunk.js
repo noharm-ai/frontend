@@ -36,7 +36,7 @@ const {
 export const fetchSegmentsListThunk =
   (params = {}) =>
   async (dispatch, getState) => {
-    if (getState().segments.list.length) return;
+    if (!params.clearCache && getState().segments.list.length) return;
 
     dispatch(segmentsFetchListStart());
 

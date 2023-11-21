@@ -20,7 +20,21 @@ function Memory() {
   const loading = status === "loading" || statusSaving === "loading";
 
   useEffect(() => {
-    dispatch(fetchMemory());
+    dispatch(
+      fetchMemory({
+        kinds: [
+          "reports",
+          "admission-reports",
+          "getnameurl",
+          "features",
+          "map-origin-drug",
+          "map-origin-solution",
+          "map-origin-procedure",
+          "map-origin-diet",
+          "map-origin-custom",
+        ],
+      })
+    );
 
     return () => {
       dispatch(reset());
@@ -97,30 +111,6 @@ function Memory() {
           <div className={`loader ${loading ? "loading" : ""}`}>
             <LoadBox />
           </div>
-          <h3>Vias: Sonda</h3>
-          <div className="box-legend">
-            Lista com as vias que ativam a flag SONDA.
-          </div>
-
-          <Form memory={data["map-tube"]} />
-        </div>
-
-        <div className="box">
-          <div className={`loader ${loading ? "loading" : ""}`}>
-            <LoadBox />
-          </div>
-          <h3>Vias: Intravenosa</h3>
-          <div className="box-legend">
-            Lista com as vias que ativam a flag SONDA.
-          </div>
-
-          <Form memory={data["map-iv"]} />
-        </div>
-
-        <div className="box">
-          <div className={`loader ${loading ? "loading" : ""}`}>
-            <LoadBox />
-          </div>
           <h3>Origem: Medicamentos</h3>
           <div className="box-legend">
             Lista com as origens que mapeiam para o tipo "Medicamentos"
@@ -171,7 +161,7 @@ function Memory() {
           </div>
           <h3>Origem: Custom</h3>
           <div className="box-legend">
-            Valores listados aqui serão aceitados como origem válida.
+            Valores listados aqui serão aceitos como origem válida.
           </div>
 
           <Form memory={data["map-origin-custom"]} />

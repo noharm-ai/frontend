@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
 
 import Button from "components/Button";
 import Collapse from "components/Collapse";
@@ -17,7 +18,9 @@ export default function CustomForm({
   startClosed,
   horizontal = false,
   onChange,
+  btnSaveText,
 }) {
+  const { t } = useTranslation();
   const initialValues = {};
   const validationShape = {};
 
@@ -37,9 +40,22 @@ export default function CustomForm({
         }
 
         if (question.required) {
-          validationShape[question.id] = Yup.string()
-            .nullable()
-            .required("Campo obrigatório");
+          if (
+            [
+              "options-multiple",
+              "memory-multiple",
+              "options-key-value-multiple",
+            ].indexOf(question.type) !== -1
+          ) {
+            validationShape[question.id] = Yup.array()
+              .nullable()
+              .min(1, t("validation.atLeastOne"))
+              .required(t("validation.requiredField"));
+          } else {
+            validationShape[question.id] = Yup.string()
+              .nullable()
+              .required(t("validation.requiredField"));
+          }
         }
       });
     });
@@ -105,7 +121,7 @@ export default function CustomForm({
               type="primary"
               loading={isSaving}
             >
-              Salvar
+              {btnSaveText || "Salvar"}
             </Button>
           </div>
         </CustomFormContainer>

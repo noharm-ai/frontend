@@ -62,6 +62,7 @@ export default function DrugForm({
       values={values}
       horizontal
       onChange={onChangeForm}
+      btnSaveText={"Avaliar"}
     />
   );
 }

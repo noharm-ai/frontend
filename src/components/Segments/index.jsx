@@ -4,7 +4,11 @@ import { Row, Col } from "antd";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useTranslation } from "react-i18next";
-import { PlusOutlined, RetweetOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  RetweetOutlined,
+  OrderedListOutlined,
+} from "@ant-design/icons";
 
 import Button from "components/Button";
 import Table from "components/Table";
@@ -17,6 +21,7 @@ import { PageCard } from "styles/Utils.style";
 
 import FormExamModal from "containers/Forms/Exam";
 import CopyExamsModal from "features/admin/Exam/CopyExams/CopyExams";
+import MostFrequentExamsModal from "features/admin/Exam/MostFrequent/MostFrequent";
 import { toDataSource } from "utils";
 
 import Filter from "./Filter";
@@ -44,6 +49,8 @@ function Segments({
   const { t } = useTranslation();
   const [examModalVisible, setExamModalVisibility] = useState(false);
   const [copyExamsVisible, setCopyExamsVisible] = useState(false);
+  const [mostFrequentModalVisible, setMostFrequentModalVisible] =
+    useState(false);
   const { single: currentSegment, examTypes } = segments;
   const availableExamTypes = currentSegment.content.exams
     ? examTypes.list.filter(
@@ -171,15 +178,27 @@ function Segments({
         </div>
         <div className="page-header-actions">
           {(security.isAdmin() || security.isTraining()) && (
-            <Tooltip title="Clique para mais informações">
-              <Button
-                type="primary"
-                icon={<RetweetOutlined />}
-                onClick={() => setCopyExamsVisible(true)}
-              >
-                Copiar Exames
-              </Button>
-            </Tooltip>
+            <>
+              <Tooltip title="Clique para mais informações">
+                <Button
+                  type="primary"
+                  icon={<RetweetOutlined />}
+                  onClick={() => setCopyExamsVisible(true)}
+                >
+                  Copiar Exames
+                </Button>
+              </Tooltip>
+
+              <Tooltip title="Clique para mais informações">
+                <Button
+                  type="primary"
+                  icon={<OrderedListOutlined />}
+                  onClick={() => setMostFrequentModalVisible(true)}
+                >
+                  Exames Mais Frequentes
+                </Button>
+              </Tooltip>
+            </>
           )}
         </div>
       </PageHeader>
@@ -250,6 +269,10 @@ function Segments({
         afterSave={onCancelExamModal}
       />
       <CopyExamsModal open={copyExamsVisible} setOpen={setCopyExamsVisible} />
+      <MostFrequentExamsModal
+        open={mostFrequentModalVisible}
+        setOpen={setMostFrequentModalVisible}
+      />
     </>
   );
 }

@@ -259,7 +259,7 @@ export default function Base({ security, data }) {
                   <div>
                     <HelpButton
                       type="primary gtm-medication-btn-help-nefro"
-                      href="https://noharm.octadesk.com/kb/article/ajuste-de-dose-por-funcao-renal"
+                      href={`${process.env.REACT_APP_SUPPORT_LINK}/kb/article/ajuste-de-dose-por-funcao-renal`}
                     />
                   </div>
                 </Tooltip>
@@ -290,7 +290,7 @@ export default function Base({ security, data }) {
                   <div>
                     <HelpButton
                       type="primary gtm-medication-btn-help-hepa"
-                      href="https://noharm.octadesk.com/kb/article/ajuste-de-dose-por-funcao-hepatica"
+                      href={`${process.env.REACT_APP_SUPPORT_LINK}/kb/article/ajuste-de-dose-por-funcao-hepatica`}
                     />
                   </div>
                 </Tooltip>

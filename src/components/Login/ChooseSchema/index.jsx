@@ -4,8 +4,11 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 
 import { Select } from "components/Inputs";
+import Switch from "components/Switch";
 import DefaultModal from "components/Modal";
+import Tooltip from "components/Tooltip";
 import { Form } from "styles/Form.style";
+import Role from "models/Role";
 
 function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
   const { t } = useTranslation();
@@ -27,13 +30,21 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
   });
   const initialValues = {
     schema: null,
+    getname: false,
+    runAsBasicUser: false,
   };
 
   const onSave = (params) => {
+    const roles = [...params.defaultRoles];
+    if (!params.getname) {
+      roles.push("getname-disabled");
+    }
+
     doLogin({
       ...preAuthConfig.params,
       schema: params.schema,
-      defaultRoles: params.defaultRoles,
+      defaultRoles: roles,
+      runAsBasicUser: params.runAsBasicUser,
     });
     setOpen(false);
   };
@@ -45,20 +56,14 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
   const onChangeSchema = (schema, setFieldValue) => {
     setFieldValue("schema", schema);
     const schemaConfig = preAuthConfig.schemas.find((i) => i.name === schema);
+    const extraRoles = Role.getLoginRoles(t).map((r) => r.id);
 
     if (schemaConfig.defaultRoles.length) {
-      setDefaultRolesOptions(
-        schemaConfig.defaultRoles.concat(schemaConfig.extraRoles || [])
-      );
+      setDefaultRolesOptions(schemaConfig.defaultRoles.concat(extraRoles));
       setFieldValue("defaultRoles", schemaConfig.defaultRoles);
     } else {
-      setDefaultRolesOptions([]);
+      setDefaultRolesOptions(extraRoles);
       setFieldValue("defaultRoles", []);
-
-      onSave({
-        schema,
-        defaultRoles: schemaConfig.defaultRoles,
-      });
     }
   };
 
@@ -142,13 +147,45 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
                     {values.schema &&
                       defaultRolesOptions.map((role) => (
                         <Select.Option key={role} value={role}>
-                          {role}
+                          {t(`roles.${role}`)}
                         </Select.Option>
                       ))}
                   </Select>
                 </div>
               </div>
             )}
+
+            <div className={`form-row`}>
+              <div className="form-label">
+                <label>Ativar Getname:</label>
+              </div>
+              <div className="form-input">
+                <Switch
+                  onChange={(value) => {
+                    setFieldValue("getname", value);
+                  }}
+                  checked={values.getname}
+                />
+              </div>
+            </div>
+            <div className={`form-row`}>
+              <div className="form-label">
+                <Tooltip
+                  title="Remove as permissões especiais para simular a visão de um usuário normal da NoHarm"
+                  underline
+                >
+                  <label>Simular Usuário Comum:</label>
+                </Tooltip>
+              </div>
+              <div className="form-input">
+                <Switch
+                  onChange={(value) => {
+                    setFieldValue("runAsBasicUser", value);
+                  }}
+                  checked={values.runAsBasicUser}
+                />
+              </div>
+            </div>
           </Form>
         </DefaultModal>
       )}

@@ -8,7 +8,7 @@ import Button from "components/Button";
 import { InputNumber } from "components/Inputs";
 import notification from "components/notification";
 import { useOutsideAlerter } from "lib/hooks";
-import { updateDailyFrequency } from "features/serverActions/ServerActionsSlice";
+import { updateDailyFrequency } from "./FrequencySlice";
 import { getErrorMessage } from "utils/errorHandler";
 
 export default function DailyFrequency({ id, dailyFrequency }) {

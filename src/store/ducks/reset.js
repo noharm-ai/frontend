@@ -1,4 +1,3 @@
-import { Creators as AdminFrequencyCreators } from "./admin/frequency";
 import { Creators as ClinicalNotesCreators } from "./clinicalNotes";
 import { Creators as DepartmentsCreators } from "./departments";
 import { Creators as DrugsCreators } from "./drugs";
@@ -17,6 +16,7 @@ import { reset as adminDrugAttributesReset } from "features/admin/DrugAttributes
 import { reset as adminIntegrationReset } from "features/admin/Integration/IntegrationSlice";
 import { reset as adminSegmentReset } from "features/admin/Segment/SegmentSlice";
 import { reset as adminExamReset } from "features/admin/Exam/ExamSlice";
+import { reset as adminFrequencyReset } from "features/admin/Frequency/FrequencySlice";
 import { reset as drugFormStatusReset } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import { reset as listsReset } from "features/lists/ListsSlice";
 import { reset as memoryDraftReset } from "features/memory/MemoryDraft/MemoryDraftSlice";
@@ -24,7 +24,6 @@ import { reset as serverActionsReset } from "features/serverActions/ServerAction
 import { reset as summaryReset } from "features/summary/SummarySlice";
 import { reset as drugMeasureUnitsReset } from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSlice";
 
-const { frequencyReset: adminFrequencyReset } = AdminFrequencyCreators;
 const { clinicalNotesReset } = ClinicalNotesCreators;
 const { departmentsReset } = DepartmentsCreators;
 const { drugsReset } = DrugsCreators;
@@ -45,6 +44,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(adminIntegrationReset());
   dispatch(adminSegmentReset());
   dispatch(adminExamReset());
+  dispatch(adminFrequencyReset());
 
   dispatch(clinicalNotesReset());
   dispatch(departmentsReset());

@@ -10,8 +10,8 @@ const endpoints = {
   exam: "/admin/exam",
 };
 
-const getFrequencyList = (bearerToken, params = {}) =>
-  instance.get(endpoints.frequency, { params, ...setHeaders(bearerToken) });
+const getFrequencyList = (params = {}) =>
+  instance.post(`${endpoints.frequency}/list`, params, setHeaders());
 
 const updateDailyFrequency = (bearerToken, id, dailyFrequency) => {
   return instance.put(
@@ -38,11 +38,8 @@ const upsertIntervReason = (bearerToken, params = {}) => {
   });
 };
 
-const getMemoryItems = (bearerToken, params = {}) =>
-  instance.get(endpoints.memory, {
-    params,
-    ...setHeaders(bearerToken),
-  });
+const getMemoryItems = (params = {}) =>
+  instance.post(`${endpoints.memory}/list`, params, setHeaders());
 
 const updateMemoryItem = (bearerToken, params = {}) => {
   return instance.put(`${endpoints.memory}`, params, {
@@ -140,6 +137,23 @@ const copyExams = (params) =>
     ...setHeaders(),
   });
 
+const upsertSegment = (params = {}) => {
+  return instance.post(`${endpoints.segment}`, params, {
+    ...setHeaders(),
+  });
+};
+
+const getMostFrequentExams = (params) =>
+  instance.get(`${endpoints.exam}/most-frequent`, {
+    params,
+    ...setHeaders(),
+  });
+
+const addMostFrequentExams = (params) =>
+  instance.post(`${endpoints.exam}/most-frequent/add`, params, {
+    ...setHeaders(),
+  });
+
 const api = {
   getFrequencyList,
   updateDailyFrequency,
@@ -161,6 +175,9 @@ const api = {
   getOutlierProcessList,
   generateOutlierFold,
   copyExams,
+  upsertSegment,
+  getMostFrequentExams,
+  addMostFrequentExams,
 };
 
 export default api;

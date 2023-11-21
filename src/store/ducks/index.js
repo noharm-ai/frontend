@@ -24,22 +24,22 @@ import serverActionsSlice from "features/serverActions/ServerActionsSlice";
 import summaryReducer from "features/summary/SummarySlice";
 import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
 
-import adminFrequencyReducer from "./admin/frequency";
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
 import adminDrugAttributes from "features/admin/DrugAttributes/DrugAttributesSlice";
 import adminIntegration from "features/admin/Integration/IntegrationSlice";
 import adminSegment from "features/admin/Segment/SegmentSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
+import adminFrequency from "features/admin/Frequency/FrequencySlice";
 
 const adminReducers = combineReducers({
-  frequency: adminFrequencyReducer,
   interventionReason: adminInterventionReasonReducer,
   memory: adminMemory,
   drugAttributes: adminDrugAttributes,
   integration: adminIntegration,
   segment: adminSegment,
   exam: adminExam,
+  frequency: adminFrequency,
 });
 
 export default combineReducers({

@@ -12,6 +12,7 @@ export default class Role {
   static SUMMARY = "summary";
   static READONLY = "readonly";
   static MULTI_SCHEMA = "multi-schema";
+  static GETNAME_DISABLED = "getname-disabled";
 
   static getRoles(t) {
     return [
@@ -39,6 +40,26 @@ export default class Role {
       {
         id: Role.READONLY,
         label: t(`roles.${Role.READONLY}`),
+      },
+    ];
+  }
+
+  static getLoginRoles(t) {
+    return [
+      { id: Role.TRANSCRIPTION, label: t(`roles.${Role.TRANSCRIPTION}`) },
+      { id: Role.ALERT_BT, label: t(`roles.${Role.ALERT_BT}`) },
+      { id: Role.CPOE, label: t(`roles.${Role.CPOE}`) },
+      {
+        id: Role.PRESCRIPTION_EDIT,
+        label: t(`roles.${Role.PRESCRIPTION_EDIT}`),
+      },
+      {
+        id: Role.PRESMED_FORM,
+        label: t(`roles.${Role.PRESMED_FORM}`),
+      },
+      {
+        id: Role.DOCTOR,
+        label: t(`roles.${Role.DOCTOR}`),
       },
     ];
   }

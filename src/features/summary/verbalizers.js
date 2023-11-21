@@ -9,7 +9,7 @@ export const examsToText = (exams) => {
     (e) =>
       `* ${e.name} (${e.date ? moment(e.date).format("DD/MM/YYYY") : "-"}): ${
         e.result
-      } ${e.measureUnit}`
+      } ${e.measureUnit || ""}`
   );
 
   return examList.join("\n");
@@ -92,7 +92,9 @@ export const receiptToText = (list) => {
     groups[g].forEach((d) => {
       drugs.push(`* ${d.name}: ${d.dose} ${d.measureUnit} ${d.frequency}`);
     });
-    result.push(`\nVia ${groups[g][0].route || ""}: \n${drugs.join("\n")}`);
+    result.push(
+      `\nVia ${groups[g][0].route || "Nada consta"}: \n${drugs.join("\n")}`
+    );
   });
 
   return result.join("\n").trim();
@@ -146,67 +148,67 @@ IMC: ${patient.imc ? `${patient.imc} kg/m²` : "Não informado"}
 export const blocksToText = (summaryBlocks) => {
   return `1) Identificação do Paciente
 
-${summaryBlocks["patient"]?.text || ""}
+${summaryBlocks["patient"]?.text || "Nada consta"}
 
 2) Dados da Internação
 
-${summaryBlocks["admission"]?.text || ""}
+${summaryBlocks["admission"]?.text || "Nada consta"}
 
 2.1) Admissão
 
 2.1.1) Motivo
 
-${summaryBlocks["reason"]?.text || ""}
+${summaryBlocks["reason"]?.text || "Nada consta"}
 
 2.1.2) Diagnósticos (primário e secundário)
 
-${summaryBlocks["diagnosis"]?.text || ""}
+${summaryBlocks["diagnosis"]?.text || "Nada consta"}
 
 2.1.3) Alergias
 
-${summaryBlocks["allergies"]?.text || ""}
+${summaryBlocks["allergies"]?.text || "Nada consta"}
 
 2.1.4) Medicamentos de uso prévio
 
-${summaryBlocks["previousDrugs"]?.text || ""}
+${summaryBlocks["previousDrugs"]?.text || "Nada consta"}
 
 2.2) Resumo Clínico
 
-${summaryBlocks["clinicalSummary"]?.text || ""}
+${summaryBlocks["clinicalSummary"]?.text || "Nada consta"}
 
 2.2.1) Exames Laboratoriais
 
-${summaryBlocks["labExams"]?.text || ""}
+${summaryBlocks["labExams"]?.text || "Nada consta"}
 
 2.2.2) Exames Textuais
 
-${summaryBlocks["textExams"]?.text || ""}
+${summaryBlocks["textExams"]?.text || "Nada consta"}
 
 2.2.3) Procedimentos realizados
 
-${summaryBlocks["procedures"]?.text || ""}
+${summaryBlocks["procedures"]?.text || "Nada consta"}
 
 2.2.4) Medicamentos utilizados na internação
 
-${summaryBlocks["drugsUsed"]?.text || ""}
+${summaryBlocks["drugsUsed"]?.text || "Nada consta"}
 
 2.2.5) Medicamentos Contínuos Interrompidos Durante a Internação
 
-${summaryBlocks["drugsSuspended"]?.text || ""}
+${summaryBlocks["drugsSuspended"]?.text || "Nada consta"}
 
 2.3) Condição de Alta
 
-${summaryBlocks["dischargeCondition"]?.text || ""}
-${summaryBlocks["dischargeStats"]?.text || ""}
+${summaryBlocks["dischargeCondition"]?.text || "Nada consta"}
+${summaryBlocks["dischargeStats"]?.text || "Nada consta"}
 
 3) PLANO TERAPÊUTICO
 
 3.1) Plano de Alta
 
-${summaryBlocks["dischargePlan"]?.text || ""}
+${summaryBlocks["dischargePlan"]?.text || "Nada consta"}
 
 3.2) Receita
 
-${summaryBlocks["recipe"]?.text || ""}
+${summaryBlocks["recipe"]?.text || "Nada consta"}
 `;
 };

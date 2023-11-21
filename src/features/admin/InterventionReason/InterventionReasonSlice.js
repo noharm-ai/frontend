@@ -10,6 +10,10 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  initInterventionReason: {
+    status: "idle",
+    error: null,
+  },
 };
 
 export const fetchInterventionReasons = createAsyncThunk(
@@ -33,6 +37,19 @@ export const upsertInterventionReason = createAsyncThunk(
         interventionReason
       );
       return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const initInterventionReason = createAsyncThunk(
+  "intervention-reason/init-intervention-reason",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.initInterventionReason(params);
+
+      return response;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
@@ -80,6 +97,15 @@ const interventionReasonSlice = createSlice({
       .addCase(upsertInterventionReason.rejected, (state, action) => {
         state.single.status = "failed";
         state.single.error = action.error.message;
+      })
+      .addCase(initInterventionReason.pending, (state, action) => {
+        state.initInterventionReason.status = "loading";
+      })
+      .addCase(initInterventionReason.fulfilled, (state, action) => {
+        state.initInterventionReason.status = "succeeded";
+      })
+      .addCase(initInterventionReason.rejected, (state, action) => {
+        state.initInterventionReason.status = "failed";
       });
   },
 });
