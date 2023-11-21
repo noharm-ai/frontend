@@ -298,13 +298,13 @@ export default function Menu({ security, featureService }) {
         },
       ],
     },
-    // {
-    //   key: "help",
-    //   link: "/suporte",
-    //   label: t("menu.help"),
-    //   icon: <CustomerServiceOutlined />,
-    //   id: "gtm-lnk-help",
-    // },
+    {
+      key: "help",
+      link: "/suporte",
+      label: t("menu.help"),
+      icon: <CustomerServiceOutlined />,
+      id: "gtm-lnk-help",
+    },
   ];
 
   return (

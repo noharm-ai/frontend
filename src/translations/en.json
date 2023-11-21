@@ -467,6 +467,7 @@
 
   "alerts": {
     "y": "Y incompatibility",
+    "isl": "Solution incompatibility",
     "interaction": "Drug interactions",
     "max_dose": "Max dose",
     "exam": "Lab results x Drugs",

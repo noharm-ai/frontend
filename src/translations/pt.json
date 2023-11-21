@@ -479,6 +479,7 @@
 
   "alerts": {
     "y": "Incompatibilidade em Y",
+    "isl": "Incompatibilidade em Solução",
     "interaction": "Interações medicamentosas",
     "max_dose": "Dose máxima ou de alerta",
     "exam": "Exames x Medicamentos",

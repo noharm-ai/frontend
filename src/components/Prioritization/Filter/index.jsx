@@ -533,6 +533,10 @@ export default function Filter({
                         {t("alerts.y")}
                       </Select.Option>
 
+                      <Select.Option key={"isl"} value={"isl"}>
+                        {t("alerts.isl")}
+                      </Select.Option>
+
                       <Select.Option key={"int"} value={"int"}>
                         {t("alerts.interaction")}
                       </Select.Option>
