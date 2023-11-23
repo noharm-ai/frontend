@@ -66,7 +66,7 @@ export const SectionHeader = styled.h2`
   color: #1565c0;
   font-size: 2.5rem;
   font-weight: 500;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 `;
 
 export const ChartCard = styled.div`

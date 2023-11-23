@@ -69,13 +69,43 @@ const getResponsiblesSummary = (datasource, totalPrescriptions) => {
     }
   });
 
-  return Object.keys(responsibles).map((name) => {
+  const data = Object.keys(responsibles).map((name) => {
     return {
       name,
       total: responsibles[name],
       percentage: ((responsibles[name] * 100) / totalPrescriptions).toFixed(1),
     };
   });
+
+  return data.sort(function (a, b) {
+    return a.total - b.total;
+  });
+};
+
+const getPrescriptionPlotSeries = (datasource) => {
+  const days = {};
+  datasource.forEach((i) => {
+    if (days[i.date]) {
+      days[i.date].total += 1;
+      days[i.date].checked += i.checked ? 1 : 0;
+    } else {
+      days[i.date] = {
+        date: i.date,
+        total: 0,
+        checked: 0,
+      };
+    }
+  });
+
+  return Object.keys(days)
+    .sort()
+    .map((i) => {
+      return {
+        date: days[i].date,
+        total: days[i].total,
+        checked: days[i].checked,
+      };
+    });
 };
 
 export const getUniqList = (datasource, attr) => {
@@ -85,6 +115,9 @@ export const getUniqList = (datasource, attr) => {
 export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
   const prescriptionTotals = getPrescriptionTotals(filteredList);
+  const days = getUniqList(filteredList, "date").map((i) =>
+    i.split("-").reverse().join("/")
+  );
 
   const reportData = {
     prescriptionTotals: prescriptionTotals,
@@ -94,6 +127,8 @@ export const getReportData = (datasource, filters) => {
       filteredList,
       prescriptionTotals.checked
     ),
+    days: days,
+    prescriptionPlotSeries: getPrescriptionPlotSeries(filteredList),
   };
 
   console.log("reportdata", reportData);

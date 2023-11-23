@@ -4,8 +4,10 @@ import { Row, Col, Space } from "antd";
 
 import { PageHeader } from "styles/PageHeader.style";
 import { PageContainer } from "styles/Utils.style";
-import { StatsCard, ChartCard } from "styles/Report.style";
+import { StatsCard, ChartCard, SectionHeader } from "styles/Report.style";
 import Filter from "./Filter/Filter";
+import ChartPrescriptionDay from "./Charts/ChartPrescriptionDay";
+import ChartResponsibles from "./Charts/ChartResponsibles";
 
 export default function GeneralReport() {
   const reportData = useSelector(
@@ -21,7 +23,9 @@ export default function GeneralReport() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Relatório Geral</h1>
+          <h1 className="page-header-title">
+            Relatório Geral: Avaliação Clínica
+          </h1>
           <div className="page-header-legend">
             Prescrições e Percentual de Checadas
           </div>
@@ -93,11 +97,27 @@ export default function GeneralReport() {
             </Col>
           </Row>
 
+          <SectionHeader>Prescrições por Dia</SectionHeader>
           <Row gutter={[16, 24]}>
             <Col xs={24}>
-              <ChartCard
-                className={`${isLoading ? "loading" : ""}`}
-              ></ChartCard>
+              <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                <ChartPrescriptionDay
+                  reportData={reportData}
+                  isLoading={isLoading}
+                />
+              </ChartCard>
+            </Col>
+          </Row>
+
+          <SectionHeader>Responsáveis</SectionHeader>
+          <Row gutter={[16, 24]}>
+            <Col xs={12}>
+              <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                <ChartResponsibles
+                  reportData={reportData}
+                  isLoading={isLoading}
+                />
+              </ChartCard>
             </Col>
           </Row>
         </Space>
