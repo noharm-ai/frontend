@@ -17,12 +17,15 @@ import { reset as adminIntegrationReset } from "features/admin/Integration/Integ
 import { reset as adminSegmentReset } from "features/admin/Segment/SegmentSlice";
 import { reset as adminExamReset } from "features/admin/Exam/ExamSlice";
 import { reset as adminFrequencyReset } from "features/admin/Frequency/FrequencySlice";
+
 import { reset as drugFormStatusReset } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import { reset as listsReset } from "features/lists/ListsSlice";
 import { reset as memoryDraftReset } from "features/memory/MemoryDraft/MemoryDraftSlice";
 import { reset as serverActionsReset } from "features/serverActions/ServerActionsSlice";
 import { reset as summaryReset } from "features/summary/SummarySlice";
 import { reset as drugMeasureUnitsReset } from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSlice";
+
+import { reset as generalReportReset } from "features/reports/GeneralReport/GeneralReportSlice";
 
 const { clinicalNotesReset } = ClinicalNotesCreators;
 const { departmentsReset } = DepartmentsCreators;
@@ -63,4 +66,6 @@ export const resetReduxState = (dispatch) => {
   dispatch(serverActionsReset());
   dispatch(summaryReset());
   dispatch(drugMeasureUnitsReset());
+
+  dispatch(generalReportReset());
 };

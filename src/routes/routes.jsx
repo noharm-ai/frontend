@@ -35,6 +35,8 @@ import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminSegment from "pages/Admin/Segment";
 
+import GeneralReport from "pages/Reports/GeneralReport";
+
 const routes = [
   {
     exact: true,
@@ -257,6 +259,11 @@ const routes = [
     exact: true,
     path: "/admin/segmentos",
     element: <WithAuth component={AdminSegment} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/geral",
+    element: <WithAuth component={GeneralReport} />,
   },
 ];
 
