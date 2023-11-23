@@ -32,6 +32,8 @@ import adminSegment from "features/admin/Segment/SegmentSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
 import adminFrequency from "features/admin/Frequency/FrequencySlice";
 
+import reportGeneralReport from "features/reports/GeneralReport/GeneralReportSlice";
+
 const adminReducers = combineReducers({
   interventionReason: adminInterventionReasonReducer,
   memory: adminMemory,
@@ -42,8 +44,13 @@ const adminReducers = combineReducers({
   frequency: adminFrequency,
 });
 
+const reportReducers = combineReducers({
+  general: reportGeneralReport,
+});
+
 export default combineReducers({
   admin: adminReducers,
+  reportsArea: reportReducers,
   app: appReducer,
   auth: authReducer,
   user: userReducer,
