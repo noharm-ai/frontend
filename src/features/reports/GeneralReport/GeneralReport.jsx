@@ -36,6 +36,7 @@ export default function GeneralReport() {
         <Filter />
 
         <Space direction="vertical" size="large">
+          <SectionHeader>Resumo</SectionHeader>
           <Row gutter={[16, 24]}>
             <Col xs={12} lg={8}>
               <StatsCard className={`blue ${isLoading ? "loading" : ""}`}>
