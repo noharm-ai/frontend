@@ -36,7 +36,7 @@ export default function ChartResponsibles({ reportData, isLoading }) {
       {
         name: "Prescrições Checadas",
         type: "bar",
-        color: "#1565c0",
+        color: "#388e3c",
         data: reportData?.responsibles
           ? reportData?.responsibles.map((i) => ({
               value: i.total,
