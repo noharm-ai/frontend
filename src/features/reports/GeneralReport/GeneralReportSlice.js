@@ -21,9 +21,18 @@ export const fetchPrescriptions = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.getGeneralPrescription(params);
+      const cacheResponseStream = await fetch(response.data.data.url);
 
-      return response;
+      const cacheReadableStream = cacheResponseStream.body.pipeThrough(
+        new window.DecompressionStream("gzip")
+      );
+
+      const decompressedResponse = new Response(cacheReadableStream);
+      const cache = await decompressedResponse.json();
+
+      return { ...response, cacheData: cache };
     } catch (err) {
+      console.error(err);
       return thunkAPI.rejectWithValue(err.response.data);
     }
   }
@@ -51,12 +60,12 @@ const generalReportSlice = createSlice({
       })
       .addCase(fetchPrescriptions.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.list = action.payload.data.data;
+        state.list = action.payload.cacheData;
         state.responsibles = getUniqList(
-          action.payload.data.data,
+          action.payload.cacheData,
           "responsible"
         );
-        state.departments = getUniqList(action.payload.data.data, "department");
+        state.departments = getUniqList(action.payload.cacheData, "department");
       })
       .addCase(fetchPrescriptions.rejected, (state, action) => {
         state.status = "failed";

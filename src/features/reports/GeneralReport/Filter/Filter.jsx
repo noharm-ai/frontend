@@ -35,7 +35,7 @@ export default function Filter() {
           description: t("error.description"),
         });
       } else {
-        search(initialValues, response.payload.data.data);
+        search(initialValues, response.payload.cacheData);
       }
     });
 
