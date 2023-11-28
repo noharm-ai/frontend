@@ -10,9 +10,9 @@ import Heading from "components/Heading";
 import Tooltip from "components/Tooltip";
 import Steps from "components/Steps";
 import { InputNumber, Select } from "components/Inputs";
-import PopConfirm from "components/PopConfirm";
 import Button from "components/Button";
 import DrugMeasureUnitsForm from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsForm";
+import GenerateScore from "features/outliers/ScoreWizard/GenerateScore/GenerateScore";
 
 import unitConversionColumns from "../UnitConversion/columns";
 import { StepContent, StepBtnContainer } from "./index.style";
@@ -25,7 +25,6 @@ const emptyText = (
 );
 
 export default function ScoreWizard({
-  generateOutlier,
   selecteds,
   drugData,
   drugUnits,
@@ -37,6 +36,7 @@ export default function ScoreWizard({
   const [currentStep, setCurrentStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState({});
   const [editDrugMeasureUnits, setEditDrugMeasureUnits] = useState(false);
+  const [generateModalVisile, setGenerateModalVisible] = useState(false);
   const { t } = useTranslation();
   const isAdmin = security.isAdmin();
   const maxSteps = 3;
@@ -48,14 +48,7 @@ export default function ScoreWizard({
   }, [generateStatus]);
 
   const generate = () => {
-    generateOutlier({
-      idSegment: selecteds.idSegment,
-      idDrug: selecteds.idDrug,
-      division: drugData.division,
-      useWeight: drugData.useWeight,
-      idMeasureUnit: drugData.idMeasureUnit,
-      measureUnitList: drugUnits.list,
-    });
+    setGenerateModalVisible(true);
   };
 
   const nextStep = () => {
@@ -253,24 +246,13 @@ export default function ScoreWizard({
 
       {currentStep === 2 && (
         <StepContent>
-          <>
-            {drugData.touched && (
-              <p>
-                Ok! Para salvar estas alterações você deve clicar no botão
-                "Gerar escores".
-                <br />
-                Lembre-se que esta ação <strong>excluirá</strong> os escores
-                manuais e os comentários. Será necessário reinseri-los
-                manualmente.
-              </p>
-            )}
-            {!drugData.touched && (
-              <p>
-                Nenhuma informação foi alterada, portanto você não poderá gerar
-                scores.
-              </p>
-            )}
-          </>
+          <p>
+            Ok! Para salvar estas alterações você deve clicar no botão "Gerar
+            escores".
+            <br />
+            Lembre-se que esta ação <strong>excluirá</strong> os escores manuais
+            e os comentários. Será necessário reinseri-los manualmente.
+          </p>
         </StepContent>
       )}
 
@@ -285,22 +267,21 @@ export default function ScoreWizard({
             Avançar
           </Button>
         )}
-        {currentStep === maxSteps - 1 && drugData.touched && (
-          <PopConfirm
-            title="Confirma a geração de escores?"
-            onConfirm={generate}
-            okText="Sim"
-            cancelText="Não"
+        {currentStep === maxSteps - 1 && (
+          <Button
+            type="primary gtm-bt-med-generate"
+            loading={generateStatus.isGenerating}
+            onClick={generate}
           >
-            <Button
-              type="primary gtm-bt-med-generate"
-              loading={generateStatus.isGenerating}
-            >
-              Gerar escores
-            </Button>
-          </PopConfirm>
+            Gerar escores
+          </Button>
         )}
       </StepBtnContainer>
+      <GenerateScore
+        open={generateModalVisile}
+        setOpen={setGenerateModalVisible}
+        setCurrentStep={setCurrentStep}
+      />
     </>
   );
 }
