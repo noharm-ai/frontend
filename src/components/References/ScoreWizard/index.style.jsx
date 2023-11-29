@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
 export const StepContent = styled.div`
   padding: 10px;
@@ -9,6 +9,12 @@ export const StepContent = styled.div`
 
   .error-description {
     color: #f5222d;
+  }
+
+  .alert-container {
+    width: 50%;
+    margin: 0 auto;
+    padding: 2rem 0;
   }
 `;
 

@@ -23,6 +23,7 @@ import lists from "features/lists/ListsSlice";
 import serverActionsSlice from "features/serverActions/ServerActionsSlice";
 import summaryReducer from "features/summary/SummarySlice";
 import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
+import scoreWizardSlice from "features/outliers/ScoreWizard/ScoreWizardSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -74,4 +75,5 @@ export default combineReducers({
   lists: lists,
   serverActions: serverActionsSlice,
   summary: summaryReducer,
+  scoreWizard: scoreWizardSlice,
 });

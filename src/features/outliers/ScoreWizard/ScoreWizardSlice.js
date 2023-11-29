@@ -15,7 +15,24 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  addHistory: {
+    status: "idle",
+    error: null,
+  },
 };
+
+export const addHistory = createAsyncThunk(
+  "score-wizard-slice/add-presc-history",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.scoreAddHistory(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
 
 export const configDrug = createAsyncThunk(
   "score-wizard-slice/config",
@@ -92,6 +109,15 @@ const scoreWizardSlice = createSlice({
       })
       .addCase(generateSingle.rejected, (state, action) => {
         state.generateSingle.status = "failed";
+      })
+      .addCase(addHistory.pending, (state, action) => {
+        state.addHistory.status = "loading";
+      })
+      .addCase(addHistory.fulfilled, (state, action) => {
+        state.addHistory.status = "succeeded";
+      })
+      .addCase(addHistory.rejected, (state, action) => {
+        state.addHistory.status = "failed";
       });
   },
 });

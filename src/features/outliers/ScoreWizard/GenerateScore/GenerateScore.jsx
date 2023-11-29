@@ -15,7 +15,7 @@ import {
   prepareGeneration,
   generateSingle,
   configDrug,
-} from "./ScoreWizardSlice";
+} from "../ScoreWizardSlice";
 
 function GenerateScore({ open, setOpen, setCurrentStep }) {
   const { t } = useTranslation();
@@ -33,6 +33,7 @@ function GenerateScore({ open, setOpen, setCurrentStep }) {
       setLoading(false);
       setOutliersStatus("idle");
       setProgressPercentage(0);
+      setErrorMessage("");
     }
   }, [open]);
 

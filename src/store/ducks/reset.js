@@ -24,6 +24,7 @@ import { reset as memoryDraftReset } from "features/memory/MemoryDraft/MemoryDra
 import { reset as serverActionsReset } from "features/serverActions/ServerActionsSlice";
 import { reset as summaryReset } from "features/summary/SummarySlice";
 import { reset as drugMeasureUnitsReset } from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSlice";
+import { reset as scoreWizardReset } from "features/outliers/ScoreWizard/ScoreWizardSlice";
 
 import { reset as generalReportReset } from "features/reports/GeneralReport/GeneralReportSlice";
 
@@ -66,6 +67,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(serverActionsReset());
   dispatch(summaryReset());
   dispatch(drugMeasureUnitsReset());
+  dispatch(scoreWizardReset());
 
   dispatch(generalReportReset());
 };
