@@ -205,32 +205,8 @@ export default function References({
     outliers.selecteds.idSegment,
   ]);
 
-  const convFreq = (frequency) => {
-    switch (frequency) {
-      case "33":
-        return "SN";
-      case "44":
-        return "ACM";
-      case "55":
-        return "CONT";
-      case "66":
-        return "AGORA";
-      case "99":
-        return "N/D";
-      default:
-        return frequency;
-    }
-  };
-
   const rowClassName = (record, index) => {
-    let matchDose = params.dose;
-    if (drugData.division) {
-      matchDose = Math.ceil(matchDose / drugData.division) * drugData.division;
-    }
-    if (
-      record.dose + "" === matchDose + "" &&
-      record.frequency + "" === convFreq(params.frequency)
-    ) {
+    if (record.selected) {
       return "highlight";
     }
   };
