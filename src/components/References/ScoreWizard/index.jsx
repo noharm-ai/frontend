@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Row, Col, Checkbox } from "antd";
+import { Row, Col, Checkbox, Divider } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
@@ -119,6 +119,31 @@ export default function ScoreWizard({
 
   return (
     <>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Heading as="label" size="16px" margin="0 0 10px">
+          Assistente para Geração de Escores{" "}
+          <span
+            style={{
+              color: "rgba(0, 0, 0, 0.65)",
+              display: "block",
+              fontSize: "14px",
+              fontWeight: "400",
+            }}
+          >
+            Alterações que envolvem a geração de escore
+          </span>
+        </Heading>
+        <div>
+          {isAdmin && (
+            <Button danger onClick={() => setHistoryModalVisible(true)}>
+              Gerar Histórico de Prescrição
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <Divider style={{ marginTop: 0, marginBottom: "45px" }} />
+
       <Steps current={currentStep} items={steps}></Steps>
 
       {currentStep === 0 && (
@@ -270,6 +295,7 @@ export default function ScoreWizard({
         </StepContent>
       )}
 
+      <Divider style={{ marginTop: "45px", marginBottom: "10px" }} />
       <StepBtnContainer>
         {currentStep > 0 && (
           <Button style={{ marginRight: 8 }} onClick={() => previousStep()}>

@@ -107,9 +107,18 @@ function GeneratePrescriptionHistory({ open, setOpen }) {
           showIcon
         />
       ) : (
-        <p>
-          Confirma a geração de histórico de prescrição para este medicamento?
-        </p>
+        <>
+          <p>
+            Confirma a geração de histórico de prescrição para este medicamento?
+          </p>
+          <ul>
+            <li>O histórico atual, se existir, será removido.</li>
+            <li>
+              Será contabilizado 1 ano de prescrições deste medicamento neste
+              segmento.
+            </li>
+          </ul>
+        </>
       )}
     </DefaultModal>
   );

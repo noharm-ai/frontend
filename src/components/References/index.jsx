@@ -11,13 +11,10 @@ import { toDataSource } from "utils";
 import Table from "components/Table";
 import Empty from "components/Empty";
 import notification from "components/notification";
-import Heading from "components/Heading";
-import { FieldSet } from "components/Inputs";
 import DefaultModal from "components/Modal";
 import Tabs from "components/Tabs";
 import Button from "components/Button";
 import BackTop from "components/BackTop";
-
 import Edit from "containers/References/Edit";
 import EditSubstance from "containers/References/EditSubstance";
 import Relation from "containers/References/Relation";
@@ -25,8 +22,8 @@ import ScoreWizard from "containers/References/ScoreWizard";
 import Filter from "./Filter";
 import columns from "./columns";
 import relationsColumns from "./Relation/columns";
-
 import DrugForm from "containers/Forms/Drug";
+import { PageCard } from "styles/Utils.style";
 
 // empty text for table result.
 const emptyText = (
@@ -227,23 +224,9 @@ export default function References({
             rowClassName={rowClassName}
           />
 
-          <FieldSet style={{ marginBottom: "25px", marginTop: "25px" }}>
-            <Heading as="label" size="16px" margin="0 0 10px">
-              Assistente para Geração de Escores{" "}
-              <span
-                style={{
-                  color: "rgba(0, 0, 0, 0.65)",
-                  display: "block",
-                  fontSize: "14px",
-                  fontWeight: "400",
-                }}
-              >
-                Alterações que envolvem a geração de escore
-              </span>
-            </Heading>
-          </FieldSet>
-
-          <ScoreWizard />
+          <PageCard style={{ marginTop: "4rem" }}>
+            <ScoreWizard />
+          </PageCard>
         </>
       ),
     },
