@@ -82,6 +82,31 @@ const getResponsiblesSummary = (datasource, totalPrescriptions) => {
   });
 };
 
+const getDepartmentsSummary = (datasource) => {
+  const departments = {};
+  datasource.forEach((i) => {
+    if (i.checked) {
+      departments[i.department] = departments[i.department]
+        ? departments[i.department] + 1
+        : 1;
+    }
+  });
+
+  const data = Object.keys(departments).map((name) => {
+    return {
+      name,
+      total: departments[name],
+    };
+  });
+
+  return data
+    .sort(function (a, b) {
+      return b.total - a.total;
+    })
+    .slice(0, 20)
+    .reverse();
+};
+
 const getPrescriptionPlotSeries = (datasource) => {
   const days = {};
   datasource.forEach((i) => {
@@ -108,6 +133,34 @@ const getPrescriptionPlotSeries = (datasource) => {
     });
 };
 
+// const getLifesPlotSeries = (datasource) => {
+//   const days = {};
+//   datasource.forEach((i) => {
+//     if (days[i.date]) {
+//       days[i.date].lifesTotal.push(i.admissionNumber);
+//       if (i.checked) {
+//         days[i.date].lifesChecked.push(i.admissionNumber);
+//       }
+//     } else {
+//       days[i.date] = {
+//         date: i.date,
+//         lifesTotal: [],
+//         lifesChecked: [],
+//       };
+//     }
+//   });
+
+//   return Object.keys(days)
+//     .sort()
+//     .map((i) => {
+//       return {
+//         date: days[i].date,
+//         total: uniq(days[i].lifesTotal).length,
+//         checked: uniq(days[i].lifesChecked).length,
+//       };
+//     });
+// };
+
 export const getUniqList = (datasource, attr) => {
   return uniq(datasource.map((i) => i[attr])).sort();
 };
@@ -127,6 +180,7 @@ export const getReportData = (datasource, filters) => {
       filteredList,
       prescriptionTotals.checked
     ),
+    departments: getDepartmentsSummary(filteredList),
     days: days,
     prescriptionPlotSeries: getPrescriptionPlotSeries(filteredList),
   };

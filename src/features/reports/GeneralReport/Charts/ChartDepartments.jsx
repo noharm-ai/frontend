@@ -2,17 +2,12 @@ import React from "react";
 
 import { EChartBase } from "components/EChartBase";
 
-export default function ChartResponsibles({ reportData, isLoading }) {
+export default function ChartDepartments({ reportData, isLoading }) {
   const chartOptions = {
     tooltip: {
       trigger: "axis",
       axisPointer: {
         type: "shadow",
-      },
-      formatter: function (params) {
-        const sData = params[0];
-        return `${sData.seriesName}<br />
-                <strong>${sData.name}:</strong> ${sData.data.value} (${sData.data.percentage}%)`;
       },
     },
     legend: {},
@@ -28,19 +23,18 @@ export default function ChartResponsibles({ reportData, isLoading }) {
     },
     yAxis: {
       type: "category",
-      data: reportData?.responsibles
-        ? reportData?.responsibles.map((i) => i.name)
+      data: reportData?.departments
+        ? reportData?.departments.map((i) => i.name)
         : [],
     },
     series: [
       {
-        name: "Prescrições Checadas por Responsável",
+        name: "Prescrições Checadas por Setor",
         type: "bar",
         color: "#388e3c",
-        data: reportData?.responsibles
-          ? reportData?.responsibles.map((i) => ({
+        data: reportData?.departments
+          ? reportData?.departments.map((i) => ({
               value: i.total,
-              percentage: i.percentage,
             }))
           : [],
         label: {

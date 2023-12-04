@@ -7,6 +7,7 @@ const initialState = {
   status: "idle",
   error: null,
   list: [],
+  updatedAt: null,
   responsibles: [],
   departments: [],
   filtered: {
@@ -14,6 +15,7 @@ const initialState = {
     error: null,
     result: {},
   },
+  filters: {},
 };
 
 export const fetchPrescriptions = createAsyncThunk(
@@ -51,6 +53,9 @@ const generalReportSlice = createSlice({
     setFilteredResult(state, action) {
       state.filtered.result = action.payload;
     },
+    setFilters(state, action) {
+      state.filters = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -61,6 +66,7 @@ const generalReportSlice = createSlice({
       .addCase(fetchPrescriptions.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.list = action.payload.cacheData;
+        state.updatedAt = action.payload.data.data.updatedAt;
         state.responsibles = getUniqList(
           action.payload.cacheData,
           "responsible"
@@ -75,7 +81,7 @@ const generalReportSlice = createSlice({
   },
 });
 
-export const { reset, setFilteredStatus, setFilteredResult } =
+export const { reset, setFilteredStatus, setFilteredResult, setFilters } =
   generalReportSlice.actions;
 
 export default generalReportSlice.reducer;
