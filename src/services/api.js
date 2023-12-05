@@ -566,6 +566,46 @@ const getSummary = (bearerToken, admissionNumber, mock) =>
   });
 
 /**
+ * Score Wizard
+ */
+
+const scorePrepareGeneration = (params) =>
+  instance.post(
+    `/outliers/generate/prepare/${params.idSegment}/${params.idDrug}`,
+    {},
+    {
+      ...setHeaders(),
+    }
+  );
+
+const scoreGenerateSingle = (params) =>
+  instance.post(
+    `/outliers/generate/single/${params.idSegment}/${params.idDrug}`,
+    {},
+    {
+      ...setHeaders(),
+    }
+  );
+
+const scoreAddHistory = (params) =>
+  instance.post(
+    `/outliers/generate/add-history/${params.idSegment}/${params.idDrug}`,
+    {},
+    {
+      ...setHeaders(),
+    }
+  );
+
+const scoreConfigDrug = (params) =>
+  instance.post(
+    `/outliers/generate/config/${params.idSegment}/${params.idDrug}`,
+    params,
+    {
+      ...setHeaders(),
+    }
+  );
+
+/**
  * API
  * all functions that can be user in API.
  */
@@ -635,6 +675,10 @@ const api = {
   getPrescriptionMissingDrugs,
   copyPrescriptionMissingDrugs,
   getSummary,
+  scorePrepareGeneration,
+  scoreGenerateSingle,
+  scoreConfigDrug,
+  scoreAddHistory,
 };
 
 export default api;

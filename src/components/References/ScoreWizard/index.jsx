@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Row, Col, Checkbox } from "antd";
+import React, { useState } from "react";
+import { Row, Col, Checkbox, Divider } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
@@ -9,10 +9,12 @@ import Empty from "components/Empty";
 import Heading from "components/Heading";
 import Tooltip from "components/Tooltip";
 import Steps from "components/Steps";
+import Alert from "components/Alert";
 import { InputNumber, Select } from "components/Inputs";
-import PopConfirm from "components/PopConfirm";
 import Button from "components/Button";
 import DrugMeasureUnitsForm from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsForm";
+import GenerateScore from "features/outliers/ScoreWizard/GenerateScore/GenerateScore";
+import GeneratePrescriptionHistory from "features/outliers/ScoreWizard/GeneratePrescriptionHistory/GeneratePrescriptionHistory";
 
 import unitConversionColumns from "../UnitConversion/columns";
 import { StepContent, StepBtnContainer } from "./index.style";
@@ -25,37 +27,24 @@ const emptyText = (
 );
 
 export default function ScoreWizard({
-  generateOutlier,
   selecteds,
   drugData,
   drugUnits,
   updateDrugData,
-  generateStatus,
   saveUnitCoefficient,
   security,
 }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState({});
   const [editDrugMeasureUnits, setEditDrugMeasureUnits] = useState(false);
+  const [generateModalVisile, setGenerateModalVisible] = useState(false);
+  const [historyModalVisile, setHistoryModalVisible] = useState(false);
   const { t } = useTranslation();
   const isAdmin = security.isAdmin();
   const maxSteps = 3;
 
-  useEffect(() => {
-    if (generateStatus.generated) {
-      setCurrentStep(0);
-    }
-  }, [generateStatus]);
-
   const generate = () => {
-    generateOutlier({
-      idSegment: selecteds.idSegment,
-      idDrug: selecteds.idDrug,
-      division: drugData.division,
-      useWeight: drugData.useWeight,
-      idMeasureUnit: drugData.idMeasureUnit,
-      measureUnitList: drugUnits.list,
-    });
+    setGenerateModalVisible(true);
   };
 
   const nextStep = () => {
@@ -130,70 +119,113 @@ export default function ScoreWizard({
 
   return (
     <>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Heading as="label" size="16px" margin="0 0 10px">
+          Assistente para Geração de Escores{" "}
+          <span
+            style={{
+              color: "rgba(0, 0, 0, 0.65)",
+              display: "block",
+              fontSize: "14px",
+              fontWeight: "400",
+            }}
+          >
+            Alterações que envolvem a geração de escore
+          </span>
+        </Heading>
+        <div>
+          {isAdmin && (
+            <Button danger onClick={() => setHistoryModalVisible(true)}>
+              Gerar Histórico de Prescrição
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <Divider style={{ marginTop: 0, marginBottom: "45px" }} />
+
       <Steps current={currentStep} items={steps}></Steps>
 
       {currentStep === 0 && (
         <StepContent>
-          <p>
-            Neste passo você pode alterar a unidade padrão deste medicamento e
-            os fatores de conversão para outras unidades. Lembre-se que a
-            unidade padrão é definida pelo fator de conversão igual a 1.
-          </p>
-
-          <Row
-            gutter={24}
-            align="middle"
-            type="flex"
-            style={{ marginTop: "20px", marginBottom: "20px" }}
-          >
+          {!drugUnits.isFetching && drugUnits.list.length === 0 ? (
+            <div className="alert-container">
+              <Alert
+                message="Medicamento sem histórico de prescrição"
+                description="Este medicamento não possui histórico de prescrição."
+                type="error"
+                showIcon
+                action={
+                  <Button danger onClick={() => setHistoryModalVisible(true)}>
+                    Gerar Histórico de Prescrição
+                  </Button>
+                }
+              />
+            </div>
+          ) : (
             <>
-              <Col md={5} xxl={3}>
-                <Heading as="label" size="14px" textAlign="right">
-                  Unidade padrão:
-                </Heading>
-              </Col>
-              <Col md={24 - 5} xxl={24 - 3}>
-                <Select
-                  placeholder="Selecione a unidade de medida padrão para este medicamento"
-                  value={drugData.idMeasureUnit}
-                  style={{ minWidth: "300px" }}
-                  onChange={(value) => onDefaultMeasureUnitChange(value)}
-                  disabled={!drugUnits.list.length}
-                >
-                  {drugUnits.list.map((unit) => (
-                    <Select.Option
-                      value={unit.idMeasureUnit}
-                      key={unit.idMeasureUnit}
+              <p>
+                Neste passo você pode alterar a unidade padrão deste medicamento
+                e os fatores de conversão para outras unidades. Lembre-se que a
+                unidade padrão é definida pelo fator de conversão igual a 1.
+              </p>
+
+              <Row
+                gutter={24}
+                align="middle"
+                type="flex"
+                style={{ marginTop: "20px", marginBottom: "20px" }}
+              >
+                <>
+                  <Col md={5} xxl={3}>
+                    <Heading as="label" size="14px" textAlign="right">
+                      Unidade padrão:
+                    </Heading>
+                  </Col>
+                  <Col md={24 - 5} xxl={24 - 3}>
+                    <Select
+                      placeholder="Selecione a unidade de medida padrão para este medicamento"
+                      value={drugData.idMeasureUnit}
+                      style={{ minWidth: "300px" }}
+                      onChange={(value) => onDefaultMeasureUnitChange(value)}
+                      disabled={!drugUnits.list.length}
                     >
-                      {unit.description}
-                    </Select.Option>
-                  ))}
-                </Select>
+                      {drugUnits.list.map((unit) => (
+                        <Select.Option
+                          value={unit.idMeasureUnit}
+                          key={unit.idMeasureUnit}
+                        >
+                          {unit.description}
+                        </Select.Option>
+                      ))}
+                    </Select>
 
-                <Tooltip title={t("titles.addDrugMeasureUnit")}>
-                  <Button
-                    type="primary"
-                    onClick={() => setEditDrugMeasureUnits(true)}
-                    icon={<PlusOutlined />}
-                    style={{ marginLeft: "5px" }}
-                  ></Button>
-                </Tooltip>
-              </Col>
+                    <Tooltip title={t("titles.addDrugMeasureUnit")}>
+                      <Button
+                        type="primary"
+                        onClick={() => setEditDrugMeasureUnits(true)}
+                        icon={<PlusOutlined />}
+                        style={{ marginLeft: "5px" }}
+                      ></Button>
+                    </Tooltip>
+                  </Col>
+                </>
+              </Row>
+
+              <DrugMeasureUnitsForm
+                visible={editDrugMeasureUnits}
+                setVisible={setEditDrugMeasureUnits}
+              />
+
+              <Table
+                columns={unitConversionColumns}
+                pagination={false}
+                loading={drugUnits.isFetching}
+                locale={{ emptyText }}
+                dataSource={!drugUnits.isFetching ? unitsDatasource : []}
+              />
             </>
-          </Row>
-
-          <DrugMeasureUnitsForm
-            visible={editDrugMeasureUnits}
-            setVisible={setEditDrugMeasureUnits}
-          />
-
-          <Table
-            columns={unitConversionColumns}
-            pagination={false}
-            loading={drugUnits.isFetching}
-            locale={{ emptyText }}
-            dataSource={!drugUnits.isFetching ? unitsDatasource : []}
-          />
+          )}
         </StepContent>
       )}
 
@@ -253,27 +285,17 @@ export default function ScoreWizard({
 
       {currentStep === 2 && (
         <StepContent>
-          <>
-            {drugData.touched && (
-              <p>
-                Ok! Para salvar estas alterações você deve clicar no botão
-                "Gerar escores".
-                <br />
-                Lembre-se que esta ação <strong>excluirá</strong> os escores
-                manuais e os comentários. Será necessário reinseri-los
-                manualmente.
-              </p>
-            )}
-            {!drugData.touched && (
-              <p>
-                Nenhuma informação foi alterada, portanto você não poderá gerar
-                scores.
-              </p>
-            )}
-          </>
+          <p>
+            Ok! Para salvar estas alterações você deve clicar no botão "Gerar
+            escores".
+            <br />
+            Lembre-se que esta ação <strong>excluirá</strong> os escores manuais
+            e os comentários. Será necessário reinseri-los manualmente.
+          </p>
         </StepContent>
       )}
 
+      <Divider style={{ marginTop: "45px", marginBottom: "10px" }} />
       <StepBtnContainer>
         {currentStep > 0 && (
           <Button style={{ marginRight: 8 }} onClick={() => previousStep()}>
@@ -281,26 +303,29 @@ export default function ScoreWizard({
           </Button>
         )}
         {currentStep < maxSteps - 1 && (
-          <Button type="primary" onClick={() => nextStep()}>
+          <Button
+            type="primary"
+            onClick={() => nextStep()}
+            disabled={drugUnits.list.length === 0}
+          >
             Avançar
           </Button>
         )}
-        {currentStep === maxSteps - 1 && drugData.touched && (
-          <PopConfirm
-            title="Confirma a geração de escores?"
-            onConfirm={generate}
-            okText="Sim"
-            cancelText="Não"
-          >
-            <Button
-              type="primary gtm-bt-med-generate"
-              loading={generateStatus.isGenerating}
-            >
-              Gerar escores
-            </Button>
-          </PopConfirm>
+        {currentStep === maxSteps - 1 && (
+          <Button type="primary gtm-bt-med-generate" onClick={generate}>
+            Gerar escores
+          </Button>
         )}
       </StepBtnContainer>
+      <GenerateScore
+        open={generateModalVisile}
+        setOpen={setGenerateModalVisible}
+        setCurrentStep={setCurrentStep}
+      />
+      <GeneratePrescriptionHistory
+        open={historyModalVisile}
+        setOpen={setHistoryModalVisible}
+      />
     </>
   );
 }

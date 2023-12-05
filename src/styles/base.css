@@ -17,3 +17,15 @@
 .ant-menu-submenu-title .anticon + span {
   font-weight: 500;
 }
+
+@keyframes flickerAnimation {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}

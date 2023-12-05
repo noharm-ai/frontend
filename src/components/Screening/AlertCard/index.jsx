@@ -16,7 +16,7 @@ export const getAlerts = (stats, t) => [
   {
     label: t("alerts.y"),
     icon: () => <ForkOutlined />,
-    value: stats.inc,
+    value: stats.inc + stats.isl,
   },
   {
     label: t("alerts.interaction"),

@@ -9,6 +9,11 @@ export const PageCard = styled.div`
   box-shadow: 0 -1px 7px rgb(0 0 0 / 16%);
 `;
 
+export const PageContainer = styled.div`
+  max-width: 1400px;
+  margin: 0 auto;
+`;
+
 export const PaginationContainer = styled.div`
   display: flex;
   justify-content: flex-end;

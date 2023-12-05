@@ -23,6 +23,7 @@ import lists from "features/lists/ListsSlice";
 import serverActionsSlice from "features/serverActions/ServerActionsSlice";
 import summaryReducer from "features/summary/SummarySlice";
 import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
+import scoreWizardSlice from "features/outliers/ScoreWizard/ScoreWizardSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -31,6 +32,8 @@ import adminIntegration from "features/admin/Integration/IntegrationSlice";
 import adminSegment from "features/admin/Segment/SegmentSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
 import adminFrequency from "features/admin/Frequency/FrequencySlice";
+
+import reportGeneralReport from "features/reports/GeneralReport/GeneralReportSlice";
 
 const adminReducers = combineReducers({
   interventionReason: adminInterventionReasonReducer,
@@ -42,8 +45,13 @@ const adminReducers = combineReducers({
   frequency: adminFrequency,
 });
 
+const reportReducers = combineReducers({
+  general: reportGeneralReport,
+});
+
 export default combineReducers({
   admin: adminReducers,
+  reportsArea: reportReducers,
   app: appReducer,
   auth: authReducer,
   user: userReducer,
@@ -67,4 +75,5 @@ export default combineReducers({
   lists: lists,
   serverActions: serverActionsSlice,
   summary: summaryReducer,
+  scoreWizard: scoreWizardSlice,
 });

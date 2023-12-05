@@ -46,7 +46,7 @@ const INITIAL_STATE = {
   },
   units: {
     error: null,
-    isFetching: false,
+    isFetching: true,
     list: [],
     save: {
       isSaving: false,
