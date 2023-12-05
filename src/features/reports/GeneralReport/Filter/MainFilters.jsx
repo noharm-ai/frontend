@@ -75,6 +75,7 @@ export default function MainFilters() {
           allowClear
           maxTagCount="responsive"
           loading={status === "loading"}
+          autoClearSearchValue={false}
         >
           {responsibles.map((i) => (
             <Select.Option key={i} value={i}>
@@ -97,6 +98,7 @@ export default function MainFilters() {
           allowClear
           maxTagCount="responsive"
           loading={status === "loading"}
+          autoClearSearchValue={false}
         >
           {departments.map((i) => (
             <Select.Option key={i} value={i}>

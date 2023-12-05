@@ -59,6 +59,13 @@ const getLifesTotal = (datasource) => {
     .length;
 };
 
+const getClinicalNotesTotal = (datasource) => {
+  return datasource.reduce(
+    (accumulator, currentValue) => accumulator + currentValue.clinicalNote,
+    0
+  );
+};
+
 const getResponsiblesSummary = (datasource, totalPrescriptions) => {
   const responsibles = {};
   datasource.forEach((i) => {
@@ -176,6 +183,7 @@ export const getReportData = (datasource, filters) => {
     prescriptionTotals: prescriptionTotals,
     itensTotals: getItensTotal(filteredList),
     lifes: getLifesTotal(filteredList),
+    clinicalNotes: getClinicalNotesTotal(filteredList),
     responsibles: getResponsiblesSummary(
       filteredList,
       prescriptionTotals.checked

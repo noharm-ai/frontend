@@ -5,6 +5,7 @@ export const StatsCard = styled.div`
   background: #fff;
   padding: 1rem;
   border-radius: 10px;
+  border: 2px solid #696766;
 
   .stats-title {
     text-align: right;
