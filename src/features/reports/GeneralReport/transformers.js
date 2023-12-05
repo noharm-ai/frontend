@@ -1,4 +1,5 @@
-import { uniq } from "utils/lodash";
+import { uniq, isEmpty } from "utils/lodash";
+import dayjs from "dayjs";
 
 const getPrescriptionTotals = (datasource) => {
   const checkedPrescriptions = datasource.filter((i) => i.checked).length;
@@ -6,10 +7,9 @@ const getPrescriptionTotals = (datasource) => {
   return {
     total: datasource.length,
     checked: checkedPrescriptions,
-    checkedPercentage: (
-      (checkedPrescriptions * 100) /
-      datasource.length
-    ).toFixed(),
+    checkedPercentage: datasource.length
+      ? ((checkedPrescriptions * 100) / datasource.length).toFixed()
+      : 0,
   };
 };
 
@@ -27,7 +27,7 @@ const getItensTotal = (datasource) => {
   return {
     total,
     checked,
-    checkedPercentage: ((checked * 100) / total).toFixed(),
+    checkedPercentage: total ? ((checked * 100) / total).toFixed() : 0,
   };
 };
 
@@ -185,7 +185,48 @@ export const getReportData = (datasource, filters) => {
     prescriptionPlotSeries: getPrescriptionPlotSeries(filteredList),
   };
 
-  console.log("reportdata", reportData);
-
   return reportData;
+};
+
+export const filtersToDescription = (filters, filtersConfig) => {
+  const dateFormat = "DD/MM/YY";
+  return Object.keys(filters)
+    .map((k) => {
+      const config = filtersConfig[k] || {
+        label: k,
+        type: "undefined",
+      };
+
+      if (isEmpty(filters[k])) {
+        return null;
+      }
+
+      if (config?.type === "range") {
+        return `<strong>${config.label}:</strong> ${dayjs(filters[k][0]).format(
+          dateFormat
+        )} até ${dayjs(filters[k][1]).format(dateFormat)}`;
+      }
+
+      return `<strong>${config.label}:</strong> ${filters[k]}`;
+    })
+    .filter((i) => i !== null)
+    .concat(`<strong>Gerado em:</strong> ${dayjs().format("DD/MM/YY HH:mm")}`)
+    .join(" | ");
+};
+
+export const toCSV = (datasource, filters) => {
+  const items = filterDatasource(datasource, filters);
+
+  const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
+  const header = Object.keys(items[0]);
+  const csv = [
+    header.join(","), // header row first
+    ...items.map((row) =>
+      header
+        .map((fieldName) => JSON.stringify(row[fieldName], replacer))
+        .join(",")
+    ),
+  ].join("\r\n");
+
+  return csv;
 };

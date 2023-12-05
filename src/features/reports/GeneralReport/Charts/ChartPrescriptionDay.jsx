@@ -14,7 +14,7 @@ export default function ChartPrescriptionDay({ reportData, isLoading }) {
       },
     },
     legend: {
-      data: ["Prescrições", "Prescrições Checadas"],
+      data: ["Pacientes/Dia", "Pacientes/Dia Checados"],
     },
     toolbox: {
       feature: {
@@ -41,7 +41,7 @@ export default function ChartPrescriptionDay({ reportData, isLoading }) {
     ],
     series: [
       {
-        name: "Prescrições",
+        name: "Pacientes/Dia",
         type: "line",
         areaStyle: {
           color: "#1e88e5",
@@ -56,7 +56,7 @@ export default function ChartPrescriptionDay({ reportData, isLoading }) {
           : [],
       },
       {
-        name: "Prescrições Checadas",
+        name: "Pacientes/Dia Checados",
         type: "line",
         areaStyle: {
           color: "#74b077",

@@ -32,9 +32,14 @@ export default function ChartResponsibles({ reportData, isLoading }) {
         ? reportData?.responsibles.map((i) => i.name)
         : [],
     },
+    toolbox: {
+      feature: {
+        saveAsImage: { title: "Salvar como imagem" },
+      },
+    },
     series: [
       {
-        name: "Prescrições Checadas por Responsável",
+        name: "Pacientes/Dia Checados por Responsável",
         type: "bar",
         color: "#388e3c",
         data: reportData?.responsibles
