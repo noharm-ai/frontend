@@ -247,13 +247,14 @@ export const filtersToDescription = (filters, filtersConfig) => {
     .join(" | ");
 };
 
-export const toCSV = (datasource, filters) => {
+export const toCSV = (datasource, filters, t) => {
   const items = filterDatasource(datasource, filters);
 
   const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
   const header = Object.keys(items[0]);
+  const headerNames = Object.keys(items[0]).map((k) => t(`reportcsv.${k}`));
   const csv = [
-    header.join(","), // header row first
+    headerNames.join(","), // header row first
     ...items.map((row) =>
       header
         .map((fieldName) => JSON.stringify(row[fieldName], replacer))

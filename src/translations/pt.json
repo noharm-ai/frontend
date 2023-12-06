@@ -535,5 +535,20 @@
     "doctor": "Médico",
     "summary": "Sumário de Alta",
     "readonly": "Somente leitura"
+  },
+
+  "reportcsv": {
+    "idDepartment": "ID SETOR",
+    "idPrescription": "NUMERO PRESCRICAO",
+    "insurance": "CONVENIO",
+    "admissionNumber": "NUMERO ATENDIMENTO",
+    "department": "SETOR",
+    "date": "DATA",
+    "checked": "CHECADO",
+    "itens": "ITENS",
+    "checkedItens": "ITENS CHECADOS",
+    "responsible": "RESPONSAVEL",
+    "clinicalNote": "EVOLUCAO",
+    "segment": "SEGMENTO"
   }
 }

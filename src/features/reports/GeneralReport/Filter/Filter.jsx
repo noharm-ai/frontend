@@ -73,7 +73,7 @@ export default function Filter({ printRef }) {
   };
 
   const exportCSV = () => {
-    const csv = toCSV(datasource, currentFilters);
+    const csv = toCSV(datasource, currentFilters, t);
     const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csv);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);

@@ -534,5 +534,20 @@
     "doctor": "Doctor",
     "summary": "Discharge Summary",
     "readonly": "Readonly"
+  },
+
+  "reportcsv": {
+    "idDepartment": "ID DEPARTMENT",
+    "idPrescription": "PRESCRIPTION NUMBER",
+    "insurance": "INSURANCE",
+    "admissionNumber": "ADMISSION NUMBER",
+    "department": "DEPARTMENT",
+    "date": "DATE",
+    "checked": "CHECKED",
+    "itens": "ITENS",
+    "checkedItens": "CHECKED ITENS",
+    "responsible": "RESPONSIBLE",
+    "clinicalNote": "CLINICAL NOTES",
+    "segment": "SEGMENT"
   }
 }
