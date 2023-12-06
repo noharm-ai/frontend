@@ -15,6 +15,7 @@ import Filter from "./Filter/Filter";
 import ChartPrescriptionDay from "./Charts/ChartPrescriptionDay";
 import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartDepartments from "./Charts/ChartDepartments";
+import ChartSegments from "./Charts/ChartSegments";
 import { ReactComponent as Brand } from "assets/noHarm-horizontal.svg";
 import { filtersToDescription } from "./transformers";
 
@@ -42,14 +43,20 @@ export default function GeneralReport() {
       label: "Setor",
       type: "list",
     },
+    segmentList: {
+      label: "Segmento",
+      type: "list",
+    },
   };
 
   return (
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Relatório Geral: Pacientes/Dia</h1>
-          <div className="page-header-legend">Análise de Pacientes por dia</div>
+          <h1 className="page-header-title">Relatório Geral: Pacientes-Dia</h1>
+          <div className="page-header-legend">
+            Métricas de Pacientes por dia
+          </div>
         </div>
       </PageHeader>
 
@@ -58,7 +65,7 @@ export default function GeneralReport() {
 
         <div ref={printRef}>
           <ReportHeader className="report-header">
-            <h1>Relatório Geral: Pacientes/Dia</h1>
+            <h1>Relatório Geral: Pacientes-Dia</h1>
             <div className="brand">
               <Brand />
             </div>
@@ -78,7 +85,7 @@ export default function GeneralReport() {
               <Col xs={12} lg={8}>
                 <Spin spinning={isLoading}>
                   <StatsCard className={`blue `}>
-                    <div className="stats-title">Total de Pacientes/Dia</div>
+                    <div className="stats-title">Total de Pacientes-Dia</div>
                     <div className="stats-value">
                       {reportData?.prescriptionTotals?.total.toLocaleString() ||
                         "-"}
@@ -89,7 +96,7 @@ export default function GeneralReport() {
               <Col xs={12} lg={8}>
                 <Spin spinning={isLoading}>
                   <StatsCard className={`green `}>
-                    <div className="stats-title">Pacientes/Dia Checados</div>
+                    <div className="stats-title">Pacientes-Dia Checados</div>
                     <div className="stats-value">
                       {reportData?.prescriptionTotals?.checked.toLocaleString() ||
                         "-"}
@@ -101,7 +108,7 @@ export default function GeneralReport() {
                 <Spin spinning={isLoading}>
                   <StatsCard className={`green `}>
                     <div className="stats-title">
-                      Percentual de Pacientes/Dia
+                      Percentual de Pacientes-Dia
                     </div>
                     <div className="stats-value">
                       {reportData?.prescriptionTotals?.checkedPercentage || "-"}
@@ -113,7 +120,7 @@ export default function GeneralReport() {
               <Col xs={12} lg={8}>
                 <Spin spinning={isLoading}>
                   <StatsCard className={`blue `}>
-                    <div className="stats-title">Total de Itens/Dia</div>
+                    <div className="stats-title">Total de Itens-Dia</div>
                     <div className="stats-value">
                       {reportData?.itensTotals?.total.toLocaleString() || "-"}
                     </div>
@@ -123,7 +130,7 @@ export default function GeneralReport() {
               <Col xs={12} lg={8}>
                 <Spin spinning={isLoading}>
                   <StatsCard className={`green `}>
-                    <div className="stats-title">Itens/Dia Checados</div>
+                    <div className="stats-title">Itens-Dia Checados</div>
                     <div className="stats-value">
                       {reportData?.itensTotals?.checked.toLocaleString() || "-"}
                     </div>
@@ -133,7 +140,7 @@ export default function GeneralReport() {
               <Col xs={12} lg={8}>
                 <Spin spinning={isLoading}>
                   <StatsCard className={`green `}>
-                    <div className="stats-title">Percentual de Itens/Dia</div>
+                    <div className="stats-title">Percentual de Itens-Dia</div>
                     <div className="stats-value">
                       {reportData?.itensTotals?.checkedPercentage || "-"}%
                     </div>
@@ -178,7 +185,7 @@ export default function GeneralReport() {
             </Row>
 
             <Row gutter={[24, 24]}>
-              <Col xs={25} lg={12}>
+              <Col xs={24} lg={12}>
                 <div className="page-break"></div>
                 <SectionHeader style={{ marginBottom: "24px" }}>
                   Responsáveis
@@ -192,7 +199,21 @@ export default function GeneralReport() {
                   </ChartCard>
                 </Spin>
               </Col>
-              <Col xs={25} lg={12}>
+              <Col xs={24} lg={12}>
+                <div className="page-break"></div>
+                <SectionHeader style={{ marginBottom: "24px" }}>
+                  Checagem por Segmento
+                </SectionHeader>
+                <Spin spinning={isLoading}>
+                  <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                    <ChartSegments
+                      reportData={reportData}
+                      isLoading={isLoading}
+                    />
+                  </ChartCard>
+                </Spin>
+              </Col>
+              <Col xs={24} lg={12}>
                 <div className="page-break"></div>
                 <SectionHeader style={{ marginBottom: "24px" }}>
                   Top 20 Setores

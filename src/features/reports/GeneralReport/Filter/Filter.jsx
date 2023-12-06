@@ -130,6 +130,7 @@ export default function Filter({ printRef }) {
     dateRange: [dayjs().startOf("month"), dayjs().subtract(1, "day")],
     responsibleList: [],
     departmentList: [],
+    segmentList: [],
   };
 
   useEffect(() => {

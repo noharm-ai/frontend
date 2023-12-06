@@ -51,6 +51,13 @@ const filterDatasource = (datasource, filters) => {
       }
 
       return true;
+    })
+    .filter((i) => {
+      if (filters.segmentList.length) {
+        return filters.segmentList.indexOf(i.segment) !== -1;
+      }
+
+      return true;
     });
 };
 
@@ -86,6 +93,23 @@ const getResponsiblesSummary = (datasource, totalPrescriptions) => {
 
   return data.sort(function (a, b) {
     return a.total - b.total;
+  });
+};
+
+const getSegmentsSummary = (datasource, totalPrescriptions) => {
+  const segments = {};
+  datasource.forEach((i) => {
+    if (i.checked) {
+      segments[i.segment] = segments[i.segment] ? segments[i.segment] + 1 : 1;
+    }
+  });
+
+  return Object.keys(segments).map((name) => {
+    return {
+      name,
+      value: segments[name],
+      percentage: ((segments[name] * 100) / totalPrescriptions).toFixed(1),
+    };
   });
 };
 
@@ -189,6 +213,7 @@ export const getReportData = (datasource, filters) => {
       prescriptionTotals.checked
     ),
     departments: getDepartmentsSummary(filteredList),
+    segments: getSegmentsSummary(filteredList, prescriptionTotals.checked),
     days: days,
     prescriptionPlotSeries: getPrescriptionPlotSeries(filteredList),
   };

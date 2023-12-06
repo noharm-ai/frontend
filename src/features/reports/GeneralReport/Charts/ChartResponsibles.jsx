@@ -39,7 +39,7 @@ export default function ChartResponsibles({ reportData, isLoading }) {
     },
     series: [
       {
-        name: "Pacientes/Dia Checados por Responsável",
+        name: "Pacientes-Dia Checados por Responsável",
         type: "bar",
         color: "#388e3c",
         data: reportData?.responsibles

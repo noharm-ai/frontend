@@ -10,6 +10,7 @@ const initialState = {
   updatedAt: null,
   responsibles: [],
   departments: [],
+  segments: [],
   filtered: {
     status: "idle",
     error: null,
@@ -72,6 +73,7 @@ const generalReportSlice = createSlice({
           "responsible"
         );
         state.departments = getUniqList(action.payload.cacheData, "department");
+        state.segments = getUniqList(action.payload.cacheData, "segment");
       })
       .addCase(fetchPrescriptions.rejected, (state, action) => {
         state.status = "failed";

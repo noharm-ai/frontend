@@ -34,7 +34,7 @@ export default function ChartDepartments({ reportData, isLoading }) {
     },
     series: [
       {
-        name: "Pacientes/Dia Checados por Setor",
+        name: "Pacientes-Dia Checados por Setor",
         type: "bar",
         color: "#388e3c",
         data: reportData?.departments
