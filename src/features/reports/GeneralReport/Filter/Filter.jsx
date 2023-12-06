@@ -40,6 +40,7 @@ export default function Filter({ printRef }) {
   const datasource = useSelector((state) => state.reportsArea.general.list);
   const updatedAt = useSelector((state) => state.reportsArea.general.updatedAt);
   const roles = useSelector((state) => state.user.account.roles);
+  const userId = useSelector((state) => state.user.account.userId);
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
     onBeforeGetContent: () => {
@@ -167,6 +168,8 @@ export default function Filter({ printRef }) {
         onSearch={search}
         loading={isFetching}
         skipFilterList={["dateRange"]}
+        memoryType={`general_report_${userId}`}
+        skipMemoryList={{ dateRange: "daterange" }}
       />
       {!isFetching && (
         <FloatButtonGroup

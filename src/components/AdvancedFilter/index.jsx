@@ -7,11 +7,13 @@ import {
   CaretUpOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
+import dayjs from "dayjs";
 
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import { Row, Col } from "components/Grid";
 import Badge from "components/Badge";
+import MemoryFilter from "features/memory/MemoryFilter/MemoryFilter";
 
 import { SearchBox, FilterCard } from "./index.style";
 
@@ -25,6 +27,8 @@ export default function AdvancedFilter({
   onChangeValues,
   loading,
   skipFilterList,
+  skipMemoryList = {},
+  memoryType,
 }) {
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState(initialValues);
@@ -69,6 +73,26 @@ export default function AdvancedFilter({
 
     setOpen(false);
     onSearch(initialValues);
+  };
+
+  const loadFilter = (filter) => {
+    const newFilters = {};
+    Object.keys(filter).forEach((k) => {
+      if (!skipMemoryList[k]) {
+        newFilters[k] = filter[k];
+      }
+    });
+
+    Object.keys(skipMemoryList).forEach((k) => {
+      if (skipMemoryList[k] === "daterange") {
+        newFilters[k] = [dayjs(values[k][0]), dayjs(values[k][1])];
+      } else {
+        newFilters[k] = filter[k];
+      }
+    });
+
+    setValues(newFilters);
+    onSearch(newFilters);
   };
 
   const hiddenFieldCount = countHiddenFilters(values);
@@ -123,6 +147,14 @@ export default function AdvancedFilter({
                     loading={loading}
                   />
                 </Tooltip>
+                {memoryType && (
+                  <MemoryFilter
+                    type={memoryType}
+                    currentValue={values}
+                    setFilter={loadFilter}
+                    loading={loading}
+                  />
+                )}
               </div>
             </Col>
           </Row>
