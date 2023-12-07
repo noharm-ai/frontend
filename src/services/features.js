@@ -21,11 +21,16 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.CONCILIATION);
   };
 
+  const hasSolutionFrequency = () => {
+    return hasFeature(Feature.SOLUTION_FREQUENCY);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
     hasPrimaryCare,
     hasConciliation,
+    hasSolutionFrequency,
   };
 };
 
