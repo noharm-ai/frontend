@@ -23,7 +23,7 @@ import {
   ControlOutlined,
   AppstoreOutlined,
   BranchesOutlined,
-  //CustomerServiceOutlined,
+  CustomerServiceOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -299,13 +299,14 @@ export default function Menu({ security, featureService }) {
         },
       ],
     },
-    // {
-    //   key: "help",
-    //   link: "/suporte",
-    //   label: t("menu.help"),
-    //   icon: <CustomerServiceOutlined />,
-    //   id: "gtm-lnk-help",
-    // },
+    {
+      key: "help",
+      link: "/suporte",
+      label: t("menu.help"),
+      icon: <CustomerServiceOutlined />,
+      id: "gtm-lnk-help",
+      role: ["admin"],
+    },
   ];
 
   return (

@@ -1,4 +1,5 @@
-import { uniq } from "utils/lodash";
+import { uniq, isEmpty } from "utils/lodash";
+import dayjs from "dayjs";
 
 const getPrescriptionTotals = (datasource) => {
   const checkedPrescriptions = datasource.filter((i) => i.checked).length;
@@ -6,10 +7,9 @@ const getPrescriptionTotals = (datasource) => {
   return {
     total: datasource.length,
     checked: checkedPrescriptions,
-    checkedPercentage: (
-      (checkedPrescriptions * 100) /
-      datasource.length
-    ).toFixed(),
+    checkedPercentage: datasource.length
+      ? ((checkedPrescriptions * 100) / datasource.length).toFixed()
+      : 0,
   };
 };
 
@@ -27,7 +27,7 @@ const getItensTotal = (datasource) => {
   return {
     total,
     checked,
-    checkedPercentage: ((checked * 100) / total).toFixed(),
+    checkedPercentage: total ? ((checked * 100) / total).toFixed() : 0,
   };
 };
 
@@ -51,12 +51,26 @@ const filterDatasource = (datasource, filters) => {
       }
 
       return true;
+    })
+    .filter((i) => {
+      if (filters.segmentList.length) {
+        return filters.segmentList.indexOf(i.segment) !== -1;
+      }
+
+      return true;
     });
 };
 
 const getLifesTotal = (datasource) => {
   return uniq(datasource.filter((i) => i.checked).map((i) => i.admissionNumber))
     .length;
+};
+
+const getClinicalNotesTotal = (datasource) => {
+  return datasource.reduce(
+    (accumulator, currentValue) => accumulator + currentValue.clinicalNote,
+    0
+  );
 };
 
 const getResponsiblesSummary = (datasource, totalPrescriptions) => {
@@ -79,6 +93,23 @@ const getResponsiblesSummary = (datasource, totalPrescriptions) => {
 
   return data.sort(function (a, b) {
     return a.total - b.total;
+  });
+};
+
+const getSegmentsSummary = (datasource, totalPrescriptions) => {
+  const segments = {};
+  datasource.forEach((i) => {
+    if (i.checked) {
+      segments[i.segment] = segments[i.segment] ? segments[i.segment] + 1 : 1;
+    }
+  });
+
+  return Object.keys(segments).map((name) => {
+    return {
+      name,
+      value: segments[name],
+      percentage: ((segments[name] * 100) / totalPrescriptions).toFixed(1),
+    };
   });
 };
 
@@ -176,16 +207,60 @@ export const getReportData = (datasource, filters) => {
     prescriptionTotals: prescriptionTotals,
     itensTotals: getItensTotal(filteredList),
     lifes: getLifesTotal(filteredList),
+    clinicalNotes: getClinicalNotesTotal(filteredList),
     responsibles: getResponsiblesSummary(
       filteredList,
       prescriptionTotals.checked
     ),
     departments: getDepartmentsSummary(filteredList),
+    segments: getSegmentsSummary(filteredList, prescriptionTotals.checked),
     days: days,
     prescriptionPlotSeries: getPrescriptionPlotSeries(filteredList),
   };
 
-  console.log("reportdata", reportData);
-
   return reportData;
+};
+
+export const filtersToDescription = (filters, filtersConfig) => {
+  const dateFormat = "DD/MM/YY";
+  return Object.keys(filters)
+    .map((k) => {
+      const config = filtersConfig[k] || {
+        label: k,
+        type: "undefined",
+      };
+
+      if (isEmpty(filters[k])) {
+        return null;
+      }
+
+      if (config?.type === "range") {
+        return `<strong>${config.label}:</strong> ${dayjs(filters[k][0]).format(
+          dateFormat
+        )} até ${dayjs(filters[k][1]).format(dateFormat)}`;
+      }
+
+      return `<strong>${config.label}:</strong> ${filters[k]}`;
+    })
+    .filter((i) => i !== null)
+    .concat(`<strong>Gerado em:</strong> ${dayjs().format("DD/MM/YY HH:mm")}`)
+    .join(" | ");
+};
+
+export const toCSV = (datasource, filters, t) => {
+  const items = filterDatasource(datasource, filters);
+
+  const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
+  const header = Object.keys(items[0]);
+  const headerNames = Object.keys(items[0]).map((k) => t(`reportcsv.${k}`));
+  const csv = [
+    headerNames.join(","), // header row first
+    ...items.map((row) =>
+      header
+        .map((fieldName) => JSON.stringify(row[fieldName], replacer))
+        .join(",")
+    ),
+  ].join("\r\n");
+
+  return csv;
 };

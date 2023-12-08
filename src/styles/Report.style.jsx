@@ -5,6 +5,7 @@ export const StatsCard = styled.div`
   background: #fff;
   padding: 1rem;
   border-radius: 10px;
+  border: 2px solid #696766;
 
   .stats-title {
     text-align: right;
@@ -60,6 +61,16 @@ export const StatsCard = styled.div`
   &.loading {
     animation: flickerAnimation 2s infinite;
   }
+
+  @media print {
+    .stats-title {
+      font-size: 1.5rem;
+    }
+
+    .stats-value {
+      font-size: 3rem;
+    }
+  }
 `;
 
 export const SectionHeader = styled.h2`
@@ -67,6 +78,10 @@ export const SectionHeader = styled.h2`
   font-size: 2.5rem;
   font-weight: 500;
   margin-bottom: 0;
+
+  @media print {
+    margin-bottom: 10px;
+  }
 `;
 
 export const ChartCard = styled.div`
@@ -78,5 +93,56 @@ export const ChartCard = styled.div`
 
   &.loading {
     animation: flickerAnimation 2s infinite;
+  }
+`;
+
+export const ReportContainer = styled.div`
+  max-width: 1400px;
+  margin: 0 auto;
+`;
+
+export const ReportHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 4px solid #1565c0;
+  padding: 1rem 0;
+  margin-bottom: 30px;
+  display: none;
+
+  h1 {
+    color: #1565c0;
+    font-size: 3rem;
+    font-weight: 500;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  .brand {
+    display: block;
+    min-width: 164px;
+    max-width: 200px;
+    width: 100%;
+
+    svg {
+      .cls-2 {
+        fill: rgb(34, 57, 91);
+      }
+    }
+  }
+`;
+
+export const ReportFilterContainer = styled.div`
+  display: none;
+
+  .report-filter-list {
+    background: #e6f4ff;
+    border: 1px solid #91caff;
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+
+  @media print {
+    display: block;
   }
 `;

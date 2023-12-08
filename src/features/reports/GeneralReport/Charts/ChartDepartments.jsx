@@ -27,9 +27,14 @@ export default function ChartDepartments({ reportData, isLoading }) {
         ? reportData?.departments.map((i) => i.name)
         : [],
     },
+    toolbox: {
+      feature: {
+        saveAsImage: { title: "Salvar como imagem" },
+      },
+    },
     series: [
       {
-        name: "Prescrições Checadas por Setor",
+        name: "Pacientes-Dia Checados por Setor",
         type: "bar",
         color: "#388e3c",
         data: reportData?.departments

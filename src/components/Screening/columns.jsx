@@ -552,6 +552,12 @@ export const expandedRowRender = (bag) => (record) => {
                 {record.frequency.label}
               </Descriptions.Item>
             )}
+            <Descriptions.Item label={bag.t("tableHeader.stage")} span={3}>
+              {record.stage}
+            </Descriptions.Item>
+            <Descriptions.Item label={bag.t("tableHeader.infusion")} span={3}>
+              {record.infusion}
+            </Descriptions.Item>
           </>
         )}
         {record.doseWeight && (
@@ -791,6 +797,8 @@ const frequency = (bag) => ({
       return null;
     }
 
+    if (prescription.emptyRow) return null;
+
     if (isEmpty(prescription.frequency)) {
       return (
         <Tooltip title="Frequência obtida por conversão" placement="top">
@@ -817,18 +825,24 @@ const frequencyAndTime = (bag) => [
   },
 ];
 
-const stageAndInfusion = (bag) => [
-  {
-    title: bag.t("tableHeader.stage"),
-    dataIndex: "stage",
-    width: 100,
-  },
-  {
-    title: bag.t("tableHeader.infusion"),
-    dataIndex: "infusion",
-    width: 100,
-  },
-];
+const stageAndInfusion = (bag) => {
+  if (bag.featureService.hasSolutionFrequency()) {
+    return [frequency(bag)];
+  }
+
+  return [
+    {
+      title: bag.t("tableHeader.stage"),
+      dataIndex: "stage",
+      width: 100,
+    },
+    {
+      title: bag.t("tableHeader.infusion"),
+      dataIndex: "infusion",
+      width: 100,
+    },
+  ];
+};
 
 const route = (bag) => ({
   title: bag.t("tableHeader.route"),

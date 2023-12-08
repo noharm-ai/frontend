@@ -16,6 +16,7 @@ export default function MainFilters() {
   const departments = useSelector(
     (state) => state.reportsArea.general.departments
   );
+  const segments = useSelector((state) => state.reportsArea.general.segments);
   const status = useSelector((state) => state.reportsArea.general.status);
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
@@ -75,8 +76,32 @@ export default function MainFilters() {
           allowClear
           maxTagCount="responsive"
           loading={status === "loading"}
+          autoClearSearchValue={false}
         >
           {responsibles.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </Select>
+      </Col>
+      <Col md={7} lg={5} xxl={5}>
+        <Heading as="label" size="14px">
+          Segmento:
+        </Heading>
+        <Select
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.segmentList}
+          onChange={(val) => setFieldValue({ segmentList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {segments.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
@@ -97,6 +122,7 @@ export default function MainFilters() {
           allowClear
           maxTagCount="responsive"
           loading={status === "loading"}
+          autoClearSearchValue={false}
         >
           {departments.map((i) => (
             <Select.Option key={i} value={i}>

@@ -23,6 +23,7 @@ import lists from "features/lists/ListsSlice";
 import serverActionsSlice from "features/serverActions/ServerActionsSlice";
 import summaryReducer from "features/summary/SummarySlice";
 import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
+import memoryFilterSlice from "features/memory/MemoryFilter/MemoryFilterSlice";
 import scoreWizardSlice from "features/outliers/ScoreWizard/ScoreWizardSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
@@ -69,6 +70,7 @@ export default combineReducers({
   reports: reportsReducer,
   memory: memoryReducer,
   memoryDraft: memoryDraftSlice,
+  memoryFilter: memoryFilterSlice,
   clinicalNotes: clinicalNotesReducer,
   drugMeasureUnits: drugMeasureUnits,
   drugFormStatus: drugFormStatus,

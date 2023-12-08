@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { init, getInstanceByDom } from "echarts";
 
 export function EChartBase({ option, style, settings, loading, theme }) {
   const chartRef = useRef(null);
+  const [imgUrl, setImgUrl] = useState(null);
 
   useEffect(() => {
     // Initialize chart
@@ -16,12 +17,25 @@ export function EChartBase({ option, style, settings, loading, theme }) {
     function resizeChart() {
       chart?.resize();
     }
+
+    function setPrintMode() {
+      setImgUrl(chart.getDataURL());
+    }
+
+    function setWebMode() {
+      setImgUrl(null);
+    }
+
     window.addEventListener("resize", resizeChart);
+    window.addEventListener("onbeforeprint", setPrintMode);
+    window.addEventListener("onafterprint", setWebMode);
 
     // Return cleanup function
     return () => {
       chart?.dispose();
       window.removeEventListener("resize", resizeChart);
+      window.removeEventListener("onbeforeprint", setPrintMode);
+      window.removeEventListener("onafterprint", setWebMode);
     };
   }, [theme]);
 
@@ -49,6 +63,17 @@ export function EChartBase({ option, style, settings, loading, theme }) {
   }, [loading, theme]);
 
   return (
-    <div ref={chartRef} style={{ width: "100%", height: "100px", ...style }} />
+    <>
+      {imgUrl && <img src={imgUrl} style={{ width: "100%" }} alt="Gráfico" />}
+      <div
+        ref={chartRef}
+        style={{
+          width: "100%",
+          height: "100px",
+          display: imgUrl ? "none" : "block",
+          ...style,
+        }}
+      />
+    </>
   );
 }
