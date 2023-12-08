@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import api from "services/reports/api";
-import { getUniqList } from "./transformers";
+import { getUniqList } from "utils/report";
 
 const initialState = {
   status: "idle",

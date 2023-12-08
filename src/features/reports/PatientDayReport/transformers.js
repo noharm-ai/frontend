@@ -1,5 +1,6 @@
-import { uniq, isEmpty } from "utils/lodash";
-import dayjs from "dayjs";
+import { uniq } from "utils/lodash";
+
+import { getUniqList, exportCSV } from "utils/report";
 
 const getPrescriptionTotals = (datasource) => {
   const checkedPrescriptions = datasource.filter((i) => i.checked).length;
@@ -192,10 +193,6 @@ const getPrescriptionPlotSeries = (datasource) => {
 //     });
 // };
 
-export const getUniqList = (datasource, attr) => {
-  return uniq(datasource.map((i) => i[attr])).sort();
-};
-
 export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
   const prescriptionTotals = getPrescriptionTotals(filteredList);
@@ -221,46 +218,8 @@ export const getReportData = (datasource, filters) => {
   return reportData;
 };
 
-export const filtersToDescription = (filters, filtersConfig) => {
-  const dateFormat = "DD/MM/YY";
-  return Object.keys(filters)
-    .map((k) => {
-      const config = filtersConfig[k] || {
-        label: k,
-        type: "undefined",
-      };
-
-      if (isEmpty(filters[k])) {
-        return null;
-      }
-
-      if (config?.type === "range") {
-        return `<strong>${config.label}:</strong> ${dayjs(filters[k][0]).format(
-          dateFormat
-        )} até ${dayjs(filters[k][1]).format(dateFormat)}`;
-      }
-
-      return `<strong>${config.label}:</strong> ${filters[k]}`;
-    })
-    .filter((i) => i !== null)
-    .concat(`<strong>Gerado em:</strong> ${dayjs().format("DD/MM/YY HH:mm")}`)
-    .join(" | ");
-};
-
-export const toCSV = (datasource, filters, t) => {
+export const filterAndExportCSV = (datasource, filters, t) => {
   const items = filterDatasource(datasource, filters);
 
-  const replacer = (key, value) => (value === null ? "" : value);
-  const header = Object.keys(items[0]);
-  const headerNames = Object.keys(items[0]).map((k) => t(`reportcsv.${k}`));
-  const csv = [
-    headerNames.join(","),
-    ...items.map((row) =>
-      header
-        .map((fieldName) => JSON.stringify(row[fieldName], replacer))
-        .join(",")
-    ),
-  ].join("\r\n");
-
-  return csv;
+  return exportCSV(items, t);
 };

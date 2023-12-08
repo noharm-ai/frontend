@@ -25,7 +25,7 @@ import {
   setFilteredResult,
   setFilters,
 } from "../PatientDayReportSlice";
-import { getReportData, toCSV } from "../transformers";
+import { getReportData, filterAndExportCSV } from "../transformers";
 import MainFilters from "./MainFilters";
 import security from "services/security";
 
@@ -75,14 +75,7 @@ export default function Filter({ printRef }) {
   };
 
   const exportCSV = () => {
-    const csv = toCSV(datasource, currentFilters, t);
-    const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csv);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "relatorio.csv");
-    document.body.appendChild(link);
-
-    link.click();
+    filterAndExportCSV(datasource, currentFilters, t);
   };
 
   const showHelp = () => {

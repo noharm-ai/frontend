@@ -17,7 +17,7 @@ import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartDepartments from "./Charts/ChartDepartments";
 import ChartSegments from "./Charts/ChartSegments";
 import { ReactComponent as Brand } from "assets/noHarm-horizontal.svg";
-import { filtersToDescription } from "./transformers";
+import { filtersToDescription } from "utils/report";
 
 export default function PatientDayReport() {
   const reportData = useSelector(
