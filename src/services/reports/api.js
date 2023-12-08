@@ -10,12 +10,19 @@ const getPatientDay = (params = {}) =>
     ...setHeaders(),
   });
 
+const getPrescription = (params = {}) =>
+  instance.get(`${endpoints.general}/prescription`, {
+    params,
+    ...setHeaders(),
+  });
+
 const getCache = (url) => {
   return instance.get(url, { responseType: "arraybuffer", decompress: true });
 };
 
 const api = {
   getPatientDay,
+  getPrescription,
   getCache,
 };
 

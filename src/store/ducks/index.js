@@ -35,6 +35,7 @@ import adminExam from "features/admin/Exam/ExamSlice";
 import adminFrequency from "features/admin/Frequency/FrequencySlice";
 
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
+import reportPrescriptionReport from "features/reports/PrescriptionReport/PrescriptionReportSlice";
 
 const adminReducers = combineReducers({
   interventionReason: adminInterventionReasonReducer,
@@ -48,6 +49,7 @@ const adminReducers = combineReducers({
 
 const reportReducers = combineReducers({
   patientDay: reportPatientDayReport,
+  prescription: reportPrescriptionReport,
 });
 
 export default combineReducers({
