@@ -19,15 +19,15 @@ import ChartSegments from "./Charts/ChartSegments";
 import { ReactComponent as Brand } from "assets/noHarm-horizontal.svg";
 import { filtersToDescription } from "./transformers";
 
-export default function GeneralReport() {
+export default function PatientDayReport() {
   const reportData = useSelector(
-    (state) => state.reportsArea.general.filtered.result
+    (state) => state.reportsArea.patientDay.filtered.result
   );
-  const status = useSelector((state) => state.reportsArea.general.status);
+  const status = useSelector((state) => state.reportsArea.patientDay.status);
   const filteredStatus = useSelector(
-    (state) => state.reportsArea.general.filtered.status
+    (state) => state.reportsArea.patientDay.filtered.status
   );
-  const filters = useSelector((state) => state.reportsArea.general.filters);
+  const filters = useSelector((state) => state.reportsArea.patientDay.filters);
   const printRef = useRef(null);
   const isLoading = status === "loading" || filteredStatus === "loading";
   const filtersConfig = {

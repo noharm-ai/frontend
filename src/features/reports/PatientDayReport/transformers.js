@@ -250,11 +250,11 @@ export const filtersToDescription = (filters, filtersConfig) => {
 export const toCSV = (datasource, filters, t) => {
   const items = filterDatasource(datasource, filters);
 
-  const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
+  const replacer = (key, value) => (value === null ? "" : value);
   const header = Object.keys(items[0]);
   const headerNames = Object.keys(items[0]).map((k) => t(`reportcsv.${k}`));
   const csv = [
-    headerNames.join(","), // header row first
+    headerNames.join(","),
     ...items.map((row) =>
       header
         .map((fieldName) => JSON.stringify(row[fieldName], replacer))

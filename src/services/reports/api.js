@@ -4,8 +4,8 @@ const endpoints = {
   general: "/reports/general",
 };
 
-const getGeneralPrescription = (params = {}) =>
-  instance.get(`${endpoints.general}/prescription`, {
+const getPatientDay = (params = {}) =>
+  instance.get(`${endpoints.general}/patient-day`, {
     params,
     ...setHeaders(),
   });
@@ -15,7 +15,7 @@ const getCache = (url) => {
 };
 
 const api = {
-  getGeneralPrescription,
+  getPatientDay,
   getCache,
 };
 

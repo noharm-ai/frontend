@@ -27,7 +27,7 @@ import { reset as summaryReset } from "features/summary/SummarySlice";
 import { reset as drugMeasureUnitsReset } from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSlice";
 import { reset as scoreWizardReset } from "features/outliers/ScoreWizard/ScoreWizardSlice";
 
-import { reset as generalReportReset } from "features/reports/GeneralReport/GeneralReportSlice";
+import { reset as patientDayReportReset } from "features/reports/PatientDayReport/PatientDayReportSlice";
 
 const { clinicalNotesReset } = ClinicalNotesCreators;
 const { departmentsReset } = DepartmentsCreators;
@@ -71,5 +71,5 @@ export const resetReduxState = (dispatch) => {
   dispatch(drugMeasureUnitsReset());
   dispatch(scoreWizardReset());
 
-  dispatch(generalReportReset());
+  dispatch(patientDayReportReset());
 };

@@ -19,11 +19,11 @@ const initialState = {
   filters: {},
 };
 
-export const fetchPrescriptions = createAsyncThunk(
-  "reports-general/fetch-prescriptions",
+export const fetchReportData = createAsyncThunk(
+  "reports-patient-day/fetch-data",
   async (params, thunkAPI) => {
     try {
-      const response = await api.getGeneralPrescription(params);
+      const response = await api.getPatientDay(params);
       const cacheResponseStream = await fetch(response.data.data.url);
 
       const cacheReadableStream = cacheResponseStream.body.pipeThrough(
@@ -41,8 +41,8 @@ export const fetchPrescriptions = createAsyncThunk(
   }
 );
 
-const generalReportSlice = createSlice({
-  name: "generalReport",
+const patientDayReportSlice = createSlice({
+  name: "patientDayReport",
   initialState,
   reducers: {
     reset() {
@@ -60,11 +60,11 @@ const generalReportSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(fetchPrescriptions.pending, (state, action) => {
+      .addCase(fetchReportData.pending, (state, action) => {
         state.status = "loading";
         state.filtered.status = "loading";
       })
-      .addCase(fetchPrescriptions.fulfilled, (state, action) => {
+      .addCase(fetchReportData.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.list = action.payload.cacheData;
         state.updatedAt = action.payload.data.data.updatedAt;
@@ -75,7 +75,7 @@ const generalReportSlice = createSlice({
         state.departments = getUniqList(action.payload.cacheData, "department");
         state.segments = getUniqList(action.payload.cacheData, "segment");
       })
-      .addCase(fetchPrescriptions.rejected, (state, action) => {
+      .addCase(fetchReportData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
         state.list = [];
@@ -84,6 +84,6 @@ const generalReportSlice = createSlice({
 });
 
 export const { reset, setFilteredStatus, setFilteredResult, setFilters } =
-  generalReportSlice.actions;
+  patientDayReportSlice.actions;
 
-export default generalReportSlice.reducer;
+export default patientDayReportSlice.reducer;

@@ -19,12 +19,12 @@ import AdvancedFilter from "components/AdvancedFilter";
 import DefaultModal from "components/Modal";
 import Button from "components/Button";
 import {
-  fetchPrescriptions,
+  fetchReportData,
   reset,
   setFilteredStatus,
   setFilteredResult,
   setFilters,
-} from "../GeneralReportSlice";
+} from "../PatientDayReportSlice";
 import { getReportData, toCSV } from "../transformers";
 import MainFilters from "./MainFilters";
 import security from "services/security";
@@ -33,12 +33,14 @@ export default function Filter({ printRef }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const isFetching =
-    useSelector((state) => state.reportsArea.general.status) === "loading";
+    useSelector((state) => state.reportsArea.patientDay.status) === "loading";
   const currentFilters = useSelector(
-    (state) => state.reportsArea.general.filters
+    (state) => state.reportsArea.patientDay.filters
   );
-  const datasource = useSelector((state) => state.reportsArea.general.list);
-  const updatedAt = useSelector((state) => state.reportsArea.general.updatedAt);
+  const datasource = useSelector((state) => state.reportsArea.patientDay.list);
+  const updatedAt = useSelector(
+    (state) => state.reportsArea.patientDay.updatedAt
+  );
   const roles = useSelector((state) => state.user.account.roles);
   const userId = useSelector((state) => state.user.account.userId);
   const handlePrint = useReactToPrint({
@@ -57,7 +59,7 @@ export default function Filter({ printRef }) {
   const sec = security(roles);
 
   const cleanCache = () => {
-    dispatch(fetchPrescriptions({ clearCache: true })).then((response) => {
+    dispatch(fetchReportData({ clearCache: true })).then((response) => {
       if (response.error) {
         notification.error({
           message: t("error.title"),
@@ -134,7 +136,7 @@ export default function Filter({ printRef }) {
   };
 
   useEffect(() => {
-    dispatch(fetchPrescriptions()).then((response) => {
+    dispatch(fetchReportData()).then((response) => {
       if (response.error) {
         notification.error({
           message: t("error.title"),

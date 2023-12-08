@@ -11,13 +11,15 @@ import { AdvancedFilterContext } from "components/AdvancedFilter";
 export default function MainFilters() {
   const { t } = useTranslation();
   const responsibles = useSelector(
-    (state) => state.reportsArea.general.responsibles
+    (state) => state.reportsArea.patientDay.responsibles
   );
   const departments = useSelector(
-    (state) => state.reportsArea.general.departments
+    (state) => state.reportsArea.patientDay.departments
   );
-  const segments = useSelector((state) => state.reportsArea.general.segments);
-  const status = useSelector((state) => state.reportsArea.general.status);
+  const segments = useSelector(
+    (state) => state.reportsArea.patientDay.segments
+  );
+  const status = useSelector((state) => state.reportsArea.patientDay.status);
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
   const rangePresets = [

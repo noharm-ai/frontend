@@ -35,7 +35,7 @@ import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminSegment from "pages/Admin/Segment";
 
-import GeneralReport from "pages/Reports/GeneralReport";
+import PatientDayReport from "pages/Reports/PatientDayReport";
 
 const routes = [
   {
@@ -262,8 +262,8 @@ const routes = [
   },
   {
     exact: true,
-    path: "/relatorios/geral",
-    element: <WithAuth component={GeneralReport} />,
+    path: "/relatorios/pacientes-dia",
+    element: <WithAuth component={PatientDayReport} />,
   },
 ];
 
