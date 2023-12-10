@@ -188,7 +188,7 @@ export default function PatientDayReport() {
               <Col xs={24} lg={12}>
                 <div className="page-break"></div>
                 <SectionHeader style={{ marginBottom: "24px" }}>
-                  Responsáveis
+                  Checagem por Responsável
                 </SectionHeader>
                 <Spin spinning={isLoading}>
                   <ChartCard className={`${isLoading ? "loading" : ""}`}>
