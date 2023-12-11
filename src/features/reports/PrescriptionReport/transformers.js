@@ -1,4 +1,5 @@
 import { uniq } from "utils/lodash";
+import dayjs from "dayjs";
 
 import { getUniqList, exportCSV } from "utils/report";
 
@@ -39,6 +40,13 @@ const filterDatasource = (datasource, filters) => {
         i.date >= filters.dateRange[0].format("YYYY-MM-DD") &&
         i.date <= filters.dateRange[1].format("YYYY-MM-DD")
     )
+    .filter((i) => {
+      if (filters.weekDays && [0, 6].indexOf(dayjs(i.date).day()) !== -1) {
+        return false;
+      }
+
+      return true;
+    })
     .filter((i) => {
       if (filters.responsibleList.length) {
         return filters.responsibleList.indexOf(i.responsible) !== -1;

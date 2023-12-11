@@ -27,6 +27,7 @@ import {
 } from "../PrescriptionReportSlice";
 import { getReportData, filterAndExportCSV } from "../transformers";
 import MainFilters from "./MainFilters";
+import SecondaryFilters from "./SecondaryFilters";
 import security from "services/security";
 
 export default function Filter({ printRef }) {
@@ -128,6 +129,7 @@ export default function Filter({ printRef }) {
     responsibleList: [],
     departmentList: [],
     segmentList: [],
+    weekDays: false,
   };
 
   useEffect(() => {
@@ -163,6 +165,7 @@ export default function Filter({ printRef }) {
       <AdvancedFilter
         initialValues={initialValues}
         mainFilters={<MainFilters />}
+        secondaryFilters={<SecondaryFilters />}
         onSearch={search}
         loading={isFetching}
         skipFilterList={["dateRange"]}

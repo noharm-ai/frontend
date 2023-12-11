@@ -14,7 +14,7 @@ export const filtersToDescription = (filters, filtersConfig) => {
         type: "undefined",
       };
 
-      if (isEmpty(filters[k])) {
+      if (isEmpty(filters[k]) && filters[k] !== true) {
         return null;
       }
 
@@ -22,6 +22,12 @@ export const filtersToDescription = (filters, filtersConfig) => {
         return `<strong>${config.label}:</strong> ${dayjs(filters[k][0]).format(
           dateFormat
         )} até ${dayjs(filters[k][1]).format(dateFormat)}`;
+      }
+
+      if (config?.type === "bool") {
+        return `<strong>${config.label}:</strong> ${
+          filters[k] ? "Sim" : "Não"
+        }`;
       }
 
       return `<strong>${config.label}:</strong> ${filters[k]}`;

@@ -49,6 +49,10 @@ export default function PrescriptionReport() {
       label: "Segmento",
       type: "list",
     },
+    weekDays: {
+      label: "Somente dias de semana",
+      type: "bool",
+    },
   };
 
   return (

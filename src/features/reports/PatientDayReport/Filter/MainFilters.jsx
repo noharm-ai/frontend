@@ -10,9 +10,6 @@ import { AdvancedFilterContext } from "components/AdvancedFilter";
 
 export default function MainFilters() {
   const { t } = useTranslation();
-  const responsibles = useSelector(
-    (state) => state.reportsArea.patientDay.responsibles
-  );
   const departments = useSelector(
     (state) => state.reportsArea.patientDay.departments
   );
@@ -63,29 +60,6 @@ export default function MainFilters() {
           allowClear={false}
           style={{ width: "100%" }}
         />
-      </Col>
-      <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
-          Responsável:
-        </Heading>
-        <Select
-          style={{ width: "100%", maxWidth: "400px" }}
-          value={values.responsibleList}
-          onChange={(val) => setFieldValue({ responsibleList: val })}
-          showSearch
-          optionFilterProp="children"
-          mode="multiple"
-          allowClear
-          maxTagCount="responsive"
-          loading={status === "loading"}
-          autoClearSearchValue={false}
-        >
-          {responsibles.map((i) => (
-            <Select.Option key={i} value={i}>
-              {i}
-            </Select.Option>
-          ))}
-        </Select>
       </Col>
       <Col md={7} lg={5} xxl={5}>
         <Heading as="label" size="14px">

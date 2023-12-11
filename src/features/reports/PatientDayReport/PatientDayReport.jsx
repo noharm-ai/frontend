@@ -47,6 +47,10 @@ export default function PatientDayReport() {
       label: "Segmento",
       type: "list",
     },
+    weekDays: {
+      label: "Somente dias de semana",
+      type: "bool",
+    },
   };
 
   return (
