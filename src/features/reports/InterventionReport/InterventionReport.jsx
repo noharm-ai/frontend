@@ -5,7 +5,6 @@ import { Row, Col, Space, Spin } from "antd";
 import { PageHeader } from "styles/PageHeader.style";
 import {
   StatsCard,
-  ChartCard,
   SectionHeader,
   ReportContainer,
   ReportHeader,

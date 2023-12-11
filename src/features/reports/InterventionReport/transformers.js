@@ -72,6 +72,9 @@ export const getTotals = (datasource) => {
       case "x":
         totalDoNotApply += 1;
         break;
+
+      default:
+        break;
     }
   });
 
