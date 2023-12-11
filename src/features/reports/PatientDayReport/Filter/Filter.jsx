@@ -58,6 +58,7 @@ export default function Filter({ printRef }) {
     },
   });
   const sec = security(roles);
+  const memoryFilterType = `patient_day_report_${userId}`;
 
   const cleanCache = () => {
     dispatch(fetchReportData({ clearCache: true })).then((response) => {
@@ -167,7 +168,7 @@ export default function Filter({ printRef }) {
         onSearch={search}
         loading={isFetching}
         skipFilterList={["dateRange"]}
-        memoryType={`general_report_${userId}`}
+        memoryType={memoryFilterType}
         skipMemoryList={{ dateRange: "daterange" }}
       />
       {!isFetching && (

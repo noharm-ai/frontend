@@ -16,6 +16,12 @@ const getPrescription = (params = {}) =>
     ...setHeaders(),
   });
 
+const getIntervention = (params = {}) =>
+  instance.get(`${endpoints.general}/intervention`, {
+    params,
+    ...setHeaders(),
+  });
+
 const getCache = (url) => {
   return instance.get(url, { responseType: "arraybuffer", decompress: true });
 };
@@ -23,6 +29,7 @@ const getCache = (url) => {
 const api = {
   getPatientDay,
   getPrescription,
+  getIntervention,
   getCache,
 };
 

@@ -29,6 +29,7 @@ import { reset as scoreWizardReset } from "features/outliers/ScoreWizard/ScoreWi
 
 import { reset as patientDayReportReset } from "features/reports/PatientDayReport/PatientDayReportSlice";
 import { reset as prescriptionReportReset } from "features/reports/PrescriptionReport/PrescriptionReportSlice";
+import { reset as interventionReportReset } from "features/reports/InterventionReport/InterventionReportSlice";
 
 const { clinicalNotesReset } = ClinicalNotesCreators;
 const { departmentsReset } = DepartmentsCreators;
@@ -74,4 +75,5 @@ export const resetReduxState = (dispatch) => {
 
   dispatch(patientDayReportReset());
   dispatch(prescriptionReportReset());
+  dispatch(interventionReportReset());
 };

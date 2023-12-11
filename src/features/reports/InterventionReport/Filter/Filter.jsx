@@ -24,43 +24,36 @@ import {
   setFilteredStatus,
   setFilteredResult,
   setFilters,
-} from "../PrescriptionReportSlice";
+} from "../InterventionReportSlice";
 import { getReportData, filterAndExportCSV } from "../transformers";
 import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
 import security from "services/security";
+import { onBeforePrint, onAfterPrint } from "utils/report";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const isFetching =
-    useSelector((state) => state.reportsArea.prescription.status) === "loading";
+    useSelector((state) => state.reportsArea.intervention.status) === "loading";
   const currentFilters = useSelector(
-    (state) => state.reportsArea.prescription.filters
+    (state) => state.reportsArea.intervention.filters
   );
   const datasource = useSelector(
-    (state) => state.reportsArea.prescription.list
+    (state) => state.reportsArea.intervention.list
   );
   const updatedAt = useSelector(
-    (state) => state.reportsArea.prescription.updatedAt
+    (state) => state.reportsArea.intervention.updatedAt
   );
   const roles = useSelector((state) => state.user.account.roles);
   const userId = useSelector((state) => state.user.account.userId);
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
-    onBeforeGetContent: () => {
-      const event = new CustomEvent("onbeforeprint");
-      window.dispatchEvent(event);
-
-      return new Promise((resolve) => setTimeout(resolve, 100));
-    },
-    onAfterPrint: () => {
-      const event = new CustomEvent("onafterprint");
-      window.dispatchEvent(event);
-    },
+    onBeforeGetContent: onBeforePrint,
+    onAfterPrint: onAfterPrint,
   });
   const sec = security(roles);
-  const memoryFilterType = `prescription_report_${userId}`;
+  const memoryFilterType = `intervention_report_${userId}`;
 
   const cleanCache = () => {
     dispatch(fetchReportData({ clearCache: true })).then((response) => {
@@ -95,7 +88,7 @@ export default function Filter({ printRef }) {
           />
           <p>
             Este relatório apresenta as métricas de avaliação de{" "}
-            <strong>Prescrições</strong>.
+            <strong>Intervenções</strong>.
           </p>
           <p>
             O período disponibilizado para consulta é:{" "}

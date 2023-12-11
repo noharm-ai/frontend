@@ -37,6 +37,7 @@ import AdminSegment from "pages/Admin/Segment";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
+import InterventionReport from "pages/Reports/InterventionReport";
 
 const routes = [
   {
@@ -270,6 +271,11 @@ const routes = [
     exact: true,
     path: "/relatorios/prescricoes",
     element: <WithAuth component={PrescriptionReport} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/intervencoes",
+    element: <WithAuth component={InterventionReport} />,
   },
 ];
 

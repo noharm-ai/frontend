@@ -62,3 +62,42 @@ export const exportCSV = (datasource, t) => {
 
   return csv;
 };
+
+export const onBeforePrint = () => {
+  const event = new CustomEvent("onbeforeprint");
+  window.dispatchEvent(event);
+
+  return new Promise((resolve) => setTimeout(resolve, 100));
+};
+
+export const onAfterPrint = () => {
+  const event = new CustomEvent("onbeforeprint");
+  window.dispatchEvent(event);
+
+  return new Promise((resolve) => setTimeout(resolve, 100));
+};
+
+export const dateRangePresets = [
+  {
+    label: "Últimos 15 Dias",
+    value: [dayjs().add(-14, "d"), dayjs().subtract(1, "day")],
+  },
+  {
+    label: "Mês atual",
+    value: [dayjs().startOf("month"), dayjs().subtract(1, "day")],
+  },
+  {
+    label: "Mês anterior",
+    value: [
+      dayjs().subtract(1, "month").startOf("month"),
+      dayjs().subtract(1, "month").endOf("month"),
+    ],
+  },
+];
+
+export const datePickerLimits = (maxInterval, minInterval) => (current) => {
+  const maxDate = dayjs().subtract(maxInterval[0], maxInterval[1]);
+  const minDate = dayjs().subtract(minInterval[0], minInterval[1]);
+
+  return current > maxDate || current < minDate;
+};

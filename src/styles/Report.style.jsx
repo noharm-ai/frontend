@@ -99,6 +99,10 @@ export const ChartCard = styled.div`
 export const ReportContainer = styled.div`
   max-width: 1400px;
   margin: 0 auto;
+
+  .ant-space {
+    width: 100%;
+  }
 `;
 
 export const ReportHeader = styled.div`
