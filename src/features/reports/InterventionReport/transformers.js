@@ -94,6 +94,23 @@ export const getTotals = (datasource) => {
   };
 };
 
+const getStatusSummary = (datasource, total) => {
+  const status = {};
+  datasource.forEach((i) => {
+    status[i.status] = status[i.status] ? status[i.status] + 1 : 1;
+  });
+
+  return Object.keys(status)
+    .sort()
+    .map((name) => {
+      return {
+        name,
+        total: status[name],
+        value: ((status[name] * 100) / total).toFixed(1),
+      };
+    });
+};
+
 export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
   const totals = getTotals(filteredList);
@@ -104,6 +121,7 @@ export const getReportData = (datasource, filters) => {
   const reportData = {
     totals,
     days,
+    statusSummary: getStatusSummary(filteredList, totals.total),
   };
 
   console.log("reportdata", reportData);

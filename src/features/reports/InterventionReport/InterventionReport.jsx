@@ -9,10 +9,12 @@ import {
   ReportContainer,
   ReportHeader,
   ReportFilterContainer,
+  ChartCard,
 } from "styles/Report.style";
 import Filter from "./Filter/Filter";
 import { ReactComponent as Brand } from "assets/noHarm-horizontal.svg";
 import { filtersToDescription } from "utils/report";
+import ChartStatus from "./Charts/ChartStatus";
 
 export default function InterventionReport() {
   const reportData = useSelector(
@@ -82,7 +84,14 @@ export default function InterventionReport() {
             <SectionHeader>Resumo</SectionHeader>
             <Row gutter={[24, 24]}>
               <Col xs={24} lg={12}>
-                teste
+                <Spin spinning={isLoading}>
+                  <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                    <ChartStatus
+                      reportData={reportData}
+                      isLoading={isLoading}
+                    />
+                  </ChartCard>
+                </Spin>
               </Col>
 
               <Col xs={24} lg={12}>
