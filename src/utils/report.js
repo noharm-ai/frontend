@@ -82,10 +82,8 @@ export const onBeforePrint = () => {
 };
 
 export const onAfterPrint = () => {
-  const event = new CustomEvent("onbeforeprint");
+  const event = new CustomEvent("onafterprint");
   window.dispatchEvent(event);
-
-  return new Promise((resolve) => setTimeout(resolve, 100));
 };
 
 export const dateRangePresets = [
