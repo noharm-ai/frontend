@@ -2,6 +2,17 @@ import { uniq, isEmpty } from "utils/lodash";
 import dayjs from "dayjs";
 
 export const getUniqList = (datasource, attr) => {
+  if (!datasource.length) return [];
+
+  if (Array.isArray(datasource[0][attr])) {
+    const flat = datasource.reduce(
+      (accumulator, currentValue) => accumulator.concat(currentValue[attr]),
+      []
+    );
+
+    return uniq(flat).sort();
+  }
+
   return uniq(datasource.map((i) => i[attr])).sort();
 };
 

@@ -2,6 +2,9 @@ import dayjs from "dayjs";
 
 import { getUniqList, exportCSV } from "utils/report";
 
+const ACCOUNTABLE_STATUSES = ["a", "j", "n"];
+const STATUSES = ["a", "j", "n", "x", "s"];
+
 const filterDatasource = (datasource, filters) => {
   return datasource
     .filter(
@@ -111,6 +114,62 @@ const getStatusSummary = (datasource, total) => {
     });
 };
 
+const getReasonSummary = (datasource) => {
+  const reasons = getUniqList(datasource, "reason");
+
+  const summary = reasons.map((r) => {
+    const totals = {
+      accountable: 0,
+      accepted: 0,
+      all: 0,
+    };
+
+    datasource.forEach((i) => {
+      if (i.reason.indexOf(r) !== -1) {
+        totals.accountable +=
+          ACCOUNTABLE_STATUSES.indexOf(i.status) !== -1 ? 1 : 0;
+        totals.accepted += i.status === "a" ? 1 : 0;
+        totals.all += 1;
+      }
+    });
+
+    return {
+      name: r,
+      totals,
+    };
+  });
+
+  return summary.sort((a, b) => b.totals.all - a.totals.all);
+};
+
+const getResponsibleSummary = (datasource) => {
+  const responsibles = getUniqList(datasource, "responsible");
+
+  const summary = responsibles.map((r) => {
+    const totals = { all: 0 };
+    STATUSES.forEach((s) => {
+      totals[s] = 0;
+    });
+
+    datasource.forEach((i) => {
+      if (i.responsible === r) {
+        totals.all += 1;
+
+        STATUSES.forEach((s) => {
+          totals[s] += i.status === s ? 1 : 0;
+        });
+      }
+    });
+
+    return {
+      name: r,
+      totals,
+    };
+  });
+
+  return summary.sort((a, b) => a.totals.all - b.totals.all);
+};
+
 export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
   const totals = getTotals(filteredList);
@@ -122,6 +181,8 @@ export const getReportData = (datasource, filters) => {
     totals,
     days,
     statusSummary: getStatusSummary(filteredList, totals.total),
+    reasonSummary: getReasonSummary(filteredList),
+    responsibleSummary: getResponsibleSummary(filteredList),
   };
 
   console.log("reportdata", reportData);

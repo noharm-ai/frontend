@@ -9,7 +9,6 @@ export default function ChartStatus({ reportData, isLoading }) {
     tooltip: {
       trigger: "item",
       formatter: function (params) {
-        console.log("params", params);
         return `<strong>${params.data.name}:</strong> ${params.data.value}% (${params.data.total})`;
       },
     },
@@ -44,7 +43,7 @@ export default function ChartStatus({ reportData, isLoading }) {
               name: t(`interventionStatus.${i.name}`),
             }))
           : [],
-        color: ["#388e3c", "#ff4d4f", "#9789D9", "#f78562", "#ccc"],
+        color: ["#90BF71", "#69C1CD", "#E6744E", "#FACA5A", "#ccc"],
       },
     ],
   };

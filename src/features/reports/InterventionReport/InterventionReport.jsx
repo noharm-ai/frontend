@@ -15,6 +15,7 @@ import Filter from "./Filter/Filter";
 import { ReactComponent as Brand } from "assets/noHarm-horizontal.svg";
 import { filtersToDescription } from "utils/report";
 import ChartStatus from "./Charts/ChartStatus";
+import ChartResponsibles from "./Charts/ChartResponsibles";
 
 export default function InterventionReport() {
   const reportData = useSelector(
@@ -119,10 +120,32 @@ export default function InterventionReport() {
                   </Col>
                   <Col xs={12}>
                     <Spin spinning={isLoading}>
+                      <StatsCard className={`yellow `}>
+                        <div className="stats-title">Pendentes</div>
+                        <div className="stats-value">
+                          {reportData?.totals?.totalPending.toLocaleString() ||
+                            "-"}
+                        </div>
+                      </StatsCard>
+                    </Spin>
+                  </Col>
+                  <Col xs={12}>
+                    <Spin spinning={isLoading}>
                       <StatsCard className={`green `}>
                         <div className="stats-title">Aceitas</div>
                         <div className="stats-value">
                           {reportData?.totals?.totalAccepted.toLocaleString() ||
+                            "-"}
+                        </div>
+                      </StatsCard>
+                    </Spin>
+                  </Col>
+                  <Col xs={12}>
+                    <Spin spinning={isLoading}>
+                      <StatsCard className={`red`}>
+                        <div className="stats-title">Não Aceita</div>
+                        <div className="stats-value">
+                          {reportData?.totals?.totalNotAccepted.toLocaleString() ||
                             "-"}
                         </div>
                       </StatsCard>
@@ -140,18 +163,24 @@ export default function InterventionReport() {
                       </StatsCard>
                     </Spin>
                   </Col>
-                  <Col xs={12}>
-                    <Spin spinning={isLoading}>
-                      <StatsCard className={`orange `}>
-                        <div className="stats-title">Pendentes</div>
-                        <div className="stats-value">
-                          {reportData?.totals?.totalPending.toLocaleString() ||
-                            "-"}
-                        </div>
-                      </StatsCard>
-                    </Spin>
-                  </Col>
                 </Row>
+              </Col>
+            </Row>
+
+            <Row gutter={[24, 24]}>
+              <Col xs={24} lg={12}>
+                <div className="page-break"></div>
+                <SectionHeader style={{ marginBottom: "24px" }}>
+                  Desfecho por Responsável
+                </SectionHeader>
+                <Spin spinning={isLoading}>
+                  <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                    <ChartResponsibles
+                      reportData={reportData}
+                      isLoading={isLoading}
+                    />
+                  </ChartCard>
+                </Spin>
               </Col>
             </Row>
           </Space>

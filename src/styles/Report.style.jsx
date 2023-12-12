@@ -58,6 +58,32 @@ export const StatsCard = styled.div`
     }
   }
 
+  &.red {
+    box-shadow: 0 -1px 7px rgb(116 176 119 / 16%);
+    border: 2px solid #e6744e;
+
+    .stats-title {
+      color: #e6744e;
+    }
+
+    .stats-value {
+      color: #e6744e;
+    }
+  }
+
+  &.yellow {
+    box-shadow: 0 -1px 7px rgb(116 176 119 / 16%);
+    border: 2px solid #f2b530;
+
+    .stats-title {
+      color: #f2b530;
+    }
+
+    .stats-value {
+      color: #f2b530;
+    }
+  }
+
   &.loading {
     animation: flickerAnimation 2s infinite;
   }
