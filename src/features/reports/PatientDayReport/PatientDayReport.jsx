@@ -57,7 +57,7 @@ export default function PatientDayReport() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Relatório Geral: Pacientes-Dia</h1>
+          <h1 className="page-header-title">Relatório: Pacientes-Dia</h1>
           <div className="page-header-legend">
             Métricas de Pacientes por dia
           </div>
@@ -69,7 +69,7 @@ export default function PatientDayReport() {
 
         <div ref={printRef}>
           <ReportHeader className="report-header">
-            <h1>Relatório Geral: Pacientes-Dia</h1>
+            <h1>Relatório: Pacientes-Dia</h1>
             <div className="brand">
               <Brand />
             </div>
@@ -84,7 +84,9 @@ export default function PatientDayReport() {
             ></div>
           </ReportFilterContainer>
           <Space direction="vertical" size="large">
-            <SectionHeader>Resumo</SectionHeader>
+            <SectionHeader>
+              <h2>Resumo</h2>
+            </SectionHeader>
             <Row gutter={[24, 24]}>
               <Col xs={12} lg={8}>
                 <Spin spinning={isLoading}>
@@ -174,7 +176,10 @@ export default function PatientDayReport() {
             </Row>
 
             <div className="page-break"></div>
-            <SectionHeader>Pacientes por Dia</SectionHeader>
+            <SectionHeader>
+              <h2>Pacientes-Dia</h2>
+              <div>Relação entre Pacientes-Dia e Pacientes-Dia Checados</div>
+            </SectionHeader>
             <Row gutter={[24, 24]}>
               <Col xs={24}>
                 <Spin spinning={isLoading}>
@@ -191,45 +196,54 @@ export default function PatientDayReport() {
             <Row gutter={[24, 24]}>
               <Col xs={24} lg={12}>
                 <div className="page-break"></div>
-                <SectionHeader style={{ marginBottom: "24px" }}>
-                  Checagem por Responsável
-                </SectionHeader>
-                <Spin spinning={isLoading}>
-                  <ChartCard className={`${isLoading ? "loading" : ""}`}>
-                    <ChartResponsibles
-                      reportData={reportData}
-                      isLoading={isLoading}
-                    />
-                  </ChartCard>
-                </Spin>
+                <Space direction="vertical" size="large">
+                  <SectionHeader>
+                    <h2>Checagem por Responsável</h2>
+                    <div></div>
+                  </SectionHeader>
+                  <Spin spinning={isLoading}>
+                    <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                      <ChartResponsibles
+                        reportData={reportData}
+                        isLoading={isLoading}
+                      />
+                    </ChartCard>
+                  </Spin>
+                </Space>
               </Col>
               <Col xs={24} lg={12}>
                 <div className="page-break"></div>
-                <SectionHeader style={{ marginBottom: "24px" }}>
-                  Checagem por Segmento
-                </SectionHeader>
-                <Spin spinning={isLoading}>
-                  <ChartCard className={`${isLoading ? "loading" : ""}`}>
-                    <ChartSegments
-                      reportData={reportData}
-                      isLoading={isLoading}
-                    />
-                  </ChartCard>
-                </Spin>
+                <Space direction="vertical" size="large">
+                  <SectionHeader>
+                    <h2>Checagem por Segmento</h2>
+                    <div></div>
+                  </SectionHeader>
+                  <Spin spinning={isLoading}>
+                    <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                      <ChartSegments
+                        reportData={reportData}
+                        isLoading={isLoading}
+                      />
+                    </ChartCard>
+                  </Spin>
+                </Space>
               </Col>
               <Col xs={24} lg={12}>
                 <div className="page-break"></div>
-                <SectionHeader style={{ marginBottom: "24px" }}>
-                  Top 20 Setores
-                </SectionHeader>
-                <Spin spinning={isLoading}>
-                  <ChartCard className={`${isLoading ? "loading" : ""}`}>
-                    <ChartDepartments
-                      reportData={reportData}
-                      isLoading={isLoading}
-                    />
-                  </ChartCard>
-                </Spin>
+                <Space direction="vertical" size="large">
+                  <SectionHeader>
+                    <h2>Top 20 Setores</h2>
+                    <div>Setores com maior número de checagens.</div>
+                  </SectionHeader>
+                  <Spin spinning={isLoading}>
+                    <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                      <ChartDepartments
+                        reportData={reportData}
+                        isLoading={isLoading}
+                      />
+                    </ChartCard>
+                  </Spin>
+                </Space>
               </Col>
             </Row>
           </Space>

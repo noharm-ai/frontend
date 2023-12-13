@@ -99,14 +99,27 @@ export const StatsCard = styled.div`
   }
 `;
 
-export const SectionHeader = styled.h2`
-  color: #1565c0;
-  font-size: 2.5rem;
-  font-weight: 500;
-  margin-bottom: 0;
+export const SectionHeader = styled.div`
+  h2 {
+    color: #1565c0;
+    font-size: 2.5rem;
+    font-weight: 500;
+    margin-bottom: 0;
 
-  @media print {
-    margin-bottom: 10px;
+    @media print {
+      margin-bottom: 10px;
+    }
+  }
+
+  > div {
+    font-size: 1rem;
+    font-weight: 300;
+    margin-bottom: 0;
+    margin-top: 5px;
+
+    @media print {
+      margin-bottom: 10px;
+    }
   }
 `;
 

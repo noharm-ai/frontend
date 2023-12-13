@@ -71,7 +71,7 @@ export default function InterventionReport() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Relatório Geral: Intervenções</h1>
+          <h1 className="page-header-title">Relatório: Intervenções</h1>
           <div className="page-header-legend">Métricas de Intervenções</div>
         </div>
       </PageHeader>
@@ -81,7 +81,7 @@ export default function InterventionReport() {
 
         <div ref={printRef}>
           <ReportHeader className="report-header">
-            <h1>Relatório Geral: Intervenções</h1>
+            <h1>Relatório: Intervenções</h1>
             <div className="brand">
               <Brand />
             </div>
@@ -96,7 +96,11 @@ export default function InterventionReport() {
             ></div>
           </ReportFilterContainer>
           <Space direction="vertical" size="large">
-            <SectionHeader>Resumo</SectionHeader>
+            <SectionHeader>
+              <h2>Resumo</h2>
+              <div>Totais por situação e percentual de aceitação.</div>
+            </SectionHeader>
+
             <Row gutter={[24, 24]}>
               <Col xs={24} lg={12}>
                 <Spin spinning={isLoading}>
@@ -184,42 +188,56 @@ export default function InterventionReport() {
             <Row gutter={[24, 24]}>
               <Col xs={24} lg={12}>
                 <div className="page-break"></div>
-                <SectionHeader style={{ marginBottom: "24px" }}>
-                  Desfecho por Responsável
-                </SectionHeader>
-                <Spin spinning={isLoading}>
-                  <ChartCard className={`${isLoading ? "loading" : ""}`}>
-                    <ChartResponsibles
-                      reportData={reportData}
-                      isLoading={isLoading}
-                    />
-                  </ChartCard>
-                </Spin>
+                <Space direction="vertical" size="large">
+                  <SectionHeader>
+                    <h2>Desfecho por Responsável</h2>
+                    <div>Totais por responsável pela intervenção.</div>
+                  </SectionHeader>
+                  <Spin spinning={isLoading}>
+                    <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                      <ChartResponsibles
+                        reportData={reportData}
+                        isLoading={isLoading}
+                      />
+                    </ChartCard>
+                  </Spin>
+                </Space>
               </Col>
               <Col xs={24} lg={12}>
                 <div className="page-break"></div>
-                <SectionHeader style={{ marginBottom: "24px" }}>
-                  Desfecho por Motivo
-                </SectionHeader>
-                <Spin spinning={isLoading}>
-                  <ChartCard className={`${isLoading ? "loading" : ""}`}>
-                    <ChartReasons
-                      reportData={reportData}
-                      isLoading={isLoading}
-                    />
-                  </ChartCard>
-                </Spin>
+                <Space direction="vertical" size="large">
+                  <SectionHeader>
+                    <h2>Desfecho por Motivo</h2>
+                    <div>Totais por motivo. Limitado em 20 motivos.</div>
+                  </SectionHeader>
+                  <Spin spinning={isLoading}>
+                    <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                      <ChartReasons
+                        reportData={reportData}
+                        isLoading={isLoading}
+                      />
+                    </ChartCard>
+                  </Spin>
+                </Space>
               </Col>
               <Col xs={24}>
                 <div className="page-break"></div>
-                <SectionHeader style={{ marginBottom: "24px" }}>
-                  Desfecho por Medicamento
-                </SectionHeader>
-                <Spin spinning={isLoading}>
-                  <ChartCard className={`${isLoading ? "loading" : ""}`}>
-                    <ChartDrugs reportData={reportData} isLoading={isLoading} />
-                  </ChartCard>
-                </Spin>
+                <Space direction="vertical" size="large">
+                  <SectionHeader>
+                    <h2>Desfecho por Medicamento</h2>
+                    <div>
+                      Totais por medicamento. Limitado em 30 medicamentos.
+                    </div>
+                  </SectionHeader>
+                  <Spin spinning={isLoading}>
+                    <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                      <ChartDrugs
+                        reportData={reportData}
+                        isLoading={isLoading}
+                      />
+                    </ChartCard>
+                  </Spin>
+                </Space>
               </Col>
             </Row>
           </Space>
