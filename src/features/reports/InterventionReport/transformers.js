@@ -4,6 +4,13 @@ import { intersection } from "utils/lodash";
 import { getUniqList, exportCSV } from "utils/report";
 
 const STATUSES = ["a", "j", "n", "x", "s"];
+export const STATUS_COLORS = {
+  a: "#90BF71",
+  j: "#69C1CD",
+  n: "#E6744E",
+  x: "#ccc",
+  s: "#FACA5A",
+};
 
 const filterDatasource = (datasource, filters) => {
   return datasource
@@ -133,6 +140,7 @@ const getStatusSummary = (datasource, total) => {
     .map((name) => {
       return {
         name,
+        color: STATUS_COLORS[name],
         total: status[name],
         value: ((status[name] * 100) / total).toFixed(1),
       };

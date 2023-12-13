@@ -2,9 +2,11 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 import { EChartBase } from "components/EChartBase";
+import { STATUS_COLORS } from "../transformers";
 
 export default function ChartStatus({ reportData, isLoading }) {
   const { t } = useTranslation();
+
   const chartOptions = {
     tooltip: {
       trigger: "item",
@@ -43,7 +45,9 @@ export default function ChartStatus({ reportData, isLoading }) {
               name: t(`interventionStatus.${i.name}`),
             }))
           : [],
-        color: ["#90BF71", "#69C1CD", "#E6744E", "#FACA5A", "#ccc"],
+        color: reportData?.statusSummary
+          ? reportData.statusSummary.map((i) => STATUS_COLORS[i.name])
+          : [],
       },
     ],
   };

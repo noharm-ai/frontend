@@ -99,7 +99,7 @@ export default function ChartResponsibles({ reportData, isLoading }) {
   return (
     <EChartBase
       option={chartOptions}
-      style={{ height: "50vh", minHeight: "700px" }}
+      style={{ height: "60vh", minHeight: "700px" }}
       loading={isLoading}
     />
   );

@@ -130,16 +130,33 @@ export default function Filter({ printRef }) {
   };
 
   useEffect(() => {
-    dispatch(fetchReportData()).then((response) => {
-      if (response.error) {
-        notification.error({
-          message: t("error.title"),
-          description: t("error.description"),
-        });
-      } else {
-        search(initialValues, response.payload.cacheData);
-      }
-    });
+    const fetchData = () => {
+      dispatch(fetchReportData()).then((response) => {
+        if (response.error) {
+          DefaultModal.confirm({
+            title: "Não foi possível exibir este relatório.",
+            content: (
+              <>
+                <p>
+                  Por favor, tente novamente.
+                  <br />
+                  Se o problema persistir, entre em contato com a Ajuda.
+                </p>
+              </>
+            ),
+            width: 500,
+            okText: "Tentar novamente",
+            cancelText: "Fechar",
+            onOk: () => fetchData(),
+            wrapClassName: "default-modal",
+          });
+        } else {
+          search(initialValues, response.payload.cacheData);
+        }
+      });
+    };
+
+    fetchData();
 
     return () => {
       dispatch(reset());

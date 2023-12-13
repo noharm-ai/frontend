@@ -91,7 +91,7 @@ export default function ChartDrugs({ reportData, isLoading }) {
   return (
     <EChartBase
       option={chartOptions}
-      style={{ height: "65vh", minHeight: "700px" }}
+      style={{ height: "70vh", minHeight: "800px" }}
       loading={isLoading}
     />
   );

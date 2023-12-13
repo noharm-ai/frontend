@@ -13,7 +13,9 @@ export const getUniqList = (datasource, attr) => {
     return uniq(flat).sort();
   }
 
-  return uniq(datasource.map((i) => i[attr])).sort();
+  return uniq(datasource.map((i) => i[attr]))
+    .filter((i) => i !== null)
+    .sort();
 };
 
 export const filtersToDescription = (filters, filtersConfig) => {
