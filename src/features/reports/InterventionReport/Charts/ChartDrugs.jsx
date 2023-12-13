@@ -2,7 +2,11 @@ import React from "react";
 
 import { EChartBase } from "components/EChartBase";
 
-export default function ChartResponsibles({ reportData, isLoading }) {
+export default function ChartDrugs({ reportData, isLoading }) {
+  const maxRows = 30;
+  const data = reportData?.drugSummary
+    ? reportData.drugSummary.slice(maxRows * -1)
+    : [];
   const chartOptions = {
     tooltip: {
       trigger: "axis",
@@ -23,9 +27,7 @@ export default function ChartResponsibles({ reportData, isLoading }) {
     },
     yAxis: {
       type: "category",
-      data: reportData?.responsibleSummary
-        ? reportData?.responsibleSummary.map((i) => i.name)
-        : [],
+      data: data.map((i) => i.name),
     },
     toolbox: {
       feature: {
@@ -38,30 +40,24 @@ export default function ChartResponsibles({ reportData, isLoading }) {
         type: "bar",
         color: "#ccc",
         stack: "total",
-        data: reportData?.responsibleSummary
-          ? reportData?.responsibleSummary.map((i) => ({
-              value: i.totals["x"],
-              total: i.totals["all"],
-            }))
-          : [],
+        data: data.map((i) => ({
+          value: i.totals["x"],
+          total: i.totals["all"],
+        })),
       },
       {
         name: "Pendente",
         type: "bar",
         color: "#FACA5A",
         stack: "total",
-        data: reportData?.responsibleSummary
-          ? reportData?.responsibleSummary.map((i) => i.totals["s"])
-          : [],
+        data: data.map((i) => i.totals["s"]),
       },
       {
         name: "Justificada",
         type: "bar",
         color: "#69C1CD",
         stack: "total",
-        data: reportData?.responsibleSummary
-          ? reportData?.responsibleSummary.map((i) => i.totals["j"])
-          : [],
+        data: data.map((i) => i.totals["j"]),
       },
 
       {
@@ -69,21 +65,17 @@ export default function ChartResponsibles({ reportData, isLoading }) {
         type: "bar",
         color: "#E6744E",
         stack: "total",
-        data: reportData?.responsibleSummary
-          ? reportData?.responsibleSummary.map((i) => i.totals["n"])
-          : [],
+        data: data.map((i) => i.totals["n"]),
       },
       {
         name: "Aceita",
         type: "bar",
         color: "#90BF71",
         stack: "total",
-        data: reportData?.responsibleSummary
-          ? reportData?.responsibleSummary.map((i) => ({
-              value: i.totals["a"],
-              total: i.totals["all"],
-            }))
-          : [],
+        data: data.map((i) => ({
+          value: i.totals["a"],
+          total: i.totals["all"],
+        })),
         label: {
           show: true,
           position: "right",
@@ -99,7 +91,7 @@ export default function ChartResponsibles({ reportData, isLoading }) {
   return (
     <EChartBase
       option={chartOptions}
-      style={{ height: "50vh", minHeight: "700px" }}
+      style={{ height: "65vh", minHeight: "700px" }}
       loading={isLoading}
     />
   );

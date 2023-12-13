@@ -16,6 +16,8 @@ import { ReactComponent as Brand } from "assets/noHarm-horizontal.svg";
 import { filtersToDescription } from "utils/report";
 import ChartStatus from "./Charts/ChartStatus";
 import ChartResponsibles from "./Charts/ChartResponsibles";
+import ChartReasons from "./Charts/ChartReasons";
+import ChartDrugs from "./Charts/ChartDrugs";
 
 export default function InterventionReport() {
   const reportData = useSelector(
@@ -47,9 +49,21 @@ export default function InterventionReport() {
       label: "Segmento",
       type: "list",
     },
+    reasonList: {
+      label: "Motivo",
+      type: "list",
+    },
+    drugList: {
+      label: "Medicamento",
+      type: "list",
+    },
     weekDays: {
       label: "Somente dias de semana",
       type: "bool",
+    },
+    interventionType: {
+      label: "Tipo de intervenção",
+      type: "dict",
     },
   };
 
@@ -110,7 +124,7 @@ export default function InterventionReport() {
                   <Col xs={12}>
                     <Spin spinning={isLoading}>
                       <StatsCard className={`blue `}>
-                        <div className="stats-title">Passível de Aceite</div>
+                        <div className="stats-title">Passíveis de Aceite</div>
                         <div className="stats-value">
                           {reportData?.totals?.totalAccountable.toLocaleString() ||
                             "-"}
@@ -120,10 +134,10 @@ export default function InterventionReport() {
                   </Col>
                   <Col xs={12}>
                     <Spin spinning={isLoading}>
-                      <StatsCard className={`yellow `}>
-                        <div className="stats-title">Pendentes</div>
+                      <StatsCard className={`red`}>
+                        <div className="stats-title">Não Aceitas</div>
                         <div className="stats-value">
-                          {reportData?.totals?.totalPending.toLocaleString() ||
+                          {reportData?.totals?.totalNotAccepted.toLocaleString() ||
                             "-"}
                         </div>
                       </StatsCard>
@@ -142,10 +156,10 @@ export default function InterventionReport() {
                   </Col>
                   <Col xs={12}>
                     <Spin spinning={isLoading}>
-                      <StatsCard className={`red`}>
-                        <div className="stats-title">Não Aceita</div>
+                      <StatsCard className={`yellow `}>
+                        <div className="stats-title">Pendentes</div>
                         <div className="stats-value">
-                          {reportData?.totals?.totalNotAccepted.toLocaleString() ||
+                          {reportData?.totals?.totalPending.toLocaleString() ||
                             "-"}
                         </div>
                       </StatsCard>
@@ -179,6 +193,31 @@ export default function InterventionReport() {
                       reportData={reportData}
                       isLoading={isLoading}
                     />
+                  </ChartCard>
+                </Spin>
+              </Col>
+              <Col xs={24} lg={12}>
+                <div className="page-break"></div>
+                <SectionHeader style={{ marginBottom: "24px" }}>
+                  Desfecho por Motivo
+                </SectionHeader>
+                <Spin spinning={isLoading}>
+                  <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                    <ChartReasons
+                      reportData={reportData}
+                      isLoading={isLoading}
+                    />
+                  </ChartCard>
+                </Spin>
+              </Col>
+              <Col xs={24}>
+                <div className="page-break"></div>
+                <SectionHeader style={{ marginBottom: "24px" }}>
+                  Desfecho por Medicamento
+                </SectionHeader>
+                <Spin spinning={isLoading}>
+                  <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                    <ChartDrugs reportData={reportData} isLoading={isLoading} />
                   </ChartCard>
                 </Spin>
               </Col>

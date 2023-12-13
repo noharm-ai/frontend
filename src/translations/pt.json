@@ -549,6 +549,15 @@
     "checkedItens": "ITENS CHECADOS",
     "responsible": "RESPONSAVEL",
     "clinicalNote": "EVOLUCAO",
-    "segment": "SEGMENTO"
+    "segment": "SEGMENTO",
+    "idPrescriptionDrug": "ID MEDICAMENTO PRESCRITO",
+    "error": "ERRO PRESCRICAO",
+    "cost": "REDUZ CUSTO",
+    "statusDescription": "SITUACAO",
+    "status": "SITUACAO",
+    "expendedDose": "DOSE DESPENDIDA",
+    "economyDays": "DIAS DE ECONOMIA",
+    "drug": "MEDICAMENTO",
+    "reason": "MOTIVO"
   }
 }

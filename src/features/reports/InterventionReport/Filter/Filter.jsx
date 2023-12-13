@@ -123,7 +123,10 @@ export default function Filter({ printRef }) {
     responsibleList: [],
     departmentList: [],
     segmentList: [],
+    drugList: [],
+    reasonList: [],
     weekDays: false,
+    interventionType: "",
   };
 
   useEffect(() => {
@@ -162,7 +165,7 @@ export default function Filter({ printRef }) {
         secondaryFilters={<SecondaryFilters />}
         onSearch={search}
         loading={isFetching}
-        skipFilterList={["dateRange"]}
+        skipFilterList={["dateRange", "segmentList", "departmentList"]}
         memoryType={memoryFilterType}
         skipMemoryList={{ dateRange: "daterange" }}
       />

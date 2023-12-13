@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 
+import { intersection } from "utils/lodash";
 import { getUniqList, exportCSV } from "utils/report";
 
-const ACCOUNTABLE_STATUSES = ["a", "j", "n"];
 const STATUSES = ["a", "j", "n", "x", "s"];
 
 const filterDatasource = (datasource, filters) => {
@@ -36,6 +36,31 @@ const filterDatasource = (datasource, filters) => {
     .filter((i) => {
       if (filters.segmentList.length) {
         return filters.segmentList.indexOf(i.segment) !== -1;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.drugList.length) {
+        return filters.drugList.indexOf(i.drug) !== -1;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.reasonList.length) {
+        return intersection(filters.reasonList, i.reason).length > 0;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.interventionType === "p") {
+        return i.idPrescription !== "0";
+      }
+
+      if (filters.interventionType === "d") {
+        return i.idPrescription === "0";
       }
 
       return true;
@@ -118,18 +143,18 @@ const getReasonSummary = (datasource) => {
   const reasons = getUniqList(datasource, "reason");
 
   const summary = reasons.map((r) => {
-    const totals = {
-      accountable: 0,
-      accepted: 0,
-      all: 0,
-    };
+    const totals = { all: 0 };
+    STATUSES.forEach((s) => {
+      totals[s] = 0;
+    });
 
     datasource.forEach((i) => {
       if (i.reason.indexOf(r) !== -1) {
-        totals.accountable +=
-          ACCOUNTABLE_STATUSES.indexOf(i.status) !== -1 ? 1 : 0;
-        totals.accepted += i.status === "a" ? 1 : 0;
         totals.all += 1;
+
+        STATUSES.forEach((s) => {
+          totals[s] += i.status === s ? 1 : 0;
+        });
       }
     });
 
@@ -139,7 +164,7 @@ const getReasonSummary = (datasource) => {
     };
   });
 
-  return summary.sort((a, b) => b.totals.all - a.totals.all);
+  return summary.sort((a, b) => a.totals.all - b.totals.all);
 };
 
 const getResponsibleSummary = (datasource) => {
@@ -170,6 +195,34 @@ const getResponsibleSummary = (datasource) => {
   return summary.sort((a, b) => a.totals.all - b.totals.all);
 };
 
+const getDrugSummary = (datasource) => {
+  const drugs = getUniqList(datasource, "drug").filter((i) => i !== null);
+
+  const summary = drugs.map((r) => {
+    const totals = { all: 0 };
+    STATUSES.forEach((s) => {
+      totals[s] = 0;
+    });
+
+    datasource.forEach((i) => {
+      if (i.drug === r) {
+        totals.all += 1;
+
+        STATUSES.forEach((s) => {
+          totals[s] += i.status === s ? 1 : 0;
+        });
+      }
+    });
+
+    return {
+      name: r,
+      totals,
+    };
+  });
+
+  return summary.sort((a, b) => a.totals.all - b.totals.all);
+};
+
 export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
   const totals = getTotals(filteredList);
@@ -183,6 +236,7 @@ export const getReportData = (datasource, filters) => {
     statusSummary: getStatusSummary(filteredList, totals.total),
     reasonSummary: getReasonSummary(filteredList),
     responsibleSummary: getResponsibleSummary(filteredList),
+    drugSummary: getDrugSummary(filteredList),
   };
 
   console.log("reportdata", reportData);

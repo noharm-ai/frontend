@@ -548,6 +548,15 @@
     "checkedItens": "CHECKED ITENS",
     "responsible": "RESPONSIBLE",
     "clinicalNote": "CLINICAL NOTES",
-    "segment": "SEGMENT"
+    "segment": "SEGMENT",
+    "idPrescriptionDrug": "ID PRESCRIBED DRUG",
+    "error": "PRESCRIPTION ERROR",
+    "cost": "COST REDUCTION",
+    "statusDescription": "STATUS",
+    "status": "STATUS",
+    "expendedDose": "EXPENDED DOSE",
+    "economyDays": "DAYS OF ECONOMY",
+    "drug": "DRUG",
+    "reason": "REASON"
   }
 }
