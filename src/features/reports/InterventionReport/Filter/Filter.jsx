@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
@@ -13,7 +13,6 @@ import {
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
-import notification from "components/notification";
 import { FloatButtonGroup } from "components/FloatButton";
 import AdvancedFilter from "components/AdvancedFilter";
 import DefaultModal from "components/Modal";
@@ -30,6 +29,7 @@ import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
 import security from "services/security";
 import { onBeforePrint, onAfterPrint } from "utils/report";
+import useFetchReport from "hooks/useFetchReport";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
@@ -54,21 +54,30 @@ export default function Filter({ printRef }) {
   });
   const sec = security(roles);
   const memoryFilterType = `intervention_report_${userId}`;
+  const initialValues = {
+    dateRange: [dayjs().startOf("month"), dayjs().subtract(1, "day")],
+    responsibleList: [],
+    departmentList: [],
+    segmentList: [],
+    drugList: [],
+    reasonList: [],
+    weekDays: false,
+    interventionType: "",
+  };
+
+  const fetchTools = useFetchReport({
+    action: fetchReportData,
+    reset,
+    onAfterFetch: (data) => {
+      search(initialValues, data);
+    },
+    onAfterClearCache: (data) => {
+      search(currentFilters);
+    },
+  });
 
   const cleanCache = () => {
-    dispatch(fetchReportData({ clearCache: true })).then((response) => {
-      if (response.error) {
-        notification.error({
-          message: t("error.title"),
-          description: t("error.description"),
-        });
-      } else {
-        notification.success({
-          message: "Cache limpo com sucesso!",
-        });
-        search(currentFilters, response.payload.cacheData);
-      }
-    });
+    fetchTools.clearCache();
   };
 
   const exportCSV = () => {
@@ -117,51 +126,6 @@ export default function Filter({ printRef }) {
       wrapClassName: "default-modal",
     });
   };
-
-  const initialValues = {
-    dateRange: [dayjs().startOf("month"), dayjs().subtract(1, "day")],
-    responsibleList: [],
-    departmentList: [],
-    segmentList: [],
-    drugList: [],
-    reasonList: [],
-    weekDays: false,
-    interventionType: "",
-  };
-
-  useEffect(() => {
-    const fetchData = () => {
-      dispatch(fetchReportData()).then((response) => {
-        if (response.error) {
-          DefaultModal.confirm({
-            title: "Não foi possível exibir este relatório.",
-            content: (
-              <>
-                <p>
-                  Por favor, tente novamente.
-                  <br />
-                  Se o problema persistir, entre em contato com a Ajuda.
-                </p>
-              </>
-            ),
-            width: 500,
-            okText: "Tentar novamente",
-            cancelText: "Fechar",
-            onOk: () => fetchData(),
-            wrapClassName: "default-modal",
-          });
-        } else {
-          search(initialValues, response.payload.cacheData);
-        }
-      });
-    };
-
-    fetchData();
-
-    return () => {
-      dispatch(reset());
-    };
-  }, []); //eslint-disable-line
 
   const search = (params, forceDs) => {
     dispatch(setFilteredStatus("loading"));
