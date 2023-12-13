@@ -173,33 +173,36 @@ const getPrescriptionPlotSeries = (datasource) => {
     });
 };
 
-// const getLifesPlotSeries = (datasource) => {
-//   const days = {};
-//   datasource.forEach((i) => {
-//     if (days[i.date]) {
-//       days[i.date].lifesTotal.push(i.admissionNumber);
-//       if (i.checked) {
-//         days[i.date].lifesChecked.push(i.admissionNumber);
-//       }
-//     } else {
-//       days[i.date] = {
-//         date: i.date,
-//         lifesTotal: [],
-//         lifesChecked: [],
-//       };
-//     }
-//   });
+const getScoreSummary = (datasource) => {
+  const scores = [];
+  for (let s = 0; s < 4; s++) {
+    scores.push({ total: 0, checked: 0 });
+  }
 
-//   return Object.keys(days)
-//     .sort()
-//     .map((i) => {
-//       return {
-//         date: days[i].date,
-//         total: uniq(days[i].lifesTotal).length,
-//         checked: uniq(days[i].lifesChecked).length,
-//       };
-//     });
-// };
+  datasource.forEach((i) => {
+    const checkedValue = i.checked ? 1 : 0;
+
+    if (i.globalScore >= 90) {
+      scores[3].total += 1;
+      scores[3].checked += checkedValue;
+    } else if (i.globalScore >= 60 && i.globalScore < 90) {
+      scores[2].total += 1;
+      scores[2].checked += checkedValue;
+    } else if (i.globalScore >= 10 && i.globalScore < 60) {
+      scores[1].total += 1;
+      scores[1].checked += checkedValue;
+    } else {
+      scores[0].total += 1;
+      scores[0].checked += checkedValue;
+    }
+  });
+
+  return scores.map((i) => ({
+    ...i,
+    pending: i.total - i.checked,
+    percentage: i.total ? ((i.checked * 100) / i.total).toFixed() : 0,
+  }));
+};
 
 export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
@@ -221,6 +224,7 @@ export const getReportData = (datasource, filters) => {
     segments: getSegmentsSummary(filteredList, prescriptionTotals.checked),
     days: days,
     prescriptionPlotSeries: getPrescriptionPlotSeries(filteredList),
+    scoreSummary: getScoreSummary(filteredList),
   };
 
   return reportData;

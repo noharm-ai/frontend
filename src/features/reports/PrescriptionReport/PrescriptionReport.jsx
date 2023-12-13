@@ -16,6 +16,7 @@ import ChartPrescriptionDay from "./Charts/ChartPrescriptionDay";
 import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartDepartments from "./Charts/ChartDepartments";
 import ChartSegments from "./Charts/ChartSegments";
+import ChartScores from "./Charts/ChartScores";
 import { ReactComponent as Brand } from "assets/noHarm-horizontal.svg";
 import { filtersToDescription } from "utils/report";
 
@@ -199,7 +200,7 @@ export default function PrescriptionReport() {
                 <Space direction="vertical" size="large">
                   <SectionHeader>
                     <h2>Checagem por Responsável</h2>
-                    <div></div>
+                    <div>Checagens agrupadas por responsável.</div>
                   </SectionHeader>
                   <Spin spinning={isLoading}>
                     <ChartCard className={`${isLoading ? "loading" : ""}`}>
@@ -215,12 +216,14 @@ export default function PrescriptionReport() {
                 <div className="page-break"></div>
                 <Space direction="vertical" size="large">
                   <SectionHeader>
-                    <h2>Checagem por Segmento</h2>
-                    <div></div>
+                    <h2>Prescrições por Escore</h2>
+                    <div>
+                      Prescrições agrupadas por escore e percentual de checagem.
+                    </div>
                   </SectionHeader>
                   <Spin spinning={isLoading}>
                     <ChartCard className={`${isLoading ? "loading" : ""}`}>
-                      <ChartSegments
+                      <ChartScores
                         reportData={reportData}
                         isLoading={isLoading}
                       />
@@ -238,6 +241,23 @@ export default function PrescriptionReport() {
                   <Spin spinning={isLoading}>
                     <ChartCard className={`${isLoading ? "loading" : ""}`}>
                       <ChartDepartments
+                        reportData={reportData}
+                        isLoading={isLoading}
+                      />
+                    </ChartCard>
+                  </Spin>
+                </Space>
+              </Col>
+              <Col xs={24} lg={12}>
+                <div className="page-break"></div>
+                <Space direction="vertical" size="large">
+                  <SectionHeader>
+                    <h2>Checagem por Segmento</h2>
+                    <div>Checagens agrupadas por segmento.</div>
+                  </SectionHeader>
+                  <Spin spinning={isLoading}>
+                    <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                      <ChartSegments
                         reportData={reportData}
                         isLoading={isLoading}
                       />

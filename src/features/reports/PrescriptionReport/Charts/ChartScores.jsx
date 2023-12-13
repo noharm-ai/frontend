@@ -2,17 +2,13 @@ import React from "react";
 
 import { EChartBase } from "components/EChartBase";
 
-export default function ChartResponsibles({ reportData, isLoading }) {
+export default function ChartScores({ reportData, isLoading }) {
+  const data = reportData?.scoreSummary ? reportData?.scoreSummary : [];
   const chartOptions = {
     tooltip: {
       trigger: "axis",
       axisPointer: {
         type: "shadow",
-      },
-      formatter: function (params) {
-        const sData = params[0];
-        return `${sData.seriesName}<br />
-                <strong>${sData.name}:</strong> ${sData.data.value} (${sData.data.percentage}%)`;
       },
     },
     legend: {},
@@ -22,15 +18,13 @@ export default function ChartResponsibles({ reportData, isLoading }) {
       bottom: "2%",
       containLabel: true,
     },
-    xAxis: {
+    yAxis: {
       type: "value",
       boundaryGap: [0, 0.01],
     },
-    yAxis: {
+    xAxis: {
       type: "category",
-      data: reportData?.responsibles
-        ? reportData?.responsibles.map((i) => i.name)
-        : [],
+      data: ["Verde", "Amarelo", "Laranja", "Vermelho"],
     },
     toolbox: {
       feature: {
@@ -39,19 +33,31 @@ export default function ChartResponsibles({ reportData, isLoading }) {
     },
     series: [
       {
-        name: "Prescrições Checadas por Responsável",
+        name: "Prescrições Pendentes",
+        type: "bar",
+        color: "#ccc",
+        stack: "total",
+        data: data.map((i) => ({
+          value: i.pending,
+        })),
+      },
+      {
+        name: "Prescrições Checadas",
         type: "bar",
         color: "#90BF71",
-        data: reportData?.responsibles
-          ? reportData?.responsibles.map((i) => ({
-              value: i.total,
-              percentage: i.percentage,
-            }))
-          : [],
+        stack: "total",
+        data: data.map((i) => ({
+          value: i.checked,
+          total: i.total,
+          percentage: i.percentage,
+        })),
         label: {
           show: true,
-          position: "right",
+          position: "top",
           valueAnimation: true,
+          formatter: (params) => {
+            return `Total: ${params.data.total}\nChecados: ${params.data.percentage}%`;
+          },
         },
       },
     ],

@@ -41,7 +41,7 @@ export default function ChartResponsibles({ reportData, isLoading }) {
       {
         name: "Pacientes-Dia Checados por Responsável",
         type: "bar",
-        color: "#388e3c",
+        color: "#90BF71",
         data: reportData?.responsibles
           ? reportData?.responsibles.map((i) => ({
               value: i.total,

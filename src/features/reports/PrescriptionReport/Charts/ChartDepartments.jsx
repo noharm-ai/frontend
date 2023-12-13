@@ -36,7 +36,7 @@ export default function ChartDepartments({ reportData, isLoading }) {
       {
         name: "Prescrições Checadas por Setor",
         type: "bar",
-        color: "#388e3c",
+        color: "#90BF71",
         data: reportData?.departments
           ? reportData?.departments.map((i) => ({
               value: i.total,
