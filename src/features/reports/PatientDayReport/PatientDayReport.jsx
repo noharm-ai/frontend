@@ -218,7 +218,7 @@ export default function PatientDayReport() {
                   <SectionHeader>
                     <h2>Pacientes-Dia por Escore</h2>
                     <div>
-                      Pacientes-Dia agrupadas por escore e percentual de
+                      Pacientes-Dia agrupados por escore e percentual de
                       checagem.
                     </div>
                   </SectionHeader>
