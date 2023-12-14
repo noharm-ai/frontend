@@ -1,7 +1,10 @@
 import React, { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Row, Col, Space, Spin } from "antd";
+import { UnorderedListOutlined } from "@ant-design/icons";
 
+import Button from "components/Button";
 import { PageHeader } from "styles/PageHeader.style";
 import {
   StatsCard,
@@ -20,6 +23,7 @@ import ChartReasons from "./Charts/ChartReasons";
 import ChartDrugs from "./Charts/ChartDrugs";
 
 export default function InterventionReport() {
+  const navigate = useNavigate();
   const reportData = useSelector(
     (state) => state.reportsArea.intervention.filtered.result
   );
@@ -73,6 +77,15 @@ export default function InterventionReport() {
         <div>
           <h1 className="page-header-title">Relatório: Intervenções</h1>
           <div className="page-header-legend">Métricas de Intervenções</div>
+        </div>
+        <div className="page-header-actions">
+          <Button
+            type="default"
+            icon={<UnorderedListOutlined />}
+            onClick={() => navigate("/relatorios")}
+          >
+            Ver todos relatórios
+          </Button>
         </div>
       </PageHeader>
 

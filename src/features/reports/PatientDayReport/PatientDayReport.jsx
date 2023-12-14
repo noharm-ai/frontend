@@ -1,7 +1,10 @@
 import React, { useRef } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Row, Col, Space, Spin } from "antd";
+import { UnorderedListOutlined } from "@ant-design/icons";
 
+import Button from "components/Button";
 import { PageHeader } from "styles/PageHeader.style";
 import {
   StatsCard,
@@ -21,6 +24,7 @@ import { filtersToDescription } from "utils/report";
 import ChartScores from "./Charts/ChartScores";
 
 export default function PatientDayReport() {
+  const navigate = useNavigate();
   const reportData = useSelector(
     (state) => state.reportsArea.patientDay.filtered.result
   );
@@ -62,6 +66,15 @@ export default function PatientDayReport() {
           <div className="page-header-legend">
             Métricas de Pacientes por dia
           </div>
+        </div>
+        <div className="page-header-actions">
+          <Button
+            type="default"
+            icon={<UnorderedListOutlined />}
+            onClick={() => navigate("/relatorios")}
+          >
+            Ver todos relatórios
+          </Button>
         </div>
       </PageHeader>
 

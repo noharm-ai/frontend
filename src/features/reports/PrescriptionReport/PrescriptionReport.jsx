@@ -1,7 +1,10 @@
 import React, { useRef } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Row, Col, Space, Spin } from "antd";
+import { UnorderedListOutlined } from "@ant-design/icons";
 
+import Button from "components/Button";
 import { PageHeader } from "styles/PageHeader.style";
 import {
   StatsCard,
@@ -21,6 +24,7 @@ import { ReactComponent as Brand } from "assets/noHarm-horizontal.svg";
 import { filtersToDescription } from "utils/report";
 
 export default function PrescriptionReport() {
+  const navigate = useNavigate();
   const reportData = useSelector(
     (state) => state.reportsArea.prescription.filtered.result
   );
@@ -62,6 +66,15 @@ export default function PrescriptionReport() {
         <div>
           <h1 className="page-header-title">Relatório: Prescrições</h1>
           <div className="page-header-legend">Métricas de Prescrições</div>
+        </div>
+        <div className="page-header-actions">
+          <Button
+            type="default"
+            icon={<UnorderedListOutlined />}
+            onClick={() => navigate("/relatorios")}
+          >
+            Ver todos relatórios
+          </Button>
         </div>
       </PageHeader>
 

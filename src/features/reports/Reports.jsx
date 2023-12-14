@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Row, Col, Spin } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { UnorderedListOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
 import notification from "components/notification";
@@ -99,9 +99,9 @@ export default function Reports() {
             <Button
               type="default"
               onClick={() => setCurrentReport(null)}
-              icon={<ArrowLeftOutlined />}
+              icon={<UnorderedListOutlined />}
             >
-              Voltar
+              Ver todos relatórios
             </Button>
           )}
         </div>
