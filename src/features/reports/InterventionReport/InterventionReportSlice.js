@@ -19,6 +19,7 @@ const initialState = {
     result: {},
   },
   filters: {},
+  helpModal: false,
 };
 
 export const fetchReportData = createAsyncThunk(
@@ -59,6 +60,9 @@ const interventionReportSlice = createSlice({
     setFilters(state, action) {
       state.filters = action.payload;
     },
+    setHelpModal(state, action) {
+      state.helpModal = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -87,7 +91,12 @@ const interventionReportSlice = createSlice({
   },
 });
 
-export const { reset, setFilteredStatus, setFilteredResult, setFilters } =
-  interventionReportSlice.actions;
+export const {
+  reset,
+  setFilteredStatus,
+  setFilteredResult,
+  setFilters,
+  setHelpModal,
+} = interventionReportSlice.actions;
 
 export default interventionReportSlice.reducer;

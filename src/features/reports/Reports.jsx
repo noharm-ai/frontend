@@ -53,7 +53,7 @@ export default function Reports() {
       description: "Métricas de análise de Prescrição",
       icon: "report",
       type: "internal",
-      route: "/relatorios/prescricoes",
+      route: "/relatorios/intervencoes",
       visible: internalList.indexOf("INTERVENTION") !== -1,
     },
   ];

@@ -2,27 +2,25 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
-import { FloatButton, Alert } from "antd";
+import { FloatButton } from "antd";
 import {
   MenuOutlined,
   ReloadOutlined,
   PrinterOutlined,
   DownloadOutlined,
   QuestionCircleOutlined,
-  ExportOutlined,
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
 import { FloatButtonGroup } from "components/FloatButton";
 import AdvancedFilter from "components/AdvancedFilter";
-import DefaultModal from "components/Modal";
-import Button from "components/Button";
 import {
   fetchReportData,
   reset,
   setFilteredStatus,
   setFilteredResult,
   setFilters,
+  setHelpModal,
 } from "../PrescriptionReportSlice";
 import { getReportData, filterAndExportCSV } from "../transformers";
 import MainFilters from "./MainFilters";
@@ -41,9 +39,6 @@ export default function Filter({ printRef }) {
   );
   const datasource = useSelector(
     (state) => state.reportsArea.prescription.list
-  );
-  const updatedAt = useSelector(
-    (state) => state.reportsArea.prescription.updatedAt
   );
   const roles = useSelector((state) => state.user.account.roles);
   const userId = useSelector((state) => state.user.account.userId);
@@ -82,46 +77,7 @@ export default function Filter({ printRef }) {
   };
 
   const showHelp = () => {
-    DefaultModal.info({
-      title: "Informações",
-      content: (
-        <>
-          <Alert
-            message={`Atualizado em: ${dayjs(updatedAt).format(
-              "DD/MM/YY HH:mm"
-            )}`}
-            type="info"
-          />
-          <p>
-            Este relatório apresenta as métricas de avaliação de{" "}
-            <strong>Prescrições</strong>.
-          </p>
-          <p>
-            O período disponibilizado para consulta é:{" "}
-            <strong>{dayjs().subtract(60, "day").format("DD/MM/YY")}</strong>{" "}
-            até <strong>{dayjs().subtract(1, "day").format("DD/MM/YY")}</strong>
-          </p>
-          <p>
-            Para informações mais detalhadas sobre este relatório, acesse a base
-            de conhecimento através do botão abaixo:
-            <Button
-              type="default"
-              icon={<ExportOutlined />}
-              size="large"
-              style={{ marginTop: "10px" }}
-              block
-            >
-              Base de Conhecimento
-            </Button>
-          </p>
-        </>
-      ),
-      icon: <QuestionCircleOutlined />,
-      width: 500,
-      okText: "Fechar",
-      okButtonProps: { type: "default" },
-      wrapClassName: "default-modal",
-    });
+    dispatch(setHelpModal(true));
   };
 
   const search = (params, forceDs) => {
