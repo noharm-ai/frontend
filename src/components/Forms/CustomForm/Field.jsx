@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Select, InputNumber } from "components/Inputs";
+import { Select, InputNumber, Textarea } from "components/Inputs";
 import Editor from "components/Editor";
 
 import MemoryField from "./Fields/MemoryField";
@@ -101,6 +101,16 @@ export default function Field({ question, values, setFieldValue }) {
           content={values[question.id]}
         />
       </EditorBox>
+    );
+  }
+
+  if (question.type === "json") {
+    return (
+      <Textarea
+        value={values[question.id]}
+        onChange={({ target }) => setFieldValue(question.id, target.value)}
+        style={{ minHeight: "400px", ...(question.style || {}) }}
+      ></Textarea>
     );
   }
 

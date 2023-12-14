@@ -13,6 +13,7 @@ export const Wrapper = styled.div`
   text-align: center;
   transition: box-shadow 0.3s;
   cursor: pointer;
+  height: 100%;
 
   &:hover {
     box-shadow: 0 -1px 7px rgb(0 0 0 / 16%);

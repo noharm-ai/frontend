@@ -30,6 +30,7 @@ import AdminFrequency from "pages/Admin/Frequency";
 import AdminInterventionReason from "pages/Admin/InterventionReason";
 import AdminMemory from "pages/Admin/Memory";
 import AdminMemoryRoutes from "pages/Admin/Memory/Routes";
+import AdminMemoryReports from "pages/Admin/Memory/Reports";
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminSegment from "pages/Admin/Segment";
@@ -239,6 +240,11 @@ const routes = [
     exact: true,
     path: "/admin/vias",
     element: <WithAuth component={AdminMemoryRoutes} />,
+  },
+  {
+    exact: true,
+    path: "/admin/relatorios",
+    element: <WithAuth component={AdminMemoryReports} />,
   },
   {
     exact: true,
