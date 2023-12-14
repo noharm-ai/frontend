@@ -3,11 +3,11 @@ import React from "react";
 import Icon from "components/Icon";
 import Heading from "components/Heading";
 import Tooltip from "components/Tooltip";
-import { Wrapper, Excerpt } from "./Widget.style";
+import { Wrapper, Excerpt } from "./ReportCard.style";
 
-export default function Widget({ id, reportData, showReport, ...props }) {
+export default function ReportCard({ id, reportData, showReport, ...props }) {
   return (
-    <Tooltip title="Visualizar">
+    <Tooltip title="Abrir Relatório">
       <Wrapper id={id} {...props} onClick={() => showReport(reportData)}>
         {reportData.icon && (
           <Icon

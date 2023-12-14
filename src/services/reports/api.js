@@ -4,6 +4,12 @@ const endpoints = {
   general: "/reports/general",
 };
 
+const getConfig = (params = {}) =>
+  instance.get(`/reports/config`, {
+    params,
+    ...setHeaders(),
+  });
+
 const getPatientDay = (params = {}) =>
   instance.get(`${endpoints.general}/patient-day`, {
     params,
@@ -31,6 +37,7 @@ const api = {
   getPrescription,
   getIntervention,
   getCache,
+  getConfig,
 };
 
 export default api;

@@ -14,7 +14,6 @@ import Screening from "pages/Screening";
 import Segments from "pages/Segments";
 import References from "pages/References";
 import Reports from "pages/Reports";
-import ViewReport from "pages/Reports/ViewReport";
 import InterventionList from "pages/InterventionList";
 import UserConfig from "pages/UserConfig";
 import Password from "pages/Password";
@@ -148,15 +147,9 @@ const routes = [
   },
   {
     exact: true,
-    path: "/relatorios/visualizar",
-    element: <WithAuth component={ViewReport} />,
-  },
-  {
-    exact: true,
     path: "/intervencoes",
     element: <WithAuth component={InterventionList} />,
   },
-
   {
     exact: true,
     path: "/configuracoes/usuario",

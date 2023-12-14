@@ -13,7 +13,6 @@ import interventionReducer from "./intervention";
 import departmentsReducer from "./departments";
 import prescriptionsReducer from "./prescriptions";
 import prescriptionDrugsReducer from "./prescriptionDrugs";
-import reportsReducer from "./reports";
 import memoryReducer from "./memory";
 import clinicalNotesReducer from "./clinicalNotes";
 import patientCentral from "./patientCentral";
@@ -34,6 +33,7 @@ import adminSegment from "features/admin/Segment/SegmentSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
 import adminFrequency from "features/admin/Frequency/FrequencySlice";
 
+import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
 import reportPrescriptionReport from "features/reports/PrescriptionReport/PrescriptionReportSlice";
 import reportInterventionReport from "features/reports/InterventionReport/InterventionReportSlice";
@@ -52,6 +52,7 @@ const reportReducers = combineReducers({
   patientDay: reportPatientDayReport,
   prescription: reportPrescriptionReport,
   intervention: reportInterventionReport,
+  reports: reports,
 });
 
 export default combineReducers({
@@ -71,7 +72,6 @@ export default combineReducers({
   intervention: interventionReducer,
   prescriptions: prescriptionsReducer,
   prescriptionDrugs: prescriptionDrugsReducer,
-  reports: reportsReducer,
   memory: memoryReducer,
   memoryDraft: memoryDraftSlice,
   memoryFilter: memoryFilterSlice,

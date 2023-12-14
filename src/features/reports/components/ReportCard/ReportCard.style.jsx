@@ -15,7 +15,7 @@ export const Wrapper = styled.div`
   cursor: pointer;
 
   &:hover {
-    box-shadow: 0px 0px 5px rgba(4, 0, 6, 0.35);
+    box-shadow: 0 -1px 7px rgb(0 0 0 / 16%);
   }
 `;
 
