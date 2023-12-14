@@ -137,7 +137,7 @@ function MemoryReports() {
 
       <Row gutter={[16, 24]}>
         <Col xs={{ span: 24 }} lg={{ span: 12 }} xxl={{ span: 12 }}>
-          <Card loading={loading} title="Relatórios Internos">
+          <Card loading={loading} title="Relatórios Internos" type="inner">
             <CustomForm
               onSubmit={onSave}
               template={templates["reports-internal"]}
@@ -149,7 +149,7 @@ function MemoryReports() {
         <Col xs={{ span: 24 }} lg={{ span: 12 }} xxl={{ span: 12 }}></Col>
 
         <Col xs={{ span: 24 }} lg={{ span: 12 }} xxl={{ span: 12 }}>
-          <Card loading={loading} title="Relatórios Externos">
+          <Card loading={loading} title="Relatórios Externos" type="inner">
             <CustomForm
               onSubmit={onSave}
               template={templates["reports"]}
@@ -160,7 +160,7 @@ function MemoryReports() {
         </Col>
 
         <Col xs={{ span: 24 }} lg={{ span: 12 }} xxl={{ span: 12 }}>
-          <Card loading={loading} title="Relatórios do Paciente">
+          <Card loading={loading} title="Relatórios do Paciente" type="inner">
             <CustomForm
               onSubmit={onSave}
               template={templates["admission-reports"]}
