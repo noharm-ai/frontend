@@ -105,8 +105,6 @@ export default function CustomForm({
       });
     });
 
-    console.log("values", preparedValues);
-
     onSubmit({
       values: preparedValues,
       template,

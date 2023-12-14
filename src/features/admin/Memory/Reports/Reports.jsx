@@ -87,7 +87,6 @@ function MemoryReports() {
               },
             ],
             optionsType: "key-value",
-            required: true,
             style: { width: "100%" },
           },
         ],
