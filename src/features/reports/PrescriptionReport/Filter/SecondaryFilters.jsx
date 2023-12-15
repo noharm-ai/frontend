@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Select, Radio } from "components/Inputs";
+import { Select, Radio, InputNumber } from "components/Inputs";
 
 export default function SecondaryFilters() {
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
@@ -56,6 +56,34 @@ export default function SecondaryFilters() {
             </Select.Option>
           ))}
         </Select>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          Escore mínimo:
+        </Heading>
+        <InputNumber
+          style={{
+            width: 120,
+          }}
+          min={0}
+          max={99999}
+          value={values.minScore}
+          onChange={(value) => setFieldValue({ minScore: value })}
+        />
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          Escore máximo:
+        </Heading>
+        <InputNumber
+          style={{
+            width: 120,
+          }}
+          min={0}
+          max={99999}
+          value={values.maxScore}
+          onChange={(value) => setFieldValue({ maxScore: value })}
+        />
       </Col>
     </Row>
   );

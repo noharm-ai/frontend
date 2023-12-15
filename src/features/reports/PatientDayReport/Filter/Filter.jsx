@@ -53,6 +53,8 @@ export default function Filter({ printRef }) {
     departmentList: [],
     segmentList: [],
     weekDays: false,
+    minScore: null,
+    maxScore: null,
   };
 
   const fetchTools = useFetchReport({

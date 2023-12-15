@@ -67,6 +67,20 @@ const filterDatasource = (datasource, filters) => {
       }
 
       return true;
+    })
+    .filter((i) => {
+      if (filters.minScore) {
+        return i.globalScore >= filters.minScore;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.maxScore) {
+        return i.globalScore <= filters.maxScore;
+      }
+
+      return true;
     });
 };
 
