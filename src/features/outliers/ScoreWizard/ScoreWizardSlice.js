@@ -19,6 +19,10 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  removeOutlier: {
+    status: "idle",
+    error: null,
+  },
 };
 
 export const addHistory = createAsyncThunk(
@@ -26,6 +30,19 @@ export const addHistory = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.scoreAddHistory(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const removeOutlier = createAsyncThunk(
+  "score-wizard-slice/remove-outlier",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.scoreRemoveOutlier(params);
 
       return response.data;
     } catch (err) {
@@ -118,6 +135,15 @@ const scoreWizardSlice = createSlice({
       })
       .addCase(addHistory.rejected, (state, action) => {
         state.addHistory.status = "failed";
+      })
+      .addCase(removeOutlier.pending, (state, action) => {
+        state.removeOutlier.status = "loading";
+      })
+      .addCase(removeOutlier.fulfilled, (state, action) => {
+        state.removeOutlier.status = "succeeded";
+      })
+      .addCase(removeOutlier.rejected, (state, action) => {
+        state.removeOutlier.status = "failed";
       });
   },
 });

@@ -596,6 +596,15 @@ const scoreAddHistory = (params) =>
     }
   );
 
+const scoreRemoveOutlier = (params) =>
+  instance.post(
+    `/outliers/generate/remove-outlier/${params.idSegment}/${params.idDrug}`,
+    {},
+    {
+      ...setHeaders(),
+    }
+  );
+
 const scoreConfigDrug = (params) =>
   instance.post(
     `/outliers/generate/config/${params.idSegment}/${params.idDrug}`,
@@ -679,6 +688,7 @@ const api = {
   scoreGenerateSingle,
   scoreConfigDrug,
   scoreAddHistory,
+  scoreRemoveOutlier,
 };
 
 export default api;
