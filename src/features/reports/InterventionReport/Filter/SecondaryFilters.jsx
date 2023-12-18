@@ -22,6 +22,12 @@ export default function SecondaryFilters() {
     { label: "Não", value: false },
   ];
 
+  const yesNoAllOptions = [
+    { label: "Sim", value: true },
+    { label: "Não", value: false },
+    { label: "Todos", value: "" },
+  ];
+
   const interventionTypes = [
     { label: "No Paciente", value: "p" },
     { label: "No Medicamento", value: "d" },
@@ -55,6 +61,32 @@ export default function SecondaryFilters() {
             setFieldValue({ interventionType: value })
           }
           value={values.interventionType}
+          optionType="button"
+        />
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          Gera redução de custo?
+        </Heading>
+        <Radio.Group
+          style={{ marginTop: "5px" }}
+          options={yesNoAllOptions}
+          onChange={({ target: { value } }) => setFieldValue({ cost: value })}
+          value={values.cost}
+          optionType="button"
+        />
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          Possível erro de prescrição?
+        </Heading>
+        <Radio.Group
+          style={{ marginTop: "5px" }}
+          options={yesNoAllOptions}
+          onChange={({ target: { value } }) =>
+            setFieldValue({ prescriptionError: value })
+          }
+          value={values.prescriptionError}
           optionType="button"
         />
       </Col>
@@ -125,6 +157,39 @@ export default function SecondaryFilters() {
               {i}
             </Select.Option>
           ))}
+        </Select>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          Desfecho:
+        </Heading>
+        <Select
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.statusList}
+          onChange={(val) => setFieldValue({ statusList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          <Select.Option key={"a"} value={"a"}>
+            Aceita
+          </Select.Option>
+          <Select.Option key={"j"} value={"j"}>
+            Justificada
+          </Select.Option>
+          <Select.Option key={"n"} value={"n"}>
+            Não Aceita
+          </Select.Option>
+          <Select.Option key={"x"} value={"x"}>
+            Não se Aplica
+          </Select.Option>
+          <Select.Option key={"s"} value={"s"}>
+            Pendente
+          </Select.Option>
         </Select>
       </Col>
     </Row>

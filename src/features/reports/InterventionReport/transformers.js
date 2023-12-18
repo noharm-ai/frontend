@@ -55,6 +55,13 @@ const filterDatasource = (datasource, filters) => {
       return true;
     })
     .filter((i) => {
+      if (filters.statusList.length) {
+        return filters.statusList.indexOf(i.status) !== -1;
+      }
+
+      return true;
+    })
+    .filter((i) => {
       if (filters.reasonList.length) {
         return intersection(filters.reasonList, i.reason).length > 0;
       }
@@ -68,6 +75,23 @@ const filterDatasource = (datasource, filters) => {
 
       if (filters.interventionType === "d") {
         return i.idPrescription === "0";
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.cost === true || filters.cost === false) {
+        return i.cost === filters.cost;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (
+        filters.prescriptionError === true ||
+        filters.prescriptionError === false
+      ) {
+        return i.error === filters.prescriptionError;
       }
 
       return true;

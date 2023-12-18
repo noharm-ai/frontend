@@ -56,8 +56,11 @@ export default function Filter({ printRef }) {
     segmentList: [],
     drugList: [],
     reasonList: [],
+    statusList: [],
     weekDays: false,
     interventionType: "",
+    cost: "",
+    prescriptionError: "",
   };
 
   const fetchTools = useFetchReport({
