@@ -27,7 +27,11 @@ import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
 import security from "services/security";
 import useFetchReport from "hooks/useFetchReport";
-import { onBeforePrint, onAfterPrint } from "utils/report";
+import {
+  onBeforePrint,
+  onAfterPrint,
+  decompressDatasource,
+} from "utils/report";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
@@ -74,18 +78,24 @@ export default function Filter({ printRef }) {
     fetchTools.clearCache();
   };
 
-  const exportCSV = () => {
-    filterAndExportCSV(datasource, currentFilters, t);
+  const exportCSV = async () => {
+    const ds = await decompressDatasource(datasource);
+    filterAndExportCSV(ds, currentFilters, t);
   };
 
   const showHelp = () => {
     dispatch(setHelpModal(true));
   };
 
-  const search = (params, forceDs) => {
+  const search = async (params, forceDs) => {
+    let ds = [];
+    if (!forceDs) {
+      ds = await decompressDatasource(datasource);
+    }
+
     dispatch(setFilteredStatus("loading"));
     dispatch(setFilters(params));
-    const reportData = getReportData(forceDs || datasource, params);
+    const reportData = getReportData(forceDs || ds, params);
     dispatch(setFilteredResult(reportData));
 
     setTimeout(() => {

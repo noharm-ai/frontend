@@ -29,6 +29,8 @@ export const fetchReportData = createAsyncThunk(
       const response = await api.getIntervention(params);
       const cacheResponseStream = await fetch(response.data.data.url);
 
+      const gzipped = await cacheResponseStream.clone().blob();
+
       const cacheReadableStream = cacheResponseStream.body.pipeThrough(
         new window.DecompressionStream("gzip")
       );
@@ -36,7 +38,7 @@ export const fetchReportData = createAsyncThunk(
       const decompressedResponse = new Response(cacheReadableStream);
       const cache = await decompressedResponse.json();
 
-      return { ...response, cacheData: cache };
+      return { ...response, cacheData: cache, gzipped };
     } catch (err) {
       console.error(err);
       return thunkAPI.rejectWithValue(err.response.data);
@@ -72,7 +74,7 @@ const interventionReportSlice = createSlice({
       })
       .addCase(fetchReportData.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.list = action.payload.cacheData;
+        state.list = action.payload.gzipped;
         state.updatedAt = action.payload.data.data.updatedAt;
         state.responsibles = getUniqList(
           action.payload.cacheData,

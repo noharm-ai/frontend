@@ -112,3 +112,17 @@ export const datePickerLimits = (maxInterval, minInterval) => (current) => {
 
   return current > maxDate || current < minDate;
 };
+
+export const decompressDatasource = async (datasource) => {
+  const stream = new Blob([datasource], {
+    type: "application/json",
+  }).stream();
+
+  const compressedReadableStream = stream.pipeThrough(
+    new window.DecompressionStream("gzip")
+  );
+
+  const decompressedResponse = new Response(compressedReadableStream);
+
+  return await decompressedResponse.json();
+};

@@ -38,7 +38,6 @@ const reportsSlice = createSlice({
         state.config.status = "loading";
       })
       .addCase(getConfig.fulfilled, (state, action) => {
-        console.log("reports", action.payload);
         state.config.status = "succeeded";
         state.config.internal = action.payload.data.internal;
         state.config.external = action.payload.data.external;
