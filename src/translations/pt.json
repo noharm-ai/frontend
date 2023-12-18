@@ -309,7 +309,8 @@
     "loadDraft": "Carregar rascunho",
     "appointment": "Agendamento",
     "dischargeDate": "Data de alta",
-    "conciliation": "Conciliação"
+    "conciliation": "Conciliação",
+    "substance": "Substância"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"

@@ -34,6 +34,7 @@ export default function Filter({ limit }) {
     hasMissingConversion: null,
     missingAttributes: null,
     term: null,
+    substance: null,
     idSegmentList: [],
     attributeList: [],
   };

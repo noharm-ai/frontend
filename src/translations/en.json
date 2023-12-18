@@ -309,7 +309,8 @@
     "loadDraft": "Load draft",
     "appointment": "Appointment",
     "dischargeDate": "Discharge date",
-    "conciliation": "Conciliation"
+    "conciliation": "Conciliation",
+    "substance": "Substance"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
