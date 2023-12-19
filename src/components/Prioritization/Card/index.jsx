@@ -94,7 +94,15 @@ const TabContent = ({ tab, prescription }) => {
             <div className="attributes-item-value">
               {prescription.status === "s" && <Tag color="green">Checada</Tag>}
               {prescription.status !== "s" && (
-                <Tag color="orange">Pendente</Tag>
+                <>
+                  {prescription.isBeingEvaluated ? (
+                    <Tooltip title={"Pendente/Em Análise"}>
+                      <Tag color="purple">Em análise</Tag>
+                    </Tooltip>
+                  ) : (
+                    <Tag color="orange">Pendente</Tag>
+                  )}
+                </>
               )}
             </div>
           </div>

@@ -23,6 +23,7 @@ import Patient from "containers/Screening/Patient";
 import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
 import DrugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatus";
 import ScreeningActions from "containers/Screening/ScreeningActions";
+import EvaluationWarning from "features/prescription/EvaluationWarning/EvaluationWarning";
 
 import {
   BoxWrapper,
@@ -421,6 +422,7 @@ export default function Screening({
 
   return (
     <>
+      <EvaluationWarning />
       <BoxWrapper>
         <PageHeader />
         <Row type="flex" gutter={24}>

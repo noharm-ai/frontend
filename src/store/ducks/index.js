@@ -24,6 +24,7 @@ import summaryReducer from "features/summary/SummarySlice";
 import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
 import memoryFilterSlice from "features/memory/MemoryFilter/MemoryFilterSlice";
 import scoreWizardSlice from "features/outliers/ScoreWizard/ScoreWizardSlice";
+import prescriptionSlice from "features/prescription/PrescriptionSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -82,4 +83,5 @@ export default combineReducers({
   serverActions: serverActionsSlice,
   summary: summaryReducer,
   scoreWizard: scoreWizardSlice,
+  prescriptionv2: prescriptionSlice,
 });

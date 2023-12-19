@@ -11,6 +11,8 @@ const requestConfig = {
 
 export const instance = axios.create(requestConfig);
 
+const api = {};
+
 /**
  * Endpoints.
  * All endpoints that can be accessible in API.
@@ -615,10 +617,20 @@ const scoreConfigDrug = (params) =>
   );
 
 /**
+ * Prescription single
+ */
+api.prescription = {};
+api.prescription.startEvaluation = (params) =>
+  instance.post(`/prescriptions/start-evaluation`, params, {
+    ...setHeaders(),
+  });
+
+/**
  * API
  * all functions that can be user in API.
  */
-const api = {
+const methods = {
+  ...api,
   authenticate,
   preAuth,
   authenticateOAuth,
@@ -691,4 +703,4 @@ const api = {
   scoreRemoveOutlier,
 };
 
-export default api;
+export default methods;

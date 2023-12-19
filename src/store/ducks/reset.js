@@ -25,6 +25,7 @@ import { reset as serverActionsReset } from "features/serverActions/ServerAction
 import { reset as summaryReset } from "features/summary/SummarySlice";
 import { reset as drugMeasureUnitsReset } from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSlice";
 import { reset as scoreWizardReset } from "features/outliers/ScoreWizard/ScoreWizardSlice";
+import { reset as prescriptionv2Reset } from "features/prescription/PrescriptionSlice";
 
 import { reset as reportsReset } from "features/reports/ReportsSlice";
 import { reset as patientDayReportReset } from "features/reports/PatientDayReport/PatientDayReportSlice";
@@ -71,6 +72,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(summaryReset());
   dispatch(drugMeasureUnitsReset());
   dispatch(scoreWizardReset());
+  dispatch(prescriptionv2Reset());
 
   dispatch(reportsReset());
   dispatch(patientDayReportReset());
