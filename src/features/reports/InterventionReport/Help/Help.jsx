@@ -57,6 +57,12 @@ export default function HelpModal() {
           size="large"
           style={{ marginTop: "10px" }}
           block
+          onClick={() =>
+            window.open(
+              `${process.env.REACT_APP_SUPPORT_LINK}/kb/article/relatorios-de-intervencoes-nova-versao`,
+              "_blank"
+            )
+          }
         >
           Base de Conhecimento
         </Button>
