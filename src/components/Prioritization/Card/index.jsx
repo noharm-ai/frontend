@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useTransition, animated, config } from "@react-spring/web";
-import { UserOutlined, NumberOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  NumberOutlined,
+  MessageOutlined,
+} from "@ant-design/icons";
+import DOMPurify from "dompurify";
 
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
@@ -274,6 +279,24 @@ const TabContent = ({ tab, prescription }) => {
     );
   }
 
+  if (tab === "observation") {
+    return (
+      <div className="attribute-container">
+        <div className="attributes">
+          <div className="attributes-item col-12">
+            <div className="attributes-item-label">Anotações</div>
+            <div
+              className="attributes-item-value text"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(prescription.observation),
+              }}
+            ></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return null;
 };
 
@@ -342,7 +365,11 @@ export default function PrioritizationCard({
         <div className={`stamp ${highlight ? "highlight" : ""}`}>
           <div className="stamp-label">{prioritization.label}</div>
           <div className="stamp-value">
-            {prescription[prioritization.formattedKey]}
+            {prioritization.formattedKey === "filled"
+              ? prescription[prioritization.key]
+                ? "Preenchido"
+                : "-"
+              : prescription[prioritization.formattedKey]}
           </div>
         </div>
       </div>
@@ -366,6 +393,14 @@ export default function PrioritizationCard({
         >
           <NumberOutlined />
         </div>
+        {prescription.observation && (
+          <div
+            className={`tab ${activeTab === "observation" ? "active" : ""}`}
+            onClick={(e) => tabClick("observation", e)}
+          >
+            <MessageOutlined />
+          </div>
+        )}
       </div>
     </Card>
   );
