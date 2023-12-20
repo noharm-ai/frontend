@@ -116,7 +116,7 @@ export default function Intervention({
     measureUnit: item.measureUnit ? item.measureUnit.value : null,
     measureUnitLabel: item.measureUnit ? item.measureUnit.label : null,
     route: item.route,
-    idDrug: item.idDrug,
+    idDrug: item.idDrug ? `${item.idDrug}` : null,
     idDrugLabel: item.drug,
     interval: item.interval,
     intervalLabel: item.time,

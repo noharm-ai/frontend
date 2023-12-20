@@ -27,10 +27,12 @@ export default function Transcription({
     values.transcriptionData;
 
   useEffect(() => {
-    fetchDrugSummary(idDrug, drugData.idSegment);
+    if (idDrug) {
+      fetchDrugSummary(idDrug, drugData.idSegment);
+    }
   }, [fetchDrugSummary, idDrug, drugData.idSegment]);
 
-  if (drugSummary.isFetching || !drugSummary.data) {
+  if (drugSummary.isFetching) {
     return (
       <div style={{ width: "100%" }}>
         <LoadBox />
@@ -39,7 +41,7 @@ export default function Transcription({
   }
 
   const handleDrugChange = (value, option) => {
-    setFieldValue("transcriptionData.idDrug", value);
+    setFieldValue("transcriptionData.idDrug", `${value}`);
     setFieldValue("transcriptionData.idDrugLabel", option.props.children);
 
     setFieldValue("transcriptionData.dose", null);
@@ -67,12 +69,17 @@ export default function Transcription({
     setFieldValue("transcriptionData.intervalLabel", option.props.children);
   };
 
-  const { units, routes, frequencies, drug, intervals } = drugSummary.data;
   const search = debounce((value) => {
     if (value.length < 3) return;
     searchDrugs(drugData.idSegment, { q: value });
   }, 800);
-  const currentDrug = { idDrug: drug.id, name: drug.name };
+  const currentDrug = drugSummary.data
+    ? {
+        idDrug: drugSummary.data?.drug?.id,
+        name: drugSummary.data?.drug?.name,
+      }
+    : null;
+  const drugList = currentDrug ? drugs.list.concat([currentDrug]) : drugs.list;
 
   return (
     <InternalBox>
@@ -96,16 +103,15 @@ export default function Transcription({
               notFoundContent={drugs.isFetching ? <LoadBox /> : null}
               filterOption={false}
               onSearch={search}
+              placeholder="Digite para pesquisar"
               onChange={(value, option) => handleDrugChange(value, option)}
             >
               {!drugs.isFetching &&
-                uniqBy(drugs.list.concat([currentDrug]), "idDrug").map(
-                  ({ idDrug, name }) => (
-                    <Select.Option key={idDrug} value={idDrug}>
-                      {name}
-                    </Select.Option>
-                  )
-                )}
+                uniqBy(drugList, "idDrug").map(({ idDrug, name }) => (
+                  <Select.Option key={idDrug} value={`${idDrug}`}>
+                    {name}
+                  </Select.Option>
+                ))}
             </Select>
             {errors.idDrug && touched.idDrug && (
               <FieldError>{errors.idDrug}</FieldError>
@@ -158,11 +164,12 @@ export default function Transcription({
                 handleMeasureUnitChange(value, option)
               }
             >
-              {units.map(({ id, description }) => (
-                <Select.Option key={id} value={id}>
-                  {description}
-                </Select.Option>
-              ))}
+              {drugSummary.data?.units &&
+                drugSummary.data?.units.map(({ id, description }) => (
+                  <Select.Option key={id} value={id}>
+                    {description}
+                  </Select.Option>
+                ))}
             </Select>
             {errors.measureUnit && touched.measureUnit && (
               <FieldError>{errors.measureUnit}</FieldError>
@@ -191,11 +198,12 @@ export default function Transcription({
               value={frequency}
               onChange={(value, option) => handleFrequencyChange(value, option)}
             >
-              {frequencies.map(({ id, description }) => (
-                <Select.Option key={id} value={id}>
-                  {description}
-                </Select.Option>
-              ))}
+              {drugSummary.data?.frequencies &&
+                drugSummary.data?.frequencies.map(({ id, description }) => (
+                  <Select.Option key={id} value={id}>
+                    {description}
+                  </Select.Option>
+                ))}
             </Select>
             {errors.frequency && touched.frequency && (
               <FieldError>{errors.frequency}</FieldError>
@@ -219,15 +227,16 @@ export default function Transcription({
               value={interval}
               onChange={(value, option) => handleIntervalChange(value, option)}
             >
-              {intervals
-                .filter(
-                  (i) => i.idFrequency === values.transcriptionData.frequency
-                )
-                .map(({ id, description }) => (
-                  <Select.Option key={id} value={id}>
-                    {description}
-                  </Select.Option>
-                ))}
+              {drugSummary.data?.intervals &&
+                drugSummary.data?.intervals
+                  .filter(
+                    (i) => i.idFrequency === values.transcriptionData.frequency
+                  )
+                  .map(({ id, description }) => (
+                    <Select.Option key={id} value={id}>
+                      {description}
+                    </Select.Option>
+                  ))}
             </Select>
             {errors.interval && touched.interval && (
               <FieldError>{errors.interval}</FieldError>
@@ -253,11 +262,12 @@ export default function Transcription({
                 setFieldValue("transcriptionData.route", value)
               }
             >
-              {routes.map(({ id, description }) => (
-                <Select.Option key={id} value={id}>
-                  {description}
-                </Select.Option>
-              ))}
+              {drugSummary.data?.routes &&
+                drugSummary.data?.routes.map(({ id, description }) => (
+                  <Select.Option key={id} value={id}>
+                    {description}
+                  </Select.Option>
+                ))}
             </Select>
             {errors.route && touched.route && (
               <FieldError>{errors.route}</FieldError>
