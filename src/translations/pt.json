@@ -156,6 +156,7 @@
     "intercurrence": "Intercorrência",
     "btnChecked": "Prescrição checada",
     "btnUndoCheck": "Desfazer checagem",
+    "btnUndoCheckDisabled": "A checagem não pode ser desfeita, pois foi efetuada por outro usuário",
     "btnCheck": "Checar",
     "btnClinicalNotes": "Evolução",
     "btnSchedule": "Agendar Atendimento",
@@ -535,7 +536,8 @@
     "presmed-form": "Formulário Presmed",
     "doctor": "Médico",
     "summary": "Sumário de Alta",
-    "readonly": "Somente leitura"
+    "readonly": "Somente leitura",
+    "unlock-checked-prescription": "Desfaz checagem de qualquer usuário"
   },
 
   "reportcsv": {

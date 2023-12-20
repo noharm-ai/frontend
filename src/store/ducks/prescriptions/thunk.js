@@ -179,29 +179,33 @@ export const fetchScreeningThunk =
 
 export const checkScreeningThunk =
   (idPrescription, status) => async (dispatch, getState) => {
-    dispatch(prescriptionsCheckStart(idPrescription));
+    return new Promise(async (resolve, reject) => {
+      dispatch(prescriptionsCheckStart(idPrescription));
 
-    const { access_token } = getState().auth.identify;
-    const params = {
-      status,
-    };
-    const { data, error } = await api
-      .putPrescriptionById(access_token, idPrescription, params)
-      .catch(errorHandler);
+      const { data, error } = await api.prescription
+        .setStatus({
+          idPrescription,
+          status,
+        })
+        .catch(errorHandler);
 
-    if (!isEmpty(error)) {
-      dispatch(prescriptionsCheckError(error));
-      return;
-    }
+      if (!isEmpty(error)) {
+        dispatch(prescriptionsCheckError(error));
+        reject(error);
+        return;
+      }
 
-    const success = {
-      status: data.status,
-      id: data.data,
-      newStatus: status,
-      user: getState().user.account.userName,
-    };
+      const success = {
+        idPrescription: idPrescription,
+        newStatus: status,
+        list: data.data,
+        user: getState().user.account.userName,
+        userId: getState().user.account.userId,
+      };
 
-    dispatch(prescriptionsCheckSuccess(success));
+      dispatch(prescriptionsCheckSuccess(success));
+      resolve(success);
+    });
   };
 
 export const savePrescriptionThunk =

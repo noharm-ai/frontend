@@ -1,3 +1,4 @@
+import isEmpty from "lodash.isempty";
 import { createActions, createReducer } from "reduxsauce";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
 
@@ -264,40 +265,36 @@ const checkError = (state = INITIAL_STATE, { error }) => ({
 const checkSuccess = (state = INITIAL_STATE, { success }) => {
   const list = [...state.list];
   const prescriptionIndex = list.findIndex(
-    (item) => item.idPrescription === success.id
+    (item) => `${item.idPrescription}` === `${success.idPrescription}`
   );
-  let prescriptionStatus = success.newStatus;
 
-  if (list.length > 0) {
+  if (prescriptionIndex !== -1) {
     list[prescriptionIndex].status = success.newStatus;
   }
 
-  const headers = [];
-  if (state.single.data.headers) {
+  let prescriptionStatus = success.newStatus;
+
+  const headers = state.single.data.headers
+    ? { ...state.single.data.headers }
+    : null;
+
+  if (!isEmpty(headers)) {
+    success.list.forEach((i) => {
+      if (headers[i.idPrescription]) {
+        headers[i.idPrescription].status = i.status;
+        headers[i.idPrescription].user = success.user;
+        headers[i.idPrescription].user = success.userId;
+      }
+    });
+
     let allChecked = true;
+    Object.keys(state.single.data.headers).forEach((p) => {
+      if (headers[p].status !== "s") {
+        allChecked = false;
+      }
+    });
 
-    if (state.single.data.headers[success.id]) {
-      Object.keys(state.single.data.headers).forEach((p) => {
-        headers[p] = { ...state.single.data.headers[p] };
-        if (p === success.id) {
-          headers[p].status = success.newStatus;
-          headers[p].user = success.user;
-        }
-
-        if (headers[p].status !== "s") {
-          allChecked = false;
-        }
-      });
-
-      prescriptionStatus = allChecked ? "s" : "0";
-    } else {
-      Object.keys(state.single.data.headers).forEach((p) => {
-        headers[p] = {
-          ...state.single.data.headers[p],
-          status: success.newStatus,
-        };
-      });
-    }
+    prescriptionStatus = allChecked ? "s" : "0";
   }
 
   return {
@@ -309,10 +306,6 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
         ...state.single.check,
         error: null,
         isChecking: false,
-        checkedPrescriptions: [
-          ...state.single.check.checkedPrescriptions,
-          success.id,
-        ],
         success,
       },
       data: {
@@ -320,6 +313,7 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
         headers,
         status: prescriptionStatus,
         user: success.user,
+        userId: success.userId,
       },
     },
   };

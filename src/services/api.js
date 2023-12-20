@@ -625,6 +625,11 @@ api.prescription.startEvaluation = (params) =>
     ...setHeaders(),
   });
 
+api.prescription.setStatus = (params) =>
+  instance.post(`/prescriptions/status`, params, {
+    ...setHeaders(),
+  });
+
 /**
  * API
  * all functions that can be user in API.

@@ -156,6 +156,7 @@
     "intercurrence": "Intercurrence",
     "btnChecked": "Checked",
     "btnUndoCheck": "Undo",
+    "btnUndoCheckDisabled": "Can't undo because it was checked by another user",
     "btnCheck": "Check",
     "btnClinicalNotes": "Clinical notes",
     "btnSchedule": "Schedule appointment",
@@ -534,7 +535,8 @@
     "presmed-form": "Presmed Form",
     "doctor": "Doctor",
     "summary": "Discharge Summary",
-    "readonly": "Readonly"
+    "readonly": "Readonly",
+    "unlock-checked-prescription": "Can uncheck prescriptions from other users"
   },
 
   "reportcsv": {
