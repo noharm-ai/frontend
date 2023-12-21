@@ -1,6 +1,11 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
-import { format, parseISO, differenceInHours } from "date-fns";
+import {
+  format,
+  parseISO,
+  differenceInHours,
+  differenceInMinutes,
+} from "date-fns";
 import { useSelector } from "react-redux";
 import {
   WarningOutlined,
@@ -24,13 +29,16 @@ function PresmedTags({ prescription, bag }) {
   );
 
   let expiresIn = null;
+  let expiresInMinutes = null;
   let prescribedTo = null;
+
   const hasExpireInfo = prescription.cpoe;
   if (hasExpireInfo && !prescription.suspended) {
     if (bag.headers[prescription.cpoe].expire) {
       const expirationDate = parseISO(bag.headers[prescription.cpoe].expire);
       const currentDate = new Date();
       expiresIn = differenceInHours(expirationDate, currentDate);
+      expiresInMinutes = differenceInMinutes(expirationDate, currentDate);
     }
 
     if (bag.headers[prescription.cpoe].date) {
@@ -39,6 +47,7 @@ function PresmedTags({ prescription, bag }) {
       prescribedTo = differenceInHours(currentDate, prescriptionDate);
     }
   }
+
   return (
     <TableTags>
       <span
@@ -106,16 +115,21 @@ function PresmedTags({ prescription, bag }) {
             className="tag gtm-tag-expires"
             onClick={() => bag.handleRowExpand(prescription)}
           >
-            {expiresIn < 0 && (
+            {(expiresIn < 0 || (expiresIn === 0 && expiresInMinutes < 0)) && (
               <Tooltip title={bag.t("prescriptionDrugTags.expired")}>
                 <HourglassOutlined style={{ fontSize: 18, color: "#f5222d" }} />
               </Tooltip>
             )}
-            {expiresIn > 0 && expiresIn < 24 && (
+            {((expiresIn > 0 && expiresIn < 24) ||
+              (expiresIn === 0 && expiresInMinutes > 0)) && (
               <Tooltip
-                title={`${bag.t(
-                  "prescriptionDrugTags.expiresIn"
-                )} ${expiresIn}h`}
+                title={
+                  expiresIn === 0
+                    ? `${bag.t(
+                        "prescriptionDrugTags.expiresIn"
+                      )} ${expiresInMinutes}min`
+                    : `${bag.t("prescriptionDrugTags.expiresIn")} ${expiresIn}h`
+                }
               >
                 <HourglassOutlined style={{ fontSize: 18, color: "#ff9f1c" }} />
               </Tooltip>

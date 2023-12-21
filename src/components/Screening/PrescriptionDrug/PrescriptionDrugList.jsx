@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import isEmpty from "lodash.isempty";
-import { format, parseISO, differenceInHours } from "date-fns";
+import { format, parseISO, differenceInMinutes } from "date-fns";
 import { useTranslation } from "react-i18next";
 
 import LoadBox, { LoadContainer } from "components/LoadBox";
@@ -34,18 +34,18 @@ const isExpired = (date) => {
 
 export const rowClassName = (record, bag) => {
   const classes = [];
-  let expiresIn = null;
+  let expiresInMinutes = null;
   const hasExpireInfo = record.cpoe;
 
   if (hasExpireInfo && !record.suspended) {
     if (bag.headers[record.cpoe].expire) {
       const expirationDate = parseISO(bag.headers[record.cpoe].expire);
       const currentDate = new Date();
-      expiresIn = differenceInHours(expirationDate, currentDate);
+      expiresInMinutes = differenceInMinutes(expirationDate, currentDate);
     }
   }
 
-  if (hasExpireInfo && expiresIn < 0) {
+  if (hasExpireInfo && expiresInMinutes < 0) {
     classes.push("suspended");
   }
 
