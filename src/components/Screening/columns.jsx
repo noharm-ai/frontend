@@ -641,6 +641,8 @@ const dose = (bag) => ({
   title: "Dose",
   dataIndex: "dosage",
   width: 130,
+  ellipsis: bag.condensed,
+  align: bag.condensed ? "left" : "center",
   render: (text, prescription) => {
     if (prescription.total && prescription.infusion) {
       return (
@@ -673,6 +675,7 @@ const dose = (bag) => ({
 const drug = (bag, addkey, title) => ({
   key: addkey ? "idPrescriptionDrug" : null,
   title: title ? title : bag.t("tableHeader.drug"),
+  ellipsis: bag.condensed,
   align: "left",
   render: (record) => {
     if (bag.concilia) {
@@ -746,6 +749,8 @@ const drugInfo = (bag) => [
   {
     title: bag.t("tableHeader.period"),
     width: 70,
+    ellipsis: bag.condensed,
+    align: bag.condensed ? "left" : "center",
     render: (record) => {
       if (record.total) {
         return (
@@ -791,6 +796,8 @@ const drugInfo = (bag) => [
 const frequency = (bag) => ({
   title: bag.t("tableHeader.frequency"),
   dataIndex: "frequency",
+  ellipsis: bag.condensed,
+  align: bag.condensed ? "left" : "center",
   width: 150,
   render: (text, prescription) => {
     if (prescription.dividerRow) {
@@ -821,6 +828,8 @@ const frequencyAndTime = (bag) => [
   {
     title: bag.t("tableHeader.time"),
     dataIndex: "time",
+    ellipsis: bag.condensed,
+    align: bag.condensed ? "left" : "center",
     width: 100,
   },
 ];
@@ -834,11 +843,13 @@ const stageAndInfusion = (bag) => {
     {
       title: bag.t("tableHeader.stage"),
       dataIndex: "stage",
+      ellipsis: bag.condensed,
       width: 100,
     },
     {
       title: bag.t("tableHeader.infusion"),
       dataIndex: "infusion",
+      align: bag.condensed ? "left" : "center",
       width: 100,
     },
   ];
@@ -847,13 +858,15 @@ const stageAndInfusion = (bag) => {
 const route = (bag) => ({
   title: bag.t("tableHeader.route"),
   dataIndex: "route",
+  ellipsis: bag.condensed,
+  align: bag.condensed ? "left" : "center",
   width: 85,
 });
 
 const tags = (bag) => ({
   title: "Tags",
+  align: bag.condensed ? "left" : "center",
   width: 50,
-  align: "center",
   render: (text, prescription) => {
     return <PresmedTags prescription={prescription} bag={bag} />;
   },

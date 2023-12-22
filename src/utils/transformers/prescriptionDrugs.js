@@ -181,3 +181,9 @@ export const getWhitelistedChildren = (list) => {
     return false;
   });
 };
+
+export const sortCondensedPrescriptions = (items) => {
+  return items
+    .filter((i) => !i.emptyRow)
+    .sort((a, b) => `${a.drug}`.localeCompare(`${b.drug}`));
+};

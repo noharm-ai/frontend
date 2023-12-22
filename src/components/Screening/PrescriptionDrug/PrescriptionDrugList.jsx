@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import isEmpty from "lodash.isempty";
 import { format, parseISO, differenceInMinutes } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -8,6 +9,10 @@ import Empty from "components/Empty";
 import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
+import {
+  sortCondensedPrescriptions,
+  groupComponents,
+} from "utils/transformers/prescriptionDrugs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 import notification from "components/notification";
 
@@ -127,6 +132,9 @@ export default function PrescriptionDrugList({
   featureService,
   interventions,
 }) {
+  const prescriptionListType = useSelector(
+    (state) => state.preferences.prescription.listType
+  );
   const [visible, setVisibility] = useState(false);
   const { t } = useTranslation();
 
@@ -219,6 +227,7 @@ export default function PrescriptionDrugList({
     savePrescriptionDrugForm,
     formTemplate,
     interventions,
+    condensed: prescriptionListType === "condensed",
   };
 
   const table = (ds, showHeader) => (
@@ -364,6 +373,26 @@ export default function PrescriptionDrugList({
         children: table(ds, true),
       },
     ];
+
+    if (prescriptionListType === "condensed") {
+      const allItems = [];
+
+      dataSource.forEach((i) => {
+        if (group.indexOf(`${i.key}`) !== -1) {
+          allItems.push(...i.value);
+        }
+      });
+
+      return table(
+        {
+          value:
+            summarySourceToType(listType) === "solutions"
+              ? allItems
+              : groupComponents(sortCondensedPrescriptions(allItems)),
+        },
+        true
+      );
+    }
 
     return dataSource.map((ds, index) => (
       <div key={index}>
