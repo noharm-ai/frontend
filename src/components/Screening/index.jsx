@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { PlusOutlined, CopyOutlined } from "@ant-design/icons";
-import { Button, FloatButton } from "antd";
+import { FloatButton } from "antd";
 
 import Empty from "components/Empty";
 import LoadBox, { LoadContainer } from "components/LoadBox";
@@ -25,7 +24,6 @@ import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
 import DrugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatus";
 import ScreeningActions from "containers/Screening/ScreeningActions";
 import EvaluationWarning from "features/prescription/EvaluationWarning/EvaluationWarning";
-import { setPrescriptionListType } from "features/preferences/PreferencesSlice";
 
 import {
   BoxWrapper,
@@ -43,10 +41,6 @@ export default function Screening({
   security,
   interventions,
 }) {
-  const dispatch = useDispatch();
-  const prescriptionListType = useSelector(
-    (state) => state.preferences.prescription.listType
-  );
   const params = useParams();
   const id = params?.slug;
   const { prescriptionCount, solutionCount, proceduresCount, dietCount, agg } =
@@ -445,17 +439,6 @@ export default function Screening({
       </BoxWrapper>
 
       <Row type="flex" gutter={24}>
-        <Button
-          onClick={() =>
-            dispatch(
-              setPrescriptionListType(
-                prescriptionListType === "default" ? "condensed" : "default"
-              )
-            )
-          }
-        >
-          trocar tipo
-        </Button>
         <ScreeningTabs
           defaultActiveKey="1"
           style={{ width: "100%", padding: "10px", marginTop: "10px" }}

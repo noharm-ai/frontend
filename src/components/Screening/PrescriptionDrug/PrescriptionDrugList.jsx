@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import isEmpty from "lodash.isempty";
 import { format, parseISO, differenceInMinutes } from "date-fns";
 import { useTranslation } from "react-i18next";
 
 import LoadBox, { LoadContainer } from "components/LoadBox";
+import { Radio } from "components/Inputs";
 import Empty from "components/Empty";
 import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
@@ -17,11 +18,13 @@ import { filterInterventionByPrescriptionDrug } from "utils/transformers/interve
 import notification from "components/notification";
 
 import FormIntervention from "containers/Forms/Intervention";
+import { setPrescriptionListType } from "features/preferences/PreferencesSlice";
 
 import {
   PrescriptionCollapse,
   PrescriptionHeader,
   GroupCollapse,
+  ToolBox,
 } from "./PrescriptionDrug.style";
 import Table from "./components/Table";
 import PanelAction from "./components/PanelAction";
@@ -132,6 +135,7 @@ export default function PrescriptionDrugList({
   featureService,
   interventions,
 }) {
+  const dispatch = useDispatch();
   const prescriptionListType = useSelector(
     (state) => state.preferences.prescription.listType
   );
@@ -489,6 +493,17 @@ export default function PrescriptionDrugList({
 
   return (
     <>
+      <ToolBox>
+        <Tooltip title="Modo de visualização">
+          <Radio.Group
+            onChange={(e) => dispatch(setPrescriptionListType(e.target.value))}
+            value={prescriptionListType}
+          >
+            <Radio.Button value="default">Padrão</Radio.Button>
+            <Radio.Button value="condensed">Condensado</Radio.Button>
+          </Radio.Group>
+        </Tooltip>
+      </ToolBox>
       {getGroups(groups).map((g) => (
         <GroupCollapse
           bordered={false}
