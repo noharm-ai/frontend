@@ -414,6 +414,19 @@ export default function PrescriptionDrugList({
   if (!aggregated || security.hasCpoe()) {
     return (
       <>
+        <ToolBox>
+          <Tooltip title="Modo de visualização">
+            <Radio.Group
+              onChange={(e) =>
+                dispatch(setPrescriptionListType(e.target.value))
+              }
+              value={prescriptionListType}
+            >
+              <Radio.Button value="default">Padrão</Radio.Button>
+              <Radio.Button value="condensed">Condensado</Radio.Button>
+            </Radio.Group>
+          </Tooltip>
+        </ToolBox>
         {table(!isEmpty(dataSource) ? dataSource[0] : [])}
         <FormIntervention
           open={visible}
