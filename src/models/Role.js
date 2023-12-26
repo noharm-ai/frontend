@@ -13,6 +13,7 @@ export default class Role {
   static READONLY = "readonly";
   static MULTI_SCHEMA = "multi-schema";
   static GETNAME_DISABLED = "getname-disabled";
+  static UNLOCK_CHECKED_PRESCRIPTION = "unlock-checked-prescription";
 
   static getRoles(t) {
     return [
@@ -40,6 +41,10 @@ export default class Role {
       {
         id: Role.READONLY,
         label: t(`roles.${Role.READONLY}`),
+      },
+      {
+        id: Role.UNLOCK_CHECKED_PRESCRIPTION,
+        label: t(`roles.${Role.UNLOCK_CHECKED_PRESCRIPTION}`),
       },
     ];
   }

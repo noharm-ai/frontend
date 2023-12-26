@@ -29,7 +29,19 @@ export default function CustomForm({
       group.questions.forEach((question) => {
         if (values) {
           if (values[question.id] !== null) {
-            initialValues[question.id] = values[question.id];
+            if (question.type === "json") {
+              try {
+                initialValues[question.id] = JSON.stringify(
+                  values[question.id],
+                  null,
+                  2
+                );
+              } catch (e) {
+                initialValues[question.id] = values[question.id];
+              }
+            } else {
+              initialValues[question.id] = values[question.id];
+            }
           } else {
             initialValues[question.id] =
               question.type === "options-multiple" ? [] : null;
@@ -51,6 +63,19 @@ export default function CustomForm({
               .nullable()
               .min(1, t("validation.atLeastOne"))
               .required(t("validation.requiredField"));
+          } else if (question.type === "json") {
+            validationShape[question.id] = Yup.string().test(
+              "json",
+              "JSON Inválido",
+              (value) => {
+                try {
+                  JSON.parse(value);
+                  return true;
+                } catch (error) {
+                  return false;
+                }
+              }
+            );
           } else {
             validationShape[question.id] = Yup.string()
               .nullable()
@@ -64,8 +89,24 @@ export default function CustomForm({
   const validationSchema = Yup.object().shape(validationShape);
 
   const submit = (values) => {
+    const preparedValues = {};
+    template.forEach((group) => {
+      group.questions.forEach((question) => {
+        if (question.type === "json") {
+          try {
+            console.log("parse json", JSON.parse(values[question.id]));
+            preparedValues[question.id] = JSON.parse(values[question.id]);
+          } catch (e) {
+            preparedValues[question.id] = null;
+          }
+        } else {
+          preparedValues[question.id] = values[question.id];
+        }
+      });
+    });
+
     onSubmit({
-      values,
+      values: preparedValues,
       template,
     });
   };

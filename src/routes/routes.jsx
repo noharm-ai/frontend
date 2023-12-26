@@ -14,7 +14,6 @@ import Screening from "pages/Screening";
 import Segments from "pages/Segments";
 import References from "pages/References";
 import Reports from "pages/Reports";
-import ViewReport from "pages/Reports/ViewReport";
 import InterventionList from "pages/InterventionList";
 import UserConfig from "pages/UserConfig";
 import Password from "pages/Password";
@@ -31,11 +30,14 @@ import AdminFrequency from "pages/Admin/Frequency";
 import AdminInterventionReason from "pages/Admin/InterventionReason";
 import AdminMemory from "pages/Admin/Memory";
 import AdminMemoryRoutes from "pages/Admin/Memory/Routes";
+import AdminMemoryReports from "pages/Admin/Memory/Reports";
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminSegment from "pages/Admin/Segment";
 
-import GeneralReport from "pages/Reports/GeneralReport";
+import PatientDayReport from "pages/Reports/PatientDayReport";
+import PrescriptionReport from "pages/Reports/PrescriptionReport";
+import InterventionReport from "pages/Reports/InterventionReport";
 
 const routes = [
   {
@@ -146,15 +148,9 @@ const routes = [
   },
   {
     exact: true,
-    path: "/relatorios/visualizar",
-    element: <WithAuth component={ViewReport} />,
-  },
-  {
-    exact: true,
     path: "/intervencoes",
     element: <WithAuth component={InterventionList} />,
   },
-
   {
     exact: true,
     path: "/configuracoes/usuario",
@@ -247,6 +243,11 @@ const routes = [
   },
   {
     exact: true,
+    path: "/admin/relatorios",
+    element: <WithAuth component={AdminMemoryReports} />,
+  },
+  {
+    exact: true,
     path: "/admin/curadoria-medicamentos",
     element: <WithAuth component={AdminDrugAttributes} />,
   },
@@ -262,8 +263,18 @@ const routes = [
   },
   {
     exact: true,
-    path: "/relatorios/geral",
-    element: <WithAuth component={GeneralReport} />,
+    path: "/relatorios/pacientes-dia",
+    element: <WithAuth component={PatientDayReport} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/prescricoes",
+    element: <WithAuth component={PrescriptionReport} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/intervencoes",
+    element: <WithAuth component={InterventionReport} />,
   },
 ];
 

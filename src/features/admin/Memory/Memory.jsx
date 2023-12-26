@@ -23,8 +23,6 @@ function Memory() {
     dispatch(
       fetchMemory({
         kinds: [
-          "reports",
-          "admission-reports",
           "getnameurl",
           "features",
           "map-origin-drug",
@@ -60,28 +58,6 @@ function Memory() {
       </PageHeader>
 
       <MemoryContainer>
-        <div className="box">
-          <div className={`loader ${loading ? "loading" : ""}`}>
-            <LoadBox />
-          </div>
-          <h3>Relatórios</h3>
-          <div className="box-legend">Lista de relatórios geral.</div>
-
-          <Form memory={data["reports"]} />
-        </div>
-
-        <div className="box">
-          <div className={`loader ${loading ? "loading" : ""}`}>
-            <LoadBox />
-          </div>
-          <h3>Relatórios do Paciente</h3>
-          <div className="box-legend">
-            Lista de relatórios exibidos no card do paciente.
-          </div>
-
-          <Form memory={data["admission-reports"]} />
-        </div>
-
         <div className="box">
           <div className={`loader ${loading ? "loading" : ""}`}>
             <LoadBox />

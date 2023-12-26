@@ -156,6 +156,7 @@
     "intercurrence": "Intercurrence",
     "btnChecked": "Checked",
     "btnUndoCheck": "Undo",
+    "btnUndoCheckDisabled": "Can't undo because it was checked by another user",
     "btnCheck": "Check",
     "btnClinicalNotes": "Clinical notes",
     "btnSchedule": "Schedule appointment",
@@ -309,7 +310,8 @@
     "loadDraft": "Load draft",
     "appointment": "Appointment",
     "dischargeDate": "Discharge date",
-    "conciliation": "Conciliation"
+    "conciliation": "Conciliation",
+    "substance": "Substance"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
@@ -533,7 +535,8 @@
     "presmed-form": "Presmed Form",
     "doctor": "Doctor",
     "summary": "Discharge Summary",
-    "readonly": "Readonly"
+    "readonly": "Readonly",
+    "unlock-checked-prescription": "Can uncheck prescriptions from other users"
   },
 
   "reportcsv": {
@@ -548,6 +551,15 @@
     "checkedItens": "CHECKED ITENS",
     "responsible": "RESPONSIBLE",
     "clinicalNote": "CLINICAL NOTES",
-    "segment": "SEGMENT"
+    "segment": "SEGMENT",
+    "idPrescriptionDrug": "ID PRESCRIBED DRUG",
+    "error": "PRESCRIPTION ERROR",
+    "cost": "COST REDUCTION",
+    "statusDescription": "STATUS",
+    "status": "STATUS",
+    "expendedDose": "EXPENDED DOSE",
+    "economyDays": "DAYS OF ECONOMY",
+    "drug": "DRUG",
+    "reason": "REASON"
   }
 }

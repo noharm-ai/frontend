@@ -156,6 +156,7 @@
     "intercurrence": "Intercorrência",
     "btnChecked": "Prescrição checada",
     "btnUndoCheck": "Desfazer checagem",
+    "btnUndoCheckDisabled": "A checagem não pode ser desfeita, pois foi efetuada por outro usuário",
     "btnCheck": "Checar",
     "btnClinicalNotes": "Evolução",
     "btnSchedule": "Agendar Atendimento",
@@ -309,7 +310,8 @@
     "loadDraft": "Carregar rascunho",
     "appointment": "Agendamento",
     "dischargeDate": "Data de alta",
-    "conciliation": "Conciliação"
+    "conciliation": "Conciliação",
+    "substance": "Substância"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
@@ -534,7 +536,8 @@
     "presmed-form": "Formulário Presmed",
     "doctor": "Médico",
     "summary": "Sumário de Alta",
-    "readonly": "Somente leitura"
+    "readonly": "Somente leitura",
+    "unlock-checked-prescription": "Desfaz checagem de qualquer usuário"
   },
 
   "reportcsv": {
@@ -549,6 +552,15 @@
     "checkedItens": "ITENS CHECADOS",
     "responsible": "RESPONSAVEL",
     "clinicalNote": "EVOLUCAO",
-    "segment": "SEGMENTO"
+    "segment": "SEGMENTO",
+    "idPrescriptionDrug": "ID MEDICAMENTO PRESCRITO",
+    "error": "ERRO PRESCRICAO",
+    "cost": "REDUZ CUSTO",
+    "statusDescription": "SITUACAO",
+    "status": "SITUACAO",
+    "expendedDose": "DOSE DESPENDIDA",
+    "economyDays": "DIAS DE ECONOMIA",
+    "drug": "MEDICAMENTO",
+    "reason": "MOTIVO"
   }
 }

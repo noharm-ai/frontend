@@ -6,12 +6,17 @@ export const PageHeader = styled.div`
   margin-bottom: 30px;
 
   .page-header-title {
+    display: flex;
+    align-items: center;
     color: #2e3c5a;
-    display: block;
     font-size: 30px;
     font-weight: 600;
     margin: 0;
     text-align: left;
+
+    .ant-btn {
+      margin-left: 1rem;
+    }
   }
 
   .page-header-legend {

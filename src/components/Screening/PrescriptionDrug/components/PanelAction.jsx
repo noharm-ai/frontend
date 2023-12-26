@@ -15,7 +15,9 @@ import Dropdown from "components/Dropdown";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import Tag from "components/Tag";
+import notification from "components/notification";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
+import { getErrorMessageFromException } from "utils/errorHandler";
 
 const PanelAction = ({
   id,
@@ -113,6 +115,24 @@ const PanelAction = ({
     return tags.map((t) => t);
   };
 
+  const setPrescriptionStatus = (id, status) => {
+    checkScreening(id, status)
+      .then(() => {
+        notification.success({
+          message:
+            status === "s"
+              ? "Checagem efetuada com sucesso!"
+              : "Checagem desfeita com sucesso!",
+        });
+      })
+      .catch((err) => {
+        notification.error({
+          message: t("error.title"),
+          description: getErrorMessageFromException(err, t),
+        });
+      });
+  };
+
   const handleMenuClick = ({ key, domEvent }) => {
     switch (key) {
       case "more":
@@ -120,11 +140,11 @@ const PanelAction = ({
         break;
 
       case "check":
-        checkScreening(id, "s");
+        setPrescriptionStatus(id, "s");
         break;
 
       case "undo":
-        checkScreening(id, "0");
+        setPrescriptionStatus(id, "0");
         break;
 
       case "add":

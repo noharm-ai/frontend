@@ -25,6 +25,29 @@ export default function SecondaryFilters() {
             setFieldValue({ term: target.value !== "" ? target.value : null })
           }
         />
+        <div style={{ marginTop: "4px", fontSize: "12px" }}>
+          *Utilize o caractere % para procurar por partes de uma palavra. Ex:
+          %Morfina%
+        </div>
+      </Col>
+
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" htmlFor="date" size="14px">
+          {t("labels.substance")}:
+        </Heading>
+        <Input
+          style={{ width: "400px" }}
+          value={values.substance}
+          onChange={({ target }) =>
+            setFieldValue({
+              substance: target.value !== "" ? target.value : null,
+            })
+          }
+        />
+        <div style={{ marginTop: "4px", fontSize: "12px" }}>
+          *Utilize o caractere % para procurar por partes de uma palavra. Ex:
+          %Morfina%
+        </div>
       </Col>
 
       <Col md={24} xl={16} xxl={14}>

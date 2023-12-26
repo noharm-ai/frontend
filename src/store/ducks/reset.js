@@ -7,7 +7,6 @@ import { Creators as OutliersCreators } from "./outliers";
 import { Creators as PatientCentralCreators } from "./patientCentral";
 import { Creators as PrescriptionDrugsCreators } from "./prescriptionDrugs";
 import { Creators as PrescriptionsCreators } from "./prescriptions";
-import { Creators as ReportsCreators } from "./reports";
 import { Creators as UserAdminCreators } from "./userAdmin";
 
 import { reset as adminMemoryReset } from "features/admin/Memory/MemorySlice";
@@ -26,8 +25,12 @@ import { reset as serverActionsReset } from "features/serverActions/ServerAction
 import { reset as summaryReset } from "features/summary/SummarySlice";
 import { reset as drugMeasureUnitsReset } from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSlice";
 import { reset as scoreWizardReset } from "features/outliers/ScoreWizard/ScoreWizardSlice";
+import { reset as prescriptionv2Reset } from "features/prescription/PrescriptionSlice";
 
-import { reset as generalReportReset } from "features/reports/GeneralReport/GeneralReportSlice";
+import { reset as reportsReset } from "features/reports/ReportsSlice";
+import { reset as patientDayReportReset } from "features/reports/PatientDayReport/PatientDayReportSlice";
+import { reset as prescriptionReportReset } from "features/reports/PrescriptionReport/PrescriptionReportSlice";
+import { reset as interventionReportReset } from "features/reports/InterventionReport/InterventionReportSlice";
 
 const { clinicalNotesReset } = ClinicalNotesCreators;
 const { departmentsReset } = DepartmentsCreators;
@@ -38,7 +41,6 @@ const { outliersReset } = OutliersCreators;
 const { patientCentralReset } = PatientCentralCreators;
 const { prescriptionDrugsReset } = PrescriptionDrugsCreators;
 const { prescriptionsReset } = PrescriptionsCreators;
-const { reportsReset } = ReportsCreators;
 const { userAdminReset } = UserAdminCreators;
 
 export const resetReduxState = (dispatch) => {
@@ -70,6 +72,10 @@ export const resetReduxState = (dispatch) => {
   dispatch(summaryReset());
   dispatch(drugMeasureUnitsReset());
   dispatch(scoreWizardReset());
+  dispatch(prescriptionv2Reset());
 
-  dispatch(generalReportReset());
+  dispatch(reportsReset());
+  dispatch(patientDayReportReset());
+  dispatch(prescriptionReportReset());
+  dispatch(interventionReportReset());
 };

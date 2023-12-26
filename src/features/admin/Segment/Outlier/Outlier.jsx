@@ -21,13 +21,17 @@ function OutliersForm({ open, setOpen }) {
   const segment = useSelector((state) => state.admin.segment.single.data);
   const [loading, setLoading] = useState(false);
   const [outliersStatus, setOutliersStatus] = useState("idle");
+  const [outliersErrorMessage, setOutliersErrorMessage] = useState("idle");
   const [progressPercentage, setProgressPercentage] = useState("idle");
+  const [refreshWarning, setRefreshWarning] = useState(null);
 
   useEffect(() => {
     if (!open) {
       setLoading(false);
       setOutliersStatus("idle");
       setProgressPercentage(0);
+      setRefreshWarning(null);
+      setOutliersErrorMessage(null);
     }
   }, [open]);
 
@@ -50,8 +54,25 @@ function OutliersForm({ open, setOpen }) {
             message: "Iniciando a geração de escores",
             description: "Este processo pode demorar alguns minutos",
           });
-          console.log("response", response);
-          generateOutliers(response.payload.data.data);
+
+          if (
+            !response.payload.data.data[0]?.url?.includes(
+              "integracao/refresh-agg"
+            )
+          ) {
+            setRefreshWarning(true);
+          }
+
+          console.log("lenght", response.payload.data.data.length);
+
+          if (response.payload.data.data.length <= 1) {
+            setOutliersErrorMessage(
+              "Não há histórico de prescrição para este segmento."
+            );
+            setLoading(false);
+          } else {
+            generateOutliers(response.payload.data.data);
+          }
         }
       }
     );
@@ -152,13 +173,25 @@ function OutliersForm({ open, setOpen }) {
         </>
       )}
 
-      {outliersStatus === "error" && (
-        <Alert
-          message="Erro"
-          description="Ocorreu um erro inesperado ao gerar os escores. Consulte os logs."
-          type="error"
-          showIcon
-        />
+      {(outliersStatus === "error" || outliersErrorMessage) && (
+        <>
+          <Alert
+            message="Erro"
+            description={
+              outliersErrorMessage ||
+              "Ocorreu um erro inesperado ao gerar os escores. Consulte os logs."
+            }
+            type="error"
+            showIcon
+          />
+          {refreshWarning && (
+            <Alert
+              description="Não foi possível recalcular o histórico de prescrição devido ao volume de dados. Gerar os escores sem antes recalcular o histórico pode causar erros. Favor solicitar o cálculo manual antes de gerar os escores."
+              type="warning"
+              showIcon
+            />
+          )}
+        </>
       )}
 
       {(outliersStatus === "loading" || outliersStatus === "succeeded") && (
@@ -194,6 +227,13 @@ function OutliersForm({ open, setOpen }) {
                 : "Escores gerados com sucesso"}
             </Heading>
             <p style={{ marginTop: "5px" }}>{segment.description}</p>
+            {refreshWarning && (
+              <Alert
+                description="Não foi possível recalcular o histórico de prescrição devido ao volume de dados. Gerar os escores sem antes recalcular o histórico pode causar erros. Favor solicitar o cálculo manual antes de gerar os escores."
+                type="warning"
+                showIcon
+              />
+            )}
           </div>
         </>
       )}

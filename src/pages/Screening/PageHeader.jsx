@@ -1,7 +1,6 @@
 import styled from "styled-components/macro";
 
-import React, { useEffect, useState } from "react";
-import isEmpty from "lodash.isempty";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import {
@@ -24,6 +23,7 @@ import ClinicalNotes from "containers/Forms/ClinicalNotes";
 import ClinicalNotesSchedule from "containers/Forms/ClinicalNotes/ScheduleForm";
 import ClinicalNotesCustomForm from "containers/Forms/ClinicalNotes/CustomForm";
 import FormClinicalAlert from "containers/Forms/ClinicalAlert";
+import { getErrorMessageFromException } from "utils/errorHandler";
 
 const close = () => {
   window.close();
@@ -51,10 +51,11 @@ export default function PageHeader({
   incrementClinicalNotes,
   security,
   featureService,
+  userId,
 }) {
   const params = useParams();
   const id = params?.slug;
-  const { isChecking, error } = prescription.check;
+  const { isChecking } = prescription.check;
   const [isClinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
   const [isClinicalNotesFormsVisible, setClinicalNotesFormsVisibility] =
     useState(false);
@@ -64,6 +65,11 @@ export default function PageHeader({
   const { t } = useTranslation();
 
   const hasPrimaryCare = featureService.hasPrimaryCare();
+  const hasUncheckPermission =
+    featureService.hasLockCheckedPrescription() &&
+    !security.hasUnlockCheckedPrescription()
+      ? `${userId}` === `${prescription?.content.userId}`
+      : true;
 
   const onCancelClinicalNotes = () => {
     setClinicalNotesVisibility(false);
@@ -112,6 +118,25 @@ export default function PageHeader({
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     notification.success({ message: "Número da prescrição copiado!" });
+  };
+
+  const setPrescriptionStatus = (id, status) => {
+    checkScreening(id, status)
+      .then(() => {
+        notification.success({
+          message:
+            status === "s"
+              ? "Checagem efetuada com sucesso!"
+              : "Checagem desfeita com sucesso!",
+        });
+      })
+      .catch((err) => {
+        console.error("error", err);
+        notification.error({
+          message: t("error.title"),
+          description: getErrorMessageFromException(err, t),
+        });
+      });
   };
 
   const now = moment();
@@ -192,16 +217,6 @@ export default function PageHeader({
     );
   };
 
-  // show message if has error
-  useEffect(() => {
-    if (!isEmpty(error)) {
-      notification.error({
-        message: t("error.title"),
-        description: t("error.description"),
-      });
-    }
-  }, [error, t]);
-
   if (!prescription.content.idPrescription) {
     return null;
   }
@@ -226,7 +241,7 @@ export default function PageHeader({
               type="primary gtm-bt-check"
               icon={<CheckOutlined />}
               ghost
-              onClick={() => checkScreening(id, "s")}
+              onClick={() => setPrescriptionStatus(id, "s")}
               loading={isChecking}
               style={{ marginRight: "5px" }}
             >
@@ -248,14 +263,21 @@ export default function PageHeader({
                   </>
                 )}
               </span>
-              <Tooltip title={t("screeningHeader.btnUndoCheck")}>
+              <Tooltip
+                title={
+                  hasUncheckPermission
+                    ? t("screeningHeader.btnUndoCheck")
+                    : t("screeningHeader.btnUndoCheckDisabled")
+                }
+              >
                 <Button
                   className="gtm-bt-undo-check"
                   danger
-                  onClick={() => checkScreening(id, "0")}
+                  onClick={() => setPrescriptionStatus(id, "0")}
                   icon={<RollbackOutlined style={{ fontSize: 16 }} />}
                   loading={isChecking}
                   style={{ marginRight: "5px" }}
+                  disabled={!hasUncheckPermission}
                 ></Button>
               </Tooltip>
             </>

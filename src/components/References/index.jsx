@@ -246,15 +246,16 @@ export default function References({
             </Col>
             <Col xs={6}>
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                {drugData.sctidA && (
-                  <Button
-                    type="primary gtm-bt-add-relation"
-                    onClick={addRelationModal}
-                    icon={<PlusOutlined />}
-                  >
-                    Adicionar
-                  </Button>
-                )}
+                {(security.isAdmin() || security.isTraining()) &&
+                  drugData.sctidA && (
+                    <Button
+                      type="primary gtm-bt-add-relation"
+                      onClick={addRelationModal}
+                      icon={<PlusOutlined />}
+                    >
+                      Adicionar
+                    </Button>
+                  )}
               </div>
             </Col>
           </Row>

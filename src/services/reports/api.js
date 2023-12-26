@@ -4,8 +4,26 @@ const endpoints = {
   general: "/reports/general",
 };
 
-const getGeneralPrescription = (params = {}) =>
+const getConfig = (params = {}) =>
+  instance.get(`/reports/config`, {
+    params,
+    ...setHeaders(),
+  });
+
+const getPatientDay = (params = {}) =>
+  instance.get(`${endpoints.general}/patient-day`, {
+    params,
+    ...setHeaders(),
+  });
+
+const getPrescription = (params = {}) =>
   instance.get(`${endpoints.general}/prescription`, {
+    params,
+    ...setHeaders(),
+  });
+
+const getIntervention = (params = {}) =>
+  instance.get(`${endpoints.general}/intervention`, {
     params,
     ...setHeaders(),
   });
@@ -15,8 +33,11 @@ const getCache = (url) => {
 };
 
 const api = {
-  getGeneralPrescription,
+  getPatientDay,
+  getPrescription,
+  getIntervention,
   getCache,
+  getConfig,
 };
 
 export default api;

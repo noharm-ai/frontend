@@ -90,6 +90,12 @@ export const ORDER_OPTIONS = [
     formattedKey: "bed",
     type: "string",
   },
+  {
+    label: "Anotações",
+    key: "observation",
+    formattedKey: "filled",
+    type: "string",
+  },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
 export const getListStats = (list) => {

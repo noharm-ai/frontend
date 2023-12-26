@@ -42,10 +42,7 @@ export default function Base({
     transcription,
   } = values;
   const layout = { label: 8, input: 16 };
-  const hasTranscription =
-    security.hasTranscription() &&
-    drugData.intervention.id + "" !== "0" &&
-    drugData.intervention.idPrescriptionDrug + "" !== "0";
+  const hasTranscription = security.hasTranscription();
 
   const hasRelationships = (reasonList, selectedReasons = []) => {
     if (!selectedReasons) return false;

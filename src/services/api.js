@@ -11,6 +11,8 @@ const requestConfig = {
 
 export const instance = axios.create(requestConfig);
 
+const api = {};
+
 /**
  * Endpoints.
  * All endpoints that can be accessible in API.
@@ -596,6 +598,15 @@ const scoreAddHistory = (params) =>
     }
   );
 
+const scoreRemoveOutlier = (params) =>
+  instance.post(
+    `/outliers/generate/remove-outlier/${params.idSegment}/${params.idDrug}`,
+    {},
+    {
+      ...setHeaders(),
+    }
+  );
+
 const scoreConfigDrug = (params) =>
   instance.post(
     `/outliers/generate/config/${params.idSegment}/${params.idDrug}`,
@@ -606,10 +617,25 @@ const scoreConfigDrug = (params) =>
   );
 
 /**
+ * Prescription single
+ */
+api.prescription = {};
+api.prescription.startEvaluation = (params) =>
+  instance.post(`/prescriptions/start-evaluation`, params, {
+    ...setHeaders(),
+  });
+
+api.prescription.setStatus = (params) =>
+  instance.post(`/prescriptions/status`, params, {
+    ...setHeaders(),
+  });
+
+/**
  * API
  * all functions that can be user in API.
  */
-const api = {
+const methods = {
+  ...api,
   authenticate,
   preAuth,
   authenticateOAuth,
@@ -679,6 +705,7 @@ const api = {
   scoreGenerateSingle,
   scoreConfigDrug,
   scoreAddHistory,
+  scoreRemoveOutlier,
 };
 
-export default api;
+export default methods;

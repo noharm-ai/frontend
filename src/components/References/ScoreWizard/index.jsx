@@ -15,6 +15,7 @@ import Button from "components/Button";
 import DrugMeasureUnitsForm from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsForm";
 import GenerateScore from "features/outliers/ScoreWizard/GenerateScore/GenerateScore";
 import GeneratePrescriptionHistory from "features/outliers/ScoreWizard/GeneratePrescriptionHistory/GeneratePrescriptionHistory";
+import RemoveOutlier from "features/outliers/ScoreWizard/RemoveOutlier/RemoveOutlier";
 
 import unitConversionColumns from "../UnitConversion/columns";
 import { StepContent, StepBtnContainer } from "./index.style";
@@ -39,6 +40,8 @@ export default function ScoreWizard({
   const [editDrugMeasureUnits, setEditDrugMeasureUnits] = useState(false);
   const [generateModalVisile, setGenerateModalVisible] = useState(false);
   const [historyModalVisile, setHistoryModalVisible] = useState(false);
+  const [removeOutlierModalVisible, setRemoveOutlierModalVisible] =
+    useState(false);
   const { t } = useTranslation();
   const isAdmin = security.isAdmin();
   const maxSteps = 3;
@@ -135,9 +138,18 @@ export default function ScoreWizard({
         </Heading>
         <div>
           {isAdmin && (
-            <Button danger onClick={() => setHistoryModalVisible(true)}>
-              Gerar Histórico de Prescrição
-            </Button>
+            <>
+              <Button danger onClick={() => setHistoryModalVisible(true)}>
+                Gerar Histórico de Prescrição
+              </Button>
+              <Button
+                danger
+                onClick={() => setRemoveOutlierModalVisible(true)}
+                style={{ marginLeft: "10px" }}
+              >
+                Remover Outlier
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -325,6 +337,10 @@ export default function ScoreWizard({
       <GeneratePrescriptionHistory
         open={historyModalVisile}
         setOpen={setHistoryModalVisible}
+      />
+      <RemoveOutlier
+        open={removeOutlierModalVisible}
+        setOpen={setRemoveOutlierModalVisible}
       />
     </>
   );

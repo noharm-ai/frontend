@@ -16,3 +16,12 @@ export const getErrorMessage = (response, translator) => {
 
   return translator("errors.generic");
 };
+
+export const getErrorMessageFromException = (error, translator) => {
+  return getErrorMessage(
+    {
+      payload: error,
+    },
+    translator
+  );
+};

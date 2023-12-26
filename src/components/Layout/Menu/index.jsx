@@ -258,6 +258,14 @@ export default function Menu({ security, featureService }) {
           notrole: ["doctor"],
         },
         {
+          key: "/admin/relatorios",
+          link: "/admin/relatorios",
+          label: "Relatórios",
+          icon: <PieChartOutlined />,
+          id: "gtm-lnk-relatorios",
+          role: ["admin", "training"],
+        },
+        {
           key: "/admin/segmentos",
           link: "/admin/segmentos",
           label: "Segmentos",

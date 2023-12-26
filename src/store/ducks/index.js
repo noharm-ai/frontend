@@ -13,7 +13,6 @@ import interventionReducer from "./intervention";
 import departmentsReducer from "./departments";
 import prescriptionsReducer from "./prescriptions";
 import prescriptionDrugsReducer from "./prescriptionDrugs";
-import reportsReducer from "./reports";
 import memoryReducer from "./memory";
 import clinicalNotesReducer from "./clinicalNotes";
 import patientCentral from "./patientCentral";
@@ -25,6 +24,7 @@ import summaryReducer from "features/summary/SummarySlice";
 import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
 import memoryFilterSlice from "features/memory/MemoryFilter/MemoryFilterSlice";
 import scoreWizardSlice from "features/outliers/ScoreWizard/ScoreWizardSlice";
+import prescriptionSlice from "features/prescription/PrescriptionSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -34,7 +34,10 @@ import adminSegment from "features/admin/Segment/SegmentSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
 import adminFrequency from "features/admin/Frequency/FrequencySlice";
 
-import reportGeneralReport from "features/reports/GeneralReport/GeneralReportSlice";
+import reports from "features/reports/ReportsSlice";
+import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
+import reportPrescriptionReport from "features/reports/PrescriptionReport/PrescriptionReportSlice";
+import reportInterventionReport from "features/reports/InterventionReport/InterventionReportSlice";
 
 const adminReducers = combineReducers({
   interventionReason: adminInterventionReasonReducer,
@@ -47,7 +50,10 @@ const adminReducers = combineReducers({
 });
 
 const reportReducers = combineReducers({
-  general: reportGeneralReport,
+  patientDay: reportPatientDayReport,
+  prescription: reportPrescriptionReport,
+  intervention: reportInterventionReport,
+  reports: reports,
 });
 
 export default combineReducers({
@@ -67,7 +73,6 @@ export default combineReducers({
   intervention: interventionReducer,
   prescriptions: prescriptionsReducer,
   prescriptionDrugs: prescriptionDrugsReducer,
-  reports: reportsReducer,
   memory: memoryReducer,
   memoryDraft: memoryDraftSlice,
   memoryFilter: memoryFilterSlice,
@@ -78,4 +83,5 @@ export default combineReducers({
   serverActions: serverActionsSlice,
   summary: summaryReducer,
   scoreWizard: scoreWizardSlice,
+  prescriptionv2: prescriptionSlice,
 });
