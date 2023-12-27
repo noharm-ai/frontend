@@ -321,7 +321,6 @@ export default function Menu({ security, featureService }) {
       label: t("menu.help"),
       icon: <CustomerServiceOutlined />,
       id: "gtm-lnk-help",
-      role: ["admin"],
     },
   ];
 
