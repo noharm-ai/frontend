@@ -181,3 +181,11 @@ export const CheckboxContainer = styled.div`
     }
   }
 `;
+
+export const CheckboxDescription = styled.div`
+  opacity: 0.7;
+  padding-left: 24px;
+  padding-top: 5px;
+  line-height: 1.2;
+  border-top: 1px solid #ccc;
+`;
