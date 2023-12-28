@@ -264,6 +264,13 @@ const Table = styled(AntTable)`
 `;
 
 export const ExpandableTable = styled(Table)`
+  &.condensed {
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td {
+      padding: 2px 5px;
+    }
+  }
+
   .ant-table-body {
     overflow-x: auto;
   }

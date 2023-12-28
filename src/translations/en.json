@@ -561,5 +561,21 @@
     "economyDays": "DAYS OF ECONOMY",
     "drug": "DRUG",
     "reason": "REASON"
+  },
+
+  "features": {
+    "MICROMEDEX": "Drug Information Leaflet",
+    "PRIMARYCARE": "Primary Care",
+    "CONCILIATION": "Conciliation",
+    "SOLUTION_FREQUENCY": "Solution Frequency",
+    "LOCK_CHECKED_PRESCRIPTION": "Lock Checked Prescription"
+  },
+
+  "featuresDescription": {
+    "MICROMEDEX": "Enables the Drug Information Leaflet link",
+    "PRIMARYCARE": "Enables the Primary Care perspective",
+    "CONCILIATION": "Enables the conciliation feature",
+    "SOLUTION_FREQUENCY": "Enables the frequency columns in the solutions list",
+    "LOCK_CHECKED_PRESCRIPTION": "Disables the Undo Check button when the prescription was checked by another user"
   }
 }

@@ -24,6 +24,7 @@ import {
   AppstoreOutlined,
   BranchesOutlined,
   CustomerServiceOutlined,
+  FlagOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -224,7 +225,14 @@ export default function Menu({ security, featureService }) {
           id: "gtm-lnk-attr-drugs",
           role: ["admin", "training"],
         },
-
+        {
+          key: "/admin/features",
+          link: "/admin/features",
+          label: "Features",
+          icon: <FlagOutlined />,
+          id: "gtm-lnk-features",
+          role: ["admin", "training"],
+        },
         {
           key: "/admin/frequencias",
           link: "/admin/frequencias",
@@ -313,7 +321,6 @@ export default function Menu({ security, featureService }) {
       label: t("menu.help"),
       icon: <CustomerServiceOutlined />,
       id: "gtm-lnk-help",
-      role: ["admin"],
     },
   ];
 

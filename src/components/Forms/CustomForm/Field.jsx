@@ -1,11 +1,12 @@
 import React from "react";
+import { Checkbox, Row, Col } from "antd";
 
 import { Select, InputNumber, Textarea } from "components/Inputs";
 import Editor from "components/Editor";
 
 import MemoryField from "./Fields/MemoryField";
 import SubstanceField from "./Fields/SubstanceField";
-import { EditorBox } from "../Form.style";
+import { EditorBox, CheckboxDescription } from "../Form.style";
 
 export default function Field({ question, values, setFieldValue }) {
   const keydownEvent = (e) => {
@@ -131,6 +132,27 @@ export default function Field({ question, values, setFieldValue }) {
         values={values}
         setFieldValue={setFieldValue}
       />
+    );
+  }
+
+  if (question.type === "checkbox") {
+    return (
+      <Checkbox.Group
+        style={{ width: "100%" }}
+        value={values[question.id]}
+        onChange={(checkedValues) => setFieldValue(question.id, checkedValues)}
+      >
+        <Row gutter={[24, 24]}>
+          {question.options.map((option) => (
+            <Col span={12}>
+              <Checkbox style={{ fontWeight: 700 }} value={option.id}>
+                {option.label}
+              </Checkbox>
+              <CheckboxDescription>{option.description}</CheckboxDescription>
+            </Col>
+          ))}
+        </Row>
+      </Checkbox.Group>
     );
   }
 }

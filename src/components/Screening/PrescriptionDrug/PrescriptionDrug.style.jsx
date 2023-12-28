@@ -19,6 +19,12 @@ export const EditorBox = styled.div`
   }
 `;
 
+export const ToolBox = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+`;
+
 export const PrescriptionHeader = styled.div`
   display: inline-block;
   padding-left: 15px;

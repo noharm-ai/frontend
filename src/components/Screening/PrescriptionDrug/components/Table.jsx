@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 import { ExpandableTable } from "components/Table";
 import Empty from "components/Empty";
@@ -20,6 +21,9 @@ function Table({
   listType,
   showHeader,
 }) {
+  const prescriptionListType = useSelector(
+    (state) => state.preferences.prescription.listType
+  );
   const [expandedRows, setExpandedRows] = useState([]);
 
   const updateExpandedRows = (list, key) => {
@@ -94,6 +98,7 @@ function Table({
       expandedRowKeys={expandedRows}
       onExpand={(expanded, record) => handleRowExpand(record)}
       columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+      className={prescriptionListType}
     />
   );
 }

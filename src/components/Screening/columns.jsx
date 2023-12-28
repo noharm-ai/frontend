@@ -293,8 +293,7 @@ const Action = ({
 };
 
 const NestedTableContainer = styled.div`
-  margin-top: 5px;
-  margin-bottom: 35px;
+  background: rgb(169 145 214 / 12%);
 
   .ant-descriptions-item-label {
     font-weight: 600;
@@ -426,6 +425,8 @@ export const expandedRowRender = (bag) => (record) => {
     });
   }
 
+  const headerId = record.cpoe || record.idPrescription;
+
   return (
     <NestedTableContainer>
       <Descriptions bordered size="small">
@@ -466,7 +467,7 @@ export const expandedRowRender = (bag) => (record) => {
             </Link>
           </Descriptions.Item>
         )}
-        {record.cpoe && (
+        {(record.cpoe || bag.condensed) && (
           <>
             <Descriptions.Item
               label={bag.t("prescriptionDrugList.panelPrescription")}
@@ -474,34 +475,31 @@ export const expandedRowRender = (bag) => (record) => {
             >
               <Button
                 type="link"
-                href={`/prescricao/${record.cpoe}`}
+                href={`/prescricao/${headerId}`}
                 target="_blank"
               >
-                {record.cpoe}
+                {headerId}
               </Button>
             </Descriptions.Item>
             <Descriptions.Item
               label={bag.t("prescriptionDrugList.panelPrescriber")}
               span={3}
             >
-              {bag.headers[record.cpoe].prescriber}
+              {bag.headers[headerId].prescriber}
             </Descriptions.Item>
             <Descriptions.Item
               label={bag.t("prescriptionDrugList.panelIssueDate")}
               span={3}
             >
-              {format(
-                new Date(bag.headers[record.cpoe].date),
-                "dd/MM/yyyy HH:mm"
-              )}
+              {format(new Date(bag.headers[headerId].date), "dd/MM/yyyy HH:mm")}
             </Descriptions.Item>
             <Descriptions.Item
               label={bag.t("prescriptionDrugList.panelValidUntil")}
               span={3}
             >
-              {bag.headers[record.cpoe].expire
+              {bag.headers[headerId].expire
                 ? format(
-                    new Date(bag.headers[record.cpoe].expire),
+                    new Date(bag.headers[headerId].expire),
                     "dd/MM/yyyy HH:mm"
                   )
                 : "Manter até 2º ordem"}
@@ -641,6 +639,8 @@ const dose = (bag) => ({
   title: "Dose",
   dataIndex: "dosage",
   width: 130,
+  ellipsis: bag.condensed,
+  align: bag.condensed ? "left" : "center",
   render: (text, prescription) => {
     if (prescription.total && prescription.infusion) {
       return (
@@ -663,7 +663,7 @@ const dose = (bag) => ({
     }
 
     return (
-      <Tooltip title={prescription.measureUnit.label} placement="top">
+      <Tooltip title={prescription.dosage} placement="top">
         {prescription.dosage}
       </Tooltip>
     );
@@ -673,6 +673,7 @@ const dose = (bag) => ({
 const drug = (bag, addkey, title) => ({
   key: addkey ? "idPrescriptionDrug" : null,
   title: title ? title : bag.t("tableHeader.drug"),
+  ellipsis: bag.condensed,
   align: "left",
   render: (record) => {
     if (bag.concilia) {
@@ -703,15 +704,19 @@ const drug = (bag, addkey, title) => ({
     const href = `/medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(
       record.drug
     )}/${record.doseconv}/${record.dayFrequency}`;
-    return (
+    const content = (
       <>
-        <Tooltip title={bag.t("prescriptionDrugList.viewDrug")} placement="top">
-          <TableLink href={href} target="_blank" rel="noopener noreferrer">
-            {record.drug}
-          </TableLink>
-        </Tooltip>
-        <DrugTags drug={record} t={bag.t} />
+        {record.drug} <DrugTags drug={record} t={bag.t} />
       </>
+    );
+
+    return (
+      <Popover content={content} title="Ver medicamento" mouseEnterDelay={0.3}>
+        <TableLink href={href} target="_blank" rel="noopener noreferrer">
+          {record.drug}
+        </TableLink>
+        <DrugTags drug={record} t={bag.t} />
+      </Popover>
     );
   },
 });
@@ -791,6 +796,8 @@ const drugInfo = (bag) => [
 const frequency = (bag) => ({
   title: bag.t("tableHeader.frequency"),
   dataIndex: "frequency",
+  ellipsis: bag.condensed,
+  align: bag.condensed ? "left" : "center",
   width: 150,
   render: (text, prescription) => {
     if (prescription.dividerRow) {
@@ -821,7 +828,12 @@ const frequencyAndTime = (bag) => [
   {
     title: bag.t("tableHeader.time"),
     dataIndex: "time",
+    ellipsis: bag.condensed,
+    align: bag.condensed ? "left" : "center",
     width: 100,
+    render: (text, prescription) => {
+      return <Tooltip title={prescription.time}>{prescription.time}</Tooltip>;
+    },
   },
 ];
 
@@ -834,11 +846,18 @@ const stageAndInfusion = (bag) => {
     {
       title: bag.t("tableHeader.stage"),
       dataIndex: "stage",
+      ellipsis: bag.condensed,
       width: 100,
+      render: (text, prescription) => {
+        return (
+          <Tooltip title={prescription.stage}>{prescription.stage}</Tooltip>
+        );
+      },
     },
     {
       title: bag.t("tableHeader.infusion"),
       dataIndex: "infusion",
+      align: bag.condensed ? "left" : "center",
       width: 100,
     },
   ];
@@ -847,13 +866,18 @@ const stageAndInfusion = (bag) => {
 const route = (bag) => ({
   title: bag.t("tableHeader.route"),
   dataIndex: "route",
+  ellipsis: bag.condensed,
+  align: bag.condensed ? "left" : "center",
   width: 85,
+  render: (text, prescription) => {
+    return <Tooltip title={prescription.route}>{prescription.route}</Tooltip>;
+  },
 });
 
 const tags = (bag) => ({
   title: "Tags",
-  width: 50,
   align: "center",
+  width: 100,
   render: (text, prescription) => {
     return <PresmedTags prescription={prescription} bag={bag} />;
   },

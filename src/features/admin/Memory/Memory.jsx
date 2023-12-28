@@ -24,7 +24,6 @@ function Memory() {
       fetchMemory({
         kinds: [
           "getnameurl",
-          "features",
           "map-origin-drug",
           "map-origin-solution",
           "map-origin-procedure",
@@ -69,18 +68,6 @@ function Memory() {
           </div>
 
           <Form memory={data["getnameurl"]} />
-        </div>
-
-        <div className="box">
-          <div className={`loader ${loading ? "loading" : ""}`}>
-            <LoadBox />
-          </div>
-          <h3>Features</h3>
-          <div className="box-legend">
-            Array com a lista de features ativas.
-          </div>
-
-          <Form memory={data["features"]} />
         </div>
 
         <div className="box">
