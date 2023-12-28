@@ -2,11 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import withLayout from "lib/withLayout";
-import {
-  ExportOutlined,
-  MessageOutlined,
-  BulbOutlined,
-} from "@ant-design/icons";
+import { ExportOutlined, MessageOutlined } from "@ant-design/icons";
 import { Typography, Divider, Row, Col } from "antd";
 
 import Button from "components/Button";
