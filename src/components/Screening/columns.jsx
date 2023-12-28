@@ -768,6 +768,10 @@ const drugInfo = (bag) => [
         );
       }
 
+      if (record.whiteList) {
+        return "";
+      }
+
       if (record.cpoe && record.periodFixed && !record.whiteList) {
         return (
           <Tooltip title='Confira o período completo no botão "Visualizar período de uso" presente na linha extendida'>
