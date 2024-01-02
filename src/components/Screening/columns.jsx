@@ -467,53 +467,58 @@ export const expandedRowRender = (bag) => (record) => {
             </Link>
           </Descriptions.Item>
         )}
-        {(record.cpoe || bag.condensed) && (
-          <>
-            <Descriptions.Item
-              label={bag.t("prescriptionDrugList.panelPrescription")}
-              span={3}
-            >
-              <Button
-                type="link"
-                href={`/prescricao/${headerId}`}
-                target="_blank"
-              >
-                {headerId}
-              </Button>
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={bag.t("prescriptionDrugList.panelPrescriber")}
-              span={3}
-            >
-              {bag.headers[headerId].prescriber}
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={bag.t("prescriptionDrugList.panelIssueDate")}
-              span={3}
-            >
-              {format(new Date(bag.headers[headerId].date), "dd/MM/yyyy HH:mm")}
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={bag.t("prescriptionDrugList.panelValidUntil")}
-              span={3}
-            >
-              {bag.headers[headerId].expire
-                ? format(
-                    new Date(bag.headers[headerId].expire),
-                    "dd/MM/yyyy HH:mm"
-                  )
-                : "Manter até 2º ordem"}
-            </Descriptions.Item>
-            {record.suspensionDate && (
+        {(record.cpoe || bag.condensed) &&
+          bag.headers &&
+          bag.headers.length && (
+            <>
               <Descriptions.Item
-                label={bag.t("prescriptionDrugList.panelSuspensionDate")}
+                label={bag.t("prescriptionDrugList.panelPrescription")}
                 span={3}
               >
-                {format(new Date(record.suspensionDate), "dd/MM/yyyy HH:mm")}
+                <Button
+                  type="link"
+                  href={`/prescricao/${headerId}`}
+                  target="_blank"
+                >
+                  {headerId}
+                </Button>
               </Descriptions.Item>
-            )}
-          </>
-        )}
+              <Descriptions.Item
+                label={bag.t("prescriptionDrugList.panelPrescriber")}
+                span={3}
+              >
+                {bag.headers[headerId].prescriber}
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={bag.t("prescriptionDrugList.panelIssueDate")}
+                span={3}
+              >
+                {format(
+                  new Date(bag.headers[headerId].date),
+                  "dd/MM/yyyy HH:mm"
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={bag.t("prescriptionDrugList.panelValidUntil")}
+                span={3}
+              >
+                {bag.headers[headerId].expire
+                  ? format(
+                      new Date(bag.headers[headerId].expire),
+                      "dd/MM/yyyy HH:mm"
+                    )
+                  : "Manter até 2º ordem"}
+              </Descriptions.Item>
+              {record.suspensionDate && (
+                <Descriptions.Item
+                  label={bag.t("prescriptionDrugList.panelSuspensionDate")}
+                  span={3}
+                >
+                  {format(new Date(record.suspensionDate), "dd/MM/yyyy HH:mm")}
+                </Descriptions.Item>
+              )}
+            </>
+          )}
         {(!isEmpty(record.period) || (record.cpoe && !record.whiteList)) && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrPeriod")}
