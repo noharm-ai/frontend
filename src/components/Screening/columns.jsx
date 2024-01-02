@@ -469,7 +469,7 @@ export const expandedRowRender = (bag) => (record) => {
         )}
         {(record.cpoe || bag.condensed) &&
           bag.headers &&
-          bag.headers.length && (
+          bag.headers[headerId] && (
             <>
               <Descriptions.Item
                 label={bag.t("prescriptionDrugList.panelPrescription")}
