@@ -41,6 +41,7 @@ const mapStateToProps = ({ prescriptions, auth, user, intervention }) => ({
   featureService: FeatureService(user.account.features),
   interventions: prescriptions.single.intervention.list,
   isSavingIntervention: intervention.maybeCreateOrUpdate.isSaving,
+  infusion: prescriptions.single.data.infusion,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

@@ -103,6 +103,14 @@ export const rowClassName = (record, bag) => {
     classes.push("group-row-last");
   }
 
+  if (record.solutionGroupRow) {
+    classes.push("solution-group");
+  }
+
+  if (record.source === "solution") {
+    classes.push("solution");
+  }
+
   return classes.join(" ");
 };
 
@@ -134,6 +142,7 @@ export default function PrescriptionDrugList({
   security,
   featureService,
   interventions,
+  infusion,
 }) {
   const dispatch = useDispatch();
   const prescriptionListType = useSelector(
@@ -389,10 +398,10 @@ export default function PrescriptionDrugList({
 
       return table(
         {
-          value:
-            summarySourceToType(listType) === "solutions"
-              ? allItems
-              : groupComponents(sortCondensedPrescriptions(allItems)),
+          value: groupComponents(
+            sortCondensedPrescriptions(allItems),
+            infusion
+          ),
         },
         true
       );

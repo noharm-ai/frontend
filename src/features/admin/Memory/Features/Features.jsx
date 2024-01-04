@@ -95,7 +95,7 @@ function MemoryFeatures() {
       </PageHeader>
 
       <Row gutter={[16, 24]}>
-        <Col xs={{ span: 24 }} lg={{ span: 8 }} xxl={{ span: 8 }}>
+        <Col xs={{ span: 24 }} lg={{ span: 12 }} xxl={{ span: 12 }}>
           <Card loading={loading} title="Features Disponíveis">
             <CustomForm
               onSubmit={onSave}

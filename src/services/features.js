@@ -29,6 +29,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.LOCK_CHECKED_PRESCRIPTION);
   };
 
+  const hasDisableSolutionTab = () => {
+    return hasFeature(Feature.DISABLE_SOLUTION_TAB);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
@@ -36,6 +40,7 @@ const FeaturesService = (features) => {
     hasConciliation,
     hasSolutionFrequency,
     hasLockCheckedPrescription,
+    hasDisableSolutionTab,
   };
 };
 

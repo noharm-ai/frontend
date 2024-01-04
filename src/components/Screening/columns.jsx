@@ -9,6 +9,7 @@ import {
   FormOutlined,
   CalculatorOutlined,
 } from "@ant-design/icons";
+import { Button as AntButton } from "antd";
 
 import { InfoIcon } from "components/Icon";
 import Button, { Link } from "components/Button";
@@ -223,7 +224,7 @@ const Action = ({
   return (
     <TableTags>
       <Tooltip title={btnTitle} placement="left">
-        <Button
+        <AntButton
           type={isIntervened ? "danger gtm-bt-interv" : "primary gtm-bt-interv"}
           onClick={() => {
             onShowModal({
@@ -234,10 +235,11 @@ const Action = ({
             });
           }}
           ghost={!isChecked}
+          danger={isChecked}
           loading={isChecking}
           disabled={isDisabled}
           icon={<WarningOutlined style={{ fontSize: 16 }} />}
-        ></Button>
+        ></AntButton>
       </Tooltip>
 
       {security.hasPrescriptionEdit() && (
@@ -253,14 +255,14 @@ const Action = ({
           loading={isChecking}
           disabled={isDisabled}
         >
-          <Button
+          <AntButton
             type="primary"
             loading={isChecking}
             disabled={isDisabled}
             className="gtm-bt-extra-actions"
             ghost
             icon={<CaretDownOutlined style={{ fontSize: 16 }} />}
-          ></Button>
+          ></AntButton>
         </Dropdown>
       )}
 
@@ -273,7 +275,7 @@ const Action = ({
           }
           placement="left"
         >
-          <Button
+          <AntButton
             type="primary gtm-bt-notes"
             ghost={!hasNotes}
             onClick={() => {
@@ -285,7 +287,7 @@ const Action = ({
               });
             }}
             icon={<FormOutlined style={{ fontSize: 16 }} />}
-          ></Button>
+          ></AntButton>
         </Tooltip>
       )}
     </TableTags>
@@ -293,7 +295,30 @@ const Action = ({
 };
 
 const NestedTableContainer = styled.div`
-  background: rgb(169 145 214 / 12%);
+  position: relative;
+
+  &:before {
+    content: "";
+    position: absolute;
+    width: 3px;
+    height: 100%;
+    left: 0;
+    top: 0;
+  }
+
+  &.group {
+    &:before {
+      background: rgba(16, 142, 233, 0.5);
+    }
+  }
+
+  &.solution {
+    background: rgb(169 145 214 / 12%);
+
+    &:before {
+      background: rgb(169 145 214);
+    }
+  }
 
   .ant-descriptions-item-label {
     font-weight: 600;
@@ -393,7 +418,7 @@ const DrugTags = ({ drug, t }) => (
 export const expandedRowRender = (bag) => (record) => {
   if (record.total && record.infusion) {
     return (
-      <NestedTableContainer>
+      <NestedTableContainer className={record.source}>
         <SolutionCalculator {...record.infusion} weight={bag.weight} />
       </NestedTableContainer>
     );
@@ -428,7 +453,9 @@ export const expandedRowRender = (bag) => (record) => {
   const headerId = record.cpoe || record.idPrescription;
 
   return (
-    <NestedTableContainer>
+    <NestedTableContainer
+      className={`${record.source} ${record.groupRow ? "group" : ""}`}
+    >
       <Descriptions bordered size="small">
         {!isEmpty(record.alerts) && (
           <Descriptions.Item
@@ -655,7 +682,7 @@ const dose = (bag) => ({
         >
           <span
             onClick={() => bag.handleRowExpand(prescription)}
-            style={{ cursor: "pointer", fontWeight: 600 }}
+            style={{ cursor: "pointer" }}
           >
             {prescription.infusion.totalVol} mL
           </span>
@@ -717,7 +744,12 @@ const drug = (bag, addkey, title) => ({
 
     return (
       <Popover content={content} title="Ver medicamento" mouseEnterDelay={0.3}>
-        <TableLink href={href} target="_blank" rel="noopener noreferrer">
+        <TableLink
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="table-link"
+        >
           {record.drug}
         </TableLink>
         <DrugTags drug={record} t={bag.t} />
@@ -765,7 +797,7 @@ const drugInfo = (bag) => [
           >
             <span
               onClick={() => bag.handleRowExpand(record)}
-              style={{ cursor: "pointer", fontWeight: 600 }}
+              style={{ cursor: "pointer" }}
             >
               Total:
             </span>
@@ -814,6 +846,30 @@ const frequency = (bag) => ({
     }
 
     if (prescription.emptyRow) return null;
+
+    if (
+      prescription.source === "solution" &&
+      !bag.featureService.hasSolutionFrequency()
+    ) {
+      const content = (
+        <>
+          <strong>Etapas:</strong> {prescription.stage || "-"}
+          <br />
+          <strong>Infusão:</strong> {prescription.infusion || "-"}
+          <br />
+          <strong>Frequência:</strong>{" "}
+          {prescription.frequency ? prescription.frequency.label : "-"}
+        </>
+      );
+      return (
+        <Popover content={content} title="Etapas/Infusão" mouseEnterDelay={0.3}>
+          {prescription.stage}{" "}
+          {`${prescription.infusion}`.trim()
+            ? `| ${prescription.infusion}`
+            : ""}
+        </Popover>
+      );
+    }
 
     if (isEmpty(prescription.frequency)) {
       return (
@@ -886,8 +942,10 @@ const route = (bag) => ({
 const tags = (bag) => ({
   title: "Tags",
   align: "center",
-  width: 100,
+  width: 110,
   render: (text, prescription) => {
+    if (prescription.emptyRow) return null;
+
     return <PresmedTags prescription={prescription} bag={bag} />;
   },
 });
@@ -896,7 +954,7 @@ const actionColumns = (bag) => [
   {
     title: bag.t("tableHeader.action"),
     dataIndex: "intervention",
-    width: 110,
+    width: 80,
     render: (text, prescription) => {
       return <Action {...prescription} {...bag} />;
     },
