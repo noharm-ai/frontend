@@ -18,7 +18,10 @@ import { filterInterventionByPrescriptionDrug } from "utils/transformers/interve
 import notification from "components/notification";
 
 import FormIntervention from "containers/Forms/Intervention";
-import { setPrescriptionListType } from "features/preferences/PreferencesSlice";
+import {
+  setPrescriptionListType,
+  savePreferences,
+} from "features/preferences/PreferencesSlice";
 
 import {
   PrescriptionCollapse,
@@ -426,9 +429,10 @@ export default function PrescriptionDrugList({
         <ToolBox>
           <Tooltip title="Modo de visualização">
             <Radio.Group
-              onChange={(e) =>
-                dispatch(setPrescriptionListType(e.target.value))
-              }
+              onChange={(e) => {
+                dispatch(setPrescriptionListType(e.target.value));
+                dispatch(savePreferences());
+              }}
               value={prescriptionListType}
             >
               <Radio.Button value="default">Padrão</Radio.Button>
@@ -518,7 +522,10 @@ export default function PrescriptionDrugList({
       <ToolBox>
         <Tooltip title="Modo de visualização">
           <Radio.Group
-            onChange={(e) => dispatch(setPrescriptionListType(e.target.value))}
+            onChange={(e) => {
+              dispatch(setPrescriptionListType(e.target.value));
+              dispatch(savePreferences());
+            }}
             value={prescriptionListType}
           >
             <Radio.Button value="default">Padrão</Radio.Button>
