@@ -4,6 +4,7 @@ export default class Feature {
   static CONCILIATION = "CONCILIATION";
   static SOLUTION_FREQUENCY = "SOLUTION_FREQUENCY";
   static LOCK_CHECKED_PRESCRIPTION = "LOCK_CHECKED_PRESCRIPTION";
+  static DISABLE_SOLUTION_TAB = "DISABLE_SOLUTION_TAB";
 
   static getFeatures(t) {
     return [
@@ -33,6 +34,11 @@ export default class Feature {
         description: t(
           `featuresDescription.${Feature.LOCK_CHECKED_PRESCRIPTION}`
         ),
+      },
+      {
+        id: Feature.DISABLE_SOLUTION_TAB,
+        label: t(`features.${Feature.DISABLE_SOLUTION_TAB}`),
+        description: t(`featuresDescription.${Feature.DISABLE_SOLUTION_TAB}`),
       },
     ];
   }

@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components/macro";
-import { Row, Col } from "antd";
 
 import { InputNumber } from "components/Inputs";
 import Heading from "components/Heading";
-import Card from "components/Card";
 import Descriptions from "components/Descriptions";
 
 const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
-  const gutter = [0, 12];
   const [lAmount, setAmount] = useState(amount);
   const [lTotalVol, setTotalVol] = useState(totalVol);
   const [lSpeed, setSpeed] = useState(speed);
@@ -29,154 +26,189 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
     }
   `;
 
+  const CalcContainer = styled.div`
+    position: relative;
+    display: flex;
+    background: rgb(169 145 214 / 12%);
+    padding-top: 10px;
+
+    &:before {
+      content: "";
+      position: absolute;
+      width: 3px;
+      height: 100%;
+      left: 0;
+      top: 0;
+      background: rgb(169 145 214);
+    }
+
+    > div:nth-child(1) {
+      flex: 1;
+    }
+
+    > div:nth-child(2) {
+      width: 500px;
+    }
+
+    .ipt-container {
+      > div {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+
+        > div:nth-child(1) {
+          flex: 1;
+          justify-content: flex-end;
+        }
+
+        > div:nth-child(2) {
+          width: 200px;
+          padding-right: 30px;
+        }
+      }
+    }
+  `;
+
   const formatValue = (value) => {
     return value.toFixed(4);
   };
 
-  const labelSize = 14;
-  const inputSize = 10;
-
   return (
-    <Card title="Calculadora de solução">
-      <Row>
-        <Col xs={24} md={14}>
-          <Row gutter={gutter} type="flex" align="middle">
-            <Col xs={labelSize}>
+    <CalcContainer>
+      <div className="ipt-container">
+        <div>
+          <div className="ipt-label">
+            <Heading as="label" size="14px" textAlign="right">
+              Concentração ({unit}/mL)
+            </Heading>
+          </div>
+          <div className="ipt-value">
+            <InputNumber
+              style={{
+                width: "100%",
+                marginLeft: 10,
+                marginRight: 5,
+                textAlign: "right",
+              }}
+              min={0}
+              max={999999}
+              value={lAmount}
+              onChange={(value) => setAmount(value)}
+            />
+          </div>
+        </div>
+        <div>
+          <div className="ipt-label">
+            <Heading as="label" size="14px" textAlign="right">
+              Volume prescrito (mL)
+            </Heading>
+          </div>
+          <div className="ipt-value">
+            <InputNumber
+              style={{
+                width: "100%",
+                marginLeft: 10,
+                marginRight: 5,
+              }}
+              min={0}
+              max={999999}
+              value={lVol}
+              onChange={(value) => setVol(value)}
+            />
+          </div>
+        </div>
+        <div>
+          <div className="ipt-label">
+            <Heading as="label" size="14px" textAlign="right">
+              Volume da solução final (mL)
+            </Heading>
+          </div>
+          <div className="ipt-value">
+            <InputNumber
+              style={{
+                width: "100%",
+                marginLeft: 10,
+                marginRight: 5,
+              }}
+              min={0}
+              max={999999}
+              value={lTotalVol}
+              onChange={(value) => setTotalVol(value)}
+            />
+          </div>
+        </div>
+        <div>
+          <div className="ipt-label">
+            <Heading as="label" size="14px" textAlign="right">
+              Velocidade de infusão (mL/hora)
+            </Heading>
+          </div>
+          <div className="ipt-value">
+            <InputNumber
+              style={{
+                width: "100%",
+                marginLeft: 10,
+                marginRight: 5,
+              }}
+              min={0}
+              max={999999}
+              value={lSpeed}
+              onChange={(value) => setSpeed(value)}
+            />
+          </div>
+        </div>
+        <div>
+          <div className="ipt-label">
+            <Heading as="label" size="14px" textAlign="right">
+              Peso (Kg)
+            </Heading>
+          </div>
+          <div className="ipt-value">
+            <InputNumber
+              style={{
+                width: "100%",
+                marginLeft: 10,
+                marginRight: 5,
+              }}
+              min={0}
+              max={999999}
+              value={lWeight}
+              onChange={(value) => setWeight(value)}
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <CalcDescriptions bordered size="small">
+          <Descriptions.Item
+            label={
               <Heading as="label" size="14px" textAlign="right">
-                Concentração ({unit}/mL)
+                Resultados
               </Heading>
-            </Col>
-            <Col xs={inputSize}>
-              <InputNumber
-                style={{
-                  width: 120,
-                  marginLeft: 10,
-                  marginRight: 5,
-                  textAlign: "right",
-                }}
-                min={0}
-                max={999999}
-                value={lAmount}
-                onChange={(value) => setAmount(value)}
-              />
-            </Col>
-          </Row>
-          <Row gutter={gutter} type="flex" align="middle">
-            <Col xs={labelSize}>
-              <Heading as="label" size="14px" textAlign="right">
-                Volume prescrito (mL)
-              </Heading>
-            </Col>
-            <Col xs={inputSize}>
-              <InputNumber
-                style={{
-                  width: 120,
-                  marginLeft: 10,
-                  marginRight: 5,
-                }}
-                min={0}
-                max={999999}
-                value={lVol}
-                onChange={(value) => setVol(value)}
-              />
-            </Col>
-          </Row>
-          <Row gutter={gutter} type="flex" align="middle">
-            <Col xs={labelSize}>
-              <Heading as="label" size="14px" textAlign="right">
-                Volume da solução final (mL)
-              </Heading>
-            </Col>
-            <Col xs={inputSize}>
-              <InputNumber
-                style={{
-                  width: 120,
-                  marginLeft: 10,
-                  marginRight: 5,
-                }}
-                min={0}
-                max={999999}
-                value={lTotalVol}
-                onChange={(value) => setTotalVol(value)}
-              />
-            </Col>
-          </Row>
-          <Row gutter={gutter} type="flex" align="middle">
-            <Col xs={labelSize}>
-              <Heading as="label" size="14px" textAlign="right">
-                Velocidade de infusão (mL/hora)
-              </Heading>
-            </Col>
-            <Col xs={inputSize}>
-              <InputNumber
-                style={{
-                  width: 120,
-                  marginLeft: 10,
-                  marginRight: 5,
-                }}
-                min={0}
-                max={999999}
-                value={lSpeed}
-                onChange={(value) => setSpeed(value)}
-              />
-            </Col>
-          </Row>
-          <Row gutter={gutter} type="flex" align="middle">
-            <Col xs={labelSize}>
-              <Heading as="label" size="14px" textAlign="right">
-                Peso (Kg)
-              </Heading>
-            </Col>
-            <Col xs={inputSize}>
-              <InputNumber
-                style={{
-                  width: 120,
-                  marginLeft: 10,
-                  marginRight: 5,
-                }}
-                min={0}
-                max={999999}
-                value={lWeight}
-                onChange={(value) => setWeight(value)}
-              />
-            </Col>
-          </Row>
-        </Col>
-        <Col xs={24} md={10}>
-          <CalcDescriptions bordered size="small">
-            <Descriptions.Item
-              label={
-                <Heading as="label" size="14px" textAlign="right">
-                  Resultados
-                </Heading>
-              }
-              span={3}
-            ></Descriptions.Item>
-            <Descriptions.Item label={formatValue(result)} span={3}>
-              {unit}/h
-            </Descriptions.Item>
-            <Descriptions.Item label={formatValue(resultByMinute)} span={3}>
-              {unit}/min
-            </Descriptions.Item>
-            <Descriptions.Item label={formatValue(resultByWeightDay)} span={3}>
-              {unit}/Kg/dia
-            </Descriptions.Item>
-            <Descriptions.Item label={formatValue(resultByWeightHour)} span={3}>
-              {unit}/Kg/h
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={formatValue(resultByWeightMinute)}
-              span={3}
-            >
-              {unit}/Kg/min
-            </Descriptions.Item>
-            <Descriptions.Item label={formatValue(solution)} span={3}>
-              {unit}/ml (solução)
-            </Descriptions.Item>
-          </CalcDescriptions>
-        </Col>
-      </Row>
-    </Card>
+            }
+            span={3}
+          ></Descriptions.Item>
+          <Descriptions.Item label={formatValue(result)} span={3}>
+            {unit}/h
+          </Descriptions.Item>
+          <Descriptions.Item label={formatValue(resultByMinute)} span={3}>
+            {unit}/min
+          </Descriptions.Item>
+          <Descriptions.Item label={formatValue(resultByWeightDay)} span={3}>
+            {unit}/Kg/dia
+          </Descriptions.Item>
+          <Descriptions.Item label={formatValue(resultByWeightHour)} span={3}>
+            {unit}/Kg/h
+          </Descriptions.Item>
+          <Descriptions.Item label={formatValue(resultByWeightMinute)} span={3}>
+            {unit}/Kg/min
+          </Descriptions.Item>
+          <Descriptions.Item label={formatValue(solution)} span={3}>
+            {unit}/ml (solução)
+          </Descriptions.Item>
+        </CalcDescriptions>
+      </div>
+    </CalcContainer>
   );
 };
 

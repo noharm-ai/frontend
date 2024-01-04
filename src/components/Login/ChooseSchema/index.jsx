@@ -9,6 +9,7 @@ import DefaultModal from "components/Modal";
 import Tooltip from "components/Tooltip";
 import { Form } from "styles/Form.style";
 import Role from "models/Role";
+import Feature from "models/Feature";
 
 function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
   const { t } = useTranslation();
@@ -32,6 +33,7 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
     schema: null,
     getname: false,
     runAsBasicUser: false,
+    extraFeatures: [],
   };
 
   const onSave = (params) => {
@@ -44,6 +46,7 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
       ...preAuthConfig.params,
       schema: params.schema,
       defaultRoles: roles,
+      extraFeatures: params.extraFeatures,
       runAsBasicUser: params.runAsBasicUser,
     });
     setOpen(false);
@@ -154,6 +157,29 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
                 </div>
               </div>
             )}
+
+            <div className={`form-row`}>
+              <div className="form-label">
+                <label>Extra Features:</label>
+              </div>
+              <div className="form-input">
+                <Select
+                  onChange={(value) => {
+                    setFieldValue("extraFeatures", value);
+                  }}
+                  value={values.extraFeatures}
+                  optionFilterProp="children"
+                  showSearch
+                  mode="multiple"
+                >
+                  {Feature.getFeatures(t).map((feature) => (
+                    <Select.Option key={feature.id} value={feature.id}>
+                      {feature.label}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            </div>
 
             <div className={`form-row`}>
               <div className="form-label">
