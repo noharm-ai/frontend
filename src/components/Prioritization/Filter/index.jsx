@@ -3,7 +3,7 @@ import isEmpty from "lodash.isempty";
 import dayjs from "dayjs";
 import debounce from "lodash.debounce";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import {
   CaretUpOutlined,
   CaretDownOutlined,
@@ -46,6 +46,7 @@ export default function Filter({
   publicFilters,
 }) {
   const params = useParams();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
 
   const [date, setDate] = useState([dayjs(params?.startDate), null]);
@@ -206,7 +207,7 @@ export default function Filter({
     if (!isEmpty(filter.idDrug) && filter.idSegment) {
       searchDrugs(filter.idSegment, { idDrug: filter.idDrug });
     }
-  }, []); // eslint-disable-line
+  }, [location.pathname]); // eslint-disable-line
 
   const disabledDate = (current) => {
     return false;
