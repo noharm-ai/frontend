@@ -10,6 +10,9 @@ const initialState = {
   prescription: {
     listType: "default",
   },
+  app: {
+    initialPage: "/priorizacao/pacientes/cards",
+  },
 };
 
 export const savePreferences = createAsyncThunk(
@@ -41,6 +44,9 @@ const preferencesSlice = createSlice({
     setPrescriptionListType(state, action) {
       state.prescription.listType = action.payload;
     },
+    setInitialPage(state, action) {
+      state.app.initialPage = action.payload;
+    },
     setSavedPreferences(state, action) {
       return {
         ...initialState,
@@ -53,8 +59,12 @@ const preferencesSlice = createSlice({
   },
 });
 
-export const { reset, setSavedPreferences, setPrescriptionListType } =
-  preferencesSlice.actions;
+export const {
+  reset,
+  setSavedPreferences,
+  setPrescriptionListType,
+  setInitialPage,
+} = preferencesSlice.actions;
 
 const persist = {
   storage,

@@ -103,7 +103,7 @@ export default function Menu({ security, featureService }) {
           key: "/priorizacao/pacientes/cards",
           link: "/priorizacao/pacientes/cards",
           label: t("menu.prioritization-lab"),
-          icon: <ExperimentOutlined />,
+          icon: <UserOutlined />,
           id: "gtm-lnk-priorizacao-cards",
         },
         {

@@ -2,7 +2,7 @@
  * Auth verification
  */
 import WithAuth from "lib/withAuth";
-import chooseJourney from "lib/chooseJourney";
+import JourneySwitch from "lib/chooseJourney";
 
 /**
  * Pages
@@ -64,7 +64,7 @@ const routes = [
   {
     exact: true,
     path: "/",
-    element: <WithAuth component={chooseJourney()} />,
+    element: <WithAuth component={JourneySwitch} />,
   },
   {
     exact: true,

@@ -29,9 +29,9 @@
   "menu": {
     "prioritization": "Priorização",
     "prioritization-prescription": "por Prescrições",
-    "prioritization-patient": "por Pacientes",
+    "prioritization-patient": "por Pacientes (Tabela)",
     "prioritization-conciliation": "de Conciliações",
-    "prioritization-lab": "por Pacientes (Beta)",
+    "prioritization-lab": "por Pacientes (Cards)",
     "interventions": "Intervenções",
     "reports": "Relatórios",
     "config": "Configurações",
