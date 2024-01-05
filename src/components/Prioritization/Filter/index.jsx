@@ -21,6 +21,7 @@ import Button from "components/Button";
 import Badge from "components/Badge";
 import LoadBox from "components/LoadBox";
 import FilterMemory from "./components/FilterMemory";
+import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
 
 import { Box, SearchBox } from "./Filter.style";
 import "./index.css";
@@ -75,6 +76,7 @@ export default function Filter({
         insurance: filter.insurance,
         indicators: filter.indicators,
         frequencies: filter.frequencies,
+        substances: filter.substances,
         patientStatus: filter.patientStatus,
       };
       const mixedParams = { ...params, ...forceParams };
@@ -84,6 +86,10 @@ export default function Filter({
         if (mixedParams[key] !== "all") {
           finalParams[key] = mixedParams[key];
         }
+      }
+
+      if (finalParams.substances && finalParams.substances.length) {
+        finalParams.substances = finalParams.substances.map((s) => s.value);
       }
 
       return finalParams;
@@ -100,6 +106,7 @@ export default function Filter({
       filter.indicators,
       filter.frequencies,
       filter.patientStatus,
+      filter.substances,
       prioritizationType,
       date,
     ]
@@ -235,6 +242,7 @@ export default function Filter({
       discharged: 0,
       indicators: [],
       frequencies: [],
+      substances: [],
       patientStatus: null,
     });
     setDate([dayjs(), null]);
@@ -461,6 +469,23 @@ export default function Filter({
                   {t("screeningList.labelAllDrugs")}
                 </Tooltip>
               </Checkbox>
+            </Col>
+          </Row>
+
+          <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={19}>
+              <Box>
+                <Heading as="label" htmlFor="drugs-filter" size="14px">
+                  {t("labels.substance")}:
+                </Heading>
+                <FieldSubstanceAutocomplete
+                  value={filter.substances}
+                  onChange={(value) =>
+                    setScreeningListFilter({ substances: value })
+                  }
+                  style={{ width: "100%" }}
+                ></FieldSubstanceAutocomplete>
+              </Box>
             </Col>
           </Row>
 
