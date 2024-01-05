@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { Collapse } from "antd";
 
 import { Select } from "components/Inputs";
 import Switch from "components/Switch";
@@ -35,6 +36,97 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
     runAsBasicUser: false,
     extraFeatures: [],
   };
+
+  const getExtraOptions = (values, setFieldValue) => [
+    {
+      key: "1",
+      label: "Mais opções",
+      children: (
+        <>
+          {defaultRolesOptions.length > 0 && (
+            <div className={`form-row`}>
+              <div className="form-label">
+                <label>Roles:</label>
+              </div>
+              <div className="form-input">
+                <Select
+                  onChange={(value) => {
+                    setFieldValue("defaultRoles", value);
+                  }}
+                  value={values.defaultRoles}
+                  optionFilterProp="children"
+                  showSearch
+                  mode="multiple"
+                >
+                  {values.schema &&
+                    defaultRolesOptions.map((role) => (
+                      <Select.Option key={role} value={role}>
+                        {t(`roles.${role}`)}
+                      </Select.Option>
+                    ))}
+                </Select>
+              </div>
+            </div>
+          )}
+
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>Extra Features:</label>
+            </div>
+            <div className="form-input">
+              <Select
+                onChange={(value) => {
+                  setFieldValue("extraFeatures", value);
+                }}
+                value={values.extraFeatures}
+                optionFilterProp="children"
+                showSearch
+                mode="multiple"
+              >
+                {Feature.getFeatures(t).map((feature) => (
+                  <Select.Option key={feature.id} value={feature.id}>
+                    {feature.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+          </div>
+
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>Ativar Getname:</label>
+            </div>
+            <div className="form-input">
+              <Switch
+                onChange={(value) => {
+                  setFieldValue("getname", value);
+                }}
+                checked={values.getname}
+              />
+            </div>
+          </div>
+          <div className={`form-row`}>
+            <div className="form-label">
+              <Tooltip
+                title="Remove as permissões especiais para simular a visão de um usuário normal da NoHarm"
+                underline
+              >
+                <label>Simular Usuário Comum:</label>
+              </Tooltip>
+            </div>
+            <div className="form-input">
+              <Switch
+                onChange={(value) => {
+                  setFieldValue("runAsBasicUser", value);
+                }}
+                checked={values.runAsBasicUser}
+              />
+            </div>
+          </div>
+        </>
+      ),
+    },
+  ];
 
   const onSave = (params) => {
     const roles = [...params.defaultRoles];
@@ -132,86 +224,11 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
               )}
             </div>
 
-            {defaultRolesOptions.length > 0 && (
-              <div className={`form-row`}>
-                <div className="form-label">
-                  <label>Roles:</label>
-                </div>
-                <div className="form-input">
-                  <Select
-                    onChange={(value) => {
-                      setFieldValue("defaultRoles", value);
-                    }}
-                    value={values.defaultRoles}
-                    optionFilterProp="children"
-                    showSearch
-                    mode="multiple"
-                  >
-                    {values.schema &&
-                      defaultRolesOptions.map((role) => (
-                        <Select.Option key={role} value={role}>
-                          {t(`roles.${role}`)}
-                        </Select.Option>
-                      ))}
-                  </Select>
-                </div>
-              </div>
-            )}
-
-            <div className={`form-row`}>
-              <div className="form-label">
-                <label>Extra Features:</label>
-              </div>
-              <div className="form-input">
-                <Select
-                  onChange={(value) => {
-                    setFieldValue("extraFeatures", value);
-                  }}
-                  value={values.extraFeatures}
-                  optionFilterProp="children"
-                  showSearch
-                  mode="multiple"
-                >
-                  {Feature.getFeatures(t).map((feature) => (
-                    <Select.Option key={feature.id} value={feature.id}>
-                      {feature.label}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-            </div>
-
-            <div className={`form-row`}>
-              <div className="form-label">
-                <label>Ativar Getname:</label>
-              </div>
-              <div className="form-input">
-                <Switch
-                  onChange={(value) => {
-                    setFieldValue("getname", value);
-                  }}
-                  checked={values.getname}
-                />
-              </div>
-            </div>
-            <div className={`form-row`}>
-              <div className="form-label">
-                <Tooltip
-                  title="Remove as permissões especiais para simular a visão de um usuário normal da NoHarm"
-                  underline
-                >
-                  <label>Simular Usuário Comum:</label>
-                </Tooltip>
-              </div>
-              <div className="form-input">
-                <Switch
-                  onChange={(value) => {
-                    setFieldValue("runAsBasicUser", value);
-                  }}
-                  checked={values.runAsBasicUser}
-                />
-              </div>
-            </div>
+            <Collapse
+              ghost
+              className="collapsed-content"
+              items={getExtraOptions(values, setFieldValue, errors, touched)}
+            />
           </Form>
         </DefaultModal>
       )}

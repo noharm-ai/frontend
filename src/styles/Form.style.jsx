@@ -38,4 +38,10 @@ export const Form = styled.form`
       margin-left: 10px;
     }
   }
+
+  .collapsed-content {
+    .ant-collapse-header {
+      padding-left: 0;
+    }
+  }
 `;
