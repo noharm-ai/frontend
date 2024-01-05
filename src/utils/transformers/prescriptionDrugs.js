@@ -4,7 +4,7 @@ export const groupComponents = (list, infusion) => {
   if (!list || list.length < 1) return list;
 
   let items = [];
-  const cpoelist = [...list];
+  const cpoelist = sortPrescriptionDrugs([...list]);
   const cpoeGroups = {};
   const order = new Set();
 
@@ -144,8 +144,13 @@ export const getWhitelistedChildren = (list) => {
   });
 };
 
-export const sortCondensedPrescriptions = (items) => {
-  return items
-    .filter((i) => !i.emptyRow)
+const sortPrescriptionDrugs = (items) => {
+  const whitelistItems = items
+    .filter((i) => i.whiteList)
     .sort((a, b) => `${a.drug}`.localeCompare(`${b.drug}`));
+
+  return items
+    .filter((i) => !i.emptyRow && !i.whiteList)
+    .sort((a, b) => `${a.drug}`.localeCompare(`${b.drug}`))
+    .concat(whitelistItems);
 };

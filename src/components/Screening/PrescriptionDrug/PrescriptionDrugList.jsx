@@ -10,10 +10,7 @@ import Empty from "components/Empty";
 import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
-import {
-  sortCondensedPrescriptions,
-  groupComponents,
-} from "utils/transformers/prescriptionDrugs";
+import { groupComponents } from "utils/transformers/prescriptionDrugs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 import notification from "components/notification";
 
@@ -401,10 +398,7 @@ export default function PrescriptionDrugList({
 
       return table(
         {
-          value: groupComponents(
-            sortCondensedPrescriptions(allItems),
-            infusion
-          ),
+          value: groupComponents(allItems, infusion),
         },
         true
       );
