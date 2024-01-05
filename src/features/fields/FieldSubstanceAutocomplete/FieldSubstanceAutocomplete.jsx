@@ -66,7 +66,7 @@ export default function FieldSubstanceAutocomplete({
       filterOption={false}
       onSearch={search}
       onChange={(value) => onChange(value)}
-      placeholder={loading ? "Carregando..." : "Selecione..."}
+      placeholder={loading ? "Carregando..." : "Digite para pesquisar"}
       mode="multiple"
       loading={loading}
       {...props}
