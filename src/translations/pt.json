@@ -311,7 +311,8 @@
     "appointment": "Agendamento",
     "dischargeDate": "Data de alta",
     "conciliation": "Conciliação",
-    "substance": "Substância"
+    "substance": "Substância",
+    "substanceClass": "Classe de Substância"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"

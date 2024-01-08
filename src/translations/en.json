@@ -311,7 +311,8 @@
     "appointment": "Appointment",
     "dischargeDate": "Discharge date",
     "conciliation": "Conciliation",
-    "substance": "Substance"
+    "substance": "Substance",
+    "substanceClass": "Substance Class"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"

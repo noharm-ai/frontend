@@ -396,14 +396,6 @@ const getSubstanceSingle = (bearerToken, id) =>
     ...setHeaders(bearerToken),
   });
 
-const findSubstances = (bearerToken, term) =>
-  instance.get(`${endpoints.substance}/find`, {
-    params: {
-      term,
-    },
-    ...setHeaders(bearerToken),
-  });
-
 const getSubstanceClasses = (bearerToken, params = {}) =>
   instance.get(`${endpoints.substance}/class`, {
     params,
@@ -631,8 +623,28 @@ api.prescription.setStatus = (params) =>
   });
 
 /**
+ * substance namespace
+ */
+api.substance = {};
+api.substance.findSubstances = (term) =>
+  instance.get(`${endpoints.substance}/find`, {
+    params: {
+      term,
+    },
+    ...setHeaders(),
+  });
+
+api.substance.findSubstanceClasses = (term) =>
+  instance.get(`${endpoints.substance}/class/find`, {
+    params: {
+      term,
+    },
+    ...setHeaders(),
+  });
+
+/**
  * API
- * all functions that can be user in API.
+ * all functions that can be used in API.
  */
 const methods = {
   ...api,
@@ -672,7 +684,6 @@ const methods = {
   updatePrescriptionDrugForm,
   getSubstances,
   getSubstanceSingle,
-  findSubstances,
   getSubstanceClasses,
   updateSegmentExam,
   getExamTypes,
