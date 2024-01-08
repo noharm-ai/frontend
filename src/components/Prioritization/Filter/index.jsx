@@ -3,7 +3,7 @@ import isEmpty from "lodash.isempty";
 import dayjs from "dayjs";
 import debounce from "lodash.debounce";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import {
   CaretUpOutlined,
   CaretDownOutlined,
@@ -21,6 +21,8 @@ import Button from "components/Button";
 import Badge from "components/Badge";
 import LoadBox from "components/LoadBox";
 import FilterMemory from "./components/FilterMemory";
+import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
+import FieldSubstanceClassAutocomplete from "features/fields/FieldSubstanceClassAutocomplete/FieldSubstanceClassAutocomplete";
 
 import { Box, SearchBox } from "./Filter.style";
 import "./index.css";
@@ -46,6 +48,7 @@ export default function Filter({
   publicFilters,
 }) {
   const params = useParams();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
 
   const [date, setDate] = useState([dayjs(params?.startDate), null]);
@@ -74,6 +77,8 @@ export default function Filter({
         insurance: filter.insurance,
         indicators: filter.indicators,
         frequencies: filter.frequencies,
+        substances: filter.substances,
+        substanceClasses: filter.substanceClasses,
         patientStatus: filter.patientStatus,
       };
       const mixedParams = { ...params, ...forceParams };
@@ -83,6 +88,16 @@ export default function Filter({
         if (mixedParams[key] !== "all") {
           finalParams[key] = mixedParams[key];
         }
+      }
+
+      if (finalParams.substances && finalParams.substances.length) {
+        finalParams.substances = finalParams.substances.map((s) => s.value);
+      }
+
+      if (finalParams.substanceClasses && finalParams.substanceClasses.length) {
+        finalParams.substanceClasses = finalParams.substanceClasses.map(
+          (s) => s.value
+        );
       }
 
       return finalParams;
@@ -99,6 +114,8 @@ export default function Filter({
       filter.indicators,
       filter.frequencies,
       filter.patientStatus,
+      filter.substances,
+      filter.substanceClasses,
       prioritizationType,
       date,
     ]
@@ -206,7 +223,7 @@ export default function Filter({
     if (!isEmpty(filter.idDrug) && filter.idSegment) {
       searchDrugs(filter.idSegment, { idDrug: filter.idDrug });
     }
-  }, []); // eslint-disable-line
+  }, [location.pathname]); // eslint-disable-line
 
   const disabledDate = (current) => {
     return false;
@@ -234,6 +251,8 @@ export default function Filter({
       discharged: 0,
       indicators: [],
       frequencies: [],
+      substances: [],
+      substanceClasses: [],
       patientStatus: null,
     });
     setDate([dayjs(), null]);
@@ -460,6 +479,40 @@ export default function Filter({
                   {t("screeningList.labelAllDrugs")}
                 </Tooltip>
               </Checkbox>
+            </Col>
+          </Row>
+
+          <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={19}>
+              <Box>
+                <Heading as="label" htmlFor="drugs-filter" size="14px">
+                  {t("labels.substance")}:
+                </Heading>
+                <FieldSubstanceAutocomplete
+                  value={filter.substances}
+                  onChange={(value) =>
+                    setScreeningListFilter({ substances: value })
+                  }
+                  style={{ width: "100%" }}
+                ></FieldSubstanceAutocomplete>
+              </Box>
+            </Col>
+          </Row>
+
+          <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={19}>
+              <Box>
+                <Heading as="label" htmlFor="drugs-filter" size="14px">
+                  {t("labels.substanceClass")}:
+                </Heading>
+                <FieldSubstanceClassAutocomplete
+                  value={filter.substanceClasses}
+                  onChange={(value) =>
+                    setScreeningListFilter({ substanceClasses: value })
+                  }
+                  style={{ width: "100%" }}
+                ></FieldSubstanceClassAutocomplete>
+              </Box>
             </Col>
           </Row>
 

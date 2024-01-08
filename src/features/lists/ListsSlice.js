@@ -31,6 +31,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  searchSubstanceClasses: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
   getSubstances: {
     list: [],
     status: "idle",
@@ -87,7 +92,20 @@ export const searchSubstances = createAsyncThunk(
   "lists/search-substances",
   async (params, thunkAPI) => {
     try {
-      const response = await api.findSubstances(null, params.term);
+      const response = await api.substance.findSubstances(params.term);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const searchSubstanceClasses = createAsyncThunk(
+  "lists/search-substances-classes",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.substance.findSubstanceClasses(params.term);
 
       return response.data;
     } catch (err) {
@@ -255,6 +273,17 @@ const listsSlice = createSlice({
       .addCase(searchSubstances.rejected, (state, action) => {
         state.searchSubstances.status = "failed";
         state.searchSubstances.error = action.error.message;
+      })
+      .addCase(searchSubstanceClasses.pending, (state, action) => {
+        state.searchSubstanceClasses.status = "loading";
+      })
+      .addCase(searchSubstanceClasses.fulfilled, (state, action) => {
+        state.searchSubstanceClasses.status = "succeeded";
+        state.searchSubstanceClasses.list = action.payload.data;
+      })
+      .addCase(searchSubstanceClasses.rejected, (state, action) => {
+        state.searchSubstanceClasses.status = "failed";
+        state.searchSubstanceClasses.error = action.error.message;
       })
       .addCase(getSubstances.pending, (state, action) => {
         state.getSubstances.status = "loading";

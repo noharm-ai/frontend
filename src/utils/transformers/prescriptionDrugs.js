@@ -1,54 +1,17 @@
 import isEmpty from "lodash.isempty";
 
-const groupPrescriptionDrugs = (list, createTotalRowFunction) => {
-  const items = [];
-  let currentGroup = list[0].grp_solution;
-  let currentInfusionKey = list[0].infusionKey;
-  let currentKey = list[0].key;
-  list.forEach((item, index) => {
-    if (item.grp_solution !== currentGroup) {
-      items.push(
-        createTotalRowFunction(
-          item,
-          currentGroup,
-          currentKey,
-          currentInfusionKey
-        )
-      );
-      currentGroup = item.grp_solution;
-    }
-
-    currentKey = item.key;
-    currentInfusionKey = item.infusionKey;
-
-    items.push(item);
-
-    if (index === list.length - 1) {
-      items.push(
-        createTotalRowFunction(
-          item,
-          item.grp_solution,
-          item.key,
-          item.infusionKey
-        )
-      );
-    }
-  });
-
-  return items;
-};
-
-export const groupComponents = (list) => {
+export const groupComponents = (list, infusion) => {
   if (!list || list.length < 1) return list;
 
   let items = [];
-  const cpoelist = [...list];
+  const cpoelist = sortPrescriptionDrugs([...list]);
   const cpoeGroups = {};
   const order = new Set();
 
   for (let i = 0; i < cpoelist.length; i++) {
-    const currentGroup =
-      cpoelist[i].grp_solution || cpoelist[i].idPrescriptionDrug;
+    const currentGroup = cpoelist[i].grp_solution
+      ? `${cpoelist[i].idPrescription}-${cpoelist[i].grp_solution}`
+      : cpoelist[i].idPrescriptionDrug;
     order.add(currentGroup);
     cpoeGroups[currentGroup] = cpoeGroups[currentGroup]
       ? [...cpoeGroups[currentGroup], cpoelist[i]]
@@ -56,7 +19,10 @@ export const groupComponents = (list) => {
   }
 
   order.forEach((key) => {
-    if (cpoeGroups[key].length > 1) {
+    if (
+      cpoeGroups[key].length > 1 ||
+      (cpoeGroups[key].length === 1 && cpoeGroups[key][0].source === "solution")
+    ) {
       const emptyRowStart = {
         key: `${key}expandStart`,
         idPrescription: cpoeGroups[key][0].idPrescription,
@@ -65,7 +31,9 @@ export const groupComponents = (list) => {
         dividerRow: true,
         emptyRow: true,
         startRow: true,
+        solutionGroupRow: cpoeGroups[key][0].source === "solution",
       };
+
       const emptyRowEnd = {
         key: `${key}expandEnd`,
         idPrescription: cpoeGroups[key][0].idPrescription,
@@ -74,53 +42,47 @@ export const groupComponents = (list) => {
         dividerRow: true,
         emptyRow: true,
         endRow: true,
+        solutionGroupRow: cpoeGroups[key][0].source === "solution",
       };
-      const groupRows = cpoeGroups[key].map((g) => ({ ...g, groupRow: true }));
-      groupRows[groupRows.length - 1].groupRowLast = true;
+      const groupRows = cpoeGroups[key].map((g) => ({
+        ...g,
+        groupRow: true,
+        solutionGroupRow: cpoeGroups[key][0].source === "solution",
+      }));
 
-      items = [...items, emptyRowStart, ...groupRows, emptyRowEnd];
+      if (cpoeGroups[key][0].source === "solution") {
+        const solutionCalcRow = {
+          key: `${key}solutionCalc`,
+          idPrescription: cpoeGroups[key][0].idPrescription,
+          idPrescriptionDrug: `${cpoeGroups[key][0].idPrescriptionDrug}SolutionEnd`,
+          total: true,
+          source: "Medicamentos",
+          handleRowExpand: cpoeGroups[key][0].handleRowExpand,
+          weight: cpoeGroups[key][0].weight,
+          infusion: infusion ? infusion[cpoeGroups[key][0].infusionKey] : {},
+          emptyRow: true,
+          groupRow: true,
+          cpoe: cpoeGroups[key][0].cpoe,
+          group: "",
+          solutionGroupRow: true,
+        };
+
+        items = [
+          ...items,
+          emptyRowStart,
+          ...groupRows,
+          solutionCalcRow,
+          emptyRowEnd,
+        ];
+      } else {
+        items = [...items, emptyRowStart, ...groupRows, emptyRowEnd];
+      }
     } else {
       items = [...items, ...cpoeGroups[key]];
     }
   });
 
   return items;
-};
-
-export const groupSolutions = (list, infusionList) => {
-  if (list.length === 0) return list;
-
-  const createTotalRow = (item, group, key, infusionKey) => {
-    return {
-      key: `${key}expand`,
-      total: true,
-      source: "Soluções",
-      handleRowExpand: item.handleRowExpand,
-      weight: item.weight,
-      infusion: infusionList[infusionKey],
-      emptyRow: true,
-      cpoe: item.cpoe,
-      group: group,
-    };
-  };
-
-  return groupPrescriptionDrugs(list, createTotalRow);
-};
-
-export const groupProcedures = (list) => {
-  if (list.length === 0) return list;
-
-  const createTotalRow = (item, group, key) => {
-    return {
-      key: `${key}expand`,
-      source: "Procedimentos",
-      dividerRow: true,
-      emptyRow: true,
-      cpoe: item.cpoe,
-    };
-  };
-
-  return groupPrescriptionDrugs(list, createTotalRow);
 };
 
 export const isWhitelistedChild = (
@@ -180,4 +142,15 @@ export const getWhitelistedChildren = (list) => {
 
     return false;
   });
+};
+
+const sortPrescriptionDrugs = (items) => {
+  const whitelistItems = items
+    .filter((i) => i.whiteList)
+    .sort((a, b) => `${a.drug}`.localeCompare(`${b.drug}`));
+
+  return items
+    .filter((i) => !i.emptyRow && !i.whiteList)
+    .sort((a, b) => `${a.drug}`.localeCompare(`${b.drug}`))
+    .concat(whitelistItems);
 };

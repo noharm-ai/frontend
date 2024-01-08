@@ -2,7 +2,7 @@
  * Auth verification
  */
 import WithAuth from "lib/withAuth";
-import chooseJourney from "lib/chooseJourney";
+import JourneySwitch from "lib/chooseJourney";
 
 /**
  * Pages
@@ -31,6 +31,7 @@ import AdminInterventionReason from "pages/Admin/InterventionReason";
 import AdminMemory from "pages/Admin/Memory";
 import AdminMemoryRoutes from "pages/Admin/Memory/Routes";
 import AdminMemoryReports from "pages/Admin/Memory/Reports";
+import AdminMemoryFeatures from "pages/Admin/Memory/Features";
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminSegment from "pages/Admin/Segment";
@@ -63,7 +64,7 @@ const routes = [
   {
     exact: true,
     path: "/",
-    element: <WithAuth component={chooseJourney()} />,
+    element: <WithAuth component={JourneySwitch} />,
   },
   {
     exact: true,
@@ -245,6 +246,11 @@ const routes = [
     exact: true,
     path: "/admin/relatorios",
     element: <WithAuth component={AdminMemoryReports} />,
+  },
+  {
+    exact: true,
+    path: "/admin/features",
+    element: <WithAuth component={AdminMemoryFeatures} />,
   },
   {
     exact: true,

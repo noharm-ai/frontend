@@ -57,7 +57,7 @@ function OutliersForm({ open, setOpen }) {
 
           if (
             !response.payload.data.data[0]?.url?.includes(
-              "integracao/refresh-agg"
+              "integration/refresh-agg"
             )
           ) {
             setRefreshWarning(true);

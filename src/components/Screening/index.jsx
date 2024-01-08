@@ -40,6 +40,7 @@ export default function Screening({
   selectPrescriptionDrug,
   security,
   interventions,
+  featureService,
 }) {
   const params = useParams();
   const id = params?.slug;
@@ -346,7 +347,10 @@ export default function Screening({
         </Col>
       ),
     },
-    {
+  ];
+
+  if (!featureService.hasDisableSolutionTab()) {
+    tabs.push({
       key: "solutions",
       label: (
         <TabTitle
@@ -363,8 +367,8 @@ export default function Screening({
           />
         </Col>
       ),
-    },
-  ];
+    });
+  }
 
   if (listCount.procedures > 0) {
     tabs.push({

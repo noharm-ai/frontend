@@ -1,49 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { Tooltip } from "antd";
 import { useNavigate } from "react-router-dom";
 
 import Heading from "components/Heading";
 import { Row, Col } from "components/Grid";
-import Switch from "components/Switch";
 import Alert from "components/Alert";
 import Button from "components/Button";
+import InitialPage from "features/preferences/InitialPage/InitialPage";
 
-const getPrioritizationName = (type) => {
-  switch (type) {
-    case "prescription":
-      return "prescrição";
-    case "patient":
-      return "patient";
-    case "conciliation":
-      return "conciliação";
-    default:
-      console.error("invalid prioritization type:", type);
-  }
-};
-
-export default function PageHeader({
-  journey,
-  prioritizationType,
-  setJourney,
-}) {
+export default function PageHeader({ prioritizationType }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [stateChecked, setStateChecked] = useState(false);
   const title = `screeningList.title-${prioritizationType}`;
-
-  const name = getPrioritizationName(prioritizationType);
-  const msg =
-    journey === prioritizationType
-      ? "Priorização padrão"
-      : `Definir a priorização por ${name} como tela inicial`;
-
-  const onChangeJourney = (checked) => {
-    if (checked) {
-      setJourney(prioritizationType);
-      setStateChecked(true);
-    }
-  };
 
   const closeInfo = () => {
     localStorage.setItem("card-alert", true);
@@ -88,18 +56,7 @@ export default function PageHeader({
               />
             )}
           </div>
-          {(journey !== prioritizationType || stateChecked) && (
-            <Tooltip title={msg}>
-              <Switch
-                unCheckedChildren="Padrão"
-                onChange={onChangeJourney}
-                checked={journey === prioritizationType}
-                disabled={journey === prioritizationType}
-                id="gtm-default-initial"
-                style={{ marginLeft: "15px" }}
-              />
-            </Tooltip>
-          )}
+          <InitialPage />
         </Col>
       </Row>
     </div>

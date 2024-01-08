@@ -14,6 +14,7 @@ import { Input } from "components/Inputs";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import { Row, Col } from "components/Grid";
+import InitialPage from "features/preferences/InitialPage/InitialPage";
 
 import Filter from "./Filter";
 import PrioritizationCard from "./Card";
@@ -171,31 +172,16 @@ export default function Prioritization({
     }, 800)(ev);
   };
 
-  const setDefault = () => {
-    setJourney(prioritizationType);
-
-    notification.success({
-      message:
-        "Agora a Priorização por Pacientes (Beta) é a sua tela inicial de priorização.",
-    });
-  };
-
   return (
     <>
       <Row align="middle">
         <Col span={24} md={10}>
           <header>
-            <Heading>Priorização por Pacientes (Beta)</Heading>
+            <Heading>Priorização por Pacientes</Heading>
           </header>
         </Col>
         <Col span={24} md={24 - 10} style={{ textAlign: "right" }}>
-          {currentJourney !== prioritizationType && (
-            <Tooltip title="Definir a priorização por Pacientes (Beta) como tela inicial">
-              <Button onClick={() => setDefault()}>
-                Definir como tela inicial
-              </Button>
-            </Tooltip>
-          )}
+          <InitialPage />
         </Col>
       </Row>
 

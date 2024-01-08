@@ -3,7 +3,6 @@ import { format } from "date-fns";
 import { uniqBy } from "utils/lodash";
 import moment from "moment";
 import {
-  groupSolutions,
   filterWhitelistedChildren,
   getWhitelistedChildren,
   groupComponents,
@@ -160,7 +159,8 @@ export const transformPrescription = ({
   const prescriptionList = prescription
     ? groupByPrescription(
         groupComponents(
-          filterWhitelistedChildren(prescription.map(transformDrug))
+          filterWhitelistedChildren(prescription.map(transformDrug)),
+          infusion
         ),
         "prescriptions",
         null,
@@ -175,10 +175,9 @@ export const transformPrescription = ({
 
   const solutionList = solution
     ? groupByPrescription(
-        solution.map(transformDrug),
+        groupComponents(solution.map(transformDrug), infusion),
         "solutions",
-        groupSolutions,
-        infusion
+        null
       )
     : [];
   const proceduresList = procedures

@@ -114,28 +114,30 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
     <script>
-      (function (o, c, t, a, d, e, s, k) {
-        o.octadesk = o.octadesk || {};
-        o.octadesk.chatOptions = {
-          subDomain: a,
-          showButton: d,
-          openOnMessage: e,
-          hide: s,
-        };
-        var bd = c.getElementsByTagName("body")[0];
-        var sc = c.createElement("script");
-        sc.async = 1;
-        sc.src = t;
-        bd.appendChild(sc);
-      })(
-        window,
-        document,
-        "https://cdn.octadesk.com/embed.js",
-        "noharm",
-        "false",
-        "true",
-        "false"
-      );
+      if ("%REACT_APP_ENVIRONMENT%" !== "DEV") {
+        (function (o, c, t, a, d, e, s, k) {
+          o.octadesk = o.octadesk || {};
+          o.octadesk.chatOptions = {
+            subDomain: a,
+            showButton: d,
+            openOnMessage: e,
+            hide: s,
+          };
+          var bd = c.getElementsByTagName("body")[0];
+          var sc = c.createElement("script");
+          sc.async = 1;
+          sc.src = t;
+          bd.appendChild(sc);
+        })(
+          window,
+          document,
+          "https://cdn.octadesk.com/embed.js",
+          "noharm",
+          "false",
+          "true",
+          "false"
+        );
+      }
     </script>
     <style>
       .octadesk-octachat-app--topRight.octa-widget-v2 {
