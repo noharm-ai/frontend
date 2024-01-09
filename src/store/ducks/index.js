@@ -39,6 +39,7 @@ import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
 import reportPrescriptionReport from "features/reports/PrescriptionReport/PrescriptionReportSlice";
 import reportInterventionReport from "features/reports/InterventionReport/InterventionReportSlice";
+import reportPrescriptionAuditReport from "features/reports/PrescriptionAuditReport/PrescriptionAuditReportSlice";
 
 const adminReducers = combineReducers({
   interventionReason: adminInterventionReasonReducer,
@@ -54,6 +55,7 @@ const reportReducers = combineReducers({
   patientDay: reportPatientDayReport,
   prescription: reportPrescriptionReport,
   intervention: reportInterventionReport,
+  prescriptionAudit: reportPrescriptionAuditReport,
   reports: reports,
 });
 

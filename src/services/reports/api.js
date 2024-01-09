@@ -22,6 +22,12 @@ const getPrescription = (params = {}) =>
     ...setHeaders(),
   });
 
+const getPrescriptionAudit = (params = {}) =>
+  instance.get(`${endpoints.general}/audit`, {
+    params,
+    ...setHeaders(),
+  });
+
 const getIntervention = (params = {}) =>
   instance.get(`${endpoints.general}/intervention`, {
     params,
@@ -35,6 +41,7 @@ const getCache = (url) => {
 const api = {
   getPatientDay,
   getPrescription,
+  getPrescriptionAudit,
   getIntervention,
   getCache,
   getConfig,

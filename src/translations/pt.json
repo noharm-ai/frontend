@@ -562,7 +562,9 @@
     "expendedDose": "DOSE DESPENDIDA",
     "economyDays": "DIAS DE ECONOMIA",
     "drug": "MEDICAMENTO",
-    "reason": "MOTIVO"
+    "reason": "MOTIVO",
+    "type": "TIPO",
+    "agg": "PACIENTE (AGREGADO)"
   },
 
   "features": {
