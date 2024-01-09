@@ -16,10 +16,10 @@ export default function ChartEventScatter({ reportData, isLoading }) {
   const hours = [];
   for (let h = 0; h < 24; h++) {
     hours.push(
-      h.toLocaleString("en-US", {
+      `${h.toLocaleString("en-US", {
         minimumIntegerDigits: 2,
         useGrouping: false,
-      })
+      })}h`
     );
   }
 
@@ -74,6 +74,13 @@ export default function ChartEventScatter({ reportData, isLoading }) {
   const chartOptions = {
     tooltip: {
       position: "top",
+      formatter: function (params) {
+        console.log("params", params);
+        return `<strong>${params.data[0].toLocaleString("en-US", {
+          minimumIntegerDigits: 2,
+          useGrouping: false,
+        })}h</strong><br/>${params.data[1]} Ações`;
+      },
     },
     title: title,
     singleAxis: singleAxis,

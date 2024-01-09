@@ -88,7 +88,7 @@ export default function PrescriptionReport() {
             </Tooltip>
           </h1>
           <div className="page-header-legend">
-            Registros de eventos de checagem e deschecagem de
+            Registros de ações de checagem e deschecagem de
             prescrições/pacientes.
           </div>
         </div>
@@ -124,8 +124,8 @@ export default function PrescriptionReport() {
           </ReportFilterContainer>
           <Space direction="vertical" size="large">
             <SectionHeader>
-              <h2>Eventos por Dia</h2>
-              <div>Eventos agrupados por dia.</div>
+              <h2>Ações por Dia</h2>
+              <div>Ações agrupadas por dia.</div>
             </SectionHeader>
             <Row gutter={[24, 24]}>
               <Col xs={24}>
@@ -145,8 +145,8 @@ export default function PrescriptionReport() {
                 <div className="page-break"></div>
                 <Space direction="vertical" size="large">
                   <SectionHeader>
-                    <h2>Eventos por Responsável</h2>
-                    <div>Eventos agrupados por responsável.</div>
+                    <h2>Ações por Responsável</h2>
+                    <div>Ações agrupadas por responsável.</div>
                   </SectionHeader>
                   <Spin spinning={isLoading}>
                     <ChartCard className={`${isLoading ? "loading" : ""}`}>
@@ -163,7 +163,7 @@ export default function PrescriptionReport() {
                 <Space direction="vertical" size="large">
                   <SectionHeader>
                     <h2>Top 20 Setores</h2>
-                    <div>Setores com maior número de eventos.</div>
+                    <div>Setores com maior número de ações.</div>
                   </SectionHeader>
                   <Spin spinning={isLoading}>
                     <ChartCard className={`${isLoading ? "loading" : ""}`}>
@@ -179,8 +179,8 @@ export default function PrescriptionReport() {
 
             <div className="page-break"></div>
             <SectionHeader>
-              <h2>Distribuição de Eventos</h2>
-              <div>Distribuição de eventos por dia e hora.</div>
+              <h2>Distribuição de Ações</h2>
+              <div>Quantidade de ações por dia e hora.</div>
             </SectionHeader>
             <Row gutter={[24, 24]}>
               <Col xs={24}>

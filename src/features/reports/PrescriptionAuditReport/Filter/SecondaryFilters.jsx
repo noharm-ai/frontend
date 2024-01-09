@@ -54,7 +54,7 @@ export default function SecondaryFilters() {
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" size="14px">
-          Evento:
+          Ação:
         </Heading>
         <Radio.Group
           style={{ marginTop: "5px" }}

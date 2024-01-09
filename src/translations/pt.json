@@ -573,7 +573,8 @@
     "CONCILIATION": "Conciliação",
     "SOLUTION_FREQUENCY": "Frequência nas Soluções",
     "LOCK_CHECKED_PRESCRIPTION": "Bloquear Desfazer Checagem",
-    "DISABLE_SOLUTION_TAB": "Remover a aba de Soluções"
+    "DISABLE_SOLUTION_TAB": "Remover a aba de Soluções",
+    "OAUTH": "OAUTH"
   },
 
   "featuresDescription": {
@@ -581,7 +582,8 @@
     "PRIMARYCARE": "Habilita a NoHarm para a perspectiva de Primary Care",
     "CONCILIATION": "Habilita a funcionalidade de Conciliação da NoHarm",
     "SOLUTION_FREQUENCY": "Exibe a frequência do medicamento na lista de soluções",
-    "LOCK_CHECKED_PRESCRIPTION": "Bloqueia o botão Desfazer Checagem quando a checagem foi executada por outro usuário. Existe uma permissão (role) que pode ser concedida a um usuário que sobrepôe esta regra.",
-    "DISABLE_SOLUTION_TAB": "Exibe as Soluções na aba de Medicamentos"
+    "LOCK_CHECKED_PRESCRIPTION": "Bloqueia o botão Desfazer Checagem quando a checagem foi executada por outro usuário. Existe uma permissão (role) que pode ser concedida a um usuário que sobrepôe esta regra",
+    "DISABLE_SOLUTION_TAB": "Exibe as Soluções na aba de Medicamentos",
+    "OAUTH": "Habilita integração OAUTH (exige configuração extra)"
   }
 }

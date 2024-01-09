@@ -58,7 +58,7 @@ export default function Reports() {
     },
     {
       title: "Auditoria",
-      description: "Controle de eventos",
+      description: "Controle de ações efetuadas por usuários",
       icon: "report",
       type: "internal",
       route: "/relatorios/audit",
