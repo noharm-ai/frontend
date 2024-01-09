@@ -153,7 +153,9 @@ const getEventScatter = (datasource) => {
     const day = date.day();
     const hour = date.hour();
 
-    const index = day * 23 + hour;
+    const index = day * 24 + hour;
+
+    console.log(i.date, day, hour, data[index]);
 
     data[index][2] += 1;
   });
