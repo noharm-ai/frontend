@@ -4,6 +4,7 @@ import { useFormikContext } from "formik";
 
 import { Col } from "components/Grid";
 import Editor from "components/Editor";
+import RichTextView from "components/RichTextView";
 
 import DrugData from "../Intervention/DrugData";
 import { Box, FieldError, EditorBox } from "../Form.style";
@@ -29,6 +30,21 @@ export default function BaseNotes({ item }) {
 
           {errors.notes && touched.notes && (
             <FieldError>{errors.notes}</FieldError>
+          )}
+
+          {item.prevNotes && (
+            <div style={{ marginTop: "10px" }}>
+              <strong>Anotação anterior:</strong>
+              <div
+                style={{
+                  background: "#fafafa",
+                  border: "1px solid #ccc",
+                  padding: "5px",
+                }}
+              >
+                <RichTextView text={item.prevNotes} />
+              </div>
+            </div>
           )}
         </Col>
       </Box>
