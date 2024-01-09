@@ -56,6 +56,14 @@ export default function Reports() {
       route: "/relatorios/intervencoes",
       visible: internalList.indexOf("INTERVENTION") !== -1,
     },
+    {
+      title: "Auditoria",
+      description: "Controle de ações efetuadas por usuários",
+      icon: "report",
+      type: "internal",
+      route: "/relatorios/audit",
+      visible: internalList.indexOf("PRESCRIPTION_AUDIT") !== -1,
+    },
   ];
 
   useEffect(() => {

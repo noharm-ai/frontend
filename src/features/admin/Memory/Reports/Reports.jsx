@@ -85,6 +85,10 @@ function MemoryReports() {
                 id: "INTERVENTION",
                 value: "Intervenções",
               },
+              {
+                id: "PRESCRIPTION_AUDIT",
+                value: "Auditoria",
+              },
             ],
             optionsType: "key-value",
             style: { width: "100%" },

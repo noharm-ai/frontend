@@ -5,6 +5,7 @@ export default class Feature {
   static SOLUTION_FREQUENCY = "SOLUTION_FREQUENCY";
   static LOCK_CHECKED_PRESCRIPTION = "LOCK_CHECKED_PRESCRIPTION";
   static DISABLE_SOLUTION_TAB = "DISABLE_SOLUTION_TAB";
+  static OAUTH = "OAUTH";
 
   static getFeatures(t) {
     return [
@@ -17,6 +18,11 @@ export default class Feature {
         id: Feature.PRIMARYCARE,
         label: t(`features.${Feature.PRIMARYCARE}`),
         description: t(`featuresDescription.${Feature.PRIMARYCARE}`),
+      },
+      {
+        id: Feature.OAUTH,
+        label: t(`features.${Feature.OAUTH}`),
+        description: t(`featuresDescription.${Feature.OAUTH}`),
       },
       {
         id: Feature.CONCILIATION,

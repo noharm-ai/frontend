@@ -561,7 +561,9 @@
     "expendedDose": "EXPENDED DOSE",
     "economyDays": "DAYS OF ECONOMY",
     "drug": "DRUG",
-    "reason": "REASON"
+    "reason": "REASON",
+    "type": "TYPE",
+    "agg": "PATIENT (AGGREGATED)"
   },
 
   "features": {
