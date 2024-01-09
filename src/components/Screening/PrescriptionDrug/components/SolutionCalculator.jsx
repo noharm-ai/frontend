@@ -5,6 +5,56 @@ import { InputNumber } from "components/Inputs";
 import Heading from "components/Heading";
 import Descriptions from "components/Descriptions";
 
+const CalcDescriptions = styled(Descriptions)`
+  .ant-descriptions-item-label {
+    text-align: right;
+    font-weight: 500;
+  }
+`;
+
+const CalcContainer = styled.div`
+  position: relative;
+  display: flex;
+  background: rgb(169 145 214 / 12%);
+  padding-top: 10px;
+
+  &:before {
+    content: "";
+    position: absolute;
+    width: 3px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: rgb(169 145 214);
+  }
+
+  > div:nth-child(1) {
+    flex: 1;
+  }
+
+  > div:nth-child(2) {
+    width: 500px;
+  }
+
+  .ipt-container {
+    > div {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+
+      > div:nth-child(1) {
+        flex: 1;
+        justify-content: flex-end;
+      }
+
+      > div:nth-child(2) {
+        width: 200px;
+        padding-right: 30px;
+      }
+    }
+  }
+`;
+
 const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
   const [lAmount, setAmount] = useState(amount);
   const [lTotalVol, setTotalVol] = useState(totalVol);
@@ -18,56 +68,6 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
   const resultByWeightDay = (result / lWeight) * 24;
   const resultByWeightMinute = resultByWeightHour / 60;
   const solution = (lAmount * lVol) / lTotalVol;
-
-  const CalcDescriptions = styled(Descriptions)`
-    .ant-descriptions-item-label {
-      text-align: right;
-      font-weight: 500;
-    }
-  `;
-
-  const CalcContainer = styled.div`
-    position: relative;
-    display: flex;
-    background: rgb(169 145 214 / 12%);
-    padding-top: 10px;
-
-    &:before {
-      content: "";
-      position: absolute;
-      width: 3px;
-      height: 100%;
-      left: 0;
-      top: 0;
-      background: rgb(169 145 214);
-    }
-
-    > div:nth-child(1) {
-      flex: 1;
-    }
-
-    > div:nth-child(2) {
-      width: 500px;
-    }
-
-    .ipt-container {
-      > div {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
-
-        > div:nth-child(1) {
-          flex: 1;
-          justify-content: flex-end;
-        }
-
-        > div:nth-child(2) {
-          width: 200px;
-          padding-right: 30px;
-        }
-      }
-    }
-  `;
 
   const formatValue = (value) => {
     return value.toFixed(4);
