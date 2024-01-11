@@ -42,7 +42,7 @@ export default function BaseNotes({ item }) {
                   padding: "5px",
                 }}
               >
-                <RichTextView text={item.prevNotes} />
+                <RichTextView text={item.prevNotesUser} />
               </div>
             </div>
           )}
