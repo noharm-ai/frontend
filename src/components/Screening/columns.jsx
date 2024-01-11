@@ -608,7 +608,7 @@ export const expandedRowRender = (bag) => (record) => {
             label={bag.t("prescriptionDrugList.exrNotesPrevious")}
             span={3}
           >
-            <RichTextView text={record.prevNotes} />
+            <RichTextView text={record.prevNotesUser} />
           </Descriptions.Item>
         )}
         {record.notes && (
