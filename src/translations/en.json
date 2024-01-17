@@ -572,7 +572,8 @@
     "CONCILIATION": "Conciliation",
     "SOLUTION_FREQUENCY": "Solution Frequency",
     "LOCK_CHECKED_PRESCRIPTION": "Lock Checked Prescription",
-    "DISABLE_SOLUTION_TAB": "Remove Solutions tab"
+    "DISABLE_SOLUTION_TAB": "Remove Solutions tab",
+    "CLINICAL_NOTES_NEW_FORMAT": "Clinical Notes - New Format"
   },
 
   "featuresDescription": {
@@ -581,6 +582,7 @@
     "CONCILIATION": "Enables the conciliation feature",
     "SOLUTION_FREQUENCY": "Enables the frequency columns in the solutions list",
     "LOCK_CHECKED_PRESCRIPTION": "Disables the Undo Check button when the prescription was checked by another user",
-    "DISABLE_SOLUTION_TAB": "Shows Solution itens in the Drugs tab"
+    "DISABLE_SOLUTION_TAB": "Shows Solution itens in the Drugs tab",
+    "CLINICAL_NOTES_NEW_FORMAT": "Enable when anony updated and is using noharm care new annotation process"
   }
 }

@@ -6,6 +6,7 @@ export default class Feature {
   static LOCK_CHECKED_PRESCRIPTION = "LOCK_CHECKED_PRESCRIPTION";
   static DISABLE_SOLUTION_TAB = "DISABLE_SOLUTION_TAB";
   static OAUTH = "OAUTH";
+  static CLINICAL_NOTES_NEW_FORMAT = "CLINICAL_NOTES_NEW_FORMAT";
 
   static getFeatures(t) {
     return [
@@ -45,6 +46,13 @@ export default class Feature {
         id: Feature.DISABLE_SOLUTION_TAB,
         label: t(`features.${Feature.DISABLE_SOLUTION_TAB}`),
         description: t(`featuresDescription.${Feature.DISABLE_SOLUTION_TAB}`),
+      },
+      {
+        id: Feature.CLINICAL_NOTES_NEW_FORMAT,
+        label: t(`features.${Feature.CLINICAL_NOTES_NEW_FORMAT}`),
+        description: t(
+          `featuresDescription.${Feature.CLINICAL_NOTES_NEW_FORMAT}`
+        ),
       },
     ];
   }

@@ -574,7 +574,8 @@
     "SOLUTION_FREQUENCY": "Frequência nas Soluções",
     "LOCK_CHECKED_PRESCRIPTION": "Bloquear Desfazer Checagem",
     "DISABLE_SOLUTION_TAB": "Remover a aba de Soluções",
-    "OAUTH": "OAUTH"
+    "OAUTH": "OAUTH",
+    "CLINICAL_NOTES_NEW_FORMAT": "Evoluções - Nova formatação"
   },
 
   "featuresDescription": {
@@ -584,6 +585,7 @@
     "SOLUTION_FREQUENCY": "Exibe a frequência do medicamento na lista de soluções",
     "LOCK_CHECKED_PRESCRIPTION": "Bloqueia o botão Desfazer Checagem quando a checagem foi executada por outro usuário. Existe uma permissão (role) que pode ser concedida a um usuário que sobrepôe esta regra",
     "DISABLE_SOLUTION_TAB": "Exibe as Soluções na aba de Medicamentos",
-    "OAUTH": "Habilita integração OAUTH (exige configuração extra)"
+    "OAUTH": "Habilita integração OAUTH (exige configuração extra)",
+    "CLINICAL_NOTES_NEW_FORMAT": "Ligar para hospitais com anony atualizado e processo novo da noharm care"
   }
 }

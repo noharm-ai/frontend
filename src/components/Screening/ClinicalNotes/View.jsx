@@ -3,6 +3,7 @@ import isEmpty from "lodash.isempty";
 import { format, parseISO } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { QuestionOutlined, FullscreenOutlined } from "@ant-design/icons";
+import DOMPurify from "dompurify";
 
 import { useOutsideAlerter } from "lib/hooks";
 import LoadBox, { LoadContainer } from "components/LoadBox";
@@ -232,6 +233,18 @@ export default function View({
 
   if (isEmpty(selected)) return null;
 
+  let html = "";
+
+  if (featureService.hasPrimaryCare()) {
+    html = selected.text.trim().replaceAll("\n", "<br/>");
+  } else if (featureService.hasClinicalNotesNewFormat()) {
+    html = selected.text.trim();
+  } else {
+    html = selected.text.trim().replaceAll("  ", "<br/>");
+  }
+
+  html = DOMPurify.sanitize(html);
+
   return (
     <>
       <PaperHeader>
@@ -310,9 +323,7 @@ export default function View({
                     <Paper
                       t={t}
                       dangerouslySetInnerHTML={{
-                        __html: featureService.hasPrimaryCare()
-                          ? selected.text.trim().replaceAll("\n", "<br/>")
-                          : selected.text.trim().replaceAll("  ", "<br/>"),
+                        __html: html,
                       }}
                       onMouseUp={(e) => selectionChange(e)}
                       onClick={(e) => removeAnnotation(e)}
