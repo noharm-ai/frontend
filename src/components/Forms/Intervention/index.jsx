@@ -29,10 +29,8 @@ export default function Intervention({
   save,
   select,
   checkPrescriptionDrug,
-  setVisibility,
   afterSaveIntervention,
   disableUndoIntervention,
-  open,
   fetchReasonsList,
   searchDrugs,
   drugs,
@@ -85,26 +83,10 @@ export default function Intervention({
   });
 
   useEffect(() => {
-    if (checkPrescriptionDrug && checkPrescriptionDrug.success) {
-      setVisibility(false);
-    }
-  }, [checkPrescriptionDrug, setVisibility]);
-
-  // show message if has error
-  useEffect(() => {
-    if (!isEmpty(error)) {
-      notification.error({
-        message: t("error.title"),
-        description: t("error.description"),
-      });
-    }
-  }, [error, t]);
-
-  useEffect(() => {
-    if (open) {
+    if (!isEmpty(item)) {
       fetchReasonsList();
     }
-  }, [fetchReasonsList, open]);
+  }, [fetchReasonsList, item]);
 
   if (!item.intervention) {
     return null;
@@ -151,7 +133,6 @@ export default function Intervention({
 
   const onCancel = () => {
     select({});
-    setVisibility(false);
   };
 
   const getTranscriptionData = (tr) => {
@@ -196,13 +177,14 @@ export default function Intervention({
         }
 
         reset();
-        setVisibility(false);
+        select({});
 
         notification.success({
           message: t("success.intervention"),
         });
       })
-      .catch(() => {
+      .catch((e) => {
+        console.error("intv error", e);
         notification.error({
           message: t("error.title"),
           description: t("error.description"),
@@ -257,7 +239,7 @@ export default function Intervention({
           });
 
           reset();
-          setVisibility(false);
+          select({});
         })
         .catch(() => {
           notification.error({
@@ -324,7 +306,7 @@ export default function Intervention({
     >
       {({ handleSubmit, setFieldValue }) => (
         <DefaultModal
-          open={open}
+          open={!isEmpty(item)}
           width={700}
           centered
           destroyOnClose

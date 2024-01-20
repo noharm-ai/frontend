@@ -312,7 +312,8 @@
     "dischargeDate": "Discharge date",
     "conciliation": "Conciliation",
     "substance": "Substance",
-    "substanceClass": "Substance Class"
+    "substanceClass": "Substance Class",
+    "filters": "Filters"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
@@ -391,6 +392,13 @@
     "exrNotes": "Notes:",
     "exrPrevIntervention": "Previous intervention:",
     "exrDiluent": "Components (not validated):"
+  },
+
+  "prescriptionDrugFilters": {
+    "alerts": "Has alerts",
+    "diff": "Not evaluated",
+    "am": "Antimicrobial",
+    "hv": "High vigilance"
   },
 
   "interventionForm": {

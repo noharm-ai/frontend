@@ -312,7 +312,8 @@
     "dischargeDate": "Data de alta",
     "conciliation": "Conciliação",
     "substance": "Substância",
-    "substanceClass": "Classe de Substância"
+    "substanceClass": "Classe de Substância",
+    "filters": "Filtros"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
@@ -391,6 +392,13 @@
     "exrNotes": "Anotação:",
     "exrPrevIntervention": "Intervenção anterior:",
     "exrDiluent": "Componentes (sem validação):"
+  },
+
+  "prescriptionDrugFilters": {
+    "alerts": "Com alertas",
+    "diff": "Diferentes",
+    "am": "Antimicrobianos",
+    "hv": "Alta vigilância"
   },
 
   "interventionForm": {

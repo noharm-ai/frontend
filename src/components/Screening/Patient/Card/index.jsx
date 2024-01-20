@@ -1,6 +1,6 @@
 import "styled-components/macro";
 
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
@@ -27,7 +27,6 @@ import notification from "components/notification";
 import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSlice";
 import { getErrorMessage } from "utils/errorHandler";
 
-import FormIntervention from "containers/Forms/Intervention";
 import PatientName from "containers/PatientName";
 
 import PatientTab from "./PatientTab";
@@ -38,7 +37,6 @@ import { PatientBox } from "../Patient.style";
 
 export default function PatientCard({
   prescription,
-  checkPrescriptionDrug,
   selectIntervention,
   setSeeMore,
   fetchScreening,
@@ -46,7 +44,6 @@ export default function PatientCard({
   interventions,
 }) {
   const dispatch = useDispatch();
-  const [interventionVisible, setInterventionVisibility] = useState(false);
   const { t } = useTranslation();
 
   const {
@@ -74,7 +71,6 @@ export default function PatientCard({
         ...int,
       },
     });
-    setInterventionVisibility(true);
   };
 
   const showInterventionModal = () => {
@@ -121,7 +117,6 @@ export default function PatientCard({
         ...data,
         intervention: {},
       });
-      setInterventionVisibility(true);
     }
   };
 
@@ -310,12 +305,6 @@ export default function PatientCard({
       <div className="patient-body">
         <Tabs defaultActiveKey="patientData" type="card" items={tabs}></Tabs>
       </div>
-
-      <FormIntervention
-        open={interventionVisible}
-        setVisibility={setInterventionVisibility}
-        checkPrescriptionDrug={checkPrescriptionDrug}
-      />
     </PatientBox>
   );
 }

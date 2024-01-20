@@ -10,6 +10,7 @@ import {
   RollbackOutlined,
   ScheduleOutlined,
 } from "@ant-design/icons";
+import { Affix } from "antd";
 
 import { InfoIcon } from "components/Icon";
 import Heading from "components/Heading";
@@ -24,6 +25,8 @@ import ClinicalNotesSchedule from "containers/Forms/ClinicalNotes/ScheduleForm";
 import ClinicalNotesCustomForm from "containers/Forms/ClinicalNotes/CustomForm";
 import FormClinicalAlert from "containers/Forms/ClinicalAlert";
 import { getErrorMessageFromException } from "utils/errorHandler";
+
+import { ScreeningHeader } from "components/Screening/index.style";
 
 const close = () => {
   window.close();
@@ -62,6 +65,7 @@ export default function PageHeader({
   const [isClinicalAlertVisible, setClinicalAlertVisibility] = useState(false);
   const [clinicalNotesAction, setClinicalNotesAction] =
     useState("clinicalNote");
+  const [affixed, setAffixed] = useState(false);
   const { t } = useTranslation();
 
   const hasPrimaryCare = featureService.hasPrimaryCare();
@@ -222,147 +226,149 @@ export default function PageHeader({
   }
 
   return (
-    <>
-      <Row type="flex" css="margin-bottom: 15px;">
-        <Col span={24} md={10}>
-          <Title content={prescription.content} type={type} />
-        </Col>
-        <Col
-          span={24}
-          md={24 - 10}
-          css="
+    <Affix onChange={(value) => setAffixed(value)}>
+      <ScreeningHeader className={`${affixed ? "affixed" : ""}`}>
+        <Row type="flex">
+          <Col span={24} md={10}>
+            <Title content={prescription.content} type={type} />
+          </Col>
+          <Col
+            span={24}
+            md={24 - 10}
+            css="
           display:flex;
           align-items: center;
           justify-content: flex-end;
         "
-        >
-          {prescription.content.status === "0" && (
-            <Button
-              type="primary gtm-bt-check"
-              icon={<CheckOutlined />}
-              ghost
-              onClick={() => setPrescriptionStatus(id, "s")}
-              loading={isChecking}
-              style={{ marginRight: "5px" }}
-            >
-              {t("screeningHeader.btnCheck")}
-            </Button>
-          )}
-          {prescription.content.status === "s" && (
-            <>
-              <span style={{ marginRight: "10px", lineHeight: 1.4 }}>
-                {prescription.content.user ? (
-                  <>
-                    {t("labels.checkedBy")}
-                    <br />
-                    {prescription.content.user}
-                  </>
-                ) : (
-                  <>
-                    {t("screeningHeader.btnChecked")} <CheckOutlined />
-                  </>
-                )}
-              </span>
-              <Tooltip
-                title={
-                  hasUncheckPermission
-                    ? t("screeningHeader.btnUndoCheck")
-                    : t("screeningHeader.btnUndoCheckDisabled")
-                }
+          >
+            {prescription.content.status === "0" && (
+              <Button
+                type="primary gtm-bt-check"
+                icon={<CheckOutlined />}
+                ghost
+                onClick={() => setPrescriptionStatus(id, "s")}
+                loading={isChecking}
+                style={{ marginRight: "5px" }}
               >
-                <Button
-                  className="gtm-bt-undo-check"
-                  danger
-                  onClick={() => setPrescriptionStatus(id, "0")}
-                  icon={<RollbackOutlined style={{ fontSize: 16 }} />}
-                  loading={isChecking}
-                  style={{ marginRight: "5px" }}
-                  disabled={!hasUncheckPermission}
-                ></Button>
-              </Tooltip>
-            </>
-          )}
-          {hasPrimaryCare && (
+                {t("screeningHeader.btnCheck")}
+              </Button>
+            )}
+            {prescription.content.status === "s" && (
+              <>
+                <span style={{ marginRight: "10px", lineHeight: 1.4 }}>
+                  {prescription.content.user ? (
+                    <>
+                      {t("labels.checkedBy")}
+                      <br />
+                      {prescription.content.user}
+                    </>
+                  ) : (
+                    <>
+                      {t("screeningHeader.btnChecked")} <CheckOutlined />
+                    </>
+                  )}
+                </span>
+                <Tooltip
+                  title={
+                    hasUncheckPermission
+                      ? t("screeningHeader.btnUndoCheck")
+                      : t("screeningHeader.btnUndoCheckDisabled")
+                  }
+                >
+                  <Button
+                    className="gtm-bt-undo-check"
+                    danger
+                    onClick={() => setPrescriptionStatus(id, "0")}
+                    icon={<RollbackOutlined style={{ fontSize: 16 }} />}
+                    loading={isChecking}
+                    style={{ marginRight: "5px" }}
+                    disabled={!hasUncheckPermission}
+                  ></Button>
+                </Tooltip>
+              </>
+            )}
+            {hasPrimaryCare && (
+              <Button
+                type="primary gtm-bt-clinical-notes-schedule"
+                onClick={() => openScheduleModal()}
+                style={{ marginRight: "5px" }}
+                ghost={!prescription.content.notes}
+              >
+                <ScheduleOutlined />
+                {t("screeningHeader.btnSchedule")}
+              </Button>
+            )}
             <Button
-              type="primary gtm-bt-clinical-notes-schedule"
-              onClick={() => openScheduleModal()}
+              type="primary gtm-bt-clinical-notes"
+              onClick={() => openClinicalNotesModal()}
               style={{ marginRight: "5px" }}
               ghost={!prescription.content.notes}
             >
-              <ScheduleOutlined />
-              {t("screeningHeader.btnSchedule")}
+              <FileAddOutlined />
+              {t("screeningHeader.btnClinicalNotes")}
             </Button>
-          )}
-          <Button
-            type="primary gtm-bt-clinical-notes"
-            onClick={() => openClinicalNotesModal()}
-            style={{ marginRight: "5px" }}
-            ghost={!prescription.content.notes}
-          >
-            <FileAddOutlined />
-            {t("screeningHeader.btnClinicalNotes")}
-          </Button>
-          {type !== "conciliation" && security.hasAlertIntegration() && (
-            <Button
-              type="primary gtm-bt-alert"
-              onClick={() => setClinicalAlertVisibility(true)}
-              style={{ marginRight: "5px" }}
-              ghost={!prescription.content.alert}
-            >
-              <AlertOutlined />
-              {t("screeningHeader.btnAlert")}
-            </Button>
-          )}
+            {type !== "conciliation" && security.hasAlertIntegration() && (
+              <Button
+                type="primary gtm-bt-alert"
+                onClick={() => setClinicalAlertVisibility(true)}
+                style={{ marginRight: "5px" }}
+                ghost={!prescription.content.alert}
+              >
+                <AlertOutlined />
+                {t("screeningHeader.btnAlert")}
+              </Button>
+            )}
 
-          <Button type="default gtm-bt-close" onClick={close}>
-            {t("screeningHeader.btnClose")}
-          </Button>
-        </Col>
-      </Row>
-      {hasPrimaryCare ? (
-        <>
-          {isClinicalNotesFormsVisible && (
-            <ClinicalNotesCustomForm
-              open={isClinicalNotesFormsVisible}
-              onCancel={onCancelClinicalNotesForms}
-              okText="Salvar"
-              okType="primary"
-              cancelText="Cancelar"
-              afterSave={afterSaveClinicalNotesPrimaryCare}
-            />
-          )}
-          {isClinicalNotesVisible && (
-            <ClinicalNotesSchedule
-              open={isClinicalNotesVisible}
-              action={clinicalNotesAction}
-              onCancel={onCancelClinicalNotes}
-              okText="Salvar"
-              okType="primary"
-              cancelText="Cancelar"
-              afterSave={afterSaveClinicalNotesSchedule}
-            />
-          )}
-        </>
-      ) : (
-        <ClinicalNotes
-          open={isClinicalNotesVisible}
-          action={clinicalNotesAction}
-          onCancel={onCancelClinicalNotes}
+            <Button type="default gtm-bt-close" onClick={close}>
+              {t("screeningHeader.btnClose")}
+            </Button>
+          </Col>
+        </Row>
+        {hasPrimaryCare ? (
+          <>
+            {isClinicalNotesFormsVisible && (
+              <ClinicalNotesCustomForm
+                open={isClinicalNotesFormsVisible}
+                onCancel={onCancelClinicalNotesForms}
+                okText="Salvar"
+                okType="primary"
+                cancelText="Cancelar"
+                afterSave={afterSaveClinicalNotesPrimaryCare}
+              />
+            )}
+            {isClinicalNotesVisible && (
+              <ClinicalNotesSchedule
+                open={isClinicalNotesVisible}
+                action={clinicalNotesAction}
+                onCancel={onCancelClinicalNotes}
+                okText="Salvar"
+                okType="primary"
+                cancelText="Cancelar"
+                afterSave={afterSaveClinicalNotesSchedule}
+              />
+            )}
+          </>
+        ) : (
+          <ClinicalNotes
+            open={isClinicalNotesVisible}
+            action={clinicalNotesAction}
+            onCancel={onCancelClinicalNotes}
+            okText="Salvar"
+            okType="primary"
+            cancelText="Cancelar"
+            afterSave={afterSaveClinicalNotes}
+          />
+        )}
+
+        <FormClinicalAlert
+          open={isClinicalAlertVisible}
+          onCancel={onCancelClinicalAlert}
           okText="Salvar"
           okType="primary"
           cancelText="Cancelar"
-          afterSave={afterSaveClinicalNotes}
+          afterSave={afterSaveClinicalAlert}
         />
-      )}
-
-      <FormClinicalAlert
-        open={isClinicalAlertVisible}
-        onCancel={onCancelClinicalAlert}
-        okText="Salvar"
-        okType="primary"
-        cancelText="Cancelar"
-        afterSave={afterSaveClinicalAlert}
-      />
-    </>
+      </ScreeningHeader>
+    </Affix>
   );
 }

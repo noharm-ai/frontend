@@ -154,3 +154,31 @@ const sortPrescriptionDrugs = (items) => {
     .sort((a, b) => `${a.drug}`.localeCompare(`${b.drug}`))
     .concat(whitelistItems);
 };
+
+export const filterPrescriptionDrugs = (items, filters) => {
+  if (filters && filters.length) {
+    return items.filter((i) => {
+      let show = true;
+
+      if (filters.indexOf("alerts") !== -1) {
+        show = show && i.alerts && i.alerts.length;
+      }
+
+      if (filters.indexOf("diff") !== -1) {
+        show = show && !i.checked;
+      }
+
+      if (filters.indexOf("am") !== -1) {
+        show = show && i.am;
+      }
+
+      if (filters.indexOf("hv") !== -1) {
+        show = show && i.av;
+      }
+
+      return show;
+    });
+  }
+
+  return items;
+};

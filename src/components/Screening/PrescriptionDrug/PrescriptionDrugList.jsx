@@ -1,34 +1,32 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import isEmpty from "lodash.isempty";
 import { format, parseISO, differenceInMinutes } from "date-fns";
 import { useTranslation } from "react-i18next";
 
 import LoadBox, { LoadContainer } from "components/LoadBox";
-import { Radio } from "components/Inputs";
 import Empty from "components/Empty";
 import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
-import { groupComponents } from "utils/transformers/prescriptionDrugs";
+import {
+  groupComponents,
+  filterPrescriptionDrugs,
+} from "utils/transformers/prescriptionDrugs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 import notification from "components/notification";
-
-import FormIntervention from "containers/Forms/Intervention";
-import {
-  setPrescriptionListType,
-  savePreferences,
-} from "features/preferences/PreferencesSlice";
+import SecurityService from "services/security";
+import FeatureService from "services/features";
 
 import {
   PrescriptionCollapse,
   PrescriptionHeader,
   GroupCollapse,
-  ToolBox,
 } from "./PrescriptionDrug.style";
 import Table from "./components/Table";
 import PanelAction from "./components/PanelAction";
 import ChooseInterventionModal from "./components/ChooseInterventionModal";
+import Filters from "./components/Filters";
 
 const isExpired = (date) => {
   if (!date) return false;
@@ -139,16 +137,17 @@ export default function PrescriptionDrugList({
   uniqueDrugs,
   checkScreening,
   isCheckingPrescription,
-  security,
-  featureService,
+  roles,
+  features,
   interventions,
   infusion,
 }) {
-  const dispatch = useDispatch();
+  const security = SecurityService(roles);
+  const featureService = FeatureService(features);
   const prescriptionListType = useSelector(
     (state) => state.preferences.prescription.listType
   );
-  const [visible, setVisibility] = useState(false);
+  const filters = useSelector((state) => state.prescriptionv2.filters);
   const { t } = useTranslation();
 
   if (isFetching) {
@@ -166,7 +165,6 @@ export default function PrescriptionDrugList({
         ...int,
       },
     });
-    setVisibility(true);
   };
 
   const onShowModal = (data) => {
@@ -203,7 +201,6 @@ export default function PrescriptionDrugList({
           nonce: Math.random(),
         },
       });
-      setVisibility(true);
     }
   };
 
@@ -243,18 +240,25 @@ export default function PrescriptionDrugList({
     condensed: prescriptionListType === "condensed",
   };
 
-  const table = (ds, showHeader) => (
-    <Table
-      hasFilter={false}
-      filter={null}
-      bag={bag}
-      isFetching={isFetching}
-      emptyMessage={emptyMessage}
-      ds={ds}
-      listType={listType}
-      showHeader={showHeader}
-    />
-  );
+  const table = (ds, showHeader) => {
+    return (
+      <Table
+        hasFilter={false}
+        filter={null}
+        bag={bag}
+        isFetching={isFetching}
+        emptyMessage={emptyMessage}
+        ds={{
+          value: groupComponents(
+            filterPrescriptionDrugs(ds.value, filters),
+            infusion
+          ),
+        }}
+        listType={listType}
+        showHeader={showHeader}
+      />
+    );
+  };
 
   const panelHeader = (ds) => (
     <PrescriptionHeader className="panel-header">
@@ -356,10 +360,7 @@ export default function PrescriptionDrugList({
     }
 
     if (security.hasCpoe()) {
-      const cpoeListByDate = dataSource[0].value.filter(
-        (i) => group.indexOf(`${i.cpoe}`) !== -1
-      );
-      return table({ key: dataSource[0].key, value: cpoeListByDate }, true);
+      return <strong>error</strong>;
     }
 
     let hasPrescription = false;
@@ -398,7 +399,7 @@ export default function PrescriptionDrugList({
 
       return table(
         {
-          value: groupComponents(allItems, infusion),
+          value: allItems,
         },
         true
       );
@@ -420,26 +421,9 @@ export default function PrescriptionDrugList({
   if (!aggregated || security.hasCpoe()) {
     return (
       <>
-        <ToolBox>
-          <Tooltip title="Modo de visualização">
-            <Radio.Group
-              onChange={(e) => {
-                dispatch(setPrescriptionListType(e.target.value));
-                dispatch(savePreferences());
-              }}
-              value={prescriptionListType}
-            >
-              <Radio.Button value="default">Padrão</Radio.Button>
-              <Radio.Button value="condensed">Condensado</Radio.Button>
-            </Radio.Group>
-          </Tooltip>
-        </ToolBox>
+        <Filters />
+
         {table(!isEmpty(dataSource) ? dataSource[0] : [])}
-        <FormIntervention
-          open={visible}
-          setVisibility={setVisibility}
-          checkPrescriptionDrug={checkPrescriptionDrug}
-        />
       </>
     );
   }
@@ -513,20 +497,8 @@ export default function PrescriptionDrugList({
 
   return (
     <>
-      <ToolBox>
-        <Tooltip title="Modo de visualização">
-          <Radio.Group
-            onChange={(e) => {
-              dispatch(setPrescriptionListType(e.target.value));
-              dispatch(savePreferences());
-            }}
-            value={prescriptionListType}
-          >
-            <Radio.Button value="default">Padrão</Radio.Button>
-            <Radio.Button value="condensed">Condensado</Radio.Button>
-          </Radio.Group>
-        </Tooltip>
-      </ToolBox>
+      <Filters />
+
       {getGroups(groups).map((g) => (
         <GroupCollapse
           bordered={false}
@@ -535,11 +507,6 @@ export default function PrescriptionDrugList({
           items={getCollapseItems(g)}
         ></GroupCollapse>
       ))}
-      <FormIntervention
-        open={visible}
-        setVisibility={setVisibility}
-        checkPrescriptionDrug={checkPrescriptionDrug}
-      />
     </>
   );
 }
