@@ -172,7 +172,7 @@ export default function PrescriptionReport() {
               <Col xs={12} lg={8}>
                 <Spin spinning={isLoading}>
                   <StatsCard className={`green `}>
-                    <div className="stats-title">Percentual de Dia</div>
+                    <div className="stats-title">Percentual de Itens</div>
                     <div className="stats-value">
                       {reportData?.itensTotals?.checkedPercentage || "-"}%
                     </div>

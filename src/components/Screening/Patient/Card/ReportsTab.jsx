@@ -13,10 +13,9 @@ export default function ReportsTab({ prescription }) {
   const reportClick = (report) => {
     setCurrentReport({
       ...report,
-      link: report.link.replaceAll(
-        "#nratendimento#",
-        prescription.admissionNumber
-      ),
+      link: report.link
+        .replaceAll("#nratendimento#", prescription.admissionNumber)
+        .replaceAll("#fkpessoa#", prescription.idPatient),
     });
   };
 
