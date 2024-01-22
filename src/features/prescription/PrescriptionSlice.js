@@ -9,6 +9,7 @@ const initialState = {
     data: {},
     active: false,
   },
+  filters: [],
 };
 
 export const startEvaluation = createAsyncThunk(
@@ -31,6 +32,9 @@ const prescriptionSlice = createSlice({
     reset() {
       return initialState;
     },
+    setPrescriptionFilters(state, action) {
+      state.filters = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -47,6 +51,6 @@ const prescriptionSlice = createSlice({
   },
 });
 
-export const { reset } = prescriptionSlice.actions;
+export const { reset, setPrescriptionFilters } = prescriptionSlice.actions;
 
 export default prescriptionSlice.reducer;

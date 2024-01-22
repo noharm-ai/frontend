@@ -74,7 +74,7 @@ function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
           );
         })
         .catch(() => {
-          console.log("error");
+          console.error("error");
           setError(true);
         });
     },

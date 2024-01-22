@@ -10,7 +10,7 @@ const pageTimer = ({ debug = false }) => {
     interval = ifvisible.onEvery(1, () => {
       currentTime += 1;
       if (debug) {
-        console.log("pagetimer", currentTime);
+        console.debug("pagetimer", currentTime);
       }
     });
   };

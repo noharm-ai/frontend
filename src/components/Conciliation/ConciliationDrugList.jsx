@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
 
@@ -9,8 +9,6 @@ import notification from "components/notification";
 import DefaultModal from "components/Modal";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 
-import FormIntervention from "containers/Forms/Intervention";
-
 import { conciliationColumns } from "../Screening/columns";
 import { rowClassName } from "../Screening/PrescriptionDrug/PrescriptionDrugList";
 import ChooseInterventionModal from "components/Screening/PrescriptionDrug/components/ChooseInterventionModal";
@@ -18,7 +16,7 @@ import expandedRowRender from "./table/expandedRowRender";
 
 import { BoxWrapper } from "./index.style";
 
-export default function PrescriptionDrugList({
+export default function ConciliationDrugList({
   isFetching,
   dataSource,
   saveIntervention,
@@ -33,9 +31,7 @@ export default function PrescriptionDrugList({
   security,
   interventions,
   updateInterventionData,
-  featureService,
 }) {
-  const [openIntervention, setOpenIntervention] = useState(false);
   const { t } = useTranslation();
 
   if (isFetching) {
@@ -49,7 +45,6 @@ export default function PrescriptionDrugList({
         ...int,
       },
     });
-    setOpenIntervention(true);
   };
 
   const onShowModal = (data) => {
@@ -86,7 +81,6 @@ export default function PrescriptionDrugList({
           nonce: Math.random(),
         },
       });
-      setOpenIntervention(true);
     }
   };
 
@@ -146,11 +140,6 @@ export default function PrescriptionDrugList({
         dataSource={filteredDataSource()}
         rowClassName={rowClassName}
         expandedRowRender={expandedRowRender({ t })}
-      />
-      <FormIntervention
-        open={openIntervention}
-        setVisibility={setOpenIntervention}
-        checkPrescriptionDrug={checkPrescriptionDrug}
       />
     </BoxWrapper>
   );

@@ -3,7 +3,7 @@ import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { PlusOutlined, CopyOutlined } from "@ant-design/icons";
-import { FloatButton } from "antd";
+import { FloatButton, Skeleton } from "antd";
 
 import Empty from "components/Empty";
 import LoadBox, { LoadContainer } from "components/LoadBox";
@@ -24,6 +24,7 @@ import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
 import DrugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatus";
 import ScreeningActions from "containers/Screening/ScreeningActions";
 import EvaluationWarning from "features/prescription/EvaluationWarning/EvaluationWarning";
+import FormIntervention from "containers/Forms/Intervention";
 
 import {
   BoxWrapper,
@@ -427,8 +428,9 @@ export default function Screening({
   return (
     <>
       <EvaluationWarning />
+      <PageHeader />
+      <Skeleton title paragraph={false} loading={isFetching} active />
       <BoxWrapper>
-        <PageHeader />
         <Row type="flex" gutter={24}>
           <Col span={24} md={24}>
             {isFetching ? (
@@ -462,7 +464,12 @@ export default function Screening({
         </DrugFormStatusBox>
       )}
 
-      {!isFetching && <ScreeningActions />}
+      {!isFetching && (
+        <>
+          <FormIntervention />
+          <ScreeningActions />
+        </>
+      )}
 
       <FloatButton.BackTop
         style={{ right: 80, bottom: 25 }}

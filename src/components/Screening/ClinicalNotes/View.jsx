@@ -135,7 +135,7 @@ export default function View({
         !className.includes("Paper-") &&
         !className.includes("PaperContainer")
       ) {
-        console.log(
+        console.error(
           "invalid selection",
           range.commonAncestorContainer.offsetParent.className,
           range

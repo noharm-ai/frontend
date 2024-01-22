@@ -155,8 +155,6 @@ const getEventScatter = (datasource) => {
 
     const index = day * 24 + hour;
 
-    console.log(i.date, day, hour, data[index]);
-
     data[index][2] += 1;
   });
 
@@ -178,8 +176,6 @@ export const getReportData = (datasource, filters) => {
     auditPlotSeries: getAuditPlotSeries(filteredList),
     eventScatter: getEventScatter(filteredList),
   };
-
-  console.log("reportdata", reportData);
 
   return reportData;
 };

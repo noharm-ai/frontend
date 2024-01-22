@@ -10,6 +10,8 @@ import {
   RollbackOutlined,
   ScheduleOutlined,
 } from "@ant-design/icons";
+import { Affix } from "antd";
+import { useTransition, animated, config } from "@react-spring/web";
 
 import { InfoIcon } from "components/Icon";
 import Heading from "components/Heading";
@@ -24,6 +26,8 @@ import ClinicalNotesSchedule from "containers/Forms/ClinicalNotes/ScheduleForm";
 import ClinicalNotesCustomForm from "containers/Forms/ClinicalNotes/CustomForm";
 import FormClinicalAlert from "containers/Forms/ClinicalAlert";
 import { getErrorMessageFromException } from "utils/errorHandler";
+
+import { ScreeningHeader } from "components/Screening/index.style";
 
 const close = () => {
   window.close();
@@ -62,7 +66,17 @@ export default function PageHeader({
   const [isClinicalAlertVisible, setClinicalAlertVisibility] = useState(false);
   const [clinicalNotesAction, setClinicalNotesAction] =
     useState("clinicalNote");
+  const [affixed, setAffixed] = useState(false);
   const { t } = useTranslation();
+  const transitions = useTransition(affixed, {
+    from: {
+      opacity: 0,
+      transform: "translate3d(5px, 0, 0)",
+    },
+    enter: { opacity: 1, transform: "translate3d(0, 0, 0)" },
+    delay: 150,
+    config: config.slow,
+  });
 
   const hasPrimaryCare = featureService.hasPrimaryCare();
   const hasUncheckPermission =
@@ -143,76 +157,81 @@ export default function PageHeader({
   const createDate = moment(prescription.content.date);
   const expireDate = moment(prescription.content.expire);
 
-  const Title = ({ content, type }) => {
+  const TitleLegend = ({ content, type }) => {
     if (type === "conciliation") {
-      return (
-        <Heading>
-          {t("screeningHeader.titleConciliation")}{" "}
-          <Tooltip title={t("screeningHeader.copyHint")}>
-            <UnstyledButton
-              onClick={() => copyToClipboard(content.idPrescription)}
-            >
-              {content.idPrescription}
-            </UnstyledButton>
-          </Tooltip>
-        </Heading>
-      );
+      return null;
     }
 
-    if (!content.agg) {
+    if (content.agg) {
       return (
-        <Heading>
-          {t("screeningHeader.titlePrescription")}{" "}
-          <Tooltip title={t("screeningHeader.copyHint")}>
-            <UnstyledButton
-              onClick={() =>
-                copyToClipboard(prescription.content.idPrescription)
-              }
-            >
-              {prescription.content.idPrescription}
-            </UnstyledButton>
-          </Tooltip>
-          <span
-            className={
-              expireDate.diff(now, "minute") < 0 ? "legend red" : "legend"
-            }
-          >
-            {t("screeningHeader.issuedOn")} {prescription.content.dateFormated}
-            {prescription.content.expire && (
-              <>
-                , {t("screeningHeader.validUntil")}{" "}
-                {prescription.content.expireFormated}
-              </>
-            )}
-            {prescription.content.expire &&
-              expireDate.diff(createDate, "hour") < 23 && (
-                <Tooltip title={t("screeningHeader.intercurrence")}>
-                  {" "}
-                  <InfoIcon />
-                </Tooltip>
-              )}
-          </span>
-        </Heading>
+        <span className="legend">
+          {t("screeningHeader.subtitleAdmission")} {content.dateOnlyFormated}
+        </span>
       );
     }
-    // aggregated
 
     return (
-      <Heading css="line-height: 1.2;">
-        {t("screeningHeader.titleAdmission")}{" "}
+      <span
+        className={expireDate.diff(now, "minute") < 0 ? "legend red" : "legend"}
+      >
+        {t("screeningHeader.issuedOn")} {content.dateFormated}
+        {content.expire && (
+          <>
+            , {t("screeningHeader.validUntil")} {content.expireFormated}
+          </>
+        )}
+        {content.expire && expireDate.diff(createDate, "hour") < 23 && (
+          <Tooltip title={t("screeningHeader.intercurrence")}>
+            {" "}
+            <InfoIcon />
+          </Tooltip>
+        )}
+      </span>
+    );
+  };
+
+  const Title = ({ content, type, small }) => {
+    const label =
+      type === "conciliation"
+        ? t("screeningHeader.titleConciliation")
+        : content.agg
+        ? t("screeningHeader.titleAdmission")
+        : t("screeningHeader.titlePrescription");
+    const id =
+      type === "conciliation" || !content.agg
+        ? content.idPrescription
+        : content.admissionNumber;
+
+    if (small) {
+      return (
+        <Heading style={{ fontSize: "18px", paddingTop: "2px" }}>
+          {label}{" "}
+          <Tooltip title={t("screeningHeader.copyHint")}>
+            <UnstyledButton onClick={() => copyToClipboard(id)}>
+              {id}
+            </UnstyledButton>
+          </Tooltip>
+          {content.agg ? (
+            <span
+              style={{ fontWeight: 400 }}
+            >{` - ${content.dateOnlyFormated}`}</span>
+          ) : (
+            ""
+          )}
+          <span className="legend">{content.namePatient}</span>
+        </Heading>
+      );
+    }
+
+    return (
+      <Heading>
+        {label}{" "}
         <Tooltip title={t("screeningHeader.copyHint")}>
-          <UnstyledButton
-            onClick={() =>
-              copyToClipboard(prescription.content.admissionNumber)
-            }
-          >
-            {prescription.content.admissionNumber}
+          <UnstyledButton onClick={() => copyToClipboard(id)}>
+            {id}
           </UnstyledButton>
         </Tooltip>
-        <span className="legend">
-          {t("screeningHeader.subtitleAdmission")}{" "}
-          {prescription.content.dateOnlyFormated}
-        </span>
+        <TitleLegend content={content} type={type} />
       </Heading>
     );
   };
@@ -222,147 +241,157 @@ export default function PageHeader({
   }
 
   return (
-    <>
-      <Row type="flex" css="margin-bottom: 15px;">
-        <Col span={24} md={10}>
-          <Title content={prescription.content} type={type} />
-        </Col>
-        <Col
-          span={24}
-          md={24 - 10}
-          css="
+    <Affix onChange={(value) => setAffixed(value)}>
+      <ScreeningHeader className={`${affixed ? "affixed" : ""}`}>
+        <Row type="flex">
+          <Col span={24} md={10}>
+            {transitions((styles) => (
+              <animated.div style={styles}>
+                <Title
+                  content={prescription.content}
+                  type={type}
+                  small={affixed}
+                />
+              </animated.div>
+            ))}
+          </Col>
+          <Col
+            span={24}
+            md={24 - 10}
+            css="
           display:flex;
           align-items: center;
           justify-content: flex-end;
         "
-        >
-          {prescription.content.status === "0" && (
-            <Button
-              type="primary gtm-bt-check"
-              icon={<CheckOutlined />}
-              ghost
-              onClick={() => setPrescriptionStatus(id, "s")}
-              loading={isChecking}
-              style={{ marginRight: "5px" }}
-            >
-              {t("screeningHeader.btnCheck")}
-            </Button>
-          )}
-          {prescription.content.status === "s" && (
-            <>
-              <span style={{ marginRight: "10px", lineHeight: 1.4 }}>
-                {prescription.content.user ? (
-                  <>
-                    {t("labels.checkedBy")}
-                    <br />
-                    {prescription.content.user}
-                  </>
-                ) : (
-                  <>
-                    {t("screeningHeader.btnChecked")} <CheckOutlined />
-                  </>
-                )}
-              </span>
-              <Tooltip
-                title={
-                  hasUncheckPermission
-                    ? t("screeningHeader.btnUndoCheck")
-                    : t("screeningHeader.btnUndoCheckDisabled")
-                }
+          >
+            {prescription.content.status === "0" && (
+              <Button
+                type="primary gtm-bt-check"
+                icon={<CheckOutlined />}
+                ghost
+                onClick={() => setPrescriptionStatus(id, "s")}
+                loading={isChecking}
+                style={{ marginRight: "5px" }}
               >
-                <Button
-                  className="gtm-bt-undo-check"
-                  danger
-                  onClick={() => setPrescriptionStatus(id, "0")}
-                  icon={<RollbackOutlined style={{ fontSize: 16 }} />}
-                  loading={isChecking}
-                  style={{ marginRight: "5px" }}
-                  disabled={!hasUncheckPermission}
-                ></Button>
-              </Tooltip>
-            </>
-          )}
-          {hasPrimaryCare && (
+                {t("screeningHeader.btnCheck")}
+              </Button>
+            )}
+            {prescription.content.status === "s" && (
+              <>
+                <span style={{ marginRight: "10px", lineHeight: 1.4 }}>
+                  {prescription.content.user ? (
+                    <>
+                      {t("labels.checkedBy")}
+                      <br />
+                      {prescription.content.user}
+                    </>
+                  ) : (
+                    <>
+                      {t("screeningHeader.btnChecked")} <CheckOutlined />
+                    </>
+                  )}
+                </span>
+                <Tooltip
+                  title={
+                    hasUncheckPermission
+                      ? t("screeningHeader.btnUndoCheck")
+                      : t("screeningHeader.btnUndoCheckDisabled")
+                  }
+                >
+                  <Button
+                    className="gtm-bt-undo-check"
+                    danger
+                    onClick={() => setPrescriptionStatus(id, "0")}
+                    icon={<RollbackOutlined style={{ fontSize: 16 }} />}
+                    loading={isChecking}
+                    style={{ marginRight: "5px" }}
+                    disabled={!hasUncheckPermission}
+                  ></Button>
+                </Tooltip>
+              </>
+            )}
+            {hasPrimaryCare && (
+              <Button
+                type="primary gtm-bt-clinical-notes-schedule"
+                onClick={() => openScheduleModal()}
+                style={{ marginRight: "5px" }}
+                ghost={!prescription.content.notes}
+              >
+                <ScheduleOutlined />
+                {t("screeningHeader.btnSchedule")}
+              </Button>
+            )}
             <Button
-              type="primary gtm-bt-clinical-notes-schedule"
-              onClick={() => openScheduleModal()}
+              type="primary gtm-bt-clinical-notes"
+              onClick={() => openClinicalNotesModal()}
               style={{ marginRight: "5px" }}
               ghost={!prescription.content.notes}
             >
-              <ScheduleOutlined />
-              {t("screeningHeader.btnSchedule")}
+              <FileAddOutlined />
+              {t("screeningHeader.btnClinicalNotes")}
             </Button>
-          )}
-          <Button
-            type="primary gtm-bt-clinical-notes"
-            onClick={() => openClinicalNotesModal()}
-            style={{ marginRight: "5px" }}
-            ghost={!prescription.content.notes}
-          >
-            <FileAddOutlined />
-            {t("screeningHeader.btnClinicalNotes")}
-          </Button>
-          {type !== "conciliation" && security.hasAlertIntegration() && (
-            <Button
-              type="primary gtm-bt-alert"
-              onClick={() => setClinicalAlertVisibility(true)}
-              style={{ marginRight: "5px" }}
-              ghost={!prescription.content.alert}
-            >
-              <AlertOutlined />
-              {t("screeningHeader.btnAlert")}
-            </Button>
-          )}
+            {type !== "conciliation" && security.hasAlertIntegration() && (
+              <Button
+                type="primary gtm-bt-alert"
+                onClick={() => setClinicalAlertVisibility(true)}
+                style={{ marginRight: "5px" }}
+                ghost={!prescription.content.alert}
+              >
+                <AlertOutlined />
+                {t("screeningHeader.btnAlert")}
+              </Button>
+            )}
 
-          <Button type="default gtm-bt-close" onClick={close}>
-            {t("screeningHeader.btnClose")}
-          </Button>
-        </Col>
-      </Row>
-      {hasPrimaryCare ? (
-        <>
-          {isClinicalNotesFormsVisible && (
-            <ClinicalNotesCustomForm
-              open={isClinicalNotesFormsVisible}
-              onCancel={onCancelClinicalNotesForms}
-              okText="Salvar"
-              okType="primary"
-              cancelText="Cancelar"
-              afterSave={afterSaveClinicalNotesPrimaryCare}
-            />
-          )}
-          {isClinicalNotesVisible && (
-            <ClinicalNotesSchedule
-              open={isClinicalNotesVisible}
-              action={clinicalNotesAction}
-              onCancel={onCancelClinicalNotes}
-              okText="Salvar"
-              okType="primary"
-              cancelText="Cancelar"
-              afterSave={afterSaveClinicalNotesSchedule}
-            />
-          )}
-        </>
-      ) : (
-        <ClinicalNotes
-          open={isClinicalNotesVisible}
-          action={clinicalNotesAction}
-          onCancel={onCancelClinicalNotes}
+            <Button type="default gtm-bt-close" onClick={close}>
+              {t("screeningHeader.btnClose")}
+            </Button>
+          </Col>
+        </Row>
+        {hasPrimaryCare ? (
+          <>
+            {isClinicalNotesFormsVisible && (
+              <ClinicalNotesCustomForm
+                open={isClinicalNotesFormsVisible}
+                onCancel={onCancelClinicalNotesForms}
+                okText="Salvar"
+                okType="primary"
+                cancelText="Cancelar"
+                afterSave={afterSaveClinicalNotesPrimaryCare}
+              />
+            )}
+            {isClinicalNotesVisible && (
+              <ClinicalNotesSchedule
+                open={isClinicalNotesVisible}
+                action={clinicalNotesAction}
+                onCancel={onCancelClinicalNotes}
+                okText="Salvar"
+                okType="primary"
+                cancelText="Cancelar"
+                afterSave={afterSaveClinicalNotesSchedule}
+              />
+            )}
+          </>
+        ) : (
+          <ClinicalNotes
+            open={isClinicalNotesVisible}
+            action={clinicalNotesAction}
+            onCancel={onCancelClinicalNotes}
+            okText="Salvar"
+            okType="primary"
+            cancelText="Cancelar"
+            afterSave={afterSaveClinicalNotes}
+          />
+        )}
+
+        <FormClinicalAlert
+          open={isClinicalAlertVisible}
+          onCancel={onCancelClinicalAlert}
           okText="Salvar"
           okType="primary"
           cancelText="Cancelar"
-          afterSave={afterSaveClinicalNotes}
+          afterSave={afterSaveClinicalAlert}
         />
-      )}
-
-      <FormClinicalAlert
-        open={isClinicalAlertVisible}
-        onCancel={onCancelClinicalAlert}
-        okText="Salvar"
-        okType="primary"
-        cancelText="Cancelar"
-        afterSave={afterSaveClinicalAlert}
-      />
-    </>
+      </ScreeningHeader>
+    </Affix>
   );
 }
