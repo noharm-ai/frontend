@@ -279,22 +279,28 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
     : null;
 
   if (!isEmpty(headers)) {
+    let found = false;
+
     success.list.forEach((i) => {
       if (headers[i.idPrescription]) {
         headers[i.idPrescription].status = i.status;
         headers[i.idPrescription].user = success.user;
         headers[i.idPrescription].user = success.userId;
+
+        found = true;
       }
     });
 
-    let allChecked = true;
-    Object.keys(state.single.data.headers).forEach((p) => {
-      if (headers[p].status !== "s") {
-        allChecked = false;
-      }
-    });
+    if (found) {
+      let allChecked = true;
+      Object.keys(state.single.data.headers).forEach((p) => {
+        if (headers[p].status !== "s") {
+          allChecked = false;
+        }
+      });
 
-    prescriptionStatus = allChecked ? "s" : "0";
+      prescriptionStatus = allChecked ? "s" : "0";
+    }
   }
 
   return {
