@@ -287,14 +287,16 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
       }
     });
 
-    let allChecked = true;
-    Object.keys(state.single.data.headers).forEach((p) => {
-      if (headers[p].status !== "s") {
-        allChecked = false;
-      }
-    });
+    if (`${state.single.data.idPrescription}` !== `${success.idPrescription}`) {
+      let allChecked = true;
+      Object.keys(state.single.data.headers).forEach((p) => {
+        if (headers[p].status !== "s") {
+          allChecked = false;
+        }
+      });
 
-    prescriptionStatus = allChecked ? "s" : "0";
+      prescriptionStatus = allChecked ? "s" : "0";
+    }
   }
 
   return {

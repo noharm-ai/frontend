@@ -235,12 +235,14 @@ export default function View({
 
   let html = "";
 
-  if (featureService.hasPrimaryCare()) {
-    html = selected.text.trim().replaceAll("\n", "<br/>");
-  } else if (featureService.hasClinicalNotesNewFormat()) {
-    html = selected.text.trim();
-  } else {
-    html = selected.text.trim().replaceAll("  ", "<br/>");
+  if (selected.text) {
+    if (featureService.hasPrimaryCare()) {
+      html = selected.text.trim().replaceAll("\n", "<br/>");
+    } else if (featureService.hasClinicalNotesNewFormat()) {
+      html = selected.text.trim();
+    } else {
+      html = selected.text.trim().replaceAll("  ", "<br/>");
+    }
   }
 
   html = DOMPurify.sanitize(html);
