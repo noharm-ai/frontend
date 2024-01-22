@@ -1,4 +1,5 @@
 import isEmpty from "lodash.isempty";
+import { parseISO, differenceInMinutes } from "date-fns";
 
 export const groupComponents = (list, infusion) => {
   if (!list || list.length < 1) return list;
@@ -155,8 +156,8 @@ const sortPrescriptionDrugs = (items) => {
     .concat(whitelistItems);
 };
 
-export const filterPrescriptionDrugs = (items, filters) => {
-  if (filters && filters.length) {
+export const filterPrescriptionDrugs = (items, headers, filters) => {
+  if (filters && filters.length && items) {
     return items.filter((i) => {
       let show = true;
 
@@ -176,9 +177,43 @@ export const filterPrescriptionDrugs = (items, filters) => {
         show = show && i.av;
       }
 
+      if (filters.indexOf("withValidation") !== -1) {
+        show = show && !i.whiteList;
+      }
+
+      if (filters.indexOf("active") !== -1) {
+        show = show && !i.suspended;
+
+        if (i.cpoe && headers[i.cpoe]) {
+          console.log("drug", i.drug);
+          show = show && isActive(headers[i.cpoe]);
+        }
+      }
+
       return show;
     });
   }
 
   return items;
+};
+
+const isActive = (header) => {
+  const prescriptionDate = parseISO(header.date);
+  const currentDate = new Date();
+
+  if (differenceInMinutes(currentDate, prescriptionDate) < 0) {
+    console.log("agendado");
+    return false;
+  }
+
+  if (header.expire) {
+    const expirationDate = parseISO(header.expire);
+
+    if (differenceInMinutes(expirationDate, currentDate) < 0) {
+      console.log("expirado");
+      return false;
+    }
+  }
+
+  return true;
 };

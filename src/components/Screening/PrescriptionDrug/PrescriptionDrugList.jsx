@@ -250,7 +250,7 @@ export default function PrescriptionDrugList({
         emptyMessage={emptyMessage}
         ds={{
           value: groupComponents(
-            filterPrescriptionDrugs(ds.value, filters),
+            filterPrescriptionDrugs(ds.value, headers, filters),
             infusion
           ),
         }}

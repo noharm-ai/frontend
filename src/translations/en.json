@@ -398,7 +398,9 @@
     "alerts": "Has alerts",
     "diff": "Not evaluated",
     "am": "Antimicrobial",
-    "hv": "High vigilance"
+    "hv": "High vigilance",
+    "active": "Active",
+    "withValidation": "With validation"
   },
 
   "interventionForm": {

@@ -398,7 +398,9 @@
     "alerts": "Com alertas",
     "diff": "Diferentes",
     "am": "Antimicrobianos",
-    "hv": "Alta vigilância"
+    "hv": "Alta vigilância",
+    "active": "Ativos",
+    "withValidation": "Com validação"
   },
 
   "interventionForm": {

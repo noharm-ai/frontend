@@ -27,20 +27,28 @@ export default function Filters() {
   const filterOptions = () => {
     const items = [
       {
-        key: "diff",
-        label: t(`prescriptionDrugFilters.diff`),
-      },
-      {
-        key: "alerts",
-        label: t(`prescriptionDrugFilters.alerts`),
+        key: "hv",
+        label: t(`prescriptionDrugFilters.hv`),
       },
       {
         key: "am",
         label: t(`prescriptionDrugFilters.am`),
       },
       {
-        key: "hv",
-        label: t(`prescriptionDrugFilters.hv`),
+        key: "active",
+        label: t(`prescriptionDrugFilters.active`),
+      },
+      {
+        key: "alerts",
+        label: t(`prescriptionDrugFilters.alerts`),
+      },
+      {
+        key: "withValidation",
+        label: t(`prescriptionDrugFilters.withValidation`),
+      },
+      {
+        key: "diff",
+        label: t(`prescriptionDrugFilters.diff`),
       },
     ];
 
