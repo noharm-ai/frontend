@@ -11,6 +11,7 @@ import {
   ScheduleOutlined,
 } from "@ant-design/icons";
 import { Affix } from "antd";
+import { useTransition, animated, config } from "@react-spring/web";
 
 import { InfoIcon } from "components/Icon";
 import Heading from "components/Heading";
@@ -67,6 +68,15 @@ export default function PageHeader({
     useState("clinicalNote");
   const [affixed, setAffixed] = useState(false);
   const { t } = useTranslation();
+  const transitions = useTransition(affixed, {
+    from: {
+      opacity: 0,
+      transform: "translate3d(5px, 0, 0)",
+    },
+    enter: { opacity: 1, transform: "translate3d(0, 0, 0)" },
+    delay: 150,
+    config: config.slow,
+  });
 
   const hasPrimaryCare = featureService.hasPrimaryCare();
   const hasUncheckPermission =
@@ -147,76 +157,81 @@ export default function PageHeader({
   const createDate = moment(prescription.content.date);
   const expireDate = moment(prescription.content.expire);
 
-  const Title = ({ content, type }) => {
+  const TitleLegend = ({ content, type }) => {
     if (type === "conciliation") {
-      return (
-        <Heading>
-          {t("screeningHeader.titleConciliation")}{" "}
-          <Tooltip title={t("screeningHeader.copyHint")}>
-            <UnstyledButton
-              onClick={() => copyToClipboard(content.idPrescription)}
-            >
-              {content.idPrescription}
-            </UnstyledButton>
-          </Tooltip>
-        </Heading>
-      );
+      return null;
     }
 
-    if (!content.agg) {
+    if (content.agg) {
       return (
-        <Heading>
-          {t("screeningHeader.titlePrescription")}{" "}
-          <Tooltip title={t("screeningHeader.copyHint")}>
-            <UnstyledButton
-              onClick={() =>
-                copyToClipboard(prescription.content.idPrescription)
-              }
-            >
-              {prescription.content.idPrescription}
-            </UnstyledButton>
-          </Tooltip>
-          <span
-            className={
-              expireDate.diff(now, "minute") < 0 ? "legend red" : "legend"
-            }
-          >
-            {t("screeningHeader.issuedOn")} {prescription.content.dateFormated}
-            {prescription.content.expire && (
-              <>
-                , {t("screeningHeader.validUntil")}{" "}
-                {prescription.content.expireFormated}
-              </>
-            )}
-            {prescription.content.expire &&
-              expireDate.diff(createDate, "hour") < 23 && (
-                <Tooltip title={t("screeningHeader.intercurrence")}>
-                  {" "}
-                  <InfoIcon />
-                </Tooltip>
-              )}
-          </span>
-        </Heading>
+        <span className="legend">
+          {t("screeningHeader.subtitleAdmission")} {content.dateOnlyFormated}
+        </span>
       );
     }
-    // aggregated
 
     return (
-      <Heading css="line-height: 1.2;">
-        {t("screeningHeader.titleAdmission")}{" "}
+      <span
+        className={expireDate.diff(now, "minute") < 0 ? "legend red" : "legend"}
+      >
+        {t("screeningHeader.issuedOn")} {content.dateFormated}
+        {content.expire && (
+          <>
+            , {t("screeningHeader.validUntil")} {content.expireFormated}
+          </>
+        )}
+        {content.expire && expireDate.diff(createDate, "hour") < 23 && (
+          <Tooltip title={t("screeningHeader.intercurrence")}>
+            {" "}
+            <InfoIcon />
+          </Tooltip>
+        )}
+      </span>
+    );
+  };
+
+  const Title = ({ content, type, small }) => {
+    const label =
+      type === "conciliation"
+        ? t("screeningHeader.titleConciliation")
+        : content.agg
+        ? t("screeningHeader.titleAdmission")
+        : t("screeningHeader.titlePrescription");
+    const id =
+      type === "conciliation" || !content.agg
+        ? content.idPrescription
+        : content.admissionNumber;
+
+    if (small) {
+      return (
+        <Heading style={{ fontSize: "18px", paddingTop: "2px" }}>
+          {label}{" "}
+          <Tooltip title={t("screeningHeader.copyHint")}>
+            <UnstyledButton onClick={() => copyToClipboard(id)}>
+              {id}
+            </UnstyledButton>
+          </Tooltip>
+          {content.agg ? (
+            <span
+              style={{ fontWeight: 400 }}
+            >{` - ${content.dateOnlyFormated}`}</span>
+          ) : (
+            ""
+          )}
+          <span className="legend">{content.namePatient}</span>
+        </Heading>
+      );
+    }
+
+    return (
+      <Heading>
+        {label}{" "}
         <Tooltip title={t("screeningHeader.copyHint")}>
-          <UnstyledButton
-            onClick={() =>
-              copyToClipboard(prescription.content.admissionNumber)
-            }
-          >
-            {prescription.content.admissionNumber}
+          <UnstyledButton onClick={() => copyToClipboard(id)}>
+            {id}
           </UnstyledButton>
         </Tooltip>
-        <span className="legend">
-          {t("screeningHeader.subtitleAdmission")}{" "}
-          {prescription.content.dateOnlyFormated}
-        </span>
+        <TitleLegend content={content} type={type} />
       </Heading>
     );
   };
@@ -230,7 +245,15 @@ export default function PageHeader({
       <ScreeningHeader className={`${affixed ? "affixed" : ""}`}>
         <Row type="flex">
           <Col span={24} md={10}>
-            <Title content={prescription.content} type={type} />
+            {transitions((styles) => (
+              <animated.div style={styles}>
+                <Title
+                  content={prescription.content}
+                  type={type}
+                  small={affixed}
+                />
+              </animated.div>
+            ))}
           </Col>
           <Col
             span={24}

@@ -122,10 +122,6 @@ export const ScreeningHeader = styled.div`
   margin-bottom: 15px;
   transition: all 0.5s ${timingFunctions("easeOutQuint")};
 
-  h1 {
-    transition: all 1s ${timingFunctions("easeOutQuint")};
-  }
-
   &.affixed {
     background: rgba(255, 255, 255, 0.8);
     padding-left: 12px;
@@ -135,13 +131,5 @@ export const ScreeningHeader = styled.div`
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03),
       0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
     backdrop-filter: blur(8px);
-
-    h1 {
-      font-size: 22px;
-
-      .legend {
-        margin-top: 0;
-      }
-    }
   }
 `;
