@@ -185,7 +185,6 @@ export const filterPrescriptionDrugs = (items, headers, filters) => {
         show = show && !i.suspended;
 
         if (i.cpoe && headers[i.cpoe]) {
-          console.log("drug", i.drug);
           show = show && isActive(headers[i.cpoe]);
         }
       }
@@ -202,7 +201,6 @@ const isActive = (header) => {
   const currentDate = new Date();
 
   if (differenceInMinutes(currentDate, prescriptionDate) < 0) {
-    console.log("agendado");
     return false;
   }
 
@@ -210,7 +208,6 @@ const isActive = (header) => {
     const expirationDate = parseISO(header.expire);
 
     if (differenceInMinutes(expirationDate, currentDate) < 0) {
-      console.log("expirado");
       return false;
     }
   }

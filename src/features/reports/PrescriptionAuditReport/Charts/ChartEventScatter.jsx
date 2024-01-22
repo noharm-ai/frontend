@@ -75,7 +75,6 @@ export default function ChartEventScatter({ reportData, isLoading }) {
     tooltip: {
       position: "top",
       formatter: function (params) {
-        console.log("params", params);
         return `<strong>${params.data[0].toLocaleString("en-US", {
           minimumIntegerDigits: 2,
           useGrouping: false,

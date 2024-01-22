@@ -63,8 +63,6 @@ function OutliersForm({ open, setOpen }) {
             setRefreshWarning(true);
           }
 
-          console.log("lenght", response.payload.data.data.length);
-
           if (response.payload.data.data.length <= 1) {
             setOutliersErrorMessage(
               "Não há histórico de prescrição para este segmento."

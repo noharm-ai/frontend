@@ -70,8 +70,6 @@ export default function FilterMemory({
   };
 
   const removeFilterAction = (index, type) => {
-    console.log("remove", index, type);
-
     const storeElement =
       type === "public" ? publicFilters[0] : privateFilters[0];
     const filters = [...storeElement.value];
