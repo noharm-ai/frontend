@@ -1,5 +1,6 @@
 import { instance, setHeaders } from "services/api";
 
+const api = {};
 const endpoints = {
   frequency: "/admin/frequency",
   interventionReason: "/admin/intervention-reason",
@@ -154,7 +155,21 @@ const addMostFrequentExams = (params) =>
     ...setHeaders(),
   });
 
-const api = {
+api.drugs = {};
+api.drugs.getDrugsMissingSubstance = (params) =>
+  instance.get(`${endpoints.drug}/get-missing-substance`, {
+    params,
+    ...setHeaders(),
+  });
+
+api.drugs.predictSubstance = (params = {}) => {
+  return instance.post(`${endpoints.drug}/predict-substance`, params, {
+    ...setHeaders(),
+  });
+};
+
+const methods = {
+  ...api,
   getFrequencyList,
   updateDailyFrequency,
   getIntervReasonList,
@@ -180,4 +195,4 @@ const api = {
   addMostFrequentExams,
 };
 
-export default api;
+export default methods;

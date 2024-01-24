@@ -112,6 +112,32 @@ export const copyAttributes = createAsyncThunk(
   }
 );
 
+export const getDrugsMissingSubstance = createAsyncThunk(
+  "admin-drug-attributes/get-missing-substance",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.drugs.getDrugsMissingSubstance(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const predictSubstance = createAsyncThunk(
+  "admin-drug-attributes/predict-substance",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.drugs.predictSubstance(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const drugAttributesSlice = createSlice({
   name: "drugAttributesSlice",
   initialState,
@@ -189,6 +215,7 @@ const drugAttributesSlice = createSlice({
         state.list.forEach((d) => {
           if (d.idDrug === idDrug) {
             d.sctid = sctid;
+            d.substanceAccuracy = null;
           }
         });
       })

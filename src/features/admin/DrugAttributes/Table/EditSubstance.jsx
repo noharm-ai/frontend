@@ -1,6 +1,6 @@
 import "styled-components/macro";
 import React, { useState, useEffect } from "react";
-import { CheckOutlined } from "@ant-design/icons";
+import { CheckOutlined, RobotOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
@@ -8,10 +8,12 @@ import Button from "components/Button";
 import { Select } from "components/Inputs";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
+import Tag from "components/Tag";
+import Tooltip from "components/Tooltip";
 
 import { updateSubstance } from "../DrugAttributesSlice";
 
-export default function EditPriceConversion({ idDrug, sctid }) {
+export default function EditPriceConversion({ idDrug, sctid, accuracy }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const substances = useSelector((state) => state.lists.getSubstances.list);
@@ -53,32 +55,67 @@ export default function EditPriceConversion({ idDrug, sctid }) {
     });
   };
 
+  const getAccuracyColor = (value) => {
+    if (value >= 75) {
+      return "green";
+    }
+
+    if (value >= 50) {
+      return "gold";
+    }
+
+    return "red";
+  };
+
   return (
-    <span style={{ width: "500px" }}>
-      <Select
-        style={{ width: "400px", marginRight: "5px" }}
-        value={value ? `${value}` : null}
-        onChange={(val) => setValue(val)}
-        showSearch
-        optionFilterProp="children"
-        disabled={substancesLoading}
-        loading={substancesLoading}
-        allowClear
-      >
-        {substances.map(({ sctid, name }) => (
-          <Select.Option key={sctid} value={sctid}>
-            {name}
-          </Select.Option>
-        ))}
-      </Select>
-      <Button
-        type="primary"
-        ghost={!updated}
-        onClick={handleSave}
-        icon={<CheckOutlined />}
-        loading={saving}
-        disabled={substancesLoading}
-      ></Button>
-    </span>
+    <div>
+      <span style={{ width: "500px", display: "flex" }}>
+        <Select
+          style={{ width: "400px", marginRight: "5px" }}
+          value={value ? `${value}` : null}
+          onChange={(val) => setValue(val)}
+          showSearch
+          optionFilterProp="children"
+          disabled={substancesLoading}
+          loading={substancesLoading}
+          allowClear
+        >
+          {substances.map(({ sctid, name }) => (
+            <Select.Option key={sctid} value={sctid}>
+              {name}
+            </Select.Option>
+          ))}
+        </Select>
+
+        <Tooltip title="Salvar">
+          <Button
+            type="primary"
+            ghost={!updated}
+            onClick={handleSave}
+            icon={<CheckOutlined />}
+            loading={saving}
+            disabled={substancesLoading}
+          ></Button>
+        </Tooltip>
+        {accuracy && value === sctid && !updated && (
+          <Tooltip
+            title={`A substância foi definida pela IA com acurácia de ${accuracy.toLocaleString()}%. Clique no botão ao lado para confirmar ou efetue a correção`}
+          >
+            <Tag
+              icon={<RobotOutlined />}
+              color={getAccuracyColor(accuracy)}
+              style={{
+                marginLeft: "5px",
+                display: "flex",
+                alignItems: "center",
+                fontSize: "14px",
+              }}
+            >
+              {accuracy.toLocaleString()}%
+            </Tag>
+          </Tooltip>
+        )}
+      </span>
+    </div>
   );
 }

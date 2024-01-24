@@ -32,11 +32,13 @@ export default function Filter({ limit }) {
     hasPriceUnit: null,
     hasInconsistency: null,
     hasMissingConversion: null,
+    hasAISubstance: null,
     missingAttributes: null,
     term: null,
     substance: null,
     idSegmentList: [],
     attributeList: [],
+    aiAccuracyRange: null,
   };
 
   useEffect(() => {
