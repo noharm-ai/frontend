@@ -5,7 +5,6 @@ import moment from "moment";
 import {
   filterWhitelistedChildren,
   getWhitelistedChildren,
-  groupComponents,
 } from "utils/transformers/prescriptionDrugs";
 import { stringify, formatAge } from "./utils";
 import { toDataSource } from "utils";
@@ -158,10 +157,8 @@ export const transformPrescription = ({
 }) => {
   const prescriptionList = prescription
     ? groupByPrescription(
-        groupComponents(
-          filterWhitelistedChildren(prescription.map(transformDrug)),
-          infusion
-        ),
+        filterWhitelistedChildren(prescription.map(transformDrug)),
+
         "prescriptions",
         null,
         null,
@@ -174,18 +171,10 @@ export const transformPrescription = ({
     : [];
 
   const solutionList = solution
-    ? groupByPrescription(
-        groupComponents(solution.map(transformDrug), infusion),
-        "solutions",
-        null
-      )
+    ? groupByPrescription(solution.map(transformDrug), "solutions", null)
     : [];
   const proceduresList = procedures
-    ? groupByPrescription(
-        groupComponents(procedures.map(transformDrug)),
-        "procedures",
-        null
-      )
+    ? groupByPrescription(procedures.map(transformDrug), "procedures", null)
     : [];
   const dietList = diet
     ? groupByPrescription(

@@ -289,8 +289,6 @@ const listsSlice = createSlice({
         state.getSubstances.status = "loading";
       })
       .addCase(getSubstances.fulfilled, (state, action) => {
-        console.log("action", action);
-
         state.getSubstances.status = "succeeded";
         state.getSubstances.list = action.payload.data;
       })

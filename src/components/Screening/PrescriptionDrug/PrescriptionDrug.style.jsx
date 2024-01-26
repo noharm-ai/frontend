@@ -21,8 +21,35 @@ export const EditorBox = styled.div`
 
 export const ToolBox = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-bottom: 15px;
+
+  .filters {
+    flex: 1;
+    display: flex;
+    height: 32px;
+
+    .add-filter {
+      background-color: #7ebe9a;
+      border-color: #7ebe9a;
+      border-style: dashed;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s linear;
+
+      &:hover {
+        background: #4096ff;
+      }
+    }
+
+    .ant-tag {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .viz-mode {
+  }
 `;
 
 export const PrescriptionHeader = styled.div`

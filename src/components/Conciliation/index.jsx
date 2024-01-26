@@ -14,6 +14,7 @@ import Patient from "containers/Screening/Patient";
 import ConciliationDrugList from "containers/Conciliation/ConciliationDrugList";
 import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
 import ScreeningActions from "containers/Screening/ScreeningActions";
+import FormIntervention from "containers/Forms/Intervention";
 
 import { BoxWrapper } from "./index.style";
 
@@ -62,7 +63,12 @@ export default function Screening({ fetchScreeningById, isFetching, error }) {
         <ConciliationDrugList />
       </div>
 
-      {!isFetching && <ScreeningActions />}
+      {!isFetching && (
+        <>
+          <ScreeningActions />
+          <FormIntervention />
+        </>
+      )}
       <PrescriptionDrugForm />
       <BackTop />
     </>

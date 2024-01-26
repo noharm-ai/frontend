@@ -26,6 +26,7 @@ import memoryFilterSlice from "features/memory/MemoryFilter/MemoryFilterSlice";
 import scoreWizardSlice from "features/outliers/ScoreWizard/ScoreWizardSlice";
 import prescriptionSlice from "features/prescription/PrescriptionSlice";
 import preferencesSlice from "features/preferences/PreferencesSlice";
+import drugAttributesFormSlice from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -88,4 +89,5 @@ export default combineReducers({
   scoreWizard: scoreWizardSlice,
   prescriptionv2: prescriptionSlice,
   preferences: preferencesSlice,
+  drugAttributesForm: drugAttributesFormSlice,
 });

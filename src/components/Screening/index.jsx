@@ -3,7 +3,7 @@ import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { PlusOutlined, CopyOutlined } from "@ant-design/icons";
-import { FloatButton } from "antd";
+import { FloatButton, Skeleton } from "antd";
 
 import Empty from "components/Empty";
 import LoadBox, { LoadContainer } from "components/LoadBox";
@@ -24,6 +24,7 @@ import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
 import DrugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatus";
 import ScreeningActions from "containers/Screening/ScreeningActions";
 import EvaluationWarning from "features/prescription/EvaluationWarning/EvaluationWarning";
+import FormIntervention from "containers/Forms/Intervention";
 
 import {
   BoxWrapper,
@@ -102,6 +103,12 @@ export default function Screening({
       return elm;
     };
 
+    const scrollIntoView = (elm) => {
+      const y = elm.getBoundingClientRect().top + window.pageYOffset - 60;
+
+      window.scrollTo({ top: y, behavior: "smooth" });
+    };
+
     const handleArrowNav = (e) => {
       const keyCode = e.keyCode || e.which;
       const actionKey = {
@@ -146,7 +153,7 @@ export default function Screening({
               ?.focus({ preventScroll: true });
 
             setTimeout(() => {
-              previousElm.scrollIntoView({ behavior: "smooth" });
+              scrollIntoView(previousElm);
             }, 50);
 
             break;
@@ -161,7 +168,7 @@ export default function Screening({
               ?.focus({ preventScroll: true });
 
             setTimeout(() => {
-              nextElm.scrollIntoView({ behavior: "smooth" });
+              scrollIntoView(nextElm);
             }, 50);
 
             break;
@@ -194,7 +201,7 @@ export default function Screening({
               ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr"
             )[0];
             first.classList.add("highlight");
-            first.scrollIntoView({ behavior: "smooth" });
+            scrollIntoView(first);
             first
               .querySelector(".ant-table-row-expand-icon")
               ?.focus({ preventScroll: true });
@@ -427,8 +434,9 @@ export default function Screening({
   return (
     <>
       <EvaluationWarning />
+      <PageHeader />
+      <Skeleton title paragraph={false} loading={isFetching} active />
       <BoxWrapper>
-        <PageHeader />
         <Row type="flex" gutter={24}>
           <Col span={24} md={24}>
             {isFetching ? (
@@ -462,7 +470,12 @@ export default function Screening({
         </DrugFormStatusBox>
       )}
 
-      {!isFetching && <ScreeningActions />}
+      {!isFetching && (
+        <>
+          <FormIntervention />
+          <ScreeningActions />
+        </>
+      )}
 
       <FloatButton.BackTop
         style={{ right: 80, bottom: 25 }}

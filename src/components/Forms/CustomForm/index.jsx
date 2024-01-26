@@ -94,7 +94,6 @@ export default function CustomForm({
       group.questions.forEach((question) => {
         if (question.type === "json") {
           try {
-            console.log("parse json", JSON.parse(values[question.id]));
             preparedValues[question.id] = JSON.parse(values[question.id]);
           } catch (e) {
             preparedValues[question.id] = null;

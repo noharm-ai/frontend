@@ -271,8 +271,6 @@ export const getReportData = (datasource, filters) => {
     drugSummary: getDrugSummary(filteredList),
   };
 
-  console.log("reportdata", reportData);
-
   return reportData;
 };
 

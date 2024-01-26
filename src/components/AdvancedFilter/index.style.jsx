@@ -20,6 +20,7 @@ export const SearchBox = styled.div`
     .filters {
       max-height: 2000px;
       padding: 15px 0;
+      margin-top: 20px;
       opacity: 1;
     }
   }
@@ -58,6 +59,7 @@ export const SearchBox = styled.div`
 
   label {
     font-weight: 400;
+    margin-bottom: 2px;
   }
 
   .ant-badge-count {

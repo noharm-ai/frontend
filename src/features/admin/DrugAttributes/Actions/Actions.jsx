@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { ReloadOutlined, RetweetOutlined } from "@ant-design/icons";
+import {
+  ReloadOutlined,
+  RetweetOutlined,
+  RobotOutlined,
+} from "@ant-design/icons";
 
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
@@ -12,10 +16,13 @@ import { getErrorMessage } from "utils/errorHandler";
 import { addDefaultUnits } from "../DrugAttributesSlice";
 import CopyConversion from "../CopyConversion/CopyConversion";
 import CopyAttributes from "../CopyAttributes/CopyAttributes";
+import PredictSubstances from "../PredictSubstances/PredictSubstances";
 
 export default function Actions({ reload }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const [predictSubstancesVisibile, setPredictSubstancesVisible] =
+    useState(false);
   const [copyConversionVisible, setCopyConversionVisible] = useState(false);
   const [copyAttributesVisible, setCopyAttributesVisible] = useState(false);
   const isAddingDefaultUnits =
@@ -79,6 +86,15 @@ export default function Actions({ reload }) {
       <Tooltip title="Clique para mais informações">
         <Button
           type="primary"
+          icon={<RobotOutlined />}
+          onClick={() => setPredictSubstancesVisible(true)}
+        >
+          Inferir Substâncias
+        </Button>
+      </Tooltip>
+      <Tooltip title="Clique para mais informações">
+        <Button
+          type="primary"
           icon={<ReloadOutlined />}
           loading={isAddingDefaultUnits}
           onClick={() => showDefaultUnitDialog()}
@@ -118,6 +134,12 @@ export default function Actions({ reload }) {
       <CopyAttributes
         open={copyAttributesVisible}
         setOpen={setCopyAttributesVisible}
+        reload={reload}
+      />
+
+      <PredictSubstances
+        open={predictSubstancesVisibile}
+        setOpen={setPredictSubstancesVisible}
         reload={reload}
       />
     </>

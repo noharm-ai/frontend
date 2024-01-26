@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "services/admin/api";
+import adminApi from "services/admin/api";
+import api from "services/api";
 
 const initialState = {
   list: [],
@@ -38,7 +39,7 @@ export const fetchDrugAttributes = createAsyncThunk(
   "admin-drug-attributes/fetch",
   async (params, thunkAPI) => {
     try {
-      const response = await api.getDrugAttributes(params);
+      const response = await adminApi.getDrugAttributes(params);
 
       return response;
     } catch (err) {
@@ -51,7 +52,7 @@ export const updatePriceFactor = createAsyncThunk(
   "admin-drug-attributes/update-price-factor",
   async (params, thunkAPI) => {
     try {
-      const response = await api.updatePriceFactor(params);
+      const response = await adminApi.updatePriceFactor(params);
 
       return response;
     } catch (err) {
@@ -64,7 +65,7 @@ export const updateSubstance = createAsyncThunk(
   "admin-drug-attributes/update-substance",
   async (params, thunkAPI) => {
     try {
-      const response = await api.updateSubstance(params);
+      const response = await api.drugs.updateSubstance(params);
 
       return response;
     } catch (err) {
@@ -77,7 +78,7 @@ export const addDefaultUnits = createAsyncThunk(
   "admin-drug-attributes/add-default-units",
   async (params, thunkAPI) => {
     try {
-      const response = await api.addDefaultUnits(params);
+      const response = await adminApi.addDefaultUnits(params);
 
       return response;
     } catch (err) {
@@ -90,7 +91,7 @@ export const copyConversion = createAsyncThunk(
   "admin-drug-attributes/copy-conversion",
   async (params, thunkAPI) => {
     try {
-      const response = await api.copyConversion(params);
+      const response = await adminApi.copyConversion(params);
 
       return response;
     } catch (err) {
@@ -103,7 +104,33 @@ export const copyAttributes = createAsyncThunk(
   "admin-drug-attributes/copy-attributes",
   async (params, thunkAPI) => {
     try {
-      const response = await api.copyDrugAttributes(params);
+      const response = await adminApi.copyDrugAttributes(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getDrugsMissingSubstance = createAsyncThunk(
+  "admin-drug-attributes/get-missing-substance",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminApi.drugs.getDrugsMissingSubstance(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const predictSubstance = createAsyncThunk(
+  "admin-drug-attributes/predict-substance",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminApi.drugs.predictSubstance(params);
 
       return response;
     } catch (err) {
@@ -189,6 +216,7 @@ const drugAttributesSlice = createSlice({
         state.list.forEach((d) => {
           if (d.idDrug === idDrug) {
             d.sctid = sctid;
+            d.substanceAccuracy = null;
           }
         });
       })

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { CheckOutlined, PlusOutlined, FormOutlined } from "@ant-design/icons";
 
@@ -10,29 +11,25 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 
 import FormSubstance from "containers/Forms/Substance";
-
-const saveMessage = {
-  message: "Uhu! Substância alterada com sucesso! :)",
-};
-
-const formId = "editSubstance";
+import { updateSubstance } from "features/admin/DrugAttributes/DrugAttributesSlice";
+import { getErrorMessage } from "utils/errorHandler";
 
 export default function EditSubstance({
   drugData,
   fetchSubstances,
   substance,
-  saveDrug,
-  saveStatus,
   idDrug,
   updateDrugData,
   security,
   selectSubstance,
   fetchRelations,
+  afterSaveSubstance,
 }) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const [isFormVisible, setFormVisibility] = useState(false);
   const [currentSubstance, setCurrentSubstance] = useState({});
-  const { isSaving } = saveStatus;
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetchSubstances();
@@ -60,28 +57,36 @@ export default function EditSubstance({
   };
 
   const saveSubstance = () => {
+    setSaving(true);
     const { sctidA, sctNameA } = currentSubstance;
 
-    updateDrugData({
-      sctidA,
-      sctNameA,
+    const params = {
+      idDrug,
+      sctid: sctidA,
+    };
+
+    dispatch(updateSubstance(params)).then((response) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        updateDrugData({
+          sctidA,
+          sctNameA,
+        });
+
+        notification.success({
+          message: "Substância atualizada!",
+        });
+
+        if (afterSaveSubstance) {
+          afterSaveSubstance();
+        }
+      }
     });
 
-    saveDrug({
-      id: idDrug,
-      sctid: sctidA,
-      formId,
-    })
-      .then(() => {
-        notification.success(saveMessage);
-      })
-      .catch((err) => {
-        console.error("err", err);
-        notification.error({
-          message: t("error.title"),
-          description: t("error.description"),
-        });
-      });
+    setSaving(false);
   };
 
   const edit = () => {
@@ -116,7 +121,7 @@ export default function EditSubstance({
             placeholder="Selecione a substância..."
             value={{ value: currentSubstance.sctidA || "" }}
             loading={substance.isFetching}
-            disabled={isSaving}
+            disabled={saving}
             onChange={changeSubstance}
           >
             <Select.Option key="0" value="0">
@@ -135,8 +140,8 @@ export default function EditSubstance({
                 type="primary gtm-bt-change-substancia"
                 style={{ marginLeft: "5px" }}
                 onClick={saveSubstance}
-                disabled={isSaving}
-                loading={isSaving}
+                disabled={saving}
+                loading={saving}
                 icon={<CheckOutlined />}
               ></Button>
             </Tooltip>

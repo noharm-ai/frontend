@@ -1,5 +1,6 @@
 import styled from "styled-components/macro";
 import { FloatButton } from "antd";
+import { timingFunctions } from "polished";
 
 import Tabs from "components/Tabs";
 import { get } from "styles/utils";
@@ -50,8 +51,8 @@ export const ScreeningTabs = styled(Tabs)`
   .ant-tabs-content {
     background: #fff;
     border-radius: 4px;
-    box-shadow: 3px 0px 4px rgba(4, 0, 6, 0.15);
     min-height: 100px;
+    padding-bottom: 5px;
   }
 
   .ant-tabs-tab {
@@ -66,9 +67,7 @@ export const ScreeningTabs = styled(Tabs)`
 export const BoxWrapper = styled.section`
   background: ${get("colors.commonLighter")};
   border-radius: 4px;
-  box-shadow: 3px 0px 4px rgba(4, 0, 6, 0.15);
-  padding: 25px;
-  padding-bottom: 5px;
+  padding: 15px 12px;
 `;
 
 export const PrescriptionActionContainer = styled.div`
@@ -116,5 +115,21 @@ export const TableTags = styled.div`
     &.gtm-tag-alert {
       width: 30px;
     }
+  }
+`;
+
+export const ScreeningHeader = styled.div`
+  margin-bottom: 15px;
+  transition: all 0.5s ${timingFunctions("easeOutQuint")};
+
+  &.affixed {
+    background: rgba(255, 255, 255, 0.8);
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 3px;
+    margin-bottom: 0;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03),
+      0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+    backdrop-filter: blur(8px);
   }
 `;

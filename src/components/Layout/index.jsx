@@ -87,7 +87,7 @@ const Me = ({
       justify-content: space-between;
     "
     >
-      <div css="display: flex; align-items: center; width: 50%;">
+      <div css="display: flex; align-items: center; width: 70%;">
         {location.pathname !== "/sumario-alta" && (
           <SearchPrescription type={sec.isDoctor() ? "summary" : "default"} />
         )}
