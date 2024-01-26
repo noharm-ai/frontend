@@ -17,6 +17,9 @@ export default function ChooseForm({ fetchMemory, memory, onChange }) {
     onChange(list[index].value);
   };
 
+  const sortForms = (a, b) =>
+    `${a?.value?.name}`.localeCompare(`${b?.value?.name}`);
+
   return (
     <Select
       placeholder="Pesquisar"
@@ -27,7 +30,7 @@ export default function ChooseForm({ fetchMemory, memory, onChange }) {
       onChange={(value) => change(value)}
     >
       {list &&
-        list.map((option, index) => (
+        list.sort(sortForms).map((option, index) => (
           <Select.Option value={index} key={option.key}>
             {option.value.name}
           </Select.Option>
