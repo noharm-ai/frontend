@@ -103,6 +103,12 @@ export default function Screening({
       return elm;
     };
 
+    const scrollIntoView = (elm) => {
+      const y = elm.getBoundingClientRect().top + window.pageYOffset - 60;
+
+      window.scrollTo({ top: y, behavior: "smooth" });
+    };
+
     const handleArrowNav = (e) => {
       const keyCode = e.keyCode || e.which;
       const actionKey = {
@@ -147,7 +153,7 @@ export default function Screening({
               ?.focus({ preventScroll: true });
 
             setTimeout(() => {
-              previousElm.scrollIntoView({ behavior: "smooth" });
+              scrollIntoView(previousElm);
             }, 50);
 
             break;
@@ -162,7 +168,7 @@ export default function Screening({
               ?.focus({ preventScroll: true });
 
             setTimeout(() => {
-              nextElm.scrollIntoView({ behavior: "smooth" });
+              scrollIntoView(nextElm);
             }, 50);
 
             break;
@@ -195,7 +201,7 @@ export default function Screening({
               ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr"
             )[0];
             first.classList.add("highlight");
-            first.scrollIntoView({ behavior: "smooth" });
+            scrollIntoView(first);
             first
               .querySelector(".ant-table-row-expand-icon")
               ?.focus({ preventScroll: true });
