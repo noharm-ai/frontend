@@ -17,6 +17,7 @@ import Tabs from "components/Tabs";
 import Button from "components/Button";
 import BackTop from "components/BackTop";
 import Card from "components/Card";
+import LoadBox from "components/LoadBox";
 import Edit from "containers/References/Edit";
 import EditSubstance from "containers/References/EditSubstance";
 import Relation from "containers/References/Relation";
@@ -251,11 +252,13 @@ export default function References({
         <Row gutter={24}>
           <Col xs={24} md={10}>
             <Card title="Atributos do Medicamento" type="inner">
-              {!isFetching && (
+              {!isFetching ? (
                 <DrugAttributesForm
                   idSegment={outliers.selecteds.idSegment}
                   idDrug={outliers.selecteds.idDrug}
                 />
+              ) : (
+                <LoadBox />
               )}
             </Card>
           </Col>
@@ -264,7 +267,6 @@ export default function References({
               <Card title="Curadoria de Doses" type="inner">
                 <div
                   dangerouslySetInnerHTML={{ __html: drugAttributes.drugRef }}
-                  style={{ height: "50vh", overflow: "scroll" }}
                 />
               </Card>
             )}
