@@ -643,6 +643,26 @@ api.substance.findSubstanceClasses = (term) =>
   });
 
 /**
+ * drugs namespace
+ */
+api.drugs = {};
+api.drugs.getDrugAttributes = (idSegment, idDrug) =>
+  instance.get(`/drugs/attributes/${idSegment}/${idDrug}`, {
+    ...setHeaders(),
+  });
+
+api.drugs.saveDrugAttributes = (params) =>
+  instance.post(`/drugs/attributes`, params, {
+    ...setHeaders(),
+  });
+
+api.drugs.updateSubstance = (params = {}) => {
+  return instance.post(`/drugs/substance`, params, {
+    ...setHeaders(),
+  });
+};
+
+/**
  * API
  * all functions that can be used in API.
  */

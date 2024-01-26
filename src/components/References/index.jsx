@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import isEmpty from "lodash.isempty";
 import { Row, Col } from "antd";
 import { useTranslation } from "react-i18next";
@@ -15,6 +16,7 @@ import DefaultModal from "components/Modal";
 import Tabs from "components/Tabs";
 import Button from "components/Button";
 import BackTop from "components/BackTop";
+import Card from "components/Card";
 import Edit from "containers/References/Edit";
 import EditSubstance from "containers/References/EditSubstance";
 import Relation from "containers/References/Relation";
@@ -22,8 +24,9 @@ import ScoreWizard from "containers/References/ScoreWizard";
 import Filter from "./Filter";
 import columns from "./columns";
 import relationsColumns from "./Relation/columns";
-import DrugForm from "containers/Forms/Drug";
 import { PageCard } from "styles/Utils.style";
+import DrugAttributesForm from "features/drugs/DrugAttributesForm/DrugAttributesForm";
+import { fetchDrugAttributes } from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
 
 // empty text for table result.
 const emptyText = (
@@ -52,6 +55,8 @@ export default function References({
 }) {
   const params = useParams();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const drugAttributes = useSelector((state) => state.drugAttributesForm.data);
   const {
     isFetching,
     list,
@@ -208,6 +213,15 @@ export default function References({
     }
   };
 
+  const afterSaveSubstance = () => {
+    dispatch(
+      fetchDrugAttributes({
+        idDrug: outliers.selecteds.idDrug,
+        idSegment: outliers.selecteds.idSegment,
+      })
+    );
+  };
+
   const items = [
     {
       key: "1",
@@ -233,7 +247,30 @@ export default function References({
     {
       key: "2",
       label: "Atributos",
-      children: <DrugForm fetchReferencesList={fetchReferencesList} />,
+      children: (
+        <Row gutter={24}>
+          <Col xs={24} md={10}>
+            <Card title="Atributos do Medicamento" type="inner">
+              {!isFetching && (
+                <DrugAttributesForm
+                  idSegment={outliers.selecteds.idSegment}
+                  idDrug={outliers.selecteds.idDrug}
+                />
+              )}
+            </Card>
+          </Col>
+          <Col xs={24} md={14}>
+            {security.isSupport() && drugAttributes.drugRef && (
+              <Card title="Curadoria de Doses" type="inner">
+                <div
+                  dangerouslySetInnerHTML={{ __html: drugAttributes.drugRef }}
+                  style={{ height: "50vh", overflow: "scroll" }}
+                />
+              </Card>
+            )}
+          </Col>
+        </Row>
+      ),
     },
     {
       key: "3",
@@ -242,7 +279,7 @@ export default function References({
         <>
           <Row type="flex" justify="end">
             <Col xs={24 - 6}>
-              <EditSubstance />
+              <EditSubstance afterSaveSubstance={afterSaveSubstance} />
             </Col>
             <Col xs={6}>
               <div style={{ display: "flex", justifyContent: "flex-end" }}>

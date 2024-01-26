@@ -1,6 +1,14 @@
 import styled from "styled-components/macro";
 
 export const Form = styled.form`
+  &.highlight-labels {
+    .form-label {
+      label {
+        font-weight: 500;
+      }
+    }
+  }
+
   .form-row {
     margin-top: 15px;
 
@@ -29,10 +37,30 @@ export const Form = styled.form`
     }
   }
 
+  .form-input-checkbox {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 1rem;
+    background: #fafafa;
+    border-radius: 5px;
+  }
+
   .form-action {
     display: flex;
     justify-content: flex-end;
     margin: 5px 0;
+
+    button {
+      margin-left: 10px;
+    }
+  }
+
+  .form-action-bottom {
+    display: flex;
+    justify-content: flex-end;
+    margin: 5px 0;
+    border-top: 1px solid rgb(240, 240, 240);
+    padding-top: 15px;
 
     button {
       margin-left: 10px;

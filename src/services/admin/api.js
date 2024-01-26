@@ -60,12 +60,6 @@ const updatePriceFactor = (params = {}) => {
   });
 };
 
-const updateSubstance = (params = {}) => {
-  return instance.post(`${endpoints.drug}/substance`, params, {
-    ...setHeaders(),
-  });
-};
-
 const addDefaultUnits = (params = {}) => {
   return instance.post(`${endpoints.drug}/add-default-units`, params, {
     ...setHeaders(),
@@ -181,7 +175,6 @@ const methods = {
   addDefaultUnits,
   copyConversion,
   copyDrugAttributes,
-  updateSubstance,
   refreshAggPrescription,
   refreshPrescription,
   initInterventionReason,
