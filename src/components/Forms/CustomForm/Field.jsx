@@ -83,9 +83,11 @@ export default function Field({ question, values, setFieldValue }) {
       <DatePicker
         format="DD/MM/YYYY"
         disabled={question.disabled}
-        value={values[question.id] ? dayjs(values[question.id]) : null}
+        value={
+          values[question.id] ? dayjs(values[question.id], "DD/MM/YYYY") : null
+        }
         onChange={(value) =>
-          setFieldValue(question.id, value.format("DD/MM/YYYY"))
+          setFieldValue(question.id, value ? value.format("DD/MM/YYYY") : null)
         }
         popupClassName="noArrow"
         allowClear
