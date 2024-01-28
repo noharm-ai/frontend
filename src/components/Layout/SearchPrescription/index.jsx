@@ -151,6 +151,11 @@ export default function SearchPrescription({ type, size }) {
   const search = (value) => {
     if (value.length < 3) return;
 
+    if (value.length > 18) {
+      notification.error({ message: "Número inválido." });
+      return;
+    }
+
     const reg = /^\d*$/;
     const searchValue = value.trim();
 
