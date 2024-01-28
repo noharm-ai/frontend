@@ -25,11 +25,6 @@ const {
   drugsFrequenciesFetchListError,
   drugsFrequenciesFetchListSuccess,
 
-  drugsSaveSingleStart,
-  drugsSaveSingleReset,
-  drugsSaveSingleSuccess,
-  drugsSaveSingleError,
-
   unitCoefficientSaveStart,
   unitCoefficientSaveReset,
   unitCoefficientSaveSuccess,
@@ -73,29 +68,6 @@ export const searchDrugsThunk =
     const list = data.data;
 
     dispatch(drugsSearchSuccess(list));
-  };
-
-export const saveDrugThunk =
-  ({ formId, ...params }) =>
-  (dispatch, getState) => {
-    return new Promise(async (resolve, reject) => {
-      dispatch(drugsSaveSingleStart());
-
-      const { access_token } = getState().auth.identify;
-      const { status, error } = await api
-        .updateDrug(access_token, params)
-        .catch(errorHandler);
-
-      if (status !== 200) {
-        dispatch(drugsSaveSingleError(error));
-        reject(error);
-        return;
-      }
-
-      dispatch(drugsSaveSingleSuccess(formId));
-      dispatch(drugsSaveSingleReset());
-      resolve();
-    });
   };
 
 export const fetchDrugsUnitsListThunk =
