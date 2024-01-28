@@ -2,7 +2,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import security from "services/security";
-import { saveDrugThunk } from "store/ducks/drugs/thunk";
 import {
   fetchSubstanceListThunk,
   updateDrugDataThunk,
@@ -21,7 +20,6 @@ const mapStateToProps = ({ outliers, drugs, user }) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      saveDrug: saveDrugThunk,
       fetchSubstances: fetchSubstanceListThunk,
       updateDrugData: updateDrugDataThunk,
       selectSubstance: selectOutlierSubstanceThunk,
