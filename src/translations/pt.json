@@ -574,7 +574,8 @@
     "drug": "MEDICAMENTO",
     "reason": "MOTIVO",
     "type": "TIPO",
-    "agg": "PACIENTE (AGREGADO)"
+    "agg": "PACIENTE (AGREGADO)",
+    "prescriptionDate": "DATA PRESCRICAO"
   },
 
   "features": {
