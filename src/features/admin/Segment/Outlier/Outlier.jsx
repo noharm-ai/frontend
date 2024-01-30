@@ -14,6 +14,7 @@ import {
   getOutlierProcessList,
   generateOutlierFold,
 } from "../SegmentSlice";
+import { refreshAgg } from "features/admin/Integration/IntegrationSlice";
 
 function OutliersForm({ open, setOpen }) {
   const { t } = useTranslation();
@@ -42,38 +43,36 @@ function OutliersForm({ open, setOpen }) {
 
   const startProcess = () => {
     setLoading(true);
-    dispatch(getOutlierProcessList({ idSegment: segment.id })).then(
-      (response) => {
-        if (response.error) {
-          setLoading(false);
-          notification.error({
-            message: getErrorMessage(response, t),
-          });
-        } else {
-          notification.info({
-            message: "Iniciando a geração de escores",
-            description: "Este processo pode demorar alguns minutos",
-          });
+    dispatch(refreshAgg()).then((refreshResponse) => {
+      if (refreshResponse.error) {
+        setRefreshWarning(true);
+      }
 
-          if (
-            !response.payload.data.data[0]?.url?.includes(
-              "integration/refresh-agg"
-            )
-          ) {
-            setRefreshWarning(true);
-          }
-
-          if (response.payload.data.data.length <= 1) {
-            setOutliersErrorMessage(
-              "Não há histórico de prescrição para este segmento."
-            );
+      dispatch(getOutlierProcessList({ idSegment: segment.id })).then(
+        (response) => {
+          if (response.error) {
             setLoading(false);
+            notification.error({
+              message: getErrorMessage(response, t),
+            });
           } else {
-            generateOutliers(response.payload.data.data);
+            notification.info({
+              message: "Iniciando a geração de escores",
+              description: "Este processo pode demorar alguns minutos",
+            });
+
+            if (response.payload.data.data.length === 0) {
+              setOutliersErrorMessage(
+                "Não há histórico de prescrição para este segmento."
+              );
+              setLoading(false);
+            } else {
+              generateOutliers(response.payload.data.data);
+            }
           }
         }
-      }
-    );
+      );
+    });
   };
 
   const generateOutliers = async (data) => {
