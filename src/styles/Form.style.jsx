@@ -35,6 +35,18 @@ export const Form = styled.form`
     .ant-select {
       width: 100%;
     }
+
+    .success {
+      input {
+        background: #f6ffed;
+      }
+    }
+
+    .error {
+      input {
+        background: #fff2f0;
+      }
+    }
   }
 
   .form-input-checkbox {

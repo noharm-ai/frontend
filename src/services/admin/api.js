@@ -9,6 +9,7 @@ const endpoints = {
   integration: "/admin/integration",
   segment: "/admin/segments",
   exam: "/admin/exam",
+  unitConversion: "/admin/unit-conversion",
 };
 
 const getFrequencyList = (params = {}) =>
@@ -158,6 +159,19 @@ api.drugs.getDrugsMissingSubstance = (params) =>
 
 api.drugs.predictSubstance = (params = {}) => {
   return instance.post(`${endpoints.drug}/predict-substance`, params, {
+    ...setHeaders(),
+  });
+};
+
+api.unitConversion = {};
+api.unitConversion.getConversionList = (params = {}) => {
+  return instance.post(`${endpoints.unitConversion}/list`, params, {
+    ...setHeaders(),
+  });
+};
+
+api.unitConversion.saveConversions = (params = {}) => {
+  return instance.post(`${endpoints.unitConversion}/save`, params, {
     ...setHeaders(),
   });
 };
