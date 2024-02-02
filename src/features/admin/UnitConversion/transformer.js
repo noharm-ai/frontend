@@ -35,6 +35,7 @@ export const groupConversions = (data) => {
       groups[d.idDrug] = {
         idDrug: d.idDrug,
         name: d.name,
+        idSegment: d.idSegment,
         data: [d],
       };
     }

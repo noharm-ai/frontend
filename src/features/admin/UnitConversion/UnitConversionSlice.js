@@ -9,6 +9,7 @@ const initialState = {
   error: null,
   filters: {
     hasConversion: null,
+    idSegment: null,
   },
   currentPage: 1,
   count: 0,

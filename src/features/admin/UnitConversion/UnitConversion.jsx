@@ -25,6 +25,7 @@ export default function UnitConversion() {
   const drugRef = useSelector(
     (state) => state.admin.unitConversion.fetchDrugAttributes.selected
   );
+  const filters = useSelector((state) => state.admin.unitConversion.filters);
   const limit = 16;
 
   const onPageChange = (newPage) => {
@@ -77,14 +78,26 @@ export default function UnitConversion() {
                       xxl={drugRef ? 8 : 6}
                       key={i.idDrug}
                     >
-                      <UnitCard name={i.name} data={i.data} idDrug={i.idDrug} />
+                      <UnitCard {...i} />
                     </Col>
                   ))
               ) : (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description="Nenhuma conversão encontrada."
-                />
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description={
+                      filters.idSegment
+                        ? "Nenhuma conversão encontrada."
+                        : "Selecione os segmento referência para visualizar as conversões"
+                    }
+                  />
+                </div>
               )}
             </Row>
           </div>

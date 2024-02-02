@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Row, Col, Spin, Alert } from "antd";
@@ -24,11 +24,17 @@ import {
 } from "../UnitConversionSlice";
 import { getErrorMessage } from "utils/errorHandler";
 
-export default function UnitCard({ idDrug, name, data }) {
+export default function UnitCard({ idDrug, name, idSegment, data }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [rejectedSegments, setRejectedSegments] = useState([]);
+
+  useEffect(() => {
+    setError(null);
+    setRejectedSegments([]);
+  }, [idSegment]);
 
   const Link = () => (
     <Tooltip title="Ver medicamento">
@@ -37,9 +43,7 @@ export default function UnitCard({ idDrug, name, data }) {
         tabIndex={-1}
         onClick={() =>
           window.open(
-            `/medicamentos/${data[0].idSegment}/${data[0].idDrug}/${createSlug(
-              name
-            )}`,
+            `/medicamentos/${idSegment}/${idDrug}/${createSlug(name)}`,
             "_blank"
           )
         }
@@ -68,6 +72,7 @@ export default function UnitCard({ idDrug, name, data }) {
   const initialValues = {
     idDrug,
     name,
+    idSegment,
     conversionList: data || [],
   };
 
@@ -78,6 +83,7 @@ export default function UnitCard({ idDrug, name, data }) {
       setLoading(true);
       const payload = {
         idDrug,
+        idSegment,
         idMeasureUnitDefault: params.conversionList.find((i) => i.factor === 1)
           .idMeasureUnit,
         conversionList: params.conversionList,
@@ -85,10 +91,19 @@ export default function UnitCard({ idDrug, name, data }) {
 
       dispatch(saveConversions(payload)).then((response) => {
         if (response.error) {
+          const errorMsg = getErrorMessage(response, t);
+          setError(errorMsg);
           notification.error({
-            message: getErrorMessage(response, t),
+            message: errorMsg,
           });
         } else {
+          if (
+            response.payload.data.data.rejected &&
+            response.payload.data.data.rejected.length
+          ) {
+            setRejectedSegments(response.payload.data.data.rejected);
+          }
+
           dispatch(updateListFactors(params.conversionList));
           notification.success({
             message: "Conversão atualizada!",
@@ -178,6 +193,23 @@ export default function UnitCard({ idDrug, name, data }) {
                   <Alert
                     description={error}
                     type="error"
+                    showIcon
+                    style={{ marginTop: "20px" }}
+                  />
+                )}
+
+                {rejectedSegments.length > 0 && (
+                  <Alert
+                    description={
+                      <>
+                        Os seguintes segmentos não foram atualizados pois
+                        possuem unidades padrão diferentes:{" "}
+                        <strong>{rejectedSegments.join(", ")}</strong>.
+                      </>
+                    }
+                    onClose={() => setRejectedSegments([])}
+                    type="warning"
+                    closable
                     showIcon
                     style={{ marginTop: "20px" }}
                   />

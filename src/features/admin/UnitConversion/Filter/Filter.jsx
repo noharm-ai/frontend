@@ -21,6 +21,7 @@ export default function Filter() {
   const isFetching =
     useSelector((state) => state.admin.unitConversion.status) === "loading";
   const drugList = useSelector((state) => state.admin.unitConversion.list);
+  const filters = useSelector((state) => state.admin.unitConversion.filters);
 
   const { t } = useTranslation();
   const errorMessage = {
@@ -29,29 +30,38 @@ export default function Filter() {
   };
   const initialValues = {
     hasConversion: null,
+    idSegment: null,
   };
 
   useEffect(() => {
-    dispatch(fetchConversionList()).then((response) => {
-      if (response.error) {
-        notification.error(errorMessage);
-      } else {
-        dispatch(setFilteredList(groupConversions(response.payload.data.data)));
-      }
-    });
-
     return () => {
       dispatch(reset());
     };
   }, []); //eslint-disable-line
 
   const search = (params) => {
-    dispatch(setCurrentPage(1));
-    dispatch(setFilters(params));
+    if (filters.idSegment !== params.idSegment) {
+      dispatch(fetchConversionList(params)).then((response) => {
+        if (response.error) {
+          notification.error(errorMessage);
+        } else {
+          dispatch(setCurrentPage(1));
+          dispatch(setFilters(params));
+          dispatch(
+            setFilteredList(groupConversions(response.payload.data.data))
+          );
+        }
+      });
+    } else {
+      dispatch(setCurrentPage(1));
+      dispatch(setFilters(params));
 
-    dispatch(
-      setFilteredList(filterConversionList(groupConversions(drugList), params))
-    );
+      dispatch(
+        setFilteredList(
+          filterConversionList(groupConversions(drugList), params)
+        )
+      );
+    }
   };
 
   return (
