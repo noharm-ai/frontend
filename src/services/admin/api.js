@@ -61,18 +61,6 @@ const updatePriceFactor = (params = {}) => {
   });
 };
 
-const addDefaultUnits = (params = {}) => {
-  return instance.post(`${endpoints.drug}/add-default-units`, params, {
-    ...setHeaders(),
-  });
-};
-
-const copyConversion = (params = {}) => {
-  return instance.post(`${endpoints.drug}/copy-unit-conversion`, params, {
-    ...setHeaders(),
-  });
-};
-
 const copyDrugAttributes = (params = {}) => {
   return instance.post(`${endpoints.drug}/copy-attributes`, params, {
     ...setHeaders(),
@@ -176,6 +164,26 @@ api.unitConversion.saveConversions = (params = {}) => {
   });
 };
 
+api.unitConversion.copyConversion = (params = {}) => {
+  return instance.post(
+    `${endpoints.unitConversion}/copy-unit-conversion`,
+    params,
+    {
+      ...setHeaders(),
+    }
+  );
+};
+
+api.unitConversion.addDefaultUnits = (params = {}) => {
+  return instance.post(
+    `${endpoints.unitConversion}/add-default-units`,
+    params,
+    {
+      ...setHeaders(),
+    }
+  );
+};
+
 const methods = {
   ...api,
   getFrequencyList,
@@ -186,8 +194,6 @@ const methods = {
   updateMemoryItem,
   getDrugAttributes,
   updatePriceFactor,
-  addDefaultUnits,
-  copyConversion,
   copyDrugAttributes,
   refreshAggPrescription,
   refreshPrescription,

@@ -17,6 +17,10 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  copyConversion: {
+    status: "idle",
+    error: null,
+  },
   fetchDrugAttributes: {
     status: "idle",
     error: null,
@@ -67,18 +71,31 @@ export const fetchDrugAttributes = createAsyncThunk(
   }
 );
 
-// export const addDefaultUnits = createAsyncThunk(
-//   "admin-unit-conversion/add-default-units",
-//   async (params, thunkAPI) => {
-//     try {
-//       const response = await adminApi.addDefaultUnits(params);
+export const addDefaultUnits = createAsyncThunk(
+  "admin-unit-conversion/add-default-units",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminApi.unitConversion.addDefaultUnits(params);
 
-//       return response;
-//     } catch (err) {
-//       return thunkAPI.rejectWithValue(err.response.data);
-//     }
-//   }
-// );
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const copyConversion = createAsyncThunk(
+  "admin-unit-conversion/copy-conversion",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminApi.unitConversion.copyConversion(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
 
 const unitConversionSlice = createSlice({
   name: "unitConversionSlice",
@@ -157,6 +174,24 @@ const unitConversionSlice = createSlice({
         state.fetchDrugAttributes.status = "failed";
         state.fetchDrugAttributes.error = action.error.message;
         state.fetchDrugAttributes.data = {};
+      })
+      .addCase(addDefaultUnits.pending, (state, action) => {
+        state.addDefaultUnits.status = "loading";
+      })
+      .addCase(addDefaultUnits.fulfilled, (state, action) => {
+        state.addDefaultUnits.status = "succeeded";
+      })
+      .addCase(addDefaultUnits.rejected, (state, action) => {
+        state.addDefaultUnits.status = "failed";
+      })
+      .addCase(copyConversion.pending, (state, action) => {
+        state.copyConversion.status = "loading";
+      })
+      .addCase(copyConversion.fulfilled, (state, action) => {
+        state.copyConversion.status = "succeeded";
+      })
+      .addCase(copyConversion.rejected, (state, action) => {
+        state.copyConversion.status = "failed";
       });
   },
 });

@@ -11,7 +11,7 @@ import Filter from "./Filter/Filter";
 import { setCurrentPage, selectDrugRef } from "./UnitConversionSlice";
 import UnitCard from "./UnitCard/UnitCard";
 import DrugReference from "./DrugReference/DrugReference";
-//import Actions from "./Actions/Actions";
+import Actions from "./Actions/Actions";
 
 export default function UnitConversion() {
   const dispatch = useDispatch();
@@ -42,7 +42,7 @@ export default function UnitConversion() {
           <h1 className="page-header-title">Curadoria de Unidades</h1>
         </div>
         <div className="page-header-actions">
-          {/* <Actions reload={reload} /> */}
+          <Actions />
         </div>
       </PageHeader>
       <Filter limit={limit} />

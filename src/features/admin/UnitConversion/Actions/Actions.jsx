@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import {
-  ReloadOutlined,
-  RetweetOutlined,
-  RobotOutlined,
-} from "@ant-design/icons";
+import { ReloadOutlined, RetweetOutlined } from "@ant-design/icons";
 
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
@@ -13,27 +9,26 @@ import DefaultModal from "components/Modal";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 
-import { addDefaultUnits } from "../DrugAttributesSlice";
+import {
+  addDefaultUnits,
+  fetchConversionList,
+  setCurrentPage,
+  setFilteredList,
+} from "../UnitConversionSlice";
 import CopyConversion from "../CopyConversion/CopyConversion";
-import CopyAttributes from "../CopyAttributes/CopyAttributes";
-import PredictSubstances from "../PredictSubstances/PredictSubstances";
+import { filterConversionList, groupConversions } from "../transformer";
 
-export default function Actions({ reload }) {
+export default function Actions() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const [predictSubstancesVisibile, setPredictSubstancesVisible] =
-    useState(false);
   const [copyConversionVisible, setCopyConversionVisible] = useState(false);
-  const [copyAttributesVisible, setCopyAttributesVisible] = useState(false);
+  const filters = useSelector((state) => state.admin.unitConversion.filters);
   const isAddingDefaultUnits =
     useSelector(
-      (state) => state.admin.drugAttributes.addDefaultUnits.status
+      (state) => state.admin.unitConversion.addDefaultUnits.status
     ) === "loading";
   const isCopyingConversion =
-    useSelector((state) => state.admin.drugAttributes.copyConversion.status) ===
-    "loading";
-  const isCopyingAttributes =
-    useSelector((state) => state.admin.drugAttributes.copyAttributes.status) ===
+    useSelector((state) => state.admin.unitConversion.copyConversion.status) ===
     "loading";
 
   const showDefaultUnitDialog = () => {
@@ -64,6 +59,26 @@ export default function Actions({ reload }) {
     });
   };
 
+  const reload = () => {
+    dispatch(fetchConversionList(filters)).then((response) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        dispatch(setCurrentPage(1));
+        dispatch(
+          setFilteredList(
+            filterConversionList(
+              groupConversions(response.payload.data.data),
+              filters
+            )
+          )
+        );
+      }
+    });
+  };
+
   const executeAddDefaultUnits = () => {
     dispatch(addDefaultUnits()).then((response) => {
       if (response.error) {
@@ -86,15 +101,6 @@ export default function Actions({ reload }) {
       <Tooltip title="Clique para mais informações">
         <Button
           type="primary"
-          icon={<RobotOutlined />}
-          onClick={() => setPredictSubstancesVisible(true)}
-        >
-          Inferir Substâncias
-        </Button>
-      </Tooltip>
-      <Tooltip title="Clique para mais informações">
-        <Button
-          type="primary"
           icon={<ReloadOutlined />}
           loading={isAddingDefaultUnits}
           onClick={() => showDefaultUnitDialog()}
@@ -114,32 +120,9 @@ export default function Actions({ reload }) {
         </Button>
       </Tooltip>
 
-      <Tooltip title="Clique para mais informações">
-        <Button
-          type="primary"
-          icon={<RetweetOutlined />}
-          loading={isCopyingAttributes}
-          onClick={() => setCopyAttributesVisible(true)}
-        >
-          Copiar Atributos
-        </Button>
-      </Tooltip>
-
       <CopyConversion
         open={copyConversionVisible}
         setOpen={setCopyConversionVisible}
-        reload={reload}
-      />
-
-      <CopyAttributes
-        open={copyAttributesVisible}
-        setOpen={setCopyAttributesVisible}
-        reload={reload}
-      />
-
-      <PredictSubstances
-        open={predictSubstancesVisibile}
-        setOpen={setPredictSubstancesVisible}
         reload={reload}
       />
     </>

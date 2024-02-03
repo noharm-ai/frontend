@@ -48,7 +48,9 @@ export default function Filter() {
           dispatch(setCurrentPage(1));
           dispatch(setFilters(params));
           dispatch(
-            setFilteredList(groupConversions(response.payload.data.data))
+            setFilteredList(
+              filterConversionList(groupConversions(response.payload.data.data))
+            )
           );
         }
       });
