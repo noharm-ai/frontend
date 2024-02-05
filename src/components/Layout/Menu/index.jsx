@@ -25,6 +25,7 @@ import {
   BranchesOutlined,
   CustomerServiceOutlined,
   FlagOutlined,
+  SwapOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -223,6 +224,14 @@ export default function Menu({ security, featureService }) {
           label: "Curadoria medicamentos",
           icon: <TableOutlined />,
           id: "gtm-lnk-attr-drugs",
+          role: ["admin", "training"],
+        },
+        {
+          key: "/admin/curadoria-unidades",
+          link: "/admin/curadoria-unidades",
+          label: "Curadoria unidades",
+          icon: <SwapOutlined />,
+          id: "gtm-lnk-units-drugs",
           role: ["admin", "training"],
         },
         {

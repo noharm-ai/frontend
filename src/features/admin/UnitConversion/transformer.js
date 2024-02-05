@@ -43,5 +43,5 @@ export const groupConversions = (data) => {
 
   return Object.keys(groups)
     .map((k) => groups[k])
-    .sort((a, b) => `${a.name}`.localeCompare(`${b.name}`));
+    .sort((a, b) => `${a.name}`.trim().localeCompare(`${b.name}`.trim()));
 };
