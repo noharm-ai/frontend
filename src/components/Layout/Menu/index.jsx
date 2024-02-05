@@ -232,7 +232,7 @@ export default function Menu({ security, featureService }) {
           label: "Curadoria unidades",
           icon: <SwapOutlined />,
           id: "gtm-lnk-units-drugs",
-          role: ["admin", "training"],
+          role: ["admin"],
         },
         {
           key: "/admin/features",
