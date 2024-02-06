@@ -184,6 +184,13 @@ api.unitConversion.addDefaultUnits = (params = {}) => {
   );
 };
 
+api.integration = {};
+api.integration.getStatus = (params) =>
+  instance.get(`${endpoints.integration}/status`, {
+    params,
+    ...setHeaders(),
+  });
+
 const methods = {
   ...api,
   getFrequencyList,

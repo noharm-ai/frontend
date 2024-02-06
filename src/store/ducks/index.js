@@ -36,6 +36,7 @@ import adminSegment from "features/admin/Segment/SegmentSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
 import adminFrequency from "features/admin/Frequency/FrequencySlice";
 import adminUnitConversion from "features/admin/UnitConversion/UnitConversionSlice";
+import adminIntegrationStatus from "features/admin/IntegrationStatus/IntegrationStatusSlice";
 
 import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
@@ -48,6 +49,7 @@ const adminReducers = combineReducers({
   memory: adminMemory,
   drugAttributes: adminDrugAttributes,
   integration: adminIntegration,
+  integrationStatus: adminIntegrationStatus,
   segment: adminSegment,
   exam: adminExam,
   frequency: adminFrequency,

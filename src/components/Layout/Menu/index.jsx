@@ -26,6 +26,7 @@ import {
   CustomerServiceOutlined,
   FlagOutlined,
   SwapOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -320,6 +321,14 @@ export default function Menu({ security, featureService }) {
           label: t("menu.memory"),
           icon: <SaveOutlined />,
           id: "gtm-lnk-memory",
+          role: ["admin"],
+        },
+        {
+          key: "/admin/integracao/status",
+          link: "/admin/integracao/status",
+          label: "Status",
+          icon: <CheckOutlined />,
+          id: "gtm-lnk-int-status",
           role: ["admin"],
         },
       ],
