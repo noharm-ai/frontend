@@ -7,12 +7,14 @@ import dayjs from "dayjs";
 import notification from "components/notification";
 import Empty from "components/Empty";
 import Tag from "components/Tag";
+import Alert from "components/Alert";
 import { getErrorMessage } from "utils/errorHandler";
 
 import { fetchStatus, reset } from "./IntegrationStatusSlice";
 import { PageHeader } from "styles/PageHeader.style";
 import { DataList } from "./IntegrationStatus.style";
 import { PageContainer } from "styles/Utils.style";
+import IntegrationStatusEnum from "models/IntegrationStatus";
 
 function IntegrationStatus() {
   const dispatch = useDispatch();
@@ -41,6 +43,20 @@ function IntegrationStatus() {
     });
   }
 
+  let alert = status !== "loading" ? {} : null;
+  if (alert !== null) {
+    if (data.status === IntegrationStatusEnum.PRODUCTION) {
+      alert.type = "success";
+      alert.message = "Implantação finalizada.";
+    } else if (data.status === IntegrationStatusEnum.INTEGRATION) {
+      alert.type = "warning";
+      alert.message = "Integração em andamento.";
+    } else {
+      alert.type = "error";
+      alert.message = "Integração cancelada.";
+    }
+  }
+
   return (
     <>
       <PageHeader>
@@ -55,6 +71,9 @@ function IntegrationStatus() {
       <PageContainer>
         <Spin spinning={status === "loading"}>
           <Space direction="vertical" style={{ width: "100%" }} size={"large"}>
+            {alert && (
+              <Alert type={alert.type} message={alert.message} showIcon></Alert>
+            )}
             <Row gutter={[24, 24]}>
               <Col xs={24} md={12}>
                 <Card title="Configurações" type="inner">
@@ -332,22 +351,6 @@ function IntegrationStatus() {
                         </Tag>
                       </div>
                     </li>
-                    <li>
-                      <div>Conversão de Unidades de Custo</div>
-                      <div>
-                        <Tag
-                          color={
-                            data?.conversions?.pendingPriceConversions === 0
-                              ? "green"
-                              : "red"
-                          }
-                        >
-                          {data?.conversions?.pendingPriceConversions > 0
-                            ? `${data?.conversions?.pendingPriceConversions} pendentes`
-                            : "Configurado"}
-                        </Tag>
-                      </div>
-                    </li>
                   </DataList>
                 </Card>
               </Col>
@@ -387,7 +390,7 @@ function IntegrationStatus() {
                         >
                           {memory["reports-internal"]?.length
                             ? "Configurado"
-                            : "Pendente"}
+                            : "Não configurado"}
                         </Tag>
                       </div>
                     </li>
@@ -399,7 +402,7 @@ function IntegrationStatus() {
                         >
                           {memory["reports"]?.length
                             ? "Configurado"
-                            : "Pendente"}
+                            : "Não configurado"}
                         </Tag>
                       </div>
                     </li>
