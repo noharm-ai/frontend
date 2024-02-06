@@ -9,6 +9,7 @@ const endpoints = {
   integration: "/admin/integration",
   segment: "/admin/segments",
   exam: "/admin/exam",
+  unitConversion: "/admin/unit-conversion",
 };
 
 const getFrequencyList = (params = {}) =>
@@ -56,18 +57,6 @@ const getDrugAttributes = (params = {}) => {
 
 const updatePriceFactor = (params = {}) => {
   return instance.post(`${endpoints.drug}/price-factor`, params, {
-    ...setHeaders(),
-  });
-};
-
-const addDefaultUnits = (params = {}) => {
-  return instance.post(`${endpoints.drug}/add-default-units`, params, {
-    ...setHeaders(),
-  });
-};
-
-const copyConversion = (params = {}) => {
-  return instance.post(`${endpoints.drug}/copy-unit-conversion`, params, {
     ...setHeaders(),
   });
 };
@@ -162,6 +151,39 @@ api.drugs.predictSubstance = (params = {}) => {
   });
 };
 
+api.unitConversion = {};
+api.unitConversion.getConversionList = (params = {}) => {
+  return instance.post(`${endpoints.unitConversion}/list`, params, {
+    ...setHeaders(),
+  });
+};
+
+api.unitConversion.saveConversions = (params = {}) => {
+  return instance.post(`${endpoints.unitConversion}/save`, params, {
+    ...setHeaders(),
+  });
+};
+
+api.unitConversion.copyConversion = (params = {}) => {
+  return instance.post(
+    `${endpoints.unitConversion}/copy-unit-conversion`,
+    params,
+    {
+      ...setHeaders(),
+    }
+  );
+};
+
+api.unitConversion.addDefaultUnits = (params = {}) => {
+  return instance.post(
+    `${endpoints.unitConversion}/add-default-units`,
+    params,
+    {
+      ...setHeaders(),
+    }
+  );
+};
+
 const methods = {
   ...api,
   getFrequencyList,
@@ -172,8 +194,6 @@ const methods = {
   updateMemoryItem,
   getDrugAttributes,
   updatePriceFactor,
-  addDefaultUnits,
-  copyConversion,
   copyDrugAttributes,
   refreshAggPrescription,
   refreshPrescription,

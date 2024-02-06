@@ -78,7 +78,7 @@ export const addDefaultUnits = createAsyncThunk(
   "admin-drug-attributes/add-default-units",
   async (params, thunkAPI) => {
     try {
-      const response = await adminApi.addDefaultUnits(params);
+      const response = await adminApi.unitConversion.addDefaultUnits(params);
 
       return response;
     } catch (err) {
@@ -91,7 +91,7 @@ export const copyConversion = createAsyncThunk(
   "admin-drug-attributes/copy-conversion",
   async (params, thunkAPI) => {
     try {
-      const response = await adminApi.copyConversion(params);
+      const response = await adminApi.unitConversion.copyConversion(params);
 
       return response;
     } catch (err) {

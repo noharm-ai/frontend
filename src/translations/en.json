@@ -573,7 +573,8 @@
     "drug": "DRUG",
     "reason": "REASON",
     "type": "TYPE",
-    "agg": "PATIENT (AGGREGATED)"
+    "agg": "PATIENT (AGGREGATED)",
+    "prescriptionDate": "PRESCRIPTION DATE"
   },
 
   "features": {

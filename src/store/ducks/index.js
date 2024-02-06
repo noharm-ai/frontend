@@ -35,6 +35,7 @@ import adminIntegration from "features/admin/Integration/IntegrationSlice";
 import adminSegment from "features/admin/Segment/SegmentSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
 import adminFrequency from "features/admin/Frequency/FrequencySlice";
+import adminUnitConversion from "features/admin/UnitConversion/UnitConversionSlice";
 
 import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
@@ -50,6 +51,7 @@ const adminReducers = combineReducers({
   segment: adminSegment,
   exam: adminExam,
   frequency: adminFrequency,
+  unitConversion: adminUnitConversion,
 });
 
 const reportReducers = combineReducers({

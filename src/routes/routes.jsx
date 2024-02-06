@@ -35,6 +35,7 @@ import AdminMemoryFeatures from "pages/Admin/Memory/Features";
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminSegment from "pages/Admin/Segment";
+import AdminUnitConversion from "pages/Admin/UnitConversion";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
@@ -267,6 +268,11 @@ const routes = [
     exact: true,
     path: "/admin/segmentos",
     element: <WithAuth component={AdminSegment} />,
+  },
+  {
+    exact: true,
+    path: "/admin/curadoria-unidades",
+    element: <WithAuth component={AdminUnitConversion} />,
   },
   {
     exact: true,
