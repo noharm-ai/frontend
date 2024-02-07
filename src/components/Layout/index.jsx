@@ -117,14 +117,14 @@ const Me = ({
           {sec.isMultiSchema() && (
             <div className="schema">
               <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
-              <Tooltip title="Posição atual da implantação. Clique para configurar">
+              <Tooltip title="Posição atual da implantação. Clique para ver mais detalhes">
                 <IntegrationStatusTag
                   type={"filled"}
                   style={{ cursor: "pointer" }}
                   status={integrationStatus}
                   onClick={
-                    sec.isAdmin()
-                      ? () => navigate("/admin/integracao/config")
+                    sec.isAdmin() || sec.isTraining()
+                      ? () => navigate("/admin/integracao/status")
                       : null
                   }
                 />
