@@ -2,12 +2,14 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Card, Col, Row, Spin, Space } from "antd";
+import { useNavigate } from "react-router";
 import dayjs from "dayjs";
 
 import notification from "components/notification";
 import Empty from "components/Empty";
 import Tag from "components/Tag";
 import Alert from "components/Alert";
+import Button from "components/Button";
 import { getErrorMessage } from "utils/errorHandler";
 
 import { fetchStatus, reset } from "./IntegrationStatusSlice";
@@ -18,6 +20,7 @@ import IntegrationStatusEnum from "models/IntegrationStatus";
 
 function IntegrationStatus() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const status = useSelector((state) => state.admin.integrationStatus.status);
   const data = useSelector((state) => state.admin.integrationStatus.data);
   const { t } = useTranslation();
@@ -72,7 +75,20 @@ function IntegrationStatus() {
         <Spin spinning={status === "loading"}>
           <Space direction="vertical" style={{ width: "100%" }} size={"large"}>
             {alert && (
-              <Alert type={alert.type} message={alert.message} showIcon></Alert>
+              <Alert
+                type={alert.type}
+                message={alert.message}
+                showIcon
+                action={
+                  <Button
+                    type="primary"
+                    size="small"
+                    onClick={() => navigate("/admin/integracao/config")}
+                  >
+                    Alterar
+                  </Button>
+                }
+              ></Alert>
             )}
             <Row gutter={[24, 24]}>
               <Col xs={24} md={12}>

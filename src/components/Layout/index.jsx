@@ -1,6 +1,6 @@
 import "styled-components/macro";
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { UserOutlined } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
 import { Alert } from "antd";
@@ -12,6 +12,8 @@ import Button from "components/Button";
 import toast from "components/notification";
 import security from "services/security";
 import Tag from "components/Tag";
+import Tooltip from "components/Tooltip";
+import IntegrationStatusTag from "components/IntegrationStatusTag";
 
 import Box from "./Box";
 import Menu from "./Menu";
@@ -37,8 +39,10 @@ const Me = ({
   setNotification,
   doLogout,
   logoutUrl,
+  integrationStatus,
 }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const sec = security(user.account.roles);
 
   const showAlert = location.pathname.indexOf("priorizacao") !== -1;
@@ -87,7 +91,7 @@ const Me = ({
       justify-content: space-between;
     "
     >
-      <div css="display: flex; align-items: center; width: 70%;">
+      <div css="display: flex; align-items: center; flex: 1">
         {location.pathname !== "/sumario-alta" && (
           <SearchPrescription type={sec.isDoctor() ? "summary" : "default"} />
         )}
@@ -113,6 +117,18 @@ const Me = ({
           {sec.isMultiSchema() && (
             <div className="schema">
               <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
+              <Tooltip title="Posição atual da implantação. Clique para configurar">
+                <IntegrationStatusTag
+                  type={"filled"}
+                  style={{ cursor: "pointer" }}
+                  status={integrationStatus}
+                  onClick={
+                    sec.isAdmin()
+                      ? () => navigate("/admin/integracao/config")
+                      : null
+                  }
+                />
+              </Tooltip>
             </div>
           )}
         </UserName>
@@ -226,6 +242,7 @@ export default function Layout({
             toggleDrawer={toggleDrawer}
             t={t}
             notification={app.notification}
+            integrationStatus={app.config.integrationStatus}
           />
         </Header>
         <Content css="padding: 25px 18px;">

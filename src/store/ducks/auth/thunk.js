@@ -84,6 +84,7 @@ const setUser = (userData, keepMeLogged, dispatch) => {
     proxy,
     segments,
     logoutUrl,
+    integrationStatus,
     ...identify
   } = userData;
   const user = {
@@ -130,6 +131,7 @@ const setUser = (userData, keepMeLogged, dispatch) => {
       nameHeaders,
       proxy,
       logoutUrl,
+      integrationStatus,
     })
   );
   dispatch(

@@ -191,6 +191,17 @@ api.integration.getStatus = (params) =>
     ...setHeaders(),
   });
 
+api.integration.getList = (params) =>
+  instance.get(`${endpoints.integration}/list`, {
+    params,
+    ...setHeaders(),
+  });
+
+api.integration.update = (params) =>
+  instance.post(`${endpoints.integration}/update`, params, {
+    ...setHeaders(),
+  });
+
 const methods = {
   ...api,
   getFrequencyList,

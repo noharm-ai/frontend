@@ -331,6 +331,14 @@ export default function Menu({ security, featureService }) {
           id: "gtm-lnk-int-status",
           role: ["admin"],
         },
+        {
+          key: "/admin/integracao/config",
+          link: "/admin/integracao/config",
+          label: "Configuração Integrações",
+          icon: <SettingOutlined />,
+          id: "gtm-lnk-int-config",
+          role: ["admin"],
+        },
       ],
     },
     {
