@@ -34,6 +34,8 @@ import AdminMemoryReports from "pages/Admin/Memory/Reports";
 import AdminMemoryFeatures from "pages/Admin/Memory/Features";
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
+import AdminIntegrationStatus from "pages/Admin/IntegrationStatus";
+import AdminIntegrationConfig from "pages/Admin/IntegrationConfig";
 import AdminSegment from "pages/Admin/Segment";
 import AdminUnitConversion from "pages/Admin/UnitConversion";
 
@@ -263,6 +265,16 @@ const routes = [
     exact: true,
     path: "/admin/integracao",
     element: <WithAuth component={AdminIntegration} />,
+  },
+  {
+    exact: true,
+    path: "/admin/integracao/status",
+    element: <WithAuth component={AdminIntegrationStatus} />,
+  },
+  {
+    exact: true,
+    path: "/admin/integracao/config",
+    element: <WithAuth component={AdminIntegrationConfig} />,
   },
   {
     exact: true,

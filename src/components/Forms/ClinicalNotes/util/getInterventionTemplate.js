@@ -17,6 +17,7 @@ const getInterventions = (prescription) => {
     ...prescription.prescription.list,
     ...prescription.solution.list,
     ...prescription.procedure.list,
+    ...prescription.diet.list,
   ];
   const flatItems = [];
   items.forEach((g) => {
