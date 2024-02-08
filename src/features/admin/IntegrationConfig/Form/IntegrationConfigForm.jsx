@@ -31,10 +31,14 @@ function IntegrationConfigForm({ ...props }) {
   });
   const initialValues = {
     ...formData,
+    defaultRoles: formData?.config?.defaultRoles || [],
   };
 
   const onSave = (params) => {
-    dispatch(updateIntegration(params)).then((response) => {
+    const config = { ...params.config, defaultRoles: params.defaultRoles };
+    const payload = { ...params, config };
+
+    dispatch(updateIntegration(payload)).then((response) => {
       if (response.error) {
         notification.error({
           message: getErrorMessage(response, t),
