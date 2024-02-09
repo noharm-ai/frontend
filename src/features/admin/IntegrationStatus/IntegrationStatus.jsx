@@ -92,7 +92,38 @@ function IntegrationStatus() {
             )}
             <Row gutter={[24, 24]}>
               <Col xs={24} md={12}>
-                <Card title="Configurações" type="inner">
+                <Card title="Integração: Tabelas" type="inner">
+                  {data.tables && data.tables.length > 0 ? (
+                    <>
+                      <DataList>
+                        {data.tables.map((i) => (
+                          <li key={i.table}>
+                            <div>{i.table}</div>
+                            <div>
+                              <Tag color={i.count > 0 ? "green" : "red"}>
+                                {i.count} registros
+                              </Tag>
+                            </div>
+                          </li>
+                        ))}
+                      </DataList>
+                      <Alert
+                        style={{ marginTop: "10px" }}
+                        showIcon
+                        type="info"
+                        message="*Números aproximados."
+                      ></Alert>
+                    </>
+                  ) : (
+                    <Empty
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      description="Nenhum registro encontrado"
+                    />
+                  )}
+                </Card>
+              </Col>
+              <Col xs={24} md={12}>
+                <Card title="Integração: Configurações" type="inner">
                   <DataList>
                     <li>
                       <div>GETNAME Único</div>
@@ -149,9 +180,12 @@ function IntegrationStatus() {
                     </li>
                   </DataList>
                 </Card>
-              </Col>
-              <Col xs={24} md={12}>
-                <Card title="Origens" type="inner">
+
+                <Card
+                  title="Integração: Origens"
+                  type="inner"
+                  style={{ marginTop: "24px" }}
+                >
                   <DataList>
                     <li>
                       <div>Medicamentos</div>
