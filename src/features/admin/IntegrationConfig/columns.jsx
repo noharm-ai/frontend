@@ -6,6 +6,10 @@ import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import IntegrationStatus from "models/IntegrationStatus";
 
+const OnOffTag = ({ value, name }) => {
+  return <Tag color={value ? "success" : "error"}>{name}</Tag>;
+};
+
 const columns = (t, dispatch, setIntegration) => {
   const openForm = (record) => {
     dispatch(setIntegration(record));
@@ -17,6 +21,53 @@ const columns = (t, dispatch, setIntegration) => {
       dataIndex: "schema",
       render: (entry, record) => {
         return record.schema;
+      },
+    },
+    {
+      title: "Fluxos de Atualização",
+      dataIndex: "fl1",
+      align: "center",
+      render: (entry, record) => {
+        return (
+          <div>
+            <Tooltip title="Atualiza indicadores prescrição por atendimento (CPOE)">
+              <span>
+                <OnOffTag value={record.fl1} name="FL1" />
+              </span>
+            </Tooltip>
+            <Tooltip title="Atualiza indicadores prescrição por prescrição">
+              <span>
+                <OnOffTag value={record.fl2} name="FL2" />
+              </span>
+            </Tooltip>
+            <Tooltip title="Atualiza a tabela prescricaoagg">
+              <span>
+                <OnOffTag value={record.fl3} name="FL3" />
+              </span>
+            </Tooltip>
+            <Tooltip title="Cria prescrições de conciliação para os novos atendimentos">
+              <span>
+                <OnOffTag value={record.fl4} name="FL4" />
+              </span>
+            </Tooltip>
+          </div>
+        );
+      },
+    },
+    {
+      title: "NoHarm Care",
+      dataIndex: "fl1",
+      align: "center",
+      render: (entry, record) => {
+        if (record.nhCare === 0) {
+          return <Tag color="error">Desativado</Tag>;
+        }
+
+        return (
+          <Tag color={record.nhCare === 1 ? "warning" : "success"}>
+            {record.nhCare === 1 ? "Ativo (Legado)" : "Ativo"}
+          </Tag>
+        );
       },
     },
     {

@@ -17,6 +17,9 @@ function BaseForm() {
       label: "Fluxos de Atualização Central",
       children: (
         <>
+          <p style={{ marginTop: 0 }}>
+            Para mais informações sobre estes fluxos, consulte a Wiki.
+          </p>
           <div
             className={`form-row ${errors.fl1 && touched.fl1 ? "error" : ""}`}
           >
@@ -41,7 +44,7 @@ function BaseForm() {
             </div>
             <div className="form-info">
               Dispara o PresCalc para prescrições agregadas do cpoe que tenham
-              sofrido alterações. Mais informações na Wiki.
+              sofrido alterações.
             </div>
             {errors.fl1 && touched.fl1 && (
               <div className="form-error">{errors.fl1}</div>
