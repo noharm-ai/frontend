@@ -84,4 +84,13 @@ export const Form = styled.form`
       padding-left: 0;
     }
   }
+
+  .form-intro {
+    font-size: 1rem;
+    margin-bottom: 30px;
+
+    p:first-child {
+      margin-top: 0;
+    }
+  }
 `;

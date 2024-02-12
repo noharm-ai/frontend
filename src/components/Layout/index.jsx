@@ -1,9 +1,10 @@
 import "styled-components/macro";
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserOutlined } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
-import { Alert } from "antd";
+import { Alert, Drawer } from "antd";
 import { useTranslation } from "react-i18next";
 
 import appInfo from "utils/appInfo";
@@ -14,6 +15,8 @@ import security from "services/security";
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
 import IntegrationStatusTag from "components/IntegrationStatusTag";
+import { setSupportOpen } from "features/support/SupportSlice";
+import SupportForm from "features/support/SupportForm/SupportForm";
 
 import Box from "./Box";
 import Menu from "./Menu";
@@ -41,6 +44,7 @@ const Me = ({
   logoutUrl,
   integrationStatus,
 }) => {
+  const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
   const sec = security(user.account.roles);
@@ -48,25 +52,10 @@ const Me = ({
   const showAlert = location.pathname.indexOf("priorizacao") !== -1;
 
   const openHelp = () => {
-    try {
-      window.octadesk.chat.login({
-        name: user.account.userName,
-        email: user.account.email,
-      });
-      window.octadesk.chat.toggle();
-    } catch (ex) {
-      console.error("octadesk error", ex);
-      window.open(`mailto:${process.env.REACT_APP_SUPPORT_EMAIL}`);
-    }
+    dispatch(setSupportOpen(true));
   };
 
   const logout = () => {
-    try {
-      window.octadesk.chat.hideApp();
-    } catch (ex) {
-      console.error("octadesk error", ex);
-    }
-
     toast.success({
       message: "Obrigado por usar a NoHarm!",
       description: "Até breve ;)",
@@ -174,11 +163,13 @@ export default function Layout({
   setAppSider,
   ...props
 }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const supportDrawerOpen = useSelector((state) => state.support.open);
   const [sider, setSider] = useState({
     collapsed: app.sider.collapsed,
     collapsedWidth: 80,
   });
-  const [isDrawerVisible, setDrawerVisibility] = useState(false);
 
   const onBreakpoint = (breaked) => {
     setSider((prevState) => ({
@@ -203,10 +194,6 @@ export default function Layout({
         collapsed,
       });
     }
-  };
-
-  const toggleDrawer = () => {
-    setDrawerVisibility(!isDrawerVisible);
   };
 
   const { t } = useTranslation();
@@ -239,7 +226,6 @@ export default function Layout({
         <Header>
           <Me
             {...props}
-            toggleDrawer={toggleDrawer}
             t={t}
             notification={app.notification}
             integrationStatus={app.config.integrationStatus}
@@ -260,6 +246,25 @@ export default function Layout({
             <img src="/updown.png" width="12px" alt="updown logo" />
           </a>
         </Footer>
+        <Drawer
+          open={supportDrawerOpen}
+          size="large"
+          onClose={() => dispatch(setSupportOpen(false))}
+          mask={false}
+          title={t("layout.help")}
+          extra={
+            <Button
+              onClick={() => {
+                dispatch(setSupportOpen(false));
+                navigate("/suporte");
+              }}
+            >
+              Ver Meus Tickets
+            </Button>
+          }
+        >
+          <SupportForm />
+        </Drawer>
       </Main>
     </Main>
   );

@@ -17,18 +17,7 @@ function Help() {
     window.open(`${process.env.REACT_APP_SUPPORT_LINK}/helpcenter`, "_blank");
   };
 
-  const openChat = () => {
-    try {
-      window.octadesk.chat.login({
-        name: user.account.userName,
-        email: user.account.email,
-      });
-      window.octadesk.chat.toggle();
-    } catch (ex) {
-      console.error("octadesk error", ex);
-      window.open(`mailto:${process.env.REACT_APP_SUPPORT_EMAIL}`);
-    }
-  };
+  const openChat = () => {};
 
   return (
     <>

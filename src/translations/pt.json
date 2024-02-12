@@ -313,7 +313,9 @@
     "conciliation": "Conciliação",
     "substance": "Substância",
     "substanceClass": "Classe de Substância",
-    "filters": "Filtros"
+    "filters": "Filtros",
+    "subject": "Assunto",
+    "message": "Mensagem"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
