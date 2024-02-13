@@ -138,7 +138,7 @@ export default function SupportForm() {
                   onClick={() => {
                     window.open(link, "_blank");
                   }}
-                  key={0}
+                  key={1}
                 >
                   Visualizar Chamado
                 </Button>,

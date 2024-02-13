@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { ReloadOutlined } from "@ant-design/icons";
 import axios from "axios";
 
@@ -9,6 +9,7 @@ import hospital from "services/hospital";
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
 import { Textarea } from "components/Inputs";
+import { setSupportOpen } from "features/support/SupportSlice";
 
 export default function PatientName({
   idPatient,
@@ -18,6 +19,7 @@ export default function PatientName({
   access_token,
   cleanCache,
 }) {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [currentName, setCurrentName] = useState(null);
   const endpointConfig = useSelector((state) => state.app.config);
@@ -26,8 +28,10 @@ export default function PatientName({
     ""
   );
 
-  const modalOk = () => {
-    document.querySelector("#gtm-lnk-ajuda").click();
+  const modalOk = (e) => {
+    dispatch(setSupportOpen(true));
+
+    return null;
   };
 
   const copyError = (error) => {
