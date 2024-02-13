@@ -259,7 +259,7 @@ export default function Layout({
                 navigate("/suporte");
               }}
             >
-              Ver Meus Tickets
+              Ver Meus Chamados
             </Button>
           }
         >

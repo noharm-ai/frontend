@@ -98,7 +98,7 @@ export default function SupportForm() {
           content: (
             <Result
               status="success"
-              title="Ticket criado com sucesso"
+              title="Chamado criado com sucesso"
               subTitle={
                 <>
                   <p>
@@ -106,12 +106,12 @@ export default function SupportForm() {
                     suporte.
                   </p>
                   <p>
-                    A referência do seu ticket é{" "}
+                    A referência do seu chamado é{" "}
                     <strong>{response.payload.data[0]?.id}</strong>.
                   </p>
                   <p>
-                    Você pode acompanhar o seu chamado pelo seu email ou atráves
-                    da Central de Ajuda
+                    Você pode acompanhar o chamado pelo seu email ou atráves da
+                    Central de Ajuda
                   </p>
                 </>
               }
@@ -169,6 +169,7 @@ export default function SupportForm() {
                 onClick={handleSubmit}
                 size="large"
                 loading={status === "loading"}
+                style={{ padding: "6px 50px" }}
               >
                 Enviar
               </Button>
