@@ -28,20 +28,26 @@ export default function SupportForm() {
     description: Yup.string()
       .nullable()
       .required(t("validation.requiredField")),
-    attachment: Yup.mixed()
-      .nullable()
-      .test("is-valid-size", t("validation.max2mb"), (value) => {
-        if (!value) return true;
+    fileList: Yup.array().of(
+      Yup.mixed()
+        .nullable()
+        .test("is-valid-size", function (value) {
+          if (!value) return true;
 
-        return value.size <= MAX_FILE_SIZE;
-      }),
+          return value.size <= MAX_FILE_SIZE
+            ? true
+            : this.createError({
+                message: `${value.name}: ${t("validation.max2mb")}`,
+                path: "fileList",
+              });
+        })
+    ),
   });
 
   const initialValues = {
     category: null,
     description: null,
     fileList: [],
-    attachment: null,
   };
 
   const goToSupportCenter = () => {
@@ -54,7 +60,6 @@ export default function SupportForm() {
       ...params,
       fromUrl: window.location.href,
     };
-    delete payload.fileList;
 
     dispatch(createTicket(payload)).then((response) => {
       if (response.error) {

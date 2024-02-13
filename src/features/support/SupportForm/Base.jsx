@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import { Upload } from "antd";
+import { Upload, notification } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
 import { Select } from "components/Inputs";
@@ -15,16 +15,23 @@ function BaseForm() {
   const { values, errors, touched, setFieldValue } = useFormikContext();
 
   const uploadProps = {
-    onRemove: () => {
-      setFieldValue("fileList", []);
-      setFieldValue("attachment", null);
+    onRemove: (file) => {
+      const index = values.fileList.indexOf(file);
+      const newFileList = values.fileList.slice();
+      newFileList.splice(index, 1);
+      setFieldValue("fileList", newFileList);
     },
     beforeUpload: (file) => {
-      setFieldValue("fileList", [file]);
-      setFieldValue("attachment", file);
+      if (values.fileList.length >= 2) {
+        notification.error({ message: "Máximo de arquivos anexos atingido." });
+      } else {
+        setFieldValue("fileList", [...values.fileList, file]);
+      }
 
       return false;
     },
+    listType: "picture",
+    multiple: true,
     accept: "image/*, .doc, .docx, .pdf",
     fileList: values.fileList,
   };
@@ -93,16 +100,14 @@ function BaseForm() {
         )}
       </div>
 
-      <div className={`form-row ${errors.attachment ? "error" : ""}`}>
+      <div className={`form-row ${errors.fileList ? "error" : ""}`}>
         <div className="form-label"></div>
         <div className="form-input">
           <Upload {...uploadProps}>
             <Button icon={<UploadOutlined />}>Anexar arquivo</Button>
           </Upload>
         </div>
-        {errors.attachment && (
-          <div className="form-error">{errors.attachment}</div>
-        )}
+        {errors.fileList && <div className="form-error">{errors.fileList}</div>}
       </div>
     </>
   );
