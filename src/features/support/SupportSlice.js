@@ -58,7 +58,7 @@ const supportSlice = createSlice({
       })
       .addCase(fetchTickets.fulfilled, (state, action) => {
         state.tickets.status = "succeeded";
-        state.tickets.data = action.payload.data;
+        state.tickets.list = action.payload.data;
       })
       .addCase(fetchTickets.rejected, (state, action) => {
         state.tickets.status = "failed";

@@ -24,7 +24,7 @@ import Prioritization from "pages/Prioritization";
 import ClinicalNotes from "pages/Screening/ClinicalNotes";
 import Summary from "pages/Summary";
 import SummarySearch from "pages/Summary/SummarySearch";
-import Help from "pages/Help";
+import SupportCenter from "pages/SupportCenter";
 
 import AdminFrequency from "pages/Admin/Frequency";
 import AdminInterventionReason from "pages/Admin/InterventionReason";
@@ -224,7 +224,7 @@ const routes = [
   {
     exact: true,
     path: "/suporte",
-    element: <WithAuth component={Help} />,
+    element: <WithAuth component={SupportCenter} />,
   },
   {
     exact: true,
