@@ -91,13 +91,15 @@ export default function SupportForm() {
         const modal = DefaultModal.success({
           content: null,
           icon: null,
-          width: 500,
+          width: 600,
           okText: "Fechar",
           onOk: () => dispatch(setSupportOpen(false)),
           onCancel: () => dispatch(setSupportOpen(false)),
           okButtonProps: { type: "default" },
           wrapClassName: "default-modal",
         });
+
+        const link = `${process.env.REACT_APP_ODOO_LINK}my/ticket/${response.payload.data[0]?.id}?access_token=${response.payload.data[0]?.access_token}`;
 
         modal.update({
           content: (
@@ -112,7 +114,7 @@ export default function SupportForm() {
                   </p>
                   <p>
                     A referência do seu chamado é{" "}
-                    <strong>{response.payload.data[0]?.id}</strong>.
+                    <strong>{response.payload.data[0]?.ticket_ref}</strong>.
                   </p>
                   <p>
                     Você pode acompanhar o chamado pelo seu email ou atráves da
@@ -130,6 +132,15 @@ export default function SupportForm() {
                   key={0}
                 >
                   Central de Ajuda
+                </Button>,
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    window.open(link, "_blank");
+                  }}
+                  key={0}
+                >
+                  Visualizar Chamado
                 </Button>,
               ]}
             />
