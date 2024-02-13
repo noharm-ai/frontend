@@ -15,6 +15,8 @@ import Base from "./Base";
 
 import { Form } from "styles/Form.style";
 
+const MAX_FILE_SIZE = 2000000;
+
 export default function SupportForm() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -26,12 +28,20 @@ export default function SupportForm() {
     description: Yup.string()
       .nullable()
       .required(t("validation.requiredField")),
+    attachment: Yup.mixed()
+      .nullable()
+      .test("is-valid-size", t("validation.max2mb"), (value) => {
+        if (!value) return true;
+
+        return value.size <= MAX_FILE_SIZE;
+      }),
   });
 
   const initialValues = {
     category: null,
     description: null,
     fileList: [],
+    attachment: null,
   };
 
   const goToSupportCenter = () => {
@@ -44,11 +54,7 @@ export default function SupportForm() {
       ...params,
       fromUrl: window.location.href,
     };
-
-    if (payload.fileList.length) {
-      payload.attachment = payload.fileList[0];
-      delete payload.fileList;
-    }
+    delete payload.fileList;
 
     dispatch(createTicket(payload)).then((response) => {
       if (response.error) {

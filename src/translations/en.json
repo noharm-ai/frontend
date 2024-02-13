@@ -521,7 +521,8 @@
 
   "validation": {
     "requiredField": "Required field",
-    "atLeastOne": "At least one item must be selected"
+    "atLeastOne": "At least one item must be selected",
+    "max2mb": "Max file size: 2mb"
   },
 
   "interventionStatus": {

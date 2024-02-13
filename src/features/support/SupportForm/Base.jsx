@@ -17,12 +17,15 @@ function BaseForm() {
   const uploadProps = {
     onRemove: () => {
       setFieldValue("fileList", []);
+      setFieldValue("attachment", null);
     },
     beforeUpload: (file) => {
       setFieldValue("fileList", [file]);
+      setFieldValue("attachment", file);
 
       return false;
     },
+    accept: "image/*, .doc, .docx, .pdf",
     fileList: values.fileList,
   };
 
@@ -90,18 +93,14 @@ function BaseForm() {
         )}
       </div>
 
-      <div
-        className={`form-row ${
-          errors.attachment && touched.attachment ? "error" : ""
-        }`}
-      >
+      <div className={`form-row ${errors.attachment ? "error" : ""}`}>
         <div className="form-label"></div>
         <div className="form-input">
           <Upload {...uploadProps}>
             <Button icon={<UploadOutlined />}>Anexar arquivo</Button>
           </Upload>
         </div>
-        {errors.attachment && touched.attachment && (
+        {errors.attachment && (
           <div className="form-error">{errors.attachment}</div>
         )}
       </div>

@@ -522,7 +522,8 @@
 
   "validation": {
     "requiredField": "Campo obrigatório",
-    "atLeastOne": "Pelo menos um item deve ser selecionado"
+    "atLeastOne": "Pelo menos um item deve ser selecionado",
+    "max2mb": "Tamanho máximo: 2mb"
   },
 
   "interventionStatus": {
