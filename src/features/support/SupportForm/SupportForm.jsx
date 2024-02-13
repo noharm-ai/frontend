@@ -61,6 +61,25 @@ export default function SupportForm() {
         notification.error({
           message: getErrorMessage(response, t),
         });
+
+        if (response.payload.statusCode >= 500) {
+          DefaultModal.error({
+            title: "Serviço Offline",
+            content: (
+              <>
+                <p>
+                  Nosso serviço de registro de chamados está fora do ar. Por
+                  favor, encaminhe o seu pedido de ajuda para{" "}
+                  <strong>{process.env.REACT_APP_SUPPORT_EMAIL}</strong>.
+                </p>
+              </>
+            ),
+            width: 500,
+            okText: "Fechar",
+            okButtonProps: { type: "default" },
+            wrapClassName: "default-modal",
+          });
+        }
       } else {
         formikBag.resetForm();
 

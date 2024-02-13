@@ -22,7 +22,10 @@ export const createTicket = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
+      return thunkAPI.rejectWithValue({
+        ...err.response.data,
+        statusCode: err.response.status,
+      });
     }
   }
 );
