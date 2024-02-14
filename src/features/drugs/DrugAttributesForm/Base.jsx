@@ -314,6 +314,33 @@ function BaseForm({ data }) {
       </div>
 
       <div
+        className={`form-row ${
+          errors.fallRisk && touched.fallRisk ? "error" : ""
+        }`}
+      >
+        <div className="form-label">
+          <label>Risco de Queda:</label>
+        </div>
+        <div className="form-input">
+          <InputNumber
+            style={{
+              width: 120,
+              marginRight: 5,
+            }}
+            min={1}
+            max={4}
+            value={values.fallRisk}
+            onChange={(value) => setFieldValue("fallRisk", value)}
+            status={errors.fallRisk && touched.fallRisk ? "error" : null}
+          />
+          Valor entre 1 e 4
+        </div>
+        {errors.fallRisk && touched.fallRisk && (
+          <div className="form-error">{errors.fallRisk}</div>
+        )}
+      </div>
+
+      <div
         className={`form-row ${errors.amount && touched.amount ? "error" : ""}`}
       >
         <div className="form-label">

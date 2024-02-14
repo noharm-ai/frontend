@@ -49,7 +49,7 @@
     "memory": "Memória",
     "summary": "Sumário de Alta",
     "integration": "Integração",
-    "help": "Suporte"
+    "help": "Central de Ajuda"
   },
   "screeningList": {
     "confirm": "Confirma?",
@@ -313,7 +313,9 @@
     "conciliation": "Conciliação",
     "substance": "Substância",
     "substanceClass": "Classe de Substância",
-    "filters": "Filtros"
+    "filters": "Filtros",
+    "subject": "Assunto",
+    "message": "Mensagem"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
@@ -520,7 +522,8 @@
 
   "validation": {
     "requiredField": "Campo obrigatório",
-    "atLeastOne": "Pelo menos um item deve ser selecionado"
+    "atLeastOne": "Pelo menos um item deve ser selecionado",
+    "max2mb": "O arquivo deve ter até 2mb"
   },
 
   "interventionStatus": {

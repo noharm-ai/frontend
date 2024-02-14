@@ -249,6 +249,13 @@ const ResetStyled = createGlobalStyle`
       max-width: none !important;
     }
   }
+
+  .iframe-modal {
+    .ant-modal-confirm-content {
+      max-width: none !important;
+      width: 100%;
+    }
+  }
 `;
 
 export default ResetStyled;

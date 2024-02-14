@@ -49,7 +49,7 @@
     "memory": "Memory",
     "summary": "Sumário de Alta",
     "integration": "Integração",
-    "help": "Support"
+    "help": "Support Central"
   },
   "screeningList": {
     "confirm": "Confirm?",
@@ -313,7 +313,9 @@
     "conciliation": "Conciliation",
     "substance": "Substance",
     "substanceClass": "Substance Class",
-    "filters": "Filters"
+    "filters": "Filters",
+    "subject": "Subject",
+    "message": "Message"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
@@ -519,7 +521,8 @@
 
   "validation": {
     "requiredField": "Required field",
-    "atLeastOne": "At least one item must be selected"
+    "atLeastOne": "At least one item must be selected",
+    "max2mb": "Max file size: 2mb"
   },
 
   "interventionStatus": {

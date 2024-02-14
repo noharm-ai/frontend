@@ -663,6 +663,37 @@ api.drugs.updateSubstance = (params = {}) => {
 };
 
 /**
+ * support namespace
+ */
+api.support = {};
+api.support.getTickets = () =>
+  instance.get(`/support/list-tickets`, {
+    ...setHeaders(),
+  });
+
+api.support.createTicket = (params) => {
+  const formData = new FormData();
+
+  if (params.fileList.length) {
+    params.fileList.forEach((f) => {
+      console.log("file", f);
+      formData.append("fileList[]", f);
+    });
+  }
+
+  Object.keys(params).forEach((k) => {
+    if (k !== "fileList") {
+      formData.append(k, params[k]);
+    }
+  });
+
+  const config = setHeaders();
+  config.headers["content-type"] = "multipart/form-data";
+
+  return instance.post(`/support/create-ticket`, formData, config);
+};
+
+/**
  * API
  * all functions that can be used in API.
  */

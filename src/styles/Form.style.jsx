@@ -29,6 +29,14 @@ export const Form = styled.form`
     margin-left: 5px;
     margin-top: 3px;
     opacity: 0.8;
+
+    ul {
+      padding: 0;
+
+      li {
+        list-style-type: none;
+      }
+    }
   }
 
   .form-input {
@@ -82,6 +90,15 @@ export const Form = styled.form`
   .collapsed-content {
     .ant-collapse-header {
       padding-left: 0;
+    }
+  }
+
+  .form-intro {
+    font-size: 1rem;
+    margin-bottom: 30px;
+
+    p:first-child {
+      margin-top: 0;
     }
   }
 `;
