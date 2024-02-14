@@ -86,6 +86,10 @@ function SupportCenter() {
                 dataSource={ds || []}
                 expandedRowRender={expandedRowRender}
               />
+              <p>
+                * Os chamados abertos antes da troca de sistema continuam
+                válidos e serão atendidos normalmente.
+              </p>
             </PageCard>
           </Col>
           <Col xs={8}>
