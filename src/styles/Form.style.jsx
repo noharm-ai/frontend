@@ -29,6 +29,14 @@ export const Form = styled.form`
     margin-left: 5px;
     margin-top: 3px;
     opacity: 0.8;
+
+    ul {
+      padding: 0;
+
+      li {
+        list-style-type: none;
+      }
+    }
   }
 
   .form-input {

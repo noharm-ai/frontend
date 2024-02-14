@@ -107,6 +107,16 @@ function BaseForm() {
             <Button icon={<UploadOutlined />}>Anexar arquivo</Button>
           </Upload>
         </div>
+        <div className="form-info">
+          <ul>
+            <li>
+              * Até 2 anexos são permitidos (mais anexos podem ser enviados após
+              a abertura do chamado)
+            </li>
+            <li>* Tamanho máximo do arquivo: 2mb</li>
+            <li>* Extensões permitidas: .png, .jpg, .doc, .docx, .pdf</li>
+          </ul>
+        </div>
         {errors.fileList && <div className="form-error">{errors.fileList}</div>}
       </div>
     </>
