@@ -165,8 +165,6 @@ function Summary({ mock }) {
                 <h4 id="motivo-admissao">2.1.1) Motivo da Admissão</h4>
                 <SummaryPanelAI
                   admissionNumber={params.admissionNumber}
-                  url={summaryData.summaryConfig?.url}
-                  apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.reason}
                   position="reason"
                 />
@@ -176,8 +174,6 @@ function Summary({ mock }) {
                 </h4>
                 <SummaryPanelAI
                   admissionNumber={params.admissionNumber}
-                  url={summaryData.summaryConfig?.url}
-                  apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.diagnosis}
                   position="diagnosis"
                 />
@@ -194,8 +190,6 @@ function Summary({ mock }) {
                 </h4>
                 <SummaryPanelAI
                   admissionNumber={params.admissionNumber}
-                  url={summaryData.summaryConfig?.url}
-                  apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.previousDrugs}
                   position="previousDrugs"
                 />
@@ -206,8 +200,6 @@ function Summary({ mock }) {
               <div className="sub_level">
                 <SummaryPanelAI
                   admissionNumber={params.admissionNumber}
-                  url={summaryData.summaryConfig?.url}
-                  apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.clinicalSummary}
                   position="clinicalSummary"
                 />
@@ -223,8 +215,6 @@ function Summary({ mock }) {
                 <h4 id="exames-textuais">2.2.2) Exames Textuais</h4>
                 <SummaryPanelAI
                   admissionNumber={params.admissionNumber}
-                  url={summaryData.summaryConfig?.url}
-                  apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.exams}
                   position="textExams"
                 />
@@ -232,8 +222,6 @@ function Summary({ mock }) {
                 <h4 id="procedimentos">2.2.3) Procedimentos realizados</h4>
                 <SummaryPanelAI
                   admissionNumber={params.admissionNumber}
-                  url={summaryData.summaryConfig?.url}
-                  apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.procedures}
                   position="procedures"
                 />
@@ -263,8 +251,6 @@ function Summary({ mock }) {
               <div className="sub_level">
                 <SummaryPanelAI
                   admissionNumber={params.admissionNumber}
-                  url={summaryData.summaryConfig?.url}
-                  apikey={summaryData.summaryConfig?.apikey}
                   payload={summaryData.summaryConfig?.dischargeCondition}
                   position="dischargeCondition"
                 />
@@ -282,8 +268,6 @@ function Summary({ mock }) {
               <h3 id="plano-alta">3.1) Plano de Alta</h3>
               <SummaryPanelAI
                 admissionNumber={params.admissionNumber}
-                url={summaryData.summaryConfig?.url}
-                apikey={summaryData.summaryConfig?.apikey}
                 payload={summaryData.summaryConfig?.dischargePlan}
                 position="dischargePlan"
               />

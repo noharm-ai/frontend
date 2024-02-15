@@ -120,8 +120,7 @@ export const fetchSummary = createAsyncThunk(
   async (params, thunkAPI) => {
     const { access_token } = thunkAPI.getState().auth.identify;
 
-    const { data } = await api.getSummary(
-      access_token,
+    const { data } = await api.summary.getSummary(
       params.admissionNumber,
       params.mock
     );
@@ -155,6 +154,21 @@ export const setLike = createAsyncThunk(
     const { data } = await api.putMemory(access_token, params);
 
     return data;
+  }
+);
+
+export const promptSummaryBlock = createAsyncThunk(
+  "summary/prompt",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.summary.prompt(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue({
+        ...err.response.data,
+      });
+    }
   }
 );
 
