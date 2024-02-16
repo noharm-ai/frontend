@@ -8,7 +8,7 @@ import {
 export const { Types, Creators } = createActions({
   clinicalNotesFetchListStart: [""],
   clinicalNotesFetchListError: ["error"],
-  clinicalNotesFetchListSuccess: ["list", "dates"],
+  clinicalNotesFetchListSuccess: ["list", "dates", "previousAdmissions"],
 
   clinicalNotesFetchListExtraStart: ["date"],
   clinicalNotesFetchListExtraSuccess: ["list"],
@@ -30,6 +30,7 @@ const INITIAL_STATE = {
   isFetchingExtra: false,
   list: [],
   dates: {},
+  previousAdmissions: [],
   positionList: [],
   single: null,
   save: {
@@ -52,11 +53,15 @@ const fetchListError = (state = INITIAL_STATE, { error }) => ({
   isFetching: false,
 });
 
-const fetchListSuccess = (state = INITIAL_STATE, { list, dates }) => {
+const fetchListSuccess = (
+  state = INITIAL_STATE,
+  { list, dates, previousAdmissions }
+) => {
   return {
     ...state,
     list,
     dates,
+    previousAdmissions,
     positionList: getPositionList(flatClinicalNotes(dates)),
     error: null,
     isFetching: false,

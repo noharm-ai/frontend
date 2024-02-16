@@ -19,6 +19,7 @@ const mapStateToProps = ({ prescriptions, clinicalNotes, user, auth }) => ({
   list: clinicalNotes.list,
   dates: clinicalNotes.dates,
   positionList: clinicalNotes.positionList,
+  previousAdmissions: clinicalNotes.previousAdmissions,
   selected: clinicalNotes.single,
   saveStatus: clinicalNotes.save,
   security: security(user.account.roles),
