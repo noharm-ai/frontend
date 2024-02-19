@@ -69,6 +69,8 @@ export default function FilterMemory({
     notification.success({ message: "Uhu! Filtro salvo com sucesso!" });
   };
 
+  const sortFilters = (a, b) => `${a?.name}`.localeCompare(`${b?.name}`);
+
   const removeFilterAction = (index, type) => {
     const storeElement =
       type === "public" ? publicFilters[0] : privateFilters[0];
@@ -121,12 +123,15 @@ export default function FilterMemory({
     return {
       key: `filter_${type}`,
       label: title,
-      children: list[0].value.filter(filterActive).map((item, index) => ({
-        key: `${type}_${item.name}_${index}`,
-        label: item.name,
-        id: `gtm-btn-menu-filter-load-${type}`,
-        data: item.data,
-      })),
+      children: list[0].value
+        .filter(filterActive)
+        .sort(sortFilters)
+        .map((item, index) => ({
+          key: `${type}_${item.name}_${index}`,
+          label: item.name,
+          id: `gtm-btn-menu-filter-load-${type}`,
+          data: item.data,
+        })),
     };
   };
 
@@ -135,7 +140,7 @@ export default function FilterMemory({
     const children = [];
 
     if (list && list.length && !isEmpty(list[0].value)) {
-      list[0].value.forEach((item, index) => {
+      list[0].value.sort(sortFilters).forEach((item, index) => {
         if (filterActive(item)) {
           children.push({
             key: `remove_${type}_${item.name}_${index}`,
@@ -201,7 +206,10 @@ export default function FilterMemory({
 
   return (
     <>
-      <Dropdown menu={{ items: filterMenu(), onClick: handleMenu }}>
+      <Dropdown
+        menu={{ items: filterMenu(), onClick: handleMenu }}
+        trigger={["click"]}
+      >
         <Button
           className="gtm-btn-filter"
           shape="circle"

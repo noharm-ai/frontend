@@ -359,11 +359,12 @@ export const FilterContainer = styled.div`
   background: #fafafa;
   margin-bottom: 5px;
 
-  > div {
-    width: 40%;
+  .fields {
+    flex: 1;
+    display: flex;
 
-    @media only screen and (min-width: 1400px) {
-      width: 45%;
+    > div {
+      width: 50%;
     }
   }
 
@@ -374,13 +375,9 @@ export const FilterContainer = styled.div`
 
   .btn-search {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: flex-end;
-    width: 20%;
-
-    @media only screen and (min-width: 1400px) {
-      width: 10%;
-    }
+    width: 90px;
   }
 
   .ant-select-selection__choice {

@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { format, parseISO } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { SearchOutlined, CloudDownloadOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  CloudDownloadOutlined,
+  ClockCircleOutlined,
+} from "@ant-design/icons";
+import dayjs from "dayjs";
 
 import { Row, Col } from "components/Grid";
 import LoadBox, { LoadContainer } from "components/LoadBox";
@@ -10,6 +15,7 @@ import { Select } from "components/Inputs";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import Tag from "components/Tag";
+import Dropdown from "components/Dropdown";
 import { getFirstAndLastName } from "utils";
 import { intersection } from "utils/lodash";
 
@@ -34,6 +40,7 @@ export default function ClinicalNotes({
   admissionNumberPopup,
   dates,
   popup,
+  previousAdmissions,
 }) {
   const [positions, setPositions] = useState([]);
   const [indicators, setIndicators] = useState([]);
@@ -116,6 +123,39 @@ export default function ClinicalNotes({
   );
   const localAdmissionNumber = admissionNumber || admissionNumberPopup;
 
+  const extraOptions = () => {
+    const items = previousAdmissions.map((i) => ({
+      key: i.admissionNumber,
+      label: (
+        <>
+          <strong>#{i.admissionNumber}:</strong> <br />
+          {i.admissionDate
+            ? dayjs(i.admissionDate).format("DD/MM/YY")
+            : " - "}{" "}
+          até{" "}
+          {i.dischargeDate ? dayjs(i.dischargeDate).format("DD/MM/YY") : " - "}
+        </>
+      ),
+    }));
+
+    return {
+      items,
+      onClick: handlePreviousAdmissionClick,
+    };
+  };
+
+  const handlePreviousAdmissionClick = (params) => {
+    const padding = 200;
+    const width = Math.round(window.innerWidth - padding);
+    const height = Math.round(window.innerHeight - padding);
+
+    window.open(
+      `/prescricao/evolucao/${params.key}`,
+      "clinicalNotesPopup",
+      `height=${height},width=${width}`
+    );
+  };
+
   useEffect(() => {
     setFilteredList(
       filterList(list, false, selectedPositions, selectedIndicators)
@@ -152,7 +192,7 @@ export default function ClinicalNotes({
   return (
     <Container>
       <Row type="flex" gutter={0}>
-        <Col md={14} xl={16} className="paper-panel">
+        <Col md={11} xl={15} className="paper-panel">
           <View
             selected={selected}
             update={update}
@@ -164,71 +204,76 @@ export default function ClinicalNotes({
             admissionNumber={localAdmissionNumber}
           />
         </Col>
-        <Col md={10} xl={8} className="list-panel">
+        <Col md={13} xl={9} className="list-panel">
           {positionList.length > 0 && (
             <FilterContainer>
-              <div>
-                <label>
-                  {t(
-                    `labels.${
-                      featureService.hasPrimaryCare() ? "type" : "role"
-                    }`
-                  )}
-                </label>
-                <Select
-                  placeholder={t(
-                    `labels.${
-                      featureService.hasPrimaryCare() ? "type" : "role"
-                    }PlaceholderFilter`
-                  )}
-                  onChange={handlePositionChange}
-                  allowClear
-                  style={{ width: "90%" }}
-                  mode="multiple"
-                  optionFilterProp="children"
-                  popupMatchSelectWidth={false}
-                >
-                  {positionList.map((p, i) => (
-                    <Select.Option value={p} key={i}>
-                      {p ? p : "-"}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-              {!featureService.hasPrimaryCare() && (
+              <div className="fields">
                 <div>
-                  <label>{t("labels.indicator")}</label>
+                  <label>
+                    {t(
+                      `labels.${
+                        featureService.hasPrimaryCare() ? "type" : "role"
+                      }`
+                    )}
+                  </label>
                   <Select
-                    placeholder={t("labels.indicatorPlaceholderFilter")}
-                    onChange={handleIndicatorsChange}
+                    placeholder={t(
+                      `labels.${
+                        featureService.hasPrimaryCare() ? "type" : "role"
+                      }PlaceholderFilter`
+                    )}
+                    onChange={handlePositionChange}
                     allowClear
-                    style={{ width: "100%" }}
+                    style={{ width: "95%" }}
                     mode="multiple"
                     optionFilterProp="children"
                     popupMatchSelectWidth={false}
                   >
-                    {ClinicalNotesIndicator.list(t).map((indicator, i) => (
-                      <Select.Option value={indicator.key} key={indicator.key}>
-                        <span
-                          style={{
-                            backgroundColor: indicator.backgroundColor,
-                            borderColor: indicator.color,
-                            borderWidth: "1px",
-                            borderStyle: "solid",
-                            borderRadius: "5px",
-                            padding: "0 2px",
-                            display: "inline-block",
-                            fontWeight: 500,
-                            lineHeight: 1.3,
-                          }}
-                        >
-                          {indicator.label}
-                        </span>
+                    {positionList.map((p, i) => (
+                      <Select.Option value={p} key={i}>
+                        {p ? p : "-"}
                       </Select.Option>
                     ))}
                   </Select>
                 </div>
-              )}
+                {!featureService.hasPrimaryCare() && (
+                  <div>
+                    <label>{t("labels.indicator")}</label>
+                    <Select
+                      placeholder={t("labels.indicatorPlaceholderFilter")}
+                      onChange={handleIndicatorsChange}
+                      allowClear
+                      style={{ width: "100%" }}
+                      mode="multiple"
+                      optionFilterProp="children"
+                      popupMatchSelectWidth={false}
+                    >
+                      {ClinicalNotesIndicator.list(t).map((indicator, i) => (
+                        <Select.Option
+                          value={indicator.key}
+                          key={indicator.key}
+                        >
+                          <span
+                            style={{
+                              backgroundColor: indicator.backgroundColor,
+                              borderColor: indicator.color,
+                              borderWidth: "1px",
+                              borderStyle: "solid",
+                              borderRadius: "5px",
+                              padding: "0 2px",
+                              display: "inline-block",
+                              fontWeight: 500,
+                              lineHeight: 1.3,
+                            }}
+                          >
+                            {indicator.label}
+                          </span>
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                )}
+              </div>
 
               <div className="btn-search">
                 <Tooltip title={t("buttons.search")}>
@@ -240,6 +285,28 @@ export default function ClinicalNotes({
                     onClick={search}
                   />
                 </Tooltip>
+                <Dropdown
+                  menu={extraOptions()}
+                  trigger={["click"]}
+                  disabled={previousAdmissions.length === 0}
+                >
+                  <Tooltip
+                    title={
+                      previousAdmissions.length === 0
+                        ? "Nenhuma internação anterior encontrada"
+                        : "Ver Internações Anteriores"
+                    }
+                  >
+                    <Button
+                      size="medium"
+                      shape="circle"
+                      style={{ marginLeft: "8px" }}
+                      disabled={previousAdmissions.length === 0}
+                    >
+                      <ClockCircleOutlined />
+                    </Button>
+                  </Tooltip>
+                </Dropdown>
               </div>
             </FilterContainer>
           )}

@@ -548,18 +548,6 @@ const updateClinicalNote = (bearerToken, id, params) => {
 };
 
 /**
- * Summary
- */
-
-const getSummary = (bearerToken, admissionNumber, mock) =>
-  instance.get(`${endpoints.summary}/${admissionNumber}`, {
-    params: {
-      mock,
-    },
-    ...setHeaders(bearerToken),
-  });
-
-/**
  * Score Wizard
  */
 
@@ -676,7 +664,6 @@ api.support.createTicket = (params) => {
 
   if (params.fileList.length) {
     params.fileList.forEach((f) => {
-      console.log("file", f);
       formData.append("fileList[]", f);
     });
   }
@@ -691,6 +678,24 @@ api.support.createTicket = (params) => {
   config.headers["content-type"] = "multipart/form-data";
 
   return instance.post(`/support/create-ticket`, formData, config);
+};
+
+/**
+ * Summary namespace
+ */
+api.summary = {};
+api.summary.getSummary = (admissionNumber, mock) =>
+  instance.get(`${endpoints.summary}/${admissionNumber}`, {
+    params: {
+      mock,
+    },
+    ...setHeaders(),
+  });
+
+api.summary.prompt = (params = {}) => {
+  return instance.post(`/summary/prompt`, params, {
+    ...setHeaders(),
+  });
 };
 
 /**
@@ -762,7 +767,6 @@ const methods = {
   searchPrescriptions,
   getPrescriptionMissingDrugs,
   copyPrescriptionMissingDrugs,
-  getSummary,
   scorePrepareGeneration,
   scoreGenerateSingle,
   scoreConfigDrug,

@@ -18,6 +18,24 @@
   font-weight: 500;
 }
 
+.ant-dropdown-menu {
+  max-height: 250px;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 15px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(112, 189, 195, 1);
+    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+  }
+}
+
 @keyframes flickerAnimation {
   0% {
     opacity: 0.5;

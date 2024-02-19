@@ -47,7 +47,9 @@ export const fetchClinicalNotesListThunk =
       groups[n.date.substr(0, 10)].push(n);
     });
 
-    dispatch(clinicalNotesFetchListSuccess(groups, dates));
+    dispatch(
+      clinicalNotesFetchListSuccess(groups, dates, data.data.previousAdmissions)
+    );
     dispatch(clinicalNotesSelect(data.data.notes[0]));
   };
 

@@ -31,6 +31,7 @@ export default function Filter() {
   const initialValues = {
     hasConversion: null,
     idSegment: null,
+    showPrediction: false,
   };
 
   useEffect(() => {
@@ -40,7 +41,10 @@ export default function Filter() {
   }, []); //eslint-disable-line
 
   const search = (params) => {
-    if (filters.idSegment !== params.idSegment) {
+    if (
+      filters.idSegment !== params.idSegment ||
+      filters.showPrediction !== params.showPrediction
+    ) {
       dispatch(fetchConversionList(params)).then((response) => {
         if (response.error) {
           notification.error(errorMessage);
@@ -49,7 +53,10 @@ export default function Filter() {
           dispatch(setFilters(params));
           dispatch(
             setFilteredList(
-              filterConversionList(groupConversions(response.payload.data.data))
+              filterConversionList(
+                groupConversions(response.payload.data.data),
+                params
+              )
             )
           );
         }

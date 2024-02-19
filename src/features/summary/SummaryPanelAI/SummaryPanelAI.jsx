@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
 import { Spin } from "antd";
 import {
   ReloadOutlined,
@@ -18,13 +17,13 @@ import Tooltip from "components/Tooltip";
 import { Textarea } from "components/Inputs";
 import { textToHtml } from "utils/transformers/utils";
 
-import { setBlock } from "../SummarySlice";
+import { setBlock, promptSummaryBlock } from "../SummarySlice";
 import SummaryPanelAIConfig from "./SummaryPanelAIConfig";
 import SummaryPanelAIAudit from "./SummaryPanelAIAudit";
 import SummaryReactions from "../SummaryReactions/SummaryReactions";
 import { SummaryPanel } from "../Summary.style";
 
-function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
+function SummaryPanelAI({ payload, position, admissionNumber }) {
   const dispatch = useDispatch();
   const status = useSelector(
     (state) => state.summary.blocks[position]?.aiStatus
@@ -57,28 +56,26 @@ function SummaryPanelAI({ url, apikey, payload, position, admissionNumber }) {
         setAIPrompt(forcePayload);
       }
 
-      axios
-        .post(url, forcePayload || aiPrompt, {
-          headers: {
-            authorization: `Key ${apikey}`,
-          },
-        })
-        .then((response) => {
+      dispatch(promptSummaryBlock(forcePayload || aiPrompt)).then(
+        (response) => {
           setLoading(false);
-          dispatch(
-            setBlock({
-              id: position,
-              data: response.data?.answer,
-              original: response.data?.answer,
-            })
-          );
-        })
-        .catch(() => {
-          console.error("error");
-          setError(true);
-        });
+
+          if (response.error) {
+            setError(true);
+            console.error(response.error);
+          } else {
+            dispatch(
+              setBlock({
+                id: position,
+                data: response.payload.data?.answer,
+                original: response.payload.data?.answer,
+              })
+            );
+          }
+        }
+      );
     },
-    [dispatch, apikey, aiPrompt, payload?.audit, position, url]
+    [dispatch, aiPrompt, payload?.audit, position]
   );
 
   useEffect(() => {

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
+import { CheckOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 
 import notification from "components/notification";
 import CustomForm from "components/Forms/CustomForm";
@@ -14,21 +16,29 @@ export default function DrugForm({
   values,
 }) {
   const [loading, setLoading] = useState(false);
+  const [updatedAtState, setUpdatedAtState] = useState(null);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  console.log("values", values);
 
   const saveForm = (data) => {
     setLoading(true);
+    const updatedAt = dayjs().toISOString();
 
     savePrescriptionDrugForm(idPrescriptionDrug, {
-      form: { ...data.values, updated: true },
+      form: { ...data.values, updated: true, updatedAt },
     })
       .then(() => {
         setLoading(false);
+        setUpdatedAtState(updatedAt);
         dispatch(
           updateDrugForm({
             id: idPrescriptionDrug,
-            data: { ...data.values, updated: true },
+            data: {
+              ...data.values,
+              updated: true,
+              updatedAt,
+            },
           })
         );
         notification.success({
@@ -55,14 +65,32 @@ export default function DrugForm({
   };
 
   return (
-    <CustomForm
-      onSubmit={saveForm}
-      template={template.data}
-      isSaving={loading}
-      values={values}
-      horizontal
-      onChange={onChangeForm}
-      btnSaveText={"Avaliar"}
-    />
+    <>
+      <CustomForm
+        onSubmit={saveForm}
+        template={template.data}
+        isSaving={loading}
+        values={values}
+        horizontal
+        onChange={onChangeForm}
+        btnSaveText={"Avaliar"}
+      />
+      {(values?.updated || updatedAtState) && (
+        <div style={{ marginTop: "10px" }}>
+          {values?.updatedAt || updatedAtState ? (
+            <>
+              <CheckOutlined /> Avaliado em:{" "}
+              {dayjs(updatedAtState || values?.updatedAt).format(
+                "DD/MM/YYYY HH:mm"
+              )}
+            </>
+          ) : (
+            <>
+              <CheckOutlined /> Avaliado
+            </>
+          )}
+        </div>
+      )}
+    </>
   );
 }

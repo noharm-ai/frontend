@@ -184,6 +184,11 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
                               }
                             />
                           </div>
+                          {i.prediction && (
+                            <div className="form-info">
+                              {i.prediction} ({(i.accuracy * 100).toFixed()}%)
+                            </div>
+                          )}
                         </div>
                       </Col>
                     ))}

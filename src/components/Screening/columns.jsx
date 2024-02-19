@@ -963,14 +963,14 @@ const actionColumns = (bag) => [
 
 const relationColumn = (bag) => ({
   title: "Prescrição vigente",
-  width: 450,
+  width: "45%",
   render: (text, prescription) => {
     return (
       <Select
         allowClear
         showSearch
         optionFilterProp="children"
-        style={{ width: "100%", maxWidth: "450px" }}
+        style={{ width: "100%" }}
         placeholder="Relação com a prescrição vigente"
         defaultValue={prescription.conciliaRelationId}
         onChange={(value) =>
@@ -985,16 +985,27 @@ const relationColumn = (bag) => ({
         }
       >
         {bag.currentPrescription.map(
-          ({ idPrescriptionDrug, drug, dose, measureUnit, frequency }) => (
+          ({
+            idPrescriptionDrug,
+            drug,
+            dose,
+            measureUnit,
+            frequency,
+            recommendation,
+          }) => (
             <Select.Option
               key={idPrescriptionDrug}
               value={idPrescriptionDrug}
               style={{ overflow: "auto", whiteSpace: "inherit" }}
             >
-              {drug}
-              <br />{" "}
+              <strong>{drug}</strong>
+              <br />
               <span className="extra-info" style={{ fontSize: "12px" }}>
                 ({dose} {measureUnit.label} X {frequency.label})
+              </span>
+              <br />
+              <span className="extra-info" style={{ fontSize: "12px" }}>
+                Obs.: {recommendation || "-"}
               </span>
             </Select.Option>
           )

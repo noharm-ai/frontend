@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import { Upload, notification } from "antd";
@@ -7,11 +8,15 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Select } from "components/Inputs";
 import Editor from "components/Editor";
 import Button from "components/Button";
+import IntegrationStatus from "models/IntegrationStatus";
 
 import { EditorBox } from "components/Forms/Form.style";
 
 function BaseForm() {
   const { t } = useTranslation();
+  const integrationStatus = useSelector(
+    (state) => state.app.config.integrationStatus
+  );
   const { values, errors, touched, setFieldValue } = useFormikContext();
 
   const uploadProps = {
@@ -63,6 +68,11 @@ function BaseForm() {
             <Select.Option key={2} value="Sugestão">
               Sugestão
             </Select.Option>
+            {integrationStatus === IntegrationStatus.INTEGRATION && (
+              <Select.Option key={2} value="Validação">
+                Validação
+              </Select.Option>
+            )}
           </Select>
         </div>
         {errors.category && touched.category && (
