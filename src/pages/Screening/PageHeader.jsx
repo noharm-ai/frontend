@@ -1,6 +1,6 @@
 import styled from "styled-components/macro";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import {
@@ -26,6 +26,7 @@ import ClinicalNotesSchedule from "containers/Forms/ClinicalNotes/ScheduleForm";
 import ClinicalNotesCustomForm from "containers/Forms/ClinicalNotes/CustomForm";
 import FormClinicalAlert from "containers/Forms/ClinicalAlert";
 import { getErrorMessageFromException } from "utils/errorHandler";
+import pageTimer from "utils/pageTimer";
 
 import { ScreeningHeader } from "components/Screening/index.style";
 
@@ -77,6 +78,23 @@ export default function PageHeader({
     delay: 150,
     config: config.slow,
   });
+
+  useEffect(() => {
+    if (!window.noharm) {
+      window.noharm = {};
+    }
+    if (!window.noharm.pageTimer) {
+      window.noharm.pageTimer = pageTimer({ debug: false });
+    }
+
+    window.noharm.pageTimer.start();
+
+    return () => {
+      if (window.noharm?.pageTimer) {
+        window.noharm.pageTimer.stop();
+      }
+    };
+  }, []); // eslint-disable-line
 
   const hasPrimaryCare = featureService.hasPrimaryCare();
   const hasUncheckPermission =
