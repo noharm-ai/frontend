@@ -15,6 +15,7 @@ const mapStateToProps = ({ prescriptions, user }) => ({
     content: prescriptions.single.data,
   },
   type: "conciliation",
+  userId: user.account.userId,
   security: security(user.account.roles),
   featureService: FeatureService(user.account.features),
 });

@@ -186,6 +186,7 @@ export const checkScreeningThunk =
         .setStatus({
           idPrescription,
           status,
+          evaluationTime: window.noharm?.pageTimer?.getCurrentTime(),
         })
         .catch(errorHandler);
 
