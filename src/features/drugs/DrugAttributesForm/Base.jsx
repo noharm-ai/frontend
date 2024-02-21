@@ -391,7 +391,6 @@ function BaseForm({ data }) {
             placeholder="Selecione a unidade da concentração"
             onChange={(value) => {
               setFieldValue("amountUnit", value || null);
-              console.log("change", value);
             }}
             value={values.amountUnit}
             allowClear

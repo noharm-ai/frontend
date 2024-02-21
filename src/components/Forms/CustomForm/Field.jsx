@@ -162,7 +162,7 @@ export default function Field({ question, values, setFieldValue }) {
       >
         <Row gutter={[24, 24]}>
           {question.options.map((option) => (
-            <Col span={12}>
+            <Col span={12} key={option.id}>
               <Checkbox style={{ fontWeight: 700 }} value={option.id}>
                 {option.label}
               </Checkbox>

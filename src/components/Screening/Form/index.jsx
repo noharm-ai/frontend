@@ -19,7 +19,6 @@ export default function DrugForm({
   const [updatedAtState, setUpdatedAtState] = useState(null);
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  console.log("values", values);
 
   const saveForm = (data) => {
     setLoading(true);
