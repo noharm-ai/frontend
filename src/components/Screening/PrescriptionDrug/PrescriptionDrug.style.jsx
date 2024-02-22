@@ -49,6 +49,13 @@ export const ToolBox = styled.div`
   }
 
   .viz-mode {
+    .btn-order {
+      transition: transform 0.3s ${timingFunctions("easeOutQuint")};
+
+      &.order-desc {
+        transform: rotate(180deg);
+      }
+    }
   }
 `;
 

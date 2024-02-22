@@ -9,6 +9,7 @@ import { PREFERENCES_TYPE } from "utils/memory";
 const initialState = {
   prescription: {
     listType: "default",
+    listOrder: "asc",
   },
   app: {
     initialPage: "/priorizacao/pacientes/cards",
@@ -44,6 +45,9 @@ const preferencesSlice = createSlice({
     setPrescriptionListType(state, action) {
       state.prescription.listType = action.payload;
     },
+    setPrescriptionListOrder(state, action) {
+      state.prescription.listOrder = action.payload;
+    },
     setInitialPage(state, action) {
       state.app.initialPage = action.payload;
     },
@@ -63,6 +67,7 @@ export const {
   reset,
   setSavedPreferences,
   setPrescriptionListType,
+  setPrescriptionListOrder,
   setInitialPage,
 } = preferencesSlice.actions;
 

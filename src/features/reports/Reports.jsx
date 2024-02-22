@@ -120,7 +120,7 @@ export default function Reports() {
           <Spin spinning={status === "loading"}>
             <Row type="flex" gutter={[20, 20]}>
               {internalReports.map((reportData, index) => (
-                <>
+                <React.Fragment key={index}>
                   {(reportData.visible ||
                     sec.isAdmin() ||
                     sec.isTraining()) && (
@@ -134,7 +134,7 @@ export default function Reports() {
                       />
                     </Col>
                   )}
-                </>
+                </React.Fragment>
               ))}
 
               {externalList.map((reportData, index) => (
