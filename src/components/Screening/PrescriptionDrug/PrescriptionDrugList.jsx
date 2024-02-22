@@ -147,6 +147,9 @@ export default function PrescriptionDrugList({
   const prescriptionListType = useSelector(
     (state) => state.preferences.prescription.listType
   );
+  const prescriptionListOrder = useSelector(
+    (state) => state.preferences.prescription.listOrder
+  );
   const filters = useSelector((state) => state.prescriptionv2.filters);
   const { t } = useTranslation();
 
@@ -405,23 +408,35 @@ export default function PrescriptionDrugList({
       );
     }
 
-    return dataSource.map((ds, index) => (
-      <div key={index}>
-        {group.indexOf(`${ds.key}`) !== -1 && (
-          <PrescriptionCollapse
-            bordered
-            defaultActiveKey={headers[ds.key].status === "s" ? [] : ["1"]}
-            items={getCollapsePrescriptionItems(ds)}
-          ></PrescriptionCollapse>
-        )}
-      </div>
-    ));
+    const sortDs = (order) => {
+      if (order === "desc") {
+        return (a, b) =>
+          `${headers[b.key].date}`.localeCompare(`${headers[a.key].date}`);
+      }
+
+      return (a, b) =>
+        `${headers[a.key].date}`.localeCompare(`${headers[b.key].date}`);
+    };
+
+    return dataSource
+      .sort(sortDs(prescriptionListOrder))
+      .map((ds, index) => (
+        <div key={index}>
+          {group.indexOf(`${ds.key}`) !== -1 && (
+            <PrescriptionCollapse
+              bordered
+              defaultActiveKey={headers[ds.key].status === "s" ? [] : ["1"]}
+              items={getCollapsePrescriptionItems(ds)}
+            ></PrescriptionCollapse>
+          )}
+        </div>
+      ));
   };
 
   if (!aggregated || security.hasCpoe()) {
     return (
       <>
-        <Filters />
+        <Filters showPrescriptionOrder={false} />
 
         {table(!isEmpty(dataSource) ? dataSource[0] : [])}
       </>
@@ -478,7 +493,7 @@ export default function PrescriptionDrugList({
   });
 
   const getGroups = (groups) => {
-    if (featureService.hasPrimaryCare()) {
+    if (prescriptionListOrder === "desc") {
       return Object.keys(groups).sort().reverse();
     }
 
@@ -497,7 +512,7 @@ export default function PrescriptionDrugList({
 
   return (
     <>
-      <Filters />
+      <Filters showPrescriptionOrder />
 
       {getGroups(groups).map((g) => (
         <GroupCollapse
