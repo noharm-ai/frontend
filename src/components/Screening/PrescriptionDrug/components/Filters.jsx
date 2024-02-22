@@ -117,7 +117,13 @@ export default function Filters({ showPrescriptionOrder }) {
           </Radio.Group>
         </Tooltip>
         {showPrescriptionOrder && (
-          <Tooltip title="Alterar ordenação das prescrições">
+          <Tooltip
+            title={
+              prescriptionListOrder === "asc"
+                ? "Ordenar prescriçoes por Data Decrescente"
+                : "Ordenar prescriçoes por Data Crescente"
+            }
+          >
             <Button
               className={`btn-order ${
                 prescriptionListOrder === "desc" ? "order-desc" : "order-asc"
