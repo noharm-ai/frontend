@@ -1,27 +1,32 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { FilterOutlined } from "@ant-design/icons";
+import { FilterOutlined, CaretUpOutlined } from "@ant-design/icons";
 import { Affix } from "antd";
 
 import Tag from "components/Tag";
 import Dropdown from "components/Dropdown";
+import Button from "components/Button";
 import { Radio } from "components/Inputs";
 import Tooltip from "components/Tooltip";
 import { setPrescriptionFilters } from "features/prescription/PrescriptionSlice";
 import {
   setPrescriptionListType,
+  setPrescriptionListOrder,
   savePreferences,
 } from "features/preferences/PreferencesSlice";
 
 import { ToolBox } from "../PrescriptionDrug.style";
 
-export default function Filters() {
+export default function Filters({ showPrescriptionOrder }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const filters = useSelector((state) => state.prescriptionv2.filters);
   const prescriptionListType = useSelector(
     (state) => state.preferences.prescription.listType
+  );
+  const prescriptionListOrder = useSelector(
+    (state) => state.preferences.prescription.listOrder
   );
 
   const filterOptions = () => {
@@ -70,6 +75,13 @@ export default function Filters() {
     }
   };
 
+  const togglePrescriptionOrder = () => {
+    dispatch(
+      setPrescriptionListOrder(prescriptionListOrder === "asc" ? "desc" : "asc")
+    );
+    dispatch(savePreferences());
+  };
+
   return (
     <ToolBox>
       <Affix offsetTop={50}>
@@ -104,6 +116,25 @@ export default function Filters() {
             <Radio.Button value="condensed">Condensado</Radio.Button>
           </Radio.Group>
         </Tooltip>
+        {showPrescriptionOrder && (
+          <Tooltip
+            title={
+              prescriptionListOrder === "asc"
+                ? "Ordenar prescriçoes por Data Decrescente"
+                : "Ordenar prescriçoes por Data Crescente"
+            }
+          >
+            <Button
+              className={`btn-order ${
+                prescriptionListOrder === "desc" ? "order-desc" : "order-asc"
+              }`}
+              shape="circle"
+              icon={<CaretUpOutlined />}
+              onClick={() => togglePrescriptionOrder()}
+              style={{ marginLeft: "15px" }}
+            />
+          </Tooltip>
+        )}
       </div>
     </ToolBox>
   );

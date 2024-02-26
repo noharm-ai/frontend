@@ -1,6 +1,4 @@
 export const filterConversionList = (data, filters) => {
-  console.log("filters", filters);
-
   if (!filters) return data;
 
   return data.filter((i) => {

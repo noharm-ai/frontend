@@ -27,7 +27,7 @@ export default function Modal({
       width="90%"
       footer={null}
       style={{ top: "10px", height: "100vh" }}
-      bodyStyle={{ padding: 0 }}
+      styles={{ body: { padding: 0 } }}
     >
       <ClinicalNotes />
     </DefaultModal>
