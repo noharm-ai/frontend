@@ -137,6 +137,26 @@ export default function SaveModal({
                   Altura
                 </Tag>
               </Tooltip>
+              <Tooltip title="Clique para adicionar o IMC">
+                <Tag
+                  onClick={() => addVariable("{{imc_paciente}}")}
+                  style={{ cursor: "pointer" }}
+                  color="geekblue"
+                >
+                  IMC
+                </Tag>
+              </Tooltip>
+              <Tooltip title="Clique para adicionar a Superfície Corporal">
+                <Tag
+                  onClick={() =>
+                    addVariable("{{superficie_corporal_paciente}}")
+                  }
+                  style={{ cursor: "pointer" }}
+                  color="geekblue"
+                >
+                  Superfície Corporal
+                </Tag>
+              </Tooltip>
               <Tooltip title="Clique para adicionar a lista de Alergias do paciente">
                 <Tag
                   onClick={() => addVariable("{{alergias}}")}
