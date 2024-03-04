@@ -598,6 +598,14 @@ export const expandedRowRender = (bag) => (record) => {
             {record.doseWeight}
           </Descriptions.Item>
         )}
+        {record.doseBodySurface && (
+          <Descriptions.Item
+            label={bag.t("prescriptionDrugList.exrDoseBodySurface")}
+            span={3}
+          >
+            {record.doseBodySurface}
+          </Descriptions.Item>
+        )}
         {record.recommendation && (
           <Descriptions.Item label={bag.t("tableHeader.observation")} span={3}>
             <RichTextView text={record.recommendation} />

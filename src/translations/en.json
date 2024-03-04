@@ -389,6 +389,7 @@
     "exrPeriodBtn": "View period",
     "exrTime": "Time:",
     "exrDoseKg": "Dose / Kg:",
+    "exrDoseBodySurface": "Dose / Body Surface:",
     "exrMedicalNotes": "Medical notes:",
     "exrNotesPrevious": "Notes (previous prescription):",
     "exrNotes": "Notes:",
