@@ -22,7 +22,7 @@ import Dropdown from "components/Dropdown";
 import Alert from "components/Alert";
 import RichTextView from "components/RichTextView";
 import InterventionStatus from "models/InterventionStatus";
-import { Select } from "components/Inputs";
+import { SelectMultiline } from "components/Inputs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 
 import { PeriodTags } from "./index.style";
@@ -412,6 +412,11 @@ const DrugTags = ({ drug, t }) => (
         <Tag color="cyan">{t("drugTags.q")}</Tag>
       </Tooltip>
     )}
+    {drug.dialyzable && (
+      <Tooltip title={t("drugTags.dialyzableHint")}>
+        <Tag color="blue">{t("drugTags.dialyzable")}</Tag>
+      </Tooltip>
+    )}
   </span>
 );
 
@@ -598,6 +603,14 @@ export const expandedRowRender = (bag) => (record) => {
             {record.doseWeight}
           </Descriptions.Item>
         )}
+        {record.doseBodySurface && (
+          <Descriptions.Item
+            label={bag.t("prescriptionDrugList.exrDoseBodySurface")}
+            span={3}
+          >
+            {record.doseBodySurface}
+          </Descriptions.Item>
+        )}
         {record.recommendation && (
           <Descriptions.Item label={bag.t("tableHeader.observation")} span={3}>
             <RichTextView text={record.recommendation} />
@@ -743,17 +756,23 @@ const drug = (bag, addkey, title) => ({
     );
 
     return (
-      <Popover content={content} title="Ver medicamento" mouseEnterDelay={0.3}>
-        <TableLink
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="table-link"
+      <>
+        <Popover
+          content={content}
+          title="Ver medicamento"
+          mouseEnterDelay={0.3}
         >
-          {record.drug}
-        </TableLink>
+          <TableLink
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="table-link"
+          >
+            {record.drug}
+          </TableLink>
+        </Popover>
         <DrugTags drug={record} t={bag.t} />
-      </Popover>
+      </>
     );
   },
 });
@@ -961,15 +980,36 @@ const actionColumns = (bag) => [
   },
 ];
 
+const filterOption = (input, option) => {
+  let found = false;
+
+  if (option.children && option.children.length) {
+    option.children.forEach((o) => {
+      if (o.props.children) {
+        let data = Array.isArray(o.props.children)
+          ? o.props.children.join(" ").toLowerCase()
+          : o.props.children.toLowerCase();
+
+        if (data.includes(input.toLowerCase())) {
+          found = true;
+        }
+      }
+    });
+  }
+
+  return found;
+};
+
 const relationColumn = (bag) => ({
   title: "Prescrição vigente",
   width: "45%",
   render: (text, prescription) => {
     return (
-      <Select
+      <SelectMultiline
         allowClear
         showSearch
         optionFilterProp="children"
+        filterOption={filterOption}
         style={{ width: "100%" }}
         placeholder="Relação com a prescrição vigente"
         defaultValue={prescription.conciliaRelationId}
@@ -993,7 +1033,7 @@ const relationColumn = (bag) => ({
             frequency,
             recommendation,
           }) => (
-            <Select.Option
+            <SelectMultiline.Option
               key={idPrescriptionDrug}
               value={idPrescriptionDrug}
               style={{ overflow: "auto", whiteSpace: "inherit" }}
@@ -1007,10 +1047,10 @@ const relationColumn = (bag) => ({
               <span className="extra-info" style={{ fontSize: "12px" }}>
                 Obs.: {recommendation || "-"}
               </span>
-            </Select.Option>
+            </SelectMultiline.Option>
           )
         )}
-      </Select>
+      </SelectMultiline>
     );
   },
 });

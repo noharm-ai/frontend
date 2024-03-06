@@ -85,6 +85,10 @@ export default function SecondaryFilters() {
                 Controlados
               </Select.Option>
 
+              <Select.Option key="dialisavel" value="dialisavel">
+                Dialisável
+              </Select.Option>
+
               <Select.Option key="idoso" value="idoso">
                 MPI
               </Select.Option>
@@ -119,6 +123,15 @@ export default function SecondaryFilters() {
               </Select.Option>
               <Select.Option key="renal" value="renal">
                 Nefrotóxico
+              </Select.Option>
+              <Select.Option key="risco_queda" value="risco_queda">
+                Risco de Queda
+              </Select.Option>
+              <Select.Option key="lactante" value="lactante">
+                Risco na Lactação
+              </Select.Option>
+              <Select.Option key="gestante" value="gestante">
+                Risco na Gestação
               </Select.Option>
             </Select.OptGroup>
           </Select>

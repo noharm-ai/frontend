@@ -315,7 +315,9 @@
     "substanceClass": "Substance Class",
     "filters": "Filters",
     "subject": "Subject",
-    "message": "Message"
+    "message": "Message",
+    "lactating": "Lactating",
+    "pregnant": "Pregnant"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
@@ -359,7 +361,9 @@
     "c": "C",
     "cHint": "Controlled",
     "q": "CH",
-    "qHint": "Chemotherapeutic"
+    "qHint": "Chemotherapeutic",
+    "dialyzable": "D",
+    "dialyzableHint": "Dialyzable Medication: The dosage must be adjusted for dialysis patients"
   },
   "prescriptionDrugList": {
     "addIntervention": "Add intervention",
@@ -389,6 +393,7 @@
     "exrPeriodBtn": "View period",
     "exrTime": "Time:",
     "exrDoseKg": "Dose / Kg:",
+    "exrDoseBodySurface": "Dose / Body Surface:",
     "exrMedicalNotes": "Medical notes:",
     "exrNotesPrevious": "Notes (previous prescription):",
     "exrNotes": "Notes:",

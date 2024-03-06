@@ -236,16 +236,7 @@ export default function Layout({
             {theme === "boxed" ? <Box {...props}>{children}</Box> : children}
           </ErrorBoundary>
         </Content>
-        <Footer>
-          {appInfo.copyright} &nbsp;
-          <a
-            href={process.env.REACT_APP_UPDOWN_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src="/updown.png" width="12px" alt="updown logo" />
-          </a>
-        </Footer>
+        <Footer>{appInfo.copyright}</Footer>
         <Drawer
           open={supportDrawerOpen}
           size="large"

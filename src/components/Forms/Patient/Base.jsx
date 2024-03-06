@@ -23,6 +23,8 @@ export default function Base({ security }) {
     birthdate,
     skinColor,
     dischargeDate,
+    lactating,
+    pregnant,
   } = values;
   const layout = { label: 6, input: 16 };
   const { t } = useTranslation();
@@ -88,8 +90,8 @@ export default function Base({ security }) {
             }}
             value={dialysis}
             onChange={(value) => setFieldValue("dialysis", value)}
+            allowClear
           >
-            <Select.Option value={null}>Não informado</Select.Option>
             <Select.Option value="c">Contínua</Select.Option>
             <Select.Option value="v">Convencional</Select.Option>
             <Select.Option value="x">Estendida</Select.Option>
@@ -114,8 +116,8 @@ export default function Base({ security }) {
             }}
             value={gender}
             onChange={(value) => setFieldValue("gender", value)}
+            allowClear
           >
-            <Select.Option value={null}>Não informado</Select.Option>
             <Select.Option value="M">Masculino</Select.Option>
             <Select.Option value="F">Feminino</Select.Option>
           </Select>
@@ -137,13 +139,57 @@ export default function Base({ security }) {
             }}
             value={skinColor}
             onChange={(value) => setFieldValue("skinColor", value)}
+            allowClear
           >
-            <Select.Option value={null}>Não informado</Select.Option>
             <Select.Option value="Amarela">Amarela</Select.Option>
             <Select.Option value="Branca">Branca</Select.Option>
             <Select.Option value="Índio">Índio</Select.Option>
             <Select.Option value="Negra">Negra</Select.Option>
             <Select.Option value="Parda">Parda</Select.Option>
+          </Select>
+        </Col>
+      </Box>
+
+      <Box hasError={errors.lactating}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
+            <Tooltip title="">{t("labels.lactating")}:</Tooltip>
+          </Heading>
+        </Col>
+        <Col xs={layout.input}>
+          <Select
+            optionFilterProp="children"
+            style={{
+              marginLeft: 10,
+              width: "100%",
+            }}
+            value={lactating}
+            onChange={(value) => setFieldValue("lactating", value)}
+          >
+            <Select.Option value={true}>Sim</Select.Option>
+            <Select.Option value={false}>Não</Select.Option>
+          </Select>
+        </Col>
+      </Box>
+
+      <Box hasError={errors.pregnant}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
+            <Tooltip title="">{t("labels.pregnant")}:</Tooltip>
+          </Heading>
+        </Col>
+        <Col xs={layout.input}>
+          <Select
+            optionFilterProp="children"
+            style={{
+              marginLeft: 10,
+              width: "100%",
+            }}
+            value={pregnant}
+            onChange={(value) => setFieldValue("pregnant", value)}
+          >
+            <Select.Option value={true}>Sim</Select.Option>
+            <Select.Option value={false}>Não</Select.Option>
           </Select>
         </Col>
       </Box>

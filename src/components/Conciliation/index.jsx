@@ -70,7 +70,7 @@ export default function Screening({ fetchScreeningById, isFetching, error }) {
         </>
       )}
       <PrescriptionDrugForm />
-      <BackTop />
+      <BackTop style={{ right: 80, bottom: 25 }} />
     </>
   );
 }

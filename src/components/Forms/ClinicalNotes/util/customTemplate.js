@@ -5,6 +5,7 @@ import {
   signatureTemplate,
 } from "./templates";
 import { uniq } from "utils/lodash";
+import { getIMC, getCorporalSurface } from "utils";
 
 export const getCustomClinicalNote = (
   prescription,
@@ -39,6 +40,17 @@ export const getCustomClinicalNote = (
     .replace("{{peso_paciente}}", getWeight(prescription.data.weight))
     .replace("{{altura_paciente}}", getHeight(prescription.data.height))
     .replace("{{idade_paciente}}", getAge(prescription.data.age))
+    .replace(
+      "{{imc_paciente}}",
+      getPatientIMC(prescription.data.weight, prescription.data.height)
+    )
+    .replace(
+      "{{superficie_corporal_paciente}}",
+      getPatientCorporalSurface(
+        prescription.data.weight,
+        prescription.data.height
+      )
+    )
     .replace("{{exames}}", getExams(prescription.data.exams))
     .replace("{{alergias}}", getAllergies(prescription.data.notesAllergies))
     .replace(
@@ -163,4 +175,20 @@ const getDrugsByAttribute = (drugs, attr, params = {}) => {
   }
 
   return list.join("\n");
+};
+
+const getPatientIMC = (weight, height) => {
+  if (weight && height) {
+    return `${getIMC(weight, height).toFixed(2)} kg/m²`;
+  }
+
+  return "Não informado";
+};
+
+const getPatientCorporalSurface = (weight, height) => {
+  if (weight && height) {
+    return `${getCorporalSurface(weight, height).toFixed(3)} m²`;
+  }
+
+  return "Não informado";
 };

@@ -25,8 +25,31 @@ export const Select = styled(AntSelect)`
     display: inline-block;
   }
 
-  .ant-select-selection-selected-value {
+  .ant-select-selection-item {
     .extra-info {
+      display: none;
+    }
+  }
+`;
+
+export const SelectMultiline = styled(Select)`
+  height: 60px;
+
+  .ant-select-selection-item {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3 !important;
+    align-items: flex-start;
+
+    .extra-info {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 500px;
+    }
+
+    br {
       display: none;
     }
   }

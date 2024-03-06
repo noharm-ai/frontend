@@ -315,7 +315,9 @@
     "substanceClass": "Classe de Substância",
     "filters": "Filtros",
     "subject": "Assunto",
-    "message": "Mensagem"
+    "message": "Mensagem",
+    "lactating": "Lactante",
+    "pregnant": "Gestante"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
@@ -359,7 +361,9 @@
     "c": "C",
     "cHint": "Controlado",
     "q": "Q",
-    "qHint": "Quimioterápico"
+    "qHint": "Quimioterápico",
+    "dialyzable": "D",
+    "dialyzableHint": "Medicamento Dialisável: A posologia deve estar ajustada para paciente dialítico"
   },
   "prescriptionDrugList": {
     "addIntervention": "Enviar intervenção",
@@ -389,6 +393,7 @@
     "exrPeriodBtn": "Visualizar período de uso",
     "exrTime": "Horários:",
     "exrDoseKg": "Dose / Kg:",
+    "exrDoseBodySurface": "Dose / Superfície Corporal:",
     "exrMedicalNotes": "Observação médica:",
     "exrNotesPrevious": "Anotação (prescrição anterior):",
     "exrNotes": "Anotação:",
