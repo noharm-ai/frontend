@@ -412,6 +412,11 @@ const DrugTags = ({ drug, t }) => (
         <Tag color="cyan">{t("drugTags.q")}</Tag>
       </Tooltip>
     )}
+    {drug.dialyzable && (
+      <Tooltip title={t("drugTags.dialyzableHint")}>
+        <Tag color="blue">{t("drugTags.dialyzable")}</Tag>
+      </Tooltip>
+    )}
   </span>
 );
 
@@ -751,17 +756,23 @@ const drug = (bag, addkey, title) => ({
     );
 
     return (
-      <Popover content={content} title="Ver medicamento" mouseEnterDelay={0.3}>
-        <TableLink
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="table-link"
+      <>
+        <Popover
+          content={content}
+          title="Ver medicamento"
+          mouseEnterDelay={0.3}
         >
-          {record.drug}
-        </TableLink>
+          <TableLink
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="table-link"
+          >
+            {record.drug}
+          </TableLink>
+        </Popover>
         <DrugTags drug={record} t={bag.t} />
-      </Popover>
+      </>
     );
   },
 });

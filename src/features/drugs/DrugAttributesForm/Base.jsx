@@ -116,6 +116,18 @@ function BaseForm({ data }) {
           >
             Quimioterápico
           </Checkbox>
+
+          <Checkbox
+            onChange={({ target }) =>
+              setFieldValue("dialyzable", !target.value)
+            }
+            value={values.dialyzable || false}
+            checked={values.dialyzable}
+            name="dialyzable"
+            id="dialyzable"
+          >
+            Dialisável
+          </Checkbox>
         </div>
       </div>
 
@@ -420,6 +432,66 @@ function BaseForm({ data }) {
         {errors.amountUnit && touched.amountUnit && (
           <div className="form-error">{errors.amountUnit}</div>
         )}
+      </div>
+
+      <div className={`form-row`}>
+        <div className="form-label">
+          <label>Risco na Lactação:</label>
+        </div>
+        <div className="form-input">
+          <Select
+            placeholder="Selecione a classificação"
+            onChange={(value) => {
+              setFieldValue("lactating", value || null);
+            }}
+            value={values.lactating}
+            allowClear
+            style={{ maxWidth: "300px" }}
+          >
+            <Select.Option value="1" key="1">
+              Baixo
+            </Select.Option>
+            <Select.Option value="2" key="2">
+              Médio
+            </Select.Option>
+            <Select.Option value="3" key="3">
+              Alto
+            </Select.Option>
+          </Select>
+        </div>
+      </div>
+
+      <div className={`form-row`}>
+        <div className="form-label">
+          <label>Risco na Gestação:</label>
+        </div>
+        <div className="form-input">
+          <Select
+            placeholder="Selecione a classificação"
+            onChange={(value) => {
+              setFieldValue("pregnant", value || null);
+            }}
+            value={values.pregnant}
+            allowClear
+            style={{ maxWidth: "300px" }}
+          >
+            <Select.Option value="A" key="A">
+              A
+            </Select.Option>
+            <Select.Option value="B" key="B">
+              B
+            </Select.Option>
+            <Select.Option value="C" key="C">
+              C
+            </Select.Option>
+            <Select.Option value="D" key="D">
+              D
+            </Select.Option>
+            <Select.Option value="X" key="X">
+              X
+            </Select.Option>
+          </Select>
+        </div>
       </div>
     </>
   );

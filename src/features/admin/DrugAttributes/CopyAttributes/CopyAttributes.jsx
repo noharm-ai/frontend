@@ -149,6 +149,10 @@ function CopyAttributes({ open, setOpen, reload, ...props }) {
                       Controlados
                     </Select.Option>
 
+                    <Select.Option key="dialisavel" value="dialisavel">
+                      Dialisável
+                    </Select.Option>
+
                     <Select.Option key="idoso" value="idoso">
                       MPI
                     </Select.Option>
@@ -183,6 +187,16 @@ function CopyAttributes({ open, setOpen, reload, ...props }) {
                     </Select.Option>
                     <Select.Option key="renal" value="renal">
                       Nefrotóxico
+                    </Select.Option>
+
+                    <Select.Option key="risco_queda" value="risco_queda">
+                      Risco de Queda
+                    </Select.Option>
+                    <Select.Option key="lactante" value="lactante">
+                      Risco Lactante
+                    </Select.Option>
+                    <Select.Option key="gestante" value="gestante">
+                      Risco Gestante
                     </Select.Option>
                   </Select.OptGroup>
                 </Select>

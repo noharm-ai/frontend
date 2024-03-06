@@ -40,6 +40,7 @@ export default function Patient({
   security,
   featureService,
   dischargeDate,
+  patient,
   ...props
 }) {
   const { t } = useTranslation();
@@ -56,6 +57,8 @@ export default function Patient({
     skinColor,
     gender,
     dischargeDate,
+    lactating: patient?.lactating,
+    pregnant: patient?.pregnant,
   };
 
   const submit = (params) => {

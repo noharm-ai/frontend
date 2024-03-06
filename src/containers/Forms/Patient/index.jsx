@@ -22,8 +22,9 @@ const mapStateToProps = ({ prescriptions, patients, user }) => ({
   notesInfo: prescriptions.single.data.notesInfo,
   notesInfoDate: prescriptions.single.data.notesInfoDate,
   dischargeDate: prescriptions.single.data.dischargeDate,
-  security: security(user.account.roles),
-  featureService: FeatureService(user.account.features),
+  patient: prescriptions.single.data.patient,
+  security: security(user.account.roles), //todo:remove
+  featureService: FeatureService(user.account.features), //todo:remove
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
