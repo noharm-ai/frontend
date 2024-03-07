@@ -2,7 +2,8 @@ name: E2E - Test
 on: workflow_dispatch
 
 jobs:
-  backend:
+  test:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -35,11 +36,7 @@ jobs:
         run: |
           python mobile.py &
           sleep 10
-  test:
-    needs: backend
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
+      - name: Setup E2E
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
