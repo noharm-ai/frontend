@@ -24,3 +24,8 @@ yarn-debug.log*
 yarn-error.log*
 
 DEVELOPMENT.md
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth
