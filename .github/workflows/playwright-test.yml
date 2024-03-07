@@ -55,8 +55,8 @@ jobs:
           REACT_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
           REACT_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
           REACT_APP_URL: http://localhost:3000
-          TEST_USER: noadmin
-          TEST_USER_PASSWORD: noadmin
+          TEST_USER: e2e@e2e.com
+          TEST_USER_PASSWORD: e2etest
       - uses: actions/upload-artifact@v4
         if: always()
         with:
