@@ -1,0 +1,35 @@
+name: E2E - Test
+on: workflow_dispatch
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: npx playwright test
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL_TEST }}
+          REACT_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_TEST }}
+          REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
+          REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
+          REACT_APP_SUPPORT_LINK: ${{ secrets.REACT_APP_SUPPORT_LINK }}
+          REACT_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
+          REACT_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
+          REACT_APP_URL: ${{ secrets.REACT_APP_URL_TEST }}
+          TEST_USER: ${{ secrets.TEST_USER }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30

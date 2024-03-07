@@ -16,6 +16,7 @@
     "date-fns": "^2.29.1",
     "dayjs": "^1.11.9",
     "dompurify": "^2.3.10",
+    "dotenv": "^16.4.5",
     "echarts": "^5.4.3",
     "formik": "^2.2.9",
     "ifvisible.js": "^1.0.6",
@@ -69,5 +70,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.25"
   }
 }
