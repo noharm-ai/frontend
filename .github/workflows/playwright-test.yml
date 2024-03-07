@@ -2,6 +2,36 @@ name: E2E - Test
 on: workflow_dispatch
 
 jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:11.6
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: noharm
+        ports:
+          - 5432:5432
+    steps:
+      run: |
+        git clone https://github.com/noharm-ai/backend
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Setup Python
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Setup PostgreSQL
+        run: |
+          git clone https://github.com/noharm-ai/database
+          psql -h localhost -U postgres -d noharm -a -f database/noharm-public.sql -v ON_ERROR_STOP=1
+          psql -h localhost -U postgres -d noharm -a -f database/noharm-create.sql -v ON_ERROR_STOP=1
+          psql -h localhost -U postgres -d noharm -a -f database/noharm-newuser.sql -v ON_ERROR_STOP=1
+          psql -h localhost -U postgres -d noharm -a -f database/noharm-triggers.sql -v ON_ERROR_STOP=1
+          psql -h localhost -U postgres -d noharm -a -f database/noharm-insert.sql -v ON_ERROR_STOP=1
+      - name: Run Backend
+        run: python mobile.py
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -17,16 +47,16 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
         env:
-          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL_TEST }}
+          REACT_APP_API_URL: http://localhost:5000
           REACT_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_TEST }}
           REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
           REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
           REACT_APP_SUPPORT_LINK: ${{ secrets.REACT_APP_SUPPORT_LINK }}
           REACT_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
           REACT_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
-          REACT_APP_URL: ${{ secrets.REACT_APP_URL_TEST }}
-          TEST_USER: ${{ secrets.TEST_USER }}
-          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          REACT_APP_URL: http://localhost:3000
+          TEST_USER: noadmin
+          TEST_USER_PASSWORD: noadmin
       - uses: actions/upload-artifact@v4
         if: always()
         with:
