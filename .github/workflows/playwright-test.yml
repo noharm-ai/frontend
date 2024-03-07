@@ -32,7 +32,9 @@ jobs:
           psql -h localhost -U postgres -d noharm -a -f database/noharm-triggers.sql -v ON_ERROR_STOP=1
           psql -h localhost -U postgres -d noharm -a -f database/noharm-insert.sql -v ON_ERROR_STOP=1
       - name: Run Backend
-        run: python mobile.py
+        run: |
+          python mobile.py &
+          sleep 10
   test:
     needs: backend
     timeout-minutes: 60
