@@ -10,7 +10,7 @@ setup("login", async ({ page }) => {
   await page.getByPlaceholder("Senha").click();
   await page.getByPlaceholder("Senha").fill(process.env.TEST_USER_PASSWORD!);
   await page.getByRole("button", { name: "Acessar" }).click();
-  await expect(page.getByText("Usuário - Banco Teste")).toBeVisible();
+  await expect(page.getByText("E2E Test")).toBeVisible();
 
   await page.context().storageState({ path: authFile });
 });
