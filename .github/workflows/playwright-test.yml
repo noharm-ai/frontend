@@ -36,7 +36,6 @@ jobs:
         run: |
           python mobile.py &
           sleep 10
-      - name: Setup E2E
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
