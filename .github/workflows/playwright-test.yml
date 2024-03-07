@@ -13,8 +13,9 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      run: |
-        git clone https://github.com/noharm-ai/backend
+      - name: Checkout backend
+        run: |
+          git clone https://github.com/noharm-ai/backend
       - uses: actions/setup-python@v2
         with:
           python-version: 3.8
