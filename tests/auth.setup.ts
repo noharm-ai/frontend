@@ -15,5 +15,7 @@ setup("login", async ({ page }) => {
     page.getByRole("heading", { name: "Priorização por Pacientes" })
   ).toBeVisible();
 
+  await page.waitForTimeout(3000);
+
   await page.context().storageState({ path: authFile });
 });
