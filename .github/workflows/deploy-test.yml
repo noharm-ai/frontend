@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Checkout backend
         run: |
-          git clone --single-branch -branch develop https://github.com/noharm-ai/backend .
+          git clone --single-branch --branch develop https://github.com/noharm-ai/backend .
       - uses: actions/setup-python@v2
         with:
           python-version: 3.8
