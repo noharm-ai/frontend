@@ -69,11 +69,12 @@ jobs:
           retention-days: 30
   deploy:
     runs-on: ubuntu-latest
-    with:
-      node-version: 18.x
     steps:
       - name: checkout
         uses: actions/checkout@v4
+        uses: actions/setup-node@v4
+          with:
+            node-version: 18
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
