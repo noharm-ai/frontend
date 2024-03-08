@@ -48,6 +48,7 @@ export default defineConfig({
         ...devices["Desktop Firefox"],
         storageState: "playwright/.auth/user.json",
       },
+      testMatch: /.*\.multi\.spec\.ts/,
       dependencies: ["setup"],
     },
 
@@ -57,6 +58,7 @@ export default defineConfig({
         ...devices["Desktop Safari"],
         storageState: "playwright/.auth/user.json",
       },
+      testMatch: /.*\.multi\.spec\.ts/,
       dependencies: ["setup"],
     },
 
