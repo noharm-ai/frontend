@@ -68,7 +68,6 @@ jobs:
           path: playwright-report/
           retention-days: 30
   deploy:
-    needs: test
     runs-on: ubuntu-latest
     strategy:
       matrix:
