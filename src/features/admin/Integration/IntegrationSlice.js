@@ -10,6 +10,10 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  prescalc: {
+    status: "idle",
+    error: null,
+  },
 };
 
 export const refreshAgg = createAsyncThunk(
@@ -30,6 +34,19 @@ export const refreshPrescription = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.refreshPrescription(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const prescalc = createAsyncThunk(
+  "admin-integration/prescalc",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.integration.prescalc(params);
 
       return response;
     } catch (err) {
@@ -65,6 +82,15 @@ const integrationSlice = createSlice({
       })
       .addCase(refreshPrescription.rejected, (state, action) => {
         state.refreshPrescription.status = "failed";
+      })
+      .addCase(prescalc.pending, (state, action) => {
+        state.prescalc.status = "loading";
+      })
+      .addCase(prescalc.fulfilled, (state, action) => {
+        state.prescalc.status = "succeeded";
+      })
+      .addCase(prescalc.rejected, (state, action) => {
+        state.prescalc.status = "failed";
       });
   },
 });

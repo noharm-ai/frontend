@@ -202,6 +202,26 @@ api.integration.update = (params) =>
     ...setHeaders(),
   });
 
+api.integration.prescalc = (params) => {
+  if (params.cpoe) {
+    return instance.get(
+      `/static/${localStorage.getItem("schema")}/aggregate/${
+        params.id
+      }?cpoe=true`,
+      {
+        ...setHeaders(),
+      }
+    );
+  }
+
+  return instance.get(
+    `/static/${localStorage.getItem("schema")}/prescription/${params.id}`,
+    {
+      ...setHeaders(),
+    }
+  );
+};
+
 const methods = {
   ...api,
   getFrequencyList,
