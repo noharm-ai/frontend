@@ -4,6 +4,7 @@ import styled from "styled-components/macro";
 import { InputNumber } from "components/Inputs";
 import Heading from "components/Heading";
 import Descriptions from "components/Descriptions";
+import NumericValue from "components/NumericValue";
 
 const CalcDescriptions = styled(Descriptions)`
   .ant-descriptions-item-label {
@@ -70,7 +71,7 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
   const solution = (lAmount * lVol) / lTotalVol;
 
   const formatValue = (value) => {
-    return value.toFixed(4);
+    return <NumericValue value={value} decimalScale={4} />;
   };
 
   return (
