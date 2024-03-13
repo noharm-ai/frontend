@@ -28,6 +28,8 @@ const {
   prescriptionsCheckError,
   prescriptionsCheckSuccess,
 
+  prescriptionsReviewSuccess,
+
   prescriptionsSaveStart,
   prescriptionsSaveError,
   prescriptionsSaveSuccess,
@@ -206,6 +208,27 @@ export const checkScreeningThunk =
 
       dispatch(prescriptionsCheckSuccess(success));
       resolve(success);
+    });
+  };
+
+export const reviewPatientThunk =
+  (idPrescription, reviewType) => async (dispatch, getState) => {
+    return new Promise(async (resolve, reject) => {
+      const { data, error } = await api.prescription
+        .review({
+          idPrescription,
+          evaluationTime: window.noharm?.pageTimer?.getCurrentTime(),
+          reviewType,
+        })
+        .catch(errorHandler);
+
+      if (!isEmpty(error)) {
+        reject(error);
+        return;
+      }
+
+      dispatch(prescriptionsReviewSuccess(data.data));
+      resolve(data.data);
     });
   };
 

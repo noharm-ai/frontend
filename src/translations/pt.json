@@ -106,6 +106,8 @@
     "labelAlertsPlaceholder": "Selecione os alertas",
     "labelPatientStatusPlaceholder": "Selecione a situação do paciente",
     "iptSearchPlaceholder": "Buscar por paciente ou nº atendimento",
+    "labelPatientReviewType": "Revisão do Paciente",
+    "labelPatientReviewTypePlaceholder": "Selecione a situação da revisão do paciente",
     "clAge": "ID",
     "clAgeHint": "Idade",
     "clLength": "TI",
@@ -161,7 +163,9 @@
     "btnClinicalNotes": "Evolução",
     "btnSchedule": "Agendar Atendimento",
     "btnAlert": "Alerta",
-    "btnClose": "Fechar"
+    "btnClose": "Fechar",
+    "btnReview": "Revisar",
+    "btnReviewed": "Revisado"
   },
   "patientCard": {
     "patientData": "Paciente",
@@ -317,7 +321,8 @@
     "subject": "Assunto",
     "message": "Mensagem",
     "lactating": "Lactante",
-    "pregnant": "Gestante"
+    "pregnant": "Gestante",
+    "reviewed": "Revisado"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
@@ -594,7 +599,8 @@
     "LOCK_CHECKED_PRESCRIPTION": "Bloquear Desfazer Checagem",
     "DISABLE_SOLUTION_TAB": "Remover a aba de Soluções",
     "OAUTH": "OAUTH",
-    "CLINICAL_NOTES_NEW_FORMAT": "Evoluções - Nova formatação"
+    "CLINICAL_NOTES_NEW_FORMAT": "Evoluções - Nova formatação",
+    "PATIENT_REVISION": "Revisão do Paciente"
   },
 
   "featuresDescription": {
@@ -605,6 +611,7 @@
     "LOCK_CHECKED_PRESCRIPTION": "Bloqueia o botão Desfazer Checagem quando a checagem foi executada por outro usuário. Existe uma permissão (role) que pode ser concedida a um usuário que sobrepôe esta regra",
     "DISABLE_SOLUTION_TAB": "Exibe as Soluções na aba de Medicamentos",
     "OAUTH": "Habilita integração OAUTH (exige configuração extra)",
-    "CLINICAL_NOTES_NEW_FORMAT": "Ligar para hospitais com anony atualizado e processo novo da noharm care"
+    "CLINICAL_NOTES_NEW_FORMAT": "Ligar para hospitais com anony atualizado e processo novo da noharm care",
+    "PATIENT_REVISION": "Habilita a ação de revisão do paciente. A revisão é uma ação para indicar que o paciente sofreu uma avaliação extra. Normalmente utilizado no contexto onde a avaliação técnica é feita pela Checagem e a avaliação clínica é registrada pela ação de Revisão."
   }
 }

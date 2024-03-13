@@ -15,6 +15,8 @@ export const { Types, Creators } = createActions({
   prescriptionsCheckError: ["error"],
   prescriptionsCheckSuccess: ["success"],
 
+  prescriptionsReviewSuccess: ["success"],
+
   prescriptionsSaveStart: [""],
   prescriptionsSaveError: ["error"],
   prescriptionsSaveSuccess: ["data", "success"],
@@ -321,6 +323,22 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
   };
 };
 
+const reviewSuccess = (state = INITIAL_STATE, { success }) => {
+  return {
+    ...state,
+    single: {
+      ...state.single,
+      data: {
+        ...state.single.data,
+        review: {
+          ...state.single.data.review,
+          ...success,
+        },
+      },
+    },
+  };
+};
+
 const saveStart = (state = INITIAL_STATE) => ({
   ...state,
   single: {
@@ -612,6 +630,8 @@ const HANDLERS = {
   [Types.PRESCRIPTIONS_CHECK_START]: checkStart,
   [Types.PRESCRIPTIONS_CHECK_ERROR]: checkError,
   [Types.PRESCRIPTIONS_CHECK_SUCCESS]: checkSuccess,
+
+  [Types.PRESCRIPTIONS_REVIEW_SUCCESS]: reviewSuccess,
 
   [Types.PRESCRIPTIONS_SAVE_START]: saveStart,
   [Types.PRESCRIPTIONS_SAVE_ERROR]: saveError,

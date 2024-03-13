@@ -5,6 +5,7 @@ import security from "services/security";
 
 import {
   checkScreeningThunk,
+  reviewPatientThunk,
   incrementClinicalNotesThunk,
 } from "store/ducks/prescriptions/thunk";
 import PageHeader from "pages/Screening/PageHeader";
@@ -25,6 +26,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       checkScreening: checkScreeningThunk,
+      reviewPatient: reviewPatientThunk,
       incrementClinicalNotes: incrementClinicalNotesThunk,
     },
     dispatch

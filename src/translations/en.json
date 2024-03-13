@@ -106,6 +106,8 @@
     "labelAlertsPlaceholder": "Select alerts",
     "labelPatientStatusPlaceholder": "Select patient status",
     "iptSearchPlaceholder": "Search by patient or admission number",
+    "labelPatientReviewType": "Patient Review",
+    "labelPatientReviewTypePlaceholder": "Select patient review status",
     "clAge": "AG",
     "clAgeHint": "Age",
     "clLength": "LS",
@@ -161,7 +163,9 @@
     "btnClinicalNotes": "Clinical notes",
     "btnSchedule": "Schedule appointment",
     "btnAlert": "Alert",
-    "btnClose": "Close"
+    "btnClose": "Close",
+    "btnReview": "Review",
+    "btnReviewed": "Reviewed"
   },
   "patientCard": {
     "patientData": "Patient data",
@@ -317,7 +321,8 @@
     "subject": "Subject",
     "message": "Message",
     "lactating": "Lactating",
-    "pregnant": "Pregnant"
+    "pregnant": "Pregnant",
+    "reviewed": "Reviewed"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
@@ -592,7 +597,8 @@
     "SOLUTION_FREQUENCY": "Solution Frequency",
     "LOCK_CHECKED_PRESCRIPTION": "Lock Checked Prescription",
     "DISABLE_SOLUTION_TAB": "Remove Solutions tab",
-    "CLINICAL_NOTES_NEW_FORMAT": "Clinical Notes - New Format"
+    "CLINICAL_NOTES_NEW_FORMAT": "Clinical Notes - New Format",
+    "PATIENT_REVISION": "Patient Review"
   },
 
   "featuresDescription": {
@@ -602,6 +608,7 @@
     "SOLUTION_FREQUENCY": "Enables the frequency columns in the solutions list",
     "LOCK_CHECKED_PRESCRIPTION": "Disables the Undo Check button when the prescription was checked by another user",
     "DISABLE_SOLUTION_TAB": "Shows Solution itens in the Drugs tab",
-    "CLINICAL_NOTES_NEW_FORMAT": "Enable when anony updated and is using noharm care new annotation process"
+    "CLINICAL_NOTES_NEW_FORMAT": "Enable when anony updated and is using noharm care new annotation process",
+    "PATIENT_REVISION": "Enables the patient review action. Review is an action to indicate that the patient has undergone extra evaluation. Typically used in the context where the technical assessment is carried out by Checking and the clinical assessment is recorded by the Review action."
   }
 }

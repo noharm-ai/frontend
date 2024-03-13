@@ -610,6 +610,11 @@ api.prescription.setStatus = (params) =>
     ...setHeaders(),
   });
 
+api.prescription.review = (params) =>
+  instance.post(`/prescriptions/review`, params, {
+    ...setHeaders(),
+  });
+
 /**
  * substance namespace
  */

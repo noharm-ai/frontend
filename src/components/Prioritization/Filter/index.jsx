@@ -46,6 +46,7 @@ export default function Filter({
   account,
   privateFilters,
   publicFilters,
+  featureService,
 }) {
   const params = useParams();
   const location = useLocation();
@@ -80,6 +81,7 @@ export default function Filter({
         substances: filter.substances,
         substanceClasses: filter.substanceClasses,
         patientStatus: filter.patientStatus,
+        patientReviewType: filter.patientReviewType,
       };
       const mixedParams = { ...params, ...forceParams };
       const finalParams = {};
@@ -116,6 +118,7 @@ export default function Filter({
       filter.patientStatus,
       filter.substances,
       filter.substanceClasses,
+      filter.patientReviewType,
       prioritizationType,
       date,
     ]
@@ -172,6 +175,10 @@ export default function Filter({
 
   const onPatientStatusChange = (status) => {
     setScreeningListFilter({ patientStatus: status });
+  };
+
+  const onPatientReviewTypeChange = (type) => {
+    setScreeningListFilter({ patientReviewType: type });
   };
 
   const onCurrentDepartmentChange = (e) => {
@@ -254,6 +261,7 @@ export default function Filter({
       substances: [],
       substanceClasses: [],
       patientStatus: null,
+      patientReviewType: null,
     });
     setDate([dayjs(), null]);
   };
@@ -661,6 +669,49 @@ export default function Filter({
               </Box>
             </Col>
           </Row>
+
+          {featureService.hasPatientRevision() &&
+            (prioritizationType === "patient" ||
+              prioritizationType === "cards") && (
+              <Row gutter={0} style={{ marginTop: "10px" }}>
+                <Col md={24}>
+                  <Box>
+                    <Row gutter={0} style={{ width: "100%" }}>
+                      <Col md={19}>
+                        <Heading
+                          as="label"
+                          htmlFor="patientReviewType"
+                          size="14px"
+                        >
+                          {t("screeningList.labelPatientReviewType")}:
+                        </Heading>
+                        <Select
+                          id="patientReviewType"
+                          optionFilterProp="children"
+                          style={{ width: "100%" }}
+                          placeholder={t(
+                            "screeningList.labelPatientReviewTypePlaceholder"
+                          )}
+                          loading={segments.single.isFetching}
+                          value={filter.patientReviewType}
+                          onChange={onPatientReviewTypeChange}
+                          autoClearSearchValue={false}
+                          allowClear
+                        >
+                          <Select.Option value={0}>
+                            {t("tableHeader.pending")}
+                          </Select.Option>
+
+                          <Select.Option value={1}>
+                            {t("labels.reviewed")}
+                          </Select.Option>
+                        </Select>
+                      </Col>
+                    </Row>
+                  </Box>
+                </Col>
+              </Row>
+            )}
 
           <Row gutter={[20, 0]} style={{ marginTop: "20px" }}>
             <Col>
