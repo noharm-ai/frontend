@@ -21,7 +21,6 @@ import {
 } from "store/ducks/drugs/thunk";
 import { memoryFetchThunk, memorySaveThunk } from "store/ducks/memory/thunk";
 
-import security from "services/security";
 import Prioritization from "components/Prioritization";
 import {
   FILTER_PRIVATE_MEMORY_TYPE,
@@ -56,7 +55,7 @@ const mapStateToProps = ({
   frequencies: drugs.frequencies,
   prioritizationType: "cards",
   currentJourney: app.preferences.journey,
-  security: security(user.account.roles),
+  features: user.account.features,
   account: user.account,
   privateFilters: memory[FILTER_PRIVATE_MEMORY_TYPE]
     ? memory[FILTER_PRIVATE_MEMORY_TYPE].list

@@ -37,6 +37,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.CLINICAL_NOTES_NEW_FORMAT);
   };
 
+  const hasPatientRevision = () => {
+    return hasFeature(Feature.PATIENT_REVISION);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
@@ -46,6 +50,7 @@ const FeaturesService = (features) => {
     hasLockCheckedPrescription,
     hasDisableSolutionTab,
     hasClinicalNotesNewFormat,
+    hasPatientRevision,
   };
 };
 

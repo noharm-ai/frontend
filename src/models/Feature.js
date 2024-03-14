@@ -7,6 +7,7 @@ export default class Feature {
   static DISABLE_SOLUTION_TAB = "DISABLE_SOLUTION_TAB";
   static OAUTH = "OAUTH";
   static CLINICAL_NOTES_NEW_FORMAT = "CLINICAL_NOTES_NEW_FORMAT";
+  static PATIENT_REVISION = "PATIENT_REVISION";
 
   static getFeatures(t) {
     return [
@@ -53,6 +54,11 @@ export default class Feature {
         description: t(
           `featuresDescription.${Feature.CLINICAL_NOTES_NEW_FORMAT}`
         ),
+      },
+      {
+        id: Feature.PATIENT_REVISION,
+        label: t(`features.${Feature.PATIENT_REVISION}`),
+        description: t(`featuresDescription.${Feature.PATIENT_REVISION}`),
       },
     ];
   }

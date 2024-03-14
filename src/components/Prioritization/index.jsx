@@ -15,6 +15,7 @@ import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import { Row, Col } from "components/Grid";
 import InitialPage from "features/preferences/InitialPage/InitialPage";
+import FeatureService from "services/features";
 
 import Filter from "./Filter";
 import PrioritizationCard from "./Card";
@@ -35,8 +36,8 @@ export default function Prioritization({
   fetchFrequencies,
   checkScreening,
   prioritizationType,
-  security,
   siderCollapsed,
+  features,
   setJourney,
   currentJourney,
   ...restProps
@@ -44,6 +45,7 @@ export default function Prioritization({
   const [state, dispatch] = useReducer(reducer, initState());
   const { isFetching, list, error } = prescriptions;
   const { t } = useTranslation();
+  const featureService = FeatureService(features);
 
   const filteredList = sortList(
     filterList(list, state.filter),
@@ -192,6 +194,7 @@ export default function Prioritization({
           prioritizationType={prioritizationType}
           fetchPrescriptionsList={fetchPrescriptionsList}
           isFetchingPrescription={isFetching}
+          featureService={featureService}
         />
       </FilterCard>
       <Spin spinning={isFetching || state.loading}>

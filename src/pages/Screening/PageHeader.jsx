@@ -9,9 +9,12 @@ import {
   FileAddOutlined,
   RollbackOutlined,
   ScheduleOutlined,
+  SafetyCertificateOutlined,
+  SafetyCertificateFilled,
 } from "@ant-design/icons";
-import { Affix } from "antd";
+import { Affix, Popover } from "antd";
 import { useTransition, animated, config } from "@react-spring/web";
+import dayjs from "dayjs";
 
 import { InfoIcon } from "components/Icon";
 import Heading from "components/Heading";
@@ -53,6 +56,7 @@ export default function PageHeader({
   prescription,
   type,
   checkScreening,
+  reviewPatient,
   incrementClinicalNotes,
   security,
   featureService,
@@ -61,6 +65,7 @@ export default function PageHeader({
   const params = useParams();
   const id = params?.slug;
   const { isChecking } = prescription.check;
+  const [isReviewing, setReviewing] = useState(false);
   const [isClinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
   const [isClinicalNotesFormsVisible, setClinicalNotesFormsVisibility] =
     useState(false);
@@ -163,6 +168,29 @@ export default function PageHeader({
         });
       })
       .catch((err) => {
+        console.error("error", err);
+        notification.error({
+          message: t("error.title"),
+          description: getErrorMessageFromException(err, t),
+        });
+      });
+  };
+
+  const setReviewType = (id, reviewType) => {
+    setReviewing(true);
+
+    reviewPatient(id, reviewType)
+      .then(() => {
+        setReviewing(false);
+        notification.success({
+          message:
+            reviewType === 1
+              ? "Revisão efetuada com sucesso!"
+              : "Revisão desfeita com sucesso!",
+        });
+      })
+      .catch((err) => {
+        setReviewing(false);
         console.error("error", err);
         notification.error({
           message: t("error.title"),
@@ -328,6 +356,61 @@ export default function PageHeader({
                 </Tooltip>
               </>
             )}
+            {featureService.hasPatientRevision() &&
+              prescription.content.agg && (
+                <Popover
+                  content={
+                    prescription.content.review?.reviewed ? (
+                      <div>
+                        <p style={{ marginTop: "0" }}>
+                          <strong>Revisado por:</strong>
+                        </p>
+                        <p>
+                          {prescription.content.review?.reviewedBy}
+                          <br />
+                          <span style={{ fontSize: "12px", fontWeight: 300 }}>
+                            {dayjs(
+                              prescription.content.review?.reviewedAt
+                            ).format("DD/MM/YYYY HH:mm")}
+                          </span>
+                        </p>
+                        <Button
+                          danger
+                          onClick={() => setReviewType(id, 0)}
+                          icon={<RollbackOutlined />}
+                          loading={isReviewing}
+                          block
+                          style={{ marginTop: "5px" }}
+                        >
+                          Desfazer Revisão
+                        </Button>
+                      </div>
+                    ) : null
+                  }
+                >
+                  <Button
+                    type="primary gtm-bt-review"
+                    icon={
+                      prescription.content.review?.reviewed ? (
+                        <SafetyCertificateFilled />
+                      ) : (
+                        <SafetyCertificateOutlined />
+                      )
+                    }
+                    style={{ marginRight: "5px" }}
+                    loading={isReviewing}
+                    ghost={!prescription.content.review?.reviewed}
+                    onClick={() =>
+                      !prescription.content.review?.reviewed &&
+                      setReviewType(id, 1)
+                    }
+                  >
+                    {prescription.content.review?.reviewed
+                      ? t("screeningHeader.btnReviewed")
+                      : t("screeningHeader.btnReview")}
+                  </Button>
+                </Popover>
+              )}
             {hasPrimaryCare && (
               <Button
                 type="primary gtm-bt-clinical-notes-schedule"

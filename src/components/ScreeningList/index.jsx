@@ -75,7 +75,6 @@ export default function ScreeningList({
   fetchFrequencies,
   checkScreening,
   prioritizationType,
-  security,
   featureService,
   ...restProps
 }) {
@@ -400,6 +399,7 @@ export default function ScreeningList({
           fetchFrequencies={fetchFrequencies}
           fetchPrescriptionsList={fetchPrescriptionsList}
           isFetchingPrescription={isFetching}
+          featureService={featureService}
         />
       </FilterCard>
       {!isFetching && info}
