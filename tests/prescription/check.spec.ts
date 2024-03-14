@@ -31,9 +31,9 @@ test("check aggregate prescription and rollback", async ({ page }) => {
     .getByRole("banner")
     .getByRole("button", { name: "search" })
     .click();
-  await expect(page.getByText("Atendimento 9999")).toBeVisible();
+  await expect(page.getByText("Atendimento 9999").first()).toBeVisible();
   const page1Promise = page.waitForEvent("popup");
-  await page.getByText("Atendimento 9999").click();
+  await page.getByText("Atendimento 9999").first().click();
 
   const prescriptionPage = await page1Promise;
   await expect(

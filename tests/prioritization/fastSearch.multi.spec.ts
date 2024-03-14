@@ -25,9 +25,9 @@ test("fast search by admission number", async ({ page }) => {
     .getByRole("banner")
     .getByRole("button", { name: "search" })
     .click();
-  await expect(page.getByText("Atendimento 9999")).toBeVisible();
+  await expect(page.getByText("Atendimento 9999").first()).toBeVisible();
   const page1Promise = page.waitForEvent("popup");
-  await page.getByText("Atendimento 9999").click();
+  await page.getByText("Atendimento 9999").first().click();
   const page1 = await page1Promise;
   await expect(page1.getByRole("button", { name: "9999" })).toBeVisible();
 });
