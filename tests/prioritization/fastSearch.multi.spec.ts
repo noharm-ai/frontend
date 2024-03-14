@@ -9,6 +9,7 @@ test("fast search by prescription number", async ({ page }) => {
     .getByRole("banner")
     .getByRole("button", { name: "search" })
     .click();
+  await expect(page.getByText("Prescrição 199")).toBeVisible();
   const page1Promise = page.waitForEvent("popup");
   await page.getByText("Prescrição 199").click();
   const page1 = await page1Promise;
@@ -24,6 +25,7 @@ test("fast search by admission number", async ({ page }) => {
     .getByRole("banner")
     .getByRole("button", { name: "search" })
     .click();
+  await expect(page.getByText("Atendimento 9999")).toBeVisible();
   const page1Promise = page.waitForEvent("popup");
   await page.getByText("Atendimento 9999").click();
   const page1 = await page1Promise;
