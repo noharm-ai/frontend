@@ -36,7 +36,7 @@ export default function useFetchReport({
             wrapClassName: "default-modal",
           });
         } else {
-          onAfterFetch(response.payload.cacheData);
+          onAfterFetch(response.payload.cacheData.body);
         }
       });
     };

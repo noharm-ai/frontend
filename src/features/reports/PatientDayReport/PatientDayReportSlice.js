@@ -8,6 +8,7 @@ const initialState = {
   error: null,
   list: [],
   updatedAt: null,
+  version: null,
   responsibles: [],
   departments: [],
   segments: [],
@@ -73,13 +74,17 @@ const patientDayReportSlice = createSlice({
       .addCase(fetchReportData.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.list = action.payload.gzipped;
-        state.updatedAt = action.payload.data.data.updatedAt;
+        state.updatedAt = action.payload.cacheData.header.date;
+        state.version = action.payload.cacheData.header.version;
         state.responsibles = getUniqList(
-          action.payload.cacheData,
+          action.payload.cacheData.body,
           "responsible"
         );
-        state.departments = getUniqList(action.payload.cacheData, "department");
-        state.segments = getUniqList(action.payload.cacheData, "segment");
+        state.departments = getUniqList(
+          action.payload.cacheData.body,
+          "department"
+        );
+        state.segments = getUniqList(action.payload.cacheData.body, "segment");
       })
       .addCase(fetchReportData.rejected, (state, action) => {
         state.status = "failed";

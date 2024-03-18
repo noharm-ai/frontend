@@ -124,7 +124,9 @@ export const decompressDatasource = async (datasource) => {
 
   const decompressedResponse = new Response(compressedReadableStream);
 
-  return await decompressedResponse.json();
+  const response = await decompressedResponse.json();
+
+  return response.body;
 };
 
 export const convertRange = (value, r1, r2) => {
