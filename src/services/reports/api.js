@@ -10,6 +10,12 @@ const getConfig = (params = {}) =>
     ...setHeaders(),
   });
 
+const getReport = (report, params = {}) =>
+  instance.get(`/reports/general/${report}`, {
+    params,
+    ...setHeaders(),
+  });
+
 const getPatientDay = (params = {}) =>
   instance.get(`${endpoints.general}/patient-day`, {
     params,
@@ -43,6 +49,7 @@ const api = {
   getPrescription,
   getPrescriptionAudit,
   getIntervention,
+  getReport,
   getCache,
   getConfig,
 };

@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import api from "services/reports/api";
 import { getUniqList } from "utils/report";
+import ReportEnum from "models/ReportEnum";
 
 const initialState = {
   status: "idle",
@@ -25,9 +26,12 @@ export const fetchReportData = createAsyncThunk(
   "reports-patient-day/fetch-data",
   async (params, thunkAPI) => {
     try {
-      const response = await api.getPatientDay(params);
-      const cacheResponseStream = await fetch(response.data.data.url);
+      const response = await api.getReport(ReportEnum.PATIENT_DAY, params);
+      if (!response.data.data.cached) {
+        return { ...response, cacheData: [], gzipped: {} };
+      }
 
+      const cacheResponseStream = await fetch(response.data.data.url);
       const gzipped = await cacheResponseStream.clone().blob();
 
       const cacheReadableStream = cacheResponseStream.body.pipeThrough(
@@ -73,18 +77,24 @@ const patientDayReportSlice = createSlice({
       })
       .addCase(fetchReportData.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.list = action.payload.gzipped;
-        state.updatedAt = action.payload.cacheData.header.date;
-        state.version = action.payload.cacheData.header.version;
-        state.responsibles = getUniqList(
-          action.payload.cacheData.body,
-          "responsible"
-        );
-        state.departments = getUniqList(
-          action.payload.cacheData.body,
-          "department"
-        );
-        state.segments = getUniqList(action.payload.cacheData.body, "segment");
+
+        if (action.payload.data.data.cached) {
+          state.list = action.payload.gzipped;
+          state.updatedAt = action.payload.cacheData.header.date;
+          state.version = action.payload.cacheData.header.version;
+          state.responsibles = getUniqList(
+            action.payload.cacheData.body,
+            "responsible"
+          );
+          state.departments = getUniqList(
+            action.payload.cacheData.body,
+            "department"
+          );
+          state.segments = getUniqList(
+            action.payload.cacheData.body,
+            "segment"
+          );
+        }
       })
       .addCase(fetchReportData.rejected, (state, action) => {
         state.status = "failed";
