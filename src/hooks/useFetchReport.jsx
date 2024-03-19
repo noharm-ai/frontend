@@ -5,12 +5,7 @@ import { useDispatch } from "react-redux";
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
 
-export default function useFetchReport({
-  action,
-  reset,
-  onAfterFetch,
-  onAfterClearCache,
-}) {
+export default function useFetchReport({ action, reset, onAfterFetch }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -71,8 +66,8 @@ export default function useFetchReport({
   }, []); //eslint-disable-line
 
   return {
-    clearCache: () => {
-      dispatch(action({ clearCache: true })).then((response) => {
+    loadArchive: (archive) => {
+      dispatch(action({ archive })).then((response) => {
         if (response.error) {
           notification.error({
             message: t("error.title"),
@@ -82,9 +77,11 @@ export default function useFetchReport({
           notification.success({
             message: "Cache limpo com sucesso!",
           });
-          if (onAfterClearCache) {
-            onAfterClearCache(response.payload.cacheData);
-          }
+
+          onAfterFetch(
+            response.payload.cacheData.body,
+            response.payload.cacheData.header
+          );
         }
       });
     },

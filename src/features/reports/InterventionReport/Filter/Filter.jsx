@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import { FloatButton, Spin } from "antd";
 import {
   MenuOutlined,
-  ReloadOutlined,
   PrinterOutlined,
   DownloadOutlined,
   QuestionCircleOutlined,
@@ -25,7 +24,6 @@ import {
 import { getReportData, filterAndExportCSV } from "../transformers";
 import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
-import security from "services/security";
 import {
   onBeforePrint,
   onAfterPrint,
@@ -47,14 +45,12 @@ export default function Filter({ printRef }) {
   const reportDate = useSelector(
     (state) => state.reportsArea.intervention.updatedAt
   );
-  const roles = useSelector((state) => state.user.account.roles);
   const userId = useSelector((state) => state.user.account.userId);
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
     onBeforeGetContent: onBeforePrint,
     onAfterPrint: onAfterPrint,
   });
-  const sec = security(roles);
   const memoryFilterType = `intervention_report_${userId}`;
   const initialValues = {
     dateRange: [
@@ -73,7 +69,7 @@ export default function Filter({ printRef }) {
     prescriptionError: "",
   };
 
-  const fetchTools = useFetchReport({
+  useFetchReport({
     action: fetchReportData,
     reset,
     onAfterFetch: (body, header) => {
@@ -88,14 +84,7 @@ export default function Filter({ printRef }) {
         body
       );
     },
-    onAfterClearCache: (data) => {
-      search(currentFilters);
-    },
   });
-
-  const cleanCache = () => {
-    fetchTools.clearCache();
-  };
 
   const exportCSV = async () => {
     const ds = await decompressDatasource(datasource);
@@ -146,13 +135,6 @@ export default function Filter({ printRef }) {
           tooltip="Menu"
           style={{ bottom: 25 }}
         >
-          {sec.isAdmin() && (
-            <FloatButton
-              icon={<ReloadOutlined />}
-              onClick={() => cleanCache()}
-              tooltip="Limpar Cache"
-            />
-          )}
           <FloatButton
             icon={<QuestionCircleOutlined />}
             onClick={showHelp}
