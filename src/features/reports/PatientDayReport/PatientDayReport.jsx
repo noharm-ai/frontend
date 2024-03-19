@@ -73,6 +73,7 @@ export default function PatientDayReport() {
                 type="primary"
                 shape="circle"
                 icon={<QuestionOutlined />}
+                loading={status === "loading"}
                 onClick={() => dispatch(setHelpModal(true))}
               />
             </Tooltip>

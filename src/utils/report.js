@@ -88,29 +88,37 @@ export const onAfterPrint = () => {
   window.dispatchEvent(event);
 };
 
-export const dateRangePresets = [
+export const getDateRangePresets = (reportDate) => [
   {
     label: "Últimos 15 Dias",
-    value: [dayjs().add(-14, "d"), dayjs().subtract(1, "day")],
+    value: [
+      dayjs(reportDate).add(-14, "d"),
+      dayjs(reportDate).subtract(1, "day"),
+    ],
   },
   {
     label: "Mês atual",
-    value: [dayjs().startOf("month"), dayjs().subtract(1, "day")],
+    value: [
+      dayjs(reportDate).startOf("month"),
+      dayjs(reportDate).subtract(1, "day"),
+    ],
   },
   {
     label: "Mês anterior",
     value: [
-      dayjs().subtract(1, "month").startOf("month"),
-      dayjs().subtract(1, "month").endOf("month"),
+      dayjs(reportDate).subtract(1, "month").startOf("month"),
+      dayjs(reportDate).subtract(1, "month").endOf("month"),
     ],
   },
 ];
 
-export const datePickerLimits = (maxInterval, minInterval) => (current) => {
-  const maxDate = dayjs().subtract(maxInterval[0], maxInterval[1]);
-  const minDate = dayjs().subtract(minInterval[0], minInterval[1]);
+export const dateRangeValid = (reportDate) => {
+  return (current) => {
+    const maxDate = dayjs(reportDate).subtract(1, "day");
+    const minDate = dayjs(reportDate).subtract(60, "day");
 
-  return current > maxDate || current < minDate;
+    return current > maxDate || current < minDate;
+  };
 };
 
 export const decompressDatasource = async (datasource) => {

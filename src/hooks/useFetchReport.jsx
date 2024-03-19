@@ -55,7 +55,10 @@ export default function useFetchReport({
             wrapClassName: "default-modal",
           });
         } else {
-          onAfterFetch(response.payload.cacheData.body);
+          onAfterFetch(
+            response.payload.cacheData.body,
+            response.payload.cacheData.header
+          );
         }
       });
     };
