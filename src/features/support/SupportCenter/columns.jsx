@@ -78,6 +78,10 @@ const columns = (t) => {
         config.label = "Cancelado";
         config.color = "default";
         break;
+      case 10:
+        config.label = "Em análise";
+        config.color = "purple";
+        break;
       default:
         config.label = "Cancelado";
         config.color = "default";
