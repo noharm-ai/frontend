@@ -2,10 +2,9 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
-import { FloatButton } from "antd";
+import { FloatButton, Spin } from "antd";
 import {
   MenuOutlined,
-  ReloadOutlined,
   PrinterOutlined,
   DownloadOutlined,
   QuestionCircleOutlined,
@@ -25,7 +24,6 @@ import {
 import { getReportData, filterAndExportCSV } from "../transformers";
 import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
-import security from "services/security";
 import useFetchReport from "hooks/useFetchReport";
 import {
   onBeforePrint,
@@ -42,17 +40,21 @@ export default function Filter({ printRef }) {
     (state) => state.reportsArea.patientDay.filters
   );
   const datasource = useSelector((state) => state.reportsArea.patientDay.list);
-  const roles = useSelector((state) => state.user.account.roles);
+  const reportDate = useSelector(
+    (state) => state.reportsArea.patientDay.updatedAt
+  );
   const userId = useSelector((state) => state.user.account.userId);
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
     onBeforeGetContent: onBeforePrint,
     onAfterPrint: onAfterPrint,
   });
-  const sec = security(roles);
   const memoryFilterType = `patient_day_report_${userId}`;
   const initialValues = {
-    dateRange: [dayjs().startOf("month"), dayjs().subtract(1, "day")],
+    dateRange: [
+      dayjs(reportDate).subtract(1, "day").startOf("month"),
+      dayjs(reportDate).subtract(1, "day"),
+    ],
     responsibleList: [],
     departmentList: [],
     segmentList: [],
@@ -61,20 +63,22 @@ export default function Filter({ printRef }) {
     maxScore: null,
   };
 
-  const fetchTools = useFetchReport({
+  useFetchReport({
     action: fetchReportData,
     reset,
-    onAfterFetch: (data) => {
-      search(initialValues, data);
-    },
-    onAfterClearCache: (data) => {
-      search(currentFilters);
+    onAfterFetch: (body, header) => {
+      search(
+        {
+          ...initialValues,
+          dateRange: [
+            dayjs(header.date).subtract(1, "day").startOf("month"),
+            dayjs(header.date).subtract(1, "day"),
+          ],
+        },
+        body
+      );
     },
   });
-
-  const cleanCache = () => {
-    fetchTools.clearCache();
-  };
 
   const exportCSV = async () => {
     const ds = await decompressDatasource(datasource);
@@ -93,6 +97,7 @@ export default function Filter({ printRef }) {
 
     dispatch(setFilteredStatus("loading"));
     dispatch(setFilters(params));
+
     const reportData = getReportData(forceDs || ds, params);
     dispatch(setFilteredResult(reportData));
 
@@ -103,16 +108,20 @@ export default function Filter({ printRef }) {
 
   return (
     <React.Fragment>
-      <AdvancedFilter
-        initialValues={initialValues}
-        mainFilters={<MainFilters />}
-        secondaryFilters={<SecondaryFilters />}
-        onSearch={search}
-        loading={isFetching}
-        skipFilterList={["dateRange"]}
-        memoryType={memoryFilterType}
-        skipMemoryList={{ dateRange: "daterange" }}
-      />
+      <Spin spinning={isFetching}>
+        {!isFetching && (
+          <AdvancedFilter
+            initialValues={initialValues}
+            mainFilters={<MainFilters />}
+            secondaryFilters={<SecondaryFilters />}
+            onSearch={search}
+            loading={isFetching}
+            skipFilterList={["dateRange"]}
+            memoryType={memoryFilterType}
+            skipMemoryList={{ dateRange: "daterange" }}
+          />
+        )}
+      </Spin>
       {!isFetching && (
         <FloatButtonGroup
           trigger="click"
@@ -121,13 +130,6 @@ export default function Filter({ printRef }) {
           tooltip="Menu"
           style={{ bottom: 25 }}
         >
-          {sec.isAdmin() && (
-            <FloatButton
-              icon={<ReloadOutlined />}
-              onClick={() => cleanCache()}
-              tooltip="Limpar Cache"
-            />
-          )}
           <FloatButton
             icon={<QuestionCircleOutlined />}
             onClick={showHelp}

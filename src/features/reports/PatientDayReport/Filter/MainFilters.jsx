@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import dayjs from "dayjs";
 
 import { RangeDatePicker, Select } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
+import { getDateRangePresets, dateRangeValid } from "utils/report";
 
 export default function MainFilters() {
   const { t } = useTranslation();
@@ -17,32 +17,12 @@ export default function MainFilters() {
     (state) => state.reportsArea.patientDay.segments
   );
   const status = useSelector((state) => state.reportsArea.patientDay.status);
+  const reportDate = useSelector(
+    (state) => state.reportsArea.patientDay.updatedAt
+  );
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
-  const rangePresets = [
-    {
-      label: "Últimos 15 Dias",
-      value: [dayjs().add(-14, "d"), dayjs().subtract(1, "day")],
-    },
-    {
-      label: "Mês atual",
-      value: [dayjs().startOf("month"), dayjs().subtract(1, "day")],
-    },
-    {
-      label: "Mês anterior",
-      value: [
-        dayjs().subtract(1, "month").startOf("month"),
-        dayjs().subtract(1, "month").endOf("month"),
-      ],
-    },
-  ];
-
-  const disabledDate = (current) => {
-    const maxDate = dayjs().subtract(1, "day");
-    const minDate = dayjs().subtract(60, "day");
-
-    return current > maxDate || current < minDate;
-  };
+  const rangePresets = getDateRangePresets(reportDate);
 
   return (
     <>
@@ -52,7 +32,7 @@ export default function MainFilters() {
         </Heading>
         <RangeDatePicker
           presets={rangePresets}
-          disabledDate={disabledDate}
+          disabledDate={dateRangeValid(reportDate)}
           format="DD/MM/YYYY"
           value={values.dateRange}
           onChange={(val) => setFieldValue({ dateRange: val })}

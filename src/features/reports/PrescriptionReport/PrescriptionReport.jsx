@@ -74,6 +74,7 @@ export default function PrescriptionReport() {
               <Button
                 type="primary"
                 shape="circle"
+                loading={status === "loading"}
                 icon={<QuestionOutlined />}
                 onClick={() => dispatch(setHelpModal(true))}
               />

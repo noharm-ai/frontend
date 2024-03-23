@@ -45,8 +45,13 @@ export default function HelpModal() {
       </p>
       <p>
         O período disponibilizado para consulta é:{" "}
-        <strong>{dayjs().subtract(60, "day").format("DD/MM/YY")}</strong> até{" "}
-        <strong>{dayjs().subtract(1, "day").format("DD/MM/YY")}</strong>
+        <strong>
+          {dayjs(updatedAt).subtract(60, "day").format("DD/MM/YY")}
+        </strong>{" "}
+        até{" "}
+        <strong>
+          {dayjs(updatedAt).subtract(1, "day").format("DD/MM/YY")}
+        </strong>
       </p>
       <p>
         Para informações mais detalhadas sobre este relatório, acesse a base de

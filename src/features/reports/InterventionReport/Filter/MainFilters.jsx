@@ -6,7 +6,7 @@ import { RangeDatePicker, Select } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { dateRangePresets, datePickerLimits } from "utils/report";
+import { getDateRangePresets, dateRangeValid } from "utils/report";
 
 export default function MainFilters() {
   const { t } = useTranslation();
@@ -17,6 +17,9 @@ export default function MainFilters() {
     (state) => state.reportsArea.intervention.segments
   );
   const status = useSelector((state) => state.reportsArea.intervention.status);
+  const reportDate = useSelector(
+    (state) => state.reportsArea.intervention.updatedAt
+  );
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
   return (
@@ -26,8 +29,8 @@ export default function MainFilters() {
           {t("tableHeader.period")}:
         </Heading>
         <RangeDatePicker
-          presets={dateRangePresets}
-          disabledDate={datePickerLimits([1, "day"], [60, "day"])}
+          presets={getDateRangePresets(reportDate)}
+          disabledDate={dateRangeValid(reportDate)}
           format="DD/MM/YYYY"
           value={values.dateRange}
           onChange={(val) => setFieldValue({ dateRange: val })}
