@@ -704,6 +704,16 @@ api.summary.prompt = (params = {}) => {
 };
 
 /**
+ * Intervention
+ */
+api.intervention = {};
+api.intervention.getOutcomeData = (params) =>
+  instance.get(`/intervention/outcome-data`, {
+    params,
+    ...setHeaders(),
+  });
+
+/**
  * API
  * all functions that can be used in API.
  */

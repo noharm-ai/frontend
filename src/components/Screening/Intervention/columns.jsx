@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components/macro";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -16,6 +17,7 @@ import Tooltip from "components/Tooltip";
 import RichTextView from "components/RichTextView";
 import isEmpty from "lodash.isempty";
 import InterventionStatus from "models/InterventionStatus";
+import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 
 const NestedTableContainer = styled.div`
   margin-top: 5px;
@@ -239,12 +241,26 @@ const Action = ({
   admissionNumber,
   ...data
 }) => {
+  const dispatch = useDispatch();
   const isChecked = data.status !== "s";
   const closedStatuses = InterventionStatus.getClosedStatuses();
   const isClosed = closedStatuses.indexOf(data.status) !== -1;
 
   return (
     <>
+      <Button
+        onClick={() =>
+          dispatch(
+            setSelectedInterventionOutcome({
+              idIntervention: data.idIntervention,
+              outcome: "s",
+              open: true,
+            })
+          )
+        }
+      >
+        O
+      </Button>
       {isChecked && (
         <Tooltip title="Desfazer situação" placement="left">
           <Button
