@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { Spin } from "antd";
 
 import notification from "components/notification";
 import Heading from "components/Heading";
@@ -11,6 +12,7 @@ import {
   fetchInterventionOutcomeData,
   setSelectedIntervention,
 } from "./InterventionOutcomeSlice";
+import InterventionOutcomeForm from "./Form/InterventionOutcomeForm";
 
 import { Form } from "styles/Form.style";
 
@@ -20,6 +22,7 @@ export default function InterventionOutcome({ ...props }) {
   const selectedIntervention = useSelector(
     (state) => state.interventionOutcome.selectedIntervention
   );
+  const outcomeData = useSelector((state) => state.interventionOutcome.data);
 
   const loadStatus = useSelector((state) => state.interventionOutcome.status);
   const saveStatus = useSelector(
@@ -42,7 +45,9 @@ export default function InterventionOutcome({ ...props }) {
     selectedIntervention.idIntervention,
   ]);
 
-  const initialValues = {};
+  const initialValues = {
+    origin: outcomeData.origin?.item || {},
+  };
 
   const validationSchema = Yup.object().shape({
     id: Yup.number().nullable().required(t("validation.requiredField")),
@@ -54,11 +59,13 @@ export default function InterventionOutcome({ ...props }) {
   };
 
   const onCancel = () => {
-    setSelectedIntervention({
-      open: false,
-      idIntervention: null,
-      outcome: null,
-    });
+    dispatch(
+      setSelectedIntervention({
+        open: false,
+        idIntervention: null,
+        outcome: null,
+      })
+    );
   };
 
   return (
@@ -71,7 +78,7 @@ export default function InterventionOutcome({ ...props }) {
       {({ handleSubmit }) => (
         <DefaultModal
           open={selectedIntervention.open}
-          width={500}
+          width={700}
           centered
           destroyOnClose
           onCancel={onCancel}
@@ -93,7 +100,11 @@ export default function InterventionOutcome({ ...props }) {
             </Heading>
           </header>
 
-          <Form onSubmit={handleSubmit}></Form>
+          <Spin spinning={loadStatus === "loading"}>
+            <Form onSubmit={handleSubmit}>
+              <InterventionOutcomeForm />
+            </Form>
+          </Spin>
         </DefaultModal>
       )}
     </Formik>
