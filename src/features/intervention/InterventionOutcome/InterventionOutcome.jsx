@@ -47,6 +47,8 @@ export default function InterventionOutcome({ ...props }) {
 
   const initialValues = {
     origin: outcomeData.origin?.item || {},
+    idPrescriptionDestiny: null,
+    destiny: {},
   };
 
   const validationSchema = Yup.object().shape({
@@ -78,7 +80,7 @@ export default function InterventionOutcome({ ...props }) {
       {({ handleSubmit }) => (
         <DefaultModal
           open={selectedIntervention.open}
-          width={700}
+          width={800}
           centered
           destroyOnClose
           onCancel={onCancel}
@@ -101,7 +103,7 @@ export default function InterventionOutcome({ ...props }) {
           </header>
 
           <Spin spinning={loadStatus === "loading"}>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} className="highlight-labels">
               <InterventionOutcomeForm />
             </Form>
           </Spin>
