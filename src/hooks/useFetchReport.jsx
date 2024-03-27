@@ -5,12 +5,7 @@ import { useDispatch } from "react-redux";
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
 
-export default function useFetchReport({
-  action,
-  reset,
-  onAfterFetch,
-  onAfterClearCache,
-}) {
+export default function useFetchReport({ action, reset, onAfterFetch }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -35,8 +30,30 @@ export default function useFetchReport({
             onOk: () => fetchData(),
             wrapClassName: "default-modal",
           });
+        } else if (!response.payload.data.data.cached) {
+          DefaultModal.info({
+            title: "Não foi possível exibir este relatório.",
+            content: (
+              <>
+                <p>
+                  Este relatório ainda não foi processado. O processamento
+                  ocorre durante a noite, portanto a partir de amanhã ele estará
+                  disponível.
+                  <br />
+                  Se o problema persistir, entre em contato com a Ajuda.
+                </p>
+              </>
+            ),
+            width: 500,
+            okText: "Ok",
+            cancelText: "Fechar",
+            wrapClassName: "default-modal",
+          });
         } else {
-          onAfterFetch(response.payload.cacheData);
+          onAfterFetch(
+            response.payload.cacheData.body,
+            response.payload.cacheData.header
+          );
         }
       });
     };
@@ -49,8 +66,8 @@ export default function useFetchReport({
   }, []); //eslint-disable-line
 
   return {
-    clearCache: () => {
-      dispatch(action({ clearCache: true })).then((response) => {
+    loadArchive: (archive) => {
+      dispatch(action({ archive })).then((response) => {
         if (response.error) {
           notification.error({
             message: t("error.title"),
@@ -60,9 +77,11 @@ export default function useFetchReport({
           notification.success({
             message: "Cache limpo com sucesso!",
           });
-          if (onAfterClearCache) {
-            onAfterClearCache(response.payload.cacheData);
-          }
+
+          onAfterFetch(
+            response.payload.cacheData.body,
+            response.payload.cacheData.header
+          );
         }
       });
     },
