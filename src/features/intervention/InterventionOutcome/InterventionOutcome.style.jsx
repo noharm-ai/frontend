@@ -42,8 +42,49 @@ export const InterventionOutcomeContainer = styled.div`
     }
 
     .form-value {
-      opacity: 0.6;
+      color: #797979;
       line-height: 1.2;
+    }
+
+    .form-input {
+      .ant-input.ant-input-disabled {
+        color: #00000082;
+      }
+
+      .ant-input-number-group-wrapper-disabled,
+      .ant-input-number-disabled {
+        input {
+          color: #00000082;
+        }
+
+        &.warning {
+          .ant-input-number-group-addon {
+            background: #fffbe6;
+          }
+
+          .ant-input-number-input-wrap {
+            background: #fffbe6;
+            border-radius: 5px;
+          }
+        }
+
+        &.error {
+          .ant-input-number-group-addon {
+            background: #fff2f0;
+          }
+
+          .ant-input-number-input-wrap {
+            background: #fff2f0;
+            border-radius: 5px;
+          }
+        }
+      }
+
+      .ant-select-disabled {
+        .ant-select-selection-item {
+          color: #00000082;
+        }
+      }
     }
   }
 `;
@@ -60,6 +101,6 @@ export const ConversionDetailsPopover = styled.div`
 
   .form-value {
     margin-bottom: 10px;
-    opacity: 0.6;
+    color: #797979;
   }
 `;

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Spin, Alert } from "antd";
+import { Spin } from "antd";
 
 import notification from "components/notification";
 import Heading from "components/Heading";

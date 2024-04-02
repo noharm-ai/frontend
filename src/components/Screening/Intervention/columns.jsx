@@ -257,7 +257,7 @@ const Action = ({
   return (
     <>
       {isChecked && (
-        <Tooltip title="Desfazer situação" placement="left">
+        <Tooltip title="Desfazer desfecho" placement="left">
           <Button
             className={
               onShowModal

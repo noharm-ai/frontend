@@ -66,6 +66,37 @@ export default function InterventionOutcomeForm() {
     return 0;
   };
 
+  const pricePerDayStatus = (source) => {
+    if (
+      !values[source]?.conversion?.doseFactor ||
+      !values[source]?.conversion?.priceFactor
+    ) {
+      return "error";
+    }
+
+    let original = {};
+    if (source === "origin") {
+      original = outcomeData.original[source];
+    } else {
+      original = outcomeData.original.destiny
+        ? outcomeData.original.destiny.find(
+            (i) => i.item?.idPrescription === values.idPrescriptionDestiny
+          )
+        : {};
+    }
+
+    const fields = ["dose", "frequencyDay", "price", "priceKit"];
+
+    const fieldsStatus = fields.map((f) =>
+      values[source][f] !== original.item[f] ? "warning" : ""
+    );
+    if (fieldsStatus.indexOf("warning") !== -1) {
+      return "warning";
+    }
+
+    return "";
+  };
+
   if (loadStatus === "loading" || isEmpty(outcomeData)) {
     return null;
   }
@@ -153,6 +184,7 @@ export default function InterventionOutcomeForm() {
                           values.origin.pricePerDose *
                           values.origin.frequencyDay
                         }
+                        className={pricePerDayStatus("origin")}
                       />
                       <Tooltip title={details ? "Recolher" : "Detalhar"}>
                         <Button
@@ -179,9 +211,9 @@ export default function InterventionOutcomeForm() {
                     setFieldValue={setFieldValue}
                     outcomeData={{
                       header: outcomeData.header,
-                      origin: outcomeData.origin,
-                      destiny: outcomeData.destiny
-                        ? outcomeData.destiny.find(
+                      origin: outcomeData.original.origin,
+                      destiny: outcomeData.original.destiny
+                        ? outcomeData.original.destiny.find(
                             (i) =>
                               i.item?.idPrescription ===
                               values.idPrescriptionDestiny
@@ -202,7 +234,14 @@ export default function InterventionOutcomeForm() {
             <div style={{ padding: "1rem" }}>
               <div className={`form-row`}>
                 <div className="form-label">
-                  <label>Prescrição substituta:</label>
+                  <label>
+                    <Tooltip
+                      underline
+                      title="Prescrição substituta é a prescrição alterada pelo médico conforme intervenção realizada."
+                    >
+                      Prescrição substituta:
+                    </Tooltip>
+                  </label>
                 </div>
                 <div className="form-input">
                   <Space direction="horizontal">
@@ -271,6 +310,7 @@ export default function InterventionOutcomeForm() {
                             values.destiny.pricePerDose *
                             values.destiny.frequencyDay
                           }
+                          className={pricePerDayStatus("destiny")}
                         />
                         <Tooltip title={details ? "Recolher" : "Detalhar"}>
                           <Button
@@ -298,9 +338,9 @@ export default function InterventionOutcomeForm() {
                       source="destiny"
                       outcomeData={{
                         header: outcomeData.header,
-                        origin: outcomeData.origin,
-                        destiny: outcomeData.destiny
-                          ? outcomeData.destiny.find(
+                        origin: outcomeData.original.origin,
+                        destiny: outcomeData.original.destiny
+                          ? outcomeData.original.destiny.find(
                               (i) =>
                                 i.item?.idPrescription ===
                                 values.idPrescriptionDestiny
@@ -321,7 +361,11 @@ export default function InterventionOutcomeForm() {
         <div className="result">
           <div className={`form-row`}>
             <div className="form-label">
-              <label>Economia/Dia:</label>
+              <label>
+                <Tooltip underline title="Cálculo do valor economizado por dia">
+                  Economia/Dia:
+                </Tooltip>
+              </label>
             </div>
             <div className="form-input">
               <Space direction="horizontal">
@@ -366,7 +410,14 @@ export default function InterventionOutcomeForm() {
 
           <div className={`form-row`}>
             <div className="form-label">
-              <label>Qtd. de dias de economia:</label>
+              <label>
+                <Tooltip
+                  underline
+                  title="Quantidade de dias de economia que serão considerados no Relatório de Farmacoeconomia caso a intervenção seja aceita. Se não for informado, a quantidade de dias será calculada considerando a data da intervenção até o dia da alta do paciente."
+                >
+                  Qtd. de dias de economia:
+                </Tooltip>
+              </label>
             </div>
             <div className="form-input">
               <Space direction="horizontal">
@@ -382,9 +433,7 @@ export default function InterventionOutcomeForm() {
                     min={0}
                   />
                 ) : (
-                  <Tooltip title="Contabiliza os dias de economia até a data de alta do paciente">
-                    <Input disabled={true} value={`Até a data de alta`} />
-                  </Tooltip>
+                  <Input disabled={true} value={`Até a data de alta`} />
                 )}
 
                 <Checkbox

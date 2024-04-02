@@ -6,14 +6,13 @@ import { InputNumber } from "components/Inputs";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import NumericValue from "components/NumericValue";
+import EditConversion from "./EditConversion";
 
 import { ConversionDetailsPopover } from "../InterventionOutcome.style";
 
 export default function EconomyDayCalculator({
   source,
   values,
-  errors,
-  touched,
   outcomeData,
   setFieldValue,
   calcEconomyDay,
@@ -95,6 +94,50 @@ export default function EconomyDayCalculator({
     }
   };
 
+  const doseStatus = () => {
+    if (!values[source]?.conversion?.doseFactor) {
+      return "error";
+    }
+
+    if (values[source].dose !== outcomeData[source].item.dose) {
+      return "warning";
+    }
+
+    return "";
+  };
+
+  const frequencyStatus = () => {
+    if (!values[source].frequencyDay) {
+      return "error";
+    }
+
+    if (values[source].frequencyDay !== outcomeData[source].item.frequencyDay) {
+      return "warning";
+    }
+
+    return "";
+  };
+
+  const priceStatus = () => {
+    if (!values[source]?.conversion?.priceFactor || !values[source].price) {
+      return "error";
+    }
+
+    if (values[source].price !== outcomeData[source].item.price) {
+      return "warning";
+    }
+
+    return "";
+  };
+
+  const priceKitStatus = () => {
+    if (values[source].priceKit !== outcomeData[source].item.priceKit) {
+      return "warning";
+    }
+
+    return "";
+  };
+
   if (!outcomeData) {
     return null;
   }
@@ -104,7 +147,13 @@ export default function EconomyDayCalculator({
       <div className={`form-row`}>
         <div className="form-label">
           <label>
-            Dose despendida ({outcomeData[source].item.idMeasureUnit}):
+            <Tooltip
+              underline
+              title="Dose dispensada é a dose despendida para cada horário, conforme rotina de cada unidade de saúde"
+            >
+              Dose dispensada
+            </Tooltip>{" "}
+            ({outcomeData[source].item.idMeasureUnit}):
           </label>
         </div>
         <div className="form-input">
@@ -114,18 +163,19 @@ export default function EconomyDayCalculator({
               onChange={(value) => onChangeDose(value)}
               value={values[source].dose}
               min={0}
-              status={!values[source]?.conversion?.doseFactor ? "error" : ""}
+              className={doseStatus()}
+              status={doseStatus()}
             />
             <Popover
               content={
                 <ConversionDetailsPopover>
                   <div className="form-label">
-                    <label>Dose convertida:</label>
+                    <label>Dose prescrita:</label>
                   </div>
                   <div className="form-value">
                     <NumericValue
-                      suffix={` ${outcomeData[source].item.idMeasureUnit}`}
-                      value={outcomeData[source].item.dose}
+                      suffix={` ${outcomeData[source].item.beforeConversion.idMeasureUnit}`}
+                      value={outcomeData[source].item.beforeConversion.dose}
                       decimalScale={4}
                     />
                   </div>
@@ -134,24 +184,30 @@ export default function EconomyDayCalculator({
                     <label>Fator de conversão:</label>
                   </div>
                   <div className="form-value">
-                    {outcomeData[source].item.conversion.doseFactor ? (
-                      <NumericValue
-                        suffix={`x `}
-                        value={outcomeData[source].item.conversion.doseFactor}
-                        decimalScale={2}
+                    <Space direction="horizontal">
+                      <EditConversion
+                        idSegment={outcomeData.header?.idSegment}
+                        idDrug={outcomeData[source].item.idDrug}
+                        idMeasureUnit={
+                          outcomeData[source].item.beforeConversion
+                            .idMeasureUnit
+                        }
+                        idMeasureUnitConverted={
+                          outcomeData[source].item.idMeasureUnit
+                        }
+                        factor={outcomeData[source].item.conversion.doseFactor}
+                        readonly={outcomeData.header?.readonly}
                       />
-                    ) : (
-                      <span style={{ color: "red" }}>Não informado</span>
-                    )}
+                    </Space>
                   </div>
 
                   <div className="form-label">
-                    <label>Dose prescrita:</label>
+                    <label>Dose convertida:</label>
                   </div>
                   <div className="form-value">
                     <NumericValue
-                      suffix={` ${outcomeData[source].item.beforeConversion.idMeasureUnit}`}
-                      value={outcomeData[source].item.beforeConversion.dose}
+                      suffix={` ${outcomeData[source].item.idMeasureUnit}`}
+                      value={outcomeData[source].item.dose}
                       decimalScale={4}
                     />
                   </div>
@@ -178,11 +234,8 @@ export default function EconomyDayCalculator({
               min={0}
               onChange={(value) => onChangeFrequencyDay(value)}
               value={values[source].frequencyDay}
-              status={
-                errors[source]?.frequencyDay && touched[source]?.frequencyDay
-                  ? "error"
-                  : null
-              }
+              className={frequencyStatus()}
+              status={frequencyStatus()}
             />
             <Popover
               content={
@@ -222,15 +275,59 @@ export default function EconomyDayCalculator({
             <InputNumber
               disabled={outcomeData.header?.readonly}
               min={0}
-              precision={2}
+              precision={6}
               addonBefore="R$"
               onChange={(value) => onChangeCost(value)}
               value={values[source].price}
-              status={!values[source]?.conversion?.priceFactor ? "error" : ""}
+              className={priceStatus()}
+              status={priceStatus()}
             />
             <Popover
               content={
                 <ConversionDetailsPopover>
+                  <div className="form-label">
+                    <label>Custo registrado:</label>
+                  </div>
+                  <div className="form-value">
+                    {outcomeData[source].item?.beforeConversion?.price &&
+                    outcomeData[source].item.beforeConversion
+                      .idMeasureUnitPrice ? (
+                      <NumericValue
+                        prefix="R$ "
+                        suffix={` / ${outcomeData[source].item.beforeConversion.idMeasureUnitPrice}`}
+                        value={outcomeData[source].item.beforeConversion.price}
+                        decimalScale={2}
+                      />
+                    ) : (
+                      <span style={{ color: "#ff4d4f" }}>
+                        <Tooltip
+                          underline
+                          title="Acione o suporte para que a integração do valor de custo seja efetuada. Se desejar, você pode informar o custo manualmente."
+                        >
+                          Valor/Unidade de medida de custo indisponível
+                        </Tooltip>
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="form-label">
+                    <label>Fator de conversão:</label>
+                  </div>
+                  <div className="form-value">
+                    <Space direction="horizontal">
+                      <EditConversion
+                        idSegment={outcomeData.header?.idSegment}
+                        idDrug={outcomeData[source].item.idDrug}
+                        idMeasureUnit={
+                          outcomeData[source].item.beforeConversion
+                            .idMeasureUnitPrice
+                        }
+                        factor={outcomeData[source].item.conversion.priceFactor}
+                        readonly={outcomeData.header?.readonly}
+                      />
+                    </Space>
+                  </div>
+
                   <div className="form-label">
                     <label>Custo convertido:</label>
                   </div>
@@ -240,41 +337,10 @@ export default function EconomyDayCalculator({
                         prefix="R$ "
                         suffix={` / ${outcomeData[source].item.idMeasureUnit}`}
                         value={outcomeData[source].item.price}
-                        decimalScale={2}
+                        decimalScale={6}
                       />
                     ) : (
-                      <span style={{ color: "red" }}>Não informado</span>
-                    )}
-                  </div>
-
-                  <div className="form-label">
-                    <label>Fator de conversão:</label>
-                  </div>
-                  <div className="form-value">
-                    {outcomeData[source].item.conversion.priceFactor ? (
-                      <NumericValue
-                        suffix={`x `}
-                        value={outcomeData[source].item.conversion.priceFactor}
-                        decimalScale={2}
-                      />
-                    ) : (
-                      <span style={{ color: "red" }}>Não informado (1x)</span>
-                    )}
-                  </div>
-
-                  <div className="form-label">
-                    <label>Custo registrado:</label>
-                  </div>
-                  <div className="form-value">
-                    {outcomeData[source].item?.beforeConversion?.price ? (
-                      <NumericValue
-                        prefix="R$ "
-                        suffix={` / ${outcomeData[source].item.beforeConversion.idMeasureUnitPrice}`}
-                        value={outcomeData[source].item.beforeConversion.price}
-                        decimalScale={2}
-                      />
-                    ) : (
-                      <span style={{ color: "red" }}>Não informado</span>
+                      <span style={{ color: "#ff4d4f" }}>Não informado</span>
                     )}
                   </div>
                 </ConversionDetailsPopover>
@@ -301,11 +367,9 @@ export default function EconomyDayCalculator({
               addonBefore="R$"
               onChange={(value) => onChangeKitCost(value)}
               value={values[source].priceKit}
-              status={
-                errors[source]?.priceKit && touched[source]?.priceKit
-                  ? "error"
-                  : null
-              }
+              status={priceKitStatus()}
+              className={priceKitStatus()}
+              precision={6}
             />
             <Tooltip title="Custo dos componentes">
               <Button icon={<InfoCircleOutlined />} />
