@@ -9,6 +9,12 @@ export const Form = styled.form`
     }
   }
 
+  .form-label {
+    label {
+      color: #2e3c5a;
+    }
+  }
+
   .form-row {
     margin-top: 15px;
 

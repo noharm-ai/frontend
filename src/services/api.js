@@ -713,6 +713,12 @@ api.intervention.getOutcomeData = (params) =>
     ...setHeaders(),
   });
 
+api.intervention.setOutcome = (params = {}) => {
+  return instance.post(`/intervention/set-outcome`, params, {
+    ...setHeaders(),
+  });
+};
+
 /**
  * API
  * all functions that can be used in API.

@@ -30,6 +30,19 @@ export const fetchInterventionOutcomeData = createAsyncThunk(
   }
 );
 
+export const setInterventionOutcome = createAsyncThunk(
+  "intervention-outcome/set-outcome",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.intervention.setOutcome(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const interventionOutcomeSlice = createSlice({
   name: "intervention-outcome",
   initialState,
@@ -53,6 +66,16 @@ const interventionOutcomeSlice = createSlice({
       .addCase(fetchInterventionOutcomeData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(setInterventionOutcome.pending, (state, action) => {
+        state.save.status = "loading";
+      })
+      .addCase(setInterventionOutcome.fulfilled, (state, action) => {
+        state.save.status = "succeeded";
+      })
+      .addCase(setInterventionOutcome.rejected, (state, action) => {
+        state.save.status = "failed";
+        state.save.error = action.error.message;
       });
   },
 });

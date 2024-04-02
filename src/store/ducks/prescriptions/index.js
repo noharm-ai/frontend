@@ -25,6 +25,7 @@ export const { Types, Creators } = createActions({
   prescriptionsUpdateListStatus: ["data"],
 
   prescriptionsUpdateIntervention: ["intervention"],
+  prescriptionsUpdateInterventionStatus: ["idIntervention", "status"],
 
   prescriptionsUpdatePrescriptionDrug: ["idPrescriptionDrug", "source", "data"],
 
@@ -491,6 +492,33 @@ const updateInterventionData = (state = INITIAL_STATE, { intervention }) => {
   };
 };
 
+const updateInterventionStatus = (
+  state = INITIAL_STATE,
+  { idIntervention, status }
+) => {
+  console.log("update status", idIntervention, status);
+  const interventionList = [...state.single.intervention.list];
+
+  const index = interventionList.findIndex(
+    (i) => `${i.idIntervention}` === `${idIntervention}`
+  );
+
+  if (index !== -1) {
+    interventionList[index].status = status;
+  }
+
+  return {
+    ...state,
+    single: {
+      ...state.single,
+      intervention: {
+        ...state.single.intervention,
+        list: interventionList,
+      },
+    },
+  };
+};
+
 const fetchPeriodStart = (state = INITIAL_STATE, { source }) => ({
   ...state,
   single: {
@@ -641,6 +669,7 @@ const HANDLERS = {
   [Types.PRESCRIPTIONS_UPDATE_LIST_STATUS]: updateListStatus,
 
   [Types.PRESCRIPTIONS_UPDATE_INTERVENTION]: updateInterventionData,
+  [Types.PRESCRIPTIONS_UPDATE_INTERVENTION_STATUS]: updateInterventionStatus,
   [Types.PRESCRIPTIONS_UPDATE_PRESCRIPTION_DRUG]: updatePrescriptionDrugData,
 
   [Types.PRESCRIPTIONS_FETCH_PERIOD_START]: fetchPeriodStart,

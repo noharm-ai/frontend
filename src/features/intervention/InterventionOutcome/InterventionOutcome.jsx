@@ -3,16 +3,21 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Spin } from "antd";
+import { Spin, Alert } from "antd";
 
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import {
   fetchInterventionOutcomeData,
+  setInterventionOutcome,
   setSelectedIntervention,
+  reset,
 } from "./InterventionOutcomeSlice";
+import { updateInterventionStatusThunk } from "store/ducks/prescriptions/thunk";
+import { updateInterventionListStatusThunk } from "store/ducks/intervention/thunk";
 import InterventionOutcomeForm from "./Form/InterventionOutcomeForm";
+import { getErrorMessage } from "utils/errorHandler";
 
 import { Form } from "styles/Form.style";
 
@@ -38,6 +43,8 @@ export default function InterventionOutcome({ ...props }) {
           idIntervention: selectedIntervention.idIntervention,
         })
       );
+    } else {
+      dispatch(reset());
     }
   }, [
     dispatch,
@@ -46,18 +53,55 @@ export default function InterventionOutcome({ ...props }) {
   ]);
 
   const initialValues = {
+    idIntervention: outcomeData.idIntervention,
+    outcome: selectedIntervention.outcome,
     origin: outcomeData.origin?.item || {},
-    idPrescriptionDestiny: null,
-    destiny: {},
+    idPrescriptionDestiny:
+      outcomeData.destiny?.length > 0
+        ? outcomeData.destiny[0].item.idPrescription
+        : null,
+    destiny: outcomeData.destiny?.length > 0 ? outcomeData.destiny[0].item : {},
+    economyDayValueManual: outcomeData.header?.economyDayValueManual,
+    economyDayValue: outcomeData.header?.economyDayValue,
+    economyDayAmountManual: outcomeData.header?.economyDayAmountManual,
+    economyDayAmount: outcomeData.header?.economyDayAmount,
   };
 
   const validationSchema = Yup.object().shape({
-    id: Yup.number().nullable().required(t("validation.requiredField")),
+    idIntervention: Yup.number()
+      .nullable()
+      .required(t("validation.requiredField")),
+    outcome: Yup.string().nullable().required(t("validation.requiredField")),
   });
 
-  const onSave = () => {
-    console.log("save");
-    notification.success({ message: "OK" });
+  const onSave = (params) => {
+    dispatch(setInterventionOutcome(params)).then((response) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        onCancel();
+
+        dispatch(
+          updateInterventionStatusThunk(
+            selectedIntervention.idIntervention,
+            selectedIntervention.outcome
+          )
+        );
+
+        dispatch(
+          updateInterventionListStatusThunk(
+            selectedIntervention.idIntervention,
+            selectedIntervention.outcome
+          )
+        );
+
+        notification.success({
+          message: "Desfecho aplicado com sucesso!",
+        });
+      }
+    });
   };
 
   const onCancel = () => {
@@ -80,16 +124,20 @@ export default function InterventionOutcome({ ...props }) {
       {({ handleSubmit }) => (
         <DefaultModal
           open={selectedIntervention.open}
-          width={800}
+          width={outcomeData.header?.economyType === 2 ? 800 : 600}
           centered
           destroyOnClose
           onCancel={onCancel}
           onOk={handleSubmit}
-          okText={t("actions.save")}
+          okText={
+            selectedIntervention.outcome === "s" ? "Desfazer" : "Confirmar"
+          }
           cancelText={t("actions.cancel")}
           confirmLoading={isLoading}
           okButtonProps={{
             disabled: isLoading,
+            danger: selectedIntervention.outcome === "s",
+            type: selectedIntervention.outcome === "s" ? "default" : "primary",
           }}
           cancelButtonProps={{
             disabled: isLoading,
@@ -98,7 +146,8 @@ export default function InterventionOutcome({ ...props }) {
         >
           <header>
             <Heading margin="0 0 11px" size="18px">
-              Registrar Desfecho
+              Intervenção:{" "}
+              {t(`interventionStatusAction.${selectedIntervention.outcome}`)}
             </Heading>
           </header>
 

@@ -38,7 +38,12 @@ const TableLink = styled.a`
   }
 `;
 
-const interventionMenu = (idIntervention, saveIntervention, onShowModal) => {
+const interventionMenu = (
+  idIntervention,
+  setSelectedInterventionOutcome,
+  dispatch,
+  onShowModal
+) => {
   const items = [
     {
       key: "a",
@@ -73,10 +78,13 @@ const interventionMenu = (idIntervention, saveIntervention, onShowModal) => {
   return {
     items,
     onClick: ({ key }) => {
-      saveIntervention({
-        idIntervention,
-        status: key,
-      });
+      dispatch(
+        setSelectedInterventionOutcome({
+          idIntervention: idIntervention,
+          outcome: key,
+          open: true,
+        })
+      );
     },
   };
 };
@@ -248,19 +256,6 @@ const Action = ({
 
   return (
     <>
-      <Button
-        onClick={() =>
-          dispatch(
-            setSelectedInterventionOutcome({
-              idIntervention: data.idIntervention,
-              outcome: "s",
-              open: true,
-            })
-          )
-        }
-      >
-        O
-      </Button>
       {isChecked && (
         <Tooltip title="Desfazer situação" placement="left">
           <Button
@@ -272,10 +267,13 @@ const Action = ({
             danger
             ghost
             onClick={() =>
-              saveIntervention({
-                idIntervention: data.idIntervention,
-                status: "s",
-              })
+              dispatch(
+                setSelectedInterventionOutcome({
+                  idIntervention: data.idIntervention,
+                  outcome: "s",
+                  open: true,
+                })
+              )
             }
             loading={isSaving}
             icon={<RollbackOutlined style={{ fontSize: 16 }} />}
@@ -286,7 +284,8 @@ const Action = ({
         <Dropdown
           menu={interventionMenu(
             data.idIntervention,
-            saveIntervention,
+            setSelectedInterventionOutcome,
+            dispatch,
             onShowModal
           )}
           loading={isSaving}

@@ -544,6 +544,14 @@
     "s": "Pendente"
   },
 
+  "interventionStatusAction": {
+    "a": "Aceitar",
+    "n": "Não aceitar",
+    "j": "Não aceitar com Justificativa",
+    "x": "Não se Aplica",
+    "s": "Desfazer desfecho"
+  },
+
   "roles": {
     "admin": "Administrador",
     "concilia": "Conciliação",

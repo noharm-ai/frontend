@@ -37,6 +37,7 @@ const {
   prescriptionsUpdateListStatus,
 
   prescriptionsUpdateIntervention,
+  prescriptionsUpdateInterventionStatus,
   prescriptionsUpdatePrescriptionDrug,
 
   prescriptionsFetchPeriodStart,
@@ -279,6 +280,11 @@ export const saveAdmissionThunk =
 export const updateInterventionDataThunk = (intervention) => (dispatch) => {
   dispatch(prescriptionsUpdateIntervention(intervention));
 };
+
+export const updateInterventionStatusThunk =
+  (idIntervention, status) => (dispatch) => {
+    dispatch(prescriptionsUpdateInterventionStatus(idIntervention, status));
+  };
 
 export const updatePrescriptionDrugDataThunk =
   (idPrescriptionDrug, source, data) => (dispatch) => {
