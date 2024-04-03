@@ -22,6 +22,8 @@ export default function InterventionOutcomeForm() {
   const outcomeData = useSelector((state) => state.interventionOutcome.data);
   const loadStatus = useSelector((state) => state.interventionOutcome.status);
   const [details, setDetails] = useState(false);
+  const costPerDayHint =
+    "(Dose dispensada X Custo + Custo Kit) X Frequência/Dia";
 
   const onChangePrescriptionDestiny = (value) => {
     setFieldValue("idPrescriptionDestiny", value);
@@ -101,6 +103,10 @@ export default function InterventionOutcomeForm() {
     return null;
   }
 
+  if (outcomeData.header?.patient || !outcomeData.header?.economyType) {
+    return <p>Confirma esta ação?</p>;
+  }
+
   return (
     <InterventionOutcomeContainer>
       <Row gutter={24}>
@@ -172,7 +178,11 @@ export default function InterventionOutcomeForm() {
               <>
                 <div className={`form-row`}>
                   <div className="form-label">
-                    <label>Custo por dia:</label>
+                    <label>
+                      <Tooltip underline title={costPerDayHint}>
+                        Custo por dia:
+                      </Tooltip>
+                    </label>
                   </div>
                   <div className="form-input">
                     <Space direction="horizontal">
@@ -298,7 +308,11 @@ export default function InterventionOutcomeForm() {
                 <>
                   <div className={`form-row`}>
                     <div className="form-label">
-                      <label>Custo por dia:</label>
+                      <label>
+                        <Tooltip underline title={costPerDayHint}>
+                          Custo por dia:
+                        </Tooltip>
+                      </label>
                     </div>
                     <div className="form-input">
                       <Space direction="horizontal">

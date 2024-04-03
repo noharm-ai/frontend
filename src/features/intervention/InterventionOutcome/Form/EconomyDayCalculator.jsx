@@ -304,7 +304,7 @@ export default function EconomyDayCalculator({
                           underline
                           title="Acione o suporte para que a integração do valor de custo seja efetuada. Se desejar, você pode informar o custo manualmente."
                         >
-                          Valor/Unidade de medida de custo indisponível
+                          Indisponível
                         </Tooltip>
                       </span>
                     )}
@@ -321,6 +321,9 @@ export default function EconomyDayCalculator({
                         idMeasureUnit={
                           outcomeData[source].item.beforeConversion
                             .idMeasureUnitPrice
+                        }
+                        idMeasureUnitConverted={
+                          outcomeData[source].item.idMeasureUnit
                         }
                         factor={outcomeData[source].item.conversion.priceFactor}
                         readonly={outcomeData.header?.readonly}

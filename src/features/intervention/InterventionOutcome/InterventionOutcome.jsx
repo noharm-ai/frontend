@@ -124,7 +124,13 @@ export default function InterventionOutcome({ ...props }) {
       {({ handleSubmit }) => (
         <DefaultModal
           open={selectedIntervention.open}
-          width={outcomeData.header?.economyType === 2 ? 800 : 600}
+          width={
+            outcomeData.header?.economyType == null
+              ? 400
+              : outcomeData.header?.economyType === 2
+              ? 800
+              : 600
+          }
           centered
           destroyOnClose
           onCancel={onCancel}
