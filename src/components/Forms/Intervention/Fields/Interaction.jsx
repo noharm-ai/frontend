@@ -64,7 +64,6 @@ export default function Interaction({
       mode="multiple"
       optionFilterProp="children"
       style={{ width: "100%" }}
-      placeholder={t("interventionForm.labelRelationsPlaceholder")}
       defaultValue={interactions || undefined}
       notFoundContent={drugs.isFetching ? <LoadBox /> : null}
       filterOption={false}

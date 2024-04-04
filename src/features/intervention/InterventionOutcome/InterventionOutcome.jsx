@@ -152,7 +152,6 @@ export default function InterventionOutcome({ ...props }) {
         >
           <header>
             <Heading margin="0 0 11px" size="18px">
-              Intervenção:{" "}
               {t(`interventionStatusAction.${selectedIntervention.outcome}`)}
             </Heading>
           </header>

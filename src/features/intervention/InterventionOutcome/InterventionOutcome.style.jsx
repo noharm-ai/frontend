@@ -103,4 +103,14 @@ export const ConversionDetailsPopover = styled.div`
     margin-bottom: 10px;
     color: #797979;
   }
+
+  .component {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+
+    > div:last-child {
+      margin-left: 15px;
+    }
+  }
 `;

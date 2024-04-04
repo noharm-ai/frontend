@@ -14,6 +14,8 @@ import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import InterventionReasonRelationType from "models/InterventionReasonRelationType";
 import interventionStatus from "models/InterventionStatus";
+import security from "services/security";
+import FeaturesService from "services/features";
 
 import Base from "./Base";
 import PatientData from "./PatientData";
@@ -39,11 +41,14 @@ export default function Intervention({
   memoryFetchReasonText,
   drugSummary,
   fetchDrugSummary,
-  security,
+  roles,
+  features,
   ...props
 }) {
   const { t } = useTranslation();
   const { isSaving, item } = intervention;
+  const securityService = security(roles);
+  const featureService = FeaturesService(features);
 
   const validationSchema = Yup.object().shape({
     idInterventionReason: Yup.array()
@@ -337,7 +342,8 @@ export default function Intervention({
                 reasonTextMemory={reasonTextMemory}
                 memorySaveReasonText={memorySaveReasonText}
                 memoryFetchReasonText={memoryFetchReasonText}
-                security={security}
+                securityService={securityService}
+                featureService={featureService}
               />
             </Row>
           </form>

@@ -374,9 +374,38 @@ export default function EconomyDayCalculator({
               className={priceKitStatus()}
               precision={6}
             />
-            <Tooltip title="Custo dos componentes">
+            <Popover
+              title="Custo dos componentes"
+              content={
+                <ConversionDetailsPopover>
+                  <Space>
+                    {values[source].kit?.list?.length > 0 ? (
+                      <div className="component">
+                        {values[source].kit.list.map((c) => (
+                          <>
+                            <div>{c.name}</div>
+                            <div>
+                              <NumericValue
+                                prefix="R$ "
+                                suffix={` / ${c.idMeasureUnit}`}
+                                value={c.price}
+                                decimalScale={6}
+                              />
+                            </div>
+                          </>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="component">
+                        Nenhum componente encontrado
+                      </div>
+                    )}
+                  </Space>
+                </ConversionDetailsPopover>
+              }
+            >
               <Button icon={<InfoCircleOutlined />} />
-            </Tooltip>
+            </Popover>
           </Space>
         </div>
       </div>
