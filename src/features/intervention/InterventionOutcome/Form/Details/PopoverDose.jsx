@@ -45,7 +45,10 @@ export default function PopoverDose({ outcomeData, source, children }) {
           </div>
           <div className="form-value">
             <NumericValue
-              suffix={` ${outcomeData[source].item.idMeasureUnit}`}
+              suffix={` ${
+                outcomeData[source].item.idMeasureUnit ||
+                "(Unidade Padrão não informada)"
+              }`}
               value={outcomeData[source].item.dose}
               decimalScale={4}
             />

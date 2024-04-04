@@ -80,7 +80,7 @@ export default function EditConversion({
 
   if (!idMeasureUnit) {
     return (
-      <Tooltip title="Este medicamento não possui unidade de custo, por isso não pode ser editado">
+      <Tooltip title="Este medicamento não possui unidade de medida, por isso não pode ser editado">
         <Tag>Indisponível</Tag>
       </Tooltip>
     );

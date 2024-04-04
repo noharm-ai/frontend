@@ -14,7 +14,11 @@ export default function PopoverFrequency({ outcomeData, source, children }) {
             <label>Frequência prescrita:</label>
           </div>
           <div className="form-value">
-            {outcomeData[source].item.idFrequency}
+            {outcomeData[source].item.idFrequency ? (
+              <>{outcomeData[source].item.idFrequency}</>
+            ) : (
+              <span className="warning">Não informado</span>
+            )}
           </div>
 
           <div className="form-label">
@@ -22,7 +26,7 @@ export default function PopoverFrequency({ outcomeData, source, children }) {
           </div>
           <div className="form-value">
             <NumericValue
-              suffix={` vezes ao dia`}
+              suffix={` vez(es) ao dia`}
               value={outcomeData[source].item.frequencyDay}
               decimalScale={2}
             />

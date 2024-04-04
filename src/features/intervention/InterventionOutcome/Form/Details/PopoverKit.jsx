@@ -3,15 +3,15 @@ import { Popover, Space } from "antd";
 
 import NumericValue from "components/NumericValue";
 
-import { ConversionDetailsPopover } from "../../InterventionOutcome.style";
+import { KitDetailsPopover } from "../../InterventionOutcome.style";
 
 export default function PopoverKit({ outcomeData, source, children }) {
   return (
     <Popover
       title="Custo dos componentes"
       content={
-        <ConversionDetailsPopover>
-          <Space>
+        <KitDetailsPopover>
+          <Space direction="vertical">
             {outcomeData[source].item.kit?.list?.length > 0 ? (
               <>
                 {outcomeData[source].item.kit.list.map((c, i) => (
@@ -20,19 +20,20 @@ export default function PopoverKit({ outcomeData, source, children }) {
                     <div>
                       <NumericValue
                         prefix="R$ "
-                        suffix={` / ${c.idMeasureUnit}`}
+                        suffix={` / ${c.idMeasureUnit || "-"}`}
                         value={c.price}
-                        decimalScale={6}
+                        decimalScale={2}
+                        fixedDecimalScale={2}
                       />
                     </div>
                   </div>
                 ))}
               </>
             ) : (
-              <div className="component">Nenhum componente encontrado</div>
+              <div className="warning">Nenhum componente encontrado</div>
             )}
           </Space>
-        </ConversionDetailsPopover>
+        </KitDetailsPopover>
       }
     >
       {children}

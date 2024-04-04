@@ -25,10 +25,10 @@ export default function PopoverPrice({ outcomeData, source, children }) {
                 decimalScale={2}
               />
             ) : (
-              <span style={{ color: "#ff4d4f" }}>
+              <span className="warning">
                 <Tooltip
                   underline
-                  title="Acione o suporte para que a integração do valor de custo seja efetuada. Se desejar, você pode informar o custo manualmente."
+                  title="Acione a Ajuda para que a integração do valor de custo seja efetuada. Se desejar, você pode informar o custo manualmente."
                 >
                   Indisponível
                 </Tooltip>
@@ -61,12 +61,15 @@ export default function PopoverPrice({ outcomeData, source, children }) {
             {outcomeData[source].item.price ? (
               <NumericValue
                 prefix="R$ "
-                suffix={` / ${outcomeData[source].item.idMeasureUnit}`}
+                suffix={` / ${
+                  outcomeData[source].item.idMeasureUnit ||
+                  "(Unidade Padrão não informada)"
+                }`}
                 value={outcomeData[source].item.price}
                 decimalScale={6}
               />
             ) : (
-              <span style={{ color: "#ff4d4f" }}>Não informado</span>
+              <span className="warning">Não informado</span>
             )}
           </div>
         </ConversionDetailsPopover>

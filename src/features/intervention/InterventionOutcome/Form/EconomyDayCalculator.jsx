@@ -153,7 +153,20 @@ export default function EconomyDayCalculator({
             >
               Dose dispensada
             </Tooltip>{" "}
-            ({outcomeData[source].item.idMeasureUnit}):
+            {outcomeData[source].item.idMeasureUnit ? (
+              <Tooltip underline title="Unidade padrão">
+                <span style={{ fontSize: "12px" }}>
+                  ({outcomeData[source].item.idMeasureUnit})
+                </span>
+              </Tooltip>
+            ) : (
+              <Tooltip underline title="Unidade padrão não informada">
+                <span style={{ color: "red", fontSize: "12px" }}>
+                  (Unidade inválida)
+                </span>
+              </Tooltip>
+            )}
+            :
           </label>
         </div>
         <div className="form-input">
@@ -199,7 +212,23 @@ export default function EconomyDayCalculator({
 
       <div className={`form-row`}>
         <div className="form-label">
-          <label>Custo / {outcomeData[source].item.idMeasureUnit}:</label>
+          <label>
+            Custo /{" "}
+            {outcomeData[source].item.idMeasureUnit ? (
+              <Tooltip underline title="Unidade padrão">
+                <span style={{ fontSize: "12px" }}>
+                  ({outcomeData[source].item.idMeasureUnit})
+                </span>
+              </Tooltip>
+            ) : (
+              <Tooltip underline title="Unidade padrão não informada">
+                <span style={{ color: "red", fontSize: "12px" }}>
+                  (Unidade inválida)
+                </span>
+              </Tooltip>
+            )}
+            :
+          </label>
         </div>
         <div className="form-input">
           <Space direction="horizontal">

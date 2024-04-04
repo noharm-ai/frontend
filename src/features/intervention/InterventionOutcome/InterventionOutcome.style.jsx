@@ -104,7 +104,17 @@ export const ConversionDetailsPopover = styled.div`
     color: #797979;
   }
 
+  .warning {
+    color: #ff4d4f;
+  }
+`;
+
+export const KitDetailsPopover = styled.div`
+  display: flex;
+  flex-direction: column;
+
   .component {
+    width: 350px;
     display: flex;
     justify-content: space-between;
     font-size: 12px;
