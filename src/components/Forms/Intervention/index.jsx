@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import isEmpty from "lodash.isempty";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -16,6 +17,7 @@ import InterventionReasonRelationType from "models/InterventionReasonRelationTyp
 import interventionStatus from "models/InterventionStatus";
 import security from "services/security";
 import FeaturesService from "services/features";
+import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 
 import Base from "./Base";
 import PatientData from "./PatientData";
@@ -46,6 +48,7 @@ export default function Intervention({
   ...props
 }) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const { isSaving, item } = intervention;
   const securityService = security(roles);
   const featureService = FeaturesService(features);
@@ -160,6 +163,7 @@ export default function Intervention({
     const { transcription, transcriptionData } = params;
     const interventionData = {
       ...params,
+      status: "s",
       transcription: transcription
         ? getTranscriptionData(transcriptionData)
         : null,
@@ -187,6 +191,16 @@ export default function Intervention({
         notification.success({
           message: t("success.intervention"),
         });
+
+        if (params.status !== "s") {
+          dispatch(
+            setSelectedInterventionOutcome({
+              idIntervention: intv.idIntervention,
+              outcome: params.status,
+              open: true,
+            })
+          );
+        }
       })
       .catch((e) => {
         console.error("intv error", e);

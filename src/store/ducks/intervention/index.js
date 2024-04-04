@@ -182,7 +182,9 @@ const updateListStatus = (
   const index = list.findIndex(
     (item) => `${item.idIntervention}` === `${idIntervention}`
   );
-  list[index].status = status;
+  if (index !== -1) {
+    list[index].status = status;
+  }
 
   return {
     ...state,

@@ -5,6 +5,7 @@ import { FloatButton } from "antd";
 
 import FormPatientModal from "containers/Forms/Patient";
 import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSlice";
+import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
 
 import { ScreeningFloatButtonGroup } from "../index.style";
 
@@ -54,6 +55,7 @@ export default function ScreeningActions({
         cancelText="Cancelar"
         afterSavePatient={afterSavePatient}
       />
+      <InterventionOutcome />
     </>
   );
 }
