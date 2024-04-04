@@ -496,7 +496,6 @@ const updateInterventionStatus = (
   state = INITIAL_STATE,
   { idIntervention, status }
 ) => {
-  console.log("update status", idIntervention, status);
   const interventionList = [...state.single.intervention.list];
 
   const index = interventionList.findIndex(

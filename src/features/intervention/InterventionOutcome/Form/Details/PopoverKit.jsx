@@ -30,7 +30,7 @@ export default function PopoverKit({ outcomeData, source, children }) {
                 ))}
               </>
             ) : (
-              <div className="warning">Nenhum componente encontrado</div>
+              <div className="component">Nenhum componente encontrado</div>
             )}
           </Space>
         </KitDetailsPopover>

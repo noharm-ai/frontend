@@ -1,6 +1,7 @@
 import React from "react";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { Space } from "antd";
+import Big from "big.js";
 
 import { InputNumber } from "components/Inputs";
 import Button from "components/Button";
@@ -10,6 +11,8 @@ import PopoverDose from "./Details/PopoverDose";
 import PopoverFrequency from "./Details/PopoverFrequency";
 import PopoverKit from "./Details/PopoverKit";
 
+const INPUT_PRECISION = 6;
+
 export default function EconomyDayCalculator({
   source,
   values,
@@ -17,63 +20,26 @@ export default function EconomyDayCalculator({
   setFieldValue,
   calcEconomyDay,
 }) {
-  const onChangeDose = (value) => {
-    setFieldValue(`${source}.dose`, value);
-    const pricePerDose = values[source].price * value + values[source].priceKit;
+  const onChangeParam = (field, value) => {
+    setFieldValue(`${source}.${field}`, value);
+
+    const newValues = {
+      ...values,
+      [source]: {
+        ...values[source],
+        [field]: value,
+      },
+    };
+
+    const pricePerDose = Big(newValues[source].price)
+      .times(Big(newValues[source].dose))
+      .plus(newValues[source].priceKit);
+
     setFieldValue(`${source}.pricePerDose`, pricePerDose);
+    newValues[source].pricePerDose = pricePerDose;
 
     if (!values.economyDayValueManual) {
-      setFieldValue(
-        "economyDayValue",
-        calcEconomyDay({
-          ...values,
-          [source]: {
-            ...values[source],
-            dose: value,
-            pricePerDose,
-          },
-        })
-      );
-    }
-  };
-
-  const onChangeCost = (value) => {
-    setFieldValue(`${source}.price`, value);
-    const pricePerDose = values[source].dose * value + values[source].priceKit;
-    setFieldValue(`${source}.pricePerDose`, pricePerDose);
-
-    if (!values.economyDayValueManual) {
-      setFieldValue(
-        "economyDayValue",
-        calcEconomyDay({
-          ...values,
-          [source]: {
-            ...values[source],
-            price: value,
-            pricePerDose,
-          },
-        })
-      );
-    }
-  };
-
-  const onChangeKitCost = (value) => {
-    setFieldValue(`${source}.priceKit`, value);
-    const pricePerDose = values[source].dose * values[source].price + value;
-    setFieldValue(`${source}.pricePerDose`, pricePerDose);
-
-    if (!values.economyDayValueManual) {
-      setFieldValue(
-        "economyDayValue",
-        calcEconomyDay({
-          ...values,
-          [source]: {
-            ...values[source],
-            priceKit: value,
-            pricePerDose,
-          },
-        })
-      );
+      setFieldValue("economyDayValue", calcEconomyDay(newValues));
     }
   };
 
@@ -94,48 +60,31 @@ export default function EconomyDayCalculator({
     }
   };
 
-  const doseStatus = () => {
-    if (!values[source]?.conversion?.doseFactor) {
+  const fieldStatus = (field) => {
+    if (field === "dose") {
+      if (!values[source]?.conversion?.doseFactor) {
+        return "error";
+      }
+    }
+
+    if (field === "price") {
+      if (!values[source]?.conversion?.priceFactor || !values[source].price) {
+        return "error";
+      }
+    }
+
+    //all
+    if (!values[source][field] && field !== "priceKit") {
       return "error";
     }
 
-    if (values[source].dose !== outcomeData[source].item.dose) {
+    if (
+      !Big(values[source][field] || 0).eq(Big(outcomeData[source].item[field]))
+    ) {
       return "warning";
     }
 
-    return "";
-  };
-
-  const frequencyStatus = () => {
-    if (!values[source].frequencyDay) {
-      return "error";
-    }
-
-    if (values[source].frequencyDay !== outcomeData[source].item.frequencyDay) {
-      return "warning";
-    }
-
-    return "";
-  };
-
-  const priceStatus = () => {
-    if (!values[source]?.conversion?.priceFactor || !values[source].price) {
-      return "error";
-    }
-
-    if (values[source].price !== outcomeData[source].item.price) {
-      return "warning";
-    }
-
-    return "";
-  };
-
-  const priceKitStatus = () => {
-    if (values[source].priceKit !== outcomeData[source].item.priceKit) {
-      return "warning";
-    }
-
-    return "";
+    return false;
   };
 
   if (!outcomeData) {
@@ -173,11 +122,13 @@ export default function EconomyDayCalculator({
           <Space direction="horizontal">
             <InputNumber
               disabled={outcomeData.header?.readonly}
-              onChange={(value) => onChangeDose(value)}
+              onChange={(value) => onChangeParam("dose", value)}
               value={values[source].dose}
               min={0}
-              className={doseStatus()}
-              status={doseStatus()}
+              className={fieldStatus("dose")}
+              status={fieldStatus("dose")}
+              stringMode
+              precision={INPUT_PRECISION}
             />
             <PopoverDose outcomeData={outcomeData} source={source}>
               <Button
@@ -200,8 +151,10 @@ export default function EconomyDayCalculator({
               min={0}
               onChange={(value) => onChangeFrequencyDay(value)}
               value={values[source].frequencyDay}
-              className={frequencyStatus()}
-              status={frequencyStatus()}
+              className={fieldStatus("frequencyDay")}
+              status={fieldStatus("frequencyDay")}
+              stringMode
+              precision={INPUT_PRECISION}
             />
             <PopoverFrequency outcomeData={outcomeData} source={source}>
               <Button icon={<InfoCircleOutlined />} />
@@ -235,12 +188,13 @@ export default function EconomyDayCalculator({
             <InputNumber
               disabled={outcomeData.header?.readonly}
               min={0}
-              precision={6}
+              precision={INPUT_PRECISION}
               addonBefore="R$"
-              onChange={(value) => onChangeCost(value)}
+              onChange={(value) => onChangeParam("price", value)}
               value={values[source].price}
-              className={priceStatus()}
-              status={priceStatus()}
+              className={fieldStatus("price")}
+              status={fieldStatus("price")}
+              stringMode
             />
             <PopoverPrice outcomeData={outcomeData} source={source}>
               <Button
@@ -262,11 +216,12 @@ export default function EconomyDayCalculator({
               disabled={outcomeData.header?.readonly}
               min={0}
               addonBefore="R$"
-              onChange={(value) => onChangeKitCost(value)}
+              onChange={(value) => onChangeParam("priceKit", value)}
               value={values[source].priceKit}
-              status={priceKitStatus()}
-              className={priceKitStatus()}
-              precision={6}
+              className={fieldStatus("priceKit")}
+              status={fieldStatus("priceKit")}
+              precision={INPUT_PRECISION}
+              stringMode
             />
             <PopoverKit outcomeData={outcomeData} source={source}>
               <Button icon={<InfoCircleOutlined />} />

@@ -8,6 +8,7 @@ import {
   CaretUpOutlined,
 } from "@ant-design/icons";
 import { isEmpty } from "lodash";
+import Big from "big.js";
 
 import { InputNumber, Input, Select } from "components/Inputs";
 import { formatDate } from "utils/date";
@@ -16,6 +17,8 @@ import Tooltip from "components/Tooltip";
 import EconomyDayCalculator from "./EconomyDayCalculator";
 
 import { InterventionOutcomeContainer } from "../InterventionOutcome.style";
+
+const INPUT_PRECISION = 6;
 
 export default function InterventionOutcomeForm() {
   const { values, setFieldValue, errors, touched } = useFormikContext();
@@ -47,11 +50,15 @@ export default function InterventionOutcomeForm() {
       formValues.destiny.pricePerDose &&
       formValues.destiny.frequencyDay
     ) {
-      const economy =
-        formValues.origin.pricePerDose * formValues.origin.frequencyDay -
-        formValues.destiny.pricePerDose * formValues.destiny.frequencyDay;
+      const originValue = Big(formValues.origin.pricePerDose).times(
+        Big(formValues.origin.frequencyDay)
+      );
+      const destinyValue = Big(formValues.destiny.pricePerDose).times(
+        Big(formValues.destiny.frequencyDay)
+      );
+      const economy = originValue.minus(destinyValue);
 
-      return economy < 0 ? 0 : economy;
+      return economy.toFixed(6) < 0 ? 0 : economy;
     }
 
     if (
@@ -59,10 +66,11 @@ export default function InterventionOutcomeForm() {
       formValues.origin.pricePerDose &&
       formValues.origin.frequencyDay
     ) {
-      const economy =
-        formValues.origin.pricePerDose * formValues.origin.frequencyDay;
+      const economy = Big(formValues.origin.pricePerDose).times(
+        formValues.origin.frequencyDay
+      );
 
-      return economy < 0 ? 0 : economy;
+      return economy.toFixed(6) < 0 ? 0 : economy;
     }
 
     return 0;
@@ -89,9 +97,22 @@ export default function InterventionOutcomeForm() {
 
     const fields = ["dose", "frequencyDay", "price", "priceKit"];
 
-    const fieldsStatus = fields.map((f) =>
-      values[source][f] !== original.item[f] ? "warning" : ""
-    );
+    const fieldsStatus = fields.map((f) => {
+      if (!values[source][f] && f !== "priceKit") {
+        return "error";
+      }
+
+      if (!Big(values[source][f]).eq(Big(original.item[f]))) {
+        return "warning";
+      }
+
+      return false;
+    });
+
+    if (fieldsStatus.indexOf("error") !== -1) {
+      return "error";
+    }
+
     if (fieldsStatus.indexOf("warning") !== -1) {
       return "warning";
     }
@@ -188,12 +209,11 @@ export default function InterventionOutcomeForm() {
                     <Space direction="horizontal">
                       <InputNumber
                         disabled
-                        precision={2}
+                        precision={INPUT_PRECISION}
                         addonBefore="R$"
-                        value={
-                          values.origin.pricePerDose *
-                          values.origin.frequencyDay
-                        }
+                        value={Big(values.origin.pricePerDose || 0).times(
+                          Big(values.origin.frequencyDay || 0)
+                        )}
                         className={pricePerDayStatus("origin")}
                       />
                       <Tooltip title={details ? "Recolher" : "Detalhar"}>
@@ -318,12 +338,11 @@ export default function InterventionOutcomeForm() {
                       <Space direction="horizontal">
                         <InputNumber
                           disabled
-                          precision={2}
+                          precision={INPUT_PRECISION}
                           addonBefore="R$"
-                          value={
-                            values.destiny.pricePerDose *
+                          value={Big(values.destiny.pricePerDose).times(
                             values.destiny.frequencyDay
-                          }
+                          )}
                           className={pricePerDayStatus("destiny")}
                         />
                         <Tooltip title={details ? "Recolher" : "Detalhar"}>
@@ -388,7 +407,7 @@ export default function InterventionOutcomeForm() {
                     !values.economyDayValueManual ||
                     outcomeData.header?.readonly
                   }
-                  precision={2}
+                  precision={INPUT_PRECISION}
                   addonBefore="R$"
                   onChange={(value) =>
                     values.economyDayValueManual
@@ -438,7 +457,7 @@ export default function InterventionOutcomeForm() {
                 {values.economyDayAmountManual ? (
                   <InputNumber
                     disabled={outcomeData.header?.readonly}
-                    precision={2}
+                    precision={0}
                     addonAfter=" Dias"
                     onChange={(value) =>
                       setFieldValue("economyDayAmount", value)
