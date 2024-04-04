@@ -1,14 +1,14 @@
 import React from "react";
 import { InfoCircleOutlined } from "@ant-design/icons";
-import { Space, Popover } from "antd";
+import { Space } from "antd";
 
 import { InputNumber } from "components/Inputs";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
-import NumericValue from "components/NumericValue";
-import EditConversion from "./EditConversion";
-
-import { ConversionDetailsPopover } from "../InterventionOutcome.style";
+import PopoverPrice from "./Details/PopoverPrice";
+import PopoverDose from "./Details/PopoverDose";
+import PopoverFrequency from "./Details/PopoverFrequency";
+import PopoverKit from "./Details/PopoverKit";
 
 export default function EconomyDayCalculator({
   source,
@@ -166,59 +166,12 @@ export default function EconomyDayCalculator({
               className={doseStatus()}
               status={doseStatus()}
             />
-            <Popover
-              content={
-                <ConversionDetailsPopover>
-                  <div className="form-label">
-                    <label>Dose prescrita:</label>
-                  </div>
-                  <div className="form-value">
-                    <NumericValue
-                      suffix={` ${outcomeData[source].item.beforeConversion.idMeasureUnit}`}
-                      value={outcomeData[source].item.beforeConversion.dose}
-                      decimalScale={4}
-                    />
-                  </div>
-
-                  <div className="form-label">
-                    <label>Fator de conversão:</label>
-                  </div>
-                  <div className="form-value">
-                    <Space direction="horizontal">
-                      <EditConversion
-                        idSegment={outcomeData.header?.idSegment}
-                        idDrug={outcomeData[source].item.idDrug}
-                        idMeasureUnit={
-                          outcomeData[source].item.beforeConversion
-                            .idMeasureUnit
-                        }
-                        idMeasureUnitConverted={
-                          outcomeData[source].item.idMeasureUnit
-                        }
-                        factor={outcomeData[source].item.conversion.doseFactor}
-                        readonly={outcomeData.header?.readonly}
-                      />
-                    </Space>
-                  </div>
-
-                  <div className="form-label">
-                    <label>Dose convertida:</label>
-                  </div>
-                  <div className="form-value">
-                    <NumericValue
-                      suffix={` ${outcomeData[source].item.idMeasureUnit}`}
-                      value={outcomeData[source].item.dose}
-                      decimalScale={4}
-                    />
-                  </div>
-                </ConversionDetailsPopover>
-              }
-            >
+            <PopoverDose outcomeData={outcomeData} source={source}>
               <Button
                 icon={<InfoCircleOutlined />}
                 danger={!values[source]?.conversion?.doseFactor}
               />
-            </Popover>
+            </PopoverDose>
           </Space>
         </div>
       </div>
@@ -237,31 +190,9 @@ export default function EconomyDayCalculator({
               className={frequencyStatus()}
               status={frequencyStatus()}
             />
-            <Popover
-              content={
-                <ConversionDetailsPopover>
-                  <div className="form-label">
-                    <label>Frequência convertida:</label>
-                  </div>
-                  <div className="form-value">
-                    <NumericValue
-                      suffix={` / Dia`}
-                      value={outcomeData[source].item.frequencyDay}
-                      decimalScale={2}
-                    />
-                  </div>
-
-                  <div className="form-label">
-                    <label>Frequência prescrita:</label>
-                  </div>
-                  <div className="form-value">
-                    {outcomeData[source].item.idFrequency}
-                  </div>
-                </ConversionDetailsPopover>
-              }
-            >
+            <PopoverFrequency outcomeData={outcomeData} source={source}>
               <Button icon={<InfoCircleOutlined />} />
-            </Popover>
+            </PopoverFrequency>
           </Space>
         </div>
       </div>
@@ -282,78 +213,12 @@ export default function EconomyDayCalculator({
               className={priceStatus()}
               status={priceStatus()}
             />
-            <Popover
-              content={
-                <ConversionDetailsPopover>
-                  <div className="form-label">
-                    <label>Custo registrado:</label>
-                  </div>
-                  <div className="form-value">
-                    {outcomeData[source].item?.beforeConversion?.price &&
-                    outcomeData[source].item.beforeConversion
-                      .idMeasureUnitPrice ? (
-                      <NumericValue
-                        prefix="R$ "
-                        suffix={` / ${outcomeData[source].item.beforeConversion.idMeasureUnitPrice}`}
-                        value={outcomeData[source].item.beforeConversion.price}
-                        decimalScale={2}
-                      />
-                    ) : (
-                      <span style={{ color: "#ff4d4f" }}>
-                        <Tooltip
-                          underline
-                          title="Acione o suporte para que a integração do valor de custo seja efetuada. Se desejar, você pode informar o custo manualmente."
-                        >
-                          Indisponível
-                        </Tooltip>
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="form-label">
-                    <label>Fator de conversão:</label>
-                  </div>
-                  <div className="form-value">
-                    <Space direction="horizontal">
-                      <EditConversion
-                        idSegment={outcomeData.header?.idSegment}
-                        idDrug={outcomeData[source].item.idDrug}
-                        idMeasureUnit={
-                          outcomeData[source].item.beforeConversion
-                            .idMeasureUnitPrice
-                        }
-                        idMeasureUnitConverted={
-                          outcomeData[source].item.idMeasureUnit
-                        }
-                        factor={outcomeData[source].item.conversion.priceFactor}
-                        readonly={outcomeData.header?.readonly}
-                      />
-                    </Space>
-                  </div>
-
-                  <div className="form-label">
-                    <label>Custo convertido:</label>
-                  </div>
-                  <div className="form-value">
-                    {outcomeData[source].item.price ? (
-                      <NumericValue
-                        prefix="R$ "
-                        suffix={` / ${outcomeData[source].item.idMeasureUnit}`}
-                        value={outcomeData[source].item.price}
-                        decimalScale={6}
-                      />
-                    ) : (
-                      <span style={{ color: "#ff4d4f" }}>Não informado</span>
-                    )}
-                  </div>
-                </ConversionDetailsPopover>
-              }
-            >
+            <PopoverPrice outcomeData={outcomeData} source={source}>
               <Button
                 icon={<InfoCircleOutlined />}
                 danger={!values[source]?.conversion?.priceFactor}
               />
-            </Popover>
+            </PopoverPrice>
           </Space>
         </div>
       </div>
@@ -374,38 +239,9 @@ export default function EconomyDayCalculator({
               className={priceKitStatus()}
               precision={6}
             />
-            <Popover
-              title="Custo dos componentes"
-              content={
-                <ConversionDetailsPopover>
-                  <Space>
-                    {values[source].kit?.list?.length > 0 ? (
-                      <div className="component">
-                        {values[source].kit.list.map((c) => (
-                          <>
-                            <div>{c.name}</div>
-                            <div>
-                              <NumericValue
-                                prefix="R$ "
-                                suffix={` / ${c.idMeasureUnit}`}
-                                value={c.price}
-                                decimalScale={6}
-                              />
-                            </div>
-                          </>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="component">
-                        Nenhum componente encontrado
-                      </div>
-                    )}
-                  </Space>
-                </ConversionDetailsPopover>
-              }
-            >
+            <PopoverKit outcomeData={outcomeData} source={source}>
               <Button icon={<InfoCircleOutlined />} />
-            </Popover>
+            </PopoverKit>
           </Space>
         </div>
       </div>
