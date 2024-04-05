@@ -56,9 +56,9 @@ export default function InterventionOutcome({ ...props }) {
     idIntervention: outcomeData.idIntervention,
     outcome: selectedIntervention.outcome,
     origin: outcomeData.origin?.item || {},
-    idPrescriptionDestiny:
+    idPrescriptionDrugDestiny:
       outcomeData.destiny?.length > 0
-        ? outcomeData.destiny[0].item.idPrescription
+        ? outcomeData.destiny[0].item.idPrescriptionDrug
         : null,
     destiny: outcomeData.destiny?.length > 0 ? outcomeData.destiny[0].item : {},
     economyDayValueManual: outcomeData.header?.economyDayValueManual,

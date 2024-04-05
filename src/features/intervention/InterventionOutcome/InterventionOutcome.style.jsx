@@ -89,6 +89,18 @@ export const InterventionOutcomeContainer = styled.div`
   }
 `;
 
+export const PrescriptionOption = styled.div`
+  .date,
+  .detail {
+    font-weight: 300;
+    font-size: 12px;
+  }
+
+  .name {
+    font-size: 12px;
+  }
+`;
+
 export const ConversionDetailsPopover = styled.div`
   min-width: 200px;
 

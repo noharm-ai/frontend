@@ -16,7 +16,10 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import EconomyDayCalculator from "./EconomyDayCalculator";
 
-import { InterventionOutcomeContainer } from "../InterventionOutcome.style";
+import {
+  InterventionOutcomeContainer,
+  PrescriptionOption,
+} from "../InterventionOutcome.style";
 
 const INPUT_PRECISION = 6;
 
@@ -29,10 +32,11 @@ export default function InterventionOutcomeForm() {
     "(Dose dispensada X Custo + Custo Kit) X Frequência/Dia";
 
   const onChangePrescriptionDestiny = (value) => {
-    setFieldValue("idPrescriptionDestiny", value);
+    console.log("value", value);
+    setFieldValue("idPrescriptionDrugDestiny", value);
 
     outcomeData.destiny.forEach((dData) => {
-      if (dData.item.idPrescription === value) {
+      if (dData.item.idPrescriptionDrug === value) {
         setFieldValue("destiny", dData.item);
       }
     });
@@ -90,7 +94,8 @@ export default function InterventionOutcomeForm() {
     } else {
       original = outcomeData.original.destiny
         ? outcomeData.original.destiny.find(
-            (i) => i.item?.idPrescription === values.idPrescriptionDestiny
+            (i) =>
+              i.item?.idPrescriptionDrug === values.idPrescriptionDrugDestiny
           )
         : {};
     }
@@ -176,11 +181,9 @@ export default function InterventionOutcomeForm() {
               <div className="form-input">
                 <Space direction="horizontal">
                   <Input
-                    value={`#${
-                      outcomeData.origin.item.idPrescription
-                    } - ${formatDate(
+                    value={`${formatDate(
                       outcomeData.origin.item.prescriptionDate
-                    )}`}
+                    )} - #${outcomeData.origin.item.idPrescription}`}
                     disabled
                   />
                   <Tooltip title="Abrir prescrição">
@@ -245,8 +248,8 @@ export default function InterventionOutcomeForm() {
                       destiny: outcomeData.original.destiny
                         ? outcomeData.original.destiny.find(
                             (i) =>
-                              i.item?.idPrescription ===
-                              values.idPrescriptionDestiny
+                              i.item?.idPrescriptionDrug ===
+                              values.idPrescriptionDrugDestiny
                           )
                         : null,
                     }}
@@ -285,8 +288,8 @@ export default function InterventionOutcomeForm() {
                       <>
                         <Select
                           optionFilterProp="children"
-                          style={{ width: "100%" }}
-                          value={values.idPrescriptionDestiny}
+                          style={{ width: "290px" }}
+                          value={values.idPrescriptionDrugDestiny}
                           onChange={(value) =>
                             onChangePrescriptionDestiny(value)
                           }
@@ -297,24 +300,37 @@ export default function InterventionOutcomeForm() {
                           status={
                             outcomeData.destiny.length === 0 ? "error" : ""
                           }
-                        >
-                          {outcomeData.destiny.length > 0 &&
-                            outcomeData.destiny.map((dData) => (
-                              <Select.Option
-                                key={dData.item.idPrescription}
-                                value={dData.item.idPrescription}
-                              >
-                                #{dData.item.idPrescription} -{" "}
-                                {formatDate(dData.item.prescriptionDate)}
-                              </Select.Option>
-                            ))}
-                        </Select>
+                          optionLabelProp="label"
+                          options={outcomeData.destiny.map((i) => ({
+                            ...i.item,
+                            value: i.item.idPrescriptionDrug,
+                            label: `${formatDate(i.item.prescriptionDate)} - #${
+                              i.item.idPrescription
+                            } - ${i.item.name}`,
+                          }))}
+                          optionRender={(option) => (
+                            <PrescriptionOption>
+                              <div className="date">
+                                {formatDate(option.data.prescriptionDate)}
+                              </div>
+                              <div className="name">{option.data.name}</div>
+                              <div className="detail">
+                                {option.data.dose}{" "}
+                                {option.data.idMeasureUnit || "-"} (
+                                {option.data.route})
+                              </div>
+                              <div className="detail">
+                                {option.data.frequencyDay} vez(es) ao dia
+                              </div>
+                            </PrescriptionOption>
+                          )}
+                        ></Select>
                         <Tooltip title="Abrir prescrição">
                           <Button
                             icon={<SearchOutlined />}
-                            disabled={!values.idPrescriptionDestiny}
+                            disabled={!values.idPrescriptionDrugDestiny}
                             onClick={() =>
-                              openPrescription(values.idPrescriptionDestiny)
+                              openPrescription(values.destiny.idPrescription)
                             }
                           />
                         </Tooltip>
@@ -375,8 +391,8 @@ export default function InterventionOutcomeForm() {
                         destiny: outcomeData.original.destiny
                           ? outcomeData.original.destiny.find(
                               (i) =>
-                                i.item?.idPrescription ===
-                                values.idPrescriptionDestiny
+                                i.item?.idPrescriptionDrug ===
+                                values.idPrescriptionDrugDestiny
                             )
                           : null,
                       }}
