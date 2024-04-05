@@ -192,7 +192,7 @@ export default function Intervention({
           message: t("success.intervention"),
         });
 
-        if (params.status !== "s") {
+        if (params.status !== "s" && params.status != null) {
           dispatch(
             setSelectedInterventionOutcome({
               idIntervention: intv.idIntervention,
