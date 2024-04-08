@@ -8,6 +8,7 @@ export default class Feature {
   static OAUTH = "OAUTH";
   static CLINICAL_NOTES_NEW_FORMAT = "CLINICAL_NOTES_NEW_FORMAT";
   static PATIENT_REVISION = "PATIENT_REVISION";
+  static INTERVENTION_V2 = "INTERVENTION_V2";
 
   static getFeatures(t) {
     return [

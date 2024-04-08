@@ -543,6 +543,14 @@
     "s": "Pending"
   },
 
+  "interventionStatusAction": {
+    "a": "Accept",
+    "n": "Do not accept",
+    "j": "Do not accept (justified)",
+    "x": "Not applicable",
+    "s": "Undo outcome"
+  },
+
   "roles": {
     "admin": "Admin",
     "concilia": "Conciliation",

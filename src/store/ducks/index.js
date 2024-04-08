@@ -28,6 +28,7 @@ import prescriptionSlice from "features/prescription/PrescriptionSlice";
 import preferencesSlice from "features/preferences/PreferencesSlice";
 import drugAttributesFormSlice from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
 import supportSlice from "features/support/SupportSlice";
+import interventionOutcomeSlice from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -98,4 +99,5 @@ export default combineReducers({
   preferences: preferencesSlice,
   drugAttributesForm: drugAttributesFormSlice,
   support: supportSlice,
+  interventionOutcome: interventionOutcomeSlice,
 });

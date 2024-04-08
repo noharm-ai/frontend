@@ -31,6 +31,7 @@ import { reset as scoreWizardReset } from "features/outliers/ScoreWizard/ScoreWi
 import { reset as prescriptionv2Reset } from "features/prescription/PrescriptionSlice";
 import { reset as drugAttributesFormReset } from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
 import { reset as supportReset } from "features/support/SupportSlice";
+import { reset as interventionOutcomeReset } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 
 import { reset as reportsReset } from "features/reports/ReportsSlice";
 import { reset as patientDayReportReset } from "features/reports/PatientDayReport/PatientDayReportSlice";
@@ -84,6 +85,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(prescriptionv2Reset());
   dispatch(drugAttributesFormReset());
   dispatch(supportReset());
+  dispatch(interventionOutcomeReset());
 
   dispatch(reportsReset());
   dispatch(patientDayReportReset());

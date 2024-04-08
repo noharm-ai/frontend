@@ -19,7 +19,6 @@ import {
 } from "store/ducks/memory/thunk";
 
 import Intervention from "components/Forms/Intervention";
-import security from "services/security";
 
 const mapStateToProps = ({ intervention, drugs, memory, user }) => ({
   intervention: intervention.maybeCreateOrUpdate,
@@ -27,7 +26,8 @@ const mapStateToProps = ({ intervention, drugs, memory, user }) => ({
   drugs: drugs.search,
   drugSummary: drugs.summary,
   reasonTextMemory: memory.reasonText,
-  security: security(user.account.roles),
+  roles: user.account.roles,
+  features: user.account.features,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

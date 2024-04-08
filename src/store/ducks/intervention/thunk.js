@@ -22,6 +22,7 @@ const {
   interventionClearSavedStatus,
 
   interventionUpdateList,
+  interventionUpdateListStatus,
 
   interventionFetchFuturePrescriptionStart,
   interventionFetchFuturePrescriptionError,
@@ -134,6 +135,11 @@ export const clearSavedInterventionStatusThunk = () => (dispatch) => {
 export const updateInterventionListDataThunk = (intervention) => (dispatch) => {
   dispatch(interventionUpdateList(intervention));
 };
+
+export const updateInterventionListStatusThunk =
+  (idIntervention, status) => (dispatch) => {
+    dispatch(interventionUpdateListStatus(idIntervention, status));
+  };
 
 export const fetchFuturePrescriptionThunk =
   (id) => async (dispatch, getState) => {

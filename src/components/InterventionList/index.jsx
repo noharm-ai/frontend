@@ -21,6 +21,7 @@ import Filter from "./filters/Filter";
 
 import { PageCard } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
+import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
 
 const TableInfo = styled.div`
   .filter-field {
@@ -401,6 +402,7 @@ export default function InterventionList({
         afterSaveIntervention={afterSaveIntervention}
         disableUndoIntervention
       />
+      <InterventionOutcome />
     </>
   );
 }

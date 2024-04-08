@@ -428,6 +428,9 @@
     "labelRelations": "Relações",
     "labelRelationsPlaceholder": "Selecione as relações...",
     "labelRelationsHint": "Lista de medicamentos com Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica",
+    "labelSubstitution": "Substituir por",
+    "labelSubstitutionPlaceholder": "Selecione o medicamento substituto...",
+    "labelSubstitutionHint": "Farmacoeconomia: O medicamento selecionado será aplicado no cálculo para substituir o medicamento atual (somente o primeiro medicamento selecionado será considerado). Se este campo não for preenchido, será considerado o medicamento atual para substituição.",
     "labelObservations": "Observações",
     "labelTranscriptionHint": "Habilita a possibilidade de alterar a prescrição atual",
     "labelTranscription": "Transcrição",
@@ -542,6 +545,14 @@
     "j": "Não aceita com Justificativa",
     "x": "Não se aplica",
     "s": "Pendente"
+  },
+
+  "interventionStatusAction": {
+    "a": "Aceitar Intervenção",
+    "n": "Não Aceitar Intervenção",
+    "j": "Não Aceitar Intervenção (com Justificativa)",
+    "x": "Marcar como Não se Aplica",
+    "s": "Desfazer desfecho"
   },
 
   "roles": {

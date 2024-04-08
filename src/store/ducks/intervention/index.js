@@ -18,6 +18,7 @@ export const { Types, Creators } = createActions({
   interventionUpdateSelectedItemIntervention: ["intervention"],
 
   interventionUpdateList: ["intervention"],
+  interventionUpdateListStatus: ["idIntervention", "status"],
 
   interventionFetchFuturePrescriptionStart: [""],
   interventionFetchFuturePrescriptionError: ["error"],
@@ -172,6 +173,25 @@ const updateList = (state = INITIAL_STATE, { intervention }) => {
   };
 };
 
+const updateListStatus = (
+  state = INITIAL_STATE,
+  { idIntervention, status }
+) => {
+  const list = [...state.list];
+
+  const index = list.findIndex(
+    (item) => `${item.idIntervention}` === `${idIntervention}`
+  );
+  if (index !== -1) {
+    list[index].status = status;
+  }
+
+  return {
+    ...state,
+    list,
+  };
+};
+
 const fetchFuturePrescriptionStart = (state = INITIAL_STATE) => ({
   ...state,
   futurePrescription: {
@@ -226,6 +246,7 @@ const HANDLERS = {
     updateSelectedItemIntervention,
 
   [Types.INTERVENTION_UPDATE_LIST]: updateList,
+  [Types.INTERVENTION_UPDATE_LIST_STATUS]: updateListStatus,
 
   [Types.INTERVENTION_FETCH_FUTURE_PRESCRIPTION_START]:
     fetchFuturePrescriptionStart,

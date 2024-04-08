@@ -2,7 +2,6 @@ import React from "react";
 import isEmpty from "lodash.isempty";
 import uniqBy from "lodash.uniqby";
 import debounce from "lodash.debounce";
-import { useTranslation } from "react-i18next";
 
 import { Select } from "components/Inputs";
 import LoadBox from "components/LoadBox";
@@ -16,8 +15,6 @@ export default function Interaction({
   idSegment,
   uniqueDrugList,
 }) {
-  const { t } = useTranslation();
-
   const handleChange = (interactions) => {
     if (!isEmpty(interactions)) {
       interactions = interactions.map((item) => parseInt(item, 10));
@@ -64,7 +61,6 @@ export default function Interaction({
       mode="multiple"
       optionFilterProp="children"
       style={{ width: "100%" }}
-      placeholder={t("interventionForm.labelRelationsPlaceholder")}
       defaultValue={interactions || undefined}
       notFoundContent={drugs.isFetching ? <LoadBox /> : null}
       filterOption={false}

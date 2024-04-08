@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components/macro";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -16,6 +17,7 @@ import Tooltip from "components/Tooltip";
 import RichTextView from "components/RichTextView";
 import isEmpty from "lodash.isempty";
 import InterventionStatus from "models/InterventionStatus";
+import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 
 const NestedTableContainer = styled.div`
   margin-top: 5px;
@@ -36,7 +38,12 @@ const TableLink = styled.a`
   }
 `;
 
-const interventionMenu = (idIntervention, saveIntervention, onShowModal) => {
+const interventionMenu = (
+  idIntervention,
+  setSelectedInterventionOutcome,
+  dispatch,
+  onShowModal
+) => {
   const items = [
     {
       key: "a",
@@ -71,10 +78,13 @@ const interventionMenu = (idIntervention, saveIntervention, onShowModal) => {
   return {
     items,
     onClick: ({ key }) => {
-      saveIntervention({
-        idIntervention,
-        status: key,
-      });
+      dispatch(
+        setSelectedInterventionOutcome({
+          idIntervention: idIntervention,
+          outcome: key,
+          open: true,
+        })
+      );
     },
   };
 };
@@ -239,6 +249,7 @@ const Action = ({
   admissionNumber,
   ...data
 }) => {
+  const dispatch = useDispatch();
   const isChecked = data.status !== "s";
   const closedStatuses = InterventionStatus.getClosedStatuses();
   const isClosed = closedStatuses.indexOf(data.status) !== -1;
@@ -246,7 +257,7 @@ const Action = ({
   return (
     <>
       {isChecked && (
-        <Tooltip title="Desfazer situação" placement="left">
+        <Tooltip title="Desfazer desfecho" placement="left">
           <Button
             className={
               onShowModal
@@ -256,10 +267,13 @@ const Action = ({
             danger
             ghost
             onClick={() =>
-              saveIntervention({
-                idIntervention: data.idIntervention,
-                status: "s",
-              })
+              dispatch(
+                setSelectedInterventionOutcome({
+                  idIntervention: data.idIntervention,
+                  outcome: "s",
+                  open: true,
+                })
+              )
             }
             loading={isSaving}
             icon={<RollbackOutlined style={{ fontSize: 16 }} />}
@@ -270,7 +284,8 @@ const Action = ({
         <Dropdown
           menu={interventionMenu(
             data.idIntervention,
-            saveIntervention,
+            setSelectedInterventionOutcome,
+            dispatch,
             onShowModal
           )}
           loading={isSaving}

@@ -15,7 +15,7 @@ import Observation from "./Fields/Observation";
 import Transcription from "./Fields/Transcription";
 import InterventionReasonRelationType from "models/InterventionReasonRelationType";
 
-import { Box, FieldError } from "../Form.style";
+import { Box, FieldError, FieldHelp } from "../Form.style";
 
 export default function Base({
   drugData,
@@ -28,7 +28,8 @@ export default function Base({
   memoryFetchReasonText,
   drugSummary,
   fetchDrugSummary,
-  security,
+  securityService,
+  featureService,
 }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const { t } = useTranslation();
@@ -42,7 +43,7 @@ export default function Base({
     transcription,
   } = values;
   const layout = { label: 8, input: 16 };
-  const hasTranscription = security.hasTranscription();
+  const hasTranscription = securityService.hasTranscription();
 
   const hasRelationships = (reasonList, selectedReasons = []) => {
     if (!selectedReasons) return false;
@@ -96,24 +97,23 @@ export default function Base({
   const hasSuspOrSubst = (reasonList, selectedReasons = []) => {
     if (!selectedReasons) return false;
 
-    let result = false;
-
-    selectedReasons.forEach((itemId) => {
+    for (let i = 0; i < selectedReasons.length; i++) {
       const reasonIndex = reasonList.findIndex(
-        (reason) => reason.id === itemId
+        (reason) => reason.id === selectedReasons[i]
       );
 
       if (reasonIndex !== -1) {
-        if (
-          reasonList[reasonIndex].suspension ||
-          reasonList[reasonIndex].substitution
-        ) {
-          result = true;
+        if (reasonList[reasonIndex].suspension) {
+          return "suspension";
+        }
+
+        if (reasonList[reasonIndex].substitution) {
+          return "substitution";
         }
       }
-    });
+    }
 
-    return result;
+    return false;
   };
 
   const handleReasonChange = (idInterventionReason) => {
@@ -193,9 +193,7 @@ export default function Base({
       >
         <Col xs={layout.label}>
           <Heading as="label" size="14px">
-            <Tooltip title={t("interventionForm.labelReasonsHint")} underline>
-              {t("interventionForm.labelReasons")}:
-            </Tooltip>
+            {t("interventionForm.labelReasons")}:
           </Heading>
         </Col>
         <Col xs={layout.input}>
@@ -215,6 +213,28 @@ export default function Base({
               </Select.Option>
             ))}
           </Select>
+          {hasSuspOrSubst(reasons.list, idInterventionReason) ===
+            "substitution" && (
+            <FieldHelp style={{ opacity: 0.7 }}>
+              <Tooltip
+                underline
+                title="Farmacoeconomia: Será aplicado o cálculo de Substituição para o motivo selecionado"
+              >
+                Tipo economia: Substituição
+              </Tooltip>
+            </FieldHelp>
+          )}
+          {hasSuspOrSubst(reasons.list, idInterventionReason) ===
+            "suspension" && (
+            <FieldHelp style={{ opacity: 0.7 }}>
+              <Tooltip
+                underline
+                title="Farmacoeconomia: Será aplicado o cálculo de Suspensão para o motivo selecionado"
+              >
+                Tipo economia: Suspensão
+              </Tooltip>
+            </FieldHelp>
+          )}
           {errors.idInterventionReason && touched.idInterventionReason && (
             <FieldError>{errors.idInterventionReason}</FieldError>
           )}
@@ -224,12 +244,22 @@ export default function Base({
         <Box hasError={errors.interactions && touched.interactions}>
           <Col xs={layout.label}>
             <Heading as="label" size="14px">
-              <Tooltip
-                title={t("interventionForm.labelRelationsHint")}
-                underline
-              >
-                {t("interventionForm.labelRelations")}:
-              </Tooltip>
+              {hasSuspOrSubst(reasons.list, idInterventionReason) ===
+              "substitution" ? (
+                <Tooltip
+                  title={t("interventionForm.labelSubstitutionHint")}
+                  underline
+                >
+                  {t("interventionForm.labelSubstitution")}:
+                </Tooltip>
+              ) : (
+                <Tooltip
+                  title={t("interventionForm.labelRelationsHint")}
+                  underline
+                >
+                  {t("interventionForm.labelRelations")}:
+                </Tooltip>
+              )}
             </Heading>
           </Col>
           <Col xs={layout.input}>
@@ -250,59 +280,60 @@ export default function Base({
           </Col>
         </Box>
       )}
-      {hasSuspOrSubst(reasons.list, idInterventionReason) && (
-        <>
-          <Box hasError={errors.economyDays && touched.economyDays}>
-            <Col xs={layout.label}>
-              <Heading as="label" size="14px">
-                <Tooltip
-                  title={t("interventionForm.labelEconomyDaysHint")}
-                  underline
-                >
-                  {t("interventionForm.labelEconomyDays")}:
-                </Tooltip>
-              </Heading>
-            </Col>
-            <Col xs={layout.input}>
-              <InputNumber
-                id="economyDays"
-                value={values.economyDays}
-                style={{ width: "100%", maxWidth: "100px" }}
-                onChange={(value) => setFieldValue("economyDays", value)}
-              />
-              {errors.economyDays && touched.economyDays && (
-                <FieldError>{errors.economyDays}</FieldError>
-              )}
-            </Col>
-          </Box>
-          <Box hasError={errors.expendedDose && touched.expendedDose}>
-            <Col xs={layout.label}>
-              <Heading as="label" size="14px">
-                <Tooltip
-                  title={t("interventionForm.labelExpendedDoseHint")}
-                  underline
-                >
-                  {t("interventionForm.labelExpendedDose")}:
-                </Tooltip>
-              </Heading>
-            </Col>
-            <Col xs={layout.input}>
-              <InputNumber
-                id="expendedDose"
-                value={values.expendedDose}
-                style={{ width: "100%", maxWidth: "100px" }}
-                onChange={(value) => setFieldValue("expendedDose", value)}
-              />
-              <span style={{ marginLeft: "10px" }}>
-                {drugData.measureUnit ? drugData.measureUnit.value : ""}
-              </span>
-              {errors.expendedDose && touched.expendedDose && (
-                <FieldError>{errors.expendedDose}</FieldError>
-              )}
-            </Col>
-          </Box>
-        </>
-      )}
+      {!featureService.hasInterventionV2() &&
+        hasSuspOrSubst(reasons.list, idInterventionReason) && (
+          <>
+            <Box hasError={errors.economyDays && touched.economyDays}>
+              <Col xs={layout.label}>
+                <Heading as="label" size="14px">
+                  <Tooltip
+                    title={t("interventionForm.labelEconomyDaysHint")}
+                    underline
+                  >
+                    {t("interventionForm.labelEconomyDays")}:
+                  </Tooltip>
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <InputNumber
+                  id="economyDays"
+                  value={values.economyDays}
+                  style={{ width: "100%", maxWidth: "100px" }}
+                  onChange={(value) => setFieldValue("economyDays", value)}
+                />
+                {errors.economyDays && touched.economyDays && (
+                  <FieldError>{errors.economyDays}</FieldError>
+                )}
+              </Col>
+            </Box>
+            <Box hasError={errors.expendedDose && touched.expendedDose}>
+              <Col xs={layout.label}>
+                <Heading as="label" size="14px">
+                  <Tooltip
+                    title={t("interventionForm.labelExpendedDoseHint")}
+                    underline
+                  >
+                    {t("interventionForm.labelExpendedDose")}:
+                  </Tooltip>
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <InputNumber
+                  id="expendedDose"
+                  value={values.expendedDose}
+                  style={{ width: "100%", maxWidth: "100px" }}
+                  onChange={(value) => setFieldValue("expendedDose", value)}
+                />
+                <span style={{ marginLeft: "10px" }}>
+                  {drugData.measureUnit ? drugData.measureUnit.value : ""}
+                </span>
+                {errors.expendedDose && touched.expendedDose && (
+                  <FieldError>{errors.expendedDose}</FieldError>
+                )}
+              </Col>
+            </Box>
+          </>
+        )}
       {hasTranscription && (
         <>
           <Box hasError={errors.transcription && touched.transcription}>
