@@ -11,6 +11,9 @@ export default function SecondaryFilters() {
   const responsibles = useSelector(
     (state) => state.reportsArea.intervention.responsibles
   );
+  const prescribers = useSelector(
+    (state) => state.reportsArea.intervention.prescribers
+  );
   const drugs = useSelector((state) => state.reportsArea.intervention.drugs);
   const reasons = useSelector(
     (state) => state.reportsArea.intervention.reasons
@@ -107,6 +110,29 @@ export default function SecondaryFilters() {
           autoClearSearchValue={false}
         >
           {responsibles.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </Select>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          Prescritor:
+        </Heading>
+        <Select
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.prescriberList}
+          onChange={(val) => setFieldValue({ prescriberList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {prescribers.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>

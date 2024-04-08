@@ -25,10 +25,12 @@ import ChartScores from "./Charts/ChartScores";
 import HelpModal from "./Help/Help";
 import { setHelpModal } from "./PatientDayReportSlice";
 import Tooltip from "components/Tooltip";
+import SecurityService from "services/security";
 
 export default function PatientDayReport() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const roles = useSelector((state) => state.user.account.roles);
   const reportData = useSelector(
     (state) => state.reportsArea.patientDay.filtered.result
   );
@@ -61,6 +63,7 @@ export default function PatientDayReport() {
       type: "bool",
     },
   };
+  const securityService = SecurityService(roles);
 
   return (
     <>
@@ -152,56 +155,54 @@ export default function PatientDayReport() {
                   </StatsCard>
                 </Spin>
               </Col>
-              <Col xs={12} lg={8}>
-                <Spin spinning={isLoading}>
-                  <StatsCard className={`blue `}>
-                    <div className="stats-title">Total de Itens-Dia</div>
-                    <div className="stats-value">
-                      {reportData?.itensTotals?.total.toLocaleString() || "-"}
-                    </div>
-                  </StatsCard>
-                </Spin>
-              </Col>
-              <Col xs={12} lg={8}>
-                <Spin spinning={isLoading}>
-                  <StatsCard className={`green `}>
-                    <div className="stats-title">Itens-Dia Checados</div>
-                    <div className="stats-value">
-                      {reportData?.itensTotals?.checked.toLocaleString() || "-"}
-                    </div>
-                  </StatsCard>
-                </Spin>
-              </Col>
-              <Col xs={12} lg={8}>
-                <Spin spinning={isLoading}>
-                  <StatsCard className={`green `}>
-                    <div className="stats-title">Percentual de Itens-Dia</div>
-                    <div className="stats-value">
-                      {reportData?.itensTotals?.checkedPercentage || "-"}%
-                    </div>
-                  </StatsCard>
-                </Spin>
-              </Col>
-              <Col xs={12} lg={8}>
-                <Spin spinning={isLoading}>
-                  <StatsCard className={`orange `}>
-                    <div className="stats-title">Vidas Impactadas</div>
-                    <div className="stats-value">
-                      {reportData?.lifes?.toLocaleString() || "-"}
-                    </div>
-                  </StatsCard>
-                </Spin>
-              </Col>
-              <Col xs={12} lg={8}>
-                <Spin spinning={isLoading}>
-                  <StatsCard className={` `}>
-                    <div className="stats-title">Evoluções</div>
-                    <div className="stats-value">
-                      {reportData?.clinicalNotes?.toLocaleString() || "-"}
-                    </div>
-                  </StatsCard>
-                </Spin>
-              </Col>
+              {securityService.hasCpoe() && (
+                <>
+                  <Col xs={12} lg={8}>
+                    <Spin spinning={isLoading}>
+                      <StatsCard className={`blue `}>
+                        <div className="stats-title">Total de Itens-Dia</div>
+                        <div className="stats-value">
+                          {reportData?.itensTotals?.total.toLocaleString() ||
+                            "-"}
+                        </div>
+                      </StatsCard>
+                    </Spin>
+                  </Col>
+                  <Col xs={12} lg={8}>
+                    <Spin spinning={isLoading}>
+                      <StatsCard className={`green `}>
+                        <div className="stats-title">Itens-Dia Checados</div>
+                        <div className="stats-value">
+                          {reportData?.itensTotals?.checked.toLocaleString() ||
+                            "-"}
+                        </div>
+                      </StatsCard>
+                    </Spin>
+                  </Col>
+                  <Col xs={12} lg={8}>
+                    <Spin spinning={isLoading}>
+                      <StatsCard className={`green `}>
+                        <div className="stats-title">
+                          Percentual de Itens-Dia
+                        </div>
+                        <div className="stats-value">
+                          {reportData?.itensTotals?.checkedPercentage || "-"}%
+                        </div>
+                      </StatsCard>
+                    </Spin>
+                  </Col>
+                  <Col xs={12} lg={8}>
+                    <Spin spinning={isLoading}>
+                      <StatsCard className={`orange `}>
+                        <div className="stats-title">Vidas Impactadas</div>
+                        <div className="stats-value">
+                          {reportData?.lifes?.toLocaleString() || "-"}
+                        </div>
+                      </StatsCard>
+                    </Spin>
+                  </Col>
+                </>
+              )}
             </Row>
 
             <div className="page-break"></div>

@@ -190,16 +190,6 @@ export default function PrescriptionReport() {
                   </StatsCard>
                 </Spin>
               </Col>
-              <Col xs={12} lg={8}>
-                <Spin spinning={isLoading}>
-                  <StatsCard className={` `}>
-                    <div className="stats-title">Evoluções</div>
-                    <div className="stats-value">
-                      {reportData?.clinicalNotes?.toLocaleString() || "-"}
-                    </div>
-                  </StatsCard>
-                </Spin>
-              </Col>
             </Row>
 
             <div className="page-break"></div>

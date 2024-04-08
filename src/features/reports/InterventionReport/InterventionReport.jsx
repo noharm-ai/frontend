@@ -49,6 +49,10 @@ export default function InterventionReport() {
       label: "Responsável",
       type: "list",
     },
+    prescriberList: {
+      label: "Prescritor",
+      type: "list",
+    },
     departmentList: {
       label: "Setor",
       type: "list",
