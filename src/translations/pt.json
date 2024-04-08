@@ -588,7 +588,8 @@
     "reason": "MOTIVO",
     "type": "TIPO",
     "agg": "PACIENTE (AGREGADO)",
-    "prescriptionDate": "DATA PRESCRICAO"
+    "prescriptionDate": "DATA PRESCRICAO",
+    "prescriber": "PRESCRITOR"
   },
 
   "features": {

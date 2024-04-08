@@ -11,6 +11,7 @@ const initialState = {
   updatedAt: null,
   version: null,
   responsibles: [],
+  prescribers: [],
   departments: [],
   segments: [],
   drugs: [],
@@ -96,6 +97,10 @@ const interventionReportSlice = createSlice({
           state.segments = getUniqList(
             action.payload.cacheData.body,
             "segment"
+          );
+          state.prescribers = getUniqList(
+            action.payload.cacheData.body,
+            "prescriber"
           );
           state.drugs = getUniqList(action.payload.cacheData.body, "drug");
           state.reasons = getUniqList(action.payload.cacheData.body, "reason");

@@ -587,7 +587,8 @@
     "reason": "REASON",
     "type": "TYPE",
     "agg": "PATIENT (AGGREGATED)",
-    "prescriptionDate": "PRESCRIPTION DATE"
+    "prescriptionDate": "PRESCRIPTION DATE",
+    "prescriber": "PRESCRIBER"
   },
 
   "features": {
