@@ -1,5 +1,6 @@
 import React from "react";
 import { Space, Popover } from "antd";
+import Big from "big.js";
 
 import NumericValue from "components/NumericValue";
 import EditConversion from "../EditConversion";
@@ -17,7 +18,9 @@ export default function PopoverDose({ outcomeData, source, children }) {
           <div className="form-value">
             <NumericValue
               suffix={` ${outcomeData[source].item.beforeConversion.idMeasureUnit}`}
-              value={outcomeData[source].item.beforeConversion.dose}
+              value={Big(
+                outcomeData[source].item.beforeConversion.dose || 0
+              ).toNumber()}
               decimalScale={4}
             />
           </div>
@@ -49,7 +52,7 @@ export default function PopoverDose({ outcomeData, source, children }) {
                 outcomeData[source].item.idMeasureUnit ||
                 "(Unidade Padrão não informada)"
               }`}
-              value={outcomeData[source].item.dose}
+              value={Big(outcomeData[source].item.dose || 0).toNumber()}
               decimalScale={4}
             />
           </div>

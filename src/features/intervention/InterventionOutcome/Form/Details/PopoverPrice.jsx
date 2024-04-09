@@ -1,5 +1,6 @@
 import React from "react";
 import { Space, Popover } from "antd";
+import Big from "big.js";
 
 import Tooltip from "components/Tooltip";
 import NumericValue from "components/NumericValue";
@@ -21,8 +22,10 @@ export default function PopoverPrice({ outcomeData, source, children }) {
               <NumericValue
                 prefix="R$ "
                 suffix={` / ${outcomeData[source].item.beforeConversion.idMeasureUnitPrice}`}
-                value={outcomeData[source].item.beforeConversion.price}
-                decimalScale={2}
+                value={Big(
+                  outcomeData[source].item.beforeConversion.price || 0
+                ).toNumber()}
+                decimalScale={6}
               />
             ) : (
               <span className="warning">
@@ -65,7 +68,7 @@ export default function PopoverPrice({ outcomeData, source, children }) {
                   outcomeData[source].item.idMeasureUnit ||
                   "(Unidade Padrão não informada)"
                 }`}
-                value={outcomeData[source].item.price}
+                value={Big(outcomeData[source].item.price || 0).toNumber()}
                 decimalScale={6}
               />
             ) : (

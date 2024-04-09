@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { CheckOutlined, EditOutlined, CloseOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import Big from "big.js";
 
 import Button from "components/Button";
 import { InputNumber } from "components/Inputs";
@@ -14,6 +15,7 @@ import {
 } from "../InterventionOutcomeSlice";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
+import NumericValue from "components/NumericValue";
 
 export default function EditConversion({
   idDrug,
@@ -119,7 +121,11 @@ export default function EditConversion({
   ) : (
     <>
       <span css="margin-right: 10px;">
-        {value === "-" || value === null ? <Tag color="red">Vazio</Tag> : value}
+        {value === "-" || value === null ? (
+          <Tag color="red">Vazio</Tag>
+        ) : (
+          <NumericValue value={Big(value || 1).toNumber()} decimalScale={6} />
+        )}
       </span>
       <Tooltip title="Editar fator de conversão">
         <Button

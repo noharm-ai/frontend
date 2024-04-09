@@ -1,5 +1,6 @@
 import React from "react";
 import { Popover, Space } from "antd";
+import Big from "big.js";
 
 import NumericValue from "components/NumericValue";
 
@@ -21,7 +22,7 @@ export default function PopoverKit({ outcomeData, source, children }) {
                       <NumericValue
                         prefix="R$ "
                         suffix={` / ${c.idMeasureUnit || "-"}`}
-                        value={c.price}
+                        value={Big(c.price || 0).toNumber()}
                         decimalScale={2}
                         fixedDecimalScale={2}
                       />
