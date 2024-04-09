@@ -72,6 +72,7 @@ test("add multiple interventions and rollback", async ({ page }) => {
 
   await page.locator(".ant-modal-content .ant-dropdown-trigger").hover();
   await page.getByText("Salvar e marcar como Aceita").click();
+  await page.getByRole("button", { name: "Confirmar" }).click();
 
   //check created interventions
   await page
