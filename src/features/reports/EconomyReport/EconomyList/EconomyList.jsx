@@ -28,6 +28,7 @@ export default function EconomyList() {
       width: 4,
       fixed: "left",
       align: "right",
+      sorter: (a, b) => a.processed.economyValue - b.processed.economyValue,
       render: (_, record) =>
         `R$ ${formatCurrency(record.processed.economyValue, 2)}`,
     },
@@ -41,6 +42,7 @@ export default function EconomyList() {
       title: "Dias Economia",
       width: 4,
       align: "right",
+      sorter: (a, b) => a.processed.economyDays - b.processed.economyDays,
       render: (_, record) => record.processed.economyDays,
     },
     {
