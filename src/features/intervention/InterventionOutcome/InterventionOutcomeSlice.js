@@ -7,6 +7,7 @@ const initialState = {
     open: false,
     idIntervention: null,
     outcome: null,
+    report: false,
   },
   status: "idle",
   error: null,

@@ -1,11 +1,16 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Table } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 
+import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
+import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 import { formatCurrency } from "utils/number";
 import { formatDate } from "utils/date";
+import Button from "components/Button";
 
 export default function EconomyList() {
+  const dispatch = useDispatch();
   const datasource = useSelector(
     (state) => state.reportsArea.economy.filtered.result.list
   );
@@ -19,13 +24,6 @@ export default function EconomyList() {
       render: (_, record) => record.idIntervention,
     },
     {
-      title: "#Atendimento",
-      width: 4,
-      fixed: "left",
-      align: "center",
-      render: (_, record) => record.admissionNumber,
-    },
-    {
       title: "Economia",
       width: 4,
       fixed: "left",
@@ -33,7 +31,12 @@ export default function EconomyList() {
       render: (_, record) =>
         `R$ ${formatCurrency(record.processed.economyValue, 2)}`,
     },
-
+    {
+      title: "#Atendimento",
+      width: 4,
+      align: "center",
+      render: (_, record) => record.admissionNumber,
+    },
     {
       title: "Qtd. Dias Economia",
       width: 3,
@@ -58,7 +61,7 @@ export default function EconomyList() {
     {
       title: "Situação",
       width: 5,
-      render: (_, record) => record.status,
+      render: (_, record) => record.statusDescription,
     },
     {
       title: "Economia Manual",
@@ -107,20 +110,45 @@ export default function EconomyList() {
       ellipsis: true,
       render: (_, record) => record.department,
     },
+    {
+      title: "",
+      width: 2,
+      fixed: "right",
+      render: (_, record) => {
+        return (
+          <Button
+            icon={<SearchOutlined />}
+            onClick={() =>
+              dispatch(
+                setSelectedInterventionOutcome({
+                  open: true,
+                  idIntervention: record.idIntervention,
+                  outcome: "s",
+                  report: true,
+                })
+              )
+            }
+          ></Button>
+        );
+      },
+    },
   ];
 
   return (
-    <Table
-      bordered
-      virtual
-      columns={columns}
-      scroll={{
-        x: 4000,
-        y: 800,
-      }}
-      rowKey="idIntervention"
-      dataSource={datasource.length === 0 ? [] : datasource}
-      pagination={false}
-    />
+    <>
+      <Table
+        bordered
+        virtual
+        columns={columns}
+        scroll={{
+          x: 4000,
+          y: 800,
+        }}
+        rowKey="idIntervention"
+        dataSource={datasource.length === 0 ? [] : datasource}
+        pagination={false}
+      />
+      <InterventionOutcome />
+    </>
   );
 }

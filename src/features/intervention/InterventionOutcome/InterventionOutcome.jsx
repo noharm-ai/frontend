@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Spin } from "antd";
+import { Spin, Alert } from "antd";
 
 import notification from "components/notification";
 import Heading from "components/Heading";
@@ -152,7 +152,15 @@ export default function InterventionOutcome({ ...props }) {
         >
           <header>
             <Heading margin="0 0 11px" size="18px">
-              {t(`interventionStatusAction.${selectedIntervention.outcome}`)}
+              {selectedIntervention.report ? (
+                <>Detalhes da Intervenção</>
+              ) : (
+                <>
+                  {t(
+                    `interventionStatusAction.${selectedIntervention.outcome}`
+                  )}
+                </>
+              )}
             </Heading>
           </header>
 
@@ -161,6 +169,14 @@ export default function InterventionOutcome({ ...props }) {
               <InterventionOutcomeForm />
             </Form>
           </Spin>
+
+          {selectedIntervention.report && (
+            <Alert
+              type="warning"
+              showIcon
+              message="Alterações feitas na intervenção só estarão disponíveis no relatório do dia seguinte."
+            ></Alert>
+          )}
         </DefaultModal>
       )}
     </Formik>

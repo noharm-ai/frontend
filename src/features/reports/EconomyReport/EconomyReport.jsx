@@ -121,6 +121,7 @@ export default function EconomyReport() {
             <Row gutter={[24, 24]}>
               <Col xs={24}>
                 <Row gutter={[24, 24]}>
+                  <Col xs={12}></Col>
                   <Col xs={12}>
                     <Spin spinning={isLoading}>
                       <StatsCard className={`blue `}>

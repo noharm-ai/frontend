@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Select } from "components/Inputs";
+import { Select, Radio } from "components/Inputs";
 
 export default function SecondaryFilters() {
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
@@ -21,8 +21,28 @@ export default function SecondaryFilters() {
   const reasons = useSelector((state) => state.reportsArea.economy.reasons);
   const status = useSelector((state) => state.reportsArea.economy.status);
 
+  const economyTypes = [
+    { label: "Suspensão", value: 1 },
+    { label: "Substituição", value: 2 },
+    { label: "Todos", value: "" },
+  ];
+
   return (
     <Row gutter={[20, 20]}>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          Tipo economia:
+        </Heading>
+        <Radio.Group
+          style={{ marginTop: "5px" }}
+          options={economyTypes}
+          onChange={({ target: { value } }) =>
+            setFieldValue({ economyType: value })
+          }
+          value={values.economyType}
+          optionType="button"
+        />
+      </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" size="14px">
           Responsável:

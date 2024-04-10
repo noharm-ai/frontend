@@ -1,7 +1,6 @@
 import Big from "big.js";
 import dayjs from "dayjs";
 
-import { intersection } from "utils/lodash";
 import { exportCSV } from "utils/report";
 
 const filterDatasource = (datasource, filters) => {
@@ -55,7 +54,14 @@ const filterDatasource = (datasource, filters) => {
     })
     .filter((i) => {
       if (filters.reasonList.length) {
-        return intersection(filters.reasonList, i.reason).length > 0;
+        return filters.reasonList.indexOf(i.interventionReason) !== -1;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.economyType !== "") {
+        return i.economyType === filters.economyType;
       }
 
       return true;

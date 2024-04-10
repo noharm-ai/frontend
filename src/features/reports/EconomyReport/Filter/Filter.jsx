@@ -61,7 +61,8 @@ export default function Filter({ printRef }) {
     originDrugList: [],
     destinyDrugList: [],
     reasonList: [],
-    statusList: [],
+    statusList: ["a"],
+    economyType: "",
   };
 
   useFetchReport({
