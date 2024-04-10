@@ -15,7 +15,7 @@ export default function PopoverFrequency({ outcomeData, source, children }) {
           </div>
           <div className="form-value">
             {outcomeData[source].item.idFrequency ? (
-              <>{outcomeData[source].item.idFrequency}</>
+              <>{outcomeData[source].item.frequencyDescription}</>
             ) : (
               <span className="warning">Não informado</span>
             )}

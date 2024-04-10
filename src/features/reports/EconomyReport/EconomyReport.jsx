@@ -22,6 +22,8 @@ import { setHelpModal } from "./EconomyReportSlice";
 import Tooltip from "components/Tooltip";
 import { formatCurrency } from "utils/number";
 import EconomyList from "./EconomyList/EconomyList";
+import ChartResponsibles from "./Charts/ChartResponsibles";
+import ChartDepartments from "./Charts/ChartDepartments";
 
 export default function EconomyReport() {
   const dispatch = useDispatch();
@@ -118,10 +120,12 @@ export default function EconomyReport() {
             ></div>
           </ReportFilterContainer>
           <Space direction="vertical" size="large">
+            <SectionHeader>
+              <h2>Resumo</h2>
+            </SectionHeader>
             <Row gutter={[24, 24]}>
               <Col xs={24}>
                 <Row gutter={[24, 24]}>
-                  <Col xs={12}></Col>
                   <Col xs={12}>
                     <Spin spinning={isLoading}>
                       <StatsCard className={`blue `}>
@@ -137,6 +141,40 @@ export default function EconomyReport() {
             </Row>
 
             <Row gutter={[24, 24]}>
+              <Col xs={24} lg={12}>
+                <div className="page-break"></div>
+                <Space direction="vertical" size="large">
+                  <SectionHeader>
+                    <h2>Economia por Responsável</h2>
+                    <div>Totais por responsável pela intervenção.</div>
+                  </SectionHeader>
+                  <Spin spinning={isLoading}>
+                    <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                      <ChartResponsibles
+                        reportData={reportData}
+                        isLoading={isLoading}
+                      />
+                    </ChartCard>
+                  </Spin>
+                </Space>
+              </Col>
+              <Col xs={24} lg={12}>
+                <div className="page-break"></div>
+                <Space direction="vertical" size="large">
+                  <SectionHeader>
+                    <h2>Desfecho por Setor</h2>
+                    <div>Totais por setor. Limitado em 20 setores.</div>
+                  </SectionHeader>
+                  <Spin spinning={isLoading}>
+                    <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                      <ChartDepartments
+                        reportData={reportData}
+                        isLoading={isLoading}
+                      />
+                    </ChartCard>
+                  </Spin>
+                </Space>
+              </Col>
               <Col xs={24} lg={24}>
                 <div className="page-break"></div>
                 <Space direction="vertical" size="large">

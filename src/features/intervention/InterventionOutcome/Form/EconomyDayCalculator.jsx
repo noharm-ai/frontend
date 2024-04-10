@@ -105,7 +105,7 @@ export default function EconomyDayCalculator({
             {outcomeData[source].item.idMeasureUnit ? (
               <Tooltip underline title="Unidade padrão">
                 <span style={{ fontSize: "12px" }}>
-                  ({outcomeData[source].item.idMeasureUnit})
+                  ({outcomeData[source].item.measureUnitDescription})
                 </span>
               </Tooltip>
             ) : (
@@ -170,7 +170,7 @@ export default function EconomyDayCalculator({
             {outcomeData[source].item.idMeasureUnit ? (
               <Tooltip underline title="Unidade padrão">
                 <span style={{ fontSize: "12px" }}>
-                  ({outcomeData[source].item.idMeasureUnit})
+                  ({outcomeData[source].item.measureUnitDescription})
                 </span>
               </Tooltip>
             ) : (

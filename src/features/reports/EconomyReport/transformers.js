@@ -1,7 +1,7 @@
 import Big from "big.js";
 import dayjs from "dayjs";
 
-import { exportCSV } from "utils/report";
+import { exportCSV, getUniqList } from "utils/report";
 
 const filterDatasource = (datasource, filters) => {
   return datasource
@@ -100,6 +100,54 @@ const getList = (datasource, periodStart, periodEnd) => {
   });
 };
 
+const getResponsibleSummary = (datasource) => {
+  const responsibles = getUniqList(datasource, "responsible");
+
+  const summary = responsibles.map((r) => {
+    const totals = { all: Big(0), suspension: Big(0), substitution: Big(0) };
+
+    datasource.forEach((i) => {
+      if (i.responsible === r) {
+        totals.all = totals.all.plus(i.processed.economyValue);
+
+        const field = i.economyType === 1 ? "suspension" : "substitution";
+        totals[field] = totals[field].plus(i.processed.economyValue);
+      }
+    });
+
+    return {
+      name: r,
+      totals,
+    };
+  });
+
+  return summary.sort((a, b) => a.totals.all.minus(b.totals.all));
+};
+
+const getDepartmentSummary = (datasource) => {
+  const departments = getUniqList(datasource, "department");
+
+  const summary = departments.map((r) => {
+    const totals = { all: Big(0), suspension: Big(0), substitution: Big(0) };
+
+    datasource.forEach((i) => {
+      if (i.department === r) {
+        totals.all = totals.all.plus(i.processed.economyValue);
+
+        const field = i.economyType === 1 ? "suspension" : "substitution";
+        totals[field] = totals[field].plus(i.processed.economyValue);
+      }
+    });
+
+    return {
+      name: r,
+      totals,
+    };
+  });
+
+  return summary.sort((a, b) => a.totals.all.minus(b.totals.all));
+};
+
 export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
   const list = getList(
@@ -112,6 +160,8 @@ export const getReportData = (datasource, filters) => {
   const reportData = {
     totals,
     list,
+    responsibleSummary: getResponsibleSummary(list),
+    departmentsSummary: getDepartmentSummary(list),
   };
 
   console.log("reportdata", reportData);

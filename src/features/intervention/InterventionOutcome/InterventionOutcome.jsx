@@ -136,7 +136,9 @@ export default function InterventionOutcome({ ...props }) {
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={
-            selectedIntervention.outcome === "s" ? "Desfazer" : "Confirmar"
+            selectedIntervention.outcome === "s"
+              ? "Desfazer desfecho"
+              : "Confirmar"
           }
           cancelText={t("actions.cancel")}
           confirmLoading={isLoading}

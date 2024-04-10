@@ -38,8 +38,8 @@ export default function EconomyList() {
       render: (_, record) => record.admissionNumber,
     },
     {
-      title: "Qtd. Dias Economia",
-      width: 3,
+      title: "Dias Economia",
+      width: 4,
       align: "right",
       render: (_, record) => record.processed.economyDays,
     },
