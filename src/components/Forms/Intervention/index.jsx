@@ -45,6 +45,8 @@ export default function Intervention({
   fetchDrugSummary,
   roles,
   features,
+  aggPrescription,
+  aggIdPrescription,
   ...props
 }) {
   const { t } = useTranslation();
@@ -167,6 +169,7 @@ export default function Intervention({
       transcription: transcription
         ? getTranscriptionData(transcriptionData)
         : null,
+      aggIdPrescription: aggPrescription ? aggIdPrescription : null,
     };
 
     delete interventionData.transcriptionData;

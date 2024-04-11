@@ -20,7 +20,13 @@ import {
 
 import Intervention from "components/Forms/Intervention";
 
-const mapStateToProps = ({ intervention, drugs, memory, user }) => ({
+const mapStateToProps = ({
+  intervention,
+  drugs,
+  memory,
+  user,
+  prescriptions,
+}) => ({
   intervention: intervention.maybeCreateOrUpdate,
   reasons: intervention.reasons,
   drugs: drugs.search,
@@ -28,6 +34,8 @@ const mapStateToProps = ({ intervention, drugs, memory, user }) => ({
   reasonTextMemory: memory.reasonText,
   roles: user.account.roles,
   features: user.account.features,
+  aggPrescription: prescriptions.single.data.agg,
+  aggIdPrescription: prescriptions.single.data.idPrescription,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
