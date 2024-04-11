@@ -18,3 +18,17 @@ export const PaginationContainer = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
+
+export const ModalFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+
+  > * {
+    margin-left: 5px;
+  }
+
+  .ant-dropdown-button {
+    width: auto;
+  }
+`;

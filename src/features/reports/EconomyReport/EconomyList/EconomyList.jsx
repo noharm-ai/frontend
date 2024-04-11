@@ -15,6 +15,9 @@ export default function EconomyList() {
   const datasource = useSelector(
     (state) => state.reportsArea.economy.filtered.result.list
   );
+  const reportUpdatedAt = useSelector(
+    (state) => state.reportsArea.economy.updatedAt
+  );
 
   const columns = [
     {
@@ -155,7 +158,9 @@ export default function EconomyList() {
                     open: true,
                     idIntervention: record.idIntervention,
                     outcome: "s",
-                    report: true,
+                    view: true,
+                    editAlert: true,
+                    reportUpdatedAt,
                   })
                 )
               }
