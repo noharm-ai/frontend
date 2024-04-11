@@ -19,6 +19,9 @@ export default function SecondaryFilters() {
     (state) => state.reportsArea.economy.destinyDrugs
   );
   const reasons = useSelector((state) => state.reportsArea.economy.reasons);
+  const insurances = useSelector(
+    (state) => state.reportsArea.economy.insurances
+  );
   const status = useSelector((state) => state.reportsArea.economy.status);
 
   const economyTypes = [
@@ -164,6 +167,29 @@ export default function SecondaryFilters() {
           <Select.Option key={"x"} value={"x"}>
             Não se Aplica
           </Select.Option>
+        </Select>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          Convênio:
+        </Heading>
+        <Select
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.insuranceList}
+          onChange={(val) => setFieldValue({ insuranceList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {insurances.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
         </Select>
       </Col>
     </Row>

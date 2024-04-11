@@ -16,6 +16,7 @@ const initialState = {
   originDrugs: [],
   destinyDrugs: [],
   reasons: [],
+  insurances: [],
   filtered: {
     status: "idle",
     error: null,
@@ -111,6 +112,10 @@ const economyReportSlice = createSlice({
           state.reasons = getUniqList(
             action.payload.cacheData.body,
             "interventionReason"
+          );
+          state.insurances = getUniqList(
+            action.payload.cacheData.body,
+            "insurance"
           );
         }
       })

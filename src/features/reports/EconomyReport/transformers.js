@@ -60,6 +60,13 @@ const filterDatasource = (datasource, filters) => {
       return true;
     })
     .filter((i) => {
+      if (filters.insuranceList.length) {
+        return filters.insuranceList.indexOf(i.insurance) !== -1;
+      }
+
+      return true;
+    })
+    .filter((i) => {
       if (filters.economyType !== "") {
         return i.economyType === filters.economyType;
       }
@@ -163,8 +170,6 @@ export const getReportData = (datasource, filters) => {
     responsibleSummary: getResponsibleSummary(list),
     departmentsSummary: getDepartmentSummary(list),
   };
-
-  console.log("reportdata", reportData);
 
   return reportData;
 };

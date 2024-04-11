@@ -1,6 +1,5 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Table } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
 import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
@@ -8,6 +7,8 @@ import { setSelectedIntervention as setSelectedInterventionOutcome } from "featu
 import { formatCurrency } from "utils/number";
 import { formatDate } from "utils/date";
 import Button from "components/Button";
+import { CardTable } from "components/Table";
+import Tooltip from "components/Tooltip";
 
 export default function EconomyList() {
   const dispatch = useDispatch();
@@ -28,7 +29,8 @@ export default function EconomyList() {
       width: 4,
       fixed: "left",
       align: "right",
-      sorter: (a, b) => a.processed.economyValue - b.processed.economyValue,
+      sorter: (a, b) =>
+        a.processed.economyValue.minus(b.processed.economyValue),
       render: (_, record) =>
         `R$ ${formatCurrency(record.processed.economyValue, 2)}`,
     },
@@ -46,13 +48,33 @@ export default function EconomyList() {
       render: (_, record) => record.processed.economyDays,
     },
     {
+      title: "Vl. Economia/Dia",
+      width: 4,
+      align: "right",
+      sorter: (a, b) =>
+        parseFloat(a.economyDayValue) - parseFloat(b.economyDayValue),
+      render: (_, record) => `R$ ${formatCurrency(record.economyDayValue, 2)}`,
+    },
+    {
       title: "Data Inicial",
       width: 5,
+      sorter: (a, b) =>
+        a.processed.iniEconomyDate < b.processed.iniEconomyDate
+          ? -1
+          : a.processed.iniEconomyDate > b.processed.iniEconomyDate
+          ? 1
+          : 0,
       render: (_, record) => formatDate(record.processed.iniEconomyDate),
     },
     {
       title: "Data Final",
       width: 5,
+      sorter: (a, b) =>
+        a.processed.endEconomyDate < b.processed.endEconomyDate
+          ? -1
+          : a.processed.endEconomyDate > b.processed.endEconomyDate
+          ? 1
+          : 0,
       render: (_, record) => formatDate(record.processed.endEconomyDate),
     },
     {
@@ -113,24 +135,32 @@ export default function EconomyList() {
       render: (_, record) => record.department,
     },
     {
+      title: "Convênio",
+      width: 10,
+      ellipsis: true,
+      render: (_, record) => record.insurance,
+    },
+    {
       title: "",
       width: 2,
       fixed: "right",
       render: (_, record) => {
         return (
-          <Button
-            icon={<SearchOutlined />}
-            onClick={() =>
-              dispatch(
-                setSelectedInterventionOutcome({
-                  open: true,
-                  idIntervention: record.idIntervention,
-                  outcome: "s",
-                  report: true,
-                })
-              )
-            }
-          ></Button>
+          <Tooltip title="Ver detalhes">
+            <Button
+              icon={<SearchOutlined />}
+              onClick={() =>
+                dispatch(
+                  setSelectedInterventionOutcome({
+                    open: true,
+                    idIntervention: record.idIntervention,
+                    outcome: "s",
+                    report: true,
+                  })
+                )
+              }
+            ></Button>
+          </Tooltip>
         );
       },
     },
@@ -138,17 +168,22 @@ export default function EconomyList() {
 
   return (
     <>
-      <Table
+      <CardTable
         bordered
         virtual
         columns={columns}
         scroll={{
-          x: 4000,
+          x: 5000,
           y: 800,
         }}
         rowKey="idIntervention"
         dataSource={datasource.length === 0 ? [] : datasource}
         pagination={false}
+        footer={() => (
+          <div style={{ textAlign: "center" }}>
+            {datasource.length} registro(s)
+          </div>
+        )}
       />
       <InterventionOutcome />
     </>

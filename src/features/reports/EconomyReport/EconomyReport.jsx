@@ -67,6 +67,14 @@ export default function EconomyReport() {
       label: "Medicamento substituto",
       type: "list",
     },
+    statusList: {
+      label: "Situação",
+      type: "dict",
+    },
+    insuranceList: {
+      label: "Convênio",
+      type: "list",
+    },
   };
 
   return (
@@ -183,9 +191,7 @@ export default function EconomyReport() {
                     <div>Análise detalhada da economia.</div>
                   </SectionHeader>
                   <Spin spinning={isLoading}>
-                    <ChartCard className={`${isLoading ? "loading" : ""}`}>
-                      <EconomyList />
-                    </ChartCard>
+                    <EconomyList />
                   </Spin>
                 </Space>
               </Col>

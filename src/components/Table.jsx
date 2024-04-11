@@ -369,4 +369,11 @@ export const TextColumn = styled.div`
   white-space: nowrap;
 `;
 
+export const CardTable = styled(AntTable)`
+  .ant-table {
+    border-radius: 8px;
+    box-shadow: 0 -1px 7px rgb(0 0 0 / 16%);
+  }
+`;
+
 export default Table;

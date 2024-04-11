@@ -27,6 +27,7 @@ export function formatCurrency(value, precision = 2) {
   if (typeof value === "string" || value instanceof String) {
     return parseFloat(value).toLocaleString(locale, {
       minimumFractionDigits: precision,
+      maximumFractionDigits: precision,
     });
   }
 

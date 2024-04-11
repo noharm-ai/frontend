@@ -61,6 +61,7 @@ export default function Filter({ printRef }) {
     originDrugList: [],
     destinyDrugList: [],
     reasonList: [],
+    insuranceList: [],
     statusList: ["a"],
     economyType: "",
   };
