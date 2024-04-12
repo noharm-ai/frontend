@@ -1,4 +1,4 @@
-import AntTable from "antd/lib/table";
+import { Table as AntTable } from "antd";
 import styled from "styled-components/macro";
 
 import { get } from "styles/utils";

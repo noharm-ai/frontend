@@ -32,7 +32,6 @@ export default function InterventionOutcomeForm() {
     "(Dose dispensada X Custo + Custo Kit) X Frequência/Dia";
 
   const onChangePrescriptionDestiny = (value) => {
-    console.log("value", value);
     setFieldValue("idPrescriptionDrugDestiny", value);
 
     outcomeData.destiny.forEach((dData) => {

@@ -199,7 +199,7 @@ export default function InterventionOutcome({ ...props }) {
               ghost
               loading={isLoading}
             >
-              Alterar desfecho
+              Alterar
             </Button>
           </Dropdown>
         ) : (
@@ -248,6 +248,7 @@ export default function InterventionOutcome({ ...props }) {
           }
           footer={<Footer handleSubmit={handleSubmit} />}
           centered
+          onCancel={onCancel}
           destroyOnClose
           {...props}
         >
