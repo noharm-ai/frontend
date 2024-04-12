@@ -185,7 +185,7 @@ export default function Base({ examTypes, examList }) {
               marginLeft: 10,
               marginRight: 5,
             }}
-            min={0}
+            min={-999999}
             max={999999}
             value={min}
             onChange={(value) => setFieldValue("min", value)}
