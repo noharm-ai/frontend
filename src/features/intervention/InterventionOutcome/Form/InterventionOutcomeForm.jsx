@@ -37,6 +37,23 @@ export default function InterventionOutcomeForm() {
     outcomeData.destiny.forEach((dData) => {
       if (dData.item.idPrescriptionDrug === value) {
         setFieldValue("destiny", dData.item);
+
+        const newValues = {
+          ...values,
+          destiny: {
+            ...dData.item,
+          },
+        };
+
+        const pricePerDose = Big(newValues.destiny.price)
+          .times(Big(newValues.destiny.dose))
+          .plus(newValues.destiny.priceKit);
+
+        newValues.destiny.pricePerDose = pricePerDose;
+
+        if (!values.economyDayValueManual) {
+          setFieldValue("economyDayValue", calcEconomyDay(newValues));
+        }
       }
     });
   };
