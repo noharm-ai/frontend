@@ -15,6 +15,7 @@ import { formatDate } from "utils/date";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import EconomyDayCalculator from "./EconomyDayCalculator";
+import SecurityService from "services/security";
 
 import {
   InterventionOutcomeContainer,
@@ -27,7 +28,10 @@ export default function InterventionOutcomeForm() {
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const outcomeData = useSelector((state) => state.interventionOutcome.data);
   const loadStatus = useSelector((state) => state.interventionOutcome.status);
+  const roles = useSelector((state) => state.user.account.roles);
   const [details, setDetails] = useState(false);
+
+  const securityService = SecurityService(roles);
   const costPerDayHint =
     "(Dose dispensada X Custo + Custo Kit) X Frequência/Dia";
 
@@ -197,16 +201,28 @@ export default function InterventionOutcomeForm() {
               <div className="form-input">
                 <Space direction="horizontal">
                   <Input
-                    value={`${formatDate(
-                      outcomeData.origin.item.prescriptionDate
-                    )} - #${outcomeData.origin.item.idPrescription}`}
+                    value={
+                      securityService.hasCpoe()
+                        ? `${formatDate(
+                            outcomeData?.header?.economyIniDate
+                          )} - #${
+                            outcomeData.origin.item.idPrescriptionAggregate
+                          }`
+                        : `${formatDate(
+                            outcomeData.origin.item.prescriptionDate
+                          )} - #${outcomeData.origin.item.idPrescription}`
+                    }
                     disabled
                   />
                   <Tooltip title="Abrir prescrição">
                     <Button
                       icon={<SearchOutlined />}
                       onClick={() =>
-                        openPrescription(outcomeData.origin.item.idPrescription)
+                        openPrescription(
+                          securityService.hasCpoe()
+                            ? outcomeData.origin.item.idPrescriptionAggregate
+                            : outcomeData.origin.item.idPrescription
+                        )
                       }
                     />
                   </Tooltip>
