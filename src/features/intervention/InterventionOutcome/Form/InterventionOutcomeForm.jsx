@@ -501,7 +501,7 @@ export default function InterventionOutcomeForm() {
                   <Input
                     disabled={true}
                     value={
-                      outcomeData?.header?.economyType == 1
+                      outcomeData?.header?.economyType === 1
                         ? `Até a data de alta`
                         : "Enquanto prescrito"
                     }
