@@ -44,6 +44,10 @@ export const InterventionOutcomeContainer = styled.div`
     .form-value {
       color: #797979;
       line-height: 1.2;
+
+      strong {
+        font-weight: 600;
+      }
     }
 
     .form-input {

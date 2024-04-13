@@ -478,7 +478,7 @@ export default function InterventionOutcomeForm() {
               <label>
                 <Tooltip
                   underline
-                  title="Quantidade de dias de economia que serão considerados no Relatório de Farmacoeconomia caso a intervenção seja aceita. Se não for informado, a quantidade de dias será calculada considerando a data da intervenção até o dia da alta do paciente."
+                  title="Quantidade de dias de economia que serão considerados no Relatório de Farmacoeconomia caso a intervenção seja aceita. Se não for informado, a quantidade de dias será calculada considerando a data da intervenção até o dia da alta do paciente (suspensão) ou enquanto estive prescrito (substituição)."
                 >
                   Qtd. de dias de economia:
                 </Tooltip>
@@ -498,7 +498,14 @@ export default function InterventionOutcomeForm() {
                     min={0}
                   />
                 ) : (
-                  <Input disabled={true} value={`Até a data de alta`} />
+                  <Input
+                    disabled={true}
+                    value={
+                      outcomeData?.header?.economyType == 1
+                        ? `Até a data de alta`
+                        : "Enquanto prescrito"
+                    }
+                  />
                 )}
 
                 <Checkbox
@@ -518,6 +525,33 @@ export default function InterventionOutcomeForm() {
               </Space>
             </div>
           </div>
+
+          {outcomeData?.header?.readonly && (
+            <div className={`form-row`}>
+              <div className="form-label">
+                <label>Período total de economia:</label>
+              </div>
+              <div className="form-value">
+                De{" "}
+                <strong>
+                  {formatDate(outcomeData?.header?.economyIniDate)}
+                </strong>{" "}
+                até{" "}
+                <strong>
+                  {outcomeData?.header?.economyEndDate ? (
+                    formatDate(outcomeData?.header?.economyEndDate)
+                  ) : (
+                    <Tooltip
+                      underline
+                      title="Período de economia ainda não possui data de encerramento"
+                    >
+                      Em aberto
+                    </Tooltip>
+                  )}
+                </strong>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </InterventionOutcomeContainer>
