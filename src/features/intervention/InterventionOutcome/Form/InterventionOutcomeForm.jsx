@@ -146,6 +146,20 @@ export default function InterventionOutcomeForm() {
     return "";
   };
 
+  const SubstitutionAlert = () => (
+    <>
+      Não foram encontradas prescrições com este medicamento posteriores à
+      intervenção.
+      <br />
+      <br />
+      Se for uma <strong>Suspensão</strong>, altere o motivo desta intervenção.
+      <br />
+      <br />
+      Caso contrário, informe <strong>manualmente</strong> a Economia/Dia e a
+      Quantidade de dias de economia.
+    </>
+  );
+
   if (loadStatus === "loading" || isEmpty(outcomeData)) {
     return null;
   }
@@ -315,7 +329,7 @@ export default function InterventionOutcomeForm() {
                   <Space direction="horizontal">
                     {outcomeData.destiny.length === 0 ? (
                       <Alert
-                        description={`Não foram encontradas prescrições com este medicamento posteriores à intervenção.`}
+                        description={<SubstitutionAlert />}
                         type="error"
                         showIcon
                       />
