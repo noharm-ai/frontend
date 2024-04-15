@@ -17,7 +17,10 @@ export default function PopoverDose({ outcomeData, source, children }) {
           </div>
           <div className="form-value">
             <NumericValue
-              suffix={` ${outcomeData[source].item.beforeConversion.idMeasureUnit}`}
+              suffix={` ${
+                outcomeData[source].item.beforeConversion.idMeasureUnit ||
+                "(Unidade não informada)"
+              }`}
               value={Big(
                 outcomeData[source].item.beforeConversion.dose || 0
               ).toNumber()}
