@@ -35,3 +35,7 @@ export function formatCurrency(value, precision = 2) {
     minimumFractionDigits: precision,
   });
 }
+
+export function formatNumber(value, precision = 2) {
+  return formatCurrency(value, precision);
+}

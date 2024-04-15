@@ -12,6 +12,7 @@ import Big from "big.js";
 
 import { InputNumber, Input, Select } from "components/Inputs";
 import { formatDate } from "utils/date";
+import { formatNumber } from "utils/number";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import EconomyDayCalculator from "./EconomyDayCalculator";
@@ -176,7 +177,9 @@ export default function InterventionOutcomeForm() {
               <div className="form-label">
                 <label className="main-label">Substituição:</label>
               </div>
-              <div className="form-value">{outcomeData.header.destinyDrug}</div>
+              <div className="form-value">
+                {values.destiny?.name || outcomeData.header.destinyDrug}
+              </div>
             </div>
           </Col>
         )}
@@ -336,9 +339,13 @@ export default function InterventionOutcomeForm() {
                           options={outcomeData.destiny.map((i) => ({
                             ...i.item,
                             value: i.item.idPrescriptionDrug,
-                            label: `${formatDate(i.item.prescriptionDate)} - #${
-                              i.item.idPrescription
-                            } - ${i.item.name}`,
+                            label: securityService.hasCpoe()
+                              ? `${formatDate(i.item.prescriptionDate)} - #${
+                                  i.item.idPrescriptionAggregate
+                                }`
+                              : `${formatDate(i.item.prescriptionDate)} - #${
+                                  i.item.idPrescription
+                                } - ${i.item.name}`,
                           }))}
                           optionRender={(option) => (
                             <PrescriptionOption>
@@ -347,7 +354,7 @@ export default function InterventionOutcomeForm() {
                               </div>
                               <div className="name">{option.data.name}</div>
                               <div className="detail">
-                                {option.data.dose}{" "}
+                                {formatNumber(option.data.dose, 4)}{" "}
                                 {option.data.idMeasureUnit || "-"} (
                                 {option.data.route})
                               </div>
@@ -362,7 +369,11 @@ export default function InterventionOutcomeForm() {
                             icon={<SearchOutlined />}
                             disabled={!values.idPrescriptionDrugDestiny}
                             onClick={() =>
-                              openPrescription(values.destiny.idPrescription)
+                              openPrescription(
+                                securityService.hasCpoe()
+                                  ? values.destiny.idPrescriptionAggregate
+                                  : values.destiny.idPrescription
+                              )
                             }
                           />
                         </Tooltip>
