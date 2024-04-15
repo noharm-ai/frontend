@@ -50,9 +50,9 @@ export default function InterventionOutcomeForm() {
           },
         };
 
-        const pricePerDose = Big(newValues.destiny.price)
-          .times(Big(newValues.destiny.dose))
-          .plus(newValues.destiny.priceKit);
+        const pricePerDose = Big(newValues.destiny.price || 0)
+          .times(Big(newValues.destiny.dose || 0))
+          .plus(Big(newValues.destiny.priceKit || 0));
 
         newValues.destiny.pricePerDose = pricePerDose;
 
@@ -399,8 +399,8 @@ export default function InterventionOutcomeForm() {
                           disabled
                           precision={INPUT_PRECISION}
                           addonBefore="R$"
-                          value={Big(values.destiny.pricePerDose).times(
-                            values.destiny.frequencyDay
+                          value={Big(values.destiny.pricePerDose || 0).times(
+                            Big(values.destiny.frequencyDay || 0)
                           )}
                           className={pricePerDayStatus("destiny")}
                         />

@@ -31,8 +31,8 @@ export default function EconomyDayCalculator({
       },
     };
 
-    const pricePerDose = Big(newValues[source].price)
-      .times(Big(newValues[source].dose))
+    const pricePerDose = Big(newValues[source].price || 0)
+      .times(Big(newValues[source].dose || 0))
       .plus(newValues[source].priceKit);
 
     setFieldValue(`${source}.pricePerDose`, pricePerDose);
