@@ -26,7 +26,7 @@ export default function Password({ resetPassword, status }) {
   const params = useParams();
   const { t } = useTranslation();
   const [passwordChanged, setPasswordChanged] = useState(false);
-  const { isSaving, error } = status;
+  const { isSaving } = status;
   const initialValues = {
     token: params.token,
     newpassword: "",
@@ -49,7 +49,7 @@ export default function Password({ resetPassword, status }) {
             console.error(err);
             notification.error({
               message: t("error.title"),
-              description: error?.message || t("error.description"),
+              description: err?.message || t("error.description"),
             });
           });
       },
