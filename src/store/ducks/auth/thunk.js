@@ -54,7 +54,7 @@ export const loginThunk =
       return;
     }
 
-    setUser(data.data ? data.data : data, keepMeLogged, dispatch);
+    setUser(data, keepMeLogged, dispatch);
   };
 
 export const logoutThunk = () => {
