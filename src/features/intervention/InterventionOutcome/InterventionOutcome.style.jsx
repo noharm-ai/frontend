@@ -82,6 +82,17 @@ export const InterventionOutcomeContainer = styled.div`
             border-radius: 5px;
           }
         }
+
+        &.success {
+          .ant-input-number-group-addon {
+            background: #f6ffed;
+          }
+
+          .ant-input-number-input-wrap {
+            background: #f6ffed;
+            border-radius: 5px;
+          }
+        }
       }
 
       .ant-select-disabled {

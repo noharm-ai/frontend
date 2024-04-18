@@ -83,7 +83,7 @@ export default function InterventionOutcomeForm() {
       );
       const economy = originValue.minus(destinyValue);
 
-      return economy.toFixed(6) < 0 ? 0 : economy;
+      return economy;
     }
 
     if (
@@ -95,7 +95,7 @@ export default function InterventionOutcomeForm() {
         formValues.origin.frequencyDay
       );
 
-      return economy.toFixed(6) < 0 ? 0 : economy;
+      return economy;
     }
 
     return 0;
@@ -488,7 +488,7 @@ export default function InterventionOutcomeForm() {
                       : false
                   }
                   value={values.economyDayValue}
-                  min={0}
+                  className={values.economyDayValue > 0 ? "success" : ""}
                 />
                 <Checkbox
                   disabled={outcomeData.header?.readonly}
@@ -519,7 +519,7 @@ export default function InterventionOutcomeForm() {
               <label>
                 <Tooltip
                   underline
-                  title="Quantidade de dias de economia que serão considerados no Relatório de Farmacoeconomia caso a intervenção seja aceita. Se não for informado, a quantidade de dias será calculada considerando a data da intervenção até o dia da alta do paciente (suspensão) ou enquanto estive prescrito (substituição)."
+                  title="Quantidade de dias de economia que serão considerados no Relatório de Farmacoeconomia caso a intervenção seja aceita. Se não for informado, a quantidade de dias será calculada considerando a data da intervenção até o dia da alta do paciente (suspensão) ou enquanto estiver prescrito (substituição)."
                 >
                   Qtd. de dias de economia:
                 </Tooltip>

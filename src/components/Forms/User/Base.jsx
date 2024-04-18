@@ -50,8 +50,8 @@ export default function Base({ security }) {
             <>
               <p>
                 Cuidado ao disponibilizar este link. Confira se o usuário é
-                legítimo. Encaminhe este link somente pro usuário que irá
-                utilizá-lo.
+                legítimo. Encaminhe este link somente para o email do usuário
+                que irá utilizá-lo.
               </p>
               <Textarea
                 onClick={() =>
