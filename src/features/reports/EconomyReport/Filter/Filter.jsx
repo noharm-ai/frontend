@@ -21,7 +21,8 @@ import {
   setFilters,
   setHelpModal,
 } from "../EconomyReportSlice";
-import { getReportData, filterAndExportCSV } from "../transformers";
+import { getReportData } from "../transformers";
+import { exportCSV } from "utils/report";
 import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
 import {
@@ -36,14 +37,14 @@ export default function Filter({ printRef }) {
   const dispatch = useDispatch();
   const isFetching =
     useSelector((state) => state.reportsArea.economy.status) === "loading";
-  const currentFilters = useSelector(
-    (state) => state.reportsArea.economy.filters
-  );
   const datasource = useSelector((state) => state.reportsArea.economy.list);
   const reportDate = useSelector(
     (state) => state.reportsArea.economy.updatedAt
   );
   const userId = useSelector((state) => state.user.account.userId);
+  const filteredList = useSelector(
+    (state) => state.reportsArea.economy.filtered.result.list
+  );
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
     onBeforeGetContent: onBeforePrint,
@@ -84,9 +85,15 @@ export default function Filter({ printRef }) {
     },
   });
 
-  const exportCSV = async () => {
-    const ds = await decompressDatasource(datasource);
-    filterAndExportCSV(ds, currentFilters, t);
+  const exportList = async () => {
+    exportCSV(
+      filteredList.map((i) => {
+        const item = { ...i, ...i.processed };
+        delete item.processed;
+        return item;
+      }),
+      t
+    );
   };
 
   const showHelp = () => {
@@ -140,7 +147,7 @@ export default function Filter({ printRef }) {
           />
           <FloatButton
             icon={<DownloadOutlined />}
-            onClick={exportCSV}
+            onClick={exportList}
             tooltip="Exportar CSV"
           />
           <FloatButton

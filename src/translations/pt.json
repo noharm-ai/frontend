@@ -600,7 +600,23 @@
     "type": "TIPO",
     "agg": "PACIENTE (AGREGADO)",
     "prescriptionDate": "DATA PRESCRICAO",
-    "prescriber": "PRESCRITOR"
+    "prescriber": "PRESCRITOR",
+    "idIntervention": "ID INTERVENÇÃO",
+    "economyType": "TIPO ECONOMIA",
+    "economyTypeDescription": "TIPO ECONOMIA",
+    "interventionDate": "DATA INTERVENÇAO",
+    "iniDate": "DATA INICIAL",
+    "endDate": "DATA FINAL",
+    "economyDayValue": "VALOR ECONOMIA/DIA",
+    "economyDayValueManual": "VALOR ECONOMIA/DIA MANUAL",
+    "originDrug": "ITEM ORIGEM",
+    "destinyDrug": "ITEM DESTINO",
+    "interventionReason": "MOTIVO INTERVENÇÃO",
+    "originKitPrice": "CUSTO KIT ORIGEM",
+    "destinyKitPrice": "CUSTO KIT DESTINO",
+    "iniEconomyDate": "DATA ECONOMIA INICIAL",
+    "endEconomyDate": "DATA ECONOMIA FINAL",
+    "economyValue": "VALOR ECONOMIA"
   },
 
   "features": {
