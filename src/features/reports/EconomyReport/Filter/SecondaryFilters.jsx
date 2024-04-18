@@ -30,6 +30,12 @@ export default function SecondaryFilters() {
     { label: "Todos", value: "" },
   ];
 
+  const economyValueTypes = [
+    { label: "Negativo", value: "n" },
+    { label: "Positivo", value: "p" },
+    { label: "Todos", value: "" },
+  ];
+
   return (
     <Row gutter={[20, 20]}>
       <Col md={24} xl={16} xxl={14}>
@@ -43,6 +49,20 @@ export default function SecondaryFilters() {
             setFieldValue({ economyType: value })
           }
           value={values.economyType}
+          optionType="button"
+        />
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          Valor Economia/Dia:
+        </Heading>
+        <Radio.Group
+          style={{ marginTop: "5px" }}
+          options={economyValueTypes}
+          onChange={({ target: { value } }) =>
+            setFieldValue({ economyValueType: value })
+          }
+          value={values.economyValueType}
           optionType="button"
         />
       </Col>

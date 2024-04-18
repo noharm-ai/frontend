@@ -72,6 +72,17 @@ const filterDatasource = (datasource, filters) => {
       }
 
       return true;
+    })
+    .filter((i) => {
+      if (filters.economyValueType === "p") {
+        return Big(i.economyDayValue).gte(Big(0));
+      }
+
+      if (filters.economyValueType === "n") {
+        return Big(i.economyDayValue).lt(Big(0));
+      }
+
+      return true;
     });
 };
 

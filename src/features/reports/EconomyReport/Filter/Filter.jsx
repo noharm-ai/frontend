@@ -64,6 +64,7 @@ export default function Filter({ printRef }) {
     insuranceList: [],
     statusList: ["a"],
     economyType: "",
+    economyValueType: "p",
   };
 
   useFetchReport({

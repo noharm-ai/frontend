@@ -75,6 +75,14 @@ export default function EconomyReport() {
       label: "Convênio",
       type: "list",
     },
+    economyType: {
+      label: "Tipo economia",
+      type: "dict",
+    },
+    economyValueType: {
+      label: "Tipo valor economia",
+      type: "dict",
+    },
   };
 
   return (
