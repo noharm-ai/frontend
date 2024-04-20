@@ -28,7 +28,7 @@ export default function IntegrationRemote() {
       } else {
         setTemplate(response.payload.data.data.template);
         const flatStatus = {};
-        flatStatuses(response.payload.data.data.template.status, flatStatus);
+        flatStatuses(response.payload.data.data.status, flatStatus);
         setTemplateStatus(flatStatus);
       }
     });
