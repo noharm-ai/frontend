@@ -48,7 +48,7 @@ export function EChartBase({
       window.removeEventListener("onbeforeprint", setPrintMode);
       window.removeEventListener("onafterprint", setWebMode);
     };
-  }, [theme]);
+  }, [theme, onClick]);
 
   useEffect(() => {
     const defaultOptions = {};
