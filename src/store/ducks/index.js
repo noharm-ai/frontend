@@ -40,6 +40,7 @@ import adminFrequency from "features/admin/Frequency/FrequencySlice";
 import adminUnitConversion from "features/admin/UnitConversion/UnitConversionSlice";
 import adminIntegrationStatus from "features/admin/IntegrationStatus/IntegrationStatusSlice";
 import adminIntegrationConfig from "features/admin/IntegrationConfig/IntegrationConfigSlice";
+import adminIntegrationRemote from "features/admin/IntegrationRemote/IntegrationRemoteSlice";
 
 import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
@@ -55,6 +56,7 @@ const adminReducers = combineReducers({
   integration: adminIntegration,
   integrationStatus: adminIntegrationStatus,
   integrationConfig: adminIntegrationConfig,
+  integrationRemote: adminIntegrationRemote,
   segment: adminSegment,
   exam: adminExam,
   frequency: adminFrequency,

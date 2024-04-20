@@ -19,6 +19,7 @@ import { reset as adminFrequencyReset } from "features/admin/Frequency/Frequency
 import { reset as adminUnitConversionReset } from "features/admin/UnitConversion/UnitConversionSlice";
 import { reset as adminIntegrationStatusReset } from "features/admin/IntegrationStatus/IntegrationStatusSlice";
 import { reset as adminIntegrationConfigReset } from "features/admin/IntegrationConfig/IntegrationConfigSlice";
+import { reset as adminIntegrationRemoteReset } from "features/admin/IntegrationRemote/IntegrationRemoteSlice";
 
 import { reset as drugFormStatusReset } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import { reset as listsReset } from "features/lists/ListsSlice";
@@ -63,6 +64,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(adminUnitConversionReset());
   dispatch(adminIntegrationStatusReset());
   dispatch(adminIntegrationConfigReset());
+  dispatch(adminIntegrationRemoteReset());
 
   dispatch(clinicalNotesReset());
   dispatch(departmentsReset());
