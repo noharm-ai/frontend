@@ -244,7 +244,6 @@ const Action = ({
   isSaving,
   id,
   idPrescription,
-  saveIntervention,
   onShowModal,
   admissionNumber,
   ...data

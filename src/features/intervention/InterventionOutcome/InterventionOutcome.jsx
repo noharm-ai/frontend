@@ -250,6 +250,7 @@ export default function InterventionOutcome({ ...props }) {
           centered
           onCancel={onCancel}
           destroyOnClose
+          maskClosable={false}
           {...props}
         >
           <header>
