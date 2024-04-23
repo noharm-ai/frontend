@@ -6,6 +6,7 @@ import { sourceToStoreType } from "utils/transformers/prescriptions";
 import { fetchScreeningThunk } from "store/ducks/prescriptions/thunk";
 import { Creators as PrescriptionDrugsCreators } from "./index";
 import { Creators as PrescriptionsCreators } from "../prescriptions/index";
+import Feature from "models/Feature";
 
 const {
   prescriptionDrugsSelect,
@@ -42,8 +43,22 @@ export const savePrescriptionDrugNoteThunk =
         notes: params.notes,
       };
 
+      let drugSource = source;
+      let features = getState().user?.account?.features || [];
+
+      if (
+        drugSource === "solution" &&
+        features.indexOf(Feature.DISABLE_SOLUTION_TAB) !== -1
+      ) {
+        drugSource = "prescription";
+      }
+
       dispatch(
-        prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data)
+        prescriptionsUpdatePrescriptionDrug(
+          idPrescriptionDrug,
+          drugSource,
+          data
+        )
       );
       dispatch(prescriptionDrugsSaveSuccess());
       resolve();
