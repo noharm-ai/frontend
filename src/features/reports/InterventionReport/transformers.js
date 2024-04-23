@@ -95,6 +95,13 @@ const filterDatasource = (datasource, filters) => {
       }
 
       return true;
+    })
+    .filter((i) => {
+      if (filters.prescriberList.length) {
+        return filters.prescriberList.indexOf(i.prescriber) !== -1;
+      }
+
+      return true;
     });
 };
 
