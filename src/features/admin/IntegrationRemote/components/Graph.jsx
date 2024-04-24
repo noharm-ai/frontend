@@ -19,6 +19,20 @@ export default function Graph({ template, templateStatus, isLoading }) {
     ? currentGroup.processors.concat(currentGroup.processGroups)
     : template?.flowContents.processGroups;
 
+  const getLineColor = (link) => {
+    const status = templateStatus[link.instanceIdentifier];
+
+    if (status.queuedCount > 0 && status.queuedCount <= 20) {
+      return "#faad14";
+    }
+
+    if (status.queuedCount > 20) {
+      return "#faad14";
+    }
+
+    return "#c4c4c4";
+  };
+
   const chartOptions = {
     title: {
       text: currentGroup ? currentGroup.name : template?.flowContents.name,
@@ -35,6 +49,7 @@ export default function Graph({ template, templateStatus, isLoading }) {
           show: true,
           position: "bottom",
         },
+
         labelLayout: {
           hideOverlap: true,
         },
@@ -57,15 +72,17 @@ export default function Graph({ template, templateStatus, isLoading }) {
           name: l.selectedRelationships.join(","),
           extra: { ...l },
           status: templateStatus[l.instanceIdentifier],
+          lineStyle: {
+            opacity: 0.9,
+            width: 2,
+            curveness: 0,
+            color: getLineColor(l),
+          },
         })),
-        lineStyle: {
-          opacity: 0.9,
-          width: 2,
-          curveness: 0,
-        },
+
         itemStyle: {
           symbolSize: 50,
-          color: (i, a) => {
+          color: (i) => {
             if (i.data.extra.componentType === "PROCESS_GROUP") {
               return "#e1bee7";
             }
