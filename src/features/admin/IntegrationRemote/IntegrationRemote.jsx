@@ -185,11 +185,13 @@ export default function IntegrationRemote() {
           </Row>
         </Col>
       </Row>
-      <DiagnosticModal
-        open={diagnosticsModal}
-        setOpen={setDiagnosticsModal}
-        data={diagnostics}
-      />
+      {diagnostics && (
+        <DiagnosticModal
+          open={diagnosticsModal}
+          setOpen={setDiagnosticsModal}
+          data={diagnostics}
+        />
+      )}
     </>
   );
 }

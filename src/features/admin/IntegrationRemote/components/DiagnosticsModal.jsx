@@ -48,7 +48,7 @@ export default function DiagnosticModal({ data, open, setOpen }) {
       label: "Versão",
       children: (
         <Descriptions bordered size="small">
-          {data &&
+          {data?.versionInfo &&
             Object.keys(data?.versionInfo).map((k) => (
               <React.Fragment key={k}>
                 <Descriptions.Item label={k} span={3}>
