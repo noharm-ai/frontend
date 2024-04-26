@@ -5,21 +5,21 @@ import DefaultModal from "components/Modal";
 import Heading from "components/Heading";
 import Descriptions from "components/Descriptions";
 
-export default function NodeModal({ data, onCancel }) {
+export default function ControllerModal({ data, onCancel }) {
   const items = [
     {
       key: "1",
       label: "Geral",
       children: (
         <Descriptions bordered size="small">
-          {data?.extra &&
-            Object.keys(data.extra).map((k) => (
+          {data &&
+            Object.keys(data).map((k) => (
               <React.Fragment key={k}>
                 {k !== "properties" && k !== "propertyDescriptors" && (
                   <Descriptions.Item label={k} span={3}>
-                    {data.extra[k] instanceof Object
-                      ? JSON.stringify(data.extra[k])
-                      : data.extra[k]}
+                    {data[k] instanceof Object
+                      ? JSON.stringify(data[k])
+                      : data[k]}
                   </Descriptions.Item>
                 )}
               </React.Fragment>
@@ -32,28 +32,14 @@ export default function NodeModal({ data, onCancel }) {
       label: "Propriedades",
       children: (
         <Descriptions bordered size="small">
-          {data?.extra?.properties &&
-            Object.keys(data.extra?.properties).map((k) => (
+          {data?.properties &&
+            Object.keys(data?.properties).map((k) => (
               <Descriptions.Item label={k} span={3} key={k}>
-                {data.extra[k]?.properties instanceof Object
+                {data?.properties[k] instanceof Object
                   ? ""
-                  : typeof data.extra?.properties[k] === "object"
-                  ? JSON.stringify(data.extra?.properties[k])
-                  : data.extra?.properties[k]}
-              </Descriptions.Item>
-            ))}
-        </Descriptions>
-      ),
-    },
-    {
-      key: "3",
-      label: "Diagnóstico",
-      children: (
-        <Descriptions bordered size="small">
-          {data?.status &&
-            Object.keys(data.status).map((k) => (
-              <Descriptions.Item label={k} span={3} key={k}>
-                {data.status[k] instanceof Object ? "" : data.status[k]}
+                  : typeof data?.properties[k] === "object"
+                  ? JSON.stringify(data?.properties[k])
+                  : data?.properties[k]}
               </Descriptions.Item>
             ))}
         </Descriptions>

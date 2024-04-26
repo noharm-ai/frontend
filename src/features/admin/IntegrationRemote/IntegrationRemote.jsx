@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Spin } from "antd";
+import { Spin, Row, Col } from "antd";
 
 import Graph from "./components/Graph";
+import ControllersList from "./components/ControllersList";
 import { flatStatuses } from "./transformer";
 import { fetchTemplate, reset } from "./IntegrationRemoteSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import notification from "components/notification";
 
 import { PageHeader } from "styles/PageHeader.style";
-import { PageCard } from "styles/Utils.style";
+import { PageCard, PageSectionTitle } from "styles/Utils.style";
 
 export default function IntegrationRemote() {
   const { t } = useTranslation();
@@ -49,13 +50,27 @@ export default function IntegrationRemote() {
         </div>
       </PageHeader>
 
-      <Spin spinning={status === "loading"}>
-        <PageCard style={{ minHeight: "60vh" }}>
-          {template && templateStatus && (
-            <Graph template={template} templateStatus={templateStatus} />
-          )}
-        </PageCard>
-      </Spin>
+      <Row gutter={[24, 24]}>
+        <Col xs={24}>
+          <Spin spinning={status === "loading"}>
+            <PageCard style={{ minHeight: "60vh" }}>
+              {template && templateStatus && (
+                <Graph template={template} templateStatus={templateStatus} />
+              )}
+            </PageCard>
+          </Spin>
+        </Col>
+        <Col xs={12}>
+          <PageSectionTitle>Controllers</PageSectionTitle>
+          <PageCard>
+            <ControllersList
+              template={template}
+              templateStatus={templateStatus}
+              loading={status === "loading"}
+            />
+          </PageCard>
+        </Col>
+      </Row>
     </>
   );
 }

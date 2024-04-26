@@ -32,3 +32,9 @@ export const ModalFooter = styled.div`
     width: auto;
   }
 `;
+
+export const PageSectionTitle = styled.h2`
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 0;
+`;
