@@ -3,6 +3,14 @@ import { Tooltip } from "antd";
 const columns = (t) => {
   return [
     {
+      title: "ID Setor",
+      dataIndex: "idDepartment",
+      align: "center",
+      render: (entry, record) => {
+        return record.idDepartment;
+      },
+    },
+    {
       title: "Setor",
       dataIndex: "name",
       align: "left",

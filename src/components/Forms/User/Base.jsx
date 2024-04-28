@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import "styled-components/macro";
 import { useFormikContext } from "formik";
 import { Alert } from "antd";
@@ -9,18 +10,70 @@ import Heading from "components/Heading";
 import { Input } from "components/Inputs";
 import Switch from "components/Switch";
 import Tooltip from "components/Tooltip";
-import { Select } from "components/Inputs";
+import { Select, Textarea } from "components/Inputs";
 import Button from "components/Button";
 import Role from "models/Role";
+import DefaultModal from "components/Modal";
+import notification from "components/notification";
+import { getUserResetToken } from "features/serverActions/ServerActionsSlice";
+import { getErrorMessage } from "utils/errorHandler";
 
 import { Box } from "../Form.style";
 
 export default function Base({ security }) {
-  const [forcePassword, setForcePassword] = useState(false);
+  const dispatch = useDispatch();
+  const [pwLoading, setPWLoading] = useState(false);
   const { values, setFieldValue, errors, touched } = useFormikContext();
-  const { name, external, active, id, roles, password } = values;
+  const { name, external, active, id, roles } = values;
   const layout = { label: 8, input: 16 };
   const { t } = useTranslation();
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    notification.success({ message: "Link copiado!" });
+  };
+
+  const generateResetToken = () => {
+    setPWLoading(true);
+
+    dispatch(getUserResetToken({ idUser: values.id })).then((response) => {
+      setPWLoading(false);
+
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        DefaultModal.info({
+          title: "Link para Reset de Senha",
+          content: (
+            <>
+              <p>
+                Cuidado ao disponibilizar este link. Confira se o usuário é
+                legítimo. Encaminhe este link somente para o email do usuário
+                que irá utilizá-lo.
+              </p>
+              <Textarea
+                onClick={() =>
+                  copyToClipboard(
+                    `${process.env.REACT_APP_URL}/reset/${response.payload.data}`
+                  )
+                }
+                style={{ minHeight: "300px" }}
+                value={`${process.env.REACT_APP_URL}/reset/${response.payload.data}`}
+              ></Textarea>
+            </>
+          ),
+          icon: null,
+          width: 500,
+          okText: "Fechar",
+          okButtonProps: { type: "default" },
+          wrapClassName: "default-modal",
+        });
+      }
+    });
+  };
+
   return (
     <>
       <Box hasError={errors.name}>
@@ -139,41 +192,15 @@ export default function Base({ security }) {
       )}
       {security.isAdmin() && id && (
         <Box hasError={errors.password}>
-          <Col xs={layout.label}>
-            {forcePassword && (
-              <Heading
-                as="label"
-                size="14px"
-                textAlign="right"
-                style={{ color: "rgb(207, 19, 34)", fontWeight: 500 }}
-              >
-                <Tooltip>Senha inicial</Tooltip>
-              </Heading>
-            )}
-          </Col>
+          <Col xs={layout.label}></Col>
           <Col xs={layout.input}>
-            {forcePassword ? (
-              <Input
-                style={{
-                  marginLeft: 10,
-                  background: "rgba(255, 0, 0, 0.1)",
-                }}
-                value={password}
-                onChange={({ target }) =>
-                  setFieldValue("password", target.value)
-                }
-                maxLength={10}
-              />
-            ) : (
-              <Button
-                type="link"
-                danger
-                onClick={() => setForcePassword(true)}
-                style={{ padding: 0 }}
-              >
-                Configurar senha inicial
-              </Button>
-            )}
+            <Button
+              danger
+              onClick={() => generateResetToken()}
+              loading={pwLoading}
+            >
+              Gerar link para reset de senha
+            </Button>
           </Col>
         </Box>
       )}

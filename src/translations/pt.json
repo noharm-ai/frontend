@@ -428,6 +428,9 @@
     "labelRelations": "Relações",
     "labelRelationsPlaceholder": "Selecione as relações...",
     "labelRelationsHint": "Lista de medicamentos com Interações, Incompatibilidades, Duplicidade e/ou Forma Farmacêutica",
+    "labelSubstitution": "Substituir por",
+    "labelSubstitutionPlaceholder": "Selecione o medicamento substituto...",
+    "labelSubstitutionHint": "Farmacoeconomia: O medicamento selecionado será aplicado no cálculo para substituir o medicamento atual (somente o primeiro medicamento selecionado será considerado). Se este campo não for preenchido, será considerado o medicamento atual para substituição.",
     "labelObservations": "Observações",
     "labelTranscriptionHint": "Habilita a possibilidade de alterar a prescrição atual",
     "labelTranscription": "Transcrição",
@@ -544,6 +547,14 @@
     "s": "Pendente"
   },
 
+  "interventionStatusAction": {
+    "a": "Aceitar Intervenção",
+    "n": "Não Aceitar Intervenção",
+    "j": "Não Aceitar Intervenção (com Justificativa)",
+    "x": "Marcar como Não se Aplica",
+    "s": "Desfazer desfecho"
+  },
+
   "roles": {
     "admin": "Administrador",
     "concilia": "Conciliação",
@@ -589,7 +600,23 @@
     "type": "TIPO",
     "agg": "PACIENTE (AGREGADO)",
     "prescriptionDate": "DATA PRESCRICAO",
-    "prescriber": "PRESCRITOR"
+    "prescriber": "PRESCRITOR",
+    "idIntervention": "ID INTERVENÇÃO",
+    "economyType": "TIPO ECONOMIA",
+    "economyTypeDescription": "TIPO ECONOMIA",
+    "interventionDate": "DATA INTERVENÇAO",
+    "iniDate": "DATA INICIAL",
+    "endDate": "DATA FINAL",
+    "economyDayValue": "VALOR ECONOMIA/DIA",
+    "economyDayValueManual": "VALOR ECONOMIA/DIA MANUAL",
+    "originDrug": "ITEM ORIGEM",
+    "destinyDrug": "ITEM DESTINO",
+    "interventionReason": "MOTIVO INTERVENÇÃO",
+    "originKitPrice": "CUSTO KIT ORIGEM",
+    "destinyKitPrice": "CUSTO KIT DESTINO",
+    "iniEconomyDate": "DATA ECONOMIA INICIAL",
+    "endEconomyDate": "DATA ECONOMIA FINAL",
+    "economyValue": "VALOR ECONOMIA"
   },
 
   "features": {

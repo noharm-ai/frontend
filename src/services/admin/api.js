@@ -222,6 +222,18 @@ api.integration.prescalc = (params) => {
   );
 };
 
+api.integration.getTemplate = (params) =>
+  instance.get(`${endpoints.integration}/template`, {
+    params,
+    ...setHeaders(),
+  });
+
+api.user = {};
+api.user.getResetToken = (params) =>
+  instance.post(`/user/reset-token`, params, {
+    ...setHeaders(),
+  });
+
 const methods = {
   ...api,
   getFrequencyList,

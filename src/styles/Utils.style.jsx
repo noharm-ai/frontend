@@ -18,3 +18,23 @@ export const PaginationContainer = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
+
+export const ModalFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+
+  > * {
+    margin-left: 5px;
+  }
+
+  .ant-dropdown-button {
+    width: auto;
+  }
+`;
+
+export const PageSectionTitle = styled.h2`
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 0;
+`;

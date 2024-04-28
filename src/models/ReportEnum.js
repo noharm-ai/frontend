@@ -3,4 +3,5 @@ export default class ReportEnum {
   static PRESCRIPTION = "PRESCRIPTION";
   static PRESCRIPTION_AUDIT = "PRESCRIPTION_AUDIT";
   static INTERVENTION = "INTERVENTION";
+  static ECONOMY = "ECONOMY";
 }

@@ -28,6 +28,7 @@ import prescriptionSlice from "features/prescription/PrescriptionSlice";
 import preferencesSlice from "features/preferences/PreferencesSlice";
 import drugAttributesFormSlice from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
 import supportSlice from "features/support/SupportSlice";
+import interventionOutcomeSlice from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -39,12 +40,14 @@ import adminFrequency from "features/admin/Frequency/FrequencySlice";
 import adminUnitConversion from "features/admin/UnitConversion/UnitConversionSlice";
 import adminIntegrationStatus from "features/admin/IntegrationStatus/IntegrationStatusSlice";
 import adminIntegrationConfig from "features/admin/IntegrationConfig/IntegrationConfigSlice";
+import adminIntegrationRemote from "features/admin/IntegrationRemote/IntegrationRemoteSlice";
 
 import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
 import reportPrescriptionReport from "features/reports/PrescriptionReport/PrescriptionReportSlice";
 import reportInterventionReport from "features/reports/InterventionReport/InterventionReportSlice";
 import reportPrescriptionAuditReport from "features/reports/PrescriptionAuditReport/PrescriptionAuditReportSlice";
+import reportEconomyReport from "features/reports/EconomyReport/EconomyReportSlice";
 
 const adminReducers = combineReducers({
   interventionReason: adminInterventionReasonReducer,
@@ -53,6 +56,7 @@ const adminReducers = combineReducers({
   integration: adminIntegration,
   integrationStatus: adminIntegrationStatus,
   integrationConfig: adminIntegrationConfig,
+  integrationRemote: adminIntegrationRemote,
   segment: adminSegment,
   exam: adminExam,
   frequency: adminFrequency,
@@ -64,6 +68,7 @@ const reportReducers = combineReducers({
   prescription: reportPrescriptionReport,
   intervention: reportInterventionReport,
   prescriptionAudit: reportPrescriptionAuditReport,
+  economy: reportEconomyReport,
   reports: reports,
 });
 
@@ -98,4 +103,5 @@ export default combineReducers({
   preferences: preferencesSlice,
   drugAttributesForm: drugAttributesFormSlice,
   support: supportSlice,
+  interventionOutcome: interventionOutcomeSlice,
 });

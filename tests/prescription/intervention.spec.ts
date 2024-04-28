@@ -8,7 +8,7 @@ test("add intervention", async ({ page }) => {
     .click();
   await page.getByText("Paciente 99").click();
   await page
-    .getByRole("row", { name: "Expand row 1 BISACODIL 5 mg" })
+    .getByRole("row", { name: "Expandir linha 1 BISACODIL 5 mg" })
     .getByRole("button")
     .nth(1)
     .click();
@@ -22,7 +22,7 @@ test("add intervention", async ({ page }) => {
   await page.getByRole("textbox").fill("teste");
   await page.getByRole("button", { name: "Salvar" }).click();
   await page
-    .getByRole("row", { name: "Expand row 1 BISACODIL 5 mg" })
+    .getByRole("row", { name: "Expandir linha 1 BISACODIL 5 mg" })
     .getByRole("button")
     .nth(1)
     .click();
@@ -36,7 +36,7 @@ test("add multiple interventions and rollback", async ({ page }) => {
 
   // click intervention button
   await page
-    .getByRole("row", { name: "Expand row 0 ENALAPRIL 20 mg" })
+    .getByRole("row", { name: "Expandir linha 0 ENALAPRIL 20 mg" })
     .getByRole("button")
     .nth(1)
     .click();
@@ -53,7 +53,7 @@ test("add multiple interventions and rollback", async ({ page }) => {
 
   // click intervention button
   await page
-    .getByRole("row", { name: "Expand row 0 ENALAPRIL 20 mg" })
+    .getByRole("row", { name: "Expandir linha 0 ENALAPRIL 20 mg" })
     .getByRole("button")
     .nth(1)
     .click();
@@ -72,10 +72,11 @@ test("add multiple interventions and rollback", async ({ page }) => {
 
   await page.locator(".ant-modal-content .ant-dropdown-trigger").hover();
   await page.getByText("Salvar e marcar como Aceita").click();
+  await page.getByRole("button", { name: "Confirmar" }).click();
 
   //check created interventions
   await page
-    .getByRole("row", { name: "Expand row 0 ENALAPRIL 20 mg" })
+    .getByRole("row", { name: "Expandir linha 0 ENALAPRIL 20 mg" })
     .getByRole("button")
     .nth(1)
     .click();
@@ -90,14 +91,14 @@ test("add multiple interventions and rollback", async ({ page }) => {
   await page.locator(".ant-modal-confirm-btns button").first().click();
 
   await page
-    .getByRole("row", { name: "Expand row 0 ENALAPRIL 20 mg" })
+    .getByRole("row", { name: "Expandir linha 0 ENALAPRIL 20 mg" })
     .getByRole("button")
     .nth(1)
     .click();
   await page.getByText("Pendente", { exact: true }).click();
   await page.getByRole("button", { name: "rollback" }).click();
   await page
-    .getByRole("row", { name: "Expand row 0 ENALAPRIL 20 mg" })
+    .getByRole("row", { name: "Expandir linha 0 ENALAPRIL 20 mg" })
     .getByRole("button")
     .nth(1)
     .click();

@@ -340,12 +340,12 @@ function BaseForm({ data }) {
               marginRight: 5,
             }}
             min={1}
-            max={4}
+            max={3}
             value={values.fallRisk}
             onChange={(value) => setFieldValue("fallRisk", value)}
             status={errors.fallRisk && touched.fallRisk ? "error" : null}
           />
-          Valor entre 1 e 4
+          Valor entre 1 e 3
         </div>
         {errors.fallRisk && touched.fallRisk && (
           <div className="form-error">{errors.fallRisk}</div>

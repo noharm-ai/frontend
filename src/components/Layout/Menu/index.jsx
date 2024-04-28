@@ -27,6 +27,7 @@ import {
   FlagOutlined,
   SwapOutlined,
   CheckOutlined,
+  DeploymentUnitOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -307,6 +308,14 @@ export default function Menu({ security, featureService }) {
       icon: <ApiOutlined />,
       role: ["admin"],
       children: [
+        {
+          key: "/admin/integracao/acesso-remoto",
+          link: "/admin/integracao/acesso-remoto",
+          label: "Acesso Remoto",
+          icon: <DeploymentUnitOutlined />,
+          id: "gtm-lnk-integration-remote",
+          role: ["admin"],
+        },
         {
           key: "/admin/integracao",
           link: "/admin/integracao",

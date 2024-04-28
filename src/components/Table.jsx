@@ -1,4 +1,4 @@
-import AntTable from "antd/lib/table";
+import { Table as AntTable } from "antd";
 import styled from "styled-components/macro";
 
 import { get } from "styles/utils";
@@ -367,6 +367,13 @@ export const TextColumn = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+export const CardTable = styled(AntTable)`
+  .ant-table {
+    border-radius: 8px;
+    box-shadow: 0 -1px 7px rgb(0 0 0 / 16%);
+  }
 `;
 
 export default Table;

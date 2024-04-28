@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import isEmpty from "lodash.isempty";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -14,6 +15,9 @@ import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import InterventionReasonRelationType from "models/InterventionReasonRelationType";
 import interventionStatus from "models/InterventionStatus";
+import security from "services/security";
+import FeaturesService from "services/features";
+import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 
 import Base from "./Base";
 import PatientData from "./PatientData";
@@ -39,11 +43,17 @@ export default function Intervention({
   memoryFetchReasonText,
   drugSummary,
   fetchDrugSummary,
-  security,
+  roles,
+  features,
+  aggPrescription,
+  aggIdPrescription,
   ...props
 }) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const { isSaving, item } = intervention;
+  const securityService = security(roles);
+  const featureService = FeaturesService(features);
 
   const validationSchema = Yup.object().shape({
     idInterventionReason: Yup.array()
@@ -155,9 +165,11 @@ export default function Intervention({
     const { transcription, transcriptionData } = params;
     const interventionData = {
       ...params,
+      status: "s",
       transcription: transcription
         ? getTranscriptionData(transcriptionData)
         : null,
+      aggIdPrescription: aggPrescription ? aggIdPrescription : null,
     };
 
     delete interventionData.transcriptionData;
@@ -182,6 +194,16 @@ export default function Intervention({
         notification.success({
           message: t("success.intervention"),
         });
+
+        if (params.status !== "s" && params.status != null) {
+          dispatch(
+            setSelectedInterventionOutcome({
+              idIntervention: intv.idIntervention,
+              outcome: params.status,
+              open: true,
+            })
+          );
+        }
       })
       .catch((e) => {
         console.error("intv error", e);
@@ -337,7 +359,8 @@ export default function Intervention({
                 reasonTextMemory={reasonTextMemory}
                 memorySaveReasonText={memorySaveReasonText}
                 memoryFetchReasonText={memoryFetchReasonText}
-                security={security}
+                securityService={securityService}
+                featureService={featureService}
               />
             </Row>
           </form>

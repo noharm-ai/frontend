@@ -64,6 +64,14 @@ export default function Reports() {
       route: "/relatorios/audit",
       visible: internalList.indexOf("PRESCRIPTION_AUDIT") !== -1,
     },
+    {
+      title: "Farmacoeconomia (Beta)",
+      description: "Economia gerada por intervenções",
+      icon: "report",
+      type: "internal",
+      route: "/relatorios/economia",
+      visible: internalList.indexOf("ECONOMY") !== -1,
+    },
   ];
 
   useEffect(() => {

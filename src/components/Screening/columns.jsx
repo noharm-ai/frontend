@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components/macro";
 import isEmpty from "lodash.isempty";
 import { format } from "date-fns";
@@ -24,6 +25,7 @@ import RichTextView from "components/RichTextView";
 import InterventionStatus from "models/InterventionStatus";
 import { SelectMultiline } from "components/Inputs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
+import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
@@ -34,7 +36,7 @@ import DrugForm from "./Form";
 
 import { TableTags, TableLink } from "./index.style";
 
-const interventionOptions = (idIntervention, saveIntervention) => {
+const interventionOptions = (idIntervention, dispatch) => {
   const items = [
     {
       key: "a",
@@ -61,10 +63,13 @@ const interventionOptions = (idIntervention, saveIntervention) => {
   return {
     items,
     onClick: ({ key }) => {
-      saveIntervention({
-        idIntervention,
-        status: key,
-      });
+      dispatch(
+        setSelectedInterventionOutcome({
+          idIntervention: idIntervention,
+          outcome: key,
+          open: true,
+        })
+      );
     },
   };
 };
@@ -125,11 +130,8 @@ const prescriptionDrugMenu = ({
   };
 };
 
-const InterventionAction = ({
-  intv,
-  saveIntervention,
-  isSavingIntervention,
-}) => {
+const InterventionAction = ({ intv, isSavingIntervention }) => {
+  const dispatch = useDispatch();
   const { idIntervention } = intv;
   const isChecked = intv.status !== "s";
 
@@ -141,7 +143,15 @@ const InterventionAction = ({
             className="gtm-bt-undo-interv-status"
             danger
             ghost
-            onClick={() => saveIntervention({ idIntervention, status: "s" })}
+            onClick={() =>
+              dispatch(
+                setSelectedInterventionOutcome({
+                  idIntervention: idIntervention,
+                  outcome: "s",
+                  open: true,
+                })
+              )
+            }
             loading={isSavingIntervention}
             icon={<RollbackOutlined style={{ fontSize: 16 }} />}
           ></Button>
@@ -149,7 +159,7 @@ const InterventionAction = ({
       )}
       {!isChecked && (
         <Dropdown
-          menu={interventionOptions(idIntervention, saveIntervention)}
+          menu={interventionOptions(idIntervention, dispatch)}
           loading={isSavingIntervention}
         >
           <Button

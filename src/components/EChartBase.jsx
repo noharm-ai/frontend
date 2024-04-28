@@ -1,7 +1,14 @@
 import React, { useRef, useEffect, useState } from "react";
 import { init, getInstanceByDom } from "echarts";
 
-export function EChartBase({ option, style, settings, loading, theme }) {
+export function EChartBase({
+  option,
+  style,
+  settings,
+  loading,
+  theme,
+  onClick,
+}) {
   const chartRef = useRef(null);
   const [imgUrl, setImgUrl] = useState(null);
 
@@ -30,6 +37,10 @@ export function EChartBase({ option, style, settings, loading, theme }) {
     window.addEventListener("onbeforeprint", setPrintMode);
     window.addEventListener("onafterprint", setWebMode);
 
+    if (onClick) {
+      chart.on("click", onClick);
+    }
+
     // Return cleanup function
     return () => {
       chart?.dispose();
@@ -37,7 +48,7 @@ export function EChartBase({ option, style, settings, loading, theme }) {
       window.removeEventListener("onbeforeprint", setPrintMode);
       window.removeEventListener("onafterprint", setWebMode);
     };
-  }, [theme]);
+  }, [theme, onClick]);
 
   useEffect(() => {
     const defaultOptions = {};

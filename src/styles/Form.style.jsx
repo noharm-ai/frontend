@@ -9,6 +9,12 @@ export const Form = styled.form`
     }
   }
 
+  .form-label {
+    label {
+      color: #2e3c5a;
+    }
+  }
+
   .form-row {
     margin-top: 15px;
 
@@ -39,6 +45,12 @@ export const Form = styled.form`
     }
   }
 
+  .form-readonly {
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .form-input {
     .ant-select {
       width: 100%;
@@ -54,6 +66,18 @@ export const Form = styled.form`
       input {
         background: #fff2f0;
       }
+    }
+
+    .ant-space {
+      width: 100%;
+
+      > div:first-child {
+        flex: 1;
+      }
+    }
+
+    .ant-input-number-group-wrapper {
+      width: 100%;
     }
   }
 

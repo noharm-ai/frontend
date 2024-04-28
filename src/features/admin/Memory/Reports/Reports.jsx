@@ -89,6 +89,10 @@ function MemoryReports() {
                 id: "PRESCRIPTION_AUDIT",
                 value: "Auditoria",
               },
+              {
+                id: "ECONOMY",
+                value: "Farmacoeconomia",
+              },
             ],
             optionsType: "key-value",
             style: { width: "100%" },

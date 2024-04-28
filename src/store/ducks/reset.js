@@ -19,6 +19,7 @@ import { reset as adminFrequencyReset } from "features/admin/Frequency/Frequency
 import { reset as adminUnitConversionReset } from "features/admin/UnitConversion/UnitConversionSlice";
 import { reset as adminIntegrationStatusReset } from "features/admin/IntegrationStatus/IntegrationStatusSlice";
 import { reset as adminIntegrationConfigReset } from "features/admin/IntegrationConfig/IntegrationConfigSlice";
+import { reset as adminIntegrationRemoteReset } from "features/admin/IntegrationRemote/IntegrationRemoteSlice";
 
 import { reset as drugFormStatusReset } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import { reset as listsReset } from "features/lists/ListsSlice";
@@ -31,12 +32,14 @@ import { reset as scoreWizardReset } from "features/outliers/ScoreWizard/ScoreWi
 import { reset as prescriptionv2Reset } from "features/prescription/PrescriptionSlice";
 import { reset as drugAttributesFormReset } from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
 import { reset as supportReset } from "features/support/SupportSlice";
+import { reset as interventionOutcomeReset } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 
 import { reset as reportsReset } from "features/reports/ReportsSlice";
 import { reset as patientDayReportReset } from "features/reports/PatientDayReport/PatientDayReportSlice";
 import { reset as prescriptionReportReset } from "features/reports/PrescriptionReport/PrescriptionReportSlice";
 import { reset as interventionReportReset } from "features/reports/InterventionReport/InterventionReportSlice";
 import { reset as prescriptionAuditReportReset } from "features/reports/PrescriptionAuditReport/PrescriptionAuditReportSlice";
+import { reset as economyReportReset } from "features/reports/EconomyReport/EconomyReportSlice";
 
 const { clinicalNotesReset } = ClinicalNotesCreators;
 const { departmentsReset } = DepartmentsCreators;
@@ -61,6 +64,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(adminUnitConversionReset());
   dispatch(adminIntegrationStatusReset());
   dispatch(adminIntegrationConfigReset());
+  dispatch(adminIntegrationRemoteReset());
 
   dispatch(clinicalNotesReset());
   dispatch(departmentsReset());
@@ -84,10 +88,12 @@ export const resetReduxState = (dispatch) => {
   dispatch(prescriptionv2Reset());
   dispatch(drugAttributesFormReset());
   dispatch(supportReset());
+  dispatch(interventionOutcomeReset());
 
   dispatch(reportsReset());
   dispatch(patientDayReportReset());
   dispatch(prescriptionReportReset());
   dispatch(interventionReportReset());
   dispatch(prescriptionAuditReportReset());
+  dispatch(economyReportReset());
 };

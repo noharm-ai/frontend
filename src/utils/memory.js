@@ -11,6 +11,5 @@ export const CUSTOM_FORM_STORE_ID = "custom-forms";
 export const CUSTOM_FORM_MEMORY_TYPE = "custom-forms";
 
 export const INFO_ALERT_MEMORY_TYPE = "info-alert";
-export const NEW_FEATURE_ANNOTATION_TYPE = "new-feature-annotation";
 
 export const PREFERENCES_TYPE = "user-preferences";

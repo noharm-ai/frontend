@@ -14,7 +14,6 @@ import {
   filterPrescriptionDrugs,
 } from "utils/transformers/prescriptionDrugs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
-import notification from "components/notification";
 import SecurityService from "services/security";
 import FeatureService from "services/features";
 
@@ -207,19 +206,6 @@ export default function PrescriptionDrugList({
     }
   };
 
-  const saveInterventionAndUpdateData = (params) => {
-    saveIntervention(params)
-      .then((response) => {
-        updateInterventionData(response.data[0]);
-      })
-      .catch(() => {
-        notification.error({
-          message: t("error.title"),
-          description: t("error.description"),
-        });
-      });
-  };
-
   const bag = {
     onShowModal,
     selectPrescriptionDrug,
@@ -227,7 +213,6 @@ export default function PrescriptionDrugList({
     idSegment,
     idHospital,
     admissionNumber,
-    saveIntervention: saveInterventionAndUpdateData,
     isSavingIntervention,
     periodObject,
     fetchPeriod,

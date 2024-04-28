@@ -112,10 +112,10 @@ export const getDateRangePresets = (reportDate) => [
   },
 ];
 
-export const dateRangeValid = (reportDate) => {
+export const dateRangeValid = (reportDate, subtractDays = 60) => {
   return (current) => {
     const maxDate = dayjs(reportDate).subtract(1, "day");
-    const minDate = dayjs(reportDate).subtract(60, "day");
+    const minDate = dayjs(reportDate).subtract(subtractDays, "day");
 
     return current > maxDate || current < minDate;
   };

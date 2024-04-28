@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import api from "services/api";
+import adminAPI from "services/admin/api";
 
 const initialState = {
   putMemory: {
@@ -34,6 +35,19 @@ export const putMemory = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.putMemory(null, params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getUserResetToken = createAsyncThunk(
+  "serverActions/user-reset-token",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminAPI.user.getResetToken(params);
 
       return response.data;
     } catch (err) {

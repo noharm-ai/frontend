@@ -36,6 +36,7 @@ import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminIntegrationStatus from "pages/Admin/IntegrationStatus";
 import AdminIntegrationConfig from "pages/Admin/IntegrationConfig";
+import AdminIntegrationRemote from "pages/Admin/IntegrationRemote";
 import AdminSegment from "pages/Admin/Segment";
 import AdminUnitConversion from "pages/Admin/UnitConversion";
 
@@ -43,6 +44,7 @@ import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
 import InterventionReport from "pages/Reports/InterventionReport";
 import PrescriptionAuditReport from "pages/Reports/PrescriptionAuditReport";
+import EconomyReport from "pages/Reports/EconomyReport";
 
 const routes = [
   {
@@ -278,6 +280,11 @@ const routes = [
   },
   {
     exact: true,
+    path: "/admin/integracao/acesso-remoto",
+    element: <WithAuth component={AdminIntegrationRemote} />,
+  },
+  {
+    exact: true,
     path: "/admin/segmentos",
     element: <WithAuth component={AdminSegment} />,
   },
@@ -305,6 +312,11 @@ const routes = [
     exact: true,
     path: "/relatorios/audit",
     element: <WithAuth component={PrescriptionAuditReport} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/economia",
+    element: <WithAuth component={EconomyReport} />,
   },
 ];
 

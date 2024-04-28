@@ -543,6 +543,14 @@
     "s": "Pending"
   },
 
+  "interventionStatusAction": {
+    "a": "Accept",
+    "n": "Do not accept",
+    "j": "Do not accept (justified)",
+    "x": "Not applicable",
+    "s": "Undo outcome"
+  },
+
   "roles": {
     "admin": "Admin",
     "concilia": "Conciliation",
@@ -588,7 +596,23 @@
     "type": "TYPE",
     "agg": "PATIENT (AGGREGATED)",
     "prescriptionDate": "PRESCRIPTION DATE",
-    "prescriber": "PRESCRIBER"
+    "prescriber": "PRESCRIBER",
+    "idIntervention": "ID INTERVENTION",
+    "economyType": "ECONOMY TYPE",
+    "economyTypeDescription": "ECONOMY TYPE",
+    "interventionDate": "INTERVENTION DATE",
+    "iniDate": "INITIAL DATE",
+    "endDate": "END DATE",
+    "economyDayValue": "ECONOMY/DAY VALUE",
+    "economyDayValueManual": "ECONOMY/DAY VALUE MANUAL",
+    "originDrug": "ORIGIN ITEM",
+    "destinyDrug": "DESTINY ITEM",
+    "interventionReason": "INTERVENTION REASON",
+    "originKitPrice": "ORIGIN KIT PRICE",
+    "destinyKitPrice": "DESTINY KIT PRICE",
+    "iniEconomyDate": "ECONOMY DATE START",
+    "endEconomyDate": "ECONOMY DATE END",
+    "economyValue": "ECONOMY VALUE"
   },
 
   "features": {
