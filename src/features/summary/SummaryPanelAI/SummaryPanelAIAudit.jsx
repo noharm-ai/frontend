@@ -1,9 +1,12 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 import DefaultModal from "components/Modal";
 import Heading from "components/Heading";
 
 function SummaryPanelAIAudit({ audit, open, setOpen }) {
+  const { t } = useTranslation();
+
   return (
     <DefaultModal
       width={700}
@@ -13,8 +16,8 @@ function SummaryPanelAIAudit({ audit, open, setOpen }) {
       open={open}
       footer={null}
     >
-      <Heading>Auditoria</Heading>
-      <p>Lista de registros encontrados pela IA.</p>
+      <Heading>{t("labels.audit")}</Heading>
+      <p>{t("summary.auditLegend")}:</p>
       <ul>
         {audit?.length ? (
           audit.map((a, i) => <li key={i}>{a}</li>)

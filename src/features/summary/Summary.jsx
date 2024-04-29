@@ -126,8 +126,8 @@ function Summary({ mock }) {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Sumário de Alta</h1>
-          <div className="page-header-legend">Sumário de alta do paciente.</div>
+          <h1 className="page-header-title">{t("summary.title")}</h1>
+          <div className="page-header-legend">{t("summary.summaryLegend")}</div>
         </div>
         <div className="page-header-actions">
           <SummaryActions
@@ -143,7 +143,7 @@ function Summary({ mock }) {
       ) : (
         <SummaryContainer>
           <div>
-            <h2 id="id-paciente">1) Identificação do Paciente</h2>
+            <h2 id="id-paciente">1) {t("summary.topic1")}</h2>
             <div className="sub_level">
               <SummaryPanelPatient
                 position="patient"
@@ -151,7 +151,7 @@ function Summary({ mock }) {
               ></SummaryPanelPatient>
             </div>
 
-            <h2 id="dados-internacao">2) Dados da Internação</h2>
+            <h2 id="dados-internacao">2) {t("summary.topic2")}</h2>
 
             <div className="sub_level">
               <SummaryPanelAdmission
@@ -159,26 +159,24 @@ function Summary({ mock }) {
                 patient={summaryData.patient}
               ></SummaryPanelAdmission>
 
-              <h3 id="admissao">2.1) Admissão</h3>
+              <h3 id="admissao">2.1) {t("summary.topic2-1")}</h3>
 
               <div className="sub_level">
-                <h4 id="motivo-admissao">2.1.1) Motivo da Admissão</h4>
+                <h4 id="motivo-admissao">2.1.1) {t("summary.topic2-1-1")}</h4>
                 <SummaryPanelAI
                   admissionNumber={params.admissionNumber}
                   payload={summaryData.summaryConfig?.reason}
                   position="reason"
                 />
 
-                <h4 id="diagnosticos">
-                  2.1.2) Diagnósticos (primário e secundário)
-                </h4>
+                <h4 id="diagnosticos">2.1.2) {t("summary.topic2-1-2")}</h4>
                 <SummaryPanelAI
                   admissionNumber={params.admissionNumber}
                   payload={summaryData.summaryConfig?.diagnosis}
                   position="diagnosis"
                 />
 
-                <h4 id="alergias">2.1.3) Alergias</h4>
+                <h4 id="alergias">2.1.3) {t("summary.topic2-1-3")}</h4>
                 <SummaryPanelText
                   admissionNumber={params.admissionNumber}
                   text={allergiesToText(summaryData.allergies)}
@@ -186,7 +184,7 @@ function Summary({ mock }) {
                 ></SummaryPanelText>
 
                 <h4 id="medicamentos-uso-previo">
-                  2.1.4) Medicamentos de uso prévio
+                  2.1.4) {t("summary.topic2-1-4")}
                 </h4>
                 <SummaryPanelAI
                   admissionNumber={params.admissionNumber}
@@ -195,7 +193,7 @@ function Summary({ mock }) {
                 />
               </div>
 
-              <h3 id="resumo-clinico">2.2) Resumo Clínico</h3>
+              <h3 id="resumo-clinico">2.2) {t("summary.topic2-2")}</h3>
 
               <div className="sub_level">
                 <SummaryPanelAI
@@ -204,7 +202,7 @@ function Summary({ mock }) {
                   position="clinicalSummary"
                 />
 
-                <h4 id="exames-lab">2.2.1) Exames Laboratoriais</h4>
+                <h4 id="exames-lab">2.2.1) {t("summary.topic2-2-1")}</h4>
 
                 <SummaryPanelText
                   admissionNumber={params.admissionNumber}
@@ -212,14 +210,14 @@ function Summary({ mock }) {
                   position="labExams"
                 ></SummaryPanelText>
 
-                <h4 id="exames-textuais">2.2.2) Exames Textuais</h4>
+                <h4 id="exames-textuais">2.2.2) {t("summary.topic2-2-2")}</h4>
                 <SummaryPanelAI
                   admissionNumber={params.admissionNumber}
                   payload={summaryData.summaryConfig?.exams}
                   position="textExams"
                 />
 
-                <h4 id="procedimentos">2.2.3) Procedimentos realizados</h4>
+                <h4 id="procedimentos">2.2.3) {t("summary.topic2-2-3")}</h4>
                 <SummaryPanelAI
                   admissionNumber={params.admissionNumber}
                   payload={summaryData.summaryConfig?.procedures}
@@ -227,7 +225,7 @@ function Summary({ mock }) {
                 />
 
                 <h4 id="medicamentos-internacao">
-                  2.2.4) Medicamentos utilizados na internação
+                  2.2.4) {t("summary.topic2-2-4")}
                 </h4>
                 <SummaryPanelText
                   admissionNumber={params.admissionNumber}
@@ -236,8 +234,7 @@ function Summary({ mock }) {
                 ></SummaryPanelText>
 
                 <h4 id="medicamentos-interrompidos">
-                  2.2.5) Medicamentos Contínuos Interrompidos Durante a
-                  Internação
+                  2.2.5) {t("summary.topic2-2-5")}
                 </h4>
                 <SummaryPanelText
                   admissionNumber={params.admissionNumber}
@@ -246,7 +243,7 @@ function Summary({ mock }) {
                 ></SummaryPanelText>
               </div>
 
-              <h3 id="condicoes-alta">2.3) Condição de Alta</h3>
+              <h3 id="condicoes-alta">2.3) {t("summary.topic2-3")}</h3>
 
               <div className="sub_level">
                 <SummaryPanelAI
@@ -262,17 +259,17 @@ function Summary({ mock }) {
               </div>
             </div>
 
-            <h2 id="plano-terapeutico">3) Plano Terapêutico</h2>
+            <h2 id="plano-terapeutico">3) {t("summary.topic3")}</h2>
 
             <div className="sub_level">
-              <h3 id="plano-alta">3.1) Plano de Alta</h3>
+              <h3 id="plano-alta">3.1) {t("summary.topic3-1")}</h3>
               <SummaryPanelAI
                 admissionNumber={params.admissionNumber}
                 payload={summaryData.summaryConfig?.dischargePlan}
                 position="dischargePlan"
               />
 
-              <h3 id="receita">3.2) Receita</h3>
+              <h3 id="receita">3.2) {t("summary.topic3-2")}</h3>
               <SummaryPanelText
                 admissionNumber={params.admissionNumber}
                 text={receiptToText(summaryData.receipt)}

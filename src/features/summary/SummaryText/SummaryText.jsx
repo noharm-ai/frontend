@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import { UndoOutlined } from "@ant-design/icons";
 
@@ -14,6 +15,7 @@ import { Form } from "styles/Form.style";
 import { blocksToText } from "../verbalizers";
 
 function SummaryText({ open, setOpen }) {
+  const { t } = useTranslation();
   const blocks = useSelector((state) => state.summary.blocks);
   const initialValues = {
     text: blocksToText(blocks),
@@ -46,12 +48,12 @@ function SummaryText({ open, setOpen }) {
           okText="Copiar"
         >
           <header>
-            <Heading margin="0 0 11px">Sumário de Alta</Heading>
+            <Heading margin="0 0 11px">{t("summary.title")}</Heading>
           </header>
           <Form>
             <div className={`form-row`}>
               <div className="form-action">
-                <Tooltip title="Desfazer todas modificações">
+                <Tooltip title={t("actions.undo")}>
                   <Button
                     shape="circle"
                     icon={<UndoOutlined />}

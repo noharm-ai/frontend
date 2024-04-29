@@ -23,12 +23,12 @@ function SummaryPanelPatient({ patient, position }) {
   return (
     <SummaryPanel>
       <div className="attribute">
-        <label>Nome do Paciente:</label> <span>{patient.name}</span>
+        <label>{t("labels.name")}:</label> <span>{patient.name}</span>
       </div>
 
       <div className="group">
         <div className="attribute">
-          <label>Data de Nascimento:</label>
+          <label>{t("tableHeader.birthdate")}:</label>
           <span>
             {patient.birthdate
               ? `${moment(patient.birthdate).format("DD/MM/YYYY")}`
@@ -36,14 +36,14 @@ function SummaryPanelPatient({ patient, position }) {
           </span>
         </div>
         <div className="attribute">
-          <label>Atendimento:</label>
+          <label>{t("labels.admissionNumber")}:</label>
           <span>{patient.admissionNumber}</span>
         </div>
       </div>
 
       <div className="group">
         <div className="attribute">
-          <label>Sexo:</label>
+          <label>{t("labels.gender")}:</label>
           <span>
             {patient.gender === "M"
               ? t("patientCard.male")
@@ -53,7 +53,7 @@ function SummaryPanelPatient({ patient, position }) {
           </span>
         </div>
         <div className="attribute">
-          <label>Cor:</label>
+          <label>{t("labels.skinColor")}:</label>
           <span>{patient.color || "Não informado"}</span>
         </div>
       </div>

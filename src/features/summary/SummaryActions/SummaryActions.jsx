@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import {
   CheckOutlined,
   MenuOutlined,
@@ -15,6 +16,7 @@ import SummarySave from "../SummarySave/SummarySave";
 import SummaryStatus from "../SummaryStatus/SummaryStatus";
 
 export default function SummaryActions({ admissionNumber, loadDraft }) {
+  const { t } = useTranslation();
   const blocks = useSelector((state) => state.summary.blocks);
 
   const [modalText, setModalText] = useState(false);
@@ -33,14 +35,14 @@ export default function SummaryActions({ admissionNumber, loadDraft }) {
         onClick={() => setModalText(true)}
         icon={<FileTextOutlined />}
       >
-        Gerar Texto
+        {t("summary.generateText")}
       </Button>
       <Button
         type="primary"
         onClick={() => setModalSave(true)}
         icon={<CheckOutlined />}
       >
-        Finalizar Sumário
+        {t("summary.finishSummary")}
       </Button>
 
       <SummaryText open={modalText} setOpen={setModalText}></SummaryText>
@@ -60,12 +62,12 @@ export default function SummaryActions({ admissionNumber, loadDraft }) {
         <FloatButton
           icon={<FileTextOutlined />}
           onClick={() => setModalText(true)}
-          tooltip="Gerar Texto"
+          tooltip={t("summary.generateText")}
         />
         <FloatButton
           onClick={() => setModalSave(true)}
           icon={<CheckOutlined />}
-          tooltip="Finalizar Sumário"
+          tooltip={t("summary.finishSummary")}
         />
       </FloatButton.Group>
       <BackTop style={{ bottom: 25 }} tooltip="Voltar ao topo" />
