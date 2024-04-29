@@ -327,7 +327,8 @@
     "admissionDate": "Data de internação",
     "audit": "Auditoria",
     "useful": "Útil",
-    "notUseful": "Possui erros"
+    "notUseful": "Possui erros",
+    "observations": "Observações"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
@@ -510,7 +511,8 @@
     "close": "Fechar",
     "configPrompt": "Configurar prompt",
     "refresh": "Atualizar",
-    "undo": "Desfazer"
+    "undo": "Desfazer",
+    "copy": "Copiar"
   },
 
   "alerts": {
@@ -681,6 +683,7 @@
     "finishHint": "Clique no botão ao lado para Finalizar a montagem do sumário",
     "finishSuccess": "Sumário finalizado com sucesso!",
     "finishSummary": "Finalizar Sumário",
-    "generateText": "Gerar Texto"
+    "generateText": "Gerar Texto",
+    "assessmentQuestion": "Qual é a sua avaliação geral sobre o sumário"
   }
 }

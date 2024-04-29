@@ -327,7 +327,8 @@
     "admissionDate": "Admission date",
     "audit": "Audit",
     "useful": "Useful",
-    "notUseful": "Has errors"
+    "notUseful": "Has errors",
+    "observations": "Observations"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
@@ -523,7 +524,8 @@
     "close": "Close",
     "configPrompt": "Config prompt",
     "refresh": "Refresh",
-    "undo": "Undo"
+    "undo": "Undo",
+    "copy": "Copy"
   },
 
   "errors": {
@@ -675,6 +677,7 @@
     "finishHint": "Click on the button to Finish assembling the summary",
     "finishSuccess": "Summary completed successfully!",
     "finishSummary": "Finish Summary",
-    "generateText": "Generate Text"
+    "generateText": "Generate Text",
+    "assessmentQuestion": "What is your overall assessment of the summary"
   }
 }

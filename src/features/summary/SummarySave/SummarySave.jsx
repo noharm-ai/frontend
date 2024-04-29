@@ -80,12 +80,12 @@ function SummaryText({ open, setOpen, admissionNumber }) {
           onOk={handleSubmit}
           onCancel={() => setOpen(false)}
           open={open}
-          cancelText="Cancelar"
-          okText="Finalizar"
+          cancelText={t("actions.cancel")}
+          okText={t("summary.finishSummary")}
           confirmLoading={loading}
         >
           <header>
-            <Heading margin="0 0 11px">Finalizar Sumário</Heading>
+            <Heading margin="0 0 11px">{t("summary.finishSummary")}</Heading>
           </header>
           <Form>
             <div
@@ -94,7 +94,7 @@ function SummaryText({ open, setOpen, admissionNumber }) {
               }`}
             >
               <div className="form-label">
-                <label>Qual é a sua avaliação geral sobre o sumário:</label>
+                <label>{t("summary.assessmentQuestion")}:</label>
               </div>
               <div className="form-input">
                 <Rate
@@ -116,7 +116,7 @@ function SummaryText({ open, setOpen, admissionNumber }) {
             </div>
             <div className={`form-row`}>
               <div className="form-label">
-                <label>Observações:</label>
+                <label>{t("labels.observations")}:</label>
               </div>
               <div className="form-input">
                 <Textarea

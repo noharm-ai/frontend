@@ -44,8 +44,8 @@ function SummaryText({ open, setOpen }) {
           onOk={handleOK}
           onCancel={() => setOpen(false)}
           open={open}
-          cancelText="Fechar"
-          okText="Copiar"
+          cancelText={t("actions.close")}
+          okText={t("actions.copy")}
         >
           <header>
             <Heading margin="0 0 11px">{t("summary.title")}</Heading>
