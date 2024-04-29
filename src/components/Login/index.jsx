@@ -20,7 +20,7 @@ import { generateRandomString, getCodeChallenge } from "utils/auth";
 import ForgotPassword from "containers/Login/ForgotPassword";
 import ChooseSchema from "./ChooseSchema";
 import api from "services/api";
-import { LoginContainer, Brand } from "./Login.style";
+import { LoginContainer, Brand, BrandEN } from "./Login.style";
 
 const initialValues = {
   email: "",
@@ -133,7 +133,11 @@ export default function Login({ isLogging, error, doLogin }) {
   return (
     <LoginContainer>
       <div className="form">
-        <Brand title="noHarm.ai | Cuidando dos pacientes" />
+        {localStorage.getItem("language") === "en" ? (
+          <BrandEN title="NoHarm.ai | Taking care of patients" />
+        ) : (
+          <Brand title="NoHarm.ai | Cuidando dos pacientes" />
+        )}
 
         {params.schema ? (
           <div className="form-container">
@@ -240,7 +244,7 @@ export default function Login({ isLogging, error, doLogin }) {
                   className="gtm-lnk-backtologin small"
                   onClick={() => setForgotPassTab(false)}
                 >
-                  Voltar
+                  {t("actions.back")}
                 </Button>
               </div>
             )}

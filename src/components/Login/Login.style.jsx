@@ -2,6 +2,7 @@ import styled from "styled-components/macro";
 
 import { get } from "styles/utils";
 import { ReactComponent as LogoSVG } from "assets/noHarm.svg";
+import { ReactComponent as LogoENSVG } from "assets/noHarm_en.svg";
 
 export const FieldError = styled.span`
   display: block;
@@ -9,6 +10,21 @@ export const FieldError = styled.span`
 `;
 
 export const Brand = styled(LogoSVG)`
+  display: block;
+  margin: 0 auto 62px;
+  width: 15em;
+  // filter: hue-rotate(150deg); // outubro rosa
+
+  @media (min-width: ${get("breakpoints.md")}) {
+    width: 20em;
+  }
+
+  .cls-1 {
+    fill: #22395b;
+  }
+`;
+
+export const BrandEN = styled(LogoENSVG)`
   display: block;
   margin: 0 auto 62px;
   width: 15em;

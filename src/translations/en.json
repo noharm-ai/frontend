@@ -525,7 +525,9 @@
     "configPrompt": "Config prompt",
     "refresh": "Refresh",
     "undo": "Undo",
-    "copy": "Copy"
+    "copy": "Copy",
+    "send": "Send",
+    "back": "Back"
   },
 
   "errors": {

@@ -512,7 +512,9 @@
     "configPrompt": "Configurar prompt",
     "refresh": "Atualizar",
     "undo": "Desfazer",
-    "copy": "Copiar"
+    "copy": "Copiar",
+    "send": "Enviar",
+    "back": "Voltar"
   },
 
   "alerts": {
