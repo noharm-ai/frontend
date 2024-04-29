@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { LikeOutlined, DislikeOutlined } from "@ant-design/icons";
 
@@ -9,6 +10,7 @@ import Dropdown from "components/Dropdown";
 import { setLike } from "../SummarySlice";
 
 export default function SummaryReactions({ position, admissionNumber }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const likeStatus = useSelector(
     (state) => state.summary.blocks[position]?.like
@@ -36,17 +38,17 @@ export default function SummaryReactions({ position, admissionNumber }) {
   const dislikeItems = [
     {
       key: "1",
-      label: "Informação incorreta",
+      label: t("summary.incorrectInfo"),
       danger: true,
     },
     {
       key: "2",
-      label: "Informação insuficiente",
+      label: t("summary.insufficientInfo"),
       danger: true,
     },
     {
       key: "3",
-      label: "Informação excessiva",
+      label: t("summary.excessiveInfo"),
       danger: true,
     },
   ];
@@ -62,7 +64,7 @@ export default function SummaryReactions({ position, admissionNumber }) {
 
   return (
     <>
-      <Tooltip title="Útil">
+      <Tooltip title={t("labels.useful")}>
         <Button
           shape="circle"
           icon={<LikeOutlined />}
@@ -73,7 +75,7 @@ export default function SummaryReactions({ position, admissionNumber }) {
         />
       </Tooltip>
 
-      <Tooltip title="Possui erros">
+      <Tooltip title={t("labels.notUseful")}>
         <Dropdown menu={{ items: dislikeItems, onClick: onMenuClick }}>
           <Button
             shape="circle"

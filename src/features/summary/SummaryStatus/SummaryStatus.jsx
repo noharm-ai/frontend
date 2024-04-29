@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { CheckOutlined } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -7,6 +8,7 @@ import Tooltip from "components/Tooltip";
 import { SummaryStatusContainer } from "../Summary.style";
 
 export default function SummaryStatus({ setModalSave }) {
+  const { t } = useTranslation();
   const saveStatus = useSelector((state) => state.summary.saveStatus);
 
   useEffect(() => {
@@ -35,18 +37,20 @@ export default function SummaryStatus({ setModalSave }) {
       <Tooltip
         title={
           saveStatus === "saved"
-            ? "Sumário finalizado com sucesso!"
-            : "Clique no botão ao lado para Finalizar a montagem do sumário"
+            ? t("summary.finishSuccess")
+            : t("summary.finishHint")
         }
       >
         <div className="summary-status">
           <div className="summary-status-header">
-            {saveStatus === "saved" ? "Finalizado!" : "Pendente"}
+            {saveStatus === "saved"
+              ? t("summary.statusSuccess")
+              : t("summary.statusPending")}
           </div>
         </div>
       </Tooltip>
       <div className="summary-status-action">
-        <Tooltip title="Finalizar Sumário">
+        <Tooltip title={t("summary.finishSummary")}>
           <Button
             type="primary"
             shape="circle"

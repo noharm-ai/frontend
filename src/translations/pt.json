@@ -322,7 +322,13 @@
     "message": "Mensagem",
     "lactating": "Lactante",
     "pregnant": "Gestante",
-    "reviewed": "Revisado"
+    "reviewed": "Revisado",
+    "name": "Nome",
+    "admissionDate": "Data de internação",
+    "audit": "Auditoria",
+    "useful": "Útil",
+    "notUseful": "Possui erros",
+    "observations": "Observações"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
@@ -502,7 +508,13 @@
     "useData": "Usar dados",
     "showNotes": "Ver anotação",
     "consult": "Consultar",
-    "close": "Fechar"
+    "close": "Fechar",
+    "configPrompt": "Configurar prompt",
+    "refresh": "Atualizar",
+    "undo": "Desfazer",
+    "copy": "Copiar",
+    "send": "Enviar",
+    "back": "Voltar"
   },
 
   "alerts": {
@@ -641,5 +653,39 @@
     "OAUTH": "Habilita integração OAUTH (exige configuração extra)",
     "CLINICAL_NOTES_NEW_FORMAT": "Ligar para hospitais com anony atualizado e processo novo da noharm care",
     "PATIENT_REVISION": "Habilita a ação de revisão do paciente. A revisão é uma ação para indicar que o paciente sofreu uma avaliação extra. Normalmente utilizado no contexto onde a avaliação técnica é feita pela Checagem e a avaliação clínica é registrada pela ação de Revisão."
+  },
+
+  "summary": {
+    "title": "Sumário de Alta",
+    "searchLegend": "Buscar pacientes",
+    "summaryLegend": "Sumário de alta do paciente",
+    "topic1": "IDENTIFICAÇÃO DO PACIENTE",
+    "topic2": "DADOS DA INTERNAÇÃO",
+    "topic2-1": "Admissão",
+    "topic2-1-1": "Motivo da Admissão",
+    "topic2-1-2": "Diagnósticos (primário e secundário)",
+    "topic2-1-3": "Alergias",
+    "topic2-1-4": "Medicamentos de uso prévio",
+    "topic2-2": "Resumo Clínico",
+    "topic2-2-1": "Exames Laboratoriais",
+    "topic2-2-2": "Exames Textuais",
+    "topic2-2-3": "Procedimentos realizados",
+    "topic2-2-4": "Medicamentos utilizados na internação",
+    "topic2-2-5": "Medicamentos Contínuos Interrompidos Durante a Internação",
+    "topic2-3": "Condição de Alta",
+    "topic3": "PLANO TERAPÊUTICO",
+    "topic3-1": "Plano de Alta",
+    "topic3-2": "Receita",
+    "incorrectInfo": "Informação incorreta",
+    "insufficientInfo": "Informação insuficiente",
+    "excessiveInfo": "Informação excessiva",
+    "auditLegend": "Lista de registros encontrados pela IA",
+    "statusPending": "Sumário pendente",
+    "statusSuccess": "Sumário finalizado!",
+    "finishHint": "Clique no botão ao lado para Finalizar a montagem do sumário",
+    "finishSuccess": "Sumário finalizado com sucesso!",
+    "finishSummary": "Finalizar Sumário",
+    "generateText": "Gerar Texto",
+    "assessmentQuestion": "Qual é a sua avaliação geral sobre o sumário"
   }
 }

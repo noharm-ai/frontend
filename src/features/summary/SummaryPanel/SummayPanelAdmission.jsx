@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import moment from "moment";
 
@@ -8,6 +9,7 @@ import { SummaryPanel } from "../Summary.style";
 
 function SummaryPanelAdmission({ patient, position }) {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(
@@ -22,7 +24,7 @@ function SummaryPanelAdmission({ patient, position }) {
     <SummaryPanel>
       <div className="group">
         <div className="attribute">
-          <label>Data da Internação:</label>
+          <label>{t("labels.admissionDate")}:</label>
           <span>
             {patient.admissionDate
               ? `${moment(patient.admissionDate).format("DD/MM/YYYY")}`
@@ -31,7 +33,7 @@ function SummaryPanelAdmission({ patient, position }) {
         </div>
 
         <div className="attribute">
-          <label>Data da Alta:</label>
+          <label>{t("labels.dischargeDate")}:</label>
           <span>
             {patient.dischargeDate
               ? `${moment(patient.dischargeDate).format("DD/MM/YYYY")}`

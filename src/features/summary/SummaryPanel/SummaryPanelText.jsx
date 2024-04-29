@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
@@ -13,6 +14,7 @@ import SummaryReactions from "../SummaryReactions/SummaryReactions";
 import { SummaryPanel } from "../Summary.style";
 
 function SummaryPanelText({ text, position, admissionNumber }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [edit, setEdit] = useState(false);
   const [editText, setEditText] = useState("");
@@ -72,7 +74,7 @@ function SummaryPanelText({ text, position, admissionNumber }) {
 
       <div className="actions">
         {edit ? (
-          <Tooltip title="Salvar">
+          <Tooltip title={t("actions.save")}>
             <Button
               shape="circle"
               icon={<SaveOutlined />}
@@ -82,7 +84,7 @@ function SummaryPanelText({ text, position, admissionNumber }) {
             />
           </Tooltip>
         ) : (
-          <Tooltip title="Editar">
+          <Tooltip title={t("actions.edit")}>
             <Button
               shape="circle"
               icon={<EditOutlined />}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { Spin } from "antd";
 import {
   ReloadOutlined,
@@ -24,6 +25,7 @@ import SummaryReactions from "../SummaryReactions/SummaryReactions";
 import { SummaryPanel } from "../Summary.style";
 
 function SummaryPanelAI({ payload, position, admissionNumber }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const status = useSelector(
     (state) => state.summary.blocks[position]?.aiStatus
@@ -108,12 +110,12 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
   const items = [
     {
       key: "prompt",
-      label: "Configurar prompt",
+      label: t("actions.configPrompt"),
       icon: <RobotOutlined />,
     },
     {
       key: "audit",
-      label: "Auditoria",
+      label: t("labels.audit"),
       icon: <FileSearchOutlined />,
     },
   ];
@@ -180,7 +182,7 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
 
       {!loading && (
         <div className="actions">
-          <Tooltip title="Atualizar">
+          <Tooltip title={t("actions.refresh")}>
             <Button
               shape="circle"
               icon={<ReloadOutlined />}
@@ -191,7 +193,7 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
           </Tooltip>
 
           {edit ? (
-            <Tooltip title="Salvar">
+            <Tooltip title={t("actions.save")}>
               <Button
                 shape="circle"
                 icon={<SaveOutlined />}
@@ -201,7 +203,7 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
               />
             </Tooltip>
           ) : (
-            <Tooltip title="Editar">
+            <Tooltip title={t("actions.edit")}>
               <Button
                 shape="circle"
                 icon={<EditOutlined />}

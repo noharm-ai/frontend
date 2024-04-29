@@ -75,7 +75,7 @@ export default function ForgotPassword({ forgotPassword, status }) {
         disabled={isSaving}
         size="large"
       >
-        Enviar
+        {t("actions.send")}
       </Button>
     </>
   );

@@ -25,7 +25,7 @@ function SummaryPanelAttributes({ patient, position }) {
     <SummaryPanel>
       <div className="group">
         <div className="attribute">
-          <label>Peso:</label>{" "}
+          <label>{t("patientCard.weight")}:</label>{" "}
           <span>
             <>
               {patient.weight ? (
@@ -44,7 +44,7 @@ function SummaryPanelAttributes({ patient, position }) {
         </div>
 
         <div className="attribute">
-          <label>Altura:</label>
+          <label>{t("patientCard.height")}:</label>
           <span>
             {patient.height ? (
               <NumericValue value={patient.height} suffix="cm" />
@@ -55,7 +55,7 @@ function SummaryPanelAttributes({ patient, position }) {
         </div>
 
         <div className="attribute">
-          <label>IMC:</label>
+          <label>{t("patientCard.bmi")}:</label>
           <span>
             {patient.imc ? (
               <NumericValue value={patient.imc} suffix="kg/m²" />
