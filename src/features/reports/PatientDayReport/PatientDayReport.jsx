@@ -193,10 +193,30 @@ export default function PatientDayReport() {
                   </Col>
                   <Col xs={12} lg={8}>
                     <Spin spinning={isLoading}>
+                      <StatsCard className={`blue `}>
+                        <div className="stats-title">Total de Vidas</div>
+                        <div className="stats-value">
+                          {reportData?.lifes?.total.toLocaleString() || "-"}
+                        </div>
+                      </StatsCard>
+                    </Spin>
+                  </Col>
+                  <Col xs={12} lg={8}>
+                    <Spin spinning={isLoading}>
                       <StatsCard className={`orange `}>
                         <div className="stats-title">Vidas Impactadas</div>
                         <div className="stats-value">
-                          {reportData?.lifes?.toLocaleString() || "-"}
+                          {reportData?.lifes?.impacted.toLocaleString() || "-"}
+                        </div>
+                      </StatsCard>
+                    </Spin>
+                  </Col>
+                  <Col xs={12} lg={8}>
+                    <Spin spinning={isLoading}>
+                      <StatsCard className={`orange `}>
+                        <div className="stats-title">% de Vidas Impactadas</div>
+                        <div className="stats-value">
+                          {reportData?.lifes?.percentage || "-"}%
                         </div>
                       </StatsCard>
                     </Spin>

@@ -84,9 +84,17 @@ const filterDatasource = (datasource, filters) => {
     });
 };
 
-const getLifesTotal = (datasource) => {
-  return uniq(datasource.filter((i) => i.checked).map((i) => i.admissionNumber))
-    .length;
+const getLifesSummary = (datasource) => {
+  const total = uniq(datasource.map((i) => i.admissionNumber)).length;
+  const impacted = uniq(
+    datasource.filter((i) => i.checked).map((i) => i.admissionNumber)
+  ).length;
+
+  return {
+    total,
+    impacted,
+    percentage: ((impacted * 100) / total).toFixed(),
+  };
 };
 
 const getClinicalNotesTotal = (datasource) => {
@@ -228,7 +236,7 @@ export const getReportData = (datasource, filters) => {
   const reportData = {
     prescriptionTotals: prescriptionTotals,
     itensTotals: getItensTotal(filteredList),
-    lifes: getLifesTotal(filteredList),
+    lifes: getLifesSummary(filteredList),
     clinicalNotes: getClinicalNotesTotal(filteredList),
     responsibles: getResponsiblesSummary(
       filteredList,
