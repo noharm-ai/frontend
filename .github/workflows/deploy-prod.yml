@@ -29,6 +29,7 @@ jobs:
           REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
           REACT_APP_SUPPORT_LINK: ${{ secrets.REACT_APP_SUPPORT_LINK }}
           REACT_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
+          REACT_APP_URL: ${{ secrets.REACT_APP_URL_PROD }}
           REACT_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
       - name: Deploy Production to AWS
         uses: jakejarvis/s3-sync-action@master
