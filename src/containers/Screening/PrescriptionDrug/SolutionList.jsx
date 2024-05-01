@@ -1,13 +1,9 @@
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import {
-  selectItemToSaveThunk,
-  saveInterventionThunk,
-} from "store/ducks/intervention/thunk";
+import { selectItemToSaveThunk } from "store/ducks/intervention/thunk";
 import {
   checkScreeningThunk,
-  updateInterventionDataThunk,
   fetchPrescriptionDrugPeriodThunk,
 } from "store/ducks/prescriptions/thunk";
 import {
@@ -46,8 +42,6 @@ const mapDispatchToProps = (dispatch) =>
       checkScreening: checkScreeningThunk,
       fetchPeriod: fetchPrescriptionDrugPeriodThunk,
       select: selectItemToSaveThunk,
-      saveIntervention: saveInterventionThunk,
-      updateInterventionData: updateInterventionDataThunk,
       selectPrescriptionDrug: selectPrescriptionDrugThunk,
       savePrescriptionDrugForm: savePrescriptionDrugFormThunk,
     },
