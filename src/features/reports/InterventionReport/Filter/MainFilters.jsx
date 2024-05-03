@@ -6,7 +6,11 @@ import { RangeDatePicker, Select } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { getDateRangePresets, dateRangeValid } from "utils/report";
+import {
+  getDateRangePresets,
+  dateRangeValid,
+  getFilterDepartment,
+} from "utils/report";
 
 export default function MainFilters() {
   const { t } = useTranslation();
@@ -46,7 +50,9 @@ export default function MainFilters() {
         <Select
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.segmentList}
-          onChange={(val) => setFieldValue({ segmentList: val })}
+          onChange={(val) =>
+            setFieldValue({ segmentList: val, departmentList: [] })
+          }
           showSearch
           optionFilterProp="children"
           mode="multiple"
@@ -78,9 +84,9 @@ export default function MainFilters() {
           loading={status === "loading"}
           autoClearSearchValue={false}
         >
-          {departments.map((i) => (
-            <Select.Option key={i} value={i}>
-              {i}
+          {getFilterDepartment(departments, values.segmentList).map((i) => (
+            <Select.Option key={i.department} value={i.department}>
+              {i.department}
             </Select.Option>
           ))}
         </Select>

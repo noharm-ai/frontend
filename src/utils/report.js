@@ -1,4 +1,4 @@
-import { uniq, isEmpty } from "utils/lodash";
+import { uniq, uniqBy, isEmpty } from "utils/lodash";
 import dayjs from "dayjs";
 
 export const getUniqList = (datasource, attr) => {
@@ -16,6 +16,12 @@ export const getUniqList = (datasource, attr) => {
   return uniq(datasource.map((i) => i[attr]))
     .filter((i) => i !== null)
     .sort();
+};
+
+export const getUniqBy = (datasource, attr) => {
+  if (!datasource.length) return [];
+
+  return uniqBy(datasource, attr);
 };
 
 export const filtersToDescription = (filters, filtersConfig) => {
@@ -139,4 +145,21 @@ export const decompressDatasource = async (datasource) => {
 
 export const convertRange = (value, r1, r2) => {
   return ((value - r1[0]) * (r2[1] - r2[0])) / (r1[1] - r1[0]) + r2[0];
+};
+
+export const getFilterDepartment = (departments, segmentList) => {
+  const sortDepartments = (a, b) =>
+    `${a?.department}`.localeCompare(`${b?.department}`);
+
+  if (!departments) return [];
+
+  if (!segmentList || !segmentList.length) {
+    return [...departments].sort(sortDepartments);
+  }
+
+  return [...departments]
+    .filter((i) => {
+      return segmentList.indexOf(i.segment) !== -1;
+    })
+    .sort(sortDepartments);
 };
