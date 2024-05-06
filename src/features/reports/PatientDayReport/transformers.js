@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import Big from "big.js";
 import { uniq } from "utils/lodash";
 
 import { getUniqList, exportCSV } from "utils/report";
@@ -226,6 +227,30 @@ const getScoreSummary = (datasource) => {
   }));
 };
 
+const getEvaluationTime = (datasource) => {
+  const summary = {
+    total: Big(0),
+    average: Big(0),
+  };
+  let count = 0;
+
+  datasource.forEach((i) => {
+    if (i.evaluationTime) {
+      summary.total = summary.total.plus(Big(i.evaluationTime));
+      count += 1;
+    }
+  });
+
+  if (count > 0) {
+    summary.average = summary.total.div(Big(count));
+  }
+
+  return {
+    total: summary.total.toFixed(0),
+    average: summary.average.toFixed(0),
+  };
+};
+
 export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
   const prescriptionTotals = getPrescriptionTotals(filteredList);
@@ -247,6 +272,7 @@ export const getReportData = (datasource, filters) => {
     days: days,
     prescriptionPlotSeries: getPrescriptionPlotSeries(filteredList),
     scoreSummary: getScoreSummary(filteredList),
+    evaluationTimeSummary: getEvaluationTime(filteredList),
   };
 
   return reportData;

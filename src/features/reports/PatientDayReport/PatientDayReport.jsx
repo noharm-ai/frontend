@@ -20,7 +20,7 @@ import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartDepartments from "./Charts/ChartDepartments";
 import ChartSegments from "./Charts/ChartSegments";
 import { ReactComponent as Brand } from "assets/noHarm-horizontal.svg";
-import { filtersToDescription } from "utils/report";
+import { filtersToDescription, formatDuration } from "utils/report";
 import ChartScores from "./Charts/ChartScores";
 import HelpModal from "./Help/Help";
 import { setHelpModal } from "./PatientDayReportSlice";
@@ -223,6 +223,37 @@ export default function PatientDayReport() {
                   </Col>
                 </>
               )}
+              <Col xs={12} lg={8}>
+                <Spin spinning={isLoading}>
+                  <Tooltip title="*Experimental: tempo total gasto para avaliar os pacientes. Este tempo é baseado na duração entre a abertura da interface de prescrição até o momento da checagem.">
+                    <StatsCard className={` `}>
+                      <div className="stats-title">
+                        *Tempo Total de Avaliação
+                      </div>
+                      <div className="stats-value">
+                        {formatDuration(
+                          reportData?.evaluationTimeSummary?.total
+                        )}
+                      </div>
+                    </StatsCard>
+                  </Tooltip>
+                </Spin>
+              </Col>
+              <Col xs={12} lg={8}>
+                <Spin spinning={isLoading}>
+                  <Tooltip title="*Experimental: tempo médio gasto para avaliar pacientes. Este tempo é baseado na duração entre a abertura da interface de prescrição até o momento da checagem">
+                    <StatsCard className={` `}>
+                      <div className="stats-title">*Tempo Médio</div>
+                      <div className="stats-value">
+                        {formatDuration(
+                          reportData?.evaluationTimeSummary?.average
+                        )}
+                      </div>
+                    </StatsCard>
+                  </Tooltip>
+                </Spin>
+              </Col>
+              <Col xs={24}>*Valores experimentais</Col>
             </Row>
 
             <div className="page-break"></div>

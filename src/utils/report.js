@@ -1,5 +1,6 @@
 import { uniq, uniqBy, isEmpty } from "utils/lodash";
 import dayjs from "dayjs";
+import humanizeDuration from "humanize-duration";
 
 export const getUniqList = (datasource, attr) => {
   if (!datasource.length) return [];
@@ -162,4 +163,33 @@ export const getFilterDepartment = (departments, segmentList) => {
       return segmentList.indexOf(i.segment) !== -1;
     })
     .sort(sortDepartments);
+};
+
+export const formatDuration = (duration) => {
+  if (!duration) return "-";
+  let units = ["s"];
+
+  if (duration > 60 && duration < 3600) {
+    units = ["m"];
+  } else if (duration > 3600) {
+    units = ["h"];
+  }
+
+  return humanizeDuration(duration * 1000, {
+    units,
+    maxDecimalPoints: 0,
+    language: "shortEn",
+    languages: {
+      shortEn: {
+        y: () => "y",
+        mo: () => "mo",
+        w: () => "w",
+        d: () => "d",
+        h: () => "h",
+        m: () => "min",
+        s: () => "s",
+        ms: () => "ms",
+      },
+    },
+  });
 };
