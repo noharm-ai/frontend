@@ -5,12 +5,13 @@ import { useNavigate } from "react-router-dom";
 
 import LoadBox from "components/LoadBox";
 import { Row } from "components/Grid";
+import CultureReport from "features/reports/CultureReport/CultureReport";
 
 const DashboardContainer = styled("div")`
   width: 100%;
 `;
 
-export default function Reports({ report }) {
+export default function Reports({ report, prescription }) {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,6 +22,15 @@ export default function Reports({ report }) {
 
   if (isEmpty(report)) {
     return <LoadBox />;
+  }
+
+  if (report.type === "CULTURE") {
+    return (
+      <CultureReport
+        idPatient={prescription.idPatient}
+        prescription={prescription}
+      />
+    );
   }
 
   return (

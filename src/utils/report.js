@@ -57,11 +57,11 @@ export const filtersToDescription = (filters, filtersConfig) => {
     .join(" | ");
 };
 
-export const exportCSV = (datasource, t) => {
+export const exportCSV = (datasource, t, namespace = "reportcsv") => {
   const replacer = (key, value) => (value === null ? "" : value);
   const header = Object.keys(datasource[0]);
   const headerNames = Object.keys(datasource[0]).map((k) =>
-    t(`reportcsv.${k}`)
+    t(`${namespace}.${k}`)
   );
   const csv = [
     headerNames.join(","),

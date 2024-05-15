@@ -627,6 +627,21 @@
     "economyValue": "ECONOMY VALUE"
   },
 
+  "reportcsvCulture": {
+    "collectionDate": "COLLECTION DATE",
+    "colony": "COLONY",
+    "examMaterialName": "MATERIAL",
+    "examName": "EXAM",
+    "extraInfo": "EXTRA INFO",
+    "gram": "GRAM",
+    "microorganism": "MICROORGANISM",
+    "previousResult": "PREVIOUS RESULT",
+    "releaseDate": "RELEASE DATE",
+    "drug": "DRUG",
+    "microorganismAmount": "MIC",
+    "result": "SENSITIVITY"
+  },
+
   "features": {
     "MICROMEDEX": "Drug Information Leaflet",
     "PRIMARYCARE": "Primary Care",

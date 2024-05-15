@@ -5,13 +5,18 @@ import { useDispatch } from "react-redux";
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
 
-export default function useFetchReport({ action, reset, onAfterFetch }) {
+export default function useFetchReport({
+  action,
+  reset,
+  onAfterFetch,
+  params = {},
+}) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
   useEffect(() => {
     const fetchData = () => {
-      dispatch(action()).then((response) => {
+      dispatch(action(params)).then((response) => {
         if (response.error) {
           DefaultModal.confirm({
             title: "Não foi possível exibir este relatório.",

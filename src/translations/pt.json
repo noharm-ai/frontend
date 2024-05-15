@@ -631,6 +631,21 @@
     "economyValue": "VALOR ECONOMIA"
   },
 
+  "reportcsvCulture": {
+    "collectionDate": "DATA DE COLETA",
+    "colony": "COLONIA",
+    "examMaterialName": "MATERIAL",
+    "examName": "EXAME",
+    "extraInfo": "COMPLEMENTO",
+    "gram": "GRAM",
+    "microorganism": "MICROORGANISMO",
+    "previousResult": "RESULTADO PREVIO",
+    "releaseDate": "DATA LIBERACAO",
+    "drug": "MEDICAMENTO",
+    "microorganismAmount": "MIC",
+    "result": "SENSIBILIDADE"
+  },
+
   "features": {
     "MICROMEDEX": "Bulário",
     "PRIMARYCARE": "Primary Care",

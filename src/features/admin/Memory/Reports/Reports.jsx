@@ -12,7 +12,12 @@ import { getErrorMessage } from "utils/errorHandler";
 import { fetchMemory, updateMemory, reset } from "../MemorySlice";
 import { PageHeader } from "styles/PageHeader.style";
 
-const KINDS = ["reports", "reports-internal", "admission-reports"];
+const KINDS = [
+  "reports",
+  "reports-internal",
+  "admission-reports",
+  "admission-reports-internal",
+];
 
 function MemoryReports() {
   const { t } = useTranslation();
@@ -126,11 +131,32 @@ function MemoryReports() {
         ],
       },
     ],
+    "admission-reports-internal": [
+      {
+        group: "Geral",
+        questions: [
+          {
+            id: "admission-reports-internal",
+            label: "",
+            type: "options-key-value-multiple",
+            options: [
+              {
+                id: "CULTURE",
+                value: "Culturas",
+              },
+            ],
+            optionsType: "key-value",
+            style: { width: "100%" },
+          },
+        ],
+      },
+    ],
   };
   const values = {
     reports: data["reports"]?.value,
     "reports-internal": data["reports-internal"]?.value,
     "admission-reports": data["admission-reports"]?.value,
+    "admission-reports-internal": data["admission-reports-internal"]?.value,
   };
 
   return (
@@ -153,7 +179,20 @@ function MemoryReports() {
             />
           </Card>
         </Col>
-        <Col xs={{ span: 24 }} lg={{ span: 12 }} xxl={{ span: 12 }}></Col>
+        <Col xs={{ span: 24 }} lg={{ span: 12 }} xxl={{ span: 12 }}>
+          <Card
+            loading={loading}
+            title="Relatórios do Paciente Internos"
+            type="inner"
+          >
+            <CustomForm
+              onSubmit={onSave}
+              template={templates["admission-reports-internal"]}
+              isSaving={loading}
+              values={values}
+            />
+          </Card>
+        </Col>
 
         <Col xs={{ span: 24 }} lg={{ span: 12 }} xxl={{ span: 12 }}>
           <Card loading={loading} title="Relatórios Externos" type="inner">
