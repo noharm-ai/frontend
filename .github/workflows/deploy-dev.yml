@@ -53,7 +53,7 @@ jobs:
         env:
           REACT_APP_API_URL: http://localhost:5000
           REACT_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_DEV }}
-          REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY_DEV }}
+          REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
           REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
           REACT_APP_SUPPORT_LINK: ${{ secrets.REACT_APP_SUPPORT_LINK }}
           REACT_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
@@ -87,7 +87,7 @@ jobs:
           REACT_APP_UPDOWN_LINK: ${{ secrets.REACT_APP_UPDOWN_LINK }}
           REACT_APP_PRISMIC_API_URL: ${{ secrets.REACT_APP_PRISMIC_API_URL }}
           REACT_APP_PRISMIC_TOKEN: ${{ secrets.REACT_APP_PRISMIC_TOKEN }}
-          REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
+          REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY_DEV }}
           REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
           REACT_APP_SUPPORT_LINK: ${{ secrets.REACT_APP_SUPPORT_LINK }}
           REACT_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
