@@ -144,6 +144,10 @@ function MemoryReports() {
                 id: "CULTURE",
                 value: "Culturas",
               },
+              {
+                id: "ANTIMICROBIAL_HISTORY",
+                value: "Histórico de Antimicrobianos",
+              },
             ],
             optionsType: "key-value",
             style: { width: "100%" },

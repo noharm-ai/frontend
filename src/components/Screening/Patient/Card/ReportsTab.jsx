@@ -29,7 +29,7 @@ export default function ReportsTab({ prescription }) {
         admissionReportsInternal.indexOf("CULTURE") !== -1,
     },
     {
-      title: "Histórico Antimicrobiano",
+      title: "Histórico de Antimicrobianos",
       description: "Histórico de uso de antimicrobianos",
       type: "ANTIMICROBIAL_HISTORY",
       visible:
@@ -67,19 +67,6 @@ export default function ReportsTab({ prescription }) {
                   </li>
                 </Tooltip>
               ))}
-            <Tooltip>
-              <li
-                onClick={() =>
-                  setCurrentReport({
-                    title: null,
-                    type: "ANTIMICROBIAL_HISTORY",
-                  })
-                }
-              >
-                <PieChartOutlined style={{ fontSize: "18px" }} /> Histórico
-                Antimicrobiano
-              </li>
-            </Tooltip>
           </ul>
         </div>
       </div>

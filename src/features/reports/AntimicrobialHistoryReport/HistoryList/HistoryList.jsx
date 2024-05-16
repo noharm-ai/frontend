@@ -31,7 +31,7 @@ export default function HistoryList() {
     } else {
       setExpandedRows(
         datasource
-          .filter((i) => /^[0-9]*$/g.test(i.id))
+          .filter((i) => /^[0-9]*$/g.test(i.idPrescriptionDrug))
           .map((i) => i.idPrescriptionDrug)
       );
     }
@@ -118,6 +118,7 @@ export default function HistoryList() {
         }}
         columnTitle={<ExpandColumn expand={!expandedRows.length} />}
         size="small"
+        pagination={{ showSizeChanger: true }}
       />
     </>
   );

@@ -628,7 +628,13 @@
     "destinyKitPrice": "CUSTO KIT DESTINO",
     "iniEconomyDate": "DATA ECONOMIA INICIAL",
     "endEconomyDate": "DATA ECONOMIA FINAL",
-    "economyValue": "VALOR ECONOMIA"
+    "economyValue": "VALOR ECONOMIA",
+    "dose": "DOSE",
+    "frequency": "FREQUENCIA",
+    "measureUnit": "UNIDADE MEDIDA",
+    "route": "VIA",
+    "prescriptionExpirationDate": "VIGENCIA",
+    "suspensionDate": "DATA SUSPENSAO"
   },
 
   "reportcsvCulture": {

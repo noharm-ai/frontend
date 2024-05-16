@@ -20,7 +20,7 @@ export default function MainFilters() {
     <>
       <Col md={7} lg={5} xxl={5}>
         <Heading as="label" size="14px">
-          Período:
+          Data de Prescrição:
         </Heading>
         <RangeDatePicker
           format="DD/MM/YYYY"

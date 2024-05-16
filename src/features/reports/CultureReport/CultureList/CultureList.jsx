@@ -115,7 +115,7 @@ export default function CultureList() {
           };
         }}
         columnTitle={<ExpandColumn expand={!expandedRows.length} />}
-        pagination={false}
+        pagination={{ showSizeChanger: true }}
         size="small"
       />
     </>
