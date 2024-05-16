@@ -4,6 +4,7 @@ import { Descriptions } from "antd";
 
 import { formatDateTime } from "utils/date";
 import { CardTable } from "components/Table";
+import Button from "components/Button";
 
 export default function HistoryList() {
   const [expandedRows, setExpandedRows] = useState([]);
@@ -127,9 +128,22 @@ export default function HistoryList() {
 const ExpandedRow = ({ record }) => {
   const items = [
     {
+      label: "Atendimento",
+      span: 3,
+      children: record.admissionNumber,
+    },
+    {
       label: "Prescrição",
       span: 3,
-      children: record.idPrescription,
+      children: (
+        <Button
+          type="link"
+          href={`/prescricao/${record.idPrescription}`}
+          target="_blank"
+        >
+          {record.idPrescription}
+        </Button>
+      ),
     },
     {
       label: "Dose",
