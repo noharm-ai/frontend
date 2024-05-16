@@ -73,10 +73,12 @@ export default function CultureList() {
     },
     {
       title: "Exame",
+      ellipsis: true,
       render: (_, record) => record.examName,
     },
     {
       title: "Material",
+      ellipsis: true,
       render: (_, record) => record.examMaterialName,
     },
     {
@@ -114,6 +116,7 @@ export default function CultureList() {
         }}
         columnTitle={<ExpandColumn expand={!expandedRows.length} />}
         pagination={false}
+        size="small"
       />
     </>
   );
@@ -198,14 +201,11 @@ const DrugTable = ({ record }) => {
   return (
     <CardTable
       bordered
-      virtual
-      scroll={{
-        y: 400,
-      }}
-      pagination={false}
       columns={columns}
       rowKey="drug"
       dataSource={record.cultures}
+      pagination={false}
+      size="small"
     />
   );
 };

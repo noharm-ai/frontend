@@ -49,6 +49,7 @@ import reportInterventionReport from "features/reports/InterventionReport/Interv
 import reportPrescriptionAuditReport from "features/reports/PrescriptionAuditReport/PrescriptionAuditReportSlice";
 import reportEconomyReport from "features/reports/EconomyReport/EconomyReportSlice";
 import reportCultureReport from "features/reports/CultureReport/CultureReportSlice";
+import reportAntimicrobialHistoryReport from "features/reports/AntimicrobialHistoryReport/AntimicrobialHistoryReportSlice";
 
 const adminReducers = combineReducers({
   interventionReason: adminInterventionReasonReducer,
@@ -71,6 +72,7 @@ const reportReducers = combineReducers({
   prescriptionAudit: reportPrescriptionAuditReport,
   economy: reportEconomyReport,
   culture: reportCultureReport,
+  antimicrobialHistory: reportAntimicrobialHistoryReport,
   reports: reports,
 });
 

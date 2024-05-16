@@ -26,4 +26,10 @@ api.live.getCultureReport = (params = {}) =>
     ...setHeaders(),
   });
 
+api.live.getAntimicrobialHistoryReport = (params = {}) =>
+  instance.get(`/reports/antimicrobial/history`, {
+    params,
+    ...setHeaders(),
+  });
+
 export default api;
