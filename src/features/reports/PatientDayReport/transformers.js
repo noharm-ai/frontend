@@ -179,8 +179,8 @@ const getPrescriptionPlotSeries = (datasource) => {
     } else {
       days[i.date] = {
         date: i.date,
-        total: 0,
-        checked: 0,
+        total: 1,
+        checked: i.checked ? 1 : 0,
       };
     }
   });

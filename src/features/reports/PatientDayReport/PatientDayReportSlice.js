@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import api from "services/reports/api";
-import { getUniqList, getUniqBy } from "utils/report";
+import { getUniqList, getUniqDepartments } from "utils/report";
 import ReportEnum from "models/ReportEnum";
 
 const initialState = {
@@ -86,9 +86,10 @@ const patientDayReportSlice = createSlice({
             action.payload.cacheData.body,
             "responsible"
           );
-          state.departments = getUniqBy(
+          state.departments = getUniqDepartments(
             action.payload.cacheData.body,
-            "idDepartment"
+            "department",
+            "segment"
           );
           state.segments = getUniqList(
             action.payload.cacheData.body,

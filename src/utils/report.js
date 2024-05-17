@@ -25,6 +25,25 @@ export const getUniqBy = (datasource, attr) => {
   return uniqBy(datasource, attr);
 };
 
+export const getUniqDepartments = (datasource, attrDepartment, attrSegment) => {
+  if (!datasource.length) return [];
+  const keys = [];
+  const departments = [];
+
+  datasource.forEach((i) => {
+    const key = `${i[attrDepartment]}-${i[attrSegment]}`;
+    if (keys.indexOf(key) === -1) {
+      departments.push({
+        [attrDepartment]: i[attrDepartment],
+        [attrSegment]: i[attrSegment],
+      });
+      keys.push(key);
+    }
+  });
+
+  return departments;
+};
+
 export const filtersToDescription = (filters, filtersConfig) => {
   const dateFormat = "DD/MM/YY";
   return Object.keys(filters)

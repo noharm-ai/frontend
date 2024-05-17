@@ -89,7 +89,10 @@ export default function MainFilters() {
           autoClearSearchValue={false}
         >
           {getFilterDepartment(departments, values.segmentList).map((i) => (
-            <Select.Option key={i.department} value={i.department}>
+            <Select.Option
+              key={`${i.segment}-${i.department}`}
+              value={i.department}
+            >
               {i.department}
             </Select.Option>
           ))}
