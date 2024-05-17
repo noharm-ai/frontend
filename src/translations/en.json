@@ -328,7 +328,8 @@
     "audit": "Audit",
     "useful": "Useful",
     "notUseful": "Has errors",
-    "observations": "Observations"
+    "observations": "Observations",
+    "drugAttributes": "Drug attributes"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
@@ -702,5 +703,17 @@
     "finishSummary": "Finish Summary",
     "generateText": "Generate Text",
     "assessmentQuestion": "What is your overall assessment of the summary"
+  },
+
+  "drugAttributes": {
+    "antimicro": "Antimicrobial",
+    "mav": "High vigilance",
+    "controlled": "Controlled",
+    "notdefault": "Not standardized",
+    "elderly": "Inappropriate for elderly",
+    "tube": "Probe",
+    "whiteList": "No validations",
+    "chemo": "Chemotherapy",
+    "dialyzable": "Dialyzable"
   }
 }

@@ -328,7 +328,8 @@
     "audit": "Auditoria",
     "useful": "Útil",
     "notUseful": "Possui erros",
-    "observations": "Observações"
+    "observations": "Observações",
+    "drugAttributes": "Atributos do medicamento"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
@@ -708,5 +709,17 @@
     "finishSummary": "Finalizar Sumário",
     "generateText": "Gerar Texto",
     "assessmentQuestion": "Qual é a sua avaliação geral sobre o sumário"
+  },
+
+  "drugAttributes": {
+    "antimicro": "Antimicrobiano",
+    "mav": "Alta vigilância",
+    "controlled": "Controlado",
+    "notdefault": "Não padronizado",
+    "elderly": "MPI",
+    "tube": "Sonda",
+    "whiteList": "Sem validação",
+    "chemo": "Quimioterápico",
+    "dialyzable": "Dialisável"
   }
 }
