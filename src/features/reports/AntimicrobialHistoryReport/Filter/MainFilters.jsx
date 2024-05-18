@@ -1,62 +1,47 @@
 import React, { useContext } from "react";
 import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
 
 import { RangeDatePicker, Select } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import {
-  getDateRangePresets,
-  dateRangeValid,
-  getFilterDepartment,
-} from "utils/report";
 
 export default function MainFilters() {
-  const { t } = useTranslation();
-  const departments = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.departments
+  const drugs = useSelector(
+    (state) => state.reportsArea.antimicrobialHistory.filterData.drugs
   );
-  const segments = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.segments
+  const substances = useSelector(
+    (state) => state.reportsArea.antimicrobialHistory.filterData.substances
   );
+
   const status = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.status
-  );
-  const reportDate = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.updatedAt
+    (state) => state.reportsArea.antimicrobialHistory.status
   );
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
-
-  const rangePresets = getDateRangePresets(reportDate);
 
   return (
     <>
       <Col md={7} lg={5} xxl={5}>
         <Heading as="label" size="14px">
-          {t("tableHeader.period")}:
+          Data de Prescrição:
         </Heading>
         <RangeDatePicker
-          presets={rangePresets}
-          disabledDate={dateRangeValid(reportDate)}
           format="DD/MM/YYYY"
           value={values.dateRange}
           onChange={(val) => setFieldValue({ dateRange: val })}
           popupClassName="noArrow"
-          allowClear={false}
+          allowClear
           style={{ width: "100%" }}
         />
       </Col>
       <Col md={7} lg={5} xxl={5}>
         <Heading as="label" size="14px">
-          Segmento:
+          Medicamento:
         </Heading>
         <Select
           style={{ width: "100%", maxWidth: "400px" }}
-          value={values.segmentList}
-          onChange={(val) =>
-            setFieldValue({ segmentList: val, departmentList: [] })
-          }
+          value={values.drugList}
+          onChange={(val) => setFieldValue({ drugList: val })}
           showSearch
           optionFilterProp="children"
           mode="multiple"
@@ -65,7 +50,7 @@ export default function MainFilters() {
           loading={status === "loading"}
           autoClearSearchValue={false}
         >
-          {segments.map((i) => (
+          {drugs.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
@@ -74,12 +59,12 @@ export default function MainFilters() {
       </Col>
       <Col md={7} lg={5} xxl={5}>
         <Heading as="label" size="14px">
-          Setor:
+          Substância:
         </Heading>
         <Select
           style={{ width: "100%", maxWidth: "400px" }}
-          value={values.departmentList}
-          onChange={(val) => setFieldValue({ departmentList: val })}
+          value={values.substanceList}
+          onChange={(val) => setFieldValue({ substanceList: val })}
           showSearch
           optionFilterProp="children"
           mode="multiple"
@@ -88,12 +73,9 @@ export default function MainFilters() {
           loading={status === "loading"}
           autoClearSearchValue={false}
         >
-          {getFilterDepartment(departments, values.segmentList).map((i) => (
-            <Select.Option
-              key={`${i.segment}-${i.department}`}
-              value={i.department}
-            >
-              {i.department}
+          {substances.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
             </Select.Option>
           ))}
         </Select>

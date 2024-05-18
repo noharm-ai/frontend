@@ -8,7 +8,7 @@ import DefaultModal from "components/Modal";
 export default function ReportsTab({ prescription }) {
   const [currentReport, setCurrentReport] = useState(null);
 
-  const { admissionReports } = prescription;
+  const { admissionReports, admissionReportsInternal } = prescription;
 
   const reportClick = (report) => {
     setCurrentReport({
@@ -19,11 +19,46 @@ export default function ReportsTab({ prescription }) {
     });
   };
 
+  const internalReports = [
+    {
+      title: "Culturas (Beta)",
+      description: "Relatório de Culturas",
+      type: "CULTURE",
+      visible:
+        admissionReportsInternal &&
+        admissionReportsInternal.indexOf("CULTURE") !== -1,
+    },
+    {
+      title: "Histórico de Antimicrobianos",
+      description: "Histórico de uso de antimicrobianos",
+      type: "ANTIMICROBIAL_HISTORY",
+      visible:
+        admissionReportsInternal &&
+        admissionReportsInternal.indexOf("ANTIMICROBIAL_HISTORY") !== -1,
+    },
+  ];
+
   return (
     <div className="patient-data">
       <div className="patient-data-item full">
         <div className="patient-data-item-value">
           <ul className="report-list">
+            {internalReports
+              .filter((r) => r.visible)
+              .map((r) => (
+                <Tooltip title={r.description} key={r.description}>
+                  <li
+                    onClick={() =>
+                      setCurrentReport({
+                        title: null,
+                        type: r.type,
+                      })
+                    }
+                  >
+                    <PieChartOutlined style={{ fontSize: "18px" }} /> {r.title}
+                  </li>
+                </Tooltip>
+              ))}
             {admissionReports &&
               admissionReports.map((r) => (
                 <Tooltip title={r.description} key={r.description}>
@@ -40,11 +75,11 @@ export default function ReportsTab({ prescription }) {
         destroyOnClose
         open={currentReport != null}
         onCancel={() => setCurrentReport(null)}
-        width="90%"
+        width={currentReport?.type ? "min(1440px, 100%)" : "90%"}
         footer={null}
         style={{ top: "10px", height: "100vh" }}
       >
-        <ViewReport report={currentReport} />
+        <ViewReport report={currentReport} prescription={prescription} />
       </DefaultModal>
     </div>
   );

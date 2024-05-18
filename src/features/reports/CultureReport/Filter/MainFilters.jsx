@@ -1,62 +1,47 @@
 import React, { useContext } from "react";
 import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
 
 import { RangeDatePicker, Select } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import {
-  getDateRangePresets,
-  dateRangeValid,
-  getFilterDepartment,
-} from "utils/report";
 
 export default function MainFilters() {
-  const { t } = useTranslation();
-  const departments = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.departments
+  const exams = useSelector(
+    (state) => state.reportsArea.culture.filterData.exams
   );
-  const segments = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.segments
+  const materials = useSelector(
+    (state) => state.reportsArea.culture.filterData.examMaterials
   );
-  const status = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.status
+  const microorganisms = useSelector(
+    (state) => state.reportsArea.culture.filterData.microorganisms
   );
-  const reportDate = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.updatedAt
-  );
+  const status = useSelector((state) => state.reportsArea.culture.status);
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
-
-  const rangePresets = getDateRangePresets(reportDate);
 
   return (
     <>
       <Col md={7} lg={5} xxl={5}>
         <Heading as="label" size="14px">
-          {t("tableHeader.period")}:
+          Período de Coleta:
         </Heading>
         <RangeDatePicker
-          presets={rangePresets}
-          disabledDate={dateRangeValid(reportDate)}
           format="DD/MM/YYYY"
           value={values.dateRange}
           onChange={(val) => setFieldValue({ dateRange: val })}
           popupClassName="noArrow"
-          allowClear={false}
+          allowClear
           style={{ width: "100%" }}
         />
       </Col>
       <Col md={7} lg={5} xxl={5}>
         <Heading as="label" size="14px">
-          Segmento:
+          Exame:
         </Heading>
         <Select
           style={{ width: "100%", maxWidth: "400px" }}
-          value={values.segmentList}
-          onChange={(val) =>
-            setFieldValue({ segmentList: val, departmentList: [] })
-          }
+          value={values.examNameList}
+          onChange={(val) => setFieldValue({ examNameList: val })}
           showSearch
           optionFilterProp="children"
           mode="multiple"
@@ -65,7 +50,7 @@ export default function MainFilters() {
           loading={status === "loading"}
           autoClearSearchValue={false}
         >
-          {segments.map((i) => (
+          {exams.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
@@ -74,12 +59,12 @@ export default function MainFilters() {
       </Col>
       <Col md={7} lg={5} xxl={5}>
         <Heading as="label" size="14px">
-          Setor:
+          Material:
         </Heading>
         <Select
           style={{ width: "100%", maxWidth: "400px" }}
-          value={values.departmentList}
-          onChange={(val) => setFieldValue({ departmentList: val })}
+          value={values.examMaterialNameList}
+          onChange={(val) => setFieldValue({ examMaterialNameList: val })}
           showSearch
           optionFilterProp="children"
           mode="multiple"
@@ -88,12 +73,32 @@ export default function MainFilters() {
           loading={status === "loading"}
           autoClearSearchValue={false}
         >
-          {getFilterDepartment(departments, values.segmentList).map((i) => (
-            <Select.Option
-              key={`${i.segment}-${i.department}`}
-              value={i.department}
-            >
-              {i.department}
+          {materials.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </Select>
+      </Col>
+      <Col md={7} lg={5} xxl={5}>
+        <Heading as="label" size="14px">
+          Microorganismo:
+        </Heading>
+        <Select
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.microorganismList}
+          onChange={(val) => setFieldValue({ microorganismList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {microorganisms.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
             </Select.Option>
           ))}
         </Select>

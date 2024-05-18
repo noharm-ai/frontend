@@ -9,7 +9,6 @@ import { Spin, Result } from "antd";
 import notification from "components/notification";
 import Button from "components/Button";
 import DefaultModal from "components/Modal";
-import Alert from "components/Alert";
 import { getErrorMessage } from "utils/errorHandler";
 import { createTicket, setSupportOpen } from "../SupportSlice";
 import Base from "./Base";
@@ -162,16 +161,6 @@ export default function SupportForm() {
         <Spin spinning={status === "loading"}>
           <Form onSubmit={handleSubmit}>
             <div className="form-intro">
-              <Alert
-                type="info"
-                message={
-                  <>
-                    <strong>O chat foi desabilitado.</strong> A partir de agora,
-                    você deve utilizar o formulário abaixo para abrir o seu
-                    chamado com o suporte da NoHarm.
-                  </>
-                }
-              ></Alert>
               <p>
                 Estamos aqui para ajudar a resolver suas dúvidas e problemas da
                 melhor maneira possível. Para garantir que possamos oferecer o

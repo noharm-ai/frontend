@@ -328,7 +328,8 @@
     "audit": "Auditoria",
     "useful": "Útil",
     "notUseful": "Possui erros",
-    "observations": "Observações"
+    "observations": "Observações",
+    "drugAttributes": "Atributos do medicamento"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
@@ -628,7 +629,28 @@
     "destinyKitPrice": "CUSTO KIT DESTINO",
     "iniEconomyDate": "DATA ECONOMIA INICIAL",
     "endEconomyDate": "DATA ECONOMIA FINAL",
-    "economyValue": "VALOR ECONOMIA"
+    "economyValue": "VALOR ECONOMIA",
+    "dose": "DOSE",
+    "frequency": "FREQUENCIA",
+    "measureUnit": "UNIDADE MEDIDA",
+    "route": "VIA",
+    "prescriptionExpirationDate": "VIGENCIA",
+    "suspensionDate": "DATA SUSPENSAO"
+  },
+
+  "reportcsvCulture": {
+    "collectionDate": "DATA DE COLETA",
+    "colony": "COLONIA",
+    "examMaterialName": "MATERIAL",
+    "examName": "EXAME",
+    "extraInfo": "COMPLEMENTO",
+    "gram": "GRAM",
+    "microorganism": "MICROORGANISMO",
+    "previousResult": "RESULTADO PREVIO",
+    "releaseDate": "DATA LIBERACAO",
+    "drug": "MEDICAMENTO",
+    "microorganismAmount": "MIC",
+    "result": "SENSIBILIDADE"
   },
 
   "features": {
@@ -687,5 +709,17 @@
     "finishSummary": "Finalizar Sumário",
     "generateText": "Gerar Texto",
     "assessmentQuestion": "Qual é a sua avaliação geral sobre o sumário"
+  },
+
+  "drugAttributes": {
+    "antimicro": "Antimicrobiano",
+    "mav": "Alta vigilância",
+    "controlled": "Controlado",
+    "notdefault": "Não padronizado",
+    "elderly": "MPI",
+    "tube": "Sonda",
+    "whiteList": "Sem validação",
+    "chemo": "Quimioterápico",
+    "dialyzable": "Dialisável"
   }
 }

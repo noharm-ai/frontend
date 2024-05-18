@@ -77,6 +77,7 @@ export default function Filter({
         endDate: date[1] ? date[1].format("YYYY-MM-DD") : "all",
         insurance: filter.insurance,
         indicators: filter.indicators,
+        drugAttributes: filter.drugAttributes,
         frequencies: filter.frequencies,
         substances: filter.substances,
         substanceClasses: filter.substanceClasses,
@@ -114,6 +115,7 @@ export default function Filter({
       filter.currentDepartment,
       filter.insurance,
       filter.indicators,
+      filter.drugAttributes,
       filter.frequencies,
       filter.patientStatus,
       filter.substances,
@@ -172,6 +174,10 @@ export default function Filter({
   const onIndicatorsChange = (indicators) => {
     setScreeningListFilter({ indicators: indicators });
   };
+
+  // const onDrugAttributesChange = (drugAttributes) => {
+  //   setScreeningListFilter({ drugAttributes });
+  // };
 
   const onPatientStatusChange = (status) => {
     setScreeningListFilter({ patientStatus: status });
@@ -257,6 +263,7 @@ export default function Filter({
       allDrugs: 0,
       discharged: 0,
       indicators: [],
+      drugAttributes: [],
       frequencies: [],
       substances: [],
       substanceClasses: [],
@@ -285,6 +292,18 @@ export default function Filter({
     if (value.length < 3) return;
     searchDrugs(filter.idSegment, { q: value });
   }, 800);
+
+  // const drugAttributesList = [
+  //   "antimicro",
+  //   "mav",
+  //   "controlled",
+  //   "notdefault",
+  //   "elderly",
+  //   "tube",
+  //   "whiteList",
+  //   "chemo",
+  //   "dialyzable",
+  // ];
 
   const hiddenFieldCount = countHiddenFilters(filter);
   return (
@@ -523,6 +542,36 @@ export default function Filter({
               </Box>
             </Col>
           </Row>
+
+          {/* <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={24}>
+              <Box>
+                <Row gutter={0} style={{ width: "100%" }}>
+                  <Col md={19}>
+                    <Heading as="label" size="14px">
+                      {t("labels.drugAttributes")}:
+                    </Heading>
+                    <Select
+                      mode="multiple"
+                      optionFilterProp="children"
+                      style={{ width: "100%" }}
+                      loading={segments.single.isFetching}
+                      value={filter.drugAttributes}
+                      onChange={onDrugAttributesChange}
+                      autoClearSearchValue={false}
+                      allowClear
+                    >
+                      {drugAttributesList.map((a) => (
+                        <Select.Option key={a} value={a}>
+                          {t(`drugAttributes.${a}`)}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Col>
+                </Row>
+              </Box>
+            </Col>
+          </Row> */}
 
           <Row gutter={0} style={{ marginTop: "10px" }}>
             <Col md={19}>

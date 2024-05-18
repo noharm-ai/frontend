@@ -244,7 +244,11 @@ export default function PatientCard({
     },
   ];
 
-  if (prescription.admissionReports && prescription.admissionReports.length) {
+  if (
+    (prescription.admissionReports && prescription.admissionReports.length) ||
+    (prescription.admissionReportsInternal &&
+      prescription.admissionReportsInternal.length)
+  ) {
     tabs.push({
       key: "reports",
       label: (

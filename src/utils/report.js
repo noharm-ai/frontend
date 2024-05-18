@@ -1,5 +1,6 @@
-import { uniq, isEmpty } from "utils/lodash";
+import { uniq, uniqBy, isEmpty } from "utils/lodash";
 import dayjs from "dayjs";
+import humanizeDuration from "humanize-duration";
 
 export const getUniqList = (datasource, attr) => {
   if (!datasource.length) return [];
@@ -16,6 +17,31 @@ export const getUniqList = (datasource, attr) => {
   return uniq(datasource.map((i) => i[attr]))
     .filter((i) => i !== null)
     .sort();
+};
+
+export const getUniqBy = (datasource, attr) => {
+  if (!datasource.length) return [];
+
+  return uniqBy(datasource, attr);
+};
+
+export const getUniqDepartments = (datasource, attrDepartment, attrSegment) => {
+  if (!datasource.length) return [];
+  const keys = [];
+  const departments = [];
+
+  datasource.forEach((i) => {
+    const key = `${i[attrDepartment]}-${i[attrSegment]}`;
+    if (keys.indexOf(key) === -1) {
+      departments.push({
+        [attrDepartment]: i[attrDepartment],
+        [attrSegment]: i[attrSegment],
+      });
+      keys.push(key);
+    }
+  });
+
+  return departments;
 };
 
 export const filtersToDescription = (filters, filtersConfig) => {
@@ -50,11 +76,11 @@ export const filtersToDescription = (filters, filtersConfig) => {
     .join(" | ");
 };
 
-export const exportCSV = (datasource, t) => {
+export const exportCSV = (datasource, t, namespace = "reportcsv") => {
   const replacer = (key, value) => (value === null ? "" : value);
   const header = Object.keys(datasource[0]);
   const headerNames = Object.keys(datasource[0]).map((k) =>
-    t(`reportcsv.${k}`)
+    t(`${namespace}.${k}`)
   );
   const csv = [
     headerNames.join(","),
@@ -139,4 +165,50 @@ export const decompressDatasource = async (datasource) => {
 
 export const convertRange = (value, r1, r2) => {
   return ((value - r1[0]) * (r2[1] - r2[0])) / (r1[1] - r1[0]) + r2[0];
+};
+
+export const getFilterDepartment = (departments, segmentList) => {
+  const sortDepartments = (a, b) =>
+    `${a?.department}`.localeCompare(`${b?.department}`);
+
+  if (!departments) return [];
+
+  if (!segmentList || !segmentList.length) {
+    return [...departments].sort(sortDepartments);
+  }
+
+  return [...departments]
+    .filter((i) => {
+      return segmentList.indexOf(i.segment) !== -1;
+    })
+    .sort(sortDepartments);
+};
+
+export const formatDuration = (duration) => {
+  if (!duration) return "-";
+  let units = ["s"];
+
+  if (duration > 60 && duration < 3600) {
+    units = ["m"];
+  } else if (duration > 3600) {
+    units = ["h"];
+  }
+
+  return humanizeDuration(duration * 1000, {
+    units,
+    maxDecimalPoints: 0,
+    language: "shortEn",
+    languages: {
+      shortEn: {
+        y: () => "y",
+        mo: () => "mo",
+        w: () => "w",
+        d: () => "d",
+        h: () => "h",
+        m: () => "min",
+        s: () => "s",
+        ms: () => "ms",
+      },
+    },
+  });
 };

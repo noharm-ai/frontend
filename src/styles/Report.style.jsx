@@ -189,3 +189,18 @@ export const ReportFilterContainer = styled.div`
     display: block;
   }
 `;
+
+export const ReportPrintDescriptions = styled.div`
+  display: none;
+  margin: 20px 0;
+
+  > div {
+    label {
+      font-weight: 600;
+    }
+  }
+
+  @media print {
+    display: block;
+  }
+`;

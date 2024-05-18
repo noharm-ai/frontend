@@ -1,25 +1,35 @@
 import { instance, setHeaders } from "services/api";
 
-const getConfig = (params = {}) =>
+const api = {};
+
+api.getConfig = (params = {}) =>
   instance.get(`/reports/config`, {
     params,
     ...setHeaders(),
   });
 
-const getReport = (report, params = {}) =>
+api.getReport = (report, params = {}) =>
   instance.get(`/reports/general/${report}`, {
     params,
     ...setHeaders(),
   });
 
-const getCache = (url) => {
+api.getCache = (url) => {
   return instance.get(url, { responseType: "arraybuffer", decompress: true });
 };
 
-const api = {
-  getReport,
-  getCache,
-  getConfig,
-};
+api.live = {};
+
+api.live.getCultureReport = (params = {}) =>
+  instance.get(`/reports/culture`, {
+    params,
+    ...setHeaders(),
+  });
+
+api.live.getAntimicrobialHistoryReport = (params = {}) =>
+  instance.get(`/reports/antimicrobial/history`, {
+    params,
+    ...setHeaders(),
+  });
 
 export default api;
