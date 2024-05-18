@@ -44,6 +44,7 @@ export default function Filter({ printRef, admissionNumber }) {
   const initialValues = {
     dateRange: [],
     drugList: [],
+    substanceList: [],
   };
 
   useEffect(() => {

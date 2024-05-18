@@ -17,6 +17,7 @@ const initialState = {
   },
   filterData: {
     drugs: [],
+    substances: [],
   },
 };
 
@@ -61,6 +62,10 @@ const antimicrobialHistoryReportSlice = createSlice({
         state.list = action.payload.data;
 
         state.filterData.drugs = getUniqList(action.payload.data, "drug");
+        state.filterData.substances = getUniqList(
+          action.payload.data,
+          "substance"
+        );
       })
       .addCase(fetchReportData.rejected, (state, action) => {
         state.status = "failed";

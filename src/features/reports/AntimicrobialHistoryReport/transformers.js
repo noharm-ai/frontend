@@ -20,6 +20,13 @@ const filterDatasource = (datasource, filters) => {
       }
 
       return true;
+    })
+    .filter((i) => {
+      if (filters.substanceList.length) {
+        return filters.substanceList.indexOf(i.substance) !== -1;
+      }
+
+      return true;
     });
 };
 

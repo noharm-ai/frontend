@@ -10,6 +10,9 @@ export default function MainFilters() {
   const drugs = useSelector(
     (state) => state.reportsArea.antimicrobialHistory.filterData.drugs
   );
+  const substances = useSelector(
+    (state) => state.reportsArea.antimicrobialHistory.filterData.substances
+  );
 
   const status = useSelector(
     (state) => state.reportsArea.antimicrobialHistory.status
@@ -48,6 +51,29 @@ export default function MainFilters() {
           autoClearSearchValue={false}
         >
           {drugs.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </Select>
+      </Col>
+      <Col md={7} lg={5} xxl={5}>
+        <Heading as="label" size="14px">
+          Substância:
+        </Heading>
+        <Select
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.substanceList}
+          onChange={(val) => setFieldValue({ substanceList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {substances.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>

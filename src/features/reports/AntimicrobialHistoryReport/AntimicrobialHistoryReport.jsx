@@ -31,8 +31,12 @@ export default function AntimicrobialHistoryReport({ prescription }) {
       label: "Período",
       type: "range",
     },
-    examNameList: {
+    drugList: {
       label: "Medicamento",
+      type: "list",
+    },
+    substanceList: {
+      label: "Substância",
       type: "list",
     },
   };
