@@ -43,7 +43,7 @@ export const rowClassName = (record, bag) => {
   const hasExpireInfo = record.cpoe;
 
   if (hasExpireInfo && !record.suspended) {
-    if (bag.headers[record.cpoe].expire) {
+    if (bag.headers[record.cpoe] && bag.headers[record.cpoe].expire) {
       const expirationDate = parseISO(bag.headers[record.cpoe].expire);
       const currentDate = new Date();
       expiresInMinutes = differenceInMinutes(expirationDate, currentDate);
