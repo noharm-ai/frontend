@@ -175,9 +175,9 @@ export default function Filter({
     setScreeningListFilter({ indicators: indicators });
   };
 
-  // const onDrugAttributesChange = (drugAttributes) => {
-  //   setScreeningListFilter({ drugAttributes });
-  // };
+  const onDrugAttributesChange = (drugAttributes) => {
+    setScreeningListFilter({ drugAttributes });
+  };
 
   const onPatientStatusChange = (status) => {
     setScreeningListFilter({ patientStatus: status });
@@ -293,17 +293,17 @@ export default function Filter({
     searchDrugs(filter.idSegment, { q: value });
   }, 800);
 
-  // const drugAttributesList = [
-  //   "antimicro",
-  //   "mav",
-  //   "controlled",
-  //   "notdefault",
-  //   "elderly",
-  //   "tube",
-  //   "whiteList",
-  //   "chemo",
-  //   "dialyzable",
-  // ];
+  const drugAttributesList = [
+    "antimicro",
+    "mav",
+    "controlled",
+    "notdefault",
+    "elderly",
+    "tube",
+    "whiteList",
+    "chemo",
+    "dialyzable",
+  ];
 
   const hiddenFieldCount = countHiddenFilters(filter);
   return (
@@ -543,7 +543,7 @@ export default function Filter({
             </Col>
           </Row>
 
-          {/* <Row gutter={0} style={{ marginTop: "10px" }}>
+          <Row gutter={0} style={{ marginTop: "10px" }}>
             <Col md={24}>
               <Box>
                 <Row gutter={0} style={{ width: "100%" }}>
@@ -571,7 +571,7 @@ export default function Filter({
                 </Row>
               </Box>
             </Col>
-          </Row> */}
+          </Row>
 
           <Row gutter={0} style={{ marginTop: "10px" }}>
             <Col md={19}>
