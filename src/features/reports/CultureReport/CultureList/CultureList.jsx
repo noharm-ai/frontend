@@ -124,6 +124,10 @@ export default function CultureList() {
 
 const ExpandedRow = ({ record }) => {
   const items = [];
+  const hasValue = (value) => {
+    return value !== null && `${value}`.trim() !== "";
+  };
+
   if (record.previousResult) {
     items.push({
       label: "Resultado Prévio",
@@ -138,7 +142,7 @@ const ExpandedRow = ({ record }) => {
     });
   }
 
-  if (record.colony) {
+  if (hasValue(record.colony)) {
     items.push({
       label: "Descrição da Colônia",
       span: 3,
@@ -146,7 +150,7 @@ const ExpandedRow = ({ record }) => {
     });
   }
 
-  if (record.gram) {
+  if (hasValue(record.gram)) {
     items.push({
       label: "Bacterioscópico",
       span: 3,
@@ -154,7 +158,7 @@ const ExpandedRow = ({ record }) => {
     });
   }
 
-  if (record.extraInfo) {
+  if (hasValue(record.extraInfo)) {
     items.push({
       label: "Complemento",
       span: 3,
