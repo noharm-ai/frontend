@@ -37,7 +37,9 @@ const getPatients = async (bearerToken, requestConfig) => {
     requestConfig;
   const nameHeaders = proxy
     ? {
-        Authorization: `Bearer ${bearerToken}`,
+        Authorization: `Bearer ${
+          localStorage.getItem("ac1") + localStorage.getItem("ac2")
+        }`,
         "x-api-key": appInfo.apiKey,
       }
     : requestConfig.nameHeaders;
