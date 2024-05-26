@@ -23,7 +23,7 @@ import {
   Legend,
 } from "./index.style";
 
-const helpLink = `${process.env.REACT_APP_SUPPORT_LINK}/kb/article/noharm-care`;
+const helpLink = `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/113`;
 
 export default function View({
   selected,
