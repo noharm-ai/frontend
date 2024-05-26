@@ -66,7 +66,7 @@ export default function HelpModal() {
           block
           onClick={() =>
             window.open(
-              `${process.env.REACT_APP_SUPPORT_LINK}/kb/article/relatorio-auditoria`,
+              `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/190`,
               "_blank"
             )
           }

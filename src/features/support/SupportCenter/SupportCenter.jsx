@@ -112,7 +112,7 @@ function SupportCenter() {
                 type="default"
                 onClick={() =>
                   window.open(
-                    `${process.env.REACT_APP_SUPPORT_LINK}/kb/article/servico-nomes`,
+                    `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/182`,
                     "_blank"
                   )
                 }
@@ -127,7 +127,7 @@ function SupportCenter() {
                 type="default"
                 onClick={() =>
                   window.open(
-                    `${process.env.REACT_APP_SUPPORT_LINK}/kb/article/itens-diferentes`,
+                    `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/111`,
                     "_blank"
                   )
                 }
@@ -135,14 +135,14 @@ function SupportCenter() {
                 block
                 style={{ marginTop: "20px" }}
               >
-                Indicador de itens diferentes
+                Escore 4: o que fazer?
               </Button>
 
               <Button
                 type="default"
                 onClick={() =>
                   window.open(
-                    `${process.env.REACT_APP_SUPPORT_LINK}/kb/article/escore-global`,
+                    `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/131`,
                     "_blank"
                   )
                 }
@@ -150,14 +150,14 @@ function SupportCenter() {
                 block
                 style={{ marginTop: "20px" }}
               >
-                O que é o Escore Global?
+                Divisor de faixas
               </Button>
 
               <Button
                 type="primary"
                 onClick={() =>
                   window.open(
-                    `${process.env.REACT_APP_SUPPORT_LINK}/kb`,
+                    `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/39`,
                     "_blank"
                   )
                 }

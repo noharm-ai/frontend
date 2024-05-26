@@ -244,7 +244,7 @@ function BaseForm({ data }) {
           <Tooltip title={t("layout.help")}>
             <HelpButton
               type="primary gtm-medication-btn-help-nefro"
-              href={`${process.env.REACT_APP_SUPPORT_LINK}/kb/article/ajuste-de-dose-por-funcao-renal`}
+              href={`${process.env.REACT_APP_ODOO_LINK}/knowledge/article/179`}
             />
           </Tooltip>
         </div>
@@ -282,7 +282,7 @@ function BaseForm({ data }) {
           <Tooltip title={t("layout.help")}>
             <HelpButton
               type="primary gtm-medication-btn-help-hepa"
-              href={`${process.env.REACT_APP_SUPPORT_LINK}/kb/article/ajuste-de-dose-por-funcao-hepatica`}
+              href={`${process.env.REACT_APP_ODOO_LINK}/knowledge/article/180`}
             />
           </Tooltip>
         </div>
