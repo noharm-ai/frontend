@@ -48,6 +48,13 @@ const filterDatasource = (datasource, filters) => {
       return true;
     })
     .filter((i) => {
+      if (filters.hasTotalItens) {
+        return i.itens > 0;
+      }
+
+      return true;
+    })
+    .filter((i) => {
       if (filters.responsibleList.length) {
         return filters.responsibleList.indexOf(i.responsible) !== -1;
       }
