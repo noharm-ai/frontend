@@ -48,7 +48,7 @@ const filterDatasource = (datasource, filters) => {
       return true;
     })
     .filter((i) => {
-      if (filters.hasTotalItens) {
+      if (!filters.showDiets) {
         return i.itens > 0;
       }
 

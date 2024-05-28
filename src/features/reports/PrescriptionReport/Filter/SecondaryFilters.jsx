@@ -36,15 +36,15 @@ export default function SecondaryFilters() {
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" size="14px">
-          Desconsidera prescrições que possuam somente Dietas/Recomendações:
+          Contabilizar prescrições que possuam somente Dietas/Recomendações:
         </Heading>
         <Radio.Group
           style={{ marginTop: "5px" }}
           options={yesNoOptions}
           onChange={({ target: { value } }) =>
-            setFieldValue({ hasTotalItens: value })
+            setFieldValue({ showDiets: value })
           }
-          value={values.hasTotalItens}
+          value={values.showDiets}
           optionType="button"
         />
       </Col>
