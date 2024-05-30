@@ -61,6 +61,7 @@ export default function Filter({ printRef }) {
     departmentList: [],
     segmentList: [],
     weekDays: false,
+    showDiets: false,
     minScore: null,
     maxScore: null,
   };

@@ -36,6 +36,20 @@ export default function SecondaryFilters() {
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" size="14px">
+          Contabilizar prescrições que possuam somente Dietas/Recomendações:
+        </Heading>
+        <Radio.Group
+          style={{ marginTop: "5px" }}
+          options={yesNoOptions}
+          onChange={({ target: { value } }) =>
+            setFieldValue({ showDiets: value })
+          }
+          value={values.showDiets}
+          optionType="button"
+        />
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
           Responsável:
         </Heading>
         <Select

@@ -54,7 +54,13 @@ export default function InterventionOutcome({ ...props }) {
         fetchInterventionOutcomeData({
           idIntervention: selectedIntervention.idIntervention,
         })
-      );
+      ).then((response) => {
+        if (response.error) {
+          notification.error({
+            message: getErrorMessage(response, t),
+          });
+        }
+      });
     } else {
       dispatch(reset());
     }
@@ -62,6 +68,7 @@ export default function InterventionOutcome({ ...props }) {
     dispatch,
     selectedIntervention.open,
     selectedIntervention.idIntervention,
+    t,
   ]);
 
   const initialValues = {
@@ -127,7 +134,7 @@ export default function InterventionOutcome({ ...props }) {
   };
 
   const Footer = ({ handleSubmit }) => {
-    if (isInvalid) {
+    if (isInvalid || !outcomeData?.header) {
       return (
         <ModalFooter>
           <Button
