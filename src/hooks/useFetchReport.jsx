@@ -71,18 +71,14 @@ export default function useFetchReport({
   }, []); //eslint-disable-line
 
   return {
-    loadArchive: (archive) => {
-      dispatch(action({ archive })).then((response) => {
+    loadArchive: (filename) => {
+      dispatch(action({ filename })).then((response) => {
         if (response.error) {
           notification.error({
             message: t("error.title"),
             description: t("error.description"),
           });
         } else {
-          notification.success({
-            message: "Cache limpo com sucesso!",
-          });
-
           onAfterFetch(
             response.payload.cacheData.body,
             response.payload.cacheData.header

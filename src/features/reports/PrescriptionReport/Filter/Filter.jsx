@@ -2,12 +2,13 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
-import { FloatButton, Spin } from "antd";
+import { FloatButton, Spin, Alert, Button } from "antd";
 import {
   MenuOutlined,
   PrinterOutlined,
   DownloadOutlined,
   QuestionCircleOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
@@ -20,6 +21,8 @@ import {
   setFilteredResult,
   setFilters,
   setHelpModal,
+  setHistoryModal,
+  setActiveReport,
 } from "../PrescriptionReportSlice";
 import { getReportData, filterAndExportCSV } from "../transformers";
 import MainFilters from "./MainFilters";
@@ -30,6 +33,7 @@ import {
   onAfterPrint,
   decompressDatasource,
 } from "utils/report";
+import HistoryModal from "../HistoryModal/HistoryModal";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
@@ -46,6 +50,15 @@ export default function Filter({ printRef }) {
     (state) => state.reportsArea.prescription.updatedAt
   );
   const userId = useSelector((state) => state.user.account.userId);
+  const activeReport = useSelector(
+    (state) => state.reportsArea.prescription.activeReport
+  );
+  const historyModalOpen = useSelector(
+    (state) => state.reportsArea.prescription.historyModal
+  );
+  const availableReports = useSelector(
+    (state) => state.reportsArea.prescription.availableReports
+  );
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
     onBeforeGetContent: onBeforePrint,
@@ -66,7 +79,7 @@ export default function Filter({ printRef }) {
     maxScore: null,
   };
 
-  useFetchReport({
+  const reportManager = useFetchReport({
     action: fetchReportData,
     reset,
     onAfterFetch: (body, header) => {
@@ -81,14 +94,16 @@ export default function Filter({ printRef }) {
         body
       );
     },
-    onAfterClearCache: (data) => {
-      search(currentFilters);
-    },
   });
 
   const exportCSV = async () => {
     const ds = await decompressDatasource(datasource);
     filterAndExportCSV(ds, currentFilters, t);
+  };
+
+  const loadArchive = (filename) => {
+    dispatch(setActiveReport(filename));
+    reportManager.loadArchive(filename);
   };
 
   const showHelp = () => {
@@ -115,16 +130,35 @@ export default function Filter({ printRef }) {
     <React.Fragment>
       <Spin spinning={isFetching}>
         {!isFetching && (
-          <AdvancedFilter
-            initialValues={initialValues}
-            mainFilters={<MainFilters />}
-            secondaryFilters={<SecondaryFilters />}
-            onSearch={search}
-            loading={isFetching}
-            skipFilterList={["dateRange"]}
-            memoryType={memoryFilterType}
-            skipMemoryList={{ dateRange: "daterange" }}
-          />
+          <>
+            <AdvancedFilter
+              initialValues={initialValues}
+              mainFilters={<MainFilters />}
+              secondaryFilters={<SecondaryFilters />}
+              onSearch={search}
+              loading={isFetching}
+              skipFilterList={["dateRange"]}
+              memoryType={memoryFilterType}
+              skipMemoryList={{ dateRange: "daterange" }}
+            />
+            {activeReport !== "current" && (
+              <Alert
+                message={`Histórico: ${dayjs(activeReport)
+                  .subtract(1, "day")
+                  .format("MM/YYYY")}`}
+                description={`Você está visualizando o relatório consolidado do mês de ${dayjs(
+                  activeReport
+                )
+                  .subtract(1, "day")
+                  .format("MMMM/YY")}.`}
+                action={
+                  <Button onClick={() => loadArchive("current")}>
+                    Voltar ao relatório atual
+                  </Button>
+                }
+              />
+            )}
+          </>
         )}
       </Spin>
       {!isFetching && (
@@ -146,6 +180,11 @@ export default function Filter({ printRef }) {
             tooltip="Exportar CSV"
           />
           <FloatButton
+            icon={<HistoryOutlined />}
+            onClick={() => dispatch(setHistoryModal(true))}
+            tooltip="Histórico"
+          />
+          <FloatButton
             icon={<PrinterOutlined />}
             onClick={handlePrint}
             tooltip="Imprimir"
@@ -155,6 +194,12 @@ export default function Filter({ printRef }) {
       <FloatButton.BackTop
         style={{ right: 80, bottom: 25 }}
         tooltip="Voltar ao topo"
+      />
+      <HistoryModal
+        availableReports={availableReports}
+        loadArchive={loadArchive}
+        open={historyModalOpen}
+        setOpen={setHistoryModal}
       />
     </React.Fragment>
   );
