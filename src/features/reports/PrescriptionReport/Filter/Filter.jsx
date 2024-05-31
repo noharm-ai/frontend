@@ -34,6 +34,7 @@ import {
   decompressDatasource,
 } from "utils/report";
 import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
+import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
@@ -141,24 +142,10 @@ export default function Filter({ printRef }) {
               memoryType={memoryFilterType}
               skipMemoryList={{ dateRange: "daterange" }}
             />
-            {activeReport !== "current" && (
-              <Alert
-                message={`Histórico: ${dayjs(activeReport)
-                  .subtract(1, "day")
-                  .format("MM/YYYY")}`}
-                description={`Você está visualizando o relatório consolidado do mês de ${dayjs(
-                  activeReport
-                )
-                  .subtract(1, "day")
-                  .format("MMMM/YY")}.`}
-                action={
-                  <Button onClick={() => loadArchive("current")}>
-                    Voltar ao relatório atual
-                  </Button>
-                }
-                showIcon
-              />
-            )}
+            <HistoryAlert
+              activeReport={activeReport}
+              loadArchive={loadArchive}
+            />
           </>
         )}
       </Spin>
