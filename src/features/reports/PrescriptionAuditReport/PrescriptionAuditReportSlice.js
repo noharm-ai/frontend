@@ -18,8 +18,11 @@ const initialState = {
     error: null,
     result: {},
   },
+  availableReports: [],
+  activeReport: "current",
   filters: {},
   helpModal: false,
+  historyModal: false,
 };
 
 export const fetchReportData = createAsyncThunk(
@@ -44,7 +47,12 @@ export const fetchReportData = createAsyncThunk(
       const decompressedResponse = new Response(cacheReadableStream);
       const cache = await decompressedResponse.json();
 
-      return { ...response, cacheData: cache, gzipped };
+      return {
+        ...response,
+        cacheData: cache,
+        gzipped,
+        availableReports: response.data.data.availableReports,
+      };
     } catch (err) {
       console.error(err);
       return thunkAPI.rejectWithValue(err.response.data);
@@ -71,6 +79,12 @@ const prescriptionAuditReportSlice = createSlice({
     setHelpModal(state, action) {
       state.helpModal = action.payload;
     },
+    setHistoryModal(state, action) {
+      state.historyModal = action.payload;
+    },
+    setActiveReport(state, action) {
+      state.activeReport = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -85,6 +99,7 @@ const prescriptionAuditReportSlice = createSlice({
           state.list = action.payload.gzipped;
           state.updatedAt = action.payload.cacheData.header.date;
           state.version = action.payload.cacheData.header.version;
+          state.availableReports = action.payload.availableReports;
           state.responsibles = getUniqList(
             action.payload.cacheData.body,
             "responsible"
@@ -114,6 +129,8 @@ export const {
   setFilteredResult,
   setFilters,
   setHelpModal,
+  setHistoryModal,
+  setActiveReport,
 } = prescriptionAuditReportSlice.actions;
 
 export default prescriptionAuditReportSlice.reducer;
