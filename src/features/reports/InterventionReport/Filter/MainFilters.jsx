@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { HistoryOutlined } from "@ant-design/icons";
 
 import { RangeDatePicker, Select } from "components/Inputs";
 import Heading from "components/Heading";
@@ -11,9 +12,13 @@ import {
   dateRangeValid,
   getFilterDepartment,
 } from "utils/report";
+import Button from "components/Button";
+import { setHistoryModal } from "../InterventionReportSlice";
 
 export default function MainFilters() {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
   const departments = useSelector(
     (state) => state.reportsArea.intervention.departments
   );
@@ -25,6 +30,12 @@ export default function MainFilters() {
     (state) => state.reportsArea.intervention.updatedAt
   );
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
+
+  const showHistory = () => {
+    document.querySelector(".ant-picker-presets li:nth-child(2)").click();
+
+    dispatch(setHistoryModal(true));
+  };
 
   return (
     <>
@@ -41,6 +52,15 @@ export default function MainFilters() {
           popupClassName="noArrow"
           allowClear={false}
           style={{ width: "100%" }}
+          renderExtraFooter={() => (
+            <Button
+              icon={<HistoryOutlined />}
+              style={{ margin: "10px 0" }}
+              onClick={() => showHistory()}
+            >
+              Ver períodos anteriores
+            </Button>
+          )}
         />
       </Col>
       <Col md={7} lg={5} xxl={5}>
