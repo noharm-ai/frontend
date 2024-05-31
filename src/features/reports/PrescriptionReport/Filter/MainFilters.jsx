@@ -1,8 +1,10 @@
 import React, { useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { HistoryOutlined } from "@ant-design/icons";
+import { DatePicker } from "antd";
 
-import { RangeDatePicker, Select } from "components/Inputs";
+import { Select } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
@@ -17,6 +19,7 @@ import { setHistoryModal } from "../PrescriptionReportSlice";
 export default function MainFilters() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
   const departments = useSelector(
     (state) => state.reportsArea.prescription.departments
   );
@@ -28,8 +31,13 @@ export default function MainFilters() {
     (state) => state.reportsArea.prescription.updatedAt
   );
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
-
   const rangePresets = getDateRangePresets(reportDate);
+
+  const showHistory = () => {
+    document.querySelector(".ant-picker-presets li:nth-child(2)").click();
+
+    dispatch(setHistoryModal(true));
+  };
 
   return (
     <>
@@ -37,7 +45,7 @@ export default function MainFilters() {
         <Heading as="label" size="14px">
           {t("tableHeader.period")}:
         </Heading>
-        <RangeDatePicker
+        <DatePicker.RangePicker
           presets={rangePresets}
           disabledDate={dateRangeValid(reportDate)}
           format="DD/MM/YYYY"
@@ -48,8 +56,9 @@ export default function MainFilters() {
           style={{ width: "100%" }}
           renderExtraFooter={() => (
             <Button
+              icon={<HistoryOutlined />}
               style={{ margin: "10px 0" }}
-              onClick={() => dispatch(setHistoryModal(true))}
+              onClick={() => showHistory()}
             >
               Ver períodos anteriores
             </Button>

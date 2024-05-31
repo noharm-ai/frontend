@@ -33,7 +33,7 @@ import {
   onAfterPrint,
   decompressDatasource,
 } from "utils/report";
-import HistoryModal from "../HistoryModal/HistoryModal";
+import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
