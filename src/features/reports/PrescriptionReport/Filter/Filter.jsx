@@ -146,6 +146,12 @@ export default function Filter({ printRef }) {
               activeReport={activeReport}
               loadArchive={loadArchive}
             />
+            <HistoryModal
+              availableReports={availableReports}
+              loadArchive={loadArchive}
+              open={historyModalOpen}
+              setOpen={setHistoryModal}
+            />
           </>
         )}
       </Spin>
@@ -182,12 +188,6 @@ export default function Filter({ printRef }) {
       <FloatButton.BackTop
         style={{ right: 80, bottom: 25 }}
         tooltip="Voltar ao topo"
-      />
-      <HistoryModal
-        availableReports={availableReports}
-        loadArchive={loadArchive}
-        open={historyModalOpen}
-        setOpen={setHistoryModal}
       />
     </React.Fragment>
   );
