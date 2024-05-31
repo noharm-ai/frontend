@@ -62,10 +62,10 @@ export default function HistoryModal({
                     style={{ backgroundColor: "#a991d6", color: "#fff" }}
                   />
                 }
-                title={dayjs(item.title).subtract(1, "day").format("MM/YY")}
-                description={dayjs(item.title)
+                title={dayjs(item.title)
                   .subtract(1, "day")
-                  .format("MMMM - YYYY")}
+                  .format("MMMM / YYYY")
+                  .toUpperCase()}
               />
             </List.Item>
           )}

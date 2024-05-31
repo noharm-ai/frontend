@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import { RangeDatePicker, Select } from "components/Inputs";
@@ -11,9 +11,12 @@ import {
   dateRangeValid,
   getFilterDepartment,
 } from "utils/report";
+import Button from "components/Button";
+import { setHistoryModal } from "../PrescriptionReportSlice";
 
 export default function MainFilters() {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const departments = useSelector(
     (state) => state.reportsArea.prescription.departments
   );
@@ -43,6 +46,14 @@ export default function MainFilters() {
           popupClassName="noArrow"
           allowClear={false}
           style={{ width: "100%" }}
+          renderExtraFooter={() => (
+            <Button
+              style={{ margin: "10px 0" }}
+              onClick={() => dispatch(setHistoryModal(true))}
+            >
+              Ver períodos anteriores
+            </Button>
+          )}
         />
       </Col>
       <Col md={7} lg={5} xxl={5}>

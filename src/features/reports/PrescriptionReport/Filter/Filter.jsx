@@ -156,6 +156,7 @@ export default function Filter({ printRef }) {
                     Voltar ao relatório atual
                   </Button>
                 }
+                showIcon
               />
             )}
           </>
