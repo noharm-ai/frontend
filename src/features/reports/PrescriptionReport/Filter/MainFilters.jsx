@@ -1,8 +1,10 @@
 import React, { useContext } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { HistoryOutlined } from "@ant-design/icons";
+import { DatePicker } from "antd";
 
-import { RangeDatePicker, Select } from "components/Inputs";
+import { Select } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
@@ -11,9 +13,13 @@ import {
   dateRangeValid,
   getFilterDepartment,
 } from "utils/report";
+import Button from "components/Button";
+import { setHistoryModal } from "../PrescriptionReportSlice";
 
 export default function MainFilters() {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
   const departments = useSelector(
     (state) => state.reportsArea.prescription.departments
   );
@@ -25,8 +31,13 @@ export default function MainFilters() {
     (state) => state.reportsArea.prescription.updatedAt
   );
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
-
   const rangePresets = getDateRangePresets(reportDate);
+
+  const showHistory = () => {
+    document.querySelector(".ant-picker-presets li:nth-child(2)").click();
+
+    dispatch(setHistoryModal(true));
+  };
 
   return (
     <>
@@ -34,7 +45,7 @@ export default function MainFilters() {
         <Heading as="label" size="14px">
           {t("tableHeader.period")}:
         </Heading>
-        <RangeDatePicker
+        <DatePicker.RangePicker
           presets={rangePresets}
           disabledDate={dateRangeValid(reportDate)}
           format="DD/MM/YYYY"
@@ -43,6 +54,15 @@ export default function MainFilters() {
           popupClassName="noArrow"
           allowClear={false}
           style={{ width: "100%" }}
+          renderExtraFooter={() => (
+            <Button
+              icon={<HistoryOutlined />}
+              style={{ margin: "10px 0" }}
+              onClick={() => showHistory()}
+            >
+              Ver períodos anteriores
+            </Button>
+          )}
         />
       </Col>
       <Col md={7} lg={5} xxl={5}>

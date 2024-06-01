@@ -8,6 +8,7 @@ import {
   PrinterOutlined,
   DownloadOutlined,
   QuestionCircleOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
@@ -20,6 +21,8 @@ import {
   setFilteredResult,
   setFilters,
   setHelpModal,
+  setHistoryModal,
+  setActiveReport,
 } from "../PrescriptionReportSlice";
 import { getReportData, filterAndExportCSV } from "../transformers";
 import MainFilters from "./MainFilters";
@@ -30,6 +33,8 @@ import {
   onAfterPrint,
   decompressDatasource,
 } from "utils/report";
+import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
+import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
@@ -46,6 +51,15 @@ export default function Filter({ printRef }) {
     (state) => state.reportsArea.prescription.updatedAt
   );
   const userId = useSelector((state) => state.user.account.userId);
+  const activeReport = useSelector(
+    (state) => state.reportsArea.prescription.activeReport
+  );
+  const historyModalOpen = useSelector(
+    (state) => state.reportsArea.prescription.historyModal
+  );
+  const availableReports = useSelector(
+    (state) => state.reportsArea.prescription.availableReports
+  );
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
     onBeforeGetContent: onBeforePrint,
@@ -66,7 +80,7 @@ export default function Filter({ printRef }) {
     maxScore: null,
   };
 
-  useFetchReport({
+  const reportManager = useFetchReport({
     action: fetchReportData,
     reset,
     onAfterFetch: (body, header) => {
@@ -81,14 +95,16 @@ export default function Filter({ printRef }) {
         body
       );
     },
-    onAfterClearCache: (data) => {
-      search(currentFilters);
-    },
   });
 
   const exportCSV = async () => {
     const ds = await decompressDatasource(datasource);
     filterAndExportCSV(ds, currentFilters, t);
+  };
+
+  const loadArchive = (filename) => {
+    dispatch(setActiveReport(filename));
+    reportManager.loadArchive(filename);
   };
 
   const showHelp = () => {
@@ -115,16 +131,28 @@ export default function Filter({ printRef }) {
     <React.Fragment>
       <Spin spinning={isFetching}>
         {!isFetching && (
-          <AdvancedFilter
-            initialValues={initialValues}
-            mainFilters={<MainFilters />}
-            secondaryFilters={<SecondaryFilters />}
-            onSearch={search}
-            loading={isFetching}
-            skipFilterList={["dateRange"]}
-            memoryType={memoryFilterType}
-            skipMemoryList={{ dateRange: "daterange" }}
-          />
+          <>
+            <AdvancedFilter
+              initialValues={initialValues}
+              mainFilters={<MainFilters />}
+              secondaryFilters={<SecondaryFilters />}
+              onSearch={search}
+              loading={isFetching}
+              skipFilterList={["dateRange"]}
+              memoryType={memoryFilterType}
+              skipMemoryList={{ dateRange: "daterange" }}
+            />
+            <HistoryAlert
+              activeReport={activeReport}
+              loadArchive={loadArchive}
+            />
+            <HistoryModal
+              availableReports={availableReports}
+              loadArchive={loadArchive}
+              open={historyModalOpen}
+              setOpen={setHistoryModal}
+            />
+          </>
         )}
       </Spin>
       {!isFetching && (
@@ -144,6 +172,11 @@ export default function Filter({ printRef }) {
             icon={<DownloadOutlined />}
             onClick={exportCSV}
             tooltip="Exportar CSV"
+          />
+          <FloatButton
+            icon={<HistoryOutlined />}
+            onClick={() => dispatch(setHistoryModal(true))}
+            tooltip="Histórico"
           />
           <FloatButton
             icon={<PrinterOutlined />}
