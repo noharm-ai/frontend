@@ -720,6 +720,16 @@ api.intervention.setOutcome = (params = {}) => {
 };
 
 /**
+ * ClinicalNotes namespace
+ */
+api.clinicalNotes = {};
+api.clinicalNotes.removeAnnotation = (params = {}) => {
+  return instance.post("/notes/remove-annotation", params, {
+    ...setHeaders(),
+  });
+};
+
+/**
  * API
  * all functions that can be used in API.
  */

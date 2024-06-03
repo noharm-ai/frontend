@@ -50,6 +50,8 @@ const {
 
   prescriptionsIncrementClinicalNotes,
 
+  prescriptionsRemoveNotes,
+
   prescriptionsActionsSetModalVisibility,
 } = PrescriptionsCreators;
 
@@ -343,3 +345,23 @@ export const incrementClinicalNotesThunk = () => (dispatch) => {
 export const setModalVisibilityThunk = (modalKey, visible) => (dispatch) => {
   dispatch(prescriptionsActionsSetModalVisibility(modalKey, visible));
 };
+
+export const removeNotesThunk =
+  (idClinicalNotes, annotationType) => (dispatch) => {
+    return new Promise(async (resolve, reject) => {
+      const { data, error } = await api.clinicalNotes
+        .removeAnnotation({
+          idClinicalNotes,
+          annotationType,
+        })
+        .catch(errorHandler);
+
+      if (!isEmpty(error)) {
+        reject(error);
+        return;
+      }
+
+      dispatch(prescriptionsRemoveNotes(idClinicalNotes, annotationType));
+      resolve(data.data);
+    });
+  };

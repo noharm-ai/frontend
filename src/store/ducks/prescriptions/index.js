@@ -41,6 +41,8 @@ export const { Types, Creators } = createActions({
 
   prescriptionsActionsSetModalVisibility: ["modalKey", "visible"],
 
+  prescriptionsRemoveNotes: ["id", "notesType"],
+
   prescriptionsReset: [],
 });
 
@@ -153,6 +155,34 @@ const setModalVisibility = (state = INITIAL_STATE, { modalKey, visible }) => ({
     },
   },
 });
+
+const removeNotes = (state = INITIAL_STATE, { id, notesType }) => {
+  console.log("remove notes thunk");
+  let listAttr;
+  if (notesType === "allergy") {
+    listAttr = "notesAllergies";
+  } else if (notesType === "dialysis") {
+    listAttr = "notesDialysis";
+  } else {
+    console.error(`notesType ${notesType} not found`);
+    return { ...state };
+  }
+
+  const newList = [...state.single.data[listAttr]].filter(
+    (i) => `${i.id}` !== `${id}`
+  );
+
+  return {
+    ...state,
+    single: {
+      ...state.single,
+      data: {
+        ...state.single.data,
+        [listAttr]: newList,
+      },
+    },
+  };
+};
 
 const incrementClinicalNotes = (state = INITIAL_STATE) => ({
   ...state,
@@ -682,6 +712,8 @@ const HANDLERS = {
   [Types.PRESCRIPTIONS_INCREMENT_CLINICAL_NOTES]: incrementClinicalNotes,
 
   [Types.PRESCRIPTIONS_ACTIONS_SET_MODAL_VISIBILITY]: setModalVisibility,
+
+  [Types.PRESCRIPTIONS_REMOVE_NOTES]: removeNotes,
 
   [Types.PRESCRIPTIONS_RESET]: reset,
 };

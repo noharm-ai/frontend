@@ -1,8 +1,9 @@
 import "styled-components/macro";
 import React, { useState } from "react";
 import moment from "moment";
-import { Row, Col } from "antd";
+import { Row, Col, notification, Popconfirm } from "antd";
 import { useTranslation } from "react-i18next";
+import { DeleteOutlined } from "@ant-design/icons";
 
 import Button from "components/Button";
 import Icon, { InfoIcon } from "components/Icon";
@@ -26,6 +27,7 @@ export default function Patient({
   siderCollapsed,
   interventions,
   setModalVisibility,
+  removeNotes,
 }) {
   const {
     alertExams,
@@ -44,6 +46,7 @@ export default function Patient({
   } = prescription;
 
   const [seeMore, setSeeMore] = useState(false);
+  const [isRemovingNotes, setIsRemovingNotes] = useState(false);
 
   const { t } = useTranslation();
 
@@ -64,6 +67,21 @@ export default function Patient({
     } catch {
       return 0;
     }
+  };
+
+  const actionRemoveNotes = (id, type) => {
+    setIsRemovingNotes(true);
+    removeNotes(id, type)
+      .then((response) => {
+        setIsRemovingNotes(false);
+        notification.success({ message: "Anotação removida com sucesso!" });
+      })
+      .catch((err) => {
+        setIsRemovingNotes(false);
+        notification.error({
+          message: err?.message || "Ocorreu um erro inesperado.",
+        });
+      });
   };
 
   return (
@@ -197,13 +215,37 @@ export default function Patient({
                   <div className="text-content list">
                     {notesAllergies
                       .sort(sortAllergies)
-                      .map(({ text, date, source }) => (
+                      .map(({ text, date, source, id }) => (
                         <div key={text} className="list-item">
-                          <div className="date">
-                            {moment(date).format("DD/MM/YYYY HH:mm")}
-                            {source === "care" ? " (NoHarm Care)" : ""}
+                          <div>
+                            <div className="date">
+                              {moment(date).format("DD/MM/YYYY HH:mm")}
+                              {source === "care" ? " (NoHarm Care)" : ""}
+                            </div>
+                            <div className="text">{text}</div>
                           </div>
-                          <div className="text">{text}</div>
+                          {source === "care" && (
+                            <div>
+                              <Popconfirm
+                                title="Remover anotação"
+                                description="Confirma a remoção desta anotação?"
+                                okText="Sim"
+                                cancelText="Não"
+                                onConfirm={() =>
+                                  actionRemoveNotes(id, "allergy")
+                                }
+                              >
+                                <Tooltip title="Remover anotação">
+                                  <Button
+                                    icon={<DeleteOutlined />}
+                                    ghost
+                                    danger
+                                    loading={isRemovingNotes}
+                                  />
+                                </Tooltip>
+                              </Popconfirm>
+                            </div>
+                          )}
                         </div>
                       ))}
                   </div>
@@ -222,12 +264,33 @@ export default function Patient({
                 </div>
                 <div className="content">
                   <div className="text-content list">
-                    {notesDialysis.map(({ text, date }) => (
+                    {notesDialysis.map(({ text, date, id }) => (
                       <div key={date} className="list-item">
-                        <div className="date">
-                          {moment(date).format("DD/MM/YYYY HH:mm")}
+                        <div>
+                          <div className="date">
+                            {moment(date).format("DD/MM/YYYY HH:mm")} (NoHarm
+                            Care)
+                          </div>
+                          <div className="text">{text}</div>
                         </div>
-                        <div className="text">{text}</div>
+                        <div>
+                          <Popconfirm
+                            title="Remover anotação"
+                            description="Confirma a remoção desta anotação?"
+                            okText="Sim"
+                            cancelText="Não"
+                            onConfirm={() => actionRemoveNotes(id, "dialysis")}
+                          >
+                            <Tooltip title="Remover anotação">
+                              <Button
+                                icon={<DeleteOutlined />}
+                                ghost
+                                danger
+                                loading={isRemovingNotes}
+                              />
+                            </Tooltip>
+                          </Popconfirm>
+                        </div>
                       </div>
                     ))}
                   </div>

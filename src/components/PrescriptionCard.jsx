@@ -75,9 +75,14 @@ export default styled.div`
       }
 
       .list-item {
+        display: flex;
         margin-bottom: 5px;
         padding-bottom: 5px;
         border-bottom: 1px solid #ccc;
+
+        > div:first-child {
+          flex: 1;
+        }
 
         &:last-child {
           border-bottom: none;
