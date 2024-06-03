@@ -6,6 +6,7 @@ import {
 } from "./templates";
 import { uniq } from "utils/lodash";
 import { getIMC, getCorporalSurface } from "utils";
+import { formatDate } from "utils/date";
 
 export const getCustomClinicalNote = (
   prescription,
@@ -123,9 +124,10 @@ const getExams = (exams) => {
   try {
     const list = exams.map((e) => {
       if (e.value.value) {
+        const date = e.value.date ? ` (${formatDate(e.value.date)})` : "";
         return `- ${e.value.initials}: ${e.value.value.toLocaleString()} ${
           e.value.unit
-        }`;
+        }${date}`;
       } else {
         return `- ${e.value.initials}: --`;
       }
