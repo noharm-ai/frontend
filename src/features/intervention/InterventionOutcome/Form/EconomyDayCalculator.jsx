@@ -79,7 +79,9 @@ export default function EconomyDayCalculator({
     }
 
     if (
-      !Big(values[source][field] || 0).eq(Big(outcomeData[source].item[field]))
+      !Big(values[source][field] || 0).eq(
+        Big(outcomeData[source].item[field] || 0)
+      )
     ) {
       return "warning";
     }
