@@ -198,6 +198,15 @@ function CopyAttributes({ open, setOpen, reload, ...props }) {
                     <Select.Option key="gestante" value="gestante">
                       Risco Gestante
                     </Select.Option>
+                    <Select.Option
+                      key="fkunidademedidacusto"
+                      value="fkunidademedidacusto"
+                    >
+                      Unidade de medida do Custo
+                    </Select.Option>
+                    <Select.Option key="custo" value="custo">
+                      Custo
+                    </Select.Option>
                   </Select.OptGroup>
                 </Select>
               </div>
