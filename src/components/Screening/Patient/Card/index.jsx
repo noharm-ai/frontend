@@ -12,6 +12,7 @@ import {
   FileOutlined,
   MessageOutlined,
   PieChartOutlined,
+  ExportOutlined,
 } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -158,6 +159,16 @@ export default function PatientCard({
       case "update":
         updatePrescriptionData();
         break;
+      case "gotoAgg":
+        if (prescription.prescriptionAggId) {
+          window.open(`/prescricao/${prescription.prescriptionAggId}`);
+        } else {
+          notification.error({
+            message:
+              "Não foi possível encontrar a Prescrição-Dia deste paciente.",
+          });
+        }
+        break;
       default:
         console.error("Invalid key", key);
     }
@@ -181,6 +192,15 @@ export default function PatientCard({
         label: t("patientCard.recalculate"),
         id: "gtm-bt-update",
         icon: <RedoOutlined />,
+      });
+    }
+
+    if (!prescription.agg) {
+      items.push({
+        key: "gotoAgg",
+        label: t("patientCard.prescriptionAggLink"),
+        id: "gtm-bt-gotoagg",
+        icon: <ExportOutlined />,
       });
     }
 
