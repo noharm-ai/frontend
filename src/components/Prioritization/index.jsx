@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import isEmpty from "lodash.isempty";
 import debounce from "lodash.debounce";
 import { useTransition, animated } from "@react-spring/web";
-import { Spin, Pagination, Tag, Empty } from "antd";
+import { Spin, Pagination, Tag, Empty, Alert } from "antd";
 import { useTranslation } from "react-i18next";
 import { CaretUpOutlined } from "@ant-design/icons";
 
@@ -299,6 +299,17 @@ export default function Prioritization({
             {!(isFetching || state.loading) && !filteredList.length && (
               <Empty description="Nenhum registro encontrado" />
             )}
+            {filteredList &&
+              filteredList.length > 0 &&
+              filteredList[0].totalRecords > 500 && (
+                <div className="alert-container">
+                  <Alert
+                    message="A lista foi limitada em 500 registros."
+                    description={`Existe um total de ${filteredList[0].totalRecords} registros para a sua consulta. Utilize mais filtros para direcionar a sua análise.`}
+                    showIcon
+                  />
+                </div>
+              )}
             {filteredList && filteredList.length > 0 && (
               <div className="grid">
                 {transitions((props, item) => (
