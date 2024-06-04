@@ -14,7 +14,7 @@ import { getAlerts } from "components/Screening/AlertCard";
 import PatientName from "containers/PatientName";
 import { Card, AlertContainer } from "./index.style";
 
-const TabContent = ({ tab, prescription }) => {
+const TabContent = ({ tab, prescription, featureService }) => {
   const { t } = useTranslation();
 
   if (tab === "patient") {
@@ -112,6 +112,37 @@ const TabContent = ({ tab, prescription }) => {
             </div>
           </div>
         </div>
+        {featureService.hasPatientRevision() && (
+          <div className="attributes">
+            <div className="attributes-item col-4">
+              <div className="attributes-item-label"></div>
+              <div className="attributes-item-value"></div>
+            </div>
+            <div className="attributes-item col-4">
+              <div className="attributes-item-label"></div>
+              <div className="attributes-item-value"></div>
+            </div>
+            <div className="attributes-item col-4">
+              <div className="attributes-item-label">Revisão</div>
+              <div className="attributes-item-value">
+                {prescription.reviewType === 1 && (
+                  <Tag color="green">Revisado</Tag>
+                )}
+                {prescription.reviewType !== 1 && (
+                  <>
+                    {prescription.isBeingEvaluated ? (
+                      <Tooltip title={"Pendente/Em Análise"}>
+                        <Tag color="purple">Em análise</Tag>
+                      </Tooltip>
+                    ) : (
+                      <Tag color="orange">Pendente</Tag>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
         <div className="attributes">
           <div className="attributes-item col-12">
             <div className="attributes-item-label">Alertas</div>
@@ -305,6 +336,7 @@ export default function PrioritizationCard({
   prioritization,
   prioritizationType,
   highlight,
+  featureService,
 }) {
   const [activeTab, setActiveTab] = useState("patient");
 
@@ -376,7 +408,11 @@ export default function PrioritizationCard({
 
       {transitions((styles) => (
         <animated.div style={styles}>
-          <TabContent tab={activeTab} prescription={prescription} />
+          <TabContent
+            tab={activeTab}
+            prescription={prescription}
+            featureService={featureService}
+          />
         </animated.div>
       ))}
 

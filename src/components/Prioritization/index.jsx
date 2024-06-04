@@ -321,6 +321,7 @@ export default function Prioritization({
                         (i) => i.key === state.prioritization
                       )}
                       highlight={state.highlightPrioritization}
+                      featureService={featureService}
                     />
                   </animated.div>
                 ))}
