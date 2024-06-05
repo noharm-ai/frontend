@@ -5,6 +5,7 @@ import { selectItemToSaveThunk } from "store/ducks/intervention/thunk";
 import {
   fetchScreeningThunk,
   setModalVisibilityThunk,
+  removeNotesThunk,
 } from "store/ducks/prescriptions/thunk";
 import Patient from "components/Screening/Patient";
 import security from "services/security";
@@ -26,6 +27,7 @@ const mapDispatchToProps = (dispatch) =>
       fetchScreening: fetchScreeningThunk,
       selectIntervention: selectItemToSaveThunk,
       setModalVisibility: setModalVisibilityThunk,
+      removeNotes: removeNotesThunk,
     },
     dispatch
   );

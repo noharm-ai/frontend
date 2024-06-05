@@ -196,6 +196,7 @@
     "more": "Ver mais",
     "less": "Ver menos",
     "recalculate": "Recalcular prescrição",
+    "prescriptionAggLink": "Abrir Prescrição-Dia do paciente",
     "patientIntervention": "Intervenção no paciente",
     "patientInterventionDisabled": "Esta intervenção não pode mais ser alterada, pois já foi resolvida.",
     "editPatient": "Editar dados de paciente",

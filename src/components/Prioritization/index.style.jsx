@@ -6,6 +6,12 @@ export const PrioritizationPage = styled.div`
   position: relative;
   min-height: 60vh;
   padding-bottom: 5rem;
+  padding-top: 1rem;
+
+  .alert-container {
+    padding: 0 1rem 1rem 1rem;
+    margin-bottom: 1rem;
+  }
 
   .grid {
     display: grid;
@@ -57,7 +63,7 @@ export const ResultActions = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 
   @media (min-width: ${breakpoints.xxl}) {
     padding: 0 1rem;

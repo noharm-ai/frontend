@@ -196,6 +196,7 @@
     "more": "More",
     "less": "Less",
     "recalculate": "Recalculate prescription",
+    "prescriptionAggLink": "Open patient prescription",
     "patientIntervention": "Patient intervention",
     "patientInterventionDisabled": "This intervention can no longer be updated",
     "editPatient": "Edit patient data",

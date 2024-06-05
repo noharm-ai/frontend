@@ -94,7 +94,7 @@ export const ORDER_OPTIONS = [
     label: "Anotações",
     key: "observation",
     formattedKey: "filled",
-    type: "string",
+    type: "filled",
   },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
@@ -135,18 +135,52 @@ export const filterList = (list, filter) => {
 
 export const sortList = (list, orderBy, orderDirection) => {
   const orderConfig = ORDER_OPTIONS.find((o) => o.key === orderBy);
+  const sortString = (a, b) => {
+    const compare = `${a[orderBy]}`.localeCompare(`${b[orderBy]}`);
+    if (compare === 0) {
+      return a["globalScore"] - b["globalScore"];
+    }
+
+    return compare;
+  };
+
+  const sortNumber = (a, b) => {
+    const compare = a[orderBy] - b[orderBy];
+    if (compare === 0) {
+      return a["globalScore"] - b["globalScore"];
+    }
+
+    return compare;
+  };
+
+  const sortFilled = (a, b) => {
+    const a1 = { ...a };
+    const b1 = { ...b };
+    a1[orderBy] = a1[orderBy] ? "2filled" : "1unfilled";
+    b1[orderBy] = b1[orderBy] ? "2filled" : "1unfilled";
+
+    return sortString(a1, b1);
+  };
+
+  if (orderConfig.type === "filled") {
+    if (orderDirection === "desc") {
+      return list.sort((a, b) => sortFilled(b, a));
+    }
+
+    return list.sort((a, b) => sortFilled(a, b));
+  }
 
   if (orderConfig.type === "number") {
     if (orderDirection === "desc") {
-      return list.sort((a, b) => b[orderBy] - a[orderBy]);
+      return list.sort((a, b) => sortNumber(b, a));
     }
 
-    return list.sort((a, b) => a[orderBy] - b[orderBy]);
+    return list.sort((a, b) => sortNumber(a, b));
   }
 
   if (orderDirection === "desc") {
-    return list.sort((a, b) => `${a[orderBy]}`.localeCompare(`${b[orderBy]}`));
+    return list.sort((a, b) => sortString(a, b));
   }
 
-  return list.sort((a, b) => `${b[orderBy]}`.localeCompare(`${a[orderBy]}`));
+  return list.sort((a, b) => sortString(b, a));
 };

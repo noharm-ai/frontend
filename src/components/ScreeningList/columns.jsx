@@ -166,7 +166,23 @@ export const expandedRowRender = (t) => {
       {
         title: t("screeningList.clExAdmissionNumber"),
         width: 100,
-        key: "admissionNumber",
+        render: (i) => {
+          if (!i.prescriptionAggId || !i.processed || i.agg) {
+            return i.admissionNumber;
+          }
+
+          return (
+            <Tooltip title="Clique para visualizar a Prescrição-Dia do paciente">
+              <a
+                href={`/prescricao/${i.prescriptionAggId}`}
+                rel="noreferrer"
+                target="_blank"
+              >
+                {i.admissionNumber}
+              </a>
+            </Tooltip>
+          );
+        },
       },
       {
         title: t("screeningList.clExPrescription"),
