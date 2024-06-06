@@ -61,6 +61,12 @@ export default class Feature {
         label: t(`features.${Feature.PATIENT_REVISION}`),
         description: t(`featuresDescription.${Feature.PATIENT_REVISION}`),
       },
+      {
+        id: Feature.INTERVENTION_V2,
+        label: "Intervenções V2",
+        description:
+          "A nova versão de intervenções possibilita o novo relatório de farmacoeconomia",
+      },
     ];
   }
 }
