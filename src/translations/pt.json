@@ -499,7 +499,12 @@
     "names": "Nomes",
     "signs": "Sinais",
     "symptoms": "Sintomas",
-    "dialysis": "Diálise"
+    "dialysis": "Diálise",
+    "acesso": "Acesso",
+    "diliexc": "Doenças exclusoras de DILI",
+    "resthid": "Restrição hídrica",
+    "gestante": "Gestante",
+    "germes": "Germes"
   },
 
   "actions": {

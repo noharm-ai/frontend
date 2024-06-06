@@ -495,7 +495,12 @@
     "names": "Names",
     "signs": "Signs",
     "symptoms": "Symptoms",
-    "dialysis": "Dialysis"
+    "dialysis": "Dialysis",
+    "acesso": "Access",
+    "diliexc": "Diseases excluding DILI",
+    "resthid": "Water restriction",
+    "gestante": "Pregnant",
+    "germes": "Germs"
   },
 
   "alerts": {

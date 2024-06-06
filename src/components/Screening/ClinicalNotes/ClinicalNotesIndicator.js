@@ -1,12 +1,20 @@
 const clinicalNotesIndicator = {
   list: (t) => [
     {
+      key: "acesso",
+      label: t("clinicalNotesIndicator.acesso"),
+      value: "acesso",
+      color: "#68FACF",
+      backgroundColor: "#68FACF0A",
+      category: "info",
+    },
+    {
       key: "allergy",
       label: t("clinicalNotesIndicator.allergy"),
       value: "alergia",
       color: "#E65100",
       backgroundColor: "rgba(230, 81, 0, 0.1)",
-      category: "indo",
+      category: "info",
     },
     {
       key: "conduct",
@@ -25,6 +33,14 @@ const clinicalNotesIndicator = {
       category: "info",
     },
     {
+      key: "dialysis",
+      label: t("clinicalNotesIndicator.dialysis"),
+      value: "dialise",
+      color: "#3b3b35",
+      backgroundColor: "rgba(59, 59, 53, 0.1)",
+      category: "info",
+    },
+    {
       key: "diseases",
       label: t("clinicalNotesIndicator.diseases"),
       value: "doencas",
@@ -33,12 +49,36 @@ const clinicalNotesIndicator = {
       category: "priority",
     },
     {
+      key: "diliexc",
+      label: t("clinicalNotesIndicator.diliexc"),
+      value: "diliexc",
+      color: "#9924FA",
+      backgroundColor: "#9924FA0A",
+      category: "info",
+    },
+    {
       key: "complication",
       label: t("clinicalNotesIndicator.complication"),
       value: "complicacoes",
       color: "#e71d36",
       backgroundColor: "rgba(231, 29, 54, 0.1)",
       category: "priority",
+    },
+    {
+      key: "germes",
+      label: t("clinicalNotesIndicator.germes"),
+      value: "germes",
+      color: "#22FA67",
+      backgroundColor: "#22FA670A",
+      category: "info",
+    },
+    {
+      key: "gestante",
+      label: t("clinicalNotesIndicator.gestante"),
+      value: "gestante",
+      color: "#6BC6FA",
+      backgroundColor: "#6BC6FA0A",
+      category: "info",
     },
     {
       key: "medications",
@@ -57,6 +97,14 @@ const clinicalNotesIndicator = {
       category: "info",
     },
     {
+      key: "resthid",
+      label: t("clinicalNotesIndicator.resthid"),
+      value: "resthid",
+      color: "#316DF7",
+      backgroundColor: "#316DF70A",
+      category: "info",
+    },
+    {
       key: "signs",
       label: t("clinicalNotesIndicator.signs"),
       value: "sinais",
@@ -71,14 +119,6 @@ const clinicalNotesIndicator = {
       color: "#43bccd",
       backgroundColor: "rgba(67,188,205, 0.1)",
       category: "priority",
-    },
-    {
-      key: "dialysis",
-      label: t("clinicalNotesIndicator.dialysis"),
-      value: "dialise",
-      color: "#3b3b35",
-      backgroundColor: "rgba(59, 59, 53, 0.1)",
-      category: "info",
     },
   ],
 
