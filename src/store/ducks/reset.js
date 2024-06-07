@@ -7,7 +7,6 @@ import { Creators as OutliersCreators } from "./outliers";
 import { Creators as PatientCentralCreators } from "./patientCentral";
 import { Creators as PrescriptionDrugsCreators } from "./prescriptionDrugs";
 import { Creators as PrescriptionsCreators } from "./prescriptions";
-import { Creators as UserAdminCreators } from "./userAdmin";
 
 import { reset as adminMemoryReset } from "features/admin/Memory/MemorySlice";
 import { reset as adminInterventionReasonsReset } from "features/admin/InterventionReason/InterventionReasonSlice";
@@ -33,6 +32,7 @@ import { reset as prescriptionv2Reset } from "features/prescription/Prescription
 import { reset as drugAttributesFormReset } from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
 import { reset as supportReset } from "features/support/SupportSlice";
 import { reset as interventionOutcomeReset } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import { reset as userAdminReset } from "features/userAdmin/UserAdminSlice";
 
 import { reset as reportsReset } from "features/reports/ReportsSlice";
 import { reset as patientDayReportReset } from "features/reports/PatientDayReport/PatientDayReportSlice";
@@ -52,7 +52,6 @@ const { outliersReset } = OutliersCreators;
 const { patientCentralReset } = PatientCentralCreators;
 const { prescriptionDrugsReset } = PrescriptionDrugsCreators;
 const { prescriptionsReset } = PrescriptionsCreators;
-const { userAdminReset } = UserAdminCreators;
 
 export const resetReduxState = (dispatch) => {
   dispatch(adminInterventionReasonsReset());
@@ -78,7 +77,6 @@ export const resetReduxState = (dispatch) => {
   dispatch(prescriptionDrugsReset());
   dispatch(prescriptionsReset());
   dispatch(reportsReset());
-  dispatch(userAdminReset());
   dispatch(drugFormStatusReset());
   dispatch(listsReset());
   dispatch(memoryDraftReset());
@@ -91,6 +89,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(drugAttributesFormReset());
   dispatch(supportReset());
   dispatch(interventionOutcomeReset());
+  dispatch(userAdminReset());
 
   dispatch(reportsReset());
   dispatch(patientDayReportReset());

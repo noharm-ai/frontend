@@ -68,6 +68,10 @@ const security = (roles) => {
     return hasRole(Role.UNLOCK_CHECKED_PRESCRIPTION);
   };
 
+  const isMaintainer = () => {
+    return hasAnyRole([Role.ADMIN, Role.TRAINING]);
+  };
+
   return {
     hasRole,
     hasAnyRole,
@@ -83,6 +87,7 @@ const security = (roles) => {
     isDoctor,
     isMultiSchema,
     isGetnameEnabled,
+    isMaintainer,
     hasUnlockCheckedPrescription,
   };
 };
