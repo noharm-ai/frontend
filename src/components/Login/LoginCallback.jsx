@@ -31,13 +31,18 @@ export default function LoginCallback({ doLogin, error }) {
         const config = { ...data.data };
 
         if (config.flow === "pkce") {
-          const params = new URLSearchParams({
+          const payload = {
             client_id: config.clientId,
             grant_type: "authorization_code",
             code: authCode,
             redirect_uri: config.redirectUri,
             code_verifier: localStorage.getItem("oauth_verifier"),
-          });
+          };
+          if (config.clientSecret && config.clientSecret !== "") {
+            payload.client_secret = config.clientSecret;
+          }
+
+          const params = new URLSearchParams(payload);
           const response = await axios.post(config.loginUrl, params);
 
           doLogin({

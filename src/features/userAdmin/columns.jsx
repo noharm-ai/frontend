@@ -14,7 +14,7 @@ const columns = (t, dispatch, setUser) => {
     {
       title: "Id Externo",
       dataIndex: "external",
-      width: 100,
+      width: 150,
       ellipsis: true,
     },
     {
