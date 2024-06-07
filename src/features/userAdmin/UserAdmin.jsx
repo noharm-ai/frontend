@@ -73,7 +73,7 @@ export default function UserAdmin() {
     return () => {
       dispatch(reset());
     };
-  }, [dispatch, t]);
+  }, []); //eslint-disable-line
 
   const ds = toDataSource(filterList(list, filter), null, {});
 
