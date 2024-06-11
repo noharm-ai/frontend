@@ -21,7 +21,7 @@ export default function CultureList() {
   };
 
   const handleRowExpand = (record) => {
-    setExpandedRows(updateExpandedRows(expandedRows, record.id));
+    setExpandedRows(updateExpandedRows(expandedRows, record.key));
   };
 
   const toggleExpansion = () => {
@@ -29,7 +29,7 @@ export default function CultureList() {
       setExpandedRows([]);
     } else {
       setExpandedRows(
-        datasource.filter((i) => /^[0-9]*$/g.test(i.id)).map((i) => i.id)
+        datasource.filter((i) => /^[0-9]*$/g.test(i.key)).map((i) => i.key)
       );
     }
   };
@@ -87,6 +87,12 @@ export default function CultureList() {
       render: (_, record) =>
         record.previousResult ? record.previousResult.split("<br>")[0] : "-",
     },
+    {
+      title: "Microorganismo",
+      ellipsis: true,
+      render: (_, record) =>
+        record.microorganism ? record.microorganism : "-",
+    },
   ];
 
   return (
@@ -94,7 +100,7 @@ export default function CultureList() {
       <CardTable
         bordered
         columns={columns}
-        rowKey="id"
+        rowKey="key"
         dataSource={datasource.length === 0 ? [] : datasource}
         footer={() => (
           <div style={{ textAlign: "center" }}>
