@@ -17,6 +17,7 @@ function BaseForm() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const roles = useSelector((state) => state.user.account.roles);
+  const segments = useSelector((state) => state.segments.list);
   const { values, errors, setFieldValue } = useFormikContext();
   const [pwLoading, setPWLoading] = useState(false);
   const security = securityService(roles);
@@ -138,6 +139,29 @@ function BaseForm() {
           {errors.roles && <div className="form-error">{errors.roles}</div>}
         </div>
       )}
+
+      <div className={`form-row ${errors.segments ? "error" : ""}`}>
+        <div className="form-label">
+          <label>{t("userAdminForm.segments")} (Beta):</label>
+        </div>
+        <div className="form-input">
+          <Select
+            id="reason"
+            mode="multiple"
+            optionFilterProp="children"
+            style={{ width: "100%" }}
+            value={values.segments}
+            onChange={(segments) => setFieldValue("segments", segments)}
+          >
+            {segments.map(({ id, description }) => (
+              <Select.Option key={id} value={id}>
+                {description}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+        {errors.segments && <div className="form-error">{errors.segments}</div>}
+      </div>
 
       <div className={`form-row ${errors.active ? "error" : ""}`}>
         <div className="form-label">

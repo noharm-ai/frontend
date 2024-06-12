@@ -474,6 +474,7 @@
     "addIcon": "Add",
     "userEdit": "Change user",
     "roles": "Roles",
+    "segments": "Authorized segments",
 
     "passwordResetWarning": "When changing the email the password will be reset",
     "emailError": "Ops! Invalid email format",

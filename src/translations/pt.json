@@ -477,6 +477,7 @@
     "addIcon": "Adicionar",
     "userEdit": "Alterar usuario",
     "roles": "Permissões",
+    "segments": "Segmentos autorizados",
 
     "passwordResetWarning": "Ao alterar o email a senha será redefinida",
     "emailError": "Ops! Formato de email inválido.",
