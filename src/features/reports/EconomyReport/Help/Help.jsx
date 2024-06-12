@@ -62,7 +62,7 @@ export default function HelpModal() {
           block
           onClick={() =>
             window.open(
-              `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/138`
+              `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/192`
             )
           }
         >
