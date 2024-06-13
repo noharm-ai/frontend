@@ -222,12 +222,24 @@ api.integration.prescalc = (params) => {
   );
 };
 
-api.integration.getTemplate = (params) =>
-  instance.get(`${endpoints.integration}/template`, {
+/**
+ * REMOTE INTEGRATION
+ */
+api.integrationRemote = {};
+api.integrationRemote.getTemplate = (params) =>
+  instance.get(`/admin/integration-remote/template`, {
     params,
     ...setHeaders(),
   });
 
+api.integrationRemote.setProcessorState = (params) =>
+  instance.post(`/admin/integration-remote/set-state`, params, {
+    ...setHeaders(),
+  });
+
+/**
+ * User
+ */
 api.user = {};
 api.user.getResetToken = (params) =>
   instance.post(`/user/reset-token`, params, {

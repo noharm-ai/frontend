@@ -37,6 +37,7 @@ import AdminIntegration from "pages/Admin/Integration";
 import AdminIntegrationStatus from "pages/Admin/IntegrationStatus";
 import AdminIntegrationConfig from "pages/Admin/IntegrationConfig";
 import AdminIntegrationRemote from "pages/Admin/IntegrationRemote";
+import AdminIntegrationRemoteNifi from "pages/Admin/IntegrationRemote/Nifi";
 import AdminSegment from "pages/Admin/Segment";
 import AdminUnitConversion from "pages/Admin/UnitConversion";
 
@@ -282,6 +283,11 @@ const routes = [
     exact: true,
     path: "/admin/integracao/acesso-remoto",
     element: <WithAuth component={AdminIntegrationRemote} />,
+  },
+  {
+    exact: true,
+    path: "/admin/integracao/acesso-remoto/nifi",
+    element: <WithAuth component={AdminIntegrationRemoteNifi} />,
   },
   {
     exact: true,

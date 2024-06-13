@@ -1,18 +1,23 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { List, Skeleton } from "antd";
 import { SettingOutlined, SearchOutlined } from "@ant-design/icons";
 
 import Button from "components/Button";
 import ControllerModal from "./ControllerModal";
 
-export default function ControllersList({ template, templateStatus, loading }) {
+export default function ControllersList() {
+  const status = useSelector((state) => state.admin.integrationRemote.status);
+  const template = useSelector(
+    (state) => state.admin.integrationRemote.template.data
+  );
   const [selectedController, setSelectedController] = useState(null);
 
   return (
     <>
       <List
         className="demo-loadmore-list"
-        loading={loading}
+        loading={status === "loading"}
         itemLayout="horizontal"
         dataSource={template?.flowContents.controllerServices}
         renderItem={(item) => (
@@ -27,7 +32,12 @@ export default function ControllersList({ template, templateStatus, loading }) {
               ></Button>,
             ]}
           >
-            <Skeleton avatar title={false} loading={loading} active>
+            <Skeleton
+              avatar
+              title={false}
+              loading={status === "loading"}
+              active
+            >
               <List.Item.Meta
                 avatar={<SettingOutlined />}
                 title={item.name}

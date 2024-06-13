@@ -1,11 +1,41 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { Tabs } from "antd";
 
 import DefaultModal from "components/Modal";
 import Heading from "components/Heading";
 import Descriptions from "components/Descriptions";
+import Button from "components/Button";
+import notification from "components/notification";
+import { getErrorMessage } from "utils/errorHandler";
+import { setProcessorState, setSelectedNode } from "../IntegrationRemoteSlice";
 
-export default function NodeModal({ data, onCancel }) {
+export default function NodeModal() {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const data = useSelector(
+    (state) => state.admin.integrationRemote.selectedNode
+  );
+
+  const executeSetProcessorState = (state) => {
+    const payload = {
+      idProcessor: data.extra.instanceIdentifier,
+      state,
+    };
+    dispatch(setProcessorState(payload)).then((response) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        notification.success({
+          message: t("success.generic"),
+        });
+      }
+    });
+  };
+
   const items = [
     {
       key: "1",
@@ -59,6 +89,26 @@ export default function NodeModal({ data, onCancel }) {
         </Descriptions>
       ),
     },
+    {
+      key: "4",
+      label: "Acões",
+      children: (
+        <>
+          <Button onClick={() => executeSetProcessorState("STOPPED")}>
+            STOP
+          </Button>
+          <Button onClick={() => executeSetProcessorState("RUNNING")}>
+            RUN
+          </Button>
+          <Button onClick={() => executeSetProcessorState("RUN_ONCE")}>
+            RUN ONCE
+          </Button>
+          <Button onClick={() => executeSetProcessorState("DISABLED")}>
+            DISABLE
+          </Button>
+        </>
+      ),
+    },
   ];
 
   return (
@@ -67,7 +117,7 @@ export default function NodeModal({ data, onCancel }) {
       centered
       destroyOnClose
       open={data}
-      onCancel={onCancel}
+      onCancel={() => dispatch(setSelectedNode(null))}
     >
       <Heading margin="0 0 11px" size="18px">
         {data?.name}
