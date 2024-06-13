@@ -8,6 +8,7 @@ import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from "utils/memory";
+import { getErrorMessageFromException } from "utils/errorHandler";
 
 import Base from "./Base";
 import { FormContainer } from "../Form.style";
@@ -91,10 +92,9 @@ export default function ClinicalNotes({
         }
       })
       .catch((err) => {
-        console.error("error", err);
         notification.error({
           message: t("error.title"),
-          description: t("error.description"),
+          description: getErrorMessageFromException(err, t),
         });
       });
   };

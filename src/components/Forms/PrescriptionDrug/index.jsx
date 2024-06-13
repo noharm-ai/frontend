@@ -9,6 +9,7 @@ import Button from "components/Button";
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
+import { getErrorMessageFromException } from "utils/errorHandler";
 
 import Base from "./Base";
 import BaseNotes from "./BaseNotes";
@@ -87,11 +88,11 @@ export default function PrescriptionDrug({
             message: t("success.generic"),
           });
         })
-        .catch((error) => {
-          console.error(error);
+        .catch((err) => {
+          console.error(err);
           notification.error({
             message: t("error.title"),
-            description: t("error.description"),
+            description: getErrorMessageFromException(err, t),
           });
         });
     }

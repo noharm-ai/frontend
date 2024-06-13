@@ -9,6 +9,7 @@ export default class Feature {
   static CLINICAL_NOTES_NEW_FORMAT = "CLINICAL_NOTES_NEW_FORMAT";
   static PATIENT_REVISION = "PATIENT_REVISION";
   static INTERVENTION_V2 = "INTERVENTION_V2";
+  static AUTHORIZATION_SEGMENT = "AUTHORIZATION_SEGMENT";
 
   static getFeatures(t) {
     return [
@@ -66,6 +67,12 @@ export default class Feature {
         label: "Intervenções V2",
         description:
           "A nova versão de intervenções possibilita o novo relatório de farmacoeconomia",
+      },
+      {
+        id: Feature.AUTHORIZATION_SEGMENT,
+        label: "Autorização por Segmento",
+        description:
+          "Quando ativado, o usuário só conseguirá efetuar ações em segmentos onde tiver autorização. As autorizações são concedidas no cadastro do usuário.",
       },
     ];
   }
