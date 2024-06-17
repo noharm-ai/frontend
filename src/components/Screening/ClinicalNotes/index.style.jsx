@@ -123,7 +123,8 @@ export const Paper = styled.div`
   padding: 25px 25px;
   max-height: 80vh;
   width: 100%;
-  font-size: 18px;
+  font-size: 16px;
+  line-height: 1.2;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(143, 148, 153, 0.8) #ffffff;
@@ -143,6 +144,10 @@ export const Paper = styled.div`
   &.disabled {
     opacity: 0.5;
     overflow-y: hidden;
+  }
+
+  p {
+    margin: 10px 0;
   }
 
   &.annotation-enabled {
