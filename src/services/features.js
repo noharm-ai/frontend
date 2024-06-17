@@ -45,6 +45,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.INTERVENTION_V2);
   };
 
+  const hasAuthorizationSegment = () => {
+    return hasFeature(Feature.AUTHORIZATION_SEGMENT);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
@@ -56,6 +60,7 @@ const FeaturesService = (features) => {
     hasClinicalNotesNewFormat,
     hasPatientRevision,
     hasInterventionV2,
+    hasAuthorizationSegment,
   };
 };
 

@@ -3,7 +3,6 @@ import { combineReducers } from "redux";
 import appReducer from "./app";
 import authReducer from "./auth";
 import userReducer from "./user";
-import userAdminReducer from "./userAdmin";
 import drugsReducer from "./drugs";
 import sessionReducer from "./session";
 import outliersReducer from "./outliers";
@@ -29,6 +28,7 @@ import preferencesSlice from "features/preferences/PreferencesSlice";
 import drugAttributesFormSlice from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
 import supportSlice from "features/support/SupportSlice";
 import interventionOutcomeSlice from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import userAdminSlice from "features/userAdmin/UserAdminSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -82,7 +82,6 @@ export default combineReducers({
   app: appReducer,
   auth: authReducer,
   user: userReducer,
-  users: userAdminReducer,
   drugs: drugsReducer,
   session: sessionReducer,
   outliers: outliersReducer,
@@ -108,4 +107,5 @@ export default combineReducers({
   drugAttributesForm: drugAttributesFormSlice,
   support: supportSlice,
   interventionOutcome: interventionOutcomeSlice,
+  userAdmin: userAdminSlice,
 });

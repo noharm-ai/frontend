@@ -18,6 +18,7 @@ import interventionStatus from "models/InterventionStatus";
 import security from "services/security";
 import FeaturesService from "services/features";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import { getErrorMessageFromException } from "utils/errorHandler";
 
 import Base from "./Base";
 import PatientData from "./PatientData";
@@ -205,11 +206,10 @@ export default function Intervention({
           );
         }
       })
-      .catch((e) => {
-        console.error("intv error", e);
+      .catch((err) => {
         notification.error({
           message: t("error.title"),
-          description: t("error.description"),
+          description: getErrorMessageFromException(err, t),
         });
       });
   };
@@ -263,10 +263,10 @@ export default function Intervention({
           reset();
           select({});
         })
-        .catch(() => {
+        .catch((err) => {
           notification.error({
             message: t("error.title"),
-            description: t("error.description"),
+            description: getErrorMessageFromException(err, t),
           });
         });
     };

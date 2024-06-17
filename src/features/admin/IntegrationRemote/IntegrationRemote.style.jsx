@@ -2,7 +2,8 @@ import styled from "styled-components/macro";
 
 export const GraphContainer = styled.div`
   position: relative;
-  height: calc(100vh - 250px);
+  height: 100%;
+  padding: 1rem;
 
   .action-container {
     position: absolute;

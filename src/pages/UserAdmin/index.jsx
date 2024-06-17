@@ -1,9 +1,6 @@
 import withLayout from "lib/withLayout";
-import UserAdmin from "containers/UserAdmin";
+import UserAdmin from "features/userAdmin/UserAdmin";
 
-const layoutProps = {
-  theme: "boxed",
-  pageTitle: "menu.reg-administration",
-};
+const layoutProps = {};
 
 export default withLayout(UserAdmin, layoutProps);

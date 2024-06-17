@@ -491,11 +491,6 @@ const putMemoryUnique = (bearerToken, { type, ...params }) => {
  * User.
  *
  */
-const createUser = (bearerToken, params = {}) =>
-  instance.put(endpoints.editUser, params, setHeaders(bearerToken));
-
-const updateUser = (bearerToken, { id, ...params }) =>
-  instance.put(`${endpoints.editUser}/${id}`, params, setHeaders(bearerToken));
 
 const updatePassword = (bearerToken, { ...params }) => {
   return instance.put(`${endpoints.user}`, params, setHeaders(bearerToken));
@@ -730,6 +725,16 @@ api.clinicalNotes.removeAnnotation = (params = {}) => {
 };
 
 /**
+ * User admin
+ */
+api.userAdmin = {};
+api.userAdmin.upsertUser = (params = {}) =>
+  instance.post(endpoints.editUser, params, { ...setHeaders() });
+
+api.userAdmin.getUsers = (params = {}) =>
+  instance.get(endpoints.users, { params, ...setHeaders() });
+
+/**
  * API
  * all functions that can be used in API.
  */
@@ -788,8 +793,6 @@ const methods = {
   getClinicalNotes,
   updateClinicalNote,
   createClinicalNote,
-  createUser,
-  updateUser,
   searchUsers,
   savePrescriptionDrug,
   suspendPrescriptionDrug,

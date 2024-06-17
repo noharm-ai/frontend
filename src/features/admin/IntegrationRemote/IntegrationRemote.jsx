@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Spin, Row, Col } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, DeploymentUnitOutlined } from "@ant-design/icons";
 
-import Graph from "./components/Graph";
 import ControllersList from "./components/ControllersList";
 import DiagnosticModal from "./components/DiagnosticsModal";
-import { flatStatuses } from "./transformer";
 import { fetchTemplate, reset } from "./IntegrationRemoteSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import notification from "components/notification";
@@ -20,9 +19,8 @@ import { StatsCard } from "styles/Report.style";
 export default function IntegrationRemote() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const status = useSelector((state) => state.admin.integrationRemote.status);
-  const [template, setTemplate] = useState(null);
-  const [templateStatus, setTemplateStatus] = useState(null);
   const [diagnostics, setDiagnostics] = useState({});
   const [diagnosticsModal, setDiagnosticsModal] = useState(false);
 
@@ -37,10 +35,6 @@ export default function IntegrationRemote() {
           response.payload.data.data.diagnostics?.systemDiagnostics
             ?.aggregateSnapshot
         );
-        setTemplate(response.payload.data.data.template);
-        const flatStatus = {};
-        flatStatuses(response.payload.data.data.status, flatStatus);
-        setTemplateStatus(flatStatus);
       }
     });
 
@@ -74,33 +68,22 @@ export default function IntegrationRemote() {
             Acesso remoto à ferramenta de integração
           </div>
         </div>
+        <div className="page-header-actions">
+          <Button
+            type="primary"
+            icon={<DeploymentUnitOutlined />}
+            onClick={() => navigate("/admin/integracao/acesso-remoto/nifi")}
+          >
+            Acessar Nifi Remoto
+          </Button>
+        </div>
       </PageHeader>
 
       <Row gutter={[24, 24]}>
-        <Col xs={24}>
-          <Spin spinning={status === "loading"}>
-            <PageCard
-              style={{
-                minHeight: "60vh",
-                backgroundSize: "40px 40px",
-                backgroundImage:
-                  "linear-gradient(to right, #fafafa 1px, transparent 1px), linear-gradient(to bottom, #fafafa, 1px, transparent 1px)",
-              }}
-            >
-              {template && templateStatus && (
-                <Graph template={template} templateStatus={templateStatus} />
-              )}
-            </PageCard>
-          </Spin>
-        </Col>
         <Col xs={8}>
           <PageSectionTitle>Controllers</PageSectionTitle>
           <PageCard>
-            <ControllersList
-              template={template}
-              templateStatus={templateStatus}
-              loading={status === "loading"}
-            />
+            <ControllersList />
           </PageCard>
         </Col>
         <Col xs={16}>

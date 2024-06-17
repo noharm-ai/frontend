@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import notification from "components/notification";
+import { getErrorMessage } from "utils/errorHandler";
 
 import { updateAllDrugForms, setDrugFormList } from "./DrugFormStatusSlice";
 
@@ -76,20 +77,9 @@ function DrugFormStatus({ title, template }) {
 
     dispatch(updateAllDrugForms(pdList)).then((response) => {
       if (response.error) {
-        if (response.payload?.code) {
-          notification.error({
-            message: t(response.payload.code),
-          });
-        } else if (response.payload?.message) {
-          notification.error({
-            message: response.payload.message,
-          });
-        } else {
-          notification.error({
-            message: t("errors.generic"),
-          });
-        }
-        console.error(response);
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
       } else {
         dispatch(setDrugFormList(pdList));
         notification.success({

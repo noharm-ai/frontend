@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 
@@ -6,14 +7,26 @@ import { EChartBase } from "components/EChartBase";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import NodeModal from "./NodeModal";
-
 import { GraphContainer } from "../IntegrationRemote.style";
+import { setSelectedNode } from "../IntegrationRemoteSlice";
 
-export default function Graph({ template, templateStatus, isLoading }) {
-  const [selectedNode, setSelectedNode] = useState(null);
+export default function Graph() {
+  const dispatch = useDispatch();
+  const status = useSelector((state) => state.admin.integrationRemote.status);
+  const template = useSelector(
+    (state) => state.admin.integrationRemote.template.data
+  );
+  const templateStatus = useSelector(
+    (state) => state.admin.integrationRemote.template.status
+  );
+
   const [group, setGroup] = useState([]);
   const [internalLoading, setInternalLoading] = useState(false);
   const currentGroup = group.length ? group[group.length - 1] : null;
+
+  if (!template) {
+    return null;
+  }
 
   const nodes = currentGroup
     ? currentGroup.processors.concat(currentGroup.processGroups)
@@ -118,7 +131,7 @@ export default function Graph({ template, templateStatus, isLoading }) {
         setInternalLoading(false);
       }, 500);
     } else {
-      setSelectedNode(evt.data);
+      dispatch(setSelectedNode(evt.data));
     }
   };
 
@@ -129,13 +142,13 @@ export default function Graph({ template, templateStatus, isLoading }) {
           <EChartBase
             option={chartOptions}
             style={{ height: "100%" }}
-            loading={isLoading || internalLoading}
+            loading={status === "loading" || internalLoading}
             onClick={onClick}
           />
         )}
       </Spin>
 
-      <NodeModal data={selectedNode} onCancel={() => setSelectedNode(null)} />
+      <NodeModal />
       <div className="action-container">
         <Tooltip title="Voltar ao nível anterior">
           <Button

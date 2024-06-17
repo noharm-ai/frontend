@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 
 import notification from "components/notification";
 import CustomForm from "components/Forms/CustomForm";
+import { getErrorMessageFromException } from "utils/errorHandler";
 
 import { updateDrugForm } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 
@@ -49,7 +50,7 @@ export default function DrugForm({
         console.error("err", err);
         notification.error({
           message: t("error.title"),
-          description: t("error.description"),
+          description: getErrorMessageFromException(err, t),
         });
       });
   };

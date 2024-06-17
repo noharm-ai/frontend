@@ -247,7 +247,7 @@ export const savePrescriptionThunk =
         .catch(errorHandler);
 
       if (!isEmpty(error)) {
-        dispatch(prescriptionsSaveError(error));
+        dispatch(prescriptionsSaveError(null));
         reject(error);
         return;
       }

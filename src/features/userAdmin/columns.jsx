@@ -1,26 +1,31 @@
 import React from "react";
 import { EditOutlined } from "@ant-design/icons";
 
-import Tag from "components/Tag";
-import Tooltip from "components/Tooltip";
 import Button from "components/Button";
+import Tooltip from "components/Tooltip";
+import Tag from "components/Tag";
 
-const enableSortUsers = (bool, t) => {
-  const columns = [];
+const columns = (t, dispatch, setUser) => {
+  const openForm = (record) => {
+    dispatch(setUser(record));
+  };
 
   return [
-    ...columns,
     {
       title: "Id Externo",
       dataIndex: "external",
+      width: 150,
+      ellipsis: true,
     },
     {
       title: "Nome",
       dataIndex: "name",
+      align: "left",
       width: 350,
     },
     {
       title: "Email",
+      align: "left",
       dataIndex: "email",
     },
     {
@@ -34,17 +39,17 @@ const enableSortUsers = (bool, t) => {
       ),
     },
     {
-      title: "Ações",
+      title: t("tableHeader.action"),
       key: "operations",
       width: 70,
       align: "center",
       render: (text, record) => {
         return (
-          <Tooltip title={t("userAdminForm.userEdit")}>
+          <Tooltip title="Editar">
             <Button
-              type="primary gtm-bt-view-exam"
-              onClick={() => record.showModal(record)}
+              type="primary"
               icon={<EditOutlined />}
+              onClick={() => openForm(record)}
             ></Button>
           </Tooltip>
         );
@@ -52,4 +57,5 @@ const enableSortUsers = (bool, t) => {
     },
   ];
 };
-export default enableSortUsers;
+
+export default columns;

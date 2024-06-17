@@ -126,13 +126,12 @@ export const saveSegmentExamThunk =
     return new Promise(async (resolve, reject) => {
       dispatch(segmentsSaveExamStart());
       const { access_token } = getState().auth.identify;
-      const { status, error } = await api.updateSegmentExam(
-        access_token,
-        params
-      );
+      const { error } = await api
+        .updateSegmentExam(access_token, params)
+        .catch(errorHandler);
 
-      if (status !== 200) {
-        dispatch(segmentsSaveExamError(error));
+      if (!isEmpty(error)) {
+        dispatch(segmentsSaveExamError(null));
         reject(error);
         return;
       }
