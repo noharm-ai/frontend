@@ -24,7 +24,7 @@ export function actionTypeToDescription(actionType) {
     case "CLEAR_QUEUE":
       return "Limpar fila";
     case "LIST_QUEUE":
-      return "Visualizar fila";
+      return "Solicitar fila";
     case "CLEAR_STATE":
       return "Limpar estado";
     case "TERMINATE_PROCESS":

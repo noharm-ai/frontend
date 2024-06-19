@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Tabs, List } from "antd";
+import { Tabs, List, Alert } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 
 import DefaultModal from "components/Modal";
@@ -107,28 +107,6 @@ export default function QueueModal({ data, onCancel }) {
           <Descriptions.Item label="Código" span={3}>
             {data?.responseCode}
           </Descriptions.Item>
-          {data?.responseCode === 202 && (
-            <>
-              <Descriptions.Item label="Status" span={3}>
-                Resposta assíncrona. Você deve utilizar o botão abaixo para
-                solicitar a resposta.
-              </Descriptions.Item>
-              <Descriptions.Item label="Ação" span={3}>
-                <Button
-                  loading={activeAction === "CUSTOM_CALLBACK"}
-                  onClick={() =>
-                    executeCustomEndpointState(
-                      data?.response.listingRequest?.uri,
-                      "GET",
-                      "Solicitar fila"
-                    )
-                  }
-                >
-                  Solicitar resposta
-                </Button>
-              </Descriptions.Item>
-            </>
-          )}
 
           <Descriptions.Item label="Resposta" span={3}>
             <Textarea
@@ -200,7 +178,38 @@ export default function QueueModal({ data, onCancel }) {
         {actionTypeToDescription(data?.extra?.type)}
       </Heading>
 
-      <Tabs defaultActiveKey="1" items={items} />
+      {data?.responseCode === 202 && (
+        <Alert
+          message="Resposta assíncrona"
+          description="Você deve utilizar o botão ao lado para fazer uma nova solicitação para trazer o conteúdo"
+          type="warning"
+          action={
+            <Button
+              type="primary"
+              loading={activeAction === "CUSTOM_CALLBACK"}
+              onClick={() =>
+                executeCustomEndpointState(
+                  data?.response.listingRequest?.uri,
+                  "GET",
+                  "Visualizar fila"
+                )
+              }
+            >
+              Solicitar resposta
+            </Button>
+          }
+        />
+      )}
+
+      <Tabs
+        defaultActiveKey={
+          data?.responseCode === 200 &&
+          data?.response?.listingRequest?.flowFileSummaries
+            ? "3"
+            : "1"
+        }
+        items={items}
+      />
     </DefaultModal>
   );
 }

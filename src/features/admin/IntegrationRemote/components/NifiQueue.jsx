@@ -6,6 +6,7 @@ import {
   LoadingOutlined,
   CloseOutlined,
   SearchOutlined,
+  ExclamationOutlined,
 } from "@ant-design/icons";
 import { Skeleton, List, Avatar, Drawer, notification } from "antd";
 
@@ -59,9 +60,12 @@ export default function NifiQueue() {
     if (!item.responseCode) {
       icon = <LoadingOutlined />;
       color = "rgba(0, 0, 0, 0.25)";
-    } else if (item.responseCode === 200 || item.responseCode === 202) {
+    } else if (item.responseCode === 200) {
       icon = <CheckOutlined />;
       color = "#7ebe9a";
+    } else if (item.responseCode === 202) {
+      icon = <ExclamationOutlined />;
+      color = "#faad14";
     } else {
       icon = <CloseOutlined />;
       color = "#ff4d4f";

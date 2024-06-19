@@ -184,41 +184,33 @@ export default function NodeModal() {
                 {data?.extra?.destination?.name}
               </Descriptions.Item>
               <Descriptions.Item label="Fila" span={3}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <div>{data?.status?.queued}</div>
-                  <div>
-                    <Space>
+                <div>
+                  <Space>
+                    <div>{data?.status?.queued}</div>
+                    <Button
+                      icon={<SearchOutlined />}
+                      loading={activeAction === "LIST_QUEUE"}
+                      onClick={() => executeAction("LIST_QUEUE")}
+                    >
+                      Visualizar fila
+                    </Button>
+                    <Popconfirm
+                      key="clearState"
+                      title="Limpar fila"
+                      description="Esta ação remove todos os registros da fila. Confirma?"
+                      okText="Sim"
+                      cancelText="Não"
+                      onConfirm={() => executeAction("CLEAR_QUEUE")}
+                    >
                       <Button
-                        icon={<SearchOutlined />}
-                        loading={activeAction === "LIST_QUEUE"}
-                        onClick={() => executeAction("LIST_QUEUE")}
+                        icon={<DeleteOutlined />}
+                        loading={activeAction === "CLEAR_QUEUE"}
+                        danger
                       >
-                        Visualizar fila
+                        Limpar fila
                       </Button>
-                      <Popconfirm
-                        key="clearState"
-                        title="Limpar fila"
-                        description="Esta ação remove todos os registros da fila. Confirma?"
-                        okText="Sim"
-                        cancelText="Não"
-                        onConfirm={() => executeAction("CLEAR_QUEUE")}
-                      >
-                        <Button
-                          icon={<DeleteOutlined />}
-                          loading={activeAction === "CLEAR_QUEUE"}
-                          danger
-                        >
-                          Limpar fila
-                        </Button>
-                      </Popconfirm>
-                    </Space>
-                  </div>
+                    </Popconfirm>
+                  </Space>
                 </div>
               </Descriptions.Item>
             </>
