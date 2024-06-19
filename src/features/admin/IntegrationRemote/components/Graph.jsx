@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Spin } from "antd";
+import { ArrowLeftOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import { Spin, FloatButton } from "antd";
 
 import { EChartBase } from "components/EChartBase";
-import Button from "components/Button";
 import Tooltip from "components/Tooltip";
+import Tag from "components/Tag";
 import NodeModal from "./NodeModal";
 import { GraphContainer } from "../IntegrationRemote.style";
-import { setSelectedNode } from "../IntegrationRemoteSlice";
+import { setSelectedNode, setQueueDrawer } from "../IntegrationRemoteSlice";
 
 export default function Graph() {
   const dispatch = useDispatch();
@@ -149,18 +149,20 @@ export default function Graph() {
       </Spin>
 
       <NodeModal />
-      <div className="action-container">
-        <Tooltip title="Voltar ao nível anterior">
-          <Button
-            shape="circle"
-            type="primary"
-            icon={<ArrowLeftOutlined />}
-            size="large"
-            onClick={() => goBack()}
-            disabled={group.length === 0}
-          ></Button>
-        </Tooltip>
+      <div className="schema">
+        <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
       </div>
+      <FloatButton.Group shape="circle" style={{ right: 24 }}>
+        <Tooltip title="Fila de ações">
+          <FloatButton
+            icon={<UnorderedListOutlined />}
+            onClick={() => dispatch(setQueueDrawer(true))}
+          />
+        </Tooltip>
+        <Tooltip title="Voltar ao nível anterior">
+          <FloatButton icon={<ArrowLeftOutlined />} onClick={() => goBack()} />
+        </Tooltip>
+      </FloatButton.Group>
     </GraphContainer>
   );
 }

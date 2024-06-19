@@ -232,8 +232,14 @@ api.integrationRemote.getTemplate = (params) =>
     ...setHeaders(),
   });
 
-api.integrationRemote.setProcessorState = (params) =>
-  instance.post(`/admin/integration-remote/set-state`, params, {
+api.integrationRemote.getQueueStatus = (params) =>
+  instance.get(`/admin/integration-remote/queue-status`, {
+    params,
+    ...setHeaders(),
+  });
+
+api.integrationRemote.pushQueueRequest = (params) =>
+  instance.post(`/admin/integration-remote/push-queue-request`, params, {
     ...setHeaders(),
   });
 

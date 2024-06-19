@@ -16,4 +16,18 @@ export const GraphContainer = styled.div`
     width: 100%;
     height: 100%;
   }
+
+  .schema {
+    position: absolute;
+    top: 2.5rem;
+    left: 1.3rem;
+  }
+`;
+
+export const NifiQueueContainer = styled.div`
+  position: absolute;
+  right: 0;
+  bottom: 5rem;
+  height: 5rem;
+  width: 300px;
 `;

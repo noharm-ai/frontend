@@ -7,6 +7,7 @@ import { fetchTemplate, reset } from "./IntegrationRemoteSlice";
 import Graph from "./components/Graph";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
+import NifiQueue from "./components/NifiQueue";
 
 export default function Nifi() {
   const { t } = useTranslation();
@@ -39,6 +40,8 @@ export default function Nifi() {
         }}
       >
         <Graph />
+
+        <NifiQueue />
       </div>
     </Spin>
   );
