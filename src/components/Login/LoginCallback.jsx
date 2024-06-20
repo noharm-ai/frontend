@@ -52,7 +52,7 @@ export default function LoginCallback({ doLogin, error }) {
         } else {
           doLogin({
             schema,
-            code: idToken,
+            code: idToken ?? authCode,
           });
         }
       } catch (e) {
