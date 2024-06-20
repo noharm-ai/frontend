@@ -536,7 +536,7 @@ export default function InterventionOutcomeForm() {
                       setFieldValue("economyDayAmount", value)
                     }
                     value={values.economyDayAmount}
-                    min={0}
+                    min={1}
                   />
                 ) : (
                   <Input
@@ -554,7 +554,7 @@ export default function InterventionOutcomeForm() {
                   onChange={(e) => {
                     setFieldValue("economyDayAmountManual", e.target.checked);
                     if (e.target.checked) {
-                      setFieldValue("economyDayAmount", 0);
+                      setFieldValue("economyDayAmount", 1);
                     } else {
                       setFieldValue("economyDayAmount", null);
                     }
