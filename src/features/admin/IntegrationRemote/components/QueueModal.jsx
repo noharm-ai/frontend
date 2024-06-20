@@ -23,7 +23,7 @@ export default function QueueModal({ data, onCancel }) {
     (state) => state.admin.integrationRemote.pushQueueRequest.activeAction
   );
 
-  const executeCustomEndpointState = (endpoint, method, entity) => {
+  const executeCustomEndpointState = (endpoint, method) => {
     if (!endpoint) {
       notification.error({
         message: "Endpoint não encontrado",
@@ -35,7 +35,7 @@ export default function QueueModal({ data, onCancel }) {
       endpoint: endpoint.replace(/http.*\/nifi-api/, "nifi-api"),
       method,
       actionType: "CUSTOM_CALLBACK",
-      entity,
+      entity: data?.extra?.entity,
       idProcessor: 0,
       componentType: null,
     };
@@ -144,8 +144,7 @@ export default function QueueModal({ data, onCancel }) {
                         onClick={() =>
                           executeCustomEndpointState(
                             item.uri + "/content",
-                            "GET",
-                            "Download flowfile"
+                            "GET"
                           )
                         }
                       ></Button>
@@ -178,7 +177,7 @@ export default function QueueModal({ data, onCancel }) {
         {actionTypeToDescription(data?.extra?.type)}
       </Heading>
 
-      {data?.responseCode === 202 && (
+      {data?.responseCode === 202 && data.response?.listingRequest && (
         <Alert
           message="Resposta assíncrona"
           description="Você deve utilizar o botão ao lado para fazer uma nova solicitação para trazer o conteúdo"
@@ -190,14 +189,21 @@ export default function QueueModal({ data, onCancel }) {
               onClick={() =>
                 executeCustomEndpointState(
                   data?.response.listingRequest?.uri,
-                  "GET",
-                  "Visualizar fila"
+                  "GET"
                 )
               }
             >
               Solicitar resposta
             </Button>
           }
+        />
+      )}
+
+      {data?.responseCode === 202 && data.response?.dropRequest && (
+        <Alert
+          message="Resposta assíncrona"
+          description="Atualiza a fila para garantir que a operação foi efetuada com sucesso."
+          type="info"
         />
       )}
 

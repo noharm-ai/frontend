@@ -192,7 +192,7 @@ export default function NodeModal() {
                       loading={activeAction === "LIST_QUEUE"}
                       onClick={() => executeAction("LIST_QUEUE")}
                     >
-                      Visualizar fila
+                      Solicitar fila
                     </Button>
                     <Popconfirm
                       key="clearState"

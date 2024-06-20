@@ -7,6 +7,8 @@ import {
   CloseOutlined,
   SearchOutlined,
   ExclamationOutlined,
+  DownloadOutlined,
+  TableOutlined,
 } from "@ant-design/icons";
 import { Skeleton, List, Avatar, Drawer, notification } from "antd";
 
@@ -56,6 +58,7 @@ export default function NifiQueue() {
   const QueueAvatar = ({ item }) => {
     let icon = null;
     let color = null;
+    let title = actionTypeToDescription(item.extra?.type);
 
     if (!item.responseCode) {
       icon = <LoadingOutlined />;
@@ -63,6 +66,16 @@ export default function NifiQueue() {
     } else if (item.responseCode === 200) {
       icon = <CheckOutlined />;
       color = "#7ebe9a";
+
+      if (item?.response?.listingRequest?.flowFileSummaries) {
+        icon = <TableOutlined />;
+        title = "Visualizar fila";
+      }
+
+      if (item.url.indexOf("/content") !== -1) {
+        icon = <DownloadOutlined />;
+        title = "Download flowfile";
+      }
     } else if (item.responseCode === 202) {
       icon = <ExclamationOutlined />;
       color = "#faad14";
@@ -81,7 +94,7 @@ export default function NifiQueue() {
             {item.extra?.entity}
           </>
         }
-        title={actionTypeToDescription(item.extra?.type)}
+        title={title}
       />
     );
   };
