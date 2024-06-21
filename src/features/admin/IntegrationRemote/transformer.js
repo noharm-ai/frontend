@@ -14,3 +14,24 @@ export function flatStatuses(obj, result = {}) {
     }
   }
 }
+
+export function actionTypeToDescription(actionType) {
+  switch (actionType) {
+    case "SET_STATE":
+      return "Alterar status";
+    case "REFRESH_STATE":
+      return "Atualizar";
+    case "CLEAR_QUEUE":
+      return "Limpar fila";
+    case "LIST_QUEUE":
+      return "Solicitar fila";
+    case "CLEAR_STATE":
+      return "Limpar estado";
+    case "TERMINATE_PROCESS":
+      return "Terminate process";
+    case "CUSTOM_CALLBACK":
+      return "Callback";
+    default:
+      return actionType;
+  }
+}

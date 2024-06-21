@@ -54,6 +54,7 @@ export default function ControllerModal({ data, onCancel }) {
       destroyOnClose
       open={data}
       onCancel={onCancel}
+      footer={null}
     >
       <Heading margin="0 0 11px" size="18px">
         {data?.name}

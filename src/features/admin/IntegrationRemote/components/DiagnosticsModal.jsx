@@ -70,6 +70,7 @@ export default function DiagnosticModal({ data, open, setOpen }) {
       destroyOnClose
       open={open}
       onCancel={() => setOpen(false)}
+      footer={null}
     >
       <Heading margin="0 0 11px" size="18px">
         Diagnóstico

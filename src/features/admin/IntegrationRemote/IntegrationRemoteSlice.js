@@ -6,13 +6,20 @@ const initialState = {
   list: [],
   status: "idle",
   error: null,
-  queue: [],
   template: {
     data: null,
     status: null,
     date: null,
   },
   selectedNode: null,
+  queue: {
+    list: [],
+    status: "idle",
+    drawer: false,
+  },
+  pushQueueRequest: {
+    activeAction: null,
+  },
 };
 
 export const fetchTemplate = createAsyncThunk(
@@ -28,11 +35,24 @@ export const fetchTemplate = createAsyncThunk(
   }
 );
 
-export const setProcessorState = createAsyncThunk(
-  "integration-remote/set-state",
+export const pushQueueRequest = createAsyncThunk(
+  "integration-remote/push-queue-request",
   async (params, thunkAPI) => {
     try {
-      const response = await api.integrationRemote.setProcessorState(params);
+      const response = await api.integrationRemote.pushQueueRequest(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getQueueStatus = createAsyncThunk(
+  "integration-remote/get-queue-stats",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.integrationRemote.getQueueStatus(params);
 
       return response;
     } catch (err) {
@@ -51,6 +71,9 @@ const integrationRemoteSlice = createSlice({
     setSelectedNode(state, action) {
       state.selectedNode = action.payload;
     },
+    setQueueDrawer(state, action) {
+      state.queue.drawer = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -64,25 +87,64 @@ const integrationRemoteSlice = createSlice({
         flatStatuses(action.payload.data.data.status, flatStatus);
         state.template.status = flatStatus;
         state.template.date = action.payload.data.data.updatedAt;
+        state.queue.list = action.payload.data.data.queue;
       })
       .addCase(fetchTemplate.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
-      .addCase(setProcessorState.pending, (state, action) => {
-        state.status = "loading";
+      .addCase(pushQueueRequest.pending, (state, action) => {
+        state.pushQueueRequest.activeAction = action.meta.arg.actionType;
       })
-      .addCase(setProcessorState.fulfilled, (state, action) => {
+      .addCase(pushQueueRequest.fulfilled, (state, action) => {
+        state.pushQueueRequest.activeAction = null;
+        state.queue.list = [action.payload.data.data, ...state.queue.list];
+      })
+      .addCase(pushQueueRequest.rejected, (state, action) => {
+        state.pushQueueRequest.activeAction = null;
+      })
+      .addCase(getQueueStatus.pending, (state, action) => {
+        state.queue.status = "loading";
+      })
+      .addCase(getQueueStatus.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.queue.push(action.payload.data.data);
+        const result = action.payload.data.data;
+
+        result.forEach((item) => {
+          if (item.responseCode) {
+            const index = state.queue.list.findIndex((i) => i.id === item.id);
+
+            if (index !== -1) {
+              state.queue.list[index] = { ...item };
+
+              //update status
+              if (
+                item.responseCode === 200 &&
+                state.template.status.hasOwnProperty(item.response?.id)
+              ) {
+                const newStatus = item.response.status?.aggregateSnapshot;
+                if (newStatus) {
+                  state.template.status[item.response?.id] = newStatus;
+
+                  if (
+                    state.selectedNode?.extra?.instanceIdentifier ===
+                    item.response?.id
+                  ) {
+                    state.selectedNode.status = newStatus;
+                  }
+                }
+              }
+            }
+          }
+        });
       })
-      .addCase(setProcessorState.rejected, (state, action) => {
+      .addCase(getQueueStatus.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
       });
   },
 });
 
-export const { reset, setSelectedNode } = integrationRemoteSlice.actions;
+export const { reset, setSelectedNode, setQueueDrawer } =
+  integrationRemoteSlice.actions;
 
 export default integrationRemoteSlice.reducer;
