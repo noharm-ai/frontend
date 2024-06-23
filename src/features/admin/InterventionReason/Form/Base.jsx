@@ -116,7 +116,7 @@ function BaseForm() {
         }`}
       >
         <div className="form-label">
-          <label>{t("labels.suspension")}:</label>
+          <label>Tipo economia Suspensão:</label>
         </div>
         <div className="form-input">
           <Switch
@@ -141,7 +141,7 @@ function BaseForm() {
         }`}
       >
         <div className="form-label">
-          <label>{t("labels.substitution")}:</label>
+          <label>Tipo economia Substituição:</label>
         </div>
         <div className="form-input">
           <Switch
@@ -159,6 +159,33 @@ function BaseForm() {
         </div>
         {errors.substitution && touched.substitution && (
           <div className="form-error">{errors.substitution}</div>
+        )}
+      </div>
+
+      <div
+        className={`form-row ${
+          errors.customEconomy && touched.customEconomy ? "error" : ""
+        }`}
+      >
+        <div className="form-label">
+          <label>Tipo economia Customizado:</label>
+        </div>
+        <div className="form-input">
+          <Switch
+            id="customEconomy"
+            name="customEconomy"
+            checked={values.customEconomy}
+            onChange={(value) => setFieldValue("customEconomy", value)}
+            onBlur={handleBlur}
+            status={
+              errors.customEconomy && touched.customEconomy ? "error" : null
+            }
+            checkedChildren={t("labels.yes")}
+            unCheckedChildren={t("labels.no")}
+          />
+        </div>
+        {errors.customEconomy && touched.customEconomy && (
+          <div className="form-error">{errors.customEconomy}</div>
         )}
       </div>
 
