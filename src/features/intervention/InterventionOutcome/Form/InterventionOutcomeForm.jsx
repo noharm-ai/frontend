@@ -583,30 +583,43 @@ export default function InterventionOutcomeForm() {
           </div>
 
           {outcomeData?.header?.readonly && (
-            <div className={`form-row`}>
-              <div className="form-label">
-                <label>Período total de economia:</label>
+            <>
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>Período total de economia:</label>
+                </div>
+                <div className="form-value">
+                  De{" "}
+                  <strong>
+                    {formatDate(outcomeData?.header?.economyIniDate)}
+                  </strong>{" "}
+                  até{" "}
+                  <strong>
+                    {outcomeData?.header?.economyEndDate ? (
+                      formatDate(outcomeData?.header?.economyEndDate)
+                    ) : (
+                      <Tooltip
+                        underline
+                        title="Período de economia ainda não possui data de encerramento"
+                      >
+                        Em aberto
+                      </Tooltip>
+                    )}
+                  </strong>
+                </div>
               </div>
-              <div className="form-value">
-                De{" "}
-                <strong>
-                  {formatDate(outcomeData?.header?.economyIniDate)}
-                </strong>{" "}
-                até{" "}
-                <strong>
-                  {outcomeData?.header?.economyEndDate ? (
-                    formatDate(outcomeData?.header?.economyEndDate)
-                  ) : (
-                    <Tooltip
-                      underline
-                      title="Período de economia ainda não possui data de encerramento"
-                    >
-                      Em aberto
-                    </Tooltip>
-                  )}
-                </strong>
-              </div>
-            </div>
+              {outcomeData?.header?.outcomeUser && (
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Responsável pelo desfecho:</label>
+                  </div>
+                  <div className="form-value">
+                    {outcomeData?.header?.outcomeUser} em{" "}
+                    {formatDate(outcomeData?.header.outcomeAt)}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

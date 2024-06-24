@@ -316,7 +316,7 @@ export default function InterventionOutcome({ ...props }) {
               ></Alert>
               {selectedIntervention.reportUpdatedAt &&
                 selectedIntervention.reportUpdatedAt <
-                  outcomeData?.header?.updatedAt && (
+                  outcomeData?.header?.outcomeAt && (
                   <Alert
                     type="warning"
                     showIcon
