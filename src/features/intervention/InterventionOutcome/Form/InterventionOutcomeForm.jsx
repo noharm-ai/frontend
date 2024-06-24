@@ -35,6 +35,11 @@ export default function InterventionOutcomeForm() {
   const securityService = SecurityService(roles);
   const costPerDayHint =
     "(Dose dispensada X Custo + Custo Kit) X Frequência/Dia";
+  const economyDaysHint = {
+    1: "Até a data de alta",
+    2: "Enquanto prescrito",
+    3: "Especificar",
+  };
 
   const onChangePrescriptionDestiny = (value) => {
     setFieldValue("idPrescriptionDrugDestiny", value);
@@ -164,7 +169,7 @@ export default function InterventionOutcomeForm() {
     return null;
   }
 
-  if (outcomeData.header?.patient || !outcomeData.header?.economyType) {
+  if (!outcomeData.header?.economyType) {
     return <p>Confirma esta ação?</p>;
   }
 
@@ -179,7 +184,11 @@ export default function InterventionOutcomeForm() {
             <div className="form-label">
               <label className="main-label">Origem:</label>
             </div>
-            <div className="form-value">{outcomeData.header.originDrug}</div>
+            <div className="form-value">
+              {outcomeData.header?.patient
+                ? "Intervenção no paciente"
+                : outcomeData.header.originDrug}
+            </div>
           </div>
         </Col>
         {outcomeData.header?.economyType === 2 && (
@@ -202,14 +211,19 @@ export default function InterventionOutcomeForm() {
       <Row gutter={24}>
         <Col xs={outcomeData.header?.economyType === 2 ? 12 : 24}>
           <div style={{ padding: "1rem" }}>
-            {outcomeData.header?.economyType === 1 && (
-              <div className={`form-row`}>
-                <div className="form-label">
-                  <label>Tipo:</label>
+            {outcomeData.header?.economyType === 1 ||
+              (outcomeData.header?.economyType === 3 && (
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Tipo:</label>
+                  </div>
+                  <div className="form-value">
+                    {outcomeData.header?.economyType === 1
+                      ? "Suspensão"
+                      : "Economia customizada"}
+                  </div>
                 </div>
-                <div className="form-value">Suspensão</div>
-              </div>
-            )}
+              ))}
 
             <div className={`form-row`}>
               <div className="form-label">
@@ -247,67 +261,68 @@ export default function InterventionOutcomeForm() {
               </div>
             </div>
 
-            {outcomeData.header?.economyType !== null && (
-              <>
-                <div className={`form-row`}>
-                  <div className="form-label">
-                    <label>
-                      <Tooltip underline title={costPerDayHint}>
-                        Custo por dia:
-                      </Tooltip>
-                    </label>
-                  </div>
-                  <div className="form-input">
-                    <Space direction="horizontal">
-                      <InputNumber
-                        disabled
-                        precision={INPUT_PRECISION}
-                        addonBefore="R$"
-                        value={Big(values.origin.pricePerDose || 0).times(
-                          Big(values.origin.frequencyDay || 0)
-                        )}
-                        className={pricePerDayStatus("origin")}
-                      />
-                      <Tooltip title={details ? "Recolher" : "Detalhar"}>
-                        <Button
-                          icon={
-                            details ? (
-                              <CaretUpOutlined />
-                            ) : (
-                              <CaretDownOutlined />
-                            )
-                          }
-                          shape="circle"
-                          onClick={() => setDetails(!details)}
+            {outcomeData.header?.economyType !== null &&
+              outcomeData.header?.economyType !== 3 && (
+                <>
+                  <div className={`form-row`}>
+                    <div className="form-label">
+                      <label>
+                        <Tooltip underline title={costPerDayHint}>
+                          Custo por dia:
+                        </Tooltip>
+                      </label>
+                    </div>
+                    <div className="form-input">
+                      <Space direction="horizontal">
+                        <InputNumber
+                          disabled
+                          precision={INPUT_PRECISION}
+                          addonBefore="R$"
+                          value={Big(values.origin.pricePerDose || 0).times(
+                            Big(values.origin.frequencyDay || 0)
+                          )}
+                          className={pricePerDayStatus("origin")}
                         />
-                      </Tooltip>
-                    </Space>
+                        <Tooltip title={details ? "Recolher" : "Detalhar"}>
+                          <Button
+                            icon={
+                              details ? (
+                                <CaretUpOutlined />
+                              ) : (
+                                <CaretDownOutlined />
+                              )
+                            }
+                            shape="circle"
+                            onClick={() => setDetails(!details)}
+                          />
+                        </Tooltip>
+                      </Space>
+                    </div>
                   </div>
-                </div>
 
-                <div className={`collapsible ${details ? "visible" : ""}`}>
-                  <EconomyDayCalculator
-                    values={values}
-                    errors={errors}
-                    touched={touched}
-                    setFieldValue={setFieldValue}
-                    outcomeData={{
-                      header: outcomeData.header,
-                      origin: outcomeData.original.origin,
-                      destiny: outcomeData.original.destiny
-                        ? outcomeData.original.destiny.find(
-                            (i) =>
-                              i.item?.idPrescriptionDrug ===
-                              values.idPrescriptionDrugDestiny
-                          )
-                        : null,
-                    }}
-                    source="origin"
-                    calcEconomyDay={calcEconomyDay}
-                  />
-                </div>
-              </>
-            )}
+                  <div className={`collapsible ${details ? "visible" : ""}`}>
+                    <EconomyDayCalculator
+                      values={values}
+                      errors={errors}
+                      touched={touched}
+                      setFieldValue={setFieldValue}
+                      outcomeData={{
+                        header: outcomeData.header,
+                        origin: outcomeData.original.origin,
+                        destiny: outcomeData.original.destiny
+                          ? outcomeData.original.destiny.find(
+                              (i) =>
+                                i.item?.idPrescriptionDrug ===
+                                values.idPrescriptionDrugDestiny
+                            )
+                          : null,
+                      }}
+                      source="origin"
+                      calcEconomyDay={calcEconomyDay}
+                    />
+                  </div>
+                </>
+              )}
           </div>
         </Col>
 
@@ -542,9 +557,9 @@ export default function InterventionOutcomeForm() {
                   <Input
                     disabled={true}
                     value={
-                      outcomeData?.header?.economyType === 1
-                        ? `Até a data de alta`
-                        : "Enquanto prescrito"
+                      economyDaysHint[outcomeData?.header?.economyType]
+                        ? economyDaysHint[outcomeData?.header?.economyType]
+                        : ""
                     }
                   />
                 )}
