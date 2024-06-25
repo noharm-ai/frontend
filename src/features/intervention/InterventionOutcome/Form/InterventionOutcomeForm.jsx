@@ -211,19 +211,19 @@ export default function InterventionOutcomeForm() {
       <Row gutter={24}>
         <Col xs={outcomeData.header?.economyType === 2 ? 12 : 24}>
           <div style={{ padding: "1rem" }}>
-            {outcomeData.header?.economyType === 1 ||
-              (outcomeData.header?.economyType === 3 && (
-                <div className={`form-row`}>
-                  <div className="form-label">
-                    <label>Tipo:</label>
-                  </div>
-                  <div className="form-value">
-                    {outcomeData.header?.economyType === 1
-                      ? "Suspensão"
-                      : "Economia customizada"}
-                  </div>
+            {(outcomeData.header?.economyType === 1 ||
+              outcomeData.header?.economyType === 3) && (
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>Tipo:</label>
                 </div>
-              ))}
+                <div className="form-value">
+                  {outcomeData.header?.economyType === 1
+                    ? "Suspensão"
+                    : "Economia customizada"}
+                </div>
+              </div>
+            )}
 
             <div className={`form-row`}>
               <div className="form-label">
