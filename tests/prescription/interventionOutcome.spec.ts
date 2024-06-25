@@ -15,7 +15,7 @@ test("outcome: suspension", async ({ page }) => {
 
   await page.locator(".ant-select-selection-overflow").click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
-  await page.mouse.wheel(0, 300);
+  await page.mouse.wheel(0, 1000);
 
   await page.getByText("Suspensão da terapia").click();
 
@@ -106,7 +106,7 @@ test("outcome: substitution", async ({ page }) => {
 
   await page.locator(".ant-select-selection-overflow").click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
-  await page.mouse.wheel(0, 300);
+  await page.mouse.wheel(0, 1000);
 
   await page.getByText("Substituição").click();
 
