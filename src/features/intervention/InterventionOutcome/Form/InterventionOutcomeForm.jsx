@@ -161,7 +161,7 @@ export default function InterventionOutcomeForm() {
       <br />
       <br />
       Caso contrário, informe <strong>manualmente</strong> a Economia/Dia e a
-      Quantidade de dias de economia.
+      Quantidade de dias de economia e, então, aplique o desfecho.
     </>
   );
 
