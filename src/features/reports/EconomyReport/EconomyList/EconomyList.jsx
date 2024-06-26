@@ -196,9 +196,9 @@ export default function EconomyList() {
 
           pageData.forEach((record) => {
             totalEconomy = totalEconomy.plus(
-              Big(record.processed.economyValue)
+              Big(record.processed.economyValue || 0)
             );
-            daysEconomy = daysEconomy.plus(record.processed.economyDays);
+            daysEconomy = daysEconomy.plus(record.processed.economyDays || 0);
           });
           return (
             <CardTable.Summary fixed>
