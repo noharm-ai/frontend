@@ -165,12 +165,21 @@ export default function NodeModal() {
                 )}
               {data?.extra && data?.extra["schedulingPeriod"] && (
                 <Descriptions.Item label="Agendamento" span={3}>
-                  {data?.extra["schedulingPeriod"]}
+                  {data?.extra["schedulingPeriod"]} (
+                  {data?.extra["schedulingStrategy"]})
                 </Descriptions.Item>
               )}
               {data?.status && data?.status["activeThreadCount"] >= 0 && (
                 <Descriptions.Item label="Threads ativas" span={3}>
                   {data?.status["activeThreadCount"]}
+                </Descriptions.Item>
+              )}
+              {data?.extra && data?.extra["comments"] && (
+                <Descriptions.Item label="Comentários" span={3}>
+                  <Textarea
+                    value={data?.extra["comments"]}
+                    style={{ minHeight: "150px", maxHeight: "300px" }}
+                  />
                 </Descriptions.Item>
               )}
             </>

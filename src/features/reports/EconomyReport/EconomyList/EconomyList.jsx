@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
+import Big from "big.js";
 
 import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
@@ -189,6 +190,34 @@ export default function EconomyList() {
             {datasource.length} registro(s)
           </div>
         )}
+        summary={(pageData) => {
+          let totalEconomy = Big(0);
+          let daysEconomy = Big(0);
+
+          pageData.forEach((record) => {
+            totalEconomy = totalEconomy.plus(
+              Big(record.processed.economyValue || 0)
+            );
+            daysEconomy = daysEconomy.plus(record.processed.economyDays || 0);
+          });
+          return (
+            <CardTable.Summary fixed>
+              <CardTable.Summary.Row>
+                <CardTable.Summary.Cell index={0}>Total</CardTable.Summary.Cell>
+                <CardTable.Summary.Cell index={1} align="right">
+                  {`R$ ${formatCurrency(totalEconomy, 2)}`}
+                </CardTable.Summary.Cell>
+                <CardTable.Summary.Cell
+                  index={2}
+                  align="right"
+                ></CardTable.Summary.Cell>
+                <CardTable.Summary.Cell index={3} align="right">
+                  {daysEconomy.toString()}
+                </CardTable.Summary.Cell>
+              </CardTable.Summary.Row>
+            </CardTable.Summary>
+          );
+        }}
       />
       <InterventionOutcome />
     </>

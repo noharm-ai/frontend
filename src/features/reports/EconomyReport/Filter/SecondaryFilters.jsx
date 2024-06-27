@@ -27,6 +27,7 @@ export default function SecondaryFilters() {
   const economyTypes = [
     { label: "Suspensão", value: 1 },
     { label: "Substituição", value: 2 },
+    { label: "Customizada", value: 3 },
     { label: "Todos", value: "" },
   ];
 

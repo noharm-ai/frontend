@@ -110,6 +110,14 @@ export default function Base({
         if (reasonList[reasonIndex].substitution) {
           return "substitution";
         }
+
+        if (reasonList[reasonIndex].substitution) {
+          return "substitution";
+        }
+
+        if (reasonList[reasonIndex].customEconomy) {
+          return "customEconomy";
+        }
       }
     }
 
@@ -213,25 +221,40 @@ export default function Base({
               </Select.Option>
             ))}
           </Select>
-          {hasSuspOrSubst(reasons.list, idInterventionReason) ===
-            "substitution" && (
-            <FieldHelp style={{ opacity: 0.7 }}>
-              <Tooltip
-                underline
-                title="Farmacoeconomia: Será aplicado o cálculo de Substituição para o motivo selecionado"
-              >
-                Tipo economia: Substituição
-              </Tooltip>
-            </FieldHelp>
+          {`${drugData.idPrescriptionDrug}` !== "0" && (
+            <>
+              {hasSuspOrSubst(reasons.list, idInterventionReason) ===
+                "substitution" && (
+                <FieldHelp style={{ opacity: 0.7 }}>
+                  <Tooltip
+                    underline
+                    title="Farmacoeconomia: Será aplicado o cálculo de Substituição para o motivo selecionado"
+                  >
+                    Tipo economia: Substituição
+                  </Tooltip>
+                </FieldHelp>
+              )}
+              {hasSuspOrSubst(reasons.list, idInterventionReason) ===
+                "suspension" && (
+                <FieldHelp style={{ opacity: 0.7 }}>
+                  <Tooltip
+                    underline
+                    title="Farmacoeconomia: Será aplicado o cálculo de Suspensão para o motivo selecionado"
+                  >
+                    Tipo economia: Suspensão
+                  </Tooltip>
+                </FieldHelp>
+              )}
+            </>
           )}
           {hasSuspOrSubst(reasons.list, idInterventionReason) ===
-            "suspension" && (
+            "customEconomy" && (
             <FieldHelp style={{ opacity: 0.7 }}>
               <Tooltip
                 underline
-                title="Farmacoeconomia: Será aplicado o cálculo de Suspensão para o motivo selecionado"
+                title="Farmacoeconomia: No tipo de economia customizado, você deve informar economia/dia e dias de economia manualmente."
               >
-                Tipo economia: Suspensão
+                Tipo economia: Customizado
               </Tooltip>
             </FieldHelp>
           )}

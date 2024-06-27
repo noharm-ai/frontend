@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
+import { getErrorMessage } from "utils/errorHandler";
 
 import { Form } from "styles/Form.style";
 
@@ -33,27 +34,21 @@ function InterventionReasonForm({ ...props }) {
       .required(t("validation.requiredField")),
   });
   const initialValues = {
-    ...{ suspension: false, substitution: false, relationType: null },
+    ...{
+      suspension: false,
+      substitution: false,
+      economyType: false,
+      relationType: null,
+    },
     ...formData,
   };
 
   const onSave = (params) => {
     dispatch(upsertInterventionReason(params)).then((response) => {
       if (response.error) {
-        if (response.payload?.code) {
-          notification.error({
-            message: t(response.payload.code),
-          });
-        } else if (response.payload?.message) {
-          notification.error({
-            message: response.payload.message,
-          });
-        } else {
-          notification.error({
-            message: t("errors.generic"),
-          });
-        }
-        console.error(response);
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
       } else {
         dispatch(setInterventionReason(null));
 

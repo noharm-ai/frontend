@@ -21,7 +21,7 @@ export default function ReportsTab({ prescription }) {
 
   const internalReports = [
     {
-      title: "Culturas (Beta)",
+      title: "Culturas",
       description: "Relatório de Culturas",
       type: "CULTURE",
       visible:
