@@ -192,7 +192,7 @@ test("outcome: custom", async ({ page }) => {
     .getByRole("button", { name: "warning" })
     .click();
   await page.locator(".ant-select-selection-overflow").click();
-  await page.getByText("Alta antecipada", { exact: true }).click();
+  await page.getByText("Alta antecipada").click();
 
   // // close dropdown
   await page.locator(".ant-modal-body").click();
