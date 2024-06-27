@@ -56,6 +56,7 @@ export default function LoginCallback({ doLogin, error }) {
           });
         }
       } catch (e) {
+        console.error(e);
         notification.error({
           message: "Inválido ou inexistente",
         });
