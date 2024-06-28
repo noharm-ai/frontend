@@ -4,7 +4,7 @@ import axios from "axios";
 import { Spin } from "antd";
 import { useParams, useLocation } from "react-router-dom";
 
-//import message from "components/message";
+import message from "components/message";
 import appInfo from "utils/appInfo";
 import { isEmpty } from "utils/lodash";
 import notification from "components/notification";
@@ -68,10 +68,7 @@ export default function LoginCallback({ doLogin, error }) {
   useEffect(() => {
     if (!isEmpty(error)) {
       console.error(error.message);
-      //message.error(error.message);
-      notification.error({
-        message: error.message,
-      });
+      message.error(error.message);
     }
   }, [error]);
 
