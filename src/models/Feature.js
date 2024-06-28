@@ -66,7 +66,7 @@ export default class Feature {
         id: Feature.INTERVENTION_V2,
         label: "Intervenções V2",
         description:
-          "A nova versão de intervenções possibilita o novo relatório de farmacoeconomia",
+          "A nova versão de intervenções possibilita o novo relatório de farmacoeconomia. Será liberado para todos usuários em 01/07/24",
       },
       {
         id: Feature.AUTHORIZATION_SEGMENT,
