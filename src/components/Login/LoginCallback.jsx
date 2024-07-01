@@ -67,6 +67,7 @@ export default function LoginCallback({ doLogin, error }) {
 
   useEffect(() => {
     if (!isEmpty(error)) {
+      console.error(error.message);
       message.error(error.message);
     }
   }, [error]);

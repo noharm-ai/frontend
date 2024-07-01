@@ -304,66 +304,35 @@ export default function Base({
         </Box>
       )}
       {hasSuspOrSubst(reasons.list, idInterventionReason) && (
-        <>
-          {!featureService.hasInterventionV2() && (
-            <Box hasError={errors.economyDays && touched.economyDays}>
-              <Col xs={layout.label}>
-                <Heading as="label" size="14px">
-                  <Tooltip
-                    title={t("interventionForm.labelEconomyDaysHint")}
-                    underline
-                  >
-                    {t("interventionForm.labelEconomyDays")}:
-                  </Tooltip>
-                </Heading>
-              </Col>
-              <Col xs={layout.input}>
-                <InputNumber
-                  id="economyDays"
-                  value={values.economyDays}
-                  style={{ width: "100%", maxWidth: "100px" }}
-                  onChange={(value) => setFieldValue("economyDays", value)}
-                />
-                {errors.economyDays && touched.economyDays && (
-                  <FieldError>{errors.economyDays}</FieldError>
-                )}
-              </Col>
-            </Box>
-          )}
-
-          <Box hasError={errors.expendedDose && touched.expendedDose}>
-            <Col xs={layout.label}>
-              <Heading as="label" size="14px">
-                <Tooltip
-                  title={t("interventionForm.labelExpendedDoseHint")}
-                  underline
-                >
-                  {t("interventionForm.labelExpendedDose")}:
-                </Tooltip>
-              </Heading>
-            </Col>
-            <Col xs={layout.input}>
-              <InputNumber
-                id="expendedDose"
-                value={values.expendedDose}
-                style={{ width: "100%", maxWidth: "100px" }}
-                onChange={(value) => setFieldValue("expendedDose", value)}
-              />
-              <span style={{ marginLeft: "10px" }}>
-                {drugData.measureUnit ? drugData.measureUnit.value : ""}
-              </span>
-              {errors.expendedDose && touched.expendedDose && (
-                <FieldError>{errors.expendedDose}</FieldError>
-              )}
-              {featureService.hasInterventionV2() && (
-                <FieldHelp style={{ opacity: 0.7 }}>
-                  Utilizado apenas na versão antiga do relatório de
-                  Farmacoeconomia
-                </FieldHelp>
-              )}
-            </Col>
-          </Box>
-        </>
+        <Box hasError={errors.expendedDose && touched.expendedDose}>
+          <Col xs={layout.label}>
+            <Heading as="label" size="14px">
+              <Tooltip
+                title={t("interventionForm.labelExpendedDoseHint")}
+                underline
+              >
+                {t("interventionForm.labelExpendedDose")}:
+              </Tooltip>
+            </Heading>
+          </Col>
+          <Col xs={layout.input}>
+            <InputNumber
+              id="expendedDose"
+              value={values.expendedDose}
+              style={{ width: "100%", maxWidth: "100px" }}
+              onChange={(value) => setFieldValue("expendedDose", value)}
+            />
+            <span style={{ marginLeft: "10px" }}>
+              {drugData.measureUnit ? drugData.measureUnit.value : ""}
+            </span>
+            {errors.expendedDose && touched.expendedDose && (
+              <FieldError>{errors.expendedDose}</FieldError>
+            )}
+            <FieldHelp style={{ opacity: 0.7 }}>
+              Utilizado apenas na versão antiga do relatório de Farmacoeconomia
+            </FieldHelp>
+          </Col>
+        </Box>
       )}
       {hasTranscription && (
         <>
