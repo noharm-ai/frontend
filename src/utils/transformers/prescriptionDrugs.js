@@ -177,8 +177,11 @@ export const filterPrescriptionDrugs = (items, headers, filters) => {
     return items.filter((i) => {
       let show = false;
 
-      if (filters.indexOf("alertsAll") !== -1) {
-        show = show || i.alertsComplete || i.alertsComplete.length;
+      if (
+        filters.indexOf("alertsAll_level") !== -1 ||
+        filters.indexOf("alertsAll_type") !== -1
+      ) {
+        show = show || (i.alertsComplete && i.alertsComplete.length > 0);
       }
 
       if (filters.indexOf("alertsHigh") !== -1) {

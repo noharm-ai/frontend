@@ -228,7 +228,7 @@ export default function CheckSummary({
               Confirmar a checagem
             </Heading>
           </header>
-          <p>A prescrição possui alertas com alto risco:</p>
+          <p>A prescrição possui alertas de Nível Alto:</p>
 
           <Form>
             <div
@@ -283,7 +283,7 @@ export default function CheckSummary({
                     setFieldValue("accept", !target.value)
                   }
                 >
-                  Estou ciente dos alertas de alto risco apresentados
+                  Estou ciente dos alertas apresentados.
                 </Checkbox>
               </div>
               {errors.accept && (

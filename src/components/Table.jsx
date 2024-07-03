@@ -126,11 +126,11 @@ const Table = styled(AntTable)`
   }
 
   .checked {
-    // td:not(:nth-child(1)) {
-    //   opacity: 0.45;
-    // }
+    td:not(:nth-child(1)) {
+      opacity: 0.45;
+    }
 
-    background: #f6ffed;
+    //background: #f6ffed;
   }
 
   .danger {

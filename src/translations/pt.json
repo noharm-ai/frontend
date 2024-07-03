@@ -421,12 +421,14 @@
     "alertsMedium": "Alertas: Nível Médio",
     "alertsLow": "Alertas: Nível Baixo",
     "alertsTypeGroup": "Alertas por Tipo",
-    "alertsLevelGroup": "Alertas por Risco",
+    "alertsLevelGroup": "Alertas por Nível",
     "diff": "Diferentes",
     "am": "Antimicrobianos",
     "hv": "Alta vigilância",
     "active": "Ativos",
-    "withValidation": "Com validação"
+    "withValidation": "Com validação",
+    "alertsAll_type": "Alertas: todos",
+    "alertsAll_level": "Alertas: todos"
   },
 
   "interventionForm": {
