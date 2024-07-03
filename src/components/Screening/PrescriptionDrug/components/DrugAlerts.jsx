@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Tag } from "antd";
 import {
@@ -14,7 +14,22 @@ import { DrugAlertsCollapse } from "../PrescriptionDrug.style";
 
 export default function DrugAlerts({ alerts, disableGroups }) {
   const { t } = useTranslation();
-  const [activeKey, setActiveKey] = useState(["high"]);
+  const [activeKey, setActiveKey] = useState([]);
+
+  useEffect(() => {
+    if (alerts && alerts.length > 0) {
+      const levels = alerts.map((a) => a.level);
+
+      if (levels.indexOf("high") !== -1) {
+        setActiveKey(["high"]);
+      }
+
+      if (levels.indexOf("medium") !== -1) {
+        setActiveKey(["medium"]);
+      }
+    }
+  }, [alerts]);
+
   if (alerts == null || alerts.length === 0) {
     return null;
   }
