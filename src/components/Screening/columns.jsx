@@ -20,7 +20,6 @@ import Descriptions from "components/Descriptions";
 import Tag from "components/Tag";
 import { createSlug } from "utils/transformers/utils";
 import Dropdown from "components/Dropdown";
-import Alert from "components/Alert";
 import RichTextView from "components/RichTextView";
 import InterventionStatus from "models/InterventionStatus";
 import { SelectMultiline } from "components/Inputs";
@@ -30,6 +29,7 @@ import { setSelectedIntervention as setSelectedInterventionOutcome } from "featu
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
 import PresmedTags from "./PrescriptionDrug/components/PresmedTags";
+import DrugAlerts from "./PrescriptionDrug/components/DrugAlerts";
 
 import { InterventionView } from "./Intervention/columns";
 import DrugForm from "./Form";
@@ -359,26 +359,6 @@ const periodDates = (dates) => {
   );
 };
 
-const showAlerts = (alerts) => {
-  if (alerts == null || alerts.length === 0) {
-    return "--";
-  }
-
-  return (
-    <>
-      {alerts.map((item, index) => (
-        <Alert
-          key={index}
-          type="error"
-          message={<RichTextView text={item} />}
-          style={{ marginTop: "5px" }}
-          showIcon
-        />
-      ))}
-    </>
-  );
-};
-
 const periodDatesList = (dates) => {
   if (dates == null || dates.length === 0) {
     return "";
@@ -472,12 +452,15 @@ export const expandedRowRender = (bag) => (record) => {
       className={`${record.source} ${record.groupRow ? "group" : ""}`}
     >
       <Descriptions bordered size="small">
-        {!isEmpty(record.alerts) && (
+        {!isEmpty(record.alertsComplete) && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrAlert")}
             span={3}
           >
-            {showAlerts(record.alerts)}
+            <DrugAlerts
+              alerts={record.alertsComplete}
+              disableGroups={bag.featureService.hasDisableAlertGroups()}
+            />
           </Descriptions.Item>
         )}
         {bag.security.hasPresmedForm() && bag.formTemplate && (

@@ -15,6 +15,7 @@ import {
   setPrescriptionListOrder,
   savePreferences,
 } from "features/preferences/PreferencesSlice";
+import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 
 import { ToolBox } from "../PrescriptionDrug.style";
 
@@ -32,6 +33,42 @@ export default function Filters({ showPrescriptionOrder }) {
   const filterOptions = () => {
     const items = [
       {
+        key: "alertsLevelGroup",
+        label: t(`prescriptionDrugFilters.alertsLevelGroup`),
+        children: [
+          {
+            key: "alertsAll_level",
+            label: t(`prescriptionDrugFilters.alertsAll`),
+          },
+          {
+            key: "alertsHigh",
+            label: t(`prescriptionDrugFilters.alertsHigh`),
+          },
+          {
+            key: "alertsMedium",
+            label: t(`prescriptionDrugFilters.alertsMedium`),
+          },
+          {
+            key: "alertsLow",
+            label: t(`prescriptionDrugFilters.alertsLow`),
+          },
+        ],
+      },
+      {
+        key: "alertsTypeGroup",
+        label: t(`prescriptionDrugFilters.alertsTypeGroup`),
+        children: [
+          {
+            key: "alertsAll_type",
+            label: t(`prescriptionDrugFilters.alertsAll`),
+          },
+          ...DrugAlertTypeEnum.getAlertTypes(t).map((a) => ({
+            key: `drugAlertType.${a.id}`,
+            label: a.label,
+          })),
+        ],
+      },
+      {
         key: "hv",
         label: t(`prescriptionDrugFilters.hv`),
       },
@@ -39,14 +76,12 @@ export default function Filters({ showPrescriptionOrder }) {
         key: "am",
         label: t(`prescriptionDrugFilters.am`),
       },
+
       {
         key: "active",
         label: t(`prescriptionDrugFilters.active`),
       },
-      {
-        key: "alerts",
-        label: t(`prescriptionDrugFilters.alerts`),
-      },
+
       {
         key: "withValidation",
         label: t(`prescriptionDrugFilters.withValidation`),
@@ -98,7 +133,7 @@ export default function Filters({ showPrescriptionOrder }) {
               closable
               onClose={() => handleFilterClick({ key: i })}
             >
-              {t(`prescriptionDrugFilters.${i}`)}
+              {t(i.split(".").length > 1 ? i : `prescriptionDrugFilters.${i}`)}
             </Tag>
           ))}
         </div>

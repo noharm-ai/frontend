@@ -46,7 +46,7 @@ export const getAlerts = (stats, t) => [
   {
     label: t("alerts.alergy"),
     icon: () => <CustomIcon type="allergy" />,
-    value: stats.allergy,
+    value: stats.allergy + (stats?.interactions?.rx || 0),
   },
   {
     label: t("alerts.tube"),

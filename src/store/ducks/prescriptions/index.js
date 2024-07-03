@@ -157,7 +157,6 @@ const setModalVisibility = (state = INITIAL_STATE, { modalKey, visible }) => ({
 });
 
 const removeNotes = (state = INITIAL_STATE, { id, notesType }) => {
-  console.log("remove notes thunk");
   let listAttr;
   if (notesType === "allergy") {
     listAttr = "notesAllergies";

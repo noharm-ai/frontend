@@ -23,6 +23,7 @@ import { Row, Col } from "components/Grid";
 import notification from "components/notification";
 import Tooltip from "components/Tooltip";
 import moment from "moment";
+import CheckSummary from "components/Screening/PrescriptionDrug/components/CheckSummary";
 
 import ClinicalNotes from "containers/Forms/ClinicalNotes";
 import ClinicalNotesSchedule from "containers/Forms/ClinicalNotes/ScheduleForm";
@@ -73,6 +74,7 @@ export default function PageHeader({
   const [clinicalNotesAction, setClinicalNotesAction] =
     useState("clinicalNote");
   const [affixed, setAffixed] = useState(false);
+  const [checkSummaryModal, setCheckSummaryModal] = useState(false);
   const { t } = useTranslation();
   const transitions = useTransition(affixed, {
     from: {
@@ -155,6 +157,24 @@ export default function PageHeader({
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     notification.success({ message: "Número da prescrição copiado!" });
+  };
+
+  const confirmCheckPrescription = (id) => {
+    let highRiskAlerts = [];
+    if (
+      prescription?.content?.alertsList &&
+      prescription.content.alertsList.length
+    ) {
+      highRiskAlerts = prescription.content.alertsList.filter(
+        (a) => a.level === "high"
+      );
+    }
+
+    if (highRiskAlerts.length > 0) {
+      setCheckSummaryModal(true);
+    } else {
+      setPrescriptionStatus(id, "s");
+    }
   };
 
   const setPrescriptionStatus = (id, status) => {
@@ -315,7 +335,7 @@ export default function PageHeader({
                 type="primary gtm-bt-check"
                 icon={<CheckOutlined />}
                 ghost
-                onClick={() => setPrescriptionStatus(id, "s")}
+                onClick={() => confirmCheckPrescription(id)}
                 loading={isChecking}
                 style={{ marginRight: "5px" }}
               >
@@ -492,6 +512,16 @@ export default function PageHeader({
           cancelText="Cancelar"
           afterSave={afterSaveClinicalAlert}
         />
+
+        {checkSummaryModal && (
+          <CheckSummary
+            open={checkSummaryModal}
+            setOpen={setCheckSummaryModal}
+            prescription={prescription}
+            checkScreening={checkScreening}
+            hasCpoe={security.hasCpoe()}
+          />
+        )}
       </ScreeningHeader>
     </Affix>
   );

@@ -62,17 +62,17 @@ const Table = styled(AntTable)`
     }
 
     &.red {
-      background-color: #e46666;
+      background-color: #f44336;
       color: #fff;
     }
 
     &.orange {
-      background-color: #e67e22;
+      background-color: #f57f17;
       color: #fff;
     }
 
     &.yellow {
-      background-color: #e4da66;
+      background-color: #ffc107;
       color: #000;
     }
 
@@ -126,9 +126,11 @@ const Table = styled(AntTable)`
   }
 
   .checked {
-    td:not(:nth-child(1)) {
-      opacity: 0.45;
-    }
+    // td:not(:nth-child(1)) {
+    //   opacity: 0.45;
+    // }
+
+    background: #f6ffed;
   }
 
   .danger {

@@ -48,6 +48,44 @@ function PresmedTags({ prescription, bag }) {
     }
   }
 
+  const getAlertStyle = () => {
+    const alerts = prescription.alertsComplete;
+    const defaultColor = {
+      background: "#ccc",
+      borderColor: "#ccc",
+    };
+
+    if (!alerts.length) {
+      return defaultColor;
+    }
+
+    const levels = alerts.map((a) => a.level);
+
+    if (levels.indexOf("high") !== -1) {
+      return {
+        background: "#f44336",
+        borderColor: "#f44336",
+        color: "#fff",
+      };
+    }
+
+    if (levels.indexOf("medium") !== -1) {
+      return {
+        background: "#f57f17",
+        borderColor: "#f57f17",
+        color: "#fff",
+      };
+    }
+
+    if (levels.indexOf("low") !== -1) {
+      return {
+        background: "#ffc107",
+        borderColor: "#ffc107",
+        color: "#fff",
+      };
+    }
+  };
+
   return (
     <TableTags>
       <span
@@ -177,7 +215,7 @@ function PresmedTags({ prescription, bag }) {
         className="tag gtm-tag-alert"
         onClick={() => bag.handleRowExpand(prescription)}
       >
-        {!isEmpty(prescription.alerts) && (
+        {!isEmpty(prescription.alertsComplete) && (
           <Tooltip
             title={
               prescription.alergy
@@ -186,8 +224,8 @@ function PresmedTags({ prescription, bag }) {
             }
           >
             <Badge dot count={prescription.alergy ? 1 : 0}>
-              <Tag color="red" style={{ marginLeft: "2px" }}>
-                {prescription.alerts.length}
+              <Tag style={{ ...getAlertStyle(), marginLeft: "2px" }}>
+                {prescription.alertsComplete.length}
               </Tag>
             </Badge>
           </Tooltip>
