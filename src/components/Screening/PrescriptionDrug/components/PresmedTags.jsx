@@ -17,7 +17,6 @@ import {
   CalendarOutlined,
 } from "@ant-design/icons";
 
-import Badge from "components/Badge";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 
@@ -47,44 +46,6 @@ function PresmedTags({ prescription, bag }) {
       prescribedTo = differenceInHours(currentDate, prescriptionDate);
     }
   }
-
-  const getAlertStyle = () => {
-    const alerts = prescription.alertsComplete;
-    const defaultColor = {
-      background: "#ccc",
-      borderColor: "#ccc",
-    };
-
-    if (!alerts.length) {
-      return defaultColor;
-    }
-
-    const levels = alerts.map((a) => a.level);
-
-    if (levels.indexOf("high") !== -1) {
-      return {
-        background: "#f44336",
-        borderColor: "#f44336",
-        color: "#fff",
-      };
-    }
-
-    if (levels.indexOf("medium") !== -1) {
-      return {
-        background: "#f57f17",
-        borderColor: "#f57f17",
-        color: "#fff",
-      };
-    }
-
-    if (levels.indexOf("low") !== -1) {
-      return {
-        background: "#ffc107",
-        borderColor: "#ffc107",
-        color: "#fff",
-      };
-    }
-  };
 
   return (
     <TableTags>
@@ -211,26 +172,6 @@ function PresmedTags({ prescription, bag }) {
           )}
         </span>
       )}
-      <span
-        className="tag gtm-tag-alert"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {!isEmpty(prescription.alertsComplete) && (
-          <Tooltip
-            title={
-              prescription.alergy
-                ? bag.t("prescriptionDrugTags.alertsAllergy")
-                : bag.t("prescriptionDrugTags.alerts")
-            }
-          >
-            <Badge dot count={prescription.alergy ? 1 : 0}>
-              <Tag style={{ ...getAlertStyle(), marginLeft: "2px" }}>
-                {prescription.alertsComplete.length}
-              </Tag>
-            </Badge>
-          </Tooltip>
-        )}
-      </span>
     </TableTags>
   );
 }

@@ -18,6 +18,7 @@ import Tooltip from "components/Tooltip";
 import Popover from "components/PopoverStyled";
 import Descriptions from "components/Descriptions";
 import Tag from "components/Tag";
+import Badge from "components/Badge";
 import { createSlug } from "utils/transformers/utils";
 import Dropdown from "components/Dropdown";
 import RichTextView from "components/RichTextView";
@@ -774,25 +775,98 @@ const drugInfo = (bag) => [
   {
     key: "idPrescriptionDrug",
     dataIndex: "score",
-    width: 20,
+    width: 55,
     align: "center",
-    render: (entry, { score, near, total, emptyRow }) => {
-      if (total || emptyRow) {
+    render: (entry, prescription) => {
+      if (prescription.total || prescription.emptyRow) {
         return "";
       }
 
+      const getAlertStyle = () => {
+        const alerts = prescription.alertsComplete;
+        const defaultColor = {
+          background: "#7ebe9a",
+          borderColor: "#7ebe9a",
+          color: "#fff",
+        };
+
+        if (!alerts.length) {
+          return defaultColor;
+        }
+
+        const levels = alerts.map((a) => a.level);
+
+        if (levels.indexOf("high") !== -1) {
+          return {
+            background: "#f44336",
+            borderColor: "#f44336",
+            color: "#fff",
+          };
+        }
+
+        if (levels.indexOf("medium") !== -1) {
+          return {
+            background: "#f57f17",
+            borderColor: "#f57f17",
+            color: "#fff",
+          };
+        }
+
+        if (levels.indexOf("low") !== -1) {
+          return {
+            background: "#ffc107",
+            borderColor: "#ffc107",
+            color: "#fff",
+          };
+        }
+      };
+
       return (
-        <Tooltip
-          title={
-            near
-              ? `${bag.t("tableHeader.approximateScore")}: ${score}`
-              : `${bag.t("tableHeader.score")}: ${score}`
-          }
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
         >
-          <span className={`flag has-score ${flags[parseInt(score, 10)]}`}>
-            {score}
-          </span>
-        </Tooltip>
+          <Tooltip
+            title={
+              prescription.alergy
+                ? bag.t("prescriptionDrugTags.alertsAllergy")
+                : bag.t("prescriptionDrugTags.alerts")
+            }
+          >
+            <Badge dot count={prescription.alergy ? 1 : 0}>
+              <Tag
+                style={{
+                  ...getAlertStyle(),
+                  cursor: "pointer",
+                  marginRight: 0,
+                }}
+                onClick={() => bag.handleRowExpand(prescription)}
+              >
+                {prescription.alertsComplete.length}
+              </Tag>
+            </Badge>
+          </Tooltip>
+          <Tooltip
+            title={
+              prescription.near
+                ? `${bag.t("tableHeader.approximateScore")}: ${
+                    prescription.score
+                  }`
+                : `${bag.t("tableHeader.score")}: ${prescription.score}`
+            }
+          >
+            <span
+              className={`flag has-score ${
+                flags[parseInt(prescription.score, 10)]
+              }`}
+            >
+              {prescription.score}
+            </span>
+          </Tooltip>
+        </div>
       );
     },
   },
