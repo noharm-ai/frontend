@@ -161,6 +161,33 @@ export default function Relation({
         </Row>
         {relation.item.editable && (
           <Row type="flex" gutter={24} css="padding: 7px 0">
+            <Col span={8}>
+              <Heading as="p" size="14px">
+                Nível:
+              </Heading>
+            </Col>
+            <Col span={24 - 8}>
+              <Select
+                optionFilterProp="children"
+                showSearch
+                onChange={(value) => update({ level: value })}
+                value={relation.item.level}
+              >
+                <Select.Option key={"low"} value={"low"}>
+                  Baixo
+                </Select.Option>
+                <Select.Option key={"medium"} value={"medium"}>
+                  Médio
+                </Select.Option>
+                <Select.Option key={"high"} value={"high"}>
+                  Alto
+                </Select.Option>
+              </Select>
+            </Col>
+          </Row>
+        )}
+        {relation.item.editable && (
+          <Row type="flex" gutter={24} css="padding: 7px 0">
             <Col span={24}>
               <Heading as="p" size="14px">
                 Efeito:

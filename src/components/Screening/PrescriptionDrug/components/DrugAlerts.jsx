@@ -20,12 +20,12 @@ export default function DrugAlerts({ alerts, disableGroups }) {
     if (alerts && alerts.length > 0) {
       const levels = alerts.map((a) => a.level);
 
-      if (levels.indexOf("high") !== -1) {
-        setActiveKey(["high"]);
-      }
-
       if (levels.indexOf("medium") !== -1) {
         setActiveKey(["medium"]);
+      }
+
+      if (levels.indexOf("high") !== -1) {
+        setActiveKey(["high"]);
       }
     }
   }, [alerts]);
