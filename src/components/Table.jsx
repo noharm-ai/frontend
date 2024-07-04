@@ -19,6 +19,10 @@ const Table = styled(AntTable)`
     padding: 5px;
   }
 
+  .ant-table-tbody > tr > td {
+    color: rgba(0, 0, 0, 0.65);
+  }
+
   .ant-table-thead > tr > th,
   .ant-table-thead > tr > td {
     background: transparent;

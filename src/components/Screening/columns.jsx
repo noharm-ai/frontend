@@ -776,7 +776,7 @@ const drugInfo = (bag) => [
   {
     key: "idPrescriptionDrug",
     dataIndex: "score",
-    width: 80,
+    width: 85,
     align: "center",
     render: (entry, prescription) => {
       if (prescription.total || prescription.emptyRow) {
@@ -843,6 +843,8 @@ const drugInfo = (bag) => [
                   ...getAlertStyle(),
                   cursor: "pointer",
                   marginRight: 0,
+                  width: "30px",
+                  textAlign: "center",
                 }}
                 onClick={() => bag.handleRowExpand(prescription)}
               >
