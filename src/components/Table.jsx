@@ -24,6 +24,10 @@ const Table = styled(AntTable)`
     background: transparent;
   }
 
+  .ant-table-expand-icon-col {
+    width: 35px;
+  }
+
   .ant-table-column-title {
     color: ${get("colors.primary")};
     font-weight: ${get("weight.semiBold")};
@@ -127,10 +131,30 @@ const Table = styled(AntTable)`
 
   .checked {
     td:not(:nth-child(1)) {
-      opacity: 0.45;
+      opacity: 0.65;
     }
 
     //background: #f6ffed;
+  }
+
+  .new-item {
+    td:not(:nth-child(1)) {
+      font-weight: 500;
+
+      a {
+        font-weight: 500;
+      }
+    }
+  }
+
+  .whitelist {
+    td:not(:nth-child(1)) {
+      opacity: 0.45;
+
+      a {
+        opacity: 0.45;
+      }
+    }
   }
 
   .danger {
@@ -291,7 +315,7 @@ const Table = styled(AntTable)`
 
   .summary-row {
     td:not(:first-child) {
-      opacity: 0.2;
+      opacity: 0.45;
     }
 
     td {

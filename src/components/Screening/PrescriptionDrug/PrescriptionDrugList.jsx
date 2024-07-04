@@ -70,8 +70,12 @@ export const rowClassName = (record, bag) => {
     classes.push("checked");
   }
 
+  if (!record.checked && record.drug) {
+    classes.push("new-item");
+  }
+
   if (record.whiteList && !record.total) {
-    classes.push("checked");
+    classes.push("whitelist");
   }
 
   if (bag.interventions) {

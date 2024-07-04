@@ -9,6 +9,7 @@ import {
   CaretDownOutlined,
   FormOutlined,
   CalculatorOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
 import { Button as AntButton } from "antd";
 
@@ -775,7 +776,7 @@ const drugInfo = (bag) => [
   {
     key: "idPrescriptionDrug",
     dataIndex: "score",
-    width: 55,
+    width: 80,
     align: "center",
     render: (entry, prescription) => {
       if (prescription.total || prescription.emptyRow) {
@@ -866,6 +867,25 @@ const drugInfo = (bag) => [
               {prescription.score}
             </span>
           </Tooltip>
+          {prescription.checked && (
+            <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
+              <CheckCircleOutlined
+                style={{
+                  fontSize: 18,
+                  color: "#52c41a",
+                }}
+              />
+            </Tooltip>
+          )}
+          {!prescription.checked && (
+            <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
+              <div
+                style={{
+                  width: "18px",
+                }}
+              />
+            </Tooltip>
+          )}
         </div>
       );
     },
