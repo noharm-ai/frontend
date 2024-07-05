@@ -408,7 +408,8 @@ const columns = (sortedInfo, filteredInfo, t) => {
       filteredValue: filteredInfo.searchKey || null,
       onFilter: (value, record) =>
         record.namePatient.toLowerCase().includes(value) ||
-        `${record.admissionNumber}` === value,
+        `${record.admissionNumber}`.includes(value) ||
+        `${record.idPatient}`.includes(value),
       sortDirections,
       sorter: (a, b) => Date.parse(a.date) - Date.parse(b.date),
       sortOrder: sortedInfo.columnKey === "date" && sortedInfo.order,
