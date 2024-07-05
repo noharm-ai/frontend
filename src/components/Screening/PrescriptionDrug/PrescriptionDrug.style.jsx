@@ -244,3 +244,47 @@ export const InterventionListContainer = styled.div`
     margin-top: 15px;
   }
 `;
+
+export const DrugAlertsCollapse = styled(Collapse)`
+  border: 1px solid #ffccc7 !important;
+  background: #fff2f0;
+
+  .ant-collapse-item {
+    &.high {
+      .tag {
+        background: #f44336;
+        border-color: #f44336;
+        color: #fff;
+      }
+    }
+
+    &.medium {
+      .tag {
+        background: #f57f17;
+        border-color: #f57f17;
+        color: #fff;
+      }
+    }
+
+    &.low {
+      .tag {
+        background: #ffc107;
+        border-color: #ffc107;
+        color: #fff;
+      }
+    }
+
+    .ant-collapse-header {
+      align-items: center;
+      padding: 12px 10px;
+    }
+  }
+
+  .ant-collapse-content.ant-collapse-content-active {
+    padding-top: 0;
+
+    .ant-collapse-content-box {
+      padding-left: 35px;
+    }
+  }
+`;

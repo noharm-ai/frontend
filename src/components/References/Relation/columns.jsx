@@ -57,6 +57,51 @@ const columns = (security) => [
     ),
   },
   {
+    title: "Nível",
+    render: (entry, record) => {
+      switch (record.level) {
+        case "low":
+          return (
+            <Tag
+              style={{
+                background: "#ffc107",
+                borderColor: "#ffc107",
+                color: "#fff",
+              }}
+            >
+              Baixo
+            </Tag>
+          );
+        case "medium":
+          return (
+            <Tag
+              style={{
+                background: "#f57f17",
+                borderColor: "#f57f17",
+                color: "#fff",
+              }}
+            >
+              Médio
+            </Tag>
+          );
+        case "high":
+          return (
+            <Tag
+              style={{
+                background: "#f44336",
+                borderColor: "#f44336",
+                color: "#fff",
+              }}
+            >
+              Alto
+            </Tag>
+          );
+        default:
+          return record.level;
+      }
+    },
+  },
+  {
     title: "Ações",
     key: "operations",
     width: 70,

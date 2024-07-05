@@ -415,12 +415,20 @@
   },
 
   "prescriptionDrugFilters": {
-    "alerts": "Com alertas",
+    "alerts": "Alertas",
+    "alertsAll": "Alertas: Todos",
+    "alertsHigh": "Alertas: Nível Alto",
+    "alertsMedium": "Alertas: Nível Médio",
+    "alertsLow": "Alertas: Nível Baixo",
+    "alertsTypeGroup": "Alertas por Tipo",
+    "alertsLevelGroup": "Alertas por Nível",
     "diff": "Diferentes",
     "am": "Antimicrobianos",
     "hv": "Alta vigilância",
     "active": "Ativos",
-    "withValidation": "Com validação"
+    "withValidation": "Com validação",
+    "alertsAll_type": "Alertas: todos",
+    "alertsAll_level": "Alertas: todos"
   },
 
   "interventionForm": {
@@ -728,5 +736,27 @@
     "whiteList": "Sem validação",
     "chemo": "Quimioterápico",
     "dialyzable": "Dialisável"
+  },
+
+  "drugAlertType": {
+    "allergy": "Alergia",
+    "maxDose": "Dose máxima ou de alerta",
+    "dm": "Duplicidade Medicamentosa",
+    "dt": "Duplicidade Terapêutica",
+    "liver": "Hepatotóxico",
+    "iy": "Incompatibilidade em Y",
+    "it": "Interação Medicamentosa",
+    "ira": "IRA (Risco)",
+    "sl": "ISL Incompatibilidade em Solução",
+    "elderly": "Medicamento potencialmente inapropriado para idosos",
+    "kidney": "Nefrotóxico",
+    "platelets": "Plaquetas",
+    "rx": "Reatividade Cruzada",
+    "tube": "Sonda",
+    "maxTime": "Tempo de tratamento",
+
+    "high": "Alertas Nível Alto",
+    "medium": "Alertas Nível Médio",
+    "low": "Alertas Nível Baixo"
   }
 }

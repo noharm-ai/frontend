@@ -89,6 +89,12 @@ export const Form = styled.form`
     border-radius: 5px;
   }
 
+  .form-input-checkbox-single {
+    padding: 1rem;
+    background: #fafafa;
+    border-radius: 5px;
+  }
+
   .form-action {
     display: flex;
     justify-content: flex-end;

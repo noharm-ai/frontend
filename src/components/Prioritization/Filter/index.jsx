@@ -624,43 +624,49 @@ export default function Filter({
                       allowClear
                     >
                       <Select.Option key={"allergy"} value={"allergy"}>
-                        {t("alerts.alergy")}
+                        {t("drugAlertType.allergy")}
                       </Select.Option>
-
                       <Select.Option key={"maxDose"} value={"maxDose"}>
-                        {t("alerts.max_dose")}
+                        {t("drugAlertType.maxDose")}
                       </Select.Option>
-
-                      <Select.Option key={"dup"} value={"dup"}>
-                        {t("alerts.duplicate")}
+                      <Select.Option key={"dm"} value={"dm"}>
+                        {t("drugAlertType.dm")}
                       </Select.Option>
-
-                      <Select.Option key={"exams"} value={"exams"}>
-                        {t("alerts.exam")}
+                      <Select.Option key={"dt"} value={"dt"}>
+                        {t("drugAlertType.dt")}
                       </Select.Option>
-
-                      <Select.Option key={"inc"} value={"inc"}>
-                        {t("alerts.y")}
+                      <Select.Option key={"liver"} value={"liver"}>
+                        {t("drugAlertType.liver")}
                       </Select.Option>
-
-                      <Select.Option key={"isl"} value={"isl"}>
-                        {t("alerts.isl")}
+                      <Select.Option key={"iy"} value={"iy"}>
+                        {t("drugAlertType.iy")}
                       </Select.Option>
-
-                      <Select.Option key={"int"} value={"int"}>
-                        {t("alerts.interaction")}
+                      <Select.Option key={"it"} value={"it"}>
+                        {t("drugAlertType.it")}
                       </Select.Option>
-
-                      <Select.Option key={"tube"} value={"tube"}>
-                        {t("alerts.tube")}
+                      <Select.Option key={"ira"} value={"ira"}>
+                        {t("drugAlertType.ira")}
                       </Select.Option>
-
+                      <Select.Option key={"sl"} value={"sl"}>
+                        {t("drugAlertType.sl")}
+                      </Select.Option>
                       <Select.Option key={"elderly"} value={"elderly"}>
-                        {t("alerts.elderly")}
+                        {t("drugAlertType.elderly")}
                       </Select.Option>
-
+                      <Select.Option key={"kidney"} value={"kidney"}>
+                        {t("drugAlertType.kidney")}
+                      </Select.Option>
+                      <Select.Option key={"platelets"} value={"platelets"}>
+                        {t("drugAlertType.platelets")}
+                      </Select.Option>
+                      <Select.Option key={"rx"} value={"rx"}>
+                        {t("drugAlertType.rx")}
+                      </Select.Option>
+                      <Select.Option key={"tube"} value={"tube"}>
+                        {t("drugAlertType.tube")}
+                      </Select.Option>
                       <Select.Option key={"maxTime"} value={"maxTime"}>
-                        {t("alerts.time")}
+                        {t("drugAlertType.maxTime")}
                       </Select.Option>
                     </Select>
                   </Col>

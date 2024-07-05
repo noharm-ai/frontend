@@ -9,7 +9,7 @@ import {
 import { useSelector } from "react-redux";
 import {
   WarningOutlined,
-  CheckOutlined,
+  //CheckOutlined,
   FormOutlined,
   StopOutlined,
   MessageOutlined,
@@ -17,7 +17,6 @@ import {
   CalendarOutlined,
 } from "@ant-design/icons";
 
-import Badge from "components/Badge";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 
@@ -50,7 +49,7 @@ function PresmedTags({ prescription, bag }) {
 
   return (
     <TableTags>
-      <span
+      {/* <span
         className="tag gtm-tag-check"
         onClick={() => bag.handleRowExpand(prescription)}
       >
@@ -59,7 +58,7 @@ function PresmedTags({ prescription, bag }) {
             <CheckOutlined style={{ fontSize: 18, color: "#52c41a" }} />
           </Tooltip>
         )}
-      </span>
+      </span> */}
       <span
         className="tag gtm-tag-msg"
         onClick={() => bag.handleRowExpand(prescription)}
@@ -173,26 +172,6 @@ function PresmedTags({ prescription, bag }) {
           )}
         </span>
       )}
-      <span
-        className="tag gtm-tag-alert"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {!isEmpty(prescription.alerts) && (
-          <Tooltip
-            title={
-              prescription.alergy
-                ? bag.t("prescriptionDrugTags.alertsAllergy")
-                : bag.t("prescriptionDrugTags.alerts")
-            }
-          >
-            <Badge dot count={prescription.alergy ? 1 : 0}>
-              <Tag color="red" style={{ marginLeft: "2px" }}>
-                {prescription.alerts.length}
-              </Tag>
-            </Badge>
-          </Tooltip>
-        )}
-      </span>
     </TableTags>
   );
 }

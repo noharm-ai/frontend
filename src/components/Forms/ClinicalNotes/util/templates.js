@@ -346,11 +346,11 @@ export const alertsTemplate = (prescription) => {
 
   let alerts = [];
   list.forEach((i) => {
-    if (i.alerts && i.alerts.length) {
+    if (i.alertsComplete && i.alertsComplete.length) {
       const tpl = `
         Medicamento: ${i.drug}
         Alertas:
-        -- ${i.alerts.join("\r\n        -- ")}
+        -- ${i.alertsComplete.map((a) => a.text).join("\r\n        -- ")}
       `;
       alerts = [...alerts, tpl];
     }

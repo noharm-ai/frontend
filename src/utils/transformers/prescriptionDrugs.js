@@ -156,38 +156,75 @@ const sortPrescriptionDrugs = (items) => {
     .concat(whitelistItems);
 };
 
+const hasAlertLevel = (alerts, level) => {
+  if (alerts && alerts.length) {
+    return alerts.findIndex((a) => a.level === level) !== -1;
+  }
+
+  return false;
+};
+
+const hasAlertType = (alerts, type) => {
+  if (alerts && alerts.length) {
+    return alerts.findIndex((a) => a.type === type) !== -1;
+  }
+
+  return false;
+};
+
 export const filterPrescriptionDrugs = (items, headers, filters) => {
   if (filters && filters.length && items) {
     return items.filter((i) => {
-      let show = true;
+      let show = false;
 
-      if (filters.indexOf("alerts") !== -1) {
-        show = show && i.alerts && i.alerts.length;
+      if (
+        filters.indexOf("alertsAll_level") !== -1 ||
+        filters.indexOf("alertsAll_type") !== -1
+      ) {
+        show = show || (i.alertsComplete && i.alertsComplete.length > 0);
+      }
+
+      if (filters.indexOf("alertsHigh") !== -1) {
+        show = show || hasAlertLevel(i.alertsComplete, "high");
+      }
+
+      if (filters.indexOf("alertsMedium") !== -1) {
+        show = show || hasAlertLevel(i.alertsComplete, "medium");
+      }
+
+      if (filters.indexOf("alertsLow") !== -1) {
+        show = show || hasAlertLevel(i.alertsComplete, "low");
       }
 
       if (filters.indexOf("diff") !== -1) {
-        show = show && !i.checked;
+        show = show || !i.checked;
       }
 
       if (filters.indexOf("am") !== -1) {
-        show = show && i.am;
+        show = show || i.am;
       }
 
       if (filters.indexOf("hv") !== -1) {
-        show = show && i.av;
+        show = show || i.av;
       }
 
       if (filters.indexOf("withValidation") !== -1) {
-        show = show && !i.whiteList;
+        show = show || !i.whiteList;
       }
 
       if (filters.indexOf("active") !== -1) {
-        show = show && !i.suspended;
+        show = show || !i.suspended;
 
-        if (i.cpoe && headers[i.cpoe]) {
-          show = show && isActive(headers[i.cpoe]);
+        if (i.cpoe || headers[i.cpoe]) {
+          show = show || isActive(headers[i.cpoe]);
         }
       }
+
+      filters.forEach((f) => {
+        if (f.indexOf("drugAlertType.") !== -1) {
+          show = show || hasAlertType(i.alertsComplete, f.split(".")[1]);
+        }
+      });
 
       return show;
     });

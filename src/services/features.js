@@ -41,12 +41,12 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.PATIENT_REVISION);
   };
 
-  const hasInterventionV2 = () => {
-    return hasFeature(Feature.INTERVENTION_V2);
-  };
-
   const hasAuthorizationSegment = () => {
     return hasFeature(Feature.AUTHORIZATION_SEGMENT);
+  };
+
+  const hasDisableAlertGroups = () => {
+    return hasFeature(Feature.DISABLE_ALERT_GROUPS);
   };
 
   return {
@@ -59,8 +59,8 @@ const FeaturesService = (features) => {
     hasDisableSolutionTab,
     hasClinicalNotesNewFormat,
     hasPatientRevision,
-    hasInterventionV2,
     hasAuthorizationSegment,
+    hasDisableAlertGroups,
   };
 };
 

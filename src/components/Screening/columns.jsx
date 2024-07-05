@@ -9,6 +9,7 @@ import {
   CaretDownOutlined,
   FormOutlined,
   CalculatorOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
 import { Button as AntButton } from "antd";
 
@@ -18,9 +19,9 @@ import Tooltip from "components/Tooltip";
 import Popover from "components/PopoverStyled";
 import Descriptions from "components/Descriptions";
 import Tag from "components/Tag";
+import Badge from "components/Badge";
 import { createSlug } from "utils/transformers/utils";
 import Dropdown from "components/Dropdown";
-import Alert from "components/Alert";
 import RichTextView from "components/RichTextView";
 import InterventionStatus from "models/InterventionStatus";
 import { SelectMultiline } from "components/Inputs";
@@ -30,6 +31,7 @@ import { setSelectedIntervention as setSelectedInterventionOutcome } from "featu
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
 import PresmedTags from "./PrescriptionDrug/components/PresmedTags";
+import DrugAlerts from "./PrescriptionDrug/components/DrugAlerts";
 
 import { InterventionView } from "./Intervention/columns";
 import DrugForm from "./Form";
@@ -359,26 +361,6 @@ const periodDates = (dates) => {
   );
 };
 
-const showAlerts = (alerts) => {
-  if (alerts == null || alerts.length === 0) {
-    return "--";
-  }
-
-  return (
-    <>
-      {alerts.map((item, index) => (
-        <Alert
-          key={index}
-          type="error"
-          message={<RichTextView text={item} />}
-          style={{ marginTop: "5px" }}
-          showIcon
-        />
-      ))}
-    </>
-  );
-};
-
 const periodDatesList = (dates) => {
   if (dates == null || dates.length === 0) {
     return "";
@@ -472,12 +454,15 @@ export const expandedRowRender = (bag) => (record) => {
       className={`${record.source} ${record.groupRow ? "group" : ""}`}
     >
       <Descriptions bordered size="small">
-        {!isEmpty(record.alerts) && (
+        {!isEmpty(record.alertsComplete) && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrAlert")}
             span={3}
           >
-            {showAlerts(record.alerts)}
+            <DrugAlerts
+              alerts={record.alertsComplete}
+              disableGroups={bag.featureService.hasDisableAlertGroups()}
+            />
           </Descriptions.Item>
         )}
         {bag.security.hasPresmedForm() && bag.formTemplate && (
@@ -791,25 +776,121 @@ const drugInfo = (bag) => [
   {
     key: "idPrescriptionDrug",
     dataIndex: "score",
-    width: 20,
+    width: 85,
     align: "center",
-    render: (entry, { score, near, total, emptyRow }) => {
-      if (total || emptyRow) {
+    render: (entry, prescription) => {
+      if (prescription.total || prescription.emptyRow) {
         return "";
       }
 
+      const getAlertStyle = () => {
+        const alerts = prescription.alertsComplete;
+        const defaultColor = {
+          background: "#7ebe9a",
+          borderColor: "#7ebe9a",
+          color: "#fff",
+        };
+
+        if (!alerts.length) {
+          return defaultColor;
+        }
+
+        const levels = alerts.map((a) => a.level);
+
+        if (levels.indexOf("high") !== -1) {
+          return {
+            background: "#f44336",
+            borderColor: "#f44336",
+            color: "#fff",
+          };
+        }
+
+        if (levels.indexOf("medium") !== -1) {
+          return {
+            background: "#f57f17",
+            borderColor: "#f57f17",
+            color: "#fff",
+          };
+        }
+
+        if (levels.indexOf("low") !== -1) {
+          return {
+            background: "#ffc107",
+            borderColor: "#ffc107",
+            color: "#fff",
+          };
+        }
+      };
+
       return (
-        <Tooltip
-          title={
-            near
-              ? `${bag.t("tableHeader.approximateScore")}: ${score}`
-              : `${bag.t("tableHeader.score")}: ${score}`
-          }
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
         >
-          <span className={`flag has-score ${flags[parseInt(score, 10)]}`}>
-            {score}
-          </span>
-        </Tooltip>
+          <Tooltip
+            title={
+              prescription.alergy
+                ? bag.t("prescriptionDrugTags.alertsAllergy")
+                : bag.t("prescriptionDrugTags.alerts")
+            }
+          >
+            <Badge dot count={prescription.alergy ? 1 : 0}>
+              <Tag
+                style={{
+                  ...getAlertStyle(),
+                  cursor: "pointer",
+                  marginRight: 0,
+                  width: "30px",
+                  textAlign: "center",
+                }}
+                onClick={() => bag.handleRowExpand(prescription)}
+              >
+                {prescription.alertsComplete.length}
+              </Tag>
+            </Badge>
+          </Tooltip>
+          <Tooltip
+            title={
+              prescription.near
+                ? `${bag.t("tableHeader.approximateScore")}: ${
+                    prescription.score
+                  }`
+                : `${bag.t("tableHeader.score")}: ${prescription.score}`
+            }
+          >
+            <span
+              className={`flag has-score ${
+                flags[parseInt(prescription.score, 10)]
+              }`}
+              style={{ cursor: "pointer" }}
+              onClick={() => bag.handleRowExpand(prescription)}
+            >
+              {prescription.score}
+            </span>
+          </Tooltip>
+          {prescription.checked && (
+            <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
+              <CheckCircleOutlined
+                style={{
+                  fontSize: 18,
+                  color: "#52c41a",
+                }}
+              />
+            </Tooltip>
+          )}
+          {!prescription.checked && (
+            <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
+              <div
+                style={{
+                  width: "18px",
+                }}
+              />
+            </Tooltip>
+          )}
+        </div>
       );
     },
   },
