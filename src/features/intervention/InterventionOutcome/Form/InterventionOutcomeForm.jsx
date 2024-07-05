@@ -133,7 +133,7 @@ export default function InterventionOutcomeForm() {
         return "error";
       }
 
-      if (!Big(values[source][f]).eq(Big(original.item[f]))) {
+      if (!Big(values[source][f] || 0).eq(Big(original.item[f] || 0))) {
         return "warning";
       }
 
