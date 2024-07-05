@@ -865,6 +865,8 @@ const drugInfo = (bag) => [
               className={`flag has-score ${
                 flags[parseInt(prescription.score, 10)]
               }`}
+              style={{ cursor: "pointer" }}
+              onClick={() => bag.handleRowExpand(prescription)}
             >
               {prescription.score}
             </span>
