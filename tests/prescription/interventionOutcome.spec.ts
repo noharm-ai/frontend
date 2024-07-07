@@ -8,7 +8,7 @@ test("outcome: suspension", async ({ page }) => {
     .click();
   await page.getByText("Paciente 99").click();
   await page
-    .getByRole("row", { name: "Expandir linha 1 BISACODIL 5 mg" })
+    .getByRole("row", { name: "Expandir linha 0 1 BISACODIL 5 mg" })
     .getByRole("button")
     .nth(1)
     .click();
@@ -100,7 +100,7 @@ test("outcome: substitution", async ({ page }) => {
     .click();
   await page.getByText("Paciente 99").click();
   await page
-    .getByRole("row", { name: "Expandir linha 0 ENALAPRIL 20" })
+    .getByRole("row", { name: "Expandir linha 0 0 ENALAPRIL 20" })
     .getByRole("button")
     .nth(1)
     .click();
