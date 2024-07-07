@@ -93,10 +93,16 @@ export default function CheckSummary({
     );
   };
 
-  const onSave = (params) => {
+  const onSave = () => {
     setLoading(true);
+    const auditAlerts = highRiskAlerts.map(({ idPrescriptionDrug, type }) => ({
+      idPrescriptionDrug,
+      type,
+    }));
 
-    checkScreening(prescription.content.idPrescription, "s")
+    checkScreening(prescription.content.idPrescription, "s", {
+      alerts: auditAlerts,
+    })
       .then(() => {
         setLoading(false);
         setOpen(false);
