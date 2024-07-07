@@ -60,36 +60,40 @@ export const ToolBox = styled.div`
 `;
 
 export const PrescriptionHeader = styled.div`
-  display: inline-block;
-  padding-left: 15px;
+  display: flex;
+  align-items: center;
 
-  div > span {
+  .panel-header-description {
     padding-left: 15px;
-  }
 
-  .p-number {
-    padding-right: 10px;
-  }
+    div > span {
+      padding-left: 15px;
+    }
 
-  a {
-    color: rgba(0, 0, 0, 0.65);
-    text-decoration: none;
-  }
+    .p-number {
+      padding-right: 10px;
+    }
 
-  a:hover {
-    text-decoration: underline;
-  }
+    a {
+      color: rgba(0, 0, 0, 0.65);
+      text-decoration: none;
+    }
 
-  .title {
-    font-size: 16px;
-  }
+    a:hover {
+      text-decoration: underline;
+    }
 
-  .subtitle {
-    opacity: 0.6;
-  }
+    .title {
+      font-size: 16px;
+    }
 
-  .expired {
-    color: rgb(207, 19, 34);
+    .subtitle {
+      opacity: 0.6;
+    }
+
+    .expired {
+      color: rgb(207, 19, 34);
+    }
   }
 `;
 
@@ -100,6 +104,8 @@ export const PrescriptionCollapse = styled(Collapse)`
     transition: background 0.3s linear;
 
     .ant-collapse-header {
+      align-items: center;
+
       .panel-header {
         transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
       }

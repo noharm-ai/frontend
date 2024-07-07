@@ -19,7 +19,6 @@ import Tooltip from "components/Tooltip";
 import Popover from "components/PopoverStyled";
 import Descriptions from "components/Descriptions";
 import Tag from "components/Tag";
-import Badge from "components/Badge";
 import { createSlug } from "utils/transformers/utils";
 import Dropdown from "components/Dropdown";
 import RichTextView from "components/RichTextView";
@@ -27,6 +26,7 @@ import InterventionStatus from "models/InterventionStatus";
 import { SelectMultiline } from "components/Inputs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
@@ -783,45 +783,6 @@ const drugInfo = (bag) => [
         return "";
       }
 
-      const getAlertStyle = () => {
-        const alerts = prescription.alertsComplete;
-        const defaultColor = {
-          background: "#7ebe9a",
-          borderColor: "#7ebe9a",
-          color: "#fff",
-        };
-
-        if (!alerts.length) {
-          return defaultColor;
-        }
-
-        const levels = alerts.map((a) => a.level);
-
-        if (levels.indexOf("high") !== -1) {
-          return {
-            background: "#f44336",
-            borderColor: "#f44336",
-            color: "#fff",
-          };
-        }
-
-        if (levels.indexOf("medium") !== -1) {
-          return {
-            background: "#f57f17",
-            borderColor: "#f57f17",
-            color: "#fff",
-          };
-        }
-
-        if (levels.indexOf("low") !== -1) {
-          return {
-            background: "#ffc107",
-            borderColor: "#ffc107",
-            color: "#fff",
-          };
-        }
-      };
-
       return (
         <div
           style={{
@@ -829,29 +790,18 @@ const drugInfo = (bag) => [
             alignItems: "center",
             justifyContent: "space-between",
           }}
+          className="score-container"
         >
-          <Tooltip
-            title={
-              prescription.alergy
-                ? bag.t("prescriptionDrugTags.alertsAllergy")
-                : bag.t("prescriptionDrugTags.alerts")
+          <DrugAlertLevelTag
+            levels={
+              prescription.alertsComplete
+                ? prescription.alertsComplete.map((a) => a.level)
+                : []
             }
-          >
-            <Badge dot count={prescription.alergy ? 1 : 0}>
-              <Tag
-                style={{
-                  ...getAlertStyle(),
-                  cursor: "pointer",
-                  marginRight: 0,
-                  width: "30px",
-                  textAlign: "center",
-                }}
-                onClick={() => bag.handleRowExpand(prescription)}
-              >
-                {prescription.alertsComplete.length}
-              </Tag>
-            </Badge>
-          </Tooltip>
+            count={prescription.alertsComplete?.length}
+            allergy={prescription.allergy}
+            onClick={() => bag.handleRowExpand(prescription)}
+          />
           <Tooltip
             title={
               prescription.near

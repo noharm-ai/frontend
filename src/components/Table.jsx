@@ -81,7 +81,7 @@ const Table = styled(AntTable)`
 
     &.yellow {
       background-color: #ffc107;
-      color: #000;
+      color: #fff;
     }
 
     &.green {
@@ -131,14 +131,23 @@ const Table = styled(AntTable)`
       opacity: 0.45;
       text-decoration: line-through;
     }
+
+    .score-container {
+      transition: opacity 0.3s linear;
+      opacity: 0;
+    }
+
+    &:hover {
+      .score-container {
+        opacity: 1;
+      }
+    }
   }
 
   .checked {
     td:not(:nth-child(1)) {
-      opacity: 0.65;
+      opacity: 0.75;
     }
-
-    //background: #f6ffed;
   }
 
   .new-item {
@@ -152,11 +161,22 @@ const Table = styled(AntTable)`
   }
 
   .whitelist {
+    .score-container {
+      transition: opacity 0.3s linear;
+      opacity: 0;
+    }
+
     td:not(:nth-child(1)) {
       opacity: 0.45;
 
       a {
         opacity: 0.45;
+      }
+    }
+
+    &:hover {
+      .score-container {
+        opacity: 1;
       }
     }
   }

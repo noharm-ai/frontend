@@ -10,11 +10,9 @@ import {
   CopyOutlined,
 } from "@ant-design/icons";
 
-import Badge from "components/Badge";
 import Dropdown from "components/Dropdown";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
-import Tag from "components/Tag";
 import notification from "components/notification";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
 import { getErrorMessageFromException } from "utils/errorHandler";
@@ -70,25 +68,6 @@ const PanelAction = ({
 
   const summaryTags = (summary) => {
     const tags = [];
-
-    if (summary.alerts) {
-      tags.push(
-        <Tooltip
-          title={
-            summary.alergy
-              ? t("prescriptionDrugTags.alertsAllergy")
-              : t("prescriptionDrugTags.alerts")
-          }
-          key="alerts"
-        >
-          <Badge dot count={summary.alergy}>
-            <Tag color="red" key="alerts" className="tag-badge">
-              {summary.alerts}
-            </Tag>
-          </Badge>
-        </Tooltip>
-      );
-    }
 
     if (summary.interventions) {
       tags.push(

@@ -167,30 +167,6 @@ export default function CheckSummary({
     };
   };
 
-  // const items = [];
-  // Object.keys(groups).forEach((g) => {
-  //   const item = groups[g];
-
-  //   items.push({
-  //     key: item.idPrescriptionDrug,
-  //     label: getHeader(item),
-  //     extra: getExtra(item),
-  //     children: (
-  //       <>
-  //         {item.alerts.map((a, index) => (
-  //           <Alert
-  //             key={index}
-  //             type="error"
-  //             message={<RichTextView text={a.text} />}
-  //             style={{ marginTop: "5px", background: "#fff" }}
-  //             showIcon
-  //           />
-  //         ))}
-  //       </>
-  //     ),
-  //   });
-  // });
-
   return (
     <Formik
       enableReinitialize
@@ -228,14 +204,19 @@ export default function CheckSummary({
               Confirmar a checagem
             </Heading>
           </header>
-          <p>A prescrição possui alertas de Nível Alto:</p>
+          <p>
+            Revise os alertas de <strong>Nível Alto</strong> e confirme para
+            finalizar a checagem.
+          </p>
 
           <Form>
             <div
               style={{
                 maxHeight: "60vh",
                 overflowY: "auto",
-                paddingRight: "15px",
+                padding: "0 15px",
+                background: "#fafafa",
+                borderRadius: "8px",
               }}
               className="custom-scroll-danger"
             >
@@ -249,12 +230,14 @@ export default function CheckSummary({
                           position: "sticky",
                           top: 0,
                           left: 0,
-                          fontSize: "18px",
+                          fontSize: "16px",
                           fontWeight: 600,
                           marginBottom: "10px",
                           marginTop: index > 0 ? "20px" : 0,
+                          padding: "0 4px",
                           zIndex: 99,
-                          background: "#fff",
+                          background: "#fafafa",
+                          color: "#2e3c5a",
                         }}
                       >
                         Fim da vigência: {formatDate(dt)}

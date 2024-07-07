@@ -16,6 +16,7 @@ import {
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 import SecurityService from "services/security";
 import FeatureService from "services/features";
+import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 
 import {
   PrescriptionCollapse,
@@ -250,59 +251,95 @@ export default function PrescriptionDrugList({
     );
   };
 
-  const panelHeader = (ds) => (
-    <PrescriptionHeader className="panel-header">
-      <div className="title">
-        <strong className="p-number">
-          {t("prescriptionDrugList.panelPrescription")} &nbsp;
-          <a
-            href={`/prescricao/${ds.key}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            # {ds.key}
-          </a>
-        </strong>
-      </div>
-      <div className="subtitle">
-        <span style={{ paddingLeft: 0 }}>
-          <strong>{t("prescriptionDrugList.panelIssueDate")}:</strong> &nbsp;
-          {format(new Date(headers[ds.key].date), "dd/MM/yyyy HH:mm")}
-        </span>
-        <span>
+  const panelHeader = (ds) => {
+    const isChecked = headers[ds.key].status === "s";
+    const source = isEmpty(ds.value) ? null : ds.value[0].source;
+    let summary = null;
+    if (headers[ds.key] && headers[ds.key][summarySourceToType(source)]) {
+      summary = headers[ds.key][summarySourceToType(source)];
+    }
+
+    return (
+      <PrescriptionHeader className="panel-header">
+        <div className="panel-header-icon">
+          {!isChecked && summary && summary.alerts > 0 && (
+            <DrugAlertLevelTag
+              levels={[summary.alertLevel]}
+              count={summary.alerts}
+              allergy={summary.allergy}
+            />
+          )}
+        </div>
+        <div className="panel-header-description">
+          <div className="title">
+            <strong className="p-number">
+              {t("prescriptionDrugList.panelPrescription")} &nbsp;
+              <a
+                href={`/prescricao/${ds.key}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                # {ds.key}
+              </a>
+            </strong>
+          </div>
+          <div className="subtitle">
+            <span style={{ paddingLeft: 0 }}>
+              <strong>{t("prescriptionDrugList.panelIssueDate")}:</strong>{" "}
+              &nbsp;
+              {format(new Date(headers[ds.key].date), "dd/MM/yyyy HH:mm")}
+            </span>
+            <span>
+              <strong>{t("prescriptionDrugList.panelValidUntil")}:</strong>{" "}
+              &nbsp;
+              <span
+                className={
+                  isExpired(headers[ds.key].expire, true) ? "expired" : ""
+                }
+              >
+                {headers[ds.key].expire
+                  ? format(new Date(headers[ds.key].expire), "dd/MM/yyyy HH:mm")
+                  : " - "}
+              </span>
+            </span>
+            <span>
+              <strong>{t("prescriptionDrugList.panelBed")}:</strong> &nbsp;
+              <Tooltip title={headers[ds.key].department} underline>
+                {headers[ds.key].bed}
+              </Tooltip>
+            </span>
+            <span>
+              <strong>{t("prescriptionDrugList.panelPrescriber")}:</strong>{" "}
+              &nbsp;
+              {headers[ds.key].prescriber}
+            </span>
+          </div>
+        </div>
+      </PrescriptionHeader>
+    );
+  };
+
+  const groupHeader = (dt, headerSummary) => {
+    return (
+      <PrescriptionHeader>
+        {!headerSummary.checked &&
+          headerSummary &&
+          headerSummary.summary.alerts > 0 && (
+            <DrugAlertLevelTag
+              levels={headerSummary.summary.alertLevel}
+              count={headerSummary.summary.alerts}
+              allergy={headerSummary.summary.allergy}
+            />
+          )}
+        <span style={{ fontSize: "16px", marginLeft: "10px" }}>
           <strong>{t("prescriptionDrugList.panelValidUntil")}:</strong> &nbsp;
-          <span
-            className={isExpired(headers[ds.key].expire, true) ? "expired" : ""}
-          >
-            {headers[ds.key].expire
-              ? format(new Date(headers[ds.key].expire), "dd/MM/yyyy HH:mm")
-              : " - "}
+          <span className={isExpired(`${dt}T23:59:59`) ? "expired" : ""}>
+            {format(parseISO(dt), "dd/MM/yyyy")}
           </span>
         </span>
-        <span>
-          <strong>{t("prescriptionDrugList.panelBed")}:</strong> &nbsp;
-          <Tooltip title={headers[ds.key].department} underline>
-            {headers[ds.key].bed}
-          </Tooltip>
-        </span>
-        <span>
-          <strong>{t("prescriptionDrugList.panelPrescriber")}:</strong> &nbsp;
-          {headers[ds.key].prescriber}
-        </span>
-      </div>
-    </PrescriptionHeader>
-  );
-
-  const groupHeader = (dt) => (
-    <PrescriptionHeader>
-      <span style={{ fontSize: "16px" }}>
-        <strong>{t("prescriptionDrugList.panelValidUntil")}:</strong> &nbsp;
-        <span className={isExpired(`${dt}T23:59:59`) ? "expired" : ""}>
-          {format(parseISO(dt), "dd/MM/yyyy")}
-        </span>
-      </span>
-    </PrescriptionHeader>
-  );
+      </PrescriptionHeader>
+    );
+  };
 
   const summarySourceToType = (s) => {
     switch (sourceToStoreType(s)) {
@@ -433,12 +470,13 @@ export default function PrescriptionDrugList({
   const aggSummary = (currentData, addData) => {
     const baseData = currentData || {
       alerts: 0,
-      alergy: 0,
+      allergy: 0,
       interventions: 0,
       np: 0,
       am: 0,
       av: 0,
       controlled: 0,
+      alertLevel: [],
     };
 
     if (isEmpty(addData)) {
@@ -447,7 +485,11 @@ export default function PrescriptionDrugList({
 
     const aggData = {};
     Object.keys(baseData).forEach((k) => {
-      aggData[k] = baseData[k] + addData[k];
+      if (k === "alertLevel") {
+        aggData[k] = [...baseData[k], addData[k]];
+      } else {
+        aggData[k] = baseData[k] + addData[k];
+      }
     });
 
     return aggData;
@@ -490,7 +532,7 @@ export default function PrescriptionDrugList({
   const getCollapseItems = (g) => [
     {
       key: "1",
-      label: groupHeader(g),
+      label: groupHeader(g, groups[g]),
       extra: groupSummary(groups[g]),
       className: groups[g].checked ? "checked" : "",
       children: list(groups[g].ids),

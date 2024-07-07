@@ -9,8 +9,6 @@ import {
 import { useSelector } from "react-redux";
 import {
   WarningOutlined,
-  //CheckOutlined,
-  FormOutlined,
   StopOutlined,
   MessageOutlined,
   HourglassOutlined,
@@ -49,16 +47,6 @@ function PresmedTags({ prescription, bag }) {
 
   return (
     <TableTags>
-      {/* <span
-        className="tag gtm-tag-check"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {prescription.checked && (
-          <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
-            <CheckOutlined style={{ fontSize: 18, color: "#52c41a" }} />
-          </Tooltip>
-        )}
-      </span> */}
       <span
         className="tag gtm-tag-msg"
         onClick={() => bag.handleRowExpand(prescription)}
@@ -69,16 +57,6 @@ function PresmedTags({ prescription, bag }) {
               <MessageOutlined style={{ fontSize: 18, color: "#108ee9" }} />
             </Tooltip>
           )}
-      </span>
-      <span
-        className="tag gtm-ico-form"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {prescription.prevNotes && prescription.prevNotes !== "None" && (
-          <Tooltip title={bag.t("prescriptionDrugTags.prevNotes")}>
-            <FormOutlined style={{ fontSize: 18, color: "#108ee9" }} />
-          </Tooltip>
-        )}
       </span>
       <span
         className="tag gtm-tag-warn"
