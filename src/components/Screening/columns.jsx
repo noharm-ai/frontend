@@ -335,7 +335,8 @@ const NestedTableContainer = styled.div`
   .ant-descriptions-item-label {
     font-weight: 600;
     color: #2e3c5a;
-    width: 20%;
+    width: 15%;
+    text-align: right;
   }
 `;
 
