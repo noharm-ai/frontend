@@ -953,8 +953,8 @@ const frequencyAndTime = (bag) => [
   {
     title: bag.t("tableHeader.time"),
     dataIndex: "time",
-    ellipsis: bag.condensed,
-    align: bag.condensed ? "left" : "center",
+    ellipsis: true,
+    align: "left",
     width: 100,
     render: (text, prescription) => {
       return <Tooltip title={prescription.time}>{prescription.time}</Tooltip>;
