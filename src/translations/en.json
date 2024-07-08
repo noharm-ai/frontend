@@ -640,11 +640,12 @@
     "endEconomyDate": "ECONOMY DATE END",
     "economyValue": "ECONOMY VALUE",
     "dose": "DOSE",
-    "frequency": "FREQUENCIA",
-    "measureUnit": "UNIDADE MEDIDA",
-    "route": "VIA",
-    "prescriptionExpirationDate": "VIGENCIA",
-    "suspensionDate": "DATA SUSPENSAO"
+    "frequency": "FREQUENCY",
+    "measureUnit": "MEASURE UNIT",
+    "route": "ROUTE",
+    "prescriptionExpirationDate": "EXPIRE DATE",
+    "suspensionDate": "SUSPENSION DATE",
+    "observation": "OBSERVATION"
   },
 
   "reportcsvCulture": {

@@ -650,7 +650,8 @@
     "measureUnit": "UNIDADE MEDIDA",
     "route": "VIA",
     "prescriptionExpirationDate": "VIGENCIA",
-    "suspensionDate": "DATA SUSPENSAO"
+    "suspensionDate": "DATA SUSPENSAO",
+    "observation": "OBSERVACAO"
   },
 
   "reportcsvCulture": {
