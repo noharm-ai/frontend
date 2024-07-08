@@ -208,6 +208,8 @@ export const transformPrescription = ({
       if (i.alertsComplete && i.alertsComplete.length) {
         const drugAlerts = i.alertsComplete.map((a) => ({
           ...a,
+          idPrescription: i.idPrescription,
+          cpoe: i.cpoe, // idPrescription when cpoe **refactor
           drugName: i.drug,
           date: item?.headers[i.idPrescription]?.date,
           expire: item?.headers[i.idPrescription]?.expire,

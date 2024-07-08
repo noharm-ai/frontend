@@ -12,6 +12,8 @@ import Tag from "components/Tag";
 import notification from "components/notification";
 import Dropdown from "components/Dropdown";
 import Menu from "components/Menu";
+import FeatureService from "services/features";
+import SecurityService from "services/security";
 
 import PrescriptionList from "containers/Screening/PrescriptionDrug/PrescriptionList";
 import SolutionList from "containers/Screening/PrescriptionDrug/SolutionList";
@@ -39,9 +41,9 @@ export default function Screening({
   content,
   error,
   selectPrescriptionDrug,
-  security,
   interventions,
-  featureService,
+  roles,
+  features,
 }) {
   const params = useParams();
   const id = params?.slug;
@@ -49,6 +51,8 @@ export default function Screening({
     content;
 
   const { t } = useTranslation();
+  const security = SecurityService(roles);
+  const featureService = FeatureService(features);
 
   // show message if has error
   useEffect(() => {

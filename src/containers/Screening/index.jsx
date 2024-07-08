@@ -4,8 +4,6 @@ import { bindActionCreators } from "redux";
 import { fetchScreeningThunk } from "store/ducks/prescriptions/thunk";
 import { selectPrescriptionDrugThunk } from "store/ducks/prescriptionDrugs/thunk";
 
-import security from "services/security";
-import FeatureService from "services/features";
 import Screening from "components/Screening";
 
 const mapStateToProps = ({ prescriptions, user }) => ({
@@ -14,8 +12,8 @@ const mapStateToProps = ({ prescriptions, user }) => ({
   isFetching: prescriptions.single.isFetching,
   content: prescriptions.single.data,
   interventions: prescriptions.single.intervention.list,
-  security: security(user.account.roles),
-  featureService: FeatureService(user.account.features),
+  roles: user.account.roles,
+  features: user.account.features,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

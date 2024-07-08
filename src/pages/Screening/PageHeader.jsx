@@ -31,6 +31,8 @@ import ClinicalNotesCustomForm from "containers/Forms/ClinicalNotes/CustomForm";
 import FormClinicalAlert from "containers/Forms/ClinicalAlert";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import pageTimer from "utils/pageTimer";
+import FeatureService from "services/features";
+import SecurityService from "services/security";
 
 import { ScreeningHeader } from "components/Screening/index.style";
 
@@ -59,9 +61,10 @@ export default function PageHeader({
   checkScreening,
   reviewPatient,
   incrementClinicalNotes,
-  security,
-  featureService,
   userId,
+  roles,
+  features,
+  interventions,
 }) {
   const params = useParams();
   const id = params?.slug;
@@ -85,6 +88,8 @@ export default function PageHeader({
     delay: 150,
     config: config.slow,
   });
+  const security = SecurityService(roles);
+  const featureService = FeatureService(features);
 
   useEffect(() => {
     if (!window.noharm) {
@@ -520,6 +525,7 @@ export default function PageHeader({
             prescription={prescription}
             checkScreening={checkScreening}
             hasCpoe={security.hasCpoe()}
+            interventions={interventions}
           />
         )}
       </ScreeningHeader>

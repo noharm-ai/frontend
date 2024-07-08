@@ -347,6 +347,10 @@ export default function PrescriptionDrugList({
         return "drugs";
 
       case "solution":
+        if (featureService.hasDisableSolutionTab()) {
+          return "drugs";
+        }
+
         return "solutions";
       case "procedure":
         return "procedures";

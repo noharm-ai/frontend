@@ -3,7 +3,11 @@ import { Alert, Tag } from "antd";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
-import { ExclamationCircleFilled } from "@ant-design/icons";
+import {
+  ExclamationCircleFilled,
+  CheckOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 
 import RichTextView from "components/RichTextView";
 import Tooltip from "components/Tooltip";
@@ -23,6 +27,7 @@ export default function CheckSummary({
   setOpen,
   checkScreening,
   hasCpoe,
+  interventions,
 }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
@@ -152,6 +157,36 @@ export default function CheckSummary({
     });
   }
 
+  const AlertStatus = ({ idPrescription, idPrescriptionDrug }) => {
+    const header = prescription.content.headers[idPrescription];
+    const intervention = interventions.find(
+      (i) => i.id === idPrescriptionDrug && i.status !== "0"
+    );
+
+    return (
+      <>
+        {header && header.status === "s" && (
+          <div style={{ marginTop: "15px" }}>
+            <CheckOutlined
+              style={{ fontSize: "18px", color: "#52c41a", marginRight: "5px" }}
+            />{" "}
+            {header.user ? <>Checado por {header.user}</> : <>Checado</>}
+          </div>
+        )}
+        {intervention && (
+          <div style={{ marginTop: "15px" }}>
+            <WarningOutlined style={{ fontSize: "18px", marginRight: "5px" }} />{" "}
+            {intervention.user ? (
+              <>Intervenção registrada por {intervention.user}</>
+            ) : (
+              <>Intervenção registrada</>
+            )}
+          </div>
+        )}
+      </>
+    );
+  };
+
   const getItemsByGroup = (g) => {
     return {
       key: g.idPrescriptionDrug,
@@ -168,6 +203,10 @@ export default function CheckSummary({
               showIcon
             />
           ))}
+          <AlertStatus
+            idPrescription={hasCpoe ? g.cpoe : g.idPrescription}
+            idPrescriptionDrug={g.idPrescriptionDrug}
+          />
         </>
       ),
     };
@@ -199,12 +238,12 @@ export default function CheckSummary({
           }}
         >
           <header>
-            <Heading margin="0 0 11px" style={{ fontSize: "1.125rem" }}>
+            <Heading margin="0 0 11px" style={{ fontSize: "1.2rem" }}>
               <ExclamationCircleFilled
                 style={{
                   marginRight: "5px",
                   color: "#faad14",
-                  fontSize: "1.125rem",
+                  fontSize: "1.2rem",
                 }}
               />{" "}
               Confirmar a checagem
@@ -240,7 +279,7 @@ export default function CheckSummary({
                           fontWeight: 600,
                           marginBottom: "10px",
                           marginTop: index > 0 ? "20px" : 0,
-                          padding: "0 4px",
+                          padding: "6px 2px 0",
                           zIndex: 99,
                           background: "#fafafa",
                           color: "#2e3c5a",
