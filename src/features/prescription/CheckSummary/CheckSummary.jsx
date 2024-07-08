@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Alert, Tag } from "antd";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -11,24 +12,28 @@ import {
 
 import RichTextView from "components/RichTextView";
 import Tooltip from "components/Tooltip";
-import { DrugAlertsCollapse } from "../PrescriptionDrug.style";
 import DefaultModal from "components/Modal";
 import Heading from "components/Heading";
 import { Checkbox } from "components/Inputs";
 import notification from "components/notification";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import { formatDate } from "utils/date";
+import { setCheckSummary } from "../PrescriptionSlice";
 
 import { Form } from "styles/Form.style";
+import { DrugAlertsCollapse } from "components/Screening/PrescriptionDrug/PrescriptionDrug.style";
 
 export default function CheckSummary({
-  prescription,
-  open,
-  setOpen,
-  checkScreening,
   hasCpoe,
+  checkScreening,
+  headers,
+  alerts,
   interventions,
 }) {
+  const dispatch = useDispatch();
+  const prescription = useSelector(
+    (state) => state.prescriptionv2.checkSummary.prescription
+  );
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
@@ -38,24 +43,32 @@ export default function CheckSummary({
       "Você precisa aceitar para confirmar a checagem"
     ),
   });
-  const initialValues = {
-    accept: false,
-  };
+
+  if (!prescription) {
+    return null;
+  }
 
   let highRiskAlerts = [];
 
-  if (
-    prescription?.content?.alertsList &&
-    prescription.content.alertsList.length
-  ) {
-    highRiskAlerts = prescription.content.alertsList.filter(
-      (a) => a.level === "high"
-    );
+  if (alerts && alerts.length) {
+    if (prescription.agg) {
+      highRiskAlerts = alerts.filter((a) => a.level === "high");
+    } else {
+      highRiskAlerts = alerts.filter(
+        (a) =>
+          a.level === "high" && a.idPrescription === prescription.idPrescription
+      );
+    }
   }
 
-  if (highRiskAlerts.length === 0) {
-    return <p>Nenhum alerta de alto risco encontrado.</p>;
-  }
+  const initialValues = {
+    accept: highRiskAlerts.length > 0 ? false : true,
+  };
+
+  const onCancel = () => {
+    setLoading(false);
+    dispatch(setCheckSummary(null));
+  };
 
   const getHeader = (item) => {
     return (
@@ -105,12 +118,12 @@ export default function CheckSummary({
       type,
     }));
 
-    checkScreening(prescription.content.idPrescription, "s", {
+    checkScreening(prescription.idPrescription, "s", {
       alerts: auditAlerts,
     })
       .then(() => {
         setLoading(false);
-        setOpen(false);
+        dispatch(setCheckSummary(null));
         notification.success({
           message: "Checagem efetuada com sucesso!",
         });
@@ -138,7 +151,7 @@ export default function CheckSummary({
   });
 
   const dateGroups = {};
-  if (prescription?.content.agg && !hasCpoe) {
+  if (prescription?.agg && !hasCpoe) {
     Object.keys(groups).forEach((g) => {
       const dt = groups[g].expire
         ? groups[g].expire.substr(0, 10)
@@ -158,7 +171,7 @@ export default function CheckSummary({
   }
 
   const AlertStatus = ({ idPrescription, idPrescriptionDrug }) => {
-    const header = prescription.content.headers[idPrescription];
+    const header = headers[idPrescription];
     const intervention = interventions.find(
       (i) => i.id === idPrescriptionDrug && i.status !== "0"
     );
@@ -221,11 +234,11 @@ export default function CheckSummary({
     >
       {({ handleSubmit, errors, values, setFieldValue }) => (
         <DefaultModal
-          open={open}
-          width={900}
+          open={prescription}
+          width={highRiskAlerts.length > 0 ? 900 : 350}
           centered
           destroyOnClose
-          onCancel={() => setOpen(false)}
+          onCancel={() => onCancel()}
           onOk={handleSubmit}
           okText="Confirmar"
           cancelText={t("actions.cancel")}
@@ -236,6 +249,7 @@ export default function CheckSummary({
           cancelButtonProps={{
             disabled: loading,
           }}
+          maskClosable={false}
         >
           <header>
             <Heading margin="0 0 11px" style={{ fontSize: "1.2rem" }}>
@@ -249,76 +263,80 @@ export default function CheckSummary({
               Confirmar a checagem
             </Heading>
           </header>
-          <p>
-            Revise os alertas de <strong>Nível Alto</strong> e confirme para
-            finalizar a checagem.
-          </p>
+          {highRiskAlerts.length > 0 && (
+            <>
+              <p>
+                Revise os alertas de <strong>Nível Alto</strong> e confirme para
+                finalizar a checagem.
+              </p>
 
-          <Form>
-            <div
-              style={{
-                maxHeight: "60vh",
-                overflowY: "auto",
-                padding: "0 15px",
-                background: "#fafafa",
-                borderRadius: "8px",
-              }}
-              className="custom-scroll-danger"
-            >
-              {Object.keys(dateGroups)
-                .sort()
-                .map((dt, index) => (
-                  <React.Fragment key={dt}>
-                    {dt !== "uniq" && (
-                      <div
-                        style={{
-                          position: "sticky",
-                          top: 0,
-                          left: 0,
-                          fontSize: "16px",
-                          fontWeight: 600,
-                          marginBottom: "10px",
-                          marginTop: index > 0 ? "20px" : 0,
-                          padding: "6px 2px 0",
-                          zIndex: 99,
-                          background: "#fafafa",
-                          color: "#2e3c5a",
-                        }}
-                      >
-                        Fim da vigência: {formatDate(dt)}
-                      </div>
-                    )}
-
-                    <DrugAlertsCollapse
-                      expandIconPosition="start"
-                      items={dateGroups[dt].map((group) =>
-                        getItemsByGroup(group)
-                      )}
-                      defaultActiveKey={dateGroups[dt].map(
-                        (i) => i.idPrescriptionDrug
-                      )}
-                      style={{ marginBottom: "10px" }}
-                    />
-                  </React.Fragment>
-                ))}
-            </div>
-            <div className={`form-row`}>
-              <div className="form-input-checkbox-single">
-                <Checkbox
-                  checked={values.accept}
-                  value={values.accept}
-                  onChange={({ target }) =>
-                    setFieldValue("accept", !target.value)
-                  }
+              <Form>
+                <div
+                  style={{
+                    maxHeight: "60vh",
+                    overflowY: "auto",
+                    padding: "0 15px",
+                    background: "#fafafa",
+                    borderRadius: "8px",
+                  }}
+                  className="custom-scroll-danger"
                 >
-                  Estou ciente dos alertas apresentados.
-                </Checkbox>
-              </div>
-              {errors.accept && (
-                <div className="form-error">{errors.accept}</div>
-              )}
-            </div>
-          </Form>
+                  {Object.keys(dateGroups)
+                    .sort()
+                    .map((dt, index) => (
+                      <React.Fragment key={dt}>
+                        {dt !== "uniq" && (
+                          <div
+                            style={{
+                              position: "sticky",
+                              top: 0,
+                              left: 0,
+                              fontSize: "16px",
+                              fontWeight: 600,
+                              marginBottom: "10px",
+                              marginTop: index > 0 ? "20px" : 0,
+                              padding: "6px 2px 0",
+                              zIndex: 99,
+                              background: "#fafafa",
+                              color: "#2e3c5a",
+                            }}
+                          >
+                            Fim da vigência: {formatDate(dt)}
+                          </div>
+                        )}
+
+                        <DrugAlertsCollapse
+                          expandIconPosition="start"
+                          items={dateGroups[dt].map((group) =>
+                            getItemsByGroup(group)
+                          )}
+                          defaultActiveKey={dateGroups[dt].map(
+                            (i) => i.idPrescriptionDrug
+                          )}
+                          style={{ marginBottom: "10px" }}
+                        />
+                      </React.Fragment>
+                    ))}
+                </div>
+                <div className={`form-row`}>
+                  <div className="form-input-checkbox-single">
+                    <Checkbox
+                      checked={values.accept}
+                      value={values.accept}
+                      onChange={({ target }) =>
+                        setFieldValue("accept", !target.value)
+                      }
+                    >
+                      Estou ciente dos alertas apresentados.
+                    </Checkbox>
+                  </div>
+                  {errors.accept && (
+                    <div className="form-error">{errors.accept}</div>
+                  )}
+                </div>
+              </Form>
+            </>
+          )}
         </DefaultModal>
       )}
     </Formik>

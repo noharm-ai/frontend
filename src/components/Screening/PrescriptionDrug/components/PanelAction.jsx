@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
   LinkOutlined,
@@ -16,6 +17,7 @@ import Button from "components/Button";
 import notification from "components/notification";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
 import { getErrorMessageFromException } from "utils/errorHandler";
+import { setCheckSummary } from "features/prescription/PrescriptionSlice";
 
 const PanelAction = ({
   id,
@@ -29,6 +31,7 @@ const PanelAction = ({
   hasPrescriptionEdit,
 }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const summarySourceToType = (s) => {
     switch (sourceToStoreType(s)) {
@@ -95,21 +98,30 @@ const PanelAction = ({
   };
 
   const setPrescriptionStatus = (id, status) => {
-    checkScreening(id, status)
-      .then(() => {
-        notification.success({
-          message:
-            status === "s"
-              ? "Checagem efetuada com sucesso!"
-              : "Checagem desfeita com sucesso!",
+    if (status === "s") {
+      dispatch(
+        setCheckSummary({
+          idPrescription: id,
+          agg: false,
+        })
+      );
+    } else {
+      checkScreening(id, status)
+        .then(() => {
+          notification.success({
+            message:
+              status === "s"
+                ? "Checagem efetuada com sucesso!"
+                : "Checagem desfeita com sucesso!",
+          });
+        })
+        .catch((err) => {
+          notification.error({
+            message: t("error.title"),
+            description: getErrorMessageFromException(err, t),
+          });
         });
-      })
-      .catch((err) => {
-        notification.error({
-          message: t("error.title"),
-          description: getErrorMessageFromException(err, t),
-        });
-      });
+    }
   };
 
   const handleMenuClick = ({ key, domEvent }) => {

@@ -16,7 +16,6 @@ const mapStateToProps = ({ prescriptions, user }) => ({
     content: prescriptions.single.data,
   },
   userId: user.account.userId,
-  interventions: prescriptions.single.intervention.list,
   roles: user.account.roles,
   features: user.account.features,
 });

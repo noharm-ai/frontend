@@ -307,7 +307,7 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
   let prescriptionStatus = success.newStatus;
 
   const headers = state.single.data.headers
-    ? { ...state.single.data.headers }
+    ? JSON.parse(JSON.stringify(state.single.data.headers))
     : null;
 
   if (!isEmpty(headers)) {

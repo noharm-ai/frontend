@@ -1,6 +1,7 @@
 import styled from "styled-components/macro";
 
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import {
@@ -23,7 +24,6 @@ import { Row, Col } from "components/Grid";
 import notification from "components/notification";
 import Tooltip from "components/Tooltip";
 import moment from "moment";
-import CheckSummary from "components/Screening/PrescriptionDrug/components/CheckSummary";
 
 import ClinicalNotes from "containers/Forms/ClinicalNotes";
 import ClinicalNotesSchedule from "containers/Forms/ClinicalNotes/ScheduleForm";
@@ -33,6 +33,7 @@ import { getErrorMessageFromException } from "utils/errorHandler";
 import pageTimer from "utils/pageTimer";
 import FeatureService from "services/features";
 import SecurityService from "services/security";
+import { setCheckSummary } from "features/prescription/PrescriptionSlice";
 
 import { ScreeningHeader } from "components/Screening/index.style";
 
@@ -64,8 +65,8 @@ export default function PageHeader({
   userId,
   roles,
   features,
-  interventions,
 }) {
+  const dispatch = useDispatch();
   const params = useParams();
   const id = params?.slug;
   const { isChecking } = prescription.check;
@@ -77,7 +78,6 @@ export default function PageHeader({
   const [clinicalNotesAction, setClinicalNotesAction] =
     useState("clinicalNote");
   const [affixed, setAffixed] = useState(false);
-  const [checkSummaryModal, setCheckSummaryModal] = useState(false);
   const { t } = useTranslation();
   const transitions = useTransition(affixed, {
     from: {
@@ -176,7 +176,7 @@ export default function PageHeader({
     }
 
     if (highRiskAlerts.length > 0) {
-      setCheckSummaryModal(true);
+      dispatch(setCheckSummary(prescription.content));
     } else {
       setPrescriptionStatus(id, "s");
     }
@@ -517,17 +517,6 @@ export default function PageHeader({
           cancelText="Cancelar"
           afterSave={afterSaveClinicalAlert}
         />
-
-        {checkSummaryModal && (
-          <CheckSummary
-            open={checkSummaryModal}
-            setOpen={setCheckSummaryModal}
-            prescription={prescription}
-            checkScreening={checkScreening}
-            hasCpoe={security.hasCpoe()}
-            interventions={interventions}
-          />
-        )}
       </ScreeningHeader>
     </Affix>
   );

@@ -9,6 +9,9 @@ const initialState = {
     data: {},
     active: false,
   },
+  checkSummary: {
+    prescription: null,
+  },
   filters: [],
 };
 
@@ -35,6 +38,9 @@ const prescriptionSlice = createSlice({
     setPrescriptionFilters(state, action) {
       state.filters = action.payload;
     },
+    setCheckSummary(state, action) {
+      state.checkSummary.prescription = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -51,6 +57,7 @@ const prescriptionSlice = createSlice({
   },
 });
 
-export const { reset, setPrescriptionFilters } = prescriptionSlice.actions;
+export const { reset, setPrescriptionFilters, setCheckSummary } =
+  prescriptionSlice.actions;
 
 export default prescriptionSlice.reducer;
