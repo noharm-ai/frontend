@@ -68,8 +68,6 @@ function IntegrationAdmin() {
     });
   };
 
-  console.log(prescalcModal.test.kk);
-
   return (
     <>
       <PageHeader>
