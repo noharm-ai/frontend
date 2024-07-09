@@ -9,7 +9,6 @@ import {
 import { useSelector } from "react-redux";
 import {
   WarningOutlined,
-  StopOutlined,
   MessageOutlined,
   HourglassOutlined,
   CalendarOutlined,
@@ -75,16 +74,6 @@ function PresmedTags({ prescription, bag }) {
               <WarningOutlined style={{ fontSize: 18, color: "gray" }} />
             </Tooltip>
           )}
-      </span>
-      <span
-        className="tag gtm-tag-stop"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {prescription.suspended && (
-          <Tooltip title={bag.t("prescriptionDrugTags.suspended")}>
-            <StopOutlined style={{ fontSize: 18, color: "#f5222d" }} />
-          </Tooltip>
-        )}
       </span>
       {hasExpireInfo && (
         <>

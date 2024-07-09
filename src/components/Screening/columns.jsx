@@ -10,6 +10,7 @@ import {
   FormOutlined,
   CalculatorOutlined,
   CheckCircleOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
 import { Button as AntButton } from "antd";
 
@@ -822,24 +823,42 @@ const drugInfo = (bag) => [
               {prescription.score}
             </span>
           </Tooltip>
-          {prescription.checked && (
-            <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
-              <CheckCircleOutlined
+          {prescription.suspensionDate ? (
+            <Tooltip
+              title={`Suspenso em: ${format(
+                new Date(prescription.suspensionDate),
+                "dd/MM/yyyy HH:mm"
+              )}`}
+            >
+              <StopOutlined
                 style={{
                   fontSize: 18,
-                  color: "#52c41a",
+                  color: "#f5222d",
                 }}
               />
             </Tooltip>
-          )}
-          {!prescription.checked && (
-            <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
-              <div
-                style={{
-                  width: "18px",
-                }}
-              />
-            </Tooltip>
+          ) : (
+            <>
+              {prescription.checked && (
+                <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
+                  <CheckCircleOutlined
+                    style={{
+                      fontSize: 18,
+                      color: "#52c41a",
+                    }}
+                  />
+                </Tooltip>
+              )}
+              {!prescription.checked && (
+                <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
+                  <div
+                    style={{
+                      width: "18px",
+                    }}
+                  />
+                </Tooltip>
+              )}
+            </>
           )}
         </div>
       );
