@@ -25,16 +25,6 @@ const AuthHandler = ({
     const schema = localStorage.getItem("schema");
     const oauth = localStorage.getItem("oauth");
 
-    try {
-      if (window.cwr) {
-        window.cwr("addSessionAttributes", {
-          schema: schema,
-        });
-      }
-    } catch (ex) {
-      console.error("cwr set schema error");
-    }
-
     if (schema && oauth) {
       return <Navigate to={`/login/${schema}`} />;
     }
@@ -49,6 +39,16 @@ const AuthHandler = ({
   if (currentVersion !== appInfo.version && isLogged) {
     logout({ preventDefault: noop });
     return <Navigate to="/login" />;
+  }
+
+  try {
+    if (window.cwr) {
+      window.cwr("addSessionAttributes", {
+        schema: localStorage.getItem("schema"),
+      });
+    }
+  } catch (ex) {
+    console.error("cwr set schema error");
   }
 
   return <Component {...props} />;
