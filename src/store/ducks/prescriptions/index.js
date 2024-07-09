@@ -315,7 +315,7 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
       if (headers[i.idPrescription]) {
         headers[i.idPrescription].status = i.status;
         headers[i.idPrescription].user = success.user;
-        headers[i.idPrescription].user = success.userId;
+        //headers[i.idPrescription].user = success.userId;
       }
     });
 
