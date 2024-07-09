@@ -85,45 +85,6 @@
     </script>
     <!-- End Global site tag (gtag.js) - Google Analytics -->
 
-    <!--AWS RUM-->
-    <script>
-      (function (n, i, v, r, s, c, u, x, z) {
-        x = window.AwsRumClient = {
-          q: [],
-          n: n,
-          i: i,
-          v: v,
-          r: r,
-          c: c,
-          u: u,
-        };
-        window[n] = function (c, p) {
-          x.q.push({ c: c, p: p });
-        };
-        z = document.createElement("script");
-        z.async = true;
-        z.src = s;
-        document.head.insertBefore(
-          z,
-          document.getElementsByTagName("script")[0]
-        );
-      })(
-        "cwr",
-        "76733ed1-1445-4f80-8e41-2f824a752c39",
-        "1.0.0",
-        "sa-east-1",
-        "https://client.rum.us-east-1.amazonaws.com/1.0.2/cwr.js",
-        {
-          sessionSampleRate: 1,
-          identityPoolId: "sa-east-1:45bad581-042d-4680-91e2-972f4074372d",
-          endpoint: "https://dataplane.rum.sa-east-1.amazonaws.com",
-          telemetries: ["errors"],
-          allowCookies: true,
-          enableXRay: false,
-        }
-      );
-    </script>
-
     <title>%REACT_APP_SITE_TITLE%</title>
   </head>
   <body>
