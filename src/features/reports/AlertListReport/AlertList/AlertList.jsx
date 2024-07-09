@@ -6,6 +6,7 @@ import { Descriptions, Alert } from "antd";
 import { CardTable } from "components/Table";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 import RichTextView from "components/RichTextView";
+import { formatDateTime } from "utils/date";
 
 export default function AlertList() {
   const { t } = useTranslation();
@@ -121,6 +122,15 @@ const ExpandedRow = ({ record }) => {
       label: "Via",
       span: 3,
       children: `${record.route || "-"}`,
+    },
+    {
+      label: "Vigência",
+      span: 3,
+      children: `${
+        record.expire
+          ? formatDateTime(record.expire)
+          : "Manter até segunda ordem"
+      }`,
     },
     {
       label: "Alerta",
