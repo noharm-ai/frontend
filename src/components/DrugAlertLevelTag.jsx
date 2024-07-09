@@ -84,7 +84,7 @@ export default function DrugAlertLevelTag({
             marginRight: 0,
             width: showDescription ? "auto" : "30px",
             textAlign: "center",
-            padding: 0,
+            padding: showDescription ? "0 5px" : 0,
           }}
           onClick={() => onClick()}
         >

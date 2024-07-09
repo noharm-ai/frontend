@@ -7,6 +7,7 @@ import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
+import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 
 export default function MainFilters() {
   const { t } = useTranslation();
@@ -19,7 +20,7 @@ export default function MainFilters() {
 
   return (
     <>
-      <Col md={5} lg={4} xxl={4}>
+      <Col md={5} lg={3} xxl={3}>
         <Heading as="label" size="14px">
           Nível:
         </Heading>
@@ -36,13 +37,13 @@ export default function MainFilters() {
           autoClearSearchValue={false}
         >
           <Select.Option key={"low"} value={"low"}>
-            Baixo
+            <DrugAlertLevelTag levels={["low"]} showDescription />
           </Select.Option>
           <Select.Option key={"medium"} value={"medium"}>
-            Médio
+            <DrugAlertLevelTag levels={["medium"]} showDescription />
           </Select.Option>
           <Select.Option key={"high"} value={"high"}>
-            Alto
+            <DrugAlertLevelTag levels={["high"]} showDescription />
           </Select.Option>
         </Select>
       </Col>
@@ -70,7 +71,7 @@ export default function MainFilters() {
         </Select>
       </Col>
 
-      <Col md={7} lg={5} xxl={5}>
+      <Col md={7} lg={6} xxl={6}>
         <Heading as="label" size="14px">
           Tipo:
         </Heading>
