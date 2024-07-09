@@ -206,7 +206,7 @@ export const transformPrescription = ({
     const allItems = [...prescription, ...solution, ...procedures];
     allItems.forEach((i) => {
       if (i.alertsComplete && i.alertsComplete.length) {
-        const drugAlerts = i.alertsComplete.map((a) => ({
+        const drugAlerts = i.alertsComplete.map((a, index) => ({
           ...a,
           idPrescription: i.idPrescription,
           cpoe: i.cpoe, // idPrescription when cpoe **refactor
@@ -218,6 +218,7 @@ export const transformPrescription = ({
           measureUnit: i.measureUnit,
           frequency: i.frequency,
           route: i.route,
+          rowKey: `${a.idPrescriptionDrug}-${a.key}-${a.type}-${index}`,
         }));
         alerts.push(...drugAlerts);
       }

@@ -8,6 +8,7 @@ import Tag from "components/Tag";
 export default function DrugAlertLevelTag({
   levels,
   count,
+  showDescription = false,
   allergy = false,
   onClick = () => {},
 }) {
@@ -49,6 +50,24 @@ export default function DrugAlertLevelTag({
     }
   };
 
+  const getAlertDescription = () => {
+    if (!levels.length) {
+      return "-";
+    }
+
+    if (levels.indexOf("high") !== -1) {
+      return "Alto";
+    }
+
+    if (levels.indexOf("medium") !== -1) {
+      return "Médio";
+    }
+
+    if (levels.indexOf("low") !== -1) {
+      return "Baixo";
+    }
+  };
+
   return (
     <Tooltip
       title={
@@ -63,12 +82,12 @@ export default function DrugAlertLevelTag({
             ...getAlertStyle(),
             cursor: "pointer",
             marginRight: 0,
-            width: "30px",
+            width: showDescription ? "auto" : "30px",
             textAlign: "center",
           }}
           onClick={() => onClick()}
         >
-          {count}
+          {showDescription ? getAlertDescription() : count}
         </Tag>
       </Badge>
     </Tooltip>
