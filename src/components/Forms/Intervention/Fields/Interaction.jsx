@@ -24,8 +24,10 @@ export default function Interaction({
       .concat(interactionsList)
       .map((i) => {
         if (interactions.indexOf(parseInt(i.idDrug, 10)) !== -1) {
-          i.idDrug += "";
-          return i;
+          return {
+            ...i,
+            idDrug: `${i.idDrug}`,
+          };
         }
 
         return null;
@@ -50,10 +52,10 @@ export default function Interaction({
   const normalizedList = drugs.list
     .concat(interactionsList)
     .concat(uniqueDrugList)
-    .map((i) => {
-      i.idDrug += "";
-      return i;
-    });
+    .map((i) => ({
+      ...i,
+      idDrug: `${i.idDrug}`,
+    }));
 
   return (
     <Select
@@ -68,7 +70,7 @@ export default function Interaction({
       onChange={handleChange}
     >
       {uniqBy(normalizedList, "idDrug").map(({ idDrug, name }) => (
-        <Select.Option key={idDrug} value={idDrug}>
+        <Select.Option key={`${idDrug}`} value={`${idDrug}`}>
           {name}
         </Select.Option>
       ))}
