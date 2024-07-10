@@ -58,22 +58,30 @@ export default function Interaction({
     }));
 
   return (
-    <Select
-      id="interactions"
-      mode="multiple"
-      optionFilterProp="children"
-      style={{ width: "100%" }}
-      defaultValue={interactions || undefined}
-      notFoundContent={drugs.isFetching ? <LoadBox /> : null}
-      filterOption={false}
-      onSearch={search}
-      onChange={handleChange}
-    >
-      {uniqBy(normalizedList, "idDrug").map(({ idDrug, name }) => (
-        <Select.Option key={`${idDrug}`} value={`${idDrug}`}>
-          {name}
-        </Select.Option>
-      ))}
-    </Select>
+    <div style={{ display: "flex" }}>
+      <Select
+        id="interactions"
+        mode="multiple"
+        optionFilterProp="children"
+        style={{ width: "100%" }}
+        defaultValue={interactions || undefined}
+        notFoundContent={drugs.isFetching ? <LoadBox /> : null}
+        filterOption={false}
+        onSearch={search}
+        onChange={handleChange}
+      >
+        {uniqBy(normalizedList, "idDrug").map(({ idDrug, name }) => (
+          <Select.Option key={`${idDrug}`} value={`${idDrug}`}>
+            {name}
+          </Select.Option>
+        ))}
+      </Select>
+      {drugs.isFetching && (
+        <div style={{ width: "50px" }}>
+          {" "}
+          <LoadBox />
+        </div>
+      )}
+    </div>
   );
 }
