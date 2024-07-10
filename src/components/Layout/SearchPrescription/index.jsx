@@ -96,11 +96,13 @@ export default function SearchPrescription({ type, size }) {
             const index = options.findIndex(
               (i) => i.idPrescription === itemActive
             );
-            navigateTo(
-              options[index].idPrescription,
-              options[index].admissionNumber,
-              options[index].concilia
-            );
+            if (options[index]) {
+              navigateTo(
+                options[index].idPrescription,
+                options[index].admissionNumber,
+                options[index].concilia
+              );
+            }
 
             break;
           default:
