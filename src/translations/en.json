@@ -415,7 +415,13 @@
   },
 
   "prescriptionDrugFilters": {
-    "alerts": "Has alerts",
+    "alerts": "Alerts",
+    "alertsAll": "Alerts: All",
+    "alertsHigh": "Alerts: High",
+    "alertsMedium": "Alerts: Medium",
+    "alertsLow": "Alerts: Low",
+    "alertsTypeGroup": "Alerts by Type",
+    "alertsLevelGroup": "Alerts by Risk",
     "diff": "Not evaluated",
     "am": "Antimicrobial",
     "hv": "High vigilance",
@@ -634,11 +640,12 @@
     "endEconomyDate": "ECONOMY DATE END",
     "economyValue": "ECONOMY VALUE",
     "dose": "DOSE",
-    "frequency": "FREQUENCIA",
-    "measureUnit": "UNIDADE MEDIDA",
-    "route": "VIA",
-    "prescriptionExpirationDate": "VIGENCIA",
-    "suspensionDate": "DATA SUSPENSAO"
+    "frequency": "FREQUENCY",
+    "measureUnit": "MEASURE UNIT",
+    "route": "ROUTE",
+    "prescriptionExpirationDate": "EXPIRE DATE",
+    "suspensionDate": "SUSPENSION DATE",
+    "observation": "OBSERVATION"
   },
 
   "reportcsvCulture": {
@@ -722,5 +729,30 @@
     "whiteList": "No validations",
     "chemo": "Chemotherapy",
     "dialyzable": "Dialyzable"
+  },
+
+  "drugAlertType": {
+    "allergy": "Allergy",
+    "maxDose": "Max dose",
+    "dm": "Drug duplicity",
+    "dt": "Therapeutic duplicity",
+    "liver": "Hepatotoxic",
+    "iy": "Y incompatibility",
+    "it": "Drug interaction",
+    "ira": "Risk of Acute Renal Failure",
+    "sl": "Solution incompatibility",
+    "elderly": "Potentially inappropriate medication for the elderly",
+    "kidney": "Nephrotoxic",
+    "platelets": "Platelets",
+    "rx": "Cross reactivity",
+    "tube": "Probe",
+    "maxTime": "Treatment time",
+
+    "exams": "Lab results x Drugs",
+    "duplicity": "Duplicity",
+    "group_pregnant_lactating": "Pregnant or Lactating",
+    "high": "Alerts: High",
+    "medium": "Alerts: Medium",
+    "low": "Alerts: Low"
   }
 }

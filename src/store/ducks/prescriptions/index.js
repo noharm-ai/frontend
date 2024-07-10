@@ -157,7 +157,6 @@ const setModalVisibility = (state = INITIAL_STATE, { modalKey, visible }) => ({
 });
 
 const removeNotes = (state = INITIAL_STATE, { id, notesType }) => {
-  console.log("remove notes thunk");
   let listAttr;
   if (notesType === "allergy") {
     listAttr = "notesAllergies";
@@ -308,7 +307,7 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
   let prescriptionStatus = success.newStatus;
 
   const headers = state.single.data.headers
-    ? { ...state.single.data.headers }
+    ? JSON.parse(JSON.stringify(state.single.data.headers))
     : null;
 
   if (!isEmpty(headers)) {
@@ -316,7 +315,7 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
       if (headers[i.idPrescription]) {
         headers[i.idPrescription].status = i.status;
         headers[i.idPrescription].user = success.user;
-        headers[i.idPrescription].user = success.userId;
+        //headers[i.idPrescription].user = success.userId;
       }
     });
 

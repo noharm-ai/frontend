@@ -6,6 +6,8 @@ import { FloatButton } from "antd";
 import FormPatientModal from "containers/Forms/Patient";
 import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSlice";
 import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
+import CheckSummary from "features/prescription/CheckSummary/CheckSummary";
+import SecurityService from "services/security";
 
 import { ScreeningFloatButtonGroup } from "../index.style";
 
@@ -14,8 +16,12 @@ export default function ScreeningActions({
   prescription,
   setModalVisibility,
   patientEditVisible,
+  roles,
+  checkScreening,
+  interventions,
 }) {
   const dispatch = useDispatch();
+  const security = SecurityService(roles);
 
   const afterSavePatient = () => {
     dispatch(
@@ -56,6 +62,14 @@ export default function ScreeningActions({
         afterSavePatient={afterSavePatient}
       />
       <InterventionOutcome />
+
+      <CheckSummary
+        hasCpoe={security.hasCpoe()}
+        checkScreening={checkScreening}
+        headers={prescription?.headers}
+        alerts={prescription?.alertsList}
+        interventions={interventions}
+      />
     </>
   );
 }

@@ -19,9 +19,17 @@ const Table = styled(AntTable)`
     padding: 5px;
   }
 
+  .ant-table-tbody > tr > td {
+    color: rgba(0, 0, 0, 0.65);
+  }
+
   .ant-table-thead > tr > th,
   .ant-table-thead > tr > td {
     background: transparent;
+  }
+
+  .ant-table-expand-icon-col {
+    width: 35px;
   }
 
   .ant-table-column-title {
@@ -62,18 +70,18 @@ const Table = styled(AntTable)`
     }
 
     &.red {
-      background-color: #e46666;
+      background-color: #f44336;
       color: #fff;
     }
 
     &.orange {
-      background-color: #e67e22;
+      background-color: #f57f17;
       color: #fff;
     }
 
     &.yellow {
-      background-color: #e4da66;
-      color: #000;
+      background-color: #ffc107;
+      color: #fff;
     }
 
     &.green {
@@ -123,11 +131,53 @@ const Table = styled(AntTable)`
       opacity: 0.45;
       text-decoration: line-through;
     }
+
+    .score-container {
+      transition: opacity 0.3s linear;
+      opacity: 0;
+    }
+
+    &:hover {
+      .score-container {
+        opacity: 1;
+      }
+    }
   }
 
   .checked {
     td:not(:nth-child(1)) {
+      opacity: 0.75;
+    }
+  }
+
+  .new-item {
+    td:not(:nth-child(1)) {
+      font-weight: 500;
+
+      a {
+        font-weight: 500;
+      }
+    }
+  }
+
+  .whitelist {
+    .score-container {
+      transition: opacity 0.3s linear;
+      opacity: 0;
+    }
+
+    td:not(:nth-child(1)) {
       opacity: 0.45;
+
+      a {
+        opacity: 0.45;
+      }
+    }
+
+    &:hover {
+      .score-container {
+        opacity: 1;
+      }
     }
   }
 
@@ -289,7 +339,7 @@ const Table = styled(AntTable)`
 
   .summary-row {
     td:not(:first-child) {
-      opacity: 0.2;
+      opacity: 0.45;
     }
 
     td {

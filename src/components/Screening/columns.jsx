@@ -9,6 +9,8 @@ import {
   CaretDownOutlined,
   FormOutlined,
   CalculatorOutlined,
+  CheckCircleOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
 import { Button as AntButton } from "antd";
 
@@ -20,16 +22,17 @@ import Descriptions from "components/Descriptions";
 import Tag from "components/Tag";
 import { createSlug } from "utils/transformers/utils";
 import Dropdown from "components/Dropdown";
-import Alert from "components/Alert";
 import RichTextView from "components/RichTextView";
 import InterventionStatus from "models/InterventionStatus";
 import { SelectMultiline } from "components/Inputs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
 import PresmedTags from "./PrescriptionDrug/components/PresmedTags";
+import DrugAlerts from "./PrescriptionDrug/components/DrugAlerts";
 
 import { InterventionView } from "./Intervention/columns";
 import DrugForm from "./Form";
@@ -333,7 +336,8 @@ const NestedTableContainer = styled.div`
   .ant-descriptions-item-label {
     font-weight: 600;
     color: #2e3c5a;
-    width: 20%;
+    width: 15%;
+    text-align: right;
   }
 `;
 
@@ -356,26 +360,6 @@ const periodDates = (dates) => {
         <span key={index}>{item}, </span>
       ))}
     </PeriodTags>
-  );
-};
-
-const showAlerts = (alerts) => {
-  if (alerts == null || alerts.length === 0) {
-    return "--";
-  }
-
-  return (
-    <>
-      {alerts.map((item, index) => (
-        <Alert
-          key={index}
-          type="error"
-          message={<RichTextView text={item} />}
-          style={{ marginTop: "5px" }}
-          showIcon
-        />
-      ))}
-    </>
   );
 };
 
@@ -472,12 +456,15 @@ export const expandedRowRender = (bag) => (record) => {
       className={`${record.source} ${record.groupRow ? "group" : ""}`}
     >
       <Descriptions bordered size="small">
-        {!isEmpty(record.alerts) && (
+        {!isEmpty(record.alertsComplete) && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrAlert")}
             span={3}
           >
-            {showAlerts(record.alerts)}
+            <DrugAlerts
+              alerts={record.alertsComplete}
+              disableGroups={bag.featureService.hasDisableAlertGroups()}
+            />
           </Descriptions.Item>
         )}
         {bag.security.hasPresmedForm() && bag.formTemplate && (
@@ -791,25 +778,89 @@ const drugInfo = (bag) => [
   {
     key: "idPrescriptionDrug",
     dataIndex: "score",
-    width: 20,
+    width: 85,
     align: "center",
-    render: (entry, { score, near, total, emptyRow }) => {
-      if (total || emptyRow) {
+    render: (entry, prescription) => {
+      if (prescription.total || prescription.emptyRow) {
         return "";
       }
 
       return (
-        <Tooltip
-          title={
-            near
-              ? `${bag.t("tableHeader.approximateScore")}: ${score}`
-              : `${bag.t("tableHeader.score")}: ${score}`
-          }
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+          className="score-container"
         >
-          <span className={`flag has-score ${flags[parseInt(score, 10)]}`}>
-            {score}
-          </span>
-        </Tooltip>
+          <DrugAlertLevelTag
+            levels={
+              prescription.alertsComplete
+                ? prescription.alertsComplete.map((a) => a.level)
+                : []
+            }
+            count={prescription.alertsComplete?.length}
+            allergy={prescription.allergy}
+            onClick={() => bag.handleRowExpand(prescription)}
+          />
+          <Tooltip
+            title={
+              prescription.near
+                ? `${bag.t("tableHeader.approximateScore")}: ${
+                    prescription.score
+                  }`
+                : `${bag.t("tableHeader.score")}: ${prescription.score}`
+            }
+          >
+            <span
+              className={`flag has-score ${
+                flags[parseInt(prescription.score, 10)]
+              }`}
+              style={{ cursor: "pointer" }}
+              onClick={() => bag.handleRowExpand(prescription)}
+            >
+              {prescription.score}
+            </span>
+          </Tooltip>
+          {prescription.suspensionDate ? (
+            <Tooltip
+              title={`Suspenso em: ${format(
+                new Date(prescription.suspensionDate),
+                "dd/MM/yyyy HH:mm"
+              )}`}
+            >
+              <StopOutlined
+                style={{
+                  fontSize: 18,
+                  color: "#f5222d",
+                }}
+              />
+            </Tooltip>
+          ) : (
+            <>
+              {prescription.checked && (
+                <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
+                  <CheckCircleOutlined
+                    style={{
+                      fontSize: 18,
+                      color: "#52c41a",
+                    }}
+                  />
+                </Tooltip>
+              )}
+              {!prescription.checked && (
+                <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
+                  <div
+                    style={{
+                      width: "18px",
+                    }}
+                  />
+                </Tooltip>
+              )}
+            </>
+          )}
+        </div>
       );
     },
   },
@@ -922,8 +973,8 @@ const frequencyAndTime = (bag) => [
   {
     title: bag.t("tableHeader.time"),
     dataIndex: "time",
-    ellipsis: bag.condensed,
-    align: bag.condensed ? "left" : "center",
+    ellipsis: true,
+    align: "left",
     width: 100,
     render: (text, prescription) => {
       return <Tooltip title={prescription.time}>{prescription.time}</Tooltip>;

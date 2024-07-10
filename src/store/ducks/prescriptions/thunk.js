@@ -183,7 +183,8 @@ export const fetchScreeningThunk =
   };
 
 export const checkScreeningThunk =
-  (idPrescription, status) => async (dispatch, getState) => {
+  (idPrescription, status, params = {}) =>
+  async (dispatch, getState) => {
     return new Promise(async (resolve, reject) => {
       dispatch(prescriptionsCheckStart(idPrescription));
 
@@ -192,6 +193,7 @@ export const checkScreeningThunk =
           idPrescription,
           status,
           evaluationTime: window.noharm?.pageTimer?.getCurrentTime(),
+          alerts: params?.alerts,
         })
         .catch(errorHandler);
 

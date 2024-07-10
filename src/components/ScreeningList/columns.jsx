@@ -1,16 +1,12 @@
 import React from "react";
 import styled from "styled-components/macro";
-import {
-  CheckOutlined,
-  SearchOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined, LoadingOutlined } from "@ant-design/icons";
 
-import { Link, BasicButton } from "components/Button";
+import { Link } from "components/Button";
 import { InfoIcon } from "components/Icon";
 import Tooltip from "components/Tooltip";
 import Table from "components/Table";
-import PopConfirm from "components/PopConfirm";
+import Tag from "components/Tag";
 
 const setDataIndex = (list) =>
   list.map(({ key, ...column }) => ({
@@ -59,10 +55,6 @@ const ActionsBox = styled.div`
   }
 `;
 
-const CheckedBox = styled.span`
-  padding: 5px 15px;
-`;
-
 const NestedTableContainer = styled.div`
   margin-top: 5px;
   margin-bottom: 35px;
@@ -77,42 +69,8 @@ const ScreeningActions = ({
   prioritizationType,
   t,
 }) => {
-  const checkAction = () => checkScreening(idPrescription, "s");
-
-  const isDisabled =
-    check.idPrescription !== idPrescription && check.isChecking;
-  const isChecking =
-    check.idPrescription === idPrescription && check.isChecking;
-  const isChecked = status === "s";
-
   return (
     <ActionsBox>
-      {!isChecked && (
-        <Tooltip title={t("screeningList.btnCheck")} placement="left">
-          <PopConfirm
-            title={t("screeningList.confirm")}
-            onConfirm={checkAction}
-            okText={t("labels.yes")}
-            cancelText={t("labels.no")}
-          >
-            <BasicButton
-              type="primary gtm-bt-check"
-              loading={isChecking}
-              disabled={isDisabled}
-              ghost
-            >
-              <CheckOutlined />
-            </BasicButton>
-          </PopConfirm>
-        </Tooltip>
-      )}
-      {isChecked && (
-        <Tooltip title={t("screeningList.btnChecked")} placement="left">
-          <CheckedBox>
-            <CheckOutlined />
-          </CheckedBox>
-        </Tooltip>
-      )}
       <Tooltip title={t("screeningList.btnOpen")} placement="left">
         <span>
           <Link
@@ -220,7 +178,7 @@ const columns = (sortedInfo, filteredInfo, t) => {
       ),
       className: `gtm-th-idade ${oddClass(index++)}`,
       key: "age",
-      width: 30,
+      width: 40,
       align: "center",
       sortDirections,
       sorter: (a, b) => a.birthdays - b.birthdays,
@@ -450,7 +408,8 @@ const columns = (sortedInfo, filteredInfo, t) => {
       filteredValue: filteredInfo.searchKey || null,
       onFilter: (value, record) =>
         record.namePatient.toLowerCase().includes(value) ||
-        `${record.admissionNumber}` === value,
+        `${record.admissionNumber}`.includes(value) ||
+        `${record.idPatient}`.includes(value),
       sortDirections,
       sorter: (a, b) => Date.parse(a.date) - Date.parse(b.date),
       sortOrder: sortedInfo.columnKey === "date" && sortedInfo.order,
@@ -465,9 +424,42 @@ const columns = (sortedInfo, filteredInfo, t) => {
       children: setDataIndex(prescriptionRiskColumns),
     },
     {
+      title: t("labels.status"),
+      key: "status",
+      width: 0,
+      align: "center",
+      render: (text, prescription) => {
+        if (prescription.status === "s") {
+          return (
+            <Tag color="green" style={{ marginRight: 0 }}>
+              Checada
+            </Tag>
+          );
+        }
+
+        if (prescription.status !== "s") {
+          return (
+            <>
+              {prescription.isBeingEvaluated ? (
+                <Tooltip title={"Pendente/Em Análise"}>
+                  <Tag color="purple" style={{ marginRight: 0 }}>
+                    Em análise
+                  </Tag>
+                </Tooltip>
+              ) : (
+                <Tag color="orange" style={{ marginRight: 0 }}>
+                  Pendente
+                </Tag>
+              )}
+            </>
+          );
+        }
+      },
+    },
+    {
       title: t("screeningList.actions"),
       key: "operations",
-      width: 70,
+      width: 10,
       align: "center",
       filteredValue: filteredInfo.status || null,
       onFilter: (value, record) => record.status === value,

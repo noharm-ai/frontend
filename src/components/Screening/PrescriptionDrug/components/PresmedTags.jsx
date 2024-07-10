@@ -9,15 +9,11 @@ import {
 import { useSelector } from "react-redux";
 import {
   WarningOutlined,
-  CheckOutlined,
-  FormOutlined,
-  StopOutlined,
   MessageOutlined,
   HourglassOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
 
-import Badge from "components/Badge";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 
@@ -51,16 +47,6 @@ function PresmedTags({ prescription, bag }) {
   return (
     <TableTags>
       <span
-        className="tag gtm-tag-check"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {prescription.checked && (
-          <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
-            <CheckOutlined style={{ fontSize: 18, color: "#52c41a" }} />
-          </Tooltip>
-        )}
-      </span>
-      <span
         className="tag gtm-tag-msg"
         onClick={() => bag.handleRowExpand(prescription)}
       >
@@ -70,16 +56,6 @@ function PresmedTags({ prescription, bag }) {
               <MessageOutlined style={{ fontSize: 18, color: "#108ee9" }} />
             </Tooltip>
           )}
-      </span>
-      <span
-        className="tag gtm-ico-form"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {prescription.prevNotes && prescription.prevNotes !== "None" && (
-          <Tooltip title={bag.t("prescriptionDrugTags.prevNotes")}>
-            <FormOutlined style={{ fontSize: 18, color: "#108ee9" }} />
-          </Tooltip>
-        )}
       </span>
       <span
         className="tag gtm-tag-warn"
@@ -98,16 +74,6 @@ function PresmedTags({ prescription, bag }) {
               <WarningOutlined style={{ fontSize: 18, color: "gray" }} />
             </Tooltip>
           )}
-      </span>
-      <span
-        className="tag gtm-tag-stop"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {prescription.suspended && (
-          <Tooltip title={bag.t("prescriptionDrugTags.suspended")}>
-            <StopOutlined style={{ fontSize: 18, color: "#f5222d" }} />
-          </Tooltip>
-        )}
       </span>
       {hasExpireInfo && (
         <>
@@ -173,26 +139,6 @@ function PresmedTags({ prescription, bag }) {
           )}
         </span>
       )}
-      <span
-        className="tag gtm-tag-alert"
-        onClick={() => bag.handleRowExpand(prescription)}
-      >
-        {!isEmpty(prescription.alerts) && (
-          <Tooltip
-            title={
-              prescription.alergy
-                ? bag.t("prescriptionDrugTags.alertsAllergy")
-                : bag.t("prescriptionDrugTags.alerts")
-            }
-          >
-            <Badge dot count={prescription.alergy ? 1 : 0}>
-              <Tag color="red" style={{ marginLeft: "2px" }}>
-                {prescription.alerts.length}
-              </Tag>
-            </Badge>
-          </Tooltip>
-        )}
-      </span>
     </TableTags>
   );
 }

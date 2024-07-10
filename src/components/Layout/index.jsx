@@ -139,6 +139,9 @@ const Me = ({
 
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   console.error(error);
+  if (window.cwr) {
+    window.cwr("recordError", error);
+  }
   return (
     <div style={{ maxWidth: "500px" }}>
       <Alert

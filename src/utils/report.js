@@ -78,6 +78,13 @@ export const filtersToDescription = (filters, filtersConfig) => {
 
 export const exportCSV = (datasource, t, namespace = "reportcsv") => {
   const replacer = (key, value) => (value === null ? "" : value);
+  const stringify = (value) => {
+    if (Array.isArray(value)) {
+      return `"${JSON.stringify(value, replacer).replaceAll('"', "")}"`;
+    }
+
+    return JSON.stringify(value, replacer);
+  };
   const header = Object.keys(datasource[0]);
   const headerNames = Object.keys(datasource[0]).map((k) =>
     t(`${namespace}.${k}`)
@@ -85,9 +92,7 @@ export const exportCSV = (datasource, t, namespace = "reportcsv") => {
   const csv = [
     headerNames.join(","),
     ...datasource.map((row) =>
-      header
-        .map((fieldName) => JSON.stringify(row[fieldName], replacer))
-        .join(",")
+      header.map((fieldName) => stringify(row[fieldName])).join(",")
     ),
   ].join("\r\n");
 

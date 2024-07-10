@@ -115,7 +115,7 @@ export default function Patient({
             justifyContent: "space-between",
           }}
         >
-          <AlertCard stats={alertStats} />
+          <AlertCard stats={alertStats} prescription={prescription} />
           {hasClinicalNotes && (
             <div style={{ marginTop: "10px" }}>
               <ClinicalNotesCard

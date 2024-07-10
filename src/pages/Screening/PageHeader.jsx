@@ -1,6 +1,7 @@
 import styled from "styled-components/macro";
 
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import {
@@ -30,6 +31,9 @@ import ClinicalNotesCustomForm from "containers/Forms/ClinicalNotes/CustomForm";
 import FormClinicalAlert from "containers/Forms/ClinicalAlert";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import pageTimer from "utils/pageTimer";
+import FeatureService from "services/features";
+import SecurityService from "services/security";
+import { setCheckSummary } from "features/prescription/PrescriptionSlice";
 
 import { ScreeningHeader } from "components/Screening/index.style";
 
@@ -58,10 +62,11 @@ export default function PageHeader({
   checkScreening,
   reviewPatient,
   incrementClinicalNotes,
-  security,
-  featureService,
   userId,
+  roles,
+  features,
 }) {
+  const dispatch = useDispatch();
   const params = useParams();
   const id = params?.slug;
   const { isChecking } = prescription.check;
@@ -83,6 +88,8 @@ export default function PageHeader({
     delay: 150,
     config: config.slow,
   });
+  const security = SecurityService(roles);
+  const featureService = FeatureService(features);
 
   useEffect(() => {
     if (!window.noharm) {
@@ -155,6 +162,24 @@ export default function PageHeader({
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     notification.success({ message: "Número da prescrição copiado!" });
+  };
+
+  const confirmCheckPrescription = (id) => {
+    let highRiskAlerts = [];
+    if (
+      prescription?.content?.alertsList &&
+      prescription.content.alertsList.length
+    ) {
+      highRiskAlerts = prescription.content.alertsList.filter(
+        (a) => a.level === "high"
+      );
+    }
+
+    if (highRiskAlerts.length > 0) {
+      dispatch(setCheckSummary(prescription.content));
+    } else {
+      setPrescriptionStatus(id, "s");
+    }
   };
 
   const setPrescriptionStatus = (id, status) => {
@@ -315,7 +340,7 @@ export default function PageHeader({
                 type="primary gtm-bt-check"
                 icon={<CheckOutlined />}
                 ghost
-                onClick={() => setPrescriptionStatus(id, "s")}
+                onClick={() => confirmCheckPrescription(id)}
                 loading={isChecking}
                 style={{ marginRight: "5px" }}
               >

@@ -10,6 +10,7 @@ export default class Feature {
   static PATIENT_REVISION = "PATIENT_REVISION";
   static INTERVENTION_V2 = "INTERVENTION_V2";
   static AUTHORIZATION_SEGMENT = "AUTHORIZATION_SEGMENT";
+  static DISABLE_ALERT_GROUPS = "DISABLE_ALERT_GROUPS";
 
   static getFeatures(t) {
     return [
@@ -63,16 +64,16 @@ export default class Feature {
         description: t(`featuresDescription.${Feature.PATIENT_REVISION}`),
       },
       {
-        id: Feature.INTERVENTION_V2,
-        label: "Intervenções V2",
-        description:
-          "A nova versão de intervenções possibilita o novo relatório de farmacoeconomia. Será liberado para todos usuários em 01/07/24",
-      },
-      {
         id: Feature.AUTHORIZATION_SEGMENT,
         label: "Autorização por Segmento",
         description:
           "Quando ativado, o usuário só conseguirá efetuar ações em segmentos onde tiver autorização. As autorizações são concedidas no cadastro do usuário.",
+      },
+      {
+        id: Feature.DISABLE_ALERT_GROUPS,
+        label: "Desabilita agrupamento de alertas",
+        description:
+          "Esta feature faz com que o agrupamento de alertas na tela de prescrição seja desativado, voltando ao modo de visualização antigo.",
       },
     ];
   }

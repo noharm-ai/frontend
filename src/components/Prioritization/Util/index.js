@@ -126,7 +126,8 @@ export const filterList = (list, filter) => {
     newList = newList.filter(
       (i) =>
         i.namePatient.toLowerCase().includes(filter.searchKey) ||
-        `${i.admissionNumber}`.includes(filter.searchKey)
+        `${i.admissionNumber}`.includes(filter.searchKey) ||
+        `${i.idPatient}`.includes(filter.searchKey)
     );
   }
 

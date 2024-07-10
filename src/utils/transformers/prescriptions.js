@@ -200,6 +200,31 @@ export const transformPrescription = ({
     return count;
   };
 
+  const alerts = [];
+
+  if (prescription || solution || procedures) {
+    const allItems = [...prescription, ...solution, ...procedures];
+    allItems.forEach((i) => {
+      if (i.alertsComplete && i.alertsComplete.length) {
+        const drugAlerts = i.alertsComplete.map((a, index) => ({
+          ...a,
+          idPrescription: i.idPrescription,
+          cpoe: i.cpoe, // idPrescription when cpoe **refactor
+          drugName: i.drug,
+          date: item?.headers[i.idPrescription]?.date,
+          expire: item?.headers[i.idPrescription]?.expire,
+          dose: i.dose,
+          doseconv: i.doseconv,
+          measureUnit: i.measureUnit,
+          frequency: i.frequency,
+          route: i.route,
+          rowKey: `${a.idPrescriptionDrug}-${a.key}-${a.type}-${index}`,
+        }));
+        alerts.push(...drugAlerts);
+      }
+    });
+  }
+
   return {
     ...item,
     daysAgo,
@@ -248,6 +273,7 @@ export const transformPrescription = ({
     proceduresCount: countList(proceduresList),
     dietCount: countList(dietList),
     uniqueDrugs: getUniqueDrugs(prescription, solution, procedures),
+    alertsList: alerts,
   };
 };
 

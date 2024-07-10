@@ -23,6 +23,7 @@ export const AlertContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    cursor: pointer;
 
     @media only screen and (min-width: 1515px) {
       font-size: 16px;

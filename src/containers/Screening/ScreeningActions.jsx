@@ -4,21 +4,22 @@ import { bindActionCreators } from "redux";
 import {
   fetchScreeningThunk,
   setModalVisibilityThunk,
+  checkScreeningThunk,
 } from "store/ducks/prescriptions/thunk";
 import ScreeningActions from "components/Screening/ScreeningActions";
-import security from "services/security";
-import FeatureService from "services/features";
 
 const mapStateToProps = ({ prescriptions, user }) => ({
   prescription: prescriptions.single.data,
-  security: security(user.account.roles),
-  featureService: FeatureService(user.account.features),
   patientEditVisible: prescriptions.single.actions.modalVisibility.patientEdit,
+  roles: user.account.roles,
+  features: user.account.features,
+  interventions: prescriptions.single.intervention.list,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchScreening: fetchScreeningThunk,
+      checkScreening: checkScreeningThunk,
       setModalVisibility: setModalVisibilityThunk,
     },
     dispatch

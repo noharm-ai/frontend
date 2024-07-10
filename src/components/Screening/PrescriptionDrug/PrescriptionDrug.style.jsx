@@ -60,36 +60,40 @@ export const ToolBox = styled.div`
 `;
 
 export const PrescriptionHeader = styled.div`
-  display: inline-block;
-  padding-left: 15px;
+  display: flex;
+  align-items: center;
 
-  div > span {
+  .panel-header-description {
     padding-left: 15px;
-  }
 
-  .p-number {
-    padding-right: 10px;
-  }
+    div > span {
+      padding-left: 15px;
+    }
 
-  a {
-    color: rgba(0, 0, 0, 0.65);
-    text-decoration: none;
-  }
+    .p-number {
+      padding-right: 10px;
+    }
 
-  a:hover {
-    text-decoration: underline;
-  }
+    a {
+      color: rgba(0, 0, 0, 0.65);
+      text-decoration: none;
+    }
 
-  .title {
-    font-size: 16px;
-  }
+    a:hover {
+      text-decoration: underline;
+    }
 
-  .subtitle {
-    opacity: 0.6;
-  }
+    .title {
+      font-size: 16px;
+    }
 
-  .expired {
-    color: rgb(207, 19, 34);
+    .subtitle {
+      opacity: 0.6;
+    }
+
+    .expired {
+      color: rgb(207, 19, 34);
+    }
   }
 `;
 
@@ -100,6 +104,8 @@ export const PrescriptionCollapse = styled(Collapse)`
     transition: background 0.3s linear;
 
     .ant-collapse-header {
+      align-items: center;
+
       .panel-header {
         transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
       }
@@ -242,5 +248,49 @@ export const InterventionListContainer = styled.div`
     display: flex;
     justify-content: flex-end;
     margin-top: 15px;
+  }
+`;
+
+export const DrugAlertsCollapse = styled(Collapse)`
+  border: 1px solid #ffccc7 !important;
+  background: #fff2f0;
+
+  .ant-collapse-item {
+    &.high {
+      .tag {
+        background: #f44336;
+        border-color: #f44336;
+        color: #fff;
+      }
+    }
+
+    &.medium {
+      .tag {
+        background: #f57f17;
+        border-color: #f57f17;
+        color: #fff;
+      }
+    }
+
+    &.low {
+      .tag {
+        background: #ffc107;
+        border-color: #ffc107;
+        color: #fff;
+      }
+    }
+
+    .ant-collapse-header {
+      align-items: center;
+      padding: 12px 10px;
+    }
+  }
+
+  .ant-collapse-content.ant-collapse-content-active {
+    padding-top: 0;
+
+    .ant-collapse-content-box {
+      padding-left: 35px;
+    }
   }
 `;

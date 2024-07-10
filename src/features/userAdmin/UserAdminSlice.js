@@ -68,7 +68,6 @@ const userAdminSlice = createSlice({
         state.single.status = "succeeded";
 
         const item = action.payload.data.data;
-        console.log("item", item);
 
         const index = state.list.findIndex((i) => i.id === item.id);
         if (index !== -1) {

@@ -41,6 +41,16 @@ const AuthHandler = ({
     return <Navigate to="/login" />;
   }
 
+  try {
+    if (window.cwr) {
+      window.cwr("addSessionAttributes", {
+        schema: localStorage.getItem("schema"),
+      });
+    }
+  } catch (ex) {
+    console.error("cwr set schema error");
+  }
+
   return <Component {...props} />;
 };
 

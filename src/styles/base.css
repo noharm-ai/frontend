@@ -36,6 +36,22 @@
   }
 }
 
+.custom-scroll-danger {
+  &::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 15px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    border: 1px solid #fff;
+    background-color: #ffccc7;
+    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+  }
+}
+
 @keyframes flickerAnimation {
   0% {
     opacity: 0.5;
