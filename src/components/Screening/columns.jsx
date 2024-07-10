@@ -461,10 +461,7 @@ export const expandedRowRender = (bag) => (record) => {
             label={bag.t("prescriptionDrugList.exrAlert")}
             span={3}
           >
-            <DrugAlerts
-              alerts={record.alertsComplete}
-              disableGroups={bag.featureService.hasDisableAlertGroups()}
-            />
+            <DrugAlerts alerts={record.alertsComplete} />
           </Descriptions.Item>
         )}
         {bag.security.hasPresmedForm() && bag.formTemplate && (
