@@ -172,6 +172,7 @@ export default function Relation({
                 showSearch
                 onChange={(value) => update({ level: value })}
                 value={relation.item.level}
+                style={{ width: "100%" }}
               >
                 <Select.Option key={"low"} value={"low"}>
                   Baixo
