@@ -24,8 +24,10 @@ export default function Interaction({
       .concat(interactionsList)
       .map((i) => {
         if (interactions.indexOf(parseInt(i.idDrug, 10)) !== -1) {
-          i.idDrug += "";
-          return i;
+          return {
+            ...i,
+            idDrug: `${i.idDrug}`,
+          };
         }
 
         return null;
@@ -50,28 +52,36 @@ export default function Interaction({
   const normalizedList = drugs.list
     .concat(interactionsList)
     .concat(uniqueDrugList)
-    .map((i) => {
-      i.idDrug += "";
-      return i;
-    });
+    .map((i) => ({
+      ...i,
+      idDrug: `${i.idDrug}`,
+    }));
 
   return (
-    <Select
-      id="interactions"
-      mode="multiple"
-      optionFilterProp="children"
-      style={{ width: "100%" }}
-      defaultValue={interactions || undefined}
-      notFoundContent={drugs.isFetching ? <LoadBox /> : null}
-      filterOption={false}
-      onSearch={search}
-      onChange={handleChange}
-    >
-      {uniqBy(normalizedList, "idDrug").map(({ idDrug, name }) => (
-        <Select.Option key={idDrug} value={idDrug}>
-          {name}
-        </Select.Option>
-      ))}
-    </Select>
+    <div style={{ display: "flex" }}>
+      <Select
+        id="interactions"
+        mode="multiple"
+        optionFilterProp="children"
+        style={{ width: "100%" }}
+        defaultValue={interactions || undefined}
+        notFoundContent={drugs.isFetching ? <LoadBox /> : null}
+        filterOption={false}
+        onSearch={search}
+        onChange={handleChange}
+      >
+        {uniqBy(normalizedList, "idDrug").map(({ idDrug, name }) => (
+          <Select.Option key={`${idDrug}`} value={`${idDrug}`}>
+            {name}
+          </Select.Option>
+        ))}
+      </Select>
+      {drugs.isFetching && (
+        <div style={{ width: "50px" }}>
+          {" "}
+          <LoadBox />
+        </div>
+      )}
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Tag } from "antd";
 import {
@@ -12,23 +12,9 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import { DrugAlertsCollapse } from "../PrescriptionDrug.style";
 
-export default function DrugAlerts({ alerts, disableGroups }) {
+export default function DrugAlerts({ alerts }) {
   const { t } = useTranslation();
-  const [activeKey, setActiveKey] = useState([]);
-
-  useEffect(() => {
-    if (alerts && alerts.length > 0) {
-      const levels = alerts.map((a) => a.level);
-
-      if (levels.indexOf("medium") !== -1) {
-        setActiveKey(["medium"]);
-      }
-
-      if (levels.indexOf("high") !== -1) {
-        setActiveKey(["high"]);
-      }
-    }
-  }, [alerts]);
+  const [activeKey, setActiveKey] = useState(["high", "medium", "low"]);
 
   if (alerts == null || alerts.length === 0) {
     return null;
@@ -109,22 +95,6 @@ export default function DrugAlerts({ alerts, disableGroups }) {
     }
   });
 
-  if (disableGroups) {
-    return (
-      <>
-        {alerts.map((item, index) => (
-          <Alert
-            key={index}
-            type="error"
-            message={<RichTextView text={item.text} />}
-            style={{ marginTop: "5px" }}
-            showIcon
-          />
-        ))}
-      </>
-    );
-  }
-
   return (
     <div style={{ display: "flex" }}>
       <Tooltip
@@ -146,7 +116,6 @@ export default function DrugAlerts({ alerts, disableGroups }) {
       <div style={{ flex: "1" }}>
         <DrugAlertsCollapse
           expandIconPosition="start"
-          defaultActiveKey="high"
           items={items}
           size="small"
           activeKey={activeKey}

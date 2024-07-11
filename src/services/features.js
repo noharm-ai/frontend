@@ -45,10 +45,6 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.AUTHORIZATION_SEGMENT);
   };
 
-  const hasDisableAlertGroups = () => {
-    return hasFeature(Feature.DISABLE_ALERT_GROUPS);
-  };
-
   return {
     hasFeature,
     hasMicromedex,
@@ -60,7 +56,6 @@ const FeaturesService = (features) => {
     hasClinicalNotesNewFormat,
     hasPatientRevision,
     hasAuthorizationSegment,
-    hasDisableAlertGroups,
   };
 };
 

@@ -139,7 +139,8 @@ export default function Screening({
           activeRow = document.querySelectorAll(
             ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr"
           )[0];
-          activeRow.classList.add("highlight");
+
+          activeRow?.classList.add("highlight");
 
           return;
         }
