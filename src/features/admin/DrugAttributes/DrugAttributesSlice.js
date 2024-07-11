@@ -33,6 +33,10 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  addNewOutlier: {
+    status: "idle",
+    error: null,
+  },
 };
 
 export const fetchDrugAttributes = createAsyncThunk(
@@ -79,6 +83,19 @@ export const addDefaultUnits = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await adminApi.unitConversion.addDefaultUnits(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const addNewOutlier = createAsyncThunk(
+  "admin-drug-attributes/add-new-outlier",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminApi.drugs.addNewOutlier(params);
 
       return response;
     } catch (err) {
@@ -185,6 +202,15 @@ const drugAttributesSlice = createSlice({
       })
       .addCase(addDefaultUnits.rejected, (state, action) => {
         state.addDefaultUnits.status = "failed";
+      })
+      .addCase(addNewOutlier.pending, (state, action) => {
+        state.addNewOutlier.status = "loading";
+      })
+      .addCase(addNewOutlier.fulfilled, (state, action) => {
+        state.addNewOutlier.status = "succeeded";
+      })
+      .addCase(addNewOutlier.rejected, (state, action) => {
+        state.addNewOutlier.status = "failed";
       })
       .addCase(copyConversion.pending, (state, action) => {
         state.copyConversion.status = "loading";
