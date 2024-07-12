@@ -151,6 +151,12 @@ api.drugs.predictSubstance = (params = {}) => {
   });
 };
 
+api.drugs.addNewOutlier = (params = {}) => {
+  return instance.post(`${endpoints.drug}/add-new-outlier`, params, {
+    ...setHeaders(),
+  });
+};
+
 api.unitConversion = {};
 api.unitConversion.getConversionList = (params = {}) => {
   return instance.post(`${endpoints.unitConversion}/list`, params, {

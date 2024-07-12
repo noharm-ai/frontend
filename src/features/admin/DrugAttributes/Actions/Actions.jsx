@@ -5,6 +5,7 @@ import {
   ReloadOutlined,
   RetweetOutlined,
   RobotOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 
 import Tooltip from "components/Tooltip";
@@ -13,7 +14,7 @@ import DefaultModal from "components/Modal";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 
-import { addDefaultUnits } from "../DrugAttributesSlice";
+import { addDefaultUnits, addNewOutlier } from "../DrugAttributesSlice";
 import CopyConversion from "../CopyConversion/CopyConversion";
 import CopyAttributes from "../CopyAttributes/CopyAttributes";
 import PredictSubstances from "../PredictSubstances/PredictSubstances";
@@ -34,6 +35,9 @@ export default function Actions({ reload }) {
     "loading";
   const isCopyingAttributes =
     useSelector((state) => state.admin.drugAttributes.copyAttributes.status) ===
+    "loading";
+  const isAddingNewOutliers =
+    useSelector((state) => state.admin.drugAttributes.addNewOutlier.status) ===
     "loading";
 
   const showDefaultUnitDialog = () => {
@@ -64,6 +68,30 @@ export default function Actions({ reload }) {
     });
   };
 
+  const showNewOutlierDialog = () => {
+    DefaultModal.confirm({
+      title: "Confirma a inclusão de novos medicamentos?",
+      content: (
+        <>
+          <p>
+            Esta operação busca novos medicamentos prescritos nos últimos 5 dias
+            e cria os registros necessários para iniciar a curadoria destes
+            itens.
+          </p>
+          <p>
+            Após adicionar estes novos medicamentos, é recomendado utilizar a
+            funcionalidade <strong>Atualizar Unidade Padrão</strong> e{" "}
+            <strong>Inferir Substâncias</strong>.
+          </p>
+        </>
+      ),
+      onOk: executeAddNewOutlier,
+      okText: "Confirmar",
+      cancelText: "Cancelar",
+      width: 500,
+    });
+  };
+
   const executeAddDefaultUnits = () => {
     dispatch(addDefaultUnits()).then((response) => {
       if (response.error) {
@@ -74,6 +102,23 @@ export default function Actions({ reload }) {
         notification.success({
           message: "Unidades Padrão Atualizadas!",
           description: `${response.payload.data.data} medicamentos atualizados`,
+        });
+
+        reload();
+      }
+    });
+  };
+
+  const executeAddNewOutlier = () => {
+    dispatch(addNewOutlier()).then((response) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        notification.success({
+          message: "Novos medicamentos criados!",
+          description: `${response.payload.data.data} medicamentos`,
         });
 
         reload();
@@ -100,6 +145,17 @@ export default function Actions({ reload }) {
           onClick={() => showDefaultUnitDialog()}
         >
           Atualizar Unidade Padrão
+        </Button>
+      </Tooltip>
+
+      <Tooltip title="Clique para mais informações">
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          loading={isAddingNewOutliers}
+          onClick={() => showNewOutlierDialog()}
+        >
+          Novos Medicamentos
         </Button>
       </Tooltip>
 

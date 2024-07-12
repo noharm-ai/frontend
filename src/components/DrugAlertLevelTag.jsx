@@ -16,9 +16,9 @@ export default function DrugAlertLevelTag({
 
   const getAlertStyle = () => {
     const defaultColor = {
-      background: "#7ebe9a",
-      borderColor: "#7ebe9a",
-      color: "#fff",
+      background: "transparent",
+      borderColor: "transparent",
+      color: "transparent",
     };
 
     if (!levels.length) {

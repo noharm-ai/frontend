@@ -214,6 +214,7 @@ export default function Patient({
                 <div className="content">
                   <div className="text-content list">
                     {notesAllergies
+                      .slice()
                       .sort(sortAllergies)
                       .map(({ text, date, source, id }) => (
                         <div key={text} className="list-item">

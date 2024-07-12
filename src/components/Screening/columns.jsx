@@ -943,7 +943,8 @@ const frequency = (bag) => ({
           {prescription.stage}{" "}
           {`${prescription.infusion}`.trim()
             ? `| ${prescription.infusion}`
-            : ""}
+            : ""}{" "}
+          ({prescription.frequency ? prescription.frequency.label : "-"})
         </Popover>
       );
     }
