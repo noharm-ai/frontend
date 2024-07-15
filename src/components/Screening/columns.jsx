@@ -863,8 +863,8 @@ const drugInfo = (bag) => [
   },
   drug(bag, false),
   {
-    title: bag.t("tableHeader.period"),
-    width: 70,
+    title: <Tooltip title={bag.t("tableHeader.period")}>Per.</Tooltip>,
+    width: 50,
     render: (record) => {
       if (record.total) {
         return (
@@ -916,7 +916,7 @@ const frequency = (bag) => ({
   dataIndex: "frequency",
   ellipsis: bag.condensed,
   align: bag.condensed ? "left" : "center",
-  width: 150,
+  width: 200,
   render: (text, prescription) => {
     if (prescription.dividerRow) {
       return null;
@@ -971,9 +971,9 @@ const frequencyAndTime = (bag) => [
   {
     title: bag.t("tableHeader.time"),
     dataIndex: "time",
-    ellipsis: true,
-    align: "left",
-    width: 100,
+    ellipsis: bag.condensed,
+    align: bag.condensed ? "left" : "center",
+    width: 200,
     render: (text, prescription) => {
       return <Tooltip title={prescription.time}>{prescription.time}</Tooltip>;
     },
@@ -1020,7 +1020,7 @@ const route = (bag) => ({
 const tags = (bag) => ({
   title: "Tags",
   align: "center",
-  width: 110,
+  width: 90,
   render: (text, prescription) => {
     if (prescription.emptyRow) return null;
 
