@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import isEmpty from "lodash.isempty";
 import dayjs from "dayjs";
 import debounce from "lodash.debounce";
@@ -11,7 +12,6 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 
-import message from "components/message";
 import Heading from "components/Heading";
 import { Row, Col } from "components/Grid";
 import { Select, RangeDatePicker, Checkbox, Input } from "components/Inputs";
@@ -23,6 +23,8 @@ import LoadBox from "components/LoadBox";
 import FilterMemory from "./components/FilterMemory";
 import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
 import FieldSubstanceClassAutocomplete from "features/fields/FieldSubstanceClassAutocomplete/FieldSubstanceClassAutocomplete";
+import { getSegmentDepartments } from "features/lists/ListsSlice";
+import { getUniqBy } from "utils/report";
 
 import { Box, SearchBox } from "./Filter.style";
 import "./index.css";
@@ -48,9 +50,16 @@ export default function Filter({
   publicFilters,
   featureService,
 }) {
+  const dispatch = useDispatch();
   const params = useParams();
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const departments = useSelector(
+    (state) => state.lists.getSegmentDepartments.list
+  );
+  const departmentsStatus = useSelector(
+    (state) => state.lists.getSegmentDepartments.status
+  );
 
   const [date, setDate] = useState([dayjs(params?.startDate), null]);
   const { t } = useTranslation();
@@ -89,7 +98,13 @@ export default function Filter({
 
       for (const key in mixedParams) {
         if (mixedParams[key] !== "all") {
-          finalParams[key] = mixedParams[key];
+          if (key === "idSegment") {
+            finalParams[key] = Array.isArray(mixedParams[key])
+              ? mixedParams[key]
+              : [mixedParams[key]];
+          } else {
+            finalParams[key] = mixedParams[key];
+          }
         }
       }
 
@@ -127,20 +142,8 @@ export default function Filter({
   );
 
   useEffect(() => {
-    if (!isEmpty(segments.error)) {
-      message.error(segments.error.message);
-    }
-  }, [segments.error]);
-
-  useEffect(() => {
-    if (filter.idSegment == null) return;
-
-    if (filter.idSegment !== "all") {
-      fetchDepartmentsList(filter.idSegment);
-    } else {
-      resetDepartmentsLst();
-    }
-  }, [filter.idSegment, fetchDepartmentsList, resetDepartmentsLst]);
+    dispatch(getSegmentDepartments());
+  }, []); //eslint-disable-line
 
   // update list status
   const updateStatus = useCallback(() => {
@@ -162,7 +165,7 @@ export default function Filter({
       getParams({ ...filterData, idDept: filterData.idDepartment })
     );
     if (!isEmpty(filterData.idDrug)) {
-      searchDrugs(filterData.idSegment, { idDrug: filterData.idDrug });
+      searchDrugs(null, { idDrug: filterData.idDrug });
     }
     setOpen(false);
   };
@@ -216,25 +219,12 @@ export default function Filter({
   };
 
   useEffect(() => {
-    if (!filter.idSegment && segments.list.length) {
-      setScreeningListFilter({ idSegment: segments.list[0].id });
-      fetchPrescriptionsList(getParams({ idSegment: segments.list[0].id }));
-    }
-  }, [
-    segments.list,
-    filter.idSegment,
-    setScreeningListFilter,
-    fetchPrescriptionsList,
-    getParams,
-  ]);
-
-  useEffect(() => {
     if (filter.idSegment) {
       fetchPrescriptionsList(getParams());
     }
 
-    if (!isEmpty(filter.idDrug) && filter.idSegment) {
-      searchDrugs(filter.idSegment, { idDrug: filter.idDrug });
+    if (!isEmpty(filter.idDrug)) {
+      searchDrugs(null, { idDrug: filter.idDrug });
     }
   }, [location.pathname]); // eslint-disable-line
 
@@ -255,7 +245,7 @@ export default function Filter({
 
   const reset = () => {
     setScreeningListFilter({
-      idSegment: segments.list[0].id,
+      idSegment: [],
       idDepartment: [],
       idDrug: [],
       insurance: null,
@@ -290,7 +280,7 @@ export default function Filter({
 
   const searchDrugsAutocomplete = debounce((value) => {
     if (value.length < 3) return;
-    searchDrugs(filter.idSegment, { q: value });
+    searchDrugs(null, { q: value });
   }, 800);
 
   const drugAttributesList = [
@@ -304,6 +294,18 @@ export default function Filter({
     "chemo",
     "dialyzable",
   ];
+
+  const filterDepartments = (idSegmentList, list) => {
+    const deps = list.filter((d) => {
+      if (!idSegmentList || idSegmentList.length === 0) {
+        return true;
+      }
+
+      return idSegmentList.indexOf(d.idSegment) !== -1;
+    });
+
+    return getUniqBy(deps, "idDepartment");
+  };
 
   const hiddenFieldCount = countHiddenFilters(filter);
   return (
@@ -322,6 +324,9 @@ export default function Filter({
                 setScreeningListFilter({ idSegment, idDepartment: [] })
               }
               value={filter.idSegment}
+              mode="multiple"
+              allowClear
+              maxTagCount="responsive"
             >
               {segments.list.map(({ id, description: text }) => (
                 <Select.Option key={id} value={id}>
@@ -424,23 +429,22 @@ export default function Filter({
                       placeholder={t(
                         "screeningList.labelDepartmentPlaceholder"
                       )}
-                      loading={segments.single.isFetching}
+                      loading={departmentsStatus === "loading"}
                       value={filter.idDepartment}
                       onChange={onDepartmentChange}
                       autoClearSearchValue={false}
                       allowClear
                     >
-                      {segments.single.content.departments &&
-                        segments.single.content.departments.map(
-                          ({ idDepartment, name }) => (
-                            <Select.Option
-                              key={idDepartment}
-                              value={idDepartment}
-                            >
-                              {name}
-                            </Select.Option>
-                          )
-                        )}
+                      {filterDepartments(filter.idSegment, departments).map(
+                        ({ idDepartment, idSegment, label }) => (
+                          <Select.Option
+                            key={`${idSegment}-${idDepartment}`}
+                            value={idDepartment}
+                          >
+                            {label}
+                          </Select.Option>
+                        )
+                      )}
                     </Select>
                   </Col>
                   {prioritizationType === "patient" ||

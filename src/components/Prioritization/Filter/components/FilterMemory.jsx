@@ -96,6 +96,11 @@ export default function FilterMemory({
   };
 
   const loadFilterAction = (filterData) => {
+    // keep compatibility between different versions
+    if (filterData.idSegment && !Array.isArray(filterData.idSegment)) {
+      filterData.idSegment = [filterData.idSegment];
+    }
+
     setScreeningListFilter(filterData);
     loadFilter(filterData);
   };
