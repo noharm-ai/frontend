@@ -647,7 +647,8 @@
     "suspensionDate": "SUSPENSION DATE",
     "observation": "OBSERVATION",
     "interventionType": "INTERVENTION TYPE",
-    "bed": "BED"
+    "bed": "BED",
+    "idPatient": "ID PATIENT"
   },
 
   "reportcsvCulture": {

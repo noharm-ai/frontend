@@ -653,7 +653,8 @@
     "suspensionDate": "DATA SUSPENSAO",
     "observation": "OBSERVACAO",
     "interventionType": "TIPO INTERVENÇÃO",
-    "bed": "LEITO"
+    "bed": "LEITO",
+    "idPatient": "ID PACIENTE"
   },
 
   "reportcsvCulture": {
