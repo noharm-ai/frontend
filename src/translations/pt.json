@@ -651,7 +651,9 @@
     "route": "VIA",
     "prescriptionExpirationDate": "VIGENCIA",
     "suspensionDate": "DATA SUSPENSAO",
-    "observation": "OBSERVACAO"
+    "observation": "OBSERVACAO",
+    "interventionType": "TIPO INTERVENÇÃO",
+    "bed": "LEITO"
   },
 
   "reportcsvCulture": {

@@ -645,7 +645,9 @@
     "route": "ROUTE",
     "prescriptionExpirationDate": "EXPIRE DATE",
     "suspensionDate": "SUSPENSION DATE",
-    "observation": "OBSERVATION"
+    "observation": "OBSERVATION",
+    "interventionType": "INTERVENTION TYPE",
+    "bed": "BED"
   },
 
   "reportcsvCulture": {
