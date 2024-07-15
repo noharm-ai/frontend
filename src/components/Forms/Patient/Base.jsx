@@ -70,6 +70,7 @@ export default function Base({ security }) {
             max={99999}
             value={height}
             onChange={(value) => setFieldValue("height", value)}
+            precision={0}
           />{" "}
           cm
         </Col>
