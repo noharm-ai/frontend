@@ -301,7 +301,12 @@ export default function Filter({
         return true;
       }
 
-      return idSegmentList.indexOf(d.idSegment) !== -1;
+      if (Array.isArray(idSegmentList)) {
+        return idSegmentList.indexOf(d.idSegment) !== -1;
+      }
+
+      // keep compatibility
+      return idSegmentList === d.idSegment;
     });
 
     return getUniqBy(deps, "idDepartment");
