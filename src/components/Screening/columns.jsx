@@ -33,6 +33,7 @@ import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
 import PresmedTags from "./PrescriptionDrug/components/PresmedTags";
 import DrugAlerts from "./PrescriptionDrug/components/DrugAlerts";
+import AlertTags from "./PrescriptionDrug/components/AlertTags";
 
 import { InterventionView } from "./Intervention/columns";
 import DrugForm from "./Form";
@@ -677,7 +678,6 @@ const flags = ["green", "yellow", "orange", "red", "red"];
 const dose = (bag) => ({
   title: "Dose",
   dataIndex: "dosage",
-  width: 130,
   ellipsis: bag.condensed,
   align: bag.condensed ? "left" : "center",
   render: (text, prescription) => {
@@ -714,6 +714,7 @@ const drug = (bag, addkey, title) => ({
   title: title ? title : bag.t("tableHeader.drug"),
   ellipsis: bag.condensed,
   align: "left",
+  width: "35%",
   render: (record) => {
     if (bag.concilia) {
       return (
@@ -772,151 +773,154 @@ const drug = (bag, addkey, title) => ({
 });
 
 const drugInfo = (bag) => [
-  {
-    key: "idPrescriptionDrug",
-    dataIndex: "score",
-    width: 85,
-    align: "center",
-    render: (entry, prescription) => {
-      if (prescription.total || prescription.emptyRow) {
-        return "";
-      }
-
-      return (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-          className="score-container"
-        >
-          <DrugAlertLevelTag
-            levels={
-              prescription.alertsComplete
-                ? prescription.alertsComplete.map((a) => a.level)
-                : []
-            }
-            count={prescription.alertsComplete?.length}
-            allergy={prescription.allergy}
-            onClick={() => bag.handleRowExpand(prescription)}
-          />
-          <Tooltip
-            title={
-              prescription.near
-                ? `${bag.t("tableHeader.approximateScore")}: ${
-                    prescription.score
-                  }`
-                : `${bag.t("tableHeader.score")}: ${prescription.score}`
-            }
-          >
-            <span
-              className={`flag has-score ${
-                flags[parseInt(prescription.score, 10)]
-              }`}
-              style={{ cursor: "pointer" }}
-              onClick={() => bag.handleRowExpand(prescription)}
-            >
-              {prescription.score}
-            </span>
-          </Tooltip>
-          {prescription.suspensionDate ? (
-            <Tooltip
-              title={`Suspenso em: ${format(
-                new Date(prescription.suspensionDate),
-                "dd/MM/yyyy HH:mm"
-              )}`}
-            >
-              <StopOutlined
-                style={{
-                  fontSize: 18,
-                  color: "#f5222d",
-                }}
-              />
-            </Tooltip>
-          ) : (
-            <>
-              {prescription.checked && (
-                <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
-                  <CheckCircleOutlined
-                    style={{
-                      fontSize: 18,
-                      color: "#52c41a",
-                    }}
-                  />
-                </Tooltip>
-              )}
-              {!prescription.checked && (
-                <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
-                  <div
-                    style={{
-                      width: "18px",
-                    }}
-                  />
-                </Tooltip>
-              )}
-            </>
-          )}
-        </div>
-      );
-    },
-  },
+  score(bag),
   drug(bag, false),
-  {
-    title: <Tooltip title={bag.t("tableHeader.period")}>Per.</Tooltip>,
-    width: 50,
-    render: (record) => {
-      if (record.total) {
-        return (
-          <Tooltip
-            title={bag.t("prescriptionDrugList.openSolutionCalculator")}
-            placement="top"
-          >
-            <span
-              onClick={() => bag.handleRowExpand(record)}
-              style={{ cursor: "pointer" }}
-            >
-              Total:
-            </span>
-          </Tooltip>
-        );
-      }
-
-      if (record.whiteList) {
-        return "";
-      }
-
-      if (record.cpoe && record.periodFixed && !record.whiteList) {
-        return (
-          <Tooltip title='Confira o período completo no botão "Visualizar período de uso" presente na linha extendida'>
-            {formatCPOEPeriod(record)}
-          </Tooltip>
-        );
-      }
-
-      if (record.periodDates == null || record.periodDates.length === 0) {
-        return record.period;
-      }
-
-      return (
-        <Popover
-          content={periodDatesList(record.periodDates)}
-          title="Período de uso"
-        >
-          {record.period}
-        </Popover>
-      );
-    },
-  },
+  period(bag),
   dose(bag),
 ];
+
+const score = (bag) => ({
+  key: "idPrescriptionDrug",
+  dataIndex: "score",
+  width: 85,
+  align: "center",
+  render: (entry, prescription) => {
+    if (prescription.total || prescription.emptyRow) {
+      return "";
+    }
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+        className="score-container"
+      >
+        <DrugAlertLevelTag
+          levels={
+            prescription.alertsComplete
+              ? prescription.alertsComplete.map((a) => a.level)
+              : []
+          }
+          count={prescription.alertsComplete?.length}
+          allergy={prescription.allergy}
+          onClick={() => bag.handleRowExpand(prescription)}
+        />
+        <Tooltip
+          title={
+            prescription.near
+              ? `${bag.t("tableHeader.approximateScore")}: ${
+                  prescription.score
+                }`
+              : `${bag.t("tableHeader.score")}: ${prescription.score}`
+          }
+        >
+          <span
+            className={`flag has-score ${
+              flags[parseInt(prescription.score, 10)]
+            }`}
+            style={{ cursor: "pointer" }}
+            onClick={() => bag.handleRowExpand(prescription)}
+          >
+            {prescription.score}
+          </span>
+        </Tooltip>
+        {prescription.suspensionDate ? (
+          <Tooltip
+            title={`Suspenso em: ${format(
+              new Date(prescription.suspensionDate),
+              "dd/MM/yyyy HH:mm"
+            )}`}
+          >
+            <StopOutlined
+              style={{
+                fontSize: 18,
+                color: "#f5222d",
+              }}
+            />
+          </Tooltip>
+        ) : (
+          <>
+            {prescription.checked && (
+              <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
+                <CheckCircleOutlined
+                  style={{
+                    fontSize: 18,
+                    color: "#52c41a",
+                  }}
+                />
+              </Tooltip>
+            )}
+            {!prescription.checked && (
+              <Tooltip title={bag.t("prescriptionDrugTags.checked")}>
+                <div
+                  style={{
+                    width: "18px",
+                  }}
+                />
+              </Tooltip>
+            )}
+          </>
+        )}
+      </div>
+    );
+  },
+});
+
+const period = (bag) => ({
+  title: <Tooltip title={bag.t("tableHeader.period")}>Per.</Tooltip>,
+  width: 50,
+  render: (record) => {
+    if (record.total) {
+      return (
+        <Tooltip
+          title={bag.t("prescriptionDrugList.openSolutionCalculator")}
+          placement="top"
+        >
+          <span
+            onClick={() => bag.handleRowExpand(record)}
+            style={{ cursor: "pointer" }}
+          >
+            Total:
+          </span>
+        </Tooltip>
+      );
+    }
+
+    if (record.whiteList) {
+      return "";
+    }
+
+    if (record.cpoe && record.periodFixed && !record.whiteList) {
+      return (
+        <Tooltip title='Confira o período completo no botão "Visualizar período de uso" presente na linha extendida'>
+          {formatCPOEPeriod(record)}
+        </Tooltip>
+      );
+    }
+
+    if (record.periodDates == null || record.periodDates.length === 0) {
+      return record.period;
+    }
+
+    return (
+      <Popover
+        content={periodDatesList(record.periodDates)}
+        title="Período de uso"
+      >
+        {record.period}
+      </Popover>
+    );
+  },
+});
 
 const frequency = (bag) => ({
   title: bag.t("tableHeader.frequency"),
   dataIndex: "frequency",
   ellipsis: bag.condensed,
   align: bag.condensed ? "left" : "center",
-  width: 200,
   render: (text, prescription) => {
     if (prescription.dividerRow) {
       return null;
@@ -973,7 +977,6 @@ const frequencyAndTime = (bag) => [
     dataIndex: "time",
     ellipsis: bag.condensed,
     align: bag.condensed ? "left" : "center",
-    width: 200,
     render: (text, prescription) => {
       return <Tooltip title={prescription.time}>{prescription.time}</Tooltip>;
     },
@@ -990,7 +993,6 @@ const stageAndInfusion = (bag) => {
       title: bag.t("tableHeader.stage"),
       dataIndex: "stage",
       ellipsis: bag.condensed,
-      width: 100,
       render: (text, prescription) => {
         return (
           <Tooltip title={prescription.stage}>{prescription.stage}</Tooltip>
@@ -1001,7 +1003,6 @@ const stageAndInfusion = (bag) => {
       title: bag.t("tableHeader.infusion"),
       dataIndex: "infusion",
       align: bag.condensed ? "left" : "center",
-      width: 100,
     },
   ];
 };
@@ -1058,6 +1059,15 @@ const filterOption = (input, option) => {
 
   return found;
 };
+
+const alertsColumn = (bag) => ({
+  title: "Alertas",
+  align: "left",
+  ellipsis: true,
+  render: (text, prescription) => {
+    return <AlertTags prescription={prescription} bag={bag} />;
+  },
+});
 
 const relationColumn = (bag) => ({
   title: "Prescrição vigente",
@@ -1141,6 +1151,16 @@ export const conciliationColumns = (bag) => [
   dose(bag),
   frequency,
   relationColumn(bag),
+  ...actionColumns(bag),
+];
+
+export const alertsPerspectiveColumns = (bag) => [
+  score(bag),
+  drug(bag),
+  alertsColumn(bag),
+  dose(bag),
+  frequency(bag),
+  route(bag),
   ...actionColumns(bag),
 ];
 

@@ -762,5 +762,23 @@
     "high": "Alertas Nível Alto",
     "medium": "Alertas Nível Médio",
     "low": "Alertas Nível Baixo"
+  },
+
+  "drugAlertTypeAcronym": {
+    "allergy": "AL",
+    "maxDose": "MAX",
+    "dm": "DM",
+    "dt": "DT",
+    "liver": "AHP",
+    "iy": "IY",
+    "it": "IM",
+    "ira": "IRA",
+    "sl": "ISL",
+    "elderly": "MPI",
+    "kidney": "AR",
+    "platelets": "PLQ",
+    "rx": "RC",
+    "tube": "S",
+    "maxTime": "TT"
   }
 }

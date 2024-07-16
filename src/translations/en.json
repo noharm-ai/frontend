@@ -757,5 +757,23 @@
     "high": "Alerts: High",
     "medium": "Alerts: Medium",
     "low": "Alerts: Low"
+  },
+
+  "drugAlertTypeAcronym": {
+    "allergy": "AL",
+    "maxDose": "MAX",
+    "dm": "DM",
+    "dt": "DT",
+    "liver": "AHP",
+    "iy": "IY",
+    "it": "IM",
+    "ira": "IRA",
+    "sl": "ISL",
+    "elderly": "MPI",
+    "kidney": "AR",
+    "platelets": "PLQ",
+    "rx": "RC",
+    "tube": "S",
+    "maxTime": "TT"
   }
 }

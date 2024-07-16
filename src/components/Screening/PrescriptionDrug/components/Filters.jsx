@@ -9,7 +9,10 @@ import Dropdown from "components/Dropdown";
 import Button from "components/Button";
 import { Radio } from "components/Inputs";
 import Tooltip from "components/Tooltip";
-import { setPrescriptionFilters } from "features/prescription/PrescriptionSlice";
+import {
+  setPrescriptionFilters,
+  setPrescriptionPerspective,
+} from "features/prescription/PrescriptionSlice";
 import {
   setPrescriptionListType,
   setPrescriptionListOrder,
@@ -23,6 +26,9 @@ export default function Filters({ showPrescriptionOrder }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const filters = useSelector((state) => state.prescriptionv2.filters);
+  const prescriptionPerspective = useSelector(
+    (state) => state.prescriptionv2.perspective
+  );
   const prescriptionListType = useSelector(
     (state) => state.preferences.prescription.listType
   );
@@ -138,39 +144,53 @@ export default function Filters({ showPrescriptionOrder }) {
           ))}
         </div>
       </Affix>
-      <div className="viz-mode">
-        <Tooltip title="Modo de visualização">
-          <Radio.Group
-            onChange={(e) => {
-              dispatch(setPrescriptionListType(e.target.value));
-              dispatch(savePreferences());
-            }}
-            value={prescriptionListType}
-          >
-            <Radio.Button value="default">Padrão</Radio.Button>
-            <Radio.Button value="condensed">Condensado</Radio.Button>
-          </Radio.Group>
-        </Tooltip>
-        {showPrescriptionOrder && (
-          <Tooltip
-            title={
-              prescriptionListOrder === "asc"
-                ? "Ordenar prescriçoes por Data Decrescente"
-                : "Ordenar prescriçoes por Data Crescente"
-            }
-          >
-            <Button
-              className={`btn-order ${
-                prescriptionListOrder === "desc" ? "order-desc" : "order-asc"
-              }`}
-              shape="circle"
-              icon={<CaretUpOutlined />}
-              onClick={() => togglePrescriptionOrder()}
-              style={{ marginLeft: "15px" }}
-            />
+      <Affix offsetTop={50}>
+        <div className="viz-mode">
+          <Tooltip title="Perspectiva">
+            <Radio.Group
+              onChange={(e) => {
+                dispatch(setPrescriptionPerspective(e.target.value));
+              }}
+              value={prescriptionPerspective}
+            >
+              <Radio.Button value="default">Padrão</Radio.Button>
+              <Radio.Button value="alerts">Alertas</Radio.Button>
+            </Radio.Group>
           </Tooltip>
-        )}
-      </div>
+          <Tooltip title="Modo de visualização">
+            <Radio.Group
+              onChange={(e) => {
+                dispatch(setPrescriptionListType(e.target.value));
+                dispatch(savePreferences());
+              }}
+              value={prescriptionListType}
+              style={{ marginLeft: "15px" }}
+            >
+              <Radio.Button value="default">Padrão</Radio.Button>
+              <Radio.Button value="condensed">Condensado</Radio.Button>
+            </Radio.Group>
+          </Tooltip>
+          {showPrescriptionOrder && (
+            <Tooltip
+              title={
+                prescriptionListOrder === "asc"
+                  ? "Ordenar prescriçoes por Data Decrescente"
+                  : "Ordenar prescriçoes por Data Crescente"
+              }
+            >
+              <Button
+                className={`btn-order ${
+                  prescriptionListOrder === "desc" ? "order-desc" : "order-asc"
+                }`}
+                shape="circle"
+                icon={<CaretUpOutlined />}
+                onClick={() => togglePrescriptionOrder()}
+                style={{ marginLeft: "15px" }}
+              />
+            </Tooltip>
+          )}
+        </div>
+      </Affix>
     </ToolBox>
   );
 }

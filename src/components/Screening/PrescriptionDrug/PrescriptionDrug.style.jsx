@@ -294,3 +294,10 @@ export const DrugAlertsCollapse = styled(Collapse)`
     }
   }
 `;
+
+export const AlertTagsContainer = styled.div`
+  .ant-tag {
+    margin-right: 5px !important;
+    font-size: 14px;
+  }
+`;

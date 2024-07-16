@@ -8,6 +8,7 @@ import columnsTable, {
   expandedRowRender,
   solutionColumns,
   dietColumns,
+  alertsPerspectiveColumns,
 } from "../../columns";
 import { rowClassName } from "../PrescriptionDrugList";
 
@@ -23,6 +24,9 @@ function Table({
 }) {
   const prescriptionListType = useSelector(
     (state) => state.preferences.prescription.listType
+  );
+  const prescriptionPerspective = useSelector(
+    (state) => state.prescriptionv2.perspective
   );
   const [expandedRows, setExpandedRows] = useState([]);
 
@@ -56,11 +60,15 @@ function Table({
   const getColumns = () => {
     switch (listType) {
       case "solution":
-        return solutionColumns(extraBag);
+        return prescriptionPerspective === "default"
+          ? solutionColumns(extraBag)
+          : alertsPerspectiveColumns(extraBag);
       case "diet":
         return dietColumns(extraBag);
       default:
-        return columnsTable(hasFilter ? filter : { status: null }, extraBag);
+        return prescriptionPerspective === "default"
+          ? columnsTable(hasFilter ? filter : { status: null }, extraBag)
+          : alertsPerspectiveColumns(extraBag);
     }
   };
 

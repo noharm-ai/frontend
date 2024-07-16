@@ -13,6 +13,7 @@ const initialState = {
     prescription: null,
   },
   filters: [],
+  perspective: "default",
 };
 
 export const startEvaluation = createAsyncThunk(
@@ -38,6 +39,9 @@ const prescriptionSlice = createSlice({
     setPrescriptionFilters(state, action) {
       state.filters = action.payload;
     },
+    setPrescriptionPerspective(state, action) {
+      state.perspective = action.payload;
+    },
     setCheckSummary(state, action) {
       state.checkSummary.prescription = action.payload;
     },
@@ -57,7 +61,11 @@ const prescriptionSlice = createSlice({
   },
 });
 
-export const { reset, setPrescriptionFilters, setCheckSummary } =
-  prescriptionSlice.actions;
+export const {
+  reset,
+  setPrescriptionFilters,
+  setCheckSummary,
+  setPrescriptionPerspective,
+} = prescriptionSlice.actions;
 
 export default prescriptionSlice.reducer;
