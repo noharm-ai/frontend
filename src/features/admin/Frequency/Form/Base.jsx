@@ -1,17 +1,32 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
+import { InputNumber } from "antd";
 
-import { InputNumber } from "components/Inputs";
 import Switch from "components/Switch";
 
-function BaseForm() {
+function BaseForm({ open }) {
   const { t } = useTranslation();
+  const inputRef = useRef(null);
   const { values, errors, touched, handleBlur, setFieldValue } =
     useFormikContext();
 
+  useEffect(() => {
+    if (open && inputRef.current) {
+      setTimeout(() => {
+        inputRef.current.focus();
+      }, 0);
+    }
+  }, [open, inputRef]);
+
   return (
     <>
+      <div className={`form-row`}>
+        <div className="form-label">
+          <label>Frequência:</label>
+        </div>
+        <div className="form-input">{values.name}</div>
+      </div>
       <div
         className={`form-row ${
           errors.dailyFrequency && touched.dailyFrequency ? "error" : ""
@@ -22,8 +37,11 @@ function BaseForm() {
         </div>
         <div className="form-input">
           <InputNumber
+            decimalSeparator=","
             onChange={(value) => setFieldValue("dailyFrequency", value)}
             value={values.dailyFrequency}
+            ref={inputRef}
+            style={{ width: "100%" }}
           />
         </div>
         {errors.dailyFrequency && touched.dailyFrequency && (

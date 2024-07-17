@@ -82,7 +82,7 @@ function FrequencyForm({ ...props }) {
           </header>
 
           <Form onSubmit={handleSubmit}>
-            <Base />
+            <Base open={formData} />
           </Form>
         </DefaultModal>
       )}
