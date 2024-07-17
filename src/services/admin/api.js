@@ -15,17 +15,10 @@ const endpoints = {
 const getFrequencyList = (params = {}) =>
   instance.post(`${endpoints.frequency}/list`, params, setHeaders());
 
-const updateDailyFrequency = (bearerToken, id, dailyFrequency) => {
-  return instance.put(
-    `${endpoints.frequency}`,
-    {
-      id,
-      dailyFrequency,
-    },
-    {
-      ...setHeaders(bearerToken),
-    }
-  );
+const updateFrequency = (params = {}) => {
+  return instance.put(`${endpoints.frequency}`, params, {
+    ...setHeaders(),
+  });
 };
 
 const getIntervReasonList = (bearerToken, params = {}) =>
@@ -261,7 +254,7 @@ api.user.getResetToken = (params) =>
 const methods = {
   ...api,
   getFrequencyList,
-  updateDailyFrequency,
+  updateFrequency,
   getIntervReasonList,
   upsertIntervReason,
   getMemoryItems,
