@@ -758,6 +758,7 @@
     "rx": "Reatividade Cruzada",
     "tube": "Sonda",
     "maxTime": "Tempo de tratamento",
+    "fasting": "Medicamento administrado sem jejum",
 
     "high": "Alertas Nível Alto",
     "medium": "Alertas Nível Médio",
@@ -779,6 +780,7 @@
     "platelets": "PLQ",
     "rx": "RC",
     "tube": "S",
-    "maxTime": "TT"
+    "maxTime": "TT",
+    "fasting": "JJ"
   }
 }

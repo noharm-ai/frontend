@@ -750,6 +750,7 @@
     "rx": "Cross reactivity",
     "tube": "Probe",
     "maxTime": "Treatment time",
+    "fasting": "Fasting not present",
 
     "exams": "Lab results x Drugs",
     "duplicity": "Duplicity",
@@ -774,6 +775,7 @@
     "platelets": "PLQ",
     "rx": "RC",
     "tube": "S",
-    "maxTime": "TT"
+    "maxTime": "TT",
+    "fasting": "JJ"
   }
 }

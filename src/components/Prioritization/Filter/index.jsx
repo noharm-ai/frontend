@@ -677,6 +677,9 @@ export default function Filter({
                       <Select.Option key={"maxTime"} value={"maxTime"}>
                         {t("drugAlertType.maxTime")}
                       </Select.Option>
+                      <Select.Option key={"fasting"} value={"fasting"}>
+                        {t("drugAlertType.fasting")}
+                      </Select.Option>
                     </Select>
                   </Col>
                 </Row>
