@@ -371,7 +371,7 @@ export default function ClinicalNotes({
                               }
                               loading={isFetchingExtra === group.label}
                             >
-                              Abrir evoluções ({dates[group.label].count})
+                              Abrir evoluções ({dates[group.label]?.count})
                             </Button>
                           </div>
                           <div className="indicators">
