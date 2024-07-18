@@ -9,10 +9,7 @@ import Dropdown from "components/Dropdown";
 import Button from "components/Button";
 import { Radio } from "components/Inputs";
 import Tooltip from "components/Tooltip";
-import {
-  setPrescriptionFilters,
-  setPrescriptionPerspective,
-} from "features/prescription/PrescriptionSlice";
+import { setPrescriptionFilters } from "features/prescription/PrescriptionSlice";
 import {
   setPrescriptionListType,
   setPrescriptionListOrder,
@@ -26,9 +23,6 @@ export default function Filters({ showPrescriptionOrder }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const filters = useSelector((state) => state.prescriptionv2.filters);
-  const prescriptionPerspective = useSelector(
-    (state) => state.prescriptionv2.perspective
-  );
   const prescriptionListType = useSelector(
     (state) => state.preferences.prescription.listType
   );
@@ -146,7 +140,7 @@ export default function Filters({ showPrescriptionOrder }) {
       </Affix>
       <Affix offsetTop={50}>
         <div className="viz-mode">
-          <Tooltip title="Perspectiva">
+          {/* <Tooltip title="Perspectiva">
             <Radio.Group
               onChange={(e) => {
                 dispatch(setPrescriptionPerspective(e.target.value));
@@ -156,7 +150,7 @@ export default function Filters({ showPrescriptionOrder }) {
               <Radio.Button value="default">Padrão</Radio.Button>
               <Radio.Button value="alerts">Alertas</Radio.Button>
             </Radio.Group>
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip title="Modo de visualização">
             <Radio.Group
               onChange={(e) => {
