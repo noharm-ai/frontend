@@ -651,7 +651,10 @@
     "route": "VIA",
     "prescriptionExpirationDate": "VIGENCIA",
     "suspensionDate": "DATA SUSPENSAO",
-    "observation": "OBSERVACAO"
+    "observation": "OBSERVACAO",
+    "interventionType": "TIPO INTERVENÇÃO",
+    "bed": "LEITO",
+    "idPatient": "ID PACIENTE"
   },
 
   "reportcsvCulture": {
@@ -755,9 +758,29 @@
     "rx": "Reatividade Cruzada",
     "tube": "Sonda",
     "maxTime": "Tempo de tratamento",
+    "fasting": "Medicamento administrado sem jejum",
 
     "high": "Alertas Nível Alto",
     "medium": "Alertas Nível Médio",
     "low": "Alertas Nível Baixo"
+  },
+
+  "drugAlertTypeAcronym": {
+    "allergy": "AL",
+    "maxDose": "MAX",
+    "dm": "DM",
+    "dt": "DT",
+    "liver": "AHP",
+    "iy": "IY",
+    "it": "IM",
+    "ira": "IRA",
+    "sl": "ISL",
+    "elderly": "MPI",
+    "kidney": "AR",
+    "platelets": "PLQ",
+    "rx": "RC",
+    "tube": "S",
+    "maxTime": "TT",
+    "fasting": "JJ"
   }
 }

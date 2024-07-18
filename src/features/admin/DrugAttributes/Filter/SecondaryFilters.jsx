@@ -89,6 +89,10 @@ export default function SecondaryFilters() {
                 Dialisável
               </Select.Option>
 
+              <Select.Option key="jejum" value="jejum">
+                Jejum
+              </Select.Option>
+
               <Select.Option key="idoso" value="idoso">
                 MPI
               </Select.Option>

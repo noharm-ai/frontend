@@ -14,6 +14,7 @@ export default class DrugAlertTypeEnum {
   static RX = "rx";
   static TUBE = "tube";
   static MAX_TIME = "maxTime";
+  static FASTING = "fasting";
 
   static getAlertTypes = (t) => {
     const types = [
@@ -77,6 +78,10 @@ export default class DrugAlertTypeEnum {
       {
         id: DrugAlertTypeEnum.MAX_TIME,
         label: t(`drugAlertType.${DrugAlertTypeEnum.MAX_TIME}`),
+      },
+      {
+        id: DrugAlertTypeEnum.FASTING,
+        label: t(`drugAlertType.${DrugAlertTypeEnum.FASTING}`),
       },
     ];
 

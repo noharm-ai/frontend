@@ -128,6 +128,21 @@ function BaseForm({ data }) {
           >
             Dialisável
           </Checkbox>
+
+          <Checkbox
+            onChange={({ target }) => setFieldValue("fasting", !target.value)}
+            value={values.fasting || false}
+            checked={values.fasting}
+            name="fasting"
+            id="fasting"
+          >
+            <Tooltip
+              title="Medicamento deve ser administrado em jejum"
+              underline
+            >
+              Jejum
+            </Tooltip>
+          </Checkbox>
         </div>
       </div>
 

@@ -5,6 +5,11 @@ const initialState = {
   list: [],
   status: "idle",
   error: null,
+  single: {
+    data: null,
+    status: "idle",
+    error: null,
+  },
 };
 
 export const fetchFrequencies = createAsyncThunk(
@@ -20,15 +25,11 @@ export const fetchFrequencies = createAsyncThunk(
   }
 );
 
-export const updateDailyFrequency = createAsyncThunk(
-  "serverActions/update-daily-freq",
+export const upsertFrequency = createAsyncThunk(
+  "admin-frequency/upsert",
   async (params, thunkAPI) => {
     try {
-      const response = await api.updateDailyFrequency(
-        null,
-        params.id,
-        params.value
-      );
+      const response = await api.updateFrequency(params);
 
       return response.data;
     } catch (err) {
@@ -44,6 +45,9 @@ const frequencySlice = createSlice({
     reset() {
       return initialState;
     },
+    setFrequency(state, action) {
+      state.single.data = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -57,10 +61,28 @@ const frequencySlice = createSlice({
       .addCase(fetchFrequencies.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(upsertFrequency.pending, (state, action) => {
+        state.single.status = "loading";
+      })
+      .addCase(upsertFrequency.fulfilled, (state, action) => {
+        state.single.status = "succeeded";
+        const freq = action.payload.data[0];
+
+        const index = state.list.findIndex((i) => i.id === freq.id);
+        if (index !== -1) {
+          state.list[index] = freq;
+        } else {
+          state.list.push(freq);
+        }
+      })
+      .addCase(upsertFrequency.rejected, (state, action) => {
+        state.single.status = "failed";
+        state.single.error = action.error.message;
       });
   },
 });
 
-export const { reset } = frequencySlice.actions;
+export const { reset, setFrequency } = frequencySlice.actions;
 
 export default frequencySlice.reducer;

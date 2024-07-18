@@ -11,7 +11,7 @@ export default function MainFilters() {
 
   return (
     <>
-      <Col md={5} lg={3} xxl={2}>
+      <Col md={5} lg={4} xxl={3}>
         <Heading as="label" size="14px">
           Frequência Dia:
         </Heading>

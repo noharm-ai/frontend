@@ -27,7 +27,6 @@ const endpoints = {
   oauth: "/auth-provider",
   prescriptions: "/prescriptions",
   drugs: "/drugs",
-  departments: "/departments",
   outliers: "/outliers",
   relation: "/relation",
   intervention: {
@@ -314,10 +313,13 @@ const getDrugs = (bearerToken, params = {}) =>
   instance.get(endpoints.drugs, { params, ...setHeaders(bearerToken) });
 
 const getDrugsBySegment = (bearerToken, idSegment, params = {}) =>
-  instance.get(`${endpoints.drugs}/${idSegment}`, {
-    params,
-    ...setHeaders(bearerToken),
-  });
+  instance.get(
+    idSegment ? `${endpoints.drugs}/${idSegment}` : endpoints.drugs,
+    {
+      params,
+      ...setHeaders(bearerToken),
+    }
+  );
 
 const updateDrug = (bearerToken, { id, ...params }) =>
   instance.put(`${endpoints.drugs}/${id}`, params, setHeaders(bearerToken));
@@ -733,6 +735,16 @@ api.userAdmin.upsertUser = (params = {}) =>
 
 api.userAdmin.getUsers = (params = {}) =>
   instance.get(endpoints.users, { params, ...setHeaders() });
+
+/**
+ * Segment namespace
+ */
+api.segments = {};
+api.segments.getDepartments = (params = {}) =>
+  instance.get(`${endpoints.segments}/departments`, {
+    params,
+    ...setHeaders(),
+  });
 
 /**
  * API

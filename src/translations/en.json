@@ -645,7 +645,10 @@
     "route": "ROUTE",
     "prescriptionExpirationDate": "EXPIRE DATE",
     "suspensionDate": "SUSPENSION DATE",
-    "observation": "OBSERVATION"
+    "observation": "OBSERVATION",
+    "interventionType": "INTERVENTION TYPE",
+    "bed": "BED",
+    "idPatient": "ID PATIENT"
   },
 
   "reportcsvCulture": {
@@ -747,6 +750,7 @@
     "rx": "Cross reactivity",
     "tube": "Probe",
     "maxTime": "Treatment time",
+    "fasting": "Fasting not present",
 
     "exams": "Lab results x Drugs",
     "duplicity": "Duplicity",
@@ -754,5 +758,24 @@
     "high": "Alerts: High",
     "medium": "Alerts: Medium",
     "low": "Alerts: Low"
+  },
+
+  "drugAlertTypeAcronym": {
+    "allergy": "AL",
+    "maxDose": "MAX",
+    "dm": "DM",
+    "dt": "DT",
+    "liver": "AHP",
+    "iy": "IY",
+    "it": "IM",
+    "ira": "IRA",
+    "sl": "ISL",
+    "elderly": "MPI",
+    "kidney": "AR",
+    "platelets": "PLQ",
+    "rx": "RC",
+    "tube": "S",
+    "maxTime": "TT",
+    "fasting": "JJ"
   }
 }
