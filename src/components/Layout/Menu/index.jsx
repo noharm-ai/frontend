@@ -253,6 +253,14 @@ export default function Menu({ security, featureService }) {
           role: ["admin", "training"],
         },
         {
+          key: "/admin/horarios",
+          link: "/admin/horarios",
+          label: t("menu.schedules"),
+          icon: <HourglassOutlined />,
+          id: "gtm-lnk-horarios",
+          role: ["admin", "training"],
+        },
+        {
           key: "/medicamentos2",
           link: "/medicamentos",
           label: "Medicamentos",

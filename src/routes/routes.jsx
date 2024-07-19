@@ -32,6 +32,7 @@ import AdminMemory from "pages/Admin/Memory";
 import AdminMemoryRoutes from "pages/Admin/Memory/Routes";
 import AdminMemoryReports from "pages/Admin/Memory/Reports";
 import AdminMemoryFeatures from "pages/Admin/Memory/Features";
+import AdminMemorySchedules from "pages/Admin/Memory/Schedules";
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminIntegrationStatus from "pages/Admin/IntegrationStatus";
@@ -258,6 +259,11 @@ const routes = [
     exact: true,
     path: "/admin/features",
     element: <WithAuth component={AdminMemoryFeatures} />,
+  },
+  {
+    exact: true,
+    path: "/admin/horarios",
+    element: <WithAuth component={AdminMemorySchedules} />,
   },
   {
     exact: true,
