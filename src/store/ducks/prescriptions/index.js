@@ -525,7 +525,9 @@ const updateInterventionStatus = (
   state = INITIAL_STATE,
   { idIntervention, status }
 ) => {
-  const interventionList = [...state.single.intervention.list];
+  const interventionList = JSON.parse(
+    JSON.stringify(state.single.intervention.list)
+  );
 
   const index = interventionList.findIndex(
     (i) => `${i.idIntervention}` === `${idIntervention}`
