@@ -726,6 +726,12 @@ api.clinicalNotes.removeAnnotation = (params = {}) => {
   });
 };
 
+api.clinicalNotes.getSingle = (params) =>
+  instance.get(`/notes/single/${params.id}`, {
+    params,
+    ...setHeaders(),
+  });
+
 /**
  * User admin
  */

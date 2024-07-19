@@ -7,6 +7,7 @@ import FormPatientModal from "containers/Forms/Patient";
 import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSlice";
 import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
 import CheckSummary from "features/prescription/CheckSummary/CheckSummary";
+import SingleClinicalNotesModal from "features/prescription/ClinicalNotes/SingleClinicalNotesModal/SingleClinicalNotesModal";
 import SecurityService from "services/security";
 
 import { ScreeningFloatButtonGroup } from "../index.style";
@@ -70,6 +71,7 @@ export default function ScreeningActions({
         alerts={prescription?.alertsList}
         interventions={interventions}
       />
+      <SingleClinicalNotesModal />
     </>
   );
 }

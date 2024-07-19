@@ -1,5 +1,6 @@
 import "styled-components/macro";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import moment from "moment";
 import { Row, Col, notification, Popconfirm } from "antd";
 import { useTranslation } from "react-i18next";
@@ -15,6 +16,7 @@ import ExamCard from "../Exam/Card";
 import AlertCard from "../AlertCard";
 import ClinicalNotesCard from "../ClinicalNotes/Card";
 import PatientCard from "./Card";
+import { selectSingleClinicalNotes } from "features/prescription/PrescriptionSlice";
 
 export default function Patient({
   fetchScreening,
@@ -29,6 +31,7 @@ export default function Patient({
   setModalVisibility,
   removeNotes,
 }) {
+  const dispatch = useDispatch();
   const {
     alertExams,
     exams,
@@ -223,7 +226,20 @@ export default function Patient({
                               {moment(date).format("DD/MM/YYYY HH:mm")}
                               {source === "care" ? " (NoHarm Care)" : ""}
                             </div>
-                            <div className="text">{text}</div>
+                            {source === "care" ? (
+                              <div
+                                className="text-link"
+                                onClick={() =>
+                                  dispatch(selectSingleClinicalNotes(id))
+                                }
+                              >
+                                <Tooltip title="Visualizar evolução">
+                                  {text}
+                                </Tooltip>
+                              </div>
+                            ) : (
+                              <div className="text">{text}</div>
+                            )}
                           </div>
                           {source === "care" && (
                             <div>
@@ -242,6 +258,7 @@ export default function Patient({
                                     ghost
                                     danger
                                     loading={isRemovingNotes}
+                                    size="small"
                                   />
                                 </Tooltip>
                               </Popconfirm>
@@ -272,7 +289,17 @@ export default function Patient({
                             {moment(date).format("DD/MM/YYYY HH:mm")} (NoHarm
                             Care)
                           </div>
-                          <div className="text">{text}</div>
+
+                          <div
+                            className="text-link"
+                            onClick={() =>
+                              dispatch(selectSingleClinicalNotes(id))
+                            }
+                          >
+                            <Tooltip title="Visualizar evolução">
+                              {text}
+                            </Tooltip>
+                          </div>
                         </div>
                         <div>
                           <Popconfirm

@@ -34,6 +34,7 @@ export default function View({
   saveStatus,
   popup,
   admissionNumber,
+  disableSelection = false,
 }) {
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
@@ -107,6 +108,14 @@ export default function View({
   const removeAnnotation = (e) => {
     const el = e.target.closest("SPAN");
     if (el && e.target.className === "close-btn") {
+      if (!update) {
+        notification.error({
+          message:
+            "Remoção de anotações devem ser efetuadas na interface de acompanhamento de evoluções",
+        });
+        return;
+      }
+
       el.removeChild(el.getElementsByClassName("close-btn")[0]);
       el.replaceWith(document.createTextNode(el.innerText));
       update({
@@ -148,7 +157,7 @@ export default function View({
   };
 
   const selectionChange = () => {
-    if (isValidSelection()) {
+    if (isValidSelection() && !disableSelection) {
       const selection = window.getSelection();
       const range = selection.getRangeAt(0);
 
@@ -257,7 +266,7 @@ export default function View({
           </div>
           <div className="help">
             <>
-              {!popup && (
+              {!popup && admissionNumber && (
                 <Tooltip title="Abrir em nova janela">
                   <Button
                     type="primary gtm-clinicalnote-btn-popup"
