@@ -74,7 +74,7 @@ function MemorySchedules() {
             type: "options-key-value-multiple",
             options: data["map-schedules"]?.value || [],
             optionsType: "key-value",
-            required: true,
+            required: false,
             style: { width: "100%" },
             help: "A lista de horários é retirada dos últimos 2 dias de prescrições e limitada em 500 registros.",
           },
@@ -98,7 +98,7 @@ function MemorySchedules() {
       </PageHeader>
 
       <Row gutter={[16, 24]}>
-        <Col xs={{ span: 24 }} lg={{ span: 8 }} xxl={{ span: 8 }}>
+        <Col xs={{ span: 24 }} lg={{ span: 12 }} xxl={{ span: 12 }}>
           <Card loading={loading} title="Horários de administração em Jejum">
             <CustomForm
               onSubmit={onSave}
