@@ -8,7 +8,8 @@ test("outcome: suspension", async ({ page }) => {
     .click();
   await page.getByText("Paciente 99").click();
   await page
-    .getByRole("row", { name: "Expandir linha 0 1 BISACODIL 5 mg" })
+    .locator(".ant-table-tbody tr")
+    .nth(0)
     .getByRole("button")
     .nth(1)
     .click();
@@ -100,7 +101,8 @@ test("outcome: substitution", async ({ page }) => {
     .click();
   await page.getByText("Paciente 99").click();
   await page
-    .getByRole("row", { name: "Expandir linha 0 0 ENALAPRIL 20" })
+    .locator(".ant-table-tbody tr")
+    .nth(1)
     .getByRole("button")
     .nth(1)
     .click();

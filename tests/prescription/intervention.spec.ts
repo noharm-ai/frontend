@@ -7,8 +7,9 @@ test("add intervention", async ({ page }) => {
     .getByRole("heading", { name: "Prescrição nº 199 Liberada em" })
     .click();
   await page.getByText("Paciente 99").click();
+  //await page.getByRole("row").nth(0).getByRole("button").nth(1).click();
   await page
-    .getByRole("row", { name: "Expandir linha 0 1 BISACODIL" })
+    .locator(".ant-table tr:nth-child(2)")
     .getByRole("button")
     .nth(1)
     .click();
@@ -23,7 +24,7 @@ test("add intervention", async ({ page }) => {
   await page.getByRole("button", { name: "Salvar" }).click();
 
   await page
-    .getByRole("row", { name: "Expandir linha 0 1 BISACODIL 5 mg" })
+    .locator(".ant-table tr:nth-child(2)")
     .getByRole("button")
     .nth(1)
     .click();
@@ -37,7 +38,7 @@ test("add multiple interventions and rollback", async ({ page }) => {
 
   // click intervention button
   await page
-    .getByRole("row", { name: "Expandir linha 0 0 ENALAPRIL" })
+    .locator(".ant-table tr:nth-child(3)")
     .getByRole("button")
     .nth(1)
     .click();
@@ -54,7 +55,7 @@ test("add multiple interventions and rollback", async ({ page }) => {
 
   // click intervention button
   await page
-    .getByRole("row", { name: "Expandir linha 0 0 ENALAPRIL" })
+    .locator(".ant-table tr:nth-child(3)")
     .getByRole("button")
     .nth(1)
     .click();
@@ -77,7 +78,7 @@ test("add multiple interventions and rollback", async ({ page }) => {
 
   //check created interventions
   await page
-    .getByRole("row", { name: "Expandir linha 0 0 ENALAPRIL" })
+    .locator(".ant-table tr:nth-child(3)")
     .getByRole("button")
     .nth(1)
     .click();
@@ -92,14 +93,14 @@ test("add multiple interventions and rollback", async ({ page }) => {
   await page.locator(".ant-modal-confirm-btns button").first().click();
 
   await page
-    .getByRole("row", { name: "Expandir linha 0 0 ENALAPRIL 20 mg" })
+    .locator(".ant-table tr:nth-child(3)")
     .getByRole("button")
     .nth(1)
     .click();
   await page.getByText("Pendente", { exact: true }).click();
   await page.getByRole("button", { name: "rollback" }).click();
   await page
-    .getByRole("row", { name: "Expandir linha 0 0 ENALAPRIL 20 mg" })
+    .locator(".ant-table tr:nth-child(3)")
     .getByRole("button")
     .nth(1)
     .click();
