@@ -197,7 +197,7 @@ test("outcome: custom", async ({ page }) => {
   await page.getByText("Alta antecipada").click();
 
   // // close dropdown
-  await page.locator(".ant-modal-body").click();
+  //await page.locator(".ant-modal-body").click();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste paciente");
