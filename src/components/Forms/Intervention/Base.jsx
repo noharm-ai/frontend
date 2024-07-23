@@ -29,7 +29,6 @@ export default function Base({
   drugSummary,
   fetchDrugSummary,
   securityService,
-  featureService,
 }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const { t } = useTranslation();
@@ -46,7 +45,7 @@ export default function Base({
   const hasTranscription = securityService.hasTranscription();
 
   const hasRelationships = (reasonList, selectedReasons = []) => {
-    if (!selectedReasons) return false;
+    if (!selectedReasons || values.idPrescriptionDrugList) return false;
 
     const reasonsWithRelationshipsRegEx =
       /duplicidade|interaç|incompatib|apresentaç|forma|subst|alterna/g;
@@ -303,37 +302,39 @@ export default function Base({
           </Col>
         </Box>
       )}
-      {hasSuspOrSubst(reasons.list, idInterventionReason) && (
-        <Box hasError={errors.expendedDose && touched.expendedDose}>
-          <Col xs={layout.label}>
-            <Heading as="label" size="14px">
-              <Tooltip
-                title={t("interventionForm.labelExpendedDoseHint")}
-                underline
-              >
-                {t("interventionForm.labelExpendedDose")}:
-              </Tooltip>
-            </Heading>
-          </Col>
-          <Col xs={layout.input}>
-            <InputNumber
-              id="expendedDose"
-              value={values.expendedDose}
-              style={{ width: "100%", maxWidth: "100px" }}
-              onChange={(value) => setFieldValue("expendedDose", value)}
-            />
-            <span style={{ marginLeft: "10px" }}>
-              {drugData.measureUnit ? drugData.measureUnit.value : ""}
-            </span>
-            {errors.expendedDose && touched.expendedDose && (
-              <FieldError>{errors.expendedDose}</FieldError>
-            )}
-            <FieldHelp style={{ opacity: 0.7 }}>
-              Utilizado apenas na versão antiga do relatório de Farmacoeconomia
-            </FieldHelp>
-          </Col>
-        </Box>
-      )}
+      {hasSuspOrSubst(reasons.list, idInterventionReason) &&
+        !values.idPrescriptionDrugList && (
+          <Box hasError={errors.expendedDose && touched.expendedDose}>
+            <Col xs={layout.label}>
+              <Heading as="label" size="14px">
+                <Tooltip
+                  title={t("interventionForm.labelExpendedDoseHint")}
+                  underline
+                >
+                  {t("interventionForm.labelExpendedDose")}:
+                </Tooltip>
+              </Heading>
+            </Col>
+            <Col xs={layout.input}>
+              <InputNumber
+                id="expendedDose"
+                value={values.expendedDose}
+                style={{ width: "100%", maxWidth: "100px" }}
+                onChange={(value) => setFieldValue("expendedDose", value)}
+              />
+              <span style={{ marginLeft: "10px" }}>
+                {drugData.measureUnit ? drugData.measureUnit.value : ""}
+              </span>
+              {errors.expendedDose && touched.expendedDose && (
+                <FieldError>{errors.expendedDose}</FieldError>
+              )}
+              <FieldHelp style={{ opacity: 0.7 }}>
+                Utilizado apenas na versão antiga do relatório de
+                Farmacoeconomia
+              </FieldHelp>
+            </Col>
+          </Box>
+        )}
       {hasTranscription && (
         <>
           <Box hasError={errors.transcription && touched.transcription}>

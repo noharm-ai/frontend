@@ -11,6 +11,8 @@ import {
   CalculatorOutlined,
   CheckCircleOutlined,
   StopOutlined,
+  CheckSquareOutlined,
+  BorderOutlined,
 } from "@ant-design/icons";
 import { Button as AntButton } from "antd";
 
@@ -203,9 +205,34 @@ const Action = ({
   emptyRow,
   t,
   security,
+  selectedRows,
+  selectedRowsActive,
+  toggleSelectedRows,
+  dispatch,
   ...data
 }) => {
   if (emptyRow) return null;
+
+  if (selectedRowsActive) {
+    const selected = selectedRows.indexOf(idPrescriptionDrug) !== -1;
+    return (
+      <Tooltip title={selected ? null : "Selecionar"}>
+        <AntButton
+          type={selected ? "primary" : "default"}
+          onClick={() => {
+            dispatch(toggleSelectedRows(idPrescriptionDrug));
+          }}
+          icon={
+            selected ? (
+              <CheckSquareOutlined style={{ fontSize: 16 }} />
+            ) : (
+              <BorderOutlined style={{ fontSize: 16 }} />
+            )
+          }
+        ></AntButton>
+      </Tooltip>
+    );
+  }
 
   const isDisabled =
     check.idPrescriptionDrug !== idPrescriptionDrug && check.isChecking;
@@ -292,6 +319,7 @@ const Action = ({
           <AntButton
             type="primary gtm-bt-notes"
             ghost={!hasNotes}
+            style={{ background: hasNotes ? "#7ebe9a" : "inherit" }}
             onClick={() => {
               data.selectPrescriptionDrug({
                 ...data,
@@ -1031,7 +1059,27 @@ const tags = (bag) => ({
 
 const actionColumns = (bag) => [
   {
-    title: bag.t("tableHeader.action"),
+    title: () => {
+      if (bag.selectedRowsActive) {
+        return (
+          <AntButton
+            type={"default"}
+            onClick={() => {
+              bag.selectAllRows();
+            }}
+            icon={
+              bag.isAllSelected ? (
+                <CheckSquareOutlined style={{ fontSize: 16 }} />
+              ) : (
+                <BorderOutlined style={{ fontSize: 16 }} />
+              )
+            }
+          ></AntButton>
+        );
+      }
+
+      return bag.t("tableHeader.action");
+    },
     dataIndex: "intervention",
     width: 80,
     render: (text, prescription) => {

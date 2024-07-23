@@ -20,6 +20,10 @@ const initialState = {
   },
   filters: [],
   perspective: "default",
+  selectedRows: {
+    active: false,
+    list: [],
+  },
 };
 
 export const getSingleClinicalNotes = createAsyncThunk(
@@ -64,6 +68,23 @@ const prescriptionSlice = createSlice({
     setCheckSummary(state, action) {
       state.checkSummary.prescription = action.payload;
     },
+    setSelectedRowsActive(state, action) {
+      state.selectedRows.active = action.payload;
+      if (!action.payload) {
+        state.selectedRows.list = [];
+      }
+    },
+    setSelectedRows(state, action) {
+      state.selectedRows.list = action.payload;
+    },
+    toggleSelectedRows(state, action) {
+      const index = state.selectedRows.list.indexOf(action.payload);
+      if (index !== -1) {
+        state.selectedRows.list.splice(index, 1);
+      } else {
+        state.selectedRows.list.push(action.payload);
+      }
+    },
     selectSingleClinicalNotes(state, action) {
       state.singleClinicalNotes.id = action.payload;
     },
@@ -98,6 +119,9 @@ export const {
   setPrescriptionFilters,
   setCheckSummary,
   setPrescriptionPerspective,
+  setSelectedRowsActive,
+  toggleSelectedRows,
+  setSelectedRows,
   selectSingleClinicalNotes,
 } = prescriptionSlice.actions;
 

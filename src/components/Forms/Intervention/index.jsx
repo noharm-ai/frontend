@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 import { RollbackOutlined } from "@ant-design/icons";
 
-import { Row } from "components/Grid";
+import { Row, Col } from "components/Grid";
 import Button from "components/Button";
 import Dropdown from "components/Dropdown";
 import Tooltip from "components/Tooltip";
@@ -18,12 +18,14 @@ import interventionStatus from "models/InterventionStatus";
 import security from "services/security";
 import FeaturesService from "services/features";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import { setSelectedRowsActive } from "features/prescription/PrescriptionSlice";
 import { getErrorMessageFromException } from "utils/errorHandler";
 
 import Base from "./Base";
 import PatientData from "./PatientData";
 import DrugData from "./DrugData";
 import { FooterContainer } from "./Intervention.style";
+import { FormHeader } from "../Form.style";
 
 export default function Intervention({
   intervention,
@@ -65,7 +67,9 @@ export default function Intervention({
       .nullable()
       .when("idInterventionReason", {
         is: (selectedReasons) => {
-          if (isEmpty(selectedReasons)) return false;
+          if (isEmpty(selectedReasons) || item.idPrescriptionDrugList) {
+            return false;
+          }
 
           let isRequired = false;
 
@@ -117,6 +121,7 @@ export default function Intervention({
   const initialValues = {
     idPrescription: item.idPrescription,
     idPrescriptionDrug: item.idPrescriptionDrug,
+    idPrescriptionDrugList: item.idPrescriptionDrugList,
     admissionNumber: item.admissionNumber,
     idIntervention: item.intervention.idIntervention,
     error: item.intervention.error,
@@ -130,6 +135,7 @@ export default function Intervention({
     expendedDose: item.intervention.expendedDose,
     nonce: item.intervention.nonce,
     status: item.intervention.status,
+    version: "1.0",
     transcriptionData: {
       ...transcriptable,
     },
@@ -177,29 +183,35 @@ export default function Intervention({
 
     save(interventionData)
       .then((response) => {
-        let intv = interventionData;
-        // new way (remove variable interventionData after transition)
-        if (response.data && response.data[0]) {
-          intv = response.data[0];
-        }
+        const intvList = response.data;
 
-        if (afterSaveIntervention) {
-          afterSaveIntervention(intv);
-        } else {
-          updateInterventionData(intv);
+        if (intvList && intvList.length) {
+          intvList.forEach((intv) => {
+            if (afterSaveIntervention) {
+              afterSaveIntervention(intv);
+            } else {
+              updateInterventionData(intv);
+            }
+          });
         }
 
         reset();
         select({});
+        dispatch(setSelectedRowsActive(false));
 
         notification.success({
           message: t("success.intervention"),
         });
 
-        if (params.status !== "s" && params.status != null) {
+        if (
+          params.status !== "s" &&
+          params.status != null &&
+          intvList &&
+          intvList.length
+        ) {
           dispatch(
             setSelectedInterventionOutcome({
-              idIntervention: intv.idIntervention,
+              idIntervention: intvList[0].idIntervention,
               outcome: params.status,
               open: true,
             })
@@ -223,18 +235,22 @@ export default function Intervention({
       {
         label: "Salvar e marcar como Aceita",
         key: "a",
+        disabled: item.idPrescriptionDrugList,
       },
       {
         label: "Salvar e marcar como Não Aceita",
         key: "n",
+        disabled: item.idPrescriptionDrugList,
       },
       {
         label: "Salvar e marcar como Não Aceita com Justificativa",
         key: "j",
+        disabled: item.idPrescriptionDrugList,
       },
       {
         label: "Salvar e marcar como Não se Aplica",
         key: "x",
+        disabled: item.idPrescriptionDrugList,
       },
     ];
 
@@ -287,9 +303,7 @@ export default function Intervention({
               danger
               icon={<RollbackOutlined style={{ fontSize: 16 }} />}
               ghost
-              loading={
-                checkPrescriptionDrug && checkPrescriptionDrug.isChecking
-              }
+              loading={isSaving}
               onClick={() => undoIntervention()}
             ></Button>
           </Tooltip>
@@ -342,10 +356,31 @@ export default function Intervention({
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">{t("interventionForm.title")}</Heading>
+            <Heading margin="0 0 11px">
+              {item.idPrescriptionDrugList
+                ? t("interventionForm.titleMultiple")
+                : t("interventionForm.title")}
+            </Heading>
           </header>
-          {item.idPrescriptionDrug + "" === "0" && <PatientData {...item} />}
-          {item.idPrescriptionDrug + "" !== "0" && <DrugData {...item} />}
+          {item.idPrescriptionDrugList ? (
+            <FormHeader>
+              <Row type="flex" gutter={24} css="padding: 2px 0">
+                <Col span={24}>
+                  <Heading as="p" size="14px">
+                    {item.idPrescriptionDrugList.length} itens selecionados
+                  </Heading>
+                </Col>
+              </Row>
+            </FormHeader>
+          ) : (
+            <>
+              {item.idPrescriptionDrug + "" === "0" && (
+                <PatientData {...item} />
+              )}
+              {item.idPrescriptionDrug + "" !== "0" && <DrugData {...item} />}
+            </>
+          )}
+
           <form onSubmit={handleSubmit}>
             <Row type="flex" gutter={[16, 16]}>
               <Base

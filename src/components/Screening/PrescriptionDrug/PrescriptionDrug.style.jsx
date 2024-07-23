@@ -49,11 +49,21 @@ export const ToolBox = styled.div`
   }
 
   .viz-mode {
+    display: flex;
+
     .btn-order {
       transition: transform 0.3s ${timingFunctions("easeOutQuint")};
 
       &.order-desc {
         transform: rotate(180deg);
+      }
+    }
+
+    .ant-dropdown-button {
+      width: 200px;
+
+      .ant-btn-compact-first-item {
+        flex: 1;
       }
     }
   }

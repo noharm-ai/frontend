@@ -197,6 +197,18 @@ const Table = styled(AntTable)`
     background: #e6f7ff;
   }
 
+  .selected {
+    background: #e6f7ff;
+
+    td:not(:nth-child(1)) {
+      opacity: 1;
+
+      a {
+        opacity: 1;
+      }
+    }
+  }
+
   .selectable {
     cursor: pointer;
     font-weight: 500;
