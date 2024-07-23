@@ -129,6 +129,10 @@ export default function Filters({
         label: "Enviar intervenção",
         icon: <WarningOutlined style={{ fontSize: "16px" }} />,
         disabled: selectedRows.length === 0,
+        danger: true,
+      },
+      {
+        type: "divider",
       },
       {
         key: "reset",
@@ -226,7 +230,7 @@ export default function Filters({
         destroyOnClose
         open={configModal}
         onCancel={() => setConfigModal(false)}
-        width={400}
+        width={450}
         footer={null}
         title="Configurações"
       >
@@ -248,11 +252,15 @@ export default function Filters({
                 <Radio.Button value="condensed">Condensado</Radio.Button>
               </Radio.Group>
             </div>
+            <div className="form-info">
+              O modo Condensado agrupa os itens por vigência e reduz o tamanho
+              da linha.
+            </div>
           </div>
 
           <div className={`form-row`}>
             <div className="form-label">
-              <label>Perspectiva:</label>
+              <label>Perspectiva (Beta):</label>
             </div>
             <div className="form-input">
               <Radio.Group
@@ -265,6 +273,10 @@ export default function Filters({
                 <Radio.Button value="default">Padrão</Radio.Button>
                 <Radio.Button value="alerts">Alertas</Radio.Button>
               </Radio.Group>
+            </div>
+            <div className="form-info">
+              A perspectiva por Alertas, tem o objetivo de agilizar a análise
+              dos alertas emitidos para cada item. (Funcionalidade Beta)
             </div>
           </div>
 
@@ -284,6 +296,9 @@ export default function Filters({
                   <Radio.Button value="asc">Crescente</Radio.Button>
                   <Radio.Button value="desc">Decrescente</Radio.Button>
                 </Radio.Group>
+              </div>
+              <div className="form-info">
+                Altera a ordem em que as prescrições são exibidas.
               </div>
             </div>
           )}
