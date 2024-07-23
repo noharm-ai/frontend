@@ -434,6 +434,7 @@
 
   "interventionForm": {
     "title": "Intervenção",
+    "titleMultiple": "Intervenção Múltipla",
 
     "labelPrescriptionError": "Possível erro de prescrição",
     "labelPrescriptionErrorHint": "Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa",
@@ -760,6 +761,8 @@
     "tube": "Sonda",
     "maxTime": "Tempo de tratamento",
     "fasting": "Medicamento administrado sem jejum",
+    "pregnant": "Gestante",
+    "lactating": "Lactante",
 
     "high": "Alertas Nível Alto",
     "medium": "Alertas Nível Médio",
@@ -782,6 +785,8 @@
     "rx": "RC",
     "tube": "S",
     "maxTime": "TT",
-    "fasting": "JJ"
+    "fasting": "JJ",
+    "pregnant": "GES",
+    "lactating": "LAC"
   }
 }

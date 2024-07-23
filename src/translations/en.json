@@ -432,6 +432,7 @@
 
   "interventionForm": {
     "title": "Intervention",
+    "titleMultiple": "Multiple Intervention",
 
     "labelPrescriptionError": "Prescription error",
     "labelPrescriptionErrorHint": "Prescribing error with clinical significance is defined as an unintentional decision error that may reduce the likelihood that the treatment will be effective or increase the risk of injury to the patient, when compared to established and accepted clinical practices. Ref: CFF, Prot.: MS and Anvisa",
@@ -752,6 +753,8 @@
     "tube": "Probe",
     "maxTime": "Treatment time",
     "fasting": "Fasting not present",
+    "pregnant": "Pregnant",
+    "lactating": "Lactating",
 
     "exams": "Lab results x Drugs",
     "duplicity": "Duplicity",
@@ -777,6 +780,8 @@
     "rx": "RC",
     "tube": "S",
     "maxTime": "TT",
-    "fasting": "JJ"
+    "fasting": "JJ",
+    "pregnant": "GES",
+    "lactating": "LAC"
   }
 }

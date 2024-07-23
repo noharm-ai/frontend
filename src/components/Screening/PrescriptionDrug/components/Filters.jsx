@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { FilterOutlined, CaretUpOutlined } from "@ant-design/icons";
+import {
+  FilterOutlined,
+  WarningOutlined,
+  BorderOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { Affix } from "antd";
 
 import Tag from "components/Tag";
@@ -9,9 +14,11 @@ import Dropdown from "components/Dropdown";
 import Button from "components/Button";
 import { Radio } from "components/Inputs";
 import Tooltip from "components/Tooltip";
+import DefaultModal from "components/Modal";
 import {
   setPrescriptionFilters,
   setPrescriptionPerspective,
+  setSelectedRowsActive,
 } from "features/prescription/PrescriptionSlice";
 import {
   setPrescriptionListType,
@@ -21,13 +28,24 @@ import {
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 
 import { ToolBox } from "../PrescriptionDrug.style";
+import { Form } from "styles/Form.style";
 
-export default function Filters({ showPrescriptionOrder }) {
+export default function Filters({
+  showPrescriptionOrder,
+  addMultipleIntervention,
+}) {
   const { t } = useTranslation();
+  const [configModal, setConfigModal] = useState(false);
   const dispatch = useDispatch();
   const filters = useSelector((state) => state.prescriptionv2.filters);
   const prescriptionPerspective = useSelector(
     (state) => state.prescriptionv2.perspective
+  );
+  const selectedRows = useSelector(
+    (state) => state.prescriptionv2.selectedRows.list
+  );
+  const selectedRowsActive = useSelector(
+    (state) => state.prescriptionv2.selectedRows.active
   );
   const prescriptionListType = useSelector(
     (state) => state.preferences.prescription.listType
@@ -104,6 +122,41 @@ export default function Filters({ showPrescriptionOrder }) {
     };
   };
 
+  const actionOptions = () => {
+    const items = [
+      {
+        key: "addIntervention",
+        label: "Enviar intervenção",
+        icon: <WarningOutlined style={{ fontSize: "16px" }} />,
+        disabled: selectedRows.length === 0,
+      },
+      {
+        key: "reset",
+        label: "Remover seleção",
+        icon: <BorderOutlined style={{ fontSize: "16px" }} />,
+        disabled: !selectedRowsActive,
+      },
+    ];
+
+    return {
+      items,
+      onClick: handleActionClick,
+    };
+  };
+
+  const handleActionClick = ({ key }) => {
+    switch (key) {
+      case "reset":
+        dispatch(setSelectedRowsActive(false));
+        break;
+      case "addIntervention":
+        addMultipleIntervention(selectedRows);
+        break;
+      default:
+        console.error(key);
+    }
+  };
+
   const handleFilterClick = ({ key }) => {
     const index = filters.indexOf(key);
 
@@ -116,10 +169,8 @@ export default function Filters({ showPrescriptionOrder }) {
     }
   };
 
-  const togglePrescriptionOrder = () => {
-    dispatch(
-      setPrescriptionListOrder(prescriptionListOrder === "asc" ? "desc" : "asc")
-    );
+  const togglePrescriptionOrder = (order) => {
+    dispatch(setPrescriptionListOrder(order));
     dispatch(savePreferences());
   };
 
@@ -146,51 +197,98 @@ export default function Filters({ showPrescriptionOrder }) {
       </Affix>
       <Affix offsetTop={50}>
         <div className="viz-mode">
-          <Tooltip title="Perspectiva">
-            <Radio.Group
-              onChange={(e) => {
-                dispatch(setPrescriptionPerspective(e.target.value));
-              }}
-              value={prescriptionPerspective}
-            >
-              <Radio.Button value="default">Padrão</Radio.Button>
-              <Radio.Button value="alerts">Alertas</Radio.Button>
-            </Radio.Group>
-          </Tooltip>
-          <Tooltip title="Modo de visualização">
-            <Radio.Group
-              onChange={(e) => {
-                dispatch(setPrescriptionListType(e.target.value));
-                dispatch(savePreferences());
-              }}
-              value={prescriptionListType}
-              style={{ marginLeft: "15px" }}
-            >
-              <Radio.Button value="default">Padrão</Radio.Button>
-              <Radio.Button value="condensed">Condensado</Radio.Button>
-            </Radio.Group>
-          </Tooltip>
-          {showPrescriptionOrder && (
-            <Tooltip
-              title={
-                prescriptionListOrder === "asc"
-                  ? "Ordenar prescriçoes por Data Decrescente"
-                  : "Ordenar prescriçoes por Data Crescente"
+          <span>
+            <Dropdown.Button
+              menu={actionOptions()}
+              type={selectedRowsActive ? "primary" : "default"}
+              onClick={() =>
+                !selectedRowsActive
+                  ? dispatch(setSelectedRowsActive(true))
+                  : false
               }
             >
-              <Button
-                className={`btn-order ${
-                  prescriptionListOrder === "desc" ? "order-desc" : "order-asc"
-                }`}
-                shape="circle"
-                icon={<CaretUpOutlined />}
-                onClick={() => togglePrescriptionOrder()}
-                style={{ marginLeft: "15px" }}
-              />
-            </Tooltip>
-          )}
+              {selectedRowsActive
+                ? `${selectedRows.length} selecionados`
+                : "Ativar seleção múltipla"}
+            </Dropdown.Button>
+          </span>
+          <Tooltip title="Configurações">
+            <Button
+              shape="circle"
+              icon={<SettingOutlined />}
+              onClick={() => setConfigModal(true)}
+              style={{ marginLeft: "15px" }}
+            />
+          </Tooltip>
         </div>
       </Affix>
+      <DefaultModal
+        destroyOnClose
+        open={configModal}
+        onCancel={() => setConfigModal(false)}
+        width={400}
+        footer={null}
+        title="Configurações"
+      >
+        <Form>
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>Modo de visualização:</label>
+            </div>
+            <div className="form-input">
+              <Radio.Group
+                onChange={(e) => {
+                  dispatch(setPrescriptionListType(e.target.value));
+                  dispatch(savePreferences());
+                }}
+                value={prescriptionListType}
+                buttonStyle="solid"
+              >
+                <Radio.Button value="default">Padrão</Radio.Button>
+                <Radio.Button value="condensed">Condensado</Radio.Button>
+              </Radio.Group>
+            </div>
+          </div>
+
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>Perspectiva:</label>
+            </div>
+            <div className="form-input">
+              <Radio.Group
+                onChange={(e) => {
+                  dispatch(setPrescriptionPerspective(e.target.value));
+                }}
+                value={prescriptionPerspective}
+                buttonStyle="solid"
+              >
+                <Radio.Button value="default">Padrão</Radio.Button>
+                <Radio.Button value="alerts">Alertas</Radio.Button>
+              </Radio.Group>
+            </div>
+          </div>
+
+          {showPrescriptionOrder && (
+            <div className={`form-row`}>
+              <div className="form-label">
+                <label>Ordenação:</label>
+              </div>
+              <div className="form-input">
+                <Radio.Group
+                  onChange={(e) => {
+                    togglePrescriptionOrder(e.target.value);
+                  }}
+                  value={prescriptionListOrder}
+                  buttonStyle="solid"
+                >
+                  <Radio.Button value="asc">Crescente</Radio.Button>
+                  <Radio.Button value="desc">Decrescente</Radio.Button>
+                </Radio.Group>
+              </div>
+            </div>
+          )}
+        </Form>
+      </DefaultModal>
     </ToolBox>
   );
 }
