@@ -13,11 +13,11 @@ test("add intervention", async ({ page }) => {
     .getByRole("button")
     .nth(1)
     .click();
-  await page.locator(".ant-select-selection-overflow").click();
+  await page.locator(".ant-select-selector").click();
   await page.getByText("Alergia").click();
 
   // // close dropdown
-  await page.locator(".ant-modal-body").click();
+  await page.locator(".ant-select-selector").click();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
@@ -42,12 +42,12 @@ test("add multiple interventions and rollback", async ({ page }) => {
     .getByRole("button")
     .nth(1)
     .click();
-  await page.locator(".ant-select-selection-overflow").click();
+  await page.locator(".ant-select-selector").click();
   // select intervention reason
   await page.getByText("Alergia").click();
 
   // close dropdown
-  await page.locator(".ant-modal-content").click();
+  await page.locator(".ant-select-selector").click();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
@@ -64,10 +64,10 @@ test("add multiple interventions and rollback", async ({ page }) => {
   // add another intervention
   await page.getByRole("button", { name: "plus Nova intervenção" }).click();
   // select intervention reason
-  await page.locator(".ant-select-selection-overflow").click();
+  await page.locator(".ant-select-selector").click();
   await page.getByText("Aprazamento").nth(1).click();
   // close dropdown
-  await page.locator(".ant-modal-content").click();
+  await page.locator(".ant-select-selector").click();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
@@ -122,11 +122,11 @@ test("add patient intervention", async ({ page }) => {
     .locator("section")
     .getByRole("button", { name: "warning" })
     .click();
-  await page.locator(".ant-select-selection-overflow").click();
+  await page.locator(".ant-select-selector").click();
   await page.getByText("Diluição", { exact: true }).click();
 
   // // close dropdown
-  await page.locator(".ant-modal-body").click();
+  await page.locator(".ant-select-selector").click();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste paciente");
