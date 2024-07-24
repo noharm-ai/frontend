@@ -26,6 +26,7 @@ export default function EconomyList() {
       width: 2,
       fixed: "left",
       align: "center",
+      sorter: (a, b) => a.idIntervention - b.idIntervention,
       render: (_, record) => record.idIntervention,
     },
     {
