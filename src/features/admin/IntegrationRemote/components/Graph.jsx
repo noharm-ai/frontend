@@ -35,11 +35,11 @@ export default function Graph() {
   const getLineColor = (link) => {
     const status = templateStatus[link.instanceIdentifier];
 
-    if (status.queuedCount > 0 && status.queuedCount <= 20) {
+    if (status?.queuedCount > 0 && status?.queuedCount <= 20) {
       return "#faad14";
     }
 
-    if (status.queuedCount > 20) {
+    if (status?.queuedCount > 20) {
       return "#faad14";
     }
 
