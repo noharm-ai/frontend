@@ -45,7 +45,6 @@ export default function Patient({
     alertStats,
     clinicalNotes,
     clinicalNotesStats,
-    features,
   } = prescription;
 
   const [seeMore, setSeeMore] = useState(false);
@@ -54,7 +53,6 @@ export default function Patient({
   const { t } = useTranslation();
 
   const hasAIData = notesSigns !== "" || notesInfo !== "";
-  const hasClinicalNotes = clinicalNotes > 0 || featureService.hasPrimaryCare();
 
   const toggleSeeMore = () => {
     setSeeMore(!seeMore);
@@ -119,37 +117,13 @@ export default function Patient({
           }}
         >
           <AlertCard stats={alertStats} prescription={prescription} />
-          {hasClinicalNotes && (
-            <div style={{ marginTop: "10px" }}>
-              <ClinicalNotesCard
-                stats={clinicalNotesStats}
-                total={clinicalNotes}
-              />
-            </div>
-          )}
-          {!hasClinicalNotes && (
-            <div style={{ marginTop: "10px" }}>
-              <PrescriptionCard style={{ minHeight: "113px" }}>
-                <div className="header">
-                  <h3 className="title">{t("tableHeader.interventions")}</h3>
-                </div>
-                <div className="content">
-                  <div className="stat-number">{interventionCount}</div>
-                </div>
-                <div className="footer">
-                  <div className="stats">
-                    <>
-                      {features && features.interventions}{" "}
-                      {features && features.interventions === 1
-                        ? t("tableHeader.pending")
-                        : t("tableHeader.pendingPlural")}
-                    </>
-                  </div>
-                  <div className="action"></div>
-                </div>
-              </PrescriptionCard>
-            </div>
-          )}
+
+          <div style={{ marginTop: "10px" }}>
+            <ClinicalNotesCard
+              stats={clinicalNotesStats}
+              total={clinicalNotes}
+            />
+          </div>
         </div>
       </Col>
       {seeMore && (
