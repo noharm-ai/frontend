@@ -61,6 +61,19 @@ export const getQueueStatus = createAsyncThunk(
   }
 );
 
+export const getTemplateDate = createAsyncThunk(
+  "integration-remote/get-template-date",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.integrationRemote.getTemplateDate(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const integrationRemoteSlice = createSlice({
   name: "integrationRemote",
   initialState,

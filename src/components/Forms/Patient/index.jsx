@@ -18,7 +18,7 @@ const saveMessage = {
 };
 const validationSchema = Yup.object().shape({
   weight: Yup.number().nullable(),
-  height: Yup.number().nullable(),
+  height: Yup.number().nullable().min(3),
 });
 
 export default function Patient({

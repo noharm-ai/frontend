@@ -231,6 +231,12 @@ api.integrationRemote.getTemplate = (params) =>
     ...setHeaders(),
   });
 
+api.integrationRemote.getTemplateDate = (params) =>
+  instance.get(`/admin/integration-remote/template-date`, {
+    params,
+    ...setHeaders(),
+  });
+
 api.integrationRemote.getQueueStatus = (params) =>
   instance.get(`/admin/integration-remote/queue-status`, {
     params,

@@ -8,20 +8,20 @@ test("outcome: suspension", async ({ page }) => {
     .click();
   await page.getByText("Paciente 99").click();
   await page
-    .getByRole("row", { name: "Expandir linha 0 1 BISACODIL 5 mg" })
+    .locator(".ant-table-tbody tr")
+    .nth(0)
     .getByRole("button")
     .nth(1)
     .click();
 
-  await page.locator(".ant-select-selection-overflow").click();
+  await page.locator(".ant-select-selector").click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
-  await page.mouse.wheel(0, 500);
 
   await page.getByText("Suspensão da terapia").click();
 
   // // close dropdown
-  await page.locator(".ant-modal-body").click();
+  await page.locator(".ant-select-selector").click();
 
   await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible();
 
@@ -100,19 +100,20 @@ test("outcome: substitution", async ({ page }) => {
     .click();
   await page.getByText("Paciente 99").click();
   await page
-    .getByRole("row", { name: "Expandir linha 0 0 ENALAPRIL 20" })
+    .locator(".ant-table-tbody tr")
+    .nth(1)
     .getByRole("button")
     .nth(1)
     .click();
 
-  await page.locator(".ant-select-selection-overflow").click();
+  await page.locator(".ant-select-selector").click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
 
   await page.getByText("Substituição").click();
 
   // // close dropdown
-  await page.locator(".ant-modal-body").click();
+  await page.locator(".ant-select-selector").nth(0).click();
 
   await expect(page.getByText("Tipo economia: Substituição")).toBeVisible();
 
@@ -191,11 +192,11 @@ test("outcome: custom", async ({ page }) => {
     .locator("section")
     .getByRole("button", { name: "warning" })
     .click();
-  await page.locator(".ant-select-selection-overflow").click();
+  await page.locator(".ant-select-selector").click();
   await page.getByText("Alta antecipada").click();
 
   // // close dropdown
-  await page.locator(".ant-modal-body").click();
+  await page.locator(".ant-select-selector").click();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste paciente");

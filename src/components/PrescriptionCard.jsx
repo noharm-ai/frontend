@@ -93,6 +93,15 @@ export default styled.div`
           font-weight: 400;
           margin-bottom: 2px;
         }
+
+        .text-link {
+          padding-right: 10px;
+          cursor: pointer;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
       }
     }
   }

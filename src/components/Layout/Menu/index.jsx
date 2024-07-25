@@ -213,14 +213,6 @@ export default function Menu({ security, featureService }) {
       role: ["admin", "training"],
       children: [
         {
-          key: "/configuracoes/administracao2",
-          link: "/configuracoes/administracao",
-          label: t("menu.user-administration"),
-          icon: <UsergroupAddOutlined />,
-          id: "gtm-lnk-user-administration",
-          role: ["userAdmin"],
-        },
-        {
           key: "/admin/curadoria-medicamentos",
           link: "/admin/curadoria-medicamentos",
           label: "Curadoria medicamentos",
@@ -253,12 +245,12 @@ export default function Menu({ security, featureService }) {
           role: ["admin", "training"],
         },
         {
-          key: "/medicamentos2",
-          link: "/medicamentos",
-          label: "Medicamentos",
-          icon: <MedicineBoxOutlined />,
-          id: "gtm-lnk-medicamentos",
-          notrole: ["doctor"],
+          key: "/admin/horarios",
+          link: "/admin/horarios",
+          label: t("menu.schedules"),
+          icon: <HourglassOutlined />,
+          id: "gtm-lnk-horarios",
+          role: ["admin", "training"],
         },
         {
           key: "/admin/motivo-intervencao",

@@ -31,6 +31,8 @@ export function actionTypeToDescription(actionType) {
       return "Terminate process";
     case "CUSTOM_CALLBACK":
       return "Callback";
+    case "REFRESH_TEMPLATE":
+      return "Atualizar template";
     default:
       return actionType;
   }

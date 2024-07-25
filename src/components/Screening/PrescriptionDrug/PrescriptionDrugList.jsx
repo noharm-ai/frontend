@@ -113,6 +113,10 @@ export const rowClassName = (record, bag) => {
     classes.push("solution");
   }
 
+  if (bag.selectedRows.indexOf(record.idPrescriptionDrug) !== -1) {
+    classes.push("selected");
+  }
+
   return classes.join(" ");
 };
 
@@ -207,6 +211,15 @@ export default function PrescriptionDrugList({
         },
       });
     }
+  };
+
+  const addMultipleIntervention = (selectedRows) => {
+    select({
+      intervention: {},
+      idPrescriptionDrugList: selectedRows,
+      admissionNumber,
+      uniqueDrugList: uniqueDrugs,
+    });
   };
 
   const bag = {
@@ -464,7 +477,10 @@ export default function PrescriptionDrugList({
   if (!aggregated || security.hasCpoe()) {
     return (
       <>
-        <Filters showPrescriptionOrder={false} />
+        <Filters
+          showPrescriptionOrder={false}
+          addMultipleIntervention={addMultipleIntervention}
+        />
 
         {table(!isEmpty(dataSource) ? dataSource[0] : [])}
       </>
@@ -545,7 +561,10 @@ export default function PrescriptionDrugList({
 
   return (
     <>
-      <Filters showPrescriptionOrder />
+      <Filters
+        showPrescriptionOrder
+        addMultipleIntervention={addMultipleIntervention}
+      />
 
       {getGroups(groups).map((g) => (
         <GroupCollapse

@@ -70,9 +70,20 @@ export default function Base({ security }) {
             max={99999}
             value={height}
             onChange={(value) => setFieldValue("height", value)}
-            precision={0}
           />{" "}
           cm
+          {errors.height && (
+            <div
+              style={{
+                color: "#f5222d",
+                paddingLeft: "12px",
+                marginTop: "3px",
+                fontSize: "13px",
+              }}
+            >
+              Altura deve ser especificada em centímetros
+            </div>
+          )}
         </Col>
       </Box>
 

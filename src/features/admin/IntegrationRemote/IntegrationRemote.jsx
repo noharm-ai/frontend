@@ -3,14 +3,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Spin, Row, Col } from "antd";
-import { SearchOutlined, DeploymentUnitOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  DeploymentUnitOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 
 import ControllersList from "./components/ControllersList";
 import DiagnosticModal from "./components/DiagnosticsModal";
-import { fetchTemplate, reset } from "./IntegrationRemoteSlice";
+import {
+  fetchTemplate,
+  reset,
+  pushQueueRequest,
+  getTemplateDate,
+} from "./IntegrationRemoteSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import notification from "components/notification";
 import Button from "components/Button";
+import { formatDateTime } from "utils/date";
 
 import { PageHeader } from "styles/PageHeader.style";
 import { PageCard, PageSectionTitle } from "styles/Utils.style";
@@ -23,25 +33,79 @@ export default function IntegrationRemote() {
   const status = useSelector((state) => state.admin.integrationRemote.status);
   const [diagnostics, setDiagnostics] = useState({});
   const [diagnosticsModal, setDiagnosticsModal] = useState(false);
+  const [updateDate, setUpdateDate] = useState(null);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
+    loadTemplate();
+
+    return () => {
+      dispatch(reset());
+    };
+  }, []); //eslint-disable-line
+
+  const loadTemplate = () => {
     dispatch(fetchTemplate()).then((response) => {
       if (response.error) {
         notification.error({
           message: getErrorMessage(response, t),
+          description:
+            "Clique em Atualizar Template para buscar a última versão",
         });
       } else {
         setDiagnostics(
           response.payload.data.data.diagnostics?.systemDiagnostics
             ?.aggregateSnapshot
         );
+        setUpdateDate(response.payload.data.data.updatedAt);
       }
     });
+  };
 
-    return () => {
-      dispatch(reset());
+  const refreshTemplate = () => {
+    setUpdating(true);
+    const payload = {
+      actionType: "REFRESH_TEMPLATE",
     };
-  }, []); //eslint-disable-line
+
+    dispatch(pushQueueRequest(payload)).then((response) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        notification.success({
+          message: "Solicitação enviada!",
+          description: "Aguarde a atualização do template",
+        });
+
+        const interval = setInterval(() => {
+          dispatch(getTemplateDate()).then((response) => {
+            const tplDate = response.payload.data.data.updatedAt;
+            console.log("tpldate", tplDate);
+
+            if (
+              (!updateDate && tplDate) ||
+              (updateDate && tplDate > updateDate)
+            ) {
+              loadTemplate();
+              clearInterval(interval);
+              setUpdating(false);
+
+              notification.success({
+                message: "Template atualizado!",
+              });
+            } else {
+              console.log("waiting for template update");
+              notification.info({
+                message: "Aguardando atualização...",
+              });
+            }
+          });
+        }, 5000);
+      }
+    });
+  };
 
   const getPercentageStatus = (formattedValue) => {
     if (!formattedValue) return "";
@@ -71,11 +135,24 @@ export default function IntegrationRemote() {
         <div className="page-header-actions">
           <Button
             type="primary"
+            icon={<ReloadOutlined />}
+            onClick={() => refreshTemplate()}
+            loading={updating}
+          >
+            Atualizar Template
+          </Button>
+          <Button
+            type="primary"
             icon={<DeploymentUnitOutlined />}
             onClick={() => navigate("/admin/integracao/acesso-remoto/nifi")}
           >
             Acessar Nifi Remoto
           </Button>
+          {updateDate && (
+            <div style={{ marginTop: "5px" }}>
+              Atualizado em: {formatDateTime(updateDate)}
+            </div>
+          )}
         </div>
       </PageHeader>
 
