@@ -111,6 +111,7 @@ export default function ConciliationDrugList({
     security,
     t,
     interventions,
+    selectedRows: [],
   };
 
   const filteredDataSource = () => {
@@ -138,7 +139,7 @@ export default function ConciliationDrugList({
           ),
         }}
         dataSource={filteredDataSource()}
-        rowClassName={rowClassName}
+        rowClassName={(record) => rowClassName(record, bag)}
         expandedRowRender={expandedRowRender({ t })}
       />
     </BoxWrapper>
