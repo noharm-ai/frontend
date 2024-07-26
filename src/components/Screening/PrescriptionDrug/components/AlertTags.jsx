@@ -7,19 +7,17 @@ import RichTextView from "components/RichTextView";
 
 import { AlertTagsContainer } from "../PrescriptionDrug.style";
 
-function AlertTags({ prescription, bag }) {
+function AlertTags({ prescription, itemAlerts, bag }) {
   const { t } = useTranslation();
   let alerts = [];
 
   const sortByType = (a, b) => `${a?.type}`.localeCompare(`${b?.type}`);
 
   ["high", "medium", "low"].forEach((level) => {
-    if (prescription.alertsComplete) {
+    if (itemAlerts) {
       alerts = [
         ...alerts,
-        ...prescription.alertsComplete
-          .filter((a) => a.level === level)
-          .sort(sortByType),
+        ...itemAlerts.filter((a) => a.level === level).sort(sortByType),
       ];
     }
   });
@@ -46,7 +44,7 @@ function AlertTags({ prescription, bag }) {
               label={t(`drugAlertTypeAcronym.${a.type}`)}
               levels={[a.level]}
               showTooltip={false}
-              onClick={() => bag.handleRowExpand(prescription)}
+              onClick={() => bag?.handleRowExpand(prescription)}
             />
           </span>
         </Popover>

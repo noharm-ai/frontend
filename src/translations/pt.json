@@ -747,6 +747,7 @@
   "drugAlertType": {
     "allergy": "Alergia",
     "maxDose": "Dose máxima ou de alerta",
+    "maxDosePlus": "Dose máxima ou de alerta (SOMADA)",
     "dm": "Duplicidade Medicamentosa",
     "dt": "Duplicidade Terapêutica",
     "liver": "Ajuste Hepático",
@@ -772,6 +773,7 @@
   "drugAlertTypeAcronym": {
     "allergy": "AL",
     "maxDose": "MAX",
+    "maxDosePlus": "MAX+",
     "dm": "DM",
     "dt": "DT",
     "liver": "AHP",

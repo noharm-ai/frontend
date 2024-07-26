@@ -638,6 +638,9 @@ export default function Filter({
                       <Select.Option key={"maxDose"} value={"maxDose"}>
                         {t("drugAlertType.maxDose")}
                       </Select.Option>
+                      <Select.Option key={"maxDosePlus"} value={"maxDosePlus"}>
+                        {t("drugAlertType.maxDosePlus")}
+                      </Select.Option>
                       <Select.Option key={"dm"} value={"dm"}>
                         {t("drugAlertType.dm")}
                       </Select.Option>

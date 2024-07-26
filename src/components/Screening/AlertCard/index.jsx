@@ -37,7 +37,7 @@ export const getAlerts = (stats, t) => [
     label: t("alerts.max_dose"),
     icon: () => <CustomIcon type="maxDose" />,
     value: stats.maxDose,
-    filters: { typeList: ["maxDose"] },
+    filters: { typeList: ["maxDose", "maxDosePlus"] },
   },
   {
     label: t("alerts.exam"),
