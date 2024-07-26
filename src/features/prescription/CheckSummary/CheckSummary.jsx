@@ -258,7 +258,7 @@ export default function CheckSummary({
       initialValues={initialValues}
       validationSchema={validationSchema}
     >
-      {({ handleSubmit, errors, values, setFieldValue }) => (
+      {({ handleSubmit }) => (
         <DefaultModal
           open={prescription}
           width={highRiskAlerts.length > 0 ? 900 : 350}
@@ -333,6 +333,27 @@ export default function CheckSummary({
                               />
                             </Tooltip>
                             Fim da vigência: {formatDate(dt)}
+                          </div>
+                        )}
+                        {dt === "uniq" && (
+                          <div
+                            className="group-header"
+                            onClick={() => toggleAll(dateGroups)}
+                          >
+                            <Button
+                              size="small"
+                              type="link"
+                              danger
+                              className="expand-button"
+                              onClick={() => toggleAll(dateGroups)}
+                              icon={
+                                activeKey.length ? (
+                                  <MinusSquareOutlined />
+                                ) : (
+                                  <PlusSquareOutlined />
+                                )
+                              }
+                            />
                           </div>
                         )}
 
