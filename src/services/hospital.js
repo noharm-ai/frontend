@@ -46,6 +46,10 @@ const getPatients = async (bearerToken, requestConfig) => {
   const security = securityService(userRoles);
   let promises;
 
+  if (!listToRequest || !Array.isArray(listToRequest)) {
+    return listToEscape;
+  }
+
   if (security.isGetnameEnabled()) {
     if (requestConfig.multipleNameUrl && listToRequest.length > 1) {
       const cacheConfig = {};
