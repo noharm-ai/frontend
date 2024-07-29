@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert, Tag } from "antd";
 import { Formik } from "formik";
-import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 import {
   ExclamationCircleFilled,
@@ -42,13 +41,6 @@ export default function CheckSummary({
   const [loading, setLoading] = useState(false);
   const [activeKey, setActiveKey] = useState([]);
 
-  const validationSchema = Yup.object().shape({
-    accept: Yup.boolean().oneOf(
-      [true],
-      "Você precisa aceitar para confirmar a checagem"
-    ),
-  });
-
   if (!prescription) {
     return null;
   }
@@ -84,6 +76,24 @@ export default function CheckSummary({
       );
     }
   }
+
+  highRiskAlerts = highRiskAlerts.filter((a) => {
+    const header = headers[a.idPrescription];
+
+    if (header && header.status === "s") {
+      return false;
+    }
+
+    const intervention = interventions.find(
+      (i) => i.id === a.idPrescriptionDrug && i.status !== "0"
+    );
+
+    if (intervention) {
+      return false;
+    }
+
+    return true;
+  });
 
   const initialValues = {
     accept: true,
@@ -252,12 +262,7 @@ export default function CheckSummary({
   };
 
   return (
-    <Formik
-      enableReinitialize
-      onSubmit={onSave}
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-    >
+    <Formik enableReinitialize onSubmit={onSave} initialValues={initialValues}>
       {({ handleSubmit }) => (
         <DefaultModal
           open={prescription}
@@ -292,7 +297,8 @@ export default function CheckSummary({
           {highRiskAlerts.length > 0 && (
             <>
               <p>
-                Revise os alertas de <strong>Nível Alto</strong> e confirme para
+                Revise os itens pendentes de checagem com alertas de{" "}
+                <strong>Nível Alto</strong> sem intervenção e confirme para
                 finalizar a checagem.
               </p>
 
