@@ -5,6 +5,7 @@ import DOMPurify from "dompurify";
 
 import { formatDate } from "utils/date";
 import { CardTable } from "components/Table";
+import Button from "components/Button";
 
 export default function CultureList() {
   const [expandedRows, setExpandedRows] = useState([]);
@@ -108,7 +109,8 @@ export default function CultureList() {
           </div>
         )}
         expandable={{
-          rowExpandable: (record) => record.cultures.length > 0,
+          rowExpandable: (record) =>
+            record.cultures.length > 0 || record.predictions.length > 0,
           expandedRowRender: (record) => <ExpandedRow record={record} />,
           onExpand: (expanded, record) => handleRowExpand(record),
           expandedRowKeys: expandedRows,
@@ -187,10 +189,22 @@ const ExpandedRow = ({ record }) => {
     children: <DrugTable record={record} />,
   });
 
+  if (record.predictions.length > 0) {
+    items.push({
+      label: "Predição",
+      span: 3,
+      children: <PredictionTable record={record} />,
+    });
+  }
+
   return <Descriptions bordered items={items} />;
 };
 
 const DrugTable = ({ record }) => {
+  if (!record.cultures.length) {
+    return "Resultado pendente";
+  }
+
   const columns = [
     {
       title: "Medicamento",
@@ -216,6 +230,52 @@ const DrugTable = ({ record }) => {
       dataSource={record.cultures}
       pagination={false}
       size="small"
+    />
+  );
+};
+
+const PredictionTable = ({ record }) => {
+  const [show, setShow] = useState(false);
+
+  const columns = [
+    {
+      title: "Medicamento",
+      sorter: (a, b) => `${a?.drug}`.localeCompare(`${b?.drug}`),
+      render: (_, record) => record.drug,
+    },
+    {
+      title: "Sensibilidade",
+      sorter: (a, b) => `${a?.result}`.localeCompare(`${b?.result}`),
+      render: (_, record) =>
+        record.prediction === "R" ? "Resistente" : "Sensível",
+    },
+    {
+      title: "Acurácia",
+      align: "right",
+      render: (_, record) => `${record.probability * 100}%`,
+    },
+  ];
+
+  if (!show) {
+    return (
+      <Button
+        onClick={() => setShow(true)}
+        style={{ background: "#a991d6", color: "#fff" }}
+      >
+        Exibir Predição de Resultados
+      </Button>
+    );
+  }
+
+  return (
+    <CardTable
+      bordered
+      columns={columns}
+      rowKey="drug"
+      dataSource={record.predictions}
+      pagination={false}
+      size="small"
+      className="ai-data"
     />
   );
 };
