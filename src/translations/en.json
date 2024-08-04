@@ -739,6 +739,7 @@
   "drugAlertType": {
     "allergy": "Allergy",
     "maxDose": "Max dose",
+    "maxDosePlus": "Max dose (Sum)",
     "dm": "Drug duplicity",
     "dt": "Therapeutic duplicity",
     "liver": "Hepatotoxic",
@@ -767,6 +768,7 @@
   "drugAlertTypeAcronym": {
     "allergy": "AL",
     "maxDose": "MAX",
+    "maxDosePlus": "MAX+",
     "dm": "DM",
     "dt": "DT",
     "liver": "AHP",

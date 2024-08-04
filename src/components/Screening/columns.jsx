@@ -1113,7 +1113,13 @@ const alertsColumn = (bag) => ({
   align: "left",
   ellipsis: true,
   render: (text, prescription) => {
-    return <AlertTags prescription={prescription} bag={bag} />;
+    return (
+      <AlertTags
+        prescription={prescription}
+        itemAlerts={prescription.alertsComplete}
+        bag={bag}
+      />
+    );
   },
 });
 

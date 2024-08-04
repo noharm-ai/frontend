@@ -443,6 +443,12 @@ export const CardTable = styled(AntTable)`
       }
     }
   }
+
+  &.ai-data {
+    .ant-table {
+      background: rgb(169 145 214 / 20%);
+    }
+  }
 `;
 
 export default Table;

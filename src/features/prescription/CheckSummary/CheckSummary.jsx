@@ -2,26 +2,29 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert, Tag } from "antd";
 import { Formik } from "formik";
-import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 import {
   ExclamationCircleFilled,
   CheckOutlined,
   WarningOutlined,
+  PlusSquareOutlined,
+  MinusSquareOutlined,
 } from "@ant-design/icons";
 
 import RichTextView from "components/RichTextView";
 import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import Heading from "components/Heading";
-import { Checkbox } from "components/Inputs";
 import notification from "components/notification";
+import Button from "components/Button";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import { formatDate } from "utils/date";
 import { setCheckSummary } from "../PrescriptionSlice";
+import AlertTags from "components/Screening/PrescriptionDrug/components/AlertTags";
 
 import { Form } from "styles/Form.style";
 import { DrugAlertsCollapse } from "components/Screening/PrescriptionDrug/PrescriptionDrug.style";
+import { CheckSummaryContainer } from "./CheckSummary.style";
 
 export default function CheckSummary({
   hasCpoe,
@@ -36,17 +39,30 @@ export default function CheckSummary({
   );
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-
-  const validationSchema = Yup.object().shape({
-    accept: Yup.boolean().oneOf(
-      [true],
-      "Você precisa aceitar para confirmar a checagem"
-    ),
-  });
+  const [activeKey, setActiveKey] = useState([]);
 
   if (!prescription) {
     return null;
   }
+
+  const activeKeyChange = (keys) => {
+    setActiveKey(keys);
+  };
+
+  const toggleAll = (groups) => {
+    if (activeKey.length) {
+      setActiveKey([]);
+    } else {
+      const keys = [];
+      Object.keys(groups).forEach((dt) => {
+        groups[dt].forEach((i) => {
+          keys.push(i.idPrescriptionDrug);
+        });
+      });
+
+      setActiveKey(keys);
+    }
+  };
 
   let highRiskAlerts = [];
 
@@ -61,8 +77,26 @@ export default function CheckSummary({
     }
   }
 
+  highRiskAlerts = highRiskAlerts.filter((a) => {
+    const header = headers[a.idPrescription];
+
+    if (header && header.status === "s") {
+      return false;
+    }
+
+    const intervention = interventions.find(
+      (i) => i.id === a.idPrescriptionDrug && i.status !== "0"
+    );
+
+    if (intervention) {
+      return false;
+    }
+
+    return true;
+  });
+
   const initialValues = {
-    accept: highRiskAlerts.length > 0 ? false : true,
+    accept: true,
   };
 
   const onCancel = () => {
@@ -75,19 +109,20 @@ export default function CheckSummary({
       <div>
         <div
           style={{
-            fontSize: "13px",
+            fontSize: "14px",
             fontWeight: 500,
           }}
         >
           {item.drugName}
         </div>
+        {getExtra(item)}
       </div>
     );
   };
 
   const getExtra = (item) => {
     return (
-      <div>
+      <div style={{ paddingLeft: "5px" }}>
         <Tooltip title="Dose">
           <Tag style={{ fontSize: "11px" }}>
             {" "}
@@ -204,7 +239,8 @@ export default function CheckSummary({
     return {
       key: g.idPrescriptionDrug,
       label: getHeader(g),
-      extra: getExtra(g),
+      extra: <AlertTags prescription={g} itemAlerts={g.alerts} bag={null} />,
+      showArrow: false,
       children: (
         <>
           {g.alerts.map((a, index) => (
@@ -226,13 +262,8 @@ export default function CheckSummary({
   };
 
   return (
-    <Formik
-      enableReinitialize
-      onSubmit={onSave}
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-    >
-      {({ handleSubmit, errors, values, setFieldValue }) => (
+    <Formik enableReinitialize onSubmit={onSave} initialValues={initialValues}>
+      {({ handleSubmit }) => (
         <DefaultModal
           open={prescription}
           width={highRiskAlerts.length > 0 ? 900 : 350}
@@ -266,73 +297,92 @@ export default function CheckSummary({
           {highRiskAlerts.length > 0 && (
             <>
               <p>
-                Revise os alertas de <strong>Nível Alto</strong> e confirme para
+                Revise os itens pendentes de checagem com alertas de{" "}
+                <strong>Nível Alto</strong> sem intervenção e confirme para
                 finalizar a checagem.
               </p>
 
               <Form>
-                <div
-                  style={{
-                    maxHeight: "60vh",
-                    overflowY: "auto",
-                    padding: "0 15px",
-                    background: "#fafafa",
-                    borderRadius: "8px",
-                  }}
-                  className="custom-scroll-danger"
-                >
+                <CheckSummaryContainer className="custom-scroll-danger">
                   {Object.keys(dateGroups)
                     .sort()
                     .map((dt, index) => (
                       <React.Fragment key={dt}>
                         {dt !== "uniq" && (
                           <div
+                            className="group-header"
                             style={{
-                              position: "sticky",
-                              top: 0,
-                              left: 0,
-                              fontSize: "16px",
-                              fontWeight: 600,
-                              marginBottom: "10px",
                               marginTop: index > 0 ? "20px" : 0,
-                              padding: "6px 2px 0",
-                              zIndex: 99,
-                              background: "#fafafa",
-                              color: "#2e3c5a",
                             }}
+                            onClick={() => toggleAll(dateGroups)}
                           >
+                            <Tooltip
+                              title={
+                                activeKey.length
+                                  ? "Recolher todos"
+                                  : "Expandir todos"
+                              }
+                            >
+                              <Button
+                                size="small"
+                                type="link"
+                                danger
+                                className="expand-button"
+                                onClick={() => toggleAll(dateGroups)}
+                                icon={
+                                  activeKey.length ? (
+                                    <MinusSquareOutlined />
+                                  ) : (
+                                    <PlusSquareOutlined />
+                                  )
+                                }
+                              />
+                            </Tooltip>
                             Fim da vigência: {formatDate(dt)}
+                          </div>
+                        )}
+                        {dt === "uniq" && (
+                          <div
+                            className="group-header"
+                            onClick={() => toggleAll(dateGroups)}
+                          >
+                            <Button
+                              size="small"
+                              type="link"
+                              danger
+                              className="expand-button"
+                              onClick={() => toggleAll(dateGroups)}
+                              icon={
+                                activeKey.length ? (
+                                  <MinusSquareOutlined />
+                                ) : (
+                                  <PlusSquareOutlined />
+                                )
+                              }
+                            />
                           </div>
                         )}
 
                         <DrugAlertsCollapse
-                          expandIconPosition="start"
+                          showArrow={false}
                           items={dateGroups[dt].map((group) =>
                             getItemsByGroup(group)
                           )}
-                          defaultActiveKey={dateGroups[dt].map(
-                            (i) => i.idPrescriptionDrug
-                          )}
                           style={{ marginBottom: "10px" }}
+                          activeKey={activeKey}
+                          onChange={activeKeyChange}
                         />
                       </React.Fragment>
                     ))}
-                </div>
+                </CheckSummaryContainer>
                 <div className={`form-row`}>
-                  <div className="form-input-checkbox-single">
-                    <Checkbox
-                      checked={values.accept}
-                      value={values.accept}
-                      onChange={({ target }) =>
-                        setFieldValue("accept", !target.value)
-                      }
-                    >
-                      Estou ciente dos alertas apresentados.
-                    </Checkbox>
+                  <div
+                    className="form-input-checkbox-single"
+                    style={{ padding: "0.5rem 1rem" }}
+                  >
+                    *Ao confirmar, você declara ciência dos alertas
+                    apresentados.
                   </div>
-                  {errors.accept && (
-                    <div className="form-error">{errors.accept}</div>
-                  )}
                 </div>
               </Form>
             </>

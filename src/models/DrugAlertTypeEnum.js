@@ -1,6 +1,7 @@
 export default class DrugAlertTypeEnum {
   static ALLERGY = "allergy";
   static MAX_DOSE = "maxDose";
+  static MAX_DOSE_PLUS = "maxDosePlus";
   static DM = "dm";
   static DT = "dt";
   static LIVER = "liver";
@@ -25,6 +26,10 @@ export default class DrugAlertTypeEnum {
       {
         id: DrugAlertTypeEnum.MAX_DOSE,
         label: t(`drugAlertType.${DrugAlertTypeEnum.MAX_DOSE}`),
+      },
+      {
+        id: DrugAlertTypeEnum.MAX_DOSE_PLUS,
+        label: t(`drugAlertType.${DrugAlertTypeEnum.MAX_DOSE_PLUS}`),
       },
       {
         id: DrugAlertTypeEnum.DM,
