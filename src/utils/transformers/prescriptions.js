@@ -277,8 +277,13 @@ export const transformPrescription = ({
   };
 };
 
-export const transformPrescriptions = (prescriptions) =>
-  prescriptions.map(transformPrescription);
+export const transformPrescriptions = (prescriptions) => {
+  if (!prescriptions) {
+    return [];
+  }
+
+  return prescriptions.map(transformPrescription);
+};
 
 export const transformExams = (exams) =>
   Object.keys(exams).map((key) => {
