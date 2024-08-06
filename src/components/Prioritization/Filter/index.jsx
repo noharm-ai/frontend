@@ -92,6 +92,7 @@ export default function Filter({
         substanceClasses: filter.substanceClasses,
         patientStatus: filter.patientStatus,
         patientReviewType: filter.patientReviewType,
+        idPatient: filter.idPatient,
       };
       const mixedParams = { ...params, ...forceParams };
       const finalParams = {};
@@ -136,6 +137,7 @@ export default function Filter({
       filter.substances,
       filter.substanceClasses,
       filter.patientReviewType,
+      filter.idPatient,
       prioritizationType,
       date,
     ]
@@ -259,6 +261,7 @@ export default function Filter({
       substanceClasses: [],
       patientStatus: null,
       patientReviewType: null,
+      idPatient: [],
     });
     setDate([dayjs(), null]);
   };
@@ -801,6 +804,33 @@ export default function Filter({
                   checked={filter.pending === 1}
                   id="gtm-pending-filter"
                 />
+              </Box>
+            </Col>
+          </Row>
+
+          <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={24}>
+              <Box>
+                <Row gutter={0} style={{ width: "100%" }}>
+                  <Col md={19}>
+                    <Heading as="label" htmlFor="indicators" size="14px">
+                      ID Paciente:
+                    </Heading>
+                    <Select
+                      id="idPatient"
+                      mode="tags"
+                      placeholder="Digite o ID do paciente e pressione enter"
+                      tokenSeparators={[","]}
+                      style={{ width: "100%" }}
+                      value={filter.idPatient}
+                      onChange={(value) =>
+                        setScreeningListFilter({ idPatient: value })
+                      }
+                      notFoundContent="Digite o ID do paciente e pressione enter. Mais de um ID pode ser informado."
+                      allowClear
+                    ></Select>
+                  </Col>
+                </Row>
               </Box>
             </Col>
           </Row>
