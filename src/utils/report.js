@@ -1,6 +1,8 @@
 import { uniq, uniqBy, isEmpty } from "utils/lodash";
 import dayjs from "dayjs";
 import humanizeDuration from "humanize-duration";
+import { isNumber, formatNumber, isInt } from "./number";
+import { isDate, formatDateTime } from "./date";
 
 export const getUniqList = (datasource, attr) => {
   if (!datasource.length) return [];
@@ -81,6 +83,14 @@ export const exportCSV = (datasource, t, namespace = "reportcsv") => {
   const stringify = (value) => {
     if (Array.isArray(value)) {
       return `"${JSON.stringify(value, replacer).replaceAll('"', "")}"`;
+    }
+
+    if (isNumber(value) && !isInt(value)) {
+      return JSON.stringify(formatNumber(value, 6));
+    }
+
+    if (isDate(value)) {
+      return JSON.stringify(formatDateTime(value), replacer);
     }
 
     return JSON.stringify(value, replacer);

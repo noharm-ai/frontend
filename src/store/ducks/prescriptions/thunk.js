@@ -68,7 +68,7 @@ export const fetchPrescriptionsListThunk =
       error,
     } = await api.getPrescriptions(access_token, params).catch(errorHandler);
 
-    if (!isEmpty(error)) {
+    if (!isEmpty(error) || !data) {
       dispatch(prescriptionsFetchListError(error));
       return;
     }
@@ -88,6 +88,7 @@ export const fetchPrescriptionsListThunk =
       access_token,
       requestConfig
     );
+
     const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
       ...item,
       idPatient,

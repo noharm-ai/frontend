@@ -39,3 +39,22 @@ export function formatCurrency(value, precision = 2) {
 export function formatNumber(value, precision = 2) {
   return formatCurrency(value, precision);
 }
+
+export function isNumber(value) {
+  try {
+    Big(value);
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function isInt(value) {
+  return (
+    !isNaN(value) &&
+    parseInt(Number(value)) == value && //eslint-disable-line
+    !isNaN(parseInt(value, 10)) &&
+    `${value}`.indexOf(".") === -1
+  );
+}
