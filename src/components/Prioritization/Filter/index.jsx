@@ -786,28 +786,6 @@ export default function Filter({
               </Row>
             )}
 
-          <Row gutter={[20, 0]} style={{ marginTop: "20px" }}>
-            <Col>
-              <Box flexDirection="row" alignItems="center">
-                <Heading
-                  as="label"
-                  htmlFor="pending-filter"
-                  size="14px"
-                  style={{ minWidth: "230px" }}
-                >
-                  {t("screeningList.labelPendingPrescription")}
-                </Heading>
-
-                <Switch
-                  style={{ marginLeft: "10px" }}
-                  onChange={onPendingChange}
-                  checked={filter.pending === 1}
-                  id="gtm-pending-filter"
-                />
-              </Box>
-            </Col>
-          </Row>
-
           <Row gutter={0} style={{ marginTop: "10px" }}>
             <Col md={24}>
               <Box>
@@ -831,6 +809,28 @@ export default function Filter({
                     ></Select>
                   </Col>
                 </Row>
+              </Box>
+            </Col>
+          </Row>
+
+          <Row gutter={[20, 0]} style={{ marginTop: "20px" }}>
+            <Col>
+              <Box flexDirection="row" alignItems="center">
+                <Heading
+                  as="label"
+                  htmlFor="pending-filter"
+                  size="14px"
+                  style={{ minWidth: "230px" }}
+                >
+                  {t("screeningList.labelPendingPrescription")}
+                </Heading>
+
+                <Switch
+                  style={{ marginLeft: "10px" }}
+                  onChange={onPendingChange}
+                  checked={filter.pending === 1}
+                  id="gtm-pending-filter"
+                />
               </Box>
             </Col>
           </Row>
