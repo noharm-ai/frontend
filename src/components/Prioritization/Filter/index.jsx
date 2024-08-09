@@ -93,6 +93,7 @@ export default function Filter({
         patientStatus: filter.patientStatus,
         patientReviewType: filter.patientReviewType,
         idPatient: filter.idPatient,
+        intervals: filter.intervals,
       };
       const mixedParams = { ...params, ...forceParams };
       const finalParams = {};
@@ -138,6 +139,7 @@ export default function Filter({
       filter.substanceClasses,
       filter.patientReviewType,
       filter.idPatient,
+      filter.intervals,
       prioritizationType,
       date,
     ]
@@ -262,6 +264,7 @@ export default function Filter({
       patientStatus: null,
       patientReviewType: null,
       idPatient: [],
+      intervals: [],
     });
     setDate([dayjs(), null]);
   };
@@ -297,6 +300,16 @@ export default function Filter({
     "chemo",
     "dialyzable",
   ];
+
+  const intervals = [];
+  for (let i = 0; i < 25; i++) {
+    intervals.push(
+      i.toLocaleString("pt-BR", {
+        minimumIntegerDigits: 2,
+      })
+    );
+  }
+  intervals.push("SN");
 
   const filterDepartments = (idSegmentList, list) => {
     const deps = list.filter((d) => {
@@ -611,6 +624,38 @@ export default function Filter({
                     </Select.Option>
                   ))}
                 </Select>
+              </Box>
+            </Col>
+          </Row>
+
+          <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={24}>
+              <Box>
+                <Row gutter={0} style={{ width: "100%" }}>
+                  <Col md={19}>
+                    <Heading as="label" htmlFor="intervals" size="14px">
+                      Horários:
+                    </Heading>
+                    <Select
+                      id="intervals"
+                      mode="multiple"
+                      optionFilterProp="children"
+                      style={{ width: "100%" }}
+                      value={filter.intervals}
+                      onChange={(value) =>
+                        setScreeningListFilter({ intervals: value })
+                      }
+                      autoClearSearchValue={false}
+                      allowClear
+                    >
+                      {intervals.map((i) => (
+                        <Select.Option key={i} value={i}>
+                          {i}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Col>
+                </Row>
               </Box>
             </Col>
           </Row>

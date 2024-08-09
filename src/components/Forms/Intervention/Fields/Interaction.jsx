@@ -69,6 +69,7 @@ export default function Interaction({
         filterOption={false}
         onSearch={search}
         onChange={handleChange}
+        placeholder="Digite para pesquisar mais medicamentos"
       >
         {uniqBy(normalizedList, "idDrug").map(({ idDrug, name }) => (
           <Select.Option key={`${idDrug}`} value={`${idDrug}`}>
