@@ -105,9 +105,14 @@ function BaseForm() {
             />
           </EditorBox>
         </div>
+
         {errors.description && touched.description && (
           <div className="form-error">{errors.description}</div>
         )}
+        <div className="form-info">
+          Lembre-se de dar exemplos com número de Atendimento e/ou número de
+          Prescrição para facilitar a resolução do seu chamado.
+        </div>
       </div>
 
       <div className={`form-row ${errors.fileList ? "error" : ""}`}>

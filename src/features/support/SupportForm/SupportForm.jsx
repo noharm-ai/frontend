@@ -165,7 +165,11 @@ export default function SupportForm() {
                 Estamos aqui para ajudar a resolver suas dúvidas e problemas da
                 melhor maneira possível. Para garantir que possamos oferecer o
                 suporte mais eficaz, é crucial que você forneça o{" "}
-                <strong>máximo de detalhes</strong> possível sobre sua questão.
+                <strong>máximo de detalhes</strong> possível sobre sua questão.{" "}
+                <span style={{ color: "#f5222d" }}>
+                  Principalmente trazendo exemplos de Atendimentos e/ou
+                  prescrições.
+                </span>
               </p>
 
               <p>
