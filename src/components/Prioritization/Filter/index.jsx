@@ -628,7 +628,7 @@ export default function Filter({
             </Col>
           </Row>
 
-          {/* <Row gutter={0} style={{ marginTop: "10px" }}>
+          <Row gutter={0} style={{ marginTop: "10px" }}>
             <Col md={24}>
               <Box>
                 <Row gutter={0} style={{ width: "100%" }}>
@@ -658,7 +658,7 @@ export default function Filter({
                 </Row>
               </Box>
             </Col>
-          </Row> */}
+          </Row>
 
           <Row gutter={0} style={{ marginTop: "10px" }}>
             <Col md={24}>

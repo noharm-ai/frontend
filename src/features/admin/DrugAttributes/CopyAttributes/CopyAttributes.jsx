@@ -153,6 +153,10 @@ function CopyAttributes({ open, setOpen, reload, ...props }) {
                       Dialisável
                     </Select.Option>
 
+                    <Select.Option key="jejum" value="jejum">
+                      Jejum
+                    </Select.Option>
+
                     <Select.Option key="idoso" value="idoso">
                       MPI
                     </Select.Option>
