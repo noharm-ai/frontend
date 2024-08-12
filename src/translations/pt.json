@@ -332,7 +332,9 @@
     "notUseful": "Possui erros",
     "observations": "Observações",
     "drugAttributes": "Atributos do medicamento",
-    "title": "Título"
+    "title": "Título",
+    "category": "Categoria",
+    "ticketType": "Tipo de chamado"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"

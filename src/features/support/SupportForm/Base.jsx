@@ -49,7 +49,7 @@ function BaseForm() {
         }`}
       >
         <div className="form-label">
-          <label>{t("labels.subject")}:</label>
+          <label>{t("labels.ticketType")}:</label>
         </div>
         <div className="form-input">
           <Select
@@ -58,6 +58,7 @@ function BaseForm() {
             status={errors.category && touched.category ? "error" : null}
             optionFilterProp="children"
             showSearch
+            placeholder="Selecione"
           >
             <Select.Option key={0} value="Dúvida">
               Dúvida
@@ -86,10 +87,11 @@ function BaseForm() {
         }`}
       >
         <div className="form-label">
-          <label>{t("labels.title")}:</label>
+          <label>{t("labels.subject")}:</label>
         </div>
         <div className="form-input">
           <Input
+            placeholder="Ex: Erro ao checar prescrição"
             value={values.title}
             onChange={({ target }) => setFieldValue("title", target.value)}
             maxLength={150}
