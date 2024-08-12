@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Upload, notification } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
-import { Select } from "components/Inputs";
+import { Select, Input } from "components/Inputs";
 import Editor from "components/Editor";
 import Button from "components/Button";
 import IntegrationStatus from "models/IntegrationStatus";
@@ -77,6 +77,26 @@ function BaseForm() {
         </div>
         {errors.category && touched.category && (
           <div className="form-error">{errors.category}</div>
+        )}
+      </div>
+
+      <div
+        className={`form-row ${
+          errors.category && touched.category ? "error" : ""
+        }`}
+      >
+        <div className="form-label">
+          <label>{t("labels.title")}:</label>
+        </div>
+        <div className="form-input">
+          <Input
+            value={values.title}
+            onChange={({ target }) => setFieldValue("title", target.value)}
+            maxLength={150}
+          />
+        </div>
+        {errors.title && touched.title && (
+          <div className="form-error">{errors.title}</div>
         )}
       </div>
 

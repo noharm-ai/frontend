@@ -24,6 +24,7 @@ export default function SupportForm() {
   const status = useSelector((state) => state.support.form.status);
 
   const validationSchema = Yup.object().shape({
+    title: Yup.string().nullable().required(t("validation.requiredField")),
     category: Yup.string().nullable().required(t("validation.requiredField")),
     description: Yup.string()
       .nullable()
@@ -45,6 +46,7 @@ export default function SupportForm() {
   });
 
   const initialValues = {
+    title: null,
     category: null,
     description: null,
     fileList: [],

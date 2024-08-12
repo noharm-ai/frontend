@@ -331,7 +331,8 @@
     "useful": "Useful",
     "notUseful": "Has errors",
     "observations": "Observations",
-    "drugAttributes": "Drug attributes"
+    "drugAttributes": "Drug attributes",
+    "title": "Título"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
