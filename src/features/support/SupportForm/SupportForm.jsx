@@ -24,6 +24,7 @@ export default function SupportForm() {
   const status = useSelector((state) => state.support.form.status);
 
   const validationSchema = Yup.object().shape({
+    title: Yup.string().nullable().required(t("validation.requiredField")),
     category: Yup.string().nullable().required(t("validation.requiredField")),
     description: Yup.string()
       .nullable()
@@ -45,6 +46,7 @@ export default function SupportForm() {
   });
 
   const initialValues = {
+    title: null,
     category: null,
     description: null,
     fileList: [],
@@ -165,7 +167,11 @@ export default function SupportForm() {
                 Estamos aqui para ajudar a resolver suas dúvidas e problemas da
                 melhor maneira possível. Para garantir que possamos oferecer o
                 suporte mais eficaz, é crucial que você forneça o{" "}
-                <strong>máximo de detalhes</strong> possível sobre sua questão.
+                <strong>máximo de detalhes</strong> possível sobre sua questão.{" "}
+                <span style={{ color: "#f5222d" }}>
+                  Principalmente trazendo exemplos de Atendimentos e/ou
+                  prescrições.
+                </span>
               </p>
 
               <p>

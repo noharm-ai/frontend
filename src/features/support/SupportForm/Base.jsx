@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Upload, notification } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
-import { Select } from "components/Inputs";
+import { Select, Input } from "components/Inputs";
 import Editor from "components/Editor";
 import Button from "components/Button";
 import IntegrationStatus from "models/IntegrationStatus";
@@ -49,7 +49,7 @@ function BaseForm() {
         }`}
       >
         <div className="form-label">
-          <label>{t("labels.subject")}:</label>
+          <label>{t("labels.ticketType")}:</label>
         </div>
         <div className="form-input">
           <Select
@@ -58,6 +58,7 @@ function BaseForm() {
             status={errors.category && touched.category ? "error" : null}
             optionFilterProp="children"
             showSearch
+            placeholder="Selecione"
           >
             <Select.Option key={0} value="Dúvida">
               Dúvida
@@ -77,6 +78,27 @@ function BaseForm() {
         </div>
         {errors.category && touched.category && (
           <div className="form-error">{errors.category}</div>
+        )}
+      </div>
+
+      <div
+        className={`form-row ${
+          errors.category && touched.category ? "error" : ""
+        }`}
+      >
+        <div className="form-label">
+          <label>{t("labels.subject")}:</label>
+        </div>
+        <div className="form-input">
+          <Input
+            placeholder="Ex: Erro ao checar prescrição"
+            value={values.title}
+            onChange={({ target }) => setFieldValue("title", target.value)}
+            maxLength={150}
+          />
+        </div>
+        {errors.title && touched.title && (
+          <div className="form-error">{errors.title}</div>
         )}
       </div>
 
@@ -105,9 +127,14 @@ function BaseForm() {
             />
           </EditorBox>
         </div>
+
         {errors.description && touched.description && (
           <div className="form-error">{errors.description}</div>
         )}
+        <div className="form-info">
+          Lembre-se de dar exemplos com número de Atendimento e/ou número de
+          Prescrição para facilitar a resolução do seu chamado.
+        </div>
       </div>
 
       <div className={`form-row ${errors.fileList ? "error" : ""}`}>
