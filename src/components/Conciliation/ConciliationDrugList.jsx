@@ -1,6 +1,8 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
+import { uniq } from "utils/lodash";
 
 import LoadBox from "components/LoadBox";
 import Table from "components/Table";
@@ -13,6 +15,11 @@ import { conciliationColumns } from "../Screening/columns";
 import { rowClassName } from "../Screening/PrescriptionDrug/PrescriptionDrugList";
 import ChooseInterventionModal from "components/Screening/PrescriptionDrug/components/ChooseInterventionModal";
 import expandedRowRender from "./table/expandedRowRender";
+import Filters from "components/Screening/PrescriptionDrug/components/Filters";
+import {
+  toggleSelectedRows,
+  setSelectedRows,
+} from "features/prescription/PrescriptionSlice";
 
 import { BoxWrapper } from "./index.style";
 
@@ -33,10 +40,53 @@ export default function ConciliationDrugList({
   updateInterventionData,
 }) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const selectedRows = useSelector(
+    (state) => state.prescriptionv2.selectedRows.list
+  );
+  const selectedRowsActive = useSelector(
+    (state) => state.prescriptionv2.selectedRows.active
+  );
 
   if (isFetching) {
     return <LoadBox />;
   }
+
+  const selectAllRows = () => {
+    let rows = dataSource[0]?.value || [];
+    rows = rows
+      .filter((i) => /^[0-9]*$/g.test(i.key))
+      .map((i) => i.idPrescriptionDrug);
+
+    if (rows.length > 0) {
+      if (isAllSelected()) {
+        dispatch(
+          setSelectedRows(selectedRows.filter((s) => rows.indexOf(s) === -1))
+        );
+      } else {
+        const allRows = [...selectedRows, ...rows];
+        dispatch(setSelectedRows(uniq(allRows)));
+      }
+    }
+  };
+
+  const isAllSelected = () => {
+    if (!selectedRows.length) return false;
+
+    let selected = true;
+    let rows = dataSource[0]?.value || [];
+    rows = rows
+      .filter((i) => /^[0-9]*$/g.test(i.key))
+      .map((i) => i.idPrescriptionDrug);
+
+    rows.forEach((r) => {
+      if (selectedRows.indexOf(r) === -1) {
+        selected = false;
+      }
+    });
+
+    return selected;
+  };
 
   const selectIntervention = (int, data) => {
     select({
@@ -44,6 +94,15 @@ export default function ConciliationDrugList({
       intervention: {
         ...int,
       },
+    });
+  };
+
+  const addMultipleIntervention = (selectedRows) => {
+    select({
+      intervention: {},
+      idPrescriptionDrugList: selectedRows,
+      admissionNumber,
+      uniqueDrugList: uniqueDrugs,
     });
   };
 
@@ -111,7 +170,12 @@ export default function ConciliationDrugList({
     security,
     t,
     interventions,
-    selectedRows: [],
+    dispatch,
+    selectedRows,
+    toggleSelectedRows,
+    selectedRowsActive,
+    selectAllRows,
+    isAllSelected: isAllSelected(),
   };
 
   const filteredDataSource = () => {
@@ -126,6 +190,14 @@ export default function ConciliationDrugList({
 
   return (
     <BoxWrapper>
+      <Filters
+        showFilter={false}
+        showPerspective={false}
+        showVizMode={false}
+        showMultipleSelection={true}
+        showPrescriptionOrder={false}
+        addMultipleIntervention={addMultipleIntervention}
+      />
       <Table
         columns={conciliationColumns(bag)}
         pagination={false}

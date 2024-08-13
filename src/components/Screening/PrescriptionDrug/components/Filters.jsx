@@ -33,6 +33,10 @@ import { ToolBox } from "../PrescriptionDrug.style";
 export default function Filters({
   showPrescriptionOrder,
   addMultipleIntervention,
+  showFilter = true,
+  showMultipleSelection = true,
+  showPerspective = true,
+  showVizMode = true,
 }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -200,80 +204,93 @@ export default function Filters({
     <ToolBox>
       <Affix offsetTop={50}>
         <div className="filters">
-          <Dropdown menu={filterOptions()}>
-            <Tag className="add-filter" icon={<FilterOutlined />}>
-              {t("labels.filters")}
-            </Tag>
-          </Dropdown>
-          {filters.map((i) => (
-            <Tag
-              color="#a991d6"
-              key={i}
-              closable
-              onClose={() => handleFilterClick({ key: i })}
-            >
-              {t(i.split(".").length > 1 ? i : `prescriptionDrugFilters.${i}`)}
-            </Tag>
-          ))}
+          {showFilter && (
+            <>
+              <Dropdown menu={filterOptions()}>
+                <Tag className="add-filter" icon={<FilterOutlined />}>
+                  {t("labels.filters")}
+                </Tag>
+              </Dropdown>
+              {filters.map((i) => (
+                <Tag
+                  color="#a991d6"
+                  key={i}
+                  closable
+                  onClose={() => handleFilterClick({ key: i })}
+                >
+                  {t(
+                    i.split(".").length > 1 ? i : `prescriptionDrugFilters.${i}`
+                  )}
+                </Tag>
+              ))}
+            </>
+          )}
         </div>
       </Affix>
       <Affix offsetTop={50}>
         <div className="viz-mode">
-          <span>
-            <Dropdown.Button
-              menu={actionOptions()}
-              type={selectedRowsActive ? "primary" : "default"}
-              onClick={() =>
-                !selectedRowsActive
-                  ? dispatch(setSelectedRowsActive(true))
-                  : false
+          {showMultipleSelection && (
+            <span>
+              <Dropdown.Button
+                menu={actionOptions()}
+                type={selectedRowsActive ? "primary" : "default"}
+                onClick={() =>
+                  !selectedRowsActive
+                    ? dispatch(setSelectedRowsActive(true))
+                    : false
+                }
+              >
+                {selectedRowsActive
+                  ? `${selectedRows.length} selecionados`
+                  : "Ativar seleção múltipla"}
+              </Dropdown.Button>
+            </span>
+          )}
+          {showPerspective && (
+            <Tooltip
+              title={
+                prescriptionPerspective === "alerts"
+                  ? "Desativar perspectiva por Alertas"
+                  : "Ativar perspectiva por Alertas (Funcionalidade Beta)"
               }
             >
-              {selectedRowsActive
-                ? `${selectedRows.length} selecionados`
-                : "Ativar seleção múltipla"}
-            </Dropdown.Button>
-          </span>
-          <Tooltip
-            title={
-              prescriptionPerspective === "alerts"
-                ? "Desativar perspectiva por Alertas"
-                : "Ativar perspectiva por Alertas (Funcionalidade Beta)"
-            }
-          >
-            <Button
-              shape="circle"
-              type={
-                prescriptionPerspective === "alerts" ? "primary" : "default"
+              <Button
+                shape="circle"
+                type={
+                  prescriptionPerspective === "alerts" ? "primary" : "default"
+                }
+                icon={
+                  prescriptionPerspective === "alerts" ? (
+                    <AlertFilled />
+                  ) : (
+                    <AlertOutlined />
+                  )
+                }
+                onClick={() => togglePrescriptionPerspective()}
+                style={{ marginLeft: "20px" }}
+              />
+            </Tooltip>
+          )}
+          {showVizMode && (
+            <Tooltip
+              title={
+                prescriptionListType === "condensed"
+                  ? "Desativar modo de visualização Condensado"
+                  : "Ativar modo de visualização Condensado"
               }
-              icon={
-                prescriptionPerspective === "alerts" ? (
-                  <AlertFilled />
-                ) : (
-                  <AlertOutlined />
-                )
-              }
-              onClick={() => togglePrescriptionPerspective()}
-              style={{ marginLeft: "20px" }}
-            />
-          </Tooltip>
-          <Tooltip
-            title={
-              prescriptionListType === "condensed"
-                ? "Desativar modo de visualização Condensado"
-                : "Ativar modo de visualização Condensado"
-            }
-          >
-            <Button
-              shape="circle"
-              type={
-                prescriptionListType === "condensed" ? "primary" : "default"
-              }
-              icon={<CompressOutlined />}
-              onClick={() => togglePrescriptionListType()}
-              style={{ marginLeft: "10px" }}
-            />
-          </Tooltip>
+            >
+              <Button
+                shape="circle"
+                type={
+                  prescriptionListType === "condensed" ? "primary" : "default"
+                }
+                icon={<CompressOutlined />}
+                onClick={() => togglePrescriptionListType()}
+                style={{ marginLeft: "10px" }}
+              />
+            </Tooltip>
+          )}
+
           {showPrescriptionOrder && (
             <Tooltip
               title={
