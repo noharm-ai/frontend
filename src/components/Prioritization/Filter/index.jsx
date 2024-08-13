@@ -293,12 +293,13 @@ export default function Filter({
     "antimicro",
     "mav",
     "controlled",
+    "dialyzable",
     "notdefault",
     "elderly",
+    "fallRisk",
     "tube",
     "whiteList",
     "chemo",
-    "dialyzable",
   ];
 
   const intervals = [];

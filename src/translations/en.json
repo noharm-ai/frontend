@@ -380,7 +380,9 @@
     "q": "CH",
     "qHint": "Chemotherapeutic",
     "dialyzable": "D",
-    "dialyzableHint": "Dialyzable Medication: The dosage must be adjusted for dialysis patients"
+    "dialyzableHint": "Dialyzable Medication: The dosage must be adjusted for dialysis patients",
+    "fallRisk": "F",
+    "fallRiskHint": "Fall risk"
   },
   "prescriptionDrugList": {
     "addIntervention": "Add intervention",
@@ -736,7 +738,8 @@
     "tube": "Probe",
     "whiteList": "No validations",
     "chemo": "Chemotherapy",
-    "dialyzable": "Dialyzable"
+    "dialyzable": "Dialyzable",
+    "fallRisk": "Fall risk"
   },
 
   "drugAlertType": {

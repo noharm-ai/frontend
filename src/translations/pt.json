@@ -380,7 +380,9 @@
     "q": "Q",
     "qHint": "Quimioterápico",
     "dialyzable": "D",
-    "dialyzableHint": "Medicamento Dialisável: A posologia deve estar ajustada para paciente dialítico"
+    "dialyzableHint": "Medicamento Dialisável: A posologia deve estar ajustada para paciente dialítico",
+    "fallRisk": "Q",
+    "fallRiskHint": "Risco de queda"
   },
   "prescriptionDrugList": {
     "addIntervention": "Enviar intervenção",
@@ -744,7 +746,8 @@
     "tube": "Sonda",
     "whiteList": "Sem validação",
     "chemo": "Quimioterápico",
-    "dialyzable": "Dialisável"
+    "dialyzable": "Dialisável",
+    "fallRisk": "Risco de queda"
   },
 
   "drugAlertType": {

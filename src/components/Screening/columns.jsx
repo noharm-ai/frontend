@@ -440,6 +440,14 @@ const DrugTags = ({ drug, t }) => (
         <Tag color="blue">{t("drugTags.dialyzable")}</Tag>
       </Tooltip>
     )}
+    {drug.drugAttributes?.fallRisk && (
+      <Tooltip title={t("drugTags.fallRiskHint")}>
+        <Tag color="volcano">
+          {t("drugTags.fallRisk")}
+          {drug.drugAttributes?.fallRisk}
+        </Tag>
+      </Tooltip>
+    )}
   </span>
 );
 
