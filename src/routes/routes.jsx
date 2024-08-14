@@ -41,6 +41,7 @@ import AdminIntegrationRemote from "pages/Admin/IntegrationRemote";
 import AdminIntegrationRemoteNifi from "pages/Admin/IntegrationRemote/Nifi";
 import AdminSegment from "pages/Admin/Segment";
 import AdminUnitConversion from "pages/Admin/UnitConversion";
+import AdminExam from "pages/Admin/Exam";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
@@ -234,6 +235,11 @@ const routes = [
     exact: true,
     path: "/admin/frequencias",
     element: <WithAuth component={AdminFrequency} />,
+  },
+  {
+    exact: true,
+    path: "/admin/exames",
+    element: <WithAuth component={AdminExam} />,
   },
   {
     exact: true,
