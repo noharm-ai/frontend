@@ -181,8 +181,8 @@ export default function Menu({ security, featureService }) {
           notrole: ["doctor"],
         },
         {
-          key: "/exames",
-          link: "/exames",
+          key: "/admin/exames",
+          link: "/admin/exames",
           label: t("menu.exams"),
           icon: <ExperimentOutlined />,
           id: "gtm-lnk-exames",
@@ -261,8 +261,8 @@ export default function Menu({ security, featureService }) {
           role: ["admin", "training"],
         },
         {
-          key: "/exames2",
-          link: "/exames",
+          key: "/admin/exames2",
+          link: "/admin/exames",
           label: "Exames",
           icon: <ExperimentOutlined />,
           id: "gtm-lnk-exames",

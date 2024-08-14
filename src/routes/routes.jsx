@@ -11,7 +11,6 @@ import Login from "pages/Login";
 import LoginCallback from "pages/Login/LoginCallback";
 import ScreeningList from "pages/ScreeningList";
 import Screening from "pages/Screening";
-import Segments from "pages/Segments";
 import References from "pages/References";
 import Reports from "pages/Reports";
 import InterventionList from "pages/InterventionList";
@@ -110,26 +109,6 @@ const routes = [
     exact: true,
     path: "/prescricao/evolucao/:admissionNumber",
     element: <WithAuth component={ClinicalNotes} />,
-  },
-  {
-    exact: true,
-    path: "/segmentos",
-    element: <WithAuth component={Segments} />,
-  },
-  {
-    exact: true,
-    path: "/exames",
-    element: <WithAuth component={Segments} />,
-  },
-  {
-    exact: true,
-    path: "/segmentos/:idSegment/:slug",
-    element: <WithAuth component={Segments} />,
-  },
-  {
-    exact: true,
-    path: "/exames/:idSegment/:slug",
-    element: <WithAuth component={Segments} />,
   },
   {
     exact: true,

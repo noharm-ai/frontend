@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
+  AppstoreOutlined,
   PlusOutlined,
   RetweetOutlined,
   OrderedListOutlined,
@@ -20,6 +21,7 @@ import { toDataSource } from "utils";
 import { selectExam } from "./ExamSlice";
 
 import ExamForm from "./Form/ExamForm";
+import ExamsOrder from "./ExamsOrder/ExamsOrder";
 import Filter from "./Filter/Filter";
 import examColumns from "./Table/columns";
 
@@ -39,6 +41,7 @@ export default function Exams() {
   const [copyExamsVisible, setCopyExamsVisible] = useState(false);
   const [mostFrequentModalVisible, setMostFrequentModalVisible] =
     useState(false);
+  const [examsOrderVisible, setExamsOrderVisible] = useState(false);
 
   const securityService = SecurityService(roles);
 
@@ -97,6 +100,14 @@ export default function Exams() {
           >
             Adicionar
           </Button>
+
+          <Button
+            type="primary gtm-bt-add-exam"
+            onClick={() => setExamsOrderVisible(true)}
+            icon={<AppstoreOutlined />}
+          >
+            Card de Exames
+          </Button>
         </div>
       </PageHeader>
 
@@ -116,6 +127,7 @@ export default function Exams() {
       <BackTop />
 
       <ExamForm />
+      <ExamsOrder open={examsOrderVisible} setOpen={setExamsOrderVisible} />
       <CopyExamsModal open={copyExamsVisible} setOpen={setCopyExamsVisible} />
       <MostFrequentExamsModal
         open={mostFrequentModalVisible}
