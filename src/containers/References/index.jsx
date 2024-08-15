@@ -18,7 +18,6 @@ import {
   saveOutlierRelationThunk,
   updateDrugDataThunk,
 } from "store/ducks/outliers/thunk";
-import { fetchSegmentsListThunk } from "store/ducks/segments/thunk";
 import References from "components/References";
 
 const mapStateToProps = ({ drugs, segments, outliers, user }) => ({
@@ -52,7 +51,6 @@ const mapDispatchToProps = (dispatch) =>
       saveUnitCoefficient: saveUnitCoeffiecientThunk,
       fetchDrugsList: fetchDrugsListThunk,
       fetchDrugsUnitsList: fetchDrugsUnitsListThunk,
-      fetchSegmentsList: fetchSegmentsListThunk,
       fetchOutliersList: fetchOutliersListThunk,
       fetchReferencesList: fetchReferencesListThunk,
       generateOutlier: generateDrugOutlierThunk,
