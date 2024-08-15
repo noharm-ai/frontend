@@ -334,7 +334,8 @@
     "drugAttributes": "Atributos do medicamento",
     "title": "Título",
     "category": "Categoria",
-    "ticketType": "Tipo de chamado"
+    "ticketType": "Tipo de chamado",
+    "prescriber": "Prescritor"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"

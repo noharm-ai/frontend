@@ -334,7 +334,8 @@
     "drugAttributes": "Drug attributes",
     "title": "Title",
     "category": "Category",
-    "ticketType": "Ticket type"
+    "ticketType": "Ticket type",
+    "prescriber": "Prescriber"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"
