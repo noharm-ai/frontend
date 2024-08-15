@@ -98,7 +98,7 @@ export default function Exams() {
             onClick={addExamModal}
             icon={<PlusOutlined />}
           >
-            Adicionar
+            Adicionar Exame
           </Button>
 
           <Button
