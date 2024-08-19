@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import { Select } from "components/Inputs";
@@ -6,12 +7,10 @@ import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 
-export default function MainFilters({ segments }) {
+export default function MainFilters() {
   const { t } = useTranslation();
+  const segments = useSelector((state) => state.segments.list);
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
-
-  const filterOption = (input, option) =>
-    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 
   return (
     <>
@@ -24,13 +23,11 @@ export default function MainFilters({ segments }) {
           name="idSegment"
           style={{ width: "100%" }}
           placeholder="Selecione um segmento..."
-          loading={segments.isFetching}
           value={values.idSegment}
           onChange={(val) => setFieldValue({ idSegment: val })}
           showSearch
-          filterOption={filterOption}
         >
-          {segments.list.map(({ id, description: text }) => (
+          {segments.map(({ id, description: text }) => (
             <Select.Option key={id} value={id}>
               {text}
             </Select.Option>

@@ -70,7 +70,6 @@ const theTitle = () => "Deslize para a direita para ver mais conteúdo.";
 
 export default function ScreeningList({
   prescriptions,
-  fetchSegmentsList,
   fetchPrescriptionsList,
   fetchFrequencies,
   checkScreening,
@@ -130,11 +129,6 @@ export default function ScreeningList({
       }
     });
   }
-
-  // fetch data
-  useEffect(() => {
-    fetchSegmentsList();
-  }, [fetchSegmentsList]);
 
   // show message if has error
 

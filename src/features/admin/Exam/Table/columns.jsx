@@ -7,35 +7,38 @@ import Button from "components/Button";
 
 const sortDirections = ["descend", "ascend"];
 
-const columns = (sortedInfo, enableSortExams) => {
+const columns = () => {
   const columns = [];
 
   return [
     ...columns,
     {
+      title: "Segmento",
+      ellipsis: true,
+      render: (entry, record) => {
+        return record.segment;
+      },
+    },
+    {
       title: "Tipo",
       dataIndex: "type",
       sortDirections,
-      //sorter: enableSortExams ? false : (a, b) => a.type.localeCompare(b.type),
-      sortOrder: sortedInfo.columnKey === "type" && sortedInfo.order,
+      sorter: (a, b) => a.type.localeCompare(b.type),
     },
 
     {
       title: "Nome",
       dataIndex: "name",
-      width: 350,
+      align: "left",
       sortDirections,
-      //sorter: enableSortExams ? null : (a, b) => a.name.localeCompare(b.name),
-      sortOrder: sortedInfo.columnKey === "name" && sortedInfo.order,
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Rótulo",
+      align: "left",
       dataIndex: "initials",
       sortDirections,
-      //sorter: enableSortExams
-      //  ? null
-      //  : (a, b) => a.initials.localeCompare(b.initials),
-      sortOrder: sortedInfo.columnKey === "initials" && sortedInfo.order,
+      sorter: (a, b) => a.initials.localeCompare(b.initials),
     },
     {
       title: "Mínimo",
@@ -45,10 +48,10 @@ const columns = (sortedInfo, enableSortExams) => {
       title: "Máximo",
       dataIndex: "max",
     },
-    {
-      title: "Referência",
-      dataIndex: "ref",
-    },
+    // {
+    //   title: "Referência",
+    //   dataIndex: "ref",
+    // },
     {
       title: "Situação",
       render: (entry, record) => (

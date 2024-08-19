@@ -33,8 +33,6 @@ export default function Filter({
   fetchPrescriptionsList,
   segments,
   fetchFrequencies,
-  fetchDepartmentsList,
-  resetDepartmentsLst,
   updatePrescriptionListStatus,
   filter,
   setScreeningListFilter,
@@ -94,6 +92,10 @@ export default function Filter({
         patientReviewType: filter.patientReviewType,
         idPatient: filter.idPatient,
         intervals: filter.intervals,
+        prescriber:
+          prioritizationType === "patient" || prioritizationType === "cards"
+            ? null
+            : filter.prescriber,
       };
       const mixedParams = { ...params, ...forceParams };
       const finalParams = {};
@@ -140,6 +142,7 @@ export default function Filter({
       filter.patientReviewType,
       filter.idPatient,
       filter.intervals,
+      filter.prescriber,
       prioritizationType,
       date,
     ]
@@ -265,6 +268,7 @@ export default function Filter({
       patientReviewType: null,
       idPatient: [],
       intervals: [],
+      prescriber: null,
     });
     setDate([dayjs(), null]);
   };
@@ -293,12 +297,13 @@ export default function Filter({
     "antimicro",
     "mav",
     "controlled",
+    "dialyzable",
     "notdefault",
     "elderly",
+    "fallRisk",
     "tube",
     "whiteList",
     "chemo",
-    "dialyzable",
   ];
 
   const intervals = [];
@@ -857,6 +862,32 @@ export default function Filter({
               </Box>
             </Col>
           </Row>
+
+          {(prioritizationType === "conciliation" ||
+            prioritizationType === "prescription") && (
+            <Row gutter={0} style={{ marginTop: "10px" }}>
+              <Col md={24}>
+                <Box>
+                  <Row gutter={0} style={{ width: "100%" }}>
+                    <Col md={19}>
+                      <Heading as="label" htmlFor="indicators" size="14px">
+                        {prioritizationType === "conciliation"
+                          ? t("labels.responsible")
+                          : t("labels.prescriber")}
+                      </Heading>
+                      <Input
+                        style={{ width: "100%" }}
+                        value={filter.prescriber}
+                        onChange={({ target }) =>
+                          setScreeningListFilter({ prescriber: target.value })
+                        }
+                      ></Input>
+                    </Col>
+                  </Row>
+                </Box>
+              </Col>
+            </Row>
+          )}
 
           <Row gutter={[20, 0]} style={{ marginTop: "20px" }}>
             <Col>

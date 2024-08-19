@@ -6,11 +6,6 @@ import {
   setJourneyThunk,
 } from "store/ducks/app/thunk";
 import {
-  fetchSegmentsListThunk,
-  fetchSegmentByIdThunk,
-  resetSingleSegmentThunk,
-} from "store/ducks/segments/thunk";
-import {
   fetchPrescriptionsListThunk,
   checkScreeningThunk,
   updatePrescriptionStatusThunk,
@@ -68,9 +63,6 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchDepartmentsList: fetchSegmentByIdThunk,
-      resetDepartmentsLst: resetSingleSegmentThunk,
-      fetchSegmentsList: fetchSegmentsListThunk,
       fetchPrescriptionsList: fetchPrescriptionsListThunk,
       checkScreening: checkScreeningThunk,
       updatePrescriptionListStatus: updatePrescriptionStatusThunk,

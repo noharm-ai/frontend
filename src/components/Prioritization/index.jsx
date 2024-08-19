@@ -31,7 +31,6 @@ import { PrioritizationPage, FilterCard, ResultActions } from "./index.style";
 
 export default function Prioritization({
   prescriptions,
-  fetchSegmentsList,
   fetchPrescriptionsList,
   fetchFrequencies,
   checkScreening,

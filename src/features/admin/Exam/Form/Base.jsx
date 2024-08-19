@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import "styled-components/macro";
 import { useFormikContext } from "formik";
 import { CopyOutlined } from "@ant-design/icons";
 
-import { Col } from "components/Grid";
-import Heading from "components/Heading";
 import { InputNumber, Input, Select } from "components/Inputs";
 import Button from "components/Button";
 import Switch from "components/Switch";
@@ -14,20 +12,26 @@ import Tooltip from "components/Tooltip";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 import { getExamRefs } from "features/lists/ListsSlice";
+import { listExamTypes } from "../ExamSlice";
 
-import { Box } from "../Form.style";
-
-export default function Base({ examTypes, examList }) {
+export default function Base() {
   const dispatch = useDispatch();
+  const segments = useSelector((state) => state.segments.list);
+  const examTypes = useSelector((state) => state.admin.exam.examTypes.list);
+  const examTypesStatus = useSelector(
+    (state) => state.admin.exam.examTypes.status
+  );
   const { t } = useTranslation();
   const { values, setFieldValue, errors } = useFormikContext();
   const [refActive, setRefActive] = useState(false);
   const [refs, setRefs] = useState([]);
   const { type, name, initials, min, max, ref, active } = values;
-  const layout = { label: 8, input: 16 };
-  const availableExamTypes = examTypes.list.filter(
-    (type) => examList.findIndex((e) => e.type === type) === -1
-  );
+
+  useEffect(() => {
+    if (examTypes.length === 0 && values.new) {
+      dispatch(listExamTypes());
+    }
+  }, []); //eslint-disable-line
 
   useEffect(() => {
     if (refActive) {
@@ -54,25 +58,48 @@ export default function Base({ examTypes, examList }) {
 
   return (
     <>
-      <Box hasError={errors.type}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Tipo de Exame:</Tooltip>
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
+      <div className={`form-row ${errors.type ? "error" : ""}`}>
+        <div className="form-label">
+          <label>Segmento:</label>
+        </div>
+        <div className="form-input">
+          <Select
+            optionFilterProp="children"
+            showSearch
+            placeholder="Selecione o segmento..."
+            onChange={(value) => setFieldValue("idSegment", value)}
+            value={values.idSegment}
+            loading={examTypesStatus === "loading"}
+            disabled={!values.new}
+          >
+            {segments.map((item) => (
+              <Select.Option key={item.id} value={item.id}>
+                {item.description}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+        {errors.idSegment && (
+          <div className="form-error">{errors.idSegment}</div>
+        )}
+      </div>
+
+      <div className={`form-row ${errors.type ? "error" : ""}`}>
+        <div className="form-label">
+          <label>Tipo de Exame:</label>
+        </div>
+        <div className="form-input">
           <div style={{ display: "flex" }}>
             <Select
               optionFilterProp="children"
-              style={{ width: "90%", marginLeft: 10 }}
               showSearch
               placeholder="Selecione o exame..."
               onChange={(value) => setFieldValue("type", value)}
               value={type}
-              loading={examTypes.isFetching}
+              loading={examTypesStatus === "loading"}
               disabled={!values.new}
             >
-              {availableExamTypes.map((item) => (
+              {examTypes.map((item) => (
                 <Select.Option key={item} value={item}>
                   {item}
                 </Select.Option>
@@ -88,20 +115,18 @@ export default function Base({ examTypes, examList }) {
               />
             </Tooltip>
           </div>
-        </Col>
-      </Box>
+        </div>
+        {errors.type && <div className="form-error">{errors.type}</div>}
+      </div>
 
       {refActive && (
-        <Box>
-          <Col xs={layout.label}>
-            <Heading as="label" size="14px" textAlign="right">
-              <Tooltip title="">Referência:</Tooltip>
-            </Heading>
-          </Col>
-          <Col xs={layout.input}>
+        <div className={`form-row`}>
+          <div className="form-label">
+            <label>Referência Curadoria:</label>
+          </div>
+          <div className="form-input">
             <Select
               optionFilterProp="children"
-              style={{ width: "100%", marginLeft: 10 }}
               showSearch
               placeholder="Selecione a referência..."
               onChange={(value) => applyRef(value)}
@@ -114,123 +139,100 @@ export default function Base({ examTypes, examList }) {
                   </Select.Option>
                 ))}
             </Select>
-          </Col>
-        </Box>
+          </div>
+        </div>
       )}
 
-      <Box hasError={errors.name}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Nome:</Tooltip>
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
+      <div className={`form-row ${errors.name ? "error" : ""}`}>
+        <div className="form-label">
+          <label>Nome:</label>
+        </div>
+        <div className="form-input">
           <Input
-            style={{
-              marginLeft: 10,
-            }}
             value={name}
             onChange={({ target }) => setFieldValue("name", target.value)}
             maxLength={250}
           />
-        </Col>
-      </Box>
+        </div>
+        {errors.name && <div className="form-error">{errors.name}</div>}
+      </div>
 
-      <Box hasError={errors.initials}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Rótulo:</Tooltip>
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
+      <div className={`form-row ${errors.initials ? "error" : ""}`}>
+        <div className="form-label">
+          <label>Rótulo:</label>
+        </div>
+        <div className="form-input">
           <Input
-            style={{
-              marginLeft: 10,
-            }}
             value={initials}
             onChange={({ target }) => setFieldValue("initials", target.value)}
             maxLength={50}
           />
-        </Col>
-      </Box>
+        </div>
+        {errors.initials && <div className="form-error">{errors.initials}</div>}
+      </div>
 
-      <Box hasError={errors.ref}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Referência:</Tooltip>
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
+      <div className={`form-row ${errors.ref ? "error" : ""}`}>
+        <div className="form-label">
+          <label>Referência:</label>
+        </div>
+        <div className="form-input">
           <Input
-            style={{
-              marginLeft: 10,
-            }}
             value={ref}
             onChange={({ target }) => setFieldValue("ref", target.value)}
             maxLength={250}
           />
-        </Col>
-      </Box>
+        </div>
+        {errors.ref && <div className="form-error">{errors.ref}</div>}
+      </div>
 
-      <Box hasError={errors.min}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Valor mínimo:</Tooltip>
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
+      <div className={`form-row ${errors.min ? "error" : ""}`}>
+        <div className="form-label">
+          <label>Valor mínimo:</label>
+        </div>
+        <div className="form-input">
           <InputNumber
             style={{
               width: 120,
-              marginLeft: 10,
-              marginRight: 5,
             }}
             min={-999999}
             max={999999}
             value={min}
             onChange={(value) => setFieldValue("min", value)}
           />
-        </Col>
-      </Box>
+        </div>
+        {errors.min && <div className="form-error">{errors.min}</div>}
+      </div>
 
-      <Box hasError={errors.max}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Valor máximo:</Tooltip>
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
+      <div className={`form-row ${errors.max ? "error" : ""}`}>
+        <div className="form-label">
+          <label>Valor máximo:</label>
+        </div>
+        <div className="form-input">
           <InputNumber
             style={{
               width: 120,
-              marginLeft: 10,
-              marginRight: 5,
             }}
             min={0}
             max={999999}
             value={max}
             onChange={(value) => setFieldValue("max", value)}
           />
-        </Col>
-      </Box>
+        </div>
+        {errors.max && <div className="form-error">{errors.max}</div>}
+      </div>
 
-      <Box hasError={errors.active}>
-        <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Ativo:</Tooltip>
-          </Heading>
-        </Col>
-        <Col xs={layout.input}>
+      <div className={`form-row ${errors.active ? "error" : ""}`}>
+        <div className="form-label">
+          <label>Ativo:</label>
+        </div>
+        <div className="form-input">
           <Switch
             onChange={(active) => setFieldValue("active", active)}
             checked={active}
-            style={{
-              marginLeft: 10,
-              marginRight: 5,
-            }}
           />
-        </Col>
-      </Box>
+        </div>
+        {errors.active && <div className="form-error">{errors.active}</div>}
+      </div>
     </>
   );
 }

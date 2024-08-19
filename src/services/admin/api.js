@@ -109,27 +109,57 @@ const generateOutlierFold = (params) => {
   return instance.get(params.url, { ...setHeaders() });
 };
 
-const copyExams = (params) =>
-  instance.post(`${endpoints.exam}/copy`, params, {
-    ...setHeaders(),
-  });
-
 const upsertSegment = (params = {}) => {
   return instance.post(`${endpoints.segment}`, params, {
     ...setHeaders(),
   });
 };
 
-const getMostFrequentExams = (params) =>
+/**
+ * EXAMS
+ */
+
+api.exams = {};
+api.exams.copyExams = (params) =>
+  instance.post(`${endpoints.exam}/copy`, params, {
+    ...setHeaders(),
+  });
+
+api.exams.getMostFrequentExams = (params) =>
   instance.get(`${endpoints.exam}/most-frequent`, {
     params,
     ...setHeaders(),
   });
 
-const addMostFrequentExams = (params) =>
+api.exams.getExamTypes = (params) =>
+  instance.get(`${endpoints.exam}/types`, {
+    params,
+    ...setHeaders(),
+  });
+
+api.exams.addMostFrequentExams = (params) =>
   instance.post(`${endpoints.exam}/most-frequent/add`, params, {
     ...setHeaders(),
   });
+
+api.exams.listExams = (params) =>
+  instance.post(`${endpoints.exam}/list`, params, {
+    ...setHeaders(),
+  });
+
+api.exams.upsertExam = (params) =>
+  instance.post(`${endpoints.exam}/upsert`, params, {
+    ...setHeaders(),
+  });
+
+api.exams.setExamsOrder = (params) =>
+  instance.post(`${endpoints.exam}/order`, params, {
+    ...setHeaders(),
+  });
+
+/**
+ * DRUGS
+ */
 
 api.drugs = {};
 api.drugs.getDrugsMissingSubstance = (params) =>
@@ -149,6 +179,10 @@ api.drugs.addNewOutlier = (params = {}) => {
     ...setHeaders(),
   });
 };
+
+/**
+ * UNIT CONVERSION
+ */
 
 api.unitConversion = {};
 api.unitConversion.getConversionList = (params = {}) => {
@@ -182,6 +216,10 @@ api.unitConversion.addDefaultUnits = (params = {}) => {
     }
   );
 };
+
+/**
+ * INTEGRATION
+ */
 
 api.integration = {};
 api.integration.getStatus = (params) =>
@@ -275,10 +313,7 @@ const methods = {
   updateSegmentDepartments,
   getOutlierProcessList,
   generateOutlierFold,
-  copyExams,
   upsertSegment,
-  getMostFrequentExams,
-  addMostFrequentExams,
 };
 
 export default methods;

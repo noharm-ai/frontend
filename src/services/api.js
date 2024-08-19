@@ -138,30 +138,10 @@ const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
     setHeaders(bearerToken)
   );
 
-const updateSegmentExam = (bearerToken, { idSegment, ...params }) =>
-  instance.put(
-    `${endpoints.segments}/${idSegment}/exams`,
-    params,
-    setHeaders(bearerToken)
-  );
-
-const getExamTypes = (bearerToken, params = {}) =>
-  instance.get(`${endpoints.segments}/exams/types`, {
-    params,
-    ...setHeaders(bearerToken),
-  });
-
 const getExamRefs = (bearerToken) =>
   instance.get(`${endpoints.segments}/exams/refs`, {
     ...setHeaders(bearerToken),
   });
-
-const updateSegmentExamOrder = (bearerToken, idSegment, params = {}) =>
-  instance.put(
-    `${endpoints.segments}/${idSegment}/exams-order`,
-    params,
-    setHeaders(bearerToken)
-  );
 
 /**
  * Exams.
@@ -795,8 +775,6 @@ const methods = {
   getSubstances,
   getSubstanceSingle,
   getSubstanceClasses,
-  updateSegmentExam,
-  getExamTypes,
   updateSubstance,
   getSubstanceRelations,
   shouldUpdatePrescription,
@@ -807,7 +785,6 @@ const methods = {
   forgotPassword,
   resetPassword,
   getUsers,
-  updateSegmentExamOrder,
   getClinicalNotes,
   updateClinicalNote,
   createClinicalNote,

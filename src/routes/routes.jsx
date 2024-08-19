@@ -11,7 +11,6 @@ import Login from "pages/Login";
 import LoginCallback from "pages/Login/LoginCallback";
 import ScreeningList from "pages/ScreeningList";
 import Screening from "pages/Screening";
-import Segments from "pages/Segments";
 import References from "pages/References";
 import Reports from "pages/Reports";
 import InterventionList from "pages/InterventionList";
@@ -41,6 +40,7 @@ import AdminIntegrationRemote from "pages/Admin/IntegrationRemote";
 import AdminIntegrationRemoteNifi from "pages/Admin/IntegrationRemote/Nifi";
 import AdminSegment from "pages/Admin/Segment";
 import AdminUnitConversion from "pages/Admin/UnitConversion";
+import AdminExam from "pages/Admin/Exam";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
@@ -109,26 +109,6 @@ const routes = [
     exact: true,
     path: "/prescricao/evolucao/:admissionNumber",
     element: <WithAuth component={ClinicalNotes} />,
-  },
-  {
-    exact: true,
-    path: "/segmentos",
-    element: <WithAuth component={Segments} />,
-  },
-  {
-    exact: true,
-    path: "/exames",
-    element: <WithAuth component={Segments} />,
-  },
-  {
-    exact: true,
-    path: "/segmentos/:idSegment/:slug",
-    element: <WithAuth component={Segments} />,
-  },
-  {
-    exact: true,
-    path: "/exames/:idSegment/:slug",
-    element: <WithAuth component={Segments} />,
   },
   {
     exact: true,
@@ -234,6 +214,11 @@ const routes = [
     exact: true,
     path: "/admin/frequencias",
     element: <WithAuth component={AdminFrequency} />,
+  },
+  {
+    exact: true,
+    path: "/admin/exames",
+    element: <WithAuth component={AdminExam} />,
   },
   {
     exact: true,
