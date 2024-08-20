@@ -80,10 +80,22 @@ export default function InterventionOutcome({ ...props }) {
         ? outcomeData.destiny[0].item.idPrescriptionDrug
         : null,
     destiny: outcomeData.destiny?.length > 0 ? outcomeData.destiny[0].item : {},
-    economyDayValueManual: outcomeData.header?.economyDayValueManual,
+    economyDayValueManual: outcomeData.header?.readonly
+      ? outcomeData.header?.economyDayValueManual
+      : selectedIntervention.outcome === "a"
+      ? false
+      : true,
     economyDayValue: outcomeData.header?.economyDayValue,
-    economyDayAmountManual: outcomeData.header?.economyDayAmountManual,
-    economyDayAmount: outcomeData.header?.economyDayAmount,
+    economyDayAmountManual: outcomeData.header?.readonly
+      ? outcomeData.header?.economyDayAmountManual
+      : selectedIntervention.outcome === "a"
+      ? false
+      : true,
+    economyDayAmount: outcomeData.header?.readonly
+      ? outcomeData.header?.economyDayAmount
+      : selectedIntervention.outcome === "a"
+      ? null
+      : 1,
   };
 
   const validationSchema = Yup.object().shape({

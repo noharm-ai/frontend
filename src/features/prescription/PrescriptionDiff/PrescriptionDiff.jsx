@@ -72,7 +72,7 @@ export default function PrescriptionDiff({ open, setOpen }) {
           {addList.length === 0 && <Empty description="0 itens adicionados" />}
         </Col>
       </Row>
-      <p>*Esta funcionalidade está em teste. Aceitamos sugestões.</p>
+      <p>*Esta funcionalidade está em fase de testes. Aceitamos sugestões.</p>
     </DefaultModal>
   );
 }
