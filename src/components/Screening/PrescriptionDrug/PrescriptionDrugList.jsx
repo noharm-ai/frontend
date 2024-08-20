@@ -480,6 +480,7 @@ export default function PrescriptionDrugList({
         <Filters
           showPrescriptionOrder={false}
           addMultipleIntervention={addMultipleIntervention}
+          showDiff={false}
         />
 
         {table(!isEmpty(dataSource) ? dataSource[0] : [])}
@@ -564,6 +565,7 @@ export default function PrescriptionDrugList({
       <Filters
         showPrescriptionOrder
         addMultipleIntervention={addMultipleIntervention}
+        showDiff={true}
       />
 
       {getGroups(groups).map((g) => (

@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-
+import _ from "lodash";
 import { uniqBy } from "utils/lodash";
 import moment from "moment";
 import {
@@ -201,9 +201,15 @@ export const transformPrescription = ({
   };
 
   const alerts = [];
+  let addList = [];
+  let removeList = [];
+  let minDate = "";
+  let maxDate = "";
 
   if (prescription || solution || procedures) {
     const allItems = [...prescription, ...solution, ...procedures];
+
+    //alert lists
     allItems.forEach((i) => {
       if (i.alertsComplete && i.alertsComplete.length) {
         const drugAlerts = i.alertsComplete.map((a, index) => ({
@@ -223,6 +229,31 @@ export const transformPrescription = ({
         alerts.push(...drugAlerts);
       }
     });
+
+    const groups = {};
+    allItems.forEach((pd) => {
+      const dt = pd.prescriptionExpire
+        ? pd.prescriptionExpire.substr(0, 10)
+        : pd.prescriptionDate.substr(0, 10);
+
+      if (pd.whiteList) return;
+
+      if (groups[dt]) {
+        if (groups[dt].indexOf(pd.drug) === -1) {
+          groups[dt].push(pd.drug);
+        }
+      } else {
+        groups[dt] = [pd.drug];
+      }
+    });
+
+    if (Object.keys(groups).length === 2) {
+      maxDate = _.max(Object.keys(groups));
+      minDate = _.min(Object.keys(groups));
+
+      removeList = _.difference(groups[minDate], groups[maxDate]);
+      addList = _.difference(groups[maxDate], groups[minDate]);
+    }
   }
 
   return {
@@ -274,6 +305,13 @@ export const transformPrescription = ({
     dietCount: countList(dietList),
     uniqueDrugs: getUniqueDrugs(prescription, solution, procedures),
     alertsList: alerts,
+    diff: {
+      hasDiff: addList.length || removeList.length,
+      minDate,
+      maxDate,
+      addList,
+      removeList,
+    },
   };
 };
 

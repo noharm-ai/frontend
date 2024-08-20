@@ -196,6 +196,7 @@ export default function ConciliationDrugList({
         showVizMode={false}
         showMultipleSelection={true}
         showPrescriptionOrder={false}
+        showDiff={false}
         addMultipleIntervention={addMultipleIntervention}
       />
       <Table
