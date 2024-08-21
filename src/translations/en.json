@@ -656,7 +656,9 @@
     "observation": "OBSERVATION",
     "interventionType": "INTERVENTION TYPE",
     "bed": "BED",
-    "idPatient": "ID PATIENT"
+    "idPatient": "ID PATIENT",
+    "originPrice": "ORIGIN PRICE",
+    "destinyPrice": "DESTINATION PRICE"
   },
 
   "reportcsvCulture": {

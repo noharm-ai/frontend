@@ -54,7 +54,7 @@ export default function EconomyList() {
     },
     {
       title: "Vl. Economia/Dia",
-      width: 4,
+      width: 5,
       align: "right",
       sorter: (a, b) =>
         parseFloat(a.economyDayValue) - parseFloat(b.economyDayValue),
@@ -144,6 +144,38 @@ export default function EconomyList() {
       width: 10,
       ellipsis: true,
       render: (_, record) => record.insurance,
+    },
+    {
+      title: "Custo Origem",
+      width: 5,
+      align: "right",
+      render: (_, record) => {
+        if (record.economyDayValueManual) {
+          return (
+            <Tooltip title="A economia foi inserida manualmente, desta forma não há custo/dia origem definido.">
+              Manual
+            </Tooltip>
+          );
+        }
+
+        return `R$ ${formatCurrency(record.processed.originPrice, 2)}`;
+      },
+    },
+    {
+      title: "Custo Substituto",
+      width: 5,
+      align: "right",
+      render: (_, record) => {
+        if (record.economyDayValueManual) {
+          return (
+            <Tooltip title="A economia foi inserida manualmente, desta forma não há custo/dia substituto definido.">
+              Manual
+            </Tooltip>
+          );
+        }
+
+        return `R$ ${formatCurrency(record.processed.destinyPrice, 2)}`;
+      },
     },
     {
       title: "",

@@ -2,7 +2,7 @@ import Big from "big.js";
 import toFormat from "toformat";
 
 export function formatCurrency(value, precision = 2) {
-  if (!value) {
+  if (value === null || value === undefined) {
     return "-";
   }
   const locale = localStorage.getItem("language") === "en" ? "en-US" : "pt-BR";
@@ -33,6 +33,7 @@ export function formatCurrency(value, precision = 2) {
 
   return value.toLocaleString(locale, {
     minimumFractionDigits: precision,
+    maximumFractionDigits: precision,
   });
 }
 
