@@ -311,13 +311,14 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
     : null;
 
   if (!isEmpty(headers)) {
-    success.list.forEach((i) => {
-      if (headers[i.idPrescription]) {
-        headers[i.idPrescription].status = i.status;
-        headers[i.idPrescription].user = success.user;
-        //headers[i.idPrescription].user = success.userId;
-      }
-    });
+    if (success.list) {
+      success.list.forEach((i) => {
+        if (headers[i.idPrescription]) {
+          headers[i.idPrescription].status = i.status;
+          headers[i.idPrescription].user = success.user;
+        }
+      });
+    }
 
     if (`${state.single.data.idPrescription}` !== `${success.idPrescription}`) {
       let allChecked = true;
