@@ -214,11 +214,12 @@ export default function Base({
             value={idInterventionReason}
             onChange={handleReasonChange}
           >
-            {reasons.list.map(({ id, parentName, name }) => (
-              <Select.Option key={id} value={id}>
-                {parentName ? `${parentName} - ${name}` : name}
-              </Select.Option>
-            ))}
+            {reasons.list &&
+              reasons.list.map(({ id, parentName, name }) => (
+                <Select.Option key={id} value={id}>
+                  {parentName ? `${parentName} - ${name}` : name}
+                </Select.Option>
+              ))}
           </Select>
           {`${drugData.idPrescriptionDrug}` !== "0" && (
             <>
