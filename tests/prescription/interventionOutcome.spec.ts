@@ -269,9 +269,58 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
   await expect(
     page
       .locator("div")
+      .filter({ hasText: /^Qtd\. de dias de economia: DiasManual$/ })
+      .getByRole("spinbutton")
+  ).toBeEnabled();
+
+  await expect(
+    page
+      .locator("div")
       .filter({ hasText: /^Economia\/Dia:R\$Manual$/ })
       .getByRole("spinbutton")
   ).toHaveValue("0,000000");
 
+  await expect(
+    page
+      .locator("div")
+      .filter({ hasText: /^Economia\/Dia:R\$Manual$/ })
+      .getByRole("spinbutton")
+  ).toBeEnabled();
+
   await page.getByRole("button", { name: "Não Aceitar Intervenção" }).click();
+
+  // check interventions tab
+  await page
+    .locator("#rc-tabs-1-tab-intervention")
+    .getByText("Intervenções")
+    .click();
+  await page.getByRole("button", { name: "rollback" }).last().click();
+
+  await expect(
+    page
+      .locator("div")
+      .filter({ hasText: /^Economia\/Dia:R\$Manual$/ })
+      .getByRole("spinbutton")
+  ).toHaveValue("0,000000");
+
+  await expect(
+    page
+      .locator("div")
+      .filter({ hasText: /^Economia\/Dia:R\$Manual$/ })
+      .getByRole("spinbutton")
+  ).toBeDisabled();
+
+  await expect(
+    page
+      .locator("div")
+      .filter({ hasText: /^Qtd\. de dias de economia: DiasManual$/ })
+      .getByRole("spinbutton")
+  ).toHaveValue("1");
+
+  await expect(
+    page
+      .locator("div")
+      .filter({ hasText: /^Qtd\. de dias de economia: DiasManual$/ })
+      .getByRole("spinbutton")
+  ).toBeDisabled();
 });
