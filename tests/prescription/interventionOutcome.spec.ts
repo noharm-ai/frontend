@@ -89,7 +89,7 @@ test("outcome: suspension", async ({ page }) => {
       .getByRole("spinbutton")
   ).toHaveValue("57,200000");
 
-  await page.getByRole("button", { name: "Confirmar desfecho" }).click();
+  await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
 });
 
 test("outcome: substitution", async ({ page }) => {
@@ -176,7 +176,7 @@ test("outcome: substitution", async ({ page }) => {
       .getByRole("spinbutton")
   ).toHaveValue("102,900000");
 
-  await page.getByRole("button", { name: "Confirmar desfecho" }).click();
+  await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
 });
 
 test("outcome: custom", async ({ page }) => {
@@ -203,7 +203,7 @@ test("outcome: custom", async ({ page }) => {
   await page.locator(".ant-modal-content .ant-dropdown-trigger").hover();
   await page.getByText("Salvar e marcar como Aceita").click();
 
-  await page.getByRole("button", { name: "Confirmar desfecho" }).click();
+  await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
   await expect(page.getByText("Quantidade de Dias de")).toBeVisible();
 
   await page
@@ -226,5 +226,52 @@ test("outcome: custom", async ({ page }) => {
     .filter({ hasText: /^Qtd\. de dias de economia: DiasManual$/ })
     .getByRole("spinbutton")
     .fill("3");
-  await page.getByRole("button", { name: "Confirmar desfecho" }).click();
+  await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
+});
+
+test("outcome: suspension (not accepted)", async ({ page }) => {
+  await page.goto("/prescricao/198");
+
+  await page
+    .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
+    .click();
+  await page.getByText("Paciente 99").click();
+  await page
+    .locator(".ant-table-tbody tr")
+    .nth(2)
+    .getByRole("button")
+    .nth(1)
+    .click();
+
+  await page.locator(".ant-select-selector").click();
+  await page.locator(".rc-virtual-list-holder-inner").hover();
+  await page.mouse.wheel(0, 1000);
+
+  await page.getByText("Suspensão da terapia").click();
+
+  // // close dropdown
+  await page.locator(".ant-select-selector").click();
+
+  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible();
+
+  await page.getByRole("textbox").click();
+  await page.getByRole("textbox").fill("teste");
+  await page.locator(".ant-modal-content .ant-dropdown-trigger").hover();
+  await page.getByText("Salvar e marcar como Não Aceita").nth(0).click();
+
+  await expect(
+    page
+      .locator("div")
+      .filter({ hasText: /^Qtd\. de dias de economia: DiasManual$/ })
+      .getByRole("spinbutton")
+  ).toHaveValue("1");
+
+  await expect(
+    page
+      .locator("div")
+      .filter({ hasText: /^Economia\/Dia:R\$Manual$/ })
+      .getByRole("spinbutton")
+  ).toHaveValue("0,000000");
+
+  await page.getByRole("button", { name: "Não Aceitar Intervenção" }).click();
 });
