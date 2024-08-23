@@ -85,7 +85,11 @@ export default function InterventionOutcome({ ...props }) {
       : selectedIntervention.outcome === "a"
       ? false
       : true,
-    economyDayValue: outcomeData.header?.economyDayValue,
+    economyDayValue: outcomeData.header?.readonly
+      ? outcomeData.header?.economyDayValue
+      : selectedIntervention.outcome === "a"
+      ? outcomeData.header?.economyDayValue
+      : "0",
     economyDayAmountManual: outcomeData.header?.readonly
       ? outcomeData.header?.economyDayAmountManual
       : selectedIntervention.outcome === "a"
@@ -240,11 +244,16 @@ export default function InterventionOutcome({ ...props }) {
               </Button>
             ) : (
               <Button
-                type="primary"
+                type={
+                  ["n", "j"].indexOf(selectedIntervention.outcome) === -1
+                    ? "primary"
+                    : "default"
+                }
                 loading={isLoading}
                 onClick={() => handleSubmit()}
+                danger={["n", "j"].indexOf(selectedIntervention.outcome) !== -1}
               >
-                Confirmar desfecho
+                {t(`interventionStatusAction.${selectedIntervention.outcome}`)}
               </Button>
             )}
           </>
@@ -265,7 +274,7 @@ export default function InterventionOutcome({ ...props }) {
           open={selectedIntervention.open}
           width={
             outcomeData.header?.economyType == null
-              ? 400
+              ? 550
               : outcomeData.header?.economyType === 2
               ? 800
               : 600
