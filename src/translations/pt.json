@@ -662,7 +662,9 @@
     "observation": "OBSERVACAO",
     "interventionType": "TIPO INTERVENÇÃO",
     "bed": "LEITO",
-    "idPatient": "ID PACIENTE"
+    "idPatient": "ID PACIENTE",
+    "originPrice": "CUSTO ORIGEM",
+    "destinyPrice": "CUSTO SUBSTITUTO"
   },
 
   "reportcsvCulture": {

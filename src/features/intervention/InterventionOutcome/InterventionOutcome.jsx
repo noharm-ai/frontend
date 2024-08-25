@@ -71,6 +71,42 @@ export default function InterventionOutcome({ ...props }) {
     t,
   ]);
 
+  const getDefaultValues = () => {
+    if (outcomeData.header?.readonly) {
+      return {
+        economyDayValueManual: outcomeData.header?.economyDayValueManual,
+        economyDayValue: outcomeData.header?.economyDayValue,
+        economyDayAmountManual: outcomeData.header?.economyDayAmountManual,
+        economyDayAmount: outcomeData.header?.economyDayAmount,
+      };
+    }
+
+    if (outcomeData.header?.economyType === 3) {
+      return {
+        economyDayValueManual: true,
+        economyDayValue: outcomeData.header?.economyDayValue,
+        economyDayAmountManual: true,
+        economyDayAmount: null,
+      };
+    }
+
+    if (selectedIntervention.outcome === "a") {
+      return {
+        economyDayValueManual: false,
+        economyDayValue: outcomeData.header?.economyDayValue,
+        economyDayAmountManual: false,
+        economyDayAmount: null,
+      };
+    }
+
+    return {
+      economyDayValueManual: true,
+      economyDayValue: "0",
+      economyDayAmountManual: true,
+      economyDayAmount: 1,
+    };
+  };
+
   const initialValues = {
     idIntervention: outcomeData.idIntervention,
     outcome: selectedIntervention.outcome,
@@ -80,10 +116,7 @@ export default function InterventionOutcome({ ...props }) {
         ? outcomeData.destiny[0].item.idPrescriptionDrug
         : null,
     destiny: outcomeData.destiny?.length > 0 ? outcomeData.destiny[0].item : {},
-    economyDayValueManual: outcomeData.header?.economyDayValueManual,
-    economyDayValue: outcomeData.header?.economyDayValue,
-    economyDayAmountManual: outcomeData.header?.economyDayAmountManual,
-    economyDayAmount: outcomeData.header?.economyDayAmount,
+    ...getDefaultValues(),
   };
 
   const validationSchema = Yup.object().shape({
@@ -228,11 +261,16 @@ export default function InterventionOutcome({ ...props }) {
               </Button>
             ) : (
               <Button
-                type="primary"
+                type={
+                  ["n", "j"].indexOf(selectedIntervention.outcome) === -1
+                    ? "primary"
+                    : "default"
+                }
                 loading={isLoading}
                 onClick={() => handleSubmit()}
+                danger={["n", "j"].indexOf(selectedIntervention.outcome) !== -1}
               >
-                Confirmar desfecho
+                {t(`interventionStatusAction.${selectedIntervention.outcome}`)}
               </Button>
             )}
           </>
@@ -253,7 +291,7 @@ export default function InterventionOutcome({ ...props }) {
           open={selectedIntervention.open}
           width={
             outcomeData.header?.economyType == null
-              ? 400
+              ? 550
               : outcomeData.header?.economyType === 2
               ? 800
               : 600

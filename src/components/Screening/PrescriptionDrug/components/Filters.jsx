@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
@@ -9,6 +9,7 @@ import {
   CompressOutlined,
   AlertOutlined,
   AlertFilled,
+  DiffOutlined,
 } from "@ant-design/icons";
 import { Affix } from "antd";
 
@@ -26,6 +27,7 @@ import {
   setPrescriptionListOrder,
   savePreferences,
 } from "features/preferences/PreferencesSlice";
+import PrescriptionDiff from "features/prescription/PrescriptionDiff/PrescriptionDiff";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 
 import { ToolBox } from "../PrescriptionDrug.style";
@@ -37,6 +39,7 @@ export default function Filters({
   showMultipleSelection = true,
   showPerspective = true,
   showVizMode = true,
+  showDiff = true,
 }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -56,6 +59,10 @@ export default function Filters({
   const prescriptionListOrder = useSelector(
     (state) => state.preferences.prescription.listOrder
   );
+  const prescriptionHasDiff = useSelector(
+    (state) => state.prescriptions.single.data.diff.hasDiff
+  );
+  const [prescriptionDiffModal, setPrescriptionDiffModal] = useState(false);
 
   const filterOptions = () => {
     const items = [
@@ -291,6 +298,24 @@ export default function Filters({
             </Tooltip>
           )}
 
+          {showDiff && (
+            <Tooltip
+              title={
+                prescriptionHasDiff
+                  ? `Abrir Comparativo de Vigências (Beta)`
+                  : "Não foram encontrados itens adicionados/removidos entre as vigências"
+              }
+            >
+              <Button
+                shape="circle"
+                icon={<DiffOutlined />}
+                onClick={() => setPrescriptionDiffModal(true)}
+                style={{ marginLeft: "10px" }}
+                disabled={!prescriptionHasDiff}
+              />
+            </Tooltip>
+          )}
+
           {showPrescriptionOrder && (
             <Tooltip
               title={
@@ -312,6 +337,12 @@ export default function Filters({
           )}
         </div>
       </Affix>
+      {prescriptionDiffModal && (
+        <PrescriptionDiff
+          open={prescriptionDiffModal}
+          setOpen={setPrescriptionDiffModal}
+        />
+      )}
     </ToolBox>
   );
 }

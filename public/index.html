@@ -122,7 +122,23 @@
           sessionSampleRate: 1,
           identityPoolId: "sa-east-1:45bad581-042d-4680-91e2-972f4074372d",
           endpoint: "https://dataplane.rum.sa-east-1.amazonaws.com",
-          telemetries: ["errors"],
+          telemetries: [
+            [
+              "errors",
+              {
+                ignore: (errorEvent) => {
+                  return (
+                    errorEvent &&
+                    errorEvent.message &&
+                    /^Request failed with status code 401/.test(
+                      errorEvent.message
+                    )
+                  );
+                },
+              },
+            ],
+            "http",
+          ],
           allowCookies: true,
           enableXRay: false,
           sessionAttributes: {

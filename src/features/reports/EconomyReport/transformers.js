@@ -105,6 +105,17 @@ const getList = (datasource, periodStart, periodEnd) => {
     const dateDiff = dayjs(endEconomyDate).diff(iniEconomyDate, "days") + 1;
     const economyDays = dateDiff > 0 ? dateDiff : 0;
     const economyValue = Big(i.economyDayValue).times(Big(economyDays));
+    let originPrice = null;
+    let destinyPrice = null;
+
+    if (!i.economyDayValueManual) {
+      originPrice = i.originPriceDay
+        ? Big(i.originPriceDay).times(Big(economyDays))
+        : null;
+      destinyPrice = i.destinyPriceDay
+        ? Big(i.destinyPriceDay || 0).times(Big(economyDays))
+        : null;
+    }
 
     return {
       ...i,
@@ -113,6 +124,8 @@ const getList = (datasource, periodStart, periodEnd) => {
         endEconomyDate,
         economyDays,
         economyValue,
+        originPrice,
+        destinyPrice,
       },
     };
   });

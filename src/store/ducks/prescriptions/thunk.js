@@ -143,6 +143,11 @@ export const fetchScreeningThunk =
       return;
     }
 
+    if (isEmpty(data)) {
+      dispatch(prescriptionsFetchSingleError("Erro ao buscar prescrição"));
+      return;
+    }
+
     const singlePrescription = transformPrescription(data);
     const requestConfig = {
       listToRequest: [singlePrescription],
