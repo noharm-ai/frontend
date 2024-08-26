@@ -11,13 +11,13 @@ import { DiffContainer } from "./PrescriptionDiff.style";
 
 export default function PrescriptionDiff({ open, setOpen }) {
   const addList = useSelector(
-    (state) => state.prescriptions.single.data.diff.addList
+    (state) => state.prescriptions.single.data.prescriptionCompare.addList
   );
   const removeList = useSelector(
-    (state) => state.prescriptions.single.data.diff.removeList
+    (state) => state.prescriptions.single.data.prescriptionCompare.removeList
   );
   const maxDate = useSelector(
-    (state) => state.prescriptions.single.data.diff.maxDate
+    (state) => state.prescriptions.single.data.prescriptionCompare.maxDate
   );
 
   return (
