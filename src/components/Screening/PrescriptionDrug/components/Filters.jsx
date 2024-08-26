@@ -60,7 +60,7 @@ export default function Filters({
     (state) => state.preferences.prescription.listOrder
   );
   const prescriptionHasDiff = useSelector(
-    (state) => state.prescriptions.single.data.diff.hasDiff
+    (state) => state.prescriptions.single.data.prescriptionCompare.hasDiff
   );
   const [prescriptionDiffModal, setPrescriptionDiffModal] = useState(false);
 

@@ -305,7 +305,7 @@ export const transformPrescription = ({
     dietCount: countList(dietList),
     uniqueDrugs: getUniqueDrugs(prescription, solution, procedures),
     alertsList: alerts,
-    diff: {
+    prescriptionCompare: {
       hasDiff: addList.length || removeList.length,
       minDate,
       maxDate,
