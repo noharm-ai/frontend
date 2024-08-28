@@ -75,7 +75,14 @@ export function EChartBase({
 
   return (
     <>
-      {imgUrl && <img src={imgUrl} style={{ width: "100%" }} alt="Gráfico" />}
+      {imgUrl && (
+        <img
+          src={imgUrl}
+          img-src={imgUrl}
+          style={{ width: "100%" }}
+          alt="Gráfico"
+        />
+      )}
       <div
         ref={chartRef}
         style={{
