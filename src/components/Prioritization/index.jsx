@@ -101,6 +101,8 @@ export default function Prioritization({
         type: "set_loading",
         payload: false,
       });
+
+      window.scrollTo({ top: 250, behavior: "smooth" });
     }, 150);
   };
 
@@ -299,7 +301,7 @@ export default function Prioritization({
                 hideOnSinglePage={true}
                 pageSize={PAGE_SIZE}
                 showSizeChanger={false}
-                onChange={(page) => onChangePage(page, false)}
+                onChange={(page) => onChangePage(page, true)}
               />
             </div>
           </ResultActions>
