@@ -193,6 +193,9 @@ export default function MultipleCheck({ open, setOpen }) {
             dataSource={list}
             pagination={false}
             size="small"
+            scroll={{
+              y: 400,
+            }}
           />
           <Form>
             <div className={`form-row`}>
