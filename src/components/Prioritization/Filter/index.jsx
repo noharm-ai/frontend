@@ -14,7 +14,13 @@ import {
 
 import Heading from "components/Heading";
 import { Row, Col } from "components/Grid";
-import { Select, RangeDatePicker, Checkbox, Input } from "components/Inputs";
+import {
+  Select,
+  RangeDatePicker,
+  Checkbox,
+  Input,
+  InputNumber,
+} from "components/Inputs";
 import Switch from "components/Switch";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
@@ -100,6 +106,10 @@ export default function Filter({
           prioritizationType === "patient" || prioritizationType === "cards"
             ? null
             : filter.prescriber,
+        diff: filter.diff,
+        globalScoreMin: filter.globalScoreMin,
+        globalScoreMax: filter.globalScoreMax,
+        pendingInterventions: filter.pendingInterventions,
       };
       const mixedParams = { ...params, ...forceParams };
       const finalParams = {};
@@ -147,6 +157,10 @@ export default function Filter({
       filter.idPatient,
       filter.intervals,
       filter.prescriber,
+      filter.diff,
+      filter.globalScoreMin,
+      filter.globalScoreMax,
+      filter.pendingInterventions,
       prioritizationType,
       date,
     ]
@@ -278,6 +292,10 @@ export default function Filter({
       idPatient: [],
       intervals: [],
       prescriber: null,
+      diff: null,
+      globalScoreMin: null,
+      globalScoreMax: null,
+      pendingInterventions: null,
     });
     setDate([dayjs(), null]);
   };
@@ -289,8 +307,11 @@ export default function Filter({
     Object.keys(filters).forEach((key) => {
       if (skip.indexOf(key) !== -1) return;
 
-      if (!isEmpty(filter[key]) || filter[key] === true || filter[key] === 1) {
+      if (!isEmpty(filter[key]) || filter[key] === true || filter[key] > 0) {
+        console.log("filters", key, filter[key]);
         count++;
+      } else {
+        console.log("empty", key, filter[key]);
       }
     });
 
@@ -897,6 +918,91 @@ export default function Filter({
               </Col>
             </Row>
           )}
+
+          <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={24}>
+              <Box>
+                <Row gutter={0} style={{ width: "100%" }}>
+                  <Col md={19}>
+                    <Heading as="label" size="14px">
+                      Possui diferentes:
+                    </Heading>
+                    <Select
+                      optionFilterProp="children"
+                      style={{ width: "100%" }}
+                      value={filter.diff}
+                      onChange={(value) =>
+                        setScreeningListFilter({ diff: value })
+                      }
+                      allowClear
+                    >
+                      <Select.Option value={0}>{t("labels.no")}</Select.Option>
+
+                      <Select.Option value={1}>{t("labels.yes")}</Select.Option>
+                    </Select>
+                  </Col>
+                </Row>
+              </Box>
+            </Col>
+          </Row>
+
+          <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={24}>
+              <Box>
+                <Row gutter={0} style={{ width: "100%" }}>
+                  <Col md={19}>
+                    <Heading as="label" size="14px">
+                      Possui intervenções pendentes:
+                    </Heading>
+                    <Select
+                      optionFilterProp="children"
+                      style={{ width: "100%" }}
+                      value={filter.pendingInterventions}
+                      onChange={(value) =>
+                        setScreeningListFilter({ pendingInterventions: value })
+                      }
+                      allowClear
+                    >
+                      <Select.Option value={0}>{t("labels.no")}</Select.Option>
+
+                      <Select.Option value={1}>{t("labels.yes")}</Select.Option>
+                    </Select>
+                  </Col>
+                </Row>
+              </Box>
+            </Col>
+          </Row>
+
+          <Row gutter={0} style={{ marginTop: "10px" }}>
+            <Col md={24}>
+              <Box>
+                <Row gutter={0} style={{ width: "100%" }}>
+                  <Col md={19}>
+                    <Heading as="label" htmlFor="patientReviewType" size="14px">
+                      Escore Global:
+                    </Heading>
+                    <InputNumber
+                      style={{ width: "150px" }}
+                      value={filter.globalScoreMin}
+                      onChange={(value) =>
+                        setScreeningListFilter({ globalScoreMin: value })
+                      }
+                      min={0}
+                    ></InputNumber>
+                    <span style={{ padding: "0 15px" }}>até</span>
+                    <InputNumber
+                      style={{ width: "150px" }}
+                      value={filter.globalScoreMax}
+                      onChange={(value) =>
+                        setScreeningListFilter({ globalScoreMax: value })
+                      }
+                      min={0}
+                    ></InputNumber>
+                  </Col>
+                </Row>
+              </Box>
+            </Col>
+          </Row>
 
           <Row gutter={[20, 0]} style={{ marginTop: "20px" }}>
             <Col>
