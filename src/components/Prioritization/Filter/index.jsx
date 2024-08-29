@@ -25,6 +25,10 @@ import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomple
 import FieldSubstanceClassAutocomplete from "features/fields/FieldSubstanceClassAutocomplete/FieldSubstanceClassAutocomplete";
 import { getSegmentDepartments } from "features/lists/ListsSlice";
 import { getUniqBy } from "utils/report";
+import {
+  setSelectedRows,
+  setSelectedRowsActive,
+} from "features/prescription/PrescriptionSlice";
 
 import { Box, SearchBox } from "./Filter.style";
 import "./index.css";
@@ -233,6 +237,9 @@ export default function Filter({
     if (!isEmpty(filter.idDrug)) {
       searchDrugs(null, { idDrug: filter.idDrug });
     }
+
+    dispatch(setSelectedRows([]));
+    dispatch(setSelectedRowsActive(false));
   }, [location.pathname]); // eslint-disable-line
 
   const disabledDate = (current) => {
@@ -248,6 +255,8 @@ export default function Filter({
   const search = () => {
     fetchPrescriptionsList(getParams());
     setOpen(false);
+    dispatch(setSelectedRows([]));
+    dispatch(setSelectedRowsActive(false));
   };
 
   const reset = () => {

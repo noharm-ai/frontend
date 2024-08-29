@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import isEmpty from "lodash.isempty";
 import styled from "styled-components/macro";
 import debounce from "lodash.debounce";
 import { useTranslation } from "react-i18next";
-import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  CheckOutlined,
+  BorderOutlined,
+} from "@ant-design/icons";
+import { uniq } from "utils/lodash";
 
 import breakpoints from "styles/breakpoints";
 import { useMedia } from "lib/hooks";
@@ -16,12 +23,23 @@ import Tag from "components/Tag";
 import { InfoIcon } from "components/Icon";
 import BackTop from "components/BackTop";
 import { Input } from "components/Inputs";
+import InitialPage from "features/preferences/InitialPage/InitialPage";
+import Dropdown from "components/Dropdown";
+import {
+  setSelectedRows,
+  setSelectedRowsActive,
+  toggleSelectedRows,
+  setMultipleCheckList,
+} from "features/prescription/PrescriptionSlice";
+import MultipleCheck from "features/prescription/MultipleCheck/MultipleCheck";
 
 import { toDataSource } from "utils";
 
 import columnsTable, { expandedRowRender } from "./columns";
 import Filter from "../Prioritization/Filter";
 import { FilterCard } from "../Prioritization/index.style";
+import { PageCard } from "styles/Utils.style";
+import { PageHeader } from "styles/PageHeader.style";
 
 const ScreeningTable = styled(Table)`
   .ant-table-title {
@@ -47,10 +65,16 @@ const TableInfo = styled.span`
     margin-right: 10px;
     margin-bottom: 15px;
     border: 1px solid #d9d9d9;
+    background: #fff;
   }
 
   button.active {
-    background-color: #eee;
+    background-color: #70bdc3;
+    border-color: #70bdc3;
+
+    span:not(.ant-tag) {
+      color: #fff;
+    }
   }
 
   .ant-input-affix-wrapper {
@@ -78,6 +102,14 @@ export default function ScreeningList({
   ...restProps
 }) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const selectedRows = useSelector(
+    (state) => state.prescriptionv2.selectedRows.list
+  );
+  const selectedRowsActive = useSelector(
+    (state) => state.prescriptionv2.selectedRows.active
+  );
+  const [multipleCheckModal, setMultipleCheckModal] = useState(false);
   const [expandedRows, setExpandedRows] = useState([]);
   const [sortOrder, setSortOrder] = useState({
     order: null,
@@ -88,13 +120,8 @@ export default function ScreeningList({
     searchKey: null,
   });
   const { isFetching, list, error, check } = prescriptions;
-  const bag = {
-    checkScreening,
-    check,
-    prioritizationType,
-  };
-  const dataSource = toDataSource(list, null, bag);
-  const columns = columnsTable(sortOrder, filter, t);
+  const pageTitle = t(`screeningList.title-${prioritizationType}`);
+
   const [title] = useMedia(
     [`(max-width: ${breakpoints.lg})`],
     [[theTitle]],
@@ -105,6 +132,108 @@ export default function ScreeningList({
     pending: 0,
     checked: 0,
   };
+
+  const selectAllRows = () => {
+    let rows = list || [];
+
+    if (filter.status) {
+      rows = rows.filter((i) => i.status === filter.status[0]);
+    }
+
+    rows = rows
+      .filter((i) => /^[0-9]*$/g.test(i.idPrescription))
+      .map((i) => i.idPrescription);
+
+    if (rows.length > 0) {
+      if (isAllSelected()) {
+        dispatch(
+          setSelectedRows(selectedRows.filter((s) => rows.indexOf(s) === -1))
+        );
+      } else {
+        const allRows = [...selectedRows, ...rows];
+        dispatch(setSelectedRows(uniq(allRows)));
+      }
+    }
+  };
+
+  const isAllSelected = () => {
+    if (!selectedRows.length) return false;
+
+    let selected = true;
+    let rows = list || [];
+
+    if (filter.status) {
+      rows = rows.filter((i) => i.status === filter.status[0]);
+    }
+
+    rows = rows
+      .filter((i) => /^[0-9]*$/g.test(i.idPrescription))
+      .map((i) => i.idPrescription);
+
+    rows.forEach((r) => {
+      if (selectedRows.indexOf(r) === -1) {
+        selected = false;
+      }
+    });
+
+    return selected;
+  };
+
+  const actionOptions = () => {
+    const items = [
+      {
+        key: "checkPrescription",
+        label: "Checar paciente",
+        icon: <CheckOutlined style={{ fontSize: "16px" }} />,
+        disabled: selectedRows.length === 0,
+      },
+      {
+        type: "divider",
+      },
+      {
+        key: "reset",
+        label: "Remover seleção",
+        icon: <BorderOutlined style={{ fontSize: "16px" }} />,
+        disabled: !selectedRowsActive,
+      },
+    ];
+
+    return {
+      items,
+      onClick: handleActionClick,
+    };
+  };
+
+  const handleActionClick = ({ key }) => {
+    switch (key) {
+      case "reset":
+        dispatch(setSelectedRowsActive(false));
+        break;
+      case "checkPrescription":
+        const cheklist = list.filter(
+          (item) => selectedRows.indexOf(item.idPrescription) !== -1
+        );
+        dispatch(setMultipleCheckList(cheklist));
+        setMultipleCheckModal(true);
+
+        break;
+      default:
+        console.error(key);
+    }
+  };
+
+  const bag = {
+    checkScreening,
+    check,
+    prioritizationType,
+    dispatch,
+    selectedRows,
+    toggleSelectedRows,
+    selectedRowsActive,
+    selectAllRows,
+    isAllSelected: isAllSelected(),
+  };
+  const dataSource = toDataSource(list, null, bag);
 
   // error message when fetch has error.
   const errorMessage = {
@@ -233,6 +362,9 @@ export default function ScreeningList({
   };
 
   const handleFilter = (e, status) => {
+    dispatch(setSelectedRows([]));
+    dispatch(setSelectedRowsActive(false));
+
     if (status) {
       setFilter({ status: status === "all" ? null : [status] });
       return;
@@ -299,7 +431,7 @@ export default function ScreeningList({
   };
 
   const info = (
-    <>
+    <div style={{ display: "flex", justifyContent: "space-between" }}>
       <TableInfo>
         <Input
           placeholder={t("screeningList.iptSearchPlaceholder")}
@@ -348,27 +480,47 @@ export default function ScreeningList({
           </Button>
         </Tooltip>
       </TableInfo>
-      {prioritizationType === "prescription" && (
-        <div>
-          <Button
-            onClick={(e) => orderByDate()}
-            type={sortOrder.columnKey === "date" ? "primary" : "default"}
-            icon={
-              sortOrder.columnKey === "date" ? (
-                sortOrder.order === "ascend" ? (
-                  <CaretUpOutlined />
-                ) : (
-                  <CaretDownOutlined />
-                )
-              ) : null
-            }
-            style={{ marginLeft: "10px" }}
-          >
-            Priorizar por data
-          </Button>
-        </div>
-      )}
-    </>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        {prioritizationType === "prescription" && (
+          <div>
+            <Button
+              onClick={(e) => orderByDate()}
+              type={sortOrder.columnKey === "date" ? "primary" : "default"}
+              icon={
+                sortOrder.columnKey === "date" ? (
+                  sortOrder.order === "ascend" ? (
+                    <CaretUpOutlined />
+                  ) : (
+                    <CaretDownOutlined />
+                  )
+                ) : null
+              }
+              style={{ marginLeft: "10px" }}
+            >
+              Priorizar por data
+            </Button>
+          </div>
+        )}
+        {prioritizationType === "patient" && (
+          <div>
+            <Dropdown.Button
+              style={{ marginLeft: "10px" }}
+              menu={actionOptions()}
+              type={selectedRowsActive ? "primary" : "default"}
+              onClick={() =>
+                !selectedRowsActive
+                  ? dispatch(setSelectedRowsActive(true))
+                  : false
+              }
+            >
+              {selectedRowsActive
+                ? `${selectedRows.length} selecionados`
+                : "Ativar seleção múltipla"}
+            </Dropdown.Button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 
   const orderByDate = () => {
@@ -386,6 +538,14 @@ export default function ScreeningList({
 
   return (
     <>
+      <PageHeader>
+        <div>
+          <h1 className="page-header-title">{pageTitle}</h1>
+        </div>
+        <div className="page-header-actions">
+          <InitialPage />
+        </div>
+      </PageHeader>
       <FilterCard>
         <Filter
           {...restProps}
@@ -397,26 +557,32 @@ export default function ScreeningList({
         />
       </FilterCard>
       {!isFetching && info}
-      <ScreeningTable
-        title={title}
-        columns={columns}
-        pagination={{
-          pageSize: 50,
-          position: ["topRight", "bottomRight"],
-          showSizeChanger: false,
-        }}
-        loading={isFetching}
-        locale={{ emptyText }}
-        expandedRowRender={expandedRowRender(t)}
-        dataSource={!isFetching ? dataSource : []}
-        onChange={handleTableChange}
-        showSorterTooltip={false}
-        columnTitle={<ExpandColumn expand={!expandedRows.length} />}
-        expandedRowKeys={expandedRows}
-        onExpand={(expanded, record) => handleRowExpand(record)}
-      />
+      <PageCard>
+        <ScreeningTable
+          title={title}
+          columns={columnsTable(sortOrder, filter, t, bag)}
+          pagination={{
+            pageSize: 50,
+            position: ["topRight", "bottomRight"],
+            showSizeChanger: false,
+          }}
+          loading={isFetching}
+          locale={{ emptyText }}
+          expandedRowRender={expandedRowRender(t)}
+          dataSource={!isFetching ? dataSource : []}
+          onChange={handleTableChange}
+          showSorterTooltip={false}
+          columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+          expandedRowKeys={expandedRows}
+          onExpand={(expanded, record) => handleRowExpand(record)}
+        />
+      </PageCard>
 
       <BackTop />
+      <MultipleCheck
+        open={multipleCheckModal}
+        setOpen={setMultipleCheckModal}
+      />
     </>
   );
 }

@@ -24,6 +24,10 @@ const initialState = {
     active: false,
     list: [],
   },
+  multipleCheck: {
+    status: "idle",
+    list: [],
+  },
 };
 
 export const getSingleClinicalNotes = createAsyncThunk(
@@ -44,6 +48,24 @@ export const startEvaluation = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.prescription.startEvaluation(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const fastCheckPrescription = createAsyncThunk(
+  "prescription/fast-check",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.prescription.setStatus({
+        idPrescription: params.idPrescription,
+        status: "s",
+        evaluationTime: 0,
+        fastCheck: true,
+      });
 
       return response.data;
     } catch (err) {
@@ -88,6 +110,9 @@ const prescriptionSlice = createSlice({
     selectSingleClinicalNotes(state, action) {
       state.singleClinicalNotes.id = action.payload;
     },
+    setMultipleCheckList(state, action) {
+      state.multipleCheck.list = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -123,6 +148,7 @@ export const {
   toggleSelectedRows,
   setSelectedRows,
   selectSingleClinicalNotes,
+  setMultipleCheckList,
 } = prescriptionSlice.actions;
 
 export default prescriptionSlice.reducer;
