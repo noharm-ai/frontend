@@ -1,12 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Row, Col } from "antd";
+import { Row, Col, Card } from "antd";
 import isEmpty from "lodash.isempty";
 import debounce from "lodash.debounce";
 
-import Heading from "components/Heading";
-import { Select, Checkbox, Input, InputNumber } from "components/Inputs";
+import { Select, Checkbox, Input, InputNumber, Radio } from "components/Inputs";
 import Switch from "components/Switch";
 import Tooltip from "components/Tooltip";
 import LoadBox from "components/LoadBox";
@@ -14,7 +13,7 @@ import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomple
 import FieldSubstanceClassAutocomplete from "features/fields/FieldSubstanceClassAutocomplete/FieldSubstanceClassAutocomplete";
 import { getUniqBy } from "utils/report";
 
-import { Box } from "../Filter.style";
+import { Form } from "styles/Form.style";
 
 export default function FilterFields({
   featureService,
@@ -130,251 +129,83 @@ export default function FilterFields({
     return getUniqBy(deps, "idDepartment");
   };
 
+  const yesNoOptionsNullable = [
+    { label: "Sim", value: 1 },
+    { label: "Não", value: 0 },
+    { label: "Todos", value: null },
+  ];
+
   return (
-    <Row gutter={[20, 20]} style={{ marginTop: "15px" }}>
-      <Col md={24} xl={18} xxl={14}>
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={24}>
-            <Box>
-              <Row gutter={0} style={{ width: "100%" }}>
-                <Col
-                  md={
-                    prioritizationType === "patient" ||
-                    prioritizationType === "cards"
-                      ? 19
-                      : 24
-                  }
+    <Row gutter={[20, 20]} style={{ marginTop: "15px", padding: "10px 0" }}>
+      <Col md={12}>
+        <Card
+          title="Prescrição"
+          bordered
+          size="small"
+          type="inner"
+          style={{ background: "#fafafa" }}
+        >
+          <Form>
+            <div className="form-row">
+              <div className="form-label">
+                <label>{t("screeningList.labelDepartment")}:</label>
+              </div>
+              <div className="form-input">
+                <Select
+                  id="departments"
+                  mode="multiple"
+                  optionFilterProp="children"
+                  placeholder={t("screeningList.labelDepartmentPlaceholder")}
+                  loading={departmentsStatus === "loading"}
+                  value={filter.idDepartment}
+                  onChange={onDepartmentChange}
+                  autoClearSearchValue={false}
+                  className={filter.idDepartment?.length ? "warning" : null}
+                  allowClear
                 >
-                  <Heading as="label" htmlFor="departments" size="14px">
-                    {t("screeningList.labelDepartment")}:
-                  </Heading>
-                  <Select
-                    id="departments"
-                    mode="multiple"
-                    optionFilterProp="children"
-                    style={{ width: "100%" }}
-                    placeholder={t("screeningList.labelDepartmentPlaceholder")}
-                    loading={departmentsStatus === "loading"}
-                    value={filter.idDepartment}
-                    onChange={onDepartmentChange}
-                    autoClearSearchValue={false}
-                    allowClear
-                  >
-                    {filterDepartments(filter.idSegment, departments).map(
-                      ({ idDepartment, idSegment, label }) => (
-                        <Select.Option
-                          key={`${idSegment}-${idDepartment}`}
-                          value={idDepartment}
-                        >
-                          {label}
-                        </Select.Option>
-                      )
-                    )}
-                  </Select>
-                </Col>
-                {prioritizationType === "patient" ||
-                  (prioritizationType === "cards" && (
-                    <Col md={5}>
-                      <Checkbox
-                        style={{ marginTop: "17px", marginLeft: "10px" }}
-                        checked={filter.currentDepartment}
-                        onChange={onCurrentDepartmentChange}
-                        id="gtm-currentDepartment-filter"
+                  {filterDepartments(filter.idSegment, departments).map(
+                    ({ idDepartment, idSegment, label }) => (
+                      <Select.Option
+                        key={`${idSegment}-${idDepartment}`}
+                        value={idDepartment}
                       >
-                        <Tooltip
-                          title={t("screeningList.labelCurrentDepartmentHint")}
-                          underline
-                        >
-                          {t("screeningList.labelCurrentDepartment")}
-                        </Tooltip>
-                      </Checkbox>
-                    </Col>
-                  ))}
-              </Row>
-            </Box>
-          </Col>
-        </Row>
-
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={19}>
-            <Box>
-              <Heading as="label" htmlFor="drugs-filter" size="14px">
-                {t("screeningList.labelDrug")}:
-              </Heading>
-              <Select
-                id="drugs-filter"
-                mode="multiple"
-                optionFilterProp="children"
-                style={{ width: "100%" }}
-                placeholder={t("screeningList.labelDrugPlaceholder")}
-                onChange={onDrugChange}
-                value={filter.idDrug}
-                notFoundContent={drugs.isFetching ? <LoadBox /> : null}
-                filterOption={false}
-                allowClear
-                onSearch={searchDrugsAutocomplete}
-              >
-                {drugs.list.map(({ idDrug, name }) => (
-                  <Select.Option key={idDrug} value={idDrug}>
-                    {name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Box>
-          </Col>
-          <Col md={5}>
-            <Checkbox
-              style={{ marginTop: "17px", marginLeft: "10px" }}
-              checked={filter.allDrugs}
-              onChange={onAllDrugsChange}
-              id="gtm-allDrugs-filter"
-            >
-              <Tooltip title={t("screeningList.labelAllDrugsHint")} underline>
-                {t("screeningList.labelAllDrugs")}
-              </Tooltip>
-            </Checkbox>
-          </Col>
-        </Row>
-
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={19}>
-            <Box>
-              <Heading as="label" htmlFor="drugs-filter" size="14px">
-                {t("labels.substance")}:
-              </Heading>
-              <FieldSubstanceAutocomplete
-                value={filter.substances}
-                onChange={(value) =>
-                  setScreeningListFilter({ substances: value })
-                }
-                style={{ width: "100%" }}
-              ></FieldSubstanceAutocomplete>
-            </Box>
-          </Col>
-        </Row>
-
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={19}>
-            <Box>
-              <Heading as="label" htmlFor="drugs-filter" size="14px">
-                {t("labels.substanceClass")}:
-              </Heading>
-              <FieldSubstanceClassAutocomplete
-                value={filter.substanceClasses}
-                onChange={(value) =>
-                  setScreeningListFilter({ substanceClasses: value })
-                }
-                style={{ width: "100%" }}
-              ></FieldSubstanceClassAutocomplete>
-            </Box>
-          </Col>
-        </Row>
-
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={24}>
-            <Box>
-              <Row gutter={0} style={{ width: "100%" }}>
-                <Col md={19}>
-                  <Heading as="label" size="14px">
-                    {t("labels.drugAttributes")}:
-                  </Heading>
-                  <Select
-                    mode="multiple"
-                    optionFilterProp="children"
-                    style={{ width: "100%" }}
-                    loading={segments.single.isFetching}
-                    value={filter.drugAttributes}
-                    onChange={onDrugAttributesChange}
-                    autoClearSearchValue={false}
-                    allowClear
-                  >
-                    {drugAttributesList.map((a) => (
-                      <Select.Option key={a} value={a}>
-                        {t(`drugAttributes.${a}`)}
+                        {label}
                       </Select.Option>
-                    ))}
-                  </Select>
-                </Col>
-              </Row>
-            </Box>
-          </Col>
-        </Row>
+                    )
+                  )}
+                </Select>
+                {(prioritizationType === "patient" ||
+                  prioritizationType === "cards") && (
+                  <div className="form-input">
+                    <Checkbox
+                      style={{ marginTop: "5px", fontWeight: 400 }}
+                      checked={filter.currentDepartment}
+                      onChange={onCurrentDepartmentChange}
+                      id="gtm-currentDepartment-filter"
+                    >
+                      <Tooltip
+                        title={t("screeningList.labelCurrentDepartmentHint")}
+                        underline
+                      >
+                        {t("screeningList.labelCurrentDepartment")}
+                      </Tooltip>
+                    </Checkbox>
+                  </div>
+                )}
+              </div>
+            </div>
 
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={19}>
-            <Box>
-              <Heading as="label" htmlFor="drugs-filter" size="14px">
-                {t("labels.frequencies")}:
-              </Heading>
-              <Select
-                id="frequencies-filter"
-                mode="multiple"
-                optionFilterProp="children"
-                style={{ width: "100%" }}
-                placeholder={t("screeningList.labelFrequenciesPlaceholder")}
-                value={filter.frequencies}
-                notFoundContent={frequencies.isFetching ? <LoadBox /> : null}
-                loading={frequencies.isFetching}
-                allowClear
-                autoClearSearchValue={false}
-                onClick={() => loadFrequencies()}
-                onChange={onFrequenciesChange}
-              >
-                {frequencies.list.map(({ id, description }) => (
-                  <Select.Option key={id} value={id}>
-                    {description} ({id})
-                  </Select.Option>
-                ))}
-              </Select>
-            </Box>
-          </Col>
-        </Row>
-
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={24}>
-            <Box>
-              <Row gutter={0} style={{ width: "100%" }}>
-                <Col md={19}>
-                  <Heading as="label" htmlFor="intervals" size="14px">
-                    Horários:
-                  </Heading>
-                  <Select
-                    id="intervals"
-                    mode="multiple"
-                    optionFilterProp="children"
-                    style={{ width: "100%" }}
-                    value={filter.intervals}
-                    onChange={(value) =>
-                      setScreeningListFilter({ intervals: value })
-                    }
-                    autoClearSearchValue={false}
-                    allowClear
-                  >
-                    {intervals.map((i) => (
-                      <Select.Option key={i} value={i}>
-                        {i}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Col>
-              </Row>
-            </Box>
-          </Col>
-        </Row>
-
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={24}>
-            <Box>
-              <Row gutter={0} style={{ width: "100%" }}>
-                <Col md={19}>
-                  <Heading as="label" htmlFor="indicators" size="14px">
-                    {t("tableHeader.alerts")}:
-                  </Heading>
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>{t("tableHeader.alerts")}:</label>
+                </div>
+                <div className="form-input">
                   <Select
                     id="indicators"
                     mode="multiple"
                     optionFilterProp="children"
-                    style={{ width: "100%" }}
+                    className={filter.indicators?.length ? "warning" : null}
                     placeholder={t("screeningList.labelAlertsPlaceholder")}
                     loading={segments.single.isFetching}
                     value={filter.indicators}
@@ -434,81 +265,338 @@ export default function FilterFields({
                       {t("drugAlertType.fasting")}
                     </Select.Option>
                   </Select>
-                </Col>
-              </Row>
-            </Box>
-          </Col>
-        </Row>
+                </div>
+              </div>
+            </div>
 
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={19}>
-            <Box>
-              <Heading as="label" size="14px">
-                Convênio:
-              </Heading>
-              <Input
-                style={{ width: "100%" }}
-                value={filter.insurance}
-                onChange={({ target }) => onInsuranceChange(target.value)}
-              ></Input>
-            </Box>
-          </Col>
-        </Row>
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Convênio:</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    className={filter.insurance ? "warning" : null}
+                    value={filter.insurance}
+                    onChange={({ target }) => onInsuranceChange(target.value)}
+                  ></Input>
+                </div>
+              </div>
+            </div>
 
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={24}>
-            <Box>
-              <Row gutter={0} style={{ width: "100%" }}>
-                <Col md={19}>
-                  <Heading as="label" htmlFor="patientStatus" size="14px">
-                    {t("tableHeader.patientStatus")}:
-                  </Heading>
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Possui diferentes:</label>
+                </div>
+                <div className="form-input">
+                  <Radio.Group
+                    options={yesNoOptionsNullable}
+                    optionType="button"
+                    onChange={({ target: { value } }) =>
+                      setScreeningListFilter({ diff: value })
+                    }
+                    value={filter.diff}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Possui intervenções pendentes:</label>
+                </div>
+                <div className="form-input">
+                  <Radio.Group
+                    options={yesNoOptionsNullable}
+                    optionType="button"
+                    onChange={({ target: { value } }) =>
+                      setScreeningListFilter({ pendingInterventions: value })
+                    }
+                    value={filter.pendingInterventions}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Escore global:</label>
+                </div>
+                <div className="form-input">
+                  <InputNumber
+                    style={{ width: "150px" }}
+                    className={filter.globalScoreMin ? "warning" : null}
+                    value={filter.globalScoreMin}
+                    onChange={(value) =>
+                      setScreeningListFilter({ globalScoreMin: value })
+                    }
+                    min={0}
+                  ></InputNumber>
+                  <span style={{ padding: "0 15px" }}>até</span>
+                  <InputNumber
+                    style={{ width: "150px" }}
+                    className={filter.globalScoreMax ? "warning" : null}
+                    value={filter.globalScoreMax}
+                    onChange={(value) =>
+                      setScreeningListFilter({ globalScoreMax: value })
+                    }
+                    min={0}
+                  ></InputNumber>
+                </div>
+              </div>
+            </div>
+
+            {(prioritizationType === "conciliation" ||
+              prioritizationType === "prescription") && (
+              <div className="form-row">
+                <div className="form-row">
+                  <div className="form-label">
+                    <label>
+                      {prioritizationType === "conciliation"
+                        ? t("labels.responsible")
+                        : t("labels.prescriber")}
+                      :
+                    </label>
+                  </div>
+                  <div className="form-input">
+                    <Input
+                      className={filter.prescriber ? "warning" : null}
+                      value={filter.prescriber}
+                      onChange={({ target }) =>
+                        setScreeningListFilter({ prescriber: target.value })
+                      }
+                    ></Input>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>{t("screeningList.labelPendingPrescription")}</label>
+                </div>
+                <div className="form-input">
+                  <Switch
+                    onChange={onPendingChange}
+                    checked={filter.pending === 1}
+                    id="gtm-pending-filter"
+                  />
+                </div>
+              </div>
+            </div>
+          </Form>
+        </Card>
+      </Col>
+
+      <Col md={12}>
+        <Card
+          title="Medicamentos"
+          bordered
+          size="small"
+          type="inner"
+          style={{ background: "#fafafa" }}
+        >
+          <Form>
+            <div className="form-row">
+              <div className="form-label">
+                <label>{t("screeningList.labelDrug")}:</label>
+              </div>
+              <div className="form-input">
+                <Select
+                  id="drugs-filter"
+                  mode="multiple"
+                  optionFilterProp="children"
+                  className={filter.idDrug?.length ? "warning" : null}
+                  placeholder={t("screeningList.labelDrugPlaceholder")}
+                  onChange={onDrugChange}
+                  value={filter.idDrug}
+                  notFoundContent={drugs.isFetching ? <LoadBox /> : null}
+                  filterOption={false}
+                  allowClear
+                  onSearch={searchDrugsAutocomplete}
+                >
+                  {drugs.list.map(({ idDrug, name }) => (
+                    <Select.Option key={idDrug} value={idDrug}>
+                      {name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+              <div className="form-input">
+                <Checkbox
+                  style={{ marginTop: "5px" }}
+                  checked={filter.allDrugs}
+                  onChange={onAllDrugsChange}
+                  id="gtm-allDrugs-filter"
+                >
+                  <Tooltip
+                    title={t("screeningList.labelAllDrugsHint")}
+                    underline
+                  >
+                    {t("screeningList.labelAllDrugs")}
+                  </Tooltip>
+                </Checkbox>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label> {t("labels.drugAttributes")}:</label>
+                </div>
+                <div className="form-input">
                   <Select
-                    id="patientStatus"
+                    mode="multiple"
                     optionFilterProp="children"
-                    style={{ width: "100%" }}
-                    placeholder={t(
-                      "screeningList.labelPatientStatusPlaceholder"
-                    )}
+                    className={filter.drugAttributes?.length ? "warning" : null}
                     loading={segments.single.isFetching}
-                    value={filter.patientStatus}
-                    onChange={onPatientStatusChange}
+                    value={filter.drugAttributes}
+                    onChange={onDrugAttributesChange}
                     autoClearSearchValue={false}
                     allowClear
                   >
-                    <Select.Option value="DISCHARGED">
-                      Paciente com alta
-                    </Select.Option>
-
-                    <Select.Option value="ACTIVE">
-                      Paciente internado
-                    </Select.Option>
+                    {drugAttributesList.map((a) => (
+                      <Select.Option key={a} value={a}>
+                        {t(`drugAttributes.${a}`)}
+                      </Select.Option>
+                    ))}
                   </Select>
-                </Col>
-              </Row>
-            </Box>
-          </Col>
-        </Row>
+                </div>
+              </div>
+            </div>
 
-        {featureService.hasPatientRevision() &&
-          (prioritizationType === "patient" ||
-            prioritizationType === "cards") && (
-            <Row gutter={0} style={{ marginTop: "10px" }}>
-              <Col md={24}>
-                <Box>
-                  <Row gutter={0} style={{ width: "100%" }}>
-                    <Col md={19}>
-                      <Heading
-                        as="label"
-                        htmlFor="patientReviewType"
-                        size="14px"
-                      >
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>{t("labels.frequencies")}:</label>
+                </div>
+                <div className="form-input">
+                  <Select
+                    id="frequencies-filter"
+                    mode="multiple"
+                    optionFilterProp="children"
+                    className={filter.frequencies?.length ? "warning" : null}
+                    placeholder={t("screeningList.labelFrequenciesPlaceholder")}
+                    value={filter.frequencies}
+                    notFoundContent={
+                      frequencies.isFetching ? <LoadBox /> : null
+                    }
+                    loading={frequencies.isFetching}
+                    allowClear
+                    autoClearSearchValue={false}
+                    onClick={() => loadFrequencies()}
+                    onChange={onFrequenciesChange}
+                  >
+                    {frequencies.list.map(({ id, description }) => (
+                      <Select.Option key={id} value={id}>
+                        {description} ({id})
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Horários:</label>
+                </div>
+                <div className="form-input">
+                  <Select
+                    id="intervals"
+                    mode="multiple"
+                    optionFilterProp="children"
+                    className={filter.intervals?.length ? "warning" : null}
+                    value={filter.intervals}
+                    onChange={(value) =>
+                      setScreeningListFilter({ intervals: value })
+                    }
+                    autoClearSearchValue={false}
+                    allowClear
+                  >
+                    {intervals.map((i) => (
+                      <Select.Option key={i} value={i}>
+                        {i}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>{t("labels.substance")}:</label>
+                </div>
+                <div className="form-input">
+                  <FieldSubstanceAutocomplete
+                    value={filter.substances}
+                    onChange={(value) =>
+                      setScreeningListFilter({ substances: value })
+                    }
+                    className={filter.substances?.length ? "warning" : null}
+                  ></FieldSubstanceAutocomplete>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>{t("labels.substanceClass")}:</label>
+                </div>
+                <div className="form-input">
+                  <FieldSubstanceClassAutocomplete
+                    value={filter.substanceClasses}
+                    onChange={(value) =>
+                      setScreeningListFilter({ substanceClasses: value })
+                    }
+                    className={
+                      filter.substanceClasses?.length ? "warning" : null
+                    }
+                  ></FieldSubstanceClassAutocomplete>
+                </div>
+              </div>
+            </div>
+          </Form>
+        </Card>
+      </Col>
+
+      <Col md={12}>
+        <Card
+          title="Paciente"
+          bordered
+          size="small"
+          type="inner"
+          style={{ background: "#fafafa" }}
+        >
+          <Form>
+            {featureService.hasPatientRevision() &&
+              (prioritizationType === "patient" ||
+                prioritizationType === "cards") && (
+                <div className="form-row">
+                  <div className="form-row">
+                    <div className="form-label">
+                      <label>
                         {t("screeningList.labelPatientReviewType")}:
-                      </Heading>
+                      </label>
+                    </div>
+                    <div className="form-input">
                       <Select
                         id="patientReviewType"
                         optionFilterProp="children"
-                        style={{ width: "100%" }}
+                        className={
+                          filter.patientReviewType !== null &&
+                          filter.patientReviewType !== undefined
+                            ? "warning"
+                            : null
+                        }
                         placeholder={t(
                           "screeningList.labelPatientReviewTypePlaceholder"
                         )}
@@ -526,27 +614,54 @@ export default function FilterFields({
                           {t("labels.reviewed")}
                         </Select.Option>
                       </Select>
-                    </Col>
-                  </Row>
-                </Box>
-              </Col>
-            </Row>
-          )}
+                    </div>
+                  </div>
+                </div>
+              )}
 
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={24}>
-            <Box>
-              <Row gutter={0} style={{ width: "100%" }}>
-                <Col md={19}>
-                  <Heading as="label" htmlFor="indicators" size="14px">
-                    ID Paciente:
-                  </Heading>
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>{t("tableHeader.patientStatus")}:</label>
+                </div>
+                <div className="form-input">
+                  <Select
+                    id="patientStatus"
+                    optionFilterProp="children"
+                    className={filter.patientStatus ? "warning" : null}
+                    placeholder={t(
+                      "screeningList.labelPatientStatusPlaceholder"
+                    )}
+                    loading={segments.single.isFetching}
+                    value={filter.patientStatus}
+                    onChange={onPatientStatusChange}
+                    autoClearSearchValue={false}
+                    allowClear
+                  >
+                    <Select.Option value="DISCHARGED">
+                      Paciente com alta
+                    </Select.Option>
+
+                    <Select.Option value="ACTIVE">
+                      Paciente internado
+                    </Select.Option>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>ID Paciente:</label>
+                </div>
+                <div className="form-input">
                   <Select
                     id="idPatient"
                     mode="tags"
                     placeholder="Digite o ID do paciente e pressione enter"
                     tokenSeparators={[","]}
-                    style={{ width: "100%" }}
+                    className={filter.idPatient?.length ? "warning" : null}
                     value={filter.idPatient}
                     onChange={(value) =>
                       setScreeningListFilter({ idPatient: value })
@@ -554,144 +669,11 @@ export default function FilterFields({
                     notFoundContent="Digite o ID do paciente e pressione enter. Mais de um ID pode ser informado."
                     allowClear
                   ></Select>
-                </Col>
-              </Row>
-            </Box>
-          </Col>
-        </Row>
-
-        {(prioritizationType === "conciliation" ||
-          prioritizationType === "prescription") && (
-          <Row gutter={0} style={{ marginTop: "10px" }}>
-            <Col md={24}>
-              <Box>
-                <Row gutter={0} style={{ width: "100%" }}>
-                  <Col md={19}>
-                    <Heading as="label" htmlFor="indicators" size="14px">
-                      {prioritizationType === "conciliation"
-                        ? t("labels.responsible")
-                        : t("labels.prescriber")}
-                    </Heading>
-                    <Input
-                      style={{ width: "100%" }}
-                      value={filter.prescriber}
-                      onChange={({ target }) =>
-                        setScreeningListFilter({ prescriber: target.value })
-                      }
-                    ></Input>
-                  </Col>
-                </Row>
-              </Box>
-            </Col>
-          </Row>
-        )}
-
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={24}>
-            <Box>
-              <Row gutter={0} style={{ width: "100%" }}>
-                <Col md={19}>
-                  <Heading as="label" size="14px">
-                    Possui diferentes:
-                  </Heading>
-                  <Select
-                    optionFilterProp="children"
-                    style={{ width: "100%" }}
-                    value={filter.diff}
-                    onChange={(value) =>
-                      setScreeningListFilter({ diff: value })
-                    }
-                    allowClear
-                  >
-                    <Select.Option value={0}>{t("labels.no")}</Select.Option>
-
-                    <Select.Option value={1}>{t("labels.yes")}</Select.Option>
-                  </Select>
-                </Col>
-              </Row>
-            </Box>
-          </Col>
-        </Row>
-
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={24}>
-            <Box>
-              <Row gutter={0} style={{ width: "100%" }}>
-                <Col md={19}>
-                  <Heading as="label" size="14px">
-                    Possui intervenções pendentes:
-                  </Heading>
-                  <Select
-                    optionFilterProp="children"
-                    style={{ width: "100%" }}
-                    value={filter.pendingInterventions}
-                    onChange={(value) =>
-                      setScreeningListFilter({ pendingInterventions: value })
-                    }
-                    allowClear
-                  >
-                    <Select.Option value={0}>{t("labels.no")}</Select.Option>
-
-                    <Select.Option value={1}>{t("labels.yes")}</Select.Option>
-                  </Select>
-                </Col>
-              </Row>
-            </Box>
-          </Col>
-        </Row>
-
-        <Row gutter={0} style={{ marginTop: "10px" }}>
-          <Col md={24}>
-            <Box>
-              <Row gutter={0} style={{ width: "100%" }}>
-                <Col md={19}>
-                  <Heading as="label" htmlFor="patientReviewType" size="14px">
-                    Escore Global:
-                  </Heading>
-                  <InputNumber
-                    style={{ width: "150px" }}
-                    value={filter.globalScoreMin}
-                    onChange={(value) =>
-                      setScreeningListFilter({ globalScoreMin: value })
-                    }
-                    min={0}
-                  ></InputNumber>
-                  <span style={{ padding: "0 15px" }}>até</span>
-                  <InputNumber
-                    style={{ width: "150px" }}
-                    value={filter.globalScoreMax}
-                    onChange={(value) =>
-                      setScreeningListFilter({ globalScoreMax: value })
-                    }
-                    min={0}
-                  ></InputNumber>
-                </Col>
-              </Row>
-            </Box>
-          </Col>
-        </Row>
-
-        <Row gutter={[20, 0]} style={{ marginTop: "20px" }}>
-          <Col>
-            <Box flexDirection="row" alignItems="center">
-              <Heading
-                as="label"
-                htmlFor="pending-filter"
-                size="14px"
-                style={{ minWidth: "230px" }}
-              >
-                {t("screeningList.labelPendingPrescription")}
-              </Heading>
-
-              <Switch
-                style={{ marginLeft: "10px" }}
-                onChange={onPendingChange}
-                checked={filter.pending === 1}
-                id="gtm-pending-filter"
-              />
-            </Box>
-          </Col>
-        </Row>
+                </div>
+              </div>
+            </div>
+          </Form>
+        </Card>
       </Col>
     </Row>
   );

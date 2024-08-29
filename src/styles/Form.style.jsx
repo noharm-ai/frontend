@@ -60,11 +60,38 @@ export const Form = styled.form`
       input {
         background: #f6ffed;
       }
+
+      .ant-select-selector {
+        background: #f6ffed !important;
+      }
     }
 
     .error {
       input {
         background: #fff2f0;
+      }
+    }
+
+    .warning {
+      input {
+        background: #fffbe6;
+      }
+
+      &.ant-input {
+        background: #fffbe6;
+      }
+
+      .ant-select-selector {
+        background: #fffbe6 !important;
+      }
+
+      .ant-input-number-group-addon {
+        background: #fffbe6;
+      }
+
+      .ant-input-number-input-wrap {
+        background: #fffbe6;
+        border-radius: 5px;
       }
     }
 
