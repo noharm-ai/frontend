@@ -64,9 +64,17 @@ export const ResultActions = styled.div`
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 1rem;
+  transition: all 0.3s linear;
 
   @media (min-width: ${breakpoints.xxl}) {
     padding: 0 1rem;
+  }
+
+  &.affixed {
+    background: #fff;
+    padding: 5px 1rem;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
   }
 
   .filters {

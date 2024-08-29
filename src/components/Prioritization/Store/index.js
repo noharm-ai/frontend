@@ -3,6 +3,7 @@ import { getListStats } from "../Util";
 export const initState = () => {
   return {
     loading: false,
+    affixed: false,
     currentPage: 1,
     filter: {},
     prioritization: "globalScore",
@@ -16,6 +17,8 @@ export const reducer = (state, action) => {
   switch (action.type) {
     case "set_loading":
       return { ...state, loading: action.payload };
+    case "set_affixed":
+      return { ...state, affixed: action.payload };
     case "set_page":
       return { ...state, currentPage: action.payload };
     case "set_filter":

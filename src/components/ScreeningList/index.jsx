@@ -10,6 +10,7 @@ import {
   CheckOutlined,
   BorderOutlined,
 } from "@ant-design/icons";
+import { Affix } from "antd";
 import { uniq } from "utils/lodash";
 
 import breakpoints from "styles/breakpoints";
@@ -556,7 +557,7 @@ export default function ScreeningList({
           featureService={featureService}
         />
       </FilterCard>
-      {!isFetching && info}
+      {!isFetching && <Affix offsetTop={10}>{info}</Affix>}
       <PageCard>
         <ScreeningTable
           title={title}
