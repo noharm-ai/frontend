@@ -41,7 +41,19 @@ export default function MultipleCheck({ open, setOpen }) {
     {
       title: "Atendimento",
       align: "center",
-      render: (entry, record) => record.admissionNumber,
+      render: (entry, record) => {
+        return (
+          <Tooltip title="Clique para visualizar a Prescrição-Dia do paciente">
+            <a
+              href={`/prescricao/${record.idPrescription}`}
+              rel="noreferrer"
+              target="_blank"
+            >
+              {record.admissionNumber}
+            </a>
+          </Tooltip>
+        );
+      },
     },
     {
       title: "Idade",
