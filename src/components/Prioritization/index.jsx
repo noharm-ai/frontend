@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import isEmpty from "lodash.isempty";
 import debounce from "lodash.debounce";
 import { useTransition, animated } from "@react-spring/web";
-import { Spin, Pagination, Tag, Empty, Alert } from "antd";
+import { Spin, Pagination, Tag, Empty, Alert, Affix } from "antd";
 import { useTranslation } from "react-i18next";
 import { CaretUpOutlined } from "@ant-design/icons";
 
@@ -101,6 +101,8 @@ export default function Prioritization({
         type: "set_loading",
         payload: false,
       });
+
+      window.scrollTo({ top: 250, behavior: "smooth" });
     }, 150);
   };
 
@@ -197,102 +199,113 @@ export default function Prioritization({
         />
       </FilterCard>
       <Spin spinning={isFetching || state.loading}>
-        <ResultActions>
-          <div className="filters">
-            <div className="filters-item">
-              <div className="filters-item-label">Priorizar por:</div>
-              <div className="filters-item-value flex">
-                <Select
-                  className="prioritization-select"
-                  optionFilterProp="children"
-                  onChange={onChangePrioritization}
-                  onMouseEnter={() =>
-                    dispatch({
-                      type: "highlight_prioritization",
-                      payload: true,
-                    })
-                  }
-                  onMouseLeave={() =>
-                    dispatch({
-                      type: "highlight_prioritization",
-                      payload: false,
-                    })
-                  }
-                  value={state.prioritization}
-                  style={{ width: 200 }}
-                >
-                  {ORDER_OPTIONS.map((o) => (
-                    <Select.Option value={o.key} key={o.key}>
-                      {o.label}
+        <Affix
+          offsetTop={0}
+          onChange={(value) =>
+            dispatch({
+              type: "set_affixed",
+              payload: value,
+            })
+          }
+        >
+          <ResultActions className={state.affixed ? "affixed" : ""}>
+            <div className="filters">
+              <div className="filters-item">
+                <div className="filters-item-label">Priorizar por:</div>
+                <div className="filters-item-value flex">
+                  <Select
+                    className="prioritization-select"
+                    optionFilterProp="children"
+                    onChange={onChangePrioritization}
+                    onMouseEnter={() =>
+                      dispatch({
+                        type: "highlight_prioritization",
+                        payload: true,
+                      })
+                    }
+                    onMouseLeave={() =>
+                      dispatch({
+                        type: "highlight_prioritization",
+                        payload: false,
+                      })
+                    }
+                    value={state.prioritization}
+                    style={{ width: 200 }}
+                  >
+                    {ORDER_OPTIONS.map((o) => (
+                      <Select.Option value={o.key} key={o.key}>
+                        {o.label}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                  <div>
+                    <Tooltip title="Alterar ordem">
+                      <Button
+                        className={`gtm-btn-change-order ${
+                          state.prioritizationOrder === "desc"
+                            ? "order-desc"
+                            : "order-asc"
+                        }`}
+                        shape="circle"
+                        icon={<CaretUpOutlined />}
+                        onClick={toggleOrder}
+                        style={{ marginLeft: "5px" }}
+                      />
+                    </Tooltip>
+                  </div>
+                </div>
+              </div>
+
+              <div className="filters-item">
+                <div className="filters-item-label">Situação:</div>
+                <div className="filters-item-value">
+                  <Select
+                    placeholder="Situação"
+                    optionFilterProp="children"
+                    defaultValue="all"
+                    onChange={onChangeStatus}
+                    value={state.filter.status || "all"}
+                  >
+                    <Select.Option value="0" key="pending">
+                      Pendentes{" "}
+                      <Tag color="orange">{state.listStats.pending}</Tag>
                     </Select.Option>
-                  ))}
-                </Select>
-                <div>
-                  <Tooltip title="Alterar ordem">
-                    <Button
-                      className={`gtm-btn-change-order ${
-                        state.prioritizationOrder === "desc"
-                          ? "order-desc"
-                          : "order-asc"
-                      }`}
-                      shape="circle"
-                      icon={<CaretUpOutlined />}
-                      onClick={toggleOrder}
-                      style={{ marginLeft: "5px" }}
-                    />
-                  </Tooltip>
+                    <Select.Option value="s" key="checked">
+                      Checadas{" "}
+                      <Tag color="green">{state.listStats.checked}</Tag>
+                    </Select.Option>
+                    <Select.Option value="all" key="all">
+                      Todas <Tag>{state.listStats.all}</Tag>
+                    </Select.Option>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="filters-item">
+                <div className="filters-item-label">
+                  Buscar por atendimento/nome:
+                </div>
+                <div className="filters-item-value">
+                  <Input
+                    style={{ width: 300 }}
+                    allowClear
+                    onChange={onClientSearch}
+                  />
                 </div>
               </div>
             </div>
-
-            <div className="filters-item">
-              <div className="filters-item-label">Situação:</div>
-              <div className="filters-item-value">
-                <Select
-                  placeholder="Situação"
-                  optionFilterProp="children"
-                  defaultValue="all"
-                  onChange={onChangeStatus}
-                  value={state.filter.status || "all"}
-                >
-                  <Select.Option value="0" key="pending">
-                    Pendentes{" "}
-                    <Tag color="orange">{state.listStats.pending}</Tag>
-                  </Select.Option>
-                  <Select.Option value="s" key="checked">
-                    Checadas <Tag color="green">{state.listStats.checked}</Tag>
-                  </Select.Option>
-                  <Select.Option value="all" key="all">
-                    Todas <Tag>{state.listStats.all}</Tag>
-                  </Select.Option>
-                </Select>
-              </div>
+            <div className="pagination">
+              <Pagination
+                current={state.currentPage}
+                total={filteredList && filteredList.length}
+                hideOnSinglePage={true}
+                pageSize={PAGE_SIZE}
+                showSizeChanger={false}
+                onChange={(page) => onChangePage(page, true)}
+              />
             </div>
-
-            <div className="filters-item">
-              <div className="filters-item-label">
-                Buscar por atendimento/nome:
-              </div>
-              <div className="filters-item-value">
-                <Input
-                  style={{ width: 300 }}
-                  allowClear
-                  onChange={onClientSearch}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="pagination">
-            <Pagination
-              current={state.currentPage}
-              total={filteredList && filteredList.length}
-              hideOnSinglePage={true}
-              pageSize={PAGE_SIZE}
-              showSizeChanger={false}
-              onChange={(page) => onChangePage(page, false)}
-            />
-          </div>
-        </ResultActions>
+          </ResultActions>
+        </Affix>
         <PrioritizationPage collapsed={siderCollapsed}>
           <>
             {!(isFetching || state.loading) && !filteredList.length && (

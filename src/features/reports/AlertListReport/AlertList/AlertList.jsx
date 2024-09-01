@@ -59,6 +59,7 @@ export default function AlertList() {
             levels={[record.level]}
             count={record.level}
             showDescription
+            showTooltip={false}
           />
         );
       },

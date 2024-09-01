@@ -1,8 +1,13 @@
 import React from "react";
 import styled from "styled-components/macro";
-import { SearchOutlined, LoadingOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  LoadingOutlined,
+  CheckSquareOutlined,
+  BorderOutlined,
+} from "@ant-design/icons";
 
-import { Link } from "components/Button";
+import Button, { Link } from "components/Button";
 import { InfoIcon } from "components/Icon";
 import Tooltip from "components/Tooltip";
 import Table from "components/Table";
@@ -68,7 +73,32 @@ const ScreeningActions = ({
   check,
   prioritizationType,
   t,
+  selectedRowsActive,
+  selectedRows,
+  dispatch,
+  toggleSelectedRows,
 }) => {
+  if (selectedRowsActive) {
+    const selected = selectedRows.indexOf(idPrescription) !== -1;
+    return (
+      <Tooltip title={selected ? null : "Selecionar"}>
+        <Button
+          type={selected ? "primary" : "default"}
+          onClick={() => {
+            dispatch(toggleSelectedRows(idPrescription));
+          }}
+          icon={
+            selected ? (
+              <CheckSquareOutlined style={{ fontSize: 16 }} />
+            ) : (
+              <BorderOutlined style={{ fontSize: 16 }} />
+            )
+          }
+        ></Button>
+      </Tooltip>
+    );
+  }
+
   return (
     <ActionsBox>
       <Tooltip title={t("screeningList.btnOpen")} placement="left">
@@ -166,7 +196,7 @@ const oddClass = (index) => (index % 2 ? "bg-light-gray" : "");
 
 const sortDirections = ["descend", "ascend"];
 
-const columns = (sortedInfo, filteredInfo, t) => {
+const columns = (sortedInfo, filteredInfo, t, bag) => {
   let index = 0;
 
   const patientRiskColumns = [
@@ -457,7 +487,27 @@ const columns = (sortedInfo, filteredInfo, t) => {
       },
     },
     {
-      title: t("screeningList.actions"),
+      title: () => {
+        if (bag.selectedRowsActive) {
+          return (
+            <Button
+              type={"default"}
+              onClick={() => {
+                bag.selectAllRows();
+              }}
+              icon={
+                bag.isAllSelected ? (
+                  <CheckSquareOutlined style={{ fontSize: 16 }} />
+                ) : (
+                  <BorderOutlined style={{ fontSize: 16 }} />
+                )
+              }
+            ></Button>
+          );
+        }
+
+        return t("screeningList.actions");
+      },
       key: "operations",
       width: 10,
       align: "center",

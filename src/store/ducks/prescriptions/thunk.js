@@ -53,6 +53,8 @@ const {
   prescriptionsRemoveNotes,
 
   prescriptionsActionsSetModalVisibility,
+
+  prescriptionsMultipleCheckUpdateStatus,
 } = PrescriptionsCreators;
 
 export const fetchPrescriptionsListThunk =
@@ -373,3 +375,7 @@ export const removeNotesThunk =
       resolve(data.data);
     });
   };
+
+export const multipleCheckUpdateStatusThunk = (data, status) => (dispatch) => {
+  dispatch(prescriptionsMultipleCheckUpdateStatus(data, status));
+};

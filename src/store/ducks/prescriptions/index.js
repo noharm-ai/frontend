@@ -44,6 +44,8 @@ export const { Types, Creators } = createActions({
   prescriptionsRemoveNotes: ["id", "notesType"],
 
   prescriptionsReset: [],
+
+  prescriptionsMultipleCheckUpdateStatus: ["data", "status"],
 });
 
 const INITIAL_STATE = {
@@ -435,6 +437,28 @@ const updateListStatus = (state = INITIAL_STATE, { data }) => {
   };
 };
 
+const multipleCheckUpdateStatus = (state = INITIAL_STATE, { data, status }) => {
+  const list = [...state.list];
+
+  data.forEach((idPrescription) => {
+    const prescriptionIndex = list.findIndex(
+      (item) => item.idPrescription === idPrescription
+    );
+
+    if (prescriptionIndex !== -1) {
+      list[prescriptionIndex] = {
+        ...list[prescriptionIndex],
+        status,
+      };
+    }
+  });
+
+  return {
+    ...state,
+    list,
+  };
+};
+
 const updatePrescriptionDrugData = (
   state = INITIAL_STATE,
   { idPrescriptionDrug, source, data }
@@ -716,6 +740,8 @@ const HANDLERS = {
   [Types.PRESCRIPTIONS_ACTIONS_SET_MODAL_VISIBILITY]: setModalVisibility,
 
   [Types.PRESCRIPTIONS_REMOVE_NOTES]: removeNotes,
+
+  [Types.PRESCRIPTIONS_MULTIPLE_CHECK_UPDATE_STATUS]: multipleCheckUpdateStatus,
 
   [Types.PRESCRIPTIONS_RESET]: reset,
 };

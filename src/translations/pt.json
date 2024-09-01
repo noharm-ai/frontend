@@ -98,7 +98,7 @@
     "labelCurrentDepartment": "Setor atual",
     "labelCurrentDepartmentHint": "Considerar somente o setor atual do paciente",
     "labelDrug": "Medicamentos",
-    "labelDrugPlaceholder": "Selecione os medicamentos",
+    "labelDrugPlaceholder": "Digite para começar a pesquisar",
     "labelFrequenciesPlaceholder": "Selecione as frequências",
     "labelAllDrugs": "Todos",
     "labelAllDrugsHint": "Prescrição deve conter todos medicamentos selecionados",

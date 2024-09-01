@@ -4,7 +4,6 @@ import api from "services/api";
 import { transformSegments } from "utils/transformers";
 import { errorHandler } from "utils";
 import { Creators as DrugsCreators } from "../drugs";
-import { Creators as SegmentsCreators } from "../segments";
 import { Creators as OutliersCreators } from "./index";
 
 const {
@@ -56,11 +55,6 @@ const {
 
 const { drugsFetchListStart, drugsFetchListError, drugsFetchListSuccess } =
   DrugsCreators;
-const {
-  segmentsFetchListStart,
-  segmentsFetchListError,
-  segmentsFetchListSuccess,
-} = SegmentsCreators;
 
 export const generateDrugOutlierThunk =
   (params) => async (dispatch, getState) => {
@@ -146,7 +140,6 @@ export const saveOutlierThunk =
 export const fetchReferencesListThunk =
   (idSegment, idDrug, dose, frequency) => async (dispatch, getState) => {
     dispatch(drugsFetchListStart());
-    dispatch(segmentsFetchListStart());
     dispatch(outliersFetchListStart());
 
     const { access_token } = getState().auth.identify;
@@ -168,19 +161,7 @@ export const fetchReferencesListThunk =
 
     dispatch(drugsFetchListSuccess(drugsList));
 
-    // get segments list
-    const { data: segmentsData, error: segmentsError } = await api
-      .getSegments(access_token)
-      .catch(errorHandler);
-
-    if (!isEmpty(segmentsError)) {
-      dispatch(segmentsFetchListError(segmentsError));
-      return;
-    }
-
-    const segmentsList = transformSegments(segmentsData.data);
-
-    dispatch(segmentsFetchListSuccess(segmentsList));
+    const segmentsList = transformSegments(getState().segments.list);
 
     // get outliers list
     let drug;
