@@ -7,6 +7,7 @@ import {
 import { uniq } from "utils/lodash";
 import { getIMC, getCorporalSurface } from "utils";
 import { formatDate } from "utils/date";
+import dayjs from "dayjs";
 
 export const getCustomClinicalNote = (
   prescription,
@@ -37,6 +38,7 @@ export const getCustomClinicalNote = (
   );
 
   return clinicalNote
+    .replace("{{data_atual}}", formatDate(dayjs()))
     .replace("{{nome_paciente}}", prescription.data.namePatient)
     .replace("{{peso_paciente}}", getWeight(prescription.data.weight))
     .replace("{{altura_paciente}}", getHeight(prescription.data.height))
