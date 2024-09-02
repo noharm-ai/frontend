@@ -91,6 +91,10 @@ export default function MultipleCheck({ open, setOpen }) {
       ),
       align: "center",
       render: (entry, record) => {
+        if (record.alerts === 0) {
+          return "-";
+        }
+
         return (
           <DrugAlertLevelTag
             levels={[record.alertLevel]}
