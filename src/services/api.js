@@ -712,6 +712,12 @@ api.clinicalNotes.getSingle = (params) =>
     ...setHeaders(),
   });
 
+api.clinicalNotes.getUserLast = (params) =>
+  instance.get(`/notes/get-user-last`, {
+    params,
+    ...setHeaders(),
+  });
+
 /**
  * User admin
  */

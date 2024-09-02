@@ -56,6 +56,19 @@ export const getUserResetToken = createAsyncThunk(
   }
 );
 
+export const getUserLastClinicalNotes = createAsyncThunk(
+  "serverActions/get-last-clinical-notes",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.clinicalNotes.getUserLast(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const serverActionsSlice = createSlice({
   name: "serverActions",
   initialState,
