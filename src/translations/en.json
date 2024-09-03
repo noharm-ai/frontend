@@ -658,7 +658,12 @@
     "bed": "BED",
     "idPatient": "ID PATIENT",
     "originPrice": "ORIGIN PRICE",
-    "destinyPrice": "DESTINATION PRICE"
+    "destinyPrice": "DESTINATION PRICE",
+    "attrAntimicro": "ANTIMICROBIAL",
+    "attrMav": "HIGH VIGILANCE",
+    "attrControl": "CONTROLLED",
+    "attrNotStandard": "NOT STANDARD",
+    "attrQuimio": "CHEMOTHERAPEUTIC"
   },
 
   "reportcsvCulture": {

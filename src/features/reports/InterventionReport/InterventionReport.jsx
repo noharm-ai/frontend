@@ -77,6 +77,10 @@ export default function InterventionReport() {
       label: "Tipo de intervenção",
       type: "dict",
     },
+    drugAttrList: {
+      label: "Atributo do medicamento",
+      type: "list",
+    },
   };
 
   return (

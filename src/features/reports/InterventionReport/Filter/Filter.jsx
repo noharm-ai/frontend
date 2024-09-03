@@ -82,6 +82,7 @@ export default function Filter({ printRef }) {
     interventionType: "",
     cost: "",
     prescriptionError: "",
+    drugAttrList: [],
   };
 
   const reportManager = useFetchReport({
