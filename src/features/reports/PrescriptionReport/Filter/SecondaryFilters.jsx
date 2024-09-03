@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Select, Radio, InputNumber } from "components/Inputs";
+import { Select, Radio, InputNumber, DatePicker } from "components/Inputs";
 
 export default function SecondaryFilters() {
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
@@ -32,6 +32,18 @@ export default function SecondaryFilters() {
           }
           value={values.weekDays}
           optionType="button"
+        />
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          Feriados/Dias de folga:
+        </Heading>
+        <DatePicker
+          multiple
+          maxTagCount="responsive"
+          format="DD/MM/YYYY"
+          onChange={(dates) => setFieldValue({ daysOffList: dates })}
+          value={values.daysOffList}
         />
       </Col>
       <Col md={24} xl={16} xxl={14}>
