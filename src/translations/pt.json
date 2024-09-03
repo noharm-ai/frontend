@@ -669,7 +669,9 @@
     "attrMav": "ALTA VIGILANCIA",
     "attrControl": "CONTROLADO",
     "attrNotStandard": "NAO PADRONIZADO",
-    "attrQuimio": "QUIMIOTERAPICO"
+    "attrQuimio": "QUIMIOTERAPICO",
+    "globalScore": "ESCORE GLOBAL",
+    "evaluationTime": "TEMPO DE AVALIACAO"
   },
 
   "reportcsvCulture": {
