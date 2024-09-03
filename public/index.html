@@ -21,6 +21,10 @@
 
     <script>
       window.addEventListener("load", function () {
+        if (!UAParser) {
+          return;
+        }
+
         var uap = new UAParser();
         var uapResult = uap.getResult();
         console.info(uapResult);
