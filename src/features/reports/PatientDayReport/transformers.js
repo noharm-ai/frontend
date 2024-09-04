@@ -35,6 +35,14 @@ const getItensTotal = (datasource) => {
 };
 
 const filterDatasource = (datasource, filters) => {
+  const daysOff = [];
+
+  if (filters.daysOffList?.length) {
+    filters.daysOffList.forEach((dt) => {
+      daysOff.push(dt.toISOString().split("T")[0]);
+    });
+  }
+
   return datasource
     .filter(
       (i) =>
@@ -65,6 +73,13 @@ const filterDatasource = (datasource, filters) => {
     .filter((i) => {
       if (filters.segmentList.length) {
         return filters.segmentList.indexOf(i.segment) !== -1;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (daysOff.length) {
+        return daysOff.indexOf(i.date) === -1;
       }
 
       return true;

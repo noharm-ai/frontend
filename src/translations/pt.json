@@ -664,7 +664,14 @@
     "bed": "LEITO",
     "idPatient": "ID PACIENTE",
     "originPrice": "CUSTO ORIGEM",
-    "destinyPrice": "CUSTO SUBSTITUTO"
+    "destinyPrice": "CUSTO SUBSTITUTO",
+    "attrAntimicro": "ANTIMICROBIANO",
+    "attrMav": "ALTA VIGILANCIA",
+    "attrControl": "CONTROLADO",
+    "attrNotStandard": "NAO PADRONIZADO",
+    "attrQuimio": "QUIMIOTERAPICO",
+    "globalScore": "ESCORE GLOBAL",
+    "evaluationTime": "TEMPO DE AVALIACAO"
   },
 
   "reportcsvCulture": {

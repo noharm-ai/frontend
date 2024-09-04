@@ -19,6 +19,6 @@ export const formatDateTime = (isoDate) => {
 export const isDate = (value) => {
   return (
     dayjs(value, "YYYY-MM-DD", true).isValid() ||
-    dayjs(value, "YYYY-MM-DDTHH:mm:ss").isValid()
+    dayjs(`${value}`.split(".")[0], "YYYY-MM-DDTHH:mm:ss", true).isValid()
   );
 };

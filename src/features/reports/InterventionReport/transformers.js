@@ -69,6 +69,28 @@ const filterDatasource = (datasource, filters) => {
       return true;
     })
     .filter((i) => {
+      const attrs = [
+        "attrAntimicro",
+        "attrMav",
+        "attrControl",
+        "attrNotStandard",
+        "attrQuimio",
+      ];
+      const drugAttrs = [];
+
+      attrs.forEach((a) => {
+        if (i[a]) {
+          drugAttrs.push(a);
+        }
+      });
+
+      if (filters.drugAttrList.length) {
+        return intersection(filters.drugAttrList, drugAttrs).length > 0;
+      }
+
+      return true;
+    })
+    .filter((i) => {
       if (filters.interventionType === "p") {
         return i.idPrescription !== "0";
       }

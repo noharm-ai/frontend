@@ -75,6 +75,7 @@ export default function Filter({ printRef }) {
     weekDays: false,
     minScore: null,
     maxScore: null,
+    daysOffList: [],
   };
 
   const reportManager = useFetchReport({

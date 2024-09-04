@@ -264,6 +264,15 @@ export default function SaveModal({
                   Assinatura
                 </Tag>
               </Tooltip>
+              <Tooltip title="Clique para adicionar a data atual">
+                <Tag
+                  onClick={() => addVariable("{{data_atual}}")}
+                  style={{ cursor: "pointer" }}
+                  color="cyan"
+                >
+                  Data atual
+                </Tag>
+              </Tooltip>
             </div>
           </div>
         </VariableContainer>

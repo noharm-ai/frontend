@@ -140,7 +140,14 @@ const Me = ({
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   console.error(error);
   if (window.cwr) {
-    window.cwr("recordError", error);
+    const ignore =
+      error &&
+      error.message &&
+      /^Request failed with status code 401/.test(error.message);
+
+    if (!ignore) {
+      window.cwr("recordError", error);
+    }
   }
   return (
     <div style={{ maxWidth: "500px" }}>

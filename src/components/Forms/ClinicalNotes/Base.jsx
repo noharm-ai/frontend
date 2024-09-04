@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import "styled-components/macro";
 import isEmpty from "lodash.isempty";
 import { useFormikContext } from "formik";
 import dayjs from "dayjs";
-import { SettingOutlined, DownloadOutlined } from "@ant-design/icons";
+import {
+  SettingOutlined,
+  DownloadOutlined,
+  CopyOutlined,
+} from "@ant-design/icons";
+import { formatDate } from "utils/date";
 
 import { Col } from "components/Grid";
 import { Textarea, Select, DatePicker } from "components/Inputs";
@@ -15,9 +22,12 @@ import {
   CLINICAL_NOTES_STORE_ID,
   CLINICAL_NOTES_MEMORY_TYPE,
 } from "utils/memory";
+import notification from "components/notification";
+import { getErrorMessage } from "utils/errorHandler";
 
 import MemoryText from "containers/MemoryText";
 import MemoryDraft from "features/memory/MemoryDraft/MemoryDraft";
+import { getUserLastClinicalNotes } from "features/serverActions/ServerActionsSlice";
 
 import getInterventionTemplate from "./util/getInterventionTemplate";
 import { Box, EditorBox, FieldError } from "../Form.style";
@@ -30,7 +40,10 @@ export default function Base({
   action,
   security,
 }) {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { values, setFieldValue, errors, touched } = useFormikContext();
+  const [loadingCopy, setLoadingCopy] = useState(false);
   const { notes, concilia, date } = values;
   const layout = { label: 2, input: 20 };
 
@@ -60,6 +73,40 @@ export default function Base({
       "notes",
       getCustomClinicalNote(prescription, clinicalNote, { signature, account })
     );
+  };
+
+  const loadLastNote = () => {
+    setLoadingCopy(true);
+    dispatch(
+      getUserLastClinicalNotes({
+        admissionNumber: values.admissionNumber,
+      })
+    ).then((response) => {
+      setLoadingCopy(false);
+
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        if (response.payload.data) {
+          setFieldValue(
+            "notes",
+            `---Cópia do dia: ${formatDate(response.payload.data?.date)}\n\n${
+              response.payload.data?.text
+            }`
+          );
+
+          notification.success({
+            message: "Última evolução copiada com sucesso",
+          });
+        } else {
+          notification.error({
+            message: "Não encontramos evolução para este atendimento",
+          });
+        }
+      }
+    });
   };
 
   return (
@@ -128,15 +175,27 @@ export default function Base({
       )}
       <Col xs={24} style={{ textAlign: "right" }}>
         {action !== "schedule" && (
-          <Tooltip title="Aplicar evolução modelo">
-            <Button
-              shape="circle"
-              icon={<DownloadOutlined />}
-              onClick={loadDefaultText}
-              type="primary gtm-bt-clinicalNotes-applyDefaultText"
-              style={{ marginRight: "5px" }}
-            />
-          </Tooltip>
+          <>
+            <Tooltip title="Aplicar evolução modelo">
+              <Button
+                shape="circle"
+                icon={<DownloadOutlined />}
+                onClick={loadDefaultText}
+                type="primary gtm-bt-clinicalNotes-applyDefaultText"
+                style={{ marginRight: "5px" }}
+              />
+            </Tooltip>
+            <Tooltip title="Copiar última evolução">
+              <Button
+                shape="circle"
+                icon={<CopyOutlined />}
+                onClick={loadLastNote}
+                type="primary"
+                style={{ marginRight: "5px" }}
+                loading={loadingCopy}
+              />
+            </Tooltip>
+          </>
         )}
         <MemoryText
           storeId={CLINICAL_NOTES_STORE_ID}

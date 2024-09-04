@@ -78,6 +78,7 @@ export default function Filter({ printRef }) {
     showDiets: false,
     minScore: null,
     maxScore: null,
+    daysOffList: [],
   };
 
   const reportManager = useFetchReport({
