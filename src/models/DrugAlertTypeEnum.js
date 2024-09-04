@@ -16,6 +16,8 @@ export default class DrugAlertTypeEnum {
   static TUBE = "tube";
   static MAX_TIME = "maxTime";
   static FASTING = "fasting";
+  static PREGNANT = "pregnant";
+  static LACTATING = "lactating";
 
   static getAlertTypes = (t) => {
     const types = [
@@ -87,6 +89,14 @@ export default class DrugAlertTypeEnum {
       {
         id: DrugAlertTypeEnum.FASTING,
         label: t(`drugAlertType.${DrugAlertTypeEnum.FASTING}`),
+      },
+      {
+        id: DrugAlertTypeEnum.PREGNANT,
+        label: t(`drugAlertType.${DrugAlertTypeEnum.PREGNANT}`),
+      },
+      {
+        id: DrugAlertTypeEnum.LACTATING,
+        label: t(`drugAlertType.${DrugAlertTypeEnum.LACTATING}`),
       },
     ];
 
