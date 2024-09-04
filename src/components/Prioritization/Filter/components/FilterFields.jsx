@@ -12,6 +12,7 @@ import LoadBox from "components/LoadBox";
 import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
 import FieldSubstanceClassAutocomplete from "features/fields/FieldSubstanceClassAutocomplete/FieldSubstanceClassAutocomplete";
 import { getUniqBy } from "utils/report";
+import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 
 import { Form } from "styles/Form.style";
 
@@ -213,57 +214,11 @@ export default function FilterFields({
                     autoClearSearchValue={false}
                     allowClear
                   >
-                    <Select.Option key={"allergy"} value={"allergy"}>
-                      {t("drugAlertType.allergy")}
-                    </Select.Option>
-                    <Select.Option key={"maxDose"} value={"maxDose"}>
-                      {t("drugAlertType.maxDose")}
-                    </Select.Option>
-                    <Select.Option key={"maxDosePlus"} value={"maxDosePlus"}>
-                      {t("drugAlertType.maxDosePlus")}
-                    </Select.Option>
-                    <Select.Option key={"dm"} value={"dm"}>
-                      {t("drugAlertType.dm")}
-                    </Select.Option>
-                    <Select.Option key={"dt"} value={"dt"}>
-                      {t("drugAlertType.dt")}
-                    </Select.Option>
-                    <Select.Option key={"liver"} value={"liver"}>
-                      {t("drugAlertType.liver")}
-                    </Select.Option>
-                    <Select.Option key={"iy"} value={"iy"}>
-                      {t("drugAlertType.iy")}
-                    </Select.Option>
-                    <Select.Option key={"it"} value={"it"}>
-                      {t("drugAlertType.it")}
-                    </Select.Option>
-                    <Select.Option key={"ira"} value={"ira"}>
-                      {t("drugAlertType.ira")}
-                    </Select.Option>
-                    <Select.Option key={"sl"} value={"sl"}>
-                      {t("drugAlertType.sl")}
-                    </Select.Option>
-                    <Select.Option key={"elderly"} value={"elderly"}>
-                      {t("drugAlertType.elderly")}
-                    </Select.Option>
-                    <Select.Option key={"kidney"} value={"kidney"}>
-                      {t("drugAlertType.kidney")}
-                    </Select.Option>
-                    <Select.Option key={"platelets"} value={"platelets"}>
-                      {t("drugAlertType.platelets")}
-                    </Select.Option>
-                    <Select.Option key={"rx"} value={"rx"}>
-                      {t("drugAlertType.rx")}
-                    </Select.Option>
-                    <Select.Option key={"tube"} value={"tube"}>
-                      {t("drugAlertType.tube")}
-                    </Select.Option>
-                    <Select.Option key={"maxTime"} value={"maxTime"}>
-                      {t("drugAlertType.maxTime")}
-                    </Select.Option>
-                    <Select.Option key={"fasting"} value={"fasting"}>
-                      {t("drugAlertType.fasting")}
-                    </Select.Option>
+                    {DrugAlertTypeEnum.getAlertTypes(t).map((a) => (
+                      <Select.Option key={a.id} value={a.id}>
+                        {a.label}
+                      </Select.Option>
+                    ))}
                   </Select>
                 </div>
               </div>
