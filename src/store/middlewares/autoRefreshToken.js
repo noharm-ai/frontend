@@ -82,8 +82,6 @@ const refreshToken = (dispatch) => {
           });
     })
     .catch((e) => {
-      console.error("error refreshing token", e);
-
       dispatch(authSetRefreshTokenPromise(null));
       return Promise.reject(e);
     });
