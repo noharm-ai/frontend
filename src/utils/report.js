@@ -104,11 +104,14 @@ export const exportCSV = (datasource, t, namespace = "reportcsv") => {
     ...datasource.map((row) =>
       header.map((fieldName) => stringify(row[fieldName])).join(",")
     ),
-  ].join("\r\n");
+  ];
 
-  const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csv);
+  const blob = new Blob([csv.join("\r\n")], {
+    type: "text/plain;charset=utf-8",
+  });
+
   const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
+  link.setAttribute("href", window.URL.createObjectURL(blob));
   link.setAttribute("download", "relatorio.csv");
   document.body.appendChild(link);
 
