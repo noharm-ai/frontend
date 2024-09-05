@@ -14,4 +14,9 @@ export const Wrapper = styled(Menu)`
   .ant-menu-title-content {
     font-weight: 500;
   }
+
+  .ant-menu-submenu {
+    max-height: 80vh;
+    overflow: auto;
+  }
 `;

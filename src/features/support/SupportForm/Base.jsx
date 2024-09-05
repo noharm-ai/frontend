@@ -94,7 +94,7 @@ function BaseForm() {
             placeholder="Ex: Erro ao checar prescrição"
             value={values.title}
             onChange={({ target }) => setFieldValue("title", target.value)}
-            maxLength={150}
+            maxLength={90}
           />
         </div>
         {errors.title && touched.title && (
