@@ -612,6 +612,12 @@ api.substance.findSubstanceClasses = (term) =>
     ...setHeaders(),
   });
 
+api.substance.getHandling = (params) =>
+  instance.get(`${endpoints.substance}/handling`, {
+    params,
+    ...setHeaders(),
+  });
+
 /**
  * drugs namespace
  */

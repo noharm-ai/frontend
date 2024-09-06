@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Alert, Tag } from "antd";
 import {
@@ -7,18 +8,56 @@ import {
   CloseCircleFilled,
 } from "@ant-design/icons";
 
-import RichTextView from "components/RichTextView";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
+import DefaultModal from "components/Modal";
+import notification from "components/notification";
+import RichTextView from "components/RichTextView";
+import { getErrorMessage } from "utils/errorHandler";
+import { getSubstanceHandling } from "features/serverActions/ServerActionsSlice";
+
 import { DrugAlertsCollapse } from "../PrescriptionDrug.style";
 
-export default function DrugAlerts({ alerts }) {
+export default function DrugAlerts({ alerts, idSubstance }) {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState(["high", "medium", "low"]);
+  const [loading, setLoading] = useState(false);
 
   if (alerts == null || alerts.length === 0) {
     return null;
   }
+
+  const getHandling = (alertType) => {
+    setLoading(true);
+    dispatch(getSubstanceHandling({ sctid: idSubstance, alertType })).then(
+      (response) => {
+        setLoading(false);
+
+        if (response.error) {
+          notification.error({
+            message: getErrorMessage(response, t),
+          });
+        } else {
+          if (response.payload.data) {
+            DefaultModal.info({
+              title: "Manejo",
+              content: (
+                <RichTextView
+                  text={response?.payload?.data || "Texto não encontrado"}
+                />
+              ),
+              icon: null,
+              width: 550,
+              okText: "Fechar",
+              okButtonProps: { type: "default" },
+              wrapClassName: "default-modal",
+            });
+          }
+        }
+      }
+    );
+  };
 
   const activeKeyChange = (keys) => {
     setActiveKey(keys);
@@ -86,6 +125,18 @@ export default function DrugAlerts({ alerts }) {
                 showIcon
                 icon={
                   <CloseCircleFilled style={{ color: getIconColor(type) }} />
+                }
+                action={
+                  item.handling ? (
+                    <Button
+                      size="small"
+                      danger
+                      onClick={() => getHandling(item.type)}
+                      loading={loading}
+                    >
+                      Ver manejo
+                    </Button>
+                  ) : null
                 }
               />
             ))}
