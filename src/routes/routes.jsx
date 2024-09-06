@@ -41,6 +41,7 @@ import AdminIntegrationRemoteNifi from "pages/Admin/IntegrationRemote/Nifi";
 import AdminSegment from "pages/Admin/Segment";
 import AdminUnitConversion from "pages/Admin/UnitConversion";
 import AdminExam from "pages/Admin/Exam";
+import AdminSubstance from "pages/Admin/Substance";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
@@ -289,6 +290,11 @@ const routes = [
     exact: true,
     path: "/admin/curadoria-unidades",
     element: <WithAuth component={AdminUnitConversion} />,
+  },
+  {
+    exact: true,
+    path: "/admin/substancias",
+    element: <WithAuth component={AdminSubstance} />,
   },
   {
     exact: true,

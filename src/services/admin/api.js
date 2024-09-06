@@ -295,6 +295,23 @@ api.user.getResetToken = (params) =>
     ...setHeaders(),
   });
 
+/**
+ * SUBSTANCE
+ */
+
+api.substance = {};
+api.substance.getSubstances = (params = {}) => {
+  return instance.post(`/admin/substance/list`, params, {
+    ...setHeaders(),
+  });
+};
+
+api.substance.upsertSubstance = (params = {}) => {
+  return instance.post(`/admin/substance`, params, {
+    ...setHeaders(),
+  });
+};
+
 const methods = {
   ...api,
   getFrequencyList,
