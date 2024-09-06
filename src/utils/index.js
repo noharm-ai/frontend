@@ -24,7 +24,7 @@ export const errorHandler = (e) => {
   }
 
   return {
-    error: e.response ? e.response.data : "error",
+    error: e?.response?.data || "error",
     status,
     data: {},
   };
