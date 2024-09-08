@@ -59,7 +59,7 @@ export default function SubstanceForm({ ...props }) {
       {({ handleSubmit }) => (
         <DefaultModal
           open={formData}
-          width={350}
+          width={600}
           centered
           destroyOnClose
           onCancel={onCancel}

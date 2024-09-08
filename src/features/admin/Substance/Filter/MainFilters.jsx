@@ -10,7 +10,7 @@ export default function MainFilters() {
 
   return (
     <>
-      <Col md={5} lg={4} xxl={4}>
+      <Col md={5} lg={4} xxl={5}>
         <Heading as="label" size="14px">
           Nome:
         </Heading>
