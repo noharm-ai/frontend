@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { CheckOutlined, PlusOutlined, FormOutlined } from "@ant-design/icons";
+import { CheckOutlined, SettingOutlined } from "@ant-design/icons";
 
 import { Row, Col } from "components/Grid";
 import { Select } from "components/Inputs";
@@ -10,7 +10,6 @@ import notification from "components/notification";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 
-import FormSubstance from "containers/Forms/Substance";
 import { updateSubstance } from "features/admin/DrugAttributes/DrugAttributesSlice";
 import { getErrorMessage } from "utils/errorHandler";
 
@@ -21,13 +20,11 @@ export default function EditSubstance({
   idDrug,
   updateDrugData,
   security,
-  selectSubstance,
   fetchRelations,
   afterSaveSubstance,
 }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [isFormVisible, setFormVisibility] = useState(false);
   const [currentSubstance, setCurrentSubstance] = useState({});
   const [saving, setSaving] = useState(false);
 
@@ -41,14 +38,6 @@ export default function EditSubstance({
       sctNameA: drugData.sctNameA,
     });
   }, [drugData.sctNameA, drugData.sctidA]);
-
-  const onCancelForm = () => {
-    setFormVisibility(false);
-  };
-
-  const afterSaveForm = () => {
-    setFormVisibility(false);
-  };
 
   const changeSubstance = (value) => {
     setCurrentSubstance({ sctidA: value.value, sctNameA: value.label });
@@ -87,20 +76,6 @@ export default function EditSubstance({
     });
 
     setSaving(false);
-  };
-
-  const edit = () => {
-    selectSubstance({
-      sctid: drugData.sctidA,
-      name: drugData.sctNameA,
-    });
-    setFormVisibility(true);
-  };
-  const add = () => {
-    selectSubstance({
-      isAdd: true,
-    });
-    setFormVisibility(true);
   };
 
   return (
@@ -149,34 +124,18 @@ export default function EditSubstance({
           {security.isAdmin() &&
             drugData.sctidA === currentSubstance.sctidA && (
               <>
-                <Tooltip title="Editar substância">
+                <Tooltip title="Curadoria de substâncias">
                   <Button
                     type="primary gtm-bt-edit-substancia"
                     style={{ marginLeft: "5px" }}
-                    onClick={edit}
-                    icon={<FormOutlined />}
-                  ></Button>
-                </Tooltip>
-                <Tooltip title="Adicionar substância">
-                  <Button
-                    type="primary gtm-bt-add-substancia"
-                    style={{ marginLeft: "5px" }}
-                    onClick={add}
-                    icon={<PlusOutlined />}
+                    onClick={() => window.open("/admin/substancias")}
+                    icon={<SettingOutlined />}
                   ></Button>
                 </Tooltip>
               </>
             )}
         </Col>
       </Row>
-      <FormSubstance
-        visible={isFormVisible}
-        onCancel={onCancelForm}
-        okText="Salvar"
-        okType="primary gtm-bt-save-substance"
-        cancelText="Cancelar"
-        afterSave={afterSaveForm}
-      />
     </>
   );
 }

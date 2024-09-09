@@ -40,6 +40,19 @@ export default function MainFilters() {
           %Morfina%
         </div>
       </Col>
+      <Col md={3} lg={3} xxl={3}>
+        <Heading as="label" size="14px">
+          ID Classe:
+        </Heading>
+        <Input
+          value={values.className}
+          onChange={({ target }) =>
+            setFieldValue({
+              className: target.value !== "" ? target.value : null,
+            })
+          }
+        />
+      </Col>
       <Col md={5} lg={5} xxl={5}>
         <Heading as="label" size="14px">
           Classe:
@@ -54,6 +67,7 @@ export default function MainFilters() {
           loading={substanceClassesStatus === "loading"}
           mode="multiple"
           maxTagCount="responsive"
+          allowClear
         >
           {substanceClasses.map(({ id, name }) => (
             <Select.Option key={id} value={id}>
@@ -73,6 +87,23 @@ export default function MainFilters() {
           style={{ width: "100%" }}
           value={values.hasHandling}
           onChange={(value, option) => setFieldValue({ hasHandling: value })}
+          allowClear
+        >
+          <Select.Option value={1}>Sim</Select.Option>
+          <Select.Option value={0}>Não</Select.Option>
+        </Select>
+      </Col>
+      <Col md={3} lg={3} xxl={2}>
+        <Heading as="label" size="14px">
+          Possui Classe:
+        </Heading>
+        <Select
+          id="idclass"
+          optionFilterProp="children"
+          showSearch
+          style={{ width: "100%" }}
+          value={values.hasClass}
+          onChange={(value, option) => setFieldValue({ hasClass: value })}
           allowClear
         >
           <Select.Option value={1}>Sim</Select.Option>

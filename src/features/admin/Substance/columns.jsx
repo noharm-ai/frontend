@@ -12,6 +12,11 @@ const columns = (setSubstance, dispatch, t) => {
       align: "left",
     },
     {
+      title: "ID Classe",
+      dataIndex: "idClass",
+      align: "center",
+    },
+    {
       title: "Classe",
       dataIndex: "className",
       align: "left",

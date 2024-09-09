@@ -18,10 +18,6 @@ export const { Types, Creators } = createActions({
   outliersFetchSubstanceListError: ["error"],
   outliersFetchSubstanceListSuccess: ["list"],
 
-  outliersFetchSubstanceSingleStart: [""],
-  outliersFetchSubstanceSingleError: ["error"],
-  outliersFetchSubstanceSingleSuccess: ["data"],
-
   outliersSaveStart: [""],
   outliersSaveSuccess: ["idOutlier", "params"],
   outliersSaveReset: [""],
@@ -39,10 +35,6 @@ export const { Types, Creators } = createActions({
 
   outliersSelectSubstance: ["item"],
   outliersUpdateSubstance: ["item"],
-  outliersSaveSubstanceStart: [""],
-  outliersSaveSubstanceSuccess: ["item"],
-  outliersSaveSubstanceReset: [""],
-  outliersSaveSubstanceError: ["error"],
 
   outliersUpdateDrugData: ["item"],
 
@@ -221,42 +213,6 @@ const fetchSubstanceListSuccess = (state = INITIAL_STATE, { list }) => ({
   },
 });
 
-const fetchSubstanceSingleStart = (state = INITIAL_STATE) => ({
-  ...state,
-  substance: {
-    ...state.substance,
-    single: {
-      ...state.substance.single,
-      isFetching: true,
-    },
-  },
-});
-
-const fetchSubstanceSingleError = (state = INITIAL_STATE, { error }) => ({
-  ...state,
-  substance: {
-    ...state.substance,
-    single: {
-      ...state.substance.single,
-      isFetching: false,
-      error,
-    },
-  },
-});
-
-const fetchSubstanceSingleSuccess = (state = INITIAL_STATE, { data }) => ({
-  ...state,
-  substance: {
-    ...state.substance,
-    single: {
-      ...state.substance.single,
-      isFetching: false,
-      error: null,
-      item: data,
-    },
-  },
-});
-
 const saveStart = (state = INITIAL_STATE) => ({
   ...state,
   save: {
@@ -415,64 +371,6 @@ const updateSubstance = (state = INITIAL_STATE, { item }) => ({
   },
 });
 
-const saveSubstanceStart = (state = INITIAL_STATE) => ({
-  ...state,
-  substance: {
-    ...state.substance,
-    single: {
-      ...state.substance.single,
-      isSaving: true,
-    },
-  },
-});
-
-const saveSubstanceError = (state = INITIAL_STATE, { error }) => ({
-  ...state,
-  substance: {
-    ...state.substance,
-    single: {
-      ...state.substance.single,
-      isSaving: false,
-      error,
-    },
-  },
-});
-
-const saveSubstanceReset = (state = INITIAL_STATE) => ({
-  ...state,
-  substance: {
-    ...state.substance,
-    single: {
-      ...INITIAL_STATE.substance.single,
-    },
-  },
-});
-
-const saveSubstanceSuccess = (state = INITIAL_STATE, { item }) => {
-  const list = [...state.substance.list];
-  const index = list.findIndex((r) => item.sctid === r.sctid);
-
-  if (index !== -1) {
-    list[index] = { ...list[index], ...item };
-  } else {
-    list.push(item);
-  }
-
-  return {
-    ...state,
-    substance: {
-      ...state.substance,
-      list,
-      single: {
-        ...state.substance.single,
-        error: null,
-        success: true,
-        isSaving: false,
-      },
-    },
-  };
-};
-
 const updateDrugData = (state = INITIAL_STATE, { item }) => ({
   ...state,
   drugData: {
@@ -528,10 +426,6 @@ const HANDLERS = {
   [Types.OUTLIERS_FETCH_SUBSTANCE_LIST_ERROR]: fetchSubstanceListError,
   [Types.OUTLIERS_FETCH_SUBSTANCE_LIST_SUCCESS]: fetchSubstanceListSuccess,
 
-  [Types.OUTLIERS_FETCH_SUBSTANCE_SINGLE_START]: fetchSubstanceSingleStart,
-  [Types.OUTLIERS_FETCH_SUBSTANCE_SINGLE_ERROR]: fetchSubstanceSingleError,
-  [Types.OUTLIERS_FETCH_SUBSTANCE_SINGLE_SUCCESS]: fetchSubstanceSingleSuccess,
-
   [Types.OUTLIERS_SAVE_START]: saveStart,
   [Types.OUTLIERS_SAVE_ERROR]: saveError,
   [Types.OUTLIERS_SAVE_RESET]: saveReset,
@@ -550,10 +444,6 @@ const HANDLERS = {
 
   [Types.OUTLIERS_UPDATE_DRUG_DATA]: updateDrugData,
 
-  [Types.OUTLIERS_SAVE_SUBSTANCE_START]: saveSubstanceStart,
-  [Types.OUTLIERS_SAVE_SUBSTANCE_ERROR]: saveSubstanceError,
-  [Types.OUTLIERS_SAVE_SUBSTANCE_RESET]: saveSubstanceReset,
-  [Types.OUTLIERS_SAVE_SUBSTANCE_SUCCESS]: saveSubstanceSuccess,
   [Types.OUTLIERS_SELECT_SUBSTANCE]: selectSubstance,
   [Types.OUTLIERS_UPDATE_SUBSTANCE]: updateSubstance,
 
