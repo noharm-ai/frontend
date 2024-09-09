@@ -2,10 +2,12 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Pagination } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 
 import Table from "components/Table";
 import Empty from "components/Empty";
 import BackTop from "components/BackTop";
+import Button from "components/Button";
 import Filter from "./Filter/Filter";
 import {
   setSubstance,
@@ -50,6 +52,15 @@ export default function Substance() {
     <>
       <PageHeader>
         <h1 className="page-header-title">Curadoria de Substâncias</h1>
+        <div className="page-header-actions">
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => dispatch(setSubstance({ new: true, active: true }))}
+          >
+            Adicionar Substância
+          </Button>
+        </div>
       </PageHeader>
       <Filter limit={limit} />
       <PaginationContainer>

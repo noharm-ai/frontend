@@ -77,13 +77,13 @@ const adminSubstanceSlice = createSlice({
       })
       .addCase(upsertSubstance.fulfilled, (state, action) => {
         state.single.status = "succeeded";
-        const freq = action.payload.data[0];
+        const subst = action.payload.data;
 
-        const index = state.list.findIndex((i) => i.id === freq.id);
+        const index = state.list.findIndex((i) => i.id === subst.id);
         if (index !== -1) {
-          state.list[index] = freq;
+          state.list[index] = subst;
         } else {
-          state.list.push(freq);
+          state.list.push(subst);
         }
       })
       .addCase(upsertSubstance.rejected, (state, action) => {

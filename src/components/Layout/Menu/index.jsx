@@ -28,7 +28,7 @@ import {
   SwapOutlined,
   CheckOutlined,
   DeploymentUnitOutlined,
-  // TagOutlined,
+  TagOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -286,14 +286,14 @@ export default function Menu({ security, featureService }) {
           id: "gtm-lnk-segmentos",
           role: ["admin", "training"],
         },
-        // {
-        //   key: "/admin/substancias",
-        //   link: "/admin/substancias",
-        //   label: "Substâncias",
-        //   icon: <TagOutlined />,
-        //   id: "gtm-lnk-substancias",
-        //   role: ["admin", "training"],
-        // },
+        {
+          key: "/admin/substancias",
+          link: "/admin/substancias",
+          label: "Substâncias",
+          icon: <TagOutlined />,
+          id: "gtm-lnk-substancias",
+          role: ["admin", "training"],
+        },
         {
           key: "/admin/vias",
           link: "/admin/vias",

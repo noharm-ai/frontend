@@ -106,6 +106,10 @@ export const Form = styled.form`
     .ant-input-number-group-wrapper {
       width: 100%;
     }
+
+    .ck-editor__editable {
+      max-height: 200px;
+    }
   }
 
   .form-input-checkbox {

@@ -23,7 +23,7 @@ export default function SubstanceForm({ ...props }) {
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().nullable().required(t("validation.requiredField")),
-    idClass: Yup.number().nullable().required(t("validation.requiredField")),
+    idClass: Yup.string().nullable().required(t("validation.requiredField")),
   });
   const initialValues = {
     ...formData,
