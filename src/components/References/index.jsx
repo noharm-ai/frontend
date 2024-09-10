@@ -4,7 +4,7 @@ import isEmpty from "lodash.isempty";
 import { Row, Col } from "antd";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { PlusOutlined } from "@ant-design/icons";
+import { SettingOutlined } from "@ant-design/icons";
 
 import breakpoints from "styles/breakpoints";
 import { useMedia } from "lib/hooks";
@@ -20,7 +20,6 @@ import Card from "components/Card";
 import LoadBox from "components/LoadBox";
 import Edit from "containers/References/Edit";
 import EditSubstance from "containers/References/EditSubstance";
-import Relation from "containers/References/Relation";
 import ScoreWizard from "containers/References/ScoreWizard";
 import Filter from "./Filter";
 import columns from "./columns";
@@ -58,17 +57,9 @@ export default function References({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const drugAttributes = useSelector((state) => state.drugAttributesForm.data);
-  const {
-    isFetching,
-    list,
-    error,
-    generateStatus,
-    drugData,
-    saveRelation,
-    relationStatus,
-  } = outliers;
+  const { isFetching, list, error, generateStatus, drugData, relationStatus } =
+    outliers;
   const [obsModalVisible, setObsModalVisibility] = useState(false);
-  const [relationModalVisible, setRelationModalVisibility] = useState(false);
 
   const [title] = useMedia(
     [`(max-width: ${breakpoints.lg})`],
@@ -98,49 +89,11 @@ export default function References({
     setObsModalVisibility(true);
   };
 
-  const onSaveRelation = () => {
-    saveOutlierRelation({
-      ...saveRelation.item,
-      new: false,
-    })
-      .then(() => {
-        notification.success({ message: "Uhu! Relação salva com sucesso." });
-        setRelationModalVisibility(false);
-      })
-      .catch((err) => {
-        console.err(err);
-        notification.error({
-          message: t("error.title"),
-          description: t("error.description"),
-        });
-      });
-  };
-  const onCancelRelation = () => {
-    selectOutlierRelation({});
-    setRelationModalVisibility(false);
-  };
-  const onShowRelationModal = (data) => {
-    selectOutlierRelation(data);
-    setRelationModalVisibility(true);
-  };
-  const addRelationModal = () => {
-    const data = {
-      new: true,
-      editable: true,
-      active: true,
-      sctidA: drugData.sctidA,
-      sctNameA: drugData.sctNameA,
-    };
-
-    onShowRelationModal(data);
-  };
-
   const dataSource = toDataSource(list, "idOutlier", {
     saveOutlier,
     onShowObsModal,
   });
   const dsRelations = toDataSource(drugData.relations, null, {
-    showModal: onShowRelationModal,
     relationTypes: drugData.relationTypes,
     sctidA: drugData.sctidA,
     sctNameA: drugData.sctNameA,
@@ -288,11 +241,10 @@ export default function References({
                 {(security.isAdmin() || security.isTraining()) &&
                   drugData.sctidA && (
                     <Button
-                      type="primary gtm-bt-add-relation"
-                      onClick={addRelationModal}
-                      icon={<PlusOutlined />}
+                      onClick={() => window.open("/admin/relacoes")}
+                      icon={<SettingOutlined />}
                     >
-                      Adicionar
+                      Curadoria de relações
                     </Button>
                   )}
               </div>
@@ -343,30 +295,6 @@ export default function References({
         }}
       >
         <Edit />
-      </DefaultModal>
-
-      <DefaultModal
-        centered
-        destroyOnClose
-        onOk={onSaveRelation}
-        open={relationModalVisible}
-        onCancel={onCancelRelation}
-        confirmLoading={saveRelation.isSaving}
-        okText="Salvar"
-        okButtonProps={{
-          disabled:
-            saveRelation.isSaving ||
-            saveRelation.item.sctidB == null ||
-            saveRelation.item.type == null,
-          type: "primary gtm-bt-save-relation",
-        }}
-        cancelText="Cancelar"
-        cancelButtonProps={{
-          disabled: saveRelation.isSaving,
-          type: "nda gtm-bt-cancel-relation",
-        }}
-      >
-        <Relation />
       </DefaultModal>
     </>
   );

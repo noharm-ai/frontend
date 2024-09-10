@@ -42,6 +42,7 @@ import AdminSegment from "pages/Admin/Segment";
 import AdminUnitConversion from "pages/Admin/UnitConversion";
 import AdminExam from "pages/Admin/Exam";
 import AdminSubstance from "pages/Admin/Substance";
+import AdminRelation from "pages/Admin/Relation";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
@@ -295,6 +296,11 @@ const routes = [
     exact: true,
     path: "/admin/substancias",
     element: <WithAuth component={AdminSubstance} />,
+  },
+  {
+    exact: true,
+    path: "/admin/relacoes",
+    element: <WithAuth component={AdminRelation} />,
   },
   {
     exact: true,

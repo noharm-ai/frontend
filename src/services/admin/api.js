@@ -312,6 +312,23 @@ api.substance.upsertSubstance = (params = {}) => {
   });
 };
 
+/**
+ * RELATIONS
+ */
+
+api.relation = {};
+api.relation.getRelations = (params = {}) => {
+  return instance.post(`/admin/relation/list`, params, {
+    ...setHeaders(),
+  });
+};
+
+api.relation.upsertRelation = (params = {}) => {
+  return instance.post(`/admin/relation`, params, {
+    ...setHeaders(),
+  });
+};
+
 const methods = {
   ...api,
   getFrequencyList,
