@@ -43,7 +43,6 @@ export default function References({
   outliers,
   fetchReferencesList,
   saveOutlier,
-  saveOutlierRelation,
   saveUnitCoefficient,
   selectOutlier,
   selectOutlierRelation,

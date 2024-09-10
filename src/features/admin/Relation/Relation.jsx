@@ -47,14 +47,16 @@ export default function Relation() {
   return (
     <>
       <PageHeader>
-        <h1 className="page-header-title">Curadoria de Relações</h1>
+        <h1 className="page-header-title">
+          Curadoria de Relações Medicamentosas
+        </h1>
         <div className="page-header-actions">
           <Button
             type="primary"
             icon={<PlusOutlined />}
             onClick={() => dispatch(setRelation({ new: true, active: true }))}
           >
-            Adicionar Relação
+            Adicionar relação
           </Button>
         </div>
       </PageHeader>

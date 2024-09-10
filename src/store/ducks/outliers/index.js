@@ -28,10 +28,6 @@ export const { Types, Creators } = createActions({
 
   outliersSelectRelation: ["item"],
   outliersUpdateRelation: ["item"],
-  outliersSaveRelationStart: [""],
-  outliersSaveRelationSuccess: ["item"],
-  outliersSaveRelationReset: [""],
-  outliersSaveRelationError: ["error"],
 
   outliersSelectSubstance: ["item"],
   outliersUpdateSubstance: ["item"],
@@ -295,57 +291,6 @@ const updateRelation = (state = INITIAL_STATE, { item }) => ({
   },
 });
 
-const saveRelationStart = (state = INITIAL_STATE) => ({
-  ...state,
-  saveRelation: {
-    ...state.saveRelation,
-    isSaving: true,
-  },
-});
-
-const saveRelationError = (state = INITIAL_STATE, { error }) => ({
-  ...state,
-  saveRelation: {
-    ...state.saveRelation,
-    error,
-    isSaving: false,
-  },
-});
-
-const saveRelationReset = (state = INITIAL_STATE) => ({
-  ...state,
-  saveRelation: {
-    ...INITIAL_STATE.saveRelation,
-  },
-});
-
-const saveRelationSuccess = (state = INITIAL_STATE, { item }) => {
-  const relations = [...state.drugData.relations];
-  const index = relations.findIndex(
-    (r) => item.sctidB === r.sctidB && item.type === r.type
-  );
-
-  if (index !== -1) {
-    relations[index] = { ...relations[index], ...item };
-  } else {
-    relations.push(item);
-  }
-
-  return {
-    ...state,
-    drugData: {
-      ...state.drugData,
-      relations,
-    },
-    saveRelation: {
-      ...state.saveRelation,
-      error: null,
-      success: true,
-      isSaving: false,
-    },
-  };
-};
-
 const selectSubstance = (state = INITIAL_STATE, { item }) => ({
   ...state,
   substance: {
@@ -433,11 +378,6 @@ const HANDLERS = {
 
   [Types.OUTLIERS_SET_SELECTED_ITEM]: setSelectedItem,
   [Types.OUTLIERS_UPDATE_SELECTED_ITEM]: updateSelectedItem,
-
-  [Types.OUTLIERS_SAVE_RELATION_START]: saveRelationStart,
-  [Types.OUTLIERS_SAVE_RELATION_ERROR]: saveRelationError,
-  [Types.OUTLIERS_SAVE_RELATION_RESET]: saveRelationReset,
-  [Types.OUTLIERS_SAVE_RELATION_SUCCESS]: saveRelationSuccess,
 
   [Types.OUTLIERS_SELECT_RELATION]: selectRelation,
   [Types.OUTLIERS_UPDATE_RELATION]: updateRelation,

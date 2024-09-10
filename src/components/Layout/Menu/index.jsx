@@ -29,6 +29,7 @@ import {
   CheckOutlined,
   DeploymentUnitOutlined,
   TagOutlined,
+  InteractionOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -267,6 +268,15 @@ export default function Menu({ security, featureService }) {
           label: t("menu.interventionReasons"),
           icon: <WarningOutlined />,
           id: "gtm-lnk-intv-reason",
+          role: ["admin", "training"],
+        },
+
+        {
+          key: "/admin/relacoes",
+          link: "/admin/relacoes",
+          label: "Relações Medicamentosas",
+          icon: <InteractionOutlined />,
+          id: "gtm-lnk-relations",
           role: ["admin", "training"],
         },
 
