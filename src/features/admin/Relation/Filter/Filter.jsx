@@ -13,6 +13,7 @@ import {
 } from "../RelationsSlice";
 
 import MainFilters from "./MainFilters";
+import SecondaryFilters from "./SecondaryFilters";
 
 export default function Filter({ limit }) {
   const dispatch = useDispatch();
@@ -56,9 +57,10 @@ export default function Filter({ limit }) {
     <AdvancedFilter
       initialValues={initialValues}
       mainFilters={<MainFilters />}
+      secondaryFilters={<SecondaryFilters />}
       onSearch={search}
       loading={isFetching}
-      skipFilterList={[]}
+      skipFilterList={["idOriginList", "idDestinationList"]}
     />
   );
 }
