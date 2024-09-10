@@ -27,7 +27,6 @@ const columns = (security) => [
     sorter: (a, b) => a.nameB.localeCompare(b.nameB),
     sortDirections: ["descend", "ascend"],
     dataIndex: "nameB",
-    width: 350,
   },
   {
     title: "Tipo",

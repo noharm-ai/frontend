@@ -13,6 +13,7 @@ import {
 } from "../SubstanceSlice";
 
 import MainFilters from "./MainFilters";
+import SecondaryFilters from "./SecondaryFilters";
 
 export default function Filter({ limit }) {
   const dispatch = useDispatch();
@@ -24,7 +25,9 @@ export default function Filter({ limit }) {
     message: t("error.title"),
     description: t("error.description"),
   };
-  const initialValues = {};
+  const initialValues = {
+    handlingOption: "filled",
+  };
 
   useEffect(() => {
     dispatch(fetchSubstances({ ...initialValues, limit, offset: 0 })).then(
@@ -56,9 +59,10 @@ export default function Filter({ limit }) {
     <AdvancedFilter
       initialValues={initialValues}
       mainFilters={<MainFilters />}
+      secondaryFilters={<SecondaryFilters />}
       onSearch={search}
       loading={isFetching}
-      skipFilterList={[]}
+      skipFilterList={["hasClass", "hasHandling", "className", "name"]}
     />
   );
 }

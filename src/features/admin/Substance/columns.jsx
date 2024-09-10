@@ -14,7 +14,7 @@ const columns = (setSubstance, dispatch, t) => {
     {
       title: "ID Classe",
       dataIndex: "idClass",
-      align: "center",
+      align: "left",
     },
     {
       title: "Classe",

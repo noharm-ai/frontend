@@ -9,12 +9,12 @@ import Tag from "components/Tag";
 const columns = (setRelation, dispatch, t) => {
   return [
     {
-      title: "Origem",
+      title: "Subst. Origem",
       dataIndex: "originName",
       align: "left",
     },
     {
-      title: "Destino",
+      title: "Subst. Relacionada",
       dataIndex: "destinationName",
       align: "left",
     },
