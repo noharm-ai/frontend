@@ -109,6 +109,10 @@ export const Form = styled.form`
 
     .ck-editor__editable {
       max-height: 200px;
+
+      .ck-placeholder {
+        opacity: 0.6;
+      }
     }
   }
 

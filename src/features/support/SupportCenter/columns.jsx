@@ -62,6 +62,14 @@ const columns = (t) => {
         config.label = "Novo";
         config.color = "cyan";
         break;
+      case 10:
+        config.label = "Em análise";
+        config.color = "purple";
+        break;
+      case 13:
+        config.label = "Atribuído";
+        config.color = "processing";
+        break;
       case 2:
         config.label = "Em andamento";
         config.color = "processing";
@@ -70,20 +78,21 @@ const columns = (t) => {
         config.label = "Em espera";
         config.color = "orange";
         break;
-      case 4:
+
+      case 12:
         config.label = "Resolvido";
+        config.color = "success";
+        break;
+      case 4:
+        config.label = "Encerrado";
         config.color = "success";
         break;
       case 5:
         config.label = "Cancelado";
         config.color = "default";
         break;
-      case 10:
-        config.label = "Em análise";
-        config.color = "purple";
-        break;
       default:
-        config.label = "Cancelado";
+        config.label = status;
         config.color = "default";
     }
 

@@ -260,7 +260,7 @@ export default function Layout({
                 navigate("/suporte");
               }}
             >
-              Ver Meus Chamados
+              Abrir Central de Ajuda
             </Button>
           }
         >
