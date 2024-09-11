@@ -28,6 +28,8 @@ import {
   SwapOutlined,
   CheckOutlined,
   DeploymentUnitOutlined,
+  TagOutlined,
+  InteractionOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -229,6 +231,14 @@ export default function Menu({ security, featureService }) {
           role: ["admin", "training"],
         },
         {
+          key: "/admin/exames2",
+          link: "/admin/exames",
+          label: "Exames",
+          icon: <ExperimentOutlined />,
+          id: "gtm-lnk-exames",
+          notrole: ["doctor"],
+        },
+        {
           key: "/admin/features",
           link: "/admin/features",
           label: "Features",
@@ -260,14 +270,16 @@ export default function Menu({ security, featureService }) {
           id: "gtm-lnk-intv-reason",
           role: ["admin", "training"],
         },
+
         {
-          key: "/admin/exames2",
-          link: "/admin/exames",
-          label: "Exames",
-          icon: <ExperimentOutlined />,
-          id: "gtm-lnk-exames",
-          notrole: ["doctor"],
+          key: "/admin/relacoes",
+          link: "/admin/relacoes",
+          label: "Relações Medicamentosas",
+          icon: <InteractionOutlined />,
+          id: "gtm-lnk-relations",
+          role: ["admin", "training"],
         },
+
         {
           key: "/admin/relatorios",
           link: "/admin/relatorios",
@@ -282,6 +294,14 @@ export default function Menu({ security, featureService }) {
           label: "Segmentos",
           icon: <AppstoreOutlined />,
           id: "gtm-lnk-segmentos",
+          role: ["admin", "training"],
+        },
+        {
+          key: "/admin/substancias",
+          link: "/admin/substancias",
+          label: "Substâncias",
+          icon: <TagOutlined />,
+          id: "gtm-lnk-substancias",
           role: ["admin", "training"],
         },
         {

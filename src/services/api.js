@@ -372,12 +372,6 @@ const getSubstances = (bearerToken, params = {}) =>
     ...setHeaders(bearerToken),
   });
 
-const getSubstanceSingle = (bearerToken, id) =>
-  instance.get(`${endpoints.substance}/single/${id}`, {
-    params: {},
-    ...setHeaders(bearerToken),
-  });
-
 const getSubstanceClasses = (bearerToken, params = {}) =>
   instance.get(`${endpoints.substance}/class`, {
     params,
@@ -389,13 +383,6 @@ const getSubstanceRelations = (bearerToken, id, params = {}) =>
     params,
     ...setHeaders(bearerToken),
   });
-
-const updateSubstance = (bearerToken, { sctid, ...params }) =>
-  instance.put(
-    `${endpoints.substance}/${sctid}`,
-    params,
-    setHeaders(bearerToken)
-  );
 
 /**
  * Intervention.
@@ -612,6 +599,12 @@ api.substance.findSubstanceClasses = (term) =>
     ...setHeaders(),
   });
 
+api.substance.getHandling = (params) =>
+  instance.get(`${endpoints.substance}/handling`, {
+    params,
+    ...setHeaders(),
+  });
+
 /**
  * drugs namespace
  */
@@ -779,9 +772,7 @@ const methods = {
   updatePrescriptionDrugNote,
   updatePrescriptionDrugForm,
   getSubstances,
-  getSubstanceSingle,
   getSubstanceClasses,
-  updateSubstance,
   getSubstanceRelations,
   shouldUpdatePrescription,
   getMemory,

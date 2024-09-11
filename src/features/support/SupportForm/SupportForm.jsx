@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
-import { Spin, Result } from "antd";
+import { Spin, Result, Divider } from "antd";
 
 import notification from "components/notification";
 import Button from "components/Button";
@@ -109,11 +109,7 @@ export default function SupportForm() {
               status="success"
               title="Chamado criado com sucesso"
               subTitle={
-                <>
-                  <p>
-                    Sua solicitação foi recebida e está sendo revisada pelo
-                    suporte.
-                  </p>
+                <div style={{ color: "rgba(0, 0, 0, 0.7)" }}>
                   <p>
                     A referência do seu chamado é{" "}
                     <strong>{response.payload.data[0]?.ticket_ref}</strong>.
@@ -122,7 +118,16 @@ export default function SupportForm() {
                     Você pode acompanhar o chamado pelo seu email ou atráves da
                     Central de Ajuda
                   </p>
-                </>
+                  <p>
+                    Fique atento no andamento do seu chamado e nas respostas dos
+                    nossos agentes, e, se possível, responda o quanto antes.{" "}
+                    <strong>
+                      Chamados sem resposta por 5 dias, serão cancelados
+                      automaticamente
+                    </strong>
+                    .
+                  </p>
+                </div>
               }
               extra={[
                 <Button
@@ -162,26 +167,40 @@ export default function SupportForm() {
       {({ handleSubmit }) => (
         <Spin spinning={status === "loading"}>
           <Form onSubmit={handleSubmit}>
-            <div className="form-intro">
+            <div className="form-intro" style={{ fontSize: "15px" }}>
               <p>
-                Estamos aqui para ajudar a resolver suas dúvidas e problemas da
-                melhor maneira possível. Para garantir que possamos oferecer o
-                suporte mais eficaz, é crucial que você forneça o{" "}
-                <strong>máximo de detalhes</strong> possível sobre sua questão.{" "}
-                <span style={{ color: "#f5222d" }}>
-                  Principalmente trazendo exemplos de Atendimentos e/ou
-                  prescrições.
-                </span>
+                Prezado usuário, para garantir que possamos oferecer um suporte
+                mais eficaz,{" "}
+                <strong>
+                  é crucial que você forneça o máximo de detalhes possível sobre
+                  sua questão
+                </strong>
+                . Descreva a situação no campo “mensagem”, traga exemplos de
+                atendimentos e/ou prescrições, e também anexe prints de tela ou
+                documentos.
               </p>
 
               <p>
-                Quanto mais informações nos fornecer, mais precisamente
-                poderemos entender sua situação e oferecer uma solução adequada.
-                Detalhes específicos nos ajudam a agir de forma mais rápida e
-                precisa, minimizando o tempo necessário para resolver o
-                problema.
+                Evite incluir mais de um chamado sobre o mesmo assunto, caso
+                ainda esteja em aberto. Se tiver mais exemplos ou perguntas,
+                envie no mesmo chamado.
+              </p>
+
+              <p>
+                Não hesite em visitar nossa{" "}
+                <a
+                  href={`${process.env.REACT_APP_ODOO_LINK}/knowledge/article/39`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {" "}
+                  Base de Conhecimento
+                </a>
+                . Você pode encontrar a resposta para sua pergunta lá.
               </p>
             </div>
+
+            <Divider />
 
             <Base />
 

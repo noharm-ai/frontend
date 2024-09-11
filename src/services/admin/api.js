@@ -295,6 +295,40 @@ api.user.getResetToken = (params) =>
     ...setHeaders(),
   });
 
+/**
+ * SUBSTANCE
+ */
+
+api.substance = {};
+api.substance.getSubstances = (params = {}) => {
+  return instance.post(`/admin/substance/list`, params, {
+    ...setHeaders(),
+  });
+};
+
+api.substance.upsertSubstance = (params = {}) => {
+  return instance.post(`/admin/substance`, params, {
+    ...setHeaders(),
+  });
+};
+
+/**
+ * RELATIONS
+ */
+
+api.relation = {};
+api.relation.getRelations = (params = {}) => {
+  return instance.post(`/admin/relation/list`, params, {
+    ...setHeaders(),
+  });
+};
+
+api.relation.upsertRelation = (params = {}) => {
+  return instance.post(`/admin/relation`, params, {
+    ...setHeaders(),
+  });
+};
+
 const methods = {
   ...api,
   getFrequencyList,

@@ -15,7 +15,6 @@ import {
   generateDrugOutlierThunk,
   resetGenerateDrugOutlierThunk,
   selectOutlierRelationThunk,
-  saveOutlierRelationThunk,
   updateDrugDataThunk,
 } from "store/ducks/outliers/thunk";
 import References from "components/References";
@@ -47,7 +46,6 @@ const mapDispatchToProps = (dispatch) =>
       selectOutlier: selectItemToSaveThunk,
       selectOutlierRelation: selectOutlierRelationThunk,
       saveOutlier: saveOutlierThunk,
-      saveOutlierRelation: saveOutlierRelationThunk,
       saveUnitCoefficient: saveUnitCoeffiecientThunk,
       fetchDrugsList: fetchDrugsListThunk,
       fetchDrugsUnitsList: fetchDrugsUnitsListThunk,

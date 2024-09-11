@@ -20,10 +20,6 @@ const {
   outliersFetchSubstanceListError,
   outliersFetchSubstanceListSuccess,
 
-  outliersFetchSubstanceSingleStart,
-  outliersFetchSubstanceSingleError,
-  outliersFetchSubstanceSingleSuccess,
-
   outliersSaveStart,
   outliersSaveSuccess,
   outliersSaveReset,
@@ -34,19 +30,11 @@ const {
 
   outliersSelectRelation,
   outliersUpdateRelation,
-  outliersSaveRelationStart,
-  outliersSaveRelationSuccess,
-  outliersSaveRelationReset,
-  outliersSaveRelationError,
 
   outliersUpdateDrugData,
 
   outliersSelectSubstance,
   outliersUpdateSubstance,
-  outliersSaveSubstanceStart,
-  outliersSaveSubstanceSuccess,
-  outliersSaveSubstanceReset,
-  outliersSaveSubstanceError,
 
   outliersFetchRelationStart,
   outliersFetchRelationError,
@@ -231,29 +219,6 @@ export const updateOutlierRelationThunk = (item) => (dispatch) => {
   dispatch(outliersUpdateRelation(item));
 };
 
-export const saveOutlierRelationThunk =
-  (params = {}) =>
-  (dispatch, getState) => {
-    return new Promise(async (resolve, reject) => {
-      dispatch(outliersSaveRelationStart());
-      const { access_token } = getState().auth.identify;
-      const { status, error } = await api.updateOutlierRelation(
-        access_token,
-        params
-      );
-
-      if (status !== 200) {
-        dispatch(outliersSaveRelationError(error));
-        reject(error);
-        return;
-      }
-
-      dispatch(outliersSaveRelationSuccess(params));
-      dispatch(outliersSaveRelationReset());
-      resolve(params);
-    });
-  };
-
 export const fetchSubstanceListThunk =
   (params = {}) =>
   async (dispatch, getState) => {
@@ -278,22 +243,6 @@ export const fetchSubstanceListThunk =
     dispatch(outliersFetchSubstanceListSuccess(list));
   };
 
-export const fetchSubstanceSingleThunk = (id) => async (dispatch, getState) => {
-  dispatch(outliersFetchSubstanceSingleStart());
-
-  const { access_token } = getState().auth.identify;
-  const {
-    data: { data },
-    error,
-  } = await api.getSubstanceSingle(access_token, id).catch(errorHandler);
-
-  if (!isEmpty(error)) {
-    dispatch(outliersFetchSubstanceSingleError(error));
-    return;
-  }
-  dispatch(outliersFetchSubstanceSingleSuccess(data));
-};
-
 export const updateDrugDataThunk = (item) => (dispatch) => {
   dispatch(outliersUpdateDrugData(item));
 };
@@ -309,39 +258,6 @@ export const selectOutlierSubstanceThunk = (item) => (dispatch) => {
 export const updateOutlierSubstanceThunk = (item) => (dispatch) => {
   dispatch(outliersUpdateSubstance(item));
 };
-
-export const saveOutlierSubstanceThunk =
-  (params = {}) =>
-  (dispatch, getState) => {
-    return new Promise(async (resolve, reject) => {
-      dispatch(outliersSaveSubstanceStart());
-      const { access_token } = getState().auth.identify;
-      const { status, error } = await api.updateSubstance(access_token, params);
-
-      if (status !== 200) {
-        dispatch(outliersSaveSubstanceError(error));
-        reject(error);
-        return;
-      }
-
-      const { isAdd } = params;
-      delete params.isAdd;
-
-      dispatch(outliersSaveSubstanceSuccess(params));
-      dispatch(outliersSaveSubstanceReset());
-
-      if (!isAdd) {
-        dispatch(
-          outliersUpdateDrugData({
-            sctidA: params.sctid,
-            sctNameA: params.name,
-          })
-        );
-      }
-
-      resolve();
-    });
-  };
 
 export const fetchRelationListThunk =
   (id, params = {}) =>

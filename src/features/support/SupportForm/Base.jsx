@@ -8,6 +8,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Select, Input } from "components/Inputs";
 import Editor from "components/Editor";
 import Button from "components/Button";
+import Tooltip from "components/Tooltip";
 import IntegrationStatus from "models/IntegrationStatus";
 
 import { EditorBox } from "components/Forms/Form.style";
@@ -49,7 +50,16 @@ function BaseForm() {
         }`}
       >
         <div className="form-label">
-          <label>{t("labels.ticketType")}:</label>
+          <label style={{ paddingBottom: "5px", display: "block" }}>
+            <Tooltip
+              title="Selecione o “Tipo de chamado” da forma que
+                mais se parecer com sua demanda. Isso também irá auxiliar a darmos o
+                correto direcionamento ao seu chamado."
+              underline
+            >
+              {t("labels.ticketType")}:
+            </Tooltip>
+          </label>
         </div>
         <div className="form-input">
           <Select
@@ -66,6 +76,12 @@ function BaseForm() {
             <Select.Option key={1} value="Erro">
               Erro
             </Select.Option>
+            <Select.Option key={1} value="Integração fora do ar">
+              Integração fora do ar
+            </Select.Option>
+            <Select.Option key={2} value="Solicitação">
+              Solicitação
+            </Select.Option>
             <Select.Option key={2} value="Sugestão">
               Sugestão
             </Select.Option>
@@ -75,6 +91,55 @@ function BaseForm() {
               </Select.Option>
             )}
           </Select>
+        </div>
+        <div className="form-info">
+          {values.category === "Dúvida" && (
+            <>
+              Dúvidas sobre uso ou configuração da plataforma, tanto na parte a
+              nível de sistema, quanto na área de farmácia. Sempre consulte
+              nossa base de conhecimento antes, caso não ache sua pergunta, abra
+              o chamado.
+            </>
+          )}
+
+          {values.category === "Erro" && (
+            <>
+              Erro devido a algum comportamento inesperado da plataforma, como
+              tela em branco, mensagem de erro ou outro problema na interface.
+              Ou relacionado a dados incorretos ou faltando, como em
+              prescrições, exames, ou relatórios.
+            </>
+          )}
+
+          {values.category === "Integração fora do ar" && (
+            <>
+              Nenhuma prescrição aparecendo na plataforma, acesso indisponível,
+              ou problemas na integração de retorno.
+            </>
+          )}
+
+          {values.category === "Solicitação" && (
+            <>
+              Solicitação de ajustes na configuração ou inclusão de novos itens
+              na plataforma, como setores, relatórios, documentos de evolução,
+              entre outros.
+            </>
+          )}
+
+          {values.category === "Sugestão" && (
+            <>
+              Sugestão de melhorias ou ajustes na plataforma, como novas
+              funcionalidades ou relatórios personalizados - para esse tipo, não
+              temos prazo para atendimento da demanda (backlog).
+            </>
+          )}
+          {values.category === "Validação" && (
+            <>
+              Demandas referentes ao processo de validação dos dados de
+              curadoria (Orientação de Validação), realizado durante a
+              implantação da plataforma. Não utilizar após período de validação.
+            </>
+          )}
         </div>
         {errors.category && touched.category && (
           <div className="form-error">{errors.category}</div>
@@ -115,6 +180,17 @@ function BaseForm() {
             <Editor
               onEdit={(value) => setFieldValue("description", value)}
               content={values.description || ""}
+              config={{
+                toolbar: [
+                  "bold",
+                  "italic",
+                  "|",
+                  "numberedList",
+                  "bulletedList",
+                ],
+                placeholder:
+                  "Lembre-se de dar exemplos com número de Atendimento e/ou número de Prescrição para facilitar a resolução do seu chamado.",
+              }}
               onReady={(editor) => {
                 editor.editing.view.change((writer) => {
                   writer.setStyle(
@@ -131,10 +207,6 @@ function BaseForm() {
         {errors.description && touched.description && (
           <div className="form-error">{errors.description}</div>
         )}
-        <div className="form-info">
-          Lembre-se de dar exemplos com número de Atendimento e/ou número de
-          Prescrição para facilitar a resolução do seu chamado.
-        </div>
       </div>
 
       <div className={`form-row ${errors.fileList ? "error" : ""}`}>

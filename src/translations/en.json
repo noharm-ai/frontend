@@ -665,7 +665,9 @@
     "attrNotStandard": "NOT STANDARD",
     "attrQuimio": "CHEMOTHERAPEUTIC",
     "globalScore": "GLOBAL SCORE",
-    "evaluationTime": "EVALUATION TIME"
+    "evaluationTime": "EVALUATION TIME",
+    "interventionReasonArray": "INTERVENTION REASONS",
+    "outcomeResponsible": "OUTCOME RESPONSIBLE"
   },
 
   "reportcsvCulture": {

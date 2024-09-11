@@ -2,6 +2,7 @@ import Big from "big.js";
 import dayjs from "dayjs";
 
 import { exportCSV, getUniqList } from "utils/report";
+import { intersection } from "utils/lodash";
 
 const filterDatasource = (datasource, filters) => {
   return datasource
@@ -54,7 +55,9 @@ const filterDatasource = (datasource, filters) => {
     })
     .filter((i) => {
       if (filters.reasonList.length) {
-        return filters.reasonList.indexOf(i.interventionReason) !== -1;
+        return (
+          intersection(filters.reasonList, i.interventionReasonArray).length > 0
+        );
       }
 
       return true;

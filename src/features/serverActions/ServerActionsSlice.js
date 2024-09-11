@@ -69,6 +69,19 @@ export const getUserLastClinicalNotes = createAsyncThunk(
   }
 );
 
+export const getSubstanceHandling = createAsyncThunk(
+  "serverActions/get-substance-handling",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.substance.getHandling(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const serverActionsSlice = createSlice({
   name: "serverActions",
   initialState,

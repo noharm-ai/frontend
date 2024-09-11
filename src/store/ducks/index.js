@@ -41,6 +41,8 @@ import adminUnitConversion from "features/admin/UnitConversion/UnitConversionSli
 import adminIntegrationStatus from "features/admin/IntegrationStatus/IntegrationStatusSlice";
 import adminIntegrationConfig from "features/admin/IntegrationConfig/IntegrationConfigSlice";
 import adminIntegrationRemote from "features/admin/IntegrationRemote/IntegrationRemoteSlice";
+import adminSubstance from "features/admin/Substance/SubstanceSlice";
+import adminRelation from "features/admin/Relation/RelationsSlice";
 
 import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
@@ -64,6 +66,8 @@ const adminReducers = combineReducers({
   exam: adminExam,
   frequency: adminFrequency,
   unitConversion: adminUnitConversion,
+  substance: adminSubstance,
+  relation: adminRelation,
 });
 
 const reportReducers = combineReducers({

@@ -112,7 +112,7 @@ const economyReportSlice = createSlice({
           );
           state.reasons = getUniqList(
             action.payload.cacheData.body,
-            "interventionReason"
+            "interventionReasonArray"
           );
           state.insurances = getUniqList(
             action.payload.cacheData.body,
