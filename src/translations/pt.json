@@ -671,7 +671,9 @@
     "attrNotStandard": "NAO PADRONIZADO",
     "attrQuimio": "QUIMIOTERAPICO",
     "globalScore": "ESCORE GLOBAL",
-    "evaluationTime": "TEMPO DE AVALIACAO"
+    "evaluationTime": "TEMPO DE AVALIACAO",
+    "interventionReasonArray": "MOTIVOS INTERVENCAO",
+    "outcomeResponsible": "RESPONSAVEL DESFECHO"
   },
 
   "reportcsvCulture": {

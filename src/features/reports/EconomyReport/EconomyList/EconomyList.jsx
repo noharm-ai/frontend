@@ -101,7 +101,13 @@ export default function EconomyList() {
       title: "Motivo",
       width: 10,
       ellipsis: true,
-      render: (_, record) => record.interventionReason,
+      render: (_, record) => {
+        if (record.interventionReasonArray) {
+          return record.interventionReasonArray.join("; ");
+        }
+
+        return "-";
+      },
     },
     {
       title: "Medicamento Origem",
@@ -126,6 +132,12 @@ export default function EconomyList() {
       width: 10,
       ellipsis: true,
       render: (_, record) => record.responsible,
+    },
+    {
+      title: "Responsável Desfecho",
+      width: 10,
+      ellipsis: true,
+      render: (_, record) => record.outcomeResponsible,
     },
     {
       title: "Segmento",
