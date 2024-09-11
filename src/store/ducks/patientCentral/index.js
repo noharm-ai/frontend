@@ -5,6 +5,8 @@ export const { Types, Creators } = createActions({
   patientCentralFetchListError: ["error"],
   patientCentralFetchListSuccess: ["list"],
 
+  patientCentralUpdateNames: ["names"],
+
   patientCentralReset: [],
 });
 
@@ -35,10 +37,33 @@ const fetchListSuccess = (state = INITIAL_STATE, { list }) => ({
   isFetching: false,
 });
 
+const updateNames = (state = INITIAL_STATE, { names }) => {
+  const list = [];
+
+  state.list.forEach((item) => {
+    if (names[item.idPatient]) {
+      list.push({
+        ...item,
+        namePatient: names[item.idPatient].name,
+        loadingName: false,
+      });
+    } else {
+      list.push({ ...item });
+    }
+  });
+
+  return {
+    ...state,
+    list,
+  };
+};
+
 const HANDLERS = {
   [Types.PATIENT_CENTRAL_FETCH_LIST_START]: fetchListStart,
   [Types.PATIENT_CENTRAL_FETCH_LIST_ERROR]: fetchListError,
   [Types.PATIENT_CENTRAL_FETCH_LIST_SUCCESS]: fetchListSuccess,
+
+  [Types.PATIENT_CENTRAL_UPDATE_NAMES]: updateNames,
 
   [Types.PATIENT_CENTRAL_RESET]: reset,
 };
