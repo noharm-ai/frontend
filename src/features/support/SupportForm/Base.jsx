@@ -65,10 +65,12 @@ function BaseForm() {
           <Select
             onChange={(value) => setFieldValue("category", value)}
             value={values.category}
-            status={errors.category && touched.category ? "error" : null}
             optionFilterProp="children"
             showSearch
             placeholder="Selecione"
+            status={
+              values.category === "Integração fora do ar" ? "warning" : ""
+            }
           >
             <Select.Option key={0} value="Dúvida">
               Dúvida
@@ -112,10 +114,10 @@ function BaseForm() {
           )}
 
           {values.category === "Integração fora do ar" && (
-            <>
+            <span style={{ color: "#c68609" }}>
               Nenhuma prescrição aparecendo na plataforma, acesso indisponível,
               ou problemas na integração de retorno.
-            </>
+            </span>
           )}
 
           {values.category === "Solicitação" && (
