@@ -11,6 +11,8 @@ const {
   patientCentralFetchListStart,
   patientCentralFetchListError,
   patientCentralFetchListSuccess,
+
+  patientCentralUpdateNames,
 } = PatientCentralCreators;
 const { patientsFetchListSuccess } = PatientsCreators;
 
@@ -19,8 +21,7 @@ export const patientCentralFetchListThunk =
   async (dispatch, getState) => {
     dispatch(patientCentralFetchListStart());
 
-    const { auth, patients, app, user } = getState();
-    const { list: listPatients } = patients;
+    const { auth } = getState();
     const { access_token } = auth.identify;
 
     const {
@@ -33,28 +34,43 @@ export const patientCentralFetchListThunk =
       return;
     }
 
-    const requestConfig = {
-      listToRequest: data,
-      listToEscape: listPatients,
-      nameUrl: app.config.nameUrl,
-      nameHeaders: app.config.nameHeaders,
-      proxy: app.config.proxy,
-      useCache: true,
-      userRoles: user.account.roles,
-    };
-
-    const patientsList = await hospital.getPatients(
-      access_token,
-      requestConfig
-    );
     const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
       ...item,
       idPatient,
-      namePatient: patientsList[idPatient]
-        ? patientsList[idPatient].name
-        : `Paciente ${idPatient}`,
+      loadingName: true,
+      namePatient: `Paciente ${idPatient}`,
     }));
 
-    dispatch(patientsFetchListSuccess(patientsList));
     dispatch(patientCentralFetchListSuccess(listAddedPatientName));
+    dispatch(patientCentralNamesThunk(data));
+  };
+
+export const patientCentralNamesThunk =
+  (data) => async (dispatch, getState) => {
+    const { patients, app, user } = getState();
+    const { list: listPatients } = patients;
+
+    const limit = 50;
+    let offset = 0;
+    const pages = Math.ceil(data.length / limit);
+
+    for (let i = 0; i < pages; i++) {
+      const items = data.slice(offset, offset + limit);
+      offset = offset + limit;
+
+      const requestConfig = {
+        listToRequest: items,
+        listToEscape: listPatients,
+        nameUrl: app.config.nameUrl,
+        nameHeaders: app.config.nameHeaders,
+        proxy: app.config.proxy,
+        useCache: true,
+        userRoles: user.account.roles,
+      };
+
+      const patientsList = await hospital.getPatients(null, requestConfig);
+
+      dispatch(patientsFetchListSuccess(patientsList));
+      dispatch(patientCentralUpdateNames(patientsList));
+    }
   };

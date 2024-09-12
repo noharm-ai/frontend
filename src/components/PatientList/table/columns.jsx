@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, LoadingOutlined } from "@ant-design/icons";
 
 import { TextColumn } from "components/Table";
 import Tooltip from "components/Tooltip";
@@ -35,7 +35,13 @@ const columns = (sortedInfo, filteredInfo, t) => {
       sortDirections,
       sorter: (a, b) => a.namePatient.localeCompare(b.namePatient),
       sortOrder: sortedInfo.columnKey === "namePatient" && sortedInfo.order,
-      render: (record) => record.namePatient,
+      render: (record) => {
+        return (
+          <>
+            {record.namePatient} {record.loadingName && <LoadingOutlined />}
+          </>
+        );
+      },
       filteredValue: filteredInfo.searchKey || null,
       onFilter: (value, record) =>
         record.namePatient.toLowerCase().includes(value) ||
