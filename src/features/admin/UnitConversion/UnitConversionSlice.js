@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import adminApi from "services/admin/api";
-import api from "services/api";
 
 const initialState = {
   list: [],
@@ -20,12 +19,6 @@ const initialState = {
   copyConversion: {
     status: "idle",
     error: null,
-  },
-  fetchDrugAttributes: {
-    status: "idle",
-    error: null,
-    data: {},
-    selected: null,
   },
 };
 
@@ -47,22 +40,6 @@ export const saveConversions = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await adminApi.unitConversion.saveConversions(params);
-
-      return response;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
-export const fetchDrugAttributes = createAsyncThunk(
-  "admin-unit-conversion/fetch-drug-attributes",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.drugs.getDrugAttributes(
-        params.idSegment,
-        params.idDrug
-      );
 
       return response;
     } catch (err) {
@@ -144,9 +121,6 @@ const unitConversionSlice = createSlice({
         }
       });
     },
-    selectDrugRef(state, action) {
-      state.fetchDrugAttributes.selected = action.payload;
-    },
   },
   extraReducers(builder) {
     builder
@@ -162,18 +136,6 @@ const unitConversionSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
         state.list = [];
-      })
-      .addCase(fetchDrugAttributes.pending, (state, action) => {
-        state.fetchDrugAttributes.status = "loading";
-      })
-      .addCase(fetchDrugAttributes.fulfilled, (state, action) => {
-        state.fetchDrugAttributes.status = "succeeded";
-        state.fetchDrugAttributes.data = action.payload.data.data;
-      })
-      .addCase(fetchDrugAttributes.rejected, (state, action) => {
-        state.fetchDrugAttributes.status = "failed";
-        state.fetchDrugAttributes.error = action.error.message;
-        state.fetchDrugAttributes.data = {};
       })
       .addCase(addDefaultUnits.pending, (state, action) => {
         state.addDefaultUnits.status = "loading";
@@ -202,7 +164,6 @@ export const {
   setCurrentPage,
   updateListFactors,
   setFilteredList,
-  selectDrugRef,
 } = unitConversionSlice.actions;
 
 export default unitConversionSlice.reducer;

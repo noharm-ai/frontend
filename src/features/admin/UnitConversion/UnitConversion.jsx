@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Pagination, Row, Col, Spin, Drawer } from "antd";
+import { Pagination, Row, Col, Spin } from "antd";
 
 import Empty from "components/Empty";
 
@@ -8,10 +8,10 @@ import { PaginationContainer } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
 
 import Filter from "./Filter/Filter";
-import { setCurrentPage, selectDrugRef } from "./UnitConversionSlice";
+import { setCurrentPage } from "./UnitConversionSlice";
 import UnitCard from "./UnitCard/UnitCard";
-import DrugReference from "./DrugReference/DrugReference";
 import Actions from "./Actions/Actions";
+import DrugReferenceDrawer from "../DrugReferenceDrawer/DrugReferenceDrawer";
 
 export default function UnitConversion() {
   const dispatch = useDispatch();
@@ -22,9 +22,7 @@ export default function UnitConversion() {
   const datasource = useSelector(
     (state) => state.admin.unitConversion.filteredList
   );
-  const drugRef = useSelector(
-    (state) => state.admin.unitConversion.fetchDrugAttributes.selected
-  );
+  const drugRef = useSelector((state) => state.admin.drugReferenceDrawer.sctid);
   const filters = useSelector((state) => state.admin.unitConversion.filters);
   const limit = 16;
 
@@ -116,15 +114,7 @@ export default function UnitConversion() {
         </div>
       </Spin>
 
-      <Drawer
-        title={drugRef?.name || "--"}
-        open={drugRef}
-        onClose={() => dispatch(selectDrugRef(null))}
-        mask={false}
-        width={"23%"}
-      >
-        <DrugReference />
-      </Drawer>
+      <DrugReferenceDrawer />
     </>
   );
 }

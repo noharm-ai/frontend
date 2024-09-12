@@ -168,6 +168,12 @@ api.drugs.getDrugsMissingSubstance = (params) =>
     ...setHeaders(),
   });
 
+api.drugs.getDrugRef = (params) =>
+  instance.get(`${endpoints.drug}/ref`, {
+    params,
+    ...setHeaders(),
+  });
+
 api.drugs.predictSubstance = (params = {}) => {
   return instance.post(`${endpoints.drug}/predict-substance`, params, {
     ...setHeaders(),
