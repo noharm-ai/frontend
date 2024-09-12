@@ -4,6 +4,7 @@ import styled from "styled-components/macro";
 import Descriptions from "components/Descriptions";
 import NumericValue from "components/NumericValue";
 import EditSubstance from "./EditSubstance";
+import EditMaxDose from "./EditMaxDose";
 
 const NestedTableContainer = styled.div`
   .ant-descriptions-item-label {
@@ -26,6 +27,15 @@ const expandedRowRender = (record) => {
             idDrug={record.idDrug}
             sctid={record.sctid}
             accuracy={record.substanceAccuracy}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Dose máxima:" span={3}>
+          <EditMaxDose
+            idDrug={record.idDrug}
+            idSegment={record.idSegment}
+            maxDose={record.maxDose}
+            useWeight={record.useWeight}
+            measureUnitDefaultName={record.measureUnitDefaultName}
           />
         </Descriptions.Item>
         <Descriptions.Item label="Custo:" span={3}>

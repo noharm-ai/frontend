@@ -44,6 +44,20 @@ export default function Relation() {
     dispatch(fetchRelations(params));
   };
 
+  const addNew = () => {
+    if (filters.idOriginList?.length > 0) {
+      dispatch(
+        setRelation({
+          new: true,
+          active: true,
+          sctida: filters.idOriginList[0],
+        })
+      );
+    } else {
+      dispatch(setRelation({ new: true, active: true }));
+    }
+  };
+
   return (
     <>
       <PageHeader>
@@ -54,7 +68,7 @@ export default function Relation() {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            onClick={() => dispatch(setRelation({ new: true, active: true }))}
+            onClick={() => addNew()}
           >
             Adicionar relação
           </Button>

@@ -58,7 +58,7 @@ export default function SecondaryFilters() {
           </div>
         </Col>
 
-        <Col xs={24} md={24}>
+        <Col xs={24} md={12}>
           <Heading as="label" size="14px">
             Filtrar por atributo
           </Heading>
@@ -138,6 +138,27 @@ export default function SecondaryFilters() {
                 Risco na Gestação
               </Select.Option>
             </Select.OptGroup>
+          </Select>
+        </Col>
+
+        <Col xs={12}>
+          <Heading as="label" size="14px">
+            Possui dose máxima:
+          </Heading>
+          <Select
+            style={{ width: "150px" }}
+            value={values.hasMaxDose}
+            onChange={(val) => setFieldValue({ hasMaxDose: val })}
+            showSearch
+            optionFilterProp="children"
+            allowClear
+          >
+            <Select.Option key={0} value={true}>
+              <Tag color="green">Sim</Tag>
+            </Select.Option>
+            <Select.Option key={1} value={false}>
+              <Tag color="red">Não</Tag>
+            </Select.Option>
           </Select>
         </Col>
 

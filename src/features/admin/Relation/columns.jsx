@@ -1,5 +1,6 @@
 import React from "react";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, CopyOutlined } from "@ant-design/icons";
+import { Flex } from "antd";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
@@ -57,13 +58,25 @@ const columns = (setRelation, dispatch, t) => {
       align: "center",
       render: (text, record) => {
         return (
-          <Tooltip title="Editar relação">
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              onClick={() => dispatch(setRelation(record))}
-            ></Button>
-          </Tooltip>
+          <Flex>
+            <Tooltip title="Editar relação">
+              <Button
+                type="primary"
+                icon={<EditOutlined />}
+                onClick={() => dispatch(setRelation(record))}
+              ></Button>
+            </Tooltip>
+            <Tooltip title="Copiar">
+              <Button
+                type="primary"
+                style={{ marginLeft: "5px" }}
+                icon={<CopyOutlined />}
+                onClick={() =>
+                  dispatch(setRelation({ ...record, new: true, sctida: null }))
+                }
+              ></Button>
+            </Tooltip>
+          </Flex>
         );
       },
     },

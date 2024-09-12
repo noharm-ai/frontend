@@ -56,7 +56,7 @@ export const saveConversions = createAsyncThunk(
 );
 
 export const fetchDrugAttributes = createAsyncThunk(
-  "admin-unit-conversion//fetch-drug-attributes",
+  "admin-unit-conversion/fetch-drug-attributes",
   async (params, thunkAPI) => {
     try {
       const response = await api.drugs.getDrugAttributes(
