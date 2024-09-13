@@ -187,7 +187,9 @@ export default function InterventionOutcomeForm() {
             <div className="reason-list">
               {outcomeData.header?.interventionReason &&
                 outcomeData.header?.interventionReason.map((i) => (
-                  <Tag>{i}</Tag>
+                  <Tooltip title="Motivo intervenção">
+                    <Tag>{i}</Tag>
+                  </Tooltip>
                 ))}
             </div>
           </div>
@@ -201,7 +203,19 @@ export default function InterventionOutcomeForm() {
       </div>
 
       {!outcomeData.header?.economyType ? (
-        <div style={{ paddingTop: "1rem" }}>Confirma esta ação?</div>
+        <div>
+          {outcomeData?.header?.outcomeUser && (
+            <div className={`form-row`}>
+              <div className="form-label">
+                <label>Responsável pelo desfecho:</label>
+              </div>
+              <div className="form-value">
+                {outcomeData?.header?.outcomeUser} em{" "}
+                {formatDate(outcomeData?.header.outcomeAt)}
+              </div>
+            </div>
+          )}
+        </div>
       ) : (
         <>
           <Row gutter={24}>
