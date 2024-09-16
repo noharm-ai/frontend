@@ -16,12 +16,8 @@ import notification from "components/notification";
 import { createSlug } from "utils/transformers/utils";
 import { Form } from "styles/Form.style";
 import { ConversionUnitCard } from "./UnitCard.style";
-import {
-  updateListFactors,
-  fetchDrugAttributes,
-  selectDrugRef,
-  saveConversions,
-} from "../UnitConversionSlice";
+import { updateListFactors, saveConversions } from "../UnitConversionSlice";
+import { setDrawerSctid } from "../../DrugReferenceDrawer/DrugReferenceDrawerSlice";
 import { getErrorMessage } from "utils/errorHandler";
 
 export default function UnitCard({ idDrug, name, idSegment, data }) {
@@ -53,20 +49,19 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
     </Tooltip>
   );
 
-  const ExtraAction = ({ idDrug, idSegment }) => (
+  const ExtraAction = ({ sctid }) => (
     <Tooltip title="Referência">
       <Button
         shape="circle"
         icon={<FileTextOutlined />}
         loading={loading}
-        onClick={() => showRef(idDrug, idSegment)}
+        onClick={() => showRef(sctid)}
       />
     </Tooltip>
   );
 
-  const showRef = (idDrug, idSegment) => {
-    dispatch(selectDrugRef({ idDrug, name, data }));
-    dispatch(fetchDrugAttributes({ idDrug, idSegment }));
+  const showRef = (sctid) => {
+    dispatch(setDrawerSctid(sctid));
   };
 
   const initialValues = {
@@ -151,7 +146,7 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
           className={`${isValid(data) ? "success" : "error"} ${
             dirty ? "warning" : ""
           }`}
-          extra={<ExtraAction idDrug={idDrug} idSegment={data[0].idSegment} />}
+          extra={<ExtraAction sctid={data[0].sctid} />}
         >
           <Spin spinning={loading}>
             <Form>

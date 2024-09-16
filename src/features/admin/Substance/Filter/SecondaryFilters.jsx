@@ -89,6 +89,23 @@ export default function SecondaryFilters() {
             value={values.handlingOption}
           />
         </Col>
+
+        <Col xs={24} md={12}>
+          <Heading as="label" size="14px">
+            Possui texto curadoria:
+          </Heading>
+          <Select
+            optionFilterProp="children"
+            showSearch
+            style={{ width: "100%" }}
+            value={values.hasAdminText}
+            onChange={(value) => setFieldValue({ hasAdminText: value })}
+            allowClear
+          >
+            <Select.Option value={1}>Sim</Select.Option>
+            <Select.Option value={0}>Não</Select.Option>
+          </Select>
+        </Col>
       </Row>
     </Col>
   );

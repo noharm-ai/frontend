@@ -43,6 +43,7 @@ import adminIntegrationConfig from "features/admin/IntegrationConfig/Integration
 import adminIntegrationRemote from "features/admin/IntegrationRemote/IntegrationRemoteSlice";
 import adminSubstance from "features/admin/Substance/SubstanceSlice";
 import adminRelation from "features/admin/Relation/RelationsSlice";
+import adminDrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
 
 import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
@@ -68,6 +69,7 @@ const adminReducers = combineReducers({
   unitConversion: adminUnitConversion,
   substance: adminSubstance,
   relation: adminRelation,
+  drugReferenceDrawer: adminDrugReferenceDrawer,
 });
 
 const reportReducers = combineReducers({

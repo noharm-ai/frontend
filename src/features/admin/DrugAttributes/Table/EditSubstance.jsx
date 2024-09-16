@@ -1,6 +1,10 @@
 import "styled-components/macro";
 import React, { useState, useEffect } from "react";
-import { CheckOutlined, RobotOutlined } from "@ant-design/icons";
+import {
+  CheckOutlined,
+  RobotOutlined,
+  FileTextOutlined,
+} from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
@@ -10,8 +14,8 @@ import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
-
 import { updateSubstance } from "../DrugAttributesSlice";
+import { setDrawerSctid } from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
 
 export default function EditPriceConversion({ idDrug, sctid, accuracy }) {
   const dispatch = useDispatch();
@@ -115,6 +119,17 @@ export default function EditPriceConversion({ idDrug, sctid, accuracy }) {
             </Tag>
           </Tooltip>
         )}
+        <Tooltip title="Referência">
+          <Button
+            onClick={() => dispatch(setDrawerSctid(value))}
+            icon={<FileTextOutlined />}
+            disabled={!value}
+            shape="circle"
+            style={{
+              marginLeft: "5px",
+            }}
+          ></Button>
+        </Tooltip>
       </span>
     </div>
   );

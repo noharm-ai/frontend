@@ -3,6 +3,20 @@ import styled from "styled-components/macro";
 export const InterventionOutcomeContainer = styled.div`
   padding-top: 10px;
 
+  .intervention-header {
+    display: flex;
+    align-items: center;
+    background: #fafafa;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+
+    > div:nth-child(1) {
+      flex: 1;
+    }
+  }
+
   .collapsible {
     margin-top: 15px;
     max-height: 0;

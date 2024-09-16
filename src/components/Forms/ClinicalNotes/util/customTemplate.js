@@ -89,6 +89,36 @@ export const getCustomClinicalNote = (
       })
     )
     .replace(
+      "{{dialisaveis}}",
+      getDialyzable(drugs, prescription.data.dialysis, {
+        empty: "Nenhum medicamento Dialisável encontrado.",
+      })
+    )
+    .replace(
+      "{{antitromboticos}}",
+      getDrugsByClass(
+        drugs,
+        ["B1"],
+        "Nenhum medicamento Antitrombótico encontrado."
+      )
+    )
+    .replace(
+      "{{profilaxia_ulcera_estresse}}",
+      getDrugsByClass(
+        drugs,
+        ["A02B"],
+        "Nenhum medicamento de Profilaxia de Úlcera de Estresse encontrado."
+      )
+    )
+    .replace(
+      "{{profilaxia_ocular}}",
+      getDrugsByClass(
+        drugs,
+        ["S1K1"],
+        "Nenhum medicamento de Profilaxia Ocular encontrado."
+      )
+    )
+    .replace(
       "{{assinatura}}",
       signatureTemplate(params.signature, params.account)
     );
@@ -164,18 +194,97 @@ const getDrugsByAttribute = (drugs, attr, params = {}) => {
     drugs
       .filter((d) => d[attr])
       .map((d) => {
+        const dose = `(${
+          d.dose !== null
+            ? `${d.dose} ${d.measureUnit ? d.measureUnit.label : ""}`
+            : "Dose não informada"
+        }  X ${
+          d.frequency?.label ? d.frequency.label : "Frequência não informada"
+        })`;
+
         if (params.period) {
           return `- ${d.drug} (Período: ${
             d.totalPeriod || 0
-          }D **Revisar período)`;
+          }D **Revisar período) ${dose}`;
         }
 
-        return `- ${d.drug}`;
+        return `- ${d.drug} ${dose}`;
       })
   ).sort();
 
   if (!list.length) {
     return params.empty;
+  }
+
+  return list.join("\n");
+};
+
+const getDialyzable = (drugs, dialysis, params = {}) => {
+  console.log("dialysis", dialysis);
+  if (!drugs || (drugs && !drugs.length)) {
+    return params.empty;
+  }
+
+  if (dialysis === "0" || dialysis == null) {
+    return "Não há informação sobre diálise para este paciente";
+  }
+
+  const list = uniq(
+    drugs
+      .filter((d) => d.dialyzable)
+      .map((d) => {
+        const dose = `(${
+          d.dose !== null
+            ? `${d.dose} ${d.measureUnit ? d.measureUnit.label : ""}`
+            : "Dose não informada"
+        }  X ${
+          d.frequency?.label ? d.frequency.label : "Frequência não informada"
+        })`;
+
+        return `- ${d.drug} ${dose}`;
+      })
+  ).sort();
+
+  if (!list.length) {
+    return params.empty;
+  }
+
+  return list.join("\n");
+};
+
+const getDrugsByClass = (drugs, classList, empty) => {
+  if (!drugs || (drugs && !drugs.length)) {
+    return empty;
+  }
+
+  const list = uniq(
+    drugs
+      .filter((d) => {
+        let hasClass = false;
+
+        classList.forEach((c) => {
+          if (`${d.idSubstanceClass}`.startsWith(c)) {
+            hasClass = true;
+          }
+        });
+
+        return hasClass;
+      })
+      .map((d) => {
+        const dose = `(${
+          d.dose !== null
+            ? `${d.dose} ${d.measureUnit ? d.measureUnit.label : ""}`
+            : "Dose não informada"
+        }  X ${
+          d.frequency?.label ? d.frequency.label : "Frequência não informada"
+        })`;
+
+        return `- ${d.drug} ${dose}`;
+      })
+  ).sort();
+
+  if (!list.length) {
+    return empty;
   }
 
   return list.join("\n");

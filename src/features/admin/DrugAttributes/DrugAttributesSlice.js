@@ -17,6 +17,10 @@ const initialState = {
   },
   currentPage: 1,
   count: 0,
+  drugRef: {
+    sctid: null,
+    data: {},
+  },
   addDefaultUnits: {
     status: "idle",
     error: null,
@@ -169,6 +173,9 @@ const drugAttributesSlice = createSlice({
     setCurrentPage(state, action) {
       state.currentPage = action.payload;
     },
+    setDrugRef(state, action) {
+      state.drugRef.data = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -252,7 +259,7 @@ const drugAttributesSlice = createSlice({
   },
 });
 
-export const { reset, setFilters, setCurrentPage } =
+export const { reset, setFilters, setCurrentPage, setDrugRef } =
   drugAttributesSlice.actions;
 
 export default drugAttributesSlice.reducer;

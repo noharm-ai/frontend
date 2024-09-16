@@ -205,6 +205,23 @@ function BaseForm() {
               </>
             ),
           },
+          {
+            key: "admin-text",
+            label: "Curadoria",
+            children: (
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>Texto curadoria:</label>
+                </div>
+                <div className="form-input">
+                  <Editor
+                    onEdit={(text) => setFieldValue(`adminText`, text)}
+                    content={values.adminText || ""}
+                  />
+                </div>
+              </div>
+            ),
+          },
         ]}
       />
     </>

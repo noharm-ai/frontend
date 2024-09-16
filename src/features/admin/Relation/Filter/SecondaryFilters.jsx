@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import Heading from "components/Heading";
@@ -11,39 +10,10 @@ import DrugAlertInteractionTypeEnum from "models/DrugAlertInteractionTypeEnum";
 export default function SecondaryFilters() {
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
-  const substances = useSelector((state) => state.lists.getSubstances.list);
-  const substancesStatus = useSelector(
-    (state) => state.lists.getSubstances.status
-  );
 
   return (
     <Col xs={24} md={14}>
       <Row gutter={[24, 24]}>
-        <Col xs={24} md={24}>
-          <Heading as="label" htmlFor="date" size="14px">
-            Subst. relacionada:
-          </Heading>
-
-          <Select
-            id="idclass"
-            optionFilterProp="children"
-            showSearch
-            style={{ width: "100%" }}
-            value={values.idDestinationList}
-            onChange={(value, option) =>
-              setFieldValue({ idDestinationList: value })
-            }
-            loading={substancesStatus === "loading"}
-            mode="multiple"
-            allowClear
-          >
-            {substances.map(({ sctid, name }) => (
-              <Select.Option key={sctid} value={sctid}>
-                {name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Col>
         <Col xs={24} md={12}>
           <Heading as="label" htmlFor="date" size="14px">
             Tipo:

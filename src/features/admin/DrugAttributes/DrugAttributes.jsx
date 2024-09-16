@@ -15,6 +15,7 @@ import expandedRowRender from "./Table/expandedRowRender";
 import { setCurrentPage, fetchDrugAttributes } from "./DrugAttributesSlice";
 import { getSubstances } from "features/lists/ListsSlice";
 import Actions from "./Actions/Actions";
+import DrugReferenceDrawer from "../DrugReferenceDrawer/DrugReferenceDrawer";
 
 export default function DrugAttributes() {
   const dispatch = useDispatch();
@@ -142,6 +143,7 @@ export default function DrugAttributes() {
           }
         />
       </PaginationContainer>
+      <DrugReferenceDrawer />
     </>
   );
 }
