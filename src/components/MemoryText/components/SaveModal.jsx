@@ -225,6 +225,45 @@ export default function SaveModal({
                   Controlados
                 </Tag>
               </Tooltip>
+              <Tooltip title="Clique para adicionar a lista de medicamentos de Dialisáveis presentes nesta prescrição">
+                <Tag
+                  onClick={() => addVariable("{{dialisaveis}}")}
+                  style={{ cursor: "pointer" }}
+                  color="magenta"
+                >
+                  Dialisáveis
+                </Tag>
+              </Tooltip>
+
+              <Tooltip title="Clique para adicionar a lista de medicamentos de Antitrombóticos presentes nesta prescrição">
+                <Tag
+                  onClick={() => addVariable("{{antitromboticos}}")}
+                  style={{ cursor: "pointer" }}
+                  color="magenta"
+                >
+                  Antitrombótico
+                </Tag>
+              </Tooltip>
+
+              <Tooltip title="Clique para adicionar a lista de medicamentos de Profilaxia de úlcera de estresse presentes nesta prescrição">
+                <Tag
+                  onClick={() => addVariable("{{profilaxia_ulcera_estresse}}")}
+                  style={{ cursor: "pointer" }}
+                  color="magenta"
+                >
+                  Profilaxia de Úlcera de Estresse
+                </Tag>
+              </Tooltip>
+
+              <Tooltip title="Clique para adicionar a lista de medicamentos de Profilaxia Ocular presentes nesta prescrição">
+                <Tag
+                  onClick={() => addVariable("{{profilaxia_ocular}}")}
+                  style={{ cursor: "pointer" }}
+                  color="magenta"
+                >
+                  Profilaxia Ocular
+                </Tag>
+              </Tooltip>
             </div>
           </div>
 
