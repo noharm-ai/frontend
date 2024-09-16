@@ -16,8 +16,14 @@ const columns = (setRelation, dispatch, t) => {
     },
     {
       title: "Subst. Relacionada",
-      dataIndex: "destinationName",
       align: "left",
+      render: (entry, record) => {
+        const regex = /(<([^>]+)>)/gi;
+        const cleanText = record.text ? record.text.replace(regex, "") : "";
+        return (
+          <Tooltip title={cleanText || "-"}>{record.destinationName}</Tooltip>
+        );
+      },
     },
     {
       title: "Tipo",
@@ -28,7 +34,7 @@ const columns = (setRelation, dispatch, t) => {
       },
     },
     {
-      title: "Nível",
+      title: "Efeito",
       align: "center",
       render: (entry, record) => {
         return (

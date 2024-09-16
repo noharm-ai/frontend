@@ -90,7 +90,7 @@ export const getCustomClinicalNote = (
     )
     .replace(
       "{{dialisaveis}}",
-      getDrugsByAttribute(drugs, "dialyzable", {
+      getDialyzable(drugs, prescription.data.dialysis, {
         empty: "Nenhum medicamento Dialisável encontrado.",
       })
     )
@@ -207,6 +207,39 @@ const getDrugsByAttribute = (drugs, attr, params = {}) => {
             d.totalPeriod || 0
           }D **Revisar período) ${dose}`;
         }
+
+        return `- ${d.drug} ${dose}`;
+      })
+  ).sort();
+
+  if (!list.length) {
+    return params.empty;
+  }
+
+  return list.join("\n");
+};
+
+const getDialyzable = (drugs, dialysis, params = {}) => {
+  console.log("dialysis", dialysis);
+  if (!drugs || (drugs && !drugs.length)) {
+    return params.empty;
+  }
+
+  if (dialysis === "0" || dialysis == null) {
+    return "Não há informação sobre diálise para este paciente";
+  }
+
+  const list = uniq(
+    drugs
+      .filter((d) => d.dialyzable)
+      .map((d) => {
+        const dose = `(${
+          d.dose !== null
+            ? `${d.dose} ${d.measureUnit ? d.measureUnit.label : ""}`
+            : "Dose não informada"
+        }  X ${
+          d.frequency?.label ? d.frequency.label : "Frequência não informada"
+        })`;
 
         return `- ${d.drug} ${dose}`;
       })

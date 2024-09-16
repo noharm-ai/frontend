@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Pagination } from "antd";
@@ -11,8 +11,8 @@ import Button from "components/Button";
 import Filter from "./Filter/Filter";
 import { setRelation, setCurrentPage, fetchRelations } from "./RelationsSlice";
 import RelationForm from "./Form/RelationForm";
-import { toDataSource } from "utils";
-import columns from "./columns";
+import columns from "./Table/columns";
+import expandedRowRender from "./Table/expandedRowRender";
 
 import { PageCard, PaginationContainer } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
@@ -32,9 +32,47 @@ export default function Relation() {
   const page = useSelector((state) => state.admin.relation.currentPage);
   const count = useSelector((state) => state.admin.relation.count);
   const filters = useSelector((state) => state.admin.relation.filters);
+  const [expandedRows, setExpandedRows] = useState([]);
   const limit = 100;
 
-  const ds = toDataSource(list, null, {});
+  const updateExpandedRows = (list, key) => {
+    if (list.includes(key)) {
+      return list.filter((i) => i !== key);
+    }
+
+    return [...list, key];
+  };
+
+  const handleRowExpand = (record) => {
+    setExpandedRows(updateExpandedRows(expandedRows, record.key));
+  };
+
+  const ExpandColumn = ({ expand }) => {
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <button
+          type="button"
+          className={`expand-all ant-table-row-expand-icon ${
+            expand ? "ant-table-row-expand-icon-collapsed" : ""
+          }`}
+          onClick={toggleExpansion}
+        ></button>
+      </div>
+    );
+  };
+
+  const toggleExpansion = () => {
+    if (expandedRows.length) {
+      setExpandedRows([]);
+    } else {
+      setExpandedRows(list.map((d) => `${d.sctida}-${d.sctidb}-${d.kind}`));
+    }
+  };
+
+  const ds = list.map((r) => ({
+    key: `${r.sctida}-${r.sctidb}-${r.kind}`,
+    ...r,
+  }));
 
   const onPageChange = (newPage) => {
     dispatch(setCurrentPage(newPage));
@@ -94,6 +132,10 @@ export default function Relation() {
           loading={status === "loading"}
           locale={{ emptyText }}
           dataSource={status === "succeeded" ? ds : []}
+          expandedRowRender={expandedRowRender(t)}
+          expandedRowKeys={expandedRows}
+          columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+          onExpand={(expanded, record) => handleRowExpand(record)}
         />
       </PageCard>
       <PaginationContainer>
