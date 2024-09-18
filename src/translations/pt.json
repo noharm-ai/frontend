@@ -212,7 +212,8 @@
     "examVariation": "Variação em relação ao último exame",
     "admissionDate": "Data de internação",
     "prescriptionDate": "Data da prescrição",
-    "reports": "Relatórios"
+    "reports": "Relatórios",
+    "openConciliation": "Abrir conciliação"
   },
   "screeningBody": {
     "tabDrugs": "Medicamentos",
@@ -603,6 +604,7 @@
     "alert-bt": "Integração de Alertas",
     "cpoe": "CPOE",
     "prescriptionEdit": "Edição de Prescrição",
+    "conciliationEdit": "Edição de Conciliação",
     "beta-cards": "Priorização Cards (Beta)",
     "presmed-form": "Formulário Presmed",
     "doctor": "Médico",
@@ -695,6 +697,7 @@
     "MICROMEDEX": "Bulário",
     "PRIMARYCARE": "Primary Care",
     "CONCILIATION": "Conciliação",
+    "CONCILIATION_EDIT": "Cadastro de Conciliação",
     "SOLUTION_FREQUENCY": "Frequência nas Soluções",
     "LOCK_CHECKED_PRESCRIPTION": "Bloquear Desfazer Checagem",
     "DISABLE_SOLUTION_TAB": "Remover a aba de Soluções",
@@ -707,6 +710,7 @@
     "MICROMEDEX": "Habilita o botão que faz o link entre o medicamento e o bulário (Bulário Cognys/Micromedex)",
     "PRIMARYCARE": "Habilita a NoHarm para a perspectiva de Primary Care",
     "CONCILIATION": "Habilita a funcionalidade de Conciliação da NoHarm",
+    "CONCILIATION_EDIT": "Habilita a possibilidade de incluir novas conciliações pela NoHarm",
     "SOLUTION_FREQUENCY": "Exibe a frequência do medicamento na lista de soluções",
     "LOCK_CHECKED_PRESCRIPTION": "Bloqueia o botão Desfazer Checagem quando a checagem foi executada por outro usuário. Existe uma permissão (role) que pode ser concedida a um usuário que sobrepôe esta regra",
     "DISABLE_SOLUTION_TAB": "Exibe as Soluções na aba de Medicamentos",

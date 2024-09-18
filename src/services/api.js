@@ -329,12 +329,9 @@ const getDrugSummary = (bearerToken, idDrug, idSegment) =>
   });
 
 const getDrugResources = (bearerToken, idDrug, idSegment, idHospital) =>
-  instance.get(
-    `${endpoints.drugs}/resources/${idDrug}/${idSegment}/${idHospital}`,
-    {
-      ...setHeaders(bearerToken),
-    }
-  );
+  instance.get(`${endpoints.drugs}/resources/${idDrug}/${idSegment}`, {
+    ...setHeaders(bearerToken),
+  });
 
 /**
  * Outliers.
@@ -576,6 +573,21 @@ api.prescription.setStatus = (params) =>
 
 api.prescription.review = (params) =>
   instance.post(`/prescriptions/review`, params, {
+    ...setHeaders(),
+  });
+
+/**
+ * Conciliation
+ */
+api.conciliation = {};
+api.conciliation.createConciliation = (params) =>
+  instance.post(`/conciliation/create`, params, {
+    ...setHeaders(),
+  });
+
+api.conciliation.getAvailableConciliations = (params) =>
+  instance.get(`/conciliation/list-available`, {
+    params,
     ...setHeaders(),
   });
 

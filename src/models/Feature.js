@@ -2,6 +2,7 @@ export default class Feature {
   static MICROMEDEX = "MICROMEDEX";
   static PRIMARYCARE = "PRIMARYCARE";
   static CONCILIATION = "CONCILIATION";
+  static CONCILIATION_EDIT = "CONCILIATION_EDIT";
   static SOLUTION_FREQUENCY = "SOLUTION_FREQUENCY";
   static LOCK_CHECKED_PRESCRIPTION = "LOCK_CHECKED_PRESCRIPTION";
   static DISABLE_SOLUTION_TAB = "DISABLE_SOLUTION_TAB";
@@ -37,6 +38,11 @@ export default class Feature {
         id: Feature.SOLUTION_FREQUENCY,
         label: t(`features.${Feature.SOLUTION_FREQUENCY}`),
         description: t(`featuresDescription.${Feature.SOLUTION_FREQUENCY}`),
+      },
+      {
+        id: Feature.CONCILIATION_EDIT,
+        label: t(`features.${Feature.CONCILIATION_EDIT}`),
+        description: t(`featuresDescription.${Feature.CONCILIATION_EDIT}`),
       },
       {
         id: Feature.LOCK_CHECKED_PRESCRIPTION,

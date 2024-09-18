@@ -212,7 +212,8 @@
     "examVariation": "Variation compared to last lab result",
     "admissionDate": "Admission date",
     "prescriptionDate": "Prescription date",
-    "reports": "Reports"
+    "reports": "Reports",
+    "openConciliation": "Open conciliation"
   },
   "screeningBody": {
     "tabDrugs": "Drugs",
@@ -597,6 +598,7 @@
     "alert-bt": "Alert Integration",
     "cpoe": "CPOE",
     "prescriptionEdit": "Prescription Edit",
+    "conciliationEdit": "Edição de Conciliação",
     "beta-cards": "Prioritization Cards (Beta)",
     "presmed-form": "Presmed Form",
     "doctor": "Doctor",

@@ -21,6 +21,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.CONCILIATION);
   };
 
+  const hasConciliationEdit = () => {
+    return hasFeature(Feature.CONCILIATION_EDIT);
+  };
+
   const hasSolutionFrequency = () => {
     return hasFeature(Feature.SOLUTION_FREQUENCY);
   };
@@ -50,6 +54,7 @@ const FeaturesService = (features) => {
     hasMicromedex,
     hasPrimaryCare,
     hasConciliation,
+    hasConciliationEdit,
     hasSolutionFrequency,
     hasLockCheckedPrescription,
     hasDisableSolutionTab,

@@ -87,6 +87,8 @@ const prescriptionDrugMenu = ({
   hasNotes,
   t,
   concilia,
+  security,
+  featureService,
   ...data
 }) => {
   const items = [
@@ -99,7 +101,10 @@ const prescriptionDrugMenu = ({
     },
   ];
 
-  if (!concilia) {
+  if (
+    (concilia && featureService.hasConciliationEdit()) ||
+    (!concilia && security.hasPrescriptionEdit())
+  ) {
     items.push({
       key: "edit",
       label: t("actions.edit"),
@@ -125,6 +130,7 @@ const prescriptionDrugMenu = ({
             ...data,
             idPrescriptionDrug,
             admissionNumber,
+            idHospital: data.idHospital,
             updateDrug: true,
           });
           break;
@@ -205,6 +211,7 @@ const Action = ({
   emptyRow,
   t,
   security,
+  featureService,
   selectedRows,
   selectedRowsActive,
   toggleSelectedRows,
@@ -283,13 +290,16 @@ const Action = ({
         ></AntButton>
       </Tooltip>
 
-      {security.hasPrescriptionEdit() && (
+      {(security.hasPrescriptionEdit() && !data.concilia) ||
+      (featureService.hasConciliationEdit() && data.concilia) ? (
         <Dropdown
           menu={prescriptionDrugMenu({
             idPrescriptionDrug,
             admissionNumber,
             t,
             hasNotes,
+            security,
+            featureService,
             ...data,
           })}
           trigger={["click"]}
@@ -305,9 +315,7 @@ const Action = ({
             icon={<CaretDownOutlined style={{ fontSize: 16 }} />}
           ></AntButton>
         </Dropdown>
-      )}
-
-      {!security.hasPrescriptionEdit() && (
+      ) : (
         <Tooltip
           title={
             hasNotes
