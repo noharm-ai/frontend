@@ -37,8 +37,8 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.DISABLE_SOLUTION_TAB);
   };
 
-  const hasClinicalNotesNewFormat = () => {
-    return hasFeature(Feature.CLINICAL_NOTES_NEW_FORMAT);
+  const hasClinicalNotesLegacyFormat = () => {
+    return hasFeature(Feature.CLINICAL_NOTES_LEGACY_FORMAT);
   };
 
   const hasPatientRevision = () => {
@@ -62,7 +62,7 @@ const FeaturesService = (features) => {
     hasSolutionFrequency,
     hasLockCheckedPrescription,
     hasDisableSolutionTab,
-    hasClinicalNotesNewFormat,
+    hasClinicalNotesLegacyFormat,
     hasPatientRevision,
     hasAuthorizationSegment,
     hasDisableWhitelistGroup,

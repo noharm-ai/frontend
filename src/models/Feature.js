@@ -8,7 +8,8 @@ export default class Feature {
   static DISABLE_SOLUTION_TAB = "DISABLE_SOLUTION_TAB";
   static DISABLE_WHITELIST_GROUP = "DISABLE_WHITELIST_GROUP";
   static OAUTH = "OAUTH";
-  static CLINICAL_NOTES_NEW_FORMAT = "CLINICAL_NOTES_NEW_FORMAT";
+
+  static CLINICAL_NOTES_LEGACY_FORMAT = "CLINICAL_NOTES_LEGACY_FORMAT";
   static PATIENT_REVISION = "PATIENT_REVISION";
   static INTERVENTION_V2 = "INTERVENTION_V2";
   static AUTHORIZATION_SEGMENT = "AUTHORIZATION_SEGMENT";
@@ -65,10 +66,10 @@ export default class Feature {
         ),
       },
       {
-        id: Feature.CLINICAL_NOTES_NEW_FORMAT,
-        label: t(`features.${Feature.CLINICAL_NOTES_NEW_FORMAT}`),
+        id: Feature.CLINICAL_NOTES_LEGACY_FORMAT,
+        label: t(`features.${Feature.CLINICAL_NOTES_LEGACY_FORMAT}`),
         description: t(
-          `featuresDescription.${Feature.CLINICAL_NOTES_NEW_FORMAT}`
+          `featuresDescription.${Feature.CLINICAL_NOTES_LEGACY_FORMAT}`
         ),
       },
       {

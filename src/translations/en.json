@@ -695,7 +695,7 @@
     "LOCK_CHECKED_PRESCRIPTION": "Lock Checked Prescription",
     "DISABLE_SOLUTION_TAB": "Remove Solutions tab",
     "DISABLE_WHITELIST_GROUP": "Disable Grouping Without Validation",
-    "CLINICAL_NOTES_NEW_FORMAT": "Clinical Notes - New Format",
+    "CLINICAL_NOTES_LEGACY_FORMAT": "Clinical Notes - Legacy Format",
     "PATIENT_REVISION": "Patient Review"
   },
 
@@ -707,7 +707,7 @@
     "LOCK_CHECKED_PRESCRIPTION": "Disables the Undo Check button when the prescription was checked by another user",
     "DISABLE_SOLUTION_TAB": "Shows Solution itens in the Drugs tab",
     "DISABLE_WHITELIST_GROUP": "Disables the option to display components without validation in the extended medicine line",
-    "CLINICAL_NOTES_NEW_FORMAT": "Enable when anony updated and is using noharm care new annotation process",
+    "CLINICAL_NOTES_LEGACY_FORMAT": "Quando habilitado, formata as evoluções com o comportamento anterior ao atual (anony e noharm care antigos)",
     "PATIENT_REVISION": "Enables the patient review action. Review is an action to indicate that the patient has undergone extra evaluation. Typically used in the context where the technical assessment is carried out by Checking and the clinical assessment is recorded by the Review action."
   },
 

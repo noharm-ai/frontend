@@ -703,7 +703,7 @@
     "DISABLE_SOLUTION_TAB": "Remover a aba de Soluções",
     "DISABLE_WHITELIST_GROUP": "Desativar Agrupamento Sem Validação",
     "OAUTH": "OAUTH",
-    "CLINICAL_NOTES_NEW_FORMAT": "Evoluções - Nova formatação",
+    "CLINICAL_NOTES_LEGACY_FORMAT": "Evoluções - Formatação Legado",
     "PATIENT_REVISION": "Revisão do Paciente"
   },
 
@@ -717,7 +717,7 @@
     "DISABLE_SOLUTION_TAB": "Exibe as Soluções na aba de Medicamentos",
     "DISABLE_WHITELIST_GROUP": "Desativa a opção de exibir os componentes sem validação na linha extendida do medicamento",
     "OAUTH": "Habilita integração OAUTH (exige configuração extra)",
-    "CLINICAL_NOTES_NEW_FORMAT": "Ligar para hospitais com anony atualizado e processo novo da noharm care",
+    "CLINICAL_NOTES_LEGACY_FORMAT": "Quando habilitado, formata as evoluções com o comportamento anterior ao atual (anony e noharm care antigos)",
     "PATIENT_REVISION": "Habilita a ação de revisão do paciente. A revisão é uma ação para indicar que o paciente sofreu uma avaliação extra. Normalmente utilizado no contexto onde a avaliação técnica é feita pela Checagem e a avaliação clínica é registrada pela ação de Revisão."
   },
 
