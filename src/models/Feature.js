@@ -6,6 +6,7 @@ export default class Feature {
   static SOLUTION_FREQUENCY = "SOLUTION_FREQUENCY";
   static LOCK_CHECKED_PRESCRIPTION = "LOCK_CHECKED_PRESCRIPTION";
   static DISABLE_SOLUTION_TAB = "DISABLE_SOLUTION_TAB";
+  static DISABLE_WHITELIST_GROUP = "DISABLE_WHITELIST_GROUP";
   static OAUTH = "OAUTH";
   static CLINICAL_NOTES_NEW_FORMAT = "CLINICAL_NOTES_NEW_FORMAT";
   static PATIENT_REVISION = "PATIENT_REVISION";
@@ -55,6 +56,13 @@ export default class Feature {
         id: Feature.DISABLE_SOLUTION_TAB,
         label: t(`features.${Feature.DISABLE_SOLUTION_TAB}`),
         description: t(`featuresDescription.${Feature.DISABLE_SOLUTION_TAB}`),
+      },
+      {
+        id: Feature.DISABLE_WHITELIST_GROUP,
+        label: t(`features.${Feature.DISABLE_WHITELIST_GROUP}`),
+        description: t(
+          `featuresDescription.${Feature.DISABLE_WHITELIST_GROUP}`
+        ),
       },
       {
         id: Feature.CLINICAL_NOTES_NEW_FORMAT,

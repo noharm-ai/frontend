@@ -132,32 +132,39 @@ export const sourceToStoreType = (source) => {
   }
 };
 
-export const transformPrescription = ({
-  daysAgo,
-  prescriptionScore,
-  date,
-  expire,
-  birthdate,
-  mdrd,
-  tgo,
-  tgp,
-  patientScore,
-  prescription,
-  solution,
-  procedures,
-  namePatient,
-  idPrescription,
-  dischargeDate,
-  infusion,
-  interventions,
-  globalScore,
-  diet,
-  admissionDate,
-  ...item
-}) => {
+export const transformPrescription = (
+  {
+    daysAgo,
+    prescriptionScore,
+    date,
+    expire,
+    birthdate,
+    mdrd,
+    tgo,
+    tgp,
+    patientScore,
+    prescription,
+    solution,
+    procedures,
+    namePatient,
+    idPrescription,
+    dischargeDate,
+    infusion,
+    interventions,
+    globalScore,
+    diet,
+    admissionDate,
+    ...item
+  },
+  options = {}
+) => {
+  const groupWhitelist = options?.disableWhitelistGroup ? false : true;
+
   const prescriptionList = prescription
     ? groupByPrescription(
-        filterWhitelistedChildren(prescription.map(transformDrug)),
+        groupWhitelist
+          ? filterWhitelistedChildren(prescription.map(transformDrug))
+          : prescription.map(transformDrug),
 
         "prescriptions",
         null,
@@ -178,7 +185,9 @@ export const transformPrescription = ({
     : [];
   const dietList = diet
     ? groupByPrescription(
-        filterWhitelistedChildren(diet.map(transformDrug)),
+        groupWhitelist
+          ? filterWhitelistedChildren(diet.map(transformDrug))
+          : diet.map(transformDrug),
         "diet",
         null,
         null,
@@ -315,12 +324,12 @@ export const transformPrescription = ({
   };
 };
 
-export const transformPrescriptions = (prescriptions) => {
+export const transformPrescriptions = (prescriptions, options = {}) => {
   if (!prescriptions) {
     return [];
   }
 
-  return prescriptions.map(transformPrescription);
+  return prescriptions.map((p) => transformPrescription(p, options));
 };
 
 export const transformExams = (exams) =>

@@ -701,6 +701,7 @@
     "SOLUTION_FREQUENCY": "Frequência nas Soluções",
     "LOCK_CHECKED_PRESCRIPTION": "Bloquear Desfazer Checagem",
     "DISABLE_SOLUTION_TAB": "Remover a aba de Soluções",
+    "DISABLE_WHITELIST_GROUP": "Desativar Agrupamento Sem Validação",
     "OAUTH": "OAUTH",
     "CLINICAL_NOTES_NEW_FORMAT": "Evoluções - Nova formatação",
     "PATIENT_REVISION": "Revisão do Paciente"
@@ -714,6 +715,7 @@
     "SOLUTION_FREQUENCY": "Exibe a frequência do medicamento na lista de soluções",
     "LOCK_CHECKED_PRESCRIPTION": "Bloqueia o botão Desfazer Checagem quando a checagem foi executada por outro usuário. Existe uma permissão (role) que pode ser concedida a um usuário que sobrepôe esta regra",
     "DISABLE_SOLUTION_TAB": "Exibe as Soluções na aba de Medicamentos",
+    "DISABLE_WHITELIST_GROUP": "Desativa a opção de exibir os componentes sem validação na linha extendida do medicamento",
     "OAUTH": "Habilita integração OAUTH (exige configuração extra)",
     "CLINICAL_NOTES_NEW_FORMAT": "Ligar para hospitais com anony atualizado e processo novo da noharm care",
     "PATIENT_REVISION": "Habilita a ação de revisão do paciente. A revisão é uma ação para indicar que o paciente sofreu uma avaliação extra. Normalmente utilizado no contexto onde a avaliação técnica é feita pela Checagem e a avaliação clínica é registrada pela ação de Revisão."

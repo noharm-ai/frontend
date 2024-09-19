@@ -49,6 +49,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.AUTHORIZATION_SEGMENT);
   };
 
+  const hasDisableWhitelistGroup = () => {
+    return hasFeature(Feature.DISABLE_WHITELIST_GROUP);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
@@ -61,6 +65,7 @@ const FeaturesService = (features) => {
     hasClinicalNotesNewFormat,
     hasPatientRevision,
     hasAuthorizationSegment,
+    hasDisableWhitelistGroup,
   };
 };
 

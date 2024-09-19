@@ -484,9 +484,12 @@ export const expandedRowRender = (bag) => (record) => {
 
   if (!isEmpty(record.whitelistedChildren)) {
     diluents = record.whitelistedChildren.filter((d) => {
-      const parent = `${d.grp_solution}000`;
+      const parent = `${d.grp_solution}`;
 
-      if (parent === `${record.idPrescriptionDrug}`) {
+      if (
+        parent === `${record.grp_solution}` &&
+        record.idPrescriptionDrug !== d.idPrescriptionDrug
+      ) {
         return true;
       }
 
