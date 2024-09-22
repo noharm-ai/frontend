@@ -184,8 +184,8 @@ const drugAttributesSlice = createSlice({
       })
       .addCase(fetchDrugAttributes.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.list = action.payload.data.data;
-        state.count = action.payload.data.count;
+        state.list = action.payload.data.data.list;
+        state.count = action.payload.data.data.count;
       })
       .addCase(fetchDrugAttributes.rejected, (state, action) => {
         state.status = "failed";
