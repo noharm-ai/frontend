@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { PlusOutlined, CopyOutlined } from "@ant-design/icons";
 import { FloatButton, Skeleton } from "antd";
 
 import Empty from "components/Empty";
@@ -10,8 +9,6 @@ import LoadBox, { LoadContainer } from "components/LoadBox";
 import { Row, Col } from "components/Grid";
 import Tag from "components/Tag";
 import notification from "components/notification";
-import Dropdown from "components/Dropdown";
-import Menu from "components/Menu";
 import FeatureService from "services/features";
 import SecurityService from "services/security";
 
@@ -28,12 +25,7 @@ import ScreeningActions from "containers/Screening/ScreeningActions";
 import EvaluationWarning from "features/prescription/EvaluationWarning/EvaluationWarning";
 import FormIntervention from "containers/Forms/Intervention";
 
-import {
-  BoxWrapper,
-  ScreeningTabs,
-  PrescriptionActionContainer,
-  DrugFormStatusBox,
-} from "./index.style";
+import { BoxWrapper, ScreeningTabs, DrugFormStatusBox } from "./index.style";
 
 export default function Screening({
   fetchScreeningById,
@@ -47,7 +39,7 @@ export default function Screening({
 }) {
   const params = useParams();
   const id = params?.slug;
-  const { prescriptionCount, solutionCount, proceduresCount, dietCount, agg } =
+  const { prescriptionCount, solutionCount, proceduresCount, dietCount } =
     content;
 
   const { t } = useTranslation();
@@ -279,44 +271,6 @@ export default function Screening({
     </>
   );
 
-  const addPrescriptionDrug = (source) => {
-    selectPrescriptionDrug({
-      idPrescription: content.idPrescription,
-      idSegment: content.idSegment,
-      idHospital: content.idHospital,
-      source,
-      updateDrug: true,
-    });
-  };
-
-  const copyPrescriptionDrug = (e, source) => {
-    selectPrescriptionDrug({
-      idPrescription: content.idPrescription,
-      idSegment: content.idSegment,
-      idHospital: content.idHospital,
-      source,
-      copyDrugs: true,
-    });
-
-    e.preventDefault();
-  };
-
-  const menu = (
-    <Menu
-      items={[
-        {
-          label: (
-            <div onClick={(e) => copyPrescriptionDrug(e, "prescription")}>
-              Copiar de prescrições anteriores
-            </div>
-          ),
-          key: "1",
-          icon: <CopyOutlined />,
-        },
-      ]}
-    ></Menu>
-  );
-
   if (error) {
     return (
       <Empty
@@ -338,19 +292,6 @@ export default function Screening({
       ),
       children: (
         <Col span={24} md={24} style={{ paddingTop: "20px" }}>
-          {!isEmpty(content) && security.hasPrescriptionEdit() && !agg && (
-            <PrescriptionActionContainer>
-              <Dropdown.Button
-                overlay={menu}
-                onClick={() => addPrescriptionDrug("prescription")}
-                className="gtm-bt-add-drugEdit"
-              >
-                <PlusOutlined />
-                {t("screeningBody.btnAddDrug")}
-              </Dropdown.Button>
-            </PrescriptionActionContainer>
-          )}
-
           <PrescriptionList
             emptyMessage="Nenhum medicamento encontrado."
             hasFilter

@@ -247,10 +247,10 @@ export default function View({
   if (selected.text) {
     if (featureService.hasPrimaryCare()) {
       html = selected.text.trim().replaceAll("\n", "<br/>");
-    } else if (featureService.hasClinicalNotesNewFormat()) {
-      html = selected.text.trim();
-    } else {
+    } else if (featureService.hasClinicalNotesLegacyFormat()) {
       html = selected.text.trim().replaceAll("  ", "<br/>");
+    } else {
+      html = selected.text.trim();
     }
   }
 

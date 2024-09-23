@@ -1,6 +1,11 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { MenuOutlined, UserOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+  MenuOutlined,
+  UserOutlined,
+  CloseOutlined,
+  ReconciliationOutlined,
+} from "@ant-design/icons";
 import { FloatButton } from "antd";
 
 import FormPatientModal from "containers/Forms/Patient";
@@ -9,6 +14,9 @@ import InterventionOutcome from "features/intervention/InterventionOutcome/Inter
 import CheckSummary from "features/prescription/CheckSummary/CheckSummary";
 import SingleClinicalNotesModal from "features/prescription/ClinicalNotes/SingleClinicalNotesModal/SingleClinicalNotesModal";
 import SecurityService from "services/security";
+import FeaturesService from "services/features";
+import { setChooseConciliationModal } from "features/prescription/PrescriptionSlice";
+import ChooseConciliation from "features/prescription/ChooseConciliation/ChooseConciliation";
 
 import { ScreeningFloatButtonGroup } from "../index.style";
 
@@ -18,11 +26,13 @@ export default function ScreeningActions({
   setModalVisibility,
   patientEditVisible,
   roles,
+  features,
   checkScreening,
   interventions,
 }) {
   const dispatch = useDispatch();
   const security = SecurityService(roles);
+  const featureService = FeaturesService(features);
 
   const afterSavePatient = () => {
     dispatch(
@@ -31,6 +41,10 @@ export default function ScreeningActions({
       fetchScreening(prescription.idPrescription);
       setModalVisibility("patientEdit", false);
     });
+  };
+
+  const addConciliation = () => {
+    dispatch(setChooseConciliationModal(prescription.admissionNumber));
   };
 
   return (
@@ -52,6 +66,13 @@ export default function ScreeningActions({
           icon={<UserOutlined />}
           tooltip="Editar dados do paciente"
         />
+        {featureService.hasConciliation() && !prescription.concilia && (
+          <FloatButton
+            onClick={() => addConciliation()}
+            icon={<ReconciliationOutlined />}
+            tooltip="Abrir conciliação"
+          />
+        )}
       </ScreeningFloatButtonGroup>
 
       <FormPatientModal
@@ -72,6 +93,7 @@ export default function ScreeningActions({
         interventions={interventions}
       />
       <SingleClinicalNotesModal />
+      <ChooseConciliation />
     </>
   );
 }

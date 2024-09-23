@@ -25,6 +25,7 @@ const mapStateToProps = ({ prescriptions, user, intervention }) => ({
   uniqueDrugs: prescriptions.single.data.uniqueDrugs,
   currentPrescription: prescriptions.single.data.conciliaList,
   security: security(user.account.roles),
+  features: user.account.features,
   interventions: prescriptions.single.intervention.list,
   isSavingIntervention: intervention.maybeCreateOrUpdate.isSaving,
 });

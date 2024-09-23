@@ -20,6 +20,7 @@ import {
   toggleSelectedRows,
   setSelectedRows,
 } from "features/prescription/PrescriptionSlice";
+import FeatureService from "services/features";
 
 import { BoxWrapper } from "./index.style";
 
@@ -38,6 +39,7 @@ export default function ConciliationDrugList({
   security,
   interventions,
   updateInterventionData,
+  features,
 }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -47,6 +49,7 @@ export default function ConciliationDrugList({
   const selectedRowsActive = useSelector(
     (state) => state.prescriptionv2.selectedRows.active
   );
+  const featureService = FeatureService(features);
 
   if (isFetching) {
     return <LoadBox />;
@@ -176,6 +179,7 @@ export default function ConciliationDrugList({
     selectedRowsActive,
     selectAllRows,
     isAllSelected: isAllSelected(),
+    featureService,
   };
 
   const filteredDataSource = () => {

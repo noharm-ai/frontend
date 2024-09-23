@@ -212,7 +212,8 @@
     "examVariation": "Variation compared to last lab result",
     "admissionDate": "Admission date",
     "prescriptionDate": "Prescription date",
-    "reports": "Reports"
+    "reports": "Reports",
+    "openConciliation": "Open conciliation"
   },
   "screeningBody": {
     "tabDrugs": "Drugs",
@@ -597,6 +598,7 @@
     "alert-bt": "Alert Integration",
     "cpoe": "CPOE",
     "prescriptionEdit": "Prescription Edit",
+    "conciliationEdit": "Edição de Conciliação",
     "beta-cards": "Prioritization Cards (Beta)",
     "presmed-form": "Presmed Form",
     "doctor": "Doctor",
@@ -692,7 +694,8 @@
     "SOLUTION_FREQUENCY": "Solution Frequency",
     "LOCK_CHECKED_PRESCRIPTION": "Lock Checked Prescription",
     "DISABLE_SOLUTION_TAB": "Remove Solutions tab",
-    "CLINICAL_NOTES_NEW_FORMAT": "Clinical Notes - New Format",
+    "DISABLE_WHITELIST_GROUP": "Disable Grouping Without Validation",
+    "CLINICAL_NOTES_LEGACY_FORMAT": "Clinical Notes - Legacy Format",
     "PATIENT_REVISION": "Patient Review"
   },
 
@@ -703,7 +706,8 @@
     "SOLUTION_FREQUENCY": "Enables the frequency columns in the solutions list",
     "LOCK_CHECKED_PRESCRIPTION": "Disables the Undo Check button when the prescription was checked by another user",
     "DISABLE_SOLUTION_TAB": "Shows Solution itens in the Drugs tab",
-    "CLINICAL_NOTES_NEW_FORMAT": "Enable when anony updated and is using noharm care new annotation process",
+    "DISABLE_WHITELIST_GROUP": "Disables the option to display components without validation in the extended medicine line",
+    "CLINICAL_NOTES_LEGACY_FORMAT": "Quando habilitado, formata as evoluções com o comportamento anterior ao atual (anony e noharm care antigos)",
     "PATIENT_REVISION": "Enables the patient review action. Review is an action to indicate that the patient has undergone extra evaluation. Typically used in the context where the technical assessment is carried out by Checking and the clinical assessment is recorded by the Review action."
   },
 

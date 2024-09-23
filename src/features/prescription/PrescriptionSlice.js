@@ -28,6 +28,11 @@ const initialState = {
     status: "idle",
     list: [],
   },
+  chooseConciliation: {
+    admissionNumber: null,
+    status: "idle",
+    list: [],
+  },
 };
 
 export const getSingleClinicalNotes = createAsyncThunk(
@@ -66,6 +71,32 @@ export const fastCheckPrescription = createAsyncThunk(
         evaluationTime: 0,
         fastCheck: true,
       });
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const createConciliation = createAsyncThunk(
+  "prescription/create-conciliation",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.conciliation.createConciliation(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getConciliationList = createAsyncThunk(
+  "prescription/get-conciliation-list",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.conciliation.getAvailableConciliations(params);
 
       return response.data;
     } catch (err) {
@@ -113,6 +144,9 @@ const prescriptionSlice = createSlice({
     setMultipleCheckList(state, action) {
       state.multipleCheck.list = action.payload;
     },
+    setChooseConciliationModal(state, action) {
+      state.chooseConciliation.admissionNumber = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -135,6 +169,16 @@ const prescriptionSlice = createSlice({
       })
       .addCase(getSingleClinicalNotes.rejected, (state, action) => {
         state.singleClinicalNotes.status = "failed";
+      })
+      .addCase(getConciliationList.pending, (state, action) => {
+        state.chooseConciliation.status = "loading";
+      })
+      .addCase(getConciliationList.fulfilled, (state, action) => {
+        state.chooseConciliation.status = "succeeded";
+        state.chooseConciliation.list = action.payload.data;
+      })
+      .addCase(getConciliationList.rejected, (state, action) => {
+        state.chooseConciliation.status = "failed";
       });
   },
 });
@@ -149,6 +193,7 @@ export const {
   setSelectedRows,
   selectSingleClinicalNotes,
   setMultipleCheckList,
+  setChooseConciliationModal,
 } = prescriptionSlice.actions;
 
 export default prescriptionSlice.reducer;

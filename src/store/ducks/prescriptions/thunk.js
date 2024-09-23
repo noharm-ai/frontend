@@ -2,6 +2,7 @@ import isEmpty from "lodash.isempty";
 
 import api from "services/api";
 import hospital from "services/hospital";
+import FeaturesService from "services/features";
 import {
   transformPrescriptions,
   transformPrescription,
@@ -99,7 +100,11 @@ export const fetchPrescriptionsListThunk =
         : `Paciente ${idPatient}`,
     }));
 
-    const list = transformPrescriptions(listAddedPatientName);
+    const featureService = FeaturesService(user.account.features);
+
+    const list = transformPrescriptions(listAddedPatientName, {
+      disableWhitelistGroup: featureService.hasDisableWhitelistGroup(),
+    });
 
     dispatch(patientsFetchListSuccess(patientsList));
     dispatch(prescriptionsFetchListSuccess(list));
@@ -150,7 +155,11 @@ export const fetchScreeningThunk =
       return;
     }
 
-    const singlePrescription = transformPrescription(data);
+    const featureService = FeaturesService(user.account.features);
+
+    const singlePrescription = transformPrescription(data, {
+      disableWhitelistGroup: featureService.hasDisableWhitelistGroup(),
+    });
     const requestConfig = {
       listToRequest: [singlePrescription],
       listToEscape: listPatients,

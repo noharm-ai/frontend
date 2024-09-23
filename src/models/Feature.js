@@ -2,11 +2,14 @@ export default class Feature {
   static MICROMEDEX = "MICROMEDEX";
   static PRIMARYCARE = "PRIMARYCARE";
   static CONCILIATION = "CONCILIATION";
+  static CONCILIATION_EDIT = "CONCILIATION_EDIT";
   static SOLUTION_FREQUENCY = "SOLUTION_FREQUENCY";
   static LOCK_CHECKED_PRESCRIPTION = "LOCK_CHECKED_PRESCRIPTION";
   static DISABLE_SOLUTION_TAB = "DISABLE_SOLUTION_TAB";
+  static DISABLE_WHITELIST_GROUP = "DISABLE_WHITELIST_GROUP";
   static OAUTH = "OAUTH";
-  static CLINICAL_NOTES_NEW_FORMAT = "CLINICAL_NOTES_NEW_FORMAT";
+
+  static CLINICAL_NOTES_LEGACY_FORMAT = "CLINICAL_NOTES_LEGACY_FORMAT";
   static PATIENT_REVISION = "PATIENT_REVISION";
   static INTERVENTION_V2 = "INTERVENTION_V2";
   static AUTHORIZATION_SEGMENT = "AUTHORIZATION_SEGMENT";
@@ -39,6 +42,11 @@ export default class Feature {
         description: t(`featuresDescription.${Feature.SOLUTION_FREQUENCY}`),
       },
       {
+        id: Feature.CONCILIATION_EDIT,
+        label: t(`features.${Feature.CONCILIATION_EDIT}`),
+        description: t(`featuresDescription.${Feature.CONCILIATION_EDIT}`),
+      },
+      {
         id: Feature.LOCK_CHECKED_PRESCRIPTION,
         label: t(`features.${Feature.LOCK_CHECKED_PRESCRIPTION}`),
         description: t(
@@ -51,10 +59,17 @@ export default class Feature {
         description: t(`featuresDescription.${Feature.DISABLE_SOLUTION_TAB}`),
       },
       {
-        id: Feature.CLINICAL_NOTES_NEW_FORMAT,
-        label: t(`features.${Feature.CLINICAL_NOTES_NEW_FORMAT}`),
+        id: Feature.DISABLE_WHITELIST_GROUP,
+        label: t(`features.${Feature.DISABLE_WHITELIST_GROUP}`),
         description: t(
-          `featuresDescription.${Feature.CLINICAL_NOTES_NEW_FORMAT}`
+          `featuresDescription.${Feature.DISABLE_WHITELIST_GROUP}`
+        ),
+      },
+      {
+        id: Feature.CLINICAL_NOTES_LEGACY_FORMAT,
+        label: t(`features.${Feature.CLINICAL_NOTES_LEGACY_FORMAT}`),
+        description: t(
+          `featuresDescription.${Feature.CLINICAL_NOTES_LEGACY_FORMAT}`
         ),
       },
       {

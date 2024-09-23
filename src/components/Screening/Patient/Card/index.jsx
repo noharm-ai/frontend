@@ -13,6 +13,7 @@ import {
   MessageOutlined,
   PieChartOutlined,
   ExportOutlined,
+  ReconciliationOutlined,
 } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -27,6 +28,7 @@ import ChooseInterventionModal from "components/Screening/PrescriptionDrug/compo
 import notification from "components/notification";
 import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSlice";
 import { getErrorMessage } from "utils/errorHandler";
+import { setChooseConciliationModal } from "features/prescription/PrescriptionSlice";
 
 import PatientName from "containers/PatientName";
 
@@ -43,6 +45,7 @@ export default function PatientCard({
   fetchScreening,
   setModalVisibility,
   interventions,
+  featureService,
 }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -169,6 +172,9 @@ export default function PatientCard({
           });
         }
         break;
+      case "openConciliation":
+        dispatch(setChooseConciliationModal(prescription.admissionNumber));
+        break;
       default:
         console.error("Invalid key", key);
     }
@@ -193,6 +199,15 @@ export default function PatientCard({
         id: "gtm-bt-update",
         icon: <RedoOutlined />,
       });
+
+      if (featureService.hasConciliation()) {
+        items.push({
+          key: "openConciliation",
+          label: t("patientCard.openConciliation"),
+          id: "gtm-bt-concilia",
+          icon: <ReconciliationOutlined />,
+        });
+      }
     }
 
     if (!prescription.agg) {

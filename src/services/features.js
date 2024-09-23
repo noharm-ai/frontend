@@ -21,6 +21,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.CONCILIATION);
   };
 
+  const hasConciliationEdit = () => {
+    return hasFeature(Feature.CONCILIATION_EDIT);
+  };
+
   const hasSolutionFrequency = () => {
     return hasFeature(Feature.SOLUTION_FREQUENCY);
   };
@@ -33,8 +37,8 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.DISABLE_SOLUTION_TAB);
   };
 
-  const hasClinicalNotesNewFormat = () => {
-    return hasFeature(Feature.CLINICAL_NOTES_NEW_FORMAT);
+  const hasClinicalNotesLegacyFormat = () => {
+    return hasFeature(Feature.CLINICAL_NOTES_LEGACY_FORMAT);
   };
 
   const hasPatientRevision = () => {
@@ -45,17 +49,23 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.AUTHORIZATION_SEGMENT);
   };
 
+  const hasDisableWhitelistGroup = () => {
+    return hasFeature(Feature.DISABLE_WHITELIST_GROUP);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
     hasPrimaryCare,
     hasConciliation,
+    hasConciliationEdit,
     hasSolutionFrequency,
     hasLockCheckedPrescription,
     hasDisableSolutionTab,
-    hasClinicalNotesNewFormat,
+    hasClinicalNotesLegacyFormat,
     hasPatientRevision,
     hasAuthorizationSegment,
+    hasDisableWhitelistGroup,
   };
 };
 
