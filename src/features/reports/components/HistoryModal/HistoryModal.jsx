@@ -7,6 +7,7 @@ import { List, Avatar } from "antd";
 import Heading from "components/Heading";
 import Modal from "components/Modal";
 import Button from "components/Button";
+import { formatDate } from "utils/date";
 
 export default function HistoryModal({
   availableReports,
@@ -15,12 +16,6 @@ export default function HistoryModal({
   setOpen,
 }) {
   const dispatch = useDispatch();
-
-  const items = availableReports
-    ? availableReports.map((r) => ({
-        title: r,
-      }))
-    : [];
 
   const load = (filename) => {
     loadArchive(filename);
@@ -49,12 +44,12 @@ export default function HistoryModal({
 
       <List
         itemLayout="horizontal"
-        dataSource={items || []}
+        dataSource={availableReports || []}
         renderItem={(item) => (
           <List.Item
             actions={[
               <Button
-                onClick={() => load(item.title)}
+                onClick={() => load(item.name)}
                 icon={<DownloadOutlined />}
               >
                 Visualizar
@@ -68,16 +63,19 @@ export default function HistoryModal({
                   style={{ backgroundColor: "#a991d6", color: "#fff" }}
                 />
               }
-              title={dayjs(item.title)
+              title={dayjs(item.name)
                 .subtract(1, "day")
                 .format("MMMM / YYYY")
                 .toUpperCase()}
+              description={`Foto retirada em ${formatDate(item.updateAt)}`}
             />
           </List.Item>
         )}
       />
       <p style={{ opacity: 0.7, fontSize: "12px" }}>
-        * Períodos anteriores à ativação do relatório não estão disponíveis.
+        * Cada arquivo histórico possui 2 meses de dados.
+        <br />* Períodos anteriores à ativação do relatório não estão
+        disponíveis.
       </p>
     </Modal>
   );
