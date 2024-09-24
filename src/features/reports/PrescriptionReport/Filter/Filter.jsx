@@ -146,6 +146,7 @@ export default function Filter({ printRef }) {
             <HistoryAlert
               activeReport={activeReport}
               loadArchive={loadArchive}
+              reportDate={reportDate}
             />
             <HistoryModal
               availableReports={availableReports}
