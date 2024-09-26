@@ -6,12 +6,12 @@ import debounce from "lodash.debounce";
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Select } from "components/Inputs";
+import { Select, Input, Radio } from "components/Inputs";
 import { searchDrugs } from "features/lists/ListsSlice";
 import Tooltip from "components/Tooltip";
 import LoadBox from "components/LoadBox";
 
-export default function SecondaryFilters() {
+export default function SecondaryFilters({ segments }) {
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
   const dispatch = useDispatch();
@@ -25,9 +25,33 @@ export default function SecondaryFilters() {
     dispatch(searchDrugs({ idSegment: values.idSegment, q: value }));
   }, 800);
 
+  const yesNoOptionsNullable = [
+    { label: "Sim", value: 1 },
+    { label: "Não", value: 0 },
+    { label: "Todos", value: "" },
+  ];
+
   return (
     <Row gutter={[20, 20]}>
-      <Col md={24} xl={16} xxl={8}>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" htmlFor="date" size="14px">
+          {t("patientCard.segment")}:
+        </Heading>
+        <Select
+          style={{ width: "100%", maxWidth: "500px" }}
+          onChange={(idSegment) => setFieldValue({ idSegment })}
+          value={values.idSegment}
+          allowClear
+        >
+          {segments.map(({ id, description: text }) => (
+            <Select.Option key={id} value={id}>
+              {text}
+            </Select.Option>
+          ))}
+        </Select>
+      </Col>
+
+      <Col md={24} xl={16} xxl={14}>
         <Heading as="label" htmlFor="segments" size="14px">
           {t("screeningList.labelDrug")}:
         </Heading>
@@ -41,7 +65,7 @@ export default function SecondaryFilters() {
           <Select
             mode="multiple"
             optionFilterProp="children"
-            style={{ width: "100%" }}
+            style={{ width: "100%", maxWidth: "500px" }}
             placeholder="Buscar medicamentos (digite para pesquisar)"
             notFoundContent={drugsListStatus === "loading" ? <LoadBox /> : null}
             filterOption={false}
@@ -59,6 +83,50 @@ export default function SecondaryFilters() {
             ))}
           </Select>
         </Tooltip>
+      </Col>
+
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" htmlFor="date" size="14px">
+          {t("labels.responsible")}:
+        </Heading>
+        <Input
+          style={{ width: "100%", maxWidth: "500px" }}
+          onChange={(evt) =>
+            setFieldValue({ responsibleName: evt.target.value })
+          }
+          value={values.responsibleName}
+          placeholder="Digite parte do nome que deseja buscar"
+          allowClear
+        />
+      </Col>
+
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" htmlFor="date" size="14px">
+          {t("labels.prescriber")}:
+        </Heading>
+        <Input
+          style={{ width: "100%", maxWidth: "500px" }}
+          onChange={(evt) =>
+            setFieldValue({ prescriberName: evt.target.value })
+          }
+          value={values.prescriberName}
+          placeholder="Digite parte do nome que deseja buscar"
+          allowClear
+        />
+      </Col>
+
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" htmlFor="date" size="14px">
+          {t("labels.hasEconomy")}:
+        </Heading>
+        <Radio.Group
+          options={yesNoOptionsNullable}
+          optionType="button"
+          onChange={({ target: { value } }) =>
+            setFieldValue({ hasEconomy: value })
+          }
+          value={values.hasEconomy}
+        />
       </Col>
     </Row>
   );

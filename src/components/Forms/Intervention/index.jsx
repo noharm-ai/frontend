@@ -136,6 +136,7 @@ export default function Intervention({
     nonce: item.intervention.nonce,
     status: item.intervention.status,
     version: "1.0",
+    updateResponsible: false,
     transcriptionData: {
       ...transcriptable,
     },

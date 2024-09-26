@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
@@ -17,6 +18,8 @@ export default function Filter({
   segments,
 }) {
   const { t } = useTranslation();
+  const userId = useSelector((state) => state.user.account.userId);
+
   const errorMessage = {
     message: t("error.title"),
     description: t("error.description"),
@@ -26,7 +29,10 @@ export default function Filter({
     endDate: null,
     idSegment: null,
     idDrug: [],
+    hasEconomy: "",
   };
+
+  const memoryFilterType = `intervention_list_${userId}`;
 
   useEffect(() => {
     searchList({
@@ -48,11 +54,19 @@ export default function Filter({
   return (
     <AdvancedFilter
       initialValues={initialValues}
-      mainFilters={<MainFilters segments={segments} />}
-      secondaryFilters={<SecondaryFilters />}
+      mainFilters={<MainFilters />}
+      secondaryFilters={<SecondaryFilters segments={segments} />}
       onSearch={search}
       loading={isFetching}
-      skipFilterList={["startDate", "endDate", "idSegment"]}
+      skipFilterList={[
+        "startDate",
+        "endDate",
+        "idInterventionReasonList",
+        "admissionNumber",
+        "statusList",
+      ]}
+      memoryType={memoryFilterType}
+      skipMemoryList={{ startDate: "startDate", endDate: "endDate" }}
     />
   );
 }
