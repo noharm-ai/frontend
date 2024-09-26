@@ -1,15 +1,20 @@
 import React, { useContext } from "react";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 
 import { RangeDatePicker, InputNumber, Select } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
+import Tag from "components/Tag";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 
-export default function MainFilters({ segments }) {
+export default function MainFilters() {
   const { t, i18n } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
+  const interventionReasonsList = useSelector(
+    (state) => state.intervention.reasons.list
+  );
 
   const onChangeDates = (value) => {
     const startDate = value[0] ? dayjs(value[0]).format("YYYY-MM-DD") : null;
@@ -22,7 +27,7 @@ export default function MainFilters({ segments }) {
 
   return (
     <>
-      <Col md={7} lg={6} xxl={4}>
+      <Col md={7} lg={6} xxl={3}>
         <Heading as="label" htmlFor="date" size="14px">
           {t("labels.interventionDate")}:
         </Heading>
@@ -40,20 +45,52 @@ export default function MainFilters({ segments }) {
       </Col>
       <Col md={7} lg={5} xxl={4}>
         <Heading as="label" htmlFor="date" size="14px">
-          {t("patientCard.segment")}:
+          {t("labels.reasons")}:
         </Heading>
         <Select
-          id="segments"
           style={{ width: "100%" }}
-          onChange={(idSegment) => setFieldValue({ idSegment })}
-          value={values.idSegment}
+          onChange={(idInterventionReasonList) =>
+            setFieldValue({ idInterventionReasonList })
+          }
+          value={values.idInterventionReasonList}
+          mode="multiple"
+          maxTagCount="responsive"
           allowClear
         >
-          {segments.map(({ id, description: text }) => (
+          {interventionReasonsList.map(({ id, parentName, name }) => (
             <Select.Option key={id} value={id}>
-              {text}
+              {parentName ? `${parentName} - ${name}` : name}
             </Select.Option>
           ))}
+        </Select>
+      </Col>
+      <Col md={7} lg={3} xxl={3}>
+        <Heading as="label" htmlFor="date" size="14px">
+          {t("labels.status")}:
+        </Heading>
+        <Select
+          style={{ width: "100%" }}
+          onChange={(statusList) => setFieldValue({ statusList })}
+          value={values.statusList}
+          mode="multiple"
+          maxTagCount="responsive"
+          allowClear
+        >
+          <Select.Option value="a" key="a">
+            <Tag color="green">Aceitas</Tag>
+          </Select.Option>
+          <Select.Option value="n" key="n">
+            <Tag color="red">Não aceitas</Tag>
+          </Select.Option>
+          <Select.Option value="j" key="j">
+            <Tag color="red">Não aceitas (Justificadas)</Tag>
+          </Select.Option>
+          <Select.Option value="x" key="x">
+            <Tag>Não se aplica</Tag>
+          </Select.Option>
+          <Select.Option value="s" key="s">
+            <Tag color="orange">Pendentes</Tag>
+          </Select.Option>
         </Select>
       </Col>
       <Col md={7} lg={3} xxl={3}>

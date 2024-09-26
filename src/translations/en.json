@@ -336,7 +336,9 @@
     "title": "Title",
     "category": "Category",
     "ticketType": "Ticket type",
-    "prescriber": "Prescriber"
+    "prescriber": "Prescriber",
+    "economyType": "Economy type",
+    "hasEconomy": "Has economy"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"

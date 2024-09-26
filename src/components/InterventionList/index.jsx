@@ -260,7 +260,7 @@ export default function InterventionList({
         ) : (
           <>
             <div className="filter-field">
-              <label>Situação</label>
+              <label>**Situação</label>
               <Select
                 id="intervFilterStatus"
                 onChange={handleStatusChange}
@@ -293,7 +293,7 @@ export default function InterventionList({
               </Select>
             </div>
             <div className="filter-field">
-              <label>Responsável</label>
+              <label>**Responsável</label>
               <Select
                 id="intervFilterUser"
                 onChange={handleResponsibleChange}
@@ -311,7 +311,7 @@ export default function InterventionList({
               </Select>
             </div>
             <div className="filter-field">
-              <label>Prescritor</label>
+              <label>**Prescritor</label>
               <Select
                 id="intervFilterPrescriber"
                 onChange={handlePrescriberChange}
@@ -329,7 +329,7 @@ export default function InterventionList({
               </Select>
             </div>
             <div className="filter-field">
-              <label>Setor</label>
+              <label>**Setor</label>
               <Select
                 id="intervFilterDept"
                 onChange={handleDepartmentChange}
@@ -347,7 +347,7 @@ export default function InterventionList({
               </Select>
             </div>
             <div className="filter-field">
-              <label>Motivo</label>
+              <label>**Motivo</label>
               <Select
                 id="intervFilterOutcome"
                 onChange={handleReasonChange}
@@ -366,7 +366,10 @@ export default function InterventionList({
               </Select>
             </div>
             <div className="obs">
-              A consulta de intervenções é limitada em 1500 registros.
+              * A consulta de intervenções é limitada em 1500 registros.
+              <br />
+              ** Filtros locais: aplicados nos {listCount.all} registros da sua
+              busca atual.
             </div>
           </>
         )}

@@ -87,7 +87,7 @@ export default function AdvancedFilter({
       if (skipMemoryList[k] === "daterange") {
         newFilters[k] = [dayjs(values[k][0]), dayjs(values[k][1])];
       } else {
-        newFilters[k] = filter[k];
+        newFilters[k] = initialValues[k];
       }
     });
 

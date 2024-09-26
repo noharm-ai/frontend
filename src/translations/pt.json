@@ -336,7 +336,9 @@
     "title": "Título",
     "category": "Categoria",
     "ticketType": "Tipo de chamado",
-    "prescriber": "Prescritor"
+    "prescriber": "Prescritor",
+    "economyType": "Tipo de economia",
+    "hasEconomy": "Possui economia"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
