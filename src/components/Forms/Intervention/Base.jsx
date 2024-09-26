@@ -388,6 +388,27 @@ export default function Base({
           <FieldError>{errors.observation}</FieldError>
         )}
       </Box>
+
+      {values.idIntervention && (
+        <Box hasError={errors.expendedDose && touched.expendedDose}>
+          <Col xs={layout.label}>
+            <Heading as="label" size="14px">
+              <Tooltip
+                title="Quando selecionado, o responsável pela intervenção passa a ser o seu usuário"
+                underline
+              >
+                Alterar responsável:
+              </Tooltip>
+            </Heading>
+          </Col>
+          <Col xs={layout.input}>
+            <Switch
+              onChange={(value) => setFieldValue("updateResponsible", value)}
+              checked={values.updateResponsible}
+            />
+          </Col>
+        </Box>
+      )}
     </>
   );
 }
