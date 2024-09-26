@@ -1,6 +1,7 @@
 export { Input, InputSearchNumber } from "./Input";
 export { Checkbox } from "./Checkbox";
 export { Select, SelectMultiline } from "./Select";
+export { SelectCustom } from "./SelectCustom";
 export { InputNumber } from "./InputNumber";
 export { FieldSet } from "./FieldSet";
 export { DatePicker } from "./DatePicker";

@@ -338,7 +338,8 @@
     "ticketType": "Tipo de chamado",
     "prescriber": "Prescritor",
     "economyType": "Tipo de economia",
-    "hasEconomy": "Possui economia"
+    "hasEconomy": "Possui economia",
+    "selectAll": "Selecionar todos"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"

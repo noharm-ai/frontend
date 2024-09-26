@@ -3,7 +3,12 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 
-import { RangeDatePicker, InputNumber, Select } from "components/Inputs";
+import {
+  RangeDatePicker,
+  InputNumber,
+  Select,
+  SelectCustom,
+} from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import Tag from "components/Tag";
@@ -47,7 +52,7 @@ export default function MainFilters() {
         <Heading as="label" htmlFor="date" size="14px">
           {t("labels.reasons")}:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%" }}
           onChange={(idInterventionReasonList) =>
             setFieldValue({ idInterventionReasonList })
@@ -56,13 +61,20 @@ export default function MainFilters() {
           mode="multiple"
           maxTagCount="responsive"
           allowClear
+          onSelectAll={() =>
+            setFieldValue({
+              idInterventionReasonList: interventionReasonsList.map(
+                ({ id }) => id
+              ),
+            })
+          }
         >
           {interventionReasonsList.map(({ id, parentName, name }) => (
             <Select.Option key={id} value={id}>
               {parentName ? `${parentName} - ${name}` : name}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
       <Col md={7} lg={3} xxl={3}>
         <Heading as="label" htmlFor="date" size="14px">
