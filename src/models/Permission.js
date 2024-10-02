@@ -1,3 +1,5 @@
 export default class Permission {
   static WRITE_PRESCRIPTION = "WRITE_PRESCRIPTION";
+  static READ_DISPENSATION = "READ_DISPENSATION";
+  static WRITE_DISPENSATION = "WRITE_DISPENSATION";
 }

@@ -10,10 +10,10 @@ export default class Feature {
   static OAUTH = "OAUTH";
   static CLINICAL_NOTES_LEGACY_FORMAT = "CLINICAL_NOTES_LEGACY_FORMAT";
   static PATIENT_REVISION = "PATIENT_REVISION";
-  static INTERVENTION_V2 = "INTERVENTION_V2";
   static AUTHORIZATION_SEGMENT = "AUTHORIZATION_SEGMENT";
   static TRANSCRIPTION = "TRANSCRIPTION";
   static PRESCRIPTION_ALERT = "PRESCRIPTION_ALERT";
+  static PRESMED_FORM = "PRESMED_FORM";
 
   static getFeatures(t) {
     return [
@@ -94,6 +94,12 @@ export default class Feature {
         label: "Alerta de Prescrição",
         description:
           "Habilita o botão Alerta. Ele permite registrar um texto de alerta para a prescrição.",
+      },
+      {
+        id: Feature.PRESMED_FORM,
+        label: "Formulário de Dispensação",
+        description:
+          "Habilita o botão o formulário de dispensação. Usuário deve possuir o papel Gestor de Dispensação para visualizar.",
       },
     ];
   }

@@ -36,6 +36,7 @@ import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator
 import PresmedTags from "./PrescriptionDrug/components/PresmedTags";
 import DrugAlerts from "./PrescriptionDrug/components/DrugAlerts";
 import AlertTags from "./PrescriptionDrug/components/AlertTags";
+import Permission from "models/Permission";
 
 import { InterventionView } from "./Intervention/columns";
 import DrugForm from "./Form";
@@ -515,18 +516,20 @@ export const expandedRowRender = (bag) => (record) => {
             />
           </Descriptions.Item>
         )}
-        {bag.security.hasPresmedForm() && bag.formTemplate && (
-          <Descriptions.Item label={bag.formTemplate.name} span={3}>
-            <div>
-              <DrugForm
-                savePrescriptionDrugForm={bag.savePrescriptionDrugForm}
-                idPrescriptionDrug={record.idPrescriptionDrug}
-                template={bag.formTemplate}
-                values={record.formValues}
-              />
-            </div>
-          </Descriptions.Item>
-        )}
+        {bag.featureService.hasPresmedForm() &&
+          bag.permissionService.has(Permission.READ_DISPENSATION) &&
+          bag.formTemplate && (
+            <Descriptions.Item label={bag.formTemplate.name} span={3}>
+              <div>
+                <DrugForm
+                  savePrescriptionDrugForm={bag.savePrescriptionDrugForm}
+                  idPrescriptionDrug={record.idPrescriptionDrug}
+                  template={bag.formTemplate}
+                  values={record.formValues}
+                />
+              </div>
+            </Descriptions.Item>
+          )}
         {record.drugInfoLink && bag.featureService.hasMicromedex() && (
           <Descriptions.Item
             label={bag.t("tableHeader.clinicalInfo") + ":"}

@@ -613,7 +613,8 @@
     "USER_MANAGER": "User Administrator",
     "CONFIG_MANAGER": "Configuration Administrator",
     "DISCHARGE_MANAGER": "Discharge Manager",
-    "VIEWER": "Viewer"
+    "VIEWER": "Viewer",
+    "DISPENSING_MANAGER": "Dispensing Manager"
   },
 
   "rolesDescription": {
@@ -621,7 +622,8 @@
     "USER_MANAGER": "Responsible for registering and editing the organization's users.",
     "CONFIG_MANAGER": "Responsible for curating medication, score and exam settings.",
     "DISCHARGE_MANAGER": "Responsible for creating discharge summaries.",
-    "VIEWER": "Read-only access to prescriptions."
+    "VIEWER": "Read-only access to prescriptions.",
+    "DISPENSING_MANAGER": "Responsible for managing item dispensing information"
   },
 
   "reportcsv": {

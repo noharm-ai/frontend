@@ -20,10 +20,6 @@ const security = (roles) => {
     return hasRole(Role.CPOE);
   };
 
-  const hasPresmedForm = () => {
-    return hasRole(Role.PRESMED_FORM);
-  };
-
   const hasSummary = () => {
     return hasRole(Role.SUMMARY);
   };
@@ -64,7 +60,6 @@ const security = (roles) => {
     hasRole,
     hasAnyRole,
     hasCpoe,
-    hasPresmedForm,
     hasSummary,
     isAdmin,
     isSupport,

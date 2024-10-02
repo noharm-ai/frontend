@@ -3,7 +3,6 @@ export default class Role {
   static TRAINING = "training";
   static USER_ADMIN = "userAdmin";
   static CPOE = "cpoe";
-  static PRESMED_FORM = "presmed-form";
   static DOCTOR = "doctor";
   static SUMMARY = "summary";
   static READONLY = "readonly";
@@ -15,6 +14,7 @@ export default class Role {
   static USER_MANAGER = "USER_MANAGER";
   static CONFIG_MANAGER = "CONFIG_MANAGER";
   static DISCHARGE_MANAGER = "DISCHARGE_MANAGER";
+  static DISPENSING_MANAGER = "DISPENSING_MANAGER";
   static VIEWER = "VIEWER";
 
   static getNewRoles(t) {
@@ -44,6 +44,11 @@ export default class Role {
         label: t(`roles.${Role.VIEWER}`),
         description: t(`rolesDescription.${Role.VIEWER}`),
       },
+      {
+        id: Role.DISPENSING_MANAGER,
+        label: t(`roles.${Role.DISPENSING_MANAGER}`),
+        description: t(`rolesDescription.${Role.DISPENSING_MANAGER}`),
+      },
     ];
   }
 
@@ -51,14 +56,6 @@ export default class Role {
     return [
       { id: Role.USER_ADMIN, label: t(`roles.${Role.USER_ADMIN}`) },
       { id: Role.CPOE, label: t(`roles.${Role.CPOE}`) },
-      {
-        id: Role.PRESCRIPTION_EDIT,
-        label: t(`roles.${Role.PRESCRIPTION_EDIT}`),
-      },
-      {
-        id: Role.PRESMED_FORM,
-        label: t(`roles.${Role.PRESMED_FORM}`),
-      },
       {
         id: Role.DOCTOR,
         label: t(`roles.${Role.DOCTOR}`),
@@ -82,10 +79,6 @@ export default class Role {
   static getLoginRoles(t) {
     return [
       { id: Role.CPOE, label: t(`roles.${Role.CPOE}`) },
-      {
-        id: Role.PRESMED_FORM,
-        label: t(`roles.${Role.PRESMED_FORM}`),
-      },
       {
         id: Role.DOCTOR,
         label: t(`roles.${Role.DOCTOR}`),
