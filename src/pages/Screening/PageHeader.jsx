@@ -456,17 +456,18 @@ export default function PageHeader({
               <FileAddOutlined />
               {t("screeningHeader.btnClinicalNotes")}
             </Button>
-            {type !== "conciliation" && security.hasAlertIntegration() && (
-              <Button
-                type="primary gtm-bt-alert"
-                onClick={() => setClinicalAlertVisibility(true)}
-                style={{ marginRight: "5px" }}
-                ghost={!prescription.content.alert}
-              >
-                <AlertOutlined />
-                {t("screeningHeader.btnAlert")}
-              </Button>
-            )}
+            {type !== "conciliation" &&
+              featureService.hasPrescriptionAlert() && (
+                <Button
+                  type="primary gtm-bt-alert"
+                  onClick={() => setClinicalAlertVisibility(true)}
+                  style={{ marginRight: "5px" }}
+                  ghost={!prescription.content.alert}
+                >
+                  <AlertOutlined />
+                  {t("screeningHeader.btnAlert")}
+                </Button>
+              )}
 
             <Button type="default gtm-bt-close" onClick={close}>
               {t("screeningHeader.btnClose")}

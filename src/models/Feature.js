@@ -13,6 +13,7 @@ export default class Feature {
   static INTERVENTION_V2 = "INTERVENTION_V2";
   static AUTHORIZATION_SEGMENT = "AUTHORIZATION_SEGMENT";
   static TRANSCRIPTION = "TRANSCRIPTION";
+  static PRESCRIPTION_ALERT = "PRESCRIPTION_ALERT";
 
   static getFeatures(t) {
     return [
@@ -87,6 +88,12 @@ export default class Feature {
         id: Feature.TRANSCRIPTION,
         label: "Transcrição",
         description: "Habilita o formulário de transcrição",
+      },
+      {
+        id: Feature.PRESCRIPTION_ALERT,
+        label: "Alerta de Prescrição",
+        description:
+          "Habilita o botão Alerta. Ele permite registrar um texto de alerta para a prescrição.",
       },
     ];
   }

@@ -57,6 +57,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.TRANSCRIPTION);
   };
 
+  const hasPrescriptionAlert = () => {
+    return hasFeature(Feature.PRESCRIPTION_ALERT);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
@@ -71,6 +75,7 @@ const FeaturesService = (features) => {
     hasAuthorizationSegment,
     hasDisableWhitelistGroup,
     hasTranscription,
+    hasPrescriptionAlert,
   };
 };
 

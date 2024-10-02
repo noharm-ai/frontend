@@ -1,9 +1,7 @@
 export default class Role {
   static SUPPORT = "suporte";
   static TRAINING = "training";
-  static TRANSCRIPTION = "transcription";
   static USER_ADMIN = "userAdmin";
-  static ALERT_BT = "alert-bt";
   static CPOE = "cpoe";
   static PRESCRIPTION_EDIT = "prescriptionEdit";
   static PRESMED_FORM = "presmed-form";
@@ -52,9 +50,7 @@ export default class Role {
 
   static getRoles(t) {
     return [
-      { id: Role.TRANSCRIPTION, label: t(`roles.${Role.TRANSCRIPTION}`) },
       { id: Role.USER_ADMIN, label: t(`roles.${Role.USER_ADMIN}`) },
-      { id: Role.ALERT_BT, label: t(`roles.${Role.ALERT_BT}`) },
       { id: Role.CPOE, label: t(`roles.${Role.CPOE}`) },
       {
         id: Role.PRESCRIPTION_EDIT,
@@ -86,8 +82,6 @@ export default class Role {
 
   static getLoginRoles(t) {
     return [
-      { id: Role.TRANSCRIPTION, label: t(`roles.${Role.TRANSCRIPTION}`) },
-      { id: Role.ALERT_BT, label: t(`roles.${Role.ALERT_BT}`) },
       { id: Role.CPOE, label: t(`roles.${Role.CPOE}`) },
       {
         id: Role.PRESCRIPTION_EDIT,

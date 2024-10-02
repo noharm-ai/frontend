@@ -16,10 +16,6 @@ const security = (roles) => {
     return intersection(roles, roleArray).length > 0;
   };
 
-  const hasAlertIntegration = () => {
-    return hasRole(Role.ALERT_BT);
-  };
-
   const hasCpoe = () => {
     return hasRole(Role.CPOE);
   };
@@ -71,7 +67,6 @@ const security = (roles) => {
   return {
     hasRole,
     hasAnyRole,
-    hasAlertIntegration,
     hasCpoe,
     hasPrescriptionEdit,
     hasPresmedForm,
