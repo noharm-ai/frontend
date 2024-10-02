@@ -5,17 +5,21 @@ import { InfoCircleFilled } from "@ant-design/icons";
 
 import { EvaluationWarningContainer } from "./EvaluationWarning.style";
 import { startEvaluation } from "../PrescriptionSlice";
+import Permission from "models/Permission";
 
 export default function EvaluationWarning() {
   const dispatch = useDispatch();
   const prescription = useSelector((state) => state.prescriptions.single.data);
   const currentUserId = useSelector((state) => state.user.account.userId);
+  const permissions = useSelector((state) => state.user.account.permissions);
 
   useEffect(() => {
     if (prescription.idPrescription && !prescription.isBeingEvaluated) {
-      dispatch(
-        startEvaluation({ idPrescription: prescription.idPrescription })
-      );
+      if (permissions.indexOf(Permission.WRITE_PRESCRIPTION) !== -1) {
+        dispatch(
+          startEvaluation({ idPrescription: prescription.idPrescription })
+        );
+      }
     }
   }, [prescription]); //eslint-disable-line
 

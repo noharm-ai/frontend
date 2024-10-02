@@ -1,23 +1,24 @@
-import { createActions, createReducer } from 'reduxsauce';
-import storage from 'redux-persist/lib/storage';
-import { persistReducer } from 'redux-persist';
-import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
+import { createActions, createReducer } from "reduxsauce";
+import storage from "redux-persist/lib/storage";
+import { persistReducer } from "redux-persist";
+import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 
 export const { Types, Creators } = createActions({
-  userLogout: [''],
-  userSetLoginStart: [''],
-  userSetCurrentUser: ['account', 'keepMeLogged'],
-  userSaveStart: [''],
-  userSaveError: ['error'],
-  userSaveSuccess: [''],
-  userSaveReset: ['']
+  userLogout: [""],
+  userSetLoginStart: [""],
+  userSetCurrentUser: ["account", "keepMeLogged"],
+  userSaveStart: [""],
+  userSaveError: ["error"],
+  userSaveSuccess: [""],
+  userSaveReset: [""],
 });
 
 const INITIAL_STATE = {
   account: {
-    userId: '',
-    userName: '',
-    email: ''
+    userId: "",
+    userName: "",
+    email: "",
+    permissions: [],
   },
   keepMeLogged: false,
   isLogged: false,
@@ -25,16 +26,16 @@ const INITIAL_STATE = {
   save: {
     isSaving: false,
     success: false,
-    error: null
-  }
+    error: null,
+  },
 };
 
 const saveStart = (state = INITIAL_STATE) => ({
   ...state,
   save: {
     ...state.save,
-    isSaving: true
-  }
+    isSaving: true,
+  },
 });
 
 const saveError = (state = INITIAL_STATE, { error }) => ({
@@ -42,8 +43,8 @@ const saveError = (state = INITIAL_STATE, { error }) => ({
   save: {
     ...state.save,
     error,
-    isSaving: false
-  }
+    isSaving: false,
+  },
 });
 
 const saveSuccess = (state = INITIAL_STATE) => ({
@@ -52,20 +53,20 @@ const saveSuccess = (state = INITIAL_STATE) => ({
     ...state.save,
     error: null,
     success: true,
-    isSaving: false
-  }
+    isSaving: false,
+  },
 });
 
 const saveReset = (state = INITIAL_STATE) => ({
   ...state,
   save: {
-    ...INITIAL_STATE.save
-  }
+    ...INITIAL_STATE.save,
+  },
 });
 
 const setLoginStart = (state = INITIAL_STATE) => ({
   ...state,
-  isLogging: true
+  isLogging: true,
 });
 
 const setCurrentUser = (state = INITIAL_STATE, { account, keepMeLogged }) => ({
@@ -75,13 +76,13 @@ const setCurrentUser = (state = INITIAL_STATE, { account, keepMeLogged }) => ({
   keepMeLogged,
   account: {
     ...state.account,
-    ...account
-  }
+    ...account,
+  },
 });
 
 const logout = (state = INITIAL_STATE) => ({
   ...state,
-  ...INITIAL_STATE
+  ...INITIAL_STATE,
 });
 
 const HANDLERS = {
@@ -91,16 +92,16 @@ const HANDLERS = {
   [Types.USER_SAVE_START]: saveStart,
   [Types.USER_SAVE_ERROR]: saveError,
   [Types.USER_SAVE_SUCCESS]: saveSuccess,
-  [Types.USER_SAVE_RESET]: saveReset
+  [Types.USER_SAVE_RESET]: saveReset,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);
 
 const persist = {
-  key: 'user',
+  key: "user",
   storage,
-  blacklist: ['isLogging', 'save'],
-  stateReconciler: autoMergeLevel2
+  blacklist: ["isLogging", "save"],
+  stateReconciler: autoMergeLevel2,
 };
 
 export default persistReducer(persist, reducer);

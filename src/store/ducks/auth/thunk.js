@@ -76,6 +76,7 @@ const setUser = (userData, keepMeLogged, dispatch) => {
     roles,
     features,
     userFeatures,
+    permissions,
     nameUrl,
     multipleNameUrl,
     nameHeaders,
@@ -98,6 +99,7 @@ const setUser = (userData, keepMeLogged, dispatch) => {
     proxy,
     nameHeaders,
     apiKey,
+    permissions,
   };
 
   localStorage.setItem("schema", schema);
