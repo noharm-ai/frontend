@@ -44,10 +44,6 @@ const security = (roles) => {
     return hasRole(Role.MULTI_SCHEMA);
   };
 
-  const isGetnameEnabled = () => {
-    return !hasRole(Role.GETNAME_DISABLED);
-  };
-
   const hasUnlockCheckedPrescription = () => {
     return hasRole(Role.UNLOCK_CHECKED_PRESCRIPTION);
   };
@@ -66,7 +62,6 @@ const security = (roles) => {
     isTraining,
     isDoctor,
     isMultiSchema,
-    isGetnameEnabled,
     isMaintainer,
     hasUnlockCheckedPrescription,
   };

@@ -65,6 +65,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.PRESMED_FORM);
   };
 
+  const hasDisableGetname = () => {
+    return hasFeature(Feature.DISABLE_GETNAME);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
@@ -81,6 +85,7 @@ const FeaturesService = (features) => {
     hasTranscription,
     hasPrescriptionAlert,
     hasPresmedForm,
+    hasDisableGetname,
   };
 };
 

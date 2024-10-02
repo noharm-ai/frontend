@@ -15,6 +15,10 @@ export default class Feature {
   static PRESCRIPTION_ALERT = "PRESCRIPTION_ALERT";
   static PRESMED_FORM = "PRESMED_FORM";
 
+  // user features
+  static DISABLE_GETNAME = "DISABLE_GETNAME";
+  static DISABLE_CPOE = "DISABLE_CPOE";
+
   static getFeatures(t) {
     return [
       {

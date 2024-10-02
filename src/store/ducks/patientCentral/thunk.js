@@ -66,6 +66,7 @@ export const patientCentralNamesThunk =
         proxy: app.config.proxy,
         useCache: true,
         userRoles: user.account.roles,
+        features: user.account.features,
       };
 
       const patientsList = await hospital.getPatients(null, requestConfig);
