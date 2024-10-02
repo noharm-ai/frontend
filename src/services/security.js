@@ -24,10 +24,6 @@ const security = (roles) => {
     return hasRole(Role.CPOE);
   };
 
-  const hasTranscription = () => {
-    return hasRole(Role.TRANSCRIPTION);
-  };
-
   const hasPrescriptionEdit = () => {
     return hasRole(Role.PRESCRIPTION_EDIT);
   };
@@ -77,7 +73,6 @@ const security = (roles) => {
     hasAnyRole,
     hasAlertIntegration,
     hasCpoe,
-    hasTranscription,
     hasPrescriptionEdit,
     hasPresmedForm,
     hasSummary,

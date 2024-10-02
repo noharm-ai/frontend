@@ -53,6 +53,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.DISABLE_WHITELIST_GROUP);
   };
 
+  const hasTranscription = () => {
+    return hasFeature(Feature.TRANSCRIPTION);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
@@ -66,6 +70,7 @@ const FeaturesService = (features) => {
     hasPatientRevision,
     hasAuthorizationSegment,
     hasDisableWhitelistGroup,
+    hasTranscription,
   };
 };
 

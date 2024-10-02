@@ -8,11 +8,11 @@ export default class Feature {
   static DISABLE_SOLUTION_TAB = "DISABLE_SOLUTION_TAB";
   static DISABLE_WHITELIST_GROUP = "DISABLE_WHITELIST_GROUP";
   static OAUTH = "OAUTH";
-
   static CLINICAL_NOTES_LEGACY_FORMAT = "CLINICAL_NOTES_LEGACY_FORMAT";
   static PATIENT_REVISION = "PATIENT_REVISION";
   static INTERVENTION_V2 = "INTERVENTION_V2";
   static AUTHORIZATION_SEGMENT = "AUTHORIZATION_SEGMENT";
+  static TRANSCRIPTION = "TRANSCRIPTION";
 
   static getFeatures(t) {
     return [
@@ -82,6 +82,11 @@ export default class Feature {
         label: "Autorização por Segmento",
         description:
           "Quando ativado, o usuário só conseguirá efetuar ações em segmentos onde tiver autorização. As autorizações são concedidas no cadastro do usuário.",
+      },
+      {
+        id: Feature.TRANSCRIPTION,
+        label: "Transcrição",
+        description: "Habilita o formulário de transcrição",
       },
     ];
   }
