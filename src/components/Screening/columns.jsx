@@ -103,7 +103,7 @@ const prescriptionDrugMenu = ({
 
   if (
     (concilia && featureService.hasConciliationEdit()) ||
-    (!concilia && security.hasPrescriptionEdit())
+    (!concilia && featureService.hasPrimaryCare())
   ) {
     items.push({
       key: "edit",
@@ -290,7 +290,7 @@ const Action = ({
         ></AntButton>
       </Tooltip>
 
-      {(security.hasPrescriptionEdit() && !data.concilia) ||
+      {(featureService.hasPrimaryCare() && !data.concilia) ||
       (featureService.hasConciliationEdit() && data.concilia) ? (
         <Dropdown
           menu={prescriptionDrugMenu({

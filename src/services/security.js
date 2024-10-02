@@ -20,10 +20,6 @@ const security = (roles) => {
     return hasRole(Role.CPOE);
   };
 
-  const hasPrescriptionEdit = () => {
-    return hasRole(Role.PRESCRIPTION_EDIT);
-  };
-
   const hasPresmedForm = () => {
     return hasRole(Role.PRESMED_FORM);
   };
@@ -68,7 +64,6 @@ const security = (roles) => {
     hasRole,
     hasAnyRole,
     hasCpoe,
-    hasPrescriptionEdit,
     hasPresmedForm,
     hasSummary,
     isAdmin,

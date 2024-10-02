@@ -3,7 +3,6 @@ export default class Role {
   static TRAINING = "training";
   static USER_ADMIN = "userAdmin";
   static CPOE = "cpoe";
-  static PRESCRIPTION_EDIT = "prescriptionEdit";
   static PRESMED_FORM = "presmed-form";
   static DOCTOR = "doctor";
   static SUMMARY = "summary";
@@ -83,10 +82,6 @@ export default class Role {
   static getLoginRoles(t) {
     return [
       { id: Role.CPOE, label: t(`roles.${Role.CPOE}`) },
-      {
-        id: Role.PRESCRIPTION_EDIT,
-        label: t(`roles.${Role.PRESCRIPTION_EDIT}`),
-      },
       {
         id: Role.PRESMED_FORM,
         label: t(`roles.${Role.PRESMED_FORM}`),

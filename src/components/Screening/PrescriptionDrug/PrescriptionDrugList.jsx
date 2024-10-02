@@ -387,7 +387,7 @@ export default function PrescriptionDrugList({
         checkScreening={checkScreening}
         isChecking={isCheckingPrescription}
         selectPrescriptionDrug={selectPrescriptionDrug}
-        hasPrescriptionEdit={security.hasPrescriptionEdit()}
+        hasPrescriptionEdit={featureService.hasPrimaryCare()}
       />
     );
   };
