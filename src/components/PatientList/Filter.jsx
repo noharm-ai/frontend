@@ -9,15 +9,7 @@ import AdvancedFilter from "components/AdvancedFilter";
 import MainFilters from "./filters/MainFilters";
 import SecondaryFilters from "./filters/SecondaryFilters";
 
-export default function Filter({
-  error,
-  isFetching,
-  segments,
-  fetchList,
-  fetchSegmentsList,
-  fetchDepartmentsList,
-  resetDepartmentsList,
-}) {
+export default function Filter({ error, isFetching, segments, fetchList }) {
   const { t } = useTranslation();
   const errorMessage = {
     message: t("error.title"),
@@ -33,17 +25,9 @@ export default function Filter({
     appointment: null,
   };
 
-  // load segments
   useEffect(() => {
-    fetchSegmentsList();
-  }, [fetchSegmentsList]);
-
-  // after segments loaded
-  useEffect(() => {
-    if (!isEmpty(segments.list)) {
-      fetchList(initialValues);
-    }
-  }, [segments.list]); // eslint-disable-line
+    fetchList(initialValues);
+  }, []); // eslint-disable-line
 
   useEffect(() => {
     if (!isEmpty(error)) {
@@ -62,13 +46,7 @@ export default function Filter({
   return (
     <AdvancedFilter
       initialValues={initialValues}
-      mainFilters={
-        <MainFilters
-          segments={segments}
-          fetchDepartmentsList={fetchDepartmentsList}
-          resetDepartmentsList={resetDepartmentsList}
-        />
-      }
+      mainFilters={<MainFilters segments={segments} />}
       secondaryFilters={<SecondaryFilters />}
       onSearch={search}
       loading={isFetching || segments.isFetching}

@@ -118,30 +118,28 @@ function BaseForm() {
         {errors.external && <div className="form-error">{errors.external}</div>}
       </div>
 
-      {security.isMaintainer() && (
-        <div className={`form-row ${errors.roles ? "error" : ""}`}>
-          <div className="form-label">
-            <label>{t("userAdminForm.roles")}:</label>
-          </div>
-          <div className="form-input">
-            <Select
-              id="reason"
-              mode="multiple"
-              optionFilterProp="children"
-              style={{ width: "100%" }}
-              value={values.roles}
-              onChange={(roles) => setFieldValue("roles", roles)}
-            >
-              {Role.getRoles(t).map(({ id, label }) => (
-                <Select.Option key={id} value={id}>
-                  {label}
-                </Select.Option>
-              ))}
-            </Select>
-          </div>
-          {errors.roles && <div className="form-error">{errors.roles}</div>}
+      <div className={`form-row ${errors.roles ? "error" : ""}`}>
+        <div className="form-label">
+          <label>{t("userAdminForm.roles")}:</label>
         </div>
-      )}
+        <div className="form-input">
+          <Select
+            id="reason"
+            mode="multiple"
+            optionFilterProp="children"
+            style={{ width: "100%" }}
+            value={values.roles}
+            onChange={(roles) => setFieldValue("roles", roles)}
+          >
+            {Role.getNewRoles(t).map(({ id, label }) => (
+              <Select.Option key={id} value={id}>
+                {label}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+        {errors.roles && <div className="form-error">{errors.roles}</div>}
+      </div>
 
       {featureService.hasAuthorizationSegment() && (
         <div className={`form-row ${errors.segments ? "error" : ""}`}>
