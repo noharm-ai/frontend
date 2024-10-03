@@ -50,8 +50,6 @@ const getPatients = async (bearerToken, requestConfig) => {
     return listToEscape;
   }
 
-  console.log("features", features);
-
   if (!featureService.hasDisableGetname()) {
     if (requestConfig.multipleNameUrl && listToRequest.length > 1) {
       const cacheConfig = {};
