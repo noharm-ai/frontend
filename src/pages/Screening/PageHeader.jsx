@@ -32,7 +32,6 @@ import FormClinicalAlert from "containers/Forms/ClinicalAlert";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import pageTimer from "utils/pageTimer";
 import FeatureService from "services/features";
-import SecurityService from "services/security";
 import { setCheckSummary } from "features/prescription/PrescriptionSlice";
 
 import { ScreeningHeader } from "components/Screening/index.style";
@@ -88,7 +87,6 @@ export default function PageHeader({
     delay: 150,
     config: config.slow,
   });
-  const security = SecurityService(roles);
   const featureService = FeatureService(features);
 
   useEffect(() => {
@@ -111,9 +109,7 @@ export default function PageHeader({
   const hasPrimaryCare = featureService.hasPrimaryCare();
   const hasUncheckPermission =
     featureService.hasLockCheckedPrescription() &&
-    !security.hasUnlockCheckedPrescription()
-      ? `${userId}` === `${prescription?.content.userId}`
-      : true;
+    `${userId}` === `${prescription?.content.userId}`;
 
   const onCancelClinicalNotes = () => {
     setClinicalNotesVisibility(false);

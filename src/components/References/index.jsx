@@ -27,6 +27,8 @@ import relationsColumns from "./Relation/columns";
 import { PageCard } from "styles/Utils.style";
 import DrugAttributesForm from "features/drugs/DrugAttributesForm/DrugAttributesForm";
 import { fetchDrugAttributes } from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 
 // empty text for table result.
 const emptyText = (
@@ -215,13 +217,14 @@ export default function References({
             </Card>
           </Col>
           <Col xs={24} md={14}>
-            {security.isSupport() && drugAttributes.drugRef && (
-              <Card title="Curadoria de Doses" type="inner">
-                <div
-                  dangerouslySetInnerHTML={{ __html: drugAttributes.drugRef }}
-                />
-              </Card>
-            )}
+            {PermissionService().has(Permission.ADMIN_SUBSTANCES) &&
+              drugAttributes.drugRef && (
+                <Card title="Curadoria de Doses" type="inner">
+                  <div
+                    dangerouslySetInnerHTML={{ __html: drugAttributes.drugRef }}
+                  />
+                </Card>
+              )}
           </Col>
         </Row>
       ),
@@ -237,7 +240,9 @@ export default function References({
             </Col>
             <Col xs={6}>
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                {(security.isAdmin() || security.isTraining()) &&
+                {PermissionService().has(
+                  Permission.ADMIN_SUBSTANCE_RELATIONS
+                ) &&
                   drugData.sctidA && (
                     <Button
                       onClick={() => window.open("/admin/relacoes")}

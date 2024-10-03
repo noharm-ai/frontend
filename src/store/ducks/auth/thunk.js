@@ -86,6 +86,7 @@ const setUser = (userData, keepMeLogged, dispatch) => {
     segments,
     logoutUrl,
     integrationStatus,
+    isCpoe,
     ...identify
   } = userData;
   const user = {
@@ -100,6 +101,7 @@ const setUser = (userData, keepMeLogged, dispatch) => {
     nameHeaders,
     apiKey,
     permissions,
+    isCpoe,
   };
 
   localStorage.setItem("schema", schema);

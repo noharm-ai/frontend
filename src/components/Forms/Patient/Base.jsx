@@ -9,6 +9,8 @@ import Heading from "components/Heading";
 import { InputNumber, Select, DatePicker } from "components/Inputs";
 import Tooltip from "components/Tooltip";
 import Editor from "components/Editor";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
 
 import { Box, EditorBox } from "../Form.style";
 
@@ -233,7 +235,7 @@ export default function Base({ security }) {
         </Col>
       </Box>
 
-      {(security.isAdmin() || security.isTraining()) && (
+      {PermissionService().has(Permission.ADMIN_PATIENT) && (
         <Box hasError={errors.dischargeDate}>
           <Col xs={layout.label}>
             <Heading as="label" size="14px" textAlign="right">

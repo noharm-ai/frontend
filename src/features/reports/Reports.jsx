@@ -12,7 +12,8 @@ import { getConfig, reset } from "./ReportsSlice";
 import Button from "components/Button";
 import ReportCard from "./components/ReportCard/ReportCard";
 import { PageCard } from "styles/Utils.style";
-import security from "services/security";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 
 export default function Reports() {
   const dispatch = useDispatch();
@@ -28,8 +29,6 @@ export default function Reports() {
   const internalList = useSelector(
     (state) => state.reportsArea.reports.config.internal
   );
-  const roles = useSelector((state) => state.user.account.roles);
-  const sec = security(roles);
 
   const internalReports = [
     {
@@ -130,8 +129,7 @@ export default function Reports() {
               {internalReports.map((reportData, index) => (
                 <React.Fragment key={index}>
                   {(reportData.visible ||
-                    sec.isAdmin() ||
-                    sec.isTraining()) && (
+                    PermissionService().has(Permission.MAINTAINER)) && (
                     <Col key={index} span={24} md={12} lg={8}>
                       <ReportCard
                         css="height: 100%;"

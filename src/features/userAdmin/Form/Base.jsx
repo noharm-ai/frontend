@@ -7,22 +7,21 @@ import { Input, Select, Textarea } from "components/Inputs";
 import Switch from "components/Switch";
 import Button from "components/Button";
 import Role from "models/Role";
-import securityService from "services/security";
 import FeaturesService from "services/features";
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
 import { getUserResetToken } from "features/serverActions/ServerActionsSlice";
 import { getErrorMessage } from "utils/errorHandler";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 
 function BaseForm() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const roles = useSelector((state) => state.user.account.roles);
   const features = useSelector((state) => state.user.account.features);
   const segments = useSelector((state) => state.segments.list);
   const { values, errors, setFieldValue } = useFormikContext();
   const [pwLoading, setPWLoading] = useState(false);
-  const security = securityService(roles);
   const featureService = FeaturesService(features);
 
   const copyToClipboard = (text) => {
@@ -181,7 +180,7 @@ function BaseForm() {
         {errors.active && <div className="form-error">{errors.active}</div>}
       </div>
 
-      {security.isAdmin() && values.id && (
+      {PermissionService().has(Permission.ADMIN_USERS) && values.id && (
         <div className={`form-row`}>
           <Button
             danger
