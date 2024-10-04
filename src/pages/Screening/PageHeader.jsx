@@ -107,9 +107,9 @@ export default function PageHeader({
   }, []); // eslint-disable-line
 
   const hasPrimaryCare = featureService.hasPrimaryCare();
-  const hasUncheckPermission =
-    featureService.hasLockCheckedPrescription() &&
-    `${userId}` === `${prescription?.content.userId}`;
+  const hasUncheckPermission = featureService.hasLockCheckedPrescription()
+    ? `${userId}` === `${prescription?.content.userId}`
+    : true;
 
   const onCancelClinicalNotes = () => {
     setClinicalNotesVisibility(false);

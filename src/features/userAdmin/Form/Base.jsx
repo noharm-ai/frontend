@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
+import { Flex } from "antd";
 
-import { Input, Select, Textarea } from "components/Inputs";
+import { Input, Select, Textarea, Checkbox } from "components/Inputs";
 import Switch from "components/Switch";
 import Button from "components/Button";
 import Role from "models/Role";
@@ -117,29 +118,6 @@ function BaseForm() {
         {errors.external && <div className="form-error">{errors.external}</div>}
       </div>
 
-      <div className={`form-row ${errors.roles ? "error" : ""}`}>
-        <div className="form-label">
-          <label>{t("userAdminForm.roles")}:</label>
-        </div>
-        <div className="form-input">
-          <Select
-            id="reason"
-            mode="multiple"
-            optionFilterProp="children"
-            style={{ width: "100%" }}
-            value={values.roles}
-            onChange={(roles) => setFieldValue("roles", roles)}
-          >
-            {Role.getNewRoles(t).map(({ id, label }) => (
-              <Select.Option key={id} value={id}>
-                {label}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-        {errors.roles && <div className="form-error">{errors.roles}</div>}
-      </div>
-
       {featureService.hasAuthorizationSegment() && (
         <div className={`form-row ${errors.segments ? "error" : ""}`}>
           <div className="form-label">
@@ -166,6 +144,29 @@ function BaseForm() {
           )}
         </div>
       )}
+
+      <div className={`form-row ${errors.roles ? "error" : ""}`}>
+        <div className="form-label">
+          <label>{t("userAdminForm.roles")}:</label>
+        </div>
+        <div className="form-input-checkbox-single">
+          <Checkbox.Group
+            style={{ width: "100%" }}
+            value={values.roles}
+            onChange={(roles) => setFieldValue("roles", roles)}
+          >
+            {Role.getNewRoles(t, features).map(({ id, label, description }) => (
+              <Flex vertical style={{ width: "100%" }}>
+                <Checkbox style={{ fontWeight: 600 }} value={id}>
+                  {label}
+                </Checkbox>
+                <div className="checkbox-description">{description}</div>
+              </Flex>
+            ))}
+          </Checkbox.Group>
+        </div>
+        {errors.roles && <div className="form-error">{errors.roles}</div>}
+      </div>
 
       <div className={`form-row ${errors.active ? "error" : ""}`}>
         <div className="form-label">

@@ -89,6 +89,7 @@ export default function Menu({ security, featureService }) {
       label: t("menu.summary"),
       icon: <FileDoneOutlined />,
       id: "gtm-lnk-summary",
+      feature: Feature.DISCHARGE_SUMMARY,
       permission: [Permission.READ_DISCHARGE_SUMMARY],
     },
     {
@@ -190,7 +191,7 @@ export default function Menu({ security, featureService }) {
           label: t("menu.exams"),
           icon: <ExperimentOutlined />,
           id: "gtm-lnk-exames",
-          permission: [Permission.READ_PRESCRIPTION],
+          permission: [Permission.ADMIN_EXAMS],
         },
         {
           key: "/configuracoes/usuario",

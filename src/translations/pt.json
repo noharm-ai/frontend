@@ -616,8 +616,8 @@
     "unlock-checked-prescription": "Desfaz checagem de qualquer usuário",
 
     "PRESCRIPTION_ANALYST": "Analista de Prescrição",
-    "USER_MANAGER": "Administrador de Usuários",
-    "CONFIG_MANAGER": "Administração de Configurações",
+    "USER_MANAGER": "Gestor de Usuários",
+    "CONFIG_MANAGER": "Gestor de Configurações",
     "DISCHARGE_MANAGER": "Gestor de Alta",
     "VIEWER": "Visualizador",
     "DISPENSING_MANAGER": "Gestor de Dispensação"

@@ -14,6 +14,7 @@ export default class Feature {
   static TRANSCRIPTION = "TRANSCRIPTION";
   static PRESCRIPTION_ALERT = "PRESCRIPTION_ALERT";
   static PRESMED_FORM = "PRESMED_FORM";
+  static DISCHARGE_SUMMARY = "DISCHARGE_SUMMARY";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -104,6 +105,11 @@ export default class Feature {
         label: "Formulário de Dispensação",
         description:
           "Habilita o botão o formulário de dispensação. Usuário deve possuir o papel Gestor de Dispensação para visualizar.",
+      },
+      {
+        id: Feature.DISCHARGE_SUMMARY,
+        label: "Sumário de Alta",
+        description: "Habilita a funcionalidade de criação de Sumário de Alta.",
       },
     ];
   }
