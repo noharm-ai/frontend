@@ -16,6 +16,7 @@ import {
 
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
+import Permission from "models/Permission";
 
 import { TableTags } from "../../index.style";
 
@@ -118,27 +119,29 @@ function PresmedTags({ prescription, bag }) {
           </span>
         </>
       )}
-      {bag.security.hasPresmedForm() && bag.formTemplate && (
-        <span
-          className="tag gtm-tag-alert"
-          onClick={() => bag.handleRowExpand(prescription)}
-        >
-          {!drugForm?.updated && (
-            <Tooltip title="Dispensação pendente">
-              <Tag
-                color="yellow"
-                style={{
-                  marginLeft: "2px",
-                  color: "#d46b08",
-                  borderColor: "#ffd591",
-                }}
-              >
-                D
-              </Tag>
-            </Tooltip>
-          )}
-        </span>
-      )}
+      {bag.featureService.hasPresmedForm() &&
+        bag.permissionService.has(Permission.READ_DISPENSATION) &&
+        bag.formTemplate && (
+          <span
+            className="tag gtm-tag-alert"
+            onClick={() => bag.handleRowExpand(prescription)}
+          >
+            {!drugForm?.updated && (
+              <Tooltip title="Dispensação pendente">
+                <Tag
+                  color="yellow"
+                  style={{
+                    marginLeft: "2px",
+                    color: "#d46b08",
+                    borderColor: "#ffd591",
+                  }}
+                >
+                  D
+                </Tag>
+              </Tooltip>
+            )}
+          </span>
+        )}
     </TableTags>
   );
 }

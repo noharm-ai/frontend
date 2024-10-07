@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { Collapse } from "antd";
 
 import { Select } from "components/Inputs";
-import Role from "models/Role";
 import IntegrationStatusTag from "components/IntegrationStatusTag";
 
 function BaseForm() {
@@ -206,40 +205,6 @@ function BaseForm() {
               Processo novo (mantém formatação original)
             </Select.Option>
           </Select>
-        </div>
-        {errors.nhCare && touched.nhCare && (
-          <div className="form-error">{errors.nhCare}</div>
-        )}
-      </div>
-
-      <div
-        className={`form-row ${
-          errors.defaultRoles && touched.defaultRoles ? "error" : ""
-        }`}
-      >
-        <div className="form-label">
-          <label>Permissões padrão:</label>
-        </div>
-        <div className="form-input">
-          <Select
-            onChange={(value) => setFieldValue("defaultRoles", value)}
-            value={values.defaultRoles}
-            status={
-              errors.defaultRoles && touched.defaultRoles ? "error" : null
-            }
-            optionFilterProp="children"
-            showSearch
-            mode="multiple"
-          >
-            {Role.getLoginRoles(t).map((role) => (
-              <Select.Option key={role.id} value={role.id}>
-                {t(`roles.${role.id}`)}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-        <div className="form-info">
-          Utilizado apenas para facilitar o login dos usuários admin.
         </div>
         {errors.nhCare && touched.nhCare && (
           <div className="form-error">{errors.nhCare}</div>

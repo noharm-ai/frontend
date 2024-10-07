@@ -28,7 +28,7 @@ export default function Base({
   memoryFetchReasonText,
   drugSummary,
   fetchDrugSummary,
-  securityService,
+  featureService,
 }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const { t } = useTranslation();
@@ -42,7 +42,7 @@ export default function Base({
     transcription,
   } = values;
   const layout = { label: 8, input: 16 };
-  const hasTranscription = securityService.hasTranscription();
+  const hasTranscription = featureService.hasTranscription();
 
   const hasRelationships = (reasonList, selectedReasons = []) => {
     if (!selectedReasons || values.idPrescriptionDrugList) return false;

@@ -607,7 +607,23 @@
     "doctor": "Doctor",
     "summary": "Discharge Summary",
     "readonly": "Readonly",
-    "unlock-checked-prescription": "Can uncheck prescriptions from other users"
+    "unlock-checked-prescription": "Can uncheck prescriptions from other users",
+
+    "PRESCRIPTION_ANALYST": "Prescription Analyst",
+    "USER_MANAGER": "User Administrator",
+    "CONFIG_MANAGER": "Configuration Administrator",
+    "DISCHARGE_MANAGER": "Discharge Manager",
+    "VIEWER": "Viewer",
+    "DISPENSING_MANAGER": "Dispensing Manager"
+  },
+
+  "rolesDescription": {
+    "PRESCRIPTION_ANALYST": "Responsible for prioritizing and analyzing prescriptions. Allows all actions related to prescriptions.",
+    "USER_MANAGER": "Responsible for registering and editing the organization's users.",
+    "CONFIG_MANAGER": "Responsible for curating medication, score and exam settings.",
+    "DISCHARGE_MANAGER": "Responsible for creating discharge summaries.",
+    "VIEWER": "Read-only access to prescriptions.",
+    "DISPENSING_MANAGER": "Responsible for managing item dispensing information"
   },
 
   "reportcsv": {

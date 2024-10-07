@@ -32,6 +32,7 @@ const mapStateToProps = ({ prescriptions, auth, user, intervention }) => ({
   isCheckingPrescription: prescriptions.single.check.isChecking,
   roles: user.account.roles,
   features: user.account.features,
+  permissions: user.account.permissions,
   interventions: prescriptions.single.intervention.list,
   isSavingIntervention: intervention.maybeCreateOrUpdate.isSaving,
   infusion: prescriptions.single.data.infusion,

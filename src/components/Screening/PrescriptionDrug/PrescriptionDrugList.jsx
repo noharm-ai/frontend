@@ -16,6 +16,7 @@ import {
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 import SecurityService from "services/security";
 import FeatureService from "services/features";
+import PermissionService from "services/PermissionService";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 
 import {
@@ -145,11 +146,13 @@ export default function PrescriptionDrugList({
   isCheckingPrescription,
   roles,
   features,
+  permissions,
   interventions,
   infusion,
 }) {
   const security = SecurityService(roles);
   const featureService = FeatureService(features);
+  const permissionService = PermissionService(permissions);
   const prescriptionListType = useSelector(
     (state) => state.preferences.prescription.listType
   );
@@ -242,6 +245,7 @@ export default function PrescriptionDrugList({
     formTemplate,
     interventions,
     condensed: prescriptionListType === "condensed",
+    permissionService,
   };
 
   const table = (ds, showHeader) => {
@@ -387,7 +391,7 @@ export default function PrescriptionDrugList({
         checkScreening={checkScreening}
         isChecking={isCheckingPrescription}
         selectPrescriptionDrug={selectPrescriptionDrug}
-        hasPrescriptionEdit={security.hasPrescriptionEdit()}
+        hasPrescriptionEdit={featureService.hasPrimaryCare()}
       />
     );
   };

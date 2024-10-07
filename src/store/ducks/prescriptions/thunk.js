@@ -85,6 +85,7 @@ export const fetchPrescriptionsListThunk =
       nameHeaders: app.config.nameHeaders,
       useCache: true,
       userRoles: user.account.roles,
+      features: user.account.features,
     };
 
     const patientsList = await hospital.getPatients(
@@ -168,6 +169,7 @@ export const fetchScreeningThunk =
       nameHeaders: app.config.nameHeaders,
       useCache: false,
       userRoles: user.account.roles,
+      features: user.account.features,
     };
 
     const patientsList = await hospital.getPatients(
@@ -288,7 +290,7 @@ export const saveAdmissionThunk =
         .catch(errorHandler);
 
       if (!isEmpty(error)) {
-        dispatch(prescriptionsSaveError(error));
+        dispatch(prescriptionsSaveError(null));
         reject(error);
         return;
       }

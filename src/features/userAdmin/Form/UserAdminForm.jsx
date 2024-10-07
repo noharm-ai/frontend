@@ -10,6 +10,7 @@ import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
 import { setUser, upsertUser } from "../UserAdminSlice";
 import Base from "./Base";
+import Role from "models/Role";
 
 import { Form } from "styles/Form.style";
 
@@ -27,6 +28,10 @@ export default function UserAdminForm({ ...props }) {
       .required(t("validation.requiredField")),
   });
   const initialValues = {
+    ...{
+      active: true,
+      roles: [Role.PRESCRIPTION_ANALIST, Role.CONFIG_MANAGER],
+    },
     ...formData,
   };
 

@@ -53,6 +53,22 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.DISABLE_WHITELIST_GROUP);
   };
 
+  const hasTranscription = () => {
+    return hasFeature(Feature.TRANSCRIPTION);
+  };
+
+  const hasPrescriptionAlert = () => {
+    return hasFeature(Feature.PRESCRIPTION_ALERT);
+  };
+
+  const hasPresmedForm = () => {
+    return hasFeature(Feature.PRESMED_FORM);
+  };
+
+  const hasDisableGetname = () => {
+    return hasFeature(Feature.DISABLE_GETNAME);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
@@ -66,6 +82,10 @@ const FeaturesService = (features) => {
     hasPatientRevision,
     hasAuthorizationSegment,
     hasDisableWhitelistGroup,
+    hasTranscription,
+    hasPrescriptionAlert,
+    hasPresmedForm,
+    hasDisableGetname,
   };
 };
 

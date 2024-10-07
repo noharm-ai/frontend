@@ -133,6 +133,7 @@ export const fetchSummary = createAsyncThunk(
       nameHeaders: thunkAPI.getState().app.config.nameHeaders,
       useCache: false,
       userRoles: thunkAPI.getState().user.account.roles,
+      features: thunkAPI.getState().user.account.features,
     };
 
     const patientsList = await hospital.getPatients(

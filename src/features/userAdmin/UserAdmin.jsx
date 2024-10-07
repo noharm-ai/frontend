@@ -17,7 +17,6 @@ import Role from "models/Role";
 import columns from "./columns";
 import { fetchUsers, reset, setUser } from "./UserAdminSlice";
 import UserAdminForm from "./Form/UserAdminForm";
-import securityService from "services/security";
 
 import { PageHeader } from "styles/PageHeader.style";
 import { PageCard } from "styles/Utils.style";
@@ -47,12 +46,10 @@ export default function UserAdmin() {
 
   const list = useSelector((state) => state.userAdmin.list);
   const status = useSelector((state) => state.userAdmin.status);
-  const roles = useSelector((state) => state.user.account.roles);
   const [filter, setFilter] = useState({
     status: null,
     roles: [],
   });
-  const security = securityService(roles);
 
   const emptyText = (
     <Empty
@@ -123,26 +120,25 @@ export default function UserAdmin() {
               </Select.Option>
             </Select>
           </div>
-          {security.isMaintainer() && (
-            <div className="filter-field">
-              <label>Permissão</label>
-              <Select
-                onChange={(val) => setFilter({ ...filter, roles: val })}
-                placeholder="Filtrar por permissão"
-                allowClear
-                style={{ minWidth: "200px" }}
-                optionFilterProp="children"
-                loading={status === "loading"}
-                mode="multiple"
-              >
-                {Role.getRoles(t).map((r) => (
-                  <Select.Option value={r.id} key={r.id}>
-                    {r.label}
-                  </Select.Option>
-                ))}
-              </Select>
-            </div>
-          )}
+
+          <div className="filter-field">
+            <label>Papel</label>
+            <Select
+              onChange={(val) => setFilter({ ...filter, roles: val })}
+              placeholder="Filtrar por papel"
+              allowClear
+              style={{ minWidth: "200px" }}
+              optionFilterProp="children"
+              loading={status === "loading"}
+              mode="multiple"
+            >
+              {Role.getNewRoles(t).map((r) => (
+                <Select.Option value={r.id} key={r.id}>
+                  {r.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
         </ExtraFilters>
         <div style={{ paddingRight: "5px" }}>
           {status !== "loading" && `${ds.length} registros`}

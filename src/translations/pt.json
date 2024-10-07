@@ -496,7 +496,7 @@
     "inactive": "Inativo",
     "addIcon": "Adicionar",
     "userEdit": "Alterar usuario",
-    "roles": "Permissões",
+    "roles": "Papéis",
     "segments": "Segmentos autorizados",
 
     "passwordResetWarning": "Ao alterar o email a senha será redefinida",
@@ -613,7 +613,23 @@
     "doctor": "Médico",
     "summary": "Sumário de Alta",
     "readonly": "Somente leitura",
-    "unlock-checked-prescription": "Desfaz checagem de qualquer usuário"
+    "unlock-checked-prescription": "Desfaz checagem de qualquer usuário",
+
+    "PRESCRIPTION_ANALYST": "Analista de Prescrição",
+    "USER_MANAGER": "Gestor de Usuários",
+    "CONFIG_MANAGER": "Gestor de Configurações",
+    "DISCHARGE_MANAGER": "Gestor de Alta",
+    "VIEWER": "Visualizador",
+    "DISPENSING_MANAGER": "Gestor de Dispensação"
+  },
+
+  "rolesDescription": {
+    "PRESCRIPTION_ANALYST": "Responsável por priorizar e analisar as prescrições. Permite todas as ações relacionadas às prescrições.",
+    "USER_MANAGER": "Responsável por cadastrar e editar os usuários da organização.",
+    "CONFIG_MANAGER": "Responsável pela curadoria das configurações de medicamentos, escores e exames.",
+    "DISCHARGE_MANAGER": "Responsável pela criação de sumários de alta",
+    "VIEWER": "Acesso somente leitura às prescrições",
+    "DISPENSING_MANAGER": "Responsável pela gestão das informações de dispensação dos itens"
   },
 
   "reportcsv": {

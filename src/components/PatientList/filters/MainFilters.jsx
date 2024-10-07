@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 
@@ -6,21 +7,23 @@ import { Select, RangeDatePicker } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
+import { getSegmentDepartments } from "features/lists/ListsSlice";
+import { getUniqBy } from "utils/report";
 
-export default function MainFilters({
-  segments,
-  fetchDepartmentsList,
-  resetDepartmentsList,
-}) {
+export default function MainFilters({ segments }) {
+  const dispatch = useDispatch();
   const { t, i18n } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
+  const departments = useSelector(
+    (state) => state.lists.getSegmentDepartments.list
+  );
+  const departmentsStatus = useSelector(
+    (state) => state.lists.getSegmentDepartments.status
+  );
 
   useEffect(() => {
-    resetDepartmentsList();
-    if (values.idSegment == null) return;
-
-    fetchDepartmentsList(values.idSegment);
-  }, [values.idSegment, fetchDepartmentsList, resetDepartmentsList]);
+    dispatch(getSegmentDepartments());
+  }, []); //eslint-disable-line
 
   const onChangeSegment = (value) => {
     setFieldValue({
@@ -36,6 +39,19 @@ export default function MainFilters({
       nextAppointmentStartDate: startDate,
       nextAppointmentEndDate: endDate,
     });
+  };
+
+  const filterDepartments = (idSegment, list) => {
+    const deps = list.filter((d) => {
+      if (!idSegment) {
+        return true;
+      }
+
+      // keep compatibility
+      return idSegment === d.idSegment;
+    });
+
+    return getUniqBy(deps, "idDepartment");
   };
 
   return (
@@ -68,20 +84,22 @@ export default function MainFilters({
           optionFilterProp="children"
           style={{ width: "100%" }}
           placeholder={t("screeningList.labelDepartmentPlaceholder")}
-          loading={segments.single.isFetching}
+          loading={departmentsStatus === "loading"}
           value={values.idDepartment}
           onChange={(value) => setFieldValue({ idDepartment: value })}
           autoClearSearchValue={false}
           allowClear
         >
-          {segments.single.content.departments &&
-            segments.single.content.departments.map(
-              ({ idDepartment, name }) => (
-                <Select.Option key={idDepartment} value={idDepartment}>
-                  {name}
-                </Select.Option>
-              )
-            )}
+          {filterDepartments(values.idSegment, departments).map(
+            ({ idDepartment, idSegment, label }) => (
+              <Select.Option
+                key={`${idSegment}-${idDepartment}`}
+                value={idDepartment}
+              >
+                {label}
+              </Select.Option>
+            )
+          )}
         </Select>
       </Col>
       <Col md={7} lg={7} xxl={5}>

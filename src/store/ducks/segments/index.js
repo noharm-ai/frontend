@@ -46,53 +46,10 @@ const fetchListSuccess = (state = INITIAL_STATE, { list }) => ({
   isFetching: false,
 });
 
-const fetchSingleStart = (state = INITIAL_STATE) => ({
-  ...state,
-  single: {
-    ...state.single,
-    isFetching: true,
-  },
-});
-
-const fetchSingleError = (state = INITIAL_STATE, { error }) => ({
-  ...state,
-  single: {
-    ...state.single,
-    error,
-    isFetching: false,
-  },
-});
-
-const fetchSingleSuccess = (
-  state = INITIAL_STATE,
-  { content, firstFilter }
-) => ({
-  ...state,
-  firstFilter,
-  single: {
-    ...state.single,
-    content,
-    error: null,
-    isFetching: false,
-  },
-});
-
-const fetchSingleReset = (state = INITIAL_STATE) => ({
-  ...state,
-  single: {
-    ...INITIAL_STATE.single,
-  },
-});
-
 const HANDLERS = {
   [Types.SEGMENTS_FETCH_LIST_START]: fetchListStart,
   [Types.SEGMENTS_FETCH_LIST_ERROR]: fetchListError,
   [Types.SEGMENTS_FETCH_LIST_SUCCESS]: fetchListSuccess,
-
-  [Types.SEGMENTS_FETCH_SINGLE_START]: fetchSingleStart,
-  [Types.SEGMENTS_FETCH_SINGLE_ERROR]: fetchSingleError,
-  [Types.SEGMENTS_FETCH_SINGLE_SUCCESS]: fetchSingleSuccess,
-  [Types.SEGMENTS_FETCH_SINGLE_RESET]: fetchSingleReset,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

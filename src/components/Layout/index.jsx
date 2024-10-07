@@ -11,12 +11,13 @@ import appInfo from "utils/appInfo";
 import Avatar from "components/Avatar";
 import Button from "components/Button";
 import toast from "components/notification";
-import security from "services/security";
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
 import IntegrationStatusTag from "components/IntegrationStatusTag";
 import { setSupportOpen } from "features/support/SupportSlice";
 import SupportForm from "features/support/SupportForm/SupportForm";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
 
 import Box from "./Box";
 import Menu from "./Menu";
@@ -47,7 +48,6 @@ const Me = ({
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const sec = security(user.account.roles);
 
   const showAlert = location.pathname.indexOf("priorizacao") !== -1;
 
@@ -61,7 +61,7 @@ const Me = ({
       description: "Até breve ;)",
     });
     document.title = `${process.env.REACT_APP_SITE_TITLE}`;
-    const redirect = !sec.isAdmin() && !sec.isSupport() && !sec.isTraining();
+    const redirect = !PermissionService().has(Permission.MAINTAINER);
 
     doLogout();
     if (logoutUrl && redirect) {
@@ -81,9 +81,9 @@ const Me = ({
     "
     >
       <div css="display: flex; align-items: center; flex: 1">
-        {location.pathname !== "/sumario-alta" && (
-          <SearchPrescription type={sec.isDoctor() ? "summary" : "default"} />
-        )}
+        <SearchPrescription
+          type={location.pathname.includes("sumario") ? "summary" : "default"}
+        />
 
         {showAlert && (
           <InfoAlert
@@ -103,7 +103,7 @@ const Me = ({
 
         <UserName>
           <div className="name">{setTitle({ user })}</div>
-          {sec.isMultiSchema() && (
+          {PermissionService().has(Permission.MAINTAINER) && (
             <div className="schema">
               <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
               <Tooltip title="Posição atual da implantação. Clique para ver mais detalhes">
@@ -111,11 +111,7 @@ const Me = ({
                   type={"filled"}
                   style={{ cursor: "pointer" }}
                   status={integrationStatus}
-                  onClick={
-                    sec.isAdmin() || sec.isTraining()
-                      ? () => navigate("/admin/integracao/status")
-                      : null
-                  }
+                  onClick={() => navigate("/admin/integracao/status")}
                 />
               </Tooltip>
             </div>
