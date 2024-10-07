@@ -7,6 +7,7 @@ import { Row } from "components/Grid";
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
+import { getErrorMessageFromException } from "utils/errorHandler";
 
 import Base from "./Base";
 import { FormContainer } from "../Form.style";
@@ -49,7 +50,7 @@ export default function ClinicalAlert({
         console.error("err", err);
         notification.error({
           message: t("error.title"),
-          description: t("error.description"),
+          description: getErrorMessageFromException(err, t),
         });
       });
   };
