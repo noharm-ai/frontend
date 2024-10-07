@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-import { Select } from "components/Inputs";
+import { Select, SelectCustom } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
@@ -51,7 +51,7 @@ export default function MainFilters() {
         <Heading as="label" size="14px">
           Medicamento:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.drugList}
           onChange={(val) => setFieldValue({ drugList: val })}
@@ -62,20 +62,25 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              drugList: drugs,
+            })
+          }
         >
           {drugs.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
 
       <Col md={7} lg={6} xxl={6}>
         <Heading as="label" size="14px">
           Tipo:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.typeList}
           onChange={(val) => setFieldValue({ typeList: val })}
@@ -86,13 +91,18 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              typeList: DrugAlertTypeEnum.getAlertTypes(t).map((a) => a.id),
+            })
+          }
         >
           {DrugAlertTypeEnum.getAlertTypes(t).map((a) => (
             <Select.Option key={a.id} value={a.id}>
               {a.label}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
     </>
   );

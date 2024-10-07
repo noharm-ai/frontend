@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 
-import { RangeDatePicker, Select } from "components/Inputs";
+import { RangeDatePicker, Select, SelectCustom } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
@@ -38,7 +38,7 @@ export default function MainFilters() {
         <Heading as="label" size="14px">
           Medicamento:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.drugList}
           onChange={(val) => setFieldValue({ drugList: val })}
@@ -49,19 +49,24 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              drugList: drugs,
+            })
+          }
         >
           {drugs.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
       <Col md={7} lg={5} xxl={5}>
         <Heading as="label" size="14px">
           Substância:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.substanceList}
           onChange={(val) => setFieldValue({ substanceList: val })}
@@ -72,13 +77,18 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              substanceList: substances,
+            })
+          }
         >
           {substances.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
     </>
   );

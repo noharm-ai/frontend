@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Select, Radio } from "components/Inputs";
+import { Select, SelectCustom, Radio } from "components/Inputs";
 
 export default function SecondaryFilters() {
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
@@ -71,7 +71,7 @@ export default function SecondaryFilters() {
         <Heading as="label" size="14px">
           Responsável:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.responsibleList}
           onChange={(val) => setFieldValue({ responsibleList: val })}
@@ -82,20 +82,25 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              responsibleList: responsibles,
+            })
+          }
         >
           {responsibles.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
 
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" size="14px">
           Medicamento origem:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.originDrugList}
           onChange={(val) => setFieldValue({ originDrugList: val })}
@@ -106,19 +111,24 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              originDrugList: originDrugs,
+            })
+          }
         >
           {originDrugs.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" size="14px">
           Medicamento substituto:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.destinyDrugList}
           onChange={(val) => setFieldValue({ destinyDrugList: val })}
@@ -129,19 +139,24 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              destinyDrugList: destinyDrugs,
+            })
+          }
         >
           {destinyDrugs.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" size="14px">
           Motivo:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.reasonList}
           onChange={(val) => setFieldValue({ reasonList: val })}
@@ -152,13 +167,18 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              reasonList: reasons,
+            })
+          }
         >
           {reasons.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" size="14px">
@@ -194,7 +214,7 @@ export default function SecondaryFilters() {
         <Heading as="label" size="14px">
           Convênio:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.insuranceList}
           onChange={(val) => setFieldValue({ insuranceList: val })}
@@ -205,13 +225,18 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              insuranceList: insurances,
+            })
+          }
         >
           {insurances.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
     </Row>
   );

@@ -5,7 +5,14 @@ import { Row, Col, Card } from "antd";
 import isEmpty from "lodash.isempty";
 import debounce from "lodash.debounce";
 
-import { Select, Checkbox, Input, InputNumber, Radio } from "components/Inputs";
+import {
+  Select,
+  SelectCustom,
+  Checkbox,
+  Input,
+  InputNumber,
+  Radio,
+} from "components/Inputs";
 import Switch from "components/Switch";
 import Tooltip from "components/Tooltip";
 import LoadBox from "components/LoadBox";
@@ -152,7 +159,7 @@ export default function FilterFields({
                 <label>{t("screeningList.labelDepartment")}:</label>
               </div>
               <div className="form-input">
-                <Select
+                <SelectCustom
                   id="departments"
                   mode="multiple"
                   optionFilterProp="children"
@@ -163,6 +170,15 @@ export default function FilterFields({
                   autoClearSearchValue={false}
                   className={filter.idDepartment?.length ? "warning" : null}
                   allowClear
+                  maxTagCount="responsive"
+                  onSelectAll={() =>
+                    setScreeningListFilter({
+                      idDepartment: filterDepartments(
+                        filter.idSegment,
+                        departments
+                      ).map((i) => i.idDepartment),
+                    })
+                  }
                 >
                   {filterDepartments(filter.idSegment, departments).map(
                     ({ idDepartment, idSegment, label }) => (
@@ -174,7 +190,7 @@ export default function FilterFields({
                       </Select.Option>
                     )
                   )}
-                </Select>
+                </SelectCustom>
                 {(prioritizationType === "patient" ||
                   prioritizationType === "cards") && (
                   <div className="form-input">

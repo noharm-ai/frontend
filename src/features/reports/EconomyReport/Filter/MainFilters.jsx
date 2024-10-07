@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-import { RangeDatePicker, Select } from "components/Inputs";
+import { RangeDatePicker, Select, SelectCustom } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
@@ -45,7 +45,7 @@ export default function MainFilters() {
         <Heading as="label" size="14px">
           Segmento:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.segmentList}
           onChange={(val) =>
@@ -58,19 +58,25 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              segmentList: segments,
+              departmentList: [],
+            })
+          }
         >
           {segments.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
       <Col md={7} lg={5} xxl={5}>
         <Heading as="label" size="14px">
           Setor:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.departmentList}
           onChange={(val) => setFieldValue({ departmentList: val })}
@@ -81,6 +87,14 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              departmentList: getFilterDepartment(
+                departments,
+                values.segmentList
+              ).map((i) => i.department),
+            })
+          }
         >
           {getFilterDepartment(departments, values.segmentList).map((i) => (
             <Select.Option
@@ -90,7 +104,7 @@ export default function MainFilters() {
               {i.department}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
     </>
   );
