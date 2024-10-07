@@ -1228,7 +1228,7 @@ export const dietColumns = (bag) => [
 export const conciliationColumns = (bag) => [
   drug(bag, true),
   dose(bag),
-  frequency,
+  frequency(bag),
   relationColumn(bag),
   ...actionColumns(bag),
 ];
