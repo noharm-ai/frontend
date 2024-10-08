@@ -694,7 +694,9 @@
     "globalScore": "ESCORE GLOBAL",
     "evaluationTime": "TEMPO DE AVALIACAO",
     "interventionReasonArray": "MOTIVOS INTERVENCAO",
-    "outcomeResponsible": "RESPONSAVEL DESFECHO"
+    "outcomeResponsible": "RESPONSAVEL DESFECHO",
+    "checkedAt": "DATA CHECAGEM",
+    "originCreatedAt": "DATA CRIACAO ORIGEM"
   },
 
   "reportcsvCulture": {

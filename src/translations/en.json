@@ -688,7 +688,9 @@
     "globalScore": "GLOBAL SCORE",
     "evaluationTime": "EVALUATION TIME",
     "interventionReasonArray": "INTERVENTION REASONS",
-    "outcomeResponsible": "OUTCOME RESPONSIBLE"
+    "outcomeResponsible": "OUTCOME RESPONSIBLE",
+    "checkedAt": "CHECK DATE",
+    "originCreatedAt": "ORIGIN CREATION DATE"
   },
 
   "reportcsvCulture": {
