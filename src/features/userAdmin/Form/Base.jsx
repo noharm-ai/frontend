@@ -168,6 +168,38 @@ function BaseForm() {
         {errors.roles && <div className="form-error">{errors.roles}</div>}
       </div>
 
+      {PermissionService().has(Permission.ADMIN_USERS) && (
+        <div className={`form-row ${errors.features ? "error" : ""}`}>
+          <div className="form-label">
+            <label>Features:</label>
+          </div>
+          <div className="form-input">
+            <Select
+              id="reason"
+              mode="multiple"
+              optionFilterProp="children"
+              style={{ width: "100%" }}
+              value={values.features}
+              onChange={(features) => setFieldValue("features", features)}
+              allowClear
+            >
+              <Select.Option value="DISABLE_CPOE">
+                Desabilitar CPOE
+              </Select.Option>
+              <Select.Option value="STAGING_ACCESS">
+                Acesso ao ambiente de homologação
+              </Select.Option>
+            </Select>
+          </div>
+          <div className="form-info">
+            Features são definidas apenas pela NoHarm.
+          </div>
+          {errors.features && (
+            <div className="form-error">{errors.features}</div>
+          )}
+        </div>
+      )}
+
       <div className={`form-row ${errors.active ? "error" : ""}`}>
         <div className="form-label">
           <label>{t("userAdminForm.active")}:</label>
