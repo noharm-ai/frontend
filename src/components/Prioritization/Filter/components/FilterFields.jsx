@@ -643,6 +643,28 @@ export default function FilterFields({
                 </div>
               </div>
             </div>
+
+            {featureService.hasConciliation() &&
+              (prioritizationType === "patient" ||
+                prioritizationType === "cards") && (
+                <div className="form-row">
+                  <div className="form-row">
+                    <div className="form-label">
+                      <label>Possui conciliação:</label>
+                    </div>
+                    <div className="form-input">
+                      <Radio.Group
+                        options={yesNoOptionsNullable}
+                        optionType="button"
+                        onChange={({ target: { value } }) =>
+                          setScreeningListFilter({ hasConciliation: value })
+                        }
+                        value={filter.hasConciliation}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
           </Form>
         </Card>
       </Col>
