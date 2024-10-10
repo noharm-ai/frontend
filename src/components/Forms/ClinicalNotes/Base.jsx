@@ -71,7 +71,12 @@ export default function Base({
   const loadNote = (clinicalNote) => {
     setFieldValue(
       "notes",
-      getCustomClinicalNote(prescription, clinicalNote, { signature, account })
+      getCustomClinicalNote(
+        prescription,
+        clinicalNote,
+        { signature, account },
+        t
+      )
     );
   };
 

@@ -12,14 +12,15 @@ import dayjs from "dayjs";
 export const getCustomClinicalNote = (
   prescription,
   clinicalNote,
-  params = {}
+  params = {},
+  t
 ) => {
   const drugs = [
     ...prescription.data.prescriptionRaw,
     ...prescription.data.solutionRaw,
     ...prescription.data.proceduresRaw,
   ];
-  const interventions = getInterventionList(prescription);
+  const interventions = getInterventionList(prescription, t);
 
   const alerts = alertsTemplate(prescription);
 
