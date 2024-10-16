@@ -120,17 +120,6 @@ const getAuthProvider = (schema) =>
 const getSegments = (bearerToken, params = {}) =>
   instance.get(endpoints.segments, { params, ...setHeaders(bearerToken) });
 
-const getSegmentById = (bearerToken, idSegment, idHospital, params = {}) => {
-  const url = idHospital
-    ? `${endpoints.segments}/${idSegment}/${idHospital}`
-    : `${endpoints.segments}/${idSegment}`;
-
-  return instance.get(url, {
-    params,
-    ...setHeaders(bearerToken),
-  });
-};
-
 const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
   instance.post(
     `/segments/${idSegment}/outliers/generate/drug/${idDrug}/clean/1`,
@@ -755,7 +744,6 @@ const methods = {
   refreshToken,
   getAuthProvider,
   getSegments,
-  getSegmentById,
   getPrescriptions,
   getPrescriptionById,
   getPrescriptionDrugPeriod,

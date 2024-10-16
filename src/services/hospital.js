@@ -1,7 +1,7 @@
 import axios from "axios";
 import moment from "moment";
 
-import securityService from "services/security";
+import FeatureService from "services/features";
 import appInfo from "utils/appInfo";
 
 const FLAG = "{idPatient}";
@@ -33,7 +33,7 @@ const defaultValue = (idPatient) => ({
  * ]
  */
 const getPatients = async (bearerToken, requestConfig) => {
-  const { listToRequest, listToEscape, nameUrl, useCache, userRoles, proxy } =
+  const { listToRequest, listToEscape, nameUrl, useCache, features, proxy } =
     requestConfig;
   const nameHeaders = proxy
     ? {
@@ -43,14 +43,14 @@ const getPatients = async (bearerToken, requestConfig) => {
         "x-api-key": appInfo.apiKey,
       }
     : requestConfig.nameHeaders;
-  const security = securityService(userRoles);
+  const featureService = FeatureService(features);
   let promises;
 
   if (!listToRequest || !Array.isArray(listToRequest)) {
     return listToEscape;
   }
 
-  if (security.isGetnameEnabled()) {
+  if (!featureService.hasDisableGetname()) {
     if (requestConfig.multipleNameUrl && listToRequest.length > 1) {
       const cacheConfig = {};
       const requestIds = [];

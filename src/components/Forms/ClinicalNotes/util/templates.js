@@ -272,7 +272,7 @@ export const interventionTemplate = (i) => `
   ${i.observation ? stripHtml(i.observation) : ""}
 `;
 
-export const interventionCompleteTemplate = (i) => `
+export const interventionCompleteTemplate = (i, t) => `
   -- ${i.drugName}
   (${
     i.dose !== null
@@ -282,6 +282,7 @@ export const interventionCompleteTemplate = (i) => `
   Intervenção: ${
     i.observation ? stripHtml(i.observation) : "Nenhuma observação registrada"
   }
+  Desfecho: ${t("interventionStatus." + i.status)}
 `;
 
 const emptyInterventionTemplate = ({ idPrescription, agg, concilia }) => {

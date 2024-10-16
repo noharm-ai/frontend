@@ -33,6 +33,9 @@ import {
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
+import SecurityService from "services/security";
 import { Wrapper as Navigator } from "./Menu.style";
 
 export default function Menu({ security, featureService }) {
@@ -49,11 +52,11 @@ export default function Menu({ security, featureService }) {
   };
 
   const hasPermission = (item) => {
-    if (item.role && !security.hasAnyRole(item.role)) {
+    if (item.permission && !PermissionService().hasAny(item.permission)) {
       return;
     }
 
-    if (item.notrole && security.hasAnyRole(item.notrole)) {
+    if (item.notcpoe && SecurityService().hasCpoe()) {
       return;
     }
 
@@ -86,7 +89,8 @@ export default function Menu({ security, featureService }) {
       label: t("menu.summary"),
       icon: <FileDoneOutlined />,
       id: "gtm-lnk-summary",
-      role: ["summary"],
+      feature: Feature.DISCHARGE_SUMMARY,
+      permission: [Permission.READ_DISCHARGE_SUMMARY],
     },
     {
       key: "prioritization",
@@ -94,7 +98,7 @@ export default function Menu({ security, featureService }) {
       label: t("menu.prioritization"),
       icon: <TableOutlined />,
       id: "gtm-lnk-priorizacao",
-      notrole: ["doctor"],
+      permission: [Permission.READ_PRESCRIPTION],
       children: [
         {
           key: "/priorizacao/prescricoes",
@@ -102,7 +106,7 @@ export default function Menu({ security, featureService }) {
           label: t("menu.prioritization-prescription"),
           icon: <FileTextOutlined />,
           id: "gtm-lnk-priorizacao-prescricao",
-          notrole: ["cpoe"],
+          notcpoe: "notcpoe",
         },
         {
           key: "/priorizacao/pacientes/cards",
@@ -136,7 +140,6 @@ export default function Menu({ security, featureService }) {
       icon: <UserOutlined />,
       id: "gtm-lnk-patients",
       feature: Feature.PRIMARYCARE,
-      notrole: ["doctor"],
     },
     {
       key: "/intervencoes",
@@ -144,7 +147,7 @@ export default function Menu({ security, featureService }) {
       label: t("menu.interventions"),
       icon: <WarningOutlined />,
       id: "gtm-lnk-intervencoes",
-      notrole: ["doctor"],
+      permission: [Permission.READ_PRESCRIPTION],
     },
     {
       key: "/relatorios",
@@ -152,7 +155,7 @@ export default function Menu({ security, featureService }) {
       label: t("menu.reports"),
       icon: <PieChartOutlined />,
       id: "gtm-lnk-report",
-      notrole: ["doctor"],
+      permission: [Permission.READ_REPORTS],
     },
     {
       key: `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/39`,
@@ -180,7 +183,7 @@ export default function Menu({ security, featureService }) {
           label: t("menu.medications"),
           icon: <MedicineBoxOutlined />,
           id: "gtm-lnk-medicamentos",
-          notrole: ["doctor"],
+          permission: [Permission.READ_PRESCRIPTION],
         },
         {
           key: "/admin/exames",
@@ -188,7 +191,7 @@ export default function Menu({ security, featureService }) {
           label: t("menu.exams"),
           icon: <ExperimentOutlined />,
           id: "gtm-lnk-exames",
-          notrole: ["doctor"],
+          permission: [Permission.ADMIN_EXAMS],
         },
         {
           key: "/configuracoes/usuario",
@@ -203,7 +206,7 @@ export default function Menu({ security, featureService }) {
           label: t("menu.user-administration"),
           icon: <UsergroupAddOutlined />,
           id: "gtm-lnk-user-administration",
-          role: ["userAdmin"],
+          permission: [Permission.READ_USERS],
         },
       ],
     },
@@ -212,7 +215,7 @@ export default function Menu({ security, featureService }) {
       key: "support",
       label: "Curadoria",
       icon: <ControlOutlined />,
-      role: ["admin", "training"],
+      permission: [Permission.MAINTAINER],
       children: [
         {
           key: "/admin/curadoria-medicamentos",
@@ -220,7 +223,6 @@ export default function Menu({ security, featureService }) {
           label: "Curadoria medicamentos",
           icon: <TableOutlined />,
           id: "gtm-lnk-attr-drugs",
-          role: ["admin", "training"],
         },
         {
           key: "/admin/curadoria-unidades",
@@ -228,7 +230,6 @@ export default function Menu({ security, featureService }) {
           label: "Curadoria unidades",
           icon: <SwapOutlined />,
           id: "gtm-lnk-units-drugs",
-          role: ["admin", "training"],
         },
         {
           key: "/admin/exames2",
@@ -236,7 +237,6 @@ export default function Menu({ security, featureService }) {
           label: "Exames",
           icon: <ExperimentOutlined />,
           id: "gtm-lnk-exames",
-          notrole: ["doctor"],
         },
         {
           key: "/admin/features",
@@ -244,7 +244,6 @@ export default function Menu({ security, featureService }) {
           label: "Features",
           icon: <FlagOutlined />,
           id: "gtm-lnk-features",
-          role: ["admin", "training"],
         },
         {
           key: "/admin/frequencias",
@@ -252,7 +251,6 @@ export default function Menu({ security, featureService }) {
           label: t("menu.frequency"),
           icon: <HourglassOutlined />,
           id: "gtm-lnk-frequencias",
-          role: ["admin", "training"],
         },
         {
           key: "/admin/horarios",
@@ -260,7 +258,6 @@ export default function Menu({ security, featureService }) {
           label: t("menu.schedules"),
           icon: <HourglassOutlined />,
           id: "gtm-lnk-horarios",
-          role: ["admin", "training"],
         },
         {
           key: "/admin/motivo-intervencao",
@@ -268,7 +265,6 @@ export default function Menu({ security, featureService }) {
           label: t("menu.interventionReasons"),
           icon: <WarningOutlined />,
           id: "gtm-lnk-intv-reason",
-          role: ["admin", "training"],
         },
 
         {
@@ -277,7 +273,6 @@ export default function Menu({ security, featureService }) {
           label: "Relações Medicamentosas",
           icon: <InteractionOutlined />,
           id: "gtm-lnk-relations",
-          role: ["admin", "training"],
         },
 
         {
@@ -286,7 +281,6 @@ export default function Menu({ security, featureService }) {
           label: "Relatórios",
           icon: <PieChartOutlined />,
           id: "gtm-lnk-relatorios",
-          role: ["admin", "training"],
         },
         {
           key: "/admin/segmentos",
@@ -294,7 +288,6 @@ export default function Menu({ security, featureService }) {
           label: "Segmentos",
           icon: <AppstoreOutlined />,
           id: "gtm-lnk-segmentos",
-          role: ["admin", "training"],
         },
         {
           key: "/admin/substancias",
@@ -302,7 +295,6 @@ export default function Menu({ security, featureService }) {
           label: "Substâncias",
           icon: <TagOutlined />,
           id: "gtm-lnk-substancias",
-          role: ["admin", "training"],
         },
         {
           key: "/admin/vias",
@@ -310,7 +302,6 @@ export default function Menu({ security, featureService }) {
           label: "Vias",
           icon: <BranchesOutlined />,
           id: "gtm-lnk-vias",
-          role: ["admin", "training"],
         },
       ],
     },
@@ -318,7 +309,7 @@ export default function Menu({ security, featureService }) {
       key: "integration",
       label: t("menu.integration"),
       icon: <ApiOutlined />,
-      role: ["admin"],
+      permission: [Permission.INTEGRATION_UTILS],
       children: [
         {
           key: "/admin/integracao/acesso-remoto",
@@ -326,7 +317,6 @@ export default function Menu({ security, featureService }) {
           label: "Acesso Remoto",
           icon: <DeploymentUnitOutlined />,
           id: "gtm-lnk-integration-remote",
-          role: ["admin"],
         },
         {
           key: "/admin/integracao",
@@ -334,7 +324,6 @@ export default function Menu({ security, featureService }) {
           label: "Utilidades",
           icon: <CodeOutlined />,
           id: "gtm-lnk-integration",
-          role: ["admin"],
         },
         {
           key: "/admin/memoria",
@@ -342,7 +331,6 @@ export default function Menu({ security, featureService }) {
           label: t("menu.memory"),
           icon: <SaveOutlined />,
           id: "gtm-lnk-memory",
-          role: ["admin"],
         },
         {
           key: "/admin/integracao/status",
@@ -350,7 +338,6 @@ export default function Menu({ security, featureService }) {
           label: "Status",
           icon: <CheckOutlined />,
           id: "gtm-lnk-int-status",
-          role: ["admin"],
         },
         {
           key: "/admin/integracao/config",
@@ -358,7 +345,6 @@ export default function Menu({ security, featureService }) {
           label: "Configuração Integrações",
           icon: <SettingOutlined />,
           id: "gtm-lnk-int-config",
-          role: ["admin"],
         },
       ],
     },

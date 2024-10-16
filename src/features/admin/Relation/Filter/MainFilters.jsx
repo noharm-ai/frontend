@@ -23,7 +23,7 @@ export default function MainFilters() {
     <>
       <Col md={7} lg={14} xxl={8}>
         <Heading as="label" size="14px">
-          Substância:
+          Substância(s):
         </Heading>
         <Select
           id="idclass"
@@ -34,7 +34,6 @@ export default function MainFilters() {
           onChange={(value, option) => setFieldValue({ idOriginList: value })}
           loading={substancesStatus === "loading"}
           mode="multiple"
-          maxCount={1}
           allowClear
         >
           {substances.map(({ sctid, name }) => (

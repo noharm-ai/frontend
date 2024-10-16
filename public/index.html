@@ -131,6 +131,16 @@
               "errors",
               {
                 ignore: (errorEvent) => {
+                  if (
+                    errorEvent &&
+                    errorEvent.reason &&
+                    /^Request failed with status code 401/.test(
+                      errorEvent.reason.message
+                    )
+                  ) {
+                    return true;
+                  }
+
                   return (
                     errorEvent &&
                     errorEvent.message &&

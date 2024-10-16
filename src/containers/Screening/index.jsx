@@ -14,6 +14,7 @@ const mapStateToProps = ({ prescriptions, user }) => ({
   interventions: prescriptions.single.intervention.list,
   roles: user.account.roles,
   features: user.account.features,
+  permissions: user.account.permissions,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

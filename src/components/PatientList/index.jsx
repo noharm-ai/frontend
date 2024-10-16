@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import debounce from "lodash.debounce";
 import { useTranslation } from "react-i18next";
 
@@ -14,7 +14,6 @@ import Filter from "containers/PatientList/Filter";
 import columns from "./table/columns";
 
 export default function PatientList({ list, isFetching }) {
-  const [dataSource, setDataSource] = useState([]);
   const [sortOrder, setSortOrder] = useState({
     order: "descend",
     columnKey: "admissionDate",
@@ -49,10 +48,6 @@ export default function PatientList({ list, isFetching }) {
     }, 800)(ev);
   };
 
-  useEffect(() => {
-    setDataSource(toDataSource(list, null, {}));
-  }, [list]); // eslint-disable-line
-
   return (
     <>
       <PageHeader>
@@ -82,7 +77,7 @@ export default function PatientList({ list, isFetching }) {
           }}
           loading={isFetching}
           locale={{ emptyText }}
-          dataSource={!isFetching ? dataSource : []}
+          dataSource={!isFetching ? toDataSource(list, null, {}) : []}
           onChange={handleTableChange}
           showSorterTooltip={false}
           style={{ marginTop: "25px" }}

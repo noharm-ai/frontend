@@ -14,16 +14,16 @@ import Tooltip from "components/Tooltip";
 import BackTop from "components/BackTop";
 import { PageHeader } from "styles/PageHeader.style";
 import { PageCard } from "styles/Utils.style";
-import SecurityService from "services/security";
 import CopyExamsModal from "features/admin/Exam/CopyExams/CopyExams";
 import MostFrequentExamsModal from "features/admin/Exam/MostFrequent/MostFrequent";
 import { toDataSource } from "utils";
 import { selectExam } from "./ExamSlice";
-
 import ExamForm from "./Form/ExamForm";
 import ExamsOrder from "./ExamsOrder/ExamsOrder";
 import Filter from "./Filter/Filter";
 import examColumns from "./Table/columns";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
 
 const emptyText = (
   <Empty
@@ -36,14 +36,11 @@ export default function Exams() {
   const dispatch = useDispatch();
   const exams = useSelector((state) => state.admin.exam.exams.list);
   const status = useSelector((state) => state.admin.exam.exams.status);
-  const roles = useSelector((state) => state.user.account.roles);
 
   const [copyExamsVisible, setCopyExamsVisible] = useState(false);
   const [mostFrequentModalVisible, setMostFrequentModalVisible] =
     useState(false);
   const [examsOrderVisible, setExamsOrderVisible] = useState(false);
-
-  const securityService = SecurityService(roles);
 
   const onShowExamModal = (data) => {
     dispatch(selectExam(data));
@@ -70,7 +67,7 @@ export default function Exams() {
           <div className="page-header-legend">Configuração de exames</div>
         </div>
         <div className="page-header-actions">
-          {(securityService.isAdmin() || securityService.isTraining()) && (
+          {PermissionService().has(Permission.ADMIN_EXAMS__COPY) && (
             <>
               <Tooltip title="Clique para mais informações">
                 <Button

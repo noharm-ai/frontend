@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 
-import { RangeDatePicker, Select } from "components/Inputs";
+import { RangeDatePicker, Select, SelectCustom } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
@@ -38,7 +38,7 @@ export default function MainFilters() {
         <Heading as="label" size="14px">
           Exame:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.examNameList}
           onChange={(val) => setFieldValue({ examNameList: val })}
@@ -49,19 +49,24 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              examNameList: exams,
+            })
+          }
         >
           {exams.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
       <Col md={7} lg={5} xxl={5}>
         <Heading as="label" size="14px">
           Material:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.examMaterialNameList}
           onChange={(val) => setFieldValue({ examMaterialNameList: val })}
@@ -72,19 +77,24 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              examMaterialNameList: materials,
+            })
+          }
         >
           {materials.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
       <Col md={7} lg={5} xxl={5}>
         <Heading as="label" size="14px">
           Microorganismo:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.microorganismList}
           onChange={(val) => setFieldValue({ microorganismList: val })}
@@ -95,13 +105,18 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              microorganismList: microorganisms,
+            })
+          }
         >
           {microorganisms.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
     </>
   );

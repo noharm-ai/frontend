@@ -93,6 +93,10 @@ export default function Filter({
         globalScoreMin: filter.globalScoreMin,
         globalScoreMax: filter.globalScoreMax,
         pendingInterventions: filter.pendingInterventions,
+        hasConciliation:
+          prioritizationType === "patient" || prioritizationType === "cards"
+            ? filter.hasConciliation
+            : null,
       };
       const mixedParams = { ...params, ...forceParams };
       const finalParams = {};
@@ -144,6 +148,7 @@ export default function Filter({
       filter.globalScoreMin,
       filter.globalScoreMax,
       filter.pendingInterventions,
+      filter.hasConciliation,
       prioritizationType,
       date,
     ]
@@ -225,6 +230,7 @@ export default function Filter({
       globalScoreMin: null,
       globalScoreMax: null,
       pendingInterventions: null,
+      hasConciliation: null,
     });
     setDate([dayjs(), null]);
   };

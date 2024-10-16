@@ -9,6 +9,7 @@ import { Row } from "components/Grid";
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
+import { getErrorMessageFromException } from "utils/errorHandler";
 
 import Base from "./Base";
 import { FormContainer } from "./Patient.style";
@@ -71,7 +72,7 @@ export default function Patient({
         console.error("error", err);
         notification.error({
           message: t("error.title"),
-          description: t("error.description"),
+          description: getErrorMessageFromException(err, t),
         });
       });
   };

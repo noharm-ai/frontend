@@ -74,7 +74,7 @@ export default function PrescriptionDrug({
           console.error(error);
           notification.error({
             message: t("error.title"),
-            description: t("error.description"),
+            description: getErrorMessageFromException(error, t),
           });
         });
     }

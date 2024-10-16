@@ -32,7 +32,6 @@ import FormClinicalAlert from "containers/Forms/ClinicalAlert";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import pageTimer from "utils/pageTimer";
 import FeatureService from "services/features";
-import SecurityService from "services/security";
 import { setCheckSummary } from "features/prescription/PrescriptionSlice";
 
 import { ScreeningHeader } from "components/Screening/index.style";
@@ -88,7 +87,6 @@ export default function PageHeader({
     delay: 150,
     config: config.slow,
   });
-  const security = SecurityService(roles);
   const featureService = FeatureService(features);
 
   useEffect(() => {
@@ -109,11 +107,9 @@ export default function PageHeader({
   }, []); // eslint-disable-line
 
   const hasPrimaryCare = featureService.hasPrimaryCare();
-  const hasUncheckPermission =
-    featureService.hasLockCheckedPrescription() &&
-    !security.hasUnlockCheckedPrescription()
-      ? `${userId}` === `${prescription?.content.userId}`
-      : true;
+  const hasUncheckPermission = featureService.hasLockCheckedPrescription()
+    ? `${userId}` === `${prescription?.content.userId}`
+    : true;
 
   const onCancelClinicalNotes = () => {
     setClinicalNotesVisibility(false);
@@ -456,17 +452,18 @@ export default function PageHeader({
               <FileAddOutlined />
               {t("screeningHeader.btnClinicalNotes")}
             </Button>
-            {type !== "conciliation" && security.hasAlertIntegration() && (
-              <Button
-                type="primary gtm-bt-alert"
-                onClick={() => setClinicalAlertVisibility(true)}
-                style={{ marginRight: "5px" }}
-                ghost={!prescription.content.alert}
-              >
-                <AlertOutlined />
-                {t("screeningHeader.btnAlert")}
-              </Button>
-            )}
+            {type !== "conciliation" &&
+              featureService.hasPrescriptionAlert() && (
+                <Button
+                  type="primary gtm-bt-alert"
+                  onClick={() => setClinicalAlertVisibility(true)}
+                  style={{ marginRight: "5px" }}
+                  ghost={!prescription.content.alert}
+                >
+                  <AlertOutlined />
+                  {t("screeningHeader.btnAlert")}
+                </Button>
+              )}
 
             <Button type="default gtm-bt-close" onClick={close}>
               {t("screeningHeader.btnClose")}

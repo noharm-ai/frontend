@@ -98,6 +98,7 @@ export default function PatientName({
       proxy: app.config.proxy,
       useCache: false,
       userRoles: [],
+      features: [],
     };
 
     try {

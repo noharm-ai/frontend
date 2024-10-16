@@ -36,6 +36,7 @@ import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator
 import PresmedTags from "./PrescriptionDrug/components/PresmedTags";
 import DrugAlerts from "./PrescriptionDrug/components/DrugAlerts";
 import AlertTags from "./PrescriptionDrug/components/AlertTags";
+import Permission from "models/Permission";
 
 import { InterventionView } from "./Intervention/columns";
 import DrugForm from "./Form";
@@ -103,7 +104,7 @@ const prescriptionDrugMenu = ({
 
   if (
     (concilia && featureService.hasConciliationEdit()) ||
-    (!concilia && security.hasPrescriptionEdit())
+    (!concilia && featureService.hasPrimaryCare())
   ) {
     items.push({
       key: "edit",
@@ -290,7 +291,7 @@ const Action = ({
         ></AntButton>
       </Tooltip>
 
-      {(security.hasPrescriptionEdit() && !data.concilia) ||
+      {(featureService.hasPrimaryCare() && !data.concilia) ||
       (featureService.hasConciliationEdit() && data.concilia) ? (
         <Dropdown
           menu={prescriptionDrugMenu({
@@ -515,18 +516,20 @@ export const expandedRowRender = (bag) => (record) => {
             />
           </Descriptions.Item>
         )}
-        {bag.security.hasPresmedForm() && bag.formTemplate && (
-          <Descriptions.Item label={bag.formTemplate.name} span={3}>
-            <div>
-              <DrugForm
-                savePrescriptionDrugForm={bag.savePrescriptionDrugForm}
-                idPrescriptionDrug={record.idPrescriptionDrug}
-                template={bag.formTemplate}
-                values={record.formValues}
-              />
-            </div>
-          </Descriptions.Item>
-        )}
+        {bag.featureService.hasPresmedForm() &&
+          bag.permissionService.has(Permission.READ_DISPENSATION) &&
+          bag.formTemplate && (
+            <Descriptions.Item label={bag.formTemplate.name} span={3}>
+              <div>
+                <DrugForm
+                  savePrescriptionDrugForm={bag.savePrescriptionDrugForm}
+                  idPrescriptionDrug={record.idPrescriptionDrug}
+                  template={bag.formTemplate}
+                  values={record.formValues}
+                />
+              </div>
+            </Descriptions.Item>
+          )}
         {record.drugInfoLink && bag.featureService.hasMicromedex() && (
           <Descriptions.Item
             label={bag.t("tableHeader.clinicalInfo") + ":"}
@@ -1225,7 +1228,7 @@ export const dietColumns = (bag) => [
 export const conciliationColumns = (bag) => [
   drug(bag, true),
   dose(bag),
-  frequency,
+  frequency(bag),
   relationColumn(bag),
   ...actionColumns(bag),
 ];

@@ -16,6 +16,8 @@ import DrugMeasureUnitsForm from "features/drugs/DrugMeasureUnits/DrugMeasureUni
 import GenerateScore from "features/outliers/ScoreWizard/GenerateScore/GenerateScore";
 import GeneratePrescriptionHistory from "features/outliers/ScoreWizard/GeneratePrescriptionHistory/GeneratePrescriptionHistory";
 import RemoveOutlier from "features/outliers/ScoreWizard/RemoveOutlier/RemoveOutlier";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 
 import unitConversionColumns from "../UnitConversion/columns";
 import { StepContent, StepBtnContainer } from "./index.style";
@@ -43,7 +45,7 @@ export default function ScoreWizard({
   const [removeOutlierModalVisible, setRemoveOutlierModalVisible] =
     useState(false);
   const { t } = useTranslation();
-  const isAdmin = security.isAdmin();
+  const isAdmin = PermissionService().has(Permission.INTEGRATION_UTILS);
   const maxSteps = 3;
 
   const generate = () => {

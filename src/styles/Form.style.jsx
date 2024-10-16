@@ -128,6 +128,16 @@ export const Form = styled.form`
     padding: 1rem;
     background: #fafafa;
     border-radius: 5px;
+
+    .checkbox-description {
+      padding-left: 1.5rem;
+      opacity: 0.75;
+      line-height: 1.2;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 0.5rem;
+      font-size: 13px;
+    }
   }
 
   .form-action {

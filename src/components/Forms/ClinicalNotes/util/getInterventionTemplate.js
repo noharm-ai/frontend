@@ -24,15 +24,13 @@ const getInterventions = (prescription) => {
     flatItems.push(...g.value);
   });
 
-  return interventions
-    .filter((i) => i.status === "s")
-    .filter((i) => {
-      return flatItems.find(
-        (item) =>
-          item.idPrescriptionDrug === i.id ||
-          i.idPrescription === prescription.data.idPrescription
-      );
-    });
+  return interventions.filter((i) => {
+    return flatItems.find(
+      (item) =>
+        item.idPrescriptionDrug === i.id ||
+        i.idPrescription === prescription.data.idPrescription
+    );
+  });
 };
 
 const groupByPrescription = (list) => {
@@ -86,11 +84,11 @@ const getInterventionTemplate = (
   );
 };
 
-export const getInterventionList = (prescription) => {
+export const getInterventionList = (prescription, t) => {
   const interventions = getInterventions(prescription);
 
   const tpl = interventions.map((i) => {
-    const iTpl = interventionCompleteTemplate(i);
+    const iTpl = interventionCompleteTemplate(i, t);
     return iTpl;
   });
 

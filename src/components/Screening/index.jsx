@@ -10,8 +10,7 @@ import { Row, Col } from "components/Grid";
 import Tag from "components/Tag";
 import notification from "components/notification";
 import FeatureService from "services/features";
-import SecurityService from "services/security";
-
+import PermissionService from "services/PermissionService";
 import PrescriptionList from "containers/Screening/PrescriptionDrug/PrescriptionList";
 import SolutionList from "containers/Screening/PrescriptionDrug/SolutionList";
 import ProcedureList from "containers/Screening/PrescriptionDrug/ProcedureList";
@@ -24,6 +23,7 @@ import DrugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatus";
 import ScreeningActions from "containers/Screening/ScreeningActions";
 import EvaluationWarning from "features/prescription/EvaluationWarning/EvaluationWarning";
 import FormIntervention from "containers/Forms/Intervention";
+import Permission from "models/Permission";
 
 import { BoxWrapper, ScreeningTabs, DrugFormStatusBox } from "./index.style";
 
@@ -36,6 +36,7 @@ export default function Screening({
   interventions,
   roles,
   features,
+  permissions,
 }) {
   const params = useParams();
   const id = params?.slug;
@@ -43,8 +44,8 @@ export default function Screening({
     content;
 
   const { t } = useTranslation();
-  const security = SecurityService(roles);
   const featureService = FeatureService(features);
+  const permissionService = PermissionService(permissions);
 
   // show message if has error
   useEffect(() => {
@@ -407,14 +408,16 @@ export default function Screening({
       </Row>
 
       <PrescriptionDrugForm />
-      {security.hasPresmedForm() && !isFetching && (
-        <DrugFormStatusBox>
-          <DrugFormStatus
-            title={content.formTemplate?.name}
-            template={content.formTemplate}
-          />
-        </DrugFormStatusBox>
-      )}
+      {featureService.hasPresmedForm() &&
+        permissionService.has(Permission.READ_DISPENSATION) &&
+        !isFetching && (
+          <DrugFormStatusBox>
+            <DrugFormStatus
+              title={content.formTemplate?.name}
+              template={content.formTemplate}
+            />
+          </DrugFormStatusBox>
+        )}
 
       {!isFetching && (
         <>

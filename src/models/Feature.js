@@ -8,11 +8,17 @@ export default class Feature {
   static DISABLE_SOLUTION_TAB = "DISABLE_SOLUTION_TAB";
   static DISABLE_WHITELIST_GROUP = "DISABLE_WHITELIST_GROUP";
   static OAUTH = "OAUTH";
-
   static CLINICAL_NOTES_LEGACY_FORMAT = "CLINICAL_NOTES_LEGACY_FORMAT";
   static PATIENT_REVISION = "PATIENT_REVISION";
-  static INTERVENTION_V2 = "INTERVENTION_V2";
   static AUTHORIZATION_SEGMENT = "AUTHORIZATION_SEGMENT";
+  static TRANSCRIPTION = "TRANSCRIPTION";
+  static PRESCRIPTION_ALERT = "PRESCRIPTION_ALERT";
+  static PRESMED_FORM = "PRESMED_FORM";
+  static DISCHARGE_SUMMARY = "DISCHARGE_SUMMARY";
+
+  // user features
+  static DISABLE_GETNAME = "DISABLE_GETNAME";
+  static DISABLE_CPOE = "DISABLE_CPOE";
 
   static getFeatures(t) {
     return [
@@ -82,6 +88,28 @@ export default class Feature {
         label: "Autorização por Segmento",
         description:
           "Quando ativado, o usuário só conseguirá efetuar ações em segmentos onde tiver autorização. As autorizações são concedidas no cadastro do usuário.",
+      },
+      {
+        id: Feature.TRANSCRIPTION,
+        label: "Transcrição",
+        description: "Habilita o formulário de transcrição",
+      },
+      {
+        id: Feature.PRESCRIPTION_ALERT,
+        label: "Alerta de Prescrição",
+        description:
+          "Habilita o botão Alerta. Ele permite registrar um texto de alerta para a prescrição.",
+      },
+      {
+        id: Feature.PRESMED_FORM,
+        label: "Formulário de Dispensação",
+        description:
+          "Habilita o botão o formulário de dispensação. Usuário deve possuir o papel Gestor de Dispensação para visualizar.",
+      },
+      {
+        id: Feature.DISCHARGE_SUMMARY,
+        label: "Sumário de Alta",
+        description: "Habilita a funcionalidade de criação de Sumário de Alta.",
       },
     ];
   }

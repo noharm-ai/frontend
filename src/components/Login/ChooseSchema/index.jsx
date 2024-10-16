@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -7,15 +7,12 @@ import { Collapse } from "antd";
 import { Select } from "components/Inputs";
 import Switch from "components/Switch";
 import DefaultModal from "components/Modal";
-import Tooltip from "components/Tooltip";
 import { Form } from "styles/Form.style";
-import Role from "models/Role";
 import Feature from "models/Feature";
 
 function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
   const { t } = useTranslation();
   const iptRef = useRef();
-  const [defaultRolesOptions, setDefaultRolesOptions] = useState([]);
 
   useEffect(() => {
     if (open) {
@@ -43,32 +40,6 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
       label: "Mais opções",
       children: (
         <>
-          {defaultRolesOptions.length > 0 && (
-            <div className={`form-row`}>
-              <div className="form-label">
-                <label>Roles:</label>
-              </div>
-              <div className="form-input">
-                <Select
-                  onChange={(value) => {
-                    setFieldValue("defaultRoles", value);
-                  }}
-                  value={values.defaultRoles}
-                  optionFilterProp="children"
-                  showSearch
-                  mode="multiple"
-                >
-                  {values.schema &&
-                    defaultRolesOptions.map((role) => (
-                      <Select.Option key={role} value={role}>
-                        {t(`roles.${role}`)}
-                      </Select.Option>
-                    ))}
-                </Select>
-              </div>
-            </div>
-          )}
-
           <div className={`form-row`}>
             <div className="form-label">
               <label>Extra Features:</label>
@@ -83,6 +54,12 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
                 showSearch
                 mode="multiple"
               >
+                <Select.Option
+                  key={Feature.DISABLE_CPOE}
+                  value={Feature.DISABLE_CPOE}
+                >
+                  Desabilitar CPOE
+                </Select.Option>
                 {Feature.getFeatures(t).map((feature) => (
                   <Select.Option key={feature.id} value={feature.id}>
                     {feature.label}
@@ -105,41 +82,21 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
               />
             </div>
           </div>
-          <div className={`form-row`}>
-            <div className="form-label">
-              <Tooltip
-                title="Remove as permissões especiais para simular a visão de um usuário normal da NoHarm"
-                underline
-              >
-                <label>Simular Usuário Comum:</label>
-              </Tooltip>
-            </div>
-            <div className="form-input">
-              <Switch
-                onChange={(value) => {
-                  setFieldValue("runAsBasicUser", value);
-                }}
-                checked={values.runAsBasicUser}
-              />
-            </div>
-          </div>
         </>
       ),
     },
   ];
 
   const onSave = (params) => {
-    const roles = [...params.defaultRoles];
+    const features = [...params.extraFeatures];
     if (!params.getname) {
-      roles.push("getname-disabled");
+      features.push("DISABLE_GETNAME");
     }
 
     doLogin({
       ...preAuthConfig.params,
       schema: params.schema,
-      defaultRoles: roles,
-      extraFeatures: params.extraFeatures,
-      runAsBasicUser: params.runAsBasicUser,
+      extraFeatures: features,
     });
     setOpen(false);
   };
@@ -150,16 +107,6 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
 
   const onChangeSchema = (schema, setFieldValue) => {
     setFieldValue("schema", schema);
-    const schemaConfig = preAuthConfig.schemas.find((i) => i.name === schema);
-    const extraRoles = Role.getLoginRoles(t).map((r) => r.id);
-
-    if (schemaConfig.defaultRoles.length) {
-      setDefaultRolesOptions(schemaConfig.defaultRoles.concat(extraRoles));
-      setFieldValue("defaultRoles", schemaConfig.defaultRoles);
-    } else {
-      setDefaultRolesOptions(extraRoles);
-      setFieldValue("defaultRoles", []);
-    }
   };
 
   if (!open) {

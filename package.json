@@ -1,6 +1,6 @@
 {
   "name": "noharm-app",
-  "version": "3.2.17",
+  "version": "4.0.0",
   "private": true,
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^35.0.1",

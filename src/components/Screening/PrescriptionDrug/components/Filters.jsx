@@ -32,7 +32,6 @@ import { selectPrescriptionDrugThunk } from "store/ducks/prescriptionDrugs/thunk
 import PrescriptionDiff from "features/prescription/PrescriptionDiff/PrescriptionDiff";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import FeaturesService from "services/features";
-import SecurityService from "services/security";
 
 import { ToolBox } from "../PrescriptionDrug.style";
 
@@ -68,15 +67,13 @@ export default function Filters({
   );
   const prescription = useSelector((state) => state.prescriptions.single.data);
   const features = useSelector((state) => state.user.account.features);
-  const roles = useSelector((state) => state.user.account.roles);
   const [prescriptionDiffModal, setPrescriptionDiffModal] = useState(false);
 
   const featureService = FeaturesService(features);
-  const securityService = SecurityService(roles);
 
   const hasAddDrugPermission =
     (prescription.concilia && featureService.hasConciliationEdit()) ||
-    (!prescription.agg && securityService.hasPrescriptionEdit());
+    (!prescription.agg && featureService.hasPrimaryCare());
 
   const filterOptions = () => {
     const items = [

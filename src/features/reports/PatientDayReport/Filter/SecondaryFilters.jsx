@@ -4,7 +4,13 @@ import { useSelector } from "react-redux";
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Select, Radio, InputNumber, DatePicker } from "components/Inputs";
+import {
+  Select,
+  Radio,
+  InputNumber,
+  DatePicker,
+  SelectCustom,
+} from "components/Inputs";
 
 export default function SecondaryFilters() {
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
@@ -50,7 +56,7 @@ export default function SecondaryFilters() {
         <Heading as="label" size="14px">
           Responsável:
         </Heading>
-        <Select
+        <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.responsibleList}
           onChange={(val) => setFieldValue({ responsibleList: val })}
@@ -61,13 +67,18 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              responsibleList: responsibles,
+            })
+          }
         >
           {responsibles.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" size="14px">

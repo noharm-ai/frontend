@@ -9,9 +9,10 @@ import Heading from "components/Heading";
 import notification from "components/notification";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
-
 import { updateSubstance } from "features/admin/DrugAttributes/DrugAttributesSlice";
 import { getErrorMessage } from "utils/errorHandler";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 
 export default function EditSubstance({
   drugData,
@@ -121,7 +122,7 @@ export default function EditSubstance({
               ></Button>
             </Tooltip>
           )}
-          {security.isAdmin() &&
+          {PermissionService().has(Permission.ADMIN_SUBSTANCES) &&
             drugData.sctidA === currentSubstance.sctidA && (
               <>
                 <Tooltip title="Curadoria de substâncias">
