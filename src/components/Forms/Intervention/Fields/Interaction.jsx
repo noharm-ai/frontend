@@ -40,7 +40,8 @@ export default function Interaction({
 
   const search = debounce((value) => {
     if (value.length < 3) return;
-    searchDrugs(idSegment, { q: value });
+    // idSegment must be null to avoid not finding drug
+    searchDrugs(null, { q: value });
   }, 800);
 
   if (!isEmpty(interactions)) {
