@@ -182,6 +182,30 @@ const getDepartmentSummary = (datasource) => {
   return summary.sort((a, b) => a.totals.all.minus(b.totals.all));
 };
 
+const getReasonsSummary = (datasource) => {
+  const departments = getUniqList(datasource, "interventionReasonArray");
+
+  const summary = departments.map((r) => {
+    const totals = { all: Big(0), suspension: Big(0), substitution: Big(0) };
+
+    datasource.forEach((i) => {
+      if (i.interventionReasonArray[0] === r) {
+        totals.all = totals.all.plus(i.processed.economyValue);
+
+        const field = i.economyType === 1 ? "suspension" : "substitution";
+        totals[field] = totals[field].plus(i.processed.economyValue);
+      }
+    });
+
+    return {
+      name: r,
+      totals,
+    };
+  });
+
+  return summary.sort((a, b) => a.totals.all.minus(b.totals.all)).slice(-10);
+};
+
 export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
   const list = getList(
@@ -196,6 +220,7 @@ export const getReportData = (datasource, filters) => {
     list,
     responsibleSummary: getResponsibleSummary(list),
     departmentsSummary: getDepartmentSummary(list),
+    reasonsSummary: getReasonsSummary(list),
   };
 
   return reportData;
