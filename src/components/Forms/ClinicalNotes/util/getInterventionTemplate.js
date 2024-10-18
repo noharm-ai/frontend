@@ -11,7 +11,7 @@ export const getCurrentInterventions = (interventions, headers) => {
   return interventions.filter((i) => headers[i.idPrescription]);
 };
 
-const getInterventions = (prescription) => {
+const getInterventions = (prescription, pending = false) => {
   const interventions = prescription.intervention.list;
   const items = [
     ...prescription.prescription.list,
@@ -24,13 +24,15 @@ const getInterventions = (prescription) => {
     flatItems.push(...g.value);
   });
 
-  return interventions.filter((i) => {
-    return flatItems.find(
-      (item) =>
-        item.idPrescriptionDrug === i.id ||
-        i.idPrescription === prescription.data.idPrescription
-    );
-  });
+  return interventions
+    .filter((i) => (pending ? i.status === "s" : true))
+    .filter((i) => {
+      return flatItems.find(
+        (item) =>
+          item.idPrescriptionDrug === i.id ||
+          i.idPrescription === prescription.data.idPrescription
+      );
+    });
 };
 
 const groupByPrescription = (list) => {
@@ -54,7 +56,7 @@ const getInterventionTemplate = (
   cpoe
 ) => {
   if (prescription.data.concilia) {
-    const interventions = getInterventions(prescription);
+    const interventions = getInterventions(prescription, true);
     const tplInterventions = interventions.map((i) => interventionTemplate(i));
 
     return conciliationTemplate(
@@ -65,7 +67,9 @@ const getInterventionTemplate = (
     );
   }
 
-  const interventions = groupByPrescription(getInterventions(prescription));
+  const interventions = groupByPrescription(
+    getInterventions(prescription, true)
+  );
 
   const tpl = Object.keys(interventions).map((k) => {
     const iTpl = interventions[k].map((i) => interventionTemplate(i));
