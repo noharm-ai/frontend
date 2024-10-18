@@ -24,6 +24,7 @@ import { formatCurrency } from "utils/number";
 import EconomyList from "./EconomyList/EconomyList";
 import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartDepartments from "./Charts/ChartDepartments";
+import ChartReasons from "./Charts/ChartReasons";
 
 export default function EconomyReport() {
   const dispatch = useDispatch();
@@ -184,6 +185,25 @@ export default function EconomyReport() {
                   <Spin spinning={isLoading}>
                     <ChartCard className={`${isLoading ? "loading" : ""}`}>
                       <ChartDepartments
+                        reportData={reportData}
+                        isLoading={isLoading}
+                      />
+                    </ChartCard>
+                  </Spin>
+                </Space>
+              </Col>
+              <Col xs={24} lg={12}>
+                <div className="page-break"></div>
+                <Space direction="vertical" size="large">
+                  <SectionHeader>
+                    <h2>Economia por Motivo</h2>
+                    <div>
+                      Totais por motivo. Limitado aos 10 mais relevantes.
+                    </div>
+                  </SectionHeader>
+                  <Spin spinning={isLoading}>
+                    <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                      <ChartReasons
                         reportData={reportData}
                         isLoading={isLoading}
                       />
