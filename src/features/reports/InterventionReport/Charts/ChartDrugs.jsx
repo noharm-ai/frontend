@@ -17,7 +17,7 @@ export default function ChartDrugs({ reportData, isLoading }) {
     legend: {},
     grid: {
       left: "3%",
-      right: "3%",
+      right: "10%",
       bottom: "2%",
       containLabel: true,
     },
