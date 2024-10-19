@@ -57,13 +57,11 @@ export const setHeaders = () => {
         headers: {
           Authorization: `Bearer ${token}`,
           "x-api-key": appInfo.apiKey,
-          "nh-app-version": process.env.REACT_APP_VERSION,
         },
       }
     : {
         headers: {
           "x-api-key": appInfo.apiKey,
-          "nh-app-version": process.env.REACT_APP_VERSION,
         },
       };
 };
