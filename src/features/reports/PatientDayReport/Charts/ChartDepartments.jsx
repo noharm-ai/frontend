@@ -13,7 +13,7 @@ export default function ChartDepartments({ reportData, isLoading }) {
     legend: {},
     grid: {
       left: "3%",
-      right: "3%",
+      right: "10%",
       bottom: "2%",
       containLabel: true,
     },
