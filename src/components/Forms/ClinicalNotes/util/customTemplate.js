@@ -115,8 +115,32 @@ export const getCustomClinicalNote = (
       "{{profilaxia_ocular}}",
       getDrugsByClass(
         drugs,
-        ["S1K1"],
+        ["S1K1", "S1X2"],
         "Nenhum medicamento de Profilaxia Ocular encontrado."
+      )
+    )
+    .replace(
+      "{{analgesicos}}",
+      getDrugsByClass(
+        drugs,
+        ["N2"],
+        "Nenhum medicamento Analgésico encontrado."
+      )
+    )
+    .replace(
+      "{{anestesicos_gerais}}",
+      getDrugsByClass(
+        drugs,
+        ["N1A1", "N1A2"],
+        "Nenhum medicamento Anestésico Geral encontrado."
+      )
+    )
+    .replace(
+      "{{vasopressores_inotropicos}}",
+      getDrugsByClass(
+        drugs,
+        ["C1C", "C1F", "H4D"],
+        "Nenhum medicamento Vasopressor ou Inotrópico encontrado."
       )
     )
     .replace(
@@ -221,7 +245,6 @@ const getDrugsByAttribute = (drugs, attr, params = {}) => {
 };
 
 const getDialyzable = (drugs, dialysis, params = {}) => {
-  console.log("dialysis", dialysis);
   if (!drugs || (drugs && !drugs.length)) {
     return params.empty;
   }
