@@ -732,6 +732,12 @@ api.segments.getDepartments = (params = {}) =>
     ...setHeaders(),
   });
 
+/** GENERAL */
+const getVersion = () =>
+  instance.get(`/frontend-version`, {
+    ...setHeaders(),
+  });
+
 /**
  * API
  * all functions that can be used in API.
@@ -743,6 +749,7 @@ const methods = {
   authenticateOAuth,
   refreshToken,
   getAuthProvider,
+  getVersion,
   getSegments,
   getPrescriptions,
   getPrescriptionById,

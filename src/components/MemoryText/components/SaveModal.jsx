@@ -6,6 +6,8 @@ import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
 import { Input, Textarea } from "components/Inputs";
 import { CLINICAL_NOTES_MEMORY_TYPE } from "utils/memory";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
 
 import { VariableContainer } from "../index.style";
 
@@ -21,7 +23,10 @@ export default function SaveModal({
   const [newText, setNewText] = useState("");
 
   const saveAction = () => {
-    save(name, newText);
+    if (!PermissionService().has(Permission.MAINTAINER)) {
+      save(name, newText);
+    }
+
     if (loadText) {
       loadText(newText);
     }
@@ -262,6 +267,36 @@ export default function SaveModal({
                   color="magenta"
                 >
                   Profilaxia Ocular
+                </Tag>
+              </Tooltip>
+
+              <Tooltip title="Clique para adicionar a lista de medicamentos Analgésicos presentes nesta prescrição">
+                <Tag
+                  onClick={() => addVariable("{{analgesicos}}")}
+                  style={{ cursor: "pointer" }}
+                  color="magenta"
+                >
+                  Analgésicos
+                </Tag>
+              </Tooltip>
+
+              <Tooltip title="Clique para adicionar a lista de medicamentos Anestésicos Gerais presentes nesta prescrição">
+                <Tag
+                  onClick={() => addVariable("{{anestesicos_gerais}}")}
+                  style={{ cursor: "pointer" }}
+                  color="magenta"
+                >
+                  Anestésicos Gerais
+                </Tag>
+              </Tooltip>
+
+              <Tooltip title="Clique para adicionar a lista de medicamentos Vasopressores e Inotrópicos presentes nesta prescrição">
+                <Tag
+                  onClick={() => addVariable("{{vasopressores_inotropicos}}")}
+                  style={{ cursor: "pointer" }}
+                  color="magenta"
+                >
+                  Vasopressores e Inotrópicos
                 </Tag>
               </Tooltip>
             </div>

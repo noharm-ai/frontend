@@ -312,7 +312,7 @@ const Action = ({
             loading={isChecking}
             disabled={isDisabled}
             className="gtm-bt-extra-actions"
-            ghost
+            ghost={!hasNotes}
             icon={<CaretDownOutlined style={{ fontSize: 16 }} />}
           ></AntButton>
         </Dropdown>
