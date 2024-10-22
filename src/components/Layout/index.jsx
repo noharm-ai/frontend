@@ -65,7 +65,9 @@ const Me = ({
       });
     };
 
-    checkVersion();
+    setInterval(() => {
+      checkVersion();
+    }, 60000 * 30);
   }, []); //eslint-disable-line
 
   const showAlert = location.pathname.indexOf("priorizacao") !== -1;
