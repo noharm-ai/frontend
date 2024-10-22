@@ -182,6 +182,42 @@ const getDepartmentSummary = (datasource) => {
   return summary.sort((a, b) => a.totals.all.minus(b.totals.all));
 };
 
+const getReasonsSummary = (datasource) => {
+  const summary = [];
+  datasource.forEach((i) => {
+    const totals = { all: Big(0), suspension: Big(0), substitution: Big(0) };
+    const field = i.economyType === 1 ? "suspension" : "substitution";
+
+    totals.all = totals.all.plus(i.processed.economyValue);
+    totals[field] = totals[field].plus(i.processed.economyValue);
+
+    const reason = i.interventionReasonArray.join("; ");
+
+    if (summary[reason]) {
+      summary[reason] = {
+        name: reason,
+        totals: {
+          all: totals.all.plus(summary[reason].totals.all),
+          suspension: totals.suspension.plus(summary[reason].totals.suspension),
+          substitution: totals.substitution.plus(
+            summary[reason].totals.substitution
+          ),
+        },
+      };
+    } else {
+      summary[reason] = {
+        name: reason,
+        totals,
+      };
+    }
+  });
+
+  return Object.keys(summary)
+    .map((k) => summary[k])
+    .sort((a, b) => a.totals.all.minus(b.totals.all))
+    .slice(-10);
+};
+
 export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
   const list = getList(
@@ -196,6 +232,7 @@ export const getReportData = (datasource, filters) => {
     list,
     responsibleSummary: getResponsibleSummary(list),
     departmentsSummary: getDepartmentSummary(list),
+    reasonsSummary: getReasonsSummary(list),
   };
 
   return reportData;
