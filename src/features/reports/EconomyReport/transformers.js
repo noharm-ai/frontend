@@ -183,27 +183,39 @@ const getDepartmentSummary = (datasource) => {
 };
 
 const getReasonsSummary = (datasource) => {
-  const departments = getUniqList(datasource, "interventionReasonArray");
-
-  const summary = departments.map((r) => {
+  const summary = [];
+  datasource.forEach((i) => {
     const totals = { all: Big(0), suspension: Big(0), substitution: Big(0) };
+    const field = i.economyType === 1 ? "suspension" : "substitution";
 
-    datasource.forEach((i) => {
-      if (i.interventionReasonArray[0] === r) {
-        totals.all = totals.all.plus(i.processed.economyValue);
+    totals.all = totals.all.plus(i.processed.economyValue);
+    totals[field] = totals[field].plus(i.processed.economyValue);
 
-        const field = i.economyType === 1 ? "suspension" : "substitution";
-        totals[field] = totals[field].plus(i.processed.economyValue);
-      }
-    });
+    const reason = i.interventionReasonArray.join("; ");
 
-    return {
-      name: r,
-      totals,
-    };
+    if (summary[reason]) {
+      summary[reason] = {
+        name: reason,
+        totals: {
+          all: totals.all.plus(summary[reason].totals.all),
+          suspension: totals.suspension.plus(summary[reason].totals.suspension),
+          substitution: totals.substitution.plus(
+            summary[reason].totals.substitution
+          ),
+        },
+      };
+    } else {
+      summary[reason] = {
+        name: reason,
+        totals,
+      };
+    }
   });
 
-  return summary.sort((a, b) => a.totals.all.minus(b.totals.all)).slice(-10);
+  return Object.keys(summary)
+    .map((k) => summary[k])
+    .sort((a, b) => a.totals.all.minus(b.totals.all))
+    .slice(-10);
 };
 
 export const getReportData = (datasource, filters) => {
