@@ -36,8 +36,10 @@ export default function Patient({
     alertExams,
     exams,
     notesInfo,
+    notesInfoId,
     notesInfoDate,
     notesSigns,
+    notesSignsId,
     notesSignsDate,
     notesAllergies,
     notesDialysis,
@@ -135,7 +137,20 @@ export default function Patient({
               </div>
               <div className="content">
                 <div className="text-content">
-                  {notesInfo === "" ? "--" : notesInfo}
+                  {notesInfoId ? (
+                    <span
+                      className="text-link"
+                      onClick={() =>
+                        dispatch(selectSingleClinicalNotes(notesInfoId))
+                      }
+                    >
+                      <Tooltip title="Visualizar evolução">
+                        {notesInfo === "" ? "--" : notesInfo}
+                      </Tooltip>
+                    </span>
+                  ) : (
+                    <>{notesInfo === "" ? "--" : notesInfo}</>
+                  )}
                 </div>
               </div>
               <div className="footer">
@@ -166,7 +181,20 @@ export default function Patient({
               </div>
               <div className="content">
                 <div className="text-content">
-                  {notesSigns === "" ? "--" : notesSigns}
+                  {notesSignsId ? (
+                    <span
+                      className="text-link"
+                      onClick={() =>
+                        dispatch(selectSingleClinicalNotes(notesSignsId))
+                      }
+                    >
+                      <Tooltip title="Visualizar evolução">
+                        {notesSigns === "" ? "--" : notesSigns}
+                      </Tooltip>
+                    </span>
+                  ) : (
+                    <>{notesSigns === "" ? "--" : notesSigns}</>
+                  )}
                 </div>
               </div>
               <div className="footer">
