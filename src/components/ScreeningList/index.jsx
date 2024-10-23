@@ -9,6 +9,7 @@ import {
   CaretUpOutlined,
   CheckOutlined,
   BorderOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { Affix } from "antd";
 import { uniq } from "utils/lodash";
@@ -192,6 +193,15 @@ export default function ScreeningList({
         type: "divider",
       },
       {
+        key: "openPrescription",
+        label: "Abrir prescrições",
+        icon: <SearchOutlined style={{ fontSize: "16px" }} />,
+        disabled: selectedRows.length === 0,
+      },
+      {
+        type: "divider",
+      },
+      {
         key: "reset",
         label: "Remover seleção",
         icon: <BorderOutlined style={{ fontSize: "16px" }} />,
@@ -216,6 +226,13 @@ export default function ScreeningList({
         );
         dispatch(setMultipleCheckList(cheklist));
         setMultipleCheckModal(true);
+        break;
+      case "openPrescription":
+        list.forEach((item) => {
+          if (selectedRows.indexOf(item.idPrescription) !== -1) {
+            window.open(`/prescricao/${item.idPrescription}`, "_blank");
+          }
+        });
 
         break;
       default:
