@@ -114,12 +114,34 @@ export default function Filters({
         ],
       },
       {
-        key: "hv",
-        label: t(`prescriptionDrugFilters.hv`),
-      },
-      {
-        key: "am",
-        label: t(`prescriptionDrugFilters.am`),
+        key: "attrGroup",
+        label: t(`prescriptionDrugFilters.attrGroup`),
+        children: [
+          {
+            key: "hv",
+            label: t(`prescriptionDrugFilters.hv`),
+          },
+          {
+            key: "am",
+            label: t(`prescriptionDrugFilters.am`),
+          },
+          {
+            key: "controlled",
+            label: t(`prescriptionDrugFilters.controlled`),
+          },
+          {
+            key: "liver",
+            label: t(`prescriptionDrugFilters.liver`),
+          },
+          {
+            key: "np",
+            label: t(`prescriptionDrugFilters.np`),
+          },
+          {
+            key: "fallRisk",
+            label: t(`prescriptionDrugFilters.fallRisk`),
+          },
+        ],
       },
 
       {

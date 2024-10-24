@@ -387,7 +387,23 @@
     "dialyzable": "D",
     "dialyzableHint": "Dialyzable Medication: The dosage must be adjusted for dialysis patients",
     "fallRisk": "F",
-    "fallRiskHint": "Fall risk"
+    "fallRiskHint": "Fall risk",
+    "liver": "HP",
+    "liverHint": "Hepatotoxic - no defined classification",
+    "liver151": "HA",
+    "liverHint151": "Hepatotoxic - Well-known cause of liver injury",
+    "liver152": "HAd",
+    "liverHint152": "Hepatotoxic - Well-known cause of liver injury when given in high doses",
+    "liver153": "HB",
+    "liverHint153": "Hepatotoxic - Likely rare cause of clinically apparent liver injury",
+    "liver154": "HBd",
+    "liverHint154": "Hepatotoxic - Likely rare cause, usually associated with overdose or misuse",
+    "liver155": "HC",
+    "liverHint155": "Hepatotóxico - Probable cause of liver injury",
+    "liver156": "HCd",
+    "liverHint156": "Hepatotóxico - Probable cause of clinically apparent liver injury when given in high doses",
+    "kidney": "NT",
+    "kidneyHint": "Nephrotoxic"
   },
   "prescriptionDrugList": {
     "addIntervention": "Add intervention",
@@ -437,7 +453,15 @@
     "am": "Antimicrobial",
     "hv": "High vigilance",
     "active": "Active",
-    "withValidation": "With validation"
+    "withValidation": "With validation",
+    "alertsAll_type": "Alerts: all",
+    "alertsAll_level": "Alerts: all",
+    "np": "Not standardized",
+    "controlled": "Controlled",
+    "liver": "Hepatotoxic",
+    "kidney": "Nephrotoxic",
+    "attrGroup": "Attributes",
+    "fallRisk": "Fall risk"
   },
 
   "interventionForm": {
