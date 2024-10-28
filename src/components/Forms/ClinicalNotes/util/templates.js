@@ -35,7 +35,7 @@ const drugDescription = (d) => {
   }`;
 };
 
-export const getConciliationDrugs = (list, hasRelation) => {
+export const getConciliationDrugs = (list, hasRelation, conciliaList) => {
   let drugList;
   if (hasRelation) {
     drugList = list.filter((d) => !d.suspended && d.conciliaRelationId);
@@ -44,16 +44,41 @@ export const getConciliationDrugs = (list, hasRelation) => {
   }
 
   return drugList
-    .map(
-      (d) => `
-- ${drugDescription(d)}
-  `
-    )
+    .map((d) => {
+      if (hasRelation) {
+        return `
+  - Uso domiciliar: ${drugDescription(d)}
+  - Prescrição hospitalar: ${getRelatedDrug(d.conciliaRelationId, conciliaList)}
+    `;
+      } else {
+        return `
+  - Uso domiciliar: ${drugDescription(d)}
+  - Observação: ${stripHtml(d.notes)}
+    `;
+      }
+    })
     .filter((t) => t != null)
     .join("");
 };
 
-const getConciliationDrugList = (list, group, conciliationType) => {
+const getRelatedDrug = (id, conciliaList) => {
+  const drug = conciliaList.find((d) => d.idPrescriptionDrug === id);
+
+  if (drug) {
+    return `${drug.drug}: ${drug.dose} ${
+      drug.measureUnit ? drug.measureUnit.label : "Unidade não definida"
+    } ${drug.frequency ? drug.frequency.label : ""}`;
+  }
+
+  return "-";
+};
+
+const getConciliationDrugList = (
+  list,
+  group,
+  conciliationType,
+  conciliaList
+) => {
   const drugList = list.filter((d) => !d.suspended);
 
   if (
@@ -79,7 +104,8 @@ Paciente nega uso contínuo de medicamentos.
     .map((d) => {
       if (d.conciliaRelationId) {
         return `
-  - ${drugDescription(d)}
+  - Uso domiciliar: ${drugDescription(d)}
+  - Prescrição hospitalar: ${getRelatedDrug(d.conciliaRelationId, conciliaList)}
     `;
       }
 
@@ -90,9 +116,16 @@ Paciente nega uso contínuo de medicamentos.
   const tplWithoutRelation = drugList
     .map((d) => {
       if (d.conciliaRelationId == null) {
-        return `
-  - ${drugDescription(d)}
+        if (!d.notes) {
+          return `
+  - Uso domiciliar: ${drugDescription(d)}
     `;
+        } else {
+          return `
+  - Uso domiciliar: ${drugDescription(d)}
+  - Observação: ${stripHtml(d.notes)}
+    `;
+        }
       }
 
       return null;
@@ -171,7 +204,8 @@ ${getConciliationDrugList(
     ? prescription.prescription.list[0].value
     : [],
   true,
-  conciliationType
+  conciliationType,
+  prescription.data.conciliaList
 )}
 3. Intervenções:
 ${interventions === "" ? emptyInterventionMessage : interventions}
