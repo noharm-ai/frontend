@@ -457,6 +457,13 @@ const DrugTags = ({ drug, t }) => (
         </Tag>
       </Tooltip>
     )}
+    {drug.drugAttributes?.liver > 150 && drug.drugAttributes?.liver <= 156 && (
+      <Tooltip title={t(`drugTags.liverHint${drug.drugAttributes?.liver}`)}>
+        <Tag color="gold">
+          {t(`drugTags.liver${drug.drugAttributes?.liver}`)}
+        </Tag>
+      </Tooltip>
+    )}
   </span>
 );
 

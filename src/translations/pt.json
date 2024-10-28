@@ -387,7 +387,23 @@
     "dialyzable": "D",
     "dialyzableHint": "Medicamento Dialisável: A posologia deve estar ajustada para paciente dialítico",
     "fallRisk": "Q",
-    "fallRiskHint": "Risco de queda"
+    "fallRiskHint": "Risco de queda",
+    "liver": "HP",
+    "liverHint": "Hepatotóxico - sem classificação definida",
+    "liver151": "HA",
+    "liverHint151": "Hepatotóxico - Causa bem conhecida de lesão hepática",
+    "liver152": "HAd",
+    "liverHint152": "Hepatotóxico - Causa bem conhecida de lesão hepática quando administrada em altas doses",
+    "liver153": "HB",
+    "liverHint153": "Hepatotóxico - Causa altamente provável, mas rara, de lesão hepática clinicamente aparente",
+    "liver154": "HBd",
+    "liverHint154": "Hepatotóxico - Causa altamente provável, mas rara, geralmente associada a sobredosagem ou uso indevido",
+    "liver155": "HC",
+    "liverHint155": "Hepatotóxico - Causa provável de lesão hepática",
+    "liver156": "HCd",
+    "liverHint156": "Hepatotóxico - Causa provável de lesão hepática clinicamente aparente quando administrada em altas doses",
+    "kidney": "NT",
+    "kidneyHint": "Nefrotóxico"
   },
   "prescriptionDrugList": {
     "addIntervention": "Enviar intervenção",
@@ -439,7 +455,13 @@
     "active": "Ativos",
     "withValidation": "Com validação",
     "alertsAll_type": "Alertas: todos",
-    "alertsAll_level": "Alertas: todos"
+    "alertsAll_level": "Alertas: todos",
+    "np": "Não padronizado",
+    "controlled": "Controlado",
+    "liver": "Hepatotóxico",
+    "kidney": "Nefrotóxico",
+    "attrGroup": "Atributos",
+    "fallRisk": "Risco de queda"
   },
 
   "interventionForm": {

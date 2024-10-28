@@ -65,9 +65,13 @@ const Me = ({
       });
     };
 
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       checkVersion();
     }, 60000 * 30);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []); //eslint-disable-line
 
   const showAlert = location.pathname.indexOf("priorizacao") !== -1;

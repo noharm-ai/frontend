@@ -203,6 +203,23 @@ export const filterPrescriptionDrugs = (items, headers, filters) => {
         show = show || i.av;
       }
 
+      if (filters.indexOf("controlled") !== -1) {
+        show = show || i.c;
+      }
+
+      if (filters.indexOf("np") !== -1) {
+        show = show || i.np;
+      }
+
+      if (filters.indexOf("fallRisk") !== -1) {
+        show = show || i.drugAttributes?.fallRisk;
+      }
+
+      if (filters.indexOf("liver") !== -1) {
+        const minValue = 150;
+        show = show || i.drugAttributes?.liver > minValue;
+      }
+
       if (filters.indexOf("withValidation") !== -1) {
         show = show || !i.whiteList;
       }

@@ -9,6 +9,7 @@ import {
   CaretUpOutlined,
   CheckOutlined,
   BorderOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { Affix } from "antd";
 import { uniq } from "utils/lodash";
@@ -189,6 +190,12 @@ export default function ScreeningList({
         disabled: selectedRows.length === 0,
       },
       {
+        key: "openPrescription",
+        label: "Abrir prescrições",
+        icon: <SearchOutlined style={{ fontSize: "16px" }} />,
+        disabled: selectedRows.length === 0,
+      },
+      {
         type: "divider",
       },
       {
@@ -216,6 +223,30 @@ export default function ScreeningList({
         );
         dispatch(setMultipleCheckList(cheklist));
         setMultipleCheckModal(true);
+        break;
+      case "openPrescription":
+        let showWarning = false;
+
+        list.forEach((item) => {
+          if (selectedRows.indexOf(item.idPrescription) !== -1) {
+            const wind = window.open(
+              `/prescricao/${item.idPrescription}`,
+              "_blank"
+            );
+
+            if (!wind) {
+              showWarning = true;
+            }
+          }
+        });
+
+        if (showWarning) {
+          notification.warning({
+            message:
+              "Desbloqueie as popups do seu navegador para abrir mais de uma prescrição ao mesmo tempo",
+            duration: 0,
+          });
+        }
 
         break;
       default:
