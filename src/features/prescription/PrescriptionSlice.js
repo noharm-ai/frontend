@@ -105,6 +105,19 @@ export const getConciliationList = createAsyncThunk(
   }
 );
 
+export const copyConciliation = createAsyncThunk(
+  "prescription/copy-conciliation",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.conciliation.copy(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const prescriptionSlice = createSlice({
   name: "prescription",
   initialState,

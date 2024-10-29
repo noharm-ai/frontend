@@ -28,14 +28,16 @@ export const getCustomClinicalNote = (
     prescription.prescription.list.length
       ? prescription.prescription.list[0].value
       : [],
-    true
+    true,
+    prescription.data.conciliaList
   );
 
   const conciliationDrugsWithoutRelation = getConciliationDrugs(
     prescription.prescription.list.length
       ? prescription.prescription.list[0].value
       : [],
-    false
+    false,
+    prescription.data.conciliaList
   );
 
   return clinicalNote
