@@ -318,7 +318,7 @@ export default function Filters({
               Adicionar medicamento
             </Button>
           )}
-          {hasAddDrugPermission && prescription.concilia && (
+          {prescription.concilia && featureService.hasConciliationEdit() && (
             <Popconfirm
               title="Copiar conciliação"
               description="Esta ação copia todos os medicamentos da conciliação anterior deste paciente. Confirma?"
