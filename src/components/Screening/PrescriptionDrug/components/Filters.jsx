@@ -11,17 +11,20 @@ import {
   AlertFilled,
   DiffOutlined,
   PlusOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
-import { Affix } from "antd";
+import { Affix, Popconfirm } from "antd";
 
 import Tag from "components/Tag";
 import Dropdown from "components/Dropdown";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
+import notification from "components/notification";
 import {
   setPrescriptionFilters,
   setPrescriptionPerspective,
   setSelectedRowsActive,
+  copyConciliation,
 } from "features/prescription/PrescriptionSlice";
 import {
   setPrescriptionListType,
@@ -29,9 +32,11 @@ import {
   savePreferences,
 } from "features/preferences/PreferencesSlice";
 import { selectPrescriptionDrugThunk } from "store/ducks/prescriptionDrugs/thunk";
+import { fetchScreeningThunk } from "store/ducks/prescriptions/thunk";
 import PrescriptionDiff from "features/prescription/PrescriptionDiff/PrescriptionDiff";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import FeaturesService from "services/features";
+import { getErrorMessage } from "utils/errorHandler";
 
 import { ToolBox } from "../PrescriptionDrug.style";
 
@@ -68,6 +73,7 @@ export default function Filters({
   const prescription = useSelector((state) => state.prescriptions.single.data);
   const features = useSelector((state) => state.user.account.features);
   const [prescriptionDiffModal, setPrescriptionDiffModal] = useState(false);
+  const [copyingConciliation, setCopyingConciliation] = useState(false);
 
   const featureService = FeaturesService(features);
 
@@ -252,6 +258,28 @@ export default function Filters({
     );
   };
 
+  const executeCopyConciliation = () => {
+    setCopyingConciliation(true);
+
+    dispatch(
+      copyConciliation({ idPrescription: prescription.idPrescription })
+    ).then((response) => {
+      setCopyingConciliation(false);
+
+      if (response.error) {
+        notification.error({
+          message: t("error.title"),
+          description: getErrorMessage(response, t),
+        });
+      } else {
+        dispatch(fetchScreeningThunk(prescription.idPrescription));
+        notification.success({
+          message: "Conciliação copiada com sucesso",
+        });
+      }
+    });
+  };
+
   return (
     <ToolBox>
       <Affix offsetTop={50}>
@@ -289,6 +317,25 @@ export default function Filters({
             >
               Adicionar medicamento
             </Button>
+          )}
+          {hasAddDrugPermission && prescription.concilia && (
+            <Popconfirm
+              title="Copiar conciliação"
+              description="Esta ação copia todos os medicamentos da conciliação anterior deste paciente. Confirma?"
+              okText="Sim"
+              cancelText="Não"
+              onConfirm={() => executeCopyConciliation()}
+            >
+              <Tooltip title="Copiar medicamentos da conciliação anterior">
+                <Button
+                  icon={<CopyOutlined />}
+                  style={{ marginRight: "10px" }}
+                  loading={copyingConciliation}
+                >
+                  Copiar
+                </Button>
+              </Tooltip>
+            </Popconfirm>
           )}
           {showMultipleSelection && (
             <span>

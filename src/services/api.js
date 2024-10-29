@@ -574,6 +574,11 @@ api.conciliation.createConciliation = (params) =>
     ...setHeaders(),
   });
 
+api.conciliation.copy = (params) =>
+  instance.post(`/conciliation/copy`, params, {
+    ...setHeaders(),
+  });
+
 api.conciliation.getAvailableConciliations = (params) =>
   instance.get(`/conciliation/list-available`, {
     params,
