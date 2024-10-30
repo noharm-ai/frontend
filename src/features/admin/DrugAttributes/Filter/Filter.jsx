@@ -38,6 +38,7 @@ export default function Filter({ limit }) {
     substance: null,
     idSegmentList: [],
     attributeList: [],
+    sourceList: [],
     aiAccuracyRange: null,
   };
 
