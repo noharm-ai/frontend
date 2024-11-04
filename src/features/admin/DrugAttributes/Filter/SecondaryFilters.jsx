@@ -60,6 +60,28 @@ export default function SecondaryFilters() {
 
         <Col xs={24} md={12}>
           <Heading as="label" size="14px">
+            Origens
+          </Heading>
+          <Select
+            style={{ width: "100%" }}
+            value={values.sourceList}
+            onChange={(val) => setFieldValue({ sourceList: val })}
+            showSearch
+            optionFilterProp="children"
+            allowClear
+            mode="multiple"
+          >
+            <Select.Option value="Dietas">Dietas</Select.Option>
+            <Select.Option value="Materiais">Materiais</Select.Option>
+            <Select.Option value="Medicamentos">Medicamentos</Select.Option>
+
+            <Select.Option value="Proced/Exames">Proced/Exames</Select.Option>
+            <Select.Option value="Soluções">Soluções</Select.Option>
+          </Select>
+        </Col>
+
+        <Col xs={24} md={12}>
+          <Heading as="label" size="14px">
             Filtrar por atributo
           </Heading>
           <Select

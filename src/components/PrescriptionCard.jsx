@@ -123,17 +123,24 @@ export default styled.div`
         padding-right: 0;
       }
     }
+  }
 
-    .stats {
-      display: flex;
-      align-items: center;
+  .stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 
-      &.light {
-        font-weight: 400;
-      }
-
-      ${(props) => createIndicatorTagClasses(props.t)}
+    &.light {
+      font-weight: 400;
     }
+
+    &.stats-center {
+      max-width: 290px;
+      margin: 0 auto;
+    }
+
+    ${(props) => createIndicatorTagClasses(props.t)}
   }
 
   ${(props) => createIndicatorCardClasses(props.t)}

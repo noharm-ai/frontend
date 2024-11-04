@@ -122,6 +122,7 @@ export default function ClinicalNotes({
     [select, dates]
   );
   const localAdmissionNumber = admissionNumber || admissionNumberPopup;
+  const keyArray = ["conduct", "diseases", "complication", "symptoms"];
 
   const extraOptions = () => {
     const items = previousAdmissions.map((i) => ({
@@ -339,8 +340,8 @@ export default function ClinicalNotes({
                               <span>{c.position || "-"}</span>
                             </div>
                             <div className="indicators">
-                              {ClinicalNotesIndicator.listByCategory(
-                                "priority",
+                              {ClinicalNotesIndicator.listByKey(
+                                keyArray,
                                 t
                               ).map((indicator) => (
                                 <React.Fragment key={indicator.key}>
@@ -372,21 +373,20 @@ export default function ClinicalNotes({
                             </Button>
                           </div>
                           <div className="indicators">
-                            {ClinicalNotesIndicator.listByCategory(
-                              "priority",
-                              t
-                            ).map((indicator) => (
-                              <React.Fragment key={indicator.key}>
-                                {dates[group.label] &&
-                                  dates[group.label][indicator.key] > 0 && (
-                                    <Tooltip title={indicator.label}>
-                                      <Tag className={indicator.key}>
-                                        {dates[group.label][indicator.key]}
-                                      </Tag>
-                                    </Tooltip>
-                                  )}
-                              </React.Fragment>
-                            ))}
+                            {ClinicalNotesIndicator.listByKey(keyArray, t).map(
+                              (indicator) => (
+                                <React.Fragment key={indicator.key}>
+                                  {dates[group.label] &&
+                                    dates[group.label][indicator.key] > 0 && (
+                                      <Tooltip title={indicator.label}>
+                                        <Tag className={indicator.key}>
+                                          {dates[group.label][indicator.key]}
+                                        </Tag>
+                                      </Tooltip>
+                                    )}
+                                </React.Fragment>
+                              )
+                            )}
                           </div>
                         </div>
                       )}
