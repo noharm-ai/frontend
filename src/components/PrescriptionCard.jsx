@@ -130,6 +130,8 @@ export default styled.div`
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    max-width: 290px;
+    margin: 0 auto;
 
     &.light {
       font-weight: 400;
