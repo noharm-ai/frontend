@@ -58,7 +58,7 @@ export default function ClinicalNotesCard({ stats, total, featureService }) {
             </div>
           </>
         ) : (
-          <div className="stats">
+          <div className="stats stats-center">
             {ClinicalNotesIndicator.listByCategory("priority", t).map(
               (indicator) => (
                 <React.Fragment key={indicator.key}>
