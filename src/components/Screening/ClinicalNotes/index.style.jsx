@@ -36,6 +36,7 @@ export const createIndicatorTagClasses = (t) => {
       display: flex;
       justify-content: center;
       align-items: center;
+      margin: 0;
     }
   `
   );
@@ -310,7 +311,8 @@ export const List = styled.div`
     align-items: center;
 
     .ant-tag {
-      margin-bottom: 2px;
+      margin-bottom: 2px !important;
+      margin-right: 2px !important;
     }
 
     ${(props) => createIndicatorTagClasses(props.t)}

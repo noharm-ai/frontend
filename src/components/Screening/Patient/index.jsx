@@ -124,6 +124,7 @@ export default function Patient({
             <ClinicalNotesCard
               stats={clinicalNotesStats}
               total={clinicalNotes}
+              featureService={featureService}
             />
           </div>
         </div>

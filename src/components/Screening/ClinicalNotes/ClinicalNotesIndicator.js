@@ -6,7 +6,7 @@ const clinicalNotesIndicator = {
       value: "acesso",
       color: "#68FACF",
       backgroundColor: "#68FACF0A",
-      category: "info",
+      category: "priority",
     },
     {
       key: "allergy",
@@ -14,7 +14,7 @@ const clinicalNotesIndicator = {
       value: "alergia",
       color: "#E65100",
       backgroundColor: "rgba(230, 81, 0, 0.1)",
-      category: "info",
+      category: "priority",
     },
     {
       key: "conduct",
@@ -70,7 +70,7 @@ const clinicalNotesIndicator = {
       value: "germes",
       color: "#22FA67",
       backgroundColor: "#22FA670A",
-      category: "info",
+      category: "priority",
     },
     {
       key: "gestante",
@@ -86,7 +86,7 @@ const clinicalNotesIndicator = {
       value: "medicamentos",
       color: "#662e9b",
       backgroundColor: "rgba(102,46,155, 0.1)",
-      category: "info",
+      category: "priority",
     },
     {
       key: "names",
@@ -121,6 +121,10 @@ const clinicalNotesIndicator = {
       category: "priority",
     },
   ],
+
+  listByKey(keyArray, t) {
+    return this.list(t).filter((i) => keyArray.indexOf(i.key) !== -1);
+  },
 
   listByCategory(category, t) {
     return this.list(t).filter((i) => i.category === category);
