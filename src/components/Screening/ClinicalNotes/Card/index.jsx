@@ -12,6 +12,10 @@ import ClinicalNotesModal from "containers/Screening/ClinicalNotes/Modal";
 export default function ClinicalNotesCard({ stats, total, featureService }) {
   const [clinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
   const { t } = useTranslation();
+  const indicatorKeys =
+    window.innerWidth < 1980
+      ? ["diseases", "complication", "medications", "symptoms"]
+      : ["diseases", "complication", "germes", "medications", "symptoms"];
 
   const prepareValue = (value) => {
     if (value > 99) {
@@ -22,44 +26,16 @@ export default function ClinicalNotesCard({ stats, total, featureService }) {
   };
 
   return (
-    <PrescriptionCard
-      style={{ minHeight: featureService.hasPrimaryCare() ? "113px" : "auto" }}
-    >
+    <PrescriptionCard style={{ minHeight: "113px" }}>
       <div className="header">
-        <h3 className="title">
-          {t("tableHeader.clinicalNotes")}
-          {!featureService.hasPrimaryCare() && (
-            <Button
-              type="link gtm-btn-notes-all"
-              style={{ paddingRight: 0 }}
-              onClick={() => setClinicalNotesVisibility(true)}
-            >
-              Visualizar
-            </Button>
-          )}
-        </h3>
+        <h3 className="title">{t("tableHeader.clinicalNotes")}</h3>
       </div>
       <div className="content">
-        <div className="stat-number">
-          {featureService.hasPrimaryCare() && <>{prepareValue(total)}</>}
-        </div>
-      </div>
-      <div className="footer">
         {featureService.hasPrimaryCare() ? (
-          <>
-            <div></div>
-            <div className="action">
-              <Button
-                type="link gtm-btn-notes-all"
-                onClick={() => setClinicalNotesVisibility(true)}
-              >
-                Visualizar
-              </Button>
-            </div>
-          </>
+          <div className="stat-number">{prepareValue(total)}</div>
         ) : (
-          <div className="stats stats-center">
-            {ClinicalNotesIndicator.listByCategory("priority", t).map(
+          <div className="stats stats-center" style={{ marginTop: "6px" }}>
+            {ClinicalNotesIndicator.listByKey(indicatorKeys, t).map(
               (indicator) => (
                 <React.Fragment key={indicator.key}>
                   <div>
@@ -74,6 +50,17 @@ export default function ClinicalNotesCard({ stats, total, featureService }) {
             )}
           </div>
         )}
+      </div>
+      <div className="footer" style={{ marginTop: 0 }}>
+        <div></div>
+        <div className="action">
+          <Button
+            type="link gtm-btn-notes-all"
+            onClick={() => setClinicalNotesVisibility(true)}
+          >
+            Visualizar
+          </Button>
+        </div>
       </div>
 
       <ClinicalNotesModal

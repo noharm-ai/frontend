@@ -45,10 +45,28 @@ export default styled.div`
 
     .stat-number {
       position: absolute;
-      top: 15%;
+      top: 30%;
       right: 5%;
-      font-size: 48px;
+      font-size: 34px;
       font-weight: 300;
+    }
+
+    .stat-variation {
+      .stat-variation-number {
+        display: flex;
+        align-items: center;
+        font-size: 30px;
+        font-weight: 300;
+
+        .anticon {
+          font-size: 30px;
+          margin-left: 5px;
+        }
+      }
+
+      .stat-variation-percentage {
+        font-size: 13px;
+      }
     }
 
     .text-content {
