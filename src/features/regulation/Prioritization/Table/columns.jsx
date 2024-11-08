@@ -25,6 +25,13 @@ const columns = (t) => {
       },
     },
     {
+      title: "Tipo",
+      align: "left",
+      render: (entry, record) => {
+        return record.type;
+      },
+    },
+    {
       title: "Nome",
       align: "left",
       render: (entry, record) => {
