@@ -9,7 +9,11 @@ import {
 import { Select } from "components/Inputs";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
-import { addOrder, updateOrder, deleteOrder } from "../PrioritizationSlice";
+import {
+  updateOrder,
+  fetchRegulationList,
+  setCurrentPage,
+} from "../PrioritizationSlice";
 
 import { OrderContainer } from "./Order.style";
 
@@ -26,14 +30,51 @@ export const ORDER_OPTIONS = [
   },
 ];
 
-export default function Order() {
+export default function Order({ limit }) {
   const dispatch = useDispatch();
   const orderList = useSelector(
     (state) => state.regulation.prioritization.order
   );
+  const filters = useSelector(
+    (state) => state.regulation.prioritization.filters
+  );
+
+  const reload = (order) => {
+    dispatch(setCurrentPage(1));
+
+    const params = { ...filters, limit, offset: 0, order };
+    dispatch(fetchRegulationList(params));
+  };
 
   const onChangePrioritization = (value, position, attr) => {
-    dispatch(updateOrder({ position: position, order: { [attr]: value } }));
+    const newOrder = [...orderList];
+    newOrder[position] = {
+      ...newOrder[position],
+      [attr]: value,
+    };
+    dispatch(updateOrder(newOrder));
+
+    reload(newOrder);
+  };
+
+  const addPrioritization = () => {
+    const newOrder = [...orderList];
+
+    newOrder.push({
+      field: "date",
+      direction: "asc",
+    });
+
+    dispatch(updateOrder(newOrder));
+    reload(newOrder);
+  };
+
+  const removePrioritization = (position) => {
+    const newOrder = [...orderList];
+    newOrder.splice(position, 1);
+
+    dispatch(updateOrder(newOrder));
+    reload(newOrder);
   };
 
   return (
@@ -87,7 +128,7 @@ export default function Order() {
                     icon={<DeleteOutlined />}
                     size="small"
                     style={{ width: "24px" }}
-                    onClick={() => dispatch(deleteOrder({ position }))}
+                    onClick={() => removePrioritization(position)}
                   />
                 </Tooltip>
               )}
@@ -103,9 +144,7 @@ export default function Order() {
               shape="circle"
               type="primary"
               icon={<PlusOutlined />}
-              onClick={() =>
-                dispatch(addOrder({ field: "date", direction: "asc" }))
-              }
+              onClick={() => addPrioritization()}
               style={{ marginLeft: "5px" }}
             />
           </Tooltip>

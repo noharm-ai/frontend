@@ -44,17 +44,8 @@ const regulationPrioritizationSlice = createSlice({
     setCurrentPage(state, action) {
       state.currentPage = action.payload;
     },
-    addOrder(state, action) {
-      state.order.push(action.payload);
-    },
     updateOrder(state, action) {
-      state.order[action.payload.position] = {
-        ...state.order[action.payload.position],
-        ...action.payload.order,
-      };
-    },
-    deleteOrder(state, action) {
-      state.order.splice(action.payload.position, 1);
+      state.order = action.payload;
     },
   },
   extraReducers(builder) {
@@ -75,13 +66,7 @@ const regulationPrioritizationSlice = createSlice({
   },
 });
 
-export const {
-  reset,
-  setFilters,
-  setCurrentPage,
-  addOrder,
-  updateOrder,
-  deleteOrder,
-} = regulationPrioritizationSlice.actions;
+export const { reset, setFilters, setCurrentPage, updateOrder } =
+  regulationPrioritizationSlice.actions;
 
 export default regulationPrioritizationSlice.reducer;

@@ -22,7 +22,7 @@ export default function MainFilters() {
 
   return (
     <>
-      <Col md={7} lg={6} xxl={3}>
+      <Col md={7} lg={6} xxl={4}>
         <Heading as="label" htmlFor="date" size="14px">
           Data da solicitação
         </Heading>
@@ -39,7 +39,7 @@ export default function MainFilters() {
           language={i18n.language}
         />
       </Col>
-      <Col md={5} lg={4} xxl={3}>
+      <Col md={5} lg={4} xxl={4}>
         <Heading as="label" size="14px">
           Tipo:
         </Heading>
@@ -50,6 +50,8 @@ export default function MainFilters() {
           showSearch
           optionFilterProp="children"
           allowClear
+          mode="multiple"
+          maxTagCount="responsive"
         >
           <Select.Option key={0} value={true}>
             Teste1
@@ -59,7 +61,7 @@ export default function MainFilters() {
           </Select.Option>
         </Select>
       </Col>
-      <Col md={5} lg={4} xxl={3}>
+      <Col md={5} lg={4} xxl={4}>
         <Heading as="label" size="14px">
           Etapa:
         </Heading>
@@ -70,6 +72,8 @@ export default function MainFilters() {
           showSearch
           optionFilterProp="children"
           allowClear
+          mode="multiple"
+          maxTagCount="responsive"
         >
           <Select.Option key={0} value={true}>
             Não iniciado

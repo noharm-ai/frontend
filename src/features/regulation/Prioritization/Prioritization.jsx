@@ -90,7 +90,7 @@ export default function Prioritization() {
 
       <Flex justify="space-between" align="center">
         <div style={{ flex: 1 }}>
-          <Order />
+          <Order limit={limit} />
         </div>
         <Pagination
           onChange={onPageChange}

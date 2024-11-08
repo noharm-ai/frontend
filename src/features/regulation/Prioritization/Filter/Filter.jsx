@@ -29,6 +29,7 @@ export default function Filter({ limit }) {
     startDate: dayjs().subtract(15, "days").format("YYYY-MM-DD"),
     endDate: null,
     typeList: [],
+    stageList: [],
   };
 
   useEffect(() => {
