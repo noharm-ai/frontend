@@ -16,6 +16,26 @@ export default function ScoreCard({ prescription }) {
   const globalScore = prescription.features?.globalScore;
   const variation = prescription.features?.scoreVariation?.variation;
 
+  const getScoreColor = () => {
+    if (globalScore > 90) {
+      return "#E53935";
+    }
+
+    if (globalScore > 60) {
+      return "#FB8C00";
+    }
+
+    if (globalScore > 10) {
+      return "#FDD835";
+    }
+
+    if (globalScore > 0) {
+      return "#7CB342";
+    }
+
+    return "#959595";
+  };
+
   return (
     <PrescriptionCard style={{ height: "100%" }}>
       <div className="header">
@@ -25,7 +45,9 @@ export default function ScoreCard({ prescription }) {
         <div className="stat-variation">
           <Tooltip title={t("screeningList.clGlobalScoreHint")}>
             <div className="stat-variation-number">
-              {globalScore || "-"}
+              {globalScore !== null && globalScore !== undefined
+                ? globalScore
+                : "-"}
 
               {prescription.agg && <VariationIndicator variation={variation} />}
             </div>
@@ -43,6 +65,10 @@ export default function ScoreCard({ prescription }) {
           )}
         </div>
       </div>
+      <div
+        className="stat-marker"
+        style={{ background: getScoreColor() }}
+      ></div>
     </PrescriptionCard>
   );
 }

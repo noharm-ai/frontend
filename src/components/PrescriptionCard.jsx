@@ -29,6 +29,16 @@ export default styled.div`
     line-heigth: 1;
   }
 
+  .stat-marker {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 6px;
+    width: 100%;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+
   .content {
     flex: 1;
 
