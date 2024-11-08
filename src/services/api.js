@@ -10,6 +10,7 @@ const requestConfig = {
 };
 
 export const instance = axios.create(requestConfig);
+export const mockInstance = axios.create({ baseURL: "/" });
 
 const api = {};
 
