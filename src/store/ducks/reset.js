@@ -48,6 +48,7 @@ import { reset as antimicrobialHistoryReportReset } from "features/reports/Antim
 import { reset as alertListReportReset } from "features/reports/AlertListReport/AlertListReportSlice";
 
 import { reset as regulationPrioritizationReset } from "features/regulation/Prioritization/PrioritizationSlice";
+import { reset as regulationReset } from "features/regulation/Regulation/RegulationSlice";
 
 const { clinicalNotesReset } = ClinicalNotesCreators;
 const { departmentsReset } = DepartmentsCreators;
@@ -111,4 +112,5 @@ export const resetReduxState = (dispatch) => {
   dispatch(alertListReportReset());
 
   dispatch(regulationPrioritizationReset());
+  dispatch(regulationReset());
 };

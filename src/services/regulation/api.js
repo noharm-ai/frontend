@@ -8,4 +8,10 @@ api.fetchRegulationList = (params = {}) =>
     ...setHeaders(),
   });
 
+api.fetchRegulation = (params = {}) =>
+  instance.get(`/mocks/regulation/regulation_${params.id}.json`, {
+    params,
+    ...setHeaders(),
+  });
+
 export default api;
