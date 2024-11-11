@@ -46,6 +46,14 @@ export const getCustomClinicalNote = (
     .replace("{{peso_paciente}}", getWeight(prescription.data.weight))
     .replace("{{altura_paciente}}", getHeight(prescription.data.height))
     .replace("{{idade_paciente}}", getAge(prescription.data.age))
+    .replace("{{escore_global}}", prescription.data.features?.globalScore)
+    .replace(
+      "{{risco_paciente}}",
+      getPatientRisk(
+        prescription.data.agg,
+        prescription.data.features?.globalScore
+      )
+    )
     .replace(
       "{{imc_paciente}}",
       getPatientIMC(prescription.data.weight, prescription.data.height)
@@ -330,4 +338,28 @@ const getPatientCorporalSurface = (weight, height) => {
   }
 
   return "Não informado";
+};
+
+const getPatientRisk = (agg, globalScore) => {
+  if (!agg) {
+    return "Não definido para prescrições individuais";
+  }
+
+  if (globalScore > 90) {
+    return "Crítico";
+  }
+
+  if (globalScore > 60) {
+    return "Alto";
+  }
+
+  if (globalScore > 10) {
+    return "Médio";
+  }
+
+  if (globalScore > 0) {
+    return "Baixo";
+  }
+
+  return "-";
 };
