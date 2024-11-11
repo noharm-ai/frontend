@@ -5,6 +5,8 @@ import {
   UserOutlined,
   NumberOutlined,
   MessageOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined,
 } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
@@ -402,6 +404,14 @@ export default function PrioritizationCard({
                 ? "Preenchido"
                 : "-"
               : prescription[prioritization.formattedKey]}
+
+            {prioritization.key === "globalScore" &&
+              prescription.scoreVariation !== null && (
+                <>
+                  {prescription.scoreVariation > 0 && <ArrowUpOutlined />}
+                  {prescription.scoreVariation < 0 && <ArrowDownOutlined />}
+                </>
+              )}
           </div>
         </div>
       </div>
