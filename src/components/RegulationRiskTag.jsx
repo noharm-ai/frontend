@@ -20,5 +20,11 @@ export default function RegulationRiskTag({ risk, ...props }) {
     }
   };
 
-  return <Badge status={getColor()} text={t(`regulation.risk.risk_${risk}`)} />;
+  return (
+    <Badge
+      status={getColor()}
+      text={t(`regulation.risk.risk_${risk}`)}
+      {...props}
+    />
+  );
 }

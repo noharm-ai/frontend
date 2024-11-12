@@ -1,18 +1,20 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Skeleton } from "antd";
+import { Skeleton, Row, Col, Space } from "antd";
 
 import Empty from "components/Empty";
 import notification from "components/notification";
+import RegulationStats from "./RegulationStats/RegulationStats";
+import RegulationHistory from "./RegulationHistory/RegulationHistory";
+import RegulationPatient from "./RegulationPatient/RegulationPatient";
+import RegulationData from "./RegulationData/RegulationData";
 import { fetchRegulation, reset } from "./RegulationSlice";
 
 import { PageHeader } from "styles/PageHeader.style";
 
 export default function Regulation() {
   const dispatch = useDispatch();
-  const { t } = useTranslation();
   const status = useSelector((state) => state.regulation.regulation.status);
 
   const params = useParams();
@@ -55,6 +57,19 @@ export default function Regulation() {
         </div>
         <div className="page-header-actions"></div>
       </PageHeader>
+
+      <Row gutter={16}>
+        <Col xs={18}>
+          <Space direction="vertical" style={{ width: "100%" }} size="large">
+            <RegulationStats />
+            <RegulationPatient />
+            <RegulationData />
+          </Space>
+        </Col>
+        <Col xs={24 - 18}>
+          <RegulationHistory />
+        </Col>
+      </Row>
     </>
   );
 }
