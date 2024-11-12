@@ -176,4 +176,8 @@ export const Form = styled.form`
       margin-top: 0;
     }
   }
+
+  .inner-section {
+    padding: 0.5rem 1rem;
+  }
 `;

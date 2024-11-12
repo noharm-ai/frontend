@@ -9,6 +9,7 @@ import RegulationStats from "./RegulationStats/RegulationStats";
 import RegulationHistory from "./RegulationHistory/RegulationHistory";
 import RegulationPatient from "./RegulationPatient/RegulationPatient";
 import RegulationData from "./RegulationData/RegulationData";
+import RegulationAction from "./RegulationAction/RegulationAction";
 import { fetchRegulation, reset } from "./RegulationSlice";
 
 import { PageHeader } from "styles/PageHeader.style";
@@ -70,6 +71,8 @@ export default function Regulation() {
           <RegulationHistory />
         </Col>
       </Row>
+
+      <RegulationAction />
     </>
   );
 }

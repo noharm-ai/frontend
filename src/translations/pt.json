@@ -870,6 +870,11 @@
       "INITIAL": "Não iniciado",
       "WAITING_SCHEDULE": "Aguardando agendamento",
       "FINISHED": "Finalizado"
+    },
+    "action": {
+      "SCHEDULE": "Agendar",
+      "SCHEDULE_TRANSPORT": "Agendar transporte",
+      "UPDATE_STAGE": "Alterar etapa"
     }
   }
 }

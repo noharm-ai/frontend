@@ -5,6 +5,11 @@ const initialState = {
   data: {},
   status: "loading",
   error: null,
+  action: {
+    open: false,
+    status: "idle",
+    error: null,
+  },
 };
 
 export const fetchRegulation = createAsyncThunk(
@@ -27,6 +32,9 @@ const regulationSlice = createSlice({
     reset() {
       return initialState;
     },
+    setActionModal(state, action) {
+      state.action.open = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -45,6 +53,6 @@ const regulationSlice = createSlice({
   },
 });
 
-export const { reset } = regulationSlice.actions;
+export const { reset, setActionModal } = regulationSlice.actions;
 
 export default regulationSlice.reducer;

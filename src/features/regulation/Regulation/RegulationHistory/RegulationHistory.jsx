@@ -1,10 +1,13 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { ClockCircleFilled, CheckCircleFilled } from "@ant-design/icons";
 import { Card, Flex, Timeline } from "antd";
 
 import Button from "components/Button";
+import { setActionModal } from "../RegulationSlice";
 
 export default function RegulationHistory() {
+  const dispatch = useDispatch();
   const items = [
     {
       dot: (
@@ -19,7 +22,12 @@ export default function RegulationHistory() {
         <Flex vertical={true}>
           <div style={{ fontWeight: 500 }}>Aguardando Agendamento</div>
           <div style={{ fontWeight: 300, marginTop: "5px" }}>
-            <Button type="primary">Ação</Button>
+            <Button
+              type="primary"
+              onClick={() => dispatch(setActionModal(true))}
+            >
+              Ação
+            </Button>
           </div>
         </Flex>
       ),

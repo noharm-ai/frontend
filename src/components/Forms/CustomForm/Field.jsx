@@ -117,7 +117,7 @@ export default function Field({ question, values, setFieldValue }) {
       <EditorBox>
         <Editor
           onEdit={(value) => setFieldValue(question.id, value)}
-          content={values[question.id]}
+          content={values[question.id] || ""}
         />
       </EditorBox>
     );
