@@ -1,43 +1,50 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useFormikContext } from "formik";
+import * as Yup from "yup";
 
 import { Select } from "components/Inputs";
 import RegulationStage from "models/regulation/RegulationStage";
 import RegulationAction from "models/regulation/RegulationAction";
 import { Form as FormElement } from "styles/Form.style";
+import RegulationStageTag from "components/RegulationStageTag";
 import Field from "components/Forms/CustomForm/Field";
 
-export default function Form() {
+export default function Form({ validationSchema, setValidationSchema }) {
   const { t } = useTranslation();
   const { values, errors, setFieldValue } = useFormikContext();
 
   const onActionChange = (action) => {
     setFieldValue("action", action);
     setFieldValue("actionData", {});
+
+    const actionDataFields = {};
+    RegulationAction.getForm(action, t).forEach((field) => {
+      actionDataFields[field.id] = Yup.string()
+        .nullable()
+        .required(t("validation.requiredField"));
+    });
+
+    const validation = validationSchema.concat(
+      Yup.object({
+        actionData: Yup.object(actionDataFields),
+      })
+    );
+
+    console.log("new validation", validation);
+
+    setValidationSchema(validation);
   };
 
   return (
     <FormElement>
-      <div className={`form-row ${errors.stage ? "error" : ""}`}>
+      <div className={`form-row`}>
         <div className="form-label">
           <label>Etapa atual:</label>
         </div>
         <div className="form-input">
-          <Select
-            onChange={(value) => setFieldValue("stage", value)}
-            value={values.stage}
-            status={errors.stage ? "error" : null}
-            disabled
-          >
-            {RegulationStage.getStages(t).map((s) => (
-              <Select.Option key={s.id} value={s.id}>
-                {s.label}
-              </Select.Option>
-            ))}
-          </Select>
+          <RegulationStageTag stage={values.stage} />
         </div>
-        {errors.stage && <div className="form-error">{errors.stage}</div>}
       </div>
 
       <div className={`form-row ${errors.action ? "error" : ""}`}>
@@ -63,7 +70,7 @@ export default function Form() {
       </div>
 
       {values.action && (
-        <>
+        <div style={{ paddingLeft: "15px", paddingTop: "15px" }}>
           {RegulationAction.getForm(values.action, t).map((q) => (
             <div className={`form-row`} key={q.id}>
               <div className="form-label">
@@ -77,10 +84,13 @@ export default function Form() {
                     setFieldValue(`actionData.${id}`, value)
                   }
                 />
+                {errors.actionData && errors.actionData[q.id] && (
+                  <div className="form-error">{errors.actionData[q.id]}</div>
+                )}
               </div>
             </div>
           ))}
-        </>
+        </div>
       )}
 
       <div className={`form-row ${errors.nextStage ? "error" : ""}`}>

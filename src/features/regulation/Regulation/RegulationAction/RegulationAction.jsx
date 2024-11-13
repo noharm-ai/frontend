@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
@@ -17,17 +17,22 @@ export default function RegulationAction() {
     (state) => state.regulation.regulation.action.status
   );
   const open = useSelector((state) => state.regulation.regulation.action.open);
+  const [validationSchema, setValidationSchema] = useState(
+    Yup.object().shape({
+      id: Yup.number().nullable().required(t("validation.requiredField")),
+      action: Yup.string().nullable().required(t("validation.requiredField")),
+      nextStage: Yup.string()
+        .nullable()
+        .required(t("validation.requiredField")),
+    })
+  );
+
   const initialValues = {
     id: data.id,
     stage: data.stage,
     action: null,
     actionData: {},
   };
-  const validationSchema = Yup.object().shape({
-    id: Yup.number().nullable().required(t("validation.requiredField")),
-    action: Yup.string().nullable().required(t("validation.requiredField")),
-    nextStage: Yup.string().nullable().required(t("validation.requiredField")),
-  });
 
   const onSave = (params) => {
     console.log("save", params);
@@ -43,6 +48,8 @@ export default function RegulationAction() {
       onSubmit={onSave}
       initialValues={initialValues}
       validationSchema={validationSchema}
+      validateOnChange={false}
+      validateOnBlur={false}
     >
       {({ handleSubmit }) => (
         <DefaultModal
@@ -73,7 +80,10 @@ export default function RegulationAction() {
             <Heading size="18px">Regulação nº: {data.id}</Heading>
           </header>
 
-          <Form />
+          <Form
+            setValidationSchema={setValidationSchema}
+            validationSchema={validationSchema}
+          />
         </DefaultModal>
       )}
     </Formik>
