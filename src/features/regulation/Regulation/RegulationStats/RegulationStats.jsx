@@ -10,7 +10,7 @@ export default function RegulationStats() {
   return (
     <Flex gap={20} align="center">
       <RegulationStageTag stage={"WAITING_SCHEDULE"} style={tagStyle} />
-      <RegulationRiskTag risk={4} />
+      <RegulationRiskTag risk={4} tag={true} style={tagStyle} />
     </Flex>
   );
 }

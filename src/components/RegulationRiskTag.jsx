@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Badge } from "antd";
+import { Badge, Tag } from "antd";
 
-export default function RegulationRiskTag({ risk, ...props }) {
+export default function RegulationRiskTag({ risk, tag = false, ...props }) {
   const { t } = useTranslation();
 
   const getColor = () => {
@@ -19,6 +19,14 @@ export default function RegulationRiskTag({ risk, ...props }) {
         return "default";
     }
   };
+
+  if (tag) {
+    return (
+      <Tag color={getColor()} {...props}>
+        {t(`regulation.risk.risk_${risk}`)}
+      </Tag>
+    );
+  }
 
   return (
     <Badge
