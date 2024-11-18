@@ -21,7 +21,7 @@ export default function EvaluationWarning() {
         );
       }
     }
-  }, [prescription]); //eslint-disable-line
+  }, [prescription.idPrescription]); //eslint-disable-line
 
   if (
     !prescription.isBeingEvaluated ||

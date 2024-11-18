@@ -58,9 +58,11 @@ function Table({
     if (expandedRows.length) {
       setExpandedRows([]);
     } else {
-      setExpandedRows(
-        ds.value.filter((i) => /^[0-9]*$/g.test(i.key)).map((i) => i.key)
-      );
+      if (ds.value) {
+        setExpandedRows(
+          ds.value.filter((i) => /^[0-9]*$/g.test(i.key)).map((i) => i.key)
+        );
+      }
     }
   };
 

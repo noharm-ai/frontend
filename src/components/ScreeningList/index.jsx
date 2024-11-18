@@ -362,11 +362,11 @@ export default function ScreeningList({
 
             break;
           case actionKey.space:
-            activeRow.querySelector(".ant-table-row-expand-icon").click();
+            activeRow.querySelector(".ant-table-row-expand-icon")?.click();
 
             break;
           case actionKey.enter:
-            activeRow.querySelector(".gtm-bt-detail").click();
+            activeRow.querySelector(".gtm-bt-detail")?.click();
 
             break;
           default:
