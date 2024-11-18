@@ -1,0 +1,98 @@
+{
+  "success": true,
+  "data": {
+    "count": 10,
+    "list": [
+      {
+        "id": "1243",
+        "date": "2024-10-02 13:00",
+        "name": "Luciana Almeida",
+        "type": "03010022 - CONS. EM ENDOCRINOLOGIA",
+        "age": 50,
+        "risk": 4,
+        "stage": "WAITING_SCHEDULE"
+      },
+      {
+        "id": "1242",
+        "date": "2024-10-02 12:20",
+        "name": "Renato Braga",
+        "type": "03010012 - CONS. EM ORTOPEDIA",
+        "age": 47,
+        "risk": 2,
+        "stage": "WAITING_SCHEDULE"
+      },
+      {
+        "id": "1241",
+        "date": "2024-10-03 11:15",
+        "name": "Ana Oliveira",
+        "type": "03010089 - CONS. EM PSIQUIATRIA",
+        "age": 37,
+        "risk": 3,
+        "stage": "INITIAL"
+      },
+      {
+        "id": "1240",
+        "date": "2024-10-04 10:00",
+        "name": "Carlos Pereira",
+        "type": "03010072 - CONS. EM PNEUMOLOGIA",
+        "age": 55,
+        "risk": 4,
+        "stage": "WAITING_SCHEDULE"
+      },
+      {
+        "id": "1239",
+        "date": "2024-10-04 09:30",
+        "name": "Joana Souza",
+        "type": "03010035 - CONS. EM DERMATOLOGIA",
+        "age": 29,
+        "risk": 1,
+        "stage": "INITIAL"
+      },
+      {
+        "id": "1237",
+        "date": "2024-10-05 15:47",
+        "name": "Beatriz Costa",
+        "type": "03010055 - CONS. EM CARDIOLOGIA",
+        "age": 60,
+        "risk": 4,
+        "stage": "WAITING_SCHEDULE"
+      },
+      {
+        "id": "1238",
+        "date": "2024-10-05 16:30",
+        "name": "Arthur da Silva",
+        "type": "03010072 - CONS. EM PNEUMOLOGIA",
+        "age": 34,
+        "risk": 2,
+        "stage": "WAITING_SCHEDULE"
+      },
+      {
+        "id": "1234",
+        "date": "2024-10-06 13:47",
+        "name": "José da Silva",
+        "type": "03010072 - CONS. EM PNEUMOLOGIA",
+        "age": 52,
+        "risk": 4,
+        "stage": "INITIAL"
+      },
+      {
+        "id": "1235",
+        "date": "2024-10-06 14:47",
+        "name": "Maria da Silva",
+        "type": "03010064 - CONS. GINECOLOGIA - LAQUEADURA",
+        "age": 42,
+        "risk": 3,
+        "stage": "INITIAL"
+      },
+      {
+        "id": "1236",
+        "date": "2024-10-06 15:47",
+        "name": "Felipe da Silva",
+        "type": "03010072 - CONS. EM PNEUMOLOGIA",
+        "age": 42,
+        "risk": 3,
+        "stage": "INITIAL"
+      }
+    ]
+  }
+}

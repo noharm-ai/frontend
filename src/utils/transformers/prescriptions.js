@@ -152,6 +152,7 @@ export const transformPrescription = (
     infusion,
     interventions,
     globalScore,
+    scoreVariation,
     diet,
     admissionDate,
     ...item
@@ -271,6 +272,9 @@ export const transformPrescription = (
     daysAgoString: `${daysAgo} dia(s)`,
     prescriptionScore,
     globalScore,
+    scoreVariation,
+    scoreVariationString:
+      scoreVariation !== null ? `${Math.trunc(scoreVariation)}%` : "-",
     prescriptionRisk: stringify([prescriptionScore]),
     date,
     dateFormated: format(new Date(date), "dd/MM/yyyy HH:mm"),

@@ -2,7 +2,7 @@ import "styled-components/macro";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import moment from "moment";
-import { Row, Col, notification, Popconfirm } from "antd";
+import { Row, Col, Flex, notification, Popconfirm } from "antd";
 import { useTranslation } from "react-i18next";
 import { DeleteOutlined } from "@ant-design/icons";
 
@@ -15,6 +15,7 @@ import { SeeMore } from "./Patient.style";
 import ExamCard from "../Exam/Card";
 import AlertCard from "../AlertCard";
 import ClinicalNotesCard from "../ClinicalNotes/Card";
+import ScoreCard from "../ScoreCard/ScoreCard";
 import PatientCard from "./Card";
 import { selectSingleClinicalNotes } from "features/prescription/PrescriptionSlice";
 
@@ -120,13 +121,18 @@ export default function Patient({
         >
           <AlertCard stats={alertStats} prescription={prescription} />
 
-          <div style={{ marginTop: "10px" }}>
-            <ClinicalNotesCard
-              stats={clinicalNotesStats}
-              total={clinicalNotes}
-              featureService={featureService}
-            />
-          </div>
+          <Flex style={{ marginTop: "10px" }} gap={8}>
+            <div style={{ flex: 1 }}>
+              <ClinicalNotesCard
+                stats={clinicalNotesStats}
+                total={clinicalNotes}
+                featureService={featureService}
+              />
+            </div>
+            <div style={{ width: "50%", maxWidth: "160px" }}>
+              <ScoreCard prescription={prescription} />
+            </div>
+          </Flex>
         </div>
       </Col>
       {seeMore && (

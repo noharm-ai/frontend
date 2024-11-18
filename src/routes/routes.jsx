@@ -50,6 +50,9 @@ import InterventionReport from "pages/Reports/InterventionReport";
 import PrescriptionAuditReport from "pages/Reports/PrescriptionAuditReport";
 import EconomyReport from "pages/Reports/EconomyReport";
 
+import RegulationPrioritization from "pages/Regulation/Prioritization";
+import Regulation from "pages/Regulation/Regulation";
+
 const routes = [
   {
     exact: true,
@@ -326,6 +329,16 @@ const routes = [
     exact: true,
     path: "/relatorios/economia",
     element: <WithAuth component={EconomyReport} />,
+  },
+  {
+    exact: true,
+    path: "/regulacao",
+    element: <WithAuth component={RegulationPrioritization} />,
+  },
+  {
+    exact: true,
+    path: "/regulacao/:id",
+    element: <WithAuth component={Regulation} />,
   },
 ];
 

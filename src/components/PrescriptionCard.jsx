@@ -29,6 +29,16 @@ export default styled.div`
     line-heigth: 1;
   }
 
+  .stat-marker {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 6px;
+    width: 100%;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+
   .content {
     flex: 1;
 
@@ -45,10 +55,28 @@ export default styled.div`
 
     .stat-number {
       position: absolute;
-      top: 15%;
+      top: 30%;
       right: 5%;
-      font-size: 48px;
+      font-size: 34px;
       font-weight: 300;
+    }
+
+    .stat-variation {
+      .stat-variation-number {
+        display: flex;
+        align-items: center;
+        font-size: 30px;
+        font-weight: 300;
+
+        .anticon {
+          font-size: 30px;
+          margin-left: 5px;
+        }
+      }
+
+      .stat-variation-percentage {
+        font-size: 13px;
+      }
     }
 
     .text-content {

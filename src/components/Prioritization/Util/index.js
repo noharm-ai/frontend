@@ -7,6 +7,12 @@ export const ORDER_OPTIONS = [
     type: "number",
   },
   {
+    label: "Variação - Escore global",
+    key: "scoreVariation",
+    formattedKey: "scoreVariationString",
+    type: "number",
+  },
+  {
     label: "Idade",
     key: "birthdays",
     formattedKey: "age",

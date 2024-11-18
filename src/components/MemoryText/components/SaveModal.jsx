@@ -180,6 +180,24 @@ export default function SaveModal({
                   Exames
                 </Tag>
               </Tooltip>
+              <Tooltip title="Clique para adicionar o Escore Global.">
+                <Tag
+                  onClick={() => addVariable("{{escore_global}}")}
+                  style={{ cursor: "pointer" }}
+                  color="geekblue"
+                >
+                  Escore Global
+                </Tag>
+              </Tooltip>
+              <Tooltip title="Clique para adicionar o Risco do Paciente (baseado no escore global).">
+                <Tag
+                  onClick={() => addVariable("{{risco_paciente}}")}
+                  style={{ cursor: "pointer" }}
+                  color="geekblue"
+                >
+                  Risco do Paciente
+                </Tag>
+              </Tooltip>
             </div>
           </div>
 

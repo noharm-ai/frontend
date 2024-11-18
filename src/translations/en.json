@@ -852,5 +852,19 @@
     "fasting": "JJ",
     "pregnant": "GES",
     "lactating": "LAC"
+  },
+
+  "regulation": {
+    "risk": {
+      "risk_1": "Eletivo",
+      "risk_2": "Prioritário",
+      "risk_3": "Urgência",
+      "risk_4": "Emergência"
+    },
+    "stage": {
+      "INITIAL": "Não iniciado",
+      "WAITING_SCHEDULE": "Aguardando agendamento",
+      "FINISHED": "Finalizado"
+    }
   }
 }

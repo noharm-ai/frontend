@@ -45,6 +45,9 @@ import adminSubstance from "features/admin/Substance/SubstanceSlice";
 import adminRelation from "features/admin/Relation/RelationsSlice";
 import adminDrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
 
+import regulationPrioritizationSlice from "features/regulation/Prioritization/PrioritizationSlice";
+import regulationSlice from "features/regulation/Regulation/RegulationSlice";
+
 import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
 import reportPrescriptionReport from "features/reports/PrescriptionReport/PrescriptionReportSlice";
@@ -72,6 +75,11 @@ const adminReducers = combineReducers({
   drugReferenceDrawer: adminDrugReferenceDrawer,
 });
 
+const regulationReducers = combineReducers({
+  prioritization: regulationPrioritizationSlice,
+  regulation: regulationSlice,
+});
+
 const reportReducers = combineReducers({
   patientDay: reportPatientDayReport,
   prescription: reportPrescriptionReport,
@@ -87,6 +95,7 @@ const reportReducers = combineReducers({
 export default combineReducers({
   admin: adminReducers,
   reportsArea: reportReducers,
+  regulation: regulationReducers,
   app: appReducer,
   auth: authReducer,
   user: userReducer,
