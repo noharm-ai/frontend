@@ -252,7 +252,7 @@ export default function FilterFields({
                 <div className="form-label">
                   <label>
                     <Tooltip title="Maior nível de alerta presente" underline>
-                      Nível dos alerta:
+                      Nível do alerta:
                     </Tooltip>
                   </label>
                 </div>
