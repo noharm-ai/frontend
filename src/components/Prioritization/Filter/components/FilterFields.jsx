@@ -143,6 +143,13 @@ export default function FilterFields({
     { label: "Todos", value: null },
   ];
 
+  const alertLevelsOptions = [
+    { label: "Baixo", value: "low" },
+    { label: "Médio", value: "medium" },
+    { label: "Alto", value: "high" },
+    { label: "Todos", value: null },
+  ];
+
   return (
     <Row gutter={[20, 20]} style={{ marginTop: "15px", padding: "10px 0" }}>
       <Col md={12}>
@@ -236,6 +243,28 @@ export default function FilterFields({
                       </Select.Option>
                     ))}
                   </Select>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>
+                    <Tooltip title="Maior nível de alerta presente" underline>
+                      Nível dos alerta:
+                    </Tooltip>
+                  </label>
+                </div>
+                <div className="form-input">
+                  <Radio.Group
+                    options={alertLevelsOptions}
+                    optionType="button"
+                    onChange={({ target: { value } }) =>
+                      setScreeningListFilter({ alertLevel: value })
+                    }
+                    value={filter.alertLevel}
+                  />
                 </div>
               </div>
             </div>
