@@ -90,6 +90,7 @@ export default function Filter({
             ? null
             : filter.prescriber,
         diff: filter.diff,
+        alertLevel: filter.alertLevel,
         globalScoreMin: filter.globalScoreMin,
         globalScoreMax: filter.globalScoreMax,
         pendingInterventions: filter.pendingInterventions,
@@ -149,6 +150,7 @@ export default function Filter({
       filter.globalScoreMax,
       filter.pendingInterventions,
       filter.hasConciliation,
+      filter.alertLevel,
       prioritizationType,
       date,
     ]
@@ -231,6 +233,7 @@ export default function Filter({
       globalScoreMax: null,
       pendingInterventions: null,
       hasConciliation: null,
+      alertLevel: null,
     });
     setDate([dayjs(), null]);
   };
