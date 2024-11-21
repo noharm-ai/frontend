@@ -15,6 +15,7 @@ export default class Feature {
   static PRESCRIPTION_ALERT = "PRESCRIPTION_ALERT";
   static PRESMED_FORM = "PRESMED_FORM";
   static DISCHARGE_SUMMARY = "DISCHARGE_SUMMARY";
+  static REGULATION = "REGULATION";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -110,6 +111,11 @@ export default class Feature {
         id: Feature.DISCHARGE_SUMMARY,
         label: "Sumário de Alta",
         description: "Habilita a funcionalidade de criação de Sumário de Alta.",
+      },
+      {
+        id: Feature.REGULATION,
+        label: "Regulação",
+        description: "Habilita o módulo de Regulação.",
       },
     ];
   }

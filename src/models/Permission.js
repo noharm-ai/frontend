@@ -51,4 +51,7 @@ export default class Permission {
   static WRITE_DISPENSATION = "WRITE_DISPENSATION";
 
   static MAINTAINER = "MAINTAINER";
+
+  static READ_REGULATION = "READ_REGULATION";
+  static WRITE_REGULATION = "WRITE_REGULATION";
 }

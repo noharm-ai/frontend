@@ -30,6 +30,7 @@ import {
   DeploymentUnitOutlined,
   TagOutlined,
   InteractionOutlined,
+  FieldTimeOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -91,6 +92,15 @@ export default function Menu({ security, featureService }) {
       id: "gtm-lnk-summary",
       feature: Feature.DISCHARGE_SUMMARY,
       permission: [Permission.READ_DISCHARGE_SUMMARY],
+    },
+    {
+      key: "/regulacao",
+      link: "/regulacao",
+      label: "Regulação",
+      icon: <FieldTimeOutlined />,
+      id: "gtm-lnk-regulation",
+      feature: Feature.REGULATION,
+      permission: [Permission.READ_REGULATION],
     },
     {
       key: "prioritization",
