@@ -1,55 +1,53 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Card, Descriptions } from "antd";
 
+import { formatDateTime } from "utils/date";
+import RichTextView from "components/RichTextView";
+
 export default function RegulationData() {
+  const solicitation = useSelector((state) => state.regulation.regulation.data);
   const items = [
     {
       key: "1",
       label: "Protocolo",
-      children: "1243",
+      children: solicitation.id,
       span: 2,
     },
     {
       key: "2",
       label: "Data da Solicitação",
-      children: "01/10/2024",
+      children: formatDateTime(solicitation.date),
       span: 2,
     },
     {
       key: "3",
       label: "Procedimento solicitado",
-      children: "03010022 - CONS. EM ENDOCRINOLOGIA",
+      children: `${solicitation.idRegSolicitationType} - ${solicitation.type}`,
       span: 4,
     },
     {
       key: "4",
       label: "Médico Solicitante",
-      children: "João Pereira",
+      children: solicitation.attendant,
       span: 2,
     },
     {
       key: "5",
       label: "CRM",
-      children: "2345",
-      span: 2,
-    },
-    {
-      key: "6",
-      label: "Diagnóstico Inicial",
-      children: "Exame Geral",
-      span: 2,
+      children: solicitation.attendantRecord,
+      span: 1,
     },
     {
       key: "7",
       label: "CID",
-      children: "1231231231231",
-      span: 2,
+      children: solicitation.cid,
+      span: 1,
     },
     {
       key: "8",
       label: "Justificativa",
-      children:
-        "Pac sem comobirdades, já cumpriu todas as etapas do planejamento familiar. Gesta III Para III US de maio de 2015. PV em andamento",
+      children: <RichTextView text={solicitation.justification} />,
       span: 4,
     },
   ];

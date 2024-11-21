@@ -11,12 +11,14 @@ import RegulationPatient from "./RegulationPatient/RegulationPatient";
 import RegulationData from "./RegulationData/RegulationData";
 import RegulationAction from "./RegulationAction/RegulationAction";
 import { fetchRegulation, reset } from "./RegulationSlice";
+import { formatDateTime } from "utils/date";
 
 import { PageHeader } from "styles/PageHeader.style";
 
 export default function Regulation() {
   const dispatch = useDispatch();
   const status = useSelector((state) => state.regulation.regulation.status);
+  const solicitation = useSelector((state) => state.regulation.regulation.data);
 
   const params = useParams();
   const id = params?.id;
@@ -55,6 +57,9 @@ export default function Regulation() {
       <PageHeader>
         <div>
           <h1 className="page-header-title">Regulação nº: {id}</h1>
+          <div className="page-header-legend">
+            Solicitado em {formatDateTime(solicitation.date)}
+          </div>
         </div>
         <div className="page-header-actions"></div>
       </PageHeader>

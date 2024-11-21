@@ -2,7 +2,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/regulation/api";
 
 const initialState = {
-  data: {},
+  data: {
+    patient: {},
+    movements: [],
+  },
   status: "loading",
   error: null,
   action: {
