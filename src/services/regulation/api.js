@@ -1,15 +1,19 @@
-import { mockInstance as instance, setHeaders } from "services/api";
+import { mockInstance, instance, setHeaders } from "services/api";
 
 const api = {};
+const baseEndpoint = "/regulation";
 
 api.fetchRegulationList = (params = {}) =>
-  instance.get("/mocks/regulation/prioritization.json", {
+  instance.post(`${baseEndpoint}/prioritization`, params, setHeaders());
+
+api.fetchRegulation = (params = {}) =>
+  mockInstance.get(`/mocks/regulation/regulation_${params.id}.json`, {
     params,
     ...setHeaders(),
   });
 
-api.fetchRegulation = (params = {}) =>
-  instance.get(`/mocks/regulation/regulation_${params.id}.json`, {
+api.fetchTypes = (params = {}) =>
+  instance.get(`${baseEndpoint}/types`, {
     params,
     ...setHeaders(),
   });

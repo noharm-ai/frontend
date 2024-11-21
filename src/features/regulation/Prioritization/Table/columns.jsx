@@ -9,14 +9,13 @@ import RegulationStageTag from "components/RegulationStageTag";
 
 const columns = (t) => {
   return [
-    {
-      title: "#",
-      align: "right",
-      width: 80,
-      render: (entry, record) => {
-        return record.id;
-      },
-    },
+    // {
+    //   title: "#",
+    //   align: "right",
+    //   render: (entry, record) => {
+    //     return record.id;
+    //   },
+    // },
     {
       title: "Solicitado em",
       align: "center",
@@ -28,14 +27,18 @@ const columns = (t) => {
       title: "Tipo",
       align: "left",
       render: (entry, record) => {
-        return record.type;
+        if (record.type && record.idRegSolicitationType) {
+          return `${record.idRegSolicitationType} - ${record.type}`;
+        }
+
+        return record.idRegSolicitationType;
       },
     },
     {
       title: "Nome",
       align: "left",
       render: (entry, record) => {
-        return record.name;
+        return `Paciente ${record.idPatient}`;
       },
     },
     {

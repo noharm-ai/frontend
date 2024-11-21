@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import api from "services/api";
+import regulationApi from "services/regulation/api";
 
 const initialState = {
   status: "idle",
@@ -60,6 +61,13 @@ const initialState = {
     list: [],
     status: "idle",
     error: null,
+  },
+  regulation: {
+    types: {
+      list: [],
+      status: "idle",
+      error: null,
+    },
   },
 };
 
@@ -227,6 +235,19 @@ export const getExamRefs = createAsyncThunk(
   }
 );
 
+export const getRegulationTypes = createAsyncThunk(
+  "lists/get-regulation-types",
+  async (params, thunkAPI) => {
+    try {
+      const response = await regulationApi.fetchTypes(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const listsSlice = createSlice({
   name: "lists",
   initialState,
@@ -357,6 +378,17 @@ const listsSlice = createSlice({
       .addCase(getSegmentDepartments.rejected, (state, action) => {
         state.getSegmentDepartments.status = "failed";
         state.getSegmentDepartments.error = action.error.message;
+      })
+      .addCase(getRegulationTypes.pending, (state, action) => {
+        state.regulation.types.status = "loading";
+      })
+      .addCase(getRegulationTypes.fulfilled, (state, action) => {
+        state.regulation.types.status = "succeeded";
+        state.regulation.types.list = action.payload.data;
+      })
+      .addCase(getRegulationTypes.rejected, (state, action) => {
+        state.regulation.types.status = "failed";
+        state.regulation.types.error = action.error.message;
       });
   },
 });
