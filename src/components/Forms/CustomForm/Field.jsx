@@ -2,7 +2,13 @@ import React from "react";
 import { Checkbox, Row, Col } from "antd";
 import dayjs from "dayjs";
 
-import { Select, InputNumber, Textarea, DatePicker } from "components/Inputs";
+import {
+  Select,
+  InputNumber,
+  Textarea,
+  DatePicker,
+  Input,
+} from "components/Inputs";
 import Editor from "components/Editor";
 
 import MemoryField from "./Fields/MemoryField";
@@ -78,6 +84,19 @@ export default function Field({ question, values, setFieldValue }) {
     );
   }
 
+  if (question.type === "plaintext") {
+    return (
+      <Input
+        style={{
+          width: 300,
+        }}
+        disabled={question.disabled}
+        value={values[question.id]}
+        onChange={({ target }) => setFieldValue(question.id, target.value)}
+      />
+    );
+  }
+
   if (question.type === "date") {
     return (
       <DatePicker
@@ -90,6 +109,29 @@ export default function Field({ question, values, setFieldValue }) {
           setFieldValue(question.id, value ? value.format("DD/MM/YYYY") : null)
         }
         popupClassName="noArrow"
+        allowClear
+      />
+    );
+  }
+
+  if (question.type === "datetime") {
+    return (
+      <DatePicker
+        format="DD/MM/YYYY HH:mm"
+        disabled={question.disabled}
+        value={
+          values[question.id]
+            ? dayjs(values[question.id], "DD/MM/YYYY HH:mm")
+            : null
+        }
+        onChange={(value) =>
+          setFieldValue(
+            question.id,
+            value ? value.format("DD/MM/YYYY HH:mm") : null
+          )
+        }
+        popupClassName="noArrow"
+        showTime
         allowClear
       />
     );

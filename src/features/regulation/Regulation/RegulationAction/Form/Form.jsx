@@ -25,13 +25,14 @@ export default function Form({ validationSchema, setValidationSchema }) {
         .required(t("validation.requiredField"));
     });
 
-    const validation = validationSchema.concat(
-      Yup.object({
-        actionData: Yup.object(actionDataFields),
-      })
-    );
-
-    console.log("new validation", validation);
+    const validation = Yup.object().shape({
+      id: Yup.number().nullable().required(t("validation.requiredField")),
+      action: Yup.string().nullable().required(t("validation.requiredField")),
+      nextStage: Yup.string()
+        .nullable()
+        .required(t("validation.requiredField")),
+      actionData: Yup.object(actionDataFields),
+    });
 
     setValidationSchema(validation);
   };

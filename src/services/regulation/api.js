@@ -17,4 +17,7 @@ api.fetchTypes = (params = {}) =>
     ...setHeaders(),
   });
 
+api.moveRegulation = (params = {}) =>
+  instance.post(`${baseEndpoint}/move`, params, setHeaders());
+
 export default api;
