@@ -28,6 +28,11 @@ export const ORDER_OPTIONS = [
     key: "risk",
     type: "number",
   },
+  {
+    label: "Idade",
+    key: "birthdate",
+    type: "date",
+  },
 ];
 
 export default function Order({ limit }) {
