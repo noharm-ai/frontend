@@ -27,8 +27,11 @@ export default function Filter({ limit }) {
     description: t("error.description"),
   };
   const initialValues = {
-    startDate: dayjs().subtract(15, "days").format("YYYY-MM-DD"),
+    startDate: dayjs().subtract(5, "days").format("YYYY-MM-DD"),
     endDate: null,
+    typeType: null,
+    idDepartmentList: [],
+    riskList: [],
     typeList: [],
     stageList: [],
   };
@@ -72,7 +75,7 @@ export default function Filter({ limit }) {
       onSearch={search}
       onChangeValues={onChangeFilter}
       loading={isFetching}
-      skipFilterList={["typeList", "startDate", "endDate"]}
+      skipFilterList={["idDepartmentList", "stageList", "startDate", "endDate"]}
     />
   );
 }

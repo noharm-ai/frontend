@@ -55,7 +55,7 @@ export default function Prioritization() {
   };
 
   const handleRowExpand = (record) => {
-    setExpandedRows(updateExpandedRows(expandedRows, record.key));
+    setExpandedRows(updateExpandedRows(expandedRows, record.id));
   };
 
   const ExpandColumn = ({ expand }) => {

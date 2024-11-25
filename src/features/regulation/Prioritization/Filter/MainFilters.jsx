@@ -3,27 +3,27 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 
-import { Select, RangeDatePicker } from "components/Inputs";
+import { Select, SelectCustom, RangeDatePicker } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 import RegulationStage from "models/regulation/RegulationStage";
-import { getRegulationTypes } from "features/lists/ListsSlice";
 import notification from "components/notification";
+import { getSegmentDepartments } from "features/lists/ListsSlice";
 
 export default function MainFilters() {
   const dispatch = useDispatch();
   const { i18n, t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
-  const regulationTypes = useSelector(
-    (state) => state.lists.regulation.types.list
+  const departments = useSelector(
+    (state) => state.lists.getSegmentDepartments.list
   );
-  const regulationTypesStatus = useSelector(
-    (state) => state.lists.regulation.types.status
+  const departmentsStatus = useSelector(
+    (state) => state.lists.getSegmentDepartments.status
   );
 
   useEffect(() => {
-    dispatch(getRegulationTypes()).then((response) => {
+    dispatch(getSegmentDepartments()).then((response) => {
       if (response.error) {
         notification.error({
           message: t("error.title"),
@@ -63,25 +63,33 @@ export default function MainFilters() {
       </Col>
       <Col md={5} lg={7} xxl={6}>
         <Heading as="label" size="14px">
-          Tipo:
+          UBS:
         </Heading>
-        <Select
-          style={{ width: "100%" }}
-          value={values.typeList}
-          onChange={(val) => setFieldValue({ typeList: val })}
-          showSearch
-          optionFilterProp="children"
-          allowClear
+        <SelectCustom
           mode="multiple"
+          optionFilterProp="children"
+          loading={departmentsStatus === "loading"}
+          value={values.idDepartmentList}
+          onChange={(value) => setFieldValue({ idDepartmentList: value })}
+          autoClearSearchValue={false}
+          allowClear
           maxTagCount="responsive"
-          loading={regulationTypesStatus === "loading"}
+          onSelectAll={() =>
+            setFieldValue({
+              idDepartmentList: departments.map((i) => i.idDepartment),
+            })
+          }
+          style={{ width: "100%" }}
         >
-          {regulationTypes.map((i) => (
-            <Select.Option key={i.id} value={i.id}>
-              {i.name} ({i.id})
+          {departments.map(({ idDepartment, idSegment, label }) => (
+            <Select.Option
+              key={`${idSegment}-${idDepartment}`}
+              value={idDepartment}
+            >
+              {label}
             </Select.Option>
           ))}
-        </Select>
+        </SelectCustom>
       </Col>
       <Col md={5} lg={4} xxl={4}>
         <Heading as="label" size="14px">

@@ -10,6 +10,7 @@ import RegulationHistory from "./RegulationHistory/RegulationHistory";
 import RegulationPatient from "./RegulationPatient/RegulationPatient";
 import RegulationData from "./RegulationData/RegulationData";
 import RegulationAction from "./RegulationAction/RegulationAction";
+import RegulationSchedules from "./RegulationSchedules/RegulationSchedules";
 import { fetchRegulation, reset } from "./RegulationSlice";
 import { formatDateTime } from "utils/date";
 
@@ -70,6 +71,7 @@ export default function Regulation() {
             <RegulationStats />
             <RegulationPatient />
             <RegulationData />
+            <RegulationSchedules />
           </Space>
         </Col>
         <Col xs={24 - 18}>

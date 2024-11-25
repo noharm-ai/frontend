@@ -13,9 +13,23 @@ const NestedTableContainer = styled.div`
 `;
 
 const expandedRowRender = (record) => {
+  const items = [
+    {
+      key: "1",
+      label: "Protocolo",
+      children: record.id,
+      span: 3,
+    },
+    {
+      key: "2",
+      label: "UBS",
+      children: record.department,
+      span: 3,
+    },
+  ];
   return (
     <NestedTableContainer>
-      <Descriptions bordered size="small"></Descriptions>
+      <Descriptions bordered size="small" items={items}></Descriptions>
     </NestedTableContainer>
   );
 };
