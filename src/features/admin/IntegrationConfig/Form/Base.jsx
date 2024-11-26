@@ -1,14 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import { Collapse } from "antd";
+import { Collapse, Flex } from "antd";
 
 import { Select, Input } from "components/Inputs";
+import Button from "components/Button";
+import Tooltip from "components/Tooltip";
+import DefaultModal from "components/Modal";
+import api from "services/api";
 import IntegrationStatusTag from "components/IntegrationStatusTag";
 
 function BaseForm() {
   const { t } = useTranslation();
+  const [generatingToken, setGeneratingToken] = useState();
   const { values, errors, touched, setFieldValue } = useFormikContext();
+
+  const generateToken = async () => {
+    setGeneratingToken(true);
+    const response = await api.getGetnameToken();
+
+    DefaultModal.info({
+      title: "Getname Token",
+      content: response.data?.data,
+      icon: null,
+      width: 550,
+      okText: "Fechar",
+      okButtonProps: { type: "default" },
+      wrapClassName: "default-modal",
+    });
+
+    setGeneratingToken(false);
+  };
 
   const getExtraOptions = () => [
     {
@@ -188,12 +210,32 @@ function BaseForm() {
                   <label>Secret:</label>
                 </div>
                 <div className="form-input">
-                  <Input
-                    value={values.config?.getname?.secret}
-                    onChange={({ target }) =>
-                      setFieldValue("config.getname.secret", target.value)
-                    }
-                  />
+                  <Flex>
+                    <Input
+                      value={values.config?.getname?.secret}
+                      onChange={({ target }) =>
+                        setFieldValue("config.getname.secret", target.value)
+                      }
+                    />
+                    <Tooltip
+                      title={
+                        values.schema !== localStorage.getItem("schema")
+                          ? "Para gerar o token você precisa fazer login no schema que está sendo configurado"
+                          : "Gerar token para teste (válido por 2min). Obs: salve o secret antes de gerar o token."
+                      }
+                    >
+                      <Button
+                        style={{ marginLeft: "5px" }}
+                        onClick={generateToken}
+                        loading={generatingToken}
+                        disabled={
+                          values.schema !== localStorage.getItem("schema")
+                        }
+                      >
+                        Gerar token
+                      </Button>
+                    </Tooltip>
+                  </Flex>
                 </div>
               </div>
             </>
