@@ -3,6 +3,8 @@ import moment from "moment";
 
 import FeatureService from "services/features";
 import appInfo from "utils/appInfo";
+import api from "services/api";
+import { store } from "store/index";
 
 const FLAG = "{idPatient}";
 
@@ -35,7 +37,8 @@ const defaultValue = (idPatient) => ({
 const getPatients = async (bearerToken, requestConfig) => {
   const { listToRequest, listToEscape, nameUrl, useCache, features, proxy } =
     requestConfig;
-  const nameHeaders = proxy
+  const getnameAuth = store.getState().app.config.getnameAuth;
+  let nameHeaders = proxy
     ? {
         Authorization: `Bearer ${
           localStorage.getItem("ac1") + localStorage.getItem("ac2")
@@ -51,6 +54,13 @@ const getPatients = async (bearerToken, requestConfig) => {
   }
 
   if (!featureService.hasDisableGetname()) {
+    if (getnameAuth) {
+      const { data: token_response } = await api.getGetnameToken();
+      nameHeaders = {
+        authorization: token_response.data,
+      };
+    }
+
     if (requestConfig.multipleNameUrl && listToRequest.length > 1) {
       const cacheConfig = {};
       const requestIds = [];
