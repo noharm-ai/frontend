@@ -35,11 +35,11 @@ const defaultValue = (idPatient) => ({
  * ]
  */
 const getPatients = async (bearerToken, requestConfig) => {
-  const { listToRequest, listToEscape, nameUrl, useCache, features } =
+  const { listToRequest, listToEscape, nameUrl, useCache, features, proxy } =
     requestConfig;
   const getnameType = store.getState().app.config.getnameType;
   let nameHeaders =
-    getnameType === "proxy"
+    getnameType === "proxy" || proxy
       ? {
           Authorization: `Bearer ${
             localStorage.getItem("ac1") + localStorage.getItem("ac2")
@@ -170,10 +170,10 @@ const getPatients = async (bearerToken, requestConfig) => {
 };
 
 const getSinglePatient = async (bearerToken, requestConfig) => {
-  const { idPatient, nameUrl } = requestConfig;
+  const { idPatient, nameUrl, proxy } = requestConfig;
   const getnameType = store.getState().app.config.getnameType;
   let nameHeaders =
-    getnameType === "proxy"
+    getnameType === "proxy" || proxy
       ? {
           Authorization: `Bearer ${bearerToken}`,
           "x-api-key": appInfo.apiKey,
