@@ -1,54 +1,66 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Card, Descriptions } from "antd";
 
+import { formatDate } from "utils/date";
+
 export default function RegulationPatient() {
+  const patient = useSelector(
+    (state) => state.regulation.regulation.data.patient
+  );
   const items = [
     {
       key: "1",
       label: "Nome",
-      children: "Luciana Almeida",
+      children: patient?.name || `Paciente ${patient?.id}`,
       span: 4,
     },
     {
       key: "2",
       label: "Data de Nascimento",
-      children: "01/10/1975",
+      children: formatDate(patient.birthdate),
       span: 2,
     },
     {
       key: "3",
       label: "Sexo",
-      children: "Feminino",
+      children: (
+        <>
+          {patient.gender === "F" && "Feminino"}
+          {patient.gender === "M" && "Masculino"}
+          {patient.gender !== "M" && patient.gender !== "F" && patient.gender}
+        </>
+      ),
       span: 2,
     },
     {
       key: "4",
       label: "Endereço",
-      children: "Av. Independência, 3456",
+      children: null,
       span: 4,
     },
     {
       key: "5",
       label: "Bairro",
-      children: "Bairro",
+      children: null,
       span: 2,
     },
     {
       key: "6",
       label: "Cidade",
-      children: "Cidade",
+      children: null,
       span: 2,
     },
     {
       key: "7",
       label: "Estado",
-      children: "Rio Grande do Sul",
+      children: null,
       span: 2,
     },
     {
       key: "8",
       label: "CEP",
-      children: "90000-000",
+      children: null,
       span: 2,
     },
   ];

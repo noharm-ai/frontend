@@ -2,20 +2,19 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Tag } from "antd";
 
+import RegulationStage from "models/regulation/RegulationStage";
+
 export default function RegulationStageTag({ stage, ...props }) {
   const { t } = useTranslation();
 
   const getColor = () => {
-    switch (stage) {
-      case "INITIAL":
-        return "default";
-      case "WAITING_SCHEDULE":
-        return "blue";
-      case "FINISHED":
-        return "green";
-      default:
-        return "default";
+    const config = RegulationStage.getStages(t).find((s) => s.id === stage);
+
+    if (config) {
+      return config.color;
     }
+
+    return "default";
   };
 
   return (

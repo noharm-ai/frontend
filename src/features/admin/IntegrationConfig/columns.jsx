@@ -71,6 +71,22 @@ const columns = (t, dispatch, setIntegration) => {
       },
     },
     {
+      title: "CPOE",
+      dataIndex: "cpoe",
+      align: "center",
+      render: (entry, record) => {
+        if (record.cpoe) {
+          return (
+            <Tag color="success" style={{ margin: 0 }}>
+              Sim
+            </Tag>
+          );
+        }
+
+        return <Tag style={{ margin: 0 }}>Não</Tag>;
+      },
+    },
+    {
       title: t("labels.status"),
       align: "center",
       render: (entry, record) => {

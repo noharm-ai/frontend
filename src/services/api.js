@@ -114,6 +114,9 @@ const refreshToken = () =>
 const getAuthProvider = (schema) =>
   instance.get(`${endpoints.oauth}/${schema}`, { ...setHeaders() });
 
+const getGetnameToken = () =>
+  instance.get(`names/auth-token`, { ...setHeaders() });
+
 /**
  * Segments.
  *
@@ -755,6 +758,7 @@ const methods = {
   authenticateOAuth,
   refreshToken,
   getAuthProvider,
+  getGetnameToken,
   getVersion,
   getSegments,
   getPrescriptions,

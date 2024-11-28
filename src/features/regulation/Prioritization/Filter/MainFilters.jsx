@@ -1,15 +1,37 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 
-import { Select, RangeDatePicker } from "components/Inputs";
+import { Select, SelectCustom, RangeDatePicker } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
+import RegulationStage from "models/regulation/RegulationStage";
+import notification from "components/notification";
+import { getSegmentDepartments } from "features/lists/ListsSlice";
 
 export default function MainFilters() {
-  const { i18n } = useTranslation();
+  const dispatch = useDispatch();
+  const { i18n, t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
+  const departments = useSelector(
+    (state) => state.lists.getSegmentDepartments.list
+  );
+  const departmentsStatus = useSelector(
+    (state) => state.lists.getSegmentDepartments.status
+  );
+
+  useEffect(() => {
+    dispatch(getSegmentDepartments()).then((response) => {
+      if (response.error) {
+        notification.error({
+          message: t("error.title"),
+          description: t("error.description"),
+        });
+      }
+    });
+  }, [dispatch, t]);
 
   const onChangeDates = (value) => {
     const startDate = value[0] ? dayjs(value[0]).format("YYYY-MM-DD") : null;
@@ -39,27 +61,35 @@ export default function MainFilters() {
           language={i18n.language}
         />
       </Col>
-      <Col md={5} lg={4} xxl={4}>
+      <Col md={5} lg={7} xxl={6}>
         <Heading as="label" size="14px">
-          Tipo:
+          UBS:
         </Heading>
-        <Select
-          style={{ width: "100%" }}
-          value={values.typeList}
-          onChange={(val) => setFieldValue({ typeList: val })}
-          showSearch
-          optionFilterProp="children"
-          allowClear
+        <SelectCustom
           mode="multiple"
+          optionFilterProp="children"
+          loading={departmentsStatus === "loading"}
+          value={values.idDepartmentList}
+          onChange={(value) => setFieldValue({ idDepartmentList: value })}
+          autoClearSearchValue={false}
+          allowClear
           maxTagCount="responsive"
+          onSelectAll={() =>
+            setFieldValue({
+              idDepartmentList: departments.map((i) => i.idDepartment),
+            })
+          }
+          style={{ width: "100%" }}
         >
-          <Select.Option key={0} value={true}>
-            Teste1
-          </Select.Option>
-          <Select.Option key={1} value={false}>
-            Teste2
-          </Select.Option>
-        </Select>
+          {departments.map(({ idDepartment, idSegment, label }) => (
+            <Select.Option
+              key={`${idSegment}-${idDepartment}`}
+              value={idDepartment}
+            >
+              {label}
+            </Select.Option>
+          ))}
+        </SelectCustom>
       </Col>
       <Col md={5} lg={4} xxl={4}>
         <Heading as="label" size="14px">
@@ -75,12 +105,11 @@ export default function MainFilters() {
           mode="multiple"
           maxTagCount="responsive"
         >
-          <Select.Option key={0} value={true}>
-            Não iniciado
-          </Select.Option>
-          <Select.Option key={1} value={false}>
-            Aguardando agendamento
-          </Select.Option>
+          {RegulationStage.getStages(t).map((s) => (
+            <Select.Option key={s.id} value={s.id}>
+              {s.label}
+            </Select.Option>
+          ))}
         </Select>
       </Col>
     </>

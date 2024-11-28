@@ -6,8 +6,11 @@ import * as Yup from "yup";
 
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
+import notification from "components/notification";
 import Form from "./Form/Form";
-import { setActionModal } from "../RegulationSlice";
+import { getErrorMessage } from "utils/errorHandler";
+import RegulationActionModel from "models/regulation/RegulationAction";
+import { setActionModal, moveRegulation } from "../RegulationSlice";
 
 export default function RegulationAction() {
   const { t } = useTranslation();
@@ -35,7 +38,23 @@ export default function RegulationAction() {
   };
 
   const onSave = (params) => {
-    console.log("save", params);
+    const payload = {
+      ...params,
+      actionDataTemplate: RegulationActionModel.getForm(params.action, t),
+    };
+    dispatch(moveRegulation(payload)).then((response) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        notification.success({
+          message: "Ação aplicada com sucesso!",
+        });
+
+        onCancel();
+      }
+    });
   };
 
   const onCancel = () => {

@@ -1,14 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import { Collapse } from "antd";
+import { Collapse, Flex } from "antd";
 
-import { Select } from "components/Inputs";
+import { Select, Input } from "components/Inputs";
+import Button from "components/Button";
+import Tooltip from "components/Tooltip";
+import DefaultModal from "components/Modal";
+import api from "services/api";
 import IntegrationStatusTag from "components/IntegrationStatusTag";
 
 function BaseForm() {
   const { t } = useTranslation();
+  const [generatingToken, setGeneratingToken] = useState();
   const { values, errors, touched, setFieldValue } = useFormikContext();
+
+  const generateToken = async () => {
+    setGeneratingToken(true);
+    const response = await api.getGetnameToken();
+
+    DefaultModal.info({
+      title: "Getname Token",
+      content: response.data?.data,
+      icon: null,
+      width: 550,
+      okText: "Fechar",
+      okButtonProps: { type: "default" },
+      wrapClassName: "default-modal",
+    });
+
+    setGeneratingToken(false);
+  };
 
   const getExtraOptions = () => [
     {
@@ -149,6 +171,181 @@ function BaseForm() {
     },
   ];
 
+  const getGetnameOptions = () => [
+    {
+      key: "1",
+      label: "Getname",
+      children: (
+        <>
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>Tipo:</label>
+            </div>
+            <div className="form-input">
+              <Select
+                onChange={(value) =>
+                  setFieldValue("config.getname.type", value)
+                }
+                value={values.config?.getname?.type}
+                optionFilterProp="children"
+                showSearch
+              >
+                <Select.Option key={0} value={"default"}>
+                  Getname NoHarm - Sem autenticação
+                </Select.Option>
+                <Select.Option key={1} value={"auth"}>
+                  Getname NoHarm - Com autenticação
+                </Select.Option>
+                <Select.Option key={2} value={"proxy"}>
+                  Proxy
+                </Select.Option>
+              </Select>
+            </div>
+          </div>
+
+          {values.config?.getname?.type === "auth" && (
+            <>
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>Secret:</label>
+                </div>
+                <div className="form-input">
+                  <Flex>
+                    <Input
+                      value={values.config?.getname?.secret}
+                      onChange={({ target }) =>
+                        setFieldValue("config.getname.secret", target.value)
+                      }
+                    />
+                    <Tooltip
+                      title={
+                        values.schema !== localStorage.getItem("schema")
+                          ? "Para gerar o token você precisa fazer login no schema que está sendo configurado"
+                          : "Gerar token para teste (válido por 2min). Obs: salve o secret antes de gerar o token."
+                      }
+                    >
+                      <Button
+                        style={{ marginLeft: "5px" }}
+                        onClick={generateToken}
+                        loading={generatingToken}
+                        disabled={
+                          values.schema !== localStorage.getItem("schema")
+                        }
+                      >
+                        Gerar token
+                      </Button>
+                    </Tooltip>
+                  </Flex>
+                </div>
+              </div>
+            </>
+          )}
+
+          {values.config?.getname?.type === "proxy" && (
+            <>
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>URL resolução de nomes:</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    value={values.config?.getname?.url}
+                    onChange={({ target }) =>
+                      setFieldValue("config.getname.url", target.value)
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>URL token:</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    value={values.config?.getname?.token?.url}
+                    onChange={({ target }) =>
+                      setFieldValue("config.getname.token.url", target.value)
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>client_id:</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    value={values.config?.getname?.token?.params?.client_id}
+                    onChange={({ target }) =>
+                      setFieldValue(
+                        "config.getname.token.params.client_id",
+                        target.value
+                      )
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>client_secret:</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    value={values.config?.getname?.token?.params?.client_secret}
+                    onChange={({ target }) =>
+                      setFieldValue(
+                        "config.getname.token.params.client_secret",
+                        target.value
+                      )
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>grant_type:</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    value={values.config?.getname?.token?.params?.grant_type}
+                    onChange={({ target }) =>
+                      setFieldValue(
+                        "config.getname.token.params.grant_type",
+                        target.value
+                      )
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>Parâmetros (json):</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    value={
+                      typeof values.config?.getname?.params === "object"
+                        ? JSON.stringify(values.config?.getname?.params)
+                        : values.config?.getname?.params
+                    }
+                    onChange={({ target }) =>
+                      setFieldValue("config.getname.params", target.value)
+                    }
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </>
+      ),
+    },
+  ];
+
   return (
     <>
       <div
@@ -178,6 +375,31 @@ function BaseForm() {
         </div>
         {errors.status && touched.status && (
           <div className="form-error">{errors.status}</div>
+        )}
+      </div>
+
+      <div className={`form-row ${errors.cpoe && touched.cpoe ? "error" : ""}`}>
+        <div className="form-label">
+          <label>CPOE:</label>
+        </div>
+        <div className="form-input">
+          <Select
+            onChange={(value) => setFieldValue("cpoe", value)}
+            value={values.cpoe}
+            status={errors.cpoe && touched.cpoe ? "error" : null}
+            optionFilterProp="children"
+            showSearch
+          >
+            <Select.Option key={0} value={false}>
+              Não
+            </Select.Option>
+            <Select.Option key={1} value={true}>
+              Sim
+            </Select.Option>
+          </Select>
+        </div>
+        {errors.cpoe && touched.cpoe && (
+          <div className="form-error">{errors.cpoe}</div>
         )}
       </div>
 
@@ -215,6 +437,12 @@ function BaseForm() {
         accordion
         style={{ marginTop: "1rem" }}
         items={getExtraOptions()}
+      ></Collapse>
+
+      <Collapse
+        accordion
+        style={{ marginTop: "1rem" }}
+        items={getGetnameOptions()}
       ></Collapse>
     </>
   );

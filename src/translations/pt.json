@@ -861,20 +861,29 @@
 
   "regulation": {
     "risk": {
+      "risk_null": "Não definido",
       "risk_1": "Eletivo",
       "risk_2": "Prioritário",
       "risk_3": "Urgência",
       "risk_4": "Emergência"
     },
     "stage": {
-      "INITIAL": "Não iniciado",
-      "WAITING_SCHEDULE": "Aguardando agendamento",
-      "FINISHED": "Finalizado"
+      "0": "Não iniciado",
+      "1": "Aguardando agendamento",
+      "2": "Aguardando reagendamento",
+      "3": "Aguardando aviso ao paciente",
+      "4": "Aguardando agendamento do transporte",
+      "5": "Aguardando documentação",
+      "6": "Aguardando realização",
+      "7": "Aguardando sistema externo",
+      "98": "Cancelado",
+      "99": "Finalizado"
     },
     "action": {
-      "SCHEDULE": "Agendar",
-      "SCHEDULE_TRANSPORT": "Agendar transporte",
-      "UPDATE_STAGE": "Alterar etapa"
+      "1": "Alterar etapa",
+      "2": "Agendar",
+      "3": "Agendar transporte",
+      "4": "Solicitar sistema externo"
     }
   }
 }

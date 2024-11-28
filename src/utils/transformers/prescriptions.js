@@ -25,6 +25,26 @@ const fillConciliationRelatedDrugs = (list, conciliaList) => {
       item.conciliaRelationId = null;
     }
   });
+
+  list.forEach((item) => {
+    if (item.conciliaRelationId) {
+      return;
+    }
+
+    let relation;
+
+    if (conciliaList) {
+      relation = conciliaList.find((d) => {
+        return d.sctid === item.sctid_infer;
+      });
+    }
+
+    if (relation) {
+      item.conciliaRelationId = relation.idPrescriptionDrug;
+    } else {
+      item.conciliaRelationId = null;
+    }
+  });
 };
 
 /**

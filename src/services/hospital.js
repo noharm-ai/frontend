@@ -3,6 +3,8 @@ import moment from "moment";
 
 import FeatureService from "services/features";
 import appInfo from "utils/appInfo";
+import api from "services/api";
+import { store } from "store/index";
 
 const FLAG = "{idPatient}";
 
@@ -35,14 +37,16 @@ const defaultValue = (idPatient) => ({
 const getPatients = async (bearerToken, requestConfig) => {
   const { listToRequest, listToEscape, nameUrl, useCache, features, proxy } =
     requestConfig;
-  const nameHeaders = proxy
-    ? {
-        Authorization: `Bearer ${
-          localStorage.getItem("ac1") + localStorage.getItem("ac2")
-        }`,
-        "x-api-key": appInfo.apiKey,
-      }
-    : requestConfig.nameHeaders;
+  const getnameType = store.getState().app.config.getnameType;
+  let nameHeaders =
+    getnameType === "proxy" || proxy
+      ? {
+          Authorization: `Bearer ${
+            localStorage.getItem("ac1") + localStorage.getItem("ac2")
+          }`,
+          "x-api-key": appInfo.apiKey,
+        }
+      : requestConfig.nameHeaders;
   const featureService = FeatureService(features);
   let promises;
 
@@ -51,6 +55,13 @@ const getPatients = async (bearerToken, requestConfig) => {
   }
 
   if (!featureService.hasDisableGetname()) {
+    if (getnameType === "auth") {
+      const { data: token_response } = await api.getGetnameToken();
+      nameHeaders = {
+        Authorization: `Bearer ${token_response.data}`,
+      };
+    }
+
     if (requestConfig.multipleNameUrl && listToRequest.length > 1) {
       const cacheConfig = {};
       const requestIds = [];
@@ -160,12 +171,21 @@ const getPatients = async (bearerToken, requestConfig) => {
 
 const getSinglePatient = async (bearerToken, requestConfig) => {
   const { idPatient, nameUrl, proxy } = requestConfig;
-  const nameHeaders = proxy
-    ? {
-        Authorization: `Bearer ${bearerToken}`,
-        "x-api-key": appInfo.apiKey,
-      }
-    : requestConfig.nameHeaders;
+  const getnameType = store.getState().app.config.getnameType;
+  let nameHeaders =
+    getnameType === "proxy" || proxy
+      ? {
+          Authorization: `Bearer ${bearerToken}`,
+          "x-api-key": appInfo.apiKey,
+        }
+      : requestConfig.nameHeaders;
+
+  if (getnameType === "auth") {
+    const { data: token_response } = await api.getGetnameToken();
+    nameHeaders = {
+      Authorization: `Bearer ${token_response.data}`,
+    };
+  }
 
   const urlRequest = nameUrl.replace(FLAG, idPatient);
 

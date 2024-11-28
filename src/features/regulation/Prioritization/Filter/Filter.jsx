@@ -19,6 +19,7 @@ export default function Filter({ limit }) {
   const isFetching =
     useSelector((state) => state.regulation.prioritization.status) ===
     "loading";
+  const order = useSelector((state) => state.regulation.prioritization.order);
 
   const { t } = useTranslation();
   const errorMessage = {
@@ -26,20 +27,24 @@ export default function Filter({ limit }) {
     description: t("error.description"),
   };
   const initialValues = {
-    startDate: dayjs().subtract(15, "days").format("YYYY-MM-DD"),
+    startDate: dayjs().subtract(5, "days").format("YYYY-MM-DD"),
     endDate: null,
+    typeType: null,
+    idDepartmentList: [],
+    riskList: [],
     typeList: [],
     stageList: [],
   };
 
   useEffect(() => {
-    dispatch(fetchRegulationList({ ...initialValues, limit, offset: 0 })).then(
-      (response) => {
-        if (response.error) {
-          notification.error(errorMessage);
-        }
+    dispatch(setFilters(initialValues));
+    dispatch(
+      fetchRegulationList({ ...initialValues, limit, offset: 0, order })
+    ).then((response) => {
+      if (response.error) {
+        notification.error(errorMessage);
       }
-    );
+    });
 
     return () => {
       dispatch(reset());
@@ -49,7 +54,7 @@ export default function Filter({ limit }) {
   const search = (params) => {
     dispatch(setCurrentPage(1));
     dispatch(setFilters(params));
-    dispatch(fetchRegulationList({ ...params, limit, offset: 0 })).then(
+    dispatch(fetchRegulationList({ ...params, limit, offset: 0, order })).then(
       (response) => {
         if (response.error) {
           notification.error(errorMessage);
@@ -58,14 +63,19 @@ export default function Filter({ limit }) {
     );
   };
 
+  const onChangeFilter = (values) => {
+    dispatch(setFilters(values));
+  };
+
   return (
     <AdvancedFilter
       initialValues={initialValues}
       mainFilters={<MainFilters />}
       secondaryFilters={<SecondaryFilters />}
       onSearch={search}
+      onChangeValues={onChangeFilter}
       loading={isFetching}
-      skipFilterList={["typeList", "startDate", "endDate"]}
+      skipFilterList={["idDepartmentList", "stageList", "startDate", "endDate"]}
     />
   );
 }

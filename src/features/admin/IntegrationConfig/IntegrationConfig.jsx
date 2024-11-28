@@ -40,6 +40,10 @@ const filterList = (ds, filter) => {
       show = show && i.nhCare === filter.nhCare;
     }
 
+    if (filter.cpoe !== null && filter.cpoe !== undefined) {
+      show = show && i.cpoe === filter.cpoe;
+    }
+
     if (filter.fl.length) {
       const activeFlows = Object.keys(i).map((k) => {
         if (i[k] === true) {
@@ -167,6 +171,19 @@ function IntegrationConfig() {
                 <Select.Option value={"fl2"}>FL2</Select.Option>
                 <Select.Option value={"fl3"}>FL3</Select.Option>
                 <Select.Option value={"fl4"}>FL4</Select.Option>
+              </Select>
+            </div>
+            <div className="filter-field">
+              <label>CPOE</label>
+              <Select
+                onChange={(val) => setFilter({ ...filter, cpoe: val })}
+                allowClear
+                style={{ minWidth: "200px" }}
+                optionFilterProp="children"
+                loading={status === "loading"}
+              >
+                <Select.Option value={true}>Sim</Select.Option>
+                <Select.Option value={false}>Não</Select.Option>
               </Select>
             </div>
           </ExtraFilters>

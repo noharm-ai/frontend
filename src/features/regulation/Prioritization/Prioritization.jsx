@@ -30,15 +30,17 @@ export default function Prioritization() {
   const filters = useSelector(
     (state) => state.regulation.prioritization.filters
   );
+  const order = useSelector((state) => state.regulation.prioritization.order);
   const datasource = useSelector(
     (state) => state.regulation.prioritization.list
   );
+
   const limit = 30;
 
   const onPageChange = (newPage) => {
     dispatch(setCurrentPage(newPage));
 
-    const params = { ...filters, limit, offset: (newPage - 1) * limit };
+    const params = { ...filters, limit, offset: (newPage - 1) * limit, order };
     setExpandedRows([]);
 
     dispatch(fetchRegulationList(params));
@@ -53,7 +55,7 @@ export default function Prioritization() {
   };
 
   const handleRowExpand = (record) => {
-    setExpandedRows(updateExpandedRows(expandedRows, record.key));
+    setExpandedRows(updateExpandedRows(expandedRows, record.id));
   };
 
   const ExpandColumn = ({ expand }) => {
@@ -113,7 +115,7 @@ export default function Prioritization() {
             emptyText: (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description="Nenhum solicitação encontrada."
+                description="Nenhuma solicitação encontrada."
               />
             ),
           }}

@@ -2,7 +2,11 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/regulation/api";
 
 const initialState = {
-  data: {},
+  data: {
+    patient: {},
+    extra: {},
+    movements: [],
+  },
   status: "loading",
   error: null,
   action: {
@@ -17,6 +21,19 @@ export const fetchRegulation = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.fetchRegulation(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const moveRegulation = createAsyncThunk(
+  "regulation/move",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.moveRegulation(params);
 
       return response;
     } catch (err) {
@@ -49,6 +66,19 @@ const regulationSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
         state.list = [];
+      })
+      .addCase(moveRegulation.pending, (state, action) => {
+        state.action.status = "loading";
+      })
+      .addCase(moveRegulation.fulfilled, (state, action) => {
+        state.action.status = "succeeded";
+        state.data.movements = action.payload.data.data.movements;
+        state.data.stage = action.payload.data.data.stage;
+        state.data.extra = action.payload.data.data.extra;
+      })
+      .addCase(moveRegulation.rejected, (state, action) => {
+        state.action.status = "failed";
+        state.action.error = action.error.message;
       });
   },
 });
