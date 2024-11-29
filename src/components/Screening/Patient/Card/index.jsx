@@ -1,7 +1,7 @@
 import "styled-components/macro";
 
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
   EditOutlined,
@@ -77,10 +77,6 @@ export default function PatientCard({
       },
     });
   };
-
-  const aggPrescriptions = useSelector(
-    (state) => state.lists.searchAggPrescriptions.list
-  );
 
   const showInterventionModal = () => {
     const data = {
@@ -160,11 +156,8 @@ export default function PatientCard({
   };
 
   const fetchAggPrescriptions = async (value) => {
-    dispatch(searchAggPrescriptions({ term: value })).then((response) => {
-      if (aggPrescriptions.length) {
-        console.log(aggPrescriptions);
-      }
-    });
+    const response = await dispatch(searchAggPrescriptions({ term: value }));
+    return response.payload.data;
   };
 
   const handleMenuClick = async ({ key, domEvent }) => {
@@ -176,7 +169,9 @@ export default function PatientCard({
         updatePrescriptionData();
         break;
       case "gotoAgg":
-        fetchAggPrescriptions(prescription.admissionNumber);
+        const aggPrescriptions = await fetchAggPrescriptions(
+          prescription.admissionNumber
+        );
         const result = aggPrescriptions[0];
         if (result && !result.concilia) {
           window.open(`/prescricao/${result.idPrescription}`);
