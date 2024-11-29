@@ -511,8 +511,7 @@ export default function ScreeningList({
             <Tag>{listCount.all}</Tag>
           </Button>
         </Tooltip>
-      </TableInfo>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+
         {prioritizationType === "prescription" && (
           <div>
             <Button
@@ -533,6 +532,9 @@ export default function ScreeningList({
             </Button>
           </div>
         )}
+      </TableInfo>
+
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
         {prioritizationType === "patient" && (
           <div>
             <Dropdown.Button
