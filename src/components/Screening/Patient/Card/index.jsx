@@ -1,7 +1,7 @@
 import "styled-components/macro";
 
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
   EditOutlined,
@@ -29,6 +29,7 @@ import notification from "components/notification";
 import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import { setChooseConciliationModal } from "features/prescription/PrescriptionSlice";
+import { searchAggPrescriptions } from "features/lists/ListsSlice";
 
 import PatientName from "containers/PatientName";
 
@@ -76,6 +77,10 @@ export default function PatientCard({
       },
     });
   };
+
+  const aggPrescriptions = useSelector(
+    (state) => state.lists.searchAggPrescriptions.list
+  );
 
   const showInterventionModal = () => {
     const data = {
@@ -154,7 +159,15 @@ export default function PatientCard({
     }
   };
 
-  const handleMenuClick = ({ key, domEvent }) => {
+  const fetchAggPrescriptions = async (value) => {
+    dispatch(searchAggPrescriptions({ term: value })).then((response) => {
+      if (aggPrescriptions.length) {
+        console.log(aggPrescriptions);
+      }
+    });
+  };
+
+  const handleMenuClick = async ({ key, domEvent }) => {
     switch (key) {
       case "edit":
         setModalVisibility("patientEdit", true);
@@ -163,8 +176,10 @@ export default function PatientCard({
         updatePrescriptionData();
         break;
       case "gotoAgg":
-        if (prescription.prescriptionAggId) {
-          window.open(`/prescricao/${prescription.prescriptionAggId}`);
+        fetchAggPrescriptions(prescription.admissionNumber);
+        const result = aggPrescriptions[0];
+        if (result && !result.concilia) {
+          window.open(`/prescricao/${result.idPrescription}`);
         } else {
           notification.error({
             message:
