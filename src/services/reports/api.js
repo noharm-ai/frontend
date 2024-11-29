@@ -32,4 +32,10 @@ api.live.getAntimicrobialHistoryReport = (params = {}) =>
     ...setHeaders(),
   });
 
+api.live.getPrescriptionHistoryReport = (params = {}) =>
+  instance.get(`/reports/prescription/history`, {
+    params,
+    ...setHeaders(),
+  });
+
 export default api;

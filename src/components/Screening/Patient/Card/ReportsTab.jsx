@@ -4,6 +4,8 @@ import { PieChartOutlined } from "@ant-design/icons";
 import Tooltip from "components/Tooltip";
 import ViewReport from "components/Reports/ViewReport";
 import DefaultModal from "components/Modal";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
 
 export default function ReportsTab({ prescription }) {
   const [currentReport, setCurrentReport] = useState(null);
@@ -35,6 +37,12 @@ export default function ReportsTab({ prescription }) {
       visible:
         admissionReportsInternal &&
         admissionReportsInternal.indexOf("ANTIMICROBIAL_HISTORY") !== -1,
+    },
+    {
+      title: "Histórico de Eventos",
+      description: "Histórico de checagens, deschecagens e revisões.",
+      type: "PRESCRIPTION_HISTORY",
+      visible: PermissionService().has(Permission.MAINTAINER),
     },
   ];
 

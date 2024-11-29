@@ -7,6 +7,7 @@ import LoadBox from "components/LoadBox";
 import { Row } from "components/Grid";
 import CultureReport from "features/reports/CultureReport/CultureReport";
 import AntimicrobialHistoryReport from "features/reports/AntimicrobialHistoryReport/AntimicrobialHistoryReport";
+import PrescriptionHistoryReport from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReport";
 
 const DashboardContainer = styled("div")`
   width: 100%;
@@ -36,6 +37,10 @@ export default function Reports({ report, prescription }) {
 
   if (report.type === "ANTIMICROBIAL_HISTORY") {
     return <AntimicrobialHistoryReport prescription={prescription} />;
+  }
+
+  if (report.type === "PRESCRIPTION_HISTORY") {
+    return <PrescriptionHistoryReport prescription={prescription} />;
   }
 
   return (
