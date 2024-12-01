@@ -3,7 +3,7 @@ import { exportCSV } from "utils/report";
 const filterDatasource = (datasource, filters) => {
   return datasource.filter((i) => {
     if (filters.responsibleList.length) {
-      return filters.responsibleList.indexOf(i.substance) !== -1;
+      return filters.responsibleList.indexOf(i.responsible) !== -1;
     }
 
     return true;

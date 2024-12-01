@@ -21,33 +21,55 @@ export default function HistoryList() {
     {
       title: "Evento",
       render: (_, record) => {
-        switch (record.type) {
-          case 1:
-            return "Prescrição checada";
+        if (record.source === "PrescriptionAudit") {
+          switch (record.type) {
+            case 1:
+              return "Prescrição checada";
 
-          case 2:
-            return "Desfazer checagem";
+            case 2:
+              if (!record.responsible) {
+                return "Desfazer checagem (novos itens)";
+              }
 
-          case 3:
-            return "Prescrição revisada";
+              return "Desfazer checagem";
 
-          case 4:
-            return "Desfazer revisão";
+            case 3:
+              return "Prescrição revisada";
 
-          case 5:
-            return "Evolução enviada ao PEP";
+            case 4:
+              return "Desfazer revisão";
 
-          case 6:
-            return "Checagem enviada ao PEP";
+            case 5:
+              return "Evolução enviada ao PEP";
 
-          case 7:
-            return "Registro/Atualização de evolução";
+            case 6:
+              return "Checagem enviada ao PEP";
 
-          case 8:
-            return "Criação do Paciente-Dia (prescrição do paciente)";
+            case 7:
+              return "Registro/Atualização de evolução";
 
-          default:
-            return `Não definido: ${record.type}`;
+            case 8:
+              return "Criação do Paciente-Dia (prescrição do paciente)";
+
+            default:
+              return `Não definido: ${record.type}-${record.source}`;
+          }
+        }
+
+        if (record.source === "custom") {
+          switch (record.type) {
+            case 1:
+              return "Prescrição criada";
+
+            case 2:
+              return "Prescrição chegou na NoHarm";
+
+            case 3:
+              return "Processada (prescalc)";
+
+            default:
+              return `Não definido: ${record.type}-${record.source}`;
+          }
         }
       },
     },
