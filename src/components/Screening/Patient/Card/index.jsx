@@ -1,7 +1,7 @@
 import "styled-components/macro";
 
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
   EditOutlined,
@@ -38,6 +38,7 @@ import AdmissionTab from "./AdmissionData";
 import NotesTab from "./NotesTab";
 import ReportsTab from "./ReportsTab";
 import { PatientBox } from "../Patient.style";
+import { Spin } from "antd";
 
 export default function PatientCard({
   prescription,
@@ -50,6 +51,9 @@ export default function PatientCard({
 }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const aggPrescriptionStatus = useSelector(
+    (state) => state.lists.searchAggPrescriptions.status
+  );
 
   const {
     admissionNumber,
@@ -160,6 +164,20 @@ export default function PatientCard({
     return response.payload.data;
   };
 
+  const openAggPrescription = async () => {
+    const aggPrescriptions = await fetchAggPrescriptions(
+      prescription.admissionNumber
+    );
+    const prescriptionResult = aggPrescriptions.find((p) => !p.concilia);
+    if (prescriptionResult) {
+      window.open(`/prescricao/${prescriptionResult.idPrescription}`);
+    } else {
+      notification.error({
+        message: "Não foi possível encontrar a Prescrição-Dia deste paciente.",
+      });
+    }
+  };
+
   const handleMenuClick = async ({ key, domEvent }) => {
     switch (key) {
       case "edit":
@@ -169,18 +187,7 @@ export default function PatientCard({
         updatePrescriptionData();
         break;
       case "gotoAgg":
-        const aggPrescriptions = await fetchAggPrescriptions(
-          prescription.admissionNumber
-        );
-        const result = aggPrescriptions[0];
-        if (result && !result.concilia) {
-          window.open(`/prescricao/${result.idPrescription}`);
-        } else {
-          notification.error({
-            message:
-              "Não foi possível encontrar a Prescrição-Dia deste paciente.",
-          });
-        }
+        openAggPrescription();
         break;
       case "openConciliation":
         dispatch(setChooseConciliationModal(prescription.admissionNumber));
@@ -341,14 +348,15 @@ export default function PatientCard({
               icon={<WarningOutlined style={{ fontSize: 16 }} />}
             ></Button>
           </Tooltip>
-
-          <Dropdown menu={prescriptionOptions()} trigger={["click"]}>
-            <Tooltip title="Menu">
-              <button className="patient-menu gtm-bt-patient-menu">
-                <MoreOutlined style={{ fontSize: 28 }} />
-              </button>
-            </Tooltip>
-          </Dropdown>
+          <Spin spinning={aggPrescriptionStatus === "loading"}>
+            <Dropdown menu={prescriptionOptions()} trigger={["click"]}>
+              <Tooltip title="Menu">
+                <button className="patient-menu gtm-bt-patient-menu">
+                  <MoreOutlined style={{ fontSize: 28 }} />
+                </button>
+              </Tooltip>
+            </Dropdown>
+          </Spin>
         </div>
       </div>
       <div className="patient-body">
