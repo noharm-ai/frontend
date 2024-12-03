@@ -36,13 +36,13 @@ export default function RegulationData() {
       key: "5",
       label: "CRM",
       children: solicitation.attendantRecord,
-      span: 1,
+      span: 2,
     },
     {
       key: "7",
       label: "CID",
       children: solicitation.cid,
-      span: 1,
+      span: 4,
     },
     {
       key: "8",

@@ -11,7 +11,7 @@ import RegulationPatient from "./RegulationPatient/RegulationPatient";
 import RegulationData from "./RegulationData/RegulationData";
 import RegulationAction from "./RegulationAction/RegulationAction";
 import RegulationSchedules from "./RegulationSchedules/RegulationSchedules";
-import { fetchRegulation, reset } from "./RegulationSlice";
+import { fetchRegulation, fetchPatient, reset } from "./RegulationSlice";
 import { formatDateTime } from "utils/date";
 
 import { PageHeader } from "styles/PageHeader.style";
@@ -28,6 +28,8 @@ export default function Regulation() {
     dispatch(fetchRegulation({ id })).then((response) => {
       if (response.error) {
         notification.error({ message: "Solicitação não encontrada" });
+      } else {
+        dispatch(fetchPatient());
       }
     });
 
