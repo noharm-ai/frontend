@@ -8,6 +8,7 @@ const {
   patientsSaveSingleError,
   patientsSetName,
   patientsCleanCache,
+  patientsFetchListSuccess,
 } = PatientCreators;
 
 export const savePatientThunk =
@@ -38,4 +39,8 @@ export const setNameThunk = (item) => async (dispatch) => {
 
 export const cleanCacheThunk = () => async (dispatch) => {
   dispatch(patientsCleanCache());
+};
+
+export const updateNames = (patientsList) => async (dispatch) => {
+  dispatch(patientsFetchListSuccess(patientsList));
 };
