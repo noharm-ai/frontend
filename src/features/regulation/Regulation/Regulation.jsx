@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Skeleton, Row, Col, Space } from "antd";
-import { FileTextOutlined } from "@ant-design/icons";
+import { FileTextOutlined, ExperimentOutlined } from "@ant-design/icons";
 
 import Empty from "components/Empty";
 import notification from "components/notification";
@@ -14,12 +14,14 @@ import RegulationData from "./RegulationData/RegulationData";
 import RegulationAction from "./RegulationAction/RegulationAction";
 import RegulationSchedules from "./RegulationSchedules/RegulationSchedules";
 import RegulationClinicalNotesModal from "./RegulationClinicalNotes/RegulationClinicalNotesModal";
+import ExamsModal from "features/exams/ExamModal/ExamModal";
 import {
   fetchRegulation,
   fetchPatient,
   reset,
   setClinicalNotesModal,
 } from "./RegulationSlice";
+import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
 import { formatDateTime } from "utils/date";
 
 import { PageHeader } from "styles/PageHeader.style";
@@ -79,6 +81,17 @@ export default function Regulation() {
           >
             Evoluções
           </Button>
+
+          <Button
+            onClick={() =>
+              dispatch(
+                setExamsModalAdmissionNumber(solicitation?.admissionNumber)
+              )
+            }
+            icon={<ExperimentOutlined />}
+          >
+            Exames
+          </Button>
         </div>
       </PageHeader>
 
@@ -98,6 +111,7 @@ export default function Regulation() {
 
       <RegulationAction />
       <RegulationClinicalNotesModal />
+      <ExamsModal />
     </>
   );
 }
