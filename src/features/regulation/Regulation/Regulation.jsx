@@ -2,16 +2,24 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Skeleton, Row, Col, Space } from "antd";
+import { FileTextOutlined } from "@ant-design/icons";
 
 import Empty from "components/Empty";
 import notification from "components/notification";
+import Button from "components/Button";
 import RegulationStats from "./RegulationStats/RegulationStats";
 import RegulationHistory from "./RegulationHistory/RegulationHistory";
 import RegulationPatient from "./RegulationPatient/RegulationPatient";
 import RegulationData from "./RegulationData/RegulationData";
 import RegulationAction from "./RegulationAction/RegulationAction";
 import RegulationSchedules from "./RegulationSchedules/RegulationSchedules";
-import { fetchRegulation, fetchPatient, reset } from "./RegulationSlice";
+import RegulationClinicalNotesModal from "./RegulationClinicalNotes/RegulationClinicalNotesModal";
+import {
+  fetchRegulation,
+  fetchPatient,
+  reset,
+  setClinicalNotesModal,
+} from "./RegulationSlice";
 import { formatDateTime } from "utils/date";
 
 import { PageHeader } from "styles/PageHeader.style";
@@ -64,7 +72,14 @@ export default function Regulation() {
             Solicitado em {formatDateTime(solicitation.date)}
           </div>
         </div>
-        <div className="page-header-actions"></div>
+        <div className="page-header-actions">
+          <Button
+            onClick={() => dispatch(setClinicalNotesModal(true))}
+            icon={<FileTextOutlined />}
+          >
+            Evoluções
+          </Button>
+        </div>
       </PageHeader>
 
       <Row gutter={16}>
@@ -82,6 +97,7 @@ export default function Regulation() {
       </Row>
 
       <RegulationAction />
+      <RegulationClinicalNotesModal />
     </>
   );
 }

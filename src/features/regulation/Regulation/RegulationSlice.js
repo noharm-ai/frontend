@@ -20,6 +20,9 @@ const initialState = {
     error: null,
     data: {},
   },
+  modal: {
+    clinicalNotes: false,
+  },
 };
 
 export const fetchRegulation = createAsyncThunk(
@@ -90,6 +93,9 @@ const regulationSlice = createSlice({
     setActionModal(state, action) {
       state.action.open = action.payload;
     },
+    setClinicalNotesModal(state, action) {
+      state.modal.clinicalNotes = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -132,6 +138,7 @@ const regulationSlice = createSlice({
   },
 });
 
-export const { reset, setActionModal } = regulationSlice.actions;
+export const { reset, setActionModal, setClinicalNotesModal } =
+  regulationSlice.actions;
 
 export default regulationSlice.reducer;
