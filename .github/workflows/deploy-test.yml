@@ -34,12 +34,19 @@ jobs:
           psql -h localhost -U postgres -d noharm -a -f database/noharm-newuser.sql -v ON_ERROR_STOP=1
           psql -h localhost -U postgres -d noharm -a -f database/noharm-triggers.sql -v ON_ERROR_STOP=1
           psql -h localhost -U postgres -d noharm -a -f database/noharm-insert.sql -v ON_ERROR_STOP=1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: sa-east-1
       - name: Run Backend
         run: |
           python mobile.py &
           sleep 10
         env:
           MAIL_HOST: http://localhost:3000
+          CACHE_BUCKET_NAME: ${{ secrets.CACHE_BUCKET_NAME }}
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
@@ -107,6 +114,6 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          source: 's3://${{ secrets.AWS_S3_BUCKET_TEST }}/index.html'
-          dest: 's3://${{ secrets.AWS_S3_BUCKET_TEST }}/index.html'
+          source: "s3://${{ secrets.AWS_S3_BUCKET_TEST }}/index.html"
+          dest: "s3://${{ secrets.AWS_S3_BUCKET_TEST }}/index.html"
           flags: --metadata-directive REPLACE --cache-control max-age=0,no-cache,no-store,must-revalidate --content-type text/html --acl public-read

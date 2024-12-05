@@ -8,13 +8,13 @@ export default function RegulationPatient() {
   const patient = useSelector(
     (state) => state.regulation.regulation.data.patient
   );
+  const patientDetails = useSelector(
+    (state) => state.regulation.regulation.patient.data
+  );
+  const patientDetailsStatus = useSelector(
+    (state) => state.regulation.regulation.patient.status
+  );
   const items = [
-    {
-      key: "1",
-      label: "Nome",
-      children: patient?.name || `Paciente ${patient?.id}`,
-      span: 4,
-    },
     {
       key: "2",
       label: "Data de Nascimento",
@@ -36,37 +36,41 @@ export default function RegulationPatient() {
     {
       key: "4",
       label: "Endereço",
-      children: null,
+      children: patientDetails?.data?.endereco,
       span: 4,
     },
     {
       key: "5",
       label: "Bairro",
-      children: null,
+      children: patientDetails?.data?.bairro,
       span: 2,
     },
     {
       key: "6",
       label: "Cidade",
-      children: null,
+      children: patientDetails?.data?.cidade,
       span: 2,
     },
     {
       key: "7",
       label: "Estado",
-      children: null,
+      children: patientDetails?.data?.estado,
       span: 2,
     },
     {
       key: "8",
       label: "CEP",
-      children: null,
+      children: patientDetails?.data?.cep,
       span: 2,
     },
   ];
 
   return (
-    <Card title="Paciente" bordered={false}>
+    <Card
+      title={patientDetails?.name || `Paciente ${patient?.id}`}
+      bordered={false}
+      loading={patientDetailsStatus === "loading"}
+    >
       <Descriptions bordered items={items} column={4} size="middle" />
     </Card>
   );

@@ -17,6 +17,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  searchAggPrescriptions: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
   searchDrugs: {
     list: [],
     status: "idle",
@@ -73,6 +78,21 @@ const initialState = {
 
 export const searchPrescriptions = createAsyncThunk(
   "lists/search-prescriptions",
+  async (params, thunkAPI) => {
+    const { access_token } = thunkAPI.getState().auth.identify;
+
+    try {
+      const response = await api.searchPrescriptions(access_token, params.term);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const searchAggPrescriptions = createAsyncThunk(
+  "lists/search-agg-prescriptions",
   async (params, thunkAPI) => {
     const { access_token } = thunkAPI.getState().auth.identify;
 
@@ -279,6 +299,17 @@ const listsSlice = createSlice({
       .addCase(searchPrescriptions.rejected, (state, action) => {
         state.searchPrescriptions.status = "failed";
         state.searchPrescriptions.error = action.error.message;
+      })
+      .addCase(searchAggPrescriptions.pending, (state, action) => {
+        state.searchAggPrescriptions.status = "loading";
+      })
+      .addCase(searchAggPrescriptions.fulfilled, (state, action) => {
+        state.searchAggPrescriptions.status = "succeeded";
+        state.searchAggPrescriptions.list = action.payload.data;
+      })
+      .addCase(searchAggPrescriptions.rejected, (state, action) => {
+        state.searchAggPrescriptions.status = "failed";
+        state.searchAggPrescriptions.error = action.error.message;
       })
       .addCase(searchDrugs.pending, (state, action) => {
         state.searchDrugs.status = "loading";

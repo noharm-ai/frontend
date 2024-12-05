@@ -1,5 +1,5 @@
 import React from "react";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, LoadingOutlined } from "@ant-design/icons";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
@@ -28,7 +28,7 @@ const columns = (t) => {
       align: "left",
       render: (entry, record) => {
         if (record.type && record.idRegSolicitationType) {
-          return `${record.idRegSolicitationType} - ${record.type}`;
+          return `${record.type}`;
         }
 
         return record.idRegSolicitationType;
@@ -38,7 +38,14 @@ const columns = (t) => {
       title: "Nome",
       align: "left",
       render: (entry, record) => {
-        return `Paciente ${record.idPatient}`;
+        if (record.patientNameLoading) {
+          return (
+            <>
+              <LoadingOutlined /> {`Paciente ${record.idPatient}`}
+            </>
+          );
+        }
+        return record.patientName;
       },
     },
     {

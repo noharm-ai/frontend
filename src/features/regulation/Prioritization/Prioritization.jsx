@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Pagination, Flex } from "antd";
@@ -13,14 +13,16 @@ import Filter from "./Filter/Filter";
 import Order from "./Order/Order";
 import columns from "./Table/columns";
 import expandedRowRender from "./Table/expandedRowRender";
-import { setCurrentPage, fetchRegulationList } from "./PrioritizationSlice";
+import {
+  setCurrentPage,
+  fetchRegulationList,
+  fetchPatients,
+} from "./PrioritizationSlice";
 
 export default function Prioritization() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const isFetching =
-    useSelector((state) => state.regulation.prioritization.status) ===
-    "loading";
+  const status = useSelector((state) => state.regulation.prioritization.status);
 
   const [expandedRows, setExpandedRows] = useState([]);
   const page = useSelector(
@@ -35,7 +37,13 @@ export default function Prioritization() {
     (state) => state.regulation.prioritization.list
   );
 
-  const limit = 30;
+  useEffect(() => {
+    if (status === "succeeded") {
+      dispatch(fetchPatients());
+    }
+  }, [dispatch, status]);
+
+  const limit = 100;
 
   const onPageChange = (newPage) => {
     dispatch(setCurrentPage(newPage));
@@ -110,7 +118,7 @@ export default function Prioritization() {
         <ExpandableTable
           columns={columns(t)}
           pagination={false}
-          loading={isFetching}
+          loading={status === "loading"}
           locale={{
             emptyText: (
               <Empty
@@ -120,7 +128,7 @@ export default function Prioritization() {
             ),
           }}
           rowKey="id"
-          dataSource={!isFetching ? datasource : []}
+          dataSource={status !== "loading" ? datasource : []}
           showSorterTooltip={false}
           expandedRowRender={expandedRowRender}
           expandedRowKeys={expandedRows}
