@@ -34,6 +34,7 @@ export default function Filter({ limit }) {
     riskList: [],
     typeList: [],
     stageList: [],
+    idPatientList: [],
   };
 
   useEffect(() => {
