@@ -139,7 +139,7 @@ export default function ScoreWizard({
           </span>
         </Heading>
         <div>
-          {PermissionService().has(Permission.WRITE_DRUG_SCORE) && (
+          {PermissionService().has(Permission.MAINTAINER) && (
             <>
               <Button danger onClick={() => setHistoryModalVisible(true)}>
                 Gerar Histórico de Prescrição
