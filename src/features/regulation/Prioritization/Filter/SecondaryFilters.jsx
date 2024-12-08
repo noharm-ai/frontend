@@ -9,6 +9,7 @@ import { RangeDatePicker, Select, Radio } from "components/Inputs";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { getRegulationTypes } from "features/lists/ListsSlice";
 import notification from "components/notification";
+import FieldNameAutocomplete from "features/fields/FieldNameAutocomplete/FieldNameAutocomplete";
 
 import { Form } from "styles/Form.style";
 
@@ -73,6 +74,16 @@ export default function SecondaryFilters() {
           style={{ background: "#fafafa" }}
         >
           <Form>
+            <div className="form-row">
+              <div className="form-label">
+                <label>Paciente:</label>
+              </div>
+              <div className="form-input">
+                <FieldNameAutocomplete
+                  onChange={(val) => setFieldValue({ idPatientList: val })}
+                />
+              </div>
+            </div>
             <div className="form-row">
               <div className="form-label">
                 <label>Tipo:</label>

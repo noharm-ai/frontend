@@ -54,8 +54,7 @@ export default function IntegrationRemote() {
         });
       } else {
         setDiagnostics(
-          response.payload.data.data.diagnostics?.systemDiagnostics
-            ?.aggregateSnapshot
+          response.payload.diagnostics?.systemDiagnostics?.aggregateSnapshot
         );
         setUpdateDate(response.payload.data.data.updatedAt);
       }

@@ -145,7 +145,12 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
               }`}
             >
               <div className="form-label">
-                <label>Escolha o schema:</label>
+                <label>
+                  {preAuthConfig.maintainer
+                    ? "Escolha o schema"
+                    : "Escolha o contexto"}
+                  :
+                </label>
               </div>
               <div className="form-input">
                 <Select
@@ -159,9 +164,9 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
                   ref={iptRef}
                 >
                   {preAuthConfig?.schemas &&
-                    preAuthConfig.schemas.map(({ name }) => (
+                    preAuthConfig.schemas.map(({ name, friendlyName }) => (
                       <Select.Option key={name} value={name}>
-                        {name}
+                        {preAuthConfig.maintainer ? name : friendlyName}
                       </Select.Option>
                     ))}
                 </Select>
@@ -171,11 +176,13 @@ function ChooseSchema({ preAuthConfig, doLogin, open, setOpen, isLogging }) {
               )}
             </div>
 
-            <Collapse
-              ghost
-              className="collapsed-content"
-              items={getExtraOptions(values, setFieldValue, errors, touched)}
-            />
+            {preAuthConfig.maintainer && (
+              <Collapse
+                ghost
+                className="collapsed-content"
+                items={getExtraOptions(values, setFieldValue, errors, touched)}
+              />
+            )}
           </Form>
         </DefaultModal>
       )}

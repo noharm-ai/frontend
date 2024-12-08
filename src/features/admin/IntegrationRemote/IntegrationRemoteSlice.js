@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/admin/api";
+import { axiosBasic } from "services/api";
 import { flatStatuses } from "./transformer";
 
 const initialState = {
@@ -28,7 +29,20 @@ export const fetchTemplate = createAsyncThunk(
     try {
       const response = await api.integrationRemote.getTemplate(params);
 
-      return response;
+      const templateUrl = response.data.data.template;
+      const statusUrl = response.data.data.status;
+      const diagnosticsUrl = response.data.data.diagnostics;
+
+      const template = await axiosBasic.get(templateUrl);
+      const status = await axiosBasic.get(statusUrl);
+      const diagnostics = await axiosBasic.get(diagnosticsUrl);
+
+      return {
+        response,
+        template: template.data,
+        status: status.data,
+        diagnostics: diagnostics.data,
+      };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
@@ -95,12 +109,12 @@ const integrationRemoteSlice = createSlice({
       })
       .addCase(fetchTemplate.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.template.data = action.payload.data.data.template;
+        state.template.data = action.payload.template;
         const flatStatus = {};
-        flatStatuses(action.payload.data.data.status, flatStatus);
+        flatStatuses(action.payload.status, flatStatus);
         state.template.status = flatStatus;
-        state.template.date = action.payload.data.data.updatedAt;
-        state.queue.list = action.payload.data.data.queue;
+        state.template.date = action.payload.response.data.data.updatedAt;
+        state.queue.list = action.payload.response.data.data.queue;
       })
       .addCase(fetchTemplate.rejected, (state, action) => {
         state.status = "failed";

@@ -11,6 +11,7 @@ const requestConfig = {
 
 export const instance = axios.create(requestConfig);
 export const mockInstance = axios.create({ baseURL: "/" });
+export const axiosBasic = axios.create();
 
 const api = {};
 
@@ -747,6 +748,11 @@ const getVersion = () =>
     ...setHeaders(),
   });
 
+const searchNames = (term) =>
+  instance.get(`/names/search/${term}`, {
+    ...setHeaders(),
+  });
+
 /**
  * API
  * all functions that can be used in API.
@@ -760,6 +766,7 @@ const methods = {
   getAuthProvider,
   getGetnameToken,
   getVersion,
+  searchNames,
   getSegments,
   getPrescriptions,
   getPrescriptionById,

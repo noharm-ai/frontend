@@ -42,6 +42,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  searchNames: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
   getSubstances: {
     list: [],
     status: "idle",
@@ -268,6 +273,19 @@ export const getRegulationTypes = createAsyncThunk(
   }
 );
 
+export const searchNames = createAsyncThunk(
+  "lists/search-names",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.searchNames(params.term);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const listsSlice = createSlice({
   name: "lists",
   initialState,
@@ -420,6 +438,17 @@ const listsSlice = createSlice({
       .addCase(getRegulationTypes.rejected, (state, action) => {
         state.regulation.types.status = "failed";
         state.regulation.types.error = action.error.message;
+      })
+      .addCase(searchNames.pending, (state, action) => {
+        state.searchNames.status = "loading";
+      })
+      .addCase(searchNames.fulfilled, (state, action) => {
+        state.searchNames.status = "succeeded";
+        state.searchNames.list = action.payload.data;
+      })
+      .addCase(searchNames.rejected, (state, action) => {
+        state.searchNames.status = "failed";
+        state.searchNames.error = action.error.message;
       });
   },
 });

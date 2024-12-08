@@ -113,8 +113,12 @@ export default function Login({ isLogging, error, doLogin }) {
       const { data } = await api.preAuth(params);
       setPreAuthLoading(false);
 
-      if (data.maintainer) {
-        setpreAuthConfig({ schemas: data.schemas, params });
+      if (data.schemas.length) {
+        setpreAuthConfig({
+          schemas: data.schemas,
+          params,
+          maintainer: data.maintainer,
+        });
         setPreAuthModal(true);
       } else {
         doLogin(params);
