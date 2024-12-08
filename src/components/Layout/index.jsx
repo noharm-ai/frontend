@@ -140,17 +140,19 @@ const Me = ({
 
         <UserName>
           <div className="name">{setTitle({ user })}</div>
-          {PermissionService().has(Permission.MAINTAINER) && (
+          {PermissionService().has(Permission.MULTI_SCHEMA) && (
             <div className="schema">
               <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
-              <Tooltip title="Posição atual da implantação. Clique para ver mais detalhes">
-                <IntegrationStatusTag
-                  type={"filled"}
-                  style={{ cursor: "pointer" }}
-                  status={integrationStatus}
-                  onClick={() => navigate("/admin/integracao/status")}
-                />
-              </Tooltip>
+              {PermissionService().has(Permission.MAINTAINER) && (
+                <Tooltip title="Posição atual da implantação. Clique para ver mais detalhes">
+                  <IntegrationStatusTag
+                    type={"filled"}
+                    style={{ cursor: "pointer" }}
+                    status={integrationStatus}
+                    onClick={() => navigate("/admin/integracao/status")}
+                  />
+                </Tooltip>
+              )}
             </div>
           )}
         </UserName>
