@@ -51,6 +51,9 @@ export default function HistoryList() {
             case 8:
               return "Criação do Paciente-Dia (prescrição do paciente)";
 
+            case 9:
+              return "Erro no envio de checagem ao PEP";
+
             default:
               return `Não definido: ${record.type}-${record.source}`;
           }
