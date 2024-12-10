@@ -11,6 +11,7 @@ import {
   TableOutlined,
 } from "@ant-design/icons";
 import { Skeleton, List, Avatar, Drawer, notification } from "antd";
+import dayjs from "dayjs";
 
 import Button from "components/Button";
 import { setQueueDrawer, getQueueStatus } from "../IntegrationRemoteSlice";
@@ -34,7 +35,11 @@ export default function NifiQueue() {
     const interval = setInterval(() => {
       const idQueueList = [];
       queue.forEach((q) => {
-        if (!q.responseCode) {
+        const queueDate = dayjs(q.createdAt);
+        const diff = dayjs().diff(queueDate, "minutes");
+        const MAX_DIFF = 10;
+
+        if (!q.responseCode && diff < MAX_DIFF) {
           idQueueList.push(q.id);
         }
       });
@@ -48,7 +53,7 @@ export default function NifiQueue() {
           }
         });
       }
-    }, 10000);
+    }, 5000);
 
     return () => {
       clearInterval(interval);
@@ -76,9 +81,11 @@ export default function NifiQueue() {
         icon = <DownloadOutlined />;
         title = "Download flowfile";
       }
-    } else if (item.responseCode === 202) {
-      icon = <ExclamationOutlined />;
-      color = "#faad14";
+
+      if (item.url.indexOf("/listing-requests") !== -1) {
+        icon = <ExclamationOutlined />;
+        color = "#faad14";
+      }
     } else {
       icon = <CloseOutlined />;
       color = "#ff4d4f";

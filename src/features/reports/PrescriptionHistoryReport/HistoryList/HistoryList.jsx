@@ -24,6 +24,10 @@ export default function HistoryList() {
         if (record.source === "PrescriptionAudit") {
           switch (record.type) {
             case 1:
+              if (!record.responsible) {
+                return "Prescrição checada automaticamente";
+              }
+
               return "Prescrição checada";
 
             case 2:
@@ -50,6 +54,9 @@ export default function HistoryList() {
 
             case 8:
               return "Criação do Paciente-Dia (prescrição do paciente)";
+
+            case 9:
+              return "Erro no envio de checagem ao PEP";
 
             default:
               return `Não definido: ${record.type}-${record.source}`;

@@ -67,8 +67,14 @@ export const getQueueStatus = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.integrationRemote.getQueueStatus(params);
+      const updateStatus = response.data.data.updateStatus;
+      let status = null;
 
-      return response;
+      if (updateStatus) {
+        status = await axiosBasic.get(response.data.data.statusUrl);
+      }
+
+      return { response, status, updateStatus };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
@@ -135,7 +141,7 @@ const integrationRemoteSlice = createSlice({
       })
       .addCase(getQueueStatus.fulfilled, (state, action) => {
         state.status = "succeeded";
-        const result = action.payload.data.data;
+        const result = action.payload.response.data.data.queue;
 
         result.forEach((item) => {
           if (item.responseCode) {
@@ -143,27 +149,15 @@ const integrationRemoteSlice = createSlice({
 
             if (index !== -1) {
               state.queue.list[index] = { ...item };
-
-              //update status
-              if (
-                item.responseCode === 200 &&
-                state.template.status.hasOwnProperty(item.response?.id)
-              ) {
-                const newStatus = item.response.status?.aggregateSnapshot;
-                if (newStatus) {
-                  state.template.status[item.response?.id] = newStatus;
-
-                  if (
-                    state.selectedNode?.extra?.instanceIdentifier ===
-                    item.response?.id
-                  ) {
-                    state.selectedNode.status = newStatus;
-                  }
-                }
-              }
             }
           }
         });
+
+        if (action.payload.updateStatus) {
+          const flatStatus = {};
+          flatStatuses(action.payload.status, flatStatus);
+          state.template.status = flatStatus;
+        }
       })
       .addCase(getQueueStatus.rejected, (state, action) => {
         state.status = "failed";
