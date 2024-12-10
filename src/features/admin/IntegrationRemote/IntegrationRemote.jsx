@@ -56,7 +56,7 @@ export default function IntegrationRemote() {
         setDiagnostics(
           response.payload.diagnostics?.systemDiagnostics?.aggregateSnapshot
         );
-        setUpdateDate(response.payload.data.data.updatedAt);
+        setUpdateDate(response.payload.response.data.data.updatedAt);
       }
     });
   };

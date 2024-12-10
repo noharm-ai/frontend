@@ -177,29 +177,30 @@ export default function QueueModal({ data, onCancel }) {
         {actionTypeToDescription(data?.extra?.type)}
       </Heading>
 
-      {data?.responseCode === 202 && data.response?.listingRequest && (
-        <Alert
-          message="Resposta assíncrona"
-          description="Você deve utilizar o botão ao lado para fazer uma nova solicitação para trazer o conteúdo"
-          type="warning"
-          action={
-            <Button
-              type="primary"
-              loading={activeAction === "CUSTOM_CALLBACK"}
-              onClick={() =>
-                executeCustomEndpointState(
-                  data?.response.listingRequest?.uri,
-                  "GET"
-                )
-              }
-            >
-              Solicitar resposta
-            </Button>
-          }
-        />
-      )}
+      {data?.response?.listingRequest &&
+        !data?.response?.listingRequest?.finished && (
+          <Alert
+            message="Resposta assíncrona"
+            description="Você deve utilizar o botão ao lado para fazer uma nova solicitação para trazer o conteúdo"
+            type="warning"
+            action={
+              <Button
+                type="primary"
+                loading={activeAction === "CUSTOM_CALLBACK"}
+                onClick={() =>
+                  executeCustomEndpointState(
+                    data?.response.listingRequest?.uri,
+                    "GET"
+                  )
+                }
+              >
+                Solicitar resposta
+              </Button>
+            }
+          />
+        )}
 
-      {data?.responseCode === 202 && data.response?.dropRequest && (
+      {data?.response?.dropRequest && (
         <Alert
           message="Resposta assíncrona"
           description="Atualiza a fila para garantir que a operação foi efetuada com sucesso."
