@@ -24,6 +24,10 @@ export default function HistoryList() {
         if (record.source === "PrescriptionAudit") {
           switch (record.type) {
             case 1:
+              if (!record.responsible) {
+                return "Prescrição checada automaticamente";
+              }
+
               return "Prescrição checada";
 
             case 2:

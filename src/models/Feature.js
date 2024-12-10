@@ -16,6 +16,8 @@ export default class Feature {
   static PRESMED_FORM = "PRESMED_FORM";
   static DISCHARGE_SUMMARY = "DISCHARGE_SUMMARY";
   static REGULATION = "REGULATION";
+  static AUTOMATIC_CHECK_IF_NOT_VALIDATED_ITENS =
+    "AUTOMATIC_CHECK_IF_NOT_VALIDATED_ITENS";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -116,6 +118,12 @@ export default class Feature {
         id: Feature.REGULATION,
         label: "Regulação",
         description: "Habilita o módulo de Regulação.",
+      },
+      {
+        id: Feature.AUTOMATIC_CHECK_IF_NOT_VALIDATED_ITENS,
+        label: "Checagem automática (CPOE - Dietas)",
+        description:
+          "Habilita a checagem automática de pacientes-dia quando possui somente itens de dieta. Atualmente é exclusivo para CPOE.",
       },
     ];
   }
