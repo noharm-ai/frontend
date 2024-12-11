@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
 import {
   CheckOutlined,
   LoadingOutlined,
@@ -10,18 +9,16 @@ import {
   DownloadOutlined,
   TableOutlined,
 } from "@ant-design/icons";
-import { Skeleton, List, Avatar, Drawer, notification } from "antd";
+import { Skeleton, List, Avatar, Drawer } from "antd";
 import dayjs from "dayjs";
 
 import Button from "components/Button";
 import { setQueueDrawer, getQueueStatus } from "../IntegrationRemoteSlice";
 import { formatDateTime } from "utils/date";
 import QueueModal from "./QueueModal";
-import { getErrorMessage } from "utils/errorHandler";
 import { actionTypeToDescription } from "../transformer";
 
 export default function NifiQueue() {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const queue = useSelector(
     (state) => state.admin.integrationRemote.queue.list
@@ -44,16 +41,8 @@ export default function NifiQueue() {
         }
       });
 
-      if (idQueueList.length > 0) {
-        dispatch(getQueueStatus({ idQueueList })).then((response) => {
-          if (response.error) {
-            notification.error({
-              message: getErrorMessage(response, t),
-            });
-          }
-        });
-      }
-    }, 5000);
+      dispatch(getQueueStatus({ idQueueList }));
+    }, 2500);
 
     return () => {
       clearInterval(interval);

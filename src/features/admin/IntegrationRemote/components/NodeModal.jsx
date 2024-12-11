@@ -2,11 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Tabs, Popconfirm, Space } from "antd";
-import {
-  ReloadOutlined,
-  DeleteOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 
 import DefaultModal from "components/Modal";
 import Heading from "components/Heading";
@@ -297,15 +293,6 @@ export default function NodeModal() {
             Limpar estado
           </Button>
         </Popconfirm>,
-        <Button
-          key="back"
-          onClick={() => executeAction("REFRESH_STATE")}
-          icon={<ReloadOutlined />}
-          type="primary"
-          loading={activeAction === "REFRESH_STATE"}
-        >
-          Atualizar
-        </Button>,
       ]}
     >
       <Heading margin="0 0 11px" size="18px">

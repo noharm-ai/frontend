@@ -10,6 +10,7 @@ const initialState = {
   template: {
     data: null,
     status: null,
+    statusDate: null,
     date: null,
   },
   selectedNode: null,
@@ -66,28 +67,17 @@ export const getQueueStatus = createAsyncThunk(
   "integration-remote/get-queue-stats",
   async (params, thunkAPI) => {
     try {
+      const lastStatusUpdate =
+        thunkAPI.getState().admin.integrationRemote.template.statusDate;
       const response = await api.integrationRemote.getQueueStatus(params);
-      const updateStatus = response.data.data.updateStatus;
+      const statusUpdatedAt = response.data.data.statusUpdatedAt;
       let status = null;
 
-      if (updateStatus) {
+      if (statusUpdatedAt > lastStatusUpdate) {
         status = await axiosBasic.get(response.data.data.statusUrl);
       }
 
-      return { response, status, updateStatus };
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
-export const getTemplateDate = createAsyncThunk(
-  "integration-remote/get-template-date",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.integrationRemote.getTemplateDate(params);
-
-      return response;
+      return { response, status, statusUpdatedAt };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
@@ -119,6 +109,8 @@ const integrationRemoteSlice = createSlice({
         const flatStatus = {};
         flatStatuses(action.payload.status, flatStatus);
         state.template.status = flatStatus;
+        state.template.statusDate =
+          action.payload.response.data.data.statusUpdatedAt;
         state.template.date = action.payload.response.data.data.updatedAt;
         state.queue.list = action.payload.response.data.data.queue;
       })
@@ -149,14 +141,32 @@ const integrationRemoteSlice = createSlice({
 
             if (index !== -1) {
               state.queue.list[index] = { ...item };
+
+              //update status
+              if (
+                item.responseCode === 200 &&
+                state.template.status.hasOwnProperty(item.response?.id)
+              ) {
+                const newStatus = item.response.status?.aggregateSnapshot;
+                if (newStatus) {
+                  state.template.status[item.response?.id] = newStatus;
+                  if (
+                    state.selectedNode?.extra?.instanceIdentifier ===
+                    item.response?.id
+                  ) {
+                    state.selectedNode.status = newStatus;
+                  }
+                }
+              }
             }
           }
         });
 
-        if (action.payload.updateStatus) {
+        if (action.payload.status) {
           const flatStatus = {};
           flatStatuses(action.payload.status, flatStatus);
           state.template.status = flatStatus;
+          state.template.statusDate = action.payload.statusUpdatedAt;
         }
       })
       .addCase(getQueueStatus.rejected, (state, action) => {

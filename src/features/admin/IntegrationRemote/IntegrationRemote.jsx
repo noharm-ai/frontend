@@ -15,7 +15,7 @@ import {
   fetchTemplate,
   reset,
   pushQueueRequest,
-  getTemplateDate,
+  getQueueStatus,
 } from "./IntegrationRemoteSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import notification from "components/notification";
@@ -33,11 +33,11 @@ export default function IntegrationRemote() {
   const status = useSelector((state) => state.admin.integrationRemote.status);
   const [diagnostics, setDiagnostics] = useState({});
   const [diagnosticsModal, setDiagnosticsModal] = useState(false);
-  const [updateDate, setUpdateDate] = useState(null);
   const [updating, setUpdating] = useState(false);
+  const [updateDate, setUpdateDate] = useState(null);
 
   useEffect(() => {
-    loadTemplate();
+    refreshTemplate();
 
     return () => {
       dispatch(reset());
@@ -67,26 +67,24 @@ export default function IntegrationRemote() {
       actionType: "REFRESH_TEMPLATE",
     };
 
-    dispatch(pushQueueRequest(payload)).then((response) => {
-      if (response.error) {
+    dispatch(pushQueueRequest(payload)).then((queueResponse) => {
+      if (queueResponse.error) {
         notification.error({
-          message: getErrorMessage(response, t),
+          message: getErrorMessage(queueResponse, t),
         });
       } else {
+        const idQueueList = [queueResponse.payload.data.data.id];
+
         notification.success({
-          message: "Solicitação enviada!",
-          description: "Aguarde a atualização do template",
+          message: "Atualizando template!",
+          description: "Aguarde...",
         });
 
         const interval = setInterval(() => {
-          dispatch(getTemplateDate()).then((response) => {
-            const tplDate = response.payload.data.data.updatedAt;
-            console.log("tpldate", tplDate);
+          dispatch(getQueueStatus({ idQueueList })).then((response) => {
+            const queue = response.payload.response.data.data.queue[0];
 
-            if (
-              (!updateDate && tplDate) ||
-              (updateDate && tplDate > updateDate)
-            ) {
+            if (queue.responseCode === 200) {
               loadTemplate();
               clearInterval(interval);
               setUpdating(false);
@@ -94,14 +92,19 @@ export default function IntegrationRemote() {
               notification.success({
                 message: "Template atualizado!",
               });
-            } else {
-              console.log("waiting for template update");
+            } else if (queue.responseCode === null) {
               notification.info({
                 message: "Aguardando atualização...",
               });
+            } else {
+              notification.error({
+                message: "Erro ao atualizar template",
+              });
+              clearInterval(interval);
+              setUpdating(false);
             }
           });
-        }, 5000);
+        }, 2500);
       }
     });
   };
@@ -123,7 +126,7 @@ export default function IntegrationRemote() {
   };
 
   return (
-    <>
+    <Spin spinning={updating}>
       <PageHeader>
         <div>
           <h1 className="page-header-title">Integração: Acesso Remoto</h1>
@@ -251,6 +254,6 @@ export default function IntegrationRemote() {
           data={diagnostics}
         />
       )}
-    </>
+    </Spin>
   );
 }
