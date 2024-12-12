@@ -20,9 +20,13 @@ export default function Graph() {
     (state) => state.admin.integrationRemote.template.status
   );
 
-  const [group, setGroup] = useState([]);
+  const [group, setGroup] = useState(null);
   const [internalLoading, setInternalLoading] = useState(false);
-  const currentGroup = group.length ? group[group.length - 1] : null;
+  const currentGroup = group
+    ? template.flowContents.processGroups.find(
+        (g) => g.instanceIdentifier === group
+      )
+    : null;
 
   if (!template) {
     return null;
@@ -118,7 +122,7 @@ export default function Graph() {
   const goBack = () => {
     setInternalLoading(true);
     setTimeout(() => {
-      setGroup((oldArray) => [...oldArray.slice(0, -1)]);
+      setGroup(null);
       setInternalLoading(false);
     }, 500);
   };
@@ -127,7 +131,7 @@ export default function Graph() {
     if (evt.data.extra.componentType === "PROCESS_GROUP") {
       setInternalLoading(true);
       setTimeout(() => {
-        setGroup((oldArray) => [...oldArray, evt.data.extra]);
+        setGroup(evt.data.extra.instanceIdentifier);
         setInternalLoading(false);
       }, 500);
     } else {

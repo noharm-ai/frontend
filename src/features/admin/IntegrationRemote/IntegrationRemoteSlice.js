@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/admin/api";
 import { axiosBasic } from "services/api";
-import { flatStatuses } from "./transformer";
+import { flatStatuses, optimisticUpdateProperties } from "./transformer";
 
 const initialState = {
   list: [],
@@ -123,7 +123,8 @@ const integrationRemoteSlice = createSlice({
       })
       .addCase(pushQueueRequest.fulfilled, (state, action) => {
         state.pushQueueRequest.activeAction = null;
-        state.queue.list = [action.payload.data.data, ...state.queue.list];
+        const queue = action.payload.data.data;
+        state.queue.list = [queue, ...state.queue.list];
       })
       .addCase(pushQueueRequest.rejected, (state, action) => {
         state.pushQueueRequest.activeAction = null;
@@ -142,21 +143,12 @@ const integrationRemoteSlice = createSlice({
             if (index !== -1) {
               state.queue.list[index] = { ...item };
 
-              //update status
-              if (
-                item.responseCode === 200 &&
-                state.template.status.hasOwnProperty(item.response?.id)
-              ) {
-                const newStatus = item.response.status?.aggregateSnapshot;
-                if (newStatus) {
-                  state.template.status[item.response?.id] = newStatus;
-                  if (
-                    state.selectedNode?.extra?.instanceIdentifier ===
-                    item.response?.id
-                  ) {
-                    state.selectedNode.status = newStatus;
-                  }
-                }
+              if (item.extra.type === "UPDATE_PROPERTY") {
+                state.template.data = optimisticUpdateProperties(
+                  state.template.data,
+                  item.extra.idEntity,
+                  item.body?.config?.properties
+                );
               }
             }
           }
@@ -170,7 +162,7 @@ const integrationRemoteSlice = createSlice({
         }
       })
       .addCase(getQueueStatus.rejected, (state, action) => {
-        state.status = "failed";
+        //state.status = "failed";
       });
   },
 });

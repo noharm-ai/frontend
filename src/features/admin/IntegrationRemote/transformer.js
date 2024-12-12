@@ -15,6 +15,23 @@ export function flatStatuses(obj, result = {}) {
   }
 }
 
+export function optimisticUpdateProperties(template, id, properties) {
+  const tpl = JSON.parse(JSON.stringify(template));
+
+  tpl.flowContents.processGroups.forEach((group) => {
+    group.processors.forEach((processor) => {
+      if (processor.instanceIdentifier === id) {
+        processor.properties = {
+          ...processor.properties,
+          ...properties,
+        };
+      }
+    });
+  });
+
+  return tpl;
+}
+
 export function actionTypeToDescription(actionType) {
   switch (actionType) {
     case "SET_STATE":
@@ -33,6 +50,8 @@ export function actionTypeToDescription(actionType) {
       return "Callback";
     case "REFRESH_TEMPLATE":
       return "Atualizar template";
+    case "UPDATE_PROPERTY":
+      return "Atualizar propriedade";
     default:
       return actionType;
   }
