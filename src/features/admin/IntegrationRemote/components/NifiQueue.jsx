@@ -5,7 +5,6 @@ import {
   LoadingOutlined,
   CloseOutlined,
   SearchOutlined,
-  ExclamationOutlined,
   DownloadOutlined,
   TableOutlined,
 } from "@ant-design/icons";
@@ -64,15 +63,12 @@ export default function NifiQueue() {
       if (item?.response?.listingRequest?.flowFileSummaries) {
         icon = <TableOutlined />;
         title = "Visualizar fila";
+        color = "#faad14";
       }
 
       if (item.url.indexOf("/content") !== -1) {
         icon = <DownloadOutlined />;
         title = "Download flowfile";
-      }
-
-      if (item.url.indexOf("/listing-requests") !== -1) {
-        icon = <ExclamationOutlined />;
         color = "#faad14";
       }
     } else {
