@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Spin, Row, Col } from "antd";
+import { Spin, Row, Col, Result } from "antd";
 import {
   SearchOutlined,
   DeploymentUnitOutlined,
@@ -13,7 +13,6 @@ import ControllersList from "./components/ControllersList";
 import DiagnosticModal from "./components/DiagnosticsModal";
 import {
   fetchTemplate,
-  reset,
   pushQueueRequest,
   getQueueStatus,
 } from "./IntegrationRemoteSlice";
@@ -31,17 +30,18 @@ export default function IntegrationRemote() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const status = useSelector((state) => state.admin.integrationRemote.status);
+  const templateDate = useSelector(
+    (state) => state.admin.integrationRemote.template.date
+  );
   const [diagnostics, setDiagnostics] = useState({});
   const [diagnosticsModal, setDiagnosticsModal] = useState(false);
   const [updating, setUpdating] = useState(false);
-  const [updateDate, setUpdateDate] = useState(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    refreshTemplate();
-
-    return () => {
-      dispatch(reset());
-    };
+    if (!templateDate) {
+      refreshTemplate();
+    }
   }, []); //eslint-disable-line
 
   const loadTemplate = () => {
@@ -56,7 +56,6 @@ export default function IntegrationRemote() {
         setDiagnostics(
           response.payload.diagnostics?.systemDiagnostics?.aggregateSnapshot
         );
-        setUpdateDate(response.payload.response.data.data.updatedAt);
       }
     });
   };
@@ -80,7 +79,10 @@ export default function IntegrationRemote() {
           description: "Aguarde...",
         });
 
+        let repeats = 0;
+
         const interval = setInterval(() => {
+          repeats += 1;
           dispatch(getQueueStatus({ idQueueList })).then((response) => {
             const queue = response.payload.response.data.data.queue[0];
 
@@ -93,15 +95,22 @@ export default function IntegrationRemote() {
                 message: "Template atualizado!",
               });
             } else if (queue.responseCode === null) {
-              notification.info({
-                message: "Aguardando atualização...",
-              });
+              if (repeats > 10) {
+                clearInterval(interval);
+                setUpdating(false);
+                setError(true);
+              } else {
+                notification.info({
+                  message: "Aguardando atualização...",
+                });
+              }
             } else {
               notification.error({
                 message: "Erro ao atualizar template",
               });
               clearInterval(interval);
               setUpdating(false);
+              setError(true);
             }
           });
         }, 2500);
@@ -124,6 +133,16 @@ export default function IntegrationRemote() {
 
     return "green";
   };
+
+  if (error) {
+    return (
+      <Result
+        status="error"
+        title="Parece que o nifi não está respondendo"
+        subTitle="Por favor, verifique se os processos estão instalados e ativos no nifi."
+      ></Result>
+    );
+  }
 
   return (
     <Spin spinning={updating}>
@@ -150,9 +169,9 @@ export default function IntegrationRemote() {
           >
             Acessar Nifi Remoto
           </Button>
-          {updateDate && (
+          {templateDate && (
             <div style={{ marginTop: "5px" }}>
-              Atualizado em: {formatDateTime(updateDate)}
+              Atualizado em: {formatDateTime(templateDate)}
             </div>
           )}
         </div>
