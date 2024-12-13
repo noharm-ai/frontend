@@ -11,7 +11,10 @@ const initialState = {
     data: null,
     status: null,
     statusDate: null,
+    bulletin: null,
+    bulletinDate: null,
     date: null,
+    diagnostics: null,
   },
   selectedNode: null,
   queue: {
@@ -21,6 +24,9 @@ const initialState = {
   },
   pushQueueRequest: {
     activeAction: null,
+  },
+  modal: {
+    bulletin: false,
   },
 };
 
@@ -33,16 +39,19 @@ export const fetchTemplate = createAsyncThunk(
       const templateUrl = response.data.data.template;
       const statusUrl = response.data.data.status;
       const diagnosticsUrl = response.data.data.diagnostics;
+      const bulletinUrl = response.data.data.bulletin;
 
       const template = await axiosBasic.get(templateUrl);
       const status = await axiosBasic.get(statusUrl);
       const diagnostics = await axiosBasic.get(diagnosticsUrl);
+      const bulletin = await axiosBasic.get(bulletinUrl);
 
       return {
         response,
         template: template.data,
         status: status.data,
         diagnostics: diagnostics.data,
+        bulletin: bulletin.data,
       };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
@@ -69,15 +78,23 @@ export const getQueueStatus = createAsyncThunk(
     try {
       const lastStatusUpdate =
         thunkAPI.getState().admin.integrationRemote.template.statusDate;
+      const lastBulletinUpdate =
+        thunkAPI.getState().admin.integrationRemote.template.bulletinDate;
       const response = await api.integrationRemote.getQueueStatus(params);
       const statusUpdatedAt = response.data.data.statusUpdatedAt;
+      const bulletinUpdatedAt = response.data.data.bulletinUpdatedAt;
       let status = null;
+      let bulletin = null;
 
       if (statusUpdatedAt > lastStatusUpdate) {
         status = await axiosBasic.get(response.data.data.statusUrl);
       }
 
-      return { response, status, statusUpdatedAt };
+      if (bulletinUpdatedAt > lastBulletinUpdate) {
+        bulletin = await axiosBasic.get(response.data.data.bulletinUrl);
+      }
+
+      return { response, status, statusUpdatedAt, bulletin, bulletinUpdatedAt };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
@@ -97,6 +114,9 @@ const integrationRemoteSlice = createSlice({
     setQueueDrawer(state, action) {
       state.queue.drawer = action.payload;
     },
+    setBulletinModal(state, action) {
+      state.modal.bulletin = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -105,13 +125,27 @@ const integrationRemoteSlice = createSlice({
       })
       .addCase(fetchTemplate.fulfilled, (state, action) => {
         state.status = "succeeded";
+        // template
         state.template.data = action.payload.template;
+        state.template.date = action.payload.response.data.data.updatedAt;
+
+        // status
         const flatStatus = {};
         flatStatuses(action.payload.status, flatStatus);
         state.template.status = flatStatus;
         state.template.statusDate =
           action.payload.response.data.data.statusUpdatedAt;
-        state.template.date = action.payload.response.data.data.updatedAt;
+
+        // bulletin
+        state.template.bulletin = action.payload.bulletin;
+        state.template.bulletinDate =
+          action.payload.response.data.data.bulletinUpdatedAt;
+
+        //diagnostics
+        state.template.diagnostics =
+          action.payload.diagnostics?.systemDiagnostics?.aggregateSnapshot;
+
+        // queue
         state.queue.list = action.payload.response.data.data.queue;
       })
       .addCase(fetchTemplate.rejected, (state, action) => {
@@ -160,14 +194,16 @@ const integrationRemoteSlice = createSlice({
           state.template.status = flatStatus;
           state.template.statusDate = action.payload.statusUpdatedAt;
         }
-      })
-      .addCase(getQueueStatus.rejected, (state, action) => {
-        //state.status = "failed";
+
+        if (action.payload.bulletin) {
+          state.template.bulletin = action.payload.bulletin.data;
+          state.template.bulletinDate = action.payload.bulletinUpdatedAt;
+        }
       });
   },
 });
 
-export const { reset, setSelectedNode, setQueueDrawer } =
+export const { reset, setSelectedNode, setQueueDrawer, setBulletinModal } =
   integrationRemoteSlice.actions;
 
 export default integrationRemoteSlice.reducer;

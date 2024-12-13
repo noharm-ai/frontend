@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { ArrowLeftOutlined, UnorderedListOutlined } from "@ant-design/icons";
-import { Spin, FloatButton } from "antd";
+import { useNavigate } from "react-router-dom";
+import { Spin } from "antd";
 
 import { EChartBase } from "components/EChartBase";
-import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import NodeModal from "./NodeModal";
 import { GraphContainer } from "../IntegrationRemote.style";
-import { setSelectedNode, setQueueDrawer } from "../IntegrationRemoteSlice";
+import { setSelectedNode } from "../IntegrationRemoteSlice";
+import GraphActions from "./GraphActions";
 
 export default function Graph() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const status = useSelector((state) => state.admin.integrationRemote.status);
   const template = useSelector(
@@ -120,11 +121,15 @@ export default function Graph() {
   };
 
   const goBack = () => {
-    setInternalLoading(true);
-    setTimeout(() => {
-      setGroup(null);
-      setInternalLoading(false);
-    }, 500);
+    if (group) {
+      setInternalLoading(true);
+      setTimeout(() => {
+        setGroup(null);
+        setInternalLoading(false);
+      }, 500);
+    } else {
+      navigate("/admin/integracao/acesso-remoto");
+    }
   };
 
   const onClick = (evt) => {
@@ -156,17 +161,7 @@ export default function Graph() {
       <div className="schema">
         <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
       </div>
-      <FloatButton.Group shape="circle" style={{ right: 24 }}>
-        <Tooltip title="Fila de ações">
-          <FloatButton
-            icon={<UnorderedListOutlined />}
-            onClick={() => dispatch(setQueueDrawer(true))}
-          />
-        </Tooltip>
-        <Tooltip title="Voltar ao nível anterior">
-          <FloatButton icon={<ArrowLeftOutlined />} onClick={() => goBack()} />
-        </Tooltip>
-      </FloatButton.Group>
+      <GraphActions goBack={goBack} />
     </GraphContainer>
   );
 }

@@ -8,6 +8,7 @@ import Graph from "./components/Graph";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 import NifiQueue from "./components/NifiQueue";
+import BulletinModal from "./components/BulletinModal";
 
 export default function Nifi() {
   const { t } = useTranslation();
@@ -43,6 +44,7 @@ export default function Nifi() {
         <Graph />
 
         <NifiQueue />
+        <BulletinModal />
       </div>
     </Spin>
   );

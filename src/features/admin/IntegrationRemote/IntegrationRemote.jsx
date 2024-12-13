@@ -33,7 +33,9 @@ export default function IntegrationRemote() {
   const templateDate = useSelector(
     (state) => state.admin.integrationRemote.template.date
   );
-  const [diagnostics, setDiagnostics] = useState({});
+  const diagnostics = useSelector(
+    (state) => state.admin.integrationRemote.template.diagnostics
+  );
   const [diagnosticsModal, setDiagnosticsModal] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState(false);
@@ -52,10 +54,6 @@ export default function IntegrationRemote() {
           description:
             "Clique em Atualizar Template para buscar a última versão",
         });
-      } else {
-        setDiagnostics(
-          response.payload.diagnostics?.systemDiagnostics?.aggregateSnapshot
-        );
       }
     });
   };
