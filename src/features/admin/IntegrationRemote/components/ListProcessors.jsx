@@ -9,7 +9,7 @@ export default function ListProcessors() {
     (state) => state.admin.integrationRemote.template.status
   );
 
-  const datasource = Object.values(status)
+  const datasource = Object.values(status ?? {})
     .map((v) => {
       return v;
     })
