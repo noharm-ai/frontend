@@ -641,7 +641,7 @@ api.drugs.updateSubstance = (params = {}) => {
  */
 api.support = {};
 api.support.getTickets = () =>
-  instance.get(`/support/list-tickets`, {
+  instance.get(`/support/list-tickets/v2`, {
     ...setHeaders(),
   });
 

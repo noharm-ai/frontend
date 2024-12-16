@@ -1,41 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { MessageOutlined } from "@ant-design/icons";
-import { Typography, Row, Col } from "antd";
+import { Typography, Row, Col, Tabs } from "antd";
 
 import Button from "components/Button";
 import Empty from "components/Empty";
 import notification from "components/notification";
 import Table from "components/Table";
 import { getErrorMessage } from "utils/errorHandler";
-import { toDataSource } from "utils";
 import { fetchTickets, setSupportOpen, reset } from "../SupportSlice";
 import columns from "./columns";
 import expandedRowRender from "./expandedRowRender";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
 
 import { PageHeader } from "styles/PageHeader.style";
-import { PageCard, PageContainer } from "styles/Utils.style";
-
-const filterList = (ds, filter) => {
-  if (!ds) return [];
-
-  return ds.filter((i) => {
-    let show = true;
-
-    return show;
-  });
-};
+import { PageCard } from "styles/Utils.style";
 
 function SupportCenter() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const list = useSelector((state) => state.support.tickets.list);
+  const myTickets = useSelector((state) => state.support.tickets.myTickets);
+  const following = useSelector((state) => state.support.tickets.following);
+  const organization = useSelector(
+    (state) => state.support.tickets.organization
+  );
   const status = useSelector((state) => state.support.tickets.status);
-  const [filter] = useState({
-    status: null,
-    fl: [],
-  });
 
   const emptyText = (
     <Empty
@@ -58,7 +49,56 @@ function SupportCenter() {
     };
   }, [dispatch, t]);
 
-  const ds = toDataSource(filterList(list, filter), null, {});
+  const items = [
+    {
+      key: "1",
+      label: "Meus chamados",
+      children: (
+        <Table
+          columns={columns(t)}
+          pagination={false}
+          loading={status === "loading"}
+          locale={{ emptyText }}
+          dataSource={myTickets}
+          rowKey="id"
+          expandedRowRender={expandedRowRender}
+        />
+      ),
+    },
+    {
+      key: "2",
+      label: "Seguindo",
+      children: (
+        <Table
+          columns={columns(t)}
+          pagination={false}
+          loading={status === "loading"}
+          locale={{ emptyText }}
+          dataSource={following}
+          rowKey="id"
+          expandedRowRender={expandedRowRender}
+        />
+      ),
+    },
+  ];
+
+  if (PermissionService().has(Permission.WRITE_USERS)) {
+    items.push({
+      key: "3",
+      label: "Minha organização",
+      children: (
+        <Table
+          columns={columns(t)}
+          pagination={false}
+          loading={status === "loading"}
+          locale={{ emptyText }}
+          dataSource={organization}
+          rowKey="id"
+          expandedRowRender={expandedRowRender}
+        />
+      ),
+    });
+  }
 
   return (
     <>
@@ -71,106 +111,91 @@ function SupportCenter() {
           </h1>
         </div>
       </PageHeader>
-      <PageContainer>
-        <Row gutter={24}>
-          <Col xs={16}>
-            <Typography.Title level={4} style={{ marginTop: 0 }}>
-              Meus Chamados de Suporte
-            </Typography.Title>
-            <PageCard style={{ marginTop: "10px" }}>
-              <Table
-                columns={columns(t)}
-                pagination={false}
-                loading={status === "loading"}
-                locale={{ emptyText }}
-                dataSource={ds || []}
-                expandedRowRender={expandedRowRender}
-              />
-              <p>
-                * Os chamados abertos antes da troca de sistema continuam
-                válidos e serão atendidos normalmente.
-              </p>
-            </PageCard>
-          </Col>
-          <Col xs={8}>
+
+      <Row gutter={24}>
+        <Col xs={16}>
+          <PageCard style={{ marginTop: "0" }}>
+            <Tabs defaultActiveKey="1" items={items} />
+            <p>* Lista limitada em 50 registros.</p>
+          </PageCard>
+        </Col>
+        <Col xs={8}>
+          <Button
+            type="primary"
+            onClick={() => dispatch(setSupportOpen(true))}
+            icon={<MessageOutlined />}
+            size="large"
+            block
+          >
+            Abrir um Novo Chamado
+          </Button>
+
+          <Typography.Title level={4} style={{ marginTop: "30px" }}>
+            Perguntas Frequentes
+          </Typography.Title>
+          <PageCard style={{ marginTop: "10px" }}>
             <Button
-              type="primary"
-              onClick={() => dispatch(setSupportOpen(true))}
-              icon={<MessageOutlined />}
+              type="default"
+              onClick={() =>
+                window.open(
+                  `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/182`,
+                  "_blank"
+                )
+              }
               size="large"
               block
-              style={{ marginTop: "37px" }}
+              style={{ marginTop: "20px" }}
             >
-              Abrir um Novo Chamado
+              Nomes dos Pacientes não aparecem
             </Button>
 
-            <Typography.Title level={4} style={{ marginTop: "30px" }}>
-              Perguntas Frequentes
-            </Typography.Title>
-            <PageCard style={{ marginTop: "10px" }}>
-              <Button
-                type="default"
-                onClick={() =>
-                  window.open(
-                    `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/182`,
-                    "_blank"
-                  )
-                }
-                size="large"
-                block
-                style={{ marginTop: "20px" }}
-              >
-                Nomes dos Pacientes não aparecem
-              </Button>
+            <Button
+              type="default"
+              onClick={() =>
+                window.open(
+                  `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/111`,
+                  "_blank"
+                )
+              }
+              size="large"
+              block
+              style={{ marginTop: "20px" }}
+            >
+              Escore 4: o que fazer?
+            </Button>
 
-              <Button
-                type="default"
-                onClick={() =>
-                  window.open(
-                    `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/111`,
-                    "_blank"
-                  )
-                }
-                size="large"
-                block
-                style={{ marginTop: "20px" }}
-              >
-                Escore 4: o que fazer?
-              </Button>
+            <Button
+              type="default"
+              onClick={() =>
+                window.open(
+                  `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/131`,
+                  "_blank"
+                )
+              }
+              size="large"
+              block
+              style={{ marginTop: "20px" }}
+            >
+              Divisor de faixas
+            </Button>
 
-              <Button
-                type="default"
-                onClick={() =>
-                  window.open(
-                    `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/131`,
-                    "_blank"
-                  )
-                }
-                size="large"
-                block
-                style={{ marginTop: "20px" }}
-              >
-                Divisor de faixas
-              </Button>
-
-              <Button
-                type="primary"
-                onClick={() =>
-                  window.open(
-                    `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/39`,
-                    "_blank"
-                  )
-                }
-                size="large"
-                block
-                style={{ marginTop: "20px" }}
-              >
-                Ver todas
-              </Button>
-            </PageCard>
-          </Col>
-        </Row>
-      </PageContainer>
+            <Button
+              type="primary"
+              onClick={() =>
+                window.open(
+                  `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/39`,
+                  "_blank"
+                )
+              }
+              size="large"
+              block
+              style={{ marginTop: "20px" }}
+            >
+              Ver todas
+            </Button>
+          </PageCard>
+        </Col>
+      </Row>
     </>
   );
 }

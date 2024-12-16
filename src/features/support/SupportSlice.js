@@ -8,7 +8,9 @@ const initialState = {
     error: null,
   },
   tickets: {
-    list: [],
+    myTickets: [],
+    following: [],
+    organization: [],
     status: "idle",
     error: null,
   },
@@ -61,7 +63,9 @@ const supportSlice = createSlice({
       })
       .addCase(fetchTickets.fulfilled, (state, action) => {
         state.tickets.status = "succeeded";
-        state.tickets.list = action.payload.data;
+        state.tickets.myTickets = action.payload.data.myTickets;
+        state.tickets.following = action.payload.data.following;
+        state.tickets.organization = action.payload.data.organization;
       })
       .addCase(fetchTickets.rejected, (state, action) => {
         state.tickets.status = "failed";

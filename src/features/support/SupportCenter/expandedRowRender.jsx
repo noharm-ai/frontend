@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components/macro";
-import DOMPurify from "dompurify";
 
 import Descriptions from "components/Descriptions";
+import RichTextView from "components/RichTextView";
 
 const NestedTableContainer = styled.div`
   .ant-descriptions-item-label {
@@ -17,12 +17,11 @@ const expandedRowRender = (record) => {
   return (
     <NestedTableContainer>
       <Descriptions bordered size="small">
+        <Descriptions.Item label="Responsável:" span={3}>
+          <RichTextView text={record.partner_name} />
+        </Descriptions.Item>
         <Descriptions.Item label="Descrição:" span={3}>
-          <div
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(record.description),
-            }}
-          />
+          <RichTextView text={record.description} />
         </Descriptions.Item>
       </Descriptions>
     </NestedTableContainer>
