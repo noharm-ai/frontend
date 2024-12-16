@@ -3,7 +3,12 @@ import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
 
 import Tag from "components/Tag";
 
-export default function NodeStatusTag({ status, loading, ...props }) {
+export default function NodeStatusTag({
+  status,
+  loading,
+  showIcon = true,
+  ...props
+}) {
   let color = null;
 
   switch (status) {
@@ -20,10 +25,14 @@ export default function NodeStatusTag({ status, loading, ...props }) {
   return (
     <Tag color={color} style={{ cursor: "pointer" }} {...props}>
       {status}
-      {loading ? (
-        <LoadingOutlined style={{ marginLeft: "10px" }} />
-      ) : (
-        <DownOutlined style={{ marginLeft: "10px" }} />
+      {showIcon && (
+        <>
+          {loading ? (
+            <LoadingOutlined style={{ marginLeft: "10px" }} />
+          ) : (
+            <DownOutlined style={{ marginLeft: "10px" }} />
+          )}
+        </>
       )}
     </Tag>
   );
