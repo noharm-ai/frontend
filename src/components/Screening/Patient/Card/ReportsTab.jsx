@@ -43,6 +43,12 @@ export default function ReportsTab({ prescription }) {
       type: "PRESCRIPTION_HISTORY",
       visible: true,
     },
+    {
+      title: "Busca de Exames",
+      description: "Pesquisa por exames, inclusive ainda não configurados.",
+      type: "EXAMS_SEARCH",
+      visible: true,
+    },
   ];
 
   return (
