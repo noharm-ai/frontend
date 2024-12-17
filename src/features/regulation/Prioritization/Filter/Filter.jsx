@@ -27,7 +27,7 @@ export default function Filter({ limit }) {
     description: t("error.description"),
   };
   const initialValues = {
-    startDate: dayjs().subtract(5, "days").format("YYYY-MM-DD"),
+    startDate: dayjs().format("YYYY-MM-DD"),
     endDate: null,
     typeType: null,
     idDepartmentList: [],

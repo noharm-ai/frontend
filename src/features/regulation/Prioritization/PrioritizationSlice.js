@@ -22,6 +22,16 @@ const initialState = {
   patients: {
     status: "idle",
   },
+  selectedRows: {
+    active: false,
+    list: [],
+  },
+  multipleAction: {
+    status: "idle",
+    error: null,
+    open: false,
+    list: [],
+  },
 };
 
 export const fetchRegulationList = createAsyncThunk(
@@ -71,6 +81,19 @@ export const fetchPatients = createAsyncThunk(
   }
 );
 
+export const moveRegulationMultiple = createAsyncThunk(
+  "regulation-prioritization/move",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.moveRegulation(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const regulationPrioritizationSlice = createSlice({
   name: "regulationPrioritizationSlice",
   initialState,
@@ -86,6 +109,29 @@ const regulationPrioritizationSlice = createSlice({
     },
     updateOrder(state, action) {
       state.order = action.payload;
+    },
+    setSelectedRowsActive(state, action) {
+      state.selectedRows.active = action.payload;
+      if (!action.payload) {
+        state.selectedRows.list = [];
+      }
+    },
+    setSelectedRows(state, action) {
+      state.selectedRows.list = action.payload;
+    },
+    toggleSelectedRows(state, action) {
+      const index = state.selectedRows.list.indexOf(action.payload);
+      if (index !== -1) {
+        state.selectedRows.list.splice(index, 1);
+      } else {
+        state.selectedRows.list.push(action.payload);
+      }
+    },
+    setMultipleActionIds(state, action) {
+      state.multipleAction.list = action.payload;
+    },
+    setMultipleActionModal(state, action) {
+      state.multipleAction.open = action.payload;
     },
   },
   extraReducers(builder) {
@@ -126,11 +172,38 @@ const regulationPrioritizationSlice = createSlice({
       .addCase(fetchPatients.rejected, (state, action) => {
         state.patients.status = "failed";
         state.patients.error = action.error.message;
+      })
+      .addCase(moveRegulationMultiple.pending, (state, action) => {
+        state.multipleAction.status = "loading";
+      })
+      .addCase(moveRegulationMultiple.fulfilled, (state, action) => {
+        state.multipleAction.status = "succeeded";
+
+        action.payload.data?.data.forEach((result) => {
+          const index = state.list.findIndex((i) => i.id === result.id);
+
+          if (index !== -1) {
+            state.list[index] = { ...state.list[index], stage: result.stage };
+          }
+        });
+      })
+      .addCase(moveRegulationMultiple.rejected, (state, action) => {
+        state.multipleAction.status = "failed";
+        state.multipleAction.error = action.error.message;
       });
   },
 });
 
-export const { reset, setFilters, setCurrentPage, updateOrder } =
-  regulationPrioritizationSlice.actions;
+export const {
+  reset,
+  setFilters,
+  setCurrentPage,
+  updateOrder,
+  setSelectedRowsActive,
+  toggleSelectedRows,
+  setSelectedRows,
+  setMultipleActionIds,
+  setMultipleActionModal,
+} = regulationPrioritizationSlice.actions;
 
 export default regulationPrioritizationSlice.reducer;
