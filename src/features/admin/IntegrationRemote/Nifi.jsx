@@ -3,29 +3,31 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Spin } from "antd";
 
-import { fetchTemplate, reset } from "./IntegrationRemoteSlice";
+import { fetchTemplate } from "./IntegrationRemoteSlice";
 import Graph from "./components/Graph";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 import NifiQueue from "./components/NifiQueue";
+import BulletinModal from "./components/BulletinModal";
 
 export default function Nifi() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const status = useSelector((state) => state.admin.integrationRemote.status);
+  const templateDate = useSelector(
+    (state) => state.admin.integrationRemote.template.date
+  );
 
   useEffect(() => {
-    dispatch(fetchTemplate()).then((response) => {
-      if (response.error) {
-        notification.error({
-          message: getErrorMessage(response, t),
-        });
-      }
-    });
-
-    return () => {
-      dispatch(reset());
-    };
+    if (!templateDate) {
+      dispatch(fetchTemplate()).then((response) => {
+        if (response.error) {
+          notification.error({
+            message: getErrorMessage(response, t),
+          });
+        }
+      });
+    }
   }, []); //eslint-disable-line
 
   return (
@@ -42,6 +44,7 @@ export default function Nifi() {
         <Graph />
 
         <NifiQueue />
+        <BulletinModal />
       </div>
     </Spin>
   );

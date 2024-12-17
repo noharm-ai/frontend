@@ -10,7 +10,7 @@ import { Form as FormElement } from "styles/Form.style";
 import RegulationStageTag from "components/RegulationStageTag";
 import Field from "components/Forms/CustomForm/Field";
 
-export default function Form({ validationSchema, setValidationSchema }) {
+export default function Form({ setValidationSchema }) {
   const { t } = useTranslation();
   const { values, errors, setFieldValue } = useFormikContext();
 
@@ -26,7 +26,6 @@ export default function Form({ validationSchema, setValidationSchema }) {
     });
 
     const validation = Yup.object().shape({
-      id: Yup.number().nullable().required(t("validation.requiredField")),
       action: Yup.string().nullable().required(t("validation.requiredField")),
       nextStage: Yup.string()
         .nullable()
@@ -39,14 +38,33 @@ export default function Form({ validationSchema, setValidationSchema }) {
 
   return (
     <FormElement>
-      <div className={`form-row`}>
-        <div className="form-label">
-          <label>Etapa atual:</label>
+      {values.stage !== undefined && (
+        <div className={`form-row`}>
+          <div className="form-label">
+            <label>Etapa atual:</label>
+          </div>
+          <div className="form-input">
+            <RegulationStageTag stage={values.stage} />
+          </div>
         </div>
-        <div className="form-input">
-          <RegulationStageTag stage={values.stage} />
+      )}
+
+      {values.ids && (
+        <div className={`form-row`}>
+          <div className="form-label">
+            <label>Solicitações selecionadas:</label>
+          </div>
+          <div className="form-input">
+            <Select value={values.ids} mode="multiple" maxTagCount="responsive">
+              {values.ids.map((id) => (
+                <Select.Option key={id} value={id}>
+                  {id}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className={`form-row ${errors.action ? "error" : ""}`}>
         <div className="form-label">

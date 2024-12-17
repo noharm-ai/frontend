@@ -449,6 +449,18 @@ export const CardTable = styled(AntTable)`
       background: rgb(169 145 214 / 20%);
     }
   }
+
+  .danger {
+    background: #f8dee2;
+
+    td:not(:nth-child(1)) {
+      opacity: 1;
+
+      a {
+        opacity: 1;
+      }
+    }
+  }
 `;
 
 export default Table;

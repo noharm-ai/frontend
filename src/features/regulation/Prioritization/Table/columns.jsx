@@ -1,5 +1,10 @@
 import React from "react";
-import { SearchOutlined, LoadingOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  LoadingOutlined,
+  CheckSquareOutlined,
+  BorderOutlined,
+} from "@ant-design/icons";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
@@ -7,15 +12,8 @@ import { formatDateTime } from "utils/date";
 import RegulationRiskTag from "components/RegulationRiskTag";
 import RegulationStageTag from "components/RegulationStageTag";
 
-const columns = (t) => {
+const columns = (t, bag) => {
   return [
-    // {
-    //   title: "#",
-    //   align: "right",
-    //   render: (entry, record) => {
-    //     return record.id;
-    //   },
-    // },
     {
       title: "Solicitado em",
       align: "center",
@@ -70,11 +68,52 @@ const columns = (t) => {
       },
     },
     {
-      title: t("tableHeader.action"),
+      title: () => {
+        if (bag.selectedRowsActive) {
+          return (
+            <Button
+              type={"default"}
+              onClick={() => {
+                bag.selectAllRows();
+              }}
+              icon={
+                bag.isAllSelected ? (
+                  <CheckSquareOutlined style={{ fontSize: 16 }} />
+                ) : (
+                  <BorderOutlined style={{ fontSize: 16 }} />
+                )
+              }
+            ></Button>
+          );
+        }
+
+        return t("tableHeader.action");
+      },
       key: "operations",
       width: 70,
       align: "center",
       render: (text, record) => {
+        if (bag.selectedRowsActive) {
+          const selected = bag.selectedRows.indexOf(record.id) !== -1;
+          return (
+            <Tooltip title={selected ? null : "Selecionar"}>
+              <Button
+                type={selected ? "primary" : "default"}
+                onClick={() => {
+                  bag.dispatch(bag.toggleSelectedRows(record.id));
+                }}
+                icon={
+                  selected ? (
+                    <CheckSquareOutlined style={{ fontSize: 16 }} />
+                  ) : (
+                    <BorderOutlined style={{ fontSize: 16 }} />
+                  )
+                }
+              ></Button>
+            </Tooltip>
+          );
+        }
+
         return (
           <Tooltip title="Abrir solicitação">
             <Button

@@ -99,6 +99,7 @@ export default function SecondaryFilters() {
                   mode="multiple"
                   maxTagCount="responsive"
                   loading={regulationTypesStatus === "loading"}
+                  autoClearSearchValue={false}
                 >
                   {filterTypes(values.typeType, regulationTypes).map((i) => (
                     <Select.Option key={i.id} value={i.id}>

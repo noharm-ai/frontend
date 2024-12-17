@@ -116,9 +116,10 @@ const regulationSlice = createSlice({
       })
       .addCase(moveRegulation.fulfilled, (state, action) => {
         state.action.status = "succeeded";
-        state.data.movements = action.payload.data.data.movements;
-        state.data.stage = action.payload.data.data.stage;
-        state.data.extra = action.payload.data.data.extra;
+        const solicitation = action.payload.data.data[0];
+        state.data.movements = solicitation.movements;
+        state.data.stage = solicitation.stage;
+        state.data.extra = solicitation.extra;
       })
       .addCase(moveRegulation.rejected, (state, action) => {
         state.action.status = "failed";

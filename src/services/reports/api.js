@@ -38,4 +38,10 @@ api.live.getPrescriptionHistoryReport = (params = {}) =>
     ...setHeaders(),
   });
 
+api.live.getExamsRawSearchReport = (params = {}) =>
+  instance.get(`/reports/exams/raw`, {
+    params,
+    ...setHeaders(),
+  });
+
 export default api;

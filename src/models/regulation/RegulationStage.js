@@ -7,6 +7,7 @@ export default class RegulationStage {
   static AWAITING_DOCUMENTATION = 5;
   static AWAITING_COMPLETION = 6;
   static AWAITING_EXTERNAL = 7;
+  static AWAITING_INFO = 8;
   static CANCELED = 98;
   static FINISHED = 99;
 
@@ -52,6 +53,11 @@ export default class RegulationStage {
       {
         id: RegulationStage.AWAITING_EXTERNAL,
         label: t(`regulation.stage.${RegulationStage.AWAITING_EXTERNAL}`),
+        color: "orange",
+      },
+      {
+        id: RegulationStage.AWAITING_INFO,
+        label: t(`regulation.stage.${RegulationStage.AWAITING_INFO}`),
         color: "orange",
       },
       {

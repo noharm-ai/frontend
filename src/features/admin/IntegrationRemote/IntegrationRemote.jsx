@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Spin, Row, Col } from "antd";
+import { Spin, Row, Col, Result, Space } from "antd";
 import {
   SearchOutlined,
   DeploymentUnitOutlined,
@@ -13,14 +13,15 @@ import ControllersList from "./components/ControllersList";
 import DiagnosticModal from "./components/DiagnosticsModal";
 import {
   fetchTemplate,
-  reset,
   pushQueueRequest,
-  getTemplateDate,
+  getQueueStatus,
 } from "./IntegrationRemoteSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import notification from "components/notification";
 import Button from "components/Button";
 import { formatDateTime } from "utils/date";
+import ListConnections from "./components/ListConnections";
+import ListProcessors from "./components/ListProcessors";
 
 import { PageHeader } from "styles/PageHeader.style";
 import { PageCard, PageSectionTitle } from "styles/Utils.style";
@@ -31,17 +32,20 @@ export default function IntegrationRemote() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const status = useSelector((state) => state.admin.integrationRemote.status);
-  const [diagnostics, setDiagnostics] = useState({});
+  const templateDate = useSelector(
+    (state) => state.admin.integrationRemote.template.date
+  );
+  const diagnostics = useSelector(
+    (state) => state.admin.integrationRemote.template.diagnostics
+  );
   const [diagnosticsModal, setDiagnosticsModal] = useState(false);
-  const [updateDate, setUpdateDate] = useState(null);
   const [updating, setUpdating] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    loadTemplate();
-
-    return () => {
-      dispatch(reset());
-    };
+    if (!templateDate) {
+      refreshTemplate();
+    }
   }, []); //eslint-disable-line
 
   const loadTemplate = () => {
@@ -52,11 +56,6 @@ export default function IntegrationRemote() {
           description:
             "Clique em Atualizar Template para buscar a última versão",
         });
-      } else {
-        setDiagnostics(
-          response.payload.diagnostics?.systemDiagnostics?.aggregateSnapshot
-        );
-        setUpdateDate(response.payload.response.data.data.updatedAt);
       }
     });
   };
@@ -67,26 +66,27 @@ export default function IntegrationRemote() {
       actionType: "REFRESH_TEMPLATE",
     };
 
-    dispatch(pushQueueRequest(payload)).then((response) => {
-      if (response.error) {
+    dispatch(pushQueueRequest(payload)).then((queueResponse) => {
+      if (queueResponse.error) {
         notification.error({
-          message: getErrorMessage(response, t),
+          message: getErrorMessage(queueResponse, t),
         });
       } else {
+        const idQueueList = [queueResponse.payload.data.data.id];
+
         notification.success({
-          message: "Solicitação enviada!",
-          description: "Aguarde a atualização do template",
+          message: "Atualizando template!",
+          description: "Aguarde...",
         });
 
-        const interval = setInterval(() => {
-          dispatch(getTemplateDate()).then((response) => {
-            const tplDate = response.payload.data.data.updatedAt;
-            console.log("tpldate", tplDate);
+        let repeats = 0;
 
-            if (
-              (!updateDate && tplDate) ||
-              (updateDate && tplDate > updateDate)
-            ) {
+        const interval = setInterval(() => {
+          repeats += 1;
+          dispatch(getQueueStatus({ idQueueList })).then((response) => {
+            const queue = response.payload.response.data.data.queue[0];
+
+            if (queue.responseCode === 200) {
               loadTemplate();
               clearInterval(interval);
               setUpdating(false);
@@ -94,14 +94,26 @@ export default function IntegrationRemote() {
               notification.success({
                 message: "Template atualizado!",
               });
+            } else if (queue.responseCode === null) {
+              if (repeats > 10) {
+                clearInterval(interval);
+                setUpdating(false);
+                setError(true);
+              } else {
+                notification.info({
+                  message: "Aguardando atualização...",
+                });
+              }
             } else {
-              console.log("waiting for template update");
-              notification.info({
-                message: "Aguardando atualização...",
+              notification.error({
+                message: "Erro ao atualizar template",
               });
+              clearInterval(interval);
+              setUpdating(false);
+              setError(true);
             }
           });
-        }, 5000);
+        }, 2500);
       }
     });
   };
@@ -122,8 +134,18 @@ export default function IntegrationRemote() {
     return "green";
   };
 
+  if (error) {
+    return (
+      <Result
+        status="error"
+        title="Parece que o nifi não está respondendo"
+        subTitle="Por favor, verifique se os processos estão instalados e ativos no nifi."
+      ></Result>
+    );
+  }
+
   return (
-    <>
+    <Spin spinning={updating}>
       <PageHeader>
         <div>
           <h1 className="page-header-title">Integração: Acesso Remoto</h1>
@@ -147,103 +169,122 @@ export default function IntegrationRemote() {
           >
             Acessar Nifi Remoto
           </Button>
-          {updateDate && (
+          {templateDate && (
             <div style={{ marginTop: "5px" }}>
-              Atualizado em: {formatDateTime(updateDate)}
+              Atualizado em: {formatDateTime(templateDate)}
             </div>
           )}
         </div>
       </PageHeader>
 
-      <Row gutter={[24, 24]}>
-        <Col xs={8}>
-          <PageSectionTitle>Controllers</PageSectionTitle>
-          <PageCard>
-            <ControllersList />
-          </PageCard>
-        </Col>
-        <Col xs={16}>
-          <PageSectionTitle style={{ marginBottom: "2rem" }}>
-            Diagnóstico
-          </PageSectionTitle>
-          <Row gutter={[12, 12]}>
-            <Col xs={12}>
-              <Spin spinning={status === "loading"}>
-                <StatsCard
-                  className={`${getPercentageStatus(
-                    diagnostics?.flowFileRepositoryStorageUsage?.utilization
-                  )}`}
-                >
-                  <div className="stats-title">Disco utilizado</div>
-                  <div className="stats-value">
-                    {diagnostics?.flowFileRepositoryStorageUsage?.utilization}
-                  </div>
-                </StatsCard>
-              </Spin>
-            </Col>
-            <Col xs={12}>
-              <Spin spinning={status === "loading"}>
-                <StatsCard className={"green"}>
-                  <div className="stats-title">Uptime</div>
-                  <div className="stats-value">
-                    {diagnostics?.uptime?.split(".")[0]}
-                  </div>
-                </StatsCard>
-              </Spin>
-            </Col>
-            <Col xs={12}>
-              <Spin spinning={status === "loading"}>
-                <StatsCard className={"blue"}>
-                  <div className="stats-title">Heap Utilizado</div>
-                  <div className="stats-value">
-                    {diagnostics?.heapUtilization}
-                  </div>
-                </StatsCard>
-              </Spin>
-            </Col>
-            <Col xs={12}>
-              <Spin spinning={status === "loading"}>
-                <StatsCard className={"blue"}>
-                  <div className="stats-title">Total Threads</div>
-                  <div className="stats-value">{diagnostics?.totalThreads}</div>
-                </StatsCard>
-              </Spin>
-            </Col>
-            <Col xs={12}>
-              <Spin spinning={status === "loading"}>
-                <StatsCard className={""}>
-                  <div className="stats-title">Versão</div>
-                  <div className="stats-value">
-                    {diagnostics?.versionInfo?.buildTag}
-                  </div>
-                </StatsCard>
-              </Spin>
-            </Col>
-            <Col xs={12}>
-              <StatsCard style={{ height: "100%" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <Button
-                    block
-                    size="large"
-                    type="link"
-                    icon={<SearchOutlined />}
-                    style={{ fontSize: "20px" }}
-                    onClick={() => setDiagnosticsModal(true)}
+      <Space direction="vertical" style={{ width: "100%" }}>
+        <Row gutter={[24, 24]}>
+          <Col xs={8}>
+            <PageSectionTitle>Controllers</PageSectionTitle>
+            <PageCard>
+              <ControllersList />
+            </PageCard>
+          </Col>
+          <Col xs={16}>
+            <PageSectionTitle style={{ marginBottom: "2rem" }}>
+              Diagnóstico
+            </PageSectionTitle>
+            <Row gutter={[12, 12]}>
+              <Col xs={12}>
+                <Spin spinning={status === "loading"}>
+                  <StatsCard
+                    className={`${getPercentageStatus(
+                      diagnostics?.flowFileRepositoryStorageUsage?.utilization
+                    )}`}
                   >
-                    Ver mais
-                  </Button>
-                </div>
-              </StatsCard>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+                    <div className="stats-title">Disco utilizado</div>
+                    <div className="stats-value">
+                      {diagnostics?.flowFileRepositoryStorageUsage?.utilization}
+                    </div>
+                  </StatsCard>
+                </Spin>
+              </Col>
+              <Col xs={12}>
+                <Spin spinning={status === "loading"}>
+                  <StatsCard className={"green"}>
+                    <div className="stats-title">Uptime</div>
+                    <div className="stats-value">
+                      {diagnostics?.uptime?.split(".")[0]}
+                    </div>
+                  </StatsCard>
+                </Spin>
+              </Col>
+              <Col xs={12}>
+                <Spin spinning={status === "loading"}>
+                  <StatsCard className={"blue"}>
+                    <div className="stats-title">Heap Utilizado</div>
+                    <div className="stats-value">
+                      {diagnostics?.heapUtilization}
+                    </div>
+                  </StatsCard>
+                </Spin>
+              </Col>
+              <Col xs={12}>
+                <Spin spinning={status === "loading"}>
+                  <StatsCard className={"blue"}>
+                    <div className="stats-title">Total Threads</div>
+                    <div className="stats-value">
+                      {diagnostics?.totalThreads}
+                    </div>
+                  </StatsCard>
+                </Spin>
+              </Col>
+              <Col xs={12}>
+                <Spin spinning={status === "loading"}>
+                  <StatsCard className={""}>
+                    <div className="stats-title">Versão</div>
+                    <div className="stats-value">
+                      {diagnostics?.versionInfo?.buildTag}
+                    </div>
+                  </StatsCard>
+                </Spin>
+              </Col>
+              <Col xs={12}>
+                <StatsCard style={{ height: "100%" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      height: "100%",
+                    }}
+                  >
+                    <Button
+                      block
+                      size="large"
+                      type="link"
+                      icon={<SearchOutlined />}
+                      style={{ fontSize: "20px" }}
+                      onClick={() => setDiagnosticsModal(true)}
+                    >
+                      Ver mais
+                    </Button>
+                  </div>
+                </StatsCard>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+
+        <div>
+          <PageSectionTitle style={{ marginBottom: "1.5rem" }}>
+            Filas
+          </PageSectionTitle>
+          <ListConnections />
+        </div>
+
+        <div>
+          <PageSectionTitle style={{ marginBottom: "1.5rem" }}>
+            Processos
+          </PageSectionTitle>
+          <ListProcessors />
+        </div>
+      </Space>
+
       {diagnostics && (
         <DiagnosticModal
           open={diagnosticsModal}
@@ -251,6 +292,6 @@ export default function IntegrationRemote() {
           data={diagnostics}
         />
       )}
-    </>
+    </Spin>
   );
 }

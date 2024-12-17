@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Pagination, Flex } from "antd";
+import { CheckOutlined, BorderOutlined } from "@ant-design/icons";
+import { uniq } from "utils/lodash";
 
 import { ExpandableTable } from "components/Table";
 import Empty from "components/Empty";
+import Dropdown from "components/Dropdown";
 
 import { PageCard, PaginationContainer } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
@@ -17,12 +20,24 @@ import {
   setCurrentPage,
   fetchRegulationList,
   fetchPatients,
+  setSelectedRows,
+  setSelectedRowsActive,
+  toggleSelectedRows,
+  setMultipleActionIds,
+  setMultipleActionModal,
 } from "./PrioritizationSlice";
+import RegulationMultipleAction from "./RegulationMultipleAction/RegulationMultipleAction";
 
 export default function Prioritization() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const status = useSelector((state) => state.regulation.prioritization.status);
+  const selectedRows = useSelector(
+    (state) => state.regulation.prioritization.selectedRows.list
+  );
+  const selectedRowsActive = useSelector(
+    (state) => state.regulation.prioritization.selectedRows.active
+  );
 
   const [expandedRows, setExpandedRows] = useState([]);
   const page = useSelector(
@@ -36,6 +51,48 @@ export default function Prioritization() {
   const datasource = useSelector(
     (state) => state.regulation.prioritization.list
   );
+  const selectAllRows = () => {
+    let rows = datasource || [];
+
+    rows = rows.map((i) => i.id);
+
+    if (rows.length > 0) {
+      if (isAllSelected()) {
+        dispatch(
+          setSelectedRows(selectedRows.filter((s) => rows.indexOf(s) === -1))
+        );
+      } else {
+        const allRows = [...selectedRows, ...rows];
+        dispatch(setSelectedRows(uniq(allRows)));
+      }
+    }
+  };
+
+  const isAllSelected = () => {
+    if (!selectedRows.length) return false;
+
+    let selected = true;
+    let rows = datasource || [];
+
+    rows = rows.map((i) => i.id);
+
+    rows.forEach((r) => {
+      if (selectedRows.indexOf(r) === -1) {
+        selected = false;
+      }
+    });
+
+    return selected;
+  };
+  const bag = {
+    dispatch,
+    setSelectedRows,
+    toggleSelectedRows,
+    selectedRowsActive,
+    selectedRows,
+    isAllSelected: isAllSelected(),
+    selectAllRows,
+  };
 
   useEffect(() => {
     if (status === "succeeded") {
@@ -88,6 +145,51 @@ export default function Prioritization() {
     }
   };
 
+  const actionOptions = () => {
+    const items = [
+      {
+        key: "action",
+        label: "Ação Múltipla",
+        icon: <CheckOutlined style={{ fontSize: "16px" }} />,
+        disabled: selectedRows.length === 0,
+      },
+      {
+        type: "divider",
+      },
+      {
+        key: "reset",
+        label: "Remover seleção",
+        icon: <BorderOutlined style={{ fontSize: "16px" }} />,
+        disabled: !selectedRowsActive,
+      },
+    ];
+
+    return {
+      items,
+      onClick: handleActionClick,
+    };
+  };
+
+  const handleActionClick = ({ key }) => {
+    switch (key) {
+      case "reset":
+        dispatch(setSelectedRowsActive(false));
+        break;
+      case "action":
+        const actionList = datasource.filter(
+          (item) => selectedRows.indexOf(item.id) !== -1
+        );
+
+        dispatch(setMultipleActionIds(actionList));
+        dispatch(setMultipleActionModal(true));
+
+        break;
+
+      default:
+        console.error(key);
+    }
+  };
+
   return (
     <>
       <PageHeader>
@@ -102,21 +204,41 @@ export default function Prioritization() {
         <div style={{ flex: 1 }}>
           <Order limit={limit} />
         </div>
-        <Pagination
-          onChange={onPageChange}
-          current={page}
-          total={count}
-          showSizeChanger={false}
-          pageSize={limit}
-          showTotal={(total, range) =>
-            `${range[0]}-${range[1]} de ${total} itens`
-          }
-        />
+        <div>
+          <Pagination
+            onChange={onPageChange}
+            current={page}
+            total={count}
+            showSizeChanger={false}
+            pageSize={limit}
+            showTotal={(total, range) =>
+              `${range[0]}-${range[1]} de ${total} itens`
+            }
+          />
+        </div>
       </Flex>
 
       <PageCard>
+        <Flex justify="end" align="center">
+          <div>
+            <Dropdown.Button
+              style={{ marginBottom: "1.5rem" }}
+              menu={actionOptions()}
+              type={selectedRowsActive ? "primary" : "default"}
+              onClick={() =>
+                !selectedRowsActive
+                  ? dispatch(setSelectedRowsActive(true))
+                  : false
+              }
+            >
+              {selectedRowsActive
+                ? `${selectedRows.length} selecionados`
+                : "Ativar seleção múltipla"}
+            </Dropdown.Button>
+          </div>
+        </Flex>
         <ExpandableTable
-          columns={columns(t)}
+          columns={columns(t, bag)}
           pagination={false}
           loading={status === "loading"}
           locale={{
@@ -148,6 +270,7 @@ export default function Prioritization() {
           }
         />
       </PaginationContainer>
+      <RegulationMultipleAction />
     </>
   );
 }

@@ -3,10 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Tabs, Popconfirm, Space } from "antd";
 import {
-  ReloadOutlined,
   DeleteOutlined,
   SearchOutlined,
+  SaveOutlined,
 } from "@ant-design/icons";
+import { Formik } from "formik";
+import isEmpty from "lodash.isempty";
 
 import DefaultModal from "components/Modal";
 import Heading from "components/Heading";
@@ -22,6 +24,7 @@ import {
 } from "../IntegrationRemoteSlice";
 import NodeStatusTag from "./NodeStatusTag";
 import { Textarea } from "components/Inputs";
+import RichTextView from "components/RichTextView";
 
 export default function NodeModal() {
   const dispatch = useDispatch();
@@ -32,7 +35,6 @@ export default function NodeModal() {
   const activeAction = useSelector(
     (state) => state.admin.integrationRemote.pushQueueRequest.activeAction
   );
-
   const statusOptions = [
     {
       key: "DISABLED",
@@ -86,7 +88,9 @@ export default function NodeModal() {
     });
   };
 
-  const items = [
+  const initialValues = { ...data?.extra?.properties };
+
+  const getItems = (setFieldValue, values) => [
     {
       key: "0",
       label: "Principal",
@@ -124,62 +128,114 @@ export default function NodeModal() {
                   />
                 </Dropdown>
               </Descriptions.Item>
-              {data?.extra?.properties &&
-                data?.extra?.properties["SQL select query"] && (
-                  <Descriptions.Item label="SQL select query" span={3}>
-                    <Textarea
-                      value={data?.extra?.properties["SQL select query"]}
-                      style={{ minHeight: "150px", maxHeight: "300px" }}
-                    />
-                  </Descriptions.Item>
-                )}
-              {data?.extra?.properties &&
-                data?.extra?.properties["db-fetch-sql-query"] && (
-                  <Descriptions.Item label="db-fetch-sql-query" span={3}>
-                    <Textarea
-                      value={data?.extra?.properties["db-fetch-sql-query"]}
-                      style={{ minHeight: "150px", maxHeight: "300px" }}
-                    />
-                  </Descriptions.Item>
-                )}
-              {data?.extra?.properties &&
-                data?.extra?.properties["Table Name"] && (
-                  <Descriptions.Item label="Table Name" span={3}>
-                    {data?.extra?.properties["Table Name"]}
-                  </Descriptions.Item>
-                )}
-              {data?.extra?.properties &&
-                data?.extra?.properties["Maximum-value Columns"] && (
-                  <Descriptions.Item label="Maximum-value Columns" span={3}>
-                    {data?.extra?.properties["Maximum-value Columns"]}
-                  </Descriptions.Item>
-                )}
-              {data?.extra?.properties &&
-                data?.extra?.properties["Remote URL"] && (
-                  <Descriptions.Item label="Remote URL" span={3}>
-                    <Textarea
-                      value={data?.extra?.properties["Remote URL"]}
-                      style={{ minHeight: "150px", maxHeight: "300px" }}
-                    />
-                  </Descriptions.Item>
-                )}
+              {Object.hasOwn(data?.extra?.properties, "SQL select query") && (
+                <Descriptions.Item label="SQL select query" span={3}>
+                  <Textarea
+                    value={values["SQL select query"]}
+                    style={{ minHeight: "150px", maxHeight: "300px" }}
+                    onChange={({ target }) =>
+                      setFieldValue("SQL select query", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
+              {Object.hasOwn(data?.extra?.properties, "db-fetch-sql-query") && (
+                <Descriptions.Item
+                  label="Custom query (db-fetch-sql-query)"
+                  span={3}
+                >
+                  <Textarea
+                    value={values["db-fetch-sql-query"]}
+                    style={{ minHeight: "150px", maxHeight: "300px" }}
+                    onChange={({ target }) =>
+                      setFieldValue("db-fetch-sql-query", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
+              {Object.hasOwn(
+                data?.extra?.properties,
+                "db-fetch-where-clause"
+              ) && (
+                <Descriptions.Item
+                  label="Additional WHERE clause (db-fetch-where-clause)"
+                  span={3}
+                >
+                  <Textarea
+                    value={values["db-fetch-where-clause"]}
+                    style={{ minHeight: "150px", maxHeight: "300px" }}
+                    onChange={({ target }) =>
+                      setFieldValue("db-fetch-where-clause", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
+              {Object.hasOwn(data?.extra?.properties, "Table Name") && (
+                <Descriptions.Item label="Table Name" span={3}>
+                  <Textarea
+                    value={values["Table Name"]}
+                    onChange={({ target }) =>
+                      setFieldValue("Table Name", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
+              {Object.hasOwn(
+                data?.extra?.properties,
+                "Maximum-value Columns"
+              ) && (
+                <Descriptions.Item label="Maximum-value Columns" span={3}>
+                  <Textarea
+                    value={values["Maximum-value Columns"]}
+                    onChange={({ target }) =>
+                      setFieldValue("Maximum-value Columns", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
+              {Object.hasOwn(data?.extra?.properties, "Max Wait Time") && (
+                <Descriptions.Item label="Max Wait Time" span={3}>
+                  <Textarea
+                    value={values["Max Wait Time"]}
+                    onChange={({ target }) =>
+                      setFieldValue("Max Wait Time", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
+              {Object.hasOwn(data?.extra?.properties, "qdbt-max-rows") && (
+                <Descriptions.Item
+                  label="Max Rows Per Flow File (qdbt-max-rows)"
+                  span={3}
+                >
+                  <Textarea
+                    value={values["qdbt-max-rows"]}
+                    onChange={({ target }) =>
+                      setFieldValue("qdbt-max-rows", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
+
+              {Object.hasOwn(data?.extra?.properties, "Remote URL") && (
+                <Descriptions.Item label="Remote URL" span={3}>
+                  <Textarea
+                    value={values["Remote URL"]}
+                    onChange={({ target }) =>
+                      setFieldValue("Remote URL", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
               {data?.extra && data?.extra["schedulingPeriod"] && (
                 <Descriptions.Item label="Agendamento" span={3}>
                   {data?.extra["schedulingPeriod"]} (
                   {data?.extra["schedulingStrategy"]})
                 </Descriptions.Item>
               )}
-              {data?.status && data?.status["activeThreadCount"] >= 0 && (
-                <Descriptions.Item label="Threads ativas" span={3}>
-                  {data?.status["activeThreadCount"]}
-                </Descriptions.Item>
-              )}
               {data?.extra && data?.extra["comments"] && (
                 <Descriptions.Item label="Comentários" span={3}>
-                  <Textarea
-                    value={data?.extra["comments"]}
-                    style={{ minHeight: "150px", maxHeight: "300px" }}
-                  />
+                  <RichTextView text={data?.extra["comments"]} />
                 </Descriptions.Item>
               )}
             </>
@@ -273,46 +329,84 @@ export default function NodeModal() {
     },
   ];
 
-  return (
-    <DefaultModal
-      width={"60vw"}
-      centered
-      destroyOnClose
-      open={data}
-      onCancel={() => dispatch(setSelectedNode(null))}
-      footer={[
-        <Popconfirm
-          key="clearState"
-          title="Limpar estado"
-          description="Esta ação limpa o maxcolumn do processo. Confirma?"
-          okText="Sim"
-          cancelText="Não"
-          onConfirm={() => executeAction("CLEAR_STATE")}
-        >
-          <Button
-            loading={activeAction === "CLEAR_STATE"}
-            icon={<DeleteOutlined />}
-            danger
-          >
-            Limpar estado
-          </Button>
-        </Popconfirm>,
-        <Button
-          key="back"
-          onClick={() => executeAction("REFRESH_STATE")}
-          icon={<ReloadOutlined />}
-          type="primary"
-          loading={activeAction === "REFRESH_STATE"}
-        >
-          Atualizar
-        </Button>,
-      ]}
-    >
-      <Heading margin="0 0 11px" size="18px">
-        {data?.name}
-      </Heading>
+  const onSave = (params) => {
+    const payload = {};
 
-      <Tabs defaultActiveKey="0" items={items} />
-    </DefaultModal>
+    const validFields = [
+      "Maximum-value Columns",
+      "Max Wait Time",
+      "qdbt-max-rows",
+      "Remote URL",
+      "SQL select query",
+      "db-fetch-sql-query",
+      "db-fetch-where-clause",
+      "Table Name",
+    ];
+
+    validFields.forEach((field) => {
+      if (params[field]) {
+        payload[field] = params[field];
+      }
+    });
+
+    if (!isEmpty(payload)) {
+      executeAction("UPDATE_PROPERTY", { properties: payload });
+    }
+  };
+
+  return (
+    <Formik enableReinitialize onSubmit={onSave} initialValues={initialValues}>
+      {({ handleSubmit, setFieldValue, values }) => (
+        <DefaultModal
+          width={"60vw"}
+          centered
+          destroyOnClose
+          open={data}
+          onCancel={() => dispatch(setSelectedNode(null))}
+          footer={[
+            <Popconfirm
+              key="clearState"
+              title="Limpar estado"
+              description="Esta ação limpa o maxcolumn do processo. Confirma?"
+              okText="Sim"
+              cancelText="Não"
+              onConfirm={() => executeAction("CLEAR_STATE")}
+            >
+              <Button
+                loading={activeAction === "CLEAR_STATE"}
+                icon={<DeleteOutlined />}
+                danger
+              >
+                Limpar estado
+              </Button>
+            </Popconfirm>,
+            <Popconfirm
+              key="updateProperty"
+              title="Salvar propriedades"
+              description="Esta ação salva as alterações nas propriedades do processo. Confirma?"
+              okText="Sim"
+              cancelText="Não"
+              onConfirm={handleSubmit}
+            >
+              <Button
+                icon={<SaveOutlined />}
+                type="primary"
+                disabled={data?.status?.runStatus !== "Stopped"}
+                loading={activeAction === "UPDATE_PROPERTY"}
+                style={{ marginLeft: "5px" }}
+              >
+                Salvar propriedades
+              </Button>
+            </Popconfirm>,
+          ]}
+        >
+          <Heading margin="0 0 11px" size="18px">
+            {data?.name}
+          </Heading>
+
+          <Tabs defaultActiveKey="0" items={getItems(setFieldValue, values)} />
+        </DefaultModal>
+      )}
+    </Formik>
   );
 }
