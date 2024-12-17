@@ -39,7 +39,7 @@ api.live.getPrescriptionHistoryReport = (params = {}) =>
   });
 
 api.live.getExamsRawSearchReport = (params = {}) =>
-  instance.get(`/reports/exams`, {
+  instance.get(`/reports/exams/raw`, {
     params,
     ...setHeaders(),
   });

@@ -41,7 +41,7 @@ export default function ExamsList() {
       <CardTable
         bordered
         columns={columns}
-        rowKey="idExam"
+        rowKey={(row) => `${row.idExam}-${row.idPatient}-${row.typeExam}`}
         dataSource={datasource.length === 0 ? [] : datasource}
         footer={() => (
           <div style={{ textAlign: "center" }}>

@@ -40,7 +40,7 @@ export default function MainFilters() {
           Resultado:
         </Heading>
         <Input
-          placeHolder={"Ex: 0.6"}
+          placeholder={"Ex: 0.6"}
           style={{ width: "100%", maxWidth: "400px" }}
           onChange={(event) => {
             setFieldValue({ valueString: event.target.value });
