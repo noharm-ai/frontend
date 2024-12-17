@@ -8,12 +8,16 @@ import Filter from "./Filter/Filter";
 import { filtersToDescription } from "utils/report";
 import ExamsList from "./ExamsList/ExamsList";
 
-export default function ExamsSearchReport({ prescription }) {
-  const status = useSelector((state) => state.reportsArea.examsSearch.status);
-  const filteredStatus = useSelector(
-    (state) => state.reportsArea.examsSearch.filtered.status
+export default function ExamsRawSearchReport({ prescription }) {
+  const status = useSelector(
+    (state) => state.reportsArea.examsRawSearch.status
   );
-  const filters = useSelector((state) => state.reportsArea.examsSearch.filters);
+  const filteredStatus = useSelector(
+    (state) => state.reportsArea.examsRawSearch.filtered.status
+  );
+  const filters = useSelector(
+    (state) => state.reportsArea.examsRawSearch.filters
+  );
   const isLoading = status === "loading" || filteredStatus === "loading";
   const filtersConfig = {
     dateRange: {

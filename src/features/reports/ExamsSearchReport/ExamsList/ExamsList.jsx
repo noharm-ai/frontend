@@ -6,7 +6,7 @@ import { CardTable } from "components/Table";
 
 export default function ExamsList() {
   const datasource = useSelector(
-    (state) => state.reportsArea.examsSearch.filtered.result.list
+    (state) => state.reportsArea.examsRawSearch.filtered.result.list
   );
 
   const columns = [

@@ -9,15 +9,18 @@ import {
   setFilteredStatus,
   setFilteredResult,
   setFilters,
-} from "../ExamsSearchReportSlice";
+} from "../ExamsRawSearchReportSlice";
 import { getReportData } from "../transformers";
 import MainFilters from "./MainFilters";
 
 export default function Filter({ idPatient }) {
   const dispatch = useDispatch();
   const isFetching =
-    useSelector((state) => state.reportsArea.examsSearch.status) === "loading";
-  const datasource = useSelector((state) => state.reportsArea.examsSearch.list);
+    useSelector((state) => state.reportsArea.examsRawSearch.status) ===
+    "loading";
+  const datasource = useSelector(
+    (state) => state.reportsArea.examsRawSearch.list
+  );
   const initialValues = {
     dateRange: [],
     typesList: [],
@@ -93,7 +96,6 @@ export default function Filter({ idPatient }) {
           />
         )}
       </Spin>
-      {!isFetching}
       <FloatButton.BackTop
         style={{ right: 80, bottom: 25 }}
         tooltip="Voltar ao topo"

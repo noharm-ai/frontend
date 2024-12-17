@@ -4,6 +4,8 @@ import { PieChartOutlined } from "@ant-design/icons";
 import Tooltip from "components/Tooltip";
 import ViewReport from "components/Reports/ViewReport";
 import DefaultModal from "components/Modal";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
 
 export default function ReportsTab({ prescription }) {
   const [currentReport, setCurrentReport] = useState(null);
@@ -47,7 +49,7 @@ export default function ReportsTab({ prescription }) {
       title: "Busca de Exames",
       description: "Pesquisa por exames, inclusive ainda não configurados.",
       type: "EXAMS_SEARCH",
-      visible: true,
+      visible: PermissionService().has(Permission.MAINTAINER),
     },
   ];
 

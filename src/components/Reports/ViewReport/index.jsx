@@ -8,7 +8,7 @@ import { Row } from "components/Grid";
 import CultureReport from "features/reports/CultureReport/CultureReport";
 import AntimicrobialHistoryReport from "features/reports/AntimicrobialHistoryReport/AntimicrobialHistoryReport";
 import PrescriptionHistoryReport from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReport";
-import ExamsSearchReport from "features/reports/ExamsSearchReport/ExamsSearchReport";
+import ExamsRawSearchReport from "features/reports/ExamsRawSearchReport/ExamsRawSearchReport";
 
 const DashboardContainer = styled("div")`
   width: 100%;
@@ -45,7 +45,7 @@ export default function Reports({ report, prescription }) {
   }
 
   if (report.type === "EXAMS_SEARCH") {
-    return <ExamsSearchReport prescription={prescription} />;
+    return <ExamsRawSearchReport prescription={prescription} />;
   }
 
   return (

@@ -13,9 +13,11 @@ import { AdvancedFilterContext } from "components/AdvancedFilter";
 
 export default function MainFilters() {
   const types = useSelector(
-    (state) => state.reportsArea.examsSearch.filterData.types
+    (state) => state.reportsArea.examsRawSearch.filterData.types
   );
-  const status = useSelector((state) => state.reportsArea.examsSearch.status);
+  const status = useSelector(
+    (state) => state.reportsArea.examsRawSearch.status
+  );
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
   return (

@@ -59,7 +59,7 @@ import reportCultureReport from "features/reports/CultureReport/CultureReportSli
 import reportAntimicrobialHistoryReport from "features/reports/AntimicrobialHistoryReport/AntimicrobialHistoryReportSlice";
 import reportPrescriptionHistoryReport from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReportSlice";
 import reportAlertListReport from "features/reports/AlertListReport/AlertListReportSlice";
-import reportExamsSearchReport from "features/reports/ExamsSearchReport/ExamsSearchReportSlice";
+import reportExamsRawSearchReport from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
 
 const adminReducers = combineReducers({
   interventionReason: adminInterventionReasonReducer,
@@ -92,7 +92,7 @@ const reportReducers = combineReducers({
   culture: reportCultureReport,
   antimicrobialHistory: reportAntimicrobialHistoryReport,
   prescriptionHistory: reportPrescriptionHistoryReport,
-  examsSearch: reportExamsSearchReport,
+  examsRawSearch: reportExamsRawSearchReport,
   alertList: reportAlertListReport,
   reports: reports,
 });

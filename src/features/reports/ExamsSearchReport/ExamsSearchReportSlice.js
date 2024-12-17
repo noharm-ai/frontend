@@ -24,7 +24,7 @@ export const fetchReportData = createAsyncThunk(
   "reports-exams-search/fetch-data",
   async (params, thunkAPI) => {
     try {
-      const response = await api.live.getExamsSearchReport(params);
+      const response = await api.live.getExamsRawSearchReport(params);
 
       return response.data;
     } catch (err) {
@@ -34,8 +34,8 @@ export const fetchReportData = createAsyncThunk(
   }
 );
 
-const examsSearchReportSlice = createSlice({
-  name: "examsSearchReport",
+const examsRawSearchReportSlice = createSlice({
+  name: "examsRawSearchReport",
   initialState,
   reducers: {
     reset() {
@@ -70,6 +70,6 @@ const examsSearchReportSlice = createSlice({
 });
 
 export const { reset, setFilters, setFilteredResult, setFilteredStatus } =
-  examsSearchReportSlice.actions;
+  examsRawSearchReportSlice.actions;
 
-export default examsSearchReportSlice.reducer;
+export default examsRawSearchReportSlice.reducer;
