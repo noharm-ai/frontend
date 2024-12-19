@@ -257,6 +257,15 @@ export default function SaveModal({
                   Dialisáveis
                 </Tag>
               </Tooltip>
+              <Tooltip title="Clique para adicionar a lista de medicamentos Não Padronizados presentes nesta prescrição">
+                <Tag
+                  onClick={() => addVariable("{{nao_padronizados}}")}
+                  style={{ cursor: "pointer" }}
+                  color="magenta"
+                >
+                  Não Padronizados
+                </Tag>
+              </Tooltip>
 
               <Tooltip title="Clique para adicionar a lista de medicamentos de Antitrombóticos presentes nesta prescrição">
                 <Tag
