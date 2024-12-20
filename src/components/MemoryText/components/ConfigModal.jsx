@@ -73,16 +73,6 @@ export default function ConfigModal({ save, open, setOpen, list }) {
       </Heading>
 
       <ConfigModalContainer>
-        <div className="control">
-          <label>Exibindo:</label>
-          <Switch
-            onChange={(value) => setActive(value)}
-            checked={active}
-            checkedChildren="Textos ativos"
-            unCheckedChildren="Textos Inativos"
-          />
-        </div>
-
         {dataSource.map((item, index) => (
           <>
             {item.active === active && (
@@ -141,6 +131,15 @@ export default function ConfigModal({ save, open, setOpen, list }) {
           </>
         ))}
       </ConfigModalContainer>
+      <div style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}>
+        <label style={{ marginRight: "10px" }}>Exibindo:</label>
+        <Switch
+          onChange={(value) => setActive(value)}
+          checked={active}
+          checkedChildren="Textos ativos"
+          unCheckedChildren="Textos Inativos"
+        />
+      </div>
     </Modal>
   );
 }

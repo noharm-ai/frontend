@@ -42,15 +42,4 @@ export const ConfigModalContainer = styled.div`
       }
     }
   }
-
-  .control {
-    display: flex;
-    align-items: center;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-
-    label {
-      margin-right: 10px;
-    }
-  }
 `;
