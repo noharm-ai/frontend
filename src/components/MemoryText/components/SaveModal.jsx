@@ -95,7 +95,7 @@ export default function SaveModal({
         ref={textRef}
       />
 
-      {memoryType === CLINICAL_NOTES_MEMORY_TYPE && (
+      {`${memoryType}`.includes(CLINICAL_NOTES_MEMORY_TYPE) && (
         <VariableContainer>
           <div className="variables-title">Váriáveis</div>
           <div className="variables-legend">

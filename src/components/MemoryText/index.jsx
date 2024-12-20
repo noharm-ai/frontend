@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import isEmpty from "lodash.isempty";
 import {
   FileTextOutlined,
+  FileProtectOutlined,
   SaveOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
@@ -21,7 +22,9 @@ export default function MemoryText({
   memoryType,
   memory,
   onLoad,
+  userId,
   canSave = true,
+  privateMemory = false,
 }) {
   const { t } = useTranslation();
   const [saveModalOpen, setSaveModalOpen] = useState(false);
@@ -30,10 +33,13 @@ export default function MemoryText({
     isFetching: true,
     list: [],
   };
+  const memoryTypeInternal = privateMemory
+    ? `${memoryType}_${userId}`
+    : memoryType;
 
   useEffect(() => {
-    fetch(storeId, memoryType);
-  }, [fetch, storeId, memoryType]);
+    fetch(storeId, memoryTypeInternal);
+  }, [fetch, storeId, memoryTypeInternal]);
 
   const saveCurrent = (name, newText) => {
     const hasMemory = list.length > 0;
@@ -45,7 +51,7 @@ export default function MemoryText({
 
     save(storeId, {
       id: hasMemory ? list[0].key : null,
-      type: memoryType,
+      type: memoryTypeInternal,
       value: texts,
     });
   };
@@ -57,7 +63,7 @@ export default function MemoryText({
 
     save(storeId, {
       id: list[0].key,
-      type: memoryType,
+      type: memoryTypeInternal,
       value: newList,
     });
   };
@@ -144,12 +150,18 @@ export default function MemoryText({
 
   return (
     <>
-      <Tooltip title="Texto padrão">
+      <Tooltip
+        title={
+          privateMemory ? "Texto padrão (privado)" : "Texto padrão (público)"
+        }
+      >
         <Dropdown menu={menuOptions()}>
           <Button
             shape="circle"
-            icon={<FileTextOutlined />}
-            type="primary gtm-bt-memorytext"
+            icon={
+              privateMemory ? <FileProtectOutlined /> : <FileTextOutlined />
+            }
+            type={privateMemory ? "default" : "primary gtm-bt-memorytext"}
             loading={isFetching}
           />
         </Dropdown>
@@ -160,7 +172,7 @@ export default function MemoryText({
         open={saveModalOpen}
         setOpen={setSaveModalOpen}
         loadText={loadText}
-        memoryType={memoryType}
+        memoryType={memoryTypeInternal}
       />
 
       <ConfigModal
