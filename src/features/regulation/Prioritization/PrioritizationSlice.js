@@ -183,7 +183,17 @@ const regulationPrioritizationSlice = createSlice({
           const index = state.list.findIndex((i) => i.id === result.id);
 
           if (index !== -1) {
-            state.list[index] = { ...state.list[index], stage: result.stage };
+            state.list[index] = {
+              ...state.list[index],
+              stage: result.stage,
+              risk: result.risk,
+            };
+
+            if (result.extra?.regType?.type) {
+              state.list[index].type = result.extra.regType.type;
+              state.list[index].idRegSolicitationType =
+                result.extra.regType.idRegSolicitationType;
+            }
           }
         });
       })
