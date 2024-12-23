@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import isEmpty from "lodash.isempty";
 import {
   FileTextOutlined,
   FileProtectOutlined,
@@ -7,6 +6,7 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import { isEmpty } from "lodash";
 
 import Dropdown from "components/Dropdown";
 import Tooltip from "components/Tooltip";
@@ -97,7 +97,8 @@ export default function MemoryText({
         label: t("labels.manage"),
         icon: <SettingOutlined />,
         id: "gtm-bt-clinicalnotes-manage",
-        disabled: !canSave,
+        disabled:
+          !canSave || isEmpty(list && list[0]?.value ? list[0].value : []),
       },
     ];
 
@@ -126,8 +127,12 @@ export default function MemoryText({
     }
   };
 
+  const filterActive = (item) => item.active || !item.hasOwnProperty("active");
+
   const textMenu = () => {
-    if (isEmpty(list) || isEmpty(list[0].value)) {
+    const filters = list && list[0]?.value ? list[0].value : [];
+
+    if (filters.filter((item) => filterActive(item)).length === 0) {
       return [
         {
           key: "empty",
