@@ -3,6 +3,8 @@ export default class RegulationAction {
   static SCHEDULE = 2;
   static SCHEDULE_TRANSPORT = 3;
   static SCHEDULE_EXTERNAL = 4;
+  static UPDATE_TYPE = 5;
+  static UPDATE_RISK = 6;
 
   static getActions(t) {
     return [
@@ -79,7 +81,43 @@ export default class RegulationAction {
           },
         ],
       },
-    ];
+      {
+        id: RegulationAction.UPDATE_TYPE,
+        label: t(`regulation.action.${RegulationAction.UPDATE_TYPE}`),
+        form: [
+          {
+            id: "reg_type",
+            label: "Tipo de solicitação",
+            type: "reg_type",
+            required: true,
+          },
+          {
+            id: "observation",
+            label: "Observação",
+            type: "text",
+            required: true,
+          },
+        ],
+      },
+      {
+        id: RegulationAction.UPDATE_RISK,
+        label: t(`regulation.action.${RegulationAction.UPDATE_RISK}`),
+        form: [
+          {
+            id: "reg_risk",
+            label: "Risco",
+            type: "reg_risk",
+            required: true,
+          },
+          {
+            id: "observation",
+            label: "Observação",
+            type: "text",
+            required: true,
+          },
+        ],
+      },
+    ].sort((a, b) => a.label.localeCompare(b.label));
   }
 
   static getForm(action, t) {

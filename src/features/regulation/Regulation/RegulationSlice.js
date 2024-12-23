@@ -120,6 +120,12 @@ const regulationSlice = createSlice({
         state.data.movements = solicitation.movements;
         state.data.stage = solicitation.stage;
         state.data.extra = solicitation.extra;
+
+        if (solicitation.extra?.regType) {
+          state.data.type = solicitation.extra.regType.type;
+          state.data.idRegSolicitationType =
+            solicitation.extra.regType.idRegSolicitationType;
+        }
       })
       .addCase(moveRegulation.rejected, (state, action) => {
         state.action.status = "failed";

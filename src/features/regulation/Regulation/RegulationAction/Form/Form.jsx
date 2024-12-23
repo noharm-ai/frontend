@@ -20,9 +20,19 @@ export default function Form({ setValidationSchema }) {
 
     const actionDataFields = {};
     RegulationAction.getForm(action, t).forEach((field) => {
-      actionDataFields[field.id] = Yup.string()
-        .nullable()
-        .required(t("validation.requiredField"));
+      if (!field.required) {
+        return;
+      }
+
+      if (field.type === "reg_type") {
+        actionDataFields[field.id] = Yup.object()
+          .nullable()
+          .required(t("validation.requiredField"));
+      } else {
+        actionDataFields[field.id] = Yup.string()
+          .nullable()
+          .required(t("validation.requiredField"));
+      }
     });
 
     const validation = Yup.object().shape({
