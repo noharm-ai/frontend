@@ -245,6 +245,20 @@ function BaseForm() {
             <>
               <div className={`form-row`}>
                 <div className="form-label">
+                  <label>URL resolução de nomes (development):</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    value={values.config?.getname?.urlDev}
+                    onChange={({ target }) =>
+                      setFieldValue("config.getname.urlDev", target.value)
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className={`form-row`}>
+                <div className="form-label">
                   <label>URL resolução de nomes:</label>
                 </div>
                 <div className="form-input">
