@@ -292,7 +292,7 @@ export default function ClinicalNotes({
                   title={
                     previousAdmissions.length === 0
                       ? "Nenhuma internação anterior encontrada"
-                      : "Ver Internações Anteriores"
+                      : "Ver outras internações do paciente"
                   }
                 >
                   <Button

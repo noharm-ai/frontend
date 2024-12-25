@@ -21,6 +21,8 @@ import Heading from "components/Heading";
 import {
   CLINICAL_NOTES_STORE_ID,
   CLINICAL_NOTES_MEMORY_TYPE,
+  CLINICAL_NOTES_PRIVATE_STORE_ID,
+  CLINICAL_NOTES_PRIVATE_MEMORY_TYPE,
 } from "utils/memory";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
@@ -208,6 +210,15 @@ export default function Base({
           content={notes}
           onLoad={(value) => loadNote(value)}
         />
+        <span style={{ marginLeft: "5px" }}>
+          <MemoryText
+            storeId={CLINICAL_NOTES_PRIVATE_STORE_ID}
+            memoryType={CLINICAL_NOTES_PRIVATE_MEMORY_TYPE}
+            privateMemory={true}
+            content={notes}
+            onLoad={(value) => loadNote(value)}
+          />
+        </span>
         {(isEmpty(signature.list) || signature.list[0].value === "") && (
           <Tooltip title="Configurar assinatura padrão">
             <Button

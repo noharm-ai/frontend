@@ -95,7 +95,7 @@ export default function IntegrationRemote() {
                 message: "Template atualizado!",
               });
             } else if (queue.responseCode === null) {
-              if (repeats > 10) {
+              if (repeats > 15) {
                 clearInterval(interval);
                 setUpdating(false);
                 setError(true);

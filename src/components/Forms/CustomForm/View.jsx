@@ -1,16 +1,20 @@
-import React from 'react';
-import DOMPurify from 'dompurify';
+import React from "react";
+import DOMPurify from "dompurify";
 
-import { CustomFormViewContainer } from './View.style';
+import { CustomFormViewContainer } from "./View.style";
 
 export default function CustomFormView({ template, values }) {
-  const getValue = value => {
+  const getValue = (value) => {
     if (!value) {
-      return 'Sem resposta';
+      return "Sem resposta";
     }
 
     if (Array.isArray(value)) {
-      return value.join(', ');
+      return value.join(", ");
+    }
+
+    if (typeof value === "object") {
+      return value.label;
     }
 
     return value;
@@ -18,17 +22,17 @@ export default function CustomFormView({ template, values }) {
 
   return (
     <CustomFormViewContainer>
-      {template.map(item => (
+      {template.map((item) => (
         <div key={item.group} className="group">
           <h2>{item.group}</h2>
-          {item.questions.map(question => (
+          {item.questions.map((question) => (
             <div className="question" key={question.id}>
               <div className="label">{question.label}</div>
-              {question.type === 'text' ? (
+              {question.type === "text" ? (
                 <div
                   className="value"
                   dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(getValue(values[question.id]))
+                    __html: DOMPurify.sanitize(getValue(values[question.id])),
                   }}
                 ></div>
               ) : (

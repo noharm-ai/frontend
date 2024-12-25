@@ -13,6 +13,8 @@ import Editor from "components/Editor";
 
 import MemoryField from "./Fields/MemoryField";
 import SubstanceField from "./Fields/SubstanceField";
+import RegulationTypeField from "./Fields/regulation/RegulationTypeField";
+import RegulationRiskField from "./Fields/regulation/RegulationRiskField";
 import { EditorBox, CheckboxDescription } from "../Form.style";
 
 export default function Field({ question, values, setFieldValue }) {
@@ -188,6 +190,26 @@ export default function Field({ question, values, setFieldValue }) {
   if (question.type === "substance") {
     return (
       <SubstanceField
+        question={question}
+        values={values}
+        setFieldValue={setFieldValue}
+      />
+    );
+  }
+
+  if (question.type === "reg_type") {
+    return (
+      <RegulationTypeField
+        question={question}
+        values={values}
+        setFieldValue={setFieldValue}
+      />
+    );
+  }
+
+  if (question.type === "reg_risk") {
+    return (
+      <RegulationRiskField
         question={question}
         values={values}
         setFieldValue={setFieldValue}

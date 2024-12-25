@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
-import { FilterOutlined, DeleteOutlined } from "@ant-design/icons";
+import { FilterOutlined } from "@ant-design/icons";
 
 import Dropdown from "components/Dropdown";
 import Button from "components/Button";
@@ -13,6 +13,7 @@ import {
 } from "utils/memory";
 import notification from "components/notification";
 import SaveFilterModal from "./SaveFilterModal";
+import ConfigModal from "./ConfigModal";
 
 export default function FilterMemory({
   fetchMemory,
@@ -25,6 +26,7 @@ export default function FilterMemory({
   loadFilter,
 }) {
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
+  const [configModalOpen, setConfigModalOpen] = useState(false);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -140,35 +142,6 @@ export default function FilterMemory({
     };
   };
 
-  const removeFilterSubmenu = (list, type) => {
-    const title = t(`screeningList.${type}FilterRemove`);
-    const children = [];
-
-    if (list && list.length && !isEmpty(list[0].value)) {
-      list[0].value.sort(sortFilters).forEach((item, index) => {
-        if (filterActive(item)) {
-          children.push({
-            key: `remove_${type}_${item.name}_${index}`,
-            label: item.name,
-            icon: <DeleteOutlined style={{ fontSize: 16 }} />,
-            id: `gtm-btn-menu-filter-remove-${type}`,
-            danger: true,
-            index: index,
-            filtertype: type,
-          });
-        }
-      });
-
-      return {
-        key: `remove_${type}`,
-        label: title,
-        children,
-      };
-    }
-
-    return null;
-  };
-
   const filterMenu = () => {
     const items = [
       {
@@ -183,8 +156,11 @@ export default function FilterMemory({
 
     items.push({ type: "divider" });
 
-    items.push(removeFilterSubmenu(privateFilters, "private"));
-    items.push(removeFilterSubmenu(publicFilters, "public"));
+    items.push({
+      key: "remove",
+      label: "Gerenciar filtros",
+      danger: true,
+    });
 
     return items;
   };
@@ -193,6 +169,10 @@ export default function FilterMemory({
     switch (item.key) {
       case "save":
         setSaveFilterOpen(true);
+
+        break;
+      case "remove":
+        setConfigModalOpen(true);
 
         break;
       default:
@@ -226,6 +206,14 @@ export default function FilterMemory({
         setSaveFilterOpen={setSaveFilterOpen}
         saveFilterAction={saveFilterAction}
         open={saveFilterOpen}
+      />
+      <ConfigModal
+        setOpen={setConfigModalOpen}
+        open={configModalOpen}
+        privateFilters={privateFilters}
+        publicFilters={publicFilters}
+        removeFilterAction={removeFilterAction}
+        filterActive={filterActive}
       />
     </>
   );

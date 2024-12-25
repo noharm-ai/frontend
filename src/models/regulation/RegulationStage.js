@@ -70,6 +70,6 @@ export default class RegulationStage {
         label: t(`regulation.stage.${RegulationStage.FINISHED}`),
         color: "green",
       },
-    ];
+    ].sort((a, b) => a.label.localeCompare(b.label));
   }
 }

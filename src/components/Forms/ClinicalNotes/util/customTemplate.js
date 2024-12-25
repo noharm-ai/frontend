@@ -88,6 +88,13 @@ export const getCustomClinicalNote = (
       })
     )
     .replace(
+      "{{nao_padronizados}}",
+      getDrugsByAttribute(drugs, "np", {
+        period: false,
+        empty: "Nenhum medicamento Não Padronizado encontrado.",
+      })
+    )
+    .replace(
       "{{alta_vigilancia}}",
       getDrugsByAttribute(drugs, "av", {
         empty: "Nenhum medicamento de Alta Vigilância encontrado",

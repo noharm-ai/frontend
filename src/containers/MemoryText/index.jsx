@@ -5,8 +5,9 @@ import { memoryFetchThunk, memorySaveThunk } from "store/ducks/memory/thunk";
 
 import MemoryText from "components/MemoryText";
 
-const mapStateToProps = ({ memory }) => ({
+const mapStateToProps = ({ memory, user }) => ({
   memory,
+  userId: user.account.userId,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

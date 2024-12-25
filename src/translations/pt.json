@@ -884,7 +884,9 @@
       "1": "Alterar etapa",
       "2": "Agendar",
       "3": "Agendar transporte",
-      "4": "Solicitar sistema externo"
+      "4": "Solicitar sistema externo",
+      "5": "Alterar tipo de solicitação",
+      "6": "Alterar risco"
     }
   }
 }
