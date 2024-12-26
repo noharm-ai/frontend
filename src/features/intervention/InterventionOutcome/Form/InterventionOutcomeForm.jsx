@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useFormikContext } from "formik";
-import { Row, Col, Space, Checkbox, Alert } from "antd";
+import { Row, Col, Space, Checkbox, Alert, Collapse } from "antd";
 import {
   SearchOutlined,
   CaretDownOutlined,
@@ -25,6 +25,7 @@ import {
   InterventionOutcomeContainer,
   PrescriptionOption,
 } from "../InterventionOutcome.style";
+import RichTextView from "components/RichTextView";
 
 const INPUT_PRECISION = 6;
 
@@ -174,32 +175,52 @@ export default function InterventionOutcomeForm() {
     t
   );
 
+  const intvCollapseItems = [
+    {
+      key: "1",
+      label: (
+        <Tooltip title="Detalhes da intervenção">
+          <div className={`intervention-header`}>
+            <div>Intervenção: #{outcomeData?.idIntervention}</div>
+            <div></div>
+          </div>
+        </Tooltip>
+      ),
+      children: (
+        <div className="intervention-details">
+          <div className="intervention-details-label">Motivos:</div>
+          <div className="intervention-details-value">
+            <div className="reason-list">
+              {outcomeData.header?.interventionReason &&
+                outcomeData.header?.interventionReason.map((i) => (
+                  <Tag>{i}</Tag>
+                ))}
+            </div>
+          </div>
+
+          <div className="intervention-details-label">Observação:</div>
+          <RichTextView
+            text={outcomeData.header?.notes}
+            className="intervention-details-value"
+          />
+        </div>
+      ),
+      extra: (
+        <Tooltip title="Situação da intervenção">
+          <Tag color={statusConfig.color}>{statusConfig.label}</Tag>
+        </Tooltip>
+      ),
+    },
+  ];
+
   if (loadStatus === "loading" || isEmpty(outcomeData)) {
     return null;
   }
 
   return (
     <InterventionOutcomeContainer>
-      <div className="intervention-header">
-        <div>
-          <div>Intervenção: #{outcomeData?.idIntervention}</div>
-          <div>
-            <div className="reason-list">
-              {outcomeData.header?.interventionReason &&
-                outcomeData.header?.interventionReason.map((i) => (
-                  <Tooltip title="Motivo intervenção">
-                    <Tag>{i}</Tag>
-                  </Tooltip>
-                ))}
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <Tooltip title="Situação da intervenção">
-            <Tag color={statusConfig.color}>{statusConfig.label}</Tag>
-          </Tooltip>
-        </div>
+      <div>
+        <Collapse items={intvCollapseItems} style={{ marginBottom: "1rem" }} />
       </div>
 
       {!outcomeData.header?.economyType ? (
