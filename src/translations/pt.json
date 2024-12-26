@@ -886,7 +886,9 @@
       "3": "Agendar transporte",
       "4": "Solicitar sistema externo",
       "5": "Alterar tipo de solicitação",
-      "6": "Alterar risco"
+      "6": "Alterar risco",
+      "7": "Desfazer agendamento",
+      "8": "Desfazer agendamento de transporte"
     }
   }
 }

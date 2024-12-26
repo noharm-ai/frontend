@@ -5,6 +5,8 @@ export default class RegulationAction {
   static SCHEDULE_EXTERNAL = 4;
   static UPDATE_TYPE = 5;
   static UPDATE_RISK = 6;
+  static UNDO_SCHEDULE = 7;
+  static UNDO_TRANSPORTATION_SCHEDULE = 8;
 
   static getActions(t) {
     return [
@@ -109,6 +111,32 @@ export default class RegulationAction {
             type: "reg_risk",
             required: true,
           },
+          {
+            id: "observation",
+            label: "Observação",
+            type: "text",
+            required: true,
+          },
+        ],
+      },
+      {
+        id: RegulationAction.UNDO_SCHEDULE,
+        label: t(`regulation.action.${RegulationAction.UNDO_SCHEDULE}`),
+        form: [
+          {
+            id: "observation",
+            label: "Observação",
+            type: "text",
+            required: true,
+          },
+        ],
+      },
+      {
+        id: RegulationAction.UNDO_TRANSPORTATION_SCHEDULE,
+        label: t(
+          `regulation.action.${RegulationAction.UNDO_TRANSPORTATION_SCHEDULE}`
+        ),
+        form: [
           {
             id: "observation",
             label: "Observação",
