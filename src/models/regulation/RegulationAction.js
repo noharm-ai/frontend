@@ -71,8 +71,9 @@ export default class RegulationAction {
           },
           {
             id: "externalRegulationProtocol",
-            label: "Protocolo",
+            label: "Código da solicitação",
             type: "plaintext",
+            help: "Código da solicitação no sistema externo",
             required: true,
           },
           {
