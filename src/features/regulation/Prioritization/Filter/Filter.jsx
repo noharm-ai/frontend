@@ -30,6 +30,7 @@ export default function Filter({ limit }) {
     startDate: dayjs().format("YYYY-MM-DD"),
     endDate: null,
     typeType: null,
+    idList: [],
     idDepartmentList: [],
     riskList: [],
     typeList: [],
