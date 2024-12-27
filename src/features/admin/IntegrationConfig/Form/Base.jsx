@@ -32,6 +32,14 @@ function BaseForm() {
     setGeneratingToken(false);
   };
 
+  const setJsonValue = (field, value) => {
+    try {
+      setFieldValue(field, JSON.parse(value));
+    } catch {
+      setFieldValue(field, "invalid json");
+    }
+  };
+
   const getExtraOptions = () => [
     {
       key: "1",
@@ -350,8 +358,16 @@ function BaseForm() {
                     onChange={({ target }) =>
                       setFieldValue("config.getname.params", target.value)
                     }
+                    onBlur={({ target }) =>
+                      setJsonValue("config.getname.params", target.value)
+                    }
                   />
                 </div>
+                {errors.config?.getname?.params && (
+                  <div className="form-error">
+                    {errors.config?.getname?.params}
+                  </div>
+                )}
               </div>
             </>
           )}
