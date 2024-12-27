@@ -638,7 +638,8 @@
     "CONFIG_MANAGER": "Configuration Administrator",
     "DISCHARGE_MANAGER": "Discharge Manager",
     "VIEWER": "Viewer",
-    "DISPENSING_MANAGER": "Dispensing Manager"
+    "DISPENSING_MANAGER": "Dispensing Manager",
+    "REGULATOR": "Regulator"
   },
 
   "rolesDescription": {
@@ -647,7 +648,8 @@
     "CONFIG_MANAGER": "Responsible for curating medication, score and exam settings.",
     "DISCHARGE_MANAGER": "Responsible for creating discharge summaries.",
     "VIEWER": "Read-only access to prescriptions.",
-    "DISPENSING_MANAGER": "Responsible for managing item dispensing information"
+    "DISPENSING_MANAGER": "Responsible for managing item dispensing information",
+    "REGULATOR": "Responsible for regulation"
   },
 
   "reportcsv": {
