@@ -3,17 +3,21 @@ import styled from "styled-components/macro";
 export const InterventionOutcomeContainer = styled.div`
   padding-top: 10px;
 
-  .intervention-header {
-    display: flex;
-    align-items: center;
-    background: #fafafa;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    padding: 1rem;
+  .intervention-details {
+    .intervention-details-label {
+      font-size: 13px;
+      font-weight: 500;
+    }
 
-    > div:nth-child(1) {
-      flex: 1;
+    .intervention-details-value {
+      font-size: 13px;
+      font-weight: 300;
+    }
+
+    .reason-list {
+      .ant-tag {
+        margin-bottom: 5px;
+      }
     }
   }
 

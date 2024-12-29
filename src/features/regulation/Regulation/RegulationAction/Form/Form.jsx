@@ -113,6 +113,7 @@ export default function Form({ setValidationSchema }) {
                     setFieldValue(`actionData.${id}`, value)
                   }
                 />
+                {q.help && <div className="form-info">{q.help}</div>}
                 {errors.actionData && errors.actionData[q.id] && (
                   <div className="form-error">{errors.actionData[q.id]}</div>
                 )}

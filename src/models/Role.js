@@ -7,6 +7,7 @@ export default class Role {
   static DISCHARGE_MANAGER = "DISCHARGE_MANAGER";
   static DISPENSING_MANAGER = "DISPENSING_MANAGER";
   static VIEWER = "VIEWER";
+  static REGULATOR = "REGULATOR";
 
   static CPOE = "cpoe"; //keep for compatibility (remove after transition)
 
@@ -42,6 +43,14 @@ export default class Role {
         id: Role.DISPENSING_MANAGER,
         label: t(`roles.${Role.DISPENSING_MANAGER}`),
         description: t(`rolesDescription.${Role.DISPENSING_MANAGER}`),
+      });
+    }
+
+    if (!features || features.indexOf(Feature.REGULATION) !== -1) {
+      roles.push({
+        id: Role.REGULATOR,
+        label: t(`roles.${Role.REGULATOR}`),
+        description: t(`rolesDescription.${Role.REGULATOR}`),
       });
     }
 

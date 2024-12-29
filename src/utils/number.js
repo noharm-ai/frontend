@@ -59,3 +59,11 @@ export function isInt(value) {
     `${value}`.indexOf(".") === -1
   );
 }
+
+export function formatCpf(number) {
+  if (!number) {
+    return "-";
+  }
+
+  return `${number}`.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+}

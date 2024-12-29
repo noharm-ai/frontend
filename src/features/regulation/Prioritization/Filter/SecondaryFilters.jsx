@@ -75,6 +75,26 @@ export default function SecondaryFilters() {
         >
           <Form>
             <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Protocolo:</label>
+                </div>
+                <div className="form-input">
+                  <Select
+                    mode="tags"
+                    placeholder="Digite o número do protocolo e pressione enter"
+                    tokenSeparators={[","]}
+                    className={values.idList?.length ? "warning" : null}
+                    value={values.idList}
+                    onChange={(value) => setFieldValue({ idList: value })}
+                    notFoundContent="Digite o número do protocolo e pressione enter. Mais de um protocolo pode ser informado."
+                    allowClear
+                  ></Select>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
               <div className="form-label">
                 <label>Paciente:</label>
               </div>

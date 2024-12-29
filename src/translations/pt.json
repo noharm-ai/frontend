@@ -642,7 +642,8 @@
     "CONFIG_MANAGER": "Gestor de Configurações",
     "DISCHARGE_MANAGER": "Gestor de Alta",
     "VIEWER": "Visualizador",
-    "DISPENSING_MANAGER": "Gestor de Dispensação"
+    "DISPENSING_MANAGER": "Gestor de Dispensação",
+    "REGULATOR": "Regulador"
   },
 
   "rolesDescription": {
@@ -651,7 +652,8 @@
     "CONFIG_MANAGER": "Responsável pela curadoria das configurações de medicamentos, escores e exames.",
     "DISCHARGE_MANAGER": "Responsável pela criação de sumários de alta",
     "VIEWER": "Acesso somente leitura às prescrições",
-    "DISPENSING_MANAGER": "Responsável pela gestão das informações de dispensação dos itens"
+    "DISPENSING_MANAGER": "Responsável pela gestão das informações de dispensação dos itens",
+    "REGULATOR": "Responsável pela regulação"
   },
 
   "reportcsv": {
@@ -886,7 +888,9 @@
       "3": "Agendar transporte",
       "4": "Solicitar sistema externo",
       "5": "Alterar tipo de solicitação",
-      "6": "Alterar risco"
+      "6": "Alterar risco",
+      "7": "Desfazer agendamento",
+      "8": "Desfazer agendamento de transporte"
     }
   }
 }

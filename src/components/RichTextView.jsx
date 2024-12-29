@@ -17,13 +17,14 @@ const textToHtml = (obs) => {
   return "--";
 };
 
-const RichTextView = ({ text, maxWidth }) => {
+const RichTextView = ({ text, maxWidth, ...props }) => {
   return (
     <Container
       maxWidth={maxWidth}
       dangerouslySetInnerHTML={{
         __html: DOMPurify.sanitize(textToHtml(text), { ADD_ATTR: ["target"] }),
       }}
+      {...props}
     />
   );
 };

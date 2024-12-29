@@ -166,7 +166,10 @@ export default function PatientName({
 
   return (
     <>
-      {currentName || name}
+      <Tooltip title={`ID do paciente: ${idPatient}`}>
+        {currentName || name}
+      </Tooltip>
+
       {name && name.indexOf("Paciente") !== -1 && (
         <Tooltip title="Recarregar nome do paciente">
           <Button

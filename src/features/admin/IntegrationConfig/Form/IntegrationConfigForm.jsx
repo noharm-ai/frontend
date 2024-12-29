@@ -28,14 +28,25 @@ function IntegrationConfigForm({ ...props }) {
   const validationSchema = Yup.object().shape({
     schema: Yup.string().nullable().required(t("validation.requiredField")),
     status: Yup.string().nullable().required(t("validation.requiredField")),
+    config: Yup.object().shape({
+      getname: Yup.object().shape({
+        type: Yup.string(),
+        params: Yup.mixed().when("type", {
+          is: (val) => {
+            return val === "proxy";
+          },
+          then: Yup.object().nullable().required("JSON inválido"),
+          otherwise: Yup.object().nullable(),
+        }),
+      }),
+    }),
   });
   const initialValues = {
     ...formData,
-    defaultRoles: formData?.config?.defaultRoles || [],
   };
 
   const onSave = (params) => {
-    const config = { ...params.config, defaultRoles: params.defaultRoles };
+    const config = { ...params.config };
     const payload = { ...params, config };
 
     dispatch(updateIntegration(payload)).then((response) => {
