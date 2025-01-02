@@ -28,7 +28,6 @@
     "lodash.isempty": "^4.4.0",
     "lodash.uniqby": "^4.7.0",
     "moment": "^2.29.4",
-    "nprogress": "^0.2.0",
     "polished": "^4.2.2",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",
