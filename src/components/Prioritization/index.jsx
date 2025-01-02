@@ -73,7 +73,7 @@ export default function Prioritization({
   useEffect(() => {
     const errorMessage = {
       message: t("error.title"),
-      description: t("error.description"),
+      description: error?.message || t("error.description"),
     };
 
     if (!isEmpty(error)) {
