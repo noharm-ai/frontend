@@ -22,3 +22,12 @@ export const isDate = (value) => {
     dayjs(`${value}`.split(".")[0], "YYYY-MM-DDTHH:mm:ss", true).isValid()
   );
 };
+
+export const datepickerRangeLimit =
+  (maxDays) =>
+  (current, { from }) => {
+    if (from) {
+      return Math.abs(current.diff(from, "days")) >= maxDays;
+    }
+    return false;
+  };

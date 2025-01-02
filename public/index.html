@@ -140,9 +140,10 @@
                   if (
                     errorEvent &&
                     errorEvent.reason &&
-                    /^Request failed with status code 401/.test(
+                    (/^Request failed with status code 401/.test(
                       errorEvent.reason.message
-                    )
+                    ) ||
+                      /^Network Error/.test(errorEvent.reason.message))
                   ) {
                     return true;
                   }
@@ -150,9 +151,10 @@
                   return (
                     errorEvent &&
                     errorEvent.message &&
-                    /^Request failed with status code 401/.test(
+                    (/^Request failed with status code 401/.test(
                       errorEvent.message
-                    )
+                    ) ||
+                      /^Network Error/.test(errorEvent.message))
                   );
                 },
               },

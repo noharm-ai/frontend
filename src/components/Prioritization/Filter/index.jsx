@@ -24,6 +24,7 @@ import {
   setSelectedRowsActive,
 } from "features/prescription/PrescriptionSlice";
 import FilterFields from "./components/FilterFields";
+import { datepickerRangeLimit } from "utils/date";
 
 import { Box, SearchBox } from "./Filter.style";
 import "./index.css";
@@ -294,6 +295,7 @@ export default function Filter({
               onChange={onDateChange}
               popupClassName="noArrow"
               allowClear={false}
+              disabledDate={datepickerRangeLimit(120)}
             />
           </Box>
         </Col>
