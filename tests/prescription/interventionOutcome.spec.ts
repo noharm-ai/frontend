@@ -188,10 +188,7 @@ test("outcome: custom", async ({ page }) => {
   await page.getByText("Paciente 99").click();
 
   await page.getByText("Paciente 99").click();
-  await page
-    .locator("section")
-    .getByRole("button", { name: "warning" })
-    .click();
+  await page.locator(".gtm-bt-patient-intervention").first().click();
   await page.locator(".ant-select-selector").click();
   await page.getByText("Alta antecipada").click();
 
