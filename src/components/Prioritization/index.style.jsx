@@ -92,14 +92,25 @@ export const ResultActions = styled.div`
     padding: 5px 1rem;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
+
+    .filters {
+      display: none;
+
+      @media (min-width: ${breakpoints.md}) {
+        display: flex;
+        flex-wrap: wrap;
+      }
+    }
   }
 
   .filters {
     display: flex;
+    flex-wrap: wrap;
 
     .filters-item {
       min-width: 10rem;
       margin-right: 1rem;
+      margin-bottom: 0.5rem;
 
       .filters-item-label {
         font-weight: 500;

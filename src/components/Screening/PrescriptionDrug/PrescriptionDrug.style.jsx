@@ -3,6 +3,7 @@ import { timingFunctions } from "polished";
 
 import Collapse from "components/Collapse";
 import { get } from "styles/utils";
+import breakpoints from "styles/breakpoints";
 
 export const Box = styled.div`
   border-top: 1px solid ${get("colors.detail")};
@@ -22,12 +23,18 @@ export const EditorBox = styled.div`
 export const ToolBox = styled.div`
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
   margin-bottom: 15px;
+
+  @media (min-width: ${breakpoints.md}) {
+    flex-direction: row;
+  }
 
   .filters {
     flex: 1;
     display: flex;
-    height: 32px;
+    flex-wrap: wrap;
+    min-height: 32px;
 
     .add-filter {
       background-color: #7ebe9a;
@@ -45,11 +52,17 @@ export const ToolBox = styled.div`
     .ant-tag {
       display: flex;
       align-items: center;
+      margin-bottom: 8px;
     }
   }
 
   .viz-mode {
     display: flex;
+    flex-wrap: wrap;
+
+    @media (min-width: ${breakpoints.md}) {
+      flex-wrap: nowrap;
+    }
 
     .btn-order {
       transition: transform 0.3s ${timingFunctions("easeOutQuint")};
@@ -65,6 +78,10 @@ export const ToolBox = styled.div`
       .ant-btn-compact-first-item {
         flex: 1;
       }
+    }
+
+    button {
+      margin-bottom: 8px;
     }
   }
 `;

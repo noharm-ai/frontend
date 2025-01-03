@@ -8,52 +8,6 @@ export const Box = styled.div`
     props.flexDirection ? props.flexDirection : "column"};
 `;
 
-export const SearchBox = styled.div`
-  max-height: 65px;
-  padding: 6px 10px;
-  overflow: hidden;
-  border-radius: 4px;
-  transition: all 0.5s ease;
-
-  &.open {
-    max-height: 2000px;
-  }
-
-  .ant-btn-link {
-    color: #2e3c5a;
-  }
-
-  .ant-btn-link:hover {
-    color: #2e3c5a;
-    span {
-      text-decoration: underline;
-    }
-  }
-
-  .ant-btn-link:focus {
-    color: #2e3c5a;
-  }
-
-  .search-box-buttons {
-    float: right;
-    margin-bottom: 15px;
-
-    button:nth-child(1) {
-      margin-right: 5px;
-    }
-  }
-
-  label {
-    font-weight: 500;
-  }
-
-  .ant-badge-count {
-    top: -10px;
-    right: -2px;
-    background: #70bdc3;
-  }
-`;
-
 export const HelpText = styled.div`
   font-size: 12px;
   margin-top: 5px;

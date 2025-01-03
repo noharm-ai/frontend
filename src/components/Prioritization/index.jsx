@@ -27,7 +27,7 @@ import {
   PAGE_SIZE,
   ORDER_OPTIONS,
 } from "./Util";
-import { PrioritizationPage, FilterCard, ResultActions } from "./index.style";
+import { PrioritizationPage, ResultActions } from "./index.style";
 
 export default function Prioritization({
   prescriptions,
@@ -188,16 +188,15 @@ export default function Prioritization({
         </Col>
       </Row>
 
-      <FilterCard>
-        <Filter
-          {...restProps}
-          fetchFrequencies={fetchFrequencies}
-          prioritizationType={prioritizationType}
-          fetchPrescriptionsList={fetchPrescriptionsList}
-          isFetchingPrescription={isFetching}
-          featureService={featureService}
-        />
-      </FilterCard>
+      <Filter
+        {...restProps}
+        fetchFrequencies={fetchFrequencies}
+        prioritizationType={prioritizationType}
+        fetchPrescriptionsList={fetchPrescriptionsList}
+        isFetchingPrescription={isFetching}
+        featureService={featureService}
+      />
+
       <Spin spinning={isFetching || state.loading}>
         <Affix
           offsetTop={0}
