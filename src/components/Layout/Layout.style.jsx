@@ -25,11 +25,15 @@ export const Brand = styled(LogoSVG)`
 `;
 
 export const UserName = styled.div`
-  display: flex;
+  display: none;
   flex-direction: column;
   margin-right: 10px;
   align-items: flex-start;
   justify-content: center;
+
+  @media (min-width: ${get("breakpoints.md")}) {
+    display: flex;
+  }
 
   .name {
     color: ${get("colors.primary")};
