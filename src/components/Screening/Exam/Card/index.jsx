@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import isEmpty from "lodash.isempty";
 import { BellOutlined } from "@ant-design/icons";
+import { Flex } from "antd";
 
 import ExamListItem from "./ExamListItem";
 import Tooltip from "components/Tooltip";
@@ -25,20 +26,22 @@ export default function ExamCard({ exams, siderCollapsed, count }) {
         </h3>
       </div>
       <div className="content">
-        <div className="exam-list">
-          {exams &&
-            exams.map((exam) => (
-              <div className="exam-item" key={exam.key}>
-                <ExamListItem exam={exam} siderCollapsed={siderCollapsed} />
-              </div>
-            ))}
-        </div>
-        {isEmpty(exams) && (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={t("screeningList.empty")}
-          />
-        )}
+        <Flex align="center" style={{ height: "100%" }}>
+          <div className="exam-list">
+            {exams &&
+              exams.map((exam) => (
+                <div className="exam-item" key={exam.key}>
+                  <ExamListItem exam={exam} siderCollapsed={siderCollapsed} />
+                </div>
+              ))}
+          </div>
+          {isEmpty(exams) && (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={t("screeningList.empty")}
+            />
+          )}
+        </Flex>
       </div>
       {!isEmpty(exams) && (
         <div className="footer">

@@ -26,4 +26,28 @@ const Heading = styled.h1`
   }
 `;
 
+export const AffixedHeader = styled.h1`
+  color: ${get("colors.primary")};
+  display: block;
+  font-size: 14px;
+  font-weight: ${get("weight.semiBold")};
+
+  @media (min-width: ${get("breakpoints.lg")}) {
+    font-size: 18px;
+    margin: ${({ margin }) => margin || 0};
+  }
+
+  .legend {
+    font-size: 12px;
+    font-weight: 300;
+    display: block;
+    margin-top: 2px;
+
+    @media (min-width: ${get("breakpoints.lg")}) {
+      font-size: 14px;
+      margin: ${({ margin }) => margin || 0};
+    }
+  }
+`;
+
 export default Heading;

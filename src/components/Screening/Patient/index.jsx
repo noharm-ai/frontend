@@ -89,8 +89,8 @@ export default function Patient({
   };
 
   return (
-    <Row gutter={8} type="flex">
-      <Col md={8}>
+    <Row gutter={[8, 16]} type="flex">
+      <Col xs={24} xl={8}>
         <PatientCard
           prescription={prescription}
           checkPrescriptionDrug={checkPrescriptionDrug}
@@ -103,25 +103,26 @@ export default function Patient({
           interventions={interventions}
         />
       </Col>
-      <Col xl={10} xxl={11}>
+      <Col xs={24} md={14} xl={10} xxl={11}>
         <ExamCard
           exams={exams}
           siderCollapsed={siderCollapsed}
           count={alertExams}
         />
       </Col>
-      <Col xl={6} xxl={5}>
+      <Col xs={24} md={10} xl={6} xxl={5}>
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             height: "100%",
-            justifyContent: "space-between",
           }}
         >
-          <AlertCard stats={alertStats} prescription={prescription} />
+          <div style={{ flex: 1 }}>
+            <AlertCard stats={alertStats} prescription={prescription} />
+          </div>
 
-          <Flex style={{ marginTop: "10px" }} gap={8}>
+          <Flex style={{ marginTop: "8px" }} gap={8}>
             <div style={{ flex: 1 }}>
               <ClinicalNotesCard
                 stats={clinicalNotesStats}
@@ -137,7 +138,7 @@ export default function Patient({
       </Col>
       {seeMore && (
         <>
-          <Col xs={8} style={{ marginTop: "10px" }}>
+          <Col xs={24} md={12} lg={8} style={{ marginTop: "10px" }}>
             <PrescriptionCard className="full-height info">
               <div className="header">
                 <h3 className="title">{t("clinicalNotesIndicator.info")}</h3>
@@ -181,7 +182,7 @@ export default function Patient({
               </div>
             </PrescriptionCard>
           </Col>
-          <Col xs={8} style={{ marginTop: "10px" }}>
+          <Col xs={24} md={12} lg={8} style={{ marginTop: "10px" }}>
             <PrescriptionCard className="full-height signs">
               <div className="header">
                 <h3 className="title">{t("clinicalNotesIndicator.signs")}</h3>
@@ -216,7 +217,7 @@ export default function Patient({
             </PrescriptionCard>
           </Col>
           {notesAllergies && notesAllergies.length > 0 && (
-            <Col xs={8} style={{ marginTop: "10px" }}>
+            <Col xs={24} md={12} lg={8} style={{ marginTop: "10px" }}>
               <PrescriptionCard className="full-height allergy">
                 <div className="header">
                   <h3 className="title">
@@ -282,7 +283,7 @@ export default function Patient({
           )}
 
           {notesDialysisDate && (
-            <Col xs={8} style={{ marginTop: "10px" }}>
+            <Col xs={24} md={12} lg={8} style={{ marginTop: "10px" }}>
               <PrescriptionCard className="full-height dialysis">
                 <div className="header">
                   <h3 className="title">

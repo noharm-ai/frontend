@@ -25,7 +25,7 @@ import EvaluationWarning from "features/prescription/EvaluationWarning/Evaluatio
 import FormIntervention from "containers/Forms/Intervention";
 import Permission from "models/Permission";
 
-import { BoxWrapper, ScreeningTabs, DrugFormStatusBox } from "./index.style";
+import { ScreeningTabs, DrugFormStatusBox } from "./index.style";
 
 export default function Screening({
   fetchScreeningById,
@@ -383,19 +383,14 @@ export default function Screening({
       <EvaluationWarning />
       <PageHeader />
       <Skeleton title paragraph={false} loading={isFetching} active />
-      <BoxWrapper>
-        <Row type="flex" gutter={24}>
-          <Col span={24} md={24}>
-            {isFetching ? (
-              <LoadContainer>
-                <LoadBox absolute={true} />
-              </LoadContainer>
-            ) : (
-              <Patient interventionCount={listCount.interventions} />
-            )}
-          </Col>
-        </Row>
-      </BoxWrapper>
+
+      {isFetching ? (
+        <LoadContainer>
+          <LoadBox absolute={true} />
+        </LoadContainer>
+      ) : (
+        <Patient interventionCount={listCount.interventions} />
+      )}
 
       <Row type="flex" gutter={24}>
         <ScreeningTabs
