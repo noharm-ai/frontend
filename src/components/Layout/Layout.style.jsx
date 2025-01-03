@@ -83,7 +83,7 @@ Wrapper.Sider = styled(Layout.Sider)`
     height: 100vh;
     left: 0;
     padding: 15px 0;
-    z-index: 2;
+    z-index: 999;
     position: fixed;
   }
 

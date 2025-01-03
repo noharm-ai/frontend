@@ -287,7 +287,7 @@ export default function Prioritization({
                 </div>
                 <div className="filters-item-value">
                   <Input
-                    style={{ width: 300 }}
+                    className="search-input"
                     allowClear
                     onChange={onClientSearch}
                   />

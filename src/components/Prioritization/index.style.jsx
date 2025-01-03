@@ -2,6 +2,8 @@ import styled, { css } from "styled-components/macro";
 import breakpoints from "styles/breakpoints";
 import { timingFunctions } from "polished";
 
+import { get } from "styles/utils";
+
 export const PrioritizationPage = styled.div`
   position: relative;
   min-height: 60vh;
@@ -23,6 +25,11 @@ export const PrioritizationPage = styled.div`
       collapsed
         ? css`
             @media (min-width: ${breakpoints.lg}) {
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+              grid-column-gap: 1rem;
+            }
+
+            @media (min-width: ${breakpoints.xl}) {
               grid-template-columns: repeat(3, minmax(0, 1fr));
               grid-column-gap: 1rem;
             }
@@ -37,7 +44,7 @@ export const PrioritizationPage = styled.div`
         : css`
             @media (min-width: ${breakpoints.lg}) {
               padding: 0 1rem;
-              grid-template-columns: repeat(2, minmax(0, 1fr));
+              grid-template-columns: repeat(1, minmax(0, 1fr));
             }
 
             @media (min-width: ${breakpoints.xxl}) {
@@ -54,9 +61,14 @@ export const FilterCard = styled.div`
   background: #fff;
   padding: 1rem;
   border-radius: 10px;
-  margin-bottom: 2rem;
-  margin-top: 2rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
   box-shadow: 0 -1px 7px rgb(0 0 0 / 16%);
+
+  @media (min-width: ${get("breakpoints.lg")}) {
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+  }
 `;
 
 export const ResultActions = styled.div`
@@ -65,6 +77,11 @@ export const ResultActions = styled.div`
   align-items: flex-end;
   margin-bottom: 1rem;
   transition: all 0.3s linear;
+  flex-direction: column;
+
+  @media (min-width: ${breakpoints.xl}) {
+    flex-direction: row;
+  }
 
   @media (min-width: ${breakpoints.xxl}) {
     padding: 0 1rem;
@@ -91,6 +108,14 @@ export const ResultActions = styled.div`
       .filters-item-value {
         &.flex {
           display: flex;
+        }
+
+        .search-input {
+          width: 100%;
+
+          @media (min-width: ${breakpoints.xl}) {
+            width: 18rem;
+          }
         }
 
         .ant-select {
@@ -125,6 +150,14 @@ export const ResultActions = styled.div`
           transform: rotate(180deg);
         }
       }
+    }
+  }
+
+  .pagination {
+    margin-top: 1rem;
+
+    @media (min-width: ${breakpoints.xl}) {
+      margin-top: 0;
     }
   }
 `;
