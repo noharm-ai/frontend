@@ -64,7 +64,7 @@ export const LoginContainer = styled.div`
     justify-content: center;
     align-items: center;
 
-    @media (min-width: ${get("breakpoints.md")}) {
+    @media (min-width: ${get("breakpoints.lg")}) {
       padding: 0 5em;
       width: 45%;
     }
@@ -140,7 +140,7 @@ export const LoginContainer = styled.div`
     background-size: contain;
     background-position: bottom center;
 
-    @media (min-width: ${get("breakpoints.md")}) {
+    @media (min-width: ${get("breakpoints.lg")}) {
       display: block;
       width: 52%;
     }
