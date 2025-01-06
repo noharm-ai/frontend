@@ -774,7 +774,7 @@ const drug = (bag, addkey, title) => ({
   title: title ? title : bag.t("tableHeader.drug"),
   ellipsis: bag.condensed,
   align: "left",
-  width: "35%",
+  width: bag.condensed ? "35%" : window.innerWidth < 768 ? "300px" : "35%",
   render: (record) => {
     if (bag.concilia) {
       return (

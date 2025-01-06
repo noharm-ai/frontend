@@ -56,6 +56,24 @@ export const ToolBox = styled.div`
     }
   }
 
+  .ant-affix {
+    .filters {
+      display: none;
+
+      @media (min-width: ${breakpoints.md}) {
+        display: flex;
+      }
+    }
+
+    .viz-mode {
+      display: none;
+
+      @media (min-width: ${breakpoints.md}) {
+        display: flex;
+      }
+    }
+  }
+
   .viz-mode {
     display: flex;
     flex-wrap: wrap;
@@ -91,10 +109,19 @@ export const PrescriptionHeader = styled.div`
   align-items: center;
 
   .panel-header-description {
-    padding-left: 15px;
+    padding-left: 5px;
+
+    @media (min-width: ${breakpoints.md}) {
+      padding-left: 15px;
+      padding-right: 50px;
+    }
 
     div > span {
-      padding-left: 15px;
+      padding-left: 0;
+
+      @media (min-width: ${breakpoints.md}) {
+        padding-left: 15px;
+      }
     }
 
     .p-number {
@@ -115,7 +142,15 @@ export const PrescriptionHeader = styled.div`
     }
 
     .subtitle {
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
       opacity: 0.6;
+
+      @media (min-width: ${breakpoints.md}) {
+        display: block;
+        font-size: 14px;
+      }
     }
 
     .expired {
@@ -326,5 +361,14 @@ export const AlertTagsContainer = styled.div`
   .ant-tag {
     margin-right: 5px !important;
     font-size: 14px;
+  }
+`;
+
+export const PanelActionContainer = styled.div`
+  display: none;
+
+  @media (min-width: ${breakpoints.md}) {
+    display: flex;
+    align-items: center;
   }
 `;
