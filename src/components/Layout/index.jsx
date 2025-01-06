@@ -142,6 +142,7 @@ const Me = ({
         label: t("layout.logout"),
         key: "exit",
         icon: <LogoutOutlined />,
+        danger: true,
       },
     ];
   };
