@@ -43,6 +43,7 @@ export default function AdminSegment() {
         idSegment: segment.id,
         description: segment.description,
         active: segment.status,
+        type: segment.type,
       })
     );
     setFormModal(true);
