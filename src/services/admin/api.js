@@ -186,6 +186,16 @@ api.drugs.addNewOutlier = (params = {}) => {
   });
 };
 
+api.drugs.calculateDosemax = (params = {}) => {
+  return instance.post(
+    `${endpoints.drug}/calculate-dosemax`,
+    {},
+    {
+      ...setHeaders(),
+    }
+  );
+};
+
 /**
  * UNIT CONVERSION
  */
@@ -206,6 +216,16 @@ api.unitConversion.saveConversions = (params = {}) => {
 api.unitConversion.copyConversion = (params = {}) => {
   return instance.post(
     `${endpoints.unitConversion}/copy-unit-conversion`,
+    params,
+    {
+      ...setHeaders(),
+    }
+  );
+};
+
+api.unitConversion.updateSubstanceUnitFactor = (params = {}) => {
+  return instance.post(
+    `${endpoints.unitConversion}/substanceunit-factor`,
     params,
     {
       ...setHeaders(),

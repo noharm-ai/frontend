@@ -39,7 +39,6 @@ import { toDataSource } from "utils";
 
 import columnsTable, { expandedRowRender } from "./columns";
 import Filter from "../Prioritization/Filter";
-import { FilterCard } from "../Prioritization/index.style";
 import { PageCard } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
 
@@ -580,16 +579,16 @@ export default function ScreeningList({
           <InitialPage />
         </div>
       </PageHeader>
-      <FilterCard>
-        <Filter
-          {...restProps}
-          prioritizationType={prioritizationType}
-          fetchFrequencies={fetchFrequencies}
-          fetchPrescriptionsList={fetchPrescriptionsList}
-          isFetchingPrescription={isFetching}
-          featureService={featureService}
-        />
-      </FilterCard>
+
+      <Filter
+        {...restProps}
+        prioritizationType={prioritizationType}
+        fetchFrequencies={fetchFrequencies}
+        fetchPrescriptionsList={fetchPrescriptionsList}
+        isFetchingPrescription={isFetching}
+        featureService={featureService}
+      />
+
       {!isFetching && <Affix offsetTop={10}>{info}</Affix>}
       <PageCard>
         <ScreeningTable

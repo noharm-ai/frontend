@@ -41,6 +41,14 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  calculateDosemax: {
+    status: "idle",
+    error: null,
+  },
+  updateSubstanceUnitFactor: {
+    status: "idle",
+    error: null,
+  },
 };
 
 export const fetchDrugAttributes = createAsyncThunk(
@@ -61,6 +69,21 @@ export const updatePriceFactor = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await adminApi.updatePriceFactor(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const updateSubstanceUnitFactor = createAsyncThunk(
+  "admin-drug-attributes/update-substance-unit-factor",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminApi.unitConversion.updateSubstanceUnitFactor(
+        params
+      );
 
       return response;
     } catch (err) {
@@ -100,6 +123,19 @@ export const addNewOutlier = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await adminApi.drugs.addNewOutlier(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const calculateDosemax = createAsyncThunk(
+  "admin-drug-attributes/calculate-dosemax",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminApi.drugs.calculateDosemax(params);
 
       return response;
     } catch (err) {
@@ -236,6 +272,36 @@ const drugAttributesSlice = createSlice({
       })
       .addCase(copyAttributes.rejected, (state, action) => {
         state.copyAttributes.status = "failed";
+      })
+      .addCase(calculateDosemax.pending, (state, action) => {
+        state.calculateDosemax.status = "loading";
+      })
+      .addCase(calculateDosemax.fulfilled, (state, action) => {
+        state.calculateDosemax.status = "succeeded";
+      })
+      .addCase(calculateDosemax.rejected, (state, action) => {
+        state.calculateDosemax.status = "failed";
+      })
+      .addCase(updateSubstanceUnitFactor.pending, (state, action) => {
+        state.updateSubstanceUnitFactor.status = "loading";
+      })
+      .addCase(updateSubstanceUnitFactor.fulfilled, (state, action) => {
+        state.updateSubstanceUnitFactor.status = "succeeded";
+
+        const idDrug = action.payload.data.data.idDrug;
+        const idSegment = action.payload.data.data.idSegment;
+        const refMaxDose = action.payload.data.data.refMaxDose;
+        const refMaxDoseWeight = action.payload.data.data.refMaxDoseWeight;
+
+        state.list.forEach((d) => {
+          if (d.idDrug === idDrug && d.idSegment === idSegment) {
+            d.refMaxDose = refMaxDose;
+            d.refMaxDoseWeight = refMaxDoseWeight;
+          }
+        });
+      })
+      .addCase(updateSubstanceUnitFactor.rejected, (state, action) => {
+        state.updateSubstanceUnitFactor.status = "failed";
       })
       .addCase(updateSubstance.pending, (state, action) => {
         state.updateSubstance.status = "loading";

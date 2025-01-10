@@ -36,6 +36,7 @@ const expandedRowRender = (record) => {
             maxDose={record.maxDose}
             useWeight={record.useWeight}
             measureUnitDefaultName={record.measureUnitDefaultName}
+            record={record}
           />
         </Descriptions.Item>
         <Descriptions.Item label="Custo:" span={3}>

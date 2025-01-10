@@ -6,9 +6,11 @@ import {
   RetweetOutlined,
   RobotOutlined,
   PlusOutlined,
+  DownOutlined,
+  AlertOutlined,
 } from "@ant-design/icons";
 
-import Tooltip from "components/Tooltip";
+import Dropdown from "components/Dropdown";
 import Button from "components/Button";
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
@@ -18,6 +20,7 @@ import { addDefaultUnits, addNewOutlier } from "../DrugAttributesSlice";
 import CopyConversion from "../CopyConversion/CopyConversion";
 import CopyAttributes from "../CopyAttributes/CopyAttributes";
 import PredictSubstances from "../PredictSubstances/PredictSubstances";
+import { CalculateDoseMaxDialog } from "../CalculateDoseMax/CalculateDoseMax";
 
 export default function Actions({ reload }) {
   const dispatch = useDispatch();
@@ -26,6 +29,7 @@ export default function Actions({ reload }) {
     useState(false);
   const [copyConversionVisible, setCopyConversionVisible] = useState(false);
   const [copyAttributesVisible, setCopyAttributesVisible] = useState(false);
+  const [calcDosemaxVisible, setCalcDosemaxVisible] = useState(false);
   const isAddingDefaultUnits =
     useSelector(
       (state) => state.admin.drugAttributes.addDefaultUnits.status
@@ -39,6 +43,10 @@ export default function Actions({ reload }) {
   const isAddingNewOutliers =
     useSelector((state) => state.admin.drugAttributes.addNewOutlier.status) ===
     "loading";
+  const isCalculatingDosemax =
+    useSelector(
+      (state) => state.admin.drugAttributes.calculateDosemax.status
+    ) === "loading";
 
   const showDefaultUnitDialog = () => {
     DefaultModal.confirm({
@@ -126,60 +134,96 @@ export default function Actions({ reload }) {
     });
   };
 
+  const getActions = () => {
+    const items = [
+      {
+        key: "updateDefaultMeasureUnit",
+        label: "Atualizar unidade padrão",
+        icon: <ReloadOutlined />,
+      },
+      {
+        key: "calculateDosemax",
+        label: "Calcular dose máxima",
+        icon: <AlertOutlined />,
+      },
+      {
+        key: "copyConversions",
+        label: "Copiar conversões",
+        icon: <RetweetOutlined />,
+      },
+      {
+        key: "copyAttributes",
+        label: "Copiar atributos",
+        icon: <RetweetOutlined />,
+      },
+      {
+        key: "inferSubstance",
+        label: "Inferir substâncias",
+        icon: <RobotOutlined />,
+      },
+      {
+        key: "newDrugs",
+        label: "Novos medicamentos",
+        icon: <PlusOutlined />,
+      },
+    ];
+
+    return items;
+  };
+
+  const handleActions = (item) => {
+    switch (item.key) {
+      case "inferSubstance":
+        setPredictSubstancesVisible(true);
+        break;
+
+      case "updateDefaultMeasureUnit":
+        showDefaultUnitDialog();
+        break;
+
+      case "newDrugs":
+        showNewOutlierDialog();
+        break;
+
+      case "copyConversions":
+        setCopyConversionVisible(true);
+        break;
+
+      case "copyAttributes":
+        setCopyAttributesVisible(true);
+        break;
+
+      case "calculateDosemax":
+        setCalcDosemaxVisible(true);
+        break;
+
+      default:
+        console.log("invalid action");
+    }
+  };
+
   return (
     <>
-      <Tooltip title="Clique para mais informações">
+      <Dropdown
+        menu={{ items: getActions(), onClick: handleActions }}
+        trigger={["click"]}
+      >
         <Button
           type="primary"
-          icon={<RobotOutlined />}
-          onClick={() => setPredictSubstancesVisible(true)}
+          icon={<DownOutlined />}
+          iconPosition="end"
+          loading={
+            isAddingDefaultUnits ||
+            isCopyingAttributes ||
+            isCopyingConversion ||
+            isAddingDefaultUnits ||
+            isAddingNewOutliers ||
+            isCalculatingDosemax
+          }
         >
-          Inferir Substâncias
+          Ações
         </Button>
-      </Tooltip>
-      <Tooltip title="Clique para mais informações">
-        <Button
-          type="primary"
-          icon={<ReloadOutlined />}
-          loading={isAddingDefaultUnits}
-          onClick={() => showDefaultUnitDialog()}
-        >
-          Atualizar Unidade Padrão
-        </Button>
-      </Tooltip>
-
-      <Tooltip title="Clique para mais informações">
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          loading={isAddingNewOutliers}
-          onClick={() => showNewOutlierDialog()}
-        >
-          Novos Medicamentos
-        </Button>
-      </Tooltip>
-
-      <Tooltip title="Clique para mais informações">
-        <Button
-          type="primary"
-          icon={<RetweetOutlined />}
-          loading={isCopyingConversion}
-          onClick={() => setCopyConversionVisible(true)}
-        >
-          Copiar Conversões
-        </Button>
-      </Tooltip>
-
-      <Tooltip title="Clique para mais informações">
-        <Button
-          type="primary"
-          icon={<RetweetOutlined />}
-          loading={isCopyingAttributes}
-          onClick={() => setCopyAttributesVisible(true)}
-        >
-          Copiar Atributos
-        </Button>
-      </Tooltip>
+      </Dropdown>
 
       <CopyConversion
         open={copyConversionVisible}
@@ -196,6 +240,12 @@ export default function Actions({ reload }) {
       <PredictSubstances
         open={predictSubstancesVisibile}
         setOpen={setPredictSubstancesVisible}
+        reload={reload}
+      />
+
+      <CalculateDoseMaxDialog
+        open={calcDosemaxVisible}
+        setOpen={setCalcDosemaxVisible}
         reload={reload}
       />
     </>
