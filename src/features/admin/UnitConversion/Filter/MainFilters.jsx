@@ -51,26 +51,6 @@ export default function MainFilters() {
           </Select.Option>
         </Select>
       </Col>
-      <Col md={5} lg={4} xxl={3}>
-        <Heading as="label" size="14px">
-          Mostrar predições:
-        </Heading>
-        <Select
-          style={{ width: "100%" }}
-          value={values.showPrediction}
-          onChange={(val) => setFieldValue({ showPrediction: val })}
-          showSearch
-          optionFilterProp="children"
-          allowClear
-        >
-          <Select.Option key={0} value={true}>
-            Sim
-          </Select.Option>
-          <Select.Option key={1} value={false}>
-            Não
-          </Select.Option>
-        </Select>
-      </Col>
     </>
   );
 }
