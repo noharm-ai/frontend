@@ -75,7 +75,15 @@ export default function SubstanceForm({ ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">{formData?.name}</Heading>
+            <Heading
+              style={{
+                fontSize: "16px",
+                lineHeight: "1.3rem",
+                paddingRight: "1rem",
+              }}
+            >
+              {formData?.name}
+            </Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>
