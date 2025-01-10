@@ -183,9 +183,6 @@ function CopyAttributes({ open, setOpen, reload, ...props }) {
                       Alerta de Plaquetas
                     </Select.Option>
 
-                    <Select.Option key="dosemaxima" value="dosemaxima">
-                      Dose de Alerta
-                    </Select.Option>
                     <Select.Option key="hepatico" value="hepatico">
                       Hepatotóxico
                     </Select.Option>

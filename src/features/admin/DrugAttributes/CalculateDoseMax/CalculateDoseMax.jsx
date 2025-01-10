@@ -70,11 +70,15 @@ export function CalculateDoseMaxDialog({ open, setOpen, reload, ...props }) {
           status="success"
           title="Cálculo Finalizado"
           subTitle={
-            <>
-              <p>Referências criadas/atualizadas: {calcResult?.converted}</p>
-              <p>Conversões pendentes: {calcResult?.notConverted}</p>
-              <p>Não possui dose de referência: {calcResult?.noReference}</p>
-            </>
+            <p>
+              Referências criadas/atualizadas: {calcResult?.converted}
+              <br />
+              Conversões pendentes: {calcResult?.notConverted}
+              <br />
+              Não possui dose de referência: {calcResult?.noReference}
+              <br />
+              Doses máximas atualizadas: {calcResult?.updated}
+            </p>
           }
         ></Result>
       ) : (
@@ -84,10 +88,11 @@ export function CalculateDoseMaxDialog({ open, setOpen, reload, ...props }) {
             curadoria de substâncias.
           </p>
           <p>
-            Os valores de dose máxima serão apenas calculados, ou seja, o
-            cálculo pode ser executado sem prejuízo à configuração de dose
-            máxima atual do cliente.
+            Os valores de dose máxima só serão aplicados para os medicamentos
+            onde a dose máxima ainda não foi definida. Quando o medicamento já
+            possuir dose máxima, o valor calculado é gravado para ser revisado.
           </p>
+
           <p>Requisitos:</p>
           <ul>
             <li>Definir tipos dos segmentos (Adulto ou Pediátrico);</li>
