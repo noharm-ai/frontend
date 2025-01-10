@@ -204,7 +204,8 @@ export default function EditMaxDose({
                   icon={<RetweetOutlined />}
                   disabled={
                     record?.measureUnitNH === record?.substanceMeasureUnit ||
-                    !record?.substanceMaxDose
+                    !record?.substanceMaxDose ||
+                    !record?.idMeasureUnitDefault
                   }
                 ></Button>
               </Tooltip>
@@ -236,7 +237,8 @@ export default function EditMaxDose({
                   icon={<RetweetOutlined />}
                   disabled={
                     record?.measureUnitNH === record?.substanceMeasureUnit ||
-                    !record?.substanceMaxDoseWeight
+                    !record?.substanceMaxDoseWeight ||
+                    !record?.idMeasureUnitDefault
                   }
                 ></Button>
               </Tooltip>
