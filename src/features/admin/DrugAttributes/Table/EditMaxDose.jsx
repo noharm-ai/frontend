@@ -40,17 +40,20 @@ export default function EditMaxDose({
     setValue(maxDose);
   }, [maxDose]);
 
-  const handleSave = (forceValue = false, newValue = null) => {
-    if (!forceValue && value === null) {
+  const handleSave = () => {
+    if (value === null) {
       notification.error({ message: "Valor inválido" });
       return;
     }
-    setSaving(true);
 
+    save(value);
+  };
+
+  const save = (maxDose) => {
     const params = {
       idDrug,
       idSegment,
-      maxDose: forceValue ? newValue : value,
+      maxDose,
     };
 
     dispatch(saveDrugAttributes(params)).then((response) => {
@@ -75,12 +78,12 @@ export default function EditMaxDose({
       return;
     }
     setValue(value);
-    handleSave(true, value);
+    save(value);
   };
 
   const cleanValue = () => {
     setValue(null);
-    handleSave(true, null);
+    save(null);
   };
 
   return (
