@@ -75,7 +75,7 @@ export default function SubstanceForm({ ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">{t("labels.substance")}</Heading>
+            <Heading margin="0 0 11px">{formData?.name}</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>
