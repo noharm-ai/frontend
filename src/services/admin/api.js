@@ -10,6 +10,7 @@ const endpoints = {
   segment: "/admin/segments",
   exam: "/admin/exam",
   unitConversion: "/admin/unit-conversion",
+  unit: "/admin/unit",
 };
 
 const getFrequencyList = (params = {}) =>
@@ -345,6 +346,19 @@ api.relation.getRelations = (params = {}) => {
 
 api.relation.upsertRelation = (params = {}) => {
   return instance.post(`/admin/relation`, params, {
+    ...setHeaders(),
+  });
+};
+
+/**
+ * MEASURE UNITS
+ */
+api.measureunits = {};
+api.measureunits.getMeasureUnits = (params = {}) =>
+  instance.post(`${endpoints.unit}/list`, params, setHeaders());
+
+api.measureunits.updateUnit = (params = {}) => {
+  return instance.put(`${endpoints.unit}`, params, {
     ...setHeaders(),
   });
 };

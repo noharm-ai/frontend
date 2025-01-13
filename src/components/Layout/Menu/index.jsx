@@ -31,6 +31,7 @@ import {
   TagOutlined,
   InteractionOutlined,
   FieldTimeOutlined,
+  GoldOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -305,6 +306,13 @@ export default function Menu({ security, featureService }) {
           label: "Substâncias",
           icon: <TagOutlined />,
           id: "gtm-lnk-substancias",
+        },
+        {
+          key: "/admin/unidade-medida",
+          link: "/admin/unidade-medida",
+          label: "Unidades de Medida",
+          icon: <GoldOutlined />,
+          id: "gtm-lnk-unitmeasure",
         },
         {
           key: "/admin/vias",

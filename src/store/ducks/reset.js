@@ -22,6 +22,7 @@ import { reset as adminIntegrationRemoteReset } from "features/admin/Integration
 import { reset as adminSubstanceReset } from "features/admin/Substance/SubstanceSlice";
 import { reset as adminRelationReset } from "features/admin/Relation/RelationsSlice";
 import { reset as adminDrugReferenceDrawerReset } from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
+import { reset as adminMeasureUnitReset } from "features/admin/MeasureUnit/MeasureUnitSlice";
 
 import { reset as drugFormStatusReset } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import { reset as listsReset } from "features/lists/ListsSlice";
@@ -79,6 +80,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(adminSubstanceReset());
   dispatch(adminRelationReset());
   dispatch(adminDrugReferenceDrawerReset());
+  dispatch(adminMeasureUnitReset());
 
   dispatch(clinicalNotesReset());
   dispatch(departmentsReset());

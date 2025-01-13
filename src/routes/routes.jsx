@@ -43,6 +43,7 @@ import AdminUnitConversion from "pages/Admin/UnitConversion";
 import AdminExam from "pages/Admin/Exam";
 import AdminSubstance from "pages/Admin/Substance";
 import AdminRelation from "pages/Admin/Relation";
+import AdminMeasureUnit from "pages/Admin/MeasureUnit";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
@@ -294,6 +295,11 @@ const routes = [
     exact: true,
     path: "/admin/curadoria-unidades",
     element: <WithAuth component={AdminUnitConversion} />,
+  },
+  {
+    exact: true,
+    path: "/admin/unidade-medida",
+    element: <WithAuth component={AdminMeasureUnit} />,
   },
   {
     exact: true,
