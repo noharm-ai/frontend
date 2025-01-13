@@ -1,41 +1,36 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Formik } from "formik";
-import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
+import { setMeasureUnit, updateMeasureUnit } from "../MeasureUnitSlice";
+import { BaseForm } from "./Base";
 
 import { Form } from "styles/Form.style";
 
-import { setSubstance, upsertSubstance } from "../SubstanceSlice";
-import Base from "./Base";
-
-export default function SubstanceForm({ ...props }) {
+export function MeasureUnitForm({ ...props }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const formData = useSelector((state) => state.admin.substance.single.data);
-  const status = useSelector((state) => state.admin.substance.single.status);
+  const formData = useSelector((state) => state.admin.measureUnit.single.data);
+  const status = useSelector((state) => state.admin.measureUnit.single.status);
   const isSaving = status === "loading";
 
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().nullable().required(t("validation.requiredField")),
-  });
   const initialValues = {
     ...formData,
   };
 
   const onSave = (params) => {
-    dispatch(upsertSubstance(params)).then((response) => {
+    dispatch(updateMeasureUnit(params)).then((response) => {
       if (response.error) {
         notification.error({
           message: getErrorMessage(response, t),
         });
       } else {
-        dispatch(setSubstance(null));
+        dispatch(setMeasureUnit(null));
 
         notification.success({
           message: t("success.generic"),
@@ -45,20 +40,15 @@ export default function SubstanceForm({ ...props }) {
   };
 
   const onCancel = () => {
-    dispatch(setSubstance(null));
+    dispatch(setMeasureUnit(null));
   };
 
   return (
-    <Formik
-      enableReinitialize
-      onSubmit={onSave}
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-    >
+    <Formik enableReinitialize onSubmit={onSave} initialValues={initialValues}>
       {({ handleSubmit }) => (
         <DefaultModal
           open={formData}
-          width={700}
+          width={350}
           centered
           destroyOnClose
           onCancel={onCancel}
@@ -75,19 +65,11 @@ export default function SubstanceForm({ ...props }) {
           {...props}
         >
           <header>
-            <Heading
-              style={{
-                fontSize: "16px",
-                lineHeight: "1.3rem",
-                paddingRight: "1rem",
-              }}
-            >
-              {formData?.name}
-            </Heading>
+            <Heading margin="0 0 11px">{formData?.name}</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>
-            <Base open={formData} />
+            <BaseForm open={formData} />
           </Form>
         </DefaultModal>
       )}

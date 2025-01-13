@@ -2,9 +2,17 @@ import "styled-components/macro";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { UserOutlined, DownloadOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  DownloadOutlined,
+  DownOutlined,
+  CustomerServiceOutlined,
+  LogoutOutlined,
+  CheckOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
-import { Alert, Drawer } from "antd";
+import { Alert, Drawer, Dropdown } from "antd";
 import { useTranslation } from "react-i18next";
 
 import appInfo from "utils/appInfo";
@@ -24,7 +32,13 @@ import Box from "./Box";
 import Menu from "./Menu";
 import InfoAlert from "./InfoAlert";
 import SearchPrescription from "./SearchPrescription";
-import { Wrapper as Main, Brand, LogOut, UserName } from "./Layout.style";
+import {
+  Wrapper as Main,
+  Brand,
+  UserName,
+  UserDataContainer,
+  HeaderContainer,
+} from "./Layout.style";
 import "styles/base.css";
 
 const siderWidth = 250;
@@ -96,16 +110,65 @@ const Me = ({
     }
   };
 
+  const userOptions = () => {
+    const options = [
+      {
+        label: t("layout.help"),
+        key: "help",
+        icon: <CustomerServiceOutlined />,
+      },
+    ];
+
+    options.push({
+      label: t("menu.config"),
+      key: "userConfig",
+      icon: <SettingOutlined />,
+    });
+
+    if (PermissionService().has(Permission.MAINTAINER)) {
+      options.push({
+        label: "Status da integração",
+        key: "status",
+        icon: <CheckOutlined />,
+      });
+    }
+
+    return [
+      ...options,
+      {
+        type: "divider",
+      },
+      {
+        label: t("layout.logout"),
+        key: "exit",
+        icon: <LogoutOutlined />,
+        danger: true,
+      },
+    ];
+  };
+
+  const onClickUserOptions = ({ key }) => {
+    switch (key) {
+      case "help":
+        openHelp();
+        break;
+      case "exit":
+        logout();
+        break;
+      case "status":
+        navigate("/admin/integracao/status");
+        break;
+      case "userConfig":
+        navigate("/configuracoes/usuario");
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
-    <div
-      css="
-      align-items: center;
-      display: flex;
-      width: 100%;
-      justify-content: space-between;
-    "
-    >
-      <div css="display: flex; align-items: center; flex: 1">
+    <HeaderContainer>
+      <div className="header-controls">
         <SearchPrescription
           type={location.pathname.includes("sumario") ? "summary" : "default"}
         />
@@ -131,44 +194,37 @@ const Me = ({
         )}
       </div>
 
-      <div className="controls">
-        <Avatar
-          size={44}
-          icon={<UserOutlined />}
-          css="margin-right: 12px !important;"
-        />
+      <Dropdown
+        menu={{
+          items: userOptions(),
+          onClick: onClickUserOptions,
+        }}
+      >
+        <UserDataContainer>
+          <Avatar size={44} icon={<UserOutlined />} className="user-avatar" />
 
-        <UserName>
-          <div className="name">{setTitle({ user })}</div>
-          {PermissionService().has(Permission.MULTI_SCHEMA) && (
-            <div className="schema">
-              <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
-              {PermissionService().has(Permission.MAINTAINER) && (
-                <Tooltip title="Posição atual da implantação. Clique para ver mais detalhes">
-                  <IntegrationStatusTag
-                    type={"filled"}
-                    style={{ cursor: "pointer" }}
-                    status={integrationStatus}
-                    onClick={() => navigate("/admin/integracao/status")}
-                  />
-                </Tooltip>
-              )}
-            </div>
-          )}
-        </UserName>
+          <UserName>
+            <div className="name">{setTitle({ user })}</div>
+            {PermissionService().has(Permission.MULTI_SCHEMA) && (
+              <div className="schema">
+                <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
+                {PermissionService().has(Permission.MAINTAINER) && (
+                  <Tooltip title="Posição atual da implantação.">
+                    <IntegrationStatusTag
+                      type={"filled"}
+                      style={{ cursor: "pointer" }}
+                      status={integrationStatus}
+                    />
+                  </Tooltip>
+                )}
+              </div>
+            )}
+          </UserName>
 
-        <LogOut
-          onClick={openHelp}
-          id="gtm-lnk-ajuda"
-          style={{ marginRight: "12px" }}
-        >
-          {t("layout.help")}
-        </LogOut>
-        <LogOut onClick={(e) => logout()} id="gtm-lnk-sair">
-          {t("layout.logout")}
-        </LogOut>
-      </div>
-    </div>
+          <DownOutlined />
+        </UserDataContainer>
+      </Dropdown>
+    </HeaderContainer>
   );
 };
 

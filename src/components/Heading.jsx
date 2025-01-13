@@ -5,15 +5,13 @@ import { get } from "styles/utils";
 const Heading = styled.h1`
   color: ${get("colors.primary")};
   display: block;
-  font-size: ${({ size }) => size || "30px"};
+  font-size: ${({ size }) => size || "18px"};
   font-weight: ${get("weight.semiBold")};
-  margin: ${({ margin }) => margin || 0};
   text-align: ${({ textAlign }) => textAlign || "left"};
 
-  @media (max-width: 768px) {
-    font-size: 18px;
-    margin-bottom: 15px;
-    margin-top: 15px;
+  @media (min-width: ${get("breakpoints.lg")}) {
+    font-size: ${({ size }) => size || "30px"};
+    margin: ${({ margin }) => margin || 0};
   }
 
   .legend {
@@ -25,6 +23,30 @@ const Heading = styled.h1`
 
   .red {
     color: red;
+  }
+`;
+
+export const AffixedHeader = styled.h1`
+  color: ${get("colors.primary")};
+  display: block;
+  font-size: 14px;
+  font-weight: ${get("weight.semiBold")};
+
+  @media (min-width: ${get("breakpoints.lg")}) {
+    font-size: 18px;
+    margin: ${({ margin }) => margin || 0};
+  }
+
+  .legend {
+    font-size: 12px;
+    font-weight: 300;
+    display: block;
+    margin-top: 2px;
+
+    @media (min-width: ${get("breakpoints.lg")}) {
+      font-size: 14px;
+      margin: ${({ margin }) => margin || 0};
+    }
   }
 `;
 

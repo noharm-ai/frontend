@@ -5,6 +5,7 @@ import Descriptions from "components/Descriptions";
 import NumericValue from "components/NumericValue";
 import EditSubstance from "./EditSubstance";
 import EditMaxDose from "./EditMaxDose";
+import { formatDateTime } from "utils/date";
 
 const NestedTableContainer = styled.div`
   .ant-descriptions-item-label {
@@ -36,10 +37,18 @@ const expandedRowRender = (record) => {
             maxDose={record.maxDose}
             useWeight={record.useWeight}
             measureUnitDefaultName={record.measureUnitDefaultName}
+            record={record}
           />
         </Descriptions.Item>
         <Descriptions.Item label="Custo:" span={3}>
           <NumericValue prefix={"R$ "} value={record.price} decimalScale={4} />
+        </Descriptions.Item>
+        <Descriptions.Item label="Última alteração" span={3}>
+          {record.responsible && (
+            <>
+              {record.responsible} em {formatDateTime(record.updateAt)}
+            </>
+          )}
         </Descriptions.Item>
       </Descriptions>
     </NestedTableContainer>

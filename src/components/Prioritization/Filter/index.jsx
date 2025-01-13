@@ -26,7 +26,8 @@ import {
 import FilterFields from "./components/FilterFields";
 import { datepickerRangeLimit } from "utils/date";
 
-import { Box, SearchBox } from "./Filter.style";
+import { Box } from "./Filter.style";
+import { SearchBox, FilterCard } from "components/AdvancedFilter/index.style";
 import "./index.css";
 
 export default function Filter({
@@ -257,112 +258,117 @@ export default function Filter({
 
   const hiddenFieldCount = countHiddenFilters(filter);
   return (
-    <SearchBox className={open ? "open" : ""}>
-      <Row gutter={[16, 24]} type="flex">
-        <Col md={8}>
-          <Box>
-            <Heading as="label" htmlFor="segments" size="14px">
-              {t("screeningList.segment")}:
-            </Heading>
-            <Select
-              id="segments"
-              style={{ width: "100%" }}
-              loading={segments.isFetching}
-              onChange={(idSegment) =>
-                setScreeningListFilter({ idSegment, idDepartment: [] })
-              }
-              value={filter.idSegment}
-              mode="multiple"
-              allowClear
-              maxTagCount="responsive"
-            >
-              {segments.list.map(({ id, description: text }) => (
-                <Select.Option key={id} value={id}>
-                  {text}
-                </Select.Option>
-              ))}
-            </Select>
-          </Box>
-        </Col>
-        <Col md={7} lg={7} xxl={5}>
-          <Box>
-            <Heading as="label" htmlFor="date" size="14px">
-              {t("screeningList.date")}:
-            </Heading>
-            <RangeDatePicker
-              format="DD/MM/YYYY"
-              value={date}
-              onChange={onDateChange}
-              popupClassName="noArrow"
-              allowClear={false}
-              disabledDate={datepickerRangeLimit(120)}
-            />
-          </Box>
-        </Col>
-        <Col md={4}>
-          <div style={{ display: "flex" }}>
-            <Tooltip
-              title={
-                hiddenFieldCount > 0 ? "Existem mais filtros aplicados" : ""
-              }
-            >
-              <Button
-                type="link gtm-btn-adv-search"
-                onClick={() => setOpen(!open)}
-                style={{ marginTop: "14px", paddingLeft: 0 }}
+    <FilterCard>
+      <SearchBox className={open ? "open" : ""}>
+        <Row gutter={[16, 24]} type="flex">
+          <Col xs={24} md={8}>
+            <Box>
+              <Heading as="label" htmlFor="segments" size="14px">
+                {t("screeningList.segment")}:
+              </Heading>
+              <Select
+                id="segments"
+                style={{ width: "100%" }}
+                loading={segments.isFetching}
+                onChange={(idSegment) =>
+                  setScreeningListFilter({ idSegment, idDepartment: [] })
+                }
+                value={filter.idSegment}
+                mode="multiple"
+                allowClear
+                maxTagCount="responsive"
               >
-                <Badge count={hiddenFieldCount}>
-                  {t("screeningList.seeMore")}
-                </Badge>
-                {open ? <CaretUpOutlined /> : <CaretDownOutlined />}
-              </Button>
-            </Tooltip>
+                {segments.list.map(({ id, description: text }) => (
+                  <Select.Option key={id} value={id}>
+                    {text}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Box>
+          </Col>
+          <Col md={7} lg={7} xxl={5}>
+            <Box>
+              <Heading as="label" htmlFor="date" size="14px">
+                {t("screeningList.date")}:
+              </Heading>
+              <RangeDatePicker
+                format="DD/MM/YYYY"
+                value={date}
+                onChange={onDateChange}
+                popupClassName="noArrow"
+                allowClear={false}
+                disabledDate={datepickerRangeLimit(120)}
+              />
+            </Box>
+          </Col>
+          <Col md={4}>
+            <div style={{ display: "flex" }}>
+              <Tooltip
+                title={
+                  hiddenFieldCount > 0 ? "Existem mais filtros aplicados" : ""
+                }
+              >
+                <Button
+                  type="link gtm-btn-adv-search"
+                  onClick={() => setOpen(!open)}
+                  style={{ marginTop: "14px", paddingLeft: 0 }}
+                >
+                  <Badge count={hiddenFieldCount}>
+                    {t("screeningList.seeMore")}
+                  </Badge>
+                  {open ? <CaretUpOutlined /> : <CaretDownOutlined />}
+                </Button>
+              </Tooltip>
 
-            <Tooltip title={t("screeningList.search")}>
-              <Button
-                type="secondary gtm-btn-search"
-                shape="circle"
-                icon={<SearchOutlined />}
-                onClick={search}
-                size="large"
-                style={{ marginTop: "7px" }}
-                loading={isFetchingPrescription}
+              <Tooltip title={t("screeningList.search")}>
+                <Button
+                  type="secondary gtm-btn-search"
+                  shape="circle"
+                  icon={<SearchOutlined />}
+                  onClick={search}
+                  size="large"
+                  style={{ marginTop: "7px" }}
+                  loading={isFetchingPrescription}
+                />
+              </Tooltip>
+              <Tooltip title={t("screeningList.resetFilter")}>
+                <Button
+                  className="gtm-btn-reset"
+                  shape="circle"
+                  icon={<DeleteOutlined />}
+                  onClick={reset}
+                  style={{ marginTop: "11px", marginLeft: "5px" }}
+                  loading={isFetchingPrescription}
+                />
+              </Tooltip>
+              <FilterMemory
+                fetchMemory={fetchMemory}
+                account={account}
+                publicFilters={publicFilters}
+                privateFilters={privateFilters}
+                saveMemory={saveMemory}
+                filter={filter}
+                setScreeningListFilter={setScreeningListFilter}
+                loadFilter={loadFilter}
               />
-            </Tooltip>
-            <Tooltip title={t("screeningList.resetFilter")}>
-              <Button
-                className="gtm-btn-reset"
-                shape="circle"
-                icon={<DeleteOutlined />}
-                onClick={reset}
-                style={{ marginTop: "11px", marginLeft: "5px" }}
-                loading={isFetchingPrescription}
-              />
-            </Tooltip>
-            <FilterMemory
-              fetchMemory={fetchMemory}
-              account={account}
-              publicFilters={publicFilters}
-              privateFilters={privateFilters}
-              saveMemory={saveMemory}
-              filter={filter}
-              setScreeningListFilter={setScreeningListFilter}
-              loadFilter={loadFilter}
-            />
-          </div>
-        </Col>
-      </Row>
-      <FilterFields
-        featureService={featureService}
-        prioritizationType={prioritizationType}
-        setScreeningListFilter={setScreeningListFilter}
-        fetchFrequencies={fetchFrequencies}
-        frequencies={frequencies}
-        filter={filter}
-        drugs={drugs}
-        segments={segments}
-        searchDrugs={searchDrugs}
-      />
-    </SearchBox>
+            </div>
+          </Col>
+        </Row>
+
+        <div className="filters">
+          <FilterFields
+            featureService={featureService}
+            prioritizationType={prioritizationType}
+            setScreeningListFilter={setScreeningListFilter}
+            fetchFrequencies={fetchFrequencies}
+            frequencies={frequencies}
+            filter={filter}
+            drugs={drugs}
+            segments={segments}
+            searchDrugs={searchDrugs}
+          />
+        </div>
+      </SearchBox>
+    </FilterCard>
   );
 }

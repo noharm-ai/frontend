@@ -4,14 +4,18 @@ import {
   createIndicatorTagClasses,
   createIndicatorCardClasses,
 } from "components/Screening/ClinicalNotes/index.style";
+import { get } from "styles/utils";
 
 export default styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  border: 1px solid #e0e0e0;
+
   border-radius: 5px;
   padding: 6px 15px;
+  background: #fff;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03),
+    0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
 
   &.full-height {
     height: 100%;
@@ -43,10 +47,15 @@ export default styled.div`
     flex: 1;
 
     .exam-list {
+      flex: 1;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       column-gap: 10px;
       row-gap: 8px;
+
+      @media (min-width: ${get("breakpoints.md")}) {
+        grid-template-columns: 1fr 1fr;
+      }
 
       @media only screen and (min-width: 1515px) {
         column-gap: 15px;

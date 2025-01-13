@@ -16,6 +16,7 @@ import columnsTable, {
   alertsPerspectiveColumns,
 } from "../../columns";
 import { rowClassName } from "../PrescriptionDrugList";
+import { breakpointsEnum } from "styles/breakpoints";
 
 function Table({
   hasFilter,
@@ -142,6 +143,20 @@ function Table({
     );
   };
 
+  const getTableWidth = () => {
+    const width = window.innerWidth;
+
+    if (width > breakpointsEnum.lg) {
+      return null;
+    }
+
+    if (width < breakpointsEnum.md) {
+      return { x: "1300px" };
+    }
+
+    return { x: `${width + width * 0.2}px` };
+  };
+
   return (
     <ExpandableTable
       showHeader={showHeader}
@@ -163,6 +178,7 @@ function Table({
       onExpand={(expanded, record) => handleRowExpand(record)}
       columnTitle={<ExpandColumn expand={!expandedRows.length} />}
       className={prescriptionListType}
+      scroll={getTableWidth()}
     />
   );
 }

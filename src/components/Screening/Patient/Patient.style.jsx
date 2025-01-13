@@ -92,10 +92,11 @@ export const Box = styled.div`
 
 export const SeeMore = styled.div`
   text-align: center;
-  margin-top: 10px;
 
   .ant-btn-link {
     font-size: 18px;
+    padding-left: 0;
+    padding-right: 0;
   }
 `;
 
@@ -130,7 +131,6 @@ export const PatientBox = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #fff;
         outline: none;
         border: 0;
         padding: 0;
@@ -155,12 +155,15 @@ export const PatientBox = styled.div`
     .patient-data {
       display: flex;
       flex-wrap: wrap;
+      background: #fff;
       border-bottom: 1px solid #e0e0e0;
       border-left: 1px solid #e0e0e0;
       border-right: 1px solid #e0e0e0;
       border-radius: 5px;
       border-top-left-radius: 0;
       height: 100%;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03),
+        0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
 
       .patient-data-item {
         position: relative;
@@ -320,6 +323,14 @@ export const PatientBox = styled.div`
       display: flex;
       flex-direction: column;
       height: 100%;
+
+      .ant-tabs-tab {
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .ant-tabs-tab-active {
+        background: #fff;
+      }
 
       .ant-tabs-nav {
         margin: 0;

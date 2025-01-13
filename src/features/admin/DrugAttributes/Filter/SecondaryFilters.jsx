@@ -163,7 +163,7 @@ export default function SecondaryFilters() {
           </Select>
         </Col>
 
-        <Col xs={12}>
+        <Col xs={6}>
           <Heading as="label" size="14px">
             Possui dose máxima:
           </Heading>
@@ -181,6 +181,23 @@ export default function SecondaryFilters() {
             <Select.Option key={1} value={false}>
               <Tag color="red">Não</Tag>
             </Select.Option>
+          </Select>
+        </Col>
+        <Col xs={6}>
+          <Heading as="label" size="14px">
+            Dose máxima referência:
+          </Heading>
+          <Select
+            style={{ width: "100%" }}
+            value={values.tpRefMaxDose}
+            onChange={(val) => setFieldValue({ tpRefMaxDose: val })}
+            showSearch
+            optionFilterProp="children"
+            allowClear
+          >
+            <Select.Option value={"empty"}>Referência vazia</Select.Option>
+            <Select.Option value={"diff"}>Divergente</Select.Option>
+            <Select.Option value={"equal"}>Igual</Select.Option>
           </Select>
         </Col>
 

@@ -1,12 +1,18 @@
 import styled from "styled-components/macro";
 import { timingFunctions } from "polished";
 
+import { get } from "styles/utils";
+
 export const SearchPrescriptionContainer = styled.div`
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 350px;
   display: flex;
   align-items: center;
+
+  @media (min-width: ${get("breakpoints.lg")}) {
+    max-width: 600px;
+  }
 
   &.big {
     max-width: none;

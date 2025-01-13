@@ -18,6 +18,7 @@ import notification from "components/notification";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import { setCheckSummary } from "features/prescription/PrescriptionSlice";
+import { PanelActionContainer } from "../PrescriptionDrug.style";
 
 const PanelAction = ({
   id,
@@ -233,7 +234,7 @@ const PanelAction = ({
   }
 
   return (
-    <>
+    <PanelActionContainer>
       <div className="info">
         {header.status !== "s" &&
           summaryTags(header[summarySourceToType(source)] || {})}
@@ -261,7 +262,7 @@ const PanelAction = ({
           </Tooltip>
         </Dropdown>
       </div>
-    </>
+    </PanelActionContainer>
   );
 };
 

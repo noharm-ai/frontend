@@ -2,11 +2,11 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import { Flex, Tabs } from "antd";
+import { Flex, Tabs, Row, Col } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import Switch from "components/Switch";
-import { Input, Select } from "components/Inputs";
+import { Input, Select, InputNumber } from "components/Inputs";
 import Button from "components/Button";
 import Editor from "components/Editor";
 import Dropdown from "components/Dropdown";
@@ -18,6 +18,7 @@ function BaseForm() {
     (state) => state.lists.substanceClasses.list
   );
   const { values, errors, touched, setFieldValue } = useFormikContext();
+  const maxValue = 999999999;
 
   const handlingMenu = () => {
     const items = DrugAlertTypeEnum.getAlertTypes(t).map((a) => ({
@@ -209,17 +210,142 @@ function BaseForm() {
             key: "admin-text",
             label: "Curadoria",
             children: (
-              <div className={`form-row`}>
-                <div className="form-label">
-                  <label>Texto curadoria:</label>
+              <>
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Unidade padrão:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      optionFilterProp="children"
+                      showSearch
+                      value={values.defaultMeasureUnit}
+                      onChange={(value) =>
+                        setFieldValue("defaultMeasureUnit", value)
+                      }
+                      allowClear
+                    >
+                      <Select.Option value={"mg"}>mg</Select.Option>
+                      <Select.Option value={"ml"}>ml</Select.Option>
+
+                      <Select.Option value={"mcg"}>mcg</Select.Option>
+                      <Select.Option value={"UI"}>UI</Select.Option>
+                    </Select>
+                  </div>
                 </div>
-                <div className="form-input">
-                  <Editor
-                    onEdit={(text) => setFieldValue(`adminText`, text)}
-                    content={values.adminText || ""}
-                  />
+
+                <Row gutter={[16, 8]} style={{ marginTop: "10px" }}>
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Dose máxima adulto:</label>
+                      </div>
+                      <div className="form-input">
+                        <InputNumber
+                          min={0}
+                          max={maxValue}
+                          value={values.maxdoseAdult}
+                          onChange={(value) =>
+                            setFieldValue("maxdoseAdult", value)
+                          }
+                          status={
+                            errors.maxdoseAdult && touched.maxdoseAdult
+                              ? "error"
+                              : null
+                          }
+                          addonAfter={values.defaultMeasureUnit || "--"}
+                        />{" "}
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Dose máxima adulto por peso:</label>
+                      </div>
+                      <div className="form-input">
+                        <InputNumber
+                          min={0}
+                          max={maxValue}
+                          value={values.maxdoseAdultWeight}
+                          onChange={(value) =>
+                            setFieldValue("maxdoseAdultWeight", value)
+                          }
+                          status={
+                            errors.maxdoseAdultWeight &&
+                            touched.maxdoseAdultWeight
+                              ? "error"
+                              : null
+                          }
+                          addonAfter={`${values.defaultMeasureUnit || "--"}/Kg`}
+                        />{" "}
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Dose máxima pediátrico:</label>
+                      </div>
+                      <div className="form-input">
+                        <InputNumber
+                          min={0}
+                          max={maxValue}
+                          value={values.maxdosePediatric}
+                          onChange={(value) =>
+                            setFieldValue("maxdosePediatric", value)
+                          }
+                          status={
+                            errors.maxdosePediatric && touched.maxdosePediatric
+                              ? "error"
+                              : null
+                          }
+                          addonAfter={values.defaultMeasureUnit || "--"}
+                        />{" "}
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Dose máxima pediátrico por peso:</label>
+                      </div>
+                      <div className="form-input">
+                        <InputNumber
+                          min={0}
+                          max={maxValue}
+                          value={values.maxdosePediatricWeight}
+                          onChange={(value) =>
+                            setFieldValue("maxdosePediatricWeight", value)
+                          }
+                          status={
+                            errors.maxdosePediatricWeight &&
+                            touched.maxdosePediatricWeight
+                              ? "error"
+                              : null
+                          }
+                          addonAfter={`${values.defaultMeasureUnit || "--"}/Kg`}
+                        />{" "}
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Texto curadoria:</label>
+                  </div>
+                  <div className="form-input">
+                    <Editor
+                      onEdit={(text) => setFieldValue(`adminText`, text)}
+                      content={values.adminText || ""}
+                    />
+                  </div>
                 </div>
-              </div>
+              </>
             ),
           },
         ]}

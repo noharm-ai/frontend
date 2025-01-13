@@ -95,7 +95,7 @@ export default function AlertCard({ stats, prescription }) {
   };
 
   return (
-    <PrescriptionCard>
+    <PrescriptionCard style={{ height: "100%" }}>
       <div className="header">
         <h3 className="title">
           {t("tableHeader.alerts")}

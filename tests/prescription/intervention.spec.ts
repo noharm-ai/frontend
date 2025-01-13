@@ -118,10 +118,7 @@ test("add patient intervention", async ({ page }) => {
   await page.getByText("Paciente 99").click();
 
   await page.getByText("Paciente 99").click();
-  await page
-    .locator("section")
-    .getByRole("button", { name: "warning" })
-    .click();
+  await page.locator(".gtm-bt-patient-intervention").first().click();
   await page.locator(".ant-select-selector").click();
   await page.getByText("Diluição", { exact: true }).click();
 
@@ -133,9 +130,6 @@ test("add patient intervention", async ({ page }) => {
   await page.getByRole("button", { name: "Salvar" }).click();
 
   // check if it was created
-  await page
-    .locator("section")
-    .getByRole("button", { name: "warning" })
-    .click();
+  await page.locator(".gtm-bt-patient-intervention").first().click();
   await expect(page.locator(".ant-modal-body .intervention")).toHaveCount(1);
 });

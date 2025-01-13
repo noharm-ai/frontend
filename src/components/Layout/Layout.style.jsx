@@ -1,5 +1,6 @@
 import { Layout } from "antd";
 import styled from "styled-components/macro";
+import { timingFunctions } from "polished";
 
 import { get } from "styles/utils";
 import { ReactComponent as LogoSVG } from "assets/noHarm-horizontal.svg";
@@ -24,11 +25,15 @@ export const Brand = styled(LogoSVG)`
 `;
 
 export const UserName = styled.div`
-  display: flex;
+  display: none;
   flex-direction: column;
-  margin-right: 20px;
+  margin-right: 10px;
   align-items: flex-start;
   justify-content: center;
+
+  @media (min-width: ${get("breakpoints.md")}) {
+    display: flex;
+  }
 
   .name {
     color: ${get("colors.primary")};
@@ -42,24 +47,27 @@ export const UserName = styled.div`
   }
 `;
 
-export const LogOut = styled.button`
-  color: ${get("colors.primary")};
-  cursor: pointer;
-  font-weight: ${get("weight.bold")};
-  transition: color 0.3s ease;
-  text-decoration: none;
-  border: 0;
-  background: #fff;
-
-  &:hover {
-    color: ${get("colors.accent")};
-  }
-`;
-
 export const Wrapper = styled(Layout)`
   &.ant-layout {
     background: #eff1f4;
     transition: all 0.2s;
+  }
+`;
+
+export const UserDataContainer = styled.div`
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  padding: 10px 20px 10px 10px;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  .user-avatar {
+    margin-right: 10px;
+    background: rgb(169, 145, 214);
+    transition: background 0.5s ${timingFunctions("easeOutQuint")};
   }
 `;
 
@@ -79,7 +87,7 @@ Wrapper.Sider = styled(Layout.Sider)`
     height: 100vh;
     left: 0;
     padding: 15px 0;
-    z-index: 2;
+    z-index: 999;
     position: fixed;
   }
 
@@ -110,11 +118,30 @@ Wrapper.Header = styled(Layout.Header)`
 
   &.ant-layout-header {
     background: ${get("colors.commonLighter")};
-    padding: 20px;
+    padding-left: 20px;
+    padding-right: 0;
   }
 
   .controls {
     display: flex;
     align-items: center;
+  }
+`;
+
+export const HeaderContainer = styled.div`
+  align-items: center;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+
+  .header-controls {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    margin-left: 25px;
+
+    @media (min-width: ${get("breakpoints.lg")}) {
+      margin-left: 0;
+    }
   }
 `;

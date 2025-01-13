@@ -106,6 +106,80 @@ export default function SecondaryFilters() {
             <Select.Option value={0}>Não</Select.Option>
           </Select>
         </Col>
+
+        <Col xs={24} md={12}></Col>
+
+        <Col xs={12} md={6}>
+          <Heading as="label" size="14px">
+            Dose máxima adulto:
+          </Heading>
+          <Select
+            optionFilterProp="children"
+            showSearch
+            style={{ width: "100%" }}
+            value={values.hasMaxDoseAdult}
+            onChange={(value) => setFieldValue({ hasMaxDoseAdult: value })}
+            allowClear
+          >
+            <Select.Option value={1}>Sim</Select.Option>
+            <Select.Option value={0}>Não</Select.Option>
+          </Select>
+        </Col>
+
+        <Col xs={12} md={6}>
+          <Heading as="label" size="14px">
+            Dose máxima adulto/Peso:
+          </Heading>
+          <Select
+            optionFilterProp="children"
+            showSearch
+            style={{ width: "100%" }}
+            value={values.hasMaxDoseAdultWeight}
+            onChange={(value) =>
+              setFieldValue({ hasMaxDoseAdultWeight: value })
+            }
+            allowClear
+          >
+            <Select.Option value={1}>Sim</Select.Option>
+            <Select.Option value={0}>Não</Select.Option>
+          </Select>
+        </Col>
+
+        <Col xs={12} md={6}>
+          <Heading as="label" size="14px">
+            Dose máxima pediátrico:
+          </Heading>
+          <Select
+            optionFilterProp="children"
+            showSearch
+            style={{ width: "100%" }}
+            value={values.hasMaxDosePediatric}
+            onChange={(value) => setFieldValue({ hasMaxDosePediatric: value })}
+            allowClear
+          >
+            <Select.Option value={1}>Sim</Select.Option>
+            <Select.Option value={0}>Não</Select.Option>
+          </Select>
+        </Col>
+
+        <Col xs={12} md={6}>
+          <Heading as="label" size="14px">
+            Dose máxima pediátrico/Peso:
+          </Heading>
+          <Select
+            optionFilterProp="children"
+            showSearch
+            style={{ width: "100%" }}
+            value={values.hasMaxDosePediatricWeight}
+            onChange={(value) =>
+              setFieldValue({ hasMaxDosePediatricWeight: value })
+            }
+            allowClear
+          >
+            <Select.Option value={1}>Sim</Select.Option>
+            <Select.Option value={0}>Não</Select.Option>
+          </Select>
+        </Col>
       </Row>
     </Col>
   );

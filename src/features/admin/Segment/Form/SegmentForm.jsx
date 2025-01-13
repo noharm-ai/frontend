@@ -27,6 +27,7 @@ function SegmentForm({ open, setOpen }) {
     description: Yup.string()
       .nullable()
       .required(t("validation.requiredField")),
+    type: Yup.number().nullable().required(t("validation.requiredField")),
   });
   const initialValues = {
     ...formData,

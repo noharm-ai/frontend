@@ -18,7 +18,7 @@ import { useTransition, animated, config } from "@react-spring/web";
 import dayjs from "dayjs";
 
 import { InfoIcon } from "components/Icon";
-import Heading from "components/Heading";
+import Heading, { AffixedHeader } from "components/Heading";
 import Button from "components/Button";
 import { Row, Col } from "components/Grid";
 import notification from "components/notification";
@@ -271,7 +271,7 @@ export default function PageHeader({
 
     if (small) {
       return (
-        <Heading style={{ fontSize: "18px", paddingTop: "2px" }}>
+        <AffixedHeader style={{ paddingTop: "2px" }}>
           {label}{" "}
           <Tooltip title={t("screeningHeader.copyHint")}>
             <UnstyledButton onClick={() => copyToClipboard(id)}>
@@ -286,7 +286,7 @@ export default function PageHeader({
             ""
           )}
           <span className="legend">{content.namePatient}</span>
-        </Heading>
+        </AffixedHeader>
       );
     }
 

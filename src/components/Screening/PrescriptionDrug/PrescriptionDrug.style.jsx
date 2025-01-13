@@ -3,6 +3,7 @@ import { timingFunctions } from "polished";
 
 import Collapse from "components/Collapse";
 import { get } from "styles/utils";
+import breakpoints from "styles/breakpoints";
 
 export const Box = styled.div`
   border-top: 1px solid ${get("colors.detail")};
@@ -22,12 +23,18 @@ export const EditorBox = styled.div`
 export const ToolBox = styled.div`
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
   margin-bottom: 15px;
+
+  @media (min-width: ${breakpoints.md}) {
+    flex-direction: row;
+  }
 
   .filters {
     flex: 1;
     display: flex;
-    height: 32px;
+    flex-wrap: wrap;
+    min-height: 32px;
 
     .add-filter {
       background-color: #7ebe9a;
@@ -45,11 +52,35 @@ export const ToolBox = styled.div`
     .ant-tag {
       display: flex;
       align-items: center;
+      margin-bottom: 8px;
+    }
+  }
+
+  .ant-affix {
+    .filters {
+      display: none;
+
+      @media (min-width: ${breakpoints.md}) {
+        display: flex;
+      }
+    }
+
+    .viz-mode {
+      display: none;
+
+      @media (min-width: ${breakpoints.md}) {
+        display: flex;
+      }
     }
   }
 
   .viz-mode {
     display: flex;
+    flex-wrap: wrap;
+
+    @media (min-width: ${breakpoints.md}) {
+      flex-wrap: nowrap;
+    }
 
     .btn-order {
       transition: transform 0.3s ${timingFunctions("easeOutQuint")};
@@ -66,6 +97,10 @@ export const ToolBox = styled.div`
         flex: 1;
       }
     }
+
+    button {
+      margin-bottom: 8px;
+    }
   }
 `;
 
@@ -74,10 +109,19 @@ export const PrescriptionHeader = styled.div`
   align-items: center;
 
   .panel-header-description {
-    padding-left: 15px;
+    padding-left: 5px;
+
+    @media (min-width: ${breakpoints.md}) {
+      padding-left: 15px;
+      padding-right: 50px;
+    }
 
     div > span {
-      padding-left: 15px;
+      padding-left: 0;
+
+      @media (min-width: ${breakpoints.md}) {
+        padding-left: 15px;
+      }
     }
 
     .p-number {
@@ -98,7 +142,15 @@ export const PrescriptionHeader = styled.div`
     }
 
     .subtitle {
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
       opacity: 0.6;
+
+      @media (min-width: ${breakpoints.md}) {
+        display: block;
+        font-size: 14px;
+      }
     }
 
     .expired {
@@ -309,5 +361,14 @@ export const AlertTagsContainer = styled.div`
   .ant-tag {
     margin-right: 5px !important;
     font-size: 14px;
+  }
+`;
+
+export const PanelActionContainer = styled.div`
+  display: none;
+
+  @media (min-width: ${breakpoints.md}) {
+    display: flex;
+    align-items: center;
   }
 `;
