@@ -313,7 +313,8 @@ export const interventionCompleteTemplate = (i, t) => `
       ? `${i.dose} ${i.measureUnit ? i.measureUnit.label : ""}`
       : "Dose não informada"
   }  X ${i.frequency ? i.frequency.label : "Frequência não informada"})
-  Intervenção: ${
+  Motivo: ${i.reasonDescription ?? "Motivo não informado"}
+  Observação: ${
     i.observation ? stripHtml(i.observation) : "Nenhuma observação registrada"
   }
   Desfecho: ${t("interventionStatus." + i.status)}
