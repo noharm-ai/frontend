@@ -3,6 +3,7 @@ import { EditOutlined } from "@ant-design/icons";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
+import { formatDateTime } from "utils/date";
 
 const columns = (setSubstance, dispatch, t) => {
   return [
@@ -26,6 +27,13 @@ const columns = (setSubstance, dispatch, t) => {
       align: "center",
       render: (entry, record) => {
         return record.active ? "Sim" : "Não";
+      },
+    },
+    {
+      title: "Atualizado em",
+      align: "center",
+      render: (entry, record) => {
+        return record.updatedAt ? formatDateTime(record.updatedAt) : "-";
       },
     },
     {

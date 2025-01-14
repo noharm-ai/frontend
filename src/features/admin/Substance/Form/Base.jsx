@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import { Flex, Tabs, Row, Col } from "antd";
+import { Flex, Tabs, Row, Col, Divider } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import Switch from "components/Switch";
@@ -11,6 +11,7 @@ import Button from "components/Button";
 import Editor from "components/Editor";
 import Dropdown from "components/Dropdown";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
+import { formatDateTime } from "utils/date";
 
 function BaseForm() {
   const { t } = useTranslation();
@@ -162,6 +163,28 @@ function BaseForm() {
                   {errors.active && touched.active && (
                     <div className="form-error">{errors.active}</div>
                   )}
+                </div>
+
+                <Divider />
+
+                <div
+                  className={`form-row ${
+                    errors.id && touched.id ? "error" : ""
+                  }`}
+                >
+                  <div className="form-label">
+                    <label>Atualização:</label>
+                  </div>
+                  <div className="form-input">
+                    {values.responsible ? (
+                      <>
+                        {values.responsible} em{" "}
+                        {formatDateTime(values.updatedAt)}
+                      </>
+                    ) : (
+                      "--"
+                    )}
+                  </div>
                 </div>
               </>
             ),
