@@ -4,6 +4,7 @@ import { EditOutlined } from "@ant-design/icons";
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
+import { formatDateTime } from "utils/date";
 
 const sortDirections = ["descend", "ascend"];
 
@@ -48,10 +49,17 @@ const columns = () => {
       title: "Máximo",
       dataIndex: "max",
     },
-    // {
-    //   title: "Referência",
-    //   dataIndex: "ref",
-    // },
+    {
+      title: "Referência",
+      dataIndex: "ref",
+      ellipsis: true,
+    },
+    {
+      title: "Atualizado em",
+      sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
+      render: (entry, record) =>
+        record.updatedAt ? formatDateTime(record.updatedAt) : "--",
+    },
     {
       title: "Situação",
       render: (entry, record) => (
