@@ -42,9 +42,14 @@ export const PrioritizationPage = styled.div`
             }
           `
         : css`
+            @media (min-width: ${breakpoints.md}) {
+              padding: 0 1rem;
+              grid-template-columns: minmax(0, 1fr);
+            }
+
             @media (min-width: ${breakpoints.lg}) {
               padding: 0 1rem;
-              grid-template-columns: repeat(1, minmax(0, 1fr));
+              grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
             @media (min-width: ${breakpoints.xxl}) {
