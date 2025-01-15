@@ -194,36 +194,39 @@ const Me = ({
         )}
       </div>
 
-      <Dropdown
-        menu={{
-          items: userOptions(),
-          onClick: onClickUserOptions,
-        }}
-      >
-        <UserDataContainer>
-          <Avatar size={44} icon={<UserOutlined />} className="user-avatar" />
+      <Tooltip title="Clique para abrir o menu" placement="left">
+        <Dropdown
+          menu={{
+            items: userOptions(),
+            onClick: onClickUserOptions,
+          }}
+          trigger={["click"]}
+        >
+          <UserDataContainer>
+            <Avatar size={44} icon={<UserOutlined />} className="user-avatar" />
 
-          <UserName>
-            <div className="name">{setTitle({ user })}</div>
-            {PermissionService().has(Permission.MULTI_SCHEMA) && (
-              <div className="schema">
-                <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
-                {PermissionService().has(Permission.MAINTAINER) && (
-                  <Tooltip title="Posição atual da implantação.">
-                    <IntegrationStatusTag
-                      type={"filled"}
-                      style={{ cursor: "pointer" }}
-                      status={integrationStatus}
-                    />
-                  </Tooltip>
-                )}
-              </div>
-            )}
-          </UserName>
+            <UserName>
+              <div className="name">{setTitle({ user })}</div>
+              {PermissionService().has(Permission.MULTI_SCHEMA) && (
+                <div className="schema">
+                  <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
+                  {PermissionService().has(Permission.MAINTAINER) && (
+                    <Tooltip title="Posição atual da implantação.">
+                      <IntegrationStatusTag
+                        type={"filled"}
+                        style={{ cursor: "pointer" }}
+                        status={integrationStatus}
+                      />
+                    </Tooltip>
+                  )}
+                </div>
+              )}
+            </UserName>
 
-          <DownOutlined />
-        </UserDataContainer>
-      </Dropdown>
+            <DownOutlined />
+          </UserDataContainer>
+        </Dropdown>
+      </Tooltip>
     </HeaderContainer>
   );
 };
