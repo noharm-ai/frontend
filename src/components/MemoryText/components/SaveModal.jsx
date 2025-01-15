@@ -1,9 +1,11 @@
 import React, { useState, useRef } from "react";
+import { Row, Col } from "antd";
+import { DownOutlined } from "@ant-design/icons";
 
 import Heading from "components/Heading";
 import Modal from "components/Modal";
 import Tag from "components/Tag";
-import Tooltip from "components/Tooltip";
+import Dropdown from "components/Dropdown";
 import { Input, Textarea } from "components/Inputs";
 import { CLINICAL_NOTES_MEMORY_TYPE } from "utils/memory";
 import PermissionService from "services/PermissionService";
@@ -54,10 +56,145 @@ export default function SaveModal({
     setNewText(value);
   };
 
+  const patientVariables = [
+    {
+      label: "Alergias",
+      key: "{{alergias}}",
+    },
+    {
+      label: "Altura",
+      key: "{{altura_paciente}}",
+    },
+    {
+      label: "Nome",
+      key: "{{nome_paciente}}",
+    },
+    {
+      label: "Idade",
+      key: "{{idade_paciente}}",
+    },
+    {
+      label: "Peso",
+      key: "{{peso_paciente}}",
+    },
+
+    {
+      label: "IMC",
+      key: "{{imc_paciente}}",
+    },
+    {
+      label: "Superfície Corporal",
+      key: "{{superficie_corporal_paciente}}",
+    },
+
+    {
+      label: "Escore Global",
+      key: "{{escore_global}}",
+    },
+    {
+      label: "Risco do Paciente",
+      key: "{{risco_paciente}}",
+    },
+  ].sort((a, b) => a.label.localeCompare(b.label));
+
+  const examVariables = [
+    {
+      label: "Exames Principais (card)",
+      key: "{{exames}}",
+    },
+  ].sort((a, b) => a.label.localeCompare(b.label));
+
+  const drugVariables = [
+    {
+      label: "Antimicrobianos",
+      key: "{{antimicrobianos}}",
+    },
+    {
+      label: "Alta Vigilância",
+      key: "{{alta_vigilancia}}",
+    },
+    {
+      label: "Controlados",
+      key: "{{controlados}}",
+    },
+    {
+      label: "Dialisáveis",
+      key: "{{dialisaveis}}",
+    },
+    {
+      label: "Não padronizados",
+      key: "{{nao_padronizados}}",
+    },
+    {
+      label: "Antitrombóticos",
+      key: "{{antitromboticos}}",
+    },
+    {
+      label: "Profilaxia de Úlcera de Estresse",
+      key: "{{profilaxia_ulcera_estresse}}",
+    },
+    {
+      label: "Profilaxia Ocular",
+      key: "{{profilaxia_ocular}}",
+    },
+    {
+      label: "Analgésicos",
+      key: "{{analgesicos}}",
+    },
+    {
+      label: "Anestésicos Gerais",
+      key: "{{anestesicos_gerais}}",
+    },
+    {
+      label: "Vasopressores e Inotrópicos",
+      key: "{{vasopressores_inotropicos}}",
+    },
+  ].sort((a, b) => a.label.localeCompare(b.label));
+
+  const conciliaVariables = [
+    {
+      label: "Medicamentos Conciliados",
+      key: "{{medicamentos_conciliados}}",
+    },
+    {
+      label: "Medicamentos Não Conciliados",
+      key: "{{medicamentos_nao_conciliados}}",
+    },
+  ].sort((a, b) => a.label.localeCompare(b.label));
+
+  const interventionVariables = [
+    {
+      label: "Todas",
+      key: "{{intervencoes}}",
+    },
+  ].sort((a, b) => a.label.localeCompare(b.label));
+
+  const alertVariables = [
+    {
+      label: "Todos",
+      key: "{{alertas}}",
+    },
+  ].sort((a, b) => a.label.localeCompare(b.label));
+
+  const utilsVariables = [
+    {
+      label: "Assinatura",
+      key: "{{assinatura}}",
+    },
+    {
+      label: "Data Atual",
+      key: "{{data_atual}}",
+    },
+  ].sort((a, b) => a.label.localeCompare(b.label));
+
+  const addVariableEvent = ({ key }) => {
+    addVariable(key);
+  };
+
   return (
     <Modal
       open={open}
-      width={"45vw"}
+      width={"70vw"}
       onCancel={() => setOpen(false)}
       onOk={() => saveAction()}
       okButtonProps={{
@@ -80,304 +217,150 @@ export default function SaveModal({
         value={name}
         maxLength={50}
       />
-      <Heading
-        as="label"
-        size="14px"
-        className="fixed"
-        style={{ marginTop: "12px" }}
-      >
-        Texto:
-      </Heading>
-      <Textarea
-        value={newText}
-        style={{ minHeight: "40vh" }}
-        onChange={({ target }) => setNewText(target.value)}
-        ref={textRef}
-      />
+      <Row gutter={[16]}>
+        <Col
+          xs={`${memoryType}`.includes(CLINICAL_NOTES_MEMORY_TYPE) ? 17 : 24}
+        >
+          <Heading
+            as="label"
+            size="14px"
+            className="fixed"
+            style={{ marginTop: "12px" }}
+          >
+            Texto:
+          </Heading>
+          <Textarea
+            value={newText}
+            style={{ minHeight: "40vh" }}
+            onChange={({ target }) => setNewText(target.value)}
+            ref={textRef}
+          />
+        </Col>
+        {`${memoryType}`.includes(CLINICAL_NOTES_MEMORY_TYPE) && (
+          <Col xs={7}>
+            <VariableContainer>
+              <div className="variables-title">Váriáveis</div>
+              <div className="variables-legend">
+                Estas varíaveis são substituídas pelos valores ao carregar os
+                textos salvos. Ex: {"{{ nome_paciente }}"} será substituído pelo
+                nome do paciente. <br />
+                Escolha um grupo abaixo e clique na variável que deseja incluir.
+              </div>
+              <div className="variables-group">
+                <div className="variables-group-list">
+                  <Dropdown
+                    menu={{
+                      items: patientVariables,
+                      onClick: addVariableEvent,
+                    }}
+                    trigger={["click"]}
+                  >
+                    <Tag
+                      style={{ cursor: "pointer" }}
+                      color="blue"
+                      icon={<DownOutlined />}
+                    >
+                      Paciente
+                    </Tag>
+                  </Dropdown>
 
-      {`${memoryType}`.includes(CLINICAL_NOTES_MEMORY_TYPE) && (
-        <VariableContainer>
-          <div className="variables-title">Váriáveis</div>
-          <div className="variables-legend">
-            Estas varíaveis são substituídas pelos valores ao carregar os textos
-            salvos. Ex: {"{{ nome_paciente }}"} será substituído pelo nome do
-            paciente. <br />
-            Clique na variável para adicioná-la ao texto.
-          </div>
-          <div className="variables-group">
-            <div className="variables-group-list">
-              <Tooltip title="Clique para adicionar o Nome do Paciente">
-                <Tag
-                  onClick={() => addVariable("{{nome_paciente}}")}
-                  style={{ cursor: "pointer" }}
-                  color="geekblue"
-                >
-                  Nome
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a Idade do Paciente">
-                <Tag
-                  onClick={() => addVariable("{{idade_paciente}}")}
-                  style={{ cursor: "pointer" }}
-                  color="geekblue"
-                >
-                  Idade
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a Peso do Paciente">
-                <Tag
-                  onClick={() => addVariable("{{peso_paciente}}")}
-                  style={{ cursor: "pointer" }}
-                  color="geekblue"
-                >
-                  Peso
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a Altura do Paciente">
-                <Tag
-                  onClick={() => addVariable("{{altura_paciente}}")}
-                  style={{ cursor: "pointer" }}
-                  color="geekblue"
-                >
-                  Altura
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar o IMC">
-                <Tag
-                  onClick={() => addVariable("{{imc_paciente}}")}
-                  style={{ cursor: "pointer" }}
-                  color="geekblue"
-                >
-                  IMC
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a Superfície Corporal">
-                <Tag
-                  onClick={() =>
-                    addVariable("{{superficie_corporal_paciente}}")
-                  }
-                  style={{ cursor: "pointer" }}
-                  color="geekblue"
-                >
-                  Superfície Corporal
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a lista de Alergias do paciente">
-                <Tag
-                  onClick={() => addVariable("{{alergias}}")}
-                  style={{ cursor: "pointer" }}
-                  color="geekblue"
-                >
-                  Alergias
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a lista de Exames exibidos na prescrição.">
-                <Tag
-                  onClick={() => addVariable("{{exames}}")}
-                  style={{ cursor: "pointer" }}
-                  color="geekblue"
-                >
-                  Exames
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar o Escore Global.">
-                <Tag
-                  onClick={() => addVariable("{{escore_global}}")}
-                  style={{ cursor: "pointer" }}
-                  color="geekblue"
-                >
-                  Escore Global
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar o Risco do Paciente (baseado no escore global).">
-                <Tag
-                  onClick={() => addVariable("{{risco_paciente}}")}
-                  style={{ cursor: "pointer" }}
-                  color="geekblue"
-                >
-                  Risco do Paciente
-                </Tag>
-              </Tooltip>
-            </div>
-          </div>
+                  <Dropdown
+                    menu={{
+                      items: examVariables,
+                      onClick: addVariableEvent,
+                    }}
+                    trigger={["click"]}
+                  >
+                    <Tag
+                      style={{ cursor: "pointer" }}
+                      color="green"
+                      icon={<DownOutlined />}
+                    >
+                      Exames
+                    </Tag>
+                  </Dropdown>
 
-          <div className="variables-group">
-            <div className="variables-group-list">
-              <Tooltip title="Clique para adicionar a lista de Intervenções realizadas nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{intervencoes}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Intervenções
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a lista de Alertas presentes nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{alertas}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Alertas
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a lista de Antimicrobianos presentes nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{antimicrobianos}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Antimicrobianos
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a lista de medicamentos de Alta Vigilância presentes nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{alta_vigilancia}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Alta Vigilância
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a lista de medicamentos de Controlados presentes nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{controlados}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Controlados
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a lista de medicamentos de Dialisáveis presentes nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{dialisaveis}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Dialisáveis
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a lista de medicamentos Não Padronizados presentes nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{nao_padronizados}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Não Padronizados
-                </Tag>
-              </Tooltip>
+                  <Dropdown
+                    menu={{
+                      items: drugVariables,
+                      onClick: addVariableEvent,
+                    }}
+                    trigger={["click"]}
+                  >
+                    <Tag
+                      style={{ cursor: "pointer" }}
+                      color="purple"
+                      icon={<DownOutlined />}
+                    >
+                      Medicamentos
+                    </Tag>
+                  </Dropdown>
 
-              <Tooltip title="Clique para adicionar a lista de medicamentos de Antitrombóticos presentes nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{antitromboticos}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Antitrombótico
-                </Tag>
-              </Tooltip>
+                  <Dropdown
+                    menu={{
+                      items: conciliaVariables,
+                      onClick: addVariableEvent,
+                    }}
+                    trigger={["click"]}
+                  >
+                    <Tag
+                      style={{ cursor: "pointer" }}
+                      color="cyan"
+                      icon={<DownOutlined />}
+                    >
+                      Conciliação
+                    </Tag>
+                  </Dropdown>
 
-              <Tooltip title="Clique para adicionar a lista de medicamentos de Profilaxia de úlcera de estresse presentes nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{profilaxia_ulcera_estresse}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Profilaxia de Úlcera de Estresse
-                </Tag>
-              </Tooltip>
+                  <Dropdown
+                    menu={{
+                      items: interventionVariables,
+                      onClick: addVariableEvent,
+                    }}
+                    trigger={["click"]}
+                  >
+                    <Tag
+                      style={{ cursor: "pointer" }}
+                      color="volcano"
+                      icon={<DownOutlined />}
+                    >
+                      Intervenções
+                    </Tag>
+                  </Dropdown>
 
-              <Tooltip title="Clique para adicionar a lista de medicamentos de Profilaxia Ocular presentes nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{profilaxia_ocular}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Profilaxia Ocular
-                </Tag>
-              </Tooltip>
+                  <Dropdown
+                    menu={{
+                      items: alertVariables,
+                      onClick: addVariableEvent,
+                    }}
+                    trigger={["click"]}
+                  >
+                    <Tag
+                      style={{ cursor: "pointer" }}
+                      color="red"
+                      icon={<DownOutlined />}
+                    >
+                      Alertas
+                    </Tag>
+                  </Dropdown>
 
-              <Tooltip title="Clique para adicionar a lista de medicamentos Analgésicos presentes nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{analgesicos}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Analgésicos
-                </Tag>
-              </Tooltip>
-
-              <Tooltip title="Clique para adicionar a lista de medicamentos Anestésicos Gerais presentes nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{anestesicos_gerais}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Anestésicos Gerais
-                </Tag>
-              </Tooltip>
-
-              <Tooltip title="Clique para adicionar a lista de medicamentos Vasopressores e Inotrópicos presentes nesta prescrição">
-                <Tag
-                  onClick={() => addVariable("{{vasopressores_inotropicos}}")}
-                  style={{ cursor: "pointer" }}
-                  color="magenta"
-                >
-                  Vasopressores e Inotrópicos
-                </Tag>
-              </Tooltip>
-            </div>
-          </div>
-
-          <div className="variables-group">
-            <div className="variables-group-list">
-              <Tooltip title="Clique para adicionar a lista de Medicamentos Conciliados">
-                <Tag
-                  onClick={() => addVariable("{{medicamentos_conciliados}}")}
-                  style={{ cursor: "pointer" }}
-                  color="purple"
-                >
-                  Medicamentos conciliados
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a lista de Medicamentos Não Conciliados">
-                <Tag
-                  onClick={() =>
-                    addVariable("{{medicamentos_nao_conciliados}}")
-                  }
-                  style={{ cursor: "pointer" }}
-                  color="purple"
-                >
-                  Medicamentos NÃO conciliados
-                </Tag>
-              </Tooltip>
-            </div>
-          </div>
-
-          <div className="variables-group">
-            <div className="variables-group-list">
-              <Tooltip title="Clique para adicionar a sua assinatura">
-                <Tag
-                  onClick={() => addVariable("{{assinatura}}")}
-                  style={{ cursor: "pointer" }}
-                  color="cyan"
-                >
-                  Assinatura
-                </Tag>
-              </Tooltip>
-              <Tooltip title="Clique para adicionar a data atual">
-                <Tag
-                  onClick={() => addVariable("{{data_atual}}")}
-                  style={{ cursor: "pointer" }}
-                  color="cyan"
-                >
-                  Data atual
-                </Tag>
-              </Tooltip>
-            </div>
-          </div>
-        </VariableContainer>
-      )}
+                  <Dropdown
+                    menu={{
+                      items: utilsVariables,
+                      onClick: addVariableEvent,
+                    }}
+                    trigger={["click"]}
+                  >
+                    <Tag style={{ cursor: "pointer" }} icon={<DownOutlined />}>
+                      Utilidades
+                    </Tag>
+                  </Dropdown>
+                </div>
+              </div>
+            </VariableContainer>
+          </Col>
+        )}
+      </Row>
     </Modal>
   );
 }
