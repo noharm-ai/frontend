@@ -1,15 +1,19 @@
 import React, { useContext } from "react";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Slider } from "antd";
 
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Input, Select } from "components/Inputs";
+import { Input, Select, Radio } from "components/Inputs";
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
 
 export default function SecondaryFilters() {
+  const substances = useSelector((state) => state.lists.getSubstances.list);
+  const substancesLoading =
+    useSelector((state) => state.lists.getSubstances.status) === "loading";
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
@@ -45,6 +49,7 @@ export default function SecondaryFilters() {
             {t("labels.substance")}:
           </Heading>
           <Input
+            placeholder="Busca por texto"
             value={values.substance}
             onChange={({ target }) =>
               setFieldValue({
@@ -56,6 +61,43 @@ export default function SecondaryFilters() {
             *Utilize o caractere % para procurar por partes de uma palavra. Ex:
             %Morfina%
           </div>
+        </Col>
+
+        <Col xs={24} md={12}>
+          <Heading as="label" htmlFor="date" size="14px">
+            {t("labels.substance")}:
+          </Heading>
+          <Select
+            id="idclass"
+            optionFilterProp="children"
+            showSearch
+            style={{ width: "100%" }}
+            value={values.substanceList}
+            onChange={(value, option) =>
+              setFieldValue({ substanceList: value })
+            }
+            loading={substancesLoading}
+            mode="multiple"
+            allowClear
+            autoClearSearchValue={false}
+          >
+            {substances.map(({ sctid, name }) => (
+              <Select.Option key={sctid} value={sctid}>
+                {name}
+              </Select.Option>
+            ))}
+          </Select>
+          <Radio.Group
+            options={[
+              { label: "Possui", value: "in" },
+              { label: "Não possui", value: "notin" },
+            ]}
+            onChange={({ target: { value } }) =>
+              setFieldValue({ tpSubstanceList: value })
+            }
+            value={values.tpSubstanceList}
+            style={{ marginTop: "5px" }}
+          />
         </Col>
 
         <Col xs={24} md={12}>
