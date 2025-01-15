@@ -43,6 +43,7 @@ function IntegrationConfigForm({ ...props }) {
   });
   const initialValues = {
     ...formData,
+    config: formData?.config ?? {},
   };
 
   const onSave = (params) => {

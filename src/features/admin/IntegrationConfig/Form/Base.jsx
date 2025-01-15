@@ -166,9 +166,10 @@ function BaseForm() {
             </div>
             <div className="form-info">
               Cria prescrições de conciliação para os novos atendimentos que
-              aparecem na tabela pessoa. Este fluxo deve ser usado para os
-              hospitais que optarem por ter o fluxo onde existe somente uma
-              conciliação por atendimento.
+              aparecem na tabela pessoa.{" "}
+              <span style={{ color: "red" }}>
+                Este fluxo não deve ser ativado para novas integrações.
+              </span>
             </div>
             {errors.fl4 && touched.fl4 && (
               <div className="form-error">{errors.fl4}</div>
