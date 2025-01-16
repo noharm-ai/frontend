@@ -89,8 +89,9 @@ export function CalculateDoseMaxDialog({ open, setOpen, reload, ...props }) {
           </p>
           <p>
             Os valores de dose máxima só serão aplicados para os medicamentos
-            onde a dose máxima ainda não foi definida. Quando o medicamento já
-            possuir dose máxima, o valor calculado é gravado para ser revisado.
+            onde a dose máxima estiver vazia ou tenha sido definida pela
+            curadoria NoHarm. Caso contrário, o valor calculado é gravado para
+            ser revisado.
           </p>
 
           <p>Requisitos:</p>
