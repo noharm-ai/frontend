@@ -44,6 +44,8 @@ export const getCustomClinicalNote = (
   resultText = alertsByType(resultText, prescription);
   resultText = alertsByLevel(resultText, prescription);
 
+  resultText = examsByType(resultText, prescription);
+
   return resultText
     .replace("{{data_atual}}", formatDate(dayjs()))
     .replace("{{nome_paciente}}", prescription.data.namePatient)
@@ -407,6 +409,25 @@ const alertsByLevel = (clinicalNote, prescription) => {
       item,
       alertsTemplate(prescription, null, level)
     );
+  });
+
+  return resultText;
+};
+
+const examsByType = (clinicalNote, prescription) => {
+  let resultText = clinicalNote;
+  const variables = clinicalNote.match(/\{\{(exame_unico.*?)\}\}/g);
+
+  if (!variables) {
+    return resultText;
+  }
+
+  variables.forEach((item) => {
+    const examType = item.replace("{{", "").replace("}}", "").split(".")[1];
+
+    const examsList = prescription.data.exams.filter((e) => e.key === examType);
+
+    resultText = resultText.replace(item, getExams(examsList));
   });
 
   return resultText;

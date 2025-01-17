@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { useSelector } from "react-redux";
 import { Row, Col } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
@@ -23,6 +24,7 @@ export default function SaveModal({
   memoryType,
 }) {
   const { t } = useTranslation();
+  const prescription = useSelector((state) => state.prescriptions.single.data);
   const textRef = useRef(null);
   const [name, setName] = useState("");
   const [newText, setNewText] = useState("");
@@ -102,10 +104,20 @@ export default function SaveModal({
 
   const examVariables = [
     {
-      label: "Exames Principais (card)",
+      label: "Todos (principais)",
       key: "{{exames}}",
     },
   ].sort((a, b) => a.label.localeCompare(b.label));
+
+  if (prescription?.exams) {
+    examVariables.push({
+      label: "Por tipo",
+      children: prescription.exams.map((e) => ({
+        label: e.value.initials,
+        key: `{{exame_unico.${e.key}}}`,
+      })),
+    });
+  }
 
   const drugVariables = [
     {
