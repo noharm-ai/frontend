@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Row, Col } from "antd";
 import { DownOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 import Heading from "components/Heading";
 import Modal from "components/Modal";
@@ -10,6 +11,7 @@ import { Input, Textarea } from "components/Inputs";
 import { CLINICAL_NOTES_MEMORY_TYPE } from "utils/memory";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
+import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 
 import { VariableContainer } from "../index.style";
 
@@ -20,6 +22,7 @@ export default function SaveModal({
   loadText,
   memoryType,
 }) {
+  const { t } = useTranslation();
   const textRef = useRef(null);
   const [name, setName] = useState("");
   const [newText, setNewText] = useState("");
@@ -175,6 +178,32 @@ export default function SaveModal({
       key: "{{alertas}}",
     },
   ].sort((a, b) => a.label.localeCompare(b.label));
+
+  alertVariables.push({
+    label: "Por nível",
+    children: [
+      {
+        key: `{{alerta_nivel.low}}`,
+        label: "Nível baixo",
+      },
+      {
+        key: `{{alerta_nivel.medium}}`,
+        label: "Nível médio",
+      },
+      {
+        key: `{{alerta_nivel.high}}`,
+        label: "Nível alto",
+      },
+    ],
+  });
+
+  alertVariables.push({
+    label: "Por tipo",
+    children: DrugAlertTypeEnum.getAlertTypes(t).map((a) => ({
+      key: `{{alerta_tipo.${a.id}}}`,
+      label: a.label,
+    })),
+  });
 
   const utilsVariables = [
     {

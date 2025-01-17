@@ -15,6 +15,7 @@ export const getCustomClinicalNote = (
   params = {},
   t
 ) => {
+  let resultText = clinicalNote;
   const drugs = [
     ...prescription.data.prescriptionRaw,
     ...prescription.data.solutionRaw,
@@ -40,7 +41,10 @@ export const getCustomClinicalNote = (
     prescription.data.conciliaList
   );
 
-  return clinicalNote
+  resultText = alertsByType(resultText, prescription);
+  resultText = alertsByLevel(resultText, prescription);
+
+  return resultText
     .replace("{{data_atual}}", formatDate(dayjs()))
     .replace("{{nome_paciente}}", prescription.data.namePatient)
     .replace("{{peso_paciente}}", getWeight(prescription.data.weight))
@@ -369,4 +373,41 @@ const getPatientRisk = (agg, globalScore) => {
   }
 
   return "-";
+};
+
+const alertsByType = (clinicalNote, prescription) => {
+  let resultText = clinicalNote;
+  const variables = clinicalNote.match(/\{\{(alerta_tipo.*?)\}\}/g);
+
+  if (!variables) {
+    return resultText;
+  }
+
+  variables.forEach((item) => {
+    const type = item.replace("{{", "").replace("}}", "").split(".")[1];
+
+    resultText = resultText.replace(item, alertsTemplate(prescription, type));
+  });
+
+  return resultText;
+};
+
+const alertsByLevel = (clinicalNote, prescription) => {
+  let resultText = clinicalNote;
+  const variables = clinicalNote.match(/\{\{(alerta_nivel.*?)\}\}/g);
+
+  if (!variables) {
+    return resultText;
+  }
+
+  variables.forEach((item) => {
+    const level = item.replace("{{", "").replace("}}", "").split(".")[1];
+
+    resultText = resultText.replace(
+      item,
+      alertsTemplate(prescription, null, level)
+    );
+  });
+
+  return resultText;
 };
