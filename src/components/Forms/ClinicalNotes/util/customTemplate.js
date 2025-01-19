@@ -41,8 +41,19 @@ export const getCustomClinicalNote = (
     prescription.data.conciliaList
   );
 
+  // custom vars
   resultText = alertsByType(resultText, prescription);
   resultText = alertsByLevel(resultText, prescription);
+  resultText = drugsByFieldList(resultText, drugs, {
+    field: "idSubstance",
+    varName: "substancias",
+    empty: "Nenhum medicamento encontrado",
+  });
+  resultText = drugsByFieldList(resultText, drugs, {
+    field: "idSubstanceClass",
+    varName: "classes",
+    empty: "Nenhum medicamento encontrado",
+  });
 
   resultText = examsByType(resultText, prescription);
 
@@ -239,25 +250,7 @@ const getDrugsByAttribute = (drugs, attr, params = {}) => {
   }
 
   const list = uniq(
-    drugs
-      .filter((d) => d[attr])
-      .map((d) => {
-        const dose = `(${
-          d.dose !== null
-            ? `${d.dose} ${d.measureUnit ? d.measureUnit.label : ""}`
-            : "Dose não informada"
-        }  X ${
-          d.frequency?.label ? d.frequency.label : "Frequência não informada"
-        })`;
-
-        if (params.period) {
-          return `- ${d.drug} (Período: ${
-            d.totalPeriod || 0
-          }D **Revisar período) ${dose}`;
-        }
-
-        return `- ${d.drug} ${dose}`;
-      })
+    drugs.filter((d) => d[attr]).map((d) => drugTemplate(d, params))
   ).sort();
 
   if (!list.length) {
@@ -277,19 +270,7 @@ const getDialyzable = (drugs, dialysis, params = {}) => {
   }
 
   const list = uniq(
-    drugs
-      .filter((d) => d.dialyzable)
-      .map((d) => {
-        const dose = `(${
-          d.dose !== null
-            ? `${d.dose} ${d.measureUnit ? d.measureUnit.label : ""}`
-            : "Dose não informada"
-        }  X ${
-          d.frequency?.label ? d.frequency.label : "Frequência não informada"
-        })`;
-
-        return `- ${d.drug} ${dose}`;
-      })
+    drugs.filter((d) => d.dialyzable).map((d) => drugTemplate(d, params))
   ).sort();
 
   if (!list.length) {
@@ -317,17 +298,7 @@ const getDrugsByClass = (drugs, classList, empty) => {
 
         return hasClass;
       })
-      .map((d) => {
-        const dose = `(${
-          d.dose !== null
-            ? `${d.dose} ${d.measureUnit ? d.measureUnit.label : ""}`
-            : "Dose não informada"
-        }  X ${
-          d.frequency?.label ? d.frequency.label : "Frequência não informada"
-        })`;
-
-        return `- ${d.drug} ${dose}`;
-      })
+      .map((d) => drugTemplate(d, {}))
   ).sort();
 
   if (!list.length) {
@@ -431,4 +402,55 @@ const examsByType = (clinicalNote, prescription) => {
   });
 
   return resultText;
+};
+
+const drugsByFieldList = (clinicalNote, drugs, params = {}) => {
+  if (!drugs || (drugs && !drugs.length)) {
+    return params.empty;
+  }
+
+  let resultText = clinicalNote;
+  const variables = clinicalNote.match(
+    new RegExp("{{(" + params.varName + ".*?)}}", "g")
+  );
+
+  if (!variables) {
+    return resultText;
+  }
+
+  variables.forEach((item) => {
+    const varName = item.replace("{{", "").replace("}}", "").split(".")[1];
+
+    const fieldList = varName.split("_");
+
+    const list = uniq(
+      drugs
+        .filter((d) => fieldList.indexOf(`${d[params.field]}`) !== -1)
+        .map((d) => drugTemplate(d, params))
+    ).sort();
+
+    if (!list.length) {
+      resultText = resultText.replace(item, params.empty);
+    } else {
+      resultText = resultText.replace(item, list.join("\n"));
+    }
+  });
+
+  return resultText;
+};
+
+const drugTemplate = (d, params) => {
+  const dose = `(${
+    d.dose !== null
+      ? `${d.dose} ${d.measureUnit ? d.measureUnit.label : ""}`
+      : "Dose não informada"
+  }  X ${d.frequency?.label ? d.frequency.label : "Frequência não informada"})`;
+
+  if (params.period) {
+    return `- ${d.drug} (Período: ${
+      d.totalPeriod || 0
+    }D **Revisar período) ${dose}`;
+  }
+
+  return `- ${d.drug} ${dose}`;
 };

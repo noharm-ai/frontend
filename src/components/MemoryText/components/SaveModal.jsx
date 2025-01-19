@@ -1,12 +1,11 @@
 import React, { useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import { Row, Col } from "antd";
+import { Row, Col, Button } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
 import Heading from "components/Heading";
 import Modal from "components/Modal";
-import Tag from "components/Tag";
 import Dropdown from "components/Dropdown";
 import { Input, Textarea } from "components/Inputs";
 import { CLINICAL_NOTES_MEMORY_TYPE } from "utils/memory";
@@ -296,13 +295,7 @@ export default function SaveModal({
                     }}
                     trigger={["click"]}
                   >
-                    <Tag
-                      style={{ cursor: "pointer" }}
-                      color="blue"
-                      icon={<DownOutlined />}
-                    >
-                      Paciente
-                    </Tag>
+                    <Button icon={<DownOutlined />}>Paciente</Button>
                   </Dropdown>
 
                   <Dropdown
@@ -312,13 +305,7 @@ export default function SaveModal({
                     }}
                     trigger={["click"]}
                   >
-                    <Tag
-                      style={{ cursor: "pointer" }}
-                      color="green"
-                      icon={<DownOutlined />}
-                    >
-                      Exames
-                    </Tag>
+                    <Button icon={<DownOutlined />}>Exames</Button>
                   </Dropdown>
 
                   <Dropdown
@@ -328,13 +315,7 @@ export default function SaveModal({
                     }}
                     trigger={["click"]}
                   >
-                    <Tag
-                      style={{ cursor: "pointer" }}
-                      color="purple"
-                      icon={<DownOutlined />}
-                    >
-                      Medicamentos
-                    </Tag>
+                    <Button icon={<DownOutlined />}>Medicamentos</Button>
                   </Dropdown>
 
                   <Dropdown
@@ -344,13 +325,7 @@ export default function SaveModal({
                     }}
                     trigger={["click"]}
                   >
-                    <Tag
-                      style={{ cursor: "pointer" }}
-                      color="cyan"
-                      icon={<DownOutlined />}
-                    >
-                      Conciliação
-                    </Tag>
+                    <Button icon={<DownOutlined />}>Conciliação</Button>
                   </Dropdown>
 
                   <Dropdown
@@ -360,13 +335,7 @@ export default function SaveModal({
                     }}
                     trigger={["click"]}
                   >
-                    <Tag
-                      style={{ cursor: "pointer" }}
-                      color="volcano"
-                      icon={<DownOutlined />}
-                    >
-                      Intervenções
-                    </Tag>
+                    <Button icon={<DownOutlined />}>Intervenções</Button>
                   </Dropdown>
 
                   <Dropdown
@@ -376,13 +345,7 @@ export default function SaveModal({
                     }}
                     trigger={["click"]}
                   >
-                    <Tag
-                      style={{ cursor: "pointer" }}
-                      color="red"
-                      icon={<DownOutlined />}
-                    >
-                      Alertas
-                    </Tag>
+                    <Button icon={<DownOutlined />}>Alertas</Button>
                   </Dropdown>
 
                   <Dropdown
@@ -392,9 +355,7 @@ export default function SaveModal({
                     }}
                     trigger={["click"]}
                   >
-                    <Tag style={{ cursor: "pointer" }} icon={<DownOutlined />}>
-                      Utilidades
-                    </Tag>
+                    <Button icon={<DownOutlined />}>Utilidades</Button>
                   </Dropdown>
                 </div>
               </div>
