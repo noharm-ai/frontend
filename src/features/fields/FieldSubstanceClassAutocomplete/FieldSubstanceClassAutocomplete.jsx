@@ -57,14 +57,14 @@ export default function FieldSubstanceClassAutocomplete({
 
   return (
     <Flex>
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, maxWidth: "100%" }}>
         <Select
           showSearch
           labelInValue
           allowClear
           value={value}
           optionFilterProp="children"
-          style={{ minWidth: "300px" }}
+          style={{ minWidth: "300px", maxWidth: "100%" }}
           notFoundContent={loading ? <LoadBox /> : null}
           filterOption={false}
           onSearch={search}
