@@ -44,6 +44,8 @@ export function actionTypeToDescription(actionType) {
       return "Solicitar fila";
     case "CLEAR_STATE":
       return "Limpar estado";
+    case "VIEW_STATE":
+      return "Visualizar estado";
     case "TERMINATE_PROCESS":
       return "Terminate process";
     case "CUSTOM_CALLBACK":

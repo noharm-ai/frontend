@@ -164,6 +164,27 @@ export default function QueueModal({ data, onCancel }) {
     });
   }
 
+  if (data?.responseCode === 200 && data?.response?.componentState) {
+    items.push({
+      key: "3",
+      label: "Estado",
+      children: (
+        <Descriptions bordered size="small">
+          <Descriptions.Item label="Chave" span={3}>
+            {data?.response?.componentState?.localState?.state && (
+              <>{data?.response?.componentState?.localState?.state[0].key}</>
+            )}
+          </Descriptions.Item>
+          <Descriptions.Item label="Valor" span={3}>
+            {data?.response?.componentState?.localState?.state && (
+              <>{data?.response?.componentState?.localState?.state[0].value}</>
+            )}
+          </Descriptions.Item>
+        </Descriptions>
+      ),
+    });
+  }
+
   return (
     <DefaultModal
       width={"60vw"}

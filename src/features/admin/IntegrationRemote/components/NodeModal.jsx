@@ -364,6 +364,13 @@ export default function NodeModal() {
           open={data}
           onCancel={() => dispatch(setSelectedNode(null))}
           footer={[
+            <Button
+              loading={activeAction === "VIEW_STATE"}
+              icon={<SearchOutlined />}
+              onClick={() => executeAction("VIEW_STATE")}
+            >
+              Visualizar estado
+            </Button>,
             <Popconfirm
               key="clearState"
               title="Limpar estado"
