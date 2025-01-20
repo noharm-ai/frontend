@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import debounce from "lodash.debounce";
+import { LoadingOutlined } from "@ant-design/icons";
 
 import { Select } from "components/Inputs";
 import LoadBox from "components/LoadBox";
 import { searchSubstanceClasses } from "features/lists/ListsSlice";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
+import { Flex } from "antd";
 
 export default function FieldSubstanceClassAutocomplete({
   value,
@@ -42,9 +44,8 @@ export default function FieldSubstanceClassAutocomplete({
         });
       } else {
         const { data } = response.payload;
-        if (data.length) {
-          setOptions(data);
-        }
+
+        setOptions(data);
       }
     });
   };
@@ -55,27 +56,40 @@ export default function FieldSubstanceClassAutocomplete({
   }, 800);
 
   return (
-    <Select
-      showSearch
-      labelInValue
-      allowClear
-      value={value}
-      optionFilterProp="children"
-      style={{ minWidth: "300px" }}
-      notFoundContent={loading ? <LoadBox /> : null}
-      filterOption={false}
-      onSearch={search}
-      onChange={(value) => onChange(value)}
-      placeholder={loading ? "Carregando..." : "Digite para pesquisar"}
-      mode="multiple"
-      loading={loading}
-      {...props}
-    >
-      {options.map((option) => (
-        <Select.Option value={option.id} key={option.id}>
-          {option.parent ? `${option.parent} - ${option.name}` : option.name}
-        </Select.Option>
-      ))}
-    </Select>
+    <Flex>
+      <div style={{ flex: 1 }}>
+        <Select
+          showSearch
+          labelInValue
+          allowClear
+          value={value}
+          optionFilterProp="children"
+          style={{ minWidth: "300px" }}
+          notFoundContent={loading ? <LoadBox /> : null}
+          filterOption={false}
+          onSearch={search}
+          onChange={(value) => onChange(value)}
+          placeholder={loading ? "Carregando..." : "Digite para pesquisar"}
+          mode="multiple"
+          loading={loading}
+          {...props}
+        >
+          {options.map((option) => (
+            <Select.Option value={option.id} key={option.id}>
+              {option.parent
+                ? `${option.parent} - ${option.name}`
+                : option.name}
+            </Select.Option>
+          ))}
+        </Select>
+      </div>
+      {loading && (
+        <div style={{ width: "30px" }}>
+          <Flex align="center" justify="center" style={{ height: "100%" }}>
+            <LoadingOutlined />
+          </Flex>
+        </div>
+      )}
+    </Flex>
   );
 }

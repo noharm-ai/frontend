@@ -12,8 +12,11 @@ import { CLINICAL_NOTES_MEMORY_TYPE } from "utils/memory";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
+import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
+import FieldSubstanceClassAutocomplete from "features/fields/FieldSubstanceClassAutocomplete/FieldSubstanceClassAutocomplete";
 
 import { VariableContainer } from "../index.style";
+import { Form } from "styles/Form.style";
 
 export default function SaveModal({
   save,
@@ -27,6 +30,10 @@ export default function SaveModal({
   const textRef = useRef(null);
   const [name, setName] = useState("");
   const [newText, setNewText] = useState("");
+  const [chooseSubstanceModal, setChooseSubstanceModal] = useState(false);
+  const [selectedSubstances, setSelectedSubstances] = useState([]);
+  const [chooseClassModal, setChooseClassModal] = useState(false);
+  const [selectedClasses, setSelectedClasses] = useState([]);
 
   const saveAction = () => {
     if (!PermissionService().has(Permission.MAINTAINER)) {
@@ -120,50 +127,68 @@ export default function SaveModal({
 
   const drugVariables = [
     {
-      label: "Antimicrobianos",
-      key: "{{antimicrobianos}}",
+      label: "Por atributo",
+      children: [
+        {
+          label: "Antimicrobianos",
+          key: "{{antimicrobianos}}",
+        },
+        {
+          label: "Alta Vigilância",
+          key: "{{alta_vigilancia}}",
+        },
+        {
+          label: "Controlados",
+          key: "{{controlados}}",
+        },
+        {
+          label: "Dialisáveis",
+          key: "{{dialisaveis}}",
+        },
+        {
+          label: "Não padronizados",
+          key: "{{nao_padronizados}}",
+        },
+      ],
     },
     {
-      label: "Alta Vigilância",
-      key: "{{alta_vigilancia}}",
+      label: "Por classe",
+      children: [
+        {
+          label: "Customizada",
+          key: "custom_class",
+        },
+        {
+          label: "Analgésicos",
+          key: "{{analgesicos}}",
+        },
+        {
+          label: "Anestésicos Gerais",
+          key: "{{anestesicos_gerais}}",
+        },
+        {
+          label: "Antitrombóticos",
+          key: "{{antitromboticos}}",
+        },
+        {
+          label: "Profilaxia de Úlcera de Estresse",
+          key: "{{profilaxia_ulcera_estresse}}",
+        },
+        {
+          label: "Profilaxia Ocular",
+          key: "{{profilaxia_ocular}}",
+        },
+        {
+          label: "Vasopressores e Inotrópicos",
+          key: "{{vasopressores_inotropicos}}",
+        },
+      ],
     },
     {
-      label: "Controlados",
-      key: "{{controlados}}",
+      label: "Por substância",
+      key: "custom_substance",
     },
-    {
-      label: "Dialisáveis",
-      key: "{{dialisaveis}}",
-    },
-    {
-      label: "Não padronizados",
-      key: "{{nao_padronizados}}",
-    },
-    {
-      label: "Antitrombóticos",
-      key: "{{antitromboticos}}",
-    },
-    {
-      label: "Profilaxia de Úlcera de Estresse",
-      key: "{{profilaxia_ulcera_estresse}}",
-    },
-    {
-      label: "Profilaxia Ocular",
-      key: "{{profilaxia_ocular}}",
-    },
-    {
-      label: "Analgésicos",
-      key: "{{analgesicos}}",
-    },
-    {
-      label: "Anestésicos Gerais",
-      key: "{{anestesicos_gerais}}",
-    },
-    {
-      label: "Vasopressores e Inotrópicos",
-      key: "{{vasopressores_inotropicos}}",
-    },
-  ].sort((a, b) => a.label.localeCompare(b.label));
+  ];
 
   const conciliaVariables = [
     {
@@ -228,141 +253,223 @@ export default function SaveModal({
   ].sort((a, b) => a.label.localeCompare(b.label));
 
   const addVariableEvent = ({ key }) => {
+    if (key === "custom_substance") {
+      setChooseSubstanceModal(true);
+      return;
+    }
+
+    if (key === "custom_class") {
+      setChooseClassModal(true);
+      return;
+    }
+
     addVariable(key);
   };
 
+  const addCustomSubstanceVar = () => {
+    const subsList = selectedSubstances.map((v) => v.value).join("_");
+    addVariable(`{{substancias.${subsList}}}`);
+
+    setSelectedSubstances([]);
+    setChooseSubstanceModal(false);
+  };
+
+  const addCustomClassVar = () => {
+    const list = selectedClasses.map((v) => v.value).join("_");
+    addVariable(`{{classes.${list}}}`);
+
+    setSelectedClasses([]);
+    setChooseClassModal(false);
+  };
+
   return (
-    <Modal
-      open={open}
-      width={"70vw"}
-      onCancel={() => setOpen(false)}
-      onOk={() => saveAction()}
-      okButtonProps={{
-        disabled: name === "" || newText === "",
-      }}
-      okText="Salvar"
-      okType="primary gtm-bt-memorytext-savemodal"
-      cancelText="Cancelar"
-    >
-      <Heading
-        as="label"
-        size="14px"
-        className="fixed"
-        style={{ marginTop: "12px" }}
+    <>
+      <Modal
+        open={open}
+        width={"70vw"}
+        onCancel={() => setOpen(false)}
+        onOk={() => saveAction()}
+        okButtonProps={{
+          disabled: name === "" || newText === "",
+        }}
+        okText="Salvar"
+        okType="primary gtm-bt-memorytext-savemodal"
+        cancelText="Cancelar"
       >
-        Nome do texto padrão:
-      </Heading>
-      <Input
-        onChange={({ target }) => setName(target.value)}
-        value={name}
-        maxLength={50}
-      />
-      <Row gutter={[16]}>
-        <Col
-          xs={`${memoryType}`.includes(CLINICAL_NOTES_MEMORY_TYPE) ? 17 : 24}
+        <Heading
+          as="label"
+          size="14px"
+          className="fixed"
+          style={{ marginTop: "12px" }}
         >
-          <Heading
-            as="label"
-            size="14px"
-            className="fixed"
-            style={{ marginTop: "12px" }}
+          Nome do texto padrão:
+        </Heading>
+        <Input
+          onChange={({ target }) => setName(target.value)}
+          value={name}
+          maxLength={50}
+        />
+        <Row gutter={[16]}>
+          <Col
+            xs={`${memoryType}`.includes(CLINICAL_NOTES_MEMORY_TYPE) ? 17 : 24}
           >
-            Texto:
-          </Heading>
-          <Textarea
-            value={newText}
-            style={{ minHeight: "40vh" }}
-            onChange={({ target }) => setNewText(target.value)}
-            ref={textRef}
-          />
-        </Col>
-        {`${memoryType}`.includes(CLINICAL_NOTES_MEMORY_TYPE) && (
-          <Col xs={7}>
-            <VariableContainer>
-              <div className="variables-title">Váriáveis</div>
-              <div className="variables-legend">
-                Estas varíaveis são substituídas pelos valores ao carregar os
-                textos salvos. Ex: {"{{ nome_paciente }}"} será substituído pelo
-                nome do paciente. <br />
-                Escolha um grupo abaixo e clique na variável que deseja incluir.
-              </div>
-              <div className="variables-group">
-                <div className="variables-group-list">
-                  <Dropdown
-                    menu={{
-                      items: patientVariables,
-                      onClick: addVariableEvent,
-                    }}
-                    trigger={["click"]}
-                  >
-                    <Button icon={<DownOutlined />}>Paciente</Button>
-                  </Dropdown>
-
-                  <Dropdown
-                    menu={{
-                      items: examVariables,
-                      onClick: addVariableEvent,
-                    }}
-                    trigger={["click"]}
-                  >
-                    <Button icon={<DownOutlined />}>Exames</Button>
-                  </Dropdown>
-
-                  <Dropdown
-                    menu={{
-                      items: drugVariables,
-                      onClick: addVariableEvent,
-                    }}
-                    trigger={["click"]}
-                  >
-                    <Button icon={<DownOutlined />}>Medicamentos</Button>
-                  </Dropdown>
-
-                  <Dropdown
-                    menu={{
-                      items: conciliaVariables,
-                      onClick: addVariableEvent,
-                    }}
-                    trigger={["click"]}
-                  >
-                    <Button icon={<DownOutlined />}>Conciliação</Button>
-                  </Dropdown>
-
-                  <Dropdown
-                    menu={{
-                      items: interventionVariables,
-                      onClick: addVariableEvent,
-                    }}
-                    trigger={["click"]}
-                  >
-                    <Button icon={<DownOutlined />}>Intervenções</Button>
-                  </Dropdown>
-
-                  <Dropdown
-                    menu={{
-                      items: alertVariables,
-                      onClick: addVariableEvent,
-                    }}
-                    trigger={["click"]}
-                  >
-                    <Button icon={<DownOutlined />}>Alertas</Button>
-                  </Dropdown>
-
-                  <Dropdown
-                    menu={{
-                      items: utilsVariables,
-                      onClick: addVariableEvent,
-                    }}
-                    trigger={["click"]}
-                  >
-                    <Button icon={<DownOutlined />}>Utilidades</Button>
-                  </Dropdown>
-                </div>
-              </div>
-            </VariableContainer>
+            <Heading
+              as="label"
+              size="14px"
+              className="fixed"
+              style={{ marginTop: "12px" }}
+            >
+              Texto:
+            </Heading>
+            <Textarea
+              value={newText}
+              style={{ minHeight: "40vh" }}
+              onChange={({ target }) => setNewText(target.value)}
+              ref={textRef}
+            />
           </Col>
-        )}
-      </Row>
-    </Modal>
+          {`${memoryType}`.includes(CLINICAL_NOTES_MEMORY_TYPE) && (
+            <Col xs={7}>
+              <VariableContainer>
+                <div className="variables-title">Váriáveis</div>
+                <div className="variables-legend">
+                  Estas varíaveis são substituídas pelos valores ao carregar os
+                  textos salvos. Ex: {"{{ nome_paciente }}"} será substituído
+                  pelo nome do paciente. <br />
+                  Escolha um grupo abaixo e clique na variável que deseja
+                  incluir.
+                </div>
+                <div className="variables-group">
+                  <div className="variables-group-list">
+                    <Dropdown
+                      menu={{
+                        items: patientVariables,
+                        onClick: addVariableEvent,
+                      }}
+                      trigger={["click"]}
+                    >
+                      <Button icon={<DownOutlined />}>Paciente</Button>
+                    </Dropdown>
+
+                    <Dropdown
+                      menu={{
+                        items: examVariables,
+                        onClick: addVariableEvent,
+                      }}
+                      trigger={["click"]}
+                    >
+                      <Button icon={<DownOutlined />}>Exames</Button>
+                    </Dropdown>
+
+                    <Dropdown
+                      menu={{
+                        items: drugVariables,
+                        onClick: addVariableEvent,
+                      }}
+                      trigger={["click"]}
+                    >
+                      <Button icon={<DownOutlined />}>Medicamentos</Button>
+                    </Dropdown>
+
+                    <Dropdown
+                      menu={{
+                        items: conciliaVariables,
+                        onClick: addVariableEvent,
+                      }}
+                      trigger={["click"]}
+                    >
+                      <Button icon={<DownOutlined />}>Conciliação</Button>
+                    </Dropdown>
+
+                    <Dropdown
+                      menu={{
+                        items: interventionVariables,
+                        onClick: addVariableEvent,
+                      }}
+                      trigger={["click"]}
+                    >
+                      <Button icon={<DownOutlined />}>Intervenções</Button>
+                    </Dropdown>
+
+                    <Dropdown
+                      menu={{
+                        items: alertVariables,
+                        onClick: addVariableEvent,
+                      }}
+                      trigger={["click"]}
+                    >
+                      <Button icon={<DownOutlined />}>Alertas</Button>
+                    </Dropdown>
+
+                    <Dropdown
+                      menu={{
+                        items: utilsVariables,
+                        onClick: addVariableEvent,
+                      }}
+                      trigger={["click"]}
+                    >
+                      <Button icon={<DownOutlined />}>Utilidades</Button>
+                    </Dropdown>
+                  </div>
+                </div>
+              </VariableContainer>
+            </Col>
+          )}
+        </Row>
+      </Modal>
+      <Modal
+        open={chooseSubstanceModal}
+        width={"500px"}
+        onCancel={() => {
+          setChooseSubstanceModal(false);
+          setSelectedSubstances([]);
+        }}
+        onOk={addCustomSubstanceVar}
+        okText="Salvar"
+        okType="primary"
+        cancelText="Cancelar"
+      >
+        <Form>
+          <div className={`form-row `}>
+            <div className="form-label">
+              <label>Escolha a lista de substâncias:</label>
+            </div>
+            <div className="form-input">
+              <FieldSubstanceAutocomplete
+                onChange={(v) => setSelectedSubstances(v)}
+                value={selectedSubstances}
+              />
+            </div>
+          </div>
+        </Form>
+      </Modal>
+
+      <Modal
+        open={chooseClassModal}
+        width={"500px"}
+        onCancel={() => {
+          setChooseClassModal(false);
+          setSelectedClasses([]);
+        }}
+        onOk={addCustomClassVar}
+        okText="Salvar"
+        okType="primary"
+        cancelText="Cancelar"
+      >
+        <Form>
+          <div className={`form-row `}>
+            <div className="form-label">
+              <label>Escolha a lista de classes:</label>
+            </div>
+            <div className="form-input">
+              <FieldSubstanceClassAutocomplete
+                onChange={(v) => setSelectedClasses(v)}
+                value={selectedClasses}
+              />
+            </div>
+          </div>
+        </Form>
+      </Modal>
+    </>
   );
 }
