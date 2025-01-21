@@ -172,12 +172,20 @@ export default function QueueModal({ data, onCancel }) {
         <Descriptions bordered size="small">
           <Descriptions.Item label="Chave" span={3}>
             {data?.response?.componentState?.localState?.state && (
-              <>{data?.response?.componentState?.localState?.state[0].key}</>
+              <>
+                {data?.response?.componentState?.localState?.state.length
+                  ? data?.response?.componentState?.localState?.state[0].key
+                  : "Vazio"}
+              </>
             )}
           </Descriptions.Item>
           <Descriptions.Item label="Valor" span={3}>
             {data?.response?.componentState?.localState?.state && (
-              <>{data?.response?.componentState?.localState?.state[0].value}</>
+              <>
+                {data?.response?.componentState?.localState?.state.length
+                  ? data?.response?.componentState?.localState?.state[0].value
+                  : "Vazio"}
+              </>
             )}
           </Descriptions.Item>
         </Descriptions>
