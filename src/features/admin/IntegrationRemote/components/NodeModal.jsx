@@ -23,7 +23,7 @@ import {
   pushQueueRequest,
 } from "../IntegrationRemoteSlice";
 import NodeStatusTag from "./NodeStatusTag";
-import { Textarea } from "components/Inputs";
+import { Textarea, Select } from "components/Inputs";
 import RichTextView from "components/RichTextView";
 
 export default function NodeModal() {
@@ -217,6 +217,83 @@ export default function NodeModal() {
                 </Descriptions.Item>
               )}
 
+              {Object.hasOwn(
+                data?.extra?.properties,
+                "put-db-record-statement-type"
+              ) && (
+                <Descriptions.Item
+                  label="Statement type (put-db-record-statement-type)"
+                  span={3}
+                >
+                  <Select
+                    value={values["put-db-record-statement-type"]}
+                    onChange={(value) =>
+                      setFieldValue("put-db-record-statement-type", value)
+                    }
+                    style={{ minWidth: "300px" }}
+                  >
+                    <Select.Option value="INSERT">INSERT</Select.Option>
+                    <Select.Option value="UPDATE">UPDATE</Select.Option>
+                    <Select.Option value="UPSERT">UPSERT</Select.Option>
+                    <Select.Option value="INSERT_IGNORE">
+                      INSERT_IGNORE
+                    </Select.Option>
+                    <Select.Option value="DELETE">DELETE</Select.Option>
+                  </Select>
+                </Descriptions.Item>
+              )}
+
+              {Object.hasOwn(
+                data?.extra?.properties,
+                "put-db-record-update-keys"
+              ) && (
+                <Descriptions.Item
+                  label="Update keys (put-db-record-update-keys)"
+                  span={3}
+                >
+                  <Textarea
+                    value={values["put-db-record-update-keys"]}
+                    onChange={({ target }) =>
+                      setFieldValue("put-db-record-update-keys", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
+
+              {Object.hasOwn(
+                data?.extra?.properties,
+                "put-db-record-table-name"
+              ) && (
+                <Descriptions.Item
+                  label="Table name (put-db-record-table-name)"
+                  span={3}
+                >
+                  <Textarea
+                    value={values["put-db-record-table-name"]}
+                    onChange={({ target }) =>
+                      setFieldValue("put-db-record-table-name", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
+
+              {Object.hasOwn(
+                data?.extra?.properties,
+                "generate-ff-custom-text"
+              ) && (
+                <Descriptions.Item
+                  label="Custom text (generate-ff-custom-text)"
+                  span={3}
+                >
+                  <Textarea
+                    value={values["generate-ff-custom-text"]}
+                    onChange={({ target }) =>
+                      setFieldValue("generate-ff-custom-text", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
+
               {Object.hasOwn(data?.extra?.properties, "Remote URL") && (
                 <Descriptions.Item label="Remote URL" span={3}>
                   <Textarea
@@ -341,11 +418,15 @@ export default function NodeModal() {
       "db-fetch-sql-query",
       "db-fetch-where-clause",
       "Table Name",
+      "put-db-record-statement-type",
+      "put-db-record-update-keys",
+      "put-db-record-table-name",
+      "generate-ff-custom-text",
     ];
 
     validFields.forEach((field) => {
-      if (params[field]) {
-        payload[field] = params[field];
+      if (params.hasOwnProperty(field)) {
+        payload[field] = params[field] === "" ? null : params[field];
       }
     });
 
@@ -398,7 +479,9 @@ export default function NodeModal() {
               <Button
                 icon={<SaveOutlined />}
                 type="primary"
-                disabled={data?.status?.runStatus !== "Stopped"}
+                disabled={
+                  ["Stopped", "Invalid"].indexOf(data?.status?.runStatus) === -1
+                }
                 loading={activeAction === "UPDATE_PROPERTY"}
                 style={{ marginLeft: "5px" }}
               >
