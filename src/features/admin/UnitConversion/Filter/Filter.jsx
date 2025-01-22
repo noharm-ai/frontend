@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import notification from "components/notification";
 import AdvancedFilter from "components/AdvancedFilter";
+import { getErrorMessage } from "utils/errorHandler";
 
 import {
   fetchConversionList,
@@ -25,10 +26,6 @@ export default function Filter() {
   const segmentList = useSelector((state) => state.segments.list);
 
   const { t } = useTranslation();
-  const errorMessage = {
-    message: t("error.title"),
-    description: t("error.description"),
-  };
   const initialValues = {
     hasConversion: null,
     idSegment: segmentList ? segmentList[0].id : null,
@@ -48,7 +45,7 @@ export default function Filter() {
     ) {
       dispatch(fetchConversionList(params)).then((response) => {
         if (response.error) {
-          notification.error(errorMessage);
+          notification.error({ message: getErrorMessage(response, t) });
         } else {
           dispatch(setCurrentPage(1));
           dispatch(setFilters(params));
