@@ -373,20 +373,35 @@ Ramal:`;
   return signature.list[0].value;
 };
 
-export const alertsTemplate = (prescription) => {
+export const alertsTemplate = (prescription, type, level) => {
   const list = [
     ...prescription.data.prescriptionRaw,
     ...prescription.data.solutionRaw,
     ...prescription.data.proceduresRaw,
   ];
 
+  const filterAlerts = (a) => {
+    if (type) {
+      return type === a.type;
+    }
+
+    if (level) {
+      return level === a.level;
+    }
+
+    return true;
+  };
+
   let alerts = [];
   list.forEach((i) => {
-    if (i.alertsComplete && i.alertsComplete.length) {
+    if (i.alertsComplete && i.alertsComplete.filter(filterAlerts).length) {
       const tpl = `
         Medicamento: ${i.drug}
         Alertas:
-        -- ${i.alertsComplete.map((a) => a.text).join("\r\n        -- ")}
+        -- ${i.alertsComplete
+          .filter(filterAlerts)
+          .map((a) => a.text)
+          .join("\r\n        -- ")}
       `;
       alerts = [...alerts, tpl];
     }

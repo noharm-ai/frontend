@@ -85,9 +85,9 @@ export default function ConfigModal({ save, open, setOpen, list }) {
         ) : (
           <>
             {dataSource.map((item, index) => (
-              <>
+              <React.Fragment key={index}>
                 {item.active === active && (
-                  <div key={index}>
+                  <div>
                     <div className="main">
                       <div>
                         <Input
@@ -143,7 +143,7 @@ export default function ConfigModal({ save, open, setOpen, list }) {
                     </div>
                   </div>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </>
         )}

@@ -40,6 +40,8 @@ export default function Filter({ limit }) {
     attributeList: [],
     sourceList: [],
     aiAccuracyRange: null,
+    substanceList: [],
+    tpSubstanceList: "in",
   };
 
   useEffect(() => {

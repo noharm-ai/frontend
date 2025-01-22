@@ -181,7 +181,7 @@ const integrationRemoteSlice = createSlice({
                 state.template.data = optimisticUpdateProperties(
                   state.template.data,
                   item.extra.idEntity,
-                  item.body?.config?.properties
+                  item.body?.component?.config?.properties
                 );
               }
             }

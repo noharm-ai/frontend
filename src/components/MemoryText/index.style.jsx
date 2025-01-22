@@ -1,7 +1,7 @@
 import styled from "styled-components/macro";
 
 export const VariableContainer = styled.div`
-  margin-top: 10px;
+  margin-top: 30px;
 
   .variables-title {
     font-weight: 600;
@@ -16,8 +16,12 @@ export const VariableContainer = styled.div`
     margin-top: 10px;
 
     .variables-group-list {
-      .ant-tag {
-        margin-bottom: 5px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+
+      button {
+        text-align: left;
       }
     }
   }

@@ -308,14 +308,15 @@ const drugAttributesSlice = createSlice({
       })
       .addCase(updateSubstance.fulfilled, (state, action) => {
         state.updateSubstance.status = "succeeded";
+        const updateList = action.payload.data.data.list;
 
-        const idDrug = action.payload.data.data.idDrug;
-        const sctid = action.payload.data.data.sctid;
+        state.list.forEach((d, index) => {
+          const updateIndex = updateList.findIndex(
+            (item) => item.idDrug === d.idDrug && item.idSegment === d.idSegment
+          );
 
-        state.list.forEach((d) => {
-          if (d.idDrug === idDrug) {
-            d.sctid = sctid;
-            d.substanceAccuracy = null;
+          if (updateIndex !== -1) {
+            state.list[index] = { ...d, ...updateList[updateIndex] };
           }
         });
       })
