@@ -10,8 +10,10 @@ import { Input, Select, InputNumber } from "components/Inputs";
 import Button from "components/Button";
 import Editor from "components/Editor";
 import Dropdown from "components/Dropdown";
+import { tagRender } from "components/Tag";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import { formatDateTime } from "utils/date";
+import { SubstanceTagEnum } from "models/SubstanceTagEnum";
 
 function BaseForm() {
   const { t } = useTranslation();
@@ -166,7 +168,6 @@ function BaseForm() {
                 </div>
 
                 <Divider />
-
                 <div
                   className={`form-row ${
                     errors.id && touched.id ? "error" : ""
@@ -236,6 +237,33 @@ function BaseForm() {
               <>
                 <div className={`form-row`}>
                   <div className="form-label">
+                    <label>Tags:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      optionFilterProp="children"
+                      showSearch
+                      value={values.tags}
+                      onChange={(value) => setFieldValue("tags", value)}
+                      allowClear
+                      mode="multiple"
+                      tagRender={tagRender("purple")}
+                    >
+                      {SubstanceTagEnum.getSubstanceTags(t).map((subtag) => (
+                        <Select.Option value={subtag.id}>
+                          {subtag.label}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+
+                <Divider orientation="left" style={{ marginTop: "25px" }}>
+                  Dose Máxima
+                </Divider>
+
+                <div className={`form-row`}>
+                  <div className="form-label">
                     <label>Unidade padrão:</label>
                   </div>
                   <div className="form-input">
@@ -257,11 +285,11 @@ function BaseForm() {
                   </div>
                 </div>
 
-                <Row gutter={[16, 8]} style={{ marginTop: "10px" }}>
+                <Row gutter={[24, 16]} style={{ marginTop: "16px" }}>
                   <Col xs={12}>
                     <div className={`form-row`}>
                       <div className="form-label">
-                        <label>Dose máxima adulto:</label>
+                        <label>Dose máxima (Adulto):</label>
                       </div>
                       <div className="form-input">
                         <InputNumber
@@ -285,7 +313,7 @@ function BaseForm() {
                   <Col xs={12}>
                     <div className={`form-row`}>
                       <div className="form-label">
-                        <label>Dose máxima adulto por peso:</label>
+                        <label>Dose máxima por peso (Adulto):</label>
                       </div>
                       <div className="form-input">
                         <InputNumber
@@ -310,7 +338,7 @@ function BaseForm() {
                   <Col xs={12}>
                     <div className={`form-row`}>
                       <div className="form-label">
-                        <label>Dose máxima pediátrico:</label>
+                        <label>Dose máxima (Pediátrico):</label>
                       </div>
                       <div className="form-input">
                         <InputNumber
@@ -334,7 +362,7 @@ function BaseForm() {
                   <Col xs={12}>
                     <div className={`form-row`}>
                       <div className="form-label">
-                        <label>Dose máxima pediátrico por peso:</label>
+                        <label>Dose máxima por peso (Pediátrico):</label>
                       </div>
                       <div className="form-input">
                         <InputNumber
@@ -355,7 +383,216 @@ function BaseForm() {
                       </div>
                     </div>
                   </Col>
+
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Divisor de faixas:</label>
+                      </div>
+                      <div className="form-input">
+                        <InputNumber
+                          min={0}
+                          max={maxValue}
+                          value={values.divisionRange}
+                          onChange={(value) =>
+                            setFieldValue("divisionRange", value)
+                          }
+                          addonAfter={`${values.defaultMeasureUnit || "--"}`}
+                        />{" "}
+                      </div>
+                    </div>
+                  </Col>
                 </Row>
+
+                <Divider orientation="left" style={{ marginTop: "25px" }}>
+                  Alertas
+                </Divider>
+
+                <Row gutter={[24, 16]} style={{ marginTop: "16px" }}>
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Nefrotóxico (Adulto):</label>
+                      </div>
+                      <div className="form-input">
+                        <InputNumber
+                          min={0}
+                          max={maxValue}
+                          value={values.kidneyAdult}
+                          onChange={(value) =>
+                            setFieldValue("kidneyAdult", value)
+                          }
+                          addonAfter={`mL/min`}
+                        />{" "}
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Nefrotóxico (Pediátrico):</label>
+                      </div>
+                      <div className="form-input">
+                        <InputNumber
+                          min={0}
+                          max={maxValue}
+                          value={values.kidneyPediatric}
+                          onChange={(value) =>
+                            setFieldValue("kidneyPediatric", value)
+                          }
+                          addonAfter={`mL/min`}
+                        />{" "}
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Hepatotóxico (Adulto):</label>
+                      </div>
+                      <div className="form-input">
+                        <InputNumber
+                          min={0}
+                          max={maxValue}
+                          value={values.liverAdult}
+                          onChange={(value) =>
+                            setFieldValue("liverAdult", value)
+                          }
+                          addonAfter={`U/L`}
+                        />{" "}
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Hepatotóxico (Pediátrico):</label>
+                      </div>
+                      <div className="form-input">
+                        <InputNumber
+                          min={0}
+                          max={maxValue}
+                          value={values.liverPediatric}
+                          onChange={(value) =>
+                            setFieldValue("liverPediatric", value)
+                          }
+                          addonAfter={`U/L`}
+                        />{" "}
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Alerta de plaquetas:</label>
+                      </div>
+                      <div className="form-input">
+                        <InputNumber
+                          min={0}
+                          max={maxValue}
+                          value={values.platelets}
+                          onChange={(value) =>
+                            setFieldValue("platelets", value)
+                          }
+                          addonAfter={`plaquetas/µL`}
+                        />{" "}
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+
+                <Divider orientation="left" style={{ marginTop: "25px" }}>
+                  Riscos
+                </Divider>
+
+                <Row gutter={[16, 8]} style={{ marginTop: "10px" }}>
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Risco de queda:</label>
+                      </div>
+                      <div className="form-input">
+                        <InputNumber
+                          min={1}
+                          max={3}
+                          value={values.fallRisk}
+                          onChange={(value) => setFieldValue("fallRisk", value)}
+                        />
+                      </div>
+                      <div className="form-info">Valor entre 1 e 3</div>
+                    </div>
+                  </Col>
+
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Risco na lactação:</label>
+                      </div>
+                      <div className="form-input">
+                        <Select
+                          placeholder="Selecione a classificação"
+                          onChange={(value) => {
+                            setFieldValue("lactating", value || null);
+                          }}
+                          value={values.lactating}
+                          allowClear
+                          style={{ maxWidth: "300px" }}
+                        >
+                          <Select.Option value="1" key="1">
+                            Baixo
+                          </Select.Option>
+                          <Select.Option value="2" key="2">
+                            Médio
+                          </Select.Option>
+                          <Select.Option value="3" key="3">
+                            Alto
+                          </Select.Option>
+                        </Select>
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col xs={12}>
+                    <div className={`form-row`}>
+                      <div className="form-label">
+                        <label>Risco na gestação:</label>
+                      </div>
+                      <div className="form-input">
+                        <Select
+                          placeholder="Selecione a classificação"
+                          onChange={(value) => {
+                            setFieldValue("pregnant", value || null);
+                          }}
+                          value={values.pregnant}
+                          allowClear
+                          style={{ maxWidth: "300px" }}
+                        >
+                          <Select.Option value="A" key="A">
+                            A
+                          </Select.Option>
+                          <Select.Option value="B" key="B">
+                            B
+                          </Select.Option>
+                          <Select.Option value="C" key="C">
+                            C
+                          </Select.Option>
+                          <Select.Option value="D" key="D">
+                            D
+                          </Select.Option>
+                          <Select.Option value="X" key="X">
+                            X
+                          </Select.Option>
+                        </Select>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+
+                <Divider style={{ marginTop: "25px" }} />
 
                 <div className={`form-row`}>
                   <div className="form-label">

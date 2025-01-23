@@ -27,6 +27,7 @@ export default function Filter({ limit }) {
   };
   const initialValues = {
     handlingOption: "filled",
+    tags: [],
   };
 
   useEffect(() => {
