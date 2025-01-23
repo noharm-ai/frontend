@@ -78,17 +78,17 @@ function BaseForm() {
             <Select.Option key={1} value="Erro">
               Erro
             </Select.Option>
-            <Select.Option key={1} value="Integração fora do ar">
+            <Select.Option key={2} value="Integração fora do ar">
               Integração fora do ar
             </Select.Option>
-            <Select.Option key={2} value="Solicitação">
+            <Select.Option key={3} value="Solicitação">
               Solicitação
             </Select.Option>
-            <Select.Option key={2} value="Sugestão">
+            <Select.Option key={4} value="Sugestão">
               Sugestão
             </Select.Option>
             {integrationStatus === IntegrationStatus.INTEGRATION && (
-              <Select.Option key={2} value="Validação">
+              <Select.Option key={5} value="Validação">
                 Validação
               </Select.Option>
             )}
