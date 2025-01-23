@@ -132,6 +132,17 @@ const integrationRemoteSlice = createSlice({
         // status
         const flatStatus = {};
         flatStatuses(action.payload.status, flatStatus);
+        const groups = Object.values(
+          state.template.data.flowContents.processGroups
+        );
+        Object.values(flatStatus).forEach((record) => {
+          if (record.groupId) {
+            const groupName = groups.find(
+              (group) => group.instanceIdentifier === record.groupId
+            ).name;
+            record.groupName = groupName ? groupName : undefined;
+          }
+        });
         state.template.status = flatStatus;
         state.template.statusDate =
           action.payload.response.data.data.statusUpdatedAt;
