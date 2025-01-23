@@ -125,6 +125,18 @@ export default function SecondaryFilters() {
               <Select.Option value={subtag.id}>{subtag.label}</Select.Option>
             ))}
           </Select>
+
+          <Radio.Group
+            options={[
+              { label: "Possui", value: "in" },
+              { label: "Não possui", value: "notin" },
+            ]}
+            onChange={({ target: { value } }) =>
+              setFieldValue({ tpSubstanceTagList: value })
+            }
+            value={values.tpSubstanceTagList}
+            style={{ marginTop: "5px" }}
+          />
         </Col>
 
         <Col xs={12} md={6}>

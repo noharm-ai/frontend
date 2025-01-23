@@ -28,6 +28,7 @@ export default function Filter({ limit }) {
   const initialValues = {
     handlingOption: "filled",
     tags: [],
+    tpSubstanceTagList: "in",
   };
 
   useEffect(() => {
