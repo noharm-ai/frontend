@@ -25,9 +25,6 @@ function CopyAttributes({ open, setOpen, reload, ...props }) {
   const segmentList = useSelector((state) => state.segments.list);
 
   const validationSchema = Yup.object().shape({
-    idSegmentOrigin: Yup.string()
-      .nullable()
-      .required(t("validation.requiredField")),
     idSegmentDestiny: Yup.string()
       .nullable()
       .required(t("validation.requiredField")),
@@ -230,50 +227,47 @@ function CopyAttributes({ open, setOpen, reload, ...props }) {
               </div>
             </div>
 
-            <div
-              className={`form-row ${
-                errors.idSegmentOrigin && touched.idSegmentOrigin ? "error" : ""
-              }`}
-            >
-              <div className="form-label">
-                <label>Segmento origem:</label>
-              </div>
-              <div className="form-input">
-                <Select
-                  onChange={(value) => setFieldValue("idSegmentOrigin", value)}
-                  value={values.idSegmentOrigin}
-                  status={
+            {!values.fromAdminSchema && (
+              <>
+                <div
+                  className={`form-row ${
                     errors.idSegmentOrigin && touched.idSegmentOrigin
                       ? "error"
-                      : null
-                  }
-                  optionFilterProp="children"
-                  showSearch
-                  autoFocus
-                  allowClear
+                      : ""
+                  }`}
                 >
-                  {values.fromAdminSchema ? (
-                    <>
-                      <Select.Option key={5} value={5}>
-                        Curadoria Adulto
-                      </Select.Option>
-                      <Select.Option key={7} value={7}>
-                        Curadoria Pediátrica
-                      </Select.Option>
-                    </>
-                  ) : (
-                    segmentList.map(({ id, description: text }) => (
-                      <Select.Option key={id} value={id}>
-                        {text}
-                      </Select.Option>
-                    ))
+                  <div className="form-label">
+                    <label>Segmento origem:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      onChange={(value) =>
+                        setFieldValue("idSegmentOrigin", value)
+                      }
+                      value={values.idSegmentOrigin}
+                      status={
+                        errors.idSegmentOrigin && touched.idSegmentOrigin
+                          ? "error"
+                          : null
+                      }
+                      optionFilterProp="children"
+                      showSearch
+                      autoFocus
+                      allowClear
+                    >
+                      {segmentList.map(({ id, description: text }) => (
+                        <Select.Option key={id} value={id}>
+                          {text}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                  {errors.idSegmentOrigin && touched.idSegmentOrigin && (
+                    <div className="form-error">{errors.idSegmentOrigin}</div>
                   )}
-                </Select>
-              </div>
-              {errors.idSegmentOrigin && touched.idSegmentOrigin && (
-                <div className="form-error">{errors.idSegmentOrigin}</div>
-              )}
-            </div>
+                </div>
+              </>
+            )}
 
             <div
               className={`form-row ${
