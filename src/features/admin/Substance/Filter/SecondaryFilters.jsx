@@ -81,8 +81,8 @@ export default function SecondaryFilters() {
           </Select>
           <Radio.Group
             options={[
-              { label: "Preenchido", value: "filled" },
-              { label: "Vazio", value: "empty" },
+              { label: "Possui", value: "filled" },
+              { label: "Não possui", value: "empty" },
             ]}
             onChange={({ target: { value } }) =>
               setFieldValue({ handlingOption: value })

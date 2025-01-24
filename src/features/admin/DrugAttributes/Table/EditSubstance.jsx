@@ -84,8 +84,9 @@ export default function EditPriceConversion({ idDrug, sctid, accuracy }) {
           loading={substancesLoading}
           allowClear
         >
-          {substances.map(({ sctid, name }) => (
+          {substances.map(({ sctid, name, active }) => (
             <Select.Option key={sctid} value={sctid}>
+              {active ? "" : "(INATIVO) "}
               {name}
             </Select.Option>
           ))}
