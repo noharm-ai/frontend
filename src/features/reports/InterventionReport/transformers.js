@@ -16,8 +16,8 @@ const filterDatasource = (datasource, filters) => {
   return datasource
     .filter(
       (i) =>
-        i.date >= filters.dateRange[0].format("YYYY-MM-DD") &&
-        i.date <= filters.dateRange[1].format("YYYY-MM-DD")
+        i.date.substring(0, 10) >= filters.dateRange[0].format("YYYY-MM-DD") &&
+        i.date.substring(0, 10) <= filters.dateRange[1].format("YYYY-MM-DD")
     )
     .filter((i) => {
       if (filters.weekDays && [0, 6].indexOf(dayjs(i.date).day()) !== -1) {

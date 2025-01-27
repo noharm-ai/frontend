@@ -10,7 +10,7 @@ export default function MainFilters() {
 
   return (
     <>
-      <Col md={5} lg={5} xxl={5}>
+      <Col md={5} lg={6} xxl={5}>
         <Heading as="label" size="14px">
           Nome:
         </Heading>
@@ -54,6 +54,23 @@ export default function MainFilters() {
         >
           <Select.Option value={1}>Sim</Select.Option>
           <Select.Option value={0}>Não</Select.Option>
+        </Select>
+      </Col>
+
+      <Col md={3} lg={3} xxl={2}>
+        <Heading as="label" size="14px">
+          Situação:
+        </Heading>
+        <Select
+          optionFilterProp="children"
+          showSearch
+          style={{ width: "100%" }}
+          value={values.active}
+          onChange={(value, option) => setFieldValue({ active: value })}
+          allowClear
+        >
+          <Select.Option value={true}>Ativo</Select.Option>
+          <Select.Option value={false}>Inativo</Select.Option>
         </Select>
       </Col>
     </>

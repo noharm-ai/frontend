@@ -8,6 +8,7 @@ import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { Select, Radio } from "components/Inputs";
 import { fetchSubstanceClasses } from "features/lists/ListsSlice";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
+import { SubstanceTagEnum } from "models/SubstanceTagEnum";
 
 export default function SecondaryFilters() {
   const { t } = useTranslation();
@@ -80,8 +81,8 @@ export default function SecondaryFilters() {
           </Select>
           <Radio.Group
             options={[
-              { label: "Preenchido", value: "filled" },
-              { label: "Vazio", value: "empty" },
+              { label: "Possui", value: "filled" },
+              { label: "Não possui", value: "empty" },
             ]}
             onChange={({ target: { value } }) =>
               setFieldValue({ handlingOption: value })
@@ -107,7 +108,36 @@ export default function SecondaryFilters() {
           </Select>
         </Col>
 
-        <Col xs={24} md={12}></Col>
+        <Col xs={24} md={12}>
+          <Heading as="label" size="14px">
+            Tags:
+          </Heading>
+          <Select
+            optionFilterProp="children"
+            showSearch
+            value={values.tags}
+            onChange={(value) => setFieldValue({ tags: value })}
+            allowClear
+            mode="multiple"
+            style={{ width: "100%" }}
+          >
+            {SubstanceTagEnum.getSubstanceTags(t).map((subtag) => (
+              <Select.Option value={subtag.id}>{subtag.label}</Select.Option>
+            ))}
+          </Select>
+
+          <Radio.Group
+            options={[
+              { label: "Possui", value: "in" },
+              { label: "Não possui", value: "notin" },
+            ]}
+            onChange={({ target: { value } }) =>
+              setFieldValue({ tpSubstanceTagList: value })
+            }
+            value={values.tpSubstanceTagList}
+            style={{ marginTop: "5px" }}
+          />
+        </Col>
 
         <Col xs={12} md={6}>
           <Heading as="label" size="14px">

@@ -35,7 +35,6 @@ export default function ScoreWizard({
   drugUnits,
   updateDrugData,
   saveUnitCoefficient,
-  security,
 }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState({});
@@ -252,15 +251,13 @@ export default function ScoreWizard({
             de doses, selecione essa opção.
           </p>
           <Row gutter={24} align="middle" type="flex">
-            <Col md={5} xxl={3}>
-              <Heading as="label" size="14px" textAlign="right">
+            <Col md={1}></Col>
+            <Col md={24 - 5} xxl={24 - 3}>
+              <Heading as="label" size="14px">
                 <Tooltip title="">Divisor de faixas:</Tooltip>
               </Heading>
-            </Col>
-            <Col md={24 - 5} xxl={24 - 3}>
               <InputNumber
                 style={{
-                  width: 120,
                   marginRight: "10px",
                 }}
                 min={0}
@@ -270,23 +267,46 @@ export default function ScoreWizard({
                   updateDrugData({ division: value, touched: true })
                 }
                 className={validationErrors.division ? "error" : ""}
+                addonAfter={getMeasureUnit(
+                  drugData.idMeasureUnit,
+                  drugUnits.list
+                )}
               />
-              <span
-                style={{
-                  marginRight: "10px",
-                }}
-              >
-                {getMeasureUnit(drugData.idMeasureUnit, drugUnits.list)}
-              </span>
-              <Checkbox
-                value={drugData.useWeight}
-                checked={drugData.useWeight}
-                onChange={onChangeUseWeight}
-              >
-                <Tooltip title="Somente será considerado peso se houver Divisor de Faixas atribuído">
-                  Considerar peso
-                </Tooltip>
-              </Checkbox>
+              <div style={{ marginTop: "5px" }}>
+                <Checkbox
+                  value={drugData.useWeight}
+                  checked={drugData.useWeight}
+                  onChange={onChangeUseWeight}
+                >
+                  <Tooltip title="Somente será considerado peso se houver Divisor de Faixas atribuído">
+                    Considerar peso
+                  </Tooltip>
+                </Checkbox>
+              </div>
+              {drugData.substance?.divisionRange && (
+                <div
+                  style={{
+                    opacity: 0.7,
+                    fontSize: "12px",
+                    marginTop: "5px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() =>
+                    updateDrugData({
+                      division: drugData.substance?.divisionRange,
+                      touched: true,
+                    })
+                  }
+                >
+                  <Tooltip title="Clique para utilizar este valor">
+                    Sugestão: {drugData.substance?.divisionRange}{" "}
+                    {drugData.substance?.unit
+                      ? `${drugData.substance?.unit}/Kg`
+                      : "Unidade indefinida"}
+                  </Tooltip>
+                </div>
+              )}
+
               {validationErrors.division && (
                 <div className="error-description">
                   {validationErrors.division}

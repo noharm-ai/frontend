@@ -27,6 +27,9 @@ export default function Filter({ limit }) {
   };
   const initialValues = {
     handlingOption: "filled",
+    tags: [],
+    tpSubstanceTagList: "in",
+    active: true,
   };
 
   useEffect(() => {
@@ -62,7 +65,15 @@ export default function Filter({ limit }) {
       secondaryFilters={<SecondaryFilters />}
       onSearch={search}
       loading={isFetching}
-      skipFilterList={["hasClass", "hasHandling", "className", "name"]}
+      skipFilterList={[
+        "hasClass",
+        "hasHandling",
+        "className",
+        "name",
+        "active",
+        "tpSubstanceTagList",
+        "handlingOption",
+      ]}
     />
   );
 }

@@ -655,6 +655,7 @@
   "reportcsv": {
     "idDepartment": "ID DEPARTMENT",
     "idPrescription": "PRESCRIPTION NUMBER",
+    "idPrescriptionFinal": "PRESCRIPTION NUMBER",
     "insurance": "INSURANCE",
     "admissionNumber": "ADMISSION NUMBER",
     "department": "DEPARTMENT",
@@ -856,17 +857,50 @@
     "lactating": "LAC"
   },
 
+  "substanceTag": {
+    "antimicro": "Antimicrobial",
+    "surveillance": "High Surveillance",
+    "controlled": "Controlled",
+    "dialyzable": "Dialyzable",
+    "fasting": "Fasting",
+    "pim": "PIM",
+    "not_standardized": "Not Standardized",
+    "chemoterapy": "Chemotherapy",
+    "not_validated": "Not Validated",
+    "tube": "Feeding Tube",
+    "no_dosemax": "No Maximum Dose"
+  },
+
   "regulation": {
     "risk": {
-      "risk_1": "Eletivo",
-      "risk_2": "Prioritário",
-      "risk_3": "Urgência",
-      "risk_4": "Emergência"
+      "risk_null": "Not Defined",
+      "risk_1": "Elective",
+      "risk_2": "Priority",
+      "risk_3": "Urgent",
+      "risk_4": "Emergency"
     },
     "stage": {
-      "INITIAL": "Não iniciado",
-      "WAITING_SCHEDULE": "Aguardando agendamento",
-      "FINISHED": "Finalizado"
+      "0": "Not Started",
+      "1": "Waiting for Scheduling",
+      "2": "Waiting for Rescheduling",
+      "3": "Waiting to Notify Patient",
+      "4": "Waiting for Transportation Scheduling",
+      "5": "Waiting for Documentation",
+      "6": "Waiting for Execution",
+      "7": "Waiting for External System Response",
+      "8": "Waiting for Information",
+      "98": "Cancelled",
+      "99": "Completed"
+    },
+    "action": {
+      "1": "Change Stage",
+      "2": "Schedule",
+      "3": "Schedule Transportation",
+      "4": "Request External System",
+      "5": "Change Request Type",
+      "6": "Change Risk",
+      "7": "Undo Scheduling",
+      "8": "Undo Transportation Scheduling"
     }
   }
 }

@@ -659,6 +659,7 @@
   "reportcsv": {
     "idDepartment": "ID SETOR",
     "idPrescription": "NUMERO PRESCRICAO",
+    "idPrescriptionFinal": "NUMERO PRESCRICAO",
     "insurance": "CONVENIO",
     "admissionNumber": "NUMERO ATENDIMENTO",
     "department": "SETOR",
@@ -859,6 +860,20 @@
     "fasting": "JJ",
     "pregnant": "GES",
     "lactating": "LAC"
+  },
+
+  "substanceTag": {
+    "antimicro": "Antimicrobiano",
+    "surveillance": "Alta Vigilância",
+    "controlled": "Controlado",
+    "dialyzable": "Dialisável",
+    "fasting": "Jejum",
+    "pim": "MPI",
+    "not_standardized": "Não padronizado",
+    "chemoterapy": "Quimioterápico",
+    "not_validated": "Sem validação",
+    "tube": "Sonda",
+    "no_dosemax": "Sem dose máxima"
   },
 
   "regulation": {

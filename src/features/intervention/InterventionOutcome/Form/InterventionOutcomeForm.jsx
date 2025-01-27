@@ -7,6 +7,7 @@ import {
   SearchOutlined,
   CaretDownOutlined,
   CaretUpOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { isEmpty } from "lodash";
 import Big from "big.js";
@@ -20,6 +21,7 @@ import Tag from "components/Tag";
 import EconomyDayCalculator from "./EconomyDayCalculator";
 import SecurityService from "services/security";
 import InterventionStatus from "models/InterventionStatus";
+import { createSlug } from "utils/transformers/utils";
 
 import {
   InterventionOutcomeContainer,
@@ -271,6 +273,37 @@ export default function InterventionOutcomeForm() {
                   <div className="form-value">
                     {values.destiny?.name || outcomeData.header.destinyDrug}
                   </div>
+                  {!values.destiny?.name &&
+                    !outcomeData.header.destinyDrugSubstance && (
+                      <div
+                        className="form-info"
+                        style={{
+                          fontSize: `12px`,
+                          color: "#ff4d4f",
+                          marginLeft: 0,
+                        }}
+                      >
+                        Medicamento substituto não possui substância definida.
+                        <Button
+                          size="small"
+                          danger
+                          style={{ fontSize: "12px" }}
+                          icon={<SettingOutlined />}
+                          onClick={() =>
+                            window.open(
+                              `/medicamentos/${
+                                outcomeData.header.idSegment || 1
+                              }/${
+                                outcomeData.header.destinyDrugId
+                              }/${createSlug(outcomeData.header.destinyDrug)}`,
+                              "_blank"
+                            )
+                          }
+                        >
+                          Configurar
+                        </Button>
+                      </div>
+                    )}
                 </div>
               </Col>
             )}
