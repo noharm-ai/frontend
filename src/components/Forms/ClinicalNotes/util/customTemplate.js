@@ -58,78 +58,78 @@ export const getCustomClinicalNote = (
   resultText = examsByType(resultText, prescription);
 
   return resultText
-    .replace("{{data_atual}}", formatDate(dayjs()))
-    .replace("{{nome_paciente}}", prescription.data.namePatient)
-    .replace("{{peso_paciente}}", getWeight(prescription.data.weight))
-    .replace("{{altura_paciente}}", getHeight(prescription.data.height))
-    .replace("{{idade_paciente}}", getAge(prescription.data.age))
-    .replace("{{escore_global}}", prescription.data.features?.globalScore)
-    .replace(
+    .replaceAll("{{data_atual}}", formatDate(dayjs()))
+    .replaceAll("{{nome_paciente}}", prescription.data.namePatient)
+    .replaceAll("{{peso_paciente}}", getWeight(prescription.data.weight))
+    .replaceAll("{{altura_paciente}}", getHeight(prescription.data.height))
+    .replaceAll("{{idade_paciente}}", getAge(prescription.data.age))
+    .replaceAll("{{escore_global}}", prescription.data.features?.globalScore)
+    .replaceAll(
       "{{risco_paciente}}",
       getPatientRisk(
         prescription.data.agg,
         prescription.data.features?.globalScore
       )
     )
-    .replace(
+    .replaceAll(
       "{{imc_paciente}}",
       getPatientIMC(prescription.data.weight, prescription.data.height)
     )
-    .replace(
+    .replaceAll(
       "{{superficie_corporal_paciente}}",
       getPatientCorporalSurface(
         prescription.data.weight,
         prescription.data.height
       )
     )
-    .replace("{{exames}}", getExams(prescription.data.exams))
-    .replace("{{alergias}}", getAllergies(prescription.data.notesAllergies))
-    .replace(
+    .replaceAll("{{exames}}", getExams(prescription.data.exams))
+    .replaceAll("{{alergias}}", getAllergies(prescription.data.notesAllergies))
+    .replaceAll(
       "{{intervencoes}}",
       interventions || "Nenhuma intervenção registrada"
     )
-    .replace("{{alertas}}", alerts || "Nenhum alerta registrado")
-    .replace(
+    .replaceAll("{{alertas}}", alerts || "Nenhum alerta registrado")
+    .replaceAll(
       "{{medicamentos_conciliados}}",
       conciliationDrugsWithRelation || "--"
     )
-    .replace(
+    .replaceAll(
       "{{medicamentos_nao_conciliados}}",
       conciliationDrugsWithoutRelation || "--"
     )
-    .replace(
+    .replaceAll(
       "{{antimicrobianos}}",
       getDrugsByAttribute(drugs, "am", {
         period: true,
         empty: "Nenhum Antimicrobiano encontrado.",
       })
     )
-    .replace(
+    .replaceAll(
       "{{nao_padronizados}}",
       getDrugsByAttribute(drugs, "np", {
         period: false,
         empty: "Nenhum medicamento Não Padronizado encontrado.",
       })
     )
-    .replace(
+    .replaceAll(
       "{{alta_vigilancia}}",
       getDrugsByAttribute(drugs, "av", {
         empty: "Nenhum medicamento de Alta Vigilância encontrado",
       })
     )
-    .replace(
+    .replaceAll(
       "{{controlados}}",
       getDrugsByAttribute(drugs, "c", {
         empty: "Nenhum medicamento Controlado encontrado.",
       })
     )
-    .replace(
+    .replaceAll(
       "{{dialisaveis}}",
       getDialyzable(drugs, prescription.data.dialysis, {
         empty: "Nenhum medicamento Dialisável encontrado.",
       })
     )
-    .replace(
+    .replaceAll(
       "{{antitromboticos}}",
       getDrugsByClass(
         drugs,
@@ -137,7 +137,7 @@ export const getCustomClinicalNote = (
         "Nenhum medicamento Antitrombótico encontrado."
       )
     )
-    .replace(
+    .replaceAll(
       "{{profilaxia_ulcera_estresse}}",
       getDrugsByClass(
         drugs,
@@ -145,7 +145,7 @@ export const getCustomClinicalNote = (
         "Nenhum medicamento de Profilaxia de Úlcera de Estresse encontrado."
       )
     )
-    .replace(
+    .replaceAll(
       "{{profilaxia_ocular}}",
       getDrugsByClass(
         drugs,
@@ -153,7 +153,7 @@ export const getCustomClinicalNote = (
         "Nenhum medicamento de Profilaxia Ocular encontrado."
       )
     )
-    .replace(
+    .replaceAll(
       "{{analgesicos}}",
       getDrugsByClass(
         drugs,
@@ -161,7 +161,7 @@ export const getCustomClinicalNote = (
         "Nenhum medicamento Analgésico encontrado."
       )
     )
-    .replace(
+    .replaceAll(
       "{{anestesicos_gerais}}",
       getDrugsByClass(
         drugs,
@@ -169,7 +169,7 @@ export const getCustomClinicalNote = (
         "Nenhum medicamento Anestésico Geral encontrado."
       )
     )
-    .replace(
+    .replaceAll(
       "{{vasopressores_inotropicos}}",
       getDrugsByClass(
         drugs,
@@ -177,7 +177,7 @@ export const getCustomClinicalNote = (
         "Nenhum medicamento Vasopressor ou Inotrópico encontrado."
       )
     )
-    .replace(
+    .replaceAll(
       "{{assinatura}}",
       signatureTemplate(params.signature, params.account)
     );
