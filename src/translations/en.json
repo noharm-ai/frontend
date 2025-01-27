@@ -655,6 +655,7 @@
   "reportcsv": {
     "idDepartment": "ID DEPARTMENT",
     "idPrescription": "PRESCRIPTION NUMBER",
+    "idPrescriptionFinal": "PRESCRIPTION NUMBER",
     "insurance": "INSURANCE",
     "admissionNumber": "ADMISSION NUMBER",
     "department": "DEPARTMENT",

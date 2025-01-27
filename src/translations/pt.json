@@ -659,6 +659,7 @@
   "reportcsv": {
     "idDepartment": "ID SETOR",
     "idPrescription": "NUMERO PRESCRICAO",
+    "idPrescriptionFinal": "NUMERO PRESCRICAO",
     "insurance": "CONVENIO",
     "admissionNumber": "NUMERO ATENDIMENTO",
     "department": "SETOR",
