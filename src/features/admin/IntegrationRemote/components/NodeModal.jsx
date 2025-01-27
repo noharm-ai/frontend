@@ -6,6 +6,7 @@ import {
   DeleteOutlined,
   SearchOutlined,
   SaveOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
 import { Formik } from "formik";
 import isEmpty from "lodash.isempty";
@@ -35,30 +36,44 @@ export default function NodeModal() {
   const activeAction = useSelector(
     (state) => state.admin.integrationRemote.pushQueueRequest.activeAction
   );
-  const statusOptions = [
-    {
-      key: "DISABLED",
-      label: <>Disable</>,
-    },
 
-    {
-      key: "RUNNING",
-      label: <>Run</>,
-    },
-    {
-      key: "RUN_ONCE",
-      label: <>Run Once</>,
-    },
-    {
-      key: "STOPPED",
-      label: <>Stop</>,
-    },
-    {
-      key: "TERMINATE",
-      label: <>Terminate</>,
-      danger: true,
-    },
-  ];
+  const isUpdatable =
+    ["Stopped", "Invalid", "Disabled"].indexOf(data?.status?.runStatus) !== -1;
+  const statusOptions = () => {
+    if (data?.status?.runStatus === "Disabled") {
+      return [
+        {
+          key: "STOPPED",
+          label: <>Enable</>,
+        },
+      ];
+    }
+
+    return [
+      {
+        key: "DISABLED",
+        label: <>Disable</>,
+      },
+
+      {
+        key: "RUNNING",
+        label: <>Run</>,
+      },
+      {
+        key: "RUN_ONCE",
+        label: <>Run Once</>,
+      },
+      {
+        key: "STOPPED",
+        label: <>Stop</>,
+      },
+      {
+        key: "TERMINATE",
+        label: <>Terminate</>,
+        danger: true,
+      },
+    ];
+  };
 
   const executeAction = (actionType, params = {}) => {
     let entity = data?.name;
@@ -90,6 +105,69 @@ export default function NodeModal() {
 
   const initialValues = { ...data?.extra?.properties };
 
+  const footerActions = (handleSubmit) => {
+    const actions = [
+      <Button
+        loading={activeAction === "VIEW_STATE"}
+        icon={<SearchOutlined />}
+        onClick={() => executeAction("VIEW_STATE")}
+      >
+        Visualizar estado
+      </Button>,
+      <Popconfirm
+        key="clearState"
+        title="Limpar estado"
+        description="Esta ação limpa o maxcolumn do processo. Confirma?"
+        okText="Sim"
+        cancelText="Não"
+        onConfirm={() => executeAction("CLEAR_STATE")}
+      >
+        <Button
+          loading={activeAction === "CLEAR_STATE"}
+          icon={<DeleteOutlined />}
+          danger
+        >
+          Limpar estado
+        </Button>
+      </Popconfirm>,
+    ];
+
+    if (isUpdatable) {
+      actions.push(
+        <Popconfirm
+          key="updateProperty"
+          title="Salvar propriedades"
+          description="Esta ação salva as alterações nas propriedades do processo. Confirma?"
+          okText="Sim"
+          cancelText="Não"
+          onConfirm={handleSubmit}
+        >
+          <Button
+            icon={<SaveOutlined />}
+            type="primary"
+            disabled={!isUpdatable}
+            loading={activeAction === "UPDATE_PROPERTY"}
+          >
+            Salvar propriedades
+          </Button>
+        </Popconfirm>
+      );
+    } else {
+      actions.push(
+        <Button
+          icon={<StopOutlined />}
+          type="primary"
+          loading={activeAction === "SET_STATE"}
+          onClick={() => executeAction("SET_STATE", { state: "STOPPED" })}
+        >
+          Parar e configurar
+        </Button>
+      );
+    }
+
+    return actions;
+  };
+
   const getItems = (setFieldValue, values) => [
     {
       key: "0",
@@ -109,7 +187,7 @@ export default function NodeModal() {
                 <Dropdown
                   trigger={["click"]}
                   menu={{
-                    items: statusOptions,
+                    items: statusOptions(),
                     onClick: (info) => {
                       if (info.key === "TERMINATE") {
                         executeAction("TERMINATE_PROCESS");
@@ -132,7 +210,8 @@ export default function NodeModal() {
                 <Descriptions.Item label="SQL select query" span={3}>
                   <Textarea
                     value={values["SQL select query"]}
-                    style={{ minHeight: "150px", maxHeight: "300px" }}
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
                     onChange={({ target }) =>
                       setFieldValue("SQL select query", target.value)
                     }
@@ -146,7 +225,8 @@ export default function NodeModal() {
                 >
                   <Textarea
                     value={values["db-fetch-sql-query"]}
-                    style={{ minHeight: "150px", maxHeight: "300px" }}
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
                     onChange={({ target }) =>
                       setFieldValue("db-fetch-sql-query", target.value)
                     }
@@ -163,7 +243,8 @@ export default function NodeModal() {
                 >
                   <Textarea
                     value={values["db-fetch-where-clause"]}
-                    style={{ minHeight: "150px", maxHeight: "300px" }}
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
                     onChange={({ target }) =>
                       setFieldValue("db-fetch-where-clause", target.value)
                     }
@@ -173,9 +254,23 @@ export default function NodeModal() {
               {Object.hasOwn(data?.extra?.properties, "Table Name") && (
                 <Descriptions.Item label="Table Name" span={3}>
                   <Textarea
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
                     value={values["Table Name"]}
                     onChange={({ target }) =>
                       setFieldValue("Table Name", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
+              {Object.hasOwn(data?.extra?.properties, "Columns to Return") && (
+                <Descriptions.Item label="Columns to Return" span={3}>
+                  <Textarea
+                    value={values["Columns to Return"]}
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
+                    onChange={({ target }) =>
+                      setFieldValue("Columns to Return", target.value)
                     }
                   />
                 </Descriptions.Item>
@@ -186,6 +281,8 @@ export default function NodeModal() {
               ) && (
                 <Descriptions.Item label="Maximum-value Columns" span={3}>
                   <Textarea
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
                     value={values["Maximum-value Columns"]}
                     onChange={({ target }) =>
                       setFieldValue("Maximum-value Columns", target.value)
@@ -196,6 +293,8 @@ export default function NodeModal() {
               {Object.hasOwn(data?.extra?.properties, "Max Wait Time") && (
                 <Descriptions.Item label="Max Wait Time" span={3}>
                   <Textarea
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
                     value={values["Max Wait Time"]}
                     onChange={({ target }) =>
                       setFieldValue("Max Wait Time", target.value)
@@ -209,6 +308,8 @@ export default function NodeModal() {
                   span={3}
                 >
                   <Textarea
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
                     value={values["qdbt-max-rows"]}
                     onChange={({ target }) =>
                       setFieldValue("qdbt-max-rows", target.value)
@@ -231,6 +332,7 @@ export default function NodeModal() {
                       setFieldValue("put-db-record-statement-type", value)
                     }
                     style={{ minWidth: "300px" }}
+                    disabled={!isUpdatable}
                   >
                     <Select.Option value="INSERT">INSERT</Select.Option>
                     <Select.Option value="UPDATE">UPDATE</Select.Option>
@@ -252,6 +354,8 @@ export default function NodeModal() {
                   span={3}
                 >
                   <Textarea
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
                     value={values["put-db-record-update-keys"]}
                     onChange={({ target }) =>
                       setFieldValue("put-db-record-update-keys", target.value)
@@ -269,6 +373,8 @@ export default function NodeModal() {
                   span={3}
                 >
                   <Textarea
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
                     value={values["put-db-record-table-name"]}
                     onChange={({ target }) =>
                       setFieldValue("put-db-record-table-name", target.value)
@@ -286,6 +392,8 @@ export default function NodeModal() {
                   span={3}
                 >
                   <Textarea
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
                     value={values["generate-ff-custom-text"]}
                     onChange={({ target }) =>
                       setFieldValue("generate-ff-custom-text", target.value)
@@ -297,6 +405,8 @@ export default function NodeModal() {
               {Object.hasOwn(data?.extra?.properties, "Remote URL") && (
                 <Descriptions.Item label="Remote URL" span={3}>
                   <Textarea
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
                     value={values["Remote URL"]}
                     onChange={({ target }) =>
                       setFieldValue("Remote URL", target.value)
@@ -422,6 +532,7 @@ export default function NodeModal() {
       "put-db-record-update-keys",
       "put-db-record-table-name",
       "generate-ff-custom-text",
+      "Columns to Return",
     ];
 
     validFields.forEach((field) => {
@@ -444,51 +555,7 @@ export default function NodeModal() {
           destroyOnClose
           open={data}
           onCancel={() => dispatch(setSelectedNode(null))}
-          footer={[
-            <Button
-              loading={activeAction === "VIEW_STATE"}
-              icon={<SearchOutlined />}
-              onClick={() => executeAction("VIEW_STATE")}
-            >
-              Visualizar estado
-            </Button>,
-            <Popconfirm
-              key="clearState"
-              title="Limpar estado"
-              description="Esta ação limpa o maxcolumn do processo. Confirma?"
-              okText="Sim"
-              cancelText="Não"
-              onConfirm={() => executeAction("CLEAR_STATE")}
-            >
-              <Button
-                loading={activeAction === "CLEAR_STATE"}
-                icon={<DeleteOutlined />}
-                danger
-              >
-                Limpar estado
-              </Button>
-            </Popconfirm>,
-            <Popconfirm
-              key="updateProperty"
-              title="Salvar propriedades"
-              description="Esta ação salva as alterações nas propriedades do processo. Confirma?"
-              okText="Sim"
-              cancelText="Não"
-              onConfirm={handleSubmit}
-            >
-              <Button
-                icon={<SaveOutlined />}
-                type="primary"
-                disabled={
-                  ["Stopped", "Invalid"].indexOf(data?.status?.runStatus) === -1
-                }
-                loading={activeAction === "UPDATE_PROPERTY"}
-                style={{ marginLeft: "5px" }}
-              >
-                Salvar propriedades
-              </Button>
-            </Popconfirm>,
-          ]}
+          footer={footerActions(handleSubmit)}
         >
           <Heading margin="0 0 11px" size="18px">
             {data?.name}
