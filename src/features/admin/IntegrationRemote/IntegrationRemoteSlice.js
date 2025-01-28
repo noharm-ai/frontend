@@ -131,7 +131,10 @@ const integrationRemoteSlice = createSlice({
 
         // status
         const flatStatus = {};
-        flatStatuses(action.payload.status, flatStatus);
+        const groups = Object.values(
+          state.template.data.flowContents.processGroups
+        );
+        flatStatuses(action.payload.status, flatStatus, groups);
         state.template.status = flatStatus;
         state.template.statusDate =
           action.payload.response.data.data.statusUpdatedAt;
@@ -190,7 +193,10 @@ const integrationRemoteSlice = createSlice({
 
         if (action.payload.status) {
           const flatStatus = {};
-          flatStatuses(action.payload.status, flatStatus);
+          const groups = Object.values(
+            state.template.data.flowContents.processGroups
+          );
+          flatStatuses(action.payload.status, flatStatus, groups);
           state.template.status = flatStatus;
           state.template.statusDate = action.payload.statusUpdatedAt;
         }

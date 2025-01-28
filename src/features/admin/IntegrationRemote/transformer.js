@@ -1,4 +1,4 @@
-export function flatStatuses(obj, result = {}) {
+export function flatStatuses(obj, result = {}, groups) {
   for (const property in obj) {
     if (obj.hasOwnProperty(property)) {
       if (typeof obj[property] == "object") {
@@ -7,9 +7,17 @@ export function flatStatuses(obj, result = {}) {
           property === "connectionStatusSnapshot"
         ) {
           result[obj[property].id] = obj[property];
+          if (groups !== undefined) {
+            if (obj[property].groupId) {
+              const groupName = groups?.find(
+                (group) => group.instanceIdentifier === obj[property].groupId
+              )?.name;
+              obj[property].groupName = groupName;
+            }
+          }
         }
 
-        flatStatuses(obj[property], result);
+        flatStatuses(obj[property], result, groups);
       }
     }
   }

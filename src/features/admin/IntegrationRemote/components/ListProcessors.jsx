@@ -27,6 +27,11 @@ export default function ListProcessors() {
       render: (_, record) => record.type,
     },
     {
+      title: "Grupo",
+      align: "left",
+      render: (_, record) => record.groupName,
+    },
+    {
       title: "Status",
       align: "center",
       render: (_, record) => (
