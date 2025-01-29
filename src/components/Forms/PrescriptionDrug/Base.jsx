@@ -37,7 +37,10 @@ export default function Base({
 
   const search = debounce((value) => {
     if (value.length < 3) return;
-    searchDrugs(idSegment, { q: value });
+    searchDrugs(idSegment, {
+      q: value,
+      addSubstance: item.concilia ? 1 : 0,
+    });
   }, 800);
 
   const handleDrugChange = (value, option) => {
