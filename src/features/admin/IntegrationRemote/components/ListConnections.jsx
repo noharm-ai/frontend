@@ -27,6 +27,11 @@ export default function ListConnections() {
       render: (_, record) => record.destinationName,
     },
     {
+      title: "Grupo",
+      align: "left",
+      render: (_, record) => record.groupName,
+    },
+    {
       title: "Contagem",
       align: "right",
       sorter: (a, b) => a.queuedCount - b.queuedCount,

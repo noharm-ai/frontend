@@ -106,6 +106,10 @@ export default function NodeModal() {
   const initialValues = { ...data?.extra?.properties };
 
   const footerActions = (handleSubmit) => {
+    if (data?.extra?.componentType !== "PROCESSOR") {
+      return null;
+    }
+
     const actions = [
       <Button
         loading={activeAction === "VIEW_STATE"}

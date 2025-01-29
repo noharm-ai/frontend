@@ -22,6 +22,7 @@ import Button from "components/Button";
 import { formatDateTime } from "utils/date";
 import ListConnections from "./components/ListConnections";
 import ListProcessors from "./components/ListProcessors";
+import ListBulletin from "./components/ListBulletin";
 
 import { PageHeader } from "styles/PageHeader.style";
 import { PageCard, PageSectionTitle } from "styles/Utils.style";
@@ -269,7 +270,12 @@ export default function IntegrationRemote() {
             </Row>
           </Col>
         </Row>
-
+        <div>
+          <PageSectionTitle style={{ marginBottom: "1.5rem" }}>
+            Bulletin Board
+          </PageSectionTitle>
+          <ListBulletin />
+        </div>
         <div>
           <PageSectionTitle style={{ marginBottom: "1.5rem" }}>
             Filas

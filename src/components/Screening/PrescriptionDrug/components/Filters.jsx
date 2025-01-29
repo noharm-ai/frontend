@@ -254,6 +254,7 @@ export default function Filters({
         idHospital: prescription.idHospital,
         source: "prescription",
         updateDrug: true,
+        concilia: prescription.concilia,
       })
     );
   };
