@@ -214,6 +214,68 @@ export default function QueueModal({ data, onCancel }) {
     });
   }
 
+  if (data?.responseCode === 200 && data?.response?.provenance) {
+    items.push({
+      key: "3",
+      label: "Data Provenance",
+      children: (
+        <Descriptions bordered size="small">
+          <Descriptions.Item label="Fila" span={3}>
+            <List
+              itemLayout="horizontal"
+              dataSource={data?.response?.provenance?.results.provenanceEvents}
+              loading={false}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Tooltip title="Solicitar atributos">
+                      <Button
+                        icon={<InfoCircleOutlined />}
+                        shape="circle"
+                        loading={activeAction === "CUSTOM_CALLBACK"}
+                        onClick={() =>
+                          executeCustomEndpointState(
+                            `nifi-api/provenance-events/${item.eventId}`,
+                            "GET",
+                            {
+                              entity: "Ver atributos (data provenance)",
+                            }
+                          )
+                        }
+                      ></Button>
+                    </Tooltip>,
+                    <Tooltip title="Solicitar download do conteúdo">
+                      <Button
+                        icon={<DownloadOutlined />}
+                        shape="circle"
+                        loading={activeAction === "CUSTOM_CALLBACK"}
+                        onClick={() =>
+                          executeCustomEndpointState(
+                            `nifi-api/provenance-events/${item.eventId}/content/output`,
+                            "GET",
+                            {
+                              entity:
+                                "Download content output (data provenance)",
+                            }
+                          )
+                        }
+                      ></Button>
+                    </Tooltip>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    title={item.eventTime}
+                    description={item.eventType}
+                  />
+                </List.Item>
+              )}
+            />
+          </Descriptions.Item>
+        </Descriptions>
+      ),
+    });
+  }
+
   return (
     <DefaultModal
       width={"60vw"}

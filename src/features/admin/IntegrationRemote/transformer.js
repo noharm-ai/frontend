@@ -62,6 +62,8 @@ export function actionTypeToDescription(actionType) {
       return "Atualizar template";
     case "UPDATE_PROPERTY":
       return "Atualizar propriedade";
+    case "VIEW_PROVENANCE":
+      return "Ver data provenance";
     default:
       return actionType;
   }
