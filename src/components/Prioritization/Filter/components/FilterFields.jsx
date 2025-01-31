@@ -673,6 +673,25 @@ export default function FilterFields({
               </div>
             </div>
 
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Marcadores:</label>
+                </div>
+                <div className="form-input">
+                  <Select
+                    mode="tags"
+                    tokenSeparators={[","]}
+                    value={filter.tags}
+                    onChange={(value) =>
+                      setScreeningListFilter({ tags: value })
+                    }
+                    allowClear
+                  ></Select>
+                </div>
+              </div>
+            </div>
+
             {featureService.hasConciliation() &&
               (prioritizationType === "patient" ||
                 prioritizationType === "cards") && (

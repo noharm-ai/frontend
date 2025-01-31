@@ -31,6 +31,21 @@ export default function Base({ security }) {
   const layout = { label: 6, input: 16 };
   const { t } = useTranslation();
 
+  const tagOptions = [
+    {
+      value: "SEPSE",
+      label: "SEPSE",
+    },
+    {
+      value: "PAC",
+      label: "PAC",
+    },
+    {
+      value: "ORIENTAR",
+      label: "ORIENTAR",
+    },
+  ];
+
   return (
     <>
       <Box hasError={errors.weight}>
@@ -232,6 +247,34 @@ export default function Base({ security }) {
               width: "100%",
             }}
           />
+        </Col>
+      </Box>
+
+      <Box hasError={errors.tags}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
+            <Tooltip title="">Tags:</Tooltip>
+          </Heading>
+        </Col>
+        <Col xs={layout.input}>
+          <Select
+            mode="tags"
+            style={{ width: "100%", marginLeft: 10 }}
+            placeholder="Tags Mode"
+            onChange={(v) => setFieldValue("tags", v)}
+            value={values.tags}
+            options={tagOptions}
+            maxCount={10}
+          />
+          <span
+            style={{
+              marginLeft: 10,
+              fontSize: "10px",
+            }}
+          >
+            Selecione uma tag existente ou digite e pressione enter para
+            adicionar uma nova
+          </span>
         </Col>
       </Box>
 

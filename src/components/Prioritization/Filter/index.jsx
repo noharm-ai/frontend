@@ -96,6 +96,7 @@ export default function Filter({
         globalScoreMin: filter.globalScoreMin,
         globalScoreMax: filter.globalScoreMax,
         pendingInterventions: filter.pendingInterventions,
+        tags: filter.tags,
         hasConciliation:
           prioritizationType === "patient" || prioritizationType === "cards"
             ? filter.hasConciliation
@@ -153,6 +154,7 @@ export default function Filter({
       filter.pendingInterventions,
       filter.hasConciliation,
       filter.alertLevel,
+      filter.tags,
       prioritizationType,
       date,
     ]
@@ -236,6 +238,7 @@ export default function Filter({
       pendingInterventions: null,
       hasConciliation: null,
       alertLevel: null,
+      tags: [],
     });
     setDate([dayjs(), null]);
   };

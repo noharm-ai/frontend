@@ -395,6 +395,13 @@ export default function PrioritizationCard({
               </div>
             </Tooltip>
           )}
+          {prescription.patientTags && prescription.patientTags.length > 0 && (
+            <div className="tags">
+              {prescription.patientTags.map((tag) => (
+                <div className="tag ">{tag}</div>
+              ))}
+            </div>
+          )}
         </div>
         <div className={`stamp ${highlight ? "highlight" : ""}`}>
           <div className="stamp-label">{prioritization.label}</div>
