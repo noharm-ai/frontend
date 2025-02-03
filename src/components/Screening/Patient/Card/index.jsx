@@ -132,6 +132,9 @@ export default function PatientCard({
   };
 
   const updatePrescriptionData = () => {
+    notification.info({
+      message: "Recalculando prescrição",
+    });
     dispatch(
       shouldUpdatePrescription({ idPrescription: prescription.idPrescription })
     ).then((response) => {
@@ -299,7 +302,7 @@ export default function PatientCard({
     {
       key: "patientTags",
       label: (
-        <Tooltip title="Tags">
+        <Tooltip title="Marcadores">
           {prescription?.patient?.tags?.length > 0 ? (
             <Badge dot>
               <TagsOutlined style={{ fontSize: "18px" }} />

@@ -6,10 +6,12 @@ import { selectPrescriptionDrugThunk } from "store/ducks/prescriptionDrugs/thunk
 
 import Screening from "components/Screening";
 
-const mapStateToProps = ({ prescriptions, user }) => ({
+const mapStateToProps = ({ prescriptions, user, serverActions }) => ({
   error: prescriptions.single.error,
   message: prescriptions.single.message,
-  isFetching: prescriptions.single.isFetching,
+  isFetching:
+    prescriptions.single.isFetching ||
+    serverActions.shouldUpdatePrescription.status === "loading",
   content: prescriptions.single.data,
   interventions: prescriptions.single.intervention.list,
   roles: user.account.roles,

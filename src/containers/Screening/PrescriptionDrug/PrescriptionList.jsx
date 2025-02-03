@@ -13,10 +13,18 @@ import {
 
 import PrescriptionDrugList from "components/Screening/PrescriptionDrug/PrescriptionDrugList";
 
-const mapStateToProps = ({ prescriptions, auth, user, intervention }) => ({
+const mapStateToProps = ({
+  prescriptions,
+  auth,
+  user,
+  intervention,
+  serverActions,
+}) => ({
   dataSource: prescriptions.single.prescription.list,
   listRaw: prescriptions.single.data.prescriptionRaw,
-  isFetching: prescriptions.single.isFetching,
+  isFetching:
+    prescriptions.single.isFetching ||
+    serverActions.shouldUpdatePrescription.status === "loading",
   headers: prescriptions.single.data.headers,
   aggregated: prescriptions.single.data.agg,
   checkPrescriptionDrug:

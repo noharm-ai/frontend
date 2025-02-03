@@ -11,6 +11,8 @@ import Tooltip from "components/Tooltip";
 import Editor from "components/Editor";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
+import { FieldTag } from "features/fields/FieldTag/FieldTag";
+import { TagTypeEnum } from "models/TagTypeEnum";
 
 import { Box, EditorBox } from "../Form.style";
 
@@ -30,21 +32,6 @@ export default function Base({ security }) {
   } = values;
   const layout = { label: 6, input: 16 };
   const { t } = useTranslation();
-
-  const tagOptions = [
-    {
-      value: "SEPSE",
-      label: "SEPSE",
-    },
-    {
-      value: "PAC",
-      label: "PAC",
-    },
-    {
-      value: "ORIENTAR",
-      label: "ORIENTAR",
-    },
-  ];
 
   return (
     <>
@@ -253,18 +240,17 @@ export default function Base({ security }) {
       <Box hasError={errors.tags}>
         <Col xs={layout.label}>
           <Heading as="label" size="14px" textAlign="right">
-            <Tooltip title="">Tags:</Tooltip>
+            <Tooltip title="">Marcadores:</Tooltip>
           </Heading>
         </Col>
         <Col xs={layout.input}>
-          <Select
+          <FieldTag
             mode="tags"
             style={{ width: "100%", marginLeft: 10 }}
-            placeholder="Tags Mode"
             onChange={(v) => setFieldValue("tags", v)}
             value={values.tags}
-            options={tagOptions}
             maxCount={10}
+            tagType={TagTypeEnum.PATIENT}
           />
           <span
             style={{

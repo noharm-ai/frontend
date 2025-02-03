@@ -10,11 +10,13 @@ export default function TagsTab({ prescription, setModalVisibility }) {
   return (
     <div className="patient-data">
       <div className="patient-data-item full edit">
-        <div className="patient-data-item-label">Tags do paciente</div>
+        <div className="patient-data-item-label">Marcadores do paciente</div>
         <div className="patient-data-item-tags ">
           {patient?.tags
             ? patient?.tags.map((tag) => (
-                <Tag style={{ marginRight: 0, fontSize: "13px" }}>{tag}</Tag>
+                <Tag style={{ marginRight: 0, fontSize: "13px" }} key={tag}>
+                  {tag}
+                </Tag>
               ))
             : "--"}
         </div>
