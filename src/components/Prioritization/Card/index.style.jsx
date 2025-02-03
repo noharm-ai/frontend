@@ -219,6 +219,13 @@ export const Card = styled.div`
         .hint {
           border-bottom: 2px dotted #999;
         }
+
+        &.tags {
+          padding: 10px 15px 10px 5px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
       }
     }
   }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useTransition, animated, config } from "@react-spring/web";
 import {
@@ -7,8 +7,10 @@ import {
   MessageOutlined,
   ArrowUpOutlined,
   ArrowDownOutlined,
+  TagsOutlined,
 } from "@ant-design/icons";
 import DOMPurify from "dompurify";
+import { Badge } from "antd";
 
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
@@ -330,6 +332,27 @@ const TabContent = ({ tab, prescription, featureService }) => {
     );
   }
 
+  if (tab === "tags") {
+    return (
+      <div className="attribute-container">
+        <div className="attributes">
+          <div className="attributes-item col-12">
+            <div className="attributes-item-label">Marcadores</div>
+            <div className="attributes-item-value tags">
+              {prescription?.patientTags
+                ? prescription.patientTags?.map((tag) => (
+                    <Tag style={{ marginRight: 0, fontSize: "13px" }}>
+                      {tag}
+                    </Tag>
+                  ))
+                : "--"}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return null;
 };
 
@@ -339,9 +362,9 @@ export default function PrioritizationCard({
   prioritizationType,
   highlight,
   featureService,
+  activeTab,
+  setActiveTab,
 }) {
-  const [activeTab, setActiveTab] = useState("patient");
-
   const transitions = useTransition(activeTab, {
     from: {
       opacity: 0,
@@ -395,13 +418,6 @@ export default function PrioritizationCard({
               </div>
             </Tooltip>
           )}
-          {prescription.patientTags && prescription.patientTags.length > 0 && (
-            <div className="tags">
-              {prescription.patientTags.map((tag) => (
-                <div className="tag ">{tag}</div>
-              ))}
-            </div>
-          )}
         </div>
         <div className={`stamp ${highlight ? "highlight" : ""}`}>
           <div className="stamp-label">{prioritization.label}</div>
@@ -446,14 +462,31 @@ export default function PrioritizationCard({
         >
           <NumberOutlined />
         </div>
-        {prescription.observation && (
-          <div
-            className={`tab ${activeTab === "observation" ? "active" : ""}`}
-            onClick={(e) => tabClick("observation", e)}
-          >
+
+        <div
+          className={`tab ${activeTab === "observation" ? "active" : ""}`}
+          onClick={(e) => tabClick("observation", e)}
+        >
+          <Badge dot count={prescription.observation ? 1 : 0}>
             <MessageOutlined />
-          </div>
-        )}
+          </Badge>
+        </div>
+
+        <div
+          className={`tab ${activeTab === "tags" ? "active" : ""}`}
+          onClick={(e) => tabClick("tags", e)}
+        >
+          <Badge
+            dot
+            count={
+              prescription.patientTags && prescription.patientTags.length > 0
+                ? 1
+                : 0
+            }
+          >
+            <TagsOutlined />
+          </Badge>
+        </div>
       </div>
     </Card>
   );

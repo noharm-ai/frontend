@@ -18,8 +18,10 @@ import Tooltip from "components/Tooltip";
 import LoadBox from "components/LoadBox";
 import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
 import FieldSubstanceClassAutocomplete from "features/fields/FieldSubstanceClassAutocomplete/FieldSubstanceClassAutocomplete";
+import { FieldTag } from "features/fields/FieldTag/FieldTag";
 import { getUniqBy } from "utils/report";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
+import { TagTypeEnum } from "models/TagTypeEnum";
 
 import { Form } from "styles/Form.style";
 
@@ -679,15 +681,13 @@ export default function FilterFields({
                   <label>Marcadores:</label>
                 </div>
                 <div className="form-input">
-                  <Select
-                    mode="tags"
-                    tokenSeparators={[","]}
+                  <FieldTag
+                    tagType={TagTypeEnum.PATIENT}
                     value={filter.tags}
                     onChange={(value) =>
                       setScreeningListFilter({ tags: value })
                     }
-                    allowClear
-                  ></Select>
+                  ></FieldTag>
                 </div>
               </div>
             </div>
