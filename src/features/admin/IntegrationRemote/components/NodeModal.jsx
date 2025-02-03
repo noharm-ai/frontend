@@ -112,6 +112,13 @@ export default function NodeModal() {
 
     const actions = [
       <Button
+        loading={activeAction === "VIEW_PROVENANCE"}
+        icon={<SearchOutlined />}
+        onClick={() => executeAction("VIEW_PROVENANCE")}
+      >
+        Data provenance
+      </Button>,
+      <Button
         loading={activeAction === "VIEW_STATE"}
         icon={<SearchOutlined />}
         onClick={() => executeAction("VIEW_STATE")}

@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Tabs, List, Alert } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, InfoCircleOutlined } from "@ant-design/icons";
 
 import DefaultModal from "components/Modal";
 import Heading from "components/Heading";
@@ -23,7 +23,7 @@ export default function QueueModal({ data, onCancel }) {
     (state) => state.admin.integrationRemote.pushQueueRequest.activeAction
   );
 
-  const executeCustomEndpointState = (endpoint, method) => {
+  const executeCustomEndpointState = (endpoint, method, params = {}) => {
     if (!endpoint) {
       notification.error({
         message: "Endpoint não encontrado",
@@ -38,6 +38,7 @@ export default function QueueModal({ data, onCancel }) {
       entity: data?.extra?.entity,
       idProcessor: 0,
       componentType: null,
+      ...params,
     };
     dispatch(pushQueueRequest(payload)).then((response) => {
       if (response.error) {
@@ -136,6 +137,18 @@ export default function QueueModal({ data, onCancel }) {
               renderItem={(item) => (
                 <List.Item
                   actions={[
+                    <Tooltip title="Solicitar atributos">
+                      <Button
+                        icon={<InfoCircleOutlined />}
+                        shape="circle"
+                        loading={activeAction === "CUSTOM_CALLBACK"}
+                        onClick={() =>
+                          executeCustomEndpointState(item.uri, "GET", {
+                            entity: "Ver atributos",
+                          })
+                        }
+                      ></Button>
+                    </Tooltip>,
                     <Tooltip title="Solicitar download do conteúdo">
                       <Button
                         icon={<DownloadOutlined />}
@@ -166,7 +179,7 @@ export default function QueueModal({ data, onCancel }) {
 
   if (data?.responseCode === 200 && data?.response?.componentState) {
     items.push({
-      key: "3",
+      key: "4",
       label: "Estado",
       children: (
         <Descriptions bordered size="small">
@@ -187,6 +200,76 @@ export default function QueueModal({ data, onCancel }) {
                   : "Vazio"}
               </>
             )}
+          </Descriptions.Item>
+        </Descriptions>
+      ),
+    });
+  }
+
+  if (data?.responseCode === 200 && data?.response?.flowFile?.attributes) {
+    items.push({
+      key: "5",
+      label: "Atributos",
+      children: getDescriptions(data?.response?.flowFile?.attributes),
+    });
+  }
+
+  if (data?.responseCode === 200 && data?.response?.provenance) {
+    items.push({
+      key: "3",
+      label: "Data Provenance",
+      children: (
+        <Descriptions bordered size="small">
+          <Descriptions.Item label="Fila" span={3}>
+            <List
+              itemLayout="horizontal"
+              dataSource={data?.response?.provenance?.results.provenanceEvents}
+              loading={false}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Tooltip title="Solicitar atributos">
+                      <Button
+                        icon={<InfoCircleOutlined />}
+                        shape="circle"
+                        loading={activeAction === "CUSTOM_CALLBACK"}
+                        onClick={() =>
+                          executeCustomEndpointState(
+                            `nifi-api/provenance-events/${item.eventId}`,
+                            "GET",
+                            {
+                              entity: "Ver atributos (data provenance)",
+                            }
+                          )
+                        }
+                      ></Button>
+                    </Tooltip>,
+                    <Tooltip title="Solicitar download do conteúdo">
+                      <Button
+                        icon={<DownloadOutlined />}
+                        shape="circle"
+                        loading={activeAction === "CUSTOM_CALLBACK"}
+                        onClick={() =>
+                          executeCustomEndpointState(
+                            `nifi-api/provenance-events/${item.eventId}/content/output`,
+                            "GET",
+                            {
+                              entity:
+                                "Download content output (data provenance)",
+                            }
+                          )
+                        }
+                      ></Button>
+                    </Tooltip>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    title={item.eventTime}
+                    description={item.eventType}
+                  />
+                </List.Item>
+              )}
+            />
           </Descriptions.Item>
         </Descriptions>
       ),
