@@ -341,7 +341,7 @@ const TabContent = ({ tab, prescription, featureService }) => {
             <div className="attributes-item-value tags">
               {prescription?.patientTags
                 ? prescription.patientTags?.map((tag) => (
-                    <Tag style={{ marginRight: 0, fontSize: "13px" }}>
+                    <Tag style={{ marginRight: 0, fontSize: "13px" }} key={tag}>
                       {tag}
                     </Tag>
                   ))

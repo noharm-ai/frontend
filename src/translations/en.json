@@ -50,7 +50,8 @@
     "summary": "Discharge Summary",
     "integration": "Integration",
     "help": "Support Central",
-    "schedules": "Schedules"
+    "schedules": "Schedules",
+    "tag": "Tags"
   },
   "screeningList": {
     "confirm": "Confirm?",

@@ -65,9 +65,9 @@ export default function Patient({
 
   const submit = (params) => {
     savePatient(params)
-      .then(() => {
+      .then((response) => {
         notification.success(saveMessage);
-        afterSavePatient();
+        afterSavePatient(response?.data);
       })
       .catch((err) => {
         console.error("error", err);

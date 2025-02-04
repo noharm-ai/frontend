@@ -18,7 +18,7 @@ export const savePatientThunk =
       dispatch(patientsSaveSingleStart());
 
       const { access_token } = getState().auth.identify;
-      const { status, error } = await api
+      const { status, data, error } = await api
         .updatePatient(access_token, admissionNumber, params)
         .catch(errorHandler);
 
@@ -29,7 +29,7 @@ export const savePatientThunk =
       }
 
       dispatch(patientsSaveSingleSuccess());
-      resolve();
+      resolve(data);
     });
   };
 
