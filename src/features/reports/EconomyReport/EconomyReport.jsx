@@ -84,6 +84,10 @@ export default function EconomyReport() {
       label: "Tipo valor economia",
       type: "dict",
     },
+    tagList: {
+      label: "Marcadores",
+      type: "list",
+    },
   };
 
   return (

@@ -22,6 +22,7 @@ export default function SecondaryFilters() {
   const insurances = useSelector(
     (state) => state.reportsArea.economy.insurances
   );
+  const tags = useSelector((state) => state.reportsArea.economy.tags);
   const status = useSelector((state) => state.reportsArea.economy.status);
 
   const economyTypes = [
@@ -232,6 +233,34 @@ export default function SecondaryFilters() {
           }
         >
           {insurances.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </SelectCustom>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          Marcadores do paciente:
+        </Heading>
+        <SelectCustom
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.tagList}
+          onChange={(val) => setFieldValue({ tagList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              tagList: tags,
+            })
+          }
+        >
+          {tags.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>
