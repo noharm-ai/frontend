@@ -36,13 +36,6 @@ export default function PrescriptionDrug({
   if (item.updateDrug) {
     validationSchema = Yup.object().shape({
       idDrug: Yup.number().nullable().required(t("validation.requiredField")),
-      dose: Yup.number().nullable().required(t("validation.requiredField")),
-      measureUnit: Yup.string()
-        .nullable()
-        .required(t("validation.requiredField")),
-      frequency: Yup.string()
-        .nullable()
-        .required(t("validation.requiredField")),
     });
   }
 
