@@ -60,13 +60,14 @@ export default function Patient({
     dischargeDate,
     lactating: patient?.lactating,
     pregnant: patient?.pregnant,
+    tags: patient?.tags,
   };
 
   const submit = (params) => {
     savePatient(params)
-      .then(() => {
+      .then((response) => {
         notification.success(saveMessage);
-        afterSavePatient();
+        afterSavePatient(response?.data);
       })
       .catch((err) => {
         console.error("error", err);

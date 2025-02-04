@@ -119,6 +119,24 @@ export const Card = styled.div`
         transition: all 0.3s linear;
       }
     }
+
+    .tags {
+      .tag {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 300;
+        border-width: 1px;
+        border-style: solid;
+        border-radius: 5px;
+        padding: 0 5px;
+        margin-left: 5px;
+        cursor: pointer;
+
+        &:first-child {
+          margin-left: 0;
+        }
+      }
+    }
   }
 
   .attribute-container {
@@ -200,6 +218,13 @@ export const Card = styled.div`
 
         .hint {
           border-bottom: 2px dotted #999;
+        }
+
+        &.tags {
+          padding: 10px 15px 10px 5px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
         }
       }
     }

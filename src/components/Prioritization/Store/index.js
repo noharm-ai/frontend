@@ -10,6 +10,7 @@ export const initState = () => {
     prioritizationOrder: "desc",
     highlightPrioritization: false,
     listStats: getListStats([]),
+    activeTab: "patient",
   };
 };
 
@@ -21,6 +22,8 @@ export const reducer = (state, action) => {
       return { ...state, affixed: action.payload };
     case "set_page":
       return { ...state, currentPage: action.payload };
+    case "set_active_tab":
+      return { ...state, activeTab: action.payload };
     case "set_filter":
       return {
         ...state,

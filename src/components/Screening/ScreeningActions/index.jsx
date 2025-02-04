@@ -34,13 +34,20 @@ export default function ScreeningActions({
   const security = SecurityService(roles);
   const featureService = FeaturesService(features);
 
-  const afterSavePatient = () => {
-    dispatch(
-      shouldUpdatePrescription({ idPrescription: prescription.idPrescription })
-    ).then(() => {
+  const afterSavePatient = (response) => {
+    if (response.updatePrescription) {
+      dispatch(
+        shouldUpdatePrescription({
+          idPrescription: prescription.idPrescription,
+        })
+      ).then(() => {
+        fetchScreening(prescription.idPrescription);
+        setModalVisibility("patientEdit", false);
+      });
+    } else {
       fetchScreening(prescription.idPrescription);
       setModalVisibility("patientEdit", false);
-    });
+    }
   };
 
   const addConciliation = () => {

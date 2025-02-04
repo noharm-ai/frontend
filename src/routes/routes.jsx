@@ -26,6 +26,7 @@ import SummarySearch from "pages/Summary/SummarySearch";
 import SupportCenter from "pages/SupportCenter";
 
 import AdminFrequency from "pages/Admin/Frequency";
+import AdminTag from "pages/Admin/Tag";
 import AdminInterventionReason from "pages/Admin/InterventionReason";
 import AdminMemory from "pages/Admin/Memory";
 import AdminMemoryRoutes from "pages/Admin/Memory/Routes";
@@ -250,6 +251,11 @@ const routes = [
     exact: true,
     path: "/admin/features",
     element: <WithAuth component={AdminMemoryFeatures} />,
+  },
+  {
+    exact: true,
+    path: "/admin/tags",
+    element: <WithAuth component={AdminTag} />,
   },
   {
     exact: true,

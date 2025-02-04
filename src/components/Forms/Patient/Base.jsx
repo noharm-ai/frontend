@@ -11,6 +11,8 @@ import Tooltip from "components/Tooltip";
 import Editor from "components/Editor";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
+import { FieldTag } from "features/fields/FieldTag/FieldTag";
+import { TagTypeEnum } from "models/TagTypeEnum";
 
 import { Box, EditorBox } from "../Form.style";
 
@@ -232,6 +234,33 @@ export default function Base({ security }) {
               width: "100%",
             }}
           />
+        </Col>
+      </Box>
+
+      <Box hasError={errors.tags}>
+        <Col xs={layout.label}>
+          <Heading as="label" size="14px" textAlign="right">
+            <Tooltip title="">Marcadores:</Tooltip>
+          </Heading>
+        </Col>
+        <Col xs={layout.input}>
+          <FieldTag
+            mode="tags"
+            style={{ width: "100%", marginLeft: 10 }}
+            onChange={(v) => setFieldValue("tags", v)}
+            value={values.tags}
+            maxCount={10}
+            tagType={TagTypeEnum.PATIENT}
+          />
+          <span
+            style={{
+              marginLeft: 10,
+              fontSize: "10px",
+            }}
+          >
+            Selecione uma tag existente ou digite e pressione enter para
+            adicionar uma nova
+          </span>
         </Col>
       </Box>
 

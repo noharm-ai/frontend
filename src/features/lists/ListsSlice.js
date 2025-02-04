@@ -72,6 +72,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  getTags: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
   regulation: {
     types: {
       list: [],
@@ -80,6 +85,19 @@ const initialState = {
     },
   },
 };
+
+export const getTags = createAsyncThunk(
+  "lists/get-tags",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.tags.getTags(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
 
 export const searchPrescriptions = createAsyncThunk(
   "lists/search-prescriptions",
@@ -306,6 +324,17 @@ const listsSlice = createSlice({
       .addCase(fetchSubstanceClasses.rejected, (state, action) => {
         state.substanceClasses.status = "failed";
         state.substanceClasses.error = action.error.message;
+      })
+      .addCase(getTags.pending, (state, action) => {
+        state.getTags.status = "loading";
+      })
+      .addCase(getTags.fulfilled, (state, action) => {
+        state.getTags.status = "succeeded";
+        state.getTags.list = action.payload.data;
+      })
+      .addCase(getTags.rejected, (state, action) => {
+        state.getTags.status = "failed";
+        state.getTags.error = action.error.message;
       })
       .addCase(searchPrescriptions.pending, (state, action) => {
         state.searchPrescriptions.status = "loading";
