@@ -16,6 +16,7 @@ const initialState = {
   segments: [],
   drugs: [],
   reasons: [],
+  tags: [],
   filtered: {
     status: "idle",
     error: null,
@@ -120,6 +121,20 @@ const interventionReportSlice = createSlice({
           );
           state.drugs = getUniqList(action.payload.cacheData.body, "drug");
           state.reasons = getUniqList(action.payload.cacheData.body, "reason");
+
+          //added in new versions
+          if (
+            action.payload.cacheData.body &&
+            action.payload.cacheData.body.length > 0
+          ) {
+            const firstRecord = action.payload.cacheData.body[0];
+
+            if (firstRecord.hasOwnProperty("tags")) {
+              state.tags = getUniqList(action.payload.cacheData.body, "tags");
+            } else {
+              state.tags = [];
+            }
+          }
         }
       })
       .addCase(fetchReportData.rejected, (state, action) => {

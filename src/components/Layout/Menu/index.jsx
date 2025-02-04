@@ -318,7 +318,7 @@ export default function Menu({ security, featureService }) {
           id: "gtm-lnk-substancias",
         },
         {
-          key: "/admin/tags",
+          key: "/admin/tags2",
           link: "/admin/tags",
           label: t("menu.tag"),
           icon: <TagsOutlined />,

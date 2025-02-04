@@ -83,6 +83,7 @@ export default function Filter({ printRef }) {
     cost: "",
     prescriptionError: "",
     drugAttrList: [],
+    tagList: [],
   };
 
   const reportManager = useFetchReport({

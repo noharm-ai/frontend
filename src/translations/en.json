@@ -718,7 +718,8 @@
     "interventionReasonArray": "INTERVENTION REASONS",
     "outcomeResponsible": "OUTCOME RESPONSIBLE",
     "checkedAt": "CHECK DATE",
-    "originCreatedAt": "ORIGIN CREATION DATE"
+    "originCreatedAt": "ORIGIN CREATION DATE",
+    "tags": "TAGS"
   },
 
   "reportcsvCulture": {

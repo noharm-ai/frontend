@@ -70,6 +70,10 @@ export default function PrescriptionReport() {
       label: "Tipo de evento",
       type: "dict",
     },
+    tagList: {
+      label: "Marcadores",
+      type: "list",
+    },
   };
 
   return (

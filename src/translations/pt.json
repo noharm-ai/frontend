@@ -722,7 +722,8 @@
     "interventionReasonArray": "MOTIVOS INTERVENCAO",
     "outcomeResponsible": "RESPONSAVEL DESFECHO",
     "checkedAt": "DATA CHECAGEM",
-    "originCreatedAt": "DATA CRIACAO ORIGEM"
+    "originCreatedAt": "DATA CRIACAO ORIGEM",
+    "tags": "MARCADORES"
   },
 
   "reportcsvCulture": {
