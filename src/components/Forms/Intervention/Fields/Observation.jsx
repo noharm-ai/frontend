@@ -46,10 +46,7 @@ export default function Observations({
   const applyVariables = (text) => {
     let newText = text;
 
-    newText = newText.replaceAll(
-      "{{nome_medicamento}}",
-      drugData?.drug ?? "(indefinido)"
-    );
+    newText = newText.replaceAll("{{nome_medicamento}}", getDrugName());
     newText = newText.replaceAll(
       "{{nome_medicamento_substituto}}",
       getRelatedDrug()?.name ?? "(indefinido)"
@@ -57,6 +54,14 @@ export default function Observations({
     newText = newText.replaceAll("{{data_atual}}", formatDate(dayjs()));
 
     return newText;
+  };
+
+  const getDrugName = () => {
+    if (drugData.idPrescriptionDrugList) {
+      return "Múltiplos medicamentos selecionados";
+    }
+
+    return drugData?.drug ?? "(indefinido)";
   };
 
   const getRelatedDrug = () => {
@@ -186,7 +191,9 @@ export default function Observations({
       <ObservationDefaultText
         open={saveTextModal}
         setOpen={setSaveTextModal}
-        initialContent={content}
+        initialContent={
+          memory.list && memory.list.length > 0 ? memory.list[0].value.text : ""
+        }
         saveDefaultText={saveDefaultText}
       />
     </>

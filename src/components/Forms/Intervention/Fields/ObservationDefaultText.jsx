@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import Modal from "components/Modal";
 import { Textarea } from "components/Inputs";
@@ -16,8 +16,12 @@ export function ObservationDefaultText({
   initialContent,
   saveDefaultText,
 }) {
-  const [content, setContent] = useState(initialContent);
+  const [content, setContent] = useState("");
   const textRef = useRef(null);
+
+  useEffect(() => {
+    setContent(initialContent);
+  }, [initialContent]);
 
   const addVariable = (variable) => {
     let value = content;
