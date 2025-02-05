@@ -80,11 +80,18 @@ export const getQueueStatus = createAsyncThunk(
         thunkAPI.getState().admin.integrationRemote.template.statusDate;
       const lastBulletinUpdate =
         thunkAPI.getState().admin.integrationRemote.template.bulletinDate;
+      const lastTemplateUpdate =
+        thunkAPI.getState().admin.integrationRemote.template.date;
+
       const response = await api.integrationRemote.getQueueStatus(params);
+
       const statusUpdatedAt = response.data.data.statusUpdatedAt;
       const bulletinUpdatedAt = response.data.data.bulletinUpdatedAt;
+      const templateUpdatedAt = response.data.data.templateUpdatedAt;
+
       let status = null;
       let bulletin = null;
+      let template = null;
 
       if (statusUpdatedAt > lastStatusUpdate) {
         status = await axiosBasic.get(response.data.data.statusUrl);
@@ -94,7 +101,20 @@ export const getQueueStatus = createAsyncThunk(
         bulletin = await axiosBasic.get(response.data.data.bulletinUrl);
       }
 
-      return { response, status, statusUpdatedAt, bulletin, bulletinUpdatedAt };
+      if (templateUpdatedAt > lastTemplateUpdate) {
+        template = await axiosBasic.get(response.data.data.templateUrl);
+        console.log("template", template);
+      }
+
+      return {
+        response,
+        status,
+        statusUpdatedAt,
+        bulletin,
+        bulletinUpdatedAt,
+        template: template?.data,
+        templateUpdatedAt,
+      };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
@@ -190,6 +210,11 @@ const integrationRemoteSlice = createSlice({
             }
           }
         });
+
+        if (action.payload.template) {
+          state.template.data = action.payload.template;
+          state.template.date = action.payload.templateUpdatedAt;
+        }
 
         if (action.payload.status) {
           const flatStatus = {};
