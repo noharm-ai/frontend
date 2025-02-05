@@ -5,7 +5,7 @@ import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 
 import { Col } from "components/Grid";
-import { Select, InputNumber } from "components/Inputs";
+import { Select } from "components/Inputs";
 import Heading from "components/Heading";
 import Tooltip from "components/Tooltip";
 import Switch from "components/Switch";
@@ -303,39 +303,6 @@ export default function Base({
           </Col>
         </Box>
       )}
-      {hasSuspOrSubst(reasons.list, idInterventionReason) &&
-        !values.idPrescriptionDrugList && (
-          <Box hasError={errors.expendedDose && touched.expendedDose}>
-            <Col xs={layout.label}>
-              <Heading as="label" size="14px">
-                <Tooltip
-                  title={t("interventionForm.labelExpendedDoseHint")}
-                  underline
-                >
-                  {t("interventionForm.labelExpendedDose")}:
-                </Tooltip>
-              </Heading>
-            </Col>
-            <Col xs={layout.input}>
-              <InputNumber
-                id="expendedDose"
-                value={values.expendedDose}
-                style={{ width: "100%", maxWidth: "100px" }}
-                onChange={(value) => setFieldValue("expendedDose", value)}
-              />
-              <span style={{ marginLeft: "10px" }}>
-                {drugData.measureUnit ? drugData.measureUnit.value : ""}
-              </span>
-              {errors.expendedDose && touched.expendedDose && (
-                <FieldError>{errors.expendedDose}</FieldError>
-              )}
-              <FieldHelp style={{ opacity: 0.7 }}>
-                Utilizado apenas na versão antiga do relatório de
-                Farmacoeconomia
-              </FieldHelp>
-            </Col>
-          </Box>
-        )}
       {hasTranscription && (
         <>
           <Box hasError={errors.transcription && touched.transcription}>
@@ -383,6 +350,10 @@ export default function Base({
           fetchMemory={memoryFetchReasonText}
           saveMemory={memorySaveReasonText}
           currentReason={idInterventionReason}
+          drugData={drugData}
+          interactions={values.interactions}
+          interactionsList={values.interactionsList}
+          uniqueDrugList={itemToSave.uniqueDrugList}
         />
         {errors.observation && touched.observation && (
           <FieldError>{errors.observation}</FieldError>

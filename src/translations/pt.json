@@ -492,7 +492,7 @@
 
     "btnModelEmpty": "Este motivo ainda não possui um modelo salvo",
     "btnModelSave": "Salvar observação modelo",
-    "btnModelSaveHint": "Preencha o texto para salvar como modelo",
+    "btnModelSaveHint": "Salvar texto padrão",
     "btnModelApply": "Aplicar observação modelo",
     "btnModelInvalid": "Modelos: Esta funcionalidade é desabilitada quando múltiplos motivos são selecionados",
     "btnModelDisabled": "Modelos: Selecione um motivo para liberar esta funcionalidade",

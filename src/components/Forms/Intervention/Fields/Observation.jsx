@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
 import { SaveOutlined, DownloadOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 
 import { Col } from "components/Grid";
 import { Textarea } from "components/Inputs";
@@ -9,6 +10,8 @@ import Heading from "components/Heading";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import notification from "components/notification";
+import { ObservationDefaultText } from "./ObservationDefaultText";
+import { formatDate } from "utils/date";
 
 import { EditorBox } from "components/Forms/Form.style";
 
@@ -19,8 +22,13 @@ export default function Observations({
   fetchMemory,
   saveMemory,
   currentReason,
+  drugData,
+  interactions,
+  interactionsList,
+  uniqueDrugList,
 }) {
   const { t } = useTranslation();
+  const [saveTextModal, setSaveTextModal] = useState(false);
   const isMemoryDisabled = currentReason == null || currentReason.length !== 1;
 
   useEffect(() => {
@@ -35,20 +43,57 @@ export default function Observations({
     }
   }, [memory.save.success, t]);
 
-  const saveDefaultText = () => {
+  const applyVariables = (text) => {
+    let newText = text;
+
+    newText = newText.replaceAll(
+      "{{nome_medicamento}}",
+      drugData?.drug ?? "(indefinido)"
+    );
+    newText = newText.replaceAll(
+      "{{nome_medicamento_substituto}}",
+      getRelatedDrug()?.name ?? "(indefinido)"
+    );
+    newText = newText.replaceAll("{{data_atual}}", formatDate(dayjs()));
+
+    return newText;
+  };
+
+  const getRelatedDrug = () => {
+    let relatedDrugId = null;
+    if (interactions && interactions.length > 0) {
+      relatedDrugId = `${interactions[0]}`;
+    } else {
+      return null;
+    }
+
+    const normalizedList = (interactionsList ?? [])
+      .concat(uniqueDrugList ?? [])
+      .map((i) => ({
+        ...i,
+        idDrug: `${i.idDrug}`,
+      }));
+
+    return normalizedList.find((d) => d.idDrug === relatedDrugId);
+  };
+
+  const saveDefaultText = (value) => {
     const payload = {
       type: `reasonsDefaultText-${currentReason[0]}`,
-      value: { text: content },
+      value: { text: value },
     };
 
     if (!isEmpty(memory.list)) {
       payload.id = memory.list[0].key;
     }
     saveMemory(payload);
+
+    setFieldValue("observation", applyVariables(value));
+    notification.success({ message: t("success.applyDefaultObservation") });
   };
 
   const loadDefaultText = () => {
-    setFieldValue("observation", memory.list[0].value.text);
+    setFieldValue("observation", applyVariables(memory.list[0].value.text));
     notification.success({ message: t("success.applyDefaultObservation") });
   };
 
@@ -106,8 +151,8 @@ export default function Observations({
               shape="circle"
               icon={<SaveOutlined />}
               loading={memory.isFetching || memory.save.isSaving}
-              onClick={saveDefaultText}
-              disabled={isMemoryDisabled || !content}
+              onClick={() => setSaveTextModal(true)}
+              disabled={isMemoryDisabled}
               style={{ marginRight: "5px" }}
               type="primary nda gtm-bt-interv-mem-save"
             />
@@ -137,6 +182,13 @@ export default function Observations({
           />
         </EditorBox>
       </Col>
+
+      <ObservationDefaultText
+        open={saveTextModal}
+        setOpen={setSaveTextModal}
+        initialContent={content}
+        saveDefaultText={saveDefaultText}
+      />
     </>
   );
 }
