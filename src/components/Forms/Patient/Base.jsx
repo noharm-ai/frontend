@@ -258,8 +258,8 @@ export default function Base({ security }) {
               fontSize: "10px",
             }}
           >
-            Selecione uma tag existente ou digite e pressione enter para
-            adicionar uma nova
+            Selecione um marcador existente ou digite e pressione enter para
+            adicionar um novo
           </span>
         </Col>
       </Box>
