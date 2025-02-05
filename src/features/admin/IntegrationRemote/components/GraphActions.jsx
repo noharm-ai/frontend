@@ -5,10 +5,16 @@ import {
   ArrowLeftOutlined,
   UnorderedListOutlined,
   BugOutlined,
+  ReloadOutlined,
 } from "@ant-design/icons";
 
 import Tooltip from "components/Tooltip";
-import { setQueueDrawer, setBulletinModal } from "../IntegrationRemoteSlice";
+import PopConfirm from "components/PopConfirm";
+import {
+  setQueueDrawer,
+  setBulletinModal,
+  pushQueueRequest,
+} from "../IntegrationRemoteSlice";
 
 export default function GraphActions({ goBack }) {
   const dispatch = useDispatch();
@@ -18,6 +24,22 @@ export default function GraphActions({ goBack }) {
   const drawerActive = useSelector(
     (state) => state.admin.integrationRemote.queue.drawer
   );
+  const activeAction = useSelector(
+    (state) => state.admin.integrationRemote.pushQueueRequest.activeAction
+  );
+
+  const refreshTemplate = () => {
+    if (activeAction === "REFRESH_TEMPLATE") {
+      return;
+    }
+
+    const payload = {
+      actionType: "REFRESH_TEMPLATE",
+    };
+
+    dispatch(pushQueueRequest(payload));
+    dispatch(setQueueDrawer(true));
+  };
 
   return (
     <FloatButton.Group
@@ -29,6 +51,18 @@ export default function GraphActions({ goBack }) {
           icon={<UnorderedListOutlined />}
           onClick={() => dispatch(setQueueDrawer(true))}
         />
+      </Tooltip>
+      <Tooltip title="Atualizar template">
+        <PopConfirm
+          title="Atualizar template"
+          description="Confirma a atualização do template?"
+          okText="Sim"
+          cancelText="Não"
+          onConfirm={() => refreshTemplate()}
+          zIndex={9999}
+        >
+          <FloatButton icon={<ReloadOutlined />} />
+        </PopConfirm>
       </Tooltip>
       <Tooltip title="Bulletin board">
         <Badge count={(bulletin?.bulletinBoard?.bulletins ?? []).length}>

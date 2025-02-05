@@ -66,6 +66,7 @@ export default function Filter({ printRef }) {
     statusList: ["a"],
     economyType: "",
     economyValueType: "p",
+    tagList: [],
   };
 
   useFetchReport({

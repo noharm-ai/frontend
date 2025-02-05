@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { uniq } from "utils/lodash";
+import { uniq, intersection } from "utils/lodash";
 
 import { exportCSV, getUniqList } from "utils/report";
 
@@ -56,6 +56,13 @@ const filterDatasource = (datasource, filters) => {
 
       if (filters.eventType === "uncheck") {
         return i.type === "deschecagem";
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.tagList.length) {
+        return intersection(filters.tagList, i.tags).length > 0;
       }
 
       return true;

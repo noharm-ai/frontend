@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import Big from "big.js";
-import { uniq } from "utils/lodash";
+import { uniq, intersection } from "utils/lodash";
 
 import { getUniqList, exportCSV } from "utils/report";
 
@@ -94,6 +94,13 @@ const filterDatasource = (datasource, filters) => {
     .filter((i) => {
       if (filters.maxScore) {
         return i.globalScore <= filters.maxScore;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.tagList.length) {
+        return intersection(filters.tagList, i.tags).length > 0;
       }
 
       return true;

@@ -18,8 +18,10 @@ import Tooltip from "components/Tooltip";
 import LoadBox from "components/LoadBox";
 import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
 import FieldSubstanceClassAutocomplete from "features/fields/FieldSubstanceClassAutocomplete/FieldSubstanceClassAutocomplete";
+import { FieldTag } from "features/fields/FieldTag/FieldTag";
 import { getUniqBy } from "utils/report";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
+import { TagTypeEnum } from "models/TagTypeEnum";
 
 import { Form } from "styles/Form.style";
 
@@ -669,6 +671,23 @@ export default function FilterFields({
                     notFoundContent="Digite o ID do paciente e pressione enter. Mais de um ID pode ser informado."
                     allowClear
                   ></Select>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Marcadores:</label>
+                </div>
+                <div className="form-input">
+                  <FieldTag
+                    tagType={TagTypeEnum.PATIENT}
+                    value={filter.tags}
+                    onChange={(value) =>
+                      setScreeningListFilter({ tags: value })
+                    }
+                  ></FieldTag>
                 </div>
               </div>
             </div>

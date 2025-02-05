@@ -14,6 +14,7 @@ import {
   PieChartOutlined,
   ExportOutlined,
   ReconciliationOutlined,
+  TagsOutlined,
 } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -36,6 +37,7 @@ import PatientName from "containers/PatientName";
 import PatientTab from "./PatientTab";
 import AdmissionTab from "./AdmissionData";
 import NotesTab from "./NotesTab";
+import TagsTab from "./TagsTab";
 import ReportsTab from "./ReportsTab";
 import { PatientBox } from "../Patient.style";
 import { Spin } from "antd";
@@ -130,6 +132,9 @@ export default function PatientCard({
   };
 
   const updatePrescriptionData = () => {
+    notification.info({
+      message: "Recalculando prescrição",
+    });
     dispatch(
       shouldUpdatePrescription({ idPrescription: prescription.idPrescription })
     ).then((response) => {
@@ -288,6 +293,27 @@ export default function PatientCard({
       ),
       children: (
         <NotesTab
+          prescription={prescription}
+          setModalVisibility={setModalVisibility}
+          setSeeMore={setSeeMore}
+        />
+      ),
+    },
+    {
+      key: "patientTags",
+      label: (
+        <Tooltip title="Marcadores">
+          {prescription?.patient?.tags?.length > 0 ? (
+            <Badge dot>
+              <TagsOutlined style={{ fontSize: "18px" }} />
+            </Badge>
+          ) : (
+            <TagsOutlined style={{ fontSize: "18px" }} />
+          )}
+        </Tooltip>
+      ),
+      children: (
+        <TagsTab
           prescription={prescription}
           setModalVisibility={setModalVisibility}
           setSeeMore={setSeeMore}

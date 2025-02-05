@@ -32,6 +32,7 @@ import {
   InteractionOutlined,
   FieldTimeOutlined,
   GoldOutlined,
+  TagsOutlined,
 } from "@ant-design/icons";
 
 import Feature from "models/Feature";
@@ -189,12 +190,12 @@ export default function Menu({ security, featureService }) {
       id: "gtm-lnk-config",
       children: [
         {
-          key: "/medicamentos",
-          link: "/medicamentos",
-          label: t("menu.medications"),
-          icon: <MedicineBoxOutlined />,
-          id: "gtm-lnk-medicamentos",
-          permission: [Permission.READ_PRESCRIPTION],
+          key: "/configuracoes/administracao",
+          link: "/configuracoes/administracao",
+          label: t("menu.user-administration"),
+          icon: <UsergroupAddOutlined />,
+          id: "gtm-lnk-user-administration",
+          permission: [Permission.READ_USERS],
         },
         {
           key: "/admin/exames",
@@ -205,19 +206,28 @@ export default function Menu({ security, featureService }) {
           permission: [Permission.ADMIN_EXAMS],
         },
         {
+          key: "/admin/tags",
+          link: "/admin/tags",
+          label: t("menu.tag"),
+          icon: <TagsOutlined />,
+          id: "gtm-lnk-tags",
+          permission: [Permission.WRITE_TAGS],
+        },
+        {
+          key: "/medicamentos",
+          link: "/medicamentos",
+          label: t("menu.medications"),
+          icon: <MedicineBoxOutlined />,
+          id: "gtm-lnk-medicamentos",
+          permission: [Permission.READ_PRESCRIPTION],
+        },
+
+        {
           key: "/configuracoes/usuario",
           link: "/configuracoes/usuario",
           label: t("menu.userConfig"),
           icon: <UserOutlined />,
           id: "gtm-lnk-usuario",
-        },
-        {
-          key: "/configuracoes/administracao",
-          link: "/configuracoes/administracao",
-          label: t("menu.user-administration"),
-          icon: <UsergroupAddOutlined />,
-          id: "gtm-lnk-user-administration",
-          permission: [Permission.READ_USERS],
         },
       ],
     },
@@ -306,6 +316,14 @@ export default function Menu({ security, featureService }) {
           label: "Substâncias",
           icon: <TagOutlined />,
           id: "gtm-lnk-substancias",
+        },
+        {
+          key: "/admin/tags2",
+          link: "/admin/tags",
+          label: t("menu.tag"),
+          icon: <TagsOutlined />,
+          id: "gtm-lnk-tags",
+          permission: [Permission.WRITE_TAGS],
         },
         {
           key: "/admin/unidade-medida",

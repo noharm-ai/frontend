@@ -5,10 +5,12 @@ import { Spin } from "antd";
 
 import { EChartBase } from "components/EChartBase";
 import Tag from "components/Tag";
+import Tooltip from "components/Tooltip";
 import NodeModal from "./NodeModal";
 import { GraphContainer } from "../IntegrationRemote.style";
 import { setSelectedNode } from "../IntegrationRemoteSlice";
 import GraphActions from "./GraphActions";
+import { formatDateTime } from "utils/date";
 
 export default function Graph() {
   const navigate = useNavigate();
@@ -16,6 +18,9 @@ export default function Graph() {
   const status = useSelector((state) => state.admin.integrationRemote.status);
   const template = useSelector(
     (state) => state.admin.integrationRemote.template.data
+  );
+  const templateDate = useSelector(
+    (state) => state.admin.integrationRemote.template.date
   );
   const templateStatus = useSelector(
     (state) => state.admin.integrationRemote.template.status
@@ -160,6 +165,11 @@ export default function Graph() {
       <NodeModal />
       <div className="schema">
         <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
+      </div>
+      <div className="template-date">
+        <Tooltip title="Última atualização do template">
+          <Tag>{formatDateTime(templateDate)}</Tag>
+        </Tooltip>
       </div>
       <GraphActions goBack={goBack} />
     </GraphContainer>

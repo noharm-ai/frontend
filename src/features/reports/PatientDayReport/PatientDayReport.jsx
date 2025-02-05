@@ -62,6 +62,10 @@ export default function PatientDayReport() {
       label: "Somente dias de semana",
       type: "bool",
     },
+    tagList: {
+      label: "Marcadores",
+      type: "list",
+    },
   };
   const securityService = SecurityService(roles);
 

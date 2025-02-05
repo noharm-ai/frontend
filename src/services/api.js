@@ -742,6 +742,16 @@ api.segments.getDepartments = (params = {}) =>
     ...setHeaders(),
   });
 
+/**
+ * TAGS
+ */
+api.tags = {};
+api.tags.getTags = (params = {}) =>
+  instance.get(`tag/list`, {
+    params,
+    ...setHeaders(),
+  });
+
 /** GENERAL */
 const getVersion = () =>
   instance.get(`/frontend-version`, {

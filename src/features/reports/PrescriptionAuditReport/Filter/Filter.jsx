@@ -78,6 +78,7 @@ export default function Filter({ printRef }) {
     weekDays: false,
     type: "",
     eventType: "",
+    tagList: [],
   };
 
   const reportManager = useFetchReport({

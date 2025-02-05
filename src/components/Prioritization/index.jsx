@@ -142,6 +142,13 @@ export default function Prioritization({
     stopLoading();
   };
 
+  const setActiveTab = (tab) => {
+    dispatch({
+      type: "set_active_tab",
+      payload: tab,
+    });
+  };
+
   const onClientSearch = (ev) => {
     ev.persist();
 
@@ -333,6 +340,8 @@ export default function Prioritization({
                       )}
                       highlight={state.highlightPrioritization}
                       featureService={featureService}
+                      activeTab={state.activeTab}
+                      setActiveTab={setActiveTab}
                     />
                   </animated.div>
                 ))}

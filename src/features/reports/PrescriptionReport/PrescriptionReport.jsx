@@ -62,6 +62,10 @@ export default function PrescriptionReport() {
       label: "Somente dias de semana",
       type: "bool",
     },
+    tagList: {
+      label: "Marcadores",
+      type: "list",
+    },
   };
 
   return (

@@ -50,7 +50,8 @@
     "summary": "Discharge Summary",
     "integration": "Integration",
     "help": "Support Central",
-    "schedules": "Schedules"
+    "schedules": "Schedules",
+    "tag": "Tags"
   },
   "screeningList": {
     "confirm": "Confirm?",
@@ -717,7 +718,8 @@
     "interventionReasonArray": "INTERVENTION REASONS",
     "outcomeResponsible": "OUTCOME RESPONSIBLE",
     "checkedAt": "CHECK DATE",
-    "originCreatedAt": "ORIGIN CREATION DATE"
+    "originCreatedAt": "ORIGIN CREATION DATE",
+    "tags": "TAGS"
   },
 
   "reportcsvCulture": {

@@ -17,6 +17,7 @@ const initialState = {
   destinyDrugs: [],
   reasons: [],
   insurances: [],
+  tags: [],
   filtered: {
     status: "idle",
     error: null,
@@ -118,6 +119,20 @@ const economyReportSlice = createSlice({
             action.payload.cacheData.body,
             "insurance"
           );
+
+          //added in new versions
+          if (
+            action.payload.cacheData.body &&
+            action.payload.cacheData.body.length > 0
+          ) {
+            const firstRecord = action.payload.cacheData.body[0];
+
+            if (firstRecord.hasOwnProperty("tags")) {
+              state.tags = getUniqList(action.payload.cacheData.body, "tags");
+            } else {
+              state.tags = [];
+            }
+          }
         }
       })
       .addCase(fetchReportData.rejected, (state, action) => {

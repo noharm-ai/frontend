@@ -86,6 +86,13 @@ const filterDatasource = (datasource, filters) => {
       }
 
       return true;
+    })
+    .filter((i) => {
+      if (filters.tagList.length) {
+        return intersection(filters.tagList, i.tags).length > 0;
+      }
+
+      return true;
     });
 };
 

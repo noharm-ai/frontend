@@ -81,6 +81,10 @@ export default function InterventionReport() {
       label: "Atributo do medicamento",
       type: "list",
     },
+    tagList: {
+      label: "Marcadores",
+      type: "list",
+    },
   };
 
   return (

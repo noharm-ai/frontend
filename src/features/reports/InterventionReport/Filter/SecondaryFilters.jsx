@@ -18,6 +18,7 @@ export default function SecondaryFilters() {
   const reasons = useSelector(
     (state) => state.reportsArea.intervention.reasons
   );
+  const tags = useSelector((state) => state.reportsArea.intervention.tags);
   const status = useSelector((state) => state.reportsArea.intervention.status);
 
   const yesNoOptions = [
@@ -270,6 +271,34 @@ export default function SecondaryFilters() {
             Pendente
           </Select.Option>
         </Select>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" size="14px">
+          Marcadores do paciente:
+        </Heading>
+        <SelectCustom
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.tagList}
+          onChange={(val) => setFieldValue({ tagList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+          onSelectAll={() =>
+            setFieldValue({
+              tagList: tags,
+            })
+          }
+        >
+          {tags.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </SelectCustom>
       </Col>
     </Row>
   );

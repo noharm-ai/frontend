@@ -22,6 +22,12 @@ export const GraphContainer = styled.div`
     top: 2.5rem;
     left: 1.3rem;
   }
+
+  .template-date {
+    position: absolute;
+    top: 4rem;
+    left: 1.3rem;
+  }
 `;
 
 export const NifiQueueContainer = styled.div`

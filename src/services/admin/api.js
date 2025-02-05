@@ -363,6 +363,19 @@ api.measureunits.updateUnit = (params = {}) => {
   });
 };
 
+/**
+ * TAGS
+ */
+api.tag = {};
+api.tag.getTags = (params = {}) =>
+  instance.post(`/admin/tag/list`, params, setHeaders());
+
+api.tag.upsertTag = (params = {}) => {
+  return instance.post(`/admin/tag/upsert`, params, {
+    ...setHeaders(),
+  });
+};
+
 const methods = {
   ...api,
   getFrequencyList,

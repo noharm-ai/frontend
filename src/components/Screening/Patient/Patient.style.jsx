@@ -246,6 +246,13 @@ export const PatientBox = styled.div`
           }
         }
 
+        .patient-data-item-tags {
+          padding: 10px 15px 10px 5px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
         .patient-data-item-edit {
           position: absolute;
           right: 0;
@@ -338,6 +345,7 @@ export const PatientBox = styled.div`
 
       .ant-tabs-content {
         flex: 1;
+        height: 100%;
 
         .ant-tabs-tabpane {
           height: 100%;
