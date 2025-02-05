@@ -199,6 +199,11 @@ const integrationRemoteSlice = createSlice({
           flatStatuses(action.payload.status, flatStatus, groups);
           state.template.status = flatStatus;
           state.template.statusDate = action.payload.statusUpdatedAt;
+
+          if (state.selectedNode) {
+            const currentId = state.selectedNode.extra?.instanceIdentifier;
+            state.selectedNode.status = state.template.status[currentId];
+          }
         }
 
         if (action.payload.bulletin) {
