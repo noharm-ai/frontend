@@ -103,7 +103,6 @@ export const getQueueStatus = createAsyncThunk(
 
       if (templateUpdatedAt > lastTemplateUpdate) {
         template = await axiosBasic.get(response.data.data.templateUrl);
-        console.log("template", template);
       }
 
       return {

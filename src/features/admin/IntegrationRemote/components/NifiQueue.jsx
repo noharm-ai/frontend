@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   CheckOutlined,
@@ -26,9 +26,17 @@ export default function NifiQueue() {
     (state) => state.admin.integrationRemote.queue.drawer
   );
   const [queueModal, setQueueModal] = useState(null);
+  const waitingResponse = useRef(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
+      if (waitingResponse.current) {
+        console.log("skip queue: waiting response from last request");
+        return;
+      }
+
+      waitingResponse.current = true;
+
       const idQueueList = [];
       queue.forEach((q) => {
         const queueDate = dayjs(q.createdAt);
@@ -40,7 +48,9 @@ export default function NifiQueue() {
         }
       });
 
-      dispatch(getQueueStatus({ idQueueList }));
+      dispatch(getQueueStatus({ idQueueList })).then(() => {
+        waitingResponse.current = false;
+      });
     }, 2500);
 
     return () => {
