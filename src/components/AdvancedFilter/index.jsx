@@ -91,8 +91,10 @@ export default function AdvancedFilter({
       }
     });
 
-    setValues(newFilters);
-    onSearch(newFilters);
+    const mergedFilters = { ...initialValues, ...newFilters };
+
+    setValues(mergedFilters);
+    onSearch(mergedFilters);
   };
 
   const hiddenFieldCount = countHiddenFilters(values);
