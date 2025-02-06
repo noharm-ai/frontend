@@ -124,7 +124,7 @@ export const Paper = styled.div`
   padding: 25px 25px;
   max-height: 80vh;
   width: 100%;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.2;
   overflow-y: auto;
   scrollbar-width: thin;
