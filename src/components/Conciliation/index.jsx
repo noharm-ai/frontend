@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import isEmpty from "lodash.isempty";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { Skeleton } from "antd";
 
 import Empty from "components/Empty";
-import LoadBox from "components/LoadBox";
-import { Row, Col } from "components/Grid";
+import LoadBox, { LoadContainer } from "components/LoadBox";
 import notification from "components/notification";
 import BackTop from "components/BackTop";
 
@@ -15,8 +15,6 @@ import ConciliationDrugList from "containers/Conciliation/ConciliationDrugList";
 import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
 import ScreeningActions from "containers/Screening/ScreeningActions";
 import FormIntervention from "containers/Forms/Intervention";
-
-import { BoxWrapper } from "./index.style";
 
 export default function Screening({ fetchScreeningById, isFetching, error }) {
   const params = useParams();
@@ -50,14 +48,17 @@ export default function Screening({ fetchScreeningById, isFetching, error }) {
 
   return (
     <>
-      <BoxWrapper>
-        <PageHeader />
-        <Row type="flex" gutter={24}>
-          <Col span={24} md={24}>
-            {isFetching ? <LoadBox /> : <Patient />}
-          </Col>
-        </Row>
-      </BoxWrapper>
+      <PageHeader />
+
+      <Skeleton title paragraph={false} loading={isFetching} active />
+
+      {isFetching ? (
+        <LoadContainer>
+          <LoadBox absolute={true} />
+        </LoadContainer>
+      ) : (
+        <Patient />
+      )}
 
       <div style={{ marginTop: "15px" }}>
         <ConciliationDrugList />

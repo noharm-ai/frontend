@@ -226,10 +226,10 @@ export default function PageHeader({
 
   const TitleLegend = ({ content, type }) => {
     if (type === "conciliation") {
-      return null;
+      return <span className="legend">{content.dateOnlyFormated}</span>;
     }
 
-    if (content.agg) {
+    if (content.agg || type === "conciliation") {
       return (
         <span className="legend">
           {t("screeningHeader.subtitleAdmission")} {content.dateOnlyFormated}
