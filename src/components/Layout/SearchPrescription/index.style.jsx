@@ -19,6 +19,8 @@ export const SearchPrescriptionContainer = styled.div`
 
     .ant-input-wrapper {
       .ant-input-affix-wrapper {
+        height: 3.35rem;
+
         input {
           font-size: 24px;
         }

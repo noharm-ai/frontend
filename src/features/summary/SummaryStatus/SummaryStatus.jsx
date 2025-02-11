@@ -33,7 +33,7 @@ export default function SummaryStatus({ setModalSave }) {
   }, [saveStatus]);
 
   return (
-    <SummaryStatusContainer completed={saveStatus === "saved"}>
+    <SummaryStatusContainer $completed={saveStatus === "saved"}>
       <Tooltip
         title={
           saveStatus === "saved"
