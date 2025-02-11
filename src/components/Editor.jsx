@@ -129,6 +129,10 @@ const EditorContainer = styled.div`
     border-bottom-right-radius: 0;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
+
+    .ant-space {
+      width: auto;
+    }
   }
 
   /* Basic editor styles */

@@ -178,32 +178,15 @@ function BaseForm() {
           <label>{t("labels.message")}:</label>
         </div>
         <div className="form-input">
-          <EditorBox>
-            <Editor
-              onEdit={(value) => setFieldValue("description", value)}
-              content={values.description || ""}
-              config={{
-                toolbar: [
-                  "bold",
-                  "italic",
-                  "|",
-                  "numberedList",
-                  "bulletedList",
-                ],
-                placeholder:
-                  "Lembre-se de dar exemplos com número de Atendimento e/ou número de Prescrição para facilitar a resolução do seu chamado.",
-              }}
-              onReady={(editor) => {
-                editor.editing.view.change((writer) => {
-                  writer.setStyle(
-                    "height",
-                    "200px",
-                    editor.editing.view.document.getRoot()
-                  );
-                });
-              }}
-            />
-          </EditorBox>
+          <Editor
+            onEdit={(value) => setFieldValue("description", value)}
+            content={values.description || ""}
+          />
+
+          <div className="form-info">
+            Lembre-se de dar exemplos com número de Atendimento e/ou número de
+            Prescrição para facilitar a resolução do seu chamado.
+          </div>
         </div>
 
         {errors.description && touched.description && (
