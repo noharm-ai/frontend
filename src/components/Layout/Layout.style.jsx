@@ -51,6 +51,10 @@ export const Wrapper = styled(Layout)`
   &.ant-layout {
     background: #eff1f4;
     transition: all 0.2s;
+
+    .ant-layout-sider-children {
+      overflow: hidden;
+    }
   }
 `;
 
