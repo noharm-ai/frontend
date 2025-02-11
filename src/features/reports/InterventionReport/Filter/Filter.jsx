@@ -61,7 +61,7 @@ export default function Filter({ printRef }) {
     (state) => state.reportsArea.intervention.availableReports
   );
   const handlePrint = useReactToPrint({
-    content: () => printRef.current,
+    contentRef: printRef,
     onBeforeGetContent: onBeforePrint,
     onAfterPrint: onAfterPrint,
   });

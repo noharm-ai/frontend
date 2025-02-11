@@ -285,7 +285,7 @@ const Action = ({ record }) => {
             dispatch,
             onShowModal
           )}
-          loading={isSaving}
+          placement="bottomRight"
         >
           <Button
             type="primary"
@@ -295,8 +295,8 @@ const Action = ({ record }) => {
                 ? "gtm-bt-menu-interv-status"
                 : "gtm-bt-tab-interv-status"
             }
-            icon={<CaretDownOutlined style={{ fontSize: 16 }} />}
-          ></Button>
+            icon={<CaretDownOutlined />}
+          />
         </Dropdown>
       )}
       {onShowModal && (

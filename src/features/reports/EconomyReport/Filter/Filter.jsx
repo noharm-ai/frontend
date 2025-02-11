@@ -46,7 +46,7 @@ export default function Filter({ printRef }) {
     (state) => state.reportsArea.economy.filtered.result.list
   );
   const handlePrint = useReactToPrint({
-    content: () => printRef.current,
+    contentRef: printRef,
     onBeforeGetContent: onBeforePrint,
     onAfterPrint: onAfterPrint,
   });

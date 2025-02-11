@@ -62,7 +62,7 @@ export default function Filter({ printRef }) {
     (state) => state.reportsArea.prescriptionAudit.availableReports
   );
   const handlePrint = useReactToPrint({
-    content: () => printRef.current,
+    contentRef: printRef,
     onBeforeGetContent: onBeforePrint,
     onAfterPrint: onAfterPrint,
   });
