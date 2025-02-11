@@ -52,7 +52,7 @@ export const CustomFormContainer = styled.div`
 export const Box = styled.div`
   display: flex;
   flex-direction: ${(props) =>
-    props.flexDirection ? props.flexDirection : "row"};
+    props.$flexDirection ? props.$flexDirection : "row"};
   flex-wrap: wrap;
   align-items: flex-start;
   width: ${(props) => (props.horizontal ? "auto" : "100%")};

@@ -25,7 +25,7 @@ export default [
     ),
     dataIndex: "fator",
     width: 40,
-    render: (entry, record) => <Coefficient {...record} />,
+    render: (entry, record) => <Coefficient record={record} />,
   },
   {
     title: "Contagem",

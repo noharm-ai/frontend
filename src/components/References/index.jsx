@@ -274,7 +274,7 @@ export default function References({
       <Tabs
         defaultActiveKey="1"
         style={{ width: "100%", marginTop: "20px" }}
-        type="card"
+        type="line"
         items={items}
       ></Tabs>
 
@@ -290,12 +290,10 @@ export default function References({
         okText="Salvar"
         okButtonProps={{
           disabled: outliers.saveStatus.isSaving,
-          type: "primary gtm-bt-save-obs",
         }}
         cancelText="Cancelar"
         cancelButtonProps={{
           disabled: outliers.saveStatus.isSaving,
-          type: "nda gtm-bt-cancel-obs",
         }}
       >
         <Edit />

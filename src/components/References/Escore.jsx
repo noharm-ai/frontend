@@ -6,7 +6,8 @@ import Button from "components/Button";
 import { InputNumber } from "components/Inputs";
 import { useOutsideAlerter } from "lib/hooks";
 
-export default function Escore({ idOutlier, manualScore, saveOutlier }) {
+export default function Escore({ outlier }) {
+  const { idOutlier, manualScore, saveOutlier } = outlier;
   const [edit, setEdit] = useState(false);
   const [score, setScore] = useState(manualScore === null ? "-" : manualScore);
   const wrapperRef = useRef(null);

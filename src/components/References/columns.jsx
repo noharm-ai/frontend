@@ -58,7 +58,7 @@ export default [
     title: "Escore Manual",
     dataIndex: "manualScore",
     width: 60,
-    render: (entry, outlier) => <Escore {...outlier} />,
+    render: (entry, outlier) => <Escore outlier={outlier} />,
   },
   {
     title: "Contagem",

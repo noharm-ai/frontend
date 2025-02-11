@@ -51,7 +51,7 @@ export default function ChangePassword({ updatePassword, status }) {
   };
 
   return (
-    <Box flexDirection="row">
+    <Box $flexDirection="row">
       <Col xl={12} xxl={7} style={{ alignSelf: "flex-start" }}>
         <Card title="Alterar senha">
           <Formik

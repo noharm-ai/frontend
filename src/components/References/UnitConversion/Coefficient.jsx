@@ -6,13 +6,14 @@ import Button from "components/Button";
 import { InputNumber } from "components/Inputs";
 import Tooltip from "components/Tooltip";
 
-export default function Escore({
-  idMeasureUnit,
-  fator,
-  saveUnitCoefficient,
-  updateDrugData,
-  defaultIdMeasureUnit,
-}) {
+export default function Escore({ record }) {
+  const {
+    idMeasureUnit,
+    fator,
+    saveUnitCoefficient,
+    updateDrugData,
+    defaultIdMeasureUnit,
+  } = record;
   const [edit, setEdit] = useState(false);
   const [coefficient, setCoefficient] = useState(fator || 0);
 
