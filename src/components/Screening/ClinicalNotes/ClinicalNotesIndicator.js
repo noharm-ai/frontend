@@ -89,11 +89,27 @@ const clinicalNotesIndicator = {
       category: "priority",
     },
     {
+      key: "medprevio",
+      label: t("clinicalNotesIndicator.medprevio"),
+      value: "medprevio",
+      color: "#662e9b",
+      backgroundColor: "rgba(243, 239, 247, 0.1)",
+      category: "info",
+    },
+    {
       key: "names",
       label: t("clinicalNotesIndicator.names"),
       value: "nomes",
       color: "#808080",
       backgroundColor: "rgba(128, 128, 128, 0.1)",
+      category: "info",
+    },
+    {
+      key: "paliativo",
+      label: t("clinicalNotesIndicator.paliativo"),
+      value: "paliativo",
+      color: "rgba(193,87,163, 0.8)",
+      backgroundColor: "rgba(193,87,163, 0.01)",
       category: "info",
     },
     {
