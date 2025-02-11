@@ -122,7 +122,9 @@ export default function SecondaryFilters() {
             style={{ width: "100%" }}
           >
             {SubstanceTagEnum.getSubstanceTags(t).map((subtag) => (
-              <Select.Option value={subtag.id}>{subtag.label}</Select.Option>
+              <Select.Option key={subtag.id} value={subtag.id}>
+                {subtag.label}
+              </Select.Option>
             ))}
           </Select>
 

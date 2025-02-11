@@ -22,10 +22,10 @@ export default function Base({ item, horizontal, onChange }) {
     <div style={{ display: horizontal ? "flex" : "block" }}>
       {item.questions.map((question) => (
         <Box
-          hasError={errors[question.id] && touched[question.id]}
+          $hasError={errors[question.id] && touched[question.id]}
           key={question.id}
           className="question-group"
-          horizontal={horizontal}
+          $horizontal={horizontal}
         >
           <div style={{ width: horizontal ? "auto" : "100%" }}>
             <div className="label-container">

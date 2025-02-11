@@ -250,7 +250,7 @@ function BaseForm() {
                       tagRender={tagRender("purple")}
                     >
                       {SubstanceTagEnum.getSubstanceTags(t).map((subtag) => (
-                        <Select.Option value={subtag.id}>
+                        <Select.Option value={subtag.id} key={subtag.id}>
                           {subtag.label}
                         </Select.Option>
                       ))}

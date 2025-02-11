@@ -55,8 +55,8 @@ export const Box = styled.div`
     props.$flexDirection ? props.$flexDirection : "row"};
   flex-wrap: wrap;
   align-items: flex-start;
-  width: ${(props) => (props.horizontal ? "auto" : "100%")};
-  margin-right: ${(props) => (props.horizontal ? "30px" : "0")};
+  width: ${(props) => (props.$horizontal ? "auto" : "100%")};
+  margin-right: ${(props) => (props.$horizontal ? "30px" : "0")};
 
   label.fixed {
     width: 140px;
@@ -66,11 +66,11 @@ export const Box = styled.div`
   input,
   .ant-select .ant-select-selector,
   textarea {
-    background: ${(props) => (props.hasError ? "#ffcdd2;" : "inherit")};
+    background: ${(props) => (props.$hasError ? "#ffcdd2;" : "inherit")};
   }
 
   .ant-select-selection__placeholder {
-    color: ${(props) => (props.hasError ? "#454545;" : "inherit")};
+    color: ${(props) => (props.$hasError ? "#454545;" : "inherit")};
   }
 
   &.highlight {
