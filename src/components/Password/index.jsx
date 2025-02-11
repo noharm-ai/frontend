@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -95,7 +95,8 @@ export default function Password({ resetPassword, status }) {
               <FieldError>{errors.confirmPassword}</FieldError>
 
               <Button
-                type="primary gtm-btn-login"
+                type="primary"
+                className="gtm-btn-login"
                 htmlType="submit"
                 block
                 onClick={handleSubmit}

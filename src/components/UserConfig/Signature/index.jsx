@@ -56,7 +56,7 @@ export default function Signature({ fetchMemory, saveMemory, memory, userId }) {
     <Box>
       <Row style={{ width: "100%" }}>
         <Col xs={24} style={{ paddingBottom: "0" }}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Assinatura:
           </Heading>
         </Col>
@@ -72,7 +72,8 @@ export default function Signature({ fetchMemory, saveMemory, memory, userId }) {
           </EditorBox>
           <ButtonContainer>
             <Button
-              type="primary gtm-btn-save-signature"
+              type="primary"
+              className="gtm-btn-save-signature"
               onClick={() => save()}
               disabled={isFetching || isSaving}
               loading={isSaving}

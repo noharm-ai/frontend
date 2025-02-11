@@ -6,7 +6,7 @@ import appInfo from "utils/appInfo";
  * Intantiated axios to auto request from API Url.
  */
 const requestConfig = {
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: import.meta.env.VITE_APP_API_URL,
 };
 
 export const instance = axios.create(requestConfig);

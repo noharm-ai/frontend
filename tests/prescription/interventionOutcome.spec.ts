@@ -30,7 +30,7 @@ test("outcome: suspension", async ({ page }) => {
   await page.locator(".ant-modal-content .ant-dropdown-trigger").hover();
   await page.getByText("Salvar e marcar como Aceita").click();
 
-  await page.getByRole("button", { name: "caret-down" }).click();
+  await page.locator(".btn-calc-details-origin").click();
   await expect(
     page
       .locator("div")
@@ -71,16 +71,10 @@ test("outcome: suspension", async ({ page }) => {
       .getByRole("spinbutton")
   ).toHaveValue("45,200000");
 
-  await page
-    .locator("div")
-    .filter({ hasText: /^Custo \/ \(mg\):R\$$/ })
-    .getByLabel("Increase Value")
-    .click();
-  await page
-    .locator("div")
-    .filter({ hasText: /^Custo KIT:R\$$/ })
-    .getByLabel("Increase Value")
-    .click();
+  await page.locator(".input-price").hover();
+  await page.locator(".input-price").getByLabel("Increase Value").click();
+  await page.locator(".input-price-kit").hover();
+  await page.locator(".input-price-kit").getByLabel("Increase Value").click();
 
   expect(
     page
@@ -148,6 +142,12 @@ test("outcome: substitution", async ({ page }) => {
     .getByRole("button", { name: "caret-down" })
     .nth(1)
     .click();
+  await page
+    .locator(
+      "div:nth-child(2) > div > .collapsible > div:nth-child(4) > .form-input > .ant-space > div > .ant-input-number-group-wrapper > .ant-input-number-wrapper > .ant-input-number"
+    )
+    .first()
+    .hover();
   await page
     .locator(
       "div:nth-child(2) > div > .collapsible > div:nth-child(4) > .form-input > .ant-space > div > .ant-input-number-group-wrapper > .ant-input-number-wrapper > .ant-input-number > .ant-input-number-handler-wrap > span"

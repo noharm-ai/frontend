@@ -2,7 +2,7 @@
 <html lang="pt-BR" translate="no">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" href="/favicon.ico" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
@@ -21,7 +21,7 @@
     <meta name="robots" content="noindex,nofollow" />
     <meta name="google" content="notranslate" />
     <link rel="apple-touch-icon" href="logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="manifest" href="/manifest.json" />
 
     <script src="/ua-parser.min.js"></script>
 
@@ -95,7 +95,7 @@
     </script>
     <!-- End Global site tag (gtag.js) - Google Analytics -->
 
-    <title>%REACT_APP_SITE_TITLE%</title>
+    <title>%VITE_APP_SITE_TITLE%</title>
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
@@ -164,7 +164,7 @@
           allowCookies: true,
           enableXRay: false,
           sessionAttributes: {
-            applicationVersion: "%REACT_APP_VERSION%",
+            applicationVersion: "%VITE_APP_VERSION%",
           },
         }
       );
@@ -174,17 +174,8 @@
     <div id="update-browser" style="display: none"></div>
     <button id="update-browser-close" style="display: none">Fechar</button>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-
+    <script type="module" src="/src/index.jsx"></script>
     <style>
       #update-browser {
         position: absolute;

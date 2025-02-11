@@ -1,5 +1,5 @@
 import React from "react";
-import "styled-components/macro";
+import "styled-components";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
@@ -37,7 +37,7 @@ export default function Base({ security }) {
     <>
       <Box hasError={errors.weight}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
+          <Heading as="label" $size="14px" $textAlign="right">
             <Tooltip title="">Peso:</Tooltip>
           </Heading>
         </Col>
@@ -59,7 +59,7 @@ export default function Base({ security }) {
 
       <Box hasError={errors.height}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
+          <Heading as="label" $size="14px" $textAlign="right">
             <Tooltip title="">Altura:</Tooltip>
           </Heading>
         </Col>
@@ -93,7 +93,7 @@ export default function Base({ security }) {
 
       <Box hasError={errors.dialysis}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
+          <Heading as="label" $size="14px" $textAlign="right">
             <Tooltip title="">{t("labels.dialysis")}:</Tooltip>
           </Heading>
         </Col>
@@ -119,7 +119,7 @@ export default function Base({ security }) {
 
       <Box hasError={errors.gender}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
+          <Heading as="label" $size="14px" $textAlign="right">
             <Tooltip title="">{t("labels.gender")}:</Tooltip>
           </Heading>
         </Col>
@@ -142,7 +142,7 @@ export default function Base({ security }) {
 
       <Box hasError={errors.skinColor}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
+          <Heading as="label" $size="14px" $textAlign="right">
             <Tooltip title="">{t("labels.skinColor")}:</Tooltip>
           </Heading>
         </Col>
@@ -168,7 +168,7 @@ export default function Base({ security }) {
 
       <Box hasError={errors.lactating}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
+          <Heading as="label" $size="14px" $textAlign="right">
             <Tooltip title="">{t("labels.lactating")}:</Tooltip>
           </Heading>
         </Col>
@@ -190,7 +190,7 @@ export default function Base({ security }) {
 
       <Box hasError={errors.pregnant}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
+          <Heading as="label" $size="14px" $textAlign="right">
             <Tooltip title="">{t("labels.pregnant")}:</Tooltip>
           </Heading>
         </Col>
@@ -212,7 +212,7 @@ export default function Base({ security }) {
 
       <Box hasError={errors.birthdate}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
+          <Heading as="label" $size="14px" $textAlign="right">
             <Tooltip title="">{t("labels.birthdate")}:</Tooltip>
           </Heading>
         </Col>
@@ -239,7 +239,7 @@ export default function Base({ security }) {
 
       <Box hasError={errors.tags}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px" textAlign="right">
+          <Heading as="label" $size="14px" $textAlign="right">
             <Tooltip title="">Marcadores:</Tooltip>
           </Heading>
         </Col>
@@ -267,7 +267,7 @@ export default function Base({ security }) {
       {PermissionService().has(Permission.ADMIN_PATIENT) && (
         <Box hasError={errors.dischargeDate}>
           <Col xs={layout.label}>
-            <Heading as="label" size="14px" textAlign="right">
+            <Heading as="label" $size="14px" $textAlign="right">
               <Tooltip title="">{t("labels.dischargeDate")}:</Tooltip>
             </Heading>
           </Col>
@@ -303,7 +303,7 @@ export default function Base({ security }) {
 
       <Box hasError={errors.observation}>
         <Col xs={24} style={{ paddingBottom: "0" }}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             <Tooltip title="">Anotações:</Tooltip>
           </Heading>
         </Col>
@@ -312,9 +312,6 @@ export default function Base({ security }) {
             <Editor
               onEdit={(value) => setFieldValue("observation", value)}
               content={observation || ""}
-              onReady={(editor) => {
-                editor.editing.view.focus();
-              }}
             />
           </EditorBox>
         </Col>

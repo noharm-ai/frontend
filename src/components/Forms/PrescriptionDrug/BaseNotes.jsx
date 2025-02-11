@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React from "react";
 import { useFormikContext } from "formik";
 
@@ -15,7 +15,7 @@ export default function BaseNotes({ item }) {
 
   return (
     <>
-      <DrugData {...item} />
+      <DrugData item={item} />
       <Box hasError={errors.notes && touched.notes}>
         <Col xs={24}>
           <EditorBox>

@@ -44,9 +44,10 @@ export default function IntegrationRemote() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (!templateDate) {
-      refreshTemplate();
-    }
+    // if (!templateDate) {
+    //   refreshTemplate();
+    // }
+    loadTemplate();
   }, []); //eslint-disable-line
 
   const loadTemplate = () => {

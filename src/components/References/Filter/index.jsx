@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -71,8 +71,8 @@ export default function Filter({
             <Heading
               as="label"
               htmlFor="segments"
-              size="16px"
-              margin="0 10px 0 0"
+              $size="16px"
+              $margin="0 10px 0 0"
             >
               Segmento:
             </Heading>
@@ -97,7 +97,12 @@ export default function Filter({
         </Col>
         <Col span={24} md={24 - 8 - 4}>
           <Box>
-            <Heading as="label" htmlFor="drug" size="16px" margin="0 10px 0 0">
+            <Heading
+              as="label"
+              htmlFor="drug"
+              $size="16px"
+              $margin="0 10px 0 0"
+            >
               Medicamento:
             </Heading>
             <Select

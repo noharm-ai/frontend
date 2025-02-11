@@ -160,16 +160,19 @@ export default function MemoryText({
           privateMemory ? "Texto padrão (privado)" : "Texto padrão (público)"
         }
       >
-        <Dropdown menu={menuOptions()}>
-          <Button
-            shape="circle"
-            icon={
-              privateMemory ? <FileProtectOutlined /> : <FileTextOutlined />
-            }
-            type={privateMemory ? "default" : "primary gtm-bt-memorytext"}
-            loading={isFetching}
-          />
-        </Dropdown>
+        <span>
+          <Dropdown menu={menuOptions()}>
+            <Button
+              shape="circle"
+              icon={
+                privateMemory ? <FileProtectOutlined /> : <FileTextOutlined />
+              }
+              type={privateMemory ? "default" : "primary"}
+              className="gtm-bt-memorytext"
+              loading={isFetching}
+            />
+          </Dropdown>
+        </span>
       </Tooltip>
 
       <SaveModal

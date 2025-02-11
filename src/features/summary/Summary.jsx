@@ -138,7 +138,7 @@ function Summary({ mock }) {
       </PageHeader>
       {status !== "succeeded" ? (
         <LoadContainer>
-          <LoadBox absolute={true} />
+          <LoadBox $absolute={true} />
         </LoadContainer>
       ) : (
         <SummaryContainer>

@@ -17,7 +17,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={4} xxl={4}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           {t("screeningList.segment")}:
         </Heading>
         <Select
@@ -37,7 +37,7 @@ export default function MainFilters() {
         </Select>
       </Col>
       <Col md={5} lg={3} xxl={2}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Substância:
         </Heading>
         <Select
@@ -57,7 +57,7 @@ export default function MainFilters() {
         </Select>
       </Col>
       <Col md={5} lg={3} xxl={2}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Unidade Padrão:
         </Heading>
         <Select
@@ -77,7 +77,7 @@ export default function MainFilters() {
         </Select>
       </Col>
       <Col md={5} lg={3} xxl={2}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Unidade Custo:
         </Heading>
         <Select
@@ -97,7 +97,7 @@ export default function MainFilters() {
         </Select>
       </Col>
       <Col md={5} lg={3} xxl={2}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           <Tooltip title="Possui fator de conversão para unidade de custo?">
             Fat. Unid. Custo:
           </Tooltip>

@@ -124,7 +124,7 @@ export default function ScoreWizard({
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Heading as="label" size="16px" margin="0 0 10px">
+        <Heading as="label" $size="16px" $margin="0 0 10px">
           Assistente para Geração de Escores{" "}
           <span
             style={{
@@ -191,7 +191,7 @@ export default function ScoreWizard({
               >
                 <>
                   <Col md={5} xxl={3}>
-                    <Heading as="label" size="14px" textAlign="right">
+                    <Heading as="label" $size="14px" $textAlign="right">
                       Unidade padrão:
                     </Heading>
                   </Col>
@@ -253,7 +253,7 @@ export default function ScoreWizard({
           <Row gutter={24} align="middle" type="flex">
             <Col md={1}></Col>
             <Col md={24 - 5} xxl={24 - 3}>
-              <Heading as="label" size="14px">
+              <Heading as="label" $size="14px">
                 <Tooltip title="">Divisor de faixas:</Tooltip>
               </Heading>
               <InputNumber
@@ -346,7 +346,11 @@ export default function ScoreWizard({
           </Button>
         )}
         {currentStep === maxSteps - 1 && (
-          <Button type="primary gtm-bt-med-generate" onClick={generate}>
+          <Button
+            type="primary"
+            className="gtm-bt-med-generate"
+            onClick={generate}
+          >
             Gerar escores
           </Button>
         )}

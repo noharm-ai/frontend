@@ -15,7 +15,7 @@ export default function SecondaryFilters() {
     <Col xs={24} md={14}>
       <Row gutter={[24, 24]}>
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             Tipo:
           </Heading>
 
@@ -40,7 +40,7 @@ export default function SecondaryFilters() {
           </Select>
         </Col>
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             Nível:
           </Heading>
 
@@ -60,7 +60,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             Situação:
           </Heading>
 

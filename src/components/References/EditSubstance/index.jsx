@@ -83,7 +83,7 @@ export default function EditSubstance({
     <>
       <Row type="flex" gutter={24} align="middle">
         <Col md={4} xxl={2}>
-          <Heading as="h3" size="16px" textAlign="right">
+          <Heading as="h3" $size="16px" $textAlign="right">
             Substância:
           </Heading>
         </Col>
@@ -113,7 +113,8 @@ export default function EditSubstance({
           {drugData.sctidA !== currentSubstance.sctidA && (
             <Tooltip title="Confirmar e Salvar a alteração">
               <Button
-                type="primary gtm-bt-change-substancia"
+                type="primary"
+                className="gtm-bt-change-substancia"
                 style={{ marginLeft: "5px" }}
                 onClick={saveSubstance}
                 disabled={saving}
@@ -127,7 +128,8 @@ export default function EditSubstance({
               <>
                 <Tooltip title="Curadoria de substâncias">
                   <Button
-                    type="primary gtm-bt-edit-substancia"
+                    type="primary"
+                    className="gtm-bt-edit-substancia"
                     style={{ marginLeft: "5px" }}
                     onClick={() => window.open("/admin/substancias")}
                     icon={<SettingOutlined />}

@@ -218,7 +218,7 @@ function OutliersForm({ open, setOpen }) {
               marginBottom: "20px",
             }}
           >
-            <Heading size="16px">
+            <Heading $size="16px">
               {outliersStatus === "loading"
                 ? "Gerando escores..."
                 : "Escores gerados com sucesso"}

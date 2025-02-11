@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useState } from "react";
 import { CheckOutlined, EditOutlined, CloseOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
@@ -86,7 +86,8 @@ export default function EditPriceConversion({
         max={99999999}
       />
       <Button
-        type="primary gtm-bt-change-daily-frequency"
+        type="primary"
+        className="gtm-bt-change-daily-frequency"
         onClick={handleSave}
         icon={<CheckOutlined />}
         loading={saving}

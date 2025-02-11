@@ -87,7 +87,8 @@ export default [
           title={hasObs ? "Ver/Editar comentário" : "Adicionar comentário"}
         >
           <Button
-            type="primary gtm-bt-view-obs"
+            type="primary"
+            className="gtm-bt-view-obs"
             ghost={!hasObs}
             onClick={() => outlier.onShowObsModal(outlier)}
             icon={<FormOutlined />}

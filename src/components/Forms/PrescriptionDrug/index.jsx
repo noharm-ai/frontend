@@ -1,5 +1,5 @@
 import React from "react";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
@@ -149,7 +149,8 @@ export default function PrescriptionDrug({
         )}
 
         <Button
-          type="primary gtm-bt-save-drugEdit"
+          type="primary"
+          className="gtm-bt-save-drugEdit"
           onClick={() => handleSubmit()}
           loading={isSaving}
         >
@@ -196,7 +197,7 @@ export default function PrescriptionDrug({
           footer={<Footer handleSubmit={handleSubmit} />}
         >
           <header>
-            <Heading margin="0 0 15px">
+            <Heading $margin="0 0 15px">
               {item.updateDrug &&
                 t(
                   `prescriptionDrugForm.title${

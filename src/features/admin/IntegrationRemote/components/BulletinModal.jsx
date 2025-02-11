@@ -51,7 +51,7 @@ export default function BulletinModal() {
       onCancel={() => dispatch(setBulletinModal(null))}
       footer={null}
     >
-      <Heading style={{ marginBottom: "20px" }} size="18px">
+      <Heading style={{ marginBottom: "20px" }} $size="18px">
         Bulletin Board
       </Heading>
 

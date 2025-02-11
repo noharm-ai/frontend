@@ -293,12 +293,12 @@ export default function SaveModal({
           disabled: name === "" || newText === "",
         }}
         okText="Salvar"
-        okType="primary gtm-bt-memorytext-savemodal"
+        okType="primary"
         cancelText="Cancelar"
       >
         <Heading
           as="label"
-          size="14px"
+          $size="14px"
           className="fixed"
           style={{ marginTop: "12px" }}
         >
@@ -315,7 +315,7 @@ export default function SaveModal({
           >
             <Heading
               as="label"
-              size="14px"
+              $size="14px"
               className="fixed"
               style={{ marginTop: "12px" }}
             >

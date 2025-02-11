@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useEffect } from "react";
 import axios from "axios";
 import { Spin } from "antd";

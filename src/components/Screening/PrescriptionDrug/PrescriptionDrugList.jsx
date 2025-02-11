@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { format, parseISO, differenceInMinutes } from "date-fns";
 import { useTranslation } from "react-i18next";
 
@@ -165,7 +165,7 @@ export default function PrescriptionDrugList({
   if (isFetching) {
     return (
       <LoadContainer>
-        <LoadBox absolute={true} />
+        <LoadBox $absolute={true} />
       </LoadContainer>
     );
   }

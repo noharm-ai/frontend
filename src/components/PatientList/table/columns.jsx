@@ -9,7 +9,8 @@ import { Link } from "components/Button";
 const Action = (record) => {
   return (
     <Link
-      type="secondary gtm-bt-detail-patient"
+      type="secondary"
+      className="gtm-bt-detail-patient"
       href={`/prescricao/${record.idPrescription}`}
       target="_blank"
       icon={<SearchOutlined />}

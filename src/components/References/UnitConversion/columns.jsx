@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React from "react";
 import Coefficient from "./Coefficient";
 import Tooltip from "components/Tooltip";

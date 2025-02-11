@@ -34,14 +34,14 @@ import {
   GoldOutlined,
   TagsOutlined,
 } from "@ant-design/icons";
+import { Menu as Navigator } from "antd";
 
 import Feature from "models/Feature";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import SecurityService from "services/security";
-import { Wrapper as Navigator } from "./Menu.style";
 
-export default function Menu({ security, featureService }) {
+export default function Menu({ featureService }) {
   const location = useLocation();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -170,15 +170,15 @@ export default function Menu({ security, featureService }) {
       permission: [Permission.READ_REPORTS],
     },
     {
-      key: `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/39`,
-      link: `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/39`,
+      key: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
+      link: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
       label: t("menu.knowledgeBase"),
       icon: <BulbOutlined />,
       id: "gtm-lnk-knowledgeBase",
     },
     {
-      key: `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/137`,
-      link: `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/137`,
+      key: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/137`,
+      link: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/137`,
       label: t("menu.news"),
       icon: <ThunderboltOutlined />,
       id: "gtm-lnk-news",
@@ -400,6 +400,6 @@ export default function Menu({ security, featureService }) {
       selectedKeys={[location.pathname]}
       items={getItems(items)}
       onClick={linkTo}
-    ></Navigator>
+    />
   );
 }

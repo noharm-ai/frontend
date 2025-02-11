@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import Menu from "components/Menu";
 import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
@@ -215,7 +215,7 @@ export const Paper = styled.div`
         font-weight: 500;
       }
 
-      ${(props) => createIndicatorClasses(props.t)}
+      ${(props) => createIndicatorClasses(props.$t)}
     }
   }
 
@@ -315,7 +315,7 @@ export const List = styled.div`
       margin-right: 2px !important;
     }
 
-    ${(props) => createIndicatorTagClasses(props.t)}
+    ${(props) => createIndicatorTagClasses(props.$t)}
   }
 
   .day-info {

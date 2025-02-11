@@ -1,5 +1,5 @@
 import slugify from "slugify";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import moment from "moment";
 
 const noValues = [0, "None", null, undefined];

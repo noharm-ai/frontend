@@ -45,7 +45,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={6} xxl={4}>
-        <Heading as="label" htmlFor="date" size="14px">
+        <Heading as="label" htmlFor="date" $size="14px">
           Data da solicitação
         </Heading>
         <RangeDatePicker
@@ -62,7 +62,7 @@ export default function MainFilters() {
         />
       </Col>
       <Col md={5} lg={7} xxl={6}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           UBS:
         </Heading>
         <SelectCustom
@@ -92,7 +92,7 @@ export default function MainFilters() {
         </SelectCustom>
       </Col>
       <Col md={5} lg={4} xxl={4}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Etapa:
         </Heading>
         <Select

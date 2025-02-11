@@ -54,7 +54,7 @@ export function isNumber(value) {
 export function isInt(value) {
   return (
     !isNaN(value) &&
-    parseInt(Number(value)) == value && //eslint-disable-line
+    parseInt(Number(value)) == value &&
     !isNaN(parseInt(value, 10)) &&
     `${value}`.indexOf(".") === -1
   );

@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useState } from "react";
 import { CheckOutlined, StarOutlined, EditOutlined } from "@ant-design/icons";
 
@@ -40,7 +40,8 @@ export default function Escore({
         onChange={setCoefficient}
       />
       <Button
-        type="primary gtm-bt-save-factor"
+        type="primary"
+        className="gtm-bt-save-factor"
         onClick={handleSave}
         icon={<CheckOutlined />}
       ></Button>

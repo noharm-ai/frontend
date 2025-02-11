@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
-import debounce from "lodash.debounce";
+import { debounce } from "lodash";
 
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
@@ -34,7 +34,7 @@ export default function SecondaryFilters({ segments }) {
   return (
     <Row gutter={[20, 20]}>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" htmlFor="date" size="14px">
+        <Heading as="label" htmlFor="date" $size="14px">
           {t("patientCard.segment")}:
         </Heading>
         <Select
@@ -52,7 +52,7 @@ export default function SecondaryFilters({ segments }) {
       </Col>
 
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" htmlFor="segments" size="14px">
+        <Heading as="label" htmlFor="segments" $size="14px">
           {t("screeningList.labelDrug")}:
         </Heading>
         <Tooltip
@@ -86,7 +86,7 @@ export default function SecondaryFilters({ segments }) {
       </Col>
 
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" htmlFor="date" size="14px">
+        <Heading as="label" htmlFor="date" $size="14px">
           {t("labels.responsible")}:
         </Heading>
         <Input
@@ -101,7 +101,7 @@ export default function SecondaryFilters({ segments }) {
       </Col>
 
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" htmlFor="date" size="14px">
+        <Heading as="label" htmlFor="date" $size="14px">
           {t("labels.prescriber")}:
         </Heading>
         <Input
@@ -116,7 +116,7 @@ export default function SecondaryFilters({ segments }) {
       </Col>
 
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" htmlFor="date" size="14px">
+        <Heading as="label" htmlFor="date" $size="14px">
           {t("labels.hasEconomy")}:
         </Heading>
         <Radio.Group

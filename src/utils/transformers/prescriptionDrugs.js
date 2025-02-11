@@ -1,4 +1,4 @@
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { parseISO, differenceInMinutes } from "date-fns";
 
 export const groupComponents = (list, infusion) => {

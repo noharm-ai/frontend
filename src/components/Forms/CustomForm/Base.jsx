@@ -30,7 +30,7 @@ export default function Base({ item, horizontal, onChange }) {
           <div style={{ width: horizontal ? "auto" : "100%" }}>
             <div className="label-container">
               <div className="label">
-                <Heading as="label" size="14px">
+                <Heading as="label" $size="14px">
                   {question.label}
                 </Heading>
               </div>

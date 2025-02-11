@@ -1,8 +1,8 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { get } from "styles/utils";
-import { ReactComponent as LogoSVG } from "assets/noHarm.svg";
-import { ReactComponent as LogoENSVG } from "assets/noHarm_en.svg";
+import { NoHarmLogo as LogoSVG } from "assets/NoHarmLogo";
+import { NoHarmLogoEn as LogoENSVG } from "assets/NoHarmLogoEn";
 
 export const FieldError = styled.span`
   display: block;
@@ -94,7 +94,6 @@ export const LoginContainer = styled.div`
       }
 
       button {
-        display: block;
         margin-top: 1em;
         font-size: 1.4em;
         height: 50px;

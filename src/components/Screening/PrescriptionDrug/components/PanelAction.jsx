@@ -248,18 +248,17 @@ const PanelAction = ({
 
       <div>
         <Dropdown menu={prescriptionOptions(header)} trigger={["click"]}>
-          <Tooltip title="Opções">
-            <Button
-              type="link gtm-bt-check-single"
-              onClick={openMenu}
-              style={{ padding: 0 }}
-              loading={isChecking}
-            >
-              {!isChecking && (
-                <MoreOutlined style={{ marginLeft: 0, fontSize: "30px" }} />
-              )}
-            </Button>
-          </Tooltip>
+          <Button
+            type="link"
+            className="gtm-bt-check-single"
+            onClick={openMenu}
+            style={{ padding: 0 }}
+            loading={isChecking}
+          >
+            {!isChecking && (
+              <MoreOutlined style={{ marginLeft: 0, fontSize: "30px" }} />
+            )}
+          </Button>
         </Dropdown>
       </div>
     </PanelActionContainer>

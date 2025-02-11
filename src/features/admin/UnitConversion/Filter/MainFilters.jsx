@@ -14,7 +14,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={4} xxl={4}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Segmento Referência:
         </Heading>
         <Select
@@ -32,7 +32,7 @@ export default function MainFilters() {
         </Select>
       </Col>
       <Col md={5} lg={4} xxl={3}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Fator de Conversão:
         </Heading>
         <Select

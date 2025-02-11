@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import {
   SearchOutlined,
   LoadingOutlined,
@@ -65,19 +65,19 @@ const NestedTableContainer = styled.div`
   margin-bottom: 35px;
 `;
 
-const ScreeningActions = ({
-  idPrescription,
-  status,
-  slug,
-  checkScreening,
-  check,
-  prioritizationType,
-  t,
-  selectedRowsActive,
-  selectedRows,
-  dispatch,
-  toggleSelectedRows,
-}) => {
+const ScreeningActions = ({ prescription, t }) => {
+  const {
+    idPrescription,
+    status,
+    slug,
+    checkScreening,
+    check,
+    prioritizationType,
+    selectedRowsActive,
+    selectedRows,
+    dispatch,
+    toggleSelectedRows,
+  } = prescription;
   if (selectedRowsActive) {
     const selected = selectedRows.indexOf(idPrescription) !== -1;
     return (
@@ -104,7 +104,8 @@ const ScreeningActions = ({
       <Tooltip title={t("screeningList.btnOpen")} placement="left">
         <span>
           <Link
-            type="secondary gtm-bt-detail"
+            type="secondary"
+            className="gtm-bt-detail"
             href={
               prioritizationType === "conciliation"
                 ? `/conciliacao/${slug}`
@@ -125,7 +126,9 @@ export const defaultAction = {
   key: "operations",
   width: 70,
   align: "center",
-  render: (text, prescription) => <ScreeningActions {...prescription} />,
+  render: (text, prescription) => (
+    <ScreeningActions prescription={prescription} />
+  ),
 };
 
 export const desktopAction = {
@@ -514,7 +517,7 @@ const columns = (sortedInfo, filteredInfo, t, bag) => {
       filteredValue: filteredInfo.status || null,
       onFilter: (value, record) => record.status === value,
       render: (text, prescription) => (
-        <ScreeningActions t={t} {...prescription} />
+        <ScreeningActions t={t} prescription={prescription} />
       ),
     },
   ];

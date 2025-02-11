@@ -125,7 +125,7 @@ export default function ClinicalNotes({
           }}
         >
           <header>
-            <Heading margin="0 0 11px">
+            <Heading $margin="0 0 11px">
               {action === "schedule" ? "Agendar consulta" : "Evolução"}
             </Heading>
           </header>

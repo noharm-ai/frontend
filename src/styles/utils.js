@@ -1,4 +1,4 @@
-import getter from "lodash.get";
+import { get as getter } from "lodash";
 import { rem as polishedRem, stripUnit } from "polished";
 
 import { defaultFontSize } from "styles/sizes";

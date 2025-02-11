@@ -1,10 +1,9 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import PropTypes from "prop-types";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -153,7 +152,8 @@ export default function Login({ isLogging, error, doLogin }) {
               <>
                 <div className="company-name">{oauthData?.company}</div>
                 <Button
-                  type="primary gtm-btn-oauthlogin"
+                  type="primary"
+                  className="gtm-btn-oauthlogin"
                   block
                   onClick={openOauthLogin}
                 >
@@ -217,12 +217,13 @@ export default function Login({ isLogging, error, doLogin }) {
                 </div>
 
                 <Button
-                  type="primary gtm-btn-login"
+                  type="primary"
                   htmlType="submit"
                   block
                   loading={isLogging || preAuthLoading}
                   onClick={handleSubmit}
                   size="large"
+                  className="gtm-btn-login"
                 >
                   {t("login.login")}
                 </Button>
@@ -270,12 +271,3 @@ export default function Login({ isLogging, error, doLogin }) {
     </LoginContainer>
   );
 }
-
-Login.propTypes = {
-  error: PropTypes.shape(),
-  doLogin: PropTypes.func.isRequired,
-};
-
-Login.defaultProps = {
-  error: {},
-};

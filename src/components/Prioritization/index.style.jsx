@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 import breakpoints from "styles/breakpoints";
 import { timingFunctions } from "polished";
 
@@ -21,8 +21,8 @@ export const PrioritizationPage = styled.div`
     grid-column-gap: 2rem;
     grid-row-gap: 4rem;
 
-    ${({ collapsed }) =>
-      collapsed
+    ${({ $collapsed }) =>
+      $collapsed
         ? css`
             @media (min-width: ${breakpoints.lg}) {
               grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -119,6 +119,7 @@ export const ResultActions = styled.div`
 
       .filters-item-label {
         font-weight: 500;
+        color: #696766;
       }
 
       .filters-item-value {

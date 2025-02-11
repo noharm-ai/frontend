@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { useParams, useLocation } from "react-router-dom";
@@ -266,7 +266,7 @@ export default function Filter({
         <Row gutter={[16, 24]} type="flex">
           <Col xs={24} md={8}>
             <Box>
-              <Heading as="label" htmlFor="segments" size="14px">
+              <Heading as="label" htmlFor="segments" $size="14px">
                 {t("screeningList.segment")}:
               </Heading>
               <Select
@@ -291,7 +291,7 @@ export default function Filter({
           </Col>
           <Col md={7} lg={7} xxl={5}>
             <Box>
-              <Heading as="label" htmlFor="date" size="14px">
+              <Heading as="label" htmlFor="date" $size="14px">
                 {t("screeningList.date")}:
               </Heading>
               <RangeDatePicker
@@ -312,7 +312,8 @@ export default function Filter({
                 }
               >
                 <Button
-                  type="link gtm-btn-adv-search"
+                  type="link"
+                  className="gtm-btn-adv-search"
                   onClick={() => setOpen(!open)}
                   style={{ marginTop: "14px", paddingLeft: 0 }}
                 >
@@ -325,11 +326,12 @@ export default function Filter({
 
               <Tooltip title={t("screeningList.search")}>
                 <Button
-                  type="secondary gtm-btn-search"
+                  type="secondary"
                   shape="circle"
                   icon={<SearchOutlined />}
                   onClick={search}
                   size="large"
+                  className="gtm-btn-search"
                   style={{ marginTop: "7px" }}
                   loading={isFetchingPrescription}
                 />

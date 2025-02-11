@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
 import {
   SearchOutlined,
@@ -130,7 +130,8 @@ export default function AdvancedFilter({
 
                 <Tooltip title={t("screeningList.search")}>
                   <Button
-                    type="secondary gtm-btn-search"
+                    type="secondary"
+                    className="gtm-btn-search"
                     shape="circle"
                     icon={<SearchOutlined />}
                     onClick={search}

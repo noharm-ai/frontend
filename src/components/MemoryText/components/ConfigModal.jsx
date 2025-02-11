@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import {
   EditOutlined,
   DeleteOutlined,
@@ -69,10 +69,10 @@ export default function ConfigModal({ save, open, setOpen, list }) {
       onCancel={() => setOpen(false)}
       onOk={() => saveAction()}
       okText="Salvar"
-      okType="primary gtm-bt-memorytext-savemodal"
+      okType="primary"
       cancelText="Cancelar"
     >
-      <Heading size="16px" className="fixed" style={{ marginBottom: "15px" }}>
+      <Heading $size="16px" className="fixed" style={{ marginBottom: "15px" }}>
         Gerenciar Textos Padrão
       </Heading>
 

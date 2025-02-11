@@ -11,7 +11,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={5} lg={6} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Nome:
         </Heading>
         <Input
@@ -26,7 +26,7 @@ export default function MainFilters() {
         </div>
       </Col>
       <Col md={3} lg={3} xxl={3}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           ID Classe:
         </Heading>
         <Input
@@ -40,7 +40,7 @@ export default function MainFilters() {
       </Col>
 
       <Col md={3} lg={3} xxl={2}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Possui Classe:
         </Heading>
         <Select
@@ -58,7 +58,7 @@ export default function MainFilters() {
       </Col>
 
       <Col md={3} lg={3} xxl={2}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Situação:
         </Heading>
         <Select

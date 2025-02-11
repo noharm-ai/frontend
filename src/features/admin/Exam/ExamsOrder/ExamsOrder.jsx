@@ -88,7 +88,7 @@ export default function ExamsOrder({ open, setOpen }) {
           }}
         >
           <header>
-            <Heading margin="0 0 11px">Card de Exames</Heading>
+            <Heading $margin="0 0 11px">Card de Exames</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

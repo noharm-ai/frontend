@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useState, useRef } from "react";
 import { CheckOutlined, EditOutlined } from "@ant-design/icons";
 
@@ -51,7 +51,8 @@ export default function Escore({ idOutlier, manualScore, saveOutlier }) {
         onPressEnter={handleSave}
       />
       <Button
-        type="primary gtm-bt-change-score"
+        type="primary"
+        className="gtm-bt-change-score"
         onClick={handleSave}
         icon={<CheckOutlined />}
       ></Button>

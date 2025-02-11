@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { get } from "styles/utils";
 import Heading from "components/Heading";
@@ -135,6 +135,7 @@ export const PatientBox = styled.div`
         border: 0;
         padding: 0;
         cursor: pointer;
+        background: #eff1f4;
 
         &:hover {
           color: #1890ff;
@@ -233,7 +234,7 @@ export const PatientBox = styled.div`
               margin-left: 0;
             }
 
-            ${(props) => createIndicatorCardClasses(props.t)}
+            ${(props) => createIndicatorCardClasses(props.$t)}
           }
 
           .small {

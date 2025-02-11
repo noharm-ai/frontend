@@ -68,7 +68,8 @@ export default function ChangePassword({ updatePassword, status }) {
                   </Row>
                   <ButtonContainer style={{ paddingTop: "10px" }}>
                     <Button
-                      type="primary gtm-btn-save-password"
+                      type="primary"
+                      className="gtm-btn-save-password"
                       onClick={handleSubmit}
                       loading={isSaving}
                       disabled={isSaving}

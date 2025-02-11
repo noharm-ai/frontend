@@ -86,7 +86,7 @@ export default function ScreeningActions({
         open={patientEditVisible}
         onCancel={() => setModalVisibility("patientEdit", false)}
         okText="Salvar"
-        okType="primary gtm-bt-save-patient"
+        okType="primary"
         cancelText="Cancelar"
         afterSavePatient={afterSavePatient}
       />

@@ -22,7 +22,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Data de Prescrição:
         </Heading>
         <RangeDatePicker
@@ -35,7 +35,7 @@ export default function MainFilters() {
         />
       </Col>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Medicamento:
         </Heading>
         <SelectCustom
@@ -63,7 +63,7 @@ export default function MainFilters() {
         </SelectCustom>
       </Col>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Substância:
         </Heading>
         <SelectCustom

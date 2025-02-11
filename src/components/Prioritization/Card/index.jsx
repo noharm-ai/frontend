@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useTransition, animated, config } from "@react-spring/web";
+import { motion } from "motion/react";
 import {
   UserOutlined,
   NumberOutlined,
@@ -365,16 +365,6 @@ export default function PrioritizationCard({
   activeTab,
   setActiveTab,
 }) {
-  const transitions = useTransition(activeTab, {
-    from: {
-      opacity: 0,
-      transform: "translate3d(5px, 0, 0)",
-    },
-    enter: { opacity: 1, transform: "translate3d(0, 0, 0)" },
-    delay: 150,
-    config: config.slow,
-  });
-
   const open = (e) => {
     window.open(
       prioritizationType === "conciliation"
@@ -390,7 +380,7 @@ export default function PrioritizationCard({
 
   return (
     <Card
-      alert={prescription.dischargeReason ? "" : prescription.class}
+      $alert={prescription.dischargeReason ? "" : prescription.class}
       onClick={(e) => open(e)}
     >
       <div className="card-header">
@@ -439,15 +429,18 @@ export default function PrioritizationCard({
         </div>
       </div>
 
-      {transitions((styles) => (
-        <animated.div style={styles}>
-          <TabContent
-            tab={activeTab}
-            prescription={prescription}
-            featureService={featureService}
-          />
-        </animated.div>
-      ))}
+      <motion.div
+        initial={{ opacity: 0, transform: "translate3d(5px, 0, 0)" }}
+        animate={{ opacity: 1, transform: "translate3d(0, 0, 0)" }}
+        transition={{ duration: 0.3, ease: "linear" }}
+        key={activeTab}
+      >
+        <TabContent
+          tab={activeTab}
+          prescription={prescription}
+          featureService={featureService}
+        />
+      </motion.div>
 
       <div className="tabs">
         <div

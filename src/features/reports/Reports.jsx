@@ -132,7 +132,6 @@ export default function Reports() {
                     PermissionService().has(Permission.MAINTAINER)) && (
                     <Col key={index} span={24} md={12} lg={8}>
                       <ReportCard
-                        css="height: 100%;"
                         reportData={reportData}
                         showReport={showInternalReport}
                         id={index}
@@ -146,7 +145,6 @@ export default function Reports() {
               {externalList.map((reportData, index) => (
                 <Col key={index} span={24} md={12} lg={8}>
                   <ReportCard
-                    css="height: 100%;"
                     reportData={reportData}
                     showReport={showReport}
                     id={index}

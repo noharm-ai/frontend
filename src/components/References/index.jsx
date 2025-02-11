@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { Row, Col } from "antd";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -274,7 +274,7 @@ export default function References({
       <Tabs
         defaultActiveKey="1"
         style={{ width: "100%", marginTop: "20px" }}
-        type="card gtm-tab-med"
+        type="card"
         items={items}
       ></Tabs>
 

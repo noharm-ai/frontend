@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -7,14 +7,15 @@ import { Row, Col } from "components/Grid";
 import Heading from "components/Heading";
 import { FormHeader } from "components/Forms/Form.style";
 
-export default function DrugData({ drug, dosage, frequency, route }) {
+export default function DrugData({ item }) {
   const { t } = useTranslation();
+  const { drug, dosage, frequency, route } = item;
 
   return (
     <FormHeader>
       <Row type="flex" gutter={24} css="padding: 2px 0">
         <Col span={8}>
-          <Heading as="p" size="14px">
+          <Heading as="p" $size="14px">
             {t("tableHeader.drug")}:
           </Heading>
         </Col>
@@ -22,7 +23,7 @@ export default function DrugData({ drug, dosage, frequency, route }) {
       </Row>
       <Row type="flex" gutter={24} css="padding: 2px 0">
         <Col span={8}>
-          <Heading as="p" size="14px">
+          <Heading as="p" $size="14px">
             {t("tableHeader.dose")}:
           </Heading>
         </Col>
@@ -30,7 +31,7 @@ export default function DrugData({ drug, dosage, frequency, route }) {
       </Row>
       <Row type="flex" gutter={24} css="padding: 2px 0">
         <Col span={8}>
-          <Heading as="p" size="14px">
+          <Heading as="p" $size="14px">
             {t("tableHeader.frequency")}:
           </Heading>
         </Col>
@@ -40,7 +41,7 @@ export default function DrugData({ drug, dosage, frequency, route }) {
       </Row>
       <Row type="flex" gutter={24} css="padding: 2px 0">
         <Col span={8}>
-          <Heading as="p" size="14px">
+          <Heading as="p" $size="14px">
             {t("tableHeader.route")}:
           </Heading>
         </Col>

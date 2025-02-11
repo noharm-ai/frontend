@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import styled from "styled-components/macro";
-import isEmpty from "lodash.isempty";
+import styled from "styled-components";
+import { isEmpty } from "lodash";
 import { format } from "date-fns";
 import {
   WarningOutlined,
@@ -202,23 +202,25 @@ const formatCPOEPeriod = (record) => {
   return "-";
 };
 
-const Action = ({
-  check,
-  idPrescriptionDrug,
-  prescriptionType,
-  onShowModal,
-  uniqueDrugList,
-  admissionNumber,
-  emptyRow,
-  t,
-  security,
-  featureService,
-  selectedRows,
-  selectedRowsActive,
-  toggleSelectedRows,
-  dispatch,
-  ...data
-}) => {
+const Action = ({ prescription, bag }) => {
+  //TODO: refactor
+  const {
+    check,
+    idPrescriptionDrug,
+    prescriptionType,
+    onShowModal,
+    uniqueDrugList,
+    admissionNumber,
+    emptyRow,
+    t,
+    security,
+    featureService,
+    selectedRows,
+    selectedRowsActive,
+    toggleSelectedRows,
+    dispatch,
+    ...data
+  } = { ...prescription, ...bag };
   if (emptyRow) return null;
 
   if (selectedRowsActive) {
@@ -274,7 +276,8 @@ const Action = ({
     <TableTags>
       <Tooltip title={btnTitle} placement="left">
         <AntButton
-          type={isIntervened ? "danger gtm-bt-interv" : "primary gtm-bt-interv"}
+          type={isIntervened ? "danger " : "primary"}
+          className="gtm-bt-interv"
           onClick={() => {
             onShowModal({
               ...data,
@@ -326,7 +329,8 @@ const Action = ({
           placement="left"
         >
           <AntButton
-            type="primary gtm-bt-notes"
+            type="primary"
+            className="gtm-bt-notes"
             ghost={!hasNotes}
             style={{ background: hasNotes ? "#7ebe9a" : "inherit" }}
             onClick={() => {
@@ -704,8 +708,7 @@ export const expandedRowRender = (bag) => (record) => {
                 >
                   <Tag color={config.color}>{config.label}</Tag>{" "}
                   <InterventionAction
-                    {...record}
-                    {...bag}
+                    isSavingIntervention={bag.isSavingIntervention}
                     intv={prevIntervention}
                   />
                 </Descriptions.Item>
@@ -1115,7 +1118,7 @@ const actionColumns = (bag) => [
     dataIndex: "intervention",
     width: 80,
     render: (text, prescription) => {
-      return <Action {...prescription} {...bag} />;
+      return <Action prescription={prescription} bag={bag} />;
     },
   },
 ];

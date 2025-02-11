@@ -1,13 +1,17 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import moment from "moment";
 import { Row, Col, Flex, notification, Popconfirm } from "antd";
 import { useTranslation } from "react-i18next";
-import { DeleteOutlined } from "@ant-design/icons";
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 
 import Button from "components/Button";
-import Icon, { InfoIcon } from "components/Icon";
+import { InfoIcon } from "components/Icon";
 import Tooltip from "components/Tooltip";
 import PrescriptionCard from "components/PrescriptionCard";
 
@@ -172,7 +176,8 @@ export default function Patient({
                 <div className="action bold">
                   {notesInfo !== "" && (
                     <Button
-                      type="link gtm-btn-nhc-update-data"
+                      type="link"
+                      className="gtm-btn-nhc-update-data"
                       onClick={() => setModalVisibility("patientEdit", true)}
                     >
                       {t("actions.useData")}
@@ -338,7 +343,8 @@ export default function Patient({
                   <div className="action bold">
                     {notesInfo !== "" && (
                       <Button
-                        type="link gtm-btn-nhc-update-data"
+                        type="link"
+                        className="gtm-btn-nhc-update-data"
                         onClick={() => setModalVisibility("patientEdit", true)}
                       >
                         {t("actions.useData")}
@@ -354,8 +360,13 @@ export default function Patient({
 
       <Col xs={24}>
         <SeeMore onClick={toggleSeeMore}>
-          <Button type="link gtm-btn-seemore" onClick={toggleSeeMore}>
-            <Icon type={seeMore ? "up" : "down"} />{" "}
+          <Button
+            type="link"
+            className="gtm-btn-seemore"
+            onClick={toggleSeeMore}
+            icon={seeMore ? <CaretUpOutlined /> : <CaretDownOutlined />}
+            iconPosition="end"
+          >
             {seeMore ? t("patientCard.less") : t("patientCard.more")}
           </Button>
           {hasAIData && (

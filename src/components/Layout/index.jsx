@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import { css } from "styled-components";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -45,7 +45,9 @@ const siderWidth = 250;
 const { Sider, Header, Content, Footer } = Main;
 
 const setTitle = ({ user }) => {
-  document.title = `${process.env.REACT_APP_SITE_TITLE} - ${user.account.schema}`;
+  document.title = `${import.meta.env.VITE_APP_SITE_TITLE} - ${
+    user.account.schema
+  }`;
   appInfo.apiKey = user.account.apiKey;
 
   return user.account.userName;
@@ -69,7 +71,7 @@ const Me = ({
     const checkVersion = () => {
       api.getVersion().then((response) => {
         if (response.data.status === "success") {
-          const localVersion = process.env.REACT_APP_VERSION;
+          const localVersion = import.meta.env.VITE_APP_VERSION;
           const version = response.data.data;
 
           if (localVersion < version) {
@@ -99,7 +101,7 @@ const Me = ({
       message: "Obrigado por usar a NoHarm!",
       description: "Até breve ;)",
     });
-    document.title = `${process.env.REACT_APP_SITE_TITLE}`;
+    document.title = `${import.meta.env.VITE_APP_SITE_TITLE}`;
     const redirect = !PermissionService().has(Permission.MAINTAINER);
 
     doLogout();
@@ -195,37 +197,41 @@ const Me = ({
       </div>
 
       <Tooltip title="Clique para abrir o menu" placement="left">
-        <Dropdown
-          menu={{
-            items: userOptions(),
-            onClick: onClickUserOptions,
-          }}
-          trigger={["click"]}
-        >
-          <UserDataContainer>
-            <Avatar size={44} icon={<UserOutlined />} className="user-avatar" />
+        <div>
+          <Dropdown
+            menu={{
+              items: userOptions(),
+              onClick: onClickUserOptions,
+            }}
+            trigger={["click"]}
+          >
+            <UserDataContainer>
+              <Avatar
+                size={44}
+                icon={<UserOutlined />}
+                className="user-avatar"
+              />
 
-            <UserName>
-              <div className="name">{setTitle({ user })}</div>
-              {PermissionService().has(Permission.MULTI_SCHEMA) && (
-                <div className="schema">
-                  <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
-                  {PermissionService().has(Permission.MAINTAINER) && (
-                    <Tooltip title="Posição atual da implantação.">
+              <UserName>
+                <div className="name">{setTitle({ user })}</div>
+                {PermissionService().has(Permission.MULTI_SCHEMA) && (
+                  <div className="schema">
+                    <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
+                    {PermissionService().has(Permission.MAINTAINER) && (
                       <IntegrationStatusTag
                         type={"filled"}
                         style={{ cursor: "pointer" }}
                         status={integrationStatus}
                       />
-                    </Tooltip>
-                  )}
-                </div>
-              )}
-            </UserName>
+                    )}
+                  </div>
+                )}
+              </UserName>
 
-            <DownOutlined />
-          </UserDataContainer>
-        </Dropdown>
+              <DownOutlined />
+            </UserDataContainer>
+          </Dropdown>
+        </div>
       </Tooltip>
     </HeaderContainer>
   );

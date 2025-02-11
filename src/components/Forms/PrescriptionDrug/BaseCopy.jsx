@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useFormikContext } from "formik";

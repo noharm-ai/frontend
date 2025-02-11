@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from "react";
-import isEmpty from "lodash.isempty";
-import debounce from "lodash.debounce";
-import { useTransition, animated } from "@react-spring/web";
+import { isEmpty } from "lodash";
+import { debounce } from "lodash";
+import { motion } from "motion/react";
 import { Spin, Pagination, Tag, Empty, Alert, Affix } from "antd";
 import { useTranslation } from "react-i18next";
 import { CaretUpOutlined } from "@ant-design/icons";
@@ -59,16 +59,6 @@ export default function Prioritization({
           (state.currentPage - 1) * PAGE_SIZE,
           (state.currentPage - 1) * PAGE_SIZE + PAGE_SIZE
         );
-
-  const transitions = useTransition(patients, {
-    from: {
-      transform: "translate3d(0, 40px, 0)",
-      opacity: 0,
-    },
-    enter: { transform: "translate3d(0,0px,0)", opacity: 1 },
-    trail: 100,
-    keys: (item) => `${item.idPrescription}`,
-  });
 
   useEffect(() => {
     const errorMessage = {
@@ -312,7 +302,7 @@ export default function Prioritization({
             </div>
           </ResultActions>
         </Affix>
-        <PrioritizationPage collapsed={siderCollapsed}>
+        <PrioritizationPage $collapsed={siderCollapsed}>
           <>
             {!(isFetching || state.loading) && !filteredList.length && (
               <Empty description="Nenhum registro encontrado" />
@@ -330,8 +320,20 @@ export default function Prioritization({
               )}
             {filteredList && filteredList.length > 0 && (
               <div className="grid">
-                {transitions((props, item) => (
-                  <animated.div style={props}>
+                {patients.map((item, index) => (
+                  <motion.div
+                    initial={{
+                      opacity: 0,
+                      transform: "translate3d(0, 40px, 0)",
+                    }}
+                    animate={{ opacity: 1, transform: "translate3d(0, 0, 0)" }}
+                    transition={{
+                      duration: 0.3,
+                      ease: "easeOut",
+                      delay: 0.05 * index,
+                    }}
+                    key={item.idPrescription}
+                  >
                     <PrioritizationCard
                       prescription={item}
                       prioritizationType={prioritizationType}
@@ -343,7 +345,7 @@ export default function Prioritization({
                       activeTab={state.activeTab}
                       setActiveTab={setActiveTab}
                     />
-                  </animated.div>
+                  </motion.div>
                 ))}
               </div>
             )}

@@ -42,7 +42,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           {t("tableHeader.period")}:
         </Heading>
         <RangeDatePicker
@@ -66,7 +66,7 @@ export default function MainFilters() {
         />
       </Col>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Segmento:
         </Heading>
         <SelectCustom
@@ -97,7 +97,7 @@ export default function MainFilters() {
         </SelectCustom>
       </Col>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Setor:
         </Heading>
         <SelectCustom

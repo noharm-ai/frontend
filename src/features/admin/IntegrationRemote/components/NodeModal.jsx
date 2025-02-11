@@ -9,7 +9,7 @@ import {
   StopOutlined,
 } from "@ant-design/icons";
 import { Formik } from "formik";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 
 import DefaultModal from "components/Modal";
 import Heading from "components/Heading";
@@ -568,7 +568,7 @@ export default function NodeModal() {
           onCancel={() => dispatch(setSelectedNode(null))}
           footer={footerActions(handleSubmit)}
         >
-          <Heading margin="0 0 11px" size="18px">
+          <Heading $margin="0 0 11px" $size="18px">
             {data?.name}
           </Heading>
 

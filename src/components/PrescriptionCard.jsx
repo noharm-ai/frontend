@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   createIndicatorTagClasses,
@@ -71,6 +71,7 @@ export default styled.div`
     }
 
     .stat-variation {
+      color: var(--nh-text-color);
       .stat-variation-number {
         display: flex;
         align-items: center;
@@ -167,6 +168,7 @@ export default styled.div`
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    color: var(--nh-text-color);
 
     &.light {
       font-weight: 400;

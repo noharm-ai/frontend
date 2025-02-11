@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { format } from "date-fns";
 import { Row, Col } from "antd";
 import { useTranslation } from "react-i18next";

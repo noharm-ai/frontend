@@ -185,7 +185,7 @@ export default function ClinicalNotes({
   if (isFetching) {
     return (
       <LoadContainer>
-        <LoadBox absolute={true} />
+        <LoadBox $absolute={true} />
       </LoadContainer>
     );
   }
@@ -276,7 +276,8 @@ export default function ClinicalNotes({
             <div className="btn-search">
               <Tooltip title={t("buttons.search")}>
                 <Button
-                  type="secondary gtm-cn-btn-search"
+                  type="secondary"
+                  className="gtm-cn-btn-search"
                   shape="circle"
                   icon={<SearchOutlined />}
                   size="large"
@@ -288,27 +289,29 @@ export default function ClinicalNotes({
                 trigger={["click"]}
                 disabled={previousAdmissions.length === 0}
               >
-                <Tooltip
-                  title={
-                    previousAdmissions.length === 0
-                      ? "Nenhuma internação anterior encontrada"
-                      : "Ver outras internações do paciente"
-                  }
-                >
-                  <Button
-                    size="medium"
-                    shape="circle"
-                    style={{ marginLeft: "8px" }}
-                    disabled={previousAdmissions.length === 0}
+                <div>
+                  <Tooltip
+                    title={
+                      previousAdmissions.length === 0
+                        ? "Nenhuma internação anterior encontrada"
+                        : "Ver outras internações do paciente"
+                    }
                   >
-                    <ClockCircleOutlined />
-                  </Button>
-                </Tooltip>
+                    <Button
+                      size="medium"
+                      shape="circle"
+                      style={{ marginLeft: "8px" }}
+                      disabled={previousAdmissions.length === 0}
+                    >
+                      <ClockCircleOutlined />
+                    </Button>
+                  </Tooltip>
+                </div>
               </Dropdown>
             </div>
           </FilterContainer>
 
-          <List t={t}>
+          <List $t={t}>
             {filteredList.length === 0 && (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}

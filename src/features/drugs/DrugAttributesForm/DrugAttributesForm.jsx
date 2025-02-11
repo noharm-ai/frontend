@@ -73,7 +73,8 @@ export default function DrugAttributesForm({ idSegment, idDrug }) {
             <div className={`form-row`}>
               <div className="form-action-bottom">
                 <Button
-                  type="primary gtm-bt-save-drug"
+                  type="primary"
+                  className="gtm-bt-save-drug"
                   htmlType="submit"
                   disabled={isLoading}
                   loading={isLoading}

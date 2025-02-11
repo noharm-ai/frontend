@@ -31,7 +31,7 @@ export default function SecondaryFilters() {
     <Col xs={24} md={14}>
       <Row gutter={[24, 24]}>
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             Classe:
           </Heading>
 
@@ -56,7 +56,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             Manejo:
           </Heading>
 
@@ -92,7 +92,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Possui texto curadoria:
           </Heading>
           <Select
@@ -109,7 +109,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Tags:
           </Heading>
           <Select
@@ -140,7 +140,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={12} md={6}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Dose máxima adulto:
           </Heading>
           <Select
@@ -157,7 +157,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={12} md={6}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Dose máxima adulto/Peso:
           </Heading>
           <Select
@@ -176,7 +176,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={12} md={6}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Dose máxima pediátrico:
           </Heading>
           <Select
@@ -193,7 +193,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={12} md={6}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Dose máxima pediátrico/Peso:
           </Heading>
           <Select

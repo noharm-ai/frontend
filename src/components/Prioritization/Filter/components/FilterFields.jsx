@@ -2,8 +2,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Row, Col, Card } from "antd";
-import isEmpty from "lodash.isempty";
-import debounce from "lodash.debounce";
+import { isEmpty } from "lodash";
+import { debounce } from "lodash";
 
 import {
   Select,

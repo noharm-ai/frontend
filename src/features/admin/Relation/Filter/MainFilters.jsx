@@ -22,7 +22,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={14} xxl={8}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Substância(s):
         </Heading>
         <Select

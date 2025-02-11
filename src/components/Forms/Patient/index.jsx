@@ -99,7 +99,7 @@ export default function Patient({
           }}
         >
           <header>
-            <Heading margin="0 0 11px">Dados do paciente</Heading>
+            <Heading $margin="0 0 11px">Dados do paciente</Heading>
           </header>
           {notesInfo && (
             <Alert

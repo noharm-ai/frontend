@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { BellOutlined } from "@ant-design/icons";
 import { Flex } from "antd";
 
@@ -57,7 +57,8 @@ export default function ExamCard({ exams, siderCollapsed, count }) {
           </div>
           <div className="action">
             <Button
-              type="link gtm-btn-exams-all"
+              type="link"
+              className="gtm-btn-exams-all"
               onClick={() => setExamVisibility(true)}
             >
               Ver todos

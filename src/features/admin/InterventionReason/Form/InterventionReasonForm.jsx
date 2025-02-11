@@ -90,7 +90,7 @@ function InterventionReasonForm({ ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">{t("labels.reason")}</Heading>
+            <Heading $margin="0 0 11px">{t("labels.reason")}</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

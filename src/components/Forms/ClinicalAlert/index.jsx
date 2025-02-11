@@ -80,7 +80,7 @@ export default function ClinicalAlert({
           }}
         >
           <header>
-            <Heading margin="0 0 11px">Alerta</Heading>
+            <Heading $margin="0 0 11px">Alerta</Heading>
           </header>
           <form onSubmit={handleSubmit}>
             <FormContainer>

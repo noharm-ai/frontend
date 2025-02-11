@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import antInputNumber from "antd/lib/input-number";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { rgba } from "polished";
 
 import { get } from "styles/utils";
