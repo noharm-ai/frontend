@@ -6,7 +6,7 @@ import { TextColumn } from "components/Table";
 import Tooltip from "components/Tooltip";
 import { Link } from "components/Button";
 
-const Action = (record) => {
+const Action = ({ record }) => {
   return (
     <Link
       type="secondary"
@@ -96,7 +96,7 @@ const columns = (sortedInfo, filteredInfo, t) => {
       key: "operations",
       width: 70,
       align: "center",
-      render: (text, record) => <Action {...record} />,
+      render: (text, record) => <Action record={record} />,
     },
   ];
 };

@@ -50,7 +50,7 @@ export const patientCentralNamesThunk =
     const { patients, app, user } = getState();
     const { list: listPatients } = patients;
 
-    const limit = 50;
+    const limit = 150;
     let offset = 0;
     const pages = Math.ceil(data.length / limit);
 
