@@ -65,6 +65,7 @@ const NestedTableContainer = styled.div`
   margin-bottom: 35px;
 `;
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 const ScreeningActions = ({ prescription, t }) => {
   const {
     idPrescription,

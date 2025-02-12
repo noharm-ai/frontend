@@ -17,6 +17,7 @@ import MemoryFilter from "features/memory/MemoryFilter/MemoryFilter";
 
 import { SearchBox, FilterCard } from "./index.style";
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export const AdvancedFilterContext = React.createContext({});
 
 export default function AdvancedFilter({

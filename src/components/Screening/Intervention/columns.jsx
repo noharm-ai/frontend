@@ -229,6 +229,7 @@ const TranscriptionView = ({ transcription }) => {
   return <Descriptions bordered>{items}</Descriptions>;
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export const expandedInterventionRowRender = (record) => {
   return (
     <NestedTableContainer>
@@ -414,4 +415,5 @@ const columns = (filteredInfo, name = false, t) => {
   ];
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export default columns;

@@ -39,6 +39,7 @@ const isExpired = (date) => {
   return false;
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export const rowClassName = (record, bag) => {
   const classes = [];
   let expiresInMinutes = null;

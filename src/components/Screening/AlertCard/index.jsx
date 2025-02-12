@@ -26,6 +26,7 @@ import { IconDuplicity } from "components/Icon/svgs/IconDuplicity";
 
 import { AlertContainer } from "./index.style";
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export const getAlerts = (stats, t) => [
   {
     label: t("alerts.y"),

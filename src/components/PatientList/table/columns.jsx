@@ -6,6 +6,7 @@ import { TextColumn } from "components/Table";
 import Tooltip from "components/Tooltip";
 import { Link } from "components/Button";
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 const Action = ({ record }) => {
   return (
     <Link

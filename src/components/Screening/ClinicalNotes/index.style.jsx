@@ -20,6 +20,7 @@ const createIndicatorClasses = (t) => {
   return classList.join(" ");
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export const createIndicatorTagClasses = (t) => {
   const translate = t ? t : () => "";
   const classList = ClinicalNotesIndicator.list(translate).map(
@@ -44,6 +45,7 @@ export const createIndicatorTagClasses = (t) => {
   return classList.join(" ");
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export const createIndicatorCardClasses = (t) => {
   const translate = t ? t : () => "";
   const classList = ClinicalNotesIndicator.list(translate).map(

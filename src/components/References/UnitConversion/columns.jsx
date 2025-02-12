@@ -3,7 +3,7 @@ import React from "react";
 import Coefficient from "./Coefficient";
 import Tooltip from "components/Tooltip";
 
-export default [
+const columns = [
   {
     title: "Medicamento",
     dataIndex: "drugName",
@@ -33,3 +33,5 @@ export default [
     width: 50,
   },
 ].map((item) => ({ ...item, key: item.dataIndex }));
+
+export default columns;

@@ -142,6 +142,7 @@ const prescriptionDrugMenu = ({
   };
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 const InterventionAction = ({ intv, isSavingIntervention }) => {
   const dispatch = useDispatch();
   const { idIntervention } = intv;
@@ -201,6 +202,7 @@ const formatCPOEPeriod = (record) => {
   return "-";
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 const Action = ({ prescription, bag }) => {
   //TODO: refactor
   const {
@@ -419,6 +421,7 @@ const periodDatesList = (dates) => {
   );
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 const DrugTags = ({ drug, t }) => (
   <span style={{ marginLeft: "10px" }}>
     {drug.np && (
