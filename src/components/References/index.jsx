@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { Row, Col } from "antd";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -45,13 +45,9 @@ export default function References({
   outliers,
   fetchReferencesList,
   saveOutlier,
-  saveUnitCoefficient,
   selectOutlier,
-  selectOutlierRelation,
   security,
-  generateOutlier,
   generateOutlierReset,
-  updateDrugData,
   ...restProps
 }) {
   const params = useParams();
@@ -74,7 +70,7 @@ export default function References({
         notification.success({ message: "Observação salva com sucesso!" });
         setObsModalVisibility(false);
       })
-      .catch((err) => {
+      .catch(() => {
         notification.error({
           message: t("error.title"),
           description: t("error.description"),
@@ -162,7 +158,7 @@ export default function References({
     outliers.selecteds.idSegment,
   ]);
 
-  const rowClassName = (record, index) => {
+  const rowClassName = (record) => {
     if (record.selected) {
       return "highlight";
     }
@@ -274,7 +270,7 @@ export default function References({
       <Tabs
         defaultActiveKey="1"
         style={{ width: "100%", marginTop: "20px" }}
-        type="card gtm-tab-med"
+        type="line"
         items={items}
       ></Tabs>
 
@@ -290,12 +286,10 @@ export default function References({
         okText="Salvar"
         okButtonProps={{
           disabled: outliers.saveStatus.isSaving,
-          type: "primary gtm-bt-save-obs",
         }}
         cancelText="Cancelar"
         cancelButtonProps={{
           disabled: outliers.saveStatus.isSaving,
-          type: "nda gtm-bt-cancel-obs",
         }}
       >
         <Edit />

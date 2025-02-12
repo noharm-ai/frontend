@@ -1,9 +1,9 @@
 import { Layout } from "antd";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { timingFunctions } from "polished";
 
 import { get } from "styles/utils";
-import { ReactComponent as LogoSVG } from "assets/noHarm-horizontal.svg";
+import { NoHarmLogoHorizontal as LogoSVG } from "assets/NoHarmLogoHorizontal";
 
 export const MessageLink = styled.a`
   color: rgba(0, 0, 0, 0.85);
@@ -51,6 +51,10 @@ export const Wrapper = styled(Layout)`
   &.ant-layout {
     background: #eff1f4;
     transition: all 0.2s;
+
+    .ant-layout-sider-children {
+      overflow: hidden;
+    }
   }
 `;
 

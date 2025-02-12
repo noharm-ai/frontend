@@ -3,4 +3,6 @@ import Summary from "features/summary/Summary";
 
 const layoutProps = {};
 
-export default withLayout(Summary, layoutProps);
+const SummaryWithLayout = withLayout(Summary, layoutProps);
+
+export default SummaryWithLayout;

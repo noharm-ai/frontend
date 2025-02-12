@@ -6,13 +6,13 @@ import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import IntegrationStatus from "models/IntegrationStatus";
 
-const OnOffTag = ({ value, name }) => {
-  return <Tag color={value ? "success" : "error"}>{name}</Tag>;
-};
-
 const columns = (t, dispatch, setIntegration) => {
   const openForm = (record) => {
     dispatch(setIntegration(record));
+  };
+
+  const OnOffTag = ({ value, name }) => {
+    return <Tag color={value ? "success" : "error"}>{name}</Tag>;
   };
 
   return [

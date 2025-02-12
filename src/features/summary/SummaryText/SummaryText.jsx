@@ -36,7 +36,7 @@ function SummaryText({ open, setOpen }) {
       onSubmit={handleOK}
       initialValues={initialValues}
     >
-      {({ handleSubmit, values, setFieldValue }) => (
+      {({ values, setFieldValue }) => (
         <DefaultModal
           width={"50vw"}
           centered
@@ -48,7 +48,7 @@ function SummaryText({ open, setOpen }) {
           okText={t("actions.copy")}
         >
           <header>
-            <Heading margin="0 0 11px">{t("summary.title")}</Heading>
+            <Heading $margin="0 0 11px">{t("summary.title")}</Heading>
           </header>
           <Form>
             <div className={`form-row`}>

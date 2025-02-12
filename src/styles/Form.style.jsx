@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 export const Form = styled.form`
   &.highlight-labels {
@@ -34,6 +34,7 @@ export const Form = styled.form`
     font-size: 13px;
     margin-left: 5px;
     margin-top: 3px;
+    color: var(--nh-text-color);
     opacity: 0.8;
 
     ul {

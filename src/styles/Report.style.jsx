@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 export const StatsCard = styled.div`
   position: relative;
@@ -11,12 +11,14 @@ export const StatsCard = styled.div`
     text-align: right;
     font-size: 2rem;
     font-weight: 300;
+    color: var(--nh-text-color);
   }
 
   .stats-value {
     text-align: right;
     font-size: 4rem;
     font-weight: 500;
+    color: var(--nh-text-color);
   }
 
   &.blue {

@@ -28,8 +28,8 @@ export function ObservationDefaultText({
     const textField = textRef.current?.resizableTextArea.textArea;
 
     if (textField.selectionStart || textField.selectionStart === "0") {
-      var startPos = textField.selectionStart;
-      var endPos = textField.selectionEnd;
+      const startPos = textField.selectionStart;
+      const endPos = textField.selectionEnd;
       value =
         value.substring(0, startPos) +
         variable +

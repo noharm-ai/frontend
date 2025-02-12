@@ -1,17 +1,17 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { get } from "styles/utils";
 
 const Heading = styled.h1`
   color: ${get("colors.primary")};
   display: block;
-  font-size: ${({ size }) => size || "18px"};
+  font-size: ${({ $size }) => $size || "18px"};
   font-weight: ${get("weight.semiBold")};
-  text-align: ${({ textAlign }) => textAlign || "left"};
+  text-align: ${({ $textAlign }) => $textAlign || "left"};
 
   @media (min-width: ${get("breakpoints.lg")}) {
-    font-size: ${({ size }) => size || "30px"};
-    margin: ${({ margin }) => margin || 0};
+    font-size: ${({ $size }) => $size || "30px"};
+    margin: ${({ $margin }) => $margin || 0};
   }
 
   .legend {
@@ -34,7 +34,7 @@ export const AffixedHeader = styled.h1`
 
   @media (min-width: ${get("breakpoints.lg")}) {
     font-size: 18px;
-    margin: ${({ margin }) => margin || 0};
+    margin: ${({ $margin }) => $margin || 0};
   }
 
   .legend {
@@ -45,7 +45,7 @@ export const AffixedHeader = styled.h1`
 
     @media (min-width: ${get("breakpoints.lg")}) {
       font-size: 14px;
-      margin: ${({ margin }) => margin || 0};
+      margin: ${({ $margin }) => $margin || 0};
     }
   }
 `;

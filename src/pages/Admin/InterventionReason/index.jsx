@@ -3,4 +3,9 @@ import InterventionReason from "features/admin/InterventionReason/InterventionRe
 
 const layoutProps = {};
 
-export default withLayout(InterventionReason, layoutProps);
+const InterventionReasonWithLayout = withLayout(
+  InterventionReason,
+  layoutProps
+);
+
+export default InterventionReasonWithLayout;

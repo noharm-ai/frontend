@@ -29,7 +29,7 @@ export default function SecondaryFilters() {
     <Col xs={24} md={14}>
       <Row gutter={[24, 24]}>
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             {t("tableHeader.drug")}:
           </Heading>
           <Input
@@ -45,7 +45,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             {t("labels.substance")}:
           </Heading>
           <Input
@@ -64,7 +64,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             {t("labels.substance")}:
           </Heading>
           <Select
@@ -73,9 +73,7 @@ export default function SecondaryFilters() {
             showSearch
             style={{ width: "100%" }}
             value={values.substanceList}
-            onChange={(value, option) =>
-              setFieldValue({ substanceList: value })
-            }
+            onChange={(value) => setFieldValue({ substanceList: value })}
             loading={substancesLoading}
             mode="multiple"
             allowClear
@@ -101,7 +99,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Origens
           </Heading>
           <Select
@@ -123,7 +121,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Filtrar por atributo
           </Heading>
           <Select
@@ -206,7 +204,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={6}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Possui dose máxima:
           </Heading>
           <Select
@@ -226,7 +224,7 @@ export default function SecondaryFilters() {
           </Select>
         </Col>
         <Col xs={6}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Dose máxima referência:
           </Heading>
           <Select
@@ -244,7 +242,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={12}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Exibir medicamentos com conversões pendentes
           </Heading>
           <Select
@@ -265,7 +263,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={12}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             <Tooltip title="Indica medicamentos que possuem inconsistências no banco de dados">
               Exibir somente medicamentos inconsistentes
             </Tooltip>
@@ -288,7 +286,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Medicamentos com substâncias definidas pela IA
           </Heading>
           <Select
@@ -309,7 +307,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Acurácia IA
           </Heading>
           <Slider

@@ -285,7 +285,7 @@ export default function QueueModal({ data, onCancel }) {
       onCancel={onCancel}
       footer={null}
     >
-      <Heading margin="0 0 11px" size="18px">
+      <Heading $margin="0 0 11px" $size="18px">
         {actionTypeToDescription(data?.extra?.type)}
       </Heading>
 

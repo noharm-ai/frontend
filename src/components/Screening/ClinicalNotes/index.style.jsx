@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import Menu from "components/Menu";
 import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
@@ -20,6 +20,7 @@ const createIndicatorClasses = (t) => {
   return classList.join(" ");
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export const createIndicatorTagClasses = (t) => {
   const translate = t ? t : () => "";
   const classList = ClinicalNotesIndicator.list(translate).map(
@@ -44,6 +45,7 @@ export const createIndicatorTagClasses = (t) => {
   return classList.join(" ");
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export const createIndicatorCardClasses = (t) => {
   const translate = t ? t : () => "";
   const classList = ClinicalNotesIndicator.list(translate).map(
@@ -215,7 +217,7 @@ export const Paper = styled.div`
         font-weight: 500;
       }
 
-      ${(props) => createIndicatorClasses(props.t)}
+      ${(props) => createIndicatorClasses(props.$t)}
     }
   }
 
@@ -315,7 +317,7 @@ export const List = styled.div`
       margin-right: 2px !important;
     }
 
-    ${(props) => createIndicatorTagClasses(props.t)}
+    ${(props) => createIndicatorTagClasses(props.$t)}
   }
 
   .day-info {

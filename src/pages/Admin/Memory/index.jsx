@@ -3,4 +3,6 @@ import Memory from "features/admin/Memory/Memory";
 
 const layoutProps = {};
 
-export default withLayout(Memory, layoutProps);
+const MemoryWithLayout = withLayout(Memory, layoutProps);
+
+export default MemoryWithLayout;

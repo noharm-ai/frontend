@@ -1,4 +1,4 @@
-import notification from "antd/lib/notification";
+import { notification } from "antd";
 
 notification.config({ duration: 2 });
 

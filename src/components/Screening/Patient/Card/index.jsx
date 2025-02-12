@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -69,7 +69,7 @@ export default function PatientCard({
     concilia,
   } = prescription;
 
-  let interventionTooltip = t("patientCard.patientIntervention");
+  const interventionTooltip = t("patientCard.patientIntervention");
   const hasIntervention =
     interventions.filter(
       filterInterventionByPrescription(prescription.idPrescription)
@@ -339,7 +339,7 @@ export default function PatientCard({
   }
 
   return (
-    <PatientBox t={t}>
+    <PatientBox $t={t}>
       <div className="patient-header">
         <div
           className={`patient-header-name ${
@@ -367,7 +367,8 @@ export default function PatientCard({
 
           <Tooltip title={interventionTooltip}>
             <Button
-              type="primary gtm-bt-patient-intervention"
+              type="primary"
+              className="gtm-bt-patient-intervention"
               onClick={() => showInterventionModal()}
               style={{ marginRight: "3px" }}
               ghost={!hasIntervention}
@@ -376,11 +377,13 @@ export default function PatientCard({
           </Tooltip>
           <Spin spinning={aggPrescriptionStatus === "loading"}>
             <Dropdown menu={prescriptionOptions()} trigger={["click"]}>
-              <Tooltip title="Menu">
-                <button className="patient-menu gtm-bt-patient-menu">
-                  <MoreOutlined style={{ fontSize: 28 }} />
-                </button>
-              </Tooltip>
+              <div>
+                <Tooltip title="Menu">
+                  <button className="patient-menu gtm-bt-patient-menu">
+                    <MoreOutlined style={{ fontSize: 28 }} />
+                  </button>
+                </Tooltip>
+              </div>
             </Dropdown>
           </Spin>
         </div>

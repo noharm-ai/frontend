@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useState, useEffect } from "react";
 import {
   CheckOutlined,

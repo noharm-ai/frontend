@@ -15,7 +15,7 @@ export default function SecondaryFilters() {
     <Col xs={24} md={14}>
       <Row gutter={[24, 24]}>
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             Tipo:
           </Heading>
 
@@ -25,7 +25,7 @@ export default function SecondaryFilters() {
             showSearch
             style={{ width: "100%" }}
             value={values.kindList}
-            onChange={(value, option) => setFieldValue({ kindList: value })}
+            onChange={(value) => setFieldValue({ kindList: value })}
             mode="multiple"
             maxTagCount="responsive"
             allowClear
@@ -40,7 +40,7 @@ export default function SecondaryFilters() {
           </Select>
         </Col>
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             Nível:
           </Heading>
 
@@ -50,7 +50,7 @@ export default function SecondaryFilters() {
             showSearch
             style={{ width: "100%" }}
             value={values.hasHandling}
-            onChange={(value, option) => setFieldValue({ level: value })}
+            onChange={(value) => setFieldValue({ level: value })}
             allowClear
           >
             <Select.Option value={"low"}>Baixo</Select.Option>
@@ -60,7 +60,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             Situação:
           </Heading>
 
@@ -70,7 +70,7 @@ export default function SecondaryFilters() {
             showSearch
             style={{ width: "100%" }}
             value={values.status}
-            onChange={(value, option) => setFieldValue({ status: value })}
+            onChange={(value) => setFieldValue({ status: value })}
             allowClear
           >
             <Select.Option value={1}>Ativo</Select.Option>

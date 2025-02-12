@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import Spin from "components/Spin";
 
@@ -12,8 +12,8 @@ const Box = styled.div`
   height: 100%;
   text-align: center;
 
-  ${({ absolute }) =>
-    absolute &&
+  ${({ $absolute }) =>
+    $absolute &&
     `
     position: absolute;
     height: 100%;

@@ -544,7 +544,9 @@
     "diliexc": "Diseases excluding DILI",
     "resthid": "Water restriction",
     "gestante": "Pregnant",
-    "germes": "Germs"
+    "germes": "Germs",
+    "medprevio": "Previous drugs",
+    "paliativo": "Palliative"
   },
 
   "alerts": {

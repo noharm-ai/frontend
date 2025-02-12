@@ -3,4 +3,6 @@ import EconomyReport from "features/reports/EconomyReport/EconomyReport";
 
 const layoutProps = {};
 
-export default withLayout(EconomyReport, layoutProps);
+const EconomyReportWithLayout = withLayout(EconomyReport, layoutProps);
+
+export default EconomyReportWithLayout;

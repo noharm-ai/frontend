@@ -11,7 +11,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={6} lg={5} xxl={4}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Possui unidade NoHarm:
         </Heading>
         <Select

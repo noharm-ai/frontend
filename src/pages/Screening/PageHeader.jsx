@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -14,7 +14,6 @@ import {
   SafetyCertificateFilled,
 } from "@ant-design/icons";
 import { Affix, Popover } from "antd";
-import { useTransition, animated, config } from "@react-spring/web";
 import dayjs from "dayjs";
 
 import { InfoIcon } from "components/Icon";
@@ -62,7 +61,6 @@ export default function PageHeader({
   reviewPatient,
   incrementClinicalNotes,
   userId,
-  roles,
   features,
 }) {
   const dispatch = useDispatch();
@@ -78,15 +76,6 @@ export default function PageHeader({
     useState("clinicalNote");
   const [affixed, setAffixed] = useState(false);
   const { t } = useTranslation();
-  const transitions = useTransition(affixed, {
-    from: {
-      opacity: 0,
-      transform: "translate3d(5px, 0, 0)",
-    },
-    enter: { opacity: 1, transform: "translate3d(0, 0, 0)" },
-    delay: 150,
-    config: config.slow,
-  });
   const featureService = FeatureService(features);
 
   useEffect(() => {
@@ -104,7 +93,7 @@ export default function PageHeader({
         window.noharm.pageTimer.stop();
       }
     };
-  }, []); // eslint-disable-line
+  }, []);
 
   const hasPrimaryCare = featureService.hasPrimaryCare();
   const hasUncheckPermission = featureService.hasLockCheckedPrescription()
@@ -312,15 +301,7 @@ export default function PageHeader({
       <ScreeningHeader className={`${affixed ? "affixed" : ""}`}>
         <Row type="flex">
           <Col span={24} md={10}>
-            {transitions((styles) => (
-              <animated.div style={styles}>
-                <Title
-                  content={prescription.content}
-                  type={type}
-                  small={affixed}
-                />
-              </animated.div>
-            ))}
+            <Title content={prescription.content} type={type} small={affixed} />
           </Col>
           <Col
             span={24}
@@ -333,7 +314,8 @@ export default function PageHeader({
           >
             {prescription.content.status === "0" && (
               <Button
-                type="primary gtm-bt-check"
+                type="primary"
+                className="gtm-bt-check"
                 icon={<CheckOutlined />}
                 ghost
                 onClick={() => confirmCheckPrescription(id)}
@@ -345,7 +327,13 @@ export default function PageHeader({
             )}
             {prescription.content.status === "s" && (
               <>
-                <span style={{ marginRight: "10px", lineHeight: 1.4 }}>
+                <span
+                  style={{
+                    marginRight: "10px",
+                    lineHeight: 1.4,
+                    color: "var(--nh-text-color)",
+                  }}
+                >
                   {prescription.content.user ? (
                     <>
                       {t("labels.checkedBy")}
@@ -410,7 +398,8 @@ export default function PageHeader({
                   }
                 >
                   <Button
-                    type="primary gtm-bt-review"
+                    type="primary"
+                    className="gtm-bt-review"
                     icon={
                       prescription.content.review?.reviewed ? (
                         <SafetyCertificateFilled />
@@ -434,7 +423,8 @@ export default function PageHeader({
               )}
             {hasPrimaryCare && (
               <Button
-                type="primary gtm-bt-clinical-notes-schedule"
+                type="primary"
+                className="gtm-bt-clinical-notes-schedule"
                 onClick={() => openScheduleModal()}
                 style={{ marginRight: "5px" }}
                 ghost={!prescription.content.notes}
@@ -444,7 +434,8 @@ export default function PageHeader({
               </Button>
             )}
             <Button
-              type="primary gtm-bt-clinical-notes"
+              type="primary"
+              className="gtm-bt-clinical-notes"
               onClick={() => openClinicalNotesModal()}
               style={{ marginRight: "5px" }}
               ghost={!prescription.content.notes}
@@ -455,7 +446,8 @@ export default function PageHeader({
             {type !== "conciliation" &&
               featureService.hasPrescriptionAlert() && (
                 <Button
-                  type="primary gtm-bt-alert"
+                  type="primary"
+                  className="gtm-bt-alert"
                   onClick={() => setClinicalAlertVisibility(true)}
                   style={{ marginRight: "5px" }}
                   ghost={!prescription.content.alert}
@@ -465,7 +457,7 @@ export default function PageHeader({
                 </Button>
               )}
 
-            <Button type="default gtm-bt-close" onClick={close}>
+            <Button type="default" className="gtm-bt-close" onClick={close}>
               {t("screeningHeader.btnClose")}
             </Button>
           </Col>

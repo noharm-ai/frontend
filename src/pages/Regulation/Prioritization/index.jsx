@@ -3,4 +3,6 @@ import Prioritization from "features/regulation/Prioritization/Prioritization";
 
 const layoutProps = {};
 
-export default withLayout(Prioritization, layoutProps);
+const PrioritizationWithLayout = withLayout(Prioritization, layoutProps);
+
+export default PrioritizationWithLayout;

@@ -138,7 +138,7 @@ function SupportCenter() {
               type="default"
               onClick={() =>
                 window.open(
-                  `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/182`,
+                  `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/182`,
                   "_blank"
                 )
               }
@@ -153,7 +153,7 @@ function SupportCenter() {
               type="default"
               onClick={() =>
                 window.open(
-                  `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/111`,
+                  `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/111`,
                   "_blank"
                 )
               }
@@ -168,7 +168,7 @@ function SupportCenter() {
               type="default"
               onClick={() =>
                 window.open(
-                  `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/131`,
+                  `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/131`,
                   "_blank"
                 )
               }
@@ -183,7 +183,7 @@ function SupportCenter() {
               type="primary"
               onClick={() =>
                 window.open(
-                  `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/39`,
+                  `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
                   "_blank"
                 )
               }

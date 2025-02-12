@@ -3,4 +3,9 @@ import InterventionReport from "features/reports/InterventionReport/Intervention
 
 const layoutProps = {};
 
-export default withLayout(InterventionReport, layoutProps);
+const InterventionReportWithLayout = withLayout(
+  InterventionReport,
+  layoutProps
+);
+
+export default InterventionReportWithLayout;

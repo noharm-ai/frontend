@@ -77,7 +77,8 @@ const columns = () => {
         return (
           <Tooltip title="Alterar exame">
             <Button
-              type="primary gtm-bt-view-exam"
+              type="primary"
+              className="gtm-bt-view-exam"
               onClick={() => record.showModal(record)}
               icon={<EditOutlined />}
             ></Button>

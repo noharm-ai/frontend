@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import "styled-components/macro";
-import isEmpty from "lodash.isempty";
+import "styled-components";
+import { isEmpty } from "lodash";
 import { useFormikContext } from "formik";
 import dayjs from "dayjs";
 import {
@@ -121,7 +121,7 @@ export default function Base({
       {prescription.data.concilia && (
         <Box>
           <Col xs={layout.label}>
-            <Heading as="label" size="14px">
+            <Heading as="label" $size="14px">
               <Tooltip title="Informe o tipo desta conciliação">Tipo:</Tooltip>
             </Heading>
           </Col>
@@ -157,7 +157,7 @@ export default function Base({
       {action === "schedule" && (
         <Box>
           <Col xs={24}>
-            <Heading as="label" size="14px">
+            <Heading as="label" $size="14px">
               Data da consulta:
             </Heading>
           </Col>
@@ -188,7 +188,8 @@ export default function Base({
                 shape="circle"
                 icon={<DownloadOutlined />}
                 onClick={loadDefaultText}
-                type="primary gtm-bt-clinicalNotes-applyDefaultText"
+                type="primary"
+                className="gtm-bt-clinicalNotes-applyDefaultText"
                 style={{ marginRight: "5px" }}
               />
             </Tooltip>
@@ -225,7 +226,8 @@ export default function Base({
               shape="circle"
               icon={<SettingOutlined />}
               onClick={openUserConfig}
-              type="primary gtm-bt-clinicalNotes-configDefaultText"
+              type="primary"
+              className="gtm-bt-clinicalNotes-configDefaultText"
               style={{ marginLeft: "5px" }}
             />
           </Tooltip>

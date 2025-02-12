@@ -19,7 +19,7 @@ import ChartPrescriptionDay from "./Charts/ChartPrescriptionDay";
 import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartDepartments from "./Charts/ChartDepartments";
 import ChartSegments from "./Charts/ChartSegments";
-import { ReactComponent as Brand } from "assets/noHarm-horizontal.svg";
+import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import { filtersToDescription, formatDuration } from "utils/report";
 import ChartScores from "./Charts/ChartScores";
 import HelpModal from "./Help/Help";

@@ -2,8 +2,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Row, Col, Card } from "antd";
-import isEmpty from "lodash.isempty";
-import debounce from "lodash.debounce";
+import { isEmpty } from "lodash";
+import { debounce } from "lodash";
 
 import {
   Select,
@@ -36,10 +36,14 @@ export default function FilterFields({
   segments,
   searchDrugs,
 }) {
+  //eslint disabled because of incorrect error msg
+  //eslint-disable-next-line
   const { t } = useTranslation();
+  //eslint-disable-next-line
   const departments = useSelector(
     (state) => state.lists.getSegmentDepartments.list
   );
+  //eslint-disable-next-line
   const departmentsStatus = useSelector(
     (state) => state.lists.getSegmentDepartments.status
   );

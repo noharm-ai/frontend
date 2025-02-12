@@ -3,4 +3,6 @@ import IntegrationStatus from "features/admin/IntegrationStatus/IntegrationStatu
 
 const layoutProps = {};
 
-export default withLayout(IntegrationStatus, layoutProps);
+const IntegrationStatusWithLayout = withLayout(IntegrationStatus, layoutProps);
+
+export default IntegrationStatusWithLayout;

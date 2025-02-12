@@ -209,13 +209,13 @@ function PredictSubstances({ open, setOpen, reload }) {
               marginBottom: "20px",
             }}
           >
-            <Heading size="16px">
+            <Heading $size="16px">
               {predictStatus === "loading"
                 ? "Inferindo..."
                 : "Finalizado com sucesso"}
             </Heading>
             {affectedItems !== null && predictStatus === "succeeded" && (
-              <Heading size="14px">
+              <Heading $size="14px">
                 {affectedItems} medicamentos atualizados
               </Heading>
             )}

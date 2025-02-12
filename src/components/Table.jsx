@@ -1,5 +1,5 @@
 import { Table as AntTable } from "antd";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { get } from "styles/utils";
 

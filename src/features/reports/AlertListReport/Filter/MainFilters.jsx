@@ -21,7 +21,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={5} lg={3} xxl={3}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Nível:
         </Heading>
         <Select
@@ -48,7 +48,7 @@ export default function MainFilters() {
         </Select>
       </Col>
       <Col md={7} lg={6} xxl={6}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Medicamento:
         </Heading>
         <SelectCustom
@@ -77,7 +77,7 @@ export default function MainFilters() {
       </Col>
 
       <Col md={7} lg={6} xxl={6}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Tipo:
         </Heading>
         <SelectCustom

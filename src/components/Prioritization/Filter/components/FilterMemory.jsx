@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
 import { FilterOutlined } from "@ant-design/icons";
 
@@ -37,7 +37,7 @@ export default function FilterMemory({
     fetchMemory(FILTER_PUBLIC_STORE_ID, FILTER_PUBLIC_MEMORY_TYPE);
   }, [account.userId, fetchMemory]);
 
-  const filterActive = (item) => item.active || !item.hasOwnProperty("active");
+  const filterActive = (item) => item.active || !Object.hasOwn(item, "active");
 
   const saveFilterAction = (filterName, filterType) => {
     if (filterType === "public") {

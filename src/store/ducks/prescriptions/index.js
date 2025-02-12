@@ -1,4 +1,4 @@
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { createActions, createReducer } from "reduxsauce";
 import { sourceToStoreType } from "utils/transformers/prescriptions";
 

@@ -85,7 +85,7 @@ function SummaryText({ open, setOpen, admissionNumber }) {
           confirmLoading={loading}
         >
           <header>
-            <Heading margin="0 0 11px">{t("summary.finishSummary")}</Heading>
+            <Heading $margin="0 0 11px">{t("summary.finishSummary")}</Heading>
           </header>
           <Form>
             <div

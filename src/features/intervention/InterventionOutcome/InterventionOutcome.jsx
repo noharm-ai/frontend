@@ -304,7 +304,7 @@ export default function InterventionOutcome({ ...props }) {
           {...props}
         >
           <header style={{ display: "flex", alignItems: "center" }}>
-            <Heading style={{ marginRight: "10px" }} size="18px">
+            <Heading style={{ marginRight: "10px" }} $size="18px">
               {selectedIntervention.view ? (
                 <>Detalhes da Intervenção</>
               ) : (
@@ -323,7 +323,9 @@ export default function InterventionOutcome({ ...props }) {
                   icon={<QuestionOutlined />}
                   onClick={() =>
                     window.open(
-                      `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/138`
+                      `${
+                        import.meta.env.VITE_APP_ODOO_LINK
+                      }/knowledge/article/138`
                     )
                   }
                 />

@@ -83,8 +83,8 @@ export default function ExamListItem({ exam, siderCollapsed }) {
       mouseEnterDelay={0.5}
     >
       <Item
-        alert={exam.value.value && exam.value.alert}
-        siderCollapsed={siderCollapsed}
+        $alert={exam.value.value && exam.value.alert}
+        $siderCollapsed={siderCollapsed}
       >
         <div className="name">{exam.value.initials}</div>
         <div className="icon">

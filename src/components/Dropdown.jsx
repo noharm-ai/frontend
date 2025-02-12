@@ -1,3 +1,3 @@
-import Dropdown from "antd/lib/dropdown";
+import { Dropdown } from "antd";
 
 export default Dropdown;

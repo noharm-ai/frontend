@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { List } from "antd";
 import { DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
 

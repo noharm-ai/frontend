@@ -92,7 +92,7 @@ function CopyAttributes({ open, setOpen, reload, ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">Copiar Atributos</Heading>
+            <Heading $margin="0 0 11px">Copiar Atributos</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

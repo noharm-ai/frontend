@@ -3,4 +3,6 @@ import PatientDayReport from "features/reports/PatientDayReport/PatientDayReport
 
 const layoutProps = {};
 
-export default withLayout(PatientDayReport, layoutProps);
+const PatientDayReportWithLayout = withLayout(PatientDayReport, layoutProps);
+
+export default PatientDayReportWithLayout;

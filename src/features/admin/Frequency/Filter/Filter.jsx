@@ -9,7 +9,7 @@ import { fetchFrequencies, reset } from "../FrequencySlice";
 
 import MainFilters from "./MainFilters";
 
-export default function Filter({ limit }) {
+export default function Filter() {
   const dispatch = useDispatch();
   const isFetching =
     useSelector((state) => state.admin.frequency.status) === "loading";

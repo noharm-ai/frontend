@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { BellOutlined } from "@ant-design/icons";
 import { Flex } from "antd";
 
@@ -27,19 +27,21 @@ export default function ExamCard({ exams, siderCollapsed, count }) {
       </div>
       <div className="content">
         <Flex align="center" style={{ height: "100%" }}>
-          <div className="exam-list">
-            {exams &&
-              exams.map((exam) => (
+          {exams && exams.length > 0 ? (
+            <div className="exam-list">
+              {exams.map((exam) => (
                 <div className="exam-item" key={exam.key}>
                   <ExamListItem exam={exam} siderCollapsed={siderCollapsed} />
                 </div>
               ))}
-          </div>
-          {isEmpty(exams) && (
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={t("screeningList.empty")}
-            />
+            </div>
+          ) : (
+            <Flex align="center" justify="center" style={{ width: "100%" }}>
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t("screeningList.empty")}
+              />
+            </Flex>
           )}
         </Flex>
       </div>
@@ -57,7 +59,8 @@ export default function ExamCard({ exams, siderCollapsed, count }) {
           </div>
           <div className="action">
             <Button
-              type="link gtm-btn-exams-all"
+              type="link"
+              className="gtm-btn-exams-all"
               onClick={() => setExamVisibility(true)}
             >
               Ver todos

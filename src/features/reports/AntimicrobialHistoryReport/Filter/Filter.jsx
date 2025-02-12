@@ -37,7 +37,7 @@ export default function Filter({ printRef, admissionNumber }) {
     (state) => state.reportsArea.antimicrobialHistory.filtered.result.list
   );
   const handlePrint = useReactToPrint({
-    content: () => printRef.current,
+    contentRef: printRef,
     onBeforeGetContent: onBeforePrint,
     onAfterPrint: onAfterPrint,
   });

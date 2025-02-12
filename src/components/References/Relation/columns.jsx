@@ -7,7 +7,7 @@ import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 export const getTypeName = (currentType, types) => {
   if (currentType == null || types == null) return "";
 
-  var type = "";
+  let type = "";
   types.map(({ key, value }) => (type = currentType === key ? value : type));
 
   return type;
@@ -21,7 +21,7 @@ const truncateText = (text) => {
   return text.substring(0, Math.min(max, text.length)) + ellipsis;
 };
 
-const columns = (security) => [
+const columns = () => [
   {
     title: "Substância relacionada",
     sorter: (a, b) => a.nameB.localeCompare(b.nameB),

@@ -24,7 +24,7 @@ const convDose = (outlier) => {
   }
 };
 
-export default [
+const columns = [
   {
     dataIndex: "class",
     key: "class",
@@ -58,7 +58,7 @@ export default [
     title: "Escore Manual",
     dataIndex: "manualScore",
     width: 60,
-    render: (entry, outlier) => <Escore {...outlier} />,
+    render: (entry, outlier) => <Escore outlier={outlier} />,
   },
   {
     title: "Contagem",
@@ -87,7 +87,8 @@ export default [
           title={hasObs ? "Ver/Editar comentário" : "Adicionar comentário"}
         >
           <Button
-            type="primary gtm-bt-view-obs"
+            type="primary"
+            className="gtm-bt-view-obs"
             ghost={!hasObs}
             onClick={() => outlier.onShowObsModal(outlier)}
             icon={<FormOutlined />}
@@ -97,3 +98,5 @@ export default [
     },
   },
 ].map((item) => ({ ...item, key: item.dataIndex }));
+
+export default columns;

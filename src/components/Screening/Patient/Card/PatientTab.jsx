@@ -42,7 +42,7 @@ export default function PatientTab({
     return msg;
   };
 
-  const AISuggestion = ({ notes, action, date, t }) => {
+  const AISuggestion = ({ notes, date, t }) => {
     return (
       <>
         <div style={{ maxWidth: "300px", textAlign: "center" }}>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { InputNumber } from "components/Inputs";
 import Heading from "components/Heading";
@@ -79,7 +79,7 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
       <div className="ipt-container">
         <div>
           <div className="ipt-label">
-            <Heading as="label" size="14px" textAlign="right">
+            <Heading as="label" $size="14px" $textAlign="right">
               Concentração ({unit}/mL)
             </Heading>
           </div>
@@ -100,7 +100,7 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
         </div>
         <div>
           <div className="ipt-label">
-            <Heading as="label" size="14px" textAlign="right">
+            <Heading as="label" $size="14px" $textAlign="right">
               Volume prescrito (mL)
             </Heading>
           </div>
@@ -120,7 +120,7 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
         </div>
         <div>
           <div className="ipt-label">
-            <Heading as="label" size="14px" textAlign="right">
+            <Heading as="label" $size="14px" $textAlign="right">
               Volume da solução final (mL)
             </Heading>
           </div>
@@ -140,7 +140,7 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
         </div>
         <div>
           <div className="ipt-label">
-            <Heading as="label" size="14px" textAlign="right">
+            <Heading as="label" $size="14px" $textAlign="right">
               Velocidade de infusão (mL/hora)
             </Heading>
           </div>
@@ -160,7 +160,7 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
         </div>
         <div>
           <div className="ipt-label">
-            <Heading as="label" size="14px" textAlign="right">
+            <Heading as="label" $size="14px" $textAlign="right">
               Peso (Kg)
             </Heading>
           </div>
@@ -183,7 +183,7 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
         <CalcDescriptions bordered size="small">
           <Descriptions.Item
             label={
-              <Heading as="label" size="14px" textAlign="right">
+              <Heading as="label" $size="14px" $textAlign="right">
                 Resultados
               </Heading>
             }

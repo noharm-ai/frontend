@@ -57,7 +57,7 @@ export function TagForm({ ...props }) {
       initialValues={initialValues}
       validationSchema={validationSchema}
     >
-      {({ handleSubmit, values }) => (
+      {({ handleSubmit }) => (
         <DefaultModal
           open={formData}
           width={350}
@@ -77,7 +77,7 @@ export function TagForm({ ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">Marcador</Heading>
+            <Heading $margin="0 0 11px">Marcador</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

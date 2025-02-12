@@ -258,8 +258,11 @@ function BaseForm({ data }) {
           mL/min
           <Tooltip title={t("layout.help")}>
             <HelpButton
-              type="primary gtm-medication-btn-help-nefro"
-              href={`${process.env.REACT_APP_ODOO_LINK}/knowledge/article/179`}
+              type="primary"
+              className="gtm-medication-btn-help-nefro"
+              href={`${
+                import.meta.env.VITE_APP_ODOO_LINK
+              }/knowledge/article/179`}
             />
           </Tooltip>
         </div>
@@ -296,8 +299,11 @@ function BaseForm({ data }) {
           U/L
           <Tooltip title={t("layout.help")}>
             <HelpButton
-              type="primary gtm-medication-btn-help-hepa"
-              href={`${process.env.REACT_APP_ODOO_LINK}/knowledge/article/180`}
+              type="primary"
+              className="gtm-medication-btn-help-hepa"
+              href={`${
+                import.meta.env.VITE_APP_ODOO_LINK
+              }/knowledge/article/180`}
             />
           </Tooltip>
         </div>

@@ -1,21 +1,20 @@
 import React from "react";
-import isEmpty from "lodash.isempty";
 import Icon, { InfoCircleFilled } from "@ant-design/icons";
 
-import * as icons from "./svgs";
-
-const CustomIcon = ({ type, ...props }) => {
-  const component = icons[type];
-
-  if (isEmpty(component)) {
-    return null;
-  }
-
+const CustomIcon = ({ component, ...props }) => {
   return <Icon component={component} {...props} />;
 };
 
-export const InfoIcon = (props) => {
-  return <InfoCircleFilled style={{ fontSize: "80%", verticalAlign: "top" }} />;
+export const InfoIcon = () => {
+  return (
+    <InfoCircleFilled
+      style={{
+        fontSize: "80%",
+        verticalAlign: "top",
+        color: "var(--nh-text-color)",
+      }}
+    />
+  );
 };
 
 export default CustomIcon;

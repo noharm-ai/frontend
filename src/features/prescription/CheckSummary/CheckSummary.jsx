@@ -283,7 +283,7 @@ export default function CheckSummary({
           maskClosable={false}
         >
           <header>
-            <Heading margin="0 0 11px" style={{ fontSize: "1.2rem" }}>
+            <Heading $margin="0 0 11px" style={{ fontSize: "1.2rem" }}>
               <ExclamationCircleFilled
                 style={{
                   marginRight: "5px",

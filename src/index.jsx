@@ -3,7 +3,6 @@ import * as ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
-import reportWebVitals from "./reportWebVitals";
 import { I18nextProvider } from "react-i18next";
 import i18next from "i18next";
 import { ConfigProvider } from "antd";
@@ -21,6 +20,8 @@ import * as serviceWorker from "./serviceWorker";
 
 import trans_pt from "./translations/pt.json";
 import trans_en from "./translations/en.json";
+
+import "@ant-design/v5-patch-for-react-19";
 
 i18next.init({
   interpolation: { escapeValue: false },
@@ -86,8 +87,3 @@ root.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

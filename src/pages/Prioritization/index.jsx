@@ -6,4 +6,6 @@ const layoutProps = {
   defaultSelectedKeys: "/",
 };
 
-export default withLayout(Prioritization, layoutProps);
+const PrioritizationWithLayout = withLayout(Prioritization, layoutProps);
+
+export default PrioritizationWithLayout;

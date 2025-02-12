@@ -1,9 +1,9 @@
-import "styled-components/macro";
+import "styled-components";
 import React from "react";
 import Coefficient from "./Coefficient";
 import Tooltip from "components/Tooltip";
 
-export default [
+const columns = [
   {
     title: "Medicamento",
     dataIndex: "drugName",
@@ -25,7 +25,7 @@ export default [
     ),
     dataIndex: "fator",
     width: 40,
-    render: (entry, record) => <Coefficient {...record} />,
+    render: (entry, record) => <Coefficient record={record} />,
   },
   {
     title: "Contagem",
@@ -33,3 +33,5 @@ export default [
     width: 50,
   },
 ].map((item) => ({ ...item, key: item.dataIndex }));
+
+export default columns;

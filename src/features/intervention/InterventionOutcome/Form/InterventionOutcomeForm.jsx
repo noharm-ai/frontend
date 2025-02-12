@@ -194,8 +194,8 @@ export default function InterventionOutcomeForm() {
           <div className="intervention-details-value">
             <div className="reason-list">
               {outcomeData.header?.interventionReason &&
-                outcomeData.header?.interventionReason.map((i) => (
-                  <Tag>{i}</Tag>
+                outcomeData.header?.interventionReason.map((i, index) => (
+                  <Tag key={index}>{i}</Tag>
                 ))}
             </div>
           </div>
@@ -373,6 +373,7 @@ export default function InterventionOutcomeForm() {
                             />
                             <Tooltip title={details ? "Recolher" : "Detalhar"}>
                               <Button
+                                className="btn-calc-details-origin"
                                 icon={
                                   details ? (
                                     <CaretUpOutlined />
@@ -527,6 +528,7 @@ export default function InterventionOutcomeForm() {
                             />
                             <Tooltip title={details ? "Recolher" : "Detalhar"}>
                               <Button
+                                className="btn-calc-details-destiny"
                                 icon={
                                   details ? (
                                     <CaretUpOutlined />

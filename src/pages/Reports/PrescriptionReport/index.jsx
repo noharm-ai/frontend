@@ -3,4 +3,9 @@ import PrescriptionReport from "features/reports/PrescriptionReport/Prescription
 
 const layoutProps = {};
 
-export default withLayout(PrescriptionReport, layoutProps);
+const PrescriptionReportWithLayout = withLayout(
+  PrescriptionReport,
+  layoutProps
+);
+
+export default PrescriptionReportWithLayout;

@@ -110,9 +110,7 @@ function BaseForm() {
                       showSearch
                       style={{ width: "100%" }}
                       value={values.idClass}
-                      onChange={(value, option) =>
-                        setFieldValue("idClass", value)
-                      }
+                      onChange={(value) => setFieldValue("idClass", value)}
                       allowClear
                     >
                       {substanceClasses.map(({ id, name }) => (
@@ -250,7 +248,7 @@ function BaseForm() {
                       tagRender={tagRender("purple")}
                     >
                       {SubstanceTagEnum.getSubstanceTags(t).map((subtag) => (
-                        <Select.Option value={subtag.id}>
+                        <Select.Option value={subtag.id} key={subtag.id}>
                           {subtag.label}
                         </Select.Option>
                       ))}

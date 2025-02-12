@@ -112,7 +112,7 @@ export default function HistoryList() {
         }}
         onRow={(record) => {
           return {
-            onClick: (event) => {
+            onClick: () => {
               handleRowExpand(record);
             },
           };

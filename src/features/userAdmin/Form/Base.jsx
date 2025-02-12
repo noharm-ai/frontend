@@ -53,11 +53,15 @@ function BaseForm() {
               <Textarea
                 onClick={() =>
                   copyToClipboard(
-                    `${process.env.REACT_APP_URL}/reset/${response.payload.data}`
+                    `${import.meta.env.VITE_APP_URL}/reset/${
+                      response.payload.data
+                    }`
                   )
                 }
                 style={{ minHeight: "300px" }}
-                value={`${process.env.REACT_APP_URL}/reset/${response.payload.data}`}
+                value={`${import.meta.env.VITE_APP_URL}/reset/${
+                  response.payload.data
+                }`}
               ></Textarea>
             </>
           ),

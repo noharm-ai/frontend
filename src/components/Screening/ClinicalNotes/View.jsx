@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { format, parseISO } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { QuestionOutlined, FullscreenOutlined } from "@ant-design/icons";
@@ -23,12 +23,11 @@ import {
   Legend,
 } from "./index.style";
 
-const helpLink = `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/113`;
+const helpLink = `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/113`;
 
 export default function View({
   selected,
   update,
-  security,
   userId,
   featureService,
   saveStatus,
@@ -272,7 +271,8 @@ export default function View({
               {!popup && admissionNumber && (
                 <Tooltip title="Abrir em nova janela">
                   <Button
-                    type="primary gtm-clinicalnote-btn-popup"
+                    type="primary"
+                    className="gtm-clinicalnote-btn-popup"
                     shape="circle"
                     ghost
                     icon={<FullscreenOutlined />}
@@ -289,7 +289,8 @@ export default function View({
               {featureService.hasPrimaryCare() ? (
                 <>
                   <Button
-                    type="primary gtm-clinicalnote-edit"
+                    type="primary"
+                    className="gtm-clinicalnote-edit"
                     ghost={edit}
                     onClick={() => setEdit(!edit)}
                   >
@@ -299,7 +300,8 @@ export default function View({
               ) : (
                 <Tooltip title={t("layout.help")}>
                   <Button
-                    type="primary gtm-annotation-btn-help"
+                    type="primary"
+                    className="gtm-annotation-btn-help"
                     shape="circle"
                     icon={<QuestionOutlined />}
                     style={{
@@ -318,12 +320,12 @@ export default function View({
       <PaperContainer ref={paperContainerRef} className={edit ? "edit" : ""}>
         {saveStatus.isSaving ? (
           <LoadContainer>
-            <LoadBox absolute={true} />
+            <LoadBox $absolute={true} />
           </LoadContainer>
         ) : (
           <>
             {edit ? (
-              <Paper t={t}>
+              <Paper $t={t}>
                 <Edit
                   clinicalNote={selected}
                   update={update}
@@ -335,7 +337,7 @@ export default function View({
                 {selected.text && (
                   <>
                     <Paper
-                      t={t}
+                      $t={t}
                       dangerouslySetInnerHTML={{
                         __html: html,
                       }}
@@ -373,16 +375,7 @@ export default function View({
           </Legend>
 
           <Legend>
-            * As anotações são geradas pela <strong>NoHarm Care</strong>.{" "}
-            <a
-              href={helpLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Saiba como ajudar"
-            >
-              Você pode ajudar a treiná-la
-            </a>
-            .
+            * As anotações são geradas pela <strong>NoHarm Care</strong>.
           </Legend>
         </>
       )}

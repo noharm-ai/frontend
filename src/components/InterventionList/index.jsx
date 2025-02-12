@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import isEmpty from "lodash.isempty";
-import styled from "styled-components/macro";
+import { isEmpty } from "lodash";
+import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 
 import Empty from "components/Empty";
@@ -255,7 +255,7 @@ export default function InterventionList({
       <TableInfo>
         {isFetching ? (
           <div style={{ minHeight: "100px", position: "relative" }}>
-            <LoadBox absolute />
+            <LoadBox $absolute />
           </div>
         ) : (
           <>

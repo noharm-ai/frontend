@@ -1,6 +1,5 @@
-import "styled-components/macro";
+import "styled-components";
 import React from "react";
-import PropTypes from "prop-types";
 
 import Heading from "components/Heading";
 import { useTranslation } from "react-i18next";
@@ -22,13 +21,3 @@ export default function Box({ renderHeader, children, pageTitle, ...props }) {
     </Wrapper>
   );
 }
-
-Box.propTypes = {
-  renderHeader: PropTypes.func,
-  pageTitle: PropTypes.string,
-  children: PropTypes.node.isRequired,
-};
-
-Box.defaultProps = {
-  renderHeader: null,
-};

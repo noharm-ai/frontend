@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Row, Col } from "components/Grid";
 import Heading from "components/Heading";
@@ -25,12 +25,12 @@ export default function Edit({ outlier, updateSelectedOutlier }) {
   return (
     <>
       <header>
-        <Heading margin="0 0 11px">Comentário</Heading>
+        <Heading $margin="0 0 11px">Comentário</Heading>
       </header>
       <Box>
         <Row type="flex" gutter={24} css="padding: 7px 0">
           <Col span={8}>
-            <Heading as="p" size="14px">
+            <Heading as="p" $size="14px">
               Medicamento:
             </Heading>
           </Col>
@@ -38,7 +38,7 @@ export default function Edit({ outlier, updateSelectedOutlier }) {
         </Row>
         <Row type="flex" gutter={24} css="padding: 7px 0">
           <Col span={8}>
-            <Heading as="p" size="14px">
+            <Heading as="p" $size="14px">
               Dose:
             </Heading>
           </Col>
@@ -46,7 +46,7 @@ export default function Edit({ outlier, updateSelectedOutlier }) {
         </Row>
         <Row type="flex" gutter={24} css="padding: 7px 0;margin-bottom: 20px">
           <Col span={8}>
-            <Heading as="p" size="14px">
+            <Heading as="p" $size="14px">
               Frequencia diária:
             </Heading>
           </Col>

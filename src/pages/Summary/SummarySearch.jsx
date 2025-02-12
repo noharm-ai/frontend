@@ -3,4 +3,6 @@ import SummarySearch from "features/summary/SummarySearch/SummarySearch";
 
 const layoutProps = {};
 
-export default withLayout(SummarySearch, layoutProps);
+const SummarySearchWithLayout = withLayout(SummarySearch, layoutProps);
+
+export default SummarySearchWithLayout;

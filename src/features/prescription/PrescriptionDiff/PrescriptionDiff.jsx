@@ -29,7 +29,7 @@ export default function PrescriptionDiff({ open, setOpen }) {
       onCancel={() => setOpen(false)}
       footer={null}
     >
-      <Heading margin="0 0 11px" style={{ fontSize: "1.2rem" }}>
+      <Heading $margin="0 0 11px" style={{ fontSize: "1.2rem" }}>
         Comparativo de Vigências (Beta)
       </Heading>
 
@@ -42,7 +42,7 @@ export default function PrescriptionDiff({ open, setOpen }) {
 
       <Row gutter={[24, 24]} style={{ marginTop: "2rem" }}>
         <Col xs={11}>
-          <Heading margin="0 0 11px" style={{ fontSize: "1rem" }}>
+          <Heading $margin="0 0 11px" style={{ fontSize: "1rem" }}>
             Itens removidos
           </Heading>
 
@@ -59,7 +59,7 @@ export default function PrescriptionDiff({ open, setOpen }) {
           <Divider type="vertical" style={{ height: "100%" }} />
         </Col>
         <Col xs={11}>
-          <Heading margin="0 0 11px" style={{ fontSize: "1rem" }}>
+          <Heading $margin="0 0 11px" style={{ fontSize: "1rem" }}>
             Itens adicionados
           </Heading>
           {addList.map((d) => (

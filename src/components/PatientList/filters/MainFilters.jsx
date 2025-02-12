@@ -57,7 +57,7 @@ export default function MainFilters({ segments }) {
   return (
     <>
       <Col md={6}>
-        <Heading as="label" htmlFor="segments" size="14px">
+        <Heading as="label" htmlFor="segments" $size="14px">
           {t("screeningList.segment")}:
         </Heading>
         <Select
@@ -75,7 +75,7 @@ export default function MainFilters({ segments }) {
         </Select>
       </Col>
       <Col md={6}>
-        <Heading as="label" htmlFor="departments" size="14px">
+        <Heading as="label" htmlFor="departments" $size="14px">
           {t("screeningList.labelDepartment")}:
         </Heading>
         <Select
@@ -103,7 +103,7 @@ export default function MainFilters({ segments }) {
         </Select>
       </Col>
       <Col md={7} lg={7} xxl={5}>
-        <Heading as="label" htmlFor="date" size="14px">
+        <Heading as="label" htmlFor="date" $size="14px">
           {t("tableHeader.scheduledDate")}:
         </Heading>
         <RangeDatePicker

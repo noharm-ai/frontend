@@ -55,7 +55,8 @@ export default function ClinicalNotesCard({ stats, total, featureService }) {
         <div></div>
         <div className="action">
           <Button
-            type="link gtm-btn-notes-all"
+            type="link"
+            className="gtm-btn-notes-all"
             onClick={() => setClinicalNotesVisibility(true)}
           >
             Visualizar

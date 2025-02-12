@@ -25,7 +25,7 @@ export default function HelpModal() {
       footer={null}
     >
       <Heading
-        size="18px"
+        $size="18px"
         className="fixed"
         style={{ marginBottom: "15px", display: "flex", alignItems: "center" }}
       >
@@ -64,7 +64,7 @@ export default function HelpModal() {
           block
           onClick={() =>
             window.open(
-              `${process.env.REACT_APP_ODOO_LINK}/knowledge/article/141`,
+              `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/141`,
               "_blank"
             )
           }

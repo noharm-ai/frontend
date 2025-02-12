@@ -1,4 +1,4 @@
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 
 import { store } from "store";
 import { Creators as AuthCreators } from "../store/ducks/auth";

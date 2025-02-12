@@ -6,10 +6,12 @@ import { TextColumn } from "components/Table";
 import Tooltip from "components/Tooltip";
 import { Link } from "components/Button";
 
-const Action = (record) => {
+/* eslint-disable-next-line react-refresh/only-export-components */
+const Action = ({ record }) => {
   return (
     <Link
-      type="secondary gtm-bt-detail-patient"
+      type="secondary"
+      className="gtm-bt-detail-patient"
       href={`/prescricao/${record.idPrescription}`}
       target="_blank"
       icon={<SearchOutlined />}
@@ -95,7 +97,7 @@ const columns = (sortedInfo, filteredInfo, t) => {
       key: "operations",
       width: 70,
       align: "center",
-      render: (text, record) => <Action {...record} />,
+      render: (text, record) => <Action record={record} />,
     },
   ];
 };

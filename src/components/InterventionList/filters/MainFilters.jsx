@@ -33,7 +33,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={6} xxl={3}>
-        <Heading as="label" htmlFor="date" size="14px">
+        <Heading as="label" htmlFor="date" $size="14px">
           {t("labels.interventionDate")}:
         </Heading>
         <RangeDatePicker
@@ -49,7 +49,7 @@ export default function MainFilters() {
         />
       </Col>
       <Col md={7} lg={5} xxl={4}>
-        <Heading as="label" htmlFor="date" size="14px">
+        <Heading as="label" htmlFor="date" $size="14px">
           {t("labels.reasons")}:
         </Heading>
         <SelectCustom
@@ -77,7 +77,7 @@ export default function MainFilters() {
         </SelectCustom>
       </Col>
       <Col md={7} lg={3} xxl={3}>
-        <Heading as="label" htmlFor="date" size="14px">
+        <Heading as="label" htmlFor="date" $size="14px">
           {t("labels.status")}:
         </Heading>
         <Select
@@ -106,7 +106,7 @@ export default function MainFilters() {
         </Select>
       </Col>
       <Col md={7} lg={3} xxl={3}>
-        <Heading as="label" htmlFor="date" size="14px">
+        <Heading as="label" htmlFor="date" $size="14px">
           {t("labels.admissionNumber")}:
         </Heading>
         <InputNumber

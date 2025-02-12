@@ -31,12 +31,12 @@ export default function SaveFilterModal({
         disabled: filterName === "",
       }}
       okText="Salvar"
-      okType="primary gtm-bt-save-filter"
+      okType="primary"
       cancelText="Cancelar"
     >
       <Heading
         as="label"
-        size="14px"
+        $size="14px"
         className="fixed"
         style={{ marginTop: "12px" }}
       >
@@ -49,7 +49,7 @@ export default function SaveFilterModal({
 
       <Row gutter={20} style={{ marginTop: "15px" }}>
         <Col xs={4}>
-          <Heading as="label" size="14px" className="fixed">
+          <Heading as="label" $size="14px" className="fixed">
             Público:
           </Heading>
         </Col>

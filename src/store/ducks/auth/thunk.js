@@ -1,4 +1,4 @@
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 
 import api from "services/api";
 import appInfo from "utils/appInfo";

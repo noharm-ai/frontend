@@ -1,5 +1,4 @@
-import isEmpty from "lodash.isempty";
-import intersection from "lodash.intersection";
+import { isEmpty, intersection } from "lodash";
 
 import { store } from "store/index";
 

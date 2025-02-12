@@ -100,7 +100,7 @@ function IntegrationConfigForm({ ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">{formData?.schema}</Heading>
+            <Heading $margin="0 0 11px">{formData?.schema}</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

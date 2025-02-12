@@ -94,7 +94,7 @@ export default function AlertList() {
         }}
         onRow={(record) => {
           return {
-            onClick: (event) => {
+            onClick: () => {
               handleRowExpand(record);
             },
           };

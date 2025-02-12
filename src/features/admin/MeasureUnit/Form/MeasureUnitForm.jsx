@@ -65,7 +65,7 @@ export function MeasureUnitForm({ ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">{formData?.name}</Heading>
+            <Heading $margin="0 0 11px">{formData?.name}</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

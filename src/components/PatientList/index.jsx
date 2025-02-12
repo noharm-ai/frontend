@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import debounce from "lodash.debounce";
+import { debounce } from "lodash";
 import { useTranslation } from "react-i18next";
 
 import Table from "components/Table";

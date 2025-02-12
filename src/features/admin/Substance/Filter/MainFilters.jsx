@@ -11,7 +11,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={5} lg={6} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Nome:
         </Heading>
         <Input
@@ -26,7 +26,7 @@ export default function MainFilters() {
         </div>
       </Col>
       <Col md={3} lg={3} xxl={3}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           ID Classe:
         </Heading>
         <Input
@@ -40,7 +40,7 @@ export default function MainFilters() {
       </Col>
 
       <Col md={3} lg={3} xxl={2}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Possui Classe:
         </Heading>
         <Select
@@ -49,7 +49,7 @@ export default function MainFilters() {
           showSearch
           style={{ width: "100%" }}
           value={values.hasClass}
-          onChange={(value, option) => setFieldValue({ hasClass: value })}
+          onChange={(value) => setFieldValue({ hasClass: value })}
           allowClear
         >
           <Select.Option value={1}>Sim</Select.Option>
@@ -58,7 +58,7 @@ export default function MainFilters() {
       </Col>
 
       <Col md={3} lg={3} xxl={2}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Situação:
         </Heading>
         <Select
@@ -66,7 +66,7 @@ export default function MainFilters() {
           showSearch
           style={{ width: "100%" }}
           value={values.active}
-          onChange={(value, option) => setFieldValue({ active: value })}
+          onChange={(value) => setFieldValue({ active: value })}
           allowClear
         >
           <Select.Option value={true}>Ativo</Select.Option>

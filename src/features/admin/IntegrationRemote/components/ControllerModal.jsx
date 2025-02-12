@@ -56,7 +56,7 @@ export default function ControllerModal({ data, onCancel }) {
       onCancel={onCancel}
       footer={null}
     >
-      <Heading margin="0 0 11px" size="18px">
+      <Heading $margin="0 0 11px" $size="18px">
         {data?.name}
       </Heading>
 

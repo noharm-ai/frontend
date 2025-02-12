@@ -3,4 +3,6 @@ import Regulation from "features/regulation/Regulation/Regulation";
 
 const layoutProps = {};
 
-export default withLayout(Regulation, layoutProps);
+const RegulationWithLayout = withLayout(Regulation, layoutProps);
+
+export default RegulationWithLayout;

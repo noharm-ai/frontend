@@ -83,7 +83,7 @@ function CopyConversion({ open, setOpen, reload, ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">Copiar Conversões</Heading>
+            <Heading $margin="0 0 11px">Copiar Conversões</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

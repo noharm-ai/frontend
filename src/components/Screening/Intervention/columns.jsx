@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 import {
@@ -15,7 +15,7 @@ import Tag from "components/Tag";
 import Dropdown from "components/Dropdown";
 import Tooltip from "components/Tooltip";
 import RichTextView from "components/RichTextView";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import InterventionStatus from "models/InterventionStatus";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 
@@ -89,17 +89,14 @@ const interventionMenu = (
   };
 };
 
-export const PrescriptionInline = ({
-  dose,
-  measureUnit,
-  frequency,
-  route,
-  time,
-}) => (
-  <>
-    {frequency.label} x {dose} {measureUnit.label} via {route} ({time})
-  </>
-);
+export const PrescriptionInline = ({ intervention }) => {
+  const { dose, measureUnit, frequency, route, time } = intervention;
+  return (
+    <>
+      {frequency.label} x {dose} {measureUnit.label} via {route} ({time})
+    </>
+  );
+};
 
 export const InterventionView = ({
   intervention,
@@ -113,7 +110,7 @@ export const InterventionView = ({
     <Descriptions bordered>
       {status}
       <Descriptions.Item label={`${t("tableHeader.prescription")}:`} span={3}>
-        <PrescriptionInline {...intervention} />
+        <PrescriptionInline intervention={intervention} />
       </Descriptions.Item>
       {intervention.fetchFuturePrescription && (
         <Descriptions.Item label={`${t("labels.nextPrescription")}:`} span={3}>
@@ -232,6 +229,7 @@ const TranscriptionView = ({ transcription }) => {
   return <Descriptions bordered>{items}</Descriptions>;
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export const expandedInterventionRowRender = (record) => {
   return (
     <NestedTableContainer>
@@ -240,14 +238,15 @@ export const expandedInterventionRowRender = (record) => {
   );
 };
 
-const Action = ({
-  isSaving,
-  id,
-  idPrescription,
-  onShowModal,
-  admissionNumber,
-  ...data
-}) => {
+const Action = ({ record }) => {
+  const {
+    isSaving,
+    id,
+    idPrescription,
+    onShowModal,
+    admissionNumber,
+    ...data
+  } = record;
   const dispatch = useDispatch();
   const isChecked = data.status !== "s";
   const closedStatuses = InterventionStatus.getClosedStatuses();
@@ -287,7 +286,7 @@ const Action = ({
             dispatch,
             onShowModal
           )}
-          loading={isSaving}
+          placement="bottomRight"
         >
           <Button
             type="primary"
@@ -297,8 +296,8 @@ const Action = ({
                 ? "gtm-bt-menu-interv-status"
                 : "gtm-bt-tab-interv-status"
             }
-            icon={<CaretDownOutlined style={{ fontSize: 16 }} />}
-          ></Button>
+            icon={<CaretDownOutlined />}
+          />
         </Dropdown>
       )}
       {onShowModal && (
@@ -311,7 +310,8 @@ const Action = ({
           placement="left"
         >
           <Button
-            type="primary gtm-bt-menu-interv"
+            type="primary"
+            className="gtm-bt-menu-interv"
             style={{ marginLeft: "5px" }}
             disabled={isClosed}
             onClick={() => {
@@ -409,10 +409,11 @@ const columns = (filteredInfo, name = false, t) => {
       align: "center",
       width: 100,
       render: (text, record) => {
-        return <Action {...record} />;
+        return <Action record={record} />;
       },
     },
   ];
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export default columns;

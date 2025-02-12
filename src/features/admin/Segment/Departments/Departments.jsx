@@ -147,7 +147,7 @@ function DepartmentsForm({ open, setOpen }) {
     }),
   });
 
-  const rowClassName = (record, bag) => {
+  const rowClassName = (record) => {
     if (record.uses > 0) {
       return "suspended checked";
     }

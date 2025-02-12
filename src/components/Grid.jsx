@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { Col as AntCol, Row as AntRow } from "antd/lib/grid";
 
 const Container = styled.div`

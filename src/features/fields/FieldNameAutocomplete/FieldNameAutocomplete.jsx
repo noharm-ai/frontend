@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import debounce from "lodash.debounce";
+import { debounce } from "lodash";
 import { Spin, Flex, Tag } from "antd";
 
 import { Select } from "components/Inputs";

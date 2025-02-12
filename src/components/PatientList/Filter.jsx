@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
 
 import notification from "components/notification";

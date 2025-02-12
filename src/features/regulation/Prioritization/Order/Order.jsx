@@ -17,7 +17,7 @@ import {
 
 import { OrderContainer } from "./Order.style";
 
-export const ORDER_OPTIONS = [
+const ORDER_OPTIONS = [
   {
     label: "Data de solicitação",
     key: "date",

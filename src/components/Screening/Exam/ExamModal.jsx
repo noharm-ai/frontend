@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
 
 import DefaultModal from "components/Modal";
@@ -37,7 +37,7 @@ export default function Modal({
 
   useEffect(() => {
     setDsExams(toDataSource(exams.list, "key", {}));
-  }, [exams.list]); // eslint-disable-line
+  }, [exams.list]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     setSortOrder(sorter);

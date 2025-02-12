@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 import { Button as AntdButton } from "antd";
 import { useNavigate } from "react-router-dom";
 import { QuestionOutlined } from "@ant-design/icons";
