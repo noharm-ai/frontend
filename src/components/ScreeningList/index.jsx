@@ -221,14 +221,16 @@ export default function ScreeningList({
       case "reset":
         dispatch(setSelectedRowsActive(false));
         break;
-      case "checkPrescription":
+      case "checkPrescription": {
         const cheklist = list.filter(
           (item) => selectedRows.indexOf(item.idPrescription) !== -1
         );
         dispatch(setMultipleCheckList(cheklist));
         setMultipleCheckModal(true);
         break;
-      case "openPrescription":
+      }
+
+      case "openPrescription": {
         let showWarning = false;
 
         list.forEach((item) => {
@@ -253,6 +255,7 @@ export default function ScreeningList({
         }
 
         break;
+      }
       default:
         console.error(key);
     }

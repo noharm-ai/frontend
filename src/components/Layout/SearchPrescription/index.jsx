@@ -71,7 +71,7 @@ export default function SearchPrescription({ type, size }) {
 
       if (open) {
         switch (keyCode) {
-          case actionKey.up:
+          case actionKey.up: {
             const indexUp = options.findIndex(
               (i) => i.idPrescription === itemActive
             );
@@ -81,7 +81,8 @@ export default function SearchPrescription({ type, size }) {
             }
 
             break;
-          case actionKey.down:
+          }
+          case actionKey.down: {
             const indexDown = options.findIndex(
               (i) => i.idPrescription === itemActive
             );
@@ -91,8 +92,9 @@ export default function SearchPrescription({ type, size }) {
             }
 
             break;
+          }
           case actionKey.space:
-          case actionKey.enter:
+          case actionKey.enter: {
             const index = options.findIndex(
               (i) => i.idPrescription === itemActive
             );
@@ -105,6 +107,7 @@ export default function SearchPrescription({ type, size }) {
             }
 
             break;
+          }
           default:
             setOpen(false);
             inputRef.current?.focus();

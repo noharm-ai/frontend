@@ -139,7 +139,7 @@ export default function Screening({
         const expandBtn = activeRow.querySelector(".ant-table-row-expand-icon");
 
         switch (keyCode) {
-          case actionKey.up:
+          case actionKey.up: {
             e.preventDefault();
             activeRow.classList.remove("highlight");
             const previousElm = getPreviousSibling(activeRow);
@@ -153,7 +153,8 @@ export default function Screening({
             }, 50);
 
             break;
-          case actionKey.down:
+          }
+          case actionKey.down: {
             e.preventDefault();
             activeRow.classList.remove("highlight");
             const nextElm = getNextSibling(activeRow);
@@ -168,6 +169,7 @@ export default function Screening({
             }, 50);
 
             break;
+          }
           case actionKey.right:
             e.preventDefault();
             if (
@@ -190,7 +192,7 @@ export default function Screening({
             }
 
             break;
-          case actionKey.backspace:
+          case actionKey.backspace: {
             e.preventDefault();
             activeRow.classList.remove("highlight");
             const first = document.querySelectorAll(
@@ -203,6 +205,7 @@ export default function Screening({
               ?.focus({ preventScroll: true });
 
             break;
+          }
           case actionKey.enter:
             e.preventDefault();
             document
