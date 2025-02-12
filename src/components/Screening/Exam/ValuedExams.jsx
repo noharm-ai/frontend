@@ -1,16 +1,16 @@
 import React from "react";
 import { format } from "date-fns";
 import { Row, Col } from "antd";
-import Chart from "react-google-charts";
 import { useTranslation } from "react-i18next";
 
 import NumericValue from "components/NumericValue";
-import LoadBox from "components/LoadBox";
 import Empty from "components/Empty";
 import Table, { NestedTableContainer } from "components/Table";
 import { toDataSource } from "utils";
+import { ExamChart } from "./ExamChart";
 
 import { examRowClassName } from "./columns";
+import { formatDate } from "utils/date";
 
 export default function ValuedExams({ record }) {
   const { t } = useTranslation();
@@ -52,22 +52,19 @@ export default function ValuedExams({ record }) {
   }));
 
   const dsHistory = toDataSource(history, "objKey");
-  const graphDataArray = history.map((item) => {
-    return [
-      format(new Date(item.date), "dd/MM"),
-      parseFloat(item.value, 10),
-      item.max,
-      item.min,
-    ];
+  const reportData = {
+    days: [],
+    min: [],
+    max: [],
+    results: [],
+    unit: `${t("tableHeader.value")} ${history[0].unit}`,
+  };
+  [...history].reverse().forEach((item) => {
+    reportData.days.push(formatDate(item.date, "DD/MM"));
+    reportData.min.push(item.min);
+    reportData.max.push(item.max);
+    reportData.results.push(parseFloat(item.value, 10));
   });
-  const dsGraph = [
-    [
-      t("tableHeader.date"),
-      `${t("tableHeader.value")} ${history[0].unit}`,
-      t("tableHeader.max"),
-      t("tableHeader.min"),
-    ],
-  ].concat(graphDataArray.reverse());
 
   return (
     <NestedTableContainer>
@@ -89,28 +86,8 @@ export default function ValuedExams({ record }) {
           />
         </Col>
         <Col md={12}>
-          {dsGraph.length > 2 && (
-            <Chart
-              width="100%"
-              height="400px"
-              chartType="LineChart"
-              loader={<LoadBox />}
-              data={dsGraph}
-              options={{
-                hAxis: {
-                  title: t("tableHeader.date"),
-                },
-                vAxis: {
-                  title: t("tableHeader.value"),
-                },
-                backgroundColor: "transparent",
-                series: {
-                  1: { color: "#d9363e" },
-                  2: { color: "#d9363e" },
-                },
-              }}
-              rootProps={{ "data-testid": "1" }}
-            />
+          {reportData.days.length > 1 && (
+            <ExamChart isLoading={false} reportData={reportData} />
           )}
         </Col>
       </Row>
