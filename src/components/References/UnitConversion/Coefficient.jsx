@@ -53,7 +53,6 @@ export default function Escore({ record }) {
 
       {idMeasureUnit !== defaultIdMeasureUnit && (
         <>
-          {/*eslint-disable-next-line*/}
           <a href="#" css="color: inherit;" onClick={handleClick}>
             <EditOutlined />
           </a>

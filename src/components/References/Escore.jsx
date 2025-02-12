@@ -61,7 +61,6 @@ export default function Escore({ outlier }) {
   ) : (
     <>
       <span css="margin-right: 10px;">{score}</span>
-      {/*eslint-disable-next-line*/}
       <a href="#" css="color: inherit;" onClick={handleClick}>
         <EditOutlined />
       </a>

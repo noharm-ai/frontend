@@ -36,10 +36,14 @@ export default function FilterFields({
   segments,
   searchDrugs,
 }) {
+  //eslint disabled because of incorrect error msg
+  //eslint-disable-next-line
   const { t } = useTranslation();
+  //eslint-disable-next-line
   const departments = useSelector(
     (state) => state.lists.getSegmentDepartments.list
   );
+  //eslint-disable-next-line
   const departmentsStatus = useSelector(
     (state) => state.lists.getSegmentDepartments.status
   );

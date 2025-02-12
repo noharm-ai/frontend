@@ -24,7 +24,7 @@ const convDose = (outlier) => {
   }
 };
 
-export default [
+const columns = [
   {
     dataIndex: "class",
     key: "class",
@@ -98,3 +98,5 @@ export default [
     },
   },
 ].map((item) => ({ ...item, key: item.dataIndex }));
+
+export default columns;

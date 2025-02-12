@@ -37,7 +37,7 @@ export default function Modal({
 
   useEffect(() => {
     setDsExams(toDataSource(exams.list, "key", {}));
-  }, [exams.list]); // eslint-disable-line
+  }, [exams.list]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     setSortOrder(sorter);
