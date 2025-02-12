@@ -1,3 +1,4 @@
+// @ts-expect-error legacy component
 import { EChartBase } from "components/EChartBase";
 
 interface IExamChartProps {
