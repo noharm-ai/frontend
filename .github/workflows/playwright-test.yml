@@ -49,14 +49,14 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
         env:
-          REACT_APP_API_URL: http://localhost:5000
-          REACT_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_TEST }}
-          REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
-          REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
-          REACT_APP_SUPPORT_LINK: ${{ secrets.REACT_APP_SUPPORT_LINK }}
-          REACT_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
-          REACT_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
-          REACT_APP_URL: http://localhost:3000
+          VITE_APP_API_URL: http://localhost:5000
+          VITE_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_TEST }}
+          VITE_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
+          VITE_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
+          VITE_APP_SUPPORT_LINK: ${{ secrets.REACT_APP_SUPPORT_LINK }}
+          VITE_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
+          VITE_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
+          VITE_APP_URL: http://localhost:3000
           TEST_USER: e2e@e2e.com
           TEST_USER_PASSWORD: e2etest
       - uses: actions/upload-artifact@v4
