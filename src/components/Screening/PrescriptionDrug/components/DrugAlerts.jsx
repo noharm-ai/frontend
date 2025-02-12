@@ -97,9 +97,9 @@ export default function DrugAlerts({ alerts, idSubstance }) {
 
   const groups = {};
   alerts.forEach((a) => {
-    let type = a.level;
+    const type = a.level;
 
-    if (!groups.hasOwnProperty(type)) {
+    if (!Object.hasOwn(groups, type)) {
       groups[type] = [a];
     } else {
       groups[type].push(a);

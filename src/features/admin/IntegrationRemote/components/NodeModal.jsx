@@ -547,7 +547,7 @@ export default function NodeModal() {
     ];
 
     validFields.forEach((field) => {
-      if (params.hasOwnProperty(field)) {
+      if (Object.hasOwn(params, field)) {
         payload[field] = params[field] === "" ? null : params[field];
       }
     });

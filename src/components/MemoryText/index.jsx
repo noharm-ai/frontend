@@ -121,13 +121,13 @@ export default function MemoryText({
       default:
         loadText(
           list[0].value.filter(
-            (item) => item.active || !item.hasOwnProperty("active")
+            (item) => item.active || !Object.hasOwn(item, "active")
           )[key]?.data
         );
     }
   };
 
-  const filterActive = (item) => item.active || !item.hasOwnProperty("active");
+  const filterActive = (item) => item.active || !Object.hasOwn(item, "active");
 
   const textMenu = () => {
     const filters = list && list[0]?.value ? list[0].value : [];
@@ -143,7 +143,7 @@ export default function MemoryText({
     }
 
     return list[0].value
-      .filter((item) => item.active || !item.hasOwnProperty("active"))
+      .filter((item) => item.active || !Object.hasOwn(item, "active"))
       .map((item, index) => {
         return {
           key: index,
