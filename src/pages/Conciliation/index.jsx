@@ -5,4 +5,6 @@ const layoutProps = {
   pageTitle: "Conciliação",
 };
 
-export default withLayout(Conciliation, layoutProps);
+const ConciliationWithLayout = withLayout(Conciliation, layoutProps);
+
+export default ConciliationWithLayout;

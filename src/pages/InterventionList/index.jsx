@@ -3,4 +3,6 @@ import InterventionList from "containers/InterventionList";
 
 const layoutProps = {};
 
-export default withLayout(InterventionList, layoutProps);
+const InterventionListWithLayout = withLayout(InterventionList, layoutProps);
+
+export default InterventionListWithLayout;

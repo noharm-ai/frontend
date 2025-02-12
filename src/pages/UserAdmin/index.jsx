@@ -3,4 +3,6 @@ import UserAdmin from "features/userAdmin/UserAdmin";
 
 const layoutProps = {};
 
-export default withLayout(UserAdmin, layoutProps);
+const UserAdminWithLayout = withLayout(UserAdmin, layoutProps);
+
+export default UserAdminWithLayout;

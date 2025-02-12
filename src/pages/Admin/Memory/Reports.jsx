@@ -3,4 +3,6 @@ import MemoryReports from "features/admin/Memory/Reports/Reports";
 
 const layoutProps = {};
 
-export default withLayout(MemoryReports, layoutProps);
+const MemoryReportsWithLayout = withLayout(MemoryReports, layoutProps);
+
+export default MemoryReportsWithLayout;

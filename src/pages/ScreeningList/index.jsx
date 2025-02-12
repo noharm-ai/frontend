@@ -3,4 +3,6 @@ import ScreeningList from "containers/ScreeningList";
 
 const layoutProps = {};
 
-export default withLayout(ScreeningList, layoutProps);
+const ScreeningListWithLayout = withLayout(ScreeningList, layoutProps);
+
+export default ScreeningListWithLayout;

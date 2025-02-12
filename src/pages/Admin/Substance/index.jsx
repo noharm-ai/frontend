@@ -3,4 +3,6 @@ import Substance from "features/admin/Substance/Substance";
 
 const layoutProps = {};
 
-export default withLayout(Substance, layoutProps);
+const SubstanceWithLayout = withLayout(Substance, layoutProps);
+
+export default SubstanceWithLayout;

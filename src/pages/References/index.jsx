@@ -6,4 +6,6 @@ const layoutProps = {
   pageTitle: "menu.medications",
 };
 
-export default withLayout(References, layoutProps);
+const ReferencesWithLayout = withLayout(References, layoutProps);
+
+export default ReferencesWithLayout;

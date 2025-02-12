@@ -3,4 +3,6 @@ import UnitConversion from "features/admin/UnitConversion/UnitConversion";
 
 const layoutProps = {};
 
-export default withLayout(UnitConversion, layoutProps);
+const UnitConversionWithLayout = withLayout(UnitConversion, layoutProps);
+
+export default UnitConversionWithLayout;

@@ -3,4 +3,6 @@ import AdminSegment from "features/admin/Segment/Segment";
 
 const layoutProps = {};
 
-export default withLayout(AdminSegment, layoutProps);
+const AdminSegmentWithLayout = withLayout(AdminSegment, layoutProps);
+
+export default AdminSegmentWithLayout;
