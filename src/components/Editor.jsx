@@ -88,10 +88,6 @@ export default function Editor({ content, onEdit, utilities = ["basic"] }) {
 const MenuBar = ({ utilities }) => {
   const { editor } = useCurrentEditor();
 
-  if (!editor) {
-    return null;
-  }
-
   const setLink = useCallback(() => {
     const previousUrl = editor.getAttributes("link").href;
     const url = window.prompt("URL", previousUrl ?? "https://");
