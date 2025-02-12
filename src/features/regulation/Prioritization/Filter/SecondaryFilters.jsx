@@ -35,7 +35,7 @@ export default function SecondaryFilters() {
     });
   }, [dispatch, t]);
 
-  let typeOptionsNullable = [
+  const typeOptionsNullable = [
     { label: "Exame", value: 1 },
     { label: "Encaminhamento", value: 2 },
     { label: "Todos", value: null },
