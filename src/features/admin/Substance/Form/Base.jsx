@@ -215,6 +215,7 @@ function BaseForm() {
                           onEdit={(text) =>
                             setFieldValue(`handling.${k}`, text)
                           }
+                          utilities={["basic", "link"]}
                           content={values.handling[k] || ""}
                         />
                       </div>
@@ -600,6 +601,7 @@ function BaseForm() {
                     <Editor
                       onEdit={(text) => setFieldValue(`adminText`, text)}
                       content={values.adminText || ""}
+                      utilities={["basic", "link"]}
                     />
                   </div>
                 </div>

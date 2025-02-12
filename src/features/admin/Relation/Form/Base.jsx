@@ -128,6 +128,7 @@ function BaseForm() {
           <Editor
             onEdit={(text) => setFieldValue(`text`, text)}
             content={values.text || ""}
+            utilities={["basic", "link"]}
           />
         </div>
       </div>

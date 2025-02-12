@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Link from "@tiptap/extension-link";
 import { Space, Divider } from "antd";
 import {
   BoldOutlined,
+  DisconnectOutlined,
   ItalicOutlined,
+  LinkOutlined,
   OrderedListOutlined,
   RedoOutlined,
   UndoOutlined,
@@ -14,9 +17,61 @@ import {
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
+import notification from "components/notification";
 
-export default function Editor({ content, onEdit }) {
-  const extensions = [StarterKit];
+export default function Editor({ content, onEdit, utilities = ["basic"] }) {
+  const extensions = [];
+
+  if (utilities.includes("basic")) {
+    extensions.push(StarterKit);
+  }
+
+  if (utilities.includes("link")) {
+    extensions.push(
+      Link.configure({
+        openOnClick: true,
+        autolink: false,
+        defaultProtocol: "https",
+        protocols: ["https"],
+        isAllowedUri: (url, ctx) => {
+          try {
+            // construct URL
+            const parsedUrl = url.includes(":")
+              ? new URL(url)
+              : new URL(`${ctx.defaultProtocol}://${url}`);
+
+            // use default validation
+            if (!ctx.defaultValidate(parsedUrl.href)) {
+              return false;
+            }
+
+            // disallowed protocols
+            const disallowedProtocols = ["ftp", "file", "mailto"];
+            const protocol = parsedUrl.protocol.replace(":", "");
+
+            if (disallowedProtocols.includes(protocol)) {
+              return false;
+            }
+
+            // only allow protocols specified in ctx.protocols
+            const allowedProtocols = ctx.protocols.map((p) =>
+              typeof p === "string" ? p : p.scheme
+            );
+
+            if (!allowedProtocols.includes(protocol)) {
+              return false;
+            }
+
+            // all checks have passed
+            return true;
+          } catch {
+            return false;
+          }
+        },
+        shouldAutoLink: false,
+      })
+    );
+  }
 
   return (
     <EditorContainer>
@@ -24,14 +79,63 @@ export default function Editor({ content, onEdit }) {
         onUpdate={({ editor }) => onEdit(editor.getHTML())}
         extensions={extensions}
         content={content}
-        slotBefore={<MenuBar />}
+        slotBefore={<MenuBar utilities={utilities} />}
       ></EditorProvider>
     </EditorContainer>
   );
 }
 
-const MenuBar = () => {
+const MenuBar = ({ utilities }) => {
   const { editor } = useCurrentEditor();
+
+  if (!editor) {
+    return null;
+  }
+
+  const setLink = useCallback(() => {
+    const previousUrl = editor.getAttributes("link").href;
+    const url = window.prompt("URL", previousUrl ?? "https://");
+
+    // cancelled
+    if (url === null) {
+      return;
+    }
+
+    // empty
+    if (url === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+
+      return;
+    }
+
+    const pattern = new RegExp(
+      "^(https?:\\/\\/)?" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
+    ); // fragment locator
+    const isValid = !!pattern.test(url);
+
+    if (!isValid) {
+      notification.error({ message: "URL inválida" });
+      return;
+    }
+
+    // update link
+    try {
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange("link")
+        .setLink({ href: url })
+        .run();
+    } catch (e) {
+      alert(e.message);
+    }
+  }, [editor]);
 
   if (!editor) {
     return null;
@@ -40,54 +144,88 @@ const MenuBar = () => {
   return (
     <div className="tiptap-menu">
       <Space>
-        <Tooltip title="Negrito">
-          <Button
-            color="black"
-            variant="outlined"
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            disabled={!editor.can().chain().focus().toggleBold().run()}
-            ghost={!editor.isActive("bold")}
-            type="primary"
-            icon={<BoldOutlined />}
-            size="small"
-          />
-        </Tooltip>
-        <Tooltip title="Itálico">
-          <Button
-            color="black"
-            variant="outlined"
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            disabled={!editor.can().chain().focus().toggleItalic().run()}
-            ghost={!editor.isActive("italic")}
-            type="primary"
-            icon={<ItalicOutlined />}
-            size="small"
-          />
-        </Tooltip>
+        {utilities.includes("basic") && (
+          <>
+            <Tooltip title="Negrito">
+              <Button
+                color="black"
+                variant="outlined"
+                onClick={() => editor.chain().focus().toggleBold().run()}
+                disabled={!editor.can().chain().focus().toggleBold().run()}
+                ghost={!editor.isActive("bold")}
+                type="primary"
+                icon={<BoldOutlined />}
+                size="small"
+              />
+            </Tooltip>
+            <Tooltip title="Itálico">
+              <Button
+                color="black"
+                variant="outlined"
+                onClick={() => editor.chain().focus().toggleItalic().run()}
+                disabled={!editor.can().chain().focus().toggleItalic().run()}
+                ghost={!editor.isActive("italic")}
+                type="primary"
+                icon={<ItalicOutlined />}
+                size="small"
+              />
+            </Tooltip>
 
-        <Tooltip title="Lista não ordenada">
-          <Button
-            color="black"
-            variant="outlined"
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            ghost={!editor.isActive("bulletList")}
-            type="primary"
-            icon={<UnorderedListOutlined />}
-            size="small"
-          />
-        </Tooltip>
-        <Tooltip title="Lista ordenada">
-          <Button
-            color="black"
-            variant="outlined"
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={editor.isActive("orderedList") ? "is-active" : ""}
-            ghost={!editor.isActive("orderedList")}
-            type="primary"
-            icon={<OrderedListOutlined />}
-            size="small"
-          />
-        </Tooltip>
+            <Tooltip title="Lista não ordenada">
+              <Button
+                color="black"
+                variant="outlined"
+                onClick={() => editor.chain().focus().toggleBulletList().run()}
+                ghost={!editor.isActive("bulletList")}
+                type="primary"
+                icon={<UnorderedListOutlined />}
+                size="small"
+              />
+            </Tooltip>
+            <Tooltip title="Lista ordenada">
+              <Button
+                color="black"
+                variant="outlined"
+                onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                className={editor.isActive("orderedList") ? "is-active" : ""}
+                ghost={!editor.isActive("orderedList")}
+                type="primary"
+                icon={<OrderedListOutlined />}
+                size="small"
+              />
+            </Tooltip>
+          </>
+        )}
+
+        {utilities.includes("link") && (
+          <>
+            <Tooltip title="Adicionar link">
+              <Button
+                color="black"
+                variant="outlined"
+                onClick={setLink}
+                className={editor.isActive("link") ? "is-active" : ""}
+                ghost={!editor.isActive("link")}
+                type="primary"
+                icon={<LinkOutlined />}
+                size="small"
+              />
+            </Tooltip>
+            <Tooltip title="Remover link">
+              <Button
+                color="black"
+                variant="outlined"
+                onClick={() => editor.chain().focus().unsetLink().run()}
+                className={editor.isActive("link") ? "is-active" : ""}
+                ghost={!editor.isActive("link")}
+                type="primary"
+                icon={<DisconnectOutlined />}
+                size="small"
+              />
+            </Tooltip>
+          </>
+        )}
+
         <Divider type="vertical" />
         <Tooltip title="Desfazer">
           <Button
