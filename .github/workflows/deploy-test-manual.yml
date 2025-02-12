@@ -15,7 +15,7 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@v1.3.1
       - name: npm ci
         run: npm ci
-      - name: lin
+      - name: lint
         run: npm run lint
       - name: npm run build
         run: npm run build
