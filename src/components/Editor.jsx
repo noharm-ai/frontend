@@ -272,6 +272,8 @@ const EditorContainer = styled.div`
   /* Basic editor styles */
   .tiptap {
     min-height: 100px;
+    max-height: 300px;
+    overflow: auto;
     padding: 0.5rem;
 
     &:focus-visible {
