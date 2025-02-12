@@ -107,7 +107,6 @@ export default function EditPriceConversion({
       <span css="margin-right: 10px;">
         {value === "-" || value === null ? <Tag color="red">Vazio</Tag> : value}
       </span>
-      {/*eslint-disable-next-line*/}
       <a href="#" css="color: inherit;" onClick={handleClick}>
         <EditOutlined />
       </a>

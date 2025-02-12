@@ -88,7 +88,6 @@ const prescriptionDrugMenu = ({
   hasNotes,
   t,
   concilia,
-  security,
   featureService,
   ...data
 }) => {
@@ -207,7 +206,6 @@ const Action = ({ prescription, bag }) => {
   const {
     check,
     idPrescriptionDrug,
-    prescriptionType,
     onShowModal,
     uniqueDrugList,
     admissionNumber,
@@ -1129,7 +1127,7 @@ const filterOption = (input, option) => {
   if (option.children && option.children.length) {
     option.children.forEach((o) => {
       if (o.props.children) {
-        let data = Array.isArray(o.props.children)
+        const data = Array.isArray(o.props.children)
           ? o.props.children.join(" ").toLowerCase()
           : o.props.children.toLowerCase();
 

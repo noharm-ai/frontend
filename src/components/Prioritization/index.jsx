@@ -33,12 +33,9 @@ export default function Prioritization({
   prescriptions,
   fetchPrescriptionsList,
   fetchFrequencies,
-  checkScreening,
   prioritizationType,
   siderCollapsed,
   features,
-  setJourney,
-  currentJourney,
   ...restProps
 }) {
   const [state, dispatch] = useReducer(reducer, initState());

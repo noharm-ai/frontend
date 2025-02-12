@@ -522,7 +522,7 @@ export default function ScreeningList({
         {prioritizationType === "prescription" && (
           <div>
             <Button
-              onClick={(e) => orderByDate()}
+              onClick={() => orderByDate()}
               type={sortOrder.columnKey === "date" ? "primary" : "default"}
               icon={
                 sortOrder.columnKey === "date" ? (

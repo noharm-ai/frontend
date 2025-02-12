@@ -11,8 +11,6 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import IntegrationStatus from "models/IntegrationStatus";
 
-import { EditorBox } from "components/Forms/Form.style";
-
 function BaseForm() {
   const { t } = useTranslation();
   const integrationStatus = useSelector(

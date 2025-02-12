@@ -69,7 +69,7 @@ root.render(
           <ConfigProvider
             locale={i18next.language === "en" ? localeEnUs : localePtBr}
           >
-            <StyleProvider>
+            <StyleProvider hashPriority={hashPriority}>
               <App>
                 <BrowserRouter>
                   <RoutedComponent />

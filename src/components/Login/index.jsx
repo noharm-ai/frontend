@@ -78,7 +78,7 @@ export default function Login({ isLogging, error, doLogin }) {
 
         setOauthData(config);
         setLoading(false);
-      } catch (e) {
+      } catch {
         notification.error({
           message: "Inválido ou inexistente",
         });

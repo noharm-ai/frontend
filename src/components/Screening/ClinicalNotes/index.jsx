@@ -249,7 +249,7 @@ export default function ClinicalNotes({
                     optionFilterProp="children"
                     popupMatchSelectWidth={false}
                   >
-                    {ClinicalNotesIndicator.list(t).map((indicator, i) => (
+                    {ClinicalNotesIndicator.list(t).map((indicator) => (
                       <Select.Option value={indicator.key} key={indicator.key}>
                         <span
                           style={{

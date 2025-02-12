@@ -33,7 +33,7 @@ export default function ExamsOrderBase() {
     }
   }, [values.idSegment]); //eslint-disable-line
 
-  const setExam = (attr, value, idx) => {
+  const setExam = (attr, value) => {
     Object.keys(values.exams).forEach((e) => {
       if (values.exams[e] === value) {
         setFieldValue(`exams.${e}`, null);

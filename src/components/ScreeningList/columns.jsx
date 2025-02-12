@@ -68,10 +68,7 @@ const NestedTableContainer = styled.div`
 const ScreeningActions = ({ prescription, t }) => {
   const {
     idPrescription,
-    status,
     slug,
-    checkScreening,
-    check,
     prioritizationType,
     selectedRowsActive,
     selectedRows,

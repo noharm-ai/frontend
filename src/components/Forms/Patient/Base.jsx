@@ -16,7 +16,7 @@ import { TagTypeEnum } from "models/TagTypeEnum";
 
 import { Box, EditorBox } from "../Form.style";
 
-export default function Base({ security }) {
+export default function Base() {
   const { values, setFieldValue, errors } = useFormikContext();
   const {
     weight,

@@ -36,7 +36,7 @@ export default function CustomForm({
                   null,
                   2
                 );
-              } catch (e) {
+              } catch {
                 initialValues[question.id] = values[question.id];
               }
             } else {
@@ -71,7 +71,7 @@ export default function CustomForm({
                 try {
                   JSON.parse(value);
                   return true;
-                } catch (error) {
+                } catch {
                   return false;
                 }
               }
@@ -95,7 +95,7 @@ export default function CustomForm({
         if (question.type === "json") {
           try {
             preparedValues[question.id] = JSON.parse(values[question.id]);
-          } catch (e) {
+          } catch {
             preparedValues[question.id] = null;
           }
         } else {

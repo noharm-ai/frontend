@@ -6,13 +6,7 @@ import Alert from "components/Alert";
 import { Wrapper, Excerpt } from "./ReportCard.style";
 import { PieChartOutlined } from "@ant-design/icons";
 
-export default function ReportCard({
-  id,
-  reportData,
-  showReport,
-  type,
-  ...props
-}) {
+export default function ReportCard({ id, reportData, showReport, ...props }) {
   return (
     <Tooltip title="Abrir Relatório">
       <Wrapper id={id} {...props} onClick={() => showReport(reportData)}>

@@ -55,7 +55,7 @@ export default function LoginCallback({ doLogin, error }) {
             code: idToken ?? authCode,
           });
         }
-      } catch (e) {
+      } catch {
         notification.error({
           message: "Inválido ou inexistente",
         });

@@ -17,7 +17,6 @@ export default function PatientName({
   setName,
   app,
   access_token,
-  cleanCache,
 }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -28,7 +27,7 @@ export default function PatientName({
     ""
   );
 
-  const modalOk = (e) => {
+  const modalOk = () => {
     dispatch(setSupportOpen(true));
 
     return null;

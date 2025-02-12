@@ -141,7 +141,7 @@ export default function SearchPrescription({ type, size }) {
   }, []);
 
   const fetchData = async (value) => {
-    dispatch(searchPrescriptions({ term: value })).then((response) => {
+    dispatch(searchPrescriptions({ term: value })).then(() => {
       setOpen(true);
 
       if (options.length) {

@@ -10,7 +10,6 @@ export default function Interaction({
   setFieldValue,
   drugs,
   searchDrugs,
-  idSegment,
   uniqueDrugList,
 }) {
   const handleChange = (interactions) => {

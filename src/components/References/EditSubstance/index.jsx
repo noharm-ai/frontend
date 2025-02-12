@@ -20,7 +20,6 @@ export default function EditSubstance({
   substance,
   idDrug,
   updateDrugData,
-  security,
   fetchRelations,
   afterSaveSubstance,
 }) {

@@ -365,7 +365,7 @@ export default function PrioritizationCard({
   activeTab,
   setActiveTab,
 }) {
-  const open = (e) => {
+  const open = () => {
     window.open(
       prioritizationType === "conciliation"
         ? `/conciliacao/${prescription.slug}`

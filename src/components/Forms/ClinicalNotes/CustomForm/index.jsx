@@ -16,13 +16,9 @@ export default function ClinicalNotes({
   prescription,
   save,
   afterSave,
-  account,
-  signature,
-  action,
   fetchMemory,
   memory,
   visible,
-  type,
   onCancel,
   ...props
 }) {

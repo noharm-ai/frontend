@@ -5,7 +5,7 @@ const CustomIcon = ({ component, ...props }) => {
   return <Icon component={component} {...props} />;
 };
 
-export const InfoIcon = (props) => {
+export const InfoIcon = () => {
   return (
     <InfoCircleFilled
       style={{

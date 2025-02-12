@@ -25,7 +25,7 @@ export default function SecondaryFilters() {
             showSearch
             style={{ width: "100%" }}
             value={values.kindList}
-            onChange={(value, option) => setFieldValue({ kindList: value })}
+            onChange={(value) => setFieldValue({ kindList: value })}
             mode="multiple"
             maxTagCount="responsive"
             allowClear
@@ -50,7 +50,7 @@ export default function SecondaryFilters() {
             showSearch
             style={{ width: "100%" }}
             value={values.hasHandling}
-            onChange={(value, option) => setFieldValue({ level: value })}
+            onChange={(value) => setFieldValue({ level: value })}
             allowClear
           >
             <Select.Option value={"low"}>Baixo</Select.Option>
@@ -70,7 +70,7 @@ export default function SecondaryFilters() {
             showSearch
             style={{ width: "100%" }}
             value={values.status}
-            onChange={(value, option) => setFieldValue({ status: value })}
+            onChange={(value) => setFieldValue({ status: value })}
             allowClear
           >
             <Select.Option value={1}>Ativo</Select.Option>

@@ -49,7 +49,7 @@ export default function MainFilters() {
           showSearch
           style={{ width: "100%" }}
           value={values.hasClass}
-          onChange={(value, option) => setFieldValue({ hasClass: value })}
+          onChange={(value) => setFieldValue({ hasClass: value })}
           allowClear
         >
           <Select.Option value={1}>Sim</Select.Option>
@@ -66,7 +66,7 @@ export default function MainFilters() {
           showSearch
           style={{ width: "100%" }}
           value={values.active}
-          onChange={(value, option) => setFieldValue({ active: value })}
+          onChange={(value) => setFieldValue({ active: value })}
           allowClear
         >
           <Select.Option value={true}>Ativo</Select.Option>

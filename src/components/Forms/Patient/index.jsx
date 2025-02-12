@@ -35,11 +35,9 @@ export default function Patient({
   gender,
   observation,
   dialysis,
-  clinicalNotes,
   notesInfo,
   notesInfoDate,
   security,
-  featureService,
   dischargeDate,
   patient,
   ...props

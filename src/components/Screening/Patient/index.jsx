@@ -30,7 +30,6 @@ export default function Patient({
   selectIntervention,
   security,
   featureService,
-  interventionCount,
   siderCollapsed,
   interventions,
   setModalVisibility,
@@ -80,7 +79,7 @@ export default function Patient({
   const actionRemoveNotes = (id, type) => {
     setIsRemovingNotes(true);
     removeNotes(id, type)
-      .then((response) => {
+      .then(() => {
         setIsRemovingNotes(false);
         notification.success({ message: "Anotação removida com sucesso!" });
       })

@@ -28,7 +28,6 @@ const helpLink = `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/113`;
 export default function View({
   selected,
   update,
-  security,
   userId,
   featureService,
   saveStatus,

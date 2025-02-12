@@ -57,7 +57,7 @@ export function TagForm({ ...props }) {
       initialValues={initialValues}
       validationSchema={validationSchema}
     >
-      {({ handleSubmit, values }) => (
+      {({ handleSubmit }) => (
         <DefaultModal
           open={formData}
           width={350}

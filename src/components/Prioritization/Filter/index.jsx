@@ -252,7 +252,6 @@ export default function Filter({
 
       if (!isEmpty(filter[key]) || filter[key] === true || filter[key] > 0) {
         count++;
-      } else {
       }
     });
 

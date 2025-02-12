@@ -69,7 +69,7 @@ export default function PatientCard({
     concilia,
   } = prescription;
 
-  let interventionTooltip = t("patientCard.patientIntervention");
+  const interventionTooltip = t("patientCard.patientIntervention");
   const hasIntervention =
     interventions.filter(
       filterInterventionByPrescription(prescription.idPrescription)

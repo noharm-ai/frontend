@@ -45,13 +45,9 @@ export default function References({
   outliers,
   fetchReferencesList,
   saveOutlier,
-  saveUnitCoefficient,
   selectOutlier,
-  selectOutlierRelation,
   security,
-  generateOutlier,
   generateOutlierReset,
-  updateDrugData,
   ...restProps
 }) {
   const params = useParams();
@@ -74,7 +70,7 @@ export default function References({
         notification.success({ message: "Observação salva com sucesso!" });
         setObsModalVisibility(false);
       })
-      .catch((err) => {
+      .catch(() => {
         notification.error({
           message: t("error.title"),
           description: t("error.description"),
@@ -162,7 +158,7 @@ export default function References({
     outliers.selecteds.idSegment,
   ]);
 
-  const rowClassName = (record, index) => {
+  const rowClassName = (record) => {
     if (record.selected) {
       return "highlight";
     }

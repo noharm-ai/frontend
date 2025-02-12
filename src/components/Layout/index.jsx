@@ -1,4 +1,3 @@
-import { css } from "styled-components";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -88,7 +87,7 @@ const Me = ({
     return () => {
       clearInterval(intervalId);
     };
-  }, []); //eslint-disable-line
+  }, []);
 
   const showAlert = location.pathname.indexOf("priorizacao") !== -1;
 

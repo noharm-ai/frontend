@@ -73,9 +73,7 @@ export default function SecondaryFilters() {
             showSearch
             style={{ width: "100%" }}
             value={values.substanceList}
-            onChange={(value, option) =>
-              setFieldValue({ substanceList: value })
-            }
+            onChange={(value) => setFieldValue({ substanceList: value })}
             loading={substancesLoading}
             mode="multiple"
             allowClear

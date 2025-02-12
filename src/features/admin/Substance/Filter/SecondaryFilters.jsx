@@ -41,7 +41,7 @@ export default function SecondaryFilters() {
             showSearch
             style={{ width: "100%" }}
             value={values.idClassList}
-            onChange={(value, option) => setFieldValue({ idClassList: value })}
+            onChange={(value) => setFieldValue({ idClassList: value })}
             loading={substanceClassesStatus === "loading"}
             mode="multiple"
             maxTagCount="responsive"
@@ -66,9 +66,7 @@ export default function SecondaryFilters() {
             showSearch
             style={{ width: "100%" }}
             value={values.handlingTypeList}
-            onChange={(value, option) =>
-              setFieldValue({ handlingTypeList: value })
-            }
+            onChange={(value) => setFieldValue({ handlingTypeList: value })}
             mode="multiple"
             maxTagCount="responsive"
             allowClear

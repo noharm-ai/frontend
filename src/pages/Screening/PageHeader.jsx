@@ -61,7 +61,6 @@ export default function PageHeader({
   reviewPatient,
   incrementClinicalNotes,
   userId,
-  roles,
   features,
 }) {
   const dispatch = useDispatch();
@@ -94,7 +93,7 @@ export default function PageHeader({
         window.noharm.pageTimer.stop();
       }
     };
-  }, []); // eslint-disable-line
+  }, []);
 
   const hasPrimaryCare = featureService.hasPrimaryCare();
   const hasUncheckPermission = featureService.hasLockCheckedPrescription()

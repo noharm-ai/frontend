@@ -64,7 +64,7 @@ export default function RegulationHistory() {
     children: <HistoryEntry movement={{ origin: solicitation.stage }} first />,
   });
 
-  movements.forEach((move, index) => {
+  movements.forEach((move) => {
     if (move.action === -1) {
       items.push({
         dot: (

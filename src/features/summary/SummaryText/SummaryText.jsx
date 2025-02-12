@@ -36,7 +36,7 @@ function SummaryText({ open, setOpen }) {
       onSubmit={handleOK}
       initialValues={initialValues}
     >
-      {({ handleSubmit, values, setFieldValue }) => (
+      {({ values, setFieldValue }) => (
         <DefaultModal
           width={"50vw"}
           centered

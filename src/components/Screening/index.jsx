@@ -32,9 +32,7 @@ export default function Screening({
   isFetching,
   content,
   error,
-  selectPrescriptionDrug,
   interventions,
-  roles,
   features,
   permissions,
 }) {

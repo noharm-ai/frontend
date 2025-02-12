@@ -1,6 +1,6 @@
 import { Tooltip } from "antd";
 
-const columns = (t) => {
+const columns = () => {
   return [
     {
       title: "ID Setor",

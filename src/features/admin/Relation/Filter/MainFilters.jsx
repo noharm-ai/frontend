@@ -31,7 +31,7 @@ export default function MainFilters() {
           showSearch
           style={{ width: "100%" }}
           value={values.idOriginList}
-          onChange={(value, option) => setFieldValue({ idOriginList: value })}
+          onChange={(value) => setFieldValue({ idOriginList: value })}
           loading={substancesStatus === "loading"}
           mode="multiple"
           allowClear
