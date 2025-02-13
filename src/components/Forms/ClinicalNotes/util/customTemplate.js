@@ -154,6 +154,42 @@ export const getCustomClinicalNote = (
       })
     )
     .replaceAll(
+      "{{med_risco_gestacao_d}}",
+      getDrugs(
+        drugs.filter((d) => d?.drugAttributes?.pregnant === "D"),
+        {
+          empty: "Nenhum medicamento com risco de gestação D encontrado",
+        }
+      )
+    )
+    .replaceAll(
+      "{{med_risco_gestacao_x}}",
+      getDrugs(
+        drugs.filter((d) => d?.drugAttributes?.pregnant === "X"),
+        {
+          empty: "Nenhum medicamento com risco de gestação X encontrado",
+        }
+      )
+    )
+    .replaceAll(
+      "{{med_risco_lactacao_medio}}",
+      getDrugs(
+        drugs.filter((d) => d?.drugAttributes?.lactating === "2"),
+        {
+          empty: "Nenhum medicamento com risco na lactação médio encontrado",
+        }
+      )
+    )
+    .replaceAll(
+      "{{med_risco_lactacao_alto}}",
+      getDrugs(
+        drugs.filter((d) => d?.drugAttributes?.lactating === "3"),
+        {
+          empty: "Nenhum medicamento com risco na lactação alto encontrado",
+        }
+      )
+    )
+    .replaceAll(
       "{{antitromboticos}}",
       getDrugsByClass(
         drugs,
@@ -294,6 +330,20 @@ const getDrugsByInternalAttribute = (drugs, attr, params = {}) => {
       .filter((d) => d?.drugAttributes && d.drugAttributes[attr])
       .map((d) => drugTemplate(d, params))
   ).sort();
+
+  if (!list.length) {
+    return params.empty;
+  }
+
+  return list.join("\n");
+};
+
+const getDrugs = (drugs, params = {}) => {
+  if (!drugs || (drugs && !drugs.length)) {
+    return params.empty;
+  }
+
+  const list = uniq(drugs.map((d) => drugTemplate(d, params))).sort();
 
   if (!list.length) {
     return params.empty;

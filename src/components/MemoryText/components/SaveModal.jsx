@@ -161,6 +161,22 @@ export default function SaveModal({
           label: "Risco de queda",
           key: "{{med_risco_queda}}",
         },
+        {
+          label: "Risco na gestação: D",
+          key: "{{med_risco_gestacao_d}}",
+        },
+        {
+          label: "Risco na gestação: X",
+          key: "{{med_risco_gestacao_x}}",
+        },
+        {
+          label: "Risco na lactação: Médio",
+          key: "{{med_risco_lactacao_medio}}",
+        },
+        {
+          label: "Risco na lactação: Alto",
+          key: "{{med_risco_lactacao_alto}}",
+        },
       ],
     },
     {
