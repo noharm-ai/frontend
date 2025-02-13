@@ -146,8 +146,20 @@ export default function SaveModal({
           key: "{{dialisaveis}}",
         },
         {
+          label: "MPI",
+          key: "{{mpi}}",
+        },
+        {
           label: "Não padronizados",
           key: "{{nao_padronizados}}",
+        },
+        {
+          label: "Quimioterápico",
+          key: "{{quimioterapico}}",
+        },
+        {
+          label: "Risco de queda",
+          key: "{{med_risco_queda}}",
         },
       ],
     },

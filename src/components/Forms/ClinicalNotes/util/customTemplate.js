@@ -130,6 +130,30 @@ export const getCustomClinicalNote = (
       })
     )
     .replaceAll(
+      "{{quimioterapico}}",
+      getDrugsByInternalAttribute(drugs, "chemo", {
+        empty: "Nenhum medicamento Quimioterápico encontrado",
+      })
+    )
+    .replaceAll(
+      "{{mpi}}",
+      getDrugsByInternalAttribute(drugs, "elderly", {
+        empty: "Nenhum medicamento MPI encontrado",
+      })
+    )
+    .replaceAll(
+      "{{med_sonda}}",
+      getDrugsByInternalAttribute(drugs, "tube", {
+        empty: "Nenhum medicamento por sonda encontrado",
+      })
+    )
+    .replaceAll(
+      "{{med_risco_queda}}",
+      getDrugsByInternalAttribute(drugs, "fallRisk", {
+        empty: "Nenhum medicamento com risco de queda encontrado",
+      })
+    )
+    .replaceAll(
       "{{antitromboticos}}",
       getDrugsByClass(
         drugs,
@@ -251,6 +275,24 @@ const getDrugsByAttribute = (drugs, attr, params = {}) => {
 
   const list = uniq(
     drugs.filter((d) => d[attr]).map((d) => drugTemplate(d, params))
+  ).sort();
+
+  if (!list.length) {
+    return params.empty;
+  }
+
+  return list.join("\n");
+};
+
+const getDrugsByInternalAttribute = (drugs, attr, params = {}) => {
+  if (!drugs || (drugs && !drugs.length)) {
+    return params.empty;
+  }
+
+  const list = uniq(
+    drugs
+      .filter((d) => d?.drugAttributes && d.drugAttributes[attr])
+      .map((d) => drugTemplate(d, params))
   ).sort();
 
   if (!list.length) {
