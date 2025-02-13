@@ -293,6 +293,24 @@ export default function FilterFields({
             <div className="form-row">
               <div className="form-row">
                 <div className="form-label">
+                  <label>Possui evolução:</label>
+                </div>
+                <div className="form-input">
+                  <Radio.Group
+                    options={yesNoOptionsNullable}
+                    optionType="button"
+                    onChange={({ target: { value } }) =>
+                      setScreeningListFilter({ hasClinicalNotes: value })
+                    }
+                    value={filter.hasClinicalNotes}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
                   <label>Possui diferentes:</label>
                 </div>
                 <div className="form-input">
