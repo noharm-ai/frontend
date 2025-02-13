@@ -41,7 +41,7 @@ export default function IntegrationRemote() {
   );
   const [diagnosticsModal, setDiagnosticsModal] = useState(false);
   const [updating, setUpdating] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!templateDate) {
@@ -69,7 +69,8 @@ export default function IntegrationRemote() {
 
     dispatch(pushQueueRequest(payload)).then((queueResponse) => {
       if (queueResponse.error) {
-        notification.error({
+        setError({
+          status: "warning",
           message: getErrorMessage(queueResponse, t),
         });
       } else {
@@ -99,7 +100,12 @@ export default function IntegrationRemote() {
               if (repeats > 15) {
                 clearInterval(interval);
                 setUpdating(false);
-                setError(true);
+                setError({
+                  status: "error",
+                  message: "Parece que o nifi não está respondendo",
+                  description:
+                    "Por favor, verifique se os processos estão instalados e ativos no nifi.",
+                });
               } else {
                 notification.info({
                   message: "Aguardando atualização...",
@@ -111,7 +117,13 @@ export default function IntegrationRemote() {
               });
               clearInterval(interval);
               setUpdating(false);
-              setError(true);
+              setError(
+                setError({
+                  status: "error",
+                  message: "Ocorreu um erro ao buscar o template",
+                  description: "Confira os logs.",
+                })
+              );
             }
           });
         }, 2500);
@@ -138,9 +150,9 @@ export default function IntegrationRemote() {
   if (error) {
     return (
       <Result
-        status="error"
-        title="Parece que o nifi não está respondendo"
-        subTitle="Por favor, verifique se os processos estão instalados e ativos no nifi."
+        status={error?.status}
+        title={error?.message}
+        subTitle={error?.description}
       ></Result>
     );
   }
