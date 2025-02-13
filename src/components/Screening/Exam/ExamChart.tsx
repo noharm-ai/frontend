@@ -1,4 +1,3 @@
-// @ts-expect-error legacy component
 import { EChartBase } from "components/EChartBase";
 
 interface IExamChartProps {
@@ -91,6 +90,9 @@ export function ExamChart({ isLoading, reportData }: IExamChartProps) {
       option={chartOptions}
       style={{ height: "40vh", minHeight: "500px" }}
       loading={isLoading}
+      settings={null}
+      theme={null}
+      onClick={null}
     />
   );
 }
