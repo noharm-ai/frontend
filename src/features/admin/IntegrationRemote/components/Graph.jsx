@@ -11,6 +11,7 @@ import { GraphContainer } from "../IntegrationRemote.style";
 import { setSelectedNode } from "../IntegrationRemoteSlice";
 import GraphActions from "./GraphActions";
 import { formatDateTime } from "utils/date";
+import { findProcessGroup } from "../transformer";
 
 export default function Graph() {
   const navigate = useNavigate();
@@ -29,8 +30,10 @@ export default function Graph() {
   const [group, setGroup] = useState(null);
   const [internalLoading, setInternalLoading] = useState(false);
   const currentGroup = group
-    ? template.flowContents.processGroups.find(
-        (g) => g.instanceIdentifier === group
+    ? findProcessGroup(
+        template.flowContents.processGroups,
+        "instanceIdentifier",
+        group
       )
     : null;
 
@@ -126,10 +129,19 @@ export default function Graph() {
   };
 
   const goBack = () => {
-    if (group) {
+    if (currentGroup) {
+      let newGroup = null;
+      if (currentGroup.groupIdentifier) {
+        newGroup = findProcessGroup(
+          template.flowContents.processGroups,
+          "identifier",
+          currentGroup.groupIdentifier
+        );
+      }
+
       setInternalLoading(true);
       setTimeout(() => {
-        setGroup(null);
+        setGroup(newGroup?.instanceIdentifier);
         setInternalLoading(false);
       }, 500);
     } else {
