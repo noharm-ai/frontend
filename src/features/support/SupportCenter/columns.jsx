@@ -93,6 +93,10 @@ const columns = (t) => {
         config.label = "Cancelado";
         config.color = "default";
         break;
+      case 14:
+        config.label = "Refinamento";
+        config.color = "processing";
+        break;
       default:
         config.label = status;
         config.color = "default";
