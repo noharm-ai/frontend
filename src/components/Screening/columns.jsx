@@ -30,6 +30,7 @@ import { SelectMultiline } from "components/Inputs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
+import { PrescriptionSchedule } from "./Table/PrescriptionSchedule";
 
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
@@ -629,6 +630,11 @@ export const expandedRowRender = (bag) => (record) => {
               </Link>
             )}
             {!isEmpty(record.periodDates) && periodDates(record.periodDates)}
+          </Descriptions.Item>
+        )}
+        {record.schedule && record.schedule.length > 0 && (
+          <Descriptions.Item label={"Aprazamento"} span={3}>
+            <PrescriptionSchedule schedule={record.schedule} />
           </Descriptions.Item>
         )}
         {record.prescriptionType === "solutions" && (
