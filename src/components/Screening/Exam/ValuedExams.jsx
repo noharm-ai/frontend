@@ -69,7 +69,7 @@ export default function ValuedExams({ record }) {
   return (
     <NestedTableContainer>
       <Row gutter={8} justify="center">
-        <Col md={12}>
+        <Col xs={24} lg={12}>
           <Table
             columns={expandedColumns}
             pagination={false}
@@ -85,7 +85,7 @@ export default function ValuedExams({ record }) {
             rowClassName={examRowClassName}
           />
         </Col>
-        <Col md={12}>
+        <Col xs={24} lg={12}>
           {reportData.days.length > 1 && (
             <ExamChart isLoading={false} reportData={reportData} />
           )}

@@ -6,6 +6,7 @@ import DefaultModal from "components/Modal";
 import { ExpandableTable } from "components/Table";
 import Empty from "components/Empty";
 import { toDataSource } from "utils";
+import { getResponsiveTableWidth } from "src/utils/responsive";
 
 import examColumns, {
   examRowClassName,
@@ -70,6 +71,7 @@ export default function Modal({
         rowClassName={examRowClassName}
         expandedRowRender={expandedExamRowRender}
         onChange={handleTableChange}
+        scroll={getResponsiveTableWidth("max-content")}
       />
     </DefaultModal>
   );

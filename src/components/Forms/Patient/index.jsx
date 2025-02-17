@@ -90,7 +90,7 @@ export default function Patient({
           {...props}
           onOk={handleSubmit}
           confirmLoading={isSaving}
-          width="40vw"
+          width="max(400px, 45vw)"
           cancelButtonProps={{
             disabled: isSaving,
             className: "gtm-bt-cancel-edit-patient",

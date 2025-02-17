@@ -310,6 +310,7 @@ export default function PageHeader({
           display:flex;
           align-items: center;
           justify-content: flex-end;
+          flex-wrap: wrap;
         "
           >
             {prescription.content.status === "0" && (
