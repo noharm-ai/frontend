@@ -64,11 +64,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              typesList: types,
-            })
-          }
         >
           {types.map((i) => (
             <Select.Option key={i} value={i}>

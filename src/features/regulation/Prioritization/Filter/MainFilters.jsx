@@ -74,11 +74,6 @@ export default function MainFilters() {
           autoClearSearchValue={false}
           allowClear
           maxTagCount="responsive"
-          onSelectAll={() =>
-            setFieldValue({
-              idDepartmentList: departments.map((i) => i.idDepartment),
-            })
-          }
           style={{ width: "100%" }}
         >
           {departments.map(({ idDepartment, idSegment, label }) => (

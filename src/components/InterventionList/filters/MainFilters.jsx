@@ -61,13 +61,6 @@ export default function MainFilters() {
           mode="multiple"
           maxTagCount="responsive"
           allowClear
-          onSelectAll={() =>
-            setFieldValue({
-              idInterventionReasonList: interventionReasonsList.map(
-                ({ id }) => id
-              ),
-            })
-          }
         >
           {interventionReasonsList.map(({ id, parentName, name }) => (
             <Select.Option key={id} value={id}>

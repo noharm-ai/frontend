@@ -58,12 +58,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              segmentList: segments,
-              departmentList: [],
-            })
-          }
         >
           {segments.map((i) => (
             <Select.Option key={i} value={i}>
@@ -87,14 +81,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              departmentList: getFilterDepartment(
-                departments,
-                values.segmentList
-              ).map((i) => i.department),
-            })
-          }
         >
           {getFilterDepartment(departments, values.segmentList).map((i) => (
             <Select.Option

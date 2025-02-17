@@ -49,11 +49,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              examNameList: exams,
-            })
-          }
         >
           {exams.map((i) => (
             <Select.Option key={i} value={i}>
@@ -77,11 +72,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              examMaterialNameList: materials,
-            })
-          }
         >
           {materials.map((i) => (
             <Select.Option key={i} value={i}>
@@ -105,11 +95,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              microorganismList: microorganisms,
-            })
-          }
         >
           {microorganisms.map((i) => (
             <Select.Option key={i} value={i}>

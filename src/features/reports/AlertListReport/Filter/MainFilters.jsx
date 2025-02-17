@@ -62,11 +62,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              drugList: drugs,
-            })
-          }
         >
           {drugs.map((i) => (
             <Select.Option key={i} value={i}>
@@ -91,11 +86,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              typeList: DrugAlertTypeEnum.getAlertTypes(t).map((a) => a.id),
-            })
-          }
         >
           {DrugAlertTypeEnum.getAlertTypes(t).map((a) => (
             <Select.Option key={a.id} value={a.id}>

@@ -32,11 +32,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              responsibleList: responsibles,
-            })
-          }
         >
           {responsibles.map((i) => (
             <Select.Option key={i} value={i}>

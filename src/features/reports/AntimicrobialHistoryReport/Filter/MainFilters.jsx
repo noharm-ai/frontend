@@ -49,11 +49,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              drugList: drugs,
-            })
-          }
         >
           {drugs.map((i) => (
             <Select.Option key={i} value={i}>
@@ -77,11 +72,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              substanceList: substances,
-            })
-          }
         >
           {substances.map((i) => (
             <Select.Option key={i} value={i}>

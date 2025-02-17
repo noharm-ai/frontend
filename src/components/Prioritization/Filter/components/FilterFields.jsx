@@ -184,14 +184,6 @@ export default function FilterFields({
                   className={filter.idDepartment?.length ? "warning" : null}
                   allowClear
                   maxTagCount="responsive"
-                  onSelectAll={() =>
-                    setScreeningListFilter({
-                      idDepartment: filterDepartments(
-                        filter.idSegment,
-                        departments
-                      ).map((i) => i.idDepartment),
-                    })
-                  }
                 >
                   {filterDepartments(filter.idSegment, departments).map(
                     ({ idDepartment, idSegment, label }) => (

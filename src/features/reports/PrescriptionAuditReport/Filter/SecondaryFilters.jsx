@@ -86,11 +86,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              responsibleList: responsibles,
-            })
-          }
         >
           {responsibles.map((i) => (
             <Select.Option key={i} value={i}>
@@ -114,11 +109,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              tagList: tags,
-            })
-          }
         >
           {tags.map((i) => (
             <Select.Option key={i} value={i}>
