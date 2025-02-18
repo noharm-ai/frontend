@@ -40,6 +40,7 @@ export const SelectMultiline = styled(Select)`
     flex-direction: column;
     line-height: 1.3 !important;
     align-items: flex-start;
+    text-align: left;
 
     .extra-info {
       display: block;
