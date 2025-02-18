@@ -14,6 +14,7 @@ import ReportCard from "./components/ReportCard/ReportCard";
 import { PageCard } from "styles/Utils.style";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
+import SecurityService from "services/security";
 
 export default function Reports() {
   const dispatch = useDispatch();
@@ -45,7 +46,9 @@ export default function Reports() {
       icon: "report",
       type: "internal",
       route: "/relatorios/prescricoes",
-      visible: internalList.indexOf("PRESCRIPTION") !== -1,
+      visible:
+        internalList.indexOf("PRESCRIPTION") !== -1 &&
+        !SecurityService().hasCpoe(),
     },
     {
       title: "Intervenções",
