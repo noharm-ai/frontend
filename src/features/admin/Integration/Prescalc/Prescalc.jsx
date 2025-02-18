@@ -75,7 +75,7 @@ function PrescalcModal({ open, setOpen }) {
           }}
         >
           <header>
-            <Heading margin="0 0 11px">Prescalc</Heading>
+            <Heading $margin="0 0 11px">Prescalc</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

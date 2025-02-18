@@ -30,7 +30,7 @@ export default function HistoryModal({
       footer={null}
     >
       <Heading
-        size="18px"
+        $size="18px"
         className="fixed"
         style={{ marginBottom: "15px", display: "flex", alignItems: "center" }}
       >

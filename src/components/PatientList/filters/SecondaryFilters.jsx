@@ -14,7 +14,7 @@ export default function SecondaryFilters() {
   return (
     <Row gutter={[20, 20]}>
       <Col md={24} xl={18} xxl={14}>
-        <Heading as="label" htmlFor="segments" size="14px">
+        <Heading as="label" htmlFor="segments" $size="14px">
           {t("labels.scheduledBy")}:
         </Heading>
         <UserSelect
@@ -24,7 +24,7 @@ export default function SecondaryFilters() {
       </Col>
 
       <Col md={24} xl={18} xxl={14}>
-        <Heading as="label" htmlFor="segments" size="14px">
+        <Heading as="label" htmlFor="segments" $size="14px">
           {t("labels.attendedBy")}:
         </Heading>
         <UserSelect
@@ -34,7 +34,7 @@ export default function SecondaryFilters() {
       </Col>
 
       <Col md={24} xl={18} xxl={14}>
-        <Heading as="label" htmlFor="segments" size="14px">
+        <Heading as="label" htmlFor="segments" $size="14px">
           {t("labels.appointment")}:
         </Heading>
         <Select

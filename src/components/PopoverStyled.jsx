@@ -1,9 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { Popover } from "antd";
-import { PopoverProps } from "antd/lib/popover";
 
-const WrappedPopover = (props: PopoverProps) => {
+const WrappedPopover = (props) => {
   return <Popover {...props} overlayClassName={props.className} />;
 };
 

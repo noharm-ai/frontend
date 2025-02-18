@@ -79,7 +79,7 @@ export default function ConfigModal({
       footer={null}
       onCancel={() => setOpen(false)}
     >
-      <Heading size="16px" className="fixed" style={{ marginBottom: "15px" }}>
+      <Heading $size="16px" className="fixed" style={{ marginBottom: "15px" }}>
         Gerenciar Filtros
       </Heading>
 

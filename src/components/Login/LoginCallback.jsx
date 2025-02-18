@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useEffect } from "react";
 import axios from "axios";
 import { Spin } from "antd";
@@ -55,7 +55,7 @@ export default function LoginCallback({ doLogin, error }) {
             code: idToken ?? authCode,
           });
         }
-      } catch (e) {
+      } catch {
         notification.error({
           message: "Inválido ou inexistente",
         });

@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 export const VariableContainer = styled.div`
   margin-top: 30px;
@@ -21,7 +21,7 @@ export const VariableContainer = styled.div`
       gap: 10px;
 
       button {
-        text-align: left;
+        justify-content: flex-start;
       }
     }
   }

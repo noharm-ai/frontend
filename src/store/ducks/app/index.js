@@ -21,7 +21,7 @@ const INITIAL_STATE = {
     nameUrl: null,
     logoutUrl: null,
     nameHeaders: [],
-    apiKey: process.env.REACT_APP_API_KEY || null,
+    apiKey: import.meta.env.VITE_APP_API_KEY || null,
   },
   sider: {
     collapsed: true,

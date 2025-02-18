@@ -54,8 +54,8 @@ export default function SaveModal({
     const textField = textRef.current?.resizableTextArea.textArea;
 
     if (textField.selectionStart || textField.selectionStart === "0") {
-      var startPos = textField.selectionStart;
-      var endPos = textField.selectionEnd;
+      const startPos = textField.selectionStart;
+      const endPos = textField.selectionEnd;
       value =
         value.substring(0, startPos) +
         variable +
@@ -146,8 +146,36 @@ export default function SaveModal({
           key: "{{dialisaveis}}",
         },
         {
+          label: "MPI",
+          key: "{{mpi}}",
+        },
+        {
           label: "Não padronizados",
           key: "{{nao_padronizados}}",
+        },
+        {
+          label: "Quimioterápico",
+          key: "{{quimioterapico}}",
+        },
+        {
+          label: "Risco de queda",
+          key: "{{med_risco_queda}}",
+        },
+        {
+          label: "Risco na gestação: D",
+          key: "{{med_risco_gestacao_d}}",
+        },
+        {
+          label: "Risco na gestação: X",
+          key: "{{med_risco_gestacao_x}}",
+        },
+        {
+          label: "Risco na lactação: Médio",
+          key: "{{med_risco_lactacao_medio}}",
+        },
+        {
+          label: "Risco na lactação: Alto",
+          key: "{{med_risco_lactacao_alto}}",
         },
       ],
     },
@@ -293,12 +321,12 @@ export default function SaveModal({
           disabled: name === "" || newText === "",
         }}
         okText="Salvar"
-        okType="primary gtm-bt-memorytext-savemodal"
+        okType="primary"
         cancelText="Cancelar"
       >
         <Heading
           as="label"
-          size="14px"
+          $size="14px"
           className="fixed"
           style={{ marginTop: "12px" }}
         >
@@ -315,7 +343,7 @@ export default function SaveModal({
           >
             <Heading
               as="label"
-              size="14px"
+              $size="14px"
               className="fixed"
               style={{ marginTop: "12px" }}
             >

@@ -28,7 +28,7 @@ export default function SecondaryFilters() {
   return (
     <Row gutter={[20, 20]}>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Somente dias de semana:
         </Heading>
         <Radio.Group
@@ -42,7 +42,7 @@ export default function SecondaryFilters() {
         />
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Feriados/Dias de folga:
         </Heading>
         <DatePicker
@@ -54,7 +54,7 @@ export default function SecondaryFilters() {
         />
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Responsável:
         </Heading>
         <SelectCustom
@@ -68,11 +68,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              responsibleList: responsibles,
-            })
-          }
         >
           {responsibles.map((i) => (
             <Select.Option key={i} value={i}>
@@ -82,7 +77,7 @@ export default function SecondaryFilters() {
         </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Escore mínimo:
         </Heading>
         <InputNumber
@@ -96,7 +91,7 @@ export default function SecondaryFilters() {
         />
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Escore máximo:
         </Heading>
         <InputNumber
@@ -110,7 +105,7 @@ export default function SecondaryFilters() {
         />
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Marcadores:
         </Heading>
         <SelectCustom
@@ -124,11 +119,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              tagList: tags,
-            })
-          }
         >
           {tags.map((i) => (
             <Select.Option key={i} value={i}>

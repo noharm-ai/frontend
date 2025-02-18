@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
@@ -32,10 +32,8 @@ export default function Intervention({
   reasons,
   updateInterventionData,
   reset,
-  error,
   save,
   select,
-  checkPrescriptionDrug,
   afterSaveIntervention,
   disableUndoIntervention,
   fetchReasonsList,
@@ -357,7 +355,7 @@ export default function Intervention({
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">
+            <Heading $margin="0 0 11px">
               {item.idPrescriptionDrugList
                 ? t("interventionForm.titleMultiple")
                 : t("interventionForm.title")}
@@ -367,7 +365,7 @@ export default function Intervention({
             <FormHeader>
               <Row type="flex" gutter={24} css="padding: 2px 0">
                 <Col span={24}>
-                  <Heading as="p" size="14px">
+                  <Heading as="p" $size="14px">
                     {item.idPrescriptionDrugList.length} itens selecionados
                   </Heading>
                 </Col>
@@ -376,9 +374,9 @@ export default function Intervention({
           ) : (
             <>
               {item.idPrescriptionDrug + "" === "0" && (
-                <PatientData {...item} />
+                <PatientData item={item} />
               )}
-              {item.idPrescriptionDrug + "" !== "0" && <DrugData {...item} />}
+              {item.idPrescriptionDrug + "" !== "0" && <DrugData item={item} />}
             </>
           )}
 

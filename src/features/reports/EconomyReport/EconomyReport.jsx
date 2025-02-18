@@ -15,7 +15,7 @@ import {
   ChartCard,
 } from "styles/Report.style";
 import Filter from "./Filter/Filter";
-import { ReactComponent as Brand } from "assets/noHarm-horizontal.svg";
+import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
 import HelpModal from "./Help/Help";
 import { setHelpModal } from "./EconomyReportSlice";

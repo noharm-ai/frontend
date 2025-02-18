@@ -15,7 +15,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={6}>
-        <Heading as="label" htmlFor="segments" size="16px">
+        <Heading as="label" htmlFor="segments" $size="16px">
           {t("screeningList.segment")}:
         </Heading>
         <Select

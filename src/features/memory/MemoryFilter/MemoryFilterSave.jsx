@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 
 import Modal from "components/Modal";
 import notification from "components/notification";
@@ -70,7 +70,7 @@ export default function MemoryFilterSave({
         disabled: filterName === "",
       }}
       okText="Salvar"
-      okType="primary gtm-bt-save-filter"
+      okType="primary"
       cancelText="Cancelar"
       confirmLoading={status === "loading"}
     >

@@ -1,6 +1,6 @@
 import React from "react";
 import dayjs from "dayjs";
-import "styled-components/macro";
+import "styled-components";
 import { useFormikContext } from "formik";
 
 import { Col } from "components/Grid";
@@ -19,7 +19,7 @@ export default function Base() {
     <>
       <Box>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             <Tooltip title="Data em que o alerta deve parar de ser exibido">
               Expira em:
             </Tooltip>
@@ -44,7 +44,7 @@ export default function Base() {
       </Box>
       <Box>
         <Col xs={24} style={{ paddingBottom: "0" }}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             <Tooltip title="">Alerta:</Tooltip>
           </Heading>
         </Col>

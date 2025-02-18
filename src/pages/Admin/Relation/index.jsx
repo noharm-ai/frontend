@@ -3,4 +3,6 @@ import Relation from "features/admin/Relation/Relation";
 
 const layoutProps = {};
 
-export default withLayout(Relation, layoutProps);
+const RelationWithLayout = withLayout(Relation, layoutProps);
+
+export default RelationWithLayout;

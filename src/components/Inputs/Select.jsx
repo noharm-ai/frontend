@@ -1,5 +1,5 @@
 import AntSelect from "antd/lib/select";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { rgba } from "polished";
 
 import { get } from "styles/utils";
@@ -40,6 +40,7 @@ export const SelectMultiline = styled(Select)`
     flex-direction: column;
     line-height: 1.3 !important;
     align-items: flex-start;
+    text-align: left;
 
     .extra-info {
       display: block;

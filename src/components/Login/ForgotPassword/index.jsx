@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { useFormik } from "formik";
@@ -68,7 +68,7 @@ export default function ForgotPassword({ forgotPassword, status }) {
       />
 
       <Button
-        type="primary gtm-btn-login"
+        type="primary"
         block
         onClick={handleSubmit}
         loading={isSaving}

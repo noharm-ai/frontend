@@ -21,7 +21,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={5} lg={3} xxl={3}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Nível:
         </Heading>
         <Select
@@ -48,7 +48,7 @@ export default function MainFilters() {
         </Select>
       </Col>
       <Col md={7} lg={6} xxl={6}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Medicamento:
         </Heading>
         <SelectCustom
@@ -62,11 +62,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              drugList: drugs,
-            })
-          }
         >
           {drugs.map((i) => (
             <Select.Option key={i} value={i}>
@@ -77,7 +72,7 @@ export default function MainFilters() {
       </Col>
 
       <Col md={7} lg={6} xxl={6}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Tipo:
         </Heading>
         <SelectCustom
@@ -91,11 +86,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              typeList: DrugAlertTypeEnum.getAlertTypes(t).map((a) => a.id),
-            })
-          }
         >
           {DrugAlertTypeEnum.getAlertTypes(t).map((a) => (
             <Select.Option key={a.id} value={a.id}>

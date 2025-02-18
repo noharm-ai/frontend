@@ -185,7 +185,7 @@ export default function EconomyDayCalculator({
             :
           </label>
         </div>
-        <div className="form-input">
+        <div className="form-input input-price">
           <Space direction="horizontal">
             <InputNumber
               disabled={outcomeData.header?.readonly}
@@ -212,7 +212,7 @@ export default function EconomyDayCalculator({
         <div className="form-label">
           <label>Custo KIT:</label>
         </div>
-        <div className="form-input">
+        <div className="form-input input-price-kit">
           <Space direction="horizontal">
             <InputNumber
               disabled={outcomeData.header?.readonly}

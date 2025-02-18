@@ -1,3 +1,21 @@
+import { thru } from "lodash";
+
+export function findProcessGroup(groups, property, value) {
+  for (let i = 0; i < groups.length; i++) {
+    const g = groups[i];
+    if (g[property] === value) {
+      return g;
+    } else {
+      const found = findProcessGroup(g.processGroups, property, value);
+      if (found) {
+        return found;
+      }
+    }
+  }
+
+  return null;
+}
+
 export function flatStatuses(obj, result = {}, groups) {
   for (const property in obj) {
     if (obj.hasOwnProperty(property)) {

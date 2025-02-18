@@ -8,7 +8,9 @@ import Tag from "components/Tag";
 
 const columns = (t) => {
   const openTicket = (record) => {
-    const link = `${process.env.REACT_APP_ODOO_LINK}my/ticket/${record.id}?access_token=${record.access_token}`;
+    const link = `${import.meta.env.VITE_APP_ODOO_LINK}my/ticket/${
+      record.id
+    }?access_token=${record.access_token}`;
     window.open(link, "_blank");
 
     //   const modal = DefaultModal.info({
@@ -90,6 +92,10 @@ const columns = (t) => {
       case 5:
         config.label = "Cancelado";
         config.color = "default";
+        break;
+      case 14:
+        config.label = "Refinamento";
+        config.color = "processing";
         break;
       default:
         config.label = status;

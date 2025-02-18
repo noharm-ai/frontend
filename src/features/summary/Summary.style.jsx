@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 export const SummaryContainer = styled.div`
   display: flex;
@@ -174,9 +174,9 @@ export const SummaryStatusContainer = styled.div`
   padding: 0.5rem 1rem;
   border: 2px solid;
   font-weight: 500;
-  background: ${(props) => (props.completed ? "#f6ffed" : "#fff7e6")};
-  border-color: ${(props) => (props.completed ? "#b7eb8f" : "#ffd591")};
-  color: ${(props) => (props.completed ? "#389e0d" : "#d46b08")};
+  background: ${(props) => (props.$completed ? "#f6ffed" : "#fff7e6")};
+  border-color: ${(props) => (props.$completed ? "#b7eb8f" : "#ffd591")};
+  color: ${(props) => (props.$completed ? "#389e0d" : "#d46b08")};
   transition: all 0.3s linear;
 
   .summary-status {
@@ -194,6 +194,6 @@ export const SummaryStatusContainer = styled.div`
     align-items: center;
     padding-left: 10px;
     border-left: 1px solid;
-    border-color: ${(props) => (props.completed ? "#b7eb8f" : "#ffd591")};
+    border-color: ${(props) => (props.$completed ? "#b7eb8f" : "#ffd591")};
   }
 `;

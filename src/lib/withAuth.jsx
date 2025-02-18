@@ -10,9 +10,7 @@ const noop = () => {};
 const initialPage = "/";
 
 const AuthHandler = ({
-  user,
   logout,
-  session,
   isLoginPage,
   isLogoutPage,
   currentVersion,
@@ -47,7 +45,7 @@ const AuthHandler = ({
         schema: localStorage.getItem("schema"),
       });
     }
-  } catch (ex) {
+  } catch {
     console.error("cwr set schema error");
   }
 

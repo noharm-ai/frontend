@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import debounce from "lodash.debounce";
-import uniqBy from "lodash.uniqby";
+import { debounce, uniqBy } from "lodash";
 
 import { Select, InputNumber } from "components/Inputs";
 import { Col, Row } from "components/Grid";
@@ -89,7 +88,7 @@ export default function Transcription({
           className={drugData.idDrug !== idDrug ? "highlight" : ""}
         >
           <Col xs={layout.label}>
-            <Heading as="label" size="14px">
+            <Heading as="label" $size="14px">
               {t("tableHeader.drug")}:
             </Heading>
           </Col>
@@ -123,7 +122,7 @@ export default function Transcription({
           className={drugData.dose !== dose ? "highlight" : ""}
         >
           <Col xs={layout.label}>
-            <Heading as="label" size="14px">
+            <Heading as="label" $size="14px">
               {t("tableHeader.dose")}:
             </Heading>
           </Col>
@@ -150,7 +149,7 @@ export default function Transcription({
           }
         >
           <Col xs={layout.label}>
-            <Heading as="label" size="14px">
+            <Heading as="label" $size="14px">
               {t("tableHeader.measureUnit")}:
             </Heading>
           </Col>
@@ -185,7 +184,7 @@ export default function Transcription({
           }
         >
           <Col xs={layout.label}>
-            <Heading as="label" size="14px">
+            <Heading as="label" $size="14px">
               {t("tableHeader.frequency")}:
             </Heading>
           </Col>
@@ -215,7 +214,7 @@ export default function Transcription({
           className={drugData.interval !== interval ? "highlight" : ""}
         >
           <Col xs={layout.label}>
-            <Heading as="label" size="14px">
+            <Heading as="label" $size="14px">
               {t("tableHeader.interval")}:
             </Heading>
           </Col>
@@ -248,7 +247,7 @@ export default function Transcription({
           className={drugData.route !== route ? "highlight" : ""}
         >
           <Col xs={layout.label}>
-            <Heading as="label" size="14px">
+            <Heading as="label" $size="14px">
               {t("tableHeader.route")}:
             </Heading>
           </Col>

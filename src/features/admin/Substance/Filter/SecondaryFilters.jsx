@@ -31,7 +31,7 @@ export default function SecondaryFilters() {
     <Col xs={24} md={14}>
       <Row gutter={[24, 24]}>
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             Classe:
           </Heading>
 
@@ -41,7 +41,7 @@ export default function SecondaryFilters() {
             showSearch
             style={{ width: "100%" }}
             value={values.idClassList}
-            onChange={(value, option) => setFieldValue({ idClassList: value })}
+            onChange={(value) => setFieldValue({ idClassList: value })}
             loading={substanceClassesStatus === "loading"}
             mode="multiple"
             maxTagCount="responsive"
@@ -56,7 +56,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" htmlFor="date" size="14px">
+          <Heading as="label" htmlFor="date" $size="14px">
             Manejo:
           </Heading>
 
@@ -66,9 +66,7 @@ export default function SecondaryFilters() {
             showSearch
             style={{ width: "100%" }}
             value={values.handlingTypeList}
-            onChange={(value, option) =>
-              setFieldValue({ handlingTypeList: value })
-            }
+            onChange={(value) => setFieldValue({ handlingTypeList: value })}
             mode="multiple"
             maxTagCount="responsive"
             allowClear
@@ -92,7 +90,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Possui texto curadoria:
           </Heading>
           <Select
@@ -109,7 +107,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={24} md={12}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Tags:
           </Heading>
           <Select
@@ -122,7 +120,9 @@ export default function SecondaryFilters() {
             style={{ width: "100%" }}
           >
             {SubstanceTagEnum.getSubstanceTags(t).map((subtag) => (
-              <Select.Option value={subtag.id}>{subtag.label}</Select.Option>
+              <Select.Option key={subtag.id} value={subtag.id}>
+                {subtag.label}
+              </Select.Option>
             ))}
           </Select>
 
@@ -140,7 +140,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={12} md={6}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Dose máxima adulto:
           </Heading>
           <Select
@@ -157,7 +157,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={12} md={6}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Dose máxima adulto/Peso:
           </Heading>
           <Select
@@ -176,7 +176,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={12} md={6}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Dose máxima pediátrico:
           </Heading>
           <Select
@@ -193,7 +193,7 @@ export default function SecondaryFilters() {
         </Col>
 
         <Col xs={12} md={6}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Dose máxima pediátrico/Peso:
           </Heading>
           <Select

@@ -39,14 +39,14 @@ function IntegrationStatus() {
     };
   }, [dispatch, t]);
 
-  let memory = {};
+  const memory = {};
   if (data.memory && data.memory.length) {
     data.memory.forEach((m) => {
       memory[m.kind] = m.value;
     });
   }
 
-  let alert = status !== "loading" ? {} : null;
+  const alert = status !== "loading" ? {} : null;
   if (alert !== null) {
     if (data.status === IntegrationStatusEnum.PRODUCTION) {
       alert.type = "success";

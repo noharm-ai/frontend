@@ -1,4 +1,4 @@
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { toDate, isPast } from "date-fns";
 
 import api from "services/api";

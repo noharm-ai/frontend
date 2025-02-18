@@ -96,7 +96,7 @@ export default function RegulationAction() {
               marginBottom: "20px",
             }}
           >
-            <Heading size="18px">Regulação nº: {data.id}</Heading>
+            <Heading $size="18px">Regulação nº: {data.id}</Heading>
           </header>
 
           <Form

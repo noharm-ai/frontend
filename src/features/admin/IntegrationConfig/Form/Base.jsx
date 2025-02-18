@@ -375,6 +375,31 @@ function BaseForm() {
         </>
       ),
     },
+    {
+      key: "2",
+      label: "Nifi Remoto",
+      children: (
+        <>
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>Schema principal:</label>
+            </div>
+            <div className="form-input">
+              <Input
+                value={values.config?.remotenifi?.main}
+                onChange={({ target }) =>
+                  setFieldValue("config.remotenifi.main", target.value)
+                }
+              />
+            </div>
+            <div className="form-info">
+              Em casos de múltiplas integrações no mesmo nifi, indique aqui o
+              schema principal.
+            </div>
+          </div>
+        </>
+      ),
+    },
   ];
 
   return (

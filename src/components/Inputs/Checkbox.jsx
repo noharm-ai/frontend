@@ -1,5 +1,5 @@
 import AntCheckbox from "antd/lib/checkbox";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { get } from "styles/utils";
 

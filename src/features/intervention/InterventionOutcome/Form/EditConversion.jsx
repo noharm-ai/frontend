@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useState } from "react";
 import { CheckOutlined, EditOutlined, CloseOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";

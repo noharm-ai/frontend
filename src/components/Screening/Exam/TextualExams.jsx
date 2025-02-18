@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { format } from "date-fns";
 import { Row, Col } from "antd";
 import { useTranslation } from "react-i18next";
@@ -58,14 +58,14 @@ export default function TextualExams({ record }) {
       title: t("tableHeader.examHistory"),
       align: "center",
       key: "testdata",
-      render: (text, record) => {
+      render: (_, record) => {
         return format(new Date(record.date), "dd/MM/yyyy HH:mm");
       },
     },
     {
       title: "",
       align: "right",
-      render: (text, record) => {
+      render: () => {
         return <Icon type="right" style={{ fontSize: 16 }} />;
       },
     },

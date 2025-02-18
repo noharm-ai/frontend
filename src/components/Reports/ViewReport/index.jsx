@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { useNavigate } from "react-router-dom";
 
 import LoadBox from "components/LoadBox";

@@ -51,7 +51,7 @@ export default function ChangePassword({ updatePassword, status }) {
   };
 
   return (
-    <Box flexDirection="row">
+    <Box $flexDirection="row">
       <Col xl={12} xxl={7} style={{ alignSelf: "flex-start" }}>
         <Card title="Alterar senha">
           <Formik
@@ -68,7 +68,8 @@ export default function ChangePassword({ updatePassword, status }) {
                   </Row>
                   <ButtonContainer style={{ paddingTop: "10px" }}>
                     <Button
-                      type="primary gtm-btn-save-password"
+                      type="primary"
+                      className="gtm-btn-save-password"
                       onClick={handleSubmit}
                       loading={isSaving}
                       disabled={isSaving}

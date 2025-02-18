@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { timingFunctions } from "polished";
 
 import Collapse from "components/Collapse";
@@ -160,12 +160,16 @@ export const PrescriptionHeader = styled.div`
 `;
 
 export const PrescriptionCollapse = styled(Collapse)`
+  margin-bottom: 10px;
+
+  .ant-collapse-header {
+    align-items: center !important;
+  }
+
   > .ant-collapse-item {
     background: #fafafa;
-    margin-bottom: 10px;
     transition: background 0.3s linear;
-
-    .ant-collapse-header {
+    z .ant-collapse-header {
       align-items: center;
 
       .panel-header {
@@ -370,5 +374,9 @@ export const PanelActionContainer = styled.div`
   @media (min-width: ${breakpoints.md}) {
     display: flex;
     align-items: center;
+  }
+
+  .gtm-bt-check-single {
+    color: rgba(0, 0, 0, 0.65);
   }
 `;

@@ -84,7 +84,7 @@ export default function UserAdminForm({ ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">{t("menu.userConfig")}</Heading>
+            <Heading $margin="0 0 11px">{t("menu.userConfig")}</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

@@ -82,7 +82,7 @@ function SegmentForm({ open, setOpen }) {
           }}
         >
           <header>
-            <Heading margin="0 0 11px">Segmento</Heading>
+            <Heading $margin="0 0 11px">Segmento</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

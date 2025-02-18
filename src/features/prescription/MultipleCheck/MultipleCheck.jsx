@@ -187,7 +187,7 @@ export default function MultipleCheck({ open, setOpen }) {
       }}
       maskClosable={false}
     >
-      <Heading margin="0 0 20px" style={{ fontSize: "1.2rem" }}>
+      <Heading $margin="0 0 20px" style={{ fontSize: "1.2rem" }}>
         <CheckCircleOutlined
           style={{
             marginRight: "5px",
@@ -254,7 +254,7 @@ export default function MultipleCheck({ open, setOpen }) {
               marginBottom: "20px",
             }}
           >
-            <Heading size="16px">
+            <Heading $size="16px">
               {checkStatus === "loading"
                 ? "Efetuando checagem..."
                 : "Checagem finalizada com sucesso"}

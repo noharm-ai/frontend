@@ -175,7 +175,7 @@ export default function Prioritization() {
       case "reset":
         dispatch(setSelectedRowsActive(false));
         break;
-      case "action":
+      case "action": {
         const actionList = datasource.filter(
           (item) => selectedRows.indexOf(item.id) !== -1
         );
@@ -184,6 +184,7 @@ export default function Prioritization() {
         dispatch(setMultipleActionModal(true));
 
         break;
+      }
 
       default:
         console.error(key);

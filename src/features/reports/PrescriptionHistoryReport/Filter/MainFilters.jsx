@@ -18,7 +18,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Responsável:
         </Heading>
         <SelectCustom
@@ -32,11 +32,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              responsibleList: responsibles,
-            })
-          }
         >
           {responsibles.map((i) => (
             <Select.Option key={i} value={i}>

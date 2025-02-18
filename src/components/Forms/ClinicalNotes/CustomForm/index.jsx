@@ -16,13 +16,9 @@ export default function ClinicalNotes({
   prescription,
   save,
   afterSave,
-  account,
-  signature,
-  action,
   fetchMemory,
   memory,
   visible,
-  type,
   onCancel,
   ...props
 }) {
@@ -75,7 +71,7 @@ export default function ClinicalNotes({
       footer={null}
     >
       <header>
-        <Heading margin="0 0 11px">Evolução</Heading>
+        <Heading $margin="0 0 11px">Evolução</Heading>
       </header>
       <ChoicePanel>
         {!template ? (

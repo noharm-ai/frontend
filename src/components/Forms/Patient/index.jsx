@@ -35,11 +35,9 @@ export default function Patient({
   gender,
   observation,
   dialysis,
-  clinicalNotes,
   notesInfo,
   notesInfoDate,
   security,
-  featureService,
   dischargeDate,
   patient,
   ...props
@@ -92,14 +90,14 @@ export default function Patient({
           {...props}
           onOk={handleSubmit}
           confirmLoading={isSaving}
-          width="40vw"
+          width="max(400px, 45vw)"
           cancelButtonProps={{
             disabled: isSaving,
             className: "gtm-bt-cancel-edit-patient",
           }}
         >
           <header>
-            <Heading margin="0 0 11px">Dados do paciente</Heading>
+            <Heading $margin="0 0 11px">Dados do paciente</Heading>
           </header>
           {notesInfo && (
             <Alert

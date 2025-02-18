@@ -103,7 +103,7 @@ export default function RegulationMultipleAction() {
               marginBottom: "20px",
             }}
           >
-            <Heading size="18px">Ação Múltipla</Heading>
+            <Heading $size="18px">Ação Múltipla</Heading>
           </header>
 
           <Form

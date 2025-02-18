@@ -117,7 +117,7 @@ export default function CultureList() {
         }}
         onRow={(record) => {
           return {
-            onClick: (event) => {
+            onClick: () => {
               handleRowExpand(record);
             },
           };

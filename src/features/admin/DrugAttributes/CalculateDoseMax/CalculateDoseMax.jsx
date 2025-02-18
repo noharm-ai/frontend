@@ -62,7 +62,7 @@ export function CalculateDoseMaxDialog({ open, setOpen, reload, ...props }) {
       {...props}
     >
       <header>
-        <Heading margin="0 0 11px">Calcular Dose Máxima</Heading>
+        <Heading $margin="0 0 11px">Calcular Dose Máxima</Heading>
       </header>
 
       {calcResult ? (

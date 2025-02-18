@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import breakpoints from "styles/breakpoints";
 import { timingFunctions } from "polished";
 
@@ -41,15 +41,18 @@ export const Card = styled.div`
     top: 0;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    background: ${({ alert }) => getAlertColor(alert)};
+    background: ${({ $alert }) => getAlertColor($alert)};
   }
 
   &:hover {
     box-shadow: 0px -2px 10px rgb(0 0 0 / 32%);
 
-    .name {
-      color: #1890ff;
+    .card-header {
+      .name {
+        color: #1890ff;
+      }
     }
+    
   }
 
   .card-header {
@@ -65,6 +68,7 @@ export const Card = styled.div`
       overflow: hidden;
       text-overflow: ellipsis;
       transition: all 0.3s linear;
+      color: #696766;
 
       &.discharged {
         padding-bottom: 0.2rem;
@@ -232,18 +236,18 @@ export const Card = styled.div`
 
   .tabs {
     position: absolute;
-    right: 0.5rem;
+    right: 0.7rem;
     bottom: -2.2rem;
-    z-index: -1;
     display: flex;
 
     .tab {
-      padding: 1rem 0.8rem 0.5rem 0.8rem;
+      padding: 0.5rem 0.8rem 0.5rem 0.8rem;
       display: flex;
       justify-content: center;
       align-items: center;
-      border-bottom-left-radius: 2px;
-      border-bottom-right-radius: 2px;
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+      
       margin-right: 0.2rem;
       background: #fafafa;
       transition: all 0.3s ${timingFunctions("easeOutQuint")};
@@ -255,7 +259,6 @@ export const Card = styled.div`
       &.active,
       &:hover {
         background: #fff;
-        transform: translateY(5px);
 
         .anticon {
           color: #1890ff;

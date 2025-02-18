@@ -86,7 +86,7 @@ const getPatients = async (bearerToken, requestConfig) => {
         try {
           const { data: patientList } = await axios.post(
             getnameType === "proxy"
-              ? `${process.env.REACT_APP_API_URL}/names`
+              ? `${import.meta.env.VITE_APP_API_URL}/names`
               : requestConfig.multipleNameUrl,
             {
               patients: requestIds,
@@ -130,7 +130,7 @@ const getPatients = async (bearerToken, requestConfig) => {
         console.log("%cRequested patient of url: ", "color: #e67e22;", nameUrl);
         const urlRequest =
           getnameType === "proxy"
-            ? `${process.env.REACT_APP_API_URL}/names/${idPatient}`
+            ? `${import.meta.env.VITE_APP_API_URL}/names/${idPatient}`
             : nameUrl.replace(FLAG, idPatient);
 
         try {

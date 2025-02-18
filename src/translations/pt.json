@@ -548,7 +548,9 @@
     "diliexc": "Doenças exclusoras de DILI",
     "resthid": "Restrição hídrica",
     "gestante": "Gestante",
-    "germes": "Germes"
+    "germes": "Germes",
+    "medprevio": "Medicamentos de uso prévio",
+    "paliativo": "Paliativo"
   },
 
   "actions": {

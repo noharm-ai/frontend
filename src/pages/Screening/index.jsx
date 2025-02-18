@@ -6,4 +6,6 @@ const layoutProps = {
   defaultSelectedKeys: "/",
 };
 
-export default withLayout(Screening, layoutProps);
+const ScreeningWithLayout = withLayout(Screening, layoutProps);
+
+export default ScreeningWithLayout;

@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import styled from "styled-components/macro";
-import isEmpty from "lodash.isempty";
+import styled from "styled-components";
+import { isEmpty } from "lodash";
 import { format } from "date-fns";
 import {
   WarningOutlined,
@@ -30,6 +30,7 @@ import { SelectMultiline } from "components/Inputs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
+import { PrescriptionSchedule } from "./Table/PrescriptionSchedule";
 
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
@@ -88,7 +89,6 @@ const prescriptionDrugMenu = ({
   hasNotes,
   t,
   concilia,
-  security,
   featureService,
   ...data
 }) => {
@@ -143,6 +143,7 @@ const prescriptionDrugMenu = ({
   };
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 const InterventionAction = ({ intv, isSavingIntervention }) => {
   const dispatch = useDispatch();
   const { idIntervention } = intv;
@@ -202,23 +203,25 @@ const formatCPOEPeriod = (record) => {
   return "-";
 };
 
-const Action = ({
-  check,
-  idPrescriptionDrug,
-  prescriptionType,
-  onShowModal,
-  uniqueDrugList,
-  admissionNumber,
-  emptyRow,
-  t,
-  security,
-  featureService,
-  selectedRows,
-  selectedRowsActive,
-  toggleSelectedRows,
-  dispatch,
-  ...data
-}) => {
+/* eslint-disable-next-line react-refresh/only-export-components */
+const Action = ({ prescription, bag }) => {
+  //TODO: refactor
+  const {
+    check,
+    idPrescriptionDrug,
+    onShowModal,
+    uniqueDrugList,
+    admissionNumber,
+    emptyRow,
+    t,
+    security,
+    featureService,
+    selectedRows,
+    selectedRowsActive,
+    toggleSelectedRows,
+    dispatch,
+    ...data
+  } = { ...prescription, ...bag };
   if (emptyRow) return null;
 
   if (selectedRowsActive) {
@@ -274,7 +277,8 @@ const Action = ({
     <TableTags>
       <Tooltip title={btnTitle} placement="left">
         <AntButton
-          type={isIntervened ? "danger gtm-bt-interv" : "primary gtm-bt-interv"}
+          type={isIntervened ? "danger " : "primary"}
+          className="gtm-bt-interv"
           onClick={() => {
             onShowModal({
               ...data,
@@ -326,7 +330,8 @@ const Action = ({
           placement="left"
         >
           <AntButton
-            type="primary gtm-bt-notes"
+            type="primary"
+            className="gtm-bt-notes"
             ghost={!hasNotes}
             style={{ background: hasNotes ? "#7ebe9a" : "inherit" }}
             onClick={() => {
@@ -417,6 +422,7 @@ const periodDatesList = (dates) => {
   );
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 const DrugTags = ({ drug, t }) => (
   <span style={{ marginLeft: "10px" }}>
     {drug.np && (
@@ -626,6 +632,11 @@ export const expandedRowRender = (bag) => (record) => {
             {!isEmpty(record.periodDates) && periodDates(record.periodDates)}
           </Descriptions.Item>
         )}
+        {record.schedule && record.schedule.length > 0 && (
+          <Descriptions.Item label={"Aprazamento"} span={3}>
+            <PrescriptionSchedule schedule={record.schedule} />
+          </Descriptions.Item>
+        )}
         {record.prescriptionType === "solutions" && (
           <>
             <Descriptions.Item
@@ -704,8 +715,7 @@ export const expandedRowRender = (bag) => (record) => {
                 >
                   <Tag color={config.color}>{config.label}</Tag>{" "}
                   <InterventionAction
-                    {...record}
-                    {...bag}
+                    isSavingIntervention={bag.isSavingIntervention}
                     intv={prevIntervention}
                   />
                 </Descriptions.Item>
@@ -1115,7 +1125,7 @@ const actionColumns = (bag) => [
     dataIndex: "intervention",
     width: 80,
     render: (text, prescription) => {
-      return <Action {...prescription} {...bag} />;
+      return <Action prescription={prescription} bag={bag} />;
     },
   },
 ];
@@ -1126,7 +1136,7 @@ const filterOption = (input, option) => {
   if (option.children && option.children.length) {
     option.children.forEach((o) => {
       if (o.props.children) {
-        let data = Array.isArray(o.props.children)
+        const data = Array.isArray(o.props.children)
           ? o.props.children.join(" ").toLowerCase()
           : o.props.children.toLowerCase();
 

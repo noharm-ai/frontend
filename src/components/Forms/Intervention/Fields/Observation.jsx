@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
 import { SaveOutlined, DownloadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -145,7 +145,7 @@ export default function Observations({
   return (
     <>
       <Col xs={20} style={{ alignSelf: "flex-end" }}>
-        <Heading as="h4" htmlFor="reason" size="14px">
+        <Heading as="h4" htmlFor="reason" $size="14px">
           {t("interventionForm.labelObservations")}:
         </Heading>
       </Col>
@@ -159,7 +159,8 @@ export default function Observations({
               onClick={() => setSaveTextModal(true)}
               disabled={isMemoryDisabled}
               style={{ marginRight: "5px" }}
-              type="primary nda gtm-bt-interv-mem-save"
+              type="primary"
+              className="gtm-bt-interv-mem-save"
             />
           </Tooltip>
           <Tooltip title={memoryTooltip.apply}>

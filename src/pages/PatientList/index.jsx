@@ -3,4 +3,6 @@ import PatientList from "containers/PatientList";
 
 const layoutProps = {};
 
-export default withLayout(PatientList, layoutProps);
+const PatientListWithLayout = withLayout(PatientList, layoutProps);
+
+export default PatientListWithLayout;

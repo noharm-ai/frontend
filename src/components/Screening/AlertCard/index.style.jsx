@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 export const AlertContainer = styled.div`
   display: grid;
@@ -24,6 +24,7 @@ export const AlertContainer = styled.div`
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
+    color: var(--nh-text-color);
 
     @media only screen and (min-width: 1515px) {
       font-size: 16px;

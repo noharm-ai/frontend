@@ -1,6 +1,6 @@
-import "styled-components/macro";
+import "styled-components";
 import React from "react";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 
@@ -153,7 +153,7 @@ export default function Base({
     <>
       <Box hasError={errors.error && touched.error}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             <Tooltip
               title={t("interventionForm.labelPrescriptionErrorHint")}
               underline
@@ -175,7 +175,7 @@ export default function Base({
 
       <Box hasError={errors.cost && touched.cost}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             <Tooltip
               title={t("interventionForm.labelCostReductionHint")}
               underline
@@ -199,7 +199,7 @@ export default function Base({
         hasError={errors.idInterventionReason && touched.idInterventionReason}
       >
         <Col xs={layout.label}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             {t("interventionForm.labelReasons")}:
           </Heading>
         </Col>
@@ -266,7 +266,7 @@ export default function Base({
       {hasRelationships(reasons.list, idInterventionReason) && (
         <Box hasError={errors.interactions && touched.interactions}>
           <Col xs={layout.label}>
-            <Heading as="label" size="14px">
+            <Heading as="label" $size="14px">
               {hasSuspOrSubst(reasons.list, idInterventionReason) ===
               "substitution" ? (
                 <Tooltip
@@ -307,7 +307,7 @@ export default function Base({
         <>
           <Box hasError={errors.transcription && touched.transcription}>
             <Col xs={layout.label}>
-              <Heading as="label" size="14px">
+              <Heading as="label" $size="14px">
                 <Tooltip
                   title={t("interventionForm.labelTranscriptionHint")}
                   underline
@@ -363,7 +363,7 @@ export default function Base({
       {values.idIntervention && (
         <Box hasError={errors.expendedDose && touched.expendedDose}>
           <Col xs={layout.label}>
-            <Heading as="label" size="14px">
+            <Heading as="label" $size="14px">
               <Tooltip
                 title="Quando selecionado, o responsável pela intervenção passa a ser o seu usuário"
                 underline

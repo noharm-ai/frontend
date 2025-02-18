@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { timingFunctions } from "polished";
 
 import { get } from "styles/utils";
@@ -19,6 +19,8 @@ export const SearchPrescriptionContainer = styled.div`
 
     .ant-input-wrapper {
       .ant-input-affix-wrapper {
+        height: 3.35rem;
+
         input {
           font-size: 24px;
         }

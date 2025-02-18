@@ -23,7 +23,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Data do Exame:
         </Heading>
         <RangeDatePicker
@@ -36,7 +36,7 @@ export default function MainFilters() {
         />
       </Col>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Resultado:
         </Heading>
         <Input
@@ -50,7 +50,7 @@ export default function MainFilters() {
         ></Input>
       </Col>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Tipo:
         </Heading>
         <SelectCustom
@@ -64,11 +64,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              typesList: types,
-            })
-          }
         >
           {types.map((i) => (
             <Select.Option key={i} value={i}>

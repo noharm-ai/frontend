@@ -42,7 +42,7 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           {t("tableHeader.period")}:
         </Heading>
         <DatePicker.RangePicker
@@ -66,7 +66,7 @@ export default function MainFilters() {
         />
       </Col>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Segmento:
         </Heading>
         <SelectCustom
@@ -82,12 +82,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              segmentList: segments,
-              departmentList: [],
-            })
-          }
         >
           {segments.map((i) => (
             <Select.Option key={i} value={i}>
@@ -97,7 +91,7 @@ export default function MainFilters() {
         </SelectCustom>
       </Col>
       <Col md={7} lg={5} xxl={5}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Setor:
         </Heading>
         <SelectCustom
@@ -111,14 +105,6 @@ export default function MainFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              departmentList: getFilterDepartment(
-                departments,
-                values.segmentList
-              ).map((i) => i.department),
-            })
-          }
         >
           {getFilterDepartment(departments, values.segmentList).map((i) => (
             <Select.Option

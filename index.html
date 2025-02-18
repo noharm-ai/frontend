@@ -2,7 +2,7 @@
 <html lang="pt-BR" translate="no">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" href="/favicon.ico" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
@@ -21,49 +21,9 @@
     <meta name="robots" content="noindex,nofollow" />
     <meta name="google" content="notranslate" />
     <link rel="apple-touch-icon" href="logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="manifest" href="/manifest.json" />
 
     <script src="/ua-parser.min.js"></script>
-
-    <script>
-      window.addEventListener("load", function () {
-        if (!UAParser) {
-          return;
-        }
-
-        var uap = new UAParser();
-        var uapResult = uap.getResult();
-        console.info(uapResult);
-        var elm = document.getElementById("update-browser");
-        var close = document.getElementById("update-browser-close");
-
-        if (!close || !elm) {
-          return;
-        }
-
-        close.addEventListener("click", function () {
-          elm.style.display = "none";
-          close.style.display = "none";
-        });
-
-        switch (uapResult.browser.name) {
-          case "Chrome":
-            if (uapResult.browser.major <= 87) {
-              elm.innerHTML =
-                "<div><strong>Por favor, atualize a versão do seu navegador.</strong> </div><div>A versão que você está utilizando está desatualizada e não é compatível com a NoHarm.</div>";
-              elm.style.display = "flex";
-              close.style.display = "block";
-            }
-            break;
-          case "IE":
-            elm.innerHTML =
-              "<div>O navegador <strong>Internet Explorer</strong> não é suportado.</div> <div>Por favor, utilize um dos seguintes navegadores: Chrome, Firefox, Edge ou Safari.</div>";
-            elm.style.display = "flex";
-            close.style.display = "block";
-            break;
-        }
-      });
-    </script>
 
     <!-- Google Tag Manager -->
     <script>
@@ -95,7 +55,7 @@
     </script>
     <!-- End Global site tag (gtag.js) - Google Analytics -->
 
-    <title>%REACT_APP_SITE_TITLE%</title>
+    <title>%VITE_APP_SITE_TITLE%</title>
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
@@ -164,7 +124,7 @@
           allowCookies: true,
           enableXRay: false,
           sessionAttributes: {
-            applicationVersion: "%REACT_APP_VERSION%",
+            applicationVersion: "%VITE_APP_VERSION%",
           },
         }
       );
@@ -174,17 +134,47 @@
     <div id="update-browser" style="display: none"></div>
     <button id="update-browser-close" style="display: none">Fechar</button>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <script type="module" src="/src/index.jsx"></script>
+    <script>
+      window.addEventListener("load", function () {
+        if (!UAParser) {
+          return;
+        }
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+        var uap = new UAParser();
+        var uapResult = uap.getResult();
+        console.info(uapResult);
+        var elm = document.getElementById("update-browser");
+        var close = document.getElementById("update-browser-close");
 
+        if (!close || !elm) {
+          return;
+        }
+
+        close.addEventListener("click", function () {
+          elm.style.display = "none";
+          close.style.display = "none";
+        });
+
+        switch (uapResult.browser.name) {
+          case "Chrome":
+            if (uapResult.browser.major <= 87) {
+              elm.innerHTML =
+                "<div><strong>Por favor, atualize a versão do seu navegador.</strong> </div><div>A versão que você está utilizando está desatualizada e não é compatível com a NoHarm.</div>";
+              elm.style.display = "flex";
+              close.style.display = "block";
+            }
+            break;
+          case "IE":
+            elm.innerHTML =
+              "<div>O navegador <strong>Internet Explorer</strong> não é suportado.</div> <div>Por favor, utilize um dos seguintes navegadores: Chrome, Firefox, Edge ou Safari.</div>";
+            elm.style.display = "flex";
+            close.style.display = "block";
+            break;
+        }
+      });
+    </script>
     <style>
       #update-browser {
         position: absolute;

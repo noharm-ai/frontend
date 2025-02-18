@@ -41,7 +41,7 @@ export default function SecondaryFilters() {
   return (
     <Row gutter={[20, 20]}>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Somente dias de semana:
         </Heading>
         <Radio.Group
@@ -55,7 +55,7 @@ export default function SecondaryFilters() {
         />
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Tipo de intervenção:
         </Heading>
         <Radio.Group
@@ -69,7 +69,7 @@ export default function SecondaryFilters() {
         />
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Gera redução de custo?
         </Heading>
         <Radio.Group
@@ -81,7 +81,7 @@ export default function SecondaryFilters() {
         />
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Possível erro de prescrição?
         </Heading>
         <Radio.Group
@@ -95,7 +95,7 @@ export default function SecondaryFilters() {
         />
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Responsável:
         </Heading>
         <SelectCustom
@@ -109,11 +109,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              responsibleList: responsibles,
-            })
-          }
         >
           {responsibles.map((i) => (
             <Select.Option key={i} value={i}>
@@ -123,7 +118,7 @@ export default function SecondaryFilters() {
         </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Prescritor:
         </Heading>
         <SelectCustom
@@ -137,11 +132,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              prescriberList: prescribers,
-            })
-          }
         >
           {prescribers.map((i) => (
             <Select.Option key={i} value={i}>
@@ -151,7 +141,7 @@ export default function SecondaryFilters() {
         </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Medicamento:
         </Heading>
         <SelectCustom
@@ -165,11 +155,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              drugList: drugs,
-            })
-          }
         >
           {drugs.map((i) => (
             <Select.Option key={i} value={i}>
@@ -179,7 +164,7 @@ export default function SecondaryFilters() {
         </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Atributo do medicamento:
         </Heading>
         <Select
@@ -212,7 +197,7 @@ export default function SecondaryFilters() {
         </Select>
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Motivo:
         </Heading>
         <SelectCustom
@@ -226,11 +211,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              reasonList: reasons,
-            })
-          }
         >
           {reasons.map((i) => (
             <Select.Option key={i} value={i}>
@@ -240,7 +220,7 @@ export default function SecondaryFilters() {
         </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Desfecho:
         </Heading>
         <Select
@@ -273,7 +253,7 @@ export default function SecondaryFilters() {
         </Select>
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Marcadores do paciente:
         </Heading>
         <SelectCustom
@@ -287,11 +267,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              tagList: tags,
-            })
-          }
         >
           {tags.map((i) => (
             <Select.Option key={i} value={i}>

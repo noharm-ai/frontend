@@ -1,9 +1,8 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useEffect } from "react";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import debounce from "lodash.debounce";
-import uniqBy from "lodash.uniqby";
+import { debounce, uniqBy } from "lodash";
 
 import { Col, Row } from "components/Grid";
 import { Select, InputNumber, Textarea, Input } from "components/Inputs";
@@ -91,7 +90,7 @@ export default function Base({
         <FormHeader>
           <Row type="flex" gutter={24} css="padding: 2px 0">
             <Col xs={layout.label}>
-              <Heading as="p" size="14px">
+              <Heading as="p" $size="14px">
                 {t("tableHeader.drug")}:
               </Heading>
             </Col>
@@ -103,7 +102,7 @@ export default function Base({
       {!idPrescriptionDrug && (
         <Box hasError={errors.idDrug && touched.idDrug}>
           <Col xs={layout.label}>
-            <Heading as="label" size="14px">
+            <Heading as="label" $size="14px">
               {t("tableHeader.drug")}:
             </Heading>
           </Col>
@@ -146,7 +145,7 @@ export default function Base({
           <>
             <Box hasError={errors.dose && touched.dose}>
               <Col xs={layout.label}>
-                <Heading as="label" size="14px">
+                <Heading as="label" $size="14px">
                   {t("tableHeader.dose")}:
                 </Heading>
               </Col>
@@ -165,7 +164,7 @@ export default function Base({
 
             <Box hasError={errors.measureUnit && touched.measureUnit}>
               <Col xs={layout.label}>
-                <Heading as="label" size="14px">
+                <Heading as="label" $size="14px">
                   {t("tableHeader.measureUnit")}:
                 </Heading>
               </Col>
@@ -194,7 +193,7 @@ export default function Base({
 
             <Box hasError={errors.frequency && touched.frequency}>
               <Col xs={layout.label}>
-                <Heading as="label" size="14px">
+                <Heading as="label" $size="14px">
                   {t("tableHeader.frequency")}:
                 </Heading>
               </Col>
@@ -224,7 +223,7 @@ export default function Base({
 
             <Box hasError={errors.interval && touched.interval}>
               <Col xs={layout.label}>
-                <Heading as="label" size="14px">
+                <Heading as="label" $size="14px">
                   {t("tableHeader.interval")}:
                 </Heading>
               </Col>
@@ -244,7 +243,7 @@ export default function Base({
             {editRoute && (
               <Box hasError={errors.route && touched.route}>
                 <Col xs={layout.label}>
-                  <Heading as="label" size="14px">
+                  <Heading as="label" $size="14px">
                     {t("tableHeader.route")}:
                   </Heading>
                 </Col>
@@ -271,7 +270,7 @@ export default function Base({
 
             <Box hasError={errors.recommendation && touched.recommendation}>
               <Col xs={layout.label}>
-                <Heading as="label" size="14px">
+                <Heading as="label" $size="14px">
                   {t("tableHeader.medicalObservation")}:
                 </Heading>
               </Col>

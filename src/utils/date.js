@@ -1,11 +1,11 @@
 import dayjs from "dayjs";
 
-export const formatDate = (isoDate) => {
+export const formatDate = (isoDate, format = "DD/MM/YYYY") => {
   if (!isoDate) {
     return null;
   }
 
-  return dayjs(isoDate).format("DD/MM/YYYY");
+  return dayjs(isoDate).format(format);
 };
 
 export const formatDateTime = (isoDate) => {

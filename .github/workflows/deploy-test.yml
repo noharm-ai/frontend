@@ -58,14 +58,14 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
         env:
-          REACT_APP_API_URL: http://localhost:5000
-          REACT_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_TEST }}
-          REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
-          REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
-          REACT_APP_SUPPORT_LINK: ${{ secrets.REACT_APP_SUPPORT_LINK }}
-          REACT_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
-          REACT_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
-          REACT_APP_URL: http://localhost:3000
+          VITE_APP_API_URL: http://localhost:5000
+          VITE_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_TEST }}
+          VITE_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
+          VITE_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
+          VITE_APP_SUPPORT_LINK: ${{ secrets.REACT_APP_SUPPORT_LINK }}
+          VITE_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
+          VITE_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
+          VITE_APP_URL: http://localhost:3000
           TEST_USER: e2e@e2e.com
           TEST_USER_PASSWORD: e2etest
       - uses: actions/upload-artifact@v4
@@ -80,26 +80,28 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
       - name: npm ci
         run: npm ci
+      - name: lint
+        run: npm run lint
       - name: npm run build
         run: npm run build
         env:
-          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL_TEST }}
-          REACT_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_TEST }}
-          REACT_APP_UPDOWN_LINK: ${{ secrets.REACT_APP_UPDOWN_LINK }}
-          REACT_APP_PRISMIC_API_URL: ${{ secrets.REACT_APP_PRISMIC_API_URL }}
-          REACT_APP_PRISMIC_TOKEN: ${{ secrets.REACT_APP_PRISMIC_TOKEN }}
-          REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
-          REACT_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
-          REACT_APP_SUPPORT_LINK: ${{ secrets.REACT_APP_SUPPORT_LINK }}
-          REACT_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
-          REACT_APP_URL: ${{ secrets.REACT_APP_URL_TEST }}
-          REACT_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
+          VITE_APP_API_URL: ${{ secrets.REACT_APP_API_URL_TEST }}
+          VITE_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_TEST }}
+          VITE_APP_UPDOWN_LINK: ${{ secrets.REACT_APP_UPDOWN_LINK }}
+          VITE_APP_PRISMIC_API_URL: ${{ secrets.REACT_APP_PRISMIC_API_URL }}
+          VITE_APP_PRISMIC_TOKEN: ${{ secrets.REACT_APP_PRISMIC_TOKEN }}
+          VITE_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
+          VITE_APP_SUPPORT_EMAIL: ${{ secrets.REACT_APP_SUPPORT_EMAIL }}
+          VITE_APP_SUPPORT_LINK: ${{ secrets.REACT_APP_SUPPORT_LINK }}
+          VITE_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
+          VITE_APP_URL: ${{ secrets.REACT_APP_URL_TEST }}
+          VITE_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
       - name: Deploy Test to AWS
         uses: jakejarvis/s3-sync-action@master
         with:
@@ -108,7 +110,7 @@ jobs:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET_TEST }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          SOURCE_DIR: "build"
+          SOURCE_DIR: "dist"
       - name: Set cache-control on index.html
         uses: prewk/s3-cp-action@v2
         with:

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import isEmpty from "lodash.isempty";
-import styled from "styled-components/macro";
-import debounce from "lodash.debounce";
+import { isEmpty } from "lodash";
+import styled from "styled-components";
+import { debounce } from "lodash";
 import { useTranslation } from "react-i18next";
 import {
   CaretDownOutlined,
@@ -75,6 +75,11 @@ const TableInfo = styled.span`
 
     span:not(.ant-tag) {
       color: #fff;
+    }
+
+    &:hover {
+      background-color: #70bdc3 !important;
+      border-color: #70bdc3 !important;
     }
   }
 
@@ -216,14 +221,16 @@ export default function ScreeningList({
       case "reset":
         dispatch(setSelectedRowsActive(false));
         break;
-      case "checkPrescription":
+      case "checkPrescription": {
         const cheklist = list.filter(
           (item) => selectedRows.indexOf(item.idPrescription) !== -1
         );
         dispatch(setMultipleCheckList(cheklist));
         setMultipleCheckModal(true);
         break;
-      case "openPrescription":
+      }
+
+      case "openPrescription": {
         let showWarning = false;
 
         list.forEach((item) => {
@@ -248,6 +255,7 @@ export default function ScreeningList({
         }
 
         break;
+      }
       default:
         console.error(key);
     }
@@ -473,8 +481,9 @@ export default function ScreeningList({
         />
         <Tooltip title={t("screeningList.pendingHint-" + prioritizationType)}>
           <Button
-            type="gtm-lnk-filter-presc-pendente ant-btn-link-hover"
-            className={isFilterActive("0") ? "active" : ""}
+            className={`gtm-lnk-filter-presc-pendente ant-btn-link-hover ${
+              isFilterActive("0") ? "active" : ""
+            }`}
             onClick={(e) => handleFilter(e, "0")}
           >
             {t("screeningList.pending-" + prioritizationType)}
@@ -484,8 +493,9 @@ export default function ScreeningList({
 
         <Tooltip title={t("screeningList.checkedHint-" + prioritizationType)}>
           <Button
-            type="gtm-lnk-filter-presc-checada ant-btn-link-hover"
-            className={isFilterActive("s") ? "active" : ""}
+            className={`gtm-lnk-filter-presc-checada ant-btn-link-hover ${
+              isFilterActive("s") ? "active" : ""
+            }`}
             onClick={(e) => handleFilter(e, "s")}
           >
             {t("screeningList.checked-" + prioritizationType)}{" "}
@@ -501,8 +511,9 @@ export default function ScreeningList({
           }
         >
           <Button
-            type="gtm-lnk-filter-presc-todas ant-btn-link-hover"
-            className={isFilterActive(null) ? "active" : ""}
+            className={`gtm-lnk-filter-presc-todas ant-btn-link-hover ${
+              isFilterActive(null) ? "active" : ""
+            }`}
             onClick={(e) => handleFilter(e, "all")}
           >
             {t("screeningList.all-" + prioritizationType)}{" "}
@@ -514,7 +525,7 @@ export default function ScreeningList({
         {prioritizationType === "prescription" && (
           <div>
             <Button
-              onClick={(e) => orderByDate()}
+              onClick={() => orderByDate()}
               type={sortOrder.columnKey === "date" ? "primary" : "default"}
               icon={
                 sortOrder.columnKey === "date" ? (

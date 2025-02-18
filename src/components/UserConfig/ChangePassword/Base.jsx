@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import "styled-components/macro";
+import "styled-components";
 import { useFormikContext } from "formik";
 
 import { Col } from "components/Grid";
@@ -24,7 +24,7 @@ export default function Base({ success }) {
     <>
       <Box hasError={errors.password && touched.password}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Senha atual:
           </Heading>
         </Col>
@@ -40,7 +40,7 @@ export default function Base({ success }) {
       </Box>
       <Box hasError={errors.newpassword && touched.newpassword}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Nova senha:
           </Heading>
         </Col>
@@ -58,7 +58,7 @@ export default function Base({ success }) {
       </Box>
       <Box hasError={errors.confirmPassword && touched.confirmPassword}>
         <Col xs={layout.label}>
-          <Heading as="label" size="14px">
+          <Heading as="label" $size="14px">
             Confirmar senha:
           </Heading>
         </Col>

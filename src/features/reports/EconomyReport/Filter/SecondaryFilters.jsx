@@ -41,7 +41,7 @@ export default function SecondaryFilters() {
   return (
     <Row gutter={[20, 20]}>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Tipo economia:
         </Heading>
         <Radio.Group
@@ -55,7 +55,7 @@ export default function SecondaryFilters() {
         />
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Valor Economia/Dia:
         </Heading>
         <Radio.Group
@@ -69,7 +69,7 @@ export default function SecondaryFilters() {
         />
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Responsável:
         </Heading>
         <SelectCustom
@@ -83,11 +83,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              responsibleList: responsibles,
-            })
-          }
         >
           {responsibles.map((i) => (
             <Select.Option key={i} value={i}>
@@ -98,7 +93,7 @@ export default function SecondaryFilters() {
       </Col>
 
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Medicamento origem:
         </Heading>
         <SelectCustom
@@ -112,11 +107,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              originDrugList: originDrugs,
-            })
-          }
         >
           {originDrugs.map((i) => (
             <Select.Option key={i} value={i}>
@@ -126,7 +116,7 @@ export default function SecondaryFilters() {
         </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Medicamento substituto:
         </Heading>
         <SelectCustom
@@ -140,11 +130,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              destinyDrugList: destinyDrugs,
-            })
-          }
         >
           {destinyDrugs.map((i) => (
             <Select.Option key={i} value={i}>
@@ -154,7 +139,7 @@ export default function SecondaryFilters() {
         </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Motivo:
         </Heading>
         <SelectCustom
@@ -168,11 +153,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              reasonList: reasons,
-            })
-          }
         >
           {reasons.map((i) => (
             <Select.Option key={i} value={i}>
@@ -182,7 +162,7 @@ export default function SecondaryFilters() {
         </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Desfecho:
         </Heading>
         <Select
@@ -212,7 +192,7 @@ export default function SecondaryFilters() {
         </Select>
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Convênio:
         </Heading>
         <SelectCustom
@@ -226,11 +206,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              insuranceList: insurances,
-            })
-          }
         >
           {insurances.map((i) => (
             <Select.Option key={i} value={i}>
@@ -240,7 +215,7 @@ export default function SecondaryFilters() {
         </SelectCustom>
       </Col>
       <Col md={24} xl={16} xxl={14}>
-        <Heading as="label" size="14px">
+        <Heading as="label" $size="14px">
           Marcadores do paciente:
         </Heading>
         <SelectCustom
@@ -254,11 +229,6 @@ export default function SecondaryFilters() {
           maxTagCount="responsive"
           loading={status === "loading"}
           autoClearSearchValue={false}
-          onSelectAll={() =>
-            setFieldValue({
-              tagList: tags,
-            })
-          }
         >
           {tags.map((i) => (
             <Select.Option key={i} value={i}>

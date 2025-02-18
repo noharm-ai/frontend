@@ -114,7 +114,7 @@ function DrugMeasureUnitsForm({ visible, setVisible, ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px" size="18px">
+            <Heading $margin="0 0 11px" $size="18px">
               {t("titles.addDrugMeasureUnit")}
             </Heading>
           </header>

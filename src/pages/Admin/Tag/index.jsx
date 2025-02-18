@@ -3,4 +3,6 @@ import { Tag } from "features/admin/Tag/Tag";
 
 const layoutProps = {};
 
-export default withLayout(Tag, layoutProps);
+const TagWithLayout = withLayout(Tag, layoutProps);
+
+export default TagWithLayout;

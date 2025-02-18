@@ -1,32 +1,23 @@
 import React from "react";
 
-import Icon from "components/Icon";
 import Heading from "components/Heading";
 import Tooltip from "components/Tooltip";
 import Alert from "components/Alert";
 import { Wrapper, Excerpt } from "./ReportCard.style";
+import { PieChartOutlined } from "@ant-design/icons";
 
-export default function ReportCard({
-  id,
-  reportData,
-  showReport,
-  type,
-  ...props
-}) {
+export default function ReportCard({ id, reportData, showReport, ...props }) {
   return (
     <Tooltip title="Abrir Relatório">
       <Wrapper id={id} {...props} onClick={() => showReport(reportData)}>
         {reportData.icon && (
-          <Icon
-            type={reportData.icon}
-            style={{ fontSize: 28, color: "#7ebe9a" }}
-          />
+          <PieChartOutlined style={{ fontSize: 28, color: "#7ebe9a" }} />
         )}
-        <Heading as="h4" size="16px" margin="18px 0 15px" textAlign="center">
+        <Heading as="h4" $size="16px" $margin="18px 0 15px" $textAlign="center">
           {reportData.title}
         </Heading>
 
-        <Excerpt margin="0 0 30px">{reportData.description}</Excerpt>
+        <Excerpt $margin="0 0 30px">{reportData.description}</Excerpt>
 
         {reportData.type === "internal" && !reportData.visible && (
           <Alert

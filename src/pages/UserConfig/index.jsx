@@ -11,4 +11,6 @@ const layoutProps = {
   renderHeader: (props) => <PageHeader {...props} />,
 };
 
-export default withLayout(UserConfig, layoutProps);
+const UserConfigWithLayout = withLayout(UserConfig, layoutProps);
+
+export default UserConfigWithLayout;

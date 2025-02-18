@@ -1,7 +1,5 @@
 import React from "react";
-import isEmpty from "lodash.isempty";
-import uniqBy from "lodash.uniqby";
-import debounce from "lodash.debounce";
+import { isEmpty, uniqBy, debounce } from "lodash";
 
 import { Select } from "components/Inputs";
 import LoadBox from "components/LoadBox";
@@ -12,7 +10,6 @@ export default function Interaction({
   setFieldValue,
   drugs,
   searchDrugs,
-  idSegment,
   uniqueDrugList,
 }) {
   const handleChange = (interactions) => {

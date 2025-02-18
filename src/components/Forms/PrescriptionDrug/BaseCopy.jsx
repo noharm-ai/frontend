@@ -1,4 +1,4 @@
-import "styled-components/macro";
+import "styled-components";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useFormikContext } from "formik";
@@ -12,7 +12,7 @@ import { getErrorMessage } from "utils/errorHandler";
 import { getPrescriptionMissingDrugs } from "features/lists/ListsSlice";
 import { Box, FieldError, CheckboxContainer } from "../Form.style";
 
-export default function BaseNotes({ item }) {
+export default function BaseNotes() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState([]);

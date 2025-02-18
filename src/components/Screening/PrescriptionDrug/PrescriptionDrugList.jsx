@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import { format, parseISO, differenceInMinutes } from "date-fns";
 import { useTranslation } from "react-i18next";
 
@@ -39,6 +39,7 @@ const isExpired = (date) => {
   return false;
 };
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export const rowClassName = (record, bag) => {
   const classes = [];
   let expiresInMinutes = null;
@@ -165,7 +166,7 @@ export default function PrescriptionDrugList({
   if (isFetching) {
     return (
       <LoadContainer>
-        <LoadBox absolute={true} />
+        <LoadBox $absolute={true} />
       </LoadContainer>
     );
   }

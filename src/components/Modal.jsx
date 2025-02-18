@@ -1,5 +1,5 @@
-import styled from "styled-components/macro";
-import AntModal from "antd/lib/modal";
+import styled from "styled-components";
+import { Modal as AntModal } from "antd";
 
 import { get } from "styles/utils";
 

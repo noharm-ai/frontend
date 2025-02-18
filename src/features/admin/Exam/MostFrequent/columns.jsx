@@ -1,4 +1,4 @@
-const columns = (t) => {
+const columns = () => {
   return [
     {
       title: "Exame",

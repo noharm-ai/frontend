@@ -91,7 +91,8 @@ export default function Exams() {
             </>
           )}
           <Button
-            type="primary gtm-bt-add-exam"
+            type="primary"
+            className="gtm-bt-add-exam"
             onClick={addExamModal}
             icon={<PlusOutlined />}
           >
@@ -99,7 +100,7 @@ export default function Exams() {
           </Button>
 
           <Button
-            type="primary gtm-bt-add-exam"
+            type="primary"
             onClick={() => setExamsOrderVisible(true)}
             icon={<AppstoreOutlined />}
           >

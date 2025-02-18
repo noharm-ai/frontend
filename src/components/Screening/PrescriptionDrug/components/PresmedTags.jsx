@@ -1,5 +1,5 @@
 import React from "react";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "lodash";
 import {
   format,
   parseISO,

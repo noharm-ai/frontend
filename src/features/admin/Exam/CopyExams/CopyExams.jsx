@@ -80,7 +80,7 @@ function CopyExamsModal({ open, setOpen, ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">Copiar Exames</Heading>
+            <Heading $margin="0 0 11px">Copiar Exames</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

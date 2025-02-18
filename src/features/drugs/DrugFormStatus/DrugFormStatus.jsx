@@ -109,7 +109,7 @@ function DrugFormStatus({ title, template }) {
   };
 
   return (
-    <DrugFormStatusContainer completed={count.updated === count.total}>
+    <DrugFormStatusContainer $completed={count.updated === count.total}>
       <div className="drug-form-status" onClick={focusPending}>
         <div className="drug-form-status-header">{title}</div>
         <div className="drug-form-status-content">

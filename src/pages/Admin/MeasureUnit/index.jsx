@@ -3,4 +3,6 @@ import { MeasureUnit } from "features/admin/MeasureUnit/MeasureUnit";
 
 const layoutProps = {};
 
-export default withLayout(MeasureUnit, layoutProps);
+const MeasureUnitWithLayout = withLayout(MeasureUnit, layoutProps);
+
+export default MeasureUnitWithLayout;

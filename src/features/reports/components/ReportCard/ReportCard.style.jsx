@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { get } from "styles/utils";
 
@@ -22,5 +22,5 @@ export const Wrapper = styled.div`
 
 export const Excerpt = styled.p`
   font-size: 16px;
-  margin: ${({ margin }) => margin || 0};
+  margin: ${({ $margin }) => $margin || 0};
 `;

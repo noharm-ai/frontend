@@ -74,7 +74,7 @@ export default function ExamForm() {
           }}
         >
           <header>
-            <Heading margin="0 0 11px">Exame</Heading>
+            <Heading $margin="0 0 11px">Exame</Heading>
           </header>
 
           <Form>

@@ -77,7 +77,7 @@ export default function SupportForm() {
                 <p>
                   Nosso serviço de registro de chamados está fora do ar. Por
                   favor, encaminhe o seu pedido de ajuda para{" "}
-                  <strong>{process.env.REACT_APP_SUPPORT_EMAIL}</strong>.
+                  <strong>{import.meta.env.VITE_APP_SUPPORT_EMAIL}</strong>.
                 </p>
               </>
             ),
@@ -101,7 +101,9 @@ export default function SupportForm() {
           wrapClassName: "default-modal",
         });
 
-        const link = `${process.env.REACT_APP_ODOO_LINK}my/ticket/${response.payload.data[0]?.id}?access_token=${response.payload.data[0]?.access_token}`;
+        const link = `${import.meta.env.VITE_APP_ODOO_LINK}my/ticket/${
+          response.payload.data[0]?.id
+        }?access_token=${response.payload.data[0]?.access_token}`;
 
         modal.update({
           content: (
@@ -189,7 +191,9 @@ export default function SupportForm() {
               <p>
                 Não hesite em visitar nossa{" "}
                 <a
-                  href={`${process.env.REACT_APP_ODOO_LINK}/knowledge/article/39`}
+                  href={`${
+                    import.meta.env.VITE_APP_ODOO_LINK
+                  }/knowledge/article/39`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

@@ -17,9 +17,16 @@ import {
   setInitialFilters,
   setReportData,
 } from "features/reports/AlertListReport/AlertListReportSlice";
+import { IconInteractionAlert } from "components/Icon/svgs/IconInteractionAlert";
+import { IconMaxDose } from "components/Icon/svgs/IconMaxDose";
+import { IconElderly } from "components/Icon/svgs/IconElderly";
+import { IconAllergy } from "components/Icon/svgs/IconAllergy";
+import { IconTube } from "components/Icon/svgs/IconTube";
+import { IconDuplicity } from "components/Icon/svgs/IconDuplicity";
 
 import { AlertContainer } from "./index.style";
 
+/* eslint-disable-next-line react-refresh/only-export-components */
 export const getAlerts = (stats, t) => [
   {
     label: t("alerts.y"),
@@ -29,13 +36,13 @@ export const getAlerts = (stats, t) => [
   },
   {
     label: t("alerts.interaction"),
-    icon: () => <CustomIcon type="interactionAlert" />,
+    icon: () => <CustomIcon component={IconInteractionAlert} />,
     value: stats.int,
     filters: { typeList: ["it"] },
   },
   {
     label: t("alerts.max_dose"),
-    icon: () => <CustomIcon type="maxDose" />,
+    icon: () => <CustomIcon component={IconMaxDose} />,
     value: stats.maxDose,
     filters: { typeList: ["maxDose", "maxDosePlus"] },
   },
@@ -53,25 +60,25 @@ export const getAlerts = (stats, t) => [
   },
   {
     label: t("alerts.elderly"),
-    icon: () => <CustomIcon type="elderly" />,
+    icon: () => <CustomIcon component={IconElderly} />,
     value: stats.elderly,
     filters: { typeList: ["elderly"] },
   },
   {
     label: t("alerts.alergy"),
-    icon: () => <CustomIcon type="allergy" />,
+    icon: () => <CustomIcon component={IconAllergy} />,
     value: stats.allergy + (stats?.interactions?.rx || 0),
     filters: { typeList: ["allergy", "rx"] },
   },
   {
     label: t("alerts.tube"),
-    icon: () => <CustomIcon type="tube" />,
+    icon: () => <CustomIcon component={IconTube} />,
     value: stats.tube,
     filters: { typeList: ["tube"] },
   },
   {
     label: t("alerts.duplicate"),
-    icon: () => <CustomIcon type="duplicity" />,
+    icon: () => <CustomIcon component={IconDuplicity} />,
     value: stats.dup,
     filters: { typeList: ["dm", "dt"] },
   },
@@ -99,7 +106,11 @@ export default function AlertCard({ stats, prescription }) {
       <div className="header">
         <h3 className="title">
           {t("tableHeader.alerts")}
-          <Button type="link gtm-btn-alerts-all" onClick={() => openModal()}>
+          <Button
+            type="link"
+            className="gtm-btn-alerts-all"
+            onClick={() => openModal()}
+          >
             Ver todos
           </Button>
         </h3>

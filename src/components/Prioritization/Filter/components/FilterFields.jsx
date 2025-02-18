@@ -2,8 +2,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Row, Col, Card } from "antd";
-import isEmpty from "lodash.isempty";
-import debounce from "lodash.debounce";
+import { isEmpty } from "lodash";
+import { debounce } from "lodash";
 
 import {
   Select,
@@ -36,10 +36,14 @@ export default function FilterFields({
   segments,
   searchDrugs,
 }) {
+  //eslint disabled because of incorrect error msg
+  //eslint-disable-next-line
   const { t } = useTranslation();
+  //eslint-disable-next-line
   const departments = useSelector(
     (state) => state.lists.getSegmentDepartments.list
   );
+  //eslint-disable-next-line
   const departmentsStatus = useSelector(
     (state) => state.lists.getSegmentDepartments.status
   );
@@ -180,14 +184,6 @@ export default function FilterFields({
                   className={filter.idDepartment?.length ? "warning" : null}
                   allowClear
                   maxTagCount="responsive"
-                  onSelectAll={() =>
-                    setScreeningListFilter({
-                      idDepartment: filterDepartments(
-                        filter.idSegment,
-                        departments
-                      ).map((i) => i.idDepartment),
-                    })
-                  }
                 >
                   {filterDepartments(filter.idSegment, departments).map(
                     ({ idDepartment, idSegment, label }) => (
@@ -282,6 +278,24 @@ export default function FilterFields({
                     value={filter.insurance}
                     onChange={({ target }) => onInsuranceChange(target.value)}
                   ></Input>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Possui evolução:</label>
+                </div>
+                <div className="form-input">
+                  <Radio.Group
+                    options={yesNoOptionsNullable}
+                    optionType="button"
+                    onChange={({ target: { value } }) =>
+                      setScreeningListFilter({ hasClinicalNotes: value })
+                    }
+                    value={filter.hasClinicalNotes}
+                  />
                 </div>
               </div>
             </div>

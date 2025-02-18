@@ -76,7 +76,7 @@ export default function RelationForm({ ...props }) {
           {...props}
         >
           <header>
-            <Heading margin="0 0 11px">Relação</Heading>
+            <Heading $margin="0 0 11px">Relação</Heading>
           </header>
 
           <Form onSubmit={handleSubmit}>

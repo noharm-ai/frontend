@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import debounce from "lodash.debounce";
+import { debounce } from "lodash";
 import { LoadingOutlined } from "@ant-design/icons";
 
 import { Select } from "components/Inputs";

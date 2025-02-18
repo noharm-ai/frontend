@@ -1,6 +1,6 @@
-import isEmpty from 'lodash.isempty';
-import uniqBy from 'lodash.uniqby';
-import uniq from 'lodash.uniq';
-import intersection from 'lodash.intersection';
+import { isEmpty } from "lodash";
+import { uniqBy } from "lodash";
+import { uniq } from "lodash";
+import { intersection } from "lodash";
 
 export { isEmpty, uniqBy, uniq, intersection };
