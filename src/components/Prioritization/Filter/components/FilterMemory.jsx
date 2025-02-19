@@ -37,7 +37,8 @@ export default function FilterMemory({
     fetchMemory(FILTER_PUBLIC_STORE_ID, FILTER_PUBLIC_MEMORY_TYPE);
   }, [account.userId, fetchMemory]);
 
-  const filterActive = (item) => item.active || !Object.hasOwn(item, "active");
+  const filterActive = (item) =>
+    item.active || !Object.prototype.hasOwnProperty.call(item, "active");
 
   const saveFilterAction = (filterName, filterType) => {
     if (filterType === "public") {
