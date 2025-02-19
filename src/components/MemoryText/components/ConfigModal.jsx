@@ -28,7 +28,9 @@ export default function ConfigModal({ save, open, setOpen, list }) {
         list[0].value.map((i) => {
           return {
             ...i,
-            active: Object.hasOwn(i, "active") ? i.active : true,
+            active: Object.prototype.hasOwnProperty.call(i, "active")
+              ? i.active
+              : true,
           };
         })
       );

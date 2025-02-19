@@ -145,7 +145,10 @@ const regulationPrioritizationSlice = createSlice({
         const list = action.payload.response.data.data.list.map((p) => ({
           ...p,
           patientName: patients[p.idPatient]?.name,
-          patientNameLoading: !Object.hasOwn(patients, p.idPatient),
+          patientNameLoading: !Object.prototype.hasOwnProperty.call(
+            patients,
+            p.idPatient
+          ),
         }));
 
         state.list = list;
