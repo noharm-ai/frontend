@@ -21,7 +21,7 @@
     "big.js": "^6.2.1",
     "date-fns": "^2.29.1",
     "dayjs": "^1.11.9",
-    "dompurify": "^2.3.10",
+    "dompurify": "^3.2.4",
     "dotenv": "^16.4.5",
     "echarts": "^5.4.3",
     "formik": "^2.2.9",
