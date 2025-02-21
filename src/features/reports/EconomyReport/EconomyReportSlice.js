@@ -10,6 +10,8 @@ const initialState = {
   list: [],
   updatedAt: null,
   version: null,
+  date: null,
+  dateRange: null,
   responsibles: [],
   departments: [],
   segments: [],
@@ -88,8 +90,12 @@ const economyReportSlice = createSlice({
 
         if (action.payload.data.data.cached) {
           state.list = action.payload.gzipped;
-          state.updatedAt = action.payload.cacheData.header.date;
+          state.updatedAt =
+            action.payload.cacheData.header.updatedAt ??
+            action.payload.cacheData.header.date;
           state.version = action.payload.cacheData.header.version;
+          state.date = action.payload.cacheData.header.date;
+          state.dateRange = action.payload.cacheData.header.dateRange ?? 360;
           state.responsibles = getUniqList(
             action.payload.cacheData.body,
             "responsible"

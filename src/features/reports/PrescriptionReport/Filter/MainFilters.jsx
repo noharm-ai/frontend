@@ -28,7 +28,10 @@ export default function MainFilters() {
   );
   const status = useSelector((state) => state.reportsArea.prescription.status);
   const reportDate = useSelector(
-    (state) => state.reportsArea.prescription.updatedAt
+    (state) => state.reportsArea.prescription.date
+  );
+  const reportDateRange = useSelector(
+    (state) => state.reportsArea.prescription.dateRange
   );
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
   const rangePresets = getDateRangePresets(reportDate);
@@ -47,7 +50,7 @@ export default function MainFilters() {
         </Heading>
         <DatePicker.RangePicker
           presets={rangePresets}
-          disabledDate={dateRangeValid(reportDate)}
+          disabledDate={dateRangeValid(reportDate, reportDateRange)}
           format="DD/MM/YYYY"
           value={values.dateRange}
           onChange={(val) => setFieldValue({ dateRange: val })}
