@@ -42,7 +42,10 @@ export default function Graph() {
   }
 
   const nodes = currentGroup
-    ? currentGroup.processors.concat(currentGroup.processGroups)
+    ? currentGroup.processors
+        .concat(currentGroup.processGroups)
+        .concat(currentGroup.inputPorts)
+        .concat(currentGroup.outputPorts)
     : template?.flowContents.processGroups;
 
   const getLineColor = (link) => {
@@ -57,6 +60,47 @@ export default function Graph() {
     }
 
     return "#c4c4c4";
+  };
+
+  const getLinks = () => {
+    const allConnections = [
+      ...(template?.flowContents.connections ?? []),
+      ...(currentGroup?.connections ?? []),
+    ];
+    const links = [];
+
+    allConnections.forEach((l) => {
+      links.push({
+        source: l.source.id,
+        target: l.destination.id,
+        name: l.selectedRelationships.join(","),
+        extra: { ...l },
+        status: templateStatus[l.instanceIdentifier],
+        lineStyle: {
+          opacity: 0.9,
+          width: 2,
+          curveness: 0,
+          color: getLineColor(l),
+        },
+      });
+
+      // relationship between groups
+      links.push({
+        source: l.source.groupId,
+        target: l.destination.groupId,
+        name: l.selectedRelationships.join(","),
+        extra: { ...l },
+        status: templateStatus[l.instanceIdentifier],
+        lineStyle: {
+          opacity: 1,
+          width: 2,
+          curveness: 0,
+          color: "#e1bee7",
+        },
+      });
+    });
+
+    return links;
   };
 
   const chartOptions = {
@@ -92,25 +136,19 @@ export default function Graph() {
           symbol: n.componentType === "PROCESS_GROUP" ? "roundRect" : "circle",
           symbolSize: n.componentType === "PROCESS_GROUP" ? 100 : 30,
         })),
-        links: currentGroup?.connections.map((l) => ({
-          source: l.source.id,
-          target: l.destination.id,
-          name: l.selectedRelationships.join(","),
-          extra: { ...l },
-          status: templateStatus[l.instanceIdentifier],
-          lineStyle: {
-            opacity: 0.9,
-            width: 2,
-            curveness: 0,
-            color: getLineColor(l),
-          },
-        })),
-
+        links: getLinks(),
         itemStyle: {
           symbolSize: 50,
           color: (i) => {
             if (i.data.extra.componentType === "PROCESS_GROUP") {
               return "#e1bee7";
+            }
+
+            if (
+              i.data.extra.type === "OUTPUT_PORT" ||
+              i.data.extra.type === "INPUT_PORT"
+            ) {
+              return "#5c6bc0";
             }
 
             if (i.data.status?.runStatus === "Running") {

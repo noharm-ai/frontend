@@ -14,6 +14,8 @@ export default function HelpModal() {
   const dispatch = useDispatch();
   const open = useSelector((state) => state.reportsArea.economy.helpModal);
   const updatedAt = useSelector((state) => state.reportsArea.economy.updatedAt);
+  const dateRange = useSelector((state) => state.reportsArea.economy.dateRange);
+  const reportDate = useSelector((state) => state.reportsArea.economy.date);
 
   return (
     <Modal
@@ -44,11 +46,11 @@ export default function HelpModal() {
       <p>
         O período disponibilizado para consulta é:{" "}
         <strong>
-          {dayjs(updatedAt).subtract(1, "year").format("DD/MM/YY")}
+          {dayjs(reportDate).subtract(dateRange, "day").format("DD/MM/YY")}
         </strong>{" "}
         até{" "}
         <strong>
-          {dayjs(updatedAt).subtract(1, "day").format("DD/MM/YY")}
+          {dayjs(reportDate).subtract(1, "day").format("DD/MM/YY")}
         </strong>
       </p>
       <p>

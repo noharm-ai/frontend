@@ -45,7 +45,8 @@ export default function Filter({ printRef }) {
     (state) => state.reportsArea.patientDay.filters
   );
   const datasource = useSelector((state) => state.reportsArea.patientDay.list);
-  const reportDate = useSelector(
+  const reportDate = useSelector((state) => state.reportsArea.patientDay.date);
+  const reportUpdatedAt = useSelector(
     (state) => state.reportsArea.patientDay.updatedAt
   );
   const userId = useSelector((state) => state.user.account.userId);
@@ -145,7 +146,7 @@ export default function Filter({ printRef }) {
             <HistoryAlert
               activeReport={activeReport}
               loadArchive={loadArchive}
-              reportDate={reportDate}
+              reportDate={reportUpdatedAt}
             />
             <HistoryModal
               availableReports={availableReports}

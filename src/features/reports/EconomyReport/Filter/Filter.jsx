@@ -38,9 +38,8 @@ export default function Filter({ printRef }) {
   const isFetching =
     useSelector((state) => state.reportsArea.economy.status) === "loading";
   const datasource = useSelector((state) => state.reportsArea.economy.list);
-  const reportDate = useSelector(
-    (state) => state.reportsArea.economy.updatedAt
-  );
+  const reportDate = useSelector((state) => state.reportsArea.economy.date);
+
   const userId = useSelector((state) => state.user.account.userId);
   const filteredList = useSelector(
     (state) => state.reportsArea.economy.filtered.result.list

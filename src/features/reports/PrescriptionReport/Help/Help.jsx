@@ -16,6 +16,12 @@ export default function HelpModal() {
   const updatedAt = useSelector(
     (state) => state.reportsArea.prescription.updatedAt
   );
+  const dateRange = useSelector(
+    (state) => state.reportsArea.prescription.dateRange
+  );
+  const reportDate = useSelector(
+    (state) => state.reportsArea.prescription.date
+  );
 
   return (
     <Modal
@@ -46,11 +52,11 @@ export default function HelpModal() {
       <p>
         O período disponibilizado para consulta é:{" "}
         <strong>
-          {dayjs(updatedAt).subtract(60, "day").format("DD/MM/YY")}
+          {dayjs(reportDate).subtract(dateRange, "day").format("DD/MM/YY")}
         </strong>{" "}
         até{" "}
         <strong>
-          {dayjs(updatedAt).subtract(1, "day").format("DD/MM/YY")}
+          {dayjs(reportDate).subtract(1, "day").format("DD/MM/YY")}
         </strong>
       </p>
       <p>
