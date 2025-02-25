@@ -4,7 +4,6 @@ import appReducer from "./app";
 import authReducer from "./auth";
 import userReducer from "./user";
 import drugsReducer from "./drugs";
-import sessionReducer from "./session";
 import outliersReducer from "./outliers";
 import patientsReducer from "./patients";
 import segmentsReducer from "./segments";
@@ -108,7 +107,6 @@ export default combineReducers({
   auth: authReducer,
   user: userReducer,
   drugs: drugsReducer,
-  session: sessionReducer,
   outliers: outliersReducer,
   patients: patientsReducer,
   patientCentral: patientCentral,
