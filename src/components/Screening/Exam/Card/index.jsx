@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { isEmpty } from "lodash";
 import { BellOutlined } from "@ant-design/icons";
@@ -10,12 +11,16 @@ import Button from "components/Button";
 import PrescriptionCard from "components/PrescriptionCard";
 import Empty from "components/Empty";
 import Help from "components/Help";
+import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
 
-import ExamModal from "containers/Screening/Exam/ExamModal";
-
-export default function ExamCard({ exams, siderCollapsed, count }) {
-  const [examVisible, setExamVisibility] = useState(false);
+export default function ExamCard({
+  exams,
+  siderCollapsed,
+  count,
+  admissionNumber,
+}) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   return (
     <PrescriptionCard style={{ height: "100%" }}>
@@ -61,14 +66,15 @@ export default function ExamCard({ exams, siderCollapsed, count }) {
             <Button
               type="link"
               className="gtm-btn-exams-all"
-              onClick={() => setExamVisibility(true)}
+              onClick={() =>
+                dispatch(setExamsModalAdmissionNumber(admissionNumber))
+              }
             >
               Ver todos
             </Button>
           </div>
         </div>
       )}
-      <ExamModal visible={examVisible} setVisibility={setExamVisibility} />
     </PrescriptionCard>
   );
 }

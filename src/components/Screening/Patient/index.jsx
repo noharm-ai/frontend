@@ -108,6 +108,7 @@ export default function Patient({
       </Col>
       <Col xs={24} md={14} xl={10} xxl={11}>
         <ExamCard
+          admissionNumber={prescription.admissionNumber}
           exams={exams}
           siderCollapsed={siderCollapsed}
           count={alertExams}
