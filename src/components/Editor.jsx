@@ -280,8 +280,14 @@ const EditorContainer = styled.div`
       outline: none;
     }
 
+    p:first-child {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
     > * + * {
-      margin-top: 0.75em;
+      margin-top: 0;
+      margin-bottom: 0;
     }
 
     ul,
