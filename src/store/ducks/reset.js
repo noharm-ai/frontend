@@ -1,5 +1,4 @@
 import { Creators as ClinicalNotesCreators } from "./clinicalNotes";
-import { Creators as DepartmentsCreators } from "./departments";
 import { Creators as DrugsCreators } from "./drugs";
 import { Creators as InterventionCreators } from "./intervention";
 import { Creators as MemoryCreators } from "./memory";
@@ -56,7 +55,6 @@ import { reset as regulationPrioritizationReset } from "features/regulation/Prio
 import { reset as regulationReset } from "features/regulation/Regulation/RegulationSlice";
 
 const { clinicalNotesReset } = ClinicalNotesCreators;
-const { departmentsReset } = DepartmentsCreators;
 const { drugsReset } = DrugsCreators;
 const { interventionReset } = InterventionCreators;
 const { memoryReset } = MemoryCreators;
@@ -85,7 +83,6 @@ export const resetReduxState = (dispatch) => {
   dispatch(adminTagReset());
 
   dispatch(clinicalNotesReset());
-  dispatch(departmentsReset());
   dispatch(drugsReset());
   dispatch(interventionReset());
   dispatch(memoryReset());

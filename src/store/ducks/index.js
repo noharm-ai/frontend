@@ -9,7 +9,6 @@ import outliersReducer from "./outliers";
 import patientsReducer from "./patients";
 import segmentsReducer from "./segments";
 import interventionReducer from "./intervention";
-import departmentsReducer from "./departments";
 import prescriptionsReducer from "./prescriptions";
 import prescriptionDrugsReducer from "./prescriptionDrugs";
 import memoryReducer from "./memory";
@@ -114,7 +113,6 @@ export default combineReducers({
   patients: patientsReducer,
   patientCentral: patientCentral,
   segments: segmentsReducer,
-  departments: departmentsReducer,
   intervention: interventionReducer,
   prescriptions: prescriptionsReducer,
   prescriptionDrugs: prescriptionDrugsReducer,
