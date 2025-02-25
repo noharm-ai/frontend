@@ -3,9 +3,9 @@ import styled from "styled-components";
 import { format } from "date-fns";
 import { Row, Col } from "antd";
 import { useTranslation } from "react-i18next";
+import { ArrowRightOutlined } from "@ant-design/icons";
 
 import Card from "components/Card";
-import Icon from "components/Icon";
 import Empty from "components/Empty";
 import Table, { NestedTableContainer } from "components/Table";
 import { toDataSource } from "utils";
@@ -66,7 +66,7 @@ export default function TextualExams({ record }) {
       title: "",
       align: "right",
       render: () => {
-        return <Icon type="right" style={{ fontSize: 16 }} />;
+        return <ArrowRightOutlined style={{ fontSize: 16 }} />;
       },
     },
   ];

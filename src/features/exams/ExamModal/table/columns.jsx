@@ -56,6 +56,33 @@ const columns = (t, sortedInfo) => {
   ];
 };
 
+export const textualColumns = (t, sortedInfo) => {
+  return [
+    {
+      title: t("tableHeader.exam"),
+      dataIndex: "name",
+      align: "left",
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      sortOrder: sortedInfo.column?.dataIndex === "name" && sortedInfo.order,
+    },
+    {
+      title: "Texto",
+      dataIndex: "ref",
+      align: "left",
+    },
+    {
+      title: t("tableHeader.date"),
+      dataIndex: "date",
+      align: "center",
+      sorter: (a, b) => a.date.localeCompare(b.date),
+      sortOrder: sortedInfo.column?.dataIndex === "date" && sortedInfo.order,
+      render: (text, record) => {
+        return format(new Date(record.date), "dd/MM/yyyy HH:mm");
+      },
+    },
+  ];
+};
+
 export const examRowClassName = (record) => {
   if (record.alert) {
     return "danger";

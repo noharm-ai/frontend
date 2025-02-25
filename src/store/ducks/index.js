@@ -4,12 +4,10 @@ import appReducer from "./app";
 import authReducer from "./auth";
 import userReducer from "./user";
 import drugsReducer from "./drugs";
-import sessionReducer from "./session";
 import outliersReducer from "./outliers";
 import patientsReducer from "./patients";
 import segmentsReducer from "./segments";
 import interventionReducer from "./intervention";
-import departmentsReducer from "./departments";
 import prescriptionsReducer from "./prescriptions";
 import prescriptionDrugsReducer from "./prescriptionDrugs";
 import memoryReducer from "./memory";
@@ -109,12 +107,10 @@ export default combineReducers({
   auth: authReducer,
   user: userReducer,
   drugs: drugsReducer,
-  session: sessionReducer,
   outliers: outliersReducer,
   patients: patientsReducer,
   patientCentral: patientCentral,
   segments: segmentsReducer,
-  departments: departmentsReducer,
   intervention: interventionReducer,
   prescriptions: prescriptionsReducer,
   prescriptionDrugs: prescriptionDrugsReducer,

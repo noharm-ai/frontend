@@ -5,7 +5,6 @@ import appInfo from "utils/appInfo";
 import { errorHandler } from "utils";
 import { Creators as SegmentCreators } from "../segments";
 import { Creators as UserCreators } from "../user";
-import { Creators as SessionCreators } from "../session";
 import { Creators as AuthCreators } from "./index";
 import { Creators as AppCreators } from "../app";
 import { resetReduxState } from "../reset";
@@ -14,7 +13,6 @@ import {
   reset as resetPreferences,
 } from "features/preferences/PreferencesSlice";
 
-const { sessionSetFirstAccess } = SessionCreators;
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { segmentsFetchListSuccess } = SegmentCreators;
 const { authSetErrorIdentify, authDelIdentify } = AuthCreators;
@@ -126,7 +124,6 @@ const setUser = (userData, keepMeLogged, dispatch) => {
   }
 
   dispatch(segmentsFetchListSuccess(segments));
-  dispatch(sessionSetFirstAccess());
   dispatch(appSetCurrentVersion(appInfo.version));
   dispatch(userSetCurrentUser(user, keepMeLogged));
   dispatch(

@@ -17,6 +17,7 @@ import SecurityService from "services/security";
 import FeaturesService from "services/features";
 import { setChooseConciliationModal } from "features/prescription/PrescriptionSlice";
 import ChooseConciliation from "features/prescription/ChooseConciliation/ChooseConciliation";
+import ExamsModal from "features/exams/ExamModal/ExamModal";
 
 import { ScreeningFloatButtonGroup } from "../index.style";
 
@@ -101,6 +102,7 @@ export default function ScreeningActions({
       />
       <SingleClinicalNotesModal />
       <ChooseConciliation />
+      <ExamsModal idSegment={prescription.idSegment} />
     </>
   );
 }

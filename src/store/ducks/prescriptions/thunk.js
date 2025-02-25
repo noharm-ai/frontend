@@ -45,10 +45,6 @@ const {
   prescriptionsFetchPeriodError,
   prescriptionsFetchPeriodSuccess,
 
-  prescriptionsFetchExamsStart,
-  prescriptionsFetchExamsError,
-  prescriptionsFetchExamsSuccess,
-
   prescriptionsIncrementClinicalNotes,
 
   prescriptionsRemoveNotes,
@@ -335,28 +331,6 @@ export const fetchPrescriptionDrugPeriodThunk =
     }
 
     dispatch(prescriptionsFetchPeriodSuccess(idPrescriptionDrug, source, data));
-  };
-
-export const fetchPrescriptionExamsThunk =
-  (admissionNumber, params = {}) =>
-  async (dispatch, getState) => {
-    dispatch(prescriptionsFetchExamsStart());
-
-    const { auth } = getState();
-    const { access_token } = auth.identify;
-    const {
-      data: { data },
-      error,
-    } = await api
-      .getExams(access_token, admissionNumber, params)
-      .catch(errorHandler);
-
-    if (!isEmpty(error)) {
-      dispatch(prescriptionsFetchExamsError(error));
-      return;
-    }
-
-    dispatch(prescriptionsFetchExamsSuccess(transformExams(data)));
   };
 
 export const incrementClinicalNotesThunk = () => (dispatch) => {

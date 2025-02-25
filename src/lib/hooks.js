@@ -33,24 +33,6 @@ export function useMedia(queries, values, defaultValue) {
   return value;
 }
 
-export function useWindowSize() {
-  const [windowSize, setWindowSize] = useState({
-    height: window.innerHeight,
-    width: window.innerWidth,
-    device: window.innerWidth > 769 ? "desktop" : "mobile",
-  });
-  useEffect(() => {
-    window.addEventListener("resize", () => {
-      setWindowSize({
-        height: window.innerHeight,
-        width: window.innerWidth,
-        device: window.innerWidth > 769 ? "desktop" : "mobile",
-      });
-    });
-  }, []);
-  return [windowSize];
-}
-
 /**
  * Hook that alerts clicks outside of the passed ref
  */

@@ -11,6 +11,7 @@ import { PageContainer } from "styles/Utils.style";
 import { getConfig, reset } from "./ReportsSlice";
 import Button from "components/Button";
 import ReportCard from "./components/ReportCard/ReportCard";
+import Empty from "components/Empty";
 import { PageCard } from "styles/Utils.style";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
@@ -128,34 +129,42 @@ export default function Reports() {
       <PageContainer>
         {!currentReport && (
           <Spin spinning={status === "loading"}>
-            <Row type="flex" gutter={[20, 20]}>
-              {internalReports.map((reportData, index) => (
-                <React.Fragment key={index}>
-                  {(reportData.visible ||
-                    PermissionService().has(Permission.MAINTAINER)) && (
-                    <Col key={index} span={24} md={12} lg={8}>
-                      <ReportCard
-                        reportData={reportData}
-                        showReport={showInternalReport}
-                        id={index}
-                        className="gtm-report-item"
-                      />
-                    </Col>
-                  )}
-                </React.Fragment>
-              ))}
+            <>
+              <Row type="flex" gutter={[20, 20]}>
+                {internalReports.map((reportData, index) => (
+                  <React.Fragment key={index}>
+                    {(reportData.visible ||
+                      PermissionService().has(Permission.MAINTAINER)) && (
+                      <Col key={index} span={24} md={12} lg={8}>
+                        <ReportCard
+                          reportData={reportData}
+                          showReport={showInternalReport}
+                          id={index}
+                          className="gtm-report-item"
+                        />
+                      </Col>
+                    )}
+                  </React.Fragment>
+                ))}
 
-              {externalList.map((reportData, index) => (
-                <Col key={index} span={24} md={12} lg={8}>
-                  <ReportCard
-                    reportData={reportData}
-                    showReport={showReport}
-                    id={index}
-                    className="gtm-report-item"
-                  />
-                </Col>
-              ))}
-            </Row>
+                {externalList.map((reportData, index) => (
+                  <Col key={index} span={24} md={12} lg={8}>
+                    <ReportCard
+                      reportData={reportData}
+                      showReport={showReport}
+                      id={index}
+                      className="gtm-report-item"
+                    />
+                  </Col>
+                ))}
+              </Row>
+              {externalList.length === 0 && internalList.length === 0 && (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={"Nenhum relatório disponível"}
+                />
+              )}
+            </>
           </Spin>
         )}
       </PageContainer>
