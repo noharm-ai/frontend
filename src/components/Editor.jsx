@@ -73,10 +73,19 @@ export default function Editor({ content, onEdit, utilities = ["basic"] }) {
     );
   }
 
+  const onUpdate = ({ editor }) => {
+    if (!editor.state.doc.textContent.trim().length) {
+      onEdit(null);
+      return;
+    }
+
+    onEdit(editor.getHTML());
+  };
+
   return (
     <EditorContainer>
       <EditorProvider
-        onUpdate={({ editor }) => onEdit(editor.getHTML())}
+        onUpdate={onUpdate}
         extensions={extensions}
         content={content}
         slotBefore={<MenuBar utilities={utilities} />}
