@@ -20,4 +20,7 @@ api.fetchTypes = (params = {}) =>
 api.moveRegulation = (params = {}) =>
   instance.post(`${baseEndpoint}/move`, params, setHeaders());
 
+api.createSolicitation = (params = {}) =>
+  instance.post(`${baseEndpoint}/create`, params, setHeaders());
+
 export default api;

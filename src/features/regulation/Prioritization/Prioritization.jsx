@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Pagination, Flex } from "antd";
-import { CheckOutlined, BorderOutlined } from "@ant-design/icons";
+import { CheckOutlined, BorderOutlined, PlusOutlined } from "@ant-design/icons";
 import { uniq } from "utils/lodash";
 
 import { ExpandableTable } from "components/Table";
 import Empty from "components/Empty";
 import Dropdown from "components/Dropdown";
+import Button from "components/Button";
 
 import { PageCard, PaginationContainer } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
@@ -26,7 +27,7 @@ import {
   setMultipleActionIds,
   setMultipleActionModal,
 } from "./PrioritizationSlice";
-import RegulationMultipleAction from "./RegulationMultipleAction/RegulationMultipleAction";
+import { setRegulationFormModal } from "../RegulationForm/RegulationFormSlice";
 
 export default function Prioritization() {
   const dispatch = useDispatch();
@@ -197,7 +198,15 @@ export default function Prioritization() {
         <div>
           <h1 className="page-header-title">Regulação</h1>
         </div>
-        <div className="page-header-actions"></div>
+        <div className="page-header-actions">
+          <Button
+            type="primary"
+            onClick={() => dispatch(setRegulationFormModal(true))}
+            icon={<PlusOutlined />}
+          >
+            Criar solicitação
+          </Button>
+        </div>
       </PageHeader>
       <Filter limit={limit} />
 
@@ -271,7 +280,6 @@ export default function Prioritization() {
           }
         />
       </PaginationContainer>
-      <RegulationMultipleAction />
     </>
   );
 }

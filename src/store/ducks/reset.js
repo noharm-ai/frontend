@@ -53,6 +53,7 @@ import { reset as examsRawSearchReset } from "features/reports/ExamsRawSearchRep
 
 import { reset as regulationPrioritizationReset } from "features/regulation/Prioritization/PrioritizationSlice";
 import { reset as regulationReset } from "features/regulation/Regulation/RegulationSlice";
+import { reset as regulationFormReset } from "features/regulation/RegulationForm/RegulationFormSlice";
 
 const { clinicalNotesReset } = ClinicalNotesCreators;
 const { drugsReset } = DrugsCreators;
@@ -120,4 +121,5 @@ export const resetReduxState = (dispatch) => {
 
   dispatch(regulationPrioritizationReset());
   dispatch(regulationReset());
+  dispatch(regulationFormReset());
 };

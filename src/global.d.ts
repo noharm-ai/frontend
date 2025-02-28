@@ -1,4 +1,4 @@
 declare module "*.jsx" {
-  const _: () => any; //eslint-disable-line
+  const _: () => any;
   export default _;
 }
