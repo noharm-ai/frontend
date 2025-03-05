@@ -12,7 +12,12 @@ import { getErrorMessage } from "utils/errorHandler";
 import { formatCpf } from "utils/number";
 import { formatDate } from "utils/date";
 
-export default function FieldNameAutocomplete({ value, onChange, ...props }) {
+export default function FieldNameAutocomplete({
+  value,
+  onChange,
+  mode,
+  ...props
+}) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [options, setOptions] = useState([]);
@@ -66,7 +71,7 @@ export default function FieldNameAutocomplete({ value, onChange, ...props }) {
         onSearch={search}
         onChange={(value) => onChange(value)}
         placeholder={loading ? "Carregando..." : "Digite para pesquisar"}
-        mode="multiple"
+        mode={mode ?? "multiple"}
         loading={loading}
         {...props}
       >

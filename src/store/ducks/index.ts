@@ -48,6 +48,7 @@ import adminTag from "features/admin/Tag/TagSlice";
 
 import regulationPrioritizationSlice from "features/regulation/Prioritization/PrioritizationSlice";
 import regulationSlice from "features/regulation/Regulation/RegulationSlice";
+import regulationFormSlice from "features/regulation/RegulationForm/RegulationFormSlice";
 
 import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
@@ -83,6 +84,7 @@ const adminReducers = combineReducers({
 const regulationReducers = combineReducers({
   prioritization: regulationPrioritizationSlice,
   regulation: regulationSlice,
+  regulationForm: regulationFormSlice,
 });
 
 const reportReducers = combineReducers({
@@ -99,7 +101,7 @@ const reportReducers = combineReducers({
   reports: reports,
 });
 
-export default combineReducers({
+const rootReducer = combineReducers({
   admin: adminReducers,
   reportsArea: reportReducers,
   regulation: regulationReducers,
@@ -132,3 +134,5 @@ export default combineReducers({
   userAdmin: userAdminSlice,
   examsModal: examModalSlice,
 });
+
+export default rootReducer;

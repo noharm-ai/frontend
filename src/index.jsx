@@ -15,7 +15,7 @@ import dayjsLocaleEnUs from "dayjs/locale/en";
 
 import RoutedComponent from "routes";
 import App from "containers/App";
-import { store, persistor } from "store";
+import { store, persistor } from "store/index.ts";
 import * as serviceWorker from "./serviceWorker";
 
 import trans_pt from "./translations/pt.json";

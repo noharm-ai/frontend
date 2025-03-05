@@ -33,6 +33,14 @@ const Modal = styled(AntModal)`
       }
     }
   }
+
+  .modal-title {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--nh-heading-color);
+  }
 `;
 
 export default Modal;
