@@ -23,7 +23,7 @@ export function flatGroups(obj, result = {}) {
         if (property === "processGroups") {
           const groupArray = obj[property];
           for (const group in groupArray) {
-            result[groupArray[group].instanceIdentifier] = groupArray[group];
+            result[groupArray[group]?.instanceIdentifier] = groupArray[group];
           }
         }
         flatGroups(obj[property], result);
