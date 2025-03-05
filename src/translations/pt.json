@@ -340,7 +340,9 @@
     "prescriber": "Prescritor",
     "economyType": "Tipo de economia",
     "hasEconomy": "Possui economia",
-    "selectAll": "Selecionar todos"
+    "selectAll": "Selecionar todos",
+    "protocols": "Protocolos",
+    "protocolAlerts": "Alertas de protocolo"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida"
