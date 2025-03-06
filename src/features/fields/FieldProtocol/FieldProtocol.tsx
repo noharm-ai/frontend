@@ -25,6 +25,7 @@ export function FieldProtocol({
 
   const fetchProtocols = () => {
     if (protocolType && options.length === 0) {
+      // @ts-expect-error ts 2554 (legacy code)
       dispatch(getProtocols({ protocolType, active: true })).then(
         (response: any) => {
           if (response.error) {
