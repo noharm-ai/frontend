@@ -49,8 +49,8 @@ export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
                 </div>
                 {pa.variableMessages && (
                   <div className="protocol-variable">
-                    {pa.variableMessages.map((v: string) => (
-                      <div>- {v}</div>
+                    {pa.variableMessages.map((v: string, index: number) => (
+                      <div key={index}>- {v}</div>
                     ))}
                   </div>
                 )}
