@@ -46,9 +46,8 @@ export default function FieldNameAutocomplete({
         });
       } else {
         const { data } = response.payload;
-        if (data.length) {
-          setOptions(data);
-        }
+
+        setOptions(data);
       }
     });
   };
@@ -66,7 +65,7 @@ export default function FieldNameAutocomplete({
         value={value}
         optionFilterProp="children"
         style={{ minWidth: "300px" }}
-        notFoundContent={loading ? <LoadBox /> : null}
+        notFoundContent={loading ? <LoadBox /> : "Nenhum resultado disponível"}
         filterOption={false}
         onSearch={search}
         onChange={(value) => onChange(value)}
