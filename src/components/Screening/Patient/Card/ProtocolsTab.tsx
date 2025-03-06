@@ -63,15 +63,22 @@ export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
         <div className="patient-data-item-label">
           {t("labels.protocolAlerts")}
         </div>
-        <div className="patient-data-item-value">
-          <div className="protocol-group">
-            <Collapse
-              items={items}
-              defaultActiveKey={protocolGroups}
-              size="small"
-            />
+
+        {protocolAlerts?.summary && protocolAlerts.summary.length > 0 ? (
+          <div className="patient-data-item-value">
+            <div className="protocol-group">
+              <Collapse
+                items={items}
+                defaultActiveKey={protocolGroups}
+                size="small"
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="patient-data-item-value">
+            Nenhum protocolo encontrado
+          </div>
+        )}
       </div>
     </div>
   );
