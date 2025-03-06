@@ -18,10 +18,12 @@ import Tooltip from "components/Tooltip";
 import LoadBox from "components/LoadBox";
 import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
 import FieldSubstanceClassAutocomplete from "features/fields/FieldSubstanceClassAutocomplete/FieldSubstanceClassAutocomplete";
+import { FieldProtocol } from "features/fields/FieldProtocol/FieldProtocol";
 import { FieldTag } from "features/fields/FieldTag/FieldTag";
 import { getUniqBy } from "utils/report";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import { TagTypeEnum } from "models/TagTypeEnum";
+import { ProtocolTypeEnum } from "models/ProtocolTypeEnum";
 
 import { Form } from "styles/Form.style";
 
@@ -266,6 +268,25 @@ export default function FilterFields({
                 </div>
               </div>
             </div>
+
+            {featureService.hasProtocolAlerts() && (
+              <div className="form-row">
+                <div className="form-row">
+                  <div className="form-label">
+                    <label>{t("labels.protocolAlerts")}:</label>
+                  </div>
+                  <div className="form-input">
+                    <FieldProtocol
+                      protocolType={ProtocolTypeEnum.PRESCRIPTION}
+                      value={filter.protocols}
+                      onChange={(value) =>
+                        setScreeningListFilter({ protocols: value })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="form-row">
               <div className="form-row">

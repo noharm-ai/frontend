@@ -324,7 +324,7 @@ export default function PatientCard({
     },
   ];
 
-  if (prescription?.protocolAlerts?.summary?.length > 0) {
+  if (featureService.hasProtocolAlerts()) {
     tabs.push({
       key: "protocolAlerts",
       label: (
