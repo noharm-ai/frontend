@@ -49,9 +49,9 @@ export function FieldProtocol({
       showSearch
       allowClear
       value={value}
-      optionFilterProp="children"
+      optionFilterProp="label"
       style={{ minWidth: "300px", maxWidth: "100%" }}
-      filterOption={false}
+      filterOption={true}
       onChange={(value) => onChange(value as number)}
       mode="multiple"
       loading={status === "loading"}
