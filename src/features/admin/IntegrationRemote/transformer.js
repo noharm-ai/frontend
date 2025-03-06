@@ -1,5 +1,3 @@
-import { thru } from "lodash";
-
 export function findProcessGroup(groups, property, value) {
   for (let i = 0; i < groups.length; i++) {
     const g = groups[i];
