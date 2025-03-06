@@ -279,7 +279,9 @@ api.integration.prescalc = (params) => {
   }
 
   return instance.get(
-    `/static/${localStorage.getItem("schema")}/prescription/${params.id}`,
+    `/static/${localStorage.getItem("schema")}/prescription/${
+      params.id
+    }?force=true`,
     {
       ...setHeaders(),
     }
