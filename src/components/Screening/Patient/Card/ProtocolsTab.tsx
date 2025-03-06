@@ -8,6 +8,14 @@ interface IProtocolsTabProps {
   protocolAlerts: any;
 }
 
+interface IProtocolResult {
+  id: number;
+  description: string;
+  level: string;
+  message: string;
+  variableMessages: string[];
+}
+
 export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
   const { t } = useTranslation();
 
@@ -16,17 +24,19 @@ export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
     .filter((a) => a !== "summary")
     .sort();
 
-  const getIconColor = (level: string) => {
-    switch (level) {
-      case "high":
-        return "#f44336";
-      case "medium":
-        return "#f57f17";
-      case "low":
-        return "#ffc107";
-      default:
-        return "#f44336";
-    }
+  const getSortedProtocols = (group: string) => {
+    let protocols: IProtocolResult[] = [];
+
+    ["high", "medium", "low"].forEach((level) => {
+      protocols = [
+        ...protocols,
+        ...protocolAlerts[group].filter(
+          (pa: IProtocolResult) => pa.level === level
+        ),
+      ];
+    });
+
+    return protocols;
   };
 
   protocolGroups.forEach((g: string) => {
@@ -36,24 +46,9 @@ export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
         label: `Vigência: ${formatDate(g)}`,
         children: (
           <>
-            {protocolAlerts[g].map((pa: any) => (
+            {getSortedProtocols(g).map((pa: IProtocolResult) => (
               <div key={pa.id} className="protocol-message">
-                <div>
-                  <Tooltip title={pa.description}>
-                    <Badge
-                      color={getIconColor(pa.level)}
-                      style={{ marginRight: "0.5rem" }}
-                    />
-                    {pa.message}
-                  </Tooltip>
-                </div>
-                {pa.variableMessages && (
-                  <div className="protocol-variable">
-                    {pa.variableMessages.map((v: string, index: number) => (
-                      <div key={index}>- {v}</div>
-                    ))}
-                  </div>
-                )}
+                <Protocol protocolResult={pa} />
               </div>
             ))}
           </>
@@ -79,5 +74,41 @@ export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+function Protocol({ protocolResult }: { protocolResult: IProtocolResult }) {
+  const getIconColor = (level: string) => {
+    switch (level) {
+      case "high":
+        return "#f44336";
+      case "medium":
+        return "#f57f17";
+      case "low":
+        return "#ffc107";
+      default:
+        return "#f44336";
+    }
+  };
+
+  return (
+    <>
+      <div>
+        <Tooltip title={protocolResult.description}>
+          <Badge
+            color={getIconColor(protocolResult.level)}
+            style={{ marginRight: "0.5rem" }}
+          />
+          {protocolResult.message}
+        </Tooltip>
+      </div>
+      {protocolResult.variableMessages && (
+        <div className="protocol-variable">
+          {protocolResult.variableMessages.map((v: string, index: number) => (
+            <div key={index}>- {v}</div>
+          ))}
+        </div>
+      )}
+    </>
   );
 }
