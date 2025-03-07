@@ -28,13 +28,13 @@ export default function RegulationData() {
     },
     {
       key: "4",
-      label: "Médico Solicitante",
+      label: "Profissional solicitante",
       children: solicitation.attendant,
       span: 2,
     },
     {
       key: "5",
-      label: "CRM",
+      label: "Registro do profissional solicitante",
       children: solicitation.attendantRecord,
       span: 2,
     },
