@@ -22,7 +22,8 @@ export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
   const items: CollapseProps["items"] = [];
   const protocolGroups = Object.keys(protocolAlerts)
     .filter((a) => a !== "summary")
-    .sort();
+    .sort()
+    .reverse();
 
   const getSortedProtocols = (group: string) => {
     let protocols: IProtocolResult[] = [];
