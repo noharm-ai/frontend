@@ -247,6 +247,27 @@ export const PatientBox = styled.div`
           }
         }
 
+        .protocol-group {
+          padding-right: 10px;
+          max-height: 200px;
+          overflow: auto;
+
+          .protocol-message {
+            margin-bottom: 0.5rem;
+            font-size: 14px;
+
+            > div:first-child:hover {
+              text-decoration: underline;
+            }
+
+            .protocol-variable {
+              color: var(--nh-text-color);
+              font-size: 13px;
+              margin-left: 0.75rem;
+            }
+          }
+        }
+
         .patient-data-item-tags {
           padding: 10px 15px 10px 5px;
           display: flex;

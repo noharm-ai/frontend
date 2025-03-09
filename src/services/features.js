@@ -69,6 +69,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.DISABLE_GETNAME);
   };
 
+  const hasProtocolAlerts = () => {
+    return hasFeature(Feature.PROTOCOL_ALERTS);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
@@ -86,6 +90,7 @@ const FeaturesService = (features) => {
     hasPrescriptionAlert,
     hasPresmedForm,
     hasDisableGetname,
+    hasProtocolAlerts,
   };
 };
 

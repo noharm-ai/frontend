@@ -22,9 +22,7 @@ export default function BaseNotes({ item }) {
             <Editor
               onEdit={(value) => setFieldValue("notes", value)}
               content={notes || ""}
-              onReady={(editor) => {
-                editor.editing.view.focus();
-              }}
+              onCreateFocus={true}
             />
           </EditorBox>
 

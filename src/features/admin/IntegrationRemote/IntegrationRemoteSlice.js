@@ -1,7 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/admin/api";
 import { axiosBasic } from "services/api";
-import { flatStatuses, optimisticUpdateProperties } from "./transformer";
+import {
+  flatGroups,
+  flatStatuses,
+  optimisticUpdateProperties,
+} from "./transformer";
 
 const initialState = {
   list: [],
@@ -149,10 +153,9 @@ const integrationRemoteSlice = createSlice({
         state.template.date = action.payload.response.data.data.updatedAt;
 
         // status
+        const groups = {};
+        flatGroups(state.template.data.flowContents, groups);
         const flatStatus = {};
-        const groups = Object.values(
-          state.template.data.flowContents.processGroups
-        );
         flatStatuses(action.payload.status, flatStatus, groups);
         state.template.status = flatStatus;
         state.template.statusDate =

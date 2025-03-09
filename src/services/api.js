@@ -752,6 +752,16 @@ api.tags.getTags = (params = {}) =>
     ...setHeaders(),
   });
 
+/**
+ * PROTOCOLS
+ */
+api.protocols = {};
+api.protocols.getProtocols = (params = {}) =>
+  instance.get(`protocol/list`, {
+    params,
+    ...setHeaders(),
+  });
+
 /** GENERAL */
 const getVersion = () =>
   instance.get(`/frontend-version`, {

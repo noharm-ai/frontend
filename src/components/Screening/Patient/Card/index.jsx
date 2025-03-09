@@ -15,6 +15,7 @@ import {
   ExportOutlined,
   ReconciliationOutlined,
   TagsOutlined,
+  FilePptOutlined,
 } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -38,6 +39,7 @@ import PatientTab from "./PatientTab";
 import AdmissionTab from "./AdmissionData";
 import NotesTab from "./NotesTab";
 import TagsTab from "./TagsTab";
+import { ProtocolsTab } from "./ProtocolsTab";
 import ReportsTab from "./ReportsTab";
 import { PatientBox } from "../Patient.style";
 import { Spin } from "antd";
@@ -321,6 +323,24 @@ export default function PatientCard({
       ),
     },
   ];
+
+  if (featureService.hasProtocolAlerts()) {
+    tabs.push({
+      key: "protocolAlerts",
+      label: (
+        <Tooltip title={t("labels.protocolAlerts")}>
+          {prescription?.protocolAlerts?.summary?.length > 0 ? (
+            <Badge dot>
+              <FilePptOutlined style={{ fontSize: "18px" }} />
+            </Badge>
+          ) : (
+            <FilePptOutlined style={{ fontSize: "18px" }} />
+          )}
+        </Tooltip>
+      ),
+      children: <ProtocolsTab protocolAlerts={prescription.protocolAlerts} />,
+    });
+  }
 
   if (
     (prescription.admissionReports && prescription.admissionReports.length) ||

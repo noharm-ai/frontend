@@ -251,9 +251,11 @@ export default function InterventionOutcomeForm() {
                   <label className="main-label">Origem:</label>
                 </div>
                 <div className="form-value">
-                  {outcomeData.header?.patient
-                    ? "Intervenção no paciente"
-                    : outcomeData.header.originDrug}
+                  {outcomeData.header?.patient ? (
+                    "Intervenção no paciente"
+                  ) : (
+                    <OriginDrugName outcomeData={outcomeData} />
+                  )}
                 </div>
               </div>
             </Col>
@@ -731,5 +733,23 @@ export default function InterventionOutcomeForm() {
         </>
       )}
     </InterventionOutcomeContainer>
+  );
+}
+
+function OriginDrugName({ outcomeData }) {
+  if (outcomeData?.header?.invalidSegment) {
+    return <>{outcomeData?.header?.originDrug}</>;
+  }
+
+  const href = `/medicamentos/${outcomeData?.header.idSegment}/${
+    outcomeData?.origin?.item?.idDrug
+  }/${createSlug(outcomeData?.header?.originDrug)}`;
+
+  return (
+    <Tooltip title="Ver medicamento">
+      <a href={href} target="_blank">
+        {outcomeData?.header?.originDrug}
+      </a>
+    </Tooltip>
   );
 }

@@ -19,7 +19,12 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import notification from "components/notification";
 
-export default function Editor({ content, onEdit, utilities = ["basic"] }) {
+export default function Editor({
+  content,
+  onEdit,
+  utilities = ["basic"],
+  onCreateFocus = false,
+}) {
   const extensions = [];
 
   if (utilities.includes("basic")) {
@@ -82,10 +87,17 @@ export default function Editor({ content, onEdit, utilities = ["basic"] }) {
     onEdit(editor.getHTML());
   };
 
+  const onCreate = ({ editor }) => {
+    if (onCreateFocus) {
+      editor.commands.focus();
+    }
+  };
+
   return (
     <EditorContainer>
       <EditorProvider
         onUpdate={onUpdate}
+        onCreate={onCreate}
         extensions={extensions}
         content={content}
         slotBefore={<MenuBar utilities={utilities} />}

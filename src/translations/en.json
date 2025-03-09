@@ -340,7 +340,9 @@
     "prescriber": "Prescriber",
     "economyType": "Economy type",
     "hasEconomy": "Has economy",
-    "selectAll": "Select all"
+    "selectAll": "Select all",
+    "protocols": "Protocols",
+    "protocolAlerts": "Protocol alerts"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit"

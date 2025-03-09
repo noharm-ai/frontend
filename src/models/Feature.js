@@ -18,6 +18,7 @@ export default class Feature {
   static REGULATION = "REGULATION";
   static AUTOMATIC_CHECK_IF_NOT_VALIDATED_ITENS =
     "AUTOMATIC_CHECK_IF_NOT_VALIDATED_ITENS";
+  static PROTOCOL_ALERTS = "PROTOCOL_ALERTS";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -124,6 +125,12 @@ export default class Feature {
         label: "Checagem automática (CPOE - Dietas)",
         description:
           "Habilita a checagem automática de pacientes-dia quando possui somente itens de dieta. Atualmente é exclusivo para CPOE.",
+      },
+      {
+        id: Feature.PROTOCOL_ALERTS,
+        label: "Alertas de protocolo",
+        description:
+          "Habilita a funcionalidade de alertas de protocolo. Funcionalide experimental, ainda não está completamente implementada.",
       },
     ];
   }

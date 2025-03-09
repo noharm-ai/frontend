@@ -287,6 +287,7 @@ const Action = ({ record }) => {
             onShowModal
           )}
           placement="bottomRight"
+          trigger={["click"]}
         >
           <Button
             type="primary"

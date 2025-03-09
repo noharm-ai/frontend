@@ -69,7 +69,7 @@ export default function SupportForm() {
           message: getErrorMessage(response, t),
         });
 
-        if (response.payload.statusCode >= 500) {
+        if (response?.payload?.statusCode >= 500) {
           DefaultModal.error({
             title: "Serviço Offline",
             content: (

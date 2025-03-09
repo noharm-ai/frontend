@@ -171,7 +171,7 @@ export function RegulationFormBase() {
 
       <div className={`form-row ${errors.attendant ? "error" : ""}`}>
         <div className="form-label">
-          <label>Médico solicitante:</label>
+          <label>Profissional solicitante:</label>
         </div>
         <div className="form-input">
           <Input
@@ -186,7 +186,9 @@ export function RegulationFormBase() {
 
       <div className={`form-row ${errors.attendantRecord ? "error" : ""}`}>
         <div className="form-label">
-          <label>CRM:</label>
+          <label>
+            Registro do profissional solicitante (CRM, COREN, CRO...):
+          </label>
         </div>
         <div className="form-input">
           <Input

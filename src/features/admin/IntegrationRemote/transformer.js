@@ -1,5 +1,3 @@
-import { thru } from "lodash";
-
 export function findProcessGroup(groups, property, value) {
   for (let i = 0; i < groups.length; i++) {
     const g = groups[i];
@@ -16,6 +14,22 @@ export function findProcessGroup(groups, property, value) {
   return null;
 }
 
+export function flatGroups(obj, result = {}) {
+  for (const property in obj) {
+    if (obj.hasOwnProperty(property)) {
+      if (typeof obj[property] == "object") {
+        if (property === "processGroups") {
+          const groupArray = obj[property];
+          for (const group in groupArray) {
+            result[groupArray[group]?.instanceIdentifier] = groupArray[group];
+          }
+        }
+        flatGroups(obj[property], result);
+      }
+    }
+  }
+}
+
 export function flatStatuses(obj, result = {}, groups) {
   for (const property in obj) {
     if (obj.hasOwnProperty(property)) {
@@ -27,9 +41,7 @@ export function flatStatuses(obj, result = {}, groups) {
           result[obj[property].id] = obj[property];
           if (groups !== undefined) {
             if (obj[property].groupId) {
-              const groupName = groups?.find(
-                (group) => group.instanceIdentifier === obj[property].groupId
-              )?.name;
+              const groupName = groups[obj[property].groupId]?.name;
               obj[property].groupName = groupName;
             }
           }
