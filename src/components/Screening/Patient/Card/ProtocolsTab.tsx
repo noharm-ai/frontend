@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Collapse, Badge, CollapseProps } from "antd";
+import { Collapse, Badge, CollapseProps, Flex } from "antd";
 
 import { formatDate } from "utils/date";
 import Tooltip from "components/Tooltip";
@@ -102,13 +102,18 @@ function Protocol({ protocolResult }: { protocolResult: IProtocolResult }) {
   return (
     <>
       <div>
-        <Tooltip title={protocolResult.description}>
+        <Flex>
           <Badge
             color={getIconColor(protocolResult.level)}
             style={{ marginRight: "0.5rem" }}
           />
-          {protocolResult.message}
-        </Tooltip>
+
+          <div style={{ whiteSpace: "break-spaces" }}>
+            <Tooltip title={protocolResult.description}>
+              {protocolResult.message}
+            </Tooltip>
+          </div>
+        </Flex>
       </div>
       {protocolResult.variableMessages && (
         <div className="protocol-variable">
