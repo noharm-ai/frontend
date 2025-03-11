@@ -9,6 +9,7 @@ import Tag from "components/Tag";
 import Empty from "components/Empty";
 import { formatAge } from "utils/transformers/utils";
 import { useOutsideAlerter } from "lib/hooks";
+import RegulationStageTag from "components/RegulationStageTag";
 
 import { searchPrescriptions } from "features/lists/ListsSlice";
 
@@ -23,15 +24,19 @@ export default function SearchPrescription({ type, size }) {
     setOpen(false);
   });
   const navigateTo = useCallback(
-    (idPrescription, admissionNumber, concilia) => {
+    (option) => {
       setOpen(false);
       if (type === "summary") {
-        window.open(`/sumario-alta/${admissionNumber}`);
+        window.open(`/sumario-alta/${option.admissionNumber}`);
       } else {
-        if (concilia) {
-          window.open(`/conciliacao/${idPrescription}`);
-        } else {
-          window.open(`/prescricao/${idPrescription}`);
+        if (option.type === "prescription") {
+          if (option.concilia) {
+            window.open(`/conciliacao/${option.idPrescription}`);
+          } else {
+            window.open(`/prescricao/${option.idPrescription}`);
+          }
+        } else if (option.type === "regulation") {
+          window.open(`/regulacao/${option.idRegSolicitation}`);
         }
       }
     },
@@ -99,11 +104,7 @@ export default function SearchPrescription({ type, size }) {
               (i) => i.idPrescription === itemActive
             );
             if (options[index]) {
-              navigateTo(
-                options[index].idPrescription,
-                options[index].admissionNumber,
-                options[index].concilia
-              );
+              navigateTo(options[index]);
             }
 
             break;
@@ -200,13 +201,7 @@ export default function SearchPrescription({ type, size }) {
       <div className={`search-result ${open ? "open" : ""}`}>
         {options.map((option, index) => (
           <div
-            onClick={() =>
-              navigateTo(
-                option.idPrescription,
-                option.admissionNumber,
-                option.concilia
-              )
-            }
+            onClick={() => navigateTo(option)}
             key={option.idPrescription}
             className={option.idPrescription === itemActive ? "active" : ""}
             onMouseEnter={() => setItemActive(option.idPrescription)}
@@ -215,15 +210,29 @@ export default function SearchPrescription({ type, size }) {
           >
             <div className="search-result-info">
               <div className="search-result-info-primary">
-                {option.agg || option.concilia
-                  ? `${t(
-                      option.concilia
-                        ? "labels.conciliation"
-                        : "patientCard.admission"
-                    )} ${option.admissionNumber}`
-                  : `${t("patientCard.prescription")} ${option.idPrescription}`}
-                {" - "}
-                <span>{getDate(option)}</span>
+                {option.type === "prescription" && (
+                  <>
+                    {option.agg || option.concilia
+                      ? `${t(
+                          option.concilia
+                            ? "labels.conciliation"
+                            : "patientCard.admission"
+                        )} ${option.admissionNumber}`
+                      : `${t("patientCard.prescription")} ${
+                          option.idPrescription
+                        }`}
+                    {" - "}
+                    <span>{getDate(option)}</span>
+                  </>
+                )}
+
+                {option.type === "regulation" && (
+                  <>
+                    Regulação nº: {option.idRegSolicitation}
+                    {" - "}
+                    <span>{getDate(option)}</span>
+                  </>
+                )}
               </div>
               <div className="search-result-info-secondary">
                 {option.birthdate && (
@@ -241,10 +250,21 @@ export default function SearchPrescription({ type, size }) {
                 )}
               </div>
             </div>
-            {type !== "summary" && (
+            {option.type === "prescription" && (
+              <>
+                {type !== "summary" && (
+                  <div>
+                    {option.status === "s" && <Tag color="green">Checada</Tag>}
+                    {option.status !== "s" && (
+                      <Tag color="orange">Pendente</Tag>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+            {option.type === "regulation" && (
               <div>
-                {option.status === "s" && <Tag color="green">Checada</Tag>}
-                {option.status !== "s" && <Tag color="orange">Pendente</Tag>}
+                <RegulationStageTag stage={option.status} />
               </div>
             )}
           </div>
