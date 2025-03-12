@@ -254,6 +254,29 @@ function BaseForm() {
             <>
               <div className={`form-row`}>
                 <div className="form-label">
+                  <label>Usa o getname NoHarm?</label>
+                </div>
+                <div className="form-input">
+                  <Select
+                    onChange={(value) =>
+                      setFieldValue("config.getname.internal", value)
+                    }
+                    value={values.config?.getname?.internal}
+                    optionFilterProp="children"
+                    showSearch
+                  >
+                    <Select.Option key={0} value={true}>
+                      Sim
+                    </Select.Option>
+                    <Select.Option key={1} value={false}>
+                      Não
+                    </Select.Option>
+                  </Select>
+                </div>
+              </div>
+
+              <div className={`form-row`}>
+                <div className="form-label">
                   <label>URL resolução de nomes (development):</label>
                 </div>
                 <div className="form-input">
@@ -289,6 +312,19 @@ function BaseForm() {
                     value={values.config?.getname?.token?.url}
                     onChange={({ target }) =>
                       setFieldValue("config.getname.token.url", target.value)
+                    }
+                  />
+                </div>
+              </div>
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>Prefixo header authorization:</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    value={values.config?.getname?.authPrefix}
+                    onChange={({ target }) =>
+                      setFieldValue("config.getname.authPrefix", target.value)
                     }
                   />
                 </div>
