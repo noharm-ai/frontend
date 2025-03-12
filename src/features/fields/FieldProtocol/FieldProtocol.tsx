@@ -10,7 +10,7 @@ import { getErrorMessage } from "utils/errorHandler";
 interface IFieldProtocolProps {
   value: number;
   onChange: (value: number) => void;
-  protocolType: number;
+  protocolType: number[];
 }
 
 export function FieldProtocol({
@@ -25,17 +25,16 @@ export function FieldProtocol({
 
   const fetchProtocols = () => {
     if (protocolType && options.length === 0) {
+      const params = { protocolTypeList: protocolType, active: true };
       // @ts-expect-error ts 2554 (legacy code)
-      dispatch(getProtocols({ protocolType, active: true })).then(
-        (response: any) => {
-          if (response.error) {
-            notification.error({
-              message: getErrorMessage(response, t),
-              description: "protocolos",
-            });
-          }
+      dispatch(getProtocols(params)).then((response: any) => {
+        if (response.error) {
+          notification.error({
+            message: getErrorMessage(response, t),
+            description: "protocolos",
+          });
         }
-      );
+      });
     }
   };
 

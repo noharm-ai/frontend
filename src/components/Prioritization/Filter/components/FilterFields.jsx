@@ -277,7 +277,11 @@ export default function FilterFields({
                   </div>
                   <div className="form-input">
                     <FieldProtocol
-                      protocolType={ProtocolTypeEnum.PRESCRIPTION}
+                      protocolType={[
+                        ProtocolTypeEnum.PRESCRIPTION_AGG,
+                        ProtocolTypeEnum.PRESCRIPTION_INDIVIDUAL,
+                        ProtocolTypeEnum.PRESCRIPTION_ALL,
+                      ]}
                       value={filter.protocols}
                       onChange={(value) =>
                         setScreeningListFilter({ protocols: value })
