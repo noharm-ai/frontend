@@ -769,7 +769,7 @@ const getVersion = () =>
   });
 
 const searchNames = (term) =>
-  instance.get(`/names/search/${term}`, {
+  instance.get(`/names/search/${term?.replaceAll("/", "")}`, {
     ...setHeaders(),
   });
 
