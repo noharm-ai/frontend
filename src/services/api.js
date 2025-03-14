@@ -323,7 +323,7 @@ const getDrugSummary = (bearerToken, idDrug, idSegment) =>
   });
 
 const getDrugResources = (bearerToken, idDrug, idSegment, idHospital) =>
-  instance.get(`${endpoints.drugs}/resources/${idDrug}/${idSegment}`, {
+  instance.get(`${endpoints.drugs}/resources/${idDrug}/${idSegment ?? 1}`, {
     ...setHeaders(bearerToken),
   });
 
