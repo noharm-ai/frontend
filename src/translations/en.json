@@ -214,7 +214,9 @@
     "admissionDate": "Admission date",
     "prescriptionDate": "Prescription date",
     "reports": "Reports",
-    "openConciliation": "Open conciliation"
+    "openConciliation": "Open conciliation",
+    "dischargeDateForecast": "Discharge forecast",
+    "responsiblePhysician": "Responsible physician"
   },
   "screeningBody": {
     "tabDrugs": "Drugs",

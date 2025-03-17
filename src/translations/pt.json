@@ -214,7 +214,9 @@
     "admissionDate": "Data de internação",
     "prescriptionDate": "Data da prescrição",
     "reports": "Relatórios",
-    "openConciliation": "Abrir conciliação"
+    "openConciliation": "Abrir conciliação",
+    "dischargeDateForecast": "Previsão de alta",
+    "responsiblePhysician": "Médico responsável"
   },
   "screeningBody": {
     "tabDrugs": "Medicamentos",

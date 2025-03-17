@@ -249,7 +249,7 @@ export const PatientBox = styled.div`
 
         .protocol-group {
           padding-right: 10px;
-          max-height: 200px;
+          max-height: 300px;
           overflow: auto;
 
           .protocol-message {
@@ -299,7 +299,7 @@ export const PatientBox = styled.div`
 
       .notes {
         padding: 10px;
-        max-height: 220px;
+        max-height: 300px;
         overflow: auto;
       }
 
@@ -308,7 +308,7 @@ export const PatientBox = styled.div`
         grid-template-columns: 1fr;
         column-gap: 5px;
         row-gap: 5px;
-        max-height: 200px;
+        max-height: 300px;
         overflow: auto;
         padding: 10px 15px 10px 5px;
 
@@ -385,5 +385,15 @@ export const PatientBox = styled.div`
         color: #1890ff;
       }
     }
+  }
+`;
+
+export const MaxHeightContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  @media (min-width: ${get("breakpoints.lg")}) {
+    max-height: 315px;
   }
 `;

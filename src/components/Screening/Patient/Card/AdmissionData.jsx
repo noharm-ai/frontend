@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 import Tooltip from "components/Tooltip";
+import { formatDate } from "src/utils/date";
 
 export default function AdmissionTab({ prescription }) {
   const { t } = useTranslation();
@@ -14,6 +15,8 @@ export default function AdmissionTab({ prescription }) {
     bed,
     prescriber,
     insurance,
+    dischargeDateForecast,
+    responsiblePhysician,
   } = prescription;
   return (
     <div className="patient-data">
@@ -83,10 +86,25 @@ export default function AdmissionTab({ prescription }) {
         </div>
       </div>
 
-      <div className="patient-data-item full">
-        <div className="patient-data-item-label">&nbsp;</div>
-        <div className="patient-data-item-value"></div>
-      </div>
+      {responsiblePhysician && (
+        <div className="patient-data-item">
+          <div className="patient-data-item-label">
+            {t("patientCard.responsiblePhysician")}
+          </div>
+          <div className="patient-data-item-value">{responsiblePhysician}</div>
+        </div>
+      )}
+
+      {dischargeDateForecast && (
+        <div className="patient-data-item">
+          <div className="patient-data-item-label">
+            {t("patientCard.dischargeDateForecast")}
+          </div>
+          <div className="patient-data-item-value">
+            {formatDate(dischargeDateForecast)}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
