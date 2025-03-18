@@ -192,13 +192,23 @@ export const getFilterDepartment = (departments, segmentList) => {
   if (!departments) return [];
 
   if (!segmentList || !segmentList.length) {
-    return [...departments].sort(sortDepartments);
+    return getUniqList(departments, "department")
+      .map((d) => ({
+        department: d,
+        idSegment: 1,
+      }))
+      .sort(sortDepartments);
   }
 
-  return [...departments]
-    .filter((i) => {
-      return segmentList.indexOf(i.segment) !== -1;
-    })
+  const filteredDepartments = [...departments].filter((i) => {
+    return segmentList.indexOf(i.segment) !== -1;
+  });
+
+  return getUniqList(filteredDepartments, "department")
+    .map((d) => ({
+      department: d,
+      idSegment: 1, // not being used
+    }))
     .sort(sortDepartments);
 };
 

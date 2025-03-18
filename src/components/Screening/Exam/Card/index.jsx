@@ -23,7 +23,7 @@ export default function ExamCard({
   const dispatch = useDispatch();
 
   return (
-    <PrescriptionCard style={{ height: "100%" }}>
+    <PrescriptionCard className="full-height max-height">
       <div className="header">
         <h3 className="title">
           {t("tableHeader.exams")}

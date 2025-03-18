@@ -15,7 +15,7 @@ import { InfoIcon } from "components/Icon";
 import Tooltip from "components/Tooltip";
 import PrescriptionCard from "components/PrescriptionCard";
 
-import { SeeMore } from "./Patient.style";
+import { SeeMore, MaxHeightContainer } from "./Patient.style";
 import ExamCard from "../Exam/Card";
 import AlertCard from "../AlertCard";
 import ClinicalNotesCard from "../ClinicalNotes/Card";
@@ -115,13 +115,7 @@ export default function Patient({
         />
       </Col>
       <Col xs={24} md={10} xl={6} xxl={5}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: "100%",
-          }}
-        >
+        <MaxHeightContainer>
           <div style={{ flex: 1 }}>
             <AlertCard stats={alertStats} prescription={prescription} />
           </div>
@@ -138,7 +132,7 @@ export default function Patient({
               <ScoreCard prescription={prescription} />
             </div>
           </Flex>
-        </div>
+        </MaxHeightContainer>
       </Col>
       {seeMore && (
         <>

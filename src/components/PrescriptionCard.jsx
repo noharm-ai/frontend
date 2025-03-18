@@ -21,6 +21,12 @@ export default styled.div`
     height: 100%;
   }
 
+  &.max-height {
+    @media (min-width: ${get("breakpoints.lg")}) {
+      max-height: 315px;
+    }
+  }
+
   h3.title {
     display: flex;
     align-items: center;
