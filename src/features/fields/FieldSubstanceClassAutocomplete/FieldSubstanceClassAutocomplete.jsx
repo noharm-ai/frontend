@@ -57,7 +57,7 @@ export default function FieldSubstanceClassAutocomplete({
 
   return (
     <Flex>
-      <div style={{ flex: 1, maxWidth: "100%" }}>
+      <div style={{ flex: 1, maxWidth: "100%" }} id="class-autocomplete">
         <Select
           showSearch
           labelInValue
@@ -72,6 +72,9 @@ export default function FieldSubstanceClassAutocomplete({
           placeholder={loading ? "Carregando..." : "Digite para pesquisar"}
           mode="multiple"
           loading={loading}
+          getPopupContainer={() =>
+            document.getElementById("class-autocomplete")
+          }
           {...props}
         >
           {options.map((option) => (

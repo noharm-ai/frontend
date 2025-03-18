@@ -55,27 +55,32 @@ export default function FieldSubstanceAutocomplete({
   }, 800);
 
   return (
-    <Select
-      showSearch
-      labelInValue
-      allowClear
-      value={value}
-      optionFilterProp="children"
-      style={{ minWidth: "300px" }}
-      notFoundContent={loading ? <LoadBox /> : null}
-      filterOption={false}
-      onSearch={search}
-      onChange={(value) => onChange(value)}
-      placeholder={loading ? "Carregando..." : "Digite para pesquisar"}
-      mode="multiple"
-      loading={loading}
-      {...props}
-    >
-      {options.map((option) => (
-        <Select.Option value={option.sctid} key={option.sctid}>
-          {option.name}
-        </Select.Option>
-      ))}
-    </Select>
+    <div style={{ position: "relative" }} id="substance-autocomplete">
+      <Select
+        showSearch
+        labelInValue
+        allowClear
+        value={value}
+        optionFilterProp="children"
+        style={{ minWidth: "300px" }}
+        notFoundContent={loading ? <LoadBox /> : null}
+        filterOption={false}
+        onSearch={search}
+        onChange={(value) => onChange(value)}
+        placeholder={loading ? "Carregando..." : "Digite para pesquisar"}
+        mode="multiple"
+        loading={loading}
+        getPopupContainer={() =>
+          document.getElementById("substance-autocomplete")
+        }
+        {...props}
+      >
+        {options.map((option) => (
+          <Select.Option value={option.sctid} key={option.sctid}>
+            {option.name}
+          </Select.Option>
+        ))}
+      </Select>
+    </div>
   );
 }
