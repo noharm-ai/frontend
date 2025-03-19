@@ -26,6 +26,7 @@ import {
 import NodeStatusTag from "./NodeStatusTag";
 import { Textarea, Select } from "components/Inputs";
 import RichTextView from "components/RichTextView";
+import { CardTable } from "components/Table";
 
 export default function NodeModal() {
   const dispatch = useDispatch();
@@ -74,6 +75,30 @@ export default function NodeModal() {
       },
     ];
   };
+
+  const bulletinColumns = [
+    {
+      title: "Hora",
+      align: "center",
+      render: (_, record) => record.timestamp,
+    },
+    {
+      title: "Categoria",
+      render: (_, record) => record.category,
+    },
+    {
+      title: "Origem",
+      render: (_, record) => record.sourceName,
+    },
+    {
+      title: "Level",
+      render: (_, record) => record.level,
+    },
+    {
+      title: "Mensagem",
+      render: (_, record) => <RichTextView text={record.message} />,
+    },
+  ];
 
   const executeAction = (actionType, params = {}) => {
     let entity = data?.name;
@@ -523,6 +548,25 @@ export default function NodeModal() {
               </Descriptions.Item>
             ))}
         </Descriptions>
+      ),
+    },
+    {
+      key: "4",
+      label: "Bulletin",
+      children: (
+        <CardTable
+          bordered
+          columns={bulletinColumns}
+          rowKey="id"
+          dataSource={
+            data?.status?.bulletinErrors &&
+            data.status?.bulletinErrors?.length > 0
+              ? data.status?.bulletinErrors
+              : []
+          }
+          size="small"
+          pagination={{ showSizeChanger: true }}
+        />
       ),
     },
   ];
