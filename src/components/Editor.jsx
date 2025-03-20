@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
+import { Slice, Fragment, Node } from "prosemirror-model";
 import { Space, Divider } from "antd";
 import {
   BoldOutlined,
@@ -13,6 +14,7 @@ import {
   RedoOutlined,
   UndoOutlined,
   UnorderedListOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -93,6 +95,25 @@ export default function Editor({
     }
   };
 
+  const editorProps = {
+    clipboardTextParser: (text, context) => {
+      const blocks = text.replace().split(/(?:\r\n?|\n)/);
+      const nodes = [];
+
+      blocks.forEach((line) => {
+        const nodeJson = { type: "paragraph" };
+        if (line.length > 0) {
+          nodeJson.content = [{ type: "text", text: line }];
+        }
+        const node = Node.fromJSON(context.doc.type.schema, nodeJson);
+        nodes.push(node);
+      });
+
+      const fragment = Fragment.fromArray(nodes);
+      return Slice.maxOpen(fragment);
+    },
+  };
+
   return (
     <EditorContainer>
       <EditorProvider
@@ -101,6 +122,7 @@ export default function Editor({
         extensions={extensions}
         content={content}
         slotBefore={<MenuBar utilities={utilities} />}
+        editorProps={editorProps}
       ></EditorProvider>
     </EditorContainer>
   );
@@ -153,6 +175,10 @@ const MenuBar = ({ utilities }) => {
       alert(e.message);
     }
   }, [editor]);
+
+  const copyText = () => {
+    navigator.clipboard.writeText(editor.getText({ blockSeparator: "\n" }));
+  };
 
   if (!editor) {
     return null;
@@ -264,6 +290,20 @@ const MenuBar = ({ utilities }) => {
             ghost
             type="primary"
             icon={<RedoOutlined />}
+            size="small"
+          />
+        </Tooltip>
+
+        <Divider type="vertical" />
+
+        <Tooltip title="Copiar sem formatação">
+          <Button
+            color="black"
+            variant="outlined"
+            onClick={() => copyText()}
+            type="primary"
+            ghost
+            icon={<CopyOutlined />}
             size="small"
           />
         </Tooltip>

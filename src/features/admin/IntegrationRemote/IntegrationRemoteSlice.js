@@ -166,6 +166,18 @@ const integrationRemoteSlice = createSlice({
         state.template.bulletinDate =
           action.payload.response.data.data.bulletinUpdatedAt;
 
+        state.template.bulletin?.bulletinBoard?.bulletins?.forEach((be) => {
+          if (state.template.status[be.sourceId]) {
+            if (state.template.status[be.sourceId].bulletinErrors) {
+              state.template.status[be.sourceId].bulletinErrors.push(
+                be.bulletin
+              );
+            } else {
+              state.template.status[be.sourceId].bulletinErrors = [be.bulletin];
+            }
+          }
+        });
+
         //diagnostics
         state.template.diagnostics =
           action.payload.diagnostics?.systemDiagnostics?.aggregateSnapshot;
@@ -236,6 +248,23 @@ const integrationRemoteSlice = createSlice({
         if (action.payload.bulletin) {
           state.template.bulletin = action.payload.bulletin.data;
           state.template.bulletinDate = action.payload.bulletinUpdatedAt;
+
+          const bulletins = {};
+
+          state.template.bulletin?.bulletinBoard?.bulletins?.forEach((be) => {
+            if (state.template.status[be.sourceId]) {
+              if (bulletins[be.sourceId]) {
+                bulletins[be.sourceId].push(be.bulletin);
+              } else {
+                bulletins[be.sourceId] = [be.bulletin];
+              }
+            }
+          });
+
+          Object.keys(bulletins).forEach((sourceId) => {
+            state.template.status[sourceId].bulletinErrors =
+              bulletins[sourceId];
+          });
         }
       });
   },

@@ -7,7 +7,7 @@ interface IRegulationForm {
   birthdate?: string | null;
   idDepartment: number;
   solicitationDate: string;
-  idRegSolicitationType: number;
+  idRegSolicitationTypeList: number;
   risk: number;
   cid?: string;
   attendant?: string;

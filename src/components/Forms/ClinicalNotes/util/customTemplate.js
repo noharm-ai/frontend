@@ -539,9 +539,7 @@ const drugTemplate = (d, params) => {
   }  X ${d.frequency?.label ? d.frequency.label : "Frequência não informada"})`;
 
   if (params.period) {
-    return `- ${d.drug} (Período: ${
-      d.totalPeriod || 0
-    }D **Revisar período) ${dose}`;
+    return `- ${d.drug} (Período: ${d.totalPeriod || 0}D) ${dose}`;
   }
 
   return `- ${d.drug} ${dose}`;

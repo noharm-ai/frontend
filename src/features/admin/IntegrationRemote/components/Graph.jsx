@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Spin } from "antd";
+import cytoscape from "cytoscape";
+import nodeHtmlLabel from "cytoscape-node-html-label";
 
-import { EChartBase } from "components/EChartBase";
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
 import NodeModal from "./NodeModal";
@@ -12,10 +13,14 @@ import { setSelectedNode } from "../IntegrationRemoteSlice";
 import GraphActions from "./GraphActions";
 import { formatDateTime } from "utils/date";
 import { findProcessGroup } from "../transformer";
+import "./graph.css";
+
+nodeHtmlLabel(cytoscape);
 
 export default function Graph() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const graphContainer = useRef(null);
   const status = useSelector((state) => state.admin.integrationRemote.status);
   const template = useSelector(
     (state) => state.admin.integrationRemote.template.data
@@ -37,134 +42,308 @@ export default function Graph() {
       )
     : null;
 
+  useEffect(() => {
+    const getLineClass = (link) => {
+      const status = templateStatus[link.instanceIdentifier];
+
+      const count = parseInt(status?.queuedCount);
+
+      if (count > 0 && count <= 20) {
+        return "filled";
+      }
+
+      if (count > 20) {
+        return "warning";
+      }
+
+      return "default";
+    };
+
+    const getLinks = (nodeList) => {
+      const allConnections = [
+        ...(template?.flowContents.connections ?? []),
+        ...(currentGroup?.connections ?? []),
+      ];
+      const links = [];
+
+      allConnections.forEach((l) => {
+        let sourceNode = nodeList.find((n) => n.identifier === l.source.id);
+        let targetNode = nodeList.find(
+          (n) => n.identifier === l.destination.id
+        );
+
+        if (sourceNode && targetNode) {
+          links.push({
+            data: {
+              id: `${l.source.id}-${l.destination.id}`,
+              source: l.source.id,
+              target: l.destination.id,
+              name: l.selectedRelationships.join(","),
+              extra: { ...l },
+              status: templateStatus[l.instanceIdentifier],
+            },
+            classes: getLineClass(l),
+          });
+        } else {
+          sourceNode = nodeList.find((n) => n.identifier === l.source.groupId);
+          targetNode = nodeList.find(
+            (n) => n.identifier === l.destination.groupId
+          );
+
+          if (sourceNode && targetNode) {
+            //relationship between groups
+            links.push({
+              data: {
+                source: l.source.groupId,
+                target: l.destination.groupId,
+                name: l.selectedRelationships.join(","),
+                extra: { ...l },
+                status: templateStatus[l.instanceIdentifier],
+              },
+            });
+          }
+        }
+      });
+
+      return links;
+    };
+
+    const onClick = (data) => {
+      if (data.extra.componentType === "PROCESS_GROUP") {
+        setInternalLoading(true);
+        setTimeout(() => {
+          setGroup(data.extra.instanceIdentifier);
+          setInternalLoading(false);
+        }, 500);
+      } else {
+        dispatch(setSelectedNode(data));
+      }
+    };
+
+    if (graphContainer.current) {
+      const nodes = currentGroup
+        ? currentGroup.processors
+            .concat(currentGroup.processGroups)
+            .concat(currentGroup.inputPorts)
+            .concat(currentGroup.outputPorts)
+        : template?.flowContents.processGroups;
+
+      let elements = [];
+
+      nodes?.forEach((n) => {
+        elements.push({
+          data: {
+            id: n.identifier,
+            name: n.name,
+            extra: { ...n },
+            status: templateStatus[n.instanceIdentifier],
+          },
+          position: {
+            x: n.position.x,
+            y: n.position.y,
+          },
+          locked: true,
+          classes: `${n.componentType}`,
+        });
+      });
+
+      elements = [...elements, ...getLinks(nodes)];
+
+      const cy = cytoscape({
+        container: graphContainer.current,
+        layout: {
+          name: "preset",
+          padding: 150,
+        },
+        elements: elements,
+        style: [
+          {
+            selector: "node.PROCESS_GROUP",
+            css: {
+              width: "150px",
+              height: "100px",
+              shape: "round-rectangle",
+              "background-opacity": "0",
+            },
+          },
+          {
+            selector: "node.PROCESSOR",
+            css: {
+              width: "55px",
+              height: "55px",
+            },
+          },
+          {
+            selector: "node.OUTPUT_PORT",
+            css: {
+              width: "100px",
+              height: "30px",
+              shape: "round-rectangle",
+              "background-opacity": "0",
+            },
+          },
+          {
+            selector: "node.INPUT_PORT",
+            css: {
+              width: "100px",
+              height: "30px",
+              shape: "round-rectangle",
+              "background-opacity": "0",
+            },
+          },
+          {
+            selector: "edge",
+            css: {
+              "line-color": "gray",
+            },
+          },
+          {
+            selector: "edge:selected",
+            css: {
+              "line-color": "gray",
+            },
+          },
+
+          {
+            selector: "edge.filled",
+            css: {
+              "line-color": "#faad14",
+            },
+          },
+          {
+            selector: "edge.warning",
+            css: {
+              "line-color": "#ff4d4f",
+            },
+          },
+          {
+            selector: "edge.hover",
+            css: {
+              "line-color": "#239df9",
+            },
+          },
+        ],
+      });
+
+      //events
+      cy.on("click", "node", function () {
+        onClick(this.data());
+      });
+
+      cy.on("click", "edge", function () {
+        onClick(this.data());
+      });
+
+      cy.on("mouseover", "node", function (e) {
+        e.target.addClass("hover");
+      });
+      cy.on("mouseout", "node", function (e) {
+        e.target.removeClass("hover");
+      });
+
+      cy.on("mouseover", "edge", function (e) {
+        e.target.addClass("hover");
+      });
+      cy.on("mouseout", "edge", function (e) {
+        e.target.removeClass("hover");
+      });
+
+      //labels
+      cy.nodeHtmlLabel([
+        {
+          query: ".PROCESS_GROUP",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="group">
+                      <span class="group-graphic ">
+                        <span class="overlay"></span>
+                      </span>
+                      <span class="group-label">${data.name}</span>
+                    </div>`;
+          },
+        },
+        {
+          query: ".PROCESS_GROUP.hover",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="group">
+                      <span class="group-graphic hover">
+                        <span class="overlay"></span>
+                      </span>
+                      <span class="group-label">${data.name}</span>
+                    </div>`;
+          },
+        },
+
+        {
+          query: ".PROCESSOR",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="element">
+                      <span class="element-graphic ${data?.status?.runStatus} ${
+              data?.status?.bulletinErrors ? "has-error" : ""
+            }">
+                        <span class="overlay"></span>
+                        <span class="overlay-error">Error</span>
+                        <span class="element-badge" style="background: ${
+                          data.extra?.style["background-color"]
+                        }"></span>
+                      </span>
+                      <span class="element-label">${data.name}</span>
+                    </div>`;
+          },
+        },
+        {
+          query: ".PROCESSOR.hover",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="element">
+                      <span class="element-graphic hover ${
+                        data?.status?.runStatus
+                      } ${data?.status?.bulletinErrors ? "has-error" : ""}">
+                        <span class="overlay"></span>
+                        <span class="overlay-error">Error</span>
+                        <span class="element-badge" style="background: ${
+                          data.extra?.style["background-color"]
+                        }"></span>
+                      </span>
+                      <span class="element-label">${data.name}</span>
+                    </div>`;
+          },
+        },
+        {
+          query: ".INPUT_PORT, .OUTPUT_PORT",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="ioport">
+                      <span class="ioport-graphic">
+                      </span>
+                      <span class="ioport-label">${data.name}</span>
+                    </div>`;
+          },
+        },
+      ]);
+    }
+  }, [currentGroup, status, template, templateStatus, dispatch]);
+
   if (!template) {
     return null;
   }
-
-  const nodes = currentGroup
-    ? currentGroup.processors
-        .concat(currentGroup.processGroups)
-        .concat(currentGroup.inputPorts)
-        .concat(currentGroup.outputPorts)
-    : template?.flowContents.processGroups;
-
-  const getLineColor = (link) => {
-    const status = templateStatus[link.instanceIdentifier];
-
-    if (status?.queuedCount > 0 && status?.queuedCount <= 20) {
-      return "#faad14";
-    }
-
-    if (status?.queuedCount > 20) {
-      return "#faad14";
-    }
-
-    return "#c4c4c4";
-  };
-
-  const getLinks = () => {
-    const allConnections = [
-      ...(template?.flowContents.connections ?? []),
-      ...(currentGroup?.connections ?? []),
-    ];
-    const links = [];
-
-    allConnections.forEach((l) => {
-      links.push({
-        source: l.source.id,
-        target: l.destination.id,
-        name: l.selectedRelationships.join(","),
-        extra: { ...l },
-        status: templateStatus[l.instanceIdentifier],
-        lineStyle: {
-          opacity: 0.9,
-          width: 2,
-          curveness: 0,
-          color: getLineColor(l),
-        },
-      });
-
-      // relationship between groups
-      links.push({
-        source: l.source.groupId,
-        target: l.destination.groupId,
-        name: l.selectedRelationships.join(","),
-        extra: { ...l },
-        status: templateStatus[l.instanceIdentifier],
-        lineStyle: {
-          opacity: 1,
-          width: 2,
-          curveness: 0,
-          color: "#e1bee7",
-        },
-      });
-    });
-
-    return links;
-  };
-
-  const chartOptions = {
-    title: {
-      text: currentGroup ? currentGroup.name : template?.flowContents.name,
-    },
-    tooltip: {},
-    animationDurationUpdate: 1500,
-    animationEasingUpdate: "quinticInOut",
-    series: [
-      {
-        type: "graph",
-        layout: "none",
-        roam: true,
-        label: {
-          show: true,
-          position: "bottom",
-        },
-
-        labelLayout: {
-          hideOverlap: true,
-        },
-        edgeSymbol: ["circle", "arrow"],
-        edgeSymbolSize: [4, 10],
-
-        data: nodes?.map((n) => ({
-          id: n.identifier,
-          name: n.name,
-          x: n.position.x,
-          y: n.position.y,
-          extra: { ...n },
-          status: templateStatus[n.instanceIdentifier],
-          symbol: n.componentType === "PROCESS_GROUP" ? "roundRect" : "circle",
-          symbolSize: n.componentType === "PROCESS_GROUP" ? 100 : 30,
-        })),
-        links: getLinks(),
-        itemStyle: {
-          symbolSize: 50,
-          color: (i) => {
-            if (i.data.extra.componentType === "PROCESS_GROUP") {
-              return "#e1bee7";
-            }
-
-            if (
-              i.data.extra.type === "OUTPUT_PORT" ||
-              i.data.extra.type === "INPUT_PORT"
-            ) {
-              return "#5c6bc0";
-            }
-
-            if (i.data.status?.runStatus === "Running") {
-              return "#b7eb8f";
-            }
-
-            if (i.data.status?.runStatus === "Stopped") {
-              return "#ffccc7";
-            }
-
-            return "gray";
-          },
-        },
-      },
-    ],
-  };
 
   const goBack = () => {
     if (currentGroup) {
@@ -187,32 +366,19 @@ export default function Graph() {
     }
   };
 
-  const onClick = (evt) => {
-    if (evt.data.extra.componentType === "PROCESS_GROUP") {
-      setInternalLoading(true);
-      setTimeout(() => {
-        setGroup(evt.data.extra.instanceIdentifier);
-        setInternalLoading(false);
-      }, 500);
-    } else {
-      dispatch(setSelectedNode(evt.data));
-    }
-  };
-
   return (
     <GraphContainer>
       <Spin spinning={internalLoading}>
-        {!internalLoading && (
-          <EChartBase
-            option={chartOptions}
-            style={{ height: "100%" }}
-            loading={status === "loading" || internalLoading}
-            onClick={onClick}
-          />
-        )}
+        <div
+          ref={graphContainer}
+          style={{ height: "100%", width: "100%" }}
+        ></div>
       </Spin>
 
       <NodeModal />
+      <div className="folder-title">
+        {currentGroup ? currentGroup.name : template?.flowContents.name}
+      </div>
       <div className="schema">
         <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
       </div>

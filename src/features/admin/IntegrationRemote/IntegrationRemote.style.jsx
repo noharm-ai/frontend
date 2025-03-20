@@ -17,6 +17,15 @@ export const GraphContainer = styled.div`
     height: 100%;
   }
 
+  .folder-title {
+    position: absolute;
+    top: 1rem;
+    left: 1.3rem;
+    font-size: 18px;
+    font-family: "Roboto", sans-serif;
+    font-weight: 600;
+  }
+
   .schema {
     position: absolute;
     top: 2.5rem;

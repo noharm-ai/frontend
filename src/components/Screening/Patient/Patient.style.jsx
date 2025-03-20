@@ -301,6 +301,35 @@ export const PatientBox = styled.div`
         padding: 10px;
         max-height: 300px;
         overflow: auto;
+
+        > div {
+          p {
+            min-height: 1rem;
+          }
+          p:first-child {
+            margin-top: 0 !important;
+            margin-bottom: 0;
+          }
+
+          > * + * {
+            margin-top: 0 !important;
+            margin-bottom: 0;
+          }
+
+          ul,
+          ol {
+            padding: 0 1rem;
+          }
+
+          h1,
+          h2,
+          h3,
+          h4,
+          h5,
+          h6 {
+            line-height: 1.1;
+          }
+        }
       }
 
       .report-list {

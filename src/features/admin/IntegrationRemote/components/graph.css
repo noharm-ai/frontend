@@ -1,0 +1,163 @@
+.element {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.element-badge {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  right: -4px;
+  top: -2px;
+  background: #ccc;
+  z-index: 999;
+  border: 2px solid #fff;
+}
+
+.element-graphic {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+  background: gray;
+  border: 1px solid rgb(255, 255, 255, 0);
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.element-graphic .overlay {
+  width: 55px;
+  height: 55px;
+  position: absolute;
+  background-color: #000;
+  opacity: 0;
+  border-radius: 50%;
+  border: 1px solid rgb(255, 255, 255, 1);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.element-graphic .overlay-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 65px;
+  height: 65px;
+  position: absolute;
+  opacity: 0;
+  border-radius: 50%;
+  border: 3px solid #ff4d4f;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-transform: uppercase;
+  font-family: "Roboto", sans-serif;
+  color: #fff;
+  font-weight: 600;
+  font-size: 10px;
+  z-index: 1;
+}
+
+.element-graphic.hover .overlay {
+  opacity: 0.3;
+}
+
+.element-graphic.has-error .overlay-error {
+  opacity: 1;
+}
+
+.element-graphic.Running {
+  background: #b7eb8f;
+  border: 1px solid #8ae346;
+}
+
+.element-graphic.Stopped {
+  background: #ffccc7;
+  border: 1px solid #ff4d4f;
+}
+
+.element-label {
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  color: #454545;
+  background-color: rgb(235, 235, 235, 1);
+  padding: 1px 6px;
+  margin-top: 5px;
+  border-radius: 1px;
+}
+
+.group {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.group-graphic {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  width: 150px;
+  height: 100px;
+  background: #e1bee7;
+  margin-top: 16px;
+  border: 1px solid #c97cd7;
+  cursor: pointer;
+}
+
+.group-graphic.hover > .overlay {
+  width: 150px;
+  height: 100px;
+  position: absolute;
+  background-color: #000;
+  opacity: 0.1;
+}
+
+.group-label {
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  max-width: 150px;
+  color: #454545;
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: 6px;
+}
+
+.ioport {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.ioport-graphic {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 30px;
+  background: white;
+  border: 3px solid gray;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.ioport-label {
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  color: #454545;
+  background-color: rgb(235, 235, 235, 1);
+  padding: 1px 6px;
+  margin-top: 5px;
+  border-radius: 1px;
+}

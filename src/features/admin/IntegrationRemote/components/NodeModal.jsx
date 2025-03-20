@@ -26,6 +26,7 @@ import {
 import NodeStatusTag from "./NodeStatusTag";
 import { Textarea, Select } from "components/Inputs";
 import RichTextView from "components/RichTextView";
+import { CardTable } from "components/Table";
 
 export default function NodeModal() {
   const dispatch = useDispatch();
@@ -75,6 +76,30 @@ export default function NodeModal() {
     ];
   };
 
+  const bulletinColumns = [
+    {
+      title: "Hora",
+      align: "center",
+      render: (_, record) => record.timestamp,
+    },
+    {
+      title: "Categoria",
+      render: (_, record) => record.category,
+    },
+    {
+      title: "Origem",
+      render: (_, record) => record.sourceName,
+    },
+    {
+      title: "Level",
+      render: (_, record) => record.level,
+    },
+    {
+      title: "Mensagem",
+      render: (_, record) => <RichTextView text={record.message} />,
+    },
+  ];
+
   const executeAction = (actionType, params = {}) => {
     let entity = data?.name;
     if (data?.extra?.componentType === "CONNECTION") {
@@ -103,7 +128,10 @@ export default function NodeModal() {
     });
   };
 
-  const initialValues = { ...data?.extra?.properties };
+  const initialValues = {
+    ...data?.extra?.properties,
+    schedulingPeriod: data?.extra?.schedulingPeriod,
+  };
 
   const footerActions = (handleSubmit) => {
     if (data?.extra?.componentType !== "PROCESSOR") {
@@ -217,6 +245,24 @@ export default function NodeModal() {
                   />
                 </Dropdown>
               </Descriptions.Item>
+              {data?.extra && data?.extra["schedulingPeriod"] && (
+                <Descriptions.Item label="Agendamento" span={3}>
+                  <Textarea
+                    value={values["schedulingPeriod"]}
+                    style={{ height: "3rem" }}
+                    disabled={!isUpdatable}
+                    onChange={({ target }) =>
+                      setFieldValue("schedulingPeriod", target.value)
+                    }
+                  />
+                </Descriptions.Item>
+              )}
+              {data?.extra && data?.extra["schedulingStrategy"] && (
+                <Descriptions.Item label="Estratégia de agendamento" span={3}>
+                  {data?.extra["schedulingStrategy"]}
+                </Descriptions.Item>
+              )}
+
               {Object.hasOwn(data?.extra?.properties, "SQL select query") && (
                 <Descriptions.Item label="SQL select query" span={3}>
                   <Textarea
@@ -425,12 +471,7 @@ export default function NodeModal() {
                   />
                 </Descriptions.Item>
               )}
-              {data?.extra && data?.extra["schedulingPeriod"] && (
-                <Descriptions.Item label="Agendamento" span={3}>
-                  {data?.extra["schedulingPeriod"]} (
-                  {data?.extra["schedulingStrategy"]})
-                </Descriptions.Item>
-              )}
+
               {data?.extra && data?.extra["comments"] && (
                 <Descriptions.Item label="Comentários" span={3}>
                   <RichTextView text={data?.extra["comments"]} />
@@ -525,10 +566,31 @@ export default function NodeModal() {
         </Descriptions>
       ),
     },
+    {
+      key: "4",
+      label: "Bulletin",
+      children: (
+        <CardTable
+          bordered
+          columns={bulletinColumns}
+          rowKey="id"
+          dataSource={
+            data?.status?.bulletinErrors &&
+            data.status?.bulletinErrors?.length > 0
+              ? data.status?.bulletinErrors
+              : []
+          }
+          size="small"
+          pagination={{ showSizeChanger: true }}
+        />
+      ),
+    },
   ];
 
   const onSave = (params) => {
     const payload = {};
+    const properties = {};
+    const config = {};
 
     const validFields = [
       "Maximum-value Columns",
@@ -546,14 +608,32 @@ export default function NodeModal() {
       "Columns to Return",
     ];
 
+    const validConfigFields = ["schedulingPeriod"];
+
     validFields.forEach((field) => {
       if (Object.hasOwn(params, field)) {
-        payload[field] = params[field] === "" ? null : params[field];
+        properties[field] = params[field] === "" ? null : params[field];
       }
     });
 
+    validConfigFields.forEach((field) => {
+      if (Object.hasOwn(params, field)) {
+        config[field] = params[field] === "" ? null : params[field];
+      }
+    });
+
+    if (!isEmpty(properties)) {
+      payload["properties"] = properties;
+    }
+
+    if (!isEmpty(config)) {
+      payload["config"] = config;
+    }
+
     if (!isEmpty(payload)) {
-      executeAction("UPDATE_PROPERTY", { properties: payload });
+      executeAction("UPDATE_PROPERTY", payload);
+    } else {
+      console.error("empty payload");
     }
   };
 
