@@ -46,11 +46,13 @@ export default function Graph() {
     const getLineClass = (link) => {
       const status = templateStatus[link.instanceIdentifier];
 
-      if (status?.queuedCount > 0 && status?.queuedCount <= 20) {
+      const count = parseInt(status?.queuedCount);
+
+      if (count > 0 && count <= 20) {
         return "filled";
       }
 
-      if (status?.queuedCount > 20) {
+      if (count > 20) {
         return "warning";
       }
 
