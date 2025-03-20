@@ -69,7 +69,7 @@ export default function Regulation() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Regulação nº: {id}</h1>
+          <h1 className="page-header-title">Solicitação nº: {id}</h1>
           <div className="page-header-legend">
             Solicitado em {formatDateTime(solicitation.date)}
           </div>
