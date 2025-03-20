@@ -119,16 +119,23 @@ export function RegulationFormBase() {
           />
           <Select
             loading={regulationTypesStatus === "loading"}
-            value={values.idRegSolicitationType}
-            onChange={(value) => setFieldValue("idRegSolicitationType", value)}
+            value={values.idRegSolicitationTypeList}
+            onChange={(value) =>
+              setFieldValue("idRegSolicitationTypeList", value)
+            }
             allowClear
             options={regulationTypesList}
             showSearch
             optionFilterProp="label"
+            mode="multiple"
+            autoClearSearchValue={false}
           />
         </div>
-        {errors.idRegSolicitationType && (
-          <div className="form-error">{errors.idRegSolicitationType}</div>
+        <div className="form-info">
+          Cada tipo selecionado gera uma nova solicitação.
+        </div>
+        {errors.idRegSolicitationTypeList && (
+          <div className="form-error">{errors.idRegSolicitationTypeList}</div>
         )}
       </div>
 

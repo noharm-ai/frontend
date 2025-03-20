@@ -20,7 +20,7 @@ import { useAppSelector } from "src/store";
 export interface IRegulationFormBaseFields {
   idPatient?: number;
   idDepartment?: number;
-  idRegSolicitationType?: number;
+  idRegSolicitationTypeList?: number;
   typeType?: number;
   solicitationDate?: Dayjs;
   risk?: number;
@@ -42,7 +42,9 @@ export function RegulationForm() {
   const validationSchema = Yup.object().shape({
     idPatient: Yup.number().required(t("validation.requiredField")),
     idDepartment: Yup.number().required(t("validation.requiredField")),
-    idRegSolicitationType: Yup.number().required(t("validation.requiredField")),
+    idRegSolicitationTypeList: Yup.array()
+      .of(Yup.number())
+      .required(t("validation.requiredField")),
     solicitationDate: Yup.string()
       .nullable()
       .required(t("validation.requiredField")),
@@ -60,7 +62,7 @@ export function RegulationForm() {
       birthdate: null,
       idDepartment: params.idDepartment!,
       solicitationDate: params.solicitationDate!.format("YYYY-MM-DDTHH:mm:ss"),
-      idRegSolicitationType: params.idRegSolicitationType!,
+      idRegSolicitationTypeList: params.idRegSolicitationTypeList!,
       risk: params.risk!,
       attendant: params.attendant,
       attendantRecord: params.attendantRecord,
@@ -83,7 +85,22 @@ export function RegulationForm() {
       } else {
         formikHelpers.resetForm();
         dispatch(setRegulationFormModal(false));
-        const solicitationId = response.payload.data?.data?.id;
+        const resultsIds = response.payload.data?.data?.idList;
+        const actions = [];
+
+        if (resultsIds.length === 1) {
+          actions.push(
+            <Button
+              type="primary"
+              onClick={() =>
+                window.open(`/regulacao/${resultsIds[0]}`, "_blank")
+              }
+              key={1}
+            >
+              Abrir solicitação
+            </Button>
+          );
+        }
 
         DefaultModal.info({
           content: (
@@ -92,23 +109,17 @@ export function RegulationForm() {
               title="Solicitação criada com sucesso"
               subTitle={
                 <div style={{ color: "rgba(0, 0, 0, 0.7)" }}>
-                  <p>
-                    O número da solicitação é:
-                    <strong>{solicitationId}</strong>.
-                  </p>
+                  {resultsIds.length > 1 ? (
+                    <p>Múltiplas solicitações foram criadas.</p>
+                  ) : (
+                    <p>
+                      O número da solicitação é:{" "}
+                      <strong>{resultsIds[0]}</strong>.
+                    </p>
+                  )}
                 </div>
               }
-              extra={[
-                <Button
-                  type="primary"
-                  onClick={() =>
-                    window.open(`/regulacao/${solicitationId}`, "_blank")
-                  }
-                  key={1}
-                >
-                  Abrir solicitação
-                </Button>,
-              ]}
+              extra={actions}
             />
           ),
           icon: null,
