@@ -7,7 +7,7 @@ import nodeHtmlLabel from "cytoscape-node-html-label";
 
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
-import NodeModal from "./NodeModal";
+import { NodeModal } from "../NodeModal/NodeModal";
 import { GraphContainer } from "../IntegrationRemote.style";
 import { setSelectedNode } from "../IntegrationRemoteSlice";
 import GraphActions from "./GraphActions";

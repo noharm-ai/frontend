@@ -741,6 +741,10 @@ function OriginDrugName({ outcomeData }) {
     return <>{outcomeData?.header?.originDrug}</>;
   }
 
+  if (!outcomeData?.header?.originDrug) {
+    return `Medicamento ${outcomeData?.origin?.item?.idDrug}`;
+  }
+
   const href = `/medicamentos/${outcomeData?.header.idSegment}/${
     outcomeData?.origin?.item?.idDrug
   }/${createSlug(outcomeData?.header?.originDrug)}`;
