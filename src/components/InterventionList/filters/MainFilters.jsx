@@ -61,6 +61,7 @@ export default function MainFilters() {
           mode="multiple"
           maxTagCount="responsive"
           allowClear
+          optionFilterProp="children"
         >
           {interventionReasonsList.map(({ id, parentName, name }) => (
             <Select.Option key={id} value={id}>
