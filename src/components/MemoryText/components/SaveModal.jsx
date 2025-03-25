@@ -81,6 +81,10 @@ export default function SaveModal({
       key: "{{nome_paciente}}",
     },
     {
+      label: "Dados (NoHarm Care)",
+      key: "{{dados_nhcare}}",
+    },
+    {
       label: "Idade",
       key: "{{idade_paciente}}",
     },
@@ -105,6 +109,10 @@ export default function SaveModal({
     {
       label: "Risco do Paciente",
       key: "{{risco_paciente}}",
+    },
+    {
+      label: "Sinais (NoHarm Care)",
+      key: "{{sinais_nhcare}}",
     },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
