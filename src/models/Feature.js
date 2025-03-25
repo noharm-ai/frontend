@@ -19,6 +19,7 @@ export default class Feature {
   static AUTOMATIC_CHECK_IF_NOT_VALIDATED_ITENS =
     "AUTOMATIC_CHECK_IF_NOT_VALIDATED_ITENS";
   static PROTOCOL_ALERTS = "PROTOCOL_ALERTS";
+  static SHOW_PEP_LINK = "SHOW_PEP_LINK";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -131,6 +132,12 @@ export default class Feature {
         label: "Alertas de protocolo",
         description:
           "Habilita a funcionalidade de alertas de protocolo. Funcionalide experimental, ainda não está completamente implementada.",
+      },
+      {
+        id: Feature.SHOW_PEP_LINK,
+        label: "Link direto ao PEP",
+        description:
+          "Habilita a possibilidade de configurar um link direto para o PEP do cliente. Para habilitar, é necessário configuração extra feita manualmente.",
       },
     ];
   }
