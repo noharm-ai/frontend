@@ -30,6 +30,19 @@ export const shouldUpdatePrescription = createAsyncThunk(
   }
 );
 
+export const getPepLink = createAsyncThunk(
+  "serverActions/pep-link",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.prescription.getPepLink(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 export const putMemory = createAsyncThunk(
   "serverActions/put-memory",
   async (params, thunkAPI) => {

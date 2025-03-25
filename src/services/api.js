@@ -570,6 +570,12 @@ api.prescription.review = (params) =>
     ...setHeaders(),
   });
 
+api.prescription.getPepLink = (params) =>
+  instance.get(`/prescriptions/pep-link`, {
+    params,
+    ...setHeaders(),
+  });
+
 /**
  * Conciliation
  */

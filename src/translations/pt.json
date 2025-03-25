@@ -216,7 +216,8 @@
     "reports": "Relatórios",
     "openConciliation": "Abrir conciliação",
     "dischargeDateForecast": "Previsão de alta",
-    "responsiblePhysician": "Médico responsável"
+    "responsiblePhysician": "Médico responsável",
+    "pepLink": "Abrir PEP"
   },
   "screeningBody": {
     "tabDrugs": "Medicamentos",

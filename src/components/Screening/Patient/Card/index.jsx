@@ -28,7 +28,10 @@ import DefaultModal from "components/Modal";
 import { filterInterventionByPrescription } from "utils/transformers/intervention";
 import ChooseInterventionModal from "components/Screening/PrescriptionDrug/components/ChooseInterventionModal";
 import notification from "components/notification";
-import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSlice";
+import {
+  shouldUpdatePrescription,
+  getPepLink,
+} from "features/serverActions/ServerActionsSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import { setChooseConciliationModal } from "features/prescription/PrescriptionSlice";
 import { searchAggPrescriptions } from "features/lists/ListsSlice";
@@ -185,6 +188,29 @@ export default function PatientCard({
     }
   };
 
+  const openPep = (idPrescription) => {
+    notification.info({
+      message: "Abrindo link PEP. Aguarde...",
+    });
+    dispatch(getPepLink({ idPrescription })).then((response) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        const link = response.payload.data?.pepLink;
+        if (link) {
+          console.debug("link", link);
+          window.open(link);
+        } else {
+          notification.error({
+            message: "Erro inesperado ao abrir link PEP",
+          });
+        }
+      }
+    });
+  };
+
   const handleMenuClick = async ({ key, domEvent }) => {
     switch (key) {
       case "edit":
@@ -199,6 +225,10 @@ export default function PatientCard({
       case "openConciliation":
         dispatch(setChooseConciliationModal(prescription.admissionNumber));
         break;
+      case "gotoPep":
+        openPep(prescription.idPrescription);
+        break;
+
       default:
         console.error("Invalid key", key);
     }
@@ -239,6 +269,15 @@ export default function PatientCard({
         key: "gotoAgg",
         label: t("patientCard.prescriptionAggLink"),
         id: "gtm-bt-gotoagg",
+        icon: <ExportOutlined />,
+      });
+    }
+
+    if (featureService.hasShowPepLink()) {
+      items.push({
+        key: "gotoPep",
+        label: t("patientCard.pepLink"),
+        id: "gtm-bt-gotopep",
         icon: <ExportOutlined />,
       });
     }

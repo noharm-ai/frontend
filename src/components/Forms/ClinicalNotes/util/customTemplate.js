@@ -64,6 +64,8 @@ export const getCustomClinicalNote = (
     .replaceAll("{{altura_paciente}}", getHeight(prescription.data.height))
     .replaceAll("{{idade_paciente}}", getAge(prescription.data.age))
     .replaceAll("{{escore_global}}", prescription.data.features?.globalScore)
+    .replaceAll("{{sinais_nhcare}}", getSignsNhCare(prescription))
+    .replaceAll("{{dados_nhcare}}", getInfoNhCare(prescription))
     .replaceAll(
       "{{risco_paciente}}",
       getPatientRisk(
@@ -241,6 +243,26 @@ export const getCustomClinicalNote = (
       "{{assinatura}}",
       signatureTemplate(params.signature, params.account)
     );
+};
+
+const getSignsNhCare = (prescription) => {
+  if (prescription.data.notesSigns) {
+    return `${prescription.data.notesSigns} (Retirado em: ${formatDate(
+      prescription.data.notesSignsDate
+    )})`;
+  }
+
+  return "Nenhum registro encontrado";
+};
+
+const getInfoNhCare = (prescription) => {
+  if (prescription.data.notesInfo) {
+    return `${prescription.data.notesInfo} (Retirado em: ${formatDate(
+      prescription.data.notesInfoDate
+    )})`;
+  }
+
+  return "Nenhum registro encontrado";
 };
 
 const getWeight = (weight) => {

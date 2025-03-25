@@ -101,6 +101,10 @@ const Table = styled(AntTable)`
     background: rgba(244, 244, 244, 0.8);
   }
 
+  td.ant-table-column-sort {
+    background: inherit !important;
+  }
+
   .ant-table-row-expand-icon-cell,
   .ant-table-expand-icon-th {
     width: 15px;
