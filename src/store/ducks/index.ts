@@ -49,6 +49,7 @@ import adminTag from "features/admin/Tag/TagSlice";
 import regulationPrioritizationSlice from "features/regulation/Prioritization/PrioritizationSlice";
 import regulationSlice from "features/regulation/Regulation/RegulationSlice";
 import regulationFormSlice from "features/regulation/RegulationForm/RegulationFormSlice";
+import regulationAttributeSlice from "features/regulation/RegulationAttribute/RegulationAttributeSlice";
 
 import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
@@ -85,6 +86,7 @@ const regulationReducers = combineReducers({
   prioritization: regulationPrioritizationSlice,
   regulation: regulationSlice,
   regulationForm: regulationFormSlice,
+  regulationAttribute: regulationAttributeSlice,
 });
 
 const reportReducers = combineReducers({

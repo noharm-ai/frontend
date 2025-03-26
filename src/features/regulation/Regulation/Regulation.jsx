@@ -14,6 +14,7 @@ import RegulationData from "./RegulationData/RegulationData";
 import RegulationAction from "./RegulationAction/RegulationAction";
 import RegulationSchedules from "./RegulationSchedules/RegulationSchedules";
 import RegulationClinicalNotesModal from "./RegulationClinicalNotes/RegulationClinicalNotesModal";
+import { RegulationAttachments } from "../RegulationAttribute/RegulationAttachments/RegulationAttachments";
 import ExamsModal from "features/exams/ExamModal/ExamModal";
 import {
   fetchRegulation,
@@ -102,6 +103,7 @@ export default function Regulation() {
             <RegulationPatient />
             <RegulationData />
             <RegulationSchedules />
+            <RegulationAttachments idRegSolicitation={id} />
           </Space>
         </Col>
         <Col xs={24 - 18}>
