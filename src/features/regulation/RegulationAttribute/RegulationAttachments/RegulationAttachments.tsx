@@ -67,7 +67,7 @@ export function RegulationAttachments({
         });
       } else {
         notification.success({
-          message: "Anexo adicionado com sucesso!",
+          message: "Anexo removido com sucesso",
         });
 
         dispatch(
