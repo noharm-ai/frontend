@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "services/regulation/api";
+import api from "services/regulation/api.ts";
 import hospital from "services/hospital";
 
 import { updateNames } from "store/ducks/patients/thunk";
