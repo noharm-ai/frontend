@@ -45,7 +45,7 @@ export default function ChangePassword({ updatePassword, status }) {
         console.error(err);
         notification.error({
           message: t("error.title"),
-          description: error.message || t("error.description"),
+          description: error?.message || t("error.description"),
         });
       });
   };
