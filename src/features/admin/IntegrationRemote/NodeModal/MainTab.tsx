@@ -3,7 +3,6 @@ import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 
 import Dropdown from "components/Dropdown";
 import { Textarea, Select } from "components/Inputs";
-import RichTextView from "components/RichTextView";
 import Button from "components/Button";
 import NodeStatusTag from "../components/NodeStatusTag";
 import { INodeData } from "./NodeModal";
@@ -307,11 +306,14 @@ export function MainTab({
             </Descriptions.Item>
           )}
 
-          {data?.extra && data?.extra["comments"] && (
-            <Descriptions.Item label="Comentários" span={3}>
-              <RichTextView text={data?.extra["comments"]} maxWidth={null} />
-            </Descriptions.Item>
-          )}
+          <Descriptions.Item label="Comentários" span={3}>
+            <Textarea
+              style={{ height: "3rem" }}
+              disabled={!isUpdatable}
+              value={values["comments"]}
+              onChange={({ target }) => setFieldValue("comments", target.value)}
+            />
+          </Descriptions.Item>
         </>
       )}
       {data?.extra?.componentType === "CONNECTION" && (

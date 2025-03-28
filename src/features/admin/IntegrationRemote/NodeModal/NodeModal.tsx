@@ -75,6 +75,7 @@ export function NodeModal() {
   const initialValues = {
     ...data?.extra?.properties,
     schedulingPeriod: data?.extra?.schedulingPeriod,
+    comments: data?.extra?.comments,
   };
 
   const footerActions = (handleSubmit: (params: any) => void) => {
@@ -207,7 +208,7 @@ export function NodeModal() {
       "Columns to Return",
     ];
 
-    const validConfigFields = ["schedulingPeriod"];
+    const validConfigFields = ["schedulingPeriod", "comments"];
 
     validFields.forEach((field) => {
       if (Object.prototype.hasOwnProperty.call(params, field)) {
