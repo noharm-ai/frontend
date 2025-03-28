@@ -5,13 +5,13 @@ import { useTranslation } from "react-i18next";
 import { QuestionOutlined, FullscreenOutlined } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
-import { useOutsideAlerter } from "lib/hooks";
 import LoadBox, { LoadContainer } from "components/LoadBox";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import CustomFormView from "components/Forms/CustomForm/View";
 import notification from "components/notification";
 import Empty from "components/Empty";
+import DefaultModal from "components/Modal";
 
 import Edit from "./Edit";
 import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
@@ -37,23 +37,10 @@ export default function View({
 }) {
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
-  const [isMenuVisible, setMenuVisibility] = useState(false);
-  const [menuPosition, setMenuPosition] = useState({});
-  const [selectionRange, setSelectionRange] = useState(null);
+  const selectionRangeRef = useRef(null);
+  const modalRef = useRef(null);
   const [edit, setEdit] = useState(false);
   const { t } = useTranslation();
-
-  useOutsideAlerter(menuRef, () => {
-    setMenuVisibility(false);
-  });
-
-  useEffect(() => {
-    if (!isMenuVisible && selectionRange) {
-      const textNode = document.createTextNode(selectionRange.toString());
-      selectionRange.deleteContents();
-      selectionRange.insertNode(textNode);
-    }
-  }, [isMenuVisible]); //eslint-disable-line
 
   useEffect(() => {
     if (saveStatus.success) {
@@ -81,9 +68,10 @@ export default function View({
   };
 
   const annotate = (option) => {
+    const range = selectionRangeRef.current;
     const elm = document.createElement("span");
     const close = document.createElement("a");
-    const content = document.createTextNode(selectionRange.toString());
+    const content = document.createTextNode(range.toString());
 
     close.setAttribute("class", "close-btn");
     close.appendChild(document.createTextNode("X"));
@@ -93,11 +81,11 @@ export default function View({
     elm.appendChild(content);
     elm.appendChild(close);
 
-    selectionRange.deleteContents();
-    selectionRange.insertNode(elm);
+    range.deleteContents();
+    range.insertNode(elm);
 
-    setSelectionRange(null);
-    setMenuVisibility(false);
+    modalRef.current?.destroy();
+
     update({
       id: selected.id,
       text: paperContainerRef.current.firstChild.innerHTML,
@@ -168,20 +156,28 @@ export default function View({
       range.deleteContents();
       range.insertNode(elm);
 
-      const containerPosition =
-        paperContainerRef.current.getBoundingClientRect();
-      const menuContainerPosition = menuRef.current.getBoundingClientRect();
-      const elmPosition = elm.getBoundingClientRect();
+      selectionRangeRef.current = range;
 
-      const top =
-        elmPosition.top - containerPosition.top - menuContainerPosition.height;
-
-      setSelectionRange(range);
-      setMenuVisibility(true);
-      setMenuPosition({
-        left: elmPosition.left - containerPosition.left + elmPosition.width,
-        top: top < 0 ? -20 : top,
+      const modal = DefaultModal.info({
+        title: window.getSelection().toString(),
+        content: null,
+        icon: null,
+        width: 500,
+        okText: "Fechar",
+        okButtonProps: { type: "default" },
+        wrapClassName: "default-modal",
       });
+
+      modal.update({
+        content: (
+          <>
+            <div>Informe a categoria desta anotação:</div>
+            <div>{menu()}</div>
+          </>
+        ),
+      });
+
+      modalRef.current = modal;
     }
   };
 
@@ -202,15 +198,7 @@ export default function View({
 
   const menu = () => {
     return (
-      <div
-        style={{
-          position: "absolute",
-          top: menuPosition.top,
-          left: menuPosition.left,
-          visibility: isMenuVisible ? "visible" : "hidden",
-        }}
-        ref={menuRef}
-      >
+      <div ref={menuRef}>
         <MenuPopup
           theme="dark"
           selectable={false}
@@ -343,11 +331,8 @@ export default function View({
                       }}
                       onMouseUp={(e) => selectionChange(e)}
                       onClick={(e) => removeAnnotation(e)}
-                      className={`${
-                        isMenuVisible ? "disabled" : ""
-                      } ${"annotation-enabled"}`}
+                      className={`${"annotation-enabled"}`}
                     />
-                    {menu()}
                   </>
                 )}
                 {!selected.text && selected.template && (
