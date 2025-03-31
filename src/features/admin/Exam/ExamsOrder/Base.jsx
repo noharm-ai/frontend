@@ -80,7 +80,7 @@ export default function ExamsOrderBase() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: "50% 50%",
             columnGap: "20px",
             background: "#fafafa",
             borderRadius: "8px",
