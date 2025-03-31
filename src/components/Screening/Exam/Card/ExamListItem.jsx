@@ -38,14 +38,14 @@ export default function ExamListItem({ exam, siderCollapsed }) {
     });
   };
 
-  const getExamValue = (exam) => {
+  const getExamValue = (exam, addUnit = true) => {
     if (!exam || !exam.value) {
       return "--";
     }
 
     return (
       <NumericValue
-        suffix={exam.unit ? ` ${exam.unit}` : ""}
+        suffix={addUnit && exam.unit ? ` ${exam.unit}` : ""}
         value={exam.value}
       />
     );
@@ -65,7 +65,7 @@ export default function ExamListItem({ exam, siderCollapsed }) {
         </div>
       )}
       {exam && exam.ref && <div>Ref: {refText(exam.ref)}</div>}
-      {exam && exam.delta && (
+      {exam?.delta != null && (
         <div>
           {t("patientCard.examVariation")}: {exam.delta > 0 ? "+" : ""}
           {exam.delta}%
@@ -88,7 +88,8 @@ export default function ExamListItem({ exam, siderCollapsed }) {
       >
         <div className="name">{exam.value.initials}</div>
         <div className="icon">
-          <span>{getExamValue(exam.value)}</span>
+          <span>{getExamValue(exam.value, false)}</span>
+
           {getIcon(exam.value.delta)}
         </div>
       </Item>

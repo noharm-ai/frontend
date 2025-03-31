@@ -89,44 +89,65 @@ export default function ExamsOrderBase() {
           }}
         >
           {Object.keys(values.exams).map((e, idx) => (
-            <div
-              key={e}
-              className={`form-row ${
-                errors.exams && errors.exams[e] && touched.exams[e]
-                  ? "error"
-                  : ""
-              }`}
-              style={{ marginTop: "15px" }}
-            >
-              <div className="form-input">
-                <Select
-                  onChange={(value) => setExam(e, value || "", idx)}
-                  value={values.exams[e]}
-                  status={
-                    errors.exams && errors.exams[e] && touched.exams[e]
-                      ? "error"
-                      : null
-                  }
-                  loading={listLoading}
-                  optionFilterProp="children"
-                  showSearch
-                  autoFocus
-                  allowClear
-                >
-                  {list.map((item) => (
-                    <Select.Option key={item.type} value={item.type}>
-                      {item.name} ({item.type})
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-              {errors.exams && errors.exams[e] && touched.exams[e] && (
-                <div className="form-error">{errors.exams[e]}</div>
-              )}
-            </div>
+            <ExamField
+              errors={errors}
+              touched={touched}
+              values={values}
+              listLoading={listLoading}
+              list={list}
+              idx={idx}
+              e={e}
+              setExam={setExam}
+            />
           ))}
         </div>
       )}
     </>
+  );
+}
+
+function ExamField({
+  errors,
+  touched,
+  values,
+  listLoading,
+  list,
+  idx,
+  e,
+  setExam,
+}) {
+  return (
+    <div
+      key={e}
+      className={`form-row ${
+        errors.exams && errors.exams[e] && touched.exams[e] ? "error" : ""
+      }`}
+      style={{ marginTop: "15px" }}
+    >
+      <div className="form-input">
+        <Select
+          onChange={(value) => setExam(e, value || "", idx)}
+          value={values.exams[e]}
+          status={
+            errors.exams && errors.exams[e] && touched.exams[e] ? "error" : null
+          }
+          loading={listLoading}
+          optionFilterProp="children"
+          showSearch
+          autoFocus
+          allowClear
+          prefix={`${idx + 1})`}
+        >
+          {list.map((item) => (
+            <Select.Option key={item.type} value={item.type}>
+              {item.name} ({item.type})
+            </Select.Option>
+          ))}
+        </Select>
+      </div>
+      {errors.exams && errors.exams[e] && touched.exams[e] && (
+        <div className="form-error">{errors.exams[e]}</div>
+      )}
+    </div>
   );
 }

@@ -11,6 +11,7 @@ import Button from "components/Button";
 import PrescriptionCard from "components/PrescriptionCard";
 import Empty from "components/Empty";
 import Help from "components/Help";
+import { Carousel } from "components/Carousel";
 import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
 
 export default function ExamCard({
@@ -33,12 +34,26 @@ export default function ExamCard({
       <div className="content">
         <Flex align="center" style={{ height: "100%" }}>
           {exams && exams.length > 0 ? (
-            <div className="exam-list">
-              {exams.map((exam) => (
-                <div className="exam-item" key={exam.key}>
-                  <ExamListItem exam={exam} siderCollapsed={siderCollapsed} />
-                </div>
-              ))}
+            <div style={{ width: "100%" }}>
+              <Carousel infinite={false}>
+                {[
+                  [0, 10],
+                  [10, 20],
+                ].map((chunk) => (
+                  <div key={chunk[0]}>
+                    <div className="exam-list">
+                      {exams.slice(chunk[0], chunk[1]).map((exam) => (
+                        <div className="exam-item" key={exam.key}>
+                          <ExamListItem
+                            exam={exam}
+                            siderCollapsed={siderCollapsed}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </Carousel>
             </div>
           ) : (
             <Flex align="center" justify="center" style={{ width: "100%" }}>
