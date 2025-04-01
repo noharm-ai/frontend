@@ -60,7 +60,7 @@ export default styled.div`
       row-gap: 8px;
 
       @media (min-width: ${get("breakpoints.md")}) {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       }
 
       @media only screen and (min-width: 1515px) {
