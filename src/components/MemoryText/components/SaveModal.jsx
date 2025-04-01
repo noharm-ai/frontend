@@ -118,8 +118,11 @@ export default function SaveModal({
 
   const examVariables = [
     {
-      label: "Todos (principais)",
-      key: "{{exames}}",
+      label: "20 Principais (card de exames)",
+      children: [
+        { key: "{{exames}}", label: "Todos" },
+        { key: "{{exames_alterados}}", label: "Exames alterados" },
+      ],
     },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
