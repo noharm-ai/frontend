@@ -23,6 +23,8 @@ const autoRefreshToken =
       localStorage.getItem("ac1") + localStorage.getItem("ac2");
     const { auth } = getState();
 
+    console.log("access", access_token);
+
     if (!isEmpty(access_token)) {
       const { exp } = tokenDecode(access_token);
       const expireDate = toDate(exp * 1000);
@@ -33,6 +35,9 @@ const autoRefreshToken =
           data: {},
         };
       };
+
+      console.log("expire", expireDate);
+      console.log("isPast", isPast(expireDate));
 
       if (!isPast(expireDate)) {
         return next(action);
