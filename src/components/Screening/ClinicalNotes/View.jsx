@@ -159,7 +159,7 @@ export default function View({
       selectionRangeRef.current = range;
 
       const modal = DefaultModal.info({
-        title: window.getSelection().toString(),
+        title: "Anotar evolução",
         content: null,
         icon: null,
         width: 500,
@@ -171,6 +171,7 @@ export default function View({
       modal.update({
         content: (
           <>
+            <div>Texto anotado: {selection.toString()}</div>
             <div>Informe a categoria desta anotação:</div>
             <div>{menu()}</div>
           </>
