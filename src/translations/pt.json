@@ -361,7 +361,7 @@
   "tooltips": {
     "relationsList": "Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade",
     "cantEditBeingUsed": "Este campo não pode ser alterado, pois já foi utilizado",
-    "recentExams": "Principais exames dos últimos 5 dias. Para ver mais, clique em \"Ver Todos\""
+    "recentExams": "Principais exames dos últimos 5 dias. Para ver mais, clique em \"Ver Todos\". Para configurar os exames, acesse o menu Configurações - Exames."
   },
   "buttons": {
     "search": "Pesquisar"

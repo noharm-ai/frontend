@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import { toDate, isPast } from "date-fns";
+import { toDate, isPast, subSeconds } from "date-fns";
 
 import api from "services/api";
 import { tokenDecode } from "utils";
@@ -25,7 +25,7 @@ const autoRefreshToken =
 
     if (!isEmpty(access_token)) {
       const { exp } = tokenDecode(access_token);
-      const expireDate = toDate(exp * 1000);
+      const expireDate = subSeconds(toDate(exp * 1000), 60);
       const errorHandler = (e) => {
         return {
           error: e.response ? e.response.data : "error",
@@ -33,6 +33,9 @@ const autoRefreshToken =
           data: {},
         };
       };
+
+      console.debug("expire", expireDate);
+      console.debug("isPast", isPast(expireDate));
 
       if (!isPast(expireDate)) {
         return next(action);

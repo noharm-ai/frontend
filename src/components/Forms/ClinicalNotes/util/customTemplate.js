@@ -85,6 +85,10 @@ export const getCustomClinicalNote = (
       )
     )
     .replaceAll("{{exames}}", getExams(prescription.data.exams))
+    .replaceAll(
+      "{{exames_alterados}}",
+      getExamsOutOfReference(prescription.data.exams)
+    )
     .replaceAll("{{alergias}}", getAllergies(prescription.data.notesAllergies))
     .replaceAll(
       "{{intervencoes}}",
@@ -296,6 +300,41 @@ const getExams = (exams) => {
 
   try {
     const list = exams.map((e) => {
+      if (e.value.value) {
+        const date = e.value.date ? ` (${formatDate(e.value.date)})` : "";
+        return `- ${e.value.initials}: ${e.value.value.toLocaleString()} ${
+          e.value.unit
+        }${date}`;
+      } else {
+        return `- ${e.value.initials}: --`;
+      }
+    });
+
+    return list.join("\n");
+  } catch {
+    return "Não foi possível encontrar os exames";
+  }
+};
+
+const getExamsOutOfReference = (exams) => {
+  if (!exams) {
+    return "Nenhum exame alterado encontrado.";
+  }
+
+  console.log("exams", exams);
+
+  const oorExams = exams.filter((e) => {
+    console.log("exam", e.key, e.value.alert);
+
+    return e.value.alert;
+  });
+
+  if (oorExams.length === 0) {
+    return "Nenhum exame alterado encontrado.";
+  }
+
+  try {
+    const list = oorExams.map((e) => {
       if (e.value.value) {
         const date = e.value.date ? ` (${formatDate(e.value.date)})` : "";
         return `- ${e.value.initials}: ${e.value.value.toLocaleString()} ${
