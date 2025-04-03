@@ -66,37 +66,6 @@ export const resetGenerateDrugOutlierThunk = () => (dispatch) => {
   dispatch(outliersGenerateDrugReset());
 };
 
-export const fetchOutliersListThunk =
-  (params = {}) =>
-  async (dispatch, getState) => {
-    dispatch(outliersFetchListStart());
-    const { idSegment, idDrug } = params;
-
-    if (!idSegment || !idDrug) {
-      dispatch(outliersFetchListError({}));
-      return;
-    }
-
-    const { access_token } = getState().auth.identify;
-    const {
-      data: { data },
-      error,
-    } = await api.getOutliersBySegmentAndDrug(access_token, params);
-
-    if (!isEmpty(error)) {
-      dispatch(outliersFetchListError(error));
-      return;
-    }
-
-    const { list: drugs } = getState().drugs;
-    const [drug] = drugs.filter(
-      ({ idDrug }) => `${idDrug}` === `${params.idDrug}`
-    );
-    const list = data.map((item) => ({ ...item, ...drug }));
-
-    dispatch(outliersFetchListSuccess(list, params));
-  };
-
 export const saveOutlierThunk =
   (idOutlier, params = {}) =>
   (dispatch, getState) => {
