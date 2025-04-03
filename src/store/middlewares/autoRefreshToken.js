@@ -34,9 +34,6 @@ const autoRefreshToken =
         };
       };
 
-      console.debug("expire", expireDate);
-      console.debug("isPast", isPast(expireDate));
-
       if (!isPast(expireDate)) {
         return next(action);
       }
