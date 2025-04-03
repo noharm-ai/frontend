@@ -150,6 +150,11 @@ export const fetchReferencesListThunk =
       params.f = frequency;
     }
 
+    if (!params.idDrug || !params.idSegment) {
+      dispatch(outliersFetchListError("Medicamento inválido"));
+      return;
+    }
+
     const {
       data: { data },
       error,
