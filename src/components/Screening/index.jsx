@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -42,6 +42,14 @@ export default function Screening({
     content;
 
   const { t } = useTranslation();
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
   const featureService = FeatureService(features);
   const permissionService = PermissionService(permissions);
 
@@ -105,6 +113,10 @@ export default function Screening({
     };
 
     const handleArrowNav = (e) => {
+      if (!isMounted.current) {
+        return;
+      }
+
       const keyCode = e.keyCode || e.which;
       const actionKey = {
         left: 37,
@@ -136,7 +148,9 @@ export default function Screening({
           return;
         }
 
-        const expandBtn = activeRow.querySelector(".ant-table-row-expand-icon");
+        const expandBtn = activeRow?.querySelector(
+          ".ant-table-row-expand-icon"
+        );
 
         switch (keyCode) {
           case actionKey.up: {
@@ -232,6 +246,7 @@ export default function Screening({
     window.addEventListener("keydown", handleArrowNav);
     return () => {
       window.removeEventListener("keydown", handleArrowNav);
+      isMounted.current = false;
     };
   }, []);
 

@@ -8,7 +8,6 @@ import {
   saveUnitCoeffiecientThunk,
 } from "store/ducks/drugs/thunk";
 import {
-  fetchOutliersListThunk,
   saveOutlierThunk,
   fetchReferencesListThunk,
   selectItemToSaveThunk,
@@ -49,7 +48,6 @@ const mapDispatchToProps = (dispatch) =>
       saveUnitCoefficient: saveUnitCoeffiecientThunk,
       fetchDrugsList: fetchDrugsListThunk,
       fetchDrugsUnitsList: fetchDrugsUnitsListThunk,
-      fetchOutliersList: fetchOutliersListThunk,
       fetchReferencesList: fetchReferencesListThunk,
       generateOutlier: generateDrugOutlierThunk,
       generateOutlierReset: resetGenerateDrugOutlierThunk,

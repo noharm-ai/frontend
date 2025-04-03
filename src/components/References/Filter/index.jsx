@@ -20,14 +20,12 @@ export default function Filter({
   segments,
   drugs,
   outliers,
-  fetchOutliersList,
   fetchDrugsUnitsList,
 }) {
   const { values } = useFormik({
     validationSchema,
     enableReinitialize: true,
     initialValues: outliers.selecteds,
-    onSubmit: fetchOutliersList,
   });
   const navigate = useNavigate();
 

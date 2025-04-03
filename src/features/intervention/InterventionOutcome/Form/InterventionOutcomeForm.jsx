@@ -140,7 +140,7 @@ export default function InterventionOutcomeForm() {
         return "error";
       }
 
-      if (!Big(values[source][f] || 0).eq(Big(original.item[f] || 0))) {
+      if (!Big(values[source][f] || 0).eq(Big(original?.item[f] || 0))) {
         return "warning";
       }
 
@@ -743,6 +743,10 @@ function OriginDrugName({ outcomeData }) {
 
   if (!outcomeData?.header?.originDrug) {
     return `Medicamento ${outcomeData?.origin?.item?.idDrug}`;
+  }
+
+  if (!outcomeData?.origin?.item?.idDrug) {
+    return outcomeData?.header?.originDrug;
   }
 
   const href = `/medicamentos/${outcomeData?.header.idSegment}/${
