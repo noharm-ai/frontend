@@ -3,7 +3,7 @@ import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import { Collapse, Flex } from "antd";
 
-import { Select, Input } from "components/Inputs";
+import { Select, Input, Textarea } from "components/Inputs";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
@@ -316,6 +316,33 @@ function BaseForm() {
                   />
                 </div>
               </div>
+
+              <div className={`form-row`}>
+                <div className="form-label">
+                  <label>Parâmetros Token (JSON):</label>
+                </div>
+                <div className="form-input">
+                  <Textarea
+                    value={
+                      typeof values.config?.getname?.token?.params === "object"
+                        ? JSON.stringify(values.config?.getname?.token?.params)
+                        : values.config?.getname?.token?.params
+                    }
+                    onChange={({ target }) =>
+                      setFieldValue("config.getname.token.params", target.value)
+                    }
+                    onBlur={({ target }) =>
+                      setJsonValue("config.getname.token.params", target.value)
+                    }
+                  />
+                </div>
+                {errors.config?.getname?.token?.params && (
+                  <div className="form-error">
+                    {errors.config?.getname?.token?.params}
+                  </div>
+                )}
+              </div>
+
               <div className={`form-row`}>
                 <div className="form-label">
                   <label>Prefixo header authorization:</label>
@@ -332,61 +359,10 @@ function BaseForm() {
 
               <div className={`form-row`}>
                 <div className="form-label">
-                  <label>client_id:</label>
+                  <label>Parâmetros (JSON):</label>
                 </div>
                 <div className="form-input">
-                  <Input
-                    value={values.config?.getname?.token?.params?.client_id}
-                    onChange={({ target }) =>
-                      setFieldValue(
-                        "config.getname.token.params.client_id",
-                        target.value
-                      )
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className={`form-row`}>
-                <div className="form-label">
-                  <label>client_secret:</label>
-                </div>
-                <div className="form-input">
-                  <Input
-                    value={values.config?.getname?.token?.params?.client_secret}
-                    onChange={({ target }) =>
-                      setFieldValue(
-                        "config.getname.token.params.client_secret",
-                        target.value
-                      )
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className={`form-row`}>
-                <div className="form-label">
-                  <label>grant_type:</label>
-                </div>
-                <div className="form-input">
-                  <Input
-                    value={values.config?.getname?.token?.params?.grant_type}
-                    onChange={({ target }) =>
-                      setFieldValue(
-                        "config.getname.token.params.grant_type",
-                        target.value
-                      )
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className={`form-row`}>
-                <div className="form-label">
-                  <label>Parâmetros (json):</label>
-                </div>
-                <div className="form-input">
-                  <Input
+                  <Textarea
                     value={
                       typeof values.config?.getname?.params === "object"
                         ? JSON.stringify(values.config?.getname?.params)
