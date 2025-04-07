@@ -558,7 +558,11 @@ export default function InterventionOutcomeForm() {
                           outcomeData={{
                             header: outcomeData.header,
                             origin: outcomeData.original.origin,
-                            destiny: outcomeData.original.destiny
+                            destiny: outcomeData.header.readonly
+                              ? outcomeData.destiny?.length > 0
+                                ? outcomeData.destiny[0]
+                                : null
+                              : outcomeData.original.destiny
                               ? outcomeData.original.destiny.find(
                                   (i) =>
                                     i.item?.idPrescriptionDrug ===

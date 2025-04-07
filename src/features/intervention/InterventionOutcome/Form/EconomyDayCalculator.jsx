@@ -89,7 +89,7 @@ export default function EconomyDayCalculator({
     return false;
   };
 
-  if (!outcomeData) {
+  if (!outcomeData || !outcomeData[source]) {
     return null;
   }
 
