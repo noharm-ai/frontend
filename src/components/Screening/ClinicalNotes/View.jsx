@@ -183,16 +183,18 @@ export default function View({
   };
 
   const menuOptions = () => {
-    const items = ClinicalNotesIndicator.list(t).map((i) => ({
-      key: i.value,
-      id: "gtm-indicator",
-      label: (
-        <>
-          <div className="avatar" style={{ backgroundColor: i.color }} />{" "}
-          {i.label}
-        </>
-      ),
-    }));
+    const items = ClinicalNotesIndicator.list(t)
+      .filter((t) => t.value === "nomes")
+      .map((i) => ({
+        key: i.value,
+        id: "gtm-indicator",
+        label: (
+          <>
+            <div className="avatar" style={{ backgroundColor: i.color }} />{" "}
+            {i.label}
+          </>
+        ),
+      }));
 
     return items;
   };
