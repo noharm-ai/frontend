@@ -29,6 +29,8 @@ export default function Base({
   drugSummary,
   fetchDrugSummary,
   featureService,
+  prescriptionStatus,
+  prescriptionHeaders,
 }) {
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const { t } = useTranslation();
@@ -117,6 +119,38 @@ export default function Base({
         if (reasonList[reasonIndex].customEconomy) {
           return "customEconomy";
         }
+      }
+    }
+
+    return false;
+  };
+
+  const hasBlockingAlert = (reasonList, selectedReasons = []) => {
+    if (!selectedReasons) return false;
+
+    if (itemToSave.intervention.idIntervention) {
+      return false;
+    }
+
+    let status;
+
+    if (prescriptionHeaders && prescriptionHeaders[drugData.idPrescription]) {
+      status = intervention?.item?.headers[drugData.idPrescription].status;
+    } else {
+      status = prescriptionStatus;
+    }
+
+    if (status !== "s") {
+      return false;
+    }
+
+    for (let i = 0; i < selectedReasons.length; i++) {
+      const reasonIndex = reasonList.findIndex(
+        (reason) => reason.id === selectedReasons[i]
+      );
+
+      if (reasonIndex !== -1 && reasonList[reasonIndex].blocking) {
+        return true;
       }
     }
 
@@ -257,6 +291,12 @@ export default function Base({
                 Tipo economia: Customizado
               </Tooltip>
             </FieldHelp>
+          )}
+          {hasBlockingAlert(reasons.list, idInterventionReason) && (
+            <FieldError>
+              A intervenção de bloqueio não terá efeito, pois a prescrição já
+              foi checada/liberada.
+            </FieldError>
           )}
           {errors.idInterventionReason && touched.idInterventionReason && (
             <FieldError>{errors.idInterventionReason}</FieldError>
