@@ -17,6 +17,7 @@ export default function AdmissionTab({ prescription }) {
     insurance,
     dischargeDateForecast,
     responsiblePhysician,
+    nameICD,
   } = prescription;
   return (
     <div className="patient-data">
@@ -103,6 +104,13 @@ export default function AdmissionTab({ prescription }) {
           <div className="patient-data-item-value">
             {formatDate(dischargeDateForecast)}
           </div>
+        </div>
+      )}
+
+      {nameICD && (
+        <div className="patient-data-item">
+          <div className="patient-data-item-label">CID</div>
+          <div className="patient-data-item-value">{nameICD}</div>
         </div>
       )}
     </div>
