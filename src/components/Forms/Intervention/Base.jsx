@@ -128,7 +128,7 @@ export default function Base({
   const hasBlockingAlert = (reasonList, selectedReasons = []) => {
     if (!selectedReasons) return false;
 
-    if (itemToSave.intervention.idIntervention) {
+    if (itemToSave?.intervention?.idIntervention) {
       return false;
     }
 
