@@ -204,8 +204,12 @@ export function NodeModal() {
       "put-db-record-statement-type",
       "put-db-record-update-keys",
       "put-db-record-table-name",
+      "put-db-record-query-timeout",
       "generate-ff-custom-text",
       "Columns to Return",
+      "Connection Timeout",
+      "Read Timeout",
+      "Socket Write Timeout",
     ];
 
     const validConfigFields = ["schedulingPeriod", "comments"];

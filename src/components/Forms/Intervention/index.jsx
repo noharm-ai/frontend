@@ -48,6 +48,8 @@ export default function Intervention({
   features,
   aggPrescription,
   aggIdPrescription,
+  prescriptionStatus,
+  prescriptionHeaders,
   ...props
 }) {
   const { t } = useTranslation();
@@ -395,6 +397,8 @@ export default function Intervention({
                 memoryFetchReasonText={memoryFetchReasonText}
                 securityService={securityService}
                 featureService={featureService}
+                prescriptionStatus={prescriptionStatus}
+                prescriptionHeaders={prescriptionHeaders}
               />
             </Row>
           </form>

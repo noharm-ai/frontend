@@ -36,6 +36,8 @@ const mapStateToProps = ({
   features: user.account.features,
   aggPrescription: prescriptions.single.data.agg,
   aggIdPrescription: prescriptions.single.data.idPrescription,
+  prescriptionStatus: prescriptions.single.data.status,
+  prescriptionHeaders: prescriptions.single.data.headers,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

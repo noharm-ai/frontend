@@ -190,6 +190,31 @@ function BaseForm() {
       </div>
 
       <div
+        className={`form-row ${
+          errors.blocking && touched.blocking ? "error" : ""
+        }`}
+      >
+        <div className="form-label">
+          <label>Bloqueante:</label>
+        </div>
+        <div className="form-input">
+          <Switch
+            id="blocking"
+            name="blocking"
+            checked={values.blocking}
+            onChange={(value) => setFieldValue("blocking", value)}
+            onBlur={handleBlur}
+            status={errors.blocking && touched.blocking ? "error" : null}
+            checkedChildren={t("labels.yes")}
+            unCheckedChildren={t("labels.no")}
+          />
+        </div>
+        {errors.blocking && touched.blocking && (
+          <div className="form-error">{errors.blocking}</div>
+        )}
+      </div>
+
+      <div
         className={`form-row ${errors.active && touched.active ? "error" : ""}`}
       >
         <div className="form-label">

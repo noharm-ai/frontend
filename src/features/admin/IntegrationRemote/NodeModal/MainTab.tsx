@@ -277,6 +277,22 @@ export function MainTab({
             </Descriptions.Item>
           )}
 
+          {hasProp(data?.extra?.properties, "put-db-record-query-timeout") && (
+            <Descriptions.Item
+              label="Max Wait Time (put-db-record-query-timeout)"
+              span={3}
+            >
+              <Textarea
+                style={{ height: "3rem" }}
+                disabled={!isUpdatable}
+                value={values["put-db-record-query-timeout"]}
+                onChange={({ target }) =>
+                  setFieldValue("put-db-record-query-timeout", target.value)
+                }
+              />
+            </Descriptions.Item>
+          )}
+
           {hasProp(data?.extra?.properties, "generate-ff-custom-text") && (
             <Descriptions.Item
               label="Custom text (generate-ff-custom-text)"
@@ -301,6 +317,45 @@ export function MainTab({
                 value={values["Remote URL"]}
                 onChange={({ target }) =>
                   setFieldValue("Remote URL", target.value)
+                }
+              />
+            </Descriptions.Item>
+          )}
+
+          {hasProp(data?.extra?.properties, "Connection Timeout") && (
+            <Descriptions.Item label="Socket Connect Timeout" span={3}>
+              <Textarea
+                style={{ height: "3rem" }}
+                disabled={!isUpdatable}
+                value={values["Connection Timeout"]}
+                onChange={({ target }) =>
+                  setFieldValue("Connection Timeout", target.value)
+                }
+              />
+            </Descriptions.Item>
+          )}
+
+          {hasProp(data?.extra?.properties, "Read Timeout") && (
+            <Descriptions.Item label="Socket Read Timeout" span={3}>
+              <Textarea
+                style={{ height: "3rem" }}
+                disabled={!isUpdatable}
+                value={values["Read Timeout"]}
+                onChange={({ target }) =>
+                  setFieldValue("Read Timeout", target.value)
+                }
+              />
+            </Descriptions.Item>
+          )}
+
+          {hasProp(data?.extra?.properties, "Socket Write Timeout") && (
+            <Descriptions.Item label="Socket Write Timeout" span={3}>
+              <Textarea
+                style={{ height: "3rem" }}
+                disabled={!isUpdatable}
+                value={values["Socket Write Timeout"]}
+                onChange={({ target }) =>
+                  setFieldValue("Socket Write Timeout", target.value)
                 }
               />
             </Descriptions.Item>
