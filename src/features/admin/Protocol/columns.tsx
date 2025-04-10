@@ -16,6 +16,16 @@ const columns = (
       dataIndex: "name",
     },
     {
+      title: "Schema",
+      render: (_, record) => {
+        if (!record.schema) {
+          return "Todos";
+        }
+
+        return record.schema;
+      },
+    },
+    {
       title: "Tipo",
       align: "center",
       render: (_, record) => {

@@ -5,14 +5,24 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "src/store";
 import DefaultModal from "components/Modal";
 import { setProtocol } from "../ProtocolSlice";
+import { BaseForm } from "./Base";
 
 import { Form } from "styles/Form.style";
-
-import { BaseForm } from "./Base";
 
 export interface IProtocolFormBaseFields {
   id?: string;
   name?: string;
+  protocolType?: number;
+  statusType?: number;
+  config: {
+    variables?: any;
+    trigger?: any;
+    result: {
+      level: string;
+      message: string;
+      description: string;
+    };
+  };
   new?: boolean;
 }
 
@@ -30,7 +40,8 @@ export function ProtocolForm() {
     ...formData,
   };
 
-  const onSave = () => {
+  const onSave = (params: IProtocolFormBaseFields) => {
+    console.log("params", params);
     // dispatch(upsertTag(params)).then((response) => {
     //   if (response.error) {
     //     notification.error({
@@ -59,7 +70,7 @@ export function ProtocolForm() {
       {({ handleSubmit }: { handleSubmit: () => void }) => (
         <DefaultModal
           open={formData}
-          width={500}
+          width={600}
           centered
           destroyOnClose
           onCancel={onCancel}
@@ -79,7 +90,7 @@ export function ProtocolForm() {
           </header>
 
           <Form onSubmit={handleSubmit}>
-            <BaseForm />
+            <BaseForm formData={formData} />
           </Form>
         </DefaultModal>
       )}

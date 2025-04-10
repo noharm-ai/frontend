@@ -1,28 +1,40 @@
-import { useFormikContext } from "formik";
+import { Divider, Tabs } from "antd";
 
-import { Input } from "components/Inputs";
-import { IProtocolFormBaseFields } from "./ProtocolForm";
+import { formatDateTime } from "src/utils/date";
+import { MainTab } from "./MainTab";
+import { VariableTab } from "./VariableTab";
+import { TriggerTab } from "./TriggerTab";
 
-export function BaseForm() {
-  const { values, errors, touched, setFieldValue } =
-    useFormikContext<IProtocolFormBaseFields>();
+export function BaseForm({ formData }: { formData: any }) {
+  const getTabs = () => [
+    {
+      key: "0",
+      label: "Geral",
+      children: <MainTab />,
+    },
+    {
+      key: "1",
+      label: "Variáveis",
+      children: <VariableTab />,
+    },
+    {
+      key: "2",
+      label: "Gatilho",
+      children: <TriggerTab />,
+    },
+  ];
 
   return (
     <>
-      <div className={`form-row ${errors.name && touched.name ? "error" : ""}`}>
-        <div className="form-label">
-          <label>Nome:</label>
-        </div>
-        <div className="form-input">
-          <Input
-            onChange={({ target }) => setFieldValue("name", target.value)}
-            value={values.name}
-            style={{ width: "100%" }}
-            disabled={!values.new}
-          />
-        </div>
-        {errors.name && <div className="form-error">{errors.name}</div>}
-      </div>
+      <Tabs defaultActiveKey="0" items={getTabs()} />
+      {formData.createdAt && (
+        <>
+          <Divider style={{ marginBottom: "10px" }} />
+          <span style={{ opacity: 0.7 }}>
+            Criado em: {formatDateTime(formData.createdAt)}
+          </span>
+        </>
+      )}
     </>
   );
 }
