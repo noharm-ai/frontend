@@ -378,6 +378,13 @@ api.tag.upsertTag = (params = {}) => {
   });
 };
 
+/**
+ * PROTOCOLS
+ */
+api.protocols = {};
+api.protocols.getProtocols = (params = {}) =>
+  instance.post(`/admin/protocol/list`, params, setHeaders());
+
 const methods = {
   ...api,
   getFrequencyList,

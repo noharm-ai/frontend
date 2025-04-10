@@ -33,6 +33,7 @@ import {
   FieldTimeOutlined,
   GoldOutlined,
   TagsOutlined,
+  FilePptOutlined,
 } from "@ant-design/icons";
 import { Menu as Navigator } from "antd";
 
@@ -287,7 +288,14 @@ export default function Menu({ featureService }) {
           icon: <WarningOutlined />,
           id: "gtm-lnk-intv-reason",
         },
-
+        {
+          key: "/admin/protocolos",
+          link: "/admin/protocolos",
+          label: "Protocolos",
+          icon: <FilePptOutlined />,
+          id: "gtm-lnk-protocols",
+          permission: [Permission.READ_PROTOCOLS],
+        },
         {
           key: "/admin/relacoes",
           link: "/admin/relacoes",

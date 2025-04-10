@@ -885,6 +885,18 @@
     "no_dosemax": "Sem dose máxima"
   },
 
+  "protocolType": {
+    "type_1": "Paciente-Dia",
+    "type_2": "Prescrição individual",
+    "type_3": "Todos"
+  },
+
+  "protocolStatus": {
+    "status_0": "Inativo",
+    "status_1": "Ativo",
+    "status_2": "Homologação"
+  },
+
   "regulation": {
     "risk": {
       "risk_null": "Não definido",

@@ -57,4 +57,7 @@ export default class Permission {
   static WRITE_REGULATION = "WRITE_REGULATION";
 
   static WRITE_TAGS = "WRITE_TAGS";
+
+  static READ_PROTOCOLS = "READ_PROTOCOLS";
+  static WRITE_PROTOCOLS = "WRITE_PROTOCOLS";
 }
