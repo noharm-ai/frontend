@@ -39,7 +39,7 @@ export function Protocol() {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            onClick={() => dispatch(setProtocol({ new: true, active: true }))}
+            onClick={() => dispatch(setProtocol({ newProtocol: true }))}
           >
             Adicionar protocolo
           </Button>

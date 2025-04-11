@@ -11,7 +11,8 @@ import { ProtocolVariableFieldEnum } from "src/models/ProtocolVariableFieldEnum"
 import { VariableContainer } from "../Protocol.style";
 
 export function VariableTab() {
-  const { values, setFieldValue } = useFormikContext<IProtocolFormBaseFields>();
+  const { values, errors, setFieldValue } =
+    useFormikContext<IProtocolFormBaseFields>();
 
   const setConfig = (idx: number, field: string, value: any) => {
     const variables = JSON.parse(JSON.stringify(values.config.variables));
@@ -27,6 +28,11 @@ export function VariableTab() {
   };
 
   const addVariable = () => {
+    if (!values.config?.variables) {
+      setFieldValue("config.variables", [{ name: "var_1" }]);
+      return;
+    }
+
     setFieldValue("config.variables", [
       ...values.config.variables,
       { name: `var_${values.config.variables.length + 1}` },
@@ -36,7 +42,7 @@ export function VariableTab() {
   const removeVariable = (varName: string) => {
     setFieldValue(
       "config.variables",
-      values.config.variables.filter((v: any) => v.name !== varName)
+      (values.config.variables ?? []).filter((v: any) => v.name !== varName)
     );
   };
 
@@ -150,6 +156,9 @@ export function VariableTab() {
       >
         Adicionar Variável
       </Button>
+      {errors.config?.variables && (
+        <div className="form-error">{errors.config?.variables}</div>
+      )}
     </>
   );
 }

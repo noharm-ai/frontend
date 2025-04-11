@@ -12,6 +12,10 @@ const columns = (
 ): TableProps<any>["columns"] => {
   return [
     {
+      title: "ID",
+      dataIndex: "id",
+    },
+    {
       title: "Nome",
       dataIndex: "name",
     },

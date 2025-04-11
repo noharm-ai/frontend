@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
+
 import api from "services/admin/api";
+import { IProtocolFormBaseFields } from "./Form/ProtocolForm";
 
 interface IProtocolSlice {
   list: any[];
@@ -37,18 +39,18 @@ export const fetchProtocols = createAsyncThunk(
   }
 );
 
-// export const upsertTag = createAsyncThunk(
-//   "admin-tag/upsert",
-//   async (params, thunkAPI) => {
-//     try {
-//       const response = await api.tag.upsertTag(params);
+export const upsertProtocol = createAsyncThunk(
+  "admin-protocol/upsert",
+  async (params: IProtocolFormBaseFields, thunkAPI) => {
+    try {
+      const response = await api.protocols.upsertProtocol(params);
 
-//       return response.data;
-//     } catch (err) {
-//       return thunkAPI.rejectWithValue(err.response.data);
-//     }
-//   }
-// );
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  }
+);
 
 const protocolSlice = createSlice({
   name: "adminProtocol",
@@ -73,6 +75,16 @@ const protocolSlice = createSlice({
       .addCase(fetchProtocols.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message ?? null;
+      })
+      .addCase(upsertProtocol.pending, (state) => {
+        state.single.status = "loading";
+      })
+      .addCase(upsertProtocol.fulfilled, (state) => {
+        state.single.status = "succeeded";
+      })
+      .addCase(upsertProtocol.rejected, (state, action) => {
+        state.single.status = "failed";
+        state.single.error = action.error.message!;
       });
   },
 });

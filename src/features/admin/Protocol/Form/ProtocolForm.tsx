@@ -4,26 +4,28 @@ import { useTranslation } from "react-i18next";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import DefaultModal from "components/Modal";
-import { setProtocol } from "../ProtocolSlice";
+import notification from "components/notification";
+import { getErrorMessage } from "src/utils/errorHandler";
+import { setProtocol, upsertProtocol, fetchProtocols } from "../ProtocolSlice";
 import { BaseForm } from "./Base";
 
 import { Form } from "styles/Form.style";
 
 export interface IProtocolFormBaseFields {
-  id?: string;
+  id?: number;
   name?: string;
   protocolType?: number;
   statusType?: number;
   config: {
-    variables?: any;
-    trigger?: any;
+    variables?: any[];
+    trigger?: string;
     result: {
       level: string;
       message: string;
       description: string;
     };
   };
-  new?: boolean;
+  newProtocol?: boolean;
 }
 
 export function ProtocolForm() {
@@ -35,25 +37,47 @@ export function ProtocolForm() {
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().nullable().required(t("validation.requiredField")),
+    protocolType: Yup.string()
+      .nullable()
+      .required(t("validation.requiredField")),
+    statusType: Yup.string().nullable().required(t("validation.requiredField")),
+    config: Yup.object().shape({
+      variables: Yup.array()
+        .nullable()
+        .min(1, t("validation.atLeastOne"))
+        .required(t("validation.requiredField")),
+      trigger: Yup.string().nullable().required(t("validation.requiredField")),
+      result: Yup.object().shape({
+        level: Yup.string().nullable().required(t("validation.requiredField")),
+        message: Yup.string()
+          .nullable()
+          .required(t("validation.requiredField")),
+        description: Yup.string()
+          .nullable()
+          .required(t("validation.requiredField")),
+      }),
+    }),
   });
   const initialValues = {
     ...formData,
   };
 
   const onSave = (params: IProtocolFormBaseFields) => {
-    console.log("params", params);
-    // dispatch(upsertTag(params)).then((response) => {
-    //   if (response.error) {
-    //     notification.error({
-    //       message: getErrorMessage(response, t),
-    //     });
-    //   } else {
-    //     dispatch(setTag(null));
-    //     notification.success({
-    //       message: t("success.generic"),
-    //     });
-    //   }
-    // });
+    delete params.newProtocol;
+
+    dispatch(upsertProtocol(params)).then((response: any) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        dispatch(setProtocol(null));
+        dispatch(fetchProtocols({}));
+        notification.success({
+          message: t("success.generic"),
+        });
+      }
+    });
   };
 
   const onCancel = () => {
@@ -66,8 +90,16 @@ export function ProtocolForm() {
       onSubmit={onSave}
       initialValues={initialValues}
       validationSchema={validationSchema}
+      validateOnChange={false}
+      validateOnBlur={false}
     >
-      {({ handleSubmit }: { handleSubmit: () => void }) => (
+      {({
+        handleSubmit,
+        values,
+      }: {
+        handleSubmit: () => void;
+        values: any;
+      }) => (
         <DefaultModal
           open={formData}
           width={600}
@@ -84,9 +116,12 @@ export function ProtocolForm() {
           cancelButtonProps={{
             disabled: isSaving,
           }}
+          maskClosable={false}
         >
           <header>
-            <h2 className="modal-title">Protocolo</h2>
+            <h2 className="modal-title">
+              {values.newProtocol ? "Novo Protocolo" : values.name}
+            </h2>
           </header>
 
           <Form onSubmit={handleSubmit}>
