@@ -29,6 +29,9 @@ const initialState = {
   },
   filters: {},
   helpModal: false,
+  historyModal: false,
+  availableReports: [],
+  activeReport: "current",
 };
 
 export const fetchReportData = createAsyncThunk(
@@ -51,7 +54,12 @@ export const fetchReportData = createAsyncThunk(
       const decompressedResponse = new Response(cacheReadableStream);
       const cache = await decompressedResponse.json();
 
-      return { ...response, cacheData: cache, gzipped };
+      return {
+        ...response,
+        cacheData: cache,
+        gzipped,
+        availableReports: response.data.data.availableReports,
+      };
     } catch (err) {
       console.error(err);
       return thunkAPI.rejectWithValue(err.response.data);
@@ -78,6 +86,12 @@ const economyReportSlice = createSlice({
     setHelpModal(state, action) {
       state.helpModal = action.payload;
     },
+    setHistoryModal(state, action) {
+      state.historyModal = action.payload;
+    },
+    setActiveReport(state, action) {
+      state.activeReport = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -96,6 +110,7 @@ const economyReportSlice = createSlice({
           state.version = action.payload.cacheData.header.version;
           state.date = action.payload.cacheData.header.date;
           state.dateRange = action.payload.cacheData.header.dateRange ?? 360;
+          state.availableReports = action.payload.availableReports;
           state.responsibles = getUniqList(
             action.payload.cacheData.body,
             "responsible"
@@ -155,6 +170,8 @@ export const {
   setFilteredResult,
   setFilters,
   setHelpModal,
+  setHistoryModal,
+  setActiveReport,
 } = economyReportSlice.actions;
 
 export default economyReportSlice.reducer;

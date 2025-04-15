@@ -8,6 +8,7 @@ import {
   PrinterOutlined,
   DownloadOutlined,
   QuestionCircleOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
@@ -20,6 +21,8 @@ import {
   setFilteredResult,
   setFilters,
   setHelpModal,
+  setHistoryModal,
+  setActiveReport,
 } from "../EconomyReportSlice";
 import { getReportData } from "../transformers";
 import { exportCSV } from "utils/report";
@@ -31,6 +34,8 @@ import {
   decompressDatasource,
 } from "utils/report";
 import useFetchReport from "hooks/useFetchReport";
+import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
+import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
@@ -39,10 +44,21 @@ export default function Filter({ printRef }) {
     useSelector((state) => state.reportsArea.economy.status) === "loading";
   const datasource = useSelector((state) => state.reportsArea.economy.list);
   const reportDate = useSelector((state) => state.reportsArea.economy.date);
-
+  const reportUpdatedAt = useSelector(
+    (state) => state.reportsArea.economy.updatedAt
+  );
   const userId = useSelector((state) => state.user.account.userId);
   const filteredList = useSelector(
     (state) => state.reportsArea.economy.filtered.result.list
+  );
+  const activeReport = useSelector(
+    (state) => state.reportsArea.economy.activeReport
+  );
+  const historyModalOpen = useSelector(
+    (state) => state.reportsArea.economy.historyModal
+  );
+  const availableReports = useSelector(
+    (state) => state.reportsArea.economy.availableReports
   );
   const handlePrint = useReactToPrint({
     contentRef: printRef,
@@ -68,7 +84,7 @@ export default function Filter({ printRef }) {
     tagList: [],
   };
 
-  useFetchReport({
+  const reportManager = useFetchReport({
     action: fetchReportData,
     reset,
     onAfterFetch: (body, header) => {
@@ -96,6 +112,11 @@ export default function Filter({ printRef }) {
     );
   };
 
+  const loadArchive = (filename) => {
+    dispatch(setActiveReport(filename));
+    reportManager.loadArchive(filename);
+  };
+
   const showHelp = () => {
     dispatch(setHelpModal(true));
   };
@@ -120,16 +141,29 @@ export default function Filter({ printRef }) {
     <React.Fragment>
       <Spin spinning={isFetching}>
         {!isFetching && (
-          <AdvancedFilter
-            initialValues={initialValues}
-            mainFilters={<MainFilters />}
-            secondaryFilters={<SecondaryFilters />}
-            onSearch={search}
-            loading={isFetching}
-            skipFilterList={["dateRange", "segmentList", "departmentList"]}
-            memoryType={memoryFilterType}
-            skipMemoryList={{ dateRange: "daterange" }}
-          />
+          <>
+            <AdvancedFilter
+              initialValues={initialValues}
+              mainFilters={<MainFilters />}
+              secondaryFilters={<SecondaryFilters />}
+              onSearch={search}
+              loading={isFetching}
+              skipFilterList={["dateRange", "segmentList", "departmentList"]}
+              memoryType={memoryFilterType}
+              skipMemoryList={{ dateRange: "daterange" }}
+            />
+            <HistoryAlert
+              activeReport={activeReport}
+              loadArchive={loadArchive}
+              reportDate={reportUpdatedAt}
+            />
+            <HistoryModal
+              availableReports={availableReports}
+              loadArchive={loadArchive}
+              open={historyModalOpen}
+              setOpen={setHistoryModal}
+            />
+          </>
         )}
       </Spin>
       {!isFetching && (
@@ -149,6 +183,11 @@ export default function Filter({ printRef }) {
             icon={<DownloadOutlined />}
             onClick={exportList}
             tooltip="Exportar CSV"
+          />
+          <FloatButton
+            icon={<HistoryOutlined />}
+            onClick={() => dispatch(setHistoryModal(true))}
+            tooltip="Histórico"
           />
           <FloatButton
             icon={<PrinterOutlined />}
