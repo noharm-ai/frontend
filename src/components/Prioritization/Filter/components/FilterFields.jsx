@@ -752,6 +752,35 @@ export default function FilterFields({
                   </div>
                 </div>
               )}
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Idade:</label>
+                </div>
+                <div className="form-input">
+                  <InputNumber
+                    style={{ width: "150px" }}
+                    className={filter.ageMin ? "warning" : null}
+                    value={filter.ageMin}
+                    onChange={(value) =>
+                      setScreeningListFilter({ ageMin: value })
+                    }
+                    min={0}
+                  ></InputNumber>
+                  <span style={{ padding: "0 15px" }}>até</span>
+                  <InputNumber
+                    style={{ width: "150px" }}
+                    className={filter.ageMax ? "warning" : null}
+                    value={filter.ageMax}
+                    onChange={(value) =>
+                      setScreeningListFilter({ ageMax: value })
+                    }
+                    min={0}
+                  ></InputNumber>
+                </div>
+              </div>
+            </div>
           </Form>
         </Card>
       </Col>
