@@ -6,12 +6,14 @@ import { Textarea, Select } from "components/Inputs";
 import Button from "components/Button";
 import NodeStatusTag from "../components/NodeStatusTag";
 import { INodeData } from "./NodeModal";
+import { getController } from "../transformer";
 
 interface IMainTabProps {
   data: INodeData;
   activeAction: string | null;
   isUpdatable: boolean;
   values: any;
+  controllers: any[];
   setFieldValue: (key: string, value: any) => void;
   executeAction: (action: string, payload?: any) => void;
 }
@@ -21,6 +23,7 @@ export function MainTab({
   activeAction,
   isUpdatable,
   values,
+  controllers,
   setFieldValue,
   executeAction,
 }: IMainTabProps) {
@@ -74,6 +77,21 @@ export function MainTab({
           <Descriptions.Item label="Tipo" span={3}>
             {data?.extra.type}
           </Descriptions.Item>
+          {hasProp(
+            data?.extra?.properties,
+            "Database Connection Pooling Service"
+          ) && (
+            <Descriptions.Item
+              label="Database Connection Pooling Service"
+              span={3}
+            >
+              {getController(
+                data?.extra.properties["Database Connection Pooling Service"],
+                controllers
+              )?.name ??
+                data?.extra.properties["Database Connection Pooling Service"]}
+            </Descriptions.Item>
+          )}
           <Descriptions.Item label="Status" span={3}>
             <Dropdown
               trigger={["click"]}

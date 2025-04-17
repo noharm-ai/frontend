@@ -880,6 +880,18 @@
     "no_dosemax": "No Maximum Dose"
   },
 
+  "protocolType": {
+    "type_1": "Patient-Day",
+    "type_2": "Individual prescription",
+    "type_3": "All"
+  },
+
+  "protocolStatus": {
+    "status_0": "Inactive",
+    "status_1": "Active",
+    "status_2": "Staging"
+  },
+
   "regulation": {
     "risk": {
       "risk_null": "Not Defined",

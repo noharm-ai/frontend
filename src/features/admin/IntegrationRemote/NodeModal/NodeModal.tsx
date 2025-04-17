@@ -36,6 +36,9 @@ export function NodeModal() {
   const data: INodeData = useAppSelector(
     (state) => state.admin.integrationRemote.selectedNode!
   );
+  const controllers = useAppSelector(
+    (state) => state.admin.integrationRemote.template.controllers
+  );
   const activeAction = useAppSelector(
     (state) => state.admin.integrationRemote.pushQueueRequest.activeAction
   );
@@ -167,6 +170,7 @@ export function NodeModal() {
           activeAction={activeAction}
           isUpdatable={isUpdatable}
           executeAction={executeAction}
+          controllers={controllers}
         />
       ),
     },

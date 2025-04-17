@@ -19,6 +19,7 @@ const initialState = {
     bulletinDate: null,
     date: null,
     diagnostics: null,
+    controllers: [],
   },
   selectedNode: null,
   queue: {
@@ -152,6 +153,10 @@ const integrationRemoteSlice = createSlice({
         state.template.data = action.payload.template;
         state.template.date = action.payload.response.data.data.updatedAt;
 
+        // controllers
+        state.template.controllers =
+          state.template.data.flowContents.controllerServices;
+
         // status
         const groups = {};
         flatGroups(state.template.data.flowContents, groups);
@@ -228,6 +233,10 @@ const integrationRemoteSlice = createSlice({
         if (action.payload.template) {
           state.template.data = action.payload.template;
           state.template.date = action.payload.templateUpdatedAt;
+
+          // controllers
+          state.template.controllers =
+            state.template.data.flowContents.controllerServices;
         }
 
         if (action.payload.status) {

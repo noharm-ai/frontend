@@ -228,7 +228,7 @@ export default function InterventionOutcome({ ...props }) {
         >
           {t("interventionForm.btnCancel")}
         </Button>
-        {selectedIntervention.view ? (
+        {selectedIntervention.view && !outcomeData?.header?.archived ? (
           <Dropdown
             loading={isLoading}
             disabled={isLoading}
@@ -364,6 +364,15 @@ export default function InterventionOutcome({ ...props }) {
                   ></Alert>
                 )}
             </Space>
+          )}
+
+          {outcomeData?.header?.archived && (
+            <Alert
+              type="error"
+              showIcon
+              message="Este registro foi arquivado, portanto não pode ser alterado."
+              style={{ marginTop: "15px" }}
+            ></Alert>
           )}
         </DefaultModal>
       )}

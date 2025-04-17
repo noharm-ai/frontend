@@ -98,3 +98,7 @@ export function actionTypeToDescription(actionType) {
       return actionType;
   }
 }
+
+export function getController(identifier, controllers) {
+  return controllers.find((c) => c.identifier === identifier);
+}
