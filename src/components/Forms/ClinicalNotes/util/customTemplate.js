@@ -105,8 +105,7 @@ export const getCustomClinicalNote = (
     )
     .replaceAll(
       "{{antimicrobianos}}",
-      getDrugsByAttribute(drugs, "am", {
-        period: true,
+      getAntimicrobial(drugs, {
         empty: "Nenhum Antimicrobiano encontrado.",
       })
     )
@@ -604,4 +603,49 @@ const drugTemplate = (d, params) => {
   }
 
   return `- ${d.drug} ${dose}`;
+};
+
+const getAntimicrobial = (
+  drugs,
+  params = { empty: "Nenhum antimicrobiano encontrado" }
+) => {
+  if (!drugs || (drugs && !drugs.length)) {
+    return params.empty;
+  }
+
+  const atmList = drugs
+    .filter((d) => d.am)
+    .map((d) => ({
+      drug: d.drug,
+      dose:
+        d.dose !== null
+          ? `${d.dose} ${d.measureUnit ? d.measureUnit.label : ""}`
+          : "Dose não informada",
+      frequency: `${
+        d.frequency?.label ? d.frequency.label : "Frequência não informada"
+      })`,
+      period: d.totalPeriod,
+    }));
+
+  if (!atmList.length) {
+    return params.empty;
+  }
+
+  const groupedAtmList = Object.values(
+    atmList.reduce((acc, item) => {
+      const key = `${item.drug}`;
+
+      if (!acc[key] || item.period > acc[key].period) {
+        acc[key] = item;
+      }
+
+      return acc;
+    }, {})
+  );
+
+  return groupedAtmList
+    .map(
+      (i) => `${i.drug} (Período: ${i.period}D) (${i.dose} X ${i.frequency})`
+    )
+    .join("\n");
 };
