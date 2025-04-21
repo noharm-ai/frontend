@@ -8,6 +8,7 @@ export class ProtocolVariableFieldEnum {
   static WEIGHT = "weight";
   static ID_DEPARTMENT = "idDepartment";
   static ID_SEGMENT = "idSegment";
+  static COMBINATION = "combination";
 
   static getList = () => [
     {
@@ -45,6 +46,10 @@ export class ProtocolVariableFieldEnum {
     {
       value: ProtocolVariableFieldEnum.ID_SEGMENT,
       label: "Segmento (idsegmento)",
+    },
+    {
+      value: ProtocolVariableFieldEnum.COMBINATION,
+      label: "Combo",
     },
   ];
 

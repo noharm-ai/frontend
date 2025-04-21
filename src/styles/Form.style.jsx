@@ -21,6 +21,16 @@ export const Form = styled.form`
     &:first-child {
       margin-top: 0;
     }
+
+    &.form-row-flex {
+      display: flex;
+      gap: 1rem;
+
+      > .form-row {
+        margin-top: 0;
+        width: 50%;
+      }
+    }
   }
 
   .form-error {
