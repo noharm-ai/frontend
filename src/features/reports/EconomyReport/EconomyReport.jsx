@@ -22,7 +22,7 @@ import { setHelpModal } from "./EconomyReportSlice";
 import Tooltip from "components/Tooltip";
 import { formatCurrency } from "utils/number";
 import EconomyList from "./EconomyList/EconomyList";
-import ChartResponsibles from "./Charts/ChartResponsibles";
+//import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartDepartments from "./Charts/ChartDepartments";
 import ChartReasons from "./Charts/ChartReasons";
 
@@ -162,7 +162,7 @@ export default function EconomyReport() {
             </Row>
 
             <Row gutter={[24, 24]}>
-              <Col xs={24} lg={12}>
+              {/* <Col xs={24} lg={12}>
                 <div className="page-break"></div>
                 <Space direction="vertical" size="large">
                   <SectionHeader>
@@ -178,7 +178,7 @@ export default function EconomyReport() {
                     </ChartCard>
                   </Spin>
                 </Space>
-              </Col>
+              </Col> */}
               <Col xs={24} lg={12}>
                 <div className="page-break"></div>
                 <Space direction="vertical" size="large">

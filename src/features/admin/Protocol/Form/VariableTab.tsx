@@ -81,58 +81,244 @@ export function VariableTab() {
             </div>
 
             {v.field === "exam" && (
-              <div className={`form-row`}>
-                <div className="form-label">
-                  <label>Exame (tp_exame):</label>
+              <>
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Exame (tp_exame):</label>
+                  </div>
+                  <div className="form-input">
+                    <Input
+                      value={v.examType}
+                      onChange={({ target }) =>
+                        setConfig(idx, "examType", target.value)
+                      }
+                    />
+                  </div>
                 </div>
-                <div className="form-input">
-                  <Input
-                    value={v.examType}
-                    onChange={({ target }) =>
-                      setConfig(idx, "examType", target.value)
-                    }
-                  />
+
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Qtd. máxima de dias desde o último exame:</label>
+                  </div>
+                  <div className="form-input">
+                    <Input
+                      value={v.examPeriod}
+                      onChange={({ target }) =>
+                        setConfig(idx, "examPeriod", target.value)
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
+              </>
             )}
 
-            <div className={`form-row`}>
-              <div className="form-label">
-                <label>Operador:</label>
-              </div>
-              <div className="form-input">
-                <Select
-                  value={v.operator}
-                  optionFilterProp="label"
-                  options={ProtocolVariableFieldEnum.getOperators(v.field).map(
-                    (f) => ({ value: f, label: f })
-                  )}
-                  onChange={(value) => setConfig(idx, "operator", value)}
-                />
-              </div>
-            </div>
+            {v.field === ProtocolVariableFieldEnum.COMBINATION ? (
+              <>
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Substância (sctid):</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      value={v.substance}
+                      allowClear
+                      mode="tags"
+                      onChange={(value) => setConfig(idx, "substance", value)}
+                    />
+                  </div>
+                </div>
 
-            <div className={`form-row`}>
-              <div className="form-label">
-                <label>Valor:</label>
-              </div>
-              <div className="form-input">
-                {v.operator === "IN" || v.operator === "NOTIN" ? (
-                  <Select
-                    value={v.value}
-                    mode="tags"
-                    onChange={(value) => setConfig(idx, "value", value)}
-                  />
-                ) : (
-                  <Input
-                    value={v.value}
-                    onChange={({ target }) =>
-                      setConfig(idx, "value", target.value)
-                    }
-                  />
-                )}
-              </div>
-            </div>
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Classe (idclasse):</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      value={v.class}
+                      allowClear
+                      mode="tags"
+                      onChange={(value) => setConfig(idx, "class", value)}
+                    />
+                  </div>
+                </div>
+
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Medicamento (fkmedicamento):</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      value={v.drug}
+                      allowClear
+                      mode="tags"
+                      onChange={(value) => setConfig(idx, "drug", value)}
+                    />
+                  </div>
+                </div>
+
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Via:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      value={v.route}
+                      allowClear
+                      mode="tags"
+                      onChange={(value) => setConfig(idx, "route", value)}
+                    />
+                  </div>
+                </div>
+
+                <div className={`form-row form-row-flex`}>
+                  <div className={`form-row`}>
+                    <div className="form-label">
+                      <label>Dose (operador):</label>
+                    </div>
+                    <div className="form-input">
+                      <Select
+                        allowClear
+                        value={v.doseOperator}
+                        optionFilterProp="label"
+                        options={ProtocolVariableFieldEnum.getOperators(
+                          ProtocolVariableFieldEnum.AGE
+                        ).map((f) => ({ value: f, label: f }))}
+                        onChange={(value) =>
+                          setConfig(idx, "doseOperator", value)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className={`form-row`}>
+                    <div className="form-label">
+                      <label>Dose (valor):</label>
+                    </div>
+                    <div className="form-input">
+                      <Input
+                        value={v.dose}
+                        onChange={({ target }) =>
+                          setConfig(idx, "dose", target.value)
+                        }
+                      />
+                    </div>
+                    <div className="form-info">
+                      Informar a dose na unidade padrão do medicamento
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`form-row form-row-flex`}>
+                  <div className={`form-row`}>
+                    <div className="form-label">
+                      <label>Frequência-dia (operador):</label>
+                    </div>
+                    <div className="form-input">
+                      <Select
+                        allowClear
+                        value={v.frequencydayOperator}
+                        optionFilterProp="label"
+                        options={ProtocolVariableFieldEnum.getOperators(
+                          ProtocolVariableFieldEnum.AGE
+                        ).map((f) => ({ value: f, label: f }))}
+                        onChange={(value) =>
+                          setConfig(idx, "frequencydayOperator", value)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className={`form-row`}>
+                    <div className="form-label">
+                      <label>Frequência-dia (valor):</label>
+                    </div>
+                    <div className="form-input">
+                      <Input
+                        value={v.frequencyday}
+                        onChange={({ target }) =>
+                          setConfig(idx, "frequencyday", target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`form-row form-row-flex`}>
+                  <div className={`form-row`}>
+                    <div className="form-label">
+                      <label>Período (operador):</label>
+                    </div>
+                    <div className="form-input">
+                      <Select
+                        allowClear
+                        value={v.periodOperator}
+                        optionFilterProp="label"
+                        options={ProtocolVariableFieldEnum.getOperators(
+                          ProtocolVariableFieldEnum.AGE
+                        ).map((f) => ({ value: f, label: f }))}
+                        onChange={(value) =>
+                          setConfig(idx, "periodOperator", value)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className={`form-row`}>
+                    <div className="form-label">
+                      <label>Período (valor):</label>
+                    </div>
+                    <div className="form-input">
+                      <Input
+                        value={v.period}
+                        onChange={({ target }) =>
+                          setConfig(idx, "period", target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Operador:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      value={v.operator}
+                      optionFilterProp="label"
+                      options={ProtocolVariableFieldEnum.getOperators(
+                        v.field
+                      ).map((f) => ({ value: f, label: f }))}
+                      onChange={(value) => setConfig(idx, "operator", value)}
+                    />
+                  </div>
+                </div>
+
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Valor:</label>
+                  </div>
+                  <div className="form-input">
+                    {v.operator === "IN" || v.operator === "NOTIN" ? (
+                      <Select
+                        value={v.value}
+                        mode="tags"
+                        onChange={(value) => setConfig(idx, "value", value)}
+                      />
+                    ) : (
+                      <Input
+                        value={v.value}
+                        onChange={({ target }) =>
+                          setConfig(idx, "value", target.value)
+                        }
+                      />
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
 
             <div className="form-row">
               <Button
