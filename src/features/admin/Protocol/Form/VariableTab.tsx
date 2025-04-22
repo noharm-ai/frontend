@@ -81,19 +81,35 @@ export function VariableTab() {
             </div>
 
             {v.field === "exam" && (
-              <div className={`form-row`}>
-                <div className="form-label">
-                  <label>Exame (tp_exame):</label>
+              <>
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Exame (tp_exame):</label>
+                  </div>
+                  <div className="form-input">
+                    <Input
+                      value={v.examType}
+                      onChange={({ target }) =>
+                        setConfig(idx, "examType", target.value)
+                      }
+                    />
+                  </div>
                 </div>
-                <div className="form-input">
-                  <Input
-                    value={v.examType}
-                    onChange={({ target }) =>
-                      setConfig(idx, "examType", target.value)
-                    }
-                  />
+
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Qtd. máxima de dias desde o último exame:</label>
+                  </div>
+                  <div className="form-input">
+                    <Input
+                      value={v.examPeriod}
+                      onChange={({ target }) =>
+                        setConfig(idx, "examPeriod", target.value)
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
+              </>
             )}
 
             {v.field === ProtocolVariableFieldEnum.COMBINATION ? (
@@ -157,21 +173,7 @@ export function VariableTab() {
                 <div className={`form-row form-row-flex`}>
                   <div className={`form-row`}>
                     <div className="form-label">
-                      <label>Dose:</label>
-                    </div>
-                    <div className="form-input">
-                      <Input
-                        value={v.dose}
-                        onChange={({ target }) =>
-                          setConfig(idx, "value", target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className={`form-row`}>
-                    <div className="form-label">
-                      <label>Operador (dose):</label>
+                      <label>Dose (operador):</label>
                     </div>
                     <div className="form-input">
                       <Select
@@ -187,26 +189,29 @@ export function VariableTab() {
                       />
                     </div>
                   </div>
+
+                  <div className={`form-row`}>
+                    <div className="form-label">
+                      <label>Dose (valor):</label>
+                    </div>
+                    <div className="form-input">
+                      <Input
+                        value={v.dose}
+                        onChange={({ target }) =>
+                          setConfig(idx, "dose", target.value)
+                        }
+                      />
+                    </div>
+                    <div className="form-info">
+                      Informar a dose na unidade padrão do medicamento
+                    </div>
+                  </div>
                 </div>
 
                 <div className={`form-row form-row-flex`}>
                   <div className={`form-row`}>
                     <div className="form-label">
-                      <label>Frequência Dia:</label>
-                    </div>
-                    <div className="form-input">
-                      <Input
-                        value={v.frequencyday}
-                        onChange={({ target }) =>
-                          setConfig(idx, "frequencyday", target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className={`form-row`}>
-                    <div className="form-label">
-                      <label>Operador (frequenciadia):</label>
+                      <label>Frequência-dia (operador):</label>
                     </div>
                     <div className="form-input">
                       <Select
@@ -222,26 +227,26 @@ export function VariableTab() {
                       />
                     </div>
                   </div>
+
+                  <div className={`form-row`}>
+                    <div className="form-label">
+                      <label>Frequência-dia (valor):</label>
+                    </div>
+                    <div className="form-input">
+                      <Input
+                        value={v.frequencyday}
+                        onChange={({ target }) =>
+                          setConfig(idx, "frequencyday", target.value)
+                        }
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className={`form-row form-row-flex`}>
                   <div className={`form-row`}>
                     <div className="form-label">
-                      <label>Período:</label>
-                    </div>
-                    <div className="form-input">
-                      <Input
-                        value={v.period}
-                        onChange={({ target }) =>
-                          setConfig(idx, "period", target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className={`form-row`}>
-                    <div className="form-label">
-                      <label>Operador (período):</label>
+                      <label>Período (operador):</label>
                     </div>
                     <div className="form-input">
                       <Select
@@ -253,6 +258,20 @@ export function VariableTab() {
                         ).map((f) => ({ value: f, label: f }))}
                         onChange={(value) =>
                           setConfig(idx, "periodOperator", value)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className={`form-row`}>
+                    <div className="form-label">
+                      <label>Período (valor):</label>
+                    </div>
+                    <div className="form-input">
+                      <Input
+                        value={v.period}
+                        onChange={({ target }) =>
+                          setConfig(idx, "period", target.value)
                         }
                       />
                     </div>
