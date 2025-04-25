@@ -56,6 +56,7 @@ const INITIAL_STATE = {
     actions: {
       modalVisibility: {
         patientEdit: false,
+        clinicalNotes: false,
       },
     },
     check: {

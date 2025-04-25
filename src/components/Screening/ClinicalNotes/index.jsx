@@ -41,11 +41,13 @@ export default function ClinicalNotes({
   dates,
   popup,
   previousAdmissions,
+  visibleState,
 }) {
   const [positions, setPositions] = useState([]);
-  const [indicators, setIndicators] = useState([]);
   const [selectedPositions, selectPositions] = useState([]);
-  const [selectedIndicators, selectIndicators] = useState([]);
+  const [selectedIndicators, selectIndicators] = useState(
+    visibleState?.indicators ?? []
+  );
   const [filteredList, setFilteredList] = useState([]);
   const { t } = useTranslation();
   const filterList = useCallback(
@@ -158,9 +160,17 @@ export default function ClinicalNotes({
   };
 
   useEffect(() => {
-    setFilteredList(
-      filterList(list, false, selectedPositions, selectedIndicators)
+    const groups = filterList(
+      list,
+      true,
+      selectedPositions,
+      selectedIndicators
     );
+    setFilteredList(groups);
+
+    if (groups.length > 0 && groups[0].value.length === 0) {
+      fetchExtra(groups[0].label);
+    }
   }, [list]); //eslint-disable-line
 
   const handlePositionChange = (p) => {
@@ -168,14 +178,18 @@ export default function ClinicalNotes({
   };
 
   const handleIndicatorsChange = (i) => {
-    setIndicators(i);
+    selectIndicators(i);
   };
 
   const search = () => {
     selectPositions(positions);
-    selectIndicators(indicators);
 
-    setFilteredList(filterList(list, true, positions, indicators));
+    const groups = filterList(list, true, positions, selectedIndicators);
+    setFilteredList(groups);
+
+    if (groups.length > 0 && groups[0].value.length === 0) {
+      fetchExtra(groups[0].label);
+    }
   };
 
   const fetchExtra = (date) => {
@@ -203,6 +217,7 @@ export default function ClinicalNotes({
             saveStatus={saveStatus}
             popup={popup}
             admissionNumber={localAdmissionNumber}
+            selectedIndicators={selectedIndicators}
           />
         </Col>
         <Col md={13} xl={9} className="list-panel">
@@ -248,6 +263,7 @@ export default function ClinicalNotes({
                     mode="multiple"
                     optionFilterProp="children"
                     popupMatchSelectWidth={false}
+                    value={selectedIndicators}
                   >
                     {ClinicalNotesIndicator.list(t).map((indicator) => (
                       <Select.Option value={indicator.key} key={indicator.key}>

@@ -34,6 +34,7 @@ export default function View({
   popup,
   admissionNumber,
   disableSelection = false,
+  selectedIndicators,
 }) {
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
@@ -329,6 +330,7 @@ export default function View({
                   <>
                     <Paper
                       $t={t}
+                      $selectedIndicators={selectedIndicators}
                       dangerouslySetInnerHTML={{
                         __html: html,
                       }}

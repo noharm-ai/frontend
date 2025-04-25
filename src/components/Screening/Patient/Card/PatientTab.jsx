@@ -32,7 +32,35 @@ export default function PatientTab({
     notesSignsDate,
     notesAllergiesDate,
     notesDialysisDate,
+    features,
   } = prescription;
+
+  const notesStats = [
+    {
+      key: "access",
+      indicator: "acesso",
+    },
+    {
+      key: "complication",
+      indicator: "complication",
+    },
+    {
+      key: "prevdrug",
+      indicator: "medprevio",
+    },
+    {
+      key: "pregnant",
+      indicator: "gestante",
+    },
+    {
+      key: "palliative",
+      indicator: "paliativo",
+    },
+    {
+      key: "resthid",
+      indicator: "resthid",
+    },
+  ];
 
   const aiDataTooltip = (msg, date) => {
     if (date) {
@@ -257,7 +285,15 @@ export default function PatientTab({
       </div>
 
       <div className="patient-data-item full">
-        <div className="patient-data-item-value">
+        <div
+          className="patient-data-item-value"
+          style={{
+            display: "flex",
+            rowGap: "5px",
+            overflow: "auto",
+            flexWrap: "wrap",
+          }}
+        >
           {notesInfo && (
             <Tooltip
               title={aiDataTooltip(
@@ -309,6 +345,25 @@ export default function PatientTab({
               </div>
             </Tooltip>
           )}
+
+          {notesStats.map(({ key, indicator }) => (
+            <React.Fragment key={key}>
+              {features?.clinicalNotesStats[key] > 0 && (
+                <Tooltip title="Abrir evoluções com esta anotação">
+                  <div
+                    className={`tag ${indicator}`}
+                    onClick={() =>
+                      setModalVisibility("clinicalNotes", {
+                        indicators: [indicator],
+                      })
+                    }
+                  >
+                    {t(`clinicalNotesIndicator.${indicator}`)}
+                  </div>
+                </Tooltip>
+              )}
+            </React.Fragment>
+          ))}
         </div>
       </div>
     </div>
