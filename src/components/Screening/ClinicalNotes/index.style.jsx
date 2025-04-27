@@ -38,8 +38,6 @@ const createActiveIndicatorClasses = (t, selectedIndicators) => {
   `
   );
 
-  console.log("classlist", classList);
-
   return classList.join(" ");
 };
 
