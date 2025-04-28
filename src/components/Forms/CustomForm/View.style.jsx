@@ -20,6 +20,7 @@ export const CustomFormViewContainer = styled.div`
   }
 
   .group {
+    display: block;
     margin-bottom: 20px;
 
     h2 {

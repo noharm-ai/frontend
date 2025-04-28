@@ -247,7 +247,7 @@ export default function View({
 
   html = DOMPurify.sanitize(html, {
     FORBID_ATTR: ["style"],
-    FORBID_TAGS: ["font"],
+    FORBID_TAGS: ["font", "img"],
   });
 
   return (
