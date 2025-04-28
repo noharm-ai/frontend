@@ -348,20 +348,21 @@ export default function PatientTab({
 
           {notesStats.map(({ key, indicator }) => (
             <React.Fragment key={key}>
-              {features?.clinicalNotesStats[key] > 0 && (
-                <Tooltip title="Abrir evoluções com esta anotação">
-                  <div
-                    className={`tag ${indicator}`}
-                    onClick={() =>
-                      setModalVisibility("clinicalNotes", {
-                        indicators: [indicator],
-                      })
-                    }
-                  >
-                    {t(`clinicalNotesIndicator.${indicator}`)}
-                  </div>
-                </Tooltip>
-              )}
+              {features?.clinicalNotesStats &&
+                features?.clinicalNotesStats[key] > 0 && (
+                  <Tooltip title="Abrir evoluções com esta anotação">
+                    <div
+                      className={`tag ${indicator}`}
+                      onClick={() =>
+                        setModalVisibility("clinicalNotes", {
+                          indicators: [indicator],
+                        })
+                      }
+                    >
+                      {t(`clinicalNotesIndicator.${indicator}`)}
+                    </div>
+                  </Tooltip>
+                )}
             </React.Fragment>
           ))}
         </div>
