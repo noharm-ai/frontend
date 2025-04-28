@@ -320,11 +320,7 @@ const getExamsOutOfReference = (exams) => {
     return "Nenhum exame alterado encontrado.";
   }
 
-  console.log("exams", exams);
-
   const oorExams = exams.filter((e) => {
-    console.log("exam", e.key, e.value.alert);
-
     return e.value.alert;
   });
 
