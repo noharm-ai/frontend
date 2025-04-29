@@ -141,6 +141,19 @@ const getExamRefs = (bearerToken) =>
  * Exams.
  *
  */
+api.exams = {};
+api.exams.createExam = (params = {}) => {
+  return instance.post(`/exams/create`, params, {
+    ...setHeaders(),
+  });
+};
+
+api.exams.getExamTypes = (params = {}) =>
+  instance.get(`/exams/types/list`, {
+    params,
+    ...setHeaders(),
+  });
+
 const getExams = (bearerToken, admissionNumber, params = {}) =>
   instance.get(`${endpoints.exams}/${admissionNumber}`, {
     params,

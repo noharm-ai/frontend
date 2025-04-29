@@ -2,16 +2,21 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
-import { Tabs } from "antd";
+import { Button, Tabs, Space } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 
 import DefaultModal from "components/Modal";
 import { ExpandableTable } from "components/Table";
 import notification from "components/notification";
 import Empty from "components/Empty";
 import { fetchExams, setExamsModalAdmissionNumber } from "./ExamModalSlice";
+import { setExamFormModal } from "../ExamForm/ExamFormSlice";
 import { toDataSource } from "utils";
 import { getErrorMessage } from "utils/errorHandler";
 import { getResponsiveTableWidth } from "src/utils/responsive";
+import { ExamForm } from "../ExamForm/ExamForm";
+import { FeatureService } from "src/services/FeatureService";
+import Feature from "src/models/Feature";
 
 import examColumns, {
   examRowClassName,
@@ -113,16 +118,44 @@ export default function ExamsModal({ idSegment }) {
     },
   ];
 
+  const Footer = () => {
+    if (FeatureService.has(Feature.ADD_EXAMS)) {
+      return (
+        <Space>
+          <Button
+            type="default"
+            onClick={() => dispatch(setExamsModalAdmissionNumber(null))}
+          >
+            Fechar
+          </Button>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() =>
+              dispatch(setExamFormModal({ admissionNumber, idSegment }))
+            }
+          >
+            Adicionar resultado de exame
+          </Button>
+        </Space>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <DefaultModal
       destroyOnClose
       open={admissionNumber}
       onCancel={() => dispatch(setExamsModalAdmissionNumber(null))}
       width="90%"
-      footer={null}
+      footer={<Footer />}
       style={{ top: "10px", height: "100vh" }}
     >
       <Tabs defaultActiveKey="exams" items={tabs} />
+
+      <ExamForm />
     </DefaultModal>
   );
 }
