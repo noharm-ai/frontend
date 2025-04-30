@@ -6,6 +6,7 @@ import {
   UnorderedListOutlined,
   BugOutlined,
   ReloadOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 
 import Tooltip from "components/Tooltip";
@@ -13,6 +14,7 @@ import PopConfirm from "components/PopConfirm";
 import {
   setQueueDrawer,
   setBulletinModal,
+  setControllersModal,
   pushQueueRequest,
 } from "../IntegrationRemoteSlice";
 
@@ -64,6 +66,14 @@ export default function GraphActions({ goBack }) {
           <FloatButton icon={<ReloadOutlined />} />
         </PopConfirm>
       </Tooltip>
+      <Tooltip title="Controllers">
+        <FloatButton
+          icon={<SettingOutlined />}
+          onClick={() => dispatch(setControllersModal(true))}
+          style={{ marginBottom: "15px" }}
+        />
+      </Tooltip>
+
       <Tooltip title="Bulletin board">
         <Badge count={(bulletin?.bulletinBoard?.bulletins ?? []).length}>
           <FloatButton
@@ -73,6 +83,7 @@ export default function GraphActions({ goBack }) {
           />
         </Badge>
       </Tooltip>
+
       <Tooltip title="Voltar ao nível anterior">
         <FloatButton icon={<ArrowLeftOutlined />} onClick={() => goBack()} />
       </Tooltip>

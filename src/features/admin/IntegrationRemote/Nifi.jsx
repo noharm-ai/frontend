@@ -9,6 +9,7 @@ import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 import NifiQueue from "./components/NifiQueue";
 import BulletinModal from "./components/BulletinModal";
+import ControllersListModal from "./components/ControllersListModal";
 
 export default function Nifi() {
   const { t } = useTranslation();
@@ -45,6 +46,7 @@ export default function Nifi() {
 
         <NifiQueue />
         <BulletinModal />
+        <ControllersListModal />
       </div>
     </Spin>
   );

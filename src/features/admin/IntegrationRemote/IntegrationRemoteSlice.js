@@ -32,6 +32,7 @@ const initialState = {
   },
   modal: {
     bulletin: false,
+    controllers: false,
   },
 };
 
@@ -140,6 +141,9 @@ const integrationRemoteSlice = createSlice({
     },
     setBulletinModal(state, action) {
       state.modal.bulletin = action.payload;
+    },
+    setControllersModal(state, action) {
+      state.modal.controllers = action.payload;
     },
   },
   extraReducers(builder) {
@@ -279,7 +283,12 @@ const integrationRemoteSlice = createSlice({
   },
 });
 
-export const { reset, setSelectedNode, setQueueDrawer, setBulletinModal } =
-  integrationRemoteSlice.actions;
+export const {
+  reset,
+  setSelectedNode,
+  setQueueDrawer,
+  setBulletinModal,
+  setControllersModal,
+} = integrationRemoteSlice.actions;
 
 export default integrationRemoteSlice.reducer;

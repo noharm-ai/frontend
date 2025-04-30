@@ -1,11 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { Tabs } from "antd";
 
 import DefaultModal from "components/Modal";
 import Heading from "components/Heading";
 import Descriptions from "components/Descriptions";
+import Button from "components/Button";
+import { ControllerActionModal } from "./ControllerActionModal";
 
 export default function ControllerModal({ data, onCancel }) {
+  const [wizardModal, setWizardModal] = useState(false);
+
+  const footerActions = () => {
+    return [
+      <Button type="primary" onClick={() => setWizardModal(true)}>
+        Alterar status
+      </Button>,
+    ];
+  };
+
   const items = [
     {
       key: "1",
@@ -54,13 +66,18 @@ export default function ControllerModal({ data, onCancel }) {
       destroyOnClose
       open={data}
       onCancel={onCancel}
-      footer={null}
+      footer={footerActions()}
     >
       <Heading $margin="0 0 11px" $size="18px">
         {data?.name}
       </Heading>
 
       <Tabs defaultActiveKey="1" items={items} />
+      <ControllerActionModal
+        open={wizardModal}
+        onCancel={() => setWizardModal(false)}
+        data={data}
+      />
     </DefaultModal>
   );
 }
