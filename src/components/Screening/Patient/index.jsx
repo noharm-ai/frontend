@@ -126,6 +126,7 @@ export default function Patient({
                 stats={clinicalNotesStats}
                 total={clinicalNotes}
                 featureService={featureService}
+                setModalVisibility={setModalVisibility}
               />
             </div>
             <div style={{ width: "50%", maxWidth: "160px" }}>

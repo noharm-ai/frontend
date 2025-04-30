@@ -34,6 +34,7 @@ export default function View({
   popup,
   admissionNumber,
   disableSelection = false,
+  selectedIndicators,
 }) {
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
@@ -246,7 +247,7 @@ export default function View({
 
   html = DOMPurify.sanitize(html, {
     FORBID_ATTR: ["style"],
-    FORBID_TAGS: ["font"],
+    FORBID_TAGS: ["font", "img"],
   });
 
   return (
@@ -329,6 +330,7 @@ export default function View({
                   <>
                     <Paper
                       $t={t}
+                      $selectedIndicators={selectedIndicators}
                       dangerouslySetInnerHTML={{
                         __html: html,
                       }}

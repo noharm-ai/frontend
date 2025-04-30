@@ -43,6 +43,9 @@ const examsModalSlice = createSlice({
         state.lastAdmissionNumber = action.payload;
       }
     },
+    clearExamsCache(state) {
+      state.list = [];
+    },
   },
   extraReducers(builder) {
     builder
@@ -61,6 +64,7 @@ const examsModalSlice = createSlice({
   },
 });
 
-export const { reset, setExamsModalAdmissionNumber } = examsModalSlice.actions;
+export const { reset, setExamsModalAdmissionNumber, clearExamsCache } =
+  examsModalSlice.actions;
 
 export default examsModalSlice.reducer;

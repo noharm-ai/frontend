@@ -20,6 +20,7 @@ export default class Feature {
     "AUTOMATIC_CHECK_IF_NOT_VALIDATED_ITENS";
   static PROTOCOL_ALERTS = "PROTOCOL_ALERTS";
   static SHOW_PEP_LINK = "SHOW_PEP_LINK";
+  static ADD_EXAMS = "ADD_EXAMS";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -138,6 +139,12 @@ export default class Feature {
         label: "Link direto ao PEP",
         description:
           "Habilita a possibilidade de configurar um link direto para o PEP do cliente. Para habilitar, é necessário configuração extra feita manualmente.",
+      },
+      {
+        id: Feature.ADD_EXAMS,
+        label: "Adicionar exames",
+        description:
+          "Habilita a possibilidade de adicionar resultados de exames manualmente.",
       },
     ];
   }

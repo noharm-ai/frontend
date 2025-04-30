@@ -20,6 +20,27 @@ const createIndicatorClasses = (t) => {
   return classList.join(" ");
 };
 
+const createActiveIndicatorClasses = (t, selectedIndicators) => {
+  if (!selectedIndicators) {
+    return "";
+  }
+
+  const indicators = ClinicalNotesIndicator.listByKey(selectedIndicators, t);
+
+  const classList = indicators.map(
+    (i) => `
+    &.annotation-${i.value} {
+      font-weight: 700;
+      border-width: 3px;
+      background: ${i.color} ;
+      color: ${i.fontColor};
+    }
+  `
+  );
+
+  return classList.join(" ");
+};
+
 /* eslint-disable-next-line react-refresh/only-export-components */
 export const createIndicatorTagClasses = (t) => {
   const translate = t ? t : () => "";
@@ -218,6 +239,9 @@ export const Paper = styled.div`
       }
 
       ${(props) => createIndicatorClasses(props.$t)}
+
+      ${(props) =>
+        createActiveIndicatorClasses(props.$t, props.$selectedIndicators)}
     }
   }
 

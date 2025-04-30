@@ -39,6 +39,7 @@ import { reset as supportReset } from "features/support/SupportSlice";
 import { reset as interventionOutcomeReset } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 import { reset as userAdminReset } from "features/userAdmin/UserAdminSlice";
 import { reset as examsModalReset } from "features/exams/ExamModal/ExamModalSlice";
+import { reset as examsFormReset } from "features/exams/ExamForm/ExamFormSlice";
 
 import { reset as reportsReset } from "features/reports/ReportsSlice";
 import { reset as patientDayReportReset } from "features/reports/PatientDayReport/PatientDayReportSlice";
@@ -109,6 +110,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(interventionOutcomeReset());
   dispatch(userAdminReset());
   dispatch(examsModalReset());
+  dispatch(examsFormReset());
 
   dispatch(reportsReset());
   dispatch(patientDayReportReset());

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 
 import PrescriptionCard from "components/PrescriptionCard";
@@ -7,10 +7,13 @@ import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
 
 import ClinicalNotesIndicator from "../ClinicalNotesIndicator";
-import ClinicalNotesModal from "containers/Screening/ClinicalNotes/Modal";
 
-export default function ClinicalNotesCard({ stats, total, featureService }) {
-  const [clinicalNotesVisible, setClinicalNotesVisibility] = useState(false);
+export default function ClinicalNotesCard({
+  stats,
+  total,
+  featureService,
+  setModalVisibility,
+}) {
   const { t } = useTranslation();
   const indicatorKeys =
     window.innerWidth < 1980
@@ -57,17 +60,12 @@ export default function ClinicalNotesCard({ stats, total, featureService }) {
           <Button
             type="link"
             className="gtm-btn-notes-all"
-            onClick={() => setClinicalNotesVisibility(true)}
+            onClick={() => setModalVisibility("clinicalNotes", true)}
           >
             Visualizar
           </Button>
         </div>
       </div>
-
-      <ClinicalNotesModal
-        visible={clinicalNotesVisible}
-        setVisibility={setClinicalNotesVisibility}
-      />
     </PrescriptionCard>
   );
 }

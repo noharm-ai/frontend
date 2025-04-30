@@ -2,6 +2,9 @@ name: Deploy Dev
 on:
   push:
     branches: [develop]
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   deploy:

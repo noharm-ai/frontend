@@ -77,6 +77,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.SHOW_PEP_LINK);
   };
 
+  const hasAddExams = () => {
+    return hasFeature(Feature.ADD_EXAMS);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
@@ -96,6 +100,7 @@ const FeaturesService = (features) => {
     hasDisableGetname,
     hasProtocolAlerts,
     hasShowPepLink,
+    hasAddExams,
   };
 };
 

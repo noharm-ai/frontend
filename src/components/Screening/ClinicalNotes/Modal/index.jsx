@@ -8,7 +8,7 @@ export default function Modal({
   fetchClinicalNotes,
   admissionNumber,
   visible,
-  setVisibility,
+  setModalVisibility,
 }) {
   const { t } = useTranslation();
 
@@ -22,14 +22,14 @@ export default function Modal({
     <DefaultModal
       title={t("tableHeader.clinicalNotes")}
       destroyOnClose
-      open={visible}
-      onCancel={() => setVisibility(false)}
+      open={!!visible}
+      onCancel={() => setModalVisibility("clinicalNotes", false)}
       width="90%"
       footer={null}
       style={{ top: "10px", height: "100vh" }}
       styles={{ body: { padding: 0 } }}
     >
-      <ClinicalNotes />
+      <ClinicalNotes visibleState={visible} />
     </DefaultModal>
   );
 }

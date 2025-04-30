@@ -28,6 +28,7 @@ import supportSlice from "features/support/SupportSlice";
 import interventionOutcomeSlice from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 import userAdminSlice from "features/userAdmin/UserAdminSlice";
 import examModalSlice from "features/exams/ExamModal/ExamModalSlice";
+import examFormSlice from "features/exams/ExamForm/ExamFormSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -137,6 +138,7 @@ const rootReducer = combineReducers({
   interventionOutcome: interventionOutcomeSlice,
   userAdmin: userAdminSlice,
   examsModal: examModalSlice,
+  examsForm: examFormSlice,
 });
 
 export default rootReducer;
