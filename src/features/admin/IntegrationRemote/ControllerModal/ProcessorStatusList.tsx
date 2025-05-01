@@ -22,6 +22,19 @@ export function ProcessorStatusList({ controllers }: IProcessorStatusList) {
     }
   };
 
+  const getState = (state: string) => {
+    switch (state) {
+      case "RUNNING":
+        return "EXECUTANDO";
+      case "STOPPED":
+        return "PARADO";
+      case "INVALID":
+        return "POSSUI ERROS DE CONFIGURAÇÃO";
+      default:
+        return state;
+    }
+  };
+
   return (
     <List
       itemLayout="horizontal"
@@ -35,7 +48,7 @@ export function ProcessorStatusList({ controllers }: IProcessorStatusList) {
               />
             }
             title={item.component.name}
-            description={item.component.state}
+            description={getState(item.component.state)}
           />
         </List.Item>
       )}

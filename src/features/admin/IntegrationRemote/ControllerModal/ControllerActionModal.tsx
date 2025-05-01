@@ -33,17 +33,18 @@ export function ControllerActionModal({
   );
   const [currentQueueId, setCurrentQueueId] = useState<number | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [loadingReferences, setLoadingReferences] = useState<boolean>(false);
-  const [referenceResponse, setReferenceResponse] = useState<any>(null);
+  const [waitingQueueResponse, setWaitingQueueResponse] =
+    useState<boolean>(false);
+  const [queueResponse, setQueueResponse] = useState<any>(null);
   const [controllerRevision, setControllerRevision] = useState<any>(null);
   const [controllerStatus, setControllerStatus] = useState<any>(null);
 
   useEffect(() => {
     if (open) {
       setCurrentStep(0);
-      setLoadingReferences(false);
+      setWaitingQueueResponse(false);
       setCurrentQueueId(null);
-      setReferenceResponse(null);
+      setQueueResponse(null);
       setControllerRevision(null);
       setControllerStatus(null);
     }
@@ -56,9 +57,9 @@ export function ControllerActionModal({
       );
 
       if (currentQueue && currentQueue.response) {
-        setReferenceResponse(currentQueue);
+        setQueueResponse(currentQueue);
         setCurrentQueueId(null);
-        setLoadingReferences(false);
+        setWaitingQueueResponse(false);
 
         if (currentQueue.extra?.type === "GET_CONTROLLER_REFERENCE") {
           setControllerRevision(currentQueue.response.revision);
@@ -96,13 +97,13 @@ export function ControllerActionModal({
       title: "Revisão",
       content: (
         <>
-          {loadingReferences ? (
+          {waitingQueueResponse ? (
             <LoadBox message="Carregando informações sobre o controller..." />
           ) : (
             <>
               <h4>Revise as informações abaixo:</h4>
 
-              {referenceResponse && (
+              {queueResponse && (
                 <>
                   <p>
                     Status do Controller:{" "}
@@ -122,7 +123,7 @@ export function ControllerActionModal({
 
                   <ProcessorStatusList
                     controllers={
-                      referenceResponse?.response?.component
+                      queueResponse?.response?.component
                         ?.referencingComponents || []
                     }
                   />
@@ -140,7 +141,7 @@ export function ControllerActionModal({
         <>
           {controllerStatus?.runStatus === "DISABLED" ? (
             <>
-              {loadingReferences ? (
+              {waitingQueueResponse ? (
                 <LoadBox message="Habilitando o Controller..." />
               ) : (
                 <>
@@ -151,7 +152,7 @@ export function ControllerActionModal({
                   </p>
                   <ProcessorStatusList
                     controllers={
-                      referenceResponse?.response?.component
+                      queueResponse?.response?.component
                         ?.referencingComponents || []
                     }
                   />
@@ -160,7 +161,7 @@ export function ControllerActionModal({
             </>
           ) : (
             <>
-              {loadingReferences ? (
+              {waitingQueueResponse ? (
                 <LoadBox message="Atualizado estado dos processos..." />
               ) : (
                 <>
@@ -171,7 +172,7 @@ export function ControllerActionModal({
                   </p>
                   <ProcessorStatusList
                     controllers={
-                      referenceResponse?.response
+                      queueResponse?.response
                         ?.controllerServiceReferencingComponents || []
                     }
                   />
@@ -188,7 +189,7 @@ export function ControllerActionModal({
         <>
           {controllerStatus?.runStatus === "DISABLED" ? (
             <>
-              {loadingReferences ? (
+              {waitingQueueResponse ? (
                 <LoadBox message="Iniciando os processos..." />
               ) : (
                 <>
@@ -199,7 +200,7 @@ export function ControllerActionModal({
 
                   <ProcessorStatusList
                     controllers={
-                      referenceResponse?.response
+                      queueResponse?.response
                         ?.controllerServiceReferencingComponents || []
                     }
                   />
@@ -208,7 +209,7 @@ export function ControllerActionModal({
             </>
           ) : (
             <>
-              {loadingReferences ? (
+              {waitingQueueResponse ? (
                 <LoadBox message="Desabilitando o Controller..." />
               ) : (
                 <>
@@ -219,7 +220,7 @@ export function ControllerActionModal({
 
                   <ProcessorStatusList
                     controllers={
-                      referenceResponse?.response.component
+                      queueResponse?.response.component
                         ?.referencingComponents || []
                     }
                   />
@@ -255,7 +256,7 @@ export function ControllerActionModal({
             onClick={() => {
               putReferences("STOPPED", 2);
             }}
-            disabled={loadingReferences}
+            disabled={waitingQueueResponse}
             icon={<ArrowRightOutlined />}
           >
             Parar processos e avançar
@@ -269,7 +270,7 @@ export function ControllerActionModal({
           onClick={() => {
             setState("ENABLED", 2);
           }}
-          disabled={loadingReferences}
+          disabled={waitingQueueResponse}
           icon={<ArrowRightOutlined />}
         >
           Habilitar controller
@@ -285,7 +286,7 @@ export function ControllerActionModal({
             onClick={() => {
               putReferences("RUNNING", 3);
             }}
-            disabled={loadingReferences}
+            disabled={waitingQueueResponse}
             icon={<ArrowRightOutlined />}
           >
             Iniciar processos
@@ -299,7 +300,7 @@ export function ControllerActionModal({
           onClick={() => {
             setState("DISABLED", 3);
           }}
-          disabled={loadingReferences}
+          disabled={waitingQueueResponse}
           icon={<ArrowRightOutlined />}
         >
           Desabilitar Controller e Avançar
@@ -310,7 +311,7 @@ export function ControllerActionModal({
     if (currentStep === 3) {
       return (
         <Button
-          disabled={loadingReferences}
+          disabled={waitingQueueResponse}
           onClick={() => {
             onCancel();
           }}
@@ -337,7 +338,7 @@ export function ControllerActionModal({
 
         setCurrentQueueId(response.payload.data.data.id);
         setCurrentStep(1);
-        setLoadingReferences(true);
+        setWaitingQueueResponse(true);
       }
     });
   };
@@ -345,7 +346,7 @@ export function ControllerActionModal({
   const putReferences = (state: "STOPPED" | "RUNNING", goToStep: number) => {
     const referencingComponentRevisions: any = {};
 
-    referenceResponse?.response?.component?.referencingComponents?.forEach(
+    queueResponse?.response?.component?.referencingComponents?.forEach(
       (comp: any) => {
         referencingComponentRevisions[comp.id] = {
           clientId: comp.revision.clientId,
@@ -376,7 +377,7 @@ export function ControllerActionModal({
 
           setCurrentQueueId(response.payload.data.data.id);
           setCurrentStep(goToStep);
-          setLoadingReferences(true);
+          setWaitingQueueResponse(true);
         }
       }
     );
@@ -410,7 +411,7 @@ export function ControllerActionModal({
 
           setCurrentQueueId(response.payload.data.data.id);
           setCurrentStep(goToStep);
-          setLoadingReferences(true);
+          setWaitingQueueResponse(true);
         }
       }
     );
