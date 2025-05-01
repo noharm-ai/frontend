@@ -130,12 +130,48 @@ export default function Graph() {
       let elements = [];
 
       nodes?.forEach((n) => {
+        const stats = {
+          Running: {
+            color: "#52c41a",
+            label: "Executando",
+            count: 0,
+          },
+          Stopped: {
+            color: "#ff4d4f",
+            label: "Parado",
+            count: 0,
+          },
+          Invalid: {
+            color: "#faad14",
+            label: "Inválido",
+            count: 0,
+          },
+          Disabled: {
+            color: "gray",
+            label: "Desativado",
+            count: 0,
+          },
+        };
+
+        if (n.componentType === "PROCESS_GROUP") {
+          Object.values(templateStatus).forEach((item) => {
+            if (
+              item.groupId === n.instanceIdentifier &&
+              item.runStatus &&
+              stats[item.runStatus]
+            ) {
+              stats[item.runStatus].count += 1;
+            }
+          });
+        }
+
         elements.push({
           data: {
             id: n.identifier,
             name: n.name,
             extra: { ...n },
             status: templateStatus[n.instanceIdentifier],
+            stats: stats,
           },
           position: {
             x: n.position.x,
@@ -247,6 +283,20 @@ export default function Graph() {
         e.target.removeClass("hover");
       });
 
+      const statsElements = (statsObj) => {
+        return Object.values(statsObj)
+          .map(
+            (item) => `
+          <span class="stats-item" style="background: ${item.color}; opacity: ${
+              item.count > 0 ? 1 : 0.3
+            }">
+            ${item.count}
+          </span>
+        `
+          )
+          .join("");
+      };
+
       //labels
       cy.nodeHtmlLabel([
         {
@@ -259,6 +309,9 @@ export default function Graph() {
             return `<div class="group">
                       <span class="group-graphic ">
                         <span class="overlay"></span>
+                        <span class="stats">
+                          ${statsElements(data.stats)}
+                        </span>
                       </span>
                       <span class="group-label">${data.name}</span>
                     </div>`;
@@ -274,6 +327,9 @@ export default function Graph() {
             return `<div class="group">
                       <span class="group-graphic hover">
                         <span class="overlay"></span>
+                        <span class="stats">
+                          ${statsElements(data.stats)}
+                        </span>
                       </span>
                       <span class="group-label">${data.name}</span>
                     </div>`;

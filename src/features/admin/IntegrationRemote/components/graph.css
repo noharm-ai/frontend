@@ -114,15 +114,43 @@
 .group-graphic {
   display: inline-flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  border-radius: 3px;
+  border-radius: 8px;
   width: 150px;
   height: 100px;
-  background: #e1bee7;
+  background: #d1c5f6;
   margin-top: 16px;
-  border: 1px solid #c97cd7;
+  border: 1px solid #c6b5f8;
   cursor: pointer;
+  box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16),
+    0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
+}
+
+.group-graphic .stats {
+  display: flex;
+  gap: 0.5rem;
+  background: white;
+  width: 100%;
+  padding: 5px 0;
+  justify-content: center;
+  border-bottom: 1px solid #c6b5f8;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.group-graphic .stats .stats-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #fff;
+  border-radius: 8px;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  color: #fff;
+  min-width: 20px;
+  min-height: 20px;
+  padding: 0 5px;
 }
 
 .group-graphic.hover > .overlay {
@@ -131,6 +159,7 @@
   position: absolute;
   background-color: #000;
   opacity: 0.1;
+  border-radius: 8px;
 }
 
 .group-label {
