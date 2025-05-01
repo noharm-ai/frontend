@@ -100,6 +100,8 @@ export function actionTypeToDescription(actionType) {
       return "Controller: Parar/Iniciar processos";
     case "SET_CONTROLLER_STATE":
       return "Controller: Habilitar/Desabilitar";
+    case "PUT_PROCESS_GROUP_STATE":
+      return "Grupo de processos: Alterar status";
     default:
       return actionType;
   }

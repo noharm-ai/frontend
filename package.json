@@ -20,6 +20,7 @@
     "axios": "^1.8.2",
     "big.js": "^6.2.1",
     "cytoscape": "^3.31.1",
+    "cytoscape-context-menus": "^4.2.1",
     "cytoscape-node-html-label": "^1.2.2",
     "date-fns": "^2.29.1",
     "dayjs": "^1.11.9",

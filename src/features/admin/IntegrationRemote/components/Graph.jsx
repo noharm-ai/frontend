@@ -4,17 +4,25 @@ import { useNavigate } from "react-router-dom";
 import { Spin } from "antd";
 import cytoscape from "cytoscape";
 import nodeHtmlLabel from "cytoscape-node-html-label";
+import contextMenus from "cytoscape-context-menus";
 
 import { NodeModal } from "../NodeModal/NodeModal";
 import { GraphContainer } from "../IntegrationRemote.style";
-import { setSelectedNode } from "../IntegrationRemoteSlice";
+import {
+  setSelectedNode,
+  pushQueueRequest,
+  setQueueDrawer,
+} from "../IntegrationRemoteSlice";
 import GraphActions from "./GraphActions";
 import { findProcessGroup } from "../transformer";
 import { GraphHeader } from "./GraphHeader";
 import { formatDateTime } from "src/utils/date";
+import notification from "components/notification";
+import { getErrorMessage } from "utils/errorHandler";
 import "./graph.css";
 
 nodeHtmlLabel(cytoscape);
+contextMenus(cytoscape);
 
 export default function Graph() {
   const navigate = useNavigate();
@@ -401,8 +409,102 @@ export default function Graph() {
           },
         },
       ]);
+
+      const setGroupState = (state, groupData) => {
+        const payload = {
+          idProcessor: groupData?.extra?.instanceIdentifier,
+          actionType: "PUT_PROCESS_GROUP_STATE",
+          componentType: "PROCESS_GROUP",
+          entity: groupData?.name,
+          body: {
+            id: groupData?.extra?.instanceIdentifier,
+            state,
+            disconnectedNodeAcknowledged: true,
+          },
+        };
+
+        return dispatch(pushQueueRequest(payload)).then((response) => {
+          if (response.error) {
+            notification.error({
+              message: getErrorMessage(response, t),
+            });
+          } else {
+            notification.success({
+              message: "Solicitação enviada. Aguarde a resposta.",
+              placement: "bottom",
+            });
+
+            dispatch(setQueueDrawer(true));
+          }
+        });
+      };
+
+      //context menu
+      cy.contextMenus({
+        evtType: "cxttap",
+        menuItems: [
+          {
+            id: "start",
+            content: "Iniciar processos",
+            tooltipText: "Iniciar processos",
+            selector: ".PROCESS_GROUP",
+            image: { src: "/svgs/play.svg", width: 12, height: 12 },
+            onClickFunction: (evt) => {
+              setGroupState("RUNNING", evt.target.data());
+            },
+            hasTrailingDivider: true,
+          },
+          {
+            id: "stop",
+            content: "Parar processos",
+            tooltipText: "Parar processos",
+            selector: ".PROCESS_GROUP",
+            image: { src: "/svgs/stop.svg", width: 12, height: 12 },
+            onClickFunction: (evt) => {
+              setGroupState("STOPPED", evt.target.data());
+            },
+            hasTrailingDivider: true,
+          },
+          {
+            id: "disable",
+            content: "Desabilitar processos",
+            tooltipText: "Desabilitar processos",
+            selector: ".PROCESS_GROUP",
+            image: { src: "/svgs/disable.svg", width: 12, height: 12 },
+            onClickFunction: (evt) => {
+              setGroupState("DISABLED", evt.target.data());
+            },
+            hasTrailingDivider: true,
+          },
+          {
+            id: "enable",
+            content: "Habilitar processos",
+            tooltipText: "Habilitar processos",
+            selector: ".PROCESS_GROUP",
+            image: { src: "/svgs/enable.svg", width: 12, height: 12 },
+            onClickFunction: (evt) => {
+              setGroupState("ENABLED", evt.target.data());
+            },
+            hasTrailingDivider: true,
+          },
+
+          {
+            id: "back",
+            content: "Voltar ao nível anterior",
+            tooltipText: "Voltar ao nível anterior",
+            image: { src: "/svgs/back.svg", width: 12, height: 12 },
+            coreAsWell: true,
+            onClickFunction: () => {
+              goBack();
+            },
+            hasTrailingDivider: true,
+          },
+        ],
+        menuItemClasses: ["custom-menu-item", "custom-menu-item:hover"],
+        contextMenuClasses: ["custom-context-menu"],
+      });
     }
-  }, [currentGroup, status, template, templateStatus, dispatch]);
+  }, [currentGroup, status, template, templateStatus, dispatch]); //eslint-disable-line
 
   if (!template) {
     return null;
@@ -430,7 +532,7 @@ export default function Graph() {
   };
 
   return (
-    <GraphContainer>
+    <GraphContainer className="graph-container">
       <Spin spinning={internalLoading}>
         <div
           ref={graphContainer}

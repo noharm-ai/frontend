@@ -1,3 +1,7 @@
+.graph-container {
+  font-family: "Roboto", sans-serif;
+}
+
 .element {
   display: flex;
   flex-direction: column;
@@ -200,4 +204,43 @@
   padding: 1px 6px;
   margin-top: 5px;
   border-radius: 1px;
+}
+
+/** CONTEXTUAL MENU **/
+.graph-container .custom-menu-item {
+  position: relative;
+  border: none !important;
+  height: 32px !important;
+  max-width: 250px !important;
+  padding-left: 35px !important;
+  padding-right: 15px !important;
+  color: rgb(0, 0, 0, 0.87) !important;
+  background-color: #fafafa !important;
+  font-weight: normal;
+  font-size: 14px;
+  text-align: left !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  width: 100%;
+}
+
+.graph-container .custom-menu-item img {
+  width: 1rem;
+  height: auto;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.graph-container .custom-menu-item:hover {
+  background-color: #c8c8c8 !important;
+}
+
+.graph-container .custom-context-menu {
+  border: none !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  background-color: #fafafa !important;
+  box-shadow: 0px 0px 8px 0px rgb(0, 0, 0, 0.12),
+    0px 8px 8px 0px rgb(0, 0, 0, 0.24) !important;
 }
