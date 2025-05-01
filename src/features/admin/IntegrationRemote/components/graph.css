@@ -7,11 +7,17 @@
 
 .element-badge {
   position: absolute;
-  width: 14px;
-  height: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  right: -4px;
-  top: -2px;
+  right: -8px;
+  top: -4px;
   background: #ccc;
   z-index: 999;
   border: 2px solid #fff;

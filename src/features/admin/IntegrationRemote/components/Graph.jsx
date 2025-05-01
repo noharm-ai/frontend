@@ -5,14 +5,13 @@ import { Spin } from "antd";
 import cytoscape from "cytoscape";
 import nodeHtmlLabel from "cytoscape-node-html-label";
 
-import Tag from "components/Tag";
-import Tooltip from "components/Tooltip";
 import { NodeModal } from "../NodeModal/NodeModal";
 import { GraphContainer } from "../IntegrationRemote.style";
 import { setSelectedNode } from "../IntegrationRemoteSlice";
 import GraphActions from "./GraphActions";
-import { formatDateTime } from "utils/date";
 import { findProcessGroup } from "../transformer";
+import { GraphHeader } from "./GraphHeader";
+import { formatDateTime } from "src/utils/date";
 import "./graph.css";
 
 nodeHtmlLabel(cytoscape);
@@ -296,7 +295,11 @@ export default function Graph() {
                         <span class="overlay-error">Error</span>
                         <span class="element-badge" style="background: ${
                           data.extra?.style["background-color"]
-                        }"></span>
+                        }">${
+              data?.status?.activeThreadCount > 0
+                ? data?.status?.activeThreadCount
+                : ""
+            }</span>
                       </span>
                       <span class="element-label">${data.name}</span>
                     </div>`;
@@ -317,7 +320,11 @@ export default function Graph() {
                         <span class="overlay-error">Error</span>
                         <span class="element-badge" style="background: ${
                           data.extra?.style["background-color"]
-                        }"></span>
+                        }">${
+              data?.status?.activeThreadCount > 0
+                ? data?.status?.activeThreadCount
+                : ""
+            }</span>
                       </span>
                       <span class="element-label">${data.name}</span>
                     </div>`;
@@ -376,17 +383,12 @@ export default function Graph() {
       </Spin>
 
       <NodeModal />
-      <div className="folder-title">
-        {currentGroup ? currentGroup.name : template?.flowContents.name}
-      </div>
-      <div className="schema">
-        <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
-      </div>
-      <div className="template-date">
-        <Tooltip title="Última atualização do template">
-          <Tag>{formatDateTime(templateDate)}</Tag>
-        </Tooltip>
-      </div>
+
+      <GraphHeader
+        title={currentGroup ? currentGroup.name : template?.flowContents.name}
+        templateDate={formatDateTime(templateDate)}
+        templateStatus={templateStatus}
+      />
       <GraphActions goBack={goBack} />
     </GraphContainer>
   );
