@@ -6,14 +6,19 @@ import Heading from "components/Heading";
 import Descriptions from "components/Descriptions";
 import Button from "components/Button";
 import { ControllerActionModal } from "./ControllerActionModal";
+import { ControllerEditModal } from "./ControllerEditModal";
 
 export default function ControllerModal({ data, onCancel }) {
   const [wizardModal, setWizardModal] = useState(false);
+  const [controllerEditdModal, setControllerEditModal] = useState(false);
 
   const footerActions = () => {
     return [
       <Button type="primary" onClick={() => setWizardModal(true)}>
         Alterar status
+      </Button>,
+      <Button type="primary" onClick={() => setControllerEditModal(true)}>
+        Alterar propriedades
       </Button>,
     ];
   };
@@ -76,6 +81,14 @@ export default function ControllerModal({ data, onCancel }) {
       <ControllerActionModal
         open={wizardModal}
         onCancel={() => setWizardModal(false)}
+        data={data}
+      />
+      <ControllerEditModal
+        open={controllerEditdModal}
+        onCancel={() => {
+          setControllerEditModal(false);
+          onCancel();
+        }}
         data={data}
       />
     </DefaultModal>
