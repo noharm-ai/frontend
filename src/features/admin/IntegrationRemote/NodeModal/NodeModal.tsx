@@ -155,6 +155,62 @@ export function NodeModal() {
     return actions;
   };
 
+  const updatableProperties = [
+    { key: "Maximum-value Columns", label: "Maximum-value Columns" },
+    { key: "Max Wait Time", label: "Max Wait Time" },
+    { key: "qdbt-max-rows", label: "Max Rows Per Flow File (qdbt-max-rows)" },
+    { key: "Remote URL", label: "Remote URL" },
+    { key: "SQL select query", label: "SQL select query" },
+    { key: "sql-post-query", label: "SQL post-query" },
+    { key: "sql-pre-query", label: "SQL pre-query" },
+    { key: "db-fetch-sql-query", label: "Custom query (db-fetch-sql-query)" },
+    {
+      key: "db-fetch-where-clause",
+      label: "Additional WHERE clause (db-fetch-where-clause)",
+    },
+    { key: "Table Name", label: "Table Name" },
+    {
+      key: "put-db-record-statement-type",
+      label: "Statement type (put-db-record-statement-type)",
+    },
+    {
+      key: "put-db-record-update-keys",
+      label: "Update keys (put-db-record-update-keys)",
+    },
+    {
+      key: "put-db-record-table-name",
+      label: "Table name (put-db-record-table-name)",
+    },
+    {
+      key: "put-db-record-query-timeout",
+      label: "Max Wait Time (put-db-record-query-timeout)",
+    },
+    {
+      key: "generate-ff-custom-text",
+      label: "Custom text (generate-ff-custom-text)",
+    },
+    { key: "Columns to Return", label: "Columns to Return" },
+    { key: "Connection Timeout", label: "Connection Timeout" },
+    { key: "Read Timeout", label: "Read Timeout" },
+    { key: "Socket Write Timeout", label: "Socket Write Timeout" },
+  ];
+
+  const updatableConfigs = [
+    { key: "schedulingPeriod", label: "Agendamento" },
+    { key: "comments", label: "Comentários" },
+  ];
+
+  if (
+    data?.extra?.type === "org.apache.nifi.processors.standard.RouteOnAttribute"
+  ) {
+    Object.keys(data?.extra?.properties).forEach((prop: any) => {
+      updatableProperties.push({
+        key: prop,
+        label: prop,
+      });
+    });
+  }
+
   const getItems = (
     setFieldValue: (key: string, value: any) => void,
     values: any
@@ -171,6 +227,8 @@ export function NodeModal() {
           isUpdatable={isUpdatable}
           executeAction={executeAction}
           controllers={controllers}
+          updatableProperties={updatableProperties}
+          updatableConfigs={updatableConfigs}
         />
       ),
     },
@@ -196,29 +254,9 @@ export function NodeModal() {
     const properties: any = {};
     const config: any = {};
 
-    const validFields = [
-      "Maximum-value Columns",
-      "Max Wait Time",
-      "qdbt-max-rows",
-      "Remote URL",
-      "SQL select query",
-      "sql-post-query",
-      "sql-pre-query",
-      "db-fetch-sql-query",
-      "db-fetch-where-clause",
-      "Table Name",
-      "put-db-record-statement-type",
-      "put-db-record-update-keys",
-      "put-db-record-table-name",
-      "put-db-record-query-timeout",
-      "generate-ff-custom-text",
-      "Columns to Return",
-      "Connection Timeout",
-      "Read Timeout",
-      "Socket Write Timeout",
-    ];
+    const validFields = updatableProperties.map(({ key }) => key);
 
-    const validConfigFields = ["schedulingPeriod", "comments"];
+    const validConfigFields = updatableConfigs.map(({ key }) => key);
 
     validFields.forEach((field) => {
       if (Object.prototype.hasOwnProperty.call(params, field)) {
