@@ -202,6 +202,8 @@ export function NodeModal() {
       "qdbt-max-rows",
       "Remote URL",
       "SQL select query",
+      "sql-post-query",
+      "sql-pre-query",
       "db-fetch-sql-query",
       "db-fetch-where-clause",
       "Table Name",

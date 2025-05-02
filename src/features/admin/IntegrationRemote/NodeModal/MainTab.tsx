@@ -133,6 +133,18 @@ export function MainTab({
             </Descriptions.Item>
           )}
 
+          {hasProp(data?.extra?.properties, "sql-pre-query") && (
+            <Descriptions.Item label="SQL pre-query" span={3}>
+              <Textarea
+                value={values["sql-pre-query"]}
+                style={{ height: "3rem" }}
+                disabled={!isUpdatable}
+                onChange={({ target }) =>
+                  setFieldValue("sql-pre-query", target.value)
+                }
+              />
+            </Descriptions.Item>
+          )}
           {hasProp(data?.extra?.properties, "SQL select query") && (
             <Descriptions.Item label="SQL select query" span={3}>
               <Textarea
@@ -141,6 +153,18 @@ export function MainTab({
                 disabled={!isUpdatable}
                 onChange={({ target }) =>
                   setFieldValue("SQL select query", target.value)
+                }
+              />
+            </Descriptions.Item>
+          )}
+          {hasProp(data?.extra?.properties, "sql-post-query") && (
+            <Descriptions.Item label="SQL post-query" span={3}>
+              <Textarea
+                value={values["sql-post-query"]}
+                style={{ height: "3rem" }}
+                disabled={!isUpdatable}
+                onChange={({ target }) =>
+                  setFieldValue("sql-post-query", target.value)
                 }
               />
             </Descriptions.Item>
