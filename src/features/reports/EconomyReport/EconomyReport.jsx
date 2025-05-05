@@ -88,6 +88,10 @@ export default function EconomyReport() {
       label: "Marcadores",
       type: "list",
     },
+    drugAttrList: {
+      label: "Atributo do medicamento",
+      type: "list",
+    },
   };
 
   return (

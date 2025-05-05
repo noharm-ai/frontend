@@ -117,6 +117,42 @@ export default function SecondaryFilters() {
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" $size="14px">
+          Atributo do medicamento origem:
+        </Heading>
+        <Select
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.drugAttrList}
+          onChange={(val) => setFieldValue({ drugAttrList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          <Select.Option key={"attrAntimicro"} value={"attrAntimicro"}>
+            Antimicrobiano
+          </Select.Option>
+          <Select.Option key={"attrMav"} value={"attrMav"}>
+            Alta Vigilância
+          </Select.Option>
+          <Select.Option key={"attrControl"} value={"attrControl"}>
+            Controlado
+          </Select.Option>
+          <Select.Option key={"attrNotStandard"} value={"attrNotStandard"}>
+            Não Padronizado
+          </Select.Option>
+          <Select.Option key={"attrQuimio"} value={"attrQuimio"}>
+            Quimioterápico
+          </Select.Option>
+        </Select>
+        <div style={{ opacity: 0.6, fontSize: "13px", marginTop: "5px" }}>
+          Disponível a partir de MAI/25.
+        </div>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" $size="14px">
           Medicamento substituto:
         </Heading>
         <SelectCustom

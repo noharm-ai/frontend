@@ -82,6 +82,7 @@ export default function Filter({ printRef }) {
     economyType: "",
     economyValueType: "p",
     tagList: [],
+    drugAttrList: [],
   };
 
   const reportManager = useFetchReport({

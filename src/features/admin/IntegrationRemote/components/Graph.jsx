@@ -4,18 +4,25 @@ import { useNavigate } from "react-router-dom";
 import { Spin } from "antd";
 import cytoscape from "cytoscape";
 import nodeHtmlLabel from "cytoscape-node-html-label";
+import contextMenus from "cytoscape-context-menus";
 
-import Tag from "components/Tag";
-import Tooltip from "components/Tooltip";
 import { NodeModal } from "../NodeModal/NodeModal";
 import { GraphContainer } from "../IntegrationRemote.style";
-import { setSelectedNode } from "../IntegrationRemoteSlice";
+import {
+  setSelectedNode,
+  pushQueueRequest,
+  setQueueDrawer,
+} from "../IntegrationRemoteSlice";
 import GraphActions from "./GraphActions";
-import { formatDateTime } from "utils/date";
 import { findProcessGroup } from "../transformer";
+import { GraphHeader } from "./GraphHeader";
+import { formatDateTime } from "src/utils/date";
+import notification from "components/notification";
+import { getErrorMessage } from "utils/errorHandler";
 import "./graph.css";
 
 nodeHtmlLabel(cytoscape);
+contextMenus(cytoscape);
 
 export default function Graph() {
   const navigate = useNavigate();
@@ -131,12 +138,48 @@ export default function Graph() {
       let elements = [];
 
       nodes?.forEach((n) => {
+        const stats = {
+          Running: {
+            color: "#52c41a",
+            label: "Executando",
+            count: 0,
+          },
+          Stopped: {
+            color: "#ff4d4f",
+            label: "Parado",
+            count: 0,
+          },
+          Invalid: {
+            color: "#faad14",
+            label: "Inválido",
+            count: 0,
+          },
+          Disabled: {
+            color: "gray",
+            label: "Desativado",
+            count: 0,
+          },
+        };
+
+        if (n.componentType === "PROCESS_GROUP") {
+          Object.values(templateStatus).forEach((item) => {
+            if (
+              item.groupId === n.instanceIdentifier &&
+              item.runStatus &&
+              stats[item.runStatus]
+            ) {
+              stats[item.runStatus].count += 1;
+            }
+          });
+        }
+
         elements.push({
           data: {
             id: n.identifier,
             name: n.name,
             extra: { ...n },
             status: templateStatus[n.instanceIdentifier],
+            stats: stats,
           },
           position: {
             x: n.position.x,
@@ -248,6 +291,20 @@ export default function Graph() {
         e.target.removeClass("hover");
       });
 
+      const statsElements = (statsObj) => {
+        return Object.values(statsObj)
+          .map(
+            (item) => `
+          <span class="stats-item" style="background: ${item.color}; opacity: ${
+              item.count > 0 ? 1 : 0.3
+            }">
+            ${item.count}
+          </span>
+        `
+          )
+          .join("");
+      };
+
       //labels
       cy.nodeHtmlLabel([
         {
@@ -260,6 +317,9 @@ export default function Graph() {
             return `<div class="group">
                       <span class="group-graphic ">
                         <span class="overlay"></span>
+                        <span class="stats">
+                          ${statsElements(data.stats)}
+                        </span>
                       </span>
                       <span class="group-label">${data.name}</span>
                     </div>`;
@@ -275,6 +335,9 @@ export default function Graph() {
             return `<div class="group">
                       <span class="group-graphic hover">
                         <span class="overlay"></span>
+                        <span class="stats">
+                          ${statsElements(data.stats)}
+                        </span>
                       </span>
                       <span class="group-label">${data.name}</span>
                     </div>`;
@@ -296,7 +359,11 @@ export default function Graph() {
                         <span class="overlay-error">Error</span>
                         <span class="element-badge" style="background: ${
                           data.extra?.style["background-color"]
-                        }"></span>
+                        }">${
+              data?.status?.activeThreadCount > 0
+                ? data?.status?.activeThreadCount
+                : ""
+            }</span>
                       </span>
                       <span class="element-label">${data.name}</span>
                     </div>`;
@@ -317,7 +384,11 @@ export default function Graph() {
                         <span class="overlay-error">Error</span>
                         <span class="element-badge" style="background: ${
                           data.extra?.style["background-color"]
-                        }"></span>
+                        }">${
+              data?.status?.activeThreadCount > 0
+                ? data?.status?.activeThreadCount
+                : ""
+            }</span>
                       </span>
                       <span class="element-label">${data.name}</span>
                     </div>`;
@@ -338,8 +409,102 @@ export default function Graph() {
           },
         },
       ]);
+
+      const setGroupState = (state, groupData) => {
+        const payload = {
+          idProcessor: groupData?.extra?.instanceIdentifier,
+          actionType: "PUT_PROCESS_GROUP_STATE",
+          componentType: "PROCESS_GROUP",
+          entity: groupData?.name,
+          body: {
+            id: groupData?.extra?.instanceIdentifier,
+            state,
+            disconnectedNodeAcknowledged: true,
+          },
+        };
+
+        return dispatch(pushQueueRequest(payload)).then((response) => {
+          if (response.error) {
+            notification.error({
+              message: getErrorMessage(response, t),
+            });
+          } else {
+            notification.success({
+              message: "Solicitação enviada. Aguarde a resposta.",
+              placement: "bottom",
+            });
+
+            dispatch(setQueueDrawer(true));
+          }
+        });
+      };
+
+      //context menu
+      cy.contextMenus({
+        evtType: "cxttap",
+        menuItems: [
+          {
+            id: "start",
+            content: "Iniciar processos",
+            tooltipText: "Iniciar processos",
+            selector: ".PROCESS_GROUP",
+            image: { src: "/svgs/play.svg", width: 12, height: 12 },
+            onClickFunction: (evt) => {
+              setGroupState("RUNNING", evt.target.data());
+            },
+            hasTrailingDivider: true,
+          },
+          {
+            id: "stop",
+            content: "Parar processos",
+            tooltipText: "Parar processos",
+            selector: ".PROCESS_GROUP",
+            image: { src: "/svgs/stop.svg", width: 12, height: 12 },
+            onClickFunction: (evt) => {
+              setGroupState("STOPPED", evt.target.data());
+            },
+            hasTrailingDivider: true,
+          },
+          {
+            id: "disable",
+            content: "Desabilitar processos",
+            tooltipText: "Desabilitar processos",
+            selector: ".PROCESS_GROUP",
+            image: { src: "/svgs/disable.svg", width: 12, height: 12 },
+            onClickFunction: (evt) => {
+              setGroupState("DISABLED", evt.target.data());
+            },
+            hasTrailingDivider: true,
+          },
+          {
+            id: "enable",
+            content: "Habilitar processos",
+            tooltipText: "Habilitar processos",
+            selector: ".PROCESS_GROUP",
+            image: { src: "/svgs/enable.svg", width: 12, height: 12 },
+            onClickFunction: (evt) => {
+              setGroupState("ENABLED", evt.target.data());
+            },
+            hasTrailingDivider: true,
+          },
+
+          {
+            id: "back",
+            content: "Voltar ao nível anterior",
+            tooltipText: "Voltar ao nível anterior",
+            image: { src: "/svgs/back.svg", width: 12, height: 12 },
+            coreAsWell: true,
+            onClickFunction: () => {
+              goBack();
+            },
+            hasTrailingDivider: true,
+          },
+        ],
+        menuItemClasses: ["custom-menu-item", "custom-menu-item:hover"],
+        contextMenuClasses: ["custom-context-menu"],
+      });
     }
-  }, [currentGroup, status, template, templateStatus, dispatch]);
+  }, [currentGroup, status, template, templateStatus, dispatch]); //eslint-disable-line
 
   if (!template) {
     return null;
@@ -367,7 +532,7 @@ export default function Graph() {
   };
 
   return (
-    <GraphContainer>
+    <GraphContainer className="graph-container">
       <Spin spinning={internalLoading}>
         <div
           ref={graphContainer}
@@ -376,17 +541,12 @@ export default function Graph() {
       </Spin>
 
       <NodeModal />
-      <div className="folder-title">
-        {currentGroup ? currentGroup.name : template?.flowContents.name}
-      </div>
-      <div className="schema">
-        <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
-      </div>
-      <div className="template-date">
-        <Tooltip title="Última atualização do template">
-          <Tag>{formatDateTime(templateDate)}</Tag>
-        </Tooltip>
-      </div>
+
+      <GraphHeader
+        title={currentGroup ? currentGroup.name : template?.flowContents.name}
+        templateDate={formatDateTime(templateDate)}
+        templateStatus={templateStatus}
+      />
       <GraphActions goBack={goBack} />
     </GraphContainer>
   );

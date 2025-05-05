@@ -9,7 +9,6 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 
-import ControllersList from "./components/ControllersList";
 import DiagnosticModal from "./components/DiagnosticsModal";
 import {
   fetchTemplate,
@@ -25,7 +24,7 @@ import ListProcessors from "./components/ListProcessors";
 import ListBulletin from "./components/ListBulletin";
 
 import { PageHeader } from "styles/PageHeader.style";
-import { PageCard, PageSectionTitle } from "styles/Utils.style";
+import { PageSectionTitle } from "styles/Utils.style";
 import { StatsCard } from "styles/Report.style";
 
 export default function IntegrationRemote() {
@@ -192,18 +191,12 @@ export default function IntegrationRemote() {
 
       <Space direction="vertical" style={{ width: "100%" }}>
         <Row gutter={[24, 24]}>
-          <Col xs={8}>
-            <PageSectionTitle>Controllers</PageSectionTitle>
-            <PageCard>
-              <ControllersList />
-            </PageCard>
-          </Col>
-          <Col xs={16}>
+          <Col xs={24}>
             <PageSectionTitle style={{ marginBottom: "2rem" }}>
               Diagnóstico
             </PageSectionTitle>
             <Row gutter={[12, 12]}>
-              <Col xs={12}>
+              <Col xs={8}>
                 <Spin spinning={status === "loading"}>
                   <StatsCard
                     className={`${getPercentageStatus(
@@ -217,7 +210,7 @@ export default function IntegrationRemote() {
                   </StatsCard>
                 </Spin>
               </Col>
-              <Col xs={12}>
+              <Col xs={8}>
                 <Spin spinning={status === "loading"}>
                   <StatsCard className={"green"}>
                     <div className="stats-title">Uptime</div>
@@ -227,7 +220,7 @@ export default function IntegrationRemote() {
                   </StatsCard>
                 </Spin>
               </Col>
-              <Col xs={12}>
+              <Col xs={8}>
                 <Spin spinning={status === "loading"}>
                   <StatsCard className={"blue"}>
                     <div className="stats-title">Heap Utilizado</div>
@@ -237,7 +230,7 @@ export default function IntegrationRemote() {
                   </StatsCard>
                 </Spin>
               </Col>
-              <Col xs={12}>
+              <Col xs={8}>
                 <Spin spinning={status === "loading"}>
                   <StatsCard className={"blue"}>
                     <div className="stats-title">Total Threads</div>
@@ -247,7 +240,7 @@ export default function IntegrationRemote() {
                   </StatsCard>
                 </Spin>
               </Col>
-              <Col xs={12}>
+              <Col xs={8}>
                 <Spin spinning={status === "loading"}>
                   <StatsCard className={""}>
                     <div className="stats-title">Versão</div>
@@ -257,7 +250,7 @@ export default function IntegrationRemote() {
                   </StatsCard>
                 </Spin>
               </Col>
-              <Col xs={12}>
+              <Col xs={8}>
                 <StatsCard style={{ height: "100%" }}>
                   <div
                     style={{

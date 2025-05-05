@@ -94,6 +94,14 @@ export function actionTypeToDescription(actionType) {
       return "Atualizar propriedade";
     case "VIEW_PROVENANCE":
       return "Ver data provenance";
+    case "GET_CONTROLLER_REFERENCE":
+      return "Examinar Controller";
+    case "PUT_CONTROLLER_REFERENCE":
+      return "Controller: Parar/Iniciar processos";
+    case "SET_CONTROLLER_STATE":
+      return "Controller: Habilitar/Desabilitar";
+    case "PUT_PROCESS_GROUP_STATE":
+      return "Grupo de processos: Alterar status";
     default:
       return actionType;
   }
