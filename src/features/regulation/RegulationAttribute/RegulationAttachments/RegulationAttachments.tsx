@@ -141,7 +141,7 @@ export function RegulationAttachments({
 
     return (
       <Card title="Anexos" bordered={false}>
-        <Descriptions bordered items={items} column={4} size="middle" />
+        <Descriptions bordered items={items} column={4} size="small" />
       </Card>
     );
   }

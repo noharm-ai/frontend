@@ -3,6 +3,17 @@ import styled from "styled-components";
 export const PrintContainer = styled.div`
   font-family: "Roboto", sans-serif;
   padding: 10px;
+
+  .ant-card {
+    margin-bottom: 10px;
+    .ant-card-head {
+      min-height: auto;
+    }
+
+    .ant-card-body {
+      padding: 5px;
+    }
+  }
 `;
 
 export const PrintHeader = styled.div`

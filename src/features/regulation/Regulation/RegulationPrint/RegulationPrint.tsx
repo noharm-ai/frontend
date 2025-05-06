@@ -50,7 +50,7 @@ export function RegulationPrint() {
       </ReportFilterContainer>
 
       <Space direction="vertical" style={{ width: "100%" }} size="large">
-        <RegulationPatient itemSpan={4} />
+        <RegulationPatient print={true} />
         <RegulationData print={true} />
         <RegulationSchedules />
 

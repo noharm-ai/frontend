@@ -76,7 +76,12 @@ export default function RegulationData({ print = false }) {
 
   return (
     <Card title="Solicitação" bordered={false}>
-      <Descriptions bordered items={items} column={4} size="middle" />
+      <Descriptions
+        bordered
+        items={items}
+        column={4}
+        size={print ? "small" : "middle"}
+      />
     </Card>
   );
 }
