@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Card, TableProps, Table, Popconfirm } from "antd";
+import { Card, TableProps, Table, Popconfirm, Descriptions } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
@@ -14,6 +14,7 @@ import { getErrorMessage } from "src/utils/errorHandler";
 
 interface IRegulationAttachmentProps {
   idRegSolicitation: number;
+  print?: boolean;
 }
 
 interface IAttachment {
@@ -27,6 +28,7 @@ interface IAttachment {
 
 export function RegulationAttachments({
   idRegSolicitation,
+  print = false,
 }: IRegulationAttachmentProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -39,7 +41,7 @@ export function RegulationAttachments({
   const [formModal, setFormModal] = useState<boolean>(false);
 
   useEffect(() => {
-    if (idRegSolicitation) {
+    if (idRegSolicitation && !print) {
       dispatch(
         listAttachments({
           idRegSolicitation,
@@ -47,7 +49,7 @@ export function RegulationAttachments({
         })
       );
     }
-  }, [idRegSolicitation, dispatch]);
+  }, [idRegSolicitation, print, dispatch]);
 
   const closeForm = () => {
     setFormModal(false);
@@ -128,6 +130,21 @@ export function RegulationAttachments({
       },
     },
   ];
+
+  if (print) {
+    const items = attachments.map((a) => ({
+      key: a.id,
+      label: a.value.name,
+      children: a.value.link,
+      span: 4,
+    }));
+
+    return (
+      <Card title="Anexos" bordered={false}>
+        <Descriptions bordered items={items} column={4} size="middle" />
+      </Card>
+    );
+  }
 
   return (
     <Card

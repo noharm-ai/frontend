@@ -4,7 +4,7 @@ import { Card, Descriptions } from "antd";
 
 import { formatDate } from "utils/date";
 
-export default function RegulationPatient() {
+export default function RegulationPatient({ itemSpan }) {
   const patient = useSelector(
     (state) => state.regulation.regulation.data.patient
   );
@@ -19,7 +19,7 @@ export default function RegulationPatient() {
       key: "2",
       label: "Data de Nascimento",
       children: formatDate(patient.birthdate),
-      span: 2,
+      span: itemSpan || 2,
     },
     {
       key: "3",
@@ -31,37 +31,37 @@ export default function RegulationPatient() {
           {patient.gender !== "M" && patient.gender !== "F" && patient.gender}
         </>
       ),
-      span: 2,
+      span: itemSpan || 2,
     },
     {
       key: "4",
       label: "Endereço",
       children: patientDetails?.data?.endereco,
-      span: 4,
+      span: itemSpan || 4,
     },
     {
       key: "5",
       label: "Bairro",
       children: patientDetails?.data?.bairro,
-      span: 2,
+      span: itemSpan || 2,
     },
     {
       key: "6",
       label: "Cidade",
       children: patientDetails?.data?.cidade,
-      span: 2,
+      span: itemSpan || 2,
     },
     {
       key: "7",
       label: "Estado",
       children: patientDetails?.data?.estado,
-      span: 2,
+      span: itemSpan || 2,
     },
     {
       key: "8",
       label: "CEP",
       children: patientDetails?.data?.cep,
-      span: 2,
+      span: itemSpan || 2,
     },
   ];
 
