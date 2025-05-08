@@ -118,6 +118,21 @@ export default function Intervention({
     interval: item.interval,
     intervalLabel: item.time,
   };
+  const ramData = {
+    detection: item.intervention?.ram?.detection ?? null,
+    internalNotificationCode:
+      item.intervention?.ram?.internalNotificationCode ?? null,
+    anvisaCode: item.intervention?.ram?.anvisaCode ?? null,
+    brand: item.intervention?.ram?.brand ?? null,
+    batch: item.intervention?.ram?.batch ?? null,
+    expiration: item.intervention?.ram?.expiration ?? null,
+    symptoms: item.intervention?.ram?.symptoms ?? null,
+    suspended: item.intervention?.ram?.suspended ?? false,
+    describedInLeaflet: item.intervention?.ram?.describedInLeaflet ?? false,
+    severity: item.intervention?.ram?.severity ?? null,
+    severityDetail: item.intervention?.ram?.severityDetail ?? null,
+    causality: item.intervention?.ram?.causality ?? null,
+  };
   const initialValues = {
     idPrescription: item.idPrescription,
     idPrescriptionDrug: item.idPrescriptionDrug,
@@ -140,6 +155,7 @@ export default function Intervention({
     transcriptionData: {
       ...transcriptable,
     },
+    ramData,
   };
 
   if (item.intervention.transcription) {

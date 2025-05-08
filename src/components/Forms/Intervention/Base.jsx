@@ -13,6 +13,7 @@ import Switch from "components/Switch";
 import Interaction from "./Fields/Interaction";
 import Observation from "./Fields/Observation";
 import Transcription from "./Fields/Transcription";
+import { RamFields } from "./Fields/RamFields";
 import InterventionReasonRelationType from "models/InterventionReasonRelationType";
 
 import { Box, FieldError, FieldHelp } from "../Form.style";
@@ -118,6 +119,24 @@ export default function Base({
 
         if (reasonList[reasonIndex].customEconomy) {
           return "customEconomy";
+        }
+      }
+    }
+
+    return false;
+  };
+
+  const hasRam = (reasonList, selectedReasons = []) => {
+    if (!selectedReasons) return false;
+
+    for (let i = 0; i < selectedReasons.length; i++) {
+      const reasonIndex = reasonList.findIndex(
+        (reason) => reason.id === selectedReasons[i]
+      );
+
+      if (reasonIndex !== -1) {
+        if (reasonList[reasonIndex].ram) {
+          return true;
         }
       }
     }
@@ -343,6 +362,13 @@ export default function Base({
           </Col>
         </Box>
       )}
+      {hasRam(reasons.list, idInterventionReason) && (
+        <RamFields
+          setFieldValue={setFieldValue}
+          values={values}
+          layout={layout}
+        />
+      )}
       {hasTranscription && (
         <>
           <Box hasError={errors.transcription && touched.transcription}>
@@ -382,6 +408,7 @@ export default function Base({
           )}
         </>
       )}
+
       <Box hasError={errors.observation && touched.observation}>
         <Observation
           content={observation}
