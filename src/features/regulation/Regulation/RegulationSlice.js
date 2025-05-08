@@ -7,6 +7,7 @@ const initialState = {
     patient: {},
     extra: {},
     movements: [],
+    id: null,
   },
   status: "loading",
   error: null,

@@ -10,12 +10,14 @@ interface IControllerFormProps {
   controllerData: any;
   controllerStatus: any;
   saveControllerData: (data: any) => void;
+  forcePool: boolean;
 }
 
 export function ControllerForm({
   controllerData,
   controllerStatus,
   saveControllerData,
+  forcePool,
 }: IControllerFormProps) {
   const initialValues = {
     "Database Connection URL":
@@ -30,8 +32,11 @@ export function ControllerForm({
     saveControllerData(params);
   };
 
-  const hasProp = (object: any, prop: string) =>
-    Object.prototype.hasOwnProperty.call(object, prop);
+  const hasProp = (object: any, prop: string) => {
+    if (!object) return false;
+
+    return Object.prototype.hasOwnProperty.call(object, prop);
+  };
 
   return (
     <Formik
@@ -136,7 +141,7 @@ export function ControllerForm({
             )}
 
             <div className="form-action" style={{ marginTop: "2rem" }}>
-              {controllerStatus?.runStatus === "DISABLED" && (
+              {(controllerStatus?.runStatus === "DISABLED" || forcePool) && (
                 <Button
                   type="primary"
                   onClick={() => handleSubmit()}

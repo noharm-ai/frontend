@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import { Steps, Tag, Result, Spin } from "antd";
+import { Steps, Tag, Result, Spin, Popconfirm, Switch } from "antd";
 
 import { useAppSelector, useAppDispatch } from "src/store";
 import DefaultModal from "components/Modal";
@@ -36,8 +36,8 @@ export function ControllerActionModal({
   const [waitingQueueResponse, setWaitingQueueResponse] =
     useState<boolean>(false);
   const [queueResponse, setQueueResponse] = useState<any>(null);
-  const [controllerRevision, setControllerRevision] = useState<any>(null);
   const [controllerStatus, setControllerStatus] = useState<any>(null);
+  const [forcePool, setForcePool] = useState<boolean>(false);
 
   useEffect(() => {
     if (open) {
@@ -45,8 +45,8 @@ export function ControllerActionModal({
       setWaitingQueueResponse(false);
       setCurrentQueueId(null);
       setQueueResponse(null);
-      setControllerRevision(null);
       setControllerStatus(null);
+      setForcePool(false);
     }
   }, [open]);
 
@@ -62,7 +62,6 @@ export function ControllerActionModal({
         setWaitingQueueResponse(false);
 
         if (currentQueue.extra?.type === "GET_CONTROLLER_REFERENCE") {
-          setControllerRevision(currentQueue.response.revision);
           setControllerStatus(currentQueue.response.status);
         }
       }
@@ -87,10 +86,45 @@ export function ControllerActionModal({
     {
       title: "Informações",
       content: (
-        <p>
-          O primeiro passo é verificar o status atual e os processos conectados
-          neste controller.
-        </p>
+        <>
+          <p>
+            O primeiro passo é verificar o status atual e os processos
+            conectados neste controller.
+          </p>
+          <Switch
+            onChange={(value) => setForcePool(value)}
+            checked={forcePool}
+          />{" "}
+          <span style={{ marginLeft: "5px" }}>
+            Este é um pool de conexão para o BD de produção da NoHarm?
+          </span>
+          {forcePool && (
+            <>
+              <h4>Para habilitar:</h4>
+              <p>
+                Utilize o botão abaixo para forçar a habilitação do controller.
+                Os processos relacionados terão que ser habilitados manualmente.
+              </p>
+              <Popconfirm
+                title="Forçar Habilitação"
+                description="Utilizar apenas para o pool de conexão com a NoHarm"
+                okText="Sim"
+                cancelText="Não"
+                onConfirm={() => setState("ENABLED", 99)}
+                zIndex={9999}
+              >
+                <Button danger>Forçar habilitação</Button>
+              </Popconfirm>
+
+              <h4>Para desabilitar:</h4>
+              <p>
+                Siga os passos, mas lembre-se que após desabilitar os processos,
+                o nifi remoto deixará de responder. Espere alguns minutos e
+                depois avance para desabilitar o controller.
+              </p>
+            </>
+          )}
+        </>
       ),
     },
     {
@@ -162,7 +196,15 @@ export function ControllerActionModal({
           ) : (
             <>
               {waitingQueueResponse ? (
-                <LoadBox message="Atualizado estado dos processos..." />
+                <>
+                  <LoadBox
+                    message={
+                      forcePool
+                        ? "Atualizando o estado dos processos. Aguarde alguns minutos e avance manualmente."
+                        : "Atualizado estado dos processos..."
+                    }
+                  />
+                </>
               ) : (
                 <>
                   <h3>Processos parados com sucesso!</h3>
@@ -210,7 +252,13 @@ export function ControllerActionModal({
           ) : (
             <>
               {waitingQueueResponse ? (
-                <LoadBox message="Desabilitando o Controller..." />
+                <LoadBox
+                  message={
+                    forcePool
+                      ? "Desabilitando o controller. Feche a popup manualmente."
+                      : "Desabilitando o Controller..."
+                  }
+                />
               ) : (
                 <>
                   <Result
@@ -300,7 +348,7 @@ export function ControllerActionModal({
           onClick={() => {
             setState("DISABLED", 3);
           }}
-          disabled={waitingQueueResponse}
+          disabled={waitingQueueResponse && !forcePool}
           icon={<ArrowRightOutlined />}
         >
           Desabilitar Controller e Avançar
@@ -384,14 +432,7 @@ export function ControllerActionModal({
   };
 
   const setState = (state: "ENABLED" | "DISABLED", goToStep: number) => {
-    if (!controllerRevision) {
-      notification.error({
-        message: "Erro ao obter a revisão do controller.",
-      });
-      return;
-    }
     const payload = {
-      revision: controllerRevision,
       disconnectedNodeAcknowledged: false,
       state: state,
       uiOnly: true,
@@ -408,6 +449,11 @@ export function ControllerActionModal({
             message: "Solicitação enviada. Aguarde a resposta.",
             placement: "bottom",
           });
+
+          if (goToStep === 99) {
+            onCancel();
+            return;
+          }
 
           setCurrentQueueId(response.payload.data.data.id);
           setCurrentStep(goToStep);

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import { Steps, Result, Spin } from "antd";
+import { Steps, Result, Spin, Switch } from "antd";
 
 import { useAppSelector, useAppDispatch } from "src/store";
 import DefaultModal from "components/Modal";
@@ -36,17 +36,17 @@ export function ControllerEditModal({
   const [waitingQueueResponse, setWaitingQueueResponse] =
     useState<boolean>(false);
 
-  const [controllerRevision, setControllerRevision] = useState<any>(null);
   const [controllerStatus, setControllerStatus] = useState<any>(null);
   const [controllerData, setControllerData] = useState<any>(null);
+  const [forcePool, setForcePool] = useState<boolean>(false);
 
   useEffect(() => {
     if (open) {
       setCurrentStep(0);
       setWaitingQueueResponse(false);
       setCurrentQueueId(null);
-      setControllerRevision(null);
       setControllerStatus(null);
+      setForcePool(false);
     }
   }, [open]);
 
@@ -61,7 +61,6 @@ export function ControllerEditModal({
         setWaitingQueueResponse(false);
 
         if (currentQueue.extra?.type === "GET_CONTROLLER_REFERENCE") {
-          setControllerRevision(currentQueue.response.revision);
           setControllerStatus(currentQueue.response.status);
           setControllerData(currentQueue.response);
         }
@@ -116,7 +115,6 @@ export function ControllerEditModal({
           id: data?.instanceIdentifier,
           properties: properties,
         },
-        revision: controllerRevision,
       },
     };
 
@@ -138,14 +136,37 @@ export function ControllerEditModal({
     });
   };
 
+  const toggleForcePool = (checked: boolean) => {
+    setForcePool(checked);
+
+    if (checked) {
+      console.log("controllerdata", data);
+
+      setControllerData({ component: data });
+      setControllerStatus({ runStatus: "unknown" });
+    } else {
+      setControllerData(null);
+      setControllerStatus(null);
+    }
+  };
+
   const steps = [
     {
       title: "Informações",
       content: (
-        <p>
-          O primeiro passo é verificar o status atual e as propriedades
-          atualizadas do controller.
-        </p>
+        <>
+          <p>
+            O primeiro passo é verificar o status atual e as propriedades
+            atualizadas do controller.
+          </p>
+          <Switch
+            onChange={(value) => toggleForcePool(value)}
+            checked={forcePool}
+          />{" "}
+          <span style={{ marginLeft: "5px" }}>
+            Este é um pool de conexão para o BD de produção da NoHarm?
+          </span>
+        </>
       ),
     },
     {
@@ -159,6 +180,7 @@ export function ControllerEditModal({
               controllerData={controllerData}
               saveControllerData={saveControllerData}
               controllerStatus={controllerStatus}
+              forcePool={forcePool}
             />
           )}
         </>
@@ -170,7 +192,13 @@ export function ControllerEditModal({
         <>
           <>
             {waitingQueueResponse ? (
-              <LoadBox message="Aguardando resposta..." />
+              <LoadBox
+                message={
+                  forcePool
+                    ? "Aguarde alguns minutos, feche a janela e execute o processo parado no grupo do Nifi remoto"
+                    : "Aguardando resposta..."
+                }
+              />
             ) : (
               <>
                 <Result
@@ -187,11 +215,19 @@ export function ControllerEditModal({
 
   const footer = () => {
     if (currentStep === 0) {
+      const start = () => {
+        if (forcePool) {
+          setCurrentStep(1);
+        } else {
+          getReferences();
+        }
+      };
+
       return (
         <Button
           type="primary"
           onClick={() => {
-            getReferences();
+            start();
           }}
           disabled={waitingQueueResponse}
           icon={<ArrowRightOutlined />}

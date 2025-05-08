@@ -1,8 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Skeleton, Row, Col, Space } from "antd";
-import { FileTextOutlined, ExperimentOutlined } from "@ant-design/icons";
+import {
+  FileTextOutlined,
+  ExperimentOutlined,
+  PrinterOutlined,
+} from "@ant-design/icons";
+import { useReactToPrint } from "react-to-print";
 
 import Empty from "components/Empty";
 import notification from "components/notification";
@@ -24,6 +29,7 @@ import {
 } from "./RegulationSlice";
 import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
 import { formatDateTime } from "utils/date";
+import { RegulationPrint } from "./RegulationPrint/RegulationPrint";
 
 import { PageHeader } from "styles/PageHeader.style";
 
@@ -31,9 +37,14 @@ export default function Regulation() {
   const dispatch = useDispatch();
   const status = useSelector((state) => state.regulation.regulation.status);
   const solicitation = useSelector((state) => state.regulation.regulation.data);
+  const printRef = useRef(null);
 
   const params = useParams();
   const id = params?.id;
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+  });
 
   useEffect(() => {
     dispatch(fetchRegulation({ id })).then((response) => {
@@ -93,6 +104,10 @@ export default function Regulation() {
           >
             Exames
           </Button>
+
+          <Button onClick={() => handlePrint()} icon={<PrinterOutlined />}>
+            Imprimir
+          </Button>
         </div>
       </PageHeader>
 
@@ -114,6 +129,9 @@ export default function Regulation() {
       <RegulationAction />
       <RegulationClinicalNotesModal />
       <ExamsModal />
+      <div ref={printRef} className="show-print">
+        <RegulationPrint />
+      </div>
     </>
   );
 }

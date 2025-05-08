@@ -92,6 +92,10 @@
   display: none;
 }
 
+.show-print {
+  display: none;
+}
+
 @media print {
   html,
   body {
@@ -115,5 +119,9 @@
   .page-break {
     display: block;
     break-after: page;
+  }
+
+  .show-print {
+    display: block;
   }
 }
