@@ -730,7 +730,19 @@
     "outcomeResponsible": "RESPONSAVEL DESFECHO",
     "checkedAt": "DATA CHECAGEM",
     "originCreatedAt": "DATA CRIACAO ORIGEM",
-    "tags": "MARCADORES"
+    "tags": "MARCADORES",
+    "ramDetection": "RAM DETECÇÃO",
+    "ramInternalNotificationCode": "RAM COD INTERNO NOTIFICACAO",
+    "ramAnvisaCode": "RAM CODIGO ANVISA",
+    "ramBrand": "RAM MARCA",
+    "ramBatch": "RAM LOTE",
+    "ramExpiration": "RAM VALIDADE",
+    "ramSymptoms": "RAM SINTOMAS",
+    "ramSuspended": "RAM SUSPENSO",
+    "ramDescribedInLeaflet": "RAM DESCRITO EM BULA",
+    "ramSeverity": "RAM GRAVIDADE",
+    "ramSeverityDetail": "RAM IMPACTO",
+    "ramCausality": "RAM CAUSALIDADE"
   },
 
   "reportcsvCulture": {
