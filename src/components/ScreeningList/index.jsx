@@ -27,6 +27,7 @@ import BackTop from "components/BackTop";
 import { Input } from "components/Inputs";
 import InitialPage from "features/preferences/InitialPage/InitialPage";
 import Dropdown from "components/Dropdown";
+import DefaultModal from "components/Modal";
 import {
   setSelectedRows,
   setSelectedRowsActive,
@@ -34,6 +35,7 @@ import {
   setMultipleCheckList,
 } from "features/prescription/PrescriptionSlice";
 import MultipleCheck from "features/prescription/MultipleCheck/MultipleCheck";
+import { OpenPrescriptionModal } from "./components/OpenPrescriptionModal";
 
 import { toDataSource } from "utils";
 
@@ -231,27 +233,60 @@ export default function ScreeningList({
       }
 
       case "openPrescription": {
-        let showWarning = false;
+        const openList = [];
 
         list.forEach((item) => {
           if (selectedRows.indexOf(item.idPrescription) !== -1) {
-            const wind = window.open(
-              `/prescricao/${item.idPrescription}`,
-              "_blank"
-            );
+            openList.push(item.idPrescription);
+          }
+        });
+
+        const openPrescriptionList = (pList) => {
+          let showWarning = false;
+          pList.forEach((idPrescription) => {
+            const wind = window.open(`/prescricao/${idPrescription}`, "_blank");
 
             if (!wind) {
               showWarning = true;
             }
-          }
-        });
-
-        if (showWarning) {
-          notification.warning({
-            message:
-              "Desbloqueie as popups do seu navegador para abrir mais de uma prescrição ao mesmo tempo",
-            duration: 0,
           });
+
+          if (showWarning) {
+            notification.warning({
+              message:
+                "Desbloqueie as popups do seu navegador para abrir mais de uma prescrição ao mesmo tempo",
+              duration: 0,
+            });
+          }
+        };
+
+        const chunkSize = 20;
+        if (openList.length > chunkSize) {
+          const chunks = [];
+          for (let i = 0; i < openList.length; i += chunkSize) {
+            chunks.push(openList.slice(i, i + chunkSize));
+          }
+          const modal = DefaultModal.info({
+            title: "Abrir Prescrições",
+            content: null,
+            icon: null,
+            width: 450,
+            okText: "Fechar",
+            okButtonProps: { type: "default" },
+            wrapClassName: "default-modal",
+            maskClosable: true,
+          });
+
+          modal.update({
+            content: (
+              <OpenPrescriptionModal
+                chunks={chunks}
+                openPrescriptionList={openPrescriptionList}
+              />
+            ),
+          });
+        } else {
+          openPrescriptionList(openList);
         }
 
         break;
