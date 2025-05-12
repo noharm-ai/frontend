@@ -369,7 +369,8 @@ export default function PrioritizationCard({
     window.open(
       prioritizationType === "conciliation"
         ? `/conciliacao/${prescription.slug}`
-        : `/prescricao/${prescription.slug}`
+        : `/prescricao/${prescription.slug}`,
+      "_blank"
     );
   };
 
