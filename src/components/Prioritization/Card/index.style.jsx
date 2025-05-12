@@ -19,8 +19,9 @@ const getAlertColor = (type) => {
   }
 };
 
-export const Card = styled.div`
+export const Card = styled.a`
   position: relative;
+  display: block;
   background: #fff;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
