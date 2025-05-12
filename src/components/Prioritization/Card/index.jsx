@@ -365,23 +365,22 @@ export default function PrioritizationCard({
   activeTab,
   setActiveTab,
 }) {
-  const open = () => {
-    window.open(
-      prioritizationType === "conciliation"
-        ? `/conciliacao/${prescription.slug}`
-        : `/prescricao/${prescription.slug}`
-    );
-  };
+  const href =
+    prioritizationType === "conciliation"
+      ? `/conciliacao/${prescription.slug}`
+      : `/prescricao/${prescription.slug}`;
 
   const tabClick = (tab, event) => {
     setActiveTab(tab);
     event.stopPropagation();
+    event.preventDefault();
   };
 
   return (
     <Card
       $alert={prescription.dischargeReason ? "" : prescription.class}
-      onClick={(e) => open(e)}
+      href={href}
+      target="_blank"
     >
       <div className="card-header">
         <div

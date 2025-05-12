@@ -726,7 +726,19 @@
     "outcomeResponsible": "OUTCOME RESPONSIBLE",
     "checkedAt": "CHECK DATE",
     "originCreatedAt": "ORIGIN CREATION DATE",
-    "tags": "TAGS"
+    "tags": "TAGS",
+    "ramDetection": "RAM DETECTION",
+    "ramInternalNotificationCode": "RAM INTERNAL NOTIFICATION CODE",
+    "ramAnvisaCode": "RAM ANVISA CODE",
+    "ramBrand": "RAM BRAND",
+    "ramBatch": "RAM BATCH",
+    "ramExpiration": "RAM EXPIRATION",
+    "ramSymptoms": "RAM SYMPTOMS",
+    "ramSuspended": "RAM SUSPENDED",
+    "ramDescribedInLeaflet": "RAM DESCRIBED IN LEAFLET",
+    "ramSeverity": "RAM SEVERITY",
+    "ramSeverityDetail": "RAM IMPACT",
+    "ramCausality": "RAM CAUSALITY"
   },
 
   "reportcsvCulture": {

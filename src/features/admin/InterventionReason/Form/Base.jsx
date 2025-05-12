@@ -214,6 +214,27 @@ function BaseForm() {
         )}
       </div>
 
+      <div className={`form-row ${errors.ram && touched.ram ? "error" : ""}`}>
+        <div className="form-label">
+          <label>RAM (Reação Adversa a Medicamentos):</label>
+        </div>
+        <div className="form-input">
+          <Switch
+            id="ram"
+            name="ram"
+            checked={values.ram}
+            onChange={(value) => setFieldValue("ram", value)}
+            onBlur={handleBlur}
+            status={errors.ram && touched.ram ? "error" : null}
+            checkedChildren={t("labels.yes")}
+            unCheckedChildren={t("labels.no")}
+          />
+        </div>
+        {errors.ram && touched.ram && (
+          <div className="form-error">{errors.ram}</div>
+        )}
+      </div>
+
       <div
         className={`form-row ${errors.active && touched.active ? "error" : ""}`}
       >
