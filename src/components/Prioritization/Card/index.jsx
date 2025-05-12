@@ -373,6 +373,7 @@ export default function PrioritizationCard({
   const tabClick = (tab, event) => {
     setActiveTab(tab);
     event.stopPropagation();
+    event.preventDefault();
   };
 
   return (
