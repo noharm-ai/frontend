@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   UserOutlined,
-  DownloadOutlined,
   DownOutlined,
   CustomerServiceOutlined,
   LogoutOutlined,
@@ -25,7 +24,6 @@ import { setSupportOpen } from "features/support/SupportSlice";
 import SupportForm from "features/support/SupportForm/SupportForm";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
-import api from "services/api";
 
 import Box from "./Box";
 import Menu from "./Menu";
@@ -64,30 +62,6 @@ const Me = ({
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const [refreshPage, setRefreshPage] = useState(false);
-
-  useEffect(() => {
-    const checkVersion = () => {
-      api.getVersion().then((response) => {
-        if (response.data.status === "success") {
-          const localVersion = import.meta.env.VITE_APP_VERSION;
-          const version = response.data.data;
-
-          if (localVersion < version) {
-            setRefreshPage(true);
-          }
-        }
-      });
-    };
-
-    const intervalId = setInterval(() => {
-      checkVersion();
-    }, 60000 * 30);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
 
   const showAlert = location.pathname.indexOf("priorizacao") !== -1;
 
@@ -180,18 +154,6 @@ const Me = ({
             notification={notification}
             setNotification={setNotification}
           />
-        )}
-        {refreshPage && (
-          <Tooltip title="Existe uma nova versão da NoHarm. Clique aqui para atualizar. Se a mensagem persistir, limpe o cache do navegador e acesse a NoHarm novamente.">
-            <Alert
-              style={{ marginLeft: "10px", cursor: "pointer" }}
-              message="Atualizar a NoHarm"
-              type="info"
-              showIcon
-              icon={<DownloadOutlined />}
-              onClick={() => window.location.reload(true)}
-            />
-          </Tooltip>
         )}
       </div>
 
