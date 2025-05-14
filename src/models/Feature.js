@@ -25,6 +25,7 @@ export default class Feature {
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
   static DISABLE_CPOE = "DISABLE_CPOE";
+  static STAGING_ACCESS = "STAGING_ACCESS";
 
   static getFeatures(t) {
     return [
