@@ -13,8 +13,12 @@ const initialState = {
   },
   order: [
     {
-      field: "date",
+      field: "date_truncate",
       direction: "asc",
+    },
+    {
+      field: "risk",
+      direction: "desc",
     },
   ],
   currentPage: 1,

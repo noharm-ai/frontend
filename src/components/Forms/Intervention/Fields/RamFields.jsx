@@ -1,5 +1,6 @@
 import React from "react";
 import { CalculatorOutlined } from "@ant-design/icons";
+import { Popover, Flex } from "antd";
 
 import { Input, Select } from "components/Inputs";
 import Switch from "components/Switch";
@@ -11,7 +12,6 @@ import DefaultModal from "components/Modal";
 import { NaranjoCalculator } from "src/components/NaranjoCalculator";
 
 import { Box, InternalBox } from "../../Form.style";
-import { Flex } from "antd";
 
 export function RamFields({ setFieldValue, layout, values }) {
   const {
@@ -227,9 +227,38 @@ export function RamFields({ setFieldValue, layout, values }) {
 
           <Box>
             <Col xs={layout.label}>
-              <Heading as="label" $size="14px">
-                Gravidade:
-              </Heading>
+              <Popover
+                content={
+                  <div style={{ maxWidth: "300px", margin: "auto" }}>
+                    <p>
+                      <strong>Leve:</strong> Não requer tratamentos específicos
+                      ou antídotos e não é necessária a suspensão do fármaco.
+                    </p>
+
+                    <p>
+                      <strong>Moderada:</strong> Exige modificação da
+                      terapêutica medicamentosa, apesar de não ser necessária a
+                      suspensão da droga agressora. Pode prolongar a
+                      hospitalização e exigir tratamento específico.
+                    </p>
+
+                    <p>
+                      <strong>Grave:</strong> Detalhar no campo <i>Impacto</i>.
+                      Potencialmente fatal, requer a interrupção da
+                      administração do medicamento e tratamento específico da
+                      reação adversa, requer hospitalização ou prolonga a
+                      estadia de pacientes já internados.
+                    </p>
+                  </div>
+                }
+                title="Gravidade"
+              >
+                <Heading as="label" $size="14px">
+                  <span style={{ borderBottom: "2px dotted #999" }}>
+                    Gravidade:
+                  </span>
+                </Heading>
+              </Popover>
             </Col>
             <Col xs={layout.input}>
               <Select

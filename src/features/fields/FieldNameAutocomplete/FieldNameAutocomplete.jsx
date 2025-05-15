@@ -11,6 +11,8 @@ import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 import { formatCpf } from "utils/number";
 import { formatDate } from "utils/date";
+import { FeatureService } from "services/FeatureService";
+import Feature from "models/Feature";
 
 export default function FieldNameAutocomplete({
   value,
@@ -89,6 +91,9 @@ export default function FieldNameAutocomplete({
             ) : null}
           </Select.Option>
         ))}
+        {FeatureService.has(Feature.STAGING_ACCESS) && (
+          <Select.Option value={999}>Paciente Teste</Select.Option>
+        )}
       </Select>
       <Spin spinning={loading} />
     </Flex>

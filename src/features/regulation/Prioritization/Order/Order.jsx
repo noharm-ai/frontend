@@ -19,9 +19,14 @@ import { OrderContainer } from "./Order.style";
 
 const ORDER_OPTIONS = [
   {
-    label: "Data de solicitação",
+    label: "Data/Hora de solicitação",
     key: "date",
     type: "number",
+  },
+  {
+    label: "Data de solicitação",
+    key: "date_truncate",
+    type: "date",
   },
   {
     label: "Risco",

@@ -55,6 +55,8 @@ export default function Screening({
 
   // show message if has error
   useEffect(() => {
+    if (!isMounted.current) return;
+
     if (!isEmpty(error)) {
       notification.error({
         message: t("error.title"),
@@ -243,10 +245,12 @@ export default function Screening({
       }
     };
 
+    if (!isMounted.current) return;
+
     window.addEventListener("keydown", handleArrowNav);
     return () => {
-      window.removeEventListener("keydown", handleArrowNav);
       isMounted.current = false;
+      window.removeEventListener("keydown", handleArrowNav);
     };
   }, []);
 
@@ -278,6 +282,8 @@ export default function Screening({
 
   // fetch data
   useEffect(() => {
+    if (!isMounted.current) return;
+
     fetchScreeningById(id);
   }, [id, fetchScreeningById]);
 
