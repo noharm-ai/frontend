@@ -241,7 +241,7 @@ export default function Filters({
 
       {
         key: "ROUTE",
-        label: "VIA",
+        label: "Via",
         icon: getIcon(prescriptionDrugOrder === "ROUTE"),
       },
     ];
