@@ -163,7 +163,7 @@ const sortPrescriptionDrugs = (items, drugOrder) => {
   }
 
   if (drugOrder === "CUSTOM") {
-    const filteredItems = items.filter((i) => !i.emptyRow && !i.whiteList);
+    const filteredItems = items.filter((i) => !i.emptyRow);
 
     // Split items into two groups: with and without orderNumber
     const withOrder = filteredItems.filter((i) => i.orderNumber !== null);
@@ -180,7 +180,7 @@ const sortPrescriptionDrugs = (items, drugOrder) => {
       return comparison;
     });
 
-    return sortedWithOrder.concat(sortedWithoutOrder).concat(whitelistItems);
+    return sortedWithOrder.concat(sortedWithoutOrder);
   }
 
   if (drugOrder === "ROUTE") {
