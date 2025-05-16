@@ -10,6 +10,7 @@ const initialState = {
   prescription: {
     listType: "default",
     listOrder: "asc",
+    drugOrder: "DRUG_NAME",
   },
   app: {
     initialPage: "/priorizacao/pacientes/cards",
@@ -48,6 +49,9 @@ const preferencesSlice = createSlice({
     setPrescriptionListOrder(state, action) {
       state.prescription.listOrder = action.payload;
     },
+    setPrescriptionDrugOrder(state, action) {
+      state.prescription.drugOrder = action.payload;
+    },
     setInitialPage(state, action) {
       state.app.initialPage = action.payload;
     },
@@ -68,6 +72,7 @@ export const {
   setSavedPreferences,
   setPrescriptionListType,
   setPrescriptionListOrder,
+  setPrescriptionDrugOrder,
   setInitialPage,
 } = preferencesSlice.actions;
 

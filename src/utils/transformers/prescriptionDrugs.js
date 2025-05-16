@@ -1,11 +1,11 @@
 import { isEmpty } from "lodash";
 import { parseISO, differenceInMinutes } from "date-fns";
 
-export const groupComponents = (list, infusion) => {
+export const groupComponents = (list, infusion, drugOrder) => {
   if (!list || list.length < 1) return list;
 
   let items = [];
-  const cpoelist = sortPrescriptionDrugs([...list]);
+  const cpoelist = sortPrescriptionDrugs([...list], drugOrder);
   const cpoeGroups = {};
   const order = new Set();
 
@@ -140,14 +140,114 @@ export const getWhitelistedChildren = (list) => {
   });
 };
 
-const sortPrescriptionDrugs = (items) => {
+const sortPrescriptionDrugs = (items, drugOrder) => {
   const whitelistItems = items
     .filter((i) => i.whiteList)
     .sort((a, b) => `${a.drug}`.localeCompare(`${b.drug}`));
 
+  const sortByName = (a, b) => `${a.drug}`.localeCompare(`${b.drug}`);
+
+  if (drugOrder === "DOSE") {
+    return items
+      .filter((i) => !i.emptyRow && !i.whiteList)
+      .sort((a, b) => {
+        // First sort by dose
+        const doseComparison = a.dose - b.dose;
+        // If doses are equal, sort by drug name
+        if (doseComparison === 0) {
+          return sortByName(a, b);
+        }
+        return doseComparison;
+      })
+      .concat(whitelistItems);
+  }
+
+  if (drugOrder === "CUSTOM") {
+    const filteredItems = items.filter((i) => !i.emptyRow && !i.whiteList);
+
+    // Split items into two groups: with and without orderNumber
+    const withOrder = filteredItems.filter((i) => i.orderNumber !== null);
+    const withoutOrder = filteredItems.filter((i) => i.orderNumber === null);
+
+    // Sort without orderNumber by drug name, with orderNumber by orderNumber
+    const sortedWithoutOrder = withoutOrder.sort(sortByName);
+    const sortedWithOrder = withOrder.sort((a, b) => {
+      const comparison = a.orderNumber - b.orderNumber;
+      // If orderNumbers are equal, sort by drug name
+      if (comparison === 0) {
+        return sortByName(a, b);
+      }
+      return comparison;
+    });
+
+    return sortedWithOrder.concat(sortedWithoutOrder).concat(whitelistItems);
+  }
+
+  if (drugOrder === "ROUTE") {
+    return items
+      .filter((i) => !i.emptyRow && !i.whiteList)
+      .sort((a, b) => {
+        // First sort by route
+        const comparison = `${a.route}`.localeCompare(`${b.route}`);
+        // If doses are equal, sort by drug name
+        if (comparison === 0) {
+          return sortByName(a, b);
+        }
+        return comparison;
+      })
+      .concat(whitelistItems);
+  }
+
+  if (drugOrder === "SCORE") {
+    return items
+      .filter((i) => !i.emptyRow && !i.whiteList)
+      .sort((a, b) => {
+        // First sort by score
+        const comparison = `${b.score}`.localeCompare(`${a.score}`);
+        // If doses are equal, sort by drug name
+        if (comparison === 0) {
+          return sortByName(a, b);
+        }
+        return comparison;
+      })
+      .concat(whitelistItems);
+  }
+
+  if (drugOrder === "PERIOD") {
+    return items
+      .filter((i) => !i.emptyRow && !i.whiteList)
+      .sort((a, b) => {
+        // First sort by period
+        const comparison = b.totalPeriod - a.totalPeriod;
+        // If doses are equal, sort by drug name
+        if (comparison === 0) {
+          return sortByName(a, b);
+        }
+        return comparison;
+      })
+      .concat(whitelistItems);
+  }
+
+  if (drugOrder === "ATTRIBUTE") {
+    return items
+      .filter((i) => !i.emptyRow && !i.whiteList)
+      .sort((a, b) => {
+        // First sort by priority attributes (am, av, controlled)
+        if (a.am && !b.am) return -1;
+        if (!a.am && b.am) return 1;
+        if (a.av && !b.av) return -1;
+        if (!a.av && b.av) return 1;
+        if (a.c && !b.c) return -1;
+        if (!a.c && b.c) return 1;
+        // If no priority attributes or they're equal, sort by name
+        return sortByName(a, b);
+      })
+      .concat(whitelistItems);
+  }
+
   return items
     .filter((i) => !i.emptyRow && !i.whiteList)
-    .sort((a, b) => `${a.drug}`.localeCompare(`${b.drug}`))
+    .sort(sortByName)
     .concat(whitelistItems);
 };
 

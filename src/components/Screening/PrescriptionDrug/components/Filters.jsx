@@ -12,6 +12,8 @@ import {
   DiffOutlined,
   PlusOutlined,
   CopyOutlined,
+  SortAscendingOutlined,
+  CheckSquareOutlined,
 } from "@ant-design/icons";
 import { Affix, Popconfirm } from "antd";
 
@@ -29,6 +31,7 @@ import {
 import {
   setPrescriptionListType,
   setPrescriptionListOrder,
+  setPrescriptionDrugOrder,
   savePreferences,
 } from "features/preferences/PreferencesSlice";
 import { selectPrescriptionDrugThunk } from "store/ducks/prescriptionDrugs/thunk";
@@ -66,6 +69,9 @@ export default function Filters({
   );
   const prescriptionListOrder = useSelector(
     (state) => state.preferences.prescription.listOrder
+  );
+  const prescriptionDrugOrder = useSelector(
+    (state) => state.preferences.prescription.drugOrder
   );
   const prescriptionHasDiff = useSelector(
     (state) => state.prescriptions.single.data.prescriptionCompare.hasDiff
@@ -194,6 +200,55 @@ export default function Filters({
     return {
       items,
       onClick: handleActionClick,
+    };
+  };
+
+  const sortOptions = () => {
+    const iconStyle = { fontSize: "16px" };
+    const getIcon = (active) =>
+      active ? (
+        <CheckSquareOutlined style={iconStyle} />
+      ) : (
+        <BorderOutlined style={iconStyle} />
+      );
+
+    const items = [
+      {
+        key: "ATTRIBUTE",
+        label: "AM, AV, C, outros",
+        icon: getIcon(prescriptionDrugOrder === "ATTRIBUTE"),
+      },
+      {
+        key: "DRUG_NAME",
+        label: "Nome do medicamento",
+        icon: getIcon(prescriptionDrugOrder === "DRUG_NAME"),
+      },
+      {
+        key: "PERIOD",
+        label: "Período",
+        icon: getIcon(prescriptionDrugOrder === "PERIOD"),
+      },
+      {
+        key: "CUSTOM",
+        label: "Pré-definida (infusão)",
+        icon: getIcon(prescriptionDrugOrder === "CUSTOM"),
+      },
+      {
+        key: "SCORE",
+        label: "Scores",
+        icon: getIcon(prescriptionDrugOrder === "SCORE"),
+      },
+
+      {
+        key: "ROUTE",
+        label: "VIA",
+        icon: getIcon(prescriptionDrugOrder === "ROUTE"),
+      },
+    ];
+
+    return {
+      items,
+      onClick: ({ key }) => dispatch(setPrescriptionDrugOrder(key)),
     };
   };
 
@@ -417,6 +472,19 @@ export default function Filters({
               />
             </Tooltip>
           )}
+
+          <Tooltip title="Ordenar lista de medicamentos por:">
+            <span>
+              <Dropdown menu={sortOptions()} trigger={["click"]}>
+                <Button
+                  shape="circle"
+                  type="primary"
+                  icon={<SortAscendingOutlined />}
+                  style={{ marginLeft: "10px" }}
+                />
+              </Dropdown>
+            </span>
+          </Tooltip>
 
           {showPrescriptionOrder && (
             <Tooltip
