@@ -110,6 +110,17 @@ const hasParent = (list, groupSolution) => {
   return obj != null;
 };
 
+const hasDiffParent = (list, idPrescriptionDrug, groupSolution) => {
+  const obj = list.find(
+    (i) =>
+      `${i.grp_solution}` === `${groupSolution}` &&
+      !i.whiteList &&
+      i.idPrescriptionDrug !== idPrescriptionDrug
+  );
+
+  return obj != null;
+};
+
 export const filterWhitelistedChildren = (list) => {
   if (list && list.length === 1) return list;
 
@@ -141,15 +152,26 @@ export const getWhitelistedChildren = (list) => {
 };
 
 const sortPrescriptionDrugs = (items, drugOrder) => {
+  const demotedClasses = ["K1B1", "K1B2", "K1B3", "K1B4"];
   const whitelistItems = items
-    .filter((i) => i.whiteList)
+    .filter(
+      (i) =>
+        i.whiteList ||
+        (demotedClasses.indexOf(i.idSubstanceClass) !== -1 &&
+          hasDiffParent(items, i.idPrescriptionDrug, i.grp_solution))
+    )
     .sort((a, b) => `${a.drug}`.localeCompare(`${b.drug}`));
 
+  const filterValidItems = (i) =>
+    !i.emptyRow &&
+    !i.whiteList &&
+    (demotedClasses.indexOf(i.idSubstanceClass) === -1 ||
+      !hasDiffParent(items, i.idPrescriptionDrug, i.grp_solution));
   const sortByName = (a, b) => `${a.drug}`.localeCompare(`${b.drug}`);
 
   if (drugOrder === "DOSE") {
     return items
-      .filter((i) => !i.emptyRow && !i.whiteList)
+      .filter(filterValidItems)
       .sort((a, b) => {
         // First sort by dose
         const doseComparison = a.dose - b.dose;
@@ -185,7 +207,7 @@ const sortPrescriptionDrugs = (items, drugOrder) => {
 
   if (drugOrder === "ROUTE") {
     return items
-      .filter((i) => !i.emptyRow && !i.whiteList)
+      .filter(filterValidItems)
       .sort((a, b) => {
         // First sort by route
         const comparison = `${a.route}`.localeCompare(`${b.route}`);
@@ -200,7 +222,7 @@ const sortPrescriptionDrugs = (items, drugOrder) => {
 
   if (drugOrder === "SCORE") {
     return items
-      .filter((i) => !i.emptyRow && !i.whiteList)
+      .filter(filterValidItems)
       .sort((a, b) => {
         // First sort by score
         const comparison = `${b.score}`.localeCompare(`${a.score}`);
@@ -215,7 +237,7 @@ const sortPrescriptionDrugs = (items, drugOrder) => {
 
   if (drugOrder === "PERIOD") {
     return items
-      .filter((i) => !i.emptyRow && !i.whiteList)
+      .filter(filterValidItems)
       .sort((a, b) => {
         // First sort by period
         const comparison = b.totalPeriod - a.totalPeriod;
@@ -230,7 +252,7 @@ const sortPrescriptionDrugs = (items, drugOrder) => {
 
   if (drugOrder === "ATTRIBUTE") {
     return items
-      .filter((i) => !i.emptyRow && !i.whiteList)
+      .filter(filterValidItems)
       .sort((a, b) => {
         // First sort by priority attributes (am, av, controlled)
         if (a.am && !b.am) return -1;
@@ -245,10 +267,7 @@ const sortPrescriptionDrugs = (items, drugOrder) => {
       .concat(whitelistItems);
   }
 
-  return items
-    .filter((i) => !i.emptyRow && !i.whiteList)
-    .sort(sortByName)
-    .concat(whitelistItems);
+  return items.filter(filterValidItems).sort(sortByName).concat(whitelistItems);
 };
 
 const hasAlertLevel = (alerts, level) => {
