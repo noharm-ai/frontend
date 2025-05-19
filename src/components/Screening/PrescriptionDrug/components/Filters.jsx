@@ -248,7 +248,10 @@ export default function Filters({
 
     return {
       items,
-      onClick: ({ key }) => dispatch(setPrescriptionDrugOrder(key)),
+      onClick: ({ key }) => {
+        dispatch(setPrescriptionDrugOrder(key));
+        dispatch(savePreferences());
+      },
     };
   };
 
