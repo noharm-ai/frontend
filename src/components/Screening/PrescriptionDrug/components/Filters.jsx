@@ -230,7 +230,7 @@ export default function Filters({
       },
       {
         key: "CUSTOM",
-        label: "Pré-definida (infusão)",
+        label: "Pré-definida",
         icon: getIcon(prescriptionDrugOrder === "CUSTOM"),
       },
       {
