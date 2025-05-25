@@ -160,6 +160,9 @@ export default function PrescriptionDrugList({
   const prescriptionListOrder = useSelector(
     (state) => state.preferences.prescription.listOrder
   );
+  const prescriptionDrugOrder = useSelector(
+    (state) => state.preferences.prescription.drugOrder
+  );
   const filters = useSelector((state) => state.prescriptionv2.filters);
   const { t } = useTranslation();
 
@@ -260,7 +263,8 @@ export default function PrescriptionDrugList({
         ds={{
           value: groupComponents(
             filterPrescriptionDrugs(ds.value, headers, filters),
-            infusion
+            infusion,
+            prescriptionDrugOrder
           ),
         }}
         listType={listType}

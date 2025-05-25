@@ -56,7 +56,7 @@ export const getAlerts = (stats, t) => [
     label: t("alerts.time"),
     icon: () => <HourglassOutlined />,
     value: stats.maxTime,
-    filters: { typeList: ["time"] },
+    filters: { typeList: ["maxTime"] },
   },
   {
     label: t("alerts.elderly"),

@@ -32,6 +32,9 @@ function Table({
   const prescriptionListType = useSelector(
     (state) => state.preferences.prescription.listType
   );
+  const prescriptionDrugOrder = useSelector(
+    (state) => state.preferences.prescription.drugOrder
+  );
   const prescriptionPerspective = useSelector(
     (state) => state.prescriptionv2.perspective
   );
@@ -112,6 +115,7 @@ function Table({
     selectedRowsActive,
     selectAllRows,
     isAllSelected: isAllSelected(),
+    prescriptionDrugOrder: prescriptionDrugOrder,
   };
 
   const getColumns = () => {

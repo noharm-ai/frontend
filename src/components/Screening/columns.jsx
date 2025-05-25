@@ -786,6 +786,10 @@ const drug = (bag, addkey, title) => ({
   align: "left",
   width: bag.condensed ? "35%" : window.innerWidth < 768 ? "300px" : "35%",
   render: (record) => {
+    if (record.total || record.emptyRow) {
+      return "";
+    }
+
     if (bag.concilia) {
       return (
         <>
@@ -833,7 +837,14 @@ const drug = (bag, addkey, title) => ({
             rel="noopener noreferrer"
             className="table-link"
           >
-            {record.drug}
+            {bag.prescriptionDrugOrder === "CUSTOM" ? (
+              <>
+                {record.orderNumber !== null ? `${record.orderNumber} - ` : ""}
+                {record.drug}
+              </>
+            ) : (
+              <>{record.drug}</>
+            )}
           </TableLink>
         </Popover>
         <DrugTags drug={record} t={bag.t} />

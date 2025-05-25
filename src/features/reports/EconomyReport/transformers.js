@@ -220,7 +220,9 @@ const getReasonsSummary = (datasource) => {
     totals.all = totals.all.plus(i.processed.economyValue);
     totals[field] = totals[field].plus(i.processed.economyValue);
 
-    const reason = i.interventionReasonArray.join("; ");
+    const reason = i.interventionReasonArray
+      ? i.interventionReasonArray.join("; ")
+      : "";
 
     if (summary[reason]) {
       summary[reason] = {
