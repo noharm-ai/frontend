@@ -26,20 +26,24 @@ const {
 
 export const memoryFetchThunk =
   (storeId, type) => async (dispatch, getState) => {
-    dispatch(memoryFetchStart(storeId));
+    return new Promise(async (resolve, reject) => {
+      dispatch(memoryFetchStart(storeId));
 
-    const { access_token } = getState().auth.identify;
+      const { access_token } = getState().auth.identify;
 
-    const { data, error } = await api
-      .getMemory(access_token, type)
-      .catch(errorHandler);
+      const { data, error } = await api
+        .getMemory(access_token, type)
+        .catch(errorHandler);
 
-    if (!isEmpty(error)) {
-      dispatch(memoryFetchError(storeId, error));
-      return;
-    }
+      if (!isEmpty(error)) {
+        dispatch(memoryFetchError(storeId, error));
+        reject(error);
+        return;
+      }
 
-    dispatch(memoryFetchSuccess(storeId, data.data));
+      dispatch(memoryFetchSuccess(storeId, data.data));
+      resolve(data);
+    });
   };
 
 export const memoryFetchReasonTextThunk =
