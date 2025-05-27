@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { Empty, Spin } from "antd";
 
 import { Select } from "components/Inputs";
 import { getTags } from "features/lists/ListsSlice";
@@ -13,7 +14,7 @@ export function FieldTag({ value, onChange, tagType, ...props }) {
   const options = useSelector((state) => state.lists.getTags.list);
   const status = useSelector((state) => state.lists.getTags.status);
 
-  useEffect(() => {
+  const fetchTags = () => {
     if (tagType && options.length === 0) {
       dispatch(getTags({ tagType, active: true })).then((response) => {
         if (response.error) {
@@ -24,7 +25,7 @@ export function FieldTag({ value, onChange, tagType, ...props }) {
         }
       });
     }
-  }, [dispatch, t, tagType, options.length]);
+  };
 
   return (
     <Select
@@ -38,6 +39,8 @@ export function FieldTag({ value, onChange, tagType, ...props }) {
       mode="multiple"
       loading={status === "loading"}
       placeholder="Selecione os marcadores"
+      onClick={fetchTags}
+      notFoundContent={status === "loading" ? <Spin size="small" /> : <Empty />}
       {...props}
     >
       {options.map((option) => (

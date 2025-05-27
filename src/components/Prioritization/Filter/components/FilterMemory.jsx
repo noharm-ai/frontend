@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
-import { FilterOutlined } from "@ant-design/icons";
+import { FilterOutlined, LoadingOutlined } from "@ant-design/icons";
 
 import Dropdown from "components/Dropdown";
 import Button from "components/Button";
@@ -27,15 +27,9 @@ export default function FilterMemory({
 }) {
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
   const [configModalOpen, setConfigModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    fetchMemory(
-      FILTER_PRIVATE_STORE_ID,
-      `${FILTER_PRIVATE_MEMORY_TYPE}_${account.userId}`
-    );
-    fetchMemory(FILTER_PUBLIC_STORE_ID, FILTER_PUBLIC_MEMORY_TYPE);
-  }, [account.userId, fetchMemory]);
 
   const filterActive = (item) =>
     item.active || !Object.prototype.hasOwnProperty.call(item, "active");
@@ -143,6 +137,23 @@ export default function FilterMemory({
     };
   };
 
+  const loadFiltersFromMemory = () => {
+    if (loaded) {
+      return;
+    }
+
+    setLoading(true);
+
+    fetchMemory(
+      FILTER_PRIVATE_STORE_ID,
+      `${FILTER_PRIVATE_MEMORY_TYPE}_${account.userId}`
+    );
+    fetchMemory(FILTER_PUBLIC_STORE_ID, FILTER_PUBLIC_MEMORY_TYPE).then(() => {
+      setLoading(false);
+      setLoaded(true);
+    });
+  };
+
   const filterMenu = () => {
     const items = [
       {
@@ -199,8 +210,9 @@ export default function FilterMemory({
         <Button
           className="gtm-btn-filter"
           shape="circle"
-          icon={<FilterOutlined />}
+          icon={loading ? <LoadingOutlined /> : <FilterOutlined />}
           style={{ marginTop: "11px", marginLeft: "5px" }}
+          onClick={() => loadFiltersFromMemory()}
         />
       </Dropdown>
       <SaveFilterModal
