@@ -1,7 +1,7 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Row, Col, Card } from "antd";
+import { Row, Col, Card, Spin } from "antd";
 import { isEmpty } from "lodash";
 import { debounce } from "lodash";
 
@@ -20,6 +20,7 @@ import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomple
 import FieldSubstanceClassAutocomplete from "features/fields/FieldSubstanceClassAutocomplete/FieldSubstanceClassAutocomplete";
 import { FieldProtocol } from "features/fields/FieldProtocol/FieldProtocol";
 import { FieldTag } from "features/fields/FieldTag/FieldTag";
+import { getSegmentDepartments } from "features/lists/ListsSlice";
 import { getUniqBy } from "utils/report";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import { TagTypeEnum } from "models/TagTypeEnum";
@@ -37,7 +38,10 @@ export default function FilterFields({
   drugs,
   segments,
   searchDrugs,
+  open,
 }) {
+  //eslint-disable-next-line
+  const dispatch = useDispatch();
   //eslint disabled because of incorrect error msg
   //eslint-disable-next-line
   const { t } = useTranslation();
@@ -49,6 +53,13 @@ export default function FilterFields({
   const departmentsStatus = useSelector(
     (state) => state.lists.getSegmentDepartments.status
   );
+
+  //eslint-disable-next-line
+  useEffect(() => {
+    if (open && isEmpty(departments)) {
+      dispatch(getSegmentDepartments());
+    }
+  }, [dispatch, open, departments]);
 
   const loadFrequencies = () => {
     if (isEmpty(frequencies.list)) {
@@ -174,30 +185,32 @@ export default function FilterFields({
                 <label>{t("screeningList.labelDepartment")}:</label>
               </div>
               <div className="form-input">
-                <SelectCustom
-                  id="departments"
-                  mode="multiple"
-                  optionFilterProp="children"
-                  placeholder={t("screeningList.labelDepartmentPlaceholder")}
-                  loading={departmentsStatus === "loading"}
-                  value={filter.idDepartment}
-                  onChange={onDepartmentChange}
-                  autoClearSearchValue={false}
-                  className={filter.idDepartment?.length ? "warning" : null}
-                  allowClear
-                  maxTagCount="responsive"
-                >
-                  {filterDepartments(filter.idSegment, departments).map(
-                    ({ idDepartment, idSegment, label }) => (
-                      <Select.Option
-                        key={`${idSegment}-${idDepartment}`}
-                        value={idDepartment}
-                      >
-                        {label}
-                      </Select.Option>
-                    )
-                  )}
-                </SelectCustom>
+                <Spin spinning={departmentsStatus === "loading"}>
+                  <SelectCustom
+                    id="departments"
+                    mode="multiple"
+                    optionFilterProp="children"
+                    placeholder={t("screeningList.labelDepartmentPlaceholder")}
+                    loading={departmentsStatus === "loading"}
+                    value={filter.idDepartment}
+                    onChange={onDepartmentChange}
+                    autoClearSearchValue={false}
+                    className={filter.idDepartment?.length ? "warning" : null}
+                    allowClear
+                    maxTagCount="responsive"
+                  >
+                    {filterDepartments(filter.idSegment, departments).map(
+                      ({ idDepartment, idSegment, label }) => (
+                        <Select.Option
+                          key={`${idSegment}-${idDepartment}`}
+                          value={idDepartment}
+                        >
+                          {label}
+                        </Select.Option>
+                      )
+                    )}
+                  </SelectCustom>
+                </Spin>
                 {(prioritizationType === "patient" ||
                   prioritizationType === "cards") && (
                   <div className="form-input">

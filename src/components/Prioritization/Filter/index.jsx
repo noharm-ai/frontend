@@ -18,7 +18,6 @@ import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import Badge from "components/Badge";
 import FilterMemory from "./components/FilterMemory";
-import { getSegmentDepartments } from "features/lists/ListsSlice";
 import {
   setSelectedRows,
   setSelectedRowsActive,
@@ -167,10 +166,6 @@ export default function Filter({
       date,
     ]
   );
-
-  useEffect(() => {
-    dispatch(getSegmentDepartments());
-  }, []); //eslint-disable-line
 
   // update list status
   const updateStatus = useCallback(() => {
@@ -382,6 +377,7 @@ export default function Filter({
             drugs={drugs}
             segments={segments}
             searchDrugs={searchDrugs}
+            open={open}
           />
         </div>
       </SearchBox>
