@@ -594,8 +594,6 @@
     "unauthorizedUser": "Unauthorized user",
     "nameExists": "There is already a user with this name!",
     "emailExists": "There is already a user with this email!",
-    "invalidRegister": "Invalid register",
-    "invalidRecord": "Invalid register",
     "empty": "No records found"
   },
 
