@@ -38,7 +38,9 @@ export default function MemoryText({
     : memoryType;
 
   useEffect(() => {
-    fetch(storeId, memoryTypeInternal);
+    fetch(storeId, memoryTypeInternal).catch((error) => {
+      console.error("Error fetching memory:", error);
+    });
   }, [fetch, storeId, memoryTypeInternal]);
 
   const saveCurrent = (name, newText) => {
