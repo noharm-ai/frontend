@@ -6,6 +6,9 @@ import DOMPurify from "dompurify";
 import { formatDate } from "utils/date";
 import { CardTable } from "components/Table";
 import Button from "components/Button";
+import { stripHtmlPreserveSpaces } from "utils/stripHtml";
+
+import { CultureResultContainer } from "../CultureReport.style";
 
 export default function CultureList() {
   const [expandedRows, setExpandedRows] = useState([]);
@@ -85,8 +88,15 @@ export default function CultureList() {
     {
       title: "Resultado Prévio",
       ellipsis: true,
-      render: (_, record) =>
-        record.previousResult ? record.previousResult.split("<br>")[0] : "-",
+      render: (_, record) => {
+        return (
+          <>
+            {record.previousResult
+              ? stripHtmlPreserveSpaces(record.previousResult.split("<br>")[0])
+              : "-"}
+          </>
+        );
+      },
     },
     {
       title: "Microorganismo",
@@ -109,8 +119,6 @@ export default function CultureList() {
           </div>
         )}
         expandable={{
-          rowExpandable: (record) =>
-            record.cultures.length > 0 || record.predictions.length > 0,
           expandedRowRender: (record) => <ExpandedRow record={record} />,
           onExpand: (expanded, record) => handleRowExpand(record),
           expandedRowKeys: expandedRows,
@@ -141,11 +149,11 @@ const ExpandedRow = ({ record }) => {
       label: "Resultado Prévio",
       span: 3,
       children: (
-        <div
+        <CultureResultContainer
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(record.previousResult),
           }}
-        ></div>
+        ></CultureResultContainer>
       ),
     });
   }
