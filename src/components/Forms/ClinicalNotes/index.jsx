@@ -64,7 +64,9 @@ export default function ClinicalNotes({
       fetchMemory(
         SIGNATURE_STORE_ID,
         `${SIGNATURE_MEMORY_TYPE}_${account.userId}`
-      );
+      ).catch((err) => {
+        console.error("Error fetching signature memory:", err);
+      });
     }
   }, [account.userId, fetchMemory, open]);
 
