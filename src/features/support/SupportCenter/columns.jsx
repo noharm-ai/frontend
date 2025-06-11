@@ -116,7 +116,19 @@ const columns = (t) => {
       title: "Título",
       align: "left",
       render: (entry, record) => {
-        return record.name;
+        const noReturnTagId = 23;
+        return (
+          <>
+            {record.name}{" "}
+            {record.tag_ids && record.tag_ids.indexOf(noReturnTagId) !== -1 && (
+              <>
+                <Tag color="error" style={{ marginLeft: "5px" }}>
+                  Aguardando resposta
+                </Tag>
+              </>
+            )}
+          </>
+        );
       },
     },
     {

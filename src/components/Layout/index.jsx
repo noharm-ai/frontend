@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -10,7 +10,7 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
-import { Alert, Drawer, Dropdown } from "antd";
+import { Alert, Drawer, Dropdown, List } from "antd";
 import { useTranslation } from "react-i18next";
 
 import appInfo from "utils/appInfo";
@@ -19,11 +19,13 @@ import Button from "components/Button";
 import toast from "components/notification";
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
+import DefaultModal from "components/Modal";
 import IntegrationStatusTag from "components/IntegrationStatusTag";
 import { setSupportOpen } from "features/support/SupportSlice";
 import SupportForm from "features/support/SupportForm/SupportForm";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
+import { setPendingTickets } from "features/support/SupportSlice";
 
 import Box from "./Box";
 import Menu from "./Menu";
@@ -237,10 +239,70 @@ export default function Layout({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const supportDrawerOpen = useSelector((state) => state.support.open);
+  const supportPendingTickets = useSelector(
+    (state) => state.support.pendingTickets.list
+  );
   const [sider, setSider] = useState({
     collapsed: app.sider.collapsed,
     collapsedWidth: 80,
   });
+
+  useEffect(() => {
+    const openTicket = (record) => {
+      const link = `${import.meta.env.VITE_APP_ODOO_LINK}my/ticket/${
+        record.id
+      }?access_token=${record.access_token}`;
+      window.open(link, "_blank");
+    };
+
+    if (supportPendingTickets.length > 0) {
+      DefaultModal.warning({
+        title: "Chamados Aguardando Resposta",
+        content: (
+          <>
+            <p>
+              Você possui {supportPendingTickets.length} chamado(s) que aguardam
+              sua resposta para que possamos dar continuidade.
+            </p>
+
+            <p>
+              Entendemos que pode ser uma interrupção, mas sua colaboração é
+              essencial para resolvermos a sua solicitação o mais rápido
+              possível.
+            </p>
+
+            <List
+              loading={false}
+              itemLayout="horizontal"
+              dataSource={supportPendingTickets}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Tooltip title="Abrir chamado">
+                      <Button type="primary" onClick={() => openTicket(item)}>
+                        Abrir
+                      </Button>
+                    </Tooltip>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={<CustomerServiceOutlined />}
+                    title={item.name}
+                    description="Aguardando resposta"
+                  />
+                </List.Item>
+              )}
+            />
+          </>
+        ),
+        width: 500,
+        okText: "Fechar",
+        okButtonProps: { type: "default" },
+        wrapClassName: "default-modal",
+        onOk: () => dispatch(setPendingTickets([])),
+      });
+    }
+  }, [supportPendingTickets, dispatch]);
 
   const onBreakpoint = (breaked) => {
     setSider((prevState) => ({
