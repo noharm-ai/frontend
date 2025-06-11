@@ -736,7 +736,9 @@
     "ramDescribedInLeaflet": "RAM DESCRIBED IN LEAFLET",
     "ramSeverity": "RAM SEVERITY",
     "ramSeverityDetail": "RAM IMPACT",
-    "ramCausality": "RAM CAUSALITY"
+    "ramCausality": "RAM CAUSALITY",
+    "admissionDate": "ADMISSION DATE",
+    "dischargeDate": "DISCHARGE DATE"
   },
 
   "reportcsvCulture": {
