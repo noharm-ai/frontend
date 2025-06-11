@@ -11,6 +11,7 @@ import Tooltip from "components/Tooltip";
 import { formatDateTime } from "utils/date";
 import RegulationRiskTag from "components/RegulationRiskTag";
 import RegulationStageTag from "components/RegulationStageTag";
+import { RegulationScoreTag } from "src/components/RegulationScoreTag";
 
 const columns = (t, bag) => {
   return [
@@ -58,6 +59,13 @@ const columns = (t, bag) => {
       align: "center",
       render: (entry, record) => {
         return <RegulationRiskTag risk={record.risk} />;
+      },
+    },
+    {
+      title: "Escore Global",
+      align: "center",
+      render: (entry, record) => {
+        return <RegulationScoreTag score={record.globalScore} />;
       },
     },
     {

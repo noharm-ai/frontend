@@ -29,6 +29,11 @@ const ORDER_OPTIONS = [
     type: "date",
   },
   {
+    label: "Escore Global",
+    key: "global_score",
+    type: "number",
+  },
+  {
     label: "Risco",
     key: "risk",
     type: "number",
@@ -142,24 +147,22 @@ export default function Order({ limit }) {
                   />
                 </Tooltip>
               )}
+              {position + 1 === orderList.length && (
+                <Tooltip title="Adicionar">
+                  <Button
+                    shape="circle"
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    size="small"
+                    style={{ width: "24px", marginLeft: "5px" }}
+                    onClick={() => addPrioritization()}
+                  />
+                </Tooltip>
+              )}
             </div>
           </div>
         </div>
       ))}
-      <div className="order-item">
-        <div className="order-item-label">&nbsp;</div>
-        <div className="order-item-value flex">
-          <Tooltip title="Adicionar">
-            <Button
-              shape="circle"
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => addPrioritization()}
-              style={{ marginLeft: "5px" }}
-            />
-          </Tooltip>
-        </div>
-      </div>
     </OrderContainer>
   );
 }
