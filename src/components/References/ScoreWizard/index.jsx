@@ -169,9 +169,11 @@ export default function ScoreWizard({
                 type="error"
                 showIcon
                 action={
-                  <Button danger onClick={() => setHistoryModalVisible(true)}>
-                    Gerar Histórico de Prescrição
-                  </Button>
+                  PermissionService().has(Permission.MAINTAINER) && (
+                    <Button danger onClick={() => setHistoryModalVisible(true)}>
+                      Gerar Histórico de Prescrição
+                    </Button>
+                  )
                 }
               />
             </div>
