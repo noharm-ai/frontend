@@ -12,6 +12,7 @@ import {
   setSavedPreferences,
   reset as resetPreferences,
 } from "features/preferences/PreferencesSlice";
+import { fetchPendingActionTickets } from "src/features/support/SupportSlice";
 
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { segmentsFetchListSuccess } = SegmentCreators;
@@ -144,4 +145,7 @@ const setUser = (userData, keepMeLogged, dispatch) => {
     })
   );
   dispatch(appSetNotification(notify));
+
+  // check for pending tickets
+  dispatch(fetchPendingActionTickets());
 };

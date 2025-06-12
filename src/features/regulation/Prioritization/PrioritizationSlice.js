@@ -20,6 +20,10 @@ const initialState = {
       field: "risk",
       direction: "desc",
     },
+    {
+      field: "global_score",
+      direction: "desc",
+    },
   ],
   currentPage: 1,
   count: 0,

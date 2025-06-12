@@ -664,6 +664,11 @@ api.support.getTickets = () =>
     ...setHeaders(),
   });
 
+api.support.getPendingActionTickets = () =>
+  instance.get(`/support/list-pending`, {
+    ...setHeaders(),
+  });
+
 api.support.createTicket = (params) => {
   const formData = new FormData();
 

@@ -150,6 +150,7 @@ export default function Intervention({
     expendedDose: item.intervention.expendedDose,
     nonce: item.intervention.nonce,
     status: item.intervention.status,
+    period: item.totalPeriod,
     version: "1.0",
     updateResponsible: false,
     transcriptionData: {

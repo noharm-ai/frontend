@@ -3,10 +3,12 @@ import { timingFunctions } from "polished";
 
 export const OrderContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 
   .order-item {
     min-width: 10rem;
-    margin-right: 1rem;
+    margin-right: 0.5rem;
 
     .order-item-label {
       font-weight: 500;

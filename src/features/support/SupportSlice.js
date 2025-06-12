@@ -14,6 +14,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  pendingTickets: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
 };
 
 export const createTicket = createAsyncThunk(
@@ -45,12 +50,28 @@ export const fetchTickets = createAsyncThunk(
   }
 );
 
+export const fetchPendingActionTickets = createAsyncThunk(
+  "support/fetch-pending-action-tickets",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.support.getPendingActionTickets(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const supportSlice = createSlice({
   name: "summary",
   initialState,
   reducers: {
     setSupportOpen(state, action) {
       state.open = action.payload;
+    },
+    setPendingTickets(state, action) {
+      state.pendingTickets.list = action.payload;
     },
     reset() {
       return initialState;
@@ -71,6 +92,17 @@ const supportSlice = createSlice({
         state.tickets.status = "failed";
         state.tickets.error = action.error.message;
       })
+      .addCase(fetchPendingActionTickets.pending, (state, action) => {
+        state.pendingTickets.status = "loading";
+      })
+      .addCase(fetchPendingActionTickets.fulfilled, (state, action) => {
+        state.pendingTickets.status = "succeeded";
+        state.pendingTickets.list = action.payload.data;
+      })
+      .addCase(fetchPendingActionTickets.rejected, (state, action) => {
+        state.pendingTickets.status = "failed";
+        state.pendingTickets.error = action.error.message;
+      })
       .addCase(createTicket.pending, (state, action) => {
         state.form.status = "loading";
       })
@@ -86,4 +118,5 @@ const supportSlice = createSlice({
 
 export default supportSlice.reducer;
 
-export const { setSupportOpen, reset } = supportSlice.actions;
+export const { setSupportOpen, reset, setPendingTickets } =
+  supportSlice.actions;

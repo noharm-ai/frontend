@@ -224,7 +224,7 @@
     "tabSolutions": "Soluções",
     "tabProcedures": "Procedimentos/Exames",
     "tabInterventions": "Intervenções",
-    "tabDiet": "Dieta",
+    "tabDiet": "Dietas/Recomendações",
     "tabLabResults": "Exames",
     "tabClinicalNotes": "Evoluções",
     "btnAddDrug": "Adicionar medicamento"
@@ -740,7 +740,9 @@
     "ramDescribedInLeaflet": "RAM DESCRITO EM BULA",
     "ramSeverity": "RAM GRAVIDADE",
     "ramSeverityDetail": "RAM IMPACTO",
-    "ramCausality": "RAM CAUSALIDADE"
+    "ramCausality": "RAM CAUSALIDADE",
+    "admissionDate": "DATA INTERNACAO",
+    "dischargeDate": "DATA ALTA"
   },
 
   "reportcsvCulture": {
