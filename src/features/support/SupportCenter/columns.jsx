@@ -66,7 +66,7 @@ const columns = (t) => {
         break;
       case 10:
         config.label = "Em análise";
-        config.color = "purple";
+        config.color = "processing";
         break;
       case 13:
         config.label = "Atribuído";
@@ -87,7 +87,7 @@ const columns = (t) => {
         break;
       case 4:
         config.label = "Encerrado";
-        config.color = "success";
+        config.color = "purple";
         break;
       case 5:
         config.label = "Cancelado";
@@ -120,13 +120,15 @@ const columns = (t) => {
         return (
           <>
             {record.name}{" "}
-            {record.tag_ids && record.tag_ids.indexOf(noReturnTagId) !== -1 && (
-              <>
-                <Tag color="error" style={{ marginLeft: "5px" }}>
-                  Aguardando resposta
-                </Tag>
-              </>
-            )}
+            {record.tag_ids &&
+              record.tag_ids.indexOf(noReturnTagId) !== -1 &&
+              record.stage_id[0] === 3 && (
+                <>
+                  <Tag color="error" style={{ marginLeft: "5px" }}>
+                    Aguardando resposta
+                  </Tag>
+                </>
+              )}
           </>
         );
       },
