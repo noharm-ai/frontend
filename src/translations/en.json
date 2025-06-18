@@ -738,7 +738,8 @@
     "ramSeverityDetail": "RAM IMPACT",
     "ramCausality": "RAM CAUSALITY",
     "admissionDate": "ADMISSION DATE",
-    "dischargeDate": "DISCHARGE DATE"
+    "dischargeDate": "DISCHARGE DATE",
+    "drugPeriod": "PERIOD"
   },
 
   "reportcsvCulture": {
