@@ -263,6 +263,34 @@ const getResponsibleSummary = (datasource) => {
   return summary.sort((a, b) => a.totals.all - b.totals.all);
 };
 
+const getDepartmentSummary = (datasource) => {
+  const departments = getUniqList(datasource, "department");
+
+  const summary = departments.map((d) => {
+    const totals = { all: 0 };
+    STATUSES.forEach((s) => {
+      totals[s] = 0;
+    });
+
+    datasource.forEach((i) => {
+      if (i.department === d) {
+        totals.all += 1;
+
+        STATUSES.forEach((s) => {
+          totals[s] += i.status === s ? 1 : 0;
+        });
+      }
+    });
+
+    return {
+      name: d,
+      totals,
+    };
+  });
+
+  return summary.sort((a, b) => a.totals.all - b.totals.all).slice(0, 20);
+};
+
 const getDrugSummary = (datasource) => {
   const drugs = getUniqList(datasource, "drug").filter((i) => i !== null);
 
@@ -305,6 +333,7 @@ export const getReportData = (datasource, filters) => {
     reasonSummary: getReasonSummary(filteredList),
     responsibleSummary: getResponsibleSummary(filteredList),
     drugSummary: getDrugSummary(filteredList),
+    departmentSummary: getDepartmentSummary(filteredList),
   };
 
   return reportData;

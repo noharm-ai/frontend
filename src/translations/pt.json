@@ -742,7 +742,8 @@
     "ramSeverityDetail": "RAM IMPACTO",
     "ramCausality": "RAM CAUSALIDADE",
     "admissionDate": "DATA INTERNACAO",
-    "dischargeDate": "DATA ALTA"
+    "dischargeDate": "DATA ALTA",
+    "drugPeriod": "PERIODO USO"
   },
 
   "reportcsvCulture": {

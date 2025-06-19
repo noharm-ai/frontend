@@ -21,6 +21,7 @@ import ChartStatus from "./Charts/ChartStatus";
 import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartReasons from "./Charts/ChartReasons";
 import ChartDrugs from "./Charts/ChartDrugs";
+import ChartDepartments from "./Charts/ChartDepartments";
 import HelpModal from "./Help/Help";
 import { setHelpModal } from "./InterventionReportSlice";
 import Tooltip from "components/Tooltip";
@@ -260,6 +261,25 @@ export default function InterventionReport() {
                   </Spin>
                 </Space>
               </Col>
+
+              <Col xs={24} lg={12}>
+                <div className="page-break"></div>
+                <Space direction="vertical" size="large">
+                  <SectionHeader>
+                    <h2>Desfecho por Setor</h2>
+                    <div>Totais por setor. Limitado em 20 setores.</div>
+                  </SectionHeader>
+                  <Spin spinning={isLoading}>
+                    <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                      <ChartDepartments
+                        reportData={reportData}
+                        isLoading={isLoading}
+                      />
+                    </ChartCard>
+                  </Spin>
+                </Space>
+              </Col>
+
               <Col xs={24}>
                 <div className="page-break"></div>
                 <Space direction="vertical" size="large">
