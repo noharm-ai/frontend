@@ -288,7 +288,10 @@ const getDepartmentSummary = (datasource) => {
     };
   });
 
-  return summary.sort((a, b) => a.totals.all - b.totals.all).slice(0, 20);
+  return summary
+    .sort((a, b) => b.totals.all - a.totals.all)
+    .slice(0, 20)
+    .reverse();
 };
 
 const getDrugSummary = (datasource) => {
