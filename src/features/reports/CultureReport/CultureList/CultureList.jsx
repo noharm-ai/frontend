@@ -32,9 +32,7 @@ export default function CultureList() {
     if (expandedRows.length) {
       setExpandedRows([]);
     } else {
-      setExpandedRows(
-        datasource.filter((i) => /^[0-9]*$/g.test(i.key)).map((i) => i.key)
-      );
+      setExpandedRows(datasource.map((i) => i.key));
     }
   };
 
@@ -209,8 +207,14 @@ const ExpandedRow = ({ record }) => {
 };
 
 const DrugTable = ({ record }) => {
+  const cultures = record.cultures.filter((culture) => culture.result !== null);
+
   if (!record.cultures.length) {
     return "Resultado pendente";
+  }
+
+  if (cultures.length === 0) {
+    return "Nenhum perfil de sensibilidade por medicamento encontrado";
   }
 
   const columns = [
@@ -235,7 +239,7 @@ const DrugTable = ({ record }) => {
       bordered
       columns={columns}
       rowKey="drug"
-      dataSource={record.cultures}
+      dataSource={cultures}
       pagination={false}
       size="small"
     />
