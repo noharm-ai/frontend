@@ -219,6 +219,16 @@ export default function Filters({
         icon: getIcon(prescriptionDrugOrder === "ATTRIBUTE"),
       },
       {
+        key: "FREQUENCY",
+        label: "Frequência",
+        icon: getIcon(prescriptionDrugOrder === "FREQUENCY"),
+      },
+      {
+        key: "INTERVAL",
+        label: "Horários",
+        icon: getIcon(prescriptionDrugOrder === "INTERVAL"),
+      },
+      {
         key: "DRUG_NAME",
         label: "Nome do medicamento",
         icon: getIcon(prescriptionDrugOrder === "DRUG_NAME"),
