@@ -44,6 +44,13 @@ const filterList = (ds, filter) => {
       show = show && i.cpoe === filter.cpoe;
     }
 
+    if (
+      filter.returnIntegration !== null &&
+      filter.returnIntegration !== undefined
+    ) {
+      show = show && i.returnIntegration === filter.returnIntegration;
+    }
+
     if (filter.fl.length) {
       const activeFlows = Object.keys(i).map((k) => {
         if (i[k] === true) {
@@ -177,6 +184,21 @@ function IntegrationConfig() {
               <label>CPOE</label>
               <Select
                 onChange={(val) => setFilter({ ...filter, cpoe: val })}
+                allowClear
+                style={{ minWidth: "200px" }}
+                optionFilterProp="children"
+                loading={status === "loading"}
+              >
+                <Select.Option value={true}>Sim</Select.Option>
+                <Select.Option value={false}>Não</Select.Option>
+              </Select>
+            </div>
+            <div className="filter-field">
+              <label>Integração de retorno</label>
+              <Select
+                onChange={(val) =>
+                  setFilter({ ...filter, returnIntegration: val })
+                }
                 allowClear
                 style={{ minWidth: "200px" }}
                 optionFilterProp="children"

@@ -190,13 +190,22 @@ const InterventionAction = ({ intv, isSavingIntervention }) => {
 
 const formatCPOEPeriod = (record) => {
   if (record.period) {
-    return `${
+    const period =
       parseInt(`${record.period}`.replace("D", ""), 10) +
-      (record.periodFixed || 0)
-    }D`;
+      (record.periodFixed || 0);
+
+    if (record.periodMax) {
+      return `${period}D/${record.periodMax}`;
+    }
+
+    return `${period}D`;
   }
 
   if (record.periodFixed) {
+    if (record.periodMax) {
+      return `${record.periodFixed}D/${record.periodMax}`;
+    }
+
     return `${record.periodFixed}D`;
   }
 
@@ -982,8 +991,13 @@ const period = (bag) => ({
       );
     }
 
+    let period = record.period;
+    if (record.periodMax) {
+      period = `${record.period}/${record.periodMax}`;
+    }
+
     if (record.periodDates == null || record.periodDates.length === 0) {
-      return record.period;
+      return period;
     }
 
     return (
@@ -991,7 +1005,7 @@ const period = (bag) => ({
         content={periodDatesList(record.periodDates)}
         title="Período de uso"
       >
-        {record.period}
+        {period}
       </Popover>
     );
   },

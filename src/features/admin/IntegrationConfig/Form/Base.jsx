@@ -472,6 +472,43 @@ function BaseForm() {
       </div>
 
       <div
+        className={`form-row ${
+          errors.returnIntegration && touched.returnIntegration ? "error" : ""
+        }`}
+      >
+        <div className="form-label">
+          <label>Integração de Retorno:</label>
+        </div>
+        <div className="form-input">
+          <Select
+            onChange={(value) => setFieldValue("returnIntegration", value)}
+            value={values.returnIntegration}
+            status={
+              errors.returnIntegration && touched.returnIntegration
+                ? "error"
+                : null
+            }
+            optionFilterProp="children"
+            showSearch
+          >
+            <Select.Option key={0} value={false}>
+              Não
+            </Select.Option>
+            <Select.Option key={1} value={true}>
+              Sim
+            </Select.Option>
+          </Select>
+        </div>
+        <div className="form-info">
+          Quando ativado, a aplicação exigirá a presença do valor fkusuario para
+          checar prescrições e criar novas evoluções.
+        </div>
+        {errors.returnIntegration && touched.returnIntegration && (
+          <div className="form-error">{errors.returnIntegration}</div>
+        )}
+      </div>
+
+      <div
         className={`form-row ${errors.nhCare && touched.nhCare ? "error" : ""}`}
       >
         <div className="form-label">

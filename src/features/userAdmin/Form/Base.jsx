@@ -161,6 +161,10 @@ function BaseForm() {
                     maxLength={250}
                   />
                 </div>
+                <div className="form-info">
+                  ID do usuário no sistema externo. Este campo é utilizado para
+                  integrar com sistemas externos.
+                </div>
                 {errors.external && (
                   <div className="form-error">{errors.external}</div>
                 )}

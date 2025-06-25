@@ -235,6 +235,38 @@ const sortPrescriptionDrugs = (items, drugOrder) => {
       .concat(whitelistItems);
   }
 
+  if (drugOrder === "FREQUENCY") {
+    return items
+      .filter(filterValidItems)
+      .sort((a, b) => {
+        const f1 = a.frequency ? a.frequency.label : "";
+        const f2 = b.frequency ? b.frequency.label : "";
+        // First sort by frequency
+        const comparison = `${f1}`.localeCompare(`${f2}`);
+        // If doses are equal, sort by drug name
+        if (comparison === 0) {
+          return sortByName(a, b);
+        }
+        return comparison;
+      })
+      .concat(whitelistItems);
+  }
+
+  if (drugOrder === "INTERVAL") {
+    return items
+      .filter(filterValidItems)
+      .sort((a, b) => {
+        // First sort by interval
+        const comparison = `${a.interval}`.localeCompare(`${b.interval}`);
+        // If doses are equal, sort by drug name
+        if (comparison === 0) {
+          return sortByName(a, b);
+        }
+        return comparison;
+      })
+      .concat(whitelistItems);
+  }
+
   if (drugOrder === "PERIOD") {
     return items
       .filter(filterValidItems)
