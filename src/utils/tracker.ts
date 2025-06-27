@@ -3,7 +3,7 @@ export const trackFeature = (
   details: any = {}
 ) => {
   track(CustomEvent.FEATURE_ACCESS, {
-    feature: trackedFeature,
+    custom_event: trackedFeature,
     ...details,
   });
 };
@@ -13,7 +13,7 @@ export const trackReport = (
   details: any = {}
 ) => {
   track(CustomEvent.REPORT_ACCESS, {
-    report: trackedReport,
+    custom_event: trackedReport,
     ...details,
   });
 };
