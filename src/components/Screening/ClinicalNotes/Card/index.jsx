@@ -5,6 +5,7 @@ import PrescriptionCard from "components/PrescriptionCard";
 import Button from "components/Button";
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
+import { trackFeature, TrackedFeature } from "src/utils/tracker";
 
 import ClinicalNotesIndicator from "../ClinicalNotesIndicator";
 
@@ -26,6 +27,11 @@ export default function ClinicalNotesCard({
     }
 
     return value;
+  };
+
+  const openModal = () => {
+    setModalVisibility("clinicalNotes", true);
+    trackFeature(TrackedFeature.MODAL_CLINICAL_NOTES);
   };
 
   return (
@@ -60,7 +66,7 @@ export default function ClinicalNotesCard({
           <Button
             type="link"
             className="gtm-btn-notes-all"
-            onClick={() => setModalVisibility("clinicalNotes", true)}
+            onClick={() => openModal()}
           >
             Visualizar
           </Button>

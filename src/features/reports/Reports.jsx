@@ -16,6 +16,7 @@ import { PageCard } from "styles/Utils.style";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import SecurityService from "services/security";
+import { TrackedReport, trackReport } from "src/utils/tracker";
 
 export default function Reports() {
   const dispatch = useDispatch();
@@ -40,6 +41,7 @@ export default function Reports() {
       type: "internal",
       route: "/relatorios/pacientes-dia",
       visible: internalList.indexOf("PATIENT_DAY") !== -1,
+      track: TrackedReport.PATIENT_DAY,
     },
     {
       title: "Prescrições",
@@ -50,6 +52,7 @@ export default function Reports() {
       visible:
         internalList.indexOf("PRESCRIPTION") !== -1 &&
         !SecurityService().hasCpoe(),
+      track: TrackedReport.PRESCRIPTIONS,
     },
     {
       title: "Intervenções",
@@ -58,6 +61,7 @@ export default function Reports() {
       type: "internal",
       route: "/relatorios/intervencoes",
       visible: internalList.indexOf("INTERVENTION") !== -1,
+      track: TrackedReport.INTERVENTIONS,
     },
     {
       title: "Auditoria",
@@ -66,6 +70,7 @@ export default function Reports() {
       type: "internal",
       route: "/relatorios/audit",
       visible: internalList.indexOf("PRESCRIPTION_AUDIT") !== -1,
+      track: TrackedReport.PRESCRIPTION_AUDIT,
     },
     {
       title: "Farmacoeconomia (Beta)",
@@ -74,6 +79,7 @@ export default function Reports() {
       type: "internal",
       route: "/relatorios/economia",
       visible: internalList.indexOf("ECONOMY") !== -1,
+      track: TrackedReport.ECONOMY,
     },
   ];
 
@@ -94,10 +100,20 @@ export default function Reports() {
 
   const showReport = (data) => {
     setCurrentReport(data);
+
+    if (data.title) {
+      trackReport(TrackedReport.CUSTOM, {
+        title: data.title,
+      });
+    }
   };
 
   const showInternalReport = (data) => {
     navigate(data.route);
+
+    if (data.track) {
+      trackReport(data.track);
+    }
   };
 
   return (

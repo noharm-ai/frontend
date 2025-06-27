@@ -13,6 +13,7 @@ import Empty from "components/Empty";
 import Help from "components/Help";
 import { Carousel } from "components/Carousel";
 import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
+import { trackFeature, TrackedFeature } from "src/utils/tracker";
 
 export default function ExamCard({
   exams,
@@ -22,6 +23,11 @@ export default function ExamCard({
 }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
+  const openModal = () => {
+    dispatch(setExamsModalAdmissionNumber(admissionNumber));
+    trackFeature(TrackedFeature.MODAL_EXAMS);
+  };
 
   return (
     <PrescriptionCard className="full-height max-height">
@@ -81,9 +87,7 @@ export default function ExamCard({
             <Button
               type="link"
               className="gtm-btn-exams-all"
-              onClick={() =>
-                dispatch(setExamsModalAdmissionNumber(admissionNumber))
-              }
+              onClick={() => openModal()}
             >
               Ver todos
             </Button>
