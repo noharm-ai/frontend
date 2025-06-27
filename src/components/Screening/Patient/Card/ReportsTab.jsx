@@ -6,6 +6,7 @@ import ViewReport from "components/Reports/ViewReport";
 import DefaultModal from "components/Modal";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
+import { trackReport, TrackedReport } from "src/utils/tracker";
 
 export default function ReportsTab({ prescription }) {
   const [currentReport, setCurrentReport] = useState(null);
@@ -19,6 +20,10 @@ export default function ReportsTab({ prescription }) {
         .replaceAll("#nratendimento#", prescription.admissionNumber)
         .replaceAll("#fkpessoa#", prescription.idPatient),
     });
+
+    trackReport(TrackedReport.CUSTOM, {
+      title: report.description,
+    });
   };
 
   const internalReports = [
@@ -26,6 +31,7 @@ export default function ReportsTab({ prescription }) {
       title: "Culturas",
       description: "Relatório de Culturas",
       type: "CULTURE",
+      track: TrackedReport.CULTURES,
       visible:
         admissionReportsInternal &&
         admissionReportsInternal.indexOf("CULTURE") !== -1,
@@ -34,6 +40,7 @@ export default function ReportsTab({ prescription }) {
       title: "Histórico de Antimicrobianos",
       description: "Histórico de uso de antimicrobianos",
       type: "ANTIMICROBIAL_HISTORY",
+      track: TrackedReport.ANTIMICROBIAL_HISTORY,
       visible:
         admissionReportsInternal &&
         admissionReportsInternal.indexOf("ANTIMICROBIAL_HISTORY") !== -1,
@@ -43,6 +50,7 @@ export default function ReportsTab({ prescription }) {
       description:
         "Histórico de eventos relacionados à prescrição (Ex.: checagens e revisões).",
       type: "PRESCRIPTION_HISTORY",
+      track: TrackedReport.PRESCRIPTION_EVENT_HISTORY,
       visible: true,
     },
     {
@@ -53,6 +61,16 @@ export default function ReportsTab({ prescription }) {
     },
   ];
 
+  const open = (type, track) => {
+    setCurrentReport({
+      title: null,
+      type,
+    });
+    if (track) {
+      trackReport(track);
+    }
+  };
+
   return (
     <div className="patient-data">
       <div className="patient-data-item full">
@@ -62,14 +80,7 @@ export default function ReportsTab({ prescription }) {
               .filter((r) => r.visible)
               .map((r) => (
                 <Tooltip title={r.description} key={r.description}>
-                  <li
-                    onClick={() =>
-                      setCurrentReport({
-                        title: null,
-                        type: r.type,
-                      })
-                    }
-                  >
+                  <li onClick={() => open(r.type, r.track)}>
                     <PieChartOutlined style={{ fontSize: "18px" }} /> {r.title}
                   </li>
                 </Tooltip>
