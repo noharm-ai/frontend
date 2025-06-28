@@ -31,6 +31,10 @@ import { filterInterventionByPrescriptionDrug } from "utils/transformers/interve
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 import { PrescriptionSchedule } from "./Table/PrescriptionSchedule";
+import {
+  TrackedPrescriptionAction,
+  trackPrescriptionAction,
+} from "src/utils/tracker";
 
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
@@ -557,16 +561,16 @@ export const expandedRowRender = (bag) => (record) => {
             label={bag.t("tableHeader.clinicalInfo") + ":"}
             span={3}
           >
-            <Link
-              to={record.drugInfoLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="gtm-lnk-micromedex"
+            <Button
+              onClick={() => {
+                window.open(record.drugInfoLink);
+                trackPrescriptionAction(TrackedPrescriptionAction.SHOW_LEAFLET);
+              }}
               type="primary"
               ghost
             >
               {bag.t("actions.consult") + " "} Bulário Cognys
-            </Link>
+            </Button>
           </Descriptions.Item>
         )}
         {(record.cpoe || bag.condensed) &&
@@ -628,9 +632,12 @@ export const expandedRowRender = (bag) => (record) => {
           >
             {isEmpty(record.periodDates) && (
               <Link
-                onClick={() =>
-                  bag.fetchPeriod(record.idPrescriptionDrug, record.source)
-                }
+                onClick={() => {
+                  bag.fetchPeriod(record.idPrescriptionDrug, record.source);
+                  trackPrescriptionAction(
+                    TrackedPrescriptionAction.SHOW_PERIOD
+                  );
+                }}
                 loading={bag.periodObject.isFetching}
                 type="default"
                 className="nda gtm-bt-period"

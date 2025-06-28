@@ -23,7 +23,10 @@ import { IconElderly } from "components/Icon/svgs/IconElderly";
 import { IconAllergy } from "components/Icon/svgs/IconAllergy";
 import { IconTube } from "components/Icon/svgs/IconTube";
 import { IconDuplicity } from "components/Icon/svgs/IconDuplicity";
-import { trackFeature, TrackedFeature } from "src/utils/tracker";
+import {
+  trackPrescriptionAction,
+  TrackedPrescriptionAction,
+} from "src/utils/tracker";
 
 import { AlertContainer } from "./index.style";
 
@@ -100,7 +103,9 @@ export default function AlertCard({ stats, prescription }) {
     dispatch(setInitialFilters(filters));
     dispatch(setReportData(prescription.alertsList));
     setModal(true);
-    trackFeature(TrackedFeature.MODAL_ALERTS, { filters: filters });
+    trackPrescriptionAction(TrackedPrescriptionAction.SHOW_ALERTS_MODAL, {
+      filters: filters,
+    });
   };
 
   return (

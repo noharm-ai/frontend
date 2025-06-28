@@ -24,6 +24,10 @@ import ScreeningActions from "containers/Screening/ScreeningActions";
 import EvaluationWarning from "features/prescription/EvaluationWarning/EvaluationWarning";
 import FormIntervention from "containers/Forms/Intervention";
 import Permission from "models/Permission";
+import {
+  trackPrescriptionAction,
+  TrackedPrescriptionAction,
+} from "src/utils/tracker";
 
 import { ScreeningTabs, DrugFormStatusBox } from "./index.style";
 
@@ -153,6 +157,10 @@ export default function Screening({
         const expandBtn = activeRow?.querySelector(
           ".ant-table-row-expand-icon"
         );
+
+        trackPrescriptionAction(TrackedPrescriptionAction.KEYBOARD_NAVIGATION, {
+          title: keyCode,
+        });
 
         switch (keyCode) {
           case actionKey.up: {
@@ -400,6 +408,26 @@ export default function Screening({
     ),
   });
 
+  const onChangeTab = (activeKey) => {
+    switch (activeKey) {
+      case "intervention":
+        trackPrescriptionAction(TrackedPrescriptionAction.TAB_INTERVENTIONS);
+        break;
+      case "diet":
+        trackPrescriptionAction(TrackedPrescriptionAction.TAB_DIET);
+        break;
+      case "procedures":
+        trackPrescriptionAction(TrackedPrescriptionAction.TAB_PROCEDURES);
+        break;
+      case "solutions":
+        trackPrescriptionAction(TrackedPrescriptionAction.TAB_SOLUTIONS);
+        break;
+      case "drugs":
+        trackPrescriptionAction(TrackedPrescriptionAction.TAB_DRUGS);
+        break;
+    }
+  };
+
   return (
     <>
       <EvaluationWarning />
@@ -421,6 +449,7 @@ export default function Screening({
           type="card"
           className={`breaktab-${tabCount}`}
           items={tabs}
+          onChange={onChangeTab}
         ></ScreeningTabs>
       </Row>
 
