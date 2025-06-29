@@ -32,10 +32,15 @@ import { getErrorMessageFromException } from "utils/errorHandler";
 import pageTimer from "utils/pageTimer";
 import FeatureService from "services/features";
 import { setCheckSummary } from "features/prescription/PrescriptionSlice";
+import {
+  trackPrescriptionAction,
+  TrackedPrescriptionAction,
+} from "src/utils/tracker";
 
 import { ScreeningHeader } from "components/Screening/index.style";
 
 const close = () => {
+  trackPrescriptionAction(TrackedPrescriptionAction.CLICK_CLOSE);
   window.close();
 };
 
@@ -136,6 +141,10 @@ export default function PageHeader({
   };
 
   const openClinicalNotesModal = () => {
+    trackPrescriptionAction(
+      TrackedPrescriptionAction.CLICK_CLINICAL_NOTES_FORM
+    );
+
     if (hasPrimaryCare) {
       setClinicalNotesFormsVisibility(true);
     } else {
@@ -150,6 +159,8 @@ export default function PageHeader({
   };
 
   const confirmCheckPrescription = (id) => {
+    trackPrescriptionAction(TrackedPrescriptionAction.CLICK_CHECK);
+
     let highRiskAlerts = [];
     if (
       prescription?.content?.alertsList &&
@@ -187,6 +198,7 @@ export default function PageHeader({
   };
 
   const setReviewType = (id, reviewType) => {
+    trackPrescriptionAction(TrackedPrescriptionAction.CLICK_REVIEW);
     setReviewing(true);
 
     reviewPatient(id, reviewType)
@@ -207,6 +219,11 @@ export default function PageHeader({
           description: getErrorMessageFromException(err, t),
         });
       });
+  };
+
+  const openAlertModal = () => {
+    setClinicalAlertVisibility(true);
+    trackPrescriptionAction(TrackedPrescriptionAction.CLICK_ALERT_FORM);
   };
 
   const now = moment();
@@ -449,7 +466,7 @@ export default function PageHeader({
                 <Button
                   type="primary"
                   className="gtm-bt-alert"
-                  onClick={() => setClinicalAlertVisibility(true)}
+                  onClick={() => openAlertModal()}
                   style={{ marginRight: "5px" }}
                   ghost={!prescription.content.alert}
                 >

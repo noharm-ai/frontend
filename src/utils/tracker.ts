@@ -85,4 +85,10 @@ export enum TrackedPrescriptionAction {
   SHOW_PERIOD = "abrir-periodo-uso",
   ADD_DRUG = "adicionar-medicamento",
   COPY_CONCILIATION = "copiar-conciliacao",
+  CLICK_CHECK = "checar",
+  CLICK_REVIEW = "revisar",
+  CLICK_CLINICAL_NOTES_FORM = "abrir-form-evolucao",
+  CLICK_ALERT_FORM = "abrir-form-alerta",
+  CLICK_CLOSE = "fechar-prescricao",
+  CLICK_FLOAT_MENU = "click-menu-flutuante",
 }

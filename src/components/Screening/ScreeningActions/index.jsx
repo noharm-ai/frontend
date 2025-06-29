@@ -19,6 +19,10 @@ import { setChooseConciliationModal } from "features/prescription/PrescriptionSl
 import ChooseConciliation from "features/prescription/ChooseConciliation/ChooseConciliation";
 import ExamsModal from "features/exams/ExamModal/ExamModal";
 import ClinicalNotesModal from "containers/Screening/ClinicalNotes/Modal";
+import {
+  trackPrescriptionAction,
+  TrackedPrescriptionAction,
+} from "src/utils/tracker";
 
 import { ScreeningFloatButtonGroup } from "../index.style";
 
@@ -64,6 +68,9 @@ export default function ScreeningActions({
         icon={<MenuOutlined />}
         tooltip="Menu"
         style={{ bottom: 25 }}
+        onClick={() =>
+          trackPrescriptionAction(TrackedPrescriptionAction.CLICK_FLOAT_MENU)
+        }
       >
         <FloatButton
           icon={<CloseOutlined />}
