@@ -221,17 +221,27 @@ export default function PatientCard({
     });
   };
 
-  const setEditPatientModal = (open) => {
-    setModalVisibility("patientEdit", open);
+  const setModalVisibilityTracked = (modal, open) => {
+    setModalVisibility(modal, open);
     if (open) {
-      trackPrescriptionAction(TrackedPrescriptionAction.EDIT_PATIENT);
+      switch (modal) {
+        case "patientEdit":
+          trackPrescriptionAction(TrackedPrescriptionAction.EDIT_PATIENT);
+          break;
+        case "clinicalNotes":
+          trackPrescriptionAction(
+            TrackedPrescriptionAction.SHOW_CLINICAL_NOTES,
+            { params: open }
+          );
+          break;
+      }
     }
   };
 
   const handleMenuClick = async ({ key, domEvent }) => {
     switch (key) {
       case "edit":
-        setEditPatientModal(true);
+        setModalVisibilityTracked("patientEdit", true);
         break;
       case "update":
         updatePrescriptionData();
@@ -317,7 +327,7 @@ export default function PatientCard({
       children: (
         <PatientTab
           prescription={prescription}
-          setModalVisibility={setEditPatientModal}
+          setModalVisibility={setModalVisibilityTracked}
           setSeeMore={setSeeMore}
         />
       ),
@@ -332,7 +342,7 @@ export default function PatientCard({
       children: (
         <AdmissionTab
           prescription={prescription}
-          setModalVisibility={setEditPatientModal}
+          setModalVisibility={setModalVisibilityTracked}
           setSeeMore={setSeeMore}
         />
       ),
@@ -353,7 +363,7 @@ export default function PatientCard({
       children: (
         <NotesTab
           prescription={prescription}
-          setModalVisibility={setEditPatientModal}
+          setModalVisibility={setModalVisibilityTracked}
           setSeeMore={setSeeMore}
         />
       ),
@@ -374,7 +384,7 @@ export default function PatientCard({
       children: (
         <TagsTab
           prescription={prescription}
-          setModalVisibility={setEditPatientModal}
+          setModalVisibility={setModalVisibilityTracked}
           setSeeMore={setSeeMore}
         />
       ),
