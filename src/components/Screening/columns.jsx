@@ -286,6 +286,26 @@ const Action = ({ prescription, bag }) => {
     btnTitle = t("prescriptionDrugList.addInterventionAgain");
   }
 
+  const openIntervention = () => {
+    onShowModal({
+      ...data,
+      idPrescriptionDrug,
+      uniqueDrugList,
+      admissionNumber,
+    });
+    trackPrescriptionAction(TrackedPrescriptionAction.CLICK_INTERVENTION);
+  };
+
+  const openNotes = () => {
+    data.selectPrescriptionDrug({
+      ...data,
+      idPrescriptionDrug,
+      admissionNumber,
+      updateNotes: true,
+    });
+    trackPrescriptionAction(TrackedPrescriptionAction.CLICK_DRUG_NOTES);
+  };
+
   return (
     <TableTags>
       <Tooltip title={btnTitle} placement="left">
@@ -293,12 +313,7 @@ const Action = ({ prescription, bag }) => {
           type={isIntervened ? "danger " : "primary"}
           className="gtm-bt-interv"
           onClick={() => {
-            onShowModal({
-              ...data,
-              idPrescriptionDrug,
-              uniqueDrugList,
-              admissionNumber,
-            });
+            openIntervention();
           }}
           ghost={!isChecked}
           danger={isChecked}
@@ -348,12 +363,7 @@ const Action = ({ prescription, bag }) => {
             ghost={!hasNotes}
             style={{ background: hasNotes ? "#7ebe9a" : "inherit" }}
             onClick={() => {
-              data.selectPrescriptionDrug({
-                ...data,
-                idPrescriptionDrug,
-                admissionNumber,
-                updateNotes: true,
-              });
+              openNotes();
             }}
             icon={<FormOutlined style={{ fontSize: 16 }} />}
           ></AntButton>
@@ -488,6 +498,9 @@ const DrugTags = ({ drug, t }) => (
 
 export const expandedRowRender = (bag) => (record) => {
   if (record.total && record.infusion) {
+    trackPrescriptionAction(
+      TrackedPrescriptionAction.EXPAND_SOLUTION_CALCULATOR
+    );
     return (
       <NestedTableContainer className={record.source}>
         <SolutionCalculator {...record.infusion} weight={bag.weight} />

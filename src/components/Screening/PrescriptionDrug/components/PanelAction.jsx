@@ -19,6 +19,10 @@ import { sourceToStoreType } from "utils/transformers/prescriptions";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import { setCheckSummary } from "features/prescription/PrescriptionSlice";
 import { PanelActionContainer } from "../PrescriptionDrug.style";
+import {
+  trackPrescriptionAction,
+  TrackedPrescriptionAction,
+} from "src/utils/tracker";
 
 const PanelAction = ({
   id,
@@ -129,14 +133,23 @@ const PanelAction = ({
     switch (key) {
       case "more":
         window.open(`/prescricao/${id}`);
+        trackPrescriptionAction(
+          TrackedPrescriptionAction.CLICK_SHOW_INDIVIDUAL
+        );
         break;
 
       case "check":
         setPrescriptionStatus(id, "s");
+        trackPrescriptionAction(
+          TrackedPrescriptionAction.CLICK_CHECK_INDIVIDUAL
+        );
         break;
 
       case "undo":
         setPrescriptionStatus(id, "0");
+        trackPrescriptionAction(
+          TrackedPrescriptionAction.CLICK_UNCHECK_INDIVIDUAL
+        );
         break;
 
       case "add":
@@ -148,6 +161,7 @@ const PanelAction = ({
           aggId,
           updateDrug: true,
         });
+        trackPrescriptionAction(TrackedPrescriptionAction.ADD_DRUG_INDIVIDUAL);
         break;
 
       case "copy":
@@ -159,6 +173,9 @@ const PanelAction = ({
           aggId,
           copyDrugs: true,
         });
+        trackPrescriptionAction(
+          TrackedPrescriptionAction.CLICK_COPY_DRUGS_INDIVIDUAL
+        );
         break;
 
       default:
