@@ -31,6 +31,10 @@ import { filterInterventionByPrescriptionDrug } from "utils/transformers/interve
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 import { PrescriptionSchedule } from "./Table/PrescriptionSchedule";
+import {
+  TrackedPrescriptionAction,
+  trackPrescriptionAction,
+} from "src/utils/tracker";
 
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
@@ -282,6 +286,26 @@ const Action = ({ prescription, bag }) => {
     btnTitle = t("prescriptionDrugList.addInterventionAgain");
   }
 
+  const openIntervention = () => {
+    onShowModal({
+      ...data,
+      idPrescriptionDrug,
+      uniqueDrugList,
+      admissionNumber,
+    });
+    trackPrescriptionAction(TrackedPrescriptionAction.CLICK_INTERVENTION);
+  };
+
+  const openNotes = () => {
+    data.selectPrescriptionDrug({
+      ...data,
+      idPrescriptionDrug,
+      admissionNumber,
+      updateNotes: true,
+    });
+    trackPrescriptionAction(TrackedPrescriptionAction.CLICK_DRUG_NOTES);
+  };
+
   return (
     <TableTags>
       <Tooltip title={btnTitle} placement="left">
@@ -289,12 +313,7 @@ const Action = ({ prescription, bag }) => {
           type={isIntervened ? "danger " : "primary"}
           className="gtm-bt-interv"
           onClick={() => {
-            onShowModal({
-              ...data,
-              idPrescriptionDrug,
-              uniqueDrugList,
-              admissionNumber,
-            });
+            openIntervention();
           }}
           ghost={!isChecked}
           danger={isChecked}
@@ -344,12 +363,7 @@ const Action = ({ prescription, bag }) => {
             ghost={!hasNotes}
             style={{ background: hasNotes ? "#7ebe9a" : "inherit" }}
             onClick={() => {
-              data.selectPrescriptionDrug({
-                ...data,
-                idPrescriptionDrug,
-                admissionNumber,
-                updateNotes: true,
-              });
+              openNotes();
             }}
             icon={<FormOutlined style={{ fontSize: 16 }} />}
           ></AntButton>
@@ -484,6 +498,9 @@ const DrugTags = ({ drug, t }) => (
 
 export const expandedRowRender = (bag) => (record) => {
   if (record.total && record.infusion) {
+    trackPrescriptionAction(
+      TrackedPrescriptionAction.EXPAND_SOLUTION_CALCULATOR
+    );
     return (
       <NestedTableContainer className={record.source}>
         <SolutionCalculator {...record.infusion} weight={bag.weight} />
@@ -557,16 +574,16 @@ export const expandedRowRender = (bag) => (record) => {
             label={bag.t("tableHeader.clinicalInfo") + ":"}
             span={3}
           >
-            <Link
-              to={record.drugInfoLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="gtm-lnk-micromedex"
+            <Button
+              onClick={() => {
+                window.open(record.drugInfoLink);
+                trackPrescriptionAction(TrackedPrescriptionAction.SHOW_LEAFLET);
+              }}
               type="primary"
               ghost
             >
               {bag.t("actions.consult") + " "} Bulário Cognys
-            </Link>
+            </Button>
           </Descriptions.Item>
         )}
         {(record.cpoe || bag.condensed) &&
@@ -628,9 +645,12 @@ export const expandedRowRender = (bag) => (record) => {
           >
             {isEmpty(record.periodDates) && (
               <Link
-                onClick={() =>
-                  bag.fetchPeriod(record.idPrescriptionDrug, record.source)
-                }
+                onClick={() => {
+                  bag.fetchPeriod(record.idPrescriptionDrug, record.source);
+                  trackPrescriptionAction(
+                    TrackedPrescriptionAction.SHOW_PERIOD
+                  );
+                }}
                 loading={bag.periodObject.isFetching}
                 type="default"
                 className="nda gtm-bt-period"

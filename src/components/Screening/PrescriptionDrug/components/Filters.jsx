@@ -40,6 +40,10 @@ import PrescriptionDiff from "features/prescription/PrescriptionDiff/Prescriptio
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import FeaturesService from "services/features";
 import { getErrorMessage } from "utils/errorHandler";
+import {
+  TrackedPrescriptionAction,
+  trackPrescriptionAction,
+} from "src/utils/tracker";
 
 import { ToolBox } from "../PrescriptionDrug.style";
 
@@ -261,6 +265,10 @@ export default function Filters({
       onClick: ({ key }) => {
         dispatch(setPrescriptionDrugOrder(key));
         dispatch(savePreferences());
+
+        trackPrescriptionAction(TrackedPrescriptionAction.ORDER_DRUGS, {
+          title: key,
+        });
       },
     };
   };
@@ -272,6 +280,10 @@ export default function Filters({
         break;
       case "addIntervention":
         addMultipleIntervention(selectedRows);
+
+        trackPrescriptionAction(
+          TrackedPrescriptionAction.MULTIPLE_INTERVENTION
+        );
         break;
       default:
         console.error(key);
@@ -280,6 +292,8 @@ export default function Filters({
 
   const handleFilterClick = ({ key }) => {
     const index = filters.indexOf(key);
+
+    trackPrescriptionAction(TrackedPrescriptionAction.FILTER, { title: key });
 
     if (index === -1) {
       dispatch(setPrescriptionFilters([...filters, key]));
@@ -291,6 +305,8 @@ export default function Filters({
   };
 
   const togglePrescriptionOrder = () => {
+    trackPrescriptionAction(TrackedPrescriptionAction.ORDER_PRESCRIPTIONS);
+
     dispatch(
       setPrescriptionListOrder(prescriptionListOrder === "asc" ? "desc" : "asc")
     );
@@ -298,6 +314,8 @@ export default function Filters({
   };
 
   const togglePrescriptionListType = () => {
+    trackPrescriptionAction(TrackedPrescriptionAction.CONDENSED_LIST);
+
     dispatch(
       setPrescriptionListType(
         prescriptionListType === "condensed" ? "default" : "condensed"
@@ -307,6 +325,8 @@ export default function Filters({
   };
 
   const togglePrescriptionPerspective = () => {
+    trackPrescriptionAction(TrackedPrescriptionAction.ALERT_PERSPECTIVE);
+
     dispatch(
       setPrescriptionPerspective(
         prescriptionPerspective === "alerts" ? "default" : "alerts"
@@ -315,6 +335,8 @@ export default function Filters({
   };
 
   const addPrescriptionDrug = () => {
+    trackPrescriptionAction(TrackedPrescriptionAction.ADD_DRUG);
+
     dispatch(
       selectPrescriptionDrugThunk({
         idPrescription: prescription.idPrescription,
@@ -329,6 +351,7 @@ export default function Filters({
 
   const executeCopyConciliation = () => {
     setCopyingConciliation(true);
+    trackPrescriptionAction(TrackedPrescriptionAction.COPY_CONCILIATION);
 
     dispatch(
       copyConciliation({ idPrescription: prescription.idPrescription })
@@ -347,6 +370,13 @@ export default function Filters({
         });
       }
     });
+  };
+
+  const toggleMultipleSelection = () => {
+    if (!selectedRowsActive) {
+      dispatch(setSelectedRowsActive(true));
+      trackPrescriptionAction(TrackedPrescriptionAction.MULTIPLE_SELECTION);
+    }
   };
 
   return (
@@ -411,11 +441,7 @@ export default function Filters({
               <Dropdown.Button
                 menu={actionOptions()}
                 type={selectedRowsActive ? "primary" : "default"}
-                onClick={() =>
-                  !selectedRowsActive
-                    ? dispatch(setSelectedRowsActive(true))
-                    : false
-                }
+                onClick={toggleMultipleSelection}
               >
                 {selectedRowsActive
                   ? `${selectedRows.length} selecionados`

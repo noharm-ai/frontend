@@ -13,7 +13,10 @@ import Empty from "components/Empty";
 import Help from "components/Help";
 import { Carousel } from "components/Carousel";
 import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
-import { trackFeature, TrackedFeature } from "src/utils/tracker";
+import {
+  trackPrescriptionAction,
+  TrackedPrescriptionAction,
+} from "src/utils/tracker";
 
 export default function ExamCard({
   exams,
@@ -26,7 +29,7 @@ export default function ExamCard({
 
   const openModal = () => {
     dispatch(setExamsModalAdmissionNumber(admissionNumber));
-    trackFeature(TrackedFeature.MODAL_EXAMS);
+    trackPrescriptionAction(TrackedPrescriptionAction.SHOW_EXAMS);
   };
 
   return (

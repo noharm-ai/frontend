@@ -17,6 +17,10 @@ import columnsTable, {
 } from "../../columns";
 import { rowClassName } from "../PrescriptionDrugList";
 import { getResponsiveTableWidth } from "src/utils/responsive";
+import {
+  trackPrescriptionAction,
+  TrackedPrescriptionAction,
+} from "src/utils/tracker";
 
 function Table({
   hasFilter,
@@ -55,6 +59,7 @@ function Table({
   };
 
   const handleRowExpand = (record) => {
+    trackPrescriptionAction(TrackedPrescriptionAction.EXPAND_ROW);
     setExpandedRows(updateExpandedRows(expandedRows, record.key));
   };
 
@@ -63,6 +68,7 @@ function Table({
       setExpandedRows([]);
     } else {
       if (ds.value) {
+        trackPrescriptionAction(TrackedPrescriptionAction.EXPAND_ALL);
         setExpandedRows(
           ds.value.filter((i) => /^[0-9]*$/g.test(i.key)).map((i) => i.key)
         );

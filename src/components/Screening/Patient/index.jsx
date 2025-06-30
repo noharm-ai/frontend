@@ -22,6 +22,10 @@ import ClinicalNotesCard from "../ClinicalNotes/Card";
 import ScoreCard from "../ScoreCard/ScoreCard";
 import PatientCard from "./Card";
 import { selectSingleClinicalNotes } from "features/prescription/PrescriptionSlice";
+import {
+  trackPrescriptionAction,
+  TrackedPrescriptionAction,
+} from "src/utils/tracker";
 
 export default function Patient({
   fetchScreening,
@@ -62,6 +66,9 @@ export default function Patient({
 
   const toggleSeeMore = () => {
     setSeeMore(!seeMore);
+    trackPrescriptionAction(TrackedPrescriptionAction.SHOW_EXTRA_INFO, {
+      status: !seeMore,
+    });
   };
 
   const sortAllergies = (a, b) => {
@@ -354,7 +361,7 @@ export default function Patient({
       )}
 
       <Col xs={24}>
-        <SeeMore onClick={toggleSeeMore}>
+        <SeeMore>
           <Button
             type="link"
             className="gtm-btn-seemore"

@@ -18,6 +18,10 @@ import SecurityService from "services/security";
 import FeatureService from "services/features";
 import PermissionService from "services/PermissionService";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
+import {
+  trackPrescriptionAction,
+  TrackedPrescriptionAction,
+} from "src/utils/tracker";
 
 import {
   PrescriptionCollapse,
@@ -468,6 +472,10 @@ export default function PrescriptionDrugList({
         `${headers[a.key].date}`.localeCompare(`${headers[b.key].date}`);
     };
 
+    const togglePrescriptionGroup = () => {
+      trackPrescriptionAction(TrackedPrescriptionAction.EXPAND_PRESCRIPTION);
+    };
+
     return dataSource
       .sort(sortDs(prescriptionListOrder))
       .map((ds, index) => (
@@ -477,6 +485,7 @@ export default function PrescriptionDrugList({
               bordered
               defaultActiveKey={headers[ds.key].status === "s" ? [] : ["1"]}
               items={getCollapsePrescriptionItems(ds)}
+              onChange={togglePrescriptionGroup}
             ></PrescriptionCollapse>
           )}
         </div>
@@ -569,6 +578,10 @@ export default function PrescriptionDrugList({
     },
   ];
 
+  const toggleGroup = () => {
+    trackPrescriptionAction(TrackedPrescriptionAction.EXPAND_DATE_GROUP);
+  };
+
   return (
     <>
       <Filters
@@ -583,6 +596,7 @@ export default function PrescriptionDrugList({
           key={g}
           defaultActiveKey={groups[g].checked ? [] : ["1"]}
           items={getCollapseItems(g)}
+          onChange={toggleGroup}
         ></GroupCollapse>
       ))}
     </>

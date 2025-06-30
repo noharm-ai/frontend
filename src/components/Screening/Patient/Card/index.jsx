@@ -35,6 +35,10 @@ import {
 import { getErrorMessage } from "utils/errorHandler";
 import { setChooseConciliationModal } from "features/prescription/PrescriptionSlice";
 import { searchAggPrescriptions } from "features/lists/ListsSlice";
+import {
+  trackPrescriptionAction,
+  TrackedPrescriptionAction,
+} from "src/utils/tracker";
 
 import PatientName from "containers/PatientName";
 
@@ -137,6 +141,8 @@ export default function PatientCard({
   };
 
   const updatePrescriptionData = () => {
+    trackPrescriptionAction(TrackedPrescriptionAction.RECALCULATE_PRESCRIPTION);
+
     notification.info({
       message: "Recalculando prescrição",
     });
@@ -175,6 +181,8 @@ export default function PatientCard({
   };
 
   const openAggPrescription = async () => {
+    trackPrescriptionAction(TrackedPrescriptionAction.OPEN_AGG_PRESCRIPTION);
+
     const aggPrescriptions = await fetchAggPrescriptions(
       prescription.admissionNumber
     );
@@ -189,6 +197,8 @@ export default function PatientCard({
   };
 
   const openPep = (idPrescription) => {
+    trackPrescriptionAction(TrackedPrescriptionAction.OPEN_PEP);
+
     notification.info({
       message: "Abrindo link PEP. Aguarde...",
     });
@@ -211,10 +221,27 @@ export default function PatientCard({
     });
   };
 
+  const setModalVisibilityTracked = (modal, open) => {
+    setModalVisibility(modal, open);
+    if (open) {
+      switch (modal) {
+        case "patientEdit":
+          trackPrescriptionAction(TrackedPrescriptionAction.EDIT_PATIENT);
+          break;
+        case "clinicalNotes":
+          trackPrescriptionAction(
+            TrackedPrescriptionAction.SHOW_CLINICAL_NOTES,
+            { params: open }
+          );
+          break;
+      }
+    }
+  };
+
   const handleMenuClick = async ({ key, domEvent }) => {
     switch (key) {
       case "edit":
-        setModalVisibility("patientEdit", true);
+        setModalVisibilityTracked("patientEdit", true);
         break;
       case "update":
         updatePrescriptionData();
@@ -224,6 +251,7 @@ export default function PatientCard({
         break;
       case "openConciliation":
         dispatch(setChooseConciliationModal(prescription.admissionNumber));
+        trackPrescriptionAction(TrackedPrescriptionAction.OPEN_CONCILIATION);
         break;
       case "gotoPep":
         openPep(prescription.idPrescription);
@@ -299,7 +327,7 @@ export default function PatientCard({
       children: (
         <PatientTab
           prescription={prescription}
-          setModalVisibility={setModalVisibility}
+          setModalVisibility={setModalVisibilityTracked}
           setSeeMore={setSeeMore}
         />
       ),
@@ -314,7 +342,7 @@ export default function PatientCard({
       children: (
         <AdmissionTab
           prescription={prescription}
-          setModalVisibility={setModalVisibility}
+          setModalVisibility={setModalVisibilityTracked}
           setSeeMore={setSeeMore}
         />
       ),
@@ -335,7 +363,7 @@ export default function PatientCard({
       children: (
         <NotesTab
           prescription={prescription}
-          setModalVisibility={setModalVisibility}
+          setModalVisibility={setModalVisibilityTracked}
           setSeeMore={setSeeMore}
         />
       ),
@@ -356,7 +384,7 @@ export default function PatientCard({
       children: (
         <TagsTab
           prescription={prescription}
-          setModalVisibility={setModalVisibility}
+          setModalVisibility={setModalVisibilityTracked}
           setSeeMore={setSeeMore}
         />
       ),
@@ -396,6 +424,26 @@ export default function PatientCard({
       children: <ReportsTab prescription={prescription} />,
     });
   }
+
+  const onChangeTab = (activeKey) => {
+    switch (activeKey) {
+      case "reports":
+        trackPrescriptionAction(TrackedPrescriptionAction.TAB_REPORTS);
+        break;
+      case "protocolAlerts":
+        trackPrescriptionAction(TrackedPrescriptionAction.TAB_PROTOCOL);
+        break;
+      case "patientTags":
+        trackPrescriptionAction(TrackedPrescriptionAction.TAB_MARKER);
+        break;
+      case "patientNotes":
+        trackPrescriptionAction(TrackedPrescriptionAction.TAB_NOTES);
+        break;
+      case "admissionData":
+        trackPrescriptionAction(TrackedPrescriptionAction.TAB_ADMISSION);
+        break;
+    }
+  };
 
   return (
     <PatientBox $t={t}>
@@ -448,7 +496,12 @@ export default function PatientCard({
         </div>
       </div>
       <div className="patient-body">
-        <Tabs defaultActiveKey="patientData" type="card" items={tabs}></Tabs>
+        <Tabs
+          defaultActiveKey="patientData"
+          type="card"
+          items={tabs}
+          onChange={onChangeTab}
+        ></Tabs>
       </div>
     </PatientBox>
   );
