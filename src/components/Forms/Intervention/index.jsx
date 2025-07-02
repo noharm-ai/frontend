@@ -179,6 +179,16 @@ export default function Intervention({
       }
     });
 
+    if (drugSummary?.data?.extraFields) {
+      drugSummary.data.extraFields.forEach((f) => {
+        const key = f.id;
+
+        if (tr[key] !== null && tr[key] !== undefined) {
+          trData[key] = tr[key];
+        }
+      });
+    }
+
     if (isEmpty(trData)) {
       return null;
     }
