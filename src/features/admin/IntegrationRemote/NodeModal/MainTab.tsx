@@ -79,10 +79,6 @@ export function MainTab({
 
   return (
     <Descriptions size="small" bordered>
-      <Descriptions.Item label="Nome" span={3}>
-        {data?.name}
-      </Descriptions.Item>
-
       {data?.extra?.componentType === "PROCESSOR" && (
         <>
           <Descriptions.Item label="Tipo" span={3}>

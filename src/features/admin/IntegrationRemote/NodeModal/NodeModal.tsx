@@ -79,6 +79,7 @@ export function NodeModal() {
     ...data?.extra?.properties,
     schedulingPeriod: data?.extra?.schedulingPeriod,
     comments: data?.extra?.comments,
+    name: data?.extra?.name,
   };
 
   const footerActions = (handleSubmit: (params: any) => void) => {
@@ -193,9 +194,11 @@ export function NodeModal() {
     { key: "Connection Timeout", label: "Connection Timeout" },
     { key: "Read Timeout", label: "Read Timeout" },
     { key: "Socket Write Timeout", label: "Socket Write Timeout" },
+    { key: "Command Arguments", label: "Command Arguments" },
   ];
 
   const updatableConfigs = [
+    { key: "name", label: "Nome" },
     { key: "schedulingPeriod", label: "Agendamento" },
     { key: "comments", label: "Comentários" },
   ];
