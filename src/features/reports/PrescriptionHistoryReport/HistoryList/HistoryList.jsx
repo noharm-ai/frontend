@@ -1,8 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 import { formatDateTime } from "utils/date";
 import { CardTable } from "components/Table";
+import Button from "components/Button";
+import DefaultModal from "components/Modal";
 
 export default function HistoryList() {
   const datasource = useSelector(
@@ -83,6 +86,45 @@ export default function HistoryList() {
     {
       title: "Responsável",
       render: (_, record) => record.responsible || "NoHarm",
+    },
+    {
+      title: "Detalhes",
+      align: "center",
+      render: (_, record) => {
+        if (record.extra) {
+          const openModal = () => {
+            DefaultModal.info({
+              title: "Detalhes do evento",
+              content: (
+                <div
+                  style={{
+                    overflow: "auto",
+                    background: "#e0e0e0",
+                    padding: "5px",
+                  }}
+                >
+                  <pre>{JSON.stringify(record.extra, null, 2)}</pre>
+                </div>
+              ),
+              icon: null,
+              width: 500,
+              okText: "Fechar",
+              okButtonProps: { type: "default" },
+              wrapClassName: "default-modal",
+            });
+          };
+
+          return (
+            <Button
+              icon={<InfoCircleOutlined />}
+              size="medium"
+              onClick={openModal}
+            />
+          );
+        }
+
+        return "-";
+      },
     },
   ];
 
