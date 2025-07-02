@@ -10,6 +10,7 @@ import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { getRegulationTypes } from "features/lists/ListsSlice";
 import notification from "components/notification";
 import FieldNameAutocomplete from "features/fields/FieldNameAutocomplete/FieldNameAutocomplete";
+import { FieldIcd } from "src/features/fields/FieldIcd/FieldIcd";
 
 import { Form } from "styles/Form.style";
 
@@ -63,6 +64,13 @@ export default function SecondaryFilters() {
     });
   };
 
+  const icdGroups = [
+    {
+      value: "ONCO",
+      label: "Oncológico",
+    },
+  ];
+
   return (
     <Row gutter={[20, 20]} style={{ marginTop: "15px", padding: "10px 0" }}>
       <Col md={12}>
@@ -94,16 +102,6 @@ export default function SecondaryFilters() {
               </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-label">
-                <label>Paciente:</label>
-              </div>
-              <div className="form-input">
-                <FieldNameAutocomplete
-                  onChange={(val) => setFieldValue({ idPatientList: val })}
-                />
-              </div>
-            </div>
             <div className="form-row">
               <div className="form-label">
                 <label>Tipo:</label>
@@ -217,6 +215,58 @@ export default function SecondaryFilters() {
                   popupClassName="noArrow"
                   allowClear
                   language={i18n.language}
+                />
+              </div>
+            </div>
+          </Form>
+        </Card>
+      </Col>
+      <Col md={12}>
+        <Card
+          title="Paciente"
+          bordered
+          size="small"
+          type="inner"
+          style={{ background: "#fafafa" }}
+        >
+          <Form>
+            <div className="form-row">
+              <div className="form-label">
+                <label>Nome do Paciente:</label>
+              </div>
+              <div className="form-input">
+                <FieldNameAutocomplete
+                  onChange={(val) => setFieldValue({ idPatientList: val })}
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-label">
+                <label>CID:</label>
+              </div>
+              <div className="form-input">
+                <FieldIcd
+                  onChange={(val) => setFieldValue({ idIcdList: val })}
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-label">
+                <label>Grupos de CID:</label>
+              </div>
+              <div className="form-input">
+                <Select
+                  style={{ width: "100%" }}
+                  value={values.idIcdGroupList}
+                  onChange={(val) => setFieldValue({ idIcdGroupList: val })}
+                  showSearch
+                  optionFilterProp="children"
+                  allowClear
+                  maxTagCount="responsive"
+                  mode="multiple"
+                  options={icdGroups}
                 />
               </div>
             </div>
