@@ -6,6 +6,7 @@ import { Select, InputNumber } from "components/Inputs";
 import { Col, Row } from "components/Grid";
 import Heading from "components/Heading";
 import LoadBox from "components/LoadBox";
+import Field from "components/Forms/CustomForm/Field";
 
 import { Box, FieldError, InternalBox } from "../../Form.style";
 
@@ -79,6 +80,10 @@ export default function Transcription({
       }
     : null;
   const drugList = currentDrug ? drugs.list.concat([currentDrug]) : drugs.list;
+
+  const setExtraFieldValue = (fieldName, value) => {
+    setFieldValue(`transcriptionData.${fieldName}`, value);
+  };
 
   return (
     <InternalBox>
@@ -273,6 +278,27 @@ export default function Transcription({
             )}
           </Col>
         </Box>
+
+        {drugSummary.data &&
+          (drugSummary.data.extraFields || []).map((field) => (
+            <Box
+              className={values.transcriptionData[field.id] ? "highlight" : ""}
+              key={field.id}
+            >
+              <Col xs={layout.label}>
+                <Heading as="label" $size="14px">
+                  {field.label}:
+                </Heading>
+              </Col>
+              <Col xs={layout.input}>
+                <Field
+                  question={field}
+                  setFieldValue={setExtraFieldValue}
+                  values={values.transcriptionData}
+                />
+              </Col>
+            </Box>
+          ))}
       </Row>
     </InternalBox>
   );

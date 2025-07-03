@@ -199,18 +199,18 @@ const formatCPOEPeriod = (record) => {
       (record.periodFixed || 0);
 
     if (record.periodMax) {
-      return `${period}D/${record.periodMax}`;
+      return `D${period}/${record.periodMax}`;
     }
 
-    return `${period}D`;
+    return `D${period}`;
   }
 
   if (record.periodFixed) {
     if (record.periodMax) {
-      return `${record.periodFixed}D/${record.periodMax}`;
+      return `D${record.periodFixed}/${record.periodMax}`;
     }
 
-    return `${record.periodFixed}D`;
+    return `D${record.periodFixed}`;
   }
 
   return "-";
@@ -981,7 +981,8 @@ const score = (bag) => ({
 
 const period = (bag) => ({
   title: <Tooltip title={bag.t("tableHeader.period")}>Per.</Tooltip>,
-  width: 50,
+  width: 60,
+  align: "left",
   render: (record) => {
     if (record.total) {
       return (

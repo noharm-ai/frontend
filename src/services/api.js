@@ -777,6 +777,16 @@ api.tags.getTags = (params = {}) =>
   });
 
 /**
+ * LISTS
+ */
+api.lists = {};
+api.lists.getIcds = (params = {}) =>
+  instance.get(`lists/icds`, {
+    params,
+    ...setHeaders(),
+  });
+
+/**
  * PROTOCOLS
  */
 api.protocols = {};

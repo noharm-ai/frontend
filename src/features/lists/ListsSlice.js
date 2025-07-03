@@ -77,6 +77,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  getIcds: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
   getProtocols: {
     list: [],
     status: "idle",
@@ -96,6 +101,19 @@ export const getTags = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.tags.getTags(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getIcds = createAsyncThunk(
+  "lists/get-icds",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.lists.getIcds(params);
 
       return response.data;
     } catch (err) {
@@ -353,6 +371,17 @@ const listsSlice = createSlice({
       .addCase(getTags.rejected, (state, action) => {
         state.getTags.status = "failed";
         state.getTags.error = action.error.message;
+      })
+      .addCase(getIcds.pending, (state, action) => {
+        state.getIcds.status = "loading";
+      })
+      .addCase(getIcds.fulfilled, (state, action) => {
+        state.getIcds.status = "succeeded";
+        state.getIcds.list = action.payload.data;
+      })
+      .addCase(getIcds.rejected, (state, action) => {
+        state.getIcds.status = "failed";
+        state.getIcds.error = action.error.message;
       })
       .addCase(getProtocols.pending, (state, action) => {
         state.getProtocols.status = "loading";
