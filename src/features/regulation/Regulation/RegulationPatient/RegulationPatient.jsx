@@ -34,6 +34,18 @@ export default function RegulationPatient({ print = false }) {
       span: print ? 4 : 2,
     },
     {
+      key: "9",
+      label: "CNS",
+      children: patientDetails?.data?.cns,
+      span: print ? 4 : 2,
+    },
+    {
+      key: "10",
+      label: "CPF",
+      children: patientDetails?.data?.cpf,
+      span: print ? 4 : 2,
+    },
+    {
       key: "4",
       label: "Endereço",
       children: patientDetails?.data?.endereco,
@@ -61,6 +73,24 @@ export default function RegulationPatient({ print = false }) {
       key: "8",
       label: "CEP",
       children: patientDetails?.data?.cep,
+      span: print ? 4 : 2,
+    },
+    {
+      key: "11",
+      label: "Telefone Residencial",
+      children: patientDetails?.data?.telefone_residencial,
+      span: print ? 4 : 2,
+    },
+    {
+      key: "12",
+      label: "Celular",
+      children: patientDetails?.data?.telefone_celular,
+      span: print ? 4 : 2,
+    },
+    {
+      key: "13",
+      label: "Telefone contato",
+      children: patientDetails?.data?.telefone_contato,
       span: print ? 4 : 2,
     },
   ];
