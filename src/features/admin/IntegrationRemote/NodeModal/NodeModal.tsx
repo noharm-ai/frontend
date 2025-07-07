@@ -195,6 +195,7 @@ export function NodeModal() {
     { key: "Read Timeout", label: "Read Timeout" },
     { key: "Socket Write Timeout", label: "Socket Write Timeout" },
     { key: "Command Arguments", label: "Command Arguments" },
+    { key: "Content-Type", label: "Content-Type" },
   ];
 
   const updatableConfigs = [
