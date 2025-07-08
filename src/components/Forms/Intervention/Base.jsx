@@ -15,6 +15,10 @@ import Observation from "./Fields/Observation";
 import Transcription from "./Fields/Transcription";
 import { RamFields } from "./Fields/RamFields";
 import InterventionReasonRelationType from "models/InterventionReasonRelationType";
+import {
+  trackInterventionAction,
+  TrackedInterventionAction,
+} from "src/utils/tracker";
 
 import { Box, FieldError, FieldHelp } from "../Form.style";
 
@@ -200,6 +204,18 @@ export default function Base({
     if (!hasSuspOrSubst(reasons.list, idInterventionReason)) {
       setFieldValue("economyDays", null);
     }
+
+    if (hasRam(reasons.list, idInterventionReason)) {
+      trackInterventionAction(TrackedInterventionAction.ENABLE_RAM);
+    }
+  };
+
+  const onChangeTranscription = (value) => {
+    setFieldValue("transcription", value);
+
+    if (value) {
+      trackInterventionAction(TrackedInterventionAction.ENABLE_TRANSCRIPTION);
+    }
   };
 
   return (
@@ -384,7 +400,7 @@ export default function Base({
             </Col>
             <Col xs={layout.input}>
               <Switch
-                onChange={(value) => setFieldValue("transcription", value)}
+                onChange={(value) => onChangeTranscription(value)}
                 checked={transcription}
               />
               {errors.transcription && touched.transcription && (

@@ -18,13 +18,23 @@ export const trackPrescriptionAction = (
   });
 };
 
+export const trackInterventionAction = (
+  trackedAction: TrackedInterventionAction,
+  details: any = {}
+) => {
+  track(CustomEvent.INTERVENTION_ACTION, {
+    custom_event: trackedAction,
+    ...details,
+  });
+};
+
 const track = (customEvent: CustomEvent, details: any = {}) => {
   if (!(window as any).cwr) {
     console.log("tracking error: cwr undefined");
     return;
   }
 
-  console.log(`track: ${customEvent}`, details);
+  console.debug(`track: ${customEvent}`, details);
 
   (window as any).cwr("recordEvent", {
     type: customEvent,
@@ -34,7 +44,8 @@ const track = (customEvent: CustomEvent, details: any = {}) => {
 
 enum CustomEvent {
   REPORT_ACCESS = "ReportAccess", // access to a report
-  PRESCRIPTION_ACTION = "PrescriptionAction", // ex. action
+  PRESCRIPTION_ACTION = "PrescriptionAction", // ex. action in screening prescription
+  INTERVENTION_ACTION = "InterventionAction", // action in intervention form
 }
 
 export enum TrackedReport {
@@ -102,4 +113,14 @@ export enum TrackedPrescriptionAction {
   CLICK_INTERVENTION = "abrir-intervencao",
   CLICK_PATIENT_INTERVENTION = "abrir-intervencao-paciente",
   CLICK_DRUG_NOTES = "abrir-anotacao-medicamento",
+}
+
+export enum TrackedInterventionAction {
+  ENABLE_RAM = "ativar-ram",
+  ENABLE_TRANSCRIPTION = "ativar-transcricao",
+  CLICK_NARANJO = "click-naranjo",
+  SAVE_DEFAULT_TEXT = "salvar-texto-padrao",
+  LOAD_DEFAULT_TEXT = "aplicar-texto-padrao",
+  DEFAULT_TEXT_VARIABLE = "variavel-texto-padrao",
+  CLICK_SAVE = "click-salvar",
 }
