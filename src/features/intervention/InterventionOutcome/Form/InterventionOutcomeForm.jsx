@@ -22,6 +22,10 @@ import EconomyDayCalculator from "./EconomyDayCalculator";
 import SecurityService from "services/security";
 import InterventionStatus from "models/InterventionStatus";
 import { createSlug } from "utils/transformers/utils";
+import {
+  trackInterventionOutcomeAction,
+  TrackedInterventionOutcomeAction,
+} from "src/utils/tracker";
 
 import {
   InterventionOutcomeContainer,
@@ -77,6 +81,10 @@ export default function InterventionOutcomeForm() {
 
   const openPrescription = (id) => {
     window.open(`/prescricao/${id}`);
+
+    trackInterventionOutcomeAction(
+      TrackedInterventionOutcomeAction.CLICK_PRESCRIPTION
+    );
   };
 
   const calcEconomyDay = (formValues) => {
@@ -215,6 +223,16 @@ export default function InterventionOutcomeForm() {
     },
   ];
 
+  const onClickDetails = () => {
+    setDetails(!details);
+
+    if (!details) {
+      trackInterventionOutcomeAction(
+        TrackedInterventionOutcomeAction.CLICK_INTERVENTION_DETAILS
+      );
+    }
+  };
+
   if (loadStatus === "loading" || isEmpty(outcomeData)) {
     return null;
   }
@@ -222,7 +240,15 @@ export default function InterventionOutcomeForm() {
   return (
     <InterventionOutcomeContainer>
       <div>
-        <Collapse items={intvCollapseItems} style={{ marginBottom: "1rem" }} />
+        <Collapse
+          items={intvCollapseItems}
+          style={{ marginBottom: "1rem" }}
+          onChange={() =>
+            trackInterventionOutcomeAction(
+              TrackedInterventionOutcomeAction.CLICK_INTERVENTION_DETAILS
+            )
+          }
+        />
       </div>
 
       {!outcomeData.header?.economyType ? (
@@ -384,7 +410,7 @@ export default function InterventionOutcomeForm() {
                                   )
                                 }
                                 shape="circle"
-                                onClick={() => setDetails(!details)}
+                                onClick={() => onClickDetails()}
                               />
                             </Tooltip>
                           </Space>
@@ -539,7 +565,7 @@ export default function InterventionOutcomeForm() {
                                   )
                                 }
                                 shape="circle"
-                                onClick={() => setDetails(!details)}
+                                onClick={() => onClickDetails()}
                               />
                             </Tooltip>
                           </Space>
@@ -619,6 +645,9 @@ export default function InterventionOutcomeForm() {
                         );
                         if (e.target.checked) {
                           setFieldValue("economyDayValue", 0);
+                          trackInterventionOutcomeAction(
+                            TrackedInterventionOutcomeAction.CLICK_MANUAL_ECONOMY
+                          );
                         } else {
                           setFieldValue(
                             "economyDayValue",
@@ -681,6 +710,9 @@ export default function InterventionOutcomeForm() {
                         );
                         if (e.target.checked) {
                           setFieldValue("economyDayAmount", 1);
+                          trackInterventionOutcomeAction(
+                            TrackedInterventionOutcomeAction.CLICK_MANUAL_ECONOMY_DAYS
+                          );
                         } else {
                           setFieldValue("economyDayAmount", null);
                         }

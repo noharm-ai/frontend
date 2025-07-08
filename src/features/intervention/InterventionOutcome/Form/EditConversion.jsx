@@ -16,6 +16,10 @@ import {
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import NumericValue from "components/NumericValue";
+import {
+  trackInterventionOutcomeAction,
+  TrackedInterventionOutcomeAction,
+} from "src/utils/tracker";
 
 export default function EditConversion({
   idDrug,
@@ -37,6 +41,10 @@ export default function EditConversion({
   const handleClick = (event) => {
     event.preventDefault();
     setEdit(true);
+
+    trackInterventionOutcomeAction(
+      TrackedInterventionOutcomeAction.EDIT_CONVERSION
+    );
   };
 
   const handleSave = () => {

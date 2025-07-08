@@ -28,6 +28,16 @@ export const trackInterventionAction = (
   });
 };
 
+export const trackInterventionOutcomeAction = (
+  trackedAction: TrackedInterventionOutcomeAction,
+  details: any = {}
+) => {
+  track(CustomEvent.INTERVENTION_OUTCOME_ACTION, {
+    custom_event: trackedAction,
+    ...details,
+  });
+};
+
 const track = (customEvent: CustomEvent, details: any = {}) => {
   if (!(window as any).cwr) {
     console.log("tracking error: cwr undefined");
@@ -46,6 +56,7 @@ enum CustomEvent {
   REPORT_ACCESS = "ReportAccess", // access to a report
   PRESCRIPTION_ACTION = "PrescriptionAction", // ex. action in screening prescription
   INTERVENTION_ACTION = "InterventionAction", // action in intervention form
+  INTERVENTION_OUTCOME_ACTION = "InterventionOutcomeAction", // action in intervention outcome form
 }
 
 export enum TrackedReport {
@@ -124,4 +135,13 @@ export enum TrackedInterventionAction {
   LOAD_DEFAULT_TEXT = "aplicar-texto-padrao",
   DEFAULT_TEXT_VARIABLE = "variavel-texto-padrao",
   CLICK_SAVE = "click-salvar",
+}
+
+export enum TrackedInterventionOutcomeAction {
+  CLICK_INTERVENTION_DETAILS = "ver-detalhes-intervencao",
+  CLICK_PRESCRIPTION = "abrir-prescricao",
+  CLICK_VALUE_DETAILS = "abrir-detalhes-custo",
+  EDIT_CONVERSION = "editar-conversao",
+  CLICK_MANUAL_ECONOMY = "click-economia-manual",
+  CLICK_MANUAL_ECONOMY_DAYS = "click-dias-economia-manual",
 }
