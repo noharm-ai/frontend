@@ -12,6 +12,10 @@ import Button from "components/Button";
 import notification from "components/notification";
 import { ObservationDefaultText } from "./ObservationDefaultText";
 import { formatDate } from "utils/date";
+import {
+  trackInterventionAction,
+  TrackedInterventionAction,
+} from "src/utils/tracker";
 
 import { EditorBox } from "components/Forms/Form.style";
 
@@ -95,11 +99,15 @@ export default function Observations({
 
     setFieldValue("observation", applyVariables(value));
     notification.success({ message: t("success.applyDefaultObservation") });
+
+    trackInterventionAction(TrackedInterventionAction.SAVE_DEFAULT_TEXT);
   };
 
   const loadDefaultText = () => {
     setFieldValue("observation", applyVariables(memory.list[0].value.text));
     notification.success({ message: t("success.applyDefaultObservation") });
+
+    trackInterventionAction(TrackedInterventionAction.LOAD_DEFAULT_TEXT);
   };
 
   const onEdit = (observation) => {

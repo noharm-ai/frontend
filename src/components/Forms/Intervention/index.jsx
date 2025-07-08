@@ -20,6 +20,10 @@ import FeaturesService from "services/features";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 import { setSelectedRowsActive } from "features/prescription/PrescriptionSlice";
 import { getErrorMessageFromException } from "utils/errorHandler";
+import {
+  trackInterventionAction,
+  TrackedInterventionAction,
+} from "src/utils/tracker";
 
 import Base from "./Base";
 import PatientData from "./PatientData";
@@ -208,6 +212,10 @@ export default function Intervention({
     };
 
     delete interventionData.transcriptionData;
+
+    trackInterventionAction(TrackedInterventionAction.CLICK_SAVE, {
+      title: params.status,
+    });
 
     save(interventionData)
       .then((response) => {

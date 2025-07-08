@@ -18,13 +18,43 @@ export const trackPrescriptionAction = (
   });
 };
 
+export const trackInterventionAction = (
+  trackedAction: TrackedInterventionAction,
+  details: any = {}
+) => {
+  track(CustomEvent.INTERVENTION_ACTION, {
+    custom_event: trackedAction,
+    ...details,
+  });
+};
+
+export const trackInterventionOutcomeAction = (
+  trackedAction: TrackedInterventionOutcomeAction,
+  details: any = {}
+) => {
+  track(CustomEvent.INTERVENTION_OUTCOME_ACTION, {
+    custom_event: trackedAction,
+    ...details,
+  });
+};
+
+export const trackPrescriptionPrioritizationAction = (
+  trackedAction: TrackedPrescriptionPrioritizationAction,
+  details: any = {}
+) => {
+  track(CustomEvent.PRESCRIPTION_PRIORITIZATION_ACTION, {
+    custom_event: trackedAction,
+    ...details,
+  });
+};
+
 const track = (customEvent: CustomEvent, details: any = {}) => {
   if (!(window as any).cwr) {
     console.log("tracking error: cwr undefined");
     return;
   }
 
-  console.log(`track: ${customEvent}`, details);
+  console.debug(`track: ${customEvent}`, details);
 
   (window as any).cwr("recordEvent", {
     type: customEvent,
@@ -34,7 +64,10 @@ const track = (customEvent: CustomEvent, details: any = {}) => {
 
 enum CustomEvent {
   REPORT_ACCESS = "ReportAccess", // access to a report
-  PRESCRIPTION_ACTION = "PrescriptionAction", // ex. action
+  PRESCRIPTION_ACTION = "PrescriptionAction", // ex. action in screening prescription
+  PRESCRIPTION_PRIORITIZATION_ACTION = "PrescriptionPrioritizationAction", // ex. action in prescription prioritization
+  INTERVENTION_ACTION = "InterventionAction", // action in intervention form
+  INTERVENTION_OUTCOME_ACTION = "InterventionOutcomeAction", // action in intervention outcome form
 }
 
 export enum TrackedReport {
@@ -102,4 +135,44 @@ export enum TrackedPrescriptionAction {
   CLICK_INTERVENTION = "abrir-intervencao",
   CLICK_PATIENT_INTERVENTION = "abrir-intervencao-paciente",
   CLICK_DRUG_NOTES = "abrir-anotacao-medicamento",
+  CLICK_INTERVENTION_OUTCOME = "desfecho-intervencao",
+  CLICK_ALERT_HANDLING = "abrir-manejo",
+}
+
+export enum TrackedInterventionAction {
+  ENABLE_RAM = "ativar-ram",
+  ENABLE_TRANSCRIPTION = "ativar-transcricao",
+  CLICK_NARANJO = "click-naranjo",
+  SAVE_DEFAULT_TEXT = "salvar-texto-padrao",
+  LOAD_DEFAULT_TEXT = "aplicar-texto-padrao",
+  DEFAULT_TEXT_VARIABLE = "variavel-texto-padrao",
+  CLICK_SAVE = "click-salvar",
+}
+
+export enum TrackedInterventionOutcomeAction {
+  CLICK_INTERVENTION_DETAILS = "ver-detalhes-intervencao",
+  CLICK_PRESCRIPTION = "abrir-prescricao",
+  CLICK_VALUE_DETAILS = "abrir-detalhes-custo",
+  EDIT_CONVERSION = "editar-conversao",
+  CLICK_MANUAL_ECONOMY = "click-economia-manual",
+  CLICK_MANUAL_ECONOMY_DAYS = "click-dias-economia-manual",
+}
+
+export enum TrackedPrescriptionPrioritizationAction {
+  CLICK_SEE_MORE = "click-ver-mais",
+  CLICK_SEARCH = "click-pesquisar",
+  CLICK_RESET = "click-limpar",
+  SAVE_FILTER = "salvar-filtro",
+  APPLY_FILTER = "aplicar-filtro",
+  MANAGE_FILTERS = "gerenciar-filtros",
+  CHANGE_ORDER = "alterar-ordem",
+  CHANGE_PRIORITIZATION_KEY = "alterar-priorizacao",
+  FILTER_STATUS = "filtrar-status",
+  FILTER_KEYWORD = "filtrar-atend_nome",
+  CHANGE_PAGE = "trocar-pagina",
+  CLICK_CARD_TAB = "click-aba-card",
+  USE_FILTER = "usar-filtro",
+  MULTIPLE_SELECTION_ACTIVATE = "ativar-selecao-multipla",
+  MULTIPLE_OPEN_PRESCRIPTION = "abrir-multiplas-prescricoes",
+  MULTIPLE_CHECK_PRESCRIPTION = "checar-multiplas-prescricoes",
 }

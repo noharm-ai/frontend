@@ -10,6 +10,10 @@ import Heading from "components/Heading";
 import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import { NaranjoCalculator } from "src/components/NaranjoCalculator";
+import {
+  trackInterventionAction,
+  TrackedInterventionAction,
+} from "src/utils/tracker";
 
 import { Box, InternalBox } from "../../Form.style";
 
@@ -30,6 +34,8 @@ export function RamFields({ setFieldValue, layout, values }) {
   } = values.ramData;
 
   const openCalculator = () => {
+    trackInterventionAction(TrackedInterventionAction.CLICK_NARANJO);
+
     const modal = DefaultModal.info({
       title: "Algoritmo de Naranjo",
       content: null,

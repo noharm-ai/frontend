@@ -16,6 +16,10 @@ import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import { getAlerts } from "components/Screening/AlertCard";
 import PatientName from "containers/PatientName";
+import {
+  trackPrescriptionPrioritizationAction,
+  TrackedPrescriptionPrioritizationAction,
+} from "src/utils/tracker";
 import { Card, AlertContainer } from "./index.style";
 
 const TabContent = ({ tab, prescription, featureService }) => {
@@ -374,6 +378,11 @@ export default function PrioritizationCard({
     setActiveTab(tab);
     event.stopPropagation();
     event.preventDefault();
+
+    trackPrescriptionPrioritizationAction(
+      TrackedPrescriptionPrioritizationAction.CLICK_CARD_TAB,
+      { title: tab }
+    );
   };
 
   return (

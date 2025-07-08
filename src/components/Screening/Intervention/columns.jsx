@@ -18,6 +18,10 @@ import RichTextView from "components/RichTextView";
 import { isEmpty } from "lodash";
 import InterventionStatus from "models/InterventionStatus";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import {
+  trackPrescriptionAction,
+  TrackedPrescriptionAction,
+} from "src/utils/tracker";
 
 const NestedTableContainer = styled.div`
   margin-top: 5px;
@@ -78,6 +82,11 @@ const interventionMenu = (
   return {
     items,
     onClick: ({ key }) => {
+      trackPrescriptionAction(
+        TrackedPrescriptionAction.CLICK_INTERVENTION_OUTCOME,
+        { title: key }
+      );
+
       dispatch(
         setSelectedInterventionOutcome({
           idIntervention: idIntervention,

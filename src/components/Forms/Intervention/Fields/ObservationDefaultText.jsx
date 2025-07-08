@@ -5,6 +5,10 @@ import { Textarea } from "components/Inputs";
 import Button from "components/Button";
 import { Col, Row } from "components/Grid";
 import Tooltip from "components/Tooltip";
+import {
+  trackInterventionAction,
+  TrackedInterventionAction,
+} from "src/utils/tracker";
 
 import { EditorBox } from "components/Forms/Form.style";
 import { Form } from "styles/Form.style";
@@ -39,6 +43,10 @@ export function ObservationDefaultText({
     }
 
     setContent(value);
+
+    trackInterventionAction(TrackedInterventionAction.DEFAULT_TEXT_VARIABLE, {
+      title: variable,
+    });
   };
 
   const save = () => {

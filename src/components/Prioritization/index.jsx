@@ -16,6 +16,10 @@ import Button from "components/Button";
 import { Row, Col } from "components/Grid";
 import InitialPage from "features/preferences/InitialPage/InitialPage";
 import FeatureService from "services/features";
+import {
+  trackPrescriptionPrioritizationAction,
+  TrackedPrescriptionPrioritizationAction,
+} from "src/utils/tracker";
 
 import Filter from "./Filter";
 import PrioritizationCard from "./Card";
@@ -98,17 +102,27 @@ export default function Prioritization({
     if (scroll) {
       window.scrollTo({ top: 250, behavior: "smooth" });
     }
+
+    trackPrescriptionPrioritizationAction(
+      TrackedPrescriptionPrioritizationAction.CHANGE_PAGE
+    );
   };
 
   const onChangeStatus = (value) => {
+    const status = !value || value === "all" ? null : value;
     dispatch({
       type: "set_filter",
       payload: {
-        status: !value || value === "all" ? null : value,
+        status,
       },
     });
 
     stopLoading();
+
+    trackPrescriptionPrioritizationAction(
+      TrackedPrescriptionPrioritizationAction.FILTER_STATUS,
+      { title: status }
+    );
   };
 
   const onChangePrioritization = (value) => {
@@ -118,6 +132,11 @@ export default function Prioritization({
     });
 
     stopLoading();
+
+    trackPrescriptionPrioritizationAction(
+      TrackedPrescriptionPrioritizationAction.CHANGE_PRIORITIZATION_KEY,
+      { title: value }
+    );
   };
 
   const toggleOrder = () => {
@@ -127,6 +146,10 @@ export default function Prioritization({
     });
 
     stopLoading();
+
+    trackPrescriptionPrioritizationAction(
+      TrackedPrescriptionPrioritizationAction.CHANGE_ORDER
+    );
   };
 
   const setActiveTab = (tab) => {
@@ -158,6 +181,10 @@ export default function Prioritization({
             searchKey: e.target.value.toLowerCase(),
           },
         });
+
+        trackPrescriptionPrioritizationAction(
+          TrackedPrescriptionPrioritizationAction.FILTER_KEYWORD
+        );
       } else if (state.filter.searchKey) {
         dispatch({
           type: "set_filter_direct",
