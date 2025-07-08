@@ -15,6 +15,10 @@ import notification from "components/notification";
 import RichTextView from "components/RichTextView";
 import { getErrorMessage } from "utils/errorHandler";
 import { getSubstanceHandling } from "features/serverActions/ServerActionsSlice";
+import {
+  trackPrescriptionAction,
+  TrackedPrescriptionAction,
+} from "src/utils/tracker";
 
 import { DrugAlertsCollapse } from "../PrescriptionDrug.style";
 
@@ -29,6 +33,8 @@ export default function DrugAlerts({ alerts, idSubstance }) {
   }
 
   const getHandling = (alertType) => {
+    trackPrescriptionAction(TrackedPrescriptionAction.CLICK_ALERT_HANDLING);
+
     setLoading(true);
     dispatch(getSubstanceHandling({ sctid: idSubstance, alertType })).then(
       (response) => {
