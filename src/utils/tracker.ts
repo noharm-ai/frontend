@@ -113,6 +113,7 @@ export enum TrackedPrescriptionAction {
   CLICK_INTERVENTION = "abrir-intervencao",
   CLICK_PATIENT_INTERVENTION = "abrir-intervencao-paciente",
   CLICK_DRUG_NOTES = "abrir-anotacao-medicamento",
+  CLICK_INTERVENTION_OUTCOME = "desfecho-intervencao",
 }
 
 export enum TrackedInterventionAction {
