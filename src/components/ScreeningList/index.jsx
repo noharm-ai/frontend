@@ -36,6 +36,10 @@ import {
 } from "features/prescription/PrescriptionSlice";
 import MultipleCheck from "features/prescription/MultipleCheck/MultipleCheck";
 import { OpenPrescriptionModal } from "./components/OpenPrescriptionModal";
+import {
+  trackPrescriptionPrioritizationAction,
+  TrackedPrescriptionPrioritizationAction,
+} from "src/utils/tracker";
 
 import { toDataSource } from "utils";
 
@@ -229,10 +233,18 @@ export default function ScreeningList({
         );
         dispatch(setMultipleCheckList(cheklist));
         setMultipleCheckModal(true);
+
+        trackPrescriptionPrioritizationAction(
+          TrackedPrescriptionPrioritizationAction.MULTIPLE_CHECK_PRESCRIPTION
+        );
+
         break;
       }
 
       case "openPrescription": {
+        trackPrescriptionPrioritizationAction(
+          TrackedPrescriptionPrioritizationAction.MULTIPLE_OPEN_PRESCRIPTION
+        );
         const openList = [];
 
         list.forEach((item) => {
@@ -504,6 +516,16 @@ export default function ScreeningList({
     );
   };
 
+  const toggleMultipleSelection = () => {
+    if (!selectedRowsActive) {
+      dispatch(setSelectedRowsActive(true));
+
+      trackPrescriptionPrioritizationAction(
+        TrackedPrescriptionPrioritizationAction.MULTIPLE_SELECTION_ACTIVATE
+      );
+    }
+  };
+
   const info = (
     <div style={{ display: "flex", justifyContent: "space-between" }}>
       <TableInfo>
@@ -586,11 +608,7 @@ export default function ScreeningList({
               style={{ marginLeft: "10px" }}
               menu={actionOptions()}
               type={selectedRowsActive ? "primary" : "default"}
-              onClick={() =>
-                !selectedRowsActive
-                  ? dispatch(setSelectedRowsActive(true))
-                  : false
-              }
+              onClick={() => toggleMultipleSelection()}
             >
               {selectedRowsActive
                 ? `${selectedRows.length} selecionados`

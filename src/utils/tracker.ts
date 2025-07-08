@@ -170,4 +170,8 @@ export enum TrackedPrescriptionPrioritizationAction {
   FILTER_KEYWORD = "filtrar-atend_nome",
   CHANGE_PAGE = "trocar-pagina",
   CLICK_CARD_TAB = "click-aba-card",
+  USE_FILTER = "usar-filtro",
+  MULTIPLE_SELECTION_ACTIVATE = "ativar-selecao-multipla",
+  MULTIPLE_OPEN_PRESCRIPTION = "abrir-multiplas-prescricoes",
+  MULTIPLE_CHECK_PRESCRIPTION = "checar-multiplas-prescricoes",
 }
