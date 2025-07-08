@@ -24,6 +24,10 @@ import {
 } from "features/prescription/PrescriptionSlice";
 import FilterFields from "./components/FilterFields";
 import { datepickerRangeLimit } from "utils/date";
+import {
+  trackPrescriptionPrioritizationAction,
+  TrackedPrescriptionPrioritizationAction,
+} from "src/utils/tracker";
 
 import { Box } from "./Filter.style";
 import { SearchBox, FilterCard } from "components/AdvancedFilter/index.style";
@@ -203,6 +207,10 @@ export default function Filter({
       searchDrugs(null, { idDrug: filterData.idDrug });
     }
     setOpen(false);
+
+    trackPrescriptionPrioritizationAction(
+      TrackedPrescriptionPrioritizationAction.APPLY_FILTER
+    );
   };
 
   const onDateChange = (dt) => {
@@ -214,6 +222,10 @@ export default function Filter({
     setOpen(false);
     dispatch(setSelectedRows([]));
     dispatch(setSelectedRowsActive(false));
+
+    trackPrescriptionPrioritizationAction(
+      TrackedPrescriptionPrioritizationAction.CLICK_SEARCH
+    );
   };
 
   const reset = () => {
@@ -248,6 +260,10 @@ export default function Filter({
       hasClinicalNotes: null,
     });
     setDate([dayjs(), null]);
+
+    trackPrescriptionPrioritizationAction(
+      TrackedPrescriptionPrioritizationAction.CLICK_RESET
+    );
   };
 
   const countHiddenFilters = (filters) => {
@@ -263,6 +279,16 @@ export default function Filter({
     });
 
     return count;
+  };
+
+  const clickSeeMore = () => {
+    setOpen(!open);
+
+    if (!open) {
+      trackPrescriptionPrioritizationAction(
+        TrackedPrescriptionPrioritizationAction.CLICK_SEE_MORE
+      );
+    }
   };
 
   const hiddenFieldCount = countHiddenFilters(filter);
@@ -320,7 +346,7 @@ export default function Filter({
                 <Button
                   type="link"
                   className="gtm-btn-adv-search"
-                  onClick={() => setOpen(!open)}
+                  onClick={() => clickSeeMore()}
                   style={{ marginTop: "14px", paddingLeft: 0 }}
                 >
                   <Badge count={hiddenFieldCount}>

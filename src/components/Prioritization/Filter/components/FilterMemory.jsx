@@ -14,6 +14,10 @@ import {
 import notification from "components/notification";
 import SaveFilterModal from "./SaveFilterModal";
 import ConfigModal from "./ConfigModal";
+import {
+  trackPrescriptionPrioritizationAction,
+  TrackedPrescriptionPrioritizationAction,
+} from "src/utils/tracker";
 
 export default function FilterMemory({
   fetchMemory,
@@ -181,10 +185,17 @@ export default function FilterMemory({
     switch (item.key) {
       case "save":
         setSaveFilterOpen(true);
+        trackPrescriptionPrioritizationAction(
+          TrackedPrescriptionPrioritizationAction.SAVE_FILTER
+        );
 
         break;
       case "remove":
         setConfigModalOpen(true);
+
+        trackPrescriptionPrioritizationAction(
+          TrackedPrescriptionPrioritizationAction.MANAGE_FILTERS
+        );
 
         break;
       default:

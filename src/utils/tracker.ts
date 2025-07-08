@@ -38,6 +38,16 @@ export const trackInterventionOutcomeAction = (
   });
 };
 
+export const trackPrescriptionPrioritizationAction = (
+  trackedAction: TrackedPrescriptionPrioritizationAction,
+  details: any = {}
+) => {
+  track(CustomEvent.PRESCRIPTION_PRIORITIZATION_ACTION, {
+    custom_event: trackedAction,
+    ...details,
+  });
+};
+
 const track = (customEvent: CustomEvent, details: any = {}) => {
   if (!(window as any).cwr) {
     console.log("tracking error: cwr undefined");
@@ -55,6 +65,7 @@ const track = (customEvent: CustomEvent, details: any = {}) => {
 enum CustomEvent {
   REPORT_ACCESS = "ReportAccess", // access to a report
   PRESCRIPTION_ACTION = "PrescriptionAction", // ex. action in screening prescription
+  PRESCRIPTION_PRIORITIZATION_ACTION = "PrescriptionPrioritizationAction", // ex. action in prescription prioritization
   INTERVENTION_ACTION = "InterventionAction", // action in intervention form
   INTERVENTION_OUTCOME_ACTION = "InterventionOutcomeAction", // action in intervention outcome form
 }
@@ -144,4 +155,19 @@ export enum TrackedInterventionOutcomeAction {
   EDIT_CONVERSION = "editar-conversao",
   CLICK_MANUAL_ECONOMY = "click-economia-manual",
   CLICK_MANUAL_ECONOMY_DAYS = "click-dias-economia-manual",
+}
+
+export enum TrackedPrescriptionPrioritizationAction {
+  CLICK_SEE_MORE = "click-ver-mais",
+  CLICK_SEARCH = "click-pesquisar",
+  CLICK_RESET = "click-limpar",
+  SAVE_FILTER = "salvar-filtro",
+  APPLY_FILTER = "aplicar-filtro",
+  MANAGE_FILTERS = "gerenciar-filtros",
+  CHANGE_ORDER = "alterar-ordem",
+  CHANGE_PRIORITIZATION_KEY = "alterar-priorizacao",
+  FILTER_STATUS = "filtrar-status",
+  FILTER_KEYWORD = "filtrar-atend_nome",
+  CHANGE_PAGE = "trocar-pagina",
+  CLICK_CARD_TAB = "click-aba-card",
 }
