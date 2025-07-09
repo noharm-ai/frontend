@@ -60,6 +60,11 @@ export const getCustomClinicalNote = (
   return resultText
     .replaceAll("{{data_atual}}", formatDate(dayjs()))
     .replaceAll("{{nome_paciente}}", prescription.data.namePatient)
+    .replaceAll(
+      "{{dtnascimento_paciente}}",
+      formatDate(prescription.data.birthdate)
+    )
+    .replaceAll("{{nratendimento_paciente}}", prescription.data.admissionNumber)
     .replaceAll("{{peso_paciente}}", getWeight(prescription.data.weight))
     .replaceAll("{{altura_paciente}}", getHeight(prescription.data.height))
     .replaceAll("{{idade_paciente}}", getAge(prescription.data.age))
