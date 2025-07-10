@@ -465,12 +465,8 @@ export default function Screening({
           </DrugFormStatusBox>
         )}
 
-      {!isFetching && (
-        <>
-          <FormIntervention />
-          <ScreeningActions />
-        </>
-      )}
+      <FormIntervention />
+      <ScreeningActions />
 
       <FloatButton.BackTop
         style={{ right: 80, bottom: 25 }}
