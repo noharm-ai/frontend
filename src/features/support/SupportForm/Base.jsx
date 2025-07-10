@@ -180,17 +180,41 @@ function BaseForm() {
             onEdit={(value) => setFieldValue("description", value)}
             content={values.description || ""}
           />
-
-          <div className="form-info">
-            Lembre-se de dar exemplos com número de Atendimento e/ou número de
-            Prescrição para facilitar a resolução do seu chamado.
-          </div>
         </div>
 
         {errors.description && touched.description && (
           <div className="form-error">{errors.description}</div>
         )}
       </div>
+
+      {(values.category === "Integração fora do ar" ||
+        values.category === "Erro") && (
+        <div className={`form-row`}>
+          <div className="form-label">
+            <label>Exemplos:</label>
+          </div>
+          <div className="form-input">
+            <Input
+              addonBefore="Números de Atendimento:"
+              onChange={({ target }) =>
+                setFieldValue("admissionNumberExamples", target.value)
+              }
+            />
+          </div>
+          <div className="form-input" style={{ marginTop: "5px" }}>
+            <Input
+              addonBefore="Números de Prescrição:"
+              onChange={({ target }) =>
+                setFieldValue("prescriptionNumberExamples", target.value)
+              }
+            />
+          </div>
+          <div className="form-info">
+            Forneça exemplos de números de atendimento e/ou de prescrição para
+            auxiliar a resolução do seu chamado.
+          </div>
+        </div>
+      )}
 
       <div className={`form-row ${errors.fileList ? "error" : ""}`}>
         <div className="form-label"></div>
