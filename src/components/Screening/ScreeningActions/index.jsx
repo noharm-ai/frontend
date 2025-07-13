@@ -62,34 +62,36 @@ export default function ScreeningActions({
 
   return (
     <>
-      <ScreeningFloatButtonGroup
-        trigger="click"
-        type="primary"
-        icon={<MenuOutlined />}
-        tooltip="Menu"
-        style={{ bottom: 25 }}
-        onClick={() =>
-          trackPrescriptionAction(TrackedPrescriptionAction.CLICK_FLOAT_MENU)
-        }
-      >
-        <FloatButton
-          icon={<CloseOutlined />}
-          onClick={() => window.close()}
-          tooltip="Fechar prescrição"
-        />
-        <FloatButton
-          onClick={() => setModalVisibility("patientEdit", true)}
-          icon={<UserOutlined />}
-          tooltip="Editar dados do paciente"
-        />
-        {featureService.hasConciliation() && !prescription.concilia && (
+      {prescription.idPrescription && (
+        <ScreeningFloatButtonGroup
+          trigger="click"
+          type="primary"
+          icon={<MenuOutlined />}
+          tooltip="Menu"
+          style={{ bottom: 25 }}
+          onClick={() =>
+            trackPrescriptionAction(TrackedPrescriptionAction.CLICK_FLOAT_MENU)
+          }
+        >
           <FloatButton
-            onClick={() => addConciliation()}
-            icon={<ReconciliationOutlined />}
-            tooltip="Abrir conciliação"
+            icon={<CloseOutlined />}
+            onClick={() => window.close()}
+            tooltip="Fechar prescrição"
           />
-        )}
-      </ScreeningFloatButtonGroup>
+          <FloatButton
+            onClick={() => setModalVisibility("patientEdit", true)}
+            icon={<UserOutlined />}
+            tooltip="Editar dados do paciente"
+          />
+          {featureService.hasConciliation() && !prescription.concilia && (
+            <FloatButton
+              onClick={() => addConciliation()}
+              icon={<ReconciliationOutlined />}
+              tooltip="Abrir conciliação"
+            />
+          )}
+        </ScreeningFloatButtonGroup>
+      )}
 
       <FormPatientModal
         open={patientEditVisible}

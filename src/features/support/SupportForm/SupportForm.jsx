@@ -50,6 +50,8 @@ export default function SupportForm() {
     category: null,
     description: null,
     fileList: [],
+    admissionNumberExamples: null,
+    prescriptionNumberExamples: null,
   };
 
   const goToSupportCenter = () => {
@@ -62,6 +64,19 @@ export default function SupportForm() {
       ...params,
       fromUrl: window.location.href,
     };
+
+    let evidences = "";
+    if (params.admissionNumberExamples) {
+      evidences += `Números de atendimento: ${params.admissionNumberExamples}<br/>`;
+    }
+
+    if (params.prescriptionNumberExamples) {
+      evidences += `Números de prescrição: ${params.prescriptionNumberExamples}<br/>`;
+    }
+
+    if (evidences !== "") {
+      payload.description += `<hr/><br/<br/><h4>Exemplos:</h4> ${evidences}`;
+    }
 
     dispatch(createTicket(payload)).then((response) => {
       if (response.error) {

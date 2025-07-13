@@ -316,6 +316,35 @@ export default function PatientCard({
     };
   };
 
+  const getProtocolBadgeColor = () => {
+    const alertLevels = [];
+
+    if (prescription?.protocolAlerts) {
+      const protocolGroups = Object.keys(prescription.protocolAlerts)
+        .filter((a) => a !== "summary")
+        .sort()
+        .reverse();
+
+      protocolGroups.forEach((g) => {
+        if (prescription.protocolAlerts[g].length) {
+          prescription.protocolAlerts[g].forEach((al) => {
+            alertLevels.push(al.level);
+          });
+        }
+      });
+    }
+
+    if (alertLevels.indexOf("high") !== -1) {
+      return "#f44336";
+    }
+
+    if (alertLevels.indexOf("medium") !== -1) {
+      return "#f57f17";
+    }
+
+    return "#ffc107";
+  };
+
   const tabs = [
     {
       key: "patientData",
@@ -397,7 +426,7 @@ export default function PatientCard({
       label: (
         <Tooltip title={t("labels.protocolAlerts")}>
           {prescription?.protocolAlerts?.summary?.length > 0 ? (
-            <Badge dot>
+            <Badge dot color={getProtocolBadgeColor()}>
               <FilePptOutlined style={{ fontSize: "18px" }} />
             </Badge>
           ) : (

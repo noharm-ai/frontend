@@ -114,6 +114,14 @@ export default function SaveModal({
       label: "Sinais (NoHarm Care)",
       key: "{{sinais_nhcare}}",
     },
+    {
+      label: "Data de nascimento",
+      key: "{{dtnascimento_paciente}}",
+    },
+    {
+      label: "Número do atendimento",
+      key: "{{nratendimento_paciente}}",
+    },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
   const examVariables = [
