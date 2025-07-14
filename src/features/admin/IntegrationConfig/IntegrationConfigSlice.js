@@ -10,6 +10,10 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  createSchema: {
+    status: "idle",
+    error: null,
+  },
 };
 
 export const fetchIntegrations = createAsyncThunk(
@@ -30,6 +34,18 @@ export const updateIntegration = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.integration.update(params);
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const createSchema = createAsyncThunk(
+  "integration-config/create-schema",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.integration.createSchema(params);
       return response;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
@@ -60,6 +76,16 @@ const integrationConfigSlice = createSlice({
       .addCase(fetchIntegrations.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(createSchema.pending, (state, action) => {
+        state.createSchema.status = "loading";
+      })
+      .addCase(createSchema.fulfilled, (state, action) => {
+        state.createSchema.status = "succeeded";
+      })
+      .addCase(createSchema.rejected, (state, action) => {
+        state.createSchema.status = "failed";
+        state.createSchema.error = action.error.message;
       })
       .addCase(updateIntegration.pending, (state, action) => {
         state.single.status = "loading";

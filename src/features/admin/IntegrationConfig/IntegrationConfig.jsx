@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { PlusOutlined } from "@ant-design/icons";
 
 import Table from "components/Table";
 import Empty from "components/Empty";
 import BackTop from "components/BackTop";
+import Button from "src/components/Button";
 import notification from "components/notification";
 import Tag from "components/Tag";
 import { Select } from "components/Inputs";
@@ -12,9 +14,9 @@ import IntegrationStatusTag from "components/IntegrationStatusTag";
 import { toDataSource } from "utils";
 import { getErrorMessage } from "utils/errorHandler";
 import { intersection } from "utils/lodash";
+import { CreateSchemaForm } from "./CreateSchemaForm/CreateSchemaForm";
 
 import columns from "./columns";
-
 import {
   fetchIntegrations,
   reset,
@@ -72,6 +74,7 @@ function IntegrationConfig() {
   const dispatch = useDispatch();
   const list = useSelector((state) => state.admin.integrationConfig.list);
   const status = useSelector((state) => state.admin.integrationConfig.status);
+  const [createModal, setCreateModal] = useState(false);
   const [filter, setFilter] = useState({
     status: null,
     fl: [],
@@ -108,6 +111,15 @@ function IntegrationConfig() {
           <div className="page-header-legend">
             Lista de integrações e seus atributos.
           </div>
+        </div>
+        <div className="page-header-actions">
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setCreateModal(true)}
+          >
+            Novo schema
+          </Button>
         </div>
       </PageHeader>
       <PageContainer>
@@ -231,6 +243,7 @@ function IntegrationConfig() {
         </PageCard>
       </PageContainer>
       <IntegrationConfigForm />
+      <CreateSchemaForm open={createModal} setOpen={setCreateModal} />
       <BackTop />
     </>
   );

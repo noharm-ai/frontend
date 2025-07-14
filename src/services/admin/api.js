@@ -266,6 +266,11 @@ api.integration.update = (params) =>
     ...setHeaders(),
   });
 
+api.integration.createSchema = (params) =>
+  instance.post(`${endpoints.integration}/create-schema`, params, {
+    ...setHeaders(),
+  });
+
 api.integration.prescalc = (params) => {
   if (params.cpoe) {
     return instance.get(
