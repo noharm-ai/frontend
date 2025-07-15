@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
-import { Result } from "antd";
+import { Result, Descriptions } from "antd";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
@@ -112,32 +112,30 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
                 status="success"
                 title="Schema criado com sucesso!"
                 subTitle={
-                  <>
-                    {resultData.create_user && (
-                      <>
-                        <p>
-                          Usuário: <strong>{resultData.db_user}</strong>
-                          <br />
-                          Senha: <strong>{resultData.db_password}</strong>
-                          {resultData.logstream_created && (
-                            <>
-                              <br />
-                              Logstream: <strong>criado</strong>
-                            </>
-                          )}
-                          {resultData.sqs_queue_url && (
-                            <>
-                              <br />
-                              SQS: <strong>{resultData.sqs_queue_url}</strong>
-                            </>
-                          )}
-                        </p>
-                        <p>
-                          Lembre-se de registrar esta senha na documentação.
-                        </p>
-                      </>
+                  <div style={{ marginTop: "25px" }}>
+                    {resultData && (
+                      <Descriptions bordered size="small">
+                        <Descriptions.Item label="Usuário BD:" span={3}>
+                          {resultData.db_user}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Senha BD:" span={3}>
+                          {resultData.create_user
+                            ? resultData.db_password
+                            : "--"}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Logstream:" span={3}>
+                          {resultData.logstream_created
+                            ? "Criado"
+                            : "Não foi criado"}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="SQS:" span={3}>
+                          {resultData.sqs_queue_url
+                            ? resultData.sqs_queue_url
+                            : "Não foi criado"}
+                        </Descriptions.Item>
+                      </Descriptions>
                     )}
-                  </>
+                  </div>
                 }
               ></Result>
             ) : (
