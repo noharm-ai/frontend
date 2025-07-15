@@ -18,6 +18,8 @@ export interface ICreateSchemaForm {
   is_cpoe: boolean;
   is_pec: boolean;
   create_user: boolean;
+  create_sqs: boolean;
+  create_logstream: boolean;
   db_user: string;
 }
 
@@ -44,6 +46,8 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
     is_pec: false,
     db_user: "",
     create_user: true,
+    create_logstream: true,
+    create_sqs: true,
   };
 
   const onSave = (
@@ -115,7 +119,18 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
                           Usuário: <strong>{resultData.db_user}</strong>
                           <br />
                           Senha: <strong>{resultData.db_password}</strong>
-                          <br />
+                          {resultData.logstream_created && (
+                            <>
+                              <br />
+                              Logstream: <strong>criado</strong>
+                            </>
+                          )}
+                          {resultData.sqs_queue_url && (
+                            <>
+                              <br />
+                              SQS: <strong>{resultData.sqs_queue_url}</strong>
+                            </>
+                          )}
                         </p>
                         <p>
                           Lembre-se de registrar esta senha na documentação.

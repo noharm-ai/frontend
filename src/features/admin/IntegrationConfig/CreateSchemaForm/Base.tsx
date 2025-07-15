@@ -107,6 +107,48 @@ export function Base() {
               )}
             </div>
           )}
+
+          <div
+            className={`form-row ${
+              errors.create_sqs && touched.create_sqs ? "error" : ""
+            }`}
+          >
+            <div className="form-label">
+              <label>Criar fila SQS:</label>
+            </div>
+            <div className="form-input">
+              <Switch
+                onChange={(value: boolean) =>
+                  setFieldValue("create_sqs", value)
+                }
+                checked={values.create_sqs}
+              />
+            </div>
+            {errors.create_sqs && (
+              <div className="form-error">{errors.create_sqs}</div>
+            )}
+          </div>
+
+          <div
+            className={`form-row ${
+              errors.create_logstream && touched.create_logstream ? "error" : ""
+            }`}
+          >
+            <div className="form-label">
+              <label>Criar logstream:</label>
+            </div>
+            <div className="form-input">
+              <Switch
+                onChange={(value: boolean) =>
+                  setFieldValue("create_logstream", value)
+                }
+                checked={values.create_logstream}
+              />
+            </div>
+            {errors.create_logstream && (
+              <div className="form-error">{errors.create_logstream}</div>
+            )}
+          </div>
         </>
       )}
     </>
