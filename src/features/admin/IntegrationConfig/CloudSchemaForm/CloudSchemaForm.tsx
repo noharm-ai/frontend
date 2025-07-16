@@ -47,6 +47,7 @@ export function CloudSchemaForm() {
 
   const onCancel = () => {
     dispatch(setCloudConfigSchema(null));
+    setEditGetname(false);
   };
 
   const afterSave = () => {
