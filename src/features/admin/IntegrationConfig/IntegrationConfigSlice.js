@@ -14,6 +14,12 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  cloudConfig: {
+    schema: null,
+    status: "idle",
+    data: null,
+    error: null,
+  },
 };
 
 export const fetchIntegrations = createAsyncThunk(
@@ -53,12 +59,39 @@ export const createSchema = createAsyncThunk(
   }
 );
 
+export const fetchCloudConfig = createAsyncThunk(
+  "integration-config/fetch-cloud-config",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.integration.fetchCloudConfig(params);
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const upsertGetname = createAsyncThunk(
+  "integration-config/upsert-getname",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.integration.upsertGetname(params);
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const integrationConfigSlice = createSlice({
   name: "integrationConfig",
   initialState,
   reducers: {
     setIntegration(state, action) {
       state.single.data = action.payload;
+    },
+    setCloudConfigSchema(state, action) {
+      state.cloudConfig.schema = action.payload;
     },
     reset() {
       return initialState;
@@ -77,6 +110,19 @@ const integrationConfigSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       })
+
+      .addCase(fetchCloudConfig.pending, (state, action) => {
+        state.cloudConfig.status = "loading";
+      })
+      .addCase(fetchCloudConfig.fulfilled, (state, action) => {
+        state.cloudConfig.status = "succeeded";
+        state.cloudConfig.data = action.payload.data.data;
+      })
+      .addCase(fetchCloudConfig.rejected, (state, action) => {
+        state.cloudConfig.status = "failed";
+        state.cloudConfig.error = action.error.message;
+      })
+
       .addCase(createSchema.pending, (state, action) => {
         state.createSchema.status = "loading";
       })
@@ -107,6 +153,7 @@ const integrationConfigSlice = createSlice({
   },
 });
 
-export const { reset, setIntegration } = integrationConfigSlice.actions;
+export const { reset, setIntegration, setCloudConfigSchema } =
+  integrationConfigSlice.actions;
 
 export default integrationConfigSlice.reducer;

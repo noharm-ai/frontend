@@ -15,17 +15,19 @@ import { toDataSource } from "utils";
 import { getErrorMessage } from "utils/errorHandler";
 import { intersection } from "utils/lodash";
 import { CreateSchemaForm } from "./CreateSchemaForm/CreateSchemaForm";
+import { CloudSchemaForm } from "./CloudSchemaForm/CloudSchemaForm";
 
 import columns from "./columns";
 import {
   fetchIntegrations,
   reset,
   setIntegration,
+  setCloudConfigSchema,
 } from "./IntegrationConfigSlice";
 import IntegrationConfigForm from "./Form/IntegrationConfigForm";
 
 import { PageHeader } from "styles/PageHeader.style";
-import { PageCard, PageContainer } from "styles/Utils.style";
+import { PageCard } from "styles/Utils.style";
 import { ExtraFilters } from "styles/PageHeader.style";
 
 const filterList = (ds, filter) => {
@@ -122,128 +124,129 @@ function IntegrationConfig() {
           </Button>
         </div>
       </PageHeader>
-      <PageContainer>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-          }}
-        >
-          <ExtraFilters>
-            <div className="filter-field">
-              <label>Situação</label>
-              <Select
-                onChange={(val) => setFilter({ ...filter, status: val })}
-                placeholder="Filtrar por situação"
-                allowClear
-                style={{ minWidth: "200px" }}
-                optionFilterProp="children"
-                loading={status === "loading"}
-              >
-                <Select.Option value={0}>
-                  <IntegrationStatusTag status={0} />
-                </Select.Option>
-                <Select.Option value={1}>
-                  <IntegrationStatusTag status={1} />
-                </Select.Option>
-                <Select.Option value={2}>
-                  <IntegrationStatusTag status={2} />
-                </Select.Option>
-              </Select>
-            </div>
 
-            <div className="filter-field">
-              <label>NoHarm Care</label>
-              <Select
-                onChange={(val) => setFilter({ ...filter, nhCare: val })}
-                placeholder="NoHarm Care Status"
-                allowClear
-                style={{ minWidth: "200px" }}
-                optionFilterProp="children"
-                loading={status === "loading"}
-              >
-                <Select.Option value={0}>
-                  <Tag color="error">Desativado</Tag>
-                </Select.Option>
-                <Select.Option value={1}>
-                  <Tag color="warning">Ativo (Legado)</Tag>
-                </Select.Option>
-                <Select.Option value={2}>
-                  <Tag color="success">Ativo</Tag>
-                </Select.Option>
-              </Select>
-            </div>
-
-            <div className="filter-field">
-              <label>Fluxos</label>
-              <Select
-                onChange={(val) => setFilter({ ...filter, fl: val })}
-                placeholder="Fluxos Ativos"
-                allowClear
-                style={{ minWidth: "200px" }}
-                optionFilterProp="children"
-                loading={status === "loading"}
-                mode="multiple"
-              >
-                <Select.Option value={"fl1"}>FL1</Select.Option>
-                <Select.Option value={"fl2"}>FL2</Select.Option>
-                <Select.Option value={"fl3"}>FL3</Select.Option>
-                <Select.Option value={"fl4"}>FL4</Select.Option>
-              </Select>
-            </div>
-            <div className="filter-field">
-              <label>CPOE</label>
-              <Select
-                onChange={(val) => setFilter({ ...filter, cpoe: val })}
-                allowClear
-                style={{ minWidth: "200px" }}
-                optionFilterProp="children"
-                loading={status === "loading"}
-              >
-                <Select.Option value={true}>Sim</Select.Option>
-                <Select.Option value={false}>Não</Select.Option>
-              </Select>
-            </div>
-            <div className="filter-field">
-              <label>Integração de retorno</label>
-              <Select
-                onChange={(val) =>
-                  setFilter({ ...filter, returnIntegration: val })
-                }
-                allowClear
-                style={{ minWidth: "200px" }}
-                optionFilterProp="children"
-                loading={status === "loading"}
-              >
-                <Select.Option value={true}>Sim</Select.Option>
-                <Select.Option value={false}>Não</Select.Option>
-              </Select>
-            </div>
-          </ExtraFilters>
-          <div style={{ paddingRight: "5px" }}>
-            {status !== "loading" && `${ds.length} registros`}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+        }}
+      >
+        <ExtraFilters>
+          <div className="filter-field">
+            <label>Situação</label>
+            <Select
+              onChange={(val) => setFilter({ ...filter, status: val })}
+              placeholder="Filtrar por situação"
+              allowClear
+              style={{ minWidth: "200px" }}
+              optionFilterProp="children"
+              loading={status === "loading"}
+            >
+              <Select.Option value={0}>
+                <IntegrationStatusTag status={0} />
+              </Select.Option>
+              <Select.Option value={1}>
+                <IntegrationStatusTag status={1} />
+              </Select.Option>
+              <Select.Option value={2}>
+                <IntegrationStatusTag status={2} />
+              </Select.Option>
+            </Select>
           </div>
+
+          <div className="filter-field">
+            <label>NoHarm Care</label>
+            <Select
+              onChange={(val) => setFilter({ ...filter, nhCare: val })}
+              placeholder="NoHarm Care Status"
+              allowClear
+              style={{ minWidth: "200px" }}
+              optionFilterProp="children"
+              loading={status === "loading"}
+            >
+              <Select.Option value={0}>
+                <Tag color="error">Desativado</Tag>
+              </Select.Option>
+              <Select.Option value={1}>
+                <Tag color="warning">Ativo (Legado)</Tag>
+              </Select.Option>
+              <Select.Option value={2}>
+                <Tag color="success">Ativo</Tag>
+              </Select.Option>
+            </Select>
+          </div>
+
+          <div className="filter-field">
+            <label>Fluxos</label>
+            <Select
+              onChange={(val) => setFilter({ ...filter, fl: val })}
+              placeholder="Fluxos Ativos"
+              allowClear
+              style={{ minWidth: "200px" }}
+              optionFilterProp="children"
+              loading={status === "loading"}
+              mode="multiple"
+            >
+              <Select.Option value={"fl1"}>FL1</Select.Option>
+              <Select.Option value={"fl2"}>FL2</Select.Option>
+              <Select.Option value={"fl3"}>FL3</Select.Option>
+              <Select.Option value={"fl4"}>FL4</Select.Option>
+            </Select>
+          </div>
+          <div className="filter-field">
+            <label>CPOE</label>
+            <Select
+              onChange={(val) => setFilter({ ...filter, cpoe: val })}
+              allowClear
+              style={{ minWidth: "200px" }}
+              optionFilterProp="children"
+              loading={status === "loading"}
+            >
+              <Select.Option value={true}>Sim</Select.Option>
+              <Select.Option value={false}>Não</Select.Option>
+            </Select>
+          </div>
+          <div className="filter-field">
+            <label>Integração de retorno</label>
+            <Select
+              onChange={(val) =>
+                setFilter({ ...filter, returnIntegration: val })
+              }
+              allowClear
+              style={{ minWidth: "200px" }}
+              optionFilterProp="children"
+              loading={status === "loading"}
+            >
+              <Select.Option value={true}>Sim</Select.Option>
+              <Select.Option value={false}>Não</Select.Option>
+            </Select>
+          </div>
+        </ExtraFilters>
+        <div style={{ paddingRight: "5px" }}>
+          {status !== "loading" && `${ds.length} registros`}
         </div>
-        <PageCard>
-          <Table
-            columns={columns(t, dispatch, setIntegration)}
-            pagination={false}
-            loading={status === "loading"}
-            locale={{ emptyText }}
-            dataSource={ds || []}
-            rowClassName={(record) =>
-              `${
-                record.schema === localStorage.getItem("schema")
-                  ? "highlight"
-                  : ""
-              }`
-            }
-          />
-        </PageCard>
-      </PageContainer>
+      </div>
+      <PageCard>
+        <Table
+          columns={columns(t, dispatch, setIntegration, setCloudConfigSchema)}
+          pagination={false}
+          loading={status === "loading"}
+          locale={{ emptyText }}
+          dataSource={ds || []}
+          rowClassName={(record) =>
+            `${
+              record.schema === localStorage.getItem("schema")
+                ? "highlight"
+                : ""
+            }`
+          }
+        />
+      </PageCard>
+
       <IntegrationConfigForm />
       <CreateSchemaForm open={createModal} setOpen={setCreateModal} />
+      <CloudSchemaForm />
       <BackTop />
     </>
   );
