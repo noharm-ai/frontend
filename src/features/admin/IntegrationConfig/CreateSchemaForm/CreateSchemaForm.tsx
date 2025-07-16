@@ -86,7 +86,7 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
       {({ handleSubmit }: { handleSubmit: () => void }) => (
         <DefaultModal
           open={open}
-          width={500}
+          width={600}
           centered
           destroyOnClose
           onCancel={onCancel}
@@ -114,26 +114,34 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
                 subTitle={
                   <div style={{ marginTop: "25px" }}>
                     {resultData && (
-                      <Descriptions bordered size="small">
-                        <Descriptions.Item label="Usuário BD:" span={3}>
-                          {resultData.db_user}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Senha BD:" span={3}>
-                          {resultData.create_user
-                            ? resultData.db_password
-                            : "--"}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Logstream:" span={3}>
-                          {resultData.logstream_created
-                            ? "Criado"
-                            : "Não foi criado"}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="SQS:" span={3}>
-                          {resultData.sqs_queue_url
-                            ? resultData.sqs_queue_url
-                            : "Não foi criado"}
-                        </Descriptions.Item>
-                      </Descriptions>
+                      <>
+                        <Descriptions bordered size="small">
+                          <Descriptions.Item label="Usuário BD:" span={3}>
+                            {resultData.db_user}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Senha BD:" span={3}>
+                            {resultData.create_user
+                              ? resultData.db_password
+                              : "--"}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Logstream:" span={3}>
+                            {resultData.logstream_created
+                              ? "Criado"
+                              : "Não foi criado"}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="SQS:" span={3}>
+                            {resultData.sqs_queue_url
+                              ? resultData.sqs_queue_url
+                              : "Não foi criado"}
+                          </Descriptions.Item>
+                        </Descriptions>
+                        {resultData.create_user && (
+                          <p>
+                            Lembre-se de salvar esta senha, pois ela não será
+                            exibida novamente.
+                          </p>
+                        )}
+                      </>
                     )}
                   </div>
                 }
