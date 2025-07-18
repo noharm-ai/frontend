@@ -8,7 +8,6 @@ import Empty from "components/Empty";
 import BackTop from "components/BackTop";
 import Button from "src/components/Button";
 import notification from "components/notification";
-import Tag from "components/Tag";
 import { Select } from "components/Inputs";
 import IntegrationStatusTag from "components/IntegrationStatusTag";
 import { toDataSource } from "utils";
