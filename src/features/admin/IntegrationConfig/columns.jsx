@@ -61,22 +61,6 @@ const columns = (t, dispatch, setIntegration, setCloudConfigSchema) => {
       },
     },
     {
-      title: "NoHarm Care",
-      dataIndex: "fl1",
-      align: "center",
-      render: (entry, record) => {
-        if (record.nhCare === 0) {
-          return <Tag color="error">Desativado</Tag>;
-        }
-
-        return (
-          <Tag color={record.nhCare === 1 ? "warning" : "success"}>
-            {record.nhCare === 1 ? "Ativo (Legado)" : "Ativo"}
-          </Tag>
-        );
-      },
-    },
-    {
       title: "CPOE",
       dataIndex: "cpoe",
       align: "center",

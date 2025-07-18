@@ -796,6 +796,22 @@ api.protocols.getProtocols = (params = {}) =>
     ...setHeaders(),
   });
 
+/**
+ * AUTH
+ */
+api.auth = {};
+api.auth.getSwitchSchemaData = (params = {}) =>
+  instance.get(`switch-schema`, {
+    params,
+    ...setHeaders(),
+  });
+
+api.auth.switchToSchema = (params = {}) =>
+  instance.post("switch-schema", params, {
+    withCredentials: true,
+    ...setHeaders(),
+  });
+
 /** GENERAL */
 const getVersion = () =>
   instance.get(`/frontend-version`, {

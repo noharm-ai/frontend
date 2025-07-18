@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
 import appInfo from "utils/appInfo";
@@ -17,7 +18,6 @@ import notification from "components/notification";
 import { generateRandomString, getCodeChallenge } from "utils/auth";
 
 import ForgotPassword from "containers/Login/ForgotPassword";
-import ChooseSchema from "./ChooseSchema";
 import api from "services/api";
 import { LoginContainer, Brand, BrandEN } from "./Login.style";
 
@@ -33,15 +33,11 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required("Você esqueceu de inserir a sua senha."),
 });
 
-export default function Login({ isLogging, error, doLogin }) {
+export default function Login({ isLogging, error, doLogin, forceSchema }) {
   const params = useParams();
   const [loading, setLoading] = useState(false);
   const [oauthData, setOauthData] = useState(null);
   const [forgotPassTabActive, setForgotPassTab] = useState(false);
-  const [preAuthError, setPreAuthError] = useState(false);
-  const [preAuthLoading, setPreAuthLoading] = useState(false);
-  const [preAuthModal, setPreAuthModal] = useState(null);
-  const [preAuthConfig, setpreAuthConfig] = useState(null);
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
     useFormik({
       initialValues,
@@ -50,6 +46,7 @@ export default function Login({ isLogging, error, doLogin }) {
     });
 
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isEmpty(error)) {
@@ -61,6 +58,12 @@ export default function Login({ isLogging, error, doLogin }) {
       message.error(error.message);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (localStorage.getItem("ac1") != null) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const getAuthProvider = async (schema) => {
@@ -85,11 +88,11 @@ export default function Login({ isLogging, error, doLogin }) {
       }
     };
 
-    if (params.schema) {
+    if (params.schema || forceSchema) {
       setLoading(true);
-      getAuthProvider(params.schema);
+      getAuthProvider(params.schema || forceSchema);
     }
-  }, [params.schema]);
+  }, [params.schema, forceSchema]);
 
   useEffect(() => {
     const queryString = new URLSearchParams(window.location.search);
@@ -105,28 +108,15 @@ export default function Login({ isLogging, error, doLogin }) {
   }, []); //eslint-disable-line
 
   const preLogin = async (params) => {
-    setPreAuthError(false);
-    setPreAuthLoading(true);
-
-    try {
-      const { data } = await api.preAuth(params);
-      setPreAuthLoading(false);
-
-      if (data.schemas.length) {
-        setpreAuthConfig({
-          schemas: data.schemas,
-          params,
-          maintainer: data.maintainer,
-        });
-        setPreAuthModal(true);
-      } else {
-        doLogin(params);
+    doLogin(params).then((response) => {
+      if (!response.error) {
+        if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
+          navigate("/switch-schema");
+        } else {
+          navigate("/");
+        }
       }
-    } catch (e) {
-      setPreAuthError(true);
-      setPreAuthLoading(false);
-      message.error(e.response?.data?.message);
-    }
+    });
   };
 
   const openOauthLogin = () => {
@@ -142,7 +132,7 @@ export default function Login({ isLogging, error, doLogin }) {
           <Brand title="NoHarm.ai | Cuidando dos pacientes" />
         )}
 
-        {params.schema ? (
+        {params.schema || forceSchema ? (
           <div className="form-container">
             {loading ? (
               <div className="loader">
@@ -175,13 +165,7 @@ export default function Login({ isLogging, error, doLogin }) {
                   name="email"
                   type="email"
                   value={values.email}
-                  status={
-                    (errors.email && touched.email) ||
-                    !isEmpty(error) ||
-                    preAuthError
-                      ? "error"
-                      : ""
-                  }
+                  status={(errors.email && touched.email) || !isEmpty(error)}
                   onBlur={handleBlur}
                   onChange={handleChange}
                   size="large"
@@ -196,11 +180,7 @@ export default function Login({ isLogging, error, doLogin }) {
                   onBlur={handleBlur}
                   onChange={handleChange}
                   status={
-                    (errors.password && touched.password) ||
-                    !isEmpty(error) ||
-                    preAuthError
-                      ? "error"
-                      : ""
+                    (errors.password && touched.password) || !isEmpty(error)
                   }
                   size="large"
                   className="input"
@@ -220,7 +200,7 @@ export default function Login({ isLogging, error, doLogin }) {
                   type="primary"
                   htmlType="submit"
                   block
-                  loading={isLogging || preAuthLoading}
+                  loading={isLogging}
                   onClick={handleSubmit}
                   size="large"
                   className="gtm-btn-login"
@@ -261,13 +241,6 @@ export default function Login({ isLogging, error, doLogin }) {
         <div className="gradient"></div>
       </div>
       <p className="copyright">{appInfo.copyright}</p>
-      <ChooseSchema
-        preAuthConfig={preAuthConfig}
-        doLogin={doLogin}
-        open={preAuthModal}
-        setOpen={setPreAuthModal}
-        isLogging={isLogging}
-      />
     </LoginContainer>
   );
 }

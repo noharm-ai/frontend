@@ -7,7 +7,6 @@ import { logoutThunk } from "store/ducks/auth/thunk";
 import appInfo from "utils/appInfo";
 
 const noop = () => {};
-const initialPage = "/";
 
 const AuthHandler = ({
   logout,
@@ -28,10 +27,6 @@ const AuthHandler = ({
     }
 
     return <Navigate to="/login" />;
-  }
-
-  if (isLoginPage && isLogged) {
-    return <Navigate to={initialPage} />;
   }
 
   if (currentVersion !== appInfo.version && isLogged) {

@@ -77,10 +77,9 @@ const Me = ({
       description: "Até breve ;)",
     });
     document.title = `${import.meta.env.VITE_APP_SITE_TITLE}`;
-    const redirect = !PermissionService().has(Permission.MAINTAINER);
 
     doLogout();
-    if (logoutUrl && redirect) {
+    if (logoutUrl) {
       setTimeout(() => {
         window.location.href = logoutUrl;
       }, 100);

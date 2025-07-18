@@ -156,28 +156,6 @@ function IntegrationConfig() {
           </div>
 
           <div className="filter-field">
-            <label>NoHarm Care</label>
-            <Select
-              onChange={(val) => setFilter({ ...filter, nhCare: val })}
-              placeholder="NoHarm Care Status"
-              allowClear
-              style={{ minWidth: "200px" }}
-              optionFilterProp="children"
-              loading={status === "loading"}
-            >
-              <Select.Option value={0}>
-                <Tag color="error">Desativado</Tag>
-              </Select.Option>
-              <Select.Option value={1}>
-                <Tag color="warning">Ativo (Legado)</Tag>
-              </Select.Option>
-              <Select.Option value={2}>
-                <Tag color="success">Ativo</Tag>
-              </Select.Option>
-            </Select>
-          </div>
-
-          <div className="filter-field">
             <label>Fluxos</label>
             <Select
               onChange={(val) => setFilter({ ...filter, fl: val })}
