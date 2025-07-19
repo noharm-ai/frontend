@@ -52,7 +52,9 @@ export default function Login({ isLogging, error, doLogin, forceSchema }) {
     if (!isEmpty(error)) {
       if (error.code && error.code.indexOf("http") !== -1) {
         message.info("Redirecionando");
-        window.location.href = error.code;
+        setTimeout(() => {
+          window.location.href = error.code;
+        }, 1000);
       }
 
       message.error(error.message);
