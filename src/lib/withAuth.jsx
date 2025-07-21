@@ -21,8 +21,13 @@ const AuthHandler = ({
   if (!isLoginPage && !isLogoutPage && !isLogged) {
     const schema = localStorage.getItem("schema");
     const oauth = localStorage.getItem("oauth");
+    const maintainer = localStorage.getItem("maintainer");
 
     if (schema && oauth) {
+      if (maintainer === "true") {
+        return <Navigate to={`/login/noharm`} />;
+      }
+
       return <Navigate to={`/login/${schema}`} />;
     }
 

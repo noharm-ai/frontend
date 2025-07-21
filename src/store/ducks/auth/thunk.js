@@ -121,6 +121,8 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
     localStorage.removeItem("oauth");
   }
 
+  localStorage.setItem("maintainer", permissions.includes("MAINTAINER"));
+
   localStorage.setItem("ac1", identify.access_token.substring(0, 10));
   localStorage.setItem("ac2", identify.access_token.substring(10));
 
