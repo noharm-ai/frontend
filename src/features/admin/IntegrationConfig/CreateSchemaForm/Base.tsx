@@ -11,19 +11,25 @@ export function Base() {
   return (
     <>
       <div
-        className={`form-row ${errors.schema && touched.schema ? "error" : ""}`}
+        className={`form-row ${
+          errors.schema_name && touched.schema_name ? "error" : ""
+        }`}
       >
         <div className="form-label">
           <label>Schema:</label>
         </div>
         <div className="form-input">
           <Input
-            onChange={({ target }) => setFieldValue("schema", target.value)}
-            value={values.schema}
+            onChange={({ target }) =>
+              setFieldValue("schema_name", target.value)
+            }
+            value={values.schema_name}
             style={{ width: "100%" }}
           />
         </div>
-        {errors.schema && <div className="form-error">{errors.schema}</div>}
+        {errors.schema_name && (
+          <div className="form-error">{errors.schema_name}</div>
+        )}
       </div>
 
       <div

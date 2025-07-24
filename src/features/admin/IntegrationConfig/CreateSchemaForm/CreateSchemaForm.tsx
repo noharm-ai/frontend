@@ -14,7 +14,7 @@ import { Base } from "./Base";
 import { Form } from "styles/Form.style";
 
 export interface ICreateSchemaForm {
-  schema: string;
+  schema_name: string;
   is_cpoe: boolean;
   is_pec: boolean;
   create_user: boolean;
@@ -38,10 +38,12 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
   const isSaving = status === "loading";
 
   const validationSchema = Yup.object().shape({
-    schema: Yup.string().nullable().required(t("validation.requiredField")),
+    schema_name: Yup.string()
+      .nullable()
+      .required(t("validation.requiredField")),
   });
   const initialValues = {
-    schema: "",
+    schema_name: "",
     is_cpoe: false,
     is_pec: false,
     db_user: "",
