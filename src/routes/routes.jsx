@@ -24,6 +24,7 @@ import ClinicalNotes from "pages/Screening/ClinicalNotes";
 import Summary from "pages/Summary";
 import SummarySearch from "pages/Summary/SummarySearch";
 import SupportCenter from "pages/SupportCenter";
+import SwitchSchema from "pages/SwitchSchema";
 
 import AdminFrequency from "pages/Admin/Frequency";
 import AdminTag from "pages/Admin/Tag";
@@ -64,9 +65,17 @@ const routes = [
   },
   {
     exact: true,
+    path: "/login/noharm",
+    element: (
+      <WithAuth component={Login} isLoginPage={true} forceSchema="hsc_test" />
+    ),
+  },
+  {
+    exact: true,
     path: "/login/:schema",
     element: <WithAuth component={Login} isLoginPage={true} />,
   },
+
   {
     exact: true,
     path: "/reset/:token",
@@ -202,6 +211,11 @@ const routes = [
     exact: true,
     path: "/sumario-alta",
     element: <WithAuth component={SummarySearch} />,
+  },
+  {
+    exact: true,
+    path: "/switch-schema",
+    element: <WithAuth component={SwitchSchema} />,
   },
   {
     exact: true,

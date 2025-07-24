@@ -2,7 +2,7 @@ import "styled-components";
 import React, { useEffect } from "react";
 import axios from "axios";
 import { Spin } from "antd";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 import message from "components/message";
 import appInfo from "utils/appInfo";
@@ -15,6 +15,7 @@ import { LoginContainer, Brand } from "./Login.style";
 export default function LoginCallback({ doLogin, error }) {
   const params = useParams();
   const { hash } = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const schema = params.schema;
@@ -48,11 +49,23 @@ export default function LoginCallback({ doLogin, error }) {
           doLogin({
             schema,
             code: response.data["id_token"],
+          }).then((response) => {
+            if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
+              navigate("/switch-schema");
+            } else {
+              navigate("/");
+            }
           });
         } else {
           doLogin({
             schema,
             code: idToken ?? authCode,
+          }).then((response) => {
+            if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
+              navigate("/switch-schema");
+            } else {
+              navigate("/");
+            }
           });
         }
       } catch {
@@ -63,7 +76,7 @@ export default function LoginCallback({ doLogin, error }) {
     };
 
     login();
-  }, [params.schema, hash, doLogin]);
+  }, [params.schema, hash, doLogin, navigate]);
 
   useEffect(() => {
     if (!isEmpty(error)) {

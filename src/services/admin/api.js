@@ -266,6 +266,21 @@ api.integration.update = (params) =>
     ...setHeaders(),
   });
 
+api.integration.createSchema = (params) =>
+  instance.post(`${endpoints.integration}/create-schema`, params, {
+    ...setHeaders(),
+  });
+
+api.integration.fetchCloudConfig = (params) =>
+  instance.post(`${endpoints.integration}/get-cloud-config`, params, {
+    ...setHeaders(),
+  });
+
+api.integration.upsertGetname = (params) =>
+  instance.post(`${endpoints.integration}/upsert-getname`, params, {
+    ...setHeaders(),
+  });
+
 api.integration.prescalc = (params) => {
   if (params.cpoe) {
     return instance.get(

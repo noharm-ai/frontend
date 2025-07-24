@@ -21,39 +21,48 @@ const { appSetData, appSetConfig, appSetCurrentVersion, appSetNotification } =
   AppCreators;
 
 export const oauthLoginThunk = (params) => async (dispatch) => {
-  resetReduxState(dispatch);
-  dispatch(userSetLoginStart());
-
-  const { data, error } = await api
-    .authenticateOAuth(params)
-    .catch(errorHandler);
-
-  if (!isEmpty(error)) {
-    dispatch(userLogout());
-    dispatch(authSetErrorIdentify(error, error.message));
-    return;
-  }
-
-  setUser(data.data, true, dispatch);
-};
-
-export const loginThunk =
-  ({ keepMeLogged, ...userIndentify }) =>
-  async (dispatch) => {
+  return new Promise(async (resolve, reject) => {
     resetReduxState(dispatch);
     dispatch(userSetLoginStart());
 
     const { data, error } = await api
-      .authenticate(userIndentify)
+      .authenticateOAuth(params)
       .catch(errorHandler);
 
     if (!isEmpty(error)) {
       dispatch(userLogout());
       dispatch(authSetErrorIdentify(error, error.message));
+      reject(error);
       return;
     }
 
-    setUser(data, keepMeLogged, dispatch);
+    setUser(data.data, true, dispatch);
+    resolve(data.data);
+  });
+};
+
+export const loginThunk =
+  ({ keepMeLogged, ...userIndentify }) =>
+  async (dispatch) => {
+    return new Promise(async (resolve, reject) => {
+      resetReduxState(dispatch);
+      dispatch(userSetLoginStart());
+
+      const { data, error } = await api
+        .authenticate(userIndentify)
+        .catch(errorHandler);
+
+      if (!isEmpty(error)) {
+        dispatch(userLogout());
+        dispatch(authSetErrorIdentify(error, error.message));
+        reject(error);
+        return;
+      }
+
+      setUser(data, keepMeLogged, dispatch);
+
+      resolve(data);
+    });
   };
 
 export const logoutThunk = () => {
@@ -66,7 +75,7 @@ export const logoutThunk = () => {
   };
 };
 
-const setUser = (userData, keepMeLogged, dispatch) => {
+export const setUser = (userData, keepMeLogged, dispatch) => {
   const {
     userId,
     userName,
@@ -111,6 +120,8 @@ const setUser = (userData, keepMeLogged, dispatch) => {
   } else {
     localStorage.removeItem("oauth");
   }
+
+  localStorage.setItem("maintainer", permissions.includes("MAINTAINER"));
 
   localStorage.setItem("ac1", identify.access_token.substring(0, 10));
   localStorage.setItem("ac2", identify.access_token.substring(10));

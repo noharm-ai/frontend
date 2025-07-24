@@ -1,14 +1,20 @@
 import React from "react";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, CloudServerOutlined } from "@ant-design/icons";
+import { Space } from "antd";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import IntegrationStatus from "models/IntegrationStatus";
+import { formatDate } from "src/utils/date";
 
-const columns = (t, dispatch, setIntegration) => {
+const columns = (t, dispatch, setIntegration, setCloudConfigSchema) => {
   const openForm = (record) => {
     dispatch(setIntegration(record));
+  };
+
+  const openCloudForm = (record) => {
+    dispatch(setCloudConfigSchema(record.schema));
   };
 
   const OnOffTag = ({ value, name }) => {
@@ -51,22 +57,6 @@ const columns = (t, dispatch, setIntegration) => {
               </span>
             </Tooltip>
           </div>
-        );
-      },
-    },
-    {
-      title: "NoHarm Care",
-      dataIndex: "fl1",
-      align: "center",
-      render: (entry, record) => {
-        if (record.nhCare === 0) {
-          return <Tag color="error">Desativado</Tag>;
-        }
-
-        return (
-          <Tag color={record.nhCare === 1 ? "warning" : "success"}>
-            {record.nhCare === 1 ? "Ativo (Legado)" : "Ativo"}
-          </Tag>
         );
       },
     },
@@ -117,19 +107,39 @@ const columns = (t, dispatch, setIntegration) => {
       },
     },
     {
+      title: "Criado em",
+      align: "center",
+      render: (entry, record) => {
+        if (record.createdAt) {
+          return formatDate(record.createdAt);
+        }
+
+        return "--";
+      },
+    },
+    {
       title: t("tableHeader.action"),
       key: "operations",
-      width: 70,
+      width: 150,
       align: "center",
       render: (text, record) => {
         return (
-          <Tooltip title="Editar">
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              onClick={() => openForm(record)}
-            ></Button>
-          </Tooltip>
+          <Space>
+            <Tooltip title="Editar">
+              <Button
+                type="primary"
+                icon={<EditOutlined />}
+                onClick={() => openForm(record)}
+              ></Button>
+            </Tooltip>
+            <Tooltip title="Infraestrutura">
+              <Button
+                type="primary"
+                icon={<CloudServerOutlined />}
+                onClick={() => openCloudForm(record)}
+              ></Button>
+            </Tooltip>
+          </Space>
         );
       },
     },
