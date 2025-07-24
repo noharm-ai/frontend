@@ -558,10 +558,6 @@ const examsByType = (clinicalNote, prescription) => {
 };
 
 const drugsByFieldList = (clinicalNote, drugs, params = {}) => {
-  if (!drugs || (drugs && !drugs.length)) {
-    return params.empty;
-  }
-
   let resultText = clinicalNote;
   const variables = clinicalNote.match(
     new RegExp("{{(" + params.varName + ".*?)}}", "g")
@@ -569,6 +565,10 @@ const drugsByFieldList = (clinicalNote, drugs, params = {}) => {
 
   if (!variables) {
     return resultText;
+  }
+
+  if (!drugs || (drugs && !drugs.length)) {
+    return params.empty;
   }
 
   variables.forEach((item) => {
