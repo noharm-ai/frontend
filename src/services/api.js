@@ -690,6 +690,16 @@ api.support.createTicket = (params) => {
   return instance.post(`/support/create-ticket`, formData, config);
 };
 
+api.support.fetchN0Response = (params) =>
+  instance.post(`/support/ask-n0`, params, {
+    ...setHeaders(),
+  });
+
+api.support.fetchN0Form = (params) =>
+  instance.post(`/support/ask-n0-form`, params, {
+    ...setHeaders(),
+  });
+
 /**
  * Summary namespace
  */

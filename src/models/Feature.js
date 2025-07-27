@@ -21,6 +21,7 @@ export default class Feature {
   static PROTOCOL_ALERTS = "PROTOCOL_ALERTS";
   static SHOW_PEP_LINK = "SHOW_PEP_LINK";
   static ADD_EXAMS = "ADD_EXAMS";
+  static N0_AGENT = "N0_AGENT";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -146,6 +147,12 @@ export default class Feature {
         label: "Adicionar exames",
         description:
           "Habilita a possibilidade de adicionar resultados de exames manualmente.",
+      },
+      {
+        id: Feature.N0_AGENT,
+        label: "N0-Copilot",
+        description:
+          "Habilita o N0-Copilot na abertura de chamados. (Experimental - Não habilitar para usuários finais)",
       },
     ];
   }

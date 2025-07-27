@@ -26,6 +26,9 @@ import SupportForm from "features/support/SupportForm/SupportForm";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
 import { setPendingTickets } from "features/support/SupportSlice";
+import { SupportFormAI } from "src/features/support/SupportFormAI/SupportFormAI";
+import { FeatureService } from "src/services/FeatureService";
+import Feature from "src/models/Feature";
 
 import Box from "./Box";
 import Menu from "./Menu";
@@ -386,7 +389,11 @@ export default function Layout({
             </Button>
           }
         >
-          <SupportForm />
+          {FeatureService.has(Feature.N0_AGENT) ? (
+            <SupportFormAI />
+          ) : (
+            <SupportForm />
+          )}
         </Drawer>
       </Main>
     </Main>

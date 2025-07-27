@@ -19,6 +19,23 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  aiform: {
+    currentStep: "question",
+    status: "idle",
+    error: null,
+    question: null,
+    response: null,
+    askn0: {
+      status: "idle",
+      error: null,
+      data: null,
+    },
+    n0form: {
+      status: "idle",
+      error: null,
+      data: null,
+    },
+  },
 };
 
 export const createTicket = createAsyncThunk(
@@ -63,6 +80,32 @@ export const fetchPendingActionTickets = createAsyncThunk(
   }
 );
 
+export const fetchN0Response = createAsyncThunk(
+  "support/fetch-n0-response",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.support.fetchN0Response(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const fetchN0Form = createAsyncThunk(
+  "support/fetch-n0-form",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.support.fetchN0Form(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const supportSlice = createSlice({
   name: "summary",
   initialState,
@@ -72,6 +115,20 @@ const supportSlice = createSlice({
     },
     setPendingTickets(state, action) {
       state.pendingTickets.list = action.payload;
+    },
+    setAIFormStep(state, action) {
+      state.aiform.currentStep = action.payload;
+    },
+    setAIFormQuestion(state, action) {
+      state.aiform.question = action.payload;
+    },
+    setAIFormResponse(state, action) {
+      state.aiform.response = action.payload;
+    },
+    resetAIForm(state) {
+      state.aiform = {
+        ...initialState.aiform,
+      };
     },
     reset() {
       return initialState;
@@ -103,6 +160,7 @@ const supportSlice = createSlice({
         state.pendingTickets.status = "failed";
         state.pendingTickets.error = action.error.message;
       })
+
       .addCase(createTicket.pending, (state, action) => {
         state.form.status = "loading";
       })
@@ -112,11 +170,44 @@ const supportSlice = createSlice({
       .addCase(createTicket.rejected, (state, action) => {
         state.form.status = "failed";
         state.form.error = action.error.message;
+      })
+
+      .addCase(fetchN0Response.pending, (state, action) => {
+        state.aiform.askn0.status = "loading";
+      })
+      .addCase(fetchN0Response.fulfilled, (state, action) => {
+        state.aiform.askn0.status = "succeeded";
+        state.aiform.askn0.data = action.payload.data;
+      })
+      .addCase(fetchN0Response.rejected, (state, action) => {
+        state.aiform.askn0.status = "failed";
+        state.aiform.askn0.error = action.error.message;
+        state.aiform.askn0.data = null;
+      })
+
+      .addCase(fetchN0Form.pending, (state, action) => {
+        state.aiform.n0form.status = "loading";
+      })
+      .addCase(fetchN0Form.fulfilled, (state, action) => {
+        state.aiform.n0form.status = "succeeded";
+        state.aiform.n0form.data = action.payload.data.agent;
+      })
+      .addCase(fetchN0Form.rejected, (state, action) => {
+        state.aiform.n0form.status = "failed";
+        state.aiform.n0form.error = action.error.message;
+        state.aiform.n0form.data = null;
       });
   },
 });
 
 export default supportSlice.reducer;
 
-export const { setSupportOpen, reset, setPendingTickets } =
-  supportSlice.actions;
+export const {
+  setSupportOpen,
+  reset,
+  resetAIForm,
+  setPendingTickets,
+  setAIFormStep,
+  setAIFormQuestion,
+  setAIFormResponse,
+} = supportSlice.actions;
