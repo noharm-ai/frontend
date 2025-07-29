@@ -24,7 +24,7 @@ export function Question() {
   const dispatch = useAppDispatch();
 
   const askAgent = (params: any) => {
-    setAIFormQuestion(params.question);
+    dispatch(setAIFormQuestion(params.question));
 
     // @ts-expect-error ts 2554 (legacy code)
     dispatch(fetchN0Response(params)).then((response: any) => {
@@ -33,7 +33,11 @@ export function Question() {
           message: getErrorMessage(response, t),
         });
       } else {
-        dispatch(setAIFormResponse(response.payload.data.agent));
+        const agent_response = response.payload.data.agent;
+        if (agent_response.includes("SKIP_ANSWER")) {
+          dispatch(setAIFormStep("form"));
+        }
+        dispatch(setAIFormResponse(agent_response));
       }
     });
 

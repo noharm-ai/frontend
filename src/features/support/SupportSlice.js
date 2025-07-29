@@ -54,6 +54,22 @@ export const createTicket = createAsyncThunk(
   }
 );
 
+export const addAttachment = createAsyncThunk(
+  "support/add-attachment",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.support.addAttachment(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue({
+        ...err.response.data,
+        statusCode: err.response.status,
+      });
+    }
+  }
+);
+
 export const fetchTickets = createAsyncThunk(
   "support/fetch-tickets",
   async (params, thunkAPI) => {

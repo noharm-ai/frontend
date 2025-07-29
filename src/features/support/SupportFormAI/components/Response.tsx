@@ -2,8 +2,18 @@ import DOMPurify from "dompurify";
 import { Flex, Skeleton, Divider } from "antd";
 
 import { useAppSelector, useAppDispatch } from "src/store";
-import { setAIFormStep } from "../../SupportSlice";
+import { setAIFormStep, resetAIForm } from "../../SupportSlice";
 import Button from "components/Button";
+import Avatar from "components/Avatar";
+
+import {
+  ChatHeader,
+  ChatContainer,
+  ChatBubble,
+  ActionSection,
+  ActionText,
+  ResponseContent,
+} from "../SupportFormAI.style";
 
 export function Response() {
   const dispatch = useAppDispatch();
@@ -11,49 +21,69 @@ export function Response() {
   const response = useAppSelector((state) => state.support.aiform.response);
 
   const resolve = () => {
-    console.log("create resolved ticket");
+    dispatch(resetAIForm());
   };
 
   const openTicket = () => {
-    console.log("open ticket");
     dispatch(setAIFormStep("form"));
   };
 
   return (
     <div>
-      {status === "loading" && <Skeleton active paragraph={{ rows: 4 }} />}
-      {status === "succeeded" && (
-        <div>
-          <h3>Farma do Suporte:</h3>
-          <div
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(response!, { ADD_ATTR: ["target"] }),
+      <div>
+        <ChatHeader>
+          <Avatar
+            size={60}
+            src="/imgs/n0-pharma.png"
+            style={{
+              flexShrink: 0,
+              border: "2px solid #FF8845",
             }}
-          ></div>
+          />
+          <h2>Suporte NoHarm</h2>
+        </ChatHeader>
+        <ChatContainer>
+          <ChatBubble>
+            {status === "loading" && (
+              <Skeleton active paragraph={{ rows: 4 }} />
+            )}
+            {status === "succeeded" && (
+              <ResponseContent
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(response!, {
+                    ADD_ATTR: ["target"],
+                  }),
+                }}
+              />
+            )}
+          </ChatBubble>
 
-          <Divider />
+          {status === "failed" && <p>Nenhuma resposta disponível</p>}
+        </ChatContainer>
 
-          <div
-            style={{ textAlign: "center", marginTop: "30px", fontSize: "18px" }}
-          >
-            <p>Você conseguiu resolver o problema?</p>
-          </div>
-          <Flex justify="center" align="center">
-            <Button type="primary" size="large" onClick={() => resolve()}>
-              Sim, obrigado!
-            </Button>
-            <Button
-              danger
-              size="large"
-              onClick={() => openTicket()}
-              style={{ marginLeft: "10px" }}
-            >
-              Não, quero abrir um chamado
-            </Button>
-          </Flex>
-        </div>
-      )}
-      {status === "failed" && <p>Error fetching response.</p>}
+        {status === "succeeded" && (
+          <>
+            <Divider />
+
+            <ActionSection>
+              <ActionText>Você conseguiu resolver o problema?</ActionText>
+              <Flex justify="center" align="center">
+                <Button type="primary" size="large" onClick={() => resolve()}>
+                  Sim, obrigado!
+                </Button>
+                <Button
+                  danger
+                  size="large"
+                  onClick={() => openTicket()}
+                  style={{ marginLeft: "10px" }}
+                >
+                  Não, quero abrir um chamado
+                </Button>
+              </Flex>
+            </ActionSection>
+          </>
+        )}
+      </div>
     </div>
   );
 }
