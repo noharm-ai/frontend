@@ -23,8 +23,8 @@ const initialState = {
     currentStep: "question",
     status: "idle",
     error: null,
-    question: null,
-    response: null,
+    question: "",
+    response: "",
     askn0: {
       status: "idle",
       error: null,
@@ -207,6 +207,17 @@ const supportSlice = createSlice({
       .addCase(fetchN0Form.fulfilled, (state, action) => {
         state.aiform.n0form.status = "succeeded";
         state.aiform.n0form.data = action.payload.data.agent;
+
+        if (state.aiform.n0form.data.extra_fields) {
+          state.aiform.n0form.data.extra_fields.push({
+            label: "Observações",
+            type: "text",
+          });
+          state.aiform.n0form.data.extra_fields.push({
+            label: "Anexos",
+            type: "archive",
+          });
+        }
       })
       .addCase(fetchN0Form.rejected, (state, action) => {
         state.aiform.n0form.status = "failed";

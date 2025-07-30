@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Skeleton, Space, Result } from "antd";
 import { Formik } from "formik";
-import { SendOutlined } from "@ant-design/icons";
+import { SendOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
@@ -10,6 +10,7 @@ import { useAppSelector, useAppDispatch } from "src/store";
 import Button from "src/components/Button";
 import notification from "components/notification";
 import DefaultModal from "components/Modal";
+import Tooltip from "components/Tooltip";
 import { getErrorMessage } from "src/utils/errorHandler";
 import { SupportField } from "./SupportField";
 import {
@@ -17,9 +18,11 @@ import {
   createTicket,
   setSupportOpen,
   addAttachment,
+  setAIFormStep,
 } from "../../SupportSlice";
 
 import { Form } from "src/styles/Form.style";
+import { ChatContainer, ChatBubble } from "../SupportFormAI.style";
 
 const MAX_FILE_SIZE = 2000000;
 
@@ -195,6 +198,10 @@ export function SupportForm() {
     dispatch(resetAIForm());
   };
 
+  const goBack = () => {
+    dispatch(setAIFormStep("response"));
+  };
+
   const initialValues: any = {};
   const validationSchemaShape: any = {};
   if (data && data.extra_fields) {
@@ -227,67 +234,81 @@ export function SupportForm() {
   return (
     <div>
       {status === "succeeded" && (
-        <div>
-          <h3>Por favor, forneça mais algumas informações:</h3>
-          <Formik
-            enableReinitialize
-            onSubmit={sendTicket}
-            initialValues={initialValues}
-            validationSchema={Yup.object().shape(validationSchemaShape)}
-          >
-            {({ handleSubmit, errors, touched, values, setFieldValue }) => (
-              <Form>
-                <div className="form-intro" style={{ fontSize: "15px" }}>
-                  <p>
-                    Preencha os campos abaixo para abrir um chamado. Quanto mais
-                    informações você fornecer, melhor poderemos te ajudar.
-                  </p>
-                </div>
-
-                {data.extra_fields &&
-                  data.extra_fields.map((field: any) => (
-                    <div
-                      key={field.label}
-                      className={`form-row ${
-                        errors[field.label] && touched[field.label]
-                          ? "error"
-                          : ""
-                      }`}
-                    >
-                      <div className="form-label">
-                        <label>{field.label}:</label>
-                      </div>
-                      <div className="form-input">
-                        <SupportField
-                          label={field.label}
-                          type={field.type}
-                          setFieldValue={setFieldValue}
-                          value={values[field.label]}
-                          error={errors[field.label]}
-                        />
-                      </div>
-                    </div>
-                  ))}
-
-                <div className={`form-row`}>
-                  <div className="form-action-bottom">
-                    <Space>
-                      <Button onClick={() => cancel()}>Cancelar</Button>
-                      <Button
-                        type="primary"
-                        onClick={() => handleSubmit()}
-                        icon={<SendOutlined />}
-                        loading={loading}
-                      >
-                        Abrir chamado
-                      </Button>
-                    </Space>
+        <ChatContainer>
+          <ChatBubble>
+            <h3 style={{ color: "#2e3c5a" }}>
+              Por favor, forneça mais algumas informações:
+            </h3>
+            <Formik
+              enableReinitialize
+              onSubmit={sendTicket}
+              initialValues={initialValues}
+              validationSchema={Yup.object().shape(validationSchemaShape)}
+            >
+              {({ handleSubmit, errors, touched, values, setFieldValue }) => (
+                <Form>
+                  <div className="form-intro" style={{ fontSize: "15px" }}>
+                    <p>
+                      Preencha os campos abaixo para abrir um chamado. Quanto
+                      mais informações você fornecer, melhor poderemos te
+                      ajudar.
+                    </p>
                   </div>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </div>
+
+                  {data.extra_fields &&
+                    data.extra_fields.map((field: any) => (
+                      <div
+                        key={field.label}
+                        className={`form-row ${
+                          errors[field.label] && touched[field.label]
+                            ? "error"
+                            : ""
+                        }`}
+                      >
+                        <div className="form-label">
+                          <label>{field.label}:</label>
+                        </div>
+                        <div className="form-input">
+                          <SupportField
+                            label={field.label}
+                            type={field.type}
+                            setFieldValue={setFieldValue}
+                            value={values[field.label]}
+                            error={errors[field.label]}
+                          />
+                        </div>
+                      </div>
+                    ))}
+
+                  <div className={`form-row`}>
+                    <div className="form-action-bottom">
+                      <Space>
+                        {aiResponse && !aiResponse.includes("SKIP_ANSWER") && (
+                          <Tooltip title="Voltar">
+                            <Button
+                              onClick={() => goBack()}
+                              icon={<ArrowLeftOutlined />}
+                            />
+                          </Tooltip>
+                        )}
+
+                        <Button onClick={() => cancel()}>Cancelar</Button>
+                        <Button
+                          type="primary"
+                          onClick={() => handleSubmit()}
+                          icon={<SendOutlined />}
+                          loading={loading}
+                        >
+                          Abrir chamado
+                        </Button>
+                      </Space>
+                    </div>
+                  </div>
+                </Form>
+              )}
+            </Formik>
+          </ChatBubble>
+        </ChatContainer>
       )}
     </div>
   );
