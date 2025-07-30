@@ -72,21 +72,23 @@ export function Question() {
     <ChatContainer>
       <ChatBubble>
         <p>
-          Prezado usuário, para garantir que possamos oferecer um suporte mais
-          eficaz,{" "}
-          <strong>
-            é crucial que você forneça o máximo de detalhes possível sobre sua
-            questão
-          </strong>
-          . Descreva a situação no campo “mensagem”, traga exemplos de
-          atendimentos e/ou prescrições, e também anexe prints de tela ou
-          documentos.
+          <strong>Olá! Seja bem-vindo(a) ao nosso suporte.</strong>
         </p>
 
         <p>
-          Evite incluir mais de um chamado sobre o mesmo assunto, caso ainda
-          esteja em aberto. Se tiver mais exemplos ou perguntas, envie no mesmo
-          chamado.
+          Para que possamos resolver sua questão o mais rápido possível, por
+          favor, descreva seu problema com o máximo de detalhes que conseguir.
+        </p>
+
+        <p>
+          Nossa IA analisará sua mensagem para dar os primeiros passos e
+          solicitar mais informações antes de abrir um chamado, caso necessário.
+        </p>
+
+        <p>
+          <strong>Importante:</strong> Se você já tem um chamado aberto sobre
+          este assunto, pedimos que envie as novas informações por lá. Isso
+          centraliza o histórico e acelera muito a sua resposta!
         </p>
 
         <h3>Como podemos ajudar?</h3>
