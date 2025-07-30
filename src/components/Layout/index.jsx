@@ -41,6 +41,7 @@ import {
   UserDataContainer,
   HeaderContainer,
 } from "./Layout.style";
+import { ChatHeader } from "src/features/support/SupportFormAI/SupportFormAI.style";
 import "styles/base.css";
 
 const siderWidth = 250;
@@ -377,7 +378,19 @@ export default function Layout({
           size="large"
           onClose={() => dispatch(setSupportOpen(false))}
           mask={false}
-          title={t("layout.help")}
+          title={
+            <ChatHeader>
+              <Avatar
+                size={60}
+                src="/imgs/n0-pharma.png"
+                style={{
+                  flexShrink: 0,
+                  border: "2px solid #FF8845",
+                }}
+              />
+              <h2>Suporte NoHarm</h2>
+            </ChatHeader>
+          }
           extra={
             <Button
               onClick={() => {

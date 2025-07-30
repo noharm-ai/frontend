@@ -20,7 +20,7 @@ const initialState = {
     error: null,
   },
   aiform: {
-    currentStep: "question",
+    currentStep: ["question"],
     status: "idle",
     error: null,
     question: "",

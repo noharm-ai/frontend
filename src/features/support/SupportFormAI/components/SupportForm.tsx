@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Skeleton, Space, Result } from "antd";
 import { Formik } from "formik";
-import { SendOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { SendOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
@@ -10,7 +10,6 @@ import { useAppSelector, useAppDispatch } from "src/store";
 import Button from "src/components/Button";
 import notification from "components/notification";
 import DefaultModal from "components/Modal";
-import Tooltip from "components/Tooltip";
 import { getErrorMessage } from "src/utils/errorHandler";
 import { SupportField } from "./SupportField";
 import {
@@ -18,7 +17,6 @@ import {
   createTicket,
   setSupportOpen,
   addAttachment,
-  setAIFormStep,
 } from "../../SupportSlice";
 
 import { Form } from "src/styles/Form.style";
@@ -198,10 +196,6 @@ export function SupportForm() {
     dispatch(resetAIForm());
   };
 
-  const goBack = () => {
-    dispatch(setAIFormStep("response"));
-  };
-
   const initialValues: any = {};
   const validationSchemaShape: any = {};
   if (data && data.extra_fields) {
@@ -283,21 +277,13 @@ export function SupportForm() {
                   <div className={`form-row`}>
                     <div className="form-action-bottom">
                       <Space>
-                        {aiResponse && !aiResponse.includes("SKIP_ANSWER") && (
-                          <Tooltip title="Voltar">
-                            <Button
-                              onClick={() => goBack()}
-                              icon={<ArrowLeftOutlined />}
-                            />
-                          </Tooltip>
-                        )}
-
                         <Button onClick={() => cancel()}>Cancelar</Button>
                         <Button
                           type="primary"
                           onClick={() => handleSubmit()}
                           icon={<SendOutlined />}
                           loading={loading}
+                          size="large"
                         >
                           Abrir chamado
                         </Button>
