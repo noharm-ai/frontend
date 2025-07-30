@@ -8,7 +8,7 @@ export const QuestionContainer = styled.div`
   }
 
   .tiptap {
-    min-height: 25vh;
+    min-height: min(15vh, 300px);
     max-height: 500px;
     background: #fff;
     padding: 1rem;
@@ -97,4 +97,34 @@ export const ChatHeader = styled.div`
     font-size: 24px;
     color: ${colors.primary};
     font-weight: 600;
+`;
+
+export const ScrollableContainer = styled.div`
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 8px;
+
+  /* Custom scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+`;
+
+export const ScrollAnchor = styled.div`
+  height: 1px;
+  width: 1px;
 `;
