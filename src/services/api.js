@@ -710,6 +710,11 @@ api.support.addAttachment = (params) => {
   return instance.post(`/support/attachment`, formData, config);
 };
 
+api.support.createClosedTicket = (params) =>
+  instance.post(`/support/create-closed-ticket`, params, {
+    ...setHeaders(),
+  });
+
 api.support.fetchN0Response = (params) =>
   instance.post(`/support/ask-n0`, params, {
     ...setHeaders(),

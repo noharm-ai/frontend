@@ -42,7 +42,23 @@ export const createTicket = createAsyncThunk(
   "support/create-ticket",
   async (params, thunkAPI) => {
     try {
-      const response = await api.support.createTicket(params);
+      const response = await api.support.create(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue({
+        ...err.response.data,
+        statusCode: err.response.status,
+      });
+    }
+  }
+);
+
+export const createClosedTicket = createAsyncThunk(
+  "support/create-closed-ticket",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.support.createClosedTicket(params);
 
       return response.data;
     } catch (err) {

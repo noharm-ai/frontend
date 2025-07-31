@@ -3,7 +3,11 @@ import { Flex, Skeleton, Divider } from "antd";
 import { motion } from "motion/react";
 
 import { useAppSelector, useAppDispatch } from "src/store";
-import { setAIFormStep, resetAIForm } from "../../SupportSlice";
+import {
+  setAIFormStep,
+  resetAIForm,
+  createClosedTicket,
+} from "../../SupportSlice";
 import Button from "components/Button";
 
 import {
@@ -18,16 +22,33 @@ export function Response() {
   const dispatch = useAppDispatch();
   const status = useAppSelector((state) => state.support.aiform.askn0.status);
   const response = useAppSelector((state) => state.support.aiform.response);
+  const question = useAppSelector((state) => state.support.aiform.question);
   const currentStep = useAppSelector(
     (state) => state.support.aiform.currentStep
   );
 
   const resolve = () => {
+    closeTicket();
+
     dispatch(resetAIForm());
   };
 
   const openTicket = () => {
     dispatch(setAIFormStep(["question", "response", "form"]));
+  };
+
+  const closeTicket = () => {
+    const description = `
+    <h2>Pergunta do usuário</h2>
+
+    ${question}
+
+    <h2>Resposta do NZero</h2>
+    ${response}
+    `;
+
+    // @ts-expect-error ts 2554 (legacy code)
+    dispatch(createClosedTicket({ description }));
   };
 
   return (
