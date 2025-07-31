@@ -49,24 +49,32 @@ export default function LoginCallback({ doLogin, error }) {
           doLogin({
             schema,
             code: response.data["id_token"],
-          }).then((response) => {
-            if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
-              navigate("/switch-schema");
-            } else {
-              navigate("/");
-            }
-          });
+          })
+            .then((response) => {
+              if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
+                navigate("/switch-schema");
+              } else {
+                navigate("/");
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+            });
         } else {
           doLogin({
             schema,
             code: idToken ?? authCode,
-          }).then((response) => {
-            if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
-              navigate("/switch-schema");
-            } else {
-              navigate("/");
-            }
-          });
+          })
+            .then((response) => {
+              if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
+                navigate("/switch-schema");
+              } else {
+                navigate("/");
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+            });
         }
       } catch {
         notification.error({

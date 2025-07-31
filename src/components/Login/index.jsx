@@ -109,16 +109,20 @@ export default function Login({ isLogging, error, doLogin, forceSchema }) {
     }
   }, []); //eslint-disable-line
 
-  const preLogin = async (params) => {
-    doLogin(params).then((response) => {
-      if (!response.error) {
-        if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
-          navigate("/switch-schema");
-        } else {
-          navigate("/");
+  const preLogin = (params) => {
+    doLogin(params)
+      .then((response) => {
+        if (!response.error) {
+          if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
+            navigate("/switch-schema");
+          } else {
+            navigate("/");
+          }
         }
-      }
-    });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   const openOauthLogin = () => {
