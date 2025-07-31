@@ -42,7 +42,7 @@ export const createTicket = createAsyncThunk(
   "support/create-ticket",
   async (params, thunkAPI) => {
     try {
-      const response = await api.support.create(params);
+      const response = await api.support.createTicket(params);
 
       return response.data;
     } catch (err) {
