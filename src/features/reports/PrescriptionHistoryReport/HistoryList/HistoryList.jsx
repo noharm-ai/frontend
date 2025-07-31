@@ -61,6 +61,12 @@ export default function HistoryList() {
             case 9:
               return "Erro no envio de checagem ao PEP";
 
+            case 10:
+              return "Integração de intervenção";
+
+            case 11:
+              return "Erro na integração de evolução";
+
             default:
               return `Não definido: ${record.type}-${record.source}`;
           }
