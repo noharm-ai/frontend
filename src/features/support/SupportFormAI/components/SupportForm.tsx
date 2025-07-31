@@ -18,6 +18,7 @@ import {
   setSupportOpen,
   addAttachment,
 } from "../../SupportSlice";
+import SupportFormLegacy from "../../SupportForm/SupportForm";
 
 import { Form } from "src/styles/Form.style";
 import { ChatContainer, ChatBubble } from "../SupportFormAI.style";
@@ -222,7 +223,17 @@ export function SupportForm() {
   }
 
   if (status === "loading") {
-    return <Skeleton active paragraph={{ rows: 4 }} />;
+    return (
+      <ChatContainer>
+        <ChatBubble>
+          <Skeleton
+            active
+            paragraph={{ rows: 4 }}
+            style={{ minWidth: "300px" }}
+          />
+        </ChatBubble>
+      </ChatContainer>
+    );
   }
 
   return (
@@ -296,6 +307,8 @@ export function SupportForm() {
           </ChatBubble>
         </ChatContainer>
       )}
+
+      {status === "failed" && <SupportFormLegacy />}
     </div>
   );
 }

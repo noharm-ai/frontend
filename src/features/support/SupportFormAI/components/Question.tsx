@@ -4,10 +4,8 @@ import { SendOutlined } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 import * as Yup from "yup";
 
-import notification from "components/notification";
 import Button from "components/Button";
 import Editor from "components/Editor";
-import { getErrorMessage } from "src/utils/errorHandler";
 import { useAppDispatch, useAppSelector } from "src/store";
 import {
   setAIFormStep,
@@ -36,9 +34,8 @@ export function Question() {
     // @ts-expect-error ts 2554 (legacy code)
     dispatch(fetchN0Response(params)).then((response: any) => {
       if (response.error) {
-        notification.error({
-          message: getErrorMessage(response, t),
-        });
+        dispatch(setAIFormStep(["question", "form"]));
+        console.error(response.error);
       } else {
         const agent_response = response.payload.data.agent;
         if (agent_response.includes("SKIP_ANSWER")) {
@@ -51,9 +48,7 @@ export function Question() {
     // @ts-expect-error ts 2554 (legacy code)
     dispatch(fetchN0Form(params)).then((response: any) => {
       if (response.error) {
-        notification.error({
-          message: getErrorMessage(response, t),
-        });
+        console.error(response.error);
       }
     });
 
