@@ -16,6 +16,7 @@ export default function Form({ setValidationSchema }) {
   const onActionChange = (action) => {
     setFieldValue("action", action);
     setFieldValue("actionData", {});
+    setFieldValue("nextStage", null);
 
     const actionDataFields = {};
     RegulationAction.getForm(action, t).forEach((field) => {
