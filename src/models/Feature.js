@@ -95,7 +95,7 @@ export default class Feature {
         id: Feature.AUTHORIZATION_SEGMENT,
         label: "Autorização por Segmento",
         description:
-          "Quando ativado, o usuário só conseguirá efetuar ações em segmentos onde tiver autorização. As autorizações são concedidas no cadastro do usuário.",
+          "Quando ativado, o usuário só conseguirá efetuar ações em segmentos onde tiver autorização. As autorizações são concedidas no cadastro do usuário. Lembre-se de conceder as autorizações antes de ativar esta feature.",
       },
       {
         id: Feature.TRANSCRIPTION,

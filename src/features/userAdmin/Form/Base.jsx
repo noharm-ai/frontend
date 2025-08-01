@@ -170,7 +170,8 @@ function BaseForm() {
                 )}
               </div>
 
-              {featureService.hasAuthorizationSegment() && (
+              {(featureService.hasAuthorizationSegment() ||
+                PermissionService().has(Permission.ADMIN_USERS)) && (
                 <div className={`form-row ${errors.segments ? "error" : ""}`}>
                   <div className="form-label">
                     <label>{t("userAdminForm.segments")} (Beta):</label>
@@ -193,6 +194,13 @@ function BaseForm() {
                       ))}
                     </Select>
                   </div>
+                  {!featureService.hasAuthorizationSegment() && (
+                    <div className="form-info">
+                      A feature de Autorização por Segmento está desativada.
+                      Lembre-se de ativar após distribuir as autorizações.
+                    </div>
+                  )}
+
                   {errors.segments && (
                     <div className="form-error">{errors.segments}</div>
                   )}
