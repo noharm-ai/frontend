@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Skeleton, Space, Result } from "antd";
+import { Skeleton, Space, Result, Popconfirm } from "antd";
 import { Formik } from "formik";
 import { SendOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
@@ -288,7 +288,16 @@ export function SupportForm() {
                   <div className={`form-row`}>
                     <div className="form-action-bottom">
                       <Space>
-                        <Button onClick={() => cancel()}>Cancelar</Button>
+                        <Popconfirm
+                          title="Cancelar chamado"
+                          description="Confirma o cancelamento da abertura do chamado?"
+                          okText="Sim"
+                          cancelText="Não"
+                          onConfirm={() => cancel()}
+                          zIndex={9999}
+                        >
+                          <Button>Cancelar</Button>
+                        </Popconfirm>
                         <Button
                           type="primary"
                           onClick={() => handleSubmit()}

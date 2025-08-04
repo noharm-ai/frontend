@@ -236,8 +236,6 @@ export default function Layout({
   ...props
 }) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const supportDrawerOpen = useSelector((state) => state.support.open);
   const supportPendingTickets = useSelector(
     (state) => state.support.pendingTickets.list
   );
