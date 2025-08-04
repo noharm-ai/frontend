@@ -10,7 +10,7 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
-import { Alert, Drawer, Dropdown, List } from "antd";
+import { Alert, Dropdown, List } from "antd";
 import { useTranslation } from "react-i18next";
 
 import appInfo from "utils/appInfo";
@@ -22,13 +22,10 @@ import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import IntegrationStatusTag from "components/IntegrationStatusTag";
 import { setSupportOpen } from "features/support/SupportSlice";
-import SupportForm from "features/support/SupportForm/SupportForm";
+
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
 import { setPendingTickets } from "features/support/SupportSlice";
-import { SupportFormAI } from "src/features/support/SupportFormAI/SupportFormAI";
-import { FeatureService } from "src/services/FeatureService";
-import Feature from "src/models/Feature";
 
 import Box from "./Box";
 import Menu from "./Menu";
@@ -41,7 +38,6 @@ import {
   UserDataContainer,
   HeaderContainer,
 } from "./Layout.style";
-import { ChatHeader } from "src/features/support/SupportFormAI/SupportFormAI.style";
 import "styles/base.css";
 
 const siderWidth = 250;
@@ -373,41 +369,6 @@ export default function Layout({
           </ErrorBoundary>
         </Content>
         <Footer>{appInfo.copyright}</Footer>
-        <Drawer
-          open={supportDrawerOpen}
-          size="large"
-          onClose={() => dispatch(setSupportOpen(false))}
-          mask={false}
-          title={
-            <ChatHeader>
-              <Avatar
-                size={60}
-                src="/imgs/n0-pharma.png"
-                style={{
-                  flexShrink: 0,
-                  border: "2px solid #FF8845",
-                }}
-              />
-              <h2>Suporte NoHarm</h2>
-            </ChatHeader>
-          }
-          extra={
-            <Button
-              onClick={() => {
-                dispatch(setSupportOpen(false));
-                navigate("/suporte");
-              }}
-            >
-              Abrir Central de Ajuda
-            </Button>
-          }
-        >
-          {FeatureService.has(Feature.N0_AGENT) ? (
-            <SupportFormAI />
-          ) : (
-            <SupportForm />
-          )}
-        </Drawer>
       </Main>
     </Main>
   );

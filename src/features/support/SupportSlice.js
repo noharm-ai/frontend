@@ -139,7 +139,7 @@ export const fetchN0Form = createAsyncThunk(
 );
 
 const supportSlice = createSlice({
-  name: "summary",
+  name: "supportSlice",
   initialState,
   reducers: {
     setSupportOpen(state, action) {
