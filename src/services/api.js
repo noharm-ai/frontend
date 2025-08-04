@@ -148,6 +148,12 @@ api.exams.createExam = (params = {}) => {
   });
 };
 
+api.exams.deleteExam = (params = {}) => {
+  return instance.post(`/exams/delete`, params, {
+    ...setHeaders(),
+  });
+};
+
 api.exams.getExamTypes = (params = {}) =>
   instance.get(`/exams/types/list`, {
     params,
