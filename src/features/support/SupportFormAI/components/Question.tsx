@@ -13,6 +13,7 @@ import {
   setAIFormResponse,
   fetchN0Response,
   fetchN0Form,
+  fetchRelatedArticles,
 } from "../../SupportSlice";
 
 import { Form } from "styles/Form.style";
@@ -47,6 +48,13 @@ export function Question() {
 
     // @ts-expect-error ts 2554 (legacy code)
     dispatch(fetchN0Form(params)).then((response: any) => {
+      if (response.error) {
+        console.error(response.error);
+      }
+    });
+
+    // @ts-expect-error ts 2554 (legacy code)
+    dispatch(fetchRelatedArticles(params)).then((response: any) => {
       if (response.error) {
         console.error(response.error);
       }

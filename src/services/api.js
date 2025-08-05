@@ -731,6 +731,11 @@ api.support.fetchN0Form = (params) =>
     ...setHeaders(),
   });
 
+api.support.fetchRelatedArticles = (params) =>
+  instance.post(`/support/related-articles`, params, {
+    ...setHeaders(),
+  });
+
 /**
  * Summary namespace
  */

@@ -1,5 +1,5 @@
 import DOMPurify from "dompurify";
-import { Flex, Skeleton, Divider } from "antd";
+import { Flex, Skeleton, Divider, Space } from "antd";
 import { motion } from "motion/react";
 
 import { useAppSelector, useAppDispatch } from "src/store";
@@ -22,6 +22,9 @@ export function Response() {
   const dispatch = useAppDispatch();
   const status = useAppSelector((state) => state.support.aiform.askn0.status);
   const response = useAppSelector((state) => state.support.aiform.response);
+  const articles = useAppSelector(
+    (state) => state.support.aiform.relatedArticles.list
+  );
   const question = useAppSelector((state) => state.support.aiform.question);
   const currentStep = useAppSelector(
     (state) => state.support.aiform.currentStep
@@ -76,6 +79,36 @@ export function Response() {
                   }),
                 }}
               />
+
+              {articles.length && (
+                <>
+                  <div
+                    style={{
+                      marginTop: "20px",
+                      marginBottom: "5px",
+                      color: "#696766",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Artigos relacionados:
+                  </div>
+                  <Space>
+                    {articles.map((a: any) => (
+                      <Button
+                        type="dashed"
+                        href={`${
+                          import.meta.env.VITE_APP_ODOO_LINK
+                        }knowledge/article/${a.id}`}
+                        target="blank"
+                        key={a.id}
+                        size="small"
+                      >
+                        {a.name}
+                      </Button>
+                    ))}
+                  </Space>
+                </>
+              )}
 
               <Divider />
 
