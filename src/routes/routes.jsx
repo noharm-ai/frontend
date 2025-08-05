@@ -47,6 +47,7 @@ import AdminSubstance from "pages/Admin/Substance";
 import AdminRelation from "pages/Admin/Relation";
 import AdminMeasureUnit from "pages/Admin/MeasureUnit";
 import AdminProtocol from "pages/Admin/Protocol";
+import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
@@ -336,6 +337,11 @@ const routes = [
     exact: true,
     path: "/admin/protocolos",
     element: <WithAuth component={AdminProtocol} />,
+  },
+  {
+    exact: true,
+    path: "/admin/memoria-global/nzero",
+    element: <WithAuth component={AdminGlobalMemoryNZero} />,
   },
   {
     exact: true,

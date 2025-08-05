@@ -1,7 +1,7 @@
 import { Upload, UploadProps } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
-import { Input, Radio } from "src/components/Inputs";
+import { Input, Radio, Textarea } from "src/components/Inputs";
 import notification from "components/notification";
 import Button from "components/Button";
 
@@ -46,6 +46,13 @@ export function SupportField({
     <>
       {type === "text" && (
         <Input
+          value={value}
+          onChange={({ target }) => setFieldValue(label, target.value)}
+        />
+      )}
+
+      {type === "textarea" && (
+        <Textarea
           value={value}
           onChange={({ target }) => setFieldValue(label, target.value)}
         />

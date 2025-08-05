@@ -34,6 +34,7 @@ import {
   GoldOutlined,
   TagsOutlined,
   FilePptOutlined,
+  RobotOutlined,
 } from "@ant-design/icons";
 import { Menu as Navigator } from "antd";
 
@@ -287,6 +288,14 @@ export default function Menu({ featureService }) {
           label: t("menu.interventionReasons"),
           icon: <WarningOutlined />,
           id: "gtm-lnk-intv-reason",
+        },
+        {
+          key: "/admin/memoria-global/nzero",
+          link: "/admin/memoria-global/nzero",
+          label: "NZero",
+          icon: <RobotOutlined />,
+          id: "gtm-lnk-nzero",
+          permission: [Permission.ADMIN_NZERO],
         },
         {
           key: "/admin/protocolos",

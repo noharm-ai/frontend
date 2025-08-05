@@ -24,6 +24,7 @@ import { reset as adminDrugReferenceDrawerReset } from "features/admin/DrugRefer
 import { reset as adminMeasureUnitReset } from "features/admin/MeasureUnit/MeasureUnitSlice";
 import { reset as adminTagReset } from "features/admin/Tag/TagSlice";
 import { reset as adminProtocolReset } from "features/admin/Protocol/ProtocolSlice";
+import { reset as adminGlobalMemoryReset } from "features/admin/GlobalMemory/GlobalMemorySlice";
 
 import { reset as drugFormStatusReset } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import { reset as listsReset } from "features/lists/ListsSlice";
@@ -87,6 +88,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(adminMeasureUnitReset());
   dispatch(adminTagReset());
   dispatch(adminProtocolReset());
+  dispatch(adminGlobalMemoryReset());
 
   dispatch(clinicalNotesReset());
   dispatch(drugsReset());

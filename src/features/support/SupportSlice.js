@@ -226,8 +226,8 @@ const supportSlice = createSlice({
 
         if (state.aiform.n0form.data.extra_fields) {
           state.aiform.n0form.data.extra_fields.push({
-            label: "Observações",
-            type: "text",
+            label: "Mais alguma informação relevante?",
+            type: "textarea",
           });
           state.aiform.n0form.data.extra_fields.push({
             label: "Anexos",
