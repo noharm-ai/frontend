@@ -80,7 +80,7 @@ export function Response() {
                 }}
               />
 
-              {articles.length && (
+              {articles.length > 0 && (
                 <>
                   <div
                     style={{
