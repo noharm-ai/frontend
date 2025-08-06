@@ -41,9 +41,10 @@ import { Menu as Navigator } from "antd";
 import Feature from "models/Feature";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
+import { FeatureService } from "services/FeatureService";
 import SecurityService from "services/security";
 
-export default function Menu({ featureService }) {
+export default function Menu() {
   const location = useLocation();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ export default function Menu({ featureService }) {
       return;
     }
 
-    if (item.feature && !featureService.hasFeature(item.feature)) {
+    if (item.feature && !FeatureService.has(item.feature)) {
       return;
     }
 

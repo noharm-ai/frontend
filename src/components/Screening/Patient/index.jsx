@@ -26,14 +26,16 @@ import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
 } from "src/utils/tracker";
+import securityService from "services/security";
+import FeatureService from "services/features";
 
 export default function Patient({
   fetchScreening,
   prescription,
   checkPrescriptionDrug,
   selectIntervention,
-  security,
-  featureService,
+  roles,
+  features,
   siderCollapsed,
   interventions,
   setModalVisibility,
@@ -56,6 +58,8 @@ export default function Patient({
     clinicalNotes,
     clinicalNotesStats,
   } = prescription;
+  const security = securityService(roles);
+  const featureService = FeatureService(features);
 
   const [seeMore, setSeeMore] = useState(false);
   const [isRemovingNotes, setIsRemovingNotes] = useState(false);

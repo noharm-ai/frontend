@@ -18,6 +18,8 @@ import Tag from "components/Tag";
 import Dropdown from "components/Dropdown";
 import { getFirstAndLastName } from "utils";
 import { intersection } from "utils/lodash";
+import securityService from "services/security";
+import FeatureService from "services/features";
 
 import View from "./View";
 import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
@@ -31,10 +33,8 @@ export default function ClinicalNotes({
   select,
   update,
   positionList,
-  security,
   saveStatus,
   userId,
-  featureService,
   fetchByDate,
   admissionNumber,
   admissionNumberPopup,
@@ -42,7 +42,11 @@ export default function ClinicalNotes({
   popup,
   previousAdmissions,
   visibleState,
+  features,
+  roles,
 }) {
+  const security = securityService(roles);
+  const featureService = FeatureService(features);
   const [positions, setPositions] = useState([]);
   const [selectedPositions, selectPositions] = useState([]);
   const [selectedIndicators, selectIndicators] = useState(
