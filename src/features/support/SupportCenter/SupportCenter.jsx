@@ -9,7 +9,7 @@ import Empty from "components/Empty";
 import notification from "components/notification";
 import Table from "components/Table";
 import { getErrorMessage } from "utils/errorHandler";
-import { fetchTickets, setSupportOpen, reset } from "../SupportSlice";
+import { fetchTickets, setSupportOpen } from "../SupportSlice";
 import columns from "./columns";
 import expandedRowRender from "./expandedRowRender";
 import PermissionService from "services/PermissionService";
@@ -43,10 +43,6 @@ function SupportCenter() {
         });
       }
     });
-
-    return () => {
-      dispatch(reset());
-    };
   }, [dispatch, t]);
 
   const items = [

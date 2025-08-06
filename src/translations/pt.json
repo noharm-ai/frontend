@@ -424,7 +424,7 @@
     "btnAllHint": "Ver todos",
 
     "panelPrescription": "Prescrição",
-    "panelIssueDate": "Liberação",
+    "panelIssueDate": "Início da Vigência",
     "panelValidUntil": "Fim da Vigência",
     "panelSuspensionDate": "Suspenso em",
     "panelBed": "Leito",
@@ -939,7 +939,9 @@
       "5": "Alterar tipo de solicitação",
       "6": "Alterar risco",
       "7": "Desfazer agendamento",
-      "8": "Desfazer agendamento de transporte"
+      "8": "Desfazer agendamento de transporte",
+      "9": "Finalizar",
+      "10": "Cancelar"
     }
   }
 }

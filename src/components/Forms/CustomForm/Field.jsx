@@ -167,6 +167,16 @@ export default function Field({ question, values, setFieldValue }) {
     );
   }
 
+  if (question.type === "textarea") {
+    return (
+      <Textarea
+        value={values[question.id]}
+        onChange={({ target }) => setFieldValue(question.id, target.value)}
+        style={{ minHeight: "400px", ...(question.style || {}) }}
+      ></Textarea>
+    );
+  }
+
   if (question.type === "json") {
     return (
       <Textarea

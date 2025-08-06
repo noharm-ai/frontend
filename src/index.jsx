@@ -15,6 +15,7 @@ import dayjsLocaleEnUs from "dayjs/locale/en";
 
 import RoutedComponent from "routes";
 import App from "containers/App";
+import { SupportDrawer } from "./features/support/SupportDrawer";
 import { store, persistor } from "store/index.ts";
 import * as serviceWorker from "./serviceWorker";
 
@@ -73,6 +74,7 @@ root.render(
               <App>
                 <BrowserRouter>
                   <RoutedComponent />
+                  <SupportDrawer />
                 </BrowserRouter>
               </App>
             </StyleProvider>

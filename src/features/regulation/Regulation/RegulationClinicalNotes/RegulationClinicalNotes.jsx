@@ -8,8 +8,6 @@ import {
   updateClinicalNoteThunk,
 } from "store/ducks/clinicalNotes/thunk";
 
-import security from "services/security";
-import FeatureService from "services/features";
 import ClinicalNotes from "components/Screening/ClinicalNotes";
 
 const mapStateToProps = ({ regulation, clinicalNotes, user, auth }) => ({
@@ -22,11 +20,11 @@ const mapStateToProps = ({ regulation, clinicalNotes, user, auth }) => ({
   previousAdmissions: clinicalNotes.previousAdmissions,
   selected: clinicalNotes.single,
   saveStatus: clinicalNotes.save,
-  security: security(user.account.roles),
   access_token: auth.identify.access_token,
   userId: user.account.userId,
-  featureService: FeatureService(user.account.features),
   admissionNumber: regulation.regulation.data.admissionNumber,
+  roles: user.account.roles,
+  features: user.account.features,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

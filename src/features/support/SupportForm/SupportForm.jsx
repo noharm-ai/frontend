@@ -10,7 +10,7 @@ import notification from "components/notification";
 import Button from "components/Button";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
-import { createTicket, setSupportOpen } from "../SupportSlice";
+import { createTicket, setSupportOpen, resetAIForm } from "../SupportSlice";
 import Base from "./Base";
 
 import { Form } from "styles/Form.style";
@@ -104,6 +104,7 @@ export default function SupportForm() {
         }
       } else {
         formikBag.resetForm();
+        dispatch(resetAIForm());
 
         const modal = DefaultModal.success({
           content: null,

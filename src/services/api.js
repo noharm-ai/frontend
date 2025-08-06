@@ -148,6 +148,12 @@ api.exams.createExam = (params = {}) => {
   });
 };
 
+api.exams.deleteExam = (params = {}) => {
+  return instance.post(`/exams/delete`, params, {
+    ...setHeaders(),
+  });
+};
+
 api.exams.getExamTypes = (params = {}) =>
   instance.get(`/exams/types/list`, {
     params,
@@ -672,7 +678,7 @@ api.support.getPendingActionTickets = () =>
 api.support.createTicket = (params) => {
   const formData = new FormData();
 
-  if (params.fileList.length) {
+  if (params.fileList && params.fileList.length) {
     params.fileList.forEach((f) => {
       formData.append("fileList[]", f);
     });
@@ -689,6 +695,46 @@ api.support.createTicket = (params) => {
 
   return instance.post(`/support/create-ticket`, formData, config);
 };
+
+api.support.addAttachment = (params) => {
+  const formData = new FormData();
+  formData.append("id_ticket", params.id_ticket);
+
+  Object.keys(params).forEach((key) => {
+    if (key !== "id_ticket") {
+      if (params[key]) {
+        params[key].forEach((f) => {
+          formData.append(`${key}[]`, f);
+        });
+      }
+    }
+  });
+
+  const config = setHeaders();
+  config.headers["content-type"] = "multipart/form-data";
+
+  return instance.post(`/support/attachment`, formData, config);
+};
+
+api.support.createClosedTicket = (params) =>
+  instance.post(`/support/create-closed-ticket`, params, {
+    ...setHeaders(),
+  });
+
+api.support.fetchN0Response = (params) =>
+  instance.post(`/support/ask-n0`, params, {
+    ...setHeaders(),
+  });
+
+api.support.fetchN0Form = (params) =>
+  instance.post(`/support/ask-n0-form`, params, {
+    ...setHeaders(),
+  });
+
+api.support.fetchRelatedArticles = (params) =>
+  instance.post(`/support/related-articles`, params, {
+    ...setHeaders(),
+  });
 
 /**
  * Summary namespace

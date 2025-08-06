@@ -14,6 +14,9 @@ test("outcome: suspension", async ({ page }) => {
     .nth(1)
     .click();
 
+  await page
+    .locator(".ant-select.ant-select-loading")
+    .waitFor({ state: "detached" });
   await page.locator(".ant-select-selector").click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
@@ -100,6 +103,9 @@ test("outcome: substitution", async ({ page }) => {
     .nth(1)
     .click();
 
+  await page
+    .locator(".ant-select.ant-select-loading")
+    .waitFor({ state: "detached" });
   await page.locator(".ant-select-selector").click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
@@ -189,6 +195,9 @@ test("outcome: custom", async ({ page }) => {
 
   await page.getByText("Paciente 99").click();
   await page.locator(".gtm-bt-patient-intervention").first().click();
+  await page
+    .locator(".ant-select.ant-select-loading")
+    .waitFor({ state: "detached" });
   await page.locator(".ant-select-selector").click();
   await page.getByText("Alta antecipada").click();
 
@@ -240,6 +249,9 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
     .nth(1)
     .click();
 
+  await page
+    .locator(".ant-select.ant-select-loading")
+    .waitFor({ state: "detached" });
   await page.locator(".ant-select-selector").click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);

@@ -122,6 +122,10 @@ export default function SaveModal({
       label: "Número do atendimento",
       key: "{{nratendimento_paciente}}",
     },
+    {
+      label: "Data de internação",
+      key: "{{data_internacao}}",
+    },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
   const examVariables = [

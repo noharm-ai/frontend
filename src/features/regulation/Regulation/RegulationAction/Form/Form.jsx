@@ -4,7 +4,6 @@ import { useFormikContext } from "formik";
 import * as Yup from "yup";
 
 import { Select } from "components/Inputs";
-import RegulationStage from "models/regulation/RegulationStage";
 import RegulationAction from "models/regulation/RegulationAction";
 import { Form as FormElement } from "styles/Form.style";
 import RegulationStageTag from "components/RegulationStageTag";
@@ -17,6 +16,7 @@ export default function Form({ setValidationSchema }) {
   const onActionChange = (action) => {
     setFieldValue("action", action);
     setFieldValue("actionData", {});
+    setFieldValue("nextStage", null);
 
     const actionDataFields = {};
     RegulationAction.getForm(action, t).forEach((field) => {
@@ -135,7 +135,7 @@ export default function Form({ setValidationSchema }) {
             optionFilterProp="children"
             showSearch
           >
-            {RegulationStage.getStages(t).map((s) => (
+            {RegulationAction.getNextStages(values.action, t).map((s) => (
               <Select.Option key={s.id} value={s.id}>
                 {s.label}
               </Select.Option>

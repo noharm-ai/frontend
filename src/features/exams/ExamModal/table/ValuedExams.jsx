@@ -14,6 +14,18 @@ import { formatDate } from "utils/date";
 
 export default function ValuedExams({ record }) {
   const { t } = useTranslation();
+  //const dispatch = useDispatch();
+
+  // const actionDeleteExam = async (item) => {
+  //   const response = await dispatch(
+  //     deleteExam({
+  //       idExam: item.idExam,
+  //       admissionNumber: item.admissionNumber,
+  //     })
+  //   );
+
+  //   console.log("response", response);
+  // };
 
   const expandedColumns = [
     {
@@ -42,6 +54,28 @@ export default function ValuedExams({ record }) {
             return format(new Date(record.date), "dd/MM/yyyy HH:mm");
           },
         },
+        // {
+        //   title: "Ação",
+        //   align: "center",
+        //   render: (text, record) => {
+        //     if (record.manual && record.idExam) {
+        //       return (
+        //         <Popconfirm
+        //           title="Remover registro de exame"
+        //           description="Confirma a remoção deste registro de exame?"
+        //           okText="Sim"
+        //           cancelText="Não"
+        //           onConfirm={() => actionDeleteExam(record)}
+        //           zIndex={9999}
+        //         >
+        //           <Button danger icon={<DeleteOutlined />} />
+        //         </Popconfirm>
+        //       );
+        //     }
+
+        //     return "--";
+        //   },
+        // },
       ],
     },
   ];

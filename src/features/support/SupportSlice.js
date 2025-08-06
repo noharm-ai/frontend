@@ -19,6 +19,28 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  aiform: {
+    currentStep: ["question"],
+    status: "idle",
+    error: null,
+    question: "",
+    response: "",
+    askn0: {
+      status: "idle",
+      error: null,
+      data: null,
+    },
+    n0form: {
+      status: "idle",
+      error: null,
+      data: null,
+    },
+    relatedArticles: {
+      status: "idle",
+      error: null,
+      list: [],
+    },
+  },
 };
 
 export const createTicket = createAsyncThunk(
@@ -26,6 +48,38 @@ export const createTicket = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.support.createTicket(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue({
+        ...err.response.data,
+        statusCode: err.response.status,
+      });
+    }
+  }
+);
+
+export const createClosedTicket = createAsyncThunk(
+  "support/create-closed-ticket",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.support.createClosedTicket(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue({
+        ...err.response.data,
+        statusCode: err.response.status,
+      });
+    }
+  }
+);
+
+export const addAttachment = createAsyncThunk(
+  "support/add-attachment",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.support.addAttachment(params);
 
       return response.data;
     } catch (err) {
@@ -63,8 +117,47 @@ export const fetchPendingActionTickets = createAsyncThunk(
   }
 );
 
+export const fetchN0Response = createAsyncThunk(
+  "support/fetch-n0-response",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.support.fetchN0Response(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const fetchN0Form = createAsyncThunk(
+  "support/fetch-n0-form",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.support.fetchN0Form(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const fetchRelatedArticles = createAsyncThunk(
+  "support/fetch-related-articles",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.support.fetchRelatedArticles(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const supportSlice = createSlice({
-  name: "summary",
+  name: "supportSlice",
   initialState,
   reducers: {
     setSupportOpen(state, action) {
@@ -72,6 +165,20 @@ const supportSlice = createSlice({
     },
     setPendingTickets(state, action) {
       state.pendingTickets.list = action.payload;
+    },
+    setAIFormStep(state, action) {
+      state.aiform.currentStep = action.payload;
+    },
+    setAIFormQuestion(state, action) {
+      state.aiform.question = action.payload;
+    },
+    setAIFormResponse(state, action) {
+      state.aiform.response = action.payload;
+    },
+    resetAIForm(state) {
+      state.aiform = {
+        ...initialState.aiform,
+      };
     },
     reset() {
       return initialState;
@@ -103,6 +210,7 @@ const supportSlice = createSlice({
         state.pendingTickets.status = "failed";
         state.pendingTickets.error = action.error.message;
       })
+
       .addCase(createTicket.pending, (state, action) => {
         state.form.status = "loading";
       })
@@ -112,11 +220,68 @@ const supportSlice = createSlice({
       .addCase(createTicket.rejected, (state, action) => {
         state.form.status = "failed";
         state.form.error = action.error.message;
+      })
+
+      .addCase(fetchN0Response.pending, (state, action) => {
+        state.aiform.askn0.status = "loading";
+      })
+      .addCase(fetchN0Response.fulfilled, (state, action) => {
+        state.aiform.askn0.status = "succeeded";
+        state.aiform.askn0.data = action.payload.data;
+      })
+      .addCase(fetchN0Response.rejected, (state, action) => {
+        state.aiform.askn0.status = "failed";
+        state.aiform.askn0.error = action.error.message;
+        state.aiform.askn0.data = null;
+      })
+
+      .addCase(fetchN0Form.pending, (state, action) => {
+        state.aiform.n0form.status = "loading";
+      })
+      .addCase(fetchN0Form.fulfilled, (state, action) => {
+        state.aiform.n0form.status = "succeeded";
+        state.aiform.n0form.data = action.payload.data.agent;
+
+        if (state.aiform.n0form.data.extra_fields) {
+          state.aiform.n0form.data.extra_fields.push({
+            label: "Mais alguma informação relevante?",
+            type: "textarea",
+          });
+          state.aiform.n0form.data.extra_fields.push({
+            label: "Anexos",
+            type: "archive",
+          });
+        }
+      })
+      .addCase(fetchN0Form.rejected, (state, action) => {
+        state.aiform.n0form.status = "failed";
+        state.aiform.n0form.error = action.error.message;
+        state.aiform.n0form.data = null;
+      })
+
+      .addCase(fetchRelatedArticles.pending, (state, action) => {
+        state.aiform.relatedArticles.status = "loading";
+      })
+      .addCase(fetchRelatedArticles.fulfilled, (state, action) => {
+        state.aiform.relatedArticles.status = "succeeded";
+        state.aiform.relatedArticles.list = action.payload.data;
+      })
+      .addCase(fetchRelatedArticles.rejected, (state, action) => {
+        state.aiform.relatedArticles.status = "failed";
+        state.aiform.relatedArticles.error = action.error.message;
+        state.aiform.relatedArticles.list = [];
       });
   },
 });
 
 export default supportSlice.reducer;
 
-export const { setSupportOpen, reset, setPendingTickets } =
-  supportSlice.actions;
+export const {
+  setSupportOpen,
+  reset,
+  resetAIForm,
+  setPendingTickets,
+  setAIFormStep,
+  setAIFormQuestion,
+  setAIFormResponse,
+} = supportSlice.actions;

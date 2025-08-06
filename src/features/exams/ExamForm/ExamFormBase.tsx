@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useFormikContext } from "formik";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 import { Select, DatePicker, InputNumber } from "components/Inputs";
 import { IExamFormBaseFields } from "./ExamForm";
@@ -63,6 +63,7 @@ export function ExamFormBase() {
               setFieldValue("examDate", value);
             }}
             popupClassName="noArrow"
+            maxDate={dayjs()}
             showTime
           />
         </div>

@@ -10,7 +10,7 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
-import { Alert, Drawer, Dropdown, List } from "antd";
+import { Alert, Dropdown, List } from "antd";
 import { useTranslation } from "react-i18next";
 
 import appInfo from "utils/appInfo";
@@ -22,7 +22,7 @@ import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import IntegrationStatusTag from "components/IntegrationStatusTag";
 import { setSupportOpen } from "features/support/SupportSlice";
-import SupportForm from "features/support/SupportForm/SupportForm";
+
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
 import { setPendingTickets } from "features/support/SupportSlice";
@@ -236,8 +236,6 @@ export default function Layout({
   ...props
 }) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const supportDrawerOpen = useSelector((state) => state.support.open);
   const supportPendingTickets = useSelector(
     (state) => state.support.pendingTickets.list
   );
@@ -369,25 +367,6 @@ export default function Layout({
           </ErrorBoundary>
         </Content>
         <Footer>{appInfo.copyright}</Footer>
-        <Drawer
-          open={supportDrawerOpen}
-          size="large"
-          onClose={() => dispatch(setSupportOpen(false))}
-          mask={false}
-          title={t("layout.help")}
-          extra={
-            <Button
-              onClick={() => {
-                dispatch(setSupportOpen(false));
-                navigate("/suporte");
-              }}
-            >
-              Abrir Central de Ajuda
-            </Button>
-          }
-        >
-          <SupportForm />
-        </Drawer>
       </Main>
     </Main>
   );

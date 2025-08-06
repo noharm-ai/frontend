@@ -22,6 +22,11 @@ interface IExamCreateRequest {
   result: number;
 }
 
+interface IExamDeleteRequest {
+  admissionNumber: number;
+  idExam: number;
+}
+
 const initialState: IExamFormSlice = {
   status: "idle",
   error: null,
@@ -52,6 +57,19 @@ export const createExam = createAsyncThunk(
   async (params: IExamCreateRequest, thunkAPI) => {
     try {
       const response = await api.exams.createExam(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  }
+);
+
+export const deleteExam = createAsyncThunk(
+  "exams/delete",
+  async (params: IExamDeleteRequest, thunkAPI) => {
+    try {
+      const response = await api.exams.deleteExam(params);
 
       return response.data;
     } catch (err) {

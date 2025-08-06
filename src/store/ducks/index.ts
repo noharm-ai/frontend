@@ -48,6 +48,7 @@ import adminDrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugRef
 import adminMeasureUnit from "features/admin/MeasureUnit/MeasureUnitSlice";
 import adminTag from "features/admin/Tag/TagSlice";
 import adminProtocol from "features/admin/Protocol/ProtocolSlice";
+import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
 
 import regulationPrioritizationSlice from "features/regulation/Prioritization/PrioritizationSlice";
 import regulationSlice from "features/regulation/Regulation/RegulationSlice";
@@ -84,6 +85,7 @@ const adminReducers = combineReducers({
   measureUnit: adminMeasureUnit,
   tag: adminTag,
   protocol: adminProtocol,
+  globalMemory: adminGlobalMemory,
 });
 
 const regulationReducers = combineReducers({

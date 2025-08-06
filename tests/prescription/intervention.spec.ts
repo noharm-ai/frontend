@@ -13,6 +13,12 @@ test("add intervention", async ({ page }) => {
     .getByRole("button")
     .nth(1)
     .click();
+
+  // wait to load reasons
+  await page
+    .locator(".ant-select.ant-select-loading")
+    .waitFor({ state: "detached" });
+
   await page.locator(".ant-select-selector").click();
   await page.getByText("Alergia").click();
 
@@ -42,6 +48,12 @@ test("add multiple interventions and rollback", async ({ page }) => {
     .getByRole("button")
     .nth(1)
     .click();
+
+  // wait to load reasons
+  await page
+    .locator(".ant-select.ant-select-loading")
+    .waitFor({ state: "detached" });
+
   await page.locator(".ant-select-selector").click();
   // select intervention reason
   await page.getByText("Alergia").click();
@@ -64,6 +76,10 @@ test("add multiple interventions and rollback", async ({ page }) => {
   // add another intervention
   await page.getByRole("button", { name: "plus Nova intervenção" }).click();
   // select intervention reason
+  // wait to load reasons
+  await page
+    .locator(".ant-select.ant-select-loading")
+    .waitFor({ state: "detached" });
   await page.locator(".ant-select-selector").click();
   await page.getByText("Aprazamento").nth(1).click();
   // close dropdown
@@ -119,6 +135,10 @@ test("add patient intervention", async ({ page }) => {
 
   await page.getByText("Paciente 99").click();
   await page.locator(".gtm-bt-patient-intervention").first().click();
+  // wait to load reasons
+  await page
+    .locator(".ant-select.ant-select-loading")
+    .waitFor({ state: "detached" });
   await page.locator(".ant-select-selector").click();
   await page.getByText("Diluição", { exact: true }).click();
 
