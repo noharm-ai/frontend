@@ -4,8 +4,6 @@ import { bindActionCreators } from "redux";
 import { savePatientThunk } from "store/ducks/patients/thunk";
 
 import FormPatient from "components/Forms/Patient";
-import security from "services/security";
-import FeatureService from "services/features";
 
 const mapStateToProps = ({ prescriptions, patients, user }) => ({
   saveStatus: patients.save,
@@ -23,8 +21,7 @@ const mapStateToProps = ({ prescriptions, patients, user }) => ({
   notesInfoDate: prescriptions.single.data.notesInfoDate,
   dischargeDate: prescriptions.single.data.dischargeDate,
   patient: prescriptions.single.data.patient,
-  security: security(user.account.roles), //todo:remove
-  featureService: FeatureService(user.account.features), //todo:remove
+  roles: user.account.roles,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

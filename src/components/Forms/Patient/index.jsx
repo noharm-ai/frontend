@@ -10,6 +10,7 @@ import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import { getErrorMessageFromException } from "utils/errorHandler";
+import securityService from "services/security";
 
 import Base from "./Base";
 import { FormContainer } from "./Patient.style";
@@ -37,13 +38,14 @@ export default function Patient({
   dialysis,
   notesInfo,
   notesInfoDate,
-  security,
   dischargeDate,
   patient,
+  roles,
   ...props
 }) {
   const { t } = useTranslation();
   const { isSaving } = saveStatus;
+  const security = securityService(roles);
 
   const initialValues = {
     idPrescription,
