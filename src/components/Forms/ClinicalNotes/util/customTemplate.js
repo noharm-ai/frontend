@@ -64,6 +64,7 @@ export const getCustomClinicalNote = (
       "{{dtnascimento_paciente}}",
       formatDate(prescription.data.birthdate)
     )
+    .replaceAll("{{data_internacao}}", prescription.data.admissionDate)
     .replaceAll("{{nratendimento_paciente}}", prescription.data.admissionNumber)
     .replaceAll("{{peso_paciente}}", getWeight(prescription.data.weight))
     .replaceAll("{{altura_paciente}}", getHeight(prescription.data.height))
