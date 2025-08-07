@@ -71,18 +71,16 @@ const Me = ({
     dispatch(setSupportOpen(true));
   };
 
-  const logout = () => {
+  const logout = async () => {
     toast.success({
       message: "Obrigado por usar a NoHarm!",
       description: "Até breve ;)",
     });
     document.title = `${import.meta.env.VITE_APP_SITE_TITLE}`;
 
-    doLogout();
+    await doLogout();
     if (logoutUrl) {
-      setTimeout(() => {
-        window.location.href = logoutUrl;
-      }, 100);
+      window.location.href = logoutUrl;
     }
   };
 
