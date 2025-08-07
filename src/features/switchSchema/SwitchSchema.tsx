@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Collapse, Card } from "antd";
+import { Collapse, Card, Alert } from "antd";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import { Select } from "components/Inputs";
@@ -23,6 +23,7 @@ import { Brand } from "components/Login/Login.style";
 export function SwitchSchema() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [queryParams] = useSearchParams();
   const dispatch = useAppDispatch();
   const status = useAppSelector((state) => state.switchSchema.status);
   const switchStatus = useAppSelector(
@@ -30,6 +31,8 @@ export function SwitchSchema() {
   );
   const data = useAppSelector((state) => state.switchSchema.data);
   const iptRef = useRef<any>(null);
+
+  console.log("queryparams", queryParams.get("alert"));
 
   useEffect(() => {
     dispatch(fetchSwitchSchemaData({}));
@@ -142,7 +145,17 @@ export function SwitchSchema() {
       {({ handleSubmit, errors, touched, values, setFieldValue }) => (
         <SwitchSchemaContainer>
           <Brand title="NoHarm.ai | Cuidando dos pacientes" />
+
           <Form>
+            {queryParams?.get("alert") && (
+              <Alert
+                message="Lembre-se de fechar as outras abas"
+                showIcon
+                description="Ao trocar o schema, as outras abas abertas serão atualizadas para o novo schema. Isto pode gerar comportamentos inesperados."
+                type="warning"
+                style={{ marginBottom: "15px" }}
+              />
+            )}
             <Card>
               <div
                 className={`form-row ${

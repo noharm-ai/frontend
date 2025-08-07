@@ -8,6 +8,7 @@ import {
   LogoutOutlined,
   CheckOutlined,
   SettingOutlined,
+  SwapOutlined,
 } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
 import { Alert, Dropdown, List } from "antd";
@@ -105,6 +106,12 @@ const Me = ({
         key: "status",
         icon: <CheckOutlined />,
       });
+
+      options.push({
+        label: "Trocar schema",
+        key: "switchSchema",
+        icon: <SwapOutlined />,
+      });
     }
 
     return [
@@ -134,6 +141,9 @@ const Me = ({
         break;
       case "userConfig":
         navigate("/configuracoes/usuario");
+        break;
+      case "switchSchema":
+        navigate("/switch-schema?alert=true");
         break;
       default:
         break;
