@@ -67,11 +67,15 @@ export const loginThunk =
 
 export const logoutThunk = () => {
   return (dispatch) => {
-    localStorage.removeItem("ac1");
-    localStorage.removeItem("ac2");
+    return new Promise(async (resolve) => {
+      localStorage.removeItem("ac1");
+      localStorage.removeItem("ac2");
 
-    dispatch(userLogout());
-    dispatch(authDelIdentify());
+      dispatch(userLogout());
+      dispatch(authDelIdentify());
+
+      resolve();
+    });
   };
 };
 

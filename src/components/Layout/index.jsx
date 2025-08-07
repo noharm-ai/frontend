@@ -8,6 +8,7 @@ import {
   LogoutOutlined,
   CheckOutlined,
   SettingOutlined,
+  SwapOutlined,
 } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
 import { Alert, Dropdown, List } from "antd";
@@ -71,18 +72,16 @@ const Me = ({
     dispatch(setSupportOpen(true));
   };
 
-  const logout = () => {
+  const logout = async () => {
     toast.success({
       message: "Obrigado por usar a NoHarm!",
       description: "Até breve ;)",
     });
     document.title = `${import.meta.env.VITE_APP_SITE_TITLE}`;
 
-    doLogout();
+    await doLogout();
     if (logoutUrl) {
-      setTimeout(() => {
-        window.location.href = logoutUrl;
-      }, 100);
+      window.location.href = logoutUrl;
     }
   };
 
@@ -106,6 +105,12 @@ const Me = ({
         label: "Status da integração",
         key: "status",
         icon: <CheckOutlined />,
+      });
+
+      options.push({
+        label: "Trocar schema",
+        key: "switchSchema",
+        icon: <SwapOutlined />,
       });
     }
 
@@ -136,6 +141,9 @@ const Me = ({
         break;
       case "userConfig":
         navigate("/configuracoes/usuario");
+        break;
+      case "switchSchema":
+        navigate("/switch-schema?alert=true");
         break;
       default:
         break;
