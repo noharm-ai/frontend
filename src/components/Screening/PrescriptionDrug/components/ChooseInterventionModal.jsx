@@ -18,7 +18,6 @@ function ChooseInterventionModal({
   const select = (intvData) => {
     selectIntervention(intvData, completeData);
     if (modalRef) {
-      modalRef.update({ transitionName: "" });
       setTimeout(() => {
         modalRef.destroy();
       }, 500);
