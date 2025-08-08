@@ -32,8 +32,6 @@ export function SwitchSchema() {
   const data = useAppSelector((state) => state.switchSchema.data);
   const iptRef = useRef<any>(null);
 
-  console.log("queryparams", queryParams.get("alert"));
-
   useEffect(() => {
     dispatch(fetchSwitchSchemaData({}));
     if (iptRef && iptRef.current) {
