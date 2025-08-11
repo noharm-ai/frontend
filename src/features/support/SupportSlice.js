@@ -243,6 +243,10 @@ const supportSlice = createSlice({
         state.aiform.n0form.data = action.payload.data.agent;
 
         if (state.aiform.n0form.data.extra_fields) {
+          state.aiform.n0form.data.extra_fields.forEach((field) => {
+            field.label = field.label.replaceAll(".", "");
+          });
+
           state.aiform.n0form.data.extra_fields.push({
             label: "Mais alguma informação relevante?",
             type: "textarea",
