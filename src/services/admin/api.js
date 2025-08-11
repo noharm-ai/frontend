@@ -13,15 +13,6 @@ const endpoints = {
   unit: "/admin/unit",
 };
 
-const getFrequencyList = (params = {}) =>
-  instance.post(`${endpoints.frequency}/list`, params, setHeaders());
-
-const updateFrequency = (params = {}) => {
-  return instance.put(`${endpoints.frequency}`, params, {
-    ...setHeaders(),
-  });
-};
-
 const getIntervReasonList = (bearerToken, params = {}) =>
   instance.get(endpoints.interventionReason, {
     params,
@@ -419,10 +410,24 @@ api.globalMemory.updateGlobalMemory = (params = {}) => {
   });
 };
 
+/**
+ * FREQUENCY
+ */
+api.frequency = {};
+api.frequency.getFrequencyList = (params = {}) =>
+  instance.post(`${endpoints.frequency}/list`, params, setHeaders());
+
+api.frequency.updateFrequency = (params = {}) => {
+  return instance.put(`${endpoints.frequency}`, params, {
+    ...setHeaders(),
+  });
+};
+
+api.frequency.inferFrequencies = (params = {}) =>
+  instance.post(`${endpoints.frequency}/infer`, params, setHeaders());
+
 const methods = {
   ...api,
-  getFrequencyList,
-  updateFrequency,
   getIntervReasonList,
   upsertIntervReason,
   getMemoryItems,

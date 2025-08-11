@@ -10,13 +10,17 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  inferFrequencies: {
+    status: "idle",
+    error: null,
+  },
 };
 
 export const fetchFrequencies = createAsyncThunk(
   "admin-frequency/fetch",
   async (params, thunkAPI) => {
     try {
-      const response = await api.getFrequencyList(params);
+      const response = await api.frequency.getFrequencyList(params);
 
       return response;
     } catch (err) {
@@ -29,7 +33,20 @@ export const upsertFrequency = createAsyncThunk(
   "admin-frequency/upsert",
   async (params, thunkAPI) => {
     try {
-      const response = await api.updateFrequency(params);
+      const response = await api.frequency.updateFrequency(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const inferFrequencies = createAsyncThunk(
+  "admin-frequency/infer",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.frequency.inferFrequencies(params);
 
       return response.data;
     } catch (err) {
@@ -79,6 +96,17 @@ const frequencySlice = createSlice({
       .addCase(upsertFrequency.rejected, (state, action) => {
         state.single.status = "failed";
         state.single.error = action.error.message;
+      })
+
+      .addCase(inferFrequencies.pending, (state, action) => {
+        state.inferFrequencies.status = "loading";
+      })
+      .addCase(inferFrequencies.fulfilled, (state, action) => {
+        state.inferFrequencies.status = "succeeded";
+      })
+      .addCase(inferFrequencies.rejected, (state, action) => {
+        state.inferFrequencies.status = "failed";
+        state.inferFrequencies.error = action.error.message;
       });
   },
 });

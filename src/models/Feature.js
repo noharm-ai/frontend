@@ -22,6 +22,7 @@ export default class Feature {
   static SHOW_PEP_LINK = "SHOW_PEP_LINK";
   static ADD_EXAMS = "ADD_EXAMS";
   static N0_AGENT = "N0_AGENT";
+  static PATIENT_DAY_OUTPATIENT_FLOW = "PATIENT_DAY_OUTPATIENT_FLOW";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -153,6 +154,12 @@ export default class Feature {
         label: "N0-Copilot",
         description:
           "Habilita o N0-Copilot na abertura de chamados. (Experimental - Não habilitar para usuários finais)",
+      },
+      {
+        id: Feature.PATIENT_DAY_OUTPATIENT_FLOW,
+        label: "Paciente-Dia: fluxo ambulatorial",
+        description:
+          "Habilita o fluxo de geração de prescrições Paciente-dia para ambulatórios. Neste fluxo, as prescrições paciente-dia só serão geradas nos dias onde houver um novo item de prescrição.",
       },
     ];
   }

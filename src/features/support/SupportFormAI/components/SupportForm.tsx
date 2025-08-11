@@ -33,6 +33,9 @@ export function SupportForm() {
   const data: any = useAppSelector((state) => state.support.aiform.n0form.data);
   const question = useAppSelector((state) => state.support.aiform.question);
   const aiResponse = useAppSelector((state) => state.support.aiform.response);
+  const integrationStatus = useAppSelector(
+    (state) => (state.app as any).config.integrationStatus
+  );
   const [loading, setLoading] = useState<boolean>(false);
 
   const goToSupportCenter = () => {
@@ -44,7 +47,7 @@ export function SupportForm() {
     setLoading(true);
 
     const payload: any = {
-      category: data.type,
+      category: integrationStatus === 0 ? "Validação" : data.type,
       title: data.subject,
       fromUrl: window.location.href,
     };

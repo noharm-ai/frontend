@@ -31,7 +31,11 @@ export function SupportField({
       if (value.length >= 2) {
         notification.error({ message: "Máximo de arquivos anexos atingido." });
       } else {
-        setFieldValue(label, [...value, file]);
+        if (value) {
+          setFieldValue(label, [...value, file]);
+        } else {
+          setFieldValue(label, [file]);
+        }
       }
 
       return false;
