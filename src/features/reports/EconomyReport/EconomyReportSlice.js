@@ -20,6 +20,9 @@ const initialState = {
   reasons: [],
   insurances: [],
   tags: [],
+  originSubstances: [],
+  originSubstanceClasses: [],
+  originSubstanceClassParents: [],
   filtered: {
     status: "idle",
     error: null,
@@ -150,8 +153,27 @@ const economyReportSlice = createSlice({
 
             if (firstRecord.hasOwnProperty("tags")) {
               state.tags = getUniqList(action.payload.cacheData.body, "tags");
-            } else {
-              state.tags = [];
+            }
+
+            if (firstRecord.hasOwnProperty("originSubstance")) {
+              state.originSubstances = getUniqList(
+                action.payload.cacheData.body,
+                "originSubstance"
+              );
+            }
+
+            if (firstRecord.hasOwnProperty("originSubstanceClass")) {
+              state.originSubstanceClasses = getUniqList(
+                action.payload.cacheData.body,
+                "originSubstanceClass"
+              );
+            }
+
+            if (firstRecord.hasOwnProperty("originSubstanceClassParent")) {
+              state.originSubstanceClassParents = getUniqList(
+                action.payload.cacheData.body,
+                "originSubstanceClassParent"
+              );
             }
           }
         }

@@ -746,7 +746,10 @@
     "drugPeriod": "PERIODO USO",
     "substance": "SUBSTANCIA",
     "substanceClass": "CLASSE DE SUBSTANCIA",
-    "substanceClassParent": "CLASSE MAE DE SUBSTANCIA"
+    "substanceClassParent": "CLASSE MAE DE SUBSTANCIA",
+    "originSubstance": "SUBSTANCIA (ORIGEM)",
+    "originSubstanceClass": "CLASSE DE SUBSTANCIA (ORIGEM)",
+    "originSubstanceClassParent": "CLASSE MAE DE SUBSTANCIA (ORIGEM)"
   },
 
   "reportcsvCulture": {

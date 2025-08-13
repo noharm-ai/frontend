@@ -115,6 +115,34 @@ const filterDatasource = (datasource, filters) => {
       }
 
       return true;
+    })
+    .filter((i) => {
+      if (filters.originSubstanceList.length) {
+        return filters.originSubstanceList.indexOf(i.originSubstance) !== -1;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.originSubstanceClassList.length) {
+        return (
+          filters.originSubstanceClassList.indexOf(i.originSubstanceClass) !==
+          -1
+        );
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.originSubstanceClassParentList.length) {
+        return (
+          filters.originSubstanceClassParentList.indexOf(
+            i.originSubstanceClassParent
+          ) !== -1
+        );
+      }
+
+      return true;
     });
 };
 

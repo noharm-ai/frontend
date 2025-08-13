@@ -742,7 +742,10 @@
     "drugPeriod": "PERIOD",
     "substance": "SUBSTANCE",
     "substanceClass": "SUBSTANCE CLASS",
-    "substanceClassParent": "SUBSTANCE PARENT CLASS"
+    "substanceClassParent": "SUBSTANCE PARENT CLASS",
+    "originSubstance": "SUBSTANCE (ORIGIN)",
+    "originSubstanceClass": "SUBSTANCE CLASS (ORIGIN)",
+    "originSubstanceClassParent": "SUBSTANCE PARENT CLASS (ORIGIN)"
   },
 
   "reportcsvCulture": {
