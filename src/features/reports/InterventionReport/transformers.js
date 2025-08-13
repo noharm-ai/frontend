@@ -131,6 +131,37 @@ const filterDatasource = (datasource, filters) => {
       }
 
       return true;
+    })
+    .filter((i) => {
+      if (filters.substanceList.length) {
+        return filters.substanceList.indexOf(i.substance) !== -1;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.substanceClassList.length) {
+        return filters.substanceClassList.indexOf(i.substanceClass) !== -1;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.substanceClassParentList.length) {
+        return (
+          filters.substanceClassParentList.indexOf(i.substanceClassParent) !==
+          -1
+        );
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.economyTypeList.length) {
+        return filters.economyTypeList.indexOf(i.economyType) !== -1;
+      }
+
+      return true;
     });
 };
 

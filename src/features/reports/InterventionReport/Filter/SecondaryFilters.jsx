@@ -18,6 +18,18 @@ export default function SecondaryFilters() {
   const reasons = useSelector(
     (state) => state.reportsArea.intervention.reasons
   );
+  const substances = useSelector(
+    (state) => state.reportsArea.intervention.substances
+  );
+  const substanceClasses = useSelector(
+    (state) => state.reportsArea.intervention.substanceClasses
+  );
+  const substanceClassParents = useSelector(
+    (state) => state.reportsArea.intervention.substanceClassParents
+  );
+  const economyTypes = useSelector(
+    (state) => state.reportsArea.intervention.economyTypes
+  );
   const tags = useSelector((state) => state.reportsArea.intervention.tags);
   const status = useSelector((state) => state.reportsArea.intervention.status);
 
@@ -165,6 +177,84 @@ export default function SecondaryFilters() {
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" $size="14px">
+          Substâncias:
+        </Heading>
+        <SelectCustom
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.substanceList}
+          onChange={(val) => setFieldValue({ substanceList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {substances.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </SelectCustom>
+        <div style={{ opacity: 0.6, fontSize: "13px", marginTop: "5px" }}>
+          Disponível a partir de AGO/25.
+        </div>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" $size="14px">
+          Classes de substância:
+        </Heading>
+        <SelectCustom
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.substanceClassList}
+          onChange={(val) => setFieldValue({ substanceClassList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {substanceClasses.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </SelectCustom>
+        <div style={{ opacity: 0.6, fontSize: "13px", marginTop: "5px" }}>
+          Disponível a partir de AGO/25.
+        </div>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" $size="14px">
+          Classe Mãe de substância:
+        </Heading>
+        <SelectCustom
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.substanceClassParentList}
+          onChange={(val) => setFieldValue({ substanceClassParentList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {substanceClassParents.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </SelectCustom>
+        <div style={{ opacity: 0.6, fontSize: "13px", marginTop: "5px" }}>
+          Disponível a partir de AGO/25.
+        </div>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" $size="14px">
           Atributo do medicamento:
         </Heading>
         <Select
@@ -251,6 +341,32 @@ export default function SecondaryFilters() {
             Pendente
           </Select.Option>
         </Select>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" $size="14px">
+          Tipo de economia:
+        </Heading>
+        <SelectCustom
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.economyTypeList}
+          onChange={(val) => setFieldValue({ economyTypeList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {economyTypes.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </SelectCustom>
+        <div style={{ opacity: 0.6, fontSize: "13px", marginTop: "5px" }}>
+          Disponível a partir de AGO/25.
+        </div>
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" $size="14px">

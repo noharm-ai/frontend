@@ -17,6 +17,10 @@ const initialState = {
   departments: [],
   segments: [],
   drugs: [],
+  substances: [],
+  substanceClasses: [],
+  substanceClassParents: [],
+  economyTypes: [],
   reasons: [],
   tags: [],
   filtered: {
@@ -137,8 +141,34 @@ const interventionReportSlice = createSlice({
 
             if (firstRecord.hasOwnProperty("tags")) {
               state.tags = getUniqList(action.payload.cacheData.body, "tags");
-            } else {
-              state.tags = [];
+            }
+
+            if (firstRecord.hasOwnProperty("substance")) {
+              state.substances = getUniqList(
+                action.payload.cacheData.body,
+                "substance"
+              );
+            }
+
+            if (firstRecord.hasOwnProperty("substanceClass")) {
+              state.substanceClasses = getUniqList(
+                action.payload.cacheData.body,
+                "substanceClass"
+              );
+            }
+
+            if (firstRecord.hasOwnProperty("substanceClassParent")) {
+              state.substanceClassParents = getUniqList(
+                action.payload.cacheData.body,
+                "substanceClassParent"
+              );
+            }
+
+            if (firstRecord.hasOwnProperty("economyType")) {
+              state.economyTypes = getUniqList(
+                action.payload.cacheData.body,
+                "economyType"
+              );
             }
           }
         }

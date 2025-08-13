@@ -739,7 +739,10 @@
     "ramCausality": "RAM CAUSALITY",
     "admissionDate": "ADMISSION DATE",
     "dischargeDate": "DISCHARGE DATE",
-    "drugPeriod": "PERIOD"
+    "drugPeriod": "PERIOD",
+    "substance": "SUBSTANCE",
+    "substanceClass": "SUBSTANCE CLASS",
+    "substanceClassParent": "SUBSTANCE PARENT CLASS"
   },
 
   "reportcsvCulture": {

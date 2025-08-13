@@ -86,6 +86,22 @@ export default function InterventionReport() {
       label: "Marcadores",
       type: "list",
     },
+    substanceList: {
+      label: "Substâncias",
+      type: "list",
+    },
+    substanceClassList: {
+      label: "Classe de substâncias",
+      type: "list",
+    },
+    substanceClassParentList: {
+      label: "Classe mãe de substâncias",
+      type: "list",
+    },
+    economyTypeList: {
+      label: "Tipo de economia",
+      type: "list",
+    },
   };
 
   return (
