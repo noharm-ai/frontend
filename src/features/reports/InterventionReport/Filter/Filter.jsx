@@ -87,6 +87,10 @@ export default function Filter({ printRef }) {
     prescriptionError: "",
     drugAttrList: [],
     tagList: [],
+    substanceList: [],
+    substanceClassList: [],
+    substanceClassParentList: [],
+    economyTypeList: [],
   };
 
   const reportManager = useFetchReport({

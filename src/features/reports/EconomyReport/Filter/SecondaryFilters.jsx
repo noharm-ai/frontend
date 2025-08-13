@@ -23,6 +23,15 @@ export default function SecondaryFilters() {
     (state) => state.reportsArea.economy.insurances
   );
   const tags = useSelector((state) => state.reportsArea.economy.tags);
+  const originSubstances = useSelector(
+    (state) => state.reportsArea.economy.originSubstances
+  );
+  const originSubstanceClasses = useSelector(
+    (state) => state.reportsArea.economy.originSubstanceClasses
+  );
+  const originSubstanceClassParents = useSelector(
+    (state) => state.reportsArea.economy.originSubstanceClassParents
+  );
   const status = useSelector((state) => state.reportsArea.economy.status);
 
   const economyTypes = [
@@ -149,6 +158,86 @@ export default function SecondaryFilters() {
         </Select>
         <div style={{ opacity: 0.6, fontSize: "13px", marginTop: "5px" }}>
           Disponível a partir de MAI/25.
+        </div>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" $size="14px">
+          Substâncias (origem):
+        </Heading>
+        <SelectCustom
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.originSubstanceList}
+          onChange={(val) => setFieldValue({ originSubstanceList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {originSubstances.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </SelectCustom>
+        <div style={{ opacity: 0.6, fontSize: "13px", marginTop: "5px" }}>
+          Disponível a partir de AGO/25.
+        </div>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" $size="14px">
+          Classes de substância (origem):
+        </Heading>
+        <SelectCustom
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.originSubstanceClassList}
+          onChange={(val) => setFieldValue({ originSubstanceClassList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {originSubstanceClasses.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </SelectCustom>
+        <div style={{ opacity: 0.6, fontSize: "13px", marginTop: "5px" }}>
+          Disponível a partir de AGO/25.
+        </div>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" $size="14px">
+          Classe Mãe de substância (origem):
+        </Heading>
+        <SelectCustom
+          style={{ width: "100%", maxWidth: "400px" }}
+          value={values.originSubstanceClassParentList}
+          onChange={(val) =>
+            setFieldValue({ originSubstanceClassParentList: val })
+          }
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {originSubstanceClassParents.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </SelectCustom>
+        <div style={{ opacity: 0.6, fontSize: "13px", marginTop: "5px" }}>
+          Disponível a partir de AGO/25.
         </div>
       </Col>
       <Col md={24} xl={16} xxl={14}>

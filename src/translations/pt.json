@@ -743,7 +743,13 @@
     "ramCausality": "RAM CAUSALIDADE",
     "admissionDate": "DATA INTERNACAO",
     "dischargeDate": "DATA ALTA",
-    "drugPeriod": "PERIODO USO"
+    "drugPeriod": "PERIODO USO",
+    "substance": "SUBSTANCIA",
+    "substanceClass": "CLASSE DE SUBSTANCIA",
+    "substanceClassParent": "CLASSE MAE DE SUBSTANCIA",
+    "originSubstance": "SUBSTANCIA (ORIGEM)",
+    "originSubstanceClass": "CLASSE DE SUBSTANCIA (ORIGEM)",
+    "originSubstanceClassParent": "CLASSE MAE DE SUBSTANCIA (ORIGEM)"
   },
 
   "reportcsvCulture": {
