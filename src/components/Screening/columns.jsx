@@ -35,13 +35,14 @@ import {
   TrackedPrescriptionAction,
   trackPrescriptionAction,
 } from "src/utils/tracker";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
 
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
 import PresmedTags from "./PrescriptionDrug/components/PresmedTags";
 import DrugAlerts from "./PrescriptionDrug/components/DrugAlerts";
 import AlertTags from "./PrescriptionDrug/components/AlertTags";
-import Permission from "models/Permission";
 
 import { InterventionView } from "./Intervention/columns";
 import DrugForm from "./Form";
@@ -847,11 +848,29 @@ const drug = (bag, addkey, title) => ({
     const href = `/medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(
       record.drug
     )}/${record.doseconv}/${record.dayFrequency}`;
-    const content = (
-      <>
-        {record.drug} <DrugTags drug={record} t={bag.t} />
-      </>
-    );
+
+    let content;
+    if (PermissionService().has(Permission.MAINTAINER)) {
+      content = (
+        <>
+          <strong>Info para mantenedores:</strong>
+          <br />
+          <br />
+          <strong>fkpresmed:</strong> {record.idPrescriptionDrug}
+          <br />
+          <strong>fkmedicamento:</strong> {record.idDrug}
+          <br />
+          <br />
+          {record.drug} <DrugTags drug={record} t={bag.t} />
+        </>
+      );
+    } else {
+      content = (
+        <>
+          {record.drug} <DrugTags drug={record} t={bag.t} />
+        </>
+      );
+    }
 
     return (
       <>
