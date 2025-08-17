@@ -153,10 +153,15 @@ export const getWhitelistedChildren = (list) => {
 
 const sortPrescriptionDrugs = (items, drugOrder) => {
   const hasMainComponents =
-    items.findIndex((i) => `${i.idPrescriptionDrug}`.endsWith("000")) !== -1;
-  let isMainComponent = (pd) => `${pd.idPrescriptionDrug}`.endsWith("000");
+    items.findIndex(
+      (i) =>
+        `${i.idPrescriptionDrug}`.endsWith("00") &&
+        i.grp_solution !== null &&
+        i.grp_solution !== ""
+    ) !== -1;
+  let isMainComponent = (pd) => `${pd.idPrescriptionDrug}`.endsWith("00");
 
-  console.log("has main components 000", hasMainComponents);
+  console.log("has main components 00", hasMainComponents);
 
   if (!hasMainComponents) {
     // if prescriptionDrugId is not using the pattern 000 for main components, change strategy

@@ -860,6 +860,8 @@ const drug = (bag, addkey, title) => ({
           <br />
           <strong>fkmedicamento:</strong> {record.idDrug}
           <br />
+          <strong>grp_solution:</strong> {record.grp_solution}
+          <br />
           <br />
           {record.drug} <DrugTags drug={record} t={bag.t} />
         </>
