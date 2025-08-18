@@ -78,6 +78,8 @@ export default function Filter({ limit }) {
       onChangeValues={onChangeFilter}
       loading={isFetching}
       skipFilterList={["idDepartmentList", "stageList", "startDate", "endDate"]}
+      memoryType={`regulation_prioritization`}
+      skipMemoryList={{ startDate: "startDate", endDate: "endDate" }}
     />
   );
 }
