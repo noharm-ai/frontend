@@ -152,6 +152,7 @@ export default function MemoryText({
         (item) =>
           item.active || !Object.prototype.hasOwnProperty.call(item, "active")
       )
+      .sort((a, b) => `${a?.name}`.localeCompare(`${b?.name}`))
       .map((item, index) => {
         return {
           key: index,
