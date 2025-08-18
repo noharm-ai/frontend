@@ -5,7 +5,12 @@ import { Card } from "antd";
 import dayjs from "dayjs";
 
 import { Col, Row } from "components/Grid";
-import { RangeDatePicker, Select, Radio } from "components/Inputs";
+import {
+  RangeDatePicker,
+  Select,
+  Radio,
+  SelectCustom,
+} from "components/Inputs";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { getRegulationTypes } from "features/lists/ListsSlice";
 import notification from "components/notification";
@@ -107,7 +112,7 @@ export default function SecondaryFilters() {
                 <label>Tipo:</label>
               </div>
               <div className="form-input">
-                <Select
+                <SelectCustom
                   style={{ width: "100%" }}
                   value={values.typeList}
                   onChange={(val) => setFieldValue({ typeList: val })}
@@ -124,7 +129,7 @@ export default function SecondaryFilters() {
                       {i.name} ({i.id})
                     </Select.Option>
                   ))}
-                </Select>
+                </SelectCustom>
                 <Radio.Group
                   options={typeOptionsNullable}
                   optionType="button"

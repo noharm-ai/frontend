@@ -152,12 +152,29 @@ export const getWhitelistedChildren = (list) => {
 };
 
 const sortPrescriptionDrugs = (items, drugOrder) => {
-  const demotedClasses = ["K1B1", "K1B2", "K1B3", "K1B4"];
+  const hasMainComponents =
+    items.findIndex(
+      (i) =>
+        `${i.idPrescriptionDrug}`.endsWith("00") &&
+        i.grp_solution !== null &&
+        i.grp_solution !== ""
+    ) !== -1;
+  let isMainComponent = (pd) => `${pd.idPrescriptionDrug}`.endsWith("00");
+
+  console.log("has main components 00", hasMainComponents);
+
+  if (!hasMainComponents) {
+    // if prescriptionDrugId is not using the pattern 000 for main components, change strategy
+    const demotedClasses = ["K1B1", "K1B2", "K1B3", "K1B4"];
+    isMainComponent = (pd) =>
+      demotedClasses.indexOf(pd.idSubstanceClass) === -1;
+  }
+
   const whitelistItems = items
     .filter(
       (i) =>
         i.whiteList ||
-        (demotedClasses.indexOf(i.idSubstanceClass) !== -1 &&
+        (!isMainComponent(i) &&
           hasDiffParent(items, i.idPrescriptionDrug, i.grp_solution))
     )
     .sort((a, b) => `${a.drug}`.localeCompare(`${b.drug}`));
@@ -165,7 +182,7 @@ const sortPrescriptionDrugs = (items, drugOrder) => {
   const filterValidItems = (i) =>
     !i.emptyRow &&
     !i.whiteList &&
-    (demotedClasses.indexOf(i.idSubstanceClass) === -1 ||
+    (isMainComponent(i) ||
       !hasDiffParent(items, i.idPrescriptionDrug, i.grp_solution));
   const sortByName = (a, b) => `${a.drug}`.localeCompare(`${b.drug}`);
 
