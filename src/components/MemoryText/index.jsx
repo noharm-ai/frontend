@@ -121,18 +121,18 @@ export default function MemoryText({
         break;
 
       default:
-        loadText(
-          list[0].value.filter(
-            (item) =>
-              item.active ||
-              !Object.prototype.hasOwnProperty.call(item, "active")
-          )[key]?.data
-        );
+        loadText(filterAndSort(list[0].value)[key]?.data);
     }
   };
 
   const filterActive = (item) =>
     item.active || !Object.prototype.hasOwnProperty.call(item, "active");
+
+  const filterAndSort = (items) => {
+    return items
+      .filter(filterActive)
+      .sort((a, b) => `${a?.name}`.localeCompare(`${b?.name}`));
+  };
 
   const textMenu = () => {
     const filters = list && list[0]?.value ? list[0].value : [];
@@ -147,18 +147,13 @@ export default function MemoryText({
       ];
     }
 
-    return list[0].value
-      .filter(
-        (item) =>
-          item.active || !Object.prototype.hasOwnProperty.call(item, "active")
-      )
-      .map((item, index) => {
-        return {
-          key: index,
-          id: "gtm-btn-memorytext-load",
-          label: item.name,
-        };
-      });
+    return filterAndSort(list[0].value).map((item, index) => {
+      return {
+        key: index,
+        id: "gtm-btn-memorytext-load",
+        label: item.name,
+      };
+    });
   };
 
   return (
