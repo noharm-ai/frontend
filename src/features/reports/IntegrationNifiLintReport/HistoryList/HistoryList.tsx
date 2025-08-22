@@ -3,6 +3,7 @@ import { Descriptions, Tag } from "antd";
 
 import { useAppSelector } from "src/store";
 import { CardTable } from "components/Table";
+import { Textarea } from "src/components/Inputs";
 import Tooltip from "src/components/Tooltip";
 
 export function HistoryList() {
@@ -151,7 +152,7 @@ const ExpandedRow = ({ record, errorKeys }: any) => {
     propItems.push({
       label: key,
       span: 3,
-      children: record.properties[key],
+      children: <Textarea value={record.properties[key]} readOnly></Textarea>,
     });
   });
 
