@@ -3,11 +3,7 @@ import { Spin } from "antd";
 
 import { useAppSelector } from "src/store";
 import { PageHeader } from "styles/PageHeader.style";
-import {
-  ReportHeader,
-  ReportFilterContainer,
-  ReportContainer,
-} from "styles/Report.style";
+import { ReportHeader, ReportFilterContainer } from "styles/Report.style";
 import Filter from "./Filter/Filter";
 import { NoHarmLogoHorizontal as Brand } from "src/assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
@@ -37,7 +33,7 @@ export function IntegrationNifiLintReport() {
   };
 
   return (
-    <ReportContainer>
+    <>
       <PageHeader>
         <div>
           <h1 className="page-header-title">NifiLint </h1>
@@ -72,6 +68,6 @@ export function IntegrationNifiLintReport() {
           <HistoryList />
         </Spin>
       </div>
-    </ReportContainer>
+    </>
   );
 }

@@ -19,9 +19,11 @@ interface IIntegrationNifiLintReportSlice {
   errorKeys: any;
   date: string | null;
   filterData: {
-    levels: any[];
-    keys: any[];
-    schemas: any[];
+    levels: string[];
+    keys: string[];
+    schemas: string[];
+    entities: string[];
+    groups: string[];
   };
 }
 
@@ -43,6 +45,8 @@ const initialState: IIntegrationNifiLintReportSlice = {
     levels: [],
     keys: [],
     schemas: [],
+    entities: [],
+    groups: [],
   },
 };
 
@@ -115,6 +119,14 @@ const integrationNifiLintReportSlice = createSlice({
         state.filterData.schemas = getUniqList(
           action.payload.cacheData.body,
           "schema"
+        );
+        state.filterData.entities = getUniqList(
+          action.payload.cacheData.body,
+          "name"
+        );
+        state.filterData.groups = getUniqList(
+          action.payload.cacheData.body,
+          "group"
         );
       })
       .addCase(fetchReportData.rejected, (state, action) => {

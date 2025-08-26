@@ -22,6 +22,20 @@ const filterDatasource = (datasource: any[], filters: any) => {
       }
 
       return true;
+    })
+    .filter((i) => {
+      if (filters.entityList?.length) {
+        return filters.entityList.indexOf(i.name) !== -1;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.groupList?.length) {
+        return filters.groupList.indexOf(i.group) !== -1;
+      }
+
+      return true;
     });
 };
 

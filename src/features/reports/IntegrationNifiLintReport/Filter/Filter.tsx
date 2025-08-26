@@ -14,6 +14,7 @@ import {
 } from "../IntegrationNifiLintReportSlice";
 import { getReportData, filterAndExportCSV } from "../transformers";
 import { MainFilters } from "./MainFilters";
+import { SecondaryFilters } from "./SecondaryFilters";
 import useFetchReport from "hooks/useFetchReport";
 import { decompressDatasource } from "utils/report";
 
@@ -34,6 +35,8 @@ export default function Filter() {
     levelList: [],
     schemaList: [],
     keyList: [],
+    entityList: [],
+    groupList: [],
   };
 
   useFetchReport({
@@ -78,7 +81,7 @@ export default function Filter() {
             <AdvancedFilter
               initialValues={initialValues}
               mainFilters={<MainFilters />}
-              secondaryFilters={null}
+              secondaryFilters={<SecondaryFilters />}
               onSearch={search}
               loading={isFetching}
               skipFilterList={[]}

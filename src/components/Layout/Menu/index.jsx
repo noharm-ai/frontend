@@ -35,6 +35,7 @@ import {
   TagsOutlined,
   FilePptOutlined,
   RobotOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { Menu as Navigator } from "antd";
 
@@ -385,6 +386,13 @@ export default function Menu() {
           label: t("menu.memory"),
           icon: <SaveOutlined />,
           id: "gtm-lnk-memory",
+        },
+        {
+          key: "/relatorios/integracao/nifilint",
+          link: "/relatorios/integracao/nifilint",
+          label: "NifiLint",
+          icon: <SearchOutlined />,
+          id: "gtm-lnk-int-nifilint",
         },
         {
           key: "/admin/integracao/status",

@@ -48,7 +48,7 @@ export function MainFilters() {
           ))}
         </SelectCustom>
       </Col>
-      <Col md={7} lg={5} xxl={5}>
+      <Col md={7} lg={4} xxl={4}>
         {/* @ts-expect-error legacy code */}
         <Heading as="label" $size="14px">
           Level:
@@ -72,7 +72,7 @@ export function MainFilters() {
           ))}
         </SelectCustom>
       </Col>
-      <Col md={7} lg={5} xxl={5}>
+      <Col md={7} lg={6} xxl={6}>
         {/* @ts-expect-error legacy code */}
         <Heading as="label" $size="14px">
           Check:

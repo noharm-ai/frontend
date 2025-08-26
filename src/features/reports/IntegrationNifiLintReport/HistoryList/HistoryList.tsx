@@ -5,6 +5,7 @@ import { useAppSelector } from "src/store";
 import { CardTable } from "components/Table";
 import { Textarea } from "src/components/Inputs";
 import Tooltip from "src/components/Tooltip";
+import { formatDateTime } from "src/utils/date";
 
 export function HistoryList() {
   const [expandedRows, setExpandedRows] = useState<any>([]);
@@ -56,8 +57,13 @@ export function HistoryList() {
   const columns = [
     {
       title: "Schema",
+      width: 200,
       render: (_: any, record: any) => record.schema,
+      sorter: (a: any, b: any) => {
+        return `${a.schema}`.localeCompare(`${b.schema}`);
+      },
     },
+
     {
       title: "Check",
       align: "center",
@@ -68,9 +74,13 @@ export function HistoryList() {
           </Tooltip>
         );
       },
+      sorter: (a: any, b: any) => {
+        return `${a.key}`.localeCompare(`${b.key}`);
+      },
     },
     {
       title: "Level",
+      width: 100,
       align: "center",
       render: (_: any, record: any) => {
         const tagStyle = { margin: 0 };
@@ -107,6 +117,13 @@ export function HistoryList() {
     {
       title: "Nome",
       render: (_: any, record: any) => record.name,
+      sorter: (a: any, b: any) => {
+        return `${a.name}`.localeCompare(`${b.name}`);
+      },
+    },
+    {
+      title: "Grupo",
+      render: (_: any, record: any) => record.group,
     },
   ];
 
@@ -154,6 +171,21 @@ const ExpandedRow = ({ record, errorKeys }: any) => {
       span: 3,
       children: <Textarea value={record.properties[key]} readOnly></Textarea>,
     });
+  });
+
+  items.push({
+    label: (
+      <Tooltip
+        title={
+          "Data do arquivo de template onde a ocorrência foi encontrada. Este arquivo é atualizado de 1h em 1h."
+        }
+        underline
+      >
+        Data do Template
+      </Tooltip>
+    ),
+    span: 3,
+    children: formatDateTime(record.backupDate),
   });
 
   items.push({
