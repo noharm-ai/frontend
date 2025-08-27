@@ -11,6 +11,7 @@ export class ProtocolVariableFieldEnum {
   static COMBINATION = "combination";
   static ADMISSION_TIME = "admissionTime";
   static ST_CONCILIA = "stConcilia";
+  static CN_STATS = "cn_stats";
 
   static getList = () =>
     [
@@ -62,6 +63,10 @@ export class ProtocolVariableFieldEnum {
         value: ProtocolVariableFieldEnum.ST_CONCILIA,
         label: "Possui conciliação (0 ou 1)",
       },
+      {
+        value: ProtocolVariableFieldEnum.CN_STATS,
+        label: "Indicador NoHarm Care",
+      },
     ].sort((a, b) => a.label.localeCompare(b.label));
 
   static getOperators = (type: string) => {
@@ -73,6 +78,7 @@ export class ProtocolVariableFieldEnum {
       ProtocolVariableFieldEnum.EXAM,
       ProtocolVariableFieldEnum.ADMISSION_TIME,
       ProtocolVariableFieldEnum.ST_CONCILIA,
+      ProtocolVariableFieldEnum.CN_STATS,
     ];
 
     if (fixedValueOperators.indexOf(type) !== -1) {

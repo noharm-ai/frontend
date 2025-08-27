@@ -162,6 +162,13 @@ const clinicalNotesIndicator = {
   listByCategory(category, t) {
     return this.list(t).filter((i) => i.category === category);
   },
+
+  listSelectOptions(t) {
+    return this.list(t).map((i) => ({
+      label: i.label,
+      value: i.value,
+    }));
+  },
 };
 
 export default clinicalNotesIndicator;
