@@ -949,5 +949,20 @@
       "9": "Finalizar",
       "10": "Cancelar"
     }
+  },
+
+  "interventionRAM": {
+    "anvisaCode": "Código Anvisa",
+    "batch": "Lote",
+    "brand": "Marca",
+    "causality": "Causalidade",
+    "describedInLeaflet": "RAM descrita em bula?",
+    "detection": "Detecção",
+    "expiration": "Validade",
+    "internalNotificationCode": "Código interno da notificação",
+    "severity": "Gravidade",
+    "severityDetail": "Impacto",
+    "suspended": "O medicamento ou infusão foi suspenso?",
+    "symptoms": "Sintomas"
   }
 }

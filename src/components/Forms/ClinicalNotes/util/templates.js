@@ -1,6 +1,7 @@
 import { isEmpty } from "lodash";
 
 import stripHtml from "utils/stripHtml";
+import { ramFields } from "src/models/InterventionRAM";
 
 const emptyInterventionMessage = `
   Nenhuma intervenção registrada.
@@ -306,7 +307,8 @@ export const interventionTemplate = (i) => `
   ${i.observation ? stripHtml(i.observation) : ""}
 `;
 
-export const interventionCompleteTemplate = (i, t) => `
+export const interventionCompleteTemplate = (i, t) => {
+  let intv = `
   -- ${i.drugName}
   (${
     i.dose !== null
@@ -319,6 +321,25 @@ export const interventionCompleteTemplate = (i, t) => `
   }
   Desfecho: ${t("interventionStatus." + i.status)}
 `;
+
+  if (i.ram) {
+    let ram = `  Detalhes RAM
+`;
+    ramFields.forEach((item) => {
+      const label = t(`interventionRAM.${item.field}`);
+      const value = i.ram[item.field];
+
+      if (value !== null && value !== "") {
+        ram += `      ${label}: ${item.render(value)}
+`;
+      }
+    });
+
+    intv += ram;
+  }
+
+  return intv;
+};
 
 const emptyInterventionTemplate = ({ idPrescription, agg, concilia }) => {
   if (concilia) {

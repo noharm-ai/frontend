@@ -941,6 +941,21 @@
       "6": "Change Risk",
       "7": "Undo Scheduling",
       "8": "Undo Transportation Scheduling"
+    },
+
+    "interventionRAM": {
+      "anvisaCode": "Anvisa Code",
+      "batch": "Batch",
+      "brand": "Brand",
+      "causality": "Causality",
+      "describedInLeaflet": "Described in leaflet?",
+      "detection": "Detection",
+      "expiration": "Expiration",
+      "internalNotificationCode": "Notification internal code",
+      "severity": "Severity",
+      "severityDetail": "Severity detail",
+      "suspended": "The medication was suspended?",
+      "symptoms": "Symptoms"
     }
   }
 }
