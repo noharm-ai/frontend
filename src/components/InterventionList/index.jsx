@@ -379,7 +379,7 @@ export default function InterventionList({
 
       <PageCard>
         <ExpandableTable
-          columns={interventionColumns(filter, true, t)}
+          columns={interventionColumns(filter, true, false, t)}
           pagination={{
             pageSize: 50,
             position: ["topRight", "bottomRight"],

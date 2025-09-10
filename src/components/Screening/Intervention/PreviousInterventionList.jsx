@@ -11,6 +11,7 @@ export default function PreviousInterventionList({
   isFetching,
   interventions,
   isSaving,
+  admissionNumber,
 }) {
   const { t } = useTranslation();
 
@@ -24,7 +25,7 @@ export default function PreviousInterventionList({
 
   return (
     <ExpandableTable
-      columns={interventionColumns({ status: null }, false, t)}
+      columns={interventionColumns({ status: null }, false, admissionNumber, t)}
       pagination={false}
       loading={isFetching}
       locale={{
