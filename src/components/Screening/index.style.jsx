@@ -102,6 +102,29 @@ export const TableLink = styled.a`
   }
 `;
 
+export const DrugLink = styled.a`
+  display: inline-block;
+  position: relative;
+  color: rgba(0, 0, 0, 0.65);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &.missing-substance {
+    &:after {
+      position: absolute;
+      content: "";
+      left: 0;
+      bottom: 0;
+      height: 0;
+      width: 100%;
+      border: 1px dashed #ffa39e;
+    }
+  }
+`;
+
 export const TableTags = styled.div`
   display: flex;
   justify-content: space-evenly;
