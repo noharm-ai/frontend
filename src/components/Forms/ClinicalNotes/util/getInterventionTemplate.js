@@ -99,4 +99,17 @@ export const getInterventionList = (prescription, t) => {
   return tpl.join("");
 };
 
+export const getMyInterventionList = (prescription, t, userName) => {
+  const interventions = getInterventions(prescription).filter(
+    (i) => i.user === userName
+  );
+
+  const tpl = interventions.map((i) => {
+    const iTpl = interventionCompleteTemplate(i, t);
+    return iTpl;
+  });
+
+  return tpl.join("");
+};
+
 export default getInterventionTemplate;

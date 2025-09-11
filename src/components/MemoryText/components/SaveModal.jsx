@@ -261,6 +261,10 @@ export default function SaveModal({
       label: "Todas",
       key: "{{intervencoes}}",
     },
+    {
+      label: "Minhas intervenções",
+      key: "{{minhas_intervencoes}}",
+    },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
   const alertVariables = [
