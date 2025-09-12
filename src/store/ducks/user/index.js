@@ -19,7 +19,6 @@ const INITIAL_STATE = {
     userName: "",
     email: "",
     permissions: [],
-    isCpoe: false,
   },
   keepMeLogged: false,
   isLogged: false,

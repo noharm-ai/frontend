@@ -19,7 +19,6 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import EconomyDayCalculator from "./EconomyDayCalculator";
-import SecurityService from "services/security";
 import InterventionStatus from "models/InterventionStatus";
 import { createSlug } from "utils/transformers/utils";
 import {
@@ -40,10 +39,8 @@ export default function InterventionOutcomeForm() {
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const outcomeData = useSelector((state) => state.interventionOutcome.data);
   const loadStatus = useSelector((state) => state.interventionOutcome.status);
-  const roles = useSelector((state) => state.user.account.roles);
   const [details, setDetails] = useState(false);
 
-  const securityService = SecurityService(roles);
   const costPerDayHint =
     "(Dose dispensada X Custo + Custo Kit) X Frequência/Dia";
   const economyDaysHint = {
@@ -348,7 +345,7 @@ export default function InterventionOutcomeForm() {
                     <Space direction="horizontal">
                       <Input
                         value={
-                          securityService.hasCpoe()
+                          outcomeData?.header?.isCpoe
                             ? `${formatDate(
                                 outcomeData?.header?.economyIniDate
                               )} - #${
@@ -365,7 +362,7 @@ export default function InterventionOutcomeForm() {
                           icon={<SearchOutlined />}
                           onClick={() =>
                             openPrescription(
-                              securityService.hasCpoe()
+                              outcomeData?.header?.isCpoe
                                 ? outcomeData.origin.item
                                     .idPrescriptionAggregate
                                 : outcomeData.origin.item.idPrescription
@@ -487,7 +484,7 @@ export default function InterventionOutcomeForm() {
                               options={outcomeData.destiny.map((i) => ({
                                 ...i.item,
                                 value: i.item.idPrescriptionDrug,
-                                label: securityService.hasCpoe()
+                                label: outcomeData?.header?.isCpoe
                                   ? `${formatDate(
                                       i.item.prescriptionDate
                                     )} - #${i.item.idPrescriptionAggregate}`
@@ -520,7 +517,7 @@ export default function InterventionOutcomeForm() {
                                 disabled={!values.idPrescriptionDrugDestiny}
                                 onClick={() =>
                                   openPrescription(
-                                    securityService.hasCpoe()
+                                    outcomeData?.header?.isCpoe
                                       ? values.destiny.idPrescriptionAggregate
                                       : values.destiny.idPrescription
                                   )

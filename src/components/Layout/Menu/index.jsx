@@ -43,7 +43,6 @@ import Feature from "models/Feature";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { FeatureService } from "services/FeatureService";
-import SecurityService from "services/security";
 
 export default function Menu() {
   const location = useLocation();
@@ -60,10 +59,6 @@ export default function Menu() {
 
   const hasPermission = (item) => {
     if (item.permission && !PermissionService().hasAny(item.permission)) {
-      return;
-    }
-
-    if (item.notcpoe && SecurityService().hasCpoe()) {
       return;
     }
 
@@ -122,7 +117,6 @@ export default function Menu() {
           label: t("menu.prioritization-prescription"),
           icon: <FileTextOutlined />,
           id: "gtm-lnk-priorizacao-prescricao",
-          notcpoe: "notcpoe",
         },
         {
           key: "/priorizacao/pacientes/cards",

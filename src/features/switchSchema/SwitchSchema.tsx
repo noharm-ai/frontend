@@ -72,12 +72,6 @@ export function SwitchSchema() {
                 showSearch
                 mode="multiple"
               >
-                <Select.Option
-                  key={Feature.DISABLE_CPOE}
-                  value={Feature.DISABLE_CPOE}
-                >
-                  Desabilitar CPOE
-                </Select.Option>
                 {Feature.getFeatures(t).map((feature) => (
                   <Select.Option key={feature.id} value={feature.id}>
                     {feature.label}

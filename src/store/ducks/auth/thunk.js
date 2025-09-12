@@ -99,7 +99,6 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
     segments,
     logoutUrl,
     integrationStatus,
-    isCpoe,
     ...identify
   } = userData;
   const user = {
@@ -115,7 +114,6 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
     getnameType,
     apiKey,
     permissions,
-    isCpoe,
   };
 
   localStorage.setItem("schema", schema);

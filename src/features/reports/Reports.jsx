@@ -15,7 +15,6 @@ import Empty from "components/Empty";
 import { PageCard } from "styles/Utils.style";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
-import SecurityService from "services/security";
 import { TrackedReport, trackReport } from "src/utils/tracker";
 
 export default function Reports() {
@@ -49,9 +48,7 @@ export default function Reports() {
       icon: "report",
       type: "internal",
       route: "/relatorios/prescricoes",
-      visible:
-        internalList.indexOf("PRESCRIPTION") !== -1 &&
-        !SecurityService().hasCpoe(),
+      visible: internalList.indexOf("PRESCRIPTION") !== -1,
       track: TrackedReport.PRESCRIPTIONS,
     },
     {
