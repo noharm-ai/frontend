@@ -44,7 +44,7 @@ import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { FeatureService } from "services/FeatureService";
 
-export default function Menu() {
+export default function Menu({ segments }) {
   const location = useLocation();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -64,6 +64,13 @@ export default function Menu() {
 
     if (item.feature && !FeatureService.has(item.feature)) {
       return;
+    }
+
+    if (item.key === "/priorizacao/prescricoes") {
+      if (segments.filter((s) => s.cpoe).length === segments.length) {
+        // all cpoe segments
+        return;
+      }
     }
 
     return item;
