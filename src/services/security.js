@@ -3,6 +3,7 @@ import { store } from "store/index";
 
 const security = () => {
   const hasCpoe = () => {
+    console.log("HASCPOE DEPRECATED");
     //TODO: switch to feature
     const account = store.getState().user.account;
 

@@ -35,13 +35,7 @@ import getInterventionTemplate from "./util/getInterventionTemplate";
 import { Box, EditorBox, FieldError } from "../Form.style";
 import { getCustomClinicalNote } from "./util/customTemplate";
 
-export default function Base({
-  prescription,
-  account,
-  signature,
-  action,
-  security,
-}) {
+export default function Base({ prescription, account, signature, action }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { values, setFieldValue, errors, touched } = useFormikContext();
@@ -52,13 +46,7 @@ export default function Base({
   const loadDefaultText = () => {
     setFieldValue(
       "notes",
-      getInterventionTemplate(
-        prescription,
-        account,
-        signature,
-        concilia,
-        security.hasCpoe()
-      )
+      getInterventionTemplate(prescription, account, signature, concilia)
     );
   };
 

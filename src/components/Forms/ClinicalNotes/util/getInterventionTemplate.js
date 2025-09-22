@@ -52,8 +52,7 @@ const getInterventionTemplate = (
   prescription,
   account,
   signature,
-  conciliationType,
-  cpoe
+  conciliationType
 ) => {
   if (prescription.data.concilia) {
     const interventions = getInterventions(prescription, true);
@@ -74,7 +73,7 @@ const getInterventionTemplate = (
   const tpl = Object.keys(interventions).map((k) => {
     const iTpl = interventions[k].map((i) => interventionTemplate(i));
 
-    if (cpoe) {
+    if (prescription.data.isCpoe) {
       return iTpl;
     }
 

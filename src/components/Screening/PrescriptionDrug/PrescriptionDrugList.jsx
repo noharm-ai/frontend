@@ -154,6 +154,7 @@ export default function PrescriptionDrugList({
   permissions,
   interventions,
   infusion,
+  isCpoe,
 }) {
   const security = SecurityService(roles);
   const featureService = FeatureService(features);
@@ -416,7 +417,7 @@ export default function PrescriptionDrugList({
       return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={msg} />;
     }
 
-    if (security.hasCpoe()) {
+    if (isCpoe) {
       return <strong>error</strong>;
     }
 
@@ -492,7 +493,7 @@ export default function PrescriptionDrugList({
       ));
   };
 
-  if (!aggregated || security.hasCpoe()) {
+  if (!aggregated || isCpoe) {
     return (
       <>
         <Filters
