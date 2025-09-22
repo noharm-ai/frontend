@@ -46,7 +46,6 @@ export default function References({
   fetchReferencesList,
   saveOutlier,
   selectOutlier,
-  security,
   generateOutlierReset,
   ...restProps
 }) {
@@ -252,7 +251,7 @@ export default function References({
           </Row>
           <Table
             title={title}
-            columns={relationsColumns(security)}
+            columns={relationsColumns()}
             pagination={false}
             loading={isFetching || relationStatus.isFetching}
             locale={{ emptyText }}

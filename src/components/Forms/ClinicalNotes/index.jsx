@@ -9,7 +9,6 @@ import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from "utils/memory";
 import { getErrorMessageFromException } from "utils/errorHandler";
-import securityService from "services/security";
 
 import Base from "./Base";
 import { FormContainer } from "../Form.style";
@@ -43,12 +42,10 @@ export default function ClinicalNotes({
   fetchMemory,
   open,
   type,
-  roles,
   ...props
 }) {
   const { t } = useTranslation();
   const { isSaving, data } = prescription;
-  const security = securityService(roles);
   const initialValues = {
     formId,
     idPrescription: data.idPrescription,
@@ -141,7 +138,6 @@ export default function ClinicalNotes({
                   account={account}
                   signature={signature}
                   action={action}
-                  security={security}
                 />
               </Row>
             </FormContainer>

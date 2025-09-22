@@ -16,7 +16,6 @@ import {
 } from "store/ducks/drugs/thunk";
 import { memoryFetchThunk, memorySaveThunk } from "store/ducks/memory/thunk";
 
-import security from "services/security";
 import FeatureService from "services/features";
 import ScreeningList from "components/ScreeningList";
 import {
@@ -50,7 +49,6 @@ const mapStateToProps = ({
   drugs: drugs.search,
   frequencies: drugs.frequencies,
   currentJourney: app.preferences.journey,
-  security: security(user.account.roles),
   featureService: FeatureService(user.account.features),
   account: user.account,
   privateFilters: memory[FILTER_PRIVATE_MEMORY_TYPE]
