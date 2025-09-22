@@ -10,7 +10,6 @@ import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import { getErrorMessageFromException } from "utils/errorHandler";
-import securityService from "services/security";
 
 import Base from "./Base";
 import { FormContainer } from "./Patient.style";
@@ -40,12 +39,10 @@ export default function Patient({
   notesInfoDate,
   dischargeDate,
   patient,
-  roles,
   ...props
 }) {
   const { t } = useTranslation();
   const { isSaving } = saveStatus;
-  const security = securityService(roles);
 
   const initialValues = {
     idPrescription,
@@ -114,7 +111,7 @@ export default function Patient({
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base security={security} />
+                <Base />
               </Row>
             </FormContainer>
           </form>

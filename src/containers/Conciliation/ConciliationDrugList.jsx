@@ -11,7 +11,6 @@ import {
 } from "store/ducks/prescriptions/thunk";
 import { selectPrescriptionDrugThunk } from "store/ducks/prescriptionDrugs/thunk";
 
-import security from "services/security";
 import ConciliationDrugList from "components/Conciliation/ConciliationDrugList";
 
 const mapStateToProps = ({ prescriptions, user, intervention }) => ({
@@ -24,7 +23,6 @@ const mapStateToProps = ({ prescriptions, user, intervention }) => ({
   admissionNumber: prescriptions.single.data.admissionNumber,
   uniqueDrugs: prescriptions.single.data.uniqueDrugs,
   currentPrescription: prescriptions.single.data.conciliaList,
-  security: security(user.account.roles),
   features: user.account.features,
   interventions: prescriptions.single.intervention.list,
   isSavingIntervention: intervention.maybeCreateOrUpdate.isSaving,

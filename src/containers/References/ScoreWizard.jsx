@@ -1,8 +1,6 @@
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import security from "services/security";
-
 import {
   generateDrugOutlierThunk,
   updateDrugDataThunk,
@@ -12,12 +10,11 @@ import { saveUnitCoeffiecientThunk } from "store/ducks/drugs/thunk";
 
 import ScoreWizard from "components/References/ScoreWizard";
 
-const mapStateToProps = ({ outliers, drugs, user }) => ({
+const mapStateToProps = ({ outliers, drugs }) => ({
   selecteds: outliers.firstFilter,
   drugData: outliers.drugData,
   drugUnits: drugs.units,
   generateStatus: outliers.generateDrugOutlier,
-  security: security(user.account.roles),
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

@@ -1,6 +1,5 @@
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import security from "services/security";
 
 import {
   fetchDrugsListThunk,
@@ -18,7 +17,7 @@ import {
 } from "store/ducks/outliers/thunk";
 import References from "components/References";
 
-const mapStateToProps = ({ drugs, segments, outliers, user }) => ({
+const mapStateToProps = ({ drugs, segments, outliers }) => ({
   drugs,
   segments: {
     error: segments.error,
@@ -37,7 +36,6 @@ const mapStateToProps = ({ drugs, segments, outliers, user }) => ({
     saveRelation: outliers.saveRelation,
     relationStatus: outliers.relation,
   },
-  security: security(user.account.roles),
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

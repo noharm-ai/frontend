@@ -15,7 +15,6 @@ import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import InterventionReasonRelationType from "models/InterventionReasonRelationType";
 import interventionStatus from "models/InterventionStatus";
-import security from "services/security";
 import FeaturesService from "services/features";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 import { setSelectedRowsActive } from "features/prescription/PrescriptionSlice";
@@ -48,7 +47,6 @@ export default function Intervention({
   memoryFetchReasonText,
   drugSummary,
   fetchDrugSummary,
-  roles,
   features,
   aggPrescription,
   aggIdPrescription,
@@ -59,7 +57,7 @@ export default function Intervention({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isSaving, item } = intervention;
-  const securityService = security(roles);
+
   const featureService = FeaturesService(features);
 
   const validationSchema = Yup.object().shape({
@@ -430,7 +428,6 @@ export default function Intervention({
                 reasonTextMemory={reasonTextMemory}
                 memorySaveReasonText={memorySaveReasonText}
                 memoryFetchReasonText={memoryFetchReasonText}
-                securityService={securityService}
                 featureService={featureService}
                 prescriptionStatus={prescriptionStatus}
                 prescriptionHeaders={prescriptionHeaders}
