@@ -11,7 +11,7 @@ import {
   BorderOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Affix } from "antd";
+import { Affix, Alert } from "antd";
 import { uniq } from "utils/lodash";
 
 import breakpoints from "styles/breakpoints";
@@ -40,6 +40,7 @@ import {
   trackPrescriptionPrioritizationAction,
   TrackedPrescriptionPrioritizationAction,
 } from "src/utils/tracker";
+import { FeatureService } from "services/FeatureService";
 
 import { toDataSource } from "utils";
 
@@ -643,6 +644,17 @@ export default function ScreeningList({
           <InitialPage />
         </div>
       </PageHeader>
+
+      {FeatureService.hasMixedCPOE() &&
+        prioritizationType === "prescription" && (
+          <Alert
+            message="Prescrições Manuais (não-CPOE)"
+            description="Esta lista mostra apenas prescrições manuais (não-CPOE). Para visualizar as prescrições eletrônicas (CPOE), por favor, acesse a tela Priorização por Pacientes."
+            type="info"
+            showIcon
+            closable
+          />
+        )}
 
       <Filter
         {...restProps}

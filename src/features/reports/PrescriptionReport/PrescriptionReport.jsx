@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Row, Col, Space, Spin } from "antd";
+import { Row, Col, Space, Spin, Alert } from "antd";
 import { UnorderedListOutlined, QuestionOutlined } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -25,6 +25,7 @@ import { filtersToDescription } from "utils/report";
 import HelpModal from "./Help/Help";
 import { setHelpModal } from "./PrescriptionReportSlice";
 import Tooltip from "components/Tooltip";
+import { FeatureService } from "services/FeatureService";
 
 export default function PrescriptionReport() {
   const dispatch = useDispatch();
@@ -98,6 +99,16 @@ export default function PrescriptionReport() {
       </PageHeader>
 
       <ReportContainer>
+        {FeatureService.hasMixedCPOE() && (
+          <Alert
+            message="Relatório aplicável para segmentos com prescrições manuais (não-CPOE)"
+            description="Para dados de prescrições eletrônicas (CPOE), por favor, utilize o relatório Pacientes-dia."
+            type="info"
+            showIcon
+            closable
+          />
+        )}
+
         <Filter printRef={printRef} />
 
         <div ref={printRef}>
