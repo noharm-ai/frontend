@@ -61,19 +61,22 @@ const columns = (t, dispatch, setIntegration, setCloudConfigSchema) => {
       },
     },
     {
-      title: "CPOE",
-      dataIndex: "cpoe",
+      title: "PRESCALC",
       align: "center",
       render: (entry, record) => {
-        if (record.cpoe) {
+        if (record.tpPrescalc === 0) {
           return (
-            <Tag color="success" style={{ margin: 0 }}>
-              Sim
+            <Tag color="error" style={{ margin: 0 }}>
+              DESLIGADO
             </Tag>
           );
         }
 
-        return <Tag style={{ margin: 0 }}>Não</Tag>;
+        return (
+          <Tag color="success" style={{ margin: 0 }}>
+            {record.tpPrescalc === 1 ? "LIGADO (PRD)" : "LIGADO (HML)"}
+          </Tag>
+        );
       },
     },
     {

@@ -44,6 +44,7 @@ export default function AdminSegment() {
         description: segment.description,
         active: segment.status,
         type: segment.type,
+        cpoe: segment.cpoe,
       })
     );
     setFormModal(true);

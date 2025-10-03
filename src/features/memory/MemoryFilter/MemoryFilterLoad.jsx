@@ -61,6 +61,7 @@ export default function MemoryFilterLoad({ setOpen, open, type, setFilter }) {
   return (
     <Modal
       open={open}
+      onCancel={() => setOpen(false)}
       footer={[
         <Button key="back" onClick={() => setOpen(false)}>
           Fechar

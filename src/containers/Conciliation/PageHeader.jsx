@@ -1,7 +1,6 @@
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import security from "services/security";
 import FeatureService from "services/features";
 
 import { checkScreeningThunk } from "store/ducks/prescriptions/thunk";
@@ -16,7 +15,6 @@ const mapStateToProps = ({ prescriptions, user }) => ({
   },
   type: "conciliation",
   userId: user.account.userId,
-  security: security(user.account.roles),
   featureService: FeatureService(user.account.features),
 });
 const mapDispatchToProps = (dispatch) =>

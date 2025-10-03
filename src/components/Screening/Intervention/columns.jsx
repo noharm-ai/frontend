@@ -341,7 +341,7 @@ const Action = ({ record }) => {
   );
 };
 
-const columns = (filteredInfo, name = false, t) => {
+const columns = (filteredInfo, name = false, admissionNumber = false, t) => {
   const columnsArray = [
     {
       title: t("tableHeader.date"),
@@ -353,6 +353,20 @@ const columns = (filteredInfo, name = false, t) => {
       },
     },
   ];
+
+  if (admissionNumber) {
+    columnsArray.push({
+      title: t("labels.admissionNumber"),
+      width: 50,
+      render: (record) => {
+        if (record.admissionNumber === admissionNumber) {
+          return "Atual";
+        }
+
+        return record.admissionNumber;
+      },
+    });
+  }
 
   if (name) {
     columnsArray.push({

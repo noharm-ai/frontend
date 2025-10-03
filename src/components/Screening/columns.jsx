@@ -47,7 +47,7 @@ import AlertTags from "./PrescriptionDrug/components/AlertTags";
 import { InterventionView } from "./Intervention/columns";
 import DrugForm from "./Form";
 
-import { TableTags, TableLink } from "./index.style";
+import { TableTags, DrugLink } from "./index.style";
 
 const interventionOptions = (idIntervention, dispatch) => {
   const items = [
@@ -849,6 +849,13 @@ const drug = (bag, addkey, title) => ({
       record.drug
     )}/${record.doseconv}/${record.dayFrequency}`;
 
+    const substanceWarning = (
+      <div style={{ fontSize: `12px`, color: "#ff4d4f", lineHeight: 1.2 }}>
+        *A substância deste medicamento não foi definida. <br />
+        Clique para configurar.
+      </div>
+    );
+
     let content;
     if (PermissionService().has(Permission.MAINTAINER)) {
       content = (
@@ -862,14 +869,20 @@ const drug = (bag, addkey, title) => ({
           <br />
           <strong>grp_solution:</strong> {record.grp_solution}
           <br />
+          <strong>doseconv:</strong> {record.doseconv}
+          <br />
+          <strong>frequenciadia:</strong> {record.dayFrequency}
+          <br />
           <br />
           {record.drug} <DrugTags drug={record} t={bag.t} />
+          {!record.idSubstance && substanceWarning}
         </>
       );
     } else {
       content = (
         <>
           {record.drug} <DrugTags drug={record} t={bag.t} />
+          {!record.idSubstance && substanceWarning}
         </>
       );
     }
@@ -881,11 +894,13 @@ const drug = (bag, addkey, title) => ({
           title="Ver medicamento"
           mouseEnterDelay={0.3}
         >
-          <TableLink
+          <DrugLink
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="table-link"
+            className={`table-link ${
+              record.idSubstance ? "" : "missing-substance"
+            }`}
           >
             {bag.prescriptionDrugOrder === "CUSTOM" ? (
               <>
@@ -895,7 +910,7 @@ const drug = (bag, addkey, title) => ({
             ) : (
               <>{record.drug}</>
             )}
-          </TableLink>
+          </DrugLink>
         </Popover>
         <DrugTags drug={record} t={bag.t} />
       </>

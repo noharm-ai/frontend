@@ -13,7 +13,6 @@ import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSl
 import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
 import CheckSummary from "features/prescription/CheckSummary/CheckSummary";
 import SingleClinicalNotesModal from "features/prescription/ClinicalNotes/SingleClinicalNotesModal/SingleClinicalNotesModal";
-import SecurityService from "services/security";
 import FeaturesService from "services/features";
 import { setChooseConciliationModal } from "features/prescription/PrescriptionSlice";
 import ChooseConciliation from "features/prescription/ChooseConciliation/ChooseConciliation";
@@ -31,13 +30,11 @@ export default function ScreeningActions({
   prescription,
   setModalVisibility,
   patientEditVisible,
-  roles,
   features,
   checkScreening,
   interventions,
 }) {
   const dispatch = useDispatch();
-  const security = SecurityService(roles);
   const featureService = FeaturesService(features);
 
   const afterSavePatient = (response) => {
@@ -104,7 +101,7 @@ export default function ScreeningActions({
       <InterventionOutcome />
 
       <CheckSummary
-        hasCpoe={security.hasCpoe()}
+        hasCpoe={prescription?.isCpoe}
         checkScreening={checkScreening}
         headers={prescription?.headers}
         alerts={prescription?.alertsList}

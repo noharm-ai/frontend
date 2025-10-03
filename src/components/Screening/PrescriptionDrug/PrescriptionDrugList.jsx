@@ -14,7 +14,6 @@ import {
   filterPrescriptionDrugs,
 } from "utils/transformers/prescriptionDrugs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
-import SecurityService from "services/security";
 import FeatureService from "services/features";
 import PermissionService from "services/PermissionService";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
@@ -149,13 +148,12 @@ export default function PrescriptionDrugList({
   uniqueDrugs,
   checkScreening,
   isCheckingPrescription,
-  roles,
   features,
   permissions,
   interventions,
   infusion,
+  isCpoe,
 }) {
-  const security = SecurityService(roles);
   const featureService = FeatureService(features);
   const permissionService = PermissionService(permissions);
   const prescriptionListType = useSelector(
@@ -246,7 +244,6 @@ export default function PrescriptionDrugList({
     weight,
     uniqueDrugList: uniqueDrugs,
     headers,
-    security,
     t,
     featureService,
     savePrescriptionDrugForm,
@@ -416,7 +413,7 @@ export default function PrescriptionDrugList({
       return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={msg} />;
     }
 
-    if (security.hasCpoe()) {
+    if (isCpoe) {
       return <strong>error</strong>;
     }
 
@@ -492,7 +489,7 @@ export default function PrescriptionDrugList({
       ));
   };
 
-  if (!aggregated || security.hasCpoe()) {
+  if (!aggregated || isCpoe) {
     return (
       <>
         <Filters

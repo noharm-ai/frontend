@@ -313,11 +313,25 @@ export default function Filter({
                 allowClear
                 maxTagCount="responsive"
               >
-                {segments.list.map(({ id, description: text }) => (
-                  <Select.Option key={id} value={id}>
-                    {text}
-                  </Select.Option>
-                ))}
+                {prioritizationType === "prescription" ? (
+                  <>
+                    {segments.list
+                      .filter((s) => !s.cpoe)
+                      .map(({ id, description: text }) => (
+                        <Select.Option key={id} value={id}>
+                          {text}
+                        </Select.Option>
+                      ))}
+                  </>
+                ) : (
+                  <>
+                    {segments.list.map(({ id, description: text }) => (
+                      <Select.Option key={id} value={id}>
+                        {text}
+                      </Select.Option>
+                    ))}
+                  </>
+                )}
               </Select>
             </Box>
           </Col>

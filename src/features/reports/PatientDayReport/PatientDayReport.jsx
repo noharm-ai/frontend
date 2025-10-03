@@ -25,12 +25,11 @@ import ChartScores from "./Charts/ChartScores";
 import HelpModal from "./Help/Help";
 import { setHelpModal } from "./PatientDayReportSlice";
 import Tooltip from "components/Tooltip";
-import SecurityService from "services/security";
+import { FeatureService } from "services/FeatureService";
 
 export default function PatientDayReport() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const roles = useSelector((state) => state.user.account.roles);
   const reportData = useSelector(
     (state) => state.reportsArea.patientDay.filtered.result
   );
@@ -67,7 +66,6 @@ export default function PatientDayReport() {
       type: "list",
     },
   };
-  const securityService = SecurityService(roles);
 
   return (
     <>
@@ -159,7 +157,7 @@ export default function PatientDayReport() {
                   </StatsCard>
                 </Spin>
               </Col>
-              {securityService.hasCpoe() && (
+              {FeatureService.hasCPOE() && (
                 <>
                   <Col xs={12} lg={8}>
                     <Spin spinning={isLoading}>

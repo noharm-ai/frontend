@@ -172,19 +172,6 @@ function IntegrationConfig() {
             </Select>
           </div>
           <div className="filter-field">
-            <label>CPOE</label>
-            <Select
-              onChange={(val) => setFilter({ ...filter, cpoe: val })}
-              allowClear
-              style={{ minWidth: "200px" }}
-              optionFilterProp="children"
-              loading={status === "loading"}
-            >
-              <Select.Option value={true}>Sim</Select.Option>
-              <Select.Option value={false}>Não</Select.Option>
-            </Select>
-          </div>
-          <div className="filter-field">
             <label>Integração de retorno</label>
             <Select
               onChange={(val) =>

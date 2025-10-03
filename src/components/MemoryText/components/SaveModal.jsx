@@ -126,6 +126,10 @@ export default function SaveModal({
       label: "Data de internação",
       key: "{{data_internacao}}",
     },
+    {
+      label: "Setor",
+      key: "{{setor}}",
+    },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
   const examVariables = [
@@ -256,6 +260,10 @@ export default function SaveModal({
     {
       label: "Todas",
       key: "{{intervencoes}}",
+    },
+    {
+      label: "Minhas intervenções",
+      key: "{{minhas_intervencoes}}",
     },
   ].sort((a, b) => a.label.localeCompare(b.label));
 

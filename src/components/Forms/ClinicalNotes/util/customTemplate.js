@@ -1,4 +1,7 @@
-import { getInterventionList } from "./getInterventionTemplate";
+import {
+  getInterventionList,
+  getMyInterventionList,
+} from "./getInterventionTemplate";
 import {
   alertsTemplate,
   getConciliationDrugs,
@@ -22,6 +25,11 @@ export const getCustomClinicalNote = (
     ...prescription.data.proceduresRaw,
   ];
   const interventions = getInterventionList(prescription, t);
+  const myInterventions = getMyInterventionList(
+    prescription,
+    t,
+    params.account?.userName
+  );
 
   const alerts = alertsTemplate(prescription);
 
@@ -65,6 +73,7 @@ export const getCustomClinicalNote = (
       formatDate(prescription.data.birthdate)
     )
     .replaceAll("{{data_internacao}}", prescription.data.admissionDate)
+    .replaceAll("{{setor}}", prescription.data.department)
     .replaceAll("{{nratendimento_paciente}}", prescription.data.admissionNumber)
     .replaceAll("{{peso_paciente}}", getWeight(prescription.data.weight))
     .replaceAll("{{altura_paciente}}", getHeight(prescription.data.height))
@@ -99,6 +108,10 @@ export const getCustomClinicalNote = (
     .replaceAll(
       "{{intervencoes}}",
       interventions || "Nenhuma intervenção registrada"
+    )
+    .replaceAll(
+      "{{minhas_intervencoes}}",
+      myInterventions || "Nenhuma intervenção registrada"
     )
     .replaceAll("{{alertas}}", alerts || "Nenhum alerta registrado")
     .replaceAll(

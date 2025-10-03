@@ -161,8 +161,6 @@ const sortPrescriptionDrugs = (items, drugOrder) => {
     ) !== -1;
   let isMainComponent = (pd) => `${pd.idPrescriptionDrug}`.endsWith("00");
 
-  console.log("has main components 00", hasMainComponents);
-
   if (!hasMainComponents) {
     // if prescriptionDrugId is not using the pattern 000 for main components, change strategy
     const demotedClasses = ["K1B1", "K1B2", "K1B3", "K1B4"];

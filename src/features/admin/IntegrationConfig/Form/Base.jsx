@@ -466,8 +466,44 @@ function BaseForm() {
             </Select.Option>
           </Select>
         </div>
+        <div className="form-info">
+          Este indicador não é mais utilizado. A definição de CPOE agora é feita
+          no segmento.
+        </div>
         {errors.cpoe && touched.cpoe && (
           <div className="form-error">{errors.cpoe}</div>
+        )}
+      </div>
+
+      <div
+        className={`form-row ${
+          errors.tpPrescalc && touched.tpPrescalc ? "error" : ""
+        }`}
+      >
+        <div className="form-label">
+          <label>PRESCALC:</label>
+        </div>
+        <div className="form-input">
+          <Select
+            onChange={(value) => setFieldValue("tpPrescalc", value)}
+            value={values.tpPrescalc}
+            status={errors.tpPrescalc && touched.tpPrescalc ? "error" : null}
+            optionFilterProp="children"
+            showSearch
+          >
+            <Select.Option key={0} value={0}>
+              Desligado
+            </Select.Option>
+            <Select.Option key={1} value={1}>
+              Ligado (Produção)
+            </Select.Option>
+            <Select.Option key={2} value={2}>
+              Ligado (Homologação)
+            </Select.Option>
+          </Select>
+        </div>
+        {errors.tpPrescalc && touched.tpPrescalc && (
+          <div className="form-error">{errors.tpPrescalc}</div>
         )}
       </div>
 

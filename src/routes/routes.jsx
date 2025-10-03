@@ -54,6 +54,7 @@ import PrescriptionReport from "pages/Reports/PrescriptionReport";
 import InterventionReport from "pages/Reports/InterventionReport";
 import PrescriptionAuditReport from "pages/Reports/PrescriptionAuditReport";
 import EconomyReport from "pages/Reports/EconomyReport";
+import IntegrationNifiLintReport from "pages/Reports/IntegrationNifiLint";
 
 import RegulationPrioritization from "pages/Regulation/Prioritization";
 import Regulation from "pages/Regulation/Regulation";
@@ -367,6 +368,11 @@ const routes = [
     exact: true,
     path: "/relatorios/economia",
     element: <WithAuth component={EconomyReport} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/integracao/nifilint",
+    element: <WithAuth component={IntegrationNifiLintReport} />,
   },
   {
     exact: true,

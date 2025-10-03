@@ -35,6 +35,7 @@ import {
   TagsOutlined,
   FilePptOutlined,
   RobotOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { Menu as Navigator } from "antd";
 
@@ -42,9 +43,8 @@ import Feature from "models/Feature";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { FeatureService } from "services/FeatureService";
-import SecurityService from "services/security";
 
-export default function Menu() {
+export default function Menu({ segments }) {
   const location = useLocation();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -62,12 +62,15 @@ export default function Menu() {
       return;
     }
 
-    if (item.notcpoe && SecurityService().hasCpoe()) {
+    if (item.feature && !FeatureService.has(item.feature)) {
       return;
     }
 
-    if (item.feature && !FeatureService.has(item.feature)) {
-      return;
+    if (item.key === "/priorizacao/prescricoes") {
+      if (segments.filter((s) => s.cpoe).length === segments.length) {
+        // all cpoe segments
+        return;
+      }
     }
 
     return item;
@@ -121,7 +124,6 @@ export default function Menu() {
           label: t("menu.prioritization-prescription"),
           icon: <FileTextOutlined />,
           id: "gtm-lnk-priorizacao-prescricao",
-          notcpoe: "notcpoe",
         },
         {
           key: "/priorizacao/pacientes/cards",
@@ -385,6 +387,13 @@ export default function Menu() {
           label: t("menu.memory"),
           icon: <SaveOutlined />,
           id: "gtm-lnk-memory",
+        },
+        {
+          key: "/relatorios/integracao/nifilint",
+          link: "/relatorios/integracao/nifilint",
+          label: "NifiLint",
+          icon: <SearchOutlined />,
+          id: "gtm-lnk-int-nifilint",
         },
         {
           key: "/admin/integracao/status",

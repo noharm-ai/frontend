@@ -44,4 +44,10 @@ api.live.getExamsRawSearchReport = (params = {}) =>
     ...setHeaders(),
   });
 
+api.live.getIntegrationNifiLintReport = (params = {}) =>
+  instance.get(`/reports/integration/nifilint`, {
+    params,
+    ...setHeaders(),
+  });
+
 export default api;

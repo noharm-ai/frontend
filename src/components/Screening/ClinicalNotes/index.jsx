@@ -18,7 +18,6 @@ import Tag from "components/Tag";
 import Dropdown from "components/Dropdown";
 import { getFirstAndLastName } from "utils";
 import { intersection } from "utils/lodash";
-import securityService from "services/security";
 import FeatureService from "services/features";
 
 import View from "./View";
@@ -43,9 +42,7 @@ export default function ClinicalNotes({
   previousAdmissions,
   visibleState,
   features,
-  roles,
 }) {
-  const security = securityService(roles);
   const featureService = FeatureService(features);
   const [positions, setPositions] = useState([]);
   const [selectedPositions, selectPositions] = useState([]);
@@ -215,7 +212,6 @@ export default function ClinicalNotes({
           <View
             selected={selected}
             update={update}
-            security={security}
             userId={userId}
             featureService={featureService}
             saveStatus={saveStatus}

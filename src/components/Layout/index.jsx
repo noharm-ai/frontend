@@ -241,6 +241,7 @@ export default function Layout({
   theme,
   app,
   setAppSider,
+  segments,
   ...props
 }) {
   const dispatch = useDispatch();
@@ -350,7 +351,7 @@ export default function Layout({
         <div css="padding: 0 15px 30px;">
           <Brand className="brand" title="noHarm.ai | Cuidando dos pacientes" />
         </div>
-        <Menu {...props} />
+        <Menu segments={segments} />
       </Sider>
       <Main
         style={{

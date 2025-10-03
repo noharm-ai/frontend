@@ -60,6 +60,27 @@ function BaseForm() {
         )}
       </div>
 
+      <div className={`form-row ${errors.cpoe && touched.cpoe ? "error" : ""}`}>
+        <div className="form-label">
+          <label>CPOE:</label>
+        </div>
+        <div className="form-input">
+          <Switch
+            id="cpoe"
+            name="cpoe"
+            checked={values.cpoe}
+            onChange={(value) => setFieldValue("cpoe", value)}
+            onBlur={handleBlur}
+            status={errors.cpoe && touched.cpoe ? "error" : null}
+            checkedChildren={t("labels.yes")}
+            unCheckedChildren={t("labels.no")}
+          />
+        </div>
+        {errors.cpoe && touched.cpoe && (
+          <div className="form-error">{errors.cpoe}</div>
+        )}
+      </div>
+
       <div
         className={`form-row ${errors.active && touched.active ? "error" : ""}`}
       >

@@ -2,17 +2,20 @@ import React from "react";
 import { useFormikContext } from "formik";
 import { Divider } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 import { Input, Select } from "components/Inputs";
 import Button from "components/Button";
 import { IProtocolFormBaseFields } from "./ProtocolForm";
 import { ProtocolVariableFieldEnum } from "src/models/ProtocolVariableFieldEnum";
+import clinicalNotesIndicator from "src/components/Screening/ClinicalNotes/ClinicalNotesIndicator";
 
 import { VariableContainer } from "../Protocol.style";
 
 export function VariableTab() {
   const { values, errors, setFieldValue } =
     useFormikContext<IProtocolFormBaseFields>();
+  const { t } = useTranslation();
 
   const setConfig = (idx: number, field: string, value: any) => {
     const variables = JSON.parse(JSON.stringify(values.config.variables));
@@ -79,6 +82,24 @@ export function VariableTab() {
                 />
               </div>
             </div>
+
+            {v.field === "cn_stats" && (
+              <>
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Indicador NoHarm Care:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      value={v.statsType}
+                      optionFilterProp="label"
+                      options={clinicalNotesIndicator.listSelectOptions(t)}
+                      onChange={(value) => setConfig(idx, "statsType", value)}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
             {v.field === "exam" && (
               <>
