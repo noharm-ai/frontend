@@ -20,6 +20,8 @@ export class FeatureService {
   static hasMixedCPOE = () => {
     const segments = (store.getState().segments as any).list;
 
+    if (FeatureService.hasCPOE() === false) return false;
+
     return (
       segments.filter((s: any) => s.cpoe).length !==
       segments.filter((s: any) => !s.cpoe).length
