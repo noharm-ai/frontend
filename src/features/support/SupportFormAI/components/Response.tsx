@@ -92,7 +92,7 @@ export function Response() {
                   >
                     Artigos relacionados:
                   </div>
-                  <Space>
+                  <Space wrap>
                     {articles.map((a: any) => (
                       <Button
                         type="dashed"

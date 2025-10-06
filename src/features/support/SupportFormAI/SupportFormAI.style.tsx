@@ -59,6 +59,16 @@ export const ChatBubble = styled.div`
     margin-left: 2rem;
     align-self: flex-end;
   }
+
+  ol {
+
+    li {
+    
+      margin-bottom: 0.8rem;
+      &:last-child {
+        margin-bottom: 0;
+      }
+  }
 `;
 
 export const ResponseContent = styled.div`
