@@ -79,19 +79,28 @@ export function Question() {
         </p>
 
         <p>
-          Para que possamos resolver sua questão o mais rápido possível, por
-          favor, descreva seu problema com o máximo de detalhes que conseguir.
+          Para uma solução mais rápida, descreva seu problema com o máximo de
+          detalhes possível.
         </p>
 
-        <p>
-          Nossa IA analisará sua mensagem para dar os primeiros passos e
-          solicitar mais informações antes de abrir um chamado, caso necessário.
-        </p>
+        <strong>Como funciona:</strong>
+
+        <ol>
+          <li>
+            <strong>Resposta Imediata:</strong> Nossa IA analisará sua mensagem
+            e buscará a solução na hora.
+          </li>
+          <li>
+            <strong>Suporte Humano:</strong> Se a IA não resolver, será exibido
+            um formulário para que você encaminhe a sua pergunta para nosso time
+            de especialistas.
+          </li>
+        </ol>
 
         <p>
-          <strong>Importante:</strong> Se você já tem um chamado aberto sobre
-          este assunto, pedimos que envie as novas informações por lá. Isso
-          centraliza o histórico e acelera muito a sua resposta!
+          <strong>Atenção:</strong> Se você já tem um chamado aberto sobre este
+          assunto, responda diretamente por lá. Isso centraliza o histórico e
+          acelera muito a sua resposta!
         </p>
 
         <h3>Como podemos ajudar?</h3>

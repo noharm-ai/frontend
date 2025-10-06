@@ -71,16 +71,16 @@ export function SupportForm() {
 
     <hr/>
 
-    <h2>Resumo</h2>
-    ${data.description}
-
-    <hr/>
-
     <h2>Informações complementares</h2>
     ${extraInfo.join("<br><br/>")}
+    `;
 
-    <hr/>
+    payload.nzero_summary = `
+    <h2>Resumo da demanda</h2>
+    ${data.description}
+    `;
 
+    payload.nzero_response = `
     <h2>Resposta N0</h2>
     ${aiResponse}
     `;
