@@ -22,9 +22,6 @@ export class FeatureService {
 
     if (FeatureService.hasCPOE() === false) return false;
 
-    return (
-      segments.filter((s: any) => s.cpoe).length !==
-      segments.filter((s: any) => !s.cpoe).length
-    );
+    return segments.filter((s: any) => !s.cpoe).length > 0;
   };
 }
