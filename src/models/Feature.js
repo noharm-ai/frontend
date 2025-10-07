@@ -23,6 +23,7 @@ export default class Feature {
   static ADD_EXAMS = "ADD_EXAMS";
   static N0_AGENT = "N0_AGENT";
   static PATIENT_DAY_OUTPATIENT_FLOW = "PATIENT_DAY_OUTPATIENT_FLOW";
+  static IGNORE_NON_CPOE_SEGMENTS = "IGNORE_NON_CPOE_SEGMENTS";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -160,6 +161,12 @@ export default class Feature {
         label: "Paciente-Dia: fluxo ambulatorial",
         description:
           "Habilita o fluxo de geração de prescrições Paciente-dia para ambulatórios. Neste fluxo, as prescrições paciente-dia só serão geradas nos dias onde houver um novo item de prescrição.",
+      },
+      {
+        id: Feature.IGNORE_NON_CPOE_SEGMENTS,
+        label: "CPOE: ignorar segmentos não CPOE na lista de medicamentos",
+        description:
+          "Com esta feature ativada, ao visualizar uma prescrição CPOE, serão exibidos apenas os medicamentos dos segmentos CPOE. Útil para clientes que desejam que o segmento quimioterápico não CPOE não 'polua' a lista de medicamentos do CPOE.",
       },
     ];
   }
