@@ -413,6 +413,11 @@ const SimpleList = styled.ul`
 
   li {
     list-style: none;
+    margin-bottom: 0.5rem;
+
+    span {
+      font-size: 12px;
+    }
   }
 `;
 
@@ -762,7 +767,10 @@ export const expandedRowRender = (bag) => (record) => {
               {diluents.map((d, i) => (
                 <li key={i}>
                   {d.drug} ({d.dose ? d.dose.toLocaleString("pt-BR") : ""}{" "}
-                  {d.measureUnit ? d.measureUnit.value : ""})
+                  {d.measureUnit ? d.measureUnit.value : ""}) <br />
+                  <span>
+                    OBS.: {d.recommendation ? d.recommendation : "--"}
+                  </span>
                 </li>
               ))}
             </SimpleList>
