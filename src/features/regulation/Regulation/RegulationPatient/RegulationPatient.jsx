@@ -93,6 +93,24 @@ export default function RegulationPatient({ print = false }) {
       children: patientDetails?.data?.telefone_contato,
       span: print ? 4 : 2,
     },
+    {
+      key: "14",
+      label: "Agente de saúde",
+      children: patientDetails?.data?.agente_saude,
+      span: print ? 4 : 2,
+    },
+    {
+      key: "15",
+      label: "Equipe",
+      children: patientDetails?.data?.equipe,
+      span: print ? 4 : 2,
+    },
+    {
+      key: "16",
+      label: "Unidade de saúde",
+      children: patientDetails?.data?.unidade_saude,
+      span: print ? 4 : 2,
+    },
   ];
 
   return (
