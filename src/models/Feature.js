@@ -153,8 +153,7 @@ export default class Feature {
       {
         id: Feature.N0_AGENT,
         label: "N0-Copilot",
-        description:
-          "Habilita o N0-Copilot na abertura de chamados. (Experimental - Não habilitar para usuários finais)",
+        description: "Habilita o N0-Copilot na abertura de chamados.",
       },
       {
         id: Feature.PATIENT_DAY_OUTPATIENT_FLOW,

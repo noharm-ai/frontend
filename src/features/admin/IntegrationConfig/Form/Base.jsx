@@ -72,8 +72,9 @@ function BaseForm() {
               </Select>
             </div>
             <div className="form-info">
-              Dispara o PresCalc para prescrições agregadas do cpoe que tenham
-              sofrido alterações.
+              (DESABILITADO - acionado direto pelo prescalc central) Dispara o
+              PresCalc para prescrições agregadas do cpoe que tenham sofrido
+              alterações.
             </div>
             {errors.fl1 && touched.fl1 && (
               <div className="form-error">{errors.fl1}</div>
@@ -103,7 +104,8 @@ function BaseForm() {
               </Select>
             </div>
             <div className="form-info">
-              Dispara o PresCalc para prescrições individuais que tenham sofrido
+              (DESABILITADO - acionado direto pelo prescalc central) Dispara o
+              PresCalc para prescrições individuais que tenham sofrido
               alterações.
             </div>
             {errors.fl2 && touched.fl2 && (
