@@ -89,6 +89,7 @@ export default function Filter({
         patientStatus: filter.patientStatus,
         patientReviewType: filter.patientReviewType,
         idPatient: filter.idPatient,
+        idPatientByNameList: filter.idPatientByNameList,
         intervals: filter.intervals,
         prescriber:
           prioritizationType === "patient" || prioritizationType === "cards"
@@ -153,6 +154,7 @@ export default function Filter({
       filter.substanceClasses,
       filter.patientReviewType,
       filter.idPatient,
+      filter.idPatientByNameList,
       filter.intervals,
       filter.prescriber,
       filter.diff,
@@ -245,6 +247,7 @@ export default function Filter({
       patientStatus: null,
       patientReviewType: null,
       idPatient: [],
+      idPatientByNameList: [],
       intervals: [],
       prescriber: null,
       diff: null,
