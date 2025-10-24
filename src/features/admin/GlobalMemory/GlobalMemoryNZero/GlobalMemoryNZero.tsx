@@ -59,6 +59,8 @@ export function GlobalMemoryNZero() {
         bedrock_model: {
           model_id: values.bedrock_model__model_id,
           region_name: values.bedrock_model__region_name,
+          guardrail_id: values.bedrock_model__guardrail_id,
+          guardrail_version: values.bedrock_model__guardrail_version,
         },
         embedding_model: {
           model_id: values.embedding_model__model_id,
@@ -132,6 +134,16 @@ export function GlobalMemoryNZero() {
             type: "plaintext",
           },
           {
+            id: "bedrock_model__guardrail_id",
+            label: "Guardrail ID",
+            type: "plaintext",
+          },
+          {
+            id: "bedrock_model__guardrail_version",
+            label: "Guardrail Version",
+            type: "plaintext",
+          },
+          {
             id: "embedding_model__model_id",
             label: "Embedding model",
             type: "plaintext",
@@ -181,6 +193,10 @@ export function GlobalMemoryNZero() {
     bedrock_model__model_id: data["n0-agent"]?.value.bedrock_model.model_id,
     bedrock_model__region_name:
       data["n0-agent"]?.value.bedrock_model.region_name,
+    bedrock_model__guardrail_id:
+      data["n0-agent"]?.value.bedrock_model.guardrail_id,
+    bedrock_model__guardrail_version:
+      data["n0-agent"]?.value.bedrock_model.guardrail_version,
     embedding_model__model_id: data["n0-agent"]?.value.embedding_model.model_id,
     embedding_model__region_name:
       data["n0-agent"]?.value.embedding_model.region_name,
