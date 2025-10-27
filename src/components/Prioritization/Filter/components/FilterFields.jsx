@@ -114,7 +114,7 @@ export default function FilterFields({
 
   const searchDrugsAutocomplete = debounce((value) => {
     if (value.length < 3) return;
-    searchDrugs(null, { q: value });
+    searchDrugs(null, { q: value, group: 0 });
   }, 800);
 
   const drugAttributesList = [

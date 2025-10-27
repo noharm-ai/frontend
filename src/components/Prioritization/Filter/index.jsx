@@ -194,7 +194,7 @@ export default function Filter({
     }
 
     if (!isEmpty(filter.idDrug)) {
-      searchDrugs(null, { idDrug: filter.idDrug });
+      searchDrugs(null, { idDrug: filter.idDrug, group: 0 });
     }
 
     dispatch(setSelectedRows([]));
@@ -206,7 +206,7 @@ export default function Filter({
       getParams({ ...filterData, idDept: filterData.idDepartment })
     );
     if (!isEmpty(filterData.idDrug)) {
-      searchDrugs(null, { idDrug: filterData.idDrug });
+      searchDrugs(null, { idDrug: filterData.idDrug, group: 0 });
     }
     setOpen(false);
 
