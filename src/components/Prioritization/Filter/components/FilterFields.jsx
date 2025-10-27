@@ -25,6 +25,7 @@ import { getUniqBy } from "utils/report";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import { TagTypeEnum } from "models/TagTypeEnum";
 import { ProtocolTypeEnum } from "models/ProtocolTypeEnum";
+import FieldNameAutocomplete from "features/fields/FieldNameAutocomplete/FieldNameAutocomplete";
 
 import { Form } from "styles/Form.style";
 
@@ -113,7 +114,7 @@ export default function FilterFields({
 
   const searchDrugsAutocomplete = debounce((value) => {
     if (value.length < 3) return;
-    searchDrugs(null, { q: value });
+    searchDrugs(null, { q: value, group: 0 });
   }, 800);
 
   const drugAttributesList = [
@@ -726,6 +727,23 @@ export default function FilterFields({
                 </div>
               </div>
             </div>
+
+            {featureService.hasPEC() && (
+              <div className="form-row">
+                <div className="form-row">
+                  <div className="form-label">
+                    <label>Nome Paciente:</label>
+                  </div>
+                  <div className="form-input">
+                    <FieldNameAutocomplete
+                      onChange={(val) =>
+                        setScreeningListFilter({ idPatientByNameList: val })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="form-row">
               <div className="form-row">

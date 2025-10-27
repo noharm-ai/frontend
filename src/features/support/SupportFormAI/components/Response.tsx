@@ -1,5 +1,5 @@
 import DOMPurify from "dompurify";
-import { Flex, Skeleton, Divider, Space } from "antd";
+import { Flex, Skeleton, Divider, Space, Popconfirm } from "antd";
 import { motion } from "motion/react";
 
 import { useAppSelector, useAppDispatch } from "src/store";
@@ -128,9 +128,29 @@ export function Response() {
             <>Não, quero abrir um chamado</>
           ) : (
             <Flex justify="center" align="center">
-              <Button type="primary" size="large" onClick={() => resolve()}>
-                Sim, obrigado!
-              </Button>
+              <Popconfirm
+                title="Atenção: Nenhum chamado será aberto"
+                description={
+                  <>
+                    Caso queira abrir um chamado, clique em{" "}
+                    <strong>"Não, quero abrir um chamado".</strong>
+                    <br />
+                    Assim, sua solicitação/dúvida será encaminhada para nossa
+                    equipe de suporte.
+                    <br />
+                    <br />
+                    Deseja realmente encerrar o atendimento?
+                  </>
+                }
+                okText="Sim"
+                cancelText="Não"
+                onConfirm={() => resolve()}
+                zIndex={9999}
+              >
+                <Button type="primary" size="large">
+                  Sim, obrigado!
+                </Button>
+              </Popconfirm>
               <Button
                 danger
                 size="large"

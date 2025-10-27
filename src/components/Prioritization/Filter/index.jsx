@@ -89,6 +89,7 @@ export default function Filter({
         patientStatus: filter.patientStatus,
         patientReviewType: filter.patientReviewType,
         idPatient: filter.idPatient,
+        idPatientByNameList: filter.idPatientByNameList,
         intervals: filter.intervals,
         prescriber:
           prioritizationType === "patient" || prioritizationType === "cards"
@@ -153,6 +154,7 @@ export default function Filter({
       filter.substanceClasses,
       filter.patientReviewType,
       filter.idPatient,
+      filter.idPatientByNameList,
       filter.intervals,
       filter.prescriber,
       filter.diff,
@@ -192,7 +194,7 @@ export default function Filter({
     }
 
     if (!isEmpty(filter.idDrug)) {
-      searchDrugs(null, { idDrug: filter.idDrug });
+      searchDrugs(null, { idDrug: filter.idDrug, group: 0 });
     }
 
     dispatch(setSelectedRows([]));
@@ -204,7 +206,7 @@ export default function Filter({
       getParams({ ...filterData, idDept: filterData.idDepartment })
     );
     if (!isEmpty(filterData.idDrug)) {
-      searchDrugs(null, { idDrug: filterData.idDrug });
+      searchDrugs(null, { idDrug: filterData.idDrug, group: 0 });
     }
     setOpen(false);
 
@@ -245,6 +247,7 @@ export default function Filter({
       patientStatus: null,
       patientReviewType: null,
       idPatient: [],
+      idPatientByNameList: [],
       intervals: [],
       prescriber: null,
       diff: null,

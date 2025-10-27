@@ -783,7 +783,7 @@
 
   "featuresDescription": {
     "MICROMEDEX": "Habilita o botão que faz o link entre o medicamento e o bulário (Bulário Cognys/Micromedex)",
-    "PRIMARYCARE": "Habilita a NoHarm para a perspectiva de Primary Care",
+    "PRIMARYCARE": "Habilita a NoHarm para a perspectiva de Primary Care. (Esta funcionalidade exige configuração extra)",
     "CONCILIATION": "Habilita a funcionalidade de Conciliação da NoHarm",
     "CONCILIATION_EDIT": "Habilita a possibilidade de incluir novas conciliações pela NoHarm",
     "SOLUTION_FREQUENCY": "Exibe a frequência do medicamento na lista de soluções",

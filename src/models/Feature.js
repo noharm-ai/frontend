@@ -24,6 +24,7 @@ export default class Feature {
   static N0_AGENT = "N0_AGENT";
   static PATIENT_DAY_OUTPATIENT_FLOW = "PATIENT_DAY_OUTPATIENT_FLOW";
   static IGNORE_NON_CPOE_SEGMENTS = "IGNORE_NON_CPOE_SEGMENTS";
+  static PEC = "PEC";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -153,8 +154,7 @@ export default class Feature {
       {
         id: Feature.N0_AGENT,
         label: "N0-Copilot",
-        description:
-          "Habilita o N0-Copilot na abertura de chamados. (Experimental - Não habilitar para usuários finais)",
+        description: "Habilita o N0-Copilot na abertura de chamados.",
       },
       {
         id: Feature.PATIENT_DAY_OUTPATIENT_FLOW,
@@ -167,6 +167,12 @@ export default class Feature {
         label: "CPOE: ignorar segmentos não CPOE na lista de medicamentos",
         description:
           "Com esta feature ativada, ao visualizar uma prescrição CPOE, serão exibidos apenas os medicamentos dos segmentos CPOE. Útil para clientes que desejam que o segmento quimioterápico não CPOE não 'polua' a lista de medicamentos do CPOE.",
+      },
+      {
+        id: Feature.PEC,
+        label: "PEC: identifica integração com o PEC",
+        description:
+          "Esta feature identifica integrações com o PEC (Prontuário Eletrônico do Cidadão). Sua ativação pode ser necessária para o funcionamento correto de certas funcionalidades relacionadas ao PEC.",
       },
     ];
   }

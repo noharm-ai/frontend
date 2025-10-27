@@ -81,6 +81,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.ADD_EXAMS);
   };
 
+  const hasPEC = () => {
+    return hasFeature(Feature.PEC);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
@@ -101,6 +105,7 @@ const FeaturesService = (features) => {
     hasProtocolAlerts,
     hasShowPepLink,
     hasAddExams,
+    hasPEC,
   };
 };
 
