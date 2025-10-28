@@ -49,16 +49,34 @@ const CalcContainer = styled.div`
       }
 
       > div:nth-child(2) {
+        display: flex;
+        flex-direction: column;
         width: 200px;
         padding-right: 30px;
       }
     }
   }
+
+  .ipt-info {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.2;
+    margin-top: 5px;
+    margin-left: 12px;
+  }
 `;
 
-const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
+const SolutionCalculator = ({
+  totalVol,
+  amount,
+  speed,
+  unit,
+  vol,
+  weight,
+  disableTotal,
+}) => {
   const [lAmount, setAmount] = useState(amount);
-  const [lTotalVol, setTotalVol] = useState(totalVol);
+  const [lTotalVol, setTotalVol] = useState(disableTotal ? 0 : totalVol);
   const [lSpeed, setSpeed] = useState(speed);
   const [lVol, setVol] = useState(vol);
   const [lWeight, setWeight] = useState(weight);
@@ -176,6 +194,18 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
               value={lWeight}
               onChange={(value) => setWeight(value)}
             />
+          </div>
+        </div>
+
+        <div>
+          <div className="ipt-label"></div>
+          <div className="ipt-value">
+            {disableTotal && (
+              <div className="ipt-info">
+                * Volume da solução final não foi calculado por falta de
+                conversão automática para ml
+              </div>
+            )}
           </div>
         </div>
       </div>
