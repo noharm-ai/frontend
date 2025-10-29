@@ -6,6 +6,39 @@ import Heading from "components/Heading";
 import Descriptions from "components/Descriptions";
 import NumericValue from "components/NumericValue";
 
+/**
+ * Valida unidades de infusão
+ * @param {string} unit - A unidade a ser validada
+ * @returns {boolean} - true se a unidade for válida, false caso contrário
+ *
+ * Unidades válidas:
+ * - MILILITRO/H
+ * - mlh
+ * - ML/H
+ * - ML 1000/H (com qualquer número)
+ * - ML250/H (com qualquer número)
+ */
+
+const validateInfusionUnit = (unit) => {
+  if (!unit || typeof unit !== "string") {
+    return false;
+  }
+
+  // Remove espaços extras e converte para maiúsculo para facilitar a comparação
+  const cleanUnit = unit.trim().toUpperCase();
+
+  // Regex patterns para cada formato válido
+  const patterns = [
+    /^MILILITRO\/H$/, // MILILITRO/H
+    /^MLH$/, // mlh (convertido para MLH)
+    /^ML\/H$/, // ML/H
+    /^ML\s*\d+\/H$/, // ML 1000/H ou ML250/H (com espaço opcional)
+  ];
+
+  // Testa cada pattern
+  return patterns.some((pattern) => pattern.test(cleanUnit));
+};
+
 const CalcDescriptions = styled(Descriptions)`
   .ant-descriptions-item-label {
     text-align: right;
@@ -49,17 +82,38 @@ const CalcContainer = styled.div`
       }
 
       > div:nth-child(2) {
+        display: flex;
+        flex-direction: column;
         width: 200px;
         padding-right: 30px;
       }
     }
   }
+
+  .ipt-info {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.2;
+    margin-top: 5px;
+    margin-left: 12px;
+  }
 `;
 
-const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
+const SolutionCalculator = ({
+  totalVol,
+  amount,
+  speed,
+  speedUnit,
+  unit,
+  vol,
+  weight,
+  disableTotal,
+}) => {
   const [lAmount, setAmount] = useState(amount);
-  const [lTotalVol, setTotalVol] = useState(totalVol);
-  const [lSpeed, setSpeed] = useState(speed);
+  const [lTotalVol, setTotalVol] = useState(disableTotal ? 0 : totalVol);
+  const [lSpeed, setSpeed] = useState(
+    validateInfusionUnit(speedUnit) ? speed : 0
+  );
   const [lVol, setVol] = useState(vol);
   const [lWeight, setWeight] = useState(weight);
 
@@ -156,6 +210,12 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
               value={lSpeed}
               onChange={(value) => setSpeed(value)}
             />
+            {!validateInfusionUnit(speedUnit) && (
+              <div className="ipt-info">
+                {speed}{" "}
+                {speedUnit ? speedUnit : "unidade de infusão não definida"}
+              </div>
+            )}
           </div>
         </div>
         <div>
@@ -176,6 +236,18 @@ const SolutionCalculator = ({ totalVol, amount, speed, unit, vol, weight }) => {
               value={lWeight}
               onChange={(value) => setWeight(value)}
             />
+          </div>
+        </div>
+
+        <div>
+          <div className="ipt-label"></div>
+          <div className="ipt-value">
+            {disableTotal && (
+              <div className="ipt-info">
+                * Volume da solução final não foi calculado por falta de
+                conversão automática para ml
+              </div>
+            )}
           </div>
         </div>
       </div>

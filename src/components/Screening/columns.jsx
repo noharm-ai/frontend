@@ -799,7 +799,11 @@ const dose = (bag) => ({
             onClick={() => bag.handleRowExpand(prescription)}
             style={{ cursor: "pointer" }}
           >
-            {prescription.infusion.totalVol} mL
+            {prescription.infusion.disableTotal ? (
+              <>--</>
+            ) : (
+              <>{prescription.infusion.totalVol} mL</>
+            )}
           </span>
         </Tooltip>
       );
