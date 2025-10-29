@@ -307,6 +307,14 @@ export const interventionTemplate = (i) => `
   ${i.observation ? stripHtml(i.observation) : ""}
 `;
 
+const hasRam = (i) => {
+  return (
+    i.ram &&
+    Object.keys(i.ram).length > 0 &&
+    Object.values(i.ram).some((value) => value !== null && value !== false)
+  );
+};
+
 export const interventionCompleteTemplate = (i, t) => {
   let intv = `
   -- ${i.drugName}
@@ -322,7 +330,7 @@ export const interventionCompleteTemplate = (i, t) => {
   Desfecho: ${t("interventionStatus." + i.status)}
 `;
 
-  if (i.ram) {
+  if (hasRam(i)) {
     let ram = `  Detalhes RAM
 `;
     ramFields.forEach((item) => {
