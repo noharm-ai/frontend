@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Descriptions, Skeleton, Tag, Flex } from "antd";
+import { Descriptions, Skeleton, Tag, Flex, Tabs, Table } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -13,6 +13,7 @@ import {
   setCloudConfigSchema,
 } from "../IntegrationConfigSlice";
 import { EditGetname } from "./components/EditGetname";
+import { EditSecurityGroup } from "./components/EditSecurityGroup";
 
 export function CloudSchemaForm() {
   const { t } = useTranslation();
@@ -56,6 +57,40 @@ export function CloudSchemaForm() {
     setEditGetname(false);
   };
 
+  const sgColumns = [
+    {
+      title: "Security Group",
+      render: (_: any, record: any) => record.sg_name,
+    },
+    {
+      title: "Port",
+      render: (_: any, record: any) => record.port_range,
+    },
+    {
+      title: "IP Range",
+      render: (_: any, record: any) => (
+        <EditSecurityGroup
+          onSave={afterSave}
+          ruleId={record.rule_id}
+          sgId={record.sg_id}
+          source={record.source}
+          schema={schema!}
+        />
+      ),
+    },
+  ];
+
+  const getRules = () => {
+    const rules = data?.rules ? [...data.rules] : [];
+
+    rules.push({
+      source: "",
+      schema: schema,
+    });
+
+    return rules;
+  };
+
   return (
     <DefaultModal
       open={!!schema}
@@ -73,50 +108,74 @@ export function CloudSchemaForm() {
           <header>
             <h2 className="modal-title">Infraestrutura: {schema}</h2>
           </header>
-          <Descriptions bordered size="small">
-            <Descriptions.Item label="Getname" span={3}>
-              {editGetname ? (
-                <EditGetname
-                  onCancel={() => setEditGetname(false)}
-                  onSave={() => afterSave()}
-                  initialIP={data.getname?.ResourceRecords[0].Value}
-                  schema={schema!}
-                />
-              ) : (
-                <Flex justify="space-between" align="center">
-                  <div>
-                    {data && data.getname ? (
-                      <>
-                        {data.getname?.Name} (
-                        {data.getname?.ResourceRecords[0].Value})
-                      </>
-                    ) : (
-                      <Tag color="red">Não configurado</Tag>
-                    )}
-                  </div>
-                  <Button
-                    icon={<EditOutlined />}
-                    type="primary"
-                    onClick={() => setEditGetname(true)}
+
+          <Tabs
+            defaultActiveKey="1"
+            items={[
+              {
+                label: "Geral",
+                key: "general",
+                children: (
+                  <Descriptions bordered size="small">
+                    <Descriptions.Item label="Getname" span={3}>
+                      {editGetname ? (
+                        <EditGetname
+                          onCancel={() => setEditGetname(false)}
+                          onSave={() => afterSave()}
+                          initialIP={data.getname?.ResourceRecords[0].Value}
+                          schema={schema!}
+                        />
+                      ) : (
+                        <Flex justify="space-between" align="center">
+                          <div>
+                            {data && data.getname ? (
+                              <>
+                                {data.getname?.Name} (
+                                {data.getname?.ResourceRecords[0].Value})
+                              </>
+                            ) : (
+                              <Tag color="red">Não configurado</Tag>
+                            )}
+                          </div>
+                          <Button
+                            icon={<EditOutlined />}
+                            type="primary"
+                            onClick={() => setEditGetname(true)}
+                          />
+                        </Flex>
+                      )}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="SQS" span={3}>
+                      {data && data.sqs ? (
+                        <>{data.sqs}</>
+                      ) : (
+                        <Tag color="red">Não configurado</Tag>
+                      )}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Logstream" span={3}>
+                      {data && data.logstream ? (
+                        <>nifi/{schema}</>
+                      ) : (
+                        <Tag color="red">Não configurado</Tag>
+                      )}
+                    </Descriptions.Item>
+                  </Descriptions>
+                ),
+              },
+              {
+                label: "Security Groups",
+                key: "sg",
+                children: (
+                  <Table
+                    columns={sgColumns}
+                    pagination={false}
+                    dataSource={getRules()}
+                    size="small"
                   />
-                </Flex>
-              )}
-            </Descriptions.Item>
-            <Descriptions.Item label="SQS" span={3}>
-              {data && data.sqs ? (
-                <>{data.sqs}</>
-              ) : (
-                <Tag color="red">Não configurado</Tag>
-              )}
-            </Descriptions.Item>
-            <Descriptions.Item label="Logstream" span={3}>
-              {data && data.logstream ? (
-                <>nifi/{schema}</>
-              ) : (
-                <Tag color="red">Não configurado</Tag>
-              )}
-            </Descriptions.Item>
-          </Descriptions>
+                ),
+              },
+            ]}
+          />
         </>
       )}
     </DefaultModal>
