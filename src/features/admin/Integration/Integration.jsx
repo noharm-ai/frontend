@@ -6,6 +6,7 @@ import {
   RetweetOutlined,
   ThunderboltOutlined,
   CalculatorOutlined,
+  WifiOutlined,
 } from "@ant-design/icons";
 
 import notification from "components/notification";
@@ -13,7 +14,12 @@ import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
-import { refreshAgg, refreshPrescription, reset } from "./IntegrationSlice";
+import {
+  refreshAgg,
+  refreshPrescription,
+  reset,
+  updateUserSecurityGroup,
+} from "./IntegrationSlice";
 import Prescalc from "./Prescalc/Prescalc";
 
 import { PageHeader } from "styles/PageHeader.style";
@@ -31,6 +37,9 @@ function IntegrationAdmin() {
   );
   const prescalcStatus = useSelector(
     (state) => state.admin.integration.prescalc.status
+  );
+  const updateUserSecurityGroupStatus = useSelector(
+    (state) => state.admin.integration.updateUserSecurityGroup.status
   );
 
   useEffect(() => {
@@ -161,8 +170,40 @@ function IntegrationAdmin() {
                     style={{ backgroundColor: "#2db7f5", color: "#fff" }}
                   />
                 }
-                title="PresCalc"
+                title="PresCalc (Precisa ser atualizado para novo formato)"
                 description="Aciona manualmente o prescalc para gerar uma prescrição agregada ou recalcular os indicadores da prescrição."
+              />
+            </Card>
+          </Col>
+          <Col xs={{ span: 24 }} lg={{ span: 8 }} xxl={{ span: 6 }}>
+            <Card
+              className={`process-card ${updateUserSecurityGroupStatus}`}
+              actions={[
+                <Tooltip title="Executar">
+                  <Button
+                    shape="circle"
+                    icon={<ThunderboltOutlined />}
+                    size="large"
+                    loading={updateUserSecurityGroupStatus === "loading"}
+                    onClick={() =>
+                      confirmAction(
+                        updateUserSecurityGroup,
+                        "Atualizar o meu ip nos security groups"
+                      )()
+                    }
+                  ></Button>
+                </Tooltip>,
+              ]}
+            >
+              <Card.Meta
+                avatar={
+                  <Avatar
+                    icon={<WifiOutlined />}
+                    style={{ backgroundColor: "#2db7f5", color: "#fff" }}
+                  />
+                }
+                title="Meu IP"
+                description="Atualiza IP nos security groups"
               />
             </Card>
           </Col>
