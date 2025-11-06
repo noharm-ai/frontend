@@ -271,6 +271,14 @@ api.integration.upsertGetname = (params) =>
   instance.post(`${endpoints.integration}/upsert-getname`, params, {
     ...setHeaders(),
   });
+api.integration.upsertSecurityGroup = (params) =>
+  instance.post(`${endpoints.integration}/upsert-security-group`, params, {
+    ...setHeaders(),
+  });
+api.integration.updateUserSecurityGroup = (params) =>
+  instance.post(`${endpoints.integration}/update-user-security-group`, params, {
+    ...setHeaders(),
+  });
 
 api.integration.prescalc = (params) => {
   if (params.cpoe) {

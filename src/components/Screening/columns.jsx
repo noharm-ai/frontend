@@ -194,24 +194,14 @@ const InterventionAction = ({ intv, isSavingIntervention }) => {
 };
 
 const formatCPOEPeriod = (record) => {
-  if (record.period) {
-    const period =
-      parseInt(`${record.period}`.replace("D", ""), 10) +
-      (record.periodFixed || 0);
+  if (record.totalPeriod) {
+    const period = record.totalPeriod;
 
     if (record.periodMax) {
       return `D${period}/${record.periodMax}`;
     }
 
     return `D${period}`;
-  }
-
-  if (record.periodFixed) {
-    if (record.periodMax) {
-      return `D${record.periodFixed}/${record.periodMax}`;
-    }
-
-    return `D${record.periodFixed}`;
   }
 
   return "-";
@@ -870,6 +860,19 @@ const drug = (bag, addkey, title) => ({
 
     let content;
     if (PermissionService().has(Permission.MAINTAINER)) {
+      let periodType = "";
+
+      switch (record.periodType) {
+        case 1:
+          periodType = "Calculado";
+          break;
+        case 2:
+          periodType = "Integrado";
+          break;
+        default:
+          periodType = "Indefinido";
+      }
+
       content = (
         <>
           <strong>Info para mantenedores:</strong>
@@ -884,6 +887,13 @@ const drug = (bag, addkey, title) => ({
           <strong>doseconv:</strong> {record.doseconv}
           <br />
           <strong>frequenciadia:</strong> {record.dayFrequency}
+          <br />
+          <strong>tipo periodo:</strong> {periodType} (fixo:{" "}
+          {record.periodFixed} / dias prescrito:{" "}
+          {record.periodFixed > 0
+            ? record.periodDayInterval
+            : record.periodDayInterval + 1}
+          )
           <br />
           <br />
           {record.drug} <DrugTags drug={record} t={bag.t} />
@@ -1052,7 +1062,7 @@ const period = (bag) => ({
       return "";
     }
 
-    if (record.cpoe && record.periodFixed && !record.whiteList) {
+    if (record.cpoe && !record.whiteList) {
       return (
         <Tooltip title='Confira o período completo no botão "Visualizar período de uso" presente na linha extendida'>
           {formatCPOEPeriod(record)}

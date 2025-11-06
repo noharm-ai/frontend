@@ -83,6 +83,18 @@ export const upsertGetname = createAsyncThunk(
   }
 );
 
+export const upsertSecurityGroup = createAsyncThunk(
+  "integration-config/upsert-security-group",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.integration.upsertSecurityGroup(params);
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const integrationConfigSlice = createSlice({
   name: "integrationConfig",
   initialState,
