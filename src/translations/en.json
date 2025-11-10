@@ -645,7 +645,9 @@
     "DISCHARGE_MANAGER": "Discharge Manager",
     "VIEWER": "Viewer",
     "DISPENSING_MANAGER": "Dispensing Manager",
-    "REGULATOR": "Regulator"
+    "REGULATOR": "Regulator",
+    "SUPPORT_REQUESTER": "Support Requester",
+    "SUPPORT_MANAGER": "Support Manager"
   },
 
   "rolesDescription": {
@@ -655,7 +657,9 @@
     "DISCHARGE_MANAGER": "Responsible for creating discharge summaries.",
     "VIEWER": "Read-only access to prescriptions.",
     "DISPENSING_MANAGER": "Responsible for managing item dispensing information",
-    "REGULATOR": "Responsible for regulation"
+    "REGULATOR": "Responsible for regulation",
+    "SUPPORT_REQUESTER": "Has the permission to create support tickets",
+    "SUPPORT_MANAGER": "Visualize tickets from all users."
   },
 
   "reportcsv": {

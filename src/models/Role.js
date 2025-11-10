@@ -8,8 +8,8 @@ export default class Role {
   static DISPENSING_MANAGER = "DISPENSING_MANAGER";
   static VIEWER = "VIEWER";
   static REGULATOR = "REGULATOR";
-
-  static CPOE = "cpoe"; //keep for compatibility (remove after transition)
+  static SUPPORT_REQUESTER = "SUPPORT_REQUESTER";
+  static SUPPORT_MANAGER = "SUPPORT_MANAGER";
 
   static getNewRoles(t, features) {
     const roles = [
@@ -53,6 +53,18 @@ export default class Role {
         description: t(`rolesDescription.${Role.REGULATOR}`),
       });
     }
+
+    roles.push({
+      id: Role.SUPPORT_REQUESTER,
+      label: t(`roles.${Role.SUPPORT_REQUESTER}`),
+      description: t(`rolesDescription.${Role.SUPPORT_REQUESTER}`),
+    });
+
+    roles.push({
+      id: Role.SUPPORT_MANAGER,
+      label: t(`roles.${Role.SUPPORT_MANAGER}`),
+      description: t(`rolesDescription.${Role.SUPPORT_MANAGER}`),
+    });
 
     roles.push({
       id: Role.VIEWER,
