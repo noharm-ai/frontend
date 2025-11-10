@@ -649,7 +649,9 @@
     "DISCHARGE_MANAGER": "Gestor de Alta",
     "VIEWER": "Visualizador",
     "DISPENSING_MANAGER": "Gestor de Dispensação",
-    "REGULATOR": "Regulador"
+    "REGULATOR": "Regulador",
+    "SUPPORT_REQUESTER": "Requerente de Suporte",
+    "SUPPORT_MANAGER": "Gestor de Suporte"
   },
 
   "rolesDescription": {
@@ -659,7 +661,9 @@
     "DISCHARGE_MANAGER": "Responsável pela criação de sumários de alta",
     "VIEWER": "Acesso somente leitura às prescrições",
     "DISPENSING_MANAGER": "Responsável pela gestão das informações de dispensação dos itens",
-    "REGULATOR": "Responsável pela regulação"
+    "REGULATOR": "Responsável pela regulação",
+    "SUPPORT_REQUESTER": "Este papel permite ao usuário que ele abra chamados de suporte",
+    "SUPPORT_MANAGER": "Responsável pelo suporte da organização. Pode visualizar todos os chamados abertos para a sua organização."
   },
 
   "reportcsv": {
