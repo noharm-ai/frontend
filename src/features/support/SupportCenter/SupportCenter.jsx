@@ -78,7 +78,7 @@ function SupportCenter() {
     },
   ];
 
-  if (PermissionService().has(Permission.WRITE_USERS)) {
+  if (PermissionService().has(Permission.ADMIN_SUPPORT)) {
     items.push({
       key: "3",
       label: "Minha organização",
