@@ -8,7 +8,11 @@ import { SupportForm } from "./components/SupportForm";
 
 import { ScrollableContainer, ScrollAnchor } from "./SupportFormAI.style";
 
-export function SupportFormAI() {
+interface SupportFormAIInterface {
+  mode: "default" | "simple";
+}
+
+export function SupportFormAI({ mode = "default" }: SupportFormAIInterface) {
   const step = useAppSelector((state) => state.support.aiform.currentStep);
   const responseStatus = useAppSelector(
     (state) => state.support.aiform.askn0.status
@@ -35,7 +39,7 @@ export function SupportFormAI() {
 
   return (
     <ScrollableContainer>
-      <Question />
+      <Question mode={mode} />
 
       {step.indexOf("response") !== -1 && (
         <motion.div
@@ -44,7 +48,7 @@ export function SupportFormAI() {
           transition={{ duration: 0.3, ease: "easeOut" }}
           onAnimationComplete={scrollToBottom}
         >
-          <Response />
+          <Response mode={mode} />
         </motion.div>
       )}
       {step.indexOf("form") !== -1 && (

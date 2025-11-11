@@ -41,6 +41,11 @@ const initialState = {
       list: [],
     },
   },
+  fetchRequesters: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
 };
 
 export const createTicket = createAsyncThunk(
@@ -87,6 +92,19 @@ export const addAttachment = createAsyncThunk(
         ...err.response.data,
         statusCode: err.response.status,
       });
+    }
+  }
+);
+
+export const fetchRequesters = createAsyncThunk(
+  "support/fetch-requesters",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.support.listRequesters(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
     }
   }
 );
@@ -274,6 +292,18 @@ const supportSlice = createSlice({
         state.aiform.relatedArticles.status = "failed";
         state.aiform.relatedArticles.error = action.error.message;
         state.aiform.relatedArticles.list = [];
+      })
+
+      .addCase(fetchRequesters.pending, (state, action) => {
+        state.fetchRequesters.status = "loading";
+      })
+      .addCase(fetchRequesters.fulfilled, (state, action) => {
+        state.fetchRequesters.status = "succeeded";
+        state.fetchRequesters.list = action.payload.data.requesters;
+      })
+      .addCase(fetchRequesters.rejected, (state, action) => {
+        state.fetchRequesters.status = "failed";
+        state.fetchRequesters.error = action.error.message;
       });
   },
 });

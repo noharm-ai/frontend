@@ -24,7 +24,11 @@ import {
   ResponseContent,
 } from "../SupportFormAI.style";
 
-export function Question() {
+interface QuestionInteface {
+  mode: string;
+}
+
+export function Question({ mode }: QuestionInteface) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const userQuestion = useAppSelector((state) => state.support.aiform.question);
@@ -34,24 +38,43 @@ export function Question() {
 
     // @ts-expect-error ts 2554 (legacy code)
     dispatch(fetchN0Response(params)).then((response: any) => {
-      if (response.error) {
-        dispatch(setAIFormStep(["question", "form"]));
-        console.error(response.error);
-      } else {
-        const agent_response = response.payload.data.agent;
-        if (agent_response.includes("SKIP_ANSWER")) {
+      if (mode === "default") {
+        if (response.error) {
           dispatch(setAIFormStep(["question", "form"]));
+          console.error(response.error);
+        } else {
+          const agent_response = response.payload.data.agent;
+          if (agent_response.includes("SKIP_ANSWER")) {
+            dispatch(setAIFormStep(["question", "form"]));
+          }
+          dispatch(setAIFormResponse(agent_response));
         }
-        dispatch(setAIFormResponse(agent_response));
+      } else {
+        if (response.error) {
+          console.error(response.error);
+        } else {
+          const agent_response = response.payload.data.agent;
+          if (agent_response.includes("SKIP_ANSWER")) {
+            dispatch(
+              setAIFormResponse(
+                "Desculpe, não encontrei informações na base de conhecimento para conseguir ajudá-lo."
+              )
+            );
+          } else {
+            dispatch(setAIFormResponse(agent_response));
+          }
+        }
       }
     });
 
-    // @ts-expect-error ts 2554 (legacy code)
-    dispatch(fetchN0Form(params)).then((response: any) => {
-      if (response.error) {
-        console.error(response.error);
-      }
-    });
+    if (mode === "default") {
+      // @ts-expect-error ts 2554 (legacy code)
+      dispatch(fetchN0Form(params)).then((response: any) => {
+        if (response.error) {
+          console.error(response.error);
+        }
+      });
+    }
 
     // @ts-expect-error ts 2554 (legacy code)
     dispatch(fetchRelatedArticles(params)).then((response: any) => {
@@ -73,38 +96,40 @@ export function Question() {
 
   return (
     <ChatContainer>
-      <ChatBubble>
-        <p>
-          <strong>Olá! Seja bem-vindo(a) ao nosso suporte.</strong>
-        </p>
+      {mode === "default" && (
+        <ChatBubble>
+          <p>
+            <strong>Olá! Seja bem-vindo(a) ao nosso suporte.</strong>
+          </p>
 
-        <p>
-          Para uma solução mais rápida, descreva seu problema com o máximo de
-          detalhes possível.
-        </p>
+          <p>
+            Para uma solução mais rápida, descreva seu problema com o máximo de
+            detalhes possível.
+          </p>
 
-        <strong>Como funciona:</strong>
+          <strong>Como funciona:</strong>
 
-        <ol>
-          <li>
-            <strong>Resposta Imediata:</strong> Nossa IA analisará sua mensagem
-            e buscará a solução na hora.
-          </li>
-          <li>
-            <strong>Suporte Humano:</strong> Se a IA não resolver, será exibido
-            um formulário para que você encaminhe a sua pergunta para nosso time
-            de especialistas.
-          </li>
-        </ol>
+          <ol>
+            <li>
+              <strong>Resposta Imediata:</strong> Nossa IA analisará sua
+              mensagem e buscará a solução na hora.
+            </li>
+            <li>
+              <strong>Suporte Humano:</strong> Se a IA não resolver, será
+              exibido um formulário para que você encaminhe a sua pergunta para
+              nosso time de especialistas.
+            </li>
+          </ol>
 
-        <p>
-          <strong>Atenção:</strong> Se você já tem um chamado aberto sobre este
-          assunto, responda diretamente por lá. Isso centraliza o histórico e
-          acelera muito a sua resposta!
-        </p>
+          <p>
+            <strong>Atenção:</strong> Se você já tem um chamado aberto sobre
+            este assunto, responda diretamente por lá. Isso centraliza o
+            histórico e acelera muito a sua resposta!
+          </p>
 
-        <h3>Como podemos ajudar?</h3>
-      </ChatBubble>
+          <h3>Como podemos ajudar?</h3>
+        </ChatBubble>
+      )}
 
       <ChatBubble className={`user ${userQuestion ? "" : "form no-padding"}`}>
         {userQuestion ? (
