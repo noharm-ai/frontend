@@ -670,6 +670,11 @@ api.support.getTickets = () =>
     ...setHeaders(),
   });
 
+api.support.listRequesters = () =>
+  instance.get(`/support/list-requesters`, {
+    ...setHeaders(),
+  });
+
 api.support.getPendingActionTickets = () =>
   instance.get(`/support/list-pending`, {
     ...setHeaders(),

@@ -45,6 +45,7 @@ export default class Permission {
 
   static READ_SUPPORT = "READ_SUPPORT";
   static WRITE_SUPPORT = "WRITE_SUPPORT";
+  static ADMIN_SUPPORT = "ADMIN_SUPPORT";
 
   static READ_USERS = "READ_USERS";
   static WRITE_USERS = "WRITE_USERS";

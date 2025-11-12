@@ -6,10 +6,13 @@ import Button from "components/Button";
 import SupportForm from "features/support/SupportForm/SupportForm";
 import { SupportFormAI } from "src/features/support/SupportFormAI/SupportFormAI";
 import { FeatureService } from "src/services/FeatureService";
+import PermissionService from "src/services/PermissionService";
 import Feature from "src/models/Feature";
 import { setSupportOpen } from "features/support/SupportSlice";
+import Permission from "src/models/Permission";
 
 import { ChatHeader } from "src/features/support/SupportFormAI/SupportFormAI.style";
+import { SupportInfo } from "./SupportInfo/SupportInfo";
 
 export function SupportDrawer() {
   const navigate = useNavigate();
@@ -46,10 +49,16 @@ export function SupportDrawer() {
         </Button>
       }
     >
-      {FeatureService.has(Feature.N0_AGENT) ? (
-        <SupportFormAI />
+      {PermissionService().has(Permission.WRITE_SUPPORT) ? (
+        <>
+          {FeatureService.has(Feature.N0_AGENT) ? (
+            <SupportFormAI mode="default" />
+          ) : (
+            <SupportForm />
+          )}
+        </>
       ) : (
-        <SupportForm />
+        <SupportInfo />
       )}
     </Drawer>
   );

@@ -18,7 +18,11 @@ import {
   ResponseContent,
 } from "../SupportFormAI.style";
 
-export function Response() {
+interface ResponseInterface {
+  mode: "default" | "simple";
+}
+
+export function Response({ mode }: ResponseInterface) {
   const dispatch = useAppDispatch();
   const status = useAppSelector((state) => state.support.aiform.askn0.status);
   const response = useAppSelector((state) => state.support.aiform.response);
@@ -110,11 +114,15 @@ export function Response() {
                 </>
               )}
 
-              <Divider />
+              {mode === "default" && (
+                <>
+                  <Divider />
 
-              <ActionSection>
-                <ActionText>Você conseguiu resolver o problema?</ActionText>
-              </ActionSection>
+                  <ActionSection>
+                    <ActionText>Você conseguiu resolver o problema?</ActionText>
+                  </ActionSection>
+                </>
+              )}
             </>
           )}
         </motion.div>
@@ -122,7 +130,7 @@ export function Response() {
         {status === "failed" && <p>Nenhuma resposta disponível</p>}
       </ChatBubble>
 
-      {status === "succeeded" && (
+      {status === "succeeded" && mode === "default" && (
         <ChatBubble className="user">
           {currentStep.indexOf("form") !== -1 ? (
             <>Não, quero abrir um chamado</>
