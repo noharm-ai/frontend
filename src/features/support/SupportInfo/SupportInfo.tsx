@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, Button, Spin } from "antd";
+import { Alert, Button, Spin, Space, Divider } from "antd";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import {
@@ -65,18 +65,24 @@ export function SupportInfo() {
           )}
         </Spin>
 
+        <Divider />
+
         <ActionSection>
-          <Button
-            type="link"
-            href={`${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`}
-            target="_blank"
-            rel="noreferer noopener"
-          >
-            Consulte a Base de Conhecimento
-          </Button>
-          <Button type="link" onClick={() => setSupportOpen(true)}>
-            Consulte a nossa IA de Suporte
-          </Button>
+          <Space>
+            <Button
+              type="default"
+              href={`${
+                import.meta.env.VITE_APP_ODOO_LINK
+              }/knowledge/article/39`}
+              target="_blank"
+              rel="noreferer noopener"
+            >
+              Consulte a Base de Conhecimento
+            </Button>
+            <Button type="primary" onClick={() => setSupportOpen(true)}>
+              Consulte o nosso Agente de Suporte (IA)
+            </Button>
+          </Space>
         </ActionSection>
       </ChatBubble>
 
@@ -89,7 +95,7 @@ export function SupportInfo() {
         onCancel={() => cancelSupportForm()}
       >
         <header>
-          <h2 className="modal-title">Suporte IA</h2>
+          <h2 className="modal-title">Agente de Suporte (IA)</h2>
         </header>
         <p>
           Tem alguma dúvida? Descreva no campo abaixo e a IA tentará ajudar:
