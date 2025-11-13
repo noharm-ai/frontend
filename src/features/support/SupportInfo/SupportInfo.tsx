@@ -19,11 +19,14 @@ export function SupportInfo() {
   const status = useAppSelector(
     (state) => state.support.fetchRequesters.status
   );
+  const supportDrawerOpen = useAppSelector((state) => state.support.open);
   const [supportFormOpen, setSupportOpen] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchRequesters());
-  }, [dispatch]);
+    if (supportDrawerOpen) {
+      dispatch(fetchRequesters());
+    }
+  }, [dispatch, supportDrawerOpen]);
 
   const cancelSupportForm = () => {
     dispatch(resetAIForm());
