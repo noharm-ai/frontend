@@ -136,6 +136,20 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
                               ? resultData.sqs_queue_url
                               : "Não foi criado"}
                           </Descriptions.Item>
+
+                          <Descriptions.Item label="ACCESS KEY ID:" span={3}>
+                            {resultData.access_key_id
+                              ? resultData.access_key_id
+                              : "Não foi criado"}
+                          </Descriptions.Item>
+                          <Descriptions.Item
+                            label="SECRET ACCESS KEY:"
+                            span={3}
+                          >
+                            {resultData.secret_access_key
+                              ? resultData.secret_access_key
+                              : "Não foi criado"}
+                          </Descriptions.Item>
                         </Descriptions>
                         {resultData.create_user && (
                           <p>
