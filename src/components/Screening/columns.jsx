@@ -634,6 +634,27 @@ export const expandedRowRender = (bag) => (record) => {
               )}
             </>
           )}
+        {bag.isCpoe && !bag.aggregated && (
+          <>
+            <Descriptions.Item
+              label={bag.t("prescriptionDrugList.panelIssueDate")}
+              span={3}
+            >
+              {format(new Date(record.prescriptionDate), "dd/MM/yyyy HH:mm")}
+            </Descriptions.Item>
+            <Descriptions.Item
+              label={bag.t("prescriptionDrugList.panelValidUntil")}
+              span={3}
+            >
+              {record.prescriptionExpire
+                ? format(
+                    new Date(record.prescriptionExpire),
+                    "dd/MM/yyyy HH:mm"
+                  )
+                : "Manter até 2º ordem"}
+            </Descriptions.Item>
+          </>
+        )}
         {(!isEmpty(record.period) || (record.cpoe && !record.whiteList)) && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrPeriod")}
