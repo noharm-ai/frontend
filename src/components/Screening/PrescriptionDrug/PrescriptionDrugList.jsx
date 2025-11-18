@@ -153,6 +153,8 @@ export default function PrescriptionDrugList({
   interventions,
   infusion,
   isCpoe,
+  prescriptionDate,
+  prescriptionExpire,
 }) {
   const featureService = FeatureService(features);
   const permissionService = PermissionService(permissions);
@@ -251,6 +253,10 @@ export default function PrescriptionDrugList({
     interventions,
     condensed: prescriptionListType === "condensed",
     permissionService,
+    prescriptionDate,
+    prescriptionExpire,
+    isCpoe,
+    aggregated,
   };
 
   const table = (ds, showHeader) => {

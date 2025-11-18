@@ -37,6 +37,8 @@ const mapStateToProps = ({ prescriptions, auth, user, intervention }) => ({
   isSavingIntervention: intervention.maybeCreateOrUpdate.isSaving,
   infusion: prescriptions.single.data.infusion,
   isCpoe: prescriptions.single.data.isCpoe,
+  prescriptionDate: prescriptions.single.data.prescriptionDate,
+  prescriptionExpire: prescriptions.single.data.prescriptionExpire,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
