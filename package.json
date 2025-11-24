@@ -1,7 +1,7 @@
 {
   "name": "noharm-app",
   "private": true,
-  "version": "5.4.15",
+  "version": "5.4.16",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -71,6 +71,6 @@
     "globals": "^15.14.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.22.0",
-    "vite": "^6.3.5"
+    "vite": "^6.4.1"
   }
 }

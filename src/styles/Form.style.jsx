@@ -15,6 +15,18 @@ export const Form = styled.form`
     }
   }
 
+  .form-label-actions {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: flex-end;
+    margin-bottom: 5px;
+
+    label {
+      color: #2e3c5a;
+    }
+  }
+
   .form-row {
     margin-top: 15px;
 

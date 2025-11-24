@@ -3,7 +3,6 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 
-import { Row } from "components/Grid";
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
@@ -11,12 +10,13 @@ import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from "utils/memory";
 import { getErrorMessageFromException } from "utils/errorHandler";
 
 import Base from "./Base";
-import { FormContainer } from "../Form.style";
+import { Form } from "styles/Form.style";
 
 const validationSchema = Yup.object().shape({
   idPrescription: Yup.number().required(),
   notes: Yup.string().nullable().required("Campo obrigatório"),
   hasConciliation: Yup.boolean(),
+  hasClinicalNotesType: Yup.boolean(),
   concilia: Yup.string()
     .nullable()
     .when("hasConciliation", {
@@ -27,6 +27,12 @@ const validationSchema = Yup.object().shape({
     .nullable()
     .when("action", {
       is: "schedule",
+      then: Yup.string().nullable().required("Campo obrigatório"),
+    }),
+  notesType: Yup.string()
+    .nullable()
+    .when("hasClinicalNotesType", {
+      is: true,
       then: Yup.string().nullable().required("Campo obrigatório"),
     }),
 });
@@ -52,7 +58,9 @@ export default function ClinicalNotes({
     admissionNumber: data.admissionNumber,
     notes: data.notes ? data.notes : "",
     concilia: data.concilia && data.concilia === "s" ? "" : data.concilia,
+    notesType: data.notesType || null,
     hasConciliation: !!data.concilia,
+    hasClinicalNotesType: prescription.data.clinicalNotesTypes?.length > 0,
     action,
     date: null,
     open: type === "primarycare" ? open : false, //reinitialize formik if primarycare
@@ -130,18 +138,14 @@ export default function ClinicalNotes({
               {action === "schedule" ? "Agendar consulta" : "Evolução"}
             </Heading>
           </header>
-          <form onSubmit={handleSubmit}>
-            <FormContainer>
-              <Row type="flex" gutter={[16, 24]}>
-                <Base
-                  prescription={prescription}
-                  account={account}
-                  signature={signature}
-                  action={action}
-                />
-              </Row>
-            </FormContainer>
-          </form>
+          <Form>
+            <Base
+              prescription={prescription}
+              account={account}
+              signature={signature}
+              action={action}
+            />
+          </Form>
         </DefaultModal>
       )}
     </Formik>

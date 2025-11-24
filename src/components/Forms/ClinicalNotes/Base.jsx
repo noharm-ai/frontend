@@ -12,12 +12,9 @@ import {
 } from "@ant-design/icons";
 import { formatDate } from "utils/date";
 
-import { Col } from "components/Grid";
 import { Textarea, Select, DatePicker } from "components/Inputs";
-
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
-import Heading from "components/Heading";
 import {
   CLINICAL_NOTES_STORE_ID,
   CLINICAL_NOTES_MEMORY_TYPE,
@@ -32,7 +29,7 @@ import MemoryDraft from "features/memory/MemoryDraft/MemoryDraft";
 import { getUserLastClinicalNotes } from "features/serverActions/ServerActionsSlice";
 
 import getInterventionTemplate from "./util/getInterventionTemplate";
-import { Box, EditorBox, FieldError } from "../Form.style";
+import { EditorBox } from "../Form.style";
 import { getCustomClinicalNote } from "./util/customTemplate";
 
 export default function Base({ prescription, account, signature, action }) {
@@ -40,8 +37,14 @@ export default function Base({ prescription, account, signature, action }) {
   const { t } = useTranslation();
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const [loadingCopy, setLoadingCopy] = useState(false);
-  const { notes, concilia, date } = values;
-  const layout = { label: 2, input: 20 };
+  const { notes, concilia, date, notesType } = values;
+
+  const clinicalNotesTypeOptions = (
+    prescription.data.clinicalNotesTypes || []
+  ).map((cnType) => ({
+    label: cnType.name,
+    value: cnType.id,
+  }));
 
   const loadDefaultText = () => {
     setFieldValue(
@@ -107,13 +110,17 @@ export default function Base({ prescription, account, signature, action }) {
   return (
     <>
       {prescription.data.concilia && (
-        <Box>
-          <Col xs={layout.label}>
-            <Heading as="label" $size="14px">
+        <div
+          className={`form-row ${
+            errors.concilia && touched.concilia ? "error" : ""
+          }`}
+        >
+          <div className="form-label">
+            <label>
               <Tooltip title="Informe o tipo desta conciliação">Tipo:</Tooltip>
-            </Heading>
-          </Col>
-          <Col xs={layout.input}>
+            </label>
+          </div>
+          <div className="form-input">
             <Select
               placeholder="Selecione o tipo de conciliação"
               onChange={(value) => setFieldValue("concilia", value)}
@@ -136,20 +143,45 @@ export default function Base({ prescription, account, signature, action }) {
                 Transferência
               </Select.Option>
             </Select>
-            {errors.concilia && touched.concilia && (
-              <FieldError>{errors.concilia}</FieldError>
-            )}
-          </Col>
-        </Box>
+          </div>
+          {errors.concilia && (
+            <div className="form-error">{errors.concilia}</div>
+          )}
+        </div>
       )}
+      {!prescription.data.concilia &&
+        prescription.data.clinicalNotesTypes?.length > 0 && (
+          <div className={`form-row ${errors.notesType ? "error" : ""}`}>
+            <div className="form-label">
+              <label>
+                <Tooltip title="Informe o tipo desta evolução">Tipo:</Tooltip>
+              </label>
+            </div>
+            <div className="form-input">
+              <Select
+                placeholder="Selecione o tipo de evolução"
+                onChange={(value) => setFieldValue("notesType", value)}
+                value={notesType}
+                identify="notesType"
+                allowClear
+                style={{ minWidth: "300px" }}
+                status={errors.notesType ? "error" : null}
+                options={clinicalNotesTypeOptions}
+              />
+            </div>
+            {errors.notesType && (
+              <div className="form-error">{errors.notesType}</div>
+            )}
+          </div>
+        )}
       {action === "schedule" && (
-        <Box>
-          <Col xs={24}>
-            <Heading as="label" $size="14px">
-              Data da consulta:
-            </Heading>
-          </Col>
-          <Col xs={24}>
+        <div
+          className={`form-row ${errors.date && touched.date ? "error" : ""}`}
+        >
+          <div className="form-label">
+            <label>Data da consulta:</label>
+          </div>
+          <div className="form-input">
             <DatePicker
               format="DD/MM/YYYY HH:mm"
               value={date ? dayjs(date) : null}
@@ -162,67 +194,71 @@ export default function Base({ prescription, account, signature, action }) {
               showTime
               status={errors.date && touched.date ? "error" : null}
             />
-            {errors.date && touched.date && (
-              <FieldError>{errors.date}</FieldError>
-            )}
-          </Col>
-        </Box>
+          </div>
+          {errors.date && <div className="form-error">{errors.date}</div>}
+        </div>
       )}
-      <Col xs={24} style={{ textAlign: "right" }}>
-        {action !== "schedule" && (
-          <>
-            <Tooltip title="Aplicar evolução modelo">
-              <Button
-                shape="circle"
-                icon={<DownloadOutlined />}
-                onClick={loadDefaultText}
-                type="primary"
-                className="gtm-bt-clinicalNotes-applyDefaultText"
-                style={{ marginRight: "5px" }}
-              />
-            </Tooltip>
-            <Tooltip title="Copiar última evolução">
-              <Button
-                shape="circle"
-                icon={<CopyOutlined />}
-                onClick={loadLastNote}
-                type="primary"
-                style={{ marginRight: "5px" }}
-                loading={loadingCopy}
-              />
-            </Tooltip>
-          </>
-        )}
-        <MemoryText
-          storeId={CLINICAL_NOTES_STORE_ID}
-          memoryType={CLINICAL_NOTES_MEMORY_TYPE}
-          content={notes}
-          onLoad={(value) => loadNote(value)}
-        />
-        <span style={{ marginLeft: "5px" }}>
-          <MemoryText
-            storeId={CLINICAL_NOTES_PRIVATE_STORE_ID}
-            memoryType={CLINICAL_NOTES_PRIVATE_MEMORY_TYPE}
-            privateMemory={true}
-            content={notes}
-            onLoad={(value) => loadNote(value)}
-          />
-        </span>
-        {(isEmpty(signature.list) || signature.list[0].value === "") && (
-          <Tooltip title="Configurar assinatura padrão">
-            <Button
-              shape="circle"
-              icon={<SettingOutlined />}
-              onClick={openUserConfig}
-              type="primary"
-              className="gtm-bt-clinicalNotes-configDefaultText"
-              style={{ marginLeft: "5px" }}
+
+      <div
+        className={`form-row ${errors.notes && touched.notes ? "error" : ""}`}
+      >
+        <div className="form-label-actions">
+          <label>Evolução:</label>
+          <div>
+            {action !== "schedule" && (
+              <>
+                <Tooltip title="Aplicar evolução modelo">
+                  <Button
+                    shape="circle"
+                    icon={<DownloadOutlined />}
+                    onClick={loadDefaultText}
+                    type="primary"
+                    className="gtm-bt-clinicalNotes-applyDefaultText"
+                    style={{ marginRight: "5px" }}
+                  />
+                </Tooltip>
+                <Tooltip title="Copiar última evolução">
+                  <Button
+                    shape="circle"
+                    icon={<CopyOutlined />}
+                    onClick={loadLastNote}
+                    type="primary"
+                    style={{ marginRight: "5px" }}
+                    loading={loadingCopy}
+                  />
+                </Tooltip>
+              </>
+            )}
+            <MemoryText
+              storeId={CLINICAL_NOTES_STORE_ID}
+              memoryType={CLINICAL_NOTES_MEMORY_TYPE}
+              content={notes}
+              onLoad={(value) => loadNote(value)}
             />
-          </Tooltip>
-        )}
-      </Col>
-      <Box>
-        <Col xs={24}>
+            <span style={{ marginLeft: "5px" }}>
+              <MemoryText
+                storeId={CLINICAL_NOTES_PRIVATE_STORE_ID}
+                memoryType={CLINICAL_NOTES_PRIVATE_MEMORY_TYPE}
+                privateMemory={true}
+                content={notes}
+                onLoad={(value) => loadNote(value)}
+              />
+            </span>
+            {(isEmpty(signature.list) || signature.list[0].value === "") && (
+              <Tooltip title="Configurar assinatura padrão">
+                <Button
+                  shape="circle"
+                  icon={<SettingOutlined />}
+                  onClick={openUserConfig}
+                  type="primary"
+                  className="gtm-bt-clinicalNotes-configDefaultText"
+                  style={{ marginLeft: "5px" }}
+                />
+              </Tooltip>
+            )}
+          </div>
+        </div>
+        <div className="form-input">
           <EditorBox>
             <Textarea
               autoFocus
@@ -231,17 +267,15 @@ export default function Base({ prescription, account, signature, action }) {
               style={{ minHeight: "60vh" }}
               status={errors.notes && touched.notes ? "error" : null}
             />
+            {errors.notes && <div className="form-error">{errors.notes}</div>}
             <MemoryDraft
               type={`draft_cn_${values.idPrescription}`}
               currentValue={values.notes}
               setValue={(value) => setFieldValue("notes", value)}
             ></MemoryDraft>
-            {errors.notes && touched.notes && (
-              <FieldError>{errors.notes}</FieldError>
-            )}
           </EditorBox>
-        </Col>
-      </Box>
+        </div>
+      </div>
     </>
   );
 }
