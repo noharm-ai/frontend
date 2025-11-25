@@ -115,8 +115,8 @@ export default function PatientName({
         content: (
           <>
             <p>
-              O botão abaixo abre um artigo da nossa base de conhecimento que
-              possui alguns passos que podem ajudar a resolver o problema:
+              Clique no botão abaixo para acessar nosso artigo da Base de
+              Conhecimento com o passo a passo para resolver o problema.
             </p>
             <Button
               type="default"
