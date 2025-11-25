@@ -83,6 +83,7 @@ export default function Filter({ printRef }) {
     maxScore: null,
     daysOffList: [],
     tagList: [],
+    timeRange: [null, null],
   };
 
   const reportManager = useFetchReport({

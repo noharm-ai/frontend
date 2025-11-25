@@ -49,6 +49,27 @@ const filterDatasource = (datasource, filters) => {
         i.date <= filters.dateRange[1].format("YYYY-MM-DD")
     )
     .filter((i) => {
+      if (filters.timeRange && filters.timeRange[0] && filters.timeRange[1]) {
+        const prescriptionTime = dayjs(i.prescriptionDate);
+
+        const startTime = dayjs(i.prescriptionDate)
+          .hour(filters.timeRange[0].format("HH"))
+          .minute(filters.timeRange[0].format("mm"));
+        const endTime = dayjs(i.prescriptionDate)
+          .hour(filters.timeRange[1].format("HH"))
+          .minute(filters.timeRange[1].format("mm"));
+
+        return (
+          (prescriptionTime.isBefore(endTime, "minute") &&
+            prescriptionTime.isAfter(startTime, "minute")) ||
+          prescriptionTime.isSame(startTime, "minute") ||
+          prescriptionTime.isSame(endTime, "minute")
+        );
+      }
+
+      return true;
+    })
+    .filter((i) => {
       if (filters.weekDays && [0, 6].indexOf(dayjs(i.date).day()) !== -1) {
         return false;
       }
