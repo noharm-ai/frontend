@@ -115,7 +115,23 @@ export default function PatientName({
         content: (
           <>
             <p>
-              Clique no texto abaixo para copiá-lo e nos envie através da Ajuda.
+              O botão abaixo abre um artigo da nossa base de conhecimento que
+              possui alguns passos que podem ajudar a resolver o problema:
+            </p>
+            <Button
+              type="default"
+              href={`${
+                import.meta.env.VITE_APP_ODOO_LINK
+              }/knowledge/article/182`}
+              target="_blank"
+              size="large"
+              block
+            >
+              Base de Conhecimento
+            </Button>
+            <p>
+              Caso os passos do artigo acima não tenham efeito, clique no texto
+              abaixo para copiá-lo e nos envie através da Ajuda.
             </p>
             <Tooltip title="Clique para copiar a descrição do erro">
               <Textarea
@@ -125,18 +141,22 @@ export default function PatientName({
                 onClick={() => copyError(error)}
               />
             </Tooltip>
-            <p>Além disso, informe o conteúdo da janela abaixo:</p>
-            <iframe
-              id="status_iframe"
-              title="getname"
-              style={{
-                border: 0,
-                width: "100%",
-                height: "100px",
-                background: "#fafafa",
-              }}
-              src={baseUrl}
-            ></iframe>
+            {app.config.getnameType !== "proxy" && (
+              <>
+                <p>Além disso, informe o conteúdo da janela abaixo:</p>
+                <iframe
+                  id="status_iframe"
+                  title="getname"
+                  style={{
+                    border: 0,
+                    width: "100%",
+                    height: "100px",
+                    background: "#fafafa",
+                  }}
+                  src={baseUrl}
+                ></iframe>
+              </>
+            )}
           </>
         ),
         onOk: modalOk,
@@ -169,17 +189,17 @@ export default function PatientName({
         {currentName || name}
       </Tooltip>
 
-      {name && name.indexOf("Paciente") !== -1 && (
-        <Tooltip title="Recarregar nome do paciente">
-          <Button
-            shape="circle"
-            icon={<ReloadOutlined />}
-            style={{ marginLeft: "10px" }}
-            onClick={reload}
-            loading={loading}
-          />
-        </Tooltip>
-      )}
+      {/* {name && name.indexOf("Paciente") !== -1 && ( */}
+      <Tooltip title="Recarregar nome do paciente">
+        <Button
+          shape="circle"
+          icon={<ReloadOutlined />}
+          style={{ marginLeft: "10px" }}
+          onClick={reload}
+          loading={loading}
+        />
+      </Tooltip>
+      {/* )} */}
     </>
   );
 }

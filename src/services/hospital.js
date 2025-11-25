@@ -180,7 +180,9 @@ const getSinglePatient = async (bearerToken, requestConfig) => {
   let nameHeaders =
     getnameType === "proxy" || proxy
       ? {
-          Authorization: `Bearer ${bearerToken}`,
+          Authorization: `Bearer ${
+            localStorage.getItem("ac1") + localStorage.getItem("ac2")
+          }`,
           "x-api-key": appInfo.apiKey,
         }
       : requestConfig.nameHeaders;
@@ -192,7 +194,10 @@ const getSinglePatient = async (bearerToken, requestConfig) => {
     };
   }
 
-  const urlRequest = nameUrl.replace(FLAG, idPatient);
+  const urlRequest =
+    getnameType === "proxy"
+      ? `${import.meta.env.VITE_APP_API_URL}/names/${idPatient}`
+      : nameUrl.replace(FLAG, idPatient);
 
   const { data: patient } = await axios.get(urlRequest, {
     timeout: 8000,
