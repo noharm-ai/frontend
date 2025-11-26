@@ -143,7 +143,7 @@ const getExamRefs = (bearerToken) =>
  */
 api.exams = {};
 api.exams.createExam = (params = {}) => {
-  return instance.post(`/exams/create`, params, {
+  return instance.post(`/exams/create-multiple`, params, {
     ...setHeaders(),
   });
 };

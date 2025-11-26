@@ -7,7 +7,11 @@ import { IExamFormBaseFields } from "./ExamForm";
 import { useAppDispatch, useAppSelector } from "src/store";
 import { fetchExamTypes } from "./ExamFormSlice";
 
-export function ExamFormBase() {
+interface IExamFormBaseProps {
+  index?: number;
+}
+
+export function ExamFormBase({ index }: IExamFormBaseProps = {}) {
   const dispatch = useAppDispatch();
   const examTypes = useAppSelector((state) => state.examsForm.examTypes.list);
   const examTypesStatus = useAppSelector(
@@ -27,60 +31,83 @@ export function ExamFormBase() {
     value: item.examType,
   }));
 
+  const isArrayMode = index !== undefined;
+  const currentExam = isArrayMode ? values.exams?.[index] : (values as any);
+  const currentErrors = isArrayMode
+    ? (errors.exams?.[index] as any)
+    : (errors as any);
+
+  const getFieldName = (field: string) =>
+    isArrayMode ? `exams.${index}.${field}` : field;
+
   return (
     <>
-      <div className={`form-row ${errors.examType ? "error" : ""}`}>
+      <div className={`form-row ${currentErrors?.examType ? "error" : ""}`}>
         <div className="form-label">
           <label>Exame:</label>
         </div>
-        <div className="form-input" id="examType-popupcontainer">
+        <div
+          className="form-input"
+          id={`examType-popupcontainer-${index || 0}`}
+        >
           <Select
-            value={values.examType}
-            onChange={(val) => setFieldValue("examType", val)}
+            value={currentExam?.examType}
+            onChange={(val) => setFieldValue(getFieldName("examType"), val)}
             showSearch
             optionFilterProp="label"
             allowClear
             options={examTypeOptions}
             getPopupContainer={() =>
-              document.getElementById("examType-popupcontainer") ||
-              document.body
+              document.getElementById(
+                `examType-popupcontainer-${index || 0}`
+              ) || document.body
             }
             loading={examTypesStatus === "loading"}
           />
         </div>
-        {errors.examType && <div className="form-error">{errors.examType}</div>}
+        {currentErrors?.examType && (
+          <div className="form-error">{currentErrors.examType}</div>
+        )}
       </div>
 
-      <div className={`form-row ${errors.examDate ? "error" : ""}`}>
-        <div className="form-label">
-          <label>Data do exame:</label>
+      <div className={`form-row form-row-flex`}>
+        <div className={`form-row ${currentErrors?.examDate ? "error" : ""}`}>
+          <div className="form-label">
+            <label>Data do exame:</label>
+          </div>
+          <div className="form-input">
+            <DatePicker
+              format="DD/MM/YYYY HH:mm"
+              value={currentExam?.examDate}
+              onChange={(value: Dayjs) => {
+                setFieldValue(getFieldName("examDate"), value);
+              }}
+              popupClassName="noArrow"
+              maxDate={dayjs()}
+              showTime
+            />
+          </div>
+          {currentErrors?.examDate && (
+            <div className="form-error">{currentErrors.examDate}</div>
+          )}
         </div>
-        <div className="form-input">
-          <DatePicker
-            format="DD/MM/YYYY HH:mm"
-            value={values.examDate}
-            onChange={(value: Dayjs) => {
-              setFieldValue("examDate", value);
-            }}
-            popupClassName="noArrow"
-            maxDate={dayjs()}
-            showTime
-          />
-        </div>
-        {errors.examDate && <div className="form-error">{errors.examDate}</div>}
-      </div>
 
-      <div className={`form-row ${errors.result ? "error" : ""}`}>
-        <div className="form-label">
-          <label>Resultado:</label>
+        <div className={`form-row ${currentErrors?.result ? "error" : ""}`}>
+          <div className="form-label">
+            <label>Resultado:</label>
+          </div>
+          <div className="form-input">
+            <InputNumber
+              value={currentExam?.result}
+              onChange={(value: number) =>
+                setFieldValue(getFieldName("result"), value)
+              }
+            />
+          </div>
+          {currentErrors?.result && (
+            <div className="form-error">{currentErrors.result}</div>
+          )}
         </div>
-        <div className="form-input">
-          <InputNumber
-            value={values.result}
-            onChange={(value: number) => setFieldValue("result", value)}
-          />
-        </div>
-        {errors.result && <div className="form-error">{errors.result}</div>}
       </div>
     </>
   );

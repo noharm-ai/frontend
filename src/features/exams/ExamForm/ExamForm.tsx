@@ -11,16 +11,20 @@ import {
   setExamsModalAdmissionNumber,
   clearExamsCache,
 } from "../ExamModal/ExamModalSlice";
-import { ExamFormBase } from "./ExamFormBase";
-import { Form } from "styles/Form.style";
-import { getErrorMessage } from "utils/errorHandler";
+import { MultipleExamForm } from "./MultipleExamForm";
+import { getErrorMessage } from "src/utils/errorHandler";
 import { fetchScreeningThunk } from "src/store/ducks/prescriptions/thunk";
+import { Form } from "styles/Form.style";
 
-export interface IExamFormBaseFields {
-  admissionNumber?: number;
+export interface IExamItem {
   examType?: string;
   examDate?: Dayjs;
   result?: number;
+}
+
+export interface IExamFormBaseFields {
+  admissionNumber?: number;
+  exams: IExamItem[];
 }
 
 export function ExamForm() {
@@ -36,11 +40,23 @@ export function ExamForm() {
   const isSaving = status === "loading";
 
   const validationSchema = Yup.object().shape({
-    examType: Yup.string().nullable().required(t("validation.requiredField")),
-    examDate: Yup.string().nullable().required(t("validation.requiredField")),
-    result: Yup.number().required(t("validation.requiredField")),
+    exams: Yup.array()
+      .of(
+        Yup.object().shape({
+          examType: Yup.string()
+            .nullable()
+            .required(t("validation.requiredField")),
+          examDate: Yup.string()
+            .nullable()
+            .required(t("validation.requiredField")),
+          result: Yup.number().required(t("validation.requiredField")),
+        })
+      )
+      .min(1, "Pelo menos um exame deve ser adicionado"),
   });
-  const initialValues: IExamFormBaseFields = {};
+  const initialValues: IExamFormBaseFields = {
+    exams: [{ examType: "", examDate: undefined, result: undefined }],
+  };
 
   const onSave = (
     params: IExamFormBaseFields,
@@ -48,9 +64,11 @@ export function ExamForm() {
   ) => {
     const payload = {
       admissionNumber: admissionNumber!,
-      examType: params.examType!,
-      examDate: params.examDate!.format("YYYY-MM-DDTHH:mm:ss"),
-      result: params.result!,
+      exams: params.exams.map((e) => ({
+        examType: e.examType!,
+        examDate: e.examDate!.format("YYYY-MM-DDTHH:mm:ss"),
+        result: e.result!,
+      })),
     };
 
     dispatch(createExam(payload)).then((response: any) => {
@@ -105,10 +123,10 @@ export function ExamForm() {
           }}
           maskClosable={false}
         >
-          <h2 className="modal-title">Adicionar Resultado de Exame</h2>
+          <h2 className="modal-title">Adicionar Resultados de Exames</h2>
 
           <Form onSubmit={handleSubmit}>
-            <ExamFormBase />
+            <MultipleExamForm />
           </Form>
         </DefaultModal>
       )}
