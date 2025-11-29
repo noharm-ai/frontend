@@ -1,6 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import adminApi from "services/admin/api";
 
+const chunkArray = (array, chunkSize) => {
+  const chunks = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    chunks.push(array.slice(i, i + chunkSize));
+  }
+  return chunks;
+};
+
 const initialState = {
   list: [],
   filteredList: [],
@@ -27,6 +35,52 @@ export const fetchConversionList = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await adminApi.unitConversion.getConversionList(params);
+
+      const conversionList = response.data.data;
+
+      const chunkSize = Math.ceil(conversionList.length / 4);
+      const chunks = chunkArray(conversionList, chunkSize);
+
+      const combinedPredictions = [];
+      for (const chunk of chunks) {
+        const predictionResponse =
+          await adminApi.unitConversion.getConversionPredictions({
+            conversionList: chunk,
+          });
+        combinedPredictions.push(...predictionResponse.data.data);
+      }
+
+      const conversionListWithPredictions = conversionList.map((item) => {
+        const prediction = combinedPredictions.find(
+          (pred) => pred.id === item.id
+        );
+
+        if (prediction) {
+          item.prediction = prediction.prediction;
+          item.probability = prediction.probability;
+        }
+
+        return item;
+      });
+
+      return {
+        data: {
+          data: conversionListWithPredictions,
+        },
+      };
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const fetchConversionPrediction = createAsyncThunk(
+  "admin-unit-conversion/fetch-prediction",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminApi.unitConversion.getConversionPredictions(
+        params
+      );
 
       return response;
     } catch (err) {

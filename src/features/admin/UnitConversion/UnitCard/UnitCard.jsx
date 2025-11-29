@@ -6,6 +6,8 @@ import {
   CheckOutlined,
   StarOutlined,
   FileTextOutlined,
+  RobotOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { Formik } from "formik";
 
@@ -19,6 +21,7 @@ import { ConversionUnitCard } from "./UnitCard.style";
 import { updateListFactors, saveConversions } from "../UnitConversionSlice";
 import { setDrawerSctid } from "../../DrugReferenceDrawer/DrugReferenceDrawerSlice";
 import { getErrorMessage } from "utils/errorHandler";
+import { matchPrediction, isValidConversion } from "../transformer";
 
 export default function UnitCard({ idDrug, name, idSegment, data }) {
   const dispatch = useDispatch();
@@ -26,6 +29,7 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [rejectedSegments, setRejectedSegments] = useState([]);
+  const [infered, setInfered] = useState(!isValidConversion(data));
 
   useEffect(() => {
     setError(null);
@@ -68,13 +72,36 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
     idDrug,
     name,
     idSegment,
-    conversionList: data || [],
+    conversionList: (data || []).map((item) => {
+      return {
+        ...item,
+        factor: infered ? item.prediction : item.factor,
+      };
+    }),
+  };
+
+  const resetForm = (setFieldValue) => {
+    setFieldValue("conversionList", data);
+    setError(null);
+    setRejectedSegments([]);
+    setInfered(false);
+  };
+
+  const applyPredictions = async (setFieldValue) => {
+    const newConversionList = data.map((item) => {
+      return {
+        ...item,
+        factor: item.prediction,
+      };
+    });
+    setFieldValue("conversionList", newConversionList);
+    setInfered(true);
   };
 
   const submit = (params) => {
     setError(null);
 
-    if (isValid(params.conversionList)) {
+    if (isValidConversion(params.conversionList)) {
       setLoading(true);
       const payload = {
         idDrug,
@@ -100,6 +127,7 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
           }
 
           dispatch(updateListFactors(params.conversionList));
+          setInfered(false);
           notification.success({
             message: "Conversão atualizada!",
             description: `${params.name}`,
@@ -119,31 +147,13 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
     }
   };
 
-  const isValid = (list) => {
-    if (!list || !list.length) return false;
-
-    let valid = true;
-    let hasDefault = false;
-    list.forEach((item) => {
-      if (item.factor === null) {
-        valid = false;
-      }
-
-      if (item.factor === 1) {
-        hasDefault = true;
-      }
-    });
-
-    return valid && hasDefault;
-  };
-
   return (
     <Formik enableReinitialize onSubmit={submit} initialValues={initialValues}>
       {({ handleSubmit, values, setFieldValue, dirty }) => (
         <ConversionUnitCard
           title={<Link />}
           type="inner"
-          className={`${isValid(data) ? "success" : "error"} ${
+          className={`${isValidConversion(data) ? "success" : "error"} ${
             dirty ? "warning" : ""
           }`}
           extra={<ExtraAction sctid={data[0].sctid} />}
@@ -179,10 +189,26 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
                               }
                             />
                           </div>
-                          {i.prediction && (
-                            <div className="form-info">
-                              {i.prediction} ({(i.accuracy * 100).toFixed()}%)
-                            </div>
+                          {infered && i.probability && (
+                            <Tooltip title="Probabilidade da inferência estar correta">
+                              <div
+                                className="form-info"
+                                style={{
+                                  display: "inline-block",
+                                  cursor: "default",
+                                }}
+                              >
+                                {i.probability.toFixed()}%
+                              </div>
+                            </Tooltip>
+                          )}
+                          {!infered && matchPrediction(i) && (
+                            <Alert
+                              type="error"
+                              showIcon
+                              style={{ marginTop: 8, fontSize: 12 }}
+                              message={`Inferência: ${i.prediction}`}
+                            />
                           )}
                         </div>
                       </Col>
@@ -215,8 +241,34 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
                   />
                 )}
 
+                {infered && (
+                  <Alert
+                    message="Conversões inferidas"
+                    description={<>Revise antes de salvar.</>}
+                    type="warning"
+                    closable
+                    showIcon
+                    style={{ marginTop: "20px" }}
+                  />
+                )}
+
                 <div className={`form-row`}>
                   <div className="form-action-bottom">
+                    <Button
+                      type="link"
+                      onClick={() => resetForm(setFieldValue)}
+                      icon={<DeleteOutlined />}
+                      danger
+                      disabled={!infered}
+                    >
+                      Reset
+                    </Button>
+                    <Button
+                      onClick={() => applyPredictions(setFieldValue)}
+                      icon={<RobotOutlined />}
+                    >
+                      Inferir
+                    </Button>
                     <Button onClick={handleSubmit} icon={<CheckOutlined />}>
                       Salvar
                     </Button>

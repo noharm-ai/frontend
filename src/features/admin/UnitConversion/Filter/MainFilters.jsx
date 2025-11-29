@@ -37,17 +37,20 @@ export default function MainFilters() {
         </Heading>
         <Select
           style={{ width: "100%" }}
-          value={values.hasConversion}
-          onChange={(val) => setFieldValue({ hasConversion: val })}
+          value={values.conversionType}
+          onChange={(val) => setFieldValue({ conversionType: val })}
           showSearch
           optionFilterProp="children"
           allowClear
         >
-          <Select.Option key={0} value={true}>
+          <Select.Option key={0} value={"filled"}>
             <Tag color="green">Preenchido</Tag>
           </Select.Option>
-          <Select.Option key={1} value={false}>
+          <Select.Option key={1} value={"empty"}>
             <Tag color="red">Vazio</Tag>
+          </Select.Option>
+          <Select.Option key={2} value={"mismatch"}>
+            <Tag color="red">Mismatch (inferência)</Tag>
           </Select.Option>
         </Select>
       </Col>
