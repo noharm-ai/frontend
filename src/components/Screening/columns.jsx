@@ -366,6 +366,7 @@ const Action = ({ prescription, bag }) => {
 
 const NestedTableContainer = styled.div`
   position: relative;
+  width: 100%;
 
   &:before {
     content: "";
@@ -388,6 +389,10 @@ const NestedTableContainer = styled.div`
     &:before {
       background: rgb(169 145 214);
     }
+  }
+
+  .ant-descriptions {
+    width: 100%;
   }
 
   .ant-descriptions-item-label {
