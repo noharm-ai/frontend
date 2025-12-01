@@ -63,6 +63,9 @@ export default function SecondaryFilters() {
           value={values.timeRange}
           format="HH:mm"
         />
+        <div style={{ fontSize: "12px", opacity: 0.7, marginTop: "5px" }}>
+          *Filtro baseado no horário do início da vigência
+        </div>
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" $size="14px">
