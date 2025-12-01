@@ -27,7 +27,7 @@ export default function Filter() {
 
   const { t } = useTranslation();
   const initialValues = {
-    hasConversion: null,
+    conversionType: null,
     idSegment: segmentList ? segmentList[0].id : null,
     showPrediction: false,
   };

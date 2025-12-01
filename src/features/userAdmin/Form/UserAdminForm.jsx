@@ -30,7 +30,11 @@ export default function UserAdminForm({ ...props }) {
   const initialValues = {
     ...{
       active: true,
-      roles: [Role.PRESCRIPTION_ANALIST, Role.CONFIG_MANAGER],
+      roles: [
+        Role.PRESCRIPTION_ANALIST,
+        Role.CONFIG_MANAGER,
+        Role.SUPPORT_REQUESTER,
+      ],
     },
     ...formData,
   };

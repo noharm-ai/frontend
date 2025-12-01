@@ -92,7 +92,7 @@ export default function UnitConversion() {
                     description={
                       filters.idSegment
                         ? "Nenhuma conversão encontrada."
-                        : "Selecione os segmento referência para visualizar as conversões"
+                        : "Selecione os segmento referência para visualizar as conversões. Esta lista pode demorar alguns minutos para ser gerada."
                     }
                   />
                 </div>

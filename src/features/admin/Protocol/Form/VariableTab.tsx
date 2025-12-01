@@ -298,6 +298,19 @@ export function VariableTab() {
                     </div>
                   </div>
                 </div>
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Observação:</label>
+                  </div>
+                  <div className="form-input">
+                    <Input
+                      value={v.observation}
+                      onChange={({ target }) =>
+                        setConfig(idx, "observation", target.value)
+                      }
+                    />
+                  </div>
+                </div>
               </>
             ) : (
               <>

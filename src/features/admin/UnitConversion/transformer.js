@@ -1,21 +1,54 @@
+export const matchPrediction = (item) =>
+  item.factor &&
+  item.prediction &&
+  `${item.prediction}` !== `${item.factor}` &&
+  item.prediction !== "Curadoria";
+
+export const isValidConversion = (list) => {
+  if (!list || !list.length) return false;
+
+  let valid = true;
+  let hasDefault = false;
+  list.forEach((item) => {
+    if (item.factor === null) {
+      valid = false;
+    }
+
+    if (item.factor === 1) {
+      hasDefault = true;
+    }
+  });
+
+  return valid && hasDefault;
+};
+
 export const filterConversionList = (data, filters) => {
   if (!filters) return data;
 
   return data.filter((i) => {
     let hasAllConversions = true;
+    let match = true;
 
     i.data.forEach((uc) => {
       if (!uc.factor) {
         hasAllConversions = false;
       }
+
+      if (!matchPrediction(uc)) {
+        match = false;
+      }
     });
 
-    if (filters.hasConversion === true) {
+    if (filters.conversionType === "filled") {
       return hasAllConversions;
     }
 
-    if (filters.hasConversion === false) {
+    if (filters.conversionType === "empty") {
       return !hasAllConversions;
+    }
+
+    if (filters.conversionType === "mismatch") {
+      return match;
     }
 
     return true;

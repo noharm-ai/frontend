@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { useSelector } from "react-redux";
+import { TimePicker } from "antd";
 
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
@@ -52,6 +53,19 @@ export default function SecondaryFilters() {
           onChange={(dates) => setFieldValue({ daysOffList: dates })}
           value={values.daysOffList}
         />
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" $size="14px">
+          Intervalo de horário da prescrição:
+        </Heading>
+        <TimePicker.RangePicker
+          onChange={(val) => setFieldValue({ timeRange: val })}
+          value={values.timeRange}
+          format="HH:mm"
+        />
+        <div style={{ fontSize: "12px", opacity: 0.7, marginTop: "5px" }}>
+          *Filtro baseado no horário do início da vigência
+        </div>
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" $size="14px">

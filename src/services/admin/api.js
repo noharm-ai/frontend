@@ -199,6 +199,12 @@ api.unitConversion.getConversionList = (params = {}) => {
   });
 };
 
+api.unitConversion.getConversionPredictions = (params = {}) => {
+  return instance.post(`${endpoints.unitConversion}/predictions`, params, {
+    ...setHeaders(),
+  });
+};
+
 api.unitConversion.saveConversions = (params = {}) => {
   return instance.post(`${endpoints.unitConversion}/save`, params, {
     ...setHeaders(),

@@ -15,11 +15,15 @@ interface IExamFormSlice {
   };
 }
 
-interface IExamCreateRequest {
-  admissionNumber: number;
+interface IExamItem {
   examType: string;
   examDate: string;
   result: number;
+}
+
+interface IExamCreateRequest {
+  admissionNumber: number;
+  exams: IExamItem[];
 }
 
 interface IExamDeleteRequest {

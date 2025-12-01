@@ -26,6 +26,7 @@ import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import { TagTypeEnum } from "models/TagTypeEnum";
 import { ProtocolTypeEnum } from "models/ProtocolTypeEnum";
 import FieldNameAutocomplete from "features/fields/FieldNameAutocomplete/FieldNameAutocomplete";
+import { FieldIcd } from "src/features/fields/FieldIcd/FieldIcd";
 
 import { Form } from "styles/Form.style";
 
@@ -168,6 +169,13 @@ export default function FilterFields({
     { label: "Médio", value: "medium" },
     { label: "Alto", value: "high" },
     { label: "Todos", value: null },
+  ];
+
+  const icdGroups = [
+    {
+      value: "ONCO",
+      label: "Oncológico",
+    },
   ];
 
   return (
@@ -729,20 +737,55 @@ export default function FilterFields({
             </div>
 
             {featureService.hasPEC() && (
-              <div className="form-row">
+              <>
+                <div className="form-row">
+                  <div className="form-row">
+                    <div className="form-label">
+                      <label>Nome Paciente:</label>
+                    </div>
+                    <div className="form-input">
+                      <FieldNameAutocomplete
+                        onChange={(val) =>
+                          setScreeningListFilter({ idPatientByNameList: val })
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
                 <div className="form-row">
                   <div className="form-label">
-                    <label>Nome Paciente:</label>
+                    <label>CID:</label>
                   </div>
                   <div className="form-input">
-                    <FieldNameAutocomplete
+                    <FieldIcd
+                      value={filter.idIcdList}
                       onChange={(val) =>
-                        setScreeningListFilter({ idPatientByNameList: val })
+                        setScreeningListFilter({ idIcdList: val })
                       }
                     />
                   </div>
                 </div>
-              </div>
+                <div className="form-row">
+                  <div className="form-label">
+                    <label>Grupos de CID:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      style={{ width: "100%" }}
+                      value={filter.idIcdGroupList}
+                      onChange={(val) =>
+                        setScreeningListFilter({ idIcdGroupList: val })
+                      }
+                      showSearch
+                      optionFilterProp="children"
+                      allowClear
+                      maxTagCount="responsive"
+                      mode="multiple"
+                      options={icdGroups}
+                    />
+                  </div>
+                </div>
+              </>
             )}
 
             <div className="form-row">

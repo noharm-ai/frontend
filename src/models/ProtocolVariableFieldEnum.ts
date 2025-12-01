@@ -12,6 +12,8 @@ export class ProtocolVariableFieldEnum {
   static ADMISSION_TIME = "admissionTime";
   static ST_CONCILIA = "stConcilia";
   static CN_STATS = "cn_stats";
+  static ID_ICD = "idIcd";
+  static DISCHARGE_REASON = "dischargeReason";
 
   static getList = () =>
     [
@@ -67,6 +69,14 @@ export class ProtocolVariableFieldEnum {
         value: ProtocolVariableFieldEnum.CN_STATS,
         label: "Indicador NoHarm Care",
       },
+      {
+        value: ProtocolVariableFieldEnum.ID_ICD,
+        label: "CID (id_cid)",
+      },
+      {
+        value: ProtocolVariableFieldEnum.DISCHARGE_REASON,
+        label: "Motivo alta",
+      },
     ].sort((a, b) => a.label.localeCompare(b.label));
 
   static getOperators = (type: string) => {
@@ -80,6 +90,12 @@ export class ProtocolVariableFieldEnum {
       ProtocolVariableFieldEnum.ST_CONCILIA,
       ProtocolVariableFieldEnum.CN_STATS,
     ];
+
+    const containOperators = [ProtocolVariableFieldEnum.DISCHARGE_REASON];
+
+    if (containOperators.indexOf(type) !== -1) {
+      return ["CONTAINS"];
+    }
 
     if (fixedValueOperators.indexOf(type) !== -1) {
       return [">", ">=", "<", "<=", "=", "!="];
