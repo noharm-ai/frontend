@@ -130,7 +130,7 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
           setInfered(false);
           notification.success({
             message: "Conversão atualizada!",
-            description: `${params.name}`,
+            description: `Geração de scores solicitada, aguarde alguns minutos para atualizar. (${params.name})`,
           });
         }
 
