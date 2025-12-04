@@ -910,6 +910,8 @@ const drug = (bag, addkey, title) => ({
           <br />
           <strong>grp_solution:</strong> {record.grp_solution}
           <br />
+          <strong>origem:</strong> {record.originalSource}
+          <br />
           <strong>doseconv:</strong> {record.doseconv}
           <br />
           <strong>frequenciadia:</strong> {record.dayFrequency}
