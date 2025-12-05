@@ -48,6 +48,11 @@ export const filterConversionList = (data, filters) => {
     }
 
     if (filters.conversionType === "mismatch") {
+      // when no conversions needed, do not consider mismatch
+      if (i.data.length === 1) {
+        return false;
+      }
+
       return match;
     }
 
