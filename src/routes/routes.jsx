@@ -58,6 +58,7 @@ import IntegrationNifiLintReport from "pages/Reports/IntegrationNifiLint";
 
 import RegulationPrioritization from "pages/Regulation/Prioritization";
 import Regulation from "pages/Regulation/Regulation";
+import RegulationIndicatorsPanelReport from "pages/Regulation/IndicatorsPanelReport";
 
 const routes = [
   {
@@ -373,6 +374,11 @@ const routes = [
     exact: true,
     path: "/relatorios/integracao/nifilint",
     element: <WithAuth component={IntegrationNifiLintReport} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/regulacao/painel-indicadores",
+    element: <WithAuth component={RegulationIndicatorsPanelReport} />,
   },
   {
     exact: true,

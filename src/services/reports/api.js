@@ -50,4 +50,11 @@ api.live.getIntegrationNifiLintReport = (params = {}) =>
     ...setHeaders(),
   });
 
+api.regulation = {};
+api.regulation.getIndicatorsPanel = (params = {}) =>
+  instance.post(`/reports/regulation/indicators-panel`, params, setHeaders());
+
+api.regulation.getIndicatorsSummary = () =>
+  instance.get(`/reports/regulation/indicators-summary`, { ...setHeaders() });
+
 export default api;

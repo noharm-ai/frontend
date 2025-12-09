@@ -98,6 +98,10 @@ function MemoryReports() {
                 id: "ECONOMY",
                 value: "Farmacoeconomia",
               },
+              {
+                id: "PEC_INDICATORS_PANEL",
+                value: "PEC: Juntos pela Saúde: Indicadores",
+              },
             ],
             optionsType: "key-value",
             style: { width: "100%" },
