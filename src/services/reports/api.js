@@ -50,4 +50,17 @@ api.live.getIntegrationNifiLintReport = (params = {}) =>
     ...setHeaders(),
   });
 
+api.regulation = {};
+api.regulation.getIndicatorsPanel = (params = {}) =>
+  instance.post(`/reports/regulation/indicators-panel`, params, setHeaders());
+
+api.regulation.getIndicatorsPanelCsv = (params = {}) =>
+  instance.post(`/reports/regulation/indicators-panel-csv`, params, {
+    ...setHeaders(),
+    responseType: "blob",
+  });
+
+api.regulation.getIndicatorsSummary = () =>
+  instance.get(`/reports/regulation/indicators-summary`, { ...setHeaders() });
+
 export default api;

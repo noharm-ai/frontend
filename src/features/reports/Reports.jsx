@@ -78,6 +78,15 @@ export default function Reports() {
       visible: internalList.indexOf("ECONOMY") !== -1,
       track: TrackedReport.ECONOMY,
     },
+    {
+      title: "Juntos pela Saúde: Indicadores",
+      description: "Acompanhamento de indicadores",
+      icon: "report",
+      type: "internal",
+      route: "/relatorios/regulacao/painel-indicadores",
+      visible: internalList.indexOf("PEC_INDICATORS_PANEL") !== -1,
+      track: TrackedReport.PEC_INDICATORS_PANEL,
+    },
   ];
 
   useEffect(() => {

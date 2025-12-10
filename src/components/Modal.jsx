@@ -41,6 +41,14 @@ const Modal = styled(AntModal)`
     font-weight: 500;
     color: var(--nh-heading-color);
   }
+
+  .modal-section-title {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--nh-heading-color);
+  }
 `;
 
 export default Modal;

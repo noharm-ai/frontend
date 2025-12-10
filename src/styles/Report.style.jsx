@@ -107,6 +107,7 @@ export const SectionHeader = styled.div`
     font-size: 2.5rem;
     font-weight: 500;
     margin-bottom: 0;
+    line-height: 1.1;
 
     @media print {
       margin-bottom: 10px;

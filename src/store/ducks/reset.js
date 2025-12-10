@@ -60,6 +60,7 @@ import { reset as regulationPrioritizationReset } from "features/regulation/Prio
 import { reset as regulationReset } from "features/regulation/Regulation/RegulationSlice";
 import { reset as regulationFormReset } from "features/regulation/RegulationForm/RegulationFormSlice";
 import { reset as regulationAttributeReset } from "features/regulation/RegulationAttribute/RegulationAttributeSlice";
+import { reset as regulationIndicatorsPanelReportReset } from "features/regulation/IndicatorsPanelReport/IndicatorsPanelReportSlice";
 
 const { clinicalNotesReset } = ClinicalNotesCreators;
 const { drugsReset } = DrugsCreators;
@@ -134,4 +135,5 @@ export const resetReduxState = (dispatch) => {
   dispatch(regulationReset());
   dispatch(regulationFormReset());
   dispatch(regulationAttributeReset());
+  dispatch(regulationIndicatorsPanelReportReset());
 };
