@@ -77,6 +77,19 @@ export const fetchReport = createAsyncThunk(
   }
 );
 
+export const exportReport = createAsyncThunk(
+  "regulation-reports/export",
+  async (params: any, thunkAPI) => {
+    try {
+      const response = await api.regulation.getIndicatorsPanelCsv(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  }
+);
+
 export const fetchSummary = createAsyncThunk(
   "regulation-reports/fetch-indicators-summary",
   async (_: any, thunkAPI) => {

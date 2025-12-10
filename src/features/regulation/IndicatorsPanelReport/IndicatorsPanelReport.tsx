@@ -1,9 +1,15 @@
 import { useState } from "react";
 import type { Key } from "react";
-import { Pagination, Flex, Empty } from "antd";
-import { PieChartOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import { Pagination, Flex, Empty, notification, FloatButton } from "antd";
+import {
+  PieChartOutlined,
+  UnorderedListOutlined,
+  MenuOutlined,
+  DownloadOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
+import { FloatButtonGroup } from "components/FloatButton";
 import { useAppSelector, useAppDispatch } from "src/store";
 import { ExpandableTable } from "components/Table";
 import Filter from "./Filter/Filter";
@@ -12,6 +18,7 @@ import expandedRowRender from "./Table/expandedRowRender";
 import {
   setCurrentPage,
   fetchReport,
+  exportReport,
   setSummaryVisibility,
 } from "./IndicatorsPanelReportSlice";
 import { Summary } from "./Summary/Summary";
@@ -45,6 +52,31 @@ export default function IndicatorsPanelReport() {
   );
 
   const limit = 100;
+
+  const executeExport = () => {
+    dispatch(exportReport({ ...filters, limit: 1000, offset: 0, order })).then(
+      (response: any) => {
+        if (response.error) {
+          notification.error({ message: "Erro ao exportar arquivo" });
+          return;
+        }
+
+        const url = window.URL.createObjectURL(
+          new Blob([response.payload.data])
+        );
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "relatorio.csv");
+
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }
+    );
+  };
 
   const onPageChange = (newPage: any) => {
     dispatch(setCurrentPage(newPage));
@@ -168,6 +200,25 @@ export default function IndicatorsPanelReport() {
         />
       </PaginationContainer>
       <Summary />
+      {status !== "loading" && (
+        <FloatButtonGroup
+          trigger="click"
+          type="primary"
+          icon={<MenuOutlined />}
+          tooltip="Menu"
+          style={{ bottom: 25 }}
+        >
+          <FloatButton
+            icon={<DownloadOutlined />}
+            onClick={() => executeExport()}
+            tooltip="Exportar CSV"
+          />
+        </FloatButtonGroup>
+      )}
+      <FloatButton.BackTop
+        style={{ right: 80, bottom: 25 }}
+        tooltip="Voltar ao topo"
+      />
     </>
   );
 }
