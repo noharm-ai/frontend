@@ -40,6 +40,11 @@ export function ExamFormBase({ index }: IExamFormBaseProps = {}) {
   const getFieldName = (field: string) =>
     isArrayMode ? `exams.${index}.${field}` : field;
 
+  const disabledDate = (current: any) => {
+    // Can not select days before 1 month
+    return current && current < dayjs().subtract(1, "month");
+  };
+
   return (
     <>
       <div className={`form-row ${currentErrors?.examType ? "error" : ""}`}>
@@ -84,6 +89,7 @@ export function ExamFormBase({ index }: IExamFormBaseProps = {}) {
               }}
               popupClassName="noArrow"
               maxDate={dayjs()}
+              disabledDate={disabledDate}
               showTime
             />
           </div>

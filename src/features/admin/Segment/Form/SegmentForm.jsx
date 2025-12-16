@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
+import { Alert } from "antd";
 
 import notification from "components/notification";
 import Heading from "components/Heading";
@@ -17,6 +18,9 @@ import Base from "./Base";
 function SegmentForm({ open, setOpen }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const integrationStatus = useSelector(
+    (state) => state.app.config.integrationStatus
+  );
   const formData = useSelector((state) => state.admin.segment.single.data);
   const status = useSelector(
     (state) => state.admin.segment.upsertSegment.status
@@ -84,6 +88,15 @@ function SegmentForm({ open, setOpen }) {
           <header>
             <Heading $margin="0 0 11px">Segmento</Heading>
           </header>
+
+          {formData && !formData.idSegment && integrationStatus === 1 && (
+            <Alert
+              showIcon
+              type="warning"
+              message="Atenção"
+              description="Ao criar um novo segmento em um schema que já está em produção, você deve acionar a equipe de curadoria para configurá-lo."
+            />
+          )}
 
           <Form onSubmit={handleSubmit}>
             <Base />

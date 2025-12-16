@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Row, Col, Spin } from "antd";
+import { Row, Col, Spin, Tabs } from "antd";
 import { UnorderedListOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
@@ -16,6 +16,7 @@ import { PageCard } from "styles/Utils.style";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { TrackedReport, trackReport } from "src/utils/tracker";
+// import { CustomReports } from "./components/CustomReports/CustomReports";
 
 export default function Reports() {
   const dispatch = useDispatch();
@@ -122,6 +123,56 @@ export default function Reports() {
     }
   };
 
+  const tabItens = [
+    {
+      key: "1",
+      label: "Relatórios Gerais",
+      children: (
+        <>
+          <Row type="flex" gutter={[20, 20]}>
+            {internalReports.map((reportData, index) => (
+              <React.Fragment key={index}>
+                {(reportData.visible ||
+                  PermissionService().has(Permission.MAINTAINER)) && (
+                  <Col key={index} span={24} md={12} lg={8}>
+                    <ReportCard
+                      reportData={reportData}
+                      showReport={showInternalReport}
+                      id={index}
+                      className="gtm-report-item"
+                    />
+                  </Col>
+                )}
+              </React.Fragment>
+            ))}
+
+            {externalList.map((reportData, index) => (
+              <Col key={index} span={24} md={12} lg={8}>
+                <ReportCard
+                  reportData={reportData}
+                  showReport={showReport}
+                  id={index}
+                  className="gtm-report-item"
+                />
+              </Col>
+            ))}
+          </Row>
+          {externalList.length === 0 && internalList.length === 0 && (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={"Nenhum relatório disponível"}
+            />
+          )}
+        </>
+      ),
+    },
+    // {
+    //   key: "2",
+    //   label: "Relatórios Customizados",
+    //   children: <CustomReports />,
+    // },
+  ];
+
   return (
     <>
       <PageHeader>
@@ -151,42 +202,7 @@ export default function Reports() {
       <PageContainer>
         {!currentReport && (
           <Spin spinning={status === "loading"}>
-            <>
-              <Row type="flex" gutter={[20, 20]}>
-                {internalReports.map((reportData, index) => (
-                  <React.Fragment key={index}>
-                    {(reportData.visible ||
-                      PermissionService().has(Permission.MAINTAINER)) && (
-                      <Col key={index} span={24} md={12} lg={8}>
-                        <ReportCard
-                          reportData={reportData}
-                          showReport={showInternalReport}
-                          id={index}
-                          className="gtm-report-item"
-                        />
-                      </Col>
-                    )}
-                  </React.Fragment>
-                ))}
-
-                {externalList.map((reportData, index) => (
-                  <Col key={index} span={24} md={12} lg={8}>
-                    <ReportCard
-                      reportData={reportData}
-                      showReport={showReport}
-                      id={index}
-                      className="gtm-report-item"
-                    />
-                  </Col>
-                ))}
-              </Row>
-              {externalList.length === 0 && internalList.length === 0 && (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description={"Nenhum relatório disponível"}
-                />
-              )}
-            </>
+            <Tabs defaultActiveKey="1" items={tabItens} />
           </Spin>
         )}
       </PageContainer>

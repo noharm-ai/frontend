@@ -50,6 +50,25 @@ api.live.getIntegrationNifiLintReport = (params = {}) =>
     ...setHeaders(),
   });
 
+// CUSTOM
+api.custom = {};
+
+api.custom.getCustomReports = (idReport, filename) =>
+  instance.get(`/reports/custom/list`, {
+    ...setHeaders(),
+  });
+
+api.custom.downloadReport = (idReport, filename) =>
+  instance.get(`/reports/custom/download/${idReport}/${filename}`, {
+    ...setHeaders(),
+  });
+
+api.custom.processReport = (idReport) =>
+  instance.get(`/reports/custom/process/${idReport}`, {
+    ...setHeaders(),
+  });
+
+// REGULATION
 api.regulation = {};
 api.regulation.getIndicatorsPanel = (params = {}) =>
   instance.post(`/reports/regulation/indicators-panel`, params, setHeaders());
