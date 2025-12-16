@@ -581,10 +581,6 @@ const drugsByFieldList = (clinicalNote, drugs, params = {}) => {
     return resultText;
   }
 
-  if (!drugs || (drugs && !drugs.length)) {
-    return params.empty;
-  }
-
   variables.forEach((item) => {
     const varName = item.replace("{{", "").replace("}}", "").split(".")[1];
 
