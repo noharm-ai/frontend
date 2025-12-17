@@ -5,6 +5,7 @@ import { get } from "styles/utils";
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   background: ${get("colors.commonLighter")};
   border: 1px solid ${get("colors.fifth")};
   border-radius: 5px;
