@@ -16,7 +16,7 @@ import { PageCard } from "styles/Utils.style";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { TrackedReport, trackReport } from "src/utils/tracker";
-// import { CustomReports } from "./components/CustomReports/CustomReports";
+import { CustomReports } from "./components/CustomReports/CustomReports";
 
 export default function Reports() {
   const dispatch = useDispatch();
@@ -166,11 +166,11 @@ export default function Reports() {
         </>
       ),
     },
-    // {
-    //   key: "2",
-    //   label: "Relatórios Customizados",
-    //   children: <CustomReports />,
-    // },
+    {
+      key: "2",
+      label: "Relatórios Customizados",
+      children: <CustomReports />,
+    },
   ];
 
   return (

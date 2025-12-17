@@ -6,6 +6,7 @@ import { IReportFormBaseFields } from "./Form/ReportForm";
 
 interface IReportSlice {
   list: any[];
+  saved_queries: any[];
   status: string;
   error: string | null;
   single: {
@@ -17,6 +18,7 @@ interface IReportSlice {
 
 const initialState: IReportSlice = {
   list: [],
+  saved_queries: [],
   status: "idle",
   error: null,
   single: {
@@ -70,7 +72,8 @@ const reportSlice = createSlice({
       })
       .addCase(fetchReports.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.list = action.payload.data.data;
+        state.list = action.payload.data.data.custom_reports;
+        state.saved_queries = action.payload.data.data.saved_queries;
       })
       .addCase(fetchReports.rejected, (state, action) => {
         state.status = "failed";
