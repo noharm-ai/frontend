@@ -25,6 +25,10 @@ export default function Transcription({
   const { t } = useTranslation();
   const { dose, frequency, route, measureUnit, idDrug, interval } =
     values.transcriptionData;
+  const removeFields =
+    drugSummary.data && drugSummary.data.removeFields
+      ? drugSummary.data.removeFields
+      : [];
 
   useEffect(() => {
     if (idDrug) {
@@ -214,39 +218,45 @@ export default function Transcription({
             )}
           </Col>
         </Box>
-        <Box
-          hasError={errors.interval && touched.interval}
-          className={drugData.interval !== interval ? "highlight" : ""}
-        >
-          <Col xs={layout.label}>
-            <Heading as="label" $size="14px">
-              {t("tableHeader.interval")}:
-            </Heading>
-          </Col>
-          <Col xs={layout.input}>
-            <Select
-              id="interval"
-              optionFilterProp="children"
-              style={{ width: "100%" }}
-              value={interval}
-              onChange={(value, option) => handleIntervalChange(value, option)}
-            >
-              {drugSummary.data?.intervals &&
-                drugSummary.data?.intervals
-                  .filter(
-                    (i) => i.idFrequency === values.transcriptionData.frequency
-                  )
-                  .map(({ id, description }) => (
-                    <Select.Option key={id} value={id}>
-                      {description}
-                    </Select.Option>
-                  ))}
-            </Select>
-            {errors.interval && touched.interval && (
-              <FieldError>{errors.interval}</FieldError>
-            )}
-          </Col>
-        </Box>
+        {removeFields.indexOf("interval") === -1 && (
+          <Box
+            hasError={errors.interval && touched.interval}
+            className={drugData.interval !== interval ? "highlight" : ""}
+          >
+            <Col xs={layout.label}>
+              <Heading as="label" $size="14px">
+                {t("tableHeader.interval")}:
+              </Heading>
+            </Col>
+            <Col xs={layout.input}>
+              <Select
+                id="interval"
+                optionFilterProp="children"
+                style={{ width: "100%" }}
+                value={interval}
+                onChange={(value, option) =>
+                  handleIntervalChange(value, option)
+                }
+              >
+                {drugSummary.data?.intervals &&
+                  drugSummary.data?.intervals
+                    .filter(
+                      (i) =>
+                        i.idFrequency === values.transcriptionData.frequency
+                    )
+                    .map(({ id, description }) => (
+                      <Select.Option key={id} value={id}>
+                        {description}
+                      </Select.Option>
+                    ))}
+              </Select>
+              {errors.interval && touched.interval && (
+                <FieldError>{errors.interval}</FieldError>
+              )}
+            </Col>
+          </Box>
+        )}
+
         <Box
           hasError={errors.route && touched.route}
           className={drugData.route !== route ? "highlight" : ""}
