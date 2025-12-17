@@ -191,6 +191,13 @@ export default function Intervention({
       });
     }
 
+    if (drugSummary?.data?.removeFields) {
+      drugSummary.data.removeFields.forEach((field) => {
+        console.log("remove", field);
+        delete trData[field];
+      });
+    }
+
     if (isEmpty(trData)) {
       return null;
     }
