@@ -9,6 +9,7 @@ import {
   CheckOutlined,
   SettingOutlined,
   SwapOutlined,
+  WifiOutlined,
 } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
 import { Alert, Dropdown, List } from "antd";
@@ -23,6 +24,7 @@ import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import IntegrationStatusTag from "components/IntegrationStatusTag";
 import { setSupportOpen } from "features/support/SupportSlice";
+import { updateUserSecurityGroup } from "src/features/admin/Integration/IntegrationSlice";
 
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
@@ -107,6 +109,12 @@ const Me = ({
       });
 
       options.push({
+        label: "Atualizar IP",
+        key: "updateip",
+        icon: <WifiOutlined />,
+      });
+
+      options.push({
         label: "Trocar schema",
         key: "switchSchema",
         icon: <SwapOutlined />,
@@ -143,6 +151,23 @@ const Me = ({
         break;
       case "switchSchema":
         navigate("/switch-schema?alert=true");
+        break;
+      case "updateip":
+        toast.info({
+          message: "Atualizando IP...",
+        });
+        dispatch(updateUserSecurityGroup()).then((response) => {
+          if (response.error) {
+            toast.error({
+              message: getErrorMessage(response, t),
+            });
+          } else {
+            toast.success({
+              message: "IP atualizado com sucesso!",
+            });
+          }
+        });
+
         break;
       default:
         break;
