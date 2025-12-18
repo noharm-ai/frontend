@@ -2,7 +2,6 @@ import axios from "axios";
 import moment from "moment";
 
 import FeatureService from "services/features";
-import appInfo from "utils/appInfo";
 import api from "services/api";
 import { store } from "store/index";
 
@@ -38,13 +37,14 @@ const getPatients = async (bearerToken, requestConfig) => {
   const { listToRequest, listToEscape, nameUrl, useCache, features, proxy } =
     requestConfig;
   const getnameType = store.getState().app.config.getnameType;
+  const apiKey = store.getState().user.account.apiKey;
   let nameHeaders =
     getnameType === "proxy" || proxy
       ? {
           Authorization: `Bearer ${
             localStorage.getItem("ac1") + localStorage.getItem("ac2")
           }`,
-          "x-api-key": appInfo.apiKey,
+          "x-api-key": apiKey,
         }
       : requestConfig.nameHeaders;
   const featureService = FeatureService(features);
@@ -177,13 +177,14 @@ const getPatients = async (bearerToken, requestConfig) => {
 const getSinglePatient = async (bearerToken, requestConfig) => {
   const { idPatient, nameUrl, proxy } = requestConfig;
   const getnameType = store.getState().app.config.getnameType;
+  const apiKey = store.getState().user.account.apiKey;
   let nameHeaders =
     getnameType === "proxy" || proxy
       ? {
           Authorization: `Bearer ${
             localStorage.getItem("ac1") + localStorage.getItem("ac2")
           }`,
-          "x-api-key": appInfo.apiKey,
+          "x-api-key": apiKey,
         }
       : requestConfig.nameHeaders;
 

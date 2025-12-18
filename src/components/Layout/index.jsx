@@ -48,7 +48,6 @@ const setTitle = ({ user }) => {
   document.title = `${import.meta.env.VITE_APP_SITE_TITLE} - ${
     user.account.schema
   }`;
-  appInfo.apiKey = user.account.apiKey;
 
   return user.account.userName;
 };
