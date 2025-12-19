@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
@@ -9,6 +9,7 @@ import {
   DownloadOutlined,
   QuestionCircleOutlined,
   HistoryOutlined,
+  SyncOutlined,
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
@@ -59,6 +60,7 @@ export default function Filter({ printRef }) {
   const availableReports = useSelector(
     (state) => state.reportsArea.patientDay.availableReports
   );
+  const [exporting, setExporting] = useState(false);
   const handlePrint = useReactToPrint({
     contentRef: printRef,
     onBeforeGetContent: onBeforePrint,
@@ -98,8 +100,13 @@ export default function Filter({ printRef }) {
   });
 
   const exportCSV = async () => {
+    if (exporting) return;
+
+    setExporting(true);
     const ds = await decompressDatasource(datasource);
-    filterAndExportCSV(ds, currentFilters, t);
+    await filterAndExportCSV(ds, currentFilters, t);
+
+    setExporting(false);
   };
 
   const loadArchive = (filename) => {
@@ -171,7 +178,9 @@ export default function Filter({ printRef }) {
             tooltip="Informações sobre este relatório"
           />
           <FloatButton
-            icon={<DownloadOutlined />}
+            icon={
+              exporting ? <SyncOutlined spin={true} /> : <DownloadOutlined />
+            }
             onClick={exportCSV}
             tooltip="Exportar CSV"
           />

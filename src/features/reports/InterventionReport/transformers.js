@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 
 import { intersection } from "utils/lodash";
-import { getUniqList, exportCSV } from "utils/report";
+import { getUniqList, exportCSVSync } from "utils/report";
 
 const STATUSES = ["a", "j", "n", "x", "s"];
 export const STATUS_COLORS = {
@@ -376,5 +376,5 @@ export const getReportData = (datasource, filters) => {
 export const filterAndExportCSV = (datasource, filters, t) => {
   const items = filterDatasource(datasource, filters);
 
-  return exportCSV(items, t);
+  return exportCSVSync(items, t);
 };

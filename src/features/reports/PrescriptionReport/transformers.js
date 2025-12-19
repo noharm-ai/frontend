@@ -309,8 +309,8 @@ export const getReportData = (datasource, filters) => {
   return reportData;
 };
 
-export const filterAndExportCSV = (datasource, filters, t) => {
+export const filterAndExportCSV = async (datasource, filters, t) => {
   const items = filterDatasource(datasource, filters);
 
-  return exportCSV(items, t);
+  return await exportCSV(items, t);
 };

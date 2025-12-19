@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import humanizeDuration from "humanize-duration";
 import { isNumber, formatNumber, isInt } from "./number";
 import { isDate, formatDateTime } from "./date";
+import { getCSVWorkerManager } from "./workerUtils";
 
 export const getUniqList = (datasource, attr) => {
   if (!datasource.length) return [];
@@ -78,7 +79,126 @@ export const filtersToDescription = (filters, filtersConfig) => {
     .join(" | ");
 };
 
-export const exportCSV = (datasource, t, namespace = "reportcsv") => {
+export const exportCSV = async (
+  datasource,
+  t,
+  namespace = "reportcsv",
+  options = {}
+) => {
+  // Fallback function for when Web Workers are not supported
+  const fallbackExportCSV = () => {
+    const replacer = (key, value) => (value === null ? "" : value);
+    const stringify = (value) => {
+      if (Array.isArray(value)) {
+        return `"${JSON.stringify(value, replacer).replaceAll('"', "")}"`;
+      }
+
+      if (isNumber(value) && !isInt(value)) {
+        return JSON.stringify(formatNumber(value, 6));
+      }
+
+      if (isDate(value)) {
+        return JSON.stringify(formatDateTime(value), replacer);
+      }
+
+      return JSON.stringify(value, replacer);
+    };
+
+    const header = Object.keys(datasource[0]);
+    const headerNames = Object.keys(datasource[0]).map((k) =>
+      t(`${namespace}.${k}`)
+    );
+    const csv = [
+      headerNames.join(","),
+      ...datasource.map((row) =>
+        header.map((fieldName) => stringify(row[fieldName])).join(",")
+      ),
+    ];
+
+    return csv.join("\r\n");
+  };
+
+  try {
+    let csvContent;
+
+    // Check if Web Workers are supported and datasource is large enough to benefit
+    const workerManager = getCSVWorkerManager();
+    const shouldUseWorker =
+      workerManager.constructor.isSupported() &&
+      datasource.length > (options.workerThreshold || 100);
+
+    if (shouldUseWorker) {
+      const translatedHeaders = {};
+      if (datasource.length > 0) {
+        const header = Object.keys(datasource[0]);
+        header.forEach((key) => {
+          translatedHeaders[key] = t(`${namespace}.${key}`);
+        });
+      }
+
+      // Use Web Worker for large datasets
+      csvContent = await workerManager.processCSV(
+        datasource,
+        translatedHeaders,
+        namespace,
+        {
+          chunkSize: options.chunkSize || 1000,
+          onProgress: options.onProgress,
+        }
+      );
+    } else {
+      // Use synchronous processing for small datasets or when workers not supported
+      csvContent = fallbackExportCSV();
+    }
+
+    // Create blob and trigger download (must happen on main thread)
+    const blob = new Blob([csvContent], {
+      type: "text/plain;charset=utf-8",
+    });
+
+    const link = document.createElement("a");
+    link.setAttribute("href", window.URL.createObjectURL(blob));
+    link.setAttribute("download", options.filename || "relatorio.csv");
+    document.body.appendChild(link);
+
+    link.click();
+
+    // Clean up the link
+    setTimeout(() => {
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(link.href);
+    }, 100);
+
+    // Return csv for backward compatibility (as array for legacy code)
+    return csvContent.split("\r\n");
+  } catch (error) {
+    console.error("Error exporting CSV:", error);
+
+    // Fall back to synchronous processing if worker fails
+    const csvContent = fallbackExportCSV();
+
+    const blob = new Blob([csvContent], {
+      type: "text/plain;charset=utf-8",
+    });
+
+    const link = document.createElement("a");
+    link.setAttribute("href", window.URL.createObjectURL(blob));
+    link.setAttribute("download", options.filename || "relatorio.csv");
+    document.body.appendChild(link);
+
+    link.click();
+
+    setTimeout(() => {
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(link.href);
+    }, 100);
+
+    return csvContent.split("\r\n");
+  }
+};
+
+// Backward compatibility: synchronous version for legacy code
+export const exportCSVSync = (datasource, t, namespace = "reportcsv") => {
   const replacer = (key, value) => (value === null ? "" : value);
   const stringify = (value) => {
     if (Array.isArray(value)) {
@@ -95,6 +215,7 @@ export const exportCSV = (datasource, t, namespace = "reportcsv") => {
 
     return JSON.stringify(value, replacer);
   };
+
   const header = Object.keys(datasource[0]);
   const headerNames = Object.keys(datasource[0]).map((k) =>
     t(`${namespace}.${k}`)
@@ -116,6 +237,12 @@ export const exportCSV = (datasource, t, namespace = "reportcsv") => {
   document.body.appendChild(link);
 
   link.click();
+
+  // Clean up the link
+  setTimeout(() => {
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(link.href);
+  }, 100);
 
   return csv;
 };
