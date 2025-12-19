@@ -84,6 +84,7 @@ export default function Filter({ printRef }) {
     daysOffList: [],
     tagList: [],
     timeRange: [null, null],
+    removePrescriptionAtDischargeDate: false,
   };
 
   const reportManager = useFetchReport({

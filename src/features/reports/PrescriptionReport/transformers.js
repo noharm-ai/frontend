@@ -84,6 +84,13 @@ const filterDatasource = (datasource, filters) => {
       return true;
     })
     .filter((i) => {
+      if (filters.removePrescriptionAtDischargeDate === true) {
+        return i.prescriptionAtDischargeDate === 0;
+      }
+
+      return true;
+    })
+    .filter((i) => {
       if (filters.responsibleList.length) {
         return filters.responsibleList.indexOf(i.responsible) !== -1;
       }
