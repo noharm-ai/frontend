@@ -106,7 +106,7 @@ export default function Filter({ printRef }) {
   });
 
   const exportList = async () => {
-    //TODO: migrate to async
+    //TODO: migrate to async (error cloning class Big in web worker - format before post message)
     exportCSVSync(
       filteredList.map((i) => {
         const item = { ...i, ...i.processed };

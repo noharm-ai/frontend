@@ -1,7 +1,7 @@
 import Big from "big.js";
 import dayjs from "dayjs";
 
-import { exportCSVSync, getUniqList } from "utils/report";
+import { getUniqList } from "utils/report";
 import { intersection } from "utils/lodash";
 
 const filterDatasource = (datasource, filters) => {
@@ -295,11 +295,4 @@ export const getReportData = (datasource, filters) => {
   };
 
   return reportData;
-};
-
-export const filterAndExportCSV = (datasource, filters, t) => {
-  const items = filterDatasource(datasource, filters);
-
-  //TODO: migrate to async
-  return exportCSVSync(items, t);
 };

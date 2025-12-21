@@ -140,7 +140,6 @@ export const exportCSV = async (
       csvContent = await workerManager.processCSV(
         datasource,
         translatedHeaders,
-        namespace,
         {
           chunkSize: options.chunkSize || 1000,
           onProgress: options.onProgress,
