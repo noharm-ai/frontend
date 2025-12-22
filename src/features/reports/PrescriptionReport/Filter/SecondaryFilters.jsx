@@ -83,6 +83,23 @@ export default function SecondaryFilters() {
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" $size="14px">
+          Remover prescrições do dia da alta:
+        </Heading>
+        <Radio.Group
+          style={{ marginTop: "5px" }}
+          options={yesNoOptions}
+          onChange={({ target: { value } }) =>
+            setFieldValue({ removePrescriptionAtDischargeDate: value })
+          }
+          value={values.removePrescriptionAtDischargeDate}
+          optionType="button"
+        />
+        <div style={{ opacity: 0.6, fontSize: "12px", marginTop: "5px" }}>
+          *Filtro disponível somente em arquivos a partir de DEZ/25.
+        </div>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" $size="14px">
           Responsável:
         </Heading>
         <SelectCustom

@@ -753,7 +753,9 @@
     "substanceClassParent": "CLASSE MAE DE SUBSTANCIA",
     "originSubstance": "SUBSTANCIA (ORIGEM)",
     "originSubstanceClass": "CLASSE DE SUBSTANCIA (ORIGEM)",
-    "originSubstanceClassParent": "CLASSE MAE DE SUBSTANCIA (ORIGEM)"
+    "originSubstanceClassParent": "CLASSE MAE DE SUBSTANCIA (ORIGEM)",
+    "dischargeReason": "MOTIVO ALTA",
+    "prescriptionAtDischargeDate": "PRESCRICAO NO DIA DA ALTA"
   },
 
   "reportcsvCulture": {

@@ -1,5 +1,6 @@
 import axios from "axios";
-import appInfo from "utils/appInfo";
+
+import { store } from "store/index";
 
 /**
  * AXIOS instance.
@@ -53,17 +54,18 @@ const endpoints = {
  */
 export const setHeaders = () => {
   const token = localStorage.getItem("ac1") + localStorage.getItem("ac2");
+  const apiKey = store.getState().user.account.apiKey;
 
   return token
     ? {
         headers: {
           Authorization: `Bearer ${token}`,
-          "x-api-key": appInfo.apiKey,
+          "x-api-key": apiKey,
         },
       }
     : {
         headers: {
-          "x-api-key": appInfo.apiKey,
+          "x-api-key": apiKey,
         },
       };
 };
@@ -76,7 +78,7 @@ export const setHeaders = () => {
 const preAuth = (params) =>
   instance.post("/pre-auth", params, {
     headers: {
-      "x-api-key": appInfo.apiKey,
+      "x-api-key": import.meta.env.VITE_APP_API_KEY,
     },
   });
 
@@ -84,7 +86,7 @@ const authenticate = (params) =>
   instance.post(endpoints.authentication, params, {
     withCredentials: true,
     headers: {
-      "x-api-key": appInfo.apiKey,
+      "x-api-key": import.meta.env.VITE_APP_API_KEY,
     },
   });
 
@@ -92,7 +94,7 @@ const authenticateOAuth = (params) =>
   instance.post(endpoints.oauth, params, {
     withCredentials: true,
     headers: {
-      "x-api-key": appInfo.apiKey,
+      "x-api-key": import.meta.env.VITE_APP_API_KEY,
     },
   });
 
@@ -103,17 +105,17 @@ const refreshToken = () =>
     {
       withCredentials: true,
       headers: {
-        "x-api-key": appInfo.apiKey,
-        // remove after transition
-        // Authorization: `Bearer ${
-        //   localStorage.getItem("rt1") + localStorage.getItem("rt2")
-        // }`,
+        "x-api-key": import.meta.env.VITE_APP_API_KEY,
       },
     }
   );
 
 const getAuthProvider = (schema) =>
-  instance.get(`${endpoints.oauth}/${schema}`, { ...setHeaders() });
+  instance.get(`${endpoints.oauth}/${schema}`, {
+    headers: {
+      "x-api-key": import.meta.env.VITE_APP_API_KEY,
+    },
+  });
 
 const getGetnameToken = () =>
   instance.get(`names/auth-token`, { ...setHeaders() });

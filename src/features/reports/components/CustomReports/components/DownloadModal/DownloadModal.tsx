@@ -25,6 +25,8 @@ import { ReportStatusEnum } from "src/models/ReportStatusEnum";
 import notification from "components/notification";
 import { getErrorMessage } from "src/utils/errorHandler";
 import { TrackedReport, trackReport } from "src/utils/tracker";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
 
 export function DownloadModal() {
   const dispatch = useAppDispatch();
@@ -71,6 +73,23 @@ export function DownloadModal() {
   };
 
   const executeProcessReport = () => {
+    if (
+      data.processed_at &&
+      !PermissionService().has(Permission.ADMIN_REPORTS)
+    ) {
+      const diff = dayjs().diff(dayjs(data.processed_at), "hours");
+
+      if (diff < 1) {
+        Modal.warning({
+          title: "Processamento recente",
+          content:
+            "Este relatório foi processado há menos de uma hora. Você deve esperar pelo menos uma hora antes de processá-lo novamente.",
+          okText: "Ok",
+        });
+        return;
+      }
+    }
+
     setLoading(true);
 
     // @ts-expect-error ts 2554 (legacy code)
@@ -94,6 +113,16 @@ export function DownloadModal() {
 
   const renderItems = (item: any, index: number) => {
     const actions = [];
+    let diff = 0;
+    let title = dayjs(item.name).format("DD/MM/YYYY");
+
+    if (item.updateAt) {
+      diff = dayjs().diff(dayjs(item.updateAt), "minutes");
+
+      if (diff < 2) {
+        title = `${dayjs(item.name).format("DD/MM/YYYY")} - Atualizado`;
+      }
+    }
 
     if (index === 0) {
       actions.push(
@@ -139,17 +168,6 @@ export function DownloadModal() {
           />
         </Dropdown>
       );
-    }
-
-    let diff = 0;
-    let title = dayjs(item.name).format("DD/MM/YYYY");
-
-    if (item.updateAt) {
-      diff = dayjs().diff(dayjs(item.updateAt), "minutes");
-
-      if (diff < 2) {
-        title = `${dayjs(item.name).format("DD/MM/YYYY")} - Atualizado`;
-      }
     }
 
     return (

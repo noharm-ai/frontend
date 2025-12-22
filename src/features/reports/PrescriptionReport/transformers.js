@@ -84,6 +84,13 @@ const filterDatasource = (datasource, filters) => {
       return true;
     })
     .filter((i) => {
+      if (filters.removePrescriptionAtDischargeDate === true) {
+        return i.prescriptionAtDischargeDate === 0;
+      }
+
+      return true;
+    })
+    .filter((i) => {
       if (filters.responsibleList.length) {
         return filters.responsibleList.indexOf(i.responsible) !== -1;
       }
@@ -302,8 +309,8 @@ export const getReportData = (datasource, filters) => {
   return reportData;
 };
 
-export const filterAndExportCSV = (datasource, filters, t) => {
+export const filterAndExportCSV = async (datasource, filters, t) => {
   const items = filterDatasource(datasource, filters);
 
-  return exportCSV(items, t);
+  return await exportCSV(items, t);
 };

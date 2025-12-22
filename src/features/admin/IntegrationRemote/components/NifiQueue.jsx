@@ -27,11 +27,26 @@ export default function NifiQueue() {
   );
   const [queueModal, setQueueModal] = useState(null);
   const waitingResponse = useRef(false);
+  const pageVisible = useRef(!document.hidden);
 
   useEffect(() => {
+    // Handle page visibility changes
+    const handleVisibilityChange = () => {
+      pageVisible.current = !document.hidden;
+    };
+
+    // Add event listener for page visibility
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     const interval = setInterval(() => {
       if (waitingResponse.current) {
         console.log("skip queue: waiting response from last request");
+        return;
+      }
+
+      // Skip polling if page is not visible
+      if (!pageVisible.current) {
+        console.log("skip queue: page is not visible");
         return;
       }
 
@@ -55,6 +70,7 @@ export default function NifiQueue() {
 
     return () => {
       clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [queue]); //eslint-disable-line
 

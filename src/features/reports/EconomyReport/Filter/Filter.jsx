@@ -25,7 +25,7 @@ import {
   setActiveReport,
 } from "../EconomyReportSlice";
 import { getReportData } from "../transformers";
-import { exportCSV } from "utils/report";
+import { exportCSVSync } from "utils/report";
 import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
 import {
@@ -106,7 +106,8 @@ export default function Filter({ printRef }) {
   });
 
   const exportList = async () => {
-    exportCSV(
+    //TODO: migrate to async (error cloning class Big in web worker - format before post message)
+    exportCSVSync(
       filteredList.map((i) => {
         const item = { ...i, ...i.processed };
         delete item.processed;

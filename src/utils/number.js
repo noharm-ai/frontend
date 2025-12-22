@@ -5,7 +5,16 @@ export function formatCurrency(value, precision = 2) {
   if (value === null || value === undefined) {
     return "-";
   }
-  const locale = localStorage.getItem("language") === "en" ? "en-US" : "pt-BR";
+
+  const isMainThread =
+    typeof window === "object" && typeof window.document !== "undefined";
+  const isWorker =
+    !isMainThread &&
+    typeof self === "object" &&
+    typeof self.importScripts === "function";
+
+  const locale =
+    !isWorker && localStorage.getItem("language") === "en" ? "en-US" : "pt-BR";
 
   if (value instanceof Big) {
     toFormat(Big);
