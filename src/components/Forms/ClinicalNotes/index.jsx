@@ -60,7 +60,8 @@ export default function ClinicalNotes({
     concilia: data.concilia && data.concilia === "s" ? "" : data.concilia,
     notesType: data.notesType || null,
     hasConciliation: !!data.concilia,
-    hasClinicalNotesType: prescription.data.clinicalNotesTypes?.length > 0,
+    hasClinicalNotesType:
+      prescription.data.clinicalNotesTypes?.length > 0 && !data.concilia,
     action,
     date: null,
     open: type === "primarycare" ? open : false, //reinitialize formik if primarycare
