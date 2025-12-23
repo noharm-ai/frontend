@@ -98,17 +98,20 @@ const authenticateOAuth = (params) =>
     },
   });
 
-const refreshToken = () =>
-  instance.post(
+const refreshToken = () => {
+  const apiKey = store.getState().user.account.apiKey;
+
+  return instance.post(
     endpoints.refreshToken,
     {},
     {
       withCredentials: true,
       headers: {
-        "x-api-key": import.meta.env.VITE_APP_API_KEY,
+        "x-api-key": apiKey,
       },
     }
   );
+};
 
 const getAuthProvider = (schema) =>
   instance.get(`${endpoints.oauth}/${schema}`, {
