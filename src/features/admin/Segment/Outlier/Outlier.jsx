@@ -52,8 +52,15 @@ function OutliersForm({ open, setOpen }) {
     setProgressPercentage(25);
     const refreshResponse = await dispatch(refreshAgg());
     if (refreshResponse.error) {
-      console.log("Error refreshing agg:", refreshResponse.error);
-      return;
+      if (refreshResponse.error) {
+        setLoading(false);
+        setOutliersStatus("error");
+        setOutliersErrorMessage(refreshResponse.payload?.message || null);
+        notification.error({
+          message: getErrorMessage(refreshResponse, t),
+        });
+        return;
+      }
     }
 
     console.log("Refresh response:", refreshResponse);
