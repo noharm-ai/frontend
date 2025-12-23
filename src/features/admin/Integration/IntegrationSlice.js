@@ -2,15 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/admin/api";
 
 const initialState = {
-  refreshAgg: {
-    status: "idle",
-    error: null,
-  },
   refreshPrescription: {
-    status: "idle",
-    error: null,
-  },
-  prescalc: {
     status: "idle",
     error: null,
   },
@@ -20,37 +12,11 @@ const initialState = {
   },
 };
 
-export const refreshAgg = createAsyncThunk(
-  "admin-integration/refresh-agg",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.refreshAggPrescription(params);
-
-      return response;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
 export const refreshPrescription = createAsyncThunk(
   "admin-integration/refresh-prescription",
   async (params, thunkAPI) => {
     try {
       const response = await api.refreshPrescription(params);
-
-      return response;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
-export const prescalc = createAsyncThunk(
-  "admin-integration/prescalc",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.integration.prescalc(params);
 
       return response;
     } catch (err) {
@@ -82,15 +48,6 @@ const integrationSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(refreshAgg.pending, (state, action) => {
-        state.refreshAgg.status = "loading";
-      })
-      .addCase(refreshAgg.fulfilled, (state, action) => {
-        state.refreshAgg.status = "succeeded";
-      })
-      .addCase(refreshAgg.rejected, (state, action) => {
-        state.refreshAgg.status = "failed";
-      })
       .addCase(refreshPrescription.pending, (state, action) => {
         state.refreshPrescription.status = "loading";
       })
@@ -99,15 +56,6 @@ const integrationSlice = createSlice({
       })
       .addCase(refreshPrescription.rejected, (state, action) => {
         state.refreshPrescription.status = "failed";
-      })
-      .addCase(prescalc.pending, (state, action) => {
-        state.prescalc.status = "loading";
-      })
-      .addCase(prescalc.fulfilled, (state, action) => {
-        state.prescalc.status = "succeeded";
-      })
-      .addCase(prescalc.rejected, (state, action) => {
-        state.prescalc.status = "failed";
       })
       .addCase(updateUserSecurityGroup.pending, (state, action) => {
         state.updateUserSecurityGroup.status = "loading";

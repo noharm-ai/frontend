@@ -19,7 +19,7 @@ const persist = {
 
 const persisted = persistReducer(persist, reducers);
 
-const store = configureStore({
+const store: any = configureStore({
   reducer: persisted,
   middleware: (getDefaultMiddleware) => {
     if (isDev) {

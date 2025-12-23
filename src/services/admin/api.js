@@ -88,24 +88,26 @@ const updateSegmentDepartments = (params) =>
     ...setHeaders(),
   });
 
-const getOutlierProcessList = (params) =>
-  instance.post(`${endpoints.segment}/outliers/process-list`, params, {
-    ...setHeaders(),
-  });
-
-const generateOutlierFold = (params) => {
-  if (params.method === "POST") {
-    return instance.post(params.url, params.params, setHeaders());
-  }
-
-  return instance.get(params.url, { ...setHeaders() });
-};
-
 const upsertSegment = (params = {}) => {
   return instance.post(`${endpoints.segment}`, params, {
     ...setHeaders(),
   });
 };
+
+/**
+ * OUTLIERS
+ */
+api.outliers = {};
+api.outliers.refreshAgg = (params) =>
+  instance.get(`/outliers/generate/refresh-agg`, {
+    params,
+    ...setHeaders(),
+  });
+
+api.outliers.generateSegmentOutliers = (params) =>
+  instance.post(`/outliers/generate/segment`, params, {
+    ...setHeaders(),
+  });
 
 /**
  * EXAMS
@@ -286,28 +288,6 @@ api.integration.updateUserSecurityGroup = (params) =>
     ...setHeaders(),
   });
 
-api.integration.prescalc = (params) => {
-  if (params.cpoe) {
-    return instance.get(
-      `/static/${localStorage.getItem("schema")}/aggregate/${
-        params.id
-      }?cpoe=true`,
-      {
-        ...setHeaders(),
-      }
-    );
-  }
-
-  return instance.get(
-    `/static/${localStorage.getItem("schema")}/prescription/${
-      params.id
-    }?force=true`,
-    {
-      ...setHeaders(),
-    }
-  );
-};
-
 /**
  * REMOTE INTEGRATION
  */
@@ -470,8 +450,6 @@ const methods = {
   initInterventionReason,
   getSegmentDepartments,
   updateSegmentDepartments,
-  getOutlierProcessList,
-  generateOutlierFold,
   upsertSegment,
 };
 

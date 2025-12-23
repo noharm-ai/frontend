@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Card, Col, Row, Avatar } from "antd";
 import {
   RetweetOutlined,
   ThunderboltOutlined,
-  CalculatorOutlined,
   WifiOutlined,
 } from "@ant-design/icons";
 
@@ -15,12 +14,10 @@ import Button from "components/Button";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
 import {
-  refreshAgg,
   refreshPrescription,
   reset,
   updateUserSecurityGroup,
 } from "./IntegrationSlice";
-import Prescalc from "./Prescalc/Prescalc";
 
 import { PageHeader } from "styles/PageHeader.style";
 import { IntegrationContainer } from "./Integration.style";
@@ -28,15 +25,8 @@ import { IntegrationContainer } from "./Integration.style";
 function IntegrationAdmin() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const [prescalcModal, setPrescalcModal] = useState(false);
-  const refreshAggStatus = useSelector(
-    (state) => state.admin.integration.refreshAgg.status
-  );
   const refreshPrescriptionStatus = useSelector(
     (state) => state.admin.integration.refreshPrescription.status
-  );
-  const prescalcStatus = useSelector(
-    (state) => state.admin.integration.prescalc.status
   );
   const updateUserSecurityGroupStatus = useSelector(
     (state) => state.admin.integration.updateUserSecurityGroup.status
@@ -89,35 +79,6 @@ function IntegrationAdmin() {
         <Row gutter={[16, 24]}>
           <Col xs={{ span: 24 }} lg={{ span: 8 }} xxl={{ span: 6 }}>
             <Card
-              className={`process-card ${refreshAggStatus}`}
-              actions={[
-                <Tooltip title="Executar">
-                  <Button
-                    shape="circle"
-                    icon={<ThunderboltOutlined />}
-                    size="large"
-                    loading={refreshAggStatus === "loading"}
-                    onClick={() =>
-                      confirmAction(refreshAgg, "Recalcular prescricaoagg")()
-                    }
-                  ></Button>
-                </Tooltip>,
-              ]}
-            >
-              <Card.Meta
-                avatar={
-                  <Avatar
-                    icon={<RetweetOutlined />}
-                    style={{ backgroundColor: "#a991d6", color: "#fff" }}
-                  />
-                }
-                title="Recalcular prescricaoagg"
-                description="Atualiza as informações de segmento, dose convertida e frequência dia. Útil quando houver alterações nos setores dos segmentos, novas conversões de unidades ou mudanças na configuração de frequências."
-              />
-            </Card>
-          </Col>
-          <Col xs={{ span: 24 }} lg={{ span: 8 }} xxl={{ span: 6 }}>
-            <Card
               className={`process-card ${refreshPrescriptionStatus}`}
               actions={[
                 <Tooltip title="Executar">
@@ -145,33 +106,6 @@ function IntegrationAdmin() {
                 }
                 title="Recalcular prescricao e presmed"
                 description="Utilizar somente durante o processo de integração. Atualiza as informações de segmento, dose convertida e frequência dia. Útil quando houver alterações nos setores dos segmentos, novas conversões de unidades ou mudanças na configuração de frequências."
-              />
-            </Card>
-          </Col>
-          <Col xs={{ span: 24 }} lg={{ span: 8 }} xxl={{ span: 6 }}>
-            <Card
-              className={`process-card ${prescalcStatus}`}
-              actions={[
-                <Tooltip title="Executar">
-                  <Button
-                    shape="circle"
-                    icon={<ThunderboltOutlined />}
-                    size="large"
-                    loading={prescalcStatus === "loading"}
-                    onClick={() => setPrescalcModal(true)}
-                  ></Button>
-                </Tooltip>,
-              ]}
-            >
-              <Card.Meta
-                avatar={
-                  <Avatar
-                    icon={<CalculatorOutlined />}
-                    style={{ backgroundColor: "#2db7f5", color: "#fff" }}
-                  />
-                }
-                title="PresCalc (Precisa ser atualizado para novo formato)"
-                description="Aciona manualmente o prescalc para gerar uma prescrição agregada ou recalcular os indicadores da prescrição."
               />
             </Card>
           </Col>
@@ -209,7 +143,6 @@ function IntegrationAdmin() {
           </Col>
         </Row>
       </IntegrationContainer>
-      <Prescalc open={prescalcModal} setOpen={setPrescalcModal} />
     </>
   );
 }

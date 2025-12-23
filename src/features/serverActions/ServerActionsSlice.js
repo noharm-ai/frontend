@@ -95,6 +95,19 @@ export const getSubstanceHandling = createAsyncThunk(
   }
 );
 
+export const getQueueStatus = createAsyncThunk(
+  "serverActions/get-queue-status",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.general.getQueueStatus(params.requestId);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const serverActionsSlice = createSlice({
   name: "serverActions",
   initialState,
