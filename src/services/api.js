@@ -866,6 +866,7 @@ api.auth.switchToSchema = (params = {}) =>
   });
 
 /** GENERAL */
+api.general = {};
 const getVersion = () =>
   instance.get(`/frontend-version`, {
     ...setHeaders(),
@@ -873,6 +874,11 @@ const getVersion = () =>
 
 const searchNames = (term) =>
   instance.get(`/names/search/${term?.replaceAll("/", "")}`, {
+    ...setHeaders(),
+  });
+
+api.general.getQueueStatus = (requestId) =>
+  instance.get(`/queue/status/${requestId}`, {
     ...setHeaders(),
   });
 

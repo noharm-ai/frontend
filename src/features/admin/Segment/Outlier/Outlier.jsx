@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { CheckSquareFilled } from "@ant-design/icons";
+import { Progress } from "antd";
 
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
 import Alert from "components/Alert";
-import Progress from "components/Progress";
 
 import {
   setSegment,
-  getOutlierProcessList,
-  generateOutlierFold,
+  generateSegmentOutliers,
+  refreshAgg,
 } from "../SegmentSlice";
-import { refreshAgg } from "features/admin/Integration/IntegrationSlice";
+import { getQueueStatus } from "src/features/serverActions/ServerActionsSlice";
 
 function OutliersForm({ open, setOpen }) {
   const { t } = useTranslation();
@@ -23,16 +24,16 @@ function OutliersForm({ open, setOpen }) {
   const [loading, setLoading] = useState(false);
   const [outliersStatus, setOutliersStatus] = useState("idle");
   const [outliersErrorMessage, setOutliersErrorMessage] = useState("idle");
-  const [progressPercentage, setProgressPercentage] = useState("idle");
-  const [refreshWarning, setRefreshWarning] = useState(null);
+  const [processStage, setProcessStage] = useState([]);
+  const [progressPercentage, setProgressPercentage] = useState(0);
 
   useEffect(() => {
     if (!open) {
       setLoading(false);
       setOutliersStatus("idle");
-      setProgressPercentage(0);
-      setRefreshWarning(null);
       setOutliersErrorMessage(null);
+      setProcessStage([]);
+      setProgressPercentage(0);
     }
   }, [open]);
 
@@ -41,84 +42,134 @@ function OutliersForm({ open, setOpen }) {
     setOpen(false);
   };
 
-  const startProcess = () => {
+  const startProcess = async () => {
     setLoading(true);
-    dispatch(refreshAgg()).then((refreshResponse) => {
-      if (refreshResponse.error) {
-        setRefreshWarning(true);
-      }
+    setOutliersStatus("loading");
+    setProcessStage((prev) => [
+      ...prev,
+      "Recalculando histórico de prescrição",
+    ]);
+    setProgressPercentage(25);
+    const refreshResponse = await dispatch(refreshAgg());
+    if (refreshResponse.error) {
+      console.log("Error refreshing agg:", refreshResponse.error);
+      return;
+    }
 
-      dispatch(getOutlierProcessList({ idSegment: segment.id })).then(
-        (response) => {
-          if (response.error) {
-            setLoading(false);
-            notification.error({
-              message: getErrorMessage(response, t),
-            });
+    console.log("Refresh response:", refreshResponse);
+
+    const requestId = refreshResponse.payload.data.data.request_id;
+
+    console.log("Refresh requestId:", requestId);
+
+    const checkQueueStatus = setInterval(async () => {
+      const statusResponse = await dispatch(getQueueStatus({ requestId }));
+      console.log("Queue status response:", statusResponse);
+
+      if (statusResponse.error) {
+        clearInterval(checkQueueStatus);
+        setOutliersStatus("error");
+        setLoading(false);
+        notification.error({
+          message: getErrorMessage(statusResponse, t),
+        });
+      } else {
+        const statusData = statusResponse.payload.data;
+
+        if (statusData.found) {
+          clearInterval(checkQueueStatus);
+
+          console.log("Status data response:", statusData.response);
+
+          if (!statusData.response.error) {
+            console.log("Queue process succeeded:", statusResponse);
+            setProcessStage((prev) => [
+              ...prev,
+              "Histórico de prescrição recalculado",
+            ]);
+            setProgressPercentage(50);
+            generateOutliers();
           } else {
-            notification.info({
-              message: "Iniciando a geração de escores",
-              description: "Este processo pode demorar alguns minutos",
-            });
+            setLoading(false);
+            setOutliersStatus("error");
 
-            if (response.payload.data.data.length === 0) {
-              setOutliersErrorMessage(
-                "Não há histórico de prescrição para este segmento."
-              );
-              setLoading(false);
-            } else {
-              generateOutliers(response.payload.data.data);
-            }
+            console.error("queue process failed", statusData.response);
+            notification.error({
+              message:
+                "Ocorreu um erro ao recalcular o histórico de prescrição. Favor verificar os logs.",
+            });
           }
         }
-      );
-    });
+      }
+    }, 5000);
   };
 
-  const generateOutliers = async (data) => {
-    setOutliersStatus("loading");
+  const generateOutliers = async () => {
+    setProcessStage((prev) => [...prev, "Gerando outliers"]);
 
-    const progressStep = 100 / data.length;
-    let progressTotal = 0;
-    let error = false;
-
-    for (let i = 0; i < data.length; i++) {
-      const url = data[i].url;
-
-      const response = await dispatch(
-        generateOutlierFold({
-          url,
-          method: data[i].method,
-          params: data[i].params,
-        })
-      );
-
-      if (response.payload?.data?.status !== "success") {
-        error = true;
-        break;
-      }
-
-      if (i === data.length - 1) {
-        progressTotal = 100;
-      } else {
-        progressTotal += progressStep;
-      }
-
-      setProgressPercentage(progressTotal);
-    }
-
-    if (!error) {
-      setTimeout(() => {
-        setOutliersStatus("succeeded");
-        setLoading(false);
-      }, 1000);
-    } else {
-      setOutliersStatus("error");
-      notification.error({
-        message: "Ocorreu um erro inesperado ao gerar os escores.",
-      });
+    const response = await dispatch(
+      generateSegmentOutliers({ idSegment: segment.id })
+    );
+    if (response.error) {
       setLoading(false);
+      setOutliersStatus("error");
+      setOutliersErrorMessage(response.payload?.message || null);
+      notification.error({
+        message: getErrorMessage(response, t),
+      });
+      return;
     }
+
+    setProcessStage((prev) => [
+      ...prev,
+      "Outliers gerados",
+      "Iniciando o cálculo dos escores",
+    ]);
+    setProgressPercentage(75);
+
+    const requestId = response.payload.data.data.request_id;
+
+    const checkQueueStatus = setInterval(async () => {
+      const statusResponse = await dispatch(getQueueStatus({ requestId }));
+      console.log("Queue status response:", statusResponse);
+
+      if (statusResponse.error) {
+        clearInterval(checkQueueStatus);
+        setOutliersStatus("error");
+        setLoading(false);
+        notification.error({
+          message: getErrorMessage(statusResponse, t),
+        });
+      } else {
+        const statusData = statusResponse.payload.data;
+
+        if (statusData.found) {
+          clearInterval(checkQueueStatus);
+
+          if (!statusData.response.error) {
+            console.log("Queue process succeeded:", statusResponse);
+            setProcessStage((prev) => [
+              ...prev,
+              "Cálculo dos escores finalizado",
+            ]);
+            setProgressPercentage(100);
+            setOutliersStatus("succeeded");
+            setLoading(false);
+            notification.success({
+              message: "Escores gerados com sucesso!",
+            });
+          } else {
+            setLoading(false);
+            setOutliersStatus("error");
+            console.error("queue process failed", statusData.response);
+            notification.error({
+              message:
+                "Ocorreu um erro ao gerar escores. Favor verificar os logs.",
+            });
+          }
+        }
+      }
+    }, 5000);
   };
 
   if (!open) {
@@ -161,10 +212,6 @@ function OutliersForm({ open, setOpen }) {
           </p>
           <p>Observações:</p>
           <ul style={{ marginBottom: "30px" }}>
-            <li>
-              Esta ação recalcula a tabela prescricaoagg quando possui menos de
-              500mil registros.
-            </li>
             <li>Os escores manuais serão removidos</li>
           </ul>
         </>
@@ -181,13 +228,6 @@ function OutliersForm({ open, setOpen }) {
             type="error"
             showIcon
           />
-          {refreshWarning && (
-            <Alert
-              description="Não foi possível recalcular o histórico de prescrição devido ao volume de dados. Gerar os escores sem antes recalcular o histórico pode causar erros. Favor solicitar o cálculo manual antes de gerar os escores."
-              type="warning"
-              showIcon
-            />
-          )}
         </>
       )}
 
@@ -224,12 +264,17 @@ function OutliersForm({ open, setOpen }) {
                 : "Escores gerados com sucesso"}
             </Heading>
             <p style={{ marginTop: "5px" }}>{segment.description}</p>
-            {refreshWarning && (
-              <Alert
-                description="Não foi possível recalcular o histórico de prescrição devido ao volume de dados. Gerar os escores sem antes recalcular o histórico pode causar erros. Favor solicitar o cálculo manual antes de gerar os escores."
-                type="warning"
-                showIcon
-              />
+            {loading && processStage.length > 0 && (
+              <div style={{ marginTop: "10px" }}>
+                {processStage.map((stage, index) => (
+                  <p
+                    key={index}
+                    style={{ margin: "5px 0", fontSize: "14px", color: "#666" }}
+                  >
+                    <CheckSquareFilled /> {stage}
+                  </p>
+                ))}
+              </div>
             )}
           </div>
         </>
