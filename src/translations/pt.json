@@ -913,7 +913,8 @@
   "protocolType": {
     "type_1": "Paciente-Dia",
     "type_2": "Prescrição individual",
-    "type_3": "Todos"
+    "type_3": "Todos",
+    "type_4": "Item prescrito"
   },
 
   "protocolStatus": {

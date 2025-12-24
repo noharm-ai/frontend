@@ -47,7 +47,7 @@ function OutliersForm({ open, setOpen }) {
     setOutliersStatus("loading");
     setProcessStage((prev) => [
       ...prev,
-      "Recalculando histórico de prescrição",
+      "Recalculando histórico de prescrição (até 5min de espera)",
     ]);
     setProgressPercentage(25);
     const refreshResponse = await dispatch(refreshAgg());

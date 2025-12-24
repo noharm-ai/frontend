@@ -21,9 +21,10 @@ export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
 
   const items: CollapseProps["items"] = [];
   const protocolGroups = Object.keys(protocolAlerts)
-    .filter((a) => a !== "summary")
+    .filter((a) => a !== "summary" && a !== "items")
     .sort()
     .reverse();
+  const hasAlerts = protocolGroups.some((g) => protocolAlerts[g].length > 0);
 
   const getSortedProtocols = (group: string) => {
     let protocols: IProtocolResult[] = [];
@@ -65,7 +66,7 @@ export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
           {t("labels.protocolAlerts")}
         </div>
 
-        {protocolAlerts?.summary && protocolAlerts.summary.length > 0 ? (
+        {hasAlerts ? (
           <div className="patient-data-item-value">
             <div className="protocol-group">
               <Collapse

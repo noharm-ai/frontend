@@ -908,7 +908,8 @@
   "protocolType": {
     "type_1": "Patient-Day",
     "type_2": "Individual prescription",
-    "type_3": "All"
+    "type_3": "All",
+    "type_4": "Item prescrito"
   },
 
   "protocolStatus": {

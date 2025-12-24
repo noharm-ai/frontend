@@ -93,6 +93,19 @@ export default function PatientCard({
     });
   };
 
+  const hasProtocolAlerts = () => {
+    if (!prescription?.protocolAlerts) {
+      return false;
+    }
+
+    const protocolAlerts = prescription.protocolAlerts;
+    const protocolGroups = Object.keys(protocolAlerts)
+      .filter((a) => a !== "summary" && a !== "items")
+      .sort()
+      .reverse();
+    return protocolGroups.some((g) => protocolAlerts[g].length > 0);
+  };
+
   const showInterventionModal = () => {
     const data = {
       idPrescriptionDrug: "0",
@@ -425,7 +438,7 @@ export default function PatientCard({
       key: "protocolAlerts",
       label: (
         <Tooltip title={t("labels.protocolAlerts")}>
-          {prescription?.protocolAlerts?.summary?.length > 0 ? (
+          {hasProtocolAlerts() ? (
             <Badge dot color={getProtocolBadgeColor()}>
               <FilePptOutlined style={{ fontSize: "18px" }} />
             </Badge>
