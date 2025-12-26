@@ -143,7 +143,7 @@ export function MainTab() {
         }`}
       >
         <div className="form-label">
-          <label>Descrição do protocolo:</label>
+          <label>Descrição do protocolo (Tooltip):</label>
         </div>
         <div className="form-input">
           <Textarea

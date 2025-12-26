@@ -889,7 +889,8 @@
     "maxTime": "TT",
     "fasting": "JJ",
     "pregnant": "GES",
-    "lactating": "LAC"
+    "lactating": "LAC",
+    "protocol": "PRT"
   },
 
   "substanceTag": {
