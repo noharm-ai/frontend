@@ -268,6 +268,8 @@ export const transformPrescription = (
 
       if (pd.whiteList) return;
 
+      if (pd.suspended) return;
+
       if (groups[dt]) {
         if (groups[dt].indexOf(pd.drug) === -1) {
           groups[dt].push(pd.drug);
