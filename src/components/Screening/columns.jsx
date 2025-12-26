@@ -916,6 +916,10 @@ const drug = (bag, addkey, title) => ({
           <br />
           <strong>frequenciadia:</strong> {record.dayFrequency}
           <br />
+          <strong>intravenosa:</strong> {record.intravenous ? "sim" : "não"}
+          <br />
+          <strong>sonda:</strong> {record.tube ? "sim" : "não"}
+          <br />
           <strong>tipo periodo:</strong> {periodType} (fixo:{" "}
           {record.periodFixed} / dias prescrito:{" "}
           {record.periodFixed > 0

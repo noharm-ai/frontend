@@ -4,7 +4,7 @@ import { Divider } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
-import { Input, Select } from "components/Inputs";
+import { Input, Select, Radio } from "components/Inputs";
 import Button from "components/Button";
 import { IProtocolFormBaseFields } from "./ProtocolForm";
 import { ProtocolVariableFieldEnum } from "src/models/ProtocolVariableFieldEnum";
@@ -47,6 +47,25 @@ export function VariableTab() {
       "config.variables",
       (values.config.variables ?? []).filter((v: any) => v.name !== varName)
     );
+  };
+
+  const yesNoOptions = [
+    { label: "Sim", value: true },
+    { label: "Não", value: false },
+    { label: "Não se aplica", value: null },
+  ];
+
+  const getFieldOptions = (field: string) => {
+    switch (field) {
+      case ProtocolVariableFieldEnum.SEGMENT_TYPE:
+        return [
+          { value: 1, label: "ADULTO" },
+          { value: 2, label: "PEDIÁTRICO" },
+        ];
+
+      default:
+        return [];
+    }
   };
 
   return (
@@ -194,6 +213,39 @@ export function VariableTab() {
                 <div className={`form-row form-row-flex`}>
                   <div className={`form-row`}>
                     <div className="form-label">
+                      <label>Via intravenosa?:</label>
+                    </div>
+                    <div className="form-input">
+                      <Radio.Group
+                        options={yesNoOptions}
+                        optionType="button"
+                        onChange={({ target: { value } }: any) =>
+                          setConfig(idx, "intravenous", value)
+                        }
+                        value={v.intravenous}
+                      />
+                    </div>
+                  </div>
+                  <div className={`form-row`}>
+                    <div className="form-label">
+                      <label>Via sonda?:</label>
+                    </div>
+                    <div className="form-input">
+                      <Radio.Group
+                        options={yesNoOptions}
+                        optionType="button"
+                        onChange={({ target: { value } }: any) =>
+                          setConfig(idx, "feedingTube", value)
+                        }
+                        value={v.feedingTube}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`form-row form-row-flex`}>
+                  <div className={`form-row`}>
+                    <div className="form-label">
                       <label>Dose (operador):</label>
                     </div>
                     <div className="form-input">
@@ -225,6 +277,33 @@ export function VariableTab() {
                     </div>
                     <div className="form-info">
                       Informar a dose na unidade padrão do medicamento
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`form-row form-row-flex`}>
+                  <div className={`form-row`}></div>
+
+                  <div className={`form-row`}>
+                    <div className="form-label">
+                      <label>Unidade de medida padrão:</label>
+                    </div>
+                    <div className="form-input">
+                      <Select
+                        optionFilterProp="children"
+                        showSearch
+                        value={v.defaultMeasureUnit}
+                        onChange={(value) =>
+                          setConfig(idx, "defaultMeasureUnit", value)
+                        }
+                        allowClear
+                      >
+                        <Select.Option value={"mg"}>mg</Select.Option>
+                        <Select.Option value={"ml"}>ml</Select.Option>
+
+                        <Select.Option value={"mcg"}>mcg</Select.Option>
+                        <Select.Option value={"UI"}>UI</Select.Option>
+                      </Select>
                     </div>
                   </div>
                 </div>
@@ -340,6 +419,7 @@ export function VariableTab() {
                         value={v.value}
                         mode="tags"
                         onChange={(value) => setConfig(idx, "value", value)}
+                        options={getFieldOptions(v.field)}
                       />
                     ) : (
                       <Input

@@ -14,6 +14,8 @@ export class ProtocolVariableFieldEnum {
   static CN_STATS = "cn_stats";
   static ID_ICD = "idIcd";
   static DISCHARGE_REASON = "dischargeReason";
+  static SEGMENT_TYPE = "segmentType";
+  static INSURANCE = "insurance";
 
   static getList = () =>
     [
@@ -77,6 +79,14 @@ export class ProtocolVariableFieldEnum {
         value: ProtocolVariableFieldEnum.DISCHARGE_REASON,
         label: "Motivo alta",
       },
+      {
+        value: ProtocolVariableFieldEnum.SEGMENT_TYPE,
+        label: "Tipo de segmento",
+      },
+      {
+        value: ProtocolVariableFieldEnum.INSURANCE,
+        label: "Convênio",
+      },
     ].sort((a, b) => a.label.localeCompare(b.label));
 
   static getOperators = (type: string) => {
@@ -91,7 +101,10 @@ export class ProtocolVariableFieldEnum {
       ProtocolVariableFieldEnum.CN_STATS,
     ];
 
-    const containOperators = [ProtocolVariableFieldEnum.DISCHARGE_REASON];
+    const containOperators = [
+      ProtocolVariableFieldEnum.DISCHARGE_REASON,
+      ProtocolVariableFieldEnum.INSURANCE,
+    ];
 
     if (containOperators.indexOf(type) !== -1) {
       return ["CONTAINS"];
