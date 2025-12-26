@@ -868,6 +868,7 @@
     "fasting": "Medicamento administrado sem jejum",
     "pregnant": "Gestante",
     "lactating": "Lactante",
+    "protocol": "Protocolo",
 
     "high": "Alertas Nível Alto",
     "medium": "Alertas Nível Médio",

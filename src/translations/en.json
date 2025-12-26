@@ -860,6 +860,7 @@
     "fasting": "Fasting not present",
     "pregnant": "Pregnant",
     "lactating": "Lactating",
+    "protocol": "Protocol",
 
     "exams": "Lab results x Drugs",
     "duplicity": "Duplicity",

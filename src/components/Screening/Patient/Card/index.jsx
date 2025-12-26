@@ -334,7 +334,7 @@ export default function PatientCard({
 
     if (prescription?.protocolAlerts) {
       const protocolGroups = Object.keys(prescription.protocolAlerts)
-        .filter((a) => a !== "summary")
+        .filter((a) => a !== "summary" && a !== "items")
         .sort()
         .reverse();
 
