@@ -19,7 +19,7 @@ export class ProtocolTypeEnum {
     },
     {
       value: ProtocolTypeEnum.PRESCRIPTION_ALL,
-      label: "Todos",
+      label: "Paciente-Dia e Prescrição Individual",
     },
   ];
 }

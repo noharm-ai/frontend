@@ -108,43 +108,69 @@ export default function AlertList() {
 }
 
 const ExpandedRow = ({ record }) => {
-  const items = [
-    {
-      label: "Dose",
-      span: 3,
-      children: `${record.dose} ${record.measureUnit?.label || "-"}`,
-    },
-    {
-      label: "Frequência",
-      span: 3,
-      children: `${record.frequency?.label || "-"}`,
-    },
-    {
-      label: "Via",
-      span: 3,
-      children: `${record.route || "-"}`,
-    },
-    {
-      label: "Vigência",
-      span: 3,
-      children: `${
-        record.expire
-          ? formatDateTime(record.expire)
-          : "Manter até segunda ordem"
-      }`,
-    },
-    {
-      label: "Alerta",
-      span: 3,
-      children: (
-        <Alert
-          type="error"
-          message={<RichTextView text={record.text} />}
-          showIcon
-        />
-      ),
-    },
-  ];
+  let items = [];
+  if (record.type === "protocolGeneral") {
+    items = [
+      {
+        label: "Vigência",
+        span: 3,
+        children: `${
+          record.expire
+            ? formatDateTime(record.expire)
+            : "Manter até segunda ordem"
+        }`,
+      },
+      {
+        label: "Alerta",
+        span: 3,
+        children: (
+          <Alert
+            type="error"
+            message={<RichTextView text={record.text} />}
+            showIcon
+          />
+        ),
+      },
+    ];
+  } else {
+    items = [
+      {
+        label: "Dose",
+        span: 3,
+        children: `${record.dose} ${record.measureUnit?.label || "-"}`,
+      },
+      {
+        label: "Frequência",
+        span: 3,
+        children: `${record.frequency?.label || "-"}`,
+      },
+      {
+        label: "Via",
+        span: 3,
+        children: `${record.route || "-"}`,
+      },
+      {
+        label: "Vigência",
+        span: 3,
+        children: `${
+          record.expire
+            ? formatDateTime(record.expire)
+            : "Manter até segunda ordem"
+        }`,
+      },
+      {
+        label: "Alerta",
+        span: 3,
+        children: (
+          <Alert
+            type="error"
+            message={<RichTextView text={record.text} />}
+            showIcon
+          />
+        ),
+      },
+    ];
+  }
 
   return <Descriptions bordered items={items} size="small" />;
 };

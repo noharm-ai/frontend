@@ -860,7 +860,8 @@
     "fasting": "Fasting not present",
     "pregnant": "Pregnant",
     "lactating": "Lactating",
-    "protocol": "Protocol",
+    "protocol": "Protocol Item",
+    "protocolGeneral": "General Protocol",
 
     "exams": "Lab results x Drugs",
     "duplicity": "Duplicity",
@@ -890,7 +891,8 @@
     "fasting": "JJ",
     "pregnant": "GES",
     "lactating": "LAC",
-    "protocol": "PRT"
+    "protocol": "PRO",
+    "protocolGeneral": "PRO"
   },
 
   "substanceTag": {
