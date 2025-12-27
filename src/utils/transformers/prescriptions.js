@@ -289,7 +289,7 @@ export const transformPrescription = (
   }
 
   // add protocol alerts
-  if (item.protocolAlerts && item.protocolAlerts.summary.length) {
+  if (item.protocolAlerts && item.protocolAlerts.summary?.length) {
     Object.keys(item.protocolAlerts)
       .filter((a) => a !== "summary" && a !== "items")
       .forEach((key) => {
