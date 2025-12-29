@@ -120,6 +120,14 @@ const getAuthProvider = (schema) =>
     },
   });
 
+const forgotPassword = (email) => {
+  return instance.get(`${endpoints.user}/forget?email=${email}`, {
+    headers: {
+      "x-api-key": import.meta.env.VITE_APP_API_KEY,
+    },
+  });
+};
+
 const getGetnameToken = () =>
   instance.get(`names/auth-token`, { ...setHeaders() });
 
@@ -478,12 +486,6 @@ const putMemoryUnique = (bearerToken, { type, ...params }) => {
 
 const updatePassword = (bearerToken, { ...params }) => {
   return instance.put(`${endpoints.user}`, params, setHeaders(bearerToken));
-};
-
-const forgotPassword = (email) => {
-  return instance.get(`${endpoints.user}/forget?email=${email}`, {
-    ...setHeaders(),
-  });
 };
 
 const resetPassword = (token, password) => {
