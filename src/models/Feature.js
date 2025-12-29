@@ -137,7 +137,7 @@ export default class Feature {
         id: Feature.PROTOCOL_ALERTS,
         label: "Alertas de protocolo",
         description:
-          "Habilita a funcionalidade de alertas de protocolo. Funcionalide experimental, ainda não está completamente implementada.",
+          "Feature desabilitada. Protocolo está ativo para todos clientes",
       },
       {
         id: Feature.SHOW_PEP_LINK,

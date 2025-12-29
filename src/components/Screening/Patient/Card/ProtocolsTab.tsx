@@ -78,7 +78,7 @@ export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
           </div>
         ) : (
           <div className="patient-data-item-value">
-            Nenhum protocolo encontrado
+            Nenhum protocolo geral encontrado
           </div>
         )}
       </div>

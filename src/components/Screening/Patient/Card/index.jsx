@@ -433,23 +433,21 @@ export default function PatientCard({
     },
   ];
 
-  if (featureService.hasProtocolAlerts()) {
-    tabs.push({
-      key: "protocolAlerts",
-      label: (
-        <Tooltip title={t("labels.protocolAlerts")}>
-          {hasProtocolAlerts() ? (
-            <Badge dot color={getProtocolBadgeColor()}>
-              <FilePptOutlined style={{ fontSize: "18px" }} />
-            </Badge>
-          ) : (
+  tabs.push({
+    key: "protocolAlerts",
+    label: (
+      <Tooltip title={t("labels.protocolAlerts")}>
+        {hasProtocolAlerts() ? (
+          <Badge dot color={getProtocolBadgeColor()}>
             <FilePptOutlined style={{ fontSize: "18px" }} />
-          )}
-        </Tooltip>
-      ),
-      children: <ProtocolsTab protocolAlerts={prescription.protocolAlerts} />,
-    });
-  }
+          </Badge>
+        ) : (
+          <FilePptOutlined style={{ fontSize: "18px" }} />
+        )}
+      </Tooltip>
+    ),
+    children: <ProtocolsTab protocolAlerts={prescription.protocolAlerts} />,
+  });
 
   if (
     (prescription.admissionReports && prescription.admissionReports.length) ||

@@ -69,10 +69,6 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.DISABLE_GETNAME);
   };
 
-  const hasProtocolAlerts = () => {
-    return hasFeature(Feature.PROTOCOL_ALERTS);
-  };
-
   const hasShowPepLink = () => {
     return hasFeature(Feature.SHOW_PEP_LINK);
   };
@@ -102,7 +98,6 @@ const FeaturesService = (features) => {
     hasPrescriptionAlert,
     hasPresmedForm,
     hasDisableGetname,
-    hasProtocolAlerts,
     hasShowPepLink,
     hasAddExams,
     hasPEC,

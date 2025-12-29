@@ -291,28 +291,26 @@ export default function FilterFields({
               </div>
             </div>
 
-            {featureService.hasProtocolAlerts() && (
+            <div className="form-row">
               <div className="form-row">
-                <div className="form-row">
-                  <div className="form-label">
-                    <label>{t("labels.protocolAlerts")}:</label>
-                  </div>
-                  <div className="form-input">
-                    <FieldProtocol
-                      protocolType={[
-                        ProtocolTypeEnum.PRESCRIPTION_AGG,
-                        ProtocolTypeEnum.PRESCRIPTION_INDIVIDUAL,
-                        ProtocolTypeEnum.PRESCRIPTION_ALL,
-                      ]}
-                      value={filter.protocols}
-                      onChange={(value) =>
-                        setScreeningListFilter({ protocols: value })
-                      }
-                    />
-                  </div>
+                <div className="form-label">
+                  <label>{t("labels.protocolAlerts")}:</label>
+                </div>
+                <div className="form-input">
+                  <FieldProtocol
+                    protocolType={[
+                      ProtocolTypeEnum.PRESCRIPTION_AGG,
+                      ProtocolTypeEnum.PRESCRIPTION_INDIVIDUAL,
+                      ProtocolTypeEnum.PRESCRIPTION_ALL,
+                    ]}
+                    value={filter.protocols}
+                    onChange={(value) =>
+                      setScreeningListFilter({ protocols: value })
+                    }
+                  />
                 </div>
               </div>
-            )}
+            </div>
 
             <div className="form-row">
               <div className="form-row">
