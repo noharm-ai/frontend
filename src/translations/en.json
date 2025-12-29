@@ -860,6 +860,8 @@
     "fasting": "Fasting not present",
     "pregnant": "Pregnant",
     "lactating": "Lactating",
+    "protocol": "Protocol Item",
+    "protocolGeneral": "General Protocol",
 
     "exams": "Lab results x Drugs",
     "duplicity": "Duplicity",
@@ -888,7 +890,9 @@
     "maxTime": "TT",
     "fasting": "JJ",
     "pregnant": "GES",
-    "lactating": "LAC"
+    "lactating": "LAC",
+    "protocol": "PRO",
+    "protocolGeneral": "PRO"
   },
 
   "substanceTag": {
@@ -908,7 +912,8 @@
   "protocolType": {
     "type_1": "Patient-Day",
     "type_2": "Individual prescription",
-    "type_3": "All"
+    "type_3": "All",
+    "type_4": "Item prescrito"
   },
 
   "protocolStatus": {

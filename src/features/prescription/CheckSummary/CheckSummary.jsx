@@ -121,6 +121,10 @@ export default function CheckSummary({
   };
 
   const getExtra = (item) => {
+    if (item.type === "protocolGeneral") {
+      return null;
+    }
+
     return (
       <div style={{ paddingLeft: "5px" }}>
         <Tooltip title="Dose">

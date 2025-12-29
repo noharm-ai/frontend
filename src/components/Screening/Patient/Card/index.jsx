@@ -93,6 +93,19 @@ export default function PatientCard({
     });
   };
 
+  const hasProtocolAlerts = () => {
+    if (!prescription?.protocolAlerts) {
+      return false;
+    }
+
+    const protocolAlerts = prescription.protocolAlerts;
+    const protocolGroups = Object.keys(protocolAlerts)
+      .filter((a) => a !== "summary" && a !== "items")
+      .sort()
+      .reverse();
+    return protocolGroups.some((g) => protocolAlerts[g].length > 0);
+  };
+
   const showInterventionModal = () => {
     const data = {
       idPrescriptionDrug: "0",
@@ -321,7 +334,7 @@ export default function PatientCard({
 
     if (prescription?.protocolAlerts) {
       const protocolGroups = Object.keys(prescription.protocolAlerts)
-        .filter((a) => a !== "summary")
+        .filter((a) => a !== "summary" && a !== "items")
         .sort()
         .reverse();
 
@@ -420,23 +433,21 @@ export default function PatientCard({
     },
   ];
 
-  if (featureService.hasProtocolAlerts()) {
-    tabs.push({
-      key: "protocolAlerts",
-      label: (
-        <Tooltip title={t("labels.protocolAlerts")}>
-          {prescription?.protocolAlerts?.summary?.length > 0 ? (
-            <Badge dot color={getProtocolBadgeColor()}>
-              <FilePptOutlined style={{ fontSize: "18px" }} />
-            </Badge>
-          ) : (
+  tabs.push({
+    key: "protocolAlerts",
+    label: (
+      <Tooltip title={t("labels.protocolAlerts")}>
+        {hasProtocolAlerts() ? (
+          <Badge dot color={getProtocolBadgeColor()}>
             <FilePptOutlined style={{ fontSize: "18px" }} />
-          )}
-        </Tooltip>
-      ),
-      children: <ProtocolsTab protocolAlerts={prescription.protocolAlerts} />,
-    });
-  }
+          </Badge>
+        ) : (
+          <FilePptOutlined style={{ fontSize: "18px" }} />
+        )}
+      </Tooltip>
+    ),
+    children: <ProtocolsTab protocolAlerts={prescription.protocolAlerts} />,
+  });
 
   if (
     (prescription.admissionReports && prescription.admissionReports.length) ||

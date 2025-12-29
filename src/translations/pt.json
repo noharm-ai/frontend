@@ -868,6 +868,8 @@
     "fasting": "Medicamento administrado sem jejum",
     "pregnant": "Gestante",
     "lactating": "Lactante",
+    "protocol": "Protocolo Item",
+    "protocolGeneral": "Protocolo Geral",
 
     "high": "Alertas Nível Alto",
     "medium": "Alertas Nível Médio",
@@ -893,7 +895,9 @@
     "maxTime": "TT",
     "fasting": "JJ",
     "pregnant": "GES",
-    "lactating": "LAC"
+    "lactating": "LAC",
+    "protocol": "PRO",
+    "protocolGeneral": "PRO"
   },
 
   "substanceTag": {
@@ -913,7 +917,8 @@
   "protocolType": {
     "type_1": "Paciente-Dia",
     "type_2": "Prescrição individual",
-    "type_3": "Todos"
+    "type_3": "Todos",
+    "type_4": "Item prescrito"
   },
 
   "protocolStatus": {

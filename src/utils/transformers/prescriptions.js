@@ -268,6 +268,8 @@ export const transformPrescription = (
 
       if (pd.whiteList) return;
 
+      if (pd.suspended) return;
+
       if (groups[dt]) {
         if (groups[dt].indexOf(pd.drug) === -1) {
           groups[dt].push(pd.drug);
@@ -284,6 +286,34 @@ export const transformPrescription = (
       removeList = _.difference(groups[minDate], groups[maxDate]);
       addList = _.difference(groups[maxDate], groups[minDate]);
     }
+  }
+
+  // add protocol alerts
+  if (item.protocolAlerts && item.protocolAlerts.summary?.length) {
+    Object.keys(item.protocolAlerts)
+      .filter((a) => a !== "summary" && a !== "items")
+      .forEach((key) => {
+        const protocolAlerts = item.protocolAlerts[key];
+        protocolAlerts.forEach((a, index) => {
+          alerts.push({
+            ...a,
+            idPrescription: idPrescription,
+            idPrescriptionDrug: `protocol-${a.id}-${index}-${key}`,
+            cpoe: null,
+            drugName: a.message,
+            date: null,
+            expire: key,
+            dose: null,
+            doseconv: null,
+            measureUnit: null,
+            frequency: null,
+            route: null,
+            type: "protocolGeneral",
+            rowKey: `protocol-${a.id}-${index}-${key}`,
+            text: a.message + "<br/> " + a.description,
+          });
+        });
+      });
   }
 
   return {

@@ -24,6 +24,16 @@ export function MainTab() {
     },
   ];
 
+  const onProtocolTypeChange = (value: number) => {
+    setFieldValue("protocolType", value);
+
+    if (value === ProtocolTypeEnum.PRESCRIPTION_ITEM) {
+      setFieldValue("config.result.description", "-");
+    } else {
+      setFieldValue("config.result.description", "");
+    }
+  };
+
   return (
     <>
       <div className={`form-row ${errors.name && touched.name ? "error" : ""}`}>
@@ -53,7 +63,7 @@ export function MainTab() {
             optionFilterProp="label"
             showSearch
             value={values.protocolType}
-            onChange={(value) => setFieldValue("protocolType", value)}
+            onChange={(value: any) => onProtocolTypeChange(parseInt(value))}
             allowClear
             options={ProtocolTypeEnum.getList()}
           />
@@ -143,12 +153,21 @@ export function MainTab() {
         }`}
       >
         <div className="form-label">
-          <label>Descrição do protocolo:</label>
+          <label>
+            Descrição do protocolo
+            {values.protocolType === ProtocolTypeEnum.PRESCRIPTION_ITEM
+              ? " (Não utilizado para o tipo de protocolo ITEM PRESCRITO)"
+              : " (Tooltip)"}
+            :
+          </label>
         </div>
         <div className="form-input">
           <Textarea
             onChange={({ target }) =>
               setFieldValue("config.result.description", target.value)
+            }
+            readOnly={
+              values.protocolType === ProtocolTypeEnum.PRESCRIPTION_ITEM
             }
             value={values.config?.result?.description}
           />
