@@ -6,8 +6,6 @@ import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import { createSlug } from "utils/transformers/utils";
 
-import EditPriceConversion from "./EditPriceConversion";
-
 const columns = (t) => {
   return [
     {
@@ -66,25 +64,10 @@ const columns = (t) => {
       },
     },
     {
-      title: "Fator Unidade Custo",
-      dataIndex: "measureUnitPriceFactor",
-      width: 250,
+      title: "Contagem",
+      width: 100,
       render: (entry, record) => {
-        if (
-          record.idMeasureUnitDefault === record.idMeasureUnitPrice &&
-          record.idMeasureUnitPrice != null
-        ) {
-          return 1;
-        }
-
-        return (
-          <EditPriceConversion
-            idDrug={record.idDrug}
-            idSegment={record.idSegment}
-            idMeasureUnitPrice={record.idMeasureUnitPrice}
-            factor={record.measureUnitPriceFactor}
-          />
-        );
+        return record.drugCount;
       },
     },
     {

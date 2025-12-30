@@ -42,6 +42,7 @@ export default function Filter({ limit }) {
     aiAccuracyRange: null,
     substanceList: [],
     tpSubstanceList: "in",
+    minDrugCount: null,
   };
 
   useEffect(() => {
