@@ -767,6 +767,16 @@ api.summary.prompt = (params = {}) => {
 };
 
 /**
+ * Navigation namespace
+ */
+api.navigation = {};
+api.navigation.copyPatient = (params = {}) => {
+  return instance.post(`/navigation/copy`, params, {
+    ...setHeaders(),
+  });
+};
+
+/**
  * Intervention
  */
 api.intervention = {};

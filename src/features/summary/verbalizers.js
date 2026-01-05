@@ -212,3 +212,24 @@ ${summaryBlocks["dischargePlan"]?.text || "Nada consta"}
 ${summaryBlocks["recipe"]?.text || "Nada consta"}
 `;
 };
+
+export const blocksToClinicalNotes = (summaryBlocks) => {
+  return {
+    patient: summaryBlocks["patient"]?.text || "",
+    admission: summaryBlocks["admission"]?.text || "",
+    reason: summaryBlocks["reason"]?.text || "",
+    diagnosis: summaryBlocks["diagnosis"]?.text || "",
+    allergies: summaryBlocks["allergies"]?.text || "",
+    previousDrugs: summaryBlocks["previousDrugs"]?.text || "",
+    clinicalSummary: summaryBlocks["clinicalSummary"]?.text || "",
+    labExams: summaryBlocks["labExams"]?.text || "",
+    textExams: summaryBlocks["textExams"]?.text || "",
+    procedures: summaryBlocks["procedures"]?.text || "",
+    drugsUsed: summaryBlocks["drugsUsed"]?.text || "",
+    drugsSuspended: summaryBlocks["drugsSuspended"]?.text || "",
+    dischargeCondition: summaryBlocks["dischargeCondition"]?.text || "",
+    dischargeStats: summaryBlocks["dischargeStats"]?.text || "",
+    dischargePlan: summaryBlocks["dischargePlan"]?.text || "",
+    recipe: summaryBlocks["recipe"]?.text || "",
+  };
+};
