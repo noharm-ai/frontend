@@ -493,7 +493,9 @@ const resetPassword = (token, password) => {
     `${endpoints.user}/reset`,
     { reset_token: token, newpassword: password },
     {
-      ...setHeaders(),
+      headers: {
+        "x-api-key": import.meta.env.VITE_APP_API_KEY,
+      },
     }
   );
 };
