@@ -173,6 +173,21 @@ export const promptSummaryBlock = createAsyncThunk(
   }
 );
 
+export const navigatePatient = createAsyncThunk(
+  "summary/navigate",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.navigation.copyPatient(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue({
+        ...err.response.data,
+      });
+    }
+  }
+);
+
 const summarySlice = createSlice({
   name: "summary",
   initialState,

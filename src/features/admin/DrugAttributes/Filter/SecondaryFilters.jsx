@@ -100,28 +100,6 @@ export default function SecondaryFilters() {
 
         <Col xs={24} md={12}>
           <Heading as="label" $size="14px">
-            Origens
-          </Heading>
-          <Select
-            style={{ width: "100%" }}
-            value={values.sourceList}
-            onChange={(val) => setFieldValue({ sourceList: val })}
-            showSearch
-            optionFilterProp="children"
-            allowClear
-            mode="multiple"
-          >
-            <Select.Option value="Dietas">Dietas</Select.Option>
-            <Select.Option value="Materiais">Materiais</Select.Option>
-            <Select.Option value="Medicamentos">Medicamentos</Select.Option>
-
-            <Select.Option value="Proced/Exames">Proced/Exames</Select.Option>
-            <Select.Option value="Soluções">Soluções</Select.Option>
-          </Select>
-        </Col>
-
-        <Col xs={24} md={12}>
-          <Heading as="label" $size="14px">
             Filtrar por atributo
           </Heading>
           <Select
@@ -239,27 +217,6 @@ export default function SecondaryFilters() {
             <Select.Option value={"diff"}>Divergente</Select.Option>
             <Select.Option value={"equal"}>Igual</Select.Option>
           </Select>
-        </Col>
-
-        <Col xs={12}>
-          <Heading as="label" $size="14px">
-            Exibir medicamentos com conversões pendentes
-          </Heading>
-          <Select
-            style={{ width: "150px" }}
-            value={values.hasMissingConversion}
-            onChange={(val) => setFieldValue({ hasMissingConversion: val })}
-            showSearch
-            optionFilterProp="children"
-            allowClear
-          >
-            <Select.Option key={0} value={true}>
-              <Tag color="green">Sim</Tag>
-            </Select.Option>
-          </Select>
-          <div style={{ marginTop: "4px", fontSize: "12px" }}>
-            *Atualizar Unidade Padrão antes de buscar as conversões pendentes
-          </div>
         </Col>
 
         <Col xs={12}>

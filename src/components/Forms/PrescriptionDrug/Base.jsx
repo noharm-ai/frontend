@@ -8,6 +8,8 @@ import { Col, Row } from "components/Grid";
 import { Select, InputNumber, Textarea, Input } from "components/Inputs";
 import Heading from "components/Heading";
 import LoadBox from "components/LoadBox";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
 
 import { Box, FieldError, FormHeader } from "../Form.style";
 
@@ -38,7 +40,10 @@ export default function Base({
     if (value.length < 3) return;
     searchDrugs(idSegment, {
       q: value,
-      addSubstance: item.concilia ? 1 : 0,
+      addSubstance:
+        item.concilia || PermissionService().has(Permission.NAV_COPY_PATIENT)
+          ? 1
+          : 0,
     });
   }, 800);
 
@@ -179,11 +184,23 @@ export default function Base({
                     handleMeasureUnitChange(value, option)
                   }
                 >
-                  {uniqBy(units, "id").map(({ id, description }) => (
-                    <Select.Option key={id} value={id}>
-                      {description}
-                    </Select.Option>
-                  ))}
+                  {PermissionService().has(Permission.NAV_COPY_PATIENT) ? (
+                    <>
+                      <Select.Option value={"mg"}>mg</Select.Option>
+                      <Select.Option value={"ml"}>ml</Select.Option>
+
+                      <Select.Option value={"mcg"}>mcg</Select.Option>
+                      <Select.Option value={"UI"}>UI</Select.Option>
+                    </>
+                  ) : (
+                    <>
+                      {uniqBy(units, "id").map(({ id, description }) => (
+                        <Select.Option key={id} value={id}>
+                          {description}
+                        </Select.Option>
+                      ))}
+                    </>
+                  )}
                 </Select>
                 {errors.measureUnit && touched.measureUnit && (
                   <FieldError>{errors.measureUnit}</FieldError>

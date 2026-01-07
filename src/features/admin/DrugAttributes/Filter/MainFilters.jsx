@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import { Select } from "components/Inputs";
+import { Select, InputNumber } from "components/Inputs";
 import Tag from "components/Tag";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
@@ -98,25 +98,16 @@ export default function MainFilters() {
       </Col>
       <Col md={5} lg={3} xxl={2}>
         <Heading as="label" $size="14px">
-          <Tooltip title="Possui fator de conversão para unidade de custo?">
-            Fat. Unid. Custo:
+          <Tooltip title="Quantidade mínima que o medicamento foi prescrito">
+            Contagem mín.:
           </Tooltip>
         </Heading>
-        <Select
+        <InputNumber
+          value={values.minDrugCount}
+          min={0}
           style={{ width: "100%" }}
-          value={values.hasPriceConversion}
-          onChange={(val) => setFieldValue({ hasPriceConversion: val })}
-          showSearch
-          optionFilterProp="children"
-          allowClear
-        >
-          <Select.Option key={0} value={true}>
-            <Tag color="green">Preenchido</Tag>
-          </Select.Option>
-          <Select.Option key={1} value={false}>
-            <Tag color="red">Vazio</Tag>
-          </Select.Option>
-        </Select>
+          onChange={(val) => setFieldValue({ minDrugCount: val })}
+        />
       </Col>
     </>
   );

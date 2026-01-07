@@ -493,7 +493,9 @@ const resetPassword = (token, password) => {
     `${endpoints.user}/reset`,
     { reset_token: token, newpassword: password },
     {
-      ...setHeaders(),
+      headers: {
+        "x-api-key": import.meta.env.VITE_APP_API_KEY,
+      },
     }
   );
 };
@@ -762,6 +764,16 @@ api.summary.getSummary = (admissionNumber, mock) =>
 
 api.summary.prompt = (params = {}) => {
   return instance.post(`/summary/prompt`, params, {
+    ...setHeaders(),
+  });
+};
+
+/**
+ * Navigation namespace
+ */
+api.navigation = {};
+api.navigation.copyPatient = (params = {}) => {
+  return instance.post(`/navigation/copy`, params, {
     ...setHeaders(),
   });
 };

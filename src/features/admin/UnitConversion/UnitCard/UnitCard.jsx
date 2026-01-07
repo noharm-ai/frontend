@@ -28,12 +28,10 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [rejectedSegments, setRejectedSegments] = useState([]);
   const [infered, setInfered] = useState(!isValidConversion(data));
 
   useEffect(() => {
     setError(null);
-    setRejectedSegments([]);
   }, [idSegment]);
 
   const Link = () => (
@@ -83,7 +81,6 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
   const resetForm = (setFieldValue) => {
     setFieldValue("conversionList", data);
     setError(null);
-    setRejectedSegments([]);
     setInfered(false);
   };
 
@@ -119,13 +116,6 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
             message: errorMsg,
           });
         } else {
-          if (
-            response.payload.data.data.rejected &&
-            response.payload.data.data.rejected.length
-          ) {
-            setRejectedSegments(response.payload.data.data.rejected);
-          }
-
           dispatch(updateListFactors(params.conversionList));
           setInfered(false);
           notification.success({
@@ -219,23 +209,6 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
                   <Alert
                     description={error}
                     type="error"
-                    showIcon
-                    style={{ marginTop: "20px" }}
-                  />
-                )}
-
-                {rejectedSegments.length > 0 && (
-                  <Alert
-                    description={
-                      <>
-                        Os seguintes segmentos não foram atualizados pois
-                        possuem unidades padrão diferentes:{" "}
-                        <strong>{rejectedSegments.join(", ")}</strong>.
-                      </>
-                    }
-                    onClose={() => setRejectedSegments([])}
-                    type="warning"
-                    closable
                     showIcon
                     style={{ marginTop: "20px" }}
                   />

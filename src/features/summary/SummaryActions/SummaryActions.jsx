@@ -14,6 +14,9 @@ import MemoryDraft from "features/memory/MemoryDraft/MemoryDraft";
 import SummaryText from "../SummaryText/SummaryText";
 import SummarySave from "../SummarySave/SummarySave";
 import SummaryStatus from "../SummaryStatus/SummaryStatus";
+import { SummaryNavigate } from "../SummaryNavigate/SummaryNavigate";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
 
 export default function SummaryActions({ admissionNumber, loadDraft }) {
   const { t } = useTranslation();
@@ -21,6 +24,7 @@ export default function SummaryActions({ admissionNumber, loadDraft }) {
 
   const [modalText, setModalText] = useState(false);
   const [modalSave, setModalSave] = useState(false);
+  const [modalNavigate, setModalNavigate] = useState(false);
 
   return (
     <>
@@ -37,13 +41,24 @@ export default function SummaryActions({ admissionNumber, loadDraft }) {
       >
         {t("summary.generateText")}
       </Button>
-      <Button
-        type="primary"
-        onClick={() => setModalSave(true)}
-        icon={<CheckOutlined />}
-      >
-        {t("summary.finishSummary")}
-      </Button>
+
+      {PermissionService().has(Permission.NAV_COPY_PATIENT) ? (
+        <Button
+          type="primary"
+          onClick={() => setModalNavigate(true)}
+          icon={<CheckOutlined />}
+        >
+          Navegar paciente
+        </Button>
+      ) : (
+        <Button
+          type="primary"
+          onClick={() => setModalSave(true)}
+          icon={<CheckOutlined />}
+        >
+          {t("summary.finishSummary")}
+        </Button>
+      )}
 
       <SummaryText open={modalText} setOpen={setModalText}></SummaryText>
       <SummarySave
@@ -51,6 +66,12 @@ export default function SummaryActions({ admissionNumber, loadDraft }) {
         setOpen={setModalSave}
         admissionNumber={admissionNumber}
       ></SummarySave>
+
+      <SummaryNavigate
+        open={modalNavigate}
+        setOpen={setModalNavigate}
+        admissionNumber={admissionNumber}
+      ></SummaryNavigate>
 
       <FloatButton.Group
         trigger="click"
