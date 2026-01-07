@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 
-import { Select } from "components/Inputs";
+import { Select, InputNumber } from "components/Inputs";
 import Tag from "components/Tag";
 import Heading from "components/Heading";
+import Tooltip from "components/Tooltip";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 
@@ -53,6 +54,19 @@ export default function MainFilters() {
             <Tag color="red">Mismatch (inferência)</Tag>
           </Select.Option>
         </Select>
+      </Col>
+      <Col md={5} lg={3} xxl={2}>
+        <Heading as="label" $size="14px">
+          <Tooltip title="Quantidade mínima que o medicamento foi prescrito">
+            Contagem mín.:
+          </Tooltip>
+        </Heading>
+        <InputNumber
+          value={values.minDrugCount}
+          min={0}
+          style={{ width: "100%" }}
+          onChange={(val) => setFieldValue({ minDrugCount: val })}
+        />
       </Col>
     </>
   );

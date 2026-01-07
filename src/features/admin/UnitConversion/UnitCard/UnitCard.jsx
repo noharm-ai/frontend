@@ -23,7 +23,13 @@ import { setDrawerSctid } from "../../DrugReferenceDrawer/DrugReferenceDrawerSli
 import { getErrorMessage } from "utils/errorHandler";
 import { matchPrediction, isValidConversion } from "../transformer";
 
-export default function UnitCard({ idDrug, name, idSegment, data }) {
+export default function UnitCard({
+  idDrug,
+  name,
+  idSegment,
+  data,
+  prescribedQuantity,
+}) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
@@ -35,20 +41,29 @@ export default function UnitCard({ idDrug, name, idSegment, data }) {
   }, [idSegment]);
 
   const Link = () => (
-    <Tooltip title="Ver medicamento">
-      <button
-        href="#"
-        tabIndex={-1}
-        onClick={() =>
-          window.open(
-            `/medicamentos/${idSegment}/${idDrug}/${createSlug(name)}`,
-            "_blank"
-          )
-        }
-      >
-        {name}
-      </button>
-    </Tooltip>
+    <div
+      style={{ display: "flex", flexDirection: "column", padding: "0.5rem 0" }}
+    >
+      <div>
+        <Tooltip title="Ver medicamento">
+          <button
+            href="#"
+            tabIndex={-1}
+            onClick={() =>
+              window.open(
+                `/medicamentos/${idSegment}/${idDrug}/${createSlug(name)}`,
+                "_blank"
+              )
+            }
+          >
+            {name}
+          </button>
+        </Tooltip>
+      </div>
+      <div style={{ fontSize: "10px", opacity: 0.5 }}>
+        Contagem: {prescribedQuantity || "--"}
+      </div>
+    </div>
   );
 
   const ExtraAction = ({ sctid }) => (
