@@ -36,24 +36,9 @@ const columns = (t, dispatch, setIntegration, setCloudConfigSchema) => {
       render: (entry, record) => {
         return (
           <div>
-            <Tooltip title="Atualiza indicadores prescrição por atendimento (CPOE)">
-              <span>
-                <OnOffTag value={record.fl1} name="FL1" />
-              </span>
-            </Tooltip>
-            <Tooltip title="Atualiza indicadores prescrição por prescrição">
-              <span>
-                <OnOffTag value={record.fl2} name="FL2" />
-              </span>
-            </Tooltip>
             <Tooltip title="Atualiza a tabela prescricaoagg">
               <span>
                 <OnOffTag value={record.fl3} name="FL3" />
-              </span>
-            </Tooltip>
-            <Tooltip title="Cria prescrições de conciliação para os novos atendimentos">
-              <span>
-                <OnOffTag value={record.fl4} name="FL4" />
               </span>
             </Tooltip>
           </div>

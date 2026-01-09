@@ -351,35 +351,6 @@ function BaseForm() {
         )}
       </div>
 
-      <div className={`form-row ${errors.cpoe && touched.cpoe ? "error" : ""}`}>
-        <div className="form-label">
-          <label>CPOE:</label>
-        </div>
-        <div className="form-input">
-          <Select
-            onChange={(value) => setFieldValue("cpoe", value)}
-            value={values.cpoe}
-            status={errors.cpoe && touched.cpoe ? "error" : null}
-            optionFilterProp="children"
-            showSearch
-          >
-            <Select.Option key={0} value={false}>
-              Não
-            </Select.Option>
-            <Select.Option key={1} value={true}>
-              Sim
-            </Select.Option>
-          </Select>
-        </div>
-        <div className="form-info">
-          Este indicador não é mais utilizado. A definição de CPOE agora é feita
-          no segmento.
-        </div>
-        {errors.cpoe && touched.cpoe && (
-          <div className="form-error">{errors.cpoe}</div>
-        )}
-      </div>
-
       <div
         className={`form-row ${
           errors.tpPrescalc && touched.tpPrescalc ? "error" : ""
