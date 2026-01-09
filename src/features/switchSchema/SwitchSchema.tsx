@@ -71,6 +71,7 @@ export function SwitchSchema() {
                 optionFilterProp="children"
                 showSearch
                 mode="multiple"
+                loading={status === "loading" || switchStatus === "loading"}
               >
                 {Feature.getFeatures(t).map((feature) => (
                   <Select.Option key={feature.id} value={feature.id}>
