@@ -36,6 +36,14 @@ export function PrescriptionSchedule({ schedule }: IPrescriptionSchedule) {
       width: 80,
       render: (_, record) => {
         if (record[key]) {
+          if (record[key] === "0001-01-01T00:00:00") {
+            return (
+              <Tag color="red" style={{ margin: 0 }}>
+                Não administrado
+              </Tag>
+            );
+          }
+
           return (
             <Tooltip title={`Administrado em: ${formatDateTime(record[key])}`}>
               <Tag color="success" style={{ margin: 0 }}>

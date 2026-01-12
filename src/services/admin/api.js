@@ -52,12 +52,6 @@ const copyDrugAttributes = (params = {}) => {
   });
 };
 
-const refreshAggPrescription = (params = {}) => {
-  return instance.post(`${endpoints.integration}/refresh-agg`, params, {
-    ...setHeaders(),
-  });
-};
-
 const refreshPrescription = (params = {}) => {
   return instance.post(
     `${endpoints.integration}/refresh-prescription`,
@@ -445,7 +439,6 @@ const methods = {
   getDrugAttributes,
   updatePriceFactor,
   copyDrugAttributes,
-  refreshAggPrescription,
   refreshPrescription,
   initInterventionReason,
   getSegmentDepartments,

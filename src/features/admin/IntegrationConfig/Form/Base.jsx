@@ -49,69 +49,6 @@ function BaseForm() {
           <p style={{ marginTop: 0 }}>
             Para mais informações sobre estes fluxos, consulte a Wiki.
           </p>
-          <div
-            className={`form-row ${errors.fl1 && touched.fl1 ? "error" : ""}`}
-          >
-            <div className="form-label">
-              <label>FL1:</label>
-            </div>
-            <div className="form-input">
-              <Select
-                onChange={(value) => setFieldValue("fl1", value)}
-                value={values.fl1}
-                status={errors.fl1 && touched.fl1 ? "error" : null}
-                optionFilterProp="children"
-                showSearch
-              >
-                <Select.Option key={0} value={false}>
-                  Desligado
-                </Select.Option>
-                <Select.Option key={1} value={true}>
-                  Ligado
-                </Select.Option>
-              </Select>
-            </div>
-            <div className="form-info">
-              (DESABILITADO - acionado direto pelo prescalc central) Dispara o
-              PresCalc para prescrições agregadas do cpoe que tenham sofrido
-              alterações.
-            </div>
-            {errors.fl1 && touched.fl1 && (
-              <div className="form-error">{errors.fl1}</div>
-            )}
-          </div>
-
-          <div
-            className={`form-row ${errors.fl2 && touched.fl2 ? "error" : ""}`}
-          >
-            <div className="form-label">
-              <label>FL2:</label>
-            </div>
-            <div className="form-input">
-              <Select
-                onChange={(value) => setFieldValue("fl2", value)}
-                value={values.fl2}
-                status={errors.fl2 && touched.fl2 ? "error" : null}
-                optionFilterProp="children"
-                showSearch
-              >
-                <Select.Option key={0} value={false}>
-                  Desligado
-                </Select.Option>
-                <Select.Option key={1} value={true}>
-                  Ligado
-                </Select.Option>
-              </Select>
-            </div>
-            <div className="form-info">
-              (DESABILITADO - acionado direto pelo prescalc central) Dispara o
-              PresCalc para prescrições individuais que tenham sofrido
-              alterações.
-            </div>
-            {errors.fl2 && touched.fl2 && (
-              <div className="form-error">{errors.fl1}</div>
-            )}
-          </div>
 
           <div
             className={`form-row ${errors.fl3 && touched.fl3 ? "error" : ""}`}
@@ -141,40 +78,6 @@ function BaseForm() {
             </div>
             {errors.fl3 && touched.fl3 && (
               <div className="form-error">{errors.fl3}</div>
-            )}
-          </div>
-
-          <div
-            className={`form-row ${errors.fl4 && touched.fl4 ? "error" : ""}`}
-          >
-            <div className="form-label">
-              <label>FL4:</label>
-            </div>
-            <div className="form-input">
-              <Select
-                onChange={(value) => setFieldValue("fl4", value)}
-                value={values.fl4}
-                status={errors.fl4 && touched.fl4 ? "error" : null}
-                optionFilterProp="children"
-                showSearch
-              >
-                <Select.Option key={0} value={false}>
-                  Desligado
-                </Select.Option>
-                <Select.Option key={1} value={true}>
-                  Ligado
-                </Select.Option>
-              </Select>
-            </div>
-            <div className="form-info">
-              Cria prescrições de conciliação para os novos atendimentos que
-              aparecem na tabela pessoa.{" "}
-              <span style={{ color: "red" }}>
-                Este fluxo não deve ser ativado para novas integrações.
-              </span>
-            </div>
-            {errors.fl4 && touched.fl4 && (
-              <div className="form-error">{errors.fl4}</div>
             )}
           </div>
         </>
@@ -445,35 +348,6 @@ function BaseForm() {
         </div>
         {errors.status && touched.status && (
           <div className="form-error">{errors.status}</div>
-        )}
-      </div>
-
-      <div className={`form-row ${errors.cpoe && touched.cpoe ? "error" : ""}`}>
-        <div className="form-label">
-          <label>CPOE:</label>
-        </div>
-        <div className="form-input">
-          <Select
-            onChange={(value) => setFieldValue("cpoe", value)}
-            value={values.cpoe}
-            status={errors.cpoe && touched.cpoe ? "error" : null}
-            optionFilterProp="children"
-            showSearch
-          >
-            <Select.Option key={0} value={false}>
-              Não
-            </Select.Option>
-            <Select.Option key={1} value={true}>
-              Sim
-            </Select.Option>
-          </Select>
-        </div>
-        <div className="form-info">
-          Este indicador não é mais utilizado. A definição de CPOE agora é feita
-          no segmento.
-        </div>
-        {errors.cpoe && touched.cpoe && (
-          <div className="form-error">{errors.cpoe}</div>
         )}
       </div>
 

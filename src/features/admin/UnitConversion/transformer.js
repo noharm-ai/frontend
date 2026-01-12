@@ -1,3 +1,5 @@
+import { intersection } from "utils/lodash";
+
 export const matchPrediction = (item) =>
   item.factor &&
   item.prediction &&
@@ -25,39 +27,53 @@ export const isValidConversion = (list) => {
 export const filterConversionList = (data, filters) => {
   if (!filters) return data;
 
-  return data.filter((i) => {
-    let hasAllConversions = true;
-    let match = true;
+  return data
+    .filter((i) => {
+      let hasAllConversions = true;
+      let match = true;
 
-    i.data.forEach((uc) => {
-      if (!uc.factor) {
-        hasAllConversions = false;
+      i.data.forEach((uc) => {
+        if (!uc.factor) {
+          hasAllConversions = false;
+        }
+
+        if (!matchPrediction(uc)) {
+          match = false;
+        }
+      });
+
+      if (filters.conversionType === "filled") {
+        return hasAllConversions;
       }
 
-      if (!matchPrediction(uc)) {
-        match = false;
+      if (filters.conversionType === "empty") {
+        return !hasAllConversions;
       }
+
+      if (filters.conversionType === "mismatch") {
+        // when no conversions needed, do not consider mismatch
+        if (i.data.length === 1) {
+          return false;
+        }
+
+        return match;
+      }
+
+      return true;
+    })
+    .filter((i) => {
+      if (filters.minDrugCount != null) {
+        return i.prescribedQuantity >= filters.minDrugCount;
+      }
+      return true;
+    })
+    .filter((i) => {
+      if (filters.tags.length) {
+        return intersection(filters.tags, i.tags).length === 0;
+      }
+
+      return true;
     });
-
-    if (filters.conversionType === "filled") {
-      return hasAllConversions;
-    }
-
-    if (filters.conversionType === "empty") {
-      return !hasAllConversions;
-    }
-
-    if (filters.conversionType === "mismatch") {
-      // when no conversions needed, do not consider mismatch
-      if (i.data.length === 1) {
-        return false;
-      }
-
-      return match;
-    }
-
-    return true;
-  });
 };
 
 export const groupConversions = (data) => {
@@ -72,6 +88,8 @@ export const groupConversions = (data) => {
         idDrug: d.idDrug,
         name: d.name,
         idSegment: d.idSegment,
+        prescribedQuantity: d.prescribedQuantity,
+        tags: d.substanceTags,
         data: [d],
       };
     }

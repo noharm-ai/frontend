@@ -165,10 +165,7 @@ function IntegrationConfig() {
               loading={status === "loading"}
               mode="multiple"
             >
-              <Select.Option value={"fl1"}>FL1</Select.Option>
-              <Select.Option value={"fl2"}>FL2</Select.Option>
               <Select.Option value={"fl3"}>FL3</Select.Option>
-              <Select.Option value={"fl4"}>FL4</Select.Option>
             </Select>
           </div>
           <div className="filter-field">
