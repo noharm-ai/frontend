@@ -69,7 +69,6 @@ export const filterConversionList = (data, filters) => {
     })
     .filter((i) => {
       if (filters.tags.length) {
-        console.log("FILTER TAGS", filters.tags, i.tags);
         return intersection(filters.tags, i.tags).length === 0;
       }
 
