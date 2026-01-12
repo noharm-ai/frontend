@@ -23,6 +23,7 @@ const getInterventions = (prescription, pending = false) => {
   items.forEach((g) => {
     flatItems.push(...g.value);
   });
+  flatItems.push({ idPrescription: prescription.data.idPrescription }); // Include prescription itself
 
   return interventions
     .filter((i) => (pending ? i.status === "s" : true))
