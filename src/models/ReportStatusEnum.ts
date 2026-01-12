@@ -3,6 +3,7 @@ export class ReportStatusEnum {
   static PROCESSED = 1;
   static PROCESSING = 2;
   static ERROR = 3;
+  static EMPTY = 4;
 
   static getConfig = (status: number) => {
     const configs = {
@@ -21,6 +22,10 @@ export class ReportStatusEnum {
       [ReportStatusEnum.ERROR]: {
         name: "Erro",
         color: "red",
+      },
+      [ReportStatusEnum.EMPTY]: {
+        name: "Vazio",
+        color: "blue",
       },
     };
 

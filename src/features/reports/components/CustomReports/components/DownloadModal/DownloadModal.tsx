@@ -100,11 +100,6 @@ export function DownloadModal() {
         });
       } else {
         dispatch(getCustomReports());
-        notification.info({
-          message:
-            "O processamento do relatório pode demorar alguns minutos. Aguarde, por favor.",
-          duration: 15,
-        });
       }
 
       setLoading(false);
@@ -204,6 +199,15 @@ export function DownloadModal() {
             <h2 className="modal-title">{data.name}</h2>
           </header>
 
+          {data.status === ReportStatusEnum.PROCESSING && (
+            <Alert
+              showIcon
+              type="info"
+              message="Processando relatório..."
+              description="O processamento pode demorar alguns minutos. Aguarde, por favor."
+            />
+          )}
+
           {data.status === ReportStatusEnum.ERROR && (
             <Alert
               showIcon
@@ -214,6 +218,15 @@ export function DownloadModal() {
                   ? data.error_message
                   : "Tente reprocessar o relatório. Caso o problema persista, entre em contato através da Ajuda."
               }
+            />
+          )}
+
+          {data.status === ReportStatusEnum.EMPTY && (
+            <Alert
+              showIcon
+              type="warning"
+              message="Resultado: Relatório vazio"
+              description="Nenhum registro encontrado. Tente reprocessar o relatório mais tarde."
             />
           )}
 
