@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 import { Select, InputNumber } from "components/Inputs";
 import Tag from "components/Tag";
@@ -7,9 +8,11 @@ import Heading from "components/Heading";
 import Tooltip from "components/Tooltip";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
+import { SubstanceTagEnum } from "src/models/SubstanceTagEnum";
 
 export default function MainFilters() {
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
+  const { t } = useTranslation();
   const segmentList = useSelector((state) => state.segments.list);
 
   return (
@@ -67,6 +70,26 @@ export default function MainFilters() {
           style={{ width: "100%" }}
           onChange={(val) => setFieldValue({ minDrugCount: val })}
         />
+      </Col>
+      <Col md={7} lg={4} xxl={4}>
+        <Heading as="label" $size="14px">
+          Remover por Tag:
+        </Heading>
+        <Select
+          optionFilterProp="children"
+          showSearch
+          value={values.tags}
+          onChange={(value) => setFieldValue({ tags: value })}
+          allowClear
+          mode="multiple"
+          style={{ width: "100%" }}
+        >
+          {SubstanceTagEnum.getSubstanceTags(t).map((subtag) => (
+            <Select.Option key={subtag.id} value={subtag.id}>
+              {subtag.label}
+            </Select.Option>
+          ))}
+        </Select>
       </Col>
     </>
   );

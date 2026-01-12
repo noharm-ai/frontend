@@ -31,6 +31,7 @@ export default function Filter() {
     idSegment: segmentList ? segmentList[0].id : null,
     showPrediction: false,
     minDrugCount: null,
+    tags: [],
   };
 
   useEffect(() => {
