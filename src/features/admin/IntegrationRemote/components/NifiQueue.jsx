@@ -9,11 +9,10 @@ import {
   TableOutlined,
 } from "@ant-design/icons";
 import { Skeleton, List, Avatar, Drawer } from "antd";
-import dayjs from "dayjs";
 
 import Button from "components/Button";
 import { setQueueDrawer, getQueueStatus } from "../IntegrationRemoteSlice";
-import { formatDateTime } from "utils/date";
+import { formatDateTime, getMinutesDiffFromServerDate } from "utils/date";
 import QueueModal from "./QueueModal";
 import { actionTypeToDescription } from "../transformer";
 
@@ -54,8 +53,8 @@ export default function NifiQueue() {
 
       const idQueueList = [];
       queue.forEach((q) => {
-        const queueDate = dayjs(q.createdAt);
-        const diff = dayjs().diff(queueDate, "minutes");
+        // Use timezone-aware date comparison for server dates (always UTC-3)
+        const diff = getMinutesDiffFromServerDate(q.createdAt);
         const MAX_DIFF = 10;
 
         if (!q.responseCode && diff < MAX_DIFF) {
