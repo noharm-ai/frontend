@@ -4,7 +4,6 @@ export default class Role {
   static PRESCRIPTION_ANALIST = "PRESCRIPTION_ANALYST";
   static USER_MANAGER = "USER_MANAGER";
   static CONFIG_MANAGER = "CONFIG_MANAGER";
-  static DISCHARGE_MANAGER = "DISCHARGE_MANAGER";
   static DISPENSING_MANAGER = "DISPENSING_MANAGER";
   static VIEWER = "VIEWER";
   static REGULATOR = "REGULATOR";
@@ -29,14 +28,6 @@ export default class Role {
         description: t(`rolesDescription.${Role.USER_MANAGER}`),
       },
     ];
-
-    if (!features || features.indexOf(Feature.DISCHARGE_SUMMARY) !== -1) {
-      roles.push({
-        id: Role.DISCHARGE_MANAGER,
-        label: t(`roles.${Role.DISCHARGE_MANAGER}`),
-        description: t(`rolesDescription.${Role.DISCHARGE_MANAGER}`),
-      });
-    }
 
     if (!features || features.indexOf(Feature.PRESMED_FORM) !== -1) {
       roles.push({
