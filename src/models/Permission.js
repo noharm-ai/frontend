@@ -65,5 +65,6 @@ export default class Permission {
   static READ_PROTOCOLS = "READ_PROTOCOLS";
   static WRITE_PROTOCOLS = "WRITE_PROTOCOLS";
 
+  static READ_NAV = "READ_NAV";
   static NAV_COPY_PATIENT = "NAV_COPY_PATIENT";
 }
