@@ -736,7 +736,8 @@ export default function FilterFields({
               </div>
             </div>
 
-            {featureService.hasPEC() && (
+            {(featureService.hasPEC() ||
+              PermissionService().has(Permission.READ_NAV)) && (
               <>
                 <div className="form-row">
                   <div className="form-row">
