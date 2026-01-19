@@ -155,20 +155,6 @@ function IntegrationConfig() {
           </div>
 
           <div className="filter-field">
-            <label>Fluxos</label>
-            <Select
-              onChange={(val) => setFilter({ ...filter, fl: val })}
-              placeholder="Fluxos Ativos"
-              allowClear
-              style={{ minWidth: "200px" }}
-              optionFilterProp="children"
-              loading={status === "loading"}
-              mode="multiple"
-            >
-              <Select.Option value={"fl3"}>FL3</Select.Option>
-            </Select>
-          </div>
-          <div className="filter-field">
             <label>Integração de retorno</label>
             <Select
               onChange={(val) =>

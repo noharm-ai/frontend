@@ -40,51 +40,6 @@ function BaseForm() {
     }
   };
 
-  const getExtraOptions = () => [
-    {
-      key: "1",
-      label: "Fluxos de Atualização Central",
-      children: (
-        <>
-          <p style={{ marginTop: 0 }}>
-            Para mais informações sobre estes fluxos, consulte a Wiki.
-          </p>
-
-          <div
-            className={`form-row ${errors.fl3 && touched.fl3 ? "error" : ""}`}
-          >
-            <div className="form-label">
-              <label>FL3:</label>
-            </div>
-            <div className="form-input">
-              <Select
-                onChange={(value) => setFieldValue("fl3", value)}
-                value={values.fl3}
-                status={errors.fl3 && touched.fl3 ? "error" : null}
-                optionFilterProp="children"
-                showSearch
-              >
-                <Select.Option key={0} value={false}>
-                  Desligado
-                </Select.Option>
-                <Select.Option key={1} value={true}>
-                  Ligado
-                </Select.Option>
-              </Select>
-            </div>
-            <div className="form-info">
-              Atualiza a tabela prescricaoagg com as prescrições do último ano
-              presentes na NoHarm.
-            </div>
-            {errors.fl3 && touched.fl3 && (
-              <div className="form-error">{errors.fl3}</div>
-            )}
-          </div>
-        </>
-      ),
-    },
-  ];
-
   const getGetnameOptions = () => [
     {
       key: "1",
@@ -449,12 +404,6 @@ function BaseForm() {
           <div className="form-error">{errors.nhCare}</div>
         )}
       </div>
-
-      <Collapse
-        accordion
-        style={{ marginTop: "1rem" }}
-        items={getExtraOptions()}
-      ></Collapse>
 
       <Collapse
         accordion

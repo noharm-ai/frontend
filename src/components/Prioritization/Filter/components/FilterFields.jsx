@@ -27,6 +27,8 @@ import { TagTypeEnum } from "models/TagTypeEnum";
 import { ProtocolTypeEnum } from "models/ProtocolTypeEnum";
 import FieldNameAutocomplete from "features/fields/FieldNameAutocomplete/FieldNameAutocomplete";
 import { FieldIcd } from "src/features/fields/FieldIcd/FieldIcd";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
 
 import { Form } from "styles/Form.style";
 
@@ -734,7 +736,8 @@ export default function FilterFields({
               </div>
             </div>
 
-            {featureService.hasPEC() && (
+            {(featureService.hasPEC() ||
+              PermissionService().has(Permission.READ_NAV)) && (
               <>
                 <div className="form-row">
                   <div className="form-row">
@@ -853,6 +856,25 @@ export default function FilterFields({
                 </div>
               </div>
             </div>
+
+            {PermissionService().has(Permission.READ_NAV) && (
+              <div className="form-row">
+                <div className="form-row">
+                  <div className="form-label">
+                    <label>Cidade:</label>
+                  </div>
+                  <div className="form-input">
+                    <Input
+                      className={filter.city ? "warning" : null}
+                      value={filter.city}
+                      onChange={({ target }) =>
+                        setScreeningListFilter({ city: target.value })
+                      }
+                    ></Input>
+                  </div>
+                </div>
+              </div>
+            )}
           </Form>
         </Card>
       </Col>

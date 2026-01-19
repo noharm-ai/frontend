@@ -17,10 +17,6 @@ const columns = (t, dispatch, setIntegration, setCloudConfigSchema) => {
     dispatch(setCloudConfigSchema(record.schema));
   };
 
-  const OnOffTag = ({ value, name }) => {
-    return <Tag color={value ? "success" : "error"}>{name}</Tag>;
-  };
-
   return [
     {
       title: "Schema",
@@ -29,22 +25,7 @@ const columns = (t, dispatch, setIntegration, setCloudConfigSchema) => {
         return record.schema;
       },
     },
-    {
-      title: "Fluxos de Atualização",
-      dataIndex: "fl1",
-      align: "center",
-      render: (entry, record) => {
-        return (
-          <div>
-            <Tooltip title="Atualiza a tabela prescricaoagg">
-              <span>
-                <OnOffTag value={record.fl3} name="FL3" />
-              </span>
-            </Tooltip>
-          </div>
-        );
-      },
-    },
+
     {
       title: "PRESCALC",
       align: "center",

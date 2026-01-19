@@ -16,6 +16,7 @@ import {
   ReconciliationOutlined,
   TagsOutlined,
   FilePptOutlined,
+  FileDoneOutlined,
 } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -39,6 +40,8 @@ import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
 } from "src/utils/tracker";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
 
 import PatientName from "containers/PatientName";
 
@@ -209,6 +212,16 @@ export default function PatientCard({
     }
   };
 
+  const openDischargeSummary = () => {
+    trackPrescriptionAction(TrackedPrescriptionAction.OPEN_DISCHARGE_SUMMARY);
+
+    notification.info({
+      message: "Abrindo sumário de alta.",
+    });
+
+    window.open(`/sumario-alta/${prescription.admissionNumber}`);
+  };
+
   const openPep = (idPrescription) => {
     trackPrescriptionAction(TrackedPrescriptionAction.OPEN_PEP);
 
@@ -270,6 +283,10 @@ export default function PatientCard({
         openPep(prescription.idPrescription);
         break;
 
+      case "dischargeSummary":
+        openDischargeSummary();
+        break;
+
       default:
         console.error("Invalid key", key);
     }
@@ -320,6 +337,15 @@ export default function PatientCard({
         label: t("patientCard.pepLink"),
         id: "gtm-bt-gotopep",
         icon: <ExportOutlined />,
+      });
+    }
+
+    if (PermissionService().has(Permission.READ_DISCHARGE_SUMMARY)) {
+      items.push({
+        key: "dischargeSummary",
+        label: t("patientCard.openDischargeSummary"),
+        id: "gtm-bt-dischargesummary",
+        icon: <FileDoneOutlined />,
       });
     }
 

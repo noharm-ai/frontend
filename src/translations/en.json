@@ -217,7 +217,8 @@
     "openConciliation": "Open conciliation",
     "dischargeDateForecast": "Discharge forecast",
     "responsiblePhysician": "Responsible physician",
-    "pepLink": "Open PEP"
+    "pepLink": "Open PEP",
+    "openDischargeSummary": "Open Discharge Summary"
   },
   "screeningBody": {
     "tabDrugs": "Drugs",

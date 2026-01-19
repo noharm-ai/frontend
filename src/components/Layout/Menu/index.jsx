@@ -17,7 +17,6 @@ import {
   ExperimentOutlined,
   HourglassOutlined,
   SaveOutlined,
-  FileDoneOutlined,
   ApiOutlined,
   CodeOutlined,
   ControlOutlined,
@@ -92,15 +91,6 @@ export default function Menu({ segments }) {
   };
 
   const items = [
-    {
-      key: "/sumario-alta",
-      link: "/sumario-alta",
-      label: t("menu.summary"),
-      icon: <FileDoneOutlined />,
-      id: "gtm-lnk-summary",
-      feature: Feature.DISCHARGE_SUMMARY,
-      permission: [Permission.READ_DISCHARGE_SUMMARY],
-    },
     {
       key: "/regulacao",
       link: "/regulacao",
