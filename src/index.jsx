@@ -22,8 +22,6 @@ import * as serviceWorker from "./serviceWorker";
 import trans_pt from "./translations/pt.json";
 import trans_en from "./translations/en.json";
 
-import "@ant-design/v5-patch-for-react-19";
-
 i18next.init({
   interpolation: { escapeValue: false },
   lng: localStorage.getItem("language") || "pt", // language to use
