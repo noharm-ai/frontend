@@ -33,7 +33,7 @@ export function GlobalExam() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Curadoria de Exames</h1>
+          <h1 className="page-header-title">Exames Referência</h1>
           <div className="page-header-legend">
             Configuração de exames padrão do sistema
           </div>

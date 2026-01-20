@@ -354,7 +354,7 @@ const routes = [
   },
   {
     exact: true,
-    path: "/admin/curadoria-exames",
+    path: "/admin/exames-referencia",
     element: <WithAuth component={AdminGlobalExam} />,
   },
   {
