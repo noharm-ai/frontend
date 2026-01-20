@@ -187,17 +187,20 @@ export default function EconomyDayCalculator({
         </div>
         <div className="form-input input-price">
           <Space direction="horizontal">
-            <InputNumber
-              disabled={outcomeData.header?.readonly}
-              min={0}
-              precision={INPUT_PRECISION}
-              addonBefore="R$"
-              onChange={(value) => onChangeParam("price", value)}
-              value={values[source].price}
-              className={fieldStatus("price")}
-              status={fieldStatus("price")}
-              stringMode
-            />
+            <Space.Compact block>
+              <Space.Addon>R$</Space.Addon>
+              <InputNumber
+                disabled={outcomeData.header?.readonly}
+                min={0}
+                precision={INPUT_PRECISION}
+                onChange={(value) => onChangeParam("price", value)}
+                value={values[source].price}
+                className={fieldStatus("price")}
+                status={fieldStatus("price")}
+                stringMode
+              />
+            </Space.Compact>
+
             <PopoverPrice outcomeData={outcomeData} source={source}>
               <Button
                 icon={<InfoCircleOutlined />}
@@ -214,17 +217,20 @@ export default function EconomyDayCalculator({
         </div>
         <div className="form-input input-price-kit">
           <Space direction="horizontal">
-            <InputNumber
-              disabled={outcomeData.header?.readonly}
-              min={0}
-              addonBefore="R$"
-              onChange={(value) => onChangeParam("priceKit", value)}
-              value={values[source].priceKit}
-              className={fieldStatus("priceKit")}
-              status={fieldStatus("priceKit")}
-              precision={INPUT_PRECISION}
-              stringMode
-            />
+            <Space.Compact block>
+              <Space.Addon>R$</Space.Addon>
+              <InputNumber
+                disabled={outcomeData.header?.readonly}
+                min={0}
+                onChange={(value) => onChangeParam("priceKit", value)}
+                value={values[source].priceKit}
+                className={fieldStatus("priceKit")}
+                status={fieldStatus("priceKit")}
+                precision={INPUT_PRECISION}
+                stringMode
+              />
+            </Space.Compact>
+
             <PopoverKit outcomeData={outcomeData} source={source}>
               <Button icon={<InfoCircleOutlined />} />
             </PopoverKit>
