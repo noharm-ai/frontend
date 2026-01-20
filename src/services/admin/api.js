@@ -436,6 +436,19 @@ api.frequency.updateFrequency = (params = {}) => {
 api.frequency.inferFrequencies = (params = {}) =>
   instance.post(`${endpoints.frequency}/infer`, params, setHeaders());
 
+/**
+ * GLOBAL EXAMS
+ */
+api.globalExam = {};
+api.globalExam.getGlobalExams = (params = {}) =>
+  instance.post(`/admin/global-exam/list`, params, setHeaders());
+
+api.globalExam.upsertGlobalExam = (params = {}) => {
+  return instance.post(`/admin/global-exam/upsert`, params, {
+    ...setHeaders(),
+  });
+};
+
 const methods = {
   ...api,
   getIntervReasonList,

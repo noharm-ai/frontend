@@ -49,6 +49,7 @@ import AdminMeasureUnit from "pages/Admin/MeasureUnit";
 import AdminProtocol from "pages/Admin/Protocol";
 import AdminReport from "pages/Admin/Report";
 import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
+import AdminGlobalExam from "pages/Admin/GlobalExam";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
@@ -350,6 +351,11 @@ const routes = [
     exact: true,
     path: "/admin/memoria-global/nzero",
     element: <WithAuth component={AdminGlobalMemoryNZero} />,
+  },
+  {
+    exact: true,
+    path: "/admin/curadoria-exames",
+    element: <WithAuth component={AdminGlobalExam} />,
   },
   {
     exact: true,
