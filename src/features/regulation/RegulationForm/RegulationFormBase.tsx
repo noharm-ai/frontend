@@ -150,7 +150,6 @@ export function RegulationFormBase() {
             onChange={(value: Dayjs) => {
               setFieldValue("solicitationDate", value);
             }}
-            popupClassName="noArrow"
             showTime
           />
         </div>

@@ -193,7 +193,6 @@ export default function SecondaryFilters() {
                   ]}
                   onChange={(value) => onChangeDates(value, "schedule")}
                   style={{ width: "100%" }}
-                  popupClassName="noArrow"
                   allowClear
                   language={i18n.language}
                 />
@@ -217,7 +216,6 @@ export default function SecondaryFilters() {
                   ]}
                   onChange={(value) => onChangeDates(value, "transportation")}
                   style={{ width: "100%" }}
-                  popupClassName="noArrow"
                   allowClear
                   language={i18n.language}
                 />

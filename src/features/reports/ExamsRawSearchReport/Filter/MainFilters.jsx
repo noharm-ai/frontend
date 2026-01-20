@@ -30,7 +30,6 @@ export default function MainFilters() {
           format="DD/MM/YYYY"
           value={values.dateRange}
           onChange={(val) => setFieldValue({ dateRange: val })}
-          popupClassName="noArrow"
           allowClear
           style={{ width: "100%" }}
         />

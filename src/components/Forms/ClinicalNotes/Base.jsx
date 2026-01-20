@@ -188,7 +188,6 @@ export default function Base({ prescription, account, signature, action }) {
               onChange={(value) =>
                 setFieldValue("date", value.format("YYYY-MM-DDTHH:mm:00"))
               }
-              popupClassName="noArrow"
               allowClear={false}
               disabledDate={disabledDate}
               showTime

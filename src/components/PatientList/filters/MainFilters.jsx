@@ -117,7 +117,6 @@ export default function MainFilters({ segments }) {
               : null,
           ]}
           onChange={onChangeNextAppointment}
-          popupClassName="noArrow"
           allowClear={false}
           language={i18n.language}
         />
