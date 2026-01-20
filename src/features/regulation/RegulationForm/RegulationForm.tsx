@@ -150,7 +150,7 @@ export function RegulationForm() {
           open={open}
           width={700}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={() => handleSubmit()}
           okText={t("actions.save")}

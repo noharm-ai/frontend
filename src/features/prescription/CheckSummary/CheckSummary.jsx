@@ -272,7 +272,7 @@ export default function CheckSummary({
           open={prescription}
           width={highRiskAlerts.length > 0 ? 900 : 350}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={() => onCancel()}
           onOk={handleSubmit}
           okText="Confirmar"

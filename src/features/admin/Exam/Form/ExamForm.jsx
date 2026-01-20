@@ -62,7 +62,7 @@ export default function ExamForm() {
           open={data}
           width={700}
           centered
-          destroyOnClose
+          destroyOnHidden
           onOk={handleSubmit}
           onCancel={() => dispatch(selectExam(null))}
           confirmLoading={status === "loading"}

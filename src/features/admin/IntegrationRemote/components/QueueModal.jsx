@@ -280,7 +280,7 @@ export default function QueueModal({ data, onCancel }) {
     <DefaultModal
       width={"60vw"}
       centered
-      destroyOnClose
+      destroyOnHidden
       open={data}
       onCancel={onCancel}
       footer={null}

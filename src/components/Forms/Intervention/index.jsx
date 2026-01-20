@@ -386,7 +386,7 @@ export default function Intervention({
           open={!isEmpty(item)}
           width={700}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           footer={
             <InterventionFooter

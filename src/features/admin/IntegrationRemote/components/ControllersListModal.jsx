@@ -22,7 +22,7 @@ export default function ControllersListModal() {
     <DefaultModal
       width={"500px"}
       centered
-      destroyOnClose
+      destroyOnHidden
       open={open}
       onCancel={() => dispatch(setControllersModal(null))}
       footer={null}

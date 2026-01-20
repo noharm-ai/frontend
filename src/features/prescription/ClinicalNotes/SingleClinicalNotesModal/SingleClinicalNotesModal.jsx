@@ -32,7 +32,7 @@ export default function SingleClinicalNotesModal() {
 
   return (
     <DefaultModal
-      destroyOnClose
+      destroyOnHidden
       open={idClinicalNote}
       onCancel={() => dispatch(selectSingleClinicalNotes(null))}
       width="800px"

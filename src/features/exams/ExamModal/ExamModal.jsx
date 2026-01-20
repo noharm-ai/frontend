@@ -146,7 +146,7 @@ export default function ExamsModal({ idSegment }) {
 
   return (
     <DefaultModal
-      destroyOnClose
+      destroyOnHidden
       open={admissionNumber}
       onCancel={() => dispatch(setExamsModalAdmissionNumber(null))}
       width="90%"

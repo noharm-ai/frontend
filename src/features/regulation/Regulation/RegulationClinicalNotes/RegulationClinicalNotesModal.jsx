@@ -26,7 +26,7 @@ export default function RegulationClinicalNotesModal() {
   return (
     <DefaultModal
       title={t("tableHeader.clinicalNotes")}
-      destroyOnClose
+      destroyOnHidden
       open={open}
       onCancel={() => dispatch(setClinicalNotesModal(false))}
       width="90%"

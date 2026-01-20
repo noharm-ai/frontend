@@ -62,7 +62,7 @@ export function TagForm({ ...props }) {
           open={formData}
           width={350}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={t("actions.save")}

@@ -96,7 +96,7 @@ export function CloudSchemaForm() {
       open={!!schema}
       width={700}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={onCancel}
       footer={null}
       maskClosable={false}

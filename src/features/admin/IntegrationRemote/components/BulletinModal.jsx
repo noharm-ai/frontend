@@ -46,7 +46,7 @@ export default function BulletinModal() {
     <DefaultModal
       width={"80vw"}
       centered
-      destroyOnClose
+      destroyOnHidden
       open={open}
       onCancel={() => dispatch(setBulletinModal(null))}
       footer={null}

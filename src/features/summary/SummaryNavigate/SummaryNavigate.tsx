@@ -105,7 +105,7 @@ export function SummaryNavigate({
         <DefaultModal
           width={"500px"}
           centered
-          destroyOnClose
+          destroyOnHidden
           onOk={() => handleSubmit()}
           onCancel={() => setOpen(false)}
           open={open}

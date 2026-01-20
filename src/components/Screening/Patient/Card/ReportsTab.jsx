@@ -98,7 +98,7 @@ export default function ReportsTab({ prescription }) {
       </div>
       <DefaultModal
         title={currentReport?.title}
-        destroyOnClose
+        destroyOnHidden
         open={currentReport != null}
         onCancel={() => setCurrentReport(null)}
         width={currentReport?.type ? "min(1440px, 100%)" : "90%"}

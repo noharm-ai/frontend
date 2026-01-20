@@ -104,7 +104,7 @@ export function ProtocolForm() {
           open={formData}
           width={600}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={t("actions.save")}

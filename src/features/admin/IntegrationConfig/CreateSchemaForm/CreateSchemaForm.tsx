@@ -90,7 +90,7 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
           open={open}
           width={600}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={t("actions.save")}

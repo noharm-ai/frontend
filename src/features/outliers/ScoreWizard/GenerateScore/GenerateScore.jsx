@@ -111,7 +111,7 @@ function GenerateScore({ open, setOpen, setCurrentStep }) {
       open={open}
       width={500}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={onCancel}
       onOk={generateOutliers}
       okText={"Gerar Escores"}

@@ -67,7 +67,7 @@ export default function DiagnosticModal({ data, open, setOpen }) {
     <DefaultModal
       width={"60vw"}
       centered
-      destroyOnClose
+      destroyOnHidden
       open={open}
       onCancel={() => setOpen(false)}
       footer={null}

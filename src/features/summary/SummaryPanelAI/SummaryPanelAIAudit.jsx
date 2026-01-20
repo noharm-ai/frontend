@@ -11,7 +11,7 @@ function SummaryPanelAIAudit({ audit, open, setOpen }) {
     <DefaultModal
       width={700}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={() => setOpen(false)}
       open={open}
       footer={null}

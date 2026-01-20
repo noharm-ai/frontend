@@ -277,7 +277,7 @@ export default function References({
 
       <DefaultModal
         centered
-        destroyOnClose
+        destroyOnHidden
         onOk={onSaveObs}
         open={obsModalVisible}
         onCancel={onCancelObs}

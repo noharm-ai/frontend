@@ -109,7 +109,7 @@ export function ExamForm() {
           open={!!admissionNumber}
           width={500}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={() => handleSubmit()}
           okText={t("actions.save")}

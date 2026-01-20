@@ -94,7 +94,7 @@ export function RegulationAttachmentForm({
           open={open}
           width={500}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={() => handleSubmit()}
           okText={t("actions.save")}

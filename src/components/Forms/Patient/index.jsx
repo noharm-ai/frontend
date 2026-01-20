@@ -85,7 +85,7 @@ export default function Patient({
       {({ handleSubmit }) => (
         <DefaultModal
           centered
-          destroyOnClose
+          destroyOnHidden
           {...props}
           onOk={handleSubmit}
           confirmLoading={isSaving}
