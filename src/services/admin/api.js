@@ -125,6 +125,12 @@ api.exams.getExamTypes = (params) =>
     ...setHeaders(),
   });
 
+api.exams.getGlobalExams = (params) =>
+  instance.get(`${endpoints.exam}/list-global`, {
+    params,
+    ...setHeaders(),
+  });
+
 api.exams.addMostFrequentExams = (params) =>
   instance.post(`${endpoints.exam}/most-frequent/add`, params, {
     ...setHeaders(),

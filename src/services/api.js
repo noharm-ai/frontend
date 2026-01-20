@@ -145,11 +145,6 @@ const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
     setHeaders(bearerToken)
   );
 
-const getExamRefs = (bearerToken) =>
-  instance.get(`${endpoints.segments}/exams/refs`, {
-    ...setHeaders(bearerToken),
-  });
-
 /**
  * Exams.
  *
@@ -959,7 +954,6 @@ const methods = {
   savePrescriptionDrug,
   suspendPrescriptionDrug,
   getDrugResources,
-  getExamRefs,
   searchPrescriptions,
   getPrescriptionMissingDrugs,
   copyPrescriptionMissingDrugs,
