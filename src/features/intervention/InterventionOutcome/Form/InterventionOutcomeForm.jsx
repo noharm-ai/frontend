@@ -686,16 +686,18 @@ export default function InterventionOutcomeForm() {
                 <div className="form-input">
                   <Space direction="horizontal">
                     {values.economyDayAmountManual ? (
-                      <InputNumber
-                        disabled={outcomeData.header?.readonly}
-                        precision={0}
-                        addonAfter=" Dias"
-                        onChange={(value) =>
-                          setFieldValue("economyDayAmount", value)
-                        }
-                        value={values.economyDayAmount}
-                        min={1}
-                      />
+                      <Space.Compact block>
+                        <InputNumber
+                          disabled={outcomeData.header?.readonly}
+                          precision={0}
+                          onChange={(value) =>
+                            setFieldValue("economyDayAmount", value)
+                          }
+                          value={values.economyDayAmount}
+                          min={1}
+                        />
+                        <Space.Addon>{" Dias"}</Space.Addon>
+                      </Space.Compact>
                     ) : (
                       <Input
                         disabled={true}
