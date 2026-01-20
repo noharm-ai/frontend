@@ -81,7 +81,6 @@ export default function SecondaryFilters() {
       <Col md={12}>
         <Card
           title="Solicitação"
-          bordered
           size="small"
           type="inner"
           style={{ background: "#fafafa" }}
@@ -170,7 +169,6 @@ export default function SecondaryFilters() {
       <Col md={12}>
         <Card
           title="Agendamentos"
-          bordered
           size="small"
           type="inner"
           style={{ background: "#fafafa" }}
@@ -227,7 +225,6 @@ export default function SecondaryFilters() {
       <Col md={12}>
         <Card
           title="Paciente"
-          bordered
           size="small"
           type="inner"
           style={{ background: "#fafafa" }}

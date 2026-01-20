@@ -185,7 +185,6 @@ export default function FilterFields({
       <Col md={12}>
         <Card
           title="Prescrição"
-          bordered
           size="small"
           type="inner"
           style={{ background: "#fafafa" }}
@@ -458,7 +457,6 @@ export default function FilterFields({
       <Col md={12}>
         <Card
           title="Medicamentos"
-          bordered
           size="small"
           type="inner"
           style={{ background: "#fafafa" }}
@@ -634,7 +632,6 @@ export default function FilterFields({
       <Col md={12}>
         <Card
           title="Paciente"
-          bordered
           size="small"
           type="inner"
           style={{ background: "#fafafa" }}

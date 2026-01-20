@@ -75,7 +75,7 @@ export default function RegulationData({ print = false }) {
   });
 
   return (
-    <Card title="Solicitação" bordered={false}>
+    <Card title="Solicitação" variant="borderless">
       <Descriptions
         bordered
         items={items}
