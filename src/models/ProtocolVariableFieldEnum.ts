@@ -4,6 +4,7 @@ export class ProtocolVariableFieldEnum {
   static DRUG_CLASS = "class";
   static ROUTE = "route";
   static EXAM = "exam";
+  static EXAM_REF = "exam_ref";
   static AGE = "age";
   static WEIGHT = "weight";
   static ID_DEPARTMENT = "idDepartment";
@@ -38,6 +39,10 @@ export class ProtocolVariableFieldEnum {
       {
         value: ProtocolVariableFieldEnum.EXAM,
         label: "Exame",
+      },
+      {
+        value: ProtocolVariableFieldEnum.EXAM_REF,
+        label: "Exame padrão NoHarm",
       },
       {
         value: ProtocolVariableFieldEnum.AGE,
@@ -96,6 +101,7 @@ export class ProtocolVariableFieldEnum {
       ProtocolVariableFieldEnum.AGE,
       ProtocolVariableFieldEnum.WEIGHT,
       ProtocolVariableFieldEnum.EXAM,
+      ProtocolVariableFieldEnum.EXAM_REF,
       ProtocolVariableFieldEnum.ADMISSION_TIME,
       ProtocolVariableFieldEnum.ST_CONCILIA,
       ProtocolVariableFieldEnum.CN_STATS,
