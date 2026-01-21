@@ -81,7 +81,9 @@ export default function DrugAlerts({ alerts, idSubstance }) {
     return (
       <div style={{ display: "flex", alignItems: "center" }}>
         <>
-          <Tag className={`tag ${type}`}>{group.length}</Tag>
+          <Tag className={`tag ${type}`} style={{ marginRight: "8px" }}>
+            {group.length}
+          </Tag>
           {t(`drugAlertType.${type}`)}
         </>
       </div>
