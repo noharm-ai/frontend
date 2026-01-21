@@ -80,6 +80,12 @@ export const Form = styled.form`
     }
 
     .success {
+      background: #f6ffed !important;
+
+      &:hover {
+        background: #f6ffed;
+      }
+
       input {
         background: #f6ffed;
       }
@@ -96,6 +102,12 @@ export const Form = styled.form`
     }
 
     .warning {
+      background: #fffbe6 !important;
+
+      &:hover {
+        background: #fffbe6;
+      }
+
       input {
         background: #fffbe6;
       }

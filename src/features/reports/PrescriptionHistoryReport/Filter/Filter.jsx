@@ -123,18 +123,27 @@ export default function Filter({ printRef, idPrescription }) {
           trigger="click"
           type="primary"
           icon={<MenuOutlined />}
-          tooltip="Menu"
+          tooltip={{
+            title: "Menu",
+            placement: "left",
+          }}
           style={{ bottom: 25 }}
         >
           <FloatButton
             icon={<DownloadOutlined />}
             onClick={exportList}
-            tooltip="Exportar CSV"
+            tooltip={{
+              title: "Exportar CSV",
+              placement: "left",
+            }}
           />
           <FloatButton
             icon={<PrinterOutlined />}
             onClick={handlePrint}
-            tooltip="Imprimir"
+            tooltip={{
+              title: "Imprimir",
+              placement: "left",
+            }}
           />
         </FloatButtonGroup>
       )}

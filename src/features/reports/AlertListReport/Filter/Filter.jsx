@@ -75,13 +75,16 @@ export default function Filter({ printRef }) {
           trigger="click"
           type="primary"
           icon={<MenuOutlined />}
-          tooltip="Menu"
+          tooltip={{
+            title: "Menu",
+            placement: "left",
+          }}
           style={{ bottom: 25 }}
         >
           <FloatButton
             icon={<PrinterOutlined />}
             onClick={handlePrint}
-            tooltip="Imprimir"
+            tooltip={{ title: "Imprimir", placement: "left" }}
           />
         </FloatButtonGroup>
       )}

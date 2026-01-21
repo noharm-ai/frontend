@@ -298,7 +298,11 @@ export default function Screening({
   const TabTitle = ({ title, count, ...props }) => (
     <>
       <span style={{ marginRight: "10px" }}>{title}</span>
-      {count >= 0 ? <Tag {...props}>{count}</Tag> : null}
+      {count >= 0 ? (
+        <Tag variant="outlined" {...props}>
+          {count}
+        </Tag>
+      ) : null}
     </>
   );
 
