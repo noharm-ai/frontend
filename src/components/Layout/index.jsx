@@ -12,7 +12,7 @@ import {
   WifiOutlined,
 } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
-import { Alert, Dropdown, List } from "antd";
+import { Alert, Dropdown, List, Space } from "antd";
 import { useTranslation } from "react-i18next";
 
 import appInfo from "utils/appInfo";
@@ -210,14 +210,19 @@ const Me = ({
                 <div className="name">{setTitle({ user })}</div>
                 {PermissionService().has(Permission.MULTI_SCHEMA) && (
                   <div className="schema">
-                    <Tag color="#a991d6">{localStorage.getItem("schema")}</Tag>
-                    {PermissionService().has(Permission.MAINTAINER) && (
-                      <IntegrationStatusTag
-                        type={"filled"}
-                        style={{ cursor: "pointer" }}
-                        status={integrationStatus}
-                      />
-                    )}
+                    <Space>
+                      <Tag color="#a991d6" variant="solid">
+                        {localStorage.getItem("schema")}
+                      </Tag>
+                      {PermissionService().has(Permission.MAINTAINER) && (
+                        <IntegrationStatusTag
+                          type={"filled"}
+                          variant="solid"
+                          style={{ cursor: "pointer" }}
+                          status={integrationStatus}
+                        />
+                      )}
+                    </Space>
                   </div>
                 )}
               </UserName>

@@ -144,16 +144,16 @@ export const ResultActions = styled.div`
         }
 
         .prioritization-select {
-          .ant-select-selector {
+          &.ant-select {
             background-color: #70bdc4;
           }
 
-          .ant-select-selection-item {
+          .ant-select-content-value {
             color: #fff;
             font-weight: 500;
           }
 
-          .ant-select-arrow {
+          .ant-select-suffix {
             color: #fff;
           }
         }

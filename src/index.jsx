@@ -67,6 +67,16 @@ root.render(
         <PersistGate loading={null} persistor={persistor}>
           <ConfigProvider
             locale={i18next.language === "en" ? localeEnUs : localePtBr}
+            modal={{
+              mask: {
+                blur: false,
+              },
+            }}
+            drawer={{
+              mask: {
+                blur: false,
+              },
+            }}
           >
             <StyleProvider hashPriority={hashPriority}>
               <App>

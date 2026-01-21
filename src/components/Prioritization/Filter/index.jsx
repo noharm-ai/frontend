@@ -324,6 +324,9 @@ export default function Filter({
                 mode="multiple"
                 allowClear
                 maxTagCount="responsive"
+                showSearch={{
+                  optionFilterProp: ["children"],
+                }}
               >
                 {prioritizationType === "prescription" ? (
                   <>
