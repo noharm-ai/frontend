@@ -44,21 +44,19 @@ export default function FilterFields({
   searchDrugs,
   open,
 }) {
-  //eslint-disable-next-line
   const dispatch = useDispatch();
   //eslint disabled because of incorrect error msg
-  //eslint-disable-next-line
+
   const { t } = useTranslation();
-  //eslint-disable-next-line
+
   const departments = useSelector(
     (state) => state.lists.getSegmentDepartments.list
   );
-  //eslint-disable-next-line
+
   const departmentsStatus = useSelector(
     (state) => state.lists.getSegmentDepartments.status
   );
 
-  //eslint-disable-next-line
   useEffect(() => {
     if (open && isEmpty(departments)) {
       dispatch(getSegmentDepartments());
@@ -470,15 +468,18 @@ export default function FilterFields({
                 <Select
                   id="drugs-filter"
                   mode="multiple"
-                  optionFilterProp="children"
                   className={filter.idDrug?.length ? "warning" : null}
                   placeholder={t("screeningList.labelDrugPlaceholder")}
                   onChange={onDrugChange}
                   value={filter.idDrug}
                   notFoundContent={drugs.isFetching ? <LoadBox /> : null}
-                  filterOption={false}
                   allowClear
-                  onSearch={searchDrugsAutocomplete}
+                  showSearch={{
+                    onSearch: (value) => searchDrugsAutocomplete(value),
+                    filterOption: false,
+                    optionFilterProp: ["children"],
+                    autoClearSearchValue: false,
+                  }}
                 >
                   {drugs.list.map(({ idDrug, name }) => (
                     <Select.Option key={idDrug} value={idDrug}>

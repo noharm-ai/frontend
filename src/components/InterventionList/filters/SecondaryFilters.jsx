@@ -64,17 +64,20 @@ export default function SecondaryFilters({ segments }) {
         >
           <Select
             mode="multiple"
-            optionFilterProp="children"
             style={{ width: "100%", maxWidth: "500px" }}
             placeholder="Buscar medicamentos (digite para pesquisar)"
             notFoundContent={drugsListStatus === "loading" ? <LoadBox /> : null}
-            filterOption={false}
             loading={drugsListStatus === "loading"}
-            onSearch={debounceSearch}
             onChange={(value) => setFieldValue({ idDrug: value })}
             disabled={!values.idSegment}
             value={values.idDrug}
             allowClear
+            showSearch={{
+              onSearch: (value) => debounceSearch(value),
+              filterOption: false,
+              optionFilterProp: ["children"],
+              autoClearSearchValue: false,
+            }}
           >
             {drugsList.map(({ idDrug, name }) => (
               <Select.Option key={idDrug} value={idDrug}>
