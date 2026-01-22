@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { useFormikContext } from "formik";
 import { DownOutlined } from "@ant-design/icons";
 
@@ -14,7 +14,7 @@ interface SavedQuery {
 }
 
 export function MainTab() {
-  const [isPreview, setIsPreview] = useState(false);
+  const previewIntentRef = useRef(false);
   const originalValues = useRef<{ name: string; sql: string }>({
     name: "",
     sql: "",
@@ -37,29 +37,29 @@ export function MainTab() {
   ];
 
   const handlePreviewQuery = (query: SavedQuery) => {
-    if (!isPreview) {
+    if (!previewIntentRef.current) {
       originalValues.current = {
         name: values.name || "",
         sql: values.sql || "",
       };
-      setIsPreview(true);
+      previewIntentRef.current = true;
     }
     setFieldValue("name", query.title);
     setFieldValue("sql", query.sql_report);
   };
 
   const handleResetPreview = () => {
-    if (isPreview) {
+    if (previewIntentRef.current) {
       setFieldValue("name", originalValues.current.name);
       setFieldValue("sql", originalValues.current.sql);
-      setIsPreview(false);
+      previewIntentRef.current = false;
     }
   };
 
   const handleSelectQuery = (query: SavedQuery) => {
     setFieldValue("name", query.title);
     setFieldValue("sql", query.sql_report);
-    setIsPreview(false);
+    previewIntentRef.current = false;
   };
 
   const dropdownItems: MenuProps["items"] = savedQueries.map(
@@ -118,7 +118,6 @@ export function MainTab() {
             onChange={({ target }) => setFieldValue("name", target.value)}
             value={values.name}
             maxLength={150}
-            style={{ backgroundColor: isPreview ? "#f0f8ff" : "white" }}
           />
         </div>
         {errors.name && <div className="form-error">{errors.name}</div>}
@@ -155,7 +154,6 @@ export function MainTab() {
             onChange={({ target }) => setFieldValue("sql", target.value)}
             value={values.sql}
             rows={10}
-            style={{ backgroundColor: isPreview ? "#f0f8ff" : "white" }}
           />
         </div>
         {errors.sql && <div className="form-error">{errors.sql}</div>}
