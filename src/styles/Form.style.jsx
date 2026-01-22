@@ -96,6 +96,12 @@ export const Form = styled.form`
     }
 
     .error {
+      background: #fff2f0 !important;
+
+      &:hover {
+        background: #fff2f0;
+      }
+
       input {
         background: #fff2f0;
       }
