@@ -44,6 +44,7 @@ export function RamFields({ setFieldValue, layout, values }) {
       okText: "Fechar",
       okButtonProps: { type: "default" },
       wrapClassName: "default-modal",
+      mask: { blur: false },
       footer: null,
     });
 

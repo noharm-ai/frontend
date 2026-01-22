@@ -96,6 +96,7 @@ export default function SupportForm() {
                 </p>
               </>
             ),
+            mask: { blur: false },
             width: 500,
             okText: "Fechar",
             okButtonProps: { type: "default" },

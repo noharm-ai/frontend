@@ -288,6 +288,7 @@ export default function ScreeningList({
             okButtonProps: { type: "default" },
             wrapClassName: "default-modal",
             maskClosable: true,
+            mask: { blur: false },
           });
 
           modal.update({

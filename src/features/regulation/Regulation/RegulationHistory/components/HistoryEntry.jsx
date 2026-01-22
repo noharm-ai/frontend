@@ -41,6 +41,7 @@ export default function HistoryEntry({ movement, first = false }) {
       okText: "Fechar",
       okButtonProps: { type: "default" },
       wrapClassName: "default-modal",
+      mask: { blur: false },
     });
   };
 

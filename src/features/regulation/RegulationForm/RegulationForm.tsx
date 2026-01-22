@@ -127,6 +127,7 @@ export function RegulationForm() {
           okText: "Fechar",
           okButtonProps: { type: "default" },
           wrapClassName: "default-modal",
+          mask: { blur: false },
         });
       }
     });

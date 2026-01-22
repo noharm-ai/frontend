@@ -331,6 +331,7 @@ export default function Layout({
           </>
         ),
         width: 500,
+        mask: { blur: false },
         okText: "Fechar",
         okButtonProps: { type: "default" },
         wrapClassName: "default-modal",

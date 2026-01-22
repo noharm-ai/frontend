@@ -58,6 +58,7 @@ export default function DrugAlerts({ alerts, idSubstance }) {
               okText: "Fechar",
               okButtonProps: { type: "default" },
               wrapClassName: "default-modal",
+              mask: { blur: false },
             });
           }
         }

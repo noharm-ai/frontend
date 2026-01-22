@@ -27,6 +27,7 @@ function BaseForm() {
       okText: "Fechar",
       okButtonProps: { type: "default" },
       wrapClassName: "default-modal",
+      mask: { blur: false },
     });
 
     setGeneratingToken(false);
