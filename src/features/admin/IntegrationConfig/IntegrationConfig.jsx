@@ -24,6 +24,7 @@ import {
   setCloudConfigSchema,
 } from "./IntegrationConfigSlice";
 import IntegrationConfigForm from "./Form/IntegrationConfigForm";
+import { TpPepEnum } from "src/models/TpPepEnum";
 
 import { PageHeader } from "styles/PageHeader.style";
 import { PageCard } from "styles/Utils.style";
@@ -43,8 +44,8 @@ const filterList = (ds, filter) => {
       show = show && i.nhCare === filter.nhCare;
     }
 
-    if (filter.cpoe !== null && filter.cpoe !== undefined) {
-      show = show && i.cpoe === filter.cpoe;
+    if (filter.tp_pep !== null && filter.tp_pep !== undefined) {
+      show = show && i.tp_pep === filter.tp_pep;
     }
 
     if (
@@ -168,6 +169,19 @@ function IntegrationConfig() {
               <Select.Option value={true}>Sim</Select.Option>
               <Select.Option value={false}>Não</Select.Option>
             </Select>
+          </div>
+          <div className="filter-field">
+            <label>PEP</label>
+            <Select
+              onChange={(val) => setFilter({ ...filter, tp_pep: val })}
+              allowClear
+              style={{ minWidth: "200px" }}
+              loading={status === "loading"}
+              options={TpPepEnum.getList()}
+              showSearch={{
+                optionFilterProp: ["label"],
+              }}
+            />
           </div>
         </ExtraFilters>
         <div style={{ paddingRight: "5px" }}>
