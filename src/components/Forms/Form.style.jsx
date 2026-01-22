@@ -74,8 +74,8 @@ export const Box = styled.div`
   }
 
   &.highlight {
-    input,
-    .ant-select .ant-select-selector,
+    .ant-select,
+    .ant-input-number,
     textarea {
       background: #7ebe9a40;
     }
