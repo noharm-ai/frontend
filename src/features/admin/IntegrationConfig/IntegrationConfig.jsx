@@ -134,25 +134,17 @@ function IntegrationConfig() {
       >
         <ExtraFilters>
           <div className="filter-field">
-            <label>Situação</label>
+            <label>PEP</label>
             <Select
-              onChange={(val) => setFilter({ ...filter, status: val })}
-              placeholder="Filtrar por situação"
+              onChange={(val) => setFilter({ ...filter, tp_pep: val })}
               allowClear
               style={{ minWidth: "200px" }}
-              optionFilterProp="children"
               loading={status === "loading"}
-            >
-              <Select.Option value={0}>
-                <IntegrationStatusTag status={0} />
-              </Select.Option>
-              <Select.Option value={1}>
-                <IntegrationStatusTag status={1} />
-              </Select.Option>
-              <Select.Option value={2}>
-                <IntegrationStatusTag status={2} />
-              </Select.Option>
-            </Select>
+              options={TpPepEnum.getList()}
+              showSearch={{
+                optionFilterProp: ["label"],
+              }}
+            />
           </div>
 
           <div className="filter-field">
@@ -170,18 +162,26 @@ function IntegrationConfig() {
               <Select.Option value={false}>Não</Select.Option>
             </Select>
           </div>
+
           <div className="filter-field">
-            <label>PEP</label>
+            <label>Situação</label>
             <Select
-              onChange={(val) => setFilter({ ...filter, tp_pep: val })}
+              onChange={(val) => setFilter({ ...filter, status: val })}
               allowClear
               style={{ minWidth: "200px" }}
+              optionFilterProp="children"
               loading={status === "loading"}
-              options={TpPepEnum.getList()}
-              showSearch={{
-                optionFilterProp: ["label"],
-              }}
-            />
+            >
+              <Select.Option value={0}>
+                <IntegrationStatusTag status={0} />
+              </Select.Option>
+              <Select.Option value={1}>
+                <IntegrationStatusTag status={1} />
+              </Select.Option>
+              <Select.Option value={2}>
+                <IntegrationStatusTag status={2} />
+              </Select.Option>
+            </Select>
           </div>
         </ExtraFilters>
         <div style={{ paddingRight: "5px" }}>
