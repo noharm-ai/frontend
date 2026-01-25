@@ -40,7 +40,7 @@ function Summary({ mock }) {
       fetchSummary({
         admissionNumber: params.admissionNumber,
         mock,
-      })
+      }),
     ).then((response) => {
       if (response.error) {
         notification.error({
@@ -96,7 +96,7 @@ function Summary({ mock }) {
         setBlock({
           id: k,
           data: value[k].text,
-        })
+        }),
       );
     });
   };
