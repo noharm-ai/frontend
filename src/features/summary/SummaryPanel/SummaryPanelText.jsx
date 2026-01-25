@@ -25,7 +25,7 @@ function SummaryPanelText({ text, position, admissionNumber }) {
       setBlock({
         id: position,
         data: result,
-      })
+      }),
     );
   }, [result, position, dispatch]);
 
@@ -35,15 +35,14 @@ function SummaryPanelText({ text, position, admissionNumber }) {
         id: position,
         data: text,
         original: text,
-      })
+      }),
     );
   }, [text, position, dispatch]);
 
-  useEffect(() => {
-    if (edit) {
-      setEditText(result);
-    }
-  }, [edit, result]);
+  const startEditing = () => {
+    setEditText(result);
+    setEdit(true);
+  };
 
   return (
     <SummaryPanel className={edit ? "edit" : ""} data-value={editText}>
@@ -58,7 +57,7 @@ function SummaryPanelText({ text, position, admissionNumber }) {
                 setBlock({
                   id: position,
                   data: target.value,
-                })
+                }),
               );
             }}
           />
@@ -88,7 +87,7 @@ function SummaryPanelText({ text, position, admissionNumber }) {
             <Button
               shape="circle"
               icon={<EditOutlined />}
-              onClick={() => setEdit(true)}
+              onClick={() => startEditing()}
               size="large"
             />
           </Tooltip>
