@@ -264,9 +264,15 @@ function BaseForm() {
   const renderOdooTab = () => (
     <>
       {values.crm_data ? (
-        <>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "20px",
+          }}
+        >
           {Object.entries(values.crm_data).map(([key, value]) => (
-            <div key={key} className="form-row">
+            <div key={key} className="form-row" style={{ marginTop: "15px" }}>
               <div className="form-label">
                 <label>{t(`crm_data.${key}`)}:</label>
               </div>
@@ -283,7 +289,7 @@ function BaseForm() {
               </div>
             </div>
           ))}
-        </>
+        </div>
       ) : (
         <div className="form-row">
           <div className="form-info">Nenhum dado CRM disponível.</div>
