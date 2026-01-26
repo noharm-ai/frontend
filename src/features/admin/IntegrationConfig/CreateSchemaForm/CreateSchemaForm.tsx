@@ -19,11 +19,7 @@ import { Form } from "styles/Form.style";
 
 export interface ICreateSchemaForm {
   schema_name: string;
-  is_cpoe: boolean;
-  is_pec: boolean;
   create_user: boolean;
-  create_sqs: boolean;
-  create_logstream: boolean;
   db_user: string;
   tp_pep: string;
   template_id: string;
@@ -50,12 +46,8 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
   });
   const initialValues = {
     schema_name: "",
-    is_cpoe: false,
-    is_pec: false,
     db_user: "",
     create_user: true,
-    create_logstream: true,
-    create_sqs: true,
     tp_pep: "",
     template_id: "",
   };
