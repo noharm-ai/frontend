@@ -3,6 +3,7 @@ import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 import { Result, Descriptions } from "antd";
+import { SyncOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
@@ -36,8 +37,11 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
   const status = useAppSelector(
     (state) => state.admin.integrationConfig.createSchema.status,
   );
+  const templateStatus = useAppSelector(
+    (state) => state.admin.integrationConfig.templateList.status,
+  );
   const [resultData, setResultData] = useState<any>(null);
-  const isSaving = status === "loading";
+  const isSaving = status === "loading" || templateStatus === "loading";
 
   const validationSchema = Yup.object().shape({
     schema_name: Yup.string()
@@ -94,7 +98,7 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
       {({ handleSubmit }: { handleSubmit: () => void }) => (
         <DefaultModal
           open={open}
-          width={600}
+          width={800}
           centered
           destroyOnHidden
           onCancel={onCancel}
@@ -169,7 +173,22 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
                 }
               ></Result>
             ) : (
-              <Base />
+              <>
+                <Base />
+                {templateStatus === "loading" && (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <p>Carregando templates...</p>
+                    <SyncOutlined spin />
+                  </div>
+                )}
+              </>
             )}
           </Form>
         </DefaultModal>

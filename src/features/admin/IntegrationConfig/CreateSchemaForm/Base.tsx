@@ -1,13 +1,16 @@
 import { useFormikContext } from "formik";
 import { useMemo } from "react";
+import { CheckOutlined } from "@ant-design/icons";
 
 import { useAppSelector } from "src/store";
 import { Input, Select } from "components/Inputs";
 import Switch from "src/components/Switch";
 import Table from "src/components/Table";
+import Button from "components/Button";
 import { ICreateSchemaForm } from "./CreateSchemaForm";
 import { TpPepEnum } from "src/models/TpPepEnum";
 import { formatDate, formatDateTime } from "src/utils/date";
+import Tooltip from "src/components/Tooltip";
 
 export function Base() {
   const { values, errors, touched, setFieldValue } =
@@ -29,6 +32,7 @@ export function Base() {
       .map((integration: any) => ({
         label: integration.schema,
         schema: integration.schema,
+        crm_data: integration.crm_data,
         created_at: integration.createdAt,
         backup_date:
           templateList &&
@@ -122,6 +126,39 @@ export function Base() {
             <Table
               columns={[
                 {
+                  title: "",
+                  key: "action",
+                  render: (_: string, record: any) => (
+                    <Tooltip title="Selecionar este template">
+                      <Button
+                        icon={
+                          values.template_id === record.schema ? (
+                            <CheckOutlined style={{ fontSize: "16px" }} />
+                          ) : (
+                            <></>
+                          )
+                        }
+                        shape="circle"
+                        onClick={() => {
+                          setFieldValue("template_id", record.schema);
+                        }}
+                        style={{
+                          background:
+                            values.template_id === record.schema
+                              ? "#1890ff"
+                              : "transparent",
+                          color:
+                            values.template_id === record.schema
+                              ? "#fff"
+                              : "#1890ff",
+
+                          cursor: "pointer",
+                        }}
+                      />
+                    </Tooltip>
+                  ),
+                },
+                {
                   title: "Schema",
                   dataIndex: "schema",
                   key: "schema",
@@ -158,40 +195,28 @@ export function Base() {
                   },
                 },
                 {
-                  title: "Ação",
-                  key: "action",
-                  render: (_: string, record: any) => (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFieldValue("template_id", record.schema);
-                      }}
-                      style={{
-                        background:
-                          values.template_id === record.schema
-                            ? "#1890ff"
-                            : "transparent",
-                        color:
-                          values.template_id === record.schema
-                            ? "#fff"
-                            : "#1890ff",
-                        border: "1px solid #1890ff",
-                        padding: "4px 8px",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {values.template_id === record.schema
-                        ? "Selecionado"
-                        : "Copiar"}
-                    </button>
-                  ),
+                  title: "Acesso",
+                  align: "center",
+
+                  render: (_: string, record: any) => {
+                    return record.crm_data?.x_studio_acesso;
+                  },
+                },
+                {
+                  title: "Responsável",
+                  align: "left",
+                  render: (_: string, record: any) => {
+                    return record.crm_data?.x_studio_responsavel_integracao;
+                  },
                 },
               ]}
               dataSource={filteredIntegrations}
               rowKey={(record: any) => record.schema}
               pagination={{ pageSize: 5 }}
               size="small"
+              rowClassName={(record: any) =>
+                values.template_id === record.schema ? "highlight" : ""
+              }
             />
           </div>
         </div>
