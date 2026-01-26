@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
-import { Result, Descriptions } from "antd";
-import { SyncOutlined } from "@ant-design/icons";
+import { Result, Descriptions, Modal } from "antd";
+import { SyncOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
@@ -77,6 +77,36 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
     });
   };
 
+  const handleSaveWithConfirmation = (
+    values: ICreateSchemaForm,
+    formikHelpers: FormikHelpers<ICreateSchemaForm>,
+  ) => {
+    Modal.confirm({
+      title: "Confirmar criação do schema",
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <>
+          Tem certeza que deseja criar o schema{" "}
+          <strong>{values.schema_name}</strong>?
+          {values.template_id ? (
+            <p>
+              O schema será criado com base no template{" "}
+              <strong>{values.template_id}</strong>.
+            </p>
+          ) : (
+            <p>O schema será criado sem template inicial.</p>
+          )}
+          <p></p>
+        </>
+      ),
+      okText: "Sim, criar schema",
+      cancelText: "Cancelar",
+      onOk() {
+        onSave(values, formikHelpers);
+      },
+    });
+  };
+
   const onCancel = () => {
     setOpen(false);
     setResultData(null);
@@ -91,7 +121,7 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
   return (
     <Formik
       enableReinitialize
-      onSubmit={onSave}
+      onSubmit={handleSaveWithConfirmation}
       initialValues={initialValues}
       validationSchema={validationSchema}
     >
