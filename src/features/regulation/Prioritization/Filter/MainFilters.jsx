@@ -56,7 +56,6 @@ export default function MainFilters() {
           ]}
           onChange={onChangeDates}
           style={{ width: "100%" }}
-          popupClassName="noArrow"
           allowClear={false}
           language={i18n.language}
         />

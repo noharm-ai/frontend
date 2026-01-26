@@ -105,15 +105,23 @@ const TabContent = ({ tab, prescription, featureService }) => {
           <div className="attributes-item col-4">
             <div className="attributes-item-label">Situação</div>
             <div className="attributes-item-value">
-              {prescription.status === "s" && <Tag color="green">Checada</Tag>}
+              {prescription.status === "s" && (
+                <Tag variant="outlined" color="green">
+                  Checada
+                </Tag>
+              )}
               {prescription.status !== "s" && (
                 <>
                   {prescription.isBeingEvaluated ? (
                     <Tooltip title={"Pendente/Em Análise"}>
-                      <Tag color="purple">Em análise</Tag>
+                      <Tag variant="outlined" color="purple">
+                        Em análise
+                      </Tag>
                     </Tooltip>
                   ) : (
-                    <Tag color="orange">Pendente</Tag>
+                    <Tag variant="outlined" color="orange">
+                      Pendente
+                    </Tag>
                   )}
                 </>
               )}
@@ -134,16 +142,22 @@ const TabContent = ({ tab, prescription, featureService }) => {
               <div className="attributes-item-label">Revisão</div>
               <div className="attributes-item-value">
                 {prescription.reviewType === 1 && (
-                  <Tag color="green">Revisado</Tag>
+                  <Tag variant="outlined" color="green">
+                    Revisado
+                  </Tag>
                 )}
                 {prescription.reviewType !== 1 && (
                   <>
                     {prescription.isBeingEvaluated ? (
                       <Tooltip title={"Pendente/Em Análise"}>
-                        <Tag color="purple">Em análise</Tag>
+                        <Tag variant="outlined" color="purple">
+                          Em análise
+                        </Tag>
                       </Tooltip>
                     ) : (
-                      <Tag color="orange">Pendente</Tag>
+                      <Tag variant="outlined" color="orange">
+                        Pendente
+                      </Tag>
                     )}
                   </>
                 )}

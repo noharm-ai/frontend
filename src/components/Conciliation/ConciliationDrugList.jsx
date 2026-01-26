@@ -118,6 +118,7 @@ export default function ConciliationDrugList({
         title: "Intervenções",
         content: null,
         icon: null,
+        mask: { blur: false },
         width: 500,
         okText: "Fechar",
         okButtonProps: { type: "default" },

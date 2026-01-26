@@ -151,7 +151,7 @@ function MostFrequentForm({ open, setOpen }) {
           open={open}
           width={"60vw"}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText="Adicionar Exames"

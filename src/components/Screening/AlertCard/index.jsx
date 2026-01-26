@@ -137,7 +137,7 @@ export default function AlertCard({ stats, prescription }) {
         </AlertContainer>
       </div>
       <DefaultModal
-        destroyOnClose
+        destroyOnHidden
         open={modal}
         onCancel={() => setModal(false)}
         width={"min(1440px, 100%)"}

@@ -97,13 +97,19 @@ export default function Filter() {
           trigger="click"
           type="primary"
           icon={<MenuOutlined />}
-          tooltip="Menu"
+          tooltip={{
+            title: "Menu",
+            placement: "left",
+          }}
           style={{ bottom: 25 }}
         >
           <FloatButton
             icon={<DownloadOutlined />}
             onClick={exportCSV}
-            tooltip="Exportar CSV"
+            tooltip={{
+              title: "Exportar CSV",
+              placement: "left",
+            }}
           />
         </FloatButtonGroup>
       )}

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
+import { Space } from "antd";
 
 import { InputSearchNumber } from "components/Inputs";
 import notification from "components/notification";
@@ -235,19 +236,25 @@ export default function SearchPrescription({ type, size }) {
                 )}
               </div>
               <div className="search-result-info-secondary">
-                {option.birthdate && (
-                  <Tag color="#a991d6">{formatAge(option.birthdate)}</Tag>
-                )}
-                {option.gender && (
-                  <Tag color="#a991d6">
-                    {option.gender === "M"
-                      ? t("patientCard.male")
-                      : t("patientCard.female")}
-                  </Tag>
-                )}
-                {option.department && (
-                  <Tag color="#a991d6">{option.department}</Tag>
-                )}
+                <Space>
+                  {option.birthdate && (
+                    <Tag color="#a991d6" variant="solid">
+                      {formatAge(option.birthdate)}
+                    </Tag>
+                  )}
+                  {option.gender && (
+                    <Tag color="#a991d6" variant="solid">
+                      {option.gender === "M"
+                        ? t("patientCard.male")
+                        : t("patientCard.female")}
+                    </Tag>
+                  )}
+                  {option.department && (
+                    <Tag color="#a991d6" variant="solid">
+                      {option.department}
+                    </Tag>
+                  )}
+                </Space>
               </div>
             </div>
             {option.type === "prescription" && (

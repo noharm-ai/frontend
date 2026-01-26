@@ -295,7 +295,7 @@ export function NodeModal() {
         <DefaultModal
           width={"60vw"}
           centered
-          destroyOnClose
+          destroyOnHidden
           open={data ? true : false}
           onCancel={() => dispatch(setSelectedNode(null))}
           footer={footerActions(handleSubmit)}

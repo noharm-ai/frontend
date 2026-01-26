@@ -87,7 +87,6 @@ export function ExamFormBase({ index }: IExamFormBaseProps = {}) {
               onChange={(value: Dayjs) => {
                 setFieldValue(getFieldName("examDate"), value);
               }}
-              popupClassName="noArrow"
               maxDate={dayjs()}
               disabledDate={disabledDate}
               showTime

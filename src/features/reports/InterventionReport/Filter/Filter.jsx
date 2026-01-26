@@ -174,28 +174,43 @@ export default function Filter({ printRef }) {
           trigger="click"
           type="primary"
           icon={<MenuOutlined />}
-          tooltip="Menu"
+          tooltip={{
+            title: "Menu",
+            placement: "left",
+          }}
           style={{ bottom: 25 }}
         >
           <FloatButton
             icon={<QuestionCircleOutlined />}
             onClick={showHelp}
-            tooltip="Informações sobre este relatório"
+            tooltip={{
+              title: "Informações sobre este relatório",
+              placement: "left",
+            }}
           />
           <FloatButton
             icon={<DownloadOutlined />}
             onClick={exportCSV}
-            tooltip="Exportar CSV"
+            tooltip={{
+              title: "Exportar CSV",
+              placement: "left",
+            }}
           />
           <FloatButton
             icon={<HistoryOutlined />}
             onClick={() => dispatch(setHistoryModal(true))}
-            tooltip="Histórico"
+            tooltip={{
+              title: "Histórico",
+              placement: "left",
+            }}
           />
           <FloatButton
             icon={<PrinterOutlined />}
             onClick={handlePrint}
-            tooltip="Imprimir"
+            tooltip={{
+              title: "Imprimir",
+              placement: "left",
+            }}
           />
         </FloatButtonGroup>
       )}

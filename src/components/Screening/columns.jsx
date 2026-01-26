@@ -14,7 +14,7 @@ import {
   CheckSquareOutlined,
   BorderOutlined,
 } from "@ant-design/icons";
-import { Button as AntButton } from "antd";
+import { Button as AntButton, Space } from "antd";
 
 import { InfoIcon } from "components/Icon";
 import Button, { Link } from "components/Button";
@@ -448,52 +448,65 @@ const periodDatesList = (dates) => {
 
 /* eslint-disable-next-line react-refresh/only-export-components */
 const DrugTags = ({ drug, t }) => (
-  <span style={{ marginLeft: "10px" }}>
-    {drug.np && (
-      <Tooltip title={t("drugTags.npHint")}>
-        <Tag>{t("drugTags.np")}</Tag>
-      </Tooltip>
-    )}
-    {drug.am && (
-      <Tooltip title={t("drugTags.amHint")}>
-        <Tag color="green">{t("drugTags.am")}</Tag>
-      </Tooltip>
-    )}
-    {drug.av && (
-      <Tooltip title={t("drugTags.avHint")}>
-        <Tag color="red">{t("drugTags.av")}</Tag>
-      </Tooltip>
-    )}
-    {drug.c && (
-      <Tooltip title={t("drugTags.cHint")}>
-        <Tag color="orange">{t("drugTags.c")}</Tag>
-      </Tooltip>
-    )}
-    {drug.q && (
-      <Tooltip title={t("drugTags.qHint")}>
-        <Tag color="cyan">{t("drugTags.q")}</Tag>
-      </Tooltip>
-    )}
-    {drug.dialyzable && (
-      <Tooltip title={t("drugTags.dialyzableHint")}>
-        <Tag color="blue">{t("drugTags.dialyzable")}</Tag>
-      </Tooltip>
-    )}
-    {drug.drugAttributes?.fallRisk && (
-      <Tooltip title={t("drugTags.fallRiskHint")}>
-        <Tag color="volcano">
-          {t("drugTags.fallRisk")}
-          {drug.drugAttributes?.fallRisk}
-        </Tag>
-      </Tooltip>
-    )}
-    {drug.drugAttributes?.liver > 150 && drug.drugAttributes?.liver <= 156 && (
-      <Tooltip title={t(`drugTags.liverHint${drug.drugAttributes?.liver}`)}>
-        <Tag color="gold">
-          {t(`drugTags.liver${drug.drugAttributes?.liver}`)}
-        </Tag>
-      </Tooltip>
-    )}
+  <span style={{ marginLeft: "8px" }}>
+    <Space size="small">
+      {drug.np && (
+        <Tooltip title={t("drugTags.npHint")}>
+          <Tag variant="outlined">{t("drugTags.np")}</Tag>
+        </Tooltip>
+      )}
+      {drug.am && (
+        <Tooltip title={t("drugTags.amHint")}>
+          <Tag variant="outlined" color="green">
+            {t("drugTags.am")}
+          </Tag>
+        </Tooltip>
+      )}
+      {drug.av && (
+        <Tooltip title={t("drugTags.avHint")}>
+          <Tag variant="outlined" color="red">
+            {t("drugTags.av")}
+          </Tag>
+        </Tooltip>
+      )}
+      {drug.c && (
+        <Tooltip title={t("drugTags.cHint")}>
+          <Tag variant="outlined" color="orange">
+            {t("drugTags.c")}
+          </Tag>
+        </Tooltip>
+      )}
+      {drug.q && (
+        <Tooltip title={t("drugTags.qHint")}>
+          <Tag variant="outlined" color="cyan">
+            {t("drugTags.q")}
+          </Tag>
+        </Tooltip>
+      )}
+      {drug.dialyzable && (
+        <Tooltip title={t("drugTags.dialyzableHint")}>
+          <Tag variant="outlined" color="blue">
+            {t("drugTags.dialyzable")}
+          </Tag>
+        </Tooltip>
+      )}
+      {drug.drugAttributes?.fallRisk && (
+        <Tooltip title={t("drugTags.fallRiskHint")}>
+          <Tag variant="outlined" color="volcano">
+            {t("drugTags.fallRisk")}
+            {drug.drugAttributes?.fallRisk}
+          </Tag>
+        </Tooltip>
+      )}
+      {drug.drugAttributes?.liver > 150 &&
+        drug.drugAttributes?.liver <= 156 && (
+          <Tooltip title={t(`drugTags.liverHint${drug.drugAttributes?.liver}`)}>
+            <Tag variant="outlined" color="gold">
+              {t(`drugTags.liver${drug.drugAttributes?.liver}`)}
+            </Tag>
+          </Tooltip>
+        )}
+    </Space>
   </span>
 );
 

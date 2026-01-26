@@ -110,7 +110,6 @@ export default function Field({ question, values, setFieldValue }) {
         onChange={(value) =>
           setFieldValue(question.id, value ? value.format("DD/MM/YYYY") : null)
         }
-        popupClassName="noArrow"
         allowClear
       />
     );
@@ -132,7 +131,6 @@ export default function Field({ question, values, setFieldValue }) {
             value ? value.format("DD/MM/YYYY HH:mm") : null
           )
         }
-        popupClassName="noArrow"
         showTime
         allowClear
       />

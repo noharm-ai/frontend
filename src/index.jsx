@@ -22,8 +22,6 @@ import * as serviceWorker from "./serviceWorker";
 import trans_pt from "./translations/pt.json";
 import trans_en from "./translations/en.json";
 
-import "@ant-design/v5-patch-for-react-19";
-
 i18next.init({
   interpolation: { escapeValue: false },
   lng: localStorage.getItem("language") || "pt", // language to use
@@ -69,6 +67,16 @@ root.render(
         <PersistGate loading={null} persistor={persistor}>
           <ConfigProvider
             locale={i18next.language === "en" ? localeEnUs : localePtBr}
+            modal={{
+              mask: {
+                blur: false,
+              },
+            }}
+            drawer={{
+              mask: {
+                blur: false,
+              },
+            }}
           >
             <StyleProvider hashPriority={hashPriority}>
               <App>

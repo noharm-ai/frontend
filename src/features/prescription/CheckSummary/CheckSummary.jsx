@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Alert, Tag } from "antd";
+import { Alert, Tag, Space } from "antd";
 import { Formik } from "formik";
 import { useTranslation } from "react-i18next";
 import {
@@ -127,25 +127,32 @@ export default function CheckSummary({
 
     return (
       <div style={{ paddingLeft: "5px" }}>
-        <Tooltip title="Dose">
-          <Tag style={{ fontSize: "11px" }}>
-            {" "}
-            {item.dose}{" "}
-            {item.measureUnit?.label
-              ? item.measureUnit.label
-              : item.measureUnit.value}
-          </Tag>
-        </Tooltip>
-        <Tooltip title="Frequência">
-          <Tag style={{ fontSize: "11px" }}>
-            {item.frequency?.label
-              ? item.frequency.label
-              : item.frequency.value}
-          </Tag>
-        </Tooltip>
-        <Tooltip title="Via">
-          <Tag style={{ fontSize: "11px", marginRight: 0 }}>{item.route}</Tag>
-        </Tooltip>
+        <Space>
+          <Tooltip title="Dose">
+            <Tag style={{ fontSize: "11px" }} variant="outlined">
+              {" "}
+              {item.dose}{" "}
+              {item.measureUnit?.label
+                ? item.measureUnit.label
+                : item.measureUnit.value}
+            </Tag>
+          </Tooltip>
+          <Tooltip title="Frequência">
+            <Tag style={{ fontSize: "11px" }} variant="outlined">
+              {item.frequency?.label
+                ? item.frequency.label
+                : item.frequency.value}
+            </Tag>
+          </Tooltip>
+          <Tooltip title="Via">
+            <Tag
+              style={{ fontSize: "11px", marginRight: 0 }}
+              variant="outlined"
+            >
+              {item.route}
+            </Tag>
+          </Tooltip>
+        </Space>
       </div>
     );
   };
@@ -272,7 +279,7 @@ export default function CheckSummary({
           open={prescription}
           width={highRiskAlerts.length > 0 ? 900 : 350}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={() => onCancel()}
           onOk={handleSubmit}
           okText="Confirmar"

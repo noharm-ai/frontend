@@ -324,6 +324,9 @@ export default function Filter({
                 mode="multiple"
                 allowClear
                 maxTagCount="responsive"
+                showSearch={{
+                  optionFilterProp: ["children"],
+                }}
               >
                 {prioritizationType === "prescription" ? (
                   <>
@@ -356,7 +359,6 @@ export default function Filter({
                 format="DD/MM/YYYY"
                 value={date}
                 onChange={onDateChange}
-                popupClassName="noArrow"
                 allowClear={false}
                 disabledDate={datepickerRangeLimit(120)}
               />

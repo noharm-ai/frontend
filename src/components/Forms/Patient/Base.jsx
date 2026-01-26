@@ -226,7 +226,6 @@ export default function Base() {
                 value ? value.format("YYYY-MM-DD") : null
               )
             }
-            popupClassName="noArrow"
             allowClear={true}
             showTime
             style={{
@@ -281,7 +280,6 @@ export default function Base() {
                   value ? value.format("YYYY-MM-DD HH:mm") : null
                 )
               }
-              popupClassName="noArrow"
               allowClear={true}
               showTime
               style={{

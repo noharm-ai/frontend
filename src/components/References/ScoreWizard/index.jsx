@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Row, Col, Checkbox, Divider } from "antd";
+import { Row, Col, Checkbox, Divider, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
@@ -258,22 +258,21 @@ export default function ScoreWizard({
               <Heading as="label" $size="14px">
                 <Tooltip title="">Divisor de faixas:</Tooltip>
               </Heading>
-              <InputNumber
-                style={{
-                  marginRight: "10px",
-                }}
-                min={0}
-                max={99999}
-                value={drugData.division}
-                onChange={(value) =>
-                  updateDrugData({ division: value, touched: true })
-                }
-                className={validationErrors.division ? "error" : ""}
-                addonAfter={getMeasureUnit(
-                  drugData.idMeasureUnit,
-                  drugUnits.list
-                )}
-              />
+              <Space.Compact>
+                <InputNumber
+                  min={0}
+                  max={99999}
+                  value={drugData.division}
+                  onChange={(value) =>
+                    updateDrugData({ division: value, touched: true })
+                  }
+                  className={validationErrors.division ? "error" : ""}
+                />
+                <Space.Addon>
+                  {getMeasureUnit(drugData.idMeasureUnit, drugUnits.list)}
+                </Space.Addon>
+              </Space.Compact>
+
               <div style={{ marginTop: "5px" }}>
                 <Checkbox
                   value={drugData.useWeight}

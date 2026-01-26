@@ -60,7 +60,7 @@ function SummaryPanelAIConfig({ open, setOpen, payload, reload }) {
     <DefaultModal
       width={700}
       centered
-      destroyOnClose
+      destroyOnHidden
       onOk={handleOK}
       onCancel={() => setOpen(false)}
       open={open}

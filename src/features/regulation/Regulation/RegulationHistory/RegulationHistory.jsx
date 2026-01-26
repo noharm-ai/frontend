@@ -101,7 +101,7 @@ export default function RegulationHistory() {
   });
 
   return (
-    <Card title="Histórico" bordered={false} style={{ height: "100%" }}>
+    <Card title="Histórico" variant="borderless" style={{ height: "100%" }}>
       <Timeline items={items} />
     </Card>
   );

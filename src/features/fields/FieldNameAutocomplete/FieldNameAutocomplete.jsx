@@ -62,18 +62,20 @@ export default function FieldNameAutocomplete({
   return (
     <Flex align="center" gap={10}>
       <Select
-        showSearch
         allowClear
         value={value}
-        optionFilterProp="children"
         style={{ minWidth: "300px" }}
         notFoundContent={loading ? <LoadBox /> : "Nenhum resultado disponível"}
-        filterOption={false}
-        onSearch={search}
         onChange={(value) => onChange(value)}
         placeholder={loading ? "Carregando..." : "Digite para pesquisar"}
         mode={mode ?? "multiple"}
         loading={loading}
+        showSearch={{
+          onSearch: (value) => search(value),
+          filterOption: false,
+          optionFilterProp: ["children"],
+          autoClearSearchValue: false,
+        }}
         {...props}
       >
         {options.map((option) => (

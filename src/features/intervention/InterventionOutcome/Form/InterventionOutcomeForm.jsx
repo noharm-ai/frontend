@@ -387,15 +387,18 @@ export default function InterventionOutcomeForm() {
                         </div>
                         <div className="form-input">
                           <Space direction="horizontal">
-                            <InputNumber
-                              disabled
-                              precision={INPUT_PRECISION}
-                              addonBefore="R$"
-                              value={Big(values.origin.pricePerDose || 0).times(
-                                Big(values.origin.frequencyDay || 0)
-                              )}
-                              className={pricePerDayStatus("origin")}
-                            />
+                            <Space.Compact block>
+                              <Space.Addon>R$</Space.Addon>
+                              <InputNumber
+                                disabled
+                                precision={INPUT_PRECISION}
+                                value={Big(
+                                  values.origin.pricePerDose || 0
+                                ).times(Big(values.origin.frequencyDay || 0))}
+                                className={pricePerDayStatus("origin")}
+                              />
+                            </Space.Compact>
+
                             <Tooltip title={details ? "Recolher" : "Detalhar"}>
                               <Button
                                 className="btn-calc-details-origin"
@@ -542,15 +545,18 @@ export default function InterventionOutcomeForm() {
                         </div>
                         <div className="form-input">
                           <Space direction="horizontal">
-                            <InputNumber
-                              disabled
-                              precision={INPUT_PRECISION}
-                              addonBefore="R$"
-                              value={Big(
-                                values.destiny.pricePerDose || 0
-                              ).times(Big(values.destiny.frequencyDay || 0))}
-                              className={pricePerDayStatus("destiny")}
-                            />
+                            <Space.Compact block>
+                              <Space.Addon>R$</Space.Addon>
+                              <InputNumber
+                                disabled
+                                precision={INPUT_PRECISION}
+                                value={Big(
+                                  values.destiny.pricePerDose || 0
+                                ).times(Big(values.destiny.frequencyDay || 0))}
+                                className={pricePerDayStatus("destiny")}
+                              />
+                            </Space.Compact>
+
                             <Tooltip title={details ? "Recolher" : "Detalhar"}>
                               <Button
                                 className="btn-calc-details-destiny"
@@ -618,21 +624,24 @@ export default function InterventionOutcomeForm() {
                 </div>
                 <div className="form-input">
                   <Space direction="horizontal">
-                    <InputNumber
-                      disabled={
-                        !values.economyDayValueManual ||
-                        outcomeData.header?.readonly
-                      }
-                      precision={INPUT_PRECISION}
-                      addonBefore="R$"
-                      onChange={(value) =>
-                        values.economyDayValueManual
-                          ? setFieldValue("economyDayValue", value)
-                          : false
-                      }
-                      value={values.economyDayValue}
-                      className={values.economyDayValue > 0 ? "success" : ""}
-                    />
+                    <Space.Compact block>
+                      <Space.Addon>R$</Space.Addon>
+                      <InputNumber
+                        disabled={
+                          !values.economyDayValueManual ||
+                          outcomeData.header?.readonly
+                        }
+                        precision={INPUT_PRECISION}
+                        onChange={(value) =>
+                          values.economyDayValueManual
+                            ? setFieldValue("economyDayValue", value)
+                            : false
+                        }
+                        value={values.economyDayValue}
+                        className={values.economyDayValue > 0 ? "success" : ""}
+                      />
+                    </Space.Compact>
+
                     <Checkbox
                       disabled={outcomeData.header?.readonly}
                       onChange={(e) => {
@@ -677,16 +686,18 @@ export default function InterventionOutcomeForm() {
                 <div className="form-input">
                   <Space direction="horizontal">
                     {values.economyDayAmountManual ? (
-                      <InputNumber
-                        disabled={outcomeData.header?.readonly}
-                        precision={0}
-                        addonAfter=" Dias"
-                        onChange={(value) =>
-                          setFieldValue("economyDayAmount", value)
-                        }
-                        value={values.economyDayAmount}
-                        min={1}
-                      />
+                      <Space.Compact block>
+                        <InputNumber
+                          disabled={outcomeData.header?.readonly}
+                          precision={0}
+                          onChange={(value) =>
+                            setFieldValue("economyDayAmount", value)
+                          }
+                          value={values.economyDayAmount}
+                          min={1}
+                        />
+                        <Space.Addon>{" Dias"}</Space.Addon>
+                      </Space.Compact>
                     ) : (
                       <Input
                         disabled={true}

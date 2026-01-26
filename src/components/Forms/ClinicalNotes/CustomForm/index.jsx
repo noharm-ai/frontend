@@ -63,7 +63,7 @@ export default function ClinicalNotes({
     <DefaultModal
       width={700}
       centered
-      destroyOnClose
+      destroyOnHidden
       open={visible}
       onCancel={cancel}
       maskClosable={false}

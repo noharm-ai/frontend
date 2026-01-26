@@ -64,7 +64,7 @@ export default function ScreeningActions({
           trigger="click"
           type="primary"
           icon={<MenuOutlined />}
-          tooltip="Menu"
+          tooltip={{ title: "Menu", placement: "left" }}
           style={{ bottom: 25 }}
           onClick={() =>
             trackPrescriptionAction(TrackedPrescriptionAction.CLICK_FLOAT_MENU)
@@ -73,18 +73,18 @@ export default function ScreeningActions({
           <FloatButton
             icon={<CloseOutlined />}
             onClick={() => window.close()}
-            tooltip="Fechar prescrição"
+            tooltip={{ title: "Fechar prescrição", placement: "left" }}
           />
           <FloatButton
             onClick={() => setModalVisibility("patientEdit", true)}
             icon={<UserOutlined />}
-            tooltip="Editar dados do paciente"
+            tooltip={{ title: "Editar dados do paciente", placement: "left" }}
           />
           {featureService.hasConciliation() && !prescription.concilia && (
             <FloatButton
               onClick={() => addConciliation()}
               icon={<ReconciliationOutlined />}
-              tooltip="Abrir conciliação"
+              tooltip={{ title: "Abrir conciliação", placement: "left" }}
             />
           )}
         </ScreeningFloatButtonGroup>

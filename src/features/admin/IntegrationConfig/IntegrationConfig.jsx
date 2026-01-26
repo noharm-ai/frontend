@@ -24,6 +24,7 @@ import {
   setCloudConfigSchema,
 } from "./IntegrationConfigSlice";
 import IntegrationConfigForm from "./Form/IntegrationConfigForm";
+import { TpPepEnum } from "src/models/TpPepEnum";
 
 import { PageHeader } from "styles/PageHeader.style";
 import { PageCard } from "styles/Utils.style";
@@ -43,8 +44,8 @@ const filterList = (ds, filter) => {
       show = show && i.nhCare === filter.nhCare;
     }
 
-    if (filter.cpoe !== null && filter.cpoe !== undefined) {
-      show = show && i.cpoe === filter.cpoe;
+    if (filter.tp_pep !== null && filter.tp_pep !== undefined) {
+      show = show && i.tp_pep === filter.tp_pep;
     }
 
     if (
@@ -133,25 +134,17 @@ function IntegrationConfig() {
       >
         <ExtraFilters>
           <div className="filter-field">
-            <label>Situação</label>
+            <label>PEP</label>
             <Select
-              onChange={(val) => setFilter({ ...filter, status: val })}
-              placeholder="Filtrar por situação"
+              onChange={(val) => setFilter({ ...filter, tp_pep: val })}
               allowClear
               style={{ minWidth: "200px" }}
-              optionFilterProp="children"
               loading={status === "loading"}
-            >
-              <Select.Option value={0}>
-                <IntegrationStatusTag status={0} />
-              </Select.Option>
-              <Select.Option value={1}>
-                <IntegrationStatusTag status={1} />
-              </Select.Option>
-              <Select.Option value={2}>
-                <IntegrationStatusTag status={2} />
-              </Select.Option>
-            </Select>
+              options={TpPepEnum.getList()}
+              showSearch={{
+                optionFilterProp: ["label"],
+              }}
+            />
           </div>
 
           <div className="filter-field">
@@ -167,6 +160,27 @@ function IntegrationConfig() {
             >
               <Select.Option value={true}>Sim</Select.Option>
               <Select.Option value={false}>Não</Select.Option>
+            </Select>
+          </div>
+
+          <div className="filter-field">
+            <label>Situação</label>
+            <Select
+              onChange={(val) => setFilter({ ...filter, status: val })}
+              allowClear
+              style={{ minWidth: "200px" }}
+              optionFilterProp="children"
+              loading={status === "loading"}
+            >
+              <Select.Option value={0}>
+                <IntegrationStatusTag status={0} />
+              </Select.Option>
+              <Select.Option value={1}>
+                <IntegrationStatusTag status={1} />
+              </Select.Option>
+              <Select.Option value={2}>
+                <IntegrationStatusTag status={2} />
+              </Select.Option>
             </Select>
           </div>
         </ExtraFilters>

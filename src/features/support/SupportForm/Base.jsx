@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import { Upload, notification } from "antd";
+import { Upload, notification, Space } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
 import { Select, Input } from "components/Inputs";
@@ -194,20 +194,24 @@ function BaseForm() {
             <label>Exemplos:</label>
           </div>
           <div className="form-input">
-            <Input
-              addonBefore="Números de Atendimento:"
-              onChange={({ target }) =>
-                setFieldValue("admissionNumberExamples", target.value)
-              }
-            />
+            <Space.Compact block>
+              <Space.Addon>Números de Atendimento:</Space.Addon>
+              <Input
+                onChange={({ target }) =>
+                  setFieldValue("admissionNumberExamples", target.value)
+                }
+              />
+            </Space.Compact>
           </div>
           <div className="form-input" style={{ marginTop: "5px" }}>
-            <Input
-              addonBefore="Números de Prescrição:"
-              onChange={({ target }) =>
-                setFieldValue("prescriptionNumberExamples", target.value)
-              }
-            />
+            <Space.Compact block>
+              <Space.Addon>Números de Prescrição::</Space.Addon>
+              <Input
+                onChange={({ target }) =>
+                  setFieldValue("prescriptionNumberExamples", target.value)
+                }
+              />
+            </Space.Compact>
           </div>
           <div className="form-info">
             Forneça exemplos de números de atendimento e/ou de prescrição para

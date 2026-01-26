@@ -140,7 +140,7 @@ export function RegulationAttachments({
     }));
 
     return (
-      <Card title="Anexos" bordered={false}>
+      <Card title="Anexos" variant="borderless">
         <Descriptions bordered items={items} column={4} size="small" />
       </Card>
     );
@@ -149,7 +149,7 @@ export function RegulationAttachments({
   return (
     <Card
       title="Anexos"
-      bordered={false}
+      variant="borderless"
       extra={
         <Button
           type="primary"

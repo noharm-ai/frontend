@@ -9,6 +9,7 @@ import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import api from "services/api";
 import IntegrationStatusTag from "components/IntegrationStatusTag";
+import { TpPepEnum } from "src/models/TpPepEnum";
 
 function BaseForm() {
   const { t } = useTranslation();
@@ -27,6 +28,7 @@ function BaseForm() {
       okText: "Fechar",
       okButtonProps: { type: "default" },
       wrapClassName: "default-modal",
+      mask: { blur: false },
     });
 
     setGeneratingToken(false);
@@ -300,6 +302,28 @@ function BaseForm() {
               <IntegrationStatusTag status={2} />
             </Select.Option>
           </Select>
+        </div>
+        {errors.status && touched.status && (
+          <div className="form-error">{errors.status}</div>
+        )}
+      </div>
+
+      <div
+        className={`form-row ${errors.tp_pep && touched.tp_pep ? "error" : ""}`}
+      >
+        <div className="form-label">
+          <label>PEP:</label>
+        </div>
+        <div className="form-input">
+          <Select
+            onChange={(value) => setFieldValue("tp_pep", value)}
+            value={values.tp_pep}
+            status={errors.tp_pep && touched.tp_pep ? "error" : null}
+            showSearch={{
+              optionFilterProp: ["label"],
+            }}
+            options={TpPepEnum.getList()}
+          />
         </div>
         {errors.status && touched.status && (
           <div className="form-error">{errors.status}</div>

@@ -60,7 +60,7 @@ function RemoveOutlier({ open, setOpen }) {
       open={open}
       width={500}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={onCancel}
       onOk={confirm}
       okText={"Confirmar"}

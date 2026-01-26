@@ -33,7 +33,7 @@ export const SelectCustom = ({ children, onChange, ...props }) => {
     <Select
       onSearch={(v) => setSearchValue(v)}
       onChange={onChange}
-      dropdownRender={(menu) => (
+      popupRender={(menu) => (
         <>
           {menu}
           {props.mode === "multiple" && (

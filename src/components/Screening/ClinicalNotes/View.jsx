@@ -166,6 +166,7 @@ export default function View({
         width: 500,
         okText: "Fechar",
         okButtonProps: { type: "default" },
+        mask: { blur: false },
         wrapClassName: "default-modal",
       });
 

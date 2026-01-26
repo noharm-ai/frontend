@@ -58,7 +58,7 @@ const refreshPrescription = (params = {}) => {
     params,
     {
       ...setHeaders(),
-    }
+    },
   );
 };
 
@@ -68,7 +68,7 @@ const initInterventionReason = (params = {}) => {
     params,
     {
       ...setHeaders(),
-    }
+    },
   );
 };
 
@@ -186,7 +186,7 @@ api.drugs.calculateDosemax = (params = {}) => {
     {},
     {
       ...setHeaders(),
-    }
+    },
   );
 };
 
@@ -219,7 +219,7 @@ api.unitConversion.copyConversion = (params = {}) => {
     params,
     {
       ...setHeaders(),
-    }
+    },
   );
 };
 
@@ -229,7 +229,7 @@ api.unitConversion.updateSubstanceUnitFactor = (params = {}) => {
     params,
     {
       ...setHeaders(),
-    }
+    },
   );
 };
 
@@ -239,7 +239,7 @@ api.unitConversion.addDefaultUnits = (params = {}) => {
     params,
     {
       ...setHeaders(),
-    }
+    },
   );
 };
 
@@ -256,6 +256,12 @@ api.integration.getStatus = (params) =>
 
 api.integration.getList = (params) =>
   instance.get(`${endpoints.integration}/list`, {
+    params,
+    ...setHeaders(),
+  });
+
+api.integration.getTemplateList = (params) =>
+  instance.get(`${endpoints.integration}/template-list`, {
     params,
     ...setHeaders(),
   });

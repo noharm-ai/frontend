@@ -116,7 +116,7 @@ export default function RegulationPatient({ print = false }) {
   return (
     <Card
       title={patientDetails?.name || `Paciente ${patient?.id}`}
-      bordered={false}
+      variant="borderless"
       loading={patientDetailsStatus === "loading"}
     >
       <Descriptions

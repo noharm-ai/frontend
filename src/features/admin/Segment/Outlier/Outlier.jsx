@@ -188,7 +188,7 @@ function OutliersForm({ open, setOpen }) {
       open={open}
       width={500}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={onCancel}
       onOk={startProcess}
       okText={"Gerar Escores"}

@@ -215,7 +215,6 @@ const ResetStyled = createGlobalStyle`
   }
 
   .anticon {
-    display: inline-block;
     color: inherit;
     font-style: normal;
     line-height: 0;

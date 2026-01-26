@@ -166,7 +166,7 @@ function DepartmentsForm({ open, setOpen }) {
           open={open}
           width={"60vw"}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={t("actions.save")}

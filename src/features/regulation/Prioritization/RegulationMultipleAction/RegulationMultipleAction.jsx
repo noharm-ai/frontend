@@ -85,7 +85,7 @@ export default function RegulationMultipleAction() {
           onCancel={onCancel}
           onOk={handleSubmit}
           confirmLoading={status === "loading"}
-          destroyOnClose
+          destroyOnHidden
           maskClosable={false}
           okText={t("actions.save")}
           cancelText={t("actions.cancel")}

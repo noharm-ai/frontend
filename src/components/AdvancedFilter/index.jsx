@@ -117,7 +117,7 @@ export default function AdvancedFilter({
                     }
                   >
                     <Button
-                      type="link gtm-btn-adv-search"
+                      type="link"
                       onClick={() => setOpen(!open)}
                       style={{ marginTop: "14px", paddingLeft: 0 }}
                     >

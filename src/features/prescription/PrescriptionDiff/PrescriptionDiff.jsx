@@ -25,7 +25,7 @@ export default function PrescriptionDiff({ open, setOpen }) {
       open={open}
       width={950}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={() => setOpen(false)}
       footer={null}
     >
