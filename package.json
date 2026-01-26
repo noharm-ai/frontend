@@ -29,7 +29,7 @@
     "formik": "^2.2.9",
     "humanize-duration": "^3.32.0",
     "ifvisible.js": "^1.0.6",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "lodash.get": "^4.4.2",
     "lodash.intersection": "^4.4.0",
     "lodash.isempty": "^4.4.0",
