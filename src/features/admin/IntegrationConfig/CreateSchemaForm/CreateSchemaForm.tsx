@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
@@ -8,7 +8,11 @@ import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
-import { createSchema, fetchIntegrations } from "../IntegrationConfigSlice";
+import {
+  createSchema,
+  fetchIntegrations,
+  fetchTemplates,
+} from "../IntegrationConfigSlice";
 import { Base } from "./Base";
 
 import { Form } from "styles/Form.style";
@@ -21,6 +25,8 @@ export interface ICreateSchemaForm {
   create_sqs: boolean;
   create_logstream: boolean;
   db_user: string;
+  tp_pep: string;
+  template_id: string;
 }
 
 export interface ICreateSchemaFormProps {
@@ -32,7 +38,7 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const status = useAppSelector(
-    (state) => state.admin.integrationConfig.createSchema.status
+    (state) => state.admin.integrationConfig.createSchema.status,
   );
   const [resultData, setResultData] = useState<any>(null);
   const isSaving = status === "loading";
@@ -50,11 +56,13 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
     create_user: true,
     create_logstream: true,
     create_sqs: true,
+    tp_pep: "",
+    template_id: "",
   };
 
   const onSave = (
     params: ICreateSchemaForm,
-    formikHelpers: FormikHelpers<ICreateSchemaForm>
+    formikHelpers: FormikHelpers<ICreateSchemaForm>,
   ) => {
     // @ts-expect-error ts 2554 (legacy code)
     dispatch(createSchema(params)).then((response: any) => {
@@ -77,6 +85,12 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
     setOpen(false);
     setResultData(null);
   };
+
+  useEffect(() => {
+    if (open) {
+      dispatch(fetchTemplates());
+    }
+  }, [dispatch, open]);
 
   return (
     <Formik

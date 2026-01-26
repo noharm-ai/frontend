@@ -27,7 +27,8 @@ export class TpPepEnum {
 
       if (typeof value === "string" && key !== "getList") {
         items.push({
-          label: value,
+          label:
+            value === "PEC" ? "PEC (Prontuário Eletrônico do Cidadão)" : value,
           value: value,
         });
       }

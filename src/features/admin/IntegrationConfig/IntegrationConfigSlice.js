@@ -20,6 +20,11 @@ const initialState = {
     data: null,
     error: null,
   },
+  templateList: {
+    data: {},
+    status: "idle",
+    error: null,
+  },
 };
 
 export const fetchIntegrations = createAsyncThunk(
@@ -32,7 +37,20 @@ export const fetchIntegrations = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
+);
+
+export const fetchTemplates = createAsyncThunk(
+  "integration-config/fetch-templates",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.integration.getTemplateList(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
 );
 
 export const updateIntegration = createAsyncThunk(
@@ -44,7 +62,7 @@ export const updateIntegration = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const createSchema = createAsyncThunk(
@@ -56,7 +74,7 @@ export const createSchema = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const fetchCloudConfig = createAsyncThunk(
@@ -68,7 +86,7 @@ export const fetchCloudConfig = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const upsertGetname = createAsyncThunk(
@@ -80,7 +98,7 @@ export const upsertGetname = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const upsertSecurityGroup = createAsyncThunk(
@@ -92,7 +110,7 @@ export const upsertSecurityGroup = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 const integrationConfigSlice = createSlice({
@@ -121,6 +139,18 @@ const integrationConfigSlice = createSlice({
       .addCase(fetchIntegrations.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+
+      .addCase(fetchTemplates.pending, (state, action) => {
+        state.templateList.status = "loading";
+      })
+      .addCase(fetchTemplates.fulfilled, (state, action) => {
+        state.templateList.status = "succeeded";
+        state.templateList.data = action.payload.data.data;
+      })
+      .addCase(fetchTemplates.rejected, (state, action) => {
+        state.templateList.status = "failed";
+        state.templateList.error = action.error.message;
       })
 
       .addCase(fetchCloudConfig.pending, (state, action) => {
