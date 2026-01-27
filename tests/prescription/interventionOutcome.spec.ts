@@ -17,20 +17,20 @@ test("outcome: suspension", async ({ page }) => {
   await page
     .locator(".ant-select.ant-select-loading")
     .waitFor({ state: "detached" });
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
 
   await page.getByText("Suspensão da terapia").click();
 
   // // close dropdown
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
 
   await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
-  await page.locator(".ant-modal-content .ant-dropdown-trigger").hover();
+  await page.locator(".ant-modal-container .ant-dropdown-trigger").hover();
   await page.getByText("Salvar e marcar como Aceita").click();
 
   await page.locator(".btn-calc-details-origin").click();
@@ -42,7 +42,7 @@ test("outcome: suspension", async ({ page }) => {
           /^Dose dispensada \(mg\):Frequência\/Dia:Custo \/ \(mg\):R\$Custo KIT:R\$$/,
       })
       .getByRole("spinbutton")
-      .first()
+      .first(),
   ).toHaveValue("5,000000");
   await expect(
     page
@@ -52,26 +52,26 @@ test("outcome: suspension", async ({ page }) => {
           /^Dose dispensada \(mg\):Frequência\/Dia:Custo \/ \(mg\):R\$Custo KIT:R\$$/,
       })
       .getByRole("spinbutton")
-      .nth(1)
+      .nth(1),
   ).toHaveValue("2,000000");
   await expect(
     page
       .locator("div")
       .filter({ hasText: /^Custo \/ \(mg\):R\$$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toHaveValue("4,520000");
   await expect(
     page
       .locator("div")
       .filter({ hasText: /^Custo KIT:R\$$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toHaveValue("0,000000");
 
   expect(
     page
       .locator("div")
       .filter({ hasText: /^Custo por dia:R\$$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toHaveValue("45,200000");
 
   await page.locator(".input-price").hover();
@@ -83,7 +83,7 @@ test("outcome: suspension", async ({ page }) => {
     page
       .locator("div")
       .filter({ hasText: /^Custo por dia:R\$$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toHaveValue("57,200000");
 
   await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
@@ -106,40 +106,38 @@ test("outcome: substitution", async ({ page }) => {
   await page
     .locator(".ant-select.ant-select-loading")
     .waitFor({ state: "detached" });
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
 
   await page.getByText("Substituição").click();
 
   // // close dropdown
-  await page.locator(".ant-select-selector").nth(0).click();
+  await page.locator(".ant-select").nth(0).click();
 
   await expect(page.getByText("Tipo economia: Substituição")).toBeVisible();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
-  await page.locator(".ant-modal-content .ant-dropdown-trigger").hover();
+  await page.locator(".ant-modal-container .ant-dropdown-trigger").hover();
   await page.getByText("Salvar e marcar como Aceita").click();
 
   // price origin
-  await expect(page.locator(".ant-input-number-input").first()).toHaveValue(
-    "209,800000"
+  await expect(page.locator("#origin-price-per-day").first()).toHaveValue(
+    "209,800000",
   );
 
   //price destination
-  await expect(
-    page.locator(
-      "div:nth-child(2) > div > div:nth-child(2) > .form-input > .ant-space > div > .ant-input-number-group-wrapper > .ant-input-number-wrapper > .ant-input-number > .ant-input-number-input-wrap > .ant-input-number-input"
-    )
-  ).toHaveValue("104,900000");
+  await expect(page.locator("#destiny-price-per-day")).toHaveValue(
+    "104,900000",
+  );
 
   // final value
   await expect(
     page
       .locator("div")
       .filter({ hasText: /^Economia\/Dia:R\$Manual$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toHaveValue("104,900000");
 
   // increase kit value
@@ -148,38 +146,26 @@ test("outcome: substitution", async ({ page }) => {
     .getByRole("button", { name: "caret-down" })
     .nth(1)
     .click();
-  await page
-    .locator(
-      "div:nth-child(2) > div > .collapsible > div:nth-child(4) > .form-input > .ant-space > div > .ant-input-number-group-wrapper > .ant-input-number-wrapper > .ant-input-number"
-    )
-    .first()
-    .hover();
-  await page
-    .locator(
-      "div:nth-child(2) > div > .collapsible > div:nth-child(4) > .form-input > .ant-space > div > .ant-input-number-group-wrapper > .ant-input-number-wrapper > .ant-input-number > .ant-input-number-handler-wrap > span"
-    )
-    .first()
-    .click();
-  await page
-    .locator(
-      "div:nth-child(2) > div > .collapsible > div:nth-child(4) > .form-input > .ant-space > div > .ant-input-number-group-wrapper > .ant-input-number-wrapper > .ant-input-number > .ant-input-number-handler-wrap > span"
-    )
-    .first()
-    .click();
+  await page.locator("#destiny-price-kit").locator("..").first().hover();
+  const increase = page
+    .locator("#destiny-price-kit")
+    .locator("..")
+    .locator(".ant-input-number-action-up");
+
+  await increase.click();
+  await increase.click();
 
   //check price again
-  await expect(
-    page.locator(
-      "div:nth-child(2) > div > div:nth-child(2) > .form-input > .ant-space > div > .ant-input-number-group-wrapper > .ant-input-number-wrapper > .ant-input-number > .ant-input-number-input-wrap > .ant-input-number-input"
-    )
-  ).toHaveValue("106,900000");
+  await expect(page.locator("#destiny-price-per-day")).toHaveValue(
+    "106,900000",
+  );
 
   // check final value
   await expect(
     page
       .locator("div")
       .filter({ hasText: /^Economia\/Dia:R\$Manual$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toHaveValue("102,900000");
 
   await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
@@ -198,15 +184,15 @@ test("outcome: custom", async ({ page }) => {
   await page
     .locator(".ant-select.ant-select-loading")
     .waitFor({ state: "detached" });
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
   await page.getByText("Alta antecipada").click();
 
   // // close dropdown
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste paciente");
-  await page.locator(".ant-modal-content .ant-dropdown-trigger").hover();
+  await page.locator(".ant-modal-container .ant-dropdown-trigger").hover();
   await page.getByText("Salvar e marcar como Aceita").click();
 
   await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
@@ -252,48 +238,48 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
   await page
     .locator(".ant-select.ant-select-loading")
     .waitFor({ state: "detached" });
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
 
   await page.getByText("Suspensão da terapia").click();
 
   // // close dropdown
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
 
   await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
-  await page.locator(".ant-modal-content .ant-dropdown-trigger").hover();
+  await page.locator(".ant-modal-container .ant-dropdown-trigger").hover();
   await page.getByText("Salvar e marcar como Não Aceita").nth(0).click();
 
   await expect(
     page
       .locator("div")
       .filter({ hasText: /^Qtd\. de dias de economia: DiasManual$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toHaveValue("1");
 
   await expect(
     page
       .locator("div")
       .filter({ hasText: /^Qtd\. de dias de economia: DiasManual$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toBeEnabled();
 
   await expect(
     page
       .locator("div")
       .filter({ hasText: /^Economia\/Dia:R\$Manual$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toHaveValue("0,000000");
 
   await expect(
     page
       .locator("div")
       .filter({ hasText: /^Economia\/Dia:R\$Manual$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toBeEnabled();
 
   await page.getByRole("button", { name: "Não Aceitar Intervenção" }).click();
@@ -309,27 +295,27 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
     page
       .locator("div")
       .filter({ hasText: /^Economia\/Dia:R\$Manual$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toHaveValue("0,000000");
 
   await expect(
     page
       .locator("div")
       .filter({ hasText: /^Economia\/Dia:R\$Manual$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toBeDisabled();
 
   await expect(
     page
       .locator("div")
       .filter({ hasText: /^Qtd\. de dias de economia: DiasManual$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toHaveValue("1");
 
   await expect(
     page
       .locator("div")
       .filter({ hasText: /^Qtd\. de dias de economia: DiasManual$/ })
-      .getByRole("spinbutton")
+      .getByRole("spinbutton"),
   ).toBeDisabled();
 });

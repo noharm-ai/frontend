@@ -55,7 +55,7 @@ export default function EconomyDayCalculator({
             ...values[source],
             frequencyDay: value,
           },
-        })
+        }),
       );
     }
   };
@@ -80,7 +80,7 @@ export default function EconomyDayCalculator({
 
     if (
       !Big(values[source][field] || 0).eq(
-        Big(outcomeData[source].item[field] || 0)
+        Big(outcomeData[source].item[field] || 0),
       )
     ) {
       return "warning";
@@ -131,6 +131,7 @@ export default function EconomyDayCalculator({
               status={fieldStatus("dose")}
               stringMode
               precision={INPUT_PRECISION}
+              id={`${source}-dose-dispensation`}
             />
             <PopoverDose outcomeData={outcomeData} source={source}>
               <Button
@@ -157,6 +158,7 @@ export default function EconomyDayCalculator({
               status={fieldStatus("frequencyDay")}
               stringMode
               precision={INPUT_PRECISION}
+              id={`${source}-frequency-day`}
             />
             <PopoverFrequency outcomeData={outcomeData} source={source}>
               <Button icon={<InfoCircleOutlined />} />
@@ -198,6 +200,7 @@ export default function EconomyDayCalculator({
                 className={fieldStatus("price")}
                 status={fieldStatus("price")}
                 stringMode
+                id={`${source}-price`}
               />
             </Space.Compact>
 
@@ -228,6 +231,7 @@ export default function EconomyDayCalculator({
                 status={fieldStatus("priceKit")}
                 precision={INPUT_PRECISION}
                 stringMode
+                id={`${source}-price-kit`}
               />
             </Space.Compact>
 
