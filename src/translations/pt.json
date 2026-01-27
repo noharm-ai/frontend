@@ -950,6 +950,7 @@
       "99": "Finalizado"
     },
     "action": {
+      "-1": "Solicitação criada",
       "1": "Alterar etapa",
       "2": "Agendar",
       "3": "Agendar transporte",

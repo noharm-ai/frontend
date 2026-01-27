@@ -945,6 +945,7 @@
       "99": "Completed"
     },
     "action": {
+      "-1": "Solicitation created",
       "1": "Change Stage",
       "2": "Schedule",
       "3": "Schedule Transportation",

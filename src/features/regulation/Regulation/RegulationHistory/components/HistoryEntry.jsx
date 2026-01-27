@@ -26,13 +26,18 @@ export default function HistoryEntry({ movement, first = false }) {
     DefaultModal.info({
       content: (
         <>
-          <CustomFormView template={template} values={movement.data} />
-          <Divider />
+          {movement.action !== -1 && (
+            <>
+              <CustomFormView template={template} values={movement.data} />
+              <Divider />
+            </>
+          )}
+
           <div>
             <strong>Data:</strong> {formatDateTime(movement.createdAt)}
           </div>
           <div>
-            <strong>Responsável:</strong> {movement.createdBy}
+            <strong>Responsável:</strong> {movement.createdBy || "Integração"}
           </div>
         </>
       ),

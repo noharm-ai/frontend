@@ -5,16 +5,15 @@ import {
   CheckCircleFilled,
   CloseCircleFilled,
 } from "@ant-design/icons";
-import { Card, Flex, Timeline } from "antd";
+import { Card, Timeline } from "antd";
 
-import { formatDateTime } from "utils/date";
 import RegulationStage from "models/regulation/RegulationStage";
 import HistoryEntry from "./components/HistoryEntry";
 
 export default function RegulationHistory() {
   const solicitation = useSelector((state) => state.regulation.regulation.data);
   const movements = useSelector(
-    (state) => state.regulation.regulation.data.movements
+    (state) => state.regulation.regulation.data.movements,
   );
 
   const getCurrentStageConfig = () => {
@@ -75,14 +74,7 @@ export default function RegulationHistory() {
           />
         ),
         color: "green",
-        children: (
-          <Flex vertical={true}>
-            <div style={{ fontWeight: 500 }}>
-              {formatDateTime(move.createdAt)}
-            </div>
-            <div style={{ fontWeight: 300 }}>Solicitação criada</div>
-          </Flex>
-        ),
+        children: <HistoryEntry movement={move} />,
       });
       return;
     }
