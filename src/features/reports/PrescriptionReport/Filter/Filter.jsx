@@ -43,26 +43,26 @@ export default function Filter({ printRef }) {
   const isFetching =
     useSelector((state) => state.reportsArea.prescription.status) === "loading";
   const currentFilters = useSelector(
-    (state) => state.reportsArea.prescription.filters
+    (state) => state.reportsArea.prescription.filters,
   );
   const datasource = useSelector(
-    (state) => state.reportsArea.prescription.list
+    (state) => state.reportsArea.prescription.list,
   );
   const reportDate = useSelector(
-    (state) => state.reportsArea.prescription.date
+    (state) => state.reportsArea.prescription.date,
   );
   const reportUpdatedAt = useSelector(
-    (state) => state.reportsArea.prescription.updatedAt
+    (state) => state.reportsArea.prescription.updatedAt,
   );
   const userId = useSelector((state) => state.user.account.userId);
   const activeReport = useSelector(
-    (state) => state.reportsArea.prescription.activeReport
+    (state) => state.reportsArea.prescription.activeReport,
   );
   const historyModalOpen = useSelector(
-    (state) => state.reportsArea.prescription.historyModal
+    (state) => state.reportsArea.prescription.historyModal,
   );
   const availableReports = useSelector(
-    (state) => state.reportsArea.prescription.availableReports
+    (state) => state.reportsArea.prescription.availableReports,
   );
   const [exporting, setExporting] = useState(false);
   const handlePrint = useReactToPrint({
@@ -86,7 +86,7 @@ export default function Filter({ printRef }) {
     daysOffList: [],
     tagList: [],
     timeRange: [null, null],
-    removePrescriptionAtDischargeDate: false,
+    removePrescriptionAtDischargeDate: "do_not_remove",
   };
 
   const reportManager = useFetchReport({
@@ -101,7 +101,7 @@ export default function Filter({ printRef }) {
             dayjs(header.date).subtract(1, "day"),
           ],
         },
-        body
+        body,
       );
     },
   });

@@ -18,12 +18,12 @@ const getPrescriptionTotals = (datasource) => {
 const getItensTotal = (datasource) => {
   const total = datasource.reduce(
     (accumulator, currentValue) => accumulator + currentValue.itens,
-    0
+    0,
   );
 
   const checked = datasource.reduce(
     (accumulator, currentValue) => accumulator + currentValue.checkedItens,
-    0
+    0,
   );
 
   return {
@@ -46,7 +46,7 @@ const filterDatasource = (datasource, filters) => {
     .filter(
       (i) =>
         i.date >= filters.dateRange[0].format("YYYY-MM-DD") &&
-        i.date <= filters.dateRange[1].format("YYYY-MM-DD")
+        i.date <= filters.dateRange[1].format("YYYY-MM-DD"),
     )
     .filter((i) => {
       if (filters.timeRange && filters.timeRange[0] && filters.timeRange[1]) {
@@ -84,8 +84,21 @@ const filterDatasource = (datasource, filters) => {
       return true;
     })
     .filter((i) => {
-      if (filters.removePrescriptionAtDischargeDate === true) {
+      if (
+        filters.removePrescriptionAtDischargeDate === "remove_discharged_day"
+      ) {
         return i.prescriptionAtDischargeDate === 0;
+      }
+
+      if (
+        filters.removePrescriptionAtDischargeDate ===
+        "remove_discharged_day_keep_checked"
+      ) {
+        if (i.prescriptionAtDischargeDate > 0) {
+          return i.checked;
+        }
+
+        return true;
       }
 
       return true;
@@ -144,7 +157,7 @@ const filterDatasource = (datasource, filters) => {
 const getLifesSummary = (datasource) => {
   const total = uniq(datasource.map((i) => i.admissionNumber)).length;
   const impacted = uniq(
-    datasource.filter((i) => i.checked).map((i) => i.admissionNumber)
+    datasource.filter((i) => i.checked).map((i) => i.admissionNumber),
   ).length;
 
   return {
@@ -157,7 +170,7 @@ const getLifesSummary = (datasource) => {
 const getClinicalNotesTotal = (datasource) => {
   return datasource.reduce(
     (accumulator, currentValue) => accumulator + currentValue.clinicalNote,
-    0
+    0,
   );
 };
 
@@ -287,7 +300,7 @@ export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
   const prescriptionTotals = getPrescriptionTotals(filteredList);
   const days = getUniqList(filteredList, "date").map((i) =>
-    i.split("-").reverse().join("/")
+    i.split("-").reverse().join("/"),
   );
 
   const reportData = {
@@ -297,7 +310,7 @@ export const getReportData = (datasource, filters) => {
     clinicalNotes: getClinicalNotesTotal(filteredList),
     responsibles: getResponsiblesSummary(
       filteredList,
-      prescriptionTotals.checked
+      prescriptionTotals.checked,
     ),
     departments: getDepartmentsSummary(filteredList),
     segments: getSegmentsSummary(filteredList, prescriptionTotals.checked),
