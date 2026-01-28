@@ -10,10 +10,24 @@ import { stripHtmlPreserveSpaces } from "utils/stripHtml";
 
 import { CultureResultContainer } from "../CultureReport.style";
 
+const ExpandColumn = ({ expand, toggleExpansion }) => {
+  return (
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <button
+        type="button"
+        className={`expand-all ant-table-row-expand-icon ${
+          expand ? "ant-table-row-expand-icon-collapsed" : ""
+        }`}
+        onClick={toggleExpansion}
+      ></button>
+    </div>
+  );
+};
+
 export default function CultureList() {
   const [expandedRows, setExpandedRows] = useState([]);
   const datasource = useSelector(
-    (state) => state.reportsArea.culture.filtered.result.list
+    (state) => state.reportsArea.culture.filtered.result.list,
   );
 
   const updateExpandedRows = (list, key) => {
@@ -36,20 +50,6 @@ export default function CultureList() {
     }
   };
 
-  const ExpandColumn = ({ expand }) => {
-    return (
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          type="button"
-          className={`expand-all ant-table-row-expand-icon ${
-            expand ? "ant-table-row-expand-icon-collapsed" : ""
-          }`}
-          onClick={toggleExpansion}
-        ></button>
-      </div>
-    );
-  };
-
   const columns = [
     {
       title: "Data Coleta",
@@ -58,8 +58,8 @@ export default function CultureList() {
         a.collectionDate < b.collectionDate
           ? -1
           : a.collectionDate > b.collectionDate
-          ? 1
-          : 0,
+            ? 1
+            : 0,
       render: (_, record) => formatDate(record.collectionDate),
     },
     {
@@ -69,8 +69,8 @@ export default function CultureList() {
         a.releaseDate < b.releaseDate
           ? -1
           : a.releaseDate > b.releaseDate
-          ? 1
-          : 0,
+            ? 1
+            : 0,
       render: (_, record) => formatDate(record.releaseDate),
     },
     {
@@ -128,7 +128,12 @@ export default function CultureList() {
             },
           };
         }}
-        columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+        columnTitle={
+          <ExpandColumn
+            expand={!expandedRows.length}
+            toggleExpansion={toggleExpansion}
+          />
+        }
         pagination={{ showSizeChanger: true }}
         size="small"
       />

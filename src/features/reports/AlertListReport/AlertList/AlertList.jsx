@@ -8,11 +8,25 @@ import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 import RichTextView from "components/RichTextView";
 import { formatDateTime } from "utils/date";
 
+const ExpandColumn = ({ expand, toggleExpansion }) => {
+  return (
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <button
+        type="button"
+        className={`expand-all ant-table-row-expand-icon ${
+          expand ? "ant-table-row-expand-icon-collapsed" : ""
+        }`}
+        onClick={toggleExpansion}
+      ></button>
+    </div>
+  );
+};
+
 export default function AlertList() {
   const { t } = useTranslation();
   const [expandedRows, setExpandedRows] = useState([]);
   const datasource = useSelector(
-    (state) => state.reportsArea.alertList.filtered.result.list
+    (state) => state.reportsArea.alertList.filtered.result.list,
   );
 
   const updateExpandedRows = (list, key) => {
@@ -33,20 +47,6 @@ export default function AlertList() {
     } else {
       setExpandedRows(datasource.map((i) => i.rowKey));
     }
-  };
-
-  const ExpandColumn = ({ expand }) => {
-    return (
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          type="button"
-          className={`expand-all ant-table-row-expand-icon ${
-            expand ? "ant-table-row-expand-icon-collapsed" : ""
-          }`}
-          onClick={toggleExpansion}
-        ></button>
-      </div>
-    );
   };
 
   const columns = [
@@ -99,7 +99,12 @@ export default function AlertList() {
             },
           };
         }}
-        columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+        columnTitle={
+          <ExpandColumn
+            expand={!expandedRows.length}
+            toggleExpansion={toggleExpansion}
+          />
+        }
         size="small"
         pagination={{ showSizeChanger: true }}
       />

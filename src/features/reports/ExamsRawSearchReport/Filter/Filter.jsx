@@ -19,12 +19,28 @@ export default function Filter({ idPatient }) {
     useSelector((state) => state.reportsArea.examsRawSearch.status) ===
     "loading";
   const datasource = useSelector(
-    (state) => state.reportsArea.examsRawSearch.list
+    (state) => state.reportsArea.examsRawSearch.list,
   );
   const initialValues = {
     dateRange: [],
     typesList: [],
     valueString: "",
+  };
+
+  const search = async (params, forceDs) => {
+    let ds = [];
+    if (!forceDs) {
+      ds = datasource;
+    }
+
+    dispatch(setFilteredStatus("loading"));
+    dispatch(setFilters(params));
+    const reportData = getReportData(forceDs || ds, params);
+    dispatch(setFilteredResult(reportData));
+
+    setTimeout(() => {
+      dispatch(setFilteredStatus("succeeded"));
+    }, 500);
   };
 
   useEffect(() => {
@@ -54,7 +70,7 @@ export default function Filter({ idPatient }) {
               ...initialValues,
               dateRange: [],
             },
-            response.payload.data
+            response.payload.data,
           );
         }
       });
@@ -66,22 +82,6 @@ export default function Filter({ idPatient }) {
       dispatch(reset());
     };
   }, []); //eslint-disable-line
-
-  const search = async (params, forceDs) => {
-    let ds = [];
-    if (!forceDs) {
-      ds = datasource;
-    }
-
-    dispatch(setFilteredStatus("loading"));
-    dispatch(setFilters(params));
-    const reportData = getReportData(forceDs || ds, params);
-    dispatch(setFilteredResult(reportData));
-
-    setTimeout(() => {
-      dispatch(setFilteredStatus("succeeded"));
-    }, 500);
-  };
 
   return (
     <React.Fragment>

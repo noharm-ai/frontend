@@ -23,6 +23,7 @@ import {
 } from "./IndicatorsPanelReportSlice";
 import { Summary } from "./Summary/Summary";
 import Button from "components/Button";
+import { ExpandColumn } from "src/components/ExpandColumn";
 
 import { PageCard, PaginationContainer } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
@@ -31,24 +32,24 @@ export default function IndicatorsPanelReport() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const status = useAppSelector(
-    (state) => state.regulation.indicatorsPanelReport.status
+    (state) => state.regulation.indicatorsPanelReport.status,
   );
 
   const [expandedRows, setExpandedRows] = useState<Key[]>([]);
   const page = useAppSelector(
-    (state) => state.regulation.indicatorsPanelReport.currentPage
+    (state) => state.regulation.indicatorsPanelReport.currentPage,
   );
   const count = useAppSelector(
-    (state) => state.regulation.indicatorsPanelReport.count
+    (state) => state.regulation.indicatorsPanelReport.count,
   );
   const filters = useAppSelector(
-    (state) => state.regulation.indicatorsPanelReport.filters
+    (state) => state.regulation.indicatorsPanelReport.filters,
   );
   const order = useAppSelector(
-    (state) => state.regulation.indicatorsPanelReport.order
+    (state) => state.regulation.indicatorsPanelReport.order,
   );
   const datasource = useAppSelector(
-    (state) => state.regulation.indicatorsPanelReport.list
+    (state) => state.regulation.indicatorsPanelReport.list,
   );
 
   const limit = 100;
@@ -62,7 +63,7 @@ export default function IndicatorsPanelReport() {
         }
 
         const url = window.URL.createObjectURL(
-          new Blob([response.payload.data])
+          new Blob([response.payload.data]),
         );
 
         const link = document.createElement("a");
@@ -74,7 +75,7 @@ export default function IndicatorsPanelReport() {
 
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-      }
+      },
     );
   };
 
@@ -85,20 +86,6 @@ export default function IndicatorsPanelReport() {
     setExpandedRows([]);
 
     dispatch(fetchReport(params));
-  };
-
-  const ExpandColumn = ({ expand }: any) => {
-    return (
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          type="button"
-          className={`expand-all ant-table-row-expand-icon ${
-            expand ? "ant-table-row-expand-icon-collapsed" : ""
-          }`}
-          onClick={toggleExpansion}
-        ></button>
-      </div>
-    );
   };
 
   const toggleExpansion = () => {
@@ -183,7 +170,12 @@ export default function IndicatorsPanelReport() {
           showSorterTooltip={false}
           expandedRowRender={expandedRowRender}
           expandedRowKeys={expandedRows}
-          columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+          columnTitle={
+            <ExpandColumn
+              expand={!expandedRows.length}
+              toggleExpansion={toggleExpansion}
+            />
+          }
           onExpand={(_: any, record: any) => handleRowExpand(record)}
         />
       </PageCard>

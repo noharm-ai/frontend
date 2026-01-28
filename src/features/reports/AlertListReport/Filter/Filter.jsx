@@ -21,7 +21,7 @@ export default function Filter({ printRef }) {
     useSelector((state) => state.reportsArea.alertList.status) === "loading";
   const datasource = useSelector((state) => state.reportsArea.alertList.list);
   const initialFilters = useSelector(
-    (state) => state.reportsArea.alertList.initialFilters
+    (state) => state.reportsArea.alertList.initialFilters,
   );
   const handlePrint = useReactToPrint({
     contentRef: printRef,
@@ -34,12 +34,6 @@ export default function Filter({ printRef }) {
     typeList: [],
     ...initialFilters,
   };
-
-  useEffect(() => {
-    search({
-      ...initialValues,
-    });
-  }, []); //eslint-disable-line
 
   const search = async (params, forceDs) => {
     let ds = [];
@@ -56,6 +50,12 @@ export default function Filter({ printRef }) {
       dispatch(setFilteredStatus("succeeded"));
     }, 500);
   };
+
+  useEffect(() => {
+    search({
+      ...initialValues,
+    });
+  }, []); //eslint-disable-line
 
   return (
     <React.Fragment>

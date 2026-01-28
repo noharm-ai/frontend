@@ -8,6 +8,7 @@ import {
   toggleSelectedRows,
   setSelectedRows,
 } from "features/prescription/PrescriptionSlice";
+import { ExpandColumn } from "src/components/ExpandColumn";
 
 import columnsTable, {
   expandedRowRender,
@@ -34,19 +35,19 @@ function Table({
 }) {
   const dispatch = useDispatch();
   const prescriptionListType = useSelector(
-    (state) => state.preferences.prescription.listType
+    (state) => state.preferences.prescription.listType,
   );
   const prescriptionDrugOrder = useSelector(
-    (state) => state.preferences.prescription.drugOrder
+    (state) => state.preferences.prescription.drugOrder,
   );
   const prescriptionPerspective = useSelector(
-    (state) => state.prescriptionv2.perspective
+    (state) => state.prescriptionv2.perspective,
   );
   const selectedRows = useSelector(
-    (state) => state.prescriptionv2.selectedRows.list
+    (state) => state.prescriptionv2.selectedRows.list,
   );
   const selectedRowsActive = useSelector(
-    (state) => state.prescriptionv2.selectedRows.active
+    (state) => state.prescriptionv2.selectedRows.active,
   );
   const [expandedRows, setExpandedRows] = useState([]);
 
@@ -70,7 +71,7 @@ function Table({
       if (ds.value) {
         trackPrescriptionAction(TrackedPrescriptionAction.EXPAND_ALL);
         setExpandedRows(
-          ds.value.filter((i) => /^[0-9]*$/g.test(i.key)).map((i) => i.key)
+          ds.value.filter((i) => /^[0-9]*$/g.test(i.key)).map((i) => i.key),
         );
       }
     }
@@ -85,7 +86,7 @@ function Table({
     if (rows.length > 0) {
       if (isAllSelected()) {
         dispatch(
-          setSelectedRows(selectedRows.filter((s) => rows.indexOf(s) === -1))
+          setSelectedRows(selectedRows.filter((s) => rows.indexOf(s) === -1)),
         );
       } else {
         const allRows = [...selectedRows, ...rows];
@@ -139,20 +140,6 @@ function Table({
     }
   };
 
-  const ExpandColumn = ({ expand }) => {
-    return (
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          type="button"
-          className={`expand-all ant-table-row-expand-icon ${
-            expand ? "ant-table-row-expand-icon-collapsed" : ""
-          }`}
-          onClick={toggleExpansion}
-        ></button>
-      </div>
-    );
-  };
-
   return (
     <ExpandableTable
       showHeader={showHeader}
@@ -172,7 +159,12 @@ function Table({
       rowClassName={(record) => rowClassName(record, extraBag)}
       expandedRowKeys={expandedRows}
       onExpand={(expanded, record) => handleRowExpand(record)}
-      columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+      columnTitle={
+        <ExpandColumn
+          expand={!expandedRows.length}
+          toggleExpansion={toggleExpansion}
+        />
+      }
       className={prescriptionListType}
       scroll={getResponsiveTableWidth("1300px")}
     />

@@ -7,13 +7,27 @@ import { Textarea } from "src/components/Inputs";
 import Tooltip from "src/components/Tooltip";
 import { formatDateTime } from "src/utils/date";
 
+const ExpandColumn = ({ expand, toggleExpansion }: any) => {
+  return (
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <button
+        type="button"
+        className={`expand-all ant-table-row-expand-icon ${
+          expand ? "ant-table-row-expand-icon-collapsed" : ""
+        }`}
+        onClick={toggleExpansion}
+      ></button>
+    </div>
+  );
+};
+
 export function HistoryList() {
   const [expandedRows, setExpandedRows] = useState<any>([]);
   const datasource = useAppSelector(
-    (state) => state.reportsArea.integrationNifiLint.filtered.result.list
+    (state) => state.reportsArea.integrationNifiLint.filtered.result.list,
   );
   const errorKeys = useAppSelector(
-    (state) => state.reportsArea.integrationNifiLint.errorKeys
+    (state) => state.reportsArea.integrationNifiLint.errorKeys,
   );
 
   const updateExpandedRows = (list: any, key: any) => {
@@ -35,23 +49,9 @@ export function HistoryList() {
       setExpandedRows(
         datasource
           .filter((i: any) => /^[0-9]*$/g.test(i.id))
-          .map((i: any) => i.id)
+          .map((i: any) => i.id),
       );
     }
-  };
-
-  const ExpandColumn = ({ expand }: any) => {
-    return (
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          type="button"
-          className={`expand-all ant-table-row-expand-icon ${
-            expand ? "ant-table-row-expand-icon-collapsed" : ""
-          }`}
-          onClick={toggleExpansion}
-        ></button>
-      </div>
-    );
   };
 
   const columns = [
@@ -153,7 +153,12 @@ export function HistoryList() {
             },
           };
         }}
-        columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+        columnTitle={
+          <ExpandColumn
+            expand={!expandedRows.length}
+            toggleExpansion={toggleExpansion}
+          />
+        }
         size="small"
         pagination={{ showSizeChanger: false, pageSize: 50 }}
       />

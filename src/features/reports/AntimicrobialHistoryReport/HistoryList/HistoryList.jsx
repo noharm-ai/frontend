@@ -6,10 +6,24 @@ import { formatDateTime } from "utils/date";
 import { CardTable } from "components/Table";
 import Button from "components/Button";
 
+const ExpandColumn = ({ expand, toggleExpansion }) => {
+  return (
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <button
+        type="button"
+        className={`expand-all ant-table-row-expand-icon ${
+          expand ? "ant-table-row-expand-icon-collapsed" : ""
+        }`}
+        onClick={toggleExpansion}
+      ></button>
+    </div>
+  );
+};
+
 export default function HistoryList() {
   const [expandedRows, setExpandedRows] = useState([]);
   const datasource = useSelector(
-    (state) => state.reportsArea.antimicrobialHistory.filtered.result.list
+    (state) => state.reportsArea.antimicrobialHistory.filtered.result.list,
   );
 
   const updateExpandedRows = (list, key) => {
@@ -22,7 +36,7 @@ export default function HistoryList() {
 
   const handleRowExpand = (record) => {
     setExpandedRows(
-      updateExpandedRows(expandedRows, record.idPrescriptionDrug)
+      updateExpandedRows(expandedRows, record.idPrescriptionDrug),
     );
   };
 
@@ -33,23 +47,9 @@ export default function HistoryList() {
       setExpandedRows(
         datasource
           .filter((i) => /^[0-9]*$/g.test(i.idPrescriptionDrug))
-          .map((i) => i.idPrescriptionDrug)
+          .map((i) => i.idPrescriptionDrug),
       );
     }
-  };
-
-  const ExpandColumn = ({ expand }) => {
-    return (
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          type="button"
-          className={`expand-all ant-table-row-expand-icon ${
-            expand ? "ant-table-row-expand-icon-collapsed" : ""
-          }`}
-          onClick={toggleExpansion}
-        ></button>
-      </div>
-    );
   };
 
   const columns = [
@@ -60,8 +60,8 @@ export default function HistoryList() {
         a.prescriptionDate < b.prescriptionDate
           ? -1
           : a.prescriptionDate > b.prescriptionDate
-          ? 1
-          : 0,
+            ? 1
+            : 0,
       render: (_, record) => formatDateTime(record.prescriptionDate),
     },
     {
@@ -71,8 +71,8 @@ export default function HistoryList() {
         a.prescriptionExpirationDate < b.prescriptionExpirationDate
           ? -1
           : a.prescriptionExpirationDate > b.prescriptionExpirationDate
-          ? 1
-          : 0,
+            ? 1
+            : 0,
       render: (_, record) => formatDateTime(record.prescriptionExpirationDate),
     },
     {
@@ -82,8 +82,8 @@ export default function HistoryList() {
         a.suspensionDate < b.suspensionDate
           ? -1
           : a.suspensionDate > b.suspensionDate
-          ? 1
-          : 0,
+            ? 1
+            : 0,
       render: (_, record) =>
         record.suspensionDate ? formatDateTime(record.suspensionDate) : "-",
     },
@@ -117,7 +117,12 @@ export default function HistoryList() {
             },
           };
         }}
-        columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+        columnTitle={
+          <ExpandColumn
+            expand={!expandedRows.length}
+            toggleExpansion={toggleExpansion}
+          />
+        }
         size="small"
         pagination={{ showSizeChanger: true }}
       />
