@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Row, Col, Spin, Alert, Space } from "antd";
@@ -36,10 +36,6 @@ export default function UnitCard({
   const [error, setError] = useState(null);
   const [infered, setInfered] = useState(!isValidConversion(data));
 
-  useEffect(() => {
-    setError(null);
-  }, [idSegment]);
-
   const Link = () => (
     <div
       style={{ display: "flex", flexDirection: "column", padding: "0.5rem 0" }}
@@ -52,7 +48,7 @@ export default function UnitCard({
             onClick={() =>
               window.open(
                 `/medicamentos/${idSegment}/${idDrug}/${createSlug(name)}`,
-                "_blank"
+                "_blank",
               )
             }
           >
@@ -191,7 +187,7 @@ export default function UnitCard({
                                   onChange={(val) =>
                                     setFieldValue(
                                       `conversionList.${index}.factor`,
-                                      val
+                                      val,
                                     )
                                   }
                                 />

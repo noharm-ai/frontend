@@ -24,10 +24,10 @@ function MostFrequentForm({ open, setOpen }) {
   const segmentList = useSelector((state) => state.segments.list);
   const exams = useSelector((state) => state.admin.exam.fetchMostFrequent.list);
   const fetchStatus = useSelector(
-    (state) => state.admin.exam.fetchMostFrequent.status
+    (state) => state.admin.exam.fetchMostFrequent.status,
   );
   const saveStatus = useSelector(
-    (state) => state.admin.exam.addMostFrequent.status
+    (state) => state.admin.exam.addMostFrequent.status,
   );
 
   const [filter, setFilter] = useState({
@@ -42,10 +42,6 @@ function MostFrequentForm({ open, setOpen }) {
             message: getErrorMessage(response, t),
           });
         }
-      });
-    } else {
-      setFilter({
-        type: null,
       });
     }
   }, [open, dispatch, t]);
@@ -116,6 +112,9 @@ function MostFrequentForm({ open, setOpen }) {
 
   const onCancel = () => {
     setOpen(false);
+    setFilter({
+      type: null,
+    });
   };
 
   const getDatasource = () => {
