@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
@@ -28,17 +28,12 @@ function GenerateScore({ open, setOpen, setCurrentStep }) {
   const [outliersStatus, setOutliersStatus] = useState("idle");
   const [progressPercentage, setProgressPercentage] = useState("idle");
 
-  useEffect(() => {
-    if (!open) {
-      setLoading(false);
-      setOutliersStatus("idle");
-      setProgressPercentage(0);
-      setErrorMessage("");
-    }
-  }, [open]);
-
   const onCancel = () => {
     setOpen(false);
+    setLoading(false);
+    setOutliersStatus("idle");
+    setProgressPercentage(0);
+    setErrorMessage("");
   };
 
   const generateOutliers = async () => {
@@ -80,14 +75,14 @@ function GenerateScore({ open, setOpen, setCurrentStep }) {
         setLoading(false);
 
         dispatch(
-          fetchReferencesListThunk(currentDrug.idSegment, currentDrug.idDrug)
+          fetchReferencesListThunk(currentDrug.idSegment, currentDrug.idDrug),
         );
 
         dispatch(
           fetchDrugsUnitsListThunk({
             id: currentDrug.idDrug,
             idSegment: currentDrug.idSegment,
-          })
+          }),
         );
 
         setCurrentStep(0);
