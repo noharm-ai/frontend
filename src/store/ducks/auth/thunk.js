@@ -17,8 +17,13 @@ import { fetchPendingActionTickets } from "src/features/support/SupportSlice";
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { segmentsFetchListSuccess } = SegmentCreators;
 const { authSetErrorIdentify, authDelIdentify } = AuthCreators;
-const { appSetData, appSetConfig, appSetCurrentVersion, appSetNotification } =
-  AppCreators;
+const {
+  appSetData,
+  appSetConfig,
+  appSetCurrentVersion,
+  appSetNotification,
+  appResetScreeningListFilter,
+} = AppCreators;
 
 export const oauthLoginThunk = (params) => async (dispatch) => {
   return new Promise(async (resolve, reject) => {
@@ -150,14 +155,20 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
       proxy,
       logoutUrl,
       integrationStatus,
-    })
+    }),
   );
   dispatch(
     appSetData({
       hospitals: userData.hospitals,
-    })
+    }),
   );
   dispatch(appSetNotification(notify));
+
+  // reset filters
+  if (permissions.includes("MAINTAINER")) {
+    console.log("Resetting screening list filters for maintainer user");
+    dispatch(appResetScreeningListFilter({}));
+  }
 
   // check for pending tickets
   dispatch(fetchPendingActionTickets());
