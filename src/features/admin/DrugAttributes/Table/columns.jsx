@@ -6,6 +6,7 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import { createSlug } from "utils/transformers/utils";
+import EditSubstance from "./EditSubstance";
 
 const columns = (t, bag) => {
   return [
@@ -41,34 +42,16 @@ const columns = (t, bag) => {
       },
     },
     {
-      title: "Unidade Padrão",
-      dataIndex: "idMeasureUnitDefault",
-      width: 180,
+      title: "Substância",
+      align: "left",
       render: (entry, record) => {
-        if (!record.idMeasureUnitDefault) {
-          return <Tag color="red">Vazio</Tag>;
-        }
-
-        return record.idMeasureUnitDefault;
-      },
-    },
-    {
-      title: "Unidade Custo",
-      dataIndex: "idMeasureUnitPrice",
-      width: 180,
-      render: (entry, record) => {
-        if (!record.idMeasureUnitPrice) {
-          return <Tag color="red">Vazio</Tag>;
-        }
-
-        return record.idMeasureUnitPrice;
-      },
-    },
-    {
-      title: "Contagem",
-      width: 100,
-      render: (entry, record) => {
-        return record.drugCount;
+        return (
+          <EditSubstance
+            idDrug={record.idDrug}
+            sctid={record.sctid}
+            accuracy={record.substanceAccuracy}
+          />
+        );
       },
     },
     {

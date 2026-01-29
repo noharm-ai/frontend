@@ -6,7 +6,6 @@ import Descriptions from "components/Descriptions";
 import NumericValue from "components/NumericValue";
 import EditMaxDose from "./EditMaxDose";
 import { formatDateTime } from "utils/date";
-import EditSubstance from "./EditSubstance";
 
 const NestedTableContainer = styled.div`
   .ant-descriptions-item-label {
@@ -21,16 +20,6 @@ const expandedRowRender = (record) => {
   return (
     <NestedTableContainer>
       <Descriptions bordered size="small">
-        <Descriptions.Item label="Medicamento:" span={3}>
-          {record.name}
-        </Descriptions.Item>
-        <Descriptions.Item label="Substância:" span={3}>
-          <EditSubstance
-            idDrug={record.idDrug}
-            sctid={record.sctid}
-            accuracy={record.substanceAccuracy}
-          />
-        </Descriptions.Item>
         <Descriptions.Item label="Dose máxima:" span={3}>
           <EditMaxDose
             idDrug={record.idDrug}
@@ -40,6 +29,22 @@ const expandedRowRender = (record) => {
             measureUnitDefaultName={record.measureUnitDefaultName}
             record={record}
           />
+        </Descriptions.Item>
+
+        <Descriptions.Item label="Unidade padrão:" span={3}>
+          {!record.idMeasureUnitDefault ? (
+            <Tag color="red">Unidade não definida</Tag>
+          ) : (
+            <>{record.idMeasureUnitDefault}</>
+          )}
+        </Descriptions.Item>
+
+        <Descriptions.Item label="Unidade de custo:" span={3}>
+          {!record.idMeasureUnitPrice ? (
+            <Tag color="red">Unidade não definida</Tag>
+          ) : (
+            <>{record.idMeasureUnitPrice}</>
+          )}
         </Descriptions.Item>
 
         <Descriptions.Item label="Custo:" span={3}>

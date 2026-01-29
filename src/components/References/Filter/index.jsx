@@ -115,7 +115,7 @@ export default function Filter({
               filterOption={filterOption}
             >
               {drugs.list.map(({ idDrug, name: text }) => (
-                <Select.Option key={idDrug} value={idDrug}>
+                <Select.Option key={`${idDrug}`} value={`${idDrug}`}>
                   {text}
                 </Select.Option>
               ))}

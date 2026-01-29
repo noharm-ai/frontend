@@ -60,7 +60,7 @@ export default function References({
   const [title] = useMedia(
     [`(max-width: ${breakpoints.lg})`],
     [[theTitle]],
-    [noop]
+    [noop],
   );
 
   const onSaveObs = () => {
@@ -101,7 +101,7 @@ export default function References({
         params.idSegment,
         params.idDrug,
         params.dose,
-        params.frequency
+        params.frequency,
       );
     } else {
       fetchReferencesList();
@@ -136,7 +136,7 @@ export default function References({
           params.idSegment,
           params.idDrug,
           params.dose,
-          params.frequency
+          params.frequency,
         );
       } else {
         fetchReferencesList();
@@ -168,7 +168,7 @@ export default function References({
       fetchDrugAttributes({
         idDrug: outliers.selecteds.idDrug,
         idSegment: outliers.selecteds.idSegment,
-      })
+      }),
     );
   };
 
@@ -236,7 +236,7 @@ export default function References({
             <Col xs={6}>
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 {PermissionService().has(
-                  Permission.ADMIN_SUBSTANCE_RELATIONS
+                  Permission.ADMIN_SUBSTANCE_RELATIONS,
                 ) &&
                   drugData.sctidA && (
                     <Button

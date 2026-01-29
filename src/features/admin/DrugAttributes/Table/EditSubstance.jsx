@@ -17,7 +17,7 @@ import Tooltip from "components/Tooltip";
 import { updateSubstance } from "../DrugAttributesSlice";
 import { setDrawerSctid } from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
 
-export default function EditPriceConversion({ idDrug, sctid, accuracy }) {
+export default function EditSubstance({ idDrug, sctid, accuracy }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const substances = useSelector((state) => state.lists.getSubstances.list);
@@ -26,6 +26,7 @@ export default function EditPriceConversion({ idDrug, sctid, accuracy }) {
   const [saving, setSaving] = useState(false);
   const [value, setValue] = useState(sctid);
   const [updated, setUpdated] = useState(false);
+  const [edit, setEdit] = useState(false);
 
   useEffect(() => {
     setValue(sctid);
@@ -52,6 +53,7 @@ export default function EditPriceConversion({ idDrug, sctid, accuracy }) {
         });
       } else {
         setUpdated(true);
+        setEdit(false);
         notification.success({
           message: "Substância atualizada!",
         });
@@ -71,11 +73,22 @@ export default function EditPriceConversion({ idDrug, sctid, accuracy }) {
     return "red";
   };
 
+  if (!accuracy && !edit && sctid) {
+    return (
+      <Tooltip title="Clique para editar">
+        <a onClick={() => setEdit(true)}>
+          {substances.find((sub) => `${sub.sctid}` === `${value}`)?.name ||
+            value}
+        </a>
+      </Tooltip>
+    );
+  }
+
   return (
     <div>
-      <span style={{ width: "600px", display: "flex" }}>
+      <span style={{ width: "100%", display: "flex" }}>
         <Select
-          style={{ width: "500px", marginRight: "5px" }}
+          style={{ width: "85%", marginRight: "5px" }}
           value={value ? `${value}` : null}
           onChange={(val) => setValue(val)}
           showSearch={{ optionFilterProp: ["label"] }}
@@ -101,6 +114,7 @@ export default function EditPriceConversion({ idDrug, sctid, accuracy }) {
             icon={<CheckOutlined />}
             loading={saving}
             disabled={substancesLoading}
+            style={{ width: "30px" }}
           ></Button>
         </Tooltip>
         {accuracy && value === sctid && !updated && (
