@@ -88,7 +88,7 @@ export default function EditMaxDose({
 
   return (
     <div>
-      <span style={{ width: "500px", display: "flex", alignItems: "center" }}>
+      <span style={{ width: "600px", display: "flex", alignItems: "center" }}>
         <Space.Compact
           style={{
             marginRight: 5,

@@ -12,7 +12,11 @@ import { PageHeader } from "styles/PageHeader.style";
 import Filter from "./Filter/Filter";
 import columns from "./Table/columns";
 import expandedRowRender from "./Table/expandedRowRender";
-import { setCurrentPage, fetchDrugAttributes } from "./DrugAttributesSlice";
+import {
+  setCurrentPage,
+  fetchDrugAttributes,
+  setDrugForm,
+} from "./DrugAttributesSlice";
 import { getSubstances } from "features/lists/ListsSlice";
 import Actions from "./Actions/Actions";
 import DrugReferenceDrawer from "../DrugReferenceDrawer/DrugReferenceDrawer";
@@ -99,7 +103,9 @@ export default function DrugAttributes() {
       </PaginationContainer>
       <PageCard>
         <ExpandableTable
-          columns={columns(t)}
+          columns={columns(t, {
+            setDrugForm: (data) => dispatch(setDrugForm(data)),
+          })}
           pagination={false}
           loading={isFetching}
           locale={{

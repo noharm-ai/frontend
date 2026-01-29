@@ -1,11 +1,12 @@
 import React from "react";
 import styled from "styled-components";
+import { Tag } from "antd";
 
 import Descriptions from "components/Descriptions";
 import NumericValue from "components/NumericValue";
-import EditSubstance from "./EditSubstance";
 import EditMaxDose from "./EditMaxDose";
 import { formatDateTime } from "utils/date";
+import EditSubstance from "./EditSubstance";
 
 const NestedTableContainer = styled.div`
   .ant-descriptions-item-label {
@@ -40,9 +41,16 @@ const expandedRowRender = (record) => {
             record={record}
           />
         </Descriptions.Item>
+
         <Descriptions.Item label="Custo:" span={3}>
-          <NumericValue prefix={"R$ "} value={record.price} decimalScale={4} />
+          <NumericValue prefix={"R$ "} value={record.price} decimalScale={4} />/
+          {!record.idMeasureUnitPrice ? (
+            <Tag color="red">Unidade não definida</Tag>
+          ) : (
+            <>{record.idMeasureUnitPrice}</>
+          )}
         </Descriptions.Item>
+
         <Descriptions.Item label="Última alteração" span={3}>
           {record.responsible && (
             <>

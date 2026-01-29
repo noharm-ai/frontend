@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Spin } from "antd";
+import { Spin, Alert } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 
 import notification from "components/notification";
@@ -22,9 +22,10 @@ export default function DrugAttributesForm({ idSegment, idDrug }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const data = useSelector((state) => state.drugAttributesForm.data);
+  const error = useSelector((state) => state.drugAttributesForm.error);
   const status = useSelector((state) => state.drugAttributesForm.status);
   const saveStatus = useSelector(
-    (state) => state.drugAttributesForm.saveDrugAttributes.status
+    (state) => state.drugAttributesForm.saveDrugAttributes.status,
   );
   const isLoading = status === "loading" || saveStatus === "loading";
 
@@ -57,6 +58,12 @@ export default function DrugAttributesForm({ idSegment, idDrug }) {
       }
     });
   };
+
+  if (error) {
+    return (
+      <Alert title={getErrorMessage({ error }, t)} type="error" showIcon />
+    );
+  }
 
   return (
     <Spin spinning={isLoading}>

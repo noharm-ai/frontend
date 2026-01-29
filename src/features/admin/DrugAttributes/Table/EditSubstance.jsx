@@ -73,24 +73,25 @@ export default function EditPriceConversion({ idDrug, sctid, accuracy }) {
 
   return (
     <div>
-      <span style={{ width: "500px", display: "flex" }}>
+      <span style={{ width: "600px", display: "flex" }}>
         <Select
-          style={{ width: "400px", marginRight: "5px" }}
+          style={{ width: "500px", marginRight: "5px" }}
           value={value ? `${value}` : null}
           onChange={(val) => setValue(val)}
-          showSearch
-          optionFilterProp="children"
+          showSearch={{ optionFilterProp: ["label"] }}
           disabled={substancesLoading}
           loading={substancesLoading}
           allowClear
-        >
-          {substances.map(({ sctid, name, active }) => (
-            <Select.Option key={sctid} value={sctid}>
-              {active ? "" : "(INATIVO) "}
-              {name}
-            </Select.Option>
-          ))}
-        </Select>
+          optionRender={(option) => (
+            <div style={{ whiteSpace: "normal", wordWrap: "break-word" }}>
+              {option.label}
+            </div>
+          )}
+          options={substances.map(({ sctid, name, active }) => ({
+            value: sctid,
+            label: `${active ? "" : "(INATIVO) "} ${name}`,
+          }))}
+        />
 
         <Tooltip title="Salvar">
           <Button

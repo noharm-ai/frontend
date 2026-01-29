@@ -179,6 +179,17 @@ export default function SecondaryFilters() {
               </Select.Option>
             </Select.OptGroup>
           </Select>
+          <Radio.Group
+            options={[
+              { label: "Possui", value: "in" },
+              { label: "Não possui", value: "notin" },
+            ]}
+            onChange={({ target: { value } }) =>
+              setFieldValue({ tpAttributeList: value })
+            }
+            value={values.tpAttributeList}
+            style={{ marginTop: "5px" }}
+          />
         </Col>
 
         <Col xs={6}>

@@ -21,6 +21,7 @@ import CopyConversion from "../CopyConversion/CopyConversion";
 import CopyAttributes from "../CopyAttributes/CopyAttributes";
 import PredictSubstances from "../PredictSubstances/PredictSubstances";
 import { CalculateDoseMaxDialog } from "../CalculateDoseMax/CalculateDoseMax";
+import { DrugFormModal } from "../DrugFormModal/DrugFormModal";
 
 export default function Actions({ reload }) {
   const dispatch = useDispatch();
@@ -32,7 +33,7 @@ export default function Actions({ reload }) {
   const [calcDosemaxVisible, setCalcDosemaxVisible] = useState(false);
   const isAddingDefaultUnits =
     useSelector(
-      (state) => state.admin.drugAttributes.addDefaultUnits.status
+      (state) => state.admin.drugAttributes.addDefaultUnits.status,
     ) === "loading";
   const isCopyingConversion =
     useSelector((state) => state.admin.drugAttributes.copyConversion.status) ===
@@ -45,7 +46,7 @@ export default function Actions({ reload }) {
     "loading";
   const isCalculatingDosemax =
     useSelector(
-      (state) => state.admin.drugAttributes.calculateDosemax.status
+      (state) => state.admin.drugAttributes.calculateDosemax.status,
     ) === "loading";
 
   const showDefaultUnitDialog = () => {
@@ -248,6 +249,8 @@ export default function Actions({ reload }) {
         setOpen={setCalcDosemaxVisible}
         reload={reload}
       />
+
+      <DrugFormModal />
     </>
   );
 }
