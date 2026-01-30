@@ -109,6 +109,7 @@ export function Base() {
           <div className="form-input">
             <Select
               options={TpPepEnum.getList()}
+              showSearch={{ optionFilterProp: ["label"] }}
               onChange={(value) => onChangeTpPep(value)}
               value={values.tp_pep}
             />
