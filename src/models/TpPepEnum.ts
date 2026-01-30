@@ -8,6 +8,7 @@ export class TpPepEnum {
   static G_HOSP = "G_HOSP";
   static IW = "IW";
   static JME = "JME";
+  static NAVEGACAO = "NAVEGACAO";
   static MICROMED = "MICROMED";
   static MV = "MV";
   static PEC = "PEC";
