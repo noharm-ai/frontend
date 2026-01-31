@@ -72,9 +72,11 @@ export default function AdmissionTab({ prescription }) {
       </div>
 
       <div className="patient-data-item">
-        <div className="patient-data-item-label">{t("labels.insurance")}</div>
+        <div className="patient-data-item-label">
+          {t("patientCard.medicalRecord")}
+        </div>
         <div className="patient-data-item-value">
-          <Tooltip title={insurance}>{insurance}</Tooltip>
+          <Tooltip title={prescription.record}>{prescription.record}</Tooltip>
         </div>
       </div>
 
@@ -84,6 +86,13 @@ export default function AdmissionTab({ prescription }) {
         </div>
         <div className="patient-data-item-value">
           <Tooltip title={prescriber}>{prescriber}</Tooltip>
+        </div>
+      </div>
+
+      <div className="patient-data-item">
+        <div className="patient-data-item-label">{t("labels.insurance")}</div>
+        <div className="patient-data-item-value">
+          <Tooltip title={insurance}>{insurance}</Tooltip>
         </div>
       </div>
 

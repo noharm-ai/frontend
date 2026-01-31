@@ -50,11 +50,11 @@ export default function FilterFields({
   const { t } = useTranslation();
 
   const departments = useSelector(
-    (state) => state.lists.getSegmentDepartments.list
+    (state) => state.lists.getSegmentDepartments.list,
   );
 
   const departmentsStatus = useSelector(
-    (state) => state.lists.getSegmentDepartments.status
+    (state) => state.lists.getSegmentDepartments.status,
   );
 
   useEffect(() => {
@@ -136,7 +136,7 @@ export default function FilterFields({
     intervals.push(
       i.toLocaleString("pt-BR", {
         minimumIntegerDigits: 2,
-      })
+      }),
     );
   }
   intervals.push("SN");
@@ -215,7 +215,7 @@ export default function FilterFields({
                         >
                           {label}
                         </Select.Option>
-                      )
+                      ),
                     )}
                   </SelectCustom>
                 </Spin>
@@ -321,6 +321,23 @@ export default function FilterFields({
                     className={filter.insurance ? "warning" : null}
                     value={filter.insurance}
                     onChange={({ target }) => onInsuranceChange(target.value)}
+                  ></Input>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Leito:</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    className={filter.bed ? "warning" : null}
+                    value={filter.bed}
+                    onChange={({ target }) =>
+                      setScreeningListFilter({ bed: target.value })
+                    }
                   ></Input>
                 </div>
               </div>
@@ -659,7 +676,7 @@ export default function FilterFields({
                             : null
                         }
                         placeholder={t(
-                          "screeningList.labelPatientReviewTypePlaceholder"
+                          "screeningList.labelPatientReviewTypePlaceholder",
                         )}
                         loading={segments.single.isFetching}
                         value={filter.patientReviewType}
@@ -691,7 +708,7 @@ export default function FilterFields({
                     optionFilterProp="children"
                     className={filter.patientStatus ? "warning" : null}
                     placeholder={t(
-                      "screeningList.labelPatientStatusPlaceholder"
+                      "screeningList.labelPatientStatusPlaceholder",
                     )}
                     loading={segments.single.isFetching}
                     value={filter.patientStatus}
@@ -730,6 +747,23 @@ export default function FilterFields({
                     notFoundContent="Digite o ID do paciente e pressione enter. Mais de um ID pode ser informado."
                     allowClear
                   ></Select>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Prontuário:</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    className={filter.medical_record ? "warning" : null}
+                    value={filter.medical_record}
+                    onChange={({ target }) =>
+                      setScreeningListFilter({ medical_record: target.value })
+                    }
+                  ></Input>
                 </div>
               </div>
             </div>
