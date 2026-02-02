@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
@@ -19,14 +19,9 @@ function GeneratePrescriptionHistory({ open, setOpen }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    if (!open) {
-      setError(false);
-    }
-  }, [open]);
-
   const onCancel = () => {
     setOpen(false);
+    setError(false);
   };
 
   const confirm = () => {
@@ -50,14 +45,14 @@ function GeneratePrescriptionHistory({ open, setOpen }) {
           setOpen(false);
 
           dispatch(
-            fetchReferencesListThunk(currentDrug.idSegment, currentDrug.idDrug)
+            fetchReferencesListThunk(currentDrug.idSegment, currentDrug.idDrug),
           );
 
           dispatch(
             fetchDrugsUnitsListThunk({
               id: currentDrug.idDrug,
               idSegment: currentDrug.idSegment,
-            })
+            }),
           );
         } else {
           setError(true);
@@ -77,7 +72,7 @@ function GeneratePrescriptionHistory({ open, setOpen }) {
       open={open}
       width={500}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={onCancel}
       onOk={confirm}
       okText={"Confirmar"}

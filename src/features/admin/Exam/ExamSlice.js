@@ -30,6 +30,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  globalExams: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
   setExamsOrder: {
     status: "idle",
     error: null,
@@ -94,6 +99,19 @@ export const listExamTypes = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.exams.getExamTypes(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const listGlobalExams = createAsyncThunk(
+  "admin-exam/list-global-exams",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.exams.getGlobalExams(params);
 
       return response;
     } catch (err) {
@@ -205,6 +223,19 @@ const examsSlice = createSlice({
         state.examTypes.status = "failed";
         state.examTypes.error = action.error.message;
       })
+
+      .addCase(listGlobalExams.pending, (state, action) => {
+        state.globalExams.status = "loading";
+      })
+      .addCase(listGlobalExams.fulfilled, (state, action) => {
+        state.globalExams.status = "succeeded";
+        state.globalExams.list = action.payload.data.data;
+      })
+      .addCase(listGlobalExams.rejected, (state, action) => {
+        state.globalExams.status = "failed";
+        state.globalExams.error = action.error.message;
+      })
+
       .addCase(upsertExam.pending, (state, action) => {
         state.single.status = "loading";
       })

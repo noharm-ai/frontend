@@ -68,7 +68,7 @@ function CopyConversion({ open, setOpen, reload, ...props }) {
           open={open}
           width={500}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText="Iniciar cópia"

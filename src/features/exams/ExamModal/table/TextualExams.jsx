@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import styled from "styled-components";
 import { format } from "date-fns";
 import { Row, Col } from "antd";
@@ -50,8 +50,19 @@ export const Paper = styled.div`
 `;
 
 export default function TextualExams({ record }) {
-  const [selected, select] = useState({});
   const { t } = useTranslation();
+
+  // Calculate default selected item when record.history changes
+  const defaultSelected = useMemo(
+    () => record.history[0] || {},
+    [record.history],
+  );
+
+  // Track user selections separately
+  const [userSelected, setUserSelected] = useState(null);
+
+  // Use user selection if available, otherwise use default
+  const selected = userSelected || defaultSelected;
 
   const expandedColumns = [
     {
@@ -70,10 +81,6 @@ export default function TextualExams({ record }) {
       },
     },
   ];
-
-  useEffect(() => {
-    select(record.history[0]);
-  }, [record.history]);
 
   const history = record.history.map((item, index) => ({
     ...item,
@@ -109,7 +116,7 @@ export default function TextualExams({ record }) {
               rowClassName={rowClassName}
               onRow={(r) => ({
                 onClick: () => {
-                  select(r);
+                  setUserSelected(r);
                 },
               })}
             />

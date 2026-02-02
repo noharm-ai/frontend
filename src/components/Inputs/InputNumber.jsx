@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import antInputNumber from "antd/lib/input-number";
+import { InputNumber as antInputNumber } from "antd";
 import styled from "styled-components";
 import { rgba } from "polished";
 

@@ -35,7 +35,12 @@ export const Select = styled(AntSelect)`
 export const SelectMultiline = styled(Select)`
   height: 60px;
 
-  .ant-select-selection-item {
+  .ant-select-content {
+    align-self: self-end !important;
+  }
+
+  .ant-select-selection-item,
+  .ant-select-content {
     display: flex;
     flex-direction: column;
     line-height: 1.3 !important;

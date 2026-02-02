@@ -467,7 +467,7 @@ export function ControllerActionModal({
     <DefaultModal
       width={"700px"}
       centered
-      destroyOnClose
+      destroyOnHidden
       open={open}
       onCancel={onCancel}
       footer={footer()}

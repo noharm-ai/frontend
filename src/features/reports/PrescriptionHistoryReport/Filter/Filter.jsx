@@ -31,10 +31,10 @@ export default function Filter({ printRef, idPrescription }) {
     useSelector((state) => state.reportsArea.prescriptionHistory.status) ===
     "loading";
   const datasource = useSelector(
-    (state) => state.reportsArea.prescriptionHistory.list
+    (state) => state.reportsArea.prescriptionHistory.list,
   );
   const filteredList = useSelector(
-    (state) => state.reportsArea.prescriptionHistory.filtered.result.list
+    (state) => state.reportsArea.prescriptionHistory.filtered.result.list,
   );
   const handlePrint = useReactToPrint({
     contentRef: printRef,
@@ -43,6 +43,22 @@ export default function Filter({ printRef, idPrescription }) {
   });
   const initialValues = {
     responsibleList: [],
+  };
+
+  const search = async (params, forceDs) => {
+    let ds = [];
+    if (!forceDs) {
+      ds = datasource;
+    }
+
+    dispatch(setFilteredStatus("loading"));
+    dispatch(setFilters(params));
+    const reportData = getReportData(forceDs || ds, params);
+    dispatch(setFilteredResult(reportData));
+
+    setTimeout(() => {
+      dispatch(setFilteredStatus("succeeded"));
+    }, 500);
   };
 
   useEffect(() => {
@@ -72,7 +88,7 @@ export default function Filter({ printRef, idPrescription }) {
               ...initialValues,
               dateRange: [],
             },
-            response.payload.data
+            response.payload.data,
           );
         }
       });
@@ -87,22 +103,6 @@ export default function Filter({ printRef, idPrescription }) {
 
   const exportList = async () => {
     exportCSV(filteredList, t, "reportcsv");
-  };
-
-  const search = async (params, forceDs) => {
-    let ds = [];
-    if (!forceDs) {
-      ds = datasource;
-    }
-
-    dispatch(setFilteredStatus("loading"));
-    dispatch(setFilters(params));
-    const reportData = getReportData(forceDs || ds, params);
-    dispatch(setFilteredResult(reportData));
-
-    setTimeout(() => {
-      dispatch(setFilteredStatus("succeeded"));
-    }, 500);
   };
 
   return (
@@ -123,18 +123,27 @@ export default function Filter({ printRef, idPrescription }) {
           trigger="click"
           type="primary"
           icon={<MenuOutlined />}
-          tooltip="Menu"
+          tooltip={{
+            title: "Menu",
+            placement: "left",
+          }}
           style={{ bottom: 25 }}
         >
           <FloatButton
             icon={<DownloadOutlined />}
             onClick={exportList}
-            tooltip="Exportar CSV"
+            tooltip={{
+              title: "Exportar CSV",
+              placement: "left",
+            }}
           />
           <FloatButton
             icon={<PrinterOutlined />}
             onClick={handlePrint}
-            tooltip="Imprimir"
+            tooltip={{
+              title: "Imprimir",
+              placement: "left",
+            }}
           />
         </FloatButtonGroup>
       )}

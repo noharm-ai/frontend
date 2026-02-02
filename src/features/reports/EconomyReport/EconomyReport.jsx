@@ -30,11 +30,11 @@ export default function EconomyReport() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const reportData = useSelector(
-    (state) => state.reportsArea.economy.filtered.result
+    (state) => state.reportsArea.economy.filtered.result,
   );
   const status = useSelector((state) => state.reportsArea.economy.status);
   const filteredStatus = useSelector(
-    (state) => state.reportsArea.economy.filtered.status
+    (state) => state.reportsArea.economy.filtered.status,
   );
   const filters = useSelector((state) => state.reportsArea.economy.filters);
   const printRef = useRef(null);
@@ -183,7 +183,7 @@ export default function EconomyReport() {
                   </Spin>
                 </Space>
               </Col> */}
-              <Col xs={24} lg={12}>
+              <Col xs={24} xxl={12}>
                 <div className="page-break"></div>
                 <Space direction="vertical" size="large">
                   <SectionHeader>
@@ -200,7 +200,7 @@ export default function EconomyReport() {
                   </Spin>
                 </Space>
               </Col>
-              <Col xs={24} lg={12}>
+              <Col xs={24} xxl={12}>
                 <div className="page-break"></div>
                 <Space direction="vertical" size="large">
                   <SectionHeader>

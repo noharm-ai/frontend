@@ -16,7 +16,7 @@ import {
 export default function SecondaryFilters() {
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
   const responsibles = useSelector(
-    (state) => state.reportsArea.prescription.responsibles
+    (state) => state.reportsArea.prescription.responsibles,
   );
   const tags = useSelector((state) => state.reportsArea.prescription.tags);
   const status = useSelector((state) => state.reportsArea.prescription.status);
@@ -24,6 +24,15 @@ export default function SecondaryFilters() {
   const yesNoOptions = [
     { label: "Sim", value: true },
     { label: "Não", value: false },
+  ];
+
+  const dischargeOptions = [
+    { label: "Sim", value: "remove_discharged_day" },
+    {
+      label: "Sim, mantendo checadas",
+      value: "remove_discharged_day_keep_checked",
+    },
+    { label: "Não", value: "do_not_remove" },
   ];
 
   return (
@@ -87,7 +96,7 @@ export default function SecondaryFilters() {
         </Heading>
         <Radio.Group
           style={{ marginTop: "5px" }}
-          options={yesNoOptions}
+          options={dischargeOptions}
           onChange={({ target: { value } }) =>
             setFieldValue({ removePrescriptionAtDischargeDate: value })
           }

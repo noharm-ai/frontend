@@ -88,21 +88,28 @@ export default function EditMaxDose({
 
   return (
     <div>
-      <span style={{ width: "500px", display: "flex", alignItems: "center" }}>
-        <InputNumber
+      <span style={{ width: "600px", display: "flex", alignItems: "center" }}>
+        <Space.Compact
           style={{
             marginRight: 5,
-            width: "370px",
           }}
-          min={0}
-          max={999999999}
-          value={value}
-          onChange={(newValue) => setValue(newValue)}
-          addonAfter={
-            useWeight ? `${measureUnitDefaultName}/Kg` : measureUnitDefaultName
-          }
-          disabled={!idSegment || !measureUnitDefaultName}
-        />
+        >
+          <InputNumber
+            style={{
+              width: "370px",
+            }}
+            min={0}
+            max={999999999}
+            value={value}
+            onChange={(newValue) => setValue(newValue)}
+            disabled={!idSegment || !measureUnitDefaultName}
+          />
+          <Space.Addon>
+            {useWeight
+              ? `${measureUnitDefaultName}/Kg`
+              : measureUnitDefaultName}
+          </Space.Addon>
+        </Space.Compact>
 
         {!measureUnitDefaultName ? (
           <>Unidade padrão indefinida</>

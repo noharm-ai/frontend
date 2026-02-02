@@ -28,7 +28,7 @@ export default function RegulationSchedules() {
   ];
 
   return (
-    <Card title="Agendamentos" bordered={false}>
+    <Card title="Agendamentos" variant="borderless">
       <Descriptions bordered items={items} column={4} size="middle" />
     </Card>
   );

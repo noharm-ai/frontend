@@ -9,6 +9,7 @@ import { ExpandableTable } from "components/Table";
 import Empty from "components/Empty";
 import Dropdown from "components/Dropdown";
 import Button from "components/Button";
+import { ExpandColumn } from "src/components/ExpandColumn";
 
 import { PageCard, PaginationContainer } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
@@ -34,23 +35,23 @@ export default function Prioritization() {
   const { t } = useTranslation();
   const status = useSelector((state) => state.regulation.prioritization.status);
   const selectedRows = useSelector(
-    (state) => state.regulation.prioritization.selectedRows.list
+    (state) => state.regulation.prioritization.selectedRows.list,
   );
   const selectedRowsActive = useSelector(
-    (state) => state.regulation.prioritization.selectedRows.active
+    (state) => state.regulation.prioritization.selectedRows.active,
   );
 
   const [expandedRows, setExpandedRows] = useState([]);
   const page = useSelector(
-    (state) => state.regulation.prioritization.currentPage
+    (state) => state.regulation.prioritization.currentPage,
   );
   const count = useSelector((state) => state.regulation.prioritization.count);
   const filters = useSelector(
-    (state) => state.regulation.prioritization.filters
+    (state) => state.regulation.prioritization.filters,
   );
   const order = useSelector((state) => state.regulation.prioritization.order);
   const datasource = useSelector(
-    (state) => state.regulation.prioritization.list
+    (state) => state.regulation.prioritization.list,
   );
   const selectAllRows = () => {
     let rows = datasource || [];
@@ -60,7 +61,7 @@ export default function Prioritization() {
     if (rows.length > 0) {
       if (isAllSelected()) {
         dispatch(
-          setSelectedRows(selectedRows.filter((s) => rows.indexOf(s) === -1))
+          setSelectedRows(selectedRows.filter((s) => rows.indexOf(s) === -1)),
         );
       } else {
         const allRows = [...selectedRows, ...rows];
@@ -124,20 +125,6 @@ export default function Prioritization() {
     setExpandedRows(updateExpandedRows(expandedRows, record.id));
   };
 
-  const ExpandColumn = ({ expand }) => {
-    return (
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          type="button"
-          className={`expand-all ant-table-row-expand-icon ${
-            expand ? "ant-table-row-expand-icon-collapsed" : ""
-          }`}
-          onClick={toggleExpansion}
-        ></button>
-      </div>
-    );
-  };
-
   const toggleExpansion = () => {
     if (expandedRows.length) {
       setExpandedRows([]);
@@ -178,7 +165,7 @@ export default function Prioritization() {
         break;
       case "action": {
         const actionList = datasource.filter(
-          (item) => selectedRows.indexOf(item.id) !== -1
+          (item) => selectedRows.indexOf(item.id) !== -1,
         );
 
         dispatch(setMultipleActionIds(actionList));
@@ -264,7 +251,12 @@ export default function Prioritization() {
           showSorterTooltip={false}
           expandedRowRender={expandedRowRender}
           expandedRowKeys={expandedRows}
-          columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+          columnTitle={
+            <ExpandColumn
+              expand={!expandedRows.length}
+              toggleExpansion={toggleExpansion}
+            />
+          }
           onExpand={(expanded, record) => handleRowExpand(record)}
         />
       </PageCard>

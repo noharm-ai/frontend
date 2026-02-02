@@ -12,10 +12,15 @@ import { PageHeader } from "styles/PageHeader.style";
 import Filter from "./Filter/Filter";
 import columns from "./Table/columns";
 import expandedRowRender from "./Table/expandedRowRender";
-import { setCurrentPage, fetchDrugAttributes } from "./DrugAttributesSlice";
+import {
+  setCurrentPage,
+  fetchDrugAttributes,
+  setDrugForm,
+} from "./DrugAttributesSlice";
 import { getSubstances } from "features/lists/ListsSlice";
 import Actions from "./Actions/Actions";
 import DrugReferenceDrawer from "../DrugReferenceDrawer/DrugReferenceDrawer";
+import { ExpandColumn } from "src/components/ExpandColumn";
 
 export default function DrugAttributes() {
   const dispatch = useDispatch();
@@ -59,20 +64,6 @@ export default function DrugAttributes() {
     setExpandedRows(updateExpandedRows(expandedRows, record.key));
   };
 
-  const ExpandColumn = ({ expand }) => {
-    return (
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          type="button"
-          className={`expand-all ant-table-row-expand-icon ${
-            expand ? "ant-table-row-expand-icon-collapsed" : ""
-          }`}
-          onClick={toggleExpansion}
-        ></button>
-      </div>
-    );
-  };
-
   const toggleExpansion = () => {
     if (expandedRows.length) {
       setExpandedRows([]);
@@ -112,7 +103,9 @@ export default function DrugAttributes() {
       </PaginationContainer>
       <PageCard>
         <ExpandableTable
-          columns={columns(t)}
+          columns={columns(t, {
+            setDrugForm: (data) => dispatch(setDrugForm(data)),
+          })}
           pagination={false}
           loading={isFetching}
           locale={{
@@ -127,7 +120,12 @@ export default function DrugAttributes() {
           showSorterTooltip={false}
           expandedRowRender={expandedRowRender}
           expandedRowKeys={expandedRows}
-          columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+          columnTitle={
+            <ExpandColumn
+              expand={!expandedRows.length}
+              toggleExpansion={toggleExpansion}
+            />
+          }
           onExpand={(expanded, record) => handleRowExpand(record)}
         />
       </PageCard>

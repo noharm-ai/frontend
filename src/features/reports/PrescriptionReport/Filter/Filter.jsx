@@ -43,26 +43,26 @@ export default function Filter({ printRef }) {
   const isFetching =
     useSelector((state) => state.reportsArea.prescription.status) === "loading";
   const currentFilters = useSelector(
-    (state) => state.reportsArea.prescription.filters
+    (state) => state.reportsArea.prescription.filters,
   );
   const datasource = useSelector(
-    (state) => state.reportsArea.prescription.list
+    (state) => state.reportsArea.prescription.list,
   );
   const reportDate = useSelector(
-    (state) => state.reportsArea.prescription.date
+    (state) => state.reportsArea.prescription.date,
   );
   const reportUpdatedAt = useSelector(
-    (state) => state.reportsArea.prescription.updatedAt
+    (state) => state.reportsArea.prescription.updatedAt,
   );
   const userId = useSelector((state) => state.user.account.userId);
   const activeReport = useSelector(
-    (state) => state.reportsArea.prescription.activeReport
+    (state) => state.reportsArea.prescription.activeReport,
   );
   const historyModalOpen = useSelector(
-    (state) => state.reportsArea.prescription.historyModal
+    (state) => state.reportsArea.prescription.historyModal,
   );
   const availableReports = useSelector(
-    (state) => state.reportsArea.prescription.availableReports
+    (state) => state.reportsArea.prescription.availableReports,
   );
   const [exporting, setExporting] = useState(false);
   const handlePrint = useReactToPrint({
@@ -86,7 +86,7 @@ export default function Filter({ printRef }) {
     daysOffList: [],
     tagList: [],
     timeRange: [null, null],
-    removePrescriptionAtDischargeDate: false,
+    removePrescriptionAtDischargeDate: "do_not_remove",
   };
 
   const reportManager = useFetchReport({
@@ -101,7 +101,7 @@ export default function Filter({ printRef }) {
             dayjs(header.date).subtract(1, "day"),
           ],
         },
-        body
+        body,
       );
     },
   });
@@ -175,30 +175,33 @@ export default function Filter({ printRef }) {
           trigger="click"
           type="primary"
           icon={<MenuOutlined />}
-          tooltip="Menu"
+          tooltip={{ title: "Menu", placement: "left" }}
           style={{ bottom: 25 }}
         >
           <FloatButton
             icon={<QuestionCircleOutlined />}
             onClick={showHelp}
-            tooltip="Informações sobre este relatório"
+            tooltip={{
+              title: "Informações sobre este relatório",
+              placement: "left",
+            }}
           />
           <FloatButton
             icon={
               exporting ? <SyncOutlined spin={true} /> : <DownloadOutlined />
             }
             onClick={exportCSV}
-            tooltip="Exportar CSV"
+            tooltip={{ title: "Exportar CSV", placement: "left" }}
           />
           <FloatButton
             icon={<HistoryOutlined />}
             onClick={() => dispatch(setHistoryModal(true))}
-            tooltip="Histórico"
+            tooltip={{ title: "Histórico", placement: "left" }}
           />
           <FloatButton
             icon={<PrinterOutlined />}
             onClick={handlePrint}
-            tooltip="Imprimir"
+            tooltip={{ title: "Imprimir", placement: "left" }}
           />
         </FloatButtonGroup>
       )}

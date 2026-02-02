@@ -65,7 +65,7 @@ function CopyExamsModal({ open, setOpen, ...props }) {
           open={open}
           width={500}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText="Iniciar cópia"

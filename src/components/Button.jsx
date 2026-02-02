@@ -45,9 +45,9 @@ const Button = styled(AntdButton)`
         &:active,
         &:focus,
         &:hover {
-          background-color: ${get("colors.accent")};
-          border-color: ${get("colors.accent")};
-          color: ${get("colors.commonLighter")};
+          background-color: ${get("colors.accent")} !important;
+          border-color: ${get("colors.accent")} !important;
+          color: ${get("colors.commonLighter")} !important;
         }
 
         &[disabled] {

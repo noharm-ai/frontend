@@ -61,7 +61,7 @@ export default function RelationForm({ ...props }) {
           open={formData}
           width={600}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={t("actions.save")}

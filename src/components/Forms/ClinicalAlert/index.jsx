@@ -66,7 +66,7 @@ export default function ClinicalAlert({
         <DefaultModal
           width={700}
           centered
-          destroyOnClose
+          destroyOnHidden
           {...props}
           onOk={handleSubmit}
           confirmLoading={isSaving}

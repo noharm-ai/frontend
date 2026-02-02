@@ -73,7 +73,7 @@ export default function UserAdminForm({ ...props }) {
           open={formData}
           width={550}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={t("actions.save")}

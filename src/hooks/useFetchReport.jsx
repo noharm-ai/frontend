@@ -53,6 +53,7 @@ export default function useFetchReport({
             okText: "Ok",
             cancelText: "Fechar",
             wrapClassName: "default-modal",
+            mask: { blur: false },
           });
         } else {
           onAfterFetch(

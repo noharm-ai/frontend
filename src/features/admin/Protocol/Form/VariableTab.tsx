@@ -152,6 +152,38 @@ export function VariableTab() {
               </>
             )}
 
+            {v.field === ProtocolVariableFieldEnum.EXAM_REF && (
+              <>
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Exame (tp_exame):</label>
+                  </div>
+                  <div className="form-input">
+                    <Input
+                      value={v.examRefType}
+                      onChange={({ target }) =>
+                        setConfig(idx, "examRefType", target.value)
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Qtd. máxima de dias desde o último exame:</label>
+                  </div>
+                  <div className="form-input">
+                    <Input
+                      value={v.examRefPeriod}
+                      onChange={({ target }) =>
+                        setConfig(idx, "examRefPeriod", target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
             {v.field === ProtocolVariableFieldEnum.COMBINATION ? (
               <>
                 <div className={`form-row`}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
@@ -15,14 +15,9 @@ function RemoveOutlier({ open, setOpen }) {
   const currentDrug = useSelector((state) => state.outliers.firstFilter);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!open) {
-      setLoading(false);
-    }
-  }, [open]);
-
   const onCancel = () => {
     setOpen(false);
+    setLoading(false);
   };
 
   const confirm = () => {
@@ -60,7 +55,7 @@ function RemoveOutlier({ open, setOpen }) {
       open={open}
       width={500}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={onCancel}
       onOk={confirm}
       okText={"Confirmar"}

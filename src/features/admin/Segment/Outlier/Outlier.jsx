@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { CheckSquareFilled } from "@ant-design/icons";
@@ -23,23 +23,18 @@ function OutliersForm({ open, setOpen }) {
   const segment = useSelector((state) => state.admin.segment.single.data);
   const [loading, setLoading] = useState(false);
   const [outliersStatus, setOutliersStatus] = useState("idle");
-  const [outliersErrorMessage, setOutliersErrorMessage] = useState("idle");
+  const [outliersErrorMessage, setOutliersErrorMessage] = useState(null);
   const [processStage, setProcessStage] = useState([]);
   const [progressPercentage, setProgressPercentage] = useState(0);
-
-  useEffect(() => {
-    if (!open) {
-      setLoading(false);
-      setOutliersStatus("idle");
-      setOutliersErrorMessage(null);
-      setProcessStage([]);
-      setProgressPercentage(0);
-    }
-  }, [open]);
 
   const onCancel = () => {
     dispatch(setSegment(null));
     setOpen(false);
+    setLoading(false);
+    setOutliersStatus("idle");
+    setOutliersErrorMessage(null);
+    setProcessStage([]);
+    setProgressPercentage(0);
   };
 
   const startProcess = async () => {
@@ -115,7 +110,7 @@ function OutliersForm({ open, setOpen }) {
     setProcessStage((prev) => [...prev, "Gerando outliers"]);
 
     const response = await dispatch(
-      generateSegmentOutliers({ idSegment: segment.id })
+      generateSegmentOutliers({ idSegment: segment.id }),
     );
     if (response.error) {
       setLoading(false);
@@ -188,7 +183,7 @@ function OutliersForm({ open, setOpen }) {
       open={open}
       width={500}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={onCancel}
       onOk={startProcess}
       okText={"Gerar Escores"}

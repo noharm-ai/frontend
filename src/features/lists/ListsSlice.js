@@ -57,11 +57,6 @@ const initialState = {
     status: "idle",
     error: null,
   },
-  getExamRefs: {
-    list: [],
-    status: "idle",
-    error: null,
-  },
   getPrescriptionMissingDrugs: {
     list: [],
     status: "idle",
@@ -301,19 +296,6 @@ export const getPrescriptionMissingDrugs = createAsyncThunk(
   }
 );
 
-export const getExamRefs = createAsyncThunk(
-  "lists/get-examRefs",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.getExamRefs(null);
-
-      return response.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
 export const getRegulationTypes = createAsyncThunk(
   "lists/get-regulation-types",
   async (params, thunkAPI) => {
@@ -481,17 +463,6 @@ const listsSlice = createSlice({
       .addCase(searchUsers.rejected, (state, action) => {
         state.searchUsers.status = "failed";
         state.searchUsers.error = action.error.message;
-      })
-      .addCase(getExamRefs.pending, (state, action) => {
-        state.getExamRefs.status = "loading";
-      })
-      .addCase(getExamRefs.fulfilled, (state, action) => {
-        state.getExamRefs.status = "succeeded";
-        state.getExamRefs.list = action.payload.data;
-      })
-      .addCase(getExamRefs.rejected, (state, action) => {
-        state.getExamRefs.status = "failed";
-        state.getExamRefs.error = action.error.message;
       })
       .addCase(getPrescriptionMissingDrugs.pending, (state, action) => {
         state.getPrescriptionMissingDrugs.status = "loading";

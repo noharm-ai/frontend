@@ -75,7 +75,7 @@ function InterventionReasonForm({ ...props }) {
           open={formData}
           width={700}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={t("actions.save")}

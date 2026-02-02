@@ -81,6 +81,8 @@ export default function Filter({
         startDate: date[0] ? date[0].format("YYYY-MM-DD") : "all",
         endDate: date[1] ? date[1].format("YYYY-MM-DD") : "all",
         insurance: filter.insurance,
+        medical_record: filter.medical_record,
+        bed: filter.bed,
         city: filter.city,
         indicators: filter.indicators,
         drugAttributes: filter.drugAttributes,
@@ -134,7 +136,7 @@ export default function Filter({
 
       if (finalParams.substanceClasses && finalParams.substanceClasses.length) {
         finalParams.substanceClasses = finalParams.substanceClasses.map(
-          (s) => s.value
+          (s) => s.value,
         );
       }
 
@@ -149,6 +151,8 @@ export default function Filter({
       filter.discharged,
       filter.currentDepartment,
       filter.insurance,
+      filter.medical_record,
+      filter.bed,
       filter.city,
       filter.indicators,
       filter.drugAttributes,
@@ -176,7 +180,7 @@ export default function Filter({
       filter.hasClinicalNotes,
       prioritizationType,
       date,
-    ]
+    ],
   );
 
   // update list status
@@ -209,7 +213,7 @@ export default function Filter({
 
   const loadFilter = (filterData) => {
     fetchPrescriptionsList(
-      getParams({ ...filterData, idDept: filterData.idDepartment })
+      getParams({ ...filterData, idDept: filterData.idDepartment }),
     );
     if (!isEmpty(filterData.idDrug)) {
       searchDrugs(null, { idDrug: filterData.idDrug, group: 0 });
@@ -217,7 +221,7 @@ export default function Filter({
     setOpen(false);
 
     trackPrescriptionPrioritizationAction(
-      TrackedPrescriptionPrioritizationAction.APPLY_FILTER
+      TrackedPrescriptionPrioritizationAction.APPLY_FILTER,
     );
   };
 
@@ -232,7 +236,7 @@ export default function Filter({
     dispatch(setSelectedRowsActive(false));
 
     trackPrescriptionPrioritizationAction(
-      TrackedPrescriptionPrioritizationAction.CLICK_SEARCH
+      TrackedPrescriptionPrioritizationAction.CLICK_SEARCH,
     );
   };
 
@@ -243,6 +247,8 @@ export default function Filter({
       idDrug: [],
       insurance: null,
       city: null,
+      medical_record: null,
+      bed: null,
       pending: 0,
       allDrugs: 0,
       discharged: 0,
@@ -274,7 +280,7 @@ export default function Filter({
     setDate([dayjs(), null]);
 
     trackPrescriptionPrioritizationAction(
-      TrackedPrescriptionPrioritizationAction.CLICK_RESET
+      TrackedPrescriptionPrioritizationAction.CLICK_RESET,
     );
   };
 
@@ -298,7 +304,7 @@ export default function Filter({
 
     if (!open) {
       trackPrescriptionPrioritizationAction(
-        TrackedPrescriptionPrioritizationAction.CLICK_SEE_MORE
+        TrackedPrescriptionPrioritizationAction.CLICK_SEE_MORE,
       );
     }
   };
@@ -324,6 +330,9 @@ export default function Filter({
                 mode="multiple"
                 allowClear
                 maxTagCount="responsive"
+                showSearch={{
+                  optionFilterProp: ["children"],
+                }}
               >
                 {prioritizationType === "prescription" ? (
                   <>
@@ -356,7 +365,6 @@ export default function Filter({
                 format="DD/MM/YYYY"
                 value={date}
                 onChange={onDateChange}
-                popupClassName="noArrow"
                 allowClear={false}
                 disabledDate={datepickerRangeLimit(120)}
               />

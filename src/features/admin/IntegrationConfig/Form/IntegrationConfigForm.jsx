@@ -18,10 +18,10 @@ function IntegrationConfigForm({ ...props }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const formData = useSelector(
-    (state) => state.admin.integrationConfig.single.data
+    (state) => state.admin.integrationConfig.single.data,
   );
   const status = useSelector(
-    (state) => state.admin.integrationConfig.single.status
+    (state) => state.admin.integrationConfig.single.status,
   );
   const isSaving = status === "loading";
 
@@ -85,7 +85,7 @@ function IntegrationConfigForm({ ...props }) {
           open={formData}
           width={700}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={t("actions.save")}

@@ -119,6 +119,7 @@ export default function HistoryList() {
               okText: "Fechar",
               okButtonProps: { type: "default" },
               wrapClassName: "default-modal",
+              mask: { blur: false },
             });
           };
 

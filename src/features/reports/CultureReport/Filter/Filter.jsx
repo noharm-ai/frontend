@@ -31,7 +31,7 @@ export default function Filter({ printRef, idPatient }) {
     useSelector((state) => state.reportsArea.culture.status) === "loading";
   const datasource = useSelector((state) => state.reportsArea.culture.list);
   const filteredList = useSelector(
-    (state) => state.reportsArea.culture.filtered.result.list
+    (state) => state.reportsArea.culture.filtered.result.list,
   );
   const handlePrint = useReactToPrint({
     contentRef: printRef,
@@ -43,6 +43,22 @@ export default function Filter({ printRef, idPatient }) {
     examNameList: [],
     examMaterialNameList: [],
     microorganismList: [],
+  };
+
+  const search = async (params, forceDs) => {
+    let ds = [];
+    if (!forceDs) {
+      ds = datasource;
+    }
+
+    dispatch(setFilteredStatus("loading"));
+    dispatch(setFilters(params));
+    const reportData = getReportData(forceDs || ds, params);
+    dispatch(setFilteredResult(reportData));
+
+    setTimeout(() => {
+      dispatch(setFilteredStatus("succeeded"));
+    }, 500);
   };
 
   useEffect(() => {
@@ -72,7 +88,7 @@ export default function Filter({ printRef, idPatient }) {
               ...initialValues,
               dateRange: [],
             },
-            response.payload.data
+            response.payload.data,
           );
         }
       });
@@ -109,22 +125,6 @@ export default function Filter({ printRef, idPatient }) {
     exportCSV(results, t, "reportcsvCulture");
   };
 
-  const search = async (params, forceDs) => {
-    let ds = [];
-    if (!forceDs) {
-      ds = datasource;
-    }
-
-    dispatch(setFilteredStatus("loading"));
-    dispatch(setFilters(params));
-    const reportData = getReportData(forceDs || ds, params);
-    dispatch(setFilteredResult(reportData));
-
-    setTimeout(() => {
-      dispatch(setFilteredStatus("succeeded"));
-    }, 500);
-  };
-
   return (
     <React.Fragment>
       <Spin spinning={isFetching}>
@@ -144,18 +144,27 @@ export default function Filter({ printRef, idPatient }) {
           trigger="click"
           type="primary"
           icon={<MenuOutlined />}
-          tooltip="Menu"
+          tooltip={{
+            title: "Menu",
+            placement: "left",
+          }}
           style={{ bottom: 25 }}
         >
           <FloatButton
             icon={<DownloadOutlined />}
             onClick={exportList}
-            tooltip="Exportar CSV"
+            tooltip={{
+              title: "Exportar CSV",
+              placement: "left",
+            }}
           />
           <FloatButton
             icon={<PrinterOutlined />}
             onClick={handlePrint}
-            tooltip="Imprimir"
+            tooltip={{
+              title: "Imprimir",
+              placement: "left",
+            }}
           />
         </FloatButtonGroup>
       )}

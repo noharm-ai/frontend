@@ -66,6 +66,7 @@ function Frequency() {
           okText: "Fechar",
           okButtonProps: { type: "default" },
           wrapClassName: "default-modal",
+          mask: { blur: false },
         });
 
         dispatch(fetchFrequencies());

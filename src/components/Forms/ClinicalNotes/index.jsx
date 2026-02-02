@@ -120,7 +120,7 @@ export default function ClinicalNotes({
         <DefaultModal
           width={"50vw"}
           centered
-          destroyOnClose
+          destroyOnHidden
           open={open}
           {...props}
           onOk={handleSubmit}

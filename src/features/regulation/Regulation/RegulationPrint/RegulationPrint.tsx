@@ -69,7 +69,7 @@ export function RegulationPrint() {
                 ? "Solicitação criada"
                 : t(`regulation.action.${entry.action}`)
             }`}
-            bordered={false}
+            variant="borderless"
             style={{ marginBottom: "15px" }}
           >
             {entry.action !== -1 && (

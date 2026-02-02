@@ -171,7 +171,7 @@ export default function MultipleCheck({ open, setOpen }) {
       open={open}
       width={1000}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={() => setOpen(false)}
       onOk={checkAll}
       okText="Checar selecionados"

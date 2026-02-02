@@ -80,7 +80,7 @@ export default function InterventionOutcomeForm() {
     window.open(`/prescricao/${id}`);
 
     trackInterventionOutcomeAction(
-      TrackedInterventionOutcomeAction.CLICK_PRESCRIPTION
+      TrackedInterventionOutcomeAction.CLICK_PRESCRIPTION,
     );
   };
 
@@ -93,10 +93,10 @@ export default function InterventionOutcomeForm() {
       formValues.destiny.frequencyDay
     ) {
       const originValue = Big(formValues.origin.pricePerDose).times(
-        Big(formValues.origin.frequencyDay)
+        Big(formValues.origin.frequencyDay),
       );
       const destinyValue = Big(formValues.destiny.pricePerDose).times(
-        Big(formValues.destiny.frequencyDay)
+        Big(formValues.destiny.frequencyDay),
       );
       const economy = originValue.minus(destinyValue);
 
@@ -109,7 +109,7 @@ export default function InterventionOutcomeForm() {
       formValues.origin.frequencyDay
     ) {
       const economy = Big(formValues.origin.pricePerDose).times(
-        formValues.origin.frequencyDay
+        formValues.origin.frequencyDay,
       );
 
       return economy;
@@ -133,7 +133,7 @@ export default function InterventionOutcomeForm() {
       original = outcomeData.original.destiny
         ? outcomeData.original.destiny.find(
             (i) =>
-              i.item?.idPrescriptionDrug === values.idPrescriptionDrugDestiny
+              i.item?.idPrescriptionDrug === values.idPrescriptionDrugDestiny,
           )
         : {};
     }
@@ -179,7 +179,7 @@ export default function InterventionOutcomeForm() {
 
   const statusConfig = InterventionStatus.translate(
     outcomeData.header?.status,
-    t
+    t,
   );
 
   const intvCollapseItems = [
@@ -225,7 +225,7 @@ export default function InterventionOutcomeForm() {
 
     if (!details) {
       trackInterventionOutcomeAction(
-        TrackedInterventionOutcomeAction.CLICK_INTERVENTION_DETAILS
+        TrackedInterventionOutcomeAction.CLICK_INTERVENTION_DETAILS,
       );
     }
   };
@@ -242,7 +242,7 @@ export default function InterventionOutcomeForm() {
           style={{ marginBottom: "1rem" }}
           onChange={() =>
             trackInterventionOutcomeAction(
-              TrackedInterventionOutcomeAction.CLICK_INTERVENTION_DETAILS
+              TrackedInterventionOutcomeAction.CLICK_INTERVENTION_DETAILS,
             )
           }
         />
@@ -321,7 +321,7 @@ export default function InterventionOutcomeForm() {
                               }/${
                                 outcomeData.header.destinyDrugId
                               }/${createSlug(outcomeData.header.destinyDrug)}`,
-                              "_blank"
+                              "_blank",
                             )
                           }
                         >
@@ -347,12 +347,12 @@ export default function InterventionOutcomeForm() {
                         value={
                           outcomeData?.header?.isCpoe
                             ? `${formatDate(
-                                outcomeData?.header?.economyIniDate
+                                outcomeData?.header?.economyIniDate,
                               )} - #${
                                 outcomeData.origin.item.idPrescriptionAggregate
                               }`
                             : `${formatDate(
-                                outcomeData.origin.item.prescriptionDate
+                                outcomeData.origin.item.prescriptionDate,
                               )} - #${outcomeData.origin.item.idPrescription}`
                         }
                         disabled
@@ -365,7 +365,7 @@ export default function InterventionOutcomeForm() {
                               outcomeData?.header?.isCpoe
                                 ? outcomeData.origin.item
                                     .idPrescriptionAggregate
-                                : outcomeData.origin.item.idPrescription
+                                : outcomeData.origin.item.idPrescription,
                             )
                           }
                         />
@@ -387,15 +387,19 @@ export default function InterventionOutcomeForm() {
                         </div>
                         <div className="form-input">
                           <Space direction="horizontal">
-                            <InputNumber
-                              disabled
-                              precision={INPUT_PRECISION}
-                              addonBefore="R$"
-                              value={Big(values.origin.pricePerDose || 0).times(
-                                Big(values.origin.frequencyDay || 0)
-                              )}
-                              className={pricePerDayStatus("origin")}
-                            />
+                            <Space.Compact block>
+                              <Space.Addon>R$</Space.Addon>
+                              <InputNumber
+                                disabled
+                                precision={INPUT_PRECISION}
+                                value={Big(
+                                  values.origin.pricePerDose || 0,
+                                ).times(Big(values.origin.frequencyDay || 0))}
+                                className={pricePerDayStatus("origin")}
+                                id={`origin-price-per-day`}
+                              />
+                            </Space.Compact>
+
                             <Tooltip title={details ? "Recolher" : "Detalhar"}>
                               <Button
                                 className="btn-calc-details-origin"
@@ -429,7 +433,7 @@ export default function InterventionOutcomeForm() {
                               ? outcomeData.original.destiny.find(
                                   (i) =>
                                     i.item?.idPrescriptionDrug ===
-                                    values.idPrescriptionDrugDestiny
+                                    values.idPrescriptionDrugDestiny,
                                 )
                               : null,
                           }}
@@ -486,10 +490,10 @@ export default function InterventionOutcomeForm() {
                                 value: i.item.idPrescriptionDrug,
                                 label: outcomeData?.header?.isCpoe
                                   ? `${formatDate(
-                                      i.item.prescriptionDate
+                                      i.item.prescriptionDate,
                                     )} - #${i.item.idPrescriptionAggregate}`
                                   : `${formatDate(
-                                      i.item.prescriptionDate
+                                      i.item.prescriptionDate,
                                     )} - #${i.item.idPrescription} - ${
                                       i.item.name
                                     }`,
@@ -519,7 +523,7 @@ export default function InterventionOutcomeForm() {
                                   openPrescription(
                                     outcomeData?.header?.isCpoe
                                       ? values.destiny.idPrescriptionAggregate
-                                      : values.destiny.idPrescription
+                                      : values.destiny.idPrescription,
                                   )
                                 }
                               />
@@ -542,15 +546,19 @@ export default function InterventionOutcomeForm() {
                         </div>
                         <div className="form-input">
                           <Space direction="horizontal">
-                            <InputNumber
-                              disabled
-                              precision={INPUT_PRECISION}
-                              addonBefore="R$"
-                              value={Big(
-                                values.destiny.pricePerDose || 0
-                              ).times(Big(values.destiny.frequencyDay || 0))}
-                              className={pricePerDayStatus("destiny")}
-                            />
+                            <Space.Compact block>
+                              <Space.Addon>R$</Space.Addon>
+                              <InputNumber
+                                disabled
+                                precision={INPUT_PRECISION}
+                                value={Big(
+                                  values.destiny.pricePerDose || 0,
+                                ).times(Big(values.destiny.frequencyDay || 0))}
+                                className={pricePerDayStatus("destiny")}
+                                id={`destiny-price-per-day`}
+                              />
+                            </Space.Compact>
+
                             <Tooltip title={details ? "Recolher" : "Detalhar"}>
                               <Button
                                 className="btn-calc-details-destiny"
@@ -586,12 +594,12 @@ export default function InterventionOutcomeForm() {
                                 ? outcomeData.destiny[0]
                                 : null
                               : outcomeData.original.destiny
-                              ? outcomeData.original.destiny.find(
-                                  (i) =>
-                                    i.item?.idPrescriptionDrug ===
-                                    values.idPrescriptionDrugDestiny
-                                )
-                              : null,
+                                ? outcomeData.original.destiny.find(
+                                    (i) =>
+                                      i.item?.idPrescriptionDrug ===
+                                      values.idPrescriptionDrugDestiny,
+                                  )
+                                : null,
                           }}
                           calcEconomyDay={calcEconomyDay}
                         />
@@ -618,32 +626,35 @@ export default function InterventionOutcomeForm() {
                 </div>
                 <div className="form-input">
                   <Space direction="horizontal">
-                    <InputNumber
-                      disabled={
-                        !values.economyDayValueManual ||
-                        outcomeData.header?.readonly
-                      }
-                      precision={INPUT_PRECISION}
-                      addonBefore="R$"
-                      onChange={(value) =>
-                        values.economyDayValueManual
-                          ? setFieldValue("economyDayValue", value)
-                          : false
-                      }
-                      value={values.economyDayValue}
-                      className={values.economyDayValue > 0 ? "success" : ""}
-                    />
+                    <Space.Compact block>
+                      <Space.Addon>R$</Space.Addon>
+                      <InputNumber
+                        disabled={
+                          !values.economyDayValueManual ||
+                          outcomeData.header?.readonly
+                        }
+                        precision={INPUT_PRECISION}
+                        onChange={(value) =>
+                          values.economyDayValueManual
+                            ? setFieldValue("economyDayValue", value)
+                            : false
+                        }
+                        value={values.economyDayValue}
+                        className={values.economyDayValue > 0 ? "success" : ""}
+                      />
+                    </Space.Compact>
+
                     <Checkbox
                       disabled={outcomeData.header?.readonly}
                       onChange={(e) => {
                         setFieldValue(
                           "economyDayValueManual",
-                          e.target.checked
+                          e.target.checked,
                         );
                         if (e.target.checked) {
                           setFieldValue("economyDayValue", 0);
                           trackInterventionOutcomeAction(
-                            TrackedInterventionOutcomeAction.CLICK_MANUAL_ECONOMY
+                            TrackedInterventionOutcomeAction.CLICK_MANUAL_ECONOMY,
                           );
                         } else {
                           setFieldValue(
@@ -651,7 +662,7 @@ export default function InterventionOutcomeForm() {
                             calcEconomyDay({
                               ...values,
                               economyDayValueManual: false,
-                            })
+                            }),
                           );
                         }
                       }}
@@ -677,16 +688,18 @@ export default function InterventionOutcomeForm() {
                 <div className="form-input">
                   <Space direction="horizontal">
                     {values.economyDayAmountManual ? (
-                      <InputNumber
-                        disabled={outcomeData.header?.readonly}
-                        precision={0}
-                        addonAfter=" Dias"
-                        onChange={(value) =>
-                          setFieldValue("economyDayAmount", value)
-                        }
-                        value={values.economyDayAmount}
-                        min={1}
-                      />
+                      <Space.Compact block>
+                        <InputNumber
+                          disabled={outcomeData.header?.readonly}
+                          precision={0}
+                          onChange={(value) =>
+                            setFieldValue("economyDayAmount", value)
+                          }
+                          value={values.economyDayAmount}
+                          min={1}
+                        />
+                        <Space.Addon>{" Dias"}</Space.Addon>
+                      </Space.Compact>
                     ) : (
                       <Input
                         disabled={true}
@@ -703,12 +716,12 @@ export default function InterventionOutcomeForm() {
                       onChange={(e) => {
                         setFieldValue(
                           "economyDayAmountManual",
-                          e.target.checked
+                          e.target.checked,
                         );
                         if (e.target.checked) {
                           setFieldValue("economyDayAmount", 1);
                           trackInterventionOutcomeAction(
-                            TrackedInterventionOutcomeAction.CLICK_MANUAL_ECONOMY_DAYS
+                            TrackedInterventionOutcomeAction.CLICK_MANUAL_ECONOMY_DAYS,
                           );
                         } else {
                           setFieldValue("economyDayAmount", null);

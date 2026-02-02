@@ -1,5 +1,5 @@
-import AntInput from "antd/lib/input";
 import styled from "styled-components";
+import { Input as AntInput } from "antd";
 import { rgba } from "polished";
 
 import { get } from "styles/utils";

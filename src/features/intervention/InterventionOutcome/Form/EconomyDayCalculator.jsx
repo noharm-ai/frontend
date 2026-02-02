@@ -55,7 +55,7 @@ export default function EconomyDayCalculator({
             ...values[source],
             frequencyDay: value,
           },
-        })
+        }),
       );
     }
   };
@@ -80,7 +80,7 @@ export default function EconomyDayCalculator({
 
     if (
       !Big(values[source][field] || 0).eq(
-        Big(outcomeData[source].item[field] || 0)
+        Big(outcomeData[source].item[field] || 0),
       )
     ) {
       return "warning";
@@ -131,6 +131,7 @@ export default function EconomyDayCalculator({
               status={fieldStatus("dose")}
               stringMode
               precision={INPUT_PRECISION}
+              id={`${source}-dose-dispensation`}
             />
             <PopoverDose outcomeData={outcomeData} source={source}>
               <Button
@@ -157,6 +158,7 @@ export default function EconomyDayCalculator({
               status={fieldStatus("frequencyDay")}
               stringMode
               precision={INPUT_PRECISION}
+              id={`${source}-frequency-day`}
             />
             <PopoverFrequency outcomeData={outcomeData} source={source}>
               <Button icon={<InfoCircleOutlined />} />
@@ -187,17 +189,21 @@ export default function EconomyDayCalculator({
         </div>
         <div className="form-input input-price">
           <Space direction="horizontal">
-            <InputNumber
-              disabled={outcomeData.header?.readonly}
-              min={0}
-              precision={INPUT_PRECISION}
-              addonBefore="R$"
-              onChange={(value) => onChangeParam("price", value)}
-              value={values[source].price}
-              className={fieldStatus("price")}
-              status={fieldStatus("price")}
-              stringMode
-            />
+            <Space.Compact block>
+              <Space.Addon>R$</Space.Addon>
+              <InputNumber
+                disabled={outcomeData.header?.readonly}
+                min={0}
+                precision={INPUT_PRECISION}
+                onChange={(value) => onChangeParam("price", value)}
+                value={values[source].price}
+                className={fieldStatus("price")}
+                status={fieldStatus("price")}
+                stringMode
+                id={`${source}-price`}
+              />
+            </Space.Compact>
+
             <PopoverPrice outcomeData={outcomeData} source={source}>
               <Button
                 icon={<InfoCircleOutlined />}
@@ -214,17 +220,21 @@ export default function EconomyDayCalculator({
         </div>
         <div className="form-input input-price-kit">
           <Space direction="horizontal">
-            <InputNumber
-              disabled={outcomeData.header?.readonly}
-              min={0}
-              addonBefore="R$"
-              onChange={(value) => onChangeParam("priceKit", value)}
-              value={values[source].priceKit}
-              className={fieldStatus("priceKit")}
-              status={fieldStatus("priceKit")}
-              precision={INPUT_PRECISION}
-              stringMode
-            />
+            <Space.Compact block>
+              <Space.Addon>R$</Space.Addon>
+              <InputNumber
+                disabled={outcomeData.header?.readonly}
+                min={0}
+                onChange={(value) => onChangeParam("priceKit", value)}
+                value={values[source].priceKit}
+                className={fieldStatus("priceKit")}
+                status={fieldStatus("priceKit")}
+                precision={INPUT_PRECISION}
+                stringMode
+                id={`${source}-price-kit`}
+              />
+            </Space.Compact>
+
             <PopoverKit outcomeData={outcomeData} source={source}>
               <Button icon={<InfoCircleOutlined />} />
             </PopoverKit>

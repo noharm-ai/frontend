@@ -58,7 +58,7 @@ const refreshPrescription = (params = {}) => {
     params,
     {
       ...setHeaders(),
-    }
+    },
   );
 };
 
@@ -68,7 +68,7 @@ const initInterventionReason = (params = {}) => {
     params,
     {
       ...setHeaders(),
-    }
+    },
   );
 };
 
@@ -121,6 +121,12 @@ api.exams.getMostFrequentExams = (params) =>
 
 api.exams.getExamTypes = (params) =>
   instance.get(`${endpoints.exam}/types`, {
+    params,
+    ...setHeaders(),
+  });
+
+api.exams.getGlobalExams = (params) =>
+  instance.get(`${endpoints.exam}/list-global`, {
     params,
     ...setHeaders(),
   });
@@ -180,7 +186,7 @@ api.drugs.calculateDosemax = (params = {}) => {
     {},
     {
       ...setHeaders(),
-    }
+    },
   );
 };
 
@@ -213,7 +219,7 @@ api.unitConversion.copyConversion = (params = {}) => {
     params,
     {
       ...setHeaders(),
-    }
+    },
   );
 };
 
@@ -223,7 +229,7 @@ api.unitConversion.updateSubstanceUnitFactor = (params = {}) => {
     params,
     {
       ...setHeaders(),
-    }
+    },
   );
 };
 
@@ -233,7 +239,7 @@ api.unitConversion.addDefaultUnits = (params = {}) => {
     params,
     {
       ...setHeaders(),
-    }
+    },
   );
 };
 
@@ -250,6 +256,12 @@ api.integration.getStatus = (params) =>
 
 api.integration.getList = (params) =>
   instance.get(`${endpoints.integration}/list`, {
+    params,
+    ...setHeaders(),
+  });
+
+api.integration.getTemplateList = (params) =>
+  instance.get(`${endpoints.integration}/template-list`, {
     params,
     ...setHeaders(),
   });
@@ -429,6 +441,19 @@ api.frequency.updateFrequency = (params = {}) => {
 
 api.frequency.inferFrequencies = (params = {}) =>
   instance.post(`${endpoints.frequency}/infer`, params, setHeaders());
+
+/**
+ * GLOBAL EXAMS
+ */
+api.globalExam = {};
+api.globalExam.getGlobalExams = (params = {}) =>
+  instance.post(`/admin/global-exam/list`, params, setHeaders());
+
+api.globalExam.upsertGlobalExam = (params = {}) => {
+  return instance.post(`/admin/global-exam/upsert`, params, {
+    ...setHeaders(),
+  });
+};
 
 const methods = {
   ...api,

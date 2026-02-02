@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { Popover, InputNumber } from "antd";
+import { Popover, InputNumber, Space } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
@@ -69,17 +69,21 @@ export function PopoverConversion({
       content={
         <ConversionDetailsPopover>
           <div>1 {measureUnitDestination} = </div>
-          <InputNumber
-            value={factor}
-            onChange={(val) => setFactor(val)}
-            autoFocus={true}
-            min={0}
-            max={99999999}
-            addonAfter={measureUnitOrigin}
-            style={{ marginLeft: "0.5rem", width: "150px" }}
-            ref={iptRef}
-            onPressEnter={save}
-          />
+
+          <Space.Compact>
+            <InputNumber
+              value={factor}
+              onChange={(val) => setFactor(val)}
+              autoFocus={true}
+              min={0}
+              max={99999999}
+              style={{ marginLeft: "0.5rem", width: "150px" }}
+              ref={iptRef}
+              onPressEnter={save}
+            />
+            <Space.Addon>{measureUnitOrigin}</Space.Addon>
+          </Space.Compact>
+
           <Button
             icon={<CheckOutlined />}
             disabled={!factor}

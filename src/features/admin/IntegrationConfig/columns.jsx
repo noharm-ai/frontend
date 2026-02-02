@@ -25,6 +25,13 @@ const columns = (t, dispatch, setIntegration, setCloudConfigSchema) => {
         return record.schema;
       },
     },
+    {
+      title: "PEP",
+      align: "center",
+      render: (entry, record) => {
+        return record.tp_pep;
+      },
+    },
 
     {
       title: "PRESCALC",
@@ -32,14 +39,14 @@ const columns = (t, dispatch, setIntegration, setCloudConfigSchema) => {
       render: (entry, record) => {
         if (record.tpPrescalc === 0) {
           return (
-            <Tag color="error" style={{ margin: 0 }}>
+            <Tag variant="outlined" color="error" style={{ margin: 0 }}>
               DESLIGADO
             </Tag>
           );
         }
 
         return (
-          <Tag color="success" style={{ margin: 0 }}>
+          <Tag variant="outlined" color="success" style={{ margin: 0 }}>
             {record.tpPrescalc === 1 ? "LIGADO (PRD)" : "LIGADO (HML)"}
           </Tag>
         );
@@ -51,28 +58,45 @@ const columns = (t, dispatch, setIntegration, setCloudConfigSchema) => {
       render: (entry, record) => {
         if (record.returnIntegration) {
           return (
-            <Tag color="success" style={{ margin: 0 }}>
+            <Tag variant="outlined" color="success" style={{ margin: 0 }}>
               Sim
             </Tag>
           );
         }
 
-        return <Tag style={{ margin: 0 }}>Não</Tag>;
+        return (
+          <Tag variant="outlined" style={{ margin: 0 }}>
+            Não
+          </Tag>
+        );
       },
     },
+
     {
       title: t("labels.status"),
       align: "center",
       render: (entry, record) => {
         if (record.status === IntegrationStatus.INTEGRATION) {
-          return <Tag color="processing">INTEGRAÇÃO</Tag>;
+          return (
+            <Tag variant="outlined" color="processing">
+              INTEGRAÇÃO
+            </Tag>
+          );
         }
 
         if (record.status === IntegrationStatus.PRODUCTION) {
-          return <Tag color="success">PRODUÇÃO</Tag>;
+          return (
+            <Tag variant="outlined" color="success">
+              PRODUÇÃO
+            </Tag>
+          );
         }
 
-        return <Tag color="error">CANCELADO</Tag>;
+        return (
+          <Tag variant="outlined" color="error">
+            CANCELADO
+          </Tag>
+        );
       },
     },
     {

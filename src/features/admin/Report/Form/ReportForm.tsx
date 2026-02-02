@@ -86,7 +86,7 @@ export function ReportForm() {
           open={formData}
           width={800}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={t("actions.save")}

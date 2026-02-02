@@ -43,7 +43,6 @@ export default function MainFilters() {
             values.endDate ? dayjs(values.endDate) : null,
           ]}
           onChange={onChangeDates}
-          popupClassName="noArrow"
           allowClear={false}
           language={i18n.language}
         />

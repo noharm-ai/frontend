@@ -99,7 +99,7 @@ function DrugMeasureUnitsForm({ visible, setVisible, ...props }) {
           open={visible}
           width={400}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={() => setVisible(false)}
           onOk={handleSubmit}
           okText={t("actions.save")}

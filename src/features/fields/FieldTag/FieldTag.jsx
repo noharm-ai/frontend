@@ -29,18 +29,20 @@ export function FieldTag({ value, onChange, tagType, ...props }) {
 
   return (
     <Select
-      showSearch
       allowClear
       value={value}
-      optionFilterProp="children"
       style={{ minWidth: "300px", maxWidth: "100%" }}
-      filterOption={false}
       onChange={(value) => onChange(value)}
       mode="multiple"
       loading={status === "loading"}
       placeholder="Selecione os marcadores"
       onClick={fetchTags}
       notFoundContent={status === "loading" ? <Spin size="small" /> : <Empty />}
+      showSearch={{
+        filterOption: false,
+        optionFilterProp: ["children"],
+        autoClearSearchValue: false,
+      }}
       {...props}
     >
       {options.map((option) => (

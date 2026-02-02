@@ -47,7 +47,7 @@ function PredictSubstances({ open, setOpen, reload }) {
       open={open}
       width={500}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={onCancel}
       onOk={() => startProcess()}
       okText={"Iniciar"}

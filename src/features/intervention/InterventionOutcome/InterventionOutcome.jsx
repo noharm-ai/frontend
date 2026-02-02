@@ -299,7 +299,7 @@ export default function InterventionOutcome({ ...props }) {
           footer={<Footer handleSubmit={handleSubmit} />}
           centered
           onCancel={onCancel}
-          destroyOnClose
+          destroyOnHidden
           maskClosable={false}
           {...props}
         >

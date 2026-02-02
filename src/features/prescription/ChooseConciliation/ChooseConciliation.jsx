@@ -73,7 +73,7 @@ export default function ChooseConciliation() {
       open={admissionNumber}
       width={350}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={() => dispatch(setChooseConciliationModal(false))}
       footer={null}
       maskClosable={false}

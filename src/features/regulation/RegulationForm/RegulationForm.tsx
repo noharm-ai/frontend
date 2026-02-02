@@ -127,6 +127,7 @@ export function RegulationForm() {
           okText: "Fechar",
           okButtonProps: { type: "default" },
           wrapClassName: "default-modal",
+          mask: { blur: false },
         });
       }
     });
@@ -150,7 +151,7 @@ export function RegulationForm() {
           open={open}
           width={700}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={() => handleSubmit()}
           okText={t("actions.save")}

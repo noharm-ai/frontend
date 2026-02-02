@@ -24,14 +24,16 @@ import SummaryPanelAIAudit from "./SummaryPanelAIAudit";
 import SummaryReactions from "../SummaryReactions/SummaryReactions";
 import { SummaryPanel } from "../Summary.style";
 
+const loaded = {};
+
 function SummaryPanelAI({ payload, position, admissionNumber }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const status = useSelector(
-    (state) => state.summary.blocks[position]?.aiStatus
+    (state) => state.summary.blocks[position]?.aiStatus,
   );
   const result = useSelector((state) => state.summary.blocks[position]?.text);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [edit, setEdit] = useState(false);
   const [editText, setEditText] = useState("");
   const [error, setError] = useState(false);
@@ -46,7 +48,7 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
           setBlock({
             id: position,
             data: msg,
-          })
+          }),
         );
         return;
       }
@@ -71,31 +73,53 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
                 id: position,
                 data: response.payload.data?.answer,
                 original: response.payload.data?.answer,
-              })
+              }),
             );
           }
-        }
+        },
       );
     },
-    [dispatch, aiPrompt, payload?.audit, position]
+    [dispatch, aiPrompt, payload?.audit, position],
   );
 
   useEffect(() => {
+    if (loaded[position]) {
+      return;
+    }
+
     if (status === "started") {
-      reload();
-    }
-  }, [status, reload]);
+      loaded[position] = true;
+      if (!payload?.audit?.length) {
+        const msg = "Nada consta";
+        dispatch(
+          setBlock({
+            id: position,
+            data: msg,
+          }),
+        ).then(() => {
+          setLoading(false);
+        });
+        return;
+      }
 
-  useEffect(() => {
-    setError(false);
-    setLoading(false);
-  }, [result]);
+      dispatch(promptSummaryBlock(aiPrompt)).then((response) => {
+        setLoading(false);
 
-  useEffect(() => {
-    if (edit) {
-      setEditText(result);
+        if (response.error) {
+          setError(true);
+          console.error(response.error);
+        } else {
+          dispatch(
+            setBlock({
+              id: position,
+              data: response.payload.data?.answer,
+              original: response.payload.data?.answer,
+            }),
+          );
+        }
+      });
     }
-  }, [edit, result]);
+  }, [status, dispatch, aiPrompt, position, payload?.audit]);
 
   const onChange = (value) => {
     setEditText(value);
@@ -103,7 +127,7 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
       setBlock({
         id: position,
         data: value,
-      })
+      }),
     );
   };
 
@@ -132,6 +156,11 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
       default:
         console.error("not implemented", key);
     }
+  };
+
+  const startEditing = () => {
+    setEditText(result);
+    setEdit(true);
   };
 
   if (error) {
@@ -207,7 +236,7 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
               <Button
                 shape="circle"
                 icon={<EditOutlined />}
-                onClick={() => setEdit(true)}
+                onClick={() => startEditing()}
                 size="large"
               />
             </Tooltip>

@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+import { Tag } from "antd";
 
 import Descriptions from "components/Descriptions";
 import NumericValue from "components/NumericValue";
-import EditSubstance from "./EditSubstance";
 import EditMaxDose from "./EditMaxDose";
 import { formatDateTime } from "utils/date";
 
@@ -20,16 +20,6 @@ const expandedRowRender = (record) => {
   return (
     <NestedTableContainer>
       <Descriptions bordered size="small">
-        <Descriptions.Item label="Medicamento:" span={3}>
-          {record.name}
-        </Descriptions.Item>
-        <Descriptions.Item label="Substância:" span={3}>
-          <EditSubstance
-            idDrug={record.idDrug}
-            sctid={record.sctid}
-            accuracy={record.substanceAccuracy}
-          />
-        </Descriptions.Item>
         <Descriptions.Item label="Dose máxima:" span={3}>
           <EditMaxDose
             idDrug={record.idDrug}
@@ -40,9 +30,32 @@ const expandedRowRender = (record) => {
             record={record}
           />
         </Descriptions.Item>
-        <Descriptions.Item label="Custo:" span={3}>
-          <NumericValue prefix={"R$ "} value={record.price} decimalScale={4} />
+
+        <Descriptions.Item label="Unidade padrão:" span={3}>
+          {!record.idMeasureUnitDefault ? (
+            <Tag color="red">Unidade não definida</Tag>
+          ) : (
+            <>{record.idMeasureUnitDefault}</>
+          )}
         </Descriptions.Item>
+
+        <Descriptions.Item label="Unidade de custo:" span={3}>
+          {!record.idMeasureUnitPrice ? (
+            <Tag color="red">Unidade não definida</Tag>
+          ) : (
+            <>{record.idMeasureUnitPrice}</>
+          )}
+        </Descriptions.Item>
+
+        <Descriptions.Item label="Custo:" span={3}>
+          <NumericValue prefix={"R$ "} value={record.price} decimalScale={4} />/
+          {!record.idMeasureUnitPrice ? (
+            <Tag color="red">Unidade não definida</Tag>
+          ) : (
+            <>{record.idMeasureUnitPrice}</>
+          )}
+        </Descriptions.Item>
+
         <Descriptions.Item label="Última alteração" span={3}>
           {record.responsible && (
             <>

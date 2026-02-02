@@ -192,7 +192,7 @@ export default function PrescriptionDrug({
           open={!isEmpty(item)}
           width={700}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           footer={<Footer handleSubmit={handleSubmit} />}
         >

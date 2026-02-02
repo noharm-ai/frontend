@@ -40,7 +40,7 @@ function SummaryText({ open, setOpen }) {
         <DefaultModal
           width={"50vw"}
           centered
-          destroyOnClose
+          destroyOnHidden
           onOk={handleOK}
           onCancel={() => setOpen(false)}
           open={open}

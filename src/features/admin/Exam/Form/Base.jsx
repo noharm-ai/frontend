@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
 import "styled-components";
 import { useFormikContext } from "formik";
 import { CopyOutlined } from "@ant-design/icons";
 
 import { InputNumber, Input, Select } from "components/Inputs";
+import Dropdown from "components/Dropdown";
 import Button from "components/Button";
 import Switch from "components/Switch";
 import Tooltip from "components/Tooltip";
-import notification from "components/notification";
-import { getErrorMessage } from "utils/errorHandler";
-import { getExamRefs } from "features/lists/ListsSlice";
-import { listExamTypes } from "../ExamSlice";
+import { listExamTypes, listGlobalExams } from "../ExamSlice";
 
 export default function Base() {
   const dispatch = useDispatch();
@@ -21,39 +18,59 @@ export default function Base() {
   const examTypesStatus = useSelector(
     (state) => state.admin.exam.examTypes.status
   );
-  const { t } = useTranslation();
+  const globalExams = useSelector((state) => state.admin.exam.globalExams.list);
+  const globalExamsStatus = useSelector(
+    (state) => state.admin.exam.globalExams.status
+  );
   const { values, setFieldValue, errors } = useFormikContext();
-  const [refActive, setRefActive] = useState(false);
-  const [refs, setRefs] = useState([]);
+
   const { type, name, initials, min, max, ref, active } = values;
 
   useEffect(() => {
     if (examTypes.length === 0 && values.new) {
       dispatch(listExamTypes());
     }
+
+    dispatch(listGlobalExams());
   }, []); //eslint-disable-line
 
-  useEffect(() => {
-    if (refActive) {
-      dispatch(getExamRefs()).then((response) => {
-        if (response.error) {
-          notification.error({
-            message: getErrorMessage(response, t),
-          });
-        } else {
-          const { data } = response.payload;
-          setRefs(data);
-        }
-      });
-    }
-  }, [refActive, dispatch, t]);
+  const applyRef = ({ key }) => {
+    const examConfig = globalExams.find(
+      (item) => item.tpexam === values.tpExamRef
+    );
 
-  const applyRef = (index) => {
-    setFieldValue("name", refs[index].name);
-    setFieldValue("initials", refs[index].initials);
-    setFieldValue("ref", refs[index].ref);
-    setFieldValue("min", refs[index].min);
-    setFieldValue("max", refs[index].max);
+    if (!examConfig) return;
+
+    setFieldValue("name", examConfig.name);
+    setFieldValue("initials", examConfig.initials);
+
+    if (key === "adult") {
+      setFieldValue("ref", examConfig.ref_adult);
+      setFieldValue("min", examConfig.min_adult);
+      setFieldValue("max", examConfig.max_adult);
+    } else {
+      setFieldValue("ref", examConfig.ref_pediatric);
+      setFieldValue("min", examConfig.min_pediatric);
+      setFieldValue("max", examConfig.max_pediatric);
+    }
+  };
+
+  const copyOptions = () => {
+    const items = [
+      {
+        key: "adult",
+        label: "Adulto",
+      },
+      {
+        key: "pediatric",
+        label: "Pediátrico",
+      },
+    ];
+
+    return {
+      items,
+      onClick: applyRef,
+    };
   };
 
   return (
@@ -89,59 +106,59 @@ export default function Base() {
           <label>Tipo de Exame:</label>
         </div>
         <div className="form-input">
-          <div style={{ display: "flex" }}>
-            <Select
-              optionFilterProp="children"
-              showSearch
-              placeholder="Selecione o exame..."
-              onChange={(value) => setFieldValue("type", value)}
-              value={type}
-              loading={examTypesStatus === "loading"}
-              disabled={!values.new}
-            >
-              {examTypes.map((item) => (
-                <Select.Option key={item} value={item}>
-                  {item}
-                </Select.Option>
-              ))}
-            </Select>
-            <Tooltip title="Copiar da referência">
-              <Button
-                shape="circle"
-                icon={<CopyOutlined />}
-                type="primary"
-                style={{ marginLeft: "5px" }}
-                onClick={() => setRefActive(!refActive)}
-              />
-            </Tooltip>
-          </div>
+          <Select
+            optionFilterProp="children"
+            showSearch
+            placeholder="Selecione o exame..."
+            onChange={(value) => setFieldValue("type", value)}
+            value={type}
+            loading={examTypesStatus === "loading"}
+            disabled={!values.new}
+          >
+            {examTypes.map((item) => (
+              <Select.Option key={item} value={item}>
+                {item}
+              </Select.Option>
+            ))}
+          </Select>
         </div>
         {errors.type && <div className="form-error">{errors.type}</div>}
       </div>
 
-      {refActive && (
-        <div className={`form-row`}>
-          <div className="form-label">
-            <label>Referência Curadoria:</label>
-          </div>
-          <div className="form-input">
+      <div className={`form-row`}>
+        <div className="form-label">
+          <label>Exame padrão NoHarm:</label>
+        </div>
+        <div className="form-input">
+          <div style={{ display: "flex" }}>
             <Select
               optionFilterProp="children"
               showSearch
-              placeholder="Selecione a referência..."
-              onChange={(value) => applyRef(value)}
-              loading={!refs.length}
+              value={values.tpExamRef}
+              placeholder="Selecione o exame correspondente..."
+              onChange={(value) => setFieldValue("tpExamRef", value)}
+              loading={globalExamsStatus === "loading"}
             >
-              {refs &&
-                refs.map((item, index) => (
-                  <Select.Option key={index} value={index}>
-                    {item.segment} - {item.name} ({item.type})
+              {globalExams &&
+                globalExams.map((item) => (
+                  <Select.Option key={item.tpexam} value={item.tpexam}>
+                    {item.name} ({item.tpexam})
                   </Select.Option>
                 ))}
             </Select>
+            <Tooltip title="Copiar da referência">
+              <Dropdown menu={copyOptions()}>
+                <Button
+                  shape="circle"
+                  icon={<CopyOutlined />}
+                  type="primary"
+                  style={{ marginLeft: "5px" }}
+                />
+              </Dropdown>
+            </Tooltip>
           </div>
         </div>
-      )}
+      </div>
 
       <div className={`form-row ${errors.name ? "error" : ""}`}>
         <div className="form-label">

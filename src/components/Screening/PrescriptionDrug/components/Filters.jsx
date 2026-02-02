@@ -15,7 +15,7 @@ import {
   SortAscendingOutlined,
   CheckSquareOutlined,
 } from "@ant-design/icons";
-import { Affix, Popconfirm } from "antd";
+import { Affix, Popconfirm, Space } from "antd";
 
 import Tag from "components/Tag";
 import Dropdown from "components/Dropdown";
@@ -384,25 +384,27 @@ export default function Filters({
       <Affix offsetTop={50}>
         <div className="filters">
           {showFilter && (
-            <>
+            <Space>
               <Dropdown menu={filterOptions()}>
                 <Tag className="add-filter" icon={<FilterOutlined />}>
                   {t("labels.filters")}
                 </Tag>
               </Dropdown>
+
               {filters.map((i) => (
                 <Tag
                   color="#a991d6"
                   key={i}
                   closable
                   onClose={() => handleFilterClick({ key: i })}
+                  variant="solid"
                 >
                   {t(
                     i.split(".").length > 1 ? i : `prescriptionDrugFilters.${i}`
                   )}
                 </Tag>
               ))}
-            </>
+            </Space>
           )}
         </div>
       </Affix>

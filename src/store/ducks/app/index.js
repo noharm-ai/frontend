@@ -8,6 +8,7 @@ export const { Types, Creators } = createActions({
   appSetConfig: ["config"],
   appSetSider: ["sider"],
   appSetScreeningListFilter: ["params"],
+  appResetScreeningListFilter: ["params"],
   appSetJourney: ["journey"],
   appSetCurrentVersion: ["version"],
   appSetNotification: ["notification"],
@@ -89,6 +90,17 @@ const setScreeningListFilter = (state = INITIAL_STATE, { params }) => ({
   },
 });
 
+const resetScreeningListFilter = (state = INITIAL_STATE, { params }) => ({
+  ...state,
+  filter: {
+    ...state.filter,
+    screeningList: {
+      ...INITIAL_STATE.filter.screeningList,
+      ...params,
+    },
+  },
+});
+
 const setJourney = (state = INITIAL_STATE, { journey }) => ({
   ...state,
   preferences: {
@@ -103,6 +115,7 @@ const HANDLERS = {
   [Types.APP_SET_SIDER]: setSider,
   [Types.APP_SET_JOURNEY]: setJourney,
   [Types.APP_SET_SCREENING_LIST_FILTER]: setScreeningListFilter,
+  [Types.APP_RESET_SCREENING_LIST_FILTER]: resetScreeningListFilter,
   [Types.APP_SET_CURRENT_VERSION]: setCurrentVersion,
   [Types.APP_SET_NOTIFICATION]: setNotification,
 };

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Row, Col, Spin, Alert } from "antd";
+import { Row, Col, Spin, Alert, Space } from "antd";
 import {
   CheckOutlined,
   StarOutlined,
@@ -36,10 +36,6 @@ export default function UnitCard({
   const [error, setError] = useState(null);
   const [infered, setInfered] = useState(!isValidConversion(data));
 
-  useEffect(() => {
-    setError(null);
-  }, [idSegment]);
-
   const Link = () => (
     <div
       style={{ display: "flex", flexDirection: "column", padding: "0.5rem 0" }}
@@ -52,7 +48,7 @@ export default function UnitCard({
             onClick={() =>
               window.open(
                 `/medicamentos/${idSegment}/${idDrug}/${createSlug(name)}`,
-                "_blank"
+                "_blank",
               )
             }
           >
@@ -175,24 +171,28 @@ export default function UnitCard({
                             {i.measureUnit || "--"}
                           </div>
                           <div className="form-input">
-                            <InputNumber
-                              value={i.factor}
-                              min={0}
-                              max={99999999}
-                              className={`${
-                                i.factor === 1 ? "success default-unit" : ""
-                              } ${!i.factor ? "error" : ""}`}
-                              addonBefore={
-                                i.factor === 1 ? <StarOutlined /> : "X"
-                              }
-                              status={i.factor ? "" : "error"}
-                              onChange={(val) =>
-                                setFieldValue(
-                                  `conversionList.${index}.factor`,
-                                  val
-                                )
-                              }
-                            />
+                            <Space direction="horizontal">
+                              <Space.Compact block>
+                                <Space.Addon>
+                                  {i.factor === 1 ? <StarOutlined /> : "X"}
+                                </Space.Addon>
+                                <InputNumber
+                                  value={i.factor}
+                                  min={0}
+                                  max={99999999}
+                                  className={`${
+                                    i.factor === 1 ? "success default-unit" : ""
+                                  } ${!i.factor ? "error" : ""}`}
+                                  status={i.factor ? "" : "error"}
+                                  onChange={(val) =>
+                                    setFieldValue(
+                                      `conversionList.${index}.factor`,
+                                      val,
+                                    )
+                                  }
+                                />
+                              </Space.Compact>
+                            </Space>
                           </div>
                           {infered && i.probability && (
                             <Tooltip title="Probabilidade da inferência estar correta">

@@ -950,6 +950,7 @@
       "99": "Finalizado"
     },
     "action": {
+      "-1": "Solicitação criada",
       "1": "Alterar etapa",
       "2": "Agendar",
       "3": "Agendar transporte",
@@ -976,5 +977,19 @@
     "severityDetail": "Impacto",
     "suspended": "O medicamento ou infusão foi suspenso?",
     "symptoms": "Sintomas"
+  },
+
+  "crm_data": {
+    "name": "Nome",
+    "x_studio_acesso": "Tipo acesso",
+    "x_studio_ambiente_compartilhado": "Ambiente compartilhado",
+    "x_studio_estagio_projeto": "Estágio projeto",
+    "x_studio_getname_cliente": "Getname cliente",
+    "x_studio_integracao_retorno": "Integração retorno",
+    "x_studio_modelo_instituicao": "Modelo instituição",
+    "x_studio_nifi_remoto": "Nifi remoto",
+    "x_studio_responsavel_integracao": "Responsável integração",
+    "x_studio_schema": "Schema",
+    "x_studio_schema_unificado": "Schema unificado"
   }
 }

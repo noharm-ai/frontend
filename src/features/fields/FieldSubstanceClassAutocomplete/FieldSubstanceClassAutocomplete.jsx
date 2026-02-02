@@ -59,15 +59,11 @@ export default function FieldSubstanceClassAutocomplete({
     <Flex>
       <div style={{ flex: 1, maxWidth: "100%" }} id="class-autocomplete">
         <Select
-          showSearch
           labelInValue
           allowClear
           value={value}
-          optionFilterProp="children"
           style={{ minWidth: "300px", maxWidth: "100%" }}
           notFoundContent={loading ? <LoadBox /> : null}
-          filterOption={false}
-          onSearch={search}
           onChange={(value) => onChange(value)}
           placeholder={loading ? "Carregando..." : "Digite para pesquisar"}
           mode="multiple"
@@ -75,6 +71,12 @@ export default function FieldSubstanceClassAutocomplete({
           getPopupContainer={() =>
             document.getElementById("class-autocomplete")
           }
+          showSearch={{
+            onSearch: (value) => search(value),
+            filterOption: false,
+            optionFilterProp: ["children"],
+            autoClearSearchValue: false,
+          }}
           {...props}
         >
           {options.map((option) => (

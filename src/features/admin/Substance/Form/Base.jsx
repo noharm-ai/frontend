@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import { Flex, Tabs, Row, Col, Divider } from "antd";
+import { Flex, Tabs, Row, Col, Divider, Space } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import Switch from "components/Switch";
@@ -291,20 +291,24 @@ function BaseForm() {
                         <label>Dose máxima (Adulto):</label>
                       </div>
                       <div className="form-input">
-                        <InputNumber
-                          min={0}
-                          max={maxValue}
-                          value={values.maxdoseAdult}
-                          onChange={(value) =>
-                            setFieldValue("maxdoseAdult", value)
-                          }
-                          status={
-                            errors.maxdoseAdult && touched.maxdoseAdult
-                              ? "error"
-                              : null
-                          }
-                          addonAfter={values.defaultMeasureUnit || "--"}
-                        />{" "}
+                        <Space.Compact block>
+                          <InputNumber
+                            min={0}
+                            max={maxValue}
+                            value={values.maxdoseAdult}
+                            onChange={(value) =>
+                              setFieldValue("maxdoseAdult", value)
+                            }
+                            status={
+                              errors.maxdoseAdult && touched.maxdoseAdult
+                                ? "error"
+                                : null
+                            }
+                          />
+                          <Space.Addon>
+                            {values.defaultMeasureUnit || "--"}
+                          </Space.Addon>
+                        </Space.Compact>
                       </div>
                     </div>
                   </Col>
@@ -315,21 +319,25 @@ function BaseForm() {
                         <label>Dose máxima por peso (Adulto):</label>
                       </div>
                       <div className="form-input">
-                        <InputNumber
-                          min={0}
-                          max={maxValue}
-                          value={values.maxdoseAdultWeight}
-                          onChange={(value) =>
-                            setFieldValue("maxdoseAdultWeight", value)
-                          }
-                          status={
-                            errors.maxdoseAdultWeight &&
-                            touched.maxdoseAdultWeight
-                              ? "error"
-                              : null
-                          }
-                          addonAfter={`${values.defaultMeasureUnit || "--"}/Kg`}
-                        />{" "}
+                        <Space.Compact block>
+                          <InputNumber
+                            min={0}
+                            max={maxValue}
+                            value={values.maxdoseAdultWeight}
+                            onChange={(value) =>
+                              setFieldValue("maxdoseAdultWeight", value)
+                            }
+                            status={
+                              errors.maxdoseAdultWeight &&
+                              touched.maxdoseAdultWeight
+                                ? "error"
+                                : null
+                            }
+                          />
+                          <Space.Addon>{`${
+                            values.defaultMeasureUnit || "--"
+                          }/Kg`}</Space.Addon>
+                        </Space.Compact>
                       </div>
                     </div>
                   </Col>
@@ -340,20 +348,25 @@ function BaseForm() {
                         <label>Dose máxima (Pediátrico):</label>
                       </div>
                       <div className="form-input">
-                        <InputNumber
-                          min={0}
-                          max={maxValue}
-                          value={values.maxdosePediatric}
-                          onChange={(value) =>
-                            setFieldValue("maxdosePediatric", value)
-                          }
-                          status={
-                            errors.maxdosePediatric && touched.maxdosePediatric
-                              ? "error"
-                              : null
-                          }
-                          addonAfter={values.defaultMeasureUnit || "--"}
-                        />{" "}
+                        <Space.Compact block>
+                          <InputNumber
+                            min={0}
+                            max={maxValue}
+                            value={values.maxdosePediatric}
+                            onChange={(value) =>
+                              setFieldValue("maxdosePediatric", value)
+                            }
+                            status={
+                              errors.maxdosePediatric &&
+                              touched.maxdosePediatric
+                                ? "error"
+                                : null
+                            }
+                          />
+                          <Space.Addon>
+                            {values.defaultMeasureUnit || "--"}
+                          </Space.Addon>
+                        </Space.Compact>
                       </div>
                     </div>
                   </Col>
@@ -364,21 +377,25 @@ function BaseForm() {
                         <label>Dose máxima por peso (Pediátrico):</label>
                       </div>
                       <div className="form-input">
-                        <InputNumber
-                          min={0}
-                          max={maxValue}
-                          value={values.maxdosePediatricWeight}
-                          onChange={(value) =>
-                            setFieldValue("maxdosePediatricWeight", value)
-                          }
-                          status={
-                            errors.maxdosePediatricWeight &&
-                            touched.maxdosePediatricWeight
-                              ? "error"
-                              : null
-                          }
-                          addonAfter={`${values.defaultMeasureUnit || "--"}/Kg`}
-                        />{" "}
+                        <Space.Compact block>
+                          <InputNumber
+                            min={0}
+                            max={maxValue}
+                            value={values.maxdosePediatricWeight}
+                            onChange={(value) =>
+                              setFieldValue("maxdosePediatricWeight", value)
+                            }
+                            status={
+                              errors.maxdosePediatricWeight &&
+                              touched.maxdosePediatricWeight
+                                ? "error"
+                                : null
+                            }
+                          />
+                          <Space.Addon>
+                            {`${values.defaultMeasureUnit || "--"}/Kg`}
+                          </Space.Addon>
+                        </Space.Compact>
                       </div>
                     </div>
                   </Col>
@@ -389,15 +406,19 @@ function BaseForm() {
                         <label>Divisor de faixas:</label>
                       </div>
                       <div className="form-input">
-                        <InputNumber
-                          min={0}
-                          max={maxValue}
-                          value={values.divisionRange}
-                          onChange={(value) =>
-                            setFieldValue("divisionRange", value)
-                          }
-                          addonAfter={`${values.defaultMeasureUnit || "--"}`}
-                        />{" "}
+                        <Space.Compact block>
+                          <InputNumber
+                            min={0}
+                            max={maxValue}
+                            value={values.divisionRange}
+                            onChange={(value) =>
+                              setFieldValue("divisionRange", value)
+                            }
+                          />
+                          <Space.Addon>
+                            {`${values.defaultMeasureUnit || "--"}`}
+                          </Space.Addon>
+                        </Space.Compact>
                       </div>
                     </div>
                   </Col>
@@ -414,15 +435,17 @@ function BaseForm() {
                         <label>Nefrotóxico (Adulto):</label>
                       </div>
                       <div className="form-input">
-                        <InputNumber
-                          min={0}
-                          max={maxValue}
-                          value={values.kidneyAdult}
-                          onChange={(value) =>
-                            setFieldValue("kidneyAdult", value)
-                          }
-                          addonAfter={`mL/min`}
-                        />{" "}
+                        <Space.Compact block>
+                          <InputNumber
+                            min={0}
+                            max={maxValue}
+                            value={values.kidneyAdult}
+                            onChange={(value) =>
+                              setFieldValue("kidneyAdult", value)
+                            }
+                          />
+                          <Space.Addon>{`mL/min`}</Space.Addon>
+                        </Space.Compact>
                       </div>
                     </div>
                   </Col>
@@ -433,15 +456,17 @@ function BaseForm() {
                         <label>Nefrotóxico (Pediátrico):</label>
                       </div>
                       <div className="form-input">
-                        <InputNumber
-                          min={0}
-                          max={maxValue}
-                          value={values.kidneyPediatric}
-                          onChange={(value) =>
-                            setFieldValue("kidneyPediatric", value)
-                          }
-                          addonAfter={`mL/min`}
-                        />{" "}
+                        <Space.Compact block>
+                          <InputNumber
+                            min={0}
+                            max={maxValue}
+                            value={values.kidneyPediatric}
+                            onChange={(value) =>
+                              setFieldValue("kidneyPediatric", value)
+                            }
+                          />
+                          <Space.Addon>{`mL/min`}</Space.Addon>
+                        </Space.Compact>
                       </div>
                     </div>
                   </Col>
@@ -452,15 +477,17 @@ function BaseForm() {
                         <label>Hepatotóxico (Adulto):</label>
                       </div>
                       <div className="form-input">
-                        <InputNumber
-                          min={0}
-                          max={maxValue}
-                          value={values.liverAdult}
-                          onChange={(value) =>
-                            setFieldValue("liverAdult", value)
-                          }
-                          addonAfter={`U/L`}
-                        />{" "}
+                        <Space.Compact block>
+                          <InputNumber
+                            min={0}
+                            max={maxValue}
+                            value={values.liverAdult}
+                            onChange={(value) =>
+                              setFieldValue("liverAdult", value)
+                            }
+                          />
+                          <Space.Addon>{`U/L`}</Space.Addon>
+                        </Space.Compact>
                       </div>
                     </div>
                   </Col>
@@ -471,15 +498,17 @@ function BaseForm() {
                         <label>Hepatotóxico (Pediátrico):</label>
                       </div>
                       <div className="form-input">
-                        <InputNumber
-                          min={0}
-                          max={maxValue}
-                          value={values.liverPediatric}
-                          onChange={(value) =>
-                            setFieldValue("liverPediatric", value)
-                          }
-                          addonAfter={`U/L`}
-                        />{" "}
+                        <Space.Compact block>
+                          <InputNumber
+                            min={0}
+                            max={maxValue}
+                            value={values.liverPediatric}
+                            onChange={(value) =>
+                              setFieldValue("liverPediatric", value)
+                            }
+                          />
+                          <Space.Addon>{`U/L`}</Space.Addon>
+                        </Space.Compact>
                       </div>
                     </div>
                   </Col>
@@ -490,15 +519,17 @@ function BaseForm() {
                         <label>Alerta de plaquetas:</label>
                       </div>
                       <div className="form-input">
-                        <InputNumber
-                          min={0}
-                          max={maxValue}
-                          value={values.platelets}
-                          onChange={(value) =>
-                            setFieldValue("platelets", value)
-                          }
-                          addonAfter={`plaquetas/µL`}
-                        />{" "}
+                        <Space.Compact block>
+                          <InputNumber
+                            min={0}
+                            max={maxValue}
+                            value={values.platelets}
+                            onChange={(value) =>
+                              setFieldValue("platelets", value)
+                            }
+                          />{" "}
+                          <Space.Addon>{`plaquetas/µL`}</Space.Addon>
+                        </Space.Compact>
                       </div>
                     </div>
                   </Col>

@@ -44,21 +44,19 @@ export default function FilterFields({
   searchDrugs,
   open,
 }) {
-  //eslint-disable-next-line
   const dispatch = useDispatch();
   //eslint disabled because of incorrect error msg
-  //eslint-disable-next-line
+
   const { t } = useTranslation();
-  //eslint-disable-next-line
+
   const departments = useSelector(
-    (state) => state.lists.getSegmentDepartments.list
-  );
-  //eslint-disable-next-line
-  const departmentsStatus = useSelector(
-    (state) => state.lists.getSegmentDepartments.status
+    (state) => state.lists.getSegmentDepartments.list,
   );
 
-  //eslint-disable-next-line
+  const departmentsStatus = useSelector(
+    (state) => state.lists.getSegmentDepartments.status,
+  );
+
   useEffect(() => {
     if (open && isEmpty(departments)) {
       dispatch(getSegmentDepartments());
@@ -138,7 +136,7 @@ export default function FilterFields({
     intervals.push(
       i.toLocaleString("pt-BR", {
         minimumIntegerDigits: 2,
-      })
+      }),
     );
   }
   intervals.push("SN");
@@ -185,7 +183,6 @@ export default function FilterFields({
       <Col md={12}>
         <Card
           title="Prescrição"
-          bordered
           size="small"
           type="inner"
           style={{ background: "#fafafa" }}
@@ -218,7 +215,7 @@ export default function FilterFields({
                         >
                           {label}
                         </Select.Option>
-                      )
+                      ),
                     )}
                   </SelectCustom>
                 </Spin>
@@ -324,6 +321,23 @@ export default function FilterFields({
                     className={filter.insurance ? "warning" : null}
                     value={filter.insurance}
                     onChange={({ target }) => onInsuranceChange(target.value)}
+                  ></Input>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Leito:</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    className={filter.bed ? "warning" : null}
+                    value={filter.bed}
+                    onChange={({ target }) =>
+                      setScreeningListFilter({ bed: target.value })
+                    }
                   ></Input>
                 </div>
               </div>
@@ -458,7 +472,6 @@ export default function FilterFields({
       <Col md={12}>
         <Card
           title="Medicamentos"
-          bordered
           size="small"
           type="inner"
           style={{ background: "#fafafa" }}
@@ -472,15 +485,18 @@ export default function FilterFields({
                 <Select
                   id="drugs-filter"
                   mode="multiple"
-                  optionFilterProp="children"
                   className={filter.idDrug?.length ? "warning" : null}
                   placeholder={t("screeningList.labelDrugPlaceholder")}
                   onChange={onDrugChange}
                   value={filter.idDrug}
                   notFoundContent={drugs.isFetching ? <LoadBox /> : null}
-                  filterOption={false}
                   allowClear
-                  onSearch={searchDrugsAutocomplete}
+                  showSearch={{
+                    onSearch: (value) => searchDrugsAutocomplete(value),
+                    filterOption: false,
+                    optionFilterProp: ["children"],
+                    autoClearSearchValue: false,
+                  }}
                 >
                   {drugs.list.map(({ idDrug, name }) => (
                     <Select.Option key={idDrug} value={idDrug}>
@@ -634,7 +650,6 @@ export default function FilterFields({
       <Col md={12}>
         <Card
           title="Paciente"
-          bordered
           size="small"
           type="inner"
           style={{ background: "#fafafa" }}
@@ -661,7 +676,7 @@ export default function FilterFields({
                             : null
                         }
                         placeholder={t(
-                          "screeningList.labelPatientReviewTypePlaceholder"
+                          "screeningList.labelPatientReviewTypePlaceholder",
                         )}
                         loading={segments.single.isFetching}
                         value={filter.patientReviewType}
@@ -693,7 +708,7 @@ export default function FilterFields({
                     optionFilterProp="children"
                     className={filter.patientStatus ? "warning" : null}
                     placeholder={t(
-                      "screeningList.labelPatientStatusPlaceholder"
+                      "screeningList.labelPatientStatusPlaceholder",
                     )}
                     loading={segments.single.isFetching}
                     value={filter.patientStatus}
@@ -732,6 +747,23 @@ export default function FilterFields({
                     notFoundContent="Digite o ID do paciente e pressione enter. Mais de um ID pode ser informado."
                     allowClear
                   ></Select>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Prontuário:</label>
+                </div>
+                <div className="form-input">
+                  <Input
+                    className={filter.medical_record ? "warning" : null}
+                    value={filter.medical_record}
+                    onChange={({ target }) =>
+                      setScreeningListFilter({ medical_record: target.value })
+                    }
+                  ></Input>
                 </div>
               </div>
             </div>

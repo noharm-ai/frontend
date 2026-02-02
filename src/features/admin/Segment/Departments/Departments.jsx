@@ -21,13 +21,13 @@ function DepartmentsForm({ open, setOpen }) {
   const dispatch = useDispatch();
   const segment = useSelector((state) => state.admin.segment.single.data);
   const departments = useSelector(
-    (state) => state.admin.segment.departments.list
+    (state) => state.admin.segment.departments.list,
   );
   const fetchStatus = useSelector(
-    (state) => state.admin.segment.departments.status
+    (state) => state.admin.segment.departments.status,
   );
   const saveStatus = useSelector(
-    (state) => state.admin.segment.saveDepartments.status
+    (state) => state.admin.segment.saveDepartments.status,
   );
   const [filter, setFilter] = useState({
     departmentName: null,
@@ -37,11 +37,6 @@ function DepartmentsForm({ open, setOpen }) {
   useEffect(() => {
     if (open) {
       dispatch(fetchDepartments({ idSegment: segment.id }));
-    } else {
-      setFilter({
-        departmentName: null,
-        onlySelected: false,
-      });
     }
   }, [open, segment, dispatch]);
 
@@ -68,7 +63,7 @@ function DepartmentsForm({ open, setOpen }) {
         show =
           show &&
           currentValues.selectedKeys.indexOf(
-            `${i.idHospital}-${i.idDepartment}`
+            `${i.idHospital}-${i.idDepartment}`,
           ) !== -1;
       }
 
@@ -84,7 +79,7 @@ function DepartmentsForm({ open, setOpen }) {
           ({ idDepartment, idHospital }) => ({
             idDepartment,
             idHospital,
-          })
+          }),
         ),
       };
 
@@ -124,6 +119,10 @@ function DepartmentsForm({ open, setOpen }) {
   const onCancel = () => {
     dispatch(setSegment(null));
     setOpen(false);
+    setFilter({
+      departmentName: null,
+      onlySelected: false,
+    });
   };
 
   const getDatasource = (currentValues) => {
@@ -166,7 +165,7 @@ function DepartmentsForm({ open, setOpen }) {
           open={open}
           width={"60vw"}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={t("actions.save")}

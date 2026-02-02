@@ -13,6 +13,7 @@ import { setRelation, setCurrentPage, fetchRelations } from "./RelationsSlice";
 import RelationForm from "./Form/RelationForm";
 import columns from "./Table/columns";
 import expandedRowRender from "./Table/expandedRowRender";
+import { ExpandColumn } from "src/components/ExpandColumn";
 
 import { PageCard, PaginationContainer } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
@@ -47,20 +48,6 @@ export default function Relation() {
     setExpandedRows(updateExpandedRows(expandedRows, record.key));
   };
 
-  const ExpandColumn = ({ expand }) => {
-    return (
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          type="button"
-          className={`expand-all ant-table-row-expand-icon ${
-            expand ? "ant-table-row-expand-icon-collapsed" : ""
-          }`}
-          onClick={toggleExpansion}
-        ></button>
-      </div>
-    );
-  };
-
   const toggleExpansion = () => {
     if (expandedRows.length) {
       setExpandedRows([]);
@@ -89,7 +76,7 @@ export default function Relation() {
           new: true,
           active: true,
           sctida: filters.idOriginList[0],
-        })
+        }),
       );
     } else {
       dispatch(setRelation({ new: true, active: true }));
@@ -134,7 +121,12 @@ export default function Relation() {
           dataSource={status === "succeeded" ? ds : []}
           expandedRowRender={expandedRowRender(t)}
           expandedRowKeys={expandedRows}
-          columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+          columnTitle={
+            <ExpandColumn
+              expand={!expandedRows.length}
+              toggleExpansion={toggleExpansion}
+            />
+          }
           onExpand={(expanded, record) => handleRowExpand(record)}
         />
       </PageCard>

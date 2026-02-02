@@ -159,6 +159,7 @@ export default function PatientName({
             )}
           </>
         ),
+        mask: { blur: false },
         onOk: modalOk,
         okText: "Ajuda",
         cancelText: "Fechar",

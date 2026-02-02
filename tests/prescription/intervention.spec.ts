@@ -19,11 +19,11 @@ test("add intervention", async ({ page }) => {
     .locator(".ant-select.ant-select-loading")
     .waitFor({ state: "detached" });
 
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
   await page.getByText("Alergia").click();
 
   // // close dropdown
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
@@ -54,12 +54,12 @@ test("add multiple interventions and rollback", async ({ page }) => {
     .locator(".ant-select.ant-select-loading")
     .waitFor({ state: "detached" });
 
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
   // select intervention reason
   await page.getByText("Alergia").click();
 
   // close dropdown
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
@@ -80,15 +80,15 @@ test("add multiple interventions and rollback", async ({ page }) => {
   await page
     .locator(".ant-select.ant-select-loading")
     .waitFor({ state: "detached" });
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
   await page.getByText("Aprazamento").nth(1).click();
   // close dropdown
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
 
-  await page.locator(".ant-modal-content .ant-dropdown-trigger").hover();
+  await page.locator(".ant-modal-container .ant-dropdown-trigger").hover();
   await page.getByText("Salvar e marcar como Aceita").click();
   await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
 
@@ -139,11 +139,11 @@ test("add patient intervention", async ({ page }) => {
   await page
     .locator(".ant-select.ant-select-loading")
     .waitFor({ state: "detached" });
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
   await page.getByText("Diluição", { exact: true }).click();
 
   // // close dropdown
-  await page.locator(".ant-select-selector").click();
+  await page.locator(".ant-select").click();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste paciente");

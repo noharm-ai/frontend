@@ -42,6 +42,7 @@ export default function Filter({ limit }) {
     aiAccuracyRange: null,
     substanceList: [],
     tpSubstanceList: "in",
+    tpAttributeList: "in",
     minDrugCount: null,
   };
 
@@ -51,7 +52,7 @@ export default function Filter({ limit }) {
         if (response.error) {
           notification.error(errorMessage);
         }
-      }
+      },
     );
 
     return () => {
@@ -67,7 +68,7 @@ export default function Filter({ limit }) {
         if (response.error) {
           notification.error(errorMessage);
         }
-      }
+      },
     );
   };
 

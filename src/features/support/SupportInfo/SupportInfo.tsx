@@ -94,7 +94,7 @@ export function SupportInfo() {
         centered
         footer={null}
         open={supportFormOpen}
-        destroyOnClose
+        destroyOnHidden
         onCancel={() => cancelSupportForm()}
       >
         <header>

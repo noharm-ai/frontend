@@ -21,6 +21,9 @@ const initialState = {
     sctid: null,
     data: {},
   },
+  drugForm: {
+    data: null,
+  },
   addDefaultUnits: {
     status: "idle",
     error: null,
@@ -61,7 +64,7 @@ export const fetchDrugAttributes = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const updatePriceFactor = createAsyncThunk(
@@ -74,22 +77,21 @@ export const updatePriceFactor = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const updateSubstanceUnitFactor = createAsyncThunk(
   "admin-drug-attributes/update-substance-unit-factor",
   async (params, thunkAPI) => {
     try {
-      const response = await adminApi.unitConversion.updateSubstanceUnitFactor(
-        params
-      );
+      const response =
+        await adminApi.unitConversion.updateSubstanceUnitFactor(params);
 
       return response;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const updateSubstance = createAsyncThunk(
@@ -102,7 +104,7 @@ export const updateSubstance = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const addDefaultUnits = createAsyncThunk(
@@ -115,7 +117,7 @@ export const addDefaultUnits = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const addNewOutlier = createAsyncThunk(
@@ -128,7 +130,7 @@ export const addNewOutlier = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const calculateDosemax = createAsyncThunk(
@@ -141,7 +143,7 @@ export const calculateDosemax = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const copyConversion = createAsyncThunk(
@@ -154,7 +156,7 @@ export const copyConversion = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const copyAttributes = createAsyncThunk(
@@ -167,7 +169,7 @@ export const copyAttributes = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const getDrugsMissingSubstance = createAsyncThunk(
@@ -180,7 +182,7 @@ export const getDrugsMissingSubstance = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const predictSubstance = createAsyncThunk(
@@ -193,7 +195,7 @@ export const predictSubstance = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 const drugAttributesSlice = createSlice({
@@ -211,6 +213,9 @@ const drugAttributesSlice = createSlice({
     },
     setDrugRef(state, action) {
       state.drugRef.data = action.payload;
+    },
+    setDrugForm(state, action) {
+      state.drugForm.data = action.payload;
     },
   },
   extraReducers(builder) {
@@ -312,7 +317,8 @@ const drugAttributesSlice = createSlice({
 
         state.list.forEach((d, index) => {
           const updateIndex = updateList.findIndex(
-            (item) => item.idDrug === d.idDrug && item.idSegment === d.idSegment
+            (item) =>
+              item.idDrug === d.idDrug && item.idSegment === d.idSegment,
           );
 
           if (updateIndex !== -1) {
@@ -326,7 +332,7 @@ const drugAttributesSlice = createSlice({
   },
 });
 
-export const { reset, setFilters, setCurrentPage, setDrugRef } =
+export const { reset, setFilters, setCurrentPage, setDrugRef, setDrugForm } =
   drugAttributesSlice.actions;
 
 export default drugAttributesSlice.reducer;

@@ -35,12 +35,60 @@ function Summary({ mock }) {
   const summaryData = useSelector((state) => state.summary.data);
   const status = useSelector((state) => state.summary.status);
 
+  const startLoadingBlocks = () => {
+    //todo add config
+    const aiBlocks = [
+      "reason",
+      "diagnosis",
+      "previousDrugs",
+      "clinicalSummary",
+      "textExams",
+      "procedures",
+      "dischargeCondition",
+      "dischargePlan",
+    ];
+    let timeout = 1000;
+    aiBlocks.forEach((k) => {
+      setTimeout(() => {
+        dispatch(startBlock({ id: k }));
+      }, timeout);
+      timeout += 1500;
+    });
+  };
+
+  const loadDraft = (value) => {
+    Object.keys(value).forEach((k) => {
+      dispatch(
+        setBlock({
+          id: k,
+          data: value[k].text,
+        }),
+      );
+    });
+  };
+
+  const chooseLoadOption = (draft) => {
+    DefaultModal.confirm({
+      title: "Rascunho",
+      content: <p>Existe um rascunho para este sumário. Deseja carregá-lo?</p>,
+      onOk: () => {
+        loadDraft(draft);
+      },
+      onCancel: () => {
+        startLoadingBlocks();
+      },
+      okText: "Sim",
+      cancelText: "Não",
+      width: 550,
+    });
+  };
+
   useEffect(() => {
     dispatch(
       fetchSummary({
         admissionNumber: params.admissionNumber,
         mock,
-      })
+      }),
     ).then((response) => {
       if (response.error) {
         notification.error({
@@ -73,54 +121,6 @@ function Summary({ mock }) {
       dispatch(reset());
     };
   }, []); // eslint-disable-line
-
-  const chooseLoadOption = (draft) => {
-    DefaultModal.confirm({
-      title: "Rascunho",
-      content: <p>Existe um rascunho para este sumário. Deseja carregá-lo?</p>,
-      onOk: () => {
-        loadDraft(draft);
-      },
-      onCancel: () => {
-        startLoadingBlocks();
-      },
-      okText: "Sim",
-      cancelText: "Não",
-      width: 550,
-    });
-  };
-
-  const loadDraft = (value) => {
-    Object.keys(value).forEach((k) => {
-      dispatch(
-        setBlock({
-          id: k,
-          data: value[k].text,
-        })
-      );
-    });
-  };
-
-  const startLoadingBlocks = () => {
-    //todo add config
-    const aiBlocks = [
-      "reason",
-      "diagnosis",
-      "previousDrugs",
-      "clinicalSummary",
-      "textExams",
-      "procedures",
-      "dischargeCondition",
-      "dischargePlan",
-    ];
-    let timeout = 1000;
-    aiBlocks.forEach((k) => {
-      setTimeout(() => {
-        dispatch(startBlock({ id: k }));
-      }, timeout);
-      timeout += 1500;
-    });
-  };
 
   return (
     <>

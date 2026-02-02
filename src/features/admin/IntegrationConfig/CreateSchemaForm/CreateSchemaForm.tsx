@@ -1,26 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
-import { Result, Descriptions } from "antd";
+import { Result, Descriptions, Modal } from "antd";
+import { SyncOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
-import { createSchema, fetchIntegrations } from "../IntegrationConfigSlice";
+import {
+  createSchema,
+  fetchIntegrations,
+  fetchTemplates,
+} from "../IntegrationConfigSlice";
 import { Base } from "./Base";
 
 import { Form } from "styles/Form.style";
 
 export interface ICreateSchemaForm {
   schema_name: string;
-  is_cpoe: boolean;
-  is_pec: boolean;
   create_user: boolean;
-  create_sqs: boolean;
-  create_logstream: boolean;
   db_user: string;
+  tp_pep: string;
+  template_id: string;
 }
 
 export interface ICreateSchemaFormProps {
@@ -32,10 +35,13 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const status = useAppSelector(
-    (state) => state.admin.integrationConfig.createSchema.status
+    (state) => state.admin.integrationConfig.createSchema.status,
+  );
+  const templateStatus = useAppSelector(
+    (state) => state.admin.integrationConfig.templateList.status,
   );
   const [resultData, setResultData] = useState<any>(null);
-  const isSaving = status === "loading";
+  const isSaving = status === "loading" || templateStatus === "loading";
 
   const validationSchema = Yup.object().shape({
     schema_name: Yup.string()
@@ -44,17 +50,15 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
   });
   const initialValues = {
     schema_name: "",
-    is_cpoe: false,
-    is_pec: false,
     db_user: "",
     create_user: true,
-    create_logstream: true,
-    create_sqs: true,
+    tp_pep: "",
+    template_id: "",
   };
 
   const onSave = (
     params: ICreateSchemaForm,
-    formikHelpers: FormikHelpers<ICreateSchemaForm>
+    formikHelpers: FormikHelpers<ICreateSchemaForm>,
   ) => {
     // @ts-expect-error ts 2554 (legacy code)
     dispatch(createSchema(params)).then((response: any) => {
@@ -73,24 +77,60 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
     });
   };
 
+  const handleSaveWithConfirmation = (
+    values: ICreateSchemaForm,
+    formikHelpers: FormikHelpers<ICreateSchemaForm>,
+  ) => {
+    Modal.confirm({
+      title: "Confirmar criação do schema",
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <>
+          Tem certeza que deseja criar o schema{" "}
+          <strong>{values.schema_name}</strong>?
+          {values.template_id ? (
+            <p>
+              O schema será criado com base no template{" "}
+              <strong>{values.template_id}</strong>.
+            </p>
+          ) : (
+            <p>O schema será criado sem template inicial.</p>
+          )}
+          <p></p>
+        </>
+      ),
+      okText: "Sim, criar schema",
+      cancelText: "Cancelar",
+      onOk() {
+        onSave(values, formikHelpers);
+      },
+    });
+  };
+
   const onCancel = () => {
     setOpen(false);
     setResultData(null);
   };
 
+  useEffect(() => {
+    if (open) {
+      dispatch(fetchTemplates());
+    }
+  }, [dispatch, open]);
+
   return (
     <Formik
       enableReinitialize
-      onSubmit={onSave}
+      onSubmit={handleSaveWithConfirmation}
       initialValues={initialValues}
       validationSchema={validationSchema}
     >
       {({ handleSubmit }: { handleSubmit: () => void }) => (
         <DefaultModal
           open={open}
-          width={600}
+          width={800}
           centered
-          destroyOnClose
+          destroyOnHidden
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={t("actions.save")}
@@ -163,7 +203,22 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
                 }
               ></Result>
             ) : (
-              <Base />
+              <>
+                <Base />
+                {templateStatus === "loading" && (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <p>Carregando templates...</p>
+                    <SyncOutlined spin />
+                  </div>
+                )}
+              </>
             )}
           </Form>
         </DefaultModal>

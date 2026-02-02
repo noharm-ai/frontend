@@ -248,9 +248,9 @@ export default function Menu({ segments }) {
           id: "gtm-lnk-units-drugs",
         },
         {
-          key: "/admin/exames2",
-          link: "/admin/exames",
-          label: "Exames",
+          key: "/admin/exames-referencia",
+          link: "/admin/exames-referencia",
+          label: "Exames Referência",
           icon: <ExperimentOutlined />,
           id: "gtm-lnk-exames",
         },

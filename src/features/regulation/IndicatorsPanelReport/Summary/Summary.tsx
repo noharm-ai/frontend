@@ -66,7 +66,7 @@ export function Summary() {
       open={open}
       width={800}
       centered
-      destroyOnClose
+      destroyOnHidden
       onCancel={() => dispatch(setSummaryVisibility(false))}
       footer={null}
     >

@@ -18,14 +18,14 @@ export const fetchDrugAttributes = createAsyncThunk(
     try {
       const response = await api.drugs.getDrugAttributes(
         params.idSegment,
-        params.idDrug
+        params.idDrug,
       );
 
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const saveDrugAttributes = createAsyncThunk(
@@ -38,7 +38,7 @@ export const saveDrugAttributes = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 const drugAttributesFormSlice = createSlice({
@@ -53,10 +53,12 @@ const drugAttributesFormSlice = createSlice({
     builder
       .addCase(fetchDrugAttributes.pending, (state, action) => {
         state.status = "loading";
+        state.error = null;
       })
       .addCase(fetchDrugAttributes.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.data = action.payload.data;
+        state.error = null;
       })
       .addCase(fetchDrugAttributes.rejected, (state, action) => {
         state.status = "failed";
