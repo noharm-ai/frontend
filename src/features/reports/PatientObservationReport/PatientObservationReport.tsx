@@ -71,6 +71,10 @@ export default function PatientObservationReport({
                 <Space orientation="vertical" size="large">
                   <Spin spinning={isLoading}>
                     <ObservationsList />
+                    <p style={{ fontSize: "12px", opacity: 0.7 }}>
+                      * Histórico disponível para alterações realizadas a partir
+                      de 05/02/2026.{" "}
+                    </p>
                   </Spin>
                 </Space>
               </Col>

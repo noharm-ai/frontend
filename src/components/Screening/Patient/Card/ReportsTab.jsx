@@ -55,7 +55,7 @@ export default function ReportsTab({ prescription }) {
     },
     {
       title: "Histórico de Anotações",
-      description: "Histórico de anotações relacionadas à prescrição.",
+      description: "Histórico de anotações registradas para este paciente.",
       type: "PATIENT_OBSERVATION_HISTORY",
       track: TrackedReport.PATIENT_OBSERVATION_HISTORY,
       visible: true,
