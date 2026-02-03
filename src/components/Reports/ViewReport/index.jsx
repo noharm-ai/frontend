@@ -9,6 +9,7 @@ import CultureReport from "features/reports/CultureReport/CultureReport";
 import AntimicrobialHistoryReport from "features/reports/AntimicrobialHistoryReport/AntimicrobialHistoryReport";
 import PrescriptionHistoryReport from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReport";
 import ExamsRawSearchReport from "features/reports/ExamsRawSearchReport/ExamsRawSearchReport";
+import PatientObservationReport from "src/features/reports/PatientObservationReport/PatientObservationReport";
 
 const DashboardContainer = styled("div")`
   width: 100%;
@@ -46,6 +47,10 @@ export default function Reports({ report, prescription }) {
 
   if (report.type === "EXAMS_SEARCH") {
     return <ExamsRawSearchReport prescription={prescription} />;
+  }
+
+  if (report.type === "PATIENT_OBSERVATION_HISTORY") {
+    return <PatientObservationReport prescription={prescription} />;
   }
 
   return (

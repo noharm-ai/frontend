@@ -69,6 +69,7 @@ import reportAntimicrobialHistoryReport from "features/reports/AntimicrobialHist
 import reportPrescriptionHistoryReport from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReportSlice";
 import reportAlertListReport from "features/reports/AlertListReport/AlertListReportSlice";
 import reportExamsRawSearchReport from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
+import reportPatientObservationReport from "features/reports/PatientObservationReport/PatientObservationReportSlice";
 import reportIntegrationNifiLintReport from "features/reports/IntegrationNifiLintReport/IntegrationNifiLintReportSlice";
 
 const adminReducers = combineReducers({
@@ -112,6 +113,7 @@ const reportReducers = combineReducers({
   antimicrobialHistory: reportAntimicrobialHistoryReport,
   prescriptionHistory: reportPrescriptionHistoryReport,
   examsRawSearch: reportExamsRawSearchReport,
+  patientObservation: reportPatientObservationReport,
   alertList: reportAlertListReport,
   reports: reports,
   integrationNifiLint: reportIntegrationNifiLintReport,

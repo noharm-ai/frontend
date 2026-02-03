@@ -54,6 +54,13 @@ export default function ReportsTab({ prescription }) {
       visible: true,
     },
     {
+      title: "Histórico de Anotações",
+      description: "Histórico de anotações relacionadas à prescrição.",
+      type: "PATIENT_OBSERVATION_HISTORY",
+      track: TrackedReport.PATIENT_OBSERVATION_HISTORY,
+      visible: true,
+    },
+    {
       title: "Busca de Exames",
       description: "Pesquisa por exames, inclusive ainda não configurados.",
       type: "EXAMS_SEARCH",
