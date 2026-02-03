@@ -60,14 +60,17 @@ export default function Interaction({
       <Select
         id="interactions"
         mode="multiple"
-        optionFilterProp="children"
         style={{ width: "100%" }}
         defaultValue={interactions || undefined}
         notFoundContent={drugs.isFetching ? <LoadBox /> : null}
-        filterOption={false}
-        onSearch={search}
         onChange={handleChange}
         placeholder="Digite para pesquisar mais medicamentos"
+        showSearch={{
+          optionFilterProp: ["children"],
+          filterOption: false,
+          onSearch: search,
+          autoClearSearchValue: false,
+        }}
       >
         {uniqBy(normalizedList, "idDrug").map(({ idDrug, name }) => (
           <Select.Option key={`${idDrug}`} value={`${idDrug}`}>
