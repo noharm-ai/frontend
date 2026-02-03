@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { CheckCircleOutlined, CheckOutlined } from "@ant-design/icons";
@@ -27,15 +27,13 @@ export default function MultipleCheck({ open, setOpen }) {
   const list = useSelector((state) => state.prescriptionv2.multipleCheck.list);
   const [checkStatus, setCheckStatus] = useState("idle");
   const [checkErrorMessage, setCheckErrorMessage] = useState([]);
-  const [progressPercentage, setProgressPercentage] = useState("idle");
+  const [progressPercentage, setProgressPercentage] = useState(0);
 
-  useEffect(() => {
-    if (!open) {
-      setCheckStatus("idle");
-      setProgressPercentage(0);
-      setCheckErrorMessage([]);
-    }
-  }, [open]);
+  const resetState = () => {
+    setCheckStatus("idle");
+    setProgressPercentage(0);
+    setCheckErrorMessage([]);
+  };
 
   const columns = [
     {
@@ -127,12 +125,12 @@ export default function MultipleCheck({ open, setOpen }) {
       const response = await dispatch(
         fastCheckPrescription({
           idPrescription,
-        })
+        }),
       );
 
       if (response.payload?.status !== "success") {
         errors.push(
-          `Prescrição ${idPrescription}: ${getErrorMessage(response, t)}`
+          `Prescrição ${idPrescription}: ${getErrorMessage(response, t)}`,
         );
       } else {
         checkedPrescriptions.push(idPrescription);
@@ -168,6 +166,7 @@ export default function MultipleCheck({ open, setOpen }) {
 
   return (
     <DefaultModal
+      afterClose={resetState}
       open={open}
       width={1000}
       centered
