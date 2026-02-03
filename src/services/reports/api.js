@@ -44,6 +44,12 @@ api.live.getExamsRawSearchReport = (params = {}) =>
     ...setHeaders(),
   });
 
+api.live.getPatientObservationHistoryReport = (params = {}) =>
+  instance.get(`/patient/${params.admissionNumber}/observation-history`, {
+    params: { ...params, admissionNumber: undefined },
+    ...setHeaders(),
+  });
+
 api.live.getIntegrationNifiLintReport = (params = {}) =>
   instance.get(`/reports/integration/nifilint`, {
     params,

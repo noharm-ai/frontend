@@ -163,8 +163,10 @@ export const PatientBox = styled.div`
       border-radius: 5px;
       border-top-left-radius: 0;
       height: 100%;
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03),
-        0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+      box-shadow:
+        0 1px 2px 0 rgba(0, 0, 0, 0.03),
+        0 1px 6px -1px rgba(0, 0, 0, 0.02),
+        0 2px 4px 0 rgba(0, 0, 0, 0.02);
 
       .patient-data-item {
         position: relative;
@@ -287,12 +289,29 @@ export const PatientBox = styled.div`
           transform: translateX(100%);
           transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
 
           &.text {
             height: 40px;
             width: 40px;
+          }
+
+          &.text.multiple-buttons {
+            height: 80px;
+            width: 40px;
+            gap: 8px;
+
+            &:after {
+              content: "";
+              position: absolute;
+              top: 50%;
+              height: 1px;
+              width: 100%;
+              background: rgba(255, 255, 255, 0.5);
+              transform: translateY(-50%);
+            }
           }
         }
       }

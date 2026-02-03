@@ -1,6 +1,6 @@
 export const trackReport = (
   trackedReport: TrackedReport,
-  details: any = {}
+  details: any = {},
 ) => {
   track(CustomEvent.REPORT_ACCESS, {
     custom_event: trackedReport,
@@ -10,7 +10,7 @@ export const trackReport = (
 
 export const trackPrescriptionAction = (
   trackedAction: TrackedPrescriptionAction,
-  details: any = {}
+  details: any = {},
 ) => {
   track(CustomEvent.PRESCRIPTION_ACTION, {
     custom_event: trackedAction,
@@ -20,7 +20,7 @@ export const trackPrescriptionAction = (
 
 export const trackInterventionAction = (
   trackedAction: TrackedInterventionAction,
-  details: any = {}
+  details: any = {},
 ) => {
   track(CustomEvent.INTERVENTION_ACTION, {
     custom_event: trackedAction,
@@ -30,7 +30,7 @@ export const trackInterventionAction = (
 
 export const trackInterventionOutcomeAction = (
   trackedAction: TrackedInterventionOutcomeAction,
-  details: any = {}
+  details: any = {},
 ) => {
   track(CustomEvent.INTERVENTION_OUTCOME_ACTION, {
     custom_event: trackedAction,
@@ -40,7 +40,7 @@ export const trackInterventionOutcomeAction = (
 
 export const trackPrescriptionPrioritizationAction = (
   trackedAction: TrackedPrescriptionPrioritizationAction,
-  details: any = {}
+  details: any = {},
 ) => {
   track(CustomEvent.PRESCRIPTION_PRIORITIZATION_ACTION, {
     custom_event: trackedAction,
@@ -73,6 +73,7 @@ enum CustomEvent {
 export enum TrackedReport {
   CULTURES = "culturas",
   PRESCRIPTION_EVENT_HISTORY = "historico-eventos-prescricao",
+  PATIENT_OBSERVATION_HISTORY = "historico-anotacoes-paciente",
   ANTIMICROBIAL_HISTORY = "historico-antimicrobiano",
   CUSTOM = "customizado",
 
