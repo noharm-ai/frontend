@@ -118,6 +118,15 @@ const clinicalNotesIndicator = {
       category: "info",
     },
     {
+      key: "snctox",
+      label: t("clinicalNotesIndicator.snctox"),
+      value: "snctox",
+      color: "#bfbf00ff",
+      fontColor: "#000",
+      backgroundColor: "rgba(191,191,0, 0.1)",
+      category: "info",
+    },
+    {
       key: "paliativo",
       label: t("clinicalNotesIndicator.paliativo"),
       value: "paliativo",
