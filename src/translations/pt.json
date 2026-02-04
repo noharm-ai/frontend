@@ -556,7 +556,8 @@
     "gestante": "Gestante",
     "germes": "Germes",
     "medprevio": "Medicamentos de uso prévio",
-    "paliativo": "Paliativo"
+    "paliativo": "Paliativo",
+    "snctox": "Neurotoxicidade"
   },
 
   "actions": {

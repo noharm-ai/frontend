@@ -88,8 +88,6 @@ export default function Filter({ admissionNumber }: FilterProps) {
       );
     };
 
-    console.log("Fetching Patient Observation Report data...");
-
     fetchData();
 
     return () => {
