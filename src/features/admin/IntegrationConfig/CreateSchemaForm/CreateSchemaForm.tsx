@@ -128,7 +128,7 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
       {({ handleSubmit }: { handleSubmit: () => void }) => (
         <DefaultModal
           open={open}
-          width={800}
+          width={850}
           centered
           destroyOnHidden
           onCancel={onCancel}
