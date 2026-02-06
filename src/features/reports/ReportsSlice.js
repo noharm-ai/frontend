@@ -26,7 +26,7 @@ export const getConfig = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const getCustomReports = createAsyncThunk(
@@ -39,7 +39,7 @@ export const getCustomReports = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const downloadReport = createAsyncThunk(
@@ -48,14 +48,14 @@ export const downloadReport = createAsyncThunk(
     try {
       const response = await api.custom.downloadReport(
         params.idReport,
-        params.filename
+        params.filename,
       );
 
       return response;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const processReport = createAsyncThunk(
@@ -68,7 +68,23 @@ export const processReport = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
+);
+
+export const getFileReport = createAsyncThunk(
+  "reports/file-report",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.getReport(params.type, {
+        id_report: params.id_report,
+        filename: params.filename,
+      });
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
 );
 
 const reportsSlice = createSlice({
@@ -107,7 +123,7 @@ const reportsSlice = createSlice({
 
         if (state.selectedReport.data) {
           const reportData = state.config.custom.find(
-            (r) => r.id === state.selectedReport.data.id
+            (r) => r.id === state.selectedReport.data.id,
           );
 
           if (reportData) {

@@ -6,11 +6,13 @@ import {
   FileTextOutlined,
   FileExcelOutlined,
   BarChartOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { List, Avatar, MenuProps, Alert } from "antd";
 import { useTranslation } from "react-i18next";
 
 import { useAppDispatch, useAppSelector } from "src/store";
+import Tooltip from "components/Tooltip";
 import Modal from "components/Modal";
 import Button from "components/Button";
 import Dropdown from "components/Dropdown";
@@ -32,14 +34,14 @@ export function DownloadModal() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const data: any = useAppSelector(
-    (state) => state.reportsArea.reports.selectedReport.data
+    (state) => state.reportsArea.reports.selectedReport.data,
   );
   const [loading, setLoading] = useState<boolean>(false);
   const isProcessing = data && data.status === ReportStatusEnum.PROCESSING;
 
   const executeDownloadWithFormat = (
     filename: string,
-    format: "csv" | "xlsx"
+    format: "csv" | "xlsx",
   ) => {
     setLoading(true);
     trackReport(TrackedReport.CUSTOM, {
@@ -130,9 +132,9 @@ export function DownloadModal() {
           {isProcessing
             ? "Processando"
             : item.ready
-            ? "Reprocessar"
-            : "Processar"}
-        </Button>
+              ? "Reprocessar"
+              : "Processar"}
+        </Button>,
       );
     }
 
@@ -161,7 +163,21 @@ export function DownloadModal() {
             icon={<DownloadOutlined />}
             loading={loading || isProcessing}
           />
-        </Dropdown>
+        </Dropdown>,
+      );
+
+      actions.push(
+        <Tooltip title="Visualizar">
+          <Button
+            icon={<EyeOutlined />}
+            loading={loading || isProcessing}
+            onClick={() => {
+              window.open(
+                `/relatorios/arquivo/CUSTOM/${data.id}/${item.filename.replace(/\.[^/.]+$/, "")}`,
+              );
+            }}
+          />
+        </Tooltip>,
       );
     }
 
