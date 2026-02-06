@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, memo } from "react";
 import {
   Button,
   Select,
@@ -8,6 +8,8 @@ import {
   FloatButton,
   Modal,
   Input,
+  Row,
+  Col,
 } from "antd";
 import { DeleteOutlined, AreaChartOutlined } from "@ant-design/icons";
 import { EChartBase } from "src/components/EChartBase";
@@ -18,11 +20,142 @@ interface ChartConfig {
   xKeys: string[];
   yKeys: string[];
   title: string;
+  width: "full" | "half";
 }
 
 interface ChartCreatorProps {
   data: any[];
 }
+
+const getChartOption = (data: any[], config: ChartConfig) => {
+  const xData = data.map((item) =>
+    config.xKeys.map((k) => item[k]).join(" - "),
+  );
+
+  if (config.type === "pie") {
+    const primaryYKey = config.yKeys[0];
+    const pieData = data.map((item) => ({
+      name: config.xKeys.map((k) => item[k]).join(" - "),
+      value: item[primaryYKey],
+    }));
+
+    return {
+      title: {
+        text: config.title,
+        left: "center",
+      },
+      tooltip: {
+        trigger: "item",
+      },
+      toolbox: {
+        feature: {
+          saveAsImage: { title: "Salvar como Imagem" },
+        },
+      },
+      legend: {
+        orient: "vertical",
+        left: "left",
+      },
+      series: [
+        {
+          name: `${primaryYKey} por ${config.xKeys.join("-")}`,
+          type: "pie",
+          radius: "50%",
+          data: pieData,
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: "rgba(0, 0, 0, 0.5)",
+            },
+          },
+        },
+      ],
+    };
+  }
+
+  const series = config.yKeys.map((yKey) => ({
+    name: yKey,
+    data: data.map((item) => item[yKey]),
+    type: config.type,
+  }));
+
+  return {
+    title: {
+      text: config.title,
+      left: "center",
+    },
+    tooltip: {
+      trigger: "axis",
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: { title: "Salvar como Imagem" },
+      },
+    },
+    legend: {
+      data: config.yKeys,
+      top: 30, // Adjust legend position to avoid overlap with title
+    },
+    xAxis: {
+      type: "category",
+      data: xData,
+    },
+    yAxis: {
+      type: "value",
+    },
+    series: series,
+  };
+};
+
+const ChartItem = memo(
+  ({
+    chart,
+    data,
+    onEdit,
+    onRemove,
+  }: {
+    chart: ChartConfig;
+    data: any[];
+    onEdit: (chart: ChartConfig) => void;
+    onRemove: (id: string) => void;
+  }) => {
+    const option = useMemo(() => getChartOption(data, chart), [data, chart]);
+
+    return (
+      <Col key={chart.id} span={chart.width === "full" ? 24 : 12}>
+        <Card
+          title={chart.title}
+          type="inner"
+          extra={
+            <Space>
+              <Button type="link" onClick={() => onEdit(chart)}>
+                Editar
+              </Button>
+              <Button
+                danger
+                type="text"
+                icon={<DeleteOutlined />}
+                onClick={() => onRemove(chart.id)}
+              >
+                Remover
+              </Button>
+            </Space>
+          }
+        >
+          <EChartBase
+            option={option}
+            style={{ height: "400px", width: "100%" }}
+            loading={false}
+            settings={{}}
+            theme={undefined}
+            onClick={() => {}}
+          />
+        </Card>
+      </Col>
+    );
+  },
+);
 
 export function ChartCreator({ data }: ChartCreatorProps) {
   const [charts, setCharts] = useState<ChartConfig[]>([]);
@@ -31,6 +164,7 @@ export function ChartCreator({ data }: ChartCreatorProps) {
   const [selectedType, setSelectedType] = useState<"bar" | "line" | "pie">(
     "bar",
   );
+  const [selectedWidth, setSelectedWidth] = useState<"full" | "half">("full");
   const [chartTitle, setChartTitle] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
@@ -44,6 +178,7 @@ export function ChartCreator({ data }: ChartCreatorProps) {
     setSelectedX([]);
     setSelectedY([]);
     setSelectedType("bar");
+    setSelectedWidth("full");
     setChartTitle("");
     setEditingChartId(null);
     setIsModalOpen(false);
@@ -57,8 +192,8 @@ export function ChartCreator({ data }: ChartCreatorProps) {
       chartTitle
     ) {
       if (editingChartId) {
-        setCharts(
-          charts.map((c) =>
+        setCharts((prev) =>
+          prev.map((c) =>
             c.id === editingChartId
               ? {
                   ...c,
@@ -66,19 +201,21 @@ export function ChartCreator({ data }: ChartCreatorProps) {
                   xKeys: selectedX,
                   yKeys: selectedY,
                   title: chartTitle,
+                  width: selectedWidth,
                 }
               : c,
           ),
         );
       } else {
-        setCharts([
-          ...charts,
+        setCharts((prev) => [
+          ...prev,
           {
             id: Math.random().toString(36).substr(2, 9),
             type: selectedType,
             xKeys: selectedX,
             yKeys: selectedY,
             title: chartTitle,
+            width: selectedWidth,
           },
         ]);
       }
@@ -86,105 +223,19 @@ export function ChartCreator({ data }: ChartCreatorProps) {
     }
   };
 
-  const handleEditChart = (chart: ChartConfig) => {
+  const handleEditChart = useCallback((chart: ChartConfig) => {
     setEditingChartId(chart.id);
     setSelectedX(chart.xKeys);
     setSelectedY(chart.yKeys);
     setSelectedType(chart.type);
+    setSelectedWidth(chart.width);
     setChartTitle(chart.title);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleRemoveChart = (id: string) => {
-    setCharts(charts.filter((c) => c.id !== id));
-  };
-
-  const getChartOption = (config: ChartConfig) => {
-    const xData = data.map((item) =>
-      config.xKeys.map((k) => item[k]).join(" - "),
-    );
-
-    if (config.type === "pie") {
-      // For Pie charts, we create one series per Y key.
-      // To avoid complete overlap, we might need more complex logic,
-      // but for now, let's render them. Ideally, Pie charts are best with 1 series.
-      // If multiple Ys are present, we might want to suggest Bar/Line, but we honor the request.
-      // We will render only the FIRST Y key for Pie to ensure it looks good,
-      // as multiple overlapping pies need manual positioning.
-      const primaryYKey = config.yKeys[0];
-      const pieData = data.map((item) => ({
-        name: config.xKeys.map((k) => item[k]).join(" - "),
-        value: item[primaryYKey],
-      }));
-
-      return {
-        title: {
-          text: config.title,
-          left: "center",
-        },
-        tooltip: {
-          trigger: "item",
-        },
-        toolbox: {
-          feature: {
-            saveAsImage: { title: "Salvar como Imagem" },
-          },
-        },
-        legend: {
-          orient: "vertical",
-          left: "left",
-        },
-        series: [
-          {
-            name: `${primaryYKey} por ${config.xKeys.join("-")}`,
-            type: "pie",
-            radius: "50%",
-            data: pieData,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)",
-              },
-            },
-          },
-        ],
-      };
-    }
-
-    const series = config.yKeys.map((yKey) => ({
-      name: yKey,
-      data: data.map((item) => item[yKey]),
-      type: config.type,
-    }));
-
-    return {
-      title: {
-        text: config.title,
-        left: "center",
-      },
-      tooltip: {
-        trigger: "axis",
-      },
-      toolbox: {
-        feature: {
-          saveAsImage: { title: "Salvar como Imagem" },
-        },
-      },
-      legend: {
-        data: config.yKeys,
-        top: 30, // Adjust legend position to avoid overlap with title
-      },
-      xAxis: {
-        type: "category",
-        data: xData,
-      },
-      yAxis: {
-        type: "value",
-      },
-      series: series,
-    };
-  };
+  const handleRemoveChart = useCallback((id: string) => {
+    setCharts((prev) => prev.filter((c) => c.id !== id));
+  }, []);
 
   if (!data || data.length === 0)
     return <Empty description="Sem dados para gerar gráficos" />;
@@ -277,46 +328,33 @@ export function ChartCreator({ data }: ChartCreatorProps) {
               ]}
             />
           </div>
+          <div>
+            <label>Largura</label>
+            <Select
+              placeholder="Selecione a largura"
+              style={{ width: "100%" }}
+              value={selectedWidth}
+              onChange={setSelectedWidth}
+              options={[
+                { label: "Inteira (100%)", value: "full" },
+                { label: "Metade (50%)", value: "half" },
+              ]}
+            />
+          </div>
         </Space>
       </Modal>
 
-      <Space
-        direction="vertical"
-        style={{ width: "100%", marginTop: "20px" }}
-        size="large"
-      >
+      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
         {charts.map((chart) => (
-          <Card
+          <ChartItem
             key={chart.id}
-            title={chart.title}
-            extra={
-              <Space>
-                <Button type="link" onClick={() => handleEditChart(chart)}>
-                  Editar
-                </Button>
-                <Button
-                  danger
-                  type="text"
-                  icon={<DeleteOutlined />}
-                  onClick={() => handleRemoveChart(chart.id)}
-                >
-                  Remover
-                </Button>
-              </Space>
-            }
-          >
-            {/* @ts-expect-error JS component props inference issue */}
-            <EChartBase
-              option={getChartOption(chart)}
-              style={{ height: "400px", width: "100%" }}
-              loading={false}
-              settings={{}}
-              theme={undefined}
-              onClick={() => {}}
-            />
-          </Card>
+            chart={chart}
+            data={data}
+            onEdit={handleEditChart}
+            onRemove={handleRemoveChart}
+          />
         ))}
-      </Space>
+      </Row>
     </div>
   );
 }
