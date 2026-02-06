@@ -9,6 +9,7 @@ import { formatDate } from "src/utils/date";
 import { getFileReport } from "../ReportsSlice";
 
 import { CustomHeaderContainer } from "./FileReport.style";
+import { ChartCreator } from "./ChartCreator/ChartCreator";
 import "styles/base.css";
 
 export function FileReport() {
@@ -65,6 +66,7 @@ export function FileReport() {
         </CustomHeaderContainer>
         <div style={{ padding: "1rem" }}>
           <DataViewer data={data} onRowClick={() => {}} />
+          {data && data.length > 0 && <ChartCreator data={data} />}
         </div>
       </Spin>
     </>
