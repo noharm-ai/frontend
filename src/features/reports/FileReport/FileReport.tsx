@@ -88,10 +88,15 @@ export function FileReport() {
     setFilters([]);
   };
 
-  const updateFilter = (id: string, field: string, value: any) => {
+  const updateFilter = (
+    id: string,
+    field: string,
+    value: any,
+    mode?: "list" | "text",
+  ) => {
     const updatedFilters = filters.map((f) => {
       if (f.id === id) {
-        return { ...f, field, value };
+        return { ...f, field, value, mode: mode || f.mode || "list" };
       }
       return f;
     });
@@ -140,6 +145,7 @@ export function FileReport() {
                   id={filter.id}
                   field={filter.field}
                   value={filter.value}
+                  mode={filter.mode}
                   schema={schema}
                   onChange={updateFilter}
                   onRemove={removeFilter}

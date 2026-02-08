@@ -13,6 +13,7 @@ export interface Filter {
   id: string;
   field: string;
   value: any;
+  mode?: "list" | "text";
 }
 
 const isDate = (value: any): boolean => {
@@ -96,12 +97,16 @@ export const applyFilters = (
       // Skip filter if value is null/undefined (unless we want to support filtering for nulls, but keeping simple for now)
       if (value === null || value === undefined) return false;
 
-      if (
-        column.type === "string" &&
-        Array.isArray(filter.value) &&
-        filter.value.length > 0
-      ) {
-        return filter.value.includes(String(value));
+      if (column.type === "string") {
+        if (filter.mode === "text") {
+          return String(value)
+            .toLowerCase()
+            .includes(String(filter.value || "").toLowerCase());
+        }
+        if (Array.isArray(filter.value) && filter.value.length > 0) {
+          return filter.value.includes(String(value));
+        }
+        return true;
       }
 
       if (
