@@ -10,7 +10,12 @@ import { formatDate } from "src/utils/date";
 import { getFileReport } from "../ReportsSlice";
 import Button from "src/components/Button";
 
-import { CustomHeaderContainer } from "./FileReport.style";
+import {
+  CustomHeaderContainer,
+  FilterContainer,
+  FilterHeader,
+  FilterList,
+} from "./FileReport.style";
 import { ChartCreator } from "./ChartCreator/ChartCreator";
 import "styles/base.css";
 import {
@@ -107,36 +112,45 @@ export function FileReport() {
           </div>
         </CustomHeaderContainer>
         <div style={{ padding: "1rem" }}>
-          <div
-            style={{
-              marginBottom: "1rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-            }}
-          >
-            {filters.map((filter) => (
-              <FilterRow
-                key={filter.id}
-                id={filter.id}
-                field={filter.field}
-                value={filter.value}
-                schema={schema}
-                onChange={updateFilter}
-                onRemove={removeFilter}
-              />
-            ))}
-            <div>
+          <FilterContainer>
+            <FilterHeader>
+              <h3>Filtros</h3>
               <Button
                 icon={<PlusOutlined />}
                 onClick={addFilter}
                 type="primary"
                 ghost
+                size="small"
               >
-                Adicionar Filtro
+                Adicionar
               </Button>
-            </div>
-          </div>
+            </FilterHeader>
+            <FilterList>
+              {filters.length === 0 && (
+                <div
+                  style={{
+                    color: "#999",
+                    fontStyle: "italic",
+                    textAlign: "center",
+                    padding: "10px",
+                  }}
+                >
+                  Nenhum filtro aplicado. Clique em "Adicionar" para começar.
+                </div>
+              )}
+              {filters.map((filter) => (
+                <FilterRow
+                  key={filter.id}
+                  id={filter.id}
+                  field={filter.field}
+                  value={filter.value}
+                  schema={schema}
+                  onChange={updateFilter}
+                  onRemove={removeFilter}
+                />
+              ))}
+            </FilterList>
+          </FilterContainer>
 
           <DataViewer data={filteredData} onRowClick={() => {}} />
           {filteredData && filteredData.length > 0 && (

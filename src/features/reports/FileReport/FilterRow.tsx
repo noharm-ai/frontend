@@ -5,29 +5,7 @@ import { InputNumber, RangeDatePicker } from "src/components/Inputs";
 import Button from "src/components/Button";
 import { ColumnSchema } from "./FileReport.utils";
 
-import styled from "styled-components";
-
-// Determine imports based on list_dir earlier
-// src/components/Inputs contains Input, Select, InputNumber, RangeDatePicker
-// src/components/Button contains Button
-
-const Row = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-`;
-
-const FieldSelect = styled(Select)`
-  width: 200px;
-`;
-
-const ValueContainer = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
+import { Row, FieldSelect, ValueContainer } from "./FilterRow.style";
 
 interface FilterRowProps {
   id: string;

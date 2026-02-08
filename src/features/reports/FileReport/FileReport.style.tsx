@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Card } from "antd";
 
 export const CustomHeaderContainer = styled.header`
   display: flex;
@@ -67,4 +68,35 @@ export const CustomHeaderContainer = styled.header`
       align-self: flex-end;
     }
   }
+`;
+
+export const FilterContainer = styled(Card)`
+  border-radius: 10px;
+  box-shadow: 0 -1px 7px rgb(0 0 0 / 16%);
+  margin-bottom: 1rem;
+
+  .ant-card-body {
+    padding: 1rem;
+  }
+`;
+
+export const FilterHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 0.5rem;
+
+  h3 {
+    margin: 0;
+    color: #2e3c5a;
+    font-weight: 600;
+  }
+`;
+
+export const FilterList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
