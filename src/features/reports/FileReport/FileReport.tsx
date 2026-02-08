@@ -1,16 +1,30 @@
 import { useState, useEffect, useMemo } from "react";
-import { Spin, notification } from "antd";
+import { useTranslation } from "react-i18next";
+import { Spin, notification, FloatButton } from "antd";
 import { useParams } from "react-router-dom";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  PlusOutlined,
+  MenuOutlined,
+  DownloadOutlined,
+  SyncOutlined,
+  FileTextOutlined,
+  FileExcelOutlined,
+} from "@ant-design/icons";
 
 import { useAppDispatch } from "src/store";
 import { DataViewer } from "src/components/DataViewer/DataViewer";
 import { formatDate } from "src/utils/date";
 import { getFileReport } from "../ReportsSlice";
 import Button from "src/components/Button";
+import { FloatButtonGroup } from "src/components/FloatButton";
+import { TrackedReport, trackReport } from "src/utils/tracker";
+import { downloadReport } from "src/features/reports/ReportsSlice";
+import { getErrorMessage } from "src/utils/errorHandler";
 
 import { PageHeader } from "src/styles/PageHeader.style";
 import { FilterContainer, FilterActions, FilterList } from "./FileReport.style";
+import Modal from "src/components/Modal";
 import { ChartCreator } from "src/components/ChartCreator/ChartCreator";
 import "styles/base.css";
 import {
@@ -25,8 +39,11 @@ const generateId = () => Math.random().toString(36).substr(2, 9);
 
 export function FileReport() {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const { type, id_report, filename } = useParams();
   const [isLoading, setIsLoading] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [title, setTitle] = useState<string>("");
   const [filters, setFilters] = useState<Filter[]>([]);
@@ -101,6 +118,42 @@ export function FileReport() {
       return f;
     });
     setFilters(updatedFilters);
+  };
+
+  const executeDownloadWithFormat = (
+    filename: string,
+    format: "csv" | "xlsx",
+  ) => {
+    setIsExporting(true);
+    trackReport(TrackedReport.CUSTOM, {
+      title: `exportar: ${title} - ${format}`,
+    });
+
+    const formatExtension = format === "csv" ? ".csv" : ".xlsx";
+    const formattedFilename = filename.includes(".")
+      ? filename.replace(/\.[^/.]+$/, formatExtension)
+      : filename + formatExtension;
+
+    const payload = {
+      idReport: id_report,
+      filename: formattedFilename,
+    };
+
+    // @ts-expect-error ts 2554 (legacy code)
+    dispatch(downloadReport(payload)).then((response: any) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        if (response.payload.data.data.url) {
+          window.open(response.payload.data.data.url);
+        }
+      }
+
+      setIsExporting(false);
+      setShowExportModal(false);
+    });
   };
 
   return (
@@ -181,6 +234,69 @@ export function FileReport() {
           )}
         </div>
       </Spin>
+
+      {!isLoading && (
+        <FloatButtonGroup
+          trigger="click"
+          type="primary"
+          icon={<MenuOutlined />}
+          tooltip={{
+            title: "Menu",
+            placement: "left",
+          }}
+          style={{ bottom: 25 }}
+        >
+          <FloatButton
+            icon={
+              isExporting ? <SyncOutlined spin={true} /> : <DownloadOutlined />
+            }
+            tooltip={{
+              title: "Exportar",
+              placement: "left",
+            }}
+            onClick={() => setShowExportModal(true)}
+          />
+        </FloatButtonGroup>
+      )}
+      <Modal
+        title="Escolha o formato de exportação"
+        open={showExportModal}
+        onCancel={() => setShowExportModal(false)}
+        footer={null}
+        destroyOnClose
+        width={400}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "20px",
+            padding: "20px 0",
+          }}
+        >
+          <Button
+            size="large"
+            icon={<FileTextOutlined />}
+            onClick={() => executeDownloadWithFormat(filename!, "csv")}
+            loading={isExporting}
+          >
+            CSV
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            icon={<FileExcelOutlined />}
+            onClick={() => executeDownloadWithFormat(filename!, "xlsx")}
+            loading={isExporting}
+          >
+            XLSX
+          </Button>
+        </div>
+      </Modal>
+      <FloatButton.BackTop
+        style={{ right: 80, bottom: 25 }}
+        tooltip="Voltar ao topo"
+      />
     </>
   );
 }
