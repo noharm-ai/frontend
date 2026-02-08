@@ -1,21 +1,16 @@
 import { useState, useEffect, useMemo } from "react";
 import { Spin, notification } from "antd";
 import { useParams } from "react-router-dom";
-import { PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
 import { useAppDispatch } from "src/store";
 import { DataViewer } from "src/components/DataViewer/DataViewer";
-import { NoHarmLogoHorizontal as Brand } from "src/assets/NoHarmLogoHorizontal";
 import { formatDate } from "src/utils/date";
 import { getFileReport } from "../ReportsSlice";
 import Button from "src/components/Button";
 
-import {
-  CustomHeaderContainer,
-  FilterContainer,
-  FilterHeader,
-  FilterList,
-} from "./FileReport.style";
+import { PageHeader } from "src/styles/PageHeader.style";
+import { FilterContainer, FilterActions, FilterList } from "./FileReport.style";
 import { ChartCreator } from "./ChartCreator/ChartCreator";
 import "styles/base.css";
 import {
@@ -89,6 +84,10 @@ export function FileReport() {
     setFilters(filters.filter((f) => f.id !== id));
   };
 
+  const removeAllFilters = () => {
+    setFilters([]);
+  };
+
   const updateFilter = (id: string, field: string, value: any) => {
     const updatedFilters = filters.map((f) => {
       if (f.id === id) {
@@ -102,29 +101,25 @@ export function FileReport() {
   return (
     <>
       <Spin spinning={isLoading}>
-        <CustomHeaderContainer>
-          <div className="header-content">
-            <h1>Relatório: {title}</h1>
-            <div className="header-subtitle">{formatDate(filename)}</div>
+        <PageHeader>
+          <div>
+            <h1 className="page-header-title">Relatório: {title}</h1>
+            <div className="page-header-legend">
+              Data de geração: {formatDate(filename)}
+            </div>
           </div>
-          <div className="brand-container">
-            <Brand />
+          <div className="page-header-actions">
+            {/* <Button
+                    type="default"
+                    icon={<UnorderedListOutlined />}
+                    onClick={() => navigate("/relatorios")}
+                  >
+                    Ver todos relatórios
+                  </Button> */}
           </div>
-        </CustomHeaderContainer>
+        </PageHeader>
         <div style={{ padding: "1rem" }}>
           <FilterContainer>
-            <FilterHeader>
-              <h3>Filtros</h3>
-              <Button
-                icon={<PlusOutlined />}
-                onClick={addFilter}
-                type="primary"
-                ghost
-                size="small"
-              >
-                Adicionar
-              </Button>
-            </FilterHeader>
             <FilterList>
               {filters.length === 0 && (
                 <div
@@ -135,7 +130,8 @@ export function FileReport() {
                     padding: "10px",
                   }}
                 >
-                  Nenhum filtro aplicado. Clique em "Adicionar" para começar.
+                  Nenhum filtro aplicado. Clique em "Adicionar filtro" para
+                  começar.
                 </div>
               )}
               {filters.map((filter) => (
@@ -150,9 +146,25 @@ export function FileReport() {
                 />
               ))}
             </FilterList>
+            <FilterActions>
+              <Button icon={<PlusOutlined />} onClick={addFilter}>
+                Adicionar filtro
+              </Button>
+              <Button
+                icon={<DeleteOutlined />}
+                danger
+                onClick={removeAllFilters}
+              >
+                Limpar
+              </Button>
+            </FilterActions>
           </FilterContainer>
 
-          <DataViewer data={filteredData} onRowClick={() => {}} />
+          <DataViewer
+            data={filteredData}
+            onRowClick={() => {}}
+            showFilters={false}
+          />
           {filteredData && filteredData.length > 0 && (
             <ChartCreator data={filteredData} />
           )}

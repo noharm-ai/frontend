@@ -6,7 +6,7 @@ export const Row = styled.div`
   align-items: center;
   gap: 10px;
   padding: 10px;
-  background-color: #fafafa;
+  background-color: rgb(169 145 214 / 12%);
   border-radius: 6px;
   border: 1px solid #f0f0f0;
   transition: all 0.3s;

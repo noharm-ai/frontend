@@ -92,6 +92,12 @@ export const FilterRow: React.FC<FilterRowProps> = ({
 
   return (
     <Row>
+      <Button
+        danger
+        icon={<DeleteOutlined />}
+        onClick={() => onRemove(id)}
+        shape="circle"
+      />
       <FieldSelect
         placeholder="Selecione o campo"
         value={field}
@@ -100,12 +106,6 @@ export const FilterRow: React.FC<FilterRowProps> = ({
         showSearch
       />
       <ValueContainer>{renderValueInput()}</ValueContainer>
-      <Button
-        danger
-        icon={<DeleteOutlined />}
-        onClick={() => onRemove(id)}
-        shape="circle"
-      />
     </Row>
   );
 };
