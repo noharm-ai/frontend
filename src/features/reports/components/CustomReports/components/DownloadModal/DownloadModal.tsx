@@ -74,6 +74,15 @@ export function DownloadModal() {
     });
   };
 
+  const openReportPreview = (filename: string) => {
+    trackReport(TrackedReport.CUSTOM, {
+      title: `Preview: ${data.name}`,
+    });
+    window.open(
+      `/relatorios/arquivo/CUSTOM/${data.id}/${filename.replace(/\.[^/.]+$/, "")}`,
+    );
+  };
+
   const executeProcessReport = () => {
     if (
       data.processed_at &&
@@ -172,9 +181,7 @@ export function DownloadModal() {
             icon={<EyeOutlined />}
             loading={loading || isProcessing}
             onClick={() => {
-              window.open(
-                `/relatorios/arquivo/CUSTOM/${data.id}/${item.filename.replace(/\.[^/.]+$/, "")}`,
-              );
+              openReportPreview(item.filename);
             }}
           />
         </Tooltip>,
