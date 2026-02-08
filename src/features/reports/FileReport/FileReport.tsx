@@ -11,7 +11,7 @@ import Button from "src/components/Button";
 
 import { PageHeader } from "src/styles/PageHeader.style";
 import { FilterContainer, FilterActions, FilterList } from "./FileReport.style";
-import { ChartCreator } from "./ChartCreator/ChartCreator";
+import { ChartCreator } from "src/components/ChartCreator/ChartCreator";
 import "styles/base.css";
 import {
   detectColumnSchema,
