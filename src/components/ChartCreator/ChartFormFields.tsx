@@ -64,7 +64,10 @@ export const ChartFormFields = ({
             setYKeys([]);
           }
         }}
-        options={keys.map((k) => ({ label: k, value: k }))}
+        options={[
+          { label: "(Contagem)", value: "__count__" },
+          ...keys.map((k) => ({ label: k, value: k })),
+        ]}
         maxTagCount="responsive"
       />
     </div>
