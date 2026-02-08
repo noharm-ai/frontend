@@ -5,13 +5,12 @@ import {
   Card,
   Empty,
   Space,
-  FloatButton,
   Modal,
   Input,
   Row,
   Col,
 } from "antd";
-import { DeleteOutlined, AreaChartOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, EditOutlined } from "@ant-design/icons";
 import { EChartBase } from "src/components/EChartBase";
 
 interface ChartConfig {
@@ -129,7 +128,11 @@ const ChartItem = memo(
           type="inner"
           extra={
             <Space>
-              <Button type="link" onClick={() => onEdit(chart)}>
+              <Button
+                type="link"
+                onClick={() => onEdit(chart)}
+                icon={<EditOutlined />}
+              >
                 Editar
               </Button>
               <Button
@@ -157,16 +160,118 @@ const ChartItem = memo(
   },
 );
 
+const ChartFormFields = ({
+  title,
+  setTitle,
+  xKeys,
+  setXKeys,
+  yKeys,
+  setYKeys,
+  type,
+  setType,
+  width,
+  setWidth,
+  keys,
+}: {
+  title: string;
+  setTitle: (val: string) => void;
+  xKeys: string[];
+  setXKeys: (val: string[]) => void;
+  yKeys: string[];
+  setYKeys: (val: string[]) => void;
+  type: "bar" | "line" | "pie";
+  setType: (val: "bar" | "line" | "pie") => void;
+  width: "full" | "half";
+  setWidth: (val: "full" | "half") => void;
+  keys: string[];
+}) => (
+  <Space direction="vertical" style={{ width: "100%" }} size="middle">
+    <div>
+      <label>Título do Gráfico</label>
+      <Input
+        placeholder="Digite um título para o gráfico"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+    </div>
+    <div>
+      <label>Eixo X (Categoria)</label>
+      <Select
+        mode="multiple"
+        placeholder="Selecione as colunas para o eixo X"
+        style={{ width: "100%" }}
+        value={xKeys}
+        onChange={setXKeys}
+        options={keys.map((k) => ({ label: k, value: k }))}
+        maxTagCount="responsive"
+      />
+    </div>
+    <div>
+      <label>Eixo Y (Valor)</label>
+      <Select
+        mode={type === "pie" ? undefined : "multiple"}
+        placeholder="Selecione as colunas para o eixo Y"
+        style={{ width: "100%" }}
+        value={type === "pie" ? yKeys[0] : yKeys}
+        onChange={(val) => {
+          if (Array.isArray(val)) {
+            setYKeys(val);
+          } else if (val) {
+            setYKeys([val]);
+          } else {
+            setYKeys([]);
+          }
+        }}
+        options={keys.map((k) => ({ label: k, value: k }))}
+        maxTagCount="responsive"
+      />
+    </div>
+    <div>
+      <label>Tipo de Gráfico</label>
+      <Select
+        placeholder="Selecione o tipo de gráfico"
+        style={{ width: "100%" }}
+        value={type}
+        onChange={setType}
+        options={[
+          { label: "Barras", value: "bar" },
+          { label: "Linha", value: "line" },
+          { label: "Pizza", value: "pie" },
+        ]}
+      />
+    </div>
+    <div>
+      <label>Largura do Gráfico</label>
+      <Select
+        placeholder="Selecione a largura"
+        style={{ width: "100%" }}
+        value={width}
+        onChange={setWidth}
+        options={[
+          { label: "Tela inteira", value: "full" },
+          { label: "Metade da tela", value: "half" },
+        ]}
+      />
+    </div>
+  </Space>
+);
+
 export function ChartCreator({ data }: ChartCreatorProps) {
   const [charts, setCharts] = useState<ChartConfig[]>([]);
-  const [selectedX, setSelectedX] = useState<string[]>([]);
-  const [selectedY, setSelectedY] = useState<string[]>([]);
-  const [selectedType, setSelectedType] = useState<"bar" | "line" | "pie">(
-    "bar",
-  );
-  const [selectedWidth, setSelectedWidth] = useState<"full" | "half">("full");
-  const [chartTitle, setChartTitle] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // State for NEW chart form
+  const [newTitle, setNewTitle] = useState("");
+  const [newX, setNewX] = useState<string[]>([]);
+  const [newY, setNewY] = useState<string[]>([]);
+  const [newType, setNewType] = useState<"bar" | "line" | "pie">("bar");
+  const [newWidth, setNewWidth] = useState<"full" | "half">("half");
+
+  // State for EDITING chart form (Modal)
+  const [editTitle, setEditTitle] = useState("");
+  const [editX, setEditX] = useState<string[]>([]);
+  const [editY, setEditY] = useState<string[]>([]);
+  const [editType, setEditType] = useState<"bar" | "line" | "pie">("bar");
+  const [editWidth, setEditWidth] = useState<"full" | "half">("full");
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
 
   const keys = useMemo(() => {
@@ -174,64 +279,56 @@ export function ChartCreator({ data }: ChartCreatorProps) {
     return Object.keys(data[0]);
   }, [data]);
 
-  const resetForm = () => {
-    setSelectedX([]);
-    setSelectedY([]);
-    setSelectedType("bar");
-    setSelectedWidth("full");
-    setChartTitle("");
-    setEditingChartId(null);
-    setIsModalOpen(false);
-  };
-
   const handleAddChart = () => {
-    if (
-      selectedX.length > 0 &&
-      selectedY.length > 0 &&
-      selectedType &&
-      chartTitle
-    ) {
-      if (editingChartId) {
-        setCharts((prev) =>
-          prev.map((c) =>
-            c.id === editingChartId
-              ? {
-                  ...c,
-                  type: selectedType,
-                  xKeys: selectedX,
-                  yKeys: selectedY,
-                  title: chartTitle,
-                  width: selectedWidth,
-                }
-              : c,
-          ),
-        );
-      } else {
-        setCharts((prev) => [
-          ...prev,
-          {
-            id: Math.random().toString(36).substr(2, 9),
-            type: selectedType,
-            xKeys: selectedX,
-            yKeys: selectedY,
-            title: chartTitle,
-            width: selectedWidth,
-          },
-        ]);
-      }
-      resetForm();
+    if (newX.length > 0 && newY.length > 0 && newType && newTitle) {
+      setCharts((prev) => [
+        ...prev,
+        {
+          id: Math.random().toString(36).substr(2, 9),
+          type: newType,
+          xKeys: newX,
+          yKeys: newY,
+          title: newTitle,
+          width: newWidth,
+        },
+      ]);
+      // Reset new form
+      setNewTitle("");
+      setNewX([]);
+      setNewY([]);
+      setNewType("bar");
+      setNewWidth("half");
     }
   };
 
-  const handleEditChart = useCallback((chart: ChartConfig) => {
+  const startEditing = useCallback((chart: ChartConfig) => {
     setEditingChartId(chart.id);
-    setSelectedX(chart.xKeys);
-    setSelectedY(chart.yKeys);
-    setSelectedType(chart.type);
-    setSelectedWidth(chart.width);
-    setChartTitle(chart.title);
-    setIsModalOpen(true);
+    setEditTitle(chart.title);
+    setEditX(chart.xKeys);
+    setEditY(chart.yKeys);
+    setEditType(chart.type);
+    setEditWidth(chart.width);
   }, []);
+
+  const saveEdit = () => {
+    if (editingChartId) {
+      setCharts((prev) =>
+        prev.map((c) =>
+          c.id === editingChartId
+            ? {
+                ...c,
+                title: editTitle,
+                xKeys: editX,
+                yKeys: editY,
+                type: editType,
+                width: editWidth,
+              }
+            : c,
+        ),
+      );
+      setEditingChartId(null);
+    }
+  };
 
   const handleRemoveChart = useCallback((id: string) => {
     setCharts((prev) => prev.filter((c) => c.id !== id));
@@ -242,119 +339,81 @@ export function ChartCreator({ data }: ChartCreatorProps) {
 
   return (
     <div style={{ marginTop: "20px" }}>
-      <FloatButton
-        icon={<AreaChartOutlined />}
-        type="primary"
-        style={{ right: 24, bottom: 24 }}
-        onClick={() => {
-          resetForm();
-          setIsModalOpen(true);
-        }}
-        tooltip="Criar Gráfico"
-      />
-
-      <Modal
-        title={editingChartId ? "Editar Gráfico" : "Criar Novo Gráfico"}
-        open={isModalOpen}
-        onCancel={() => resetForm()}
-        footer={[
-          <Button key="cancel" onClick={() => resetForm()}>
-            Cancelar
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            disabled={
-              selectedX.length === 0 || selectedY.length === 0 || !chartTitle
-            }
-            onClick={handleAddChart}
-          >
-            {editingChartId ? "Salvar Alterações" : "Adicionar Gráfico"}
-          </Button>,
-        ]}
-      >
-        <Space direction="vertical" style={{ width: "100%" }} size="middle">
-          <div>
-            <label>Título do Gráfico</label>
-            <Input
-              placeholder="Digite um título para o gráfico"
-              value={chartTitle}
-              onChange={(e) => setChartTitle(e.target.value)}
-            />
-          </div>
-          <div>
-            <label>Eixo X (Categoria)</label>
-            <Select
-              mode="multiple"
-              placeholder="Selecione as colunas para o eixo X"
-              style={{ width: "100%" }}
-              value={selectedX}
-              onChange={setSelectedX}
-              options={keys.map((k) => ({ label: k, value: k }))}
-              maxTagCount="responsive"
-            />
-          </div>
-          <div>
-            <label>Eixo Y (Valor)</label>
-            <Select
-              mode={selectedType === "pie" ? undefined : "multiple"}
-              placeholder="Selecione as colunas para o eixo Y"
-              style={{ width: "100%" }}
-              value={selectedType === "pie" ? selectedY[0] : selectedY}
-              onChange={(val) => {
-                if (Array.isArray(val)) {
-                  setSelectedY(val);
-                } else if (val) {
-                  setSelectedY([val]);
-                } else {
-                  setSelectedY([]);
-                }
-              }}
-              options={keys.map((k) => ({ label: k, value: k }))}
-              maxTagCount="responsive"
-            />
-          </div>
-          <div>
-            <label>Tipo de Gráfico</label>
-            <Select
-              placeholder="Selecione o tipo de gráfico"
-              style={{ width: "100%" }}
-              value={selectedType}
-              onChange={setSelectedType}
-              options={[
-                { label: "Barras", value: "bar" },
-                { label: "Linha", value: "line" },
-                { label: "Pizza", value: "pie" },
-              ]}
-            />
-          </div>
-          <div>
-            <label>Largura</label>
-            <Select
-              placeholder="Selecione a largura"
-              style={{ width: "100%" }}
-              value={selectedWidth}
-              onChange={setSelectedWidth}
-              options={[
-                { label: "Inteira (100%)", value: "full" },
-                { label: "Metade (50%)", value: "half" },
-              ]}
-            />
-          </div>
-        </Space>
-      </Modal>
-
-      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+      <Row gutter={[16, 16]}>
         {charts.map((chart) => (
           <ChartItem
             key={chart.id}
             chart={chart}
             data={data}
-            onEdit={handleEditChart}
+            onEdit={startEditing}
             onRemove={handleRemoveChart}
           />
         ))}
+
+        <Col span={12}>
+          <Card
+            title="Adicionar Novo Gráfico"
+            type="inner"
+            extra={
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                disabled={newX.length === 0 || newY.length === 0 || !newTitle}
+                onClick={handleAddChart}
+              >
+                Adicionar
+              </Button>
+            }
+          >
+            <ChartFormFields
+              title={newTitle}
+              setTitle={setNewTitle}
+              xKeys={newX}
+              setXKeys={setNewX}
+              yKeys={newY}
+              setYKeys={setNewY}
+              type={newType}
+              setType={setNewType}
+              width={newWidth}
+              setWidth={setNewWidth}
+              keys={keys}
+            />
+          </Card>
+        </Col>
       </Row>
+
+      <Modal
+        title="Editar Gráfico"
+        open={!!editingChartId}
+        onCancel={() => setEditingChartId(null)}
+        footer={[
+          <Button key="cancel" onClick={() => setEditingChartId(null)}>
+            Cancelar
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            disabled={editX.length === 0 || editY.length === 0 || !editTitle}
+            onClick={saveEdit}
+          >
+            Salvar Alterações
+          </Button>,
+        ]}
+      >
+        <ChartFormFields
+          title={editTitle}
+          setTitle={setEditTitle}
+          xKeys={editX}
+          setXKeys={setEditX}
+          yKeys={editY}
+          setYKeys={setEditY}
+          type={editType}
+          setType={setEditType}
+          width={editWidth}
+          setWidth={setEditWidth}
+          keys={keys}
+        />
+      </Modal>
     </div>
   );
 }

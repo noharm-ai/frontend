@@ -153,7 +153,12 @@ export function FileReport() {
               ))}
             </FilterList>
             <FilterActions>
-              <Button icon={<PlusOutlined />} onClick={addFilter}>
+              <Button
+                icon={<PlusOutlined />}
+                onClick={addFilter}
+                type="primary"
+                ghost
+              >
                 Adicionar filtro
               </Button>
               <Button
