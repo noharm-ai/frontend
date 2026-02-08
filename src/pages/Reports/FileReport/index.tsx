@@ -1,3 +1,8 @@
-import { FileReport } from "src/features/reports/FileReport/FileReport";
+import withLayout from "src/lib/withLayout";
+import { FileReport } from "features/reports/FileReport/FileReport";
 
-export default FileReport;
+const layoutProps = {};
+
+const FileReportWithLayout = withLayout(FileReport, layoutProps);
+
+export default FileReportWithLayout;
