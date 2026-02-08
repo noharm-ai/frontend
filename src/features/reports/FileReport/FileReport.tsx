@@ -263,7 +263,7 @@ export function FileReport() {
         open={showExportModal}
         onCancel={() => setShowExportModal(false)}
         footer={null}
-        destroyOnClose
+        destroyOnHidden
         width={400}
       >
         <div
