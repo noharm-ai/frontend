@@ -25,8 +25,7 @@ import { getErrorMessage } from "src/utils/errorHandler";
 import { PageHeader } from "src/styles/PageHeader.style";
 import { FilterContainer, FilterActions, FilterList } from "./FileReport.style";
 import Modal from "src/components/Modal";
-import { ChartCreator } from "src/components/ChartCreator/ChartCreator";
-import "styles/base.css";
+// import { ChartCreator } from "src/components/ChartCreator/ChartCreator";
 import {
   detectColumnSchema,
   applyFilters,
@@ -166,15 +165,7 @@ export function FileReport() {
               Data de geração: {formatDate(filename)}
             </div>
           </div>
-          <div className="page-header-actions">
-            {/* <Button
-                    type="default"
-                    icon={<UnorderedListOutlined />}
-                    onClick={() => navigate("/relatorios")}
-                  >
-                    Ver todos relatórios
-                  </Button> */}
-          </div>
+          <div className="page-header-actions"></div>
         </PageHeader>
         <div style={{ padding: "1rem" }}>
           <FilterContainer>
@@ -229,9 +220,9 @@ export function FileReport() {
             onRowClick={() => {}}
             showFilters={false}
           />
-          {filteredData && filteredData.length > 0 && (
+          {/* {filteredData && filteredData.length > 0 && (
             <ChartCreator data={filteredData} />
-          )}
+          )} */}
         </div>
       </Spin>
 
