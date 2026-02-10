@@ -18,7 +18,12 @@ import { formatDate } from "src/utils/date";
 import { getFileReport } from "../ReportsSlice";
 import Button from "src/components/Button";
 import { FloatButtonGroup } from "src/components/FloatButton";
-import { TrackedReport, trackReport } from "src/utils/tracker";
+import {
+  TrackedReport,
+  trackReport,
+  trackCustomReportAction,
+  TrackedCustomReportAction,
+} from "src/utils/tracker";
 import { downloadReport } from "src/features/reports/ReportsSlice";
 import { getErrorMessage } from "src/utils/errorHandler";
 
@@ -94,14 +99,17 @@ export function FileReport() {
 
   const addFilter = () => {
     setFilters([...filters, { id: generateId(), field: "", value: null }]);
+    trackCustomReportAction(TrackedCustomReportAction.ADD_FILTER);
   };
 
   const removeFilter = (id: string) => {
     setFilters(filters.filter((f) => f.id !== id));
+    trackCustomReportAction(TrackedCustomReportAction.REMOVE_FILTER);
   };
 
   const removeAllFilters = () => {
     setFilters([]);
+    trackCustomReportAction(TrackedCustomReportAction.CLEAR_FILTERS);
   };
 
   const updateFilter = (

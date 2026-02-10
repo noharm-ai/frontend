@@ -45,7 +45,7 @@ export function DownloadModal() {
   ) => {
     setLoading(true);
     trackReport(TrackedReport.CUSTOM, {
-      title: data.name,
+      title: `exportar: ${data.name} - ${format}`,
     });
 
     const formatExtension = format === "csv" ? ".csv" : ".xlsx";
@@ -76,7 +76,7 @@ export function DownloadModal() {
 
   const openReportPreview = (filename: string) => {
     trackReport(TrackedReport.CUSTOM, {
-      title: `Preview: ${data.name}`,
+      title: `preview: ${data.name}`,
     });
     window.open(
       `/relatorios/arquivo/CUSTOM/${data.id}/${filename.replace(/\.[^/.]+$/, "")}`,
