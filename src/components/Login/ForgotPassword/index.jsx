@@ -36,7 +36,7 @@ export default function ForgotPassword({ forgotPassword, status }) {
       forgotPassword(values.email)
         .then((email) => {
           notification.success({
-            message: `Um e-mail foi enviado para ${email} com as instruções para alterar a senha`,
+            message: `Se o e-mail existir na plataforma, será enviado para ${email} as instruções para alterar a senha`,
           });
           resetForm();
         })
