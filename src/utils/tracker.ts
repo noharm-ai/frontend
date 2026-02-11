@@ -48,6 +48,16 @@ export const trackPrescriptionPrioritizationAction = (
   });
 };
 
+export const trackCustomReportAction = (
+  trackedAction: TrackedCustomReportAction,
+  details: any = {},
+) => {
+  track(CustomEvent.CUSTOM_REPORT_ACTION, {
+    custom_event: trackedAction,
+    ...details,
+  });
+};
+
 const track = (customEvent: CustomEvent, details: any = {}) => {
   if (!(window as any).cwr) {
     console.log("tracking error: cwr undefined");
@@ -68,6 +78,7 @@ enum CustomEvent {
   PRESCRIPTION_PRIORITIZATION_ACTION = "PrescriptionPrioritizationAction", // ex. action in prescription prioritization
   INTERVENTION_ACTION = "InterventionAction", // action in intervention form
   INTERVENTION_OUTCOME_ACTION = "InterventionOutcomeAction", // action in intervention outcome form
+  CUSTOM_REPORT_ACTION = "CustomReportAction", // action in custom report
 }
 
 export enum TrackedReport {
@@ -159,6 +170,12 @@ export enum TrackedInterventionOutcomeAction {
   EDIT_CONVERSION = "editar-conversao",
   CLICK_MANUAL_ECONOMY = "click-economia-manual",
   CLICK_MANUAL_ECONOMY_DAYS = "click-dias-economia-manual",
+}
+
+export enum TrackedCustomReportAction {
+  ADD_FILTER = "add-filter",
+  REMOVE_FILTER = "remove-filter",
+  CLEAR_FILTERS = "clear-filters",
 }
 
 export enum TrackedPrescriptionPrioritizationAction {

@@ -57,6 +57,7 @@ import InterventionReport from "pages/Reports/InterventionReport";
 import PrescriptionAuditReport from "pages/Reports/PrescriptionAuditReport";
 import EconomyReport from "pages/Reports/EconomyReport";
 import IntegrationNifiLintReport from "pages/Reports/IntegrationNifiLint";
+import FileReport from "pages/Reports/FileReport";
 
 import RegulationPrioritization from "pages/Regulation/Prioritization";
 import Regulation from "pages/Regulation/Regulation";
@@ -391,6 +392,11 @@ const routes = [
     exact: true,
     path: "/relatorios/regulacao/painel-indicadores",
     element: <WithAuth component={RegulationIndicatorsPanelReport} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/arquivo/:type/:id_report/:filename",
+    element: <WithAuth component={FileReport} />,
   },
   {
     exact: true,

@@ -6,11 +6,13 @@ import {
   FileTextOutlined,
   FileExcelOutlined,
   BarChartOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { List, Avatar, MenuProps, Alert } from "antd";
 import { useTranslation } from "react-i18next";
 
 import { useAppDispatch, useAppSelector } from "src/store";
+import Tooltip from "components/Tooltip";
 import Modal from "components/Modal";
 import Button from "components/Button";
 import Dropdown from "components/Dropdown";
@@ -32,18 +34,18 @@ export function DownloadModal() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const data: any = useAppSelector(
-    (state) => state.reportsArea.reports.selectedReport.data
+    (state) => state.reportsArea.reports.selectedReport.data,
   );
   const [loading, setLoading] = useState<boolean>(false);
   const isProcessing = data && data.status === ReportStatusEnum.PROCESSING;
 
   const executeDownloadWithFormat = (
     filename: string,
-    format: "csv" | "xlsx"
+    format: "csv" | "xlsx",
   ) => {
     setLoading(true);
     trackReport(TrackedReport.CUSTOM, {
-      title: data.name,
+      title: `exportar: ${data.name} - ${format}`,
     });
 
     const formatExtension = format === "csv" ? ".csv" : ".xlsx";
@@ -70,6 +72,15 @@ export function DownloadModal() {
 
       setLoading(false);
     });
+  };
+
+  const openReportPreview = (filename: string) => {
+    trackReport(TrackedReport.CUSTOM, {
+      title: `preview: ${data.name}`,
+    });
+    window.open(
+      `/relatorios/arquivo/CUSTOM/${data.id}/${filename.replace(/\.[^/.]+$/, "")}`,
+    );
   };
 
   const executeProcessReport = () => {
@@ -130,9 +141,9 @@ export function DownloadModal() {
           {isProcessing
             ? "Processando"
             : item.ready
-            ? "Reprocessar"
-            : "Processar"}
-        </Button>
+              ? "Reprocessar"
+              : "Processar"}
+        </Button>,
       );
     }
 
@@ -161,7 +172,19 @@ export function DownloadModal() {
             icon={<DownloadOutlined />}
             loading={loading || isProcessing}
           />
-        </Dropdown>
+        </Dropdown>,
+      );
+
+      actions.push(
+        <Tooltip title="Visualizar">
+          <Button
+            icon={<EyeOutlined />}
+            loading={loading || isProcessing}
+            onClick={() => {
+              openReportPreview(item.filename);
+            }}
+          />
+        </Tooltip>,
       );
     }
 

@@ -11,6 +11,7 @@ import { ICreateSchemaForm } from "./CreateSchemaForm";
 import { TpPepEnum } from "src/models/TpPepEnum";
 import { formatDate, formatDateTime } from "src/utils/date";
 import Tooltip from "src/components/Tooltip";
+import { CrmStageEnum } from "src/models/CrmStageEnum";
 
 export function Base() {
   const { values, errors, touched, setFieldValue } =
@@ -201,6 +202,16 @@ export function Base() {
 
                   render: (_: string, record: any) => {
                     return record.crm_data?.x_studio_acesso;
+                  },
+                },
+                {
+                  title: "Estágio",
+                  align: "center",
+
+                  render: (_: string, record: any) => {
+                    return CrmStageEnum.getName(
+                      record.crm_data?.x_studio_estagio_projeto,
+                    );
                   },
                 },
                 {
