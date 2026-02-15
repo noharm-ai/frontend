@@ -89,7 +89,7 @@ export const groupComponents = (list, infusion, drugOrder) => {
 export const isWhitelistedChild = (
   whitelist,
   groupSolution,
-  idPrescriptionDrug
+  idPrescriptionDrug,
 ) => {
   if (!whitelist) {
     return false;
@@ -104,7 +104,7 @@ export const isWhitelistedChild = (
 
 const hasParent = (list, groupSolution) => {
   const obj = list.find(
-    (i) => `${i.grp_solution}` === `${groupSolution}` && !i.whiteList
+    (i) => `${i.grp_solution}` === `${groupSolution}` && !i.whiteList,
   );
 
   return obj != null;
@@ -115,7 +115,7 @@ const hasDiffParent = (list, idPrescriptionDrug, groupSolution) => {
     (i) =>
       `${i.grp_solution}` === `${groupSolution}` &&
       !i.whiteList &&
-      i.idPrescriptionDrug !== idPrescriptionDrug
+      i.idPrescriptionDrug !== idPrescriptionDrug,
   );
 
   return obj != null;
@@ -157,7 +157,7 @@ const sortPrescriptionDrugs = (items, drugOrder) => {
       (i) =>
         `${i.idPrescriptionDrug}`.endsWith("00") &&
         i.grp_solution !== null &&
-        i.grp_solution !== ""
+        i.grp_solution !== "",
     ) !== -1;
   let isMainComponent = (pd) => `${pd.idPrescriptionDrug}`.endsWith("00");
 
@@ -173,7 +173,7 @@ const sortPrescriptionDrugs = (items, drugOrder) => {
       (i) =>
         i.whiteList ||
         (!isMainComponent(i) &&
-          hasDiffParent(items, i.idPrescriptionDrug, i.grp_solution))
+          hasDiffParent(items, i.idPrescriptionDrug, i.grp_solution)),
     )
     .sort((a, b) => `${a.drug}`.localeCompare(`${b.drug}`));
 
@@ -391,10 +391,10 @@ export const filterPrescriptionDrugs = (items, headers, filters) => {
       }
 
       if (filters.indexOf("active") !== -1) {
-        show = show || !i.suspended;
-
         if (i.cpoe || headers[i.cpoe]) {
-          show = show || isActive(headers[i.cpoe]);
+          show = show || (!i.suspended && isActive(headers[i.cpoe]));
+        } else {
+          show = show || !i.suspended;
         }
       }
 
