@@ -7,10 +7,12 @@ import Button from "components/Button";
 import { PageHeader } from "styles/PageHeader.style";
 import {
   StatsCard,
+  ChartCard,
   SectionHeader,
   ReportContainer,
   ReportHeader,
 } from "styles/Report.style";
+import ChartPrescriptionDay from "./Charts/ChartPrescriptionDay";
 // @ts-expect-error missing types
 import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import { fetchReportData } from "./PatientDayConsolidatedReportSlice";
@@ -90,7 +92,7 @@ export default function PatientDayConsolidatedReport() {
             Relatório: Pacientes-Dia Consolidado
           </h1>
           <div className="page-header-legend">
-            Métricas consolidadas de Pacientes por dia
+            Métricas consolidadas de Pacientes-Dia.
           </div>
         </div>
         <div className="page-header-actions">
@@ -236,6 +238,23 @@ export default function PatientDayConsolidatedReport() {
                       ) || "-"}
                     </div>
                   </StatsCard>
+                </Spin>
+              </Col>
+            </Row>
+            <div className="page-break"></div>
+            <SectionHeader>
+              <h2>Pacientes-Dia</h2>
+              <div>Relação entre Pacientes-Dia e Pacientes-Dia Checados</div>
+            </SectionHeader>
+            <Row gutter={[24, 24]}>
+              <Col xs={24}>
+                <Spin spinning={isLoading}>
+                  <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                    <ChartPrescriptionDay
+                      reportData={reportData}
+                      isLoading={isLoading}
+                    />
+                  </ChartCard>
                 </Spin>
               </Col>
             </Row>
