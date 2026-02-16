@@ -88,4 +88,9 @@ api.regulation.getIndicatorsPanelCsv = (params = {}) =>
 api.regulation.getIndicatorsSummary = () =>
   instance.get(`/reports/regulation/indicators-summary`, { ...setHeaders() });
 
+// CONSOLIDATED
+api.consolidated = {};
+api.consolidated.getPatientDayConsolidatedReport = (params = {}) =>
+  instance.post(`/reports/consolidated/patient-day`, params, setHeaders());
+
 export default api;
