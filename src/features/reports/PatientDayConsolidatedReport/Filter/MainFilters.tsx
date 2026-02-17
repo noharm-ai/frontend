@@ -1,28 +1,30 @@
-import { useContext, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useAppDispatch, useAppSelector } from "src/store";
 import { Col } from "components/Grid";
 import { SelectCustom, RangeDatePicker, Select } from "components/Inputs";
 import Heading from "components/Heading";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Creators as SegmentsCreators } from "store/ducks/segments";
+import { getSegmentDepartments } from "features/lists/ListsSlice";
+import { getUniqBy } from "utils/report";
 
 export default function MainFilters() {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { values, setFieldValue } = useContext(AdvancedFilterContext) as any;
 
-  const segments = useSelector((state: any) => state.segments.list);
-  const segmentsFetching = useSelector(
+  const segments = useAppSelector((state: any) => state.segments.list);
+  const segmentsFetching = useAppSelector(
     (state: any) => state.segments.isFetching,
   );
+  const departments = useAppSelector(
+    (state) => state.lists.getSegmentDepartments.list,
+  );
 
-  useEffect(() => {
-    if (segments.length === 0) {
-      dispatch(SegmentsCreators.segmentsFetchListStart());
-    }
-  }, [dispatch, segments.length]);
+  const departmentsStatus = useAppSelector(
+    (state) => state.lists.getSegmentDepartments.status,
+  );
 
   const handleChange = (key: string, value: any) => {
     setFieldValue({ [key]: value });
@@ -32,37 +34,27 @@ export default function MainFilters() {
     setFieldValue({ segment: val, id_department: [] });
   };
 
-  const getDepartments = () => {
-    if (!segments) return [];
-
-    // Flatten departments from all segments or filtered segments
-    let departments: any[] = [];
-
-    if (values.segment && values.segment.length > 0) {
-      const selectedSegments = segments.filter((s: any) =>
-        values.segment.includes(s.description),
-      );
-      selectedSegments.forEach((s: any) => {
-        if (s.departments) {
-          departments = [...departments, ...s.departments];
-        }
-      });
-    } else {
-      segments.forEach((s: any) => {
-        if (s.departments) {
-          departments = [...departments, ...s.departments];
-        }
-      });
-    }
-
-    // dedup by id
-    return [
-      ...new Map(departments.map((item) => [item.id, item])).values(),
-    ].sort((a, b) => a.description.localeCompare(b.description));
-  };
-
   const getSegmentsList = () => {
     return segments.map((s: any) => s.description).sort();
+  };
+
+  const filterDepartments = (list: any[]) => {
+    const idSegmentList = values.segment.map((seg_description: string) => {
+      const segment = segments.find(
+        (s: any) => s.description === seg_description,
+      );
+      return segment?.id;
+    });
+
+    const deps = list.filter((d) => {
+      if (!idSegmentList || idSegmentList.length === 0) {
+        return true;
+      }
+
+      return idSegmentList.indexOf(d.idSegment) !== -1;
+    });
+
+    return getUniqBy(deps, "idDepartment");
   };
 
   return (
@@ -117,13 +109,18 @@ export default function MainFilters() {
           showSearch
           mode="multiple"
           maxTagCount="responsive"
-          loading={segmentsFetching}
+          loading={departmentsStatus === "loading"}
           optionFilterProp="children"
           allowClear
+          onDropdownVisibleChange={(open: boolean) => {
+            if (open && departments.length === 0) {
+              dispatch(getSegmentDepartments());
+            }
+          }}
         >
-          {getDepartments().map((d: any) => (
-            <Select.Option key={d.id} value={d.id}>
-              {d.description}
+          {filterDepartments(departments).map((d: any) => (
+            <Select.Option key={d.idDepartment} value={d.idDepartment}>
+              {d.label}
             </Select.Option>
           ))}
         </SelectCustom>
