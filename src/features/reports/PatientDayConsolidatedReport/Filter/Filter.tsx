@@ -1,5 +1,3 @@
-import dayjs from "dayjs";
-
 import AdvancedFilter from "components/AdvancedFilter";
 import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
@@ -7,19 +5,14 @@ import SecondaryFilters from "./SecondaryFilters";
 interface FilterProps {
   onSearch: (filters: any) => void;
   loading: boolean;
+  initialValues: any;
 }
 
-export default function Filter({ onSearch, loading }: FilterProps) {
-  const initialValues = {
-    segment: [],
-    id_department: [],
-    start_date: dayjs().startOf("year").format("YYYY-MM-DD"),
-    end_date: dayjs().endOf("year").format("YYYY-MM-DD"),
-    global_score_start: null,
-    global_score_end: null,
-    dateRange: [dayjs().startOf("year"), dayjs().endOf("year")],
-  };
-
+export default function Filter({
+  onSearch,
+  loading,
+  initialValues,
+}: FilterProps) {
   return (
     <AdvancedFilter
       initialValues={initialValues}

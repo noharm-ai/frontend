@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { Row, Col, Space, Spin } from "antd";
 import { UnorderedListOutlined } from "@ant-design/icons";
@@ -31,6 +33,16 @@ export default function PatientDayConsolidatedReport() {
   );
   const isLoading = status === "loading";
 
+  const initialValues = {
+    segment: [],
+    id_department: [],
+    start_date: dayjs().startOf("year").format("YYYY-MM-DD"),
+    end_date: dayjs().endOf("year").format("YYYY-MM-DD"),
+    global_score_start: null,
+    global_score_end: null,
+    dateRange: [dayjs().startOf("year"), dayjs().endOf("year")],
+  };
+
   const onSearch = (params: any) => {
     if (
       params.dateRange &&
@@ -58,6 +70,10 @@ export default function PatientDayConsolidatedReport() {
     };
     dispatch(fetchReportData(apiParams) as any);
   };
+
+  useEffect(() => {
+    onSearch(initialValues);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const percentualPrescriptions = reportData?.totals
     ?.total_prescriptions_checked
@@ -107,7 +123,11 @@ export default function PatientDayConsolidatedReport() {
       </PageHeader>
 
       <ReportContainer>
-        <Filter onSearch={onSearch} loading={isLoading} />
+        <Filter
+          onSearch={onSearch}
+          loading={isLoading}
+          initialValues={initialValues}
+        />
 
         <div>
           <ReportHeader className="report-header">
