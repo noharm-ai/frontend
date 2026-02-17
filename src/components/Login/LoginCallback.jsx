@@ -31,6 +31,17 @@ export default function LoginCallback({ doLogin, error }) {
         const { data } = await api.getAuthProvider(schema);
         const config = { ...data.data };
 
+        if (config.state) {
+          const state = localStorage.getItem("oauth_state");
+          if (state !== queryString.get("state")) {
+            localStorage.removeItem("oauth_state");
+            notification.error({
+              message: "Inválido ou inexistente (state)",
+            });
+            return;
+          }
+        }
+
         if (config.flow === "pkce") {
           const payload = {
             client_id: config.clientId,
@@ -68,6 +79,7 @@ export default function LoginCallback({ doLogin, error }) {
           })
             .then((response) => {
               localStorage.removeItem("oauth_nonce");
+              localStorage.removeItem("oauth_state");
               if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
                 navigate("/switch-schema");
               } else {
