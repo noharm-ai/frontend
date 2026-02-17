@@ -20,7 +20,7 @@ export default function LoginCallback({ doLogin, error }) {
   useEffect(() => {
     const schema = params.schema;
     const queryString = new URLSearchParams(
-      hash ? hash.substring(1) : window.location.search
+      hash ? hash.substring(1) : window.location.search,
     );
 
     const idToken = queryString.get("id_token");
@@ -64,8 +64,10 @@ export default function LoginCallback({ doLogin, error }) {
           doLogin({
             schema,
             code: idToken ?? authCode,
+            nonce: localStorage.getItem("oauth_nonce") ?? null,
           })
             .then((response) => {
+              localStorage.removeItem("oauth_nonce");
               if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
                 navigate("/switch-schema");
               } else {

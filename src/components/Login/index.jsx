@@ -79,6 +79,12 @@ export default function Login({ isLogging, error, doLogin, forceSchema }) {
           const codeChallenge = await getCodeChallenge(verifier);
 
           config.url = `${config.url}&code_challenge=${codeChallenge}&code_challenge_method=${config.codeChallengeMethod}`;
+        } else {
+          if (!config.url.includes("nonce")) {
+            const nonce = generateRandomString();
+            localStorage.setItem("oauth_nonce", nonce);
+            config.url = `${config.url}&nonce=${nonce}`;
+          }
         }
 
         setOauthData(config);
