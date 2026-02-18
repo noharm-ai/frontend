@@ -3,9 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { Row, Col, Space, Spin } from "antd";
-import { UnorderedListOutlined } from "@ant-design/icons";
+import { UnorderedListOutlined, QuestionOutlined } from "@ant-design/icons";
 
 import Button from "components/Button";
+import Tooltip from "components/Tooltip";
 import { PageHeader } from "styles/PageHeader.style";
 import {
   StatsCard,
@@ -17,10 +18,14 @@ import {
 import ChartPrescriptionDay from "./Charts/ChartPrescriptionDay";
 // @ts-expect-error missing types
 import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
-import { fetchReportData } from "./PatientDayConsolidatedReportSlice";
+import {
+  fetchReportData,
+  setHelpModal,
+} from "./PatientDayConsolidatedReportSlice";
 import Filter from "./Filter/Filter";
 import { FeatureService } from "services/FeatureService";
 import DefaultModal from "components/Modal";
+import { HelpModal } from "./Help/Help";
 
 export default function PatientDayConsolidatedReport() {
   const navigate = useNavigate();
@@ -107,6 +112,15 @@ export default function PatientDayConsolidatedReport() {
         <div>
           <h1 className="page-header-title">
             Relatório: Pacientes-Dia Consolidado
+            <Tooltip title="Informações sobre este relatório">
+              <Button
+                type="primary"
+                shape="circle"
+                icon={<QuestionOutlined />}
+                loading={status === "loading"}
+                onClick={() => dispatch(setHelpModal(true))}
+              />
+            </Tooltip>
           </h1>
           <div className="page-header-legend">
             Métricas consolidadas de Pacientes-Dia.
@@ -284,6 +298,7 @@ export default function PatientDayConsolidatedReport() {
           </Space>
         </div>
       </ReportContainer>
+      <HelpModal />
     </>
   );
 }

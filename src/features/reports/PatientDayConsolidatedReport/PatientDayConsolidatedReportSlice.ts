@@ -14,6 +14,7 @@ interface PatientDayConsolidatedReportState {
   list: any[];
   filtered: FilteredState;
   filters: any;
+  helpModal: boolean;
 }
 
 const initialState: PatientDayConsolidatedReportState = {
@@ -26,6 +27,7 @@ const initialState: PatientDayConsolidatedReportState = {
     result: {},
   },
   filters: {},
+  helpModal: false,
 };
 
 export const fetchReportData = createAsyncThunk(
@@ -61,6 +63,9 @@ const patientDayConsolidatedReportSlice = createSlice({
     setFilters(state, action: PayloadAction<any>) {
       state.filters = action.payload;
     },
+    setHelpModal(state, action: PayloadAction<boolean>) {
+      state.helpModal = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -81,7 +86,12 @@ const patientDayConsolidatedReportSlice = createSlice({
   },
 });
 
-export const { reset, setFilteredStatus, setFilteredResult, setFilters } =
-  patientDayConsolidatedReportSlice.actions;
+export const {
+  reset,
+  setFilteredStatus,
+  setFilteredResult,
+  setFilters,
+  setHelpModal,
+} = patientDayConsolidatedReportSlice.actions;
 
 export default patientDayConsolidatedReportSlice.reducer;
