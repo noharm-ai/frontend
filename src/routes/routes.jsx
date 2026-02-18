@@ -58,6 +58,7 @@ import PrescriptionAuditReport from "pages/Reports/PrescriptionAuditReport";
 import EconomyReport from "pages/Reports/EconomyReport";
 import IntegrationNifiLintReport from "pages/Reports/IntegrationNifiLint";
 import FileReport from "pages/Reports/FileReport";
+import PatientDayConsolidatedReport from "pages/Reports/PatientDayConsolidatedReport";
 
 import RegulationPrioritization from "pages/Regulation/Prioritization";
 import Regulation from "pages/Regulation/Regulation";
@@ -362,6 +363,11 @@ const routes = [
     exact: true,
     path: "/relatorios/pacientes-dia",
     element: <WithAuth component={PatientDayReport} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/consolidado/pacientes-dia",
+    element: <WithAuth component={PatientDayConsolidatedReport} />,
   },
   {
     exact: true,

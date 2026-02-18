@@ -60,6 +60,7 @@ import regulationIndicatorsPanelReportSlice from "src/features/regulation/Indica
 
 import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
+import reportPatientDayConsolidatedReport from "features/reports/PatientDayConsolidatedReport/PatientDayConsolidatedReportSlice";
 import reportPrescriptionReport from "features/reports/PrescriptionReport/PrescriptionReportSlice";
 import reportInterventionReport from "features/reports/InterventionReport/InterventionReportSlice";
 import reportPrescriptionAuditReport from "features/reports/PrescriptionAuditReport/PrescriptionAuditReportSlice";
@@ -105,6 +106,7 @@ const regulationReducers = combineReducers({
 
 const reportReducers = combineReducers({
   patientDay: reportPatientDayReport,
+  patientDayConsolidated: reportPatientDayConsolidatedReport,
   prescription: reportPrescriptionReport,
   intervention: reportInterventionReport,
   prescriptionAudit: reportPrescriptionAuditReport,

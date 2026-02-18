@@ -20,7 +20,7 @@ export default function LoginCallback({ doLogin, error }) {
   useEffect(() => {
     const schema = params.schema;
     const queryString = new URLSearchParams(
-      hash ? hash.substring(1) : window.location.search
+      hash ? hash.substring(1) : window.location.search,
     );
 
     const idToken = queryString.get("id_token");
@@ -30,6 +30,17 @@ export default function LoginCallback({ doLogin, error }) {
       try {
         const { data } = await api.getAuthProvider(schema);
         const config = { ...data.data };
+
+        if (config.state) {
+          const state = localStorage.getItem("oauth_state");
+          if (state !== queryString.get("state")) {
+            localStorage.removeItem("oauth_state");
+            notification.error({
+              message: "Inválido ou inexistente (state)",
+            });
+            return;
+          }
+        }
 
         if (config.flow === "pkce") {
           const payload = {
@@ -64,8 +75,11 @@ export default function LoginCallback({ doLogin, error }) {
           doLogin({
             schema,
             code: idToken ?? authCode,
+            nonce: localStorage.getItem("oauth_nonce") ?? null,
           })
             .then((response) => {
+              localStorage.removeItem("oauth_nonce");
+              localStorage.removeItem("oauth_state");
               if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
                 navigate("/switch-schema");
               } else {

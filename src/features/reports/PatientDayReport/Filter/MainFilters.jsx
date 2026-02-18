@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { HistoryOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 
 import { RangeDatePicker, Select, SelectCustom } from "components/Inputs";
 import Heading from "components/Heading";
@@ -20,19 +21,19 @@ export default function MainFilters() {
   const dispatch = useDispatch();
 
   const departments = useSelector(
-    (state) => state.reportsArea.patientDay.departments
+    (state) => state.reportsArea.patientDay.departments,
   );
   const segments = useSelector(
-    (state) => state.reportsArea.patientDay.segments
+    (state) => state.reportsArea.patientDay.segments,
   );
   const status = useSelector((state) => state.reportsArea.patientDay.status);
   const reportDate = useSelector((state) => state.reportsArea.patientDay.date);
   const reportDateRange = useSelector(
-    (state) => state.reportsArea.patientDay.dateRange
+    (state) => state.reportsArea.patientDay.dateRange,
   );
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 
-  const rangePresets = getDateRangePresets(reportDate);
+  const rangePresets = getDateRangePresets(dayjs());
 
   const showHistory = () => {
     document.querySelector(".ant-picker-presets li:nth-child(2)").click();

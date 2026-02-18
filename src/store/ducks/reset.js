@@ -58,6 +58,7 @@ import { reset as alertListReportReset } from "features/reports/AlertListReport/
 import { reset as examsRawSearchReset } from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
 import { reset as patientObservationReportReset } from "features/reports/PatientObservationReport/PatientObservationReportSlice";
 import { reset as integrationNifiLintReportReset } from "features/reports/IntegrationNifiLintReport/IntegrationNifiLintReportSlice";
+import { reset as patientDayConsolidatedReportReset } from "features/reports/PatientDayConsolidatedReport/PatientDayConsolidatedReportSlice";
 
 import { reset as regulationPrioritizationReset } from "features/regulation/Prioritization/PrioritizationSlice";
 import { reset as regulationReset } from "features/regulation/Regulation/RegulationSlice";
@@ -136,6 +137,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(examsRawSearchReset());
   dispatch(patientObservationReportReset());
   dispatch(integrationNifiLintReportReset());
+  dispatch(patientDayConsolidatedReportReset());
 
   dispatch(regulationPrioritizationReset());
   dispatch(regulationReset());

@@ -30,6 +30,9 @@ export default function AdvancedFilter({
   skipFilterList,
   skipMemoryList = {},
   memoryType,
+  timeRangeFilters = [],
+  dateFilters = [],
+  dateListFilters = [],
 }) {
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState(initialValues);
@@ -86,9 +89,44 @@ export default function AdvancedFilter({
 
     Object.keys(skipMemoryList).forEach((k) => {
       if (skipMemoryList[k] === "daterange") {
-        newFilters[k] = [dayjs(values[k][0]), dayjs(values[k][1])];
+        if (values[k] && values[k].length === 2) {
+          newFilters[k] = [dayjs(values[k][0]), dayjs(values[k][1])];
+        }
       } else {
         newFilters[k] = initialValues[k];
+      }
+    });
+
+    // convert string to dayjs
+    timeRangeFilters.forEach((timeRangeFilter) => {
+      if (
+        newFilters[timeRangeFilter] &&
+        newFilters[timeRangeFilter].length === 2
+      ) {
+        newFilters[timeRangeFilter] = [
+          dayjs(newFilters[timeRangeFilter][0]),
+          dayjs(newFilters[timeRangeFilter][1]),
+        ];
+      }
+
+      if (newFilters[timeRangeFilter] === null) {
+        newFilters[timeRangeFilter] = [null, null];
+      }
+    });
+
+    // convert string to dayjs
+    dateFilters.forEach((dateFilter) => {
+      if (newFilters[dateFilter]) {
+        newFilters[dateFilter] = dayjs(newFilters[dateFilter]);
+      }
+    });
+
+    // convert string to dayjs
+    dateListFilters.forEach((dateListFilter) => {
+      if (newFilters[dateListFilter]) {
+        newFilters[dateListFilter] = newFilters[dateListFilter].map((day) =>
+          dayjs(day),
+        );
       }
     });
 
