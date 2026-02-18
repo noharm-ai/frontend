@@ -81,6 +81,7 @@ const patientDayConsolidatedReportSlice = createSlice({
       .addCase(fetchReportData.rejected, (state, action) => {
         state.status = "failed";
         state.filtered.status = "failed";
+        state.filtered.result = {};
         state.error = action.error.message || null;
       });
   },

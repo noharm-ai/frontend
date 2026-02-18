@@ -1,9 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
-import { Row, Col, Space, Spin } from "antd";
-import { UnorderedListOutlined, QuestionOutlined } from "@ant-design/icons";
+import { Row, Col, Space, Spin, FloatButton } from "antd";
+import {
+  UnorderedListOutlined,
+  QuestionOutlined,
+  MenuOutlined,
+  QuestionCircleOutlined,
+  PrinterOutlined,
+} from "@ant-design/icons";
+import { useReactToPrint } from "react-to-print";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
@@ -14,6 +21,7 @@ import {
   SectionHeader,
   ReportContainer,
   ReportHeader,
+  ReportFilterContainer,
 } from "styles/Report.style";
 import ChartPrescriptionDay from "./Charts/ChartPrescriptionDay";
 // @ts-expect-error missing types
@@ -26,16 +34,25 @@ import Filter from "./Filter/Filter";
 import { FeatureService } from "services/FeatureService";
 import DefaultModal from "components/Modal";
 import { HelpModal } from "./Help/Help";
+import { FloatButtonGroup } from "components/FloatButton";
+import {
+  onBeforePrint,
+  onAfterPrint,
+  filtersToDescription,
+} from "src/utils/report";
+import notification from "components/notification";
 
 export default function PatientDayConsolidatedReport() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const printRef = useRef(null);
   const reportData = useSelector(
     (state: any) => state.reportsArea.patientDayConsolidated.filtered.result,
   );
   const status = useSelector(
     (state: any) => state.reportsArea.patientDayConsolidated.filtered.status,
   );
+  const [filters, setFilters] = useState<any>({});
   const isLoading = status === "loading";
 
   const initialValues = {
@@ -47,6 +64,29 @@ export default function PatientDayConsolidatedReport() {
     global_score_end: null,
     dateRange: [dayjs().startOf("year"), dayjs().endOf("year")],
     weekdays_only: false,
+  };
+
+  const filtersConfig = {
+    start_date: {
+      label: "Data Inicial",
+      type: "date",
+    },
+    end_date: {
+      label: "Data Final",
+      type: "date",
+    },
+    id_department: {
+      label: "Setor",
+      type: "list",
+    },
+    segment: {
+      label: "Segmento",
+      type: "list",
+    },
+    weekdays_only: {
+      label: "Somente dias de semana",
+      type: "bool",
+    },
   };
 
   const onSearch = (params: any) => {
@@ -74,12 +114,30 @@ export default function PatientDayConsolidatedReport() {
         ? params.dateRange[1].format("YYYY-MM-DD")
         : null,
     };
-    dispatch(fetchReportData(apiParams) as any);
+    dispatch(fetchReportData(apiParams) as any).then((response: any) => {
+      if (response.error) {
+        notification.error({
+          message: "Erro ao carregar dados",
+          description:
+            response.payload?.message || "Ocorreu um erro inesperado",
+        });
+      } else {
+        delete apiParams.dateRange;
+        delete apiParams.year;
+        setFilters(apiParams);
+      }
+    });
   };
 
   useEffect(() => {
     onSearch(initialValues);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    onBeforePrint: onBeforePrint,
+    onAfterPrint: onAfterPrint,
+  });
 
   const percentualPrescriptions = reportData?.totals
     ?.total_prescriptions_checked
@@ -144,13 +202,22 @@ export default function PatientDayConsolidatedReport() {
           initialValues={initialValues}
         />
 
-        <div>
+        <div ref={printRef}>
           <ReportHeader className="report-header">
             <h1>Relatório: Pacientes-Dia Consolidado</h1>
             <div className="brand">
               <Brand />
             </div>
           </ReportHeader>
+
+          <ReportFilterContainer>
+            <div
+              className="report-filter-list"
+              dangerouslySetInnerHTML={{
+                __html: filtersToDescription(filters, filtersConfig),
+              }}
+            ></div>
+          </ReportFilterContainer>
 
           <Space orientation="vertical" size="large" style={{ width: "100%" }}>
             <SectionHeader>
@@ -299,6 +366,40 @@ export default function PatientDayConsolidatedReport() {
         </div>
       </ReportContainer>
       <HelpModal />
+      {!isLoading && (
+        <FloatButtonGroup
+          trigger="click"
+          type="primary"
+          icon={<MenuOutlined />}
+          tooltip={{
+            title: "Menu",
+            placement: "left",
+          }}
+          style={{ bottom: 25 }}
+        >
+          <FloatButton
+            icon={<QuestionCircleOutlined />}
+            onClick={() => dispatch(setHelpModal(true))}
+            tooltip={{
+              title: "Informações sobre este relatório",
+              placement: "left",
+            }}
+          />
+
+          <FloatButton
+            icon={<PrinterOutlined />}
+            onClick={() => handlePrint()}
+            tooltip={{
+              title: "Imprimir",
+              placement: "left",
+            }}
+          />
+        </FloatButtonGroup>
+      )}
+      <FloatButton.BackTop
+        style={{ right: 80, bottom: 25 }}
+        tooltip="Voltar ao topo"
+      />
     </>
   );
 }
