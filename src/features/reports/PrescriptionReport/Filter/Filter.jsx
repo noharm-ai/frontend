@@ -155,6 +155,8 @@ export default function Filter({ printRef }) {
               skipFilterList={["dateRange"]}
               memoryType={memoryFilterType}
               skipMemoryList={{ dateRange: "daterange" }}
+              timeRangeFilters={["timeRange"]}
+              dateListFilters={["daysOffList"]}
             />
             <HistoryAlert
               activeReport={activeReport}
