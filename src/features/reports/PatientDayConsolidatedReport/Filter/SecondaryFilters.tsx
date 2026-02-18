@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Card } from "antd";
 
 import { Col, Row } from "components/Grid";
-import { InputNumber } from "components/Inputs";
+import { InputNumber, Radio } from "components/Inputs";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 
 import { Form } from "styles/Form.style";
@@ -14,6 +14,11 @@ export default function SecondaryFilters() {
     setFieldValue({ [key]: value });
   };
 
+  const yesNoOptions = [
+    { label: "Sim", value: true },
+    { label: "Não", value: false },
+  ];
+
   return (
     <Row gutter={[20, 20]} style={{ marginTop: "15px", padding: "10px 0" }}>
       <Col md={12}>
@@ -24,6 +29,25 @@ export default function SecondaryFilters() {
           style={{ background: "#fafafa" }}
         >
           <Form>
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Somente dias de semana:</label>
+                </div>
+                <div className="form-input">
+                  <Radio.Group
+                    style={{ marginTop: "5px" }}
+                    options={yesNoOptions}
+                    onChange={({ target: { value } }) =>
+                      handleChange("weekdays_only", value)
+                    }
+                    value={values.weekdays_only}
+                    optionType="button"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="form-row">
               <div className="form-row">
                 <div className="form-label">

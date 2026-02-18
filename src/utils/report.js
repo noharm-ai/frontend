@@ -11,7 +11,7 @@ export const getUniqList = (datasource, attr) => {
   if (Array.isArray(datasource[0][attr])) {
     const flat = datasource.reduce(
       (accumulator, currentValue) => accumulator.concat(currentValue[attr]),
-      []
+      [],
     );
 
     return uniq(flat).sort();
@@ -62,7 +62,7 @@ export const filtersToDescription = (filters, filtersConfig) => {
 
       if (config?.type === "range") {
         return `<strong>${config.label}:</strong> ${dayjs(filters[k][0]).format(
-          dateFormat
+          dateFormat,
         )} até ${dayjs(filters[k][1]).format(dateFormat)}`;
       }
 
@@ -83,7 +83,7 @@ export const exportCSV = async (
   datasource,
   t,
   namespace = "reportcsv",
-  options = {}
+  options = {},
 ) => {
   // Fallback function for when Web Workers are not supported
   const fallbackExportCSV = () => {
@@ -106,12 +106,12 @@ export const exportCSV = async (
 
     const header = Object.keys(datasource[0]);
     const headerNames = Object.keys(datasource[0]).map((k) =>
-      t(`${namespace}.${k}`)
+      t(`${namespace}.${k}`),
     );
     const csv = [
       headerNames.join(","),
       ...datasource.map((row) =>
-        header.map((fieldName) => stringify(row[fieldName])).join(",")
+        header.map((fieldName) => stringify(row[fieldName])).join(","),
       ),
     ];
 
@@ -143,7 +143,7 @@ export const exportCSV = async (
         {
           chunkSize: options.chunkSize || 1000,
           onProgress: options.onProgress,
-        }
+        },
       );
     } else {
       // Use synchronous processing for small datasets or when workers not supported
@@ -217,12 +217,12 @@ export const exportCSVSync = (datasource, t, namespace = "reportcsv") => {
 
   const header = Object.keys(datasource[0]);
   const headerNames = Object.keys(datasource[0]).map((k) =>
-    t(`${namespace}.${k}`)
+    t(`${namespace}.${k}`),
   );
   const csv = [
     headerNames.join(","),
     ...datasource.map((row) =>
-      header.map((fieldName) => stringify(row[fieldName])).join(",")
+      header.map((fieldName) => stringify(row[fieldName])).join(","),
     ),
   ];
 
@@ -282,6 +282,27 @@ export const getDateRangePresets = (reportDate) => [
   },
 ];
 
+export const getLongDateRangePresets = (reportDate) => [
+  {
+    label: "Ano atual",
+    value: [dayjs(reportDate).startOf("year"), dayjs(reportDate).endOf("year")],
+  },
+  {
+    label: `${dayjs(reportDate).subtract(1, "year").format("YYYY")}`,
+    value: [
+      dayjs(reportDate).subtract(1, "year").startOf("year"),
+      dayjs(reportDate).subtract(1, "year").endOf("year"),
+    ],
+  },
+  {
+    label: `${dayjs(reportDate).subtract(2, "year").format("YYYY")}`,
+    value: [
+      dayjs(reportDate).subtract(2, "year").startOf("year"),
+      dayjs(reportDate).subtract(2, "year").endOf("year"),
+    ],
+  },
+];
+
 export const dateRangeValid = (reportDate, subtractDays = 60) => {
   return (current) => {
     const maxDate = dayjs(reportDate).subtract(1, "day");
@@ -297,7 +318,7 @@ export const decompressDatasource = async (datasource) => {
   }).stream();
 
   const compressedReadableStream = stream.pipeThrough(
-    new window.DecompressionStream("gzip")
+    new window.DecompressionStream("gzip"),
   );
 
   const decompressedResponse = new Response(compressedReadableStream);

@@ -41,6 +41,7 @@ export default function PatientDayConsolidatedReport() {
     global_score_start: null,
     global_score_end: null,
     dateRange: [dayjs().startOf("year"), dayjs().endOf("year")],
+    weekdays_only: false,
   };
 
   const onSearch = (params: any) => {
@@ -182,7 +183,7 @@ export default function PatientDayConsolidatedReport() {
                   <Col xs={12} lg={8}>
                     <Spin spinning={isLoading}>
                       <StatsCard className={`blue `}>
-                        <div className="stats-title">Total de Itens</div>
+                        <div className="stats-title">Total de Itens-Dia</div>
                         <div className="stats-value">
                           {reportData?.totals?.total_itens?.toLocaleString() ||
                             "-"}
@@ -193,7 +194,7 @@ export default function PatientDayConsolidatedReport() {
                   <Col xs={12} lg={8}>
                     <Spin spinning={isLoading}>
                       <StatsCard className={`green `}>
-                        <div className="stats-title">Itens Checados</div>
+                        <div className="stats-title">Itens-Dia Checados</div>
                         <div className="stats-value">
                           {reportData?.totals?.total_itens_checked?.toLocaleString() ||
                             "-"}
@@ -204,7 +205,9 @@ export default function PatientDayConsolidatedReport() {
                   <Col xs={12} lg={8}>
                     <Spin spinning={isLoading}>
                       <StatsCard className={`green `}>
-                        <div className="stats-title">Percentual de Itens</div>
+                        <div className="stats-title">
+                          Percentual de Itens-Dia
+                        </div>
                         <div className="stats-value">
                           {percentualItens?.toLocaleString() || "-"} %
                         </div>

@@ -8,6 +8,7 @@ import Heading from "components/Heading";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { getSegmentDepartments } from "features/lists/ListsSlice";
 import { getUniqBy } from "utils/report";
+import { getLongDateRangePresets } from "utils/report";
 
 export default function MainFilters() {
   const { t } = useTranslation();
@@ -59,13 +60,14 @@ export default function MainFilters() {
 
   return (
     <>
-      <Col md={6}>
+      <Col md={5}>
         {/* @ts-expect-error missing types */}
         <Heading as="label" $size="14px">
           {t("tableHeader.period")}:
         </Heading>
         <RangeDatePicker
           format="DD/MM/YYYY"
+          presets={getLongDateRangePresets(values.reportDate)}
           value={values.dateRange}
           onChange={(val: any) => {
             handleChange("dateRange", val);
