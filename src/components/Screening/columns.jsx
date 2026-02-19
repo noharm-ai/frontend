@@ -81,7 +81,7 @@ const interventionOptions = (idIntervention, dispatch) => {
           idIntervention: idIntervention,
           outcome: key,
           open: true,
-        })
+        }),
       );
     },
   };
@@ -168,7 +168,7 @@ const InterventionAction = ({ intv, isSavingIntervention }) => {
                   idIntervention: idIntervention,
                   outcome: "s",
                   open: true,
-                })
+                }),
               )
             }
             loading={isSavingIntervention}
@@ -265,7 +265,7 @@ const Action = ({ prescription, bag }) => {
 
   if (data.interventions) {
     const intvList = data.interventions.filter(
-      filterInterventionByPrescriptionDrug(idPrescriptionDrug)
+      filterInterventionByPrescriptionDrug(idPrescriptionDrug),
     );
 
     if (intvList.length) {
@@ -513,7 +513,7 @@ const DrugTags = ({ drug, t }) => (
 export const expandedRowRender = (bag) => (record) => {
   if (record.total && record.infusion) {
     trackPrescriptionAction(
-      TrackedPrescriptionAction.EXPAND_SOLUTION_CALCULATOR
+      TrackedPrescriptionAction.EXPAND_SOLUTION_CALCULATOR,
     );
     return (
       <NestedTableContainer className={record.source}>
@@ -526,7 +526,7 @@ export const expandedRowRender = (bag) => (record) => {
   let prevIntervention = null;
   if (record.prevIntervention) {
     prevIntervention = bag.interventions.find(
-      (i) => i.idIntervention === record.prevIntervention.idIntervention
+      (i) => i.idIntervention === record.prevIntervention.idIntervention,
     );
 
     if (prevIntervention) {
@@ -628,7 +628,7 @@ export const expandedRowRender = (bag) => (record) => {
               >
                 {format(
                   new Date(bag.headers[headerId].date),
-                  "dd/MM/yyyy HH:mm"
+                  "dd/MM/yyyy HH:mm",
                 )}
               </Descriptions.Item>
               <Descriptions.Item
@@ -638,7 +638,7 @@ export const expandedRowRender = (bag) => (record) => {
                 {bag.headers[headerId].expire
                   ? format(
                       new Date(bag.headers[headerId].expire),
-                      "dd/MM/yyyy HH:mm"
+                      "dd/MM/yyyy HH:mm",
                     )
                   : "Manter até 2º ordem"}
               </Descriptions.Item>
@@ -667,7 +667,7 @@ export const expandedRowRender = (bag) => (record) => {
               {record.prescriptionExpire
                 ? format(
                     new Date(record.prescriptionExpire),
-                    "dd/MM/yyyy HH:mm"
+                    "dd/MM/yyyy HH:mm",
                   )
                 : "Manter até 2º ordem"}
             </Descriptions.Item>
@@ -683,7 +683,7 @@ export const expandedRowRender = (bag) => (record) => {
                 onClick={() => {
                   bag.fetchPeriod(record.idPrescriptionDrug, record.source);
                   trackPrescriptionAction(
-                    TrackedPrescriptionAction.SHOW_PERIOD
+                    TrackedPrescriptionAction.SHOW_PERIOD,
                   );
                 }}
                 loading={bag.periodObject.isFetching}
@@ -731,6 +731,11 @@ export const expandedRowRender = (bag) => (record) => {
             span={3}
           >
             {record.doseWeight}
+          </Descriptions.Item>
+        )}
+        {record.doseWeightDay && (
+          <Descriptions.Item label="Dose / Kg / Dia" span={3}>
+            {record.doseWeightDay}
           </Descriptions.Item>
         )}
         {record.doseBodySurface && (
@@ -887,7 +892,7 @@ const drug = (bag, addkey, title) => ({
     }
 
     const href = `/medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(
-      record.drug
+      record.drug,
     )}/${record.doseconv}/${record.dayFrequency}`;
 
     const substanceWarning = (
@@ -1044,7 +1049,7 @@ const score = (bag) => ({
           <Tooltip
             title={`Suspenso em: ${format(
               new Date(prescription.suspensionDate),
-              "dd/MM/yyyy HH:mm"
+              "dd/MM/yyyy HH:mm",
             )}`}
           >
             <StopOutlined
@@ -1334,7 +1339,7 @@ const relationColumn = (bag) => ({
             {
               ...prescription,
               conciliaRelationId: value,
-            }
+            },
           )
         }
       >
@@ -1362,7 +1367,7 @@ const relationColumn = (bag) => ({
                 Obs.: {recommendation || "-"}
               </span>
             </SelectMultiline.Option>
-          )
+          ),
         )}
       </SelectMultiline>
     );
