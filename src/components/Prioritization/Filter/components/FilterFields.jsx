@@ -29,6 +29,8 @@ import FieldNameAutocomplete from "features/fields/FieldNameAutocomplete/FieldNa
 import { FieldIcd } from "src/features/fields/FieldIcd/FieldIcd";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
+import { FeatureService } from "src/services/FeatureService";
+import Feature from "src/models/Feature";
 
 import { Form } from "styles/Form.style";
 
@@ -329,19 +331,48 @@ export default function FilterFields({
             <div className="form-row">
               <div className="form-row">
                 <div className="form-label">
-                  <label>Leito:</label>
+                  <label>Leitos:</label>
                 </div>
                 <div className="form-input">
-                  <Input
-                    className={filter.bed ? "warning" : null}
-                    value={filter.bed}
-                    onChange={({ target }) =>
-                      setScreeningListFilter({ bed: target.value })
+                  <Select
+                    mode="tags"
+                    tokenSeparators={[","]}
+                    className={filter.bedList?.length ? "warning" : null}
+                    value={filter.bedList}
+                    onChange={(value) =>
+                      setScreeningListFilter({ bedList: value })
                     }
-                  ></Input>
+                    allowClear
+                    notFoundContent="Digite o leito e pressione enter. Mais de um leito pode ser informado."
+                  />
                 </div>
               </div>
             </div>
+
+            {FeatureService.has(Feature.PRIORITIZATION_FIELD_SPECIALTY) && (
+              <div className="form-row">
+                <div className="form-row">
+                  <div className="form-label">
+                    <label>Especialidades:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      mode="tags"
+                      tokenSeparators={[","]}
+                      className={
+                        filter.specialtyList?.length ? "warning" : null
+                      }
+                      value={filter.specialtyList}
+                      onChange={(value) =>
+                        setScreeningListFilter({ specialtyList: value })
+                      }
+                      allowClear
+                      notFoundContent="Digite a especialidade e pressione enter. Mais de uma especialidade pode ser informada."
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="form-row">
               <div className="form-row">

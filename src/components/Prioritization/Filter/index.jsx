@@ -28,6 +28,7 @@ import {
   trackPrescriptionPrioritizationAction,
   TrackedPrescriptionPrioritizationAction,
 } from "src/utils/tracker";
+import notification from "components/notification";
 
 import { Box } from "./Filter.style";
 import { SearchBox, FilterCard } from "components/AdvancedFilter/index.style";
@@ -109,6 +110,8 @@ export default function Filter({
         pendingInterventions: filter.pendingInterventions,
         tags: filter.tags,
         protocols: filter.protocols,
+        bedList: filter.bedList,
+        specialtyList: filter.specialtyList,
         hasClinicalNotes: filter.hasClinicalNotes,
         hasConciliation:
           prioritizationType === "patient" || prioritizationType === "cards"
@@ -178,6 +181,8 @@ export default function Filter({
       filter.tags,
       filter.protocols,
       filter.hasClinicalNotes,
+      filter.bedList,
+      filter.specialtyList,
       prioritizationType,
       date,
     ],
@@ -212,6 +217,14 @@ export default function Filter({
   }, [location.pathname]); // eslint-disable-line
 
   const loadFilter = (filterData) => {
+    if (filterData.bed) {
+      notification.warning({
+        message:
+          "O filtro de 'Leito' foi atualizado e agora permite selecionar múltiplos itens. Como este filtro salvo utiliza o formato antigo, por favor, remova-o e configure-o novamente para utilizar a nova Lista de Leitos.",
+        duration: 15,
+      });
+    }
+
     fetchPrescriptionsList(
       getParams({ ...filterData, idDept: filterData.idDepartment }),
     );
@@ -276,6 +289,8 @@ export default function Filter({
       tags: [],
       protocols: [],
       hasClinicalNotes: null,
+      bedList: [],
+      specialtyList: [],
     });
     setDate([dayjs(), null]);
 

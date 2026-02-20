@@ -27,7 +27,7 @@ function MemoryFeatures() {
     dispatch(
       fetchMemory({
         kinds: KINDS,
-      })
+      }),
     );
 
     return () => {
