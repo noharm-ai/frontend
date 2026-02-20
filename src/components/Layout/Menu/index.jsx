@@ -319,6 +319,7 @@ export default function Menu({ segments }) {
           label: "Relatórios Customizados",
           icon: <PieChartOutlined />,
           id: "gtm-lnk-relatorios-custom",
+          permission: [Permission.READ_CUSTOM_REPORTS],
         },
         {
           key: "/admin/segmentos",
