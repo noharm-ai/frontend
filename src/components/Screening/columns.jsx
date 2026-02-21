@@ -37,6 +37,7 @@ import {
 } from "src/utils/tracker";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
+import { formatNumber } from "src/utils/number";
 
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
@@ -737,6 +738,32 @@ export const expandedRowRender = (bag) => (record) => {
           <Descriptions.Item label="Dose / Kg / Dia" span={3}>
             {record.doseWeightDay}
           </Descriptions.Item>
+        )}
+        {bag.permissionService.has(Permission.MAINTAINER) && record.auc && (
+          <>
+            {record.auc.auc_cg && (
+              <Descriptions.Item label="AUC calculada (CG)" span={3}>
+                {formatNumber(record.auc.auc_cg, 2)} mg/mL * min
+              </Descriptions.Item>
+            )}
+            {record.auc.missing_cg && (
+              <Descriptions.Item label="AUC calculada (CG)" span={3}>
+                Faltam dados para calcular a AUC:{" "}
+                {bag.t(`aucMissingData.${record.auc.missing_cg}`)}
+              </Descriptions.Item>
+            )}
+            {record.auc.auc_ckd && (
+              <Descriptions.Item label="AUC calculada (CKD21)" span={3}>
+                {formatNumber(record.auc.auc_ckd, 2)} mg/mL * min
+              </Descriptions.Item>
+            )}
+            {record.auc.missing_ckd && (
+              <Descriptions.Item label="AUC calculada (CKD21)" span={3}>
+                Faltam dados para calcular a AUC:{" "}
+                {bag.t(`aucMissingData.${record.auc.missing_ckd}`)}
+              </Descriptions.Item>
+            )}
+          </>
         )}
         {record.doseBodySurface && (
           <Descriptions.Item

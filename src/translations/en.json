@@ -985,5 +985,15 @@
     "x_studio_responsavel_integracao": "Responsável integração",
     "x_studio_schema": "Schema",
     "x_studio_schema_unificado": "Schema unificado"
+  },
+
+  "aucMissingData": {
+    "measure_unit": "Undefined unit of measure",
+    "exams": "Does not have the exam in the last 5 days",
+    "weight_conversion": "Weight-based dose converted to mg (future implementation)",
+    "dose": "It was not possible to calculate the dose in mg",
+    "no_cg_exam": "CG exam not found (last 5 days)",
+    "no_ckd21_exam": "CKD21 exam not found (last 5 days)",
+    "weight_height": "It was not possible to calculate the body surface area (weight/height not found)"
   }
 }

@@ -992,5 +992,15 @@
     "x_studio_responsavel_integracao": "Responsável integração",
     "x_studio_schema": "Schema",
     "x_studio_schema_unificado": "Schema unificado"
+  },
+
+  "aucMissingData": {
+    "measure_unit": "Unidade de medida indefinida",
+    "exams": "Não possui o exame nos últimos 5 dias",
+    "weight_conversion": "Dose por peso convertida para mg (implementação futura)",
+    "dose": "Não foi possível calcular a dose em mg",
+    "no_cg_exam": "Exame CG não encontrado (últimos 5 dias)",
+    "no_ckd21_exam": "Exame CKD21 não encontrado (últimos 5 dias)",
+    "weight_height": "Não foi possível calcular a superfície corporal (peso/altura não encontrados)"
   }
 }
