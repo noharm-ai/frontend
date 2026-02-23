@@ -97,6 +97,11 @@ export default function SecondaryFilters() {
                     optionType="button"
                   />
                 </div>
+                <div
+                  style={{ opacity: 0.6, fontSize: "12px", marginTop: "5px" }}
+                >
+                  *Filtro disponível somente em períodos a partir de DEZ/25.
+                </div>
               </div>
             </div>
 

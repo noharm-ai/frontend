@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { FloatButton, Spin } from "antd";
 import {
@@ -10,6 +11,7 @@ import {
   QuestionCircleOutlined,
   HistoryOutlined,
   SyncOutlined,
+  LineChartOutlined,
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
@@ -39,6 +41,7 @@ import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert"
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const isFetching =
     useSelector((state) => state.reportsArea.prescription.status) === "loading";
@@ -168,6 +171,7 @@ export default function Filter({ printRef }) {
               loadArchive={loadArchive}
               open={historyModalOpen}
               setOpen={setHistoryModal}
+              anualreportLink="/relatorios/consolidado/prescricoes"
             />
           </>
         )}
@@ -194,6 +198,14 @@ export default function Filter({ printRef }) {
             }
             onClick={exportCSV}
             tooltip={{ title: "Exportar CSV", placement: "left" }}
+          />
+          <FloatButton
+            icon={<LineChartOutlined />}
+            onClick={() => navigate("/relatorios/consolidado/prescricoes")}
+            tooltip={{
+              title: "Abrir relatório anual",
+              placement: "left",
+            }}
           />
           <FloatButton
             icon={<HistoryOutlined />}

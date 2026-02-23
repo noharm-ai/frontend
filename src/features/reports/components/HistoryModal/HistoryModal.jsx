@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { HistoryOutlined, DownloadOutlined } from "@ant-design/icons";
 import { List, Avatar } from "antd";
@@ -7,6 +8,7 @@ import { List, Avatar } from "antd";
 import Heading from "components/Heading";
 import Modal from "components/Modal";
 import Button from "components/Button";
+import Alert from "components/Alert";
 import { formatDate } from "utils/date";
 
 export default function HistoryModal({
@@ -14,8 +16,10 @@ export default function HistoryModal({
   loadArchive,
   open,
   setOpen,
+  anualreportLink = null,
 }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const load = (filename) => {
     loadArchive(filename);
@@ -44,6 +48,7 @@ export default function HistoryModal({
 
       <List
         itemLayout="horizontal"
+        pagination={{ pageSize: 5, size: "small" }}
         dataSource={availableReports || []}
         renderItem={(item) => (
           <List.Item
@@ -72,6 +77,28 @@ export default function HistoryModal({
           </List.Item>
         )}
       />
+      {anualreportLink && (
+        <Alert
+          type="info"
+          showIcon
+          style={{ marginTop: "16px" }}
+          description={
+            <>
+              <strong>Relatório Anual disponível</strong>
+              <br />
+              Para visualizar períodos mais longos com dados agregados, acesse o
+              Relatório Anual.{" "}
+              <Button
+                type="link"
+                style={{ padding: 0 }}
+                onClick={() => navigate(anualreportLink)}
+              >
+                Acessar Relatório Anual
+              </Button>
+            </>
+          }
+        />
+      )}
       <p style={{ opacity: 0.7, fontSize: "12px" }}>
         * Cada arquivo histórico possui 2 meses de dados.
         <br />* Períodos anteriores à ativação do relatório não estão

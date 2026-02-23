@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
-import { Row, Col, Space, Spin, FloatButton } from "antd";
+import { Row, Col, Space, Spin, FloatButton, Alert } from "antd";
 import {
   UnorderedListOutlined,
   QuestionOutlined,
@@ -200,6 +200,27 @@ export default function PatientDayConsolidatedReport() {
           onSearch={onSearch}
           loading={isLoading}
           initialValues={initialValues}
+        />
+
+        <Alert
+          title={<strong>Relatório Anual</strong>}
+          description={
+            <>
+              Este relatório consolida o volume de{" "}
+              <strong>Pacientes-Dia</strong> para análises de longo prazo, com
+              atualização mensal (todo dia 1º). <br />
+              *Para detalhes individuais, utilize o{" "}
+              <strong>Relatório de Pacientes-Dia</strong>.<br />
+              <Button
+                type="link"
+                style={{ padding: 0 }}
+                onClick={() => navigate("/relatorios/pacientes-dia")}
+              >
+                Acessar Relatório de Pacientes-Dia
+              </Button>
+            </>
+          }
+          showIcon
         />
 
         <div ref={printRef}>
