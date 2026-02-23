@@ -27,7 +27,7 @@ export function SwitchSchema() {
   const dispatch = useAppDispatch();
   const status = useAppSelector((state) => state.switchSchema.status);
   const switchStatus = useAppSelector(
-    (state) => state.switchSchema.switch.status
+    (state) => state.switchSchema.switch.status,
   );
   const data = useAppSelector((state) => state.switchSchema.data);
   const iptRef = useRef<any>(null);
@@ -95,6 +95,20 @@ export function SwitchSchema() {
               />
             </div>
           </div>
+
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>Ocultar nomes:</label>
+            </div>
+            <div className="form-input">
+              <Switch
+                onChange={(value) => {
+                  setFieldValue("hideNames", value);
+                }}
+                checked={values.hideNames}
+              />
+            </div>
+          </div>
         </>
       ),
     },
@@ -104,6 +118,10 @@ export function SwitchSchema() {
     const features = [...params.extraFeatures];
     if (!params.getname) {
       features.push("DISABLE_GETNAME");
+    }
+
+    if (params.hideNames) {
+      features.push("HIDE_NAMES");
     }
 
     const payload = {
