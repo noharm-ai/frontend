@@ -152,6 +152,36 @@ const columns = (indicator: string): TableProps<any>["columns"] => {
     });
   }
 
+  if (indicator === "SEVEN_GESTATIONAL_APPOINTMENTS") {
+    cols.push({
+      title: "Idade Gestacional",
+      align: "center",
+      render: (_: any, record: any) => {
+        return record.gestational_age;
+      },
+    });
+
+    cols.push({
+      title: "Data da Última Consulta",
+      align: "center",
+      render: (_: any, record: any) => {
+        return formatDate(record.seven_gestational_appointments_date);
+      },
+    });
+
+    cols.push({
+      title: "Situação",
+      align: "center",
+      render: (_: any, record: any) => {
+        if (record.has_seven_gestational_appointments) {
+          return <Tag color="green">Concluído</Tag>;
+        }
+
+        return <Tag color="warning">Pendente</Tag>;
+      },
+    });
+  }
+
   return cols;
 };
 
