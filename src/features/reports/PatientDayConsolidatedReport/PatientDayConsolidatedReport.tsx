@@ -41,6 +41,7 @@ import {
   filtersToDescription,
 } from "src/utils/report";
 import notification from "components/notification";
+import { trackReport, TrackedReport } from "src/utils/tracker";
 
 export default function PatientDayConsolidatedReport() {
   const navigate = useNavigate();
@@ -164,6 +165,11 @@ export default function PatientDayConsolidatedReport() {
       )
     : 0;
 
+  const openMonthlyReport = () => {
+    trackReport(TrackedReport.PATIENT_DAY);
+    navigate("/relatorios/pacientes-dia");
+  };
+
   return (
     <>
       <PageHeader>
@@ -214,7 +220,7 @@ export default function PatientDayConsolidatedReport() {
               <Button
                 type="link"
                 style={{ padding: 0 }}
-                onClick={() => navigate("/relatorios/pacientes-dia")}
+                onClick={() => openMonthlyReport()}
               >
                 Acessar Relatório de Pacientes-Dia
               </Button>

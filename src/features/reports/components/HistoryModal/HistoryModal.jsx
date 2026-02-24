@@ -1,6 +1,5 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { HistoryOutlined, DownloadOutlined } from "@ant-design/icons";
 import { List, Avatar } from "antd";
@@ -16,10 +15,9 @@ export default function HistoryModal({
   loadArchive,
   open,
   setOpen,
-  anualreportLink = null,
+  onOpenYearlyReport = null,
 }) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const load = (filename) => {
     loadArchive(filename);
@@ -40,6 +38,29 @@ export default function HistoryModal({
       >
         Histórico
       </Heading>
+
+      {onOpenYearlyReport && (
+        <Alert
+          type="info"
+          showIcon
+          style={{ marginTop: "16px" }}
+          description={
+            <>
+              <strong>Relatório Anual disponível</strong>
+              <br />
+              Para visualizar períodos mais longos com dados agregados, acesse o
+              Relatório Anual.{" "}
+              <Button
+                type="link"
+                style={{ padding: 0 }}
+                onClick={() => onOpenYearlyReport()}
+              >
+                Acessar Relatório Anual
+              </Button>
+            </>
+          }
+        />
+      )}
 
       <p>
         Através desta funcionalidade, você possui acesso aos relatórios de
@@ -77,28 +98,7 @@ export default function HistoryModal({
           </List.Item>
         )}
       />
-      {anualreportLink && (
-        <Alert
-          type="info"
-          showIcon
-          style={{ marginTop: "16px" }}
-          description={
-            <>
-              <strong>Relatório Anual disponível</strong>
-              <br />
-              Para visualizar períodos mais longos com dados agregados, acesse o
-              Relatório Anual.{" "}
-              <Button
-                type="link"
-                style={{ padding: 0 }}
-                onClick={() => navigate(anualreportLink)}
-              >
-                Acessar Relatório Anual
-              </Button>
-            </>
-          }
-        />
-      )}
+
       <p style={{ opacity: 0.7, fontSize: "12px" }}>
         * Cada arquivo histórico possui 2 meses de dados.
         <br />* Períodos anteriores à ativação do relatório não estão

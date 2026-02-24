@@ -38,6 +38,7 @@ import {
 } from "utils/report";
 import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
 import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
+import { trackReport, TrackedReport } from "src/utils/tracker";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
@@ -144,6 +145,11 @@ export default function Filter({ printRef }) {
     }, 500);
   };
 
+  const openYearlyReport = () => {
+    trackReport(TrackedReport.PRESCRIPTIONS_YEARLY);
+    navigate("/relatorios/consolidado/prescricoes");
+  };
+
   return (
     <React.Fragment>
       <Spin spinning={isFetching}>
@@ -172,6 +178,7 @@ export default function Filter({ printRef }) {
               open={historyModalOpen}
               setOpen={setHistoryModal}
               anualreportLink="/relatorios/consolidado/prescricoes"
+              onOpenYearlyReport={openYearlyReport}
             />
           </>
         )}

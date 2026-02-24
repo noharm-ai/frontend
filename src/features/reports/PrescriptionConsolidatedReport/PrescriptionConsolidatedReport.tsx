@@ -41,6 +41,7 @@ import {
   filtersToDescription,
 } from "src/utils/report";
 import notification from "components/notification";
+import { trackReport, TrackedReport } from "src/utils/tracker";
 
 export default function PrescriptionConsolidatedReport() {
   const navigate = useNavigate();
@@ -175,6 +176,11 @@ export default function PrescriptionConsolidatedReport() {
       )
     : 0;
 
+  const openMonthlyReport = () => {
+    trackReport(TrackedReport.PRESCRIPTIONS);
+    navigate("/relatorios/prescricoes");
+  };
+
   return (
     <>
       <PageHeader>
@@ -225,7 +231,7 @@ export default function PrescriptionConsolidatedReport() {
               <Button
                 type="link"
                 style={{ padding: 0 }}
-                onClick={() => navigate("/relatorios/prescricoes")}
+                onClick={() => openMonthlyReport()}
               >
                 Acessar Relatório de Prescrições
               </Button>
