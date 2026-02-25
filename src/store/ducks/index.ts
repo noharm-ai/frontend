@@ -72,6 +72,7 @@ import reportPrescriptionHistoryReport from "features/reports/PrescriptionHistor
 import reportAlertListReport from "features/reports/AlertListReport/AlertListReportSlice";
 import reportExamsRawSearchReport from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
 import reportPatientObservationReport from "features/reports/PatientObservationReport/PatientObservationReportSlice";
+import reportCheckedIndexReport from "features/reports/CheckedIndexReport/CheckedIndexReportSlice";
 import reportIntegrationNifiLintReport from "features/reports/IntegrationNifiLintReport/IntegrationNifiLintReportSlice";
 
 const adminReducers = combineReducers({
@@ -118,6 +119,7 @@ const reportReducers = combineReducers({
   prescriptionHistory: reportPrescriptionHistoryReport,
   examsRawSearch: reportExamsRawSearchReport,
   patientObservation: reportPatientObservationReport,
+  checkedIndex: reportCheckedIndexReport,
   alertList: reportAlertListReport,
   reports: reports,
   integrationNifiLint: reportIntegrationNifiLintReport,

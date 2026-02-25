@@ -13,6 +13,7 @@ import {
   StopOutlined,
   CheckSquareOutlined,
   BorderOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import { Button as AntButton, Space } from "antd";
 
@@ -29,6 +30,7 @@ import InterventionStatus from "models/InterventionStatus";
 import { SelectMultiline } from "components/Inputs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import { setCheckedIndexReport } from "features/prescription/PrescriptionSlice";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 import { PrescriptionSchedule } from "./Table/PrescriptionSchedule";
 import {
@@ -975,6 +977,22 @@ const drug = (bag, addkey, title) => ({
           <br />
           {record.drug} <DrugTags drug={record} t={bag.t} />
           {!record.idSubstance && substanceWarning}
+          <div style={{ marginTop: "8px" }}>
+            <AntButton
+              icon={<HistoryOutlined />}
+              size="small"
+              onClick={() =>
+                bag.dispatch(
+                  setCheckedIndexReport({
+                    idPrescriptionDrug: record.idPrescriptionDrug,
+                    data: record,
+                  }),
+                )
+              }
+            >
+              Histórico de checagem
+            </AntButton>
+          </div>
         </>
       );
     } else {
@@ -982,17 +1000,29 @@ const drug = (bag, addkey, title) => ({
         <>
           {record.drug} <DrugTags drug={record} t={bag.t} />
           {!record.idSubstance && substanceWarning}
+          <div style={{ marginTop: "8px" }}>
+            <AntButton
+              icon={<HistoryOutlined />}
+              size="small"
+              onClick={() =>
+                bag.dispatch(
+                  setCheckedIndexReport({
+                    idPrescriptionDrug: record.idPrescriptionDrug,
+                    data: record,
+                  }),
+                )
+              }
+            >
+              Histórico de checagem
+            </AntButton>
+          </div>
         </>
       );
     }
 
     return (
       <>
-        <Popover
-          content={content}
-          title="Ver medicamento"
-          mouseEnterDelay={0.3}
-        >
+        <Popover content={content} mouseEnterDelay={0.3}>
           <DrugLink
             href={href}
             target="_blank"
