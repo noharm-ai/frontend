@@ -43,6 +43,7 @@ export function FieldIcd({ value, onChange }: IFieldIcdProps) {
       loading={status === "loading"}
       placeholder="Selecione os CIDs"
       onClick={fetchIcds}
+      maxTagCount="responsive"
       notFoundContent={status === "loading" ? <Spin size="small" /> : <Empty />}
     >
       {options.map((option: any) => (
