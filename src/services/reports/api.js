@@ -50,6 +50,15 @@ api.live.getPatientObservationHistoryReport = (params = {}) =>
     ...setHeaders(),
   });
 
+api.live.getCheckedIndexReport = (params = {}) =>
+  instance.get(
+    `/prescriptions/drug/${params.idPrescriptionDrug}/check-history`,
+    {
+      params: { ...params, idPrescriptionDrug: undefined },
+      ...setHeaders(),
+    },
+  );
+
 api.live.getIntegrationNifiLintReport = (params = {}) =>
   instance.get(`/reports/integration/nifilint`, {
     params,
@@ -92,5 +101,8 @@ api.regulation.getIndicatorsSummary = () =>
 api.consolidated = {};
 api.consolidated.getPatientDayConsolidatedReport = (params = {}) =>
   instance.post(`/reports/consolidated/patient-day`, params, setHeaders());
+
+api.consolidated.getPrescriptionConsolidatedReport = (params = {}) =>
+  instance.post(`/reports/consolidated/prescription`, params, setHeaders());
 
 export default api;

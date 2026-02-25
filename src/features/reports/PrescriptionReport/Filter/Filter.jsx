@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { FloatButton, Spin } from "antd";
 import {
@@ -10,6 +11,7 @@ import {
   QuestionCircleOutlined,
   HistoryOutlined,
   SyncOutlined,
+  LineChartOutlined,
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
@@ -36,9 +38,11 @@ import {
 } from "utils/report";
 import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
 import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
+import { trackReport, TrackedReport } from "src/utils/tracker";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const isFetching =
     useSelector((state) => state.reportsArea.prescription.status) === "loading";
@@ -141,6 +145,11 @@ export default function Filter({ printRef }) {
     }, 500);
   };
 
+  const openYearlyReport = () => {
+    trackReport(TrackedReport.PRESCRIPTIONS_YEARLY);
+    navigate("/relatorios/consolidado/prescricoes");
+  };
+
   return (
     <React.Fragment>
       <Spin spinning={isFetching}>
@@ -168,6 +177,8 @@ export default function Filter({ printRef }) {
               loadArchive={loadArchive}
               open={historyModalOpen}
               setOpen={setHistoryModal}
+              anualreportLink="/relatorios/consolidado/prescricoes"
+              onOpenYearlyReport={openYearlyReport}
             />
           </>
         )}
@@ -194,6 +205,14 @@ export default function Filter({ printRef }) {
             }
             onClick={exportCSV}
             tooltip={{ title: "Exportar CSV", placement: "left" }}
+          />
+          <FloatButton
+            icon={<LineChartOutlined />}
+            onClick={() => navigate("/relatorios/consolidado/prescricoes")}
+            tooltip={{
+              title: "Abrir relatório anual",
+              placement: "left",
+            }}
           />
           <FloatButton
             icon={<HistoryOutlined />}

@@ -20,6 +20,7 @@
     <meta http-equiv="Expires" content="0" />
     <meta name="robots" content="noindex,nofollow" />
     <meta name="google" content="notranslate" />
+    <meta name="app-version" content="%VITE_APP_VERSION%" />
     <link rel="apple-touch-icon" href="logo192.png" />
     <link rel="manifest" href="/manifest.json" />
 
@@ -28,80 +29,7 @@
     <title>%VITE_APP_SITE_TITLE%</title>
   </head>
   <body>
-    <script>
-      function isLocalStorageEnabled() {
-        try {
-          const testKey = "__test_localStorage__";
-          localStorage.setItem(testKey, testKey);
-          localStorage.removeItem(testKey);
-          return true;
-        } catch (e) {
-          return false;
-        }
-      }
-
-      (function (n, i, v, r, s, c, u, x, z) {
-        x = window.AwsRumClient = { q: [], n: n, i: i, v: v, r: r, c: c, u: u };
-        window[n] = function (c, p) {
-          x.q.push({ c: c, p: p });
-        };
-        z = document.createElement("script");
-        z.async = true;
-        z.src = s;
-        document.head.insertBefore(
-          z,
-          document.getElementsByTagName("script")[0]
-        );
-      })(
-        "cwr",
-        "76733ed1-1445-4f80-8e41-2f824a752c39",
-        "1.0.0",
-        "sa-east-1",
-        "https://client.rum.us-east-1.amazonaws.com/1.18.0/cwr.js",
-        {
-          sessionSampleRate: 1,
-          identityPoolId: "sa-east-1:45bad581-042d-4680-91e2-972f4074372d",
-          endpoint: "https://dataplane.rum.sa-east-1.amazonaws.com",
-          telemetries: [
-            [
-              "errors",
-              {
-                ignore: (errorEvent) => {
-                  if (
-                    errorEvent &&
-                    errorEvent.reason &&
-                    (/^Request failed with status code 401/.test(
-                      errorEvent.reason.message
-                    ) ||
-                      /^Network Error/.test(errorEvent.reason.message))
-                  ) {
-                    return true;
-                  }
-
-                  return (
-                    errorEvent &&
-                    errorEvent.message &&
-                    (/^Request failed with status code 401/.test(
-                      errorEvent.message
-                    ) ||
-                      /^Network Error/.test(errorEvent.message))
-                  );
-                },
-              },
-            ],
-            "http",
-          ],
-          allowCookies: true,
-          enableXRay: false,
-          sessionAttributes: {
-            applicationVersion: "%VITE_APP_VERSION%",
-            schema: isLocalStorageEnabled()
-              ? localStorage.getItem("schema") || "indefinido"
-              : "inacessivel",
-          },
-        }
-      );
-    </script>
+    <script src="/rum-init.js"></script>
 
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="update-browser" style="display: none"></div>
@@ -109,45 +37,7 @@
     <div id="root"></div>
 
     <script type="module" src="/src/index.jsx"></script>
-    <script>
-      window.addEventListener("load", function () {
-        if (!window.UAParser) {
-          return;
-        }
-
-        var uap = new window.UAParser();
-        var uapResult = uap.getResult();
-        console.info(uapResult);
-        var elm = document.getElementById("update-browser");
-        var close = document.getElementById("update-browser-close");
-
-        if (!close || !elm) {
-          return;
-        }
-
-        close.addEventListener("click", function () {
-          elm.style.display = "none";
-          close.style.display = "none";
-        });
-
-        switch (uapResult.browser.name) {
-          case "Chrome":
-            if (uapResult.browser.major <= 88) {
-              elm.innerHTML =
-                "<div><strong>Por favor, atualize a versão do seu navegador.</strong> </div><div>A versão que você está utilizando está desatualizada e não é compatível com a NoHarm.</div>";
-              elm.style.display = "flex";
-              close.style.display = "block";
-            }
-            break;
-          case "IE":
-            elm.innerHTML =
-              "<div>O navegador <strong>Internet Explorer</strong> não é suportado.</div> <div>Por favor, utilize um dos seguintes navegadores: Chrome, Firefox, Edge ou Safari.</div>";
-            elm.style.display = "flex";
-            close.style.display = "block";
-            break;
-        }
-      });
-    </script>
+    <script src="/browser-check.js" defer></script>
     <style>
       #update-browser {
         position: absolute;

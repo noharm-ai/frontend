@@ -33,6 +33,7 @@ const initialState = {
     status: "idle",
     list: [],
   },
+  checkedIndexReport: null,
 };
 
 export const getSingleClinicalNotes = createAsyncThunk(
@@ -45,7 +46,7 @@ export const getSingleClinicalNotes = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const startEvaluation = createAsyncThunk(
@@ -58,7 +59,7 @@ export const startEvaluation = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const fastCheckPrescription = createAsyncThunk(
@@ -76,7 +77,7 @@ export const fastCheckPrescription = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const createConciliation = createAsyncThunk(
@@ -89,7 +90,7 @@ export const createConciliation = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const getConciliationList = createAsyncThunk(
@@ -102,7 +103,7 @@ export const getConciliationList = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const copyConciliation = createAsyncThunk(
@@ -115,7 +116,7 @@ export const copyConciliation = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 const prescriptionSlice = createSlice({
@@ -159,6 +160,9 @@ const prescriptionSlice = createSlice({
     },
     setChooseConciliationModal(state, action) {
       state.chooseConciliation.admissionNumber = action.payload;
+    },
+    setCheckedIndexReport(state, action) {
+      state.checkedIndexReport = action.payload;
     },
   },
   extraReducers(builder) {
@@ -207,6 +211,7 @@ export const {
   selectSingleClinicalNotes,
   setMultipleCheckList,
   setChooseConciliationModal,
+  setCheckedIndexReport,
 } = prescriptionSlice.actions;
 
 export default prescriptionSlice.reducer;

@@ -1,7 +1,7 @@
 {
   "name": "noharm-app",
   "private": true,
-  "version": "6.0.6",
+  "version": "6.0.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -30,7 +30,6 @@
     "humanize-duration": "^3.32.0",
     "ifvisible.js": "^1.0.6",
     "lodash": "^4.17.21",
-    "lodash.get": "^4.4.2",
     "lodash.intersection": "^4.4.0",
     "lodash.isempty": "^4.4.0",
     "lodash.uniq": "^4.5.0",

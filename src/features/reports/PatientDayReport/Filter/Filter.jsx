@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { FloatButton, Spin } from "antd";
 import {
@@ -10,6 +11,7 @@ import {
   QuestionCircleOutlined,
   HistoryOutlined,
   SyncOutlined,
+  LineChartOutlined,
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
@@ -36,29 +38,31 @@ import {
 } from "utils/report";
 import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
 import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
+import { trackReport, TrackedReport } from "src/utils/tracker";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isFetching =
     useSelector((state) => state.reportsArea.patientDay.status) === "loading";
   const currentFilters = useSelector(
-    (state) => state.reportsArea.patientDay.filters
+    (state) => state.reportsArea.patientDay.filters,
   );
   const datasource = useSelector((state) => state.reportsArea.patientDay.list);
   const reportDate = useSelector((state) => state.reportsArea.patientDay.date);
   const reportUpdatedAt = useSelector(
-    (state) => state.reportsArea.patientDay.updatedAt
+    (state) => state.reportsArea.patientDay.updatedAt,
   );
   const userId = useSelector((state) => state.user.account.userId);
   const activeReport = useSelector(
-    (state) => state.reportsArea.patientDay.activeReport
+    (state) => state.reportsArea.patientDay.activeReport,
   );
   const historyModalOpen = useSelector(
-    (state) => state.reportsArea.patientDay.historyModal
+    (state) => state.reportsArea.patientDay.historyModal,
   );
   const availableReports = useSelector(
-    (state) => state.reportsArea.patientDay.availableReports
+    (state) => state.reportsArea.patientDay.availableReports,
   );
   const [exporting, setExporting] = useState(false);
   const handlePrint = useReactToPrint({
@@ -94,7 +98,7 @@ export default function Filter({ printRef }) {
             dayjs(header.date).subtract(1, "day"),
           ],
         },
-        body
+        body,
       );
     },
   });
@@ -135,6 +139,11 @@ export default function Filter({ printRef }) {
     }, 500);
   };
 
+  const openYearlyReport = () => {
+    trackReport(TrackedReport.PATIENT_DAY_YEARLY);
+    navigate("/relatorios/consolidado/pacientes-dia");
+  };
+
   return (
     <React.Fragment>
       <Spin spinning={isFetching}>
@@ -160,6 +169,8 @@ export default function Filter({ printRef }) {
               loadArchive={loadArchive}
               open={historyModalOpen}
               setOpen={setHistoryModal}
+              anualreportLink="/relatorios/consolidado/pacientes-dia"
+              onOpenYearlyReport={openYearlyReport}
             />
           </>
         )}
@@ -190,6 +201,14 @@ export default function Filter({ printRef }) {
             onClick={exportCSV}
             tooltip={{
               title: "Exportar CSV",
+              placement: "left",
+            }}
+          />
+          <FloatButton
+            icon={<LineChartOutlined />}
+            onClick={() => openYearlyReport()}
+            tooltip={{
+              title: "Abrir relatório anual",
               placement: "left",
             }}
           />

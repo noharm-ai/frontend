@@ -86,7 +86,7 @@ export function DownloadModal() {
   const executeProcessReport = () => {
     if (
       data.processed_at &&
-      !PermissionService().has(Permission.ADMIN_REPORTS)
+      !PermissionService().has(Permission.READ_CUSTOM_REPORTS)
     ) {
       const diff = dayjs().diff(dayjs(data.processed_at), "hours");
 

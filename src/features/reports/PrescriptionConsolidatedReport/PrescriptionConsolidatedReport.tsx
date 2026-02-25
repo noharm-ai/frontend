@@ -29,7 +29,7 @@ import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import {
   fetchReportData,
   setHelpModal,
-} from "./PatientDayConsolidatedReportSlice";
+} from "./PrescriptionConsolidatedReportSlice";
 import Filter from "./Filter/Filter";
 import { FeatureService } from "services/FeatureService";
 import DefaultModal from "components/Modal";
@@ -43,15 +43,15 @@ import {
 import notification from "components/notification";
 import { trackReport, TrackedReport } from "src/utils/tracker";
 
-export default function PatientDayConsolidatedReport() {
+export default function PrescriptionConsolidatedReport() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const printRef = useRef(null);
   const reportData = useSelector(
-    (state: any) => state.reportsArea.patientDayConsolidated.filtered.result,
+    (state: any) => state.reportsArea.prescriptionConsolidated.filtered.result,
   );
   const status = useSelector(
-    (state: any) => state.reportsArea.patientDayConsolidated.filtered.status,
+    (state: any) => state.reportsArea.prescriptionConsolidated.filtered.status,
   );
   const [filters, setFilters] = useState<any>({});
   const isLoading = status === "loading";
@@ -65,6 +65,8 @@ export default function PatientDayConsolidatedReport() {
     global_score_end: null,
     dateRange: [dayjs().startOf("year"), dayjs().endOf("year")],
     weekdays_only: false,
+    consider_empty_prescriptions: false,
+    remove_prescription_at_discharge_date: "do_not_remove",
   };
 
   const filtersConfig = {
@@ -87,6 +89,15 @@ export default function PatientDayConsolidatedReport() {
     weekdays_only: {
       label: "Somente dias de semana",
       type: "bool",
+    },
+    consider_empty_prescriptions: {
+      label:
+        "Contabilizar prescrições que possuam somente Dietas/Recomendações",
+      type: "bool",
+    },
+    remove_prescription_at_discharge_date: {
+      label: "Remover prescrições no dia de alta",
+      type: "list",
     },
   };
 
@@ -166,8 +177,8 @@ export default function PatientDayConsolidatedReport() {
     : 0;
 
   const openMonthlyReport = () => {
-    trackReport(TrackedReport.PATIENT_DAY);
-    navigate("/relatorios/pacientes-dia");
+    trackReport(TrackedReport.PRESCRIPTIONS);
+    navigate("/relatorios/prescricoes");
   };
 
   return (
@@ -175,7 +186,7 @@ export default function PatientDayConsolidatedReport() {
       <PageHeader>
         <div>
           <h1 className="page-header-title">
-            Relatório: Pacientes-Dia Anual
+            Relatório: Prescrições Anual
             <Tooltip title="Informações sobre este relatório">
               <Button
                 type="primary"
@@ -187,7 +198,7 @@ export default function PatientDayConsolidatedReport() {
             </Tooltip>
           </h1>
           <div className="page-header-legend">
-            Métricas consolidadas de Pacientes-Dia.
+            Métricas consolidadas de Prescrições.
           </div>
         </div>
         <div className="page-header-actions">
@@ -212,17 +223,17 @@ export default function PatientDayConsolidatedReport() {
           title={<strong>Relatório Anual</strong>}
           description={
             <>
-              Este relatório consolida o volume de{" "}
-              <strong>Pacientes-Dia</strong> para análises de longo prazo, com
-              atualização mensal (todo dia 1º). <br />
+              Este relatório consolida o volume de <strong>Prescrições</strong>{" "}
+              para análises de longo prazo, com atualização mensal (todo dia
+              1º). <br />
               *Para detalhes individuais, utilize o{" "}
-              <strong>Relatório de Pacientes-Dia</strong>.<br />
+              <strong>Relatório de Prescrições</strong>.<br />
               <Button
                 type="link"
                 style={{ padding: 0 }}
                 onClick={() => openMonthlyReport()}
               >
-                Acessar Relatório de Pacientes-Dia
+                Acessar Relatório de Prescrições
               </Button>
             </>
           }
@@ -231,7 +242,7 @@ export default function PatientDayConsolidatedReport() {
 
         <div ref={printRef}>
           <ReportHeader className="report-header">
-            <h1>Relatório: Pacientes-Dia Anual</h1>
+            <h1>Relatório: Prescrições Anual</h1>
             <div className="brand">
               <Brand />
             </div>
@@ -254,7 +265,7 @@ export default function PatientDayConsolidatedReport() {
               <Col xs={12} lg={8}>
                 <Spin spinning={isLoading}>
                   <StatsCard className={`blue `}>
-                    <div className="stats-title">Total de Pacientes-Dia</div>
+                    <div className="stats-title">Total de Prescrições</div>
                     <div className="stats-value">
                       {reportData?.totals?.total_prescriptions?.toLocaleString() ||
                         "-"}
@@ -265,7 +276,7 @@ export default function PatientDayConsolidatedReport() {
               <Col xs={12} lg={8}>
                 <Spin spinning={isLoading}>
                   <StatsCard className={`green `}>
-                    <div className="stats-title">Pacientes-Dia Checados</div>
+                    <div className="stats-title">Prescrições Checadas</div>
                     <div className="stats-value">
                       {reportData?.totals?.total_prescriptions_checked?.toLocaleString() ||
                         "-"}
@@ -276,9 +287,7 @@ export default function PatientDayConsolidatedReport() {
               <Col xs={12} lg={8}>
                 <Spin spinning={isLoading}>
                   <StatsCard className={`green `}>
-                    <div className="stats-title">
-                      Percentual de Pacientes-Dia
-                    </div>
+                    <div className="stats-title">Percentual de Prescrições</div>
                     <div className="stats-value">
                       {percentualPrescriptions?.toLocaleString() || "-"} %
                     </div>
@@ -286,12 +295,12 @@ export default function PatientDayConsolidatedReport() {
                 </Spin>
               </Col>
 
-              {FeatureService.hasCPOE() && (
+              {!FeatureService.hasCPOE() && (
                 <>
                   <Col xs={12} lg={8}>
                     <Spin spinning={isLoading}>
                       <StatsCard className={`blue `}>
-                        <div className="stats-title">Total de Itens-Dia</div>
+                        <div className="stats-title">Total de Itens</div>
                         <div className="stats-value">
                           {reportData?.totals?.total_itens?.toLocaleString() ||
                             "-"}
@@ -302,7 +311,7 @@ export default function PatientDayConsolidatedReport() {
                   <Col xs={12} lg={8}>
                     <Spin spinning={isLoading}>
                       <StatsCard className={`green `}>
-                        <div className="stats-title">Itens-Dia Checados</div>
+                        <div className="stats-title">Itens Checados</div>
                         <div className="stats-value">
                           {reportData?.totals?.total_itens_checked?.toLocaleString() ||
                             "-"}
@@ -313,9 +322,7 @@ export default function PatientDayConsolidatedReport() {
                   <Col xs={12} lg={8}>
                     <Spin spinning={isLoading}>
                       <StatsCard className={`green `}>
-                        <div className="stats-title">
-                          Percentual de Itens-Dia
-                        </div>
+                        <div className="stats-title">Percentual de Itens</div>
                         <div className="stats-value">
                           {percentualItens?.toLocaleString() || "-"} %
                         </div>
@@ -374,8 +381,8 @@ export default function PatientDayConsolidatedReport() {
             </Row>
             <div className="page-break"></div>
             <SectionHeader>
-              <h2>Pacientes-Dia</h2>
-              <div>Relação entre Pacientes-Dia e Pacientes-Dia Checados</div>
+              <h2>Prescrições</h2>
+              <div>Relação entre Prescrições e Prescrições Checadas</div>
             </SectionHeader>
             <Row gutter={[24, 24]}>
               <Col xs={24}>

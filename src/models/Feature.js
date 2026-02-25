@@ -25,11 +25,13 @@ export default class Feature {
   static PATIENT_DAY_OUTPATIENT_FLOW = "PATIENT_DAY_OUTPATIENT_FLOW";
   static IGNORE_NON_CPOE_SEGMENTS = "IGNORE_NON_CPOE_SEGMENTS";
   static PEC = "PEC";
+  static PRIORITIZATION_FIELD_SPECIALTY = "PRIORITIZATION_FIELD_SPECIALTY";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
   static DISABLE_CPOE = "DISABLE_CPOE";
   static STAGING_ACCESS = "STAGING_ACCESS";
+  static HIDE_NAMES = "HIDE_NAMES";
 
   static getFeatures(t) {
     return [
@@ -67,7 +69,7 @@ export default class Feature {
         id: Feature.LOCK_CHECKED_PRESCRIPTION,
         label: t(`features.${Feature.LOCK_CHECKED_PRESCRIPTION}`),
         description: t(
-          `featuresDescription.${Feature.LOCK_CHECKED_PRESCRIPTION}`
+          `featuresDescription.${Feature.LOCK_CHECKED_PRESCRIPTION}`,
         ),
       },
       {
@@ -79,14 +81,14 @@ export default class Feature {
         id: Feature.DISABLE_WHITELIST_GROUP,
         label: t(`features.${Feature.DISABLE_WHITELIST_GROUP}`),
         description: t(
-          `featuresDescription.${Feature.DISABLE_WHITELIST_GROUP}`
+          `featuresDescription.${Feature.DISABLE_WHITELIST_GROUP}`,
         ),
       },
       {
         id: Feature.CLINICAL_NOTES_LEGACY_FORMAT,
         label: t(`features.${Feature.CLINICAL_NOTES_LEGACY_FORMAT}`),
         description: t(
-          `featuresDescription.${Feature.CLINICAL_NOTES_LEGACY_FORMAT}`
+          `featuresDescription.${Feature.CLINICAL_NOTES_LEGACY_FORMAT}`,
         ),
       },
       {
@@ -173,6 +175,11 @@ export default class Feature {
         label: "PEC: identifica integração com o PEC",
         description:
           "Esta feature identifica integrações com o PEC (Prontuário Eletrônico do Cidadão). Sua ativação pode ser necessária para o funcionamento correto de certas funcionalidades relacionadas ao PEC.",
+      },
+      {
+        id: Feature.PRIORITIZATION_FIELD_SPECIALTY,
+        label: "Campo de priorizaçao: Especialidade",
+        description: "Habilita o campo Especialidade no filtro de priorização.",
       },
     ];
   }

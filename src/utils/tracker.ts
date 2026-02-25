@@ -89,7 +89,9 @@ export enum TrackedReport {
   CUSTOM = "customizado",
 
   PATIENT_DAY = "paciente-dia",
+  PATIENT_DAY_YEARLY = "paciente-dia-anual",
   PRESCRIPTIONS = "prescricoes",
+  PRESCRIPTIONS_YEARLY = "prescricoes-anual",
   INTERVENTIONS = "intervencoes",
   PRESCRIPTION_AUDIT = "auditoria-prescricoes",
   ECONOMY = "farmacoeconomia",

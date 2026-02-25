@@ -28,6 +28,8 @@ import { updateUserSecurityGroup } from "src/features/admin/Integration/Integrat
 
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
+import { FeatureService } from "src/services/FeatureService";
+import Feature from "models/Feature";
 import { setPendingTickets } from "features/support/SupportSlice";
 
 import Box from "./Box";
@@ -206,26 +208,32 @@ const Me = ({
                 className="user-avatar"
               />
 
-              <UserName>
-                <div className="name">{setTitle({ user })}</div>
-                {PermissionService().has(Permission.MULTI_SCHEMA) && (
-                  <div className="schema">
-                    <Space>
-                      <Tag color="#a991d6" variant="solid">
-                        {localStorage.getItem("schema")}
-                      </Tag>
-                      {PermissionService().has(Permission.MAINTAINER) && (
-                        <IntegrationStatusTag
-                          type={"filled"}
-                          variant="solid"
-                          style={{ cursor: "pointer" }}
-                          status={integrationStatus}
-                        />
-                      )}
-                    </Space>
-                  </div>
-                )}
-              </UserName>
+              {FeatureService.has(Feature.HIDE_NAMES) ? (
+                <UserName>
+                  <div className="name">****** ******</div>
+                </UserName>
+              ) : (
+                <UserName>
+                  <div className="name">{setTitle({ user })}</div>
+                  {PermissionService().has(Permission.MULTI_SCHEMA) && (
+                    <div className="schema">
+                      <Space>
+                        <Tag color="#a991d6" variant="solid">
+                          {localStorage.getItem("schema")}
+                        </Tag>
+                        {PermissionService().has(Permission.MAINTAINER) && (
+                          <IntegrationStatusTag
+                            type={"filled"}
+                            variant="solid"
+                            style={{ cursor: "pointer" }}
+                            status={integrationStatus}
+                          />
+                        )}
+                      </Space>
+                    </div>
+                  )}
+                </UserName>
+              )}
 
               <DownOutlined />
             </UserDataContainer>
@@ -275,7 +283,7 @@ export default function Layout({
 }) {
   const dispatch = useDispatch();
   const supportPendingTickets = useSelector(
-    (state) => state.support.pendingTickets.list
+    (state) => state.support.pendingTickets.list,
   );
   const [sider, setSider] = useState({
     collapsed: app.sider.collapsed,
@@ -388,8 +396,8 @@ export default function Layout({
           paddingLeft: window.nh_compatibility
             ? 0
             : sider.collapsed
-            ? sider.collapsedWidth
-            : siderWidth,
+              ? sider.collapsedWidth
+              : siderWidth,
         }}
       >
         <Header>

@@ -61,6 +61,7 @@ import regulationIndicatorsPanelReportSlice from "src/features/regulation/Indica
 import reports from "features/reports/ReportsSlice";
 import reportPatientDayReport from "features/reports/PatientDayReport/PatientDayReportSlice";
 import reportPatientDayConsolidatedReport from "features/reports/PatientDayConsolidatedReport/PatientDayConsolidatedReportSlice";
+import reportPrescriptionConsolidatedReport from "features/reports/PrescriptionConsolidatedReport/PrescriptionConsolidatedReportSlice";
 import reportPrescriptionReport from "features/reports/PrescriptionReport/PrescriptionReportSlice";
 import reportInterventionReport from "features/reports/InterventionReport/InterventionReportSlice";
 import reportPrescriptionAuditReport from "features/reports/PrescriptionAuditReport/PrescriptionAuditReportSlice";
@@ -71,6 +72,7 @@ import reportPrescriptionHistoryReport from "features/reports/PrescriptionHistor
 import reportAlertListReport from "features/reports/AlertListReport/AlertListReportSlice";
 import reportExamsRawSearchReport from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
 import reportPatientObservationReport from "features/reports/PatientObservationReport/PatientObservationReportSlice";
+import reportCheckedIndexReport from "features/reports/CheckedIndexReport/CheckedIndexReportSlice";
 import reportIntegrationNifiLintReport from "features/reports/IntegrationNifiLintReport/IntegrationNifiLintReportSlice";
 
 const adminReducers = combineReducers({
@@ -107,6 +109,7 @@ const regulationReducers = combineReducers({
 const reportReducers = combineReducers({
   patientDay: reportPatientDayReport,
   patientDayConsolidated: reportPatientDayConsolidatedReport,
+  prescriptionConsolidated: reportPrescriptionConsolidatedReport,
   prescription: reportPrescriptionReport,
   intervention: reportInterventionReport,
   prescriptionAudit: reportPrescriptionAuditReport,
@@ -116,6 +119,7 @@ const reportReducers = combineReducers({
   prescriptionHistory: reportPrescriptionHistoryReport,
   examsRawSearch: reportExamsRawSearchReport,
   patientObservation: reportPatientObservationReport,
+  checkedIndex: reportCheckedIndexReport,
   alertList: reportAlertListReport,
   reports: reports,
   integrationNifiLint: reportIntegrationNifiLintReport,

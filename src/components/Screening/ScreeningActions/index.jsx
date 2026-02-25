@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   MenuOutlined,
   UserOutlined,
@@ -8,16 +8,22 @@ import {
 } from "@ant-design/icons";
 import { FloatButton } from "antd";
 
+import DefaultModal from "components/Modal";
+
 import FormPatientModal from "containers/Forms/Patient";
 import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSlice";
 import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
 import CheckSummary from "features/prescription/CheckSummary/CheckSummary";
 import SingleClinicalNotesModal from "features/prescription/ClinicalNotes/SingleClinicalNotesModal/SingleClinicalNotesModal";
 import FeaturesService from "services/features";
-import { setChooseConciliationModal } from "features/prescription/PrescriptionSlice";
+import {
+  setChooseConciliationModal,
+  setCheckedIndexReport,
+} from "features/prescription/PrescriptionSlice";
 import ChooseConciliation from "features/prescription/ChooseConciliation/ChooseConciliation";
 import ExamsModal from "features/exams/ExamModal/ExamModal";
 import ClinicalNotesModal from "containers/Screening/ClinicalNotes/Modal";
+import { CheckedIndexReport } from "src/features/reports/CheckedIndexReport/CheckedIndexReport";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
@@ -35,6 +41,9 @@ export default function ScreeningActions({
   interventions,
 }) {
   const dispatch = useDispatch();
+  const checkedIndexReport = useSelector(
+    (state) => state.prescriptionv2.checkedIndexReport,
+  );
   const featureService = FeaturesService(features);
 
   const afterSavePatient = (response) => {
@@ -42,7 +51,7 @@ export default function ScreeningActions({
       dispatch(
         shouldUpdatePrescription({
           idPrescription: prescription.idPrescription,
-        })
+        }),
       ).then(() => {
         fetchScreening(prescription.idPrescription);
         setModalVisibility("patientEdit", false);
@@ -111,6 +120,20 @@ export default function ScreeningActions({
       <ChooseConciliation />
       <ExamsModal idSegment={prescription.idSegment} />
       <ClinicalNotesModal />
+
+      <DefaultModal
+        width="90%"
+        centered
+        destroyOnHidden
+        footer={null}
+        open={!!checkedIndexReport}
+        onCancel={() => dispatch(setCheckedIndexReport(null))}
+      >
+        <CheckedIndexReport
+          idPrescriptionDrug={checkedIndexReport?.idPrescriptionDrug}
+          data={checkedIndexReport?.data}
+        />
+      </DefaultModal>
     </>
   );
 }

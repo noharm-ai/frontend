@@ -13,6 +13,7 @@ import {
   StopOutlined,
   CheckSquareOutlined,
   BorderOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import { Button as AntButton, Space } from "antd";
 
@@ -29,6 +30,7 @@ import InterventionStatus from "models/InterventionStatus";
 import { SelectMultiline } from "components/Inputs";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import { setCheckedIndexReport } from "features/prescription/PrescriptionSlice";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 import { PrescriptionSchedule } from "./Table/PrescriptionSchedule";
 import {
@@ -37,6 +39,7 @@ import {
 } from "src/utils/tracker";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
+import { formatNumber } from "src/utils/number";
 
 import { PeriodTags } from "./index.style";
 import SolutionCalculator from "./PrescriptionDrug/components/SolutionCalculator";
@@ -81,7 +84,7 @@ const interventionOptions = (idIntervention, dispatch) => {
           idIntervention: idIntervention,
           outcome: key,
           open: true,
-        })
+        }),
       );
     },
   };
@@ -168,7 +171,7 @@ const InterventionAction = ({ intv, isSavingIntervention }) => {
                   idIntervention: idIntervention,
                   outcome: "s",
                   open: true,
-                })
+                }),
               )
             }
             loading={isSavingIntervention}
@@ -265,7 +268,7 @@ const Action = ({ prescription, bag }) => {
 
   if (data.interventions) {
     const intvList = data.interventions.filter(
-      filterInterventionByPrescriptionDrug(idPrescriptionDrug)
+      filterInterventionByPrescriptionDrug(idPrescriptionDrug),
     );
 
     if (intvList.length) {
@@ -513,7 +516,7 @@ const DrugTags = ({ drug, t }) => (
 export const expandedRowRender = (bag) => (record) => {
   if (record.total && record.infusion) {
     trackPrescriptionAction(
-      TrackedPrescriptionAction.EXPAND_SOLUTION_CALCULATOR
+      TrackedPrescriptionAction.EXPAND_SOLUTION_CALCULATOR,
     );
     return (
       <NestedTableContainer className={record.source}>
@@ -526,7 +529,7 @@ export const expandedRowRender = (bag) => (record) => {
   let prevIntervention = null;
   if (record.prevIntervention) {
     prevIntervention = bag.interventions.find(
-      (i) => i.idIntervention === record.prevIntervention.idIntervention
+      (i) => i.idIntervention === record.prevIntervention.idIntervention,
     );
 
     if (prevIntervention) {
@@ -628,7 +631,7 @@ export const expandedRowRender = (bag) => (record) => {
               >
                 {format(
                   new Date(bag.headers[headerId].date),
-                  "dd/MM/yyyy HH:mm"
+                  "dd/MM/yyyy HH:mm",
                 )}
               </Descriptions.Item>
               <Descriptions.Item
@@ -638,7 +641,7 @@ export const expandedRowRender = (bag) => (record) => {
                 {bag.headers[headerId].expire
                   ? format(
                       new Date(bag.headers[headerId].expire),
-                      "dd/MM/yyyy HH:mm"
+                      "dd/MM/yyyy HH:mm",
                     )
                   : "Manter até 2º ordem"}
               </Descriptions.Item>
@@ -667,7 +670,7 @@ export const expandedRowRender = (bag) => (record) => {
               {record.prescriptionExpire
                 ? format(
                     new Date(record.prescriptionExpire),
-                    "dd/MM/yyyy HH:mm"
+                    "dd/MM/yyyy HH:mm",
                   )
                 : "Manter até 2º ordem"}
             </Descriptions.Item>
@@ -683,7 +686,7 @@ export const expandedRowRender = (bag) => (record) => {
                 onClick={() => {
                   bag.fetchPeriod(record.idPrescriptionDrug, record.source);
                   trackPrescriptionAction(
-                    TrackedPrescriptionAction.SHOW_PERIOD
+                    TrackedPrescriptionAction.SHOW_PERIOD,
                   );
                 }}
                 loading={bag.periodObject.isFetching}
@@ -732,6 +735,37 @@ export const expandedRowRender = (bag) => (record) => {
           >
             {record.doseWeight}
           </Descriptions.Item>
+        )}
+        {record.doseWeightDay && (
+          <Descriptions.Item label="Dose / Kg / Dia" span={3}>
+            {record.doseWeightDay}
+          </Descriptions.Item>
+        )}
+        {bag.permissionService.has(Permission.MAINTAINER) && record.auc && (
+          <>
+            {record.auc.auc_cg && (
+              <Descriptions.Item label="AUC calculada (CG)" span={3}>
+                {formatNumber(record.auc.auc_cg, 2)} mg/mL * min
+              </Descriptions.Item>
+            )}
+            {record.auc.missing_cg && (
+              <Descriptions.Item label="AUC calculada (CG)" span={3}>
+                Faltam dados para calcular a AUC:{" "}
+                {bag.t(`aucMissingData.${record.auc.missing_cg}`)}
+              </Descriptions.Item>
+            )}
+            {record.auc.auc_ckd && (
+              <Descriptions.Item label="AUC calculada (CKD21)" span={3}>
+                {formatNumber(record.auc.auc_ckd, 2)} mg/mL * min
+              </Descriptions.Item>
+            )}
+            {record.auc.missing_ckd && (
+              <Descriptions.Item label="AUC calculada (CKD21)" span={3}>
+                Faltam dados para calcular a AUC:{" "}
+                {bag.t(`aucMissingData.${record.auc.missing_ckd}`)}
+              </Descriptions.Item>
+            )}
+          </>
         )}
         {record.doseBodySurface && (
           <Descriptions.Item
@@ -887,7 +921,7 @@ const drug = (bag, addkey, title) => ({
     }
 
     const href = `/medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(
-      record.drug
+      record.drug,
     )}/${record.doseconv}/${record.dayFrequency}`;
 
     const substanceWarning = (
@@ -943,6 +977,22 @@ const drug = (bag, addkey, title) => ({
           <br />
           {record.drug} <DrugTags drug={record} t={bag.t} />
           {!record.idSubstance && substanceWarning}
+          <div style={{ marginTop: "8px" }}>
+            <AntButton
+              icon={<HistoryOutlined />}
+              size="small"
+              onClick={() =>
+                bag.dispatch(
+                  setCheckedIndexReport({
+                    idPrescriptionDrug: record.idPrescriptionDrug,
+                    data: record,
+                  }),
+                )
+              }
+            >
+              Histórico de checagem
+            </AntButton>
+          </div>
         </>
       );
     } else {
@@ -950,17 +1000,29 @@ const drug = (bag, addkey, title) => ({
         <>
           {record.drug} <DrugTags drug={record} t={bag.t} />
           {!record.idSubstance && substanceWarning}
+          {/* <div style={{ marginTop: "8px" }}>
+            <AntButton
+              icon={<HistoryOutlined />}
+              size="small"
+              onClick={() =>
+                bag.dispatch(
+                  setCheckedIndexReport({
+                    idPrescriptionDrug: record.idPrescriptionDrug,
+                    data: record,
+                  }),
+                )
+              }
+            >
+              Histórico de checagem
+            </AntButton>
+          </div> */}
         </>
       );
     }
 
     return (
       <>
-        <Popover
-          content={content}
-          title="Ver medicamento"
-          mouseEnterDelay={0.3}
-        >
+        <Popover content={content} mouseEnterDelay={0.3}>
           <DrugLink
             href={href}
             target="_blank"
@@ -1044,7 +1106,7 @@ const score = (bag) => ({
           <Tooltip
             title={`Suspenso em: ${format(
               new Date(prescription.suspensionDate),
-              "dd/MM/yyyy HH:mm"
+              "dd/MM/yyyy HH:mm",
             )}`}
           >
             <StopOutlined
@@ -1334,7 +1396,7 @@ const relationColumn = (bag) => ({
             {
               ...prescription,
               conciliaRelationId: value,
-            }
+            },
           )
         }
       >
@@ -1362,7 +1424,7 @@ const relationColumn = (bag) => ({
                 Obs.: {recommendation || "-"}
               </span>
             </SelectMultiline.Option>
-          )
+          ),
         )}
       </SelectMultiline>
     );

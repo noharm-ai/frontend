@@ -7,6 +7,7 @@ import { List, Avatar } from "antd";
 import Heading from "components/Heading";
 import Modal from "components/Modal";
 import Button from "components/Button";
+import Alert from "components/Alert";
 import { formatDate } from "utils/date";
 
 export default function HistoryModal({
@@ -14,6 +15,7 @@ export default function HistoryModal({
   loadArchive,
   open,
   setOpen,
+  onOpenYearlyReport = null,
 }) {
   const dispatch = useDispatch();
 
@@ -37,6 +39,29 @@ export default function HistoryModal({
         Histórico
       </Heading>
 
+      {onOpenYearlyReport && (
+        <Alert
+          type="info"
+          showIcon
+          style={{ marginTop: "16px" }}
+          description={
+            <>
+              <strong>Relatório Anual disponível</strong>
+              <br />
+              Para visualizar períodos mais longos com dados agregados, acesse o
+              Relatório Anual.{" "}
+              <Button
+                type="link"
+                style={{ padding: 0 }}
+                onClick={() => onOpenYearlyReport()}
+              >
+                Acessar Relatório Anual
+              </Button>
+            </>
+          }
+        />
+      )}
+
       <p>
         Através desta funcionalidade, você possui acesso aos relatórios de
         períodos anteriores ao atual. Clique no período que deseja visualizar:
@@ -44,6 +69,7 @@ export default function HistoryModal({
 
       <List
         itemLayout="horizontal"
+        pagination={{ pageSize: 5, size: "small" }}
         dataSource={availableReports || []}
         renderItem={(item) => (
           <List.Item
@@ -72,6 +98,7 @@ export default function HistoryModal({
           </List.Item>
         )}
       />
+
       <p style={{ opacity: 0.7, fontSize: "12px" }}>
         * Cada arquivo histórico possui 2 meses de dados.
         <br />* Períodos anteriores à ativação do relatório não estão

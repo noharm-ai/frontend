@@ -291,6 +291,10 @@ export function FileReport() {
             XLSX
           </Button>
         </div>
+        <p>
+          *Os filtros não são aplicados no arquivo exportado. Ele sempre possui
+          os dados completos.
+        </p>
       </Modal>
       <FloatButton.BackTop
         style={{ right: 80, bottom: 25 }}
