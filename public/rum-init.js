@@ -17,16 +17,13 @@ function isLocalStorageEnabled() {
   z = document.createElement("script");
   z.async = true;
   z.src = s;
-  document.head.insertBefore(
-    z,
-    document.getElementsByTagName("script")[0]
-  );
+  document.head.insertBefore(z, document.getElementsByTagName("script")[0]);
 })(
   "cwr",
   "76733ed1-1445-4f80-8e41-2f824a752c39",
   "1.0.0",
   "sa-east-1",
-  "https://client.rum.us-east-1.amazonaws.com/1.18.0/cwr.js",
+  "/cwr.js", // https://client.rum.us-east-1.amazonaws.com/1.18.0/cwr.js
   {
     sessionSampleRate: 1,
     identityPoolId: "sa-east-1:45bad581-042d-4680-91e2-972f4074372d",
@@ -40,7 +37,7 @@ function isLocalStorageEnabled() {
               errorEvent &&
               errorEvent.reason &&
               (/^Request failed with status code 401/.test(
-                errorEvent.reason.message
+                errorEvent.reason.message,
               ) ||
                 /^Network Error/.test(errorEvent.reason.message))
             ) {
@@ -51,7 +48,7 @@ function isLocalStorageEnabled() {
               errorEvent &&
               errorEvent.message &&
               (/^Request failed with status code 401/.test(
-                errorEvent.message
+                errorEvent.message,
               ) ||
                 /^Network Error/.test(errorEvent.message))
             );
@@ -70,5 +67,5 @@ function isLocalStorageEnabled() {
         ? localStorage.getItem("schema") || "indefinido"
         : "inacessivel",
     },
-  }
+  },
 );
