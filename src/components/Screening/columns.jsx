@@ -990,14 +990,17 @@ const drug = (bag, addkey, title) => ({
             <AntButton
               icon={<HistoryOutlined />}
               size="small"
-              onClick={() =>
+              onClick={() => {
+                trackPrescriptionAction(
+                  TrackedPrescriptionAction.CLICK_CHECK_HISTORY,
+                );
                 bag.dispatch(
                   setCheckedIndexReport({
                     idPrescriptionDrug: record.idPrescriptionDrug,
                     data: record,
                   }),
-                )
-              }
+                );
+              }}
             >
               Histórico de checagem
             </AntButton>
@@ -1013,14 +1016,17 @@ const drug = (bag, addkey, title) => ({
             <AntButton
               icon={<HistoryOutlined />}
               size="small"
-              onClick={() =>
+              onClick={() => {
+                trackPrescriptionAction(
+                  TrackedPrescriptionAction.CLICK_CHECK_HISTORY,
+                );
                 bag.dispatch(
                   setCheckedIndexReport({
                     idPrescriptionDrug: record.idPrescriptionDrug,
                     data: record,
                   }),
-                )
-              }
+                );
+              }}
             >
               Histórico de checagem
             </AntButton>
