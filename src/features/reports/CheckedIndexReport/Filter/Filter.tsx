@@ -79,7 +79,7 @@ export default function Filter({ idPrescriptionDrug }: FilterProps) {
                 ...initialValues,
                 dateRange: [],
               },
-              response.payload.data,
+              response.payload.data.records,
             );
           }
         },

@@ -2,10 +2,11 @@ import { useSelector } from "react-redux";
 import { Tag, Space } from "antd";
 
 import { formatDateTime } from "utils/date";
-import { CardTable } from "components/Table";
+import Table from "components/Table";
 import Tooltip from "components/Tooltip";
 import PermissionService from "services/PermissionService";
 import Permission from "src/models/Permission";
+import { translateFrequencyDay } from "utils/index";
 
 export default function CheckedIndexList() {
   const datasource = useSelector(
@@ -19,6 +20,11 @@ export default function CheckedIndexList() {
       width: 120,
       align: "right" as const,
       sorter: (a: any, b: any) => a.dose - b.dose,
+      onCell: (record: any) => ({
+        style: record.matchDiff?.includes("dose")
+          ? { backgroundColor: "#ff4d4f33" }
+          : {},
+      }),
       render: (_: any, record: any) =>
         record.dose != null ? record.dose : "-",
     },
@@ -28,14 +34,26 @@ export default function CheckedIndexList() {
       width: 120,
       align: "right" as const,
       sorter: (a: any, b: any) => a.frequencyDay - b.frequencyDay,
+      onCell: (record: any) => ({
+        style: record.matchDiff?.includes("frequenciadia")
+          ? { backgroundColor: "#ff4d4f33" }
+          : {},
+      }),
       render: (_: any, record: any) =>
-        record.frequencyDay != null ? record.frequencyDay : "-",
+        record.frequencyDay != null
+          ? translateFrequencyDay(record.frequencyDay)
+          : "-",
     },
     {
       title: "Via",
       width: 120,
       sorter: (a: any, b: any) =>
         a.route < b.route ? -1 : a.route > b.route ? 1 : 0,
+      onCell: (record: any) => ({
+        style: record.matchDiff?.includes("via")
+          ? { backgroundColor: "#ff4d4f33" }
+          : {},
+      }),
       render: (_: any, record: any) =>
         record.route != null ? record.route : "-",
     },
@@ -44,6 +62,11 @@ export default function CheckedIndexList() {
       width: 120,
       sorter: (a: any, b: any) =>
         a.interval < b.interval ? -1 : a.interval > b.interval ? 1 : 0,
+      onCell: (record: any) => ({
+        style: record.matchDiff?.includes("horario")
+          ? { backgroundColor: "#ff4d4f33" }
+          : {},
+      }),
       render: (_: any, record: any) =>
         record.interval != null ? record.interval : "-",
     },
@@ -115,7 +138,7 @@ export default function CheckedIndexList() {
 
   return (
     <>
-      <CardTable
+      <Table
         bordered
         columns={columns}
         rowKey={(row: any) => `${row.idPrescription}-${row.createdAt}`}
@@ -128,16 +151,6 @@ export default function CheckedIndexList() {
         size="small"
         pagination={{ showSizeChanger: true }}
       />
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: "16px",
-          fontSize: "12px",
-          opacity: 0.7,
-        }}
-      >
-        *Histórico limitado em 100 registros
-      </div>
     </>
   );
 }

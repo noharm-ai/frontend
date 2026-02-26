@@ -19,12 +19,12 @@ const getPrescriptionTotals = (datasource) => {
 const getItensTotal = (datasource) => {
   const total = datasource.reduce(
     (accumulator, currentValue) => accumulator + currentValue.itens,
-    0
+    0,
   );
 
   const checked = datasource.reduce(
     (accumulator, currentValue) => accumulator + currentValue.checkedItens,
-    0
+    0,
   );
 
   return {
@@ -47,7 +47,7 @@ const filterDatasource = (datasource, filters) => {
     .filter(
       (i) =>
         i.date >= filters.dateRange[0].format("YYYY-MM-DD") &&
-        i.date <= filters.dateRange[1].format("YYYY-MM-DD")
+        i.date <= filters.dateRange[1].format("YYYY-MM-DD"),
     )
     .filter((i) => {
       if (filters.weekDays && [0, 6].indexOf(dayjs(i.date).day()) !== -1) {
@@ -110,7 +110,7 @@ const filterDatasource = (datasource, filters) => {
 const getLifesSummary = (datasource) => {
   const total = uniq(datasource.map((i) => i.admissionNumber)).length;
   const impacted = uniq(
-    datasource.filter((i) => i.checked).map((i) => i.admissionNumber)
+    datasource.filter((i) => i.checked).map((i) => i.admissionNumber),
   ).length;
 
   return {
@@ -123,7 +123,7 @@ const getLifesSummary = (datasource) => {
 const getClinicalNotesTotal = (datasource) => {
   return datasource.reduce(
     (accumulator, currentValue) => accumulator + currentValue.clinicalNote,
-    0
+    0,
   );
 };
 
@@ -227,13 +227,13 @@ const getScoreSummary = (datasource) => {
   datasource.forEach((i) => {
     const checkedValue = i.checked ? 1 : 0;
 
-    if (i.globalScore >= 90) {
+    if (i.globalScore > 90) {
       scores[3].total += 1;
       scores[3].checked += checkedValue;
-    } else if (i.globalScore >= 60 && i.globalScore < 90) {
+    } else if (i.globalScore > 60) {
       scores[2].total += 1;
       scores[2].checked += checkedValue;
-    } else if (i.globalScore >= 10 && i.globalScore < 60) {
+    } else if (i.globalScore > 10) {
       scores[1].total += 1;
       scores[1].checked += checkedValue;
     } else {
@@ -277,7 +277,7 @@ export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
   const prescriptionTotals = getPrescriptionTotals(filteredList);
   const days = getUniqList(filteredList, "date").map((i) =>
-    i.split("-").reverse().join("/")
+    i.split("-").reverse().join("/"),
   );
 
   const reportData = {
@@ -287,7 +287,7 @@ export const getReportData = (datasource, filters) => {
     clinicalNotes: getClinicalNotesTotal(filteredList),
     responsibles: getResponsiblesSummary(
       filteredList,
-      prescriptionTotals.checked
+      prescriptionTotals.checked,
     ),
     departments: getDepartmentsSummary(filteredList),
     segments: getSegmentsSummary(filteredList, prescriptionTotals.checked),

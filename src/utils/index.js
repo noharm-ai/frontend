@@ -40,7 +40,7 @@ export const toObject = (array, key) =>
       ...object,
       [item[key]]: item,
     }),
-    {}
+    {},
   );
 
 // transform a list to dataSource table
@@ -80,3 +80,13 @@ export const getCorporalSurface = (weight, height) =>
   Math.sqrt((weight * height) / 3600);
 
 export const getIMC = (weight, height) => weight / (height / 100) ** 2;
+
+export const translateFrequencyDay = (frequencyDay) => {
+  const fixed = [33, 44, 55, 66, 99];
+
+  if (fixed.includes(frequencyDay)) {
+    return `Fixa (${frequencyDay})`;
+  }
+
+  return frequencyDay;
+};

@@ -741,10 +741,13 @@ export const expandedRowRender = (bag) => (record) => {
             {record.doseWeightDay}
           </Descriptions.Item>
         )}
-        {bag.permissionService.has(Permission.MAINTAINER) && record.auc && (
+        {record.auc && (
           <>
             {record.auc.auc_cg && (
-              <Descriptions.Item label="AUC calculada (CG)" span={3}>
+              <Descriptions.Item
+                label="AUC calculada (CG) *Em validação"
+                span={3}
+              >
                 {formatNumber(record.auc.auc_cg, 2)} mg/mL * min
               </Descriptions.Item>
             )}
@@ -755,7 +758,10 @@ export const expandedRowRender = (bag) => (record) => {
               </Descriptions.Item>
             )}
             {record.auc.auc_ckd && (
-              <Descriptions.Item label="AUC calculada (CKD21)" span={3}>
+              <Descriptions.Item
+                label="AUC calculada (CKD21) *Em validação"
+                span={3}
+              >
                 {formatNumber(record.auc.auc_ckd, 2)} mg/mL * min
               </Descriptions.Item>
             )}
@@ -955,6 +961,9 @@ const drug = (bag, addkey, title) => ({
           <br />
           <strong>fkmedicamento:</strong> {record.idDrug}
           <br />
+          <strong>idsegmento:</strong>{" "}
+          {record.idSegment ? record.idSegment : "Indefinido"}
+          <br />
           <strong>grp_solution:</strong> {record.grp_solution}
           <br />
           <strong>origem:</strong> {record.originalSource}
@@ -1000,7 +1009,7 @@ const drug = (bag, addkey, title) => ({
         <>
           {record.drug} <DrugTags drug={record} t={bag.t} />
           {!record.idSubstance && substanceWarning}
-          {/* <div style={{ marginTop: "8px" }}>
+          <div style={{ marginTop: "8px" }}>
             <AntButton
               icon={<HistoryOutlined />}
               size="small"
@@ -1015,7 +1024,7 @@ const drug = (bag, addkey, title) => ({
             >
               Histórico de checagem
             </AntButton>
-          </div> */}
+          </div>
         </>
       );
     }
