@@ -1,0 +1,28 @@
+services:
+  postgres:
+    build:
+      context: ./docker/db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: noharm
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+      - "5001:5000"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./docker/backend
+    network_mode: "service:postgres"
+    environment:
+      MAIL_HOST: http://localhost:3000
+      SECRET_KEY: "E2ESECRETKEY"
+      API_KEY: "E2EAPIKEY"
+    depends_on:
+      postgres:
+        condition: service_healthy

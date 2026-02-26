@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:e2e": "VITE_APP_API_URL=http://localhost:5001 playwright test",
+    "test:e2e:ui": "VITE_APP_API_URL=http://localhost:5001 playwright test --ui"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.1",
