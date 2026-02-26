@@ -23,6 +23,7 @@ services:
       MAIL_HOST: http://localhost:3000
       SECRET_KEY: "E2ESECRETKEY"
       API_KEY: "E2EAPIKEY"
+      ENV: "test"
     depends_on:
       postgres:
         condition: service_healthy
