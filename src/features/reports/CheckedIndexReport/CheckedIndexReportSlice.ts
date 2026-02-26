@@ -19,6 +19,11 @@ interface CheckedIndexState {
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   list: CheckedIndexData[];
+  auditData: {
+    createdAt: string;
+    config: any;
+  };
+  current: any;
   filters: Record<string, any>;
   filtered: {
     status: "idle" | "loading" | "succeeded" | "failed";
@@ -42,6 +47,11 @@ const initialState: CheckedIndexState = {
   status: "idle",
   error: null,
   list: [],
+  auditData: {
+    createdAt: "",
+    config: {},
+  },
+  current: {},
   filters: {},
   filtered: {
     status: "idle",
@@ -97,9 +107,11 @@ const checkedIndexReportSlice = createSlice({
       })
       .addCase(fetchReportData.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.list = action.payload.data;
+        state.auditData = (action.payload.data as any).audit;
+        state.current = (action.payload.data as any).current;
+        state.list = (action.payload.data as any).records;
         state.filterData.createdBy = getUniqList(
-          action.payload.data,
+          (action.payload.data as any).records,
           "createdBy",
         );
       })

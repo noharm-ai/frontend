@@ -1000,7 +1000,7 @@ const drug = (bag, addkey, title) => ({
         <>
           {record.drug} <DrugTags drug={record} t={bag.t} />
           {!record.idSubstance && substanceWarning}
-          {/* <div style={{ marginTop: "8px" }}>
+          <div style={{ marginTop: "8px" }}>
             <AntButton
               icon={<HistoryOutlined />}
               size="small"
@@ -1015,7 +1015,7 @@ const drug = (bag, addkey, title) => ({
             >
               Histórico de checagem
             </AntButton>
-          </div> */}
+          </div>
         </>
       );
     }
