@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -41,6 +41,8 @@ export default function IntegrationRemote() {
   const [diagnosticsModal, setDiagnosticsModal] = useState(false);
   const [updating, setUpdating] = useState(!templateDate);
   const [error, setError] = useState(null);
+  const intervalRef = useRef(null);
+  const initializedRef = useRef(false);
 
   const loadTemplate = () => {
     dispatch(fetchTemplate()).then((response) => {
@@ -75,14 +77,15 @@ export default function IntegrationRemote() {
 
         let repeats = 0;
 
-        const interval = setInterval(() => {
+        intervalRef.current = setInterval(() => {
           repeats += 1;
           dispatch(getQueueStatus({ idQueueList })).then((response) => {
             const queue = response.payload.response.data.data.queue[0];
 
             if (queue.responseCode === 200) {
               loadTemplate();
-              clearInterval(interval);
+              clearInterval(intervalRef.current);
+              intervalRef.current = null;
               setUpdating(false);
 
               notification.success({
@@ -90,7 +93,8 @@ export default function IntegrationRemote() {
               });
             } else if (queue.responseCode === null) {
               if (repeats > 20) {
-                clearInterval(interval);
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
                 setUpdating(false);
                 setError({
                   status: "error",
@@ -107,7 +111,8 @@ export default function IntegrationRemote() {
               notification.error({
                 message: "Erro ao atualizar template",
               });
-              clearInterval(interval);
+              clearInterval(intervalRef.current);
+              intervalRef.current = null;
               setUpdating(false);
               setError({
                 status: "error",
@@ -127,10 +132,19 @@ export default function IntegrationRemote() {
   };
 
   useEffect(() => {
-    if (!templateDate) {
+    if (!templateDate && !initializedRef.current) {
+      initializedRef.current = true;
       doRefresh();
     }
   }, []); //eslint-disable-line
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
   const getPercentageStatus = (formattedValue) => {
     if (!formattedValue) return "";
