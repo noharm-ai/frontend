@@ -11,6 +11,8 @@ import { ExamChart } from "./ExamChart";
 
 import { examRowClassName } from "./columns";
 import { formatDate } from "utils/date";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
 
 export default function ValuedExams({ record }) {
   const { t } = useTranslation();
@@ -53,6 +55,12 @@ export default function ValuedExams({ record }) {
           render: (text, record) => {
             return format(new Date(record.date), "dd/MM/yyyy HH:mm");
           },
+        },
+        {
+          title: "Origem",
+          dataIndex: "source",
+          align: "center",
+          hidden: !PermissionService().has(Permission.MAINTAINER),
         },
         // {
         //   title: "Ação",
