@@ -66,7 +66,7 @@ export default function PatientCard({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const aggPrescriptionStatus = useSelector(
-    (state) => state.lists.searchAggPrescriptions.status
+    (state) => state.lists.searchAggPrescriptions.status,
   );
 
   const {
@@ -84,7 +84,7 @@ export default function PatientCard({
   const interventionTooltip = t("patientCard.patientIntervention");
   const hasIntervention =
     interventions.filter(
-      filterInterventionByPrescription(prescription.idPrescription)
+      filterInterventionByPrescription(prescription.idPrescription),
     ).length > 0;
 
   const selectInterventionData = (int, data) => {
@@ -123,7 +123,7 @@ export default function PatientCard({
     };
 
     const intvList = interventions.filter(
-      filterInterventionByPrescription(data.idPrescription)
+      filterInterventionByPrescription(data.idPrescription),
     );
 
     if (intvList.length > 0) {
@@ -164,7 +164,7 @@ export default function PatientCard({
       message: "Recalculando prescrição",
     });
     dispatch(
-      shouldUpdatePrescription({ idPrescription: prescription.idPrescription })
+      shouldUpdatePrescription({ idPrescription: prescription.idPrescription }),
     ).then((response) => {
       if (response.error) {
         notification.error({
@@ -201,7 +201,7 @@ export default function PatientCard({
     trackPrescriptionAction(TrackedPrescriptionAction.OPEN_AGG_PRESCRIPTION);
 
     const aggPrescriptions = await fetchAggPrescriptions(
-      prescription.admissionNumber
+      prescription.admissionNumber,
     );
     const prescriptionResult = aggPrescriptions.find((p) => !p.concilia);
     if (prescriptionResult) {
@@ -258,7 +258,7 @@ export default function PatientCard({
         case "clinicalNotes":
           trackPrescriptionAction(
             TrackedPrescriptionAction.SHOW_CLINICAL_NOTES,
-            { params: open }
+            { params: open },
           );
           break;
       }
@@ -476,21 +476,15 @@ export default function PatientCard({
     children: <ProtocolsTab protocolAlerts={prescription.protocolAlerts} />,
   });
 
-  if (
-    (prescription.admissionReports && prescription.admissionReports.length) ||
-    (prescription.admissionReportsInternal &&
-      prescription.admissionReportsInternal.length)
-  ) {
-    tabs.push({
-      key: "reports",
-      label: (
-        <Tooltip title={t("patientCard.reports")}>
-          <PieChartOutlined style={{ fontSize: "18px" }} />
-        </Tooltip>
-      ),
-      children: <ReportsTab prescription={prescription} />,
-    });
-  }
+  tabs.push({
+    key: "reports",
+    label: (
+      <Tooltip title={t("patientCard.reports")}>
+        <PieChartOutlined style={{ fontSize: "18px" }} />
+      </Tooltip>
+    ),
+    children: <ReportsTab prescription={prescription} />,
+  });
 
   const onChangeTab = (activeKey) => {
     switch (activeKey) {
