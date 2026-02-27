@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { debounce } from "lodash";
@@ -18,19 +18,12 @@ export default function FieldSubstanceClassAutocomplete({
 }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState(() =>
+    value && value.length
+      ? value.map((i) => ({ id: i.value, name: i.label }))
+      : []
+  );
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (value && value.length && !options.length) {
-      setOptions(
-        value.map((i) => ({
-          id: i.value,
-          name: i.label,
-        }))
-      );
-    }
-  }, [value]); //eslint-disable-line
 
   const fetchData = async (value) => {
     setLoading(true);
