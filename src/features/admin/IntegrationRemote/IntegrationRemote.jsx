@@ -33,20 +33,14 @@ export default function IntegrationRemote() {
   const navigate = useNavigate();
   const status = useSelector((state) => state.admin.integrationRemote.status);
   const templateDate = useSelector(
-    (state) => state.admin.integrationRemote.template.date
+    (state) => state.admin.integrationRemote.template.date,
   );
   const diagnostics = useSelector(
-    (state) => state.admin.integrationRemote.template.diagnostics
+    (state) => state.admin.integrationRemote.template.diagnostics,
   );
   const [diagnosticsModal, setDiagnosticsModal] = useState(false);
-  const [updating, setUpdating] = useState(false);
+  const [updating, setUpdating] = useState(!templateDate);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (!templateDate) {
-      refreshTemplate();
-    }
-  }, []); //eslint-disable-line
 
   const loadTemplate = () => {
     dispatch(fetchTemplate()).then((response) => {
@@ -60,8 +54,7 @@ export default function IntegrationRemote() {
     });
   };
 
-  const refreshTemplate = () => {
-    setUpdating(true);
+  const doRefresh = () => {
     const payload = {
       actionType: "REFRESH_TEMPLATE",
     };
@@ -116,19 +109,28 @@ export default function IntegrationRemote() {
               });
               clearInterval(interval);
               setUpdating(false);
-              setError(
-                setError({
-                  status: "error",
-                  message: "Ocorreu um erro ao buscar o template",
-                  description: "Confira os logs.",
-                })
-              );
+              setError({
+                status: "error",
+                message: "Ocorreu um erro ao buscar o template",
+                description: "Confira os logs.",
+              });
             }
           });
         }, 2500);
       }
     });
   };
+
+  const refreshTemplate = () => {
+    setUpdating(true);
+    doRefresh();
+  };
+
+  useEffect(() => {
+    if (!templateDate) {
+      doRefresh();
+    }
+  }, []); //eslint-disable-line
 
   const getPercentageStatus = (formattedValue) => {
     if (!formattedValue) return "";
@@ -200,7 +202,7 @@ export default function IntegrationRemote() {
                 <Spin spinning={status === "loading"}>
                   <StatsCard
                     className={`${getPercentageStatus(
-                      diagnostics?.flowFileRepositoryStorageUsage?.utilization
+                      diagnostics?.flowFileRepositoryStorageUsage?.utilization,
                     )}`}
                   >
                     <div className="stats-title">Disco utilizado</div>
