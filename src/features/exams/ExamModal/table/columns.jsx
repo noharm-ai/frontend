@@ -2,6 +2,8 @@ import React from "react";
 import { format } from "date-fns";
 
 import NumericValue from "components/NumericValue";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
 
 import ValuedExams from "./ValuedExams";
 import TextualExams from "./TextualExams";
@@ -42,6 +44,12 @@ const columns = (t, sortedInfo) => {
       title: t("tableHeader.reference"),
       dataIndex: "ref",
       align: "left",
+    },
+    {
+      title: "Origem",
+      dataIndex: "source",
+      align: "center",
+      hidden: !PermissionService().has(Permission.MAINTAINER),
     },
     {
       title: t("tableHeader.date"),
