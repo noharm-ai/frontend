@@ -13,18 +13,15 @@ import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from "utils/memory";
 
 export default function Signature({ fetchMemory, saveMemory, memory, userId }) {
   const { t } = useTranslation();
-  const [signature, setSignature] = useState("");
+  const [editedSignature, setSignature] = useState(null);
   const { isFetching, list: memoryData } = memory;
   const { isSaving, success, error } = memory.save;
   const memoryType = `${SIGNATURE_MEMORY_TYPE}_${userId}`;
+  const signature = editedSignature ?? memoryData[0]?.value ?? "";
 
   useEffect(() => {
     fetchMemory(SIGNATURE_STORE_ID, memoryType);
   }, [fetchMemory]); //eslint-disable-line
-
-  useEffect(() => {
-    setSignature(memoryData[0] ? memoryData[0].value : "");
-  }, [memoryData]);
 
   useEffect(() => {
     if (success) {

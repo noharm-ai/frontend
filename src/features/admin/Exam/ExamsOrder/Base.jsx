@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useFormikContext } from "formik";
 
@@ -8,17 +8,16 @@ import { listExamsOrder } from "../ExamSlice";
 export default function ExamsOrderBase() {
   const dispatch = useDispatch();
   const { values, setFieldValue, errors, touched } = useFormikContext();
-  const [listLoading, setListLoading] = useState(false);
   const list = useSelector((state) => state.admin.exam.setExamsOrder.list);
+  const listLoading = useSelector(
+    (state) => state.admin.exam.setExamsOrder.status === "loading"
+  );
   const segmentList = useSelector((state) => state.segments.list);
 
   useEffect(() => {
     if (values.idSegment) {
-      setListLoading(true);
       dispatch(listExamsOrder({ idSegment: values.idSegment })).then(
         (response) => {
-          setListLoading(false);
-
           const examList = [...response.payload.data.data].sort((a, b) => {
             const v1 = a.order === null ? 99 : a.order;
             const v2 = b.order === null ? 99 : b.order;

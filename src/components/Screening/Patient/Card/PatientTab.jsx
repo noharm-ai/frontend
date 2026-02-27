@@ -10,6 +10,20 @@ import Alert from "components/Alert";
 import { getCorporalSurface, getIMC } from "utils/index";
 import { translateDialysis } from "utils/transformers/prescriptions";
 
+const AISuggestion = ({ notes, date, t }) => {
+  return (
+    <>
+      <div style={{ maxWidth: "300px", textAlign: "center" }}>
+        <Alert description={notes} type="info" />
+      </div>
+      <div style={{ fontSize: "11px", fontWeight: 300, marginTop: "10px" }}>
+        {t("patientCard.extractedFrom")}{" "}
+        {moment(date).format("DD/MM/YYYY HH:mm")}
+      </div>
+    </>
+  );
+};
+
 export default function PatientTab({
   prescription,
   setSeeMore,
@@ -68,20 +82,6 @@ export default function PatientTab({
     }
 
     return msg;
-  };
-
-  const AISuggestion = ({ notes, date, t }) => {
-    return (
-      <>
-        <div style={{ maxWidth: "300px", textAlign: "center" }}>
-          <Alert description={notes} type="info" />
-        </div>
-        <div style={{ fontSize: "11px", fontWeight: 300, marginTop: "10px" }}>
-          {t("patientCard.extractedFrom")}{" "}
-          {moment(date).format("DD/MM/YYYY HH:mm")}
-        </div>
-      </>
-    );
   };
 
   const formatWeightDate = (weightDate) => {
@@ -298,7 +298,7 @@ export default function PatientTab({
             <Tooltip
               title={aiDataTooltip(
                 t("patientCard.dataExtractedFrom"),
-                notesInfoDate
+                notesInfoDate,
               )}
             >
               <div className="tag info" onClick={() => setSeeMore(true)}>
@@ -311,7 +311,7 @@ export default function PatientTab({
             <Tooltip
               title={aiDataTooltip(
                 t("patientCard.signalsExtractedFrom"),
-                notesSignsDate
+                notesSignsDate,
               )}
             >
               <div className="tag signs" onClick={() => setSeeMore(true)}>
@@ -324,7 +324,7 @@ export default function PatientTab({
             <Tooltip
               title={aiDataTooltip(
                 t("patientCard.allergiesExtractedFrom"),
-                notesAllergiesDate
+                notesAllergiesDate,
               )}
             >
               <div className="tag allergy" onClick={() => setSeeMore(true)}>
@@ -337,7 +337,7 @@ export default function PatientTab({
             <Tooltip
               title={aiDataTooltip(
                 t("patientCard.extractedFrom"),
-                notesDialysisDate
+                notesDialysisDate,
               )}
             >
               <div className="tag dialysis" onClick={() => setSeeMore(true)}>

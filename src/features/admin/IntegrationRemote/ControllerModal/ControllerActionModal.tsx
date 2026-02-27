@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { Steps, Tag, Result, Spin, Popconfirm, Switch } from "antd";
@@ -31,42 +31,46 @@ export function ControllerActionModal({
   const queueList = useAppSelector(
     (state) => state.admin.integrationRemote.queue.list,
   );
-  const [currentQueueId, setCurrentQueueId] = useState<number | null>(null);
+  const currentQueueId = useRef<number | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [waitingQueueResponse, setWaitingQueueResponse] =
-    useState<boolean>(false);
-  const [queueResponse, setQueueResponse] = useState<any>(null);
-  const [controllerStatus, setControllerStatus] = useState<any>(null);
   const [forcePool, setForcePool] = useState<boolean>(false);
+  const [queueResult, setQueueResult] = useState<{
+    waitingQueueResponse: boolean;
+    queueResponse: any;
+    controllerStatus: any;
+  }>({
+    waitingQueueResponse: false,
+    queueResponse: null,
+    controllerStatus: null,
+  });
+
+  const { waitingQueueResponse, queueResponse, controllerStatus } = queueResult;
 
   useEffect(() => {
-    if (open) {
-      setCurrentStep(0);
-      setWaitingQueueResponse(false);
-      setCurrentQueueId(null);
-      setQueueResponse(null);
-      setControllerStatus(null);
-      setForcePool(false);
-    }
-  }, [open]);
+    if (!currentQueueId.current) return;
 
-  useEffect(() => {
-    if (currentQueueId) {
-      const currentQueue: any = queueList.find(
-        (queue: any) => queue.id === currentQueueId,
-      );
+    const currentQueue: any = queueList.find(
+      (queue: any) => queue.id === currentQueueId.current,
+    );
 
-      if (currentQueue && currentQueue.response) {
-        setQueueResponse(currentQueue);
-        setCurrentQueueId(null);
-        setWaitingQueueResponse(false);
+    if (currentQueue && currentQueue.response) {
+      currentQueueId.current = null;
 
-        if (currentQueue.extra?.type === "GET_CONTROLLER_REFERENCE") {
-          setControllerStatus(currentQueue.response.status);
-        }
+      if (currentQueue.extra?.type === "GET_CONTROLLER_REFERENCE") {
+        setQueueResult({
+          waitingQueueResponse: false,
+          queueResponse: currentQueue,
+          controllerStatus: currentQueue.response.status,
+        });
+      } else {
+        setQueueResult((prev) => ({
+          ...prev,
+          waitingQueueResponse: false,
+          queueResponse: currentQueue,
+        }));
       }
     }
-  }, [queueList, currentQueueId]);
+  }, [queueList]);
 
   const executeAction = (actionType: string, params: any = {}) => {
     const entity = data?.name;
@@ -201,9 +205,9 @@ export function ControllerActionModal({
           placement: "bottom",
         });
 
-        setCurrentQueueId(response.payload.data.data.id);
+        currentQueueId.current = response.payload.data.data.id;
         setCurrentStep(1);
-        setWaitingQueueResponse(true);
+        setQueueResult((prev) => ({ ...prev, waitingQueueResponse: true }));
       }
     });
   };
@@ -240,9 +244,9 @@ export function ControllerActionModal({
             placement: "bottom",
           });
 
-          setCurrentQueueId(response.payload.data.data.id);
+          currentQueueId.current = response.payload.data.data.id;
           setCurrentStep(goToStep);
-          setWaitingQueueResponse(true);
+          setQueueResult((prev) => ({ ...prev, waitingQueueResponse: true }));
         }
       },
     );
@@ -272,12 +276,19 @@ export function ControllerActionModal({
             return;
           }
 
-          setCurrentQueueId(response.payload.data.data.id);
+          currentQueueId.current = response.payload.data.data.id;
           setCurrentStep(goToStep);
-          setWaitingQueueResponse(true);
+          setQueueResult((prev) => ({ ...prev, waitingQueueResponse: true }));
         }
       },
     );
+  };
+
+  const cleanState = () => {
+    setCurrentStep(0);
+    currentQueueId.current = null;
+    setQueueResult({ waitingQueueResponse: false, queueResponse: null, controllerStatus: null });
+    setForcePool(false);
   };
 
   return (
@@ -289,6 +300,7 @@ export function ControllerActionModal({
       onCancel={onCancel}
       footer={footer()}
       maskClosable={false}
+      afterClose={() => cleanState()}
     >
       <div className="modal-title">Alterar Status</div>
 
