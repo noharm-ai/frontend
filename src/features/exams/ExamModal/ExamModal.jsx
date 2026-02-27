@@ -118,39 +118,33 @@ export default function ExamsModal({ idSegment }) {
     },
   ];
 
-  const Footer = () => {
-    if (FeatureService.has(Feature.ADD_EXAMS)) {
-      return (
-        <Space>
-          <Button
-            type="default"
-            onClick={() => dispatch(setExamsModalAdmissionNumber(null))}
-          >
-            Fechar
-          </Button>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() =>
-              dispatch(setExamFormModal({ admissionNumber, idSegment }))
-            }
-          >
-            Adicionar resultado de exame
-          </Button>
-        </Space>
-      );
-    }
-
-    return null;
-  };
-
   return (
     <DefaultModal
       destroyOnHidden
       open={admissionNumber}
       onCancel={() => dispatch(setExamsModalAdmissionNumber(null))}
       width="90%"
-      footer={<Footer />}
+      footer={
+        FeatureService.has(Feature.ADD_EXAMS) ? (
+          <Space>
+            <Button
+              type="default"
+              onClick={() => dispatch(setExamsModalAdmissionNumber(null))}
+            >
+              Fechar
+            </Button>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() =>
+                dispatch(setExamFormModal({ admissionNumber, idSegment }))
+              }
+            >
+              Adicionar resultado de exame
+            </Button>
+          </Space>
+        ) : null
+      }
       style={{ top: "10px", height: "100vh" }}
     >
       <Tabs defaultActiveKey="exams" items={tabs} />
