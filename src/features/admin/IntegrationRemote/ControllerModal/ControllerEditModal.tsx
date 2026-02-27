@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { Steps, Result, Spin, Switch } from "antd";
@@ -29,44 +29,56 @@ export function ControllerEditModal({
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const queueList = useAppSelector(
-    (state) => state.admin.integrationRemote.queue.list
+    (state) => state.admin.integrationRemote.queue.list,
   );
-  const [currentQueueId, setCurrentQueueId] = useState<number | null>(null);
+  const currentQueueId = useRef<number | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [waitingQueueResponse, setWaitingQueueResponse] =
-    useState<boolean>(false);
-
-  const [controllerStatus, setControllerStatus] = useState<any>(null);
-  const [controllerData, setControllerData] = useState<any>(null);
   const [forcePool, setForcePool] = useState<boolean>(false);
+  const [queueResult, setQueueResult] = useState<{
+    waitingQueueResponse: boolean;
+    controllerStatus: any;
+    controllerData: any;
+  }>({
+    waitingQueueResponse: false,
+    controllerStatus: null,
+    controllerData: null,
+  });
+
+  const { waitingQueueResponse, controllerStatus, controllerData } =
+    queueResult;
 
   useEffect(() => {
-    if (open) {
-      setCurrentStep(0);
-      setWaitingQueueResponse(false);
-      setCurrentQueueId(null);
-      setControllerStatus(null);
-      setForcePool(false);
-    }
-  }, [open]);
+    if (!currentQueueId.current) return;
 
-  useEffect(() => {
-    if (currentQueueId) {
-      const currentQueue: any = queueList.find(
-        (queue: any) => queue.id === currentQueueId
-      );
+    const currentQueue: any = queueList.find(
+      (queue: any) => queue.id === currentQueueId.current,
+    );
 
-      if (currentQueue && currentQueue.response) {
-        setCurrentQueueId(null);
-        setWaitingQueueResponse(false);
+    if (currentQueue && currentQueue.response) {
+      currentQueueId.current = null;
 
-        if (currentQueue.extra?.type === "GET_CONTROLLER_REFERENCE") {
-          setControllerStatus(currentQueue.response.status);
-          setControllerData(currentQueue.response);
-        }
+      if (currentQueue.extra?.type === "GET_CONTROLLER_REFERENCE") {
+        setQueueResult({
+          waitingQueueResponse: false,
+          controllerStatus: currentQueue.response.status,
+          controllerData: currentQueue.response,
+        });
+      } else {
+        setQueueResult((prev) => ({ ...prev, waitingQueueResponse: false }));
       }
     }
-  }, [queueList, currentQueueId]);
+  }, [queueList]);
+
+  const cleanState = () => {
+    setCurrentStep(0);
+    currentQueueId.current = null;
+    setQueueResult({
+      waitingQueueResponse: false,
+      controllerStatus: null,
+      controllerData: null,
+    });
+    setForcePool(false);
+  };
 
   const executeAction = (actionType: string, params: any = {}) => {
     const entity = data?.name;
@@ -94,9 +106,9 @@ export function ControllerEditModal({
           placement: "bottom",
         });
 
-        setCurrentQueueId(response.payload.data.data.id);
+        currentQueueId.current = response.payload.data.data.id;
         setCurrentStep(1);
-        setWaitingQueueResponse(true);
+        setQueueResult((prev) => ({ ...prev, waitingQueueResponse: true }));
       }
     });
   };
@@ -129,9 +141,9 @@ export function ControllerEditModal({
           placement: "bottom",
         });
 
-        setCurrentQueueId(response.payload.data.data.id);
+        currentQueueId.current = response.payload.data.data.id;
         setCurrentStep(2);
-        setWaitingQueueResponse(true);
+        setQueueResult((prev) => ({ ...prev, waitingQueueResponse: true }));
       }
     });
   };
@@ -142,74 +154,29 @@ export function ControllerEditModal({
     if (checked) {
       console.log("controllerdata", data);
 
-      setControllerData({ component: data });
-      setControllerStatus({ runStatus: "unknown" });
+      setQueueResult((prev) => ({
+        ...prev,
+        controllerData: { component: data },
+        controllerStatus: { runStatus: "unknown" },
+      }));
     } else {
-      setControllerData(null);
-      setControllerStatus(null);
+      setQueueResult((prev) => ({
+        ...prev,
+        controllerData: null,
+        controllerStatus: null,
+      }));
     }
   };
 
   const steps = [
     {
       title: "Informações",
-      content: (
-        <>
-          <p>
-            O primeiro passo é verificar o status atual e as propriedades
-            atualizadas do controller.
-          </p>
-          <Switch
-            onChange={(value) => toggleForcePool(value)}
-            checked={forcePool}
-          />{" "}
-          <span style={{ marginLeft: "5px" }}>
-            Este é um pool de conexão para o BD de produção da NoHarm?
-          </span>
-        </>
-      ),
     },
     {
       title: "Formulário",
-      content: (
-        <>
-          {waitingQueueResponse ? (
-            <LoadBox message="Carregando informações sobre o controller..." />
-          ) : (
-            <ControllerForm
-              controllerData={controllerData}
-              saveControllerData={saveControllerData}
-              controllerStatus={controllerStatus}
-              forcePool={forcePool}
-            />
-          )}
-        </>
-      ),
     },
     {
       title: "Resultado",
-      content: (
-        <>
-          <>
-            {waitingQueueResponse ? (
-              <LoadBox
-                message={
-                  forcePool
-                    ? "Aguarde alguns minutos, feche a janela e execute o processo parado no grupo do Nifi remoto"
-                    : "Aguardando resposta..."
-                }
-              />
-            ) : (
-              <>
-                <Result
-                  status="success"
-                  title="Controller atualizado com sucesso"
-                />
-              </>
-            )}
-          </>
-        </>
-      ),
     },
   ];
 
@@ -262,12 +229,67 @@ export function ControllerEditModal({
       onCancel={onCancel}
       footer={footer()}
       maskClosable={false}
+      afterClose={() => cleanState()}
     >
       <div className="modal-title">Alterar Propriedades</div>
 
       <Steps items={steps} current={currentStep} />
 
-      <div style={{ margin: "30px 0" }}>{steps[currentStep].content}</div>
+      <div style={{ margin: "30px 0" }}>
+        {currentStep === 0 && (
+          <>
+            <p>
+              O primeiro passo é verificar o status atual e as propriedades
+              atualizadas do controller.
+            </p>
+            <Switch
+              onChange={(value) => toggleForcePool(value)}
+              checked={forcePool}
+            />{" "}
+            <span style={{ marginLeft: "5px" }}>
+              Este é um pool de conexão para o BD de produção da NoHarm?
+            </span>
+          </>
+        )}
+
+        {currentStep === 1 && (
+          <>
+            {waitingQueueResponse ? (
+              <LoadBox message="Carregando informações sobre o controller..." />
+            ) : (
+              <ControllerForm
+                controllerData={controllerData}
+                saveControllerData={saveControllerData}
+                controllerStatus={controllerStatus}
+                forcePool={forcePool}
+              />
+            )}
+          </>
+        )}
+
+        {currentStep === 2 && (
+          <>
+            <>
+              {waitingQueueResponse ? (
+                <LoadBox
+                  message={
+                    forcePool
+                      ? "Aguarde alguns minutos, feche a janela e execute o processo parado no grupo do Nifi remoto"
+                      : "Aguardando resposta..."
+                  }
+                />
+              ) : (
+                <>
+                  <Result
+                    status="success"
+                    title="Controller atualizado com sucesso"
+                  />
+                </>
+              )}
+            </>
+          </>
+        )}
+      </div>
     </DefaultModal>
   );
 }
