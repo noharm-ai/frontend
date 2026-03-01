@@ -12,6 +12,53 @@ import NumericValue from "components/NumericValue";
 
 import { Item } from "./ExamListItem.style";
 
+const refText = (text) => {
+  return text.split("\n").map(function (item, key) {
+    return (
+      <span key={key}>
+        {item}
+        <br />
+      </span>
+    );
+  });
+};
+
+const getExamValue = (exam, addUnit = true) => {
+  if (!exam || !exam.value) {
+    return "--";
+  }
+
+  return (
+    <NumericValue
+      suffix={addUnit && exam.unit ? ` ${exam.unit}` : ""}
+      value={exam.value}
+    />
+  );
+};
+
+const ExamData = ({ exam, t }) => (
+  <>
+    {exam && exam.value && (
+      <div>
+        {t("tableHeader.value")}: {getExamValue(exam)}
+      </div>
+    )}
+    {exam && exam.date && (
+      <div>
+        {t("patientCard.examDate")}:{" "}
+        {moment(exam.date).format("DD/MM/YYYY HH:mm")}
+      </div>
+    )}
+    {exam && exam.ref && <div>Ref: {refText(exam.ref)}</div>}
+    {exam?.delta != null && (
+      <div>
+        {t("patientCard.examVariation")}: {exam.delta > 0 ? "+" : ""}
+        {exam.delta}%
+      </div>
+    )}
+  </>
+);
+
 export default function ExamListItem({ exam, siderCollapsed }) {
   const { t } = useTranslation();
 
@@ -26,53 +73,6 @@ export default function ExamListItem({ exam, siderCollapsed }) {
 
     return <MinusOutlined />;
   };
-
-  const refText = (text) => {
-    return text.split("\n").map(function (item, key) {
-      return (
-        <span key={key}>
-          {item}
-          <br />
-        </span>
-      );
-    });
-  };
-
-  const getExamValue = (exam, addUnit = true) => {
-    if (!exam || !exam.value) {
-      return "--";
-    }
-
-    return (
-      <NumericValue
-        suffix={addUnit && exam.unit ? ` ${exam.unit}` : ""}
-        value={exam.value}
-      />
-    );
-  };
-
-  const ExamData = ({ exam, t }) => (
-    <>
-      {exam && exam.value && (
-        <div>
-          {t("tableHeader.value")}: {getExamValue(exam)}
-        </div>
-      )}
-      {exam && exam.date && (
-        <div>
-          {t("patientCard.examDate")}:{" "}
-          {moment(exam.date).format("DD/MM/YYYY HH:mm")}
-        </div>
-      )}
-      {exam && exam.ref && <div>Ref: {refText(exam.ref)}</div>}
-      {exam?.delta != null && (
-        <div>
-          {t("patientCard.examVariation")}: {exam.delta > 0 ? "+" : ""}
-          {exam.delta}%
-        </div>
-      )}
-    </>
-  );
 
   return (
     <Popover

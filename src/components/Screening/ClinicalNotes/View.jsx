@@ -41,14 +41,25 @@ export default function View({
   const selectionRangeRef = useRef(null);
   const modalRef = useRef(null);
   const [edit, setEdit] = useState(false);
+  const [prevSelected, setPrevSelected] = useState(selected);
+  const [prevSaveStatus, setPrevSaveStatus] = useState(saveStatus);
   const { t } = useTranslation();
+
+  if (prevSelected !== selected) {
+    setPrevSelected(selected);
+    setEdit(false);
+  }
+
+  if (saveStatus.success && !prevSaveStatus.success) {
+    setPrevSaveStatus(saveStatus);
+    setEdit(false);
+  }
 
   useEffect(() => {
     if (saveStatus.success) {
       notification.success({
         message: t("success.generic"),
       });
-      setEdit(false);
     }
 
     if (saveStatus.error) {
@@ -58,11 +69,6 @@ export default function View({
       });
     }
   }, [saveStatus, t]);
-
-  useEffect(() => {
-    // stop editing on selection change
-    setEdit(false);
-  }, [selected]);
 
   const goToHelp = () => {
     window.open(helpLink);

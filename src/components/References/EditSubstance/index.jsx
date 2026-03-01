@@ -3,9 +3,7 @@ import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { CheckOutlined, SettingOutlined } from "@ant-design/icons";
 
-import { Row, Col } from "components/Grid";
 import { Select } from "components/Inputs";
-import Heading from "components/Heading";
 import notification from "components/notification";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
@@ -20,7 +18,6 @@ export default function EditSubstance({
   substance,
   idDrug,
   updateDrugData,
-  fetchRelations,
   afterSaveSubstance,
 }) {
   const { t } = useTranslation();
@@ -41,8 +38,6 @@ export default function EditSubstance({
 
   const changeSubstance = (value) => {
     setCurrentSubstance({ sctidA: value.value, sctNameA: value.label });
-
-    fetchRelations(value.value);
   };
 
   const saveSubstance = () => {
@@ -60,6 +55,7 @@ export default function EditSubstance({
           message: getErrorMessage(response, t),
         });
       } else {
+        setSaving(false);
         updateDrugData({
           sctidA,
           sctNameA,
@@ -74,70 +70,59 @@ export default function EditSubstance({
         }
       }
     });
-
-    setSaving(false);
   };
 
   return (
-    <>
-      <Row type="flex" gutter={24} align="middle">
-        <Col md={4} xxl={2}>
-          <Heading as="h3" $size="16px" $textAlign="right">
-            Substância:
-          </Heading>
-        </Col>
-        <Col md={24 - 4} xxl={24 - 8}>
-          <Select
-            id="sctidA"
-            labelInValue
-            style={{ width: "70%" }}
-            showSearch
-            optionFilterProp="children"
-            placeholder="Selecione a substância..."
-            value={{ value: currentSubstance.sctidA || "" }}
-            loading={substance.isFetching}
+    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <Select
+        id="sctidA"
+        labelInValue
+        style={{ width: "100%" }}
+        showSearch
+        optionFilterProp="children"
+        placeholder="Selecione a substância..."
+        value={{ value: currentSubstance.sctidA || "" }}
+        loading={substance.isFetching}
+        disabled={saving}
+        onChange={changeSubstance}
+      >
+        <Select.Option key="0" value="0">
+          &nbsp;
+        </Select.Option>
+        {substance.list.map(({ sctid, name, active }) => (
+          <Select.Option key={sctid} value={sctid} title={name}>
+            {`${active ? "" : "(INATIVO) "}`}
+            {name}
+          </Select.Option>
+        ))}
+      </Select>
+      {drugData.sctidA !== currentSubstance.sctidA && (
+        <Tooltip title="Confirmar e Salvar a alteração">
+          <Button
+            type="primary"
+            className="gtm-bt-change-substancia"
+            style={{ marginLeft: "5px" }}
+            onClick={saveSubstance}
             disabled={saving}
-            onChange={changeSubstance}
-          >
-            <Select.Option key="0" value="0">
-              &nbsp;
-            </Select.Option>
-            {substance.list.map(({ sctid, name, active }) => (
-              <Select.Option key={sctid} value={sctid} title={name}>
-                {`${active ? "" : "(INATIVO) "}`}
-                {name}
-              </Select.Option>
-            ))}
-          </Select>
-          {drugData.sctidA !== currentSubstance.sctidA && (
-            <Tooltip title="Confirmar e Salvar a alteração">
+            loading={saving}
+            icon={<CheckOutlined />}
+          ></Button>
+        </Tooltip>
+      )}
+      {PermissionService().has(Permission.ADMIN_SUBSTANCES) &&
+        drugData.sctidA === currentSubstance.sctidA && (
+          <>
+            <Tooltip title="Curadoria de substâncias">
               <Button
                 type="primary"
-                className="gtm-bt-change-substancia"
+                className="gtm-bt-edit-substancia"
                 style={{ marginLeft: "5px" }}
-                onClick={saveSubstance}
-                disabled={saving}
-                loading={saving}
-                icon={<CheckOutlined />}
+                onClick={() => window.open("/admin/substancias")}
+                icon={<SettingOutlined />}
               ></Button>
             </Tooltip>
-          )}
-          {PermissionService().has(Permission.ADMIN_SUBSTANCES) &&
-            drugData.sctidA === currentSubstance.sctidA && (
-              <>
-                <Tooltip title="Curadoria de substâncias">
-                  <Button
-                    type="primary"
-                    className="gtm-bt-edit-substancia"
-                    style={{ marginLeft: "5px" }}
-                    onClick={() => window.open("/admin/substancias")}
-                    icon={<SettingOutlined />}
-                  ></Button>
-                </Tooltip>
-              </>
-            )}
-        </Col>
-      </Row>
-    </>
+          </>
+        )}
+    </div>
   );
 }

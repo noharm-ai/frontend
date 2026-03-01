@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { isEmpty } from "lodash";
-import { Row, Col } from "antd";
+import { Row, Col, Space } from "antd";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { SettingOutlined } from "@ant-design/icons";
 
 import breakpoints from "styles/breakpoints";
 import { useMedia } from "lib/hooks";
@@ -14,7 +13,6 @@ import Empty from "components/Empty";
 import notification from "components/notification";
 import DefaultModal from "components/Modal";
 import Tabs from "components/Tabs";
-import Button from "components/Button";
 import BackTop from "components/BackTop";
 import Card from "components/Card";
 import LoadBox from "components/LoadBox";
@@ -23,7 +21,6 @@ import EditSubstance from "containers/References/EditSubstance";
 import ScoreWizard from "containers/References/ScoreWizard";
 import Filter from "./Filter";
 import columns from "./columns";
-import relationsColumns from "./Relation/columns";
 import { PageCard } from "styles/Utils.style";
 import DrugAttributesForm from "features/drugs/DrugAttributesForm/DrugAttributesForm";
 import { fetchDrugAttributes } from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
@@ -53,8 +50,7 @@ export default function References({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const drugAttributes = useSelector((state) => state.drugAttributesForm.data);
-  const { isFetching, list, error, generateStatus, drugData, relationStatus } =
-    outliers;
+  const { isFetching, list, error, generateStatus } = outliers;
   const [obsModalVisible, setObsModalVisibility] = useState(false);
 
   const [title] = useMedia(
@@ -88,11 +84,6 @@ export default function References({
   const dataSource = toDataSource(list, "idOutlier", {
     saveOutlier,
     onShowObsModal,
-  });
-  const dsRelations = toDataSource(drugData.relations, null, {
-    relationTypes: drugData.relationTypes,
-    sctidA: drugData.sctidA,
-    sctNameA: drugData.sctNameA,
   });
 
   useEffect(() => {
@@ -200,16 +191,22 @@ export default function References({
       children: (
         <Row gutter={24}>
           <Col xs={24} md={10}>
-            <Card title="Atributos do Medicamento" type="inner">
-              {!isFetching ? (
-                <DrugAttributesForm
-                  idSegment={outliers.selecteds.idSegment}
-                  idDrug={outliers.selecteds.idDrug}
-                />
-              ) : (
-                <LoadBox />
-              )}
-            </Card>
+            <Space orientation="vertical" style={{ width: "100%" }}>
+              <Card title="Substância" type="inner">
+                <EditSubstance afterSaveSubstance={afterSaveSubstance} />
+              </Card>
+
+              <Card title="Atributos do Medicamento" type="inner">
+                {!isFetching ? (
+                  <DrugAttributesForm
+                    idSegment={outliers.selecteds.idSegment}
+                    idDrug={outliers.selecteds.idDrug}
+                  />
+                ) : (
+                  <LoadBox />
+                )}
+              </Card>
+            </Space>
           </Col>
           <Col xs={24} md={14}>
             {PermissionService().has(Permission.ADMIN_SUBSTANCES) &&
@@ -222,43 +219,6 @@ export default function References({
               )}
           </Col>
         </Row>
-      ),
-    },
-    {
-      key: "3",
-      label: "Relações",
-      children: (
-        <>
-          <Row type="flex" justify="end">
-            <Col xs={24 - 6}>
-              <EditSubstance afterSaveSubstance={afterSaveSubstance} />
-            </Col>
-            <Col xs={6}>
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                {PermissionService().has(
-                  Permission.ADMIN_SUBSTANCE_RELATIONS,
-                ) &&
-                  drugData.sctidA && (
-                    <Button
-                      onClick={() => window.open("/admin/relacoes")}
-                      icon={<SettingOutlined />}
-                    >
-                      Curadoria de relações
-                    </Button>
-                  )}
-              </div>
-            </Col>
-          </Row>
-          <Table
-            title={title}
-            columns={relationsColumns()}
-            pagination={false}
-            loading={isFetching || relationStatus.isFetching}
-            locale={{ emptyText }}
-            dataSource={!isFetching ? dsRelations : []}
-            showSorterTooltip={false}
-          />
-        </>
       ),
     },
   ];

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { Steps, Tag, Result, Spin, Popconfirm, Switch } from "antd";
@@ -29,44 +29,48 @@ export function ControllerActionModal({
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const queueList = useAppSelector(
-    (state) => state.admin.integrationRemote.queue.list
+    (state) => state.admin.integrationRemote.queue.list,
   );
-  const [currentQueueId, setCurrentQueueId] = useState<number | null>(null);
+  const currentQueueId = useRef<number | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [waitingQueueResponse, setWaitingQueueResponse] =
-    useState<boolean>(false);
-  const [queueResponse, setQueueResponse] = useState<any>(null);
-  const [controllerStatus, setControllerStatus] = useState<any>(null);
   const [forcePool, setForcePool] = useState<boolean>(false);
+  const [queueResult, setQueueResult] = useState<{
+    waitingQueueResponse: boolean;
+    queueResponse: any;
+    controllerStatus: any;
+  }>({
+    waitingQueueResponse: false,
+    queueResponse: null,
+    controllerStatus: null,
+  });
+
+  const { waitingQueueResponse, queueResponse, controllerStatus } = queueResult;
 
   useEffect(() => {
-    if (open) {
-      setCurrentStep(0);
-      setWaitingQueueResponse(false);
-      setCurrentQueueId(null);
-      setQueueResponse(null);
-      setControllerStatus(null);
-      setForcePool(false);
-    }
-  }, [open]);
+    if (!currentQueueId.current) return;
 
-  useEffect(() => {
-    if (currentQueueId) {
-      const currentQueue: any = queueList.find(
-        (queue: any) => queue.id === currentQueueId
-      );
+    const currentQueue: any = queueList.find(
+      (queue: any) => queue.id === currentQueueId.current,
+    );
 
-      if (currentQueue && currentQueue.response) {
-        setQueueResponse(currentQueue);
-        setCurrentQueueId(null);
-        setWaitingQueueResponse(false);
+    if (currentQueue && currentQueue.response) {
+      currentQueueId.current = null;
 
-        if (currentQueue.extra?.type === "GET_CONTROLLER_REFERENCE") {
-          setControllerStatus(currentQueue.response.status);
-        }
+      if (currentQueue.extra?.type === "GET_CONTROLLER_REFERENCE") {
+        setQueueResult({
+          waitingQueueResponse: false,
+          queueResponse: currentQueue,
+          controllerStatus: currentQueue.response.status,
+        });
+      } else {
+        setQueueResult((prev) => ({
+          ...prev,
+          waitingQueueResponse: false,
+          queueResponse: currentQueue,
+        }));
       }
     }
-  }, [queueList, currentQueueId]);
+  }, [queueList]);
 
   const executeAction = (actionType: string, params: any = {}) => {
     const entity = data?.name;
@@ -85,199 +89,16 @@ export function ControllerActionModal({
   const steps = [
     {
       title: "Informações",
-      content: (
-        <>
-          <p>
-            O primeiro passo é verificar o status atual e os processos
-            conectados neste controller.
-          </p>
-          <Switch
-            onChange={(value) => setForcePool(value)}
-            checked={forcePool}
-          />{" "}
-          <span style={{ marginLeft: "5px" }}>
-            Este é um pool de conexão para o BD de produção da NoHarm?
-          </span>
-          {forcePool && (
-            <>
-              <h4>Para habilitar:</h4>
-              <p>
-                Utilize o botão abaixo para forçar a habilitação do controller.
-                Os processos relacionados terão que ser habilitados manualmente.
-              </p>
-              <Popconfirm
-                title="Forçar Habilitação"
-                description="Utilizar apenas para o pool de conexão com a NoHarm"
-                okText="Sim"
-                cancelText="Não"
-                onConfirm={() => setState("ENABLED", 99)}
-                zIndex={9999}
-              >
-                <Button danger>Forçar habilitação</Button>
-              </Popconfirm>
-
-              <h4>Para desabilitar:</h4>
-              <p>
-                Siga os passos, mas lembre-se que após desabilitar os processos,
-                o nifi remoto deixará de responder. Espere alguns minutos e
-                depois avance para desabilitar o controller.
-              </p>
-            </>
-          )}
-        </>
-      ),
     },
     {
       title: "Revisão",
-      content: (
-        <>
-          {waitingQueueResponse ? (
-            <LoadBox message="Carregando informações sobre o controller..." />
-          ) : (
-            <>
-              <h4>Revise as informações abaixo:</h4>
-
-              {queueResponse && (
-                <>
-                  <p>
-                    Status do Controller:{" "}
-                    {controllerStatus?.runStatus === "ENABLED" ? (
-                      <Tag color="success">Habilitado</Tag>
-                    ) : (
-                      <Tag>Desabilitado</Tag>
-                    )}
-                    <br />
-                    {controllerStatus?.validationStatus === "VALID"
-                      ? ""
-                      : "Controller inválido (verifique as configurações)"}
-                  </p>
-                  <h4 style={{ marginTop: "25px", marginBottom: 0 }}>
-                    Processos relacionados:
-                  </h4>
-
-                  <ProcessorStatusList
-                    controllers={
-                      queueResponse?.response?.component
-                        ?.referencingComponents || []
-                    }
-                  />
-                </>
-              )}
-            </>
-          )}
-        </>
-      ),
     },
     {
       title:
         controllerStatus?.runStatus === "DISABLED" ? "Processos" : "Controller",
-      content: (
-        <>
-          {controllerStatus?.runStatus === "DISABLED" ? (
-            <>
-              {waitingQueueResponse ? (
-                <LoadBox message="Habilitando o Controller..." />
-              ) : (
-                <>
-                  <h3>Controller habilitado com sucesso!</h3>
-                  <p>
-                    Clique em avançar para iniciar os processos conectados ao
-                    controller.
-                  </p>
-                  <ProcessorStatusList
-                    controllers={
-                      queueResponse?.response?.component
-                        ?.referencingComponents || []
-                    }
-                  />
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              {waitingQueueResponse ? (
-                <>
-                  <LoadBox
-                    message={
-                      forcePool
-                        ? "Atualizando o estado dos processos. Aguarde alguns minutos e avance manualmente."
-                        : "Atualizado estado dos processos..."
-                    }
-                  />
-                </>
-              ) : (
-                <>
-                  <h3>Processos parados com sucesso!</h3>
-                  <p>
-                    Agora você pode desabilitar o controller. Clique em avançar
-                    para continuar.
-                  </p>
-                  <ProcessorStatusList
-                    controllers={
-                      queueResponse?.response
-                        ?.controllerServiceReferencingComponents || []
-                    }
-                  />
-                </>
-              )}
-            </>
-          )}
-        </>
-      ),
     },
     {
       title: "Resultado",
-      content: (
-        <>
-          {controllerStatus?.runStatus === "DISABLED" ? (
-            <>
-              {waitingQueueResponse ? (
-                <LoadBox message="Iniciando os processos..." />
-              ) : (
-                <>
-                  <Result
-                    status="success"
-                    title="Processos iniciados com sucesso"
-                  />
-
-                  <ProcessorStatusList
-                    controllers={
-                      queueResponse?.response
-                        ?.controllerServiceReferencingComponents || []
-                    }
-                  />
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              {waitingQueueResponse ? (
-                <LoadBox
-                  message={
-                    forcePool
-                      ? "Desabilitando o controller. Feche a popup manualmente."
-                      : "Desabilitando o Controller..."
-                  }
-                />
-              ) : (
-                <>
-                  <Result
-                    status="success"
-                    title="Controller desabilitado com sucesso"
-                  />
-
-                  <ProcessorStatusList
-                    controllers={
-                      queueResponse?.response.component
-                        ?.referencingComponents || []
-                    }
-                  />
-                </>
-              )}
-            </>
-          )}
-        </>
-      ),
     },
   ];
 
@@ -384,9 +205,9 @@ export function ControllerActionModal({
           placement: "bottom",
         });
 
-        setCurrentQueueId(response.payload.data.data.id);
+        currentQueueId.current = response.payload.data.data.id;
         setCurrentStep(1);
-        setWaitingQueueResponse(true);
+        setQueueResult((prev) => ({ ...prev, waitingQueueResponse: true }));
       }
     });
   };
@@ -400,7 +221,7 @@ export function ControllerActionModal({
           clientId: comp.revision.clientId,
           version: comp.revision.version,
         };
-      }
+      },
     );
 
     const payload = {
@@ -423,11 +244,11 @@ export function ControllerActionModal({
             placement: "bottom",
           });
 
-          setCurrentQueueId(response.payload.data.data.id);
+          currentQueueId.current = response.payload.data.data.id;
           setCurrentStep(goToStep);
-          setWaitingQueueResponse(true);
+          setQueueResult((prev) => ({ ...prev, waitingQueueResponse: true }));
         }
-      }
+      },
     );
   };
 
@@ -455,12 +276,19 @@ export function ControllerActionModal({
             return;
           }
 
-          setCurrentQueueId(response.payload.data.data.id);
+          currentQueueId.current = response.payload.data.data.id;
           setCurrentStep(goToStep);
-          setWaitingQueueResponse(true);
+          setQueueResult((prev) => ({ ...prev, waitingQueueResponse: true }));
         }
-      }
+      },
     );
+  };
+
+  const cleanState = () => {
+    setCurrentStep(0);
+    currentQueueId.current = null;
+    setQueueResult({ waitingQueueResponse: false, queueResponse: null, controllerStatus: null });
+    setForcePool(false);
   };
 
   return (
@@ -472,12 +300,201 @@ export function ControllerActionModal({
       onCancel={onCancel}
       footer={footer()}
       maskClosable={false}
+      afterClose={() => cleanState()}
     >
       <div className="modal-title">Alterar Status</div>
 
       <Steps items={steps} current={currentStep} />
 
-      <div style={{ margin: "30px 0" }}>{steps[currentStep].content}</div>
+      <div style={{ margin: "30px 0" }}>
+        {currentStep === 0 && (
+          <>
+            <p>
+              O primeiro passo é verificar o status atual e os processos
+              conectados neste controller.
+            </p>
+            <Switch
+              onChange={(value) => setForcePool(value)}
+              checked={forcePool}
+            />{" "}
+            <span style={{ marginLeft: "5px" }}>
+              Este é um pool de conexão para o BD de produção da NoHarm?
+            </span>
+            {forcePool && (
+              <>
+                <h4>Para habilitar:</h4>
+                <p>
+                  Utilize o botão abaixo para forçar a habilitação do
+                  controller. Os processos relacionados terão que ser
+                  habilitados manualmente.
+                </p>
+                <Popconfirm
+                  title="Forçar Habilitação"
+                  description="Utilizar apenas para o pool de conexão com a NoHarm"
+                  okText="Sim"
+                  cancelText="Não"
+                  onConfirm={() => setState("ENABLED", 99)}
+                  zIndex={9999}
+                >
+                  <Button danger>Forçar habilitação</Button>
+                </Popconfirm>
+
+                <h4>Para desabilitar:</h4>
+                <p>
+                  Siga os passos, mas lembre-se que após desabilitar os
+                  processos, o nifi remoto deixará de responder. Espere alguns
+                  minutos e depois avance para desabilitar o controller.
+                </p>
+              </>
+            )}
+          </>
+        )}
+
+        {currentStep === 1 && (
+          <>
+            {waitingQueueResponse ? (
+              <LoadBox message="Carregando informações sobre o controller..." />
+            ) : (
+              <>
+                <h4>Revise as informações abaixo:</h4>
+
+                {queueResponse && (
+                  <>
+                    <p>
+                      Status do Controller:{" "}
+                      {controllerStatus?.runStatus === "ENABLED" ? (
+                        <Tag color="success">Habilitado</Tag>
+                      ) : (
+                        <Tag>Desabilitado</Tag>
+                      )}
+                      <br />
+                      {controllerStatus?.validationStatus === "VALID"
+                        ? ""
+                        : "Controller inválido (verifique as configurações)"}
+                    </p>
+                    <h4 style={{ marginTop: "25px", marginBottom: 0 }}>
+                      Processos relacionados:
+                    </h4>
+
+                    <ProcessorStatusList
+                      controllers={
+                        queueResponse?.response?.component
+                          ?.referencingComponents || []
+                      }
+                    />
+                  </>
+                )}
+              </>
+            )}
+          </>
+        )}
+
+        {currentStep === 2 && (
+          <>
+            {controllerStatus?.runStatus === "DISABLED" ? (
+              <>
+                {waitingQueueResponse ? (
+                  <LoadBox message="Habilitando o Controller..." />
+                ) : (
+                  <>
+                    <h3>Controller habilitado com sucesso!</h3>
+                    <p>
+                      Clique em avançar para iniciar os processos conectados ao
+                      controller.
+                    </p>
+                    <ProcessorStatusList
+                      controllers={
+                        queueResponse?.response?.component
+                          ?.referencingComponents || []
+                      }
+                    />
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                {waitingQueueResponse ? (
+                  <>
+                    <LoadBox
+                      message={
+                        forcePool
+                          ? "Atualizando o estado dos processos. Aguarde alguns minutos e avance manualmente."
+                          : "Atualizado estado dos processos..."
+                      }
+                    />
+                  </>
+                ) : (
+                  <>
+                    <h3>Processos parados com sucesso!</h3>
+                    <p>
+                      Agora você pode desabilitar o controller. Clique em
+                      avançar para continuar.
+                    </p>
+                    <ProcessorStatusList
+                      controllers={
+                        queueResponse?.response
+                          ?.controllerServiceReferencingComponents || []
+                      }
+                    />
+                  </>
+                )}
+              </>
+            )}
+          </>
+        )}
+
+        {currentStep === 3 && (
+          <>
+            {controllerStatus?.runStatus === "DISABLED" ? (
+              <>
+                {waitingQueueResponse ? (
+                  <LoadBox message="Iniciando os processos..." />
+                ) : (
+                  <>
+                    <Result
+                      status="success"
+                      title="Processos iniciados com sucesso"
+                    />
+
+                    <ProcessorStatusList
+                      controllers={
+                        queueResponse?.response
+                          ?.controllerServiceReferencingComponents || []
+                      }
+                    />
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                {waitingQueueResponse ? (
+                  <LoadBox
+                    message={
+                      forcePool
+                        ? "Desabilitando o controller. Feche a popup manualmente."
+                        : "Desabilitando o Controller..."
+                    }
+                  />
+                ) : (
+                  <>
+                    <Result
+                      status="success"
+                      title="Controller desabilitado com sucesso"
+                    />
+
+                    <ProcessorStatusList
+                      controllers={
+                        queueResponse?.response.component
+                          ?.referencingComponents || []
+                      }
+                    />
+                  </>
+                )}
+              </>
+            )}
+          </>
+        )}
+      </div>
     </DefaultModal>
   );
 }
