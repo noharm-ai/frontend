@@ -130,6 +130,10 @@ export default function SaveModal({
       label: "Setor",
       key: "{{setor}}",
     },
+    {
+      label: "Setor anterior",
+      key: "{{setor_anterior}}",
+    },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
   const examVariables = [
