@@ -16,7 +16,7 @@ export const getCustomClinicalNote = (
   prescription,
   clinicalNote,
   params = {},
-  t
+  t,
 ) => {
   let resultText = clinicalNote;
   const drugs = [
@@ -28,7 +28,7 @@ export const getCustomClinicalNote = (
   const myInterventions = getMyInterventionList(
     prescription,
     t,
-    params.account?.userName
+    params.account?.userName,
   );
 
   const alerts = alertsTemplate(prescription);
@@ -38,7 +38,7 @@ export const getCustomClinicalNote = (
       ? prescription.prescription.list[0].value
       : [],
     true,
-    prescription.data.conciliaList
+    prescription.data.conciliaList,
   );
 
   const conciliationDrugsWithoutRelation = getConciliationDrugs(
@@ -46,7 +46,7 @@ export const getCustomClinicalNote = (
       ? prescription.prescription.list[0].value
       : [],
     false,
-    prescription.data.conciliaList
+    prescription.data.conciliaList,
   );
 
   // custom vars
@@ -70,10 +70,17 @@ export const getCustomClinicalNote = (
     .replaceAll("{{nome_paciente}}", prescription.data.namePatient)
     .replaceAll(
       "{{dtnascimento_paciente}}",
-      formatDate(prescription.data.birthdate)
+      formatDate(prescription.data.birthdate),
     )
     .replaceAll("{{data_internacao}}", prescription.data.admissionDate)
     .replaceAll("{{setor}}", prescription.data.department)
+    .replaceAll(
+      "{{setor_anterior}}",
+      prescription.data.lastDepartment &&
+        prescription.data.department !== prescription.data.lastDepartment
+        ? prescription.data.lastDepartment
+        : "--",
+    )
     .replaceAll("{{nratendimento_paciente}}", prescription.data.admissionNumber)
     .replaceAll("{{peso_paciente}}", getWeight(prescription.data.weight))
     .replaceAll("{{altura_paciente}}", getHeight(prescription.data.height))
@@ -85,97 +92,97 @@ export const getCustomClinicalNote = (
       "{{risco_paciente}}",
       getPatientRisk(
         prescription.data.agg,
-        prescription.data.features?.globalScore
-      )
+        prescription.data.features?.globalScore,
+      ),
     )
     .replaceAll(
       "{{imc_paciente}}",
-      getPatientIMC(prescription.data.weight, prescription.data.height)
+      getPatientIMC(prescription.data.weight, prescription.data.height),
     )
     .replaceAll(
       "{{superficie_corporal_paciente}}",
       getPatientCorporalSurface(
         prescription.data.weight,
-        prescription.data.height
-      )
+        prescription.data.height,
+      ),
     )
     .replaceAll("{{exames}}", getExams(prescription.data.exams))
     .replaceAll(
       "{{exames_alterados}}",
-      getExamsOutOfReference(prescription.data.exams)
+      getExamsOutOfReference(prescription.data.exams),
     )
     .replaceAll("{{alergias}}", getAllergies(prescription.data.notesAllergies))
     .replaceAll(
       "{{intervencoes}}",
-      interventions || "Nenhuma intervenção registrada"
+      interventions || "Nenhuma intervenção registrada",
     )
     .replaceAll(
       "{{minhas_intervencoes}}",
-      myInterventions || "Nenhuma intervenção registrada"
+      myInterventions || "Nenhuma intervenção registrada",
     )
     .replaceAll("{{alertas}}", alerts || "Nenhum alerta registrado")
     .replaceAll(
       "{{medicamentos_conciliados}}",
-      conciliationDrugsWithRelation || "--"
+      conciliationDrugsWithRelation || "--",
     )
     .replaceAll(
       "{{medicamentos_nao_conciliados}}",
-      conciliationDrugsWithoutRelation || "--"
+      conciliationDrugsWithoutRelation || "--",
     )
     .replaceAll(
       "{{antimicrobianos}}",
       getAntimicrobial(drugs, {
         empty: "Nenhum Antimicrobiano encontrado.",
-      })
+      }),
     )
     .replaceAll(
       "{{nao_padronizados}}",
       getDrugsByAttribute(drugs, "np", {
         period: false,
         empty: "Nenhum medicamento Não Padronizado encontrado.",
-      })
+      }),
     )
     .replaceAll(
       "{{alta_vigilancia}}",
       getDrugsByAttribute(drugs, "av", {
         empty: "Nenhum medicamento de Alta Vigilância encontrado",
-      })
+      }),
     )
     .replaceAll(
       "{{controlados}}",
       getDrugsByAttribute(drugs, "c", {
         empty: "Nenhum medicamento Controlado encontrado.",
-      })
+      }),
     )
     .replaceAll(
       "{{dialisaveis}}",
       getDialyzable(drugs, prescription.data.dialysis, {
         empty: "Nenhum medicamento Dialisável encontrado.",
-      })
+      }),
     )
     .replaceAll(
       "{{quimioterapico}}",
       getDrugsByInternalAttribute(drugs, "chemo", {
         empty: "Nenhum medicamento Quimioterápico encontrado",
-      })
+      }),
     )
     .replaceAll(
       "{{mpi}}",
       getDrugsByInternalAttribute(drugs, "elderly", {
         empty: "Nenhum medicamento MPI encontrado",
-      })
+      }),
     )
     .replaceAll(
       "{{med_sonda}}",
       getDrugsByInternalAttribute(drugs, "tube", {
         empty: "Nenhum medicamento por sonda encontrado",
-      })
+      }),
     )
     .replaceAll(
       "{{med_risco_queda}}",
       getDrugsByInternalAttribute(drugs, "fallRisk", {
         empty: "Nenhum medicamento com risco de queda encontrado",
-      })
+      }),
     )
     .replaceAll(
       "{{med_risco_gestacao_d}}",
@@ -183,8 +190,8 @@ export const getCustomClinicalNote = (
         drugs.filter((d) => d?.drugAttributes?.pregnant === "D"),
         {
           empty: "Nenhum medicamento com risco de gestação D encontrado",
-        }
-      )
+        },
+      ),
     )
     .replaceAll(
       "{{med_risco_gestacao_x}}",
@@ -192,8 +199,8 @@ export const getCustomClinicalNote = (
         drugs.filter((d) => d?.drugAttributes?.pregnant === "X"),
         {
           empty: "Nenhum medicamento com risco de gestação X encontrado",
-        }
-      )
+        },
+      ),
     )
     .replaceAll(
       "{{med_risco_lactacao_medio}}",
@@ -201,8 +208,8 @@ export const getCustomClinicalNote = (
         drugs.filter((d) => d?.drugAttributes?.lactating === "2"),
         {
           empty: "Nenhum medicamento com risco na lactação médio encontrado",
-        }
-      )
+        },
+      ),
     )
     .replaceAll(
       "{{med_risco_lactacao_alto}}",
@@ -210,67 +217,67 @@ export const getCustomClinicalNote = (
         drugs.filter((d) => d?.drugAttributes?.lactating === "3"),
         {
           empty: "Nenhum medicamento com risco na lactação alto encontrado",
-        }
-      )
+        },
+      ),
     )
     .replaceAll(
       "{{antitromboticos}}",
       getDrugsByClass(
         drugs,
         ["B1"],
-        "Nenhum medicamento Antitrombótico encontrado."
-      )
+        "Nenhum medicamento Antitrombótico encontrado.",
+      ),
     )
     .replaceAll(
       "{{profilaxia_ulcera_estresse}}",
       getDrugsByClass(
         drugs,
         ["A02B"],
-        "Nenhum medicamento de Profilaxia de Úlcera de Estresse encontrado."
-      )
+        "Nenhum medicamento de Profilaxia de Úlcera de Estresse encontrado.",
+      ),
     )
     .replaceAll(
       "{{profilaxia_ocular}}",
       getDrugsByClass(
         drugs,
         ["S1K1", "S1X2"],
-        "Nenhum medicamento de Profilaxia Ocular encontrado."
-      )
+        "Nenhum medicamento de Profilaxia Ocular encontrado.",
+      ),
     )
     .replaceAll(
       "{{analgesicos}}",
       getDrugsByClass(
         drugs,
         ["N2"],
-        "Nenhum medicamento Analgésico encontrado."
-      )
+        "Nenhum medicamento Analgésico encontrado.",
+      ),
     )
     .replaceAll(
       "{{anestesicos_gerais}}",
       getDrugsByClass(
         drugs,
         ["N1A1", "N1A2"],
-        "Nenhum medicamento Anestésico Geral encontrado."
-      )
+        "Nenhum medicamento Anestésico Geral encontrado.",
+      ),
     )
     .replaceAll(
       "{{vasopressores_inotropicos}}",
       getDrugsByClass(
         drugs,
         ["C1C", "C1F", "H4D"],
-        "Nenhum medicamento Vasopressor ou Inotrópico encontrado."
-      )
+        "Nenhum medicamento Vasopressor ou Inotrópico encontrado.",
+      ),
     )
     .replaceAll(
       "{{assinatura}}",
-      signatureTemplate(params.signature, params.account)
+      signatureTemplate(params.signature, params.account),
     );
 };
 
 const getSignsNhCare = (prescription) => {
   if (prescription.data.notesSigns) {
     return `${prescription.data.notesSigns} (Retirado em: ${formatDate(
-      prescription.data.notesSignsDate
+      prescription.data.notesSignsDate,
     )})`;
   }
 
@@ -280,7 +287,7 @@ const getSignsNhCare = (prescription) => {
 const getInfoNhCare = (prescription) => {
   if (prescription.data.notesInfo) {
     return `${prescription.data.notesInfo} (Retirado em: ${formatDate(
-      prescription.data.notesInfoDate
+      prescription.data.notesInfoDate,
     )})`;
   }
 
@@ -373,7 +380,7 @@ const getAllergies = (allergies) => {
   const list = uniq(
     allergies.map(({ text }) => {
       return `- ${text}`;
-    })
+    }),
   ).sort();
 
   return list.join("\n");
@@ -385,7 +392,7 @@ const getDrugsByAttribute = (drugs, attr, params = {}) => {
   }
 
   const list = uniq(
-    drugs.filter((d) => d[attr]).map((d) => drugTemplate(d, params))
+    drugs.filter((d) => d[attr]).map((d) => drugTemplate(d, params)),
   ).sort();
 
   if (!list.length) {
@@ -403,7 +410,7 @@ const getDrugsByInternalAttribute = (drugs, attr, params = {}) => {
   const list = uniq(
     drugs
       .filter((d) => d?.drugAttributes && d.drugAttributes[attr])
-      .map((d) => drugTemplate(d, params))
+      .map((d) => drugTemplate(d, params)),
   ).sort();
 
   if (!list.length) {
@@ -437,7 +444,7 @@ const getDialyzable = (drugs, dialysis, params = {}) => {
   }
 
   const list = uniq(
-    drugs.filter((d) => d.dialyzable).map((d) => drugTemplate(d, params))
+    drugs.filter((d) => d.dialyzable).map((d) => drugTemplate(d, params)),
   ).sort();
 
   if (!list.length) {
@@ -465,7 +472,7 @@ const getDrugsByClass = (drugs, classList, empty) => {
 
         return hasClass;
       })
-      .map((d) => drugTemplate(d, {}))
+      .map((d) => drugTemplate(d, {})),
   ).sort();
 
   if (!list.length) {
@@ -545,7 +552,7 @@ const alertsByLevel = (clinicalNote, prescription) => {
 
     resultText = resultText.replace(
       item,
-      alertsTemplate(prescription, null, level)
+      alertsTemplate(prescription, null, level),
     );
   });
 
@@ -574,7 +581,7 @@ const examsByType = (clinicalNote, prescription) => {
 const drugsByFieldList = (clinicalNote, drugs, params = {}) => {
   let resultText = clinicalNote;
   const variables = clinicalNote.match(
-    new RegExp("{{(" + params.varName + ".*?)}}", "g")
+    new RegExp("{{(" + params.varName + ".*?)}}", "g"),
   );
 
   if (!variables) {
@@ -589,7 +596,7 @@ const drugsByFieldList = (clinicalNote, drugs, params = {}) => {
     const list = uniq(
       drugs
         .filter((d) => fieldList.indexOf(`${d[params.field]}`) !== -1)
-        .map((d) => drugTemplate(d, params))
+        .map((d) => drugTemplate(d, params)),
     ).sort();
 
     if (!list.length) {
@@ -618,7 +625,7 @@ const drugTemplate = (d, params) => {
 
 const getAntimicrobial = (
   drugs,
-  params = { empty: "Nenhum antimicrobiano encontrado" }
+  params = { empty: "Nenhum antimicrobiano encontrado" },
 ) => {
   if (!drugs || (drugs && !drugs.length)) {
     return params.empty;
@@ -651,12 +658,12 @@ const getAntimicrobial = (
       }
 
       return acc;
-    }, {})
+    }, {}),
   );
 
   return groupedAtmList
     .map(
-      (i) => `${i.drug} (Período: ${i.period}D) (${i.dose} X ${i.frequency})`
+      (i) => `${i.drug} (Período: ${i.period}D) (${i.dose} X ${i.frequency})`,
     )
     .join("\n");
 };
