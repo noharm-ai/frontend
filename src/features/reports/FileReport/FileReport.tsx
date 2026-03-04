@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Spin, notification, FloatButton } from "antd";
+import { Spin, notification, FloatButton, Tag, Alert } from "antd";
 import { useParams } from "react-router-dom";
 import {
   DeleteOutlined,
@@ -42,6 +42,22 @@ import {
   Filter,
 } from "./FileReport.utils";
 import { FilterRow } from "./FilterRow";
+import { ErrorBoundary } from "react-error-boundary";
+
+const ChartCreatorFallback = ({ resetErrorBoundary }: { resetErrorBoundary: () => void }) => (
+  <Alert
+    message="Erro nos gráficos"
+    description="Ocorreu um erro ao renderizar os gráficos. Os dados do relatório não foram afetados."
+    type="error"
+    showIcon
+    style={{ marginTop: "16px" }}
+    action={
+      <Button size="small" onClick={resetErrorBoundary}>
+        Tentar novamente
+      </Button>
+    }
+  />
+);
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -60,6 +76,8 @@ export function FileReport() {
   const [currentCharts, setCurrentCharts] = useState<ChartConfig[]>([]);
   const [isSavingCharts, setIsSavingCharts] = useState(false);
   const canWriteGraphs = PermissionService().has(Permission.WRITE_CUSTOM_REPORTS_GRAPHS);
+  const hasUnsavedChanges =
+    JSON.stringify(currentCharts) !== JSON.stringify(initialCharts);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,7 +100,9 @@ export function FileReport() {
         setTitle(response.payload.data.data.title);
         if (response.payload.data.data.graphs) {
           try {
-            setInitialCharts(JSON.parse(response.payload.data.data.graphs));
+            const parsedCharts = JSON.parse(response.payload.data.data.graphs);
+            setInitialCharts(parsedCharts);
+            setCurrentCharts(parsedCharts);
           } catch {
             // ignore malformed JSON
           }
@@ -151,6 +171,7 @@ export function FileReport() {
           notification.error({ message: getErrorMessage(response, t) });
         } else {
           notification.success({ message: "Gráficos salvos com sucesso." });
+          setInitialCharts(currentCharts);
         }
         setIsSavingCharts(false);
       },
@@ -259,15 +280,20 @@ export function FileReport() {
             showFilters={false}
           />
           {filteredData && filteredData.length > 0 && (
-            <>
+            <ErrorBoundary FallbackComponent={ChartCreatorFallback}>
               {canWriteGraphs && (
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "flex-end",
+                    alignItems: "center",
+                    gap: "8px",
                     margin: "16px 0 0",
                   }}
                 >
+                  {hasUnsavedChanges && (
+                    <Tag color="warning">Alterações não salvas</Tag>
+                  )}
                   <Button
                     type="primary"
                     icon={<SaveOutlined />}
@@ -284,7 +310,7 @@ export function FileReport() {
                 onChartsChange={setCurrentCharts}
                 readOnly={!canWriteGraphs}
               />
-            </>
+            </ErrorBoundary>
           )}
         </div>
       </Spin>
