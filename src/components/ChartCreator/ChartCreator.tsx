@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Button, Card, Empty, Modal, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { ChartConfig, ChartCreatorProps } from "./types";
+import { AggregationType, ChartConfig, ChartCreatorProps } from "./types";
 import { ChartItem } from "./ChartItem";
 import { ChartFormFields } from "./ChartFormFields";
 
@@ -18,6 +18,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [newY, setNewY] = useState<string[]>([]);
   const [newType, setNewType] = useState<"bar" | "line" | "pie">("bar");
   const [newWidth, setNewWidth] = useState<"full" | "half">("half");
+  const [newAggregation, setNewAggregation] = useState<AggregationType>("none");
 
   // State for EDITING chart form (Modal)
   const [editTitle, setEditTitle] = useState("");
@@ -25,6 +26,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [editY, setEditY] = useState<string[]>([]);
   const [editType, setEditType] = useState<"bar" | "line" | "pie">("bar");
   const [editWidth, setEditWidth] = useState<"full" | "half">("full");
+  const [editAggregation, setEditAggregation] = useState<AggregationType>("none");
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
 
   const keys = useMemo(() => {
@@ -32,17 +34,28 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
     return Object.keys(data[0]);
   }, [data]);
 
+  const isNewFormValid =
+    newX.length > 0 &&
+    (newAggregation === "count" || newY.length > 0) &&
+    !!newTitle;
+
+  const isEditFormValid =
+    editX.length > 0 &&
+    (editAggregation === "count" || editY.length > 0) &&
+    !!editTitle;
+
   const handleAddChart = () => {
-    if (newX.length > 0 && newY.length > 0 && newType && newTitle) {
+    if (isNewFormValid) {
       setCharts((prev) => [
         ...prev,
         {
           id: Math.random().toString(36).substr(2, 9),
           type: newType,
           xKeys: newX,
-          yKeys: newY,
+          yKeys: newAggregation === "count" ? [] : newY,
           title: newTitle,
           width: newWidth,
+          aggregation: newAggregation,
         },
       ]);
       // Reset new form
@@ -51,6 +64,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
       setNewY([]);
       setNewType("bar");
       setNewWidth("half");
+      setNewAggregation("none");
     }
   };
 
@@ -61,6 +75,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
     setEditY(chart.yKeys);
     setEditType(chart.type);
     setEditWidth(chart.width);
+    setEditAggregation(chart.aggregation ?? "none");
   }, []);
 
   const saveEdit = () => {
@@ -72,9 +87,10 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 ...c,
                 title: editTitle,
                 xKeys: editX,
-                yKeys: editY,
+                yKeys: editAggregation === "count" ? [] : editY,
                 type: editType,
                 width: editWidth,
+                aggregation: editAggregation,
               }
             : c,
         ),
@@ -113,7 +129,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 <Button
                   type="primary"
                   icon={<PlusOutlined />}
-                  disabled={newX.length === 0 || newY.length === 0 || !newTitle}
+                  disabled={!isNewFormValid}
                   onClick={handleAddChart}
                 >
                   Adicionar
@@ -131,6 +147,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 setType={setNewType}
                 width={newWidth}
                 setWidth={setNewWidth}
+                aggregation={newAggregation}
+                setAggregation={setNewAggregation}
                 keys={keys}
               />
             </Card>
@@ -149,7 +167,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           <Button
             key="submit"
             type="primary"
-            disabled={editX.length === 0 || editY.length === 0 || !editTitle}
+            disabled={!isEditFormValid}
             onClick={saveEdit}
           >
             Salvar Alterações
@@ -167,6 +185,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           setType={setEditType}
           width={editWidth}
           setWidth={setEditWidth}
+          aggregation={editAggregation}
+          setAggregation={setEditAggregation}
           keys={keys}
         />
       </Modal>

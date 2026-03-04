@@ -1,3 +1,5 @@
+export type AggregationType = "none" | "count" | "sum" | "avg" | "min" | "max";
+
 export interface ChartConfig {
   id: string;
   type: "bar" | "line" | "pie";
@@ -5,6 +7,7 @@ export interface ChartConfig {
   yKeys: string[];
   title: string;
   width: "full" | "half";
+  aggregation?: AggregationType;
 }
 
 export interface ChartCreatorProps {

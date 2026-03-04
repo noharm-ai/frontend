@@ -1,66 +1,113 @@
-import { ChartConfig } from "./types";
+import { AggregationType, ChartConfig } from "./types";
+
+const AGGREGATION_LABEL: Record<AggregationType, string> = {
+  none: "",
+  count: "Contagem",
+  sum: "Soma",
+  avg: "Média",
+  min: "Mínimo",
+  max: "Máximo",
+};
+
+function groupAndAggregate(
+  data: any[],
+  xKeys: string[],
+  yKeys: string[],
+  aggregation: AggregationType,
+) {
+  const groups = new Map<string, { key: string; items: any[] }>();
+
+  data.forEach((item) => {
+    const key = xKeys.map((k) => item[k]).join(" - ");
+    if (!groups.has(key)) groups.set(key, { key, items: [] });
+    groups.get(key)!.items.push(item);
+  });
+
+  return Array.from(groups.values()).map(({ key, items }) => {
+    const row: any = { __xKey__: key, __count__: items.length };
+
+    yKeys.forEach((yKey) => {
+      const vals = items
+        .map((i) => Number(i[yKey]))
+        .filter((v) => !isNaN(v));
+
+      if (aggregation === "sum") {
+        row[yKey] = vals.reduce((a, b) => a + b, 0);
+      } else if (aggregation === "avg") {
+        row[yKey] = vals.length
+          ? vals.reduce((a, b) => a + b, 0) / vals.length
+          : 0;
+      } else if (aggregation === "min") {
+        row[yKey] = vals.length ? Math.min(...vals) : 0;
+      } else if (aggregation === "max") {
+        row[yKey] = vals.length ? Math.max(...vals) : 0;
+      }
+    });
+
+    return row;
+  });
+}
 
 export const getChartOption = (data: any[], config: ChartConfig) => {
-  // Check if we're using count aggregation
-  const isCountMode = config.yKeys.includes("__count__");
+  // Backward compat: treat __count__ sentinel as count aggregation
+  const effectiveAggregation: AggregationType =
+    config.aggregation && config.aggregation !== "none"
+      ? config.aggregation
+      : config.yKeys.includes("__count__")
+        ? "count"
+        : "none";
+
+  const isAggregated = effectiveAggregation !== "none";
+  const isCount = effectiveAggregation === "count";
 
   let xData: string[];
   let processedData: any[];
 
-  if (isCountMode) {
-    // Aggregate data by counting occurrences of X-axis combinations
-    const countMap = new Map<string, number>();
-
-    data.forEach((item) => {
-      const key = config.xKeys.map((k) => item[k]).join(" - ");
-      countMap.set(key, (countMap.get(key) || 0) + 1);
-    });
-
-    xData = Array.from(countMap.keys());
-    processedData = Array.from(countMap.entries()).map(([key, count]) => ({
-      key,
-      __count__: count,
-    }));
+  if (isAggregated) {
+    processedData = groupAndAggregate(
+      data,
+      config.xKeys,
+      isCount ? [] : config.yKeys,
+      effectiveAggregation,
+    );
+    xData = processedData.map((item) => item.__xKey__);
   } else {
-    // Use original data
-    xData = data.map((item) => config.xKeys.map((k) => item[k]).join(" - "));
     processedData = data;
+    xData = data.map((item) => config.xKeys.map((k) => item[k]).join(" - "));
   }
+
+  const seriesLabel = isCount
+    ? AGGREGATION_LABEL.count
+    : effectiveAggregation !== "none"
+      ? `${AGGREGATION_LABEL[effectiveAggregation]}`
+      : undefined;
 
   if (config.type === "pie") {
     const primaryYKey = config.yKeys[0];
-    const pieData = isCountMode
+    const pieData = isAggregated
       ? processedData.map((item) => ({
-          name: item.key,
-          value: item.__count__,
+          name: item.__xKey__,
+          value: isCount ? item.__count__ : item[primaryYKey],
         }))
       : data.map((item) => ({
           name: config.xKeys.map((k) => item[k]).join(" - "),
           value: item[primaryYKey],
         }));
 
+    const seriesName = isCount
+      ? "Contagem"
+      : seriesLabel
+        ? `${seriesLabel} de ${primaryYKey}`
+        : `${primaryYKey} por ${config.xKeys.join("-")}`;
+
     return {
-      title: {
-        text: config.title,
-        left: "center",
-      },
-      tooltip: {
-        trigger: "item",
-      },
-      toolbox: {
-        feature: {
-          saveAsImage: { title: "Salvar como Imagem" },
-        },
-      },
-      legend: {
-        orient: "vertical",
-        left: "left",
-      },
+      title: { text: config.title, left: "center" },
+      tooltip: { trigger: "item" },
+      toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
+      legend: { orient: "vertical", left: "left" },
       series: [
         {
-          name: isCountMode
-            ? "Contagem"
-            : `${primaryYKey} por ${config.xKeys.join("-")}`,
+          name: seriesName,
           type: "pie",
           radius: "50%",
           data: pieData,
@@ -76,55 +123,37 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     };
   }
 
-  const series = config.yKeys.map((yKey) => {
-    if (yKey === "__count__") {
-      return {
-        name: "Contagem",
-        data: processedData.map((item) => item.__count__),
-        type: config.type,
-      };
-    }
-    return {
-      name: yKey,
-      data: isCountMode
-        ? processedData.map((item) => {
-            // Find original data point matching this x-axis key
-            const originalItem = data.find(
-              (d) => config.xKeys.map((k) => d[k]).join(" - ") === item.key,
-            );
-            return originalItem ? originalItem[yKey] : 0;
-          })
-        : data.map((item) => item[yKey]),
-      type: config.type,
-    };
-  });
+  const series = isCount
+    ? [
+        {
+          name: "Contagem",
+          data: processedData.map((item) => item.__count__),
+          type: config.type,
+        },
+      ]
+    : config.yKeys
+        .filter((yKey) => yKey !== "__count__")
+        .map((yKey) => ({
+          name: seriesLabel ? `${seriesLabel} de ${yKey}` : yKey,
+          data: isAggregated
+            ? processedData.map((item) => item[yKey])
+            : data.map((item) => item[yKey]),
+          type: config.type,
+        }));
+
+  const legendData = isCount
+    ? ["Contagem"]
+    : config.yKeys
+        .filter((yKey) => yKey !== "__count__")
+        .map((yKey) => (seriesLabel ? `${seriesLabel} de ${yKey}` : yKey));
 
   return {
-    title: {
-      text: config.title,
-      left: "center",
-    },
-    tooltip: {
-      trigger: "axis",
-    },
-    toolbox: {
-      feature: {
-        saveAsImage: { title: "Salvar como Imagem" },
-      },
-    },
-    legend: {
-      data: config.yKeys.map((yKey) =>
-        yKey === "__count__" ? "Contagem" : yKey,
-      ),
-      top: 30, // Adjust legend position to avoid overlap with title
-    },
-    xAxis: {
-      type: "category",
-      data: xData,
-    },
-    yAxis: {
-      type: "value",
-    },
-    series: series,
+    title: { text: config.title, left: "center" },
+    tooltip: { trigger: "axis" },
+    toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
+    legend: { data: legendData, top: 30 },
+    xAxis: { type: "category", data: xData },
+    yAxis: { type: "value" },
+    series,
   };
 };

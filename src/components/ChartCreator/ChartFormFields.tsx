@@ -1,4 +1,5 @@
 import { Space, Input, Select } from "antd";
+import { AggregationType } from "./types";
 
 interface ChartFormFieldsProps {
   title: string;
@@ -11,6 +12,8 @@ interface ChartFormFieldsProps {
   setType: (val: "bar" | "line" | "pie") => void;
   width: "full" | "half";
   setWidth: (val: "full" | "half") => void;
+  aggregation: AggregationType;
+  setAggregation: (val: AggregationType) => void;
   keys: string[];
 }
 
@@ -25,6 +28,8 @@ export const ChartFormFields = ({
   setType,
   width,
   setWidth,
+  aggregation,
+  setAggregation,
   keys,
 }: ChartFormFieldsProps) => (
   <Space direction="vertical" style={{ width: "100%" }} size="middle">
@@ -49,28 +54,44 @@ export const ChartFormFields = ({
       />
     </div>
     <div>
-      <label>Eixo Y (Valor)</label>
+      <label>Agregação</label>
       <Select
-        mode={type === "pie" ? undefined : "multiple"}
-        placeholder="Selecione as colunas para o eixo Y"
+        placeholder="Selecione o tipo de agregação"
         style={{ width: "100%" }}
-        value={type === "pie" ? yKeys[0] : yKeys}
-        onChange={(val) => {
-          if (Array.isArray(val)) {
-            setYKeys(val);
-          } else if (val) {
-            setYKeys([val]);
-          } else {
-            setYKeys([]);
-          }
-        }}
+        value={aggregation}
+        onChange={setAggregation}
         options={[
-          { label: "(Contagem)", value: "__count__" },
-          ...keys.map((k) => ({ label: k, value: k })),
+          { label: "Nenhuma", value: "none" },
+          { label: "Contagem", value: "count" },
+          { label: "Soma", value: "sum" },
+          { label: "Média", value: "avg" },
+          { label: "Mínimo", value: "min" },
+          { label: "Máximo", value: "max" },
         ]}
-        maxTagCount="responsive"
       />
     </div>
+    {aggregation !== "count" && (
+      <div>
+        <label>Eixo Y (Valor)</label>
+        <Select
+          mode={type === "pie" ? undefined : "multiple"}
+          placeholder="Selecione as colunas para o eixo Y"
+          style={{ width: "100%" }}
+          value={type === "pie" ? yKeys[0] : yKeys}
+          onChange={(val) => {
+            if (Array.isArray(val)) {
+              setYKeys(val);
+            } else if (val) {
+              setYKeys([val]);
+            } else {
+              setYKeys([]);
+            }
+          }}
+          options={keys.map((k) => ({ label: k, value: k }))}
+          maxTagCount="responsive"
+        />
+      </div>
+    )}
     <div>
       <label>Tipo de Gráfico</label>
       <Select
