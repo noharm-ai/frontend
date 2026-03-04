@@ -1,4 +1,5 @@
 export type AggregationType = "none" | "count" | "sum" | "avg" | "min" | "max";
+export type SortOrder = "none" | "asc" | "desc";
 
 export interface ChartConfig {
   id: string;
@@ -8,6 +9,10 @@ export interface ChartConfig {
   title: string;
   width: "full" | "half";
   aggregation?: AggregationType;
+  sortOrder?: SortOrder;
+  topN?: number;
+  showLabels?: boolean;
+  height?: number;
 }
 
 export interface ChartCreatorProps {

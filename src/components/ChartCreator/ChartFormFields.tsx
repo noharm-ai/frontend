@@ -1,5 +1,5 @@
-import { Space, Input, Select } from "antd";
-import { AggregationType } from "./types";
+import { InputNumber, Flex, Input, Select, Switch } from "antd";
+import { AggregationType, SortOrder } from "./types";
 
 interface ChartFormFieldsProps {
   title: string;
@@ -14,6 +14,14 @@ interface ChartFormFieldsProps {
   setWidth: (val: "full" | "half") => void;
   aggregation: AggregationType;
   setAggregation: (val: AggregationType) => void;
+  sortOrder: SortOrder;
+  setSortOrder: (val: SortOrder) => void;
+  topN: number;
+  setTopN: (val: number) => void;
+  showLabels: boolean;
+  setShowLabels: (val: boolean) => void;
+  height: number;
+  setHeight: (val: number) => void;
   keys: string[];
 }
 
@@ -30,9 +38,17 @@ export const ChartFormFields = ({
   setWidth,
   aggregation,
   setAggregation,
+  sortOrder,
+  setSortOrder,
+  topN,
+  setTopN,
+  showLabels,
+  setShowLabels,
+  height,
+  setHeight,
   keys,
 }: ChartFormFieldsProps) => (
-  <Space direction="vertical" style={{ width: "100%" }} size="middle">
+  <Flex vertical style={{ width: "100%" }} gap="middle">
     <div>
       <label>Título do Gráfico</label>
       <Input
@@ -107,6 +123,33 @@ export const ChartFormFields = ({
       />
     </div>
     <div>
+      <label>Ordenação</label>
+      <Select
+        style={{ width: "100%" }}
+        value={sortOrder}
+        onChange={setSortOrder}
+        options={[
+          { label: "Nenhuma", value: "none" },
+          { label: "Crescente (menor → maior)", value: "asc" },
+          { label: "Decrescente (maior → menor)", value: "desc" },
+        ]}
+      />
+    </div>
+    <div>
+      <label>Top N (0 = todos)</label>
+      <InputNumber
+        min={0}
+        step={1}
+        style={{ width: "100%" }}
+        value={topN}
+        onChange={(val) => setTopN(val ?? 0)}
+      />
+    </div>
+    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <Switch checked={showLabels} onChange={setShowLabels} />
+      <label>Rótulos nos dados</label>
+    </div>
+    <div>
       <label>Largura do Gráfico</label>
       <Select
         placeholder="Selecione a largura"
@@ -119,5 +162,16 @@ export const ChartFormFields = ({
         ]}
       />
     </div>
-  </Space>
+    <div>
+      <label>Altura (px)</label>
+      <InputNumber
+        min={200}
+        max={1200}
+        step={50}
+        style={{ width: "100%" }}
+        value={height}
+        onChange={(val) => setHeight(val ?? 400)}
+      />
+    </div>
+  </Flex>
 );

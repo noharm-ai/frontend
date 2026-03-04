@@ -46,7 +46,7 @@ export const ChartItem = memo(
         >
           <EChartBase
             option={option}
-            style={{ height: "400px", width: "100%" }}
+            style={{ height: `${chart.height ?? 400}px`, width: "100%" }}
             loading={false}
             settings={{}}
             theme={undefined}

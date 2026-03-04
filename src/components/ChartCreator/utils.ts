@@ -48,6 +48,11 @@ function groupAndAggregate(
   });
 }
 
+function getPrimaryValue(row: any, isCount: boolean, primaryYKey: string): number {
+  if (isCount) return row.__count__ ?? 0;
+  return Number(row[primaryYKey]) || 0;
+}
+
 export const getChartOption = (data: any[], config: ChartConfig) => {
   // Backward compat: treat __count__ sentinel as count aggregation
   const effectiveAggregation: AggregationType =
@@ -59,8 +64,8 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
 
   const isAggregated = effectiveAggregation !== "none";
   const isCount = effectiveAggregation === "count";
+  const primaryYKey = config.yKeys.filter((k) => k !== "__count__")[0];
 
-  let xData: string[];
   let processedData: any[];
 
   if (isAggregated) {
@@ -70,11 +75,32 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
       isCount ? [] : config.yKeys,
       effectiveAggregation,
     );
-    xData = processedData.map((item) => item.__xKey__);
   } else {
-    processedData = data;
-    xData = data.map((item) => config.xKeys.map((k) => item[k]).join(" - "));
+    processedData = data.map((item) => ({
+      ...item,
+      __xKey__: config.xKeys.map((k) => item[k]).join(" - "),
+    }));
   }
+
+  // Sort
+  const sortOrder = config.sortOrder ?? "none";
+  if (sortOrder !== "none") {
+    processedData = [...processedData].sort((a, b) => {
+      const av = getPrimaryValue(a, isCount, primaryYKey);
+      const bv = getPrimaryValue(b, isCount, primaryYKey);
+      return sortOrder === "asc" ? av - bv : bv - av;
+    });
+  }
+
+  // Top N
+  const topN = config.topN ?? 0;
+  if (topN > 0) {
+    processedData = processedData.slice(0, topN);
+  }
+
+  const xData = processedData.map((item) => item.__xKey__);
+
+  const showLabels = config.showLabels ?? false;
 
   const seriesLabel = isCount
     ? AGGREGATION_LABEL.count
@@ -83,14 +109,13 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
       : undefined;
 
   if (config.type === "pie") {
-    const primaryYKey = config.yKeys[0];
     const pieData = isAggregated
       ? processedData.map((item) => ({
           name: item.__xKey__,
           value: isCount ? item.__count__ : item[primaryYKey],
         }))
-      : data.map((item) => ({
-          name: config.xKeys.map((k) => item[k]).join(" - "),
+      : processedData.map((item) => ({
+          name: item.__xKey__,
           value: item[primaryYKey],
         }));
 
@@ -111,6 +136,7 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
           type: "pie",
           radius: "50%",
           data: pieData,
+          label: { show: showLabels, position: "outside" },
           emphasis: {
             itemStyle: {
               shadowBlur: 10,
@@ -123,22 +149,26 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     };
   }
 
+  const label = { show: showLabels, position: "top" as const, formatter: "{c}" };
+
   const series = isCount
     ? [
         {
           name: "Contagem",
           data: processedData.map((item) => item.__count__),
           type: config.type,
+          label,
         },
       ]
     : config.yKeys
         .filter((yKey) => yKey !== "__count__")
         .map((yKey) => ({
           name: seriesLabel ? `${seriesLabel} de ${yKey}` : yKey,
-          data: isAggregated
-            ? processedData.map((item) => item[yKey])
-            : data.map((item) => item[yKey]),
+          data: processedData.map((item) =>
+            isAggregated ? item[yKey] : item[yKey],
+          ),
           type: config.type,
+          label,
         }));
 
   const legendData = isCount

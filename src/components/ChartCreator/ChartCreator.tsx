@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Button, Card, Empty, Modal, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { AggregationType, ChartConfig, ChartCreatorProps } from "./types";
+import { AggregationType, ChartConfig, ChartCreatorProps, SortOrder } from "./types";
 import { ChartItem } from "./ChartItem";
 import { ChartFormFields } from "./ChartFormFields";
 
@@ -19,6 +19,10 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [newType, setNewType] = useState<"bar" | "line" | "pie">("bar");
   const [newWidth, setNewWidth] = useState<"full" | "half">("half");
   const [newAggregation, setNewAggregation] = useState<AggregationType>("none");
+  const [newSortOrder, setNewSortOrder] = useState<SortOrder>("none");
+  const [newTopN, setNewTopN] = useState(0);
+  const [newShowLabels, setNewShowLabels] = useState(false);
+  const [newHeight, setNewHeight] = useState(400);
 
   // State for EDITING chart form (Modal)
   const [editTitle, setEditTitle] = useState("");
@@ -27,6 +31,10 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [editType, setEditType] = useState<"bar" | "line" | "pie">("bar");
   const [editWidth, setEditWidth] = useState<"full" | "half">("full");
   const [editAggregation, setEditAggregation] = useState<AggregationType>("none");
+  const [editSortOrder, setEditSortOrder] = useState<SortOrder>("none");
+  const [editTopN, setEditTopN] = useState(0);
+  const [editShowLabels, setEditShowLabels] = useState(false);
+  const [editHeight, setEditHeight] = useState(400);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
 
   const keys = useMemo(() => {
@@ -56,15 +64,22 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           title: newTitle,
           width: newWidth,
           aggregation: newAggregation,
+          sortOrder: newSortOrder,
+          topN: newTopN,
+          showLabels: newShowLabels,
+          height: newHeight,
         },
       ]);
-      // Reset new form
       setNewTitle("");
       setNewX([]);
       setNewY([]);
       setNewType("bar");
       setNewWidth("half");
       setNewAggregation("none");
+      setNewSortOrder("none");
+      setNewTopN(0);
+      setNewShowLabels(false);
+      setNewHeight(400);
     }
   };
 
@@ -76,6 +91,10 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
     setEditType(chart.type);
     setEditWidth(chart.width);
     setEditAggregation(chart.aggregation ?? "none");
+    setEditSortOrder(chart.sortOrder ?? "none");
+    setEditTopN(chart.topN ?? 0);
+    setEditShowLabels(chart.showLabels ?? false);
+    setEditHeight(chart.height ?? 400);
   }, []);
 
   const saveEdit = () => {
@@ -91,6 +110,10 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 type: editType,
                 width: editWidth,
                 aggregation: editAggregation,
+                sortOrder: editSortOrder,
+                topN: editTopN,
+                showLabels: editShowLabels,
+                height: editHeight,
               }
             : c,
         ),
@@ -149,6 +172,14 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 setWidth={setNewWidth}
                 aggregation={newAggregation}
                 setAggregation={setNewAggregation}
+                sortOrder={newSortOrder}
+                setSortOrder={setNewSortOrder}
+                topN={newTopN}
+                setTopN={setNewTopN}
+                showLabels={newShowLabels}
+                setShowLabels={setNewShowLabels}
+                height={newHeight}
+                setHeight={setNewHeight}
                 keys={keys}
               />
             </Card>
@@ -187,6 +218,14 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           setWidth={setEditWidth}
           aggregation={editAggregation}
           setAggregation={setEditAggregation}
+          sortOrder={editSortOrder}
+          setSortOrder={setEditSortOrder}
+          topN={editTopN}
+          setTopN={setEditTopN}
+          showLabels={editShowLabels}
+          setShowLabels={setEditShowLabels}
+          height={editHeight}
+          setHeight={setEditHeight}
           keys={keys}
         />
       </Modal>
