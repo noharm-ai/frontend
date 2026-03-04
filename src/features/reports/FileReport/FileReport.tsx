@@ -298,7 +298,8 @@ export function FileReport() {
                 data={filteredData}
                 initialCharts={initialCharts}
                 onChartsChange={setCurrentCharts}
-                readOnly={!canWriteGraphs}
+                // readOnly={!canWriteGraphs}
+                readOnly={true}
               />
 
               {canWriteGraphs && (
@@ -396,8 +397,12 @@ export function FileReport() {
             style={{
               bottom: 85,
               right: 24,
+              display: "none",
               ...(hasUnsavedChanges
-                ? ({ background: "#faad14", color: "#fff" } as object)
+                ? ({
+                    background: "#faad14",
+                    color: "#fff",
+                  } as object)
                 : {}),
             }}
             onClick={handleSaveCharts}
