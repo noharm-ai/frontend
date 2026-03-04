@@ -9,4 +9,7 @@ export interface ChartConfig {
 
 export interface ChartCreatorProps {
   data: any[];
+  initialCharts?: ChartConfig[];
+  onChartsChange?: (charts: ChartConfig[]) => void;
+  readOnly?: boolean;
 }

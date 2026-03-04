@@ -10,6 +10,7 @@ import {
   SyncOutlined,
   FileTextOutlined,
   FileExcelOutlined,
+  SaveOutlined,
 } from "@ant-design/icons";
 
 import { useAppDispatch } from "src/store";
@@ -24,13 +25,16 @@ import {
   trackCustomReportAction,
   TrackedCustomReportAction,
 } from "src/utils/tracker";
-import { downloadReport } from "src/features/reports/ReportsSlice";
+import { downloadReport, updateReportGraphs } from "src/features/reports/ReportsSlice";
 import { getErrorMessage } from "src/utils/errorHandler";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
 
 import { PageHeader } from "src/styles/PageHeader.style";
 import { FilterContainer, FilterActions, FilterList } from "./FileReport.style";
 import Modal from "src/components/Modal";
-// import { ChartCreator } from "src/components/ChartCreator/ChartCreator";
+import { ChartCreator } from "src/components/ChartCreator/ChartCreator";
+import { ChartConfig } from "src/components/ChartCreator/types";
 import {
   detectColumnSchema,
   applyFilters,
@@ -52,6 +56,10 @@ export function FileReport() {
   const [title, setTitle] = useState<string>("");
   const [filters, setFilters] = useState<Filter[]>([]);
   const [schema, setSchema] = useState<ColumnSchema[]>([]);
+  const [initialCharts, setInitialCharts] = useState<ChartConfig[]>([]);
+  const [currentCharts, setCurrentCharts] = useState<ChartConfig[]>([]);
+  const [isSavingCharts, setIsSavingCharts] = useState(false);
+  const canWriteGraphs = PermissionService().has(Permission.WRITE_CUSTOM_REPORTS_GRAPHS);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,6 +80,13 @@ export function FileReport() {
 
         setData(cache);
         setTitle(response.payload.data.data.title);
+        if (response.payload.data.data.graphs) {
+          try {
+            setInitialCharts(JSON.parse(response.payload.data.data.graphs));
+          } catch {
+            // ignore malformed JSON
+          }
+        }
       } catch (err) {
         console.error(err);
         notification.error({
@@ -125,6 +140,21 @@ export function FileReport() {
       return f;
     });
     setFilters(updatedFilters);
+  };
+
+  const handleSaveCharts = () => {
+    setIsSavingCharts(true);
+    // @ts-expect-error legacy code
+    dispatch(updateReportGraphs({ idReport: id_report, graphs: JSON.stringify(currentCharts) })).then(
+      (response: any) => {
+        if (response.error) {
+          notification.error({ message: getErrorMessage(response, t) });
+        } else {
+          notification.success({ message: "Gráficos salvos com sucesso." });
+        }
+        setIsSavingCharts(false);
+      },
+    );
   };
 
   const executeDownloadWithFormat = (
@@ -228,9 +258,34 @@ export function FileReport() {
             onRowClick={() => {}}
             showFilters={false}
           />
-          {/* {filteredData && filteredData.length > 0 && (
-            <ChartCreator data={filteredData} />
-          )} */}
+          {filteredData && filteredData.length > 0 && (
+            <>
+              {canWriteGraphs && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    margin: "16px 0 0",
+                  }}
+                >
+                  <Button
+                    type="primary"
+                    icon={<SaveOutlined />}
+                    loading={isSavingCharts}
+                    onClick={handleSaveCharts}
+                  >
+                    Salvar gráficos
+                  </Button>
+                </div>
+              )}
+              <ChartCreator
+                data={filteredData}
+                initialCharts={initialCharts}
+                onChartsChange={setCurrentCharts}
+                readOnly={!canWriteGraphs}
+              />
+            </>
+          )}
         </div>
       </Spin>
 

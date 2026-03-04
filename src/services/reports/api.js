@@ -83,6 +83,9 @@ api.custom.processReport = (idReport) =>
     ...setHeaders(),
   });
 
+api.custom.updateReportGraphs = (idReport, graphs) =>
+  instance.patch(`/admin/report/${idReport}/graphs`, { graphs }, setHeaders());
+
 // REGULATION
 api.regulation = {};
 api.regulation.getIndicatorsPanel = (params = {}) =>

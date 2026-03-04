@@ -1,12 +1,16 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Button, Card, Empty, Modal, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { ChartConfig, ChartCreatorProps } from "./types";
 import { ChartItem } from "./ChartItem";
 import { ChartFormFields } from "./ChartFormFields";
 
-export function ChartCreator({ data }: ChartCreatorProps) {
-  const [charts, setCharts] = useState<ChartConfig[]>([]);
+export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: ChartCreatorProps) {
+  const [charts, setCharts] = useState<ChartConfig[]>(initialCharts ?? []);
+
+  useEffect(() => {
+    onChartsChange?.(charts);
+  }, [charts]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // State for NEW chart form
   const [newTitle, setNewTitle] = useState("");
@@ -96,39 +100,42 @@ export function ChartCreator({ data }: ChartCreatorProps) {
             data={data}
             onEdit={startEditing}
             onRemove={handleRemoveChart}
+            readOnly={readOnly}
           />
         ))}
 
-        <Col span={12}>
-          <Card
-            title="Adicionar Novo Gráfico"
-            type="inner"
-            extra={
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                disabled={newX.length === 0 || newY.length === 0 || !newTitle}
-                onClick={handleAddChart}
-              >
-                Adicionar
-              </Button>
-            }
-          >
-            <ChartFormFields
-              title={newTitle}
-              setTitle={setNewTitle}
-              xKeys={newX}
-              setXKeys={setNewX}
-              yKeys={newY}
-              setYKeys={setNewY}
-              type={newType}
-              setType={setNewType}
-              width={newWidth}
-              setWidth={setNewWidth}
-              keys={keys}
-            />
-          </Card>
-        </Col>
+        {!readOnly && (
+          <Col span={12}>
+            <Card
+              title="Adicionar Novo Gráfico"
+              type="inner"
+              extra={
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  disabled={newX.length === 0 || newY.length === 0 || !newTitle}
+                  onClick={handleAddChart}
+                >
+                  Adicionar
+                </Button>
+              }
+            >
+              <ChartFormFields
+                title={newTitle}
+                setTitle={setNewTitle}
+                xKeys={newX}
+                setXKeys={setNewX}
+                yKeys={newY}
+                setYKeys={setNewY}
+                type={newType}
+                setType={setNewType}
+                width={newWidth}
+                setWidth={setNewWidth}
+                keys={keys}
+              />
+            </Card>
+          </Col>
+        )}
       </Row>
 
       <Modal

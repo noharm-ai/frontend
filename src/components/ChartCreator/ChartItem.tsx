@@ -10,10 +10,11 @@ interface ChartItemProps {
   data: any[];
   onEdit: (chart: ChartConfig) => void;
   onRemove: (id: string) => void;
+  readOnly?: boolean;
 }
 
 export const ChartItem = memo(
-  ({ chart, data, onEdit, onRemove }: ChartItemProps) => {
+  ({ chart, data, onEdit, onRemove, readOnly }: ChartItemProps) => {
     const option = useMemo(() => getChartOption(data, chart), [data, chart]);
 
     return (
@@ -22,23 +23,25 @@ export const ChartItem = memo(
           title={chart.title}
           type="inner"
           extra={
-            <Space>
-              <Button
-                type="link"
-                onClick={() => onEdit(chart)}
-                icon={<EditOutlined />}
-              >
-                Editar
-              </Button>
-              <Button
-                danger
-                type="text"
-                icon={<DeleteOutlined />}
-                onClick={() => onRemove(chart.id)}
-              >
-                Remover
-              </Button>
-            </Space>
+            !readOnly && (
+              <Space>
+                <Button
+                  type="link"
+                  onClick={() => onEdit(chart)}
+                  icon={<EditOutlined />}
+                >
+                  Editar
+                </Button>
+                <Button
+                  danger
+                  type="text"
+                  icon={<DeleteOutlined />}
+                  onClick={() => onRemove(chart.id)}
+                >
+                  Remover
+                </Button>
+              </Space>
+            )
           }
         >
           <EChartBase
