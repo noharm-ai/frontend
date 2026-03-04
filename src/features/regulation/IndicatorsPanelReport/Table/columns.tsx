@@ -182,6 +182,36 @@ const columns = (indicator: string): TableProps<any>["columns"] => {
     });
   }
 
+  if (indicator === "GESTATIONAL_PRESSURE_MEASUREMENTS") {
+    cols.push({
+      title: "Idade Gestacional",
+      align: "center",
+      render: (_: any, record: any) => {
+        return record.gestational_age;
+      },
+    });
+
+    cols.push({
+      title: "Data da Última Aferição",
+      align: "center",
+      render: (_: any, record: any) => {
+        return formatDate(record.gestational_pressure_measurements_date);
+      },
+    });
+
+    cols.push({
+      title: "Situação",
+      align: "center",
+      render: (_: any, record: any) => {
+        if (record.has_gestational_pressure_measurements) {
+          return <Tag color="green">Concluído</Tag>;
+        }
+
+        return <Tag color="warning">Pendente</Tag>;
+      },
+    });
+  }
+
   return cols;
 };
 

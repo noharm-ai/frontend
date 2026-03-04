@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Empty, Spin } from "antd";
 
 import { useAppDispatch, useAppSelector } from "src/store";
-import { Select } from "components/Inputs";
+import { Select, SelectCustom } from "components/Inputs";
 import { getIcds } from "features/lists/ListsSlice";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
@@ -31,7 +31,7 @@ export function FieldIcd({ value, onChange }: IFieldIcdProps) {
   };
 
   return (
-    <Select
+    <SelectCustom
       showSearch
       allowClear
       value={value}
@@ -51,6 +51,6 @@ export function FieldIcd({ value, onChange }: IFieldIcdProps) {
           {option.name}
         </Select.Option>
       ))}
-    </Select>
+    </SelectCustom>
   );
 }

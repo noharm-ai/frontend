@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Spin, notification, FloatButton } from "antd";
+import { Spin, notification, FloatButton, Tag, Alert } from "antd";
 import { useParams } from "react-router-dom";
 import {
   DeleteOutlined,
@@ -10,6 +10,7 @@ import {
   SyncOutlined,
   FileTextOutlined,
   FileExcelOutlined,
+  SaveOutlined,
 } from "@ant-design/icons";
 
 import { useAppDispatch } from "src/store";
@@ -24,13 +25,19 @@ import {
   trackCustomReportAction,
   TrackedCustomReportAction,
 } from "src/utils/tracker";
-import { downloadReport } from "src/features/reports/ReportsSlice";
+import {
+  downloadReport,
+  updateReportGraphs,
+} from "src/features/reports/ReportsSlice";
 import { getErrorMessage } from "src/utils/errorHandler";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
 
 import { PageHeader } from "src/styles/PageHeader.style";
 import { FilterContainer, FilterActions, FilterList } from "./FileReport.style";
 import Modal from "src/components/Modal";
-// import { ChartCreator } from "src/components/ChartCreator/ChartCreator";
+import { ChartCreator } from "src/components/ChartCreator/ChartCreator";
+import { ChartConfig } from "src/components/ChartCreator/types";
 import {
   detectColumnSchema,
   applyFilters,
@@ -38,6 +45,26 @@ import {
   Filter,
 } from "./FileReport.utils";
 import { FilterRow } from "./FilterRow";
+import { ErrorBoundary } from "react-error-boundary";
+
+const ChartCreatorFallback = ({
+  resetErrorBoundary,
+}: {
+  resetErrorBoundary: () => void;
+}) => (
+  <Alert
+    message="Erro nos gráficos"
+    description="Ocorreu um erro ao renderizar os gráficos. Os dados do relatório não foram afetados."
+    type="error"
+    showIcon
+    style={{ marginTop: "16px" }}
+    action={
+      <Button size="small" onClick={resetErrorBoundary}>
+        Tentar novamente
+      </Button>
+    }
+  />
+);
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -52,6 +79,14 @@ export function FileReport() {
   const [title, setTitle] = useState<string>("");
   const [filters, setFilters] = useState<Filter[]>([]);
   const [schema, setSchema] = useState<ColumnSchema[]>([]);
+  const [initialCharts, setInitialCharts] = useState<ChartConfig[]>([]);
+  const [currentCharts, setCurrentCharts] = useState<ChartConfig[]>([]);
+  const [isSavingCharts, setIsSavingCharts] = useState(false);
+  const canWriteGraphs = PermissionService().has(
+    Permission.WRITE_CUSTOM_REPORTS_GRAPHS,
+  );
+  const hasUnsavedChanges =
+    JSON.stringify(currentCharts) !== JSON.stringify(initialCharts);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,6 +107,15 @@ export function FileReport() {
 
         setData(cache);
         setTitle(response.payload.data.data.title);
+        if (response.payload.data.data.graphs) {
+          try {
+            const parsedCharts = JSON.parse(response.payload.data.data.graphs);
+            setInitialCharts(parsedCharts);
+            setCurrentCharts(parsedCharts);
+          } catch {
+            // ignore malformed JSON
+          }
+        }
       } catch (err) {
         console.error(err);
         notification.error({
@@ -125,6 +169,26 @@ export function FileReport() {
       return f;
     });
     setFilters(updatedFilters);
+  };
+
+  const handleSaveCharts = () => {
+    setIsSavingCharts(true);
+
+    dispatch(
+      // @ts-expect-error legacy code
+      updateReportGraphs({
+        idReport: id_report,
+        graphs: JSON.stringify(currentCharts),
+      }),
+    ).then((response: any) => {
+      if (response.error) {
+        notification.error({ message: getErrorMessage(response, t) });
+      } else {
+        notification.success({ message: "Gráficos salvos com sucesso." });
+        setInitialCharts(currentCharts);
+      }
+      setIsSavingCharts(false);
+    });
   };
 
   const executeDownloadWithFormat = (
@@ -228,9 +292,26 @@ export function FileReport() {
             onRowClick={() => {}}
             showFilters={false}
           />
-          {/* {filteredData && filteredData.length > 0 && (
-            <ChartCreator data={filteredData} />
-          )} */}
+          {filteredData && filteredData.length > 0 && (
+            <ErrorBoundary FallbackComponent={ChartCreatorFallback}>
+              <ChartCreator
+                data={filteredData}
+                // initialCharts={initialCharts}
+                onChartsChange={setCurrentCharts}
+                // readOnly={!canWriteGraphs}
+                readOnly={true}
+              />
+
+              {canWriteGraphs && (
+                <Alert
+                  type="info"
+                  showIcon
+                  description="A visualização de gráficos está disponível para todos, mas a adição e edição são restritas a usuários com permissão específica."
+                  style={{ maxWidth: "500px", margin: "2rem auto" }}
+                />
+              )}
+            </ErrorBoundary>
+          )}
         </div>
       </Spin>
 
@@ -296,6 +377,38 @@ export function FileReport() {
           os dados completos.
         </p>
       </Modal>
+      {!isLoading && filteredData.length > 0 && canWriteGraphs && (
+        <>
+          {hasUnsavedChanges && (
+            <div
+              style={{
+                position: "fixed",
+                bottom: 94,
+                right: 70,
+                zIndex: 1000,
+              }}
+            >
+              <Tag color="warning">Alterações não salvas</Tag>
+            </div>
+          )}
+          <FloatButton
+            icon={isSavingCharts ? <SyncOutlined spin /> : <SaveOutlined />}
+            tooltip={{ title: "Salvar gráficos", placement: "left" }}
+            style={{
+              bottom: 85,
+              right: 24,
+              display: "none",
+              ...(hasUnsavedChanges
+                ? ({
+                    background: "#faad14",
+                    color: "#fff",
+                  } as object)
+                : {}),
+            }}
+            onClick={handleSaveCharts}
+          />
+        </>
+      )}
       <FloatButton.BackTop
         style={{ right: 80, bottom: 25 }}
         tooltip="Voltar ao topo"
