@@ -296,7 +296,7 @@ export function FileReport() {
             <ErrorBoundary FallbackComponent={ChartCreatorFallback}>
               <ChartCreator
                 data={filteredData}
-                initialCharts={initialCharts}
+                // initialCharts={initialCharts}
                 onChartsChange={setCurrentCharts}
                 // readOnly={!canWriteGraphs}
                 readOnly={true}
