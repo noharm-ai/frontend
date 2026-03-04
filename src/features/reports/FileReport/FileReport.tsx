@@ -25,7 +25,10 @@ import {
   trackCustomReportAction,
   TrackedCustomReportAction,
 } from "src/utils/tracker";
-import { downloadReport, updateReportGraphs } from "src/features/reports/ReportsSlice";
+import {
+  downloadReport,
+  updateReportGraphs,
+} from "src/features/reports/ReportsSlice";
 import { getErrorMessage } from "src/utils/errorHandler";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
@@ -44,7 +47,11 @@ import {
 import { FilterRow } from "./FilterRow";
 import { ErrorBoundary } from "react-error-boundary";
 
-const ChartCreatorFallback = ({ resetErrorBoundary }: { resetErrorBoundary: () => void }) => (
+const ChartCreatorFallback = ({
+  resetErrorBoundary,
+}: {
+  resetErrorBoundary: () => void;
+}) => (
   <Alert
     message="Erro nos gráficos"
     description="Ocorreu um erro ao renderizar os gráficos. Os dados do relatório não foram afetados."
@@ -75,7 +82,9 @@ export function FileReport() {
   const [initialCharts, setInitialCharts] = useState<ChartConfig[]>([]);
   const [currentCharts, setCurrentCharts] = useState<ChartConfig[]>([]);
   const [isSavingCharts, setIsSavingCharts] = useState(false);
-  const canWriteGraphs = PermissionService().has(Permission.WRITE_CUSTOM_REPORTS_GRAPHS);
+  const canWriteGraphs = PermissionService().has(
+    Permission.WRITE_CUSTOM_REPORTS_GRAPHS,
+  );
   const hasUnsavedChanges =
     JSON.stringify(currentCharts) !== JSON.stringify(initialCharts);
 
@@ -164,18 +173,22 @@ export function FileReport() {
 
   const handleSaveCharts = () => {
     setIsSavingCharts(true);
-    // @ts-expect-error legacy code
-    dispatch(updateReportGraphs({ idReport: id_report, graphs: JSON.stringify(currentCharts) })).then(
-      (response: any) => {
-        if (response.error) {
-          notification.error({ message: getErrorMessage(response, t) });
-        } else {
-          notification.success({ message: "Gráficos salvos com sucesso." });
-          setInitialCharts(currentCharts);
-        }
-        setIsSavingCharts(false);
-      },
-    );
+
+    dispatch(
+      // @ts-expect-error legacy code
+      updateReportGraphs({
+        idReport: id_report,
+        graphs: JSON.stringify(currentCharts),
+      }),
+    ).then((response: any) => {
+      if (response.error) {
+        notification.error({ message: getErrorMessage(response, t) });
+      } else {
+        notification.success({ message: "Gráficos salvos com sucesso." });
+        setInitialCharts(currentCharts);
+      }
+      setIsSavingCharts(false);
+    });
   };
 
   const executeDownloadWithFormat = (
@@ -281,35 +294,21 @@ export function FileReport() {
           />
           {filteredData && filteredData.length > 0 && (
             <ErrorBoundary FallbackComponent={ChartCreatorFallback}>
-              {canWriteGraphs && (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                    gap: "8px",
-                    margin: "16px 0 0",
-                  }}
-                >
-                  {hasUnsavedChanges && (
-                    <Tag color="warning">Alterações não salvas</Tag>
-                  )}
-                  <Button
-                    type="primary"
-                    icon={<SaveOutlined />}
-                    loading={isSavingCharts}
-                    onClick={handleSaveCharts}
-                  >
-                    Salvar gráficos
-                  </Button>
-                </div>
-              )}
               <ChartCreator
                 data={filteredData}
                 initialCharts={initialCharts}
                 onChartsChange={setCurrentCharts}
                 readOnly={!canWriteGraphs}
               />
+
+              {canWriteGraphs && (
+                <Alert
+                  type="info"
+                  showIcon
+                  description="A visualização de gráficos está disponível para todos, mas a adição e edição são restritas a usuários com permissão específica."
+                  style={{ maxWidth: "500px", margin: "2rem auto" }}
+                />
+              )}
             </ErrorBoundary>
           )}
         </div>
@@ -377,6 +376,34 @@ export function FileReport() {
           os dados completos.
         </p>
       </Modal>
+      {!isLoading && filteredData.length > 0 && canWriteGraphs && (
+        <>
+          {hasUnsavedChanges && (
+            <div
+              style={{
+                position: "fixed",
+                bottom: 94,
+                right: 70,
+                zIndex: 1000,
+              }}
+            >
+              <Tag color="warning">Alterações não salvas</Tag>
+            </div>
+          )}
+          <FloatButton
+            icon={isSavingCharts ? <SyncOutlined spin /> : <SaveOutlined />}
+            tooltip={{ title: "Salvar gráficos", placement: "left" }}
+            style={{
+              bottom: 85,
+              right: 24,
+              ...(hasUnsavedChanges
+                ? ({ background: "#faad14", color: "#fff" } as object)
+                : {}),
+            }}
+            onClick={handleSaveCharts}
+          />
+        </>
+      )}
       <FloatButton.BackTop
         style={{ right: 80, bottom: 25 }}
         tooltip="Voltar ao topo"
