@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Button, Card, Empty, Modal, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { AggregationType, ChartConfig, ChartCreatorProps, SortOrder } from "./types";
+import { AggregationType, ChartConfig, ChartCreatorProps, DateGrouping, DerivedColumn, SortOrder } from "./types";
 import { ChartItem } from "./ChartItem";
 import { ChartFormFields } from "./ChartFormFields";
 
@@ -23,6 +23,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [newTopN, setNewTopN] = useState(0);
   const [newShowLabels, setNewShowLabels] = useState(false);
   const [newHeight, setNewHeight] = useState(400);
+  const [newDateGrouping, setNewDateGrouping] = useState<DateGrouping>("none");
+  const [newDerivedColumns, setNewDerivedColumns] = useState<DerivedColumn[]>([]);
 
   // State for EDITING chart form (Modal)
   const [editTitle, setEditTitle] = useState("");
@@ -35,6 +37,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [editTopN, setEditTopN] = useState(0);
   const [editShowLabels, setEditShowLabels] = useState(false);
   const [editHeight, setEditHeight] = useState(400);
+  const [editDateGrouping, setEditDateGrouping] = useState<DateGrouping>("none");
+  const [editDerivedColumns, setEditDerivedColumns] = useState<DerivedColumn[]>([]);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
 
   const keys = useMemo(() => {
@@ -68,6 +72,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           topN: newTopN,
           showLabels: newShowLabels,
           height: newHeight,
+          dateGrouping: newDateGrouping,
+          derivedColumns: newDerivedColumns,
         },
       ]);
       setNewTitle("");
@@ -80,6 +86,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
       setNewTopN(0);
       setNewShowLabels(false);
       setNewHeight(400);
+      setNewDateGrouping("none");
+      setNewDerivedColumns([]);
     }
   };
 
@@ -95,6 +103,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
     setEditTopN(chart.topN ?? 0);
     setEditShowLabels(chart.showLabels ?? false);
     setEditHeight(chart.height ?? 400);
+    setEditDateGrouping(chart.dateGrouping ?? "none");
+    setEditDerivedColumns(chart.derivedColumns ?? []);
   }, []);
 
   const saveEdit = () => {
@@ -114,6 +124,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 topN: editTopN,
                 showLabels: editShowLabels,
                 height: editHeight,
+                dateGrouping: editDateGrouping,
+                derivedColumns: editDerivedColumns,
               }
             : c,
         ),
@@ -180,6 +192,10 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 setShowLabels={setNewShowLabels}
                 height={newHeight}
                 setHeight={setNewHeight}
+                dateGrouping={newDateGrouping}
+                setDateGrouping={setNewDateGrouping}
+                derivedColumns={newDerivedColumns}
+                setDerivedColumns={setNewDerivedColumns}
                 keys={keys}
               />
             </Card>
@@ -226,6 +242,10 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           setShowLabels={setEditShowLabels}
           height={editHeight}
           setHeight={setEditHeight}
+          dateGrouping={editDateGrouping}
+          setDateGrouping={setEditDateGrouping}
+          derivedColumns={editDerivedColumns}
+          setDerivedColumns={setEditDerivedColumns}
           keys={keys}
         />
       </Modal>
