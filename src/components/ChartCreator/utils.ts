@@ -103,6 +103,18 @@ function getPrimaryValue(row: any, isCount: boolean, primaryYKey: string): numbe
   return Number(row[primaryYKey]) || 0;
 }
 
+// --- Color palettes ---
+
+const COLOR_PALETTES: Record<string, string[]> = {
+  default:  [],
+  noharm:   ["#2e3c5a", "#7ebe9a", "#70bdc3", "#e46666", "#f2b530", "#696766"],
+  blues:    ["#1a237e", "#1565c0", "#1976d2", "#42a5f5", "#90caf9", "#bbdefb"],
+  greens:   ["#1b5e20", "#388e3c", "#66bb6a", "#a5d6a7", "#c8e6c9", "#43a047"],
+  warm:     ["#bf360c", "#e64a19", "#ff7043", "#ffa726", "#ffca28", "#ffee58"],
+  pastel:   ["#b39ddb", "#90caf9", "#80cbc4", "#a5d6a7", "#ffcc80", "#f48fb1"],
+  contrast: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"],
+};
+
 // --- Main ---
 
 export const getChartOption = (data: any[], config: ChartConfig) => {
@@ -158,6 +170,10 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
 
   const xData = processedData.map((item) => item.__xKey__);
   const showLabels = config.showLabels ?? false;
+  const colors = COLOR_PALETTES[config.colorPalette ?? "default"] ?? [];
+  const titleOption = config.showTitle !== false
+    ? { title: { text: config.title, left: "center" } }
+    : {};
 
   const seriesLabel = isCount
     ? AGGREGATION_LABEL.count
@@ -183,7 +199,8 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
         : `${primaryYKey} por ${config.xKeys.join("-")}`;
 
     return {
-      title: { text: config.title, left: "center" },
+      ...titleOption,
+      ...(colors.length ? { color: colors } : {}),
       tooltip: { trigger: "item" },
       toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
       legend: { orient: "vertical", left: "left" },
@@ -254,7 +271,8 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
         .map((yKey) => (seriesLabel ? `${seriesLabel} de ${yKey}` : yKey));
 
   return {
-    title: { text: config.title, left: "center" },
+    ...titleOption,
+    ...(colors.length ? { color: colors } : {}),
     tooltip: { trigger: "axis" },
     toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
     legend: { data: legendData, top: 30 },

@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Button, Card, Empty, Modal, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { AggregationType, ChartConfig, ChartCreatorProps, DateGrouping, DerivedColumn, ReferenceLine, SortOrder } from "./types";
+import { AggregationType, ChartConfig, ChartCreatorProps, ColorPalette, DateGrouping, DerivedColumn, ReferenceLine, SortOrder } from "./types";
 import { ChartItem } from "./ChartItem";
 import { ChartFormFields } from "./ChartFormFields";
 
@@ -26,6 +26,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [newDateGrouping, setNewDateGrouping] = useState<DateGrouping>("none");
   const [newDerivedColumns, setNewDerivedColumns] = useState<DerivedColumn[]>([]);
   const [newReferenceLine, setNewReferenceLine] = useState<ReferenceLine | undefined>(undefined);
+  const [newShowTitle, setNewShowTitle] = useState(true);
+  const [newColorPalette, setNewColorPalette] = useState<ColorPalette>("default");
 
   // State for EDITING chart form (Modal)
   const [editTitle, setEditTitle] = useState("");
@@ -41,6 +43,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [editDateGrouping, setEditDateGrouping] = useState<DateGrouping>("none");
   const [editDerivedColumns, setEditDerivedColumns] = useState<DerivedColumn[]>([]);
   const [editReferenceLine, setEditReferenceLine] = useState<ReferenceLine | undefined>(undefined);
+  const [editShowTitle, setEditShowTitle] = useState(true);
+  const [editColorPalette, setEditColorPalette] = useState<ColorPalette>("default");
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
 
   const keys = useMemo(() => {
@@ -77,6 +81,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           dateGrouping: newDateGrouping,
           derivedColumns: newDerivedColumns,
           referenceLine: newReferenceLine,
+          showTitle: newShowTitle,
+          colorPalette: newColorPalette,
         },
       ]);
       setNewTitle("");
@@ -92,6 +98,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
       setNewDateGrouping("none");
       setNewDerivedColumns([]);
       setNewReferenceLine(undefined);
+      setNewShowTitle(true);
+      setNewColorPalette("default");
     }
   };
 
@@ -110,6 +118,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
     setEditDateGrouping(chart.dateGrouping ?? "none");
     setEditDerivedColumns(chart.derivedColumns ?? []);
     setEditReferenceLine(chart.referenceLine);
+    setEditShowTitle(chart.showTitle ?? true);
+    setEditColorPalette(chart.colorPalette ?? "default");
   }, []);
 
   const saveEdit = () => {
@@ -132,6 +142,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 dateGrouping: editDateGrouping,
                 derivedColumns: editDerivedColumns,
                 referenceLine: editReferenceLine,
+                showTitle: editShowTitle,
+                colorPalette: editColorPalette,
               }
             : c,
         ),
@@ -204,6 +216,10 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 setDerivedColumns={setNewDerivedColumns}
                 referenceLine={newReferenceLine}
                 setReferenceLine={setNewReferenceLine}
+                showTitle={newShowTitle}
+                setShowTitle={setNewShowTitle}
+                colorPalette={newColorPalette}
+                setColorPalette={setNewColorPalette}
                 keys={keys}
               />
             </Card>
@@ -256,6 +272,10 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           setDerivedColumns={setEditDerivedColumns}
           referenceLine={editReferenceLine}
           setReferenceLine={setEditReferenceLine}
+          showTitle={editShowTitle}
+          setShowTitle={setEditShowTitle}
+          colorPalette={editColorPalette}
+          setColorPalette={setEditColorPalette}
           keys={keys}
         />
       </Modal>

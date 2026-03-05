@@ -1,6 +1,22 @@
-import { InputNumber, Flex, Input, Select, Switch, Row, Col, Button } from "antd";
+import {
+  InputNumber,
+  Flex,
+  Input,
+  Select,
+  Switch,
+  Row,
+  Col,
+  Button,
+} from "antd";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
-import { AggregationType, DateGrouping, DerivedColumn, ReferenceLine, SortOrder } from "./types";
+import {
+  AggregationType,
+  ColorPalette,
+  DateGrouping,
+  DerivedColumn,
+  ReferenceLine,
+  SortOrder,
+} from "./types";
 
 interface ChartFormFieldsProps {
   title: string;
@@ -29,6 +45,10 @@ interface ChartFormFieldsProps {
   setDerivedColumns: (cols: DerivedColumn[]) => void;
   referenceLine: ReferenceLine | undefined;
   setReferenceLine: (val: ReferenceLine | undefined) => void;
+  showTitle: boolean;
+  setShowTitle: (val: boolean) => void;
+  colorPalette: ColorPalette;
+  setColorPalette: (val: ColorPalette) => void;
   keys: string[];
 }
 
@@ -38,6 +58,44 @@ const labelStyle: React.CSSProperties = {
   color: "#888",
   marginBottom: 2,
 };
+
+const PALETTE_OPTIONS: {
+  label: string;
+  value: ColorPalette;
+  colors: string[];
+}[] = [
+  { label: "Padrão", value: "default", colors: [] },
+  {
+    label: "Secundário",
+    value: "secondary",
+    colors: ["#2e3c5a", "#7ebe9a", "#70bdc3", "#e46666", "#f2b530"],
+  },
+  {
+    label: "Azuis",
+    value: "blues",
+    colors: ["#1a237e", "#1565c0", "#1976d2", "#42a5f5", "#90caf9"],
+  },
+  {
+    label: "Verdes",
+    value: "greens",
+    colors: ["#1b5e20", "#388e3c", "#66bb6a", "#a5d6a7", "#c8e6c9"],
+  },
+  {
+    label: "Quente",
+    value: "warm",
+    colors: ["#bf360c", "#e64a19", "#ff7043", "#ffa726", "#ffca28"],
+  },
+  {
+    label: "Pastel",
+    value: "pastel",
+    colors: ["#b39ddb", "#90caf9", "#80cbc4", "#a5d6a7", "#ffcc80"],
+  },
+  {
+    label: "Contraste",
+    value: "contrast",
+    colors: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd"],
+  },
+];
 
 const OPERATOR_OPTIONS = [
   { label: "+", value: "+" },
@@ -82,6 +140,10 @@ export const ChartFormFields = ({
   setDerivedColumns,
   referenceLine,
   setReferenceLine,
+  showTitle,
+  setShowTitle,
+  colorPalette,
+  setColorPalette,
   keys,
 }: ChartFormFieldsProps) => {
   const allYOptions = [
@@ -107,6 +169,22 @@ export const ChartFormFields = ({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginTop: 4,
+          }}
+        >
+          <Switch checked={showTitle} onChange={setShowTitle} size="small" />
+          <label
+            style={{ cursor: "pointer", fontSize: 12, color: "#888" }}
+            onClick={() => setShowTitle(!showTitle)}
+          >
+            Exibir título no gráfico
+          </label>
+        </div>
       </div>
 
       {/* X axis + Date grouping */}
@@ -163,7 +241,11 @@ export const ChartFormFields = ({
                     style={{ width: "100%" }}
                     placeholder="Col"
                     value={dc.left.columnKey}
-                    onChange={(v) => updateDerived(i, { left: { type: "column", columnKey: v } })}
+                    onChange={(v) =>
+                      updateDerived(i, {
+                        left: { type: "column", columnKey: v },
+                      })
+                    }
                     options={keys.map((k) => ({ label: k, value: k }))}
                     popupMatchSelectWidth={false}
                   />
@@ -172,7 +254,11 @@ export const ChartFormFields = ({
                     size="small"
                     style={{ width: "100%" }}
                     value={dc.left.number}
-                    onChange={(v) => updateDerived(i, { left: { type: "number", number: v ?? 0 } })}
+                    onChange={(v) =>
+                      updateDerived(i, {
+                        left: { type: "number", number: v ?? 0 },
+                      })
+                    }
                   />
                 )}
               </Col>
@@ -183,9 +269,10 @@ export const ChartFormFields = ({
                   style={{ fontSize: 10, padding: "0 2px", width: "100%" }}
                   onClick={() =>
                     updateDerived(i, {
-                      left: dc.left.type === "column"
-                        ? { type: "number", number: 0 }
-                        : { type: "column" },
+                      left:
+                        dc.left.type === "column"
+                          ? { type: "number", number: 0 }
+                          : { type: "column" },
                     })
                   }
                 >
@@ -211,7 +298,11 @@ export const ChartFormFields = ({
                     style={{ width: "100%" }}
                     placeholder="Col"
                     value={dc.right.columnKey}
-                    onChange={(v) => updateDerived(i, { right: { type: "column", columnKey: v } })}
+                    onChange={(v) =>
+                      updateDerived(i, {
+                        right: { type: "column", columnKey: v },
+                      })
+                    }
                     options={keys.map((k) => ({ label: k, value: k }))}
                     popupMatchSelectWidth={false}
                   />
@@ -220,7 +311,11 @@ export const ChartFormFields = ({
                     size="small"
                     style={{ width: "100%" }}
                     value={dc.right.number}
-                    onChange={(v) => updateDerived(i, { right: { type: "number", number: v ?? 0 } })}
+                    onChange={(v) =>
+                      updateDerived(i, {
+                        right: { type: "number", number: v ?? 0 },
+                      })
+                    }
                   />
                 )}
               </Col>
@@ -231,9 +326,10 @@ export const ChartFormFields = ({
                   style={{ fontSize: 10, padding: "0 2px", width: "100%" }}
                   onClick={() =>
                     updateDerived(i, {
-                      right: dc.right.type === "column"
-                        ? { type: "number", number: 0 }
-                        : { type: "column" },
+                      right:
+                        dc.right.type === "column"
+                          ? { type: "number", number: 0 }
+                          : { type: "column" },
                     })
                   }
                 >
@@ -247,7 +343,9 @@ export const ChartFormFields = ({
                   type="text"
                   danger
                   icon={<CloseOutlined />}
-                  onClick={() => setDerivedColumns(derivedColumns.filter((_, j) => j !== i))}
+                  onClick={() =>
+                    setDerivedColumns(derivedColumns.filter((_, j) => j !== i))
+                  }
                 />
               </Col>
             </Row>
@@ -256,7 +354,9 @@ export const ChartFormFields = ({
             size="small"
             type="dashed"
             icon={<PlusOutlined />}
-            onClick={() => setDerivedColumns([...derivedColumns, newDerivedColumn()])}
+            onClick={() =>
+              setDerivedColumns([...derivedColumns, newDerivedColumn()])
+            }
           >
             Adicionar coluna
           </Button>
@@ -334,6 +434,37 @@ export const ChartFormFields = ({
         </Col>
       </Row>
 
+      {/* Color palette */}
+      <div>
+        <label style={labelStyle}>Paleta de Cores</label>
+        <Select
+          style={{ width: "100%" }}
+          value={colorPalette}
+          onChange={setColorPalette}
+          options={PALETTE_OPTIONS.map(({ label, value, colors }) => ({
+            label: (
+              <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                {colors.map((c, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: 2,
+                      background: c,
+                      display: "inline-block",
+                      flexShrink: 0,
+                    }}
+                  />
+                ))}
+                {label}
+              </span>
+            ),
+            value,
+          }))}
+        />
+      </div>
+
       {/* Sort + Top N + Height */}
       <Row gutter={8}>
         <Col span={10}>
@@ -375,15 +506,28 @@ export const ChartFormFields = ({
       {/* Reference line */}
       {type !== "pie" && (
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: referenceLine ? 4 : 0 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              marginBottom: referenceLine ? 4 : 0,
+            }}
+          >
             <Switch
               checked={!!referenceLine}
-              onChange={(on) => setReferenceLine(on ? { value: 0, label: "" } : undefined)}
+              onChange={(on) =>
+                setReferenceLine(on ? { value: 0, label: "" } : undefined)
+              }
               size="small"
             />
             <label
               style={{ cursor: "pointer" }}
-              onClick={() => setReferenceLine(referenceLine ? undefined : { value: 0, label: "" })}
+              onClick={() =>
+                setReferenceLine(
+                  referenceLine ? undefined : { value: 0, label: "" },
+                )
+              }
             >
               Linha de Referência
             </label>
@@ -395,7 +539,9 @@ export const ChartFormFields = ({
                 <InputNumber
                   style={{ width: "100%" }}
                   value={referenceLine.value}
-                  onChange={(v) => setReferenceLine({ ...referenceLine, value: v ?? 0 })}
+                  onChange={(v) =>
+                    setReferenceLine({ ...referenceLine, value: v ?? 0 })
+                  }
                 />
               </Col>
               <Col span={16}>
@@ -403,7 +549,12 @@ export const ChartFormFields = ({
                 <Input
                   placeholder="ex: Meta"
                   value={referenceLine.label ?? ""}
-                  onChange={(e) => setReferenceLine({ ...referenceLine, label: e.target.value })}
+                  onChange={(e) =>
+                    setReferenceLine({
+                      ...referenceLine,
+                      label: e.target.value,
+                    })
+                  }
                 />
               </Col>
             </Row>
@@ -414,7 +565,10 @@ export const ChartFormFields = ({
       {/* Show labels toggle */}
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <Switch checked={showLabels} onChange={setShowLabels} size="small" />
-        <label style={{ cursor: "pointer" }} onClick={() => setShowLabels(!showLabels)}>
+        <label
+          style={{ cursor: "pointer" }}
+          onClick={() => setShowLabels(!showLabels)}
+        >
           Rótulos nos dados
         </label>
       </div>

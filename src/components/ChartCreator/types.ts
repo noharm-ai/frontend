@@ -1,6 +1,20 @@
 export type AggregationType = "none" | "count" | "sum" | "avg" | "min" | "max";
 export type SortOrder = "none" | "asc" | "desc";
-export type DateGrouping = "none" | "day" | "week" | "month" | "quarter" | "year";
+export type DateGrouping =
+  | "none"
+  | "day"
+  | "week"
+  | "month"
+  | "quarter"
+  | "year";
+export type ColorPalette =
+  | "default"
+  | "secondary"
+  | "blues"
+  | "greens"
+  | "warm"
+  | "pastel"
+  | "contrast";
 
 export interface DerivedColumnOperand {
   type: "column" | "number";
@@ -35,6 +49,8 @@ export interface ChartConfig {
   dateGrouping?: DateGrouping;
   derivedColumns?: DerivedColumn[];
   referenceLine?: ReferenceLine;
+  showTitle?: boolean;
+  colorPalette?: ColorPalette;
 }
 
 export interface ChartCreatorProps {
