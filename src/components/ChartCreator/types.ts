@@ -1,4 +1,4 @@
-export type AggregationType = "none" | "count" | "sum" | "avg" | "min" | "max";
+export type AggregationType = "none" | "count" | "count_pct" | "sum" | "avg" | "min" | "max";
 export type SortOrder = "none" | "asc" | "desc";
 export type DateGrouping =
   | "none"

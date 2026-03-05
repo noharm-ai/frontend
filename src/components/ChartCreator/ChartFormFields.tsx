@@ -222,7 +222,7 @@ export const ChartFormFields = ({
 
       {/* Aggregation + Y axis */}
       <Row gutter={8}>
-        <Col span={aggregation !== "count" ? 8 : 24}>
+        <Col span={aggregation !== "count" && aggregation !== "count_pct" ? 8 : 24}>
           <label style={labelStyle}>Agregação</label>
           <Select
             style={{ width: "100%" }}
@@ -231,6 +231,7 @@ export const ChartFormFields = ({
             options={[
               { label: "Nenhuma", value: "none" },
               { label: "Contagem", value: "count" },
+              { label: "Contagem (%)", value: "count_pct" },
               { label: "Soma", value: "sum" },
               { label: "Média", value: "avg" },
               { label: "Mínimo", value: "min" },
@@ -238,7 +239,7 @@ export const ChartFormFields = ({
             ]}
           />
         </Col>
-        {aggregation !== "count" && (
+        {aggregation !== "count" && aggregation !== "count_pct" && (
           <Col span={16}>
             <label style={labelStyle}>Eixo Y (Valor)</label>
             <Select

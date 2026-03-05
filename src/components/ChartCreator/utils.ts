@@ -3,6 +3,7 @@ import { AggregationType, ChartConfig, DateGrouping, DerivedColumn, DerivedColum
 const AGGREGATION_LABEL: Record<AggregationType, string> = {
   none: "",
   count: "Contagem",
+  count_pct: "Porcentagem",
   sum: "Soma",
   avg: "Média",
   min: "Mínimo",
@@ -132,10 +133,12 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
         : "none";
 
   const isAggregated = effectiveAggregation !== "none";
-  const isCount = effectiveAggregation === "count";
+  const isCountPct = effectiveAggregation === "count_pct";
+  const isCount = effectiveAggregation === "count" || isCountPct;
   const primaryYKey = config.yKeys.filter((k) => k !== "__count__")[0];
 
   let processedData: any[];
+  let countTotal = 0;
 
   if (isAggregated) {
     processedData = groupAndAggregate(
@@ -145,6 +148,9 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
       effectiveAggregation,
       dateGrouping,
     );
+    if (isCountPct) {
+      countTotal = processedData.reduce((sum, item) => sum + (item.__count__ ?? 0), 0);
+    }
   } else {
     processedData = enrichedData.map((item) => ({
       ...item,
@@ -168,6 +174,15 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     processedData = processedData.slice(0, topN);
   }
 
+  // Normalize counts to percentages (after sort/topN, using pre-filter total)
+  if (isCountPct && countTotal > 0) {
+    processedData = processedData.map((item) => ({
+      ...item,
+      __raw_count__: item.__count__,
+      __count__: parseFloat(((item.__count__ / countTotal) * 100).toFixed(1)),
+    }));
+  }
+
   const xData = processedData.map((item) => item.__xKey__);
   const showLabels = config.showLabels ?? false;
   const colors = COLOR_PALETTES[config.colorPalette ?? "default"] ?? [];
@@ -175,17 +190,20 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     ? { title: { text: config.title, left: "center" } }
     : {};
 
-  const seriesLabel = isCount
-    ? AGGREGATION_LABEL.count
-    : effectiveAggregation !== "none"
-      ? `${AGGREGATION_LABEL[effectiveAggregation]}`
-      : undefined;
+  const seriesLabel = isCountPct
+    ? AGGREGATION_LABEL.count_pct
+    : isCount
+      ? AGGREGATION_LABEL.count
+      : effectiveAggregation !== "none"
+        ? `${AGGREGATION_LABEL[effectiveAggregation]}`
+        : undefined;
 
   if (config.type === "pie") {
     const pieData = isAggregated
       ? processedData.map((item) => ({
           name: item.__xKey__,
           value: isCount ? item.__count__ : item[primaryYKey],
+          ...(isCountPct ? { rawCount: item.__raw_count__ } : {}),
         }))
       : processedData.map((item) => ({
           name: item.__xKey__,
@@ -201,7 +219,13 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     return {
       ...titleOption,
       ...(colors.length ? { color: colors } : {}),
-      tooltip: { trigger: "item" },
+      tooltip: isCountPct
+        ? {
+            trigger: "item",
+            formatter: (params: any) =>
+              `${params.marker}${params.name}<br/>${params.seriesName}: ${params.data?.rawCount} (${params.value}%)`,
+          }
+        : { trigger: "item" },
       toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
       legend: { orient: "vertical", left: "left" },
       series: [
@@ -210,7 +234,13 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
           type: "pie",
           radius: "50%",
           data: pieData,
-          label: { show: showLabels, position: "outside" },
+          label: {
+            show: showLabels,
+            position: "outside",
+            formatter: isCountPct
+              ? (params: any) => `${params.data.rawCount} (${params.value}%)`
+              : undefined,
+          },
           emphasis: {
             itemStyle: {
               shadowBlur: 10,
@@ -224,7 +254,13 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
   }
 
   const isHBar = config.type === "hbar";
-  const label = { show: showLabels, position: isHBar ? "right" as const : "top" as const, formatter: "{c}" };
+  const label = {
+    show: showLabels,
+    position: isHBar ? "right" as const : "top" as const,
+    formatter: isCountPct
+      ? (params: any) => `${params.data.rawCount} (${params.value}%)`
+      : "{c}",
+  };
 
   const markLine = config.referenceLine
     ? {
@@ -250,7 +286,11 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     ? [
         {
           name: "Contagem",
-          data: processedData.map((item) => item.__count__),
+          data: processedData.map((item) =>
+            isCountPct
+              ? { value: item.__count__, rawCount: item.__raw_count__ }
+              : item.__count__
+          ),
           type: echartsType,
           label,
           markLine,
@@ -276,11 +316,23 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
   return {
     ...titleOption,
     ...(colors.length ? { color: colors } : {}),
-    tooltip: { trigger: "axis" },
+    tooltip: {
+      trigger: "axis",
+      ...(isCountPct ? {
+        formatter: (params: any) => {
+          const list = Array.isArray(params) ? params : [params];
+          const name = list[0]?.name ?? "";
+          const rows = list
+            .map((p: any) => `${p.marker}${p.seriesName}: ${p.data?.rawCount} (${p.value}%)`)
+            .join("<br/>");
+          return `${name}<br/>${rows}`;
+        },
+      } : {}),
+    },
     toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
     legend: { data: legendData, top: 30 },
-    xAxis: isHBar ? { type: "value" } : { type: "category", data: xData },
-    yAxis: isHBar ? { type: "category", data: xData } : { type: "value" },
+    xAxis: isHBar ? { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) } : { type: "category", data: xData },
+    yAxis: isHBar ? { type: "category", data: xData } : { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) },
     series,
   };
 };

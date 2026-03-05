@@ -54,12 +54,12 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
 
   const isNewFormValid =
     newX.length > 0 &&
-    (newAggregation === "count" || newY.length > 0) &&
+    (newAggregation === "count" || newAggregation === "count_pct" || newY.length > 0) &&
     !!newTitle;
 
   const isEditFormValid =
     editX.length > 0 &&
-    (editAggregation === "count" || editY.length > 0) &&
+    (editAggregation === "count" || editAggregation === "count_pct" || editY.length > 0) &&
     !!editTitle;
 
   const handleAddChart = () => {
@@ -70,7 +70,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           id: Math.random().toString(36).substr(2, 9),
           type: newType,
           xKeys: newX,
-          yKeys: newAggregation === "count" ? [] : newY,
+          yKeys: newAggregation === "count" || newAggregation === "count_pct" ? [] : newY,
           title: newTitle,
           width: newWidth,
           aggregation: newAggregation,
@@ -131,7 +131,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 ...c,
                 title: editTitle,
                 xKeys: editX,
-                yKeys: editAggregation === "count" ? [] : editY,
+                yKeys: editAggregation === "count" || editAggregation === "count_pct" ? [] : editY,
                 type: editType,
                 width: editWidth,
                 aggregation: editAggregation,
