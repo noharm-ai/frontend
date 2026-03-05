@@ -16,19 +16,6 @@ export type ColorPalette =
   | "pastel"
   | "contrast";
 
-export interface DerivedColumnOperand {
-  type: "column" | "number";
-  columnKey?: string;
-  number?: number;
-}
-
-export interface DerivedColumn {
-  name: string;
-  left: DerivedColumnOperand;
-  operator: "+" | "-" | "*" | "/";
-  right: DerivedColumnOperand;
-}
-
 export interface ReferenceLine {
   value: number;
   label?: string;
@@ -47,7 +34,6 @@ export interface ChartConfig {
   showLabels?: boolean;
   height?: number;
   dateGrouping?: DateGrouping;
-  derivedColumns?: DerivedColumn[];
   referenceLine?: ReferenceLine;
   showTitle?: boolean;
   colorPalette?: ColorPalette;

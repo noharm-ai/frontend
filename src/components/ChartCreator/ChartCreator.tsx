@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Button, Card, Empty, Modal, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { AggregationType, ChartConfig, ChartCreatorProps, ColorPalette, DateGrouping, DerivedColumn, ReferenceLine, SortOrder } from "./types";
+import { AggregationType, ChartConfig, ChartCreatorProps, ColorPalette, DateGrouping, ReferenceLine, SortOrder } from "./types";
 import { ChartItem } from "./ChartItem";
 import { ChartFormFields } from "./ChartFormFields";
 
@@ -24,7 +24,6 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [newShowLabels, setNewShowLabels] = useState(false);
   const [newHeight, setNewHeight] = useState(400);
   const [newDateGrouping, setNewDateGrouping] = useState<DateGrouping>("none");
-  const [newDerivedColumns, setNewDerivedColumns] = useState<DerivedColumn[]>([]);
   const [newReferenceLine, setNewReferenceLine] = useState<ReferenceLine | undefined>(undefined);
   const [newShowTitle, setNewShowTitle] = useState(true);
   const [newColorPalette, setNewColorPalette] = useState<ColorPalette>("default");
@@ -41,7 +40,6 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [editShowLabels, setEditShowLabels] = useState(false);
   const [editHeight, setEditHeight] = useState(400);
   const [editDateGrouping, setEditDateGrouping] = useState<DateGrouping>("none");
-  const [editDerivedColumns, setEditDerivedColumns] = useState<DerivedColumn[]>([]);
   const [editReferenceLine, setEditReferenceLine] = useState<ReferenceLine | undefined>(undefined);
   const [editShowTitle, setEditShowTitle] = useState(true);
   const [editColorPalette, setEditColorPalette] = useState<ColorPalette>("default");
@@ -79,7 +77,6 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           showLabels: newShowLabels,
           height: newHeight,
           dateGrouping: newDateGrouping,
-          derivedColumns: newDerivedColumns,
           referenceLine: newReferenceLine,
           showTitle: newShowTitle,
           colorPalette: newColorPalette,
@@ -96,7 +93,6 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
       setNewShowLabels(false);
       setNewHeight(400);
       setNewDateGrouping("none");
-      setNewDerivedColumns([]);
       setNewReferenceLine(undefined);
       setNewShowTitle(true);
       setNewColorPalette("default");
@@ -116,7 +112,6 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
     setEditShowLabels(chart.showLabels ?? false);
     setEditHeight(chart.height ?? 400);
     setEditDateGrouping(chart.dateGrouping ?? "none");
-    setEditDerivedColumns(chart.derivedColumns ?? []);
     setEditReferenceLine(chart.referenceLine);
     setEditShowTitle(chart.showTitle ?? true);
     setEditColorPalette(chart.colorPalette ?? "default");
@@ -140,7 +135,6 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 showLabels: editShowLabels,
                 height: editHeight,
                 dateGrouping: editDateGrouping,
-                derivedColumns: editDerivedColumns,
                 referenceLine: editReferenceLine,
                 showTitle: editShowTitle,
                 colorPalette: editColorPalette,
@@ -212,8 +206,6 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 setHeight={setNewHeight}
                 dateGrouping={newDateGrouping}
                 setDateGrouping={setNewDateGrouping}
-                derivedColumns={newDerivedColumns}
-                setDerivedColumns={setNewDerivedColumns}
                 referenceLine={newReferenceLine}
                 setReferenceLine={setNewReferenceLine}
                 showTitle={newShowTitle}
@@ -268,8 +260,6 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           setHeight={setEditHeight}
           dateGrouping={editDateGrouping}
           setDateGrouping={setEditDateGrouping}
-          derivedColumns={editDerivedColumns}
-          setDerivedColumns={setEditDerivedColumns}
           referenceLine={editReferenceLine}
           setReferenceLine={setEditReferenceLine}
           showTitle={editShowTitle}

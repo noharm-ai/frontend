@@ -1,4 +1,4 @@
-import { AggregationType, ChartConfig, DateGrouping, DerivedColumn, DerivedColumnOperand } from "./types";
+import { AggregationType, ChartConfig, DateGrouping } from "./types";
 
 const AGGREGATION_LABEL: Record<AggregationType, string> = {
   none: "",
@@ -9,30 +9,6 @@ const AGGREGATION_LABEL: Record<AggregationType, string> = {
   min: "Mínimo",
   max: "Máximo",
 };
-
-// --- Derived columns ---
-
-function evalOperand(op: DerivedColumnOperand, row: any): number {
-  return op.type === "column" ? Number(row[op.columnKey!]) || 0 : op.number ?? 0;
-}
-
-function applyDerivedColumns(data: any[], cols: DerivedColumn[]): any[] {
-  if (!cols || cols.length === 0) return data;
-  return data.map((row) => {
-    const enriched = { ...row };
-    for (const dc of cols) {
-      if (!dc.name) continue;
-      const l = evalOperand(dc.left, row);
-      const r = evalOperand(dc.right, row);
-      enriched[dc.name] =
-        dc.operator === "+" ? l + r :
-        dc.operator === "-" ? l - r :
-        dc.operator === "*" ? l * r :
-        r !== 0 ? l / r : 0;
-    }
-    return enriched;
-  });
-}
 
 // --- Date grouping ---
 
@@ -119,9 +95,6 @@ const COLOR_PALETTES: Record<string, string[]> = {
 // --- Main ---
 
 export const getChartOption = (data: any[], config: ChartConfig) => {
-  // Apply derived columns first so they're available everywhere
-  const enrichedData = applyDerivedColumns(data, config.derivedColumns ?? []);
-
   const dateGrouping: DateGrouping = config.dateGrouping ?? "none";
 
   // Backward compat: treat __count__ sentinel as count aggregation
@@ -142,7 +115,7 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
 
   if (isAggregated) {
     processedData = groupAndAggregate(
-      enrichedData,
+      data,
       config.xKeys,
       isCount ? [] : config.yKeys,
       effectiveAggregation,
@@ -152,7 +125,7 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
       countTotal = processedData.reduce((sum, item) => sum + (item.__count__ ?? 0), 0);
     }
   } else {
-    processedData = enrichedData.map((item) => ({
+    processedData = data.map((item) => ({
       ...item,
       __xKey__: buildXKey(item, config.xKeys, dateGrouping),
     }));

@@ -6,15 +6,12 @@ import {
   Switch,
   Row,
   Col,
-  Button,
   Tabs,
 } from "antd";
-import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   AggregationType,
   ColorPalette,
   DateGrouping,
-  DerivedColumn,
   ReferenceLine,
   SortOrder,
 } from "./types";
@@ -42,8 +39,6 @@ interface ChartFormFieldsProps {
   setHeight: (val: number) => void;
   dateGrouping: DateGrouping;
   setDateGrouping: (val: DateGrouping) => void;
-  derivedColumns: DerivedColumn[];
-  setDerivedColumns: (cols: DerivedColumn[]) => void;
   referenceLine: ReferenceLine | undefined;
   setReferenceLine: (val: ReferenceLine | undefined) => void;
   showTitle: boolean;
@@ -98,22 +93,6 @@ const PALETTE_OPTIONS: {
   },
 ];
 
-const OPERATOR_OPTIONS = [
-  { label: "+", value: "+" },
-  { label: "−", value: "-" },
-  { label: "×", value: "*" },
-  { label: "÷", value: "/" },
-];
-
-function newDerivedColumn(): DerivedColumn {
-  return {
-    name: "",
-    left: { type: "column" },
-    operator: "/",
-    right: { type: "column" },
-  };
-}
-
 export const ChartFormFields = ({
   title,
   setTitle,
@@ -137,8 +116,6 @@ export const ChartFormFields = ({
   setHeight,
   dateGrouping,
   setDateGrouping,
-  derivedColumns,
-  setDerivedColumns,
   referenceLine,
   setReferenceLine,
   showTitle,
@@ -147,18 +124,7 @@ export const ChartFormFields = ({
   setColorPalette,
   keys,
 }: ChartFormFieldsProps) => {
-  const allYOptions = [
-    ...keys.map((k) => ({ label: k, value: k })),
-    ...derivedColumns
-      .filter((dc) => dc.name.trim())
-      .map((dc) => ({ label: `📐 ${dc.name}`, value: dc.name })),
-  ];
-
-  const updateDerived = (index: number, patch: Partial<DerivedColumn>) => {
-    setDerivedColumns(
-      derivedColumns.map((dc, i) => (i === index ? { ...dc, ...patch } : dc)),
-    );
-  };
+  const allYOptions = keys.map((k) => ({ label: k, value: k }));
 
   const dadosTab = (
     <Flex vertical gap="small">
@@ -263,149 +229,6 @@ export const ChartFormFields = ({
         )}
       </Row>
 
-      {/* Derived columns */}
-      <div>
-        <label style={labelStyle}>Colunas Derivadas</label>
-        <Flex vertical gap={4}>
-          {derivedColumns.map((dc, i) => (
-            <Row key={i} gutter={4} align="middle" wrap={false}>
-              <Col flex="90px">
-                <Input
-                  placeholder="Nome"
-                  value={dc.name}
-                  onChange={(e) => updateDerived(i, { name: e.target.value })}
-                  size="small"
-                />
-              </Col>
-              {/* Left operand */}
-              <Col flex="auto">
-                {dc.left.type === "column" ? (
-                  <Select
-                    size="small"
-                    style={{ width: "100%" }}
-                    placeholder="Col"
-                    value={dc.left.columnKey}
-                    onChange={(v) =>
-                      updateDerived(i, {
-                        left: { type: "column", columnKey: v },
-                      })
-                    }
-                    options={keys.map((k) => ({ label: k, value: k }))}
-                    popupMatchSelectWidth={false}
-                  />
-                ) : (
-                  <InputNumber
-                    size="small"
-                    style={{ width: "100%" }}
-                    value={dc.left.number}
-                    onChange={(v) =>
-                      updateDerived(i, {
-                        left: { type: "number", number: v ?? 0 },
-                      })
-                    }
-                  />
-                )}
-              </Col>
-              <Col flex="28px">
-                <Button
-                  size="small"
-                  type="text"
-                  style={{ fontSize: 10, padding: "0 2px", width: "100%" }}
-                  onClick={() =>
-                    updateDerived(i, {
-                      left:
-                        dc.left.type === "column"
-                          ? { type: "number", number: 0 }
-                          : { type: "column" },
-                    })
-                  }
-                >
-                  {dc.left.type === "column" ? "#" : "A"}
-                </Button>
-              </Col>
-              {/* Operator */}
-              <Col flex="60px">
-                <Select
-                  size="small"
-                  style={{ width: "100%" }}
-                  value={dc.operator}
-                  onChange={(v) => updateDerived(i, { operator: v })}
-                  options={OPERATOR_OPTIONS}
-                  popupMatchSelectWidth={false}
-                />
-              </Col>
-              {/* Right operand */}
-              <Col flex="auto">
-                {dc.right.type === "column" ? (
-                  <Select
-                    size="small"
-                    style={{ width: "100%" }}
-                    placeholder="Col"
-                    value={dc.right.columnKey}
-                    onChange={(v) =>
-                      updateDerived(i, {
-                        right: { type: "column", columnKey: v },
-                      })
-                    }
-                    options={keys.map((k) => ({ label: k, value: k }))}
-                    popupMatchSelectWidth={false}
-                  />
-                ) : (
-                  <InputNumber
-                    size="small"
-                    style={{ width: "100%" }}
-                    value={dc.right.number}
-                    onChange={(v) =>
-                      updateDerived(i, {
-                        right: { type: "number", number: v ?? 0 },
-                      })
-                    }
-                  />
-                )}
-              </Col>
-              <Col flex="28px">
-                <Button
-                  size="small"
-                  type="text"
-                  style={{ fontSize: 10, padding: "0 2px", width: "100%" }}
-                  onClick={() =>
-                    updateDerived(i, {
-                      right:
-                        dc.right.type === "column"
-                          ? { type: "number", number: 0 }
-                          : { type: "column" },
-                    })
-                  }
-                >
-                  {dc.right.type === "column" ? "#" : "A"}
-                </Button>
-              </Col>
-              {/* Remove */}
-              <Col flex="24px">
-                <Button
-                  size="small"
-                  type="text"
-                  danger
-                  icon={<CloseOutlined />}
-                  onClick={() =>
-                    setDerivedColumns(derivedColumns.filter((_, j) => j !== i))
-                  }
-                />
-              </Col>
-            </Row>
-          ))}
-          <Button
-            size="small"
-            type="dashed"
-            icon={<PlusOutlined />}
-            onClick={() =>
-              setDerivedColumns([...derivedColumns, newDerivedColumn()])
-            }
-          >
-            Adicionar coluna
-          </Button>
-        </Flex>
-      </div>
     </Flex>
   );
 
