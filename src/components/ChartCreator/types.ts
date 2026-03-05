@@ -36,7 +36,7 @@ export interface ReferenceLine {
 
 export interface ChartConfig {
   id: string;
-  type: "bar" | "line" | "pie";
+  type: "bar" | "hbar" | "line" | "pie";
   xKeys: string[];
   yKeys: string[];
   title: string;

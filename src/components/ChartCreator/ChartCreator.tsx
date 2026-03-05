@@ -16,7 +16,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [newTitle, setNewTitle] = useState("");
   const [newX, setNewX] = useState<string[]>([]);
   const [newY, setNewY] = useState<string[]>([]);
-  const [newType, setNewType] = useState<"bar" | "line" | "pie">("bar");
+  const [newType, setNewType] = useState<"bar" | "hbar" | "line" | "pie">("bar");
   const [newWidth, setNewWidth] = useState<"full" | "half">("half");
   const [newAggregation, setNewAggregation] = useState<AggregationType>("none");
   const [newSortOrder, setNewSortOrder] = useState<SortOrder>("none");
@@ -33,7 +33,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [editTitle, setEditTitle] = useState("");
   const [editX, setEditX] = useState<string[]>([]);
   const [editY, setEditY] = useState<string[]>([]);
-  const [editType, setEditType] = useState<"bar" | "line" | "pie">("bar");
+  const [editType, setEditType] = useState<"bar" | "hbar" | "line" | "pie">("bar");
   const [editWidth, setEditWidth] = useState<"full" | "half">("full");
   const [editAggregation, setEditAggregation] = useState<AggregationType>("none");
   const [editSortOrder, setEditSortOrder] = useState<SortOrder>("none");

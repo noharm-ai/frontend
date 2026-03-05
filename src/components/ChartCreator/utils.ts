@@ -223,14 +223,15 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     };
   }
 
-  const label = { show: showLabels, position: "top" as const, formatter: "{c}" };
+  const isHBar = config.type === "hbar";
+  const label = { show: showLabels, position: isHBar ? "right" as const : "top" as const, formatter: "{c}" };
 
   const markLine = config.referenceLine
     ? {
         silent: true,
         data: [
           {
-            yAxis: config.referenceLine.value,
+            [isHBar ? "xAxis" : "yAxis"]: config.referenceLine.value,
             name: config.referenceLine.label ?? "",
           },
         ],
@@ -243,12 +244,14 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
       }
     : undefined;
 
+  const echartsType = isHBar ? "bar" : config.type;
+
   const series = isCount
     ? [
         {
           name: "Contagem",
           data: processedData.map((item) => item.__count__),
-          type: config.type,
+          type: echartsType,
           label,
           markLine,
         },
@@ -258,7 +261,7 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
         .map((yKey, idx) => ({
           name: seriesLabel ? `${seriesLabel} de ${yKey}` : yKey,
           data: processedData.map((item) => item[yKey]),
-          type: config.type,
+          type: echartsType,
           label,
           // Only attach markLine to the first series to avoid duplication
           ...(idx === 0 && markLine ? { markLine } : {}),
@@ -276,8 +279,8 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     tooltip: { trigger: "axis" },
     toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
     legend: { data: legendData, top: 30 },
-    xAxis: { type: "category", data: xData },
-    yAxis: { type: "value" },
+    xAxis: isHBar ? { type: "value" } : { type: "category", data: xData },
+    yAxis: isHBar ? { type: "category", data: xData } : { type: "value" },
     series,
   };
 };

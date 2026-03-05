@@ -26,8 +26,8 @@ interface ChartFormFieldsProps {
   setXKeys: (val: string[]) => void;
   yKeys: string[];
   setYKeys: (val: string[]) => void;
-  type: "bar" | "line" | "pie";
-  setType: (val: "bar" | "line" | "pie") => void;
+  type: "bar" | "hbar" | "line" | "pie";
+  setType: (val: "bar" | "hbar" | "line" | "pie") => void;
   width: "full" | "half";
   setWidth: (val: "full" | "half") => void;
   aggregation: AggregationType;
@@ -420,6 +420,7 @@ export const ChartFormFields = ({
             onChange={setType}
             options={[
               { label: "Barras", value: "bar" },
+              { label: "Barras Horizontais", value: "hbar" },
               { label: "Linha", value: "line" },
               { label: "Pizza", value: "pie" },
             ]}
