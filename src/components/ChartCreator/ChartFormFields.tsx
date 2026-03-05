@@ -1,6 +1,6 @@
 import { InputNumber, Flex, Input, Select, Switch, Row, Col, Button } from "antd";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
-import { AggregationType, DateGrouping, DerivedColumn, SortOrder } from "./types";
+import { AggregationType, DateGrouping, DerivedColumn, ReferenceLine, SortOrder } from "./types";
 
 interface ChartFormFieldsProps {
   title: string;
@@ -27,6 +27,8 @@ interface ChartFormFieldsProps {
   setDateGrouping: (val: DateGrouping) => void;
   derivedColumns: DerivedColumn[];
   setDerivedColumns: (cols: DerivedColumn[]) => void;
+  referenceLine: ReferenceLine | undefined;
+  setReferenceLine: (val: ReferenceLine | undefined) => void;
   keys: string[];
 }
 
@@ -78,6 +80,8 @@ export const ChartFormFields = ({
   setDateGrouping,
   derivedColumns,
   setDerivedColumns,
+  referenceLine,
+  setReferenceLine,
   keys,
 }: ChartFormFieldsProps) => {
   const allYOptions = [
@@ -367,6 +371,45 @@ export const ChartFormFields = ({
           />
         </Col>
       </Row>
+
+      {/* Reference line */}
+      {type !== "pie" && (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: referenceLine ? 4 : 0 }}>
+            <Switch
+              checked={!!referenceLine}
+              onChange={(on) => setReferenceLine(on ? { value: 0, label: "" } : undefined)}
+              size="small"
+            />
+            <label
+              style={{ cursor: "pointer" }}
+              onClick={() => setReferenceLine(referenceLine ? undefined : { value: 0, label: "" })}
+            >
+              Linha de Referência
+            </label>
+          </div>
+          {referenceLine && (
+            <Row gutter={8} style={{ marginTop: 4 }}>
+              <Col span={8}>
+                <label style={labelStyle}>Valor</label>
+                <InputNumber
+                  style={{ width: "100%" }}
+                  value={referenceLine.value}
+                  onChange={(v) => setReferenceLine({ ...referenceLine, value: v ?? 0 })}
+                />
+              </Col>
+              <Col span={16}>
+                <label style={labelStyle}>Rótulo (opcional)</label>
+                <Input
+                  placeholder="ex: Meta"
+                  value={referenceLine.label ?? ""}
+                  onChange={(e) => setReferenceLine({ ...referenceLine, label: e.target.value })}
+                />
+              </Col>
+            </Row>
+          )}
+        </div>
+      )}
 
       {/* Show labels toggle */}
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

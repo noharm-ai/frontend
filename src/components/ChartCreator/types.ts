@@ -15,6 +15,11 @@ export interface DerivedColumn {
   right: DerivedColumnOperand;
 }
 
+export interface ReferenceLine {
+  value: number;
+  label?: string;
+}
+
 export interface ChartConfig {
   id: string;
   type: "bar" | "line" | "pie";
@@ -29,6 +34,7 @@ export interface ChartConfig {
   height?: number;
   dateGrouping?: DateGrouping;
   derivedColumns?: DerivedColumn[];
+  referenceLine?: ReferenceLine;
 }
 
 export interface ChartCreatorProps {

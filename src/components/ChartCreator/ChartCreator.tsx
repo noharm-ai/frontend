@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Button, Card, Empty, Modal, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { AggregationType, ChartConfig, ChartCreatorProps, DateGrouping, DerivedColumn, SortOrder } from "./types";
+import { AggregationType, ChartConfig, ChartCreatorProps, DateGrouping, DerivedColumn, ReferenceLine, SortOrder } from "./types";
 import { ChartItem } from "./ChartItem";
 import { ChartFormFields } from "./ChartFormFields";
 
@@ -25,6 +25,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [newHeight, setNewHeight] = useState(400);
   const [newDateGrouping, setNewDateGrouping] = useState<DateGrouping>("none");
   const [newDerivedColumns, setNewDerivedColumns] = useState<DerivedColumn[]>([]);
+  const [newReferenceLine, setNewReferenceLine] = useState<ReferenceLine | undefined>(undefined);
 
   // State for EDITING chart form (Modal)
   const [editTitle, setEditTitle] = useState("");
@@ -39,6 +40,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [editHeight, setEditHeight] = useState(400);
   const [editDateGrouping, setEditDateGrouping] = useState<DateGrouping>("none");
   const [editDerivedColumns, setEditDerivedColumns] = useState<DerivedColumn[]>([]);
+  const [editReferenceLine, setEditReferenceLine] = useState<ReferenceLine | undefined>(undefined);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
 
   const keys = useMemo(() => {
@@ -74,6 +76,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           height: newHeight,
           dateGrouping: newDateGrouping,
           derivedColumns: newDerivedColumns,
+          referenceLine: newReferenceLine,
         },
       ]);
       setNewTitle("");
@@ -88,6 +91,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
       setNewHeight(400);
       setNewDateGrouping("none");
       setNewDerivedColumns([]);
+      setNewReferenceLine(undefined);
     }
   };
 
@@ -105,6 +109,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
     setEditHeight(chart.height ?? 400);
     setEditDateGrouping(chart.dateGrouping ?? "none");
     setEditDerivedColumns(chart.derivedColumns ?? []);
+    setEditReferenceLine(chart.referenceLine);
   }, []);
 
   const saveEdit = () => {
@@ -126,6 +131,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 height: editHeight,
                 dateGrouping: editDateGrouping,
                 derivedColumns: editDerivedColumns,
+                referenceLine: editReferenceLine,
               }
             : c,
         ),
@@ -196,6 +202,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 setDateGrouping={setNewDateGrouping}
                 derivedColumns={newDerivedColumns}
                 setDerivedColumns={setNewDerivedColumns}
+                referenceLine={newReferenceLine}
+                setReferenceLine={setNewReferenceLine}
                 keys={keys}
               />
             </Card>
@@ -246,6 +254,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           setDateGrouping={setEditDateGrouping}
           derivedColumns={editDerivedColumns}
           setDerivedColumns={setEditDerivedColumns}
+          referenceLine={editReferenceLine}
+          setReferenceLine={setEditReferenceLine}
           keys={keys}
         />
       </Modal>

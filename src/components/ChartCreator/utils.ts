@@ -208,6 +208,24 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
 
   const label = { show: showLabels, position: "top" as const, formatter: "{c}" };
 
+  const markLine = config.referenceLine
+    ? {
+        silent: true,
+        data: [
+          {
+            yAxis: config.referenceLine.value,
+            name: config.referenceLine.label ?? "",
+          },
+        ],
+        label: {
+          formatter: config.referenceLine.label
+            ? `${config.referenceLine.label}: {c}`
+            : "{c}",
+        },
+        lineStyle: { color: "#ff4d4f", type: "dashed" as const },
+      }
+    : undefined;
+
   const series = isCount
     ? [
         {
@@ -215,15 +233,18 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
           data: processedData.map((item) => item.__count__),
           type: config.type,
           label,
+          markLine,
         },
       ]
     : config.yKeys
         .filter((yKey) => yKey !== "__count__")
-        .map((yKey) => ({
+        .map((yKey, idx) => ({
           name: seriesLabel ? `${seriesLabel} de ${yKey}` : yKey,
           data: processedData.map((item) => item[yKey]),
           type: config.type,
           label,
+          // Only attach markLine to the first series to avoid duplication
+          ...(idx === 0 && markLine ? { markLine } : {}),
         }));
 
   const legendData = isCount
