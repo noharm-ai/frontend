@@ -7,6 +7,7 @@ import {
   Row,
   Col,
   Button,
+  Tabs,
 } from "antd";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import {
@@ -55,7 +56,7 @@ interface ChartFormFieldsProps {
 const labelStyle: React.CSSProperties = {
   display: "block",
   fontSize: 12,
-  color: "#888",
+  color: "#454545",
   marginBottom: 2,
 };
 
@@ -159,8 +160,8 @@ export const ChartFormFields = ({
     );
   };
 
-  return (
-    <Flex vertical style={{ width: "100%" }} gap="small">
+  const dadosTab = (
+    <Flex vertical gap="small">
       {/* Title */}
       <div>
         <label style={labelStyle}>Título do Gráfico</label>
@@ -189,7 +190,7 @@ export const ChartFormFields = ({
 
       {/* X axis + Date grouping */}
       <Row gutter={8}>
-        <Col span={dateGrouping !== "none" ? 14 : 24}>
+        <Col span={14}>
           <label style={labelStyle}>Eixo X (Categoria)</label>
           <Select
             mode="multiple"
@@ -201,7 +202,7 @@ export const ChartFormFields = ({
             maxTagCount="responsive"
           />
         </Col>
-        <Col span={dateGrouping !== "none" ? 10 : 24}>
+        <Col span={10}>
           <label style={labelStyle}>Agrupamento de Data</label>
           <Select
             style={{ width: "100%" }}
@@ -217,6 +218,48 @@ export const ChartFormFields = ({
             ]}
           />
         </Col>
+      </Row>
+
+      {/* Aggregation + Y axis */}
+      <Row gutter={8}>
+        <Col span={aggregation !== "count" ? 8 : 24}>
+          <label style={labelStyle}>Agregação</label>
+          <Select
+            style={{ width: "100%" }}
+            value={aggregation}
+            onChange={setAggregation}
+            options={[
+              { label: "Nenhuma", value: "none" },
+              { label: "Contagem", value: "count" },
+              { label: "Soma", value: "sum" },
+              { label: "Média", value: "avg" },
+              { label: "Mínimo", value: "min" },
+              { label: "Máximo", value: "max" },
+            ]}
+          />
+        </Col>
+        {aggregation !== "count" && (
+          <Col span={16}>
+            <label style={labelStyle}>Eixo Y (Valor)</label>
+            <Select
+              mode={type === "pie" ? undefined : "multiple"}
+              placeholder="Selecione as colunas para o eixo Y"
+              style={{ width: "100%" }}
+              value={type === "pie" ? yKeys[0] : yKeys}
+              onChange={(val) => {
+                if (Array.isArray(val)) {
+                  setYKeys(val);
+                } else if (val) {
+                  setYKeys([val]);
+                } else {
+                  setYKeys([]);
+                }
+              }}
+              options={allYOptions}
+              maxTagCount="responsive"
+            />
+          </Col>
+        )}
       </Row>
 
       {/* Derived columns */}
@@ -280,7 +323,7 @@ export const ChartFormFields = ({
                 </Button>
               </Col>
               {/* Operator */}
-              <Col flex="40px">
+              <Col flex="60px">
                 <Select
                   size="small"
                   style={{ width: "100%" }}
@@ -362,49 +405,11 @@ export const ChartFormFields = ({
           </Button>
         </Flex>
       </div>
+    </Flex>
+  );
 
-      {/* Aggregation + Y axis */}
-      <Row gutter={8}>
-        <Col span={aggregation !== "count" ? 8 : 24}>
-          <label style={labelStyle}>Agregação</label>
-          <Select
-            style={{ width: "100%" }}
-            value={aggregation}
-            onChange={setAggregation}
-            options={[
-              { label: "Nenhuma", value: "none" },
-              { label: "Contagem", value: "count" },
-              { label: "Soma", value: "sum" },
-              { label: "Média", value: "avg" },
-              { label: "Mínimo", value: "min" },
-              { label: "Máximo", value: "max" },
-            ]}
-          />
-        </Col>
-        {aggregation !== "count" && (
-          <Col span={16}>
-            <label style={labelStyle}>Eixo Y (Valor)</label>
-            <Select
-              mode={type === "pie" ? undefined : "multiple"}
-              placeholder="Selecione as colunas para o eixo Y"
-              style={{ width: "100%" }}
-              value={type === "pie" ? yKeys[0] : yKeys}
-              onChange={(val) => {
-                if (Array.isArray(val)) {
-                  setYKeys(val);
-                } else if (val) {
-                  setYKeys([val]);
-                } else {
-                  setYKeys([]);
-                }
-              }}
-              options={allYOptions}
-              maxTagCount="responsive"
-            />
-          </Col>
-        )}
-      </Row>
-
+  const visualTab = (
+    <Flex vertical gap="small">
       {/* Chart type + Width */}
       <Row gutter={8}>
         <Col span={12}>
@@ -573,5 +578,16 @@ export const ChartFormFields = ({
         </label>
       </div>
     </Flex>
+  );
+
+  return (
+    <Tabs
+      size="small"
+      style={{ width: "100%" }}
+      items={[
+        { key: "dados", label: "Dados", children: dadosTab },
+        { key: "visual", label: "Visual", children: visualTab },
+      ]}
+    />
   );
 };
