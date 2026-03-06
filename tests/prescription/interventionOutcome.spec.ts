@@ -21,6 +21,7 @@ test("outcome: suspension", async ({ page }) => {
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
 
+  await page.getByText("Suspensão da terapia").waitFor({ state: "visible" });
   await page.getByText("Suspensão da terapia").click();
 
   // // close dropdown
@@ -242,6 +243,7 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
 
+  await page.getByText("Suspensão da terapia").waitFor({ state: "visible" });
   await page.getByText("Suspensão da terapia").click();
 
   // // close dropdown
