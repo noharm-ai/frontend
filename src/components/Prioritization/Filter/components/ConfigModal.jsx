@@ -9,6 +9,48 @@ import Empty from "components/Empty";
 
 import { ConfigModalContainer } from "./ConfigModal.style";
 
+function FilterList({ list, type, filterActive, removeFilterAction }) {
+  const filters = list && list[0]?.value ? list[0].value : [];
+
+  if (filters.filter((item) => filterActive(item)).length === 0) {
+    return (
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description="Nenhum filtro encontrado."
+      />
+    );
+  }
+
+  return (
+    <ConfigModalContainer>
+      {list?.length &&
+        list[0].value.map((item, index) => (
+          <React.Fragment key={index}>
+            {filterActive(item) && (
+              <div key={index}>
+                <div className="main">
+                  <div>{item.name}</div>
+                  <div>
+                    <Popconfirm
+                      title="Remover filtro"
+                      description="Confirma a remoção deste filtro?"
+                      okText="Sim"
+                      cancelText="Não"
+                      onConfirm={() => removeFilterAction(index, type)}
+                      zIndex={9999}
+                    >
+                      <Button danger icon={<DeleteOutlined />} />
+                    </Popconfirm>
+                  </div>
+                </div>
+              </div>
+            )}
+          </React.Fragment>
+        ))}
+    </ConfigModalContainer>
+  );
+}
+
 export default function ConfigModal({
   open,
   setOpen,
@@ -17,58 +59,30 @@ export default function ConfigModal({
   removeFilterAction,
   filterActive,
 }) {
-  const FilterList = ({ list, type }) => {
-    const filters = list && list[0]?.value ? list[0].value : [];
-
-    if (filters.filter((item) => filterActive(item)).length === 0) {
-      return (
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description="Nenhum filtro encontrado."
-        />
-      );
-    }
-
-    return (
-      <ConfigModalContainer>
-        {list?.length &&
-          list[0].value.map((item, index) => (
-            <React.Fragment key={index}>
-              {filterActive(item) && (
-                <div key={index}>
-                  <div className="main">
-                    <div>{item.name}</div>
-                    <div>
-                      <Popconfirm
-                        title="Remover filtro"
-                        description="Confirma a remoção deste filtro?"
-                        okText="Sim"
-                        cancelText="Não"
-                        onConfirm={() => removeFilterAction(index, type)}
-                        zIndex={9999}
-                      >
-                        <Button danger icon={<DeleteOutlined />} />
-                      </Popconfirm>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </React.Fragment>
-          ))}
-      </ConfigModalContainer>
-    );
-  };
-
   const items = [
     {
       key: "1",
       label: "Privados",
-      children: <FilterList list={privateFilters} type="private" />,
+      children: (
+        <FilterList
+          list={privateFilters}
+          type="private"
+          filterActive={filterActive}
+          removeFilterAction={removeFilterAction}
+        />
+      ),
     },
     {
       key: "2",
       label: "Públicos",
-      children: <FilterList list={publicFilters} type="public" />,
+      children: (
+        <FilterList
+          list={publicFilters}
+          type="public"
+          filterActive={filterActive}
+          removeFilterAction={removeFilterAction}
+        />
+      ),
     },
   ];
 

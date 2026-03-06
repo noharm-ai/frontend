@@ -22,7 +22,7 @@ export default function Filter({
   outliers,
   fetchDrugsUnitsList,
 }) {
-  const { values } = useFormik({
+  const { values, setFieldValue } = useFormik({
     validationSchema,
     enableReinitialize: true,
     initialValues: outliers.selecteds,
@@ -43,7 +43,7 @@ export default function Filter({
   ]);
 
   const handleChange = (key, value) => {
-    values[key] = value;
+    setFieldValue(key, value);
     const params = {
       ...values,
       [key]: value,
