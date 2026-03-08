@@ -74,6 +74,10 @@ const fetchListExtraStart = (state = INITIAL_STATE, { date }) => ({
 });
 
 const fetchListExtraSuccess = (state = INITIAL_STATE, { list }) => {
+  if (!list || !list.length) {
+    return { ...state, isFetchingExtra: false };
+  }
+
   const newList = { ...state.list };
 
   list.forEach((n) => {
