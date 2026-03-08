@@ -19,15 +19,11 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      "react-hooks/exhaustive-deps": "warn",
-      "react-hooks/set-state-in-effect": "warn",
-      "react-hooks/static-components": "warn",
-      "react-hooks/immutability": "warn",
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
       ],
       "@typescript-eslint/no-explicit-any": "off",
     },
-  }
+  },
 );
