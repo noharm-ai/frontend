@@ -47,6 +47,7 @@ export interface DrugRecord {
   c?: boolean;
   q?: boolean;
   dialyzable?: boolean;
+  idMeasureUnitDefault?: string;
   drugAttributes?: DrugAttributes;
 }
 
@@ -220,7 +221,10 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
           <span className="info-value">{record.originalSource}</span>
 
           <span className="info-label">doseconv:</span>
-          <span className="info-value">{record.doseconv}</span>
+          <span className="info-value">
+            {record.doseconv}{" "}
+            {record.idMeasureUnitDefault || "Unidade indefinida"}
+          </span>
 
           <span className="info-label">frequenciadia:</span>
           <span className="info-value">{record.dayFrequency}</span>
