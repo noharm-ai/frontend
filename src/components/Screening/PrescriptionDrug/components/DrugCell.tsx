@@ -1,5 +1,5 @@
 import React from "react";
-import { CalculatorOutlined, HistoryOutlined } from "@ant-design/icons";
+import { HistoryOutlined } from "@ant-design/icons";
 import { Button as AntButton, Space } from "antd";
 
 import Tooltip from "components/Tooltip";
@@ -17,12 +17,61 @@ import Permission from "models/Permission";
 import { DrugLink } from "../../index.style";
 import { DrugCellPopover } from "./DrugCell.style";
 
-export const DrugTags = ({ drug, t, noMargin }) => (
-  <span
-    style={{
-      marginLeft: noMargin ? 0 : "8px",
-    }}
-  >
+interface DrugAttributes {
+  fallRisk?: string;
+  liver?: number;
+}
+
+export interface DrugRecord {
+  drug: string;
+  total?: boolean;
+  emptyRow?: boolean;
+  idPrescriptionDrug: string;
+  idDrug: string;
+  idSegment?: string | number;
+  idSubstance?: string | number;
+  substanceName?: string;
+  grp_solution?: string;
+  originalSource?: string;
+  doseconv?: number | string;
+  dayFrequency?: number | string;
+  intravenous?: boolean;
+  tube?: boolean;
+  periodType?: number;
+  periodFixed?: number;
+  periodDayInterval?: number;
+  orderNumber?: number | null;
+  np?: boolean;
+  am?: boolean;
+  av?: boolean;
+  c?: boolean;
+  q?: boolean;
+  dialyzable?: boolean;
+  drugAttributes?: DrugAttributes;
+}
+
+interface DrugCellBag {
+  t: (key: string) => string;
+  concilia?: boolean;
+  handleRowExpand: (record: DrugRecord) => void;
+  idSegment: string | number;
+  prescriptionDrugOrder?: string;
+  dispatch: (action: unknown) => void;
+}
+
+interface DrugTagsProps {
+  drug: DrugRecord;
+  t: (key: string) => string;
+  noMargin?: boolean;
+}
+
+interface DrugCellProps {
+  record: DrugRecord;
+  bag: DrugCellBag;
+}
+
+export const DrugTags = ({ drug, t, noMargin }: DrugTagsProps) => (
+  <span style={{ marginLeft: noMargin ? 0 : "8px" }}>
     <Space size="small">
       {drug.np && (
         <Tooltip title={t("drugTags.npHint")}>
@@ -68,15 +117,16 @@ export const DrugTags = ({ drug, t, noMargin }) => (
         <Tooltip title={t("drugTags.fallRiskHint")}>
           <Tag variant="outlined" color="volcano">
             {t("drugTags.fallRisk")}
-            {drug.drugAttributes?.fallRisk}
+            {drug.drugAttributes.fallRisk}
           </Tag>
         </Tooltip>
       )}
-      {drug.drugAttributes?.liver > 150 &&
-        drug.drugAttributes?.liver <= 156 && (
-          <Tooltip title={t(`drugTags.liverHint${drug.drugAttributes?.liver}`)}>
+      {drug.drugAttributes?.liver != null &&
+        drug.drugAttributes.liver > 150 &&
+        drug.drugAttributes.liver <= 156 && (
+          <Tooltip title={t(`drugTags.liverHint${drug.drugAttributes.liver}`)}>
             <Tag variant="outlined" color="gold">
-              {t(`drugTags.liver${drug.drugAttributes?.liver}`)}
+              {t(`drugTags.liver${drug.drugAttributes.liver}`)}
             </Tag>
           </Tooltip>
         )}
@@ -84,7 +134,7 @@ export const DrugTags = ({ drug, t, noMargin }) => (
   </span>
 );
 
-const periodTypeLabel = (periodType) => {
+const periodTypeLabel = (periodType?: number): string => {
   switch (periodType) {
     case 1:
       return "Calculado";
@@ -95,9 +145,9 @@ const periodTypeLabel = (periodType) => {
   }
 };
 
-function DrugCell({ record, bag }) {
+function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
   if (record.total || record.emptyRow) {
-    return "";
+    return null;
   }
 
   if (bag.concilia) {
@@ -105,24 +155,6 @@ function DrugCell({ record, bag }) {
       <>
         {record.drug} <DrugTags drug={record} t={bag.t} />
       </>
-    );
-  }
-
-  if (record.total) {
-    return (
-      <Tooltip
-        title={bag.t("prescriptionDrugList.openSolutionCalculator")}
-        placement="top"
-      >
-        <span
-          className="gtm-tag-calc"
-          onClick={() => bag.handleRowExpand(record)}
-          style={{ cursor: "pointer" }}
-        >
-          <CalculatorOutlined style={{ fontSize: 16, marginRight: "10px" }} />
-          {bag.t("prescriptionDrugList.solutionCalculator")}
-        </span>
-      </Tooltip>
     );
   }
 
@@ -148,13 +180,22 @@ function DrugCell({ record, bag }) {
     </AntButton>
   );
 
-  let content;
+  const substanceCell = record.idSubstance ? (
+    <span className="info-value">{record.substanceName}</span>
+  ) : (
+    <div className="substance-warning">
+      A substância deste medicamento não foi definida. Clique no medicamento
+      para configurar.
+    </div>
+  );
+
+  let content: React.ReactElement;
   if (PermissionService().has(Permission.MAINTAINER)) {
     const periodType = periodTypeLabel(record.periodType);
     const periodDays =
-      record.periodFixed > 0
+      (record.periodFixed ?? 0) > 0
         ? record.periodDayInterval
-        : record.periodDayInterval + 1;
+        : (record.periodDayInterval ?? 0) + 1;
 
     content = (
       <DrugCellPopover>
@@ -167,16 +208,7 @@ function DrugCell({ record, bag }) {
           <span className="info-value">{record.idDrug}</span>
 
           <span className="info-label">Substância:</span>
-          <span className="info-value">
-            {record.idSubstance ? (
-              record.substanceName
-            ) : (
-              <div className="substance-warning">
-                A substância deste medicamento não foi definida. Clique no
-                medicamento para configurar.
-              </div>
-            )}
-          </span>
+          {substanceCell}
 
           <span className="info-label">idsegmento:</span>
           <span className="info-value">{record.idSegment ?? "Indefinido"}</span>
@@ -209,7 +241,7 @@ function DrugCell({ record, bag }) {
 
           <span className="info-label">Tags:</span>
           <span className="info-value">
-            <DrugTags drug={record} t={bag.t} noMargin small />
+            <DrugTags drug={record} t={bag.t} noMargin />
           </span>
         </div>
 
@@ -223,20 +255,11 @@ function DrugCell({ record, bag }) {
         <div className="popover-title">{record.drug}</div>
         <div className="info-grid">
           <span className="info-label">Substância:</span>
-          <span className="info-value">
-            {record.idSubstance ? (
-              record.substanceName
-            ) : (
-              <div className="substance-warning">
-                A substância deste medicamento não foi definida. Clique no
-                medicamento para configurar.
-              </div>
-            )}
-          </span>
+          {substanceCell}
 
           <span className="info-label">Tags:</span>
           <span className="info-value">
-            <DrugTags drug={record} t={bag.t} noMargin small />
+            <DrugTags drug={record} t={bag.t} noMargin />
           </span>
         </div>
 

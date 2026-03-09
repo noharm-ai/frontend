@@ -445,8 +445,6 @@ const periodDatesList = (dates) => {
   );
 };
 
-/* eslint-disable-next-line react-refresh/only-export-components */
-
 export const expandedRowRender = (bag) => (record) => {
   if (record.total && record.infusion) {
     trackPrescriptionAction(
