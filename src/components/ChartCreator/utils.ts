@@ -289,6 +289,7 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
   return {
     ...titleOption,
     ...(colors.length ? { color: colors } : {}),
+    grid: { left: "3%", right: "10%", bottom: "3%", containLabel: true },
     tooltip: {
       trigger: "axis",
       ...(isCountPct ? {
