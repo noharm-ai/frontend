@@ -15,9 +15,14 @@ import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
 
 import { DrugLink } from "../../index.style";
+import { DrugCellPopover } from "./DrugCell.style";
 
-export const DrugTags = ({ drug, t }) => (
-  <span style={{ marginLeft: "8px" }}>
+export const DrugTags = ({ drug, t, noMargin }) => (
+  <span
+    style={{
+      marginLeft: noMargin ? 0 : "8px",
+    }}
+  >
     <Space size="small">
       {drug.np && (
         <Tooltip title={t("drugTags.npHint")}>
@@ -79,6 +84,17 @@ export const DrugTags = ({ drug, t }) => (
   </span>
 );
 
+const periodTypeLabel = (periodType) => {
+  switch (periodType) {
+    case 1:
+      return "Calculado";
+    case 2:
+      return "Integrado";
+    default:
+      return "Indefinido";
+  }
+};
+
 function DrugCell({ record, bag }) {
   if (record.total || record.emptyRow) {
     return "";
@@ -114,94 +130,119 @@ function DrugCell({ record, bag }) {
     record.drug,
   )}/${record.doseconv}/${record.dayFrequency}`;
 
-  const substanceWarning = (
-    <div style={{ fontSize: `12px`, color: "#ff4d4f", lineHeight: 1.2 }}>
-      *A substância deste medicamento não foi definida. <br />
-      Clique para configurar.
-    </div>
-  );
-
   const historyButton = (
-    <div style={{ marginTop: "8px" }}>
-      <AntButton
-        icon={<HistoryOutlined />}
-        size="small"
-        onClick={() => {
-          trackPrescriptionAction(
-            TrackedPrescriptionAction.CLICK_CHECK_HISTORY,
-          );
-          bag.dispatch(
-            setCheckedIndexReport({
-              idPrescriptionDrug: record.idPrescriptionDrug,
-              data: record,
-            }),
-          );
-        }}
-      >
-        Histórico de checagem
-      </AntButton>
-    </div>
+    <AntButton
+      icon={<HistoryOutlined />}
+      size="small"
+      onClick={() => {
+        trackPrescriptionAction(TrackedPrescriptionAction.CLICK_CHECK_HISTORY);
+        bag.dispatch(
+          setCheckedIndexReport({
+            idPrescriptionDrug: record.idPrescriptionDrug,
+            data: record,
+          }),
+        );
+      }}
+    >
+      Histórico de checagem
+    </AntButton>
   );
 
   let content;
   if (PermissionService().has(Permission.MAINTAINER)) {
-    let periodType = "";
-
-    switch (record.periodType) {
-      case 1:
-        periodType = "Calculado";
-        break;
-      case 2:
-        periodType = "Integrado";
-        break;
-      default:
-        periodType = "Indefinido";
-    }
+    const periodType = periodTypeLabel(record.periodType);
+    const periodDays =
+      record.periodFixed > 0
+        ? record.periodDayInterval
+        : record.periodDayInterval + 1;
 
     content = (
-      <>
-        <strong>Info para mantenedores:</strong>
-        <br />
-        <br />
-        <strong>fkpresmed:</strong> {record.idPrescriptionDrug}
-        <br />
-        <strong>fkmedicamento:</strong> {record.idDrug}
-        <br />
-        <strong>idsegmento:</strong>{" "}
-        {record.idSegment ? record.idSegment : "Indefinido"}
-        <br />
-        <strong>grp_solution:</strong> {record.grp_solution}
-        <br />
-        <strong>origem:</strong> {record.originalSource}
-        <br />
-        <strong>doseconv:</strong> {record.doseconv}
-        <br />
-        <strong>frequenciadia:</strong> {record.dayFrequency}
-        <br />
-        <strong>intravenosa:</strong> {record.intravenous ? "sim" : "não"}
-        <br />
-        <strong>sonda:</strong> {record.tube ? "sim" : "não"}
-        <br />
-        <strong>tipo periodo:</strong> {periodType} (fixo:{" "}
-        {record.periodFixed} / dias prescrito:{" "}
-        {record.periodFixed > 0
-          ? record.periodDayInterval
-          : record.periodDayInterval + 1}
-        )
-        <br />
-        <br />
-        {record.drug} <DrugTags drug={record} t={bag.t} />
-        {!record.idSubstance && substanceWarning}
+      <DrugCellPopover>
+        <div className="popover-title">{record.drug}</div>
+        <div className="info-grid">
+          <span className="info-label">fkpresmed:</span>
+          <span className="info-value">{record.idPrescriptionDrug}</span>
+
+          <span className="info-label">fkmedicamento:</span>
+          <span className="info-value">{record.idDrug}</span>
+
+          <span className="info-label">Substância:</span>
+          <span className="info-value">
+            {record.idSubstance ? (
+              record.substanceName
+            ) : (
+              <div className="substance-warning">
+                A substância deste medicamento não foi definida. Clique no
+                medicamento para configurar.
+              </div>
+            )}
+          </span>
+
+          <span className="info-label">idsegmento:</span>
+          <span className="info-value">{record.idSegment ?? "Indefinido"}</span>
+
+          <span className="info-label">grp_solution:</span>
+          <span className="info-value">{record.grp_solution}</span>
+
+          <span className="info-label">origem:</span>
+          <span className="info-value">{record.originalSource}</span>
+
+          <span className="info-label">doseconv:</span>
+          <span className="info-value">{record.doseconv}</span>
+
+          <span className="info-label">frequenciadia:</span>
+          <span className="info-value">{record.dayFrequency}</span>
+
+          <span className="info-label">intravenosa:</span>
+          <span className="info-value">
+            {record.intravenous ? "sim" : "não"}
+          </span>
+
+          <span className="info-label">sonda:</span>
+          <span className="info-value">{record.tube ? "sim" : "não"}</span>
+
+          <span className="info-label">tipo periodo:</span>
+          <span className="info-value">
+            {periodType} (fixo: {record.periodFixed} / dias prescrito:{" "}
+            {periodDays})
+          </span>
+
+          <span className="info-label">Tags:</span>
+          <span className="info-value">
+            <DrugTags drug={record} t={bag.t} noMargin small />
+          </span>
+        </div>
+
+        <div className="divider" />
         {historyButton}
-      </>
+      </DrugCellPopover>
     );
   } else {
     content = (
-      <>
-        {record.drug} <DrugTags drug={record} t={bag.t} />
-        {!record.idSubstance && substanceWarning}
+      <DrugCellPopover>
+        <div className="popover-title">{record.drug}</div>
+        <div className="info-grid">
+          <span className="info-label">Substância:</span>
+          <span className="info-value">
+            {record.idSubstance ? (
+              record.substanceName
+            ) : (
+              <div className="substance-warning">
+                A substância deste medicamento não foi definida. Clique no
+                medicamento para configurar.
+              </div>
+            )}
+          </span>
+
+          <span className="info-label">Tags:</span>
+          <span className="info-value">
+            <DrugTags drug={record} t={bag.t} noMargin small />
+          </span>
+        </div>
+
+        <div className="divider" />
         {historyButton}
-      </>
+      </DrugCellPopover>
     );
   }
 
