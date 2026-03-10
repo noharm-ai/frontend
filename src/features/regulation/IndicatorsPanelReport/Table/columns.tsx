@@ -212,6 +212,36 @@ const columns = (indicator: string): TableProps<any>["columns"] => {
     });
   }
 
+  if (indicator === "GESTATIONAL_WEIGHT_HEIGHT_MEASUREMENTS") {
+    cols.push({
+      title: "Idade Gestacional",
+      align: "center",
+      render: (_: any, record: any) => {
+        return record.gestational_age;
+      },
+    });
+
+    cols.push({
+      title: "Data da Última Medição",
+      align: "center",
+      render: (_: any, record: any) => {
+        return formatDate(record.weight_height_measurements_date);
+      },
+    });
+
+    cols.push({
+      title: "Situação",
+      align: "center",
+      render: (_: any, record: any) => {
+        if (record.has_weight_height_measurements) {
+          return <Tag color="green">Concluído</Tag>;
+        }
+
+        return <Tag color="warning">Pendente</Tag>;
+      },
+    });
+  }
+
   return cols;
 };
 
