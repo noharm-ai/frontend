@@ -1,0 +1,134 @@
+import React from "react";
+
+import Tooltip from "components/Tooltip";
+import Popover from "components/PopoverStyled";
+import { DoseCellPopover } from "./DoseCell.style";
+import { formatNumber } from "src/utils/number";
+
+interface DoseRecord {
+  total?: boolean;
+  infusion?: {
+    disableTotal?: boolean;
+    totalVol?: number;
+  };
+  measureUnit?: any;
+  dose?: string | number;
+  dosage?: string | number;
+  idMeasureUnitDefault?: string;
+  doseconv?: string | number;
+  useWeight?: boolean;
+  doseRange?: string | number;
+  doseWeight?: string;
+  doseWeightValue?: string;
+  doseWeightDay?: string;
+  doseWeightDayValue?: string;
+}
+
+interface DoseCellBag {
+  t: (key: string) => string;
+  handleRowExpand: (record: DoseRecord) => void;
+}
+
+interface DoseCellProps {
+  record: DoseRecord;
+  bag: DoseCellBag;
+}
+
+function DoseCell({ record, bag }: DoseCellProps): React.ReactElement | null {
+  if (record.total && record.infusion) {
+    return (
+      <Tooltip
+        title={bag.t("prescriptionDrugList.openSolutionCalculator")}
+        placement="top"
+      >
+        <span
+          onClick={() => bag.handleRowExpand(record)}
+          style={{ cursor: "pointer" }}
+        >
+          {record.infusion.disableTotal ? (
+            <>--</>
+          ) : (
+            <>{record.infusion.totalVol} mL</>
+          )}
+        </span>
+      </Tooltip>
+    );
+  }
+
+  const popoverContent = (
+    <DoseCellPopover>
+      <table className="info-table">
+        <thead>
+          <tr>
+            <th className="info-label"></th>
+            <th className="info-label right header">Dose</th>
+            <th className="info-label header">Unidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className="info-value header">Dose prescrita</td>
+            <td className="info-value right">{formatNumber(record.dose, 2)}</td>
+            <td className="info-value">
+              {record.measureUnit?.value || "(indefinida)"}
+            </td>
+          </tr>
+          <tr>
+            <td className="info-value header">Dose convertida</td>
+            <td className="info-value right">
+              {record.useWeight && !record.doseWeight ? (
+                <span className="missing-data">Peso indefinido</span>
+              ) : (
+                <>
+                  {record.doseRange && record.doseconv
+                    ? `${formatNumber(Number(record.doseconv) - Number(record.doseRange), 2)} - ${formatNumber(record.doseconv, 2)}`
+                    : formatNumber(record.doseconv, 2)}
+                </>
+              )}
+            </td>
+            <td className="info-value">
+              {record.idMeasureUnitDefault || "(indefinida)"}
+              {record.useWeight ? " / Kg" : ""}
+            </td>
+          </tr>
+
+          {record.doseWeight && (
+            <tr>
+              <td className="info-value header">Dose/Kg</td>
+              <td className="info-value right">{record.doseWeightValue}</td>
+              <td className="info-value">
+                {record.measureUnit?.value || "(indefinida)"} / Kg
+              </td>
+            </tr>
+          )}
+
+          {record.doseWeightDay && (
+            <tr>
+              <td className="info-value header">Dose/Kg/Dia</td>
+              <td className="info-value right">{record.doseWeightDayValue}</td>
+              <td className="info-value">
+                {record.measureUnit?.value || "(indefinida)"} / Kg / Dia
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </DoseCellPopover>
+  );
+
+  if (!record.measureUnit) {
+    return (
+      <Popover content={popoverContent} mouseEnterDelay={0.3}>
+        <span>{record.dose}</span>
+      </Popover>
+    );
+  }
+
+  return (
+    <Popover content={popoverContent} mouseEnterDelay={0.3}>
+      {record.dosage}
+    </Popover>
+  );
+}
+
+export default DoseCell;

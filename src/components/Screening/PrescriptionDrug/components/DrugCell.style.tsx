@@ -27,11 +27,13 @@ export const DrugCellPopover = styled.div`
     font-weight: 600;
     color: #2e3c5a;
     white-space: nowrap;
+    line-height: 1.3;
+    padding-right: 10px;
   }
 
   .info-value {
     color: #595959;
-    line-height: 1.2;
+    line-height: 1.3;
   }
 
   .divider {

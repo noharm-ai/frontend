@@ -42,6 +42,7 @@ import PresmedTags from "./PrescriptionDrug/components/PresmedTags";
 import DrugAlerts from "./PrescriptionDrug/components/DrugAlerts";
 import AlertTags from "./PrescriptionDrug/components/AlertTags";
 import DrugCell from "./PrescriptionDrug/components/DrugCell";
+import DoseCell from "./PrescriptionDrug/components/DoseCell";
 
 import { InterventionView } from "./Intervention/columns";
 import DrugForm from "./Form";
@@ -789,37 +790,9 @@ const dose = (bag) => ({
   dataIndex: "dosage",
   ellipsis: bag.condensed,
   align: bag.condensed ? "left" : "center",
-  render: (text, prescription) => {
-    if (prescription.total && prescription.infusion) {
-      return (
-        <Tooltip
-          title={bag.t("prescriptionDrugList.openSolutionCalculator")}
-          placement="top"
-        >
-          <span
-            onClick={() => bag.handleRowExpand(prescription)}
-            style={{ cursor: "pointer" }}
-          >
-            {prescription.infusion.disableTotal ? (
-              <>--</>
-            ) : (
-              <>{prescription.infusion.totalVol} mL</>
-            )}
-          </span>
-        </Tooltip>
-      );
-    }
-
-    if (!prescription.measureUnit) {
-      return prescription.dose;
-    }
-
-    return (
-      <Tooltip title={prescription.dosage} placement="top">
-        {prescription.dosage}
-      </Tooltip>
-    );
-  },
+  render: (text, prescription) => (
+    <DoseCell record={prescription} bag={bag} />
+  ),
 });
 
 const drug = (bag, addkey, title) => ({
