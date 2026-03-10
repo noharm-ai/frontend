@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
   ReloadOutlined,
-  RetweetOutlined,
   RobotOutlined,
   PlusOutlined,
   DownOutlined,
@@ -147,16 +146,16 @@ export default function Actions({ reload }) {
         label: "Calcular dose máxima",
         icon: <AlertOutlined />,
       },
-      {
-        key: "copyConversions",
-        label: "Copiar conversões",
-        icon: <RetweetOutlined />,
-      },
-      {
-        key: "copyAttributes",
-        label: "Copiar atributos",
-        icon: <RetweetOutlined />,
-      },
+      // {
+      //   key: "copyConversions",
+      //   label: "Copiar conversões",
+      //   icon: <RetweetOutlined />,
+      // },
+      // {
+      //   key: "copyAttributes",
+      //   label: "Copiar atributos",
+      //   icon: <RetweetOutlined />,
+      // },
       {
         key: "inferSubstance",
         label: "Inferir substâncias",
