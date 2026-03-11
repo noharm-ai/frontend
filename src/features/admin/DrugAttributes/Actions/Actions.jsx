@@ -7,6 +7,7 @@ import {
   PlusOutlined,
   DownOutlined,
   AlertOutlined,
+  RetweetOutlined,
 } from "@ant-design/icons";
 
 import Dropdown from "components/Dropdown";
@@ -151,11 +152,11 @@ export default function Actions({ reload }) {
       //   label: "Copiar conversões",
       //   icon: <RetweetOutlined />,
       // },
-      // {
-      //   key: "copyAttributes",
-      //   label: "Copiar atributos",
-      //   icon: <RetweetOutlined />,
-      // },
+      {
+        key: "copyAttributes",
+        label: "Copiar atributos",
+        icon: <RetweetOutlined />,
+      },
       {
         key: "inferSubstance",
         label: "Inferir substâncias",
