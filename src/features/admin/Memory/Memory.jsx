@@ -28,9 +28,10 @@ function Memory() {
           "map-origin-solution",
           "map-origin-procedure",
           "map-origin-diet",
+          "map-origin-material",
           "map-origin-custom",
         ],
-      })
+      }),
     );
 
     return () => {
@@ -122,9 +123,23 @@ function Memory() {
           <div className={`loader ${loading ? "loading" : ""}`}>
             <LoadBox />
           </div>
-          <h3>Origem: Custom</h3>
+          <h3>Origem: Materiais</h3>
           <div className="box-legend">
-            Valores listados aqui serão aceitos como origem válida.
+            Lista com as origens que mapeiam para o tipo "Materiais"
+          </div>
+
+          <Form memory={data["map-origin-material"]} />
+        </div>
+
+        <div className="box">
+          <div className={`loader ${loading ? "loading" : ""}`}>
+            <LoadBox />
+          </div>
+          <h3>Origem: Custom **Descontinuado</h3>
+          <div className="box-legend">
+            Valores listados aqui serão aceitos como origem válida. **Este
+            recurso não deve mais ser utilizado. As únicas origens válidas são:
+            Medicamentos, Soluções, Procedimentos/Exames, Dietas e Materiais.
           </div>
 
           <Form memory={data["map-origin-custom"]} />

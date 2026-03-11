@@ -7,6 +7,8 @@ export class RegulationReportIndicatorEnum {
   static SEVEN_GESTATIONAL_APPOINTMENTS = "SEVEN_GESTATIONAL_APPOINTMENTS";
   static GESTATIONAL_PRESSURE_MEASUREMENTS =
     "GESTATIONAL_PRESSURE_MEASUREMENTS";
+  static GESTATIONAL_WEIGHT_HEIGHT_MEASUREMENTS =
+    "GESTATIONAL_WEIGHT_HEIGHT_MEASUREMENTS";
 
   static getList = () =>
     [
@@ -37,6 +39,11 @@ export class RegulationReportIndicatorEnum {
       {
         value: RegulationReportIndicatorEnum.GESTATIONAL_PRESSURE_MEASUREMENTS,
         label: "Gestante: Mínimo de 7 registros de pressão na gestação",
+      },
+      {
+        value:
+          RegulationReportIndicatorEnum.GESTATIONAL_WEIGHT_HEIGHT_MEASUREMENTS,
+        label: "Gestante: Mínimo de 7 registros de peso e altura ",
       },
     ].sort((a, b) => a.label.localeCompare(b.label));
 }

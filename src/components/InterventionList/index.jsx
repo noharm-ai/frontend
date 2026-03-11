@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { isEmpty } from "lodash";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
@@ -58,8 +58,17 @@ export default function InterventionList({
 }) {
   const { t } = useTranslation();
   const [visible, setVisibility] = useState(false);
-  const [prescriberList, setPrescriberList] = useState([]);
-  const [departmentList, setDepartmentList] = useState([]);
+  const prescriberList = useMemo(
+    () =>
+      list ? uniqBy(list, "prescriber").map((i) => i.prescriber).sort() : [],
+    [list]
+  );
+
+  const departmentList = useMemo(
+    () =>
+      list ? uniqBy(list, "department").map((i) => i.department).sort() : [],
+    [list]
+  );
   const [filter, setFilter] = useState({
     status: null,
     responsible: [],
@@ -98,20 +107,6 @@ export default function InterventionList({
   useEffect(() => {
     fetchReasonsList();
   }, [fetchReasonsList]);
-
-  useEffect(() => {
-    setPrescriberList(
-      uniqBy(list, "prescriber")
-        .map((i) => i.prescriber)
-        .sort()
-    );
-
-    setDepartmentList(
-      uniqBy(list, "department")
-        .map((i) => i.department)
-        .sort()
-    );
-  }, [list]);
 
   // show message if has error
   useEffect(() => {

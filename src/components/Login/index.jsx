@@ -69,6 +69,7 @@ export default function Login({ isLogging, error, doLogin, forceSchema }) {
 
   useEffect(() => {
     const getAuthProvider = async (schema) => {
+      setLoading(true);
       try {
         const { data } = await api.getAuthProvider(schema);
         const config = { ...data.data };
@@ -103,7 +104,6 @@ export default function Login({ isLogging, error, doLogin, forceSchema }) {
     };
 
     if (params.schema || forceSchema) {
-      setLoading(true);
       getAuthProvider(params.schema || forceSchema);
     }
   }, [params.schema, forceSchema]);

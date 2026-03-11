@@ -50,6 +50,7 @@ export default function ClinicalNotes({
     visibleState?.indicators ?? []
   );
   const [filteredList, setFilteredList] = useState([]);
+  const [autoFetchedDates, setAutoFetchedDates] = useState(new Set());
   const { t } = useTranslation();
   const filterList = useCallback(
     (stateList, selectFirst, positionsArray, indicatorsArray) => {
@@ -170,7 +171,11 @@ export default function ClinicalNotes({
     setFilteredList(groups);
 
     if (groups.length > 0 && groups[0].value.length === 0) {
-      fetchExtra(groups[0].label);
+      const firstDate = groups[0].label;
+      if (!autoFetchedDates.has(firstDate)) {
+        setAutoFetchedDates((prev) => new Set([...prev, firstDate]));
+        fetchExtra(firstDate);
+      }
     }
   }, [list]); //eslint-disable-line
 

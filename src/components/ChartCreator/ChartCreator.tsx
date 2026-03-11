@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Button, Card, Empty, Modal, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { ChartConfig, ChartCreatorProps } from "./types";
+import { AggregationType, ChartConfig, ChartCreatorProps, ColorPalette, DateGrouping, ReferenceLine, SortOrder } from "./types";
 import { ChartItem } from "./ChartItem";
 import { ChartFormFields } from "./ChartFormFields";
 
@@ -16,15 +16,33 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [newTitle, setNewTitle] = useState("");
   const [newX, setNewX] = useState<string[]>([]);
   const [newY, setNewY] = useState<string[]>([]);
-  const [newType, setNewType] = useState<"bar" | "line" | "pie">("bar");
+  const [newType, setNewType] = useState<"bar" | "hbar" | "line" | "pie">("bar");
   const [newWidth, setNewWidth] = useState<"full" | "half">("half");
+  const [newAggregation, setNewAggregation] = useState<AggregationType>("none");
+  const [newSortOrder, setNewSortOrder] = useState<SortOrder>("none");
+  const [newTopN, setNewTopN] = useState(0);
+  const [newShowLabels, setNewShowLabels] = useState(false);
+  const [newHeight, setNewHeight] = useState(400);
+  const [newDateGrouping, setNewDateGrouping] = useState<DateGrouping>("none");
+  const [newReferenceLine, setNewReferenceLine] = useState<ReferenceLine | undefined>(undefined);
+  const [newShowTitle, setNewShowTitle] = useState(true);
+  const [newColorPalette, setNewColorPalette] = useState<ColorPalette>("default");
 
   // State for EDITING chart form (Modal)
   const [editTitle, setEditTitle] = useState("");
   const [editX, setEditX] = useState<string[]>([]);
   const [editY, setEditY] = useState<string[]>([]);
-  const [editType, setEditType] = useState<"bar" | "line" | "pie">("bar");
+  const [editType, setEditType] = useState<"bar" | "hbar" | "line" | "pie">("bar");
   const [editWidth, setEditWidth] = useState<"full" | "half">("full");
+  const [editAggregation, setEditAggregation] = useState<AggregationType>("none");
+  const [editSortOrder, setEditSortOrder] = useState<SortOrder>("none");
+  const [editTopN, setEditTopN] = useState(0);
+  const [editShowLabels, setEditShowLabels] = useState(false);
+  const [editHeight, setEditHeight] = useState(400);
+  const [editDateGrouping, setEditDateGrouping] = useState<DateGrouping>("none");
+  const [editReferenceLine, setEditReferenceLine] = useState<ReferenceLine | undefined>(undefined);
+  const [editShowTitle, setEditShowTitle] = useState(true);
+  const [editColorPalette, setEditColorPalette] = useState<ColorPalette>("default");
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
 
   const keys = useMemo(() => {
@@ -32,25 +50,52 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
     return Object.keys(data[0]);
   }, [data]);
 
+  const isNewFormValid =
+    newX.length > 0 &&
+    (newAggregation === "count" || newAggregation === "count_pct" || newY.length > 0) &&
+    !!newTitle;
+
+  const isEditFormValid =
+    editX.length > 0 &&
+    (editAggregation === "count" || editAggregation === "count_pct" || editY.length > 0) &&
+    !!editTitle;
+
   const handleAddChart = () => {
-    if (newX.length > 0 && newY.length > 0 && newType && newTitle) {
+    if (isNewFormValid) {
       setCharts((prev) => [
         ...prev,
         {
           id: Math.random().toString(36).substr(2, 9),
           type: newType,
           xKeys: newX,
-          yKeys: newY,
+          yKeys: newAggregation === "count" || newAggregation === "count_pct" ? [] : newY,
           title: newTitle,
           width: newWidth,
+          aggregation: newAggregation,
+          sortOrder: newSortOrder,
+          topN: newTopN,
+          showLabels: newShowLabels,
+          height: newHeight,
+          dateGrouping: newDateGrouping,
+          referenceLine: newReferenceLine,
+          showTitle: newShowTitle,
+          colorPalette: newColorPalette,
         },
       ]);
-      // Reset new form
       setNewTitle("");
       setNewX([]);
       setNewY([]);
       setNewType("bar");
       setNewWidth("half");
+      setNewAggregation("none");
+      setNewSortOrder("none");
+      setNewTopN(0);
+      setNewShowLabels(false);
+      setNewHeight(400);
+      setNewDateGrouping("none");
+      setNewReferenceLine(undefined);
+      setNewShowTitle(true);
+      setNewColorPalette("default");
     }
   };
 
@@ -61,6 +106,15 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
     setEditY(chart.yKeys);
     setEditType(chart.type);
     setEditWidth(chart.width);
+    setEditAggregation(chart.aggregation ?? "none");
+    setEditSortOrder(chart.sortOrder ?? "none");
+    setEditTopN(chart.topN ?? 0);
+    setEditShowLabels(chart.showLabels ?? false);
+    setEditHeight(chart.height ?? 400);
+    setEditDateGrouping(chart.dateGrouping ?? "none");
+    setEditReferenceLine(chart.referenceLine);
+    setEditShowTitle(chart.showTitle ?? true);
+    setEditColorPalette(chart.colorPalette ?? "default");
   }, []);
 
   const saveEdit = () => {
@@ -72,9 +126,18 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 ...c,
                 title: editTitle,
                 xKeys: editX,
-                yKeys: editY,
+                yKeys: editAggregation === "count" || editAggregation === "count_pct" ? [] : editY,
                 type: editType,
                 width: editWidth,
+                aggregation: editAggregation,
+                sortOrder: editSortOrder,
+                topN: editTopN,
+                showLabels: editShowLabels,
+                height: editHeight,
+                dateGrouping: editDateGrouping,
+                referenceLine: editReferenceLine,
+                showTitle: editShowTitle,
+                colorPalette: editColorPalette,
               }
             : c,
         ),
@@ -113,7 +176,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 <Button
                   type="primary"
                   icon={<PlusOutlined />}
-                  disabled={newX.length === 0 || newY.length === 0 || !newTitle}
+                  disabled={!isNewFormValid}
                   onClick={handleAddChart}
                 >
                   Adicionar
@@ -131,6 +194,24 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 setType={setNewType}
                 width={newWidth}
                 setWidth={setNewWidth}
+                aggregation={newAggregation}
+                setAggregation={setNewAggregation}
+                sortOrder={newSortOrder}
+                setSortOrder={setNewSortOrder}
+                topN={newTopN}
+                setTopN={setNewTopN}
+                showLabels={newShowLabels}
+                setShowLabels={setNewShowLabels}
+                height={newHeight}
+                setHeight={setNewHeight}
+                dateGrouping={newDateGrouping}
+                setDateGrouping={setNewDateGrouping}
+                referenceLine={newReferenceLine}
+                setReferenceLine={setNewReferenceLine}
+                showTitle={newShowTitle}
+                setShowTitle={setNewShowTitle}
+                colorPalette={newColorPalette}
+                setColorPalette={setNewColorPalette}
                 keys={keys}
               />
             </Card>
@@ -149,7 +230,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           <Button
             key="submit"
             type="primary"
-            disabled={editX.length === 0 || editY.length === 0 || !editTitle}
+            disabled={!isEditFormValid}
             onClick={saveEdit}
           >
             Salvar Alterações
@@ -167,6 +248,24 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           setType={setEditType}
           width={editWidth}
           setWidth={setEditWidth}
+          aggregation={editAggregation}
+          setAggregation={setEditAggregation}
+          sortOrder={editSortOrder}
+          setSortOrder={setEditSortOrder}
+          topN={editTopN}
+          setTopN={setEditTopN}
+          showLabels={editShowLabels}
+          setShowLabels={setEditShowLabels}
+          height={editHeight}
+          setHeight={setEditHeight}
+          dateGrouping={editDateGrouping}
+          setDateGrouping={setEditDateGrouping}
+          referenceLine={editReferenceLine}
+          setReferenceLine={setEditReferenceLine}
+          showTitle={editShowTitle}
+          setShowTitle={setEditShowTitle}
+          colorPalette={editColorPalette}
+          setColorPalette={setEditColorPalette}
           keys={keys}
         />
       </Modal>

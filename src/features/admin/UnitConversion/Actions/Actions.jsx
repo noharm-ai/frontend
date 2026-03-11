@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { ReloadOutlined, RetweetOutlined } from "@ant-design/icons";
+import { ReloadOutlined } from "@ant-design/icons";
 
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
@@ -25,11 +25,11 @@ export default function Actions() {
   const filters = useSelector((state) => state.admin.unitConversion.filters);
   const isAddingDefaultUnits =
     useSelector(
-      (state) => state.admin.unitConversion.addDefaultUnits.status
+      (state) => state.admin.unitConversion.addDefaultUnits.status,
     ) === "loading";
-  const isCopyingConversion =
-    useSelector((state) => state.admin.unitConversion.copyConversion.status) ===
-    "loading";
+  // const isCopyingConversion =
+  //   useSelector((state) => state.admin.unitConversion.copyConversion.status) ===
+  //   "loading";
 
   const showDefaultUnitDialog = () => {
     DefaultModal.confirm({
@@ -71,9 +71,9 @@ export default function Actions() {
           setFilteredList(
             filterConversionList(
               groupConversions(response.payload.data.data),
-              filters
-            )
-          )
+              filters,
+            ),
+          ),
         );
       }
     });
@@ -109,7 +109,7 @@ export default function Actions() {
         </Button>
       </Tooltip>
 
-      <Tooltip title="Clique para mais informações">
+      {/* <Tooltip title="Clique para mais informações">
         <Button
           type="primary"
           icon={<RetweetOutlined />}
@@ -118,7 +118,7 @@ export default function Actions() {
         >
           Copiar Conversões
         </Button>
-      </Tooltip>
+      </Tooltip> */}
 
       <CopyConversion
         open={copyConversionVisible}

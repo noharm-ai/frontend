@@ -24,6 +24,7 @@ export default function ConfigModal({ save, open, setOpen, list }) {
 
   useEffect(() => {
     if (list && list[0]) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDataSource(
         list[0].value.map((i) => {
           return {
@@ -32,7 +33,7 @@ export default function ConfigModal({ save, open, setOpen, list }) {
               ? i.active
               : true,
           };
-        })
+        }),
       );
     }
   }, [list]);
@@ -43,18 +44,27 @@ export default function ConfigModal({ save, open, setOpen, list }) {
   };
 
   const setItem = (value, index) => {
-    dataSource[index].active = value;
-    setDataSource([...dataSource]);
+    setDataSource(
+      dataSource.map((item, i) =>
+        i === index ? { ...item, active: value } : item,
+      ),
+    );
   };
 
   const setName = (value, index) => {
-    dataSource[index].name = value;
-    setDataSource([...dataSource]);
+    setDataSource(
+      dataSource.map((item, i) =>
+        i === index ? { ...item, name: value } : item,
+      ),
+    );
   };
 
   const setData = (value, index) => {
-    dataSource[index].data = value;
-    setDataSource([...dataSource]);
+    setDataSource(
+      dataSource.map((item, i) =>
+        i === index ? { ...item, data: value } : item,
+      ),
+    );
   };
 
   if (isEmpty(dataSource)) {

@@ -3,11 +3,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
   ReloadOutlined,
-  RetweetOutlined,
   RobotOutlined,
   PlusOutlined,
   DownOutlined,
   AlertOutlined,
+  RetweetOutlined,
 } from "@ant-design/icons";
 
 import Dropdown from "components/Dropdown";
@@ -147,11 +147,11 @@ export default function Actions({ reload }) {
         label: "Calcular dose máxima",
         icon: <AlertOutlined />,
       },
-      {
-        key: "copyConversions",
-        label: "Copiar conversões",
-        icon: <RetweetOutlined />,
-      },
+      // {
+      //   key: "copyConversions",
+      //   label: "Copiar conversões",
+      //   icon: <RetweetOutlined />,
+      // },
       {
         key: "copyAttributes",
         label: "Copiar atributos",

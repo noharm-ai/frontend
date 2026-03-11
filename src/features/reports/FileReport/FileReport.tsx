@@ -296,10 +296,9 @@ export function FileReport() {
             <ErrorBoundary FallbackComponent={ChartCreatorFallback}>
               <ChartCreator
                 data={filteredData}
-                // initialCharts={initialCharts}
+                initialCharts={initialCharts}
                 onChartsChange={setCurrentCharts}
-                // readOnly={!canWriteGraphs}
-                readOnly={true}
+                readOnly={!canWriteGraphs}
               />
 
               {canWriteGraphs && (
@@ -397,7 +396,6 @@ export function FileReport() {
             style={{
               bottom: 85,
               right: 24,
-              display: "none",
               ...(hasUnsavedChanges
                 ? ({
                     background: "#faad14",
