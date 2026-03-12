@@ -35,7 +35,11 @@ import {
   EmptyMessage,
 } from "./DrugUnitConversion.style";
 
-export function DrugUnitConversion() {
+interface DrugUnitConversionProps {
+  onAfterSave?: () => void;
+}
+
+export function DrugUnitConversion({ onAfterSave }: DrugUnitConversionProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const open = useAppSelector((state) => state.drugUnitConversion.open);
@@ -66,6 +70,7 @@ export function DrugUnitConversion() {
           "Conversões salvas com sucesso!",
         ),
       });
+      onAfterSave?.();
       onClose();
     },
     onError: () => {
