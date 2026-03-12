@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Tooltip, Spin } from "antd";
+import { Tooltip, Spin, Steps } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 import DefaultModal from "components/Modal";
 import Button from "components/Button";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 import { useAppDispatch, useAppSelector } from "store/index";
+import useQueueProcess from "src/hooks/useQueueProcess";
 import {
   fetchDrugUnitConversion,
   saveUnitConversion,
+  processDrugScores,
   setDrugUnitConversionOpen,
   IConversionItem,
 } from "./DrugUnitConversionSlice";
@@ -49,11 +52,34 @@ export function DrugUnitConversion() {
   >({});
   const [invalidItems, setInvalidItems] = useState<Set<string>>(new Set());
 
+  const {
+    loading: isProcessingScores,
+    startProcess,
+    resetState: resetQueueState,
+    cleanup,
+  } = useQueueProcess({
+    initialAction: processDrugScores,
+    onSuccess: () => {
+      notification.success({
+        message: t(
+          "drugUnitConversion.saveSuccess",
+          "Conversões salvas com sucesso!",
+        ),
+      });
+      onClose();
+    },
+    onError: () => {
+      onClose();
+    },
+  });
+
   useEffect(() => {
     if (open && idDrug != null) {
       dispatch(fetchDrugUnitConversion(idDrug));
     }
   }, [open, idDrug, dispatch]);
+
+  useEffect(() => () => cleanup(), [cleanup]);
 
   const isFactorValid = (factor: number | null | undefined) =>
     factor != null && factor > 0 && factor < 99999;
@@ -61,6 +87,7 @@ export function DrugUnitConversion() {
   const onClose = () => {
     setFactorOverrides({});
     setInvalidItems(new Set());
+    resetQueueState();
     dispatch(setDrugUnitConversionOpen({ open: false }));
   };
 
@@ -98,13 +125,7 @@ export function DrugUnitConversion() {
         if (response.error) {
           notification.error({ message: getErrorMessage(response, t) });
         } else {
-          notification.success({
-            message: t(
-              "drugUnitConversion.saveSuccess",
-              "Conversões salvas com sucesso!",
-            ),
-          });
-          onClose();
+          startProcess(idDrug);
         }
       },
     );
@@ -210,16 +231,22 @@ export function DrugUnitConversion() {
     <DefaultModal
       open={open}
       onCancel={onClose}
+      maskClosable={false}
       footer={
         <FooterRow>
-          <Button onClick={onClose} disabled={isSaving}>
+          <Button onClick={onClose} disabled={isSaving || isProcessingScores}>
             {t("actions.cancel", "Cancelar")}
           </Button>
           <Button
             type="primary"
             onClick={onSave}
             loading={isSaving}
-            disabled={isLoading || otherUnits.length === 0}
+            disabled={
+              isLoading ||
+              isSaving ||
+              isProcessingScores ||
+              otherUnits.length === 0
+            }
           >
             {t("actions.save", "Salvar")}
           </Button>
@@ -236,7 +263,31 @@ export function DrugUnitConversion() {
         </div>
       }
     >
-      {isLoading ? (
+      {isSaving || isProcessingScores ? (
+        <LoadingContainer>
+          <Steps
+            size="small"
+            orientation="vertical"
+            current={isProcessingScores ? 1 : 0}
+            items={[
+              {
+                title: t("drugUnitConversion.stepSave", "Salvando conversões"),
+                status: isProcessingScores ? "finish" : "process",
+                icon: isSaving ? <LoadingOutlined /> : null,
+              },
+              {
+                title: t(
+                  "drugUnitConversion.stepProcess",
+                  "Processando scores",
+                ),
+                status: isProcessingScores ? "process" : "wait",
+                icon: isProcessingScores ? <LoadingOutlined /> : null,
+              },
+            ]}
+          />
+          <Spin spinning={true} style={{ marginTop: 16 }} />
+        </LoadingContainer>
+      ) : isLoading ? (
         <Spin spinning={true}>
           <LoadingContainer>
             {t("common.loading", "Carregando...")}

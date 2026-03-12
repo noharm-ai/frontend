@@ -675,6 +675,11 @@ api.drugs.saveUnitConversion = (idDrug, params) =>
     ...setHeaders(),
   });
 
+api.drugs.processDrugScores = (idDrug) =>
+  instance.post(`/drugs/process-scores/${idDrug}`, {}, {
+    ...setHeaders(),
+  });
+
 /**
  * support namespace
  */

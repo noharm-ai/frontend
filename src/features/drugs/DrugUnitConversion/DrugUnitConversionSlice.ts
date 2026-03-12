@@ -69,6 +69,18 @@ export const fetchDrugUnitConversion = createAsyncThunk(
   },
 );
 
+export const processDrugScores = createAsyncThunk(
+  "drugUnitConversion/processScores",
+  async (idDrug: string, thunkAPI) => {
+    try {
+      const response = await api.drugs.processDrugScores(idDrug);
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
 const drugUnitConversionSlice = createSlice({
   name: "drugUnitConversion",
   initialState,
@@ -112,7 +124,8 @@ const drugUnitConversionSlice = createSlice({
       })
       .addCase(saveUnitConversion.rejected, (state) => {
         state.savingStatus = "failed";
-      });
+      })
+;
   },
 });
 
