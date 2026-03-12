@@ -14,6 +14,7 @@ import memoryReducer from "./memory";
 import clinicalNotesReducer from "./clinicalNotes";
 import patientCentral from "./patientCentral";
 import drugMeasureUnits from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSlice";
+import drugUnitConversionSlice from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import drugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import lists from "features/lists/ListsSlice";
 import serverActionsSlice from "features/serverActions/ServerActionsSlice";
@@ -145,6 +146,7 @@ const rootReducer = combineReducers({
   memoryFilter: memoryFilterSlice,
   clinicalNotes: clinicalNotesReducer,
   drugMeasureUnits: drugMeasureUnits,
+  drugUnitConversion: drugUnitConversionSlice,
   drugFormStatus: drugFormStatus,
   lists: lists,
   serverActions: serverActionsSlice,

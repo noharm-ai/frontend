@@ -665,6 +665,16 @@ api.drugs.updateSubstance = (params = {}) => {
   });
 };
 
+api.drugs.getDrugUnitConversion = (idDrug) =>
+  instance.get(`/drugs/unit-conversion/${idDrug}`, {
+    ...setHeaders(),
+  });
+
+api.drugs.saveUnitConversion = (idDrug, params) =>
+  instance.post(`/drugs/unit-conversion/${idDrug}`, params, {
+    ...setHeaders(),
+  });
+
 /**
  * support namespace
  */
