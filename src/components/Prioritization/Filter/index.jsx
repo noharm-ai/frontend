@@ -17,6 +17,8 @@ import { Select, RangeDatePicker } from "components/Inputs";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import Badge from "components/Badge";
+import TourTooltip from "components/TourTooltip";
+import tourConfig from "../tourConfig.json";
 import FilterMemory from "./components/FilterMemory";
 import {
   setSelectedRows,
@@ -334,6 +336,7 @@ export default function Filter({
               <Heading as="label" htmlFor="segments" $size="14px">
                 {t("screeningList.segment")}:
               </Heading>
+              <TourTooltip {...tourConfig.segment}>
               <Select
                 id="segments"
                 style={{ width: "100%" }}
@@ -369,6 +372,7 @@ export default function Filter({
                   </>
                 )}
               </Select>
+              </TourTooltip>
             </Box>
           </Col>
           <Col md={7} lg={7} xxl={5}>
@@ -376,6 +380,7 @@ export default function Filter({
               <Heading as="label" htmlFor="date" $size="14px">
                 {t("screeningList.date")}:
               </Heading>
+              <TourTooltip {...tourConfig.date}>
               <RangeDatePicker
                 format="DD/MM/YYYY"
                 value={date}
@@ -383,6 +388,7 @@ export default function Filter({
                 allowClear={false}
                 disabledDate={datepickerRangeLimit(120)}
               />
+              </TourTooltip>
             </Box>
           </Col>
           <Col md={4}>
