@@ -14,4 +14,10 @@ export const TourProvider = ({ children }) => {
   );
 };
 
-export const useTour = () => useContext(TourContext);
+export const useTour = () => {
+  const context = useContext(TourContext);
+  if (!context) {
+    throw new Error("useTour must be used within a TourProvider");
+  }
+  return context;
+};

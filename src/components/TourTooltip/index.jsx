@@ -25,14 +25,13 @@ const HIGHLIGHT_STYLE = `
   }
 `;
 
-let styleInjected = false;
-
 const injectStyle = () => {
-  if (styleInjected) return;
+  if (document.getElementById("tour-highlight-styles")) return;
   const el = document.createElement("style");
+  el.id = "tour-highlight-styles";
   el.textContent = HIGHLIGHT_STYLE;
   document.head.appendChild(el);
-  styleInjected = true;
+};
 };
 
 const TourTooltip = ({ title, description, details, articleUrl, children }) => {
