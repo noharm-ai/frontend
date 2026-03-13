@@ -21,8 +21,6 @@ import { getSubstances } from "features/lists/ListsSlice";
 import Actions from "./Actions/Actions";
 import DrugReferenceDrawer from "../DrugReferenceDrawer/DrugReferenceDrawer";
 import { ExpandColumn } from "src/components/ExpandColumn";
-import TourTooltip from "components/TourTooltip";
-import tourConfig from "./tourConfig.json";
 
 export default function DrugAttributes() {
   const dispatch = useDispatch();
@@ -89,9 +87,7 @@ export default function DrugAttributes() {
           <Actions reload={reload} />
         </div>
       </PageHeader>
-      <TourTooltip {...tourConfig.filter}>
-        <Filter limit={limit} />
-      </TourTooltip>
+      <Filter limit={limit} />
 
       <PaginationContainer>
         <Pagination
@@ -106,7 +102,6 @@ export default function DrugAttributes() {
         />
       </PaginationContainer>
       <PageCard>
-        <TourTooltip {...tourConfig.table}>
         <ExpandableTable
           columns={columns(t, {
             setDrugForm: (data) => dispatch(setDrugForm(data)),
@@ -133,7 +128,6 @@ export default function DrugAttributes() {
           }
           onExpand={(expanded, record) => handleRowExpand(record)}
         />
-        </TourTooltip>
       </PageCard>
       <PaginationContainer>
         <Pagination

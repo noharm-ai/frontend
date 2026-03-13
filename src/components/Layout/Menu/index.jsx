@@ -42,8 +42,6 @@ import Feature from "models/Feature";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { FeatureService } from "services/FeatureService";
-import TourTooltip from "components/TourTooltip";
-import tourConfig from "./tourConfig.json";
 
 export default function Menu({ segments }) {
   const location = useLocation();
@@ -153,11 +151,7 @@ export default function Menu({ segments }) {
     {
       key: "/intervencoes",
       link: "/intervencoes",
-      label: (
-        <TourTooltip {...tourConfig.interventions}>
-          <span>{t("menu.interventions")}</span>
-        </TourTooltip>
-      ),
+      label: t("menu.interventions"),
       icon: <WarningOutlined />,
       id: "gtm-lnk-intervencoes",
       permission: [Permission.READ_PRESCRIPTION],
