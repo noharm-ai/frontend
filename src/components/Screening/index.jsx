@@ -29,6 +29,9 @@ import {
   TrackedPrescriptionAction,
 } from "src/utils/tracker";
 
+import TourTooltip from "components/TourTooltip";
+import tourConfig from "./tourConfig.json";
+
 import { ScreeningTabs, DrugFormStatusBox } from "./index.style";
 
 export default function Screening({
@@ -320,10 +323,12 @@ export default function Screening({
     {
       key: "drugs",
       label: (
-        <TabTitle
-          title={t("screeningBody.tabDrugs")}
-          count={listCount.prescriptions}
-        />
+        <TourTooltip {...tourConfig.drugsTab}>
+          <TabTitle
+            title={t("screeningBody.tabDrugs")}
+            count={listCount.prescriptions}
+          />
+        </TourTooltip>
       ),
       children: (
         <Col span={24} md={24} style={{ paddingTop: "20px" }}>
@@ -341,10 +346,12 @@ export default function Screening({
     tabs.push({
       key: "solutions",
       label: (
-        <TabTitle
-          title={t("screeningBody.tabSolutions")}
-          count={listCount.solutions}
-        />
+        <TourTooltip {...tourConfig.solutionsTab}>
+          <TabTitle
+            title={t("screeningBody.tabSolutions")}
+            count={listCount.solutions}
+          />
+        </TourTooltip>
       ),
       children: (
         <Col span={24} md={24} style={{ paddingTop: "20px" }}>
@@ -362,10 +369,12 @@ export default function Screening({
     tabs.push({
       key: "procedures",
       label: (
-        <TabTitle
-          title={t("screeningBody.tabProcedures")}
-          count={listCount.procedures}
-        />
+        <TourTooltip {...tourConfig.proceduresTab}>
+          <TabTitle
+            title={t("screeningBody.tabProcedures")}
+            count={listCount.procedures}
+          />
+        </TourTooltip>
       ),
       children: (
         <Col span={24} md={24} style={{ paddingTop: "20px" }}>
@@ -383,7 +392,12 @@ export default function Screening({
     tabs.push({
       key: "diet",
       label: (
-        <TabTitle title={t("screeningBody.tabDiet")} count={listCount.diet} />
+        <TourTooltip {...tourConfig.dietTab}>
+          <TabTitle
+            title={t("screeningBody.tabDiet")}
+            count={listCount.diet}
+          />
+        </TourTooltip>
       ),
       children: (
         <Col span={24} md={24} style={{ paddingTop: "20px" }}>
@@ -400,10 +414,12 @@ export default function Screening({
   tabs.push({
     key: "intervention",
     label: (
-      <TabTitle
-        title={t("screeningBody.tabInterventions")}
-        count={listCount.interventions}
-      />
+      <TourTooltip {...tourConfig.interventionTab}>
+        <TabTitle
+          title={t("screeningBody.tabInterventions")}
+          count={listCount.interventions}
+        />
+      </TourTooltip>
     ),
     children: (
       <div style={{ paddingTop: "20px" }}>
@@ -443,7 +459,9 @@ export default function Screening({
           <LoadBox $absolute={true} />
         </LoadContainer>
       ) : (
-        <Patient interventionCount={listCount.interventions} />
+        <TourTooltip {...tourConfig.patientCard}>
+          <Patient interventionCount={listCount.interventions} />
+        </TourTooltip>
       )}
 
       <Row type="flex" gutter={24}>
@@ -470,7 +488,9 @@ export default function Screening({
         )}
 
       <FormIntervention />
-      <ScreeningActions />
+      <TourTooltip {...tourConfig.checkButton}>
+        <ScreeningActions />
+      </TourTooltip>
 
       <FloatButton.BackTop
         style={{ right: 80, bottom: 25 }}

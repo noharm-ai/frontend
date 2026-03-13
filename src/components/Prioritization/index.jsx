@@ -21,6 +21,8 @@ import {
   TrackedPrescriptionPrioritizationAction,
 } from "src/utils/tracker";
 
+import TourTooltip from "components/TourTooltip";
+import tourConfig from "./tourConfig.json";
 import Filter from "./Filter";
 import PrioritizationCard from "./Card";
 import { reducer, initState } from "./Store";
@@ -233,6 +235,7 @@ export default function Prioritization({
               <div className="filters-item">
                 <div className="filters-item-label">Priorizar por:</div>
                 <div className="filters-item-value flex">
+                  <TourTooltip {...tourConfig.prioritizeBy}>
                   <Select
                     className="prioritization-select"
                     optionFilterProp="children"
@@ -258,6 +261,7 @@ export default function Prioritization({
                       </Select.Option>
                     ))}
                   </Select>
+                  </TourTooltip>
                   <div>
                     <Tooltip title="Alterar ordem">
                       <Button
@@ -279,7 +283,9 @@ export default function Prioritization({
               <div className="filters-item">
                 <div className="filters-item-label">Situação:</div>
                 <div className="filters-item-value">
+                  <TourTooltip {...tourConfig.status}>
                   <Select
+                    id="tour-status-filter"
                     placeholder="Situação"
                     optionFilterProp="children"
                     defaultValue="all"
@@ -298,6 +304,7 @@ export default function Prioritization({
                       Todas <Tag>{state.listStats.all}</Tag>
                     </Select.Option>
                   </Select>
+                  </TourTooltip>
                 </div>
               </div>
 
@@ -306,15 +313,18 @@ export default function Prioritization({
                   Buscar por atendimento/nome:
                 </div>
                 <div className="filters-item-value">
+                  <TourTooltip {...tourConfig.search}>
                   <Input
                     className="search-input"
                     allowClear
                     onChange={onClientSearch}
                   />
+                  </TourTooltip>
                 </div>
               </div>
             </div>
             <div className="pagination">
+              <TourTooltip {...tourConfig.pagination}>
               <Pagination
                 current={state.currentPage}
                 total={filteredList && filteredList.length}
@@ -323,6 +333,7 @@ export default function Prioritization({
                 showSizeChanger={false}
                 onChange={(page) => onChangePage(page, true)}
               />
+              </TourTooltip>
             </div>
           </ResultActions>
         </Affix>
@@ -343,6 +354,7 @@ export default function Prioritization({
                 </div>
               )}
             {filteredList && filteredList.length > 0 && (
+              <TourTooltip {...tourConfig.cards}>
               <div className="grid">
                 {patients.map((item, index) => (
                   <motion.div
@@ -372,6 +384,7 @@ export default function Prioritization({
                   </motion.div>
                 ))}
               </div>
+              </TourTooltip>
             )}
           </>
         </PrioritizationPage>

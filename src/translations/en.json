@@ -14,7 +14,8 @@
     "help": "Help",
     "logout": "Logout",
     "goBack": "Back",
-    "iptSearch": "Search by prescription or admission number"
+    "iptSearch": "Search by prescription or admission number",
+    "tutorial": "Tutorial"
   },
   "error": {
     "title": "Oops! Something wrong happened.",
