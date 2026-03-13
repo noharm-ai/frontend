@@ -43,6 +43,7 @@ import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { FeatureService } from "services/FeatureService";
 import TourTooltip from "components/TourTooltip";
+import tourConfig from "./tourConfig.json";
 
 export default function Menu({ segments }) {
   const location = useLocation();
@@ -153,12 +154,7 @@ export default function Menu({ segments }) {
       key: "/intervencoes",
       link: "/intervencoes",
       label: (
-        <TourTooltip
-          title="Menu de Intervenções"
-          description="Acesse rapidamente as intervenções de qualquer paciente."
-          details="Neste menu totalmente focado nas Intervenções, o farmacêutico clínico pode acessar as intervenções de qualquer paciente, selecionar o desfecho e editar a intervenção. É possível filtrar por data, motivo, situação, número de atendimento, segmento, medicamento, responsável, prescritor e se possui economia associada."
-          articleUrl="article/201"
-        >
+        <TourTooltip {...tourConfig.interventions}>
           <span>{t("menu.interventions")}</span>
         </TourTooltip>
       ),
