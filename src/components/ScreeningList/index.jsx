@@ -44,9 +44,6 @@ import { FeatureService } from "services/FeatureService";
 
 import { toDataSource } from "utils";
 
-import TourTooltip from "components/TourTooltip";
-import tourConfig from "./tourConfig.json";
-
 import columnsTable, { expandedRowRender } from "./columns";
 import Filter from "../Prioritization/Filter";
 import { PageCard } from "styles/Utils.style";
@@ -541,19 +538,17 @@ export default function ScreeningList({
           onChange={onClientSearch}
           className={filter.searchKey ? "active" : ""}
         />
-        <TourTooltip {...tourConfig.statusButtons}>
-          <Tooltip title={t("screeningList.pendingHint-" + prioritizationType)}>
-            <Button
-              className={`gtm-lnk-filter-presc-pendente ant-btn-link-hover ${
-                isFilterActive("0") ? "active" : ""
-              }`}
-              onClick={(e) => handleFilter(e, "0")}
-            >
-              {t("screeningList.pending-" + prioritizationType)}
-              <Tag color="orange">{listCount.pending}</Tag>
-            </Button>
-          </Tooltip>
-        </TourTooltip>
+        <Tooltip title={t("screeningList.pendingHint-" + prioritizationType)}>
+          <Button
+            className={`gtm-lnk-filter-presc-pendente ant-btn-link-hover ${
+              isFilterActive("0") ? "active" : ""
+            }`}
+            onClick={(e) => handleFilter(e, "0")}
+          >
+            {t("screeningList.pending-" + prioritizationType)}
+            <Tag color="orange">{listCount.pending}</Tag>
+          </Button>
+        </Tooltip>
 
         <Tooltip title={t("screeningList.checkedHint-" + prioritizationType)}>
           <Button
@@ -662,39 +657,35 @@ export default function ScreeningList({
           />
         )}
 
-      <TourTooltip {...tourConfig.filter}>
-        <Filter
-          {...restProps}
-          prioritizationType={prioritizationType}
-          fetchFrequencies={fetchFrequencies}
-          fetchPrescriptionsList={fetchPrescriptionsList}
-          isFetchingPrescription={isFetching}
-          featureService={featureService}
-        />
-      </TourTooltip>
+      <Filter
+        {...restProps}
+        prioritizationType={prioritizationType}
+        fetchFrequencies={fetchFrequencies}
+        fetchPrescriptionsList={fetchPrescriptionsList}
+        isFetchingPrescription={isFetching}
+        featureService={featureService}
+      />
 
       {!isFetching && <Affix offsetTop={10}>{info}</Affix>}
       <PageCard>
-        <TourTooltip {...tourConfig.table}>
-          <ScreeningTable
-            title={title}
-            columns={columnsTable(sortOrder, filter, t, bag)}
-            pagination={{
-              pageSize: 50,
-              position: ["topRight", "bottomRight"],
-              showSizeChanger: false,
-            }}
-            loading={isFetching}
-            locale={{ emptyText }}
-            expandedRowRender={expandedRowRender(t)}
-            dataSource={!isFetching ? dataSource : []}
-            onChange={handleTableChange}
-            showSorterTooltip={false}
-            columnTitle={<ExpandColumn expand={!expandedRows.length} />}
-            expandedRowKeys={expandedRows}
-            onExpand={(expanded, record) => handleRowExpand(record)}
-          />
-        </TourTooltip>
+        <ScreeningTable
+          title={title}
+          columns={columnsTable(sortOrder, filter, t, bag)}
+          pagination={{
+            pageSize: 50,
+            position: ["topRight", "bottomRight"],
+            showSizeChanger: false,
+          }}
+          loading={isFetching}
+          locale={{ emptyText }}
+          expandedRowRender={expandedRowRender(t)}
+          dataSource={!isFetching ? dataSource : []}
+          onChange={handleTableChange}
+          showSorterTooltip={false}
+          columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+          expandedRowKeys={expandedRows}
+          onExpand={(expanded, record) => handleRowExpand(record)}
+        />
       </PageCard>
 
       <BackTop />

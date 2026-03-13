@@ -17,9 +17,6 @@ import { uniqBy, intersection } from "utils/lodash";
 import { toDataSource } from "utils";
 import LoadBox from "components/LoadBox";
 
-import TourTooltip from "components/TourTooltip";
-import tourConfig from "./tourConfig.json";
-
 import Filter from "./filters/Filter";
 
 import { PageCard } from "styles/Utils.style";
@@ -243,15 +240,13 @@ export default function InterventionList({
           </div>
         </div>
       </PageHeader>
-      <TourTooltip {...tourConfig.filters}>
-        <Filter
-          isFetching={isFetching}
-          error={error}
-          searchList={searchList}
-          resetLocalFilters={resetLocalFilters}
-          segments={segments}
-        />
-      </TourTooltip>
+      <Filter
+        isFetching={isFetching}
+        error={error}
+        searchList={searchList}
+        resetLocalFilters={resetLocalFilters}
+        segments={segments}
+      />
       <TableInfo>
         {isFetching ? (
           <div style={{ minHeight: "100px", position: "relative" }}>
@@ -261,7 +256,6 @@ export default function InterventionList({
           <>
             <div className="filter-field">
               <label>**Situação</label>
-              <TourTooltip {...tourConfig.statusFilter}>
               <Select
                 id="intervFilterStatus"
                 onChange={handleStatusChange}
@@ -292,7 +286,6 @@ export default function InterventionList({
                   Todas <Tag>{listCount.all}</Tag>
                 </Select.Option>
               </Select>
-              </TourTooltip>
             </div>
             <div className="filter-field">
               <label>**Responsável</label>
@@ -350,7 +343,6 @@ export default function InterventionList({
             </div>
             <div className="filter-field">
               <label>**Motivo</label>
-              <TourTooltip {...tourConfig.reasonFilter}>
               <Select
                 id="intervFilterOutcome"
                 onChange={handleReasonChange}
@@ -367,7 +359,6 @@ export default function InterventionList({
                     </Select.Option>
                   ))}
               </Select>
-              </TourTooltip>
             </div>
             <div className="obs">
               * A consulta de intervenções é limitada em 1500 registros.
@@ -382,28 +373,26 @@ export default function InterventionList({
       <BackTop />
 
       <PageCard>
-        <TourTooltip {...tourConfig.table}>
-          <ExpandableTable
-            columns={interventionColumns(filter, true, false, t)}
-            pagination={{
-              pageSize: 50,
-              position: ["topRight", "bottomRight"],
-              showSizeChanger: false,
-            }}
-            loading={isFetching}
-            locale={{
-              emptyText: (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description="Nenhuma intervenção encontrada."
-                />
-              ),
-            }}
-            dataSource={!isFetching ? dsInterventions : []}
-            expandedRowRender={expandedInterventionRowRender}
-            showSorterTooltip={false}
-          />
-        </TourTooltip>
+        <ExpandableTable
+          columns={interventionColumns(filter, true, false, t)}
+          pagination={{
+            pageSize: 50,
+            position: ["topRight", "bottomRight"],
+            showSizeChanger: false,
+          }}
+          loading={isFetching}
+          locale={{
+            emptyText: (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description="Nenhuma intervenção encontrada."
+              />
+            ),
+          }}
+          dataSource={!isFetching ? dsInterventions : []}
+          expandedRowRender={expandedInterventionRowRender}
+          showSorterTooltip={false}
+        />
       </PageCard>
       <FormIntervention
         open={visible}

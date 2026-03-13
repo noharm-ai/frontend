@@ -14,8 +14,7 @@
     "help": "Ajuda",
     "logout": "Sair",
     "goBack": "Voltar",
-    "iptSearch": "Buscar por nº de atendimento ou prescrição",
-    "tutorial": "Tutorial"
+    "iptSearch": "Buscar por nº de atendimento ou prescrição"
   },
   "error": {
     "title": "Ops! Algo de errado aconteceu.",

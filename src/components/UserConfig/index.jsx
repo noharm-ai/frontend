@@ -8,8 +8,6 @@ import notification from "components/notification";
 
 import Signature from "containers/UserConfig/Signature";
 import ChangePassword from "containers/UserConfig/ChangePassword";
-import TourTooltip from "components/TourTooltip";
-import tourConfig from "./tourConfig.json";
 
 export default function UserConfig({ cleanCache }) {
   const endpointConfig = useSelector((state) => state.app.config);
@@ -36,29 +34,17 @@ export default function UserConfig({ cleanCache }) {
   const items = [
     {
       key: "1",
-      label: (
-        <TourTooltip {...tourConfig.signatureTab}>
-          <span>Textos padrão</span>
-        </TourTooltip>
-      ),
+      label: "Textos padrão",
       children: <Signature />,
     },
     {
       key: "2",
-      label: (
-        <TourTooltip {...tourConfig.securityTab}>
-          <span>Segurança</span>
-        </TourTooltip>
-      ),
+      label: "Segurança",
       children: <ChangePassword />,
     },
     {
       key: "3",
-      label: (
-        <TourTooltip {...tourConfig.cacheTab}>
-          <span>Cache</span>
-        </TourTooltip>
-      ),
+      label: "Cache",
       children: (
         <Button type="primary" onClick={executeCleanCache}>
           Limpar cache de nomes dos pacientes

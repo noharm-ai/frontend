@@ -10,7 +10,6 @@ import {
   SettingOutlined,
   SwapOutlined,
   WifiOutlined,
-  BookOutlined,
 } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
 import { Alert, Dropdown, List, Space } from "antd";
@@ -33,7 +32,6 @@ import { FeatureService } from "src/services/FeatureService";
 import Feature from "models/Feature";
 import { setPendingTickets } from "features/support/SupportSlice";
 
-import { useTour } from "../../context/TourContext";
 import Box from "./Box";
 import Menu from "./Menu";
 import InfoAlert from "./InfoAlert";
@@ -70,7 +68,6 @@ const Me = ({
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const { tutorialMode, toggleTutorialMode } = useTour();
 
   const showAlert = location.pathname.indexOf("priorizacao") !== -1;
 
@@ -104,12 +101,6 @@ const Me = ({
       label: t("menu.config"),
       key: "userConfig",
       icon: <SettingOutlined />,
-    });
-
-    options.push({
-      label: tutorialMode ? `${t("layout.tutorial")} ✓` : t("layout.tutorial"),
-      key: "tutorial",
-      icon: <BookOutlined style={tutorialMode ? { color: "#a991d6" } : {}} />,
     });
 
     if (PermissionService().has(Permission.MAINTAINER)) {
@@ -159,9 +150,6 @@ const Me = ({
         break;
       case "userConfig":
         navigate("/configuracoes/usuario");
-        break;
-      case "tutorial":
-        toggleTutorialMode();
         break;
       case "switchSchema":
         navigate("/switch-schema?alert=true");
