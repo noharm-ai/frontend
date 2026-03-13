@@ -32,7 +32,6 @@ const injectStyle = () => {
   el.textContent = HIGHLIGHT_STYLE;
   document.head.appendChild(el);
 };
-};
 
 const TourTooltip = ({ title, description, details, articleUrl, children }) => {
   const { tutorialMode } = useTour();
