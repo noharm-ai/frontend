@@ -24,6 +24,7 @@ import ChooseConciliation from "features/prescription/ChooseConciliation/ChooseC
 import ExamsModal from "features/exams/ExamModal/ExamModal";
 import ClinicalNotesModal from "containers/Screening/ClinicalNotes/Modal";
 import { CheckedIndexReport } from "src/features/reports/CheckedIndexReport/CheckedIndexReport";
+import { DrugUnitConversion } from "src/features/drugs/DrugUnitConversion";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
@@ -60,6 +61,15 @@ export default function ScreeningActions({
       fetchScreening(prescription.idPrescription);
       setModalVisibility("patientEdit", false);
     }
+  };
+
+  const afterSaveUnitConversion = async () => {
+    await dispatch(
+      shouldUpdatePrescription({
+        idPrescription: prescription.idPrescription,
+      }),
+    );
+    await fetchScreening(prescription.idPrescription);
   };
 
   const addConciliation = () => {
@@ -120,6 +130,7 @@ export default function ScreeningActions({
       <ChooseConciliation />
       <ExamsModal idSegment={prescription.idSegment} />
       <ClinicalNotesModal />
+      <DrugUnitConversion onAfterSave={afterSaveUnitConversion} />
 
       <DefaultModal
         width="90%"

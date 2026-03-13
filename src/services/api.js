@@ -680,6 +680,11 @@ api.drugs.processDrugScores = (idDrug) =>
     ...setHeaders(),
   });
 
+api.drugs.getDrugDashboard = (idSegment, idDrug) =>
+  instance.get(`/drugs/dashboard/${idSegment}/${idDrug}`, {
+    ...setHeaders(),
+  });
+
 /**
  * support namespace
  */
