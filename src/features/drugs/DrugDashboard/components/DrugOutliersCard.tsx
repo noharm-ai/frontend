@@ -1,6 +1,16 @@
-import { Card, Table, Tag } from "antd";
+import { Card, Table, Tag, Typography, Dropdown } from "antd";
+import { DownOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 import type { TableProps } from "antd";
+
 import { formatNumber } from "src/utils/number";
+import { useAppDispatch, useAppSelector } from "store/index";
+import { setDrugGeneratePrescriptionHistoryOpen } from "src/features/drugs/DrugGeneratePrescriptionHistory";
+import { setDrugGenerateScoreOpen } from "src/features/drugs/DrugGenerateScore";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
+import Button from "components/Button";
+import Tooltip from "components/Tooltip";
 
 const SCORE_COLOR: Record<number, string> = {
   0: "green",
@@ -20,6 +30,7 @@ interface OutlierItem {
   countNum: number;
   divisionRange: number | null;
   obs: string;
+  useWeight: boolean | null;
   updatedAt: string;
 }
 
@@ -70,7 +81,22 @@ const columns: TableProps<OutlierItem>["columns"] = [
     title: "Dose",
     key: "dose",
     align: "right",
-    render: (_, record) => `${formatNumber(record.dose, 2)} ${record.unit}`,
+    render: (_, record) => {
+      const unit = record.unit || "**";
+
+      if (record.divisionRange) {
+        return (
+          Number((record.dose - record.divisionRange).toFixed(2)) +
+          "-" +
+          record.dose +
+          " " +
+          unit +
+          (record.useWeight ? "/Kg" : "")
+        );
+      } else {
+        return `${formatNumber(record.dose, 2)} ${unit}`;
+      }
+    },
     sorter: (a, b) => a.dose - b.dose,
   },
   {
@@ -78,8 +104,11 @@ const columns: TableProps<OutlierItem>["columns"] = [
     dataIndex: "frequency",
     key: "frequency",
     align: "right",
-    sorter: (a, b) => a.frequency - b.frequency,
-    render: (_, record) => formatNumber(record.frequency, 3),
+    sorter: (a, b) => Number(a.frequency) - Number(b.frequency),
+    render: (_, record) =>
+      typeof record.frequency === "number"
+        ? formatNumber(record.frequency, 3)
+        : record.frequency,
   },
 
   {
@@ -94,8 +123,72 @@ const columns: TableProps<OutlierItem>["columns"] = [
 const TABLE_HEIGHT = 400;
 
 export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
+  const dispatch = useAppDispatch();
+  const idDrug = useAppSelector((state: any) => state.drugDashboard.idDrug);
+  const idSegment = useAppSelector(
+    (state: any) => state.drugDashboard.idSegment,
+  );
+  const attributes = useAppSelector(
+    (state: any) => state.drugDashboard.data?.attributes,
+  );
+  const substance = useAppSelector(
+    (state: any) => state.drugDashboard.data?.substance,
+  );
+
+  const lastUpdatedAt = outliers.length
+    ? outliers.reduce(
+        (max, item) => (item.updatedAt > max ? item.updatedAt : max),
+        outliers[0].updatedAt,
+      )
+    : null;
+
+  const menuItems = [];
+
+  if (PermissionService().has(Permission.MAINTAINER)) {
+    menuItems.push({
+      key: "generate-score",
+      label: "Gerar Escores",
+      onClick: () =>
+        dispatch(
+          setDrugGenerateScoreOpen({
+            open: true,
+            idDrug,
+            idSegment,
+            division: attributes?.divisionRange ?? null,
+            useWeight: attributes?.useWeight ?? null,
+            idMeasureUnit: attributes?.idMeasureUnit ?? null,
+            substance,
+          }),
+        ),
+    });
+
+    menuItems.push({
+      key: "generate-history",
+      label: "Gerar Histórico de Prescrição",
+      onClick: () =>
+        dispatch(
+          setDrugGeneratePrescriptionHistoryOpen({
+            open: true,
+            idDrug,
+            idSegment,
+          }),
+        ),
+    });
+  }
+
+  const cardExtra =
+    menuItems.length > 0 ? (
+      <Tooltip title="Ações">
+        <Dropdown menu={{ items: menuItems }} placement="bottomRight">
+          <Button icon={<DownOutlined />} iconPlacement="end">
+            Ações
+          </Button>
+        </Dropdown>
+      </Tooltip>
+    ) : null;
+
   return (
-    <Card title="Escores" type="inner">
+    <Card title="Escores" type="inner" extra={cardExtra}>
       <Table
         columns={columns}
         dataSource={outliers}
@@ -106,6 +199,20 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
         virtual
         scroll={{ y: TABLE_HEIGHT }}
       />
+      {lastUpdatedAt && (
+        <Typography.Text
+          type="secondary"
+          style={{
+            fontSize: 12,
+            marginTop: 16,
+            display: "block",
+            textAlign: "center",
+          }}
+        >
+          Última atualização dos escores:{" "}
+          {dayjs(lastUpdatedAt).format("DD/MM/YYYY HH:mm")}
+        </Typography.Text>
+      )}
     </Card>
   );
 }

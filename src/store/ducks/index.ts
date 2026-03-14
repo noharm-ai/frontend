@@ -32,6 +32,9 @@ import examModalSlice from "features/exams/ExamModal/ExamModalSlice";
 import examFormSlice from "features/exams/ExamForm/ExamFormSlice";
 import switchSchemaSlice from "features/switchSchema/SwitchSchemaSlice";
 import drugDashboardSlice from "features/drugs/DrugDashboard/DrugDashboardSlice";
+import drugRemoveOutlierSlice from "features/drugs/DrugRemoveOutlier/DrugRemoveOutlierSlice";
+import drugGeneratePrescriptionHistorySlice from "features/drugs/DrugGeneratePrescriptionHistory/DrugGeneratePrescriptionHistorySlice";
+import drugGenerateScoreSlice from "features/drugs/DrugGenerateScore/DrugGenerateScoreSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -163,6 +166,9 @@ const rootReducer = combineReducers({
   examsForm: examFormSlice,
   switchSchema: switchSchemaSlice,
   drugDashboard: drugDashboardSlice,
+  drugRemoveOutlier: drugRemoveOutlierSlice,
+  drugGeneratePrescriptionHistory: drugGeneratePrescriptionHistorySlice,
+  drugGenerateScore: drugGenerateScoreSlice,
 });
 
 export default rootReducer;

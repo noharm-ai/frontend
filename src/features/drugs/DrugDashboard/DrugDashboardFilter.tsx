@@ -10,6 +10,7 @@ import { createSlug } from "utils/transformers/utils";
 const FilterBar = styled.div`
   background: #fff;
   padding: 12px 16px;
+  border-radius: 8px;
   margin-bottom: 24px;
   border-bottom: 1px solid #e8e8e8;
   transition: box-shadow 0.2s;

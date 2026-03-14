@@ -11,6 +11,16 @@ import {
 import { Row, Col } from "components/Grid";
 import { DrugDashboardFilter } from "./DrugDashboardFilter";
 import { DrugOutliersCard } from "./components/DrugOutliersCard";
+import { DrugConversionsCard } from "./components/DrugConversionsCard";
+import { DrugAttributesCard } from "./components/DrugAttributesCard";
+import { DrugUnitConversion } from "src/features/drugs/DrugUnitConversion";
+import { DrugRemoveOutlier } from "src/features/drugs/DrugRemoveOutlier/DrugRemoveOutlier";
+import { DrugGeneratePrescriptionHistory } from "src/features/drugs/DrugGeneratePrescriptionHistory";
+import { DrugGenerateScore } from "src/features/drugs/DrugGenerateScore";
+import { setDrugRemoveOutlierOpen } from "src/features/drugs/DrugRemoveOutlier/DrugRemoveOutlierSlice";
+import Button from "components/Button";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
 import { PageHeader } from "src/styles/PageHeader.style";
 
 export function DrugDashboard() {
@@ -18,6 +28,9 @@ export function DrugDashboard() {
   const drugsSearch = useAppSelector((state: any) => state.drugs.search);
   const segments = useAppSelector((state: any) => state.segments);
   const drugDashboard = useAppSelector((state: any) => state.drugDashboard);
+  const drugGenerateScoreOpenCount = useAppSelector(
+    (state: any) => state.drugGenerateScore.openCount,
+  );
   const params = useParams();
 
   const idSegmentParam = params.idSegment
@@ -47,13 +60,43 @@ export function DrugDashboard() {
     }
   }, [dispatch, drugDashboard.idSegment, drugDashboard.idDrug]);
 
+  const handleAfterSave = () => {
+    if (drugDashboard.idSegment && drugDashboard.idDrug) {
+      dispatch(
+        fetchDrugDashboard({
+          idSegment: drugDashboard.idSegment,
+          idDrug: drugDashboard.idDrug,
+        }),
+      );
+    }
+  };
+
   return (
     <>
       <PageHeader>
         <div>
           <h1 className="page-header-title">Painel de Medicamentos</h1>
         </div>
-        <div className="page-header-actions"></div>
+        <div className="page-header-actions">
+          {drugDashboard.idSegment &&
+            drugDashboard.idDrug &&
+            PermissionService().has(Permission.MAINTAINER) && (
+            <Button
+              danger
+              onClick={() =>
+                dispatch(
+                  setDrugRemoveOutlierOpen({
+                    open: true,
+                    idSegment: drugDashboard.idSegment,
+                    idDrug: drugDashboard.idDrug,
+                  }),
+                )
+              }
+            >
+              Remover Outlier
+            </Button>
+          )}
+        </div>
       </PageHeader>
       <DrugDashboardFilter
         segments={{ list: segments.list, isFetching: segments.isFetching }}
@@ -67,8 +110,28 @@ export function DrugDashboard() {
               loading={drugDashboard.status === "loading"}
             />
           </Col>
+          <Col xs={24} lg={12}>
+            <DrugConversionsCard
+              conversions={drugDashboard.data?.conversions ?? []}
+              defaultUnit={
+                drugDashboard.data?.attributes?.idMeasureUnit ?? null
+              }
+              idDrug={drugDashboard.idDrug}
+              loading={drugDashboard.status === "loading"}
+            />
+          </Col>
+          <Col xs={24} lg={12}>
+            <DrugAttributesCard
+              idSegment={drugDashboard.idSegment}
+              idDrug={drugDashboard.idDrug}
+            />
+          </Col>
         </Row>
       )}
+      <DrugUnitConversion onAfterSave={handleAfterSave} />
+      <DrugRemoveOutlier onAfterSave={handleAfterSave} />
+      <DrugGeneratePrescriptionHistory onAfterSave={handleAfterSave} />
+      <DrugGenerateScore key={drugGenerateScoreOpenCount} onAfterSave={handleAfterSave} />
     </>
   );
 }
