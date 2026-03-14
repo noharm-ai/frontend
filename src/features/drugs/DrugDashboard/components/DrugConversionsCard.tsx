@@ -1,5 +1,4 @@
-import { Alert, Card, Space, Table, Tag } from "antd";
-import type { TableProps } from "antd";
+import { Alert, Card, Space, Spin, Tag } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 
 import { formatNumber } from "src/utils/number";
@@ -19,26 +18,6 @@ interface DrugConversionsCardProps {
   idDrug: number;
   loading: boolean;
 }
-
-const columns: TableProps<ConversionItem>["columns"] = [
-  {
-    title: "Unidade",
-    dataIndex: "idMeasureUnit",
-    key: "idMeasureUnit",
-  },
-  {
-    title: "Nome",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Fator",
-    dataIndex: "factor",
-    key: "factor",
-    align: "right",
-    render: (value: number) => formatNumber(value, 2),
-  },
-];
 
 export function DrugConversionsCard({
   conversions,
@@ -86,14 +65,41 @@ export function DrugConversionsCard({
           </Tag>
         </div>
       )}
-      <Table
-        columns={columns}
-        dataSource={conversions}
-        rowKey="idMeasureUnit"
-        size="small"
-        loading={loading}
-        pagination={false}
-      />
+      <Spin spinning={loading}>
+        <div>
+          {conversions.map((item, index) => (
+            <div
+              key={item.idMeasureUnit}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "8px 0",
+                borderBottom:
+                  index < conversions.length - 1
+                    ? "1px solid #f0f0f0"
+                    : undefined,
+              }}
+            >
+              <span>
+                1 <strong>{item.idMeasureUnit}</strong>
+                {item.name ? (
+                  <span style={{ color: "#888", marginLeft: 4 }}>
+                    ({item.name})
+                  </span>
+                ) : null}
+              </span>
+              <span style={{ color: "#888" }}>equivale a</span>
+              <span>
+                <strong>{formatNumber(item.factor, 2)}</strong>
+                {defaultUnit ? (
+                  <span style={{ marginLeft: 4 }}>{defaultUnit}</span>
+                ) : null}
+              </span>
+            </div>
+          ))}
+        </div>
+      </Spin>
     </Card>
   );
 }
