@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { Alert } from "antd";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import { searchDrugsThunk } from "store/ducks/drugs/thunk";
@@ -18,6 +19,7 @@ import { DrugRemoveOutlier } from "src/features/drugs/DrugRemoveOutlier/DrugRemo
 import { DrugGeneratePrescriptionHistory } from "src/features/drugs/DrugGeneratePrescriptionHistory";
 import { DrugGenerateScore } from "src/features/drugs/DrugGenerateScore";
 import { setDrugRemoveOutlierOpen } from "src/features/drugs/DrugRemoveOutlier/DrugRemoveOutlierSlice";
+import DrugSubstance from "features/drugs/DrugSubstance/DrugSubstance";
 import Button from "components/Button";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
@@ -81,21 +83,21 @@ export function DrugDashboard() {
           {drugDashboard.idSegment &&
             drugDashboard.idDrug &&
             PermissionService().has(Permission.MAINTAINER) && (
-            <Button
-              danger
-              onClick={() =>
-                dispatch(
-                  setDrugRemoveOutlierOpen({
-                    open: true,
-                    idSegment: drugDashboard.idSegment,
-                    idDrug: drugDashboard.idDrug,
-                  }),
-                )
-              }
-            >
-              Remover Outlier
-            </Button>
-          )}
+              <Button
+                danger
+                onClick={() =>
+                  dispatch(
+                    setDrugRemoveOutlierOpen({
+                      open: true,
+                      idSegment: drugDashboard.idSegment,
+                      idDrug: drugDashboard.idDrug,
+                    }),
+                  )
+                }
+              >
+                Remover Outlier
+              </Button>
+            )}
         </div>
       </PageHeader>
       <DrugDashboardFilter
@@ -103,35 +105,59 @@ export function DrugDashboard() {
         drugs={{ list: drugsSearch.list, isFetching: drugsSearch.isFetching }}
       />
       {drugDashboard.idSegment && drugDashboard.idDrug && (
-        <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-          <Col xs={24} lg={12}>
-            <DrugOutliersCard
-              outliers={drugDashboard.data?.outliers ?? []}
-              loading={drugDashboard.status === "loading"}
+        drugDashboard.data && !drugDashboard.data.substance?.sctid ? (
+          <div style={{ marginTop: 16 }}>
+            <Alert
+              type="error"
+              description="Substância não definida. Adicione uma substância para continuar."
+              showIcon
+              style={{ marginBottom: 16 }}
             />
-          </Col>
-          <Col xs={24} lg={12}>
-            <DrugConversionsCard
-              conversions={drugDashboard.data?.conversions ?? []}
-              defaultUnit={
-                drugDashboard.data?.attributes?.idMeasureUnit ?? null
-              }
+            <DrugSubstance
               idDrug={drugDashboard.idDrug}
-              loading={drugDashboard.status === "loading"}
+              sctidA={null}
+              sctNameA={null}
+              onAfterSave={handleAfterSave}
             />
-          </Col>
-          <Col xs={24} lg={12}>
-            <DrugAttributesCard
-              idSegment={drugDashboard.idSegment}
-              idDrug={drugDashboard.idDrug}
-            />
-          </Col>
-        </Row>
+          </div>
+        ) : (
+          <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+            <Col xs={24} lg={12}>
+              <DrugOutliersCard
+                outliers={drugDashboard.data?.outliers ?? []}
+                loading={drugDashboard.status === "loading"}
+              />
+            </Col>
+            <Col xs={24} lg={12}>
+              <DrugConversionsCard
+                conversions={drugDashboard.data?.conversions ?? []}
+                defaultUnit={
+                  drugDashboard.data?.attributes?.idMeasureUnit ?? null
+                }
+                idDrug={drugDashboard.idDrug}
+                loading={drugDashboard.status === "loading"}
+              />
+            </Col>
+
+            <Col xs={24} lg={12}>
+              <DrugAttributesCard
+                idSegment={drugDashboard.idSegment}
+                idDrug={drugDashboard.idDrug}
+                sctid={drugDashboard.data?.substance?.sctid ?? null}
+                sctName={drugDashboard.data?.substance?.name ?? null}
+                onAfterSave={handleAfterSave}
+              />
+            </Col>
+          </Row>
+        )
       )}
       <DrugUnitConversion onAfterSave={handleAfterSave} />
       <DrugRemoveOutlier onAfterSave={handleAfterSave} />
       <DrugGeneratePrescriptionHistory onAfterSave={handleAfterSave} />
-      <DrugGenerateScore key={drugGenerateScoreOpenCount} onAfterSave={handleAfterSave} />
+      <DrugGenerateScore
+        key={drugGenerateScoreOpenCount}
+        onAfterSave={handleAfterSave}
+      />
     </>
   );
 }

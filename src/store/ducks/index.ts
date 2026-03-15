@@ -35,6 +35,7 @@ import drugDashboardSlice from "features/drugs/DrugDashboard/DrugDashboardSlice"
 import drugRemoveOutlierSlice from "features/drugs/DrugRemoveOutlier/DrugRemoveOutlierSlice";
 import drugGeneratePrescriptionHistorySlice from "features/drugs/DrugGeneratePrescriptionHistory/DrugGeneratePrescriptionHistorySlice";
 import drugGenerateScoreSlice from "features/drugs/DrugGenerateScore/DrugGenerateScoreSlice";
+import drugSubstanceSlice from "features/drugs/DrugSubstance/DrugSubstanceSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -169,6 +170,7 @@ const rootReducer = combineReducers({
   drugRemoveOutlier: drugRemoveOutlierSlice,
   drugGeneratePrescriptionHistory: drugGeneratePrescriptionHistorySlice,
   drugGenerateScore: drugGenerateScoreSlice,
+  drugSubstance: drugSubstanceSlice,
 });
 
 export default rootReducer;

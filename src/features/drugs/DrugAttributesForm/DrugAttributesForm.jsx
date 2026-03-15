@@ -18,7 +18,7 @@ import { getErrorMessage } from "utils/errorHandler";
 
 import { Form } from "styles/Form.style";
 
-export default function DrugAttributesForm({ idSegment, idDrug }) {
+export default function DrugAttributesForm({ idSegment, idDrug, reloadKey }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const data = useSelector((state) => state.drugAttributesForm.data);
@@ -43,7 +43,7 @@ export default function DrugAttributesForm({ idSegment, idDrug }) {
     if (idSegment && idDrug) {
       dispatch(fetchDrugAttributes({ idSegment, idDrug }));
     }
-  }, [dispatch, idSegment, idDrug]);
+  }, [dispatch, idSegment, idDrug, reloadKey]);
 
   const onSave = (params) => {
     dispatch(saveDrugAttributes(params)).then((response) => {

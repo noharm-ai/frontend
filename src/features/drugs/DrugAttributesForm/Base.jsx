@@ -14,6 +14,7 @@ function BaseForm({ data }) {
 
   return (
     <>
+      <Divider>Classificação</Divider>
       <div className={`form-row`}>
         <div className="form-label">
           <label>Classificação:</label>
@@ -147,7 +148,7 @@ function BaseForm({ data }) {
         </div>
       </div>
 
-      <Divider orientation="left">Alertas Clínicos</Divider>
+      <Divider>Alertas Clínicos</Divider>
 
       <div className="form-row form-row-flex">
         <div
@@ -325,7 +326,7 @@ function BaseForm({ data }) {
         </div>
       </div>
 
-      <Divider orientation="left">Calculadora de Soluções</Divider>
+      <Divider>Calculadora de Soluções</Divider>
 
       <div className="form-row form-row-flex">
         <div
@@ -379,12 +380,24 @@ function BaseForm({ data }) {
               allowClear
               style={{ maxWidth: "180px" }}
             >
-              <Select.Option value="mEq" key="mEq">mEq</Select.Option>
-              <Select.Option value="mg" key="mg">mg</Select.Option>
-              <Select.Option value="mcg" key="mcg">mcg</Select.Option>
-              <Select.Option value="mmol" key="mmol">mmol</Select.Option>
-              <Select.Option value="U" key="U">U</Select.Option>
-              <Select.Option value="UI" key="UI">UI</Select.Option>
+              <Select.Option value="mEq" key="mEq">
+                mEq
+              </Select.Option>
+              <Select.Option value="mg" key="mg">
+                mg
+              </Select.Option>
+              <Select.Option value="mcg" key="mcg">
+                mcg
+              </Select.Option>
+              <Select.Option value="mmol" key="mmol">
+                mmol
+              </Select.Option>
+              <Select.Option value="U" key="U">
+                U
+              </Select.Option>
+              <Select.Option value="UI" key="UI">
+                UI
+              </Select.Option>
             </Select>{" "}
             &nbsp; /mL
           </div>
@@ -394,7 +407,7 @@ function BaseForm({ data }) {
         </div>
       </div>
 
-      <Divider orientation="left">Riscos Reprodutivos</Divider>
+      <Divider>Riscos Reprodutivos</Divider>
 
       <div className="form-row form-row-flex">
         <div className={`form-row`}>
@@ -411,11 +424,21 @@ function BaseForm({ data }) {
               allowClear
               style={{ maxWidth: "200px" }}
             >
-              <Select.Option value="A" key="A">A</Select.Option>
-              <Select.Option value="B" key="B">B</Select.Option>
-              <Select.Option value="C" key="C">C</Select.Option>
-              <Select.Option value="D" key="D">D</Select.Option>
-              <Select.Option value="X" key="X">X</Select.Option>
+              <Select.Option value="A" key="A">
+                A
+              </Select.Option>
+              <Select.Option value="B" key="B">
+                B
+              </Select.Option>
+              <Select.Option value="C" key="C">
+                C
+              </Select.Option>
+              <Select.Option value="D" key="D">
+                D
+              </Select.Option>
+              <Select.Option value="X" key="X">
+                X
+              </Select.Option>
             </Select>
           </div>
         </div>
@@ -434,15 +457,21 @@ function BaseForm({ data }) {
               allowClear
               style={{ maxWidth: "200px" }}
             >
-              <Select.Option value="1" key="1">Baixo</Select.Option>
-              <Select.Option value="2" key="2">Médio</Select.Option>
-              <Select.Option value="3" key="3">Alto</Select.Option>
+              <Select.Option value="1" key="1">
+                Baixo
+              </Select.Option>
+              <Select.Option value="2" key="2">
+                Médio
+              </Select.Option>
+              <Select.Option value="3" key="3">
+                Alto
+              </Select.Option>
             </Select>
           </div>
         </div>
       </div>
 
-      <Divider orientation="left">Custo</Divider>
+      <Divider>Custo</Divider>
 
       <div
         className={`form-row ${errors.price && touched.price ? "error" : ""}`}
