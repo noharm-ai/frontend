@@ -104,9 +104,10 @@ export function DrugDashboard() {
         segments={{ list: segments.list, isFetching: segments.isFetching }}
         drugs={{ list: drugsSearch.list, isFetching: drugsSearch.isFetching }}
       />
-      {drugDashboard.idSegment && drugDashboard.idDrug && (
-        drugDashboard.data && !drugDashboard.data.substance?.sctid ? (
-          <div style={{ marginTop: 16 }}>
+      {drugDashboard.idSegment &&
+        drugDashboard.idDrug &&
+        (drugDashboard.data && !drugDashboard.data.substance?.sctid ? (
+          <div style={{ marginTop: 16, maxWidth: "500px", margin: "0 auto" }}>
             <Alert
               type="error"
               description="Substância não definida. Adicione uma substância para continuar."
@@ -149,8 +150,7 @@ export function DrugDashboard() {
               />
             </Col>
           </Row>
-        )
-      )}
+        ))}
       <DrugUnitConversion onAfterSave={handleAfterSave} />
       <DrugRemoveOutlier onAfterSave={handleAfterSave} />
       <DrugGeneratePrescriptionHistory onAfterSave={handleAfterSave} />
