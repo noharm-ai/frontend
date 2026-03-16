@@ -154,6 +154,7 @@ export enum TrackedPrescriptionAction {
   CLICK_ALERT_HANDLING = "abrir-manejo",
   OPEN_DISCHARGE_SUMMARY = "abrir-sumario-alta",
   CLICK_CHECK_HISTORY = "abrir-historico-checagem",
+  CLICK_DRUG_UNIT_CONVERSION = "abrir-conversao-unidade",
 }
 
 export enum TrackedInterventionAction {

@@ -17,8 +17,9 @@ interface QueueResponse {
 interface InitialActionResponse {
   payload: {
     data: {
-      data: {
-        request_id: string;
+      request_id?: string;
+      data?: {
+        request_id?: string;
       };
     };
   };
@@ -102,9 +103,11 @@ export default function useQueueProcess<T = any>({
 
         console.log("Initial response:", initialResponse);
 
-        // Extract request ID from response
+        // Extract request ID from response (may be nested one or two levels deep)
         const typedResponse = initialResponse as InitialActionResponse;
-        const requestId = typedResponse.payload.data.data.request_id;
+        const requestId =
+          typedResponse.payload.data.data?.request_id ??
+          typedResponse.payload.data.request_id;
 
         if (!requestId) {
           const errorMsg = "Request ID not found in response";

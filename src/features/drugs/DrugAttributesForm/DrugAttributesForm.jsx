@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Spin, Alert } from "antd";
-import { CheckOutlined } from "@ant-design/icons";
+import { CheckOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 
 import notification from "components/notification";
 import Button from "components/Button";
@@ -18,7 +18,7 @@ import { getErrorMessage } from "utils/errorHandler";
 
 import { Form } from "styles/Form.style";
 
-export default function DrugAttributesForm({ idSegment, idDrug }) {
+export default function DrugAttributesForm({ idSegment, idDrug, reloadKey }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const data = useSelector((state) => state.drugAttributesForm.data);
@@ -43,7 +43,7 @@ export default function DrugAttributesForm({ idSegment, idDrug }) {
     if (idSegment && idDrug) {
       dispatch(fetchDrugAttributes({ idSegment, idDrug }));
     }
-  }, [dispatch, idSegment, idDrug]);
+  }, [dispatch, idSegment, idDrug, reloadKey]);
 
   const onSave = (params) => {
     dispatch(saveDrugAttributes(params)).then((response) => {
@@ -73,12 +73,18 @@ export default function DrugAttributesForm({ idSegment, idDrug }) {
         initialValues={initialValues}
         validationSchema={validationSchema}
       >
-        {({ handleSubmit }) => (
+        {({ handleSubmit, dirty }) => (
           <Form onSubmit={handleSubmit} className="highlight-labels">
             <Base data={data} />
 
             <div className={`form-row`}>
               <div className="form-action-bottom">
+                {dirty && !isLoading && (
+                  <span style={{ color: "#faad14", marginRight: 12 }}>
+                    <ExclamationCircleOutlined style={{ marginRight: 4 }} />
+                    Existem alterações não salvas
+                  </span>
+                )}
                 <Button
                   type="primary"
                   className="gtm-bt-save-drug"

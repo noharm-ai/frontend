@@ -109,7 +109,7 @@ const refreshToken = () => {
       headers: {
         "x-api-key": apiKey,
       },
-    }
+    },
   );
 };
 
@@ -142,7 +142,7 @@ const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
   instance.post(
     `/segments/${idSegment}/outliers/generate/drug/${idDrug}/clean/1`,
     params,
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 
 /**
@@ -190,7 +190,7 @@ const getPrescriptionById = (bearerToken, idPrescription, params = {}) =>
 const getPrescriptionDrugPeriod = (
   bearerToken,
   idPrescriptionDrug,
-  params = {}
+  params = {},
 ) =>
   instance.get(`${endpoints.prescriptions}/drug/${idPrescriptionDrug}/period`, {
     params,
@@ -201,25 +201,25 @@ const putPrescriptionById = (bearerToken, idPrescription, params = {}) =>
   instance.put(
     `${endpoints.prescriptions}/${idPrescription}`,
     params,
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 
 const updatePrescriptionDrugNote = (
   bearerToken,
   idPrescriptionDrug,
-  params = {}
+  params = {},
 ) =>
   instance.put(
     `${endpoints.prescriptions}/drug/${idPrescriptionDrug}`,
     params,
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 
 const updatePrescriptionDrugForm = (bearerToken, params = {}) =>
   instance.put(
     `${endpoints.prescriptions}/drug/form`,
     params,
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 
 const shouldUpdatePrescription = (bearerToken, idPrescription, params = {}) => {
@@ -247,14 +247,14 @@ const savePrescriptionDrug = (bearerToken, idPrescriptionDrug, params = {}) => {
     return instance.put(
       `${endpoints.editPrescription}/drug/${idPrescriptionDrug}`,
       params,
-      setHeaders(bearerToken)
+      setHeaders(bearerToken),
     );
   }
 
   return instance.post(
     `${endpoints.editPrescription}/drug`,
     params,
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 };
 
@@ -264,7 +264,7 @@ const suspendPrescriptionDrug = (bearerToken, idPrescriptionDrug, suspend) => {
       suspend ? 1 : 0
     }`,
     {},
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 };
 
@@ -273,7 +273,7 @@ const getPrescriptionMissingDrugs = (bearerToken, idPrescription) => {
     `${endpoints.editPrescription}/${idPrescription}/missing-drugs`,
     {
       ...setHeaders(bearerToken),
-    }
+    },
   );
 };
 
@@ -281,7 +281,7 @@ const copyPrescriptionMissingDrugs = (bearerToken, idPrescription, idDrugs) => {
   return instance.post(
     `${endpoints.editPrescription}/${idPrescription}/missing-drugs/copy`,
     { idDrugs },
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 };
 
@@ -301,7 +301,7 @@ const updatePatient = (bearerToken, admissionNumber, params = {}) =>
   instance.post(
     `${endpoints.patient}/${admissionNumber}`,
     params,
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 
 const getPatientList = (bearerToken, params = {}) =>
@@ -319,7 +319,7 @@ const getDrugsBySegment = (bearerToken, idSegment, params = {}) =>
     {
       params,
       ...setHeaders(bearerToken),
-    }
+    },
   );
 
 const updateDrug = (bearerToken, { id, ...params }) =>
@@ -341,7 +341,7 @@ const updateDrugUnits = (bearerToken, idSegment, idDrug, params = {}) =>
   instance.post(
     `${endpoints.drugs}/${idSegment}/${idDrug}/convertunit`,
     params,
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 
 const getDrugSummary = (bearerToken, idDrug, idSegment) =>
@@ -360,7 +360,7 @@ const getDrugResources = (bearerToken, idDrug, idSegment, idHospital) =>
  */
 const getOutliersBySegmentAndDrug = (
   bearerToken,
-  { idSegment, idDrug, ...params }
+  { idSegment, idDrug, ...params },
 ) =>
   instance.get(`${endpoints.outliers}/${idSegment}/${idDrug}`, {
     params,
@@ -371,17 +371,17 @@ const updateOutlier = (bearerToken, idOutlier, params = {}) =>
   instance.put(
     `${endpoints.outliers}/${idOutlier}`,
     params,
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 
 const updateOutlierRelation = (
   bearerToken,
-  { sctidA, sctidB, type, ...params }
+  { sctidA, sctidB, type, ...params },
 ) =>
   instance.put(
     `${endpoints.relation}/${sctidA}/${sctidB}/${type}`,
     params,
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 
 const getSubstances = (bearerToken, params = {}) =>
@@ -416,12 +416,12 @@ const searchInterventions = (bearerToken, params) =>
   instance.post(
     `${endpoints.intervention.base}/search`,
     params,
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 
 const getInterventionReasons = (
   bearerToken,
-  { idSegment, idDrug, ...params }
+  { idSegment, idDrug, ...params },
 ) =>
   instance.get(endpoints.intervention.reasons, {
     params,
@@ -432,7 +432,7 @@ const updateIntervention = (bearerToken, params) =>
   instance.put(
     `${endpoints.intervention.base}`,
     params,
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 
 /**
@@ -459,7 +459,7 @@ const putMemory = (bearerToken, { id, ...params }) => {
     return instance.put(
       `${endpoints.memory}/${id}`,
       params,
-      setHeaders(bearerToken)
+      setHeaders(bearerToken),
     );
   }
 
@@ -470,7 +470,7 @@ const putMemoryUnique = (bearerToken, { type, ...params }) => {
   return instance.put(
     `${endpoints.memory}/unique/${type}`,
     params,
-    setHeaders(bearerToken)
+    setHeaders(bearerToken),
   );
 };
 
@@ -491,7 +491,7 @@ const resetPassword = (token, password) => {
       headers: {
         "x-api-key": import.meta.env.VITE_APP_API_KEY,
       },
-    }
+    },
   );
 };
 
@@ -535,7 +535,7 @@ const scorePrepareGeneration = (params) =>
     {},
     {
       ...setHeaders(),
-    }
+    },
   );
 
 const scoreGenerateSingle = (params) =>
@@ -544,7 +544,7 @@ const scoreGenerateSingle = (params) =>
     {},
     {
       ...setHeaders(),
-    }
+    },
   );
 
 const scoreAddHistory = (params) =>
@@ -553,7 +553,7 @@ const scoreAddHistory = (params) =>
     {},
     {
       ...setHeaders(),
-    }
+    },
   );
 
 const scoreRemoveOutlier = (params) =>
@@ -562,7 +562,7 @@ const scoreRemoveOutlier = (params) =>
     {},
     {
       ...setHeaders(),
-    }
+    },
   );
 
 const scoreConfigDrug = (params) =>
@@ -571,7 +571,16 @@ const scoreConfigDrug = (params) =>
     params,
     {
       ...setHeaders(),
-    }
+    },
+  );
+
+const scoreConfigDrugV2 = (params) =>
+  instance.post(
+    `/outliers/generate/config/${params.idSegment}/${params.idDrug}/v2`,
+    params,
+    {
+      ...setHeaders(),
+    },
   );
 
 /**
@@ -664,6 +673,35 @@ api.drugs.updateSubstance = (params = {}) => {
     ...setHeaders(),
   });
 };
+
+api.drugs.getDrugUnitConversion = (idDrug) =>
+  instance.get(`/drugs/unit-conversion/${idDrug}`, {
+    ...setHeaders(),
+  });
+
+api.drugs.saveUnitConversion = (idDrug, params) =>
+  instance.post(`/drugs/unit-conversion/${idDrug}`, params, {
+    ...setHeaders(),
+  });
+
+api.drugs.processDrugScores = (idDrug) =>
+  instance.post(
+    `/drugs/process-scores/${idDrug}`,
+    {},
+    {
+      ...setHeaders(),
+    },
+  );
+
+api.drugs.getDrugDashboard = (idSegment, idDrug) =>
+  instance.get(`/drugs/dashboard/${idSegment}/${idDrug}`, {
+    ...setHeaders(),
+  });
+
+api.drugs.updateOutlier = (idOutlier, params) =>
+  instance.put(`${endpoints.outliers}/${idOutlier}`, params, {
+    ...setHeaders(),
+  });
 
 /**
  * support namespace
@@ -960,6 +998,7 @@ const methods = {
   scorePrepareGeneration,
   scoreGenerateSingle,
   scoreConfigDrug,
+  scoreConfigDrugV2,
   scoreAddHistory,
   scoreRemoveOutlier,
 };

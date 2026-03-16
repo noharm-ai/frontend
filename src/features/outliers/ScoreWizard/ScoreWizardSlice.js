@@ -35,7 +35,7 @@ export const addHistory = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const removeOutlier = createAsyncThunk(
@@ -48,7 +48,7 @@ export const removeOutlier = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const configDrug = createAsyncThunk(
@@ -61,7 +61,20 @@ export const configDrug = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
+);
+
+export const configDrugV2 = createAsyncThunk(
+  "score-wizard-slice/config",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.scoreConfigDrugV2(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
 );
 
 export const prepareGeneration = createAsyncThunk(
@@ -74,7 +87,7 @@ export const prepareGeneration = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const generateSingle = createAsyncThunk(
@@ -87,7 +100,7 @@ export const generateSingle = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 const scoreWizardSlice = createSlice({

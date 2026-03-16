@@ -18,6 +18,9 @@ export default function SecondaryFilters() {
   const responsibles = useSelector(
     (state) => state.reportsArea.prescription.responsibles,
   );
+  const insurances = useSelector(
+    (state) => state.reportsArea.prescription.insurances,
+  );
   const tags = useSelector((state) => state.reportsArea.prescription.tags);
   const status = useSelector((state) => state.reportsArea.prescription.status);
 
@@ -124,6 +127,29 @@ export default function SecondaryFilters() {
           autoClearSearchValue={false}
         >
           {responsibles.map((i) => (
+            <Select.Option key={i} value={i}>
+              {i}
+            </Select.Option>
+          ))}
+        </SelectCustom>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" $size="14px">
+          Convênio:
+        </Heading>
+        <SelectCustom
+          style={{ width: "100%", maxWidth: "600px" }}
+          value={values.insuranceList}
+          onChange={(val) => setFieldValue({ insuranceList: val })}
+          showSearch
+          optionFilterProp="children"
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          loading={status === "loading"}
+          autoClearSearchValue={false}
+        >
+          {insurances.map((i) => (
             <Select.Option key={i} value={i}>
               {i}
             </Select.Option>

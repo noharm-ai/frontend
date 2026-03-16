@@ -30,6 +30,8 @@ export interface ChartConfig {
   width: "full" | "half";
   aggregation?: AggregationType;
   sortOrder?: SortOrder;
+  xSortOrder?: SortOrder;
+  xLabelRotate?: number;
   topN?: number;
   showLabels?: boolean;
   height?: number;

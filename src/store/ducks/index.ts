@@ -14,6 +14,7 @@ import memoryReducer from "./memory";
 import clinicalNotesReducer from "./clinicalNotes";
 import patientCentral from "./patientCentral";
 import drugMeasureUnits from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSlice";
+import drugUnitConversionSlice from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import drugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import lists from "features/lists/ListsSlice";
 import serverActionsSlice from "features/serverActions/ServerActionsSlice";
@@ -30,6 +31,11 @@ import userAdminSlice from "features/userAdmin/UserAdminSlice";
 import examModalSlice from "features/exams/ExamModal/ExamModalSlice";
 import examFormSlice from "features/exams/ExamForm/ExamFormSlice";
 import switchSchemaSlice from "features/switchSchema/SwitchSchemaSlice";
+import drugDashboardSlice from "features/drugs/DrugDashboard/DrugDashboardSlice";
+import drugRemoveOutlierSlice from "features/drugs/DrugRemoveOutlier/DrugRemoveOutlierSlice";
+import drugGeneratePrescriptionHistorySlice from "features/drugs/DrugGeneratePrescriptionHistory/DrugGeneratePrescriptionHistorySlice";
+import drugGenerateScoreSlice from "features/drugs/DrugGenerateScore/DrugGenerateScoreSlice";
+import drugSubstanceSlice from "features/drugs/DrugSubstance/DrugSubstanceSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -145,6 +151,7 @@ const rootReducer = combineReducers({
   memoryFilter: memoryFilterSlice,
   clinicalNotes: clinicalNotesReducer,
   drugMeasureUnits: drugMeasureUnits,
+  drugUnitConversion: drugUnitConversionSlice,
   drugFormStatus: drugFormStatus,
   lists: lists,
   serverActions: serverActionsSlice,
@@ -159,6 +166,11 @@ const rootReducer = combineReducers({
   examsModal: examModalSlice,
   examsForm: examFormSlice,
   switchSchema: switchSchemaSlice,
+  drugDashboard: drugDashboardSlice,
+  drugRemoveOutlier: drugRemoveOutlierSlice,
+  drugGeneratePrescriptionHistory: drugGeneratePrescriptionHistorySlice,
+  drugGenerateScore: drugGenerateScoreSlice,
+  drugSubstance: drugSubstanceSlice,
 });
 
 export default rootReducer;

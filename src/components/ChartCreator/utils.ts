@@ -147,6 +147,15 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     processedData = processedData.slice(0, topN);
   }
 
+  // Sort by X axis
+  const xSortOrder = config.xSortOrder ?? "none";
+  if (xSortOrder !== "none") {
+    processedData = [...processedData].sort((a, b) => {
+      const cmp = String(a.__xKey__).localeCompare(String(b.__xKey__));
+      return xSortOrder === "asc" ? cmp : -cmp;
+    });
+  }
+
   // Normalize counts to percentages (after sort/topN, using pre-filter total)
   if (isCountPct && countTotal > 0) {
     processedData = processedData.map((item) => ({
@@ -305,7 +314,15 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     },
     toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
     legend: { data: legendData, top: 30 },
-    xAxis: isHBar ? { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) } : { type: "category", data: xData },
+    xAxis: isHBar
+      ? { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) }
+      : {
+          type: "category",
+          data: xData,
+          ...(config.xLabelRotate
+            ? { axisLabel: { rotate: config.xLabelRotate, interval: 0 } }
+            : {}),
+        },
     yAxis: isHBar ? { type: "category", data: xData } : { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) },
     series,
   };

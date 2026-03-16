@@ -790,9 +790,7 @@ const dose = (bag) => ({
   dataIndex: "dosage",
   ellipsis: bag.condensed,
   align: bag.condensed ? "left" : "center",
-  render: (text, prescription) => (
-    <DoseCell record={prescription} bag={bag} />
-  ),
+  render: (text, prescription) => <DoseCell record={prescription} bag={bag} />,
 });
 
 const drug = (bag, addkey, title) => ({

@@ -34,13 +34,13 @@ export default function InterventionOutcome({ ...props }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const selectedIntervention = useSelector(
-    (state) => state.interventionOutcome.selectedIntervention
+    (state) => state.interventionOutcome.selectedIntervention,
   );
   const outcomeData = useSelector((state) => state.interventionOutcome.data);
 
   const loadStatus = useSelector((state) => state.interventionOutcome.status);
   const saveStatus = useSelector(
-    (state) => state.interventionOutcome.save.status
+    (state) => state.interventionOutcome.save.status,
   );
 
   const isLoading = saveStatus === "loading" || loadStatus === "loading";
@@ -53,7 +53,7 @@ export default function InterventionOutcome({ ...props }) {
       dispatch(
         fetchInterventionOutcomeData({
           idIntervention: selectedIntervention.idIntervention,
-        })
+        }),
       ).then((response) => {
         if (response.error) {
           notification.error({
@@ -136,15 +136,15 @@ export default function InterventionOutcome({ ...props }) {
         dispatch(
           updateInterventionStatusThunk(
             selectedIntervention.idIntervention,
-            selectedIntervention.outcome
-          )
+            selectedIntervention.outcome,
+          ),
         );
 
         dispatch(
           updateInterventionListStatusThunk(
             selectedIntervention.idIntervention,
-            selectedIntervention.outcome
-          )
+            selectedIntervention.outcome,
+          ),
         );
 
         onCancel();
@@ -162,7 +162,7 @@ export default function InterventionOutcome({ ...props }) {
         open: false,
         idIntervention: null,
         outcome: null,
-      })
+      }),
     );
   };
 
@@ -208,14 +208,14 @@ export default function InterventionOutcome({ ...props }) {
           outcome: key,
           view: false,
           editAlert: true,
-        })
+        }),
       );
 
       dispatch(
         fetchInterventionOutcomeData({
           idIntervention: selectedIntervention.idIntervention,
           edit: true,
-        })
+        }),
       );
     };
 
@@ -293,8 +293,8 @@ export default function InterventionOutcome({ ...props }) {
             outcomeData.header?.economyType == null
               ? 550
               : outcomeData.header?.economyType === 2
-              ? 800
-              : 600
+                ? 800
+                : 600
           }
           footer={<Footer handleSubmit={handleSubmit} />}
           centered
@@ -310,7 +310,7 @@ export default function InterventionOutcome({ ...props }) {
               ) : (
                 <>
                   {t(
-                    `interventionStatusAction.${selectedIntervention.outcome}`
+                    `interventionStatusAction.${selectedIntervention.outcome}`,
                   )}
                 </>
               )}
@@ -325,7 +325,7 @@ export default function InterventionOutcome({ ...props }) {
                     window.open(
                       `${
                         import.meta.env.VITE_APP_ODOO_LINK
-                      }/knowledge/article/138`
+                      }/knowledge/article/138`,
                     )
                   }
                 />

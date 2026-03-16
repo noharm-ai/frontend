@@ -81,6 +81,7 @@ export default function Filter({ printRef }) {
       dayjs(reportDate).subtract(1, "day"),
     ],
     responsibleList: [],
+    insuranceList: [],
     departmentList: [],
     segmentList: [],
     weekDays: false,

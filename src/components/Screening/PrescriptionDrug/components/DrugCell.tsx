@@ -7,6 +7,7 @@ import Popover from "components/PopoverStyled";
 import Tag from "components/Tag";
 import { createSlug } from "utils/transformers/utils";
 import { setCheckedIndexReport } from "features/prescription/PrescriptionSlice";
+import { setDrugUnitConversionOpen } from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import {
   TrackedPrescriptionAction,
   trackPrescriptionAction,
@@ -159,26 +160,49 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
     );
   }
 
-  const href = `/medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(
+  let href = `/medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(
     record.drug,
   )}/${record.doseconv}/${record.dayFrequency}`;
 
   const historyButton = (
-    <AntButton
-      icon={<HistoryOutlined />}
-      size="small"
-      onClick={() => {
-        trackPrescriptionAction(TrackedPrescriptionAction.CLICK_CHECK_HISTORY);
-        bag.dispatch(
-          setCheckedIndexReport({
-            idPrescriptionDrug: record.idPrescriptionDrug,
-            data: record,
-          }),
-        );
-      }}
-    >
-      Histórico de checagem
-    </AntButton>
+    <Space>
+      <AntButton
+        icon={<HistoryOutlined />}
+        size="small"
+        onClick={() => {
+          trackPrescriptionAction(
+            TrackedPrescriptionAction.CLICK_CHECK_HISTORY,
+          );
+          bag.dispatch(
+            setCheckedIndexReport({
+              idPrescriptionDrug: record.idPrescriptionDrug,
+              data: record,
+            }),
+          );
+        }}
+      >
+        Histórico de checagem
+      </AntButton>
+
+      <AntButton
+        style={{ display: "none" }}
+        icon={<HistoryOutlined />}
+        size="small"
+        onClick={() => {
+          trackPrescriptionAction(
+            TrackedPrescriptionAction.CLICK_DRUG_UNIT_CONVERSION,
+          );
+          bag.dispatch(
+            setDrugUnitConversionOpen({
+              idDrug: record.idDrug,
+              open: true,
+            }),
+          );
+        }}
+      >
+        Conversões de unidade
+      </AntButton>
+    </Space>
   );
 
   const substanceCell = record.idSubstance ? (
@@ -192,6 +216,9 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
 
   let content: React.ReactElement;
   if (PermissionService().has(Permission.MAINTAINER)) {
+    href = `/painel-medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(
+      record.drug,
+    )}/${record.doseconv}/${record.dayFrequency}`;
     const periodType = periodTypeLabel(record.periodType);
     const periodDays =
       (record.periodFixed ?? 0) > 0
