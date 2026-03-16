@@ -314,7 +314,15 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     },
     toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
     legend: { data: legendData, top: 30 },
-    xAxis: isHBar ? { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) } : { type: "category", data: xData },
+    xAxis: isHBar
+      ? { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) }
+      : {
+          type: "category",
+          data: xData,
+          ...(config.xLabelRotate
+            ? { axisLabel: { rotate: config.xLabelRotate, interval: 0 } }
+            : {}),
+        },
     yAxis: isHBar ? { type: "category", data: xData } : { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) },
     series,
   };

@@ -1,13 +1,4 @@
-import {
-  InputNumber,
-  Flex,
-  Input,
-  Select,
-  Switch,
-  Row,
-  Col,
-  Tabs,
-} from "antd";
+import { InputNumber, Flex, Input, Select, Switch, Row, Col, Tabs } from "antd";
 import {
   AggregationType,
   ColorPalette,
@@ -33,6 +24,8 @@ interface ChartFormFieldsProps {
   setSortOrder: (val: SortOrder) => void;
   xSortOrder: SortOrder;
   setXSortOrder: (val: SortOrder) => void;
+  xLabelRotate: number;
+  setXLabelRotate: (val: number) => void;
   topN: number;
   setTopN: (val: number) => void;
   showLabels: boolean;
@@ -112,6 +105,8 @@ export const ChartFormFields = ({
   setSortOrder,
   xSortOrder,
   setXSortOrder,
+  xLabelRotate,
+  setXLabelRotate,
   topN,
   setTopN,
   showLabels,
@@ -192,7 +187,9 @@ export const ChartFormFields = ({
 
       {/* Aggregation + Y axis */}
       <Row gutter={8}>
-        <Col span={aggregation !== "count" && aggregation !== "count_pct" ? 8 : 24}>
+        <Col
+          span={aggregation !== "count" && aggregation !== "count_pct" ? 8 : 24}
+        >
           <label style={labelStyle}>Agregação</label>
           <Select
             style={{ width: "100%" }}
@@ -232,7 +229,6 @@ export const ChartFormFields = ({
           </Col>
         )}
       </Row>
-
     </Flex>
   );
 
@@ -348,6 +344,35 @@ export const ChartFormFields = ({
             onChange={(val) => setHeight(val ?? 400)}
           />
         </Col>
+        <Col span={12}>
+          <label style={labelStyle}>Rotação eixo X</label>
+          <Select
+            style={{ width: "100%" }}
+            value={xLabelRotate}
+            onChange={setXLabelRotate}
+            options={[
+              { label: "Nenhuma", value: 0 },
+              { label: "45°", value: 45 },
+              { label: "90°", value: 90 },
+            ]}
+          />
+        </Col>
+      </Row>
+
+      {/* Show labels + X label rotation */}
+      <Row gutter={8} align="middle">
+        <Col
+          span={12}
+          style={{ display: "flex", alignItems: "center", gap: 8 }}
+        >
+          <Switch checked={showLabels} onChange={setShowLabels} size="small" />
+          <label
+            style={{ cursor: "pointer" }}
+            onClick={() => setShowLabels(!showLabels)}
+          >
+            Rótulos nos dados
+          </label>
+        </Col>
       </Row>
 
       {/* Reference line */}
@@ -408,17 +433,6 @@ export const ChartFormFields = ({
           )}
         </div>
       )}
-
-      {/* Show labels toggle */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <Switch checked={showLabels} onChange={setShowLabels} size="small" />
-        <label
-          style={{ cursor: "pointer" }}
-          onClick={() => setShowLabels(!showLabels)}
-        >
-          Rótulos nos dados
-        </label>
-      </div>
     </Flex>
   );
 

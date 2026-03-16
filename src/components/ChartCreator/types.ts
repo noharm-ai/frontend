@@ -31,6 +31,7 @@ export interface ChartConfig {
   aggregation?: AggregationType;
   sortOrder?: SortOrder;
   xSortOrder?: SortOrder;
+  xLabelRotate?: number;
   topN?: number;
   showLabels?: boolean;
   height?: number;
