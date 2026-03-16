@@ -16,6 +16,7 @@ const initialState = {
   departments: [],
   segments: [],
   tags: [],
+  insurances: [],
   filtered: {
     status: "idle",
     error: null,
@@ -129,6 +130,15 @@ const prescriptionReportSlice = createSlice({
               state.tags = getUniqList(action.payload.cacheData.body, "tags");
             } else {
               state.tags = [];
+            }
+
+            if (firstRecord.hasOwnProperty("insurance")) {
+              state.insurances = getUniqList(
+                action.payload.cacheData.body,
+                "insurance"
+              );
+            } else {
+              state.insurances = [];
             }
           }
         }

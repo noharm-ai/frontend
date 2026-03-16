@@ -111,6 +111,13 @@ const filterDatasource = (datasource, filters) => {
       return true;
     })
     .filter((i) => {
+      if (filters.insuranceList.length) {
+        return filters.insuranceList.indexOf(i.insurance) !== -1;
+      }
+
+      return true;
+    })
+    .filter((i) => {
       if (filters.departmentList.length) {
         return filters.departmentList.indexOf(i.department) !== -1;
       }
