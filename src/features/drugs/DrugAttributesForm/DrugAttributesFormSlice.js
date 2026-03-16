@@ -69,6 +69,7 @@ const drugAttributesFormSlice = createSlice({
       })
       .addCase(saveDrugAttributes.fulfilled, (state, action) => {
         state.saveDrugAttributes.status = "succeeded";
+        state.data = action.meta.arg;
       })
       .addCase(saveDrugAttributes.rejected, (state, action) => {
         state.saveDrugAttributes.status = "failed";
