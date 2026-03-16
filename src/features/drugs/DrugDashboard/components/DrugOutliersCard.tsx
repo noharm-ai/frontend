@@ -8,6 +8,7 @@ import {
   notification,
   Modal,
   Input,
+  Tooltip,
 } from "antd";
 import dayjs from "dayjs";
 import type { TableProps } from "antd";
@@ -116,6 +117,7 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
       title: "Escore",
       dataIndex: "score",
       key: "score",
+      width: 90,
       align: "center",
       sorter: (a, b) => a.score - b.score,
       render: (value: number) => (
@@ -198,10 +200,16 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
           : record.frequency,
     },
     {
-      title: "Contagem",
+      title: (
+        <Tooltip title="Contagem" placement="bottom">
+          {" "}
+          Cont.
+        </Tooltip>
+      ),
       dataIndex: "countNum",
       key: "countNum",
       align: "right",
+      width: 90,
       sorter: (a, b) => a.countNum - b.countNum,
     },
     {

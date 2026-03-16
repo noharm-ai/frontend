@@ -32,6 +32,7 @@ export function DrugFormModal() {
         <DrugAttributesForm
           idDrug={drugFormData.idDrug}
           idSegment={drugFormData.idSegment}
+          reloadKey={1}
         />
       )}
     </DefaultModal>
