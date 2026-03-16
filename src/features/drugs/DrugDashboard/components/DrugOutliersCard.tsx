@@ -1,4 +1,5 @@
 import {
+  Alert,
   Card,
   Table,
   Tag,
@@ -9,6 +10,7 @@ import {
   Modal,
   Input,
   Tooltip,
+  Badge,
 } from "antd";
 import dayjs from "dayjs";
 import type { TableProps } from "antd";
@@ -266,6 +268,14 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
 
   return (
     <Card title="Escores" type="inner" extra={cardExtra}>
+      {!loading && outliers.length === 0 && (
+        <Alert
+          type="error"
+          showIcon
+          style={{ marginBottom: 16 }}
+          description='Nenhum escore encontrado. Clique em "Gerar escores" para calcular os escores deste medicamento.'
+        />
+      )}
       <Table
         columns={columns}
         dataSource={outliers}
@@ -276,6 +286,7 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
         virtual
         scroll={{ y: TABLE_HEIGHT }}
       />
+
       {lastUpdatedAt && (
         <Typography.Text
           type="secondary"
@@ -283,10 +294,9 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
             fontSize: 12,
             marginTop: 16,
             display: "block",
-            textAlign: "center",
           }}
         >
-          Última atualização dos escores:{" "}
+          <Badge status="warning" /> Última atualização dos escores:{" "}
           {dayjs(lastUpdatedAt).format("DD/MM/YYYY HH:mm")}
         </Typography.Text>
       )}
