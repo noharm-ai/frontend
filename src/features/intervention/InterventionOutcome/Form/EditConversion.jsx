@@ -1,18 +1,10 @@
 import "styled-components";
-import React, { useState } from "react";
-import { CheckOutlined, EditOutlined, CloseOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import React from "react";
+import { EditOutlined } from "@ant-design/icons";
+import { useDispatch } from "react-redux";
 import Big from "big.js";
 
 import Button from "components/Button";
-import { InputNumber } from "components/Inputs";
-import notification from "components/notification";
-import { getErrorMessage } from "utils/errorHandler";
-import {
-  upsertDrugMeasureUnit,
-  fetchInterventionOutcomeData,
-} from "../InterventionOutcomeSlice";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import NumericValue from "components/NumericValue";
@@ -20,72 +12,24 @@ import {
   trackInterventionOutcomeAction,
   TrackedInterventionOutcomeAction,
 } from "src/utils/tracker";
+import { setDrugUnitConversionOpen } from "src/features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 
 export default function EditConversion({
   idDrug,
-  idSegment,
   idMeasureUnit,
   idMeasureUnitConverted,
   factor,
   readonly,
 }) {
   const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const selectedIntervention = useSelector(
-    (state) => state.interventionOutcome.selectedIntervention
-  );
-  const [saving, setSaving] = useState(false);
-  const [edit, setEdit] = useState(false);
-  const [value, setValue] = useState(factor === null ? "-" : factor);
 
   const handleClick = (event) => {
     event.preventDefault();
-    setEdit(true);
+    dispatch(setDrugUnitConversionOpen({ open: true, idDrug: String(idDrug) }));
 
     trackInterventionOutcomeAction(
-      TrackedInterventionOutcomeAction.EDIT_CONVERSION
+      TrackedInterventionOutcomeAction.EDIT_CONVERSION,
     );
-  };
-
-  const handleSave = () => {
-    if (value === null || isNaN(value)) {
-      notification.error({ message: "Valor inválido" });
-      return;
-    }
-    setSaving(true);
-
-    const params = {
-      idDrug,
-      idSegment,
-      idMeasureUnit,
-      factor: value,
-    };
-
-    dispatch(upsertDrugMeasureUnit(params)).then((response) => {
-      setSaving(false);
-      setEdit(false);
-
-      if (response.error) {
-        notification.error({
-          message: getErrorMessage(response, t),
-        });
-      } else {
-        notification.success({
-          message: "Conversão atualizada!",
-        });
-
-        dispatch(
-          fetchInterventionOutcomeData({
-            idIntervention: selectedIntervention.idIntervention,
-          })
-        );
-      }
-    });
-  };
-
-  const cancel = () => {
-    setValue(factor);
-    setEdit(false);
   };
 
   if (!idMeasureUnit) {
@@ -96,53 +40,22 @@ export default function EditConversion({
     );
   }
 
-  return edit ? (
-    <span>
-      <InputNumber
-        style={{
-          marginRight: 8,
-          width: 100,
-        }}
-        defaultValue={value === "-" ? 0 : value}
-        onChange={setValue}
-        autoFocus={true}
-        onPressEnter={handleSave}
-        min={0}
-        max={99999999}
-      />
-      <Button
-        type="primary"
-        onClick={handleSave}
-        icon={<CheckOutlined />}
-        loading={saving}
-      ></Button>
-      <Button
-        onClick={cancel}
-        icon={<CloseOutlined />}
-        loading={saving}
-        size="small"
-        style={{
-          marginLeft: 8,
-        }}
-      ></Button>
-    </span>
-  ) : (
+  return (
     <>
       <span css="margin-right: 10px;">
-        {value === "-" || value === null ? (
+        {factor === null || factor === "-" ? (
           <Tag color="red">Vazio</Tag>
         ) : (
-          <NumericValue value={Big(value || 1).toNumber()} decimalScale={6} />
+          <NumericValue value={Big(factor || 1).toNumber()} decimalScale={6} />
         )}
       </span>
       <Tooltip title="Editar fator de conversão">
         <Button
           onClick={handleClick}
           icon={<EditOutlined />}
-          loading={saving}
           disabled={idMeasureUnit === idMeasureUnitConverted || readonly}
           size="small"
-        ></Button>
+        />
       </Tooltip>
     </>
   );

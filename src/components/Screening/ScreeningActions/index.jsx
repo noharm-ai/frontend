@@ -20,6 +20,7 @@ import {
   setChooseConciliationModal,
   setCheckedIndexReport,
 } from "features/prescription/PrescriptionSlice";
+import { fetchInterventionOutcomeData } from "src/features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 import ChooseConciliation from "features/prescription/ChooseConciliation/ChooseConciliation";
 import ExamsModal from "features/exams/ExamModal/ExamModal";
 import ClinicalNotesModal from "containers/Screening/ClinicalNotes/Modal";
@@ -45,6 +46,9 @@ export default function ScreeningActions({
   const checkedIndexReport = useSelector(
     (state) => state.prescriptionv2.checkedIndexReport,
   );
+  const selectedIntervention = useSelector(
+    (state) => state.interventionOutcome.selectedIntervention,
+  );
   const featureService = FeaturesService(features);
 
   const afterSavePatient = (response) => {
@@ -69,7 +73,17 @@ export default function ScreeningActions({
         idPrescription: prescription.idPrescription,
       }),
     );
+
+    // refresh prescription
     await fetchScreening(prescription.idPrescription);
+
+    if (selectedIntervention.idIntervention) {
+      await dispatch(
+        fetchInterventionOutcomeData({
+          idIntervention: selectedIntervention.idIntervention,
+        }),
+      );
+    }
   };
 
   const addConciliation = () => {
