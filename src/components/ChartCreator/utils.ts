@@ -147,6 +147,15 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     processedData = processedData.slice(0, topN);
   }
 
+  // Sort by X axis
+  const xSortOrder = config.xSortOrder ?? "none";
+  if (xSortOrder !== "none") {
+    processedData = [...processedData].sort((a, b) => {
+      const cmp = String(a.__xKey__).localeCompare(String(b.__xKey__));
+      return xSortOrder === "asc" ? cmp : -cmp;
+    });
+  }
+
   // Normalize counts to percentages (after sort/topN, using pre-filter total)
   if (isCountPct && countTotal > 0) {
     processedData = processedData.map((item) => ({

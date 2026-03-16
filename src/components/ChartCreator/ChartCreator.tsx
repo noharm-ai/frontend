@@ -20,6 +20,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [newWidth, setNewWidth] = useState<"full" | "half">("half");
   const [newAggregation, setNewAggregation] = useState<AggregationType>("none");
   const [newSortOrder, setNewSortOrder] = useState<SortOrder>("none");
+  const [newXSortOrder, setNewXSortOrder] = useState<SortOrder>("none");
   const [newTopN, setNewTopN] = useState(0);
   const [newShowLabels, setNewShowLabels] = useState(false);
   const [newHeight, setNewHeight] = useState(400);
@@ -36,6 +37,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [editWidth, setEditWidth] = useState<"full" | "half">("full");
   const [editAggregation, setEditAggregation] = useState<AggregationType>("none");
   const [editSortOrder, setEditSortOrder] = useState<SortOrder>("none");
+  const [editXSortOrder, setEditXSortOrder] = useState<SortOrder>("none");
   const [editTopN, setEditTopN] = useState(0);
   const [editShowLabels, setEditShowLabels] = useState(false);
   const [editHeight, setEditHeight] = useState(400);
@@ -73,6 +75,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           width: newWidth,
           aggregation: newAggregation,
           sortOrder: newSortOrder,
+          xSortOrder: newXSortOrder,
           topN: newTopN,
           showLabels: newShowLabels,
           height: newHeight,
@@ -89,6 +92,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
       setNewWidth("half");
       setNewAggregation("none");
       setNewSortOrder("none");
+      setNewXSortOrder("none");
       setNewTopN(0);
       setNewShowLabels(false);
       setNewHeight(400);
@@ -108,6 +112,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
     setEditWidth(chart.width);
     setEditAggregation(chart.aggregation ?? "none");
     setEditSortOrder(chart.sortOrder ?? "none");
+    setEditXSortOrder(chart.xSortOrder ?? "none");
     setEditTopN(chart.topN ?? 0);
     setEditShowLabels(chart.showLabels ?? false);
     setEditHeight(chart.height ?? 400);
@@ -131,6 +136,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 width: editWidth,
                 aggregation: editAggregation,
                 sortOrder: editSortOrder,
+                xSortOrder: editXSortOrder,
                 topN: editTopN,
                 showLabels: editShowLabels,
                 height: editHeight,
@@ -198,6 +204,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 setAggregation={setNewAggregation}
                 sortOrder={newSortOrder}
                 setSortOrder={setNewSortOrder}
+                xSortOrder={newXSortOrder}
+                setXSortOrder={setNewXSortOrder}
                 topN={newTopN}
                 setTopN={setNewTopN}
                 showLabels={newShowLabels}
@@ -252,6 +260,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           setAggregation={setEditAggregation}
           sortOrder={editSortOrder}
           setSortOrder={setEditSortOrder}
+          xSortOrder={editXSortOrder}
+          setXSortOrder={setEditXSortOrder}
           topN={editTopN}
           setTopN={setEditTopN}
           showLabels={editShowLabels}

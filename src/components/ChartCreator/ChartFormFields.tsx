@@ -31,6 +31,8 @@ interface ChartFormFieldsProps {
   setAggregation: (val: AggregationType) => void;
   sortOrder: SortOrder;
   setSortOrder: (val: SortOrder) => void;
+  xSortOrder: SortOrder;
+  setXSortOrder: (val: SortOrder) => void;
   topN: number;
   setTopN: (val: number) => void;
   showLabels: boolean;
@@ -108,6 +110,8 @@ export const ChartFormFields = ({
   setAggregation,
   sortOrder,
   setSortOrder,
+  xSortOrder,
+  setXSortOrder,
   topN,
   setTopN,
   showLabels,
@@ -297,7 +301,7 @@ export const ChartFormFields = ({
 
       {/* Sort + Top N + Height */}
       <Row gutter={8}>
-        <Col span={10}>
+        <Col span={6}>
           <label style={labelStyle}>Ordenação</label>
           <Select
             style={{ width: "100%" }}
@@ -310,7 +314,20 @@ export const ChartFormFields = ({
             ]}
           />
         </Col>
-        <Col span={7}>
+        <Col span={6}>
+          <label style={labelStyle}>Ord. eixo X</label>
+          <Select
+            style={{ width: "100%" }}
+            value={xSortOrder}
+            onChange={setXSortOrder}
+            options={[
+              { label: "Nenhuma", value: "none" },
+              { label: "Crescente ↑", value: "asc" },
+              { label: "Decrescente ↓", value: "desc" },
+            ]}
+          />
+        </Col>
+        <Col span={6}>
           <label style={labelStyle}>Top N (0 = todos)</label>
           <InputNumber
             min={0}
@@ -320,7 +337,7 @@ export const ChartFormFields = ({
             onChange={(val) => setTopN(val ?? 0)}
           />
         </Col>
-        <Col span={7}>
+        <Col span={6}>
           <label style={labelStyle}>Altura (px)</label>
           <InputNumber
             min={200}
