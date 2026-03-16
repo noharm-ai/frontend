@@ -1,16 +1,12 @@
-import { Card, Table, Tag, Typography, Dropdown } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import { Card, Table, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import type { TableProps } from "antd";
+import { ThunderboltOutlined } from "@ant-design/icons";
 
 import { formatNumber } from "src/utils/number";
 import { useAppDispatch, useAppSelector } from "store/index";
-import { setDrugGeneratePrescriptionHistoryOpen } from "src/features/drugs/DrugGeneratePrescriptionHistory";
 import { setDrugGenerateScoreOpen } from "src/features/drugs/DrugGenerateScore";
-import PermissionService from "services/PermissionService";
-import Permission from "models/Permission";
 import Button from "components/Button";
-import Tooltip from "components/Tooltip";
 
 const SCORE_COLOR: Record<number, string> = {
   0: "green",
@@ -142,13 +138,12 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
       )
     : null;
 
-  const menuItems = [];
-
-  if (PermissionService().has(Permission.MAINTAINER)) {
-    menuItems.push({
-      key: "generate-score",
-      label: "Gerar Escores",
-      onClick: () =>
+  const cardExtra = (
+    <Button
+      icon={<ThunderboltOutlined />}
+      ghost
+      type="primary"
+      onClick={() =>
         dispatch(
           setDrugGenerateScoreOpen({
             open: true,
@@ -159,33 +154,12 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
             idMeasureUnit: attributes?.idMeasureUnit ?? null,
             substance,
           }),
-        ),
-    });
-
-    menuItems.push({
-      key: "generate-history",
-      label: "Gerar Histórico de Prescrição",
-      onClick: () =>
-        dispatch(
-          setDrugGeneratePrescriptionHistoryOpen({
-            open: true,
-            idDrug,
-            idSegment,
-          }),
-        ),
-    });
-  }
-
-  const cardExtra =
-    menuItems.length > 0 ? (
-      <Tooltip title="Ações">
-        <Dropdown menu={{ items: menuItems }} placement="bottomRight">
-          <Button icon={<DownOutlined />} iconPlacement="end">
-            Ações
-          </Button>
-        </Dropdown>
-      </Tooltip>
-    ) : null;
+        )
+      }
+    >
+      Gerar escores
+    </Button>
+  );
 
   return (
     <Card title="Escores" type="inner" extra={cardExtra}>

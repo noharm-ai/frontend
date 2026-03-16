@@ -19,6 +19,7 @@ import { DrugRemoveOutlier } from "src/features/drugs/DrugRemoveOutlier/DrugRemo
 import { DrugGeneratePrescriptionHistory } from "src/features/drugs/DrugGeneratePrescriptionHistory";
 import { DrugGenerateScore } from "src/features/drugs/DrugGenerateScore";
 import { setDrugRemoveOutlierOpen } from "src/features/drugs/DrugRemoveOutlier/DrugRemoveOutlierSlice";
+import { setDrugGeneratePrescriptionHistoryOpen } from "src/features/drugs/DrugGeneratePrescriptionHistory";
 import DrugSubstance from "features/drugs/DrugSubstance/DrugSubstance";
 import Button from "components/Button";
 import PermissionService from "services/PermissionService";
@@ -83,20 +84,36 @@ export function DrugDashboard() {
           {drugDashboard.idSegment &&
             drugDashboard.idDrug &&
             PermissionService().has(Permission.MAINTAINER) && (
-              <Button
-                danger
-                onClick={() =>
-                  dispatch(
-                    setDrugRemoveOutlierOpen({
-                      open: true,
-                      idSegment: drugDashboard.idSegment,
-                      idDrug: drugDashboard.idDrug,
-                    }),
-                  )
-                }
-              >
-                Remover Outlier
-              </Button>
+              <>
+                <Button
+                  danger
+                  onClick={() =>
+                    dispatch(
+                      setDrugGeneratePrescriptionHistoryOpen({
+                        open: true,
+                        idDrug: drugDashboard.idDrug,
+                        idSegment: drugDashboard.idSegment,
+                      }),
+                    )
+                  }
+                >
+                  Gerar Histórico de Prescrição
+                </Button>
+                <Button
+                  danger
+                  onClick={() =>
+                    dispatch(
+                      setDrugRemoveOutlierOpen({
+                        open: true,
+                        idSegment: drugDashboard.idSegment,
+                        idDrug: drugDashboard.idDrug,
+                      }),
+                    )
+                  }
+                >
+                  Remover Outlier
+                </Button>
+              </>
             )}
         </div>
       </PageHeader>

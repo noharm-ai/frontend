@@ -35,6 +35,8 @@ export function DrugConversionsCard({
         <Space>
           <Button
             icon={<EditOutlined />}
+            ghost
+            type="primary"
             onClick={() =>
               dispatch(
                 setDrugUnitConversionOpen({
