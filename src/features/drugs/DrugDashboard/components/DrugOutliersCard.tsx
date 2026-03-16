@@ -289,7 +289,7 @@ export function DrugOutliersCard({
             <DrugInfoBarItem label="Intervalo de dose:">
               {attributes.divisionRange ? (
                 <Tag color="blue" style={{ margin: 0 }}>
-                  {attributes.divisionRange}
+                  {formatNumber(attributes.divisionRange, 2)}
                   {attributes.idMeasureUnit
                     ? ` ${attributes.idMeasureUnit}`
                     : ""}
