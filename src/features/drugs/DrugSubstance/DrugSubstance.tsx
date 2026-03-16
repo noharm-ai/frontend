@@ -34,8 +34,9 @@ export default function DrugSubstance({
   );
   const saveStatus = useSelector((state: any) => state.drugSubstance.status);
 
-  const [editing, setEditing] = useState(!sctidA);
-  const [currentSubstance, setCurrentSubstance] = useState(sctidA ?? null);
+  const [userEditing, setUserEditing] = useState(false);
+  const editing = userEditing || !sctidA;
+  const [currentSubstance, setCurrentSubstance] = useState<string | null>(null);
 
   useEffect(() => {
     if (!sctidA) {
@@ -49,7 +50,7 @@ export default function DrugSubstance({
   const handleEnterEdit = () => {
     dispatch((getSubstances as any)({ useCache: true }));
     setCurrentSubstance(sctidA ?? null);
-    setEditing(true);
+    setUserEditing(true);
   };
 
   const handleChange = (value: any) => {
@@ -63,7 +64,7 @@ export default function DrugSubstance({
           notification.error({ message: getErrorMessage(response, t) });
         } else {
           notification.success({ message: "Substância atualizada!" });
-          setEditing(false);
+          setUserEditing(false);
           onAfterSave?.(currentSubstance);
         }
       },

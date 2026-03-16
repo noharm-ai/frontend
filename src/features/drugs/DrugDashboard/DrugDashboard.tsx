@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Alert } from "antd";
+import { Alert, Space } from "antd";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import { searchDrugsThunk } from "store/ducks/drugs/thunk";
@@ -124,23 +124,6 @@ export function DrugDashboard() {
         ) : (
           <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
             <Col xs={24} lg={12}>
-              <DrugOutliersCard
-                outliers={drugDashboard.data?.outliers ?? []}
-                loading={drugDashboard.status === "loading"}
-              />
-            </Col>
-            <Col xs={24} lg={12}>
-              <DrugConversionsCard
-                conversions={drugDashboard.data?.conversions ?? []}
-                defaultUnit={
-                  drugDashboard.data?.attributes?.idMeasureUnit ?? null
-                }
-                idDrug={drugDashboard.idDrug}
-                loading={drugDashboard.status === "loading"}
-              />
-            </Col>
-
-            <Col xs={24} lg={12}>
               <DrugAttributesCard
                 idSegment={drugDashboard.idSegment}
                 idDrug={drugDashboard.idDrug}
@@ -149,6 +132,28 @@ export function DrugDashboard() {
                 onAfterSave={handleAfterSave}
               />
             </Col>
+            <Col xs={24} lg={12}>
+              <Space
+                orientation="vertical"
+                style={{ width: "100%" }}
+                size="large"
+              >
+                <DrugOutliersCard
+                  outliers={drugDashboard.data?.outliers ?? []}
+                  loading={drugDashboard.status === "loading"}
+                />
+
+                <DrugConversionsCard
+                  conversions={drugDashboard.data?.conversions ?? []}
+                  defaultUnit={
+                    drugDashboard.data?.attributes?.idMeasureUnit ?? null
+                  }
+                  idDrug={drugDashboard.idDrug}
+                  loading={drugDashboard.status === "loading"}
+                />
+              </Space>
+            </Col>
+            <Col xs={24} lg={12}></Col>
           </Row>
         ))}
       <DrugUnitConversion onAfterSave={handleAfterSave} />
