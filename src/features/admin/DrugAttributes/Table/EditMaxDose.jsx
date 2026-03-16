@@ -16,7 +16,7 @@ import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 import Tooltip from "components/Tooltip";
 import NumericValue from "components/NumericValue";
-import { PopoverConversion } from "./components/PopoverConversion";
+import { setDrugUnitConversionOpen } from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import { MaxDoseReferenceContainer } from "./EditMaxDose.style";
 
 import { saveDrugAttributes } from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
@@ -200,23 +200,24 @@ export default function EditMaxDose({
             {record?.substanceMeasureUnit || "Unidade indefinida"}
           </div>
           <div className="ref-action">
-            <PopoverConversion
-              measureUnitOrigin={record?.substanceMeasureUnit}
-              measureUnitDestination={record?.idMeasureUnitDefault}
-              idDrug={record?.idDrug}
-              idSegment={record?.idSegment}
-            >
-              <Tooltip title="Converter" placement="right">
-                <Button
-                  icon={<RetweetOutlined />}
-                  disabled={
-                    record?.measureUnitNH === record?.substanceMeasureUnit ||
-                    !record?.substanceMaxDose ||
-                    !record?.idMeasureUnitDefault
-                  }
-                ></Button>
-              </Tooltip>
-            </PopoverConversion>
+            <Tooltip title="Converter" placement="right">
+              <Button
+                icon={<RetweetOutlined />}
+                disabled={
+                  record?.measureUnitNH === record?.substanceMeasureUnit ||
+                  !record?.substanceMaxDose ||
+                  !record?.idMeasureUnitDefault
+                }
+                onClick={() =>
+                  dispatch(
+                    setDrugUnitConversionOpen({
+                      open: true,
+                      idDrug: String(record?.idDrug),
+                    }),
+                  )
+                }
+              ></Button>
+            </Tooltip>
           </div>
         </div>
 
@@ -233,23 +234,24 @@ export default function EditMaxDose({
             {(record?.substanceMeasureUnit || "Unidade indefinida") + "/Kg"}
           </div>
           <div className="ref-action">
-            <PopoverConversion
-              measureUnitOrigin={record?.substanceMeasureUnit}
-              measureUnitDestination={record?.idMeasureUnitDefault}
-              idDrug={record?.idDrug}
-              idSegment={record?.idSegment}
-            >
-              <Tooltip title="Converter" placement="right">
-                <Button
-                  icon={<RetweetOutlined />}
-                  disabled={
-                    record?.measureUnitNH === record?.substanceMeasureUnit ||
-                    !record?.substanceMaxDoseWeight ||
-                    !record?.idMeasureUnitDefault
-                  }
-                ></Button>
-              </Tooltip>
-            </PopoverConversion>
+            <Tooltip title="Converter" placement="right">
+              <Button
+                icon={<RetweetOutlined />}
+                disabled={
+                  record?.measureUnitNH === record?.substanceMeasureUnit ||
+                  !record?.substanceMaxDoseWeight ||
+                  !record?.idMeasureUnitDefault
+                }
+                onClick={() =>
+                  dispatch(
+                    setDrugUnitConversionOpen({
+                      open: true,
+                      idDrug: String(record?.idDrug),
+                    }),
+                  )
+                }
+              ></Button>
+            </Tooltip>
           </div>
         </div>
       </MaxDoseReferenceContainer>

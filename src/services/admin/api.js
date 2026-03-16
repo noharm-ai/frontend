@@ -40,12 +40,6 @@ const getDrugAttributes = (params = {}) => {
   });
 };
 
-const updatePriceFactor = (params = {}) => {
-  return instance.post(`${endpoints.drug}/price-factor`, params, {
-    ...setHeaders(),
-  });
-};
-
 const copyDrugAttributes = (params = {}) => {
   return instance.post(`${endpoints.drug}/copy-attributes`, params, {
     ...setHeaders(),
@@ -462,7 +456,6 @@ const methods = {
   getMemoryItems,
   updateMemoryItem,
   getDrugAttributes,
-  updatePriceFactor,
   copyDrugAttributes,
   refreshPrescription,
   initInterventionReason,

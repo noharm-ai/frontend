@@ -20,6 +20,8 @@ import {
 import { getSubstances } from "features/lists/ListsSlice";
 import Actions from "./Actions/Actions";
 import DrugReferenceDrawer from "../DrugReferenceDrawer/DrugReferenceDrawer";
+import { setDrugUnitConversionOpen } from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
+import { DrugUnitConversion } from "features/drugs/DrugUnitConversion/DrugUnitConversion";
 import { ExpandColumn } from "src/components/ExpandColumn";
 
 export default function DrugAttributes() {
@@ -105,6 +107,10 @@ export default function DrugAttributes() {
         <ExpandableTable
           columns={columns(t, {
             setDrugForm: (data) => dispatch(setDrugForm(data)),
+            openUnitConversion: (idDrug) =>
+              dispatch(
+                setDrugUnitConversionOpen({ open: true, idDrug: String(idDrug) }),
+              ),
           })}
           pagination={false}
           loading={isFetching}
@@ -142,6 +148,7 @@ export default function DrugAttributes() {
         />
       </PaginationContainer>
       <DrugReferenceDrawer />
+      <DrugUnitConversion onAfterSave={reload} />
     </>
   );
 }

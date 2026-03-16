@@ -1,6 +1,6 @@
 import React from "react";
 import { Space } from "antd";
-import { EditOutlined, SearchOutlined } from "@ant-design/icons";
+import { EditOutlined, SearchOutlined, SwapOutlined } from "@ant-design/icons";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
@@ -57,7 +57,7 @@ const columns = (t, bag) => {
     {
       title: t("tableHeader.action"),
       key: "operations",
-      width: 120,
+      width: 150,
       align: "center",
       render: (text, record) => {
         return (
@@ -70,7 +70,6 @@ const columns = (t, bag) => {
               }
             >
               <Button
-                type="primary"
                 icon={<EditOutlined />}
                 disabled={!record.idSegment}
                 onClick={() =>
@@ -86,6 +85,19 @@ const columns = (t, bag) => {
               title={
                 !record.idSegment
                   ? 'Este medicamento está inconsistente. Utilize o botão "Atualizar Unidade Padrão".'
+                  : "Conversões de unidade"
+              }
+            >
+              <Button
+                icon={<SwapOutlined />}
+                disabled={!record.idSegment}
+                onClick={() => bag.openUnitConversion(record.idDrug)}
+              />
+            </Tooltip>
+            <Tooltip
+              title={
+                !record.idSegment
+                  ? 'Este medicamento está inconsistente. Utilize o botão "Atualizar Unidade Padrão".'
                   : "Abrir tela do medicamento"
               }
             >
@@ -95,7 +107,7 @@ const columns = (t, bag) => {
                 disabled={!record.idSegment}
                 onClick={() =>
                   window.open(
-                    `/medicamentos/${record.idSegment}/${
+                    `/painel-medicamentos/${record.idSegment}/${
                       record.idDrug
                     }/${createSlug(record.name)}`,
                     "_blank",
