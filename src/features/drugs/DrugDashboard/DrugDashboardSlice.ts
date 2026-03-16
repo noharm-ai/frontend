@@ -19,6 +19,39 @@ const initialState: IDrugDashboardSlice = {
   data: null,
 };
 
+export const updateOutlierManualScore = createAsyncThunk(
+  "drugDashboard/updateOutlierManualScore",
+  async (
+    {
+      idOutlier,
+      manualScore,
+    }: { idOutlier: number; manualScore: number | null },
+    thunkAPI,
+  ) => {
+    try {
+      await api.drugs.updateOutlier(idOutlier, { manualScore });
+      return { idOutlier, manualScore };
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+export const updateOutlierObs = createAsyncThunk(
+  "drugDashboard/updateOutlierObs",
+  async (
+    { idOutlier, obs }: { idOutlier: number; obs: string },
+    thunkAPI,
+  ) => {
+    try {
+      await api.drugs.updateOutlier(idOutlier, { obs });
+      return { idOutlier, obs };
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
 export const fetchDrugDashboard = createAsyncThunk(
   "drugDashboard/fetch",
   async (
@@ -65,6 +98,26 @@ const drugDashboardSlice = createSlice({
       .addCase(fetchDrugDashboard.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message ?? null;
+      })
+      .addCase(updateOutlierManualScore.fulfilled, (state, action) => {
+        if (state.data?.outliers) {
+          const idx = state.data.outliers.findIndex(
+            (o: any) => o.idOutlier === action.payload.idOutlier,
+          );
+          if (idx !== -1) {
+            state.data.outliers[idx].manualScore = action.payload.manualScore;
+          }
+        }
+      })
+      .addCase(updateOutlierObs.fulfilled, (state, action) => {
+        if (state.data?.outliers) {
+          const idx = state.data.outliers.findIndex(
+            (o: any) => o.idOutlier === action.payload.idOutlier,
+          );
+          if (idx !== -1) {
+            state.data.outliers[idx].obs = action.payload.obs;
+          }
+        }
       });
   },
 });

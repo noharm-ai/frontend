@@ -1,11 +1,26 @@
-import { Card, Table, Tag, Typography } from "antd";
+import {
+  Card,
+  Table,
+  Tag,
+  Typography,
+  Select,
+  Spin,
+  notification,
+  Modal,
+  Input,
+} from "antd";
 import dayjs from "dayjs";
 import type { TableProps } from "antd";
-import { ThunderboltOutlined } from "@ant-design/icons";
+import { ThunderboltOutlined, MessageOutlined } from "@ant-design/icons";
+import { useState } from "react";
 
 import { formatNumber } from "src/utils/number";
 import { useAppDispatch, useAppSelector } from "store/index";
 import { setDrugGenerateScoreOpen } from "src/features/drugs/DrugGenerateScore";
+import {
+  updateOutlierManualScore,
+  updateOutlierObs,
+} from "src/features/drugs/DrugDashboard/DrugDashboardSlice";
 import Button from "components/Button";
 
 const SCORE_COLOR: Record<number, string> = {
@@ -13,7 +28,17 @@ const SCORE_COLOR: Record<number, string> = {
   1: "yellow",
   2: "orange",
   3: "red",
+  4: "purple",
 };
+
+const SCORE_OPTIONS = [
+  { value: null, label: "—" },
+  { value: 0, label: "0" },
+  { value: 1, label: "1" },
+  { value: 2, label: "2" },
+  { value: 3, label: "3" },
+  { value: 4, label: "4" },
+];
 
 interface OutlierItem {
   idOutlier: number;
@@ -35,87 +60,6 @@ interface DrugOutliersCardProps {
   loading: boolean;
 }
 
-const columns: TableProps<OutlierItem>["columns"] = [
-  {
-    title: "Escore",
-    dataIndex: "score",
-    key: "score",
-    align: "center",
-    sorter: (a, b) => a.score - b.score,
-    render: (value: number) => (
-      <Tag
-        style={{ paddingLeft: "1rem", paddingRight: "1rem" }}
-        color={SCORE_COLOR[value] ?? "default"}
-      >
-        {value}
-      </Tag>
-    ),
-  },
-  {
-    title: "Escore Manual",
-    dataIndex: "manualScore",
-    key: "manualScore",
-    align: "center",
-    render: (value: number) => {
-      if (value === null) {
-        return "-";
-      }
-
-      return (
-        <Tag
-          style={{ paddingLeft: "1rem", paddingRight: "1rem" }}
-          color={SCORE_COLOR[value] ?? "default"}
-        >
-          {value}
-        </Tag>
-      );
-    },
-    sorter: (a, b) =>
-      (a.manualScore ?? -Infinity) - (b.manualScore ?? -Infinity),
-  },
-  {
-    title: "Dose",
-    key: "dose",
-    align: "right",
-    render: (_, record) => {
-      const unit = record.unit || "**";
-
-      if (record.divisionRange) {
-        return (
-          Number((record.dose - record.divisionRange).toFixed(2)) +
-          "-" +
-          record.dose +
-          " " +
-          unit +
-          (record.useWeight ? "/Kg" : "")
-        );
-      } else {
-        return `${formatNumber(record.dose, 2)} ${unit}`;
-      }
-    },
-    sorter: (a, b) => a.dose - b.dose,
-  },
-  {
-    title: "Frequência/Dia",
-    dataIndex: "frequency",
-    key: "frequency",
-    align: "right",
-    sorter: (a, b) => Number(a.frequency) - Number(b.frequency),
-    render: (_, record) =>
-      typeof record.frequency === "number"
-        ? formatNumber(record.frequency, 3)
-        : record.frequency,
-  },
-
-  {
-    title: "Contagem",
-    dataIndex: "countNum",
-    key: "countNum",
-    align: "right",
-    sorter: (a, b) => a.countNum - b.countNum,
-  },
-];
-
 const TABLE_HEIGHT = 400;
 
 export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
@@ -130,6 +74,157 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
   const substance = useAppSelector(
     (state: any) => state.drugDashboard.data?.substance,
   );
+
+  const [savingId, setSavingId] = useState<number | null>(null);
+  const [obsModal, setObsModal] = useState<{
+    open: boolean;
+    idOutlier: number | null;
+    value: string;
+  }>({ open: false, idOutlier: null, value: "" });
+  const [savingObs, setSavingObs] = useState(false);
+
+  const handleManualScoreChange = async (
+    idOutlier: number,
+    manualScore: number | null,
+  ) => {
+    setSavingId(idOutlier);
+    const result = await dispatch(
+      updateOutlierManualScore({ idOutlier, manualScore }),
+    );
+    setSavingId(null);
+    if (updateOutlierManualScore.rejected.match(result)) {
+      notification.error({ message: "Erro ao salvar escore manual." });
+    }
+  };
+
+  const handleSaveObs = async () => {
+    if (obsModal.idOutlier === null) return;
+    setSavingObs(true);
+    const result = await dispatch(
+      updateOutlierObs({ idOutlier: obsModal.idOutlier, obs: obsModal.value }),
+    );
+    setSavingObs(false);
+    if (updateOutlierObs.rejected.match(result)) {
+      notification.error({ message: "Erro ao salvar observação." });
+    } else {
+      setObsModal({ open: false, idOutlier: null, value: "" });
+    }
+  };
+
+  const columns: TableProps<OutlierItem>["columns"] = [
+    {
+      title: "Escore",
+      dataIndex: "score",
+      key: "score",
+      align: "center",
+      sorter: (a, b) => a.score - b.score,
+      render: (value: number) => (
+        <Tag
+          style={{ paddingLeft: "1rem", paddingRight: "1rem" }}
+          color={SCORE_COLOR[value] ?? "default"}
+        >
+          {value}
+        </Tag>
+      ),
+    },
+    {
+      title: "Escore Manual",
+      dataIndex: "manualScore",
+      key: "manualScore",
+      align: "center",
+      width: 140,
+      render: (value: number | null, record: OutlierItem) => {
+        if (savingId === record.idOutlier) {
+          return <Spin size="small" />;
+        }
+
+        return (
+          <Select
+            size="small"
+            value={value ?? null}
+            style={{ width: 100 }}
+            onChange={(val) => handleManualScoreChange(record.idOutlier, val)}
+            options={SCORE_OPTIONS.map((opt) => ({
+              value: opt.value,
+              label:
+                opt.value === null ? (
+                  <span style={{ color: "#999" }}>{opt.label}</span>
+                ) : (
+                  <Tag
+                    color={SCORE_COLOR[opt.value] ?? "default"}
+                    style={{ margin: 0 }}
+                  >
+                    {opt.label}
+                  </Tag>
+                ),
+            }))}
+          />
+        );
+      },
+      sorter: (a, b) =>
+        (a.manualScore ?? -Infinity) - (b.manualScore ?? -Infinity),
+    },
+    {
+      title: "Dose",
+      key: "dose",
+      align: "right",
+      render: (_, record) => {
+        const unit = record.unit || "**";
+
+        if (record.divisionRange) {
+          return (
+            Number((record.dose - record.divisionRange).toFixed(2)) +
+            "-" +
+            record.dose +
+            " " +
+            unit +
+            (record.useWeight ? "/Kg" : "")
+          );
+        } else {
+          return `${formatNumber(record.dose, 2)} ${unit}`;
+        }
+      },
+      sorter: (a, b) => a.dose - b.dose,
+    },
+    {
+      title: "Frequência/Dia",
+      dataIndex: "frequency",
+      key: "frequency",
+      align: "right",
+      sorter: (a, b) => Number(a.frequency) - Number(b.frequency),
+      render: (_, record) =>
+        typeof record.frequency === "number"
+          ? formatNumber(record.frequency, 3)
+          : record.frequency,
+    },
+    {
+      title: "Contagem",
+      dataIndex: "countNum",
+      key: "countNum",
+      align: "right",
+      sorter: (a, b) => a.countNum - b.countNum,
+    },
+    {
+      key: "obs",
+      width: 48,
+      align: "center",
+      render: (_, record: OutlierItem) => (
+        <Button
+          size="small"
+          type="primary"
+          ghost={!record.obs}
+          icon={<MessageOutlined />}
+          onClick={() =>
+            setObsModal({
+              open: true,
+              idOutlier: record.idOutlier,
+              value: record.obs ?? "",
+            })
+          }
+        />
+      ),
+    },
+  ];
 
   const lastUpdatedAt = outliers.length
     ? outliers.reduce(
@@ -187,6 +282,25 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
           {dayjs(lastUpdatedAt).format("DD/MM/YYYY HH:mm")}
         </Typography.Text>
       )}
+      <Modal
+        title="Observação"
+        open={obsModal.open}
+        onCancel={() =>
+          setObsModal({ open: false, idOutlier: null, value: "" })
+        }
+        onOk={handleSaveObs}
+        okText="Salvar"
+        cancelText="Cancelar"
+        confirmLoading={savingObs}
+      >
+        <Input.TextArea
+          rows={4}
+          value={obsModal.value}
+          onChange={(e) =>
+            setObsModal((prev) => ({ ...prev, value: e.target.value }))
+          }
+        />
+      </Modal>
     </Card>
   );
 }

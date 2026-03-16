@@ -698,6 +698,11 @@ api.drugs.getDrugDashboard = (idSegment, idDrug) =>
     ...setHeaders(),
   });
 
+api.drugs.updateOutlier = (idOutlier, params) =>
+  instance.put(`${endpoints.outliers}/${idOutlier}`, params, {
+    ...setHeaders(),
+  });
+
 /**
  * support namespace
  */
