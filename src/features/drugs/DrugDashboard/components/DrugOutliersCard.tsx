@@ -183,9 +183,9 @@ export function DrugOutliersCard({
 
         if (record.divisionRange) {
           return (
-            Number((record.dose - record.divisionRange).toFixed(2)) +
+            formatNumber(record.dose - record.divisionRange, 2) +
             "-" +
-            record.dose +
+            formatNumber(record.dose, 2) +
             " " +
             unit +
             (record.useWeight ? "/Kg" : "")
