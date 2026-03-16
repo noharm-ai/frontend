@@ -1,4 +1,5 @@
 import { Alert, Card, Space, Spin, Tag } from "antd";
+import { DrugInfoBar, DrugInfoBarItem } from "./DrugInfoBar";
 import { EditOutlined } from "@ant-design/icons";
 
 import { formatNumber } from "src/utils/number";
@@ -59,14 +60,13 @@ export function DrugConversionsCard({
           style={{ marginBottom: 16 }}
         />
       )}
-      {defaultUnit && (
-        <div style={{ marginBottom: 16 }}>
-          Unidade padrão:{" "}
-          <Tag color="green" variant="outlined">
-            {defaultUnit}
+      <DrugInfoBar>
+        <DrugInfoBarItem label="Unidade padrão:">
+          <Tag color={defaultUnit ? "green" : "default"} style={{ margin: 0 }}>
+            {defaultUnit ?? "—"}
           </Tag>
-        </div>
-      )}
+        </DrugInfoBarItem>
+      </DrugInfoBar>
       <Spin spinning={loading}>
         <div>
           {conversions.map((item, index) => (

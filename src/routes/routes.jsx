@@ -173,6 +173,11 @@ const routes = [
   },
   {
     exact: true,
+    path: "/painel-medicamentos/:idSegment/:idDrug/:slug/:dose/:frequency",
+    element: <WithAuth component={DrugDashboard} />,
+  },
+  {
+    exact: true,
     path: "/relatorios",
     element: <WithAuth component={Reports} />,
   },

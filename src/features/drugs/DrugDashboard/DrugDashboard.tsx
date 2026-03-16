@@ -41,6 +41,9 @@ export function DrugDashboard() {
     : null;
   const idDrugParam = params.idDrug ? parseInt(params.idDrug, 10) : null;
 
+  const outlierDose = params.dose;
+  const outlierFrequency = params.frequency;
+
   useEffect(() => {
     dispatch(setIdSegment(idSegmentParam));
     if (idSegmentParam) {
@@ -158,6 +161,8 @@ export function DrugDashboard() {
                 <DrugOutliersCard
                   outliers={drugDashboard.data?.outliers ?? []}
                   loading={drugDashboard.status === "loading"}
+                  outlierDose={outlierDose}
+                  outlierFrequency={outlierFrequency}
                 />
 
                 <DrugConversionsCard

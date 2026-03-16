@@ -3,16 +3,13 @@ import {
   Card,
   Table,
   Tag,
-  Typography,
   Select,
   Spin,
   notification,
   Modal,
   Input,
   Tooltip,
-  Badge,
 } from "antd";
-import dayjs from "dayjs";
 import type { TableProps } from "antd";
 import { ThunderboltOutlined, MessageOutlined } from "@ant-design/icons";
 import { useState } from "react";
@@ -25,6 +22,8 @@ import {
   updateOutlierObs,
 } from "src/features/drugs/DrugDashboard/DrugDashboardSlice";
 import Button from "components/Button";
+import { formatDateTime } from "src/utils/date";
+import { DrugInfoBar, DrugInfoBarItem } from "./DrugInfoBar";
 
 const SCORE_COLOR: Record<number, string> = {
   0: "green",
@@ -61,11 +60,18 @@ interface OutlierItem {
 interface DrugOutliersCardProps {
   outliers: OutlierItem[];
   loading: boolean;
+  outlierDose?: string;
+  outlierFrequency?: string;
 }
 
 const TABLE_HEIGHT = 400;
 
-export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
+export function DrugOutliersCard({
+  outliers,
+  loading,
+  outlierDose,
+  outlierFrequency,
+}: DrugOutliersCardProps) {
   const dispatch = useAppDispatch();
   const idDrug = useAppSelector((state: any) => state.drugDashboard.idDrug);
   const idSegment = useAppSelector(
@@ -276,6 +282,42 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
           description='Nenhum escore encontrado. Clique em "Gerar escores" para calcular os escores deste medicamento.'
         />
       )}
+
+      <DrugInfoBar>
+        {attributes && (
+          <>
+            <DrugInfoBarItem label="Intervalo de dose:">
+              {attributes.divisionRange ? (
+                <Tag color="blue" style={{ margin: 0 }}>
+                  {attributes.divisionRange}
+                  {attributes.idMeasureUnit
+                    ? ` ${attributes.idMeasureUnit}`
+                    : ""}
+                </Tag>
+              ) : (
+                <Tag color="default" style={{ margin: 0 }}>
+                  Não
+                </Tag>
+              )}
+            </DrugInfoBarItem>
+            <DrugInfoBarItem label="Considera peso:">
+              <Tag
+                color={attributes.useWeight ? "green" : "default"}
+                style={{ margin: 0 }}
+              >
+                {attributes.useWeight ? "Sim" : "Não"}
+              </Tag>
+            </DrugInfoBarItem>
+          </>
+        )}
+
+        <DrugInfoBarItem label="Atualizado em:">
+          <Tag color="default" style={{ margin: 0 }}>
+            {lastUpdatedAt ? formatDateTime(lastUpdatedAt) : "-"}
+          </Tag>
+        </DrugInfoBarItem>
+      </DrugInfoBar>
+
       <Table
         columns={columns}
         dataSource={outliers}
@@ -285,21 +327,18 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
         pagination={false}
         virtual
         scroll={{ y: TABLE_HEIGHT }}
+        onRow={(record) => {
+          const isMatch =
+            outlierDose !== undefined &&
+            outlierFrequency !== undefined &&
+            record.dose === parseFloat(outlierDose) &&
+            record.frequency === parseFloat(outlierFrequency);
+          return isMatch
+            ? { style: { background: "rgba(169, 145, 214, 0.2)" } }
+            : {};
+        }}
       />
 
-      {lastUpdatedAt && (
-        <Typography.Text
-          type="secondary"
-          style={{
-            fontSize: 12,
-            marginTop: 16,
-            display: "block",
-          }}
-        >
-          <Badge status="warning" /> Última atualização dos escores:{" "}
-          {dayjs(lastUpdatedAt).format("DD/MM/YYYY HH:mm")}
-        </Typography.Text>
-      )}
       <Modal
         title="Observação"
         open={obsModal.open}
