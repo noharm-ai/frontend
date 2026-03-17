@@ -190,6 +190,15 @@ export function CreateSchemaForm({ open, setOpen }: ICreateSchemaFormProps) {
                               ? resultData.secret_access_key
                               : "Não foi criado"}
                           </Descriptions.Item>
+
+                          <Descriptions.Item
+                            label="GETNAME JWT_SECRET:"
+                            span={3}
+                          >
+                            {resultData.jwt_secret
+                              ? resultData.jwt_secret
+                              : "Não foi criado"}
+                          </Descriptions.Item>
                         </Descriptions>
                         {resultData.create_user && (
                           <p>

@@ -7,7 +7,6 @@ import Popover from "components/PopoverStyled";
 import Tag from "components/Tag";
 import { createSlug } from "utils/transformers/utils";
 import { setCheckedIndexReport } from "features/prescription/PrescriptionSlice";
-import { setDrugUnitConversionOpen } from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import {
   TrackedPrescriptionAction,
   trackPrescriptionAction,
@@ -182,25 +181,6 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
         }}
       >
         Histórico de checagem
-      </AntButton>
-
-      <AntButton
-        style={{ display: "none" }}
-        icon={<HistoryOutlined />}
-        size="small"
-        onClick={() => {
-          trackPrescriptionAction(
-            TrackedPrescriptionAction.CLICK_DRUG_UNIT_CONVERSION,
-          );
-          bag.dispatch(
-            setDrugUnitConversionOpen({
-              idDrug: record.idDrug,
-              open: true,
-            }),
-          );
-        }}
-      >
-        Conversões de unidade
       </AntButton>
     </Space>
   );

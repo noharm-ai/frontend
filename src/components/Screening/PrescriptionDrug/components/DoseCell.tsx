@@ -1,9 +1,16 @@
 import React from "react";
+import { SwapOutlined } from "@ant-design/icons";
 
 import Tooltip from "components/Tooltip";
 import Popover from "components/PopoverStyled";
+import Button from "components/Button";
 import { DoseCellPopover } from "./DoseCell.style";
 import { formatNumber } from "src/utils/number";
+import { setDrugUnitConversionOpen } from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
+import {
+  TrackedPrescriptionAction,
+  trackPrescriptionAction,
+} from "src/utils/tracker";
 
 interface DoseRecord {
   total?: boolean;
@@ -11,6 +18,7 @@ interface DoseRecord {
     disableTotal?: boolean;
     totalVol?: number;
   };
+  idDrug: string;
   measureUnit?: any;
   dose?: string | number;
   dosage?: string | number;
@@ -26,6 +34,7 @@ interface DoseRecord {
 
 interface DoseCellBag {
   t: (key: string) => string;
+  dispatch: (action: unknown) => void;
   handleRowExpand: (record: DoseRecord) => void;
 }
 
@@ -113,6 +122,25 @@ function DoseCell({ record, bag }: DoseCellProps): React.ReactElement | null {
           )}
         </tbody>
       </table>
+
+      <Button
+        style={{ marginTop: "1rem" }}
+        icon={<SwapOutlined />}
+        size="small"
+        onClick={() => {
+          trackPrescriptionAction(
+            TrackedPrescriptionAction.CLICK_DRUG_UNIT_CONVERSION,
+          );
+          bag.dispatch(
+            setDrugUnitConversionOpen({
+              idDrug: record.idDrug,
+              open: true,
+            }),
+          );
+        }}
+      >
+        Conversões de unidade
+      </Button>
     </DoseCellPopover>
   );
 
