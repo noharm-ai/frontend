@@ -632,7 +632,7 @@ const getAntimicrobial = (
   }
 
   const atmList = drugs
-    .filter((d) => d.am)
+    .filter((d) => d.am && !d.suspended)
     .map((d) => ({
       drug: d.drug,
       dose:
