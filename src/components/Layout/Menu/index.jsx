@@ -35,6 +35,7 @@ import {
   FilePptOutlined,
   RobotOutlined,
   SearchOutlined,
+  BookOutlined,
 } from "@ant-design/icons";
 import { Menu as Navigator } from "antd";
 
@@ -320,6 +321,13 @@ export default function Menu({ segments }) {
           icon: <PieChartOutlined />,
           id: "gtm-lnk-relatorios-custom",
           permission: [Permission.READ_CUSTOM_REPORTS],
+        },
+        {
+          key: "/admin/knowledge-base",
+          link: "/admin/knowledge-base",
+          label: "Base de Conhecimento",
+          icon: <BookOutlined />,
+          id: "gtm-lnk-knowledge-base",
         },
         {
           key: "/admin/segmentos",

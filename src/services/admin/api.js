@@ -408,6 +408,21 @@ api.reports.upsertReport = (params = {}) => {
 };
 
 /**
+ * KNOWLEDGE BASE
+ */
+api.knowledgeBase = {};
+api.knowledgeBase.getKnowledgeBase = (params = {}) =>
+  instance.post(`/admin/knowledge-base/list`, params, {
+    ...setHeaders(),
+  });
+
+api.knowledgeBase.upsertKnowledgeBase = (params = {}) => {
+  return instance.post(`/admin/knowledge-base/upsert`, params, {
+    ...setHeaders(),
+  });
+};
+
+/**
  * GLOBAL MEMORY
  */
 api.globalMemory = {};

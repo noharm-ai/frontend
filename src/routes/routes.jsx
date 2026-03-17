@@ -49,6 +49,7 @@ import AdminRelation from "pages/Admin/Relation";
 import AdminMeasureUnit from "pages/Admin/MeasureUnit";
 import AdminProtocol from "pages/Admin/Protocol";
 import AdminReport from "pages/Admin/Report";
+import AdminKnowledgeBase from "pages/Admin/KnowledgeBase";
 import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
 import AdminGlobalExam from "pages/Admin/GlobalExam";
 
@@ -370,6 +371,11 @@ const routes = [
     exact: true,
     path: "/admin/relatorios-customizados",
     element: <WithAuth component={AdminReport} />,
+  },
+  {
+    exact: true,
+    path: "/admin/knowledge-base",
+    element: <WithAuth component={AdminKnowledgeBase} />,
   },
   {
     exact: true,

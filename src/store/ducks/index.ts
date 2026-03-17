@@ -55,6 +55,7 @@ import adminMeasureUnit from "features/admin/MeasureUnit/MeasureUnitSlice";
 import adminTag from "features/admin/Tag/TagSlice";
 import adminProtocol from "features/admin/Protocol/ProtocolSlice";
 import adminReport from "features/admin/Report/ReportSlice";
+import adminKnowledgeBase from "features/admin/KnowledgeBase/KnowledgeBaseSlice";
 import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
 import adminGlobalExam from "features/admin/GlobalExam/GlobalExamSlice";
 
@@ -100,6 +101,7 @@ const adminReducers = combineReducers({
   tag: adminTag,
   protocol: adminProtocol,
   report: adminReport,
+  knowledgeBase: adminKnowledgeBase,
   globalMemory: adminGlobalMemory,
   globalExam: adminGlobalExam,
 });
