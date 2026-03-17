@@ -219,7 +219,11 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
           {substanceCell}
 
           <span className="info-label">idsegmento:</span>
-          <span className="info-value">{record.idSegment ?? "Indefinido"}</span>
+          <span
+            className={record.idSegment ? "info-value" : "substance-warning"}
+          >
+            {record.idSegment ?? "Indefinido"}
+          </span>
 
           <span className="info-label">grp_solution:</span>
           <span className="info-value">{record.grp_solution}</span>
