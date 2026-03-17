@@ -56,7 +56,7 @@ const columns = () => {
     },
     {
       title: "Atualizado em",
-      sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
+      sorter: (a, b) => (a.updatedAt ?? "").localeCompare(b.updatedAt ?? ""),
       render: (entry, record) =>
         record.updatedAt ? formatDateTime(record.updatedAt) : "--",
     },
