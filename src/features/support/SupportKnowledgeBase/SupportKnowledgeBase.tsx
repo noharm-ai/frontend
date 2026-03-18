@@ -3,6 +3,7 @@ import { Button, Input, Skeleton, Typography, Space } from "antd";
 import { BookOutlined, LinkOutlined } from "@ant-design/icons";
 
 import { useAppSelector } from "src/store";
+import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
 
 const { Text, Paragraph } = Typography;
 
@@ -103,9 +104,12 @@ export function SupportKnowledgeBase() {
                         <Button
                           type="link"
                           icon={<LinkOutlined />}
-                          href={article.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          onClick={() => {
+                            trackSupportAction(
+                              TrackedSupportAction.OPEN_ARTICLE,
+                            );
+                            window.open(article.link, "_blank");
+                          }}
                           style={{ padding: 0, height: "auto", fontSize: 13 }}
                         >
                           Ver artigo

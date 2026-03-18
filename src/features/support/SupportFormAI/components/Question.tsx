@@ -15,6 +15,7 @@ import {
   fetchN0Form,
   fetchRelatedArticles,
 } from "../../SupportSlice";
+import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
 
 import { Form } from "styles/Form.style";
 import {
@@ -57,8 +58,8 @@ export function Question({ mode }: QuestionInteface) {
           if (agent_response.includes("SKIP_ANSWER")) {
             dispatch(
               setAIFormResponse(
-                "Desculpe, não encontrei informações na base de conhecimento para conseguir ajudá-lo."
-              )
+                "Desculpe, não encontrei informações na base de conhecimento para conseguir ajudá-lo.",
+              ),
             );
           } else {
             dispatch(setAIFormResponse(agent_response));
@@ -178,7 +179,10 @@ export function Question({ mode }: QuestionInteface) {
                 >
                   <Button
                     type="primary"
-                    onClick={() => handleSubmit()}
+                    onClick={() => {
+                      trackSupportAction(TrackedSupportAction.ASK_AI);
+                      handleSubmit();
+                    }}
                     size="large"
                     style={{ padding: "6px 50px" }}
                     icon={<SendOutlined />}

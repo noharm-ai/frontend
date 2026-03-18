@@ -20,6 +20,7 @@ import {
 } from "features/support/SupportSlice";
 import Permission from "src/models/Permission";
 import DefaultModal from "components/Modal";
+import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
 
 import { ChatHeader } from "src/features/support/SupportFormAI/SupportFormAI.style";
 import { SupportInfo } from "./SupportInfo/SupportInfo";
@@ -46,7 +47,8 @@ export function SupportDrawer() {
 
   useEffect(() => {
     if (supportDrawerOpen) {
-      const path = pathOverride || KnowledgeBasePathEnum.getPath(location.pathname);
+      const path =
+        pathOverride || KnowledgeBasePathEnum.getPath(location.pathname);
       // @ts-expect-error ts 2554 (legacy code)
       dispatch(fetchKnowledgeBaseArticles({ active: true, path: [path] }));
       setShowForm(false);
@@ -55,6 +57,16 @@ export function SupportDrawer() {
       setShowForm(false);
     }
   }, [supportDrawerOpen, dispatch, location.pathname, pathOverride]);
+
+  const handleOpenSupportAI = () => {
+    trackSupportAction(TrackedSupportAction.OPEN_AI_AGENT);
+    setAiModalOpen(true);
+  };
+
+  const handleOpenSupportForm = () => {
+    trackSupportAction(TrackedSupportAction.OPEN_TICKET_FORM);
+    setShowForm(true);
+  };
 
   return (
     <Drawer
@@ -131,7 +143,7 @@ export function SupportDrawer() {
             <Col span={12}>
               <Card
                 hoverable
-                onClick={() => setAiModalOpen(true)}
+                onClick={() => handleOpenSupportAI()}
                 style={{
                   cursor: "pointer",
                   textAlign: "center",
@@ -153,7 +165,7 @@ export function SupportDrawer() {
             <Col span={12}>
               <Card
                 hoverable
-                onClick={() => setShowForm(true)}
+                onClick={() => handleOpenSupportForm()}
                 style={{
                   cursor: "pointer",
                   textAlign: "center",
@@ -176,9 +188,13 @@ export function SupportDrawer() {
           <div style={{ textAlign: "center", marginTop: 12 }}>
             <Button
               type="link"
-              href={`${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => {
+                trackSupportAction(TrackedSupportAction.OPEN_KNOWLEDGE_BASE);
+                window.open(
+                  `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
+                  "_blank",
+                );
+              }}
               icon={<LinkOutlined />}
               style={{ fontSize: 12, color: "#8c8c8c" }}
             >
