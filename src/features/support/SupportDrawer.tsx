@@ -25,7 +25,7 @@ import { ChatHeader } from "src/features/support/SupportFormAI/SupportFormAI.sty
 import { SupportInfo } from "./SupportInfo/SupportInfo";
 import { SupportKnowledgeBase } from "./SupportKnowledgeBase/SupportKnowledgeBase";
 import { SupportFormAI } from "./SupportFormAI/SupportFormAI";
-import { getKnowledgeBasePath } from "./utils/getKnowledgeBasePath";
+import { KnowledgeBasePathEnum } from "src/models/KnowledgeBasePathEnum";
 
 const { Text } = Typography;
 
@@ -46,7 +46,7 @@ export function SupportDrawer() {
 
   useEffect(() => {
     if (supportDrawerOpen) {
-      const path = pathOverride || getKnowledgeBasePath(location.pathname);
+      const path = pathOverride || KnowledgeBasePathEnum.getPath(location.pathname);
       // @ts-expect-error ts 2554 (legacy code)
       dispatch(fetchKnowledgeBaseArticles({ active: true, path: [path] }));
       setShowForm(false);

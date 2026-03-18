@@ -43,7 +43,7 @@ export function SupportKnowledgeBase() {
       )}
       <div
         style={{
-          maxHeight: "50vh",
+          maxHeight: "40vh",
           overflowY: "auto",
           display: "flex",
           flexDirection: "column",
