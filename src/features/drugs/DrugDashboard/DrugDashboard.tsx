@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Alert, Space } from "antd";
+import { MedicineBoxOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import { searchDrugsThunk } from "store/ducks/drugs/thunk";
@@ -124,6 +125,17 @@ export function DrugDashboard() {
         segments={{ list: segments.list, isFetching: segments.isFetching }}
         drugs={{ list: drugsSearch.list, isFetching: drugsSearch.isFetching }}
       />
+      {!drugDashboard.idDrug && (
+        <div style={{ textAlign: "center", padding: "80px 0", color: "#8c8c8c" }}>
+          <MedicineBoxOutlined
+            style={{ fontSize: 72, color: "#d9d9d9", display: "block", marginBottom: 24 }}
+          />
+          <h2 style={{ color: "#595959", marginBottom: 8 }}>Selecione um medicamento</h2>
+          <p style={{ fontSize: 14 }}>
+            Escolha um segmento e um medicamento no filtro acima para visualizar o painel.
+          </p>
+        </div>
+      )}
       {drugDashboard.idSegment &&
         drugDashboard.idDrug &&
         (drugDashboard.data && !drugDashboard.data.substance?.sctid ? (

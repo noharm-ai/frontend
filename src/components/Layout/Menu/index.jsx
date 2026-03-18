@@ -210,8 +210,8 @@ export default function Menu({ segments }) {
           permission: [Permission.WRITE_TAGS],
         },
         {
-          key: "/medicamentos",
-          link: "/medicamentos",
+          key: "/painel-medicamentos",
+          link: "/painel-medicamentos",
           label: t("menu.medications"),
           icon: <MedicineBoxOutlined />,
           id: "gtm-lnk-medicamentos",
