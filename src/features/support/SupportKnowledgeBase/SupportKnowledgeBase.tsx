@@ -1,0 +1,92 @@
+import { Button, Skeleton, Typography, Space } from "antd";
+import { BookOutlined, LinkOutlined } from "@ant-design/icons";
+
+import { useAppSelector } from "src/store";
+
+const { Text, Paragraph } = Typography;
+
+export function SupportKnowledgeBase() {
+  const { status, list } = useAppSelector(
+    (state) => state.support.knowledgeBase,
+  );
+
+  const isLoading = status === "loading" || status === "idle";
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div
+        style={{
+          maxHeight: "50vh",
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+        }}
+      >
+        {isLoading ? (
+          <>
+            <Skeleton active paragraph={{ rows: 3 }} />
+            <Skeleton active paragraph={{ rows: 3 }} />
+          </>
+        ) : list && list.length > 0 ? (
+          <>
+            <Text type="secondary" style={{ fontSize: 13 }}>
+              Encontramos alguns artigos que podem te ajudar:
+            </Text>
+            <Space direction="vertical" style={{ width: "100%" }} size="middle">
+              {list.map((article: any) => (
+                <div
+                  key={article.id}
+                  style={{
+                    border: "1px solid #e8e8e8",
+                    borderRadius: 8,
+                    padding: "12px 16px",
+                    background: "#fafafa",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 8,
+                      marginBottom: article.description ? 6 : 0,
+                    }}
+                  >
+                    <BookOutlined style={{ color: "#FF8845", marginTop: 3 }} />
+                    <Text strong>{article.title}</Text>
+                  </div>
+                  {article.description && (
+                    <Paragraph
+                      type="secondary"
+                      style={{ margin: "0 0 8px 24px", fontSize: 13 }}
+                    >
+                      {article.description}
+                    </Paragraph>
+                  )}
+                  {article.link && (
+                    <div style={{ marginLeft: 24 }}>
+                      <Button
+                        type="link"
+                        icon={<LinkOutlined />}
+                        href={article.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ padding: 0, height: "auto", fontSize: 13 }}
+                      >
+                        Ver artigo
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </Space>
+          </>
+        ) : (
+          <Text type="secondary">
+            Nenhum artigo encontrado para esta página.
+          </Text>
+        )}
+      </div>
+    </div>
+  );
+}
