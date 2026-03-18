@@ -26,6 +26,7 @@ import Summary from "pages/Summary";
 import SummarySearch from "pages/Summary/SummarySearch";
 import SupportCenter from "pages/SupportCenter";
 import SwitchSchema from "pages/SwitchSchema";
+import CustomForms from "pages/CustomForms/CustomForms";
 
 import AdminFrequency from "pages/Admin/Frequency";
 import AdminTag from "pages/Admin/Tag";
@@ -35,6 +36,7 @@ import AdminMemoryRoutes from "pages/Admin/Memory/Routes";
 import AdminMemoryReports from "pages/Admin/Memory/Reports";
 import AdminMemoryFeatures from "pages/Admin/Memory/Features";
 import AdminMemorySchedules from "pages/Admin/Memory/Schedules";
+
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminIntegrationStatus from "pages/Admin/IntegrationStatus";
@@ -199,6 +201,11 @@ const routes = [
   },
   {
     exact: true,
+    path: "/configuracoes/forms-personalizados",
+    element: <WithAuth component={CustomForms} />,
+  },
+  {
+    exact: true,
     path: "/priorizacao/pacientes/cards",
     element: (
       <WithAuth component={Prioritization} prioritizationType={"patient"} />
@@ -297,6 +304,7 @@ const routes = [
     path: "/admin/features",
     element: <WithAuth component={AdminMemoryFeatures} />,
   },
+
   {
     exact: true,
     path: "/admin/tags",
