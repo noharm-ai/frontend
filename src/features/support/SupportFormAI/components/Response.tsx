@@ -1,3 +1,4 @@
+import { useState } from "react";
 import DOMPurify from "dompurify";
 import { Flex, Skeleton, Divider, Space, Popconfirm } from "antd";
 import { motion } from "motion/react";
@@ -9,6 +10,7 @@ import {
   createClosedTicket,
 } from "../../SupportSlice";
 import Button from "components/Button";
+import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
 
 import {
   ChatContainer,
@@ -23,15 +25,16 @@ interface ResponseInterface {
 }
 
 export function Response({ mode }: ResponseInterface) {
+  const [feedback, setFeedback] = useState<"positive" | "negative" | null>(null);
   const dispatch = useAppDispatch();
   const status = useAppSelector((state) => state.support.aiform.askn0.status);
   const response = useAppSelector((state) => state.support.aiform.response);
   const articles = useAppSelector(
-    (state) => state.support.aiform.relatedArticles.list
+    (state) => state.support.aiform.relatedArticles.list,
   );
   const question = useAppSelector((state) => state.support.aiform.question);
   const currentStep = useAppSelector(
-    (state) => state.support.aiform.currentStep
+    (state) => state.support.aiform.currentStep,
   );
 
   const resolve = () => {
@@ -123,12 +126,53 @@ export function Response({ mode }: ResponseInterface) {
                   </ActionSection>
                 </>
               )}
+
+              {mode === "simple" && (
+                <>
+                  <Divider />
+
+                  <ActionSection>
+                    <ActionText>Esta resposta foi útil?</ActionText>
+                  </ActionSection>
+                </>
+              )}
             </>
           )}
         </motion.div>
 
         {status === "failed" && <p>Nenhuma resposta disponível</p>}
       </ChatBubble>
+
+      {status === "succeeded" && mode === "simple" && (
+        <ChatBubble className="user">
+          {feedback ? (
+            <>Obrigado pelo feedback!</>
+          ) : (
+            <Flex justify="center" align="center" gap={10}>
+              <Button
+                type="primary"
+                size="large"
+                onClick={() => {
+                  trackSupportAction(TrackedSupportAction.AI_RESPONSE_POSITIVE);
+                  setFeedback("positive");
+                }}
+              >
+                Sim, foi útil!
+              </Button>
+              <Button
+                danger
+                size="large"
+                onClick={() => {
+                  trackSupportAction(TrackedSupportAction.AI_RESPONSE_NEGATIVE);
+                  setFeedback("negative");
+                }}
+              >
+                Não foi útil
+              </Button>
+            </Flex>
+          )}
+        </ChatBubble>
+      )}
 
       {status === "succeeded" && mode === "default" && (
         <ChatBubble className="user">

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Alert, Button, Spin, Space, Divider } from "antd";
+import { useEffect } from "react";
+import { Alert, Button, Spin, Divider } from "antd";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import {
@@ -7,9 +7,7 @@ import {
   ChatBubble,
   ActionSection,
 } from "../SupportFormAI/SupportFormAI.style";
-import { fetchRequesters, resetAIForm } from "../SupportSlice";
-import DefaultModal from "components/Modal";
-import { SupportFormAI } from "../SupportFormAI/SupportFormAI";
+import { fetchRequesters } from "../SupportSlice";
 
 export function SupportInfo() {
   const dispatch = useAppDispatch();
@@ -20,18 +18,12 @@ export function SupportInfo() {
     (state) => state.support.fetchRequesters.status
   );
   const supportDrawerOpen = useAppSelector((state) => state.support.open);
-  const [supportFormOpen, setSupportOpen] = useState(false);
 
   useEffect(() => {
     if (supportDrawerOpen) {
       dispatch(fetchRequesters());
     }
   }, [dispatch, supportDrawerOpen]);
-
-  const cancelSupportForm = () => {
-    dispatch(resetAIForm());
-    setSupportOpen(false);
-  };
 
   return (
     <ChatContainer>
@@ -71,40 +63,18 @@ export function SupportInfo() {
         <Divider />
 
         <ActionSection>
-          <Space>
-            <Button
-              type="default"
-              href={`${
-                import.meta.env.VITE_APP_ODOO_LINK
-              }/knowledge/article/39`}
-              target="_blank"
-              rel="noreferer noopener"
-            >
-              Consulte a Base de Conhecimento
-            </Button>
-            <Button type="primary" onClick={() => setSupportOpen(true)}>
-              Consulte o nosso Agente de Suporte (IA)
-            </Button>
-          </Space>
+          <Button
+            type="default"
+            href={`${
+              import.meta.env.VITE_APP_ODOO_LINK
+            }/knowledge/article/39`}
+            target="_blank"
+            rel="noreferer noopener"
+          >
+            Consulte a Base de Conhecimento
+          </Button>
         </ActionSection>
       </ChatBubble>
-
-      <DefaultModal
-        width={700}
-        centered
-        footer={null}
-        open={supportFormOpen}
-        destroyOnHidden
-        onCancel={() => cancelSupportForm()}
-      >
-        <header>
-          <h2 className="modal-title">Agente de Suporte (IA)</h2>
-        </header>
-        <p>
-          Tem alguma dúvida? Descreva no campo abaixo e a IA tentará ajudar:
-        </p>
-        <SupportFormAI mode="simple" />
-      </DefaultModal>
     </ChatContainer>
   );
 }

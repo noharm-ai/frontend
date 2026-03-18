@@ -783,6 +783,11 @@ api.support.fetchRelatedArticles = (params) =>
     ...setHeaders(),
   });
 
+api.support.fetchKnowledgeBaseArticles = (params) =>
+  instance.post(`/support/knowledge-base-articles`, params, {
+    ...setHeaders(),
+  });
+
 /**
  * Summary namespace
  */

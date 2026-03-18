@@ -33,7 +33,7 @@ export function KnowledgeBase() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Base de Conhecimento</h1>
+          <h1 className="page-header-title">Ajuda: Base de Conhecimento</h1>
           <div className="page-header-legend">
             Administração dos registros da base de conhecimento
           </div>

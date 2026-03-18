@@ -235,6 +235,13 @@ export default function Menu({ segments }) {
       permission: [Permission.MAINTAINER],
       children: [
         {
+          key: "/admin/knowledge-base",
+          link: "/admin/knowledge-base",
+          label: "Ajuda: Base de Conhecimento",
+          icon: <BookOutlined />,
+          id: "gtm-lnk-knowledge-base",
+        },
+        {
           key: "/admin/curadoria-medicamentos",
           link: "/admin/curadoria-medicamentos",
           label: "Curadoria medicamentos",
@@ -322,13 +329,7 @@ export default function Menu({ segments }) {
           id: "gtm-lnk-relatorios-custom",
           permission: [Permission.READ_CUSTOM_REPORTS],
         },
-        {
-          key: "/admin/knowledge-base",
-          link: "/admin/knowledge-base",
-          label: "Base de Conhecimento",
-          icon: <BookOutlined />,
-          id: "gtm-lnk-knowledge-base",
-        },
+
         {
           key: "/admin/segmentos",
           link: "/admin/segmentos",
