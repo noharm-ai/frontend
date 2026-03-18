@@ -3,6 +3,7 @@ import {
   RobotOutlined,
   CustomerServiceOutlined,
   LinkOutlined,
+  ArrowLeftOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -92,12 +93,22 @@ export function SupportDrawer() {
     >
       {!showForm ? (
         <SupportKnowledgeBase />
-      ) : PermissionService().has(Permission.WRITE_SUPPORT) ? (
-        <>
-          <SupportForm />
-        </>
       ) : (
-        <SupportInfo />
+        <>
+          <Button
+            type="link"
+            icon={<ArrowLeftOutlined />}
+            onClick={() => setShowForm(false)}
+            style={{ paddingLeft: 0, marginBottom: 8 }}
+          >
+            Voltar
+          </Button>
+          {PermissionService().has(Permission.WRITE_SUPPORT) ? (
+            <SupportForm />
+          ) : (
+            <SupportInfo />
+          )}
+        </>
       )}
 
       {!showForm && kbStatus === "succeeded" && (
@@ -132,7 +143,7 @@ export function SupportDrawer() {
                   style={{ fontSize: 28, color: "#FF8845", marginBottom: 8 }}
                 />
                 <div style={{ fontWeight: 600, marginBottom: 4 }}>
-                  Agente IA
+                  Suporte IA
                 </div>
                 <Text type="secondary" style={{ fontSize: 12 }}>
                   Resposta rápida e automatizada
@@ -154,7 +165,7 @@ export function SupportDrawer() {
                   style={{ fontSize: 28, color: "#2e3c5a", marginBottom: 8 }}
                 />
                 <div style={{ fontWeight: 600, marginBottom: 4 }}>
-                  Central de Ajuda
+                  Abrir chamado
                 </div>
                 <Text type="secondary" style={{ fontSize: 12 }}>
                   Falar com nossa equipe

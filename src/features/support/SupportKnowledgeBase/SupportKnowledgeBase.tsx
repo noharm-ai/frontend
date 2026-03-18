@@ -33,7 +33,7 @@ export function SupportKnowledgeBase() {
             Encontramos alguns artigos que podem te ajudar:
           </Text>
           <Input.Search
-            placeholder="Buscar artigos..."
+            placeholder="Buscar..."
             allowClear
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -62,53 +62,59 @@ export function SupportKnowledgeBase() {
                 Nenhum artigo encontrado para &ldquo;{query}&rdquo;.
               </Text>
             ) : (
-            <Space direction="vertical" style={{ width: "100%" }} size="middle">
-              {filtered.map((article: any) => (
-                <div
-                  key={article.id}
-                  style={{
-                    border: "1px solid #e8e8e8",
-                    borderRadius: 8,
-                    padding: "12px 16px",
-                    background: "#fafafa",
-                  }}
-                >
+              <Space
+                orientation="vertical"
+                style={{ width: "100%" }}
+                size="middle"
+              >
+                {filtered.map((article: any) => (
                   <div
+                    key={article.id}
                     style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 8,
-                      marginBottom: article.description ? 6 : 0,
+                      border: "1px solid #e8e8e8",
+                      borderRadius: 8,
+                      padding: "12px 16px",
+                      background: "#fafafa",
                     }}
                   >
-                    <BookOutlined style={{ color: "#FF8845", marginTop: 3 }} />
-                    <Text strong>{article.title}</Text>
-                  </div>
-                  {article.description && (
-                    <Paragraph
-                      type="secondary"
-                      style={{ margin: "0 0 8px 24px", fontSize: 13 }}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 8,
+                        marginBottom: article.description ? 6 : 0,
+                      }}
                     >
-                      {article.description}
-                    </Paragraph>
-                  )}
-                  {article.link && (
-                    <div style={{ marginLeft: 24 }}>
-                      <Button
-                        type="link"
-                        icon={<LinkOutlined />}
-                        href={article.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ padding: 0, height: "auto", fontSize: 13 }}
-                      >
-                        Ver artigo
-                      </Button>
+                      <BookOutlined
+                        style={{ color: "#FF8845", marginTop: 3 }}
+                      />
+                      <Text strong>{article.title}</Text>
                     </div>
-                  )}
-                </div>
-              ))}
-            </Space>
+                    {article.description && (
+                      <Paragraph
+                        type="secondary"
+                        style={{ margin: "0 0 8px 24px", fontSize: 13 }}
+                      >
+                        {article.description}
+                      </Paragraph>
+                    )}
+                    {article.link && (
+                      <div style={{ marginLeft: 24 }}>
+                        <Button
+                          type="link"
+                          icon={<LinkOutlined />}
+                          href={article.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ padding: 0, height: "auto", fontSize: 13 }}
+                        >
+                          Ver artigo
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </Space>
             )}
           </>
         ) : (
