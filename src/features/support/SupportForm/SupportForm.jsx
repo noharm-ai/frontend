@@ -41,7 +41,7 @@ export default function SupportForm() {
                 message: `${value.name}: ${t("validation.max2mb")}`,
                 path: "fileList",
               });
-        })
+        }),
     ),
   });
 
@@ -203,21 +203,6 @@ export default function SupportForm() {
                 Evite incluir mais de um chamado sobre o mesmo assunto, caso
                 ainda esteja em aberto. Se tiver mais exemplos ou perguntas,
                 envie no mesmo chamado.
-              </p>
-
-              <p>
-                Não hesite em visitar nossa{" "}
-                <a
-                  href={`${
-                    import.meta.env.VITE_APP_ODOO_LINK
-                  }/knowledge/article/39`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {" "}
-                  Base de Conhecimento
-                </a>
-                . Você pode encontrar a resposta para sua pergunta lá.
               </p>
             </div>
 
