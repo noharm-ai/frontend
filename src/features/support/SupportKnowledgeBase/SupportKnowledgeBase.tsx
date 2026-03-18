@@ -1,4 +1,5 @@
-import { Button, Skeleton, Typography, Space } from "antd";
+import { useState } from "react";
+import { Button, Input, Skeleton, Typography, Space } from "antd";
 import { BookOutlined, LinkOutlined } from "@ant-design/icons";
 
 import { useAppSelector } from "src/store";
@@ -9,11 +10,37 @@ export function SupportKnowledgeBase() {
   const { status, list } = useAppSelector(
     (state) => state.support.knowledgeBase,
   );
+  const [query, setQuery] = useState("");
 
   const isLoading = status === "loading" || status === "idle";
 
+  const filtered =
+    query.trim() === ""
+      ? list
+      : list.filter((article: any) => {
+          const q = query.toLowerCase();
+          return (
+            article.title?.toLowerCase().includes(q) ||
+            article.description?.toLowerCase().includes(q)
+          );
+        });
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      {!isLoading && list && list.length > 0 && (
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Text type="secondary" style={{ fontSize: 13, flex: 1 }}>
+            Encontramos alguns artigos que podem te ajudar:
+          </Text>
+          <Input.Search
+            placeholder="Buscar artigos..."
+            allowClear
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            style={{ flex: 1 }}
+          />
+        </div>
+      )}
       <div
         style={{
           maxHeight: "50vh",
@@ -30,11 +57,13 @@ export function SupportKnowledgeBase() {
           </>
         ) : list && list.length > 0 ? (
           <>
-            <Text type="secondary" style={{ fontSize: 13 }}>
-              Encontramos alguns artigos que podem te ajudar:
-            </Text>
+            {filtered.length === 0 ? (
+              <Text type="secondary">
+                Nenhum artigo encontrado para &ldquo;{query}&rdquo;.
+              </Text>
+            ) : (
             <Space direction="vertical" style={{ width: "100%" }} size="middle">
-              {list.map((article: any) => (
+              {filtered.map((article: any) => (
                 <div
                   key={article.id}
                   style={{
@@ -80,6 +109,7 @@ export function SupportKnowledgeBase() {
                 </div>
               ))}
             </Space>
+            )}
           </>
         ) : (
           <Text type="secondary">
