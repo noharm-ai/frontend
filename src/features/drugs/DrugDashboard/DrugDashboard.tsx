@@ -26,6 +26,7 @@ import Button from "components/Button";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
 import { PageHeader } from "src/styles/PageHeader.style";
+import DrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawer";
 
 export function DrugDashboard() {
   const dispatch = useAppDispatch();
@@ -126,13 +127,23 @@ export function DrugDashboard() {
         drugs={{ list: drugsSearch.list, isFetching: drugsSearch.isFetching }}
       />
       {!drugDashboard.idDrug && (
-        <div style={{ textAlign: "center", padding: "80px 0", color: "#8c8c8c" }}>
+        <div
+          style={{ textAlign: "center", padding: "80px 0", color: "#8c8c8c" }}
+        >
           <MedicineBoxOutlined
-            style={{ fontSize: 72, color: "#d9d9d9", display: "block", marginBottom: 24 }}
+            style={{
+              fontSize: 72,
+              color: "#d9d9d9",
+              display: "block",
+              marginBottom: 24,
+            }}
           />
-          <h2 style={{ color: "#595959", marginBottom: 8 }}>Selecione um medicamento</h2>
+          <h2 style={{ color: "#595959", marginBottom: 8 }}>
+            Selecione um medicamento
+          </h2>
           <p style={{ fontSize: 14 }}>
-            Escolha um segmento e um medicamento no filtro acima para visualizar o painel.
+            Escolha um segmento e um medicamento no filtro acima para visualizar
+            o painel.
           </p>
         </div>
       )}
@@ -197,6 +208,7 @@ export function DrugDashboard() {
         key={drugGenerateScoreOpenCount}
         onAfterSave={handleAfterSave}
       />
+      <DrugReferenceDrawer placement="bottom" />
     </>
   );
 }

@@ -109,7 +109,10 @@ export default function DrugAttributes() {
             setDrugForm: (data) => dispatch(setDrugForm(data)),
             openUnitConversion: (idDrug) =>
               dispatch(
-                setDrugUnitConversionOpen({ open: true, idDrug: String(idDrug) }),
+                setDrugUnitConversionOpen({
+                  open: true,
+                  idDrug: String(idDrug),
+                }),
               ),
           })}
           pagination={false}
@@ -147,7 +150,7 @@ export default function DrugAttributes() {
           }
         />
       </PaginationContainer>
-      <DrugReferenceDrawer />
+      <DrugReferenceDrawer placement="bottom" />
       <DrugUnitConversion onAfterSave={reload} />
     </>
   );

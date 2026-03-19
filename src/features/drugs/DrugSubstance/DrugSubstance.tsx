@@ -2,14 +2,22 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Spin } from "antd";
-import { CheckOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  CheckOutlined,
+  EditOutlined,
+  FileTextOutlined,
+} from "@ant-design/icons";
 
 import { Select } from "components/Inputs";
 import notification from "components/notification";
 import Button from "components/Button";
+import Tooltip from "components/Tooltip";
 import { getSubstances } from "features/lists/ListsSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import { updateDrugSubstance } from "./DrugSubstanceSlice";
+import { setDrawerSctid } from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
 
 interface DrugSubstanceProps {
   idDrug: number;
@@ -77,14 +85,25 @@ export default function DrugSubstance({
     return (
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         <span>{sctNameA ?? "-"}</span>
-        <Button
-          type="link"
-          size="small"
-          icon={<EditOutlined />}
-          onClick={handleEnterEdit}
-        >
-          Alterar substância
-        </Button>
+        <Tooltip title="Alterar substância">
+          <Button
+            type="primary"
+            ghost
+            shape="circle"
+            icon={<EditOutlined />}
+            onClick={handleEnterEdit}
+          />
+        </Tooltip>
+        {PermissionService().has(Permission.MAINTAINER) && (
+          <Tooltip title="Referência">
+            <Button
+              onClick={() => dispatch(setDrawerSctid(sctidA))}
+              icon={<FileTextOutlined />}
+              disabled={!sctidA}
+              shape="circle"
+            ></Button>
+          </Tooltip>
+        )}
       </div>
     );
   }
