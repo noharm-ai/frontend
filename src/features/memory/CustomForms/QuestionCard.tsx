@@ -62,6 +62,21 @@ export function QuestionCard({
         {errors.label && <div className="form-error">{errors.label}</div>}
       </div>
 
+      <div className="form-row">
+        <div className="form-label">
+          <label>Ajuda:</label>
+        </div>
+        <div className="form-input">
+          <Input
+            value={q.help ?? ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              onUpdate(gIdx, qIdx, "help", e.target.value)
+            }
+            placeholder="Texto de ajuda para o preenchimento"
+          />
+        </div>
+      </div>
+
       <div className="form-row form-row-flex">
         <div className="form-row">
           <div className="form-label">

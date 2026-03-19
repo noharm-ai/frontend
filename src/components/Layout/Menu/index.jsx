@@ -36,6 +36,7 @@ import {
   RobotOutlined,
   SearchOutlined,
   BookOutlined,
+  FormOutlined,
 } from "@ant-design/icons";
 import { Menu as Navigator } from "antd";
 
@@ -200,6 +201,14 @@ export default function Menu({ segments }) {
           icon: <ExperimentOutlined />,
           id: "gtm-lnk-exames",
           permission: [Permission.ADMIN_EXAMS],
+        },
+        {
+          key: "/configuracoes/forms-personalizados",
+          link: "/configuracoes/forms-personalizados",
+          label: "Formulários de evolução",
+          icon: <FormOutlined />,
+          id: "gtm-lnk-customForms",
+          permission: [Permission.WRITE_CUSTOM_FORMS],
         },
         {
           key: "/admin/tags",

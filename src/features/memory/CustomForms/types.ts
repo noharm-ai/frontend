@@ -1,6 +1,7 @@
 export interface Question {
   id: string;
   label: string;
+  help?: string;
   type: "text" | "number" | "options" | "options-multiple";
   options: string[];
   required: boolean;
@@ -21,6 +22,7 @@ export interface CustomForm {
 export const emptyQuestion = (): Question => ({
   id: "",
   label: "",
+  help: "",
   type: "text",
   options: [],
   required: false,
