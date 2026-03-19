@@ -37,8 +37,9 @@ export function QuestionCard({
           <Input
             value={q.id}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              onUpdate(gIdx, qIdx, "id", e.target.value)
+              onUpdate(gIdx, qIdx, "id", e.target.value.replace(/ /g, ""))
             }
+            maxLength={100}
             placeholder="identificador-unico"
           />
         </div>

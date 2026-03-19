@@ -8,6 +8,7 @@ export interface Question {
 
 export interface FormGroup {
   group: string;
+  description?: string;
   questions: Question[];
 }
 
@@ -27,6 +28,7 @@ export const emptyQuestion = (): Question => ({
 
 export const emptyGroup = (): FormGroup => ({
   group: "",
+  description: "",
   questions: [emptyQuestion()],
 });
 

@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import Button from "components/Button";
 import Collapse from "components/Collapse";
+import RichTextView from "src/components/RichTextView";
 
 import Base from "./Base";
 import { CustomFormContainer } from "../Form.style";
@@ -34,7 +35,7 @@ export default function CustomForm({
                 initialValues[question.id] = JSON.stringify(
                   values[question.id],
                   null,
-                  2
+                  2,
                 );
               } catch {
                 initialValues[question.id] = values[question.id];
@@ -74,7 +75,7 @@ export default function CustomForm({
                 } catch {
                   return false;
                 }
-              }
+              },
             );
           } else {
             validationShape[question.id] = Yup.string()
@@ -131,6 +132,7 @@ export default function CustomForm({
             >
               {template.map((item) => (
                 <Collapse.Panel key={item.group} header={item.group}>
+                  {item.description && <RichTextView text={item.description} />}
                   <Base
                     horizontal={horizontal}
                     item={item}
@@ -141,6 +143,9 @@ export default function CustomForm({
             </Collapse>
           ) : (
             <div className="single-panel">
+              {template[0].description && (
+                <RichTextView text={template[0].description} />
+              )}
               <Base
                 horizontal={horizontal}
                 item={template[0]}

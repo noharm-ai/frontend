@@ -50,7 +50,7 @@ export const CarouselNav = styled.div`
 export const GroupHeader = styled.div`
   display: flex;
   gap: 1rem;
-  align-items: flex-end;
+  align-items: flex-start;
   margin-bottom: 0.5rem;
 
   .group-name-field {
