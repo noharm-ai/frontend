@@ -475,6 +475,23 @@ const putMemoryUnique = (bearerToken, { type, ...params }) => {
 };
 
 /**
+ * Custom Forms.
+ *
+ */
+api.customForms = {};
+api.customForms.putCustomForm = ({ id, ...params }) => {
+  if (id) {
+    return instance.put(
+      `${endpoints.memory}/custom-forms/${id}`,
+      params,
+      setHeaders(),
+    );
+  }
+
+  return instance.put(`${endpoints.memory}/custom-forms`, params, setHeaders());
+};
+
+/**
  * User.
  *
  */

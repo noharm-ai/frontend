@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Space, Popconfirm, Tag } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Tag } from "antd";
+import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import Table from "components/Table";
@@ -18,7 +18,6 @@ import { CustomFormEditor, CustomForm } from "./CustomFormEditor";
 function MemoryCustomForms() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch() as any;
-  const id = useAppSelector((state: any) => state.memoryCustomForms.id);
   const forms: CustomForm[] = useAppSelector(
     (state: any) => state.memoryCustomForms.forms,
   );
@@ -59,30 +58,21 @@ function MemoryCustomForms() {
     setEditorOpen(false);
   };
 
-  const saveArray = (value: CustomForm[]) => {
-    dispatch(saveCustomForms({ id, kind: "custom-forms", value })).then(
-      (response: any) => {
-        if (response.error) {
-          notification.error({ message: getErrorMessage(response, t) });
-        } else {
-          notification.success({ message: t("success.generic") });
-          setEditorOpen(false);
-          dispatch(fetchCustomForms());
-        }
-      },
-    );
-  };
-
   const handleEditorSave = (form: CustomForm) => {
-    const updated =
-      editIndex === null
-        ? [...forms, form]
-        : forms.map((f, i) => (i === editIndex ? form : f));
-    saveArray(updated);
-  };
+    const formId =
+      editIndex !== null ? (forms[editIndex] as any).key : undefined;
 
-  const deleteForm = (index: number) => {
-    saveArray(forms.filter((_, i) => i !== index));
+    dispatch(
+      saveCustomForms({ id: formId, type: "custom-forms", value: form }),
+    ).then((response: any) => {
+      if (response.error) {
+        notification.error({ message: getErrorMessage(response, t) });
+      } else {
+        notification.success({ message: t("success.generic") });
+        setEditorOpen(false);
+        dispatch(fetchCustomForms());
+      }
+    });
   };
 
   const columns = [
@@ -123,21 +113,11 @@ function MemoryCustomForms() {
       width: 120,
       align: "center" as const,
       render: (_: any, _record: any, index: number) => (
-        <Space>
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={() => openEditor(index)}
-          />
-          <Popconfirm
-            title="Remover formulário?"
-            onConfirm={() => deleteForm(index)}
-            okText="Sim"
-            cancelText="Não"
-          >
-            <Button danger icon={<DeleteOutlined />} />
-          </Popconfirm>
-        </Space>
+        <Button
+          type="primary"
+          icon={<EditOutlined />}
+          onClick={() => openEditor(index)}
+        />
       ),
     },
   ];

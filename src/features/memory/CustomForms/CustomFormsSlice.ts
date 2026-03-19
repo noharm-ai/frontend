@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/api";
 
 const initialState = {
-  id: null as number | null,
   forms: [] as any[],
   status: "idle" as string,
   saveStatus: "idle" as string,
@@ -26,8 +25,7 @@ export const saveCustomForms = createAsyncThunk(
   "memory-custom-forms/save",
   async (params: any, thunkAPI: any) => {
     try {
-      const { access_token } = (thunkAPI.getState() as any).auth.identify;
-      const response = await api.putMemory(access_token, params);
+      const response = await api.customForms.putCustomForm(params);
       return response.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.response.data);
@@ -51,8 +49,6 @@ const customFormsSlice = createSlice({
       .addCase(fetchCustomForms.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.forms = action.payload.data;
-
-        console.log("forms", state.forms);
       })
       .addCase(fetchCustomForms.rejected, (state, action) => {
         state.status = "failed";
