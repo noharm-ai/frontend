@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { useFormikContext } from "formik";
-import { Divider, Tabs } from "antd";
+import { Divider, Tabs, Segmented } from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
   LeftOutlined,
   RightOutlined,
+  EditOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 
+import CustomFormPreview from "components/Forms/CustomForm";
 import Switch from "components/Switch";
 import { Input } from "components/Inputs";
 import Button from "components/Button";
@@ -24,6 +27,7 @@ import { QuestionCard } from "./QuestionCard";
 
 export function FormBody() {
   const { values, errors, setFieldValue } = useFormikContext<CustomForm>();
+  const [mode, setMode] = useState<"edit" | "preview">("edit");
   const [activeKey, setActiveKey] = useState("0");
   const [carouselPages, setCarouselPages] = useState<Record<number, number>>(
     {},
@@ -138,141 +142,167 @@ export function FormBody() {
         </div>
       </div>
 
+      <Segmented
+        value={mode}
+        onChange={(v) => setMode(v as "edit" | "preview")}
+        options={[
+          { label: "Editar", value: "edit", icon: <EditOutlined /> },
+          { label: "Pré-visualizar", value: "preview", icon: <EyeOutlined /> },
+        ]}
+        style={{ marginTop: "0.75rem" }}
+      />
+
       <Divider />
 
-      <Tabs
-        activeKey={activeKey}
-        onChange={setActiveKey}
-        tabBarExtraContent={
-          <Button icon={<PlusOutlined />} onClick={addGroup}>
-            Adicionar Grupo
-          </Button>
-        }
-        items={values.data.map((g, gIdx) => ({
-          key: String(gIdx),
-          label: g.group || `Grupo ${gIdx + 1}`,
-          children: (
-            <GroupContainer>
-              <GroupHeader>
-                <div className="group-name-field">
-                  <div className="form-label">
-                    <label>Grupo:</label>
-                  </div>
-                  <div className="form-input">
-                    <Input
-                      value={g.group}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        updateGroupName(gIdx, e.target.value)
-                      }
-                      placeholder="Nome do grupo"
-                    />
-                  </div>
-                  {groupErrors[gIdx]?.group && (
-                    <div className="form-error">{groupErrors[gIdx].group}</div>
-                  )}
-                </div>
-                {values.data.length > 1 && (
-                  <Button
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => removeGroup(gIdx)}
-                  >
-                    Remover Grupo
-                  </Button>
-                )}
-              </GroupHeader>
-
-              <div className="form-row">
-                <div className="form-label">
-                  <label>Questões:</label>
-                </div>
-              </div>
-
-              {(() => {
-                const currentPage = getPage(gIdx);
-                const totalPages = Math.ceil(g.questions.length / 2);
-                const pages: Array<typeof g.questions> = [];
-                for (let i = 0; i < g.questions.length; i += 2) {
-                  pages.push(g.questions.slice(i, i + 2));
-                }
-                const canPrev = currentPage > 0;
-                const canNext = currentPage < totalPages - 1;
-
-                return (
-                  <>
-                    {totalPages > 1 && (
-                      <CarouselNav>
-                        <Button
-                          icon={<LeftOutlined />}
-                          size="small"
-                          disabled={!canPrev}
-                          onClick={() =>
-                            setCarouselPages((p) => ({
-                              ...p,
-                              [gIdx]: currentPage - 1,
-                            }))
-                          }
-                        />
-                        <span style={{ fontSize: "13px", color: "#666" }}>
-                          {currentPage + 1} / {totalPages}
-                        </span>
-                        <Button
-                          icon={<RightOutlined />}
-                          size="small"
-                          disabled={!canNext}
-                          onClick={() =>
-                            setCarouselPages((p) => ({
-                              ...p,
-                              [gIdx]: currentPage + 1,
-                            }))
-                          }
-                        />
-                      </CarouselNav>
-                    )}
-
-                    <CarouselWrapper>
-                      <CarouselTrack page={currentPage}>
-                        {pages.map((pageQuestions, pageIdx) => (
-                          <CarouselSlide key={pageIdx}>
-                            {pageQuestions.map((q, slotIdx) => {
-                              const qIdx = pageIdx * 2 + slotIdx;
-                              const qErrors =
-                                groupErrors[gIdx]?.questions?.[qIdx] ?? {};
-
-                              return (
-                                <QuestionCard
-                                  key={qIdx}
-                                  q={q}
-                                  qIdx={qIdx}
-                                  gIdx={gIdx}
-                                  canRemove={g.questions.length > 1}
-                                  errors={qErrors}
-                                  onUpdate={updateQuestion}
-                                  onRemove={removeQuestion}
-                                />
-                              );
-                            })}
-                          </CarouselSlide>
-                        ))}
-                      </CarouselTrack>
-                    </CarouselWrapper>
-
-                    <div style={{ marginTop: "0.75rem" }}>
-                      <Button
-                        block
-                        icon={<PlusOutlined />}
-                        onClick={() => addQuestion(gIdx)}
-                      >
-                        Adicionar Questão
-                      </Button>
+      {mode === "preview" ? (
+        <CustomFormPreview
+          onSubmit={() => {}}
+          onCancel={() => {}}
+          onChange={() => {}}
+          isSaving={false}
+          template={values.data}
+          startClosed={false}
+          horizontal={false}
+          btnSaveText={"--"}
+          values={{}}
+        />
+      ) : (
+        <Tabs
+          activeKey={activeKey}
+          onChange={setActiveKey}
+          tabBarExtraContent={
+            <Button icon={<PlusOutlined />} onClick={addGroup}>
+              Adicionar Grupo
+            </Button>
+          }
+          items={values.data.map((g, gIdx) => ({
+            key: String(gIdx),
+            label: g.group || `Grupo ${gIdx + 1}`,
+            children: (
+              <GroupContainer>
+                <GroupHeader>
+                  <div className="group-name-field">
+                    <div className="form-label">
+                      <label>Grupo:</label>
                     </div>
-                  </>
-                );
-              })()}
-            </GroupContainer>
-          ),
-        }))}
-      />
+                    <div className="form-input">
+                      <Input
+                        value={g.group}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          updateGroupName(gIdx, e.target.value)
+                        }
+                        placeholder="Nome do grupo"
+                      />
+                    </div>
+                    {groupErrors[gIdx]?.group && (
+                      <div className="form-error">
+                        {groupErrors[gIdx].group}
+                      </div>
+                    )}
+                  </div>
+                  {values.data.length > 1 && (
+                    <Button
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={() => removeGroup(gIdx)}
+                    >
+                      Remover Grupo
+                    </Button>
+                  )}
+                </GroupHeader>
+
+                <div className="form-row">
+                  <div className="form-label">
+                    <label>Questões:</label>
+                  </div>
+                </div>
+
+                {(() => {
+                  const currentPage = getPage(gIdx);
+                  const totalPages = Math.ceil(g.questions.length / 2);
+                  const pages: Array<typeof g.questions> = [];
+                  for (let i = 0; i < g.questions.length; i += 2) {
+                    pages.push(g.questions.slice(i, i + 2));
+                  }
+                  const canPrev = currentPage > 0;
+                  const canNext = currentPage < totalPages - 1;
+
+                  return (
+                    <>
+                      {totalPages > 1 && (
+                        <CarouselNav>
+                          <Button
+                            icon={<LeftOutlined />}
+                            size="small"
+                            disabled={!canPrev}
+                            onClick={() =>
+                              setCarouselPages((p) => ({
+                                ...p,
+                                [gIdx]: currentPage - 1,
+                              }))
+                            }
+                          />
+                          <span style={{ fontSize: "13px", color: "#666" }}>
+                            {currentPage + 1} / {totalPages}
+                          </span>
+                          <Button
+                            icon={<RightOutlined />}
+                            size="small"
+                            disabled={!canNext}
+                            onClick={() =>
+                              setCarouselPages((p) => ({
+                                ...p,
+                                [gIdx]: currentPage + 1,
+                              }))
+                            }
+                          />
+                        </CarouselNav>
+                      )}
+
+                      <CarouselWrapper>
+                        <CarouselTrack page={currentPage}>
+                          {pages.map((pageQuestions, pageIdx) => (
+                            <CarouselSlide key={pageIdx}>
+                              {pageQuestions.map((q, slotIdx) => {
+                                const qIdx = pageIdx * 2 + slotIdx;
+                                const qErrors =
+                                  groupErrors[gIdx]?.questions?.[qIdx] ?? {};
+
+                                return (
+                                  <QuestionCard
+                                    key={qIdx}
+                                    q={q}
+                                    qIdx={qIdx}
+                                    gIdx={gIdx}
+                                    canRemove={g.questions.length > 1}
+                                    errors={qErrors}
+                                    onUpdate={updateQuestion}
+                                    onRemove={removeQuestion}
+                                  />
+                                );
+                              })}
+                            </CarouselSlide>
+                          ))}
+                        </CarouselTrack>
+                      </CarouselWrapper>
+
+                      <div style={{ marginTop: "0.75rem" }}>
+                        <Button
+                          block
+                          icon={<PlusOutlined />}
+                          onClick={() => addQuestion(gIdx)}
+                        >
+                          Adicionar Questão
+                        </Button>
+                      </div>
+                    </>
+                  );
+                })()}
+              </GroupContainer>
+            ),
+          }))}
+        />
+      )}
     </>
   );
 }
