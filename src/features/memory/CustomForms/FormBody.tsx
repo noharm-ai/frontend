@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import { useFormikContext } from "formik";
-import { Divider, Tabs, Segmented } from "antd";
+import { Divider, Tabs } from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
   LeftOutlined,
   RightOutlined,
-  EditOutlined,
-  EyeOutlined,
 } from "@ant-design/icons";
 
-import CustomFormPreview from "components/Forms/CustomForm";
 import Switch from "components/Switch";
 import { Input } from "components/Inputs";
 import Button from "components/Button";
@@ -27,7 +24,6 @@ import { QuestionCard } from "./QuestionCard";
 
 export function FormBody() {
   const { values, errors, setFieldValue } = useFormikContext<CustomForm>();
-  const [mode, setMode] = useState<"edit" | "preview">("edit");
   const [activeKey, setActiveKey] = useState("0");
   const [carouselPages, setCarouselPages] = useState<Record<number, number>>(
     {},
@@ -142,32 +138,9 @@ export function FormBody() {
         </div>
       </div>
 
-      <Segmented
-        value={mode}
-        onChange={(v) => setMode(v as "edit" | "preview")}
-        options={[
-          { label: "Editar", value: "edit", icon: <EditOutlined /> },
-          { label: "Pré-visualizar", value: "preview", icon: <EyeOutlined /> },
-        ]}
-        style={{ marginTop: "0.75rem" }}
-      />
-
       <Divider />
 
-      {mode === "preview" ? (
-        <CustomFormPreview
-          onSubmit={() => {}}
-          onCancel={() => {}}
-          onChange={() => {}}
-          isSaving={false}
-          template={values.data}
-          startClosed={false}
-          horizontal={false}
-          btnSaveText={"--"}
-          values={{}}
-        />
-      ) : (
-        <Tabs
+      <Tabs
           activeKey={activeKey}
           onChange={setActiveKey}
           tabBarExtraContent={
@@ -302,7 +275,6 @@ export function FormBody() {
             ),
           }))}
         />
-      )}
     </>
   );
 }

@@ -1,12 +1,48 @@
+import { useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { Button } from "antd";
+import { EyeOutlined } from "@ant-design/icons";
 
 import DefaultModal from "components/Modal";
+import CustomFormView from "components/Forms/CustomForm";
 import { Form } from "styles/Form.style";
-import { CustomForm, emptyForm } from "./types";
+import { CustomForm, FormGroup, emptyForm } from "./types";
 import { FormBody } from "./FormBody";
 
 export type { CustomForm } from "./types";
+
+function PreviewButton({ template }: { template: FormGroup[] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button icon={<EyeOutlined />} onClick={() => setOpen(true)}>
+        Pré-visualizar
+      </Button>
+      <DefaultModal
+        open={open}
+        onCancel={() => setOpen(false)}
+        footer={null}
+        title="Pré-visualização"
+        width={800}
+        centered
+        destroyOnHidden
+      >
+        <CustomFormView
+          template={template}
+          values={{}}
+          onSubmit={() => setOpen(false)}
+          onCancel={() => setOpen(false)}
+          onChange={() => {}}
+          isSaving={false}
+          startClosed={false}
+          horizontal={false}
+          btnSaveText={"Fechar preview"}
+        />
+      </DefaultModal>
+    </>
+  );
+}
 
 interface CustomFormEditorProps {
   open: boolean;
@@ -93,20 +129,29 @@ export function CustomFormEditor({
       validateOnChange={false}
       validateOnBlur={false}
     >
-      {({ handleSubmit }) => (
+      {({ handleSubmit, values }) => (
         <DefaultModal
           open={open}
           width={1000}
           centered
           destroyOnHidden
           onCancel={onCancel}
-          onOk={() => handleSubmit()}
-          okText="Salvar"
-          cancelText="Cancelar"
-          confirmLoading={isSaving}
-          okButtonProps={{ disabled: isSaving }}
-          cancelButtonProps={{ disabled: isSaving }}
           maskClosable={false}
+          footer={[
+            <Button key="cancel" onClick={onCancel} disabled={isSaving}>
+              Cancelar
+            </Button>,
+            <PreviewButton key="preview" template={values.data} />,
+            <Button
+              key="save"
+              type="primary"
+              loading={isSaving}
+              disabled={isSaving}
+              onClick={() => handleSubmit()}
+            >
+              Salvar
+            </Button>,
+          ]}
         >
           <header>
             <h2 className="modal-title">

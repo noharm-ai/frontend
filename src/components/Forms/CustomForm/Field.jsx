@@ -26,21 +26,29 @@ export default function Field({ question, values, setFieldValue }) {
 
   if (question.type === "options" || question.type === "options-multiple") {
     return (
-      <Select
-        placeholder="Selecione..."
-        onChange={(value) => setFieldValue(question.id, value)}
-        value={values[question.id]}
-        allowClear
-        style={{ minWidth: "300px" }}
-        mode={question.type === "options-multiple" ? "multiple" : "default"}
-        disabled={question.disabled}
+      <div
+        style={{ position: "relative" }}
+        id={`field-select-${question.id}`}
       >
-        {question.options.map((option) => (
-          <Select.Option value={option} key={option}>
-            {option}
-          </Select.Option>
-        ))}
-      </Select>
+        <Select
+          placeholder="Selecione..."
+          onChange={(value) => setFieldValue(question.id, value)}
+          value={values[question.id]}
+          allowClear
+          style={{ minWidth: "300px" }}
+          mode={question.type === "options-multiple" ? "multiple" : "default"}
+          disabled={question.disabled}
+          getPopupContainer={() =>
+            document.getElementById(`field-select-${question.id}`)
+          }
+        >
+          {question.options.map((option) => (
+            <Select.Option value={option} key={option}>
+              {option}
+            </Select.Option>
+          ))}
+        </Select>
+      </div>
     );
   }
 
@@ -49,25 +57,33 @@ export default function Field({ question, values, setFieldValue }) {
     question.type === "options-key-value-multiple"
   ) {
     return (
-      <Select
-        placeholder="Selecione..."
-        onChange={(value) => setFieldValue(question.id, value)}
-        value={values[question.id]}
-        allowClear
-        style={{ minWidth: "300px", ...(question.style || {}) }}
-        mode={
-          question.type === "options-key-value-multiple"
-            ? "multiple"
-            : "default"
-        }
-        disabled={question.disabled}
+      <div
+        style={{ position: "relative" }}
+        id={`field-select-${question.id}`}
       >
-        {question.options.map((option) => (
-          <Select.Option value={option.id} key={option.id}>
-            {option.value}
-          </Select.Option>
-        ))}
-      </Select>
+        <Select
+          placeholder="Selecione..."
+          onChange={(value) => setFieldValue(question.id, value)}
+          value={values[question.id]}
+          allowClear
+          style={{ minWidth: "300px", ...(question.style || {}) }}
+          mode={
+            question.type === "options-key-value-multiple"
+              ? "multiple"
+              : "default"
+          }
+          disabled={question.disabled}
+          getPopupContainer={() =>
+            document.getElementById(`field-select-${question.id}`)
+          }
+        >
+          {question.options.map((option) => (
+            <Select.Option value={option.id} key={option.id}>
+              {option.value}
+            </Select.Option>
+          ))}
+        </Select>
+      </div>
     );
   }
 
