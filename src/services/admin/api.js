@@ -329,6 +329,12 @@ api.substance.getSubstances = (params = {}) => {
   });
 };
 
+api.substance.getSubstance = (id) => {
+  return instance.get(`/admin/substance/${id}`, {
+    ...setHeaders(),
+  });
+};
+
 api.substance.upsertSubstance = (params = {}) => {
   return instance.post(`/admin/substance`, params, {
     ...setHeaders(),

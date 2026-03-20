@@ -1,17 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/admin/api";
 
+import { upsertSubstance } from "./SubstanceFormSlice";
+
 const initialState = {
   list: [],
   status: "idle",
   error: null,
   currentPage: 1,
   count: 0,
-  single: {
-    data: null,
-    status: "idle",
-    error: null,
-  },
   filters: {},
 };
 
@@ -28,28 +25,12 @@ export const fetchSubstances = createAsyncThunk(
   }
 );
 
-export const upsertSubstance = createAsyncThunk(
-  "admin-substance/upsert",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.substance.upsertSubstance(params);
-
-      return response.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
 const adminSubstanceSlice = createSlice({
   name: "adminSubstance",
   initialState,
   reducers: {
     reset() {
       return initialState;
-    },
-    setSubstance(state, action) {
-      state.single.data = action.payload;
     },
     setFilters(state, action) {
       state.filters = action.payload;
@@ -60,7 +41,7 @@ const adminSubstanceSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(fetchSubstances.pending, (state, action) => {
+      .addCase(fetchSubstances.pending, (state) => {
         state.status = "loading";
       })
       .addCase(fetchSubstances.fulfilled, (state, action) => {
@@ -72,11 +53,7 @@ const adminSubstanceSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       })
-      .addCase(upsertSubstance.pending, (state, action) => {
-        state.single.status = "loading";
-      })
       .addCase(upsertSubstance.fulfilled, (state, action) => {
-        state.single.status = "succeeded";
         const subst = action.payload.data;
 
         const index = state.list.findIndex((i) => i.id === subst.id);
@@ -85,15 +62,11 @@ const adminSubstanceSlice = createSlice({
         } else {
           state.list.push(subst);
         }
-      })
-      .addCase(upsertSubstance.rejected, (state, action) => {
-        state.single.status = "failed";
-        state.single.error = action.error.message;
       });
   },
 });
 
-export const { reset, setSubstance, setFilters, setCurrentPage } =
+export const { reset, setFilters, setCurrentPage } =
   adminSubstanceSlice.actions;
 
 export default adminSubstanceSlice.reducer;
