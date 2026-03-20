@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Spin, Drawer } from "antd";
+import { SettingOutlined } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
 import { getErrorMessage } from "utils/errorHandler";
 import notification from "components/notification";
+import { fetchSubstance } from "features/admin/Substance/SubstanceFormSlice";
 import { setDrawerSctid, fetchDrugReference } from "./DrugReferenceDrawerSlice";
+import Button from "components/Button";
 
 export default function DrugReferenceDrawer({ placement }) {
   const { t } = useTranslation();
@@ -39,6 +42,15 @@ export default function DrugReferenceDrawer({ placement }) {
       resizable={{
         onResize: (newSize) => setSize(newSize),
       }}
+      extra={
+        <Button
+          onClick={() => dispatch(fetchSubstance(sctid))}
+          icon={<SettingOutlined />}
+          disabled={!sctid}
+        >
+          Configurar substância
+        </Button>
+      }
     >
       <Spin spinning={status === "loading"}>
         {data?.ref ? (
