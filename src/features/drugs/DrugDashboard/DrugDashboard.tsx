@@ -27,6 +27,7 @@ import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
 import { PageHeader } from "src/styles/PageHeader.style";
 import DrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawer";
+import SubstanceForm from "features/admin/Substance/Form/SubstanceForm";
 
 export function DrugDashboard() {
   const dispatch = useAppDispatch();
@@ -41,7 +42,7 @@ export function DrugDashboard() {
   const idSegmentParam = params.idSegment
     ? parseInt(params.idSegment, 10)
     : null;
-  const idDrugParam = params.idDrug ? parseInt(params.idDrug, 10) : null;
+  const idDrugParam = params.idDrug ?? null;
 
   const outlierDose = params.dose;
   const outlierFrequency = params.frequency;
@@ -209,6 +210,7 @@ export function DrugDashboard() {
         onAfterSave={handleAfterSave}
       />
       <DrugReferenceDrawer placement="bottom" />
+      <SubstanceForm />
     </>
   );
 }

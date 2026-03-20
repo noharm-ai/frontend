@@ -6,7 +6,7 @@ import DrugSubstance from "features/drugs/DrugSubstance/DrugSubstance";
 
 interface DrugAttributesCardProps {
   idSegment: number;
-  idDrug: number;
+  idDrug: string;
   sctid?: string | null;
   sctName?: string | null;
   onAfterSave?: () => void;

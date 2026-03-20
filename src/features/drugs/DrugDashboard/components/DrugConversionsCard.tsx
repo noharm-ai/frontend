@@ -16,7 +16,7 @@ interface ConversionItem {
 interface DrugConversionsCardProps {
   conversions: ConversionItem[];
   defaultUnit: string | null;
-  idDrug: number;
+  idDrug: string;
   loading: boolean;
 }
 
@@ -41,7 +41,7 @@ export function DrugConversionsCard({
             onClick={() =>
               dispatch(
                 setDrugUnitConversionOpen({
-                  idDrug: String(idDrug),
+                  idDrug: idDrug,
                   open: true,
                 }),
               )
