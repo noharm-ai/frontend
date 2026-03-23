@@ -7,6 +7,7 @@ import {
   LeftOutlined,
   RightOutlined,
   ExclamationCircleOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 
 import Switch from "components/Switch";
@@ -46,11 +47,16 @@ function pageHasErrors(
 }
 
 export function FormBody() {
-  const { values, errors, setFieldValue, submitCount } = useFormikContext<CustomForm>();
+  const { values, errors, setFieldValue, submitCount } =
+    useFormikContext<CustomForm>();
   const [activeKey, setActiveKey] = useState("0");
   const [carouselPages, setCarouselPages] = useState<Record<number, number>>(
     {},
   );
+  const [openDescriptions, setOpenDescriptions] = useState<
+    Record<number, boolean>
+  >({});
+  const stripHtml = (html: string) => html.replace(/<[^>]*>/g, "").trim();
   const getPage = (gIdx: number) => carouselPages[gIdx] ?? 0;
   const groupErrors: any[] = (errors as any).data ?? [];
 
@@ -63,7 +69,9 @@ export function FormBody() {
     );
     if (firstErrorGroup === -1) return;
 
-    notification.error({ message: "Verifique os campos obrigatórios antes de salvar." });
+    notification.error({
+      message: "Verifique os campos obrigatórios antes de salvar.",
+    });
 
     const totalPages = Math.ceil(
       values.data[firstErrorGroup].questions.length / 2,
@@ -78,7 +86,10 @@ export function FormBody() {
 
     setTimeout(() => {
       setActiveKey(String(firstErrorGroup));
-      setCarouselPages((prev) => ({ ...prev, [firstErrorGroup]: firstErrorPage }));
+      setCarouselPages((prev) => ({
+        ...prev,
+        [firstErrorGroup]: firstErrorPage,
+      }));
     }, 0);
   }, [submitCount]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -220,166 +231,245 @@ export function FormBody() {
               </span>
             ),
             children: (
-            <GroupContainer>
-              <GroupHeader>
-                <div className="group-name-field">
-                  <div className="form-label">
-                    <label>Grupo:</label>
-                  </div>
-                  <div className="form-input">
-                    <Input
-                      value={g.group}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        updateGroupName(gIdx, e.target.value)
-                      }
-                      placeholder="Nome do grupo"
-                    />
-                  </div>
-                  {groupErrors[gIdx]?.group && (
-                    <div className="form-error">{groupErrors[gIdx].group}</div>
-                  )}
-                </div>
-                <div className="group-name-field">
-                  <div className="form-label">
-                    <label>Descrição do grupo:</label>
-                  </div>
-                  <div className="form-input">
-                    <Editor
-                      content={g.description ?? ""}
-                      onEdit={(val: string | null) =>
-                        updateGroupDescription(gIdx, val ?? "")
-                      }
-                    />
-                  </div>
-                </div>
-                {values.data.length > 1 && (
-                  <Button
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => removeGroup(gIdx)}
-                  >
-                    Remover Grupo
-                  </Button>
-                )}
-              </GroupHeader>
+              <GroupContainer>
+                <GroupHeader>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="group-name-field">
+                      <div className="form-label">
+                        <label>Grupo:</label>
+                      </div>
+                      <div className="form-input">
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <Input
+                            value={g.group}
+                            onChange={(
+                              e: React.ChangeEvent<HTMLInputElement>,
+                            ) => updateGroupName(gIdx, e.target.value)}
+                            placeholder="Nome do grupo"
+                          />
 
-              <div className="form-row">
-                <div className="form-label">
-                  <label>Questões:</label>
-                </div>
-              </div>
-
-              {(() => {
-                const currentPage = getPage(gIdx);
-                const totalPages = Math.ceil(g.questions.length / 2);
-                const pages: Array<typeof g.questions> = [];
-                for (let i = 0; i < g.questions.length; i += 2) {
-                  pages.push(g.questions.slice(i, i + 2));
-                }
-                const canPrev = currentPage > 0;
-                const canNext = currentPage < totalPages - 1;
-
-                return (
-                  <>
-                    {totalPages > 1 && (
-                      <CarouselNav>
-                        <Button
-                          icon={<LeftOutlined />}
-                          size="small"
-                          disabled={!canPrev}
-                          onClick={() =>
-                            setCarouselPages((p) => ({
-                              ...p,
-                              [gIdx]: currentPage - 1,
-                            }))
-                          }
-                        />
-                        <span
+                          {values.data.length > 1 && (
+                            <Button
+                              danger
+                              icon={<DeleteOutlined />}
+                              onClick={() => removeGroup(gIdx)}
+                            >
+                              Remover Grupo
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                      {groupErrors[gIdx]?.group && (
+                        <div className="form-error">
+                          {groupErrors[gIdx].group}
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ marginTop: "0.5rem" }}>
+                      {openDescriptions[gIdx] ? (
+                        <>
+                          <div
+                            className="form-label"
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <label>Descrição do grupo:</label>
+                            <a
+                              role="button"
+                              style={{ fontSize: 12, color: "#999" }}
+                              onClick={() =>
+                                setOpenDescriptions((prev) => ({
+                                  ...prev,
+                                  [gIdx]: false,
+                                }))
+                              }
+                            >
+                              Fechar
+                            </a>
+                          </div>
+                          <div className="form-input">
+                            <Editor
+                              content={g.description ?? ""}
+                              onEdit={(val: string | null) =>
+                                updateGroupDescription(gIdx, val ?? "")
+                              }
+                            />
+                          </div>
+                        </>
+                      ) : g.description && stripHtml(g.description) ? (
+                        <div
                           style={{
-                            display: "flex",
-                            gap: "6px",
-                            alignItems: "center",
+                            marginTop: 4,
                           }}
                         >
-                          {Array.from({ length: totalPages }, (_, pIdx) => {
-                            const isActive = pIdx === currentPage;
-                            const hasError =
-                              submitCount > 0 &&
-                              pageHasErrors(groupErrors, gIdx, pIdx);
-                            return (
-                              <CarouselDot
-                                key={pIdx}
-                                className={
-                                  hasError
-                                    ? "error"
-                                    : isActive
-                                      ? "active"
-                                      : undefined
-                                }
-                                onClick={() =>
-                                  setCarouselPages((p) => ({
-                                    ...p,
-                                    [gIdx]: pIdx,
-                                  }))
-                                }
-                              />
-                            );
-                          })}
-                        </span>
-                        <Button
-                          icon={<RightOutlined />}
-                          size="small"
-                          disabled={!canNext}
+                          <span
+                            style={{
+                              fontSize: 12,
+                              color: "#666",
+                              flex: 1,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {stripHtml(g.description).slice(0, 100)}
+                            {stripHtml(g.description).length > 100 ? "…" : ""}
+                          </span>
+                          <a
+                            role="button"
+                            style={{
+                              fontSize: 12,
+                              whiteSpace: "nowrap",
+                              marginLeft: 8,
+                            }}
+                            onClick={() =>
+                              setOpenDescriptions((prev) => ({
+                                ...prev,
+                                [gIdx]: true,
+                              }))
+                            }
+                          >
+                            <EditOutlined /> Editar descrição
+                          </a>
+                        </div>
+                      ) : (
+                        <a
+                          role="button"
+                          style={{ fontSize: 12, color: "#1677ff" }}
                           onClick={() =>
-                            setCarouselPages((p) => ({
-                              ...p,
-                              [gIdx]: currentPage + 1,
+                            setOpenDescriptions((prev) => ({
+                              ...prev,
+                              [gIdx]: true,
                             }))
                           }
-                        />
-                      </CarouselNav>
-                    )}
+                        >
+                          <PlusOutlined /> Adicionar descrição
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </GroupHeader>
 
-                    <CarouselWrapper>
-                      <CarouselTrack page={currentPage}>
-                        {pages.map((pageQuestions, pageIdx) => (
-                          <CarouselSlide key={pageIdx}>
-                            {pageQuestions.map((q, slotIdx) => {
-                              const qIdx = pageIdx * 2 + slotIdx;
-                              const qErrors =
-                                groupErrors[gIdx]?.questions?.[qIdx] ?? {};
+                <div className="form-row">
+                  <div className="form-label">
+                    <label>Questões:</label>
+                  </div>
+                </div>
 
+                {(() => {
+                  const currentPage = getPage(gIdx);
+                  const totalPages = Math.ceil(g.questions.length / 2);
+                  const pages: Array<typeof g.questions> = [];
+                  for (let i = 0; i < g.questions.length; i += 2) {
+                    pages.push(g.questions.slice(i, i + 2));
+                  }
+                  const canPrev = currentPage > 0;
+                  const canNext = currentPage < totalPages - 1;
+
+                  return (
+                    <>
+                      {totalPages > 1 && (
+                        <CarouselNav>
+                          <Button
+                            icon={<LeftOutlined />}
+                            size="small"
+                            disabled={!canPrev}
+                            onClick={() =>
+                              setCarouselPages((p) => ({
+                                ...p,
+                                [gIdx]: currentPage - 1,
+                              }))
+                            }
+                          />
+                          <span
+                            style={{
+                              display: "flex",
+                              gap: "6px",
+                              alignItems: "center",
+                            }}
+                          >
+                            {Array.from({ length: totalPages }, (_, pIdx) => {
+                              const isActive = pIdx === currentPage;
+                              const hasError =
+                                submitCount > 0 &&
+                                pageHasErrors(groupErrors, gIdx, pIdx);
                               return (
-                                <QuestionCard
-                                  key={qIdx}
-                                  q={q}
-                                  qIdx={qIdx}
-                                  gIdx={gIdx}
-                                  canRemove={g.questions.length > 1}
-                                  errors={qErrors}
-                                  onUpdate={updateQuestion}
-                                  onRemove={removeQuestion}
+                                <CarouselDot
+                                  key={pIdx}
+                                  className={
+                                    hasError
+                                      ? "error"
+                                      : isActive
+                                        ? "active"
+                                        : undefined
+                                  }
+                                  onClick={() =>
+                                    setCarouselPages((p) => ({
+                                      ...p,
+                                      [gIdx]: pIdx,
+                                    }))
+                                  }
                                 />
                               );
                             })}
-                          </CarouselSlide>
-                        ))}
-                      </CarouselTrack>
-                    </CarouselWrapper>
+                          </span>
+                          <Button
+                            icon={<RightOutlined />}
+                            size="small"
+                            disabled={!canNext}
+                            onClick={() =>
+                              setCarouselPages((p) => ({
+                                ...p,
+                                [gIdx]: currentPage + 1,
+                              }))
+                            }
+                          />
+                        </CarouselNav>
+                      )}
 
-                    <div style={{ marginTop: "0.75rem" }}>
-                      <Button
-                        block
-                        icon={<PlusOutlined />}
-                        onClick={() => addQuestion(gIdx)}
-                      >
-                        Adicionar Questão
-                      </Button>
-                    </div>
-                  </>
-                );
-              })()}
-            </GroupContainer>
+                      <CarouselWrapper>
+                        <CarouselTrack page={currentPage}>
+                          {pages.map((pageQuestions, pageIdx) => (
+                            <CarouselSlide key={pageIdx}>
+                              {pageQuestions.map((q, slotIdx) => {
+                                const qIdx = pageIdx * 2 + slotIdx;
+                                const qErrors =
+                                  groupErrors[gIdx]?.questions?.[qIdx] ?? {};
+
+                                return (
+                                  <QuestionCard
+                                    key={qIdx}
+                                    q={q}
+                                    qIdx={qIdx}
+                                    gIdx={gIdx}
+                                    canRemove={g.questions.length > 1}
+                                    errors={qErrors}
+                                    onUpdate={updateQuestion}
+                                    onRemove={removeQuestion}
+                                  />
+                                );
+                              })}
+                            </CarouselSlide>
+                          ))}
+                        </CarouselTrack>
+                      </CarouselWrapper>
+
+                      <div style={{ marginTop: "0.75rem" }}>
+                        <Button
+                          block
+                          icon={<PlusOutlined />}
+                          onClick={() => addQuestion(gIdx)}
+                        >
+                          Adicionar Questão
+                        </Button>
+                      </div>
+                    </>
+                  );
+                })()}
+              </GroupContainer>
             ),
           };
         })}
