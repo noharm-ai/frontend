@@ -1,5 +1,5 @@
 import React from "react";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
 import Editor from "components/Editor";
 import { Input, Select } from "components/Inputs";
@@ -27,7 +27,13 @@ export function QuestionCard({
   onRemove,
 }: QuestionCardProps) {
   const showOptions = q.type === "options" || q.type === "options-multiple";
+  const showKeyValueOptions =
+    q.type === "options-key-value" || q.type === "options-key-value-multiple";
   const [showHelp, setShowHelp] = React.useState(!!(q.help || q.helpDetails));
+
+  const keyValueOptions = (
+    q.options as { id: string; value: string }[]
+  ).filter((o) => typeof o === "object");
 
   return (
     <StyledQuestionCard>
@@ -94,6 +100,62 @@ export function QuestionCard({
               placeholder="Digite e pressione Enter para adicionar opções"
               notFoundContent={null}
             />
+          </div>
+        </div>
+      )}
+
+      {showKeyValueOptions && (
+        <div className="form-row">
+          <div className="form-label">
+            <label>Opções (chave-valor):</label>
+          </div>
+          <div className="form-input">
+            {keyValueOptions.map((opt, idx) => (
+              <div
+                key={idx}
+                style={{ display: "flex", gap: 8, marginBottom: 8 }}
+              >
+                <Input
+                  placeholder="ID"
+                  value={opt.id}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const updated = [...keyValueOptions];
+                    updated[idx] = { ...opt, id: e.target.value };
+                    onUpdate(gIdx, qIdx, "options", updated);
+                  }}
+                  style={{ width: 140 }}
+                />
+                <Input
+                  placeholder="Valor"
+                  value={opt.value}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const updated = [...keyValueOptions];
+                    updated[idx] = { ...opt, value: e.target.value };
+                    onUpdate(gIdx, qIdx, "options", updated);
+                  }}
+                  style={{ width: 220 }}
+                />
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={() => {
+                    const updated = keyValueOptions.filter((_, i) => i !== idx);
+                    onUpdate(gIdx, qIdx, "options", updated);
+                  }}
+                />
+              </div>
+            ))}
+            <Button
+              icon={<PlusOutlined />}
+              onClick={() =>
+                onUpdate(gIdx, qIdx, "options", [
+                  ...keyValueOptions,
+                  { id: "", value: "" },
+                ])
+              }
+            >
+              Adicionar opção
+            </Button>
           </div>
         </div>
       )}

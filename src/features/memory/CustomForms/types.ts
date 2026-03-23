@@ -3,8 +3,17 @@ export interface Question {
   label: string;
   help?: string;
   helpDetails?: string;
-  type: "text" | "number" | "options" | "options-multiple";
-  options: string[];
+  type:
+    | "text"
+    | "number"
+    | "options"
+    | "options-multiple"
+    | "options-key-value"
+    | "options-key-value-multiple"
+    | "plaintext"
+    | "date"
+    | "datetime";
+  options: string[] | { id: string; value: string }[];
   required: boolean;
 }
 
@@ -45,6 +54,11 @@ export const emptyForm = (): CustomForm => ({
 export const questionTypeOptions = [
   { value: "text", label: "Texto" },
   { value: "number", label: "Número" },
+  { value: "plaintext", label: "Texto simples" },
+  { value: "date", label: "Data" },
+  { value: "datetime", label: "Data e hora" },
   { value: "options", label: "Seleção única" },
   { value: "options-multiple", label: "Seleção múltipla" },
+  { value: "options-key-value", label: "Seleção única (chave-valor)" },
+  { value: "options-key-value-multiple", label: "Seleção múltipla (chave-valor)" },
 ];
