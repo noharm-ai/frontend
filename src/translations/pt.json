@@ -514,7 +514,11 @@
     "titleCopy": "Copiar de prescrições anteriores",
     "titleNotes": "Anotação",
     "btnSuspend": "Suspender",
-    "btnRemoveSuspension": "Remover suspensão"
+    "btnRemoveSuspension": "Remover suspensão",
+    "suspendConfirmTitle": "Confirmar suspensão",
+    "suspendConfirmContent": "Confirma a suspensão deste medicamento?",
+    "removeSuspensionConfirmTitle": "Confirmar remoção de suspensão",
+    "removeSuspensionConfirmContent": "Confirma a remoção da suspensão deste medicamento?"
   },
 
   "userAdminForm": {
