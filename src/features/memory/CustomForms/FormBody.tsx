@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormikContext } from "formik";
 import { Divider, Tabs } from "antd";
 import {
@@ -6,6 +6,7 @@ import {
   DeleteOutlined,
   LeftOutlined,
   RightOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 
 import Switch from "components/Switch";
@@ -19,17 +20,67 @@ import {
   CarouselTrack,
   CarouselSlide,
   CarouselNav,
+  CarouselDot,
 } from "./CustomFormEditor.style";
 import { CustomForm, emptyGroup, emptyQuestion } from "./types";
 import { QuestionCard } from "./QuestionCard";
+import notification from "components/notification";
+
+function groupHasErrors(groupErrors: any[], gIdx: number): boolean {
+  const ge = groupErrors[gIdx];
+  if (!ge) return false;
+  if (ge.group) return true;
+  return ge.questions?.some((qe: any) => qe && (qe.id || qe.label)) ?? false;
+}
+
+function pageHasErrors(
+  groupErrors: any[],
+  gIdx: number,
+  pageIdx: number,
+): boolean {
+  const qErrors = groupErrors[gIdx]?.questions;
+  if (!qErrors) return false;
+  const q0 = qErrors[pageIdx * 2];
+  const q1 = qErrors[pageIdx * 2 + 1];
+  return !!((q0 && (q0.id || q0.label)) || (q1 && (q1.id || q1.label)));
+}
 
 export function FormBody() {
-  const { values, errors, setFieldValue } = useFormikContext<CustomForm>();
+  const { values, errors, setFieldValue, submitCount } = useFormikContext<CustomForm>();
   const [activeKey, setActiveKey] = useState("0");
   const [carouselPages, setCarouselPages] = useState<Record<number, number>>(
     {},
   );
   const getPage = (gIdx: number) => carouselPages[gIdx] ?? 0;
+  const groupErrors: any[] = (errors as any).data ?? [];
+
+  useEffect(() => {
+    if (submitCount === 0) return;
+    const gErrors: any[] = (errors as any).data ?? [];
+
+    const firstErrorGroup = values.data.findIndex((_, gIdx) =>
+      groupHasErrors(gErrors, gIdx),
+    );
+    if (firstErrorGroup === -1) return;
+
+    notification.error({ message: "Verifique os campos obrigatórios antes de salvar." });
+
+    const totalPages = Math.ceil(
+      values.data[firstErrorGroup].questions.length / 2,
+    );
+    let firstErrorPage = 0;
+    for (let p = 0; p < totalPages; p++) {
+      if (pageHasErrors(gErrors, firstErrorGroup, p)) {
+        firstErrorPage = p;
+        break;
+      }
+    }
+
+    setTimeout(() => {
+      setActiveKey(String(firstErrorGroup));
+      setCarouselPages((prev) => ({ ...prev, [firstErrorGroup]: firstErrorPage }));
+    }, 0);
+  }, [submitCount]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const addGroup = () => {
     const newIdx = values.data.length;
@@ -110,8 +161,6 @@ export function FormBody() {
     setFieldValue("data", data);
   };
 
-  const groupErrors: any[] = (errors as any).data ?? [];
-
   return (
     <>
       <div className="form-row form-row-flex">
@@ -155,10 +204,22 @@ export function FormBody() {
             Adicionar Grupo
           </Button>
         }
-        items={values.data.map((g, gIdx) => ({
-          key: String(gIdx),
-          label: g.group || `Grupo ${gIdx + 1}`,
-          children: (
+        items={values.data.map((g, gIdx) => {
+          const hasTabError =
+            submitCount > 0 && groupHasErrors(groupErrors, gIdx);
+          return {
+            key: String(gIdx),
+            label: (
+              <span>
+                {g.group || `Grupo ${gIdx + 1}`}
+                {hasTabError && (
+                  <ExclamationCircleOutlined
+                    style={{ color: "#ff4d4f", marginLeft: 6, fontSize: 13 }}
+                  />
+                )}
+              </span>
+            ),
+            children: (
             <GroupContainer>
               <GroupHeader>
                 <div className="group-name-field">
@@ -233,8 +294,37 @@ export function FormBody() {
                             }))
                           }
                         />
-                        <span style={{ fontSize: "13px", color: "#666" }}>
-                          {currentPage + 1} / {totalPages}
+                        <span
+                          style={{
+                            display: "flex",
+                            gap: "6px",
+                            alignItems: "center",
+                          }}
+                        >
+                          {Array.from({ length: totalPages }, (_, pIdx) => {
+                            const isActive = pIdx === currentPage;
+                            const hasError =
+                              submitCount > 0 &&
+                              pageHasErrors(groupErrors, gIdx, pIdx);
+                            return (
+                              <CarouselDot
+                                key={pIdx}
+                                className={
+                                  hasError
+                                    ? "error"
+                                    : isActive
+                                      ? "active"
+                                      : undefined
+                                }
+                                onClick={() =>
+                                  setCarouselPages((p) => ({
+                                    ...p,
+                                    [gIdx]: pIdx,
+                                  }))
+                                }
+                              />
+                            );
+                          })}
                         </span>
                         <Button
                           icon={<RightOutlined />}
@@ -290,8 +380,9 @@ export function FormBody() {
                 );
               })()}
             </GroupContainer>
-          ),
-        }))}
+            ),
+          };
+        })}
       />
     </>
   );

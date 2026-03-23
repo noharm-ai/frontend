@@ -57,3 +57,21 @@ export const GroupHeader = styled.div`
     flex: 1;
   }
 `;
+
+export const CarouselDot = styled.span`
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d9d9d9;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &.active {
+    background: #1677ff;
+  }
+
+  &.error {
+    background: #ff4d4f;
+  }
+`;
