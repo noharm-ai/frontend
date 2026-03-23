@@ -11,6 +11,8 @@ import {
   TrackedPrescriptionAction,
   trackPrescriptionAction,
 } from "src/utils/tracker";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
 
 interface DoseRecord {
   total?: boolean;
@@ -123,24 +125,26 @@ function DoseCell({ record, bag }: DoseCellProps): React.ReactElement | null {
         </tbody>
       </table>
 
-      <Button
-        style={{ marginTop: "1rem" }}
-        icon={<SwapOutlined />}
-        size="small"
-        onClick={() => {
-          trackPrescriptionAction(
-            TrackedPrescriptionAction.CLICK_DRUG_UNIT_CONVERSION,
-          );
-          bag.dispatch(
-            setDrugUnitConversionOpen({
-              idDrug: record.idDrug,
-              open: true,
-            }),
-          );
-        }}
-      >
-        Conversões de unidade
-      </Button>
+      {PermissionService().has(Permission.WRITE_DRUG_ATTRIBUTES) && (
+        <Button
+          style={{ marginTop: "1rem" }}
+          icon={<SwapOutlined />}
+          size="small"
+          onClick={() => {
+            trackPrescriptionAction(
+              TrackedPrescriptionAction.CLICK_DRUG_UNIT_CONVERSION,
+            );
+            bag.dispatch(
+              setDrugUnitConversionOpen({
+                idDrug: record.idDrug,
+                open: true,
+              }),
+            );
+          }}
+        >
+          Conversões de unidade
+        </Button>
+      )}
     </DoseCellPopover>
   );
 

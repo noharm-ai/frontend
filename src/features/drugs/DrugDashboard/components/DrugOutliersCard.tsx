@@ -286,7 +286,7 @@ export function DrugOutliersCard({
       <DrugInfoBar>
         {attributes && (
           <>
-            <DrugInfoBarItem label="Intervalo de dose:">
+            <DrugInfoBarItem label="Divisor de faixas:">
               {attributes.divisionRange ? (
                 <Tag color="blue" style={{ margin: 0 }}>
                   {formatNumber(attributes.divisionRange, 2)}
