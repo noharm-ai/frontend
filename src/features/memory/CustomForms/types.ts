@@ -2,6 +2,7 @@ export interface Question {
   id: string;
   label: string;
   help?: string;
+  helpDetails?: string;
   type: "text" | "number" | "options" | "options-multiple";
   options: string[];
   required: boolean;
@@ -23,6 +24,7 @@ export const emptyQuestion = (): Question => ({
   id: "",
   label: "",
   help: "",
+  helpDetails: "",
   type: "text",
   options: [],
   required: false,

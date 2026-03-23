@@ -62,7 +62,7 @@ export default function Editor({
 
             // only allow protocols specified in ctx.protocols
             const allowedProtocols = ctx.protocols.map((p) =>
-              typeof p === "string" ? p : p.scheme
+              typeof p === "string" ? p : p.scheme,
             );
 
             if (!allowedProtocols.includes(protocol)) {
@@ -76,7 +76,7 @@ export default function Editor({
           }
         },
         shouldAutoLink: false,
-      })
+      }),
     );
   }
 
@@ -154,7 +154,7 @@ const MenuBar = ({ utilities }) => {
         "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
         "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
         "(\\#[-a-z\\d_]*)?$",
-      "i"
+      "i",
     ); // fragment locator
     const isValid = !!pattern.test(url);
 
@@ -336,6 +336,9 @@ const EditorContainer = styled.div`
     max-height: 300px;
     overflow: auto;
     padding: 0.5rem;
+    background: white;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 
     &:focus-visible {
       outline: none;
