@@ -27,6 +27,7 @@ import SummarySearch from "pages/Summary/SummarySearch";
 import SupportCenter from "pages/SupportCenter";
 import SwitchSchema from "pages/SwitchSchema";
 import CustomForms from "pages/CustomForms/CustomForms";
+import CustomFormEditorPage from "pages/CustomForms/CustomFormEditorPage";
 
 import AdminFrequency from "pages/Admin/Frequency";
 import AdminTag from "pages/Admin/Tag";
@@ -203,6 +204,11 @@ const routes = [
     exact: true,
     path: "/configuracoes/forms-personalizados",
     element: <WithAuth component={CustomForms} />,
+  },
+  {
+    exact: true,
+    path: "/configuracoes/forms-personalizados/:id",
+    element: <WithAuth component={CustomFormEditorPage} />,
   },
   {
     exact: true,

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Tag } from "antd";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 
@@ -8,27 +9,19 @@ import Table from "components/Table";
 import Button from "components/Button";
 import BackTop from "components/BackTop";
 import notification from "components/notification";
-import { getErrorMessage } from "utils/errorHandler";
 import { PageCard } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
 
-import { fetchCustomForms, saveCustomForms, reset } from "./CustomFormsSlice";
-import { CustomFormEditor, CustomForm } from "./CustomFormEditor";
+import { fetchCustomForms, reset } from "./CustomFormsSlice";
 
 function MemoryCustomForms() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch() as any;
-  const forms: CustomForm[] = useAppSelector(
+  const navigate = useNavigate();
+  const forms: any[] = useAppSelector(
     (state: any) => state.memoryCustomForms.forms,
   );
   const status = useAppSelector((state: any) => state.memoryCustomForms.status);
-  const saveStatus = useAppSelector(
-    (state: any) => state.memoryCustomForms.saveStatus,
-  );
-  const loading = status === "loading" || saveStatus === "loading";
-
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editorOpen, setEditorOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchCustomForms());
@@ -44,36 +37,7 @@ function MemoryCustomForms() {
     });
   }
 
-  const openNew = () => {
-    setEditIndex(null);
-    setEditorOpen(true);
-  };
-
-  const openEditor = (index: number) => {
-    setEditIndex(index);
-    setEditorOpen(true);
-  };
-
-  const closeEditor = () => {
-    setEditorOpen(false);
-  };
-
-  const handleEditorSave = (form: CustomForm) => {
-    const formId =
-      editIndex !== null ? (forms[editIndex] as any).key : undefined;
-
-    dispatch(
-      saveCustomForms({ id: formId, type: "custom-forms", value: form }),
-    ).then((response: any) => {
-      if (response.error) {
-        notification.error({ message: getErrorMessage(response, t) });
-      } else {
-        notification.success({ message: t("success.generic") });
-        setEditorOpen(false);
-        dispatch(fetchCustomForms());
-      }
-    });
-  };
+  const basePath = "/configuracoes/forms-personalizados";
 
   const columns = [
     {
@@ -116,7 +80,7 @@ function MemoryCustomForms() {
         <Button
           type="primary"
           icon={<EditOutlined />}
-          onClick={() => openEditor(index)}
+          onClick={() => navigate(`${basePath}/${forms[index].key}`)}
         />
       ),
     },
@@ -132,7 +96,11 @@ function MemoryCustomForms() {
           </div>
         </div>
         <div className="page-header-actions">
-          <Button type="primary" icon={<PlusOutlined />} onClick={openNew}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate(`${basePath}/new`)}
+          >
             Adicionar formulário
           </Button>
         </div>
@@ -150,16 +118,6 @@ function MemoryCustomForms() {
           locale={{ emptyText: "Nenhum formulário cadastrado" }}
         />
       </PageCard>
-
-      <CustomFormEditor
-        open={editorOpen}
-        initialForm={
-          editIndex !== null ? (forms[editIndex] as any).value : null
-        }
-        isSaving={loading}
-        onSave={handleEditorSave}
-        onCancel={closeEditor}
-      />
 
       <BackTop />
     </>

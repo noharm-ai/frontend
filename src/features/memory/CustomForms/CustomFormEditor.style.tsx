@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 export const GroupContainer = styled.div`
-  padding: 1rem;
-  background: #fafafa;
+  padding: 2rem;
+  background: #fff;
   border-radius: 8px;
   margin-bottom: 0.5rem;
 `;

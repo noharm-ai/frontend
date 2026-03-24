@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useFormikContext } from "formik";
-import { Divider, Tabs } from "antd";
+import { Tabs, Card, Popconfirm } from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -26,6 +26,7 @@ import {
 import { CustomForm, emptyGroup, emptyQuestion } from "./types";
 import { QuestionCard } from "./QuestionCard";
 import notification from "components/notification";
+import Tooltip from "src/components/Tooltip";
 
 function groupHasErrors(groupErrors: any[], gIdx: number): boolean {
   const ge = groupErrors[gIdx];
@@ -174,40 +175,41 @@ export function FormBody() {
 
   return (
     <>
-      <div className="form-row form-row-flex">
-        <div className="form-row" style={{ flex: 1 }}>
-          <div className="form-label">
-            <label>Nome do formulário:</label>
-          </div>
-          <div className="form-input">
-            <Input
-              value={values.name}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setFieldValue("name", e.target.value)
-              }
-              placeholder="Nome do formulário"
-            />
-          </div>
-          {(errors as any).name && (
-            <div className="form-error">{(errors as any).name}</div>
-          )}
-        </div>
+      <Card>
         <div className="form-row">
-          <div className="form-label">
-            <label>Ativo:</label>
+          <div className="form-row" style={{ flex: 1 }}>
+            <div className="form-label">
+              <label>Nome do formulário:</label>
+            </div>
+            <div className="form-input">
+              <Input
+                value={values.name}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFieldValue("name", e.target.value)
+                }
+                placeholder="Nome do formulário"
+              />
+            </div>
+            {(errors as any).name && (
+              <div className="form-error">{(errors as any).name}</div>
+            )}
           </div>
-          <div className="form-input">
-            <Switch
-              checked={values.active !== false}
-              onChange={(val) => setFieldValue("active", val)}
-            />
+          <div className="form-row">
+            <div className="form-label">
+              <label>Ativo:</label>
+            </div>
+            <div className="form-input">
+              <Switch
+                checked={values.active !== false}
+                onChange={(val) => setFieldValue("active", val)}
+              />
+            </div>
           </div>
         </div>
-      </div>
-
-      <Divider />
+      </Card>
 
       <Tabs
+        style={{ marginTop: 16 }}
         activeKey={activeKey}
         onChange={setActiveKey}
         tabBarExtraContent={
@@ -221,12 +223,34 @@ export function FormBody() {
           return {
             key: String(gIdx),
             label: (
-              <span>
+              <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 {g.group || `Grupo ${gIdx + 1}`}
                 {hasTabError && (
                   <ExclamationCircleOutlined
-                    style={{ color: "#ff4d4f", marginLeft: 6, fontSize: 13 }}
+                    style={{ color: "#ff4d4f", fontSize: 13 }}
                   />
+                )}
+                {values.data.length > 1 && (
+                  <Popconfirm
+                    title="Remover grupo?"
+                    onConfirm={(e) => {
+                      e?.stopPropagation();
+                      removeGroup(gIdx);
+                    }}
+                    onCancel={(e) => e?.stopPropagation()}
+                    okText="Remover"
+                    okButtonProps={{ danger: true }}
+                    cancelText="Cancelar"
+                  >
+                    <Tooltip title="Remover grupo">
+                      <Button
+                        type="text"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </Tooltip>
+                  </Popconfirm>
                 )}
               </span>
             ),
@@ -239,25 +263,13 @@ export function FormBody() {
                         <label>Grupo:</label>
                       </div>
                       <div className="form-input">
-                        <div style={{ display: "flex", gap: 8 }}>
-                          <Input
-                            value={g.group}
-                            onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>,
-                            ) => updateGroupName(gIdx, e.target.value)}
-                            placeholder="Nome do grupo"
-                          />
-
-                          {values.data.length > 1 && (
-                            <Button
-                              danger
-                              icon={<DeleteOutlined />}
-                              onClick={() => removeGroup(gIdx)}
-                            >
-                              Remover Grupo
-                            </Button>
-                          )}
-                        </div>
+                        <Input
+                          value={g.group}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            updateGroupName(gIdx, e.target.value)
+                          }
+                          placeholder="Nome do grupo"
+                        />
                       </div>
                       {groupErrors[gIdx]?.group && (
                         <div className="form-error">

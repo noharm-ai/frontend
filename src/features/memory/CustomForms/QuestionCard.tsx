@@ -31,9 +31,9 @@ export function QuestionCard({
     q.type === "options-key-value" || q.type === "options-key-value-multiple";
   const [showHelp, setShowHelp] = React.useState(!!(q.help || q.helpDetails));
 
-  const keyValueOptions = (
-    q.options as { id: string; value: string }[]
-  ).filter((o) => typeof o === "object");
+  const keyValueOptions = ((q.options ?? []) as { id: string; value: string }[]).filter(
+    (o) => typeof o === "object",
+  );
 
   return (
     <StyledQuestionCard>
