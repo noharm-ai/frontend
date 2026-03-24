@@ -4,7 +4,7 @@ import api from "services/api";
 
 interface IDrugGeneratePrescriptionHistorySlice {
   open: boolean;
-  idDrug: number | null;
+  idDrug: string | null;
   idSegment: number | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
@@ -20,7 +20,7 @@ const initialState: IDrugGeneratePrescriptionHistorySlice = {
 
 export const addPrescriptionHistory = createAsyncThunk(
   "drugGeneratePrescriptionHistory/addHistory",
-  async (params: { idDrug: number; idSegment: number }, thunkAPI) => {
+  async (params: { idDrug: string; idSegment: number }, thunkAPI) => {
     try {
       const response = await api.scoreAddHistory(params);
       return response.data;
@@ -42,7 +42,7 @@ const drugGeneratePrescriptionHistorySlice = createSlice({
       action: {
         payload: {
           open: boolean;
-          idDrug?: number | null;
+          idDrug?: string | null;
           idSegment?: number | null;
         };
       },

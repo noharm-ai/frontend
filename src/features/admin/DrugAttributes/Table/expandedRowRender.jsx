@@ -31,7 +31,7 @@ const expandedRowRender = (record) => {
           />
         </Descriptions.Item>
 
-        <Descriptions.Item label="Unidade padrão:" span={3}>
+        <Descriptions.Item label="Unidade padrão:" span={2}>
           {!record.idMeasureUnitDefault ? (
             <Tag color="red">Unidade não definida</Tag>
           ) : (
@@ -39,7 +39,7 @@ const expandedRowRender = (record) => {
           )}
         </Descriptions.Item>
 
-        <Descriptions.Item label="Unidade de custo:" span={3}>
+        <Descriptions.Item label="Unidade de custo:" span={2}>
           {!record.idMeasureUnitPrice ? (
             <Tag color="red">Unidade não definida</Tag>
           ) : (
@@ -47,7 +47,7 @@ const expandedRowRender = (record) => {
           )}
         </Descriptions.Item>
 
-        <Descriptions.Item label="Custo:" span={3}>
+        <Descriptions.Item label="Custo:" span={2}>
           <NumericValue prefix={"R$ "} value={record.price} decimalScale={4} />/
           {!record.idMeasureUnitPrice ? (
             <Tag color="red">Unidade não definida</Tag>
@@ -56,7 +56,15 @@ const expandedRowRender = (record) => {
           )}
         </Descriptions.Item>
 
-        <Descriptions.Item label="Última alteração" span={3}>
+        <Descriptions.Item label="Considera peso" span={2}>
+          {record.useWeight ? "Sim" : "Não"}
+        </Descriptions.Item>
+
+        <Descriptions.Item label="Divisor de faixas" span={2}>
+          {record.doseRange ? record.doseRange : "Não definido"}
+        </Descriptions.Item>
+
+        <Descriptions.Item label="Última alteração" span={2}>
           {record.responsible && (
             <>
               {record.responsible} em {formatDateTime(record.updateAt)}

@@ -475,6 +475,23 @@ const putMemoryUnique = (bearerToken, { type, ...params }) => {
 };
 
 /**
+ * Custom Forms.
+ *
+ */
+api.customForms = {};
+api.customForms.putCustomForm = ({ id, ...params }) => {
+  if (id) {
+    return instance.put(
+      `${endpoints.memory}/custom-forms/${id}`,
+      params,
+      setHeaders(),
+    );
+  }
+
+  return instance.put(`${endpoints.memory}/custom-forms`, params, setHeaders());
+};
+
+/**
  * User.
  *
  */
@@ -780,6 +797,11 @@ api.support.fetchN0Form = (params) =>
 
 api.support.fetchRelatedArticles = (params) =>
   instance.post(`/support/related-articles`, params, {
+    ...setHeaders(),
+  });
+
+api.support.fetchKnowledgeBaseArticles = (params) =>
+  instance.post(`/support/knowledge-base-articles`, params, {
     ...setHeaders(),
   });
 

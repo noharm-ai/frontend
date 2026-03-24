@@ -3,6 +3,12 @@ import api from "services/api";
 
 const initialState = {
   open: false,
+  knowledgeBase: {
+    status: "idle",
+    error: null,
+    list: [],
+    pathOverride: null,
+  },
   form: {
     status: "idle",
     error: null,
@@ -174,6 +180,19 @@ export const fetchRelatedArticles = createAsyncThunk(
   }
 );
 
+export const fetchKnowledgeBaseArticles = createAsyncThunk(
+  "support/fetch-knowledge-base-articles",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.support.fetchKnowledgeBaseArticles(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const supportSlice = createSlice({
   name: "supportSlice",
   initialState,
@@ -196,6 +215,17 @@ const supportSlice = createSlice({
     resetAIForm(state) {
       state.aiform = {
         ...initialState.aiform,
+      };
+    },
+    setKnowledgeBasePath(state, action) {
+      state.knowledgeBase.pathOverride = action.payload;
+    },
+    resetKnowledgeBase(state) {
+      state.knowledgeBase = {
+        status: "idle",
+        error: null,
+        list: [],
+        pathOverride: null,
       };
     },
     reset() {
@@ -294,6 +324,19 @@ const supportSlice = createSlice({
         state.aiform.relatedArticles.list = [];
       })
 
+      .addCase(fetchKnowledgeBaseArticles.pending, (state) => {
+        state.knowledgeBase.status = "loading";
+      })
+      .addCase(fetchKnowledgeBaseArticles.fulfilled, (state, action) => {
+        state.knowledgeBase.status = "succeeded";
+        state.knowledgeBase.list = action.payload.data;
+      })
+      .addCase(fetchKnowledgeBaseArticles.rejected, (state, action) => {
+        state.knowledgeBase.status = "failed";
+        state.knowledgeBase.error = action.error.message;
+        state.knowledgeBase.list = [];
+      })
+
       .addCase(fetchRequesters.pending, (state, action) => {
         state.fetchRequesters.status = "loading";
       })
@@ -318,4 +361,6 @@ export const {
   setAIFormStep,
   setAIFormQuestion,
   setAIFormResponse,
+  setKnowledgeBasePath,
+  resetKnowledgeBase,
 } = supportSlice.actions;

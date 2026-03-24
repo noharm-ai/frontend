@@ -121,6 +121,10 @@ export default function SecondaryFilters() {
                 Antimicrobiano
               </Select.Option>
 
+              <Select.Option key="use_weight" value="use_weight">
+                Considera peso (escores)
+              </Select.Option>
+
               <Select.Option key="controlados" value="controlados">
                 Controlados
               </Select.Option>
@@ -227,6 +231,52 @@ export default function SecondaryFilters() {
             <Select.Option value={"empty"}>Referência vazia</Select.Option>
             <Select.Option value={"diff"}>Divergente</Select.Option>
             <Select.Option value={"equal"}>Igual</Select.Option>
+          </Select>
+        </Col>
+
+        <Col xs={6}>
+          <Heading as="label" $size="14px">
+            Substância com dose máxima/peso (adulto):
+          </Heading>
+          <Select
+            style={{ width: "150px" }}
+            value={values.hasSubstanceMaxDoseWeightAdult}
+            onChange={(val) =>
+              setFieldValue({ hasSubstanceMaxDoseWeightAdult: val })
+            }
+            showSearch
+            optionFilterProp="children"
+            allowClear
+          >
+            <Select.Option key={0} value={true}>
+              <Tag color="green">Sim</Tag>
+            </Select.Option>
+            <Select.Option key={1} value={false}>
+              <Tag color="red">Não</Tag>
+            </Select.Option>
+          </Select>
+        </Col>
+
+        <Col xs={6}>
+          <Heading as="label" $size="14px">
+            Substância com dose máxima/peso (pediátrico):
+          </Heading>
+          <Select
+            style={{ width: "150px" }}
+            value={values.hasSubstanceMaxDoseWeightPediatric}
+            onChange={(val) =>
+              setFieldValue({ hasSubstanceMaxDoseWeightPediatric: val })
+            }
+            showSearch
+            optionFilterProp="children"
+            allowClear
+          >
+            <Select.Option key={0} value={true}>
+              <Tag color="green">Sim</Tag>
+            </Select.Option>
+            <Select.Option key={1} value={false}>
+              <Tag color="red">Não</Tag>
+            </Select.Option>
           </Select>
         </Col>
 

@@ -58,6 +58,16 @@ export const trackCustomReportAction = (
   });
 };
 
+export const trackSupportAction = (
+  trackedAction: TrackedSupportAction,
+  details: any = {},
+) => {
+  track(CustomEvent.SUPPORT_ACTION, {
+    custom_event: trackedAction,
+    ...details,
+  });
+};
+
 const track = (customEvent: CustomEvent, details: any = {}) => {
   if (!(window as any).cwr) {
     console.log("tracking error: cwr undefined");
@@ -79,6 +89,7 @@ enum CustomEvent {
   INTERVENTION_ACTION = "InterventionAction", // action in intervention form
   INTERVENTION_OUTCOME_ACTION = "InterventionOutcomeAction", // action in intervention outcome form
   CUSTOM_REPORT_ACTION = "CustomReportAction", // action in custom report
+  SUPPORT_ACTION = "SupportAction", // action in support drawer
 }
 
 export enum TrackedReport {
@@ -199,4 +210,15 @@ export enum TrackedPrescriptionPrioritizationAction {
   MULTIPLE_SELECTION_ACTIVATE = "ativar-selecao-multipla",
   MULTIPLE_OPEN_PRESCRIPTION = "abrir-multiplas-prescricoes",
   MULTIPLE_CHECK_PRESCRIPTION = "checar-multiplas-prescricoes",
+}
+
+export enum TrackedSupportAction {
+  OPEN_SUPPORT_DRAWER = "abrir-suporte",
+  OPEN_ARTICLE = "abrir-artigo",
+  OPEN_KNOWLEDGE_BASE = "abrir-base-conhecimento",
+  OPEN_AI_AGENT = "abrir-agente-ia",
+  OPEN_TICKET_FORM = "abrir-formulario-ticket",
+  ASK_AI = "perguntar-ia",
+  AI_RESPONSE_POSITIVE = "resposta-ia-positiva",
+  AI_RESPONSE_NEGATIVE = "resposta-ia-negativa",
 }

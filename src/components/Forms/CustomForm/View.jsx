@@ -1,6 +1,8 @@
 import React from "react";
 import DOMPurify from "dompurify";
 
+import { evaluateFormula } from "./Fields/formulaEvaluator";
+
 import { CustomFormViewContainer } from "./View.style";
 
 export default function CustomFormView({ template, values }) {
@@ -28,7 +30,11 @@ export default function CustomFormView({ template, values }) {
           {item.questions.map((question) => (
             <div className="question" key={question.id}>
               <div className="label">{question.label}</div>
-              {question.type === "text" ? (
+              {question.type === "calculated_field" ? (
+                <div className="value">
+                  {evaluateFormula(question.formula || "", values).value ?? "—"}
+                </div>
+              ) : question.type === "text" ? (
                 <div
                   className="value"
                   dangerouslySetInnerHTML={{

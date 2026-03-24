@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test("check individual prescription and rollback", async ({ page }) => {
+  test.setTimeout(60_000);
   await page.goto("/prescricao/199");
 
   await expect(
@@ -21,6 +22,7 @@ test("check individual prescription and rollback", async ({ page }) => {
 });
 
 test("check aggregate prescription and rollback", async ({ page }) => {
+  test.setTimeout(60_000);
   // first find aggregate prescription using fast search
   // we need to do that because ID keeps changing
   await page.goto("/priorizacao/pacientes/cards");

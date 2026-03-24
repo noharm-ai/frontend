@@ -13,12 +13,16 @@ export default function ChooseForm({ fetchMemory, memory, onChange }) {
     fetchMemory(CUSTOM_FORM_STORE_ID, CUSTOM_FORM_MEMORY_TYPE);
   }, [fetchMemory]);
 
-  const change = (index) => {
-    onChange(list[index].value);
-  };
-
   const sortForms = (a, b) =>
     `${a?.value?.name}`.localeCompare(`${b?.value?.name}`);
+
+  const activeForms = list
+    ? list.filter((option) => option?.value?.active !== false).sort(sortForms)
+    : [];
+
+  const change = (key) => {
+    onChange(activeForms.find((f) => f.key === key).value);
+  };
 
   return (
     <Select
@@ -29,12 +33,11 @@ export default function ChooseForm({ fetchMemory, memory, onChange }) {
       optionFilterProp="children"
       onChange={(value) => change(value)}
     >
-      {list &&
-        list.sort(sortForms).map((option, index) => (
-          <Select.Option value={index} key={option.key}>
-            {option.value.name}
-          </Select.Option>
-        ))}
+      {activeForms.map((option) => (
+        <Select.Option value={option.key} key={option.key}>
+          {option.value.name}
+        </Select.Option>
+      ))}
     </Select>
   );
 }

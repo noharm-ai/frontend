@@ -392,7 +392,9 @@ const getDrugsByAttribute = (drugs, attr, params = {}) => {
   }
 
   const list = uniq(
-    drugs.filter((d) => d[attr]).map((d) => drugTemplate(d, params)),
+    drugs
+      .filter((d) => d[attr] && !d.suspended)
+      .map((d) => drugTemplate(d, params)),
   ).sort();
 
   if (!list.length) {
@@ -409,7 +411,9 @@ const getDrugsByInternalAttribute = (drugs, attr, params = {}) => {
 
   const list = uniq(
     drugs
-      .filter((d) => d?.drugAttributes && d.drugAttributes[attr])
+      .filter(
+        (d) => d?.drugAttributes && d.drugAttributes[attr] && !d.suspended,
+      )
       .map((d) => drugTemplate(d, params)),
   ).sort();
 
@@ -425,7 +429,9 @@ const getDrugs = (drugs, params = {}) => {
     return params.empty;
   }
 
-  const list = uniq(drugs.map((d) => drugTemplate(d, params))).sort();
+  const list = uniq(
+    drugs.filter((d) => !d.suspended).map((d) => drugTemplate(d, params)),
+  ).sort();
 
   if (!list.length) {
     return params.empty;
@@ -444,7 +450,9 @@ const getDialyzable = (drugs, dialysis, params = {}) => {
   }
 
   const list = uniq(
-    drugs.filter((d) => d.dialyzable).map((d) => drugTemplate(d, params)),
+    drugs
+      .filter((d) => d.dialyzable && !d.suspended)
+      .map((d) => drugTemplate(d, params)),
   ).sort();
 
   if (!list.length) {
@@ -461,6 +469,7 @@ const getDrugsByClass = (drugs, classList, empty) => {
 
   const list = uniq(
     drugs
+      .filter((d) => !d.suspended)
       .filter((d) => {
         let hasClass = false;
 
@@ -595,6 +604,7 @@ const drugsByFieldList = (clinicalNote, drugs, params = {}) => {
 
     const list = uniq(
       drugs
+        .filter((d) => !d.suspended)
         .filter((d) => fieldList.indexOf(`${d[params.field]}`) !== -1)
         .map((d) => drugTemplate(d, params)),
     ).sort();
@@ -632,7 +642,7 @@ const getAntimicrobial = (
   }
 
   const atmList = drugs
-    .filter((d) => d.am)
+    .filter((d) => d.am && !d.suspended)
     .map((d) => ({
       drug: d.drug,
       dose:

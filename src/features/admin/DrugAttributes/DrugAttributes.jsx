@@ -23,6 +23,7 @@ import DrugReferenceDrawer from "../DrugReferenceDrawer/DrugReferenceDrawer";
 import { setDrugUnitConversionOpen } from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import { DrugUnitConversion } from "features/drugs/DrugUnitConversion/DrugUnitConversion";
 import { ExpandColumn } from "src/components/ExpandColumn";
+import SubstanceForm from "features/admin/Substance/Form/SubstanceForm";
 
 export default function DrugAttributes() {
   const dispatch = useDispatch();
@@ -109,7 +110,10 @@ export default function DrugAttributes() {
             setDrugForm: (data) => dispatch(setDrugForm(data)),
             openUnitConversion: (idDrug) =>
               dispatch(
-                setDrugUnitConversionOpen({ open: true, idDrug: String(idDrug) }),
+                setDrugUnitConversionOpen({
+                  open: true,
+                  idDrug: String(idDrug),
+                }),
               ),
           })}
           pagination={false}
@@ -147,8 +151,9 @@ export default function DrugAttributes() {
           }
         />
       </PaginationContainer>
-      <DrugReferenceDrawer />
+      <DrugReferenceDrawer placement="bottom" />
       <DrugUnitConversion onAfterSave={reload} />
+      <SubstanceForm />
     </>
   );
 }

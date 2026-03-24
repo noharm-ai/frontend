@@ -16,7 +16,7 @@ const initialState: IDrugSubstanceState = {
 export const updateDrugSubstance = createAsyncThunk(
   "drugSubstance/update",
   async (
-    { idDrug, sctid }: { idDrug: number; sctid: string | null },
+    { idDrug, sctid }: { idDrug: string; sctid: string | null },
     thunkAPI,
   ) => {
     try {

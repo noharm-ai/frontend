@@ -87,7 +87,7 @@ export function DrugUnitConversion({ onAfterSave }: DrugUnitConversionProps) {
   useEffect(() => () => cleanup(), [cleanup]);
 
   const isFactorValid = (factor: number | null | undefined) =>
-    factor != null && factor > 0 && factor < 99999;
+    factor != null && factor > 0 && factor < 999999999;
 
   const onClose = () => {
     setFactorOverrides({});

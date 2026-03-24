@@ -69,4 +69,6 @@ export default class Permission {
 
   static READ_NAV = "READ_NAV";
   static NAV_COPY_PATIENT = "NAV_COPY_PATIENT";
+
+  static WRITE_CUSTOM_FORMS = "WRITE_CUSTOM_FORMS";
 }

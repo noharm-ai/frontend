@@ -21,6 +21,7 @@ import serverActionsSlice from "features/serverActions/ServerActionsSlice";
 import summaryReducer from "features/summary/SummarySlice";
 import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
 import memoryFilterSlice from "features/memory/MemoryFilter/MemoryFilterSlice";
+import memoryCustomFormsSlice from "features/memory/CustomForms/CustomFormsSlice";
 import scoreWizardSlice from "features/outliers/ScoreWizard/ScoreWizardSlice";
 import prescriptionSlice from "features/prescription/PrescriptionSlice";
 import preferencesSlice from "features/preferences/PreferencesSlice";
@@ -49,12 +50,14 @@ import adminIntegrationStatus from "features/admin/IntegrationStatus/Integration
 import adminIntegrationConfig from "features/admin/IntegrationConfig/IntegrationConfigSlice";
 import adminIntegrationRemote from "features/admin/IntegrationRemote/IntegrationRemoteSlice";
 import adminSubstance from "features/admin/Substance/SubstanceSlice";
+import adminSubstanceForm from "features/admin/Substance/SubstanceFormSlice";
 import adminRelation from "features/admin/Relation/RelationsSlice";
 import adminDrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
 import adminMeasureUnit from "features/admin/MeasureUnit/MeasureUnitSlice";
 import adminTag from "features/admin/Tag/TagSlice";
 import adminProtocol from "features/admin/Protocol/ProtocolSlice";
 import adminReport from "features/admin/Report/ReportSlice";
+import adminKnowledgeBase from "features/admin/KnowledgeBase/KnowledgeBaseSlice";
 import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
 import adminGlobalExam from "features/admin/GlobalExam/GlobalExamSlice";
 
@@ -94,12 +97,14 @@ const adminReducers = combineReducers({
   frequency: adminFrequency,
   unitConversion: adminUnitConversion,
   substance: adminSubstance,
+  substanceForm: adminSubstanceForm,
   relation: adminRelation,
   drugReferenceDrawer: adminDrugReferenceDrawer,
   measureUnit: adminMeasureUnit,
   tag: adminTag,
   protocol: adminProtocol,
   report: adminReport,
+  knowledgeBase: adminKnowledgeBase,
   globalMemory: adminGlobalMemory,
   globalExam: adminGlobalExam,
 });
@@ -149,6 +154,7 @@ const rootReducer = combineReducers({
   memory: memoryReducer,
   memoryDraft: memoryDraftSlice,
   memoryFilter: memoryFilterSlice,
+  memoryCustomForms: memoryCustomFormsSlice,
   clinicalNotes: clinicalNotesReducer,
   drugMeasureUnits: drugMeasureUnits,
   drugUnitConversion: drugUnitConversionSlice,

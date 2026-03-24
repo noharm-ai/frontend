@@ -110,7 +110,23 @@ export default function PrescriptionDrug({
   };
 
   const onSuspend = (suspension) => {
-    suspend(item.idPrescriptionDrug, item.source, suspension);
+    DefaultModal.confirm({
+      title: suspension
+        ? t("prescriptionDrugForm.suspendConfirmTitle")
+        : t("prescriptionDrugForm.removeSuspensionConfirmTitle"),
+      content: suspension
+        ? t("prescriptionDrugForm.suspendConfirmContent")
+        : t("prescriptionDrugForm.removeSuspensionConfirmContent"),
+      okText: suspension
+        ? t("prescriptionDrugForm.btnSuspend")
+        : t("prescriptionDrugForm.btnRemoveSuspension"),
+      cancelText: t("interventionForm.btnCancel"),
+      okType: "danger",
+      onOk: async () => {
+        await suspend(item.idPrescriptionDrug, item.source, suspension);
+        window.location.reload();
+      },
+    });
   };
 
   const Footer = ({ handleSubmit }) => {
@@ -202,7 +218,7 @@ export default function PrescriptionDrug({
                 t(
                   `prescriptionDrugForm.title${
                     initialValues.idPrescriptionDrug ? "Edit" : "Create"
-                  }`
+                  }`,
                 )}
               {item.updateNotes && t("prescriptionDrugForm.titleNotes")}
               {item.copyDrugs && t("prescriptionDrugForm.titleCopy")}

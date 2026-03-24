@@ -18,7 +18,7 @@ import { SubstanceTagEnum } from "models/SubstanceTagEnum";
 function BaseForm() {
   const { t } = useTranslation();
   const substanceClasses = useSelector(
-    (state) => state.lists.substanceClasses.list
+    (state) => state.lists.substanceClasses.list,
   );
   const { values, errors, touched, setFieldValue } = useFormikContext();
   const maxValue = 999999999;
@@ -279,6 +279,7 @@ function BaseForm() {
                       <Select.Option value={"ml"}>ml</Select.Option>
 
                       <Select.Option value={"mcg"}>mcg</Select.Option>
+                      <Select.Option value={"un"}>un</Select.Option>
                       <Select.Option value={"UI"}>UI</Select.Option>
                     </Select>
                   </div>

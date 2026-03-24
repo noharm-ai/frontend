@@ -9,11 +9,8 @@ import Empty from "components/Empty";
 import BackTop from "components/BackTop";
 import Button from "components/Button";
 import Filter from "./Filter/Filter";
-import {
-  setSubstance,
-  setCurrentPage,
-  fetchSubstances,
-} from "./SubstanceSlice";
+import { setCurrentPage, fetchSubstances } from "./SubstanceSlice";
+import { setSubstance } from "./SubstanceFormSlice";
 import SubstanceForm from "./Form/SubstanceForm";
 import { toDataSource } from "utils";
 import columns from "./columns";

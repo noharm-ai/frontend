@@ -26,6 +26,8 @@ import Summary from "pages/Summary";
 import SummarySearch from "pages/Summary/SummarySearch";
 import SupportCenter from "pages/SupportCenter";
 import SwitchSchema from "pages/SwitchSchema";
+import CustomForms from "pages/CustomForms/CustomForms";
+import CustomFormEditorPage from "pages/CustomForms/CustomFormEditorPage";
 
 import AdminFrequency from "pages/Admin/Frequency";
 import AdminTag from "pages/Admin/Tag";
@@ -35,6 +37,7 @@ import AdminMemoryRoutes from "pages/Admin/Memory/Routes";
 import AdminMemoryReports from "pages/Admin/Memory/Reports";
 import AdminMemoryFeatures from "pages/Admin/Memory/Features";
 import AdminMemorySchedules from "pages/Admin/Memory/Schedules";
+
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminIntegrationStatus from "pages/Admin/IntegrationStatus";
@@ -49,6 +52,7 @@ import AdminRelation from "pages/Admin/Relation";
 import AdminMeasureUnit from "pages/Admin/MeasureUnit";
 import AdminProtocol from "pages/Admin/Protocol";
 import AdminReport from "pages/Admin/Report";
+import AdminKnowledgeBase from "pages/Admin/KnowledgeBase";
 import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
 import AdminGlobalExam from "pages/Admin/GlobalExam";
 
@@ -198,6 +202,16 @@ const routes = [
   },
   {
     exact: true,
+    path: "/configuracoes/forms-personalizados",
+    element: <WithAuth component={CustomForms} />,
+  },
+  {
+    exact: true,
+    path: "/configuracoes/forms-personalizados/:id",
+    element: <WithAuth component={CustomFormEditorPage} />,
+  },
+  {
+    exact: true,
     path: "/priorizacao/pacientes/cards",
     element: (
       <WithAuth component={Prioritization} prioritizationType={"patient"} />
@@ -296,6 +310,7 @@ const routes = [
     path: "/admin/features",
     element: <WithAuth component={AdminMemoryFeatures} />,
   },
+
   {
     exact: true,
     path: "/admin/tags",
@@ -370,6 +385,11 @@ const routes = [
     exact: true,
     path: "/admin/relatorios-customizados",
     element: <WithAuth component={AdminReport} />,
+  },
+  {
+    exact: true,
+    path: "/admin/knowledge-base",
+    element: <WithAuth component={AdminKnowledgeBase} />,
   },
   {
     exact: true,

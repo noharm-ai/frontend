@@ -329,6 +329,12 @@ api.substance.getSubstances = (params = {}) => {
   });
 };
 
+api.substance.getSubstance = (id) => {
+  return instance.get(`/admin/substance/${id}`, {
+    ...setHeaders(),
+  });
+};
+
 api.substance.upsertSubstance = (params = {}) => {
   return instance.post(`/admin/substance`, params, {
     ...setHeaders(),
@@ -403,6 +409,21 @@ api.reports.getReports = (params = {}) =>
 
 api.reports.upsertReport = (params = {}) => {
   return instance.post(`/admin/report`, params, {
+    ...setHeaders(),
+  });
+};
+
+/**
+ * KNOWLEDGE BASE
+ */
+api.knowledgeBase = {};
+api.knowledgeBase.getKnowledgeBase = (params = {}) =>
+  instance.post(`/admin/knowledge-base/list`, params, {
+    ...setHeaders(),
+  });
+
+api.knowledgeBase.upsertKnowledgeBase = (params = {}) => {
+  return instance.post(`/admin/knowledge-base/upsert`, params, {
     ...setHeaders(),
   });
 };

@@ -1,19 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Spin, Drawer } from "antd";
+import { SettingOutlined } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
 import { getErrorMessage } from "utils/errorHandler";
 import notification from "components/notification";
+import { fetchSubstance } from "features/admin/Substance/SubstanceFormSlice";
 import { setDrawerSctid, fetchDrugReference } from "./DrugReferenceDrawerSlice";
+import Button from "components/Button";
 
-export default function DrugReferenceDrawer() {
+export default function DrugReferenceDrawer({ placement }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const sctid = useSelector((state) => state.admin.drugReferenceDrawer.sctid);
   const data = useSelector((state) => state.admin.drugReferenceDrawer.data);
   const status = useSelector((state) => state.admin.drugReferenceDrawer.status);
+  const [size, setSize] = useState(400);
 
   useEffect(() => {
     if (sctid) {
@@ -33,7 +37,20 @@ export default function DrugReferenceDrawer() {
       open={sctid}
       onClose={() => dispatch(setDrawerSctid(null))}
       mask={false}
-      width={"23%"}
+      placement={placement || "left"}
+      size={size}
+      resizable={{
+        onResize: (newSize) => setSize(newSize),
+      }}
+      extra={
+        <Button
+          onClick={() => dispatch(fetchSubstance(sctid))}
+          icon={<SettingOutlined />}
+          disabled={!sctid}
+        >
+          Configurar substância
+        </Button>
+      }
     >
       <Spin spinning={status === "loading"}>
         {data?.ref ? (

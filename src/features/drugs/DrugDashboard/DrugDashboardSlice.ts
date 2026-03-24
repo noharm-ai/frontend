@@ -5,7 +5,7 @@ import api from "services/api";
 
 interface IDrugDashboardSlice {
   idSegment: number | null;
-  idDrug: number | null;
+  idDrug: string | null;
   status: string;
   error: string | null;
   data: any | null;
@@ -55,7 +55,7 @@ export const updateOutlierObs = createAsyncThunk(
 export const fetchDrugDashboard = createAsyncThunk(
   "drugDashboard/fetch",
   async (
-    { idSegment, idDrug }: { idSegment: number; idDrug: number },
+    { idSegment, idDrug }: { idSegment: number; idDrug: string },
     thunkAPI,
   ) => {
     try {
@@ -81,7 +81,7 @@ const drugDashboardSlice = createSlice({
       state.status = "idle";
       state.error = null;
     },
-    setIdDrug(state, action: { payload: number | null }) {
+    setIdDrug(state, action: { payload: string | null }) {
       state.idDrug = action.payload;
     },
   },

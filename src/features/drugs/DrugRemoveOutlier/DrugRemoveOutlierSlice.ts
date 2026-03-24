@@ -6,7 +6,7 @@ import api from "services/api";
 interface IDrugRemoveOutlierSlice {
   open: boolean;
   idSegment: number | null;
-  idDrug: number | null;
+  idDrug: string | null;
   status: string;
   error: string | null;
 }
@@ -22,7 +22,7 @@ const initialState: IDrugRemoveOutlierSlice = {
 export const removeOutlier = createAsyncThunk(
   "drugRemoveOutlier/remove",
   async (
-    params: { idSegment: number; idDrug: number },
+    params: { idSegment: number; idDrug: string },
     thunkAPI,
   ) => {
     try {
@@ -47,7 +47,7 @@ const drugRemoveOutlierSlice = createSlice({
         payload: {
           open: boolean;
           idSegment?: number | null;
-          idDrug?: number | null;
+          idDrug?: string | null;
         };
       },
     ) {

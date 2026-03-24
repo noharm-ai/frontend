@@ -35,6 +35,8 @@ import {
   FilePptOutlined,
   RobotOutlined,
   SearchOutlined,
+  BookOutlined,
+  FormOutlined,
 } from "@ant-design/icons";
 import { Menu as Navigator } from "antd";
 
@@ -201,6 +203,14 @@ export default function Menu({ segments }) {
           permission: [Permission.ADMIN_EXAMS],
         },
         {
+          key: "/configuracoes/forms-personalizados",
+          link: "/configuracoes/forms-personalizados",
+          label: "Formulários de evolução",
+          icon: <FormOutlined />,
+          id: "gtm-lnk-customForms",
+          permission: [Permission.WRITE_CUSTOM_FORMS],
+        },
+        {
           key: "/admin/tags",
           link: "/admin/tags",
           label: t("menu.tag"),
@@ -209,8 +219,8 @@ export default function Menu({ segments }) {
           permission: [Permission.WRITE_TAGS],
         },
         {
-          key: "/medicamentos",
-          link: "/medicamentos",
+          key: "/painel-medicamentos",
+          link: "/painel-medicamentos",
           label: t("menu.medications"),
           icon: <MedicineBoxOutlined />,
           id: "gtm-lnk-medicamentos",
@@ -233,6 +243,13 @@ export default function Menu({ segments }) {
       icon: <ControlOutlined />,
       permission: [Permission.MAINTAINER],
       children: [
+        {
+          key: "/admin/knowledge-base",
+          link: "/admin/knowledge-base",
+          label: "Ajuda: Base de Conhecimento",
+          icon: <BookOutlined />,
+          id: "gtm-lnk-knowledge-base",
+        },
         {
           key: "/admin/curadoria-medicamentos",
           link: "/admin/curadoria-medicamentos",
@@ -321,6 +338,7 @@ export default function Menu({ segments }) {
           id: "gtm-lnk-relatorios-custom",
           permission: [Permission.READ_CUSTOM_REPORTS],
         },
+
         {
           key: "/admin/segmentos",
           link: "/admin/segmentos",

@@ -44,6 +44,8 @@ export default function Filter({ limit }) {
     tpSubstanceList: "in",
     tpAttributeList: "in",
     minDrugCount: null,
+    hasSubstanceMaxDoseWeightAdult: null,
+    hasSubstanceMaxDoseWeightPediatric: null,
   };
 
   useEffect(() => {

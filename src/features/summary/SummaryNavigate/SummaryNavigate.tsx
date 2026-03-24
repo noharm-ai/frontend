@@ -61,7 +61,7 @@ export function SummaryNavigate({
           time: pageTimer?.getCurrentTime(),
           blocks,
         },
-      })
+      }),
     );
 
     pageTimer?.reset();
@@ -75,7 +75,7 @@ export function SummaryNavigate({
         name: params.name,
         phone: params.phone,
         clinical_notes: blocksToClinicalNotes(blocks),
-      })
+      }),
     );
 
     setLoading(false);
@@ -87,6 +87,9 @@ export function SummaryNavigate({
     } else {
       notification.success({
         message: "Sumário finalizado e paciente copiado para navegação!",
+        description:
+          "A prescrição do paciente pode demorar até 5min para ser gerada",
+        duration: 30,
       });
 
       setOpen(false);
