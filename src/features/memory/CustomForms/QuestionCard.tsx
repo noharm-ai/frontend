@@ -217,15 +217,13 @@ export function QuestionCard({
         </div>
       )}
 
-      {!isCalculatedField && (
-        <div className="form-row">
-          <a style={{ fontSize: 12 }} onClick={() => setShowHelp((v) => !v)}>
-            {showHelp ? "Ocultar ajuda" : "Adicionar ajuda"}
-          </a>
-        </div>
-      )}
+      <div className="form-row">
+        <a style={{ fontSize: 12 }} onClick={() => setShowHelp((v) => !v)}>
+          {showHelp ? "Ocultar ajuda" : "Adicionar ajuda"}
+        </a>
+      </div>
 
-      {!isCalculatedField && showHelp && (
+      {showHelp && (
         <>
           <div className="form-row">
             <div className="form-label">
