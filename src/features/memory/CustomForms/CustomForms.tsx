@@ -109,10 +109,14 @@ function MemoryCustomForms() {
       <PageCard>
         <Table
           columns={columns}
-          dataSource={forms.map((f: any, i: number) => ({
-            ...f.value,
-            key: i,
-          }))}
+          dataSource={[...forms]
+            .sort((a: any, b: any) =>
+              (a.value?.name ?? "").localeCompare(b.value?.name ?? ""),
+            )
+            .map((f: any, i: number) => ({
+              ...f.value,
+              key: i,
+            }))}
           loading={status === "loading"}
           pagination={false}
           locale={{ emptyText: "Nenhum formulário cadastrado" }}
