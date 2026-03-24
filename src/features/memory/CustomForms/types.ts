@@ -12,8 +12,10 @@ export interface Question {
     | "options-key-value-multiple"
     | "plaintext"
     | "date"
-    | "datetime";
+    | "datetime"
+    | "calculated_field";
   options: string[] | { id: string; value: string }[];
+  formula?: string;
   required: boolean;
 }
 
@@ -61,4 +63,5 @@ export const questionTypeOptions = [
   { value: "options-multiple", label: "Seleção múltipla" },
   { value: "options-key-value", label: "Seleção única (chave-valor)" },
   { value: "options-key-value-multiple", label: "Seleção múltipla (chave-valor)" },
+  { value: "calculated_field", label: "Campo calculado" },
 ];

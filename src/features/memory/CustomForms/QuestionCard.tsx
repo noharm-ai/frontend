@@ -1,5 +1,6 @@
 import React from "react";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { Tag } from "antd";
 
 import Editor from "components/Editor";
 import { Input, Select } from "components/Inputs";
@@ -13,6 +14,7 @@ interface QuestionCardProps {
   gIdx: number;
   canRemove: boolean;
   errors: any;
+  groupQuestions: Question[];
   onUpdate: (gIdx: number, qIdx: number, field: string, value: any) => void;
   onRemove: (gIdx: number, qIdx: number) => void;
 }
@@ -23,16 +25,24 @@ export function QuestionCard({
   gIdx,
   canRemove,
   errors,
+  groupQuestions,
   onUpdate,
   onRemove,
 }: QuestionCardProps) {
   const showOptions = q.type === "options" || q.type === "options-multiple";
   const showKeyValueOptions =
     q.type === "options-key-value" || q.type === "options-key-value-multiple";
+  const isCalculatedField = q.type === "calculated_field";
   const [showHelp, setShowHelp] = React.useState(!!(q.help || q.helpDetails));
 
   const keyValueOptions = ((q.options ?? []) as { id: string; value: string }[]).filter(
     (o) => typeof o === "object",
+  );
+
+  const availableForFormula = groupQuestions.filter(
+    (gq) =>
+      gq !== q &&
+      (gq.type === "number" || gq.type === "options-key-value"),
   );
 
   return (
@@ -160,13 +170,62 @@ export function QuestionCard({
         </div>
       )}
 
-      <div className="form-row">
-        <a style={{ fontSize: 12 }} onClick={() => setShowHelp((v) => !v)}>
-          {showHelp ? "Ocultar ajuda" : "Adicionar ajuda"}
-        </a>
-      </div>
+      {isCalculatedField && (
+        <div className="form-row">
+          <div className="form-label">
+            <label>Fórmula:</label>
+          </div>
+          <div className="form-input">
+            <Input
+              value={q.formula ?? ""}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onUpdate(gIdx, qIdx, "formula", e.target.value)
+              }
+              placeholder="Ex: {{peso}} + {{altura}} * 2"
+            />
+            {availableForFormula.length > 0 && (
+              <div style={{ marginTop: 6 }}>
+                {availableForFormula.map((aq) => (
+                  <Tag
+                    key={aq.id}
+                    variant="outlined"
+                    style={{ cursor: "pointer", marginBottom: 4 }}
+                    onClick={() =>
+                      onUpdate(
+                        gIdx,
+                        qIdx,
+                        "formula",
+                        q.formula
+                          ? `${q.formula} {{${aq.id}}}`
+                          : `{{${aq.id}}}`,
+                      )
+                    }
+                  >
+                    {aq.label || aq.id} ({aq.id})
+                  </Tag>
+                ))}
+              </div>
+            )}
+            <div style={{ fontSize: 11, color: "#999", marginTop: 4 }}>
+              Use os IDs das questões como variáveis. Ex:{" "}
+              <code>{"{{peso}} + {{altura}} * 2"}</code>
+            </div>
+          </div>
+          {errors.formula && (
+            <div className="form-error">{errors.formula}</div>
+          )}
+        </div>
+      )}
 
-      {showHelp && (
+      {!isCalculatedField && (
+        <div className="form-row">
+          <a style={{ fontSize: 12 }} onClick={() => setShowHelp((v) => !v)}>
+            {showHelp ? "Ocultar ajuda" : "Adicionar ajuda"}
+          </a>
+        </div>
+      )}
+
+      {!isCalculatedField && showHelp && (
         <>
           <div className="form-row">
             <div className="form-label">

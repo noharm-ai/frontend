@@ -65,6 +65,12 @@ const validationSchema = Yup.object().shape({
             Yup.object().shape({
               id: Yup.string().nullable().required("Campo obrigatório"),
               label: Yup.string().nullable().required("Campo obrigatório"),
+              formula: Yup.string()
+                .nullable()
+                .when("type", {
+                  is: "calculated_field",
+                  then: (s) => s.required("Campo obrigatório"),
+                }),
             }),
           ),
       }),

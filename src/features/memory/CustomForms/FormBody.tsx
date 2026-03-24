@@ -32,7 +32,7 @@ function groupHasErrors(groupErrors: any[], gIdx: number): boolean {
   const ge = groupErrors[gIdx];
   if (!ge) return false;
   if (ge.group) return true;
-  return ge.questions?.some((qe: any) => qe && (qe.id || qe.label)) ?? false;
+  return ge.questions?.some((qe: any) => qe && (qe.id || qe.label || qe.formula)) ?? false;
 }
 
 function pageHasErrors(
@@ -44,7 +44,7 @@ function pageHasErrors(
   if (!qErrors) return false;
   const q0 = qErrors[pageIdx * 2];
   const q1 = qErrors[pageIdx * 2 + 1];
-  return !!((q0 && (q0.id || q0.label)) || (q1 && (q1.id || q1.label)));
+  return !!((q0 && (q0.id || q0.label || q0.formula)) || (q1 && (q1.id || q1.label || q1.formula)));
 }
 
 export function FormBody() {
@@ -169,6 +169,9 @@ export function FormBody() {
       value !== "options-multiple"
     ) {
       data[gIdx].questions[qIdx].options = [];
+    }
+    if (field === "type" && value !== "calculated_field") {
+      data[gIdx].questions[qIdx].formula = undefined;
     }
     setFieldValue("data", data);
   };
@@ -459,6 +462,7 @@ export function FormBody() {
                                     gIdx={gIdx}
                                     canRemove={g.questions.length > 1}
                                     errors={qErrors}
+                                    groupQuestions={g.questions}
                                     onUpdate={updateQuestion}
                                     onRemove={removeQuestion}
                                   />

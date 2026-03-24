@@ -15,6 +15,7 @@ import MemoryField from "./Fields/MemoryField";
 import SubstanceField from "./Fields/SubstanceField";
 import RegulationTypeField from "./Fields/regulation/RegulationTypeField";
 import RegulationRiskField from "./Fields/regulation/RegulationRiskField";
+import CalculatedField from "./Fields/CalculatedField";
 import { EditorBox, CheckboxDescription } from "../Form.style";
 
 export default function Field({ question, values, setFieldValue }) {
@@ -239,6 +240,10 @@ export default function Field({ question, values, setFieldValue }) {
         setFieldValue={setFieldValue}
       />
     );
+  }
+
+  if (question.type === "calculated_field") {
+    return <CalculatedField question={question} values={values} />;
   }
 
   if (question.type === "checkbox") {
