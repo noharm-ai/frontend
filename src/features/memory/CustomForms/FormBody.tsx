@@ -27,12 +27,16 @@ import { CustomForm, emptyGroup, emptyQuestion } from "./types";
 import { QuestionCard } from "./QuestionCard";
 import notification from "components/notification";
 import Tooltip from "src/components/Tooltip";
+import stripHtml from "src/utils/stripHtml";
 
 function groupHasErrors(groupErrors: any[], gIdx: number): boolean {
   const ge = groupErrors[gIdx];
   if (!ge) return false;
   if (ge.group) return true;
-  return ge.questions?.some((qe: any) => qe && (qe.id || qe.label || qe.formula)) ?? false;
+  return (
+    ge.questions?.some((qe: any) => qe && (qe.id || qe.label || qe.formula)) ??
+    false
+  );
 }
 
 function pageHasErrors(
@@ -44,7 +48,10 @@ function pageHasErrors(
   if (!qErrors) return false;
   const q0 = qErrors[pageIdx * 2];
   const q1 = qErrors[pageIdx * 2 + 1];
-  return !!((q0 && (q0.id || q0.label || q0.formula)) || (q1 && (q1.id || q1.label || q1.formula)));
+  return !!(
+    (q0 && (q0.id || q0.label || q0.formula)) ||
+    (q1 && (q1.id || q1.label || q1.formula))
+  );
 }
 
 export function FormBody() {
@@ -57,7 +64,6 @@ export function FormBody() {
   const [openDescriptions, setOpenDescriptions] = useState<
     Record<number, boolean>
   >({});
-  const stripHtml = (html: string) => html.replace(/<[^>]*>/g, "").trim();
   const getPage = (gIdx: number) => carouselPages[gIdx] ?? 0;
   const groupErrors: any[] = (errors as any).data ?? [];
 
