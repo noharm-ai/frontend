@@ -76,11 +76,11 @@ function MemoryCustomForms() {
       key: "operations",
       width: 120,
       align: "center" as const,
-      render: (_: any, _record: any, index: number) => (
+      render: (_: any, record: any) => (
         <Button
           type="primary"
           icon={<EditOutlined />}
-          onClick={() => navigate(`${basePath}/${forms[index].key}`)}
+          onClick={() => navigate(`${basePath}/${record.key}`)}
         />
       ),
     },
@@ -113,9 +113,9 @@ function MemoryCustomForms() {
             .sort((a: any, b: any) =>
               (a.value?.name ?? "").localeCompare(b.value?.name ?? ""),
             )
-            .map((f: any, i: number) => ({
+            .map((f: any) => ({
               ...f.value,
-              key: i,
+              key: f.key,
             }))}
           loading={status === "loading"}
           pagination={false}
