@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Spin } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 
 import { usePatientName } from "hooks/usePatientName";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
+import Descriptions from "components/Descriptions";
 import notification from "components/notification";
 import { Textarea } from "components/Inputs";
 import { setSupportOpen } from "features/support/SupportSlice";
@@ -77,7 +79,9 @@ const httpErrorHandler = (error: unknown): string => {
 export default function PatientNameCache({ idPatient }: Props) {
   const { name, isLoading, data } = usePatientName(idPatient);
   const [reloadLoading, setReloadLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const appConfig = useSelector((state: any) => state.app.config);
 
   const baseUrl = `${appConfig.nameUrl}`.replace(
@@ -181,11 +185,22 @@ export default function PatientNameCache({ idPatient }: Props) {
     }
   };
 
+  const openModal = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setModalOpen(true);
+  };
+
   if (isLoading && !name) return <Spin size="small" />;
 
   return (
     <>
-      <span>{name ?? `Paciente ${idPatient}`}</span>
+      <Tooltip title={`ID do paciente: ${idPatient}. Clique para detalhes.`}>
+        <span onClick={openModal} style={{ fontSize: 14, cursor: "pointer" }}>
+          {name ?? `Paciente ${idPatient}`}
+        </span>
+      </Tooltip>
+
       {!name && (
         <Tooltip title="Recarregar nome do paciente">
           <Button
@@ -197,6 +212,30 @@ export default function PatientNameCache({ idPatient }: Props) {
           />
         </Tooltip>
       )}
+      <DefaultModal
+        open={modalOpen}
+        onCancel={() => setModalOpen(false)}
+        footer={null}
+        title={name ?? `Paciente ${idPatient}`}
+        width={600}
+        destroyOnHidden
+      >
+        <Descriptions bordered size="small" column={1}>
+          <Descriptions.Item label="ID">{idPatient}</Descriptions.Item>
+
+          {data &&
+            Object.entries(data)
+              .filter(([key]) => key !== "cache")
+              .map(([key, value]) => (
+                <Descriptions.Item
+                  key={key}
+                  label={t(`patientDetails.${key}`, { defaultValue: key })}
+                >
+                  {value !== null && value !== undefined ? String(value) : "—"}
+                </Descriptions.Item>
+              ))}
+        </Descriptions>
+      </DefaultModal>
     </>
   );
 }

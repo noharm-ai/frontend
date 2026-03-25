@@ -1006,5 +1006,9 @@
     "no_cg_exam": "Exame CG não encontrado (últimos 5 dias)",
     "no_ckd21_exam": "Exame CKD21 não encontrado (últimos 5 dias)",
     "weight_height": "Não foi possível calcular a superfície corporal (peso/altura não encontrados)"
+  },
+
+  "patientDetails": {
+    "fone": "Telefone"
   }
 }
