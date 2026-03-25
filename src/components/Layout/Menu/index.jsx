@@ -67,6 +67,10 @@ export default function Menu({ segments }) {
       return;
     }
 
+    if (item.featureHide && FeatureService.has(item.featureHide)) {
+      return;
+    }
+
     if (item.key === "/priorizacao/prescricoes") {
       if (segments.filter((s) => s.cpoe).length === segments.length) {
         // all cpoe segments
@@ -109,6 +113,7 @@ export default function Menu({ segments }) {
       icon: <TableOutlined />,
       id: "gtm-lnk-priorizacao",
       permission: [Permission.READ_PRESCRIPTION],
+      featureHide: Feature.PRIMARYCARE,
       children: [
         {
           key: "/priorizacao/prescricoes",

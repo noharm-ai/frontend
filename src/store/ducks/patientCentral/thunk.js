@@ -11,8 +11,6 @@ const {
   patientCentralFetchListStart,
   patientCentralFetchListError,
   patientCentralFetchListSuccess,
-
-  patientCentralUpdateNames,
 } = PatientCentralCreators;
 const { patientsFetchListSuccess } = PatientsCreators;
 
@@ -34,14 +32,7 @@ export const patientCentralFetchListThunk =
       return;
     }
 
-    const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
-      ...item,
-      idPatient,
-      loadingName: true,
-      namePatient: `Paciente ${idPatient}`,
-    }));
-
-    dispatch(patientCentralFetchListSuccess(listAddedPatientName));
+    dispatch(patientCentralFetchListSuccess(data));
     dispatch(patientCentralNamesThunk(data));
   };
 
@@ -72,6 +63,5 @@ export const patientCentralNamesThunk =
       const patientsList = await hospital.getPatients(null, requestConfig);
 
       dispatch(patientsFetchListSuccess(patientsList));
-      dispatch(patientCentralUpdateNames(patientsList));
     }
   };

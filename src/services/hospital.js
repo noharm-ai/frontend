@@ -4,6 +4,7 @@ import moment from "moment";
 import FeatureService from "services/features";
 import api from "services/api";
 import { store } from "store/index";
+import * as patientCache from "utils/patientCache";
 
 const FLAG = "{idPatient}";
 
@@ -83,6 +84,7 @@ const getPatients = async (bearerToken, requestConfig) => {
           .filter((p) => listToEscape[p.idPatient])
           .map((p) => listToEscape[p.idPatient]);
       } else {
+        patientCache.markLoading(requestIds);
         try {
           const { data: patientList } = await axios.post(
             getnameType === "proxy"
@@ -117,6 +119,7 @@ const getPatients = async (bearerToken, requestConfig) => {
           return listToEscape[idPatient];
         }
 
+        patientCache.markLoading([idPatient]);
         const cache = birthdate
           ? moment().diff(birthdate, "years") > 0
           : useCache;
@@ -171,6 +174,8 @@ const getPatients = async (bearerToken, requestConfig) => {
     listToEscape[p.idPatient] = p;
   });
 
+  patientCache.setPatients(listToEscape);
+
   return listToEscape;
 };
 
@@ -200,6 +205,7 @@ const getSinglePatient = async (bearerToken, requestConfig) => {
       ? `${import.meta.env.VITE_APP_API_URL}/names/${idPatient}`
       : nameUrl.replace(FLAG, idPatient);
 
+  patientCache.markLoading([idPatient]);
   const { data: patient } = await axios.get(urlRequest, {
     timeout: 8000,
     headers: nameHeaders,
@@ -208,6 +214,8 @@ const getSinglePatient = async (bearerToken, requestConfig) => {
   if (patient.id) {
     patient.idPatient = patient.id;
   }
+
+  patientCache.setPatient({ ...patient, cache: true });
 
   return { ...patient };
 };
