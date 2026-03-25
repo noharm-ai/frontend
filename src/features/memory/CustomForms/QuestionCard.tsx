@@ -1,6 +1,6 @@
 import React from "react";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { Tag } from "antd";
+import { Tag, Tooltip } from "antd";
 
 import Editor from "components/Editor";
 import { Input, Select } from "components/Inputs";
@@ -35,14 +35,13 @@ export function QuestionCard({
   const isCalculatedField = q.type === "calculated_field";
   const [showHelp, setShowHelp] = React.useState(!!(q.help || q.helpDetails));
 
-  const keyValueOptions = ((q.options ?? []) as { id: string; value: string }[]).filter(
-    (o) => typeof o === "object",
-  );
+  const keyValueOptions = (
+    (q.options ?? []) as { id: string; value: string }[]
+  ).filter((o) => typeof o === "object");
 
   const availableForFormula = groupQuestions.filter(
     (gq) =>
-      gq !== q &&
-      (gq.type === "number" || gq.type === "options-key-value"),
+      gq !== q && (gq.type === "number" || gq.type === "options-key-value"),
   );
 
   return (
@@ -184,7 +183,14 @@ export function QuestionCard({
               placeholder="Ex: {{peso}} + {{altura}} * 2"
             />
             {availableForFormula.length > 0 && (
-              <div style={{ marginTop: 6 }}>
+              <div
+                style={{
+                  marginTop: 6,
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 4,
+                }}
+              >
                 {availableForFormula.map((aq) => (
                   <Tag
                     key={aq.id}
@@ -201,7 +207,7 @@ export function QuestionCard({
                       )
                     }
                   >
-                    {aq.label || aq.id} ({aq.id})
+                    <Tooltip title={aq.label}>{aq.id}</Tooltip>
                   </Tag>
                 ))}
               </div>
@@ -211,9 +217,7 @@ export function QuestionCard({
               <code>{"{{peso}} + {{altura}} * 2"}</code>
             </div>
           </div>
-          {errors.formula && (
-            <div className="form-error">{errors.formula}</div>
-          )}
+          {errors.formula && <div className="form-error">{errors.formula}</div>}
         </div>
       )}
 
