@@ -80,6 +80,11 @@ export function setPatients(list: Cache): void {
   notify();
 }
 
+export function clearLoading(ids: (number | string)[]): void {
+  ids.forEach((id) => loadingIds.delete(String(id)));
+  notify();
+}
+
 export function clearCache(): void {
   mem = {};
   try {

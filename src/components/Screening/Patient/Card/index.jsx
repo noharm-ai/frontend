@@ -43,7 +43,7 @@ import {
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
 
-import PatientName from "containers/PatientName";
+import PatientNameCache from "components/PatientName/PatientNameCache";
 
 import PatientTab from "./PatientTab";
 import AdmissionTab from "./AdmissionData";
@@ -514,7 +514,7 @@ export default function PatientCard({
             hasIntervention && "has-intervention"
           }`}
         >
-          <PatientName idPatient={prescription.idPatient} name={namePatient} />
+          <PatientNameCache idPatient={prescription.idPatient} />
           {dischargeMessage(dischargeFormated, dischargeReason)}
         </div>
         <div className="patient-header-action">
