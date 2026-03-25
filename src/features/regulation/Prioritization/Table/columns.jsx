@@ -1,7 +1,6 @@
 import React from "react";
 import {
   SearchOutlined,
-  LoadingOutlined,
   CheckSquareOutlined,
   BorderOutlined,
 } from "@ant-design/icons";
@@ -12,6 +11,7 @@ import { formatDateTime } from "utils/date";
 import RegulationRiskTag from "components/RegulationRiskTag";
 import RegulationStageTag from "components/RegulationStageTag";
 import { RegulationScoreTag } from "src/components/RegulationScoreTag";
+import PatientNameCache from "src/components/PatientName/PatientNameCache";
 
 const columns = (t, bag) => {
   return [
@@ -37,14 +37,7 @@ const columns = (t, bag) => {
       title: "Nome",
       align: "left",
       render: (entry, record) => {
-        if (record.patientNameLoading) {
-          return (
-            <>
-              <LoadingOutlined /> {`Paciente ${record.idPatient}`}
-            </>
-          );
-        }
-        return record.patientName;
+        return <PatientNameCache idPatient={record.idPatient} />;
       },
     },
     {

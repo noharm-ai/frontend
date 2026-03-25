@@ -52,7 +52,7 @@ export const fetchRegulationList = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const fetchPatients = createAsyncThunk(
@@ -86,7 +86,7 @@ export const fetchPatients = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const moveRegulationMultiple = createAsyncThunk(
@@ -99,7 +99,7 @@ export const moveRegulationMultiple = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 const regulationPrioritizationSlice = createSlice({
@@ -149,14 +149,8 @@ const regulationPrioritizationSlice = createSlice({
       })
       .addCase(fetchRegulationList.fulfilled, (state, action) => {
         state.status = "succeeded";
-        const patients = action.payload.patients;
         const list = action.payload.response.data.data.list.map((p) => ({
           ...p,
-          patientName: patients[p.idPatient]?.name,
-          patientNameLoading: !Object.prototype.hasOwnProperty.call(
-            patients,
-            p.idPatient
-          ),
         }));
 
         state.list = list;
@@ -172,13 +166,6 @@ const regulationPrioritizationSlice = createSlice({
       })
       .addCase(fetchPatients.fulfilled, (state, action) => {
         state.patients.status = "succeeded";
-        const patients = action.payload.patientData;
-
-        state.list = state.list.map((p) => ({
-          ...p,
-          patientName: patients[p.idPatient]?.name,
-          patientNameLoading: false,
-        }));
       })
       .addCase(fetchPatients.rejected, (state, action) => {
         state.patients.status = "failed";
