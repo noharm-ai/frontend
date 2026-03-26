@@ -188,6 +188,7 @@ function InnerPage({
             loading={isSaving}
             disabled={isSaving}
             onClick={handleSubmit}
+            danger={hasErrors}
           >
             Salvar
           </Button>

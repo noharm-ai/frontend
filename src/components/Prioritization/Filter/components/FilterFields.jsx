@@ -175,10 +175,6 @@ export default function FilterFields({
 
   const icdGroups = [
     {
-      value: "ONCO",
-      label: "Oncológico",
-    },
-    {
       value: "CARDIOVASCULAR",
       label: "Cardiovascular",
     },
@@ -187,16 +183,20 @@ export default function FilterFields({
       label: "Cerebrovascular",
     },
     {
+      value: "DIABETES",
+      label: "Diabetes",
+    },
+    {
+      value: "ONCO",
+      label: "Oncológico",
+    },
+    {
       value: "PULMONAR",
       label: "Pulmonar",
     },
     {
       value: "TUBERCULOSE",
       label: "Tuberculose",
-    },
-    {
-      value: "DIABETES",
-      label: "Diabetes",
     },
   ];
 
