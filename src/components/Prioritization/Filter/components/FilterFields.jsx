@@ -178,6 +178,26 @@ export default function FilterFields({
       value: "ONCO",
       label: "Oncológico",
     },
+    {
+      value: "CARDIOVASCULAR",
+      label: "Cardiovascular",
+    },
+    {
+      value: "CEREBROVASCULAR",
+      label: "Cerebrovascular",
+    },
+    {
+      value: "PULMONAR",
+      label: "Pulmonar",
+    },
+    {
+      value: "TUBERCULOSE",
+      label: "Tuberculose",
+    },
+    {
+      value: "DIABETES",
+      label: "Diabetes",
+    },
   ];
 
   return (
