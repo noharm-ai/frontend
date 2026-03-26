@@ -76,10 +76,6 @@ export function FormBody() {
     );
     if (firstErrorGroup === -1) return;
 
-    notification.error({
-      message: "Verifique os campos obrigatórios antes de salvar.",
-    });
-
     const totalPages = Math.ceil(
       values.data[firstErrorGroup].questions.length / 2,
     );
@@ -92,6 +88,10 @@ export function FormBody() {
     }
 
     setTimeout(() => {
+      notification.error({
+        message: "Verifique os campos obrigatórios antes de salvar.",
+      });
+
       setActiveKey(String(firstErrorGroup));
       setCarouselPages((prev) => ({
         ...prev,

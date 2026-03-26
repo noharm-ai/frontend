@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Button } from "antd";
+import { Button, Popconfirm, Tag } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -75,6 +75,18 @@ const validationSchema = Yup.object().shape({
     ),
 });
 
+function DirtyGuard({ dirty }: { dirty: boolean }) {
+  useEffect(() => {
+    if (!dirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty]);
+  return null;
+}
+
 function PreviewButton({ template }: { template: FormGroup[] }) {
   const [open, setOpen] = useState(false);
   return (
@@ -103,6 +115,88 @@ function PreviewButton({ template }: { template: FormGroup[] }) {
           btnSaveText={"Fechar preview"}
         />
       </DefaultModal>
+    </>
+  );
+}
+
+interface InnerPageProps {
+  title: string;
+  dirty: boolean;
+  hasErrors: boolean;
+  isSaving: boolean;
+  values: any;
+  handleSubmit: () => void;
+  handleCancel: () => void;
+}
+
+function InnerPage({
+  title,
+  dirty,
+  hasErrors,
+  isSaving,
+  values,
+  handleSubmit,
+  handleCancel,
+}: InnerPageProps) {
+  return (
+    <>
+      <DirtyGuard dirty={dirty} />
+      <PageHeader>
+        <div>
+          <h1 className="page-header-title">{title}</h1>
+          <div className="page-header-legend">Formulários de evolução</div>
+        </div>
+        <div className="page-header-actions">
+          {hasErrors && (
+            <Tag
+              color="error"
+              variant="outlined"
+              style={{ marginLeft: 8, verticalAlign: "middle" }}
+            >
+              Formulário com erros
+            </Tag>
+          )}
+          {dirty ? (
+            <>
+              <Tag
+                color="warning"
+                variant="outlined"
+                style={{ marginLeft: 8, verticalAlign: "middle" }}
+              >
+                Alterações não salvas
+              </Tag>
+
+              <Popconfirm
+                title="Alterações não salvas"
+                description="Deseja sair sem salvar?"
+                onConfirm={handleCancel}
+                okText="Sair sem salvar"
+                cancelText="Continuar editando"
+                okButtonProps={{ danger: true }}
+              >
+                <Button disabled={isSaving}>Cancelar</Button>
+              </Popconfirm>
+            </>
+          ) : (
+            <Button onClick={handleCancel} disabled={isSaving}>
+              Cancelar
+            </Button>
+          )}
+          <PreviewButton template={values.data} />
+          <Button
+            type="primary"
+            loading={isSaving}
+            disabled={isSaving}
+            onClick={handleSubmit}
+          >
+            Salvar
+          </Button>
+        </div>
+      </PageHeader>
+
+      <Form onSubmit={handleSubmit}>
+        <FormBody />
+      </Form>
     </>
   );
 }
@@ -169,33 +263,16 @@ function CustomFormEditorPage() {
       validateOnChange={false}
       validateOnBlur={false}
     >
-      {({ handleSubmit, values }) => (
-        <>
-          <PageHeader>
-            <div>
-              <h1 className="page-header-title">{title}</h1>
-              <div className="page-header-legend">Formulários de evolução</div>
-            </div>
-            <div className="page-header-actions">
-              <Button onClick={handleCancel} disabled={isSaving}>
-                Cancelar
-              </Button>
-              <PreviewButton template={values.data} />
-              <Button
-                type="primary"
-                loading={isSaving}
-                disabled={isSaving}
-                onClick={() => handleSubmit()}
-              >
-                Salvar
-              </Button>
-            </div>
-          </PageHeader>
-
-          <Form onSubmit={handleSubmit}>
-            <FormBody />
-          </Form>
-        </>
+      {({ handleSubmit, values, dirty, errors }) => (
+        <InnerPage
+          title={title}
+          dirty={dirty}
+          hasErrors={Object.keys(errors).length > 0}
+          isSaving={isSaving}
+          values={values}
+          handleSubmit={handleSubmit}
+          handleCancel={handleCancel}
+        />
       )}
     </Formik>
   );
