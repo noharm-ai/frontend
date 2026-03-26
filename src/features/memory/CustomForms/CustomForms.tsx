@@ -2,13 +2,15 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Tag } from "antd";
-import { PlusOutlined, EditOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditOutlined, CopyOutlined } from "@ant-design/icons";
+import { Space } from "antd";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import Table from "components/Table";
 import Button from "components/Button";
 import BackTop from "components/BackTop";
 import notification from "components/notification";
+import Tooltip from "src/components/Tooltip";
 import { PageCard } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
 
@@ -77,11 +79,19 @@ function MemoryCustomForms() {
       width: 120,
       align: "center" as const,
       render: (_: any, record: any) => (
-        <Button
-          type="primary"
-          icon={<EditOutlined />}
-          onClick={() => navigate(`${basePath}/${record.key}`)}
-        />
+        <Space>
+          <Tooltip title="Duplicar">
+            <Button
+              icon={<CopyOutlined />}
+              onClick={() => navigate(`${basePath}/new?copyFrom=${record.key}`)}
+            />
+          </Tooltip>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => navigate(`${basePath}/${record.key}`)}
+          />
+        </Space>
       ),
     },
   ];

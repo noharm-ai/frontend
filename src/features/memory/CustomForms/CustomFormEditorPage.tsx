@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -205,6 +205,8 @@ function InnerPage({
 function CustomFormEditorPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const copyFromKey = searchParams.get("copyFrom");
   const { t } = useTranslation();
   const dispatch = useAppDispatch() as any;
 
@@ -227,9 +229,20 @@ function CustomFormEditorPage() {
   const formRecord = isNew
     ? null
     : forms.find((f: any) => String(f.key) === id);
-  const initialForm: CustomForm = formRecord
-    ? JSON.parse(JSON.stringify(formRecord.value))
-    : emptyForm();
+
+  const initialForm: CustomForm = (() => {
+    if (isNew && copyFromKey) {
+      const source = forms.find((f: any) => String(f.key) === copyFromKey);
+      if (source) {
+        const copy = JSON.parse(JSON.stringify(source.value));
+        copy.name = `Cópia de ${copy.name}`;
+        return copy;
+      }
+    }
+    return formRecord
+      ? JSON.parse(JSON.stringify(formRecord.value))
+      : emptyForm();
+  })();
 
   const listPath = "/configuracoes/forms-personalizados";
 
