@@ -1,3 +1,5 @@
+import * as patientCache from "utils/patientCache";
+
 export const PAGE_SIZE = 24;
 export const ORDER_OPTIONS = [
   {
@@ -131,9 +133,11 @@ export const filterList = (list, filter) => {
   if (filter.searchKey) {
     newList = newList.filter(
       (i) =>
-        i.namePatient.toLowerCase().includes(filter.searchKey) ||
+        (patientCache.getPatient(i.idPatient)?.name ?? "")
+          .toLowerCase()
+          .includes(filter.searchKey) ||
         `${i.admissionNumber}`.includes(filter.searchKey) ||
-        `${i.idPatient}`.includes(filter.searchKey)
+        `${i.idPatient}`.includes(filter.searchKey),
     );
   }
 

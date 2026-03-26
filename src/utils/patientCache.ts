@@ -65,9 +65,8 @@ export function setPatients(list: Cache): void {
   const updates: Cache = {};
   Object.keys(list).forEach((key) => {
     loadingIds.delete(key);
-    if (list[key].cache) {
-      updates[key] = list[key];
-    }
+
+    updates[key] = list[key];
   });
 
   if (Object.keys(updates).length === 0) {

@@ -15,7 +15,7 @@ import { Badge } from "antd";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import { getAlerts } from "components/Screening/AlertCard";
-import PatientName from "containers/PatientName";
+import PatientNameCache from "src/components/PatientName/PatientNameCache";
 import {
   trackPrescriptionPrioritizationAction,
   TrackedPrescriptionPrioritizationAction,
@@ -27,7 +27,7 @@ const TabContent = ({ tab, prescription, featureService }) => {
 
   if (tab === "patient") {
     const alerts = getAlerts(prescription.alertStats || {}, t).filter(
-      (a) => a.value > 0
+      (a) => a.value > 0,
     );
 
     return (
@@ -395,7 +395,7 @@ export default function PrioritizationCard({
 
     trackPrescriptionPrioritizationAction(
       TrackedPrescriptionPrioritizationAction.CLICK_CARD_TAB,
-      { title: tab }
+      { title: tab },
     );
   };
 
@@ -412,10 +412,7 @@ export default function PrioritizationCard({
           }`}
         >
           <Tooltip title={prescription.namePatient}>
-            <PatientName
-              idPatient={prescription.idPatient}
-              name={prescription.namePatient}
-            />
+            <PatientNameCache idPatient={prescription.idPatient} />
           </Tooltip>
           {prescription.dischargeFormated && (
             <Tooltip

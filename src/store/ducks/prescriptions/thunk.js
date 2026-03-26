@@ -84,26 +84,23 @@ export const fetchPrescriptionsListThunk =
       features: user.account.features,
     };
 
-    const patientsList = await hospital.getPatients(
-      access_token,
-      requestConfig
-    );
+    const patientsList = hospital.getPatients(access_token, requestConfig);
 
-    const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
-      ...item,
-      idPatient,
-      namePatient: patientsList[idPatient]
-        ? patientsList[idPatient].name
-        : `Paciente ${idPatient}`,
-    }));
+    // const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
+    //   ...item,
+    //   idPatient,
+    //   namePatient: patientsList[idPatient]
+    //     ? patientsList[idPatient].name
+    //     : `Paciente ${idPatient}`,
+    // }));
 
     const featureService = FeaturesService(user.account.features);
 
-    const list = transformPrescriptions(listAddedPatientName, {
+    const list = transformPrescriptions(data, {
       disableWhitelistGroup: featureService.hasDisableWhitelistGroup(),
     });
 
-    dispatch(patientsFetchListSuccess(patientsList));
+    // dispatch(patientsFetchListSuccess(patientsList));
     dispatch(prescriptionsFetchListSuccess(list));
   };
 
@@ -170,7 +167,7 @@ export const fetchScreeningThunk =
 
     const patientsList = await hospital.getPatients(
       access_token,
-      requestConfig
+      requestConfig,
     );
 
     const singlePrescriptionAddedPatientName = {
@@ -193,7 +190,7 @@ export const fetchScreeningThunk =
 
     dispatch(patientsFetchListSuccess(patientsList));
     dispatch(
-      prescriptionsFetchSingleSuccess(singlePrescriptionAddedPatientName)
+      prescriptionsFetchSingleSuccess(singlePrescriptionAddedPatientName),
     );
   };
 
@@ -308,7 +305,7 @@ export const updateInterventionStatusThunk =
 export const updatePrescriptionDrugDataThunk =
   (idPrescriptionDrug, source, data) => (dispatch) => {
     dispatch(
-      prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data)
+      prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data),
     );
   };
 

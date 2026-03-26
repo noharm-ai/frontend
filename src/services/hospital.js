@@ -68,7 +68,8 @@ const getPatients = async (bearerToken, requestConfig) => {
       const requestIds = [];
 
       listToRequest.forEach((p) => {
-        if (!listToEscape[p.idPatient]) {
+        const cachedPatient = patientCache.getPatient(p.idPatient);
+        if (!cachedPatient || !cachedPatient?.cache) {
           requestIds.push(p.idPatient);
 
           if (p.birthdate && moment().diff(p.birthdate, "years") > 0) {
@@ -81,8 +82,8 @@ const getPatients = async (bearerToken, requestConfig) => {
 
       if (!requestIds.length) {
         promises = listToRequest
-          .filter((p) => listToEscape[p.idPatient])
-          .map((p) => listToEscape[p.idPatient]);
+          .filter((p) => patientCache.getPatient(p.idPatient))
+          .map((p) => patientCache.getPatient(p.idPatient));
       } else {
         patientCache.markLoading(requestIds);
         try {
@@ -93,7 +94,7 @@ const getPatients = async (bearerToken, requestConfig) => {
             {
               patients: requestIds,
             },
-            { headers: nameHeaders, timeout: 30000 }
+            { headers: nameHeaders, timeout: 30000 },
           );
 
           promises = patientList
@@ -106,8 +107,8 @@ const getPatients = async (bearerToken, requestConfig) => {
             }))
             .concat(
               listToRequest
-                .filter((p) => listToEscape[p.idPatient])
-                .map((p) => listToEscape[p.idPatient])
+                .filter((p) => patientCache.getPatient(p.idPatient))
+                .map((p) => patientCache.getPatient(p.idPatient)),
             );
         } catch (error) {
           promises = listToRequest.map((p) => defaultValue(p.idPatient));
@@ -115,8 +116,8 @@ const getPatients = async (bearerToken, requestConfig) => {
       }
     } else {
       promises = await listToRequest.map(async ({ idPatient, birthdate }) => {
-        if (listToEscape[idPatient] && useCache) {
-          return listToEscape[idPatient];
+        if (patientCache.getPatient(idPatient) && useCache) {
+          return patientCache.getPatient(idPatient);
         }
 
         patientCache.markLoading([idPatient]);
@@ -128,7 +129,7 @@ const getPatients = async (bearerToken, requestConfig) => {
           "color: #e67e22;",
           idPatient,
           "cache:",
-          cache
+          cache,
         );
         console.log("%cRequested patient of url: ", "color: #e67e22;", nameUrl);
         const urlRequest =
@@ -147,7 +148,7 @@ const getPatients = async (bearerToken, requestConfig) => {
               "%cRequested patient error: ",
               "color: #e67e22;",
               idPatient,
-              patient
+              patient,
             );
             return defaultValue(idPatient);
           }
@@ -164,7 +165,7 @@ const getPatients = async (bearerToken, requestConfig) => {
   } else {
     console.log("bypass name resolution service");
     promises = listToRequest.map(async ({ idPatient }) =>
-      defaultValue(idPatient)
+      defaultValue(idPatient),
     );
   }
 
