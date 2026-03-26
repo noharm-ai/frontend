@@ -38,6 +38,7 @@ const mapStateToProps = ({
   aggIdPrescription: prescriptions.single.data.idPrescription,
   prescriptionStatus: prescriptions.single.data.status,
   prescriptionHeaders: prescriptions.single.data.headers,
+  idPatient: prescriptions.single.data.idPatient,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
@@ -54,7 +55,7 @@ const mapDispatchToProps = (dispatch) =>
       memorySaveReasonText: memorySaveReasonTextThunk,
       memoryFetchReasonText: memoryFetchReasonTextThunk,
     },
-    dispatch
+    dispatch,
   );
 
 export default connect(mapStateToProps, mapDispatchToProps)(Intervention);

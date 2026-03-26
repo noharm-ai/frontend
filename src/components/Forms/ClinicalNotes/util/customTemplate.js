@@ -11,6 +11,7 @@ import { uniq } from "utils/lodash";
 import { getIMC, getCorporalSurface } from "utils";
 import { formatDate } from "utils/date";
 import dayjs from "dayjs";
+import * as patientCache from "utils/patientCache";
 
 export const getCustomClinicalNote = (
   prescription,
@@ -67,7 +68,11 @@ export const getCustomClinicalNote = (
 
   return resultText
     .replaceAll("{{data_atual}}", formatDate(dayjs()))
-    .replaceAll("{{nome_paciente}}", prescription.data.namePatient)
+    .replaceAll(
+      "{{nome_paciente}}",
+      patientCache.getPatient(prescription.data.idPatient)?.name ??
+        `Paciente ${prescription.data.idPatient}`,
+    )
     .replaceAll(
       "{{dtnascimento_paciente}}",
       formatDate(prescription.data.birthdate),

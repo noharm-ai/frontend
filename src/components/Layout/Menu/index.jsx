@@ -67,7 +67,7 @@ export default function Menu({ segments }) {
       return;
     }
 
-    if (item.featureHide && FeatureService.has(item.featureHide)) {
+    if (item.featurehide && FeatureService.has(item.featurehide)) {
       return;
     }
 
@@ -113,7 +113,7 @@ export default function Menu({ segments }) {
       icon: <TableOutlined />,
       id: "gtm-lnk-priorizacao",
       permission: [Permission.READ_PRESCRIPTION],
-      featureHide: Feature.PRIMARYCARE,
+      featurehide: Feature.PRIMARYCARE,
       children: [
         {
           key: "/priorizacao/prescricoes",

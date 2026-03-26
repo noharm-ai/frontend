@@ -165,17 +165,7 @@ export const fetchScreeningThunk =
       features: user.account.features,
     };
 
-    const patientsList = await hospital.getPatients(
-      access_token,
-      requestConfig,
-    );
-
-    const singlePrescriptionAddedPatientName = {
-      ...singlePrescription,
-      namePatient: patientsList[singlePrescription.idPatient]
-        ? patientsList[singlePrescription.idPatient].name
-        : "Paciente",
-    };
+    const patientsList = hospital.getPatients(access_token, requestConfig);
 
     const prescriptionDrugFormStatus = {};
     [
@@ -188,10 +178,8 @@ export const fetchScreeningThunk =
 
     dispatch(setDrugFormList(prescriptionDrugFormStatus));
 
-    dispatch(patientsFetchListSuccess(patientsList));
-    dispatch(
-      prescriptionsFetchSingleSuccess(singlePrescriptionAddedPatientName),
-    );
+    //dispatch(patientsFetchListSuccess(patientsList));
+    dispatch(prescriptionsFetchSingleSuccess(singlePrescription));
   };
 
 export const checkScreeningThunk =
