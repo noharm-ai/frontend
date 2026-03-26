@@ -64,10 +64,18 @@ export function DrugDashboard() {
         fetchDrugDashboard({
           idSegment: drugDashboard.idSegment,
           idDrug: drugDashboard.idDrug,
+          dose: outlierDose,
+          frequency: outlierFrequency,
         }),
       );
     }
-  }, [dispatch, drugDashboard.idSegment, drugDashboard.idDrug]);
+  }, [
+    dispatch,
+    drugDashboard.idSegment,
+    drugDashboard.idDrug,
+    outlierDose,
+    outlierFrequency,
+  ]);
 
   const handleAfterSave = () => {
     if (drugDashboard.idSegment && drugDashboard.idDrug) {
@@ -75,6 +83,8 @@ export function DrugDashboard() {
         fetchDrugDashboard({
           idSegment: drugDashboard.idSegment,
           idDrug: drugDashboard.idDrug,
+          dose: outlierDose,
+          frequency: outlierFrequency,
         }),
       );
     }
@@ -185,8 +195,6 @@ export function DrugDashboard() {
                 <DrugOutliersCard
                   outliers={drugDashboard.data?.outliers ?? []}
                   loading={drugDashboard.status === "loading"}
-                  outlierDose={outlierDose}
-                  outlierFrequency={outlierFrequency}
                 />
 
                 <DrugConversionsCard

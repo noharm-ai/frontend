@@ -710,8 +710,9 @@ api.drugs.processDrugScores = (idDrug) =>
     },
   );
 
-api.drugs.getDrugDashboard = (idSegment, idDrug) =>
+api.drugs.getDrugDashboard = (idSegment, idDrug, dose, frequency) =>
   instance.get(`/drugs/dashboard/${idSegment}/${idDrug}`, {
+    params: { dose, frequency },
     ...setHeaders(),
   });
 
