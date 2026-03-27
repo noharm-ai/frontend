@@ -3,8 +3,8 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Button, Popconfirm, Tag } from "antd";
-import { EyeOutlined } from "@ant-design/icons";
+import { Button, Input, Popconfirm, Tag } from "antd";
+import { CopyOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import DefaultModal from "components/Modal";
@@ -13,6 +13,9 @@ import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 import { PageHeader } from "styles/PageHeader.style";
 import { Form } from "styles/Form.style";
+
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 
 import { fetchCustomForms, saveCustomForms, reset } from "./CustomFormsSlice";
 import { FormBody } from "./FormBody";
@@ -125,6 +128,7 @@ interface InnerPageProps {
   hasErrors: boolean;
   isSaving: boolean;
   values: any;
+  setValues: (values: CustomForm) => void;
   handleSubmit: () => void;
   handleCancel: () => void;
 }
@@ -135,9 +139,30 @@ function InnerPage({
   hasErrors,
   isSaving,
   values,
+  setValues,
   handleSubmit,
   handleCancel,
 }: InnerPageProps) {
+  const [jsonModalOpen, setJsonModalOpen] = useState(false);
+  const [jsonInput, setJsonInput] = useState("");
+  const isMaintainer = PermissionService().has(Permission.MAINTAINER);
+
+  const handleCopyJson = () => {
+    navigator.clipboard.writeText(JSON.stringify(values, null, 2));
+    notification.success({ message: "JSON copiado!" });
+  };
+
+  const handleLoadJson = () => {
+    try {
+      const parsed = JSON.parse(jsonInput);
+      setValues(parsed);
+      setJsonModalOpen(false);
+      setJsonInput("");
+    } catch {
+      notification.error({ message: "JSON inválido" });
+    }
+  };
+
   return (
     <>
       <DirtyGuard dirty={dirty} />
@@ -182,6 +207,19 @@ function InnerPage({
               Cancelar
             </Button>
           )}
+          {isMaintainer && (
+            <>
+              <Button icon={<CopyOutlined />} onClick={handleCopyJson}>
+                Copiar JSON
+              </Button>
+              <Button
+                icon={<UploadOutlined />}
+                onClick={() => setJsonModalOpen(true)}
+              >
+                Carregar JSON
+              </Button>
+            </>
+          )}
           <PreviewButton template={values.data} />
           <Button
             type="primary"
@@ -194,6 +232,28 @@ function InnerPage({
           </Button>
         </div>
       </PageHeader>
+
+      <DefaultModal
+        open={jsonModalOpen}
+        title="Carregar definição JSON"
+        onCancel={() => {
+          setJsonModalOpen(false);
+          setJsonInput("");
+        }}
+        onOk={handleLoadJson}
+        okText="Carregar"
+        cancelText="Cancelar"
+        width={700}
+        destroyOnHidden
+      >
+        <Input.TextArea
+          rows={16}
+          value={jsonInput}
+          onChange={(e) => setJsonInput(e.target.value)}
+          placeholder='{"name": "...", "data": [...]}'
+          style={{ fontFamily: "monospace", fontSize: 12 }}
+        />
+      </DefaultModal>
 
       <Form onSubmit={handleSubmit}>
         <FormBody />
@@ -277,13 +337,14 @@ function CustomFormEditorPage() {
       validateOnChange={false}
       validateOnBlur={false}
     >
-      {({ handleSubmit, values, dirty, errors }) => (
+      {({ handleSubmit, values, dirty, errors, setValues }) => (
         <InnerPage
           title={title}
           dirty={dirty}
           hasErrors={Object.keys(errors).length > 0}
           isSaving={isSaving}
           values={values}
+          setValues={setValues}
           handleSubmit={handleSubmit}
           handleCancel={handleCancel}
         />
