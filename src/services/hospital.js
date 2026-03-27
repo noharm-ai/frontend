@@ -216,7 +216,7 @@ const getSinglePatient = async (bearerToken, requestConfig) => {
     patient.idPatient = patient.id;
   }
 
-  patientCache.setPatient({ ...patient, cache: true });
+  patientCache.setPatient({ ...patient, cache: false });
 
   return { ...patient };
 };
