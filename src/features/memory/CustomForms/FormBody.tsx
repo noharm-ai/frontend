@@ -128,6 +128,29 @@ export function FormBody() {
     });
   };
 
+  const moveGroup = (fromIdx: number, direction: -1 | 1) => {
+    const toIdx = fromIdx + direction;
+    if (toIdx < 0 || toIdx >= values.data.length) return;
+    const data = JSON.parse(JSON.stringify(values.data));
+    [data[fromIdx], data[toIdx]] = [data[toIdx], data[fromIdx]];
+    setFieldValue("data", data);
+    setActiveKey(String(toIdx));
+    setCarouselPages((prev) => {
+      const next = { ...prev };
+      const tmp = next[fromIdx];
+      next[fromIdx] = next[toIdx] ?? 0;
+      next[toIdx] = tmp ?? 0;
+      return next;
+    });
+    setOpenDescriptions((prev) => {
+      const next = { ...prev };
+      const tmp = next[fromIdx];
+      next[fromIdx] = next[toIdx] ?? false;
+      next[toIdx] = tmp ?? false;
+      return next;
+    });
+  };
+
   const updateGroupName = (gIdx: number, value: string) => {
     const data = JSON.parse(JSON.stringify(values.data));
     data[gIdx].group = value;
@@ -238,6 +261,34 @@ export function FormBody() {
                   <ExclamationCircleOutlined
                     style={{ color: "#ff4d4f", fontSize: 13 }}
                   />
+                )}
+                {values.data.length > 1 && (
+                  <>
+                    <Tooltip title="Mover para esquerda">
+                      <Button
+                        type="text"
+                        size="small"
+                        icon={<LeftOutlined />}
+                        disabled={gIdx === 0}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          moveGroup(gIdx, -1);
+                        }}
+                      />
+                    </Tooltip>
+                    <Tooltip title="Mover para direita">
+                      <Button
+                        type="text"
+                        size="small"
+                        icon={<RightOutlined />}
+                        disabled={gIdx === values.data.length - 1}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          moveGroup(gIdx, 1);
+                        }}
+                      />
+                    </Tooltip>
+                  </>
                 )}
                 {values.data.length > 1 && (
                   <Popconfirm
