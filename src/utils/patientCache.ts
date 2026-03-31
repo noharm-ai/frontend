@@ -1,5 +1,3 @@
-const STORAGE_KEY = "patientNamesCache";
-
 export type PatientData = {
   idPatient: number | string;
   name: string;
@@ -13,9 +11,17 @@ type Listener = () => void;
 
 const listeners = new Set<Listener>();
 
-function load(): Cache {
+function getSchema(): string {
+  return localStorage.getItem("schema") ?? "default";
+}
+
+function getStorageKey(schema: string): string {
+  return `patientNamesCache_${schema}`;
+}
+
+function load(schema: string): Cache {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(getStorageKey(schema));
     return raw ? (JSON.parse(raw) as Cache) : {};
   } catch {
     return {};
@@ -24,7 +30,7 @@ function load(): Cache {
 
 function persist(data: Cache): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(getStorageKey(getSchema()), JSON.stringify(data));
   } catch {
     // localStorage may be unavailable (private mode, quota exceeded)
   }
@@ -34,27 +40,42 @@ function notify(): void {
   listeners.forEach((fn) => fn());
 }
 
-let mem: Cache = load();
-const loadingIds = new Set<string>();
+let currentSchema: string | null = null;
+let mem: Cache = {};
+let loadingIds = new Set<string>();
+
+function ensureSchemaLoaded(): void {
+  const schema = getSchema();
+  if (schema !== currentSchema) {
+    currentSchema = schema;
+    mem = load(schema);
+    loadingIds = new Set<string>();
+  }
+}
 
 export function markLoading(ids: (number | string)[]): void {
+  ensureSchemaLoaded();
   ids.forEach((id) => loadingIds.add(String(id)));
   notify();
 }
 
 export function isPatientLoading(id: number | string): boolean {
+  ensureSchemaLoaded();
   return loadingIds.has(String(id));
 }
 
 export function getPatient(id: number | string): PatientData | undefined {
+  ensureSchemaLoaded();
   return mem[String(id)];
 }
 
 export function getAllPatients(): Cache {
+  ensureSchemaLoaded();
   return mem;
 }
 
 export function setPatient(data: PatientData): void {
+  ensureSchemaLoaded();
   loadingIds.delete(String(data.idPatient));
   mem = { ...mem, [String(data.idPatient)]: data };
   persist(mem);
@@ -62,10 +83,10 @@ export function setPatient(data: PatientData): void {
 }
 
 export function setPatients(list: Cache): void {
+  ensureSchemaLoaded();
   const updates: Cache = {};
   Object.keys(list).forEach((key) => {
     loadingIds.delete(key);
-
     updates[key] = list[key];
   });
 
@@ -80,14 +101,16 @@ export function setPatients(list: Cache): void {
 }
 
 export function clearLoading(ids: (number | string)[]): void {
+  ensureSchemaLoaded();
   ids.forEach((id) => loadingIds.delete(String(id)));
   notify();
 }
 
 export function clearCache(): void {
+  ensureSchemaLoaded();
   mem = {};
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(getStorageKey(getSchema()));
   } catch {
     // ignore
   }
