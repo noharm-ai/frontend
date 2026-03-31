@@ -41,13 +41,13 @@ export default function SearchPrescription({ type, size }) {
         }
       }
     },
-    [type]
+    [type],
   );
 
   const [open, setOpen] = useState(false);
   const [itemActive, setItemActive] = useState(null);
   const loadStatus = useSelector(
-    (state) => state.lists.searchPrescriptions.status
+    (state) => state.lists.searchPrescriptions.status,
   );
   const options = useSelector((state) => state.lists.searchPrescriptions.list);
 
@@ -79,7 +79,7 @@ export default function SearchPrescription({ type, size }) {
         switch (keyCode) {
           case actionKey.up: {
             const indexUp = options.findIndex(
-              (i) => i.idPrescription === itemActive
+              (i) => i.idPrescription === itemActive,
             );
             if (indexUp - 1 >= 0) {
               setItemActive(options[indexUp - 1].idPrescription);
@@ -90,7 +90,7 @@ export default function SearchPrescription({ type, size }) {
           }
           case actionKey.down: {
             const indexDown = options.findIndex(
-              (i) => i.idPrescription === itemActive
+              (i) => i.idPrescription === itemActive,
             );
             if (indexDown + 1 < options.length) {
               setItemActive(options[indexDown + 1].idPrescription);
@@ -102,7 +102,7 @@ export default function SearchPrescription({ type, size }) {
           case actionKey.space:
           case actionKey.enter: {
             const index = options.findIndex(
-              (i) => i.idPrescription === itemActive
+              (i) => i.idPrescription === itemActive,
             );
             if (options[index]) {
               navigateTo(options[index]);
@@ -176,9 +176,10 @@ export default function SearchPrescription({ type, size }) {
   const getDate = (option) => {
     const dtFormat = "dd/MM/yyyy";
 
-    if (option.concilia && option.admissionDate) {
-      return format(new Date(option.admissionDate), dtFormat);
-    }
+    // TODO: verify this
+    // if (option.concilia && option.admissionDate) {
+    //   return format(new Date(option.admissionDate), dtFormat);
+    // }
 
     if (option.date) {
       return format(new Date(option.date), dtFormat);
@@ -217,7 +218,7 @@ export default function SearchPrescription({ type, size }) {
                       ? `${t(
                           option.concilia
                             ? "labels.conciliation"
-                            : "patientCard.admission"
+                            : "patientCard.admission",
                         )} ${option.admissionNumber}`
                       : `${t("patientCard.prescription")} ${
                           option.idPrescription

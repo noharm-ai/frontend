@@ -34,7 +34,6 @@ export const CarouselSlide = styled.div`
   display: flex;
   gap: 0.75rem;
   min-width: 100%;
-  flex-shrink: 0;
   overflow: hidden;
   align-items: flex-start;
 `;
@@ -75,4 +74,3 @@ export const CarouselDot = styled.span`
     background: #ff4d4f;
   }
 `;
-

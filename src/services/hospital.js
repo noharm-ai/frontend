@@ -1,41 +1,22 @@
 import axios from "axios";
 import moment from "moment";
 
-import FeatureService from "services/features";
+import { FeatureService } from "services/FeatureService";
 import api from "services/api";
 import { store } from "store/index";
+import * as patientCache from "utils/patientCache";
 
 const FLAG = "{idPatient}";
 
-const defaultValue = (idPatient) => ({
-  idPatient,
-  name: `Paciente ${idPatient}`,
-  cache: false,
-  status: "success",
-});
-
 /**
+ * Fetches patient names and stores results in patientCache.
+ * Absence from cache means the patient name was not found.
  *
- * @param {string} bearerToken
  * @param {object} requestConfig
- * @param {[object]} requestConfig.listToRequest array of object
- * containing the idPatient to request.
- * @param {{object}} requestConfig.listToEscape object of objects
- * containing the patients that has already requested.
- *
- * @return {[object]} array of object.
- * ex:
- * [
- *   {
- *     "status": "success",
- *     "idPatient": 7,
- *     "name": "Fulano da Silva e Santos"
- *   }
- * ]
+ * @param {[object]} requestConfig.listToRequest array of objects containing idPatient (and optionally birthdate)
  */
-const getPatients = async (bearerToken, requestConfig) => {
-  const { listToRequest, listToEscape, nameUrl, useCache, features, proxy } =
-    requestConfig;
+const getPatients = async (requestConfig) => {
+  const { listToRequest, nameUrl, proxy } = requestConfig;
   const getnameType = store.getState().app.config.getnameType;
   const apiKey = store.getState().user.account.apiKey;
   let nameHeaders =
@@ -47,87 +28,85 @@ const getPatients = async (bearerToken, requestConfig) => {
           "x-api-key": apiKey,
         }
       : requestConfig.nameHeaders;
-  const featureService = FeatureService(features);
-  let promises;
 
   if (!listToRequest || !Array.isArray(listToRequest)) {
-    return listToEscape;
+    return;
   }
 
-  if (!featureService.hasDisableGetname()) {
-    if (getnameType === "auth") {
-      const { data: token_response } = await api.getGetnameToken();
-      nameHeaders = {
-        Authorization: `Bearer ${token_response.data}`,
-      };
-    }
+  if (FeatureService.has("DISABLE_GETNAME")) {
+    console.log("bypass name resolution");
+    return;
+  }
 
-    if (requestConfig.multipleNameUrl && listToRequest.length > 1) {
-      const cacheConfig = {};
-      const requestIds = [];
+  if (getnameType === "auth") {
+    const { data: token_response } = await api.getGetnameToken();
+    nameHeaders = {
+      Authorization: `Bearer ${token_response.data}`,
+    };
+  }
 
-      listToRequest.forEach((p) => {
-        if (!listToEscape[p.idPatient]) {
-          requestIds.push(p.idPatient);
+  if (requestConfig.multipleNameUrl) {
+    const cacheConfig = {};
+    const requestIds = [];
 
-          if (p.birthdate && moment().diff(p.birthdate, "years") > 0) {
-            cacheConfig[p.idPatient] = true;
-          } else {
-            cacheConfig[p.idPatient] = false;
-          }
-        }
-      });
+    listToRequest.forEach((p) => {
+      const cachedPatient = patientCache.getPatient(p.idPatient);
+      if (!cachedPatient || !cachedPatient?.cache) {
+        requestIds.push(p.idPatient);
 
-      if (!requestIds.length) {
-        promises = listToRequest
-          .filter((p) => listToEscape[p.idPatient])
-          .map((p) => listToEscape[p.idPatient]);
-      } else {
-        try {
-          const { data: patientList } = await axios.post(
-            getnameType === "proxy"
-              ? `${import.meta.env.VITE_APP_API_URL}/names`
-              : requestConfig.multipleNameUrl,
-            {
-              patients: requestIds,
-            },
-            { headers: nameHeaders, timeout: 30000 }
-          );
-
-          promises = patientList
-            .map((p) => ({
-              ...p,
-              cache:
-                p.status === "success"
-                  ? cacheConfig[p.idPatient] || false
-                  : false,
-            }))
-            .concat(
-              listToRequest
-                .filter((p) => listToEscape[p.idPatient])
-                .map((p) => listToEscape[p.idPatient])
-            );
-        } catch (error) {
-          promises = listToRequest.map((p) => defaultValue(p.idPatient));
+        if (p.birthdate && moment().diff(p.birthdate, "years") > 0) {
+          cacheConfig[p.idPatient] = true;
+        } else {
+          cacheConfig[p.idPatient] = false;
         }
       }
-    } else {
-      promises = await listToRequest.map(async ({ idPatient, birthdate }) => {
-        if (listToEscape[idPatient] && useCache) {
-          return listToEscape[idPatient];
+    });
+
+    if (!requestIds.length) {
+      return;
+    }
+
+    patientCache.markLoading(requestIds);
+    try {
+      const { data: patientList } = await axios.post(
+        getnameType === "proxy"
+          ? `${import.meta.env.VITE_APP_API_URL}/names`
+          : requestConfig.multipleNameUrl,
+        {
+          patients: requestIds,
+        },
+        { headers: nameHeaders, timeout: 30000 },
+      );
+
+      const results = {};
+      patientList
+        .filter((p) => p.status === "success")
+        .forEach((p) => {
+          results[p.idPatient] = {
+            ...p,
+            cache: cacheConfig[p.idPatient] || false,
+          };
+        });
+
+      const failed = requestIds.filter((id) => !results[id]);
+      if (failed.length) {
+        patientCache.clearLoading(failed);
+      }
+
+      patientCache.setPatients(results);
+    } catch (error) {
+      patientCache.clearLoading(requestIds);
+    }
+  } else {
+    await Promise.all(
+      listToRequest.map(async ({ idPatient, birthdate }) => {
+        const cached = patientCache.getPatient(idPatient);
+        if (cached?.cache) {
+          return;
         }
 
-        const cache = birthdate
-          ? moment().diff(birthdate, "years") > 0
-          : useCache;
-        console.log(
-          "%cRequested patient of id: ",
-          "color: #e67e22;",
-          idPatient,
-          "cache:",
-          cache
-        );
-        console.log("%cRequested patient of url: ", "color: #e67e22;", nameUrl);
+        patientCache.markLoading([idPatient]);
+        const cache = birthdate ? moment().diff(birthdate, "years") > 0 : false;
         const urlRequest =
           getnameType === "proxy"
             ? `${import.meta.env.VITE_APP_API_URL}/names/${idPatient}`
@@ -140,41 +119,23 @@ const getPatients = async (bearerToken, requestConfig) => {
           });
 
           if (patient == null || patient.status === "error") {
-            console.log(
-              "%cRequested patient error: ",
-              "color: #e67e22;",
-              idPatient,
-              patient
-            );
-            return defaultValue(idPatient);
+            patientCache.clearLoading([idPatient]);
+            return;
           }
           if (patient.id) {
             patient.idPatient = patient.id;
           }
 
-          return { ...patient, cache };
+          patientCache.setPatient({ ...patient, cache });
         } catch (e) {
-          return defaultValue(idPatient);
+          patientCache.clearLoading([idPatient]);
         }
-      });
-    }
-  } else {
-    console.log("bypass name resolution service");
-    promises = listToRequest.map(async ({ idPatient }) =>
-      defaultValue(idPatient)
+      }),
     );
   }
-
-  const patients = await Promise.all(promises);
-
-  patients.forEach((p) => {
-    listToEscape[p.idPatient] = p;
-  });
-
-  return listToEscape;
 };
 
-const getSinglePatient = async (bearerToken, requestConfig) => {
+const getSinglePatient = async (requestConfig) => {
   const { idPatient, nameUrl, proxy } = requestConfig;
   const getnameType = store.getState().app.config.getnameType;
   const apiKey = store.getState().user.account.apiKey;
@@ -200,6 +161,7 @@ const getSinglePatient = async (bearerToken, requestConfig) => {
       ? `${import.meta.env.VITE_APP_API_URL}/names/${idPatient}`
       : nameUrl.replace(FLAG, idPatient);
 
+  patientCache.markLoading([idPatient]);
   const { data: patient } = await axios.get(urlRequest, {
     timeout: 8000,
     headers: nameHeaders,
@@ -209,7 +171,7 @@ const getSinglePatient = async (bearerToken, requestConfig) => {
     patient.idPatient = patient.id;
   }
 
-  return { ...patient };
+  patientCache.setPatient({ ...patient, cache: false });
 };
 
 const hospital = {

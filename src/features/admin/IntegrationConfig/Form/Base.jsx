@@ -64,6 +64,9 @@ function BaseForm() {
             <Select.Option key={2} value={"proxy"}>
               Proxy
             </Select.Option>
+            <Select.Option key={3} value={"getname-proxy"}>
+              Proxy para serviço com ip restrito (getname-proxy)
+            </Select.Option>
           </Select>
         </div>
       </div>
@@ -206,6 +209,62 @@ function BaseForm() {
                 value={values.config?.getname?.authPrefix}
                 onChange={({ target }) =>
                   setFieldValue("config.getname.authPrefix", target.value)
+                }
+              />
+            </div>
+          </div>
+
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>Parâmetros (JSON):</label>
+            </div>
+            <div className="form-input">
+              <Textarea
+                value={
+                  typeof values.config?.getname?.params === "object"
+                    ? JSON.stringify(values.config?.getname?.params)
+                    : values.config?.getname?.params
+                }
+                onChange={({ target }) =>
+                  setFieldValue("config.getname.params", target.value)
+                }
+                onBlur={({ target }) =>
+                  setJsonValue("config.getname.params", target.value)
+                }
+              />
+            </div>
+            {errors.config?.getname?.params && (
+              <div className="form-error">{errors.config?.getname?.params}</div>
+            )}
+          </div>
+        </>
+      )}
+
+      {values.config?.getname?.type === "getname-proxy" && (
+        <>
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>URL resolução de nomes:</label>
+            </div>
+            <div className="form-input">
+              <Input
+                value={values.config?.getname?.url}
+                onChange={({ target }) =>
+                  setFieldValue("config.getname.url", target.value)
+                }
+              />
+            </div>
+          </div>
+
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>X-API-Key:</label>
+            </div>
+            <div className="form-input">
+              <Input
+                value={values.config?.getname?.xapikey}
+                onChange={({ target }) =>
+                  setFieldValue("config.getname.xapikey", target.value)
                 }
               />
             </div>

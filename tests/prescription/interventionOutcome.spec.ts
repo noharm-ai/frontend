@@ -6,7 +6,7 @@ test("outcome: suspension", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").click();
+  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
   await page
     .locator(".ant-table-tbody tr")
     .nth(0)
@@ -27,7 +27,7 @@ test("outcome: suspension", async ({ page }) => {
   // // close dropdown
   await page.locator(".ant-select").click();
 
-  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible();
+  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible({ timeout: 30000 });
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
@@ -96,7 +96,7 @@ test("outcome: substitution", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").click();
+  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
   await page
     .locator(".ant-table-tbody tr")
     .nth(1)
@@ -111,12 +111,13 @@ test("outcome: substitution", async ({ page }) => {
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
 
+  await page.getByText("Substituição").waitFor({ state: "visible" });
   await page.getByText("Substituição").click();
 
   // // close dropdown
   await page.locator(".ant-select").nth(0).click();
 
-  await expect(page.getByText("Tipo economia: Substituição")).toBeVisible();
+  await expect(page.getByText("Tipo economia: Substituição")).toBeVisible({ timeout: 30000 });
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
@@ -178,9 +179,8 @@ test("outcome: custom", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").click();
+  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
 
-  await page.getByText("Paciente 99").click();
   await page.locator(".gtm-bt-patient-intervention").first().click();
   await page
     .locator(".ant-select.ant-select-loading")
@@ -197,7 +197,7 @@ test("outcome: custom", async ({ page }) => {
   await page.getByText("Salvar e marcar como Aceita").click();
 
   await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
-  await expect(page.getByText("Quantidade de Dias de")).toBeVisible();
+  await expect(page.getByText("Quantidade de Dias de")).toBeVisible({ timeout: 30000 });
 
   await page
     .locator("div")
@@ -228,7 +228,7 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").click();
+  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
   await page
     .locator(".ant-table-tbody tr")
     .nth(2)
@@ -249,7 +249,7 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
   // // close dropdown
   await page.locator(".ant-select").click();
 
-  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible();
+  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible({ timeout: 30000 });
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");

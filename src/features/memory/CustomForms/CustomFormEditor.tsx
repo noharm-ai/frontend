@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Button } from "antd";
+import { Button, Popconfirm, Tag } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
 
 import DefaultModal from "components/Modal";
@@ -11,6 +11,18 @@ import { CustomForm, FormGroup, emptyForm } from "./types";
 import { FormBody } from "./FormBody";
 
 export type { CustomForm } from "./types";
+
+function DirtyGuard({ dirty }: { dirty: boolean }) {
+  useEffect(() => {
+    if (!dirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty]);
+  return null;
+}
 
 function PreviewButton({ template }: { template: FormGroup[] }) {
   const [open, setOpen] = useState(false);
@@ -135,7 +147,7 @@ export function CustomFormEditor({
       validateOnChange={false}
       validateOnBlur={false}
     >
-      {({ handleSubmit, values }) => (
+      {({ handleSubmit, values, dirty, errors }) => (
         <DefaultModal
           open={open}
           width={1000}
@@ -144,9 +156,23 @@ export function CustomFormEditor({
           onCancel={onCancel}
           maskClosable={false}
           footer={[
-            <Button key="cancel" onClick={onCancel} disabled={isSaving}>
-              Cancelar
-            </Button>,
+            dirty ? (
+              <Popconfirm
+                key="cancel"
+                title="Alterações não salvas"
+                description="Deseja sair sem salvar?"
+                onConfirm={onCancel}
+                okText="Sair sem salvar"
+                cancelText="Continuar editando"
+                okButtonProps={{ danger: true }}
+              >
+                <Button disabled={isSaving}>Cancelar</Button>
+              </Popconfirm>
+            ) : (
+              <Button key="cancel" onClick={onCancel} disabled={isSaving}>
+                Cancelar
+              </Button>
+            ),
             <PreviewButton key="preview" template={values.data} />,
             <Button
               key="save"
@@ -159,11 +185,28 @@ export function CustomFormEditor({
             </Button>,
           ]}
         >
+          <DirtyGuard dirty={dirty} />
           <header>
             <h2 className="modal-title">
               {initialForm
                 ? initialForm.name || "Editar Formulário"
                 : "Novo Formulário"}
+              {Object.keys(errors).length > 0 && (
+                <Tag
+                  color="error"
+                  style={{ marginLeft: 8, verticalAlign: "middle" }}
+                >
+                  Formulário com erros
+                </Tag>
+              )}
+              {dirty && (
+                <Tag
+                  color="warning"
+                  style={{ marginLeft: 8, verticalAlign: "middle" }}
+                >
+                  Alterações não salvas
+                </Tag>
+              )}
             </h2>
           </header>
 

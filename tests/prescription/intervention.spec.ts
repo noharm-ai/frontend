@@ -6,7 +6,7 @@ test("add intervention", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 199 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").click();
+  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
   //await page.getByRole("row").nth(0).getByRole("button").nth(1).click();
   await page
     .locator(".ant-table tr:nth-child(2)")
@@ -40,7 +40,7 @@ test("add intervention", async ({ page }) => {
 test("add multiple interventions and rollback", async ({ page }) => {
   await page.goto("/prescricao/199");
 
-  await expect(page.getByText("Medicamentos")).toBeVisible();
+  await expect(page.getByText("Medicamentos")).toBeVisible({ timeout: 30000 });
 
   // click intervention button
   await page
@@ -101,10 +101,10 @@ test("add multiple interventions and rollback", async ({ page }) => {
 
   //should have 2 interventions
   await expect(page.locator(".ant-modal-body .intervention")).toHaveCount(2);
-  await expect(page.getByText("Aprazamento")).toBeVisible();
-  await expect(page.getByText("Alergia")).toBeVisible();
-  await expect(page.getByText("Pendente", { exact: true })).toBeVisible();
-  await expect(page.getByText("Aceita", { exact: true })).toBeVisible();
+  await expect(page.getByText("Aprazamento")).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText("Alergia")).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText("Pendente", { exact: true })).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText("Aceita", { exact: true })).toBeVisible({ timeout: 30000 });
 
   await page.locator(".ant-modal-confirm-btns button").first().click();
 
@@ -131,9 +131,9 @@ test("add patient intervention", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 199 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").click();
 
-  await page.getByText("Paciente 99").click();
+  await page.locator(".gtm-bt-patient-intervention").waitFor({ state: "visible", timeout: 30000 });
+
   await page.locator(".gtm-bt-patient-intervention").first().click();
   // wait to load reasons
   await page

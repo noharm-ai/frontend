@@ -8,7 +8,7 @@ import Collapse from "components/Collapse";
 import RichTextView from "src/components/RichTextView";
 
 import Base from "./Base";
-import { CustomFormContainer } from "../Form.style";
+import { CustomFormContainer, GroupProgressBadge } from "../Form.style";
 
 export default function CustomForm({
   onSubmit,
@@ -111,6 +111,20 @@ export default function CustomForm({
     });
   };
 
+  const getGroupProgress = (group, formValues) => {
+    const countable = group.questions.filter(
+      (q) => q.type !== "calculated_field"
+    );
+    const answered = countable.filter((q) => {
+      const v = formValues[q.id];
+      if (v === null || v === undefined) return false;
+      if (typeof v === "string" && v.trim() === "") return false;
+      if (Array.isArray(v) && v.length === 0) return false;
+      return true;
+    });
+    return { answered: answered.length, total: countable.length };
+  };
+
   if (!template) {
     return null;
   }
@@ -122,7 +136,7 @@ export default function CustomForm({
       initialValues={initialValues}
       validationSchema={validationSchema}
     >
-      {({ handleSubmit }) => (
+      {({ handleSubmit, values }) => (
         <CustomFormContainer>
           {template.length > 1 ? (
             <Collapse
@@ -130,8 +144,20 @@ export default function CustomForm({
               defaultActiveKey={startClosed ? null : template[0].group}
               accordion
             >
-              {template.map((item) => (
-                <Collapse.Panel key={item.group} header={item.group}>
+              {template.map((item) => {
+                const { answered, total } = getGroupProgress(item, values);
+                return (
+                <Collapse.Panel
+                  key={item.group}
+                  header={
+                    <span style={{ display: "flex", alignItems: "center" }}>
+                      {item.group}
+                      <GroupProgressBadge $complete={answered === total}>
+                        {answered}/{total}
+                      </GroupProgressBadge>
+                    </span>
+                  }
+                >
                   {item.description && <RichTextView text={item.description} />}
                   <Base
                     horizontal={horizontal}
@@ -139,13 +165,24 @@ export default function CustomForm({
                     onChange={onChange}
                   />
                 </Collapse.Panel>
-              ))}
+                );
+              })}
             </Collapse>
           ) : (
             <div className="single-panel">
               {template[0].description && (
                 <RichTextView text={template[0].description} />
               )}
+              {(() => {
+                const { answered, total } = getGroupProgress(template[0], values);
+                return (
+                  <div style={{ marginBottom: 12, textAlign: "right" }}>
+                    <GroupProgressBadge $complete={answered === total}>
+                      {answered}/{total}
+                    </GroupProgressBadge>
+                  </div>
+                );
+              })()}
               <Base
                 horizontal={horizontal}
                 item={template[0]}

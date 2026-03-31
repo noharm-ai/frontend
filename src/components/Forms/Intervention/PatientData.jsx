@@ -5,13 +5,14 @@ import { useTranslation } from "react-i18next";
 import { Row, Col } from "components/Grid";
 
 import Heading from "components/Heading";
+import PatientNameCache from "src/components/PatientName/PatientNameCache";
 import { FormHeader } from "components/Forms/Form.style";
 
-export default function PatientData({ item }) {
-  const { patientName, age, intervention } = item;
+export default function PatientData({ item, idPatient }) {
+  const { age, intervention } = item;
   const { t } = useTranslation();
 
-  if (!patientName) {
+  if (!idPatient) {
     return (
       <FormHeader>
         <Row type="flex" gutter={24} css="padding: 2px 0">
@@ -37,7 +38,9 @@ export default function PatientData({ item }) {
             {t("patientCard.patient")}:
           </Heading>
         </Col>
-        <Col span={24 - 8}>{patientName}</Col>
+        <Col span={24 - 8}>
+          <PatientNameCache idPatient={idPatient} />
+        </Col>
       </Row>
       <Row type="flex" gutter={24} css="padding: 2px 0">
         <Col span={8}>

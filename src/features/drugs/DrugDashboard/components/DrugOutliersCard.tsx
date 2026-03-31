@@ -54,6 +54,7 @@ interface OutlierItem {
   divisionRange: number | null;
   obs: string;
   useWeight: boolean | null;
+  selected: boolean;
   updatedAt: string;
 }
 
@@ -66,12 +67,7 @@ interface DrugOutliersCardProps {
 
 const TABLE_HEIGHT = 400;
 
-export function DrugOutliersCard({
-  outliers,
-  loading,
-  outlierDose,
-  outlierFrequency,
-}: DrugOutliersCardProps) {
+export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
   const dispatch = useAppDispatch();
   const idDrug = useAppSelector((state: any) => state.drugDashboard.idDrug);
   const idSegment = useAppSelector(
@@ -328,12 +324,7 @@ export function DrugOutliersCard({
         virtual
         scroll={{ y: TABLE_HEIGHT }}
         onRow={(record) => {
-          const isMatch =
-            outlierDose !== undefined &&
-            outlierFrequency !== undefined &&
-            record.dose === parseFloat(outlierDose) &&
-            record.frequency === parseFloat(outlierFrequency);
-          return isMatch
+          return record.selected
             ? { style: { background: "rgba(169, 145, 214, 0.2)" } }
             : {};
         }}

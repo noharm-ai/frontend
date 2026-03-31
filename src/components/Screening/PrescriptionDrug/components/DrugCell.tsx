@@ -159,7 +159,7 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
     );
   }
 
-  let href = `/medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(
+  const href = `/painel-medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(
     record.drug,
   )}/${record.doseconv}/${record.dayFrequency}`;
 
@@ -196,9 +196,6 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
 
   let content: React.ReactElement;
   if (PermissionService().has(Permission.MAINTAINER)) {
-    href = `/painel-medicamentos/${bag.idSegment}/${record.idDrug}/${createSlug(
-      record.drug,
-    )}/${record.doseconv}/${record.dayFrequency}`;
     const periodType = periodTypeLabel(record.periodType);
     const periodDays =
       (record.periodFixed ?? 0) > 0

@@ -2,8 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/regulation/api.ts";
 import hospital from "services/hospital";
 
-import { updateNames } from "store/ducks/patients/thunk";
-
 const initialState = {
   list: [],
   status: "idle",
@@ -52,7 +50,7 @@ export const fetchRegulationList = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const fetchPatients = createAsyncThunk(
@@ -66,27 +64,19 @@ export const fetchPatients = createAsyncThunk(
             idPatient: r.idPatient,
             birthdate: r.birthdate,
           })),
-        listToEscape: thunkAPI.getState().patients.list,
         nameUrl: thunkAPI.getState().app.config.nameUrl,
         multipleNameUrl: thunkAPI.getState().app.config.multipleNameUrl,
         proxy: thunkAPI.getState().app.config.proxy,
         nameHeaders: thunkAPI.getState().app.config.nameHeaders,
-        useCache: true,
-        userRoles: thunkAPI.getState().user.account.roles,
-        features: thunkAPI.getState().user.account.features,
       };
 
-      const response = await hospital.getPatients(null, requestConfig);
+      await hospital.getPatients(requestConfig);
 
-      thunkAPI.dispatch(updateNames(response));
-
-      return {
-        patientData: response,
-      };
+      return {};
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const moveRegulationMultiple = createAsyncThunk(
@@ -99,7 +89,7 @@ export const moveRegulationMultiple = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 const regulationPrioritizationSlice = createSlice({
@@ -149,14 +139,8 @@ const regulationPrioritizationSlice = createSlice({
       })
       .addCase(fetchRegulationList.fulfilled, (state, action) => {
         state.status = "succeeded";
-        const patients = action.payload.patients;
         const list = action.payload.response.data.data.list.map((p) => ({
           ...p,
-          patientName: patients[p.idPatient]?.name,
-          patientNameLoading: !Object.prototype.hasOwnProperty.call(
-            patients,
-            p.idPatient
-          ),
         }));
 
         state.list = list;
@@ -172,13 +156,6 @@ const regulationPrioritizationSlice = createSlice({
       })
       .addCase(fetchPatients.fulfilled, (state, action) => {
         state.patients.status = "succeeded";
-        const patients = action.payload.patientData;
-
-        state.list = state.list.map((p) => ({
-          ...p,
-          patientName: patients[p.idPatient]?.name,
-          patientNameLoading: false,
-        }));
       })
       .addCase(fetchPatients.rejected, (state, action) => {
         state.patients.status = "failed";

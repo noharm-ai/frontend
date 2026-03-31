@@ -189,3 +189,15 @@ export const CheckboxDescription = styled.div`
   line-height: 1.2;
   border-top: 1px solid #ccc;
 `;
+
+export const GroupProgressBadge = styled.span`
+  font-size: 12px;
+  font-weight: normal;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: ${({ $complete }) => ($complete ? "#f6ffed" : "#f5f5f5")};
+  color: ${({ $complete }) => ($complete ? "#52c41a" : "#8c8c8c")};
+  border: 1px solid ${({ $complete }) => ($complete ? "#b7eb8f" : "#d9d9d9")};
+  margin-left: 8px;
+  white-space: nowrap;
+`;

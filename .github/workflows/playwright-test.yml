@@ -2,11 +2,10 @@ name: E2E - Test
 on: workflow_dispatch
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   test:
-    timeout-minutes: 60
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -20,7 +19,8 @@ jobs:
       - name: Checkout backend
         run: |
           git clone --single-branch --branch develop https://github.com/noharm-ai/backend .
-      - uses: actions/setup-python@v5
+          echo "Backend SHA: $(git rev-parse HEAD)" >> $GITHUB_STEP_SUMMARY
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: 3.11
       - name: Setup Python
@@ -29,7 +29,8 @@ jobs:
           pip install -r requirements.txt
       - name: Setup PostgreSQL
         run: |
-          git clone https://github.com/noharm-ai/database
+          git clone --single-branch --branch master https://github.com/noharm-ai/database
+          echo "Database SHA: $(git -C database rev-parse HEAD)" >> $GITHUB_STEP_SUMMARY
           psql -h localhost -U postgres -d noharm -a -f database/noharm-public.sql -v ON_ERROR_STOP=1
           psql -h localhost -U postgres -d noharm -a -f database/noharm-create.sql -v ON_ERROR_STOP=1
           psql -h localhost -U postgres -d noharm -a -f database/noharm-newuser.sql -v ON_ERROR_STOP=1
@@ -41,12 +42,12 @@ jobs:
           sleep 10
         env:
           MAIL_HOST: http://localhost:3000
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: lts/*
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
@@ -62,7 +63,7 @@ jobs:
           VITE_APP_URL: http://localhost:3000
           TEST_USER: e2e@e2e.com
           TEST_USER_PASSWORD: e2etest
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: playwright-report

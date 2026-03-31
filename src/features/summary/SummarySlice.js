@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/api";
 import hospital from "services/hospital";
+import * as patientCache from "utils/patientCache";
 
 const initialState = {
   data: {},
@@ -127,21 +128,17 @@ export const fetchSummary = createAsyncThunk(
 
     const requestConfig = {
       listToRequest: [{ idPatient: data.data.patient.idPatient }],
-      listToEscape: [],
       nameUrl: thunkAPI.getState().app.config.nameUrl,
       proxy: thunkAPI.getState().app.config.proxy,
       nameHeaders: thunkAPI.getState().app.config.nameHeaders,
-      useCache: false,
-      userRoles: thunkAPI.getState().user.account.roles,
-      features: thunkAPI.getState().user.account.features,
     };
 
-    const patientsList = await hospital.getPatients(
-      access_token,
-      requestConfig
-    );
+    await hospital.getPatients(requestConfig);
 
-    data.data.patient.name = patientsList[data.data.patient.idPatient].name;
+    const patient = patientCache.getPatient(data.data.patient.idPatient);
+    if (patient) {
+      data.data.patient.name = patient.name;
+    }
 
     return data;
   }

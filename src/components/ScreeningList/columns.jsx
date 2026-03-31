@@ -12,6 +12,7 @@ import { InfoIcon } from "components/Icon";
 import Tooltip from "components/Tooltip";
 import Table from "components/Table";
 import Tag from "components/Tag";
+import PatientNameCache from "components/PatientName/PatientNameCache";
 
 const setDataIndex = (list) =>
   list.map(({ key, ...column }) => ({
@@ -139,7 +140,7 @@ export const expandedRowRender = (t) => {
       {
         title: t("screeningList.clExName"),
         width: 150,
-        key: "namePatient",
+        render: (record) => <PatientNameCache idPatient={record.idPatient} />,
       },
       {
         title: t("screeningList.clExDate"),

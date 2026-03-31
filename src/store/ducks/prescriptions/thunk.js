@@ -9,12 +9,9 @@ import {
   transformExams,
 } from "utils/transformers";
 import { errorHandler } from "utils";
-import { Creators as PatientsCreators } from "../patients";
 import { Creators as PrescriptionsCreators } from "./index";
 
 import { setDrugFormList } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
-
-const { patientsFetchListSuccess } = PatientsCreators;
 
 const {
   prescriptionsFetchListStart,
@@ -59,8 +56,7 @@ export const fetchPrescriptionsListThunk =
   async (dispatch, getState) => {
     dispatch(prescriptionsFetchListStart());
 
-    const { auth, patients, app, user } = getState();
-    const { list: listPatients } = patients;
+    const { auth, app, user } = getState();
     const { access_token } = auth.identify;
     const {
       data: { data },
@@ -74,36 +70,28 @@ export const fetchPrescriptionsListThunk =
 
     const requestConfig = {
       listToRequest: data,
-      listToEscape: listPatients,
       nameUrl: app.config.nameUrl,
       multipleNameUrl: app.config.multipleNameUrl,
       proxy: app.config.proxy,
       nameHeaders: app.config.nameHeaders,
-      useCache: true,
-      userRoles: user.account.roles,
-      features: user.account.features,
     };
 
-    const patientsList = await hospital.getPatients(
-      access_token,
-      requestConfig
-    );
+    hospital.getPatients(requestConfig);
 
-    const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
-      ...item,
-      idPatient,
-      namePatient: patientsList[idPatient]
-        ? patientsList[idPatient].name
-        : `Paciente ${idPatient}`,
-    }));
+    // const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
+    //   ...item,
+    //   idPatient,
+    //   namePatient: patientsList[idPatient]
+    //     ? patientsList[idPatient].name
+    //     : `Paciente ${idPatient}`,
+    // }));
 
     const featureService = FeaturesService(user.account.features);
 
-    const list = transformPrescriptions(listAddedPatientName, {
+    const list = transformPrescriptions(data, {
       disableWhitelistGroup: featureService.hasDisableWhitelistGroup(),
     });
 
-    dispatch(patientsFetchListSuccess(patientsList));
     dispatch(prescriptionsFetchListSuccess(list));
   };
 
@@ -133,8 +121,7 @@ export const fetchScreeningThunk =
   (idPrescription) => async (dispatch, getState) => {
     dispatch(prescriptionsFetchSingleStart());
 
-    const { auth, patients, app, user } = getState();
-    const { list: listPatients } = patients;
+    const { auth, app, user } = getState();
     const { access_token } = auth.identify;
     const {
       data: { data },
@@ -159,26 +146,12 @@ export const fetchScreeningThunk =
     });
     const requestConfig = {
       listToRequest: [singlePrescription],
-      listToEscape: listPatients,
       nameUrl: app.config.nameUrl,
       proxy: app.config.proxy,
       nameHeaders: app.config.nameHeaders,
-      useCache: false,
-      userRoles: user.account.roles,
-      features: user.account.features,
     };
 
-    const patientsList = await hospital.getPatients(
-      access_token,
-      requestConfig
-    );
-
-    const singlePrescriptionAddedPatientName = {
-      ...singlePrescription,
-      namePatient: patientsList[singlePrescription.idPatient]
-        ? patientsList[singlePrescription.idPatient].name
-        : "Paciente",
-    };
+    hospital.getPatients(requestConfig);
 
     const prescriptionDrugFormStatus = {};
     [
@@ -191,10 +164,7 @@ export const fetchScreeningThunk =
 
     dispatch(setDrugFormList(prescriptionDrugFormStatus));
 
-    dispatch(patientsFetchListSuccess(patientsList));
-    dispatch(
-      prescriptionsFetchSingleSuccess(singlePrescriptionAddedPatientName)
-    );
+    dispatch(prescriptionsFetchSingleSuccess(singlePrescription));
   };
 
 export const checkScreeningThunk =
@@ -308,7 +278,7 @@ export const updateInterventionStatusThunk =
 export const updatePrescriptionDrugDataThunk =
   (idPrescriptionDrug, source, data) => (dispatch) => {
     dispatch(
-      prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data)
+      prescriptionsUpdatePrescriptionDrug(idPrescriptionDrug, source, data),
     );
   };
 

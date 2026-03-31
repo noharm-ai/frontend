@@ -8,12 +8,14 @@ import notification from "components/notification";
 
 import Signature from "containers/UserConfig/Signature";
 import ChangePassword from "containers/UserConfig/ChangePassword";
+import { clearCache as cleanPatientCache } from "utils/patientCache";
 
 export default function UserConfig({ cleanCache }) {
   const endpointConfig = useSelector((state) => state.app.config);
 
   const executeCleanCache = async () => {
     cleanCache();
+    cleanPatientCache();
 
     const urlRequest = endpointConfig.nameUrl.replace("{idPatient}", "clear");
 

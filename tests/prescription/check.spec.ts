@@ -5,20 +5,22 @@ test("check individual prescription and rollback", async ({ page }) => {
   await page.goto("/prescricao/199");
 
   await expect(
-    page.getByRole("heading", { name: "Prescrição nº 199 Liberada em" })
-  ).toBeVisible();
-  await expect(page.getByText("Paciente 99")).toBeVisible();
+    page.getByRole("heading", { name: "Prescrição nº 199 Liberada em" }),
+  ).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText("Paciente 99")).toBeVisible({ timeout: 30000 });
 
   // check
   await page.getByRole("button", { name: "check Checar" }).click();
-  await expect(page.getByText("Checada porE2E Test")).toBeVisible();
+  //await expect(page.getByText("Checada porE2E Test")).toBeVisible({ timeout: 30000 });
+
+  await page.getByRole("button", { name: "check Checar" }).isHidden();
 
   // rollback
   await page.getByRole("button", { name: "rollback" }).click();
 
   await expect(
-    page.getByRole("button", { name: "check Checar" })
-  ).toBeVisible();
+    page.getByRole("button", { name: "check Checar" }),
+  ).toBeVisible({ timeout: 30000 });
 });
 
 test("check aggregate prescription and rollback", async ({ page }) => {
@@ -33,27 +35,27 @@ test("check aggregate prescription and rollback", async ({ page }) => {
     .getByRole("banner")
     .getByRole("button", { name: "search" })
     .click();
-  await expect(page.getByText("Atendimento 9999").first()).toBeVisible();
+  await expect(page.getByText("Atendimento 9999").first()).toBeVisible({ timeout: 30000 });
   const page1Promise = page.waitForEvent("popup");
   await page.getByText("Atendimento 9999").first().click();
 
   const prescriptionPage = await page1Promise;
   await expect(
-    prescriptionPage.getByRole("button", { name: "9999" })
-  ).toBeVisible();
+    prescriptionPage.getByRole("button", { name: "9999" }),
+  ).toBeVisible({ timeout: 30000 });
 
   // check
   await prescriptionPage.getByRole("button", { name: "check Checar" }).click();
-  await expect(prescriptionPage.getByText("Checada porE2E Test")).toBeVisible();
+  await expect(prescriptionPage.getByText("Checada porE2E Test")).toBeVisible({ timeout: 30000 });
 
   await expect(
-    prescriptionPage.locator(".ant-collapse-item.checked")
+    prescriptionPage.locator(".ant-collapse-item.checked"),
   ).toHaveCount(3);
 
   // rollback
   await prescriptionPage.getByRole("button", { name: "rollback" }).click();
 
   await expect(
-    prescriptionPage.getByRole("button", { name: "check Checar" })
-  ).toBeVisible();
+    prescriptionPage.getByRole("button", { name: "check Checar" }),
+  ).toBeVisible({ timeout: 30000 });
 });

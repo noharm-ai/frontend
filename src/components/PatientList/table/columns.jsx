@@ -1,10 +1,12 @@
 import React from "react";
 import moment from "moment";
-import { SearchOutlined, LoadingOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 
 import { TextColumn } from "components/Table";
 import Tooltip from "components/Tooltip";
 import { Link } from "components/Button";
+import PatientNameCache from "components/PatientName/PatientNameCache";
+import * as patientCache from "utils/patientCache";
 
 /* eslint-disable-next-line react-refresh/only-export-components */
 const Action = ({ record }) => {
@@ -35,18 +37,20 @@ const columns = (sortedInfo, filteredInfo, t) => {
       key: "namePatient",
       title: t("tableHeader.patient"),
       sortDirections,
-      sorter: (a, b) => a.namePatient.localeCompare(b.namePatient),
-      sortOrder: sortedInfo.columnKey === "namePatient" && sortedInfo.order,
-      render: (record) => {
-        return (
-          <>
-            {record.namePatient} {record.loadingName && <LoadingOutlined />}
-          </>
-        );
+      sorter: (a, b) => {
+        const nameA =
+          patientCache.getPatient(a.idPatient)?.name ?? `Paciente ${a.idPatient}`;
+        const nameB =
+          patientCache.getPatient(b.idPatient)?.name ?? `Paciente ${b.idPatient}`;
+        return nameA.localeCompare(nameB);
       },
+      sortOrder: sortedInfo.columnKey === "namePatient" && sortedInfo.order,
+      render: (record) => <PatientNameCache idPatient={record.idPatient} />,
       filteredValue: filteredInfo.searchKey || null,
       onFilter: (value, record) =>
-        record.namePatient.toLowerCase().includes(value) ||
+        (patientCache.getPatient(record.idPatient)?.name ?? "")
+          .toLowerCase()
+          .includes(value) ||
         `${record.admissionNumber}` === value ||
         `${record.idPatient}` === value,
     },

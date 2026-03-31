@@ -52,6 +52,7 @@ export default function Intervention({
   aggIdPrescription,
   prescriptionStatus,
   prescriptionHeaders,
+  idPatient,
   ...props
 }) {
   const { t } = useTranslation();
@@ -77,13 +78,13 @@ export default function Intervention({
 
           selectedReasons.forEach((itemId) => {
             const reasonIndex = reasons.list.findIndex(
-              (reason) => reason.id === itemId
+              (reason) => reason.id === itemId,
             );
 
             if (
               reasonIndex !== -1 &&
               InterventionReasonRelationType.isRequired(
-                reasons.list[reasonIndex].relationType
+                reasons.list[reasonIndex].relationType,
               )
             ) {
               isRequired = true;
@@ -255,7 +256,7 @@ export default function Intervention({
               idIntervention: intvList[0].idIntervention,
               outcome: params.status,
               open: true,
-            })
+            }),
           );
         }
       })
@@ -416,7 +417,7 @@ export default function Intervention({
           ) : (
             <>
               {item.idPrescriptionDrug + "" === "0" && (
-                <PatientData item={item} />
+                <PatientData item={item} idPatient={idPatient} />
               )}
               {item.idPrescriptionDrug + "" !== "0" && <DrugData item={item} />}
             </>

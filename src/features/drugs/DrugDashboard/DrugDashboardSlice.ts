@@ -55,11 +55,26 @@ export const updateOutlierObs = createAsyncThunk(
 export const fetchDrugDashboard = createAsyncThunk(
   "drugDashboard/fetch",
   async (
-    { idSegment, idDrug }: { idSegment: number; idDrug: string },
+    {
+      idSegment,
+      idDrug,
+      dose,
+      frequency,
+    }: {
+      idSegment: number;
+      idDrug: string;
+      dose?: string;
+      frequency?: string;
+    },
     thunkAPI,
   ) => {
     try {
-      const response = await api.drugs.getDrugDashboard(idSegment, idDrug);
+      const response = await api.drugs.getDrugDashboard(
+        idSegment,
+        idDrug,
+        dose,
+        frequency,
+      );
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);

@@ -4,7 +4,6 @@ on:
     branches: [master]
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   deploy:
@@ -14,12 +13,12 @@ jobs:
         node-version: [22.x]
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - name: get-npm-version
         id: package-version
-        uses: martinbeentjes/npm-get-version-action@v1.3.1
+        run: echo "current-version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
       - name: npm ci
-        run: npm ci
+        run: npm ci --ignore-scripts
       - name: npm run build
         run: npm run build
         env:
@@ -34,20 +33,18 @@ jobs:
           VITE_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
           VITE_APP_URL: ${{ secrets.REACT_APP_URL_PROD }}
           VITE_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a  # v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: sa-east-1
       - name: Deploy Production to AWS
-        uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --acl public-read
-        env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET_PROD }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          SOURCE_DIR: "dist"
+        run: aws s3 sync dist/ s3://${{ secrets.AWS_S3_BUCKET_PROD }} --acl public-read
       - name: Set cache-control on index.html
-        uses: prewk/s3-cp-action@v2
-        with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          source: "s3://${{ secrets.AWS_S3_BUCKET_PROD }}/index.html"
-          dest: "s3://${{ secrets.AWS_S3_BUCKET_PROD }}/index.html"
-          flags: --metadata-directive REPLACE --cache-control max-age=0,no-cache,no-store,must-revalidate --content-type text/html --acl public-read
+        run: |
+          aws s3 cp s3://${{ secrets.AWS_S3_BUCKET_PROD }}/index.html s3://${{ secrets.AWS_S3_BUCKET_PROD }}/index.html \
+            --metadata-directive REPLACE \
+            --cache-control "max-age=0,no-cache,no-store,must-revalidate" \
+            --content-type text/html \
+            --acl public-read

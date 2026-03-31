@@ -24,7 +24,11 @@ export const SelectCustom = ({ children, onChange, ...props }) => {
     });
 
     if (onChange) {
-      onChange(options);
+      const existing = props.value ?? [];
+      const merged = Array.from(
+        new Set([...existing, ...options.filter(Boolean)])
+      );
+      onChange(merged);
       setSearchValue(null);
     }
   };

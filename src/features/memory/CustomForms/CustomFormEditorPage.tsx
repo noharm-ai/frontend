@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Button } from "antd";
-import { EyeOutlined } from "@ant-design/icons";
+import { Button, Input, Popconfirm, Tag } from "antd";
+import { CopyOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import DefaultModal from "components/Modal";
@@ -13,6 +13,9 @@ import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 import { PageHeader } from "styles/PageHeader.style";
 import { Form } from "styles/Form.style";
+
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 
 import { fetchCustomForms, saveCustomForms, reset } from "./CustomFormsSlice";
 import { FormBody } from "./FormBody";
@@ -75,6 +78,18 @@ const validationSchema = Yup.object().shape({
     ),
 });
 
+function DirtyGuard({ dirty }: { dirty: boolean }) {
+  useEffect(() => {
+    if (!dirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty]);
+  return null;
+}
+
 function PreviewButton({ template }: { template: FormGroup[] }) {
   const [open, setOpen] = useState(false);
   return (
@@ -107,9 +122,151 @@ function PreviewButton({ template }: { template: FormGroup[] }) {
   );
 }
 
+interface InnerPageProps {
+  title: string;
+  dirty: boolean;
+  hasErrors: boolean;
+  isSaving: boolean;
+  values: any;
+  setValues: (values: CustomForm) => void;
+  handleSubmit: () => void;
+  handleCancel: () => void;
+}
+
+function InnerPage({
+  title,
+  dirty,
+  hasErrors,
+  isSaving,
+  values,
+  setValues,
+  handleSubmit,
+  handleCancel,
+}: InnerPageProps) {
+  const [jsonModalOpen, setJsonModalOpen] = useState(false);
+  const [jsonInput, setJsonInput] = useState("");
+  const isMaintainer = PermissionService().has(Permission.MAINTAINER);
+
+  const handleCopyJson = () => {
+    navigator.clipboard.writeText(JSON.stringify(values, null, 2));
+    notification.success({ message: "JSON copiado!" });
+  };
+
+  const handleLoadJson = () => {
+    try {
+      const parsed = JSON.parse(jsonInput);
+      setValues(parsed);
+      setJsonModalOpen(false);
+      setJsonInput("");
+    } catch {
+      notification.error({ message: "JSON inválido" });
+    }
+  };
+
+  return (
+    <>
+      <DirtyGuard dirty={dirty} />
+      <PageHeader>
+        <div>
+          <h1 className="page-header-title">{title}</h1>
+          <div className="page-header-legend">Formulários de evolução</div>
+        </div>
+        <div className="page-header-actions">
+          {hasErrors && (
+            <Tag
+              color="error"
+              variant="outlined"
+              style={{ marginLeft: 8, verticalAlign: "middle" }}
+            >
+              Formulário com erros
+            </Tag>
+          )}
+          {dirty ? (
+            <>
+              <Tag
+                color="warning"
+                variant="outlined"
+                style={{ marginLeft: 8, verticalAlign: "middle" }}
+              >
+                Alterações não salvas
+              </Tag>
+
+              <Popconfirm
+                title="Alterações não salvas"
+                description="Deseja sair sem salvar?"
+                onConfirm={handleCancel}
+                okText="Sair sem salvar"
+                cancelText="Continuar editando"
+                okButtonProps={{ danger: true }}
+              >
+                <Button disabled={isSaving}>Cancelar</Button>
+              </Popconfirm>
+            </>
+          ) : (
+            <Button onClick={handleCancel} disabled={isSaving}>
+              Cancelar
+            </Button>
+          )}
+          {isMaintainer && (
+            <>
+              <Button icon={<CopyOutlined />} onClick={handleCopyJson}>
+                Copiar JSON
+              </Button>
+              <Button
+                icon={<UploadOutlined />}
+                onClick={() => setJsonModalOpen(true)}
+              >
+                Carregar JSON
+              </Button>
+            </>
+          )}
+          <PreviewButton template={values.data} />
+          <Button
+            type="primary"
+            loading={isSaving}
+            disabled={isSaving}
+            onClick={handleSubmit}
+            danger={hasErrors}
+          >
+            Salvar
+          </Button>
+        </div>
+      </PageHeader>
+
+      <DefaultModal
+        open={jsonModalOpen}
+        title="Carregar definição JSON"
+        onCancel={() => {
+          setJsonModalOpen(false);
+          setJsonInput("");
+        }}
+        onOk={handleLoadJson}
+        okText="Carregar"
+        cancelText="Cancelar"
+        width={700}
+        destroyOnHidden
+      >
+        <Input.TextArea
+          rows={16}
+          value={jsonInput}
+          onChange={(e) => setJsonInput(e.target.value)}
+          placeholder='{"name": "...", "data": [...]}'
+          style={{ fontFamily: "monospace", fontSize: 12 }}
+        />
+      </DefaultModal>
+
+      <Form onSubmit={handleSubmit}>
+        <FormBody />
+      </Form>
+    </>
+  );
+}
+
 function CustomFormEditorPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const copyFromKey = searchParams.get("copyFrom");
   const { t } = useTranslation();
   const dispatch = useAppDispatch() as any;
 
@@ -132,9 +289,20 @@ function CustomFormEditorPage() {
   const formRecord = isNew
     ? null
     : forms.find((f: any) => String(f.key) === id);
-  const initialForm: CustomForm = formRecord
-    ? JSON.parse(JSON.stringify(formRecord.value))
-    : emptyForm();
+
+  const initialForm: CustomForm = (() => {
+    if (isNew && copyFromKey) {
+      const source = forms.find((f: any) => String(f.key) === copyFromKey);
+      if (source) {
+        const copy = JSON.parse(JSON.stringify(source.value));
+        copy.name = `Cópia de ${copy.name}`;
+        return copy;
+      }
+    }
+    return formRecord
+      ? JSON.parse(JSON.stringify(formRecord.value))
+      : emptyForm();
+  })();
 
   const listPath = "/configuracoes/forms-personalizados";
 
@@ -169,33 +337,17 @@ function CustomFormEditorPage() {
       validateOnChange={false}
       validateOnBlur={false}
     >
-      {({ handleSubmit, values }) => (
-        <>
-          <PageHeader>
-            <div>
-              <h1 className="page-header-title">{title}</h1>
-              <div className="page-header-legend">Formulários de evolução</div>
-            </div>
-            <div className="page-header-actions">
-              <Button onClick={handleCancel} disabled={isSaving}>
-                Cancelar
-              </Button>
-              <PreviewButton template={values.data} />
-              <Button
-                type="primary"
-                loading={isSaving}
-                disabled={isSaving}
-                onClick={() => handleSubmit()}
-              >
-                Salvar
-              </Button>
-            </div>
-          </PageHeader>
-
-          <Form onSubmit={handleSubmit}>
-            <FormBody />
-          </Form>
-        </>
+      {({ handleSubmit, values, dirty, errors, setValues }) => (
+        <InnerPage
+          title={title}
+          dirty={dirty}
+          hasErrors={Object.keys(errors).length > 0}
+          isSaving={isSaving}
+          values={values}
+          setValues={setValues}
+          handleSubmit={handleSubmit}
+          handleCancel={handleCancel}
+        />
       )}
     </Formik>
   );
