@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/regulation/api";
 import hospital from "services/hospital";
+import * as patientCache from "utils/patientCache";
 
 const initialState = {
   data: {
@@ -36,39 +37,34 @@ export const fetchRegulation = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const fetchPatient = createAsyncThunk(
   "regulation/fetch-patient",
   async (params, thunkAPI) => {
     try {
+      const idPatient =
+        thunkAPI.getState().regulation.regulation.data.patient.id;
       const requestConfig = {
-        listToRequest: [
-          {
-            idPatient:
-              thunkAPI.getState().regulation.regulation.data.patient.id,
-          },
-        ],
-        listToEscape: [],
+        listToRequest: [{ idPatient }],
         nameUrl: thunkAPI.getState().app.config.nameUrl,
         proxy: thunkAPI.getState().app.config.proxy,
         nameHeaders: thunkAPI.getState().app.config.nameHeaders,
-        useCache: false,
         userRoles: thunkAPI.getState().user.account.roles,
         features: thunkAPI.getState().user.account.features,
       };
 
-      const response = await hospital.getPatients(null, requestConfig);
+      await hospital.getPatients(requestConfig);
 
       return {
         patientData:
-          response[thunkAPI.getState().regulation.regulation.data.patient.id],
+          patientCache.getPatient(idPatient) ?? `Paciente ${idPatient}`,
       };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const moveRegulation = createAsyncThunk(
@@ -81,7 +77,7 @@ export const moveRegulation = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 const regulationSlice = createSlice({

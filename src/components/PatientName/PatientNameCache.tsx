@@ -114,17 +114,14 @@ export default function PatientNameCache({ idPatient }: Props) {
 
     const requestConfig = {
       idPatient,
-      listToEscape: [],
       nameUrl: appConfig.nameUrl,
       nameHeaders: appConfig.nameHeaders,
       proxy: appConfig.proxy,
-      useCache: false,
-      userRoles: [],
       features: [],
     };
 
     try {
-      await hospital.getSinglePatient(null, requestConfig);
+      await hospital.getSinglePatient(requestConfig);
     } catch (error) {
       clearLoading([idPatient]);
       DefaultModal.confirm({

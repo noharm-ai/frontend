@@ -5,14 +5,12 @@ import hospital from "services/hospital";
 import { errorHandler } from "utils";
 
 import { Creators as PatientCentralCreators } from "./index";
-import { Creators as PatientsCreators } from "../patients";
 
 const {
   patientCentralFetchListStart,
   patientCentralFetchListError,
   patientCentralFetchListSuccess,
 } = PatientCentralCreators;
-const { patientsFetchListSuccess } = PatientsCreators;
 
 export const patientCentralFetchListThunk =
   (params = {}) =>
@@ -38,8 +36,7 @@ export const patientCentralFetchListThunk =
 
 export const patientCentralNamesThunk =
   (data) => async (dispatch, getState) => {
-    const { patients, app, user } = getState();
-    const { list: listPatients } = patients;
+    const { app, user } = getState();
 
     const limit = 150;
     let offset = 0;
@@ -51,17 +48,13 @@ export const patientCentralNamesThunk =
 
       const requestConfig = {
         listToRequest: items,
-        listToEscape: listPatients,
         nameUrl: app.config.nameUrl,
         nameHeaders: app.config.nameHeaders,
         proxy: app.config.proxy,
-        useCache: true,
         userRoles: user.account.roles,
         features: user.account.features,
       };
 
-      const patientsList = await hospital.getPatients(null, requestConfig);
-
-      dispatch(patientsFetchListSuccess(patientsList));
+      await hospital.getPatients(requestConfig);
     }
   };

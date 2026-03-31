@@ -2,8 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/regulation/api.ts";
 import hospital from "services/hospital";
 
-import { updateNames } from "store/ducks/patients/thunk";
-
 const initialState = {
   list: [],
   status: "idle",
@@ -66,23 +64,17 @@ export const fetchPatients = createAsyncThunk(
             idPatient: r.idPatient,
             birthdate: r.birthdate,
           })),
-        listToEscape: thunkAPI.getState().patients.list,
         nameUrl: thunkAPI.getState().app.config.nameUrl,
         multipleNameUrl: thunkAPI.getState().app.config.multipleNameUrl,
         proxy: thunkAPI.getState().app.config.proxy,
         nameHeaders: thunkAPI.getState().app.config.nameHeaders,
-        useCache: true,
         userRoles: thunkAPI.getState().user.account.roles,
         features: thunkAPI.getState().user.account.features,
       };
 
-      const response = await hospital.getPatients(null, requestConfig);
+      await hospital.getPatients(requestConfig);
 
-      thunkAPI.dispatch(updateNames(response));
-
-      return {
-        patientData: response,
-      };
+      return {};
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }

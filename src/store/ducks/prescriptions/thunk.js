@@ -9,12 +9,9 @@ import {
   transformExams,
 } from "utils/transformers";
 import { errorHandler } from "utils";
-import { Creators as PatientsCreators } from "../patients";
 import { Creators as PrescriptionsCreators } from "./index";
 
 import { setDrugFormList } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
-
-const { patientsFetchListSuccess } = PatientsCreators;
 
 const {
   prescriptionsFetchListStart,
@@ -59,8 +56,7 @@ export const fetchPrescriptionsListThunk =
   async (dispatch, getState) => {
     dispatch(prescriptionsFetchListStart());
 
-    const { auth, patients, app, user } = getState();
-    const { list: listPatients } = patients;
+    const { auth, app, user } = getState();
     const { access_token } = auth.identify;
     const {
       data: { data },
@@ -74,17 +70,15 @@ export const fetchPrescriptionsListThunk =
 
     const requestConfig = {
       listToRequest: data,
-      listToEscape: listPatients,
       nameUrl: app.config.nameUrl,
       multipleNameUrl: app.config.multipleNameUrl,
       proxy: app.config.proxy,
       nameHeaders: app.config.nameHeaders,
-      useCache: true,
       userRoles: user.account.roles,
       features: user.account.features,
     };
 
-    const patientsList = hospital.getPatients(access_token, requestConfig);
+    hospital.getPatients(requestConfig);
 
     // const listAddedPatientName = data.map(({ idPatient, ...item }) => ({
     //   ...item,
@@ -100,7 +94,6 @@ export const fetchPrescriptionsListThunk =
       disableWhitelistGroup: featureService.hasDisableWhitelistGroup(),
     });
 
-    // dispatch(patientsFetchListSuccess(patientsList));
     dispatch(prescriptionsFetchListSuccess(list));
   };
 
@@ -130,8 +123,7 @@ export const fetchScreeningThunk =
   (idPrescription) => async (dispatch, getState) => {
     dispatch(prescriptionsFetchSingleStart());
 
-    const { auth, patients, app, user } = getState();
-    const { list: listPatients } = patients;
+    const { auth, app, user } = getState();
     const { access_token } = auth.identify;
     const {
       data: { data },
@@ -156,16 +148,14 @@ export const fetchScreeningThunk =
     });
     const requestConfig = {
       listToRequest: [singlePrescription],
-      listToEscape: listPatients,
       nameUrl: app.config.nameUrl,
       proxy: app.config.proxy,
       nameHeaders: app.config.nameHeaders,
-      useCache: false,
       userRoles: user.account.roles,
       features: user.account.features,
     };
 
-    const patientsList = hospital.getPatients(access_token, requestConfig);
+    hospital.getPatients(requestConfig);
 
     const prescriptionDrugFormStatus = {};
     [
@@ -178,7 +168,6 @@ export const fetchScreeningThunk =
 
     dispatch(setDrugFormList(prescriptionDrugFormStatus));
 
-    //dispatch(patientsFetchListSuccess(patientsList));
     dispatch(prescriptionsFetchSingleSuccess(singlePrescription));
   };
 
