@@ -74,8 +74,6 @@ export const fetchPrescriptionsListThunk =
       multipleNameUrl: app.config.multipleNameUrl,
       proxy: app.config.proxy,
       nameHeaders: app.config.nameHeaders,
-      userRoles: user.account.roles,
-      features: user.account.features,
     };
 
     hospital.getPatients(requestConfig);
@@ -151,8 +149,6 @@ export const fetchScreeningThunk =
       nameUrl: app.config.nameUrl,
       proxy: app.config.proxy,
       nameHeaders: app.config.nameHeaders,
-      userRoles: user.account.roles,
-      features: user.account.features,
     };
 
     hospital.getPatients(requestConfig);

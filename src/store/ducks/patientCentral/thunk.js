@@ -51,8 +51,6 @@ export const patientCentralNamesThunk =
         nameUrl: app.config.nameUrl,
         nameHeaders: app.config.nameHeaders,
         proxy: app.config.proxy,
-        userRoles: user.account.roles,
-        features: user.account.features,
       };
 
       await hospital.getPatients(requestConfig);

@@ -117,7 +117,6 @@ export default function PatientNameCache({ idPatient }: Props) {
       nameUrl: appConfig.nameUrl,
       nameHeaders: appConfig.nameHeaders,
       proxy: appConfig.proxy,
-      features: [],
     };
 
     try {

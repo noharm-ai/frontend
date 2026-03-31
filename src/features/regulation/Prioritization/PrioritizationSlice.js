@@ -68,8 +68,6 @@ export const fetchPatients = createAsyncThunk(
         multipleNameUrl: thunkAPI.getState().app.config.multipleNameUrl,
         proxy: thunkAPI.getState().app.config.proxy,
         nameHeaders: thunkAPI.getState().app.config.nameHeaders,
-        userRoles: thunkAPI.getState().user.account.roles,
-        features: thunkAPI.getState().user.account.features,
       };
 
       await hospital.getPatients(requestConfig);

@@ -1,7 +1,7 @@
 import axios from "axios";
 import moment from "moment";
 
-import FeatureService from "services/features";
+import { FeatureService } from "services/FeatureService";
 import api from "services/api";
 import { store } from "store/index";
 import * as patientCache from "utils/patientCache";
@@ -16,7 +16,7 @@ const FLAG = "{idPatient}";
  * @param {[object]} requestConfig.listToRequest array of objects containing idPatient (and optionally birthdate)
  */
 const getPatients = async (requestConfig) => {
-  const { listToRequest, nameUrl, features, proxy } = requestConfig;
+  const { listToRequest, nameUrl, proxy } = requestConfig;
   const getnameType = store.getState().app.config.getnameType;
   const apiKey = store.getState().user.account.apiKey;
   let nameHeaders =
@@ -28,13 +28,12 @@ const getPatients = async (requestConfig) => {
           "x-api-key": apiKey,
         }
       : requestConfig.nameHeaders;
-  const featureService = FeatureService(features);
 
   if (!listToRequest || !Array.isArray(listToRequest)) {
     return;
   }
 
-  if (!featureService.hasDisableGetname()) {
+  if (!FeatureService.has("DISABLE_GETNAME")) {
     if (getnameType === "auth") {
       const { data: token_response } = await api.getGetnameToken();
       nameHeaders = {
