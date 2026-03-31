@@ -6,7 +6,7 @@ test("add intervention", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 199 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").isVisible();
+  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
   //await page.getByRole("row").nth(0).getByRole("button").nth(1).click();
   await page
     .locator(".ant-table tr:nth-child(2)")
@@ -132,7 +132,7 @@ test("add patient intervention", async ({ page }) => {
     .getByRole("heading", { name: "Prescrição nº 199 Liberada em" })
     .click();
 
-  await page.locator(".gtm-bt-patient-intervention").isVisible();
+  await page.locator(".gtm-bt-patient-intervention").waitFor({ state: "visible", timeout: 30000 });
 
   await page.locator(".gtm-bt-patient-intervention").first().click();
   // wait to load reasons

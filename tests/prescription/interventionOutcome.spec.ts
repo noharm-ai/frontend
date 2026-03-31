@@ -6,7 +6,7 @@ test("outcome: suspension", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").isVisible();
+  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
   await page
     .locator(".ant-table-tbody tr")
     .nth(0)
@@ -96,7 +96,7 @@ test("outcome: substitution", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").isVisible();
+  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
   await page
     .locator(".ant-table-tbody tr")
     .nth(1)
@@ -179,7 +179,7 @@ test("outcome: custom", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").isVisible();
+  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
 
   await page.locator(".gtm-bt-patient-intervention").first().click();
   await page
@@ -228,7 +228,7 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").isVisible();
+  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
   await page
     .locator(".ant-table-tbody tr")
     .nth(2)

@@ -14,7 +14,6 @@ import notification from "components/notification";
 import { Textarea } from "components/Inputs";
 import { setSupportOpen } from "features/support/SupportSlice";
 import hospital from "services/hospital";
-import { FeatureService } from "services/FeatureService";
 import { clearLoading } from "utils/patientCache";
 
 interface Props {
@@ -187,10 +186,6 @@ export default function PatientNameCache({ idPatient }: Props) {
     e.stopPropagation();
     setModalOpen(true);
   };
-
-  if (FeatureService.has("DISABLE_GETNAME")) {
-    return `Paciente ${idPatient}`;
-  }
 
   if (isLoading && !name) return <Spin size="small" />;
 
