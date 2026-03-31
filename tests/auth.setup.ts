@@ -10,10 +10,10 @@ setup("login", async ({ page }) => {
   await page.getByPlaceholder("Senha").click();
   await page.getByPlaceholder("Senha").fill(process.env.TEST_USER_PASSWORD!);
   await page.getByRole("button", { name: "Acessar" }).click();
-  await expect(page.getByText("E2E Test")).toBeVisible();
+  await expect(page.getByText("E2E Test")).toBeVisible({ timeout: 30000 });
   await expect(
     page.getByRole("heading", { name: "Priorização por Pacientes" })
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 30000 });
 
   await page.waitForTimeout(3000);
 

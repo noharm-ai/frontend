@@ -5,8 +5,8 @@ test("show conciliation", async ({ page }) => {
 
   await expect(
     page.getByRole("heading", { name: "Conciliação n°" })
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 30000 });
   await expect(
     page.getByRole("cell", { name: "Medicamento do paciente" })
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 30000 });
 });

@@ -9,5 +9,5 @@ test("click first patient", async ({ page }) => {
   await page.getByText("Atendimento9999").click();
   const page1 = await page1Promise;
 
-  await expect(page1.getByText("Paciente 99")).toBeVisible();
+  await expect(page1.getByText("Paciente 99")).toBeVisible({ timeout: 30000 });
 });

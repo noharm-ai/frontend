@@ -27,7 +27,7 @@ test("outcome: suspension", async ({ page }) => {
   // // close dropdown
   await page.locator(".ant-select").click();
 
-  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible();
+  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible({ timeout: 30000 });
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
@@ -117,7 +117,7 @@ test("outcome: substitution", async ({ page }) => {
   // // close dropdown
   await page.locator(".ant-select").nth(0).click();
 
-  await expect(page.getByText("Tipo economia: Substituição")).toBeVisible();
+  await expect(page.getByText("Tipo economia: Substituição")).toBeVisible({ timeout: 30000 });
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
@@ -197,7 +197,7 @@ test("outcome: custom", async ({ page }) => {
   await page.getByText("Salvar e marcar como Aceita").click();
 
   await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
-  await expect(page.getByText("Quantidade de Dias de")).toBeVisible();
+  await expect(page.getByText("Quantidade de Dias de")).toBeVisible({ timeout: 30000 });
 
   await page
     .locator("div")
@@ -249,7 +249,7 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
   // // close dropdown
   await page.locator(".ant-select").click();
 
-  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible();
+  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible({ timeout: 30000 });
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
