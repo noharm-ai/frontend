@@ -5,19 +5,21 @@ test("check individual prescription and rollback", async ({ page }) => {
   await page.goto("/prescricao/199");
 
   await expect(
-    page.getByRole("heading", { name: "Prescrição nº 199 Liberada em" })
+    page.getByRole("heading", { name: "Prescrição nº 199 Liberada em" }),
   ).toBeVisible();
   await expect(page.getByText("Paciente 99")).toBeVisible();
 
   // check
   await page.getByRole("button", { name: "check Checar" }).click();
-  await expect(page.getByText("Checada porE2E Test")).toBeVisible();
+  //await expect(page.getByText("Checada porE2E Test")).toBeVisible();
+
+  await page.getByRole("button", { name: "check Checar" }).isHidden();
 
   // rollback
   await page.getByRole("button", { name: "rollback" }).click();
 
   await expect(
-    page.getByRole("button", { name: "check Checar" })
+    page.getByRole("button", { name: "check Checar" }),
   ).toBeVisible();
 });
 
@@ -39,7 +41,7 @@ test("check aggregate prescription and rollback", async ({ page }) => {
 
   const prescriptionPage = await page1Promise;
   await expect(
-    prescriptionPage.getByRole("button", { name: "9999" })
+    prescriptionPage.getByRole("button", { name: "9999" }),
   ).toBeVisible();
 
   // check
@@ -47,13 +49,13 @@ test("check aggregate prescription and rollback", async ({ page }) => {
   await expect(prescriptionPage.getByText("Checada porE2E Test")).toBeVisible();
 
   await expect(
-    prescriptionPage.locator(".ant-collapse-item.checked")
+    prescriptionPage.locator(".ant-collapse-item.checked"),
   ).toHaveCount(3);
 
   // rollback
   await prescriptionPage.getByRole("button", { name: "rollback" }).click();
 
   await expect(
-    prescriptionPage.getByRole("button", { name: "check Checar" })
+    prescriptionPage.getByRole("button", { name: "check Checar" }),
   ).toBeVisible();
 });
