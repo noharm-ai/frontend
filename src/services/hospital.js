@@ -33,104 +33,105 @@ const getPatients = async (requestConfig) => {
     return;
   }
 
-  if (!FeatureService.has("DISABLE_GETNAME")) {
-    if (getnameType === "auth") {
-      const { data: token_response } = await api.getGetnameToken();
-      nameHeaders = {
-        Authorization: `Bearer ${token_response.data}`,
-      };
+  if (FeatureService.has("DISABLE_GETNAME")) {
+    console.log("bypass name resolution");
+    return;
+  }
+
+  if (getnameType === "auth") {
+    const { data: token_response } = await api.getGetnameToken();
+    nameHeaders = {
+      Authorization: `Bearer ${token_response.data}`,
+    };
+  }
+
+  if (requestConfig.multipleNameUrl) {
+    const cacheConfig = {};
+    const requestIds = [];
+
+    listToRequest.forEach((p) => {
+      const cachedPatient = patientCache.getPatient(p.idPatient);
+      if (!cachedPatient || !cachedPatient?.cache) {
+        requestIds.push(p.idPatient);
+
+        if (p.birthdate && moment().diff(p.birthdate, "years") > 0) {
+          cacheConfig[p.idPatient] = true;
+        } else {
+          cacheConfig[p.idPatient] = false;
+        }
+      }
+    });
+
+    if (!requestIds.length) {
+      return;
     }
 
-    if (requestConfig.multipleNameUrl) {
-      const cacheConfig = {};
-      const requestIds = [];
+    patientCache.markLoading(requestIds);
+    try {
+      const { data: patientList } = await axios.post(
+        getnameType === "proxy"
+          ? `${import.meta.env.VITE_APP_API_URL}/names`
+          : requestConfig.multipleNameUrl,
+        {
+          patients: requestIds,
+        },
+        { headers: nameHeaders, timeout: 30000 },
+      );
 
-      listToRequest.forEach((p) => {
-        const cachedPatient = patientCache.getPatient(p.idPatient);
-        if (!cachedPatient || !cachedPatient?.cache) {
-          requestIds.push(p.idPatient);
+      const results = {};
+      patientList
+        .filter((p) => p.status === "success")
+        .forEach((p) => {
+          results[p.idPatient] = {
+            ...p,
+            cache: cacheConfig[p.idPatient] || false,
+          };
+        });
 
-          if (p.birthdate && moment().diff(p.birthdate, "years") > 0) {
-            cacheConfig[p.idPatient] = true;
-          } else {
-            cacheConfig[p.idPatient] = false;
-          }
-        }
-      });
-
-      if (!requestIds.length) {
-        return;
+      const failed = requestIds.filter((id) => !results[id]);
+      if (failed.length) {
+        patientCache.clearLoading(failed);
       }
 
-      patientCache.markLoading(requestIds);
-      try {
-        const { data: patientList } = await axios.post(
-          getnameType === "proxy"
-            ? `${import.meta.env.VITE_APP_API_URL}/names`
-            : requestConfig.multipleNameUrl,
-          {
-            patients: requestIds,
-          },
-          { headers: nameHeaders, timeout: 30000 },
-        );
+      patientCache.setPatients(results);
+    } catch (error) {
+      patientCache.clearLoading(requestIds);
+    }
+  } else {
+    await Promise.all(
+      listToRequest.map(async ({ idPatient, birthdate }) => {
+        const cached = patientCache.getPatient(idPatient);
+        if (cached?.cache) {
+          return;
+        }
 
-        const results = {};
-        patientList
-          .filter((p) => p.status === "success")
-          .forEach((p) => {
-            results[p.idPatient] = {
-              ...p,
-              cache: cacheConfig[p.idPatient] || false,
-            };
+        patientCache.markLoading([idPatient]);
+        const cache = birthdate ? moment().diff(birthdate, "years") > 0 : false;
+        const urlRequest =
+          getnameType === "proxy"
+            ? `${import.meta.env.VITE_APP_API_URL}/names/${idPatient}`
+            : nameUrl.replace(FLAG, idPatient);
+
+        try {
+          const { data: patient } = await axios.get(urlRequest, {
+            timeout: 8000,
+            headers: nameHeaders,
           });
 
-        const failed = requestIds.filter((id) => !results[id]);
-        if (failed.length) {
-          patientCache.clearLoading(failed);
-        }
-
-        patientCache.setPatients(results);
-      } catch (error) {
-        patientCache.clearLoading(requestIds);
-      }
-    } else {
-      await Promise.all(
-        listToRequest.map(async ({ idPatient, birthdate }) => {
-          const cached = patientCache.getPatient(idPatient);
-          if (cached?.cache) {
+          if (patient == null || patient.status === "error") {
+            patientCache.clearLoading([idPatient]);
             return;
           }
-
-          patientCache.markLoading([idPatient]);
-          const cache = birthdate
-            ? moment().diff(birthdate, "years") > 0
-            : false;
-          const urlRequest =
-            getnameType === "proxy"
-              ? `${import.meta.env.VITE_APP_API_URL}/names/${idPatient}`
-              : nameUrl.replace(FLAG, idPatient);
-
-          try {
-            const { data: patient } = await axios.get(urlRequest, {
-              timeout: 8000,
-              headers: nameHeaders,
-            });
-
-            if (patient == null || patient.status === "error") {
-              patientCache.clearLoading([idPatient]);
-              return;
-            }
-            if (patient.id) {
-              patient.idPatient = patient.id;
-            }
-
-            patientCache.setPatient({ ...patient, cache });
-          } catch (e) {
-            patientCache.clearLoading([idPatient]);
+          if (patient.id) {
+            patient.idPatient = patient.id;
           }
-        }),
-      );
-    }
+
+          patientCache.setPatient({ ...patient, cache });
+        } catch (e) {
+          patientCache.clearLoading([idPatient]);
+        }
+      }),
+    );
   }
 };
 
