@@ -17,7 +17,7 @@ jobs:
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
       - name: npm ci
-        run: npm ci
+        run: npm ci --ignore-scripts
       - name: lint
         run: npm run lint
       - name: npm run build
