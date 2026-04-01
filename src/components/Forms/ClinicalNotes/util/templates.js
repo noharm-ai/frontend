@@ -2,6 +2,7 @@ import { isEmpty } from "lodash";
 
 import stripHtml from "utils/stripHtml";
 import { ramFields } from "src/models/InterventionRAM";
+import * as patientCache from "utils/patientCache";
 
 const emptyInterventionMessage = `
   Nenhuma intervenção registrada.
@@ -26,7 +27,10 @@ Realizada a conciliação dos medicamentos e não encontrada divergência não i
 };
 
 const getConciliationHeader = (prescription) => `Farmácia Clínica
-${prescription.data.namePatient}, ${prescription.data.age}${
+${
+  patientCache.getPatient(prescription.data.idPatient)?.name ??
+  `Paciente ${prescription.data.idPatient}`
+}, ${prescription.data.age}${
   prescription.data.weight ? `, ${prescription.data.weight}Kg` : ""
 }`;
 
@@ -78,7 +82,7 @@ const getConciliationDrugList = (
   list,
   group,
   conciliationType,
-  conciliaList
+  conciliaList,
 ) => {
   const drugList = list.filter((d) => !d.suspended);
 
@@ -95,7 +99,7 @@ Paciente nega uso contínuo de medicamentos.
     const drugs = drugList.map(
       (d) => `
   - ${drugDescription(d)}
-  `
+  `,
     );
 
     return drugs.join("");
@@ -162,7 +166,7 @@ Paciente nega uso contínuo de medicamentos.
 
 const conciliationNotPerformedTemplate = (
   prescription,
-  signature
+  signature,
 ) => `${getConciliationHeader(prescription)}
 
 Conciliação medicamentosa por farmacêutico não realizada neste internamento; paciente não localizado no momento da visita ao leito ou entrevista realizada anteriormente por outro profissional de saúde.
@@ -172,7 +176,7 @@ ${signature}
 
 const conciliationDischargeTemplate = (
   prescription,
-  signature
+  signature,
 ) => `${getConciliationHeader(prescription)}
 
 Realizadas orientações farmacêuticas ao paciente e acompanhante a respeito dos medicamentos prescritos para uso domiciliar:
@@ -180,7 +184,7 @@ ${getConciliationDrugList(
   prescription.prescription.list.length
     ? prescription.prescription.list[0].value
     : [],
-  false
+  false,
 )}
 Orientações:
 
@@ -198,7 +202,7 @@ const conciliationDefaultBodyTemplate = (
   prescription,
   interventions,
   signature,
-  conciliationType
+  conciliationType,
 ) => `2. Conciliação medicamentosa:
 ${getConciliationDrugList(
   prescription.prescription.list.length
@@ -206,7 +210,7 @@ ${getConciliationDrugList(
     : [],
   true,
   conciliationType,
-  prescription.data.conciliaList
+  prescription.data.conciliaList,
 )}
 3. Intervenções:
 ${interventions === "" ? emptyInterventionMessage : interventions}
@@ -221,7 +225,7 @@ const conciliationTransferenceTemplate = (
   prescription,
   interventions,
   signature,
-  conciliationType
+  conciliationType,
 ) => `${getConciliationHeader(prescription)}
 
 1. Transferência interna:
@@ -233,7 +237,7 @@ ${conciliationDefaultBodyTemplate(
   prescription,
   interventions,
   signature,
-  conciliationType
+  conciliationType,
 )}
 `;
 
@@ -241,7 +245,7 @@ const conciliationAdmissionTemplate = (
   prescription,
   interventions,
   signature,
-  conciliationType
+  conciliationType,
 ) => `${getConciliationHeader(prescription)}
 
 Conciliação Medicamentosa realizada com:
@@ -253,7 +257,7 @@ ${conciliationDefaultBodyTemplate(
   prescription,
   interventions,
   signature,
-  conciliationType
+  conciliationType,
 )}
 `;
 
@@ -261,7 +265,7 @@ export const conciliationTemplate = (
   prescription,
   interventions,
   signature,
-  conciliationType
+  conciliationType,
 ) => {
   switch (conciliationType) {
     case "n":
@@ -275,7 +279,7 @@ export const conciliationTemplate = (
         prescription,
         interventions,
         signature,
-        conciliationType
+        conciliationType,
       );
 
     default:
@@ -283,7 +287,7 @@ export const conciliationTemplate = (
         prescription,
         interventions,
         signature,
-        conciliationType
+        conciliationType,
       );
   }
 };
@@ -355,7 +359,7 @@ const emptyInterventionTemplate = ({ idPrescription, agg, concilia }) => {
       "",
       `
       Nenhuma divergência encontrada.
-      `
+      `,
     );
   }
 
@@ -381,11 +385,12 @@ const emptyInterventionTemplate = ({ idPrescription, agg, concilia }) => {
 export const layoutTemplate = (
   prescription,
   interventions,
-  signature
+  signature,
 ) => `Farmácia Clínica
-${prescription.namePatient}, ${prescription.age}${
-  prescription.weight ? `, ${prescription.weight}Kg` : ""
-}
+${
+  patientCache.getPatient(prescription.idPatient)?.name ??
+  `Paciente ${prescription.idPatient}`
+}, ${prescription.age}${prescription.weight ? `, ${prescription.weight}Kg` : ""}
 
 ${interventions || emptyInterventionTemplate(prescription)}
 
