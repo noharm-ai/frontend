@@ -17,8 +17,11 @@ jobs:
       - name: get-npm-version
         id: package-version
         run: echo "current-version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      - uses: SocketDev/action@2d3f25590c6ed6ba11a9a14c064d962a3a04698f  # v1.3.1
+        with:
+          mode: firewall-free
       - name: npm ci
-        run: npm ci --ignore-scripts
+        run: sfw npm ci --ignore-scripts
       - name: npm run build
         run: npm run build
         env:

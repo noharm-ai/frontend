@@ -17,5 +17,8 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
         with:
           node-version: 22
-      - run: npm ci --ignore-scripts
+      - uses: SocketDev/action@2d3f25590c6ed6ba11a9a14c064d962a3a04698f  # v1.3.1
+        with:
+          mode: firewall-free
+      - run: sfw npm ci --ignore-scripts
       - run: npm run build
