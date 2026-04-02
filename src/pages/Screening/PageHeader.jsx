@@ -36,6 +36,7 @@ import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
 } from "src/utils/tracker";
+import PatientNameCache from "src/components/PatientName/PatientNameCache";
 
 import { ScreeningHeader } from "components/Screening/index.style";
 
@@ -142,7 +143,7 @@ export default function PageHeader({
 
   const openClinicalNotesModal = () => {
     trackPrescriptionAction(
-      TrackedPrescriptionAction.CLICK_CLINICAL_NOTES_FORM
+      TrackedPrescriptionAction.CLICK_CLINICAL_NOTES_FORM,
     );
 
     if (hasPrimaryCare) {
@@ -167,7 +168,7 @@ export default function PageHeader({
       prescription.content.alertsList.length
     ) {
       highRiskAlerts = prescription.content.alertsList.filter(
-        (a) => a.level === "high"
+        (a) => a.level === "high",
       );
     }
 
@@ -268,8 +269,8 @@ export default function PageHeader({
       type === "conciliation"
         ? t("screeningHeader.titleConciliation")
         : content.agg
-        ? t("screeningHeader.titleAdmission")
-        : t("screeningHeader.titlePrescription");
+          ? t("screeningHeader.titleAdmission")
+          : t("screeningHeader.titlePrescription");
     const id =
       type === "conciliation" || !content.agg
         ? content.idPrescription
@@ -291,7 +292,9 @@ export default function PageHeader({
           ) : (
             ""
           )}
-          <span className="legend">{content.namePatient}</span>
+          <span className="legend">
+            <PatientNameCache idPatient={content.idPatient} />
+          </span>
         </AffixedHeader>
       );
     }
@@ -397,7 +400,7 @@ export default function PageHeader({
                           <br />
                           <span style={{ fontSize: "12px", fontWeight: 300 }}>
                             {dayjs(
-                              prescription.content.review?.reviewedAt
+                              prescription.content.review?.reviewedAt,
                             ).format("DD/MM/YYYY HH:mm")}
                           </span>
                         </p>
