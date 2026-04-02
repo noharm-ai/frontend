@@ -13,6 +13,7 @@ import Tooltip from "components/Tooltip";
 import Table from "components/Table";
 import Tag from "components/Tag";
 import PatientNameCache from "components/PatientName/PatientNameCache";
+import * as patientCache from "utils/patientCache";
 
 const setDataIndex = (list) =>
   list.map(({ key, ...column }) => ({
@@ -439,7 +440,9 @@ const columns = (sortedInfo, filteredInfo, t, bag) => {
       },
       filteredValue: filteredInfo.searchKey || null,
       onFilter: (value, record) =>
-        record.namePatient.toLowerCase().includes(value) ||
+        (patientCache.getPatient(record.idPatient)?.name ?? "")
+          .toLowerCase()
+          .includes(value) ||
         `${record.admissionNumber}`.includes(value) ||
         `${record.idPatient}`.includes(value),
       sortDirections,
