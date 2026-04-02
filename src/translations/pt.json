@@ -1010,5 +1010,25 @@
 
   "patientDetails": {
     "fone": "Telefone"
+  },
+
+  "carePlan": {
+    "btnOpen": "Plano de Cuidado",
+    "title": "Plano de Cuidado",
+    "snippetsPanel": "Textos disponíveis",
+    "editorPanel": "Texto do plano",
+    "insertHint": "Clique para inserir no texto",
+    "btnClear": "Limpar",
+    "btnCancel": "Cancelar",
+    "btnCopy": "Copiar texto",
+    "btnSave": "Salvar",
+    "copiedSuccess": "Texto copiado!",
+    "saveComingSoon": "Salvar plano de cuidado em breve.",
+    "tabTemplates": "Modelo base",
+    "tabTexts": "Textos",
+    "searchPlaceholder": "Buscar textos...",
+    "applyTemplateHint": "Clique para usar este modelo",
+    "templateApplied": "Modelo aplicado!",
+    "noResults": "Nenhum texto encontrado."
   }
 }

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import styled from "styled-components";
 import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -21,12 +21,38 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import notification from "components/notification";
 
-export default function Editor({
+const EditorInstanceCapture = ({ editorInstanceRef }) => {
+  const { editor } = useCurrentEditor();
+
+  useEffect(() => {
+    if (editor) {
+      editorInstanceRef.current = editor;
+    }
+    return () => {
+      editorInstanceRef.current = null;
+    };
+  }, [editor, editorInstanceRef]);
+
+  return null;
+};
+
+const Editor = forwardRef(function Editor({
   content,
   onEdit,
   utilities = ["basic"],
   onCreateFocus = false,
-}) {
+}, ref) {
+  const editorInstanceRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    insertContent: (html) =>
+      editorInstanceRef.current?.chain().focus().insertContent(html).run(),
+    setContent: (html) =>
+      editorInstanceRef.current?.commands.setContent(html),
+    getText: () =>
+      editorInstanceRef.current?.getText({ blockSeparator: "\n" }) ?? "",
+  }));
+
   const extensions = [];
 
   if (utilities.includes("basic")) {
@@ -123,10 +149,14 @@ export default function Editor({
         content={content}
         slotBefore={<MenuBar utilities={utilities} />}
         editorProps={editorProps}
-      ></EditorProvider>
+      >
+        <EditorInstanceCapture editorInstanceRef={editorInstanceRef} />
+      </EditorProvider>
     </EditorContainer>
   );
-}
+});
+
+export default Editor;
 
 const MenuBar = ({ utilities }) => {
   const { editor } = useCurrentEditor();

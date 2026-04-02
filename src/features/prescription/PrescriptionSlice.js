@@ -34,6 +34,9 @@ const initialState = {
     list: [],
   },
   checkedIndexReport: null,
+  carePlan: {
+    open: false,
+  },
 };
 
 export const getSingleClinicalNotes = createAsyncThunk(
@@ -164,6 +167,9 @@ const prescriptionSlice = createSlice({
     setCheckedIndexReport(state, action) {
       state.checkedIndexReport = action.payload;
     },
+    setCarePlanOpen(state, action) {
+      state.carePlan.open = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -212,6 +218,7 @@ export const {
   setMultipleCheckList,
   setChooseConciliationModal,
   setCheckedIndexReport,
+  setCarePlanOpen,
 } = prescriptionSlice.actions;
 
 export default prescriptionSlice.reducer;
