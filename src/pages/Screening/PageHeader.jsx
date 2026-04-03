@@ -32,6 +32,8 @@ import FormClinicalAlert from "containers/Forms/ClinicalAlert";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import pageTimer from "utils/pageTimer";
 import FeatureService from "services/features";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
 import {
   setCheckSummary,
   setCarePlanOpen,
@@ -482,7 +484,7 @@ export default function PageHeader({
                 </Button>
               )}
 
-            {hasPrimaryCare && (
+            {hasPrimaryCare && PermissionService().has(Permission.READ_NAV) && (
               <Button
                 type="primary"
                 className="gtm-bt-care-plan"

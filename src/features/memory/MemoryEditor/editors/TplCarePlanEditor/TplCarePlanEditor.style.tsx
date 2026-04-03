@@ -45,3 +45,19 @@ export const CategoryHeader = styled.div`
     flex: 1;
   }
 `;
+
+export const VariableTagsRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 0 2px;
+
+  .var-tag {
+    cursor: pointer;
+    font-size: 12px;
+    user-select: none;
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+`;

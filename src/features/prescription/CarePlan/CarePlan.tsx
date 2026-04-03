@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Alert, Collapse, Input, Spin, Tabs } from "antd";
 import {
-  CopyOutlined,
   ClearOutlined,
   FileTextOutlined,
   UnorderedListOutlined,
@@ -21,6 +20,7 @@ import {
 } from "features/prescription/PrescriptionSlice";
 import { fetchDraft } from "features/memory/MemoryDraft/MemoryDraftSlice";
 import { getErrorMessage } from "src/utils/errorHandler";
+import { processCarePlanTemplate } from "./processTemplate";
 import type { Template, SnippetCategory } from "./types";
 import {
   CarePlanLayout,
@@ -65,6 +65,9 @@ export function CarePlan({
   const carePlanMemory = useSelector(
     (state: any) => state.memoryDraft?.["tpl-care-plan"],
   );
+  const prescriptionData = useSelector(
+    (state: any) => state.prescriptions.single.data,
+  );
   const editorRef = useRef<EditorHandle | null>(null);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [activeTab, setActiveTab] = React.useState("templates");
@@ -92,17 +95,13 @@ export function CarePlan({
 
   const applyTemplate = useCallback(
     (content: string) => {
-      editorRef.current?.setContent(content);
+      editorRef.current?.setContent(
+        processCarePlanTemplate(content, prescriptionData),
+      );
       notification.success({ message: t("carePlan.templateApplied") });
     },
-    [t],
+    [t, prescriptionData],
   );
-
-  const handleCopy = useCallback(() => {
-    const text = editorRef.current?.getText() ?? "";
-    navigator.clipboard.writeText(text);
-    notification.success({ message: t("carePlan.copiedSuccess") });
-  }, [t]);
 
   const handleClear = useCallback(() => {
     editorRef.current?.setContent(baseTemplate);
@@ -124,7 +123,7 @@ export function CarePlan({
         questions: [
           {
             id: "care-plan",
-            label: "Plano de Cuidado:",
+            label: "",
             type: "text",
           },
         ],
@@ -137,7 +136,6 @@ export function CarePlan({
       formValues: { "care-plan": html },
       template: fixedTemplate,
       tplName: "Plano de Cuidado",
-      notes: html,
     };
 
     const result = await dispatch((createCarePlan as any)(params));
@@ -271,9 +269,6 @@ export function CarePlan({
           </Button>
           <div style={{ display: "flex", gap: 8 }}>
             <Button onClick={handleClose}>{t("carePlan.btnCancel")}</Button>
-            <Button icon={<CopyOutlined />} onClick={handleCopy}>
-              {t("carePlan.btnCopy")}
-            </Button>
             <Button
               type="primary"
               onClick={handleSave}

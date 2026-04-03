@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Input, Tabs, Switch, Popconfirm, Tag } from "antd";
@@ -22,12 +22,14 @@ import {
   type TemplateWithId,
   type SnippetCategoryWithId,
 } from "./types";
+import { CARE_PLAN_VARIABLES } from "features/prescription/CarePlan/processTemplate";
 import {
   EditorCard,
   CardHeader,
   SnippetItemRow,
   CategoryContainer,
   CategoryHeader,
+  VariableTagsRow,
 } from "./TplCarePlanEditor.style";
 
 const validationSchema = Yup.object().shape({
@@ -69,6 +71,38 @@ function DirtyGuard({ dirty }: { dirty: boolean }) {
     return () => window.removeEventListener("beforeunload", handler);
   }, [dirty]);
   return null;
+}
+
+function TemplateContentEditor({
+  content,
+  onEdit,
+}: {
+  content: string;
+  onEdit: (html: string) => void;
+}) {
+  const editorRef = useRef<any>(null);
+  return (
+    <>
+      <Editor
+        ref={editorRef}
+        content={content}
+        onEdit={(html: string | null) => onEdit(html ?? "")}
+        utilities={["basic"]}
+      />
+      <VariableTagsRow>
+        {CARE_PLAN_VARIABLES.map(({ label, variable }) => (
+          <Tag
+            key={variable}
+            className="var-tag"
+            color="blue"
+            onClick={() => editorRef.current?.insertContent(variable)}
+          >
+            {label}
+          </Tag>
+        ))}
+      </VariableTagsRow>
+    </>
+  );
 }
 
 function TplCarePlanEditorInner({
@@ -248,12 +282,11 @@ function TplCarePlanEditorInner({
                           <label>Conteúdo *</label>
                         </div>
                         <div className="form-input">
-                          <Editor
+                          <TemplateContentEditor
                             content={tpl.content}
-                            onEdit={(html: string | null) =>
-                              setTemplateField(idx, "content", html ?? "")
+                            onEdit={(html) =>
+                              setTemplateField(idx, "content", html)
                             }
-                            utilities={["basic"]}
                           />
                         </div>
                         {tplErr?.content && (
