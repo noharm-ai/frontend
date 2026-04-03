@@ -25,8 +25,6 @@ import {
 import {
   EditorCard,
   CardHeader,
-  FormRow,
-  FormError,
   SnippetItemRow,
   CategoryContainer,
   CategoryHeader,
@@ -214,40 +212,54 @@ function TplCarePlanEditorInner({
                           onClick={() => removeTemplate(idx)}
                         />
                       </CardHeader>
-                      <FormRow>
-                        <label>Título *</label>
-                        <Input
-                          value={tpl.title}
-                          onChange={(e) =>
-                            setTemplateField(idx, "title", e.target.value)
-                          }
-                          placeholder="Título do modelo"
-                        />
-                        {tplErr?.title && <FormError>{tplErr.title}</FormError>}
-                      </FormRow>
-                      <FormRow>
-                        <label>Descrição</label>
-                        <Input
-                          value={tpl.description}
-                          onChange={(e) =>
-                            setTemplateField(idx, "description", e.target.value)
-                          }
-                          placeholder="Breve descrição do modelo"
-                        />
-                      </FormRow>
-                      <FormRow>
-                        <label>Conteúdo *</label>
-                        <Editor
-                          content={tpl.content}
-                          onEdit={(html: string | null) =>
-                            setTemplateField(idx, "content", html ?? "")
-                          }
-                          utilities={["basic"]}
-                        />
-                        {tplErr?.content && (
-                          <FormError>{tplErr.content}</FormError>
+                      <div className={`form-row ${tplErr?.title ? "error" : ""}`}>
+                        <div className="form-label">
+                          <label>Título *</label>
+                        </div>
+                        <div className="form-input">
+                          <Input
+                            value={tpl.title}
+                            onChange={(e) =>
+                              setTemplateField(idx, "title", e.target.value)
+                            }
+                            placeholder="Título do modelo"
+                          />
+                        </div>
+                        {tplErr?.title && (
+                          <div className="form-error">{tplErr.title}</div>
                         )}
-                      </FormRow>
+                      </div>
+                      <div className="form-row">
+                        <div className="form-label">
+                          <label>Descrição</label>
+                        </div>
+                        <div className="form-input">
+                          <Input
+                            value={tpl.description}
+                            onChange={(e) =>
+                              setTemplateField(idx, "description", e.target.value)
+                            }
+                            placeholder="Breve descrição do modelo"
+                          />
+                        </div>
+                      </div>
+                      <div className={`form-row ${tplErr?.content ? "error" : ""}`}>
+                        <div className="form-label">
+                          <label>Conteúdo *</label>
+                        </div>
+                        <div className="form-input">
+                          <Editor
+                            content={tpl.content}
+                            onEdit={(html: string | null) =>
+                              setTemplateField(idx, "content", html ?? "")
+                            }
+                            utilities={["basic"]}
+                          />
+                        </div>
+                        {tplErr?.content && (
+                          <div className="form-error">{tplErr.content}</div>
+                        )}
+                      </div>
                     </EditorCard>
                   );
                 })}
@@ -290,9 +302,7 @@ function TplCarePlanEditorInner({
                         />
                       </CategoryHeader>
                       {catErr?.category && (
-                        <FormError style={{ marginTop: -8, marginBottom: 8 }}>
-                          {catErr.category}
-                        </FormError>
+                        <div className="form-error">{catErr.category}</div>
                       )}
 
                       {cat.items.map((item, itemIdx) => {
@@ -336,9 +346,9 @@ function TplCarePlanEditorInner({
                               />
                             </SnippetItemRow>
                             {(itemErr?.title || itemErr?.text) && (
-                              <FormError style={{ marginBottom: 4 }}>
+                              <div className="form-error">
                                 {itemErr.title || itemErr.text}
-                              </FormError>
+                              </div>
                             )}
                           </div>
                         );
@@ -422,43 +432,32 @@ function TplCarePlanEditorInner({
 
             <PageCard>
               <Form onSubmit={() => handleSubmit()}>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "1rem",
-                    alignItems: "center",
-                    marginBottom: "1.5rem",
-                  }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <label
-                      style={{
-                        display: "block",
-                        fontSize: 12,
-                        color: "#666",
-                        marginBottom: 4,
-                      }}
-                    >
-                      Nome *
-                    </label>
-                    <Input
-                      value={values.name}
-                      onChange={(e) => setFieldValue("name", e.target.value)}
-                      placeholder="Nome do registro"
-                      status={(errors as any).name ? "error" : undefined}
-                    />
+                <div className="form-row form-row-flex">
+                  <div className={`form-row ${(errors as any).name ? "error" : ""}`}>
+                    <div className="form-label">
+                      <label>Nome *</label>
+                    </div>
+                    <div className="form-input">
+                      <Input
+                        value={values.name}
+                        onChange={(e) => setFieldValue("name", e.target.value)}
+                        placeholder="Nome do registro"
+                      />
+                    </div>
                     {(errors as any).name && (
-                      <FormError>{(errors as any).name}</FormError>
+                      <div className="form-error">{(errors as any).name}</div>
                     )}
                   </div>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
-                    <label style={{ fontSize: 12, color: "#666" }}>Ativo</label>
-                    <Switch
-                      checked={values.active}
-                      onChange={(checked) => setFieldValue("active", checked)}
-                    />
+                  <div className="form-row">
+                    <div className="form-label">
+                      <label>Ativo</label>
+                    </div>
+                    <div className="form-input">
+                      <Switch
+                        checked={values.active}
+                        onChange={(checked) => setFieldValue("active", checked)}
+                      />
+                    </div>
                   </div>
                 </div>
 

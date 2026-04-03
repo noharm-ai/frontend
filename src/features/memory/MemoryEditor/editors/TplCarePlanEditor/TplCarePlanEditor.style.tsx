@@ -20,23 +20,6 @@ export const CardHeader = styled.div`
   }
 `;
 
-export const FormRow = styled.div`
-  margin-bottom: 0.75rem;
-
-  label {
-    display: block;
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 4px;
-  }
-`;
-
-export const FormError = styled.div`
-  color: #ff4d4f;
-  font-size: 12px;
-  margin-top: 2px;
-`;
-
 export const SnippetItemRow = styled.div`
   display: flex;
   gap: 0.5rem;
