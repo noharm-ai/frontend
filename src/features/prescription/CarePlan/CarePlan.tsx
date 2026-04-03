@@ -21,7 +21,7 @@ import {
 } from "features/prescription/PrescriptionSlice";
 import { fetchDraft } from "features/memory/MemoryDraft/MemoryDraftSlice";
 import { getErrorMessage } from "src/utils/errorHandler";
-import type { Template, SnippetCategory } from "./mockData";
+import type { Template, SnippetCategory } from "./types";
 import {
   CarePlanLayout,
   SnippetsPanel,
