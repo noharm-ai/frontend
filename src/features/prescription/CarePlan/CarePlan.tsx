@@ -70,7 +70,7 @@ export function CarePlan({
   );
   const editorRef = useRef<EditorHandle | null>(null);
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [activeTab, setActiveTab] = React.useState("templates");
+  const [activeTab, setActiveTab] = React.useState("texts");
 
   useEffect(() => {
     if (open) dispatch((fetchDraft as any)("tpl-care-plan"));
@@ -83,6 +83,14 @@ export function CarePlan({
   const isLoading = carePlanMemory?.status === "loading";
   const isReady = carePlanMemory?.status === "succeeded";
   const isEmpty = isReady && templates.length === 0;
+
+  useEffect(() => {
+    if (open && isReady && editorRef.current) {
+      editorRef.current.setContent(
+        processCarePlanTemplate(baseTemplate, prescriptionData),
+      );
+    }
+  }, [open, isReady, baseTemplate, prescriptionData]);
 
   const handleClose = useCallback(() => {
     dispatch(setCarePlanOpen(false));
