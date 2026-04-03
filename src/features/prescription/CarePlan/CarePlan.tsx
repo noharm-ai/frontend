@@ -112,8 +112,8 @@ export function CarePlan({
   );
 
   const handleClear = useCallback(() => {
-    editorRef.current?.setContent(baseTemplate);
-  }, [baseTemplate]);
+    editorRef.current?.setContent("");
+  }, []);
 
   const handleSave = useCallback(async () => {
     const text = editorRef.current?.getText() ?? "";
