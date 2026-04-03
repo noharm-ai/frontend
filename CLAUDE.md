@@ -44,6 +44,8 @@ src/
 
 **Styling:** Prefer Styled Components; Ant Design v6 for structure/layout. Theme tokens are in `styles/theme.js` and `styles/colors.js`.
 
+**Exports:** Always use named exports. Avoid default exports.
+
 ## Environment Variables
 
 ```

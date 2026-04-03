@@ -22,6 +22,7 @@ import summaryReducer from "features/summary/SummarySlice";
 import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
 import memoryFilterSlice from "features/memory/MemoryFilter/MemoryFilterSlice";
 import memoryCustomFormsSlice from "features/memory/CustomForms/CustomFormsSlice";
+import memoryListSlice from "features/memory/MemoryList/MemoryListSlice";
 import scoreWizardSlice from "features/outliers/ScoreWizard/ScoreWizardSlice";
 import prescriptionSlice from "features/prescription/PrescriptionSlice";
 import preferencesSlice from "features/preferences/PreferencesSlice";
@@ -155,6 +156,7 @@ const rootReducer = combineReducers({
   memoryDraft: memoryDraftSlice,
   memoryFilter: memoryFilterSlice,
   memoryCustomForms: memoryCustomFormsSlice,
+  memoryList: memoryListSlice,
   clinicalNotes: clinicalNotesReducer,
   drugMeasureUnits: drugMeasureUnits,
   drugUnitConversion: drugUnitConversionSlice,

@@ -491,6 +491,21 @@ api.customForms.putCustomForm = ({ id, ...params }) => {
   return instance.put(`${endpoints.memory}/custom-forms`, params, setHeaders());
 };
 
+api.memoryRecords = {};
+
+api.memoryRecords.getEditableMemories = () =>
+  instance.get(endpoints.memory, {
+    ...setHeaders(),
+  });
+
+api.memoryRecords.putRecord = ({ id, ...params }) => {
+  if (id) {
+    return instance.put(`${endpoints.memory}/${id}`, params, setHeaders());
+  }
+
+  return instance.put(`${endpoints.memory}`, params, setHeaders());
+};
+
 /**
  * User.
  *
