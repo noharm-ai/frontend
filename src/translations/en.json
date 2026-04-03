@@ -1022,6 +1022,9 @@
     "searchPlaceholder": "Search texts...",
     "applyTemplateHint": "Click to use this template",
     "templateApplied": "Template applied!",
-    "noResults": "No texts found."
+    "noResults": "No texts found.",
+    "validationEmpty": "The care plan cannot be empty.",
+    "saveSuccess": "Care plan saved successfully!",
+    "saveError": "Error saving the care plan."
   }
 }

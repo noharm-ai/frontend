@@ -892,6 +892,9 @@ api.clinicalNotes.getUserLast = (params) =>
     ...setHeaders(),
   });
 
+api.clinicalNotes.createClinicalNote = (params = {}) =>
+  instance.post(`${endpoints.clinicalNotes}`, params, setHeaders());
+
 /**
  * User admin
  */

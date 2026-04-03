@@ -482,16 +482,18 @@ export default function PageHeader({
                 </Button>
               )}
 
-            <Button
-              type="primary"
-              className="gtm-bt-care-plan"
-              icon={<MedicineBoxOutlined />}
-              ghost
-              onClick={() => dispatch(setCarePlanOpen(true))}
-              style={{ marginRight: "5px" }}
-            >
-              {t("carePlan.btnOpen")}
-            </Button>
+            {hasPrimaryCare && (
+              <Button
+                type="primary"
+                className="gtm-bt-care-plan"
+                icon={<MedicineBoxOutlined />}
+                ghost
+                onClick={() => dispatch(setCarePlanOpen(true))}
+                style={{ marginRight: "5px" }}
+              >
+                {t("carePlan.btnOpen")}
+              </Button>
+            )}
 
             <Button type="default" className="gtm-bt-close" onClick={close}>
               {t("screeningHeader.btnClose")}

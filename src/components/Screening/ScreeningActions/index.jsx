@@ -143,7 +143,10 @@ export default function ScreeningActions({
       />
       <SingleClinicalNotesModal />
       <ChooseConciliation />
-      <CarePlan />
+      <CarePlan
+        idPrescription={prescription.idPrescription}
+        admissionNumber={prescription.admissionNumber}
+      />
       <ExamsModal idSegment={prescription.idSegment} />
       <ClinicalNotesModal />
       <DrugUnitConversion onAfterSave={afterSaveUnitConversion} />

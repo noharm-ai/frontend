@@ -1029,6 +1029,9 @@
     "searchPlaceholder": "Buscar textos...",
     "applyTemplateHint": "Clique para usar este modelo",
     "templateApplied": "Modelo aplicado!",
-    "noResults": "Nenhum texto encontrado."
+    "noResults": "Nenhum texto encontrado.",
+    "validationEmpty": "O plano de cuidado não pode estar vazio.",
+    "saveSuccess": "Plano de cuidado salvo com sucesso!",
+    "saveError": "Erro ao salvar o plano de cuidado."
   }
 }

@@ -51,6 +51,7 @@ const Editor = forwardRef(function Editor({
       editorInstanceRef.current?.commands.setContent(html),
     getText: () =>
       editorInstanceRef.current?.getText({ blockSeparator: "\n" }) ?? "",
+    getHTML: () => editorInstanceRef.current?.getHTML() ?? "",
   }));
 
   const extensions = [];

@@ -36,6 +36,7 @@ const initialState = {
   checkedIndexReport: null,
   carePlan: {
     open: false,
+    status: "idle",
   },
 };
 
@@ -89,6 +90,18 @@ export const createConciliation = createAsyncThunk(
     try {
       const response = await api.conciliation.createConciliation(params);
 
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
+);
+
+export const createCarePlan = createAsyncThunk(
+  "prescription/create-care-plan",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.clinicalNotes.createClinicalNote(params);
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
@@ -169,6 +182,7 @@ const prescriptionSlice = createSlice({
     },
     setCarePlanOpen(state, action) {
       state.carePlan.open = action.payload;
+      if (!action.payload) state.carePlan.status = "idle";
     },
   },
   extraReducers(builder) {
@@ -202,6 +216,15 @@ const prescriptionSlice = createSlice({
       })
       .addCase(getConciliationList.rejected, (state, action) => {
         state.chooseConciliation.status = "failed";
+      })
+      .addCase(createCarePlan.pending, (state) => {
+        state.carePlan.status = "loading";
+      })
+      .addCase(createCarePlan.fulfilled, (state) => {
+        state.carePlan.status = "succeeded";
+      })
+      .addCase(createCarePlan.rejected, (state) => {
+        state.carePlan.status = "failed";
       });
   },
 });
