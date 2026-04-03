@@ -498,6 +498,11 @@ api.memoryRecords.getEditableMemories = () =>
     ...setHeaders(),
   });
 
+api.memoryRecords.getMemoryRecord = (id) =>
+  instance.get(`${endpoints.memory}/id/${id}`, {
+    ...setHeaders(),
+  });
+
 api.memoryRecords.putRecord = ({ id, ...params }) => {
   if (id) {
     return instance.put(`${endpoints.memory}/${id}`, params, setHeaders());

@@ -3,6 +3,7 @@ import api from "services/api";
 
 const initialState = {
   records: [] as any[],
+  currentRecord: null as any,
   status: "idle" as string,
   saveStatus: "idle" as string,
   error: null as string | null,
@@ -13,6 +14,18 @@ export const fetchEditableMemories = createAsyncThunk(
   async (_, thunkAPI: any) => {
     try {
       const response = await api.memoryRecords.getEditableMemories();
+      return response.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
+);
+
+export const fetchMemoryRecord = createAsyncThunk(
+  "memory-list/fetchOne",
+  async (id: number | string, thunkAPI: any) => {
+    try {
+      const response = await api.memoryRecords.getMemoryRecord(id);
       return response.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.response.data);
@@ -50,6 +63,17 @@ const memoryListSlice = createSlice({
         state.records = action.payload.data;
       })
       .addCase(fetchEditableMemories.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message ?? null;
+      })
+      .addCase(fetchMemoryRecord.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchMemoryRecord.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.currentRecord = action.payload.data;
+      })
+      .addCase(fetchMemoryRecord.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message ?? null;
       })

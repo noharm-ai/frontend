@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Tag, Space, Modal, List } from "antd";
+import { Tag, Space, Modal, List, Tooltip } from "antd";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -49,10 +49,16 @@ function MemoryList() {
     navigate(`${BASE_PATH}/new?kind=${kind}`);
   };
 
+  const existingKinds = new Set(records.map((r: any) => r.value?.kind));
+
   const kindOptions = Object.entries(KIND_META).map(([k, meta]) => ({
     kind: k,
     label: meta.label,
+    disabled: existingKinds.has(k),
   }));
+
+  const allKindsTaken =
+    kindOptions.length > 0 && kindOptions.every((o) => o.disabled);
 
   const columns = [
     {
@@ -104,13 +110,15 @@ function MemoryList() {
           </div>
         </div>
         <div className="page-header-actions">
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={handleNewClick}
-          >
-            Novo registro
-          </Button>
+          {!allKindsTaken && (
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={handleNewClick}
+            >
+              Novo registro
+            </Button>
+          )}
         </div>
       </PageHeader>
 
@@ -142,12 +150,21 @@ function MemoryList() {
         <List
           dataSource={kindOptions}
           renderItem={(item) => (
-            <List.Item
-              style={{ cursor: "pointer" }}
-              onClick={() => handleKindSelect(item.kind)}
+            <Tooltip
+              title={
+                item.disabled ? "Já existe um registro deste tipo" : undefined
+              }
             >
-              {item.label}
-            </List.Item>
+              <List.Item
+                style={{
+                  cursor: item.disabled ? "not-allowed" : "pointer",
+                  opacity: item.disabled ? 0.45 : 1,
+                }}
+                onClick={() => !item.disabled && handleKindSelect(item.kind)}
+              >
+                {item.label}
+              </List.Item>
+            </Tooltip>
           )}
         />
       </Modal>

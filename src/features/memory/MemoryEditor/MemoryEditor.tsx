@@ -8,7 +8,7 @@ import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 
 import {
-  fetchEditableMemories,
+  fetchMemoryRecord,
   saveMemoryRecord,
   reset,
 } from "features/memory/MemoryList/MemoryListSlice";
@@ -23,8 +23,8 @@ export default function MemoryEditor() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch() as any;
 
-  const records: any[] = useAppSelector(
-    (state: any) => state.memoryList.records,
+  const currentRecord = useAppSelector(
+    (state: any) => state.memoryList.currentRecord,
   );
   const status = useAppSelector((state: any) => state.memoryList.status);
   const saveStatus = useAppSelector(
@@ -35,24 +35,27 @@ export default function MemoryEditor() {
   const kindFromQuery = searchParams.get("kind");
 
   const isNew = id === "new";
-  const formRecord = isNew
-    ? null
-    : records.find((r: any) => String(r.key) === id);
 
-  const kind = isNew ? (kindFromQuery ?? "") : (formRecord?.value?.kind ?? "");
+  const kind = isNew
+    ? (kindFromQuery ?? "")
+    : (currentRecord?.kind ?? "");
 
   useEffect(() => {
-    dispatch(fetchEditableMemories());
+    if (!isNew && id) {
+      dispatch(fetchMemoryRecord(id));
+    }
     return () => {
       dispatch(reset());
     };
-  }, [dispatch]);
+  }, [dispatch, id, isNew]);
 
   const recordValue =
-    !isNew && formRecord ? JSON.parse(JSON.stringify(formRecord.value)) : null;
+    !isNew && currentRecord
+      ? JSON.parse(JSON.stringify(currentRecord.value))
+      : null;
 
   const handleSave = (values: any) => {
-    const recordId = isNew ? undefined : formRecord?.key;
+    const recordId = isNew ? undefined : currentRecord?.key;
     dispatch(
       saveMemoryRecord({ id: recordId, type: kind, value: values }),
     ).then((response: any) => {
@@ -71,7 +74,7 @@ export default function MemoryEditor() {
 
   const EditorComponent = kind ? KIND_EDITORS[kind] : null;
 
-  const isWaitingForRecord = !isNew && status === "loading" && !recordValue;
+  const isWaitingForRecord = !isNew && status === "loading" && !currentRecord;
 
   if (isWaitingForRecord || (kind && !EditorComponent)) {
     return (
