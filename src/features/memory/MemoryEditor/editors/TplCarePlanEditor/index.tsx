@@ -325,20 +325,20 @@ function TplCarePlanEditorInner({
                                 placeholder="Título"
                                 style={{ width: 200 }}
                               />
-                              <Input.TextArea
-                                value={item.text}
-                                onChange={(e) =>
-                                  setItemField(
-                                    catIdx,
-                                    itemIdx,
-                                    "text",
-                                    e.target.value,
-                                  )
-                                }
-                                placeholder="Texto do snippet"
-                                rows={2}
-                                style={{ flex: 1 }}
-                              />
+                              <div style={{ flex: 1 }}>
+                                <Editor
+                                  content={item.text}
+                                  onEdit={(html: string | null) =>
+                                    setItemField(
+                                      catIdx,
+                                      itemIdx,
+                                      "text",
+                                      html ?? "",
+                                    )
+                                  }
+                                  utilities={["basic"]}
+                                />
+                              </div>
                               <Button
                                 icon={<DeleteOutlined />}
                                 disabled={cat.items.length <= 1}
