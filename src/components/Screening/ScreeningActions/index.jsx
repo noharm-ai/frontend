@@ -22,6 +22,7 @@ import {
 } from "features/prescription/PrescriptionSlice";
 import { fetchInterventionOutcomeData } from "src/features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 import ChooseConciliation from "features/prescription/ChooseConciliation/ChooseConciliation";
+import { CarePlan } from "features/prescription/CarePlan/CarePlan";
 import ExamsModal from "features/exams/ExamModal/ExamModal";
 import ClinicalNotesModal from "containers/Screening/ClinicalNotes/Modal";
 import { CheckedIndexReport } from "src/features/reports/CheckedIndexReport/CheckedIndexReport";
@@ -142,6 +143,10 @@ export default function ScreeningActions({
       />
       <SingleClinicalNotesModal />
       <ChooseConciliation />
+      <CarePlan
+        idPrescription={prescription.idPrescription}
+        admissionNumber={prescription.admissionNumber}
+      />
       <ExamsModal idSegment={prescription.idSegment} />
       <ClinicalNotesModal />
       <DrugUnitConversion onAfterSave={afterSaveUnitConversion} />

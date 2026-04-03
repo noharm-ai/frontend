@@ -157,8 +157,8 @@ export function Question({ mode }: QuestionInteface) {
                 >
                   <QuestionContainer>
                     <Editor
-                      onEdit={(value: string) =>
-                        setFieldValue("question", value)
+                      onEdit={(value) =>
+                        setFieldValue("question", value ?? "")
                       }
                       content={values.question || ""}
                     />

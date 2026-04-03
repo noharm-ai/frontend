@@ -215,7 +215,7 @@ export function RegulationFormBase() {
         </div>
         <div className="form-input">
           <Editor
-            onEdit={(text: string) => setFieldValue("justification", text)}
+            onEdit={(text) => setFieldValue("justification", text ?? "")}
             content={values.justification}
           />
         </div>

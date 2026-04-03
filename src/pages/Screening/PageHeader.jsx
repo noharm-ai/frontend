@@ -12,6 +12,7 @@ import {
   ScheduleOutlined,
   SafetyCertificateOutlined,
   SafetyCertificateFilled,
+  MedicineBoxOutlined,
 } from "@ant-design/icons";
 import { Affix, Popover } from "antd";
 import dayjs from "dayjs";
@@ -31,7 +32,12 @@ import FormClinicalAlert from "containers/Forms/ClinicalAlert";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import pageTimer from "utils/pageTimer";
 import FeatureService from "services/features";
-import { setCheckSummary } from "features/prescription/PrescriptionSlice";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
+import {
+  setCheckSummary,
+  setCarePlanOpen,
+} from "features/prescription/PrescriptionSlice";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
@@ -477,6 +483,19 @@ export default function PageHeader({
                   {t("screeningHeader.btnAlert")}
                 </Button>
               )}
+
+            {hasPrimaryCare && PermissionService().has(Permission.READ_NAV) && (
+              <Button
+                type="primary"
+                className="gtm-bt-care-plan"
+                icon={<MedicineBoxOutlined />}
+                ghost
+                onClick={() => dispatch(setCarePlanOpen(true))}
+                style={{ marginRight: "5px" }}
+              >
+                {t("carePlan.btnOpen")}
+              </Button>
+            )}
 
             <Button type="default" className="gtm-bt-close" onClick={close}>
               {t("screeningHeader.btnClose")}
