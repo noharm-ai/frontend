@@ -46,6 +46,8 @@ src/
 
 **Exports:** Always use named exports. Avoid default exports.
 
+**Component file naming:** Each component lives in a folder named after it, with the main file matching the folder name — never `index.tsx`. Example: `TestComponent/TestComponent.tsx`, not `TestComponent/index.tsx`.
+
 ## Environment Variables
 
 ```

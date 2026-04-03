@@ -51,7 +51,7 @@ const snippetToHtml = (text: string): string =>
     .map((line) => `<p>${line ? escapeHtml(line) : "<br/>"}</p>`)
     .join("");
 
-export default function CarePlan() {
+export function CarePlan() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const open = useSelector(
