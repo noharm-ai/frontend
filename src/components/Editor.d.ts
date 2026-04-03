@@ -8,8 +8,8 @@ export interface EditorHandle {
 }
 
 export interface EditorProps {
-  content: string;
-  onEdit: (value: string | null) => void;
+  content?: string;
+  onEdit: (value: string | null) => unknown;
   utilities?: string[];
   onCreateFocus?: boolean;
 }
