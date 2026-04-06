@@ -13,7 +13,7 @@ export default function DrugData({ item }) {
 
   return (
     <FormHeader>
-      <Row type="flex" gutter={24} css="padding: 2px 0">
+      <Row type="flex" gutter={24} style={{ padding: "2px 0" }}>
         <Col span={8}>
           <Heading as="p" $size="14px">
             {t("tableHeader.drug")}:
@@ -21,7 +21,7 @@ export default function DrugData({ item }) {
         </Col>
         <Col span={24 - 8}>{drug}</Col>
       </Row>
-      <Row type="flex" gutter={24} css="padding: 2px 0">
+      <Row type="flex" gutter={24} style={{ padding: "2px 0" }}>
         <Col span={8}>
           <Heading as="p" $size="14px">
             {t("tableHeader.dose")}:
@@ -29,7 +29,7 @@ export default function DrugData({ item }) {
         </Col>
         <Col span={24 - 8}>{dosage}</Col>
       </Row>
-      <Row type="flex" gutter={24} css="padding: 2px 0">
+      <Row type="flex" gutter={24} style={{ padding: "2px 0" }}>
         <Col span={8}>
           <Heading as="p" $size="14px">
             {t("tableHeader.frequency")}:
@@ -39,7 +39,7 @@ export default function DrugData({ item }) {
           {frequency && `${frequency.value} ${frequency.label}`}
         </Col>
       </Row>
-      <Row type="flex" gutter={24} css="padding: 2px 0">
+      <Row type="flex" gutter={24} style={{ padding: "2px 0" }}>
         <Col span={8}>
           <Heading as="p" $size="14px">
             {t("tableHeader.route")}:

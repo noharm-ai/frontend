@@ -12,7 +12,7 @@ export default function Box({ renderHeader, children, pageTitle, ...props }) {
       {renderHeader
         ? renderHeader({ ...props, pageTitle, t })
         : pageTitle && (
-            <header css="margin-bottom: 30px;">
+            <header style={{ marginBottom: "30px" }}>
               <Heading>{t(pageTitle)}</Heading>
             </header>
           )}

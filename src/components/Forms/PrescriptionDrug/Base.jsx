@@ -93,7 +93,7 @@ export default function Base({
     <>
       {idPrescriptionDrug && (
         <FormHeader>
-          <Row type="flex" gutter={24} css="padding: 2px 0">
+          <Row type="flex" gutter={24} style={{ padding: "2px 0" }}>
             <Col xs={layout.label}>
               <Heading as="p" $size="14px">
                 {t("tableHeader.drug")}:

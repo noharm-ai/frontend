@@ -332,12 +332,12 @@ export default function PageHeader({
           <Col
             span={24}
             md={24 - 10}
-            css="
-          display:flex;
-          align-items: center;
-          justify-content: flex-end;
-          flex-wrap: wrap;
-        "
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              flexWrap: "wrap",
+            }}
           >
             {prescription.content.status === "0" && (
               <Button
