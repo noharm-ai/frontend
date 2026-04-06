@@ -1,26 +1,29 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import babel from "@rolldown/plugin-babel";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react({
-      babel: {
-        plugins: [
-          [
-            "babel-plugin-styled-components",
-            {
-              displayName: true,
-              fileName: false,
-              cssProp: true,
-            },
-          ],
+    react(),
+    babel({
+      plugins: [
+        [
+          "babel-plugin-styled-components",
+          {
+            displayName: true,
+            fileName: false,
+            cssProp: true,
+          },
         ],
-      },
+      ],
     }),
   ],
   server: {
     port: 3000,
+  },
+  legacy: {
+    inconsistentCjsInterop: true,
   },
   resolve: {
     alias: {
