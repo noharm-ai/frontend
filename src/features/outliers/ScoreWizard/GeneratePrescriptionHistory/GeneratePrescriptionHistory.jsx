@@ -7,8 +7,6 @@ import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import Alert from "components/Alert";
 import { getErrorMessage } from "utils/errorHandler";
-import { fetchReferencesListThunk } from "store/ducks/outliers/thunk";
-import { fetchDrugsUnitsListThunk } from "store/ducks/drugs/thunk";
 
 import { addHistory } from "../ScoreWizardSlice";
 
@@ -43,17 +41,6 @@ function GeneratePrescriptionHistory({ open, setOpen }) {
           });
 
           setOpen(false);
-
-          dispatch(
-            fetchReferencesListThunk(currentDrug.idSegment, currentDrug.idDrug),
-          );
-
-          dispatch(
-            fetchDrugsUnitsListThunk({
-              id: currentDrug.idDrug,
-              idSegment: currentDrug.idSegment,
-            }),
-          );
         } else {
           setError(true);
         }

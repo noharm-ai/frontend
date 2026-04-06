@@ -8,8 +8,6 @@ import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
 import Alert from "components/Alert";
 import Progress from "components/Progress";
-import { fetchReferencesListThunk } from "store/ducks/outliers/thunk";
-import { fetchDrugsUnitsListThunk } from "store/ducks/drugs/thunk";
 
 import {
   prepareGeneration,
@@ -73,17 +71,6 @@ function GenerateScore({ open, setOpen, setCurrentStep }) {
       setTimeout(() => {
         setOutliersStatus("succeeded");
         setLoading(false);
-
-        dispatch(
-          fetchReferencesListThunk(currentDrug.idSegment, currentDrug.idDrug),
-        );
-
-        dispatch(
-          fetchDrugsUnitsListThunk({
-            id: currentDrug.idDrug,
-            idSegment: currentDrug.idSegment,
-          }),
-        );
 
         setCurrentStep(0);
       }, 1000);
