@@ -299,24 +299,11 @@ const getDrugsBySegment = (bearerToken, idSegment, params = {}) =>
     },
   );
 
-const getDrugUnits = (bearerToken, { id, ...params }) =>
-  instance.get(`${endpoints.drugs}/${id}/units`, {
-    params,
-    ...setHeaders(bearerToken),
-  });
-
 const getDrugFrequencies = (bearerToken, { ...params }) =>
   instance.get(`${endpoints.drugs}/frequencies`, {
     params,
     ...setHeaders(bearerToken),
   });
-
-const updateDrugUnits = (bearerToken, idSegment, idDrug, params = {}) =>
-  instance.post(
-    `${endpoints.drugs}/${idSegment}/${idDrug}/convertunit`,
-    params,
-    setHeaders(bearerToken),
-  );
 
 const getDrugSummary = (bearerToken, idDrug, idSegment) =>
   instance.get(`${endpoints.drugs}/summary/${idSegment || 1}/${idDrug}`, {
@@ -926,8 +913,6 @@ const methods = {
   getDrugsBySegment,
   getDrugSummary,
   getDrugFrequencies,
-  getDrugUnits,
-  updateDrugUnits,
   getInterventionReasons,
   updateIntervention,
   getInterventions,

@@ -30,7 +30,7 @@ export const fetchInterventionOutcomeData = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const setInterventionOutcome = createAsyncThunk(
@@ -43,27 +43,7 @@ export const setInterventionOutcome = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
-);
-
-export const upsertDrugMeasureUnit = createAsyncThunk(
-  "intervention-outcome/upsert-unit-factor",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.updateDrugUnits(
-        null,
-        params.idSegment,
-        params.idDrug,
-        {
-          idMeasureUnit: params.idMeasureUnit,
-          factor: params.factor,
-        }
-      );
-      return response.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
+  },
 );
 
 const interventionOutcomeSlice = createSlice({
