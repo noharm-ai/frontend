@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Alert, Space } from "antd";
 import { MedicineBoxOutlined } from "@ant-design/icons";
@@ -31,6 +31,7 @@ import SubstanceForm from "features/admin/Substance/Form/SubstanceForm";
 
 export function DrugDashboard() {
   const dispatch = useAppDispatch();
+  const [attributesCardReloadKey, setAttributesCardReloadKey] = useState(0);
   const drugsSearch = useAppSelector((state: any) => state.drugs.search);
   const segments = useAppSelector((state: any) => state.segments);
   const drugDashboard = useAppSelector((state: any) => state.drugDashboard);
@@ -88,6 +89,7 @@ export function DrugDashboard() {
         }),
       );
     }
+    setAttributesCardReloadKey((k) => k + 1);
   };
 
   return (
@@ -183,6 +185,7 @@ export function DrugDashboard() {
                 idDrug={drugDashboard.idDrug}
                 sctid={drugDashboard.data?.substance?.sctid ?? null}
                 sctName={drugDashboard.data?.substance?.name ?? null}
+                reloadKey={attributesCardReloadKey}
                 onAfterSave={handleAfterSave}
               />
             </Col>

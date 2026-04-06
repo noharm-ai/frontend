@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Card, Divider } from "antd";
 
 import DrugAttributesForm from "features/drugs/DrugAttributesForm/DrugAttributesForm";
@@ -9,6 +8,7 @@ interface DrugAttributesCardProps {
   idDrug: string;
   sctid?: string | null;
   sctName?: string | null;
+  reloadKey?: number;
   onAfterSave?: () => void;
 }
 
@@ -17,15 +17,9 @@ export function DrugAttributesCard({
   idDrug,
   sctid,
   sctName,
+  reloadKey,
   onAfterSave,
 }: DrugAttributesCardProps) {
-  const [attributesReloadKey, setAttributesReloadKey] = useState(0);
-
-  const handleAfterSave = () => {
-    setAttributesReloadKey((k) => k + 1);
-    onAfterSave?.();
-  };
-
   return (
     <Card title="Substância e Atributos" type="inner">
       <Divider>Substância</Divider>
@@ -34,13 +28,13 @@ export function DrugAttributesCard({
         idDrug={idDrug}
         sctidA={sctid ?? null}
         sctNameA={sctName ?? null}
-        onAfterSave={handleAfterSave}
+        onAfterSave={onAfterSave}
       />
 
       <DrugAttributesForm
         idSegment={idSegment}
         idDrug={idDrug}
-        reloadKey={attributesReloadKey}
+        reloadKey={reloadKey}
       />
     </Card>
   );
