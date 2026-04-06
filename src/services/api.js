@@ -22,16 +22,13 @@ const api = {};
  */
 const endpoints = {
   segments: "/segments",
-  resolveNamesUrl: "/user/name-url",
   patient: "/patient",
-  patientName: "/patient-name",
   refreshToken: "/refresh-token",
   authentication: "/authenticate",
   oauth: "/auth-provider",
   prescriptions: "/prescriptions",
   drugs: "/drugs",
   outliers: "/outliers",
-  relation: "/relation",
   intervention: {
     base: "/intervention",
     reasons: "/intervention/reasons",
@@ -74,13 +71,6 @@ export const setHeaders = () => {
  * Authentication.
  * Loggin and refresh token...
  */
-
-const preAuth = (params) =>
-  instance.post("/pre-auth", params, {
-    headers: {
-      "x-api-key": import.meta.env.VITE_APP_API_KEY,
-    },
-  });
 
 const authenticate = (params) =>
   instance.post(endpoints.authentication, params, {
@@ -137,13 +127,6 @@ const getGetnameToken = () =>
  */
 const getSegments = (bearerToken, params = {}) =>
   instance.get(endpoints.segments, { params, ...setHeaders(bearerToken) });
-
-const generateDrugOutlier = (bearerToken, { idSegment, idDrug, ...params }) =>
-  instance.post(
-    `/segments/${idSegment}/outliers/generate/drug/${idDrug}/clean/1`,
-    params,
-    setHeaders(bearerToken),
-  );
 
 /**
  * Exams.
@@ -289,13 +272,6 @@ const copyPrescriptionMissingDrugs = (bearerToken, idPrescription, idDrugs) => {
  * Patients.
  *
  */
-const getResolveNamesUrl = (bearerToken) =>
-  instance.get(endpoints.resolveNamesUrl, { ...setHeaders(bearerToken) });
-
-const getPatient = (bearerToken, idPatient) =>
-  instance.get(`${endpoints.patientName}/${idPatient}`, {
-    ...setHeaders(bearerToken),
-  });
 
 const updatePatient = (bearerToken, admissionNumber, params = {}) =>
   instance.post(
@@ -306,6 +282,7 @@ const updatePatient = (bearerToken, admissionNumber, params = {}) =>
 
 const getPatientList = (bearerToken, params = {}) =>
   instance.get(endpoints.patient, { params, ...setHeaders(bearerToken) });
+
 /**
  * Drugs.
  *
@@ -321,9 +298,6 @@ const getDrugsBySegment = (bearerToken, idSegment, params = {}) =>
       ...setHeaders(bearerToken),
     },
   );
-
-const updateDrug = (bearerToken, { id, ...params }) =>
-  instance.put(`${endpoints.drugs}/${id}`, params, setHeaders(bearerToken));
 
 const getDrugUnits = (bearerToken, { id, ...params }) =>
   instance.get(`${endpoints.drugs}/${id}/units`, {
@@ -355,34 +329,9 @@ const getDrugResources = (bearerToken, idDrug, idSegment, idHospital) =>
   });
 
 /**
- * Outliers.
+ * Substances
  *
  */
-const getOutliersBySegmentAndDrug = (
-  bearerToken,
-  { idSegment, idDrug, ...params },
-) =>
-  instance.get(`${endpoints.outliers}/${idSegment}/${idDrug}`, {
-    params,
-    ...setHeaders(bearerToken),
-  });
-
-const updateOutlier = (bearerToken, idOutlier, params = {}) =>
-  instance.put(
-    `${endpoints.outliers}/${idOutlier}`,
-    params,
-    setHeaders(bearerToken),
-  );
-
-const updateOutlierRelation = (
-  bearerToken,
-  { sctidA, sctidB, type, ...params },
-) =>
-  instance.put(
-    `${endpoints.relation}/${sctidA}/${sctidB}/${type}`,
-    params,
-    setHeaders(bearerToken),
-  );
 
 const getSubstances = (bearerToken, params = {}) =>
   instance.get(endpoints.substance, {
@@ -392,12 +341,6 @@ const getSubstances = (bearerToken, params = {}) =>
 
 const getSubstanceClasses = (bearerToken, params = {}) =>
   instance.get(`${endpoints.substance}/class`, {
-    params,
-    ...setHeaders(bearerToken),
-  });
-
-const getSubstanceRelations = (bearerToken, id, params = {}) =>
-  instance.get(`${endpoints.substance}/${id}/relation`, {
     params,
     ...setHeaders(bearerToken),
   });
@@ -434,16 +377,6 @@ const updateIntervention = (bearerToken, params) =>
     params,
     setHeaders(bearerToken),
   );
-
-/**
- * Reports
- */
-
-const getReports = (bearerToken, params = {}) =>
-  instance.get(endpoints.reports, {
-    params,
-    ...setHeaders(bearerToken),
-  });
 
 /**
  * Memory
@@ -531,9 +464,6 @@ const resetPassword = (token, password) => {
     },
   );
 };
-
-const getUsers = (bearerToken, params = {}) =>
-  instance.get(endpoints.users, { params, ...setHeaders(bearerToken) });
 
 const searchUsers = (bearerToken, term) =>
   instance.get(`${endpoints.users}/search`, {
@@ -963,10 +893,6 @@ api.auth.switchToSchema = (params = {}) =>
 
 /** GENERAL */
 api.general = {};
-const getVersion = () =>
-  instance.get(`/frontend-version`, {
-    ...setHeaders(),
-  });
 
 const searchNames = (term) =>
   instance.get(`/names/search/${term?.replaceAll("/", "")}`, {
@@ -985,35 +911,25 @@ api.general.getQueueStatus = (requestId) =>
 const methods = {
   ...api,
   authenticate,
-  preAuth,
   authenticateOAuth,
   refreshToken,
   getAuthProvider,
   getGetnameToken,
-  getVersion,
   searchNames,
   getSegments,
   getPrescriptions,
   getPrescriptionById,
   getPrescriptionDrugPeriod,
   putPrescriptionById,
-  getResolveNamesUrl,
-  getPatient,
   getPatientList,
   getDrugs,
   getDrugsBySegment,
   getDrugSummary,
   getDrugFrequencies,
-  updateDrug,
   getDrugUnits,
   updateDrugUnits,
-  generateDrugOutlier,
-  getOutliersBySegmentAndDrug,
-  updateOutlier,
-  updateOutlierRelation,
   getInterventionReasons,
   updateIntervention,
-  getReports,
   getInterventions,
   searchInterventions,
   getExams,
@@ -1022,7 +938,6 @@ const methods = {
   updatePrescriptionDrugForm,
   getSubstances,
   getSubstanceClasses,
-  getSubstanceRelations,
   shouldUpdatePrescription,
   getMemory,
   putMemory,
@@ -1030,7 +945,6 @@ const methods = {
   updatePassword,
   forgotPassword,
   resetPassword,
-  getUsers,
   getClinicalNotes,
   updateClinicalNote,
   createClinicalNote,

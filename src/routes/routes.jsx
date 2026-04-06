@@ -11,7 +11,6 @@ import Login from "pages/Login";
 import LoginCallback from "pages/Login/LoginCallback";
 import ScreeningList from "pages/ScreeningList";
 import Screening from "pages/Screening";
-import References from "pages/References";
 import DrugDashboard from "pages/DrugDashboard";
 import Reports from "pages/Reports";
 import InterventionList from "pages/InterventionList";
@@ -145,22 +144,22 @@ const routes = [
   {
     exact: true,
     path: "/medicamentos",
-    element: <WithAuth component={References} />,
+    element: <WithAuth component={DrugDashboard} />,
   },
   {
     exact: true,
     path: "/medicamentos/:idSegment",
-    element: <WithAuth component={References} />,
+    element: <WithAuth component={DrugDashboard} />,
   },
   {
     exact: true,
     path: "/medicamentos/:idSegment/:idDrug/:slug",
-    element: <WithAuth component={References} />,
+    element: <WithAuth component={DrugDashboard} />,
   },
   {
     exact: true,
     path: "/medicamentos/:idSegment/:idDrug/:slug/:dose/:frequency",
-    element: <WithAuth component={References} />,
+    element: <WithAuth component={DrugDashboard} />,
   },
   {
     exact: true,

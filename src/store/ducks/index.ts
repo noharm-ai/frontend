@@ -4,7 +4,6 @@ import appReducer from "./app";
 import authReducer from "./auth";
 import userReducer from "./user";
 import drugsReducer from "./drugs";
-import outliersReducer from "./outliers";
 import patientsReducer from "./patients";
 import segmentsReducer from "./segments";
 import interventionReducer from "./intervention";
@@ -145,7 +144,6 @@ const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
   drugs: drugsReducer,
-  outliers: outliersReducer,
   patients: patientsReducer,
   patientCentral: patientCentral,
   segments: segmentsReducer,
