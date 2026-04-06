@@ -33,7 +33,6 @@ import { reset as memoryDraftReset } from "features/memory/MemoryDraft/MemoryDra
 import { reset as memoryFilterReset } from "features/memory/MemoryFilter/MemoryFilterSlice";
 import { reset as serverActionsReset } from "features/serverActions/ServerActionsSlice";
 import { reset as summaryReset } from "features/summary/SummarySlice";
-import { reset as drugMeasureUnitsReset } from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSlice";
 import { reset as scoreWizardReset } from "features/outliers/ScoreWizard/ScoreWizardSlice";
 import { reset as prescriptionv2Reset } from "features/prescription/PrescriptionSlice";
 import { reset as drugAttributesFormReset } from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
@@ -101,7 +100,6 @@ export const resetReduxState = (dispatch) => {
   dispatch(drugsReset());
   dispatch(interventionReset());
   dispatch(memoryReset());
-  dispatch(outliersReset());
   dispatch(patientCentralReset());
   dispatch(prescriptionDrugsReset());
   dispatch(prescriptionsReset());
@@ -112,7 +110,6 @@ export const resetReduxState = (dispatch) => {
   dispatch(memoryFilterReset());
   dispatch(serverActionsReset());
   dispatch(summaryReset());
-  dispatch(drugMeasureUnitsReset());
   dispatch(scoreWizardReset());
   dispatch(prescriptionv2Reset());
   dispatch(drugAttributesFormReset());
