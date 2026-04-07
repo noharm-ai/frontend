@@ -11,7 +11,6 @@ import Login from "pages/Login";
 import LoginCallback from "pages/Login/LoginCallback";
 import ScreeningList from "pages/ScreeningList";
 import Screening from "pages/Screening";
-import References from "pages/References";
 import DrugDashboard from "pages/DrugDashboard";
 import Reports from "pages/Reports";
 import InterventionList from "pages/InterventionList";
@@ -28,6 +27,8 @@ import SupportCenter from "pages/SupportCenter";
 import SwitchSchema from "pages/SwitchSchema";
 import CustomForms from "pages/CustomForms/CustomForms";
 import CustomFormEditorPage from "pages/CustomForms/CustomFormEditorPage";
+import MemoryListPage from "pages/Memory/MemoryListPage";
+import MemoryEditorPage from "pages/Memory/MemoryEditorPage";
 
 import AdminFrequency from "pages/Admin/Frequency";
 import AdminTag from "pages/Admin/Tag";
@@ -143,22 +144,22 @@ const routes = [
   {
     exact: true,
     path: "/medicamentos",
-    element: <WithAuth component={References} />,
+    element: <WithAuth component={DrugDashboard} />,
   },
   {
     exact: true,
     path: "/medicamentos/:idSegment",
-    element: <WithAuth component={References} />,
+    element: <WithAuth component={DrugDashboard} />,
   },
   {
     exact: true,
     path: "/medicamentos/:idSegment/:idDrug/:slug",
-    element: <WithAuth component={References} />,
+    element: <WithAuth component={DrugDashboard} />,
   },
   {
     exact: true,
     path: "/medicamentos/:idSegment/:idDrug/:slug/:dose/:frequency",
-    element: <WithAuth component={References} />,
+    element: <WithAuth component={DrugDashboard} />,
   },
   {
     exact: true,
@@ -209,6 +210,16 @@ const routes = [
     exact: true,
     path: "/configuracoes/forms-personalizados/:id",
     element: <WithAuth component={CustomFormEditorPage} />,
+  },
+  {
+    exact: true,
+    path: "/configuracoes/memoria",
+    element: <WithAuth component={MemoryListPage} />,
+  },
+  {
+    exact: true,
+    path: "/configuracoes/memoria/:id",
+    element: <WithAuth component={MemoryEditorPage} />,
   },
   {
     exact: true,

@@ -4,7 +4,6 @@ import appReducer from "./app";
 import authReducer from "./auth";
 import userReducer from "./user";
 import drugsReducer from "./drugs";
-import outliersReducer from "./outliers";
 import patientsReducer from "./patients";
 import segmentsReducer from "./segments";
 import interventionReducer from "./intervention";
@@ -13,7 +12,6 @@ import prescriptionDrugsReducer from "./prescriptionDrugs";
 import memoryReducer from "./memory";
 import clinicalNotesReducer from "./clinicalNotes";
 import patientCentral from "./patientCentral";
-import drugMeasureUnits from "features/drugs/DrugMeasureUnits/DrugMeasureUnitsSlice";
 import drugUnitConversionSlice from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import drugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import lists from "features/lists/ListsSlice";
@@ -22,6 +20,7 @@ import summaryReducer from "features/summary/SummarySlice";
 import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
 import memoryFilterSlice from "features/memory/MemoryFilter/MemoryFilterSlice";
 import memoryCustomFormsSlice from "features/memory/CustomForms/CustomFormsSlice";
+import memoryListSlice from "features/memory/MemoryList/MemoryListSlice";
 import scoreWizardSlice from "features/outliers/ScoreWizard/ScoreWizardSlice";
 import prescriptionSlice from "features/prescription/PrescriptionSlice";
 import preferencesSlice from "features/preferences/PreferencesSlice";
@@ -144,7 +143,6 @@ const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
   drugs: drugsReducer,
-  outliers: outliersReducer,
   patients: patientsReducer,
   patientCentral: patientCentral,
   segments: segmentsReducer,
@@ -155,8 +153,8 @@ const rootReducer = combineReducers({
   memoryDraft: memoryDraftSlice,
   memoryFilter: memoryFilterSlice,
   memoryCustomForms: memoryCustomFormsSlice,
+  memoryList: memoryListSlice,
   clinicalNotes: clinicalNotesReducer,
-  drugMeasureUnits: drugMeasureUnits,
   drugUnitConversion: drugUnitConversionSlice,
   drugFormStatus: drugFormStatus,
   lists: lists,

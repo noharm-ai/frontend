@@ -386,7 +386,7 @@ export default function Layout({
         collapsed={sider.collapsed}
         collapsedWidth={sider.collapsedWidth}
       >
-        <div css="padding: 0 15px 30px;">
+        <div style={{ padding: "0 15px 30px" }}>
           <Brand className="brand" title="noHarm.ai | Cuidando dos pacientes" />
         </div>
         <Menu segments={segments} />
@@ -408,7 +408,7 @@ export default function Layout({
             integrationStatus={app.config.integrationStatus}
           />
         </Header>
-        <Content css="padding: 25px 18px;">
+        <Content style={{ padding: "25px 18px" }}>
           <ErrorBoundary FallbackComponent={ErrorFallback}>
             {theme === "boxed" ? <Box {...props}>{children}</Box> : children}
           </ErrorBoundary>

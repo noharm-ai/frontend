@@ -512,6 +512,90 @@ function BaseForm() {
     </>
   );
 
+  const renderHealthcheckTab = () => (
+    <>
+      <div className="form-row">
+        <div className="form-label">
+          <label>Status:</label>
+        </div>
+        <div className="form-input">
+          <Select
+            onChange={(value) =>
+              setFieldValue("config.healthcheck.status", value)
+            }
+            value={values.config?.healthcheck?.status}
+            optionFilterProp="children"
+            showSearch
+          >
+            <Select.Option key={0} value={0}>
+              Desabilitado
+            </Select.Option>
+            <Select.Option key={1} value={1}>
+              Habilitado
+            </Select.Option>
+          </Select>
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-label">
+          <label>Metric name:</label>
+        </div>
+        <div className="form-input">
+          <Input
+            value={values.config?.healthcheck?.metric_name}
+            onChange={({ target }) =>
+              setFieldValue("config.healthcheck.metric_name", target.value)
+            }
+          />
+        </div>
+      </div>
+    </>
+  );
+
+  const renderNifilintTab = () => (
+    <>
+      <div className="form-row">
+        <div className="form-label">
+          <label>Skip de verificação do nifilint:</label>
+        </div>
+        <div className="form-input">
+          <Select
+            onChange={(value) => setFieldValue("config.nifilint.skip", value)}
+            value={values.config?.nifilint?.skip}
+            optionFilterProp="children"
+            showSearch
+          >
+            <Select.Option key={0} value={false}>
+              Não
+            </Select.Option>
+            <Select.Option key={1} value={true}>
+              Sim
+            </Select.Option>
+          </Select>
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-label">
+          <label>Max backup days:</label>
+        </div>
+        <div className="form-input">
+          <Input
+            type="number"
+            value={values.config?.nifilint?.max_backup_days}
+            onChange={({ target }) =>
+              setFieldValue(
+                "config.nifilint.max_backup_days",
+                target.value !== "" ? parseInt(target.value, 10) : null,
+              )
+            }
+          />
+        </div>
+      </div>
+    </>
+  );
+
   const tabItems = [
     {
       key: "1",
@@ -530,6 +614,16 @@ function BaseForm() {
     },
     {
       key: "4",
+      label: "Healthcheck",
+      children: renderHealthcheckTab(),
+    },
+    {
+      key: "5",
+      label: "Nifilint",
+      children: renderNifilintTab(),
+    },
+    {
+      key: "6",
       label: "Odoo",
       children: renderOdooTab(),
     },

@@ -36,6 +36,10 @@ export default function ChartReasons({ reportData, isLoading }) {
       data: reportData?.reasonsSummary
         ? reportData?.reasonsSummary.map((i) => i.name)
         : [],
+      axisLabel: {
+        overflow: "break",
+        width: 150,
+      },
     },
     toolbox: {
       feature: {

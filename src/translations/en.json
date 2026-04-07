@@ -1003,5 +1003,28 @@
 
   "patientDetails": {
     "fone": "Phone"
+  },
+
+  "carePlan": {
+    "btnOpen": "Care Plan",
+    "title": "Care Plan",
+    "snippetsPanel": "Available texts",
+    "editorPanel": "Plan text",
+    "insertHint": "Click to insert into text",
+    "btnClear": "Clear",
+    "btnCancel": "Cancel",
+    "btnCopy": "Copy text",
+    "btnSave": "Save",
+    "copiedSuccess": "Text copied!",
+    "saveComingSoon": "Save care plan coming soon.",
+    "tabTemplates": "Base template",
+    "tabTexts": "Texts",
+    "searchPlaceholder": "Search texts...",
+    "applyTemplateHint": "Click to use this template",
+    "templateApplied": "Template applied!",
+    "noResults": "No texts found.",
+    "validationEmpty": "The care plan cannot be empty.",
+    "saveSuccess": "Care plan saved successfully!",
+    "saveError": "Error saving the care plan."
   }
 }

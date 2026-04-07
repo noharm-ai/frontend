@@ -20,7 +20,7 @@ export default function UnitConversion() {
     useSelector((state) => state.admin.unitConversion.status) === "loading";
   const page = useSelector((state) => state.admin.unitConversion.currentPage);
   const datasource = useSelector(
-    (state) => state.admin.unitConversion.filteredList
+    (state) => state.admin.unitConversion.filteredList,
   );
   const drugRef = useSelector((state) => state.admin.drugReferenceDrawer.sctid);
   const filters = useSelector((state) => state.admin.unitConversion.filters);
@@ -114,7 +114,7 @@ export default function UnitConversion() {
         </div>
       </Spin>
 
-      <DrugReferenceDrawer />
+      <DrugReferenceDrawer placement="right" />
     </>
   );
 }

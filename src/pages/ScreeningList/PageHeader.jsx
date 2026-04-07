@@ -24,7 +24,7 @@ export default function PageHeader({ prioritizationType }) {
 
   return (
     <div style={{ marginBottom: "30px" }}>
-      <Row type="flex" css="margin-bottom: 15px;" align="middle">
+      <Row type="flex" style={{ marginBottom: "15px" }} align="middle">
         <Col span={24} md={10}>
           <header>
             <Heading>{t(title)}</Heading>

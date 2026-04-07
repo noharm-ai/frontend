@@ -216,6 +216,13 @@ export default function Menu({ segments }) {
           permission: [Permission.WRITE_CUSTOM_FORMS],
         },
         {
+          key: "/configuracoes/memoria",
+          link: "/configuracoes/memoria",
+          label: "Memória",
+          icon: <SaveOutlined />,
+          id: "gtm-lnk-memory",
+        },
+        {
           key: "/admin/tags",
           link: "/admin/tags",
           label: t("menu.tag"),

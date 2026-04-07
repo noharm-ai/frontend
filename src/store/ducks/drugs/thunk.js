@@ -70,26 +70,6 @@ export const searchDrugsThunk =
     dispatch(drugsSearchSuccess(list));
   };
 
-export const fetchDrugsUnitsListThunk =
-  (params = {}) =>
-  async (dispatch, getState) => {
-    dispatch(drugsUnitsFetchListStart());
-
-    const { access_token } = getState().auth.identify;
-    const { data, error } = await api
-      .getDrugUnits(access_token, params)
-      .catch(errorHandler);
-
-    if (!isEmpty(error)) {
-      dispatch(drugsUnitsFetchListError(error));
-      return;
-    }
-
-    const list = data.data;
-
-    dispatch(drugsUnitsFetchListSuccess(list));
-  };
-
 export const fetchDrugsFrequenciesListThunk =
   (params = {}) =>
   async (dispatch, getState) => {

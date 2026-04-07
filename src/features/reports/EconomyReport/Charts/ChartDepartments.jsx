@@ -36,6 +36,10 @@ export default function ChartDepartments({ reportData, isLoading }) {
       data: reportData?.departmentsSummary
         ? reportData?.departmentsSummary.map((i) => i.name)
         : [],
+      axisLabel: {
+        overflow: "break",
+        width: 150,
+      },
     },
     toolbox: {
       feature: {

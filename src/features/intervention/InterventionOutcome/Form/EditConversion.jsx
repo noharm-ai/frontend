@@ -42,7 +42,7 @@ export default function EditConversion({
 
   return (
     <>
-      <span css="margin-right: 10px;">
+      <span style={{ marginRight: "10px" }}>
         {factor === null || factor === "-" ? (
           <Tag color="red">Vazio</Tag>
         ) : (

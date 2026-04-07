@@ -15,7 +15,7 @@ export default function PatientData({ item, idPatient }) {
   if (!idPatient) {
     return (
       <FormHeader>
-        <Row type="flex" gutter={24} css="padding: 2px 0">
+        <Row type="flex" gutter={24} style={{ padding: "2px 0" }}>
           <Col span={8}>
             <Heading as="p" $size="14px">
               {t("patientCard.prescription")}:
@@ -32,7 +32,7 @@ export default function PatientData({ item, idPatient }) {
 
   return (
     <FormHeader>
-      <Row type="flex" gutter={24} css="padding: 2px 0">
+      <Row type="flex" gutter={24} style={{ padding: "2px 0" }}>
         <Col span={8}>
           <Heading as="p" $size="14px">
             {t("patientCard.patient")}:
@@ -42,7 +42,7 @@ export default function PatientData({ item, idPatient }) {
           <PatientNameCache idPatient={idPatient} />
         </Col>
       </Row>
-      <Row type="flex" gutter={24} css="padding: 2px 0">
+      <Row type="flex" gutter={24} style={{ padding: "2px 0" }}>
         <Col span={8}>
           <Heading as="p" $size="14px">
             {t("patientCard.age")}:

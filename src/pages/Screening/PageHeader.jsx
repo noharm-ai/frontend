@@ -12,6 +12,7 @@ import {
   ScheduleOutlined,
   SafetyCertificateOutlined,
   SafetyCertificateFilled,
+  MedicineBoxOutlined,
 } from "@ant-design/icons";
 import { Affix, Popover } from "antd";
 import dayjs from "dayjs";
@@ -31,11 +32,17 @@ import FormClinicalAlert from "containers/Forms/ClinicalAlert";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import pageTimer from "utils/pageTimer";
 import FeatureService from "services/features";
-import { setCheckSummary } from "features/prescription/PrescriptionSlice";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
+import {
+  setCheckSummary,
+  setCarePlanOpen,
+} from "features/prescription/PrescriptionSlice";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
 } from "src/utils/tracker";
+import PatientNameCache from "src/components/PatientName/PatientNameCache";
 
 import { ScreeningHeader } from "components/Screening/index.style";
 
@@ -142,7 +149,7 @@ export default function PageHeader({
 
   const openClinicalNotesModal = () => {
     trackPrescriptionAction(
-      TrackedPrescriptionAction.CLICK_CLINICAL_NOTES_FORM
+      TrackedPrescriptionAction.CLICK_CLINICAL_NOTES_FORM,
     );
 
     if (hasPrimaryCare) {
@@ -167,7 +174,7 @@ export default function PageHeader({
       prescription.content.alertsList.length
     ) {
       highRiskAlerts = prescription.content.alertsList.filter(
-        (a) => a.level === "high"
+        (a) => a.level === "high",
       );
     }
 
@@ -268,8 +275,8 @@ export default function PageHeader({
       type === "conciliation"
         ? t("screeningHeader.titleConciliation")
         : content.agg
-        ? t("screeningHeader.titleAdmission")
-        : t("screeningHeader.titlePrescription");
+          ? t("screeningHeader.titleAdmission")
+          : t("screeningHeader.titlePrescription");
     const id =
       type === "conciliation" || !content.agg
         ? content.idPrescription
@@ -291,7 +298,9 @@ export default function PageHeader({
           ) : (
             ""
           )}
-          <span className="legend">{content.namePatient}</span>
+          <span className="legend">
+            <PatientNameCache idPatient={content.idPatient} />
+          </span>
         </AffixedHeader>
       );
     }
@@ -323,12 +332,12 @@ export default function PageHeader({
           <Col
             span={24}
             md={24 - 10}
-            css="
-          display:flex;
-          align-items: center;
-          justify-content: flex-end;
-          flex-wrap: wrap;
-        "
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              flexWrap: "wrap",
+            }}
           >
             {prescription.content.status === "0" && (
               <Button
@@ -397,7 +406,7 @@ export default function PageHeader({
                           <br />
                           <span style={{ fontSize: "12px", fontWeight: 300 }}>
                             {dayjs(
-                              prescription.content.review?.reviewedAt
+                              prescription.content.review?.reviewedAt,
                             ).format("DD/MM/YYYY HH:mm")}
                           </span>
                         </p>
@@ -474,6 +483,19 @@ export default function PageHeader({
                   {t("screeningHeader.btnAlert")}
                 </Button>
               )}
+
+            {hasPrimaryCare && PermissionService().has(Permission.READ_NAV) && (
+              <Button
+                type="primary"
+                className="gtm-bt-care-plan"
+                icon={<MedicineBoxOutlined />}
+                ghost
+                onClick={() => dispatch(setCarePlanOpen(true))}
+                style={{ marginRight: "5px" }}
+              >
+                {t("carePlan.btnOpen")}
+              </Button>
+            )}
 
             <Button type="default" className="gtm-bt-close" onClick={close}>
               {t("screeningHeader.btnClose")}

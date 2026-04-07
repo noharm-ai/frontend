@@ -406,7 +406,7 @@ export default function Intervention({
           </header>
           {item.idPrescriptionDrugList ? (
             <FormHeader>
-              <Row type="flex" gutter={24} css="padding: 2px 0">
+              <Row type="flex" gutter={24} style={{ padding: "2px 0" }}>
                 <Col span={24}>
                   <Heading as="p" $size="14px">
                     {item.idPrescriptionDrugList.length} itens selecionados
