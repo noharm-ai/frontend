@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { CheckSquareFilled } from "@ant-design/icons";
-import { Progress } from "antd";
+import { Progress, Checkbox } from "antd";
 
 import notification from "components/notification";
 import Heading from "components/Heading";
@@ -26,6 +26,7 @@ function OutliersForm({ open, setOpen }) {
   const [outliersErrorMessage, setOutliersErrorMessage] = useState(null);
   const [processStage, setProcessStage] = useState([]);
   const [progressPercentage, setProgressPercentage] = useState(0);
+  const [skipRefreshAgg, setSkipRefreshAgg] = useState(false);
 
   const onCancel = () => {
     dispatch(setSegment(null));
@@ -35,11 +36,23 @@ function OutliersForm({ open, setOpen }) {
     setOutliersErrorMessage(null);
     setProcessStage([]);
     setProgressPercentage(0);
+    setSkipRefreshAgg(false);
   };
 
   const startProcess = async () => {
     setLoading(true);
     setOutliersStatus("loading");
+
+    if (skipRefreshAgg) {
+      setProcessStage((prev) => [
+        ...prev,
+        "Histórico de prescrição ignorado",
+      ]);
+      setProgressPercentage(50);
+      generateOutliers();
+      return;
+    }
+
     setProcessStage((prev) => [
       ...prev,
       "Recalculando histórico de prescrição (até 5min de espera)",
@@ -213,9 +226,24 @@ function OutliersForm({ open, setOpen }) {
             <strong>{segment.description}</strong> ?
           </p>
           <p>Observações:</p>
-          <ul style={{ marginBottom: "30px" }}>
+          <ul style={{ marginBottom: "15px" }}>
             <li>Os escores manuais serão removidos</li>
           </ul>
+          <Checkbox
+            checked={skipRefreshAgg}
+            onChange={(e) => setSkipRefreshAgg(e.target.checked)}
+            style={{ marginBottom: "10px" }}
+          >
+            Pular recálculo do histórico de prescrição
+          </Checkbox>
+          {skipRefreshAgg && (
+            <Alert
+              type="warning"
+              showIcon
+              description="Atenção: utilize esta opção apenas em casos excepcionais. Pular esta etapa pode resultar em escores desatualizados."
+              style={{ marginBottom: "10px" }}
+            />
+          )}
         </>
       )}
 
