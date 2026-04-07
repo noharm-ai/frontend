@@ -31,6 +31,7 @@ function DepartmentsForm({ open, setOpen }) {
   );
   const [filter, setFilter] = useState({
     departmentName: null,
+    idDepartment: null,
     onlySelected: false,
   });
 
@@ -57,6 +58,11 @@ function DepartmentsForm({ open, setOpen }) {
         show =
           show &&
           i.name.toLowerCase().includes(filter.departmentName.toLowerCase());
+      }
+
+      if (filter.idDepartment) {
+        show =
+          show && String(i.idDepartment).includes(filter.idDepartment.trim());
       }
 
       if (filter.onlySelected) {
@@ -121,6 +127,7 @@ function DepartmentsForm({ open, setOpen }) {
     setOpen(false);
     setFilter({
       departmentName: null,
+      idDepartment: null,
       onlySelected: false,
     });
   };
@@ -190,6 +197,17 @@ function DepartmentsForm({ open, setOpen }) {
               {values.selectedKeys.length} setores selecionados
             </div>
             <div>
+              <Input
+                style={{ width: 100, marginRight: "8px" }}
+                placeholder="ID Setor"
+                allowClear
+                onChange={(ev) =>
+                  setFilter({
+                    ...filter,
+                    ...{ idDepartment: ev.target.value },
+                  })
+                }
+              />
               <Input
                 style={{ width: 300 }}
                 placeholder="Procurar por setor"
