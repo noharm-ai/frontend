@@ -36,6 +36,10 @@ export default function ChartResponsibles({ reportData, isLoading }) {
       data: reportData?.responsibleSummary
         ? reportData?.responsibleSummary.map((i) => i.name)
         : [],
+      axisLabel: {
+        overflow: "break",
+        width: 150,
+      },
     },
     toolbox: {
       feature: {
