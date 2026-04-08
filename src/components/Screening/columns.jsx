@@ -901,7 +901,7 @@ const score = (bag) => ({
 
 const period = (bag) => ({
   title: <Tooltip title={bag.t("tableHeader.period")}>Per.</Tooltip>,
-  width: 60,
+  width: 65,
   align: "left",
   render: (record) => {
     if (record.total) {
@@ -937,8 +937,22 @@ const period = (bag) => ({
       period = `${record.period}/${record.periodMax}`;
     }
 
+    const isMaxPeriod = record.totalPeriod >= 120 && record.periodType == 1;
+    const maxIndicator = isMaxPeriod ? (
+      <Tooltip title="Este medicamento está em uso há mais de 120 dias. Por limitação do sistema, a contagem é exibida até esse valor.">
+        <WarningOutlined style={{ color: "#faad14", marginLeft: 4 }} />
+      </Tooltip>
+    ) : null;
+
     if (record.periodDates == null || record.periodDates.length === 0) {
-      return period;
+      return isMaxPeriod ? (
+        <span>
+          {period}
+          {maxIndicator}
+        </span>
+      ) : (
+        period
+      );
     }
 
     return (
@@ -946,7 +960,10 @@ const period = (bag) => ({
         content={periodDatesList(record.periodDates)}
         title="Período de uso"
       >
-        {period}
+        <span>
+          {period}
+          {maxIndicator}
+        </span>
       </Popover>
     );
   },
