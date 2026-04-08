@@ -182,7 +182,7 @@ export function DrugUnitConversion({ onAfterSave }: DrugUnitConversionProps) {
     const label = item.idMeasureUnit;
     const effectiveFactor = getEffectiveFactor(item);
     const factorDisplay =
-      effectiveFactor != null ? formatNumber(effectiveFactor) : "?";
+      effectiveFactor != null ? formatNumber(effectiveFactor, 4) : "?";
 
     const isInvalid = invalidItems.has(item.idMeasureUnit);
 

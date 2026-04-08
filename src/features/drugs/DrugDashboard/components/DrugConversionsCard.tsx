@@ -93,7 +93,7 @@ export function DrugConversionsCard({
               </span>
               <span style={{ color: "#888" }}>equivale a</span>
               <span>
-                <strong>{formatNumber(item.factor, 2)}</strong>
+                <strong>{formatNumber(item.factor, 4)}</strong>
                 {defaultUnit ? (
                   <span style={{ marginLeft: 4 }}>{defaultUnit}</span>
                 ) : null}
