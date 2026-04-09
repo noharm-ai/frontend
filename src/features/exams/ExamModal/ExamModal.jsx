@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import { Button, Tabs, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
+import { ExamsRawModal } from "./ExamsRawModal/ExamsRawModal";
+
 import DefaultModal from "components/Modal";
 import { ExpandableTable } from "components/Table";
 import notification from "components/notification";
@@ -36,6 +38,7 @@ export default function ExamsModal({ idSegment }) {
     order: null,
     columnKey: null,
   });
+  const [activeTab, setActiveTab] = useState("exams");
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -116,6 +119,17 @@ export default function ExamsModal({ idSegment }) {
         />
       ),
     },
+    {
+      label: "Todos os exames",
+      key: "exams_raw",
+      children: (
+        <ExamsRawModal
+          admissionNumber={admissionNumber}
+          idSegment={idSegment}
+          active={activeTab === "exams_raw"}
+        />
+      ),
+    },
   ];
 
   return (
@@ -147,7 +161,11 @@ export default function ExamsModal({ idSegment }) {
       }
       style={{ top: "10px", height: "100vh" }}
     >
-      <Tabs defaultActiveKey="exams" items={tabs} />
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        items={tabs}
+      />
 
       <ExamForm />
     </DefaultModal>
