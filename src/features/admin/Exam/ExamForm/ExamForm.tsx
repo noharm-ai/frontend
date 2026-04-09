@@ -10,7 +10,11 @@ import { setExam, saveExam } from "./ExamFormSlice";
 import { ExamFormBase } from "./ExamFormBase";
 import { Form } from "styles/Form.style";
 
-export function ExamForm() {
+interface Props {
+  onAfterSave?: () => void;
+}
+
+export function ExamForm({ onAfterSave }: Props) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const data = useAppSelector((state) => state.admin.examForm.single.data);
@@ -38,6 +42,7 @@ export function ExamForm() {
         });
       } else {
         dispatch(setExam(null));
+        onAfterSave?.();
         notification.success({
           message: t("success.generic"),
         });
@@ -68,6 +73,7 @@ export function ExamForm() {
           cancelButtonProps={{
             disabled: status === "loading",
           }}
+          maskClosable={false}
         >
           <header>
             <div className="modal-title">Exame</div>

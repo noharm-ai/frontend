@@ -6,6 +6,7 @@ const initialState = {
     list: [],
     status: "idle",
     error: null,
+    lastParams: null,
   },
   copyExams: {
     status: "idle",
@@ -144,8 +145,9 @@ const examsSlice = createSlice({
         state.exams.status = "failed";
         state.exams.error = action.error.message;
       })
-      .addCase(listExams.pending, (state) => {
+      .addCase(listExams.pending, (state, action) => {
         state.exams.status = "loading";
+        state.exams.lastParams = action.meta.arg;
       })
       .addCase(listExams.fulfilled, (state, action) => {
         state.exams.status = "succeeded";

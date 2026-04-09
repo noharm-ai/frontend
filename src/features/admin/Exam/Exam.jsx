@@ -18,6 +18,7 @@ import CopyExamsModal from "features/admin/Exam/CopyExams/CopyExams";
 import MostFrequentExamsModal from "features/admin/Exam/MostFrequent/MostFrequent";
 import { toDataSource } from "utils";
 import { setExam, fetchExam } from "./ExamForm/ExamFormSlice";
+import { listExams } from "./ExamSlice";
 import { ExamForm } from "./ExamForm/ExamForm";
 import ExamsOrder from "./ExamsOrder/ExamsOrder";
 import Filter from "./Filter/Filter";
@@ -36,6 +37,8 @@ export default function Exams() {
   const dispatch = useDispatch();
   const exams = useSelector((state) => state.admin.exam.exams.list);
   const status = useSelector((state) => state.admin.exam.exams.status);
+
+  const lastParams = useSelector((state) => state.admin.exam.exams.lastParams);
 
   const [copyExamsVisible, setCopyExamsVisible] = useState(false);
   const [mostFrequentModalVisible, setMostFrequentModalVisible] =
@@ -119,7 +122,7 @@ export default function Exams() {
 
       <BackTop />
 
-      <ExamForm />
+      <ExamForm onAfterSave={() => dispatch(listExams(lastParams))} />
       <ExamsOrder open={examsOrderVisible} setOpen={setExamsOrderVisible} />
       <CopyExamsModal open={copyExamsVisible} setOpen={setCopyExamsVisible} />
       <MostFrequentExamsModal
