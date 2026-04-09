@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
@@ -6,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
-import { setExam, saveExam } from "./ExamFormSlice";
+import { setExam, saveExam, fetchExam } from "./ExamFormSlice";
 import { ExamFormBase } from "./ExamFormBase";
 import { Form } from "styles/Form.style";
 
@@ -29,6 +30,12 @@ export function ExamForm({ onAfterSave }: Props) {
     min: Yup.number().required(t("validation.requiredField")),
     max: Yup.number().required(t("validation.requiredField")),
   });
+
+  useEffect(() => {
+    if (data && !data.new && data.idSegment && data.type) {
+      dispatch(fetchExam({ idSegment: data.idSegment, examType: data.type }));
+    }
+  }, [data?.idSegment, data?.type]); // eslint-disable-line
 
   const initialValues = {
     ...data,

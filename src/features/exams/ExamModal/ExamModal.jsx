@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
 import { Button, Tabs, Space } from "antd";
+import { Checkbox, Select } from "components/Inputs";
 import { PlusOutlined } from "@ant-design/icons";
 
 import DefaultModal from "components/Modal";
@@ -11,6 +12,8 @@ import notification from "components/notification";
 import Empty from "components/Empty";
 import { fetchExams, setExamsModalAdmissionNumber } from "./ExamModalSlice";
 import { setExamFormModal } from "../ExamForm/ExamFormSlice";
+import { setExam as setAdminExam } from "features/admin/Exam/ExamForm/ExamFormSlice";
+import { ExamForm as AdminExamForm } from "features/admin/Exam/ExamForm/ExamForm";
 import { toDataSource } from "utils";
 import { getErrorMessage } from "utils/errorHandler";
 import { getResponsiveTableWidth } from "src/utils/responsive";
@@ -37,6 +40,8 @@ export default function ExamsModal({ idSegment }) {
     columnKey: null,
   });
   const [activeTab, setActiveTab] = useState("exams");
+  const [showOnlyConfigured, setShowOnlyConfigured] = useState(true);
+  const [selectedNames, setSelectedNames] = useState([]);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -59,35 +64,75 @@ export default function ExamsModal({ idSegment }) {
     setSortOrder(sorter);
   };
 
+  const onConfigure = (record) => {
+    dispatch(setAdminExam({ idSegment, type: record.key }));
+  };
+
   const numericExams = list.filter((e) => !e.text);
   const textualExams = list.filter((e) => e.text);
+  const configuredFilteredExams = showOnlyConfigured
+    ? numericExams.filter((e) => e.configured)
+    : numericExams;
+  const nameOptions = useMemo(
+    () =>
+      [...new Set(configuredFilteredExams.map((e) => e.name))].map((name) => ({
+        label: name,
+        value: name,
+      })),
+    [configuredFilteredExams],
+  );
+  const filteredNumericExams = configuredFilteredExams.filter(
+    (e) => selectedNames.length === 0 || selectedNames.includes(e.name),
+  );
 
   const tabs = [
     {
       label: "Exames numéricos",
       key: "exams",
       children: (
-        <ExpandableTable
-          columns={examColumns(t, sortOrder)}
-          showSorterTooltip={false}
-          pagination={false}
-          loading={status === "loading"}
-          locale={{
-            emptyText: (
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description="Nenhum exame encontrado."
-              />
-            ),
-          }}
-          dataSource={
-            status !== "loading" ? toDataSource(numericExams, "key", {}) : []
-          }
-          rowClassName={examRowClassName}
-          expandedRowRender={expandedExamRowRender}
-          onChange={handleTableChange}
-          scroll={getResponsiveTableWidth("max-content")}
-        />
+        <>
+          <Space style={{ marginBottom: 8 }} wrap>
+            <Select
+              mode="multiple"
+              allowClear
+              showSearch
+              placeholder="Filtrar por exame..."
+              style={{ minWidth: 250 }}
+              options={nameOptions}
+              value={selectedNames}
+              onChange={setSelectedNames}
+            />
+            <Checkbox
+              checked={showOnlyConfigured}
+              onChange={(e) => setShowOnlyConfigured(e.target.checked)}
+            >
+              Exibir somente exames configurados
+            </Checkbox>
+          </Space>
+          <ExpandableTable
+            columns={examColumns(t, sortOrder)}
+            showSorterTooltip={false}
+            pagination={{ showSizeChanger: true }}
+            loading={status === "loading"}
+            locale={{
+              emptyText: (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description="Nenhum exame encontrado."
+                />
+              ),
+            }}
+            dataSource={
+              status !== "loading"
+                ? toDataSource(filteredNumericExams, "key", { onConfigure })
+                : []
+            }
+            rowClassName={examRowClassName}
+            expandedRowRender={expandedExamRowRender}
+            onChange={handleTableChange}
+            scroll={getResponsiveTableWidth("max-content")}
+          />
+        </>
       ),
     },
     {
@@ -108,7 +153,9 @@ export default function ExamsModal({ idSegment }) {
             ),
           }}
           dataSource={
-            status !== "loading" ? toDataSource(textualExams, "key", {}) : []
+            status !== "loading"
+              ? toDataSource(textualExams, "key", { onConfigure })
+              : []
           }
           rowClassName={examRowClassName}
           expandedRowRender={expandedExamRowRender}
@@ -151,6 +198,9 @@ export default function ExamsModal({ idSegment }) {
       <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabs} />
 
       <ExamForm />
+      <AdminExamForm
+        onAfterSave={() => dispatch(fetchExams({ admissionNumber, idSegment }))}
+      />
     </DefaultModal>
   );
 }

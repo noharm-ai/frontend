@@ -17,7 +17,7 @@ import { PageCard } from "styles/Utils.style";
 import CopyExamsModal from "features/admin/Exam/CopyExams/CopyExams";
 import MostFrequentExamsModal from "features/admin/Exam/MostFrequent/MostFrequent";
 import { toDataSource } from "utils";
-import { setExam, fetchExam } from "./ExamForm/ExamFormSlice";
+import { setExam } from "./ExamForm/ExamFormSlice";
 import { listExams } from "./ExamSlice";
 import { ExamForm } from "./ExamForm/ExamForm";
 import ExamsOrder from "./ExamsOrder/ExamsOrder";
@@ -46,7 +46,7 @@ export default function Exams() {
   const [examsOrderVisible, setExamsOrderVisible] = useState(false);
 
   const onShowExamModal = (data) => {
-    dispatch(fetchExam({ idSegment: data.idSegment, examType: data.type }));
+    dispatch(setExam({ idSegment: data.idSegment, type: data.type }));
   };
 
   const addExamModal = () => {

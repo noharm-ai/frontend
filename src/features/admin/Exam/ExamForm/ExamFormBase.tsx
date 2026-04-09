@@ -31,7 +31,7 @@ export function ExamFormBase() {
   const { type, name, initials, min, max, ref, active } = values;
 
   useEffect(() => {
-    if (examTypes.length === 0 && values.new) {
+    if (examTypes.length === 0 && values.new && !values.type) {
       dispatch(fetchExamTypes());
     }
 
@@ -91,7 +91,7 @@ export function ExamFormBase() {
             onChange={(value) => setFieldValue("idSegment", value)}
             value={values.idSegment}
             loading={examTypesStatus === "loading"}
-            disabled={!values.new}
+            disabled={!values.new || !!values.idSegment}
           >
             {segments.map((item: any) => (
               <Select.Option key={item.id} value={item.id}>
@@ -117,7 +117,7 @@ export function ExamFormBase() {
             onChange={(value) => setFieldValue("type", value)}
             value={type}
             loading={examTypesStatus === "loading"}
-            disabled={!values.new}
+            disabled={!values.new || !!values.type}
           >
             {examTypes.map((item: string) => (
               <Select.Option key={item} value={item}>
