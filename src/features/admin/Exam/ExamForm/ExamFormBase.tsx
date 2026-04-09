@@ -88,7 +88,7 @@ export function ExamFormBase() {
             optionFilterProp="children"
             showSearch
             placeholder="Selecione o segmento..."
-            onChange={(value: number) => setFieldValue("idSegment", value)}
+            onChange={(value) => setFieldValue("idSegment", value)}
             value={values.idSegment}
             loading={examTypesStatus === "loading"}
             disabled={!values.new}
@@ -114,7 +114,7 @@ export function ExamFormBase() {
             optionFilterProp="children"
             showSearch
             placeholder="Selecione o exame..."
-            onChange={(value: string) => setFieldValue("type", value)}
+            onChange={(value) => setFieldValue("type", value)}
             value={type}
             loading={examTypesStatus === "loading"}
             disabled={!values.new}
@@ -140,7 +140,7 @@ export function ExamFormBase() {
               showSearch
               value={values.tpExamRef}
               placeholder="Selecione o exame correspondente..."
-              onChange={(value: string) => setFieldValue("tpExamRef", value)}
+              onChange={(value) => setFieldValue("tpExamRef", value)}
               loading={globalExamsStatus === "loading"}
             >
               {globalExams &&
