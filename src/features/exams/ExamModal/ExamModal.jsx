@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { Button, Tabs, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
-import { ExamsRawModal } from "./ExamsRawModal/ExamsRawModal";
 import DefaultModal from "components/Modal";
 import { ExpandableTable } from "components/Table";
 import notification from "components/notification";
@@ -115,17 +114,6 @@ export default function ExamsModal({ idSegment }) {
           expandedRowRender={expandedExamRowRender}
           onChange={handleTableChange}
           scroll={getResponsiveTableWidth("max-content")}
-        />
-      ),
-    },
-    {
-      label: "Todos os exames",
-      key: "exams_raw",
-      children: (
-        <ExamsRawModal
-          idSegment={idSegment}
-          admissionNumber={admissionNumber}
-          active={activeTab === "exams_raw"}
         />
       ),
     },

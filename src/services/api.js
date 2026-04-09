@@ -151,12 +151,6 @@ api.exams.getExamTypes = (params = {}) =>
     ...setHeaders(),
   });
 
-api.exams.getExamsRaw = (admissionNumber, params = {}) =>
-  instance.get(`/exams/${admissionNumber}/raw`, {
-    params,
-    ...setHeaders(),
-  });
-
 const getExams = (bearerToken, admissionNumber, params = {}) =>
   instance.get(`${endpoints.exams}/${admissionNumber}`, {
     params,
