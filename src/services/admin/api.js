@@ -145,6 +145,11 @@ api.exams.setExamsOrder = (params) =>
     ...setHeaders(),
   });
 
+api.exams.getExam = (params) =>
+  instance.post(`${endpoints.exam}/get`, params, {
+    ...setHeaders(),
+  });
+
 /**
  * DRUGS
  */

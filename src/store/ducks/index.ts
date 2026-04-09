@@ -59,6 +59,7 @@ import adminReport from "features/admin/Report/ReportSlice";
 import adminKnowledgeBase from "features/admin/KnowledgeBase/KnowledgeBaseSlice";
 import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
 import adminGlobalExam from "features/admin/GlobalExam/GlobalExamSlice";
+import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
 
 import regulationPrioritizationSlice from "features/regulation/Prioritization/PrioritizationSlice";
 import regulationSlice from "features/regulation/Regulation/RegulationSlice";
@@ -93,6 +94,7 @@ const adminReducers = combineReducers({
   integrationRemote: adminIntegrationRemote,
   segment: adminSegment,
   exam: adminExam,
+  examForm: adminExamForm,
   frequency: adminFrequency,
   unitConversion: adminUnitConversion,
   substance: adminSubstance,
