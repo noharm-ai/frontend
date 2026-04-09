@@ -6,11 +6,7 @@ const initialState = {
     list: [],
     status: "idle",
     error: null,
-  },
-  single: {
-    data: null,
-    status: "idle",
-    error: null,
+    lastParams: null,
   },
   copyExams: {
     status: "idle",
@@ -21,16 +17,6 @@ const initialState = {
     error: null,
   },
   fetchMostFrequent: {
-    list: [],
-    status: "idle",
-    error: null,
-  },
-  examTypes: {
-    list: [],
-    status: "idle",
-    error: null,
-  },
-  globalExams: {
     list: [],
     status: "idle",
     error: null,
@@ -68,50 +54,11 @@ export const listExamsOrder = createAsyncThunk(
   }
 );
 
-export const upsertExam = createAsyncThunk(
-  "admin-exam/upsert",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.exams.upsertExam(params);
-
-      return response;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
 export const setExamsOrder = createAsyncThunk(
   "admin-exam/order",
   async (params, thunkAPI) => {
     try {
       const response = await api.exams.setExamsOrder(params);
-
-      return response;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
-export const listExamTypes = createAsyncThunk(
-  "admin-exam/list-exams-types",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.exams.getExamTypes(params);
-
-      return response;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
-export const listGlobalExams = createAsyncThunk(
-  "admin-exam/list-global-exams",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.exams.getGlobalExams(params);
 
       return response;
     } catch (err) {
@@ -166,31 +113,28 @@ const examsSlice = createSlice({
     reset() {
       return initialState;
     },
-    selectExam(state, action) {
-      state.single.data = action.payload;
-    },
   },
   extraReducers(builder) {
     builder
-      .addCase(copyExams.pending, (state, action) => {
+      .addCase(copyExams.pending, (state) => {
         state.copyExams.status = "loading";
       })
-      .addCase(copyExams.fulfilled, (state, action) => {
+      .addCase(copyExams.fulfilled, (state) => {
         state.copyExams.status = "succeeded";
       })
-      .addCase(copyExams.rejected, (state, action) => {
+      .addCase(copyExams.rejected, (state) => {
         state.copyExams.status = "failed";
       })
-      .addCase(addMostFrequent.pending, (state, action) => {
+      .addCase(addMostFrequent.pending, (state) => {
         state.addMostFrequent.status = "loading";
       })
-      .addCase(addMostFrequent.fulfilled, (state, action) => {
+      .addCase(addMostFrequent.fulfilled, (state) => {
         state.addMostFrequent.status = "succeeded";
       })
-      .addCase(addMostFrequent.rejected, (state, action) => {
+      .addCase(addMostFrequent.rejected, (state) => {
         state.addMostFrequent.status = "failed";
       })
-      .addCase(fetchMostFrequent.pending, (state, action) => {
+      .addCase(fetchMostFrequent.pending, (state) => {
         state.fetchMostFrequent.status = "loading";
       })
       .addCase(fetchMostFrequent.fulfilled, (state, action) => {
@@ -203,6 +147,7 @@ const examsSlice = createSlice({
       })
       .addCase(listExams.pending, (state, action) => {
         state.exams.status = "loading";
+        state.exams.lastParams = action.meta.arg;
       })
       .addCase(listExams.fulfilled, (state, action) => {
         state.exams.status = "succeeded";
@@ -212,61 +157,16 @@ const examsSlice = createSlice({
         state.exams.status = "failed";
         state.exams.error = action.error.message;
       })
-      .addCase(listExamTypes.pending, (state, action) => {
-        state.examTypes.status = "loading";
-      })
-      .addCase(listExamTypes.fulfilled, (state, action) => {
-        state.examTypes.status = "succeeded";
-        state.examTypes.list = action.payload.data.data;
-      })
-      .addCase(listExamTypes.rejected, (state, action) => {
-        state.examTypes.status = "failed";
-        state.examTypes.error = action.error.message;
-      })
-
-      .addCase(listGlobalExams.pending, (state, action) => {
-        state.globalExams.status = "loading";
-      })
-      .addCase(listGlobalExams.fulfilled, (state, action) => {
-        state.globalExams.status = "succeeded";
-        state.globalExams.list = action.payload.data.data;
-      })
-      .addCase(listGlobalExams.rejected, (state, action) => {
-        state.globalExams.status = "failed";
-        state.globalExams.error = action.error.message;
-      })
-
-      .addCase(upsertExam.pending, (state, action) => {
-        state.single.status = "loading";
-      })
-      .addCase(upsertExam.fulfilled, (state, action) => {
-        state.single.status = "succeeded";
-        const exam = action.payload.data.data;
-
-        const index = state.exams.list.findIndex(
-          (i) => i.type === exam.type && i.idSegment === exam.idSegment
-        );
-
-        if (index !== -1) {
-          state.exams.list[index] = exam;
-        } else {
-          state.exams.list.push(exam);
-        }
-      })
-      .addCase(upsertExam.rejected, (state, action) => {
-        state.single.status = "failed";
-        state.single.error = action.error.message;
-      })
-      .addCase(setExamsOrder.pending, (state, action) => {
+      .addCase(setExamsOrder.pending, (state) => {
         state.setExamsOrder.status = "loading";
       })
-      .addCase(setExamsOrder.fulfilled, (state, action) => {
+      .addCase(setExamsOrder.fulfilled, (state) => {
         state.setExamsOrder.status = "succeeded";
       })
-      .addCase(setExamsOrder.rejected, (state, action) => {
+      .addCase(setExamsOrder.rejected, (state) => {
         state.setExamsOrder.status = "failed";
       })
-      .addCase(listExamsOrder.pending, (state, action) => {
+      .addCase(listExamsOrder.pending, (state) => {
         state.setExamsOrder.status = "loading";
       })
       .addCase(listExamsOrder.fulfilled, (state, action) => {
@@ -280,6 +180,6 @@ const examsSlice = createSlice({
   },
 });
 
-export const { reset, selectExam } = examsSlice.actions;
+export const { reset } = examsSlice.actions;
 
 export default examsSlice.reducer;

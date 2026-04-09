@@ -17,8 +17,9 @@ import { PageCard } from "styles/Utils.style";
 import CopyExamsModal from "features/admin/Exam/CopyExams/CopyExams";
 import MostFrequentExamsModal from "features/admin/Exam/MostFrequent/MostFrequent";
 import { toDataSource } from "utils";
-import { selectExam } from "./ExamSlice";
-import ExamForm from "./Form/ExamForm";
+import { setExam } from "./ExamForm/ExamFormSlice";
+import { listExams } from "./ExamSlice";
+import { ExamForm } from "./ExamForm/ExamForm";
 import ExamsOrder from "./ExamsOrder/ExamsOrder";
 import Filter from "./Filter/Filter";
 import examColumns from "./Table/columns";
@@ -37,22 +38,19 @@ export default function Exams() {
   const exams = useSelector((state) => state.admin.exam.exams.list);
   const status = useSelector((state) => state.admin.exam.exams.status);
 
+  const lastParams = useSelector((state) => state.admin.exam.exams.lastParams);
+
   const [copyExamsVisible, setCopyExamsVisible] = useState(false);
   const [mostFrequentModalVisible, setMostFrequentModalVisible] =
     useState(false);
   const [examsOrderVisible, setExamsOrderVisible] = useState(false);
 
   const onShowExamModal = (data) => {
-    dispatch(selectExam(data));
+    dispatch(setExam({ idSegment: data.idSegment, type: data.type }));
   };
 
   const addExamModal = () => {
-    dispatch(
-      selectExam({
-        new: true,
-        active: true,
-      })
-    );
+    dispatch(setExam({ new: true, active: true }));
   };
 
   const dsExams = toDataSource(exams, null, {
@@ -124,7 +122,7 @@ export default function Exams() {
 
       <BackTop />
 
-      <ExamForm />
+      <ExamForm onAfterSave={() => dispatch(listExams(lastParams))} />
       <ExamsOrder open={examsOrderVisible} setOpen={setExamsOrderVisible} />
       <CopyExamsModal open={copyExamsVisible} setOpen={setCopyExamsVisible} />
       <MostFrequentExamsModal

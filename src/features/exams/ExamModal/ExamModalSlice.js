@@ -3,12 +3,25 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/api";
 import { transformExams } from "utils/transformers";
 
+const rawInitialState = {
+  status: "idle",
+  error: null,
+  list: [],
+  filters: {},
+  filtered: {
+    status: "idle",
+    result: { list: [] },
+  },
+  filterData: { types: [] },
+};
+
 const initialState = {
   status: "idle",
   error: null,
   list: [],
   admissionNumber: null,
   lastAdmissionNumber: null,
+  raw: rawInitialState,
 };
 
 export const fetchExams = createAsyncThunk(
@@ -21,7 +34,7 @@ export const fetchExams = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 const examsModalSlice = createSlice({
@@ -35,6 +48,7 @@ const examsModalSlice = createSlice({
       if (action.payload && action.payload !== state.lastAdmissionNumber) {
         // clear list when new admissionNumber
         state.list = [];
+        state.raw = rawInitialState;
       }
 
       state.admissionNumber = action.payload;
@@ -49,7 +63,7 @@ const examsModalSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(fetchExams.pending, (state, action) => {
+      .addCase(fetchExams.pending, (state) => {
         state.status = "loading";
       })
       .addCase(fetchExams.fulfilled, (state, action) => {

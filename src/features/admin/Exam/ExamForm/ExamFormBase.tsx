@@ -1,42 +1,46 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import "styled-components";
+import { useEffect } from "react";
 import { useFormikContext } from "formik";
 import { CopyOutlined } from "@ant-design/icons";
 
+import { useAppDispatch, useAppSelector } from "src/store";
 import { InputNumber, Input, Select } from "components/Inputs";
 import Dropdown from "components/Dropdown";
 import Button from "components/Button";
 import Switch from "components/Switch";
 import Tooltip from "components/Tooltip";
-import { listExamTypes, listGlobalExams } from "../ExamSlice";
+import { fetchExamTypes, fetchGlobalExams } from "./ExamFormSlice";
 
-export default function Base() {
-  const dispatch = useDispatch();
-  const segments = useSelector((state) => state.segments.list);
-  const examTypes = useSelector((state) => state.admin.exam.examTypes.list);
-  const examTypesStatus = useSelector(
-    (state) => state.admin.exam.examTypes.status
+export function ExamFormBase() {
+  const dispatch = useAppDispatch();
+  //@ts-expect-error - segments is not typed
+  const segments = useAppSelector((state) => state.segments.list);
+  const examTypes = useAppSelector(
+    (state) => state.admin.examForm.examTypes.list,
   );
-  const globalExams = useSelector((state) => state.admin.exam.globalExams.list);
-  const globalExamsStatus = useSelector(
-    (state) => state.admin.exam.globalExams.status
+  const examTypesStatus = useAppSelector(
+    (state) => state.admin.examForm.examTypes.status,
   );
-  const { values, setFieldValue, errors } = useFormikContext();
+  const globalExams = useAppSelector(
+    (state) => state.admin.examForm.globalExams.list,
+  );
+  const globalExamsStatus = useAppSelector(
+    (state) => state.admin.examForm.globalExams.status,
+  );
+  const { values, setFieldValue, errors } = useFormikContext<any>();
 
   const { type, name, initials, min, max, ref, active } = values;
 
   useEffect(() => {
-    if (examTypes.length === 0 && values.new) {
-      dispatch(listExamTypes());
+    if (examTypes.length === 0 && values.new && !values.type) {
+      dispatch(fetchExamTypes());
     }
 
-    dispatch(listGlobalExams());
+    dispatch(fetchGlobalExams());
   }, []); //eslint-disable-line
 
-  const applyRef = ({ key }) => {
+  const applyRef = ({ key }: { key: string }) => {
     const examConfig = globalExams.find(
-      (item) => item.tpexam === values.tpExamRef
+      (item: any) => item.tpexam === values.tpExamRef,
     );
 
     if (!examConfig) return;
@@ -87,9 +91,9 @@ export default function Base() {
             onChange={(value) => setFieldValue("idSegment", value)}
             value={values.idSegment}
             loading={examTypesStatus === "loading"}
-            disabled={!values.new}
+            disabled={!values.new || !!values.idSegment}
           >
-            {segments.map((item) => (
+            {segments.map((item: any) => (
               <Select.Option key={item.id} value={item.id}>
                 {item.description}
               </Select.Option>
@@ -97,7 +101,7 @@ export default function Base() {
           </Select>
         </div>
         {errors.idSegment && (
-          <div className="form-error">{errors.idSegment}</div>
+          <div className="form-error">{String(errors.idSegment)}</div>
         )}
       </div>
 
@@ -113,16 +117,16 @@ export default function Base() {
             onChange={(value) => setFieldValue("type", value)}
             value={type}
             loading={examTypesStatus === "loading"}
-            disabled={!values.new}
+            disabled={!values.new || !!values.type}
           >
-            {examTypes.map((item) => (
+            {examTypes.map((item: string) => (
               <Select.Option key={item} value={item}>
                 {item}
               </Select.Option>
             ))}
           </Select>
         </div>
-        {errors.type && <div className="form-error">{errors.type}</div>}
+        {errors.type && <div className="form-error">{String(errors.type)}</div>}
       </div>
 
       <div className={`form-row`}>
@@ -140,7 +144,7 @@ export default function Base() {
               loading={globalExamsStatus === "loading"}
             >
               {globalExams &&
-                globalExams.map((item) => (
+                globalExams.map((item: any) => (
                   <Select.Option key={item.tpexam} value={item.tpexam}>
                     {item.name} ({item.tpexam})
                   </Select.Option>
@@ -167,11 +171,13 @@ export default function Base() {
         <div className="form-input">
           <Input
             value={name}
-            onChange={({ target }) => setFieldValue("name", target.value)}
+            onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
+              setFieldValue("name", target.value)
+            }
             maxLength={250}
           />
         </div>
-        {errors.name && <div className="form-error">{errors.name}</div>}
+        {errors.name && <div className="form-error">{String(errors.name)}</div>}
       </div>
 
       <div className={`form-row ${errors.initials ? "error" : ""}`}>
@@ -181,11 +187,15 @@ export default function Base() {
         <div className="form-input">
           <Input
             value={initials}
-            onChange={({ target }) => setFieldValue("initials", target.value)}
+            onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
+              setFieldValue("initials", target.value)
+            }
             maxLength={50}
           />
         </div>
-        {errors.initials && <div className="form-error">{errors.initials}</div>}
+        {errors.initials && (
+          <div className="form-error">{String(errors.initials)}</div>
+        )}
       </div>
 
       <div className={`form-row ${errors.ref ? "error" : ""}`}>
@@ -195,11 +205,13 @@ export default function Base() {
         <div className="form-input">
           <Input
             value={ref}
-            onChange={({ target }) => setFieldValue("ref", target.value)}
+            onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
+              setFieldValue("ref", target.value)
+            }
             maxLength={250}
           />
         </div>
-        {errors.ref && <div className="form-error">{errors.ref}</div>}
+        {errors.ref && <div className="form-error">{String(errors.ref)}</div>}
       </div>
 
       <div className={`form-row ${errors.min ? "error" : ""}`}>
@@ -208,16 +220,14 @@ export default function Base() {
         </div>
         <div className="form-input">
           <InputNumber
-            style={{
-              width: 120,
-            }}
+            style={{ width: 120 }}
             min={-999999}
             max={999999}
             value={min}
-            onChange={(value) => setFieldValue("min", value)}
+            onChange={(value: number) => setFieldValue("min", value)}
           />
         </div>
-        {errors.min && <div className="form-error">{errors.min}</div>}
+        {errors.min && <div className="form-error">{String(errors.min)}</div>}
       </div>
 
       <div className={`form-row ${errors.max ? "error" : ""}`}>
@@ -226,16 +236,14 @@ export default function Base() {
         </div>
         <div className="form-input">
           <InputNumber
-            style={{
-              width: 120,
-            }}
+            style={{ width: 120 }}
             min={0}
             max={999999}
             value={max}
-            onChange={(value) => setFieldValue("max", value)}
+            onChange={(value: number) => setFieldValue("max", value)}
           />
         </div>
-        {errors.max && <div className="form-error">{errors.max}</div>}
+        {errors.max && <div className="form-error">{String(errors.max)}</div>}
       </div>
 
       <div className={`form-row ${errors.active ? "error" : ""}`}>
@@ -244,11 +252,13 @@ export default function Base() {
         </div>
         <div className="form-input">
           <Switch
-            onChange={(active) => setFieldValue("active", active)}
+            onChange={(value: boolean) => setFieldValue("active", value)}
             checked={active}
           />
         </div>
-        {errors.active && <div className="form-error">{errors.active}</div>}
+        {errors.active && (
+          <div className="form-error">{String(errors.active)}</div>
+        )}
       </div>
     </>
   );
