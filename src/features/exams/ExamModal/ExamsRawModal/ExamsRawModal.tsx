@@ -1,11 +1,16 @@
-import React from "react";
-import { useSelector } from "react-redux";
 import { Spin } from "antd";
 
+import { useAppSelector } from "src/store";
 import { filtersToDescription } from "utils/report";
 import { ReportFilterContainer } from "styles/Report.style";
 import { ExamsRawFilter } from "./Filter/ExamsRawFilter";
 import { ExamsRawList } from "./ExamsRawList/ExamsRawList";
+
+interface IExamsRawModalProps {
+  admissionNumber: number;
+  idSegment: number;
+  active: boolean;
+}
 
 const filtersConfig = {
   dateRange: { label: "Período", type: "range" },
@@ -13,17 +18,29 @@ const filtersConfig = {
   valueString: { label: "Resultado", type: "string" },
 };
 
-export function ExamsRawModal({ admissionNumber, idSegment, active }) {
-  const status = useSelector((state) => state.examsModal.raw.status);
-  const filteredStatus = useSelector(
-    (state) => state.examsModal.raw.filtered.status,
+export function ExamsRawModal({
+  admissionNumber,
+  idSegment,
+  active,
+}: IExamsRawModalProps) {
+  const status = useAppSelector(
+    (state) => (state as any).examsModal.raw.status as string
   );
-  const filters = useSelector((state) => state.examsModal.raw.filters);
+  const filteredStatus = useAppSelector(
+    (state) => (state as any).examsModal.raw.filtered.status as string
+  );
+  const filters = useAppSelector(
+    (state) => (state as any).examsModal.raw.filters
+  );
   const isLoading = status === "loading" || filteredStatus === "loading";
 
   return (
     <>
-      <ExamsRawFilter admissionNumber={admissionNumber} idSegment={idSegment} active={active} />
+      <ExamsRawFilter
+        admissionNumber={admissionNumber}
+        idSegment={idSegment}
+        active={active}
+      />
 
       <ReportFilterContainer>
         <div

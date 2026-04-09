@@ -6,7 +6,6 @@ import { Button, Tabs, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 import { ExamsRawModal } from "./ExamsRawModal/ExamsRawModal";
-
 import DefaultModal from "components/Modal";
 import { ExpandableTable } from "components/Table";
 import notification from "components/notification";
@@ -29,7 +28,7 @@ import examColumns, {
 export default function ExamsModal({ idSegment }) {
   const dispatch = useDispatch();
   const admissionNumber = useSelector(
-    (state) => state.examsModal.admissionNumber
+    (state) => state.examsModal.admissionNumber,
   );
   const list = useSelector((state) => state.examsModal.list);
   const status = useSelector((state) => state.examsModal.status);
@@ -51,7 +50,7 @@ export default function ExamsModal({ idSegment }) {
                 message: getErrorMessage(response, t),
               });
             }
-          }
+          },
         );
       }
     }
@@ -125,7 +124,6 @@ export default function ExamsModal({ idSegment }) {
       children: (
         <ExamsRawModal
           admissionNumber={admissionNumber}
-          idSegment={idSegment}
           active={activeTab === "exams_raw"}
         />
       ),
@@ -161,11 +159,7 @@ export default function ExamsModal({ idSegment }) {
       }
       style={{ top: "10px", height: "100vh" }}
     >
-      <Tabs
-        activeKey={activeTab}
-        onChange={setActiveTab}
-        items={tabs}
-      />
+      <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabs} />
 
       <ExamForm />
     </DefaultModal>

@@ -1,6 +1,29 @@
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
-export const getReportData = (datasource, filters) => {
+export interface IExamRawItem {
+  idExam: number;
+  idPatient: number;
+  dateExam: string;
+  value: string | number | null;
+  typeExam: string;
+  segExamName?: string | null;
+  segExamActive?: boolean;
+}
+
+export interface IExamRawFilters {
+  dateRange: [Dayjs, Dayjs] | [];
+  typesList: string[];
+  valueString: string;
+}
+
+export interface IExamRawReportData {
+  list: IExamRawItem[];
+}
+
+export const getReportData = (
+  datasource: IExamRawItem[],
+  filters: IExamRawFilters
+): IExamRawReportData => {
   let list = [...datasource];
 
   if (filters.dateRange && filters.dateRange.length === 2) {
