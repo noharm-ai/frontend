@@ -123,6 +123,7 @@ export default function ExamsModal({ idSegment }) {
       key: "exams_raw",
       children: (
         <ExamsRawModal
+          idSegment={idSegment}
           admissionNumber={admissionNumber}
           active={activeTab === "exams_raw"}
         />

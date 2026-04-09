@@ -1,8 +1,10 @@
 import { Spin } from "antd";
 
-import { useAppSelector } from "src/store";
+import { useAppDispatch, useAppSelector } from "src/store";
 import { filtersToDescription } from "utils/report";
 import { ReportFilterContainer } from "styles/Report.style";
+import { ExamForm } from "features/admin/Exam/ExamForm/ExamForm";
+import { fetchExamsRaw } from "../ExamModalSlice";
 import { ExamsRawFilter } from "./Filter/ExamsRawFilter";
 import { ExamsRawList } from "./ExamsRawList/ExamsRawList";
 
@@ -23,6 +25,7 @@ export function ExamsRawModal({
   idSegment,
   active,
 }: IExamsRawModalProps) {
+  const dispatch = useAppDispatch();
   const status = useAppSelector(
     (state) => (state as any).examsModal.raw.status as string
   );
@@ -52,8 +55,14 @@ export function ExamsRawModal({
       </ReportFilterContainer>
 
       <Spin spinning={isLoading}>
-        <ExamsRawList />
+        <ExamsRawList idSegment={idSegment} />
       </Spin>
+
+      <ExamForm
+        onAfterSave={() =>
+          dispatch((fetchExamsRaw as any)({ admissionNumber, idSegment }))
+        }
+      />
     </>
   );
 }

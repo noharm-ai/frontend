@@ -1,9 +1,19 @@
-import { useAppSelector } from "src/store";
+import { SettingOutlined } from "@ant-design/icons";
+
+import { useAppDispatch, useAppSelector } from "src/store";
 import { formatDateTime } from "utils/date";
 import { CardTable } from "components/Table";
+import Tooltip from "components/Tooltip";
+import Button from "components/Button";
+import { fetchExam } from "features/admin/Exam/ExamForm/ExamFormSlice";
 import { IExamRawItem } from "../transformers";
 
-export function ExamsRawList() {
+interface IExamsRawListProps {
+  idSegment: number;
+}
+
+export function ExamsRawList({ idSegment }: IExamsRawListProps) {
+  const dispatch = useAppDispatch();
   const datasource = useAppSelector(
     (state) => (state as any).examsModal.raw.filtered.result.list as IExamRawItem[]
   );
@@ -39,6 +49,21 @@ export function ExamsRawList() {
     {
       title: "Ativo",
       render: (_: unknown, record: IExamRawItem) => (record.segExamActive ? "Sim" : "Não"),
+    },
+    {
+      title: "Ações",
+      width: 80,
+      render: (_: unknown, record: IExamRawItem) => (
+        <Tooltip title="Configurar exame">
+          <Button
+            type="text"
+            icon={<SettingOutlined />}
+            onClick={() =>
+              dispatch(fetchExam({ idSegment, examType: record.typeExam }))
+            }
+          />
+        </Tooltip>
+      ),
     },
   ];
 
