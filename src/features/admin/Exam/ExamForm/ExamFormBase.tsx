@@ -134,7 +134,7 @@ export function ExamFormBase() {
           <label>Exame padrão NoHarm:</label>
         </div>
         <div className="form-input">
-          <div style={{ display: "flex" }}>
+          <div style={{ display: "flex" }} id="exam-ref-container">
             <Select
               optionFilterProp="children"
               showSearch
@@ -142,6 +142,9 @@ export function ExamFormBase() {
               placeholder="Selecione o exame correspondente..."
               onChange={(value) => setFieldValue("tpExamRef", value)}
               loading={globalExamsStatus === "loading"}
+              getPopupContainer={() =>
+                document.getElementById("exam-ref-container") || document.body
+              }
             >
               {globalExams &&
                 globalExams.map((item: any) => (
