@@ -101,6 +101,7 @@ export default function ExamsModal({ idSegment }) {
               options={nameOptions}
               value={selectedNames}
               onChange={setSelectedNames}
+              popupMatchSelectWidth={false}
             />
             <Checkbox
               checked={showOnlyConfigured}

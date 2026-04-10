@@ -5,6 +5,7 @@ import { SettingOutlined } from "@ant-design/icons";
 import NumericValue from "components/NumericValue";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
+import Tag from "components/Tag";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
 
@@ -48,12 +49,7 @@ const columns = (t, sortedInfo) => {
       dataIndex: "ref",
       align: "left",
     },
-    {
-      title: "Origem",
-      dataIndex: "source",
-      align: "center",
-      hidden: !PermissionService().has(Permission.MAINTAINER),
-    },
+
     {
       title: t("tableHeader.date"),
       dataIndex: "date",
@@ -63,6 +59,23 @@ const columns = (t, sortedInfo) => {
       render: (text, record) => {
         return format(new Date(record.date), "dd/MM/yyyy HH:mm");
       },
+    },
+    {
+      title: "Origem",
+      dataIndex: "source",
+      align: "center",
+      hidden: !PermissionService().has(Permission.MAINTAINER),
+    },
+    {
+      title: "Configurado",
+      dataIndex: "configured",
+      align: "center",
+      render: (configured) =>
+        configured ? (
+          <Tag color="green">Sim</Tag>
+        ) : (
+          <Tag color="default">Não</Tag>
+        ),
     },
   ];
 
