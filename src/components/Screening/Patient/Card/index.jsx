@@ -341,7 +341,10 @@ export default function PatientCard({
       });
     }
 
-    if (PermissionService().has(Permission.READ_DISCHARGE_SUMMARY)) {
+    if (
+      PermissionService().has(Permission.READ_DISCHARGE_SUMMARY) &&
+      !featureService.hasPrimaryCare()
+    ) {
       items.push({
         key: "dischargeSummary",
         label: t("patientCard.openDischargeSummary"),
