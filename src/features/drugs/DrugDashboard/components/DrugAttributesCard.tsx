@@ -22,14 +22,22 @@ export function DrugAttributesCard({
 }: DrugAttributesCardProps) {
   return (
     <Card title="Substância e Atributos" type="inner">
-      <Divider>Substância</Divider>
+      <Divider titlePlacement="left">Substância</Divider>
 
-      <DrugSubstance
-        idDrug={idDrug}
-        sctidA={sctid ?? null}
-        sctNameA={sctName ?? null}
-        onAfterSave={onAfterSave}
-      />
+      <div
+        style={{
+          background: "#fafafa",
+          borderRadius: "8px",
+          padding: "1rem 1.5rem",
+        }}
+      >
+        <DrugSubstance
+          idDrug={idDrug}
+          sctidA={sctid ?? null}
+          sctNameA={sctName ?? null}
+          onAfterSave={onAfterSave}
+        />
+      </div>
 
       <DrugAttributesForm
         idSegment={idSegment}
