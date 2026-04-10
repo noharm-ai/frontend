@@ -113,7 +113,7 @@ export default function ExamsModal({ idSegment }) {
           <ExpandableTable
             columns={examColumns(t, sortOrder)}
             showSorterTooltip={false}
-            pagination={{ showSizeChanger: true }}
+            pagination={false}
             loading={status === "loading"}
             locale={{
               emptyText: (
