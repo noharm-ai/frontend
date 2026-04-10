@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import { Upload, notification, Space } from "antd";
+import { Upload, notification, Space, Divider } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
 import { Select, Input } from "components/Inputs";
@@ -10,6 +10,7 @@ import Editor from "components/Editor";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import IntegrationStatus from "models/IntegrationStatus";
+import { ReportsForm } from "./ReportsForm/ReportsForm";
 
 function BaseForm() {
   const { t } = useTranslation();
@@ -85,6 +86,9 @@ function BaseForm() {
             <Select.Option key={4} value="Sugestão">
               Sugestão
             </Select.Option>
+            <Select.Option key={6} value="Relatórios">
+              Relatórios
+            </Select.Option>
             {integrationStatus === IntegrationStatus.INTEGRATION && (
               <Select.Option key={5} value="Validação">
                 Validação
@@ -140,6 +144,13 @@ function BaseForm() {
               implantação da plataforma. Não utilizar após período de validação.
             </>
           )}
+          {values.category === "Relatórios" && (
+            <>
+              Solicitações relacionadas a relatórios: criação de novos, erros
+              em relatórios existentes, dúvidas ou alterações em relatórios já
+              disponíveis.
+            </>
+          )}
         </div>
         {errors.category && touched.category && (
           <div className="form-error">{errors.category}</div>
@@ -167,25 +178,34 @@ function BaseForm() {
         )}
       </div>
 
-      <div
-        className={`form-row ${
-          errors.description && touched.description ? "error" : ""
-        }`}
-      >
-        <div className="form-label">
-          <label>{t("labels.message")}:</label>
-        </div>
-        <div className="form-input">
-          <Editor
-            onEdit={(value) => setFieldValue("description", value)}
-            content={values.description || ""}
-          />
-        </div>
+      {values.category !== "Relatórios" && (
+        <div
+          className={`form-row ${
+            errors.description && touched.description ? "error" : ""
+          }`}
+        >
+          <div className="form-label">
+            <label>{t("labels.message")}:</label>
+          </div>
+          <div className="form-input">
+            <Editor
+              onEdit={(value) => setFieldValue("description", value)}
+              content={values.description || ""}
+            />
+          </div>
 
-        {errors.description && touched.description && (
-          <div className="form-error">{errors.description}</div>
-        )}
-      </div>
+          {errors.description && touched.description && (
+            <div className="form-error">{errors.description}</div>
+          )}
+        </div>
+      )}
+
+      {values.category === "Relatórios" && (
+        <>
+          <Divider />
+          <ReportsForm />
+        </>
+      )}
 
       {(values.category === "Integração fora do ar" ||
         values.category === "Erro") && (

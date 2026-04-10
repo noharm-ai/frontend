@@ -1026,5 +1026,52 @@
     "validationEmpty": "The care plan cannot be empty.",
     "saveSuccess": "Care plan saved successfully!",
     "saveError": "Error saving the care plan."
+  },
+  "support": {
+    "reports": {
+      "sectionTitle": "Report details",
+      "alertMessage": "The requested information must be recorded in NoHarm for it to be possible to create the report. Please verify that the data you need is part of our system.",
+      "requestType": "What kind of request is this?",
+      "requestTypeOptions": {
+        "novo": "New report",
+        "erro": "Error in existing report",
+        "duvida": "Question about a report",
+        "alteracao": "Change to existing report"
+      },
+      "novo": {
+        "objective": "What is the objective and how will it be used in the workflow?",
+        "similarReport": "Is there an existing similar report?",
+        "similarReportName": "Which report?",
+        "similarReportDiff": "What needs to be different?",
+        "period": "What time period does this report need to cover?",
+        "periodDays": "days",
+        "periodOther": "Other",
+        "periodOtherPlaceholder": "Define the period",
+        "extraFilters": "Are there any extra filters? (e.g. ward, segment, age) Which ones?",
+        "columnsTitle": "Spreadsheet structure",
+        "columnsDescription": "List the columns your report should contain: provide each column's name and an example value. This mapping is essential for our team to understand the exact format expected and build the report correctly — the more detail you provide, the better.",
+        "columnName": "Column name",
+        "columnExample": "Example value",
+        "addColumn": "Add column",
+        "removeColumn": "Remove"
+      },
+      "erro": {
+        "reportName": "Which report has the error?",
+        "errorDescription": "What happens? Describe the expected vs. actual behavior"
+      },
+      "duvida": {
+        "reportName": "Which report? (optional)",
+        "question": "What is your question?"
+      },
+      "alteracao": {
+        "reportName": "Which report?",
+        "changeDescription": "What needs to change?",
+        "changeReason": "What is the goal/reason for the change?"
+      },
+      "additionalInfo": "Is there anything else you would like to share?",
+      "additionalInfoPlaceholder": "Describe any additional details that may help...",
+      "printRequest": "Report screenshot",
+      "printUploadButton": "Attach screenshot"
+    }
   }
 }

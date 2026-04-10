@@ -28,7 +28,11 @@ export default function SupportForm() {
     category: Yup.string().nullable().required(t("validation.requiredField")),
     description: Yup.string()
       .nullable()
-      .required(t("validation.requiredField")),
+      .when("category", {
+        is: "Relatórios",
+        then: (schema) => schema.notRequired(),
+        otherwise: (schema) => schema.required(t("validation.requiredField")),
+      }),
     fileList: Yup.array().of(
       Yup.mixed()
         .nullable()
@@ -52,6 +56,22 @@ export default function SupportForm() {
     fileList: [],
     admissionNumberExamples: null,
     prescriptionNumberExamples: null,
+    reportFields: {
+      requestType: null,
+      objective: null,
+      similarReport: null,
+      similarReportName: null,
+      similarReportDiff: null,
+      period: null,
+      extraFilters: null,
+      columns: [],
+      reportName: null,
+      errorDescription: null,
+      question: null,
+      changeDescription: null,
+      changeReason: null,
+      additionalInfo: null,
+    },
   };
 
   const goToSupportCenter = () => {
@@ -76,6 +96,65 @@ export default function SupportForm() {
 
     if (evidences !== "") {
       payload.description += `<hr/><br/<br/><h4>Exemplos:</h4> ${evidences}`;
+    }
+
+    if (params.category === "Relatórios" && params.reportFields) {
+      if (!payload.description) {
+        payload.description = "Chamado de relatório — detalhes abaixo.";
+      }
+
+      const rf = params.reportFields;
+      const TYPE_LABELS = {
+        novo: "Novo relatório",
+        erro: "Erro em relatório existente",
+        duvida: "Dúvida sobre relatório",
+        alteracao: "Alteração em relatório existente",
+      };
+
+      let reportHtml = `<hr/><br/><h4>Detalhes do chamado de Relatórios</h4>`;
+      reportHtml += `<strong>Tipo:</strong> ${TYPE_LABELS[rf.requestType] ?? rf.requestType}<br/><br/>`;
+
+      if (rf.requestType === "novo") {
+        reportHtml += `<strong>Objetivo:</strong><br/>${rf.objective ?? ""}<br/><br/>`;
+        reportHtml += `<strong>Relatório parecido?</strong> ${rf.similarReport === "sim" ? "Sim" : "Não"}<br/>`;
+        if (rf.similarReport === "sim") {
+          reportHtml += `<strong>Qual:</strong> ${rf.similarReportName ?? ""}<br/>`;
+          reportHtml += `<strong>Diferença:</strong><br/>${rf.similarReportDiff ?? ""}<br/>`;
+        }
+        reportHtml += `<br/><strong>Período:</strong> ${rf.period ?? ""}<br/>`;
+        reportHtml += `<strong>Filtros extras:</strong><br/>${rf.extraFilters ?? ""}<br/>`;
+        if (rf.columns?.length > 0) {
+          reportHtml += `<br/><strong>Estrutura da planilha:</strong><br/>`;
+          reportHtml += `<table border="1" cellpadding="4" style="border-collapse:collapse;"><thead><tr><th>Coluna</th><th>Exemplo</th></tr></thead><tbody>`;
+          rf.columns.forEach((col) => {
+            reportHtml += `<tr><td>${col.name}</td><td>${col.example}</td></tr>`;
+          });
+          reportHtml += `</tbody></table>`;
+        }
+      }
+
+      if (rf.requestType === "erro") {
+        reportHtml += `<strong>Relatório:</strong> ${rf.reportName ?? ""}<br/>`;
+        reportHtml += `<strong>Descrição do erro:</strong><br/>${rf.errorDescription ?? ""}<br/>`;
+      }
+
+      if (rf.requestType === "duvida") {
+        if (rf.reportName)
+          reportHtml += `<strong>Relatório:</strong> ${rf.reportName}<br/>`;
+        reportHtml += `<strong>Dúvida:</strong><br/>${rf.question ?? ""}<br/>`;
+      }
+
+      if (rf.requestType === "alteracao") {
+        reportHtml += `<strong>Relatório:</strong> ${rf.reportName ?? ""}<br/>`;
+        reportHtml += `<strong>O que alterar:</strong><br/>${rf.changeDescription ?? ""}<br/>`;
+        reportHtml += `<strong>Objetivo/motivo:</strong><br/>${rf.changeReason ?? ""}<br/>`;
+      }
+
+      if (rf.additionalInfo) {
+        reportHtml += `<br/><strong>Informações adicionais:</strong><br/>${rf.additionalInfo}<br/>`;
+      }
+
+      payload.description += reportHtml;
     }
 
     dispatch(createTicket(payload)).then((response) => {

@@ -1033,5 +1033,52 @@
     "validationEmpty": "O plano de cuidado não pode estar vazio.",
     "saveSuccess": "Plano de cuidado salvo com sucesso!",
     "saveError": "Erro ao salvar o plano de cuidado."
+  },
+  "support": {
+    "reports": {
+      "sectionTitle": "Detalhes do relatório",
+      "alertMessage": "As informações solicitadas precisam estar registradas na NoHarm para que seja possível criar o relatório. Verifique se os dados que você precisa fazem parte do nosso sistema.",
+      "requestType": "Qual é o tipo da solicitação?",
+      "requestTypeOptions": {
+        "novo": "Novo relatório",
+        "erro": "Erro em relatório existente",
+        "duvida": "Dúvida sobre relatório",
+        "alteracao": "Alteração em relatório existente"
+      },
+      "novo": {
+        "objective": "Qual o objetivo e como vai ser usado no fluxo de trabalho?",
+        "similarReport": "Já existe algum relatório parecido?",
+        "similarReportName": "Qual relatório?",
+        "similarReportDiff": "O que precisa de diferente?",
+        "period": "Qual período este relatório precisa consultar?",
+        "periodDays": "dias",
+        "periodOther": "Outro",
+        "periodOtherPlaceholder": "Defina o período",
+        "extraFilters": "Existe algum filtro extra? (ex: setor, segmento, idade) Quais?",
+        "columnsTitle": "Estrutura da planilha",
+        "columnsDescription": "Descreva abaixo as colunas que o relatório deve conter: informe o nome de cada coluna e um exemplo de valor. Esse mapeamento é fundamental para que nossa equipe entenda exatamente o formato esperado e consiga construir o relatório corretamente — quanto mais detalhado, melhor.",
+        "columnName": "Nome da coluna",
+        "columnExample": "Exemplo de valor",
+        "addColumn": "Adicionar coluna",
+        "removeColumn": "Remover"
+      },
+      "erro": {
+        "reportName": "Em qual relatório ocorre o erro?",
+        "errorDescription": "O que acontece? Descreva o comportamento esperado vs. atual"
+      },
+      "duvida": {
+        "reportName": "Em qual relatório? (opcional)",
+        "question": "Qual é a sua dúvida?"
+      },
+      "alteracao": {
+        "reportName": "Em qual relatório?",
+        "changeDescription": "O que precisa alterar?",
+        "changeReason": "Qual o objetivo/motivo da alteração?"
+      },
+      "additionalInfo": "Tem mais alguma informação para compartilhar?",
+      "additionalInfoPlaceholder": "Descreva qualquer detalhe adicional que possa ajudar...",
+      "printRequest": "Print do relatório",
+      "printUploadButton": "Anexar print"
+    }
   }
 }
