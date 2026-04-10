@@ -8,14 +8,14 @@ import { AdvancedFilterContext } from "components/AdvancedFilter";
 
 export default function MainFilters() {
   const drugs = useSelector(
-    (state) => state.reportsArea.antimicrobialHistory.filterData.drugs
+    (state) => state.reportsArea.drugHistory.filterData.drugs
   );
   const substances = useSelector(
-    (state) => state.reportsArea.antimicrobialHistory.filterData.substances
+    (state) => state.reportsArea.drugHistory.filterData.substances
   );
 
   const status = useSelector(
-    (state) => state.reportsArea.antimicrobialHistory.status
+    (state) => state.reportsArea.drugHistory.status
   );
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
 

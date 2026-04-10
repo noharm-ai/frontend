@@ -23,7 +23,7 @@ const ExpandColumn = ({ expand, toggleExpansion }) => {
 export default function HistoryList() {
   const [expandedRows, setExpandedRows] = useState([]);
   const datasource = useSelector(
-    (state) => state.reportsArea.antimicrobialHistory.filtered.result.list,
+    (state) => state.reportsArea.drugHistory.filtered.result.list,
   );
 
   const updateExpandedRows = (list, key) => {

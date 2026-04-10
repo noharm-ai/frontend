@@ -22,10 +22,10 @@ const initialState = {
 };
 
 export const fetchReportData = createAsyncThunk(
-  "reports-antimicro-history/fetch-data",
+  "reports-drug-history/fetch-data",
   async (params, thunkAPI) => {
     try {
-      const response = await api.live.getAntimicrobialHistoryReport(params);
+      const response = await api.live.getDrugAttributeHistoryReport(params);
 
       return response.data;
     } catch (err) {
@@ -35,8 +35,8 @@ export const fetchReportData = createAsyncThunk(
   }
 );
 
-const antimicrobialHistoryReportSlice = createSlice({
-  name: "antimicrobialHistoryReport",
+const drugHistoryReportSlice = createSlice({
+  name: "drugHistoryReport",
   initialState,
   reducers: {
     reset() {
@@ -76,6 +76,6 @@ const antimicrobialHistoryReportSlice = createSlice({
 });
 
 export const { reset, setFilters, setFilteredResult, setFilteredStatus } =
-  antimicrobialHistoryReportSlice.actions;
+  drugHistoryReportSlice.actions;
 
-export default antimicrobialHistoryReportSlice.reducer;
+export default drugHistoryReportSlice.reducer;

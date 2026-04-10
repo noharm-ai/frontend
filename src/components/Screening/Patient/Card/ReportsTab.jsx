@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { PieChartOutlined } from "@ant-design/icons";
+import { Dropdown } from "antd";
 
 import Tooltip from "components/Tooltip";
 import ViewReport from "components/Reports/ViewReport";
@@ -37,13 +38,11 @@ export default function ReportsTab({ prescription }) {
         admissionReportsInternal.indexOf("CULTURE") !== -1,
     },
     {
-      title: "Histórico de Antimicrobianos",
-      description: "Histórico de uso de antimicrobianos",
-      type: "ANTIMICROBIAL_HISTORY",
+      title: "Histórico de Medicamentos",
+      description: "Histórico de uso de medicamentos (por tipo).",
+      type: "MEDICATION_HISTORY",
       track: TrackedReport.ANTIMICROBIAL_HISTORY,
-      visible:
-        admissionReportsInternal &&
-        admissionReportsInternal.indexOf("ANTIMICROBIAL_HISTORY") !== -1,
+      visible: true,
     },
     {
       title: "Histórico de Eventos",
@@ -68,10 +67,11 @@ export default function ReportsTab({ prescription }) {
     },
   ];
 
-  const open = (type, track) => {
+  const open = (type, track, attribute) => {
     setCurrentReport({
       title: null,
       type,
+      attribute,
     });
     if (track) {
       trackReport(track);
@@ -85,13 +85,40 @@ export default function ReportsTab({ prescription }) {
           <ul className="report-list">
             {internalReports
               .filter((r) => r.visible)
-              .map((r) => (
-                <Tooltip title={r.description} key={r.description}>
-                  <li onClick={() => open(r.type, r.track)}>
-                    <PieChartOutlined style={{ fontSize: "18px" }} /> {r.title}
-                  </li>
-                </Tooltip>
-              ))}
+              .map((r) => {
+                if (r.type === "MEDICATION_HISTORY") {
+                  return (
+                    <Tooltip title={r.description} key={r.description}>
+                      <Dropdown
+                        trigger={["click"]}
+                        menu={{
+                          items: [
+                            { key: "antimicro", label: "Antimicrobianos" },
+                            { key: "mav", label: "Alta vigilância" },
+                            { key: "controlled", label: "Controlados" },
+                            { key: "chemo", label: "Quimioterápicos" },
+                          ],
+                          onClick: ({ key }) =>
+                            open("ANTIMICROBIAL_HISTORY", r.track, key),
+                        }}
+                      >
+                        <li>
+                          <PieChartOutlined style={{ fontSize: "18px" }} />{" "}
+                          {r.title}
+                        </li>
+                      </Dropdown>
+                    </Tooltip>
+                  );
+                }
+                return (
+                  <Tooltip title={r.description} key={r.description}>
+                    <li onClick={() => open(r.type, r.track, r.attribute)}>
+                      <PieChartOutlined style={{ fontSize: "18px" }} />{" "}
+                      {r.title}
+                    </li>
+                  </Tooltip>
+                );
+              })}
             {admissionReports &&
               admissionReports.map((r) => (
                 <Tooltip title={r.description} key={r.description}>

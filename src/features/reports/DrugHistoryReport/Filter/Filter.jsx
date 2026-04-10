@@ -18,23 +18,23 @@ import {
   setFilteredStatus,
   setFilteredResult,
   setFilters,
-} from "../AntimicrobialHistoryReportSlice";
+} from "../DrugHistoryReportSlice";
 import { getReportData } from "../transformers";
 import { exportCSV } from "utils/report";
 import MainFilters from "./MainFilters";
 import { onBeforePrint, onAfterPrint } from "utils/report";
 
-export default function Filter({ printRef, admissionNumber }) {
+export default function Filter({ printRef, admissionNumber, attribute }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const isFetching =
-    useSelector((state) => state.reportsArea.antimicrobialHistory.status) ===
+    useSelector((state) => state.reportsArea.drugHistory.status) ===
     "loading";
   const datasource = useSelector(
-    (state) => state.reportsArea.antimicrobialHistory.list,
+    (state) => state.reportsArea.drugHistory.list,
   );
   const filteredList = useSelector(
-    (state) => state.reportsArea.antimicrobialHistory.filtered.result.list,
+    (state) => state.reportsArea.drugHistory.filtered.result.list,
   );
   const handlePrint = useReactToPrint({
     contentRef: printRef,
@@ -65,7 +65,7 @@ export default function Filter({ printRef, admissionNumber }) {
 
   useEffect(() => {
     const fetchData = () => {
-      dispatch(fetchReportData({ admissionNumber })).then((response) => {
+      dispatch(fetchReportData({ admissionNumber, attribute })).then((response) => {
         if (response.error) {
           DefaultModal.confirm({
             title: "Não foi possível exibir este relatório.",

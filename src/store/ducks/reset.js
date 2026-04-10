@@ -50,7 +50,7 @@ import { reset as interventionReportReset } from "features/reports/InterventionR
 import { reset as prescriptionAuditReportReset } from "features/reports/PrescriptionAuditReport/PrescriptionAuditReportSlice";
 import { reset as economyReportReset } from "features/reports/EconomyReport/EconomyReportSlice";
 import { reset as cultureReportReset } from "features/reports/CultureReport/CultureReportSlice";
-import { reset as antimicrobialHistoryReportReset } from "features/reports/AntimicrobialHistoryReport/AntimicrobialHistoryReportSlice";
+import { reset as drugHistoryReportReset } from "features/reports/DrugHistoryReport/DrugHistoryReportSlice";
 import { reset as prescriptionHistoryReportReset } from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReportSlice";
 import { reset as alertListReportReset } from "features/reports/AlertListReport/AlertListReportSlice";
 import { reset as examsRawSearchReset } from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
@@ -127,7 +127,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(prescriptionAuditReportReset());
   dispatch(economyReportReset());
   dispatch(cultureReportReset());
-  dispatch(antimicrobialHistoryReportReset());
+  dispatch(drugHistoryReportReset());
   dispatch(prescriptionHistoryReportReset());
   dispatch(alertListReportReset());
   dispatch(examsRawSearchReset());
