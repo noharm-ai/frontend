@@ -65,7 +65,13 @@ export default function ExamsModal({ idSegment }) {
   };
 
   const onConfigure = (record) => {
-    dispatch(setAdminExam({ idSegment, type: record.key }));
+    if (record.configured) {
+      dispatch(setAdminExam({ idSegment, type: record.key }));
+    } else {
+      dispatch(
+        setAdminExam({ idSegment, type: record.key, new: true, active: true }),
+      );
+    }
   };
 
   const numericExams = list.filter((e) => !e.text);
