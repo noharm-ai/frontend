@@ -11,7 +11,13 @@ import notification from "components/notification";
 
 import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from "utils/memory";
 
-export default function Signature({ fetchMemory, saveMemory, memory, userId }) {
+export default function Signature({
+  fetchMemory,
+  saveMemory,
+  setUserAccountField,
+  memory,
+  userId,
+}) {
   const { t } = useTranslation();
   const [editedSignature, setSignature] = useState(null);
   const { isFetching, list: memoryData } = memory;
@@ -25,11 +31,12 @@ export default function Signature({ fetchMemory, saveMemory, memory, userId }) {
 
   useEffect(() => {
     if (success) {
+      setUserAccountField({ signature });
       notification.success({
         message: "Uhu! Assinatura salva com sucesso! :)",
       });
     }
-  }, [success]);
+  }, [success]); //eslint-disable-line
 
   useEffect(() => {
     if (error) {

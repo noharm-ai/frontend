@@ -7,6 +7,7 @@ export const { Types, Creators } = createActions({
   userLogout: [""],
   userSetLoginStart: [""],
   userSetCurrentUser: ["account", "keepMeLogged"],
+  userSetAccountField: ["fields"],
   userSaveStart: [""],
   userSaveError: ["error"],
   userSaveSuccess: [""],
@@ -80,6 +81,14 @@ const setCurrentUser = (state = INITIAL_STATE, { account, keepMeLogged }) => ({
   },
 });
 
+const setAccountField = (state = INITIAL_STATE, { fields }) => ({
+  ...state,
+  account: {
+    ...state.account,
+    ...fields,
+  },
+});
+
 const logout = (state = INITIAL_STATE) => ({
   ...state,
   ...INITIAL_STATE,
@@ -89,6 +98,7 @@ const HANDLERS = {
   [Types.USER_LOGOUT]: logout,
   [Types.USER_SET_LOGIN_START]: setLoginStart,
   [Types.USER_SET_CURRENT_USER]: setCurrentUser,
+  [Types.USER_SET_ACCOUNT_FIELD]: setAccountField,
   [Types.USER_SAVE_START]: saveStart,
   [Types.USER_SAVE_ERROR]: saveError,
   [Types.USER_SAVE_SUCCESS]: saveSuccess,
