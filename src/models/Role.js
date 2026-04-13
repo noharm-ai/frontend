@@ -9,6 +9,7 @@ export default class Role {
   static REGULATOR = "REGULATOR";
   static SUPPORT_REQUESTER = "SUPPORT_REQUESTER";
   static SUPPORT_MANAGER = "SUPPORT_MANAGER";
+  static DISCHARGE_MANAGER = "DISCHARGE_MANAGER";
 
   static getNewRoles(t, features) {
     const roles = [
@@ -42,6 +43,14 @@ export default class Role {
         id: Role.REGULATOR,
         label: t(`roles.${Role.REGULATOR}`),
         description: t(`rolesDescription.${Role.REGULATOR}`),
+      });
+    }
+
+    if (!features || features.indexOf(Feature.DISCHARGE_SUMMARY) !== -1) {
+      roles.push({
+        id: Role.DISCHARGE_MANAGER,
+        label: t(`roles.${Role.DISCHARGE_MANAGER}`),
+        description: t(`rolesDescription.${Role.DISCHARGE_MANAGER}`),
       });
     }
 
