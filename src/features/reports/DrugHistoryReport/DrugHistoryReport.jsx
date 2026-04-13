@@ -14,16 +14,24 @@ import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
 import HistoryList from "./HistoryList/HistoryList";
 
-export default function AntimicrobialHistoryReport({ prescription }) {
-  const status = useSelector(
-    (state) => state.reportsArea.antimicrobialHistory.status
-  );
+const ATTRIBUTE_LABELS = {
+  antimicro: "Antimicrobianos",
+  mav: "Alta vigilância",
+  controlled: "Controlados",
+  notdefault: "Não Padronizados",
+  elderly: "Inapropriado para idosos",
+  whiteList: "Sem validação",
+  chemo: "Quimioterápico",
+  dialyzable: "Dializável",
+};
+
+export default function DrugHistoryReport({ prescription, attribute }) {
+  const attributeLabel = ATTRIBUTE_LABELS[attribute] ?? attribute;
+  const status = useSelector((state) => state.reportsArea.drugHistory.status);
   const filteredStatus = useSelector(
-    (state) => state.reportsArea.antimicrobialHistory.filtered.status
+    (state) => state.reportsArea.drugHistory.filtered.status,
   );
-  const filters = useSelector(
-    (state) => state.reportsArea.antimicrobialHistory.filters
-  );
+  const filters = useSelector((state) => state.reportsArea.drugHistory.filters);
   const printRef = useRef(null);
   const isLoading = status === "loading" || filteredStatus === "loading";
   const filtersConfig = {
@@ -46,7 +54,7 @@ export default function AntimicrobialHistoryReport({ prescription }) {
       <PageHeader>
         <div>
           <h1 className="page-header-title">
-            Relatório: Histórico de Antimicrobianos{" "}
+            Relatório: Histórico de {attributeLabel}{" "}
           </h1>
         </div>
       </PageHeader>
@@ -55,11 +63,12 @@ export default function AntimicrobialHistoryReport({ prescription }) {
         <Filter
           printRef={printRef}
           admissionNumber={prescription.admissionNumber}
+          attribute={attribute}
         />
 
         <div ref={printRef}>
           <ReportHeader className="report-header">
-            <h1>Relatório: Histórico de Antimicrobianos</h1>
+            <h1>Relatório: Histórico de {attributeLabel}</h1>
             <div className="brand">
               <Brand />
             </div>

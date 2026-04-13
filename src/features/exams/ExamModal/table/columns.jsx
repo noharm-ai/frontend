@@ -1,7 +1,11 @@
 import React from "react";
 import { format } from "date-fns";
+import { SettingOutlined } from "@ant-design/icons";
 
 import NumericValue from "components/NumericValue";
+import Tooltip from "components/Tooltip";
+import Button from "components/Button";
+import Tag from "components/Tag";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
 
@@ -9,7 +13,7 @@ import ValuedExams from "./ValuedExams";
 import TextualExams from "./TextualExams";
 
 const columns = (t, sortedInfo) => {
-  return [
+  const cols = [
     {
       title: t("tableHeader.exam"),
       dataIndex: "name",
@@ -45,12 +49,7 @@ const columns = (t, sortedInfo) => {
       dataIndex: "ref",
       align: "left",
     },
-    {
-      title: "Origem",
-      dataIndex: "source",
-      align: "center",
-      hidden: !PermissionService().has(Permission.MAINTAINER),
-    },
+
     {
       title: t("tableHeader.date"),
       dataIndex: "date",
@@ -61,11 +60,49 @@ const columns = (t, sortedInfo) => {
         return format(new Date(record.date), "dd/MM/yyyy HH:mm");
       },
     },
+    {
+      title: "Origem",
+      dataIndex: "source",
+      align: "center",
+      hidden: !PermissionService().has(Permission.MAINTAINER),
+    },
+    {
+      title: "Configurado",
+      dataIndex: "configured",
+      align: "center",
+      render: (configured) =>
+        configured ? (
+          <Tag color="green">Sim</Tag>
+        ) : (
+          <Tag color="default">Não</Tag>
+        ),
+    },
   ];
+
+  if (PermissionService().has(Permission.ADMIN_EXAMS)) {
+    cols.push({
+      title: "Ações",
+      key: "operations",
+      width: 70,
+      align: "center",
+      render: (text, record) => (
+        <Tooltip title="Configurar exame">
+          <Button
+            type="primary"
+            icon={<SettingOutlined />}
+            onClick={() => record.onConfigure(record)}
+            ghost={record.configured}
+          />
+        </Tooltip>
+      ),
+    });
+  }
+
+  return cols;
 };
 
 export const textualColumns = (t, sortedInfo) => {
-  return [
+  const cols = [
     {
       title: t("tableHeader.exam"),
       dataIndex: "name",
@@ -89,6 +126,8 @@ export const textualColumns = (t, sortedInfo) => {
       },
     },
   ];
+
+  return cols;
 };
 
 export const examRowClassName = (record) => {

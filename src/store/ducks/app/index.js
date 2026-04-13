@@ -15,9 +15,6 @@ export const { Types, Creators } = createActions({
 });
 
 const INITIAL_STATE = {
-  data: {
-    hospitals: [],
-  },
   config: {
     nameUrl: null,
     logoutUrl: null,

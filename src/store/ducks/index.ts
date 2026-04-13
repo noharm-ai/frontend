@@ -59,6 +59,7 @@ import adminReport from "features/admin/Report/ReportSlice";
 import adminKnowledgeBase from "features/admin/KnowledgeBase/KnowledgeBaseSlice";
 import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
 import adminGlobalExam from "features/admin/GlobalExam/GlobalExamSlice";
+import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
 
 import regulationPrioritizationSlice from "features/regulation/Prioritization/PrioritizationSlice";
 import regulationSlice from "features/regulation/Regulation/RegulationSlice";
@@ -75,7 +76,7 @@ import reportInterventionReport from "features/reports/InterventionReport/Interv
 import reportPrescriptionAuditReport from "features/reports/PrescriptionAuditReport/PrescriptionAuditReportSlice";
 import reportEconomyReport from "features/reports/EconomyReport/EconomyReportSlice";
 import reportCultureReport from "features/reports/CultureReport/CultureReportSlice";
-import reportAntimicrobialHistoryReport from "features/reports/AntimicrobialHistoryReport/AntimicrobialHistoryReportSlice";
+import reportDrugHistoryReport from "features/reports/DrugHistoryReport/DrugHistoryReportSlice";
 import reportPrescriptionHistoryReport from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReportSlice";
 import reportAlertListReport from "features/reports/AlertListReport/AlertListReportSlice";
 import reportExamsRawSearchReport from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
@@ -93,6 +94,7 @@ const adminReducers = combineReducers({
   integrationRemote: adminIntegrationRemote,
   segment: adminSegment,
   exam: adminExam,
+  examForm: adminExamForm,
   frequency: adminFrequency,
   unitConversion: adminUnitConversion,
   substance: adminSubstance,
@@ -125,7 +127,7 @@ const reportReducers = combineReducers({
   prescriptionAudit: reportPrescriptionAuditReport,
   economy: reportEconomyReport,
   culture: reportCultureReport,
-  antimicrobialHistory: reportAntimicrobialHistoryReport,
+  drugHistory: reportDrugHistoryReport,
   prescriptionHistory: reportPrescriptionHistoryReport,
   examsRawSearch: reportExamsRawSearchReport,
   patientObservation: reportPatientObservationReport,

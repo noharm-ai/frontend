@@ -14,6 +14,8 @@ import Button from "components/Button";
 import { toDataSource } from "utils";
 import { getErrorMessage } from "utils/errorHandler";
 import Role from "models/Role";
+import Feature from "models/Feature";
+import { FeatureService } from "services/FeatureService";
 import columns from "./columns";
 import { fetchUsers, reset, setUser } from "./UserAdminSlice";
 import UserAdminForm from "./Form/UserAdminForm";
@@ -36,6 +38,10 @@ const filterList = (ds, filter) => {
       show = show && intersection(filter.roles, i.roles).length > 0;
     }
 
+    if (filter.segments.length) {
+      show = show && intersection(filter.segments, i.segments).length > 0;
+    }
+
     return show;
   });
 };
@@ -46,9 +52,11 @@ export default function UserAdmin() {
 
   const list = useSelector((state) => state.userAdmin.list);
   const status = useSelector((state) => state.userAdmin.status);
+  const segments = useSelector((state) => state.segments.list);
   const [filter, setFilter] = useState({
     status: null,
     roles: [],
+    segments: [],
   });
 
   const emptyText = (
@@ -139,6 +147,27 @@ export default function UserAdmin() {
               ))}
             </Select>
           </div>
+
+          {FeatureService.has(Feature.AUTHORIZATION_SEGMENT) && (
+            <div className="filter-field">
+              <label>Segmento</label>
+              <Select
+                onChange={(val) => setFilter({ ...filter, segments: val })}
+                placeholder="Filtrar por segmento"
+                allowClear
+                style={{ minWidth: "200px" }}
+                optionFilterProp="children"
+                loading={status === "loading"}
+                mode="multiple"
+              >
+                {segments.map(({ id, description }) => (
+                  <Select.Option value={id} key={id}>
+                    {description}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+          )}
         </ExtraFilters>
         <div style={{ paddingRight: "5px" }}>
           {status !== "loading" && `${ds.length} registros`}

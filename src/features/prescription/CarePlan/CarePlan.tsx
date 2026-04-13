@@ -68,6 +68,9 @@ export function CarePlan({
   const prescriptionData = useSelector(
     (state: any) => state.prescriptions.single.data,
   );
+  const userSignature = useSelector(
+    (state: any) => state.user.account.signature,
+  );
   const editorRef = useRef<EditorHandle | null>(null);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [activeTab, setActiveTab] = React.useState("texts");
@@ -87,10 +90,10 @@ export function CarePlan({
   useEffect(() => {
     if (open && isReady && editorRef.current) {
       editorRef.current.setContent(
-        processCarePlanTemplate(baseTemplate, prescriptionData),
+        processCarePlanTemplate(baseTemplate, prescriptionData, userSignature),
       );
     }
-  }, [open, isReady, baseTemplate, prescriptionData]);
+  }, [open, isReady, baseTemplate, prescriptionData, userSignature]);
 
   const handleClose = useCallback(() => {
     dispatch(setCarePlanOpen(false));
@@ -104,11 +107,11 @@ export function CarePlan({
   const applyTemplate = useCallback(
     (content: string) => {
       editorRef.current?.setContent(
-        processCarePlanTemplate(content, prescriptionData),
+        processCarePlanTemplate(content, prescriptionData, userSignature),
       );
       notification.success({ message: t("carePlan.templateApplied") });
     },
-    [t, prescriptionData],
+    [t, prescriptionData, userSignature],
   );
 
   const handleClear = useCallback(() => {

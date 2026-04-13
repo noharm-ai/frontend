@@ -12,6 +12,7 @@ import { setCurrentPage } from "./UnitConversionSlice";
 import UnitCard from "./UnitCard/UnitCard";
 import Actions from "./Actions/Actions";
 import DrugReferenceDrawer from "../DrugReferenceDrawer/DrugReferenceDrawer";
+import SubstanceForm from "features/admin/Substance/Form/SubstanceForm";
 
 export default function UnitConversion() {
   const dispatch = useDispatch();
@@ -115,6 +116,7 @@ export default function UnitConversion() {
       </Spin>
 
       <DrugReferenceDrawer placement="right" />
+      <SubstanceForm />
     </>
   );
 }

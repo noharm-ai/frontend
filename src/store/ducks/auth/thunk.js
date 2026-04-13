@@ -18,7 +18,6 @@ const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { segmentsFetchListSuccess } = SegmentCreators;
 const { authSetErrorIdentify, authDelIdentify } = AuthCreators;
 const {
-  appSetData,
   appSetConfig,
   appSetCurrentVersion,
   appSetNotification,
@@ -104,6 +103,7 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
     segments,
     logoutUrl,
     integrationStatus,
+    signature,
     ...identify
   } = userData;
   const user = {
@@ -119,6 +119,7 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
     getnameType,
     apiKey,
     permissions,
+    signature,
   };
 
   localStorage.setItem("schema", schema);
@@ -155,11 +156,6 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
       proxy,
       logoutUrl,
       integrationStatus,
-    }),
-  );
-  dispatch(
-    appSetData({
-      hospitals: userData.hospitals,
     }),
   );
   dispatch(appSetNotification(notify));
