@@ -15,6 +15,7 @@ export default class Permission {
   static ADMIN_UNIT_CONVERSION = "ADMIN_UNIT_CONVERSION";
 
   static ADMIN_PATIENT = "ADMIN_PATIENT";
+  static WRITE_NAME = "WRITE_NAME";
 
   static ADMIN_USERS = "ADMIN_USERS";
 

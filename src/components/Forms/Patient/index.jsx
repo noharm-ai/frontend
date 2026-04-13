@@ -10,6 +10,9 @@ import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 import { getErrorMessageFromException } from "utils/errorHandler";
+import { getPatient, setPatient } from "utils/patientCache";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
 
 import Base from "./Base";
 import { FormContainer } from "./Patient.style";
@@ -39,6 +42,7 @@ export default function Patient({
   notesInfoDate,
   dischargeDate,
   patient,
+  idPatient,
   ...props
 }) {
   const { t } = useTranslation();
@@ -47,6 +51,8 @@ export default function Patient({
   const initialValues = {
     idPrescription,
     admissionNumber,
+    name: getPatient(idPatient)?.name ?? "",
+    patientData: { ...(getPatient(idPatient)?.data ?? {}) },
     weight,
     height,
     observation,
@@ -60,9 +66,23 @@ export default function Patient({
     tags: patient?.tags,
   };
 
-  const submit = (params) => {
-    savePatient(params)
+  const submit = ({ name, patientData, ...params }) => {
+    const payload = { ...params };
+    if (PermissionService().has(Permission.WRITE_NAME) && name) {
+      payload.name = { name, data: patientData };
+    }
+    savePatient(payload)
       .then((response) => {
+        const existing = getPatient(idPatient);
+        if (existing) {
+          setPatient({
+            ...existing,
+            ...(PermissionService().has(Permission.WRITE_NAME) && name
+              ? { name }
+              : {}),
+            data: { ...existing.data, ...patientData },
+          });
+        }
         notification.success(saveMessage);
         afterSavePatient(response?.data);
       })
@@ -101,7 +121,7 @@ export default function Patient({
           {notesInfo && (
             <Alert
               message={`NoHarm Care (${moment(notesInfoDate).format(
-                "DD/MM/YYYY HH:mm"
+                "DD/MM/YYYY HH:mm",
               )})`}
               description={notesInfo}
               type="info"

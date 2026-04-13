@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 
 import { Col } from "components/Grid";
 import Heading from "components/Heading";
-import { InputNumber, Select, DatePicker } from "components/Inputs";
+import { Input, InputNumber, Select, DatePicker } from "components/Inputs";
 import Tooltip from "components/Tooltip";
 import Editor from "components/Editor";
 import PermissionService from "services/PermissionService";
@@ -19,6 +19,7 @@ import { Box, EditorBox } from "../Form.style";
 export default function Base() {
   const { values, setFieldValue, errors } = useFormikContext();
   const {
+    name,
     weight,
     height,
     observation,
@@ -35,6 +36,51 @@ export default function Base() {
 
   return (
     <>
+      {PermissionService().has(Permission.WRITE_NAME) && (
+        <>
+          <Box hasError={errors.name}>
+            <Col xs={layout.label}>
+              <Heading as="label" $size="14px" $textAlign="right">
+                <Tooltip title="">Nome:</Tooltip>
+              </Heading>
+            </Col>
+            <Col xs={layout.input}>
+              <Input
+                style={{ marginLeft: 10, width: "100%" }}
+                value={name}
+                onChange={(e) => setFieldValue("name", e.target.value)}
+              />
+            </Col>
+          </Box>
+
+          {Object.entries(values.patientData ?? {})
+            .filter(([key]) => key !== "cache")
+            .map(([key, value]) => (
+              <Box key={key}>
+                <Col xs={layout.label}>
+                  <Heading as="label" $size="14px" $textAlign="right">
+                    <Tooltip title="">
+                      {t(`patientDetails.${key}`, { defaultValue: key })}:
+                    </Tooltip>
+                  </Heading>
+                </Col>
+                <Col xs={layout.input}>
+                  <Input
+                    style={{ marginLeft: 10, width: "100%" }}
+                    value={value ?? ""}
+                    onChange={(e) =>
+                      setFieldValue("patientData", {
+                        ...values.patientData,
+                        [key]: e.target.value,
+                      })
+                    }
+                  />
+                </Col>
+              </Box>
+            ))}
+        </>
+      )}
+
       <Box hasError={errors.weight}>
         <Col xs={layout.label}>
           <Heading as="label" $size="14px" $textAlign="right">
