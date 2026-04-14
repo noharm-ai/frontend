@@ -45,7 +45,7 @@ export function VariableTab() {
   const removeVariable = (varName: string) => {
     setFieldValue(
       "config.variables",
-      (values.config.variables ?? []).filter((v: any) => v.name !== varName)
+      (values.config.variables ?? []).filter((v: any) => v.name !== varName),
     );
   };
 
@@ -230,6 +230,32 @@ export function VariableTab() {
 
                 <div className={`form-row`}>
                   <div className="form-label">
+                    <label>Atributo do medicamento:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      value={v.drugAttribute}
+                      allowClear
+                      mode="multiple"
+                      optionFilterProp="label"
+                      options={[
+                        { value: "mav", label: "Alta Vigilância" },
+                        { value: "antimicro", label: "Antimicrobiano" },
+                        { value: "controlled", label: "Controlado" },
+                        { value: "dialyzable", label: "Dializavel" },
+                        { value: "elderly", label: "Inapropriado para idosos" },
+                        { value: "notdefault", label: "Não Padronizado" },
+                        { value: "chemo", label: "Quimioterápico" },
+                      ]}
+                      onChange={(value) =>
+                        setConfig(idx, "drugAttribute", value)
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className={`form-row`}>
+                  <div className="form-label">
                     <label>Via:</label>
                   </div>
                   <div className="form-input">
@@ -286,7 +312,7 @@ export function VariableTab() {
                         value={v.doseOperator}
                         optionFilterProp="label"
                         options={ProtocolVariableFieldEnum.getOperators(
-                          ProtocolVariableFieldEnum.AGE
+                          ProtocolVariableFieldEnum.AGE,
                         ).map((f) => ({ value: f, label: f }))}
                         onChange={(value) =>
                           setConfig(idx, "doseOperator", value)
@@ -351,7 +377,7 @@ export function VariableTab() {
                         value={v.frequencydayOperator}
                         optionFilterProp="label"
                         options={ProtocolVariableFieldEnum.getOperators(
-                          ProtocolVariableFieldEnum.AGE
+                          ProtocolVariableFieldEnum.AGE,
                         ).map((f) => ({ value: f, label: f }))}
                         onChange={(value) =>
                           setConfig(idx, "frequencydayOperator", value)
@@ -386,7 +412,7 @@ export function VariableTab() {
                         value={v.periodOperator}
                         optionFilterProp="label"
                         options={ProtocolVariableFieldEnum.getOperators(
-                          ProtocolVariableFieldEnum.AGE
+                          ProtocolVariableFieldEnum.AGE,
                         ).map((f) => ({ value: f, label: f }))}
                         onChange={(value) =>
                           setConfig(idx, "periodOperator", value)
@@ -434,7 +460,7 @@ export function VariableTab() {
                       value={v.operator}
                       optionFilterProp="label"
                       options={ProtocolVariableFieldEnum.getOperators(
-                        v.field
+                        v.field,
                       ).map((f) => ({ value: f, label: f }))}
                       onChange={(value) => setConfig(idx, "operator", value)}
                     />
