@@ -617,7 +617,9 @@ const fetchPeriodSuccess = (
       );
 
       if (index !== -1) {
-        group.value[index].periodDates = newData;
+        const newValue = [...group.value];
+        newValue[index] = { ...newValue[index], periodDates: newData };
+        list[i] = { ...group, value: newValue };
         break;
       }
     }

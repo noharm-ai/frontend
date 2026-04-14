@@ -134,6 +134,14 @@ export default function SaveModal({
       label: "Setor anterior",
       key: "{{setor_anterior}}",
     },
+    {
+      label: "CID (Quando integrado)",
+      key: "{{paciente_cid}}",
+    },
+    {
+      label: "Médico responsável (Quando integrado)",
+      key: "{{paciente_medresponsavel}}",
+    },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
   const examVariables = [

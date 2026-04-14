@@ -30,7 +30,8 @@ export class RegulationReportIndicatorEnum {
       },
       {
         value: RegulationReportIndicatorEnum.GESTATIONAL_APPOINTMENT,
-        label: "Gestante: Consulta gestacional",
+        label:
+          "Gestante: Primeira consulta de pré-natal até 12 semanas de gestação",
       },
       {
         value: RegulationReportIndicatorEnum.SEVEN_GESTATIONAL_APPOINTMENTS,
