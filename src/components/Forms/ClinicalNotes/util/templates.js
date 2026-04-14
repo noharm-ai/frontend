@@ -426,20 +426,39 @@ export const alertsTemplate = (prescription, type, level) => {
     return true;
   };
 
-  let alerts = [];
+  // Group alerts by drug name (preserves first-seen order)
+  const drugMap = new Map();
   list.forEach((i) => {
-    if (i.alertsComplete && i.alertsComplete.filter(filterAlerts).length) {
-      const tpl = `
-        Medicamento: ${i.drug}
-        Alertas:
-        -- ${i.alertsComplete
-          .filter(filterAlerts)
-          .map((a) => a.text)
-          .join("\r\n        -- ")}
-      `;
-      alerts = [...alerts, tpl];
+    const filtered = i.alertsComplete
+      ? i.alertsComplete.filter(filterAlerts)
+      : [];
+    if (filtered.length) {
+      if (!drugMap.has(i.drug)) drugMap.set(i.drug, []);
+      drugMap.get(i.drug).push(...filtered);
     }
   });
 
-  return alerts.map((a) => `${stripHtml(a)}`).join("");
+  // Global dedup: each unique alert text appears only once across all drugs
+  const seenAlerts = new Set();
+  const normalizeText = (text) => stripHtml(text).replace(/\s+/g, " ").trim();
+
+  const alerts = [];
+  for (const [drugName, drugAlerts] of drugMap) {
+    const uniqueAlerts = drugAlerts.filter((a) => {
+      const key = normalizeText(a.text);
+      if (seenAlerts.has(key)) return false;
+      seenAlerts.add(key);
+      return true;
+    });
+
+    if (uniqueAlerts.length) {
+      alerts.push(`
+###MEDICAMENTO: ${drugName}
+Alertas:
+        -- ${uniqueAlerts.map((a) => a.text).join("\r\n        -- ")}
+`);
+    }
+  }
+
+  return alerts.map((a) => stripHtml(a)).join("");
 };
