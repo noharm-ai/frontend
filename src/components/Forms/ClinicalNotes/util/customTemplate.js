@@ -94,6 +94,14 @@ export const getCustomClinicalNote = (
     .replaceAll("{{sinais_nhcare}}", getSignsNhCare(prescription))
     .replaceAll("{{dados_nhcare}}", getInfoNhCare(prescription))
     .replaceAll(
+      "{{paciente_cid}}",
+      prescription.data.nameICD ?? "Não informado",
+    )
+    .replaceAll(
+      "{{paciente_medresponsavel}}",
+      prescription.data.responsiblePhysician ?? "Não informado",
+    )
+    .replaceAll(
       "{{risco_paciente}}",
       getPatientRisk(
         prescription.data.agg,
