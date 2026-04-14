@@ -808,13 +808,14 @@ export default function FilterFields({
                   <label>Prontuário:</label>
                 </div>
                 <div className="form-input">
-                  <Input
+                  <InputNumber
                     className={filter.medical_record ? "warning" : null}
                     value={filter.medical_record}
-                    onChange={({ target }) =>
-                      setScreeningListFilter({ medical_record: target.value })
+                    onChange={(value) =>
+                      setScreeningListFilter({ medical_record: value })
                     }
-                  ></Input>
+                    placeholder="Digite o número do prontuário"
+                  ></InputNumber>
                 </div>
               </div>
             </div>
