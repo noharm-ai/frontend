@@ -70,10 +70,7 @@ export const detectColumnSchema = (data: any[]): ColumnSchema[] => {
     if (type === "string") {
       // Collect unique values for select options
       const uniqueValues = Array.from(new Set(values.map(String))).sort();
-      // Limit options to prevent performance issues with high cardinality
-      if (uniqueValues.length <= 1000) {
-        schema.options = uniqueValues;
-      }
+      schema.options = uniqueValues;
     }
 
     return schema;
