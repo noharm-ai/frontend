@@ -11,7 +11,6 @@ import prescriptionsReducer from "./prescriptions";
 import prescriptionDrugsReducer from "./prescriptionDrugs";
 import memoryReducer from "./memory";
 import clinicalNotesReducer from "./clinicalNotes";
-import patientCentral from "./patientCentral";
 import drugUnitConversionSlice from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import drugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import lists from "features/lists/ListsSlice";
@@ -148,7 +147,6 @@ const rootReducer = combineReducers({
   user: userReducer,
   drugs: drugsReducer,
   patients: patientsReducer,
-  patientCentral: patientCentral,
   segments: segmentsReducer,
   intervention: interventionReducer,
   prescriptions: prescriptionsReducer,

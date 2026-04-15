@@ -96,7 +96,6 @@ export function OutpatientPrioritization() {
           dataSource={status !== "loading" ? toDataSource(list, null, {}) : []}
           onChange={handleTableChange}
           showSorterTooltip={false}
-          style={{ marginTop: "25px" }}
         />
       </PageCard>
 
