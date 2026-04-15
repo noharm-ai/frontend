@@ -61,6 +61,8 @@ import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
 import adminGlobalExam from "features/admin/GlobalExam/GlobalExamSlice";
 import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
 
+import { outpatientPrioritizationReducer } from "features/outpatient/OutpatientPrioritization/OutpatientPrioritizationSlice";
+
 import regulationPrioritizationSlice from "features/regulation/Prioritization/PrioritizationSlice";
 import regulationSlice from "features/regulation/Regulation/RegulationSlice";
 import regulationFormSlice from "features/regulation/RegulationForm/RegulationFormSlice";
@@ -177,6 +179,7 @@ const rootReducer = combineReducers({
   drugGeneratePrescriptionHistory: drugGeneratePrescriptionHistorySlice,
   drugGenerateScore: drugGenerateScoreSlice,
   drugSubstance: drugSubstanceSlice,
+  outpatient: outpatientPrioritizationReducer,
 });
 
 export default rootReducer;
