@@ -33,6 +33,8 @@ export function Filter() {
     scheduledBy: [],
     attendedBy: [],
     appointment: null,
+    dischargeDateStart: null,
+    dischargeDateEnd: null,
   };
 
   useEffect(() => {

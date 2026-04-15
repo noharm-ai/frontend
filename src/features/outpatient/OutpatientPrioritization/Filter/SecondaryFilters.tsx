@@ -1,15 +1,25 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
+import dayjs from "dayjs";
 
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Select } from "components/Inputs";
+import { Select, RangeDatePicker } from "components/Inputs";
 import UserSelect from "components/Forms/Fields/UserSelect";
 
 export function SecondaryFilters() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext) as any;
+
+  const onChangeDischargeDate = (value: any[]) => {
+    const startDate = value[0] ? dayjs(value[0]).format("YYYY-MM-DD") : null;
+    const endDate = value[1] ? dayjs(value[1]).format("YYYY-MM-DD") : null;
+    setFieldValue({
+      dischargeDateStart: startDate,
+      dischargeDateEnd: endDate,
+    });
+  };
 
   return (
     <Row gutter={[20, 20]}>
@@ -50,6 +60,22 @@ export function SecondaryFilters() {
             Sem agendamento
           </Select.Option>
         </Select>
+      </Col>
+
+      <Col md={24} xl={18} xxl={14}>
+        <Heading {...{ as: "label", $size: "14px" } as any}>
+          {t("labels.dischargeDate")}:
+        </Heading>
+        <RangeDatePicker
+          format="DD/MM/YYYY"
+          value={[
+            values.dischargeDateStart ? dayjs(values.dischargeDateStart) : null,
+            values.dischargeDateEnd ? dayjs(values.dischargeDateEnd) : null,
+          ]}
+          onChange={onChangeDischargeDate}
+          allowClear
+          language={i18n.language}
+        />
       </Col>
     </Row>
   );

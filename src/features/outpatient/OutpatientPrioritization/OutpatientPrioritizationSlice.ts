@@ -23,6 +23,8 @@ export interface OutpatientFilters {
   scheduledBy: number[];
   attendedBy: number[];
   appointment: "scheduled" | "not-scheduled" | null;
+  dischargeDateStart: string | null;
+  dischargeDateEnd: string | null;
 }
 
 interface OutpatientPrioritizationState {
@@ -46,19 +48,14 @@ const initialState: OutpatientPrioritizationState = {
 export const fetchPatientList = createAsyncThunk<
   PatientRecord[],
   OutpatientFilters
->(
-  "outpatient/fetchPatientList",
-  async (params, thunkAPI) => {
-    try {
-      const state = thunkAPI.getState() as any;
-      const { access_token } = state.auth.identify;
-      const response = await api.getPatientList(access_token, params);
-      return response.data.data as PatientRecord[];
-    } catch (err: any) {
-      return thunkAPI.rejectWithValue(err?.response?.data ?? "Fetch failed");
-    }
+>("outpatient/fetchPatientList", async (params, thunkAPI) => {
+  try {
+    const response = await api.patient.getPatientList(params);
+    return response.data.data as PatientRecord[];
+  } catch (err: any) {
+    return thunkAPI.rejectWithValue(err?.response?.data ?? "Fetch failed");
   }
-);
+});
 
 export const fetchPatientNames = createAsyncThunk<void, void>(
   "outpatient/fetchPatientNames",
@@ -85,9 +82,11 @@ export const fetchPatientNames = createAsyncThunk<void, void>(
         });
       }
     } catch (err: any) {
-      return thunkAPI.rejectWithValue(err?.response?.data ?? "Name fetch failed");
+      return thunkAPI.rejectWithValue(
+        err?.response?.data ?? "Name fetch failed",
+      );
     }
-  }
+  },
 );
 
 const outpatientPrioritizationSlice = createSlice({
