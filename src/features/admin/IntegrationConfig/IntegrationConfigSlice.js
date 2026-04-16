@@ -20,6 +20,10 @@ const initialState = {
     data: null,
     error: null,
   },
+  returnLogstream: {
+    status: "idle",
+    error: null,
+  },
   templateList: {
     data: {},
     status: "idle",
@@ -113,6 +117,18 @@ export const upsertSecurityGroup = createAsyncThunk(
   },
 );
 
+export const createReturnLogstream = createAsyncThunk(
+  "integration-config/create-return-logstream",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.integration.createReturnLogstream(params);
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
+);
+
 const integrationConfigSlice = createSlice({
   name: "integrationConfig",
   initialState,
@@ -191,6 +207,17 @@ const integrationConfigSlice = createSlice({
       .addCase(updateIntegration.rejected, (state, action) => {
         state.single.status = "failed";
         state.single.error = action.error.message;
+      })
+
+      .addCase(createReturnLogstream.pending, (state) => {
+        state.returnLogstream.status = "loading";
+      })
+      .addCase(createReturnLogstream.fulfilled, (state) => {
+        state.returnLogstream.status = "succeeded";
+      })
+      .addCase(createReturnLogstream.rejected, (state, action) => {
+        state.returnLogstream.status = "failed";
+        state.returnLogstream.error = action.error.message;
       });
   },
 });

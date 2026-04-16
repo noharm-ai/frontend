@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Descriptions, Skeleton, Tag, Flex, Tabs, Table } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
@@ -11,6 +11,7 @@ import { getErrorMessage } from "utils/errorHandler";
 import {
   fetchCloudConfig,
   setCloudConfigSchema,
+  createReturnLogstream,
 } from "../IntegrationConfigSlice";
 import { EditGetname } from "./components/EditGetname";
 import { EditSecurityGroup } from "./components/EditSecurityGroup";
@@ -20,13 +21,16 @@ export function CloudSchemaForm() {
   const dispatch = useAppDispatch();
   const [editGetname, setEditGetname] = useState<boolean>(false);
   const schema = useAppSelector(
-    (state) => state.admin.integrationConfig.cloudConfig.schema
+    (state) => state.admin.integrationConfig.cloudConfig.schema,
   );
   const status = useAppSelector(
-    (state) => state.admin.integrationConfig.cloudConfig.status
+    (state) => state.admin.integrationConfig.cloudConfig.status,
   );
   const data: any = useAppSelector(
-    (state) => state.admin.integrationConfig.cloudConfig.data
+    (state) => state.admin.integrationConfig.cloudConfig.data,
+  );
+  const returnLogstreamStatus = useAppSelector(
+    (state) => state.admin.integrationConfig.returnLogstream.status,
   );
 
   useEffect(() => {
@@ -49,6 +53,20 @@ export function CloudSchemaForm() {
   const onCancel = () => {
     dispatch(setCloudConfigSchema(null));
     setEditGetname(false);
+  };
+
+  const onCreateReturnLogstream = () => {
+    // @ts-expect-error ts 2554 (legacy code)
+    dispatch(createReturnLogstream({ schema })).then((response: any) => {
+      if (response.error) {
+        notification.error({ message: getErrorMessage(response, t) });
+      } else {
+        notification.success({
+          message: "Logstream de retorno criado com sucesso.",
+        });
+        afterSave();
+      }
+    });
   };
 
   const afterSave = () => {
@@ -154,9 +172,23 @@ export function CloudSchemaForm() {
                     </Descriptions.Item>
                     <Descriptions.Item label="Logstream" span={3}>
                       {data && data.logstream ? (
-                        <>nifi/{schema}</>
+                        <>{data.logstream}</>
                       ) : (
                         <Tag color="red">Não configurado</Tag>
+                      )}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Logstream Retorno" span={3}>
+                      {data && data.return_logstream ? (
+                        <>{data.return_logstream}</>
+                      ) : (
+                        <Button
+                          icon={<PlusOutlined />}
+                          type="primary"
+                          loading={returnLogstreamStatus === "loading"}
+                          onClick={onCreateReturnLogstream}
+                        >
+                          Criar logstream de retorno
+                        </Button>
                       )}
                     </Descriptions.Item>
                   </Descriptions>

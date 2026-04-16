@@ -288,6 +288,10 @@ api.integration.upsertSecurityGroup = (params) =>
   instance.post(`${endpoints.integration}/upsert-security-group`, params, {
     ...setHeaders(),
   });
+api.integration.createReturnLogstream = (params) =>
+  instance.post(`${endpoints.integration}/create-return-logstream`, params, {
+    ...setHeaders(),
+  });
 api.integration.updateUserSecurityGroup = (params) =>
   instance.post(`${endpoints.integration}/update-user-security-group`, params, {
     ...setHeaders(),
