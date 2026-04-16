@@ -50,7 +50,7 @@ export default function Prioritization({
   const filteredList = sortList(
     filterList(list, state.filter),
     state.prioritization,
-    state.prioritizationOrder
+    state.prioritizationOrder,
   );
 
   const patients =
@@ -58,7 +58,7 @@ export default function Prioritization({
       ? []
       : filteredList.slice(
           (state.currentPage - 1) * PAGE_SIZE,
-          (state.currentPage - 1) * PAGE_SIZE + PAGE_SIZE
+          (state.currentPage - 1) * PAGE_SIZE + PAGE_SIZE,
         );
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function Prioritization({
     }
 
     trackPrescriptionPrioritizationAction(
-      TrackedPrescriptionPrioritizationAction.CHANGE_PAGE
+      TrackedPrescriptionPrioritizationAction.CHANGE_PAGE,
     );
   };
 
@@ -121,7 +121,7 @@ export default function Prioritization({
 
     trackPrescriptionPrioritizationAction(
       TrackedPrescriptionPrioritizationAction.FILTER_STATUS,
-      { title: status }
+      { title: status },
     );
   };
 
@@ -135,7 +135,7 @@ export default function Prioritization({
 
     trackPrescriptionPrioritizationAction(
       TrackedPrescriptionPrioritizationAction.CHANGE_PRIORITIZATION_KEY,
-      { title: value }
+      { title: value },
     );
   };
 
@@ -148,7 +148,7 @@ export default function Prioritization({
     stopLoading();
 
     trackPrescriptionPrioritizationAction(
-      TrackedPrescriptionPrioritizationAction.CHANGE_ORDER
+      TrackedPrescriptionPrioritizationAction.CHANGE_ORDER,
     );
   };
 
@@ -183,7 +183,7 @@ export default function Prioritization({
         });
 
         trackPrescriptionPrioritizationAction(
-          TrackedPrescriptionPrioritizationAction.FILTER_KEYWORD
+          TrackedPrescriptionPrioritizationAction.FILTER_KEYWORD,
         );
       } else if (state.filter.searchKey) {
         dispatch({
@@ -333,11 +333,11 @@ export default function Prioritization({
             )}
             {filteredList &&
               filteredList.length > 0 &&
-              filteredList[0].totalRecords > 500 && (
+              filteredList[0].totalRecords >= 500 && (
                 <div className="alert-container">
                   <Alert
                     message="A lista foi limitada em 500 registros."
-                    description={`Existe um total de ${filteredList[0].totalRecords} registros para a sua consulta. Utilize mais filtros para direcionar a sua análise.`}
+                    description={`Utilize mais filtros para direcionar a sua análise.`}
                     showIcon
                   />
                 </div>
@@ -362,7 +362,7 @@ export default function Prioritization({
                       prescription={item}
                       prioritizationType={prioritizationType}
                       prioritization={ORDER_OPTIONS.find(
-                        (i) => i.key === state.prioritization
+                        (i) => i.key === state.prioritization,
                       )}
                       highlight={state.highlightPrioritization}
                       featureService={featureService}

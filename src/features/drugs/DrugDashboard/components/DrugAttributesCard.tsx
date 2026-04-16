@@ -21,7 +21,7 @@ export function DrugAttributesCard({
   onAfterSave,
 }: DrugAttributesCardProps) {
   return (
-    <Card title="Substância e Atributos" type="inner">
+    <Card title="Substância e Atributos">
       <Divider titlePlacement="left">Substância</Divider>
 
       <div
