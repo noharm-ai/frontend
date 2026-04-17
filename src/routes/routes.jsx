@@ -18,7 +18,7 @@ import UserConfig from "pages/UserConfig";
 import Password from "pages/Password";
 import Conciliation from "pages/Conciliation";
 import UserAdmin from "pages/UserAdmin";
-import PatientList from "pages/PatientList";
+import { OutpatientPrioritizationPage } from "pages/OutpatientPrioritization/OutpatientPrioritizationPage";
 import Prioritization from "pages/Prioritization";
 import ClinicalNotes from "pages/Screening/ClinicalNotes";
 import Summary from "pages/Summary";
@@ -259,7 +259,12 @@ const routes = [
   {
     exact: true,
     path: "/pacientes",
-    element: <WithAuth component={PatientList} />,
+    element: <WithAuth component={OutpatientPrioritizationPage} />,
+  },
+  {
+    exact: true,
+    path: "/pacientes-ambulatoriais",
+    element: <WithAuth component={OutpatientPrioritizationPage} />,
   },
   {
     exact: true,

@@ -31,7 +31,6 @@ export function DrugConversionsCard({
   return (
     <Card
       title="Conversões"
-      type="inner"
       extra={
         <Space>
           <Button

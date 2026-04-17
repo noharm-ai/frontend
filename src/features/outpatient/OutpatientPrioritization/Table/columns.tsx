@@ -1,4 +1,4 @@
-import React from "react";
+// react-jsx transform active — no React default import needed
 import moment from "moment";
 import { SearchOutlined } from "@ant-design/icons";
 
@@ -8,67 +8,66 @@ import { Link } from "components/Button";
 import PatientNameCache from "components/PatientName/PatientNameCache";
 import * as patientCache from "utils/patientCache";
 
+interface SortedInfo {
+  order: string | false | undefined;
+  columnKey: string;
+}
+
+interface FilteredInfo {
+  searchKey: string[] | null;
+}
+
 /* eslint-disable-next-line react-refresh/only-export-components */
-const Action = ({ record }) => {
+const Action = ({ record }: { record: any }) => {
+  const LinkAny = Link as any;
   return (
-    <Link
+    <LinkAny
       type="secondary"
       className="gtm-bt-detail-patient"
       href={`/prescricao/${record.idPrescription}`}
       target="_blank"
       icon={<SearchOutlined />}
-    ></Link>
+    />
   );
 };
 
-const columns = (sortedInfo, filteredInfo, t) => {
+export const columns = (
+  sortedInfo: SortedInfo,
+  filteredInfo: FilteredInfo,
+  t: (key: string) => string
+) => {
   const sortDirections = ["descend", "ascend"];
 
   return [
-    /*{
-      key: 'idPatient',
-      title: 'ID',
-      sortDirections,
-      sorter: (a, b) => a.idPatient - b.idPatient,
-      sortOrder: sortedInfo.columnKey === 'idPatient' && sortedInfo.order,
-      render: record => record.idPatient
-    },*/
     {
       key: "namePatient",
       title: t("tableHeader.patient"),
       sortDirections,
-      sorter: (a, b) => {
+      sorter: (a: any, b: any) => {
         const nameA =
           patientCache.getPatient(a.idPatient)?.name ?? `Paciente ${a.idPatient}`;
         const nameB =
           patientCache.getPatient(b.idPatient)?.name ?? `Paciente ${b.idPatient}`;
         return nameA.localeCompare(nameB);
       },
-      sortOrder: sortedInfo.columnKey === "namePatient" && sortedInfo.order,
-      render: (record) => <PatientNameCache idPatient={record.idPatient} />,
+      sortOrder: (sortedInfo.columnKey === "namePatient" ? sortedInfo.order : undefined) as any,
+      render: (record: any) => <PatientNameCache idPatient={record.idPatient} />,
       filteredValue: filteredInfo.searchKey || null,
-      onFilter: (value, record) =>
+      onFilter: (value: any, record: any) =>
         (patientCache.getPatient(record.idPatient)?.name ?? "")
           .toLowerCase()
           .includes(value) ||
         `${record.admissionNumber}` === value ||
         `${record.idPatient}` === value,
     },
-    /*{
-      key: 'birthdate',
-      title: t('tableHeader.birthdate'),
-      sortDirections,
-      sorter: (a, b) => moment(a.birthdate).unix() - moment(b.birthdate).unix(),
-      sortOrder: sortedInfo.columnKey === 'birthdate' && sortedInfo.order,
-      render: record => (record.birthdate ? moment(record.birthdate).format('DD/MM/YYYY') : '')
-    },*/
     {
       key: "observation",
       title: t("tableHeader.observation"),
       sortDirections,
-      sorter: (a, b) => `${a.observation}`.localeCompare(b.observation),
-      sortOrder: sortedInfo.columnKey === "observation" && sortedInfo.order,
-      render: (record) => {
+      sorter: (a: any, b: any) =>
+        `${a.observation}`.localeCompare(b.observation),
+      sortOrder: (sortedInfo.columnKey === "observation" ? sortedInfo.order : undefined) as any,
+      render: (record: any) => {
         const tmp = document.createElement("DIV");
         tmp.innerHTML = record.observation
           ? record.observation.split(/(<\/p>|<br>)/)[0]
@@ -89,11 +88,11 @@ const columns = (sortedInfo, filteredInfo, t) => {
       key: "refDate",
       title: t("tableHeader.scheduledDate"),
       sortDirections,
-      sorter: (a, b) =>
+      sorter: (a: any, b: any) =>
         moment(a.refDate || new Date()).unix() -
         moment(b.refDate || new Date()).unix(),
-      sortOrder: sortedInfo.columnKey === "refDate" && sortedInfo.order,
-      render: (record) =>
+      sortOrder: (sortedInfo.columnKey === "refDate" ? sortedInfo.order : undefined) as any,
+      render: (record: any) =>
         record.refDate ? moment(record.refDate).format("DD/MM/YYYY") : "",
     },
     {
@@ -101,9 +100,7 @@ const columns = (sortedInfo, filteredInfo, t) => {
       key: "operations",
       width: 70,
       align: "center",
-      render: (text, record) => <Action record={record} />,
+      render: (_: any, record: any) => <Action record={record} />,
     },
   ];
 };
-
-export default columns;

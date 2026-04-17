@@ -1,37 +1,53 @@
-import React, { useState } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { debounce } from "lodash";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 
 import Table from "components/Table";
 import Empty from "components/Empty";
 import BackTop from "components/BackTop";
 import { Input } from "components/Inputs";
-import { toDataSource } from "utils";
+import { toDataSource } from "utils/index";
 import { PageCard } from "styles/Utils.style";
 import { PageHeader, ExtraFilters } from "styles/PageHeader.style";
 
-import Filter from "containers/PatientList/Filter";
-import columns from "./table/columns";
+import { fetchPatientNames } from "./OutpatientPrioritizationSlice";
+import { Filter } from "./Filter/Filter";
+import { columns } from "./Table/columns";
 
-export default function PatientList({ list, isFetching }) {
+export function OutpatientPrioritization() {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+
+  const list = useSelector((state: any) => state.outpatient.list);
+  const status = useSelector((state: any) => state.outpatient.status);
+
   const [sortOrder, setSortOrder] = useState({
     order: "descend",
     columnKey: "admissionDate",
   });
-  const [filter, setFilter] = useState({
+  const [filter, setFilter] = useState<{ searchKey: string[] | null }>({
     searchKey: null,
   });
-  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (status === "succeeded") {
+      dispatch(fetchPatientNames() as any);
+    }
+  }, [dispatch, status]);
+
   const emptyText = (
     <Empty
       image={Empty.PRESENTED_IMAGE_SIMPLE}
       description={t("screeningList.empty")}
     />
   );
-  const handleTableChange = (pagination, filters, sorter) => {
+
+  const handleTableChange = (_pagination: any, _filters: any, sorter: any) => {
     setSortOrder(sorter);
   };
-  const onClientSearch = (ev) => {
+
+  const onClientSearch = (ev: ChangeEvent<HTMLInputElement>) => {
     ev.persist();
 
     if (ev.target.value === "") {
@@ -39,7 +55,7 @@ export default function PatientList({ list, isFetching }) {
       return;
     }
 
-    debounce((e) => {
+    debounce((e: ChangeEvent<HTMLInputElement>) => {
       if (e.target.value !== "" && e.target.value.length > 3) {
         setFilter({ ...filter, searchKey: [e.target.value.toLowerCase()] });
       } else if (filter.searchKey) {
@@ -70,17 +86,16 @@ export default function PatientList({ list, isFetching }) {
       </ExtraFilters>
       <PageCard>
         <Table
-          columns={columns(sortOrder, filter, t)}
+          columns={columns(sortOrder, filter, t) as any}
           pagination={{
             pageSize: 50,
-            position: "both",
+            position: ["bottomRight", "topRight"] as any,
           }}
-          loading={isFetching}
+          loading={status === "loading"}
           locale={{ emptyText }}
-          dataSource={!isFetching ? toDataSource(list, null, {}) : []}
+          dataSource={status !== "loading" ? toDataSource(list, null, {}) : []}
           onChange={handleTableChange}
           showSorterTooltip={false}
-          style={{ marginTop: "25px" }}
         />
       </PageCard>
 

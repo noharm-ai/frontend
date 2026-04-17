@@ -269,7 +269,7 @@ export function DrugOutliersCard({ outliers, loading }: DrugOutliersCardProps) {
   );
 
   return (
-    <Card title="Escores" type="inner" extra={cardExtra}>
+    <Card title="Escores" extra={cardExtra}>
       {!loading && outliers.length === 0 && (
         <Alert
           type="error"

@@ -1,21 +1,31 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 
 import notification from "components/notification";
 import LoadBox from "components/LoadBox";
 import AdvancedFilter from "components/AdvancedFilter";
 
-import MainFilters from "./filters/MainFilters";
-import SecondaryFilters from "./filters/SecondaryFilters";
+import { fetchPatientList } from "../OutpatientPrioritizationSlice";
+import type { OutpatientFilters } from "../OutpatientPrioritizationSlice";
+import { MainFilters } from "./MainFilters";
+import { SecondaryFilters } from "./SecondaryFilters";
 
-export default function Filter({ error, isFetching, segments, fetchList }) {
+export function Filter() {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
+
+  const status = useSelector((state: any) => state.outpatient.status);
+  const error = useSelector((state: any) => state.outpatient.error);
+  const segments = useSelector((state: any) => state.segments);
+
   const errorMessage = {
     message: t("error.title"),
     description: t("error.description"),
   };
-  const initialValues = {
+
+  const initialValues: OutpatientFilters = {
     idSegment: !isEmpty(segments.list) ? 1 : null,
     idDepartment: [],
     nextAppointmentStartDate: null,
@@ -23,10 +33,12 @@ export default function Filter({ error, isFetching, segments, fetchList }) {
     scheduledBy: [],
     attendedBy: [],
     appointment: null,
+    dischargeDateStart: null,
+    dischargeDateEnd: null,
   };
 
   useEffect(() => {
-    fetchList(initialValues);
+    dispatch(fetchPatientList(initialValues) as any);
   }, []); // eslint-disable-line
 
   useEffect(() => {
@@ -35,8 +47,8 @@ export default function Filter({ error, isFetching, segments, fetchList }) {
     }
   }, [error]); // eslint-disable-line
 
-  const search = (params) => {
-    fetchList(params);
+  const search = (params: OutpatientFilters) => {
+    dispatch(fetchPatientList(params) as any);
   };
 
   if (segments.isFetching) {
@@ -46,10 +58,12 @@ export default function Filter({ error, isFetching, segments, fetchList }) {
   return (
     <AdvancedFilter
       initialValues={initialValues}
-      mainFilters={<MainFilters segments={segments} />}
+      mainFilters={<MainFilters />}
       secondaryFilters={<SecondaryFilters />}
       onSearch={search}
-      loading={isFetching || segments.isFetching}
+      onChangeValues={undefined as any}
+      memoryType={null as any}
+      loading={status === "loading" || segments.isFetching}
       skipFilterList={[
         "idSegment",
         "idDepartment",

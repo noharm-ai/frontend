@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
@@ -10,29 +10,34 @@ import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { getSegmentDepartments } from "features/lists/ListsSlice";
 import { getUniqBy } from "utils/report";
 
-export default function MainFilters({ segments }) {
+export function MainFilters() {
   const dispatch = useDispatch();
   const { t, i18n } = useTranslation();
-  const { values, setFieldValue } = useContext(AdvancedFilterContext);
+  const { values, setFieldValue } = useContext(AdvancedFilterContext) as any;
+
+  const segmentsList = useSelector((state: any) => state.segments.list);
+  const segmentsIsFetching = useSelector(
+    (state: any) => state.segments.isFetching
+  );
   const departments = useSelector(
-    (state) => state.lists.getSegmentDepartments.list
+    (state: any) => state.lists.getSegmentDepartments.list
   );
   const departmentsStatus = useSelector(
-    (state) => state.lists.getSegmentDepartments.status
+    (state: any) => state.lists.getSegmentDepartments.status
   );
 
   useEffect(() => {
-    dispatch(getSegmentDepartments());
-  }, []); //eslint-disable-line
+    dispatch(getSegmentDepartments() as any);
+  }, []); // eslint-disable-line
 
-  const onChangeSegment = (value) => {
+  const onChangeSegment = (value: any) => {
     setFieldValue({
       idSegment: value,
       idDepartment: [],
     });
   };
 
-  const onChangeNextAppointment = (value) => {
+  const onChangeNextAppointment = (value: any[]) => {
     const startDate = value[0] ? dayjs(value[0]).format("YYYY-MM-DD") : null;
     const endDate = value[1] ? dayjs(value[1]).format("YYYY-MM-DD") : null;
     setFieldValue({
@@ -41,13 +46,11 @@ export default function MainFilters({ segments }) {
     });
   };
 
-  const filterDepartments = (idSegment, list) => {
+  const filterDepartments = (idSegment: number | null, list: any[]) => {
     const deps = list.filter((d) => {
       if (!idSegment) {
         return true;
       }
-
-      // keep compatibility
       return idSegment === d.idSegment;
     });
 
@@ -57,17 +60,17 @@ export default function MainFilters({ segments }) {
   return (
     <>
       <Col md={6}>
-        <Heading as="label" htmlFor="segments" $size="14px">
+        <Heading {...{ as: "label", htmlFor: "segments", $size: "14px" } as any}>
           {t("screeningList.segment")}:
         </Heading>
         <Select
           id="segments"
           style={{ width: "100%" }}
-          loading={segments.isFetching}
+          loading={segmentsIsFetching}
           onChange={onChangeSegment}
           value={values.idSegment}
         >
-          {segments.list.map(({ id, description: text }) => (
+          {segmentsList.map(({ id, description: text }: any) => (
             <Select.Option key={id} value={id}>
               {text}
             </Select.Option>
@@ -75,7 +78,7 @@ export default function MainFilters({ segments }) {
         </Select>
       </Col>
       <Col md={6}>
-        <Heading as="label" htmlFor="departments" $size="14px">
+        <Heading {...{ as: "label", htmlFor: "departments", $size: "14px" } as any}>
           {t("screeningList.labelDepartment")}:
         </Heading>
         <Select
@@ -86,12 +89,12 @@ export default function MainFilters({ segments }) {
           placeholder={t("screeningList.labelDepartmentPlaceholder")}
           loading={departmentsStatus === "loading"}
           value={values.idDepartment}
-          onChange={(value) => setFieldValue({ idDepartment: value })}
+          onChange={(value: any) => setFieldValue({ idDepartment: value })}
           autoClearSearchValue={false}
           allowClear
         >
           {filterDepartments(values.idSegment, departments).map(
-            ({ idDepartment, idSegment, label }) => (
+            ({ idDepartment, idSegment, label }: any) => (
               <Select.Option
                 key={`${idSegment}-${idDepartment}`}
                 value={idDepartment}
@@ -103,7 +106,7 @@ export default function MainFilters({ segments }) {
         </Select>
       </Col>
       <Col md={7} lg={7} xxl={5}>
-        <Heading as="label" htmlFor="date" $size="14px">
+        <Heading {...{ as: "label", htmlFor: "date", $size: "14px" } as any}>
           {t("tableHeader.scheduledDate")}:
         </Heading>
         <RangeDatePicker

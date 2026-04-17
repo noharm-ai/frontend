@@ -1,13 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFormikContext } from "formik";
 import { CopyOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
-import { InputNumber, Input, Select } from "components/Inputs";
+import { InputNumber, Input, Select, Radio } from "components/Inputs";
 import Dropdown from "components/Dropdown";
 import Button from "components/Button";
 import Switch from "components/Switch";
 import Tooltip from "components/Tooltip";
+import { FeatureService } from "services/FeatureService";
+import Feature from "models/Feature";
 import { fetchExamTypes, fetchGlobalExams } from "./ExamFormSlice";
 
 export function ExamFormBase() {
@@ -27,16 +29,25 @@ export function ExamFormBase() {
     (state) => state.admin.examForm.globalExams.status,
   );
   const { values, setFieldValue, errors } = useFormikContext<any>();
+  const [typeMode, setTypeMode] = useState<"select" | "input">("select");
 
   const { type, name, initials, min, max, ref, active } = values;
 
+  const canAddExams =
+    values.new && FeatureService.has(Feature.ADD_EXAMS);
+
   useEffect(() => {
-    if (examTypes.length === 0 && values.new && !values.type) {
+    if (values.new) {
       dispatch(fetchExamTypes());
     }
 
     dispatch(fetchGlobalExams());
   }, []); //eslint-disable-line
+
+  const handleTypeModeChange = (mode: "select" | "input") => {
+    setTypeMode(mode);
+    setFieldValue("type", undefined);
+  };
 
   const applyRef = ({ key }: { key: string }) => {
     const examConfig = globalExams.find(
@@ -110,21 +121,42 @@ export function ExamFormBase() {
           <label>Tipo de Exame:</label>
         </div>
         <div className="form-input">
-          <Select
-            optionFilterProp="children"
-            showSearch
-            placeholder="Selecione o exame..."
-            onChange={(value) => setFieldValue("type", value)}
-            value={type}
-            loading={examTypesStatus === "loading"}
-            disabled={!values.new || !!values.type}
-          >
-            {examTypes.map((item: string) => (
-              <Select.Option key={item} value={item}>
-                {item}
-              </Select.Option>
-            ))}
-          </Select>
+          {canAddExams && (
+            <Radio.Group
+              value={typeMode}
+              onChange={(e) => handleTypeModeChange(e.target.value)}
+              style={{ marginBottom: "8px", display: "block" }}
+            >
+              <Radio value="select">Selecionar existente</Radio>
+              <Radio value="input">Digitar novo</Radio>
+            </Radio.Group>
+          )}
+          {canAddExams && typeMode === "input" ? (
+            <Input
+              value={type}
+              onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
+                setFieldValue("type", target.value)
+              }
+              maxLength={100}
+              placeholder="Digite o tipo de exame..."
+            />
+          ) : (
+            <Select
+              optionFilterProp="children"
+              showSearch
+              placeholder="Selecione o exame..."
+              onChange={(value) => setFieldValue("type", value)}
+              value={type}
+              loading={examTypesStatus === "loading"}
+              disabled={!values.new || !!values.type}
+            >
+              {examTypes.map((item: string) => (
+                <Select.Option key={item} value={item}>
+                  {item}
+                </Select.Option>
+              ))}
+            </Select>
+          )}
         </div>
         {errors.type && <div className="form-error">{String(errors.type)}</div>}
       </div>

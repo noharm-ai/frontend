@@ -11,7 +11,6 @@ import prescriptionsReducer from "./prescriptions";
 import prescriptionDrugsReducer from "./prescriptionDrugs";
 import memoryReducer from "./memory";
 import clinicalNotesReducer from "./clinicalNotes";
-import patientCentral from "./patientCentral";
 import drugUnitConversionSlice from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import drugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import lists from "features/lists/ListsSlice";
@@ -60,6 +59,8 @@ import adminKnowledgeBase from "features/admin/KnowledgeBase/KnowledgeBaseSlice"
 import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
 import adminGlobalExam from "features/admin/GlobalExam/GlobalExamSlice";
 import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
+
+import { outpatientPrioritizationReducer } from "features/outpatient/OutpatientPrioritization/OutpatientPrioritizationSlice";
 
 import regulationPrioritizationSlice from "features/regulation/Prioritization/PrioritizationSlice";
 import regulationSlice from "features/regulation/Regulation/RegulationSlice";
@@ -146,7 +147,6 @@ const rootReducer = combineReducers({
   user: userReducer,
   drugs: drugsReducer,
   patients: patientsReducer,
-  patientCentral: patientCentral,
   segments: segmentsReducer,
   intervention: interventionReducer,
   prescriptions: prescriptionsReducer,
@@ -177,6 +177,7 @@ const rootReducer = combineReducers({
   drugGeneratePrescriptionHistory: drugGeneratePrescriptionHistorySlice,
   drugGenerateScore: drugGenerateScoreSlice,
   drugSubstance: drugSubstanceSlice,
+  outpatient: outpatientPrioritizationReducer,
 });
 
 export default rootReducer;

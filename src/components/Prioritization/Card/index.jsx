@@ -20,6 +20,8 @@ import {
   trackPrescriptionPrioritizationAction,
   TrackedPrescriptionPrioritizationAction,
 } from "src/utils/tracker";
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
 import { Card, AlertContainer } from "./index.style";
 
 const TabContent = ({ tab, prescription, featureService }) => {
@@ -128,6 +130,26 @@ const TabContent = ({ tab, prescription, featureService }) => {
             </div>
           </div>
         </div>
+        {PermissionService().has(Permission.READ_NAV) && (
+          <div className="attributes">
+            <div className="attributes-item col-4">
+              <div className="attributes-item-label">Cidade</div>
+              <div className="attributes-item-value">
+                <Tooltip title={`${prescription.city}`}>
+                  {prescription.city}
+                </Tooltip>
+              </div>
+            </div>
+            <div className="attributes-item col-4">
+              <div className="attributes-item-label">CID</div>
+              <div className="attributes-item-value">{prescription.id_icd}</div>
+            </div>
+            <div className="attributes-item col-4">
+              <div className="attributes-item-label"></div>
+              <div className="attributes-item-value"></div>
+            </div>
+          </div>
+        )}
         {featureService.hasPatientRevision() && (
           <div className="attributes">
             <div className="attributes-item col-4">
