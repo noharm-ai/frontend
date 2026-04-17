@@ -280,7 +280,7 @@ export default function PatientDayConsolidatedReport() {
                       Percentual de Pacientes-Dia
                     </div>
                     <div className="stats-value">
-                      {percentualPrescriptions?.toLocaleString() || "-"} %
+                      {percentualPrescriptions?.toLocaleString() || "-"}%
                     </div>
                   </StatsCard>
                 </Spin>
@@ -317,7 +317,7 @@ export default function PatientDayConsolidatedReport() {
                           Percentual de Itens-Dia
                         </div>
                         <div className="stats-value">
-                          {percentualItens?.toLocaleString() || "-"} %
+                          {percentualItens?.toLocaleString() || "-"}%
                         </div>
                       </StatsCard>
                     </Spin>
