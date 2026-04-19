@@ -1,10 +1,6 @@
 import { createActions, createReducer } from "reduxsauce";
 
 export const { Types, Creators } = createActions({
-  drugsFetchListStart: [""],
-  drugsFetchListError: ["error"],
-  drugsFetchListSuccess: ["list"],
-
   drugsFetchSummaryStart: [""],
   drugsFetchSummaryError: ["error"],
   drugsFetchSummarySuccess: ["data"],
@@ -25,11 +21,6 @@ export const { Types, Creators } = createActions({
   drugsSaveSingleSuccess: ["success"],
   drugsSaveSingleReset: [""],
   drugsSaveSingleError: ["error"],
-
-  unitCoefficientSaveStart: [""],
-  unitCoefficientSaveSuccess: ["idMeasureUnit", "item"],
-  unitCoefficientSaveReset: [""],
-  unitCoefficientSaveError: ["error"],
 
   drugsReset: [],
 });
@@ -72,24 +63,6 @@ const INITIAL_STATE = {
 };
 
 const reset = () => INITIAL_STATE;
-
-const fetchListStart = (state = INITIAL_STATE) => ({
-  ...state,
-  isFetching: true,
-});
-
-const fetchListError = (state = INITIAL_STATE, { error }) => ({
-  ...state,
-  error,
-  isFetching: false,
-});
-
-const fetchListSuccess = (state = INITIAL_STATE, { list }) => ({
-  ...state,
-  list,
-  error: null,
-  isFetching: false,
-});
 
 const fetchSummaryStart = (state = INITIAL_STATE) => ({
   ...state,
@@ -233,72 +206,7 @@ const saveSingleSuccess = (state = INITIAL_STATE, { success }) => ({
   },
 });
 
-const unitCoefficientSaveStart = (state = INITIAL_STATE) => {
-  return {
-    ...state,
-    units: {
-      ...state.units,
-      save: {
-        ...state.units.save,
-        isSaving: true,
-      },
-    },
-  };
-};
-
-const unitCoefficientSaveError = (state = INITIAL_STATE, { error }) => ({
-  ...state,
-  units: {
-    ...state.units,
-    save: {
-      ...state.units.save,
-      error,
-      isSaving: false,
-    },
-  },
-});
-
-const unitCoefficientSaveReset = (state = INITIAL_STATE) => ({
-  ...state,
-  units: {
-    ...state.units,
-    save: {
-      ...INITIAL_STATE.units.save,
-    },
-  },
-});
-
-const unitCoefficientSaveSuccess = (
-  state = INITIAL_STATE,
-  { idMeasureUnit, item }
-) => {
-  const list = [...state.units.list];
-  const index = list.findIndex((i) => i.idMeasureUnit === idMeasureUnit);
-
-  if (index !== -1) {
-    list[index] = { ...list[index], ...item };
-  }
-
-  return {
-    ...state,
-    units: {
-      ...state.units,
-      list,
-      save: {
-        ...state.units.save,
-        error: null,
-        success: true,
-        isSaving: false,
-      },
-    },
-  };
-};
-
 const HANDLERS = {
-  [Types.DRUGS_FETCH_LIST_START]: fetchListStart,
-  [Types.DRUGS_FETCH_LIST_ERROR]: fetchListError,
-  [Types.DRUGS_FETCH_LIST_SUCCESS]: fetchListSuccess,
-
   [Types.DRUGS_FETCH_SUMMARY_START]: fetchSummaryStart,
   [Types.DRUGS_FETCH_SUMMARY_ERROR]: fetchSummaryError,
   [Types.DRUGS_FETCH_SUMMARY_SUCCESS]: fetchSummarySuccess,
@@ -319,11 +227,6 @@ const HANDLERS = {
   [Types.DRUGS_SAVE_SINGLE_ERROR]: saveSingleError,
   [Types.DRUGS_SAVE_SINGLE_RESET]: saveSingleReset,
   [Types.DRUGS_SAVE_SINGLE_SUCCESS]: saveSingleSuccess,
-
-  [Types.UNIT_COEFFICIENT_SAVE_START]: unitCoefficientSaveStart,
-  [Types.UNIT_COEFFICIENT_SAVE_ERROR]: unitCoefficientSaveError,
-  [Types.UNIT_COEFFICIENT_SAVE_RESET]: unitCoefficientSaveReset,
-  [Types.UNIT_COEFFICIENT_SAVE_SUCCESS]: unitCoefficientSaveSuccess,
 
   [Types.DRUGS_RESET]: reset,
 };
