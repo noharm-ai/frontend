@@ -25,7 +25,7 @@
     "cytoscape-node-html-label": "1.2.2",
     "date-fns": "2.30.0",
     "dayjs": "1.11.13",
-    "dompurify": "3.3.3",
+    "dompurify": "3.4.0",
     "dotenv": "16.4.7",
     "echarts": "5.6.0",
     "formik": "2.4.9",
