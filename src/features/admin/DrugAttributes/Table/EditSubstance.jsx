@@ -76,7 +76,15 @@ export default function EditSubstance({ idDrug, sctid, accuracy }) {
   if (!accuracy && !edit && sctid) {
     return (
       <Tooltip title="Clique para editar">
-        <a onClick={() => setEdit(true)}>
+        <a
+          onClick={() => setEdit(true)}
+          style={{
+            display: "block",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
           {substances.find((sub) => `${sub.sctid}` === `${value}`)?.name ||
             value}
         </a>
@@ -85,10 +93,10 @@ export default function EditSubstance({ idDrug, sctid, accuracy }) {
   }
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
       <span style={{ width: "100%", display: "flex" }}>
         <Select
-          style={{ width: "85%", marginRight: "5px" }}
+          style={{ flex: 1, minWidth: 0 }}
           value={value ? `${value}` : null}
           onChange={(val) => setValue(val)}
           showSearch={{ optionFilterProp: ["label"] }}
@@ -104,8 +112,25 @@ export default function EditSubstance({ idDrug, sctid, accuracy }) {
             value: sctid,
             label: `${active ? "" : "(INATIVO) "} ${name}`,
           }))}
+          size="small"
         />
-
+      </span>
+      <span
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "4px",
+          marginTop: "2px",
+        }}
+      >
+        <Tooltip title="Referência">
+          <Button
+            onClick={() => dispatch(setDrawerSctid(value))}
+            icon={<FileTextOutlined />}
+            disabled={!value}
+            size="small"
+          ></Button>
+        </Tooltip>
         <Tooltip title="Salvar">
           <Button
             type="primary"
@@ -114,7 +139,7 @@ export default function EditSubstance({ idDrug, sctid, accuracy }) {
             icon={<CheckOutlined />}
             loading={saving}
             disabled={substancesLoading}
-            style={{ width: "30px" }}
+            size="small"
           ></Button>
         </Tooltip>
         {accuracy && value === sctid && !updated && (
@@ -125,27 +150,15 @@ export default function EditSubstance({ idDrug, sctid, accuracy }) {
               icon={<RobotOutlined />}
               color={getAccuracyColor(accuracy)}
               style={{
-                marginLeft: "5px",
                 display: "flex",
                 alignItems: "center",
-                fontSize: "14px",
+                fontSize: "11px",
               }}
             >
               {accuracy.toLocaleString()}%
             </Tag>
           </Tooltip>
         )}
-        <Tooltip title="Referência">
-          <Button
-            onClick={() => dispatch(setDrawerSctid(value))}
-            icon={<FileTextOutlined />}
-            disabled={!value}
-            shape="circle"
-            style={{
-              marginLeft: "5px",
-            }}
-          ></Button>
-        </Tooltip>
       </span>
     </div>
   );

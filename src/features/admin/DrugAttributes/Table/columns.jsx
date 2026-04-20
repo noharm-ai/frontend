@@ -1,6 +1,11 @@
 import React from "react";
-import { Space } from "antd";
-import { EditOutlined, SearchOutlined, SwapOutlined } from "@ant-design/icons";
+import { Dropdown } from "antd";
+import {
+  EditOutlined,
+  SearchOutlined,
+  SwapOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
@@ -57,65 +62,60 @@ const columns = (t, bag) => {
     {
       title: t("tableHeader.action"),
       key: "operations",
-      width: 150,
+      width: 60,
       align: "center",
       render: (text, record) => {
+        const menuItems = [
+          {
+            key: "edit",
+            label: "Editar atributos",
+            icon: <EditOutlined />,
+          },
+          {
+            key: "unitConversion",
+            label: "Conversões de unidade",
+            icon: <SwapOutlined />,
+          },
+          {
+            key: "openDrug",
+            label: "Abrir tela do medicamento",
+            icon: <SearchOutlined />,
+          },
+        ];
+
+        const handleMenuClick = ({ key }) => {
+          if (key === "edit") {
+            bag.setDrugForm({
+              idSegment: record.idSegment,
+              idDrug: record.idDrug,
+              name: record.name,
+            });
+          } else if (key === "unitConversion") {
+            bag.openUnitConversion(record.idDrug);
+          } else if (key === "openDrug") {
+            window.open(
+              `/painel-medicamentos/${record.idSegment}/${record.idDrug}/${createSlug(record.name)}`,
+              "_blank",
+            );
+          }
+        };
+
         return (
-          <Space>
-            <Tooltip
-              title={
-                !record.idSegment
-                  ? 'Este medicamento está inconsistente. Utilize o botão "Atualizar Unidade Padrão".'
-                  : "Editar atributos"
-              }
+          <Tooltip
+            title={
+              !record.idSegment
+                ? 'Este medicamento está inconsistente. Utilize o botão "Atualizar Unidade Padrão".'
+                : null
+            }
+          >
+            <Dropdown
+              menu={{ items: menuItems, onClick: handleMenuClick }}
+              trigger={["click"]}
+              disabled={!record.idSegment}
             >
-              <Button
-                icon={<EditOutlined />}
-                disabled={!record.idSegment}
-                onClick={() =>
-                  bag.setDrugForm({
-                    idSegment: record.idSegment,
-                    idDrug: record.idDrug,
-                    name: record.name,
-                  })
-                }
-              />
-            </Tooltip>
-            <Tooltip
-              title={
-                !record.idSegment
-                  ? 'Este medicamento está inconsistente. Utilize o botão "Atualizar Unidade Padrão".'
-                  : "Conversões de unidade"
-              }
-            >
-              <Button
-                icon={<SwapOutlined />}
-                disabled={!record.idSegment}
-                onClick={() => bag.openUnitConversion(record.idDrug)}
-              />
-            </Tooltip>
-            <Tooltip
-              title={
-                !record.idSegment
-                  ? 'Este medicamento está inconsistente. Utilize o botão "Atualizar Unidade Padrão".'
-                  : "Abrir tela do medicamento"
-              }
-            >
-              <Button
-                type="primary"
-                icon={<SearchOutlined />}
-                disabled={!record.idSegment}
-                onClick={() =>
-                  window.open(
-                    `/painel-medicamentos/${record.idSegment}/${
-                      record.idDrug
-                    }/${createSlug(record.name)}`,
-                    "_blank",
-                  )
-                }
-              ></Button>
-            </Tooltip>
-          </Space>
+              <Button icon={<MoreOutlined />} />
+            </Dropdown>
+          </Tooltip>
         );
       },
     },
