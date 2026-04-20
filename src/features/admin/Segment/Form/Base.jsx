@@ -1,6 +1,9 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
+import { Tooltip } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 import { Input, Select } from "components/Inputs";
 import Switch from "components/Switch";
@@ -9,6 +12,7 @@ function BaseForm() {
   const { t } = useTranslation();
   const { values, errors, touched, handleChange, handleBlur, setFieldValue } =
     useFormikContext();
+  const segmentList = useSelector((state) => state.segments.list);
 
   return (
     <>
@@ -59,6 +63,37 @@ function BaseForm() {
           <div className="form-error">{errors.type}</div>
         )}
       </div>
+
+      {!values.idSegment && (
+        <div className="form-row">
+          <div className="form-label">
+            <label>
+              Segmento Origem{" "}
+              <Tooltip title="Ao selecionar um segmento de origem, todas as configurações serão copiadas: exames, atributos de medicamentos, conversões de unidades de medida e outliers.">
+                <QuestionCircleOutlined />
+              </Tooltip>
+              :
+            </label>
+          </div>
+          <div className="form-input">
+            <Select
+              showSearch
+              allowClear
+              style={{ width: "100%" }}
+              value={values.idSegmentOrigin}
+              onChange={(value) => setFieldValue("idSegmentOrigin", value)}
+              placeholder="Selecione o segmento de origem"
+              options={segmentList.map(({ id, description }) => ({
+                value: id,
+                label: description,
+              }))}
+            />
+          </div>
+          {errors.idSegmentOrigin && (
+            <div className="form-error">{errors.idSegmentOrigin}</div>
+          )}
+        </div>
+      )}
 
       <div className={`form-row ${errors.cpoe && touched.cpoe ? "error" : ""}`}>
         <div className="form-label">

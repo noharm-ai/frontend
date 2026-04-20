@@ -289,7 +289,7 @@ export default function PrescriptionConsolidatedReport() {
                   <StatsCard className={`green `}>
                     <div className="stats-title">Percentual de Prescrições</div>
                     <div className="stats-value">
-                      {percentualPrescriptions?.toLocaleString() || "-"} %
+                      {percentualPrescriptions?.toLocaleString() || "-"}%
                     </div>
                   </StatsCard>
                 </Spin>
@@ -324,7 +324,7 @@ export default function PrescriptionConsolidatedReport() {
                       <StatsCard className={`green `}>
                         <div className="stats-title">Percentual de Itens</div>
                         <div className="stats-value">
-                          {percentualItens?.toLocaleString() || "-"} %
+                          {percentualItens?.toLocaleString() || "-"}%
                         </div>
                       </StatsCard>
                     </Spin>

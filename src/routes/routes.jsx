@@ -14,7 +14,7 @@ import Screening from "pages/Screening";
 import DrugDashboard from "pages/DrugDashboard";
 import Reports from "pages/Reports";
 import InterventionList from "pages/InterventionList";
-import UserConfig from "pages/UserConfig";
+import UserProfilePage from "pages/UserProfile/UserProfilePage";
 import Password from "pages/Password";
 import Conciliation from "pages/Conciliation";
 import UserAdmin from "pages/UserAdmin";
@@ -194,7 +194,7 @@ const routes = [
   {
     exact: true,
     path: "/configuracoes/usuario",
-    element: <WithAuth component={UserConfig} />,
+    element: <WithAuth component={UserProfilePage} />,
   },
   {
     exact: true,

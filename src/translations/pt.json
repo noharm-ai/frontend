@@ -657,7 +657,10 @@
     "DISPENSING_MANAGER": "Gestor de Dispensação",
     "REGULATOR": "Regulador",
     "SUPPORT_REQUESTER": "Requerente de Suporte",
-    "SUPPORT_MANAGER": "Gestor de Suporte"
+    "SUPPORT_MANAGER": "Gestor de Suporte",
+    "ORGANIZATION_MANAGER": "Gestor da Organização",
+    "ADMIN": "Administrador",
+    "CURATOR": "Curadoria"
   },
 
   "rolesDescription": {

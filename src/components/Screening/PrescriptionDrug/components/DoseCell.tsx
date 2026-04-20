@@ -156,9 +156,15 @@ function DoseCell({ record, bag }: DoseCellProps): React.ReactElement | null {
     );
   }
 
+  const measureUnitValue = record.measureUnit?.value || "(indefinida)";
+  const measureUnit = PermissionService().has(Permission.READ_NAV)
+    ? measureUnitValue.replace(/^\d+_/, "")
+    : measureUnitValue;
+  const formattedDose = `${record.dose ? record.dose.toLocaleString("pt-BR") : ""}`;
+
   return (
     <Popover content={popoverContent} mouseEnterDelay={0.3}>
-      {record.dosage}
+      {formattedDose} {measureUnit}
     </Popover>
   );
 }

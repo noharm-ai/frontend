@@ -19,11 +19,11 @@ function SegmentForm({ open, setOpen }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const integrationStatus = useSelector(
-    (state) => state.app.config.integrationStatus
+    (state) => state.app.config.integrationStatus,
   );
   const formData = useSelector((state) => state.admin.segment.single.data);
   const status = useSelector(
-    (state) => state.admin.segment.upsertSegment.status
+    (state) => state.admin.segment.upsertSegment.status,
   );
   const isSaving = status === "loading";
 
@@ -32,12 +32,21 @@ function SegmentForm({ open, setOpen }) {
       .nullable()
       .required(t("validation.requiredField")),
     type: Yup.number().nullable().required(t("validation.requiredField")),
+    idSegmentOrigin: Yup.number()
+      .nullable()
+      .when("idSegment", {
+        is: (val) => !val,
+        then: (schema) => schema.required(t("validation.requiredField")),
+        otherwise: (schema) => schema.nullable(),
+      }),
   });
   const initialValues = {
+    idSegmentOrigin: null,
     ...formData,
   };
 
   const onSave = (params) => {
+    const isNew = !formData?.idSegment;
     dispatch(upsertSegment(params)).then((response) => {
       if (response.error) {
         notification.error({
@@ -48,9 +57,35 @@ function SegmentForm({ open, setOpen }) {
         dispatch(fetchSegmentsListThunk({ clearCache: true }));
         setOpen(false);
 
-        notification.success({
-          message: t("success.generic"),
-        });
+        if (isNew) {
+          DefaultModal.success({
+            title: "Segmento criado com sucesso!",
+            content: (
+              <div>
+                <p>
+                  Para que o segmento funcione corretamente, siga os próximos
+                  passos:
+                </p>
+                <ol>
+                  <li>
+                    <strong>Adicione setores</strong> ao segmento para definir
+                    quais farão parte dele.
+                  </li>
+                  <li>
+                    <strong>Gere os escores</strong> após configurar os setores
+                    para corrigir os escores dos medicamentos.
+                  </li>
+                </ol>
+              </div>
+            ),
+            okText: "Entendido",
+            width: 500,
+          });
+        } else {
+          notification.success({
+            message: t("success.generic"),
+          });
+        }
       }
     });
   };

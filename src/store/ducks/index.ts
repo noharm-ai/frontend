@@ -35,6 +35,7 @@ import drugRemoveOutlierSlice from "features/drugs/DrugRemoveOutlier/DrugRemoveO
 import drugGeneratePrescriptionHistorySlice from "features/drugs/DrugGeneratePrescriptionHistory/DrugGeneratePrescriptionHistorySlice";
 import drugGenerateScoreSlice from "features/drugs/DrugGenerateScore/DrugGenerateScoreSlice";
 import drugSubstanceSlice from "features/drugs/DrugSubstance/DrugSubstanceSlice";
+import { userProfileReducer } from "features/user/UserProfile/UserProfileSlice";
 
 import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
@@ -178,6 +179,7 @@ const rootReducer = combineReducers({
   drugGenerateScore: drugGenerateScoreSlice,
   drugSubstance: drugSubstanceSlice,
   outpatient: outpatientPrioritizationReducer,
+  userProfile: userProfileReducer,
 });
 
 export default rootReducer;

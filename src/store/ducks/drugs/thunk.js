@@ -5,10 +5,6 @@ import { errorHandler } from "utils";
 import { Creators as DrugsCreators } from "./index";
 
 const {
-  drugsFetchListStart,
-  drugsFetchListError,
-  drugsFetchListSuccess,
-
   drugsFetchSummaryStart,
   drugsFetchSummaryError,
   drugsFetchSummarySuccess,
@@ -24,31 +20,7 @@ const {
   drugsFrequenciesFetchListStart,
   drugsFrequenciesFetchListError,
   drugsFrequenciesFetchListSuccess,
-
-  unitCoefficientSaveStart,
-  unitCoefficientSaveReset,
-  unitCoefficientSaveSuccess,
 } = DrugsCreators;
-
-export const fetchDrugsListThunk =
-  (params = {}) =>
-  async (dispatch, getState) => {
-    dispatch(drugsFetchListStart());
-
-    const { access_token } = getState().auth.identify;
-    const { data, error } = await api
-      .getDrugs(access_token, params)
-      .catch(errorHandler);
-
-    if (!isEmpty(error)) {
-      dispatch(drugsFetchListError(error));
-      return;
-    }
-
-    const list = data.data;
-
-    dispatch(drugsFetchListSuccess(list));
-  };
 
 export const searchDrugsThunk =
   (idSegment, params = {}) =>
@@ -88,14 +60,6 @@ export const fetchDrugsFrequenciesListThunk =
     const list = data.data;
 
     dispatch(drugsFrequenciesFetchListSuccess(list));
-  };
-
-export const saveUnitCoeffiecientThunk =
-  (idMeasureUnit, params = {}) =>
-  async (dispatch) => {
-    dispatch(unitCoefficientSaveStart());
-    dispatch(unitCoefficientSaveSuccess(idMeasureUnit, params));
-    dispatch(unitCoefficientSaveReset());
   };
 
 export const fetchDrugSummaryThunk =
