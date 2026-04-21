@@ -2,9 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Pagination } from "antd";
+import {
+  BorderOutlined,
+  ExperimentOutlined,
+  EllipsisOutlined,
+} from "@ant-design/icons";
+import { uniq } from "utils/lodash";
 
 import { ExpandableTable } from "components/Table";
 import Empty from "components/Empty";
+import Dropdown from "components/Dropdown";
+import { EditSubstanceMultiple } from "./EditSubstanceMultiple/EditSubstanceMultiple";
 
 import { PageCard, PaginationContainer } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
@@ -16,6 +24,9 @@ import {
   setCurrentPage,
   fetchDrugAttributes,
   setDrugForm,
+  setSelectedRowsActive,
+  setSelectedRows,
+  toggleSelectedRows,
 } from "./DrugAttributesSlice";
 import { getSubstances } from "features/lists/ListsSlice";
 import Actions from "./Actions/Actions";
@@ -36,17 +47,74 @@ export default function DrugAttributes() {
   const count = useSelector((state) => state.admin.drugAttributes.count);
   const filters = useSelector((state) => state.admin.drugAttributes.filters);
   const drugList = useSelector((state) => state.admin.drugAttributes.list);
+  const selectedRows = useSelector(
+    (state) => state.admin.drugAttributes.selectedRows.list,
+  );
+  const selectedRowsActive = useSelector(
+    (state) => state.admin.drugAttributes.selectedRows.active,
+  );
   const limit = 50;
 
   useEffect(() => {
     dispatch(getSubstances({ useCache: true }));
   }, [dispatch]);
 
+  const datasource = drugList.map((d) => ({
+    key: `${d.idSegment}-${d.idDrug}`,
+    ...d,
+  }));
+
+  const isAllSelected = () => {
+    if (!selectedRows.length) return false;
+    return datasource.every((d) => selectedRows.includes(d.key));
+  };
+
+  const selectAllRows = () => {
+    const keys = datasource.map((d) => d.key);
+    if (isAllSelected()) {
+      dispatch(setSelectedRows(selectedRows.filter((k) => !keys.includes(k))));
+    } else {
+      dispatch(setSelectedRows(uniq([...selectedRows, ...keys])));
+    }
+  };
+
+  const [defineSubstanceVisible, setDefineSubstanceVisible] = useState(false);
+
+  const toggleMultipleSelection = () => {
+    dispatch(setSelectedRowsActive(!selectedRowsActive));
+  };
+
+  const selectionActionOptions = {
+    items: [
+      {
+        key: "defineSubstance",
+        label: "Definir substância",
+        icon: <ExperimentOutlined />,
+        disabled: selectedRows.length === 0,
+      },
+      { type: "divider" },
+      {
+        key: "reset",
+        label: "Remover seleção",
+        icon: <BorderOutlined />,
+        danger: true,
+      },
+    ],
+    onClick: ({ key }) => {
+      if (key === "defineSubstance") {
+        setDefineSubstanceVisible(true);
+      } else if (key === "reset") {
+        dispatch(setSelectedRowsActive(false));
+      }
+    },
+  };
+
   const onPageChange = (newPage) => {
     dispatch(setCurrentPage(newPage));
 
     const params = { ...filters, limit, offset: (newPage - 1) * limit };
     setExpandedRows([]);
+    if (selectedRowsActive) dispatch(setSelectedRows([]));
 
     dispatch(fetchDrugAttributes(params));
   };
@@ -75,11 +143,6 @@ export default function DrugAttributes() {
     }
   };
 
-  const datasource = drugList.map((d) => ({
-    key: `${d.idSegment}-${d.idDrug}`,
-    ...d,
-  }));
-
   return (
     <>
       <PageHeader>
@@ -103,6 +166,19 @@ export default function DrugAttributes() {
             `${range[0]}-${range[1]} de ${total} itens`
           }
         />
+
+        <div>
+          <Dropdown.Button
+            type={selectedRowsActive ? "primary" : "default"}
+            onClick={toggleMultipleSelection}
+            menu={selectedRowsActive ? selectionActionOptions : { items: [] }}
+            icon={<EllipsisOutlined />}
+          >
+            {selectedRowsActive
+              ? `${selectedRows.length} selecionados`
+              : "Ativar seleção múltipla"}
+          </Dropdown.Button>
+        </div>
       </PaginationContainer>
       <PageCard>
         <ExpandableTable
@@ -115,6 +191,11 @@ export default function DrugAttributes() {
                   idDrug: String(idDrug),
                 }),
               ),
+            selectedRows,
+            selectedRowsActive,
+            isAllSelected: isAllSelected(),
+            selectAllRows,
+            toggleSelectedRows: (key) => dispatch(toggleSelectedRows(key)),
           })}
           pagination={false}
           loading={isFetching}
@@ -154,6 +235,10 @@ export default function DrugAttributes() {
       <DrugReferenceDrawer placement="bottom" />
       <DrugUnitConversion onAfterSave={reload} />
       <SubstanceForm />
+      <EditSubstanceMultiple
+        open={defineSubstanceVisible}
+        setOpen={setDefineSubstanceVisible}
+      />
     </>
   );
 }

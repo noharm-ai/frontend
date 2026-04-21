@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
-  ReloadOutlined,
   RobotOutlined,
   PlusOutlined,
   DownOutlined,
@@ -16,7 +15,7 @@ import DefaultModal from "components/Modal";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 
-import { addDefaultUnits, addNewOutlier } from "../DrugAttributesSlice";
+import { addNewOutlier } from "../DrugAttributesSlice";
 import CopyConversion from "../CopyConversion/CopyConversion";
 import CopyAttributes from "../CopyAttributes/CopyAttributes";
 import PredictSubstances from "../PredictSubstances/PredictSubstances";
@@ -49,34 +48,6 @@ export default function Actions({ reload }) {
       (state) => state.admin.drugAttributes.calculateDosemax.status,
     ) === "loading";
 
-  const showDefaultUnitDialog = () => {
-    DefaultModal.confirm({
-      title: "Confirma a atualização de unidade padrão?",
-      content: (
-        <>
-          <p>
-            Esta operação atualizará a <strong>Unidade Padrão</strong> de todos
-            medicamentos sem unidade padrão definida e que tiverem somente uma
-            unidade de medida no histórico de prescrição (prescricaoagg).
-          </p>
-          <p>
-            Os medicamentos que não forem atualizados posssuem mais de uma
-            unidade de medida no histórico de prescrição ou nunca foram
-            prescritos.
-          </p>
-          <p>
-            Esta ação também ajusta inconsistências entre as tabelas{" "}
-            <strong>outlier - medatributos - medicamento</strong>.
-          </p>
-        </>
-      ),
-      onOk: executeAddDefaultUnits,
-      okText: "Confirmar",
-      cancelText: "Cancelar",
-      width: 500,
-    });
-  };
-
   const showNewOutlierDialog = () => {
     DefaultModal.confirm({
       title: "Confirma a inclusão de novos medicamentos?",
@@ -89,8 +60,7 @@ export default function Actions({ reload }) {
           </p>
           <p>
             Após adicionar estes novos medicamentos, é recomendado utilizar a
-            funcionalidade <strong>Atualizar Unidade Padrão</strong> e{" "}
-            <strong>Inferir Substâncias</strong>.
+            funcionalidade <strong>Inferir Substâncias</strong>.
           </p>
         </>
       ),
@@ -98,23 +68,6 @@ export default function Actions({ reload }) {
       okText: "Confirmar",
       cancelText: "Cancelar",
       width: 500,
-    });
-  };
-
-  const executeAddDefaultUnits = () => {
-    dispatch(addDefaultUnits()).then((response) => {
-      if (response.error) {
-        notification.error({
-          message: getErrorMessage(response, t),
-        });
-      } else {
-        notification.success({
-          message: "Unidades Padrão Atualizadas!",
-          description: `${response.payload.data.data} medicamentos atualizados`,
-        });
-
-        reload();
-      }
     });
   };
 
@@ -137,11 +90,6 @@ export default function Actions({ reload }) {
 
   const getActions = () => {
     const items = [
-      {
-        key: "updateDefaultMeasureUnit",
-        label: "Atualizar unidade padrão",
-        icon: <ReloadOutlined />,
-      },
       {
         key: "calculateDosemax",
         label: "Calcular dose máxima",
@@ -176,10 +124,6 @@ export default function Actions({ reload }) {
     switch (item.key) {
       case "inferSubstance":
         setPredictSubstancesVisible(true);
-        break;
-
-      case "updateDefaultMeasureUnit":
-        showDefaultUnitDialog();
         break;
 
       case "newDrugs":

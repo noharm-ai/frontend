@@ -5,6 +5,8 @@ import {
   SearchOutlined,
   SwapOutlined,
   MoreOutlined,
+  CheckSquareOutlined,
+  BorderOutlined,
 } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -60,11 +62,48 @@ const columns = (t, bag) => {
       },
     },
     {
-      title: t("tableHeader.action"),
+      title: bag.selectedRowsActive ? (
+        <Tooltip
+          title={bag.isAllSelected ? "Desmarcar todos" : "Selecionar todos"}
+        >
+          <Button
+            type={bag.isAllSelected ? "primary" : "default"}
+            onClick={bag.selectAllRows}
+            icon={
+              bag.isAllSelected ? (
+                <CheckSquareOutlined />
+              ) : (
+                <BorderOutlined />
+              )
+            }
+          />
+        </Tooltip>
+      ) : (
+        t("tableHeader.action")
+      ),
       key: "operations",
       width: 60,
       align: "center",
       render: (text, record) => {
+        if (bag.selectedRowsActive) {
+          const selected = bag.selectedRows.includes(record.key);
+          return (
+            <Tooltip title={selected ? null : "Selecionar"}>
+              <Button
+                type={selected ? "primary" : "default"}
+                onClick={() => bag.toggleSelectedRows(record.key)}
+                icon={
+                  selected ? (
+                    <CheckSquareOutlined style={{ fontSize: 16 }} />
+                  ) : (
+                    <BorderOutlined style={{ fontSize: 16 }} />
+                  )
+                }
+              />
+            </Tooltip>
+          );
+        }
+
         const menuItems = [
           {
             key: "edit",
