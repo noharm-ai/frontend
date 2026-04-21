@@ -36,7 +36,7 @@ export default function DrugAttributes() {
   const count = useSelector((state) => state.admin.drugAttributes.count);
   const filters = useSelector((state) => state.admin.drugAttributes.filters);
   const drugList = useSelector((state) => state.admin.drugAttributes.list);
-  const limit = 30;
+  const limit = 50;
 
   useEffect(() => {
     dispatch(getSubstances({ useCache: true }));
