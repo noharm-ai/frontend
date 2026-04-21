@@ -46,6 +46,7 @@ export default function Filter({ limit }) {
     minDrugCount: null,
     hasSubstanceMaxDoseWeightAdult: null,
     hasSubstanceMaxDoseWeightPediatric: null,
+    substanceStatus: null,
   };
 
   useEffect(() => {

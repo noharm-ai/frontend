@@ -42,21 +42,37 @@ export default function MainFilters() {
         </Heading>
         <Select
           style={{ width: "100%" }}
-          value={values.hasSubstance}
-          onChange={(val) => setFieldValue({ hasSubstance: val })}
+          value={values.substanceStatus}
+          onChange={(val) => setFieldValue({ substanceStatus: val })}
           showSearch
           optionFilterProp="children"
           allowClear
         >
-          <Select.Option key={0} value={true}>
-            <Tag color="green">Preenchido</Tag>
+          <Select.Option key={0} value={"empty"}>
+            <Tag color="red">Não definida</Tag>
           </Select.Option>
-          <Select.Option key={1} value={false}>
-            <Tag color="red">Vazio</Tag>
+          <Select.Option key={1} value={"confirmed"}>
+            <Tag color="blue">Definida</Tag>
+          </Select.Option>
+
+          <Select.Option key={1} value={"not_confirmed_95"}>
+            <Tag color="green">IA: até 95%</Tag>
+          </Select.Option>
+          <Select.Option key={1} value={"not_confirmed_85"}>
+            <Tag color="green">IA: até 85%</Tag>
+          </Select.Option>
+          <Select.Option key={1} value={"not_confirmed_75"}>
+            <Tag color="orange">IA: até 75%</Tag>
+          </Select.Option>
+          <Select.Option key={1} value={"not_confirmed_50"}>
+            <Tag color="red">IA: até 50%</Tag>
+          </Select.Option>
+          <Select.Option key={1} value={"not_confirmed"}>
+            <Tag color="purple">IA: todos</Tag>
           </Select.Option>
         </Select>
       </Col>
-<Col md={5} lg={3} xxl={2}>
+      <Col md={5} lg={3} xxl={2}>
         <Heading as="label" $size="14px">
           <Tooltip title="Quantidade mínima que o medicamento foi prescrito">
             Contagem mín.:
