@@ -56,47 +56,7 @@ export default function MainFilters() {
           </Select.Option>
         </Select>
       </Col>
-      <Col md={5} lg={3} xxl={2}>
-        <Heading as="label" $size="14px">
-          Unidade Padrão:
-        </Heading>
-        <Select
-          style={{ width: "100%" }}
-          value={values.hasDefaultUnit}
-          onChange={(val) => setFieldValue({ hasDefaultUnit: val })}
-          showSearch
-          optionFilterProp="children"
-          allowClear
-        >
-          <Select.Option key={0} value={true}>
-            <Tag color="green">Preenchido</Tag>
-          </Select.Option>
-          <Select.Option key={1} value={false}>
-            <Tag color="red">Vazio</Tag>
-          </Select.Option>
-        </Select>
-      </Col>
-      <Col md={5} lg={3} xxl={2}>
-        <Heading as="label" $size="14px">
-          Unidade Custo:
-        </Heading>
-        <Select
-          style={{ width: "100%" }}
-          value={values.hasPriceUnit}
-          onChange={(val) => setFieldValue({ hasPriceUnit: val })}
-          showSearch
-          optionFilterProp="children"
-          allowClear
-        >
-          <Select.Option key={0} value={true}>
-            <Tag color="green">Preenchido</Tag>
-          </Select.Option>
-          <Select.Option key={1} value={false}>
-            <Tag color="red">Vazio</Tag>
-          </Select.Option>
-        </Select>
-      </Col>
-      <Col md={5} lg={3} xxl={2}>
+<Col md={5} lg={3} xxl={2}>
         <Heading as="label" $size="14px">
           <Tooltip title="Quantidade mínima que o medicamento foi prescrito">
             Contagem mín.:
