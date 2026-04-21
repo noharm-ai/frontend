@@ -52,7 +52,7 @@ export default function DrugAttributes() {
   };
 
   const reload = () => {
-    onPageChange(1);
+    onPageChange(page);
   };
 
   const updateExpandedRows = (list, key) => {
