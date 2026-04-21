@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Pagination } from "antd";
+import { Pagination, Affix } from "antd";
 import {
   BorderOutlined,
   ExperimentOutlined,
@@ -28,6 +28,7 @@ import {
   setSelectedRows,
   toggleSelectedRows,
 } from "./DrugAttributesSlice";
+import { DRUG_ATTRIBUTES_MODES, DEFAULT_MODE } from "./drugAttributesConfig";
 import { getSubstances } from "features/lists/ListsSlice";
 import Actions from "./Actions/Actions";
 import DrugReferenceDrawer from "../DrugReferenceDrawer/DrugReferenceDrawer";
@@ -36,7 +37,8 @@ import { DrugUnitConversion } from "features/drugs/DrugUnitConversion/DrugUnitCo
 import { ExpandColumn } from "src/components/ExpandColumn";
 import SubstanceForm from "features/admin/Substance/Form/SubstanceForm";
 
-export default function DrugAttributes() {
+export default function DrugAttributes({ mode = DEFAULT_MODE }) {
+  const config = DRUG_ATTRIBUTES_MODES[mode];
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const isFetching =
@@ -139,7 +141,13 @@ export default function DrugAttributes() {
     if (expandedRows.length) {
       setExpandedRows([]);
     } else {
-      setExpandedRows(drugList.map((d) => `${d.idSegment}-${d.idDrug}`));
+      setExpandedRows(
+        drugList.map((d) =>
+          config.columns.includes("segment")
+            ? `${d.idSegment}-${d.idDrug}`
+            : `${d.idDrug}`,
+        ),
+      );
     }
   };
 
@@ -147,39 +155,41 @@ export default function DrugAttributes() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Curadoria de Medicamentos</h1>
+          <h1 className="page-header-title">{config.pageTitle}</h1>
         </div>
         <div className="page-header-actions">
           <Actions reload={reload} />
         </div>
       </PageHeader>
-      <Filter limit={limit} />
+      <Filter limit={limit} config={config} />
 
-      <PaginationContainer>
-        <Pagination
-          onChange={onPageChange}
-          current={page}
-          total={count}
-          showSizeChanger={false}
-          pageSize={limit}
-          showTotal={(total, range) =>
-            `${range[0]}-${range[1]} de ${total} itens`
-          }
-        />
+      <Affix offsetTop={10}>
+        <PaginationContainer>
+          <Pagination
+            onChange={onPageChange}
+            current={page}
+            total={count}
+            showSizeChanger={false}
+            pageSize={limit}
+            showTotal={(total, range) =>
+              `${range[0]}-${range[1]} de ${total} itens`
+            }
+          />
 
-        <div>
-          <Dropdown.Button
-            type={selectedRowsActive ? "primary" : "default"}
-            onClick={toggleMultipleSelection}
-            menu={selectedRowsActive ? selectionActionOptions : { items: [] }}
-            icon={<EllipsisOutlined />}
-          >
-            {selectedRowsActive
-              ? `${selectedRows.length} selecionados`
-              : "Ativar seleção múltipla"}
-          </Dropdown.Button>
-        </div>
-      </PaginationContainer>
+          <div>
+            <Dropdown.Button
+              type={selectedRowsActive ? "primary" : "default"}
+              onClick={toggleMultipleSelection}
+              menu={selectedRowsActive ? selectionActionOptions : { items: [] }}
+              icon={<EllipsisOutlined />}
+            >
+              {selectedRowsActive
+                ? `${selectedRows.length} selecionados`
+                : "Ativar seleção múltipla"}
+            </Dropdown.Button>
+          </div>
+        </PaginationContainer>
+      </Affix>
       <PageCard>
         <ExpandableTable
           columns={columns(t, {
@@ -196,6 +206,8 @@ export default function DrugAttributes() {
             isAllSelected: isAllSelected(),
             selectAllRows,
             toggleSelectedRows: (key) => dispatch(toggleSelectedRows(key)),
+            config,
+            mode,
           })}
           pagination={false}
           loading={isFetching}
@@ -209,15 +221,17 @@ export default function DrugAttributes() {
           }}
           dataSource={!isFetching ? datasource : []}
           showSorterTooltip={false}
-          expandedRowRender={expandedRowRender}
-          expandedRowKeys={expandedRows}
-          columnTitle={
-            <ExpandColumn
-              expand={!expandedRows.length}
-              toggleExpansion={toggleExpansion}
-            />
-          }
-          onExpand={(expanded, record) => handleRowExpand(record)}
+          {...(config.expandedRow && {
+            expandedRowRender,
+            expandedRowKeys: expandedRows,
+            columnTitle: (
+              <ExpandColumn
+                expand={!expandedRows.length}
+                toggleExpansion={toggleExpansion}
+              />
+            ),
+            onExpand: (expanded, record) => handleRowExpand(record),
+          })}
         />
       </PageCard>
       <PaginationContainer>
