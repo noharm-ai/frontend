@@ -5,6 +5,17 @@ export const ConversionUnitCard = styled(Card)`
   height: 100%;
   display: flex;
   flex-direction: column;
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+
+  ${({ $isFocused }) =>
+    $isFocused &&
+    `
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(46, 60, 90, 0.35), 0 2px 8px rgba(0,0,0,0.15);
+    border-color: #2e3c5a !important;
+  `}
 
   .ant-card-body {
     flex: 1;
