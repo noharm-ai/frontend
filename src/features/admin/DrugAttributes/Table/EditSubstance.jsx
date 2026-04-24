@@ -96,7 +96,7 @@ export default function EditSubstance({ idDrug, sctid, accuracy }) {
     <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
       <span style={{ width: "100%", display: "flex" }}>
         <Select
-          style={{ flex: 1, minWidth: 0 }}
+          style={{ flex: 1, minWidth: 0, maxWidth: "450px" }}
           value={value ? `${value}` : null}
           onChange={(val) => setValue(val)}
           showSearch={{ optionFilterProp: ["label"] }}
