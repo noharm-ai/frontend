@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Row, Col, Spin, Alert, Space, Tag } from "antd";
+import { Row, Col, Spin, Alert, Space } from "antd";
 import {
   CheckOutlined,
   StarOutlined,
   RobotOutlined,
   DeleteOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { Formik } from "formik";
 
-import { InputNumber } from "components/Inputs";
+import { InputNumber, Input } from "components/Inputs";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import notification from "components/notification";
@@ -26,7 +27,6 @@ export default function UnitCard({
   idDrug,
   name,
   data,
-  prescribedQuantity,
   substanceMeasureUnit,
   substanceName,
   showPredictions,
@@ -48,16 +48,42 @@ export default function UnitCard({
         fontSize: "13px",
       }}
     >
-      <div style={{ lineHeight: 1.2 }}>{name}</div>
-      <div style={{ fontSize: "10px", opacity: 0.5 }}>
-        Contagem: {prescribedQuantity || "--"}
+      <div
+        style={{ lineHeight: 1.2, cursor: "pointer" }}
+        onClick={() => showRef(idDrug)}
+      >
+        {name}
       </div>
+      <Tooltip title={substanceName}>
+        <div
+          style={{
+            fontSize: "10px",
+            opacity: 0.5,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {substanceName || "--"}
+        </div>
+      </Tooltip>
     </div>
   );
 
   const showRef = (sctid) => {
     dispatch(setDrawerSctid(sctid));
   };
+
+  const ExtraAction = ({ sctid }) => (
+    <Tooltip title="Referência">
+      <Button
+        shape="circle"
+        icon={<FileTextOutlined />}
+        loading={loading}
+        onClick={() => showRef(sctid)}
+      />
+    </Tooltip>
+  );
 
   const initialValues = {
     idDrug,
@@ -91,15 +117,12 @@ export default function UnitCard({
     setError(null);
 
     if (isValidConversion(params.conversionList)) {
-      // setLoading(true);
+      setLoading(true);
       const payload = {
         idDrug,
         idMeasureUnitDefault: substanceMeasureUnit,
         conversionList: params.conversionList,
       };
-
-      console.log("payload", payload);
-      return;
 
       dispatch(saveConversions(payload)).then((response) => {
         if (response.error) {
@@ -111,10 +134,6 @@ export default function UnitCard({
         } else {
           dispatch(updateListFactors(params.conversionList));
           setInfered(false);
-          notification.success({
-            message: "Conversão atualizada!",
-            description: `Geração de scores solicitada, aguarde alguns minutos para atualizar. (${params.name})`,
-          });
         }
 
         setLoading(false);
@@ -142,31 +161,35 @@ export default function UnitCard({
           className={`${isValidConversion(data) ? "success" : "error"} ${
             dirty ? "warning" : ""
           }`}
+          extra={<ExtraAction sctid={data[0].sctid} />}
         >
           <Spin spinning={loading}>
             <Form>
               <div className="conversion-unit-card-container">
                 <div>
-                  <div className="default-unit-container">
-                    <Tooltip title="Referência">
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          showRef(data[0].sctid);
-                        }}
-                      >
-                        {substanceName}
-                      </a>
-                    </Tooltip>
-
-                    <Tag color="blue" variant="outlined">
-                      {" "}
-                      <StarOutlined />{" "}
-                      {MeasureUnitEnum.getDescription(substanceMeasureUnit)}
-                    </Tag>
-                  </div>
                   <Row gutter={[24, 16]}>
+                    <Col xs={12}>
+                      <div className="form-row">
+                        <div className="form-label">Unidade padrão</div>
+                        <div className="form-input default-unit">
+                          <Space orientation="horizontal">
+                            <Space.Compact block>
+                              <Space.Addon>
+                                <StarOutlined />
+                              </Space.Addon>
+                              <Input
+                                value={MeasureUnitEnum.getDescription(
+                                  substanceMeasureUnit,
+                                )}
+                                readOnly
+                                tabIndex={-1}
+                              />
+                            </Space.Compact>
+                          </Space>
+                        </div>
+                      </div>
+                    </Col>
+
                     {values.conversionList
                       .filter(filterConversions)
                       .map((i, index) => (

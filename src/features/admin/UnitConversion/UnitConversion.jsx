@@ -3,12 +3,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { Pagination, Row, Col, Spin } from "antd";
 
 import Empty from "components/Empty";
+import Progress from "components/Progress";
 
 import { PaginationContainer } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
+import { ProgressContainer } from "./UnitConversion.style";
 
 import Filter from "./Filter/Filter";
 import { setCurrentPage } from "./UnitConversionSlice";
+import { isValidConversion } from "./transformer";
 import UnitCard from "./UnitCard/UnitCard";
 import Actions from "./Actions/Actions";
 import DrugReferenceDrawer from "../DrugReferenceDrawer/DrugReferenceDrawer";
@@ -33,6 +36,10 @@ export default function UnitConversion() {
   };
 
   const count = datasource.length;
+  const completedCount = datasource.filter((drug) =>
+    isValidConversion(drug.data),
+  ).length;
+  const percentage = count > 0 ? Math.round((completedCount / count) * 100) : 0;
 
   return (
     <>
@@ -53,7 +60,26 @@ export default function UnitConversion() {
             transition: "all 0.3s linear",
           }}
         >
-          <PaginationContainer>
+          <PaginationContainer style={{ justifyContent: "space-between" }}>
+            <div>
+              {count > 0 && (
+                <ProgressContainer>
+                  <div className="progress-header">
+                    <span>Conversões preenchidas</span>
+                    <span className="progress-count">
+                      {completedCount} de {count} medicamentos
+                    </span>
+                  </div>
+                  <Progress
+                    percent={percentage}
+                    strokeColor={{
+                      "0%": "rgb(112, 189, 196)",
+                      "100%": "rgb(126, 190, 154)",
+                    }}
+                  />
+                </ProgressContainer>
+              )}
+            </div>
             <Pagination
               onChange={onPageChange}
               current={page}
@@ -65,6 +91,7 @@ export default function UnitConversion() {
               }
             />
           </PaginationContainer>
+
           <div style={{ margin: "20px 0" }}>
             <Row gutter={[24, 24]}>
               {datasource.length ? (

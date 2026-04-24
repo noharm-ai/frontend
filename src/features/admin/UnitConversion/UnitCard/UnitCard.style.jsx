@@ -76,15 +76,15 @@ export const ConversionUnitCard = styled(Card)`
   }
 
   .default-unit {
-    .ant-input-number {
-      border-color: #70bdc3;
+    .ant-input {
+      border-color: #70bdc3 !important;
     }
 
-    .ant-input-number-group-addon {
+    .ant-space-addon {
       font-weight: 600;
-      background: #70bdc3;
-      color: #fff;
-      border-color: #70bdc3;
+      background: #70bdc3 !important;
+      color: #fff !important;
+      border-color: #70bdc3 !important;
     }
   }
 
