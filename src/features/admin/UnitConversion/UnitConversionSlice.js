@@ -46,7 +46,7 @@ export const fetchConversionList = createAsyncThunk(
       if (import.meta.env.DEV) {
         combinedPredictions = conversionList.map((item, index) => ({
           id: item.id,
-          prediction: index % 3 === 0 ? item.factor : String((index % 9) + 1),
+          prediction: index % 3 === 0 ? item.factor : "Curadoria",
           probability: 70 + (index % 30),
         }));
       } else {

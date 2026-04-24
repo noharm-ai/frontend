@@ -59,9 +59,6 @@ const UnitCard = forwardRef(function UnitCard(
   const cardRef = useRef(null);
   const formikBagRef = useRef(null);
 
-  console.log("showpredictions", showPredictions);
-  console.log("isValidconversion", isValidConversion(data));
-
   useEffect(() => {
     if (isFocused && cardRef.current) {
       cardRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -254,6 +251,7 @@ const UnitCard = forwardRef(function UnitCard(
       {(formikBag) => {
         formikBagRef.current = formikBag;
         const { handleSubmit, values, setFieldValue, dirty } = formikBag;
+        console.log("values", values);
         return (
           <div ref={cardRef}>
             <ConversionUnitCard
@@ -293,8 +291,9 @@ const UnitCard = forwardRef(function UnitCard(
                         </Col>
 
                         {values.conversionList
-                          .filter(filterConversions)
-                          .map((i, index) => (
+                          .map((i, index) => ({ i, index }))
+                          .filter(({ i }) => filterConversions(i))
+                          .map(({ i, index }) => (
                             <Col xs={12} key={i.idMeasureUnit}>
                               <div className="form-row">
                                 <div className="form-label">
@@ -310,12 +309,12 @@ const UnitCard = forwardRef(function UnitCard(
                                         max={99999999}
                                         className={`${!i.factor ? "error" : ""}`}
                                         status={i.factor ? "" : "error"}
-                                        onChange={(val) =>
+                                        onChange={(val) => {
                                           setFieldValue(
                                             `conversionList.${index}.factor`,
                                             val,
-                                          )
-                                        }
+                                          );
+                                        }}
                                       />
                                     </Space.Compact>
                                   </Space>
