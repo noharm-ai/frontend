@@ -41,16 +41,24 @@ export const fetchConversionList = createAsyncThunk(
         return { data: { data: conversionList } };
       }
 
-      const chunkSize = Math.ceil(conversionList.length / 4);
-      const chunks = chunkArray(conversionList, chunkSize);
+      let combinedPredictions = [];
 
-      const combinedPredictions = [];
-      for (const chunk of chunks) {
-        const predictionResponse =
-          await adminApi.unitConversion.getConversionPredictions({
-            conversionList: chunk,
-          });
-        combinedPredictions.push(...predictionResponse.data.data);
+      if (import.meta.env.DEV) {
+        combinedPredictions = conversionList.map((item, index) => ({
+          id: item.id,
+          prediction: index % 3 === 0 ? item.factor : String((index % 9) + 1),
+          probability: 70 + (index % 30),
+        }));
+      } else {
+        const chunkSize = Math.ceil(conversionList.length / 4);
+        const chunks = chunkArray(conversionList, chunkSize);
+        for (const chunk of chunks) {
+          const predictionResponse =
+            await adminApi.unitConversion.getConversionPredictions({
+              conversionList: chunk,
+            });
+          combinedPredictions.push(...predictionResponse.data.data);
+        }
       }
 
       const conversionListWithPredictions = conversionList.map((item) => {

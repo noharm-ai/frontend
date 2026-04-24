@@ -59,6 +59,9 @@ const UnitCard = forwardRef(function UnitCard(
   const cardRef = useRef(null);
   const formikBagRef = useRef(null);
 
+  console.log("showpredictions", showPredictions);
+  console.log("isValidconversion", isValidConversion(data));
+
   useEffect(() => {
     if (isFocused && cardRef.current) {
       cardRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });

@@ -216,7 +216,7 @@ export default function UnitConversion() {
                       >
                         <UnitCard
                           {...i}
-                          showPredictions={filters.showPredictions}
+                          showPredictions={filters.showPrediction}
                           isFocused={i.idDrug === focusedDrugId}
                           ref={(el) => {
                             cardRefs.current[slotIndex] = el;
