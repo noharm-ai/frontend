@@ -757,7 +757,8 @@
     "originSubstanceClass": "SUBSTANCE CLASS (ORIGIN)",
     "originSubstanceClassParent": "SUBSTANCE PARENT CLASS (ORIGIN)",
     "dischargeReason": "DISCHARGE REASON",
-    "prescriptionAtDischargeDate": "PRESCRIPTION AT DISCHARGE DATE"
+    "prescriptionAtDischargeDate": "PRESCRIPTION AT DISCHARGE DATE",
+    "age": "AGE"
   },
 
   "reportcsvCulture": {

@@ -20,6 +20,7 @@ import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartDepartments from "./Charts/ChartDepartments";
 import ChartSegments from "./Charts/ChartSegments";
 import ChartScores from "./Charts/ChartScores";
+import ChartAgeRange from "./Charts/ChartAgeRange";
 import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
 import HelpModal from "./Help/Help";
@@ -39,6 +40,9 @@ export default function PrescriptionReport() {
   );
   const filters = useSelector(
     (state) => state.reportsArea.prescription.filters
+  );
+  const hasAge = useSelector(
+    (state) => state.reportsArea.prescription.hasAge
   );
   const printRef = useRef(null);
   const isLoading = status === "loading" || filteredStatus === "loading";
@@ -318,6 +322,28 @@ export default function PrescriptionReport() {
                   </Spin>
                 </Space>
               </Col>
+              {hasAge && (
+                <Col xs={24} lg={12}>
+                  <div className="page-break"></div>
+                  <Space direction="vertical" size="large">
+                    <SectionHeader>
+                      <h2>Prescrições por Faixa Etária</h2>
+                      <div>
+                        Prescrições agrupadas por faixa etária e percentual de
+                        checagem.
+                      </div>
+                    </SectionHeader>
+                    <Spin spinning={isLoading}>
+                      <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                        <ChartAgeRange
+                          reportData={reportData}
+                          isLoading={isLoading}
+                        />
+                      </ChartCard>
+                    </Spin>
+                  </Space>
+                </Col>
+              )}
             </Row>
           </Space>
         </div>
