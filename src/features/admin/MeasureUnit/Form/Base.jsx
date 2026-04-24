@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { useFormikContext } from "formik";
 
 import { Select } from "components/Inputs";
+import { MeasureUnitEnum } from "models/MeasureUnitEnum";
 
 export function BaseForm({ open }) {
   const inputRef = useRef(null);
@@ -36,11 +37,11 @@ export function BaseForm({ open }) {
             onChange={(value) => setFieldValue("measureUnitNh", value)}
             allowClear
           >
-            <Select.Option value={"mg"}>mg</Select.Option>
-            <Select.Option value={"ml"}>ml</Select.Option>
-
-            <Select.Option value={"mcg"}>mcg</Select.Option>
-            <Select.Option value={"UI"}>UI</Select.Option>
+            {MeasureUnitEnum.getDefaultUnits().map(({ value, label }) => (
+              <Select.Option key={value} value={value}>
+                {label}
+              </Select.Option>
+            ))}
           </Select>
         </div>
       </div>

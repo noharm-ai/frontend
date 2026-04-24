@@ -16,7 +16,6 @@ const initialState = {
   error: null,
   filters: {
     hasConversion: null,
-    idSegment: null,
   },
   currentPage: 1,
   count: 0,
@@ -38,6 +37,10 @@ export const fetchConversionList = createAsyncThunk(
 
       const conversionList = response.data.data;
 
+      if (!params.showPrediction) {
+        return { data: { data: conversionList } };
+      }
+
       const chunkSize = Math.ceil(conversionList.length / 4);
       const chunks = chunkArray(conversionList, chunkSize);
 
@@ -52,7 +55,7 @@ export const fetchConversionList = createAsyncThunk(
 
       const conversionListWithPredictions = conversionList.map((item) => {
         const prediction = combinedPredictions.find(
-          (pred) => pred.id === item.id
+          (pred) => pred.id === item.id,
         );
 
         if (prediction) {
@@ -71,22 +74,33 @@ export const fetchConversionList = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const fetchConversionPrediction = createAsyncThunk(
   "admin-unit-conversion/fetch-prediction",
   async (params, thunkAPI) => {
     try {
-      const response = await adminApi.unitConversion.getConversionPredictions(
-        params
-      );
+      const response =
+        await adminApi.unitConversion.getConversionPredictions(params);
 
       return response;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
+);
+
+export const fetchLlmSuggestion = createAsyncThunk(
+  "admin-unit-conversion/llm-suggest",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminApi.unitConversion.llmSuggest(params);
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
 );
 
 export const saveConversions = createAsyncThunk(
@@ -99,7 +113,7 @@ export const saveConversions = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const addDefaultUnits = createAsyncThunk(
@@ -112,7 +126,7 @@ export const addDefaultUnits = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 export const copyConversion = createAsyncThunk(
@@ -125,7 +139,7 @@ export const copyConversion = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 const unitConversionSlice = createSlice({
@@ -146,13 +160,14 @@ const unitConversionSlice = createSlice({
     },
     updateListFactors(state, action) {
       const filteredDrugIndex = state.filteredList.findIndex(
-        (d) => d.idDrug === action.payload[0].idDrug
+        (d) => d.idDrug === action.payload[0].idDrug,
       );
 
       action.payload.forEach((item) => {
         const index = state.list.findIndex(
           (uc) =>
-            uc.idMeasureUnit === item.idMeasureUnit && uc.idDrug === item.idDrug
+            uc.idMeasureUnit === item.idMeasureUnit &&
+            uc.idDrug === item.idDrug,
         );
         if (index !== -1) {
           state.list[index].factor = item.factor;

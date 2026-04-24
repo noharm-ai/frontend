@@ -5,6 +5,17 @@ export const ConversionUnitCard = styled(Card)`
   height: 100%;
   display: flex;
   flex-direction: column;
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+
+  ${({ $isFocused }) =>
+    $isFocused &&
+    `
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(46, 60, 90, 0.35), 0 2px 8px rgba(0,0,0,0.15);
+    border-color: #2e3c5a !important;
+  `}
 
   .ant-card-body {
     flex: 1;
@@ -76,15 +87,40 @@ export const ConversionUnitCard = styled(Card)`
   }
 
   .default-unit {
-    .ant-input-number {
-      border-color: #70bdc3;
+    .ant-input {
+      border-color: #70bdc3 !important;
     }
 
-    .ant-input-number-group-addon {
+    .ant-space-addon {
       font-weight: 600;
-      background: #70bdc3;
-      color: #fff;
-      border-color: #70bdc3;
+      background: #70bdc3 !important;
+      color: #fff !important;
+      border-color: #70bdc3 !important;
+    }
+  }
+
+  .default-unit-container {
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.6;
+    background-color: #fafafa;
+    padding: 8px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    line-height: 1.2;
+
+    a {
+      color: #1677ff;
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 `;

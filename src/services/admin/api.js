@@ -242,6 +242,12 @@ api.unitConversion.addDefaultUnits = (params = {}) => {
   );
 };
 
+api.unitConversion.llmSuggest = (params = {}) => {
+  return instance.post(`${endpoints.unitConversion}/llm-suggest`, params, {
+    ...setHeaders(),
+  });
+};
+
 /**
  * INTEGRATION
  */
