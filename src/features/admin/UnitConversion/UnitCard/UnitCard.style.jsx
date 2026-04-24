@@ -87,4 +87,29 @@ export const ConversionUnitCard = styled(Card)`
       border-color: #70bdc3;
     }
   }
+
+  .default-unit-container {
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.6;
+    background-color: #fafafa;
+    padding: 8px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    line-height: 1.2;
+
+    a {
+      color: #1677ff;
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
 `;

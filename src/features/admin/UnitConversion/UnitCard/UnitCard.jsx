@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Row, Col, Spin, Alert, Space } from "antd";
+import { Row, Col, Spin, Alert, Space, Tag } from "antd";
 import {
   CheckOutlined,
   StarOutlined,
-  FileTextOutlined,
   RobotOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
@@ -15,62 +14,45 @@ import { InputNumber } from "components/Inputs";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import notification from "components/notification";
-import { createSlug } from "utils/transformers/utils";
 import { Form } from "styles/Form.style";
 import { ConversionUnitCard } from "./UnitCard.style";
 import { updateListFactors, saveConversions } from "../UnitConversionSlice";
 import { setDrawerSctid } from "../../DrugReferenceDrawer/DrugReferenceDrawerSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import { matchPrediction, isValidConversion } from "../transformer";
+import { MeasureUnitEnum } from "models/MeasureUnitEnum";
 
 export default function UnitCard({
   idDrug,
   name,
-  idSegment,
   data,
   prescribedQuantity,
+  substanceMeasureUnit,
+  substanceName,
+  showPredictions,
 }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [infered, setInfered] = useState(!isValidConversion(data));
+  const [infered, setInfered] = useState(
+    showPredictions && !isValidConversion(data),
+  );
 
   const Link = () => (
     <div
-      style={{ display: "flex", flexDirection: "column", padding: "0.5rem 0" }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        padding: "0.5rem 0",
+        fontSize: "13px",
+      }}
     >
-      <div>
-        <Tooltip title="Ver medicamento">
-          <button
-            href="#"
-            tabIndex={-1}
-            onClick={() =>
-              window.open(
-                `/medicamentos/${idSegment}/${idDrug}/${createSlug(name)}`,
-                "_blank",
-              )
-            }
-          >
-            {name}
-          </button>
-        </Tooltip>
-      </div>
+      <div style={{ lineHeight: 1.2 }}>{name}</div>
       <div style={{ fontSize: "10px", opacity: 0.5 }}>
         Contagem: {prescribedQuantity || "--"}
       </div>
     </div>
-  );
-
-  const ExtraAction = ({ sctid }) => (
-    <Tooltip title="Referência">
-      <Button
-        shape="circle"
-        icon={<FileTextOutlined />}
-        loading={loading}
-        onClick={() => showRef(sctid)}
-      />
-    </Tooltip>
   );
 
   const showRef = (sctid) => {
@@ -80,7 +62,6 @@ export default function UnitCard({
   const initialValues = {
     idDrug,
     name,
-    idSegment,
     conversionList: (data || []).map((item) => {
       return {
         ...item,
@@ -110,14 +91,15 @@ export default function UnitCard({
     setError(null);
 
     if (isValidConversion(params.conversionList)) {
-      setLoading(true);
+      // setLoading(true);
       const payload = {
         idDrug,
-        idSegment,
-        idMeasureUnitDefault: params.conversionList.find((i) => i.factor === 1)
-          .idMeasureUnit,
+        idMeasureUnitDefault: substanceMeasureUnit,
         conversionList: params.conversionList,
       };
+
+      console.log("payload", payload);
+      return;
 
       dispatch(saveConversions(payload)).then((response) => {
         if (response.error) {
@@ -138,14 +120,17 @@ export default function UnitCard({
         setLoading(false);
       });
     } else {
-      const errorMsg =
-        "Todas as conversões precisam estar preenchidas e, ao menos uma, deve ter o fator 1.";
+      const errorMsg = "Todas as conversões precisam estar preenchidas.";
       setError(errorMsg);
       notification.error({
         message: "Conversão inválida!",
         description: errorMsg,
       });
     }
+  };
+
+  const filterConversions = (item) => {
+    return item.drugMeasureUnitNh !== item.substanceMeasureUnit;
   };
 
   return (
@@ -157,67 +142,83 @@ export default function UnitCard({
           className={`${isValidConversion(data) ? "success" : "error"} ${
             dirty ? "warning" : ""
           }`}
-          extra={<ExtraAction sctid={data[0].sctid} />}
         >
           <Spin spinning={loading}>
             <Form>
               <div className="conversion-unit-card-container">
                 <div>
+                  <div className="default-unit-container">
+                    <Tooltip title="Referência">
+                      <a
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          showRef(data[0].sctid);
+                        }}
+                      >
+                        {substanceName}
+                      </a>
+                    </Tooltip>
+
+                    <Tag color="blue" variant="outlined">
+                      {" "}
+                      <StarOutlined />{" "}
+                      {MeasureUnitEnum.getDescription(substanceMeasureUnit)}
+                    </Tag>
+                  </div>
                   <Row gutter={[24, 16]}>
-                    {values.conversionList.map((i, index) => (
-                      <Col xs={12} key={i.idMeasureUnit}>
-                        <div className="form-row">
-                          <div className="form-label">
-                            {i.measureUnit || "--"}
+                    {values.conversionList
+                      .filter(filterConversions)
+                      .map((i, index) => (
+                        <Col xs={12} key={i.idMeasureUnit}>
+                          <div className="form-row">
+                            <div className="form-label">
+                              {i.measureUnit || "--"}
+                            </div>
+                            <div className="form-input">
+                              <Space orientation="horizontal">
+                                <Space.Compact block>
+                                  <Space.Addon>{"X"}</Space.Addon>
+                                  <InputNumber
+                                    value={i.factor}
+                                    min={0}
+                                    max={99999999}
+                                    className={`${!i.factor ? "error" : ""}`}
+                                    status={i.factor ? "" : "error"}
+                                    onChange={(val) =>
+                                      setFieldValue(
+                                        `conversionList.${index}.factor`,
+                                        val,
+                                      )
+                                    }
+                                  />
+                                </Space.Compact>
+                              </Space>
+                            </div>
+                            {infered && i.probability && (
+                              <Tooltip title="Probabilidade da inferência estar correta">
+                                <div
+                                  className="form-info"
+                                  style={{
+                                    display: "inline-block",
+                                    cursor: "default",
+                                  }}
+                                >
+                                  {i.probability.toFixed()}%
+                                </div>
+                              </Tooltip>
+                            )}
+                            {!infered && matchPrediction(i) && (
+                              <Alert
+                                type="error"
+                                showIcon
+                                style={{ marginTop: 8, fontSize: 12 }}
+                                message={`Inferência: ${i.prediction}`}
+                              />
+                            )}
                           </div>
-                          <div className="form-input">
-                            <Space direction="horizontal">
-                              <Space.Compact block>
-                                <Space.Addon>
-                                  {i.factor === 1 ? <StarOutlined /> : "X"}
-                                </Space.Addon>
-                                <InputNumber
-                                  value={i.factor}
-                                  min={0}
-                                  max={99999999}
-                                  className={`${
-                                    i.factor === 1 ? "success default-unit" : ""
-                                  } ${!i.factor ? "error" : ""}`}
-                                  status={i.factor ? "" : "error"}
-                                  onChange={(val) =>
-                                    setFieldValue(
-                                      `conversionList.${index}.factor`,
-                                      val,
-                                    )
-                                  }
-                                />
-                              </Space.Compact>
-                            </Space>
-                          </div>
-                          {infered && i.probability && (
-                            <Tooltip title="Probabilidade da inferência estar correta">
-                              <div
-                                className="form-info"
-                                style={{
-                                  display: "inline-block",
-                                  cursor: "default",
-                                }}
-                              >
-                                {i.probability.toFixed()}%
-                              </div>
-                            </Tooltip>
-                          )}
-                          {!infered && matchPrediction(i) && (
-                            <Alert
-                              type="error"
-                              showIcon
-                              style={{ marginTop: 8, fontSize: 12 }}
-                              message={`Inferência: ${i.prediction}`}
-                            />
-                          )}
-                        </div>
-                      </Col>
-                    ))}
+                        </Col>
+                      ))}
                   </Row>
                 </div>
                 {error && (
@@ -231,12 +232,11 @@ export default function UnitCard({
 
                 {infered && (
                   <Alert
-                    message="Conversões inferidas"
-                    description={<>Revise antes de salvar.</>}
+                    title="Conversões inferidas"
                     type="warning"
                     closable
                     showIcon
-                    style={{ marginTop: "20px" }}
+                    style={{ marginTop: "16px" }}
                   />
                 )}
 

@@ -90,6 +90,9 @@ export const groupConversions = (data) => {
         idSegment: d.idSegment,
         prescribedQuantity: d.prescribedQuantity,
         tags: d.substanceTags,
+        substanceMeasureUnit: d.substanceMeasureUnit,
+        uniformMeasureUnit: d.uniformMeasureUnit,
+        substanceName: d.substanceName,
         data: [d],
       };
     }
@@ -97,5 +100,11 @@ export const groupConversions = (data) => {
 
   return Object.keys(groups)
     .map((k) => groups[k])
+    .filter(
+      (g) =>
+        g.data.filter(
+          (item) => item.drugMeasureUnitNh !== item.substanceMeasureUnit,
+        ).length > 0,
+    )
     .sort((a, b) => `${a.name}`.trim().localeCompare(`${b.name}`.trim()));
 };

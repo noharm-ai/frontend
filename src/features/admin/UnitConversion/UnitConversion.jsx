@@ -77,7 +77,10 @@ export default function UnitConversion() {
                       xxl={drugRef ? 8 : 6}
                       key={i.idDrug}
                     >
-                      <UnitCard {...i} />
+                      <UnitCard
+                        {...i}
+                        showPredictions={filters.showPredictions}
+                      />
                     </Col>
                   ))
               ) : (
@@ -90,11 +93,7 @@ export default function UnitConversion() {
                 >
                   <Empty
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description={
-                      filters.idSegment
-                        ? "Nenhuma conversão encontrada."
-                        : "Selecione os segmento referência para visualizar as conversões. Esta lista pode demorar alguns minutos para ser gerada."
-                    }
+                    description="Nenhuma conversão encontrada."
                   />
                 </div>
               )}
