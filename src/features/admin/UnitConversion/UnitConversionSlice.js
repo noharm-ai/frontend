@@ -91,6 +91,18 @@ export const fetchConversionPrediction = createAsyncThunk(
   },
 );
 
+export const fetchLlmSuggestion = createAsyncThunk(
+  "admin-unit-conversion/llm-suggest",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminApi.unitConversion.llmSuggest(params);
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
+);
+
 export const saveConversions = createAsyncThunk(
   "admin-unit-conversion/save-conversions",
   async (params, thunkAPI) => {

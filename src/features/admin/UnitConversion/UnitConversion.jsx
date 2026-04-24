@@ -126,6 +126,17 @@ export default function UnitConversion() {
       } else if (e.key === "ArrowUp" || e.key === "k") {
         e.preventDefault();
         if (focusedIndex >= 0) navigateTo(Math.max(focusedIndex - 1, 0));
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        const nextFirstIndex = page * limit;
+        if (nextFirstIndex < datasource.length) {
+          navigateTo(nextFirstIndex);
+        }
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        if (page > 1) {
+          navigateTo((page - 2) * limit);
+        }
       }
     };
 
@@ -256,10 +267,13 @@ export default function UnitConversion() {
               <kbd>k</kbd> anterior
             </span>
             <span className="hint-item">
-              <kbd>Enter</kbd> editar / salvar
+              <kbd>→</kbd> próx. página
             </span>
             <span className="hint-item">
-              <kbd>Ctrl</kbd>+<kbd>I</kbd> inferir
+              <kbd>←</kbd> ant. página
+            </span>
+            <span className="hint-item">
+              <kbd>Enter</kbd> editar / salvar
             </span>
             <span className="hint-item">
               <kbd>r</kbd> referência

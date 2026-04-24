@@ -7,13 +7,14 @@ import React, {
 } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Row, Col, Spin, Alert, Space } from "antd";
+import { Row, Col, Spin, Alert, Space, Popconfirm } from "antd";
 import {
   CheckOutlined,
   StarOutlined,
   RobotOutlined,
   DeleteOutlined,
   FileTextOutlined,
+  ThunderboltOutlined,
 } from "@ant-design/icons";
 import { Formik } from "formik";
 
@@ -23,7 +24,11 @@ import Tooltip from "components/Tooltip";
 import notification from "components/notification";
 import { Form } from "styles/Form.style";
 import { ConversionUnitCard } from "./UnitCard.style";
-import { updateListFactors, saveConversions } from "../UnitConversionSlice";
+import {
+  updateListFactors,
+  saveConversions,
+  fetchLlmSuggestion,
+} from "../UnitConversionSlice";
 import { setDrawerSctid } from "../../DrugReferenceDrawer/DrugReferenceDrawerSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import { matchPrediction, isValidConversion } from "../transformer";
@@ -38,6 +43,7 @@ const UnitCard = forwardRef(function UnitCard(
     substanceName,
     showPredictions,
     isFocused,
+    prescribedQuantity,
   },
   ref,
 ) {
@@ -48,6 +54,7 @@ const UnitCard = forwardRef(function UnitCard(
   const [infered, setInfered] = useState(
     showPredictions && !isValidConversion(data),
   );
+  const [llmStatus, setLlmStatus] = useState("idle");
 
   const cardRef = useRef(null);
   const formikBagRef = useRef(null);
@@ -105,7 +112,7 @@ const UnitCard = forwardRef(function UnitCard(
       >
         {name}
       </div>
-      <Tooltip title={substanceName}>
+      <Tooltip title={`${substanceName} (${prescribedQuantity})`}>
         <div
           style={{
             fontSize: "10px",
@@ -115,7 +122,7 @@ const UnitCard = forwardRef(function UnitCard(
             whiteSpace: "nowrap",
           }}
         >
-          {substanceName || "--"}
+          {`${substanceName} (${prescribedQuantity})`}
         </div>
       </Tooltip>
     </div>
@@ -153,6 +160,41 @@ const UnitCard = forwardRef(function UnitCard(
     setInfered(false);
   };
 
+  const suggestFromLlm = async (values, setFieldValue) => {
+    setLlmStatus("loading");
+
+    const params = {
+      sctid: data[0]?.sctid,
+      drugName: name,
+      conversionList: values.conversionList
+        .filter(filterConversions)
+        .map((item) => ({
+          idMeasureUnit: item.idMeasureUnit,
+          description: item.measureUnit,
+        })),
+    };
+
+    const response = await dispatch(fetchLlmSuggestion(params));
+
+    if (response.error) {
+      notification.error({
+        message: getErrorMessage(response, t),
+      });
+      setLlmStatus("failed");
+    } else {
+      const suggestion = response.payload.data;
+      suggestion.forEach((item) => {
+        const idx = values.conversionList.findIndex(
+          (c) => c.idMeasureUnit === item.idMeasureUnit,
+        );
+        if (idx !== -1 && item.factor != null) {
+          setFieldValue(`conversionList.${idx}.factor`, item.factor);
+        }
+      });
+      setLlmStatus("succeeded");
+    }
+  };
+
   const applyPredictions = async (setFieldValue) => {
     const newConversionList = data.map((item) => {
       return {
@@ -168,12 +210,13 @@ const UnitCard = forwardRef(function UnitCard(
     setError(null);
 
     if (isValidConversion(params.conversionList)) {
-      setLoading(true);
       const payload = {
         idDrug,
         idMeasureUnitDefault: substanceMeasureUnit,
         conversionList: params.conversionList,
       };
+
+      setLoading(true);
 
       dispatch(saveConversions(payload)).then((response) => {
         if (response.error) {
@@ -327,12 +370,26 @@ const UnitCard = forwardRef(function UnitCard(
                           icon={<DeleteOutlined />}
                           danger
                           disabled={!infered}
+                        />
+                        <Popconfirm
+                          title="Usar sugestão LLM?"
+                          description="Esta operação consome créditos. Use apenas em casos especiais."
+                          onConfirm={() =>
+                            suggestFromLlm(values, setFieldValue)
+                          }
+                          okText="Confirmar"
+                          cancelText="Cancelar"
                         >
-                          Reset
-                        </Button>
+                          <Button
+                            icon={<RobotOutlined />}
+                            loading={llmStatus === "loading"}
+                          >
+                            Sugerir (LLM)
+                          </Button>
+                        </Popconfirm>
                         <Button
                           onClick={() => applyPredictions(setFieldValue)}
-                          icon={<RobotOutlined />}
+                          icon={<ThunderboltOutlined />}
                         >
                           Inferir
                         </Button>
