@@ -47,6 +47,7 @@ const columns = (t, bag) => {
       title: "Medicamento",
       dataIndex: "name",
       align: "left",
+      width: bag.mode === "substanceDefinition" ? "50%" : undefined,
       hidden: !bag.config.columns.includes("name"),
       render: (entry, record) => {
         return <Tooltip title={record.name}>{record.name}</Tooltip>;
@@ -55,6 +56,7 @@ const columns = (t, bag) => {
     {
       title: "Substância",
       align: "left",
+      width: bag.mode === "substanceDefinition" ? "50%" : undefined,
       hidden: !bag.config.columns.includes("substance"),
       render: (entry, record) => {
         return (
