@@ -263,11 +263,33 @@ export default function Menu({ segments }) {
           id: "gtm-lnk-knowledge-base",
         },
         {
-          key: "/admin/curadoria-medicamentos",
-          link: "/admin/curadoria-medicamentos",
+          key: "curadoria-medicamentos",
           label: "Curadoria medicamentos",
           icon: <TableOutlined />,
           id: "gtm-lnk-attr-drugs",
+          children: [
+            {
+              key: "/admin/curadoria-medicamentos",
+              link: "/admin/curadoria-medicamentos",
+              label: "Geral",
+              icon: <TableOutlined />,
+              id: "gtm-lnk-attr-drugs",
+            },
+            {
+              key: "/admin/definicao-substancias",
+              link: "/admin/definicao-substancias",
+              label: "Definição de substâncias",
+              icon: <TableOutlined />,
+              id: "gtm-lnk-attr-drugs",
+            },
+            {
+              key: "/admin/divisor-faixas",
+              link: "/admin/divisor-faixas",
+              label: "Divisor de faixas",
+              icon: <TableOutlined />,
+              id: "gtm-lnk-attr-drugs",
+            },
+          ],
         },
         {
           key: "/admin/curadoria-unidades",

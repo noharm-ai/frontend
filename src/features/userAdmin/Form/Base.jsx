@@ -55,7 +55,7 @@ function BaseForm() {
                   copyToClipboard(
                     `${import.meta.env.VITE_APP_URL}/reset/${
                       response.payload.data
-                    }`
+                    }`,
                   )
                 }
                 style={{ minHeight: "300px" }}
@@ -172,7 +172,7 @@ function BaseForm() {
               </div>
 
               {(featureService.hasAuthorizationSegment() ||
-                PermissionService().has(Permission.ADMIN_USERS)) && (
+                PermissionService().has(Permission.MAINTAINER)) && (
                 <div className={`form-row ${errors.segments ? "error" : ""}`}>
                   <div className="form-label">
                     <label>{t("userAdminForm.segments")} (Beta):</label>
@@ -228,7 +228,7 @@ function BaseForm() {
                             {description}
                           </div>
                         </Flex>
-                      )
+                      ),
                     )}
                   </Checkbox.Group>
                 </div>

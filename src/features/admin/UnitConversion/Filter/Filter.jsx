@@ -23,13 +23,11 @@ export default function Filter() {
     useSelector((state) => state.admin.unitConversion.status) === "loading";
   const drugList = useSelector((state) => state.admin.unitConversion.list);
   const filters = useSelector((state) => state.admin.unitConversion.filters);
-  const segmentList = useSelector((state) => state.segments.list);
 
   const { t } = useTranslation();
   const initialValues = {
     conversionType: null,
-    idSegment: segmentList ? segmentList[0].id : null,
-    showPrediction: false,
+    showPrediction: true,
     minDrugCount: null,
     tags: [],
   };
@@ -41,10 +39,7 @@ export default function Filter() {
   }, []); //eslint-disable-line
 
   const search = (params) => {
-    if (
-      filters.idSegment !== params.idSegment ||
-      filters.showPrediction !== params.showPrediction
-    ) {
+    if (filters.showPrediction !== params.showPrediction) {
       dispatch(fetchConversionList(params)).then((response) => {
         if (response.error) {
           notification.error({ message: getErrorMessage(response, t) });

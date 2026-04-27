@@ -47,9 +47,7 @@ export default function DrugReferenceDrawer({ placement }) {
           onClick={() => dispatch(fetchSubstance(sctid))}
           icon={<SettingOutlined />}
           disabled={!sctid}
-        >
-          Configurar substância
-        </Button>
+        />
       }
     >
       <Spin spinning={status === "loading"}>

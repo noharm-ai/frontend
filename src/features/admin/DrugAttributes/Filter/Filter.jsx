@@ -15,7 +15,7 @@ import {
 import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
 
-export default function Filter({ limit }) {
+export default function Filter({ limit, config }) {
   const dispatch = useDispatch();
   const isFetching =
     useSelector((state) => state.admin.drugAttributes.status) === "loading";
@@ -46,39 +46,46 @@ export default function Filter({ limit }) {
     minDrugCount: null,
     hasSubstanceMaxDoseWeightAdult: null,
     hasSubstanceMaxDoseWeightPediatric: null,
+    substanceStatus: null,
   };
 
   useEffect(() => {
-    dispatch(fetchDrugAttributes({ ...initialValues, limit, offset: 0 })).then(
-      (response) => {
-        if (response.error) {
-          notification.error(errorMessage);
-        }
-      },
-    );
+    dispatch(
+      fetchDrugAttributes({
+        ...initialValues,
+        ...config.apiParams,
+        limit,
+        offset: 0,
+      })
+    ).then((response) => {
+      if (response.error) {
+        notification.error(errorMessage);
+      }
+    });
 
     return () => {
       dispatch(reset());
     };
-  }, []); //eslint-disable-line
+  }, [config]); //eslint-disable-line
 
   const search = (params) => {
     dispatch(setCurrentPage(1));
     dispatch(setFilters(params));
-    dispatch(fetchDrugAttributes({ ...params, limit, offset: 0 })).then(
-      (response) => {
-        if (response.error) {
-          notification.error(errorMessage);
-        }
-      },
-    );
+    dispatch(
+      fetchDrugAttributes({ ...params, ...config.apiParams, limit, offset: 0 })
+    ).then((response) => {
+      if (response.error) {
+        notification.error(errorMessage);
+      }
+    });
   };
 
   return (
     <AdvancedFilter
+      key={config.pageTitle}
       initialValues={initialValues}
-      mainFilters={<MainFilters />}
-      secondaryFilters={<SecondaryFilters />}
+      mainFilters={<MainFilters config={config} />}
+      secondaryFilters={<SecondaryFilters config={config} />}
       onSearch={search}
       loading={isFetching}
       skipFilterList={[

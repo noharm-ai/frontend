@@ -17,6 +17,7 @@ const initialState = {
   segments: [],
   tags: [],
   insurances: [],
+  hasAge: false,
   filtered: {
     status: "idle",
     error: null,
@@ -140,6 +141,8 @@ const prescriptionReportSlice = createSlice({
             } else {
               state.insurances = [];
             }
+
+            state.hasAge = firstRecord.hasOwnProperty("age");
           }
         }
       })

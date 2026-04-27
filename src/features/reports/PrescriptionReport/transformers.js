@@ -272,6 +272,42 @@ const getPrescriptionPlotSeries = (datasource) => {
     });
 };
 
+const getAgeSummary = (datasource) => {
+  const ages = [];
+  for (let s = 0; s < 5; s++) {
+    ages.push({ total: 0, checked: 0 });
+  }
+
+  datasource.forEach((i) => {
+    const checkedValue = i.checked ? 1 : 0;
+    const age = i.age ?? -1;
+
+    if (age < 0) return;
+    if (age <= 17) {
+      ages[0].total += 1;
+      ages[0].checked += checkedValue;
+    } else if (age <= 39) {
+      ages[1].total += 1;
+      ages[1].checked += checkedValue;
+    } else if (age <= 59) {
+      ages[2].total += 1;
+      ages[2].checked += checkedValue;
+    } else if (age <= 79) {
+      ages[3].total += 1;
+      ages[3].checked += checkedValue;
+    } else {
+      ages[4].total += 1;
+      ages[4].checked += checkedValue;
+    }
+  });
+
+  return ages.map((i) => ({
+    ...i,
+    pending: i.total - i.checked,
+    percentage: i.total ? ((i.checked * 100) / i.total).toFixed() : 0,
+  }));
+};
+
 const getScoreSummary = (datasource) => {
   const scores = [];
   for (let s = 0; s < 4; s++) {
@@ -324,6 +360,7 @@ export const getReportData = (datasource, filters) => {
     days: days,
     prescriptionPlotSeries: getPrescriptionPlotSeries(filteredList),
     scoreSummary: getScoreSummary(filteredList),
+    ageSummary: getAgeSummary(filteredList),
   };
 
   return reportData;

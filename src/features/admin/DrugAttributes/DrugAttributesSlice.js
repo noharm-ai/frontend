@@ -48,6 +48,10 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  selectedRows: {
+    active: false,
+    list: [],
+  },
 };
 
 export const fetchDrugAttributes = createAsyncThunk(
@@ -186,6 +190,22 @@ const drugAttributesSlice = createSlice({
     setDrugForm(state, action) {
       state.drugForm.data = action.payload;
     },
+    setSelectedRowsActive(state, action) {
+      state.selectedRows.active = action.payload;
+      if (!action.payload) state.selectedRows.list = [];
+    },
+    setSelectedRows(state, action) {
+      state.selectedRows.list = action.payload;
+    },
+    toggleSelectedRows(state, action) {
+      const key = action.payload;
+      const idx = state.selectedRows.list.indexOf(key);
+      if (idx === -1) {
+        state.selectedRows.list.push(key);
+      } else {
+        state.selectedRows.list.splice(idx, 1);
+      }
+    },
   },
   extraReducers(builder) {
     builder
@@ -271,7 +291,15 @@ const drugAttributesSlice = createSlice({
   },
 });
 
-export const { reset, setFilters, setCurrentPage, setDrugRef, setDrugForm } =
-  drugAttributesSlice.actions;
+export const {
+  reset,
+  setFilters,
+  setCurrentPage,
+  setDrugRef,
+  setDrugForm,
+  setSelectedRowsActive,
+  setSelectedRows,
+  toggleSelectedRows,
+} = drugAttributesSlice.actions;
 
 export default drugAttributesSlice.reducer;

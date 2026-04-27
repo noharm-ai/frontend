@@ -1,7 +1,5 @@
 import React, { useContext } from "react";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-
 import { Select, InputNumber } from "components/Inputs";
 import Tag from "components/Tag";
 import Heading from "components/Heading";
@@ -13,26 +11,24 @@ import { SubstanceTagEnum } from "src/models/SubstanceTagEnum";
 export default function MainFilters() {
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
   const { t } = useTranslation();
-  const segmentList = useSelector((state) => state.segments.list);
 
   return (
     <>
-      <Col md={7} lg={4} xxl={4}>
+      <Col md={4} lg={3} xxl={2}>
         <Heading as="label" $size="14px">
-          Segmento Referência:
+          Inferência:
         </Heading>
         <Select
-          style={{ width: "100%", maxWidth: "400px" }}
-          value={values.idSegment}
-          onChange={(val) => setFieldValue({ idSegment: val })}
-          showSearch
-          optionFilterProp="children"
+          style={{ width: "100%" }}
+          value={values.showPrediction}
+          onChange={(val) => setFieldValue({ showPrediction: val })}
         >
-          {segmentList.map(({ id, description: text }) => (
-            <Select.Option key={id} value={id}>
-              {text}
-            </Select.Option>
-          ))}
+          <Select.Option key={1} value={true}>
+            <Tag color="green">Habilitar</Tag>
+          </Select.Option>
+          <Select.Option key={0} value={false}>
+            <Tag color="red">Desabilitar</Tag>
+          </Select.Option>
         </Select>
       </Col>
       <Col md={5} lg={4} xxl={3}>

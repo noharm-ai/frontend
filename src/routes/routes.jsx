@@ -340,7 +340,19 @@ const routes = [
   {
     exact: true,
     path: "/admin/curadoria-medicamentos",
-    element: <WithAuth component={AdminDrugAttributes} />,
+    element: <WithAuth component={AdminDrugAttributes} mode="drugAttributes" />,
+  },
+  {
+    exact: true,
+    path: "/admin/definicao-substancias",
+    element: (
+      <WithAuth component={AdminDrugAttributes} mode="substanceDefinition" />
+    ),
+  },
+  {
+    exact: true,
+    path: "/admin/divisor-faixas",
+    element: <WithAuth component={AdminDrugAttributes} mode="doseDivision" />,
   },
   {
     exact: true,

@@ -14,6 +14,7 @@ import { tagRender } from "components/Tag";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import { formatDateTime } from "utils/date";
 import { SubstanceTagEnum } from "models/SubstanceTagEnum";
+import { MeasureUnitEnum } from "models/MeasureUnitEnum";
 
 function BaseForm() {
   const { t } = useTranslation();
@@ -275,12 +276,11 @@ function BaseForm() {
                       }
                       allowClear
                     >
-                      <Select.Option value={"mg"}>mg</Select.Option>
-                      <Select.Option value={"ml"}>ml</Select.Option>
-
-                      <Select.Option value={"mcg"}>mcg</Select.Option>
-                      <Select.Option value={"un"}>un</Select.Option>
-                      <Select.Option value={"UI"}>UI</Select.Option>
+                      {MeasureUnitEnum.getDefaultUnits().map(({ value, label }) => (
+                        <Select.Option key={value} value={value}>
+                          {label}
+                        </Select.Option>
+                      ))}
                     </Select>
                   </div>
                 </div>

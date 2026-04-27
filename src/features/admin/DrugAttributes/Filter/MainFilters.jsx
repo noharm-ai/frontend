@@ -1,114 +1,14 @@
-import React, { useContext } from "react";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import React from "react";
 
-import { Select, InputNumber } from "components/Inputs";
-import Tag from "components/Tag";
-import Heading from "components/Heading";
-import { Col } from "components/Grid";
-import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Tooltip } from "antd";
+import { FILTER_ITEMS } from "./FilterItems";
 
-export default function MainFilters() {
-  const { t } = useTranslation();
-  const segmentList = useSelector((state) => state.segments.list);
-  const { values, setFieldValue } = useContext(AdvancedFilterContext);
-
+export default function MainFilters({ config }) {
   return (
     <>
-      <Col md={7} lg={4} xxl={4}>
-        <Heading as="label" $size="14px">
-          {t("screeningList.segment")}:
-        </Heading>
-        <Select
-          style={{ width: "100%", maxWidth: "400px" }}
-          value={values.idSegmentList}
-          onChange={(val) => setFieldValue({ idSegmentList: val })}
-          showSearch
-          optionFilterProp="children"
-          mode="multiple"
-          allowClear
-        >
-          {segmentList.map(({ id, description: text }) => (
-            <Select.Option key={id} value={id}>
-              {text}
-            </Select.Option>
-          ))}
-        </Select>
-      </Col>
-      <Col md={5} lg={3} xxl={2}>
-        <Heading as="label" $size="14px">
-          Substância:
-        </Heading>
-        <Select
-          style={{ width: "100%" }}
-          value={values.hasSubstance}
-          onChange={(val) => setFieldValue({ hasSubstance: val })}
-          showSearch
-          optionFilterProp="children"
-          allowClear
-        >
-          <Select.Option key={0} value={true}>
-            <Tag color="green">Preenchido</Tag>
-          </Select.Option>
-          <Select.Option key={1} value={false}>
-            <Tag color="red">Vazio</Tag>
-          </Select.Option>
-        </Select>
-      </Col>
-      <Col md={5} lg={3} xxl={2}>
-        <Heading as="label" $size="14px">
-          Unidade Padrão:
-        </Heading>
-        <Select
-          style={{ width: "100%" }}
-          value={values.hasDefaultUnit}
-          onChange={(val) => setFieldValue({ hasDefaultUnit: val })}
-          showSearch
-          optionFilterProp="children"
-          allowClear
-        >
-          <Select.Option key={0} value={true}>
-            <Tag color="green">Preenchido</Tag>
-          </Select.Option>
-          <Select.Option key={1} value={false}>
-            <Tag color="red">Vazio</Tag>
-          </Select.Option>
-        </Select>
-      </Col>
-      <Col md={5} lg={3} xxl={2}>
-        <Heading as="label" $size="14px">
-          Unidade Custo:
-        </Heading>
-        <Select
-          style={{ width: "100%" }}
-          value={values.hasPriceUnit}
-          onChange={(val) => setFieldValue({ hasPriceUnit: val })}
-          showSearch
-          optionFilterProp="children"
-          allowClear
-        >
-          <Select.Option key={0} value={true}>
-            <Tag color="green">Preenchido</Tag>
-          </Select.Option>
-          <Select.Option key={1} value={false}>
-            <Tag color="red">Vazio</Tag>
-          </Select.Option>
-        </Select>
-      </Col>
-      <Col md={5} lg={3} xxl={2}>
-        <Heading as="label" $size="14px">
-          <Tooltip title="Quantidade mínima que o medicamento foi prescrito">
-            Contagem mín.:
-          </Tooltip>
-        </Heading>
-        <InputNumber
-          value={values.minDrugCount}
-          min={0}
-          style={{ width: "100%" }}
-          onChange={(val) => setFieldValue({ minDrugCount: val })}
-        />
-      </Col>
+      {config.mainFilters.map((key) => {
+        const FilterComponent = FILTER_ITEMS[key];
+        return <FilterComponent key={key} source="main" />;
+      })}
     </>
   );
 }
