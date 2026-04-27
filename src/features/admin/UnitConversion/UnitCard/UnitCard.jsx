@@ -233,6 +233,7 @@ const UnitCard = forwardRef(function UnitCard(
         setLoading(false);
       });
     } else {
+      console.log("params", params.conversionList);
       const errorMsg = "Todas as conversões precisam estar preenchidas.";
       setError(errorMsg);
       notification.error({
@@ -251,7 +252,7 @@ const UnitCard = forwardRef(function UnitCard(
       {(formikBag) => {
         formikBagRef.current = formikBag;
         const { handleSubmit, values, setFieldValue, dirty } = formikBag;
-        console.log("values", values);
+
         return (
           <div ref={cardRef}>
             <ConversionUnitCard
