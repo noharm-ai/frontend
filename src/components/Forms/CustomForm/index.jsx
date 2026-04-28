@@ -1,5 +1,5 @@
-import React from "react";
-import { Formik } from "formik";
+import React, { useEffect } from "react";
+import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 
@@ -10,6 +10,14 @@ import RichTextView from "src/components/RichTextView";
 import Base from "./Base";
 import { CustomFormContainer, GroupProgressBadge } from "../Form.style";
 
+function FormikObserver({ onValuesChange }) {
+  const { values } = useFormikContext();
+  useEffect(() => {
+    if (onValuesChange) onValuesChange(values);
+  }, [values, onValuesChange]);
+  return null;
+}
+
 export default function CustomForm({
   onSubmit,
   onCancel,
@@ -19,6 +27,7 @@ export default function CustomForm({
   startClosed,
   horizontal = false,
   onChange,
+  onValuesChange,
   btnSaveText,
 }) {
   const { t } = useTranslation();
@@ -138,6 +147,7 @@ export default function CustomForm({
     >
       {({ handleSubmit, values }) => (
         <CustomFormContainer>
+          <FormikObserver onValuesChange={onValuesChange} />
           {template.length > 1 ? (
             <Collapse
               bordered
