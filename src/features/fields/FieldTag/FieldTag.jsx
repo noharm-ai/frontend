@@ -39,8 +39,8 @@ export function FieldTag({ value, onChange, tagType, ...props }) {
       onClick={fetchTags}
       notFoundContent={status === "loading" ? <Spin size="small" /> : <Empty />}
       showSearch={{
-        filterOption: false,
-        optionFilterProp: ["children"],
+        filterOption: true,
+        optionFilterProp: "children",
         autoClearSearchValue: false,
       }}
       {...props}
