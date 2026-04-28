@@ -24,7 +24,7 @@ export function GlobalMemoryNZero() {
   const data = useAppSelector((state) => state.admin.globalMemory.data);
   const status = useAppSelector((state) => state.admin.globalMemory.status);
   const statusSaving = useAppSelector(
-    (state) => state.admin.globalMemory.single.status
+    (state) => state.admin.globalMemory.single.status,
   );
   const loading = status === "loading" || statusSaving === "loading";
 
@@ -32,7 +32,7 @@ export function GlobalMemoryNZero() {
     dispatch(
       fetchGlobalMemory({
         kinds: KINDS,
-      })
+      }),
     );
 
     return () => {
@@ -92,7 +92,7 @@ export function GlobalMemoryNZero() {
         dispatch(
           fetchGlobalMemory({
             kinds: KINDS,
-          })
+          }),
         );
       }
     });
@@ -234,6 +234,7 @@ export function GlobalMemoryNZero() {
               startClosed={false}
               horizontal={false}
               btnSaveText="Salvar"
+              onValuesChange={null}
             />
           </Card>
         </Col>
