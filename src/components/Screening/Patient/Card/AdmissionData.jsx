@@ -120,7 +120,9 @@ export default function AdmissionTab({ prescription }) {
       {nameICD && (
         <div className="patient-data-item">
           <div className="patient-data-item-label">CID</div>
-          <div className="patient-data-item-value">{nameICD}</div>
+          <div className="patient-data-item-value">
+            <Tooltip title={nameICD}>{nameICD}</Tooltip>
+          </div>
         </div>
       )}
       {specialty && (

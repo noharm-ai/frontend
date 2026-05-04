@@ -116,6 +116,7 @@ function PreviewButton({ template }: { template: FormGroup[] }) {
           startClosed={false}
           horizontal={false}
           btnSaveText={"Fechar preview"}
+          onValuesChange={null}
         />
       </DefaultModal>
     </>
