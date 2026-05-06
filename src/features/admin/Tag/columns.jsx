@@ -18,6 +18,8 @@ const columns = (setTag, dispatch, t) => {
         switch (record.tagType) {
           case 1:
             return "Paciente";
+          case 2:
+            return "Paciente (Navegação)";
           default:
             return record.tagType;
         }
