@@ -348,6 +348,68 @@ function BaseForm({ data }) {
             )}
           </div>
         </div>
+
+        <div className="form-row form-row-flex">
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>Risco na Gestação:</label>
+            </div>
+            <div className="form-input">
+              <Select
+                placeholder="Selecione a classificação"
+                onChange={(value) => {
+                  setFieldValue("pregnant", value || null);
+                }}
+                value={values.pregnant}
+                allowClear
+                style={{ maxWidth: "200px" }}
+              >
+                <Select.Option value="A" key="A">
+                  A
+                </Select.Option>
+                <Select.Option value="B" key="B">
+                  B
+                </Select.Option>
+                <Select.Option value="C" key="C">
+                  C
+                </Select.Option>
+                <Select.Option value="D" key="D">
+                  D
+                </Select.Option>
+                <Select.Option value="X" key="X">
+                  X
+                </Select.Option>
+              </Select>
+            </div>
+          </div>
+
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>Risco na Lactação:</label>
+            </div>
+            <div className="form-input">
+              <Select
+                placeholder="Selecione a classificação"
+                onChange={(value) => {
+                  setFieldValue("lactating", value || null);
+                }}
+                value={values.lactating}
+                allowClear
+                style={{ maxWidth: "200px" }}
+              >
+                <Select.Option value="1" key="1">
+                  Baixo
+                </Select.Option>
+                <Select.Option value="2" key="2">
+                  Médio
+                </Select.Option>
+                <Select.Option value="3" key="3">
+                  Alto
+                </Select.Option>
+              </Select>
+            </div>
+          </div>
+        </div>
       </div>
 
       <Divider titlePlacement="start" style={{ marginTop: "32px" }}>
@@ -437,80 +499,6 @@ function BaseForm({ data }) {
             {errors.amountUnit && touched.amountUnit && (
               <div className="form-error">{errors.amountUnit}</div>
             )}
-          </div>
-        </div>
-      </div>
-
-      <Divider titlePlacement="start" style={{ marginTop: "32px" }}>
-        Riscos Reprodutivos
-      </Divider>
-
-      <div
-        style={{
-          background: "#fafafa",
-          borderRadius: "8px",
-          padding: "1rem 1.5rem",
-        }}
-      >
-        <div className="form-row form-row-flex">
-          <div className={`form-row`}>
-            <div className="form-label">
-              <label>Risco na Gestação:</label>
-            </div>
-            <div className="form-input">
-              <Select
-                placeholder="Selecione a classificação"
-                onChange={(value) => {
-                  setFieldValue("pregnant", value || null);
-                }}
-                value={values.pregnant}
-                allowClear
-                style={{ maxWidth: "200px" }}
-              >
-                <Select.Option value="A" key="A">
-                  A
-                </Select.Option>
-                <Select.Option value="B" key="B">
-                  B
-                </Select.Option>
-                <Select.Option value="C" key="C">
-                  C
-                </Select.Option>
-                <Select.Option value="D" key="D">
-                  D
-                </Select.Option>
-                <Select.Option value="X" key="X">
-                  X
-                </Select.Option>
-              </Select>
-            </div>
-          </div>
-
-          <div className={`form-row`}>
-            <div className="form-label">
-              <label>Risco na Lactação:</label>
-            </div>
-            <div className="form-input">
-              <Select
-                placeholder="Selecione a classificação"
-                onChange={(value) => {
-                  setFieldValue("lactating", value || null);
-                }}
-                value={values.lactating}
-                allowClear
-                style={{ maxWidth: "200px" }}
-              >
-                <Select.Option value="1" key="1">
-                  Baixo
-                </Select.Option>
-                <Select.Option value="2" key="2">
-                  Médio
-                </Select.Option>
-                <Select.Option value="3" key="3">
-                  Alto
-                </Select.Option>
-              </Select>
-            </div>
           </div>
         </div>
       </div>
