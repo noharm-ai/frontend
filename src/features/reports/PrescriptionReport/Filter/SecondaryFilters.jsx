@@ -81,6 +81,20 @@ export default function SecondaryFilters() {
       </Col>
       <Col md={24} xl={16} xxl={14}>
         <Heading as="label" $size="14px">
+          Intervalo de horário de criação da prescrição:
+        </Heading>
+        <TimePicker.RangePicker
+          onChange={(val) => setFieldValue({ originCreatedAtRange: val })}
+          value={values.originCreatedAtRange}
+          format="HH:mm"
+        />
+        <div style={{ fontSize: "12px", opacity: 0.7, marginTop: "5px" }}>
+          *Filtro baseado no horário em que a prescrição foi criada (quando
+          disponível)
+        </div>
+      </Col>
+      <Col md={24} xl={16} xxl={14}>
+        <Heading as="label" $size="14px">
           Contabilizar prescrições que possuam somente Dietas/Recomendações:
         </Heading>
         <Radio.Group

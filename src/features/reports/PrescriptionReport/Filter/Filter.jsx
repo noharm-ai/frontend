@@ -91,6 +91,7 @@ export default function Filter({ printRef }) {
     daysOffList: [],
     tagList: [],
     timeRange: [null, null],
+    originCreatedAtRange: [null, null],
     removePrescriptionAtDischargeDate: "do_not_remove",
   };
 
@@ -165,7 +166,7 @@ export default function Filter({ printRef }) {
               skipFilterList={["dateRange"]}
               memoryType={memoryFilterType}
               skipMemoryList={{ dateRange: "daterange" }}
-              timeRangeFilters={["timeRange"]}
+              timeRangeFilters={["timeRange", "originCreatedAtRange"]}
               dateListFilters={["daysOffList"]}
             />
             <HistoryAlert

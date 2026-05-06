@@ -70,6 +70,29 @@ const filterDatasource = (datasource, filters) => {
       return true;
     })
     .filter((i) => {
+      if (
+        filters.originCreatedAtRange &&
+        filters.originCreatedAtRange[0] &&
+        filters.originCreatedAtRange[1]
+      ) {
+        if (!i.originCreatedAt) return false;
+        const createdAt = dayjs(i.originCreatedAt);
+        const startTime = dayjs(i.originCreatedAt)
+          .hour(filters.originCreatedAtRange[0].format("HH"))
+          .minute(filters.originCreatedAtRange[0].format("mm"));
+        const endTime = dayjs(i.originCreatedAt)
+          .hour(filters.originCreatedAtRange[1].format("HH"))
+          .minute(filters.originCreatedAtRange[1].format("mm"));
+        return (
+          (createdAt.isBefore(endTime, "minute") &&
+            createdAt.isAfter(startTime, "minute")) ||
+          createdAt.isSame(startTime, "minute") ||
+          createdAt.isSame(endTime, "minute")
+        );
+      }
+      return true;
+    })
+    .filter((i) => {
       if (filters.weekDays && [0, 6].indexOf(dayjs(i.date).day()) !== -1) {
         return false;
       }
