@@ -339,6 +339,42 @@ const getScoreSummary = (datasource) => {
   }));
 };
 
+const getCheckedBeforeDateTotals = (datasource) => {
+  const checked = datasource.filter((i) => i.checked);
+  const beforeDate = checked.filter(
+    (i) =>
+      i.checkedAt &&
+      i.prescriptionDate &&
+      dayjs(i.checkedAt).isBefore(dayjs(i.prescriptionDate)),
+  );
+  return {
+    count: beforeDate.length,
+    total: checked.length,
+    percentage: checked.length
+      ? ((beforeDate.length * 100) / checked.length).toFixed()
+      : 0,
+  };
+};
+
+const getAverageDuration = (datasource) => {
+  const records = datasource.filter((i) => i.originCreatedAt && i.checkedAt);
+  if (!records.length) return { formatted: null, count: 0 };
+
+  const totalMinutes = records.reduce(
+    (acc, i) =>
+      acc + dayjs(i.checkedAt).diff(dayjs(i.originCreatedAt), "minute"),
+    0,
+  );
+  const avg = Math.round(totalMinutes / records.length);
+  const hours = Math.floor(Math.abs(avg) / 60);
+  const minutes = Math.abs(avg) % 60;
+
+  return {
+    count: records.length,
+    formatted: hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`,
+  };
+};
+
 export const getReportData = (datasource, filters) => {
   const filteredList = filterDatasource(datasource, filters);
   const prescriptionTotals = getPrescriptionTotals(filteredList);
@@ -361,6 +397,8 @@ export const getReportData = (datasource, filters) => {
     prescriptionPlotSeries: getPrescriptionPlotSeries(filteredList),
     scoreSummary: getScoreSummary(filteredList),
     ageSummary: getAgeSummary(filteredList),
+    checkedBeforeDate: getCheckedBeforeDateTotals(filteredList),
+    averageDuration: getAverageDuration(filteredList),
   };
 
   return reportData;

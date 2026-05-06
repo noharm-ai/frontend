@@ -13,6 +13,7 @@ import {
   ReportContainer,
   ReportHeader,
   ReportFilterContainer,
+  InfoStatsRow,
 } from "styles/Report.style";
 import Filter from "./Filter/Filter";
 import ChartPrescriptionDay from "./Charts/ChartPrescriptionDay";
@@ -32,17 +33,21 @@ export default function PrescriptionReport() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const reportData = useSelector(
-    (state) => state.reportsArea.prescription.filtered.result
+    (state) => state.reportsArea.prescription.filtered.result,
   );
   const status = useSelector((state) => state.reportsArea.prescription.status);
   const filteredStatus = useSelector(
-    (state) => state.reportsArea.prescription.filtered.status
+    (state) => state.reportsArea.prescription.filtered.status,
   );
   const filters = useSelector(
-    (state) => state.reportsArea.prescription.filters
+    (state) => state.reportsArea.prescription.filters,
   );
-  const hasAge = useSelector(
-    (state) => state.reportsArea.prescription.hasAge
+  const hasAge = useSelector((state) => state.reportsArea.prescription.hasAge);
+  const hasCheckedAt = useSelector(
+    (state) => state.reportsArea.prescription.hasCheckedAt,
+  );
+  const hasOriginCreatedAt = useSelector(
+    (state) => state.reportsArea.prescription.hasOriginCreatedAt,
   );
   const printRef = useRef(null);
   const isLoading = status === "loading" || filteredStatus === "loading";
@@ -339,6 +344,81 @@ export default function PrescriptionReport() {
                           reportData={reportData}
                           isLoading={isLoading}
                         />
+                      </ChartCard>
+                    </Spin>
+                  </Space>
+                </Col>
+              )}
+              {(hasCheckedAt || hasOriginCreatedAt) && (
+                <Col xs={24} lg={12}>
+                  <div className="page-break"></div>
+                  <Space direction="vertical" size="large">
+                    <SectionHeader>
+                      <h2>Mais informações</h2>
+                      <div>Algumas informações complementares.</div>
+                    </SectionHeader>
+                    <Spin spinning={isLoading}>
+                      <ChartCard className={`${isLoading ? "loading" : ""}`}>
+                        <Space orientation="vertical" style={{ width: "100%" }}>
+                          {hasCheckedAt && (
+                            <InfoStatsRow>
+                              <div className="info-section-header">
+                                <span className="info-section-title">
+                                  Checagem antecipada
+                                </span>
+                                <span className="info-section-description">
+                                  Prescrições checadas antes da data da
+                                  prescrição (início da vigência)
+                                </span>
+                              </div>
+                              <div className="info-groups">
+                                <div className="info-group">
+                                  <div className="info-label">
+                                    Checadas antes da data
+                                  </div>
+                                  <div className="info-value">
+                                    {reportData?.checkedBeforeDate?.count?.toLocaleString() ??
+                                      "-"}
+                                  </div>
+                                </div>
+                                <div className="info-group">
+                                  <div className="info-label">
+                                    % Checadas antes da data
+                                  </div>
+                                  <div className="info-value">
+                                    {reportData?.checkedBeforeDate
+                                      ?.percentage ?? "-"}
+                                    %
+                                  </div>
+                                </div>
+                              </div>
+                            </InfoStatsRow>
+                          )}
+                          {hasCheckedAt && hasOriginCreatedAt && (
+                            <InfoStatsRow>
+                              <div className="info-section-header">
+                                <span className="info-section-title">
+                                  Duração média
+                                </span>
+                                <span className="info-section-description">
+                                  Tempo médio entre a criação da prescrição no
+                                  sistema de origem e a checagem
+                                </span>
+                              </div>
+                              <div className="info-groups">
+                                <div className="info-group">
+                                  <div className="info-label">
+                                    Criação → Checagem
+                                  </div>
+                                  <div className="info-value">
+                                    {reportData?.averageDuration?.formatted ??
+                                      "-"}
+                                  </div>
+                                </div>
+                              </div>
+                            </InfoStatsRow>
+                          )}
+                        </Space>
                       </ChartCard>
                     </Spin>
                   </Space>
