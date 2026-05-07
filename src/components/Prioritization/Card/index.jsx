@@ -423,7 +423,7 @@ export default function PrioritizationCard({
 
   return (
     <Card
-      $alert={prescription.dischargeReason ? "" : prescription.class}
+      $alert={prescription.dischargeDate ? "" : prescription.class}
       href={href}
       target="_blank"
     >
