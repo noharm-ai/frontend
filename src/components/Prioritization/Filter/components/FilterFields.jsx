@@ -820,6 +820,35 @@ export default function FilterFields({
               </div>
             </div>
 
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
+                  <label>Lista de Prontuários:</label>
+                </div>
+                <div className="form-input">
+                  <Select
+                    id="medicalRecordList"
+                    mode="tags"
+                    placeholder="Digite o número do prontuário e pressione enter"
+                    tokenSeparators={[","]}
+                    className={
+                      filter.medicalRecordList?.length ? "warning" : null
+                    }
+                    value={filter.medicalRecordList}
+                    onChange={(value) =>
+                      setScreeningListFilter({
+                        medicalRecordList: value.filter((v) =>
+                          /^\d+$/.test(v),
+                        ),
+                      })
+                    }
+                    notFoundContent="Digite o número do prontuário e pressione enter. Mais de um prontuário pode ser informado."
+                    allowClear
+                  ></Select>
+                </div>
+              </div>
+            </div>
+
             {(featureService.hasPEC() ||
               PermissionService().has(Permission.READ_NAV)) && (
               <>

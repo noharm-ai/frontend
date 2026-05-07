@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import Switch from "components/Switch";
 import { Input, Select } from "components/Inputs";
 import { TagTypeEnum } from "models/TagTypeEnum";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 
 function BaseForm({ open }) {
   const { t } = useTranslation();
@@ -26,6 +28,14 @@ function BaseForm({ open }) {
       value: TagTypeEnum.PATIENT,
       label: "Marcador do paciente",
     },
+    ...(PermissionService().has(Permission.READ_NAV)
+      ? [
+          {
+            value: TagTypeEnum.PATIENT_NAVIGATION,
+            label: "Marcador de navegação do paciente",
+          },
+        ]
+      : []),
   ];
 
   return (

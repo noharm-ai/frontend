@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useFormikContext } from "formik";
-import { Tabs, Card, Popconfirm } from "antd";
+import { Tabs, Card, Popconfirm, Modal } from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
   LeftOutlined,
   RightOutlined,
+  UpOutlined,
+  DownOutlined,
+  OrderedListOutlined,
   ExclamationCircleOutlined,
   EditOutlined,
 } from "@ant-design/icons";
@@ -64,6 +67,10 @@ export function FormBody() {
   const [openDescriptions, setOpenDescriptions] = useState<
     Record<number, boolean>
   >({});
+  const [reorderGroupIdx, setReorderGroupIdx] = useState<number | null>(null);
+  const [reorderItems, setReorderItems] = useState<
+    (typeof values.data)[0]["questions"]
+  >([]);
   const getPage = (gIdx: number) => carouselPages[gIdx] ?? 0;
   const groupErrors: any[] = (errors as any).data ?? [];
 
@@ -182,6 +189,28 @@ export function FormBody() {
       ...prev,
       [gIdx]: Math.min(prev[gIdx] ?? 0, maxPage),
     }));
+  };
+
+  const openReorderModal = (gIdx: number) => {
+    setReorderGroupIdx(gIdx);
+    setReorderItems(JSON.parse(JSON.stringify(values.data[gIdx].questions)));
+  };
+
+  const moveReorderItem = (fromIdx: number, direction: -1 | 1) => {
+    const toIdx = fromIdx + direction;
+    if (toIdx < 0 || toIdx >= reorderItems.length) return;
+    const items = [...reorderItems];
+    [items[fromIdx], items[toIdx]] = [items[toIdx], items[fromIdx]];
+    setReorderItems(items);
+  };
+
+  const confirmReorder = () => {
+    if (reorderGroupIdx === null) return;
+    const data = JSON.parse(JSON.stringify(values.data));
+    data[reorderGroupIdx].questions = reorderItems;
+    setFieldValue("data", data);
+    setCarouselPages((prev) => ({ ...prev, [reorderGroupIdx]: 0 }));
+    setReorderGroupIdx(null);
   };
 
   const updateQuestion = (
@@ -530,7 +559,13 @@ export function FormBody() {
                         </CarouselTrack>
                       </CarouselWrapper>
 
-                      <div style={{ marginTop: "0.75rem" }}>
+                      <div
+                        style={{
+                          marginTop: "0.75rem",
+                          display: "flex",
+                          gap: 8,
+                        }}
+                      >
                         <Button
                           block
                           icon={<PlusOutlined />}
@@ -538,6 +573,15 @@ export function FormBody() {
                         >
                           Adicionar Questão
                         </Button>
+                        {g.questions.length > 1 && (
+                          <Button
+                            block
+                            icon={<OrderedListOutlined />}
+                            onClick={() => openReorderModal(gIdx)}
+                          >
+                            Reordenar
+                          </Button>
+                        )}
                       </div>
                     </>
                   );
@@ -547,6 +591,58 @@ export function FormBody() {
           };
         })}
       />
+
+      <Modal
+        title="Reordenar questões"
+        open={reorderGroupIdx !== null}
+        onOk={confirmReorder}
+        onCancel={() => setReorderGroupIdx(null)}
+        okText="Confirmar"
+        cancelText="Cancelar"
+      >
+        {reorderItems.map((item, idx) => (
+          <div
+            key={idx}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "8px 0",
+              borderBottom: "1px solid #f0f0f0",
+            }}
+          >
+            <span style={{ flex: 1, minWidth: 0 }}>
+              <strong>{idx + 1}.</strong>{" "}
+              {item.label || (
+                <em style={{ color: "#999" }}>Questão sem título</em>
+              )}
+              {item.id && (
+                <small style={{ color: "#bbb", marginLeft: 8 }}>
+                  ({item.id})
+                </small>
+              )}
+            </span>
+            <Tooltip title="Mover para cima">
+              <Button
+                type="text"
+                size="small"
+                icon={<UpOutlined />}
+                disabled={idx === 0}
+                onClick={() => moveReorderItem(idx, -1)}
+              />
+            </Tooltip>
+            <Tooltip title="Mover para baixo">
+              <Button
+                type="text"
+                size="small"
+                icon={<DownOutlined />}
+                disabled={idx === reorderItems.length - 1}
+                onClick={() => moveReorderItem(idx, 1)}
+              />
+            </Tooltip>
+          </div>
+        ))}
+      </Modal>
     </>
   );
 }

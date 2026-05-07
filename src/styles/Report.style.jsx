@@ -193,6 +193,60 @@ export const ReportFilterContainer = styled.div`
   }
 `;
 
+export const InfoStatsRow = styled.div`
+  background: #fafafa;
+  border: 1px dashed #d9d9d9;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .info-section-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .info-section-title {
+    font-size: 0.8rem;
+    color: #bbb;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+
+  .info-section-description {
+    font-size: 0.8rem;
+    color: #aaa;
+  }
+
+  .info-groups {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .info-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .info-label {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 2px;
+  }
+
+  .info-value {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #666;
+    line-height: 1.2;
+  }
+`;
+
 export const ReportPrintDescriptions = styled.div`
   display: none;
   margin: 20px 0;

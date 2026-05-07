@@ -18,6 +18,8 @@ const initialState = {
   tags: [],
   insurances: [],
   hasAge: false,
+  hasCheckedAt: false,
+  hasOriginCreatedAt: false,
   filtered: {
     status: "idle",
     error: null,
@@ -142,7 +144,12 @@ const prescriptionReportSlice = createSlice({
               state.insurances = [];
             }
 
-            state.hasAge = firstRecord.hasOwnProperty("age");
+            const records = action.payload.cacheData.body;
+            state.hasAge = records.some((r) => r.age != null);
+            state.hasCheckedAt = records.some((r) => r.checkedAt != null);
+            state.hasOriginCreatedAt = records.some(
+              (r) => r.originCreatedAt != null
+            );
           }
         }
       })
