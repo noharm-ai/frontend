@@ -542,7 +542,7 @@ export function FormBody() {
 
                                 return (
                                   <QuestionCard
-                                    key={qIdx}
+                                    key={q.id || `idx-${qIdx}`}
                                     q={q}
                                     qIdx={qIdx}
                                     gIdx={gIdx}
