@@ -13,16 +13,16 @@ jobs:
         node-version: [22.x]
     steps:
       - name: checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: get-npm-version
         id: package-version
         run: echo "current-version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-      - uses: SocketDev/action@ba6de6cc0565af1f42295590380973573297e31f  # v1.3.2
+      - uses: SocketDev/action@ba6de6cc0565af1f42295590380973573297e31f # v1.3.2
         with:
           mode: firewall-free
-      - name: npm ci
+      - name: sfw npm ci
         run: sfw npm ci --ignore-scripts
-      - name: npm run build
+      - name: sfw npm run build
         run: sfw npm run build
         env:
           VITE_APP_API_URL: ${{ secrets.REACT_APP_API_URL_PROD }}
@@ -37,7 +37,7 @@ jobs:
           VITE_APP_URL: ${{ secrets.REACT_APP_URL_PROD }}
           VITE_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a  # v4
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
