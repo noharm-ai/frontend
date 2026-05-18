@@ -17,13 +17,11 @@ export function Signature() {
   const dispatch = useAppDispatch();
   const userId = useAppSelector((state: any) => state.user.account.userId);
   const accountSignature = useAppSelector(
-    (state: any) => state.user.account.signature
+    (state: any) => state.user.account.signature,
   );
-  const {
-    saveStatus,
-    data: signatureData,
-    error,
-  } = useAppSelector((state) => state.userProfile.signature);
+  const { saveStatus, error } = useAppSelector(
+    (state) => state.userProfile.signature,
+  );
 
   const [editedSignature, setSignature] = useState<string | null>(null);
   const memoryType = `${SIGNATURE_MEMORY_TYPE}_${userId}`;
@@ -51,7 +49,6 @@ export function Signature() {
   const save = () => {
     dispatch(
       saveSignature({
-        id: signatureData?.key ?? "",
         type: memoryType,
         value: signature,
       }),

@@ -10,6 +10,7 @@ import { stringify, formatAge } from "./utils";
 import { toDataSource } from "utils";
 
 const fillConciliationRelatedDrugs = (list, conciliaList) => {
+  // fill by idDrug
   list.forEach((item) => {
     let relation;
 
@@ -26,6 +27,7 @@ const fillConciliationRelatedDrugs = (list, conciliaList) => {
     }
   });
 
+  // fill by substance
   list.forEach((item) => {
     if (item.conciliaRelationId) {
       return;
@@ -36,6 +38,29 @@ const fillConciliationRelatedDrugs = (list, conciliaList) => {
     if (conciliaList) {
       relation = conciliaList.find((d) => {
         return d.sctid === item.sctid_infer;
+      });
+    }
+
+    if (relation) {
+      item.conciliaRelationId = relation.idPrescriptionDrug;
+    } else {
+      item.conciliaRelationId = null;
+    }
+  });
+
+  // fill by substance class
+  list.forEach((item) => {
+    if (item.conciliaRelationId) {
+      return;
+    }
+
+    let relation;
+
+    if (conciliaList) {
+      relation = conciliaList.find((d) => {
+        console.log("class match", d.idSubstanceClass, item.idSubstanceClass);
+
+        return d.idSubstanceClass === item.idSubstanceClass;
       });
     }
 
@@ -59,7 +84,7 @@ const groupByPrescription = (
   prescriptionType,
   groupFunction,
   infusionList,
-  extraContent
+  extraContent,
 ) => {
   if (extraContent && extraContent.concilia) {
     fillConciliationRelatedDrugs(list, extraContent.conciliaList);
@@ -83,7 +108,7 @@ const groupByPrescription = (
             prescriptionType,
             ...extraContent,
           }),
-          infusionList
+          infusionList,
         ),
       });
     } else {
@@ -177,7 +202,7 @@ export const transformPrescription = (
     admissionDate,
     ...item
   },
-  options = {}
+  options = {},
 ) => {
   const groupWhitelist = options?.disableWhitelistGroup ? false : true;
 
@@ -194,7 +219,7 @@ export const transformPrescription = (
           whitelistedChildren: getWhitelistedChildren(prescription),
           concilia: item.concilia,
           conciliaList: item.conciliaList,
-        }
+        },
       )
     : [];
 
@@ -214,7 +239,7 @@ export const transformPrescription = (
         null,
         {
           whitelistedChildren: getWhitelistedChildren(diet),
-        }
+        },
       )
     : [];
 
@@ -223,7 +248,7 @@ export const transformPrescription = (
 
     Object.keys(list).forEach((i) => {
       count += list[i].value.filter(
-        (item) => !(item.total || item.emptyRow)
+        (item) => !(item.total || item.emptyRow),
       ).length;
     });
 
