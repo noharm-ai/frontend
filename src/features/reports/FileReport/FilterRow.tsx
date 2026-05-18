@@ -5,7 +5,12 @@ import {
   FontSizeOutlined,
 } from "@ant-design/icons";
 import { Select, Radio, Tooltip } from "antd";
-import { InputNumber, RangeDatePicker, Input } from "src/components/Inputs";
+import {
+  InputNumber,
+  RangeDatePicker,
+  Input,
+  SelectCustom,
+} from "src/components/Inputs";
 import Button from "src/components/Button";
 import { ColumnSchema } from "./FileReport.utils";
 
@@ -85,19 +90,23 @@ export const FilterRow: React.FC<FilterRowProps> = ({
                 style={{ width: "100%" }}
               />
             ) : (
-              <Select
+              <SelectCustom
                 mode="multiple"
                 style={{ width: "100%" }}
                 placeholder="Selecione os valores"
                 value={value}
                 onChange={handleValueChange}
-                options={selectedColumn.options?.map((opt) => ({
-                  label: opt,
-                  value: opt,
-                }))}
                 showSearch
+                optionFilterProp="children"
+                maxTagCount="responsive"
                 allowClear
-              />
+              >
+                {selectedColumn.options?.map((opt) => (
+                  <Select.Option key={opt} value={opt}>
+                    {opt}
+                  </Select.Option>
+                ))}
+              </SelectCustom>
             )}
           </>
         );
