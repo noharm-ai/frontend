@@ -64,13 +64,10 @@ export const fetchSignature = createAsyncThunk(
 
 export const saveSignature = createAsyncThunk(
   "userProfile/saveSignature",
-  async (
-    params: { id: string; type: string; value: string },
-    thunkAPI: any,
-  ) => {
+  async (params: { type: string; value: string }, thunkAPI: any) => {
     try {
       const { access_token } = thunkAPI.getState().auth.identify;
-      const response = await api.putMemory(access_token, params);
+      const response = await api.putMemoryUnique(access_token, params);
       return { ...params, key: response.data?.data };
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
