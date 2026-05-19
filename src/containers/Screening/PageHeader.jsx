@@ -15,6 +15,7 @@ const mapStateToProps = ({ prescriptions, user }) => ({
     },
     content: prescriptions.single.data,
   },
+  prescriptionList: null,
   userId: user.account.userId,
   roles: user.account.roles,
   features: user.account.features,
@@ -26,7 +27,7 @@ const mapDispatchToProps = (dispatch) =>
       reviewPatient: reviewPatientThunk,
       incrementClinicalNotes: incrementClinicalNotesThunk,
     },
-    dispatch
+    dispatch,
   );
 
 export default connect(mapStateToProps, mapDispatchToProps)(PageHeader);

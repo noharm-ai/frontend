@@ -74,6 +74,7 @@ export default function PageHeader({
   incrementClinicalNotes,
   userId,
   features,
+  prescriptionList,
 }) {
   const dispatch = useDispatch();
   const params = useParams();
@@ -186,7 +187,22 @@ export default function PageHeader({
   };
 
   const setPrescriptionStatus = (id, status) => {
-    checkScreening(id, status)
+    const payload = {};
+    const content = prescription.content;
+
+    if (content.concilia) {
+      const extracted = prescriptionList.flatMap(({ value }) =>
+        value.map(({ idPrescriptionDrug, conciliaRelationId }) => ({
+          idPrescriptionDrug,
+          conciliaRelationId,
+        })),
+      );
+
+      payload.conciliaList = [...content.conciliaList];
+      payload.conciliaRelations = extracted;
+    }
+
+    checkScreening(id, status, payload)
       .then(() => {
         notification.success({
           message:
