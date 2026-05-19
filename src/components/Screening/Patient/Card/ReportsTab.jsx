@@ -12,7 +12,7 @@ import { trackReport, TrackedReport } from "src/utils/tracker";
 export default function ReportsTab({ prescription }) {
   const [currentReport, setCurrentReport] = useState(null);
 
-  const { admissionReports, admissionReportsInternal } = prescription;
+  const { admissionReports } = prescription;
 
   const reportClick = (report) => {
     setCurrentReport({
@@ -33,9 +33,7 @@ export default function ReportsTab({ prescription }) {
       description: "Relatório de Culturas",
       type: "CULTURE",
       track: TrackedReport.CULTURES,
-      visible:
-        admissionReportsInternal &&
-        admissionReportsInternal.indexOf("CULTURE") !== -1,
+      visible: true,
     },
     {
       title: "Histórico de Medicamentos",
