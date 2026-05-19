@@ -82,6 +82,19 @@ export const getUserLastClinicalNotes = createAsyncThunk(
   }
 );
 
+export const getUserLastClinicalNotesList = createAsyncThunk(
+  "serverActions/get-last-clinical-notes-list",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.clinicalNotes.getUserLastList(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 export const getSubstanceHandling = createAsyncThunk(
   "serverActions/get-substance-handling",
   async (params, thunkAPI) => {

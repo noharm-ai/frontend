@@ -814,6 +814,12 @@ api.clinicalNotes.getUserLast = (params) =>
     ...setHeaders(),
   });
 
+api.clinicalNotes.getUserLastList = (params) =>
+  instance.get(`/notes/get-user-last-list`, {
+    params,
+    ...setHeaders(),
+  });
+
 api.clinicalNotes.createClinicalNote = (params = {}) =>
   instance.post(`${endpoints.clinicalNotes}`, params, setHeaders());
 
