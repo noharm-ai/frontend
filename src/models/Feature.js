@@ -26,6 +26,8 @@ export default class Feature {
   static IGNORE_NON_CPOE_SEGMENTS = "IGNORE_NON_CPOE_SEGMENTS";
   static PEC = "PEC";
   static PRIORITIZATION_FIELD_SPECIALTY = "PRIORITIZATION_FIELD_SPECIALTY";
+  static PRIORITIZATION_FIELD_RESPONSIBLE_PHYSICIAN =
+    "PRIORITIZATION_FIELD_RESPONSIBLE_PHYSICIAN";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -180,6 +182,12 @@ export default class Feature {
         id: Feature.PRIORITIZATION_FIELD_SPECIALTY,
         label: "Campo de priorizaçao: Especialidade",
         description: "Habilita o campo Especialidade no filtro de priorização.",
+      },
+      {
+        id: Feature.PRIORITIZATION_FIELD_RESPONSIBLE_PHYSICIAN,
+        label: "Campo de priorização: Médico Responsável",
+        description:
+          "Habilita o campo Médico Responsável no filtro de priorização.",
       },
     ];
   }
