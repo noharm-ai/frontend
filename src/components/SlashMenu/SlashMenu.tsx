@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Menu as AntMenu } from "antd";
+import { Menu as AntMenu, type MenuProps } from "antd";
 
 export interface SlashMenuItem {
   key: string;
@@ -238,7 +238,7 @@ export const useSlashMenu = ({
                 mode="vertical"
                 openKeys={openMenuKeys}
                 onOpenChange={setOpenMenuKeys}
-                items={items}
+                items={items as MenuProps["items"]}
                 onClick={handleMenuSelect}
                 selectedKeys={activeMenuKey ? [activeMenuKey] : []}
                 style={{
