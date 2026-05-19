@@ -236,9 +236,10 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
   }
 
   const isHBar = config.type === "hbar";
+  const isStacked = !!config.stacked && (config.type === "bar" || config.type === "hbar");
   const label = {
     show: showLabels,
-    position: isHBar ? "right" as const : "top" as const,
+    position: isStacked ? "inside" as const : (isHBar ? "right" as const : "top" as const),
     formatter: isCountPct
       ? (params: any) => `${params.data.rawCount} (${params.value}%)`
       : "{c}",
@@ -276,6 +277,7 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
           type: echartsType,
           label,
           markLine,
+          ...(isStacked ? { stack: "total" } : {}),
         },
       ]
     : config.yKeys
@@ -287,6 +289,7 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
           label,
           // Only attach markLine to the first series to avoid duplication
           ...(idx === 0 && markLine ? { markLine } : {}),
+          ...(isStacked ? { stack: "total" } : {}),
         }));
 
   const legendData = isCount

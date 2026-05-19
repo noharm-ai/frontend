@@ -40,6 +40,8 @@ interface ChartFormFieldsProps {
   setShowTitle: (val: boolean) => void;
   colorPalette: ColorPalette;
   setColorPalette: (val: ColorPalette) => void;
+  stacked: boolean;
+  setStacked: (val: boolean) => void;
   keys: string[];
 }
 
@@ -121,6 +123,8 @@ export const ChartFormFields = ({
   setShowTitle,
   colorPalette,
   setColorPalette,
+  stacked,
+  setStacked,
   keys,
 }: ChartFormFieldsProps) => {
   const allYOptions = keys.map((k) => ({ label: k, value: k }));
@@ -359,7 +363,7 @@ export const ChartFormFields = ({
         </Col>
       </Row>
 
-      {/* Show labels + X label rotation */}
+      {/* Show labels + Stacked */}
       <Row gutter={8} align="middle">
         <Col
           span={12}
@@ -373,6 +377,20 @@ export const ChartFormFields = ({
             Rótulos nos dados
           </label>
         </Col>
+        {(type === "bar" || type === "hbar") && (
+          <Col
+            span={12}
+            style={{ display: "flex", alignItems: "center", gap: 8 }}
+          >
+            <Switch checked={stacked} onChange={setStacked} size="small" />
+            <label
+              style={{ cursor: "pointer" }}
+              onClick={() => setStacked(!stacked)}
+            >
+              Barras empilhadas
+            </label>
+          </Col>
+        )}
       </Row>
 
       {/* Reference line */}
