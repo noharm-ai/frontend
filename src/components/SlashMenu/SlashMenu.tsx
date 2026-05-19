@@ -25,7 +25,10 @@ interface CursorCoords {
   y: number;
 }
 
-const getCursorCoords = (textarea: HTMLTextAreaElement, index: number): CursorCoords => {
+const getCursorCoords = (
+  textarea: HTMLTextAreaElement,
+  index: number,
+): CursorCoords => {
   try {
     const style = window.getComputedStyle(textarea);
     const textareaRect = textarea.getBoundingClientRect();
@@ -93,18 +96,18 @@ const getCursorCoords = (textarea: HTMLTextAreaElement, index: number): CursorCo
 
 const getVisibleItems = (
   items: SlashMenuItem[],
-  openKeys: string[]
+  openKeys: string[],
 ): SlashMenuItem[] =>
   items.flatMap((item) =>
     item.children && openKeys.includes(item.key)
       ? [item, ...getVisibleItems(item.children, openKeys)]
-      : [item]
+      : [item],
   );
 
 const getParentKey = (
   items: SlashMenuItem[],
   targetKey: string,
-  parentKey: string | null = null
+  parentKey: string | null = null,
 ): string | null | undefined => {
   for (const item of items) {
     if (item.key === targetKey) return parentKey;
@@ -180,17 +183,15 @@ export const useSlashMenu = ({
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setActiveMenuKey(
-        visible[Math.min(idx + 1, visible.length - 1)]?.key ?? activeMenuKey
+        visible[Math.min(idx + 1, visible.length - 1)]?.key ?? activeMenuKey,
       );
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActiveMenuKey(
-        visible[Math.max(idx - 1, 0)]?.key ?? activeMenuKey
-      );
+      setActiveMenuKey(visible[Math.max(idx - 1, 0)]?.key ?? activeMenuKey);
     } else if (e.key === "ArrowRight" && current?.children) {
       e.preventDefault();
       setOpenMenuKeys((prev) =>
-        prev.includes(current.key) ? prev : [...prev, current.key]
+        prev.includes(current.key) ? prev : [...prev, current.key],
       );
       setActiveMenuKey(current.children[0]?.key ?? activeMenuKey);
     } else if (e.key === "ArrowLeft") {
@@ -206,7 +207,7 @@ export const useSlashMenu = ({
         setOpenMenuKeys((prev) =>
           prev.includes(current.key)
             ? prev.filter((k) => k !== current.key)
-            : [...prev, current.key]
+            : [...prev, current.key],
         );
         if (!openMenuKeys.includes(current.key)) {
           setActiveMenuKey(current.children[0]?.key ?? activeMenuKey);
@@ -222,7 +223,7 @@ export const useSlashMenu = ({
       ? createPortal(
           <>
             <div
-              style={{ position: "fixed", inset: 0, zIndex: 1049 }}
+              style={{ position: "fixed", inset: 0, zIndex: 9998 }}
               onClick={closeSlashMenu}
             />
             <div
@@ -230,7 +231,7 @@ export const useSlashMenu = ({
                 position: "fixed",
                 left: cursorCoords.x,
                 top: cursorCoords.y,
-                zIndex: 1050,
+                zIndex: 9999,
               }}
             >
               <AntMenu
@@ -249,7 +250,7 @@ export const useSlashMenu = ({
               />
             </div>
           </>,
-          document.body
+          document.body,
         )
       : null;
 
