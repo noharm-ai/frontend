@@ -58,8 +58,6 @@ const fillConciliationRelatedDrugs = (list, conciliaList) => {
 
     if (conciliaList) {
       relation = conciliaList.find((d) => {
-        console.log("class match", d.idSubstanceClass, item.idSubstanceClass);
-
         return d.idSubstanceClass === item.idSubstanceClass;
       });
     }
