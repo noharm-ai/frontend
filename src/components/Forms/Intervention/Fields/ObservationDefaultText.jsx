@@ -1,10 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Button as AntButton } from "antd";
+import { DownOutlined } from "@ant-design/icons";
 
 import Modal from "components/Modal";
 import { Textarea } from "components/Inputs";
 import Button from "components/Button";
 import { Col, Row } from "components/Grid";
 import Tooltip from "components/Tooltip";
+import Dropdown from "components/Dropdown";
+import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import {
   trackInterventionAction,
   TrackedInterventionAction,
@@ -20,8 +25,30 @@ export function ObservationDefaultText({
   initialContent,
   saveDefaultText,
 }) {
+  const { t } = useTranslation();
   const [content, setContent] = useState("");
   const textRef = useRef(null);
+
+  const alertVariables = [{ label: "Todos", key: "{{alertas}}" }];
+  alertVariables.push({
+    label: "Por nível",
+    children: [
+      { key: "{{alerta_nivel.low}}", label: "Nível baixo" },
+      { key: "{{alerta_nivel.medium}}", label: "Nível médio" },
+      { key: "{{alerta_nivel.high}}", label: "Nível alto" },
+    ],
+  });
+  alertVariables.push({
+    label: "Por tipo",
+    children: DrugAlertTypeEnum.getAlertTypes(t).map((a) => ({
+      key: `{{alerta_tipo.${a.id}}}`,
+      label: a.label,
+    })),
+  });
+
+  const addVariableEvent = ({ key }) => {
+    addVariable(key);
+  };
 
   useEffect(() => {
     setContent(initialContent);
@@ -114,6 +141,12 @@ export function ObservationDefaultText({
                     Med. substituto/relacionado
                   </Button>
                 </Tooltip>
+                <Dropdown
+                  menu={{ items: alertVariables, onClick: addVariableEvent }}
+                  trigger={["click"]}
+                >
+                  <AntButton icon={<DownOutlined />}>Alertas</AntButton>
+                </Dropdown>
               </div>
             </div>
           </InterventionVariableContainer>

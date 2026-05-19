@@ -499,6 +499,8 @@
     "btnModelApply": "Apply saved observation",
     "btnModelInvalid": "Models: Disabled when multiple reasons selected",
     "btnModelDisabled": "Models: Select a reason",
+    "btnInsertVariable": "Insert variable into observation",
+    "slashMenuHint": "Type / to insert variables into the observation",
 
     "btnSave": "Save",
     "btnUndo": "Undo",
