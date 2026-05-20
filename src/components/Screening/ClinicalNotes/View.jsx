@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { isEmpty } from "lodash";
 import { format, parseISO } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -19,6 +20,7 @@ import DefaultModal from "components/Modal";
 
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
+import { getMemory } from "features/lists/ListsSlice";
 
 import Edit from "./Edit";
 import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
@@ -43,6 +45,7 @@ export default function View({
   disableSelection = false,
   selectedIndicators,
 }) {
+  const dispatch = useDispatch();
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
   const selectionRangeRef = useRef(null);
@@ -234,36 +237,49 @@ export default function View({
       return;
     }
 
-    const header = `${format(parseISO(selected.date), "dd/MM/yyyy HH:mm")} — ${selected.prescriber}`;
-    const content = paperContainerRef.current?.innerHTML ?? "";
-    const styles = Array.from(
-      document.querySelectorAll('style, link[rel="stylesheet"]'),
-    )
-      .map((el) => el.outerHTML)
-      .join("\n");
+    dispatch(getMemory({ type: "nav-header" })).then((result) => {
+      const navHeaderText = result.payload?.data?.[0]?.value?.header ?? "";
+      const noteHeader = `${format(parseISO(selected.date), "dd/MM/yyyy HH:mm")} — ${selected.prescriber}`;
+      const content = paperContainerRef.current?.innerHTML ?? "";
+      const styles = Array.from(
+        document.querySelectorAll('style, link[rel="stylesheet"]'),
+      )
+        .map((el) => el.outerHTML)
+        .join("\n");
 
-    printWindow.document.write(`<!DOCTYPE html>
+      printWindow.document.write(`<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Evolução — ${header}</title>
+    <title>Evolução — ${noteHeader}</title>
     ${styles}
     <style>
+      @page { margin: 24px; }
       body { padding: 24px; }
       * { max-height: none !important; overflow: visible !important; }
       a.close-btn { display: none; }
-      .question { break-inside: avoid; page-break-inside: avoid; }
+      .print-institution-header {
+        display: flex; flex-direction: column; align-items: center;
+        text-align: center; border-bottom: 1px solid #ccc;
+        padding-bottom: 12px; margin-bottom: 12px;
+      }
+      .print-institution-header p { margin: 0; font-size: 13px; }
+      .print-note-header { font-size: 14px; font-weight: bold; margin-bottom: 12px; margin-top: 30px; }
       h2 { break-after: avoid; page-break-after: avoid; }
       p { orphans: 3; widows: 3; }
     </style>
   </head>
   <body>
-    <h1 style="font-size:15px;font-weight:bold;border-bottom:1px solid #ccc;padding-bottom:8px;margin-bottom:16px;">${header}</h1>
+    <div class="print-institution-header">
+      <img src="/logo512.png" style="width:30px;margin-bottom:8px" alt="NoHarm.ai" />
+      ${navHeaderText}
+    </div>
     ${content}
     <script>window.onload = function() { window.print(); window.close(); }</script>
   </body>
 </html>`);
-    printWindow.document.close();
+      printWindow.document.close();
+    });
   };
 
   const openPopup = () => {
@@ -316,22 +332,22 @@ export default function View({
               {!edit &&
                 (selected.text || selected.template) &&
                 PermissionService().has(Permission.READ_NAV) && (
-                <Tooltip title="Imprimir">
-                  <Button
-                    type="primary"
-                    ghost
-                    shape="circle"
-                    icon={<PrinterOutlined />}
-                    style={{
-                      width: "28px",
-                      height: "28px",
-                      minWidth: "28px",
-                      marginRight: "10px",
-                    }}
-                    onClick={printNote}
-                  />
-                </Tooltip>
-              )}
+                  <Tooltip title="Imprimir">
+                    <Button
+                      type="primary"
+                      ghost
+                      shape="circle"
+                      icon={<PrinterOutlined />}
+                      style={{
+                        width: "28px",
+                        height: "28px",
+                        minWidth: "28px",
+                        marginRight: "10px",
+                      }}
+                      onClick={printNote}
+                    />
+                  </Tooltip>
+                )}
               {!popup && admissionNumber && (
                 <Tooltip title="Abrir em nova janela">
                   <Button
