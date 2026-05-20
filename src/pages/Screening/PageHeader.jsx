@@ -167,26 +167,6 @@ export default function PageHeader({
   };
 
   const confirmCheckPrescription = (id) => {
-    trackPrescriptionAction(TrackedPrescriptionAction.CLICK_CHECK);
-
-    let highRiskAlerts = [];
-    if (
-      prescription?.content?.alertsList &&
-      prescription.content.alertsList.length
-    ) {
-      highRiskAlerts = prescription.content.alertsList.filter(
-        (a) => a.level === "high",
-      );
-    }
-
-    if (highRiskAlerts.length > 0) {
-      dispatch(setCheckSummary(prescription.content));
-    } else {
-      setPrescriptionStatus(id, "s");
-    }
-  };
-
-  const setPrescriptionStatus = (id, status) => {
     const payload = {};
     const content = prescription.content;
 
@@ -201,7 +181,28 @@ export default function PageHeader({
       payload.conciliaList = [...content.conciliaList];
       payload.conciliaRelations = extracted;
     }
+    trackPrescriptionAction(TrackedPrescriptionAction.CLICK_CHECK);
 
+    let highRiskAlerts = [];
+    if (
+      prescription?.content?.alertsList &&
+      prescription.content.alertsList.length
+    ) {
+      highRiskAlerts = prescription.content.alertsList.filter(
+        (a) => a.level === "high",
+      );
+    }
+
+    if (highRiskAlerts.length > 0) {
+      dispatch(
+        setCheckSummary({ ...prescription.content, conciliaPayload: payload }),
+      );
+    } else {
+      setPrescriptionStatus(id, "s", payload);
+    }
+  };
+
+  const setPrescriptionStatus = (id, status, payload = {}) => {
     checkScreening(id, status, payload)
       .then(() => {
         notification.success({

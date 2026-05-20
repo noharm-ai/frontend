@@ -35,7 +35,7 @@ export default function CheckSummary({
 }) {
   const dispatch = useDispatch();
   const prescription = useSelector(
-    (state) => state.prescriptionv2.checkSummary.prescription
+    (state) => state.prescriptionv2.checkSummary.prescription,
   );
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
@@ -72,7 +72,8 @@ export default function CheckSummary({
     } else {
       highRiskAlerts = alerts.filter(
         (a) =>
-          a.level === "high" && a.idPrescription === prescription.idPrescription
+          a.level === "high" &&
+          a.idPrescription === prescription.idPrescription,
       );
     }
   }
@@ -85,7 +86,7 @@ export default function CheckSummary({
     }
 
     const intervention = interventions.find(
-      (i) => i.id === a.idPrescriptionDrug && i.status !== "0"
+      (i) => i.id === a.idPrescriptionDrug && i.status !== "0",
     );
 
     if (intervention) {
@@ -159,14 +160,23 @@ export default function CheckSummary({
 
   const onSave = () => {
     setLoading(true);
-    const auditAlerts = highRiskAlerts.map(({ idPrescriptionDrug, type }) => ({
+    const payload = {};
+    payload.alerts = highRiskAlerts.map(({ idPrescriptionDrug, type }) => ({
       idPrescriptionDrug,
       type,
     }));
 
-    checkScreening(prescription.idPrescription, "s", {
-      alerts: auditAlerts,
-    })
+    if (
+      prescription.conciliaPayload?.conciliaList &&
+      prescription.conciliaPayload?.conciliaRelations
+    ) {
+      payload.conciliaList = [...prescription.conciliaPayload.conciliaList];
+      payload.conciliaRelations = [
+        ...prescription.conciliaPayload.conciliaRelations,
+      ];
+    }
+
+    checkScreening(prescription.idPrescription, "s", payload)
       .then(() => {
         setLoading(false);
         dispatch(setCheckSummary(null));
@@ -219,7 +229,7 @@ export default function CheckSummary({
   const AlertStatus = ({ idPrescription, idPrescriptionDrug }) => {
     const header = headers[idPrescription];
     const intervention = interventions.find(
-      (i) => i.id === idPrescriptionDrug && i.status !== "0"
+      (i) => i.id === idPrescriptionDrug && i.status !== "0",
     );
 
     return (
@@ -377,7 +387,7 @@ export default function CheckSummary({
                         <DrugAlertsCollapse
                           showArrow={false}
                           items={dateGroups[dt].map((group) =>
-                            getItemsByGroup(group)
+                            getItemsByGroup(group),
                           )}
                           style={{ marginBottom: "10px" }}
                           activeKey={activeKey}
