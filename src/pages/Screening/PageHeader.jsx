@@ -211,6 +211,9 @@ export default function PageHeader({
               ? "Checagem efetuada com sucesso!"
               : "Checagem desfeita com sucesso!",
         });
+        if (status === "0" && type === "conciliation") {
+          window.location.reload();
+        }
       })
       .catch((err) => {
         console.error("error", err);
