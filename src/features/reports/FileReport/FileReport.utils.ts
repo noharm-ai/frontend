@@ -123,7 +123,7 @@ export const applyFilters = (
         Array.isArray(filter.value) &&
         filter.value.length === 2
       ) {
-        const dateValue = dayjs(value);
+        const dateValue = dayjs(value, ["YYYY-MM-DD", "DD/MM/YYYY"]);
         const [start, end] = filter.value;
 
         if (start && dateValue.isBefore(dayjs(start), "day")) return false;
