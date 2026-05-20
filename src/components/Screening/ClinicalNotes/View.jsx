@@ -2,7 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { isEmpty } from "lodash";
 import { format, parseISO } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { QuestionOutlined, FullscreenOutlined } from "@ant-design/icons";
+import {
+  QuestionOutlined,
+  FullscreenOutlined,
+  PrinterOutlined,
+} from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
 import LoadBox, { LoadContainer } from "components/LoadBox";
@@ -12,6 +16,9 @@ import CustomFormView from "components/Forms/CustomForm/View";
 import notification from "components/notification";
 import Empty from "components/Empty";
 import DefaultModal from "components/Modal";
+
+import PermissionService from "src/services/PermissionService";
+import Permission from "src/models/Permission";
 
 import Edit from "./Edit";
 import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
@@ -141,7 +148,7 @@ export default function View({
         console.error(
           "invalid selection",
           range.commonAncestorContainer.offsetParent.className,
-          range
+          range,
         );
         return false;
       }
@@ -220,6 +227,45 @@ export default function View({
     );
   };
 
+  const printNote = () => {
+    const printWindow = window.open("", "_blank", "width=800,height=600");
+    if (!printWindow) {
+      notification.error({ message: "Desative o bloqueador de popups" });
+      return;
+    }
+
+    const header = `${format(parseISO(selected.date), "dd/MM/yyyy HH:mm")} — ${selected.prescriber}`;
+    const content = paperContainerRef.current?.innerHTML ?? "";
+    const styles = Array.from(
+      document.querySelectorAll('style, link[rel="stylesheet"]'),
+    )
+      .map((el) => el.outerHTML)
+      .join("\n");
+
+    printWindow.document.write(`<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Evolução — ${header}</title>
+    ${styles}
+    <style>
+      body { padding: 24px; }
+      * { max-height: none !important; overflow: visible !important; }
+      a.close-btn { display: none; }
+      .question { break-inside: avoid; page-break-inside: avoid; }
+      h2 { break-after: avoid; page-break-after: avoid; }
+      p { orphans: 3; widows: 3; }
+    </style>
+  </head>
+  <body>
+    <h1 style="font-size:15px;font-weight:bold;border-bottom:1px solid #ccc;padding-bottom:8px;margin-bottom:16px;">${header}</h1>
+    ${content}
+    <script>window.onload = function() { window.print(); window.close(); }</script>
+  </body>
+</html>`);
+    printWindow.document.close();
+  };
+
   const openPopup = () => {
     const padding = 200;
     const width = Math.round(window.innerWidth - padding);
@@ -228,7 +274,7 @@ export default function View({
     const popup = window.open(
       `/prescricao/evolucao/${admissionNumber}`,
       "clinicalNotesPopup",
-      `height=${height},width=${width}`
+      `height=${height},width=${width}`,
     );
 
     if (!popup) {
@@ -267,6 +313,25 @@ export default function View({
           </div>
           <div className="help">
             <>
+              {!edit &&
+                (selected.text || selected.template) &&
+                PermissionService().has(Permission.READ_NAV) && (
+                <Tooltip title="Imprimir">
+                  <Button
+                    type="primary"
+                    ghost
+                    shape="circle"
+                    icon={<PrinterOutlined />}
+                    style={{
+                      width: "28px",
+                      height: "28px",
+                      minWidth: "28px",
+                      marginRight: "10px",
+                    }}
+                    onClick={printNote}
+                  />
+                </Tooltip>
+              )}
               {!popup && admissionNumber && (
                 <Tooltip title="Abrir em nova janela">
                   <Button
