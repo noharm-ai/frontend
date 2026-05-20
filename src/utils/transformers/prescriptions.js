@@ -9,7 +9,25 @@ import {
 import { stringify, formatAge } from "./utils";
 import { toDataSource } from "utils";
 
-const fillConciliationRelatedDrugs = (list, conciliaList) => {
+const fillConciliationRelatedDrugs = (
+  list,
+  conciliaList,
+  conciliaRelations,
+) => {
+  // use saved relations
+  if (conciliaRelations && conciliaRelations.length) {
+    conciliaRelations.forEach((relation) => {
+      const item = list.find(
+        (d) => d.idPrescriptionDrug === relation.idPrescriptionDrug,
+      );
+      if (item) {
+        item.conciliaRelationId = relation.conciliaRelationId;
+      }
+    });
+
+    return;
+  }
+
   // fill by idDrug
   list.forEach((item) => {
     let relation;
@@ -37,7 +55,7 @@ const fillConciliationRelatedDrugs = (list, conciliaList) => {
 
     if (conciliaList) {
       relation = conciliaList.find((d) => {
-        return d.sctid === item.sctid_infer;
+        return d.sctid === item.sctid_infer && d.sctid !== null;
       });
     }
 
@@ -58,9 +76,10 @@ const fillConciliationRelatedDrugs = (list, conciliaList) => {
 
     if (conciliaList) {
       relation = conciliaList.find((d) => {
-        console.log("class match", d.idSubstanceClass, item.idSubstanceClass);
-
-        return d.idSubstanceClass === item.idSubstanceClass;
+        return (
+          d.idSubstanceClass === item.idSubstanceClass &&
+          d.idSubstanceClass !== null
+        );
       });
     }
 
@@ -87,7 +106,11 @@ const groupByPrescription = (
   extraContent,
 ) => {
   if (extraContent && extraContent.concilia) {
-    fillConciliationRelatedDrugs(list, extraContent.conciliaList);
+    fillConciliationRelatedDrugs(
+      list,
+      extraContent.conciliaList,
+      extraContent.conciliaRelations,
+    );
   }
 
   const drugArray = [];
@@ -219,6 +242,7 @@ export const transformPrescription = (
           whitelistedChildren: getWhitelistedChildren(prescription),
           concilia: item.concilia,
           conciliaList: item.conciliaList,
+          conciliaRelations: item.conciliaRelations,
         },
       )
     : [];

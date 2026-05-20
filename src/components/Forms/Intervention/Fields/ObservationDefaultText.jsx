@@ -1,10 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Button as AntButton } from "antd";
+import { DownOutlined } from "@ant-design/icons";
 
 import Modal from "components/Modal";
 import { Textarea } from "components/Inputs";
 import Button from "components/Button";
 import { Col, Row } from "components/Grid";
 import Tooltip from "components/Tooltip";
+import Dropdown from "components/Dropdown";
+import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import {
   trackInterventionAction,
   TrackedInterventionAction,
@@ -13,6 +18,7 @@ import {
 import { EditorBox } from "components/Forms/Form.style";
 import { Form } from "styles/Form.style";
 import { InterventionVariableContainer } from "../Intervention.style";
+import { useSlashMenu } from "components/SlashMenu/SlashMenu";
 
 export function ObservationDefaultText({
   open,
@@ -20,8 +26,54 @@ export function ObservationDefaultText({
   initialContent,
   saveDefaultText,
 }) {
+  const { t } = useTranslation();
   const [content, setContent] = useState("");
   const textRef = useRef(null);
+
+  const menuItems = [
+    { key: "{{data_atual}}", label: "Data atual" },
+    { key: "{{nome_medicamento}}", label: "Medicamento" },
+    { key: "{{nome_medicamento_substituto}}", label: "Med. substituto/relacionado" },
+    {
+      key: "alertas_group",
+      label: "Alertas",
+      children: [
+        { key: "{{alertas}}", label: "Todos" },
+        {
+          key: "alertas_nivel",
+          label: "Por nível",
+          children: [
+            { key: "{{alerta_nivel.low}}", label: "Nível baixo" },
+            { key: "{{alerta_nivel.medium}}", label: "Nível médio" },
+            { key: "{{alerta_nivel.high}}", label: "Nível alto" },
+          ],
+        },
+        {
+          key: "alertas_tipo",
+          label: "Por tipo",
+          children: DrugAlertTypeEnum.getAlertTypes(t).map((a) => ({
+            key: `{{alerta_tipo.${a.id}}}`,
+            label: a.label,
+          })),
+        },
+      ],
+    },
+  ];
+
+  const alertVariables = menuItems.find((i) => i.key === "alertas_group").children;
+
+  const { onTextChange, onKeyDown, portal } = useSlashMenu({
+    textareaRef: textRef,
+    items: menuItems,
+    onSelect: ({ key, slashIndex }) => {
+      const cur = content || "";
+      setContent(cur.substring(0, slashIndex) + key + cur.substring(slashIndex + 1));
+    },
+  });
+
+  const addVariableEvent = ({ key }) => {
+    addVariable(key);
+  };
 
   useEffect(() => {
     setContent(initialContent);
@@ -81,11 +133,19 @@ export function ObservationDefaultText({
                   <Textarea
                     autoFocus
                     value={content || ""}
-                    onChange={({ target }) => setContent(target.value)}
+                    onChange={({ target }) => {
+                      onTextChange(target);
+                      setContent(target.value);
+                    }}
+                    onKeyDown={onKeyDown}
                     style={{ minHeight: "400px", marginTop: "10px" }}
                     ref={textRef}
                   />
+                  {portal}
                 </EditorBox>
+                <div style={{ marginTop: "4px", fontSize: "12px", color: "#aaa" }}>
+                  {t("interventionForm.slashMenuHint")}
+                </div>
               </div>
             </div>
           </Form>
@@ -114,6 +174,12 @@ export function ObservationDefaultText({
                     Med. substituto/relacionado
                   </Button>
                 </Tooltip>
+                <Dropdown
+                  menu={{ items: alertVariables, onClick: addVariableEvent }}
+                  trigger={["click"]}
+                >
+                  <AntButton icon={<DownOutlined />}>Alertas</AntButton>
+                </Dropdown>
               </div>
             </div>
           </InterventionVariableContainer>

@@ -6,7 +6,9 @@ test("add intervention", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 199 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
+  await page
+    .getByText("Paciente 99")
+    .waitFor({ state: "visible", timeout: 30000 });
   //await page.getByRole("row").nth(0).getByRole("button").nth(1).click();
   await page
     .locator(".ant-table tr:nth-child(2)")
@@ -88,7 +90,9 @@ test("add multiple interventions and rollback", async ({ page }) => {
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
 
-  await page.locator(".ant-modal-container .ant-dropdown-trigger").hover();
+  await page
+    .locator("#btn-interv-save-action button.ant-dropdown-trigger")
+    .hover();
   await page.getByText("Salvar e marcar como Aceita").click();
   await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
 
@@ -103,8 +107,12 @@ test("add multiple interventions and rollback", async ({ page }) => {
   await expect(page.locator(".ant-modal-body .intervention")).toHaveCount(2);
   await expect(page.getByText("Aprazamento")).toBeVisible({ timeout: 30000 });
   await expect(page.getByText("Alergia")).toBeVisible({ timeout: 30000 });
-  await expect(page.getByText("Pendente", { exact: true })).toBeVisible({ timeout: 30000 });
-  await expect(page.getByText("Aceita", { exact: true })).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText("Pendente", { exact: true })).toBeVisible({
+    timeout: 30000,
+  });
+  await expect(page.getByText("Aceita", { exact: true })).toBeVisible({
+    timeout: 30000,
+  });
 
   await page.locator(".ant-modal-confirm-btns button").first().click();
 
@@ -132,7 +140,9 @@ test("add patient intervention", async ({ page }) => {
     .getByRole("heading", { name: "Prescrição nº 199 Liberada em" })
     .click();
 
-  await page.locator(".gtm-bt-patient-intervention").waitFor({ state: "visible", timeout: 30000 });
+  await page
+    .locator(".gtm-bt-patient-intervention")
+    .waitFor({ state: "visible", timeout: 30000 });
 
   await page.locator(".gtm-bt-patient-intervention").first().click();
   // wait to load reasons

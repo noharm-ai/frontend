@@ -1,7 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
-import { SaveOutlined, DownloadOutlined } from "@ant-design/icons";
+import { Button as AntButton } from "antd";
+import {
+  SaveOutlined,
+  DownloadOutlined,
+  SignatureOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
 
 import { Col } from "components/Grid";
@@ -11,6 +16,9 @@ import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import notification from "components/notification";
 import { ObservationDefaultText } from "./ObservationDefaultText";
+import Dropdown from "components/Dropdown";
+import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
+import stripHtml from "utils/stripHtml";
 import { formatDate } from "utils/date";
 import {
   trackInterventionAction,
@@ -18,6 +26,7 @@ import {
 } from "src/utils/tracker";
 
 import { EditorBox } from "components/Forms/Form.style";
+import { useSlashMenu } from "components/SlashMenu/SlashMenu";
 
 export default function Observations({
   content,
@@ -33,6 +42,7 @@ export default function Observations({
 }) {
   const { t } = useTranslation();
   const [saveTextModal, setSaveTextModal] = useState(false);
+  const textareaRef = useRef(null);
   const isMemoryDisabled = currentReason == null || currentReason.length !== 1;
 
   useEffect(() => {
@@ -46,19 +56,6 @@ export default function Observations({
       notification.success({ message: t("success.defaultObservation") });
     }
   }, [memory.save.success, t]);
-
-  const applyVariables = (text) => {
-    let newText = text;
-
-    newText = newText.replaceAll("{{nome_medicamento}}", getDrugName());
-    newText = newText.replaceAll(
-      "{{nome_medicamento_substituto}}",
-      getRelatedDrug()?.name ?? "(indefinido)"
-    );
-    newText = newText.replaceAll("{{data_atual}}", formatDate(dayjs()));
-
-    return newText;
-  };
 
   const getDrugName = () => {
     if (drugData.idPrescriptionDrugList) {
@@ -84,6 +81,151 @@ export default function Observations({
       }));
 
     return normalizedList.find((d) => d.idDrug === relatedDrugId);
+  };
+
+  const getAlerts = (type = null, level = null) => {
+    const alerts = drugData.alertsComplete;
+    if (!alerts || !alerts.length) return "Nenhum alerta registrado";
+
+    const filtered = alerts.filter((a) => {
+      if (type && a.type !== type) return false;
+      if (level && a.level !== level) return false;
+      return true;
+    });
+
+    if (!filtered.length) return "Nenhum alerta registrado";
+
+    const seen = new Set();
+    return filtered
+      .filter((a) => {
+        if (seen.has(a.text)) return false;
+        seen.add(a.text);
+        return true;
+      })
+      .map((a) => `- ${stripHtml(a.text)}`)
+      .join("\n");
+  };
+
+  const buildVariableMenuItems = () => {
+    const items = [];
+
+    items.push({ key: "var_data_atual", label: "Data atual" });
+    items.push({ key: "var_medicamento", label: "Medicamento" });
+
+    if (getRelatedDrug()) {
+      items.push({
+        key: "var_medicamento_substituto",
+        label: "Med. substituto/relacionado",
+      });
+    }
+
+    const alertChildren = [];
+
+    if (getAlerts() !== "Nenhum alerta registrado") {
+      alertChildren.push({ key: "alert_all", label: "Todos" });
+    }
+
+    const levels = [
+      { key: "alert_level_low", label: "Nível baixo" },
+      { key: "alert_level_medium", label: "Nível médio" },
+      { key: "alert_level_high", label: "Nível alto" },
+    ].filter((l) => {
+      const level = l.key.replace("alert_level_", "");
+      return getAlerts(null, level) !== "Nenhum alerta registrado";
+    });
+
+    if (levels.length) {
+      alertChildren.push({
+        key: "alert_nivel",
+        label: "Por nível",
+        children: levels,
+      });
+    }
+
+    const types = DrugAlertTypeEnum.getAlertTypes(t)
+      .filter((a) => getAlerts(a.id) !== "Nenhum alerta registrado")
+      .map((a) => ({ key: `alert_type_${a.id}`, label: a.label }));
+
+    if (types.length) {
+      alertChildren.push({
+        key: "alert_tipo",
+        label: "Por tipo",
+        children: types,
+      });
+    }
+
+    if (alertChildren.length) {
+      items.push({ key: "alertas", label: "Alertas", children: alertChildren });
+    }
+
+    return items;
+  };
+
+  const { onTextChange, onKeyDown, portal } = useSlashMenu({
+    textareaRef,
+    items: buildVariableMenuItems(),
+    onSelect: ({ key, slashIndex }) => {
+      const text = resolveVariable(key);
+      const cur = content || "";
+      setFieldValue(
+        "observation",
+        cur.substring(0, slashIndex) + text + cur.substring(slashIndex + 1),
+      );
+    },
+  });
+
+  const resolveVariable = (key) => {
+    if (key === "var_data_atual") return formatDate(dayjs());
+    if (key === "var_medicamento") return getDrugName();
+    if (key === "var_medicamento_substituto")
+      return getRelatedDrug()?.name ?? "(indefinido)";
+    if (key === "alert_all") return getAlerts();
+    if (key.startsWith("alert_type_"))
+      return getAlerts(key.replace("alert_type_", ""));
+    if (key.startsWith("alert_level_"))
+      return getAlerts(null, key.replace("alert_level_", ""));
+    return "";
+  };
+
+  const onApplyVariable = ({ key }) => {
+    const text = resolveVariable(key);
+    const newContent = content ? `${content}\n${text}` : text;
+    setFieldValue("observation", newContent);
+  };
+
+  const handleTextChange = ({ target }) => {
+    onTextChange(target);
+    onEdit(target.value);
+  };
+
+  const applyVariables = (text) => {
+    let newText = text;
+
+    newText = newText.replaceAll("{{nome_medicamento}}", getDrugName());
+    newText = newText.replaceAll(
+      "{{nome_medicamento_substituto}}",
+      getRelatedDrug()?.name ?? "(indefinido)",
+    );
+    newText = newText.replaceAll("{{data_atual}}", formatDate(dayjs()));
+    newText = newText.replaceAll("{{alertas}}", getAlerts());
+
+    const typeVars = newText.match(/\{\{(alerta_tipo.*?)\}\}/g);
+    if (typeVars) {
+      typeVars.forEach((item) => {
+        const type = item.replace("{{", "").replace("}}", "").split(".")[1];
+        newText = newText.replace(item, getAlerts(type));
+      });
+    }
+
+    const levelVars = newText.match(/\{\{(alerta_nivel.*?)\}\}/g);
+    if (levelVars) {
+      levelVars.forEach((item) => {
+        const level = item.replace("{{", "").replace("}}", "").split(".")[1];
+        newText = newText.replace(item, getAlerts(null, level));
+      });
+    }
+
+    return newText;
   };
 
   const saveDefaultText = (value) => {
@@ -152,12 +294,12 @@ export default function Observations({
 
   return (
     <>
-      <Col xs={20} style={{ alignSelf: "flex-end" }}>
+      <Col xs={16} style={{ alignSelf: "flex-end" }}>
         <Heading as="h4" htmlFor="reason" $size="14px">
           {t("interventionForm.labelObservations")}:
         </Heading>
       </Col>
-      <Col xs={4}>
+      <Col xs={8}>
         <div style={{ textAlign: "right" }}>
           <Tooltip title={memoryTooltip.save}>
             <Button
@@ -178,11 +320,27 @@ export default function Observations({
               loading={memory.isFetching || memory.save.isSaving}
               onClick={loadDefaultText}
               disabled={isMemoryDisabled || isEmpty(memory.list)}
+              style={{ marginRight: "5px" }}
               className={
                 !isEmpty(memory.list) ? "primary gtm-bt-interv-mem-apply" : ""
               }
               type="primary"
             />
+          </Tooltip>
+          <Tooltip title={t("interventionForm.btnInsertVariable")}>
+            <Dropdown
+              menu={{
+                items: buildVariableMenuItems(),
+                onClick: onApplyVariable,
+              }}
+              trigger={["click"]}
+            >
+              <AntButton
+                shape="circle"
+                icon={<SignatureOutlined />}
+                type="primary"
+              />
+            </Dropdown>
           </Tooltip>
         </div>
       </Col>
@@ -190,11 +348,17 @@ export default function Observations({
         <EditorBox>
           <Textarea
             autoFocus
+            ref={textareaRef}
             value={content || ""}
-            onChange={({ target }) => onEdit(target.value)}
+            onChange={handleTextChange}
+            onKeyDown={onKeyDown}
             style={{ minHeight: "200px", marginTop: "10px" }}
           />
+          {portal}
         </EditorBox>
+        <div style={{ marginTop: "4px", fontSize: "12px", color: "#aaa" }}>
+          {t("interventionForm.slashMenuHint")}
+        </div>
       </Col>
 
       <ObservationDefaultText

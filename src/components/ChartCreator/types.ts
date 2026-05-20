@@ -39,6 +39,7 @@ export interface ChartConfig {
   referenceLine?: ReferenceLine;
   showTitle?: boolean;
   colorPalette?: ColorPalette;
+  stacked?: boolean;
 }
 
 export interface ChartCreatorProps {

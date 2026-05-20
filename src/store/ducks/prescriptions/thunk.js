@@ -179,6 +179,8 @@ export const checkScreeningThunk =
           status,
           evaluationTime: window.noharm?.pageTimer?.getCurrentTime(),
           alerts: params?.alerts,
+          conciliaList: params?.conciliaList,
+          conciliaRelations: params?.conciliaRelations,
         })
         .catch(errorHandler);
 

@@ -6,7 +6,9 @@ test("outcome: suspension", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
+  await page
+    .getByText("Paciente 99")
+    .waitFor({ state: "visible", timeout: 30000 });
   await page
     .locator(".ant-table-tbody tr")
     .nth(0)
@@ -27,11 +29,15 @@ test("outcome: suspension", async ({ page }) => {
   // // close dropdown
   await page.locator(".ant-select").click();
 
-  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible({
+    timeout: 30000,
+  });
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
-  await page.locator(".ant-modal-container .ant-dropdown-trigger").hover();
+  await page
+    .locator("#btn-interv-save-action button.ant-dropdown-trigger")
+    .hover();
   await page.getByText("Salvar e marcar como Aceita").click();
 
   await page.locator(".btn-calc-details-origin").click();
@@ -96,7 +102,9 @@ test("outcome: substitution", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
+  await page
+    .getByText("Paciente 99")
+    .waitFor({ state: "visible", timeout: 30000 });
   await page
     .locator(".ant-table-tbody tr")
     .nth(1)
@@ -117,11 +125,15 @@ test("outcome: substitution", async ({ page }) => {
   // // close dropdown
   await page.locator(".ant-select").nth(0).click();
 
-  await expect(page.getByText("Tipo economia: Substituição")).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText("Tipo economia: Substituição")).toBeVisible({
+    timeout: 30000,
+  });
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
-  await page.locator(".ant-modal-container .ant-dropdown-trigger").hover();
+  await page
+    .locator("#btn-interv-save-action button.ant-dropdown-trigger")
+    .hover();
   await page.getByText("Salvar e marcar como Aceita").click();
 
   // price origin
@@ -179,7 +191,9 @@ test("outcome: custom", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
+  await page
+    .getByText("Paciente 99")
+    .waitFor({ state: "visible", timeout: 30000 });
 
   await page.locator(".gtm-bt-patient-intervention").first().click();
   await page
@@ -193,11 +207,15 @@ test("outcome: custom", async ({ page }) => {
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste paciente");
-  await page.locator(".ant-modal-container .ant-dropdown-trigger").hover();
+  await page
+    .locator("#btn-interv-save-action button.ant-dropdown-trigger")
+    .hover();
   await page.getByText("Salvar e marcar como Aceita").click();
 
   await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
-  await expect(page.getByText("Quantidade de Dias de")).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText("Quantidade de Dias de")).toBeVisible({
+    timeout: 30000,
+  });
 
   await page
     .locator("div")
@@ -228,7 +246,9 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
   await page
     .getByRole("heading", { name: "Prescrição nº 198 Liberada em" })
     .click();
-  await page.getByText("Paciente 99").waitFor({ state: "visible", timeout: 30000 });
+  await page
+    .getByText("Paciente 99")
+    .waitFor({ state: "visible", timeout: 30000 });
   await page
     .locator(".ant-table-tbody tr")
     .nth(2)
@@ -249,11 +269,15 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
   // // close dropdown
   await page.locator(".ant-select").click();
 
-  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible({
+    timeout: 30000,
+  });
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
-  await page.locator(".ant-modal-container .ant-dropdown-trigger").hover();
+  await page
+    .locator("#btn-interv-save-action button.ant-dropdown-trigger")
+    .hover();
   await page.getByText("Salvar e marcar como Não Aceita").nth(0).click();
 
   await expect(

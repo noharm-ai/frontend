@@ -13,6 +13,7 @@ const mapStateToProps = ({ prescriptions, user }) => ({
     },
     content: prescriptions.single.data,
   },
+  prescriptionList: prescriptions.single.prescription.list,
   type: "conciliation",
   userId: user.account.userId,
   featureService: FeatureService(user.account.features),
@@ -22,7 +23,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       checkScreening: checkScreeningThunk,
     },
-    dispatch
+    dispatch,
   );
 
 export default connect(mapStateToProps, mapDispatchToProps)(PageHeader);

@@ -74,6 +74,7 @@ export default function PageHeader({
   incrementClinicalNotes,
   userId,
   features,
+  prescriptionList,
 }) {
   const dispatch = useDispatch();
   const params = useParams();
@@ -166,6 +167,20 @@ export default function PageHeader({
   };
 
   const confirmCheckPrescription = (id) => {
+    const payload = {};
+    const content = prescription.content;
+
+    if (content.concilia) {
+      const extracted = prescriptionList.flatMap(({ value }) =>
+        value.map(({ idPrescriptionDrug, conciliaRelationId }) => ({
+          idPrescriptionDrug,
+          conciliaRelationId,
+        })),
+      );
+
+      payload.conciliaList = [...content.conciliaList];
+      payload.conciliaRelations = extracted;
+    }
     trackPrescriptionAction(TrackedPrescriptionAction.CLICK_CHECK);
 
     let highRiskAlerts = [];
@@ -179,14 +194,16 @@ export default function PageHeader({
     }
 
     if (highRiskAlerts.length > 0) {
-      dispatch(setCheckSummary(prescription.content));
+      dispatch(
+        setCheckSummary({ ...prescription.content, conciliaPayload: payload }),
+      );
     } else {
-      setPrescriptionStatus(id, "s");
+      setPrescriptionStatus(id, "s", payload);
     }
   };
 
-  const setPrescriptionStatus = (id, status) => {
-    checkScreening(id, status)
+  const setPrescriptionStatus = (id, status, payload = {}) => {
+    checkScreening(id, status, payload)
       .then(() => {
         notification.success({
           message:
@@ -194,6 +211,9 @@ export default function PageHeader({
               ? "Checagem efetuada com sucesso!"
               : "Checagem desfeita com sucesso!",
         });
+        if (status === "0" && type === "conciliation") {
+          window.location.reload();
+        }
       })
       .catch((err) => {
         console.error("error", err);

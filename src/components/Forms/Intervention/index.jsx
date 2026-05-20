@@ -359,6 +359,7 @@ export default function Intervention({
           }
         >
           <Dropdown.Button
+            id="btn-interv-save-action"
             loading={isSaving}
             disabled={isClosed}
             type="primary"

@@ -9,6 +9,8 @@ import {
   SettingOutlined,
   DownloadOutlined,
   CopyOutlined,
+  LeftOutlined,
+  RightOutlined,
 } from "@ant-design/icons";
 import { formatDate } from "utils/date";
 
@@ -24,9 +26,10 @@ import {
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 
+import Modal from "components/Modal";
 import MemoryText from "containers/MemoryText";
 import MemoryDraft from "features/memory/MemoryDraft/MemoryDraft";
-import { getUserLastClinicalNotes } from "features/serverActions/ServerActionsSlice";
+import { getUserLastClinicalNotesList } from "features/serverActions/ServerActionsSlice";
 
 import getInterventionTemplate from "./util/getInterventionTemplate";
 import { EditorBox } from "../Form.style";
@@ -37,6 +40,9 @@ export default function Base({ prescription, account, signature, action }) {
   const { t } = useTranslation();
   const { values, setFieldValue, errors, touched } = useFormikContext();
   const [loadingCopy, setLoadingCopy] = useState(false);
+  const [lastNotesList, setLastNotesList] = useState([]);
+  const [lastNotesModalOpen, setLastNotesModalOpen] = useState(false);
+  const [currentNoteIndex, setCurrentNoteIndex] = useState(0);
   const { notes, concilia, date, notesType } = values;
 
   const clinicalNotesTypeOptions = (
@@ -49,7 +55,7 @@ export default function Base({ prescription, account, signature, action }) {
   const loadDefaultText = () => {
     setFieldValue(
       "notes",
-      getInterventionTemplate(prescription, account, signature, concilia)
+      getInterventionTemplate(prescription, account, signature, concilia),
     );
   };
 
@@ -68,36 +74,37 @@ export default function Base({ prescription, account, signature, action }) {
         prescription,
         clinicalNote,
         { signature, account },
-        t
-      )
+        t,
+      ),
     );
+  };
+
+  const applyLastNote = (item) => {
+    setFieldValue(
+      "notes",
+      `---Cópia do dia: ${formatDate(item.date)}\n\n${item.text}`,
+    );
+    setLastNotesModalOpen(false);
+    notification.success({ message: "Evolução copiada com sucesso" });
   };
 
   const loadLastNote = () => {
     setLoadingCopy(true);
     dispatch(
-      getUserLastClinicalNotes({
+      getUserLastClinicalNotesList({
         admissionNumber: values.admissionNumber,
-      })
+      }),
     ).then((response) => {
       setLoadingCopy(false);
 
       if (response.error) {
-        notification.error({
-          message: getErrorMessage(response, t),
-        });
+        notification.error({ message: getErrorMessage(response, t) });
       } else {
-        if (response.payload.data) {
-          setFieldValue(
-            "notes",
-            `---Cópia do dia: ${formatDate(response.payload.data?.date)}\n\n${
-              response.payload.data?.text
-            }`
-          );
-
-          notification.success({
-            message: "Última evolução copiada com sucesso",
-          });
+        const list = response.payload?.data;
+        if (list && list.length > 0) {
+          setLastNotesList(list);
+          setCurrentNoteIndex(0);
+          setLastNotesModalOpen(true);
         } else {
           notification.error({
             message: "Não encontramos evolução para este atendimento",
@@ -275,6 +282,66 @@ export default function Base({ prescription, account, signature, action }) {
           </EditorBox>
         </div>
       </div>
+      <Modal
+        title={`Selecionar evolução (${currentNoteIndex + 1} / ${lastNotesList.length})`}
+        open={lastNotesModalOpen}
+        onCancel={() => setLastNotesModalOpen(false)}
+        footer={
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              icon={<LeftOutlined />}
+              onClick={() => setCurrentNoteIndex((i) => i - 1)}
+              disabled={currentNoteIndex === 0}
+            >
+              Anterior
+            </Button>
+            <Button
+              type="primary"
+              icon={<CopyOutlined />}
+              onClick={() => applyLastNote(lastNotesList[currentNoteIndex])}
+            >
+              Copiar
+            </Button>
+            <Button
+              onClick={() => setCurrentNoteIndex((i) => i + 1)}
+              disabled={currentNoteIndex === lastNotesList.length - 1}
+            >
+              Próxima
+              <RightOutlined />
+            </Button>
+          </div>
+        }
+        width={660}
+      >
+        <p style={{ marginBottom: "16px", color: "#666" }}>
+          Navegue pelas evoluções anteriores e selecione a que deseja copiar
+          para o campo de evolução.
+        </p>
+        {lastNotesList[currentNoteIndex] && (
+          <>
+            <strong>{formatDate(lastNotesList[currentNoteIndex].date)}</strong>
+            <div
+              style={{
+                marginTop: "8px",
+                maxHeight: "50vh",
+                overflowY: "auto",
+                whiteSpace: "pre-wrap",
+                padding: "12px",
+                background: "#f5f5f5",
+                borderRadius: "6px",
+              }}
+            >
+              {lastNotesList[currentNoteIndex].text}
+            </div>
+          </>
+        )}
+      </Modal>
     </>
   );
 }

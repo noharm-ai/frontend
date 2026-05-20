@@ -29,6 +29,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [newReferenceLine, setNewReferenceLine] = useState<ReferenceLine | undefined>(undefined);
   const [newShowTitle, setNewShowTitle] = useState(true);
   const [newColorPalette, setNewColorPalette] = useState<ColorPalette>("default");
+  const [newStacked, setNewStacked] = useState(false);
 
   // State for EDITING chart form (Modal)
   const [editTitle, setEditTitle] = useState("");
@@ -47,6 +48,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [editReferenceLine, setEditReferenceLine] = useState<ReferenceLine | undefined>(undefined);
   const [editShowTitle, setEditShowTitle] = useState(true);
   const [editColorPalette, setEditColorPalette] = useState<ColorPalette>("default");
+  const [editStacked, setEditStacked] = useState(false);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
 
   const keys = useMemo(() => {
@@ -86,6 +88,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           referenceLine: newReferenceLine,
           showTitle: newShowTitle,
           colorPalette: newColorPalette,
+          stacked: newStacked,
         },
       ]);
       setNewTitle("");
@@ -104,6 +107,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
       setNewReferenceLine(undefined);
       setNewShowTitle(true);
       setNewColorPalette("default");
+      setNewStacked(false);
     }
   };
 
@@ -125,6 +129,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
     setEditReferenceLine(chart.referenceLine);
     setEditShowTitle(chart.showTitle ?? true);
     setEditColorPalette(chart.colorPalette ?? "default");
+    setEditStacked(chart.stacked ?? false);
   }, []);
 
   const saveEdit = () => {
@@ -150,6 +155,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 referenceLine: editReferenceLine,
                 showTitle: editShowTitle,
                 colorPalette: editColorPalette,
+                stacked: editStacked,
               }
             : c,
         ),
@@ -228,6 +234,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 setShowTitle={setNewShowTitle}
                 colorPalette={newColorPalette}
                 setColorPalette={setNewColorPalette}
+                stacked={newStacked}
+                setStacked={setNewStacked}
                 keys={keys}
               />
             </Card>
@@ -286,6 +294,8 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           setShowTitle={setEditShowTitle}
           colorPalette={editColorPalette}
           setColorPalette={setEditColorPalette}
+          stacked={editStacked}
+          setStacked={setEditStacked}
           keys={keys}
         />
       </Modal>

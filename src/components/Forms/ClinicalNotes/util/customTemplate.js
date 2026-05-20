@@ -136,11 +136,15 @@ export const getCustomClinicalNote = (
     .replaceAll("{{alertas}}", alerts || "Nenhum alerta registrado")
     .replaceAll(
       "{{medicamentos_conciliados}}",
-      conciliationDrugsWithRelation || "--",
+      prescription.data.concilia
+        ? conciliationDrugsWithRelation || "--"
+        : "Lista de conciliação só está disponível em prescrições de conciliação",
     )
     .replaceAll(
       "{{medicamentos_nao_conciliados}}",
-      conciliationDrugsWithoutRelation || "--",
+      prescription.data.concilia
+        ? conciliationDrugsWithoutRelation || "--"
+        : "Lista de conciliação só está disponível em prescrições de conciliação",
     )
     .replaceAll(
       "{{antimicrobianos}}",

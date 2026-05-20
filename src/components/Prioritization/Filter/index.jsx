@@ -113,6 +113,7 @@ export default function Filter({
         protocols: filter.protocols,
         bedList: filter.bedList,
         specialtyList: filter.specialtyList,
+        responsiblePhysicianList: filter.responsiblePhysicianList,
         hasClinicalNotes: filter.hasClinicalNotes,
         hasConciliation:
           prioritizationType === "patient" || prioritizationType === "cards"
@@ -185,6 +186,7 @@ export default function Filter({
       filter.hasClinicalNotes,
       filter.bedList,
       filter.specialtyList,
+      filter.responsiblePhysicianList,
       prioritizationType,
       date,
     ],
@@ -294,6 +296,7 @@ export default function Filter({
       hasClinicalNotes: null,
       bedList: [],
       specialtyList: [],
+      responsiblePhysicianList: [],
     });
     setDate([dayjs(), null]);
 

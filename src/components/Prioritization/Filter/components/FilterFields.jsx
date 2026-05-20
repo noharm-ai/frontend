@@ -394,6 +394,37 @@ export default function FilterFields({
               </div>
             )}
 
+            {FeatureService.has(
+              Feature.PRIORITIZATION_FIELD_RESPONSIBLE_PHYSICIAN,
+            ) && (
+              <div className="form-row">
+                <div className="form-row">
+                  <div className="form-label">
+                    <label>Médico Responsável:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      mode="tags"
+                      tokenSeparators={[","]}
+                      className={
+                        filter.responsiblePhysicianList?.length
+                          ? "warning"
+                          : null
+                      }
+                      value={filter.responsiblePhysicianList}
+                      onChange={(value) =>
+                        setScreeningListFilter({
+                          responsiblePhysicianList: value,
+                        })
+                      }
+                      allowClear
+                      notFoundContent="Digite o nome do médico e pressione enter. Mais de um médico pode ser informado."
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="form-row">
               <div className="form-row">
                 <div className="form-label">
