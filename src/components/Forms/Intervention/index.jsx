@@ -147,6 +147,7 @@ export default function Intervention({
     idInterventionReason: item.intervention.idInterventionReason,
     reasonDescription: null,
     interactions: item.intervention.interactions,
+    interactionsList: item.intervention.interactionsList,
     observation: item.intervention.observation || "",
     transcription: item.intervention.transcription != null,
     economyDays: item.intervention.economyDays,
