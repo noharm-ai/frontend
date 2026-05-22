@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Menu as AntMenu, type MenuProps } from "antd";
 
@@ -129,6 +129,19 @@ export const useSlashMenu = ({
   const [cursorCoords, setCursorCoords] = useState<CursorCoords | null>(null);
   const [activeMenuKey, setActiveMenuKey] = useState<string | null>(null);
   const [openMenuKeys, setOpenMenuKeys] = useState<string[]>([]);
+  const menuContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!slashMenuOpen) return;
+    const handleMouseDown = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const insideMenu = menuContainerRef.current?.contains(target);
+      const insidePopup = !!target.closest(".ant-menu-submenu-popup");
+      if (!insideMenu && !insidePopup) closeSlashMenu();
+    };
+    document.addEventListener("mousedown", handleMouseDown);
+    return () => document.removeEventListener("mousedown", handleMouseDown);
+  }, [slashMenuOpen]);
 
   useEffect(() => {
     if (!slashMenuOpen) {
@@ -221,35 +234,30 @@ export const useSlashMenu = ({
   const portal =
     slashMenuOpen && cursorCoords
       ? createPortal(
-          <>
-            <div
-              style={{ position: "fixed", inset: 0, zIndex: 9998 }}
-              onClick={closeSlashMenu}
-            />
-            <div
+          <div
+            ref={menuContainerRef}
+            style={{
+              position: "fixed",
+              left: cursorCoords.x,
+              top: cursorCoords.y,
+              zIndex: 9999,
+            }}
+          >
+            <AntMenu
+              mode="vertical"
+              openKeys={openMenuKeys}
+              onOpenChange={setOpenMenuKeys}
+              items={items as MenuProps["items"]}
+              onClick={handleMenuSelect}
+              selectedKeys={activeMenuKey ? [activeMenuKey] : []}
               style={{
-                position: "fixed",
-                left: cursorCoords.x,
-                top: cursorCoords.y,
-                zIndex: 9999,
+                minWidth: 160,
+                borderRadius: 8,
+                boxShadow:
+                  "0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05)",
               }}
-            >
-              <AntMenu
-                mode="vertical"
-                openKeys={openMenuKeys}
-                onOpenChange={setOpenMenuKeys}
-                items={items as MenuProps["items"]}
-                onClick={handleMenuSelect}
-                selectedKeys={activeMenuKey ? [activeMenuKey] : []}
-                style={{
-                  minWidth: 160,
-                  borderRadius: 8,
-                  boxShadow:
-                    "0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05)",
-                }}
-              />
-            </div>
-          </>,
+            />
+          </div>,
           document.body,
         )
       : null;

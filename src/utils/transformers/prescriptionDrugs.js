@@ -102,9 +102,12 @@ export const isWhitelistedChild = (
   return true;
 };
 
-const hasParent = (list, groupSolution) => {
+const hasParent = (list, groupSolution, idPrescription) => {
   const obj = list.find(
-    (i) => `${i.grp_solution}` === `${groupSolution}` && !i.whiteList,
+    (i) =>
+      `${i.grp_solution}` === `${groupSolution}` &&
+      !i.whiteList &&
+      `${i.idPrescription}` === `${idPrescription}`,
   );
 
   return obj != null;
@@ -127,7 +130,7 @@ export const filterWhitelistedChildren = (list) => {
   return list.filter((i) => {
     if (
       isWhitelistedChild(i.whiteList, i.grp_solution, i.idPrescriptionDrug) &&
-      hasParent(list, i.grp_solution)
+      hasParent(list, i.grp_solution, i.idPrescription)
     ) {
       console.debug("removed", i);
       return false;
