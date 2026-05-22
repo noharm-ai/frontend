@@ -478,7 +478,8 @@ export const expandedRowRender = (bag) => (record) => {
 
       if (
         parent === `${record.grp_solution}` &&
-        record.idPrescriptionDrug !== d.idPrescriptionDrug
+        record.idPrescriptionDrug !== d.idPrescriptionDrug &&
+        record.idPrescription === d.idPrescription
       ) {
         return true;
       }
