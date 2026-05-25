@@ -823,6 +823,14 @@ api.clinicalNotes.getUserLastList = (params) =>
 api.clinicalNotes.createClinicalNote = (params = {}) =>
   instance.post(`${endpoints.clinicalNotes}`, params, setHeaders());
 
+api.clinicalNotes.listByPrescription = (idPrescription) =>
+  instance.get(`/prescription-clinical-note/${idPrescription}`, {
+    ...setHeaders(),
+  });
+
+api.clinicalNotes.upsert = (params = {}) =>
+  instance.post(`/prescription-clinical-note`, params, { ...setHeaders() });
+
 /**
  * User admin
  */

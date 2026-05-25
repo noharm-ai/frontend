@@ -28,6 +28,8 @@ import moment from "moment";
 import ClinicalNotes from "containers/Forms/ClinicalNotes";
 import ClinicalNotesSchedule from "containers/Forms/ClinicalNotes/ScheduleForm";
 import ClinicalNotesCustomForm from "containers/Forms/ClinicalNotes/CustomForm";
+import { ClinicalNotesList } from "features/clinicalNotes/ClinicalNotesList/ClinicalNotesList";
+import { setListModalOpen } from "features/clinicalNotes/ClinicalNotesSlice";
 import FormClinicalAlert from "containers/Forms/ClinicalAlert";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import pageTimer from "utils/pageTimer";
@@ -109,6 +111,7 @@ export default function PageHeader({
   }, []);
 
   const hasPrimaryCare = featureService.hasPrimaryCare();
+  const hasMultiClinicalNotes = featureService.hasMultiClinicalNotes();
   const hasUncheckPermission = featureService.hasLockCheckedPrescription()
     ? `${userId}` === `${prescription?.content.userId}`
     : true;
@@ -153,7 +156,13 @@ export default function PageHeader({
       TrackedPrescriptionAction.CLICK_CLINICAL_NOTES_FORM,
     );
 
-    if (hasPrimaryCare) {
+    if (hasMultiClinicalNotes) {
+      dispatch(
+        setListModalOpen({
+          idPrescription: prescription.content.idPrescription,
+        }),
+      );
+    } else if (hasPrimaryCare) {
       setClinicalNotesFormsVisibility(true);
     } else {
       setClinicalNotesAction("clinicalNote");
@@ -566,6 +575,10 @@ export default function PageHeader({
           cancelText="Cancelar"
           afterSave={afterSaveClinicalAlert}
         />
+
+        {hasMultiClinicalNotes && (
+          <ClinicalNotesList afterSave={() => incrementClinicalNotes()} />
+        )}
       </ScreeningHeader>
     </Affix>
   );
