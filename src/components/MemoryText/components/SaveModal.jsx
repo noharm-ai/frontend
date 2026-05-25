@@ -287,6 +287,16 @@ export default function SaveModal({
   ].sort((a, b) => a.label.localeCompare(b.label));
 
   alertVariables.push({
+    label: "Interações",
+    children: [
+      { key: "{{interacoes}}", label: "Todos os níveis" },
+      { key: "{{interacoes.nivel.baixo}}", label: "Nível baixo" },
+      { key: "{{interacoes.nivel.medio}}", label: "Nível médio" },
+      { key: "{{interacoes.nivel.alto}}", label: "Nível alto" },
+    ],
+  });
+
+  alertVariables.push({
     label: "Por nível",
     children: [
       {

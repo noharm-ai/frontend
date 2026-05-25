@@ -4,6 +4,7 @@ import {
 } from "./getInterventionTemplate";
 import {
   alertsTemplate,
+  interactionAlertsTemplate,
   getConciliationDrugs,
   signatureTemplate,
 } from "./templates";
@@ -53,6 +54,7 @@ export const getCustomClinicalNote = (
   // custom vars
   resultText = alertsByType(resultText, prescription);
   resultText = alertsByLevel(resultText, prescription);
+  resultText = interactionAlerts(resultText, prescription, t);
   resultText = drugsByFieldList(resultText, drugs, {
     field: "idSubstance",
     varName: "substancias",
@@ -579,6 +581,31 @@ const alertsByLevel = (clinicalNote, prescription) => {
     resultText = resultText.replace(
       item,
       alertsTemplate(prescription, null, level),
+    );
+  });
+
+  return resultText;
+};
+
+const INTERACTION_LEVEL_MAP = {
+  baixo: "low",
+  medio: "medium",
+  alto: "high",
+};
+
+const interactionAlerts = (clinicalNote, prescription, t) => {
+  let resultText = clinicalNote;
+  const variables = clinicalNote.match(/\{\{(interacoes.*?)\}\}/g);
+
+  if (!variables) return resultText;
+
+  variables.forEach((item) => {
+    const parts = item.replace("{{", "").replace("}}", "").split(".");
+    const levelPt = parts[2] ?? null;
+    const level = levelPt ? (INTERACTION_LEVEL_MAP[levelPt] ?? null) : null;
+    resultText = resultText.replace(
+      item,
+      interactionAlertsTemplate(prescription, t, level),
     );
   });
 

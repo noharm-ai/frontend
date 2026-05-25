@@ -462,3 +462,50 @@ Alertas:
 
   return alerts.map((a) => stripHtml(a)).join("");
 };
+
+export const interactionAlertsTemplate = (prescription, t, level = null) => {
+  const INTERACTION_TYPES = ["dm", "dt", "iy", "it", "sl", "rx"];
+
+  const list = [
+    ...prescription.data.prescriptionRaw,
+    ...prescription.data.solutionRaw,
+    ...prescription.data.proceduresRaw,
+  ];
+
+  // Drugs sharing the same (type + normalized text) are the two sides of a pair
+  const normalizeText = (text) => stripHtml(text).replace(/\s+/g, " ").trim();
+  const pairMap = new Map();
+
+  list.forEach((i) => {
+    if (!i.alertsComplete) return;
+    i.alertsComplete
+      .filter(
+        (a) =>
+          INTERACTION_TYPES.includes(a.type) && (!level || a.level === level),
+      )
+      .forEach((alert) => {
+        const key = `${alert.type}:${normalizeText(alert.text)}`;
+        if (!pairMap.has(key)) {
+          pairMap.set(key, { type: alert.type, drugs: new Set() });
+        }
+        pairMap.get(key).drugs.add(i.drug);
+      });
+  });
+
+  if (pairMap.size === 0) return "Nenhuma interação registrada";
+
+  const typeResults = new Map();
+  for (const { type, drugs } of pairMap.values()) {
+    if (!typeResults.has(type)) typeResults.set(type, []);
+    typeResults.get(type).push(`- ${[...drugs].join(" x ")}`);
+  }
+
+  const result = [];
+  for (const type of INTERACTION_TYPES) {
+    if (!typeResults.has(type)) continue;
+    const typeLabel = t(`drugAlertType.${type}`);
+    result.push(`${typeLabel}:\n${typeResults.get(type).join("\n")}`);
+  }
+
+  return result.length ? result.join("\n\n") : "Nenhuma interação registrada";
+};
