@@ -576,7 +576,7 @@ const alertsByType = (clinicalNote, prescription, t) => {
 
     const replacement =
       descricao === "simplificada"
-        ? interactionAlertsTemplate(prescription, t, level)
+        ? interactionAlertsTemplate(prescription, t, level, type)
         : alertsTemplate(prescription, type, level);
 
     resultText = resultText.replace(item, replacement);

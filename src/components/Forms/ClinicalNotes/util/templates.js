@@ -467,7 +467,12 @@ Alertas:
   return alerts.map((a) => stripHtml(a)).join("");
 };
 
-export const interactionAlertsTemplate = (prescription, t, level = null) => {
+export const interactionAlertsTemplate = (
+  prescription,
+  t,
+  level = null,
+  type = null,
+) => {
   const INTERACTION_TYPES = ["dm", "dt", "iy", "it", "sl", "rx"];
 
   const list = [
@@ -485,7 +490,8 @@ export const interactionAlertsTemplate = (prescription, t, level = null) => {
     i.alertsComplete
       .filter(
         (a) =>
-          INTERACTION_TYPES.includes(a.type) && (!level || a.level === level),
+          (type ? a.type === type : INTERACTION_TYPES.includes(a.type)) &&
+          (!level || a.level === level),
       )
       .forEach((alert) => {
         const key = `${alert.type}:${normalizeText(alert.text)}`;
