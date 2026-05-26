@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
-import { Alert, Spin } from "antd";
+import { Spin } from "antd";
 
 import { useAppSelector, useAppDispatch } from "src/store";
 import DefaultModal from "components/Modal";
@@ -202,13 +202,6 @@ export function ClinicalNotesForm({
                 <div style={{ textAlign: "center", padding: "40px 0" }}>
                   <Spin />
                 </div>
-              )}
-              {saveStatus === "failed" && (
-                <Alert
-                  type="error"
-                  message="Erro ao salvar evolução. Tente novamente."
-                  style={{ marginTop: 12 }}
-                />
               )}
             </>
           );
