@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
@@ -7,10 +7,8 @@ import { Spin } from "antd";
 import { useAppSelector, useAppDispatch } from "src/store";
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
-import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from "utils/memory";
 import { getErrorMessage } from "utils/errorHandler";
 import { Form } from "styles/Form.style";
-import { memoryFetchThunk } from "store/ducks/memory/thunk";
 
 import Base from "components/Forms/ClinicalNotes/Base";
 import {
@@ -64,22 +62,11 @@ export function ClinicalNotesForm({
     (state) => (state.prescriptions as any).single,
   );
   const account = useAppSelector((state) => (state.user as any).account);
-  const signature = useAppSelector((state) => (state.memory as any).signature);
+  const signature = useAppSelector(
+    (state) => (state.user as any).account?.signature,
+  );
 
   const { open, selectedNote } = formModal;
-
-  useEffect(() => {
-    if (open) {
-      dispatch(
-        (memoryFetchThunk as any)(
-          SIGNATURE_STORE_ID,
-          `${SIGNATURE_MEMORY_TYPE}_${account?.userId}`,
-        ),
-      ).catch((err: any) => {
-        console.error("Error fetching signature memory:", err);
-      });
-    }
-  }, [open, account?.userId, dispatch]);
 
   const initialValues = {
     formId: "clinicalNotesMulti",
