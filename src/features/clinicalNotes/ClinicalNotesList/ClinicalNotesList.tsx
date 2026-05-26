@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Alert, Button, Empty, List, Space, Spin } from "antd";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 
 import { useAppSelector, useAppDispatch } from "src/store";
 import DefaultModal from "components/Modal";
@@ -86,8 +87,8 @@ export function ClinicalNotesList({ afterSave }: IClinicalNotesListProps) {
             key={item.id}
             actions={[
               <Button
+                icon={<EditOutlined />}
                 key="edit"
-                type="link"
                 onClick={() => handleEditNote(item)}
               >
                 Editar
@@ -98,11 +99,11 @@ export function ClinicalNotesList({ afterSave }: IClinicalNotesListProps) {
               title={
                 <span>
                   {formatDate(item.createdAt, "DD/MM/YYYY HH:mm")}
-                  {item.userName && (
+                  {item.createdByName && (
                     <span
                       style={{ marginLeft: 8, color: "#888", fontWeight: 400 }}
                     >
-                      — {item.userName}
+                      — {item.createdByName}
                     </span>
                   )}
                 </span>
@@ -132,7 +133,11 @@ export function ClinicalNotesList({ afterSave }: IClinicalNotesListProps) {
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Space>
               <Button onClick={handleClose}>Fechar</Button>
-              <Button type="primary" onClick={handleNewNote}>
+              <Button
+                icon={<PlusOutlined />}
+                type="primary"
+                onClick={handleNewNote}
+              >
                 Nova Evolução
               </Button>
             </Space>

@@ -118,8 +118,8 @@ export function ClinicalNotesForm({
   const submit = (formData: typeof initialValues) => {
     const params: IClinicalNotesUpsertParams = {
       idPrescription: formData.idPrescription,
-      texto: formData.notes,
-      idTipoEvolucao: formData.notesType,
+      text: formData.notes,
+      idClinicalNoteType: formData.notesType,
       concilia: formData.hasConciliation ? formData.concilia : undefined,
       tpStatus: 0,
     };

@@ -12,15 +12,16 @@ export interface IClinicalNoteItem {
   createdAt: string;
   updatedAt: string;
   userName: string;
+  createdByName: string | null;
 }
 
 export interface IClinicalNotesUpsertParams {
   id?: number;
   idPrescription: number;
-  idTipoEvolucao?: string | null;
+  idClinicalNoteType?: string | null;
   concilia?: string | null;
   tpStatus?: number;
-  texto?: string | null;
+  text?: string | null;
 }
 
 interface IClinicalNotesSlice {
@@ -67,12 +68,13 @@ export const fetchClinicalNotesByPrescription = createAsyncThunk(
   "clinicalNotes/list-by-prescription",
   async (idPrescription: number, thunkAPI) => {
     try {
-      const response = await api.clinicalNotes.listByPrescription(idPrescription);
+      const response =
+        await api.clinicalNotes.listByPrescription(idPrescription);
       return response.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err?.response?.data);
     }
-  }
+  },
 );
 
 export const upsertClinicalNote = createAsyncThunk(
@@ -84,17 +86,14 @@ export const upsertClinicalNote = createAsyncThunk(
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err?.response?.data);
     }
-  }
+  },
 );
 
 const clinicalNotesMultiSlice = createSlice({
   name: "clinicalNotesMulti",
   initialState,
   reducers: {
-    setListModalOpen(
-      state,
-      action: PayloadAction<{ idPrescription: number }>
-    ) {
+    setListModalOpen(state, action: PayloadAction<{ idPrescription: number }>) {
       state.listModal.open = true;
       state.listModal.idPrescription = action.payload.idPrescription;
     },
@@ -107,7 +106,7 @@ const clinicalNotesMultiSlice = createSlice({
     },
     setFormModalOpen(
       state,
-      action: PayloadAction<{ selectedNote: IClinicalNoteItem | null }>
+      action: PayloadAction<{ selectedNote: IClinicalNoteItem | null }>,
     ) {
       state.formModal.open = true;
       state.formModal.selectedNote = action.payload.selectedNote;
@@ -134,7 +133,8 @@ const clinicalNotesMultiSlice = createSlice({
       })
       .addCase(fetchClinicalNotesByPrescription.rejected, (state, action) => {
         state.list.status = "failed";
-        state.list.error = (action.payload as any)?.message ?? "Erro ao carregar evoluções";
+        state.list.error =
+          (action.payload as any)?.message ?? "Erro ao carregar evoluções";
       })
       .addCase(upsertClinicalNote.pending, (state) => {
         state.save.status = "loading";
@@ -145,7 +145,8 @@ const clinicalNotesMultiSlice = createSlice({
       })
       .addCase(upsertClinicalNote.rejected, (state, action) => {
         state.save.status = "failed";
-        state.save.error = (action.payload as any)?.message ?? "Erro ao salvar evolução";
+        state.save.error =
+          (action.payload as any)?.message ?? "Erro ao salvar evolução";
       });
   },
 });
