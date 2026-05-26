@@ -250,7 +250,7 @@ export default function Base({ prescription, account, signature, action }) {
                 onLoad={(value) => loadNote(value)}
               />
             </span>
-            {(isEmpty(signature.list) || signature.list[0].value === "") && (
+            {!signature && (
               <Tooltip title="Configurar assinatura padrão">
                 <Button
                   shape="circle"

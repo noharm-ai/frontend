@@ -398,13 +398,13 @@ ${signature}
 `;
 
 export const signatureTemplate = (signature, account) => {
-  if (isEmpty(signature.list) || signature.list[0].value === "") {
+  if (!signature) {
     return `Farm. ${account.userName}
 CRF/UF:
 Ramal:`;
   }
 
-  return signature.list[0].value;
+  return signature;
 };
 
 export const alertsTemplate = (prescription, type, level) => {

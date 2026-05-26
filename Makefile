@@ -52,3 +52,8 @@ e2e: e2e-db-reset
 ## Run e2e tests in interactive UI mode (no auto-reset)
 e2e-ui:
 	VITE_APP_API_URL=http://localhost:5001 npx playwright test --ui
+
+
+## Dev environment
+dev:
+	npm run dev
