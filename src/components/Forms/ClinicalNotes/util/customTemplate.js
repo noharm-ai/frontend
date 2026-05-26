@@ -52,7 +52,7 @@ export const getCustomClinicalNote = (
   );
 
   // custom vars
-  resultText = alertsByType(resultText, prescription);
+  resultText = alertsByType(resultText, prescription, t);
   resultText = alertsByLevel(resultText, prescription);
   resultText = interactionAlerts(resultText, prescription, t);
   resultText = drugsByFieldList(resultText, drugs, {
@@ -550,7 +550,13 @@ const getPatientRisk = (agg, globalScore) => {
   return "-";
 };
 
-const alertsByType = (clinicalNote, prescription) => {
+const INTERACTION_LEVEL_MAP = {
+  baixo: "low",
+  medio: "medium",
+  alto: "high",
+};
+
+const alertsByType = (clinicalNote, prescription, t) => {
   let resultText = clinicalNote;
   const variables = clinicalNote.match(/\{\{(alerta_tipo.*?)\}\}/g);
 
@@ -559,9 +565,21 @@ const alertsByType = (clinicalNote, prescription) => {
   }
 
   variables.forEach((item) => {
-    const type = item.replace("{{", "").replace("}}", "").split(".")[1];
+    const parts = item.replace("{{", "").replace("}}", "").split(".");
+    const type = parts[1];
+    const descricao = parts[2] ?? null;
+    const nivelPt = parts[3] ?? null;
+    const level =
+      nivelPt && nivelPt !== "todos"
+        ? (INTERACTION_LEVEL_MAP[nivelPt] ?? null)
+        : null;
 
-    resultText = resultText.replace(item, alertsTemplate(prescription, type));
+    const replacement =
+      descricao === "simplificada"
+        ? interactionAlertsTemplate(prescription, t, level)
+        : alertsTemplate(prescription, type, level);
+
+    resultText = resultText.replace(item, replacement);
   });
 
   return resultText;
@@ -585,12 +603,6 @@ const alertsByLevel = (clinicalNote, prescription) => {
   });
 
   return resultText;
-};
-
-const INTERACTION_LEVEL_MAP = {
-  baixo: "low",
-  medio: "medium",
-  alto: "high",
 };
 
 const interactionAlerts = (clinicalNote, prescription, t) => {

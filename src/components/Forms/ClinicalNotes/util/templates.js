@@ -415,6 +415,10 @@ export const alertsTemplate = (prescription, type, level) => {
   ];
 
   const filterAlerts = (a) => {
+    if (type && level) {
+      return type === a.type && level === a.level;
+    }
+
     if (type) {
       return type === a.type;
     }
@@ -503,8 +507,7 @@ export const interactionAlertsTemplate = (prescription, t, level = null) => {
   const result = [];
   for (const type of INTERACTION_TYPES) {
     if (!typeResults.has(type)) continue;
-    const typeLabel = t(`drugAlertType.${type}`);
-    result.push(`${typeLabel}:\n${typeResults.get(type).join("\n")}`);
+    result.push(`${typeResults.get(type).join("\n")}`);
   }
 
   return result.length ? result.join("\n\n") : "Nenhuma interação registrada";
