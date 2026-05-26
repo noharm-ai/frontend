@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Alert, Button, Empty, List, Space, Spin } from "antd";
+import { useEffect, useState } from "react";
+import { Alert, Button, Empty, List, Modal, Space, Spin } from "antd";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 
 import { useAppSelector, useAppDispatch } from "src/store";
@@ -20,11 +20,16 @@ interface IClinicalNotesListProps {
 
 export function ClinicalNotesList({ afterSave }: IClinicalNotesListProps) {
   const dispatch = useAppDispatch();
+  const [legacyNoteOpen, setLegacyNoteOpen] = useState(false);
 
   const listModal = useAppSelector(
     (state) => state.clinicalNotesMulti.listModal,
   );
   const list = useAppSelector((state) => state.clinicalNotesMulti.list);
+  const legacyNote = useAppSelector(
+    (state) =>
+      (state.prescriptions as any).single?.data?.notes as string | undefined,
+  );
 
   useEffect(() => {
     if (listModal.open && listModal.idPrescription) {
@@ -33,10 +38,10 @@ export function ClinicalNotesList({ afterSave }: IClinicalNotesListProps) {
   }, [dispatch, listModal.open, listModal.idPrescription]);
 
   useEffect(() => {
-    if (list.status === "succeeded" && list.data.length === 0) {
+    if (list.status === "succeeded" && list.data.length === 0 && !legacyNote) {
       dispatch(setFormModalOpen({ selectedNote: null }));
     }
-  }, [dispatch, list.status, list.data.length]);
+  }, [dispatch, list.status, list.data.length, legacyNote]);
 
   const handleClose = () => {
     dispatch(setListModalClose());
@@ -76,47 +81,96 @@ export function ClinicalNotesList({ afterSave }: IClinicalNotesListProps) {
     }
 
     if (list.status === "succeeded" && list.data.length === 0) {
+      if (legacyNote) {
+        return (
+          <Alert
+            type="info"
+            showIcon
+            description={
+              <>
+                Esta prescrição possui uma evolução anterior ao novo sistema de
+                evoluções.{" "}
+                <Button
+                  type="link"
+                  size="small"
+                  style={{ padding: 0 }}
+                  onClick={() => setLegacyNoteOpen(true)}
+                >
+                  Ver evolução
+                </Button>
+              </>
+            }
+          />
+        );
+      }
       return <Empty description="Nenhuma evolução registrada" />;
     }
 
     return (
-      <List
-        dataSource={list.data}
-        renderItem={(item: IClinicalNoteItem) => (
-          <List.Item
-            key={item.id}
-            actions={[
-              <Button
-                icon={<EditOutlined />}
-                key="edit"
-                onClick={() => handleEditNote(item)}
-              >
-                Editar
-              </Button>,
-            ]}
-          >
-            <List.Item.Meta
-              title={
-                <span>
-                  {formatDate(item.createdAt, "DD/MM/YYYY HH:mm")}
-                  {item.createdByName && (
-                    <span
-                      style={{ marginLeft: 8, color: "#888", fontWeight: 400 }}
-                    >
-                      — {item.createdByName}
-                    </span>
-                  )}
-                </span>
-              }
-              description={
-                item.notes?.length > 120
-                  ? `${item.notes.substring(0, 120)}…`
-                  : item.notes
-              }
-            />
-          </List.Item>
+      <>
+        <List
+          dataSource={list.data}
+          renderItem={(item: IClinicalNoteItem) => (
+            <List.Item
+              key={item.id}
+              actions={[
+                <Button
+                  icon={<EditOutlined />}
+                  key="edit"
+                  onClick={() => handleEditNote(item)}
+                >
+                  Editar
+                </Button>,
+              ]}
+            >
+              <List.Item.Meta
+                title={
+                  <span>
+                    {formatDate(item.createdAt, "DD/MM/YYYY HH:mm")}
+                    {item.createdByName && (
+                      <span
+                        style={{
+                          marginLeft: 8,
+                          color: "#888",
+                          fontWeight: 400,
+                        }}
+                      >
+                        — {item.createdByName}
+                      </span>
+                    )}
+                  </span>
+                }
+                description={
+                  item.notes?.length > 120
+                    ? `${item.notes.substring(0, 120)}…`
+                    : item.notes
+                }
+              />
+            </List.Item>
+          )}
+        />
+        {legacyNote && (
+          <Alert
+            style={{ marginTop: 16 }}
+            type="info"
+            showIcon
+            description={
+              <>
+                Esta prescrição possui uma evolução anterior ao novo sistema de
+                evoluções.{" "}
+                <Button
+                  type="link"
+                  size="small"
+                  style={{ padding: 0 }}
+                  onClick={() => setLegacyNoteOpen(true)}
+                >
+                  Ver evolução
+                </Button>
+              </>
+            }
+          />
         )}
-      />
+      </>
     );
   };
 
@@ -148,6 +202,19 @@ export function ClinicalNotesList({ afterSave }: IClinicalNotesListProps) {
       </DefaultModal>
 
       <ClinicalNotesForm afterSave={afterSave} onCancel={handleFormCancel} />
+
+      <Modal
+        title="Evolução anterior (migração)"
+        open={legacyNoteOpen}
+        onCancel={() => setLegacyNoteOpen(false)}
+        footer={
+          <Button onClick={() => setLegacyNoteOpen(false)}>Fechar</Button>
+        }
+        centered
+        width={600}
+      >
+        <p style={{ whiteSpace: "pre-wrap" }}>{legacyNote}</p>
+      </Modal>
     </>
   );
 }
