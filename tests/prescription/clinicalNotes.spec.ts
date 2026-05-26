@@ -50,6 +50,16 @@ test.describe("clinical notes", () => {
       .getByText("Uhu! Evolução salva com sucesso! :)")
       .waitFor({ state: "visible", timeout: 10000 });
 
+    // form modal may still be open; close it, then close the list modal
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".ant-modal-wrap")).toHaveCount(1, {
+      timeout: 10000,
+    });
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".ant-modal-wrap")).toHaveCount(0, {
+      timeout: 10000,
+    });
+
     // re-open list and verify 2 items
     await page.locator(".gtm-bt-clinical-notes").click();
 
