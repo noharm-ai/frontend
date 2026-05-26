@@ -32,9 +32,10 @@ function BaseForm() {
             allowClear
             disabled={!values.new}
           >
-            {substances.map(({ sctid, name }) => (
+            {substances.map(({ sctid, name, active }) => (
               <Select.Option key={sctid} value={sctid}>
                 {name}
+                {active ? "" : " (inativa)"}
               </Select.Option>
             ))}
           </Select>
@@ -57,9 +58,10 @@ function BaseForm() {
             allowClear
             disabled={!values.new}
           >
-            {substances.map(({ sctid, name }) => (
+            {substances.map(({ sctid, name, active }) => (
               <Select.Option key={sctid} value={sctid}>
                 {name}
+                {active ? "" : " (inativa)"}
               </Select.Option>
             ))}
           </Select>
@@ -87,7 +89,7 @@ function BaseForm() {
                 <Select.Option key={a.id} value={a.id}>
                   {a.label}
                 </Select.Option>
-              )
+              ),
             )}
           </Select>
         </div>
