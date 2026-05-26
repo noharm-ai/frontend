@@ -577,7 +577,7 @@ export default function PageHeader({
         />
 
         {hasMultiClinicalNotes && (
-          <ClinicalNotesList afterSave={() => incrementClinicalNotes()} />
+          <ClinicalNotesList afterSave={() => incrementClinicalNotes?.()} />
         )}
       </ScreeningHeader>
     </Affix>
