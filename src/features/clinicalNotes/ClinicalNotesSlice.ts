@@ -13,6 +13,8 @@ export interface IClinicalNoteItem {
   updatedAt: string;
   userName: string;
   createdByName: string | null;
+  tpStatus?: number | null;
+  sentAt?: string | null;
 }
 
 export interface IClinicalNotesUpsertParams {

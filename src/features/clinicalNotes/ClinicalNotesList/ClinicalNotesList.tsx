@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Alert, Button, Empty, List, Modal, Space, Spin } from "antd";
-import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Alert, Button, Empty, List, Modal, Space, Spin, Tag, Tooltip } from "antd";
+import { CheckCircleOutlined, EditOutlined, PlusOutlined, WarningOutlined } from "@ant-design/icons";
 
 import { useAppSelector, useAppDispatch } from "src/store";
 import DefaultModal from "components/Modal";
@@ -126,7 +126,7 @@ export function ClinicalNotesList({ afterSave }: IClinicalNotesListProps) {
               <List.Item.Meta
                 title={
                   <span>
-                    {formatDate(item.createdAt, "DD/MM/YYYY HH:mm")}
+                    {formatDate(item.updatedAt, "DD/MM/YYYY HH:mm")}
                     {item.createdByName && (
                       <span
                         style={{
@@ -137,6 +137,30 @@ export function ClinicalNotesList({ afterSave }: IClinicalNotesListProps) {
                       >
                         — {item.createdByName}
                       </span>
+                    )}
+                    {item.tpStatus === 1 && (
+                      <Tooltip
+                        title={`Enviado ao sistema institucional em ${formatDate(item.sentAt, "DD/MM/YYYY HH:mm")}`}
+                      >
+                        <Tag
+                          icon={<CheckCircleOutlined />}
+                          color="success"
+                          style={{ marginLeft: 8 }}
+                        >
+                          Integrado
+                        </Tag>
+                      </Tooltip>
+                    )}
+                    {item.tpStatus === 2 && (
+                      <Tooltip title="Erro na integração com o sistema institucional. Salve o registro novamente para reenviar.">
+                        <Tag
+                          icon={<WarningOutlined />}
+                          color="error"
+                          style={{ marginLeft: 8 }}
+                        >
+                          Erro na integração
+                        </Tag>
+                      </Tooltip>
                     )}
                   </span>
                 }
