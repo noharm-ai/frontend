@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import "styled-components";
-import { isEmpty } from "lodash";
 import { useFormikContext } from "formik";
 import dayjs from "dayjs";
 import {
@@ -250,7 +249,7 @@ export default function Base({ prescription, account, signature, action }) {
                 onLoad={(value) => loadNote(value)}
               />
             </span>
-            {(isEmpty(signature.list) || signature.list[0].value === "") && (
+            {!signature && (
               <Tooltip title="Configurar assinatura padrão">
                 <Button
                   shape="circle"

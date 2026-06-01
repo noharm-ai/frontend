@@ -269,7 +269,7 @@ export default function Base() {
             onChange={(value) =>
               setFieldValue(
                 "birthdate",
-                value ? value.format("YYYY-MM-DD") : null
+                value ? value.format("YYYY-MM-DD") : null,
               )
             }
             allowClear={true}
@@ -309,7 +309,10 @@ export default function Base() {
         </Col>
       </Box>
 
-      {PermissionService().has(Permission.ADMIN_PATIENT) && (
+      {PermissionService().hasAny([
+        Permission.ADMIN_PATIENT,
+        Permission.READ_NAV,
+      ]) && (
         <Box hasError={errors.dischargeDate}>
           <Col xs={layout.label}>
             <Heading as="label" $size="14px" $textAlign="right">
@@ -323,7 +326,7 @@ export default function Base() {
               onChange={(value) =>
                 setFieldValue(
                   "dischargeDate",
-                  value ? value.format("YYYY-MM-DD HH:mm") : null
+                  value ? value.format("YYYY-MM-DD HH:mm") : null,
                 )
               }
               allowClear={true}

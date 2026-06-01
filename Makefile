@@ -1,6 +1,6 @@
 COMPOSE = docker compose -f docker-compose.test.yml
 
-.PHONY: e2e-up e2e-down e2e-rebuild e2e e2e-ui e2e-logs e2e-logs-backend e2e-db-reset
+.PHONY: e2e-up e2e-down e2e-rebuild e2e-rebuild-postgres e2e e2e-ui e2e-logs e2e-logs-backend e2e-db-reset
 
 ## Start the test infrastructure (postgres + backend)
 e2e-up:
@@ -13,6 +13,13 @@ e2e-down:
 ## Rebuild the backend image (after upstream changes)
 e2e-rebuild:
 	$(COMPOSE) build backend
+
+## Rebuild the postgres image (after SQL seed changes)
+e2e-rebuild-postgres:
+	$(COMPOSE) stop postgres backend
+	$(COMPOSE) rm -f postgres
+	$(COMPOSE) build postgres
+	$(COMPOSE) up -d
 
 ## Show all service logs
 e2e-logs:
@@ -45,3 +52,8 @@ e2e: e2e-db-reset
 ## Run e2e tests in interactive UI mode (no auto-reset)
 e2e-ui:
 	VITE_APP_API_URL=http://localhost:5001 npx playwright test --ui
+
+
+## Dev environment
+dev:
+	sfw npm run dev

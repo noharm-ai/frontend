@@ -398,13 +398,13 @@ ${signature}
 `;
 
 export const signatureTemplate = (signature, account) => {
-  if (isEmpty(signature.list) || signature.list[0].value === "") {
+  if (!signature) {
     return `Farm. ${account.userName}
 CRF/UF:
 Ramal:`;
   }
 
-  return signature.list[0].value;
+  return signature;
 };
 
 export const alertsTemplate = (prescription, type, level) => {
@@ -415,6 +415,10 @@ export const alertsTemplate = (prescription, type, level) => {
   ];
 
   const filterAlerts = (a) => {
+    if (type && level) {
+      return type === a.type && level === a.level;
+    }
+
     if (type) {
       return type === a.type;
     }
@@ -461,4 +465,56 @@ Alertas:
   }
 
   return alerts.map((a) => stripHtml(a)).join("");
+};
+
+export const interactionAlertsTemplate = (
+  prescription,
+  t,
+  level = null,
+  type = null,
+) => {
+  const INTERACTION_TYPES = ["dm", "dt", "iy", "it", "sl", "rx"];
+
+  const list = [
+    ...prescription.data.prescriptionRaw,
+    ...prescription.data.solutionRaw,
+    ...prescription.data.proceduresRaw,
+  ];
+
+  // Drugs sharing the same (type + normalized text) are the two sides of a pair
+  const normalizeText = (text) => stripHtml(text).replace(/\s+/g, " ").trim();
+  const pairMap = new Map();
+
+  list.forEach((i) => {
+    if (!i.alertsComplete) return;
+    i.alertsComplete
+      .filter(
+        (a) =>
+          (type ? a.type === type : INTERACTION_TYPES.includes(a.type)) &&
+          (!level || a.level === level),
+      )
+      .forEach((alert) => {
+        const key = `${alert.type}:${normalizeText(alert.text)}`;
+        if (!pairMap.has(key)) {
+          pairMap.set(key, { type: alert.type, drugs: new Set() });
+        }
+        pairMap.get(key).drugs.add(i.drug);
+      });
+  });
+
+  if (pairMap.size === 0) return "Nenhuma interação registrada";
+
+  const typeResults = new Map();
+  for (const { type, drugs } of pairMap.values()) {
+    if (!typeResults.has(type)) typeResults.set(type, []);
+    typeResults.get(type).push(`- ${[...drugs].join(" x ")}`);
+  }
+
+  const result = [];
+  for (const type of INTERACTION_TYPES) {
+    if (!typeResults.has(type)) continue;
+    result.push(`${typeResults.get(type).join("\n")}`);
+  }
+
+  return result.length ? result.join("\n\n") : "Nenhuma interação registrada";
 };

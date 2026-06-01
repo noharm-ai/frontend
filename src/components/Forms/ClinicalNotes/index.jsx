@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
-import { SIGNATURE_STORE_ID, SIGNATURE_MEMORY_TYPE } from "utils/memory";
 import { getErrorMessageFromException } from "utils/errorHandler";
 
 import Base from "./Base";
@@ -45,7 +44,6 @@ export default function ClinicalNotes({
   account,
   signature,
   action,
-  fetchMemory,
   open,
   type,
   ...props
@@ -66,17 +64,6 @@ export default function ClinicalNotes({
     date: null,
     open: type === "primarycare" ? open : false, //reinitialize formik if primarycare
   };
-
-  useEffect(() => {
-    if (open) {
-      fetchMemory(
-        SIGNATURE_STORE_ID,
-        `${SIGNATURE_MEMORY_TYPE}_${account.userId}`
-      ).catch((err) => {
-        console.error("Error fetching signature memory:", err);
-      });
-    }
-  }, [account.userId, fetchMemory, open]);
 
   const submit = (formData) => {
     const params = { ...formData };

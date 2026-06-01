@@ -6,10 +6,10 @@ import { memoryFetchThunk } from "store/ducks/memory/thunk";
 
 import FormClinicalNotes from "components/Forms/ClinicalNotes";
 
-const mapStateToProps = ({ prescriptions, user, memory }) => ({
+const mapStateToProps = ({ prescriptions, user }) => ({
   prescription: prescriptions.single,
   account: user.account,
-  signature: memory.signature,
+  signature: user.account.signature,
   roles: user.account.roles,
 });
 const mapDispatchToProps = (dispatch) =>
@@ -18,7 +18,7 @@ const mapDispatchToProps = (dispatch) =>
       fetchMemory: memoryFetchThunk,
       save: savePrescriptionThunk,
     },
-    dispatch
+    dispatch,
   );
 
 export default connect(mapStateToProps, mapDispatchToProps)(FormClinicalNotes);

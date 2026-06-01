@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import { Row, Col, Button } from "antd";
+import { Row, Col, Button, Radio } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
@@ -34,6 +34,10 @@ export default function SaveModal({
   const [selectedSubstances, setSelectedSubstances] = useState([]);
   const [chooseClassModal, setChooseClassModal] = useState(false);
   const [selectedClasses, setSelectedClasses] = useState([]);
+  const [chooseAlertaModal, setChooseAlertaModal] = useState(false);
+  const [alertaBaseKey, setAlertaBaseKey] = useState("");
+  const [alertaDescricao, setAlertaDescricao] = useState("completa");
+  const [alertaNivel, setAlertaNivel] = useState("todos");
 
   const saveAction = () => {
     if (!PermissionService().has(Permission.MAINTAINER)) {
@@ -286,6 +290,16 @@ export default function SaveModal({
     },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
+  // alertVariables.push({
+  //   label: "Interações",
+  //   children: [
+  //     { key: "{{interacoes}}", label: "Todos os níveis" },
+  //     { key: "{{interacoes.nivel.baixo}}", label: "Nível baixo" },
+  //     { key: "{{interacoes.nivel.medio}}", label: "Nível médio" },
+  //     { key: "{{interacoes.nivel.alto}}", label: "Nível alto" },
+  //   ],
+  // });
+
   alertVariables.push({
     label: "Por nível",
     children: [
@@ -323,6 +337,15 @@ export default function SaveModal({
     },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
+  const ALERTA_TIPO_WITH_OPTIONS = new Set([
+    "{{alerta_tipo.dm}}",
+    "{{alerta_tipo.dt}}",
+    "{{alerta_tipo.iy}}",
+    "{{alerta_tipo.it}}",
+    "{{alerta_tipo.sl}}",
+    "{{alerta_tipo.rx}}",
+  ]);
+
   const addVariableEvent = ({ key }) => {
     if (key === "custom_substance") {
       setChooseSubstanceModal(true);
@@ -331,6 +354,12 @@ export default function SaveModal({
 
     if (key === "custom_class") {
       setChooseClassModal(true);
+      return;
+    }
+
+    if (ALERTA_TIPO_WITH_OPTIONS.has(key)) {
+      setAlertaBaseKey(key);
+      setChooseAlertaModal(true);
       return;
     }
 
@@ -351,6 +380,16 @@ export default function SaveModal({
 
     setSelectedClasses([]);
     setChooseClassModal(false);
+  };
+
+  const addCustomAlertaVar = () => {
+    const baseKey = alertaBaseKey.replace(/^\{\{/, "").replace(/\}\}$/, "");
+    addVariable(`{{${baseKey}.${alertaDescricao}.${alertaNivel}}}`);
+
+    setChooseAlertaModal(false);
+    setAlertaBaseKey("");
+    setAlertaDescricao("completa");
+    setAlertaNivel("todos");
   };
 
   return (
@@ -538,6 +577,83 @@ export default function SaveModal({
                 value={selectedClasses}
               />
             </div>
+          </div>
+        </Form>
+      </Modal>
+
+      <Modal
+        open={chooseAlertaModal}
+        width={"460px"}
+        onCancel={() => {
+          setChooseAlertaModal(false);
+          setAlertaBaseKey("");
+          setAlertaDescricao("completa");
+          setAlertaNivel("todos");
+        }}
+        onOk={addCustomAlertaVar}
+        okText="Salvar"
+        okType="primary"
+        cancelText="Cancelar"
+      >
+        <Form style={{ display: "flex", flexDirection: "column", gap: "20px", marginTop: "16px" }}>
+          <div>
+            <label style={{ display: "block", fontWeight: 600, marginBottom: "10px" }}>
+              Descrição
+            </label>
+            <Radio.Group
+              value={alertaDescricao}
+              onChange={(e) => setAlertaDescricao(e.target.value)}
+              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+            >
+              {[
+                {
+                  value: "completa",
+                  label: "Completa",
+                  description:
+                    "Lista agrupada por medicamento, com a explicação completa sobre o alerta",
+                },
+                {
+                  value: "simplificada",
+                  label: "Simplificada",
+                  description:
+                    "Lista direta de todos os medicamentos relacionados com o alerta",
+                },
+              ].map(({ value, label, description }) => (
+                <Radio
+                  key={value}
+                  value={value}
+                  style={{
+                    border: `1px solid ${alertaDescricao === value ? "#1677ff" : "#d9d9d9"}`,
+                    borderRadius: "8px",
+                    padding: "10px 14px",
+                    margin: 0,
+                    background: alertaDescricao === value ? "#f0f7ff" : "#fafafa",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <span style={{ fontWeight: 500 }}>{label}</span>
+                  <br />
+                  <span style={{ fontSize: "12px", color: "#888", fontWeight: 400 }}>
+                    {description}
+                  </span>
+                </Radio>
+              ))}
+            </Radio.Group>
+          </div>
+
+          <div>
+            <label style={{ display: "block", fontWeight: 600, marginBottom: "10px" }}>
+              Nível do alerta
+            </label>
+            <Radio.Group
+              value={alertaNivel}
+              onChange={(e) => setAlertaNivel(e.target.value)}
+            >
+              <Radio value="todos">Todos</Radio>
+              <Radio value="alto">Alto</Radio>
+              <Radio value="medio">Médio</Radio>
+              <Radio value="baixo">Baixo</Radio>
+            </Radio.Group>
           </div>
         </Form>
       </Modal>

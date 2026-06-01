@@ -12,7 +12,7 @@ export default function MainFilters() {
   const dispatch = useDispatch();
   const substances = useSelector((state) => state.lists.getSubstances.list);
   const substancesStatus = useSelector(
-    (state) => state.lists.getSubstances.status
+    (state) => state.lists.getSubstances.status,
   );
 
   useEffect(() => {
@@ -36,9 +36,10 @@ export default function MainFilters() {
           mode="multiple"
           allowClear
         >
-          {substances.map(({ sctid, name }) => (
+          {substances.map(({ sctid, name, active }) => (
             <Select.Option key={sctid} value={sctid}>
               {name}
+              {active ? "" : " (inativa)"}
             </Select.Option>
           ))}
         </Select>
