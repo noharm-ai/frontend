@@ -56,4 +56,4 @@ e2e-ui:
 
 ## Dev environment
 dev:
-	npm run dev
+	sfw npm run dev
