@@ -134,9 +134,18 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
   // Sort
   const sortOrder = config.sortOrder ?? "none";
   if (sortOrder !== "none") {
+    const isStacked = !!config.stacked && (config.type === "bar" || config.type === "hbar");
+    const yKeysForSum = config.yKeys.filter((k) => k !== "__count__");
+    const getSortValue = (row: any): number => {
+      if (isCount) return row.__count__ ?? 0;
+      if (isStacked && yKeysForSum.length > 1) {
+        return yKeysForSum.reduce((sum, k) => sum + (Number(row[k]) || 0), 0);
+      }
+      return Number(row[primaryYKey]) || 0;
+    };
     processedData = [...processedData].sort((a, b) => {
-      const av = getPrimaryValue(a, isCount, primaryYKey);
-      const bv = getPrimaryValue(b, isCount, primaryYKey);
+      const av = getSortValue(a);
+      const bv = getSortValue(b);
       return sortOrder === "asc" ? av - bv : bv - av;
     });
   }
@@ -326,7 +335,7 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
             ? { axisLabel: { rotate: config.xLabelRotate, interval: 0 } }
             : {}),
         },
-    yAxis: isHBar ? { type: "category", data: xData } : { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) },
+    yAxis: isHBar ? { type: "category", data: xData, inverse: true } : { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) },
     series,
   };
 };
