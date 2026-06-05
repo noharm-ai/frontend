@@ -11,7 +11,6 @@ export const { Types, Creators } = createActions({
   appResetScreeningListFilter: ["params"],
   appSetJourney: ["journey"],
   appSetCurrentVersion: ["version"],
-  appSetNotification: ["notification"],
 });
 
 const INITIAL_STATE = {
@@ -38,18 +37,12 @@ const INITIAL_STATE = {
   preferences: {
     journey: "cards",
   },
-  notification: null,
   currentVersion: "0",
 };
 
 const setCurrentVersion = (state = INITIAL_STATE, { version }) => ({
   ...state,
   currentVersion: version,
-});
-
-const setNotification = (state = INITIAL_STATE, { notification }) => ({
-  ...state,
-  notification,
 });
 
 const setSider = (state = INITIAL_STATE, { sider }) => ({
@@ -114,7 +107,6 @@ const HANDLERS = {
   [Types.APP_SET_SCREENING_LIST_FILTER]: setScreeningListFilter,
   [Types.APP_RESET_SCREENING_LIST_FILTER]: resetScreeningListFilter,
   [Types.APP_SET_CURRENT_VERSION]: setCurrentVersion,
-  [Types.APP_SET_NOTIFICATION]: setNotification,
 };
 
 const reducer = createReducer(INITIAL_STATE, HANDLERS);

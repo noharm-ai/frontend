@@ -14,7 +14,10 @@
     "help": "Help",
     "logout": "Logout",
     "goBack": "Back",
-    "iptSearch": "Search by prescription or admission number"
+    "iptSearch": "Search by prescription or admission number",
+    "notifications": "Notifications",
+    "unreadNotifications": "Unread notifications ({{count}})",
+    "markAsRead": "Mark as read"
   },
   "error": {
     "title": "Oops! Something wrong happened.",

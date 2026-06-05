@@ -62,6 +62,7 @@ import adminGlobalExam from "features/admin/GlobalExam/GlobalExamSlice";
 import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
 
 import { outpatientPrioritizationReducer } from "features/outpatient/OutpatientPrioritization/OutpatientPrioritizationSlice";
+import notificationsSlice from "features/notifications/NotificationsSlice";
 import clinicalNotesMultiSlice from "features/clinicalNotes/ClinicalNotesSlice";
 
 import regulationPrioritizationSlice from "features/regulation/Prioritization/PrioritizationSlice";
@@ -182,6 +183,7 @@ const rootReducer = combineReducers({
   drugSubstance: drugSubstanceSlice,
   outpatient: outpatientPrioritizationReducer,
   userProfile: userProfileReducer,
+  notifications: notificationsSlice,
 });
 
 export default rootReducer;
