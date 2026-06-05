@@ -11,7 +11,6 @@ const {
   appSetScreeningListFilter,
   appSetConfig,
   appSetJourney,
-  appSetNotification,
 } = AppCreators;
 
 export const setSiderThunk =
@@ -50,6 +49,3 @@ export const setScreeningListFilterThunk =
     });
   };
 
-export const setNotificationThunk = (notification) => (dispatch) => {
-  dispatch(appSetNotification(notification));
-};
