@@ -3,9 +3,12 @@ import {
   AggregationType,
   ColorPalette,
   DateGrouping,
+  Filter,
+  ColumnSchema,
   ReferenceLine,
   SortOrder,
 } from "./types";
+import { ChartFilterPanel } from "./ChartFilterPanel";
 
 interface ChartFormFieldsProps {
   title: string;
@@ -43,6 +46,9 @@ interface ChartFormFieldsProps {
   stacked: boolean;
   setStacked: (val: boolean) => void;
   keys: string[];
+  filters: Filter[];
+  setFilters: (val: Filter[]) => void;
+  schema: ColumnSchema[];
 }
 
 const labelStyle: React.CSSProperties = {
@@ -126,6 +132,9 @@ export const ChartFormFields = ({
   stacked,
   setStacked,
   keys,
+  filters,
+  setFilters,
+  schema,
 }: ChartFormFieldsProps) => {
   const allYOptions = keys.map((k) => ({ label: k, value: k }));
 
@@ -454,6 +463,15 @@ export const ChartFormFields = ({
     </Flex>
   );
 
+  const filtrosTab = (
+    <ChartFilterPanel
+      filters={filters}
+      schema={schema}
+      readOnly={false}
+      onChange={setFilters}
+    />
+  );
+
   return (
     <Tabs
       size="small"
@@ -461,6 +479,7 @@ export const ChartFormFields = ({
       items={[
         { key: "dados", label: "Dados", children: dadosTab },
         { key: "visual", label: "Visual", children: visualTab },
+        { key: "filtros", label: "Filtros", children: filtrosTab },
       ]}
     />
   );

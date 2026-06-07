@@ -1,22 +1,31 @@
 import { memo, useMemo, useState } from "react";
-import { Col, Card, Space, Button, Modal } from "antd";
-import { EditOutlined, DeleteOutlined, FullscreenOutlined } from "@ant-design/icons";
+import { Badge, Col, Card, Space, Button, Modal } from "antd";
+import { EditOutlined, DeleteOutlined, FilterOutlined, FullscreenOutlined } from "@ant-design/icons";
 import { EChartBase } from "src/components/EChartBase";
-import { ChartConfig } from "./types";
+import { ChartConfig, ColumnSchema } from "./types";
 import { getChartOption } from "./utils";
+import { applyFilters } from "src/utils/dataFilters";
+import { ChartFilterPanel } from "./ChartFilterPanel";
 
 interface ChartItemProps {
   chart: ChartConfig;
   data: any[];
+  schema: ColumnSchema[];
   onEdit: (chart: ChartConfig) => void;
   onRemove: (id: string) => void;
   readOnly?: boolean;
 }
 
 export const ChartItem = memo(
-  ({ chart, data, onEdit, onRemove, readOnly }: ChartItemProps) => {
-    const option = useMemo(() => getChartOption(data, chart), [data, chart]);
+  ({ chart, data, schema, onEdit, onRemove, readOnly }: ChartItemProps) => {
+    const filteredData = useMemo(
+      () => applyFilters(data, chart.filters ?? [], schema),
+      [data, chart.filters, schema],
+    );
+    const option = useMemo(() => getChartOption(filteredData, chart), [filteredData, chart]);
     const [fullscreen, setFullscreen] = useState(false);
+    const [filterModalOpen, setFilterModalOpen] = useState(false);
+    const activeFilterCount = chart.filters?.length ?? 0;
 
     return (
       <Col key={chart.id} span={chart.width === "full" ? 24 : 12}>
@@ -30,6 +39,17 @@ export const ChartItem = memo(
                 icon={<FullscreenOutlined />}
                 onClick={() => setFullscreen(true)}
               />
+              {readOnly && activeFilterCount > 0 && (
+                <Badge count={activeFilterCount} size="small">
+                  <Button
+                    type="text"
+                    icon={<FilterOutlined />}
+                    onClick={() => setFilterModalOpen(true)}
+                  >
+                    Filtros
+                  </Button>
+                </Badge>
+              )}
               {!readOnly && (
                 <>
                   <Button
@@ -79,6 +99,20 @@ export const ChartItem = memo(
             settings={{}}
             theme={undefined}
             onClick={() => {}}
+          />
+        </Modal>
+
+        <Modal
+          open={filterModalOpen}
+          onCancel={() => setFilterModalOpen(false)}
+          footer={null}
+          title="Filtros aplicados"
+        >
+          <ChartFilterPanel
+            filters={chart.filters ?? []}
+            schema={schema}
+            readOnly={true}
+            onChange={() => {}}
           />
         </Modal>
       </Col>

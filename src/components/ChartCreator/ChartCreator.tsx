@@ -1,9 +1,10 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Button, Card, Empty, Modal, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { AggregationType, ChartConfig, ChartCreatorProps, ColorPalette, DateGrouping, ReferenceLine, SortOrder } from "./types";
+import { AggregationType, ChartConfig, ChartCreatorProps, ColorPalette, DateGrouping, Filter, ReferenceLine, SortOrder } from "./types";
 import { ChartItem } from "./ChartItem";
 import { ChartFormFields } from "./ChartFormFields";
+import { detectColumnSchema } from "src/utils/dataFilters";
 
 export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: ChartCreatorProps) {
   const [charts, setCharts] = useState<ChartConfig[]>(initialCharts ?? []);
@@ -30,6 +31,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [newShowTitle, setNewShowTitle] = useState(true);
   const [newColorPalette, setNewColorPalette] = useState<ColorPalette>("default");
   const [newStacked, setNewStacked] = useState(false);
+  const [newFilters, setNewFilters] = useState<Filter[]>([]);
 
   // State for EDITING chart form (Modal)
   const [editTitle, setEditTitle] = useState("");
@@ -49,12 +51,12 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
   const [editShowTitle, setEditShowTitle] = useState(true);
   const [editColorPalette, setEditColorPalette] = useState<ColorPalette>("default");
   const [editStacked, setEditStacked] = useState(false);
+  const [editFilters, setEditFilters] = useState<Filter[]>([]);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
 
-  const keys = useMemo(() => {
-    if (!data || data.length === 0) return [];
-    return Object.keys(data[0]);
-  }, [data]);
+  const schema = useMemo(() => detectColumnSchema(data), [data]);
+  const keys = useMemo(() => schema.map((s) => s.key), [schema]);
+
 
   const isNewFormValid =
     newX.length > 0 &&
@@ -89,6 +91,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           showTitle: newShowTitle,
           colorPalette: newColorPalette,
           stacked: newStacked,
+          filters: newFilters,
         },
       ]);
       setNewTitle("");
@@ -108,6 +111,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
       setNewShowTitle(true);
       setNewColorPalette("default");
       setNewStacked(false);
+      setNewFilters([]);
     }
   };
 
@@ -130,6 +134,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
     setEditShowTitle(chart.showTitle ?? true);
     setEditColorPalette(chart.colorPalette ?? "default");
     setEditStacked(chart.stacked ?? false);
+    setEditFilters(chart.filters ?? []);
   }, []);
 
   const saveEdit = () => {
@@ -156,6 +161,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 showTitle: editShowTitle,
                 colorPalette: editColorPalette,
                 stacked: editStacked,
+                filters: editFilters,
               }
             : c,
         ),
@@ -179,6 +185,7 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
             key={chart.id}
             chart={chart}
             data={data}
+            schema={schema}
             onEdit={startEditing}
             onRemove={handleRemoveChart}
             readOnly={readOnly}
@@ -237,6 +244,9 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
                 stacked={newStacked}
                 setStacked={setNewStacked}
                 keys={keys}
+                filters={newFilters}
+                setFilters={setNewFilters}
+                schema={schema}
               />
             </Card>
           </Col>
@@ -297,6 +307,9 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
           stacked={editStacked}
           setStacked={setEditStacked}
           keys={keys}
+          filters={editFilters}
+          setFilters={setEditFilters}
+          schema={schema}
         />
       </Modal>
     </div>

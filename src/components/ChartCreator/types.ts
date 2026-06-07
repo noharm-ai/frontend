@@ -1,3 +1,6 @@
+import type { Filter } from "src/utils/dataFilters";
+export type { Filter, ColumnSchema } from "src/utils/dataFilters";
+
 export type AggregationType = "none" | "count" | "count_pct" | "sum" | "avg" | "min" | "max";
 export type SortOrder = "none" | "asc" | "desc";
 export type DateGrouping =
@@ -40,6 +43,7 @@ export interface ChartConfig {
   showTitle?: boolean;
   colorPalette?: ColorPalette;
   stacked?: boolean;
+  filters?: Filter[];
 }
 
 export interface ChartCreatorProps {
