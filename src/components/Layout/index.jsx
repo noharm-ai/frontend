@@ -34,7 +34,7 @@ import { setPendingTickets } from "features/support/SupportSlice";
 
 import Box from "./Box";
 import Menu from "./Menu";
-import InfoAlert from "./InfoAlert";
+import { InfoAlert } from "features/notifications/InfoAlert/InfoAlert";
 import SearchPrescription from "./SearchPrescription";
 import {
   Wrapper as Main,
@@ -59,8 +59,6 @@ const setTitle = ({ user }) => {
 const Me = ({
   user,
   t,
-  notification,
-  setNotification,
   doLogout,
   logoutUrl,
   integrationStatus,
@@ -182,15 +180,9 @@ const Me = ({
         <SearchPrescription
           type={location.pathname.includes("sumario") ? "summary" : "default"}
         />
-
-        {showAlert && (
-          <InfoAlert
-            userId={user.account.userId}
-            notification={notification}
-            setNotification={setNotification}
-          />
-        )}
       </div>
+
+      {showAlert && <InfoAlert />}
 
       <Tooltip title="Clique para abrir o menu" placement="left">
         <div>
@@ -404,7 +396,6 @@ export default function Layout({
           <Me
             {...props}
             t={t}
-            notification={app.notification}
             integrationStatus={app.config.integrationStatus}
           />
         </Header>

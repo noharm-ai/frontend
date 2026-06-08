@@ -13,6 +13,7 @@ import {
   reset as resetPreferences,
 } from "features/preferences/PreferencesSlice";
 import { fetchPendingActionTickets } from "src/features/support/SupportSlice";
+import { setNotifications } from "features/notifications/NotificationsSlice";
 
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { segmentsFetchListSuccess } = SegmentCreators;
@@ -20,7 +21,6 @@ const { authSetErrorIdentify, authDelIdentify } = AuthCreators;
 const {
   appSetConfig,
   appSetCurrentVersion,
-  appSetNotification,
   appResetScreeningListFilter,
 } = AppCreators;
 
@@ -98,7 +98,7 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
     nameHeaders,
     getnameType,
     apiKey,
-    notify,
+    notifications,
     proxy,
     segments,
     logoutUrl,
@@ -158,7 +158,7 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
       integrationStatus,
     }),
   );
-  dispatch(appSetNotification(notify));
+  dispatch(setNotifications(notifications ?? []));
 
   // reset filters
   if (permissions.includes("MAINTAINER")) {

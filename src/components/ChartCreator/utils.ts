@@ -75,11 +75,6 @@ function groupAndAggregate(
   });
 }
 
-function getPrimaryValue(row: any, isCount: boolean, primaryYKey: string): number {
-  if (isCount) return row.__count__ ?? 0;
-  return Number(row[primaryYKey]) || 0;
-}
-
 // --- Color palettes ---
 
 const COLOR_PALETTES: Record<string, string[]> = {
@@ -134,9 +129,18 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
   // Sort
   const sortOrder = config.sortOrder ?? "none";
   if (sortOrder !== "none") {
+    const isStacked = !!config.stacked && (config.type === "bar" || config.type === "hbar");
+    const yKeysForSum = config.yKeys.filter((k) => k !== "__count__");
+    const getSortValue = (row: any): number => {
+      if (isCount) return row.__count__ ?? 0;
+      if (isStacked && yKeysForSum.length > 1) {
+        return yKeysForSum.reduce((sum, k) => sum + (Number(row[k]) || 0), 0);
+      }
+      return Number(row[primaryYKey]) || 0;
+    };
     processedData = [...processedData].sort((a, b) => {
-      const av = getPrimaryValue(a, isCount, primaryYKey);
-      const bv = getPrimaryValue(b, isCount, primaryYKey);
+      const av = getSortValue(a);
+      const bv = getSortValue(b);
       return sortOrder === "asc" ? av - bv : bv - av;
     });
   }
@@ -237,12 +241,22 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
 
   const isHBar = config.type === "hbar";
   const isStacked = !!config.stacked && (config.type === "bar" || config.type === "hbar");
+  const yKeysFiltered = config.yKeys.filter((k) => k !== "__count__");
+  const stackTotals = isStacked && !isCount && yKeysFiltered.length > 1
+    ? processedData.map((item) => yKeysFiltered.reduce((sum, k) => sum + (Number(item[k]) || 0), 0))
+    : null;
   const label = {
     show: showLabels,
     position: isStacked ? "inside" as const : (isHBar ? "right" as const : "top" as const),
     formatter: isCountPct
       ? (params: any) => `${params.data.rawCount} (${params.value}%)`
-      : "{c}",
+      : stackTotals
+        ? (params: any) => {
+            const total = params.data?.total;
+            if (!total || !params.value) return "";
+            return `${params.value} (${((params.value / total) * 100).toFixed(1)}%)`;
+          }
+        : "{c}",
   };
 
   const markLine = config.referenceLine
@@ -284,7 +298,11 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
         .filter((yKey) => yKey !== "__count__")
         .map((yKey, idx) => ({
           name: seriesLabel ? `${seriesLabel} de ${yKey}` : yKey,
-          data: processedData.map((item) => item[yKey]),
+          data: processedData.map((item, i) =>
+            stackTotals
+              ? { value: Number(item[yKey]) || 0, total: stackTotals[i] }
+              : item[yKey]
+          ),
           type: echartsType,
           label,
           // Only attach markLine to the first series to avoid duplication
@@ -313,6 +331,19 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
             .join("<br/>");
           return `${name}<br/>${rows}`;
         },
+      } : stackTotals ? {
+        formatter: (params: any) => {
+          const list = Array.isArray(params) ? params : [params];
+          const total = list.reduce((sum, p) => sum + (Number(p.value) || 0), 0);
+          const name = list[0]?.name ?? "";
+          const rows = list
+            .map((p: any) => {
+              const pct = total > 0 ? ` (${((Number(p.value) / total) * 100).toFixed(1)}%)` : "";
+              return `${p.marker}${p.seriesName}: ${p.value}${pct}`;
+            })
+            .join("<br/>");
+          return `${name}<br/>Total: ${total}<br/>${rows}`;
+        },
       } : {}),
     },
     toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
@@ -326,7 +357,7 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
             ? { axisLabel: { rotate: config.xLabelRotate, interval: 0 } }
             : {}),
         },
-    yAxis: isHBar ? { type: "category", data: xData } : { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) },
+    yAxis: isHBar ? { type: "category", data: xData, inverse: true } : { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) },
     series,
   };
 };

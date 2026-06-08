@@ -14,7 +14,10 @@
     "help": "Ajuda",
     "logout": "Sair",
     "goBack": "Voltar",
-    "iptSearch": "Buscar por nº de atendimento ou prescrição"
+    "iptSearch": "Buscar por nº de atendimento ou prescrição",
+    "notifications": "Notificações",
+    "unreadNotifications": "Notificações não lidas ({{count}})",
+    "markAsRead": "Marcar como lida"
   },
   "error": {
     "title": "Ops! Algo de errado aconteceu.",
