@@ -17,6 +17,7 @@ import CustomFormView from "components/Forms/CustomForm/View";
 import notification from "components/notification";
 import Empty from "components/Empty";
 import DefaultModal from "components/Modal";
+import Alert from "components/Alert";
 
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
@@ -309,6 +310,8 @@ export default function View({
       html = selected.text.trim().replaceAll("\n", "<br/>");
     } else if (featureService.hasClinicalNotesLegacyFormat()) {
       html = selected.text.trim().replaceAll("  ", "<br/>");
+    } else if (selected.source === "prescription") {
+      html = selected.text.trim().replaceAll("\n", "<br/>");
     } else {
       html = selected.text.trim();
     }
@@ -416,6 +419,16 @@ export default function View({
               <>
                 {selected.text && (
                   <>
+                    {selected.source === "prescription" && (
+                      <Alert
+                        type="info"
+                        message={t("clinicalNotesView.prescriptionSourceAlert", {
+                          idPrescription: selected.idPrescription,
+                        })}
+                        style={{ marginBottom: "12px" }}
+                        showIcon
+                      />
+                    )}
                     <Paper
                       $t={t}
                       $selectedIndicators={selectedIndicators}

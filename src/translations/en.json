@@ -544,6 +544,10 @@
     "btnCancel": "Cancel"
   },
 
+  "clinicalNotesView": {
+    "prescriptionSourceAlert": "This clinical note was registered inside NoHarm and is related to prescription {{idPrescription}}. Customers with return integration may see it duplicated: we display both the version created in NoHarm and the version sent to the source system."
+  },
+
   "clinicalNotesIndicator": {
     "allergy": "Allergy",
     "conduct": "Conduct",
