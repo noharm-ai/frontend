@@ -41,18 +41,20 @@ export default function UserSelect({ onChange, value }) {
 
   return (
     <Select
-      showSearch
       allowClear
-      optionFilterProp="children"
       style={{ minWidth: "300px" }}
       notFoundContent={loading ? <LoadBox /> : null}
-      filterOption={false}
-      onSearch={search}
       onChange={(value) => onChange(value)}
       placeholder={loading ? "Carregando..." : "Selecione..."}
       mode="multiple"
       value={value}
       loading={loading}
+      showSearch={{
+        onSearch: (value) => search(value),
+        filterOption: false,
+        optionFilterProp: ["children"],
+        autoClearSearchValue: false,
+      }}
     >
       {options.map((option) => (
         <Select.Option value={option.id} key={option.name}>
