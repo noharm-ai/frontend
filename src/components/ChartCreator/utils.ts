@@ -245,18 +245,54 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
   const stackTotals = isStacked && !isCount && yKeysFiltered.length > 1
     ? processedData.map((item) => yKeysFiltered.reduce((sum, k) => sum + (Number(item[k]) || 0), 0))
     : null;
+
+  const isHBarNonStacked = isHBar && !isStacked;
+  const HBAR_LABEL_MIN_RATIO = 0.15;
+
+  // Max raw count across all items — used to threshold isCountPct hbar labels
+  const hbarCountMax = isHBar && isCountPct
+    ? Math.max(1, ...processedData.map((item) => Number(item.__raw_count__) || 0))
+    : 0;
+
+  // Max value across all items — used to threshold non-count non-stacked hbar labels
+  const hbarDataMax = isHBarNonStacked && !isCountPct
+    ? Math.max(
+        1,
+        ...processedData.map((item) =>
+          isCount
+            ? Number(item.__count__) || 0
+            : Math.max(...config.yKeys.map((k) => Number(item[k]) || 0))
+        )
+      )
+    : 0;
+
+  // Max stack total — used to threshold stacked hbar labels by physical bar width
+  const maxStackTotal = stackTotals ? Math.max(1, ...stackTotals) : 0;
+
+  const baseFormatter = isCountPct
+    ? (params: any) => {
+        if (isHBar && (params.data?.rawCount ?? 0) / hbarCountMax < HBAR_LABEL_MIN_RATIO) return "";
+        return `${params.data.rawCount} (${params.value}%)`;
+      }
+    : stackTotals
+      ? (params: any) => {
+          const total = params.data?.total;
+          if (!total || !params.value) return "";
+          if (isHBar && params.value / total < HBAR_LABEL_MIN_RATIO) return "";
+          if (isHBar && total / maxStackTotal < HBAR_LABEL_MIN_RATIO) return "";
+          return `${params.value} (${((params.value / total) * 100).toFixed(1)}%)`;
+        }
+      : (params: any) => String(params.value ?? "");
+
   const label = {
     show: showLabels,
-    position: isStacked ? "inside" as const : (isHBar ? "right" as const : "top" as const),
-    formatter: isCountPct
-      ? (params: any) => `${params.data.rawCount} (${params.value}%)`
-      : stackTotals
-        ? (params: any) => {
-            const total = params.data?.total;
-            if (!total || !params.value) return "";
-            return `${params.value} (${((params.value / total) * 100).toFixed(1)}%)`;
-          }
-        : "{c}",
+    position: isStacked ? "inside" as const : (isHBar ? "inside" as const : "top" as const),
+    formatter: isHBarNonStacked && !isCountPct
+      ? (params: any) => {
+          if ((params.value ?? 0) / hbarDataMax < HBAR_LABEL_MIN_RATIO) return "";
+          return baseFormatter(params);
+        }
+      : baseFormatter,
   };
 
   const markLine = config.referenceLine
