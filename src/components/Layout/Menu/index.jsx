@@ -216,6 +216,7 @@ export default function Menu({ segments }) {
           label: "Memória",
           icon: <SaveOutlined />,
           id: "gtm-lnk-memory",
+          permission: [Permission.READ_NAV],
         },
         {
           key: "/admin/tags",
