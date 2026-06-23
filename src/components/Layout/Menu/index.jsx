@@ -252,8 +252,8 @@ export default function Menu({ segments }) {
       permission: [Permission.MAINTAINER],
       children: [
         {
-          key: `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema`,
-          link: `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema`,
+          key: `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema/${localStorage.getItem("schema")}`,
+          link: `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema/${localStorage.getItem("schema")}`,
           label: "Admin",
           icon: <LayoutOutlined />,
           id: "gtm-lnk-admin",

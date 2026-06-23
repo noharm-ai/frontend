@@ -147,7 +147,7 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
         break;
       case "admin":
         window.open(
-          `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema`,
+          `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema/${localStorage.getItem("schema")}`,
           "_blank",
         );
         break;
