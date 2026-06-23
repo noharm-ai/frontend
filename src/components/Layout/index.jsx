@@ -105,12 +105,6 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
 
     if (PermissionService().has(Permission.MAINTAINER)) {
       options.push({
-        label: "Admin",
-        key: "admin",
-        icon: <LayoutOutlined />,
-      });
-
-      options.push({
         label: "Atualizar IP",
         key: "updateip",
         icon: <WifiOutlined />,
