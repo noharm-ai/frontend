@@ -81,13 +81,21 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
   };
 
   const userOptions = () => {
-    const options = [
-      {
-        label: t("layout.help"),
-        key: "help",
-        icon: <CustomerServiceOutlined />,
-      },
-    ];
+    const options = [];
+
+    if (PermissionService().has(Permission.MAINTAINER)) {
+      options.push({
+        label: "Admin",
+        key: "admin",
+        icon: <LayoutOutlined />,
+      });
+    }
+
+    options.push({
+      label: t("layout.help"),
+      key: "help",
+      icon: <CustomerServiceOutlined />,
+    });
 
     options.push({
       label: t("menu.config"),
