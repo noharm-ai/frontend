@@ -6,7 +6,6 @@ import {
   DownOutlined,
   CustomerServiceOutlined,
   LogoutOutlined,
-  CheckOutlined,
   SettingOutlined,
   SwapOutlined,
   WifiOutlined,
@@ -56,13 +55,7 @@ const setTitle = ({ user }) => {
   return user.account.userName;
 };
 
-const Me = ({
-  user,
-  t,
-  doLogout,
-  logoutUrl,
-  integrationStatus,
-}) => {
+const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -103,12 +96,6 @@ const Me = ({
 
     if (PermissionService().has(Permission.MAINTAINER)) {
       options.push({
-        label: "Status da integração",
-        key: "status",
-        icon: <CheckOutlined />,
-      });
-
-      options.push({
         label: "Atualizar IP",
         key: "updateip",
         icon: <WifiOutlined />,
@@ -142,9 +129,6 @@ const Me = ({
         break;
       case "exit":
         logout();
-        break;
-      case "status":
-        navigate("/admin/integracao/status");
         break;
       case "userConfig":
         navigate("/configuracoes/usuario");
