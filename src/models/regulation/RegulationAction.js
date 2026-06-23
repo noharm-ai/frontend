@@ -153,7 +153,7 @@ export default class RegulationAction {
       {
         id: RegulationAction.UNDO_TRANSPORTATION_SCHEDULE,
         label: t(
-          `regulation.action.${RegulationAction.UNDO_TRANSPORTATION_SCHEDULE}`
+          `regulation.action.${RegulationAction.UNDO_TRANSPORTATION_SCHEDULE}`,
         ),
         validNextStages: [],
         invalidNextStages: [RegulationStage.CANCELED, RegulationStage.FINISHED],
@@ -178,6 +178,7 @@ export default class RegulationAction {
             type: "options",
             options: [
               "Consulta realizada",
+              "Exame realizado",
               "Paciente faltante",
               "Sem registro do comparecimento",
               "Regulado por outro setor",
@@ -219,10 +220,10 @@ export default class RegulationAction {
     }
 
     let validStages = this.getActions(t).find(
-      (i) => i.id === action
+      (i) => i.id === action,
     ).validNextStages;
     const invalidStages = this.getActions(t).find(
-      (i) => i.id === action
+      (i) => i.id === action,
     ).invalidNextStages;
 
     if (validStages.length === 0) {
