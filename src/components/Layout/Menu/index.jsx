@@ -30,8 +30,8 @@ import {
   TagsOutlined,
   FilePptOutlined,
   RobotOutlined,
-  BookOutlined,
   FormOutlined,
+  LayoutOutlined,
 } from "@ant-design/icons";
 import { Menu as Navigator } from "antd";
 
@@ -252,11 +252,11 @@ export default function Menu({ segments }) {
       permission: [Permission.MAINTAINER],
       children: [
         {
-          key: "/admin/knowledge-base",
-          link: "/admin/knowledge-base",
-          label: "Ajuda: Base de Conhecimento",
-          icon: <BookOutlined />,
-          id: "gtm-lnk-knowledge-base",
+          key: `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema`,
+          link: `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema`,
+          label: "Admin",
+          icon: <LayoutOutlined />,
+          id: "gtm-lnk-admin",
         },
         {
           key: "curadoria-medicamentos",
@@ -407,56 +407,6 @@ export default function Menu({ segments }) {
         },
       ],
     },
-    // {
-    //   key: "integration",
-    //   label: t("menu.integration"),
-    //   icon: <ApiOutlined />,
-    //   permission: [Permission.INTEGRATION_UTILS],
-    //   children: [
-    //     {
-    //       key: "/admin/integracao/acesso-remoto",
-    //       link: "/admin/integracao/acesso-remoto",
-    //       label: "Acesso Remoto",
-    //       icon: <DeploymentUnitOutlined />,
-    //       id: "gtm-lnk-integration-remote",
-    //     },
-    //     {
-    //       key: "/admin/integracao",
-    //       link: "/admin/integracao",
-    //       label: "Utilidades",
-    //       icon: <CodeOutlined />,
-    //       id: "gtm-lnk-integration",
-    //     },
-    //     {
-    //       key: "/admin/memoria",
-    //       link: "/admin/memoria",
-    //       label: t("menu.memory"),
-    //       icon: <SaveOutlined />,
-    //       id: "gtm-lnk-memory",
-    //     },
-    //     {
-    //       key: "/relatorios/integracao/nifilint",
-    //       link: "/relatorios/integracao/nifilint",
-    //       label: "NifiLint",
-    //       icon: <SearchOutlined />,
-    //       id: "gtm-lnk-int-nifilint",
-    //     },
-    //     {
-    //       key: "/admin/integracao/status",
-    //       link: "/admin/integracao/status",
-    //       label: "Status",
-    //       icon: <CheckOutlined />,
-    //       id: "gtm-lnk-int-status",
-    //     },
-    //     {
-    //       key: "/admin/integracao/config",
-    //       link: "/admin/integracao/config",
-    //       label: "Configuração Integrações",
-    //       icon: <SettingOutlined />,
-    //       id: "gtm-lnk-int-config",
-    //     },
-    //   ],
-    // },
     {
       key: "help",
       link: "/suporte",

@@ -9,6 +9,7 @@ import {
   SettingOutlined,
   SwapOutlined,
   WifiOutlined,
+  LayoutOutlined,
 } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
 import { Alert, Dropdown, List, Space } from "antd";
@@ -96,6 +97,12 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
 
     if (PermissionService().has(Permission.MAINTAINER)) {
       options.push({
+        label: "Admin",
+        key: "admin",
+        icon: <LayoutOutlined />,
+      });
+
+      options.push({
         label: "Atualizar IP",
         key: "updateip",
         icon: <WifiOutlined />,
@@ -135,6 +142,12 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
         break;
       case "switchSchema":
         navigate("/switch-schema?alert=true");
+        break;
+      case "admin":
+        window.open(
+          `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema`,
+          "_blank",
+        );
         break;
       case "updateip":
         toast.info({
