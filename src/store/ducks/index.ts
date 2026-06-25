@@ -45,9 +45,6 @@ import adminSegment from "features/admin/Segment/SegmentSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
 import adminFrequency from "features/admin/Frequency/FrequencySlice";
 import adminUnitConversion from "features/admin/UnitConversion/UnitConversionSlice";
-import adminIntegrationStatus from "features/admin/IntegrationStatus/IntegrationStatusSlice";
-import adminIntegrationConfig from "features/admin/IntegrationConfig/IntegrationConfigSlice";
-import adminIntegrationRemote from "features/admin/IntegrationRemote/IntegrationRemoteSlice";
 import adminSubstance from "features/admin/Substance/SubstanceSlice";
 import adminSubstanceForm from "features/admin/Substance/SubstanceFormSlice";
 import adminRelation from "features/admin/Relation/RelationsSlice";
@@ -56,7 +53,6 @@ import adminMeasureUnit from "features/admin/MeasureUnit/MeasureUnitSlice";
 import adminTag from "features/admin/Tag/TagSlice";
 import adminProtocol from "features/admin/Protocol/ProtocolSlice";
 import adminReport from "features/admin/Report/ReportSlice";
-import adminKnowledgeBase from "features/admin/KnowledgeBase/KnowledgeBaseSlice";
 import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
 import adminGlobalExam from "features/admin/GlobalExam/GlobalExamSlice";
 import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
@@ -86,16 +82,12 @@ import reportAlertListReport from "features/reports/AlertListReport/AlertListRep
 import reportExamsRawSearchReport from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
 import reportPatientObservationReport from "features/reports/PatientObservationReport/PatientObservationReportSlice";
 import reportCheckedIndexReport from "features/reports/CheckedIndexReport/CheckedIndexReportSlice";
-import reportIntegrationNifiLintReport from "features/reports/IntegrationNifiLintReport/IntegrationNifiLintReportSlice";
 
 const adminReducers = combineReducers({
   interventionReason: adminInterventionReasonReducer,
   memory: adminMemory,
   drugAttributes: adminDrugAttributes,
   integration: adminIntegration,
-  integrationStatus: adminIntegrationStatus,
-  integrationConfig: adminIntegrationConfig,
-  integrationRemote: adminIntegrationRemote,
   segment: adminSegment,
   exam: adminExam,
   examForm: adminExamForm,
@@ -109,7 +101,6 @@ const adminReducers = combineReducers({
   tag: adminTag,
   protocol: adminProtocol,
   report: adminReport,
-  knowledgeBase: adminKnowledgeBase,
   globalMemory: adminGlobalMemory,
   globalExam: adminGlobalExam,
 });
@@ -138,7 +129,6 @@ const reportReducers = combineReducers({
   checkedIndex: reportCheckedIndexReport,
   alertList: reportAlertListReport,
   reports: reports,
-  integrationNifiLint: reportIntegrationNifiLintReport,
 });
 
 const rootReducer = combineReducers({

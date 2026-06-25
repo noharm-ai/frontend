@@ -6,10 +6,10 @@ import {
   DownOutlined,
   CustomerServiceOutlined,
   LogoutOutlined,
-  CheckOutlined,
   SettingOutlined,
   SwapOutlined,
   WifiOutlined,
+  LayoutOutlined,
 } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
 import { Alert, Dropdown, List, Space } from "antd";
@@ -56,13 +56,7 @@ const setTitle = ({ user }) => {
   return user.account.userName;
 };
 
-const Me = ({
-  user,
-  t,
-  doLogout,
-  logoutUrl,
-  integrationStatus,
-}) => {
+const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -87,13 +81,21 @@ const Me = ({
   };
 
   const userOptions = () => {
-    const options = [
-      {
-        label: t("layout.help"),
-        key: "help",
-        icon: <CustomerServiceOutlined />,
-      },
-    ];
+    const options = [];
+
+    if (PermissionService().has(Permission.MAINTAINER)) {
+      options.push({
+        label: "Admin",
+        key: "admin",
+        icon: <LayoutOutlined />,
+      });
+    }
+
+    options.push({
+      label: t("layout.help"),
+      key: "help",
+      icon: <CustomerServiceOutlined />,
+    });
 
     options.push({
       label: t("menu.config"),
@@ -102,12 +104,6 @@ const Me = ({
     });
 
     if (PermissionService().has(Permission.MAINTAINER)) {
-      options.push({
-        label: "Status da integração",
-        key: "status",
-        icon: <CheckOutlined />,
-      });
-
       options.push({
         label: "Atualizar IP",
         key: "updateip",
@@ -143,14 +139,17 @@ const Me = ({
       case "exit":
         logout();
         break;
-      case "status":
-        navigate("/admin/integracao/status");
-        break;
       case "userConfig":
         navigate("/configuracoes/usuario");
         break;
       case "switchSchema":
         navigate("/switch-schema?alert=true");
+        break;
+      case "admin":
+        window.open(
+          `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema/${localStorage.getItem("schema")}`,
+          "_blank",
+        );
         break;
       case "updateip":
         toast.info({

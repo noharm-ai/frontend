@@ -8,15 +8,15 @@ import { RegulationReportIndicatorEnum } from "src/models/regulation/RegulationR
 export function Summary() {
   const dispatch = useAppDispatch();
   const open = useAppSelector(
-    (state) => state.regulation.indicatorsPanelReport.summary.open
+    (state) => state.regulation.indicatorsPanelReport.summary.open,
   );
   const data = useAppSelector(
-    (state) => state.regulation.indicatorsPanelReport.summary.data
+    (state) => state.regulation.indicatorsPanelReport.summary.data,
   );
 
   const config = [
     {
-      panel: "Painel: Prevenção do Câncer",
+      panel: "Painel: Prevenção do Câncer na Mulher",
       total: 0,
       indicators: [
         {
@@ -34,16 +34,6 @@ export function Summary() {
         {
           key: RegulationReportIndicatorEnum.MAMMOGRAM_EXAM,
           title: "(D) Mamografia - rastreamento para câncer de mama",
-        },
-      ],
-    },
-    {
-      panel: "Painel: Gestante",
-      total: 0,
-      indicators: [
-        {
-          key: RegulationReportIndicatorEnum.GESTATIONAL_APPOINTMENT,
-          title: "(A) Consulta Gestante",
         },
       ],
     },

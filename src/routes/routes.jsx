@@ -41,10 +41,6 @@ import AdminMemorySchedules from "pages/Admin/Memory/Schedules";
 
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
-import AdminIntegrationStatus from "pages/Admin/IntegrationStatus";
-import AdminIntegrationConfig from "pages/Admin/IntegrationConfig";
-import AdminIntegrationRemote from "pages/Admin/IntegrationRemote";
-import AdminIntegrationRemoteNifi from "pages/Admin/IntegrationRemote/Nifi";
 import AdminSegment from "pages/Admin/Segment";
 import AdminUnitConversion from "pages/Admin/UnitConversion";
 import AdminExam from "pages/Admin/Exam";
@@ -53,7 +49,6 @@ import AdminRelation from "pages/Admin/Relation";
 import AdminMeasureUnit from "pages/Admin/MeasureUnit";
 import AdminProtocol from "pages/Admin/Protocol";
 import AdminReport from "pages/Admin/Report";
-import AdminKnowledgeBase from "pages/Admin/KnowledgeBase";
 import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
 import AdminGlobalExam from "pages/Admin/GlobalExam";
 
@@ -62,7 +57,6 @@ import PrescriptionReport from "pages/Reports/PrescriptionReport";
 import InterventionReport from "pages/Reports/InterventionReport";
 import PrescriptionAuditReport from "pages/Reports/PrescriptionAuditReport";
 import EconomyReport from "pages/Reports/EconomyReport";
-import IntegrationNifiLintReport from "pages/Reports/IntegrationNifiLint";
 import FileReport from "pages/Reports/FileReport";
 import PatientDayConsolidatedReport from "pages/Reports/PatientDayConsolidatedReport";
 import PrescriptionConsolidatedReport from "pages/Reports/PrescriptionConsolidatedReport";
@@ -361,26 +355,6 @@ const routes = [
   },
   {
     exact: true,
-    path: "/admin/integracao/status",
-    element: <WithAuth component={AdminIntegrationStatus} />,
-  },
-  {
-    exact: true,
-    path: "/admin/integracao/config",
-    element: <WithAuth component={AdminIntegrationConfig} />,
-  },
-  {
-    exact: true,
-    path: "/admin/integracao/acesso-remoto",
-    element: <WithAuth component={AdminIntegrationRemote} />,
-  },
-  {
-    exact: true,
-    path: "/admin/integracao/acesso-remoto/nifi",
-    element: <WithAuth component={AdminIntegrationRemoteNifi} />,
-  },
-  {
-    exact: true,
     path: "/admin/segmentos",
     element: <WithAuth component={AdminSegment} />,
   },
@@ -413,11 +387,6 @@ const routes = [
     exact: true,
     path: "/admin/relatorios-customizados",
     element: <WithAuth component={AdminReport} />,
-  },
-  {
-    exact: true,
-    path: "/admin/knowledge-base",
-    element: <WithAuth component={AdminKnowledgeBase} />,
   },
   {
     exact: true,
@@ -464,11 +433,7 @@ const routes = [
     path: "/relatorios/economia",
     element: <WithAuth component={EconomyReport} />,
   },
-  {
-    exact: true,
-    path: "/relatorios/integracao/nifilint",
-    element: <WithAuth component={IntegrationNifiLintReport} />,
-  },
+
   {
     exact: true,
     path: "/relatorios/regulacao/painel-indicadores",

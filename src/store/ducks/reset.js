@@ -13,9 +13,6 @@ import { reset as adminSegmentReset } from "features/admin/Segment/SegmentSlice"
 import { reset as adminExamReset } from "features/admin/Exam/ExamSlice";
 import { reset as adminFrequencyReset } from "features/admin/Frequency/FrequencySlice";
 import { reset as adminUnitConversionReset } from "features/admin/UnitConversion/UnitConversionSlice";
-import { reset as adminIntegrationStatusReset } from "features/admin/IntegrationStatus/IntegrationStatusSlice";
-import { reset as adminIntegrationConfigReset } from "features/admin/IntegrationConfig/IntegrationConfigSlice";
-import { reset as adminIntegrationRemoteReset } from "features/admin/IntegrationRemote/IntegrationRemoteSlice";
 import { reset as adminSubstanceReset } from "features/admin/Substance/SubstanceSlice";
 import { reset as adminRelationReset } from "features/admin/Relation/RelationsSlice";
 import { reset as adminDrugReferenceDrawerReset } from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
@@ -54,7 +51,6 @@ import { reset as prescriptionHistoryReportReset } from "features/reports/Prescr
 import { reset as alertListReportReset } from "features/reports/AlertListReport/AlertListReportSlice";
 import { reset as examsRawSearchReset } from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
 import { reset as patientObservationReportReset } from "features/reports/PatientObservationReport/PatientObservationReportSlice";
-import { reset as integrationNifiLintReportReset } from "features/reports/IntegrationNifiLintReport/IntegrationNifiLintReportSlice";
 import { reset as patientDayConsolidatedReportReset } from "features/reports/PatientDayConsolidatedReport/PatientDayConsolidatedReportSlice";
 import { reset as prescriptionConsolidatedReportReset } from "features/reports/PrescriptionConsolidatedReport/PrescriptionConsolidatedReportSlice";
 
@@ -81,9 +77,6 @@ export const resetReduxState = (dispatch) => {
   dispatch(adminExamReset());
   dispatch(adminFrequencyReset());
   dispatch(adminUnitConversionReset());
-  dispatch(adminIntegrationStatusReset());
-  dispatch(adminIntegrationConfigReset());
-  dispatch(adminIntegrationRemoteReset());
   dispatch(adminSubstanceReset());
   dispatch(adminRelationReset());
   dispatch(adminDrugReferenceDrawerReset());
@@ -129,7 +122,6 @@ export const resetReduxState = (dispatch) => {
   dispatch(alertListReportReset());
   dispatch(examsRawSearchReset());
   dispatch(patientObservationReportReset());
-  dispatch(integrationNifiLintReportReset());
   dispatch(patientDayConsolidatedReportReset());
   dispatch(prescriptionConsolidatedReportReset());
 
