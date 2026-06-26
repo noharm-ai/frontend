@@ -482,11 +482,46 @@ export function VariableTab() {
                     ) : (
                       <Input
                         value={v.value}
-                        onChange={({ target }) =>
-                          setConfig(idx, "value", target.value)
-                        }
+                        onChange={({ target }) => {
+                          const val = target.value;
+                          const isDecimalField =
+                            v.field === ProtocolVariableFieldEnum.EXAM_REF ||
+                            v.field === "exam" ||
+                            v.field === ProtocolVariableFieldEnum.WEIGHT;
+                          const isIntegerField =
+                            v.field === ProtocolVariableFieldEnum.AGE;
+                          if (
+                            isDecimalField &&
+                            val !== "" &&
+                            !/^-?\d*\.?\d*$/.test(val)
+                          ) {
+                            return;
+                          }
+                          if (
+                            isIntegerField &&
+                            val !== "" &&
+                            !/^-?\d*$/.test(val)
+                          ) {
+                            return;
+                          }
+                          setConfig(idx, "value", val);
+                        }}
                       />
                     )}
+                    {(v.field === ProtocolVariableFieldEnum.EXAM_REF ||
+                      v.field === "exam" ||
+                      v.field === ProtocolVariableFieldEnum.WEIGHT) &&
+                      v.operator !== "IN" &&
+                      v.operator !== "NOTIN" && (
+                        <div className="form-info">
+                          Use ponto (.) como separador decimal. Ex: 1.5
+                        </div>
+                      )}
+                    {v.field === ProtocolVariableFieldEnum.AGE &&
+                      v.operator !== "IN" &&
+                      v.operator !== "NOTIN" && (
+                        <div className="form-info">Informe um número inteiro. Ex: 18</div>
+                      )}
                   </div>
                 </div>
               </>
