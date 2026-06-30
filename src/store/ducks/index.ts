@@ -53,7 +53,6 @@ import adminTag from "features/admin/Tag/TagSlice";
 import adminProtocol from "features/admin/Protocol/ProtocolSlice";
 import adminReport from "features/admin/Report/ReportSlice";
 import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
-import adminGlobalExam from "features/admin/GlobalExam/GlobalExamSlice";
 import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
 
 import { outpatientPrioritizationReducer } from "features/outpatient/OutpatientPrioritization/OutpatientPrioritizationSlice";
@@ -100,7 +99,6 @@ const adminReducers = combineReducers({
   protocol: adminProtocol,
   report: adminReport,
   globalMemory: adminGlobalMemory,
-  globalExam: adminGlobalExam,
 });
 
 const regulationReducers = combineReducers({
