@@ -30,7 +30,6 @@ import CustomFormEditorPage from "pages/CustomForms/CustomFormEditorPage";
 import MemoryListPage from "pages/Memory/MemoryListPage";
 import MemoryEditorPage from "pages/Memory/MemoryEditorPage";
 
-import AdminFrequency from "pages/Admin/Frequency";
 import AdminTag from "pages/Admin/Tag";
 import AdminInterventionReason from "pages/Admin/InterventionReason";
 import AdminMemory from "pages/Admin/Memory";
@@ -284,11 +283,6 @@ const routes = [
     exact: true,
     path: "/suporte",
     element: <WithAuth component={SupportCenter} />,
-  },
-  {
-    exact: true,
-    path: "/admin/frequencias",
-    element: <WithAuth component={AdminFrequency} />,
   },
   {
     exact: true,

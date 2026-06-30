@@ -11,7 +11,6 @@ import { reset as adminDrugAttributesReset } from "features/admin/DrugAttributes
 import { reset as adminIntegrationReset } from "features/admin/Integration/IntegrationSlice";
 import { reset as adminSegmentReset } from "features/admin/Segment/SegmentSlice";
 import { reset as adminExamReset } from "features/admin/Exam/ExamSlice";
-import { reset as adminFrequencyReset } from "features/admin/Frequency/FrequencySlice";
 import { reset as adminUnitConversionReset } from "features/admin/UnitConversion/UnitConversionSlice";
 import { reset as adminSubstanceReset } from "features/admin/Substance/SubstanceSlice";
 import { reset as adminRelationReset } from "features/admin/Relation/RelationsSlice";
@@ -70,12 +69,10 @@ const { prescriptionsReset } = PrescriptionsCreators;
 export const resetReduxState = (dispatch) => {
   dispatch(adminInterventionReasonsReset());
   dispatch(adminMemoryReset());
-  dispatch(adminFrequencyReset());
   dispatch(adminDrugAttributesReset());
   dispatch(adminIntegrationReset());
   dispatch(adminSegmentReset());
   dispatch(adminExamReset());
-  dispatch(adminFrequencyReset());
   dispatch(adminUnitConversionReset());
   dispatch(adminSubstanceReset());
   dispatch(adminRelationReset());
