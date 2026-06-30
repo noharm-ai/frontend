@@ -37,7 +37,6 @@ import drugGenerateScoreSlice from "features/drugs/DrugGenerateScore/DrugGenerat
 import drugSubstanceSlice from "features/drugs/DrugSubstance/DrugSubstanceSlice";
 import { userProfileReducer } from "features/user/UserProfile/UserProfileSlice";
 
-import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
 import adminDrugAttributes from "features/admin/DrugAttributes/DrugAttributesSlice";
 import adminIntegration from "features/admin/Integration/IntegrationSlice";
@@ -48,7 +47,6 @@ import adminSubstance from "features/admin/Substance/SubstanceSlice";
 import adminSubstanceForm from "features/admin/Substance/SubstanceFormSlice";
 import adminRelation from "features/admin/Relation/RelationsSlice";
 import adminDrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
-import adminMeasureUnit from "features/admin/MeasureUnit/MeasureUnitSlice";
 import adminTag from "features/admin/Tag/TagSlice";
 import adminProtocol from "features/admin/Protocol/ProtocolSlice";
 import adminReport from "features/admin/Report/ReportSlice";
@@ -82,7 +80,6 @@ import reportPatientObservationReport from "features/reports/PatientObservationR
 import reportCheckedIndexReport from "features/reports/CheckedIndexReport/CheckedIndexReportSlice";
 
 const adminReducers = combineReducers({
-  interventionReason: adminInterventionReasonReducer,
   memory: adminMemory,
   drugAttributes: adminDrugAttributes,
   integration: adminIntegration,
@@ -94,7 +91,6 @@ const adminReducers = combineReducers({
   substanceForm: adminSubstanceForm,
   relation: adminRelation,
   drugReferenceDrawer: adminDrugReferenceDrawer,
-  measureUnit: adminMeasureUnit,
   tag: adminTag,
   protocol: adminProtocol,
   report: adminReport,

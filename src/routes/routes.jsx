@@ -31,7 +31,6 @@ import MemoryListPage from "pages/Memory/MemoryListPage";
 import MemoryEditorPage from "pages/Memory/MemoryEditorPage";
 
 import AdminTag from "pages/Admin/Tag";
-import AdminInterventionReason from "pages/Admin/InterventionReason";
 import AdminMemory from "pages/Admin/Memory";
 import AdminMemoryRoutes from "pages/Admin/Memory/Routes";
 import AdminMemoryReports from "pages/Admin/Memory/Reports";
@@ -45,7 +44,6 @@ import AdminUnitConversion from "pages/Admin/UnitConversion";
 import AdminExam from "pages/Admin/Exam";
 import AdminSubstance from "pages/Admin/Substance";
 import AdminRelation from "pages/Admin/Relation";
-import AdminMeasureUnit from "pages/Admin/MeasureUnit";
 import AdminProtocol from "pages/Admin/Protocol";
 import AdminReport from "pages/Admin/Report";
 import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
@@ -290,11 +288,6 @@ const routes = [
   },
   {
     exact: true,
-    path: "/admin/motivo-intervencao",
-    element: <WithAuth component={AdminInterventionReason} />,
-  },
-  {
-    exact: true,
     path: "/admin/memoria",
     element: <WithAuth component={AdminMemory} />,
   },
@@ -355,11 +348,6 @@ const routes = [
     exact: true,
     path: "/admin/curadoria-unidades",
     element: <WithAuth component={AdminUnitConversion} />,
-  },
-  {
-    exact: true,
-    path: "/admin/unidade-medida",
-    element: <WithAuth component={AdminMeasureUnit} />,
   },
   {
     exact: true,
