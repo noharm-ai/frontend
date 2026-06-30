@@ -1,9 +1,10 @@
-import { useState, useEffect, type ChangeEvent } from "react";
+import { useState, useEffect, type ChangeEvent, type Key } from "react";
+import { ExpandColumn } from "components/ExpandColumn";
 import { debounce } from "lodash";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
-import Table from "components/Table";
+import { ExpandableTable } from "components/Table";
 import Empty from "components/Empty";
 import BackTop from "components/BackTop";
 import { Input } from "components/Inputs";
@@ -12,6 +13,7 @@ import { PageCard } from "styles/Utils.style";
 import { PageHeader, ExtraFilters } from "styles/PageHeader.style";
 
 import { fetchPatientNames } from "./OutpatientPrioritizationSlice";
+import { expandedRowRender } from "./Table/expandedRowRender";
 import { Filter } from "./Filter/Filter";
 import { columns } from "./Table/columns";
 
@@ -29,6 +31,27 @@ export function OutpatientPrioritization() {
   const [filter, setFilter] = useState<{ searchKey: string[] | null }>({
     searchKey: null,
   });
+  const [expandedRows, setExpandedRows] = useState<Key[]>([]);
+
+  const toggleExpansion = () => {
+    if (expandedRows.length) {
+      setExpandedRows([]);
+    } else {
+      setExpandedRows(
+        list
+          .filter((r: any) => r.tags?.length)
+          .map((r: any) => r.idPrescription)
+      );
+    }
+  };
+
+  const handleRowExpand = (_: boolean, record: any) => {
+    setExpandedRows((prev) =>
+      prev.includes(record.idPrescription)
+        ? prev.filter((k) => k !== record.idPrescription)
+        : [...prev, record.idPrescription]
+    );
+  };
 
   useEffect(() => {
     if (status === "succeeded") {
@@ -85,7 +108,7 @@ export function OutpatientPrioritization() {
         </div>
       </ExtraFilters>
       <PageCard>
-        <Table
+        <ExpandableTable
           columns={columns(sortOrder, filter, t) as any}
           pagination={{
             pageSize: 50,
@@ -96,6 +119,19 @@ export function OutpatientPrioritization() {
           dataSource={status !== "loading" ? toDataSource(list, null, {}) : []}
           onChange={handleTableChange}
           showSorterTooltip={false}
+          rowKey="idPrescription"
+          expandable={{
+            expandedRowRender,
+            rowExpandable: (record: any) => !!record.tags?.length,
+            expandedRowKeys: expandedRows,
+            onExpand: handleRowExpand,
+            columnTitle: (
+              <ExpandColumn
+                expand={!expandedRows.length}
+                toggleExpansion={toggleExpansion}
+              />
+            ),
+          }}
         />
       </PageCard>
 

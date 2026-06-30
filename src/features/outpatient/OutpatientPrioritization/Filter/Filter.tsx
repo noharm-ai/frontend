@@ -35,6 +35,7 @@ export function Filter() {
     appointment: null,
     dischargeDateStart: null,
     dischargeDateEnd: null,
+    tags: null,
   };
 
   useEffect(() => {

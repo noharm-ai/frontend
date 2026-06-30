@@ -13,6 +13,7 @@ export interface PatientRecord {
   birthdate: string | null;
   admissionDate: string | null;
   loadingName: boolean;
+  tags: string[] | null;
 }
 
 export interface OutpatientFilters {
@@ -25,6 +26,7 @@ export interface OutpatientFilters {
   appointment: "scheduled" | "not-scheduled" | null;
   dischargeDateStart: string | null;
   dischargeDateEnd: string | null;
+  tags: number[] | null;
 }
 
 interface OutpatientPrioritizationState {

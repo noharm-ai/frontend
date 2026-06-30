@@ -7,6 +7,8 @@ import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { Select, RangeDatePicker } from "components/Inputs";
 import UserSelect from "components/Forms/Fields/UserSelect";
+import { FieldTag } from "features/fields/FieldTag/FieldTag";
+import { TagTypeEnum } from "models/TagTypeEnum";
 
 export function SecondaryFilters() {
   const { t, i18n } = useTranslation();
@@ -24,7 +26,9 @@ export function SecondaryFilters() {
   return (
     <Row gutter={[20, 20]}>
       <Col md={24} xl={18} xxl={14}>
-        <Heading {...{ as: "label", htmlFor: "segments", $size: "14px" } as any}>
+        <Heading
+          {...({ as: "label", htmlFor: "segments", $size: "14px" } as any)}
+        >
           {t("labels.scheduledBy")}:
         </Heading>
         <UserSelect
@@ -34,7 +38,9 @@ export function SecondaryFilters() {
       </Col>
 
       <Col md={24} xl={18} xxl={14}>
-        <Heading {...{ as: "label", htmlFor: "segments", $size: "14px" } as any}>
+        <Heading
+          {...({ as: "label", htmlFor: "segments", $size: "14px" } as any)}
+        >
           {t("labels.attendedBy")}:
         </Heading>
         <UserSelect
@@ -44,7 +50,9 @@ export function SecondaryFilters() {
       </Col>
 
       <Col md={24} xl={18} xxl={14}>
-        <Heading {...{ as: "label", htmlFor: "segments", $size: "14px" } as any}>
+        <Heading
+          {...({ as: "label", htmlFor: "segments", $size: "14px" } as any)}
+        >
           {t("labels.appointment")}:
         </Heading>
         <Select
@@ -63,7 +71,7 @@ export function SecondaryFilters() {
       </Col>
 
       <Col md={24} xl={18} xxl={14}>
-        <Heading {...{ as: "label", $size: "14px" } as any}>
+        <Heading {...({ as: "label", $size: "14px" } as any)}>
           {t("labels.dischargeDate")}:
         </Heading>
         <RangeDatePicker
@@ -76,6 +84,17 @@ export function SecondaryFilters() {
           allowClear
           language={i18n.language}
         />
+      </Col>
+
+      <Col md={24} xl={18} xxl={14}>
+        <Heading {...({ as: "label", $size: "14px" } as any)}>
+          Marcadores:
+        </Heading>
+        <FieldTag
+          tagType={TagTypeEnum.PATIENT}
+          value={values.tags}
+          onChange={(value: any) => setFieldValue({ tags: value })}
+        ></FieldTag>
       </Col>
     </Row>
   );

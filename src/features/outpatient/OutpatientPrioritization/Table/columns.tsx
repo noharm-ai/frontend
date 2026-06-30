@@ -34,7 +34,7 @@ const Action = ({ record }: { record: any }) => {
 export const columns = (
   sortedInfo: SortedInfo,
   filteredInfo: FilteredInfo,
-  t: (key: string) => string
+  t: (key: string) => string,
 ) => {
   const sortDirections = ["descend", "ascend"];
 
@@ -45,13 +45,19 @@ export const columns = (
       sortDirections,
       sorter: (a: any, b: any) => {
         const nameA =
-          patientCache.getPatient(a.idPatient)?.name ?? `Paciente ${a.idPatient}`;
+          patientCache.getPatient(a.idPatient)?.name ??
+          `Paciente ${a.idPatient}`;
         const nameB =
-          patientCache.getPatient(b.idPatient)?.name ?? `Paciente ${b.idPatient}`;
+          patientCache.getPatient(b.idPatient)?.name ??
+          `Paciente ${b.idPatient}`;
         return nameA.localeCompare(nameB);
       },
-      sortOrder: (sortedInfo.columnKey === "namePatient" ? sortedInfo.order : undefined) as any,
-      render: (record: any) => <PatientNameCache idPatient={record.idPatient} />,
+      sortOrder: (sortedInfo.columnKey === "namePatient"
+        ? sortedInfo.order
+        : undefined) as any,
+      render: (record: any) => (
+        <PatientNameCache idPatient={record.idPatient} />
+      ),
       filteredValue: filteredInfo.searchKey || null,
       onFilter: (value: any, record: any) =>
         (patientCache.getPatient(record.idPatient)?.name ?? "")
@@ -63,10 +69,13 @@ export const columns = (
     {
       key: "observation",
       title: t("tableHeader.observation"),
+      align: "left",
       sortDirections,
       sorter: (a: any, b: any) =>
         `${a.observation}`.localeCompare(b.observation),
-      sortOrder: (sortedInfo.columnKey === "observation" ? sortedInfo.order : undefined) as any,
+      sortOrder: (sortedInfo.columnKey === "observation"
+        ? sortedInfo.order
+        : undefined) as any,
       render: (record: any) => {
         const tmp = document.createElement("DIV");
         tmp.innerHTML = record.observation
@@ -91,7 +100,9 @@ export const columns = (
       sorter: (a: any, b: any) =>
         moment(a.refDate || new Date()).unix() -
         moment(b.refDate || new Date()).unix(),
-      sortOrder: (sortedInfo.columnKey === "refDate" ? sortedInfo.order : undefined) as any,
+      sortOrder: (sortedInfo.columnKey === "refDate"
+        ? sortedInfo.order
+        : undefined) as any,
       render: (record: any) =>
         record.refDate ? moment(record.refDate).format("DD/MM/YYYY") : "",
     },
