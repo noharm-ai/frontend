@@ -40,7 +40,6 @@ import AdminMemorySchedules from "pages/Admin/Memory/Schedules";
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminSegment from "pages/Admin/Segment";
-import AdminUnitConversion from "pages/Admin/UnitConversion";
 import AdminExam from "pages/Admin/Exam";
 import AdminSubstance from "pages/Admin/Substance";
 import AdminRelation from "pages/Admin/Relation";
@@ -343,11 +342,6 @@ const routes = [
     exact: true,
     path: "/admin/segmentos",
     element: <WithAuth component={AdminSegment} />,
-  },
-  {
-    exact: true,
-    path: "/admin/curadoria-unidades",
-    element: <WithAuth component={AdminUnitConversion} />,
   },
   {
     exact: true,
