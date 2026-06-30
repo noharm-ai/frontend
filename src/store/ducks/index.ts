@@ -37,24 +37,19 @@ import drugGenerateScoreSlice from "features/drugs/DrugGenerateScore/DrugGenerat
 import drugSubstanceSlice from "features/drugs/DrugSubstance/DrugSubstanceSlice";
 import { userProfileReducer } from "features/user/UserProfile/UserProfileSlice";
 
-import adminInterventionReasonReducer from "features/admin/InterventionReason/InterventionReasonSlice";
 import adminMemory from "features/admin/Memory/MemorySlice";
 import adminDrugAttributes from "features/admin/DrugAttributes/DrugAttributesSlice";
 import adminIntegration from "features/admin/Integration/IntegrationSlice";
 import adminSegment from "features/admin/Segment/SegmentSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
-import adminFrequency from "features/admin/Frequency/FrequencySlice";
-import adminUnitConversion from "features/admin/UnitConversion/UnitConversionSlice";
 import adminSubstance from "features/admin/Substance/SubstanceSlice";
 import adminSubstanceForm from "features/admin/Substance/SubstanceFormSlice";
 import adminRelation from "features/admin/Relation/RelationsSlice";
 import adminDrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
-import adminMeasureUnit from "features/admin/MeasureUnit/MeasureUnitSlice";
 import adminTag from "features/admin/Tag/TagSlice";
 import adminProtocol from "features/admin/Protocol/ProtocolSlice";
 import adminReport from "features/admin/Report/ReportSlice";
 import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
-import adminGlobalExam from "features/admin/GlobalExam/GlobalExamSlice";
 import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
 
 import { outpatientPrioritizationReducer } from "features/outpatient/OutpatientPrioritization/OutpatientPrioritizationSlice";
@@ -84,25 +79,20 @@ import reportPatientObservationReport from "features/reports/PatientObservationR
 import reportCheckedIndexReport from "features/reports/CheckedIndexReport/CheckedIndexReportSlice";
 
 const adminReducers = combineReducers({
-  interventionReason: adminInterventionReasonReducer,
   memory: adminMemory,
   drugAttributes: adminDrugAttributes,
   integration: adminIntegration,
   segment: adminSegment,
   exam: adminExam,
   examForm: adminExamForm,
-  frequency: adminFrequency,
-  unitConversion: adminUnitConversion,
   substance: adminSubstance,
   substanceForm: adminSubstanceForm,
   relation: adminRelation,
   drugReferenceDrawer: adminDrugReferenceDrawer,
-  measureUnit: adminMeasureUnit,
   tag: adminTag,
   protocol: adminProtocol,
   report: adminReport,
   globalMemory: adminGlobalMemory,
-  globalExam: adminGlobalExam,
 });
 
 const regulationReducers = combineReducers({

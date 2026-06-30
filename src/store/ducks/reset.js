@@ -6,22 +6,17 @@ import { Creators as PrescriptionDrugsCreators } from "./prescriptionDrugs";
 import { Creators as PrescriptionsCreators } from "./prescriptions";
 
 import { reset as adminMemoryReset } from "features/admin/Memory/MemorySlice";
-import { reset as adminInterventionReasonsReset } from "features/admin/InterventionReason/InterventionReasonSlice";
 import { reset as adminDrugAttributesReset } from "features/admin/DrugAttributes/DrugAttributesSlice";
 import { reset as adminIntegrationReset } from "features/admin/Integration/IntegrationSlice";
 import { reset as adminSegmentReset } from "features/admin/Segment/SegmentSlice";
 import { reset as adminExamReset } from "features/admin/Exam/ExamSlice";
-import { reset as adminFrequencyReset } from "features/admin/Frequency/FrequencySlice";
-import { reset as adminUnitConversionReset } from "features/admin/UnitConversion/UnitConversionSlice";
 import { reset as adminSubstanceReset } from "features/admin/Substance/SubstanceSlice";
 import { reset as adminRelationReset } from "features/admin/Relation/RelationsSlice";
 import { reset as adminDrugReferenceDrawerReset } from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
-import { reset as adminMeasureUnitReset } from "features/admin/MeasureUnit/MeasureUnitSlice";
 import { reset as adminTagReset } from "features/admin/Tag/TagSlice";
 import { reset as adminProtocolReset } from "features/admin/Protocol/ProtocolSlice";
 import { reset as adminReportReset } from "features/admin/Report/ReportSlice";
 import { reset as adminGlobalMemoryReset } from "features/admin/GlobalMemory/GlobalMemorySlice";
-import { reset as adminGlobalExamReset } from "features/admin/GlobalExam/GlobalExamSlice";
 
 import { reset as drugFormStatusReset } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import { reset as listsReset } from "features/lists/ListsSlice";
@@ -68,24 +63,18 @@ const { prescriptionDrugsReset } = PrescriptionDrugsCreators;
 const { prescriptionsReset } = PrescriptionsCreators;
 
 export const resetReduxState = (dispatch) => {
-  dispatch(adminInterventionReasonsReset());
   dispatch(adminMemoryReset());
-  dispatch(adminFrequencyReset());
   dispatch(adminDrugAttributesReset());
   dispatch(adminIntegrationReset());
   dispatch(adminSegmentReset());
   dispatch(adminExamReset());
-  dispatch(adminFrequencyReset());
-  dispatch(adminUnitConversionReset());
   dispatch(adminSubstanceReset());
   dispatch(adminRelationReset());
   dispatch(adminDrugReferenceDrawerReset());
-  dispatch(adminMeasureUnitReset());
   dispatch(adminTagReset());
   dispatch(adminProtocolReset());
   dispatch(adminReportReset());
   dispatch(adminGlobalMemoryReset());
-  dispatch(adminGlobalExamReset());
 
   dispatch(clinicalNotesReset());
   dispatch(drugsReset());

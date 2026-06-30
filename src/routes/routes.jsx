@@ -30,9 +30,7 @@ import CustomFormEditorPage from "pages/CustomForms/CustomFormEditorPage";
 import MemoryListPage from "pages/Memory/MemoryListPage";
 import MemoryEditorPage from "pages/Memory/MemoryEditorPage";
 
-import AdminFrequency from "pages/Admin/Frequency";
 import AdminTag from "pages/Admin/Tag";
-import AdminInterventionReason from "pages/Admin/InterventionReason";
 import AdminMemory from "pages/Admin/Memory";
 import AdminMemoryRoutes from "pages/Admin/Memory/Routes";
 import AdminMemoryReports from "pages/Admin/Memory/Reports";
@@ -42,15 +40,12 @@ import AdminMemorySchedules from "pages/Admin/Memory/Schedules";
 import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminSegment from "pages/Admin/Segment";
-import AdminUnitConversion from "pages/Admin/UnitConversion";
 import AdminExam from "pages/Admin/Exam";
 import AdminSubstance from "pages/Admin/Substance";
 import AdminRelation from "pages/Admin/Relation";
-import AdminMeasureUnit from "pages/Admin/MeasureUnit";
 import AdminProtocol from "pages/Admin/Protocol";
 import AdminReport from "pages/Admin/Report";
 import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
-import AdminGlobalExam from "pages/Admin/GlobalExam";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
@@ -287,18 +282,8 @@ const routes = [
   },
   {
     exact: true,
-    path: "/admin/frequencias",
-    element: <WithAuth component={AdminFrequency} />,
-  },
-  {
-    exact: true,
     path: "/admin/exames",
     element: <WithAuth component={AdminExam} />,
-  },
-  {
-    exact: true,
-    path: "/admin/motivo-intervencao",
-    element: <WithAuth component={AdminInterventionReason} />,
   },
   {
     exact: true,
@@ -360,16 +345,6 @@ const routes = [
   },
   {
     exact: true,
-    path: "/admin/curadoria-unidades",
-    element: <WithAuth component={AdminUnitConversion} />,
-  },
-  {
-    exact: true,
-    path: "/admin/unidade-medida",
-    element: <WithAuth component={AdminMeasureUnit} />,
-  },
-  {
-    exact: true,
     path: "/admin/substancias",
     element: <WithAuth component={AdminSubstance} />,
   },
@@ -392,11 +367,6 @@ const routes = [
     exact: true,
     path: "/admin/memoria-global/nzero",
     element: <WithAuth component={AdminGlobalMemoryNZero} />,
-  },
-  {
-    exact: true,
-    path: "/admin/exames-referencia",
-    element: <WithAuth component={AdminGlobalExam} />,
   },
   {
     exact: true,
