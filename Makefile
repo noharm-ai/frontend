@@ -47,19 +47,19 @@ e2e-db-reset:
 
 ## Run e2e tests (headless) — resets DB first
 e2e: e2e-db-reset
-	npm run test:e2e
+	sfw npm run test:e2e
 
 ## Run e2e tests in interactive UI mode (no auto-reset)
 e2e-ui:
-	npm run test:e2e:ui
+	sfw npm run test:e2e:ui
 
 ## Run e2e tests against a fully mocked backend — no docker required
 e2e-mock:
-	npm run test:e2e:mock
+	sfw npm run test:e2e:mock
 
 ## Run mocked e2e tests in interactive UI mode
 e2e-mock-ui:
-	npm run test:e2e:mock:ui
+	sfw npm run test:e2e:mock:ui
 
 
 ## Dev environment
