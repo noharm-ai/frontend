@@ -22,14 +22,18 @@ jobs:
           node-version: 22
           cache: npm
 
+      - uses: SocketDev/action@ba6de6cc0565af1f42295590380973573297e31f # v1.3.2
+        with:
+          mode: firewall-free
+
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: sfw npm ci --ignore-scripts
 
       - name: Install Playwright chromium
         run: npx playwright install --with-deps chromium
 
       - name: Run mocked e2e tests
-        run: npm run test:e2e:mock
+        run: sfw npm run test:e2e:mock
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
