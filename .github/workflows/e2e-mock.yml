@@ -32,8 +32,11 @@ jobs:
       - name: Install Playwright chromium
         run: npx playwright install --with-deps chromium
 
+      # npx (not sfw npm run): the sfw wrapper injects proxy env vars that
+      # break Playwright's webServer startup probe (same pattern as
+      # playwright-test.yml)
       - name: Run mocked e2e tests
-        run: sfw npm run test:e2e:mock
+        run: npx playwright test --project=mock-setup --project=chromium-mocked
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
