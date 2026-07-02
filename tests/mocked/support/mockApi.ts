@@ -95,7 +95,7 @@ export class MockApi {
     const pathSegments = path.split("/").filter(Boolean);
     for (const key of this.handlers.keys()) {
       const [keyMethod, keyPath] = key.split(" ");
-      if (keyMethod !== method || !keyPath.includes(":")) {
+      if (keyMethod !== method || !keyPath?.includes(":")) {
         continue;
       }
       const keySegments = keyPath.split("/").filter(Boolean);

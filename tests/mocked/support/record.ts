@@ -65,10 +65,16 @@ async function main() {
     }
   });
 
+  if (!process.env.TEST_USER || !process.env.TEST_USER_PASSWORD) {
+    throw new Error(
+      "TEST_USER and TEST_USER_PASSWORD environment variables are required",
+    );
+  }
+
   console.log("logging in...");
   await page.goto(`${APP_URL}/login`);
-  await page.getByPlaceholder("Email").fill(process.env.TEST_USER!);
-  await page.getByPlaceholder("Senha").fill(process.env.TEST_USER_PASSWORD!);
+  await page.getByPlaceholder("Email").fill(process.env.TEST_USER);
+  await page.getByPlaceholder("Senha").fill(process.env.TEST_USER_PASSWORD);
   await page.getByRole("button", { name: "Acessar" }).click();
   await page.waitForURL(`${APP_URL}/`);
   await page.waitForTimeout(3000);
