@@ -1,0 +1,46 @@
+name: Mocked e2e tests
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    env:
+      VITE_APP_URL: http://localhost:3000
+      VITE_APP_API_URL: http://localhost:5001
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: SocketDev/action@ba6de6cc0565af1f42295590380973573297e31f # v1.3.2
+        with:
+          mode: firewall-free
+
+      - name: Install dependencies
+        run: sfw npm ci --ignore-scripts
+
+      - name: Install Playwright chromium
+        run: npx playwright install --with-deps chromium
+
+      # npx (not sfw npm run): the sfw wrapper injects proxy env vars that
+      # break Playwright's webServer startup probe (same pattern as
+      # playwright-test.yml)
+      - name: Run mocked e2e tests
+        run: npx playwright test --project=mock-setup --project=chromium-mocked
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: failure()
+        with:
+          name: playwright-report-mocked
+          path: playwright-report/
+          retention-days: 15
