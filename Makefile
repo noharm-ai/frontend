@@ -45,21 +45,25 @@ e2e-db-reset:
 	$(COMPOSE) exec -T postgres psql -v ON_ERROR_STOP=1 -U postgres -d noharm -f /docker-entrypoint-initdb.d/db/noharm-insert.sql
 	$(COMPOSE) start backend
 
+# npx (not sfw npm run): the sfw wrapper injects proxy env vars that
+# break Playwright's webServer startup probe (same pattern as the
+# playwright-test.yml / e2e-mock.yml CI workflows)
+
 ## Run e2e tests (headless) — resets DB first
 e2e: e2e-db-reset
-	sfw npm run test:e2e
+	VITE_APP_API_URL=http://localhost:5001 npx playwright test --project=setup --project=chromium
 
 ## Run e2e tests in interactive UI mode (no auto-reset)
 e2e-ui:
-	sfw npm run test:e2e:ui
+	VITE_APP_API_URL=http://localhost:5001 npx playwright test --ui --project=setup --project=chromium
 
 ## Run e2e tests against a fully mocked backend — no docker required
 e2e-mock:
-	sfw npm run test:e2e:mock
+	VITE_APP_API_URL=http://localhost:5001 npx playwright test --project=mock-setup --project=chromium-mocked
 
 ## Run mocked e2e tests in interactive UI mode
 e2e-mock-ui:
-	sfw npm run test:e2e:mock:ui
+	VITE_APP_API_URL=http://localhost:5001 npx playwright test --ui --project=mock-setup --project=chromium-mocked
 
 
 ## Dev environment
