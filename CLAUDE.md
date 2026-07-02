@@ -60,7 +60,10 @@ VITE_APP_ENVIRONMENT       # DEV / PROD label
 
 ## E2E Tests
 
-Tests use [Playwright](https://playwright.dev/) against a full local stack: PostgreSQL 11.6 + Python/Flask backend + Vite dev server.
+There are two Playwright suites:
+
+- **Real-backend suite** (`tests/prescription`, `tests/prioritization`) — runs against a full local stack (PostgreSQL 11.6 + Python/Flask backend + Vite dev server). Integration safety net.
+- **Mocked suite** (`tests/mocked/`) — the entire backend is mocked with route interception; no docker required, runs in seconds, and can simulate scenarios impossible to seed in a real DB (errors, empty states). Run with `make e2e-mock` / `make e2e-mock-ui`. See `tests/mocked/README.md`.
 
 ### First-time setup
 
@@ -74,8 +77,10 @@ make e2e-logs      # wait until backend is ready
 ### Running tests
 
 ```bash
-make e2e           # reset DB + run all tests headless (Chromium)
-make e2e-ui        # open Playwright interactive UI
+make e2e           # reset DB + run real-backend tests headless (Chromium)
+make e2e-ui        # open Playwright interactive UI (real backend)
+make e2e-mock      # run mocked suite — no docker needed
+make e2e-mock-ui   # open Playwright interactive UI (mocked)
 ```
 
 ### Other useful commands
@@ -107,7 +112,7 @@ The backend container uses `network_mode: "service:postgres"` so `localhost` ins
 
 ```
 tests/
-  auth.setup.ts                    # login once, save auth state
+  auth.setup.ts                    # real login once, save auth state
   prioritization/
     cards.multi.spec.ts
     fastSearch.multi.spec.ts
@@ -116,10 +121,16 @@ tests/
     intervention.spec.ts
     interventionOutcome.spec.ts
     conciliation.spec.ts
+  mocked/                          # mocked-backend suite (see its README.md)
+    auth.setup.ts                  # login against mocked /authenticate
+    support/                       # mockApi fixture, default handlers, recorder
+    fixtures/                      # endpoint payloads (JSON)
+    prioritization/  prescription/  scenarios/
 ```
 
 Tests run in Chromium only. Firefox/WebKit are commented out in `playwright.config.ts`.
 
 ### CI
 
-Tests also run in GitHub Actions via `.github/workflows/playwright-test.yml` (manual trigger).
+- `.github/workflows/playwright-test.yml` — real-backend suite (manual trigger).
+- `.github/workflows/e2e-mock.yml` — mocked suite, runs on every pull request.

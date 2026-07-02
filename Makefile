@@ -1,6 +1,6 @@
 COMPOSE = docker compose -f docker-compose.test.yml
 
-.PHONY: e2e-up e2e-down e2e-rebuild e2e-rebuild-postgres e2e e2e-ui e2e-logs e2e-logs-backend e2e-db-reset
+.PHONY: e2e-up e2e-down e2e-rebuild e2e-rebuild-postgres e2e e2e-ui e2e-logs e2e-logs-backend e2e-db-reset e2e-mock e2e-mock-ui
 
 ## Start the test infrastructure (postgres + backend)
 e2e-up:
@@ -47,11 +47,19 @@ e2e-db-reset:
 
 ## Run e2e tests (headless) — resets DB first
 e2e: e2e-db-reset
-	VITE_APP_API_URL=http://localhost:5001 npx playwright test
+	npm run test:e2e
 
 ## Run e2e tests in interactive UI mode (no auto-reset)
 e2e-ui:
-	VITE_APP_API_URL=http://localhost:5001 npx playwright test --ui
+	npm run test:e2e:ui
+
+## Run e2e tests against a fully mocked backend — no docker required
+e2e-mock:
+	npm run test:e2e:mock
+
+## Run mocked e2e tests in interactive UI mode
+e2e-mock-ui:
+	npm run test:e2e:mock:ui
 
 
 ## Dev environment
