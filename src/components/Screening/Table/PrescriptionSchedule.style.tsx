@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Table, TableProps } from "antd";
 
-export const ScrollableTable: typeof Table = styled(Table)<TableProps>`
+export const ScrollableTable = styled(Table)<TableProps>`
   th.ant-table-cell.ant-table-cell-fix-left {
     background: #fff !important;
     font-weight: 700 !important;
@@ -11,4 +11,4 @@ export const ScrollableTable: typeof Table = styled(Table)<TableProps>`
   th.ant-table-cell {
     font-weight: 400 !important;
   }
-`;
+` as unknown as typeof Table;
