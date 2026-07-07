@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { store } from "store/index";
+import { installTrainingMock } from "features/training/mock/installTrainingMock";
 
 /**
  * AXIOS instance.
@@ -13,6 +14,9 @@ const requestConfig = {
 export const instance = axios.create(requestConfig);
 export const mockInstance = axios.create({ baseURL: "/" });
 export const axiosBasic = axios.create();
+
+// no-op unless training mode is active (features/training)
+installTrainingMock(instance);
 
 const api = {};
 

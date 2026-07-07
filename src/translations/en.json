@@ -19,6 +19,18 @@
     "unreadNotifications": "Unread notifications ({{count}})",
     "markAsRead": "Mark as read"
   },
+  "training": {
+    "start": "Training",
+    "startTooltip": "Start a guided training with sample data",
+    "bannerMessage": "Training mode active — you are working with sample data",
+    "exit": "Exit training",
+    "next": "Next",
+    "stepDone": "Task completed!",
+    "stepCounter": "Step {{current}} of {{total}}",
+    "completedTitle": "Training completed!",
+    "completedMessage": "You have completed every task in this training.",
+    "finish": "Finish"
+  },
   "error": {
     "title": "Oops! Something wrong happened.",
     "description": "Something happened that prevented us from showing you the data, please try again."

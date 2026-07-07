@@ -1,3 +1,5 @@
+import { emitTrainingEvent } from "features/training/eventBus";
+
 export const trackReport = (
   trackedReport: TrackedReport,
   details: any = {},
@@ -69,6 +71,10 @@ export const trackSupportAction = (
 };
 
 const track = (customEvent: CustomEvent, details: any = {}) => {
+  // training-mode step conditions listen to tracked actions; must run before
+  // the cwr guard below so training works even when tracking is unavailable
+  emitTrainingEvent(String(details.custom_event ?? customEvent), details);
+
   if (!(window as any).cwr) {
     console.log("tracking error: cwr undefined");
     return;

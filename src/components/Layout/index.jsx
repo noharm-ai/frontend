@@ -35,6 +35,7 @@ import { setPendingTickets } from "features/support/SupportSlice";
 import Box from "./Box";
 import Menu from "./Menu";
 import { InfoAlert } from "features/notifications/InfoAlert/InfoAlert";
+import { TrainingController } from "features/training/TrainingController/TrainingController";
 import SearchPrescription from "./SearchPrescription";
 import {
   Wrapper as Main,
@@ -398,6 +399,7 @@ export default function Layout({
             integrationStatus={app.config.integrationStatus}
           />
         </Header>
+        <TrainingController />
         <Content style={{ padding: "25px 18px" }}>
           <ErrorBoundary FallbackComponent={ErrorFallback}>
             {theme === "boxed" ? <Box {...props}>{children}</Box> : children}

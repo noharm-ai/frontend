@@ -1,0 +1,152 @@
+import { hoursFromNow } from "./dates";
+import { trainingPrescriptionListItems } from "./prescriptionsList";
+
+/**
+ * Raw backend payload for GET /prescriptions/:id (same shape as
+ * tests/mocked/fixtures/prescriptions/single-199.json). Best-effort coverage
+ * for trainings that navigate into the screening page. Note: prioritization
+ * cards open prescriptions in a NEW TAB, where training mode is off — this
+ * fixture only serves same-tab (SPA) navigation.
+ */
+
+const drugItem = (
+  idPrescription: number,
+  idPrescriptionDrug: string,
+  overrides: Record<string, unknown>,
+) => ({
+  idPrescriptionDrug,
+  idPrescription: `${idPrescription}`,
+  dayFrequency: 1,
+  route: "Oral",
+  source: "Medicamentos",
+  prescriptionDate: hoursFromNow(-2),
+  prescriptionExpire: hoursFromNow(22),
+  period: "1D",
+  periodDates: [],
+  periodFixed: null,
+  cpoe: null,
+  cpoe_group: null,
+  grp_solution: null,
+  infusion: null,
+  stage: null,
+  recommendation: null,
+  obs: null,
+  am: null,
+  av: null,
+  np: false,
+  c: false,
+  q: false,
+  alergy: false,
+  allergy: false,
+  tube: false,
+  whiteList: null,
+  checked: false,
+  suspended: false,
+  suspensionDate: null,
+  status: "0",
+  near: false,
+  existIntervention: false,
+  intervened: false,
+  intervention: null,
+  prevIntervention: null,
+  previousIntervention: null,
+  alerts: [],
+  alertsComplete: [],
+  drugAttributes: null,
+  drugInfoLink: null,
+  kit: null,
+  formValues: null,
+  totalPeriod: 1,
+  totalDose: null,
+  useWeight: false,
+  sctidA: null,
+  sctid_infer: null,
+  idSubstanceClass: null,
+  chemo: false,
+  dividerRow: false,
+  emptyRow: false,
+  ...overrides,
+});
+
+export const trainingPrescriptionSinglePayload = (idPrescription: number) => {
+  const items = trainingPrescriptionListItems();
+  const item =
+    items.find((i) => i.idPrescription === idPrescription) ?? items[0];
+
+  return {
+    status: "success",
+    data: {
+      ...item,
+      idPrescription,
+      agg: false,
+      weightUser: null,
+      weightDate: item.admissionDate,
+      dialysis: null,
+      notes: null,
+      alert: null,
+      alertExpire: null,
+      conciliaList: null,
+      conciliaRelations: null,
+      record: `${item.admissionNumber}`,
+      segment: "Treinamento",
+      idSegment: 1,
+      idHospital: 1,
+      prescriber: "Dra. Treinamento",
+      creatinina: null,
+      cn_stats: {},
+      clinicalNotesStats: {},
+      clinicalNotes: 0,
+      user: null,
+      userId: null,
+      insurance_group: null,
+      review: null,
+      protocolAlerts: null,
+      headers: {
+        [`${idPrescription}`]: {
+          date: item.date,
+          expire: item.expire,
+          status: item.status,
+          bed: item.bed,
+          prescriber: "Dra. Treinamento",
+          drugs: { total: 2, checked: 0 },
+          procedures: { total: 0, checked: 0 },
+          solutions: { total: 0, checked: 0 },
+        },
+      },
+      interventions: [],
+      prescription: [
+        drugItem(idPrescription, `${idPrescription}01`, {
+          idDrug: 990010,
+          drug: "Dipirona 500mg (Treinamento)",
+          dose: 500,
+          doseconv: 500,
+          measureUnit: { value: "mg", label: "mg" },
+          frequency: { value: "6", label: "6/6h" },
+          dayFrequency: 4,
+          interval: "6/6h",
+          time: "6/6h",
+          score: "2",
+          idSubstance: 990100,
+          sctid: "990100",
+        }),
+        drugItem(idPrescription, `${idPrescription}02`, {
+          idDrug: 990011,
+          drug: "Omeprazol 20mg (Treinamento)",
+          dose: 20,
+          doseconv: 20,
+          measureUnit: { value: "mg", label: "mg" },
+          frequency: { value: "1", label: "1x/dia" },
+          interval: "1x/dia",
+          time: "1x/dia",
+          score: "1",
+          idSubstance: 990101,
+          sctid: "990101",
+        }),
+      ],
+      solution: [],
+      procedures: [],
+      diet: [],
+      exams: [],
+    },
+  };
+};

@@ -5,6 +5,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 import autoRefreshToken from "./middlewares/autoRefreshToken";
+import { trainingMiddleware } from "features/training/trainingMiddleware";
 import reducers from "./ducks/index.ts";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -26,13 +27,13 @@ const store: any = configureStore({
       return getDefaultMiddleware({
         immutableCheck: false,
         serializableCheck: false,
-      }).prepend(autoRefreshToken, logger);
+      }).prepend(autoRefreshToken, trainingMiddleware, logger);
     }
 
     return getDefaultMiddleware({
       immutableCheck: false,
       serializableCheck: false,
-    }).prepend(autoRefreshToken);
+    }).prepend(autoRefreshToken, trainingMiddleware);
   },
 });
 

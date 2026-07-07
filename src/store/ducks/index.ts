@@ -36,6 +36,7 @@ import drugGeneratePrescriptionHistorySlice from "features/drugs/DrugGeneratePre
 import drugGenerateScoreSlice from "features/drugs/DrugGenerateScore/DrugGenerateScoreSlice";
 import drugSubstanceSlice from "features/drugs/DrugSubstance/DrugSubstanceSlice";
 import { userProfileReducer } from "features/user/UserProfile/UserProfileSlice";
+import { trainingReducer } from "features/training/TrainingSlice";
 
 import adminMemory from "features/admin/Memory/MemorySlice";
 import adminDrugAttributes from "features/admin/DrugAttributes/DrugAttributesSlice";
@@ -164,6 +165,7 @@ const rootReducer = combineReducers({
   outpatient: outpatientPrioritizationReducer,
   userProfile: userProfileReducer,
   notifications: notificationsSlice,
+  training: trainingReducer,
 });
 
 export default rootReducer;

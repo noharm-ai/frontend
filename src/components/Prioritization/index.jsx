@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import { isEmpty } from "lodash";
 import { debounce } from "lodash";
 import { motion } from "motion/react";
-import { Spin, Pagination, Tag, Empty, Alert, Affix } from "antd";
+import { Spin, Pagination, Tag, Empty, Alert, Affix, Space } from "antd";
 import { useTranslation } from "react-i18next";
 import { CaretUpOutlined } from "@ant-design/icons";
 
@@ -15,6 +15,7 @@ import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import { Row, Col } from "components/Grid";
 import InitialPage from "features/preferences/InitialPage/InitialPage";
+import { TrainingTrigger } from "features/training/TrainingTrigger/TrainingTrigger";
 import FeatureService from "services/features";
 import {
   trackPrescriptionPrioritizationAction,
@@ -205,7 +206,10 @@ export default function Prioritization({
           </header>
         </Col>
         <Col span={24} md={24 - 10} style={{ textAlign: "right" }}>
-          <InitialPage />
+          <Space>
+            <TrainingTrigger trainingId="prioritization-basics" />
+            <InitialPage />
+          </Space>
         </Col>
       </Row>
 
@@ -280,6 +284,7 @@ export default function Prioritization({
                 <div className="filters-item-label">Situação:</div>
                 <div className="filters-item-value">
                   <Select
+                    className="prioritization-status-select"
                     placeholder="Situação"
                     optionFilterProp="children"
                     defaultValue="all"
