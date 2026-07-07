@@ -29,7 +29,6 @@ export default class Feature {
   static PRIORITIZATION_FIELD_RESPONSIBLE_PHYSICIAN =
     "PRIORITIZATION_FIELD_RESPONSIBLE_PHYSICIAN";
   static MULTI_CLINICAL_NOTES = "MULTI_CLINICAL_NOTES";
-  static TRAINING_MODE = "TRAINING_MODE";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -190,12 +189,6 @@ export default class Feature {
         label: "Campo de priorização: Médico Responsável",
         description:
           "Habilita o campo Médico Responsável no filtro de priorização.",
-      },
-      {
-        id: Feature.TRAINING_MODE,
-        label: "Modo Treinamento",
-        description:
-          "Habilita o botão de treinamento na priorização. No modo treinamento, o usuário executa tarefas guiadas utilizando somente dados fictícios.",
       },
     ];
   }

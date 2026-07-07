@@ -17,6 +17,7 @@ export const prioritizationBasics: Training = {
     pt: "Aprenda as interações básicas da tela de priorização por pacientes.",
     en: "Learn the basic interactions of the patient prioritization page.",
   },
+  path: "/priorizacao/pacientes/cards",
   steps: [
     {
       id: "welcome",

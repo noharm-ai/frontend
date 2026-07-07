@@ -22,6 +22,9 @@
   "training": {
     "start": "Training",
     "startTooltip": "Start a guided training with sample data",
+    "selectModuleTitle": "Choose a training",
+    "selectModuleDescription": "Select the module you want to get to know. All data shown is fictitious.",
+    "launch": "Start",
     "bannerMessage": "Training mode active — you are working with sample data",
     "exit": "Exit training",
     "next": "Next",

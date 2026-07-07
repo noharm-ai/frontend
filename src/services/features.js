@@ -85,10 +85,6 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.MULTI_CLINICAL_NOTES);
   };
 
-  const hasTrainingMode = () => {
-    return hasFeature(Feature.TRAINING_MODE);
-  };
-
   return {
     hasFeature,
     hasMicromedex,
@@ -110,7 +106,6 @@ const FeaturesService = (features) => {
     hasAddExams,
     hasPEC,
     hasMultiClinicalNotes,
-    hasTrainingMode,
   };
 };
 

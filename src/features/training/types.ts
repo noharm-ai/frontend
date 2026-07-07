@@ -62,6 +62,8 @@ export interface Training {
   id: string;
   title: LocalizedText;
   description: LocalizedText;
+  /** Route the app is navigated to before the training starts. */
+  path: string;
   steps: TrainingStep[];
 }
 

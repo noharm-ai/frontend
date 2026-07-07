@@ -22,6 +22,9 @@
   "training": {
     "start": "Treinamento",
     "startTooltip": "Iniciar treinamento guiado com dados fictícios",
+    "selectModuleTitle": "Escolha um treinamento",
+    "selectModuleDescription": "Selecione o módulo que deseja conhecer. Todos os dados exibidos são fictícios.",
+    "launch": "Iniciar",
     "bannerMessage": "Modo treinamento ativo — você está trabalhando com dados fictícios",
     "exit": "Sair do treinamento",
     "next": "Próximo",

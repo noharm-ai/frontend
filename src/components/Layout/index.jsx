@@ -10,6 +10,7 @@ import {
   SwapOutlined,
   WifiOutlined,
   LayoutOutlined,
+  ExperimentOutlined,
 } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
 import { Alert, Dropdown, List, Space } from "antd";
@@ -36,6 +37,7 @@ import Box from "./Box";
 import Menu from "./Menu";
 import { InfoAlert } from "features/notifications/InfoAlert/InfoAlert";
 import { TrainingController } from "features/training/TrainingController/TrainingController";
+import { TrainingModuleModal } from "features/training/TrainingModuleModal/TrainingModuleModal";
 import SearchPrescription from "./SearchPrescription";
 import {
   Wrapper as Main,
@@ -61,6 +63,7 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const [trainingModalOpen, setTrainingModalOpen] = useState(false);
 
   const showAlert = location.pathname.indexOf("priorizacao") !== -1;
 
@@ -91,6 +94,12 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
         icon: <LayoutOutlined />,
       });
     }
+
+    options.push({
+      label: t("training.start"),
+      key: "training",
+      icon: <ExperimentOutlined />,
+    });
 
     options.push({
       label: t("layout.help"),
@@ -134,6 +143,9 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
 
   const onClickUserOptions = ({ key }) => {
     switch (key) {
+      case "training":
+        setTrainingModalOpen(true);
+        break;
       case "help":
         openHelp();
         break;
@@ -232,6 +244,11 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
           </Dropdown>
         </div>
       </Tooltip>
+
+      <TrainingModuleModal
+        open={trainingModalOpen}
+        onClose={() => setTrainingModalOpen(false)}
+      />
     </HeaderContainer>
   );
 };
