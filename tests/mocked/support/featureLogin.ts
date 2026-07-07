@@ -30,7 +30,11 @@ export async function loginWithFeatures(
   await page.getByPlaceholder("Senha").fill("mocked-password");
   await page.getByRole("button", { name: "Acessar" }).click();
 
-  await expect(
-    page.getByRole("heading", { name: "Priorização por Pacientes" }),
-  ).toBeVisible({ timeout: 15000 });
+  // the landing page differs per feature set, so wait for the logged-in
+  // header instead of a specific heading
+  await expect(page.getByText("E2E Test")).toBeVisible({ timeout: 15000 });
+
+  // give redux-persist a beat to flush user.account before navigating
+  // (same as auth.setup.ts), or features are lost on the next page load
+  await page.waitForTimeout(1000);
 }

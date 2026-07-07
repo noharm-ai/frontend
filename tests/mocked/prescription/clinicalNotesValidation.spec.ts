@@ -2,6 +2,7 @@ import { test, expect } from "../support/mockApi";
 import type { MockApi } from "../support/mockApi";
 import { loadFixture } from "../support/defaultHandlers";
 import { loginWithFeatures } from "../support/featureLogin";
+import { openSelect, pickOption } from "../support/antd";
 
 /**
  * Validation behavior of the legacy clinical notes form
@@ -58,8 +59,8 @@ test("clinical note requires notes and notesType when types exist", async ({
   expect(putPrescriptionCalls(mockApi)).toHaveLength(0);
 
   // fill both fields and save
-  await page.getByText("Selecione o tipo de evolução").click();
-  await page.getByRole("option", { name: "Farmácia Clínica" }).click();
+  await openSelect(page.locator(".ant-modal"));
+  await pickOption(page, "Farmácia Clínica");
   await page.locator(".ant-modal textarea").fill("Evolução de teste");
 
   await page.locator(".gtm-bt-save-clinical-notes").click();
@@ -91,9 +92,9 @@ test("clinical note requires conciliation type when prescription has one", async
   await expect(page.getByText("Dipirona 500mg")).toBeVisible();
 
   await page.locator(".gtm-bt-clinical-notes").click();
-  await expect(
-    page.getByText("Selecione o tipo de conciliação"),
-  ).toBeVisible();
+  // concilia === "s" initializes the select with an empty value, so assert
+  // on the field label rather than a placeholder
+  await expect(page.locator(".ant-modal").getByText("Tipo:")).toBeVisible();
 
   // submit empty: concilia + notes blocked
   await page.locator(".gtm-bt-save-clinical-notes").click();
@@ -101,8 +102,8 @@ test("clinical note requires conciliation type when prescription has one", async
   expect(putPrescriptionCalls(mockApi)).toHaveLength(0);
 
   // fill both fields and save
-  await page.getByText("Selecione o tipo de conciliação").click();
-  await page.getByRole("option", { name: "Admissão" }).click();
+  await openSelect(page.locator(".ant-modal"));
+  await pickOption(page, "Admissão");
   await page.locator(".ant-modal textarea").fill("Conciliação de teste");
 
   await page.locator(".gtm-bt-save-clinical-notes").click();
@@ -123,6 +124,13 @@ test.describe("schedule flow (PRIMARYCARE)", () => {
 
   test("schedule requires a date", async ({ page, mockApi }) => {
     mockApi.override("POST /notes", { json: { status: "success", data: {} } });
+    // the PRIMARYCARE prioritization page fetches these on login
+    mockApi.override("GET /segments/departments", {
+      json: { status: "success", data: [] },
+    });
+    mockApi.override("POST /patient/list", {
+      json: { status: "success", data: [] },
+    });
 
     await loginWithFeatures(page, mockApi, ["PRIMARYCARE"]);
 
@@ -155,8 +163,14 @@ test.describe("schedule flow (PRIMARYCARE)", () => {
       tomorrow.getMonth() + 1,
     )}/${tomorrow.getFullYear()} 10:00`;
 
+    // confirm via the picker's OK button: the form is a native <form>, so
+    // pressing Enter would trigger a native submit and reload the page
     await page.locator(".ant-modal .ant-picker input").fill(dateText);
-    await page.keyboard.press("Enter");
+    await page
+      .locator(
+        ".ant-picker-dropdown:not(.ant-picker-dropdown-hidden) .ant-picker-ok button",
+      )
+      .click();
 
     await page.locator(".gtm-bt-save-clinical-notes").click();
     await expect(

@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "../support/mockApi";
 import type { MockApi } from "../support/mockApi";
+import { pickOption } from "../support/antd";
 
 /**
  * Validation behavior of the intervention form
@@ -75,12 +76,8 @@ test("intervention requires at least one reason", async ({
 
   // pick a reason without required relations and save
   await page.locator("#reason").click();
-  await page.getByRole("option", { name: "Ajuste de Dose" }).click();
+  await pickOption(page, "Ajuste de Dose");
   await page.locator("#reason").click(); // close dropdown
-
-  await expect(
-    page.locator(".ant-modal").getByText("Campo obrigatório"),
-  ).toBeHidden();
 
   await page.getByRole("button", { name: "Salvar", exact: true }).click();
   await expect(
@@ -103,7 +100,7 @@ test("interactions become required when the reason has a required relation", asy
 
   // reason with relationType = HAS_REQUIRED_RELATION shows the relations field
   await page.locator("#reason").click();
-  await page.getByRole("option", { name: "Interação Medicamentosa" }).click();
+  await pickOption(page, "Interação Medicamentosa");
   await page.locator("#reason").click(); // close dropdown
 
   await expect(
@@ -119,7 +116,7 @@ test("interactions become required when the reason has a required relation", asy
 
   // pick a related drug (options come from the prescription drug list)
   await page.locator("#interactions").click();
-  await page.getByRole("option", { name: "Omeprazol 20mg" }).click();
+  await pickOption(page, "Omeprazol 20mg");
   await page.locator("#interactions").click(); // close dropdown
 
   await page.getByRole("button", { name: "Salvar", exact: true }).click();

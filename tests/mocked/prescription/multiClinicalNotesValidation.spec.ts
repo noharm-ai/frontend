@@ -2,6 +2,7 @@ import { test, expect } from "../support/mockApi";
 import type { MockApi } from "../support/mockApi";
 import { loadFixture } from "../support/defaultHandlers";
 import { loginWithFeatures } from "../support/featureLogin";
+import { openSelect, pickOption } from "../support/antd";
 
 /**
  * Validation behavior of the multi clinical notes form
@@ -58,7 +59,7 @@ test("multi clinical note requires notes and notesType when types exist", async 
 
   // opening the list with no existing notes auto-opens the form
   await page.locator(".gtm-bt-clinical-notes").click();
-  await expect(page.getByText("Nova Evolução")).toBeVisible();
+  await expect(page.locator("h2.modal-title")).toHaveText("Nova Evolução");
   await expect(
     page.getByText("Selecione o tipo de evolução"),
   ).toBeVisible();
@@ -69,8 +70,8 @@ test("multi clinical note requires notes and notesType when types exist", async 
   expect(upsertCalls(mockApi)).toHaveLength(0);
 
   // fill both fields and save
-  await page.getByText("Selecione o tipo de evolução").click();
-  await page.getByRole("option", { name: "Farmácia Clínica" }).click();
+  await openSelect(page.locator(".ant-modal-wrap:not([style*='none'])"));
+  await pickOption(page, "Farmácia Clínica");
   await page.locator("textarea").fill("Evolução de teste");
 
   await page.locator(".gtm-bt-save-clinical-notes-multi").click();
@@ -101,10 +102,7 @@ test("multi clinical note requires conciliation type when prescription has one",
   await expect(page.getByText("Dipirona 500mg")).toBeVisible();
 
   await page.locator(".gtm-bt-clinical-notes").click();
-  await expect(page.getByText("Nova Evolução")).toBeVisible();
-  await expect(
-    page.getByText("Selecione o tipo de conciliação"),
-  ).toBeVisible();
+  await expect(page.locator("h2.modal-title")).toHaveText("Nova Evolução");
 
   // submit empty: concilia + notes blocked
   await page.locator(".gtm-bt-save-clinical-notes-multi").click();
@@ -112,8 +110,8 @@ test("multi clinical note requires conciliation type when prescription has one",
   expect(upsertCalls(mockApi)).toHaveLength(0);
 
   // fill both fields and save
-  await page.getByText("Selecione o tipo de conciliação").click();
-  await page.getByRole("option", { name: "Alta" }).click();
+  await openSelect(page.locator(".ant-modal-wrap:not([style*='none'])"));
+  await pickOption(page, "Alta");
   await page.locator("textarea").fill("Conciliação de teste");
 
   await page.locator(".gtm-bt-save-clinical-notes-multi").click();
