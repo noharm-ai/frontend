@@ -93,34 +93,51 @@ export function TrainingPlayer() {
 
   return (
     <>
-      <PageHeader>
-        <div>
-          <Eyebrow>
-            {t("trainingPlayer.moduleLessonLabel", {
-              module: moduleName,
-              lesson: currentStep + 1,
-              total: sortedItems.length,
-            })}
-          </Eyebrow>
-          <h1 className="page-header-title">{currentItem.title}</h1>
-          <MetaRow>
-            {currentItem.video && (
-              <span>
-                <VideoCameraOutlined />
-                {t("trainingPlayer.videoLabel")}
-              </span>
-            )}
-            <span>
-              <FileTextOutlined />
-              {hasQuiz
-                ? t("trainingPlayer.readingAndQuizLabel")
-                : t("trainingPlayer.readingLabel")}
-            </span>
-          </MetaRow>
-        </div>
-      </PageHeader>
+      <Row gutter={24} justify="center">
+        <Col xs={7} />
 
-      <Row gutter={24}>
+        <Col xs={17}>
+          <PageHeader>
+            <div>
+              <Eyebrow>
+                {t("trainingPlayer.moduleLessonLabel", {
+                  module: moduleName,
+                  lesson: currentStep + 1,
+                  total: sortedItems.length,
+                })}
+              </Eyebrow>
+              <h1 className="page-header-title">{currentItem.title}</h1>
+              <MetaRow>
+                {currentItem.video && (
+                  <span>
+                    <VideoCameraOutlined />
+                    {t("trainingPlayer.videoLabel")}
+                  </span>
+                )}
+                <span>
+                  <FileTextOutlined />
+                  {hasQuiz
+                    ? t("trainingPlayer.readingAndQuizLabel")
+                    : t("trainingPlayer.readingLabel")}
+                </span>
+              </MetaRow>
+            </div>
+          </PageHeader>
+        </Col>
+      </Row>
+
+      <Row gutter={24} justify="center">
+        <Col xs={7}>
+          <StepsPanel>
+            <Steps
+              current={currentStep}
+              size="small"
+              orientation="vertical"
+              items={sortedItems.map((item) => ({ title: item.title }))}
+            />
+          </StepsPanel>
+        </Col>
+
         <Col xs={17}>
           <ItemContent>
             {currentItem.video && (
@@ -180,17 +197,6 @@ export function TrainingPlayer() {
                 : t("trainingPlayer.markCompleted")}
             </Button>
           </FooterRow>
-        </Col>
-
-        <Col xs={7}>
-          <StepsPanel>
-            <Steps
-              current={currentStep}
-              size="small"
-              orientation="vertical"
-              items={sortedItems.map((item) => ({ title: item.title }))}
-            />
-          </StepsPanel>
         </Col>
       </Row>
     </>

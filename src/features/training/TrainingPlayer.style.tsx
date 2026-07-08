@@ -34,6 +34,8 @@ export const MetaRow = styled.div`
 `;
 
 export const ItemContent = styled.div`
+  max-width: 820px;
+
   .item-text {
     p {
       color: ${colors.text};
