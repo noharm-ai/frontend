@@ -1054,8 +1054,23 @@
     "previous": "Previous",
     "next": "Next",
     "finish": "Finish",
+    "markCompleted": "Mark as completed",
     "completed": "Congratulations! You completed this module.",
+    "moduleLessonLabel": "Module {{module}} · Lesson {{lesson}} of {{total}}",
+    "lessonProgress": "Lesson {{lesson}} of {{total}}",
+    "videoLabel": "Video",
+    "readingLabel": "Reading",
+    "readingAndQuizLabel": "Reading and quiz",
+    "quizTitle": "Check your understanding",
+    "questionProgress": "{{current}} of {{total}}",
+    "verifyAnswer": "Check answer",
+    "nextQuestion": "Next question",
+    "quizPassed": "Quiz completed! You can move on now.",
     "answerCorrect": "Correct answer!",
-    "answerIncorrect": "Incorrect answer. Try again."
+    "answerIncorrect": "Incorrect answer. Try again.",
+    "videoCoverBrand": "NoHarm Training — Module {{module}}",
+    "videoCoverOrg": "NoHarm.ai",
+    "videoCoverTitle": "Training",
+    "videoCoverModule": "Module {{module}}"
   }
 }

@@ -2,6 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { Row, Col } from "antd";
+import DOMPurify from "dompurify";
+import {
+  LeftOutlined,
+  ArrowRightOutlined,
+  VideoCameraOutlined,
+  FileTextOutlined,
+} from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
@@ -14,7 +21,14 @@ import { PageHeader } from "styles/PageHeader.style";
 import { fetchTrainingItems } from "./TrainingPlayerSlice";
 import { TrainingItemQuiz } from "./TrainingItemQuiz";
 import { YoutubeEmbed } from "./YoutubeEmbed";
-import { ItemContent, FooterRow, StepsPanel } from "./TrainingPlayer.style";
+import {
+  ItemContent,
+  FooterRow,
+  FooterProgress,
+  StepsPanel,
+  Eyebrow,
+  MetaRow,
+} from "./TrainingPlayer.style";
 
 export function TrainingPlayer() {
   const { t } = useTranslation();
@@ -28,9 +42,6 @@ export function TrainingPlayer() {
   const [passedByItem, setPassedByItem] = useState<Record<number, boolean>>(
     {},
   );
-  const [revealedQuizByItem, setRevealedQuizByItem] = useState<
-    Record<number, boolean>
-  >({});
 
   useEffect(() => {
     dispatch(fetchTrainingItems(params.id)).then((response: any) => {
@@ -51,7 +62,6 @@ export function TrainingPlayer() {
   const isLastStep = currentStep === sortedItems.length - 1;
   const hasQuiz = Boolean(currentItem?.questions?.length);
   const passed = Boolean(passedByItem[currentItem?.id]);
-  const showQuiz = hasQuiz && Boolean(revealedQuizByItem[currentItem?.id]);
 
   if (status === "loading" || !currentItem) {
     return <LoadBox />;
@@ -62,11 +72,6 @@ export function TrainingPlayer() {
   };
 
   const goToNext = () => {
-    if (hasQuiz && !passed) {
-      setRevealedQuizByItem((prev) => ({ ...prev, [currentItem.id]: true }));
-      return;
-    }
-
     if (isLastStep) {
       notification.success({ message: t("trainingPlayer.completed") });
       navigate("/treinamento");
@@ -79,7 +84,28 @@ export function TrainingPlayer() {
     <>
       <PageHeader>
         <div>
+          <Eyebrow>
+            {t("trainingPlayer.moduleLessonLabel", {
+              module: currentItem.trainingId,
+              lesson: currentStep + 1,
+              total: sortedItems.length,
+            })}
+          </Eyebrow>
           <h1 className="page-header-title">{currentItem.title}</h1>
+          <MetaRow>
+            {currentItem.video && (
+              <span>
+                <VideoCameraOutlined />
+                {t("trainingPlayer.videoLabel")}
+              </span>
+            )}
+            <span>
+              <FileTextOutlined />
+              {hasQuiz
+                ? t("trainingPlayer.readingAndQuizLabel")
+                : t("trainingPlayer.readingLabel")}
+            </span>
+          </MetaRow>
         </div>
       </PageHeader>
 
@@ -87,19 +113,21 @@ export function TrainingPlayer() {
         <Col xs={17}>
           <ItemContent>
             {currentItem.video && (
-              <YoutubeEmbed url={currentItem.video} title={currentItem.title} />
+              <YoutubeEmbed
+                url={currentItem.video}
+                title={currentItem.title}
+                trainingId={currentItem.trainingId}
+              />
             )}
 
-            <div className="item-text">
-              {currentItem.text
-                .split("\n")
-                .filter((line) => line.trim().length > 0)
-                .map((line, index) => (
-                  <p key={index}>{line}</p>
-                ))}
-            </div>
+            <div
+              className="item-text"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(currentItem.text),
+              }}
+            />
 
-            {showQuiz && (
+            {hasQuiz && (
               <TrainingItemQuiz
                 key={currentItem.id}
                 questions={currentItem.questions!}
@@ -114,13 +142,31 @@ export function TrainingPlayer() {
           </ItemContent>
 
           <FooterRow>
-            <Button onClick={goToPrevious} disabled={currentStep === 0}>
+            <Button
+              icon={<LeftOutlined />}
+              onClick={goToPrevious}
+              disabled={currentStep === 0}
+            >
               {t("trainingPlayer.previous")}
             </Button>
-            <Button type="primary" onClick={goToNext}>
+
+            <FooterProgress>
+              {t("trainingPlayer.lessonProgress", {
+                lesson: currentStep + 1,
+                total: sortedItems.length,
+              })}
+            </FooterProgress>
+
+            <Button
+              type="primary"
+              icon={<ArrowRightOutlined />}
+              iconPosition="end"
+              onClick={goToNext}
+              disabled={hasQuiz && !passed}
+            >
               {isLastStep
                 ? t("trainingPlayer.finish")
-                : t("trainingPlayer.next")}
+                : t("trainingPlayer.markCompleted")}
             </Button>
           </FooterRow>
         </Col>

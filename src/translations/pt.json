@@ -1064,8 +1064,23 @@
     "previous": "Anterior",
     "next": "Próximo",
     "finish": "Concluir",
+    "markCompleted": "Marcar como concluída",
     "completed": "Parabéns! Você concluiu este módulo.",
+    "moduleLessonLabel": "Módulo {{module}} · Aula {{lesson}} de {{total}}",
+    "lessonProgress": "Aula {{lesson}} de {{total}}",
+    "videoLabel": "Vídeo",
+    "readingLabel": "Leitura",
+    "readingAndQuizLabel": "Leitura e quiz",
+    "quizTitle": "Verifique seu aprendizado",
+    "questionProgress": "{{current}} de {{total}}",
+    "verifyAnswer": "Verificar resposta",
+    "nextQuestion": "Próxima pergunta",
+    "quizPassed": "Quiz concluído! Você já pode avançar.",
     "answerCorrect": "Resposta correta!",
-    "answerIncorrect": "Resposta incorreta. Tente novamente."
+    "answerIncorrect": "Resposta incorreta. Tente novamente.",
+    "videoCoverBrand": "Treinamento NoHarm — Módulo {{module}}",
+    "videoCoverOrg": "NoHarm.ai",
+    "videoCoverTitle": "Treinamento",
+    "videoCoverModule": "Módulo {{module}}"
   }
 }

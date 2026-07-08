@@ -1,10 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
-import { Radio } from "components/Inputs";
+import Button from "components/Button";
 
 import { ITrainingQuestion } from "./TrainingPlayerSlice";
-import { QuizContainer, QuestionBlock, AnswerFeedback } from "./TrainingPlayer.style";
+import {
+  QuizCard,
+  QuizHeader,
+  QuestionText,
+  AnswerRadio,
+  AnswerFeedback,
+  QuizActions,
+} from "./TrainingPlayer.style";
 
 interface TrainingItemQuizProps {
   questions: ITrainingQuestion[];
@@ -16,62 +24,92 @@ export function TrainingItemQuiz({
   onPassedChange,
 }: TrainingItemQuizProps) {
   const { t } = useTranslation();
-  const [selectedAnswers, setSelectedAnswers] = useState<
-    Record<number, number>
-  >({});
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [selected, setSelected] = useState<number>();
+  const [verified, setVerified] = useState(false);
 
-  const isQuestionCorrect = (questionIndex: number) => {
-    const selected = selectedAnswers[questionIndex];
+  const question = questions[questionIndex];
+  const isLastQuestion = questionIndex === questions.length - 1;
+  const isCorrect = selected !== undefined && question.answers[selected].correct;
 
-    return (
-      selected !== undefined &&
-      questions[questionIndex].answers[selected].correct
-    );
+  const handleSelect = (value: number) => {
+    setSelected(value);
+    setVerified(false);
   };
 
-  useEffect(() => {
-    const passed = questions.every((_, index) => isQuestionCorrect(index));
+  const handleVerify = () => {
+    setVerified(true);
 
-    onPassedChange(passed);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAnswers, questions]);
+    if (isCorrect && isLastQuestion) {
+      onPassedChange(true);
+    }
+  };
+
+  const handleNextQuestion = () => {
+    setQuestionIndex((index) => index + 1);
+    setSelected(undefined);
+    setVerified(false);
+  };
 
   return (
-    <QuizContainer>
-      {questions.map((question, questionIndex) => {
-        const selected = selectedAnswers[questionIndex];
-        const answeredCorrectly = isQuestionCorrect(questionIndex);
+    <QuizCard>
+      <QuizHeader>
+        <span className="quiz-title">
+          <QuestionCircleOutlined />
+          {t("trainingPlayer.quizTitle")}
+        </span>
+        <span className="quiz-progress">
+          {t("trainingPlayer.questionProgress", {
+            current: questionIndex + 1,
+            total: questions.length,
+          })}
+        </span>
+      </QuizHeader>
 
-        return (
-          <QuestionBlock key={questionIndex}>
-            <strong>{question.question}</strong>
+      <QuestionText>{question.question}</QuestionText>
 
-            <Radio.Group
-              value={selected}
-              onChange={(e) =>
-                setSelectedAnswers((prev) => ({
-                  ...prev,
-                  [questionIndex]: e.target.value,
-                }))
-              }
-            >
-              {question.answers.map((answer, answerIndex) => (
-                <Radio key={answerIndex} value={answerIndex}>
-                  {answer.text}
-                </Radio>
-              ))}
-            </Radio.Group>
+      {question.answers.map((answer, answerIndex) => (
+        <AnswerRadio
+          key={answerIndex}
+          checked={selected === answerIndex}
+          disabled={verified && isCorrect}
+          onChange={() => handleSelect(answerIndex)}
+        >
+          {answer.text}
+        </AnswerRadio>
+      ))}
 
-            {selected !== undefined && (
-              <AnswerFeedback $correct={answeredCorrectly}>
-                {answeredCorrectly
-                  ? t("trainingPlayer.answerCorrect")
-                  : t("trainingPlayer.answerIncorrect")}
-              </AnswerFeedback>
-            )}
-          </QuestionBlock>
-        );
-      })}
-    </QuizContainer>
+      {verified && (
+        <AnswerFeedback $correct={isCorrect}>
+          {isCorrect
+            ? t("trainingPlayer.answerCorrect")
+            : t("trainingPlayer.answerIncorrect")}
+        </AnswerFeedback>
+      )}
+
+      <QuizActions>
+        {!verified && (
+          <Button
+            type="primary"
+            disabled={selected === undefined}
+            onClick={handleVerify}
+          >
+            {t("trainingPlayer.verifyAnswer")}
+          </Button>
+        )}
+
+        {verified && isCorrect && !isLastQuestion && (
+          <Button type="primary" onClick={handleNextQuestion}>
+            {t("trainingPlayer.nextQuestion")}
+          </Button>
+        )}
+
+        {verified && isCorrect && isLastQuestion && (
+          <AnswerFeedback $correct>
+            {t("trainingPlayer.quizPassed")}
+          </AnswerFeedback>
+        )}
+      </QuizActions>
+    </QuizCard>
   );
 }
