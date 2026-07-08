@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
 import Button from "components/Button";
 import Steps from "components/Steps";
+import Progress from "components/Progress";
 import LoadBox from "components/LoadBox";
 import { getErrorMessage } from "utils/errorHandler";
 import { PageHeader } from "styles/PageHeader.style";
@@ -29,6 +30,9 @@ import {
   StepsPanel,
   Eyebrow,
   MetaRow,
+  ModuleTitle,
+  ProgressLabel,
+  BackRow,
 } from "./TrainingPlayer.style";
 
 export function TrainingPlayer() {
@@ -73,6 +77,9 @@ export function TrainingPlayer() {
   const isLastStep = currentStep === sortedItems.length - 1;
   const hasQuiz = Boolean(currentItem?.questions?.length);
   const passed = Boolean(passedByItem[currentItem?.id]);
+  const progressPercent = sortedItems.length
+    ? Math.round((currentStep / sortedItems.length) * 100)
+    : 0;
 
   if (status === "loading" || !currentItem) {
     return <LoadBox />;
@@ -93,8 +100,35 @@ export function TrainingPlayer() {
 
   return (
     <>
-      <Row gutter={24} justify="center">
-        <Col xs={7} />
+      <Row gutter={24} justify="center" align="stretch">
+        <Col xs={7}>
+          <StepsPanel>
+            <BackRow>
+              <Button
+                type="text"
+                icon={<LeftOutlined />}
+                onClick={() => navigate("/treinamento")}
+              >
+                {t("trainingPlayer.backToCentral")}
+              </Button>
+            </BackRow>
+
+            <ModuleTitle>{moduleName}</ModuleTitle>
+            <Progress percent={progressPercent} size="small" />
+            <ProgressLabel>
+              {t("trainingPlayer.overallProgress", {
+                percent: progressPercent,
+              })}
+            </ProgressLabel>
+
+            <Steps
+              current={currentStep}
+              size="small"
+              orientation="vertical"
+              items={sortedItems.map((item) => ({ title: item.title }))}
+            />
+          </StepsPanel>
+        </Col>
 
         <Col xs={17}>
           <PageHeader>
@@ -123,22 +157,7 @@ export function TrainingPlayer() {
               </MetaRow>
             </div>
           </PageHeader>
-        </Col>
-      </Row>
 
-      <Row gutter={24} justify="center">
-        <Col xs={7}>
-          <StepsPanel>
-            <Steps
-              current={currentStep}
-              size="small"
-              orientation="vertical"
-              items={sortedItems.map((item) => ({ title: item.title }))}
-            />
-          </StepsPanel>
-        </Col>
-
-        <Col xs={17}>
           <ItemContent>
             {currentItem.video && (
               <YoutubeEmbed

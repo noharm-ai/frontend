@@ -4,9 +4,40 @@ import colors from "styles/colors";
 import { Radio } from "components/Inputs";
 
 export const StepsPanel = styled.div`
+  height: 100%;
   background: ${colors.commonLighter};
   border-radius: 8px;
   padding: 20px;
+`;
+
+export const BackRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+
+  .ant-btn {
+    padding: 0;
+    height: auto;
+    color: ${colors.text};
+    font-size: 0.8125rem;
+
+    &:hover {
+      color: ${colors.accentSecondary};
+    }
+  }
+`;
+
+export const ModuleTitle = styled.div`
+  color: ${colors.primary};
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+`;
+
+export const ProgressLabel = styled.div`
+  color: ${colors.text};
+  font-size: 0.8125rem;
+  margin: 6px 0 20px 0;
 `;
 
 export const Eyebrow = styled.div`

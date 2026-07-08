@@ -1058,6 +1058,8 @@
     "completed": "Congratulations! You completed this module.",
     "moduleLessonLabel": "Module {{module}} · Lesson {{lesson}} of {{total}}",
     "lessonProgress": "Lesson {{lesson}} of {{total}}",
+    "overallProgress": "{{percent}}% completed",
+    "backToCentral": "Training Central",
     "videoLabel": "Video",
     "readingLabel": "Reading",
     "readingAndQuizLabel": "Reading and quiz",
