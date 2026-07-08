@@ -23,10 +23,10 @@ const getEmbedUrl = (url: string): string => {
 interface YoutubeEmbedProps {
   url: string;
   title: string;
-  trainingId: number;
+  moduleName: string | number;
 }
 
-export function YoutubeEmbed({ url, title, trainingId }: YoutubeEmbedProps) {
+export function YoutubeEmbed({ url, title, moduleName }: YoutubeEmbedProps) {
   const { t } = useTranslation();
   const [started, setStarted] = useState(false);
 
@@ -40,7 +40,7 @@ export function YoutubeEmbed({ url, title, trainingId }: YoutubeEmbedProps) {
             <span className="avatar" />
             <div>
               <strong>
-                {t("trainingPlayer.videoCoverBrand", { module: trainingId })}
+                {t("trainingPlayer.videoCoverBrand", { module: moduleName })}
               </strong>
               <span>{t("trainingPlayer.videoCoverOrg")}</span>
             </div>
@@ -53,7 +53,7 @@ export function YoutubeEmbed({ url, title, trainingId }: YoutubeEmbedProps) {
           <CoverTitle>
             <span>{t("trainingPlayer.videoCoverTitle")}</span>
             <span>
-              {t("trainingPlayer.videoCoverModule", { module: trainingId })}
+              {t("trainingPlayer.videoCoverModule", { module: moduleName })}
             </span>
           </CoverTitle>
         </VideoCover>

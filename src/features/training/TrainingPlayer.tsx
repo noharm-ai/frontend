@@ -19,6 +19,7 @@ import { getErrorMessage } from "utils/errorHandler";
 import { PageHeader } from "styles/PageHeader.style";
 
 import { fetchTrainingItems } from "./TrainingPlayerSlice";
+import { fetchTrainingList } from "./TrainingCentralSlice";
 import { TrainingItemQuiz } from "./TrainingItemQuiz";
 import { YoutubeEmbed } from "./YoutubeEmbed";
 import {
@@ -37,6 +38,7 @@ export function TrainingPlayer() {
   const dispatch = useAppDispatch();
   const list = useAppSelector((state) => state.trainingPlayer.list);
   const status = useAppSelector((state) => state.trainingPlayer.status);
+  const moduleList = useAppSelector((state) => state.trainingCentral.list);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [passedByItem, setPassedByItem] = useState<Record<number, boolean>>(
@@ -53,12 +55,21 @@ export function TrainingPlayer() {
     });
   }, [dispatch, t, params.id]);
 
+  useEffect(() => {
+    if (!moduleList.length) {
+      dispatch(fetchTrainingList({}));
+    }
+  }, [dispatch, moduleList.length]);
+
   const sortedItems = useMemo(
     () => [...list].sort((a, b) => a.position - b.position),
     [list],
   );
 
   const currentItem = sortedItems[currentStep];
+  const moduleName =
+    moduleList.find((module) => module.id === currentItem?.trainingId)
+      ?.title ?? currentItem?.trainingId;
   const isLastStep = currentStep === sortedItems.length - 1;
   const hasQuiz = Boolean(currentItem?.questions?.length);
   const passed = Boolean(passedByItem[currentItem?.id]);
@@ -86,7 +97,7 @@ export function TrainingPlayer() {
         <div>
           <Eyebrow>
             {t("trainingPlayer.moduleLessonLabel", {
-              module: currentItem.trainingId,
+              module: moduleName,
               lesson: currentStep + 1,
               total: sortedItems.length,
             })}
@@ -116,7 +127,7 @@ export function TrainingPlayer() {
               <YoutubeEmbed
                 url={currentItem.video}
                 title={currentItem.title}
-                trainingId={currentItem.trainingId}
+                moduleName={moduleName}
               />
             )}
 
