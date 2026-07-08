@@ -332,7 +332,7 @@ export default function Filter({
 
   const hiddenFieldCount = countHiddenFilters(filter);
   return (
-    <FilterCard>
+    <FilterCard className="filter-card">
       <SearchBox className={open ? "open" : ""}>
         <Row gutter={[16, 24]} type="flex">
           <Col xs={24} md={8}>
@@ -433,16 +433,18 @@ export default function Filter({
                   loading={isFetchingPrescription}
                 />
               </Tooltip>
-              <FilterMemory
-                fetchMemory={fetchMemory}
-                account={account}
-                publicFilters={publicFilters}
-                privateFilters={privateFilters}
-                saveMemory={saveMemory}
-                filter={filter}
-                setScreeningListFilter={setScreeningListFilter}
-                loadFilter={loadFilter}
-              />
+              <div className="memory-filters">
+                <FilterMemory
+                  fetchMemory={fetchMemory}
+                  account={account}
+                  publicFilters={publicFilters}
+                  privateFilters={privateFilters}
+                  saveMemory={saveMemory}
+                  filter={filter}
+                  setScreeningListFilter={setScreeningListFilter}
+                  loadFilter={loadFilter}
+                />
+              </div>
             </div>
           </Col>
         </Row>

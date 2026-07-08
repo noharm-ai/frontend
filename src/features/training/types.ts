@@ -37,7 +37,19 @@ export type StepCompletion =
       type: "tracker";
       event: string;
       when?: (details: Record<string, any>) => boolean;
+    }
+  | {
+      /** Completed when the antd Tour rendered from `TrainingStep.tour` is finished. */
+      type: "tour";
     };
+
+/** One stop of a `TrainingStep.tour`, rendered as an antd Tour.Step. */
+export interface TourStop {
+  title: LocalizedText;
+  description?: LocalizedText;
+  /** CSS selector of the element this tour stop points at. */
+  target: string;
+}
 
 export interface TrainingStep {
   id: string;
@@ -46,6 +58,12 @@ export interface TrainingStep {
   hint?: LocalizedText;
   /** CSS selector of the element highlighted while this step is active. */
   target?: string;
+  /**
+   * Renders an antd Tour walking through several page elements. Requires
+   * `completeOn: { type: "tour" }` — the step completes once the user
+   * reaches the tour's last stop.
+   */
+  tour?: TourStop[];
   /**
    * Omit for informational steps: the panel shows a "Next" button instead of
    * waiting for a condition.

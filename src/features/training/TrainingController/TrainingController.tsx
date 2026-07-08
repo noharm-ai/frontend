@@ -1,9 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Tour } from "antd";
 
 import { onTrainingEvent } from "../eventBus";
 import { getTraining } from "../trainings";
-import { advanceStep, trainingTrackerEvent } from "../TrainingSlice";
+import {
+  advanceStep,
+  stepCompleted,
+  trainingTrackerEvent,
+} from "../TrainingSlice";
+import { localize } from "../types";
 import { TrainingBanner } from "../TrainingBanner/TrainingBanner";
 import { TrainingPanel } from "../TrainingPanel/TrainingPanel";
 import {
@@ -28,6 +34,16 @@ export function TrainingController() {
   const training = getTraining(trainingId);
   const step = status === "active" ? training?.steps[stepIndex] : undefined;
   const target = step?.target;
+  const tourStops = step?.completeOn?.type === "tour" ? step.tour : undefined;
+
+  // restart at the first stop whenever a new tour step becomes active
+  // (adjusting state during render instead of an effect, per React docs)
+  const [tourCurrent, setTourCurrent] = useState(0);
+  const [tourStepId, setTourStepId] = useState(step?.id);
+  if (step?.id !== tourStepId) {
+    setTourStepId(step?.id);
+    setTourCurrent(0);
+  }
 
   useEffect(() => {
     if (status !== "active") {
@@ -67,6 +83,22 @@ export function TrainingController() {
       <TrainingHighlightStyle />
       <TrainingBanner />
       <TrainingFrame aria-hidden="true" />
+      {tourStops && !stepJustCompleted && (
+        <Tour
+          open
+          current={tourCurrent}
+          onChange={setTourCurrent}
+          closeIcon={false}
+          onClose={() => dispatch(stepCompleted())}
+          steps={tourStops.map((stop) => ({
+            title: localize(stop.title),
+            description: stop.description
+              ? localize(stop.description)
+              : undefined,
+            target: () => document.querySelector(stop.target) as HTMLElement,
+          }))}
+        />
+      )}
       <TrainingPanel />
     </>
   );

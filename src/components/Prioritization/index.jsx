@@ -201,7 +201,7 @@ export default function Prioritization({
       <Row align="middle">
         <Col span={24} md={10}>
           <header>
-            <Heading>Priorização por Pacientes</Heading>
+            <Heading className="page-title">Priorização por Pacientes</Heading>
           </header>
         </Col>
         <Col span={24} md={24 - 10} style={{ textAlign: "right" }}>

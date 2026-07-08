@@ -31,14 +31,105 @@ export const prioritizationBasics: Training = {
       },
     },
     {
+      id: "page-tour",
+      title: {
+        pt: "Conheça a tela",
+        en: "Get to know the page",
+      },
+      instruction: {
+        pt: "Vamos fazer um tour rápido pelos principais elementos da tela. Use os botões do tour para avançar.",
+        en: "Let's take a quick tour of the page's main elements. Use the tour's buttons to move forward.",
+      },
+      completeOn: { type: "tour" },
+      tour: [
+        {
+          title: {
+            pt: "Priorização por Pacientes",
+            en: "Patient Prioritization",
+          },
+          description: {
+            pt: "A tela de priorização por pacientes auxilia na priorização dos pacientes.",
+            en: "The patient prioritization screen helps prioritize patients that need clinical attention.",
+          },
+          target: ".page-title",
+        },
+        {
+          title: {
+            pt: "Filtros",
+            en: "Filters",
+          },
+          description: {
+            pt: "Aqui você define os filtros para buscar os pacientes.",
+            en: "Here you set the criteria used to load and sort the patient list.",
+          },
+          target: ".filter-card",
+        },
+        {
+          title: {
+            pt: "Mais filtros",
+            en: "More filters",
+          },
+          description: {
+            pt: "Clicando em Ver mais você tem acesso a mais filtros para refinar sua busca.",
+            en: "By clicking More filters you can access more filters to refine your search.",
+          },
+          target: ".gtm-btn-adv-search",
+        },
+        {
+          title: {
+            pt: "Salvar filtros",
+            en: "Save filters",
+          },
+          description: {
+            pt: "Selecione os filtros desejados e clique em Salvar filtros para aplicar. Ou carregue uma filtragem salva anteriormente.",
+            en: "Select the desired filters and click Save filters to apply. Or load previously saved filtering.",
+          },
+          target: ".memory-filters",
+        },
+        {
+          title: {
+            pt: "Priorizar por",
+            en: "Priorizar por",
+          },
+          description: {
+            pt: "Escolha o critério de prioridade clínica usado para ordenar os pacientes.",
+            en: "Choose the clinical priority criteria used to sort patients.",
+          },
+          target: ".prioritization-select",
+        },
+        {
+          title: {
+            pt: "Busca local",
+            en: "Local search",
+          },
+          description: {
+            pt: "Busca pelo nome do paciente ou número de atendimento. Esta busca é aplicada somente aos pacientes desta busca limitada em 500 registros.",
+            en: "Search for a patient by name or admission number. This search applies only to the patients returned by the current filter, up to a maximum of 500 results.",
+          },
+          target: ".search-input",
+        },
+        {
+          title: {
+            pt: "Lista de pacientes",
+            en: "Patient list",
+          },
+          description: {
+            pt: "Cada cartão representa a visão de um paciente em um dia. As abas mostram mais indicadores, anotações e marcadores definidos para este paciente.",
+            en: "Each card represents a patient on a given day. The tabs show additional indicators, notes, and markers defined for this patient.",
+          },
+          target: ".grid div",
+        },
+      ],
+    },
+    {
       id: "change-order",
       title: {
         pt: "Altere a ordem da lista",
         en: "Change the list order",
       },
       instruction: {
-        pt: "A lista é ordenada pelo critério escolhido em \"Priorizar por\". Clique no botão de seta ao lado dele para inverter a ordem dos pacientes.",
-        en: "The list is sorted by the criteria chosen in \"Priorizar por\". Click the arrow button next to it to reverse the patient order.",
+        pt: 'A lista é ordenada pelo critério escolhido em "Priorizar por". Clique no botão de seta ao lado dele para inverter a ordem dos pacientes.',
+        en: 'The list is sorted by the criteria chosen in "Priorizar por". Click the arrow button next to it to reverse the patient order.',
       },
       target: ".gtm-btn-change-order",
       completeOn: {
@@ -53,8 +144,8 @@ export const prioritizationBasics: Training = {
         en: "Filter pending prescriptions",
       },
       instruction: {
-        pt: "No campo \"Situação\", selecione \"Pendentes\" para ver apenas os pacientes que ainda não foram checados.",
-        en: "In the \"Situação\" field, select \"Pendentes\" to see only patients that have not been checked yet.",
+        pt: 'No campo "Situação", selecione "Pendentes" para ver apenas os pacientes que ainda não foram checados.',
+        en: 'In the "Situação" field, select "Pendentes" to see only patients that have not been checked yet.',
       },
       target: ".prioritization-status-select",
       completeOn: {
@@ -74,8 +165,8 @@ export const prioritizationBasics: Training = {
         en: "Use the search field to find a patient by name or admission number.",
       },
       hint: {
-        pt: "Digite \"Paciente Treinamento 1\" (a busca é acionada a partir de 4 caracteres).",
-        en: "Type \"Paciente Treinamento 1\" (the search kicks in after 4 characters).",
+        pt: 'Digite "Paciente Treinamento 1" (a busca é acionada a partir de 4 caracteres).',
+        en: 'Type "Paciente Treinamento 1" (the search kicks in after 4 characters).',
       },
       target: ".search-input",
       completeOn: {
