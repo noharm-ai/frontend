@@ -20,6 +20,7 @@ export const prioritizationBasics: Training = {
     en: "Learn the basic interactions of the patient prioritization page.",
   },
   path: "/priorizacao/pacientes/cards",
+  estimatedMinutes: 5,
   steps: [
     {
       id: "welcome",

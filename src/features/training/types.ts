@@ -82,8 +82,17 @@ export interface Training {
   description: LocalizedText;
   /** Route the app is navigated to before the training starts. */
   path: string;
+  /** Rough time to complete, shown next to the description in the module list. */
+  estimatedMinutes: number;
   steps: TrainingStep[];
 }
+
+/**
+ * Per-user progress on a training module, as returned by the (future)
+ * training status endpoint. "active" means it is the next module the user
+ * should take; everything after it is "locked" until reached in order.
+ */
+export type ModuleStatus = "completed" | "active" | "locked";
 
 export const localize = (text: LocalizedText): string =>
   i18next.language === "en" ? text.en : text.pt;
