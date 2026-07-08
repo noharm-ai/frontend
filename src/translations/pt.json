@@ -20,7 +20,7 @@
     "markAsRead": "Marcar como lida"
   },
   "training": {
-    "start": "Treinamento",
+    "start": "Central de Treinamento",
     "startTooltip": "Iniciar treinamento guiado com dados fictícios",
     "selectModuleTitle": "Central de Treinamento",
     "selectModuleDescription": "Conclua os módulos no seu ritmo. Progresso salvo automaticamente.",

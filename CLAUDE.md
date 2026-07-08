@@ -48,6 +48,17 @@ src/
 
 **Component file naming:** Each component lives in a folder named after it, with the main file matching the folder name — never `index.tsx`. Example: `TestComponent/TestComponent.tsx`, not `TestComponent/index.tsx`.
 
+## Training Mode
+
+A self-paced, in-app guided tutorial system lives under `src/features/training/`. It walks users through real pages (currently the Prioritization/screening list) using entirely mocked data, so no write ever reaches the backend while it's active.
+
+- **Entry point:** "Training" item in the user menu (`components/Layout/index.jsx`) opens `TrainingModuleModal` ("Training Center"), which lists modules with completion/lock state. Picking one navigates to the module's target page and dispatches `startTraining(trainingId)`. There is no permission or feature-flag gate — it's available to all users.
+- **Redux:** `TrainingSlice.ts` (slice key `training`, thunks `startTraining`/`stopTraining`) plus `trainingMiddleware.ts` (registered in `store/index.ts`), which watches every dispatched action against the active step's `completeOn` condition (`"action"`, `"tracker"` via `utils/tracker.ts`, or `"tour"` via antd `Tour`). The `training` slice is intentionally excluded from `redux-persist`, so a page refresh silently exits training.
+- **Mocking:** `startTraining` calls `enableTrainingMocks`, installed as an axios request interceptor (`mock/installTrainingMock.ts`) on the shared instance in `services/api.js`. All non-GET calls are intercepted/swallowed against fixture data (`mock/fixtures/`); unmatched writes are blocked with a console warning.
+- **Filter sandboxing:** while training, screening-list filter changes are routed into the non-persisted `training.filter` slice instead of the real `app` duck (see `trainingAwareSetScreeningListFilter` in `containers/Prioritization/index.jsx`), merged over the real filter only for display. `stopTraining` restores real data via a fresh fetch using the untouched real filter.
+- **UI chrome:** `TrainingController` (always mounted in `Layout`) renders `TrainingBanner` (top banner), a `TrainingFrame` overlay, an antd `Tour`, and `TrainingPanel` (step instructions/progress).
+- **Content:** modules are registered in `trainings/index.ts`; the one existing module is `trainings/prioritizationBasics.ts` (bilingual pt/en content inline, typed via `types.ts`: `Training`, `TrainingStep`, `StepCompletion`, `TourStop`). User-facing strings live under the `"training"` key in `translations/en.json`/`pt.json`.
+
 ## Environment Variables
 
 ```
