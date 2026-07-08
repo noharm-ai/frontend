@@ -1,0 +1,141 @@
+import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router-dom";
+import { Row, Col } from "antd";
+
+import { useAppDispatch, useAppSelector } from "src/store";
+import notification from "components/notification";
+import Button from "components/Button";
+import Steps from "components/Steps";
+import LoadBox from "components/LoadBox";
+import { getErrorMessage } from "utils/errorHandler";
+import { PageHeader } from "styles/PageHeader.style";
+
+import { fetchTrainingItems } from "./TrainingPlayerSlice";
+import { TrainingItemQuiz } from "./TrainingItemQuiz";
+import { YoutubeEmbed } from "./YoutubeEmbed";
+import { ItemContent, FooterRow, StepsPanel } from "./TrainingPlayer.style";
+
+export function TrainingPlayer() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams();
+  const dispatch = useAppDispatch();
+  const list = useAppSelector((state) => state.trainingPlayer.list);
+  const status = useAppSelector((state) => state.trainingPlayer.status);
+
+  const [currentStep, setCurrentStep] = useState(0);
+  const [passedByItem, setPassedByItem] = useState<Record<number, boolean>>(
+    {},
+  );
+  const [revealedQuizByItem, setRevealedQuizByItem] = useState<
+    Record<number, boolean>
+  >({});
+
+  useEffect(() => {
+    dispatch(fetchTrainingItems(params.id)).then((response: any) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      }
+    });
+  }, [dispatch, t, params.id]);
+
+  const sortedItems = useMemo(
+    () => [...list].sort((a, b) => a.position - b.position),
+    [list],
+  );
+
+  const currentItem = sortedItems[currentStep];
+  const isLastStep = currentStep === sortedItems.length - 1;
+  const hasQuiz = Boolean(currentItem?.questions?.length);
+  const passed = Boolean(passedByItem[currentItem?.id]);
+  const showQuiz = hasQuiz && Boolean(revealedQuizByItem[currentItem?.id]);
+
+  if (status === "loading" || !currentItem) {
+    return <LoadBox />;
+  }
+
+  const goToPrevious = () => {
+    setCurrentStep((step) => Math.max(0, step - 1));
+  };
+
+  const goToNext = () => {
+    if (hasQuiz && !passed) {
+      setRevealedQuizByItem((prev) => ({ ...prev, [currentItem.id]: true }));
+      return;
+    }
+
+    if (isLastStep) {
+      notification.success({ message: t("trainingPlayer.completed") });
+      navigate("/treinamento");
+    } else {
+      setCurrentStep((step) => step + 1);
+    }
+  };
+
+  return (
+    <>
+      <PageHeader>
+        <div>
+          <h1 className="page-header-title">{currentItem.title}</h1>
+        </div>
+      </PageHeader>
+
+      <Row gutter={24}>
+        <Col xs={17}>
+          <ItemContent>
+            {currentItem.video && (
+              <YoutubeEmbed url={currentItem.video} title={currentItem.title} />
+            )}
+
+            <div className="item-text">
+              {currentItem.text
+                .split("\n")
+                .filter((line) => line.trim().length > 0)
+                .map((line, index) => (
+                  <p key={index}>{line}</p>
+                ))}
+            </div>
+
+            {showQuiz && (
+              <TrainingItemQuiz
+                key={currentItem.id}
+                questions={currentItem.questions!}
+                onPassedChange={(itemPassed) =>
+                  setPassedByItem((prev) => ({
+                    ...prev,
+                    [currentItem.id]: itemPassed,
+                  }))
+                }
+              />
+            )}
+          </ItemContent>
+
+          <FooterRow>
+            <Button onClick={goToPrevious} disabled={currentStep === 0}>
+              {t("trainingPlayer.previous")}
+            </Button>
+            <Button type="primary" onClick={goToNext}>
+              {isLastStep
+                ? t("trainingPlayer.finish")
+                : t("trainingPlayer.next")}
+            </Button>
+          </FooterRow>
+        </Col>
+
+        <Col xs={7}>
+          <StepsPanel>
+            <Steps
+              current={currentStep}
+              size="small"
+              orientation="vertical"
+              items={sortedItems.map((item) => ({ title: item.title }))}
+            />
+          </StepsPanel>
+        </Col>
+      </Row>
+    </>
+  );
+}

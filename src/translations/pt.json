@@ -54,7 +54,8 @@
     "integration": "Integração",
     "help": "Central de Ajuda",
     "schedules": "Horários",
-    "tag": "Marcadores"
+    "tag": "Marcadores",
+    "training": "Treinamento"
   },
   "screeningList": {
     "confirm": "Confirma?",
@@ -1046,5 +1047,25 @@
     "validationEmpty": "O plano de cuidado não pode estar vazio.",
     "saveSuccess": "Plano de cuidado salvo com sucesso!",
     "saveError": "Erro ao salvar o plano de cuidado."
+  },
+  "trainingCentral": {
+    "title": "Central de Treinamento",
+    "subtitle": "Conclua os módulos no seu ritmo. Progresso salvo automaticamente.",
+    "completed": "Concluído",
+    "locked": "Bloqueado",
+    "continue": "Continuar",
+    "completedCount": "{{done}} de {{total}} concluídos",
+    "empty": "Nenhum módulo de treinamento disponível.",
+    "progressTitle": "Seu progresso",
+    "badgesTitle": "Conquistas",
+    "badgesEmpty": "Complete módulos para desbloquear conquistas."
+  },
+  "trainingPlayer": {
+    "previous": "Anterior",
+    "next": "Próximo",
+    "finish": "Concluir",
+    "completed": "Parabéns! Você concluiu este módulo.",
+    "answerCorrect": "Resposta correta!",
+    "answerIncorrect": "Resposta incorreta. Tente novamente."
   }
 }

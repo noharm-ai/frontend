@@ -54,7 +54,8 @@
     "integration": "Integration",
     "help": "Support Central",
     "schedules": "Schedules",
-    "tag": "Tags"
+    "tag": "Tags",
+    "training": "Training"
   },
   "screeningList": {
     "confirm": "Confirm?",
@@ -1036,5 +1037,25 @@
     "validationEmpty": "The care plan cannot be empty.",
     "saveSuccess": "Care plan saved successfully!",
     "saveError": "Error saving the care plan."
+  },
+  "trainingCentral": {
+    "title": "Training Central",
+    "subtitle": "Complete the modules at your own pace. Progress is saved automatically.",
+    "completed": "Completed",
+    "locked": "Locked",
+    "continue": "Continue",
+    "completedCount": "{{done}} of {{total}} completed",
+    "empty": "No training modules available.",
+    "progressTitle": "Your progress",
+    "badgesTitle": "Achievements",
+    "badgesEmpty": "Complete modules to unlock achievements."
+  },
+  "trainingPlayer": {
+    "previous": "Previous",
+    "next": "Next",
+    "finish": "Finish",
+    "completed": "Congratulations! You completed this module.",
+    "answerCorrect": "Correct answer!",
+    "answerIncorrect": "Incorrect answer. Try again."
   }
 }
