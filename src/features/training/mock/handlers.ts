@@ -2,6 +2,7 @@ import type { InternalAxiosRequestConfig } from "axios";
 
 import { trainingPrescriptionsListPayload } from "./fixtures/prescriptionsList";
 import { trainingPrescriptionSinglePayload } from "./fixtures/prescriptionSingle";
+import { TRAINING_DEPARTMENTS } from "./fixtures/departments";
 
 export type TrainingHandler = (config: InternalAxiosRequestConfig) => unknown;
 
@@ -30,6 +31,10 @@ const requestBody = (config: InternalAxiosRequestConfig) => {
  */
 export const trainingHandlers: Record<string, TrainingHandler> = {
   "GET /prescriptions": () => trainingPrescriptionsListPayload(),
+  "GET /segments/departments": () => ({
+    status: "success",
+    data: TRAINING_DEPARTMENTS,
+  }),
   "GET /prescriptions/:id": (config) =>
     trainingPrescriptionSinglePayload(Number(pathSegment(config, 1))),
   "GET /exams/:admissionNumber": emptyList,

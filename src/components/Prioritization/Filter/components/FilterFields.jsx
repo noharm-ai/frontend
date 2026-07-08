@@ -225,7 +225,7 @@ export default function FilterFields({
                     value={filter.idDepartment}
                     onChange={onDepartmentChange}
                     autoClearSearchValue={false}
-                    className={filter.idDepartment?.length ? "warning" : null}
+                    className={`department-select ${filter.idDepartment?.length ? "warning" : ""}`}
                     allowClear
                     maxTagCount="responsive"
                   >

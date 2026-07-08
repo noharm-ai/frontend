@@ -1,5 +1,6 @@
 import { TrackedPrescriptionPrioritizationAction } from "utils/tracker";
 import { TRAINING_SEGMENT_ADULT_ID } from "../mock/fixtures/segments";
+import { TRAINING_DEPARTMENT_ICU_ID } from "../mock/fixtures/departments";
 import { setTrainingFilter } from "../TrainingSlice";
 import type { Training } from "../types";
 
@@ -159,6 +160,58 @@ export const prioritizationBasics: Training = {
       },
     },
     {
+      id: "open-advanced-filters",
+      title: {
+        pt: "Veja mais filtros",
+        en: "See more filters",
+      },
+      instruction: {
+        pt: 'Clique em "Ver mais" para acessar filtros adicionais, como o filtro por setor.',
+        en: 'Click "See more" to access additional filters, such as the department filter.',
+      },
+      target: ".gtm-btn-adv-search",
+      completeOn: {
+        type: "tracker",
+        event: TrackedPrescriptionPrioritizationAction.CLICK_SEE_MORE,
+      },
+    },
+    {
+      id: "select-department",
+      title: {
+        pt: "Filtre por setor",
+        en: "Filter by department",
+      },
+      instruction: {
+        pt: 'No campo "Setor", selecione "Setor UTI" para refinar a lista de pacientes.',
+        en: 'In the "Department" field, select "Setor UTI" to narrow down the patient list.',
+      },
+      target: ".department-select",
+      completeOn: {
+        type: "action",
+        actionType: setTrainingFilter.type,
+        when: (action) =>
+          !!action.payload?.idDepartment?.includes?.(
+            TRAINING_DEPARTMENT_ICU_ID,
+          ),
+      },
+    },
+    {
+      id: "search-department",
+      title: {
+        pt: "Busque os pacientes",
+        en: "Search for patients",
+      },
+      instruction: {
+        pt: "Clique no botão de busca (lupa) novamente para carregar os pacientes do setor selecionado.",
+        en: "Click the search (magnifier) button again to load the patients from the selected department.",
+      },
+      target: ".gtm-btn-search",
+      completeOn: {
+        type: "action",
+        actionType: "PRESCRIPTIONS_FETCH_LIST_SUCCESS",
+      },
+    },
+    {
       id: "change-order",
       title: {
         pt: "Altere a ordem da lista",
@@ -209,22 +262,6 @@ export const prioritizationBasics: Training = {
       completeOn: {
         type: "tracker",
         event: TrackedPrescriptionPrioritizationAction.FILTER_KEYWORD,
-      },
-    },
-    {
-      id: "refresh-list",
-      title: {
-        pt: "Atualize a lista",
-        en: "Refresh the list",
-      },
-      instruction: {
-        pt: "Os filtros no topo da página controlam quais pacientes são carregados. Clique no botão de busca (lupa) para atualizar a lista.",
-        en: "The filters at the top of the page control which patients are loaded. Click the search (magnifier) button to refresh the list.",
-      },
-      target: ".gtm-btn-search",
-      completeOn: {
-        type: "action",
-        actionType: "PRESCRIPTIONS_FETCH_LIST_SUCCESS",
       },
     },
   ],
