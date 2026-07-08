@@ -1,10 +1,7 @@
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import {
-  setScreeningListFilterThunk,
-  setJourneyThunk,
-} from "store/ducks/app/thunk";
+import { setJourneyThunk } from "store/ducks/app/thunk";
 import {
   fetchPrescriptionsListThunk,
   checkScreeningThunk,
@@ -21,6 +18,8 @@ import {
   FILTER_PRIVATE_MEMORY_TYPE,
   FILTER_PUBLIC_MEMORY_TYPE,
 } from "utils/memory";
+import { TRAINING_SEGMENTS } from "features/training/mock/fixtures/segments";
+import { trainingAwareSetScreeningListFilter } from "features/training/TrainingSlice";
 
 const mapStateToProps = ({
   segments,
@@ -29,10 +28,14 @@ const mapStateToProps = ({
   drugs,
   user,
   memory,
+  training,
 }) => ({
   segments: {
     error: segments.error,
-    list: segments.list,
+    // training never persists into the segments duck (redux-persist would
+    // keep fake segments across a mid-training reload) — swap the list here
+    // instead, driven by the non-persisted training slice
+    list: training.status === "active" ? TRAINING_SEGMENTS : segments.list,
     isFetching: segments.isFetching,
     single: segments.single,
   },
@@ -45,7 +48,13 @@ const mapStateToProps = ({
     },
   },
   siderCollapsed: app.sider.collapsed,
-  filter: app.filter.screeningList,
+  // training filter changes (e.g. picking a segment) are sandboxed in the
+  // non-persisted training slice and merged in here instead of being
+  // dispatched into the real app duck — see trainingAwareSetScreeningListFilter
+  filter:
+    training.status === "active"
+      ? { ...app.filter.screeningList, ...training.filter }
+      : app.filter.screeningList,
   drugs: drugs.search,
   frequencies: drugs.frequencies,
   prioritizationType: "cards",
@@ -65,7 +74,7 @@ const mapDispatchToProps = (dispatch) =>
       fetchPrescriptionsList: fetchPrescriptionsListThunk,
       checkScreening: checkScreeningThunk,
       updatePrescriptionListStatus: updatePrescriptionStatusThunk,
-      setScreeningListFilter: setScreeningListFilterThunk,
+      setScreeningListFilter: trainingAwareSetScreeningListFilter,
       searchDrugs: searchDrugsThunk,
       fetchFrequencies: fetchDrugsFrequenciesListThunk,
       setJourney: setJourneyThunk,

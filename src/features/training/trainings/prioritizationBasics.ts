@@ -1,4 +1,6 @@
 import { TrackedPrescriptionPrioritizationAction } from "utils/tracker";
+import { TRAINING_SEGMENT_ADULT_ID } from "../mock/fixtures/segments";
+import { setTrainingFilter } from "../TrainingSlice";
 import type { Training } from "../types";
 
 /**
@@ -120,6 +122,40 @@ export const prioritizationBasics: Training = {
           target: ".grid div",
         },
       ],
+    },
+    {
+      id: "select-segment",
+      title: {
+        pt: "Filtre por segmento",
+        en: "Filter by segment",
+      },
+      instruction: {
+        pt: 'No campo "Segmento", selecione "Segmento Adulto" para definir quais pacientes serão listados.',
+        en: 'In the "Segmento" field, select "Segmento Adulto" to define which patients will be listed.',
+      },
+      target: ".segment-select",
+      completeOn: {
+        type: "action",
+        actionType: setTrainingFilter.type,
+        when: (action) =>
+          !!action.payload?.idSegment?.includes?.(TRAINING_SEGMENT_ADULT_ID),
+      },
+    },
+    {
+      id: "search-segment",
+      title: {
+        pt: "Busque os pacientes",
+        en: "Search for patients",
+      },
+      instruction: {
+        pt: "Agora clique no botão de busca (lupa) para carregar os pacientes do segmento selecionado.",
+        en: "Now click the search (magnifier) button to load the patients from the selected segment.",
+      },
+      target: ".gtm-btn-search",
+      completeOn: {
+        type: "action",
+        actionType: "PRESCRIPTIONS_FETCH_LIST_SUCCESS",
+      },
     },
     {
       id: "change-order",

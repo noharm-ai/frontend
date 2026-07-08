@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 
 import { Creators as PrescriptionsCreators } from "store/ducks/prescriptions";
 import { fetchPrescriptionsListThunk } from "store/ducks/prescriptions/thunk";
+import { setScreeningListFilterThunk } from "store/ducks/app/thunk";
 import {
   enableTrainingMocks,
   disableTrainingMocks,
@@ -18,6 +19,16 @@ interface TrainingState {
   stepIndex: number;
   /** True between a step being detected as done and the advance to the next. */
   stepJustCompleted: boolean;
+  /**
+   * Overrides for app.filter.screeningList while training is active (e.g.
+   * the segment picked in the "select-segment" step). Kept here instead of
+   * dispatching into the real (redux-persisted) app duck so a mid-training
+   * reload can never strand a fake filter value in the real screening list
+   * filter — see containers/Prioritization, which merges this over the real
+   * filter for display, and trainingAwareSetScreeningListFilter below, which
+   * routes writes here instead of the app duck while training is active.
+   */
+  filter: Record<string, unknown>;
 }
 
 /**
@@ -31,6 +42,7 @@ const initialState: TrainingState = {
   trainingId: null,
   stepIndex: 0,
   stepJustCompleted: false,
+  filter: {},
 };
 
 const trainingSlice = createSlice({
@@ -42,6 +54,8 @@ const trainingSlice = createSlice({
       state.trainingId = action.payload;
       state.stepIndex = 0;
       state.stepJustCompleted = false;
+      // segment starts unselected: picking "Segmento Adulto" is the first task
+      state.filter = { idSegment: [], idDepartment: [] };
     },
     stepCompleted(state) {
       state.stepJustCompleted = true;
@@ -62,6 +76,9 @@ const trainingSlice = createSlice({
     trainingStopped() {
       return initialState;
     },
+    setTrainingFilter(state, action: PayloadAction<Record<string, unknown>>) {
+      state.filter = { ...state.filter, ...action.payload };
+    },
     /**
      * Signal action bridging tracker events (utils/tracker.ts) into redux so
      * trainingMiddleware can evaluate step conditions. Never changes state.
@@ -81,10 +98,26 @@ export const {
   stepCompleted,
   advanceStep,
   trainingStopped,
+  setTrainingFilter,
   trainingTrackerEvent,
 } = trainingSlice.actions;
 
 export const trainingReducer = trainingSlice.reducer;
+
+/**
+ * Bind this instead of setScreeningListFilterThunk wherever a Filter-like
+ * component's changes must be sandboxed during training (see
+ * containers/Prioritization). Outside training it behaves identically to
+ * the real thunk.
+ */
+export const trainingAwareSetScreeningListFilter =
+  (params: Record<string, unknown>) => (dispatch: any, getState: any) => {
+    if (getState().training.status === "active") {
+      dispatch(setTrainingFilter(params));
+      return;
+    }
+    dispatch(setScreeningListFilterThunk(params));
+  };
 
 export const startTraining =
   (trainingId: string) => async (dispatch: any) => {
@@ -100,6 +133,7 @@ export const stopTraining = () => async (dispatch: any, getState: any) => {
   dispatch(trainingStopped());
 
   // restore real data with the same default params a fresh page load uses
+  // (app.filter.screeningList was never touched by training, see above)
   const filter = getState().app.filter.screeningList;
   const idSegment = filter?.idSegment;
   const hasSegment = Array.isArray(idSegment) ? idSegment.length > 0 : !!idSegment;

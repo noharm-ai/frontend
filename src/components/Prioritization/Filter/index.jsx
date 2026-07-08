@@ -342,6 +342,7 @@ export default function Filter({
               </Heading>
               <Select
                 id="segments"
+                className="segment-select"
                 style={{ width: "100%" }}
                 loading={segments.isFetching}
                 onChange={(idSegment) =>
