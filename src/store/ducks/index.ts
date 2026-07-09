@@ -54,6 +54,8 @@ import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
 
 import { outpatientPrioritizationReducer } from "features/outpatient/OutpatientPrioritization/OutpatientPrioritizationSlice";
 import notificationsSlice from "features/notifications/NotificationsSlice";
+import trainingCentralSlice from "features/training/TrainingCentralSlice";
+import trainingPlayerSlice from "features/training/TrainingPlayerSlice";
 import clinicalNotesMultiSlice from "features/clinicalNotes/ClinicalNotesSlice";
 
 import regulationPrioritizationSlice from "features/regulation/Prioritization/PrioritizationSlice";
@@ -164,6 +166,8 @@ const rootReducer = combineReducers({
   outpatient: outpatientPrioritizationReducer,
   userProfile: userProfileReducer,
   notifications: notificationsSlice,
+  trainingCentral: trainingCentralSlice,
+  trainingPlayer: trainingPlayerSlice,
 });
 
 export default rootReducer;

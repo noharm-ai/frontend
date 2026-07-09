@@ -54,7 +54,8 @@
     "integration": "Integração",
     "help": "Central de Ajuda",
     "schedules": "Horários",
-    "tag": "Marcadores"
+    "tag": "Marcadores",
+    "training": "Treinamento"
   },
   "screeningList": {
     "confirm": "Confirma?",
@@ -1046,5 +1047,49 @@
     "validationEmpty": "O plano de cuidado não pode estar vazio.",
     "saveSuccess": "Plano de cuidado salvo com sucesso!",
     "saveError": "Erro ao salvar o plano de cuidado."
+  },
+  "trainingCentral": {
+    "title": "Central de Treinamento",
+    "subtitle": "Conclua os módulos no seu ritmo. Progresso salvo automaticamente.",
+    "completed": "Concluído",
+    "continue": "Continuar",
+    "start": "Iniciar",
+    "completedCount": "{{done}} de {{total}} concluídos",
+    "empty": "Nenhum módulo de treinamento disponível.",
+    "progressTitle": "Seu progresso",
+    "progressMandatory": "Módulos obrigatórios",
+    "progressOptional": "Módulos opcionais",
+    "mandatoryExplanation": "Os módulos obrigatórios são a base para o uso do NoHarm. Enquanto não forem concluídos, não será possível abrir chamados de suporte.",
+    "mandatoryTag": "Obrigatório",
+    "badgesTitle": "Conquistas",
+    "badgesEmpty": "Complete módulos para desbloquear conquistas."
+  },
+  "trainingPlayer": {
+    "previous": "Anterior",
+    "next": "Próximo",
+    "finish": "Concluir",
+    "markCompleted": "Marcar como concluída",
+    "completed": "Parabéns! Você concluiu este módulo.",
+    "moduleLessonLabel": "Módulo {{module}} · Aula {{lesson}} de {{total}}",
+    "lessonProgress": "Aula {{lesson}} de {{total}}",
+    "lessonsListLabel": "Aulas",
+    "overallProgress": "{{percent}}% concluído",
+    "backToCentral": "Central de Treinamento",
+    "videoLabel": "Vídeo",
+    "readingLabel": "Leitura",
+    "readingAndQuizLabel": "Leitura e quiz",
+    "quizTitle": "Verifique seu aprendizado",
+    "questionProgress": "{{current}} de {{total}}",
+    "verifyAnswer": "Verificar resposta",
+    "nextQuestion": "Próxima pergunta",
+    "quizPassed": "Quiz concluído! Você já pode avançar.",
+    "answerCorrect": "Resposta correta!",
+    "answerIncorrect": "Resposta incorreta. Tente novamente.",
+    "videoCoverBrand": "Treinamento NoHarm — Módulo {{module}}",
+    "videoCoverOrg": "NoHarm.ai",
+    "videoCoverTitle": "Treinamento",
+    "videoCoverModule": "Módulo {{module}}",
+    "moduleCompletedTitle": "Parabéns!",
+    "moduleCompletedMessage": "Você concluiu o módulo de treinamento \"{{module}}\"."
   }
 }

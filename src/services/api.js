@@ -749,6 +749,19 @@ api.support.fetchKnowledgeBaseArticles = (params) =>
   });
 
 /**
+ * training namespace
+ */
+api.training = {};
+api.training.getList = (params = {}) =>
+  instance.get(`/training/list`, { params, ...setHeaders() });
+api.training.getItems = (idTraining) =>
+  instance.get(`/training/${idTraining}/items`, { ...setHeaders() });
+api.training.finishItem = (idTrainingItem, params = {}) =>
+  instance.post(`/training/item/${idTrainingItem}/finish`, params, {
+    ...setHeaders(),
+  });
+
+/**
  * Summary namespace
  */
 api.summary = {};

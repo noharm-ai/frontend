@@ -54,7 +54,8 @@
     "integration": "Integration",
     "help": "Support Central",
     "schedules": "Schedules",
-    "tag": "Tags"
+    "tag": "Tags",
+    "training": "Training"
   },
   "screeningList": {
     "confirm": "Confirm?",
@@ -1036,5 +1037,49 @@
     "validationEmpty": "The care plan cannot be empty.",
     "saveSuccess": "Care plan saved successfully!",
     "saveError": "Error saving the care plan."
+  },
+  "trainingCentral": {
+    "title": "Training Central",
+    "subtitle": "Complete the modules at your own pace. Progress is saved automatically.",
+    "completed": "Completed",
+    "continue": "Continue",
+    "start": "Start",
+    "completedCount": "{{done}} of {{total}} completed",
+    "empty": "No training modules available.",
+    "progressTitle": "Your progress",
+    "progressMandatory": "Mandatory modules",
+    "progressOptional": "Optional modules",
+    "mandatoryExplanation": "Mandatory modules cover the basics of using NoHarm. Until they are all completed, you won't be able to open support tickets.",
+    "mandatoryTag": "Mandatory",
+    "badgesTitle": "Achievements",
+    "badgesEmpty": "Complete modules to unlock achievements."
+  },
+  "trainingPlayer": {
+    "previous": "Previous",
+    "next": "Next",
+    "finish": "Finish",
+    "markCompleted": "Mark as completed",
+    "completed": "Congratulations! You completed this module.",
+    "moduleLessonLabel": "Module {{module}} · Lesson {{lesson}} of {{total}}",
+    "lessonProgress": "Lesson {{lesson}} of {{total}}",
+    "lessonsListLabel": "Lessons",
+    "overallProgress": "{{percent}}% completed",
+    "backToCentral": "Training Central",
+    "videoLabel": "Video",
+    "readingLabel": "Reading",
+    "readingAndQuizLabel": "Reading and quiz",
+    "quizTitle": "Check your understanding",
+    "questionProgress": "{{current}} of {{total}}",
+    "verifyAnswer": "Check answer",
+    "nextQuestion": "Next question",
+    "quizPassed": "Quiz completed! You can move on now.",
+    "answerCorrect": "Correct answer!",
+    "answerIncorrect": "Incorrect answer. Try again.",
+    "videoCoverBrand": "NoHarm Training — Module {{module}}",
+    "videoCoverOrg": "NoHarm.ai",
+    "videoCoverTitle": "Training",
+    "videoCoverModule": "Module {{module}}",
+    "moduleCompletedTitle": "Congratulations!",
+    "moduleCompletedMessage": "You've completed the \"{{module}}\" training module."
   }
 }

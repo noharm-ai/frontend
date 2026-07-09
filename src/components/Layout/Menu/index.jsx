@@ -26,6 +26,7 @@ import {
   RobotOutlined,
   FormOutlined,
   LayoutOutlined,
+  ReadOutlined,
 } from "@ant-design/icons";
 import { Menu as Navigator } from "antd";
 
@@ -307,6 +308,14 @@ export default function Menu({ segments }) {
           permission: [Permission.READ_CUSTOM_REPORTS],
         },
       ],
+    },
+    {
+      key: "/treinamento",
+      link: "/treinamento",
+      label: t("menu.training"),
+      icon: <ReadOutlined />,
+      id: "gtm-lnk-training",
+      permission: [Permission.ADMIN_NZERO],
     },
     {
       key: "help",
