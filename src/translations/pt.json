@@ -1088,6 +1088,8 @@
     "videoCoverBrand": "Treinamento NoHarm — Módulo {{module}}",
     "videoCoverOrg": "NoHarm.ai",
     "videoCoverTitle": "Treinamento",
-    "videoCoverModule": "Módulo {{module}}"
+    "videoCoverModule": "Módulo {{module}}",
+    "moduleCompletedTitle": "Parabéns!",
+    "moduleCompletedMessage": "Você concluiu o módulo de treinamento \"{{module}}\"."
   }
 }

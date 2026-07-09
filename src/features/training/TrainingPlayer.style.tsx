@@ -333,3 +333,24 @@ export const FooterProgress = styled.span`
   color: ${colors.text};
   font-size: 0.875rem;
 `;
+
+export const CompletionModalContent = styled.div`
+  text-align: center;
+  padding: 12px 0 4px;
+
+  .anticon {
+    font-size: 48px;
+    color: ${colors.accentSecondary};
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    color: ${colors.primary};
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: ${colors.text};
+    margin-bottom: 24px;
+  }
+`;

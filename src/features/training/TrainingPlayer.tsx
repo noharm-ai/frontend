@@ -16,6 +16,7 @@ import notification from "components/notification";
 import Button from "components/Button";
 import Progress from "components/Progress";
 import LoadBox from "components/LoadBox";
+import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
 import { PageHeader } from "styles/PageHeader.style";
 import colors from "styles/colors";
@@ -40,6 +41,7 @@ import {
   LessonNumber,
   LessonTitle,
   BackRow,
+  CompletionModalContent,
 } from "./TrainingPlayer.style";
 
 export function TrainingPlayer() {
@@ -57,6 +59,7 @@ export function TrainingPlayer() {
     Record<number, boolean>
   >({});
   const [itemStartedAt, setItemStartedAt] = useState(() => Date.now());
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchTrainingItems(params.id)).then((response: any) => {
@@ -121,15 +124,22 @@ export function TrainingPlayer() {
         notification.error({
           message: getErrorMessage(response, t),
         });
-      } else {
-        setLocallyFinishedIds((prev) => ({ ...prev, [currentItem.id]: true }));
+        return;
+      }
+
+      setLocallyFinishedIds((prev) => ({ ...prev, [currentItem.id]: true }));
+
+      if (isLastStep) {
+        if (response.payload?.data?.moduleFinished) {
+          setShowCompletionModal(true);
+        } else {
+          notification.success({ message: t("trainingPlayer.completed") });
+          navigate("/treinamento");
+        }
       }
     });
 
-    if (isLastStep) {
-      notification.success({ message: t("trainingPlayer.completed") });
-      navigate("/treinamento");
-    } else {
+    if (!isLastStep) {
       setCurrentStep((step) => step + 1);
     }
   };
@@ -288,6 +298,25 @@ export function TrainingPlayer() {
           </FooterRow>
         </Col>
       </Row>
+
+      <DefaultModal
+        open={showCompletionModal}
+        footer={null}
+        centered
+        destroyOnHidden
+        onCancel={() => navigate("/treinamento")}
+      >
+        <CompletionModalContent>
+          <CheckCircleFilled />
+          <h2>{t("trainingPlayer.moduleCompletedTitle")}</h2>
+          <p>
+            {t("trainingPlayer.moduleCompletedMessage", { module: moduleName })}
+          </p>
+          <Button type="primary" onClick={() => navigate("/treinamento")}>
+            {t("trainingPlayer.backToCentral")}
+          </Button>
+        </CompletionModalContent>
+      </DefaultModal>
     </>
   );
 }
