@@ -12,7 +12,6 @@ export const StepsPanel = styled.div`
 
 export const BackRow = styled.div`
   display: flex;
-  justify-content: flex-end;
   margin-bottom: 16px;
 
   .ant-btn {
@@ -29,15 +28,72 @@ export const BackRow = styled.div`
 
 export const ModuleTitle = styled.div`
   color: ${colors.primary};
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   margin-bottom: 12px;
 `;
 
 export const ProgressLabel = styled.div`
   color: ${colors.text};
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   margin: 6px 0 20px 0;
+`;
+
+export const StepsDivider = styled.div`
+  border-top: 1px solid #f0f0f0;
+  margin: 0 0 20px 0;
+`;
+
+export const LessonsLabel = styled.div`
+  color: ${colors.text};
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+`;
+
+export const LessonList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+export const LessonItem = styled.li<{ $active: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: ${(props) =>
+    props.$active ? "rgba(112, 189, 195, 0.12)" : "transparent"};
+`;
+
+export const LessonNumber = styled.span<{ $active: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: ${(props) =>
+    props.$active ? colors.accentSecondary : "transparent"};
+  color: ${(props) => (props.$active ? colors.commonLighter : colors.text)};
+`;
+
+export const LessonTitle = styled.span<{ $active: boolean }>`
+  font-size: 0.875rem;
+  color: ${(props) => (props.$active ? colors.primary : colors.text)};
+  font-weight: ${(props) => (props.$active ? 700 : 400)};
 `;
 
 export const Eyebrow = styled.div`

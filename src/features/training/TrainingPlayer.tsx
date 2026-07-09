@@ -13,11 +13,11 @@ import {
 import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
 import Button from "components/Button";
-import Steps from "components/Steps";
 import Progress from "components/Progress";
 import LoadBox from "components/LoadBox";
 import { getErrorMessage } from "utils/errorHandler";
 import { PageHeader } from "styles/PageHeader.style";
+import colors from "styles/colors";
 
 import { fetchTrainingItems } from "./TrainingPlayerSlice";
 import { fetchTrainingList } from "./TrainingCentralSlice";
@@ -32,6 +32,12 @@ import {
   MetaRow,
   ModuleTitle,
   ProgressLabel,
+  StepsDivider,
+  LessonsLabel,
+  LessonList,
+  LessonItem,
+  LessonNumber,
+  LessonTitle,
   BackRow,
 } from "./TrainingPlayer.style";
 
@@ -114,19 +120,33 @@ export function TrainingPlayer() {
             </BackRow>
 
             <ModuleTitle>{moduleName}</ModuleTitle>
-            <Progress percent={progressPercent} size="small" />
+            <Progress
+              percent={progressPercent}
+              size="small"
+              strokeColor={colors.accentSecondary}
+            />
             <ProgressLabel>
-              {t("trainingPlayer.overallProgress", {
-                percent: progressPercent,
+              {t("trainingPlayer.lessonProgress", {
+                lesson: currentStep + 1,
+                total: sortedItems.length,
               })}
             </ProgressLabel>
 
-            <Steps
-              current={currentStep}
-              size="small"
-              orientation="vertical"
-              items={sortedItems.map((item) => ({ title: item.title }))}
-            />
+            <StepsDivider />
+
+            <LessonsLabel>{t("trainingPlayer.lessonsListLabel")}</LessonsLabel>
+            <LessonList>
+              {sortedItems.map((item, index) => (
+                <LessonItem key={item.id} $active={index === currentStep}>
+                  <LessonNumber $active={index === currentStep}>
+                    {index + 1}
+                  </LessonNumber>
+                  <LessonTitle $active={index === currentStep}>
+                    {item.title}
+                  </LessonTitle>
+                </LessonItem>
+              ))}
+            </LessonList>
           </StepsPanel>
         </Col>
 
