@@ -1045,6 +1045,7 @@
     "locked": "Locked",
     "continue": "Continue",
     "completedCount": "{{done}} of {{total}} completed",
+    "moduleLessonProgress": "{{done}} of {{total}} lessons completed",
     "empty": "No training modules available.",
     "progressTitle": "Your progress",
     "badgesTitle": "Achievements",

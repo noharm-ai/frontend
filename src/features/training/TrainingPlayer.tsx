@@ -86,6 +86,7 @@ export function TrainingPlayer() {
   useEffect(() => {
     if (currentItem) {
       setItemStartedAt(Date.now());
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentItem?.id]);
@@ -97,8 +98,9 @@ export function TrainingPlayer() {
   const passed =
     Boolean(passedByItem[currentItem?.id]) ||
     Boolean(currentItem && isItemFinished(currentItem));
+  const finishedCount = sortedItems.filter(isItemFinished).length;
   const progressPercent = sortedItems.length
-    ? Math.round((currentStep / sortedItems.length) * 100)
+    ? Math.round((finishedCount / sortedItems.length) * 100)
     : 0;
 
   if (status === "loading" || !currentItem) {

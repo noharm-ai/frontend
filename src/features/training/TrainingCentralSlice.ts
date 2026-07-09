@@ -9,6 +9,8 @@ export interface ITrainingModule {
   title: string;
   description: string;
   position: number;
+  totalLessons: number;
+  totalLessonsFinished: number;
 }
 
 interface ITrainingCentralSlice {

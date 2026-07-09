@@ -1055,6 +1055,7 @@
     "locked": "Bloqueado",
     "continue": "Continuar",
     "completedCount": "{{done}} de {{total}} concluídos",
+    "moduleLessonProgress": "{{done}} de {{total}} aulas concluídas",
     "empty": "Nenhum módulo de treinamento disponível.",
     "progressTitle": "Seu progresso",
     "badgesTitle": "Conquistas",

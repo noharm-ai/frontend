@@ -13,6 +13,7 @@ import {
   ModuleIconCircle,
   ModuleText,
   ModuleAction,
+  ModuleLessonProgress,
 } from "./TrainingCentral.style";
 
 type TrainingModuleStatus = "completed" | "current" | "locked";
@@ -45,18 +46,29 @@ export function TrainingModuleRow({
           {module.position} · {module.title}
         </strong>
         <span>{module.description}</span>
+        {module.totalLessons > 0 && (
+          <ModuleLessonProgress>
+            {t("trainingCentral.moduleLessonProgress", {
+              done: module.totalLessonsFinished,
+              total: module.totalLessons,
+            })}
+          </ModuleLessonProgress>
+        )}
       </ModuleText>
 
-      {status === "current" ? (
-        <Button type="primary" onClick={onContinue}>
-          {t("trainingCentral.continue")}
-        </Button>
-      ) : (
+      {status === "locked" ? (
         <ModuleAction $status={status}>
+          {t("trainingCentral.locked")}
+        </ModuleAction>
+      ) : (
+        <Button
+          type={status === "current" ? "primary" : "default"}
+          onClick={onContinue}
+        >
           {status === "completed"
             ? t("trainingCentral.completed")
-            : t("trainingCentral.locked")}
-        </ModuleAction>
+            : t("trainingCentral.continue")}
+        </Button>
       )}
     </ModuleRow>
   );

@@ -8,7 +8,7 @@ import notification from "components/notification";
 import Empty from "components/Empty";
 import { getErrorMessage } from "utils/errorHandler";
 
-import { fetchTrainingList } from "./TrainingCentralSlice";
+import { fetchTrainingList, ITrainingModule } from "./TrainingCentralSlice";
 import { TrainingModuleRow } from "./TrainingModuleRow";
 import { TrainingBadges } from "./TrainingBadges";
 import { ModuleList, SideColumn, ProgressPanel } from "./TrainingCentral.style";
@@ -16,8 +16,22 @@ import { PageHeader } from "styles/PageHeader.style";
 
 type TrainingModuleStatus = "completed" | "current" | "locked";
 
-const getModuleStatus = (index: number): TrainingModuleStatus =>
-  index === 0 ? "current" : "locked";
+const isModuleFinished = (module: ITrainingModule) =>
+  module.totalLessons > 0 &&
+  module.totalLessonsFinished === module.totalLessons;
+
+const getModuleStatus = (
+  module: ITrainingModule,
+  index: number,
+  list: ITrainingModule[],
+): TrainingModuleStatus => {
+  if (isModuleFinished(module)) return "completed";
+
+  const previousModule = list[index - 1];
+  const previousFinished = index === 0 || isModuleFinished(previousModule);
+
+  return previousFinished ? "current" : "locked";
+};
 
 export function TrainingCentral() {
   const { t } = useTranslation();
@@ -42,9 +56,7 @@ export function TrainingCentral() {
   );
 
   const total = sortedList.length;
-  const completedCount = sortedList.filter(
-    (_, index) => getModuleStatus(index) === "completed",
-  ).length;
+  const completedCount = sortedList.filter(isModuleFinished).length;
   const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
 
   return (
@@ -72,7 +84,7 @@ export function TrainingCentral() {
               <TrainingModuleRow
                 key={module.id}
                 module={module}
-                status={getModuleStatus(index)}
+                status={getModuleStatus(module, index, sortedList)}
                 onContinue={() => navigate(`/treinamento/${module.id}`)}
               />
             ))}

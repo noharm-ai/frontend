@@ -81,6 +81,13 @@ export const ModuleText = styled.div`
   }
 `;
 
+export const ModuleLessonProgress = styled.span`
+  display: block;
+  color: ${colors.fourth};
+  font-size: 0.8125rem;
+  margin-top: 4px;
+`;
+
 export const ModuleAction = styled.div<{
   $status: "completed" | "current" | "locked";
 }>`
