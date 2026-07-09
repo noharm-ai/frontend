@@ -1,21 +1,12 @@
 import { useTranslation } from "react-i18next";
-import {
-  CheckOutlined,
-  PlayCircleFilled,
-  LockOutlined,
-} from "@ant-design/icons";
+import { CheckOutlined, PlayCircleFilled } from "@ant-design/icons";
 
 import Button from "components/Button";
 
 import { ITrainingModule } from "./TrainingCentralSlice";
-import {
-  ModuleRow,
-  ModuleIconCircle,
-  ModuleText,
-  ModuleAction,
-} from "./TrainingCentral.style";
+import { ModuleRow, ModuleIconCircle, ModuleText } from "./TrainingCentral.style";
 
-type TrainingModuleStatus = "completed" | "current" | "locked";
+type TrainingModuleStatus = "completed" | "current";
 
 interface TrainingModuleRowProps {
   module: ITrainingModule;
@@ -33,7 +24,6 @@ export function TrainingModuleRow({
   const icon = {
     completed: <CheckOutlined />,
     current: <PlayCircleFilled />,
-    locked: <LockOutlined />,
   }[status];
 
   return (
@@ -52,22 +42,16 @@ export function TrainingModuleRow({
         <span>{module.description}</span>
       </ModuleText>
 
-      {status === "locked" ? (
-        <ModuleAction $status={status}>
-          {t("trainingCentral.locked")}
-        </ModuleAction>
-      ) : (
-        <Button
-          type={status === "current" ? "primary" : "default"}
-          onClick={onContinue}
-        >
-          {status === "completed"
-            ? t("trainingCentral.completed")
-            : module.totalLessonsFinished === 0
-              ? t("trainingCentral.start")
-              : t("trainingCentral.continue")}
-        </Button>
-      )}
+      <Button
+        type={status === "current" ? "primary" : "default"}
+        onClick={onContinue}
+      >
+        {status === "completed"
+          ? t("trainingCentral.completed")
+          : module.totalLessonsFinished === 0
+            ? t("trainingCentral.start")
+            : t("trainingCentral.continue")}
+      </Button>
     </ModuleRow>
   );
 }

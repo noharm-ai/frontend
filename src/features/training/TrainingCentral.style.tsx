@@ -34,6 +34,15 @@ export const ProgressRow = styled.div`
   gap: 16px;
 `;
 
+export const ProgressNote = styled.p`
+  margin: 16px 0 0 0;
+  padding-top: 16px;
+  border-top: 1px solid ${colors.detail};
+  color: ${colors.text};
+  font-size: 0.8rem;
+  text-align: left;
+`;
+
 export const ProgressGroup = styled.div`
   flex: 1;
   min-width: 0;
@@ -65,7 +74,7 @@ export const ModuleRow = styled.div<{ $current: boolean }>`
 `;
 
 export const ModuleIconCircle = styled.div<{
-  $status: "completed" | "current" | "locked";
+  $status: "completed" | "current";
 }>`
   display: flex;
   align-items: center;
@@ -76,11 +85,8 @@ export const ModuleIconCircle = styled.div<{
   border-radius: 50%;
   font-size: 16px;
   color: ${colors.commonLighter};
-  background: ${(props) => {
-    if (props.$status === "completed") return colors.accent;
-    if (props.$status === "current") return colors.accentSecondary;
-    return colors.fifth;
-  }};
+  background: ${(props) =>
+    props.$status === "completed" ? colors.accent : colors.accentSecondary};
 `;
 
 export const ModuleText = styled.div`
@@ -111,19 +117,6 @@ export const ModuleText = styled.div`
     font-size: 0.875rem;
     margin-top: 2px;
   }
-`;
-
-export const ModuleAction = styled.div<{
-  $status: "completed" | "current" | "locked";
-}>`
-  flex-shrink: 0;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: ${(props) => {
-    if (props.$status === "completed") return colors.accent;
-    if (props.$status === "locked") return colors.fourth;
-    return colors.text;
-  }};
 `;
 
 export const BadgesPanel = styled.div`

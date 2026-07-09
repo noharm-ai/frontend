@@ -17,27 +17,18 @@ import {
   ProgressPanel,
   ProgressRow,
   ProgressGroup,
+  ProgressNote,
 } from "./TrainingCentral.style";
 import { PageHeader } from "styles/PageHeader.style";
 
-type TrainingModuleStatus = "completed" | "current" | "locked";
+type TrainingModuleStatus = "completed" | "current";
 
 const isModuleFinished = (module: ITrainingModule) =>
   module.totalLessons > 0 &&
   module.totalLessonsFinished === module.totalLessons;
 
-const getModuleStatus = (
-  module: ITrainingModule,
-  index: number,
-  list: ITrainingModule[],
-): TrainingModuleStatus => {
-  if (isModuleFinished(module)) return "completed";
-
-  const previousModule = list[index - 1];
-  const previousFinished = index === 0 || isModuleFinished(previousModule);
-
-  return previousFinished ? "current" : "locked";
-};
+const getModuleStatus = (module: ITrainingModule): TrainingModuleStatus =>
+  isModuleFinished(module) ? "completed" : "current";
 
 export function TrainingCentral() {
   const { t } = useTranslation();
@@ -99,11 +90,11 @@ export function TrainingCentral() {
               />
             )}
 
-            {sortedList.map((module, index) => (
+            {sortedList.map((module) => (
               <TrainingModuleRow
                 key={module.id}
                 module={module}
-                status={getModuleStatus(module, index, sortedList)}
+                status={getModuleStatus(module)}
                 onContinue={() => navigate(`/treinamento/${module.id}`)}
               />
             ))}
@@ -155,6 +146,12 @@ export function TrainingCentral() {
                     </ProgressGroup>
                   )}
                 </ProgressRow>
+
+                {mandatoryList.length > 0 && (
+                  <ProgressNote>
+                    {t("trainingCentral.mandatoryExplanation")}
+                  </ProgressNote>
+                )}
               </ProgressPanel>
             )}
 
