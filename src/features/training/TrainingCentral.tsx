@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Progress, Row, Col } from "antd";
+import { CheckCircleTwoTone } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
@@ -29,6 +30,21 @@ const isModuleFinished = (module: ITrainingModule) =>
 
 const getModuleStatus = (module: ITrainingModule): TrainingModuleStatus =>
   isModuleFinished(module) ? "completed" : "current";
+
+const formatProgress = (percent?: number) =>
+  percent === 100 ? (
+    <CheckCircleTwoTone
+      twoToneColor="#70bdc3"
+      style={{
+        fontSize: 34,
+        display: "block",
+        lineHeight: 1,
+        margin: 0,
+      }}
+    />
+  ) : (
+    `${percent}%`
+  );
 
 export function TrainingCentral() {
   const { t } = useTranslation();
@@ -117,6 +133,7 @@ export function TrainingCentral() {
                         type="circle"
                         percent={mandatoryPercent}
                         size={72}
+                        format={formatProgress}
                       />
                       <span>
                         {t("trainingCentral.completedCount", {
@@ -136,6 +153,7 @@ export function TrainingCentral() {
                         type="circle"
                         percent={optionalPercent}
                         size={72}
+                        format={formatProgress}
                       />
                       <span>
                         {t("trainingCentral.completedCount", {
