@@ -8,6 +8,7 @@ import {
   ArrowRightOutlined,
   VideoCameraOutlined,
   FileTextOutlined,
+  CheckCircleFilled,
 } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -19,7 +20,7 @@ import { getErrorMessage } from "utils/errorHandler";
 import { PageHeader } from "styles/PageHeader.style";
 import colors from "styles/colors";
 
-import { fetchTrainingItems } from "./TrainingPlayerSlice";
+import { fetchTrainingItems, finishTrainingItem } from "./TrainingPlayerSlice";
 import { fetchTrainingList } from "./TrainingCentralSlice";
 import { TrainingItemQuiz } from "./TrainingItemQuiz";
 import { YoutubeEmbed } from "./YoutubeEmbed";
@@ -51,9 +52,11 @@ export function TrainingPlayer() {
   const moduleList = useAppSelector((state) => state.trainingCentral.list);
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [passedByItem, setPassedByItem] = useState<Record<number, boolean>>(
-    {},
-  );
+  const [passedByItem, setPassedByItem] = useState<Record<number, boolean>>({});
+  const [locallyFinishedIds, setLocallyFinishedIds] = useState<
+    Record<number, boolean>
+  >({});
+  const [itemStartedAt, setItemStartedAt] = useState(() => Date.now());
 
   useEffect(() => {
     dispatch(fetchTrainingItems(params.id)).then((response: any) => {
@@ -77,12 +80,23 @@ export function TrainingPlayer() {
   );
 
   const currentItem = sortedItems[currentStep];
+  const isItemFinished = (item: (typeof sortedItems)[number]) =>
+    item.finished || Boolean(locallyFinishedIds[item.id]);
+
+  useEffect(() => {
+    if (currentItem) {
+      setItemStartedAt(Date.now());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentItem?.id]);
   const moduleName =
-    moduleList.find((module) => module.id === currentItem?.trainingId)
-      ?.title ?? currentItem?.trainingId;
+    moduleList.find((module) => module.id === currentItem?.trainingId)?.title ??
+    currentItem?.trainingId;
   const isLastStep = currentStep === sortedItems.length - 1;
   const hasQuiz = Boolean(currentItem?.questions?.length);
-  const passed = Boolean(passedByItem[currentItem?.id]);
+  const passed =
+    Boolean(passedByItem[currentItem?.id]) ||
+    Boolean(currentItem && isItemFinished(currentItem));
   const progressPercent = sortedItems.length
     ? Math.round((currentStep / sortedItems.length) * 100)
     : 0;
@@ -96,6 +110,20 @@ export function TrainingPlayer() {
   };
 
   const goToNext = () => {
+    const durationSeconds = Math.round((Date.now() - itemStartedAt) / 1000);
+
+    dispatch(
+      finishTrainingItem({ idTrainingItem: currentItem.id, durationSeconds }),
+    ).then((response: any) => {
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        setLocallyFinishedIds((prev) => ({ ...prev, [currentItem.id]: true }));
+      }
+    });
+
     if (isLastStep) {
       notification.success({ message: t("trainingPlayer.completed") });
       navigate("/treinamento");
@@ -136,16 +164,36 @@ export function TrainingPlayer() {
 
             <LessonsLabel>{t("trainingPlayer.lessonsListLabel")}</LessonsLabel>
             <LessonList>
-              {sortedItems.map((item, index) => (
-                <LessonItem key={item.id} $active={index === currentStep}>
-                  <LessonNumber $active={index === currentStep}>
-                    {index + 1}
-                  </LessonNumber>
-                  <LessonTitle $active={index === currentStep}>
-                    {item.title}
-                  </LessonTitle>
-                </LessonItem>
-              ))}
+              {sortedItems.map((item, index) => {
+                const finished = isItemFinished(item);
+                const unlocked =
+                  finished ||
+                  index === 0 ||
+                  isItemFinished(sortedItems[index - 1]);
+
+                return (
+                  <LessonItem
+                    key={item.id}
+                    $active={index === currentStep}
+                    $clickable={unlocked}
+                    onClick={() => {
+                      if (unlocked) {
+                        setCurrentStep(index);
+                      }
+                    }}
+                  >
+                    <LessonNumber
+                      $active={index === currentStep}
+                      $finished={finished}
+                    >
+                      {finished ? <CheckCircleFilled /> : index + 1}
+                    </LessonNumber>
+                    <LessonTitle $active={index === currentStep}>
+                      {item.title}
+                    </LessonTitle>
+                  </LessonItem>
+                );
+              })}
             </LessonList>
           </StepsPanel>
         </Col>

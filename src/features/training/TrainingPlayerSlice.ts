@@ -21,6 +21,7 @@ export interface ITrainingItem {
   video: string | null;
   position: number;
   questions: ITrainingQuestion[] | null;
+  finished: boolean;
 }
 
 interface ITrainingPlayerSlice {
@@ -40,6 +41,27 @@ export const fetchTrainingItems = createAsyncThunk(
   async (idTraining: string | undefined, thunkAPI) => {
     try {
       const response = await api.training.getItems(idTraining);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+export const finishTrainingItem = createAsyncThunk(
+  "training/finish-item",
+  async (
+    {
+      idTrainingItem,
+      durationSeconds,
+    }: { idTrainingItem: number; durationSeconds: number },
+    thunkAPI,
+  ) => {
+    try {
+      const response = await api.training.finishItem(idTrainingItem, {
+        durationSeconds,
+      });
 
       return response.data;
     } catch (err) {

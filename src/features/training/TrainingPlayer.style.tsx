@@ -65,17 +65,28 @@ export const LessonList = styled.ul`
   gap: 4px;
 `;
 
-export const LessonItem = styled.li<{ $active: boolean }>`
+export const LessonItem = styled.li<{ $active: boolean; $clickable: boolean }>`
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 8px 10px;
   border-radius: 10px;
+  cursor: ${(props) => (props.$clickable ? "pointer" : "default")};
   background: ${(props) =>
     props.$active ? "rgba(112, 189, 195, 0.12)" : "transparent"};
+
+  &:hover {
+    background: ${(props) =>
+      props.$clickable && !props.$active
+        ? "rgba(112, 189, 195, 0.06)"
+        : undefined};
+  }
 `;
 
-export const LessonNumber = styled.span<{ $active: boolean }>`
+export const LessonNumber = styled.span<{
+  $active: boolean;
+  $finished: boolean;
+}>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -86,8 +97,9 @@ export const LessonNumber = styled.span<{ $active: boolean }>`
   font-size: 0.75rem;
   font-weight: 700;
   background: ${(props) =>
-    props.$active ? colors.accentSecondary : "transparent"};
-  color: ${(props) => (props.$active ? colors.commonLighter : colors.text)};
+    props.$finished || props.$active ? colors.accentSecondary : "transparent"};
+  color: ${(props) =>
+    props.$finished || props.$active ? colors.commonLighter : colors.text};
 `;
 
 export const LessonTitle = styled.span<{ $active: boolean }>`
@@ -313,6 +325,7 @@ export const FooterRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  max-width: 820px;
   margin-top: 30px;
 `;
 
