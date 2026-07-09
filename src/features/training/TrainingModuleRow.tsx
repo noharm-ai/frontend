@@ -43,6 +43,11 @@ export function TrainingModuleRow({
       <ModuleText>
         <strong>
           {module.position} · {module.title}
+          {module.mandatory && (
+            <span className="mandatory-tag">
+              {t("trainingCentral.mandatoryTag")}
+            </span>
+          )}
         </strong>
         <span>{module.description}</span>
       </ModuleText>

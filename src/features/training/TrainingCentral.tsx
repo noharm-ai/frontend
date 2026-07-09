@@ -11,7 +11,13 @@ import { getErrorMessage } from "utils/errorHandler";
 import { fetchTrainingList, ITrainingModule } from "./TrainingCentralSlice";
 import { TrainingModuleRow } from "./TrainingModuleRow";
 import { TrainingBadges } from "./TrainingBadges";
-import { ModuleList, SideColumn, ProgressPanel } from "./TrainingCentral.style";
+import {
+  ModuleList,
+  SideColumn,
+  ProgressPanel,
+  ProgressRow,
+  ProgressGroup,
+} from "./TrainingCentral.style";
 import { PageHeader } from "styles/PageHeader.style";
 
 type TrainingModuleStatus = "completed" | "current" | "locked";
@@ -56,8 +62,21 @@ export function TrainingCentral() {
   );
 
   const total = sortedList.length;
-  const completedCount = sortedList.filter(isModuleFinished).length;
-  const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+
+  const mandatoryList = sortedList.filter((module) => module.mandatory);
+  const optionalList = sortedList.filter((module) => !module.mandatory);
+
+  const mandatoryCompleted = mandatoryList.filter(isModuleFinished).length;
+  const mandatoryPercent =
+    mandatoryList.length > 0
+      ? Math.round((mandatoryCompleted / mandatoryList.length) * 100)
+      : 0;
+
+  const optionalCompleted = optionalList.filter(isModuleFinished).length;
+  const optionalPercent =
+    optionalList.length > 0
+      ? Math.round((optionalCompleted / optionalList.length) * 100)
+      : 0;
 
   return (
     <>
@@ -96,13 +115,46 @@ export function TrainingCentral() {
             {total > 0 && (
               <ProgressPanel>
                 <h3>{t("trainingCentral.progressTitle")}</h3>
-                <Progress type="circle" percent={percent} size={72} />
-                <span>
-                  {t("trainingCentral.completedCount", {
-                    done: completedCount,
-                    total,
-                  })}
-                </span>
+
+                <ProgressRow>
+                  {mandatoryList.length > 0 && (
+                    <ProgressGroup>
+                      <span className="progress-label">
+                        {t("trainingCentral.progressMandatory")}
+                      </span>
+                      <Progress
+                        type="circle"
+                        percent={mandatoryPercent}
+                        size={72}
+                      />
+                      <span>
+                        {t("trainingCentral.completedCount", {
+                          done: mandatoryCompleted,
+                          total: mandatoryList.length,
+                        })}
+                      </span>
+                    </ProgressGroup>
+                  )}
+
+                  {optionalList.length > 0 && (
+                    <ProgressGroup>
+                      <span className="progress-label">
+                        {t("trainingCentral.progressOptional")}
+                      </span>
+                      <Progress
+                        type="circle"
+                        percent={optionalPercent}
+                        size={72}
+                      />
+                      <span>
+                        {t("trainingCentral.completedCount", {
+                          done: optionalCompleted,
+                          total: optionalList.length,
+                        })}
+                      </span>
+                    </ProgressGroup>
+                  )}
+                </ProgressRow>
               </ProgressPanel>
             )}
 

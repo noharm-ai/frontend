@@ -1058,6 +1058,9 @@
     "completedCount": "{{done}} de {{total}} concluídos",
     "empty": "Nenhum módulo de treinamento disponível.",
     "progressTitle": "Seu progresso",
+    "progressMandatory": "Módulos obrigatórios",
+    "progressOptional": "Módulos opcionais",
+    "mandatoryTag": "Obrigatório",
     "badgesTitle": "Conquistas",
     "badgesEmpty": "Complete módulos para desbloquear conquistas."
   },

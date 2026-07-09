@@ -11,6 +11,7 @@ export interface ITrainingModule {
   position: number;
   totalLessons: number;
   totalLessonsFinished: number;
+  mandatory: boolean;
 }
 
 interface ITrainingCentralSlice {

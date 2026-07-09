@@ -28,6 +28,25 @@ export const ProgressPanel = styled.div`
   }
 `;
 
+export const ProgressRow = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+`;
+
+export const ProgressGroup = styled.div`
+  flex: 1;
+  min-width: 0;
+
+  .progress-label {
+    display: block;
+    color: ${colors.primary};
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+`;
+
 export const ModuleList = styled.div`
   display: flex;
   flex-direction: column;
@@ -71,6 +90,19 @@ export const ModuleText = styled.div`
     display: block;
     color: ${colors.primary};
     font-size: 1rem;
+  }
+
+  .mandatory-tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: ${colors.commonLighter};
+    background: ${colors.danger};
+    vertical-align: middle;
   }
 
   span {

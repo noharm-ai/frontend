@@ -1048,6 +1048,9 @@
     "completedCount": "{{done}} of {{total}} completed",
     "empty": "No training modules available.",
     "progressTitle": "Your progress",
+    "progressMandatory": "Mandatory modules",
+    "progressOptional": "Optional modules",
+    "mandatoryTag": "Mandatory",
     "badgesTitle": "Achievements",
     "badgesEmpty": "Complete modules to unlock achievements."
   },
