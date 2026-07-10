@@ -1085,6 +1085,7 @@
     "quizPassed": "Quiz concluído! Você já pode avançar.",
     "answerCorrect": "Resposta correta!",
     "answerIncorrect": "Resposta incorreta. Tente novamente.",
+    "completeQuizHint": "Responda ao quiz corretamente para avançar.",
     "videoCoverBrand": "Treinamento NoHarm — Módulo {{module}}",
     "videoCoverOrg": "NoHarm.ai",
     "videoCoverTitle": "Treinamento",

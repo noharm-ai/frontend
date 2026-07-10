@@ -9,6 +9,7 @@ import {
   VideoCameraOutlined,
   FileTextOutlined,
   CheckCircleFilled,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -42,6 +43,7 @@ import {
   LessonTitle,
   BackRow,
   CompletionModalContent,
+  QuizHint,
 } from "./TrainingPlayer.style";
 
 export function TrainingPlayer() {
@@ -267,6 +269,13 @@ export function TrainingPlayer() {
               />
             )}
           </ItemContent>
+
+          {hasQuiz && !passed && (
+            <QuizHint>
+              <ExclamationCircleOutlined />
+              {t("trainingPlayer.completeQuizHint")}
+            </QuizHint>
+          )}
 
           <FooterRow>
             <Button

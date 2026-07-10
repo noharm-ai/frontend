@@ -26,21 +26,16 @@ export function TrainingItemQuiz({
   const { t } = useTranslation();
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selected, setSelected] = useState<number>();
-  const [verified, setVerified] = useState(false);
 
   const question = questions[questionIndex];
   const isLastQuestion = questionIndex === questions.length - 1;
-  const isCorrect = selected !== undefined && question.answers[selected].correct;
+  const verified = selected !== undefined;
+  const isCorrect = verified && question.answers[selected].correct;
 
   const handleSelect = (value: number) => {
     setSelected(value);
-    setVerified(false);
-  };
 
-  const handleVerify = () => {
-    setVerified(true);
-
-    if (isCorrect && isLastQuestion) {
+    if (question.answers[value].correct && isLastQuestion) {
       onPassedChange(true);
     }
   };
@@ -48,7 +43,6 @@ export function TrainingItemQuiz({
   const handleNextQuestion = () => {
     setQuestionIndex((index) => index + 1);
     setSelected(undefined);
-    setVerified(false);
   };
 
   return (
@@ -88,16 +82,6 @@ export function TrainingItemQuiz({
       )}
 
       <QuizActions>
-        {!verified && (
-          <Button
-            type="primary"
-            disabled={selected === undefined}
-            onClick={handleVerify}
-          >
-            {t("trainingPlayer.verifyAnswer")}
-          </Button>
-        )}
-
         {verified && isCorrect && !isLastQuestion && (
           <Button type="primary" onClick={handleNextQuestion}>
             {t("trainingPlayer.nextQuestion")}

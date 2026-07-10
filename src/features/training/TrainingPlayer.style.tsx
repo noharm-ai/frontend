@@ -334,6 +334,16 @@ export const FooterProgress = styled.span`
   font-size: 0.875rem;
 `;
 
+export const QuizHint = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 820px;
+  margin-top: 16px;
+  color: ${colors.danger};
+  font-size: 0.8125rem;
+`;
+
 export const CompletionModalContent = styled.div`
   text-align: center;
   padding: 12px 0 4px;
