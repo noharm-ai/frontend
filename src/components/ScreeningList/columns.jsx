@@ -185,6 +185,17 @@ export const expandedRowRender = (t) => {
         width: 100,
         key: "insurance",
       },
+
+      {
+        title: t("screeningList.clExIntervals"),
+        width: 150,
+        render: (i) => {
+          const hour = i.firstAdministrationHour;
+          return Number.isInteger(hour) && hour >= 0 && hour <= 23
+            ? `${String(hour).padStart(2, "0")}h`
+            : "-";
+        },
+      },
     ]);
 
     return (
@@ -446,8 +457,27 @@ const columns = (sortedInfo, filteredInfo, t, bag) => {
         `${record.admissionNumber}`.includes(value) ||
         `${record.idPatient}`.includes(value),
       sortDirections,
-      sorter: (a, b) => Date.parse(a.date) - Date.parse(b.date),
-      sortOrder: sortedInfo.columnKey === "date" && sortedInfo.order,
+      sorter: (a, b, sortOrder) => {
+        if (sortedInfo.columnKey === "firstAdministrationHour") {
+          const hourDiff =
+            (a.firstAdministrationHour ?? 24) -
+            (b.firstAdministrationHour ?? 24);
+          if (hourDiff !== 0) {
+            return hourDiff;
+          }
+
+          // tie-break by globalScore desc, regardless of sort direction
+          // (antd negates the whole result when sortOrder is "descend")
+          const scoreDiff = b.globalScore - a.globalScore;
+          return sortOrder === "ascend" ? scoreDiff : -scoreDiff;
+        }
+
+        return Date.parse(a.date) - Date.parse(b.date);
+      },
+      sortOrder:
+        (sortedInfo.columnKey === "date" ||
+          sortedInfo.columnKey === "firstAdministrationHour") &&
+        sortedInfo.order,
     },
     {
       title: t("screeningList.patientRisk"),

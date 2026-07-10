@@ -85,6 +85,8 @@
     "allHint-patient": "Ver todos os pacientes",
     "allHint-conciliation": "Ver todas as conciliações",
     "allHintLimit": "Limite de 500 registros atingido, reduza os setores para visualizar todas do dia.",
+    "orderByAdministration": "Priorizar por horário de administração",
+    "orderByAdministrationHint": "Ordenar pelo horário da primeira administração do medicamento",
     "patientRisk": "Risco do paciente",
     "prescriptionRisk": "Risco da prescrição",
     "actions": "Ações",
@@ -148,6 +150,7 @@
     "clExDepartment": "Setor",
     "clExAdmissionNumber": "# Atendimento",
     "clExPrescription": "# Prescrição",
+    "clExIntervals": "Horário da 1ª administração",
 
     "btnCheck": "Checar prescrição",
     "btnChecked": "Prescrição checada",

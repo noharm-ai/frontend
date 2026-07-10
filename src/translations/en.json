@@ -85,6 +85,8 @@
     "allHint-patient": "Show all",
     "allHint-conciliation": "Show all",
     "allHintLimit": "500 records limit reached",
+    "orderByAdministration": "Prioritize by administration",
+    "orderByAdministrationHint": "Order by the first medication administration hour",
     "patientRisk": "Patient risk",
     "prescriptionRisk": "Prescription risk",
     "actions": "Actions",
@@ -148,6 +150,7 @@
     "clExDepartment": "Department",
     "clExAdmissionNumber": "# Admission number",
     "clExPrescription": "# Prescription",
+    "clExIntervals": "First administration hour",
 
     "btnCheck": "Check prescription",
     "btnChecked": "Checked prescription",

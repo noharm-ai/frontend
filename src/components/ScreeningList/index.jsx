@@ -117,10 +117,10 @@ export default function ScreeningList({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const selectedRows = useSelector(
-    (state) => state.prescriptionv2.selectedRows.list
+    (state) => state.prescriptionv2.selectedRows.list,
   );
   const selectedRowsActive = useSelector(
-    (state) => state.prescriptionv2.selectedRows.active
+    (state) => state.prescriptionv2.selectedRows.active,
   );
   const [multipleCheckModal, setMultipleCheckModal] = useState(false);
   const [expandedRows, setExpandedRows] = useState([]);
@@ -138,7 +138,7 @@ export default function ScreeningList({
   const [title] = useMedia(
     [`(max-width: ${breakpoints.lg})`],
     [[theTitle]],
-    [noop]
+    [noop],
   );
   const listCount = {
     all: list ? list.length : 0,
@@ -160,7 +160,7 @@ export default function ScreeningList({
     if (rows.length > 0) {
       if (isAllSelected()) {
         dispatch(
-          setSelectedRows(selectedRows.filter((s) => rows.indexOf(s) === -1))
+          setSelectedRows(selectedRows.filter((s) => rows.indexOf(s) === -1)),
         );
       } else {
         const allRows = [...selectedRows, ...rows];
@@ -230,13 +230,13 @@ export default function ScreeningList({
         break;
       case "checkPrescription": {
         const cheklist = list.filter(
-          (item) => selectedRows.indexOf(item.idPrescription) !== -1
+          (item) => selectedRows.indexOf(item.idPrescription) !== -1,
         );
         dispatch(setMultipleCheckList(cheklist));
         setMultipleCheckModal(true);
 
         trackPrescriptionPrioritizationAction(
-          TrackedPrescriptionPrioritizationAction.MULTIPLE_CHECK_PRESCRIPTION
+          TrackedPrescriptionPrioritizationAction.MULTIPLE_CHECK_PRESCRIPTION,
         );
 
         break;
@@ -244,7 +244,7 @@ export default function ScreeningList({
 
       case "openPrescription": {
         trackPrescriptionPrioritizationAction(
-          TrackedPrescriptionPrioritizationAction.MULTIPLE_OPEN_PRESCRIPTION
+          TrackedPrescriptionPrioritizationAction.MULTIPLE_OPEN_PRESCRIPTION,
         );
         const openList = [];
 
@@ -399,7 +399,7 @@ export default function ScreeningList({
 
       if (e.ctrlKey) {
         let activeRow = document.querySelectorAll(
-          ".ant-table-tbody tr.highlight"
+          ".ant-table-tbody tr.highlight",
         )[0];
         if (!activeRow) {
           activeRow = document.querySelectorAll(".ant-table-tbody tr")[0];
@@ -485,6 +485,14 @@ export default function ScreeningList({
   };
 
   const handleTableChange = (pagination, filters, sorter) => {
+    // the "class" column drives the "date"/"firstAdministrationHour" custom
+    // sort buttons (see orderByDate/orderByAdministration); antd reports its
+    // real key ("class") on every onChange, including pagination-only
+    // changes, so ignore it here to avoid clobbering the tracked sortOrder.
+    if (sorter.columnKey === "class") {
+      return;
+    }
+
     setSortOrder(sorter);
   };
 
@@ -523,7 +531,7 @@ export default function ScreeningList({
       dispatch(setSelectedRowsActive(true));
 
       trackPrescriptionPrioritizationAction(
-        TrackedPrescriptionPrioritizationAction.MULTIPLE_SELECTION_ACTIVATE
+        TrackedPrescriptionPrioritizationAction.MULTIPLE_SELECTION_ACTIVATE,
       );
     }
   };
@@ -599,6 +607,29 @@ export default function ScreeningList({
             >
               Priorizar por data
             </Button>
+
+            <Tooltip title={t("screeningList.orderByAdministrationHint")}>
+              <Button
+                onClick={() => orderByAdministration()}
+                type={
+                  sortOrder.columnKey === "firstAdministrationHour"
+                    ? "primary"
+                    : "default"
+                }
+                icon={
+                  sortOrder.columnKey === "firstAdministrationHour" ? (
+                    sortOrder.order === "ascend" ? (
+                      <CaretUpOutlined />
+                    ) : (
+                      <CaretDownOutlined />
+                    )
+                  ) : null
+                }
+                style={{ marginLeft: "10px" }}
+              >
+                {t("screeningList.orderByAdministration")}
+              </Button>
+            </Tooltip>
           </div>
         )}
       </TableInfo>
@@ -632,6 +663,22 @@ export default function ScreeningList({
       setSortOrder({ order: undefined });
     } else if (sortOrder.columnKey !== "date") {
       setSortOrder({ columnKey: "date", order: "ascend" });
+    }
+  };
+
+  const orderByAdministration = () => {
+    if (
+      sortOrder.columnKey === "firstAdministrationHour" &&
+      sortOrder.order === "ascend"
+    ) {
+      setSortOrder({ columnKey: "firstAdministrationHour", order: "descend" });
+    } else if (
+      sortOrder.columnKey === "firstAdministrationHour" &&
+      sortOrder.order === "descend"
+    ) {
+      setSortOrder({ order: undefined });
+    } else if (sortOrder.columnKey !== "firstAdministrationHour") {
+      setSortOrder({ columnKey: "firstAdministrationHour", order: "ascend" });
     }
   };
 
