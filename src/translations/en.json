@@ -1063,6 +1063,7 @@
     "moduleLessonLabel": "Module {{module}} · Lesson {{lesson}} of {{total}}",
     "lessonProgress": "Lesson {{lesson}} of {{total}}",
     "lessonsListLabel": "Lessons",
+    "pendingLesson": "Pending lesson",
     "overallProgress": "{{percent}}% completed",
     "backToCentral": "Training Central",
     "videoLabel": "Video",

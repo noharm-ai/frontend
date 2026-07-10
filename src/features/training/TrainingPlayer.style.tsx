@@ -103,9 +103,19 @@ export const LessonNumber = styled.span<{
 `;
 
 export const LessonTitle = styled.span<{ $active: boolean }>`
+  flex: 1;
   font-size: 0.875rem;
   color: ${(props) => (props.$active ? colors.primary : colors.text)};
   font-weight: ${(props) => (props.$active ? 700 : 400)};
+`;
+
+export const PendingBadge = styled.span`
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: ${colors.text};
+  opacity: 0.45;
+  font-size: 0.875rem;
 `;
 
 export const Eyebrow = styled.div`
@@ -152,7 +162,23 @@ export const ItemContent = styled.div`
         line-height: 1.6;
       }
     }
+
+    img {
+      display: block;
+      max-width: 70%;
+      height: auto;
+      margin: 32px auto;
+      border-radius: 8px;
+      cursor: pointer;
+    }
   }
+`;
+
+export const ImagePreview = styled.img`
+  display: block;
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 8px;
 `;
 
 export const VideoWrapper = styled.div`

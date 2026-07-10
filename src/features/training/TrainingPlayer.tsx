@@ -10,6 +10,7 @@ import {
   FileTextOutlined,
   QuestionCircleOutlined,
   CheckCircleFilled,
+  ClockCircleOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 
@@ -42,9 +43,11 @@ import {
   LessonItem,
   LessonNumber,
   LessonTitle,
+  PendingBadge,
   BackRow,
   CompletionModalContent,
   QuizHint,
+  ImagePreview,
 } from "./TrainingPlayer.style";
 
 export function TrainingPlayer() {
@@ -63,6 +66,7 @@ export function TrainingPlayer() {
   >({});
   const [itemStartedAt, setItemStartedAt] = useState(() => Date.now());
   const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [previewImageSrc, setPreviewImageSrc] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchTrainingItems(params.id)).then((response: any) => {
@@ -207,6 +211,11 @@ export function TrainingPlayer() {
                     <LessonTitle $active={index === currentStep}>
                       {item.title}
                     </LessonTitle>
+                    {!finished && (
+                      <PendingBadge title={t("trainingPlayer.pendingLesson")}>
+                        <ClockCircleOutlined />
+                      </PendingBadge>
+                    )}
                   </LessonItem>
                 );
               })}
@@ -260,6 +269,12 @@ export function TrainingPlayer() {
             {hasText && (
               <div
                 className="item-text"
+                onClick={(event) => {
+                  const target = event.target as HTMLElement;
+                  if (target.tagName === "IMG") {
+                    setPreviewImageSrc((target as HTMLImageElement).src);
+                  }
+                }}
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(currentItem.text!),
                 }}
@@ -335,6 +350,17 @@ export function TrainingPlayer() {
             {t("trainingPlayer.backToCentral")}
           </Button>
         </CompletionModalContent>
+      </DefaultModal>
+
+      <DefaultModal
+        open={Boolean(previewImageSrc)}
+        footer={null}
+        centered
+        destroyOnHidden
+        width="auto"
+        onCancel={() => setPreviewImageSrc(null)}
+      >
+        <ImagePreview src={previewImageSrc ?? undefined} alt="" />
       </DefaultModal>
     </>
   );
