@@ -8,6 +8,7 @@ import {
   ArrowRightOutlined,
   VideoCameraOutlined,
   FileTextOutlined,
+  QuestionCircleOutlined,
   CheckCircleFilled,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
@@ -99,6 +100,7 @@ export function TrainingPlayer() {
     moduleList.find((module) => module.id === currentItem?.trainingId)?.title ??
     currentItem?.trainingId;
   const isLastStep = currentStep === sortedItems.length - 1;
+  const hasText = Boolean(currentItem?.text?.trim());
   const hasQuiz = Boolean(currentItem?.questions?.length);
   const passed =
     Boolean(passedByItem[currentItem?.id]) ||
@@ -230,12 +232,18 @@ export function TrainingPlayer() {
                     {t("trainingPlayer.videoLabel")}
                   </span>
                 )}
-                <span>
-                  <FileTextOutlined />
-                  {hasQuiz
-                    ? t("trainingPlayer.readingAndQuizLabel")
-                    : t("trainingPlayer.readingLabel")}
-                </span>
+                {hasText && (
+                  <span>
+                    <FileTextOutlined />
+                    {t("trainingPlayer.readingLabel")}
+                  </span>
+                )}
+                {hasQuiz && (
+                  <span>
+                    <QuestionCircleOutlined />
+                    {t("trainingPlayer.quizLabel")}
+                  </span>
+                )}
               </MetaRow>
             </div>
           </PageHeader>
@@ -249,12 +257,14 @@ export function TrainingPlayer() {
               />
             )}
 
-            <div
-              className="item-text"
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(currentItem.text),
-              }}
-            />
+            {hasText && (
+              <div
+                className="item-text"
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(currentItem.text!),
+                }}
+              />
+            )}
 
             {hasQuiz && (
               <TrainingItemQuiz

@@ -17,7 +17,7 @@ export interface ITrainingItem {
   id: number;
   trainingId: number;
   title: string;
-  text: string;
+  text: string | null;
   video: string | null;
   position: number;
   questions: ITrainingQuestion[] | null;

@@ -1077,7 +1077,7 @@
     "backToCentral": "Central de Treinamento",
     "videoLabel": "Vídeo",
     "readingLabel": "Leitura",
-    "readingAndQuizLabel": "Leitura e quiz",
+    "quizLabel": "Quiz",
     "quizTitle": "Verifique seu aprendizado",
     "questionProgress": "{{current}} de {{total}}",
     "verifyAnswer": "Verificar resposta",
