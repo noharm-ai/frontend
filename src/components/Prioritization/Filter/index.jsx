@@ -198,8 +198,8 @@ export default function Filter({
   const updateStatus = useCallback(() => {
     if (segments.list.length === 0) return;
 
-    updatePrescriptionListStatus(getParams());
-  }, [segments, updatePrescriptionListStatus, getParams]);
+    updatePrescriptionListStatus();
+  }, [segments, updatePrescriptionListStatus]);
 
   useEffect(() => {
     window.addEventListener("focus", updateStatus);

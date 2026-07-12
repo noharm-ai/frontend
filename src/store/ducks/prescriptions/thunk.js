@@ -96,21 +96,27 @@ export const fetchPrescriptionsListThunk =
   };
 
 export const updatePrescriptionStatusThunk =
-  (params = {}) =>
+  () =>
   async (dispatch, getState) => {
-    const { auth } = getState();
+    const { auth, prescriptions } = getState();
     const { access_token } = auth.identify;
+    const idPrescriptionList = prescriptions.list.map((p) => p.idPrescription);
+
+    if (idPrescriptionList.length === 0) return;
+
     const {
       data: { data },
       error,
-    } = await api.getPrescriptions(access_token, params).catch(errorHandler);
+    } = await api
+      .getPrescriptionsStatusList(access_token, idPrescriptionList)
+      .catch(errorHandler);
 
     if (!isEmpty(error)) {
       dispatch(prescriptionsFetchListError(error));
       return;
     }
 
-    dispatch(prescriptionsUpdateListStatus(transformPrescriptions(data)));
+    dispatch(prescriptionsUpdateListStatus(data));
   };
 
 /**
