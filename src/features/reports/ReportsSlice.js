@@ -86,6 +86,18 @@ export const updateReportGraphs = createAsyncThunk(
   },
 );
 
+export const suggestReportGraphs = createAsyncThunk(
+  "reports/custom/suggest-graphs",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.custom.suggestReportGraphs(params);
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
+);
+
 export const getFileReport = createAsyncThunk(
   "reports/file-report",
   async (params, thunkAPI) => {

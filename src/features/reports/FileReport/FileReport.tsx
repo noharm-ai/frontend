@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Spin, notification, FloatButton, Tag, Alert } from "antd";
 import { useParams } from "react-router-dom";
@@ -28,6 +28,7 @@ import {
 import {
   downloadReport,
   updateReportGraphs,
+  suggestReportGraphs,
 } from "src/features/reports/ReportsSlice";
 import { getErrorMessage } from "src/utils/errorHandler";
 import PermissionService from "src/services/PermissionService";
@@ -37,7 +38,7 @@ import { PageHeader } from "src/styles/PageHeader.style";
 import { FilterContainer, FilterActions, FilterList } from "./FileReport.style";
 import Modal from "src/components/Modal";
 import { ChartCreator } from "src/components/ChartCreator/ChartCreator";
-import { ChartConfig } from "src/components/ChartCreator/types";
+import { ChartConfig, ChartCreatorHandle } from "src/components/ChartCreator/types";
 import {
   detectColumnSchema,
   applyFilters,
@@ -45,6 +46,7 @@ import {
   Filter,
 } from "./FileReport.utils";
 import { FilterRow } from "./FilterRow";
+import { SuggestChartsButton } from "./SuggestChartsButton";
 import { ErrorBoundary } from "react-error-boundary";
 
 const ChartCreatorFallback = ({
@@ -82,6 +84,8 @@ export function FileReport() {
   const [initialCharts, setInitialCharts] = useState<ChartConfig[]>([]);
   const [currentCharts, setCurrentCharts] = useState<ChartConfig[]>([]);
   const [isSavingCharts, setIsSavingCharts] = useState(false);
+  const [isSuggestingCharts, setIsSuggestingCharts] = useState(false);
+  const chartCreatorRef = useRef<ChartCreatorHandle>(null);
   const canWriteGraphs = PermissionService().has(
     Permission.WRITE_CUSTOM_REPORTS_GRAPHS,
   );
@@ -191,6 +195,72 @@ export function FileReport() {
     });
   };
 
+  const handleSuggestCharts = (hint: string) => {
+    setIsSuggestingCharts(true);
+
+    const payload = {
+      columns: schema.map(({ key, label, type: columnType, options }) => ({
+        key,
+        label,
+        type: columnType,
+        options: options?.slice(0, 20),
+        distinctCount: options?.length,
+      })),
+      sampleRows: filteredData.slice(0, 5).map((row) => {
+        const truncatedRow: Record<string, any> = {};
+        Object.entries(row).forEach(([key, value]) => {
+          truncatedRow[key] =
+            typeof value === "string" && value.length > 120
+              ? value.slice(0, 120)
+              : value;
+        });
+        return truncatedRow;
+      }),
+      hint: hint || undefined,
+      existingTitles: currentCharts.map((c) => c.title),
+    };
+
+    dispatch(
+      // @ts-expect-error legacy code
+      suggestReportGraphs(payload),
+    ).then((response: any) => {
+      if (response.error) {
+        notification.error({ message: getErrorMessage(response, t) });
+      } else {
+        const suggestions = response.payload.data.data ?? [];
+
+        if (suggestions.length === 0) {
+          notification.info({
+            message: "Nenhuma sugestão gerada para estes dados.",
+          });
+        } else {
+          chartCreatorRef.current?.appendCharts(
+            suggestions.map((chart: ChartConfig) => ({
+              aggregation: "none",
+              sortOrder: "none",
+              xSortOrder: "none",
+              xLabelRotate: 0,
+              topN: 0,
+              showLabels: false,
+              height: 400,
+              dateGrouping: "none",
+              showTitle: true,
+              colorPalette: "default",
+              stacked: false,
+              filters: [],
+              ...chart,
+              id: generateId(),
+            })),
+          );
+          notification.success({
+            message: `${suggestions.length} gráfico(s) sugerido(s) adicionado(s). Revise e salve.`,
+          });
+        }
+      }
+      setIsSuggestingCharts(false);
+    });
+  };
+
   const executeDownloadWithFormat = (
     filename: string,
     format: "csv" | "xlsx",
@@ -295,10 +365,17 @@ export function FileReport() {
           {filteredData && filteredData.length > 0 && (
             <ErrorBoundary FallbackComponent={ChartCreatorFallback}>
               <ChartCreator
+                ref={chartCreatorRef}
                 data={filteredData}
                 initialCharts={initialCharts}
                 onChartsChange={setCurrentCharts}
                 readOnly={!canWriteGraphs}
+                extraActions={
+                  <SuggestChartsButton
+                    loading={isSuggestingCharts}
+                    onSuggest={handleSuggestCharts}
+                  />
+                }
               />
 
               {canWriteGraphs && (

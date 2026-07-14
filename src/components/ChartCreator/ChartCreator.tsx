@@ -1,17 +1,26 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
-import { Button, Card, Empty, Modal, Row, Col } from "antd";
+import { useState, useMemo, useCallback, useEffect, useImperativeHandle } from "react";
+import { Button, Card, Empty, Modal, Row, Col, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { AggregationType, ChartConfig, ChartCreatorProps, ColorPalette, DateGrouping, Filter, ReferenceLine, SortOrder } from "./types";
 import { ChartItem } from "./ChartItem";
 import { ChartFormFields } from "./ChartFormFields";
 import { detectColumnSchema } from "src/utils/dataFilters";
 
-export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: ChartCreatorProps) {
+export function ChartCreator({ data, initialCharts, onChartsChange, readOnly, extraActions, ref }: ChartCreatorProps) {
   const [charts, setCharts] = useState<ChartConfig[]>(initialCharts ?? []);
 
   useEffect(() => {
     onChartsChange?.(charts);
   }, [charts]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      appendCharts: (newCharts: ChartConfig[]) =>
+        setCharts((prev) => [...prev, ...newCharts]),
+    }),
+    [],
+  );
 
   // State for NEW chart form
   const [newTitle, setNewTitle] = useState("");
@@ -198,14 +207,17 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly }: 
               title="Adicionar Novo Gráfico"
               type="inner"
               extra={
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  disabled={!isNewFormValid}
-                  onClick={handleAddChart}
-                >
-                  Adicionar
-                </Button>
+                <Space>
+                  {extraActions}
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    disabled={!isNewFormValid}
+                    onClick={handleAddChart}
+                  >
+                    Adicionar
+                  </Button>
+                </Space>
               }
             >
               <ChartFormFields

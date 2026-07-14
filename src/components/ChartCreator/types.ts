@@ -1,3 +1,4 @@
+import type { ReactNode, Ref } from "react";
 import type { Filter } from "src/utils/dataFilters";
 export type { Filter, ColumnSchema } from "src/utils/dataFilters";
 
@@ -46,9 +47,15 @@ export interface ChartConfig {
   filters?: Filter[];
 }
 
+export interface ChartCreatorHandle {
+  appendCharts: (charts: ChartConfig[]) => void;
+}
+
 export interface ChartCreatorProps {
   data: any[];
   initialCharts?: ChartConfig[];
   onChartsChange?: (charts: ChartConfig[]) => void;
   readOnly?: boolean;
+  extraActions?: ReactNode;
+  ref?: Ref<ChartCreatorHandle>;
 }
