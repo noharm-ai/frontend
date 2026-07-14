@@ -26,7 +26,7 @@ export const SuggestChartsButton: React.FC<SuggestChartsButtonProps> = ({
       trigger="click"
       open={open}
       onOpenChange={setOpen}
-      title="Sugerir gráficos"
+      title="Sugerir gráfico"
       content={
         <div style={{ width: 300 }}>
           <Textarea
@@ -40,13 +40,13 @@ export const SuggestChartsButton: React.FC<SuggestChartsButtonProps> = ({
             style={{ marginBottom: "8px" }}
           />
           <Button type="primary" onClick={handleGenerate} block>
-            Gerar sugestões
+            Gerar sugestão
           </Button>
         </div>
       }
     >
       <Button icon={<BulbOutlined />} loading={loading}>
-        Sugerir gráficos
+        Sugerir gráfico
       </Button>
     </Popover>
   );
