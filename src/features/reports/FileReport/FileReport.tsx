@@ -253,7 +253,8 @@ export function FileReport() {
             })),
           );
           notification.success({
-            message: `${suggestions.length} gráfico(s) sugerido(s) adicionado(s). Revise e salve.`,
+            message:
+              "Gráfico sugerido adicionado. Revise e salve — clique novamente para sugerir outro.",
           });
         }
       }
