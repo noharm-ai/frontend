@@ -27,4 +27,10 @@ test("app still renders and redirects to login when localStorage is blocked", as
 
   await expect(page).toHaveURL(/\/login/);
   await expect(page.getByPlaceholder("Email")).toBeVisible();
+
+  await expect(
+    page.getByText(
+      "Seu navegador está bloqueando o armazenamento local (cookies/local storage).",
+    ),
+  ).toBeVisible();
 });

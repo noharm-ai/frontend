@@ -1,3 +1,14 @@
+export function isStorageAvailable(): boolean {
+  try {
+    const testKey = "__test_localStorage__";
+    localStorage.setItem(testKey, testKey);
+    localStorage.removeItem(testKey);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function getStorageItem(key: string): string | null {
   try {
     return localStorage.getItem(key);
