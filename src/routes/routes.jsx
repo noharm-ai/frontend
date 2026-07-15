@@ -29,6 +29,8 @@ import CustomForms from "pages/CustomForms/CustomForms";
 import CustomFormEditorPage from "pages/CustomForms/CustomFormEditorPage";
 import MemoryListPage from "pages/Memory/MemoryListPage";
 import MemoryEditorPage from "pages/Memory/MemoryEditorPage";
+import TrainingCentral from "pages/TrainingCentral";
+import TrainingPlayer from "pages/TrainingPlayer";
 
 import AdminTag from "pages/Admin/Tag";
 import AdminMemory from "pages/Admin/Memory";
@@ -279,6 +281,16 @@ const routes = [
     exact: true,
     path: "/suporte",
     element: <WithAuth component={SupportCenter} />,
+  },
+  {
+    exact: true,
+    path: "/treinamento",
+    element: <WithAuth component={TrainingCentral} />,
+  },
+  {
+    exact: true,
+    path: "/treinamento/:id",
+    element: <WithAuth component={TrainingPlayer} />,
   },
   {
     exact: true,

@@ -153,7 +153,7 @@ export default function IndicatorsPanelReport() {
       </Flex>
 
       <PageCard>
-        <ExpandableTable<any>
+        <ExpandableTable
           columns={columns(filters.indicator)}
           pagination={false}
           loading={status === "loading"}
@@ -170,6 +170,7 @@ export default function IndicatorsPanelReport() {
           showSorterTooltip={false}
           expandedRowRender={expandedRowRender}
           expandedRowKeys={expandedRows}
+          // @ts-expect-error columnTitle is not part of TableProps, kept as-is pre-existing behavior
           columnTitle={
             <ExpandColumn
               expand={!expandedRows.length}

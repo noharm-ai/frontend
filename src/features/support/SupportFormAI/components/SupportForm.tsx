@@ -211,7 +211,7 @@ export function SupportForm() {
         validationSchemaShape[field.label] = Yup.array().of(
           Yup.mixed()
             .nullable()
-            .test("is-valid-size", function (value) {
+            .test("is-valid-size", function (value: any) {
               if (!value) return true;
 
               return value.size <= MAX_FILE_SIZE

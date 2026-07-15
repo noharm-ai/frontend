@@ -172,9 +172,11 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
   const xData = processedData.map((item) => item.__xKey__);
   const showLabels = config.showLabels ?? false;
   const colors = COLOR_PALETTES[config.colorPalette ?? "default"] ?? [];
-  const titleOption = config.showTitle !== false
-    ? { title: { text: config.title, left: "center" } }
+  const hasTitle = config.showTitle !== false;
+  const titleOption = hasTitle
+    ? { title: { text: config.title, left: "center", top: 10 } }
     : {};
+  const legendTop = hasTitle ? 50 : 20;
 
   const seriesLabel = isCountPct
     ? AGGREGATION_LABEL.count_pct
@@ -213,7 +215,7 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
           }
         : { trigger: "item" },
       toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
-      legend: { orient: "vertical", left: "left" },
+      legend: { orient: "vertical", left: "left", top: legendTop },
       series: [
         {
           name: seriesName,
@@ -355,7 +357,13 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
   return {
     ...titleOption,
     ...(colors.length ? { color: colors } : {}),
-    grid: { left: "3%", right: "10%", bottom: "3%", containLabel: true },
+    grid: {
+      left: "3%",
+      right: "10%",
+      bottom: "3%",
+      top: hasTitle ? 90 : 60,
+      containLabel: true,
+    },
     tooltip: {
       trigger: "axis",
       ...(isCountPct ? {
@@ -383,7 +391,7 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
       } : {}),
     },
     toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
-    legend: { data: legendData, top: 30 },
+    legend: { data: legendData, top: legendTop },
     xAxis: isHBar
       ? { type: "value", ...(isCountPct ? { axisLabel: { formatter: "{value}%" } } : {}) }
       : {

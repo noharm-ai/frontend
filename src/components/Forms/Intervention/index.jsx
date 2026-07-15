@@ -93,10 +93,10 @@ export default function Intervention({
 
           return isRequired;
         },
-        then: Yup.array()
-          .nullable()
-          .min(1, t("validation.atLeastOne"))
-          .required(t("validation.requiredField")),
+        then: (schema) =>
+          schema
+            .min(1, t("validation.atLeastOne"))
+            .required(t("validation.requiredField")),
       }),
   });
 

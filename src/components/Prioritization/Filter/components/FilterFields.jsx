@@ -143,6 +143,15 @@ export default function FilterFields({
   }
   intervals.push("SN");
 
+  const firstAdministrationHours = [];
+  for (let i = 0; i < 24; i++) {
+    firstAdministrationHours.push(
+      i.toLocaleString("pt-BR", {
+        minimumIntegerDigits: 2,
+      }),
+    );
+  }
+
   const filterDepartments = (idSegmentList, list) => {
     const deps = list.filter((d) => {
       if (!idSegmentList || idSegmentList.length === 0) {
@@ -693,6 +702,42 @@ export default function FilterFields({
             <div className="form-row">
               <div className="form-row">
                 <div className="form-label">
+                  <label>
+                    Primeiro horário de administração do medicamento:
+                  </label>
+                </div>
+                <div className="form-input">
+                  <Select
+                    id="first_administration_hour"
+                    mode="multiple"
+                    optionFilterProp="children"
+                    className={
+                      filter.first_administration_hour?.length
+                        ? "warning"
+                        : null
+                    }
+                    value={filter.first_administration_hour}
+                    onChange={(value) =>
+                      setScreeningListFilter({
+                        first_administration_hour: value,
+                      })
+                    }
+                    autoClearSearchValue={false}
+                    allowClear
+                  >
+                    {firstAdministrationHours.map((i) => (
+                      <Select.Option key={i} value={i}>
+                        {i}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-row">
+                <div className="form-label">
                   <label>{t("labels.substance")}:</label>
                 </div>
                 <div className="form-input">
@@ -868,9 +913,7 @@ export default function FilterFields({
                     value={filter.medicalRecordList}
                     onChange={(value) =>
                       setScreeningListFilter({
-                        medicalRecordList: value.filter((v) =>
-                          /^\d+$/.test(v),
-                        ),
+                        medicalRecordList: value.filter((v) => /^\d+$/.test(v)),
                       })
                     }
                     notFoundContent="Digite o número do prontuário e pressione enter. Mais de um prontuário pode ser informado."

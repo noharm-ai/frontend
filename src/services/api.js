@@ -27,6 +27,7 @@ const endpoints = {
   authentication: "/authenticate",
   oauth: "/auth-provider",
   prescriptions: "/prescriptions",
+  prescriptionsStatusList: "/prescriptions/status-list",
   drugs: "/drugs",
   outliers: "/outliers",
   intervention: {
@@ -163,6 +164,13 @@ const getExams = (bearerToken, admissionNumber, params = {}) =>
  */
 const getPrescriptions = (bearerToken, params = {}) =>
   instance.get(endpoints.prescriptions, { params, ...setHeaders(bearerToken) });
+
+const getPrescriptionsStatusList = (bearerToken, idPrescriptionList) =>
+  instance.post(
+    endpoints.prescriptionsStatusList,
+    { idPrescriptionList },
+    setHeaders(bearerToken),
+  );
 
 const getPrescriptionById = (bearerToken, idPrescription, params = {}) =>
   instance.get(`${endpoints.prescriptions}/${idPrescription}`, {
@@ -749,6 +757,19 @@ api.support.fetchKnowledgeBaseArticles = (params) =>
   });
 
 /**
+ * training namespace
+ */
+api.training = {};
+api.training.getList = (params = {}) =>
+  instance.get(`/training/list`, { params, ...setHeaders() });
+api.training.getItems = (idTraining) =>
+  instance.get(`/training/${idTraining}/items`, { ...setHeaders() });
+api.training.finishItem = (idTrainingItem, params = {}) =>
+  instance.post(`/training/item/${idTrainingItem}/finish`, params, {
+    ...setHeaders(),
+  });
+
+/**
  * Summary namespace
  */
 api.summary = {};
@@ -924,6 +945,7 @@ const methods = {
   searchNames,
   getSegments,
   getPrescriptions,
+  getPrescriptionsStatusList,
   getPrescriptionById,
   getPrescriptionDrugPeriod,
   putPrescriptionById,

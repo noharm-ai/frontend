@@ -1,46 +1,82 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import dayjs from "dayjs";
 import { InfoCircleFilled } from "@ant-design/icons";
 
 import { EvaluationWarningContainer } from "./EvaluationWarning.style";
 import { startEvaluation } from "../PrescriptionSlice";
-import Permission from "models/Permission";
+
+const POLLING_INTERVAL = 60000;
 
 export default function EvaluationWarning() {
   const dispatch = useDispatch();
   const prescription = useSelector((state) => state.prescriptions.single.data);
   const currentUserId = useSelector((state) => state.user.account.userId);
-  const permissions = useSelector((state) => state.user.account.permissions);
+  const evaluationData = useSelector(
+    (state) => state.prescriptionv2.evaluation.data
+  );
 
   useEffect(() => {
-    if (prescription.idPrescription && !prescription.isBeingEvaluated) {
-      if (permissions.indexOf(Permission.WRITE_PRESCRIPTION) !== -1) {
-        dispatch(
-          startEvaluation({ idPrescription: prescription.idPrescription })
-        );
-      }
+    const idPrescription = prescription.idPrescription;
+    if (!idPrescription) {
+      return;
     }
+
+    let intervalId = null;
+
+    const poll = () => {
+      dispatch(startEvaluation({ idPrescription }));
+    };
+
+    const startPolling = () => {
+      poll();
+      intervalId = setInterval(poll, POLLING_INTERVAL);
+    };
+
+    const stopPolling = () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        startPolling();
+      } else {
+        stopPolling();
+      }
+    };
+
+    if (document.visibilityState === "visible") {
+      startPolling();
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      stopPolling();
+    };
   }, [prescription.idPrescription]); //eslint-disable-line
 
-  if (
-    !prescription.isBeingEvaluated ||
-    (prescription.isBeingEvaluated &&
-      `${currentUserId}` === `${prescription.features["evaluation"].userId}`)
-  ) {
+  const viewers = Array.isArray(evaluationData) ? evaluationData : [];
+  const otherViewers = viewers.filter(
+    (viewer) => `${viewer.userId}` !== `${currentUserId}`
+  );
+
+  if (otherViewers.length === 0) {
     return null;
   }
+
+  const [firstViewer, ...restViewers] = otherViewers;
 
   return (
     <EvaluationWarningContainer>
       <InfoCircleFilled />
       <div>
-        Esta prescrição está sendo analisada por{" "}
-        <strong>{prescription.features["evaluation"].userName}</strong>. A
-        análise foi iniciada em{" "}
-        {dayjs(prescription.features["evaluation"].startDate).format(
-          "DD/MM/YYYY HH:mm"
-        )}
+        Esta prescrição está sendo visualizada por{" "}
+        <strong>{firstViewer.userName}</strong>
+        {restViewers.length > 0 && ` e mais ${restViewers.length} pessoa(s)`}.
       </div>
     </EvaluationWarningContainer>
   );

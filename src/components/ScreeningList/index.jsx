@@ -24,7 +24,7 @@ import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 import { InfoIcon } from "components/Icon";
 import BackTop from "components/BackTop";
-import { Input } from "components/Inputs";
+import { Input, Select } from "components/Inputs";
 import InitialPage from "features/preferences/InitialPage/InitialPage";
 import Dropdown from "components/Dropdown";
 import DefaultModal from "components/Modal";
@@ -117,10 +117,10 @@ export default function ScreeningList({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const selectedRows = useSelector(
-    (state) => state.prescriptionv2.selectedRows.list
+    (state) => state.prescriptionv2.selectedRows.list,
   );
   const selectedRowsActive = useSelector(
-    (state) => state.prescriptionv2.selectedRows.active
+    (state) => state.prescriptionv2.selectedRows.active,
   );
   const [multipleCheckModal, setMultipleCheckModal] = useState(false);
   const [expandedRows, setExpandedRows] = useState([]);
@@ -138,7 +138,7 @@ export default function ScreeningList({
   const [title] = useMedia(
     [`(max-width: ${breakpoints.lg})`],
     [[theTitle]],
-    [noop]
+    [noop],
   );
   const listCount = {
     all: list ? list.length : 0,
@@ -160,7 +160,7 @@ export default function ScreeningList({
     if (rows.length > 0) {
       if (isAllSelected()) {
         dispatch(
-          setSelectedRows(selectedRows.filter((s) => rows.indexOf(s) === -1))
+          setSelectedRows(selectedRows.filter((s) => rows.indexOf(s) === -1)),
         );
       } else {
         const allRows = [...selectedRows, ...rows];
@@ -230,13 +230,13 @@ export default function ScreeningList({
         break;
       case "checkPrescription": {
         const cheklist = list.filter(
-          (item) => selectedRows.indexOf(item.idPrescription) !== -1
+          (item) => selectedRows.indexOf(item.idPrescription) !== -1,
         );
         dispatch(setMultipleCheckList(cheklist));
         setMultipleCheckModal(true);
 
         trackPrescriptionPrioritizationAction(
-          TrackedPrescriptionPrioritizationAction.MULTIPLE_CHECK_PRESCRIPTION
+          TrackedPrescriptionPrioritizationAction.MULTIPLE_CHECK_PRESCRIPTION,
         );
 
         break;
@@ -244,7 +244,7 @@ export default function ScreeningList({
 
       case "openPrescription": {
         trackPrescriptionPrioritizationAction(
-          TrackedPrescriptionPrioritizationAction.MULTIPLE_OPEN_PRESCRIPTION
+          TrackedPrescriptionPrioritizationAction.MULTIPLE_OPEN_PRESCRIPTION,
         );
         const openList = [];
 
@@ -399,7 +399,7 @@ export default function ScreeningList({
 
       if (e.ctrlKey) {
         let activeRow = document.querySelectorAll(
-          ".ant-table-tbody tr.highlight"
+          ".ant-table-tbody tr.highlight",
         )[0];
         if (!activeRow) {
           activeRow = document.querySelectorAll(".ant-table-tbody tr")[0];
@@ -485,6 +485,14 @@ export default function ScreeningList({
   };
 
   const handleTableChange = (pagination, filters, sorter) => {
+    // the "class" column drives the "date"/"firstAdministrationHour" custom
+    // sort buttons (see orderByDate/orderByAdministration); antd reports its
+    // real key ("class") on every onChange, including pagination-only
+    // changes, so ignore it here to avoid clobbering the tracked sortOrder.
+    if (sorter.columnKey === "class") {
+      return;
+    }
+
     setSortOrder(sorter);
   };
 
@@ -523,117 +531,137 @@ export default function ScreeningList({
       dispatch(setSelectedRowsActive(true));
 
       trackPrescriptionPrioritizationAction(
-        TrackedPrescriptionPrioritizationAction.MULTIPLE_SELECTION_ACTIVATE
+        TrackedPrescriptionPrioritizationAction.MULTIPLE_SELECTION_ACTIVATE,
       );
     }
   };
 
+  const handleSortColumnChange = (columnKey) => {
+    if (!columnKey) {
+      setSortOrder({ columnKey: undefined, order: undefined });
+    } else {
+      setSortOrder({ columnKey, order: "ascend" });
+    }
+  };
+
+  const toggleSortDirection = () => {
+    setSortOrder({
+      columnKey: sortOrder.columnKey,
+      order: sortOrder.order === "ascend" ? "descend" : "ascend",
+    });
+  };
+
   const info = (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <TableInfo>
-        <Input
-          placeholder={t("screeningList.iptSearchPlaceholder")}
-          style={{ width: 300 }}
-          allowClear
-          onChange={onClientSearch}
-          className={filter.searchKey ? "active" : ""}
-        />
-        <Tooltip title={t("screeningList.pendingHint-" + prioritizationType)}>
-          <Button
-            className={`gtm-lnk-filter-presc-pendente ant-btn-link-hover ${
-              isFilterActive("0") ? "active" : ""
-            }`}
-            onClick={(e) => handleFilter(e, "0")}
-          >
-            {t("screeningList.pending-" + prioritizationType)}
-            <Tag color="orange">{listCount.pending}</Tag>
-          </Button>
-        </Tooltip>
-
-        <Tooltip title={t("screeningList.checkedHint-" + prioritizationType)}>
-          <Button
-            className={`gtm-lnk-filter-presc-checada ant-btn-link-hover ${
-              isFilterActive("s") ? "active" : ""
-            }`}
-            onClick={(e) => handleFilter(e, "s")}
-          >
-            {t("screeningList.checked-" + prioritizationType)}{" "}
-            <Tag color="green">{listCount.checked}</Tag>
-          </Button>
-        </Tooltip>
-
-        <Tooltip
-          title={
-            listCount.all === 500
-              ? t("screeningList.allHintLimit")
-              : t("screeningList.allHint-" + prioritizationType)
-          }
-        >
-          <Button
-            className={`gtm-lnk-filter-presc-todas ant-btn-link-hover ${
-              isFilterActive(null) ? "active" : ""
-            }`}
-            onClick={(e) => handleFilter(e, "all")}
-          >
-            {t("screeningList.all-" + prioritizationType)}{" "}
-            {listCount.all === 500 ? <InfoIcon /> : ""}
-            <Tag>{listCount.all}</Tag>
-          </Button>
-        </Tooltip>
-
-        {prioritizationType === "prescription" && (
-          <div>
+    <>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <TableInfo>
+          <Input
+            placeholder={t("screeningList.iptSearchPlaceholder")}
+            style={{ width: 300 }}
+            allowClear
+            onChange={onClientSearch}
+            className={filter.searchKey ? "active" : ""}
+          />
+          <Tooltip title={t("screeningList.pendingHint-" + prioritizationType)}>
             <Button
-              onClick={() => orderByDate()}
-              type={sortOrder.columnKey === "date" ? "primary" : "default"}
-              icon={
-                sortOrder.columnKey === "date" ? (
+              className={`gtm-lnk-filter-presc-pendente ant-btn-link-hover ${
+                isFilterActive("0") ? "active" : ""
+              }`}
+              onClick={(e) => handleFilter(e, "0")}
+            >
+              {t("screeningList.pending-" + prioritizationType)}
+              <Tag color="orange">{listCount.pending}</Tag>
+            </Button>
+          </Tooltip>
+
+          <Tooltip title={t("screeningList.checkedHint-" + prioritizationType)}>
+            <Button
+              className={`gtm-lnk-filter-presc-checada ant-btn-link-hover ${
+                isFilterActive("s") ? "active" : ""
+              }`}
+              onClick={(e) => handleFilter(e, "s")}
+            >
+              {t("screeningList.checked-" + prioritizationType)}{" "}
+              <Tag color="green">{listCount.checked}</Tag>
+            </Button>
+          </Tooltip>
+
+          <Tooltip
+            title={
+              listCount.all === 500
+                ? t("screeningList.allHintLimit")
+                : t("screeningList.allHint-" + prioritizationType)
+            }
+          >
+            <Button
+              className={`gtm-lnk-filter-presc-todas ant-btn-link-hover ${
+                isFilterActive(null) ? "active" : ""
+              }`}
+              onClick={(e) => handleFilter(e, "all")}
+            >
+              {t("screeningList.all-" + prioritizationType)}{" "}
+              {listCount.all === 500 ? <InfoIcon /> : ""}
+              <Tag>{listCount.all}</Tag>
+            </Button>
+          </Tooltip>
+        </TableInfo>
+
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          {prioritizationType === "patient" && (
+            <div>
+              <Dropdown.Button
+                style={{ marginLeft: "10px" }}
+                menu={actionOptions()}
+                type={selectedRowsActive ? "primary" : "default"}
+                onClick={() => toggleMultipleSelection()}
+              >
+                {selectedRowsActive
+                  ? `${selectedRows.length} selecionados`
+                  : "Ativar seleção múltipla"}
+              </Dropdown.Button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {prioritizationType === "prescription" && (
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div>
+            <Select
+              style={{ width: 320, marginLeft: "10px" }}
+              placeholder={t("screeningList.orderByPlaceholder")}
+              allowClear
+              value={sortOrder.columnKey || undefined}
+              onChange={handleSortColumnChange}
+            >
+              <Select.Option value="date">
+                {t("screeningList.orderByDate")}
+              </Select.Option>
+              <Select.Option value="firstAdministrationHour">
+                {t("screeningList.orderByAdministration")}
+              </Select.Option>
+            </Select>
+          </div>
+
+          {sortOrder.columnKey && (
+            <div>
+              <Button
+                onClick={toggleSortDirection}
+                shape="circle"
+                icon={
                   sortOrder.order === "ascend" ? (
                     <CaretUpOutlined />
                   ) : (
                     <CaretDownOutlined />
                   )
-                ) : null
-              }
-              style={{ marginLeft: "10px" }}
-            >
-              Priorizar por data
-            </Button>
-          </div>
-        )}
-      </TableInfo>
-
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        {prioritizationType === "patient" && (
-          <div>
-            <Dropdown.Button
-              style={{ marginLeft: "10px" }}
-              menu={actionOptions()}
-              type={selectedRowsActive ? "primary" : "default"}
-              onClick={() => toggleMultipleSelection()}
-            >
-              {selectedRowsActive
-                ? `${selectedRows.length} selecionados`
-                : "Ativar seleção múltipla"}
-            </Dropdown.Button>
-          </div>
-        )}
-      </div>
-    </div>
+                }
+              />
+            </div>
+          )}
+        </div>
+      )}
+    </>
   );
-
-  const orderByDate = () => {
-    if (sortOrder.columnKey === "date" && sortOrder.order === "ascend") {
-      setSortOrder({ columnKey: "date", order: "descend" });
-    } else if (
-      sortOrder.columnKey === "date" &&
-      sortOrder.order === "descend"
-    ) {
-      setSortOrder({ order: undefined });
-    } else if (sortOrder.columnKey !== "date") {
-      setSortOrder({ columnKey: "date", order: "ascend" });
-    }
-  };
 
   return (
     <>

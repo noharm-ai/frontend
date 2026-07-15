@@ -20,19 +20,19 @@ const validationSchema = Yup.object().shape({
     .nullable()
     .when("hasConciliation", {
       is: true,
-      then: Yup.string().required("Campo obrigatório"),
+      then: (schema) => schema.required("Campo obrigatório"),
     }),
   date: Yup.string()
     .nullable()
     .when("action", {
       is: "schedule",
-      then: Yup.string().nullable().required("Campo obrigatório"),
+      then: (schema) => schema.required("Campo obrigatório"),
     }),
   notesType: Yup.string()
     .nullable()
     .when("hasClinicalNotesType", {
       is: true,
-      then: Yup.string().nullable().required("Campo obrigatório"),
+      then: (schema) => schema.required("Campo obrigatório"),
     }),
 });
 const formId = "clinicalNotes";

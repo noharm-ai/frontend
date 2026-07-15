@@ -36,14 +36,28 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    { name: "setup", testMatch: /.*\.setup\.ts/ },
+    /* Suite against the real dockerized backend (make e2e) */
+    { name: "setup", testMatch: /tests\/auth\.setup\.ts/ },
     {
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
         storageState: "playwright/.auth/user.json",
       },
+      testIgnore: /tests\/mocked\//,
       dependencies: ["setup"],
+    },
+
+    /* Suite against a fully mocked backend (make e2e-mock) — no docker */
+    { name: "mock-setup", testMatch: /tests\/mocked\/auth\.setup\.ts/ },
+    {
+      name: "chromium-mocked",
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "playwright/.auth/mock-user.json",
+      },
+      testMatch: /tests\/mocked\/.*\.spec\.ts/,
+      dependencies: ["mock-setup"],
     },
 
     // {
@@ -92,5 +106,6 @@ export default defineConfig({
     command: "npm run dev",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
   },
 });

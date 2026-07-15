@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "id": 1,
+      "description": "Adulto",
+      "status": 1,
+      "minAge": null,
+      "maxAge": null,
+      "minWeight": null,
+      "maxWeight": null
+    }
+  ]
+}

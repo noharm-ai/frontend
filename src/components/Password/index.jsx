@@ -19,7 +19,7 @@ const validationSchema = Yup.object().shape({
     .matches(passwordValidation.regex, passwordValidation.message),
   confirmPassword: Yup.string()
     .required("Campo obrigatório")
-    .oneOf([Yup.ref("newpassword"), null], "Senhas não conferem"),
+    .oneOf([Yup.ref("newpassword")], "Senhas não conferem"),
 });
 
 export default function Password({ resetPassword, status }) {

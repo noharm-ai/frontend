@@ -98,6 +98,7 @@ export default function Filter({
         idIcdList: filter.idIcdList,
         idIcdGroupList: filter.idIcdGroupList,
         intervals: filter.intervals,
+        first_administration_hour: filter.first_administration_hour,
         prescriber:
           prioritizationType === "patient" || prioritizationType === "cards"
             ? null
@@ -172,6 +173,7 @@ export default function Filter({
       filter.idIcdList,
       filter.idIcdGroupList,
       filter.intervals,
+      filter.first_administration_hour,
       filter.prescriber,
       filter.diff,
       filter.globalScoreMin,
@@ -196,8 +198,8 @@ export default function Filter({
   const updateStatus = useCallback(() => {
     if (segments.list.length === 0) return;
 
-    updatePrescriptionListStatus(getParams());
-  }, [segments, updatePrescriptionListStatus, getParams]);
+    updatePrescriptionListStatus();
+  }, [segments, updatePrescriptionListStatus]);
 
   useEffect(() => {
     window.addEventListener("focus", updateStatus);
@@ -282,6 +284,7 @@ export default function Filter({
       idIcdList: [],
       idIcdGroupList: [],
       intervals: [],
+      first_administration_hour: [],
       prescriber: null,
       diff: null,
       globalScoreMin: null,

@@ -1,0 +1,38 @@
+{
+  "status": "success",
+  "access_token": "__FAKE_JWT__",
+  "userId": 1,
+  "userName": "E2E Test",
+  "email": "e2e@noharm.ai",
+  "schema": "demo",
+  "roles": [],
+  "features": [],
+  "userFeatures": [],
+  "permissions": [
+    "READ_BASIC_FEATURES",
+    "WRITE_BASIC_FEATURES",
+    "READ_PRESCRIPTION",
+    "WRITE_PRESCRIPTION",
+    "READ_SUPPORT",
+    "WRITE_SUPPORT",
+    "READ_USERS"
+  ],
+  "nameUrl": "http://localhost:5001/names/{idPatient}",
+  "multipleNameUrl": "http://localhost:5001/names",
+  "nameHeaders": {},
+  "getnameType": "proxy",
+  "proxy": true,
+  "apiKey": "E2EAPIKEY",
+  "notifications": [],
+  "segments": [
+    {
+      "id": 1,
+      "description": "Adulto",
+      "status": 1
+    }
+  ],
+  "logoutUrl": null,
+  "integrationStatus": 1,
+  "signature": "",
+  "preferences": null
+}
