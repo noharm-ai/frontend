@@ -180,7 +180,7 @@ export default function PageHeader({
     const content = prescription.content;
 
     if (content.concilia) {
-      const extracted = prescriptionList.flatMap(({ value }) =>
+      const extracted = (prescriptionList || []).flatMap(({ value }) =>
         value.map(({ idPrescriptionDrug, conciliaRelationId }) => ({
           idPrescriptionDrug,
           conciliaRelationId,
