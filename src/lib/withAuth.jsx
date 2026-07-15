@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 
 import { logoutThunk } from "store/ducks/auth/thunk";
 import appInfo from "utils/appInfo";
+import { getStorageItem } from "utils/storage";
 
 const noop = () => {};
 
@@ -16,12 +17,12 @@ const AuthHandler = ({
   component: Component,
   ...props
 }) => {
-  const isLogged = localStorage.getItem("ac1") != null;
+  const isLogged = getStorageItem("ac1") != null;
 
   if (!isLoginPage && !isLogoutPage && !isLogged) {
-    const schema = localStorage.getItem("schema");
-    const oauth = localStorage.getItem("oauth");
-    const maintainer = localStorage.getItem("maintainer");
+    const schema = getStorageItem("schema");
+    const oauth = getStorageItem("oauth");
+    const maintainer = getStorageItem("maintainer");
 
     if (schema && oauth) {
       if (maintainer === "true") {
@@ -42,7 +43,7 @@ const AuthHandler = ({
   try {
     if (window.cwr) {
       window.cwr("addSessionAttributes", {
-        schema: localStorage.getItem("schema"),
+        schema: getStorageItem("schema"),
       });
     }
   } catch {

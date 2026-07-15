@@ -8,12 +8,14 @@ export type HistoryEntry = {
   formValues: Record<string, unknown>;
 };
 
+import { getStorageItem, setStorageItem, removeStorageItem } from "./storage";
+
 export type NewHistoryEntry = Omit<HistoryEntry, "id" | "timestamp">;
 
 const MAX_ENTRIES = 30;
 
 function getSchema(): string {
-  return localStorage.getItem("schema") ?? "default";
+  return getStorageItem("schema") ?? "default";
 }
 
 function getStorageKey(): string {
@@ -21,8 +23,8 @@ function getStorageKey(): string {
 }
 
 function load(): HistoryEntry[] {
+  const raw = getStorageItem(getStorageKey());
   try {
-    const raw = localStorage.getItem(getStorageKey());
     return raw ? (JSON.parse(raw) as HistoryEntry[]) : [];
   } catch {
     return [];
@@ -30,11 +32,7 @@ function load(): HistoryEntry[] {
 }
 
 function persist(entries: HistoryEntry[]): void {
-  try {
-    localStorage.setItem(getStorageKey(), JSON.stringify(entries));
-  } catch {
-    // localStorage may be unavailable (private mode, quota exceeded)
-  }
+  setStorageItem(getStorageKey(), JSON.stringify(entries));
 }
 
 export function saveEntry(entry: NewHistoryEntry): void {
@@ -61,9 +59,5 @@ export function getEntries(): HistoryEntry[] {
 }
 
 export function clearEntries(): void {
-  try {
-    localStorage.removeItem(getStorageKey());
-  } catch {
-    // ignore
-  }
+  removeStorageItem(getStorageKey());
 }

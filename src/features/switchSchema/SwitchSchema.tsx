@@ -15,6 +15,7 @@ import { fetchSwitchSchemaData, switchToSchema } from "./SwitchSchemaSlice";
 import { getErrorMessage } from "src/utils/errorHandler";
 import { setUser } from "src/store/ducks/auth/thunk";
 import { resetReduxState } from "src/store/ducks/reset";
+import { getStorageItem } from "src/utils/storage";
 
 import { SwitchSchemaContainer } from "./SwitchSchema.style";
 import { Form } from "styles/Form.style";
@@ -46,7 +47,7 @@ export function SwitchSchema() {
   });
 
   const initialValues = {
-    schema: localStorage.getItem("schema"),
+    schema: getStorageItem("schema"),
     getname: false,
     runAsBasicUser: false,
     extraFeatures: [],

@@ -1,6 +1,8 @@
 import Big from "big.js";
 import toFormat from "toformat";
 
+import { getStorageItem } from "./storage";
+
 export function formatCurrency(value, precision = 2) {
   if (value === null || value === undefined) {
     return "-";
@@ -14,7 +16,7 @@ export function formatCurrency(value, precision = 2) {
     typeof self.importScripts === "function";
 
   const locale =
-    !isWorker && localStorage.getItem("language") === "en" ? "en-US" : "pt-BR";
+    !isWorker && getStorageItem("language") === "en" ? "en-US" : "pt-BR";
 
   if (value instanceof Big) {
     toFormat(Big);

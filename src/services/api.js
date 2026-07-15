@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { store } from "store/index";
+import { getStorageItem } from "utils/storage";
 
 /**
  * AXIOS instance.
@@ -51,7 +52,7 @@ const endpoints = {
  * Set Authorization for API requests.
  */
 export const setHeaders = () => {
-  const token = localStorage.getItem("ac1") + localStorage.getItem("ac2");
+  const token = getStorageItem("ac1") + getStorageItem("ac2");
   const apiKey = store.getState().user.account.apiKey;
 
   return token

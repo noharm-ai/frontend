@@ -7,6 +7,7 @@ import { Row, Col } from "components/Grid";
 import Alert from "components/Alert";
 import Button from "components/Button";
 import InitialPage from "features/preferences/InitialPage/InitialPage";
+import { getStorageItem, setStorageItem } from "utils/storage";
 
 export default function PageHeader({ prioritizationType }) {
   const { t } = useTranslation();
@@ -14,11 +15,11 @@ export default function PageHeader({ prioritizationType }) {
   const title = `screeningList.title-${prioritizationType}`;
 
   const closeInfo = () => {
-    localStorage.setItem("card-alert", true);
+    setStorageItem("card-alert", true);
   };
 
   const goToCards = () => {
-    localStorage.setItem("card-alert", true);
+    setStorageItem("card-alert", true);
     navigate("/priorizacao/pacientes/cards");
   };
 
@@ -40,7 +41,7 @@ export default function PageHeader({ prioritizationType }) {
           }}
         >
           <div style={{ maxWidth: "500px" }}>
-            {!localStorage.getItem("card-alert") && (
+            {!getStorageItem("card-alert") && (
               <Alert
                 showIcon
                 message="Nova interface de priorização"
