@@ -16,7 +16,7 @@ import { formatDateTime } from "utils/date";
 import { SubstanceTagEnum } from "models/SubstanceTagEnum";
 import { MeasureUnitEnum } from "models/MeasureUnitEnum";
 
-function BaseForm() {
+function BaseForm({ disabled = false }) {
   const { t } = useTranslation();
   const substanceClasses = useSelector(
     (state) => state.lists.substanceClasses.list,
@@ -70,7 +70,7 @@ function BaseForm() {
                         setFieldValue("id", target.value)
                       }
                       value={values.id}
-                      disabled={!values.new}
+                      disabled={disabled || !values.new}
                     />
                   </div>
                   {errors.id && touched.id && (
@@ -91,6 +91,7 @@ function BaseForm() {
                         setFieldValue("name", target.value)
                       }
                       value={values.name}
+                      disabled={disabled}
                     />
                   </div>
                   {errors.name && touched.name && (
@@ -113,6 +114,7 @@ function BaseForm() {
                       value={values.idClass}
                       onChange={(value) => setFieldValue("idClass", value)}
                       allowClear
+                      disabled={disabled}
                     >
                       {substanceClasses.map(({ id, name }) => (
                         <Select.Option key={id} value={id}>
@@ -139,6 +141,7 @@ function BaseForm() {
                         setFieldValue("link", target.value)
                       }
                       value={values.link}
+                      disabled={disabled}
                     />
                   </div>
                   {errors.link && touched.link && (
@@ -159,6 +162,7 @@ function BaseForm() {
                       onChange={(value) => setFieldValue("active", value)}
                       checkedChildren={t("labels.yes")}
                       unCheckedChildren={t("labels.no")}
+                      disabled={disabled}
                     />
                   </div>
                   {errors.active && touched.active && (
@@ -202,13 +206,15 @@ function BaseForm() {
                           <div>
                             <label>{t(`drugAlertType.${k}`)}:</label>
                           </div>
-                          <Button
-                            onClick={() => removeHandling(k)}
-                            danger
-                            icon={<DeleteOutlined />}
-                            style={{ marginBottom: "5px" }}
-                            size="small"
-                          ></Button>
+                          {!disabled && (
+                            <Button
+                              onClick={() => removeHandling(k)}
+                              danger
+                              icon={<DeleteOutlined />}
+                              style={{ marginBottom: "5px" }}
+                              size="small"
+                            ></Button>
+                          )}
                         </Flex>
                       </div>
                       <div className="form-input">
@@ -218,15 +224,18 @@ function BaseForm() {
                           }
                           utilities={["basic", "link"]}
                           content={values.handling[k] || ""}
+                          editable={!disabled}
                         />
                       </div>
                     </div>
                   ))}
-                <Flex justify="center" style={{ marginTop: "20px" }}>
-                  <Dropdown menu={handlingMenu()}>
-                    <Button icon={<PlusOutlined />}>Adicionar manejo</Button>
-                  </Dropdown>
-                </Flex>
+                {!disabled && (
+                  <Flex justify="center" style={{ marginTop: "20px" }}>
+                    <Dropdown menu={handlingMenu()}>
+                      <Button icon={<PlusOutlined />}>Adicionar manejo</Button>
+                    </Dropdown>
+                  </Flex>
+                )}
               </>
             ),
           },
@@ -248,6 +257,7 @@ function BaseForm() {
                       allowClear
                       mode="multiple"
                       tagRender={tagRender("purple")}
+                      disabled={disabled}
                     >
                       {SubstanceTagEnum.getSubstanceTags(t).map((subtag) => (
                         <Select.Option value={subtag.id} key={subtag.id}>
@@ -275,6 +285,7 @@ function BaseForm() {
                         setFieldValue("defaultMeasureUnit", value)
                       }
                       allowClear
+                      disabled={disabled}
                     >
                       {MeasureUnitEnum.getDefaultUnits().map(({ value, label }) => (
                         <Select.Option key={value} value={value}>
@@ -300,6 +311,7 @@ function BaseForm() {
                             onChange={(value) =>
                               setFieldValue("maxdoseAdult", value)
                             }
+                            disabled={disabled}
                             status={
                               errors.maxdoseAdult && touched.maxdoseAdult
                                 ? "error"
@@ -328,6 +340,7 @@ function BaseForm() {
                             onChange={(value) =>
                               setFieldValue("maxdoseAdultWeight", value)
                             }
+                            disabled={disabled}
                             status={
                               errors.maxdoseAdultWeight &&
                               touched.maxdoseAdultWeight
@@ -357,6 +370,7 @@ function BaseForm() {
                             onChange={(value) =>
                               setFieldValue("maxdosePediatric", value)
                             }
+                            disabled={disabled}
                             status={
                               errors.maxdosePediatric &&
                               touched.maxdosePediatric
@@ -386,6 +400,7 @@ function BaseForm() {
                             onChange={(value) =>
                               setFieldValue("maxdosePediatricWeight", value)
                             }
+                            disabled={disabled}
                             status={
                               errors.maxdosePediatricWeight &&
                               touched.maxdosePediatricWeight
@@ -415,6 +430,7 @@ function BaseForm() {
                             onChange={(value) =>
                               setFieldValue("divisionRange", value)
                             }
+                            disabled={disabled}
                           />
                           <Space.Addon>
                             {`${values.defaultMeasureUnit || "--"}`}
@@ -444,6 +460,7 @@ function BaseForm() {
                             onChange={(value) =>
                               setFieldValue("kidneyAdult", value)
                             }
+                            disabled={disabled}
                           />
                           <Space.Addon>{`mL/min`}</Space.Addon>
                         </Space.Compact>
@@ -465,6 +482,7 @@ function BaseForm() {
                             onChange={(value) =>
                               setFieldValue("kidneyPediatric", value)
                             }
+                            disabled={disabled}
                           />
                           <Space.Addon>{`mL/min`}</Space.Addon>
                         </Space.Compact>
@@ -486,6 +504,7 @@ function BaseForm() {
                             onChange={(value) =>
                               setFieldValue("liverAdult", value)
                             }
+                            disabled={disabled}
                           />
                           <Space.Addon>{`U/L`}</Space.Addon>
                         </Space.Compact>
@@ -507,6 +526,7 @@ function BaseForm() {
                             onChange={(value) =>
                               setFieldValue("liverPediatric", value)
                             }
+                            disabled={disabled}
                           />
                           <Space.Addon>{`U/L`}</Space.Addon>
                         </Space.Compact>
@@ -528,6 +548,7 @@ function BaseForm() {
                             onChange={(value) =>
                               setFieldValue("platelets", value)
                             }
+                            disabled={disabled}
                           />{" "}
                           <Space.Addon>{`plaquetas/µL`}</Space.Addon>
                         </Space.Compact>
@@ -552,6 +573,7 @@ function BaseForm() {
                           max={3}
                           value={values.fallRisk}
                           onChange={(value) => setFieldValue("fallRisk", value)}
+                          disabled={disabled}
                         />
                       </div>
                       <div className="form-info">Valor entre 1 e 3</div>
@@ -572,6 +594,7 @@ function BaseForm() {
                           value={values.lactating}
                           allowClear
                           style={{ maxWidth: "300px" }}
+                          disabled={disabled}
                         >
                           <Select.Option value="1" key="1">
                             Baixo
@@ -601,6 +624,7 @@ function BaseForm() {
                           value={values.pregnant}
                           allowClear
                           style={{ maxWidth: "300px" }}
+                          disabled={disabled}
                         >
                           <Select.Option value="A" key="A">
                             A
@@ -634,6 +658,7 @@ function BaseForm() {
                       onEdit={(text) => setFieldValue(`adminText`, text)}
                       content={values.adminText || ""}
                       utilities={["basic", "link"]}
+                      editable={!disabled}
                     />
                   </div>
                 </div>

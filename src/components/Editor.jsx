@@ -41,6 +41,7 @@ const Editor = forwardRef(function Editor({
   onEdit,
   utilities = ["basic"],
   onCreateFocus = false,
+  editable = true,
 }, ref) {
   const editorInstanceRef = useRef(null);
 
@@ -144,11 +145,12 @@ const Editor = forwardRef(function Editor({
   return (
     <EditorContainer>
       <EditorProvider
+        editable={editable}
         onUpdate={onUpdate}
         onCreate={onCreate}
         extensions={extensions}
         content={content}
-        slotBefore={<MenuBar utilities={utilities} />}
+        slotBefore={editable ? <MenuBar utilities={utilities} /> : undefined}
         editorProps={editorProps}
       >
         <EditorInstanceCapture editorInstanceRef={editorInstanceRef} />
