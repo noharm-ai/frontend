@@ -2,27 +2,12 @@ import { instance, setHeaders } from "services/api";
 
 const api = {};
 const endpoints = {
-  frequency: "/admin/frequency",
-  interventionReason: "/admin/intervention-reason",
   memory: "/admin/memory",
   drug: "/admin/drug",
   integration: "/admin/integration",
   segment: "/admin/segments",
   exam: "/admin/exam",
   unitConversion: "/admin/unit-conversion",
-  unit: "/admin/unit",
-};
-
-const getIntervReasonList = (bearerToken, params = {}) =>
-  instance.get(endpoints.interventionReason, {
-    params,
-    ...setHeaders(bearerToken),
-  });
-
-const upsertIntervReason = (bearerToken, params = {}) => {
-  return instance.post(`${endpoints.interventionReason}`, params, {
-    ...setHeaders(bearerToken),
-  });
 };
 
 const getMemoryItems = (params = {}) =>
@@ -49,16 +34,6 @@ const copyDrugAttributes = (params = {}) => {
 const refreshPrescription = (params = {}) => {
   return instance.post(
     `${endpoints.integration}/refresh-prescription`,
-    params,
-    {
-      ...setHeaders(),
-    },
-  );
-};
-
-const initInterventionReason = (params = {}) => {
-  return instance.post(
-    `${endpoints.integration}/init-intervention-reason`,
     params,
     {
       ...setHeaders(),
@@ -194,37 +169,9 @@ api.drugs.calculateDosemax = (params = {}) => {
  */
 
 api.unitConversion = {};
-api.unitConversion.getConversionList = (params = {}) => {
-  return instance.post(`${endpoints.unitConversion}/list`, params, {
-    ...setHeaders(),
-  });
-};
-
-api.unitConversion.getConversionPredictions = (params = {}) => {
-  return instance.post(`${endpoints.unitConversion}/predictions`, params, {
-    ...setHeaders(),
-  });
-};
-
-api.unitConversion.saveConversions = (params = {}) => {
-  return instance.post(`${endpoints.unitConversion}/save`, params, {
-    ...setHeaders(),
-  });
-};
-
 api.unitConversion.copyConversion = (params = {}) => {
   return instance.post(
     `${endpoints.unitConversion}/copy-unit-conversion`,
-    params,
-    {
-      ...setHeaders(),
-    },
-  );
-};
-
-api.unitConversion.updateSubstanceUnitFactor = (params = {}) => {
-  return instance.post(
-    `${endpoints.unitConversion}/substanceunit-factor`,
     params,
     {
       ...setHeaders(),
@@ -242,85 +189,13 @@ api.unitConversion.addDefaultUnits = (params = {}) => {
   );
 };
 
-api.unitConversion.llmSuggest = (params = {}) => {
-  return instance.post(`${endpoints.unitConversion}/llm-suggest`, params, {
-    ...setHeaders(),
-  });
-};
-
 /**
  * INTEGRATION
  */
 
 api.integration = {};
-api.integration.getStatus = (params) =>
-  instance.get(`${endpoints.integration}/status`, {
-    params,
-    ...setHeaders(),
-  });
-
-api.integration.getList = (params) =>
-  instance.get(`${endpoints.integration}/list`, {
-    params,
-    ...setHeaders(),
-  });
-
-api.integration.getTemplateList = (params) =>
-  instance.get(`${endpoints.integration}/template-list`, {
-    params,
-    ...setHeaders(),
-  });
-
-api.integration.update = (params) =>
-  instance.post(`${endpoints.integration}/update`, params, {
-    ...setHeaders(),
-  });
-
-api.integration.createSchema = (params) =>
-  instance.post(`${endpoints.integration}/create-schema`, params, {
-    ...setHeaders(),
-  });
-
-api.integration.fetchCloudConfig = (params) =>
-  instance.post(`${endpoints.integration}/get-cloud-config`, params, {
-    ...setHeaders(),
-  });
-
-api.integration.upsertGetname = (params) =>
-  instance.post(`${endpoints.integration}/upsert-getname`, params, {
-    ...setHeaders(),
-  });
-api.integration.upsertSecurityGroup = (params) =>
-  instance.post(`${endpoints.integration}/upsert-security-group`, params, {
-    ...setHeaders(),
-  });
-api.integration.createReturnLogstream = (params) =>
-  instance.post(`${endpoints.integration}/create-return-logstream`, params, {
-    ...setHeaders(),
-  });
 api.integration.updateUserSecurityGroup = (params) =>
   instance.post(`${endpoints.integration}/update-user-security-group`, params, {
-    ...setHeaders(),
-  });
-
-/**
- * REMOTE INTEGRATION
- */
-api.integrationRemote = {};
-api.integrationRemote.getTemplate = (params) =>
-  instance.get(`/admin/integration-remote/template`, {
-    params,
-    ...setHeaders(),
-  });
-
-api.integrationRemote.getQueueStatus = (params) =>
-  instance.get(`/admin/integration-remote/queue-status`, {
-    params,
-    ...setHeaders(),
-  });
-
-api.integrationRemote.pushQueueRequest = (params) =>
-  instance.post(`/admin/integration-remote/push-queue-request`, params, {
     ...setHeaders(),
   });
 
@@ -338,50 +213,8 @@ api.user.getResetToken = (params) =>
  */
 
 api.substance = {};
-api.substance.getSubstances = (params = {}) => {
-  return instance.post(`/admin/substance/list`, params, {
-    ...setHeaders(),
-  });
-};
-
 api.substance.getSubstance = (id) => {
   return instance.get(`/admin/substance/${id}`, {
-    ...setHeaders(),
-  });
-};
-
-api.substance.upsertSubstance = (params = {}) => {
-  return instance.post(`/admin/substance`, params, {
-    ...setHeaders(),
-  });
-};
-
-/**
- * RELATIONS
- */
-
-api.relation = {};
-api.relation.getRelations = (params = {}) => {
-  return instance.post(`/admin/relation/list`, params, {
-    ...setHeaders(),
-  });
-};
-
-api.relation.upsertRelation = (params = {}) => {
-  return instance.post(`/admin/relation`, params, {
-    ...setHeaders(),
-  });
-};
-
-/**
- * MEASURE UNITS
- */
-api.measureunits = {};
-api.measureunits.getMeasureUnits = (params = {}) =>
-  instance.post(`${endpoints.unit}/list`, params, setHeaders());
-
-api.measureunits.updateUnit = (params = {}) => {
-  return instance.put(`${endpoints.unit}`, params, {
     ...setHeaders(),
   });
 };
@@ -429,21 +262,6 @@ api.reports.upsertReport = (params = {}) => {
 };
 
 /**
- * KNOWLEDGE BASE
- */
-api.knowledgeBase = {};
-api.knowledgeBase.getKnowledgeBase = (params = {}) =>
-  instance.post(`/admin/knowledge-base/list`, params, {
-    ...setHeaders(),
-  });
-
-api.knowledgeBase.upsertKnowledgeBase = (params = {}) => {
-  return instance.post(`/admin/knowledge-base/upsert`, params, {
-    ...setHeaders(),
-  });
-};
-
-/**
  * GLOBAL MEMORY
  */
 api.globalMemory = {};
@@ -456,45 +274,13 @@ api.globalMemory.updateGlobalMemory = (params = {}) => {
   });
 };
 
-/**
- * FREQUENCY
- */
-api.frequency = {};
-api.frequency.getFrequencyList = (params = {}) =>
-  instance.post(`${endpoints.frequency}/list`, params, setHeaders());
-
-api.frequency.updateFrequency = (params = {}) => {
-  return instance.put(`${endpoints.frequency}`, params, {
-    ...setHeaders(),
-  });
-};
-
-api.frequency.inferFrequencies = (params = {}) =>
-  instance.post(`${endpoints.frequency}/infer`, params, setHeaders());
-
-/**
- * GLOBAL EXAMS
- */
-api.globalExam = {};
-api.globalExam.getGlobalExams = (params = {}) =>
-  instance.post(`/admin/global-exam/list`, params, setHeaders());
-
-api.globalExam.upsertGlobalExam = (params = {}) => {
-  return instance.post(`/admin/global-exam/upsert`, params, {
-    ...setHeaders(),
-  });
-};
-
 const methods = {
   ...api,
-  getIntervReasonList,
-  upsertIntervReason,
   getMemoryItems,
   updateMemoryItem,
   getDrugAttributes,
   copyDrugAttributes,
   refreshPrescription,
-  initInterventionReason,
   getSegmentDepartments,
   updateSegmentDepartments,
   upsertSegment,

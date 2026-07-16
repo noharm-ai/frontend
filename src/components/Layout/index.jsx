@@ -16,6 +16,7 @@ import { Alert, Dropdown, List, Space } from "antd";
 import { useTranslation } from "react-i18next";
 
 import appInfo from "utils/appInfo";
+import { getStorageItem } from "utils/storage";
 import Avatar from "components/Avatar";
 import Button from "components/Button";
 import toast from "components/notification";
@@ -147,7 +148,7 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
         break;
       case "admin":
         window.open(
-          `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema/${localStorage.getItem("schema")}`,
+          `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema/${getStorageItem("schema")}`,
           "_blank",
         );
         break;
@@ -210,7 +211,7 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
                     <div className="schema">
                       <Space>
                         <Tag color="#a991d6" variant="solid">
-                          {localStorage.getItem("schema")}
+                          {getStorageItem("schema")}
                         </Tag>
                         {PermissionService().has(Permission.MAINTAINER) && (
                           <IntegrationStatusTag

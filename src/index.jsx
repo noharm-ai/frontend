@@ -18,13 +18,14 @@ import App from "containers/App";
 import { SupportDrawer } from "./features/support/SupportDrawer";
 import { store, persistor } from "store/index.ts";
 import * as serviceWorker from "./serviceWorker";
+import { getStorageItem } from "utils/storage";
 
 import trans_pt from "./translations/pt.json";
 import trans_en from "./translations/en.json";
 
 i18next.init({
   interpolation: { escapeValue: false },
-  lng: localStorage.getItem("language") || "pt", // language to use
+  lng: getStorageItem("language") || "pt", // language to use
   ns: ["common"],
   defaultNS: "common",
   resources: {

@@ -3,6 +3,7 @@ import { isEmpty } from "lodash";
 import { store } from "store";
 import { Creators as AuthCreators } from "../store/ducks/auth";
 import { Creators as UserCreators } from "../store/ducks/user";
+import { getStorageItem } from "./storage";
 
 const { authDelIdentify } = AuthCreators;
 const { userLogout } = UserCreators;
@@ -16,7 +17,7 @@ export const passwordValidation = {
 export const errorHandler = (e) => {
   const status = e.response ? e.response.status : e.code;
 
-  const isLogged = localStorage.getItem("ac1") != null;
+  const isLogged = getStorageItem("ac1") != null;
 
   if (status === 401 && !isLogged) {
     store.dispatch(userLogout());
@@ -30,8 +31,12 @@ export const errorHandler = (e) => {
   };
 };
 
-export const tokenDecode = (token) =>
-  JSON.parse(window.atob(token.split(".")[1]));
+export const tokenDecode = (token) => {
+  const payload = token.split(".")[1];
+  const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+  return JSON.parse(window.atob(padded));
+};
 
 // convert array to object
 export const toObject = (array, key) =>

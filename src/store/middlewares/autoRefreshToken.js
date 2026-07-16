@@ -1,9 +1,9 @@
-import { isEmpty } from "lodash";
 import { toDate, isPast, subSeconds } from "date-fns";
 
 import api from "services/api";
 import { tokenDecode } from "utils";
 import notification from "components/notification";
+import { getStorageItem, setStorageItem, removeStorageItem } from "utils/storage";
 
 import { Creators as AuthCreators } from "../ducks/auth";
 import { Creators as UserCreators } from "../ducks/user";
@@ -19,13 +19,19 @@ const autoRefreshToken =
       return next(action);
     }
 
-    const access_token =
-      localStorage.getItem("ac1") + localStorage.getItem("ac2");
+    const ac1 = getStorageItem("ac1");
+    const ac2 = getStorageItem("ac2");
+    const access_token = ac1 && ac2 ? ac1 + ac2 : null;
     const { auth } = getState();
 
-    if (!isEmpty(access_token)) {
-      const { exp } = tokenDecode(access_token);
-      const expireDate = subSeconds(toDate(exp * 1000), 60);
+    if (access_token) {
+      let expireDate = null;
+      try {
+        const { exp } = tokenDecode(access_token);
+        expireDate = subSeconds(toDate(exp * 1000), 60);
+      } catch {
+        // corrupt/partial token -> treat as expired, force refresh below
+      }
       const errorHandler = (e) => {
         return {
           error: e.response ? e.response.data : "error",
@@ -34,7 +40,7 @@ const autoRefreshToken =
         };
       };
 
-      if (!isPast(expireDate)) {
+      if (expireDate && !isPast(expireDate)) {
         return next(action);
       }
 
@@ -42,12 +48,12 @@ const autoRefreshToken =
         return refreshToken(dispatch)
           .then(() => next(action))
           .catch((e) => {
-            localStorage.removeItem("ac1");
-            localStorage.removeItem("ac2");
+            removeStorageItem("ac1");
+            removeStorageItem("ac2");
 
             // remove after transition
-            // localStorage.removeItem("rt1");
-            // localStorage.removeItem("rt2");
+            // removeStorageItem("rt1");
+            // removeStorageItem("rt2");
 
             notification.warning({
               message: "Sessão expirada.",
@@ -70,8 +76,8 @@ const refreshToken = (dispatch) => {
   const refreshTokenPromise = api
     .refreshToken()
     .then((response) => {
-      localStorage.setItem("ac1", response.data.access_token.substring(0, 10));
-      localStorage.setItem("ac2", response.data.access_token.substring(10));
+      setStorageItem("ac1", response.data.access_token.substring(0, 10));
+      setStorageItem("ac2", response.data.access_token.substring(10));
 
       dispatch(authSetRefreshTokenPromise(null));
 

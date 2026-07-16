@@ -19,7 +19,6 @@ import {
   SaveOutlined,
   ControlOutlined,
   CustomerServiceOutlined,
-  InteractionOutlined,
   FieldTimeOutlined,
   TagsOutlined,
   FilePptOutlined,
@@ -34,6 +33,7 @@ import Feature from "models/Feature";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { FeatureService } from "services/FeatureService";
+import { getStorageItem } from "utils/storage";
 
 export default function Menu({ segments }) {
   const location = useLocation();
@@ -247,8 +247,8 @@ export default function Menu({ segments }) {
       permission: [Permission.MAINTAINER],
       children: [
         {
-          key: `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema/${localStorage.getItem("schema")}`,
-          link: `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema/${localStorage.getItem("schema")}`,
+          key: `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema/${getStorageItem("schema")}`,
+          link: `${import.meta.env.VITE_APP_ADMIN_LINK}/select-schema/${getStorageItem("schema")}`,
           label: "Admin",
           icon: <LayoutOutlined />,
           id: "gtm-lnk-admin",
@@ -291,13 +291,6 @@ export default function Menu({ segments }) {
           icon: <FilePptOutlined />,
           id: "gtm-lnk-protocols",
           permission: [Permission.READ_PROTOCOLS],
-        },
-        {
-          key: "/admin/relacoes",
-          link: "/admin/relacoes",
-          label: "Relações Medicamentosas",
-          icon: <InteractionOutlined />,
-          id: "gtm-lnk-relations",
         },
         {
           key: "/admin/relatorios-customizados",

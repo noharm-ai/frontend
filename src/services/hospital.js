@@ -5,6 +5,7 @@ import { FeatureService } from "services/FeatureService";
 import api from "services/api";
 import { store } from "store/index";
 import * as patientCache from "utils/patientCache";
+import { getStorageItem } from "utils/storage";
 
 const FLAG = "{idPatient}";
 
@@ -23,7 +24,7 @@ const getPatients = async (requestConfig) => {
     getnameType === "proxy" || proxy
       ? {
           Authorization: `Bearer ${
-            localStorage.getItem("ac1") + localStorage.getItem("ac2")
+            getStorageItem("ac1") + getStorageItem("ac2")
           }`,
           "x-api-key": apiKey,
         }
@@ -143,7 +144,7 @@ const getSinglePatient = async (requestConfig) => {
     getnameType === "proxy" || proxy
       ? {
           Authorization: `Bearer ${
-            localStorage.getItem("ac1") + localStorage.getItem("ac2")
+            getStorageItem("ac1") + getStorageItem("ac2")
           }`,
           "x-api-key": apiKey,
         }

@@ -14,6 +14,7 @@ import {
 } from "features/preferences/PreferencesSlice";
 import { fetchPendingActionTickets } from "src/features/support/SupportSlice";
 import { setNotifications } from "features/notifications/NotificationsSlice";
+import { setStorageItem, removeStorageItem } from "utils/storage";
 
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
 const { segmentsFetchListSuccess } = SegmentCreators;
@@ -72,8 +73,8 @@ export const loginThunk =
 export const logoutThunk = () => {
   return (dispatch) => {
     return new Promise(async (resolve) => {
-      localStorage.removeItem("ac1");
-      localStorage.removeItem("ac2");
+      removeStorageItem("ac1");
+      removeStorageItem("ac2");
 
       dispatch(userLogout());
       dispatch(authDelIdentify());
@@ -122,17 +123,17 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
     signature,
   };
 
-  localStorage.setItem("schema", schema);
+  setStorageItem("schema", schema);
   if (userData.oauth) {
-    localStorage.setItem("oauth", "active");
+    setStorageItem("oauth", "active");
   } else {
-    localStorage.removeItem("oauth");
+    removeStorageItem("oauth");
   }
 
-  localStorage.setItem("maintainer", permissions.includes("MAINTAINER"));
+  setStorageItem("maintainer", permissions.includes("MAINTAINER"));
 
-  localStorage.setItem("ac1", identify.access_token.substring(0, 10));
-  localStorage.setItem("ac2", identify.access_token.substring(10));
+  setStorageItem("ac1", identify.access_token.substring(0, 10));
+  setStorageItem("ac2", identify.access_token.substring(10));
 
   user.features = [...features, ...userFeatures];
   appInfo.apiKey = apiKey;

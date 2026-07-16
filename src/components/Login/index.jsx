@@ -19,6 +19,7 @@ import { generateRandomString, getCodeChallenge } from "utils/auth";
 
 import ForgotPassword from "containers/Login/ForgotPassword";
 import api from "services/api";
+import { getStorageItem, setStorageItem } from "utils/storage";
 import { LoginContainer, Brand, BrandEN } from "./Login.style";
 
 const initialValues = {
@@ -62,7 +63,7 @@ export default function Login({ isLogging, error, doLogin, forceSchema }) {
   }, [error]);
 
   useEffect(() => {
-    if (localStorage.getItem("ac1") != null) {
+    if (getStorageItem("ac1") != null) {
       navigate("/");
     }
   }, [navigate]);
@@ -76,20 +77,20 @@ export default function Login({ isLogging, error, doLogin, forceSchema }) {
 
         if (config.flow === "pkce") {
           const verifier = generateRandomString();
-          localStorage.setItem("oauth_verifier", verifier);
+          setStorageItem("oauth_verifier", verifier);
           const codeChallenge = await getCodeChallenge(verifier);
 
           config.url = `${config.url}&code_challenge=${codeChallenge}&code_challenge_method=${config.codeChallengeMethod}`;
         } else {
           if (config.nonce) {
             const nonce = generateRandomString();
-            localStorage.setItem("oauth_nonce", nonce);
+            setStorageItem("oauth_nonce", nonce);
             config.url = `${config.url}&nonce=${nonce}`;
           }
 
           if (config.state) {
             const state = generateRandomString();
-            localStorage.setItem("oauth_state", state);
+            setStorageItem("oauth_state", state);
             config.url = `${config.url}&state=${state}`;
           }
         }
@@ -115,9 +116,9 @@ export default function Login({ isLogging, error, doLogin, forceSchema }) {
 
     if (language) {
       i18n.changeLanguage(language);
-      localStorage.setItem("language", language);
+      setStorageItem("language", language);
     } else {
-      localStorage.setItem("language", "pt");
+      setStorageItem("language", "pt");
     }
   }, []); //eslint-disable-line
 
@@ -144,7 +145,7 @@ export default function Login({ isLogging, error, doLogin, forceSchema }) {
   return (
     <LoginContainer>
       <div className="form">
-        {localStorage.getItem("language") === "en" ? (
+        {getStorageItem("language") === "en" ? (
           <BrandEN title="NoHarm.ai | Taking care of patients" />
         ) : (
           <Brand title="NoHarm.ai | Cuidando dos pacientes" />

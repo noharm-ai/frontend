@@ -9,6 +9,7 @@ import appInfo from "utils/appInfo";
 import { isEmpty } from "utils/lodash";
 import notification from "components/notification";
 import api from "services/api";
+import { getStorageItem, removeStorageItem } from "utils/storage";
 
 import { LoginContainer, Brand } from "./Login.style";
 
@@ -32,9 +33,9 @@ export default function LoginCallback({ doLogin, error }) {
         const config = { ...data.data };
 
         if (config.state) {
-          const state = localStorage.getItem("oauth_state");
+          const state = getStorageItem("oauth_state");
           if (state !== queryString.get("state")) {
-            localStorage.removeItem("oauth_state");
+            removeStorageItem("oauth_state");
             notification.error({
               message: "Inválido ou inexistente (state)",
             });
@@ -48,7 +49,7 @@ export default function LoginCallback({ doLogin, error }) {
             grant_type: "authorization_code",
             code: authCode,
             redirect_uri: config.redirectUri,
-            code_verifier: localStorage.getItem("oauth_verifier"),
+            code_verifier: getStorageItem("oauth_verifier"),
           };
           if (config.clientSecret && config.clientSecret !== "") {
             payload.client_secret = config.clientSecret;
@@ -75,11 +76,11 @@ export default function LoginCallback({ doLogin, error }) {
           doLogin({
             schema,
             code: idToken ?? authCode,
-            nonce: localStorage.getItem("oauth_nonce") ?? null,
+            nonce: getStorageItem("oauth_nonce") ?? null,
           })
             .then((response) => {
-              localStorage.removeItem("oauth_nonce");
-              localStorage.removeItem("oauth_state");
+              removeStorageItem("oauth_nonce");
+              removeStorageItem("oauth_state");
               if (response.permissions.indexOf("MULTI_SCHEMA") !== -1) {
                 navigate("/switch-schema");
               } else {

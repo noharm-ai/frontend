@@ -30,7 +30,6 @@ import {
 } from "./DrugAttributesSlice";
 import { DRUG_ATTRIBUTES_MODES, DEFAULT_MODE } from "./drugAttributesConfig";
 import { getSubstances } from "features/lists/ListsSlice";
-import Actions from "./Actions/Actions";
 import DrugReferenceDrawer from "../DrugReferenceDrawer/DrugReferenceDrawer";
 import { setDrugUnitConversionOpen } from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import { DrugUnitConversion } from "features/drugs/DrugUnitConversion/DrugUnitConversion";
@@ -157,9 +156,7 @@ export default function DrugAttributes({ mode = DEFAULT_MODE }) {
         <div>
           <h1 className="page-header-title">{config.pageTitle}</h1>
         </div>
-        <div className="page-header-actions">
-          <Actions reload={reload} />
-        </div>
+        <div className="page-header-actions"></div>
       </PageHeader>
       <Filter limit={limit} config={config} />
 

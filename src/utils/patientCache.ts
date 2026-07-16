@@ -1,3 +1,5 @@
+import { getStorageItem, setStorageItem, removeStorageItem } from "./storage";
+
 export type PatientData = {
   idPatient: number | string;
   name: string;
@@ -12,7 +14,7 @@ type Listener = () => void;
 const listeners = new Set<Listener>();
 
 function getSchema(): string {
-  return localStorage.getItem("schema") ?? "default";
+  return getStorageItem("schema") ?? "default";
 }
 
 function getStorageKey(schema: string): string {
@@ -20,8 +22,8 @@ function getStorageKey(schema: string): string {
 }
 
 function load(schema: string): Cache {
+  const raw = getStorageItem(getStorageKey(schema));
   try {
-    const raw = localStorage.getItem(getStorageKey(schema));
     return raw ? (JSON.parse(raw) as Cache) : {};
   } catch {
     return {};
@@ -29,11 +31,7 @@ function load(schema: string): Cache {
 }
 
 function persist(data: Cache): void {
-  try {
-    localStorage.setItem(getStorageKey(getSchema()), JSON.stringify(data));
-  } catch {
-    // localStorage may be unavailable (private mode, quota exceeded)
-  }
+  setStorageItem(getStorageKey(getSchema()), JSON.stringify(data));
 }
 
 function notify(): void {
@@ -109,11 +107,7 @@ export function clearLoading(ids: (number | string)[]): void {
 export function clearCache(): void {
   ensureSchemaLoaded();
   mem = {};
-  try {
-    localStorage.removeItem(getStorageKey(getSchema()));
-  } catch {
-    // ignore
-  }
+  removeStorageItem(getStorageKey(getSchema()));
   notify();
 }
 
