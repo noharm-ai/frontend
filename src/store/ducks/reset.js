@@ -11,7 +11,6 @@ import { reset as adminIntegrationReset } from "features/admin/Integration/Integ
 import { reset as adminSegmentReset } from "features/admin/Segment/SegmentSlice";
 import { reset as adminExamReset } from "features/admin/Exam/ExamSlice";
 import { reset as adminSubstanceReset } from "features/admin/Substance/SubstanceSlice";
-import { reset as adminRelationReset } from "features/admin/Relation/RelationsSlice";
 import { reset as adminDrugReferenceDrawerReset } from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
 import { reset as adminTagReset } from "features/admin/Tag/TagSlice";
 import { reset as adminProtocolReset } from "features/admin/Protocol/ProtocolSlice";
@@ -69,7 +68,6 @@ export const resetReduxState = (dispatch) => {
   dispatch(adminSegmentReset());
   dispatch(adminExamReset());
   dispatch(adminSubstanceReset());
-  dispatch(adminRelationReset());
   dispatch(adminDrugReferenceDrawerReset());
   dispatch(adminTagReset());
   dispatch(adminProtocolReset());

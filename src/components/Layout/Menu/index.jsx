@@ -19,7 +19,6 @@ import {
   SaveOutlined,
   ControlOutlined,
   CustomerServiceOutlined,
-  InteractionOutlined,
   FieldTimeOutlined,
   TagsOutlined,
   FilePptOutlined,
@@ -292,13 +291,6 @@ export default function Menu({ segments }) {
           icon: <FilePptOutlined />,
           id: "gtm-lnk-protocols",
           permission: [Permission.READ_PROTOCOLS],
-        },
-        {
-          key: "/admin/relacoes",
-          link: "/admin/relacoes",
-          label: "Relações Medicamentosas",
-          icon: <InteractionOutlined />,
-          id: "gtm-lnk-relations",
         },
         {
           key: "/admin/relatorios-customizados",
