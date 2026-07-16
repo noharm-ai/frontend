@@ -30,7 +30,6 @@ import {
 } from "./DrugAttributesSlice";
 import { DRUG_ATTRIBUTES_MODES, DEFAULT_MODE } from "./drugAttributesConfig";
 import { getSubstances } from "features/lists/ListsSlice";
-import Actions from "./Actions/Actions";
 import DrugReferenceDrawer from "../DrugReferenceDrawer/DrugReferenceDrawer";
 import { setDrugUnitConversionOpen } from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import { DrugUnitConversion } from "features/drugs/DrugUnitConversion/DrugUnitConversion";
