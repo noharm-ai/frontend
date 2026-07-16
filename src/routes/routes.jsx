@@ -43,7 +43,6 @@ import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminSegment from "pages/Admin/Segment";
 import AdminExam from "pages/Admin/Exam";
-import AdminSubstance from "pages/Admin/Substance";
 import AdminProtocol from "pages/Admin/Protocol";
 import AdminReport from "pages/Admin/Report";
 import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
@@ -353,11 +352,6 @@ const routes = [
     exact: true,
     path: "/admin/segmentos",
     element: <WithAuth component={AdminSegment} />,
-  },
-  {
-    exact: true,
-    path: "/admin/substancias",
-    element: <WithAuth component={AdminSubstance} />,
   },
   {
     exact: true,

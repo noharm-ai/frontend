@@ -42,7 +42,6 @@ import adminDrugAttributes from "features/admin/DrugAttributes/DrugAttributesSli
 import adminIntegration from "features/admin/Integration/IntegrationSlice";
 import adminSegment from "features/admin/Segment/SegmentSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
-import adminSubstance from "features/admin/Substance/SubstanceSlice";
 import adminSubstanceForm from "features/admin/Substance/SubstanceFormSlice";
 import adminDrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
 import adminTag from "features/admin/Tag/TagSlice";
@@ -86,7 +85,6 @@ const adminReducers = combineReducers({
   segment: adminSegment,
   exam: adminExam,
   examForm: adminExamForm,
-  substance: adminSubstance,
   substanceForm: adminSubstanceForm,
   drugReferenceDrawer: adminDrugReferenceDrawer,
   tag: adminTag,

@@ -338,20 +338,8 @@ api.user.getResetToken = (params) =>
  */
 
 api.substance = {};
-api.substance.getSubstances = (params = {}) => {
-  return instance.post(`/admin/substance/list`, params, {
-    ...setHeaders(),
-  });
-};
-
 api.substance.getSubstance = (id) => {
   return instance.get(`/admin/substance/${id}`, {
-    ...setHeaders(),
-  });
-};
-
-api.substance.upsertSubstance = (params = {}) => {
-  return instance.post(`/admin/substance`, params, {
     ...setHeaders(),
   });
 };
