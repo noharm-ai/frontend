@@ -157,9 +157,7 @@ export default function DrugAttributes({ mode = DEFAULT_MODE }) {
         <div>
           <h1 className="page-header-title">{config.pageTitle}</h1>
         </div>
-        <div className="page-header-actions">
-          <Actions reload={reload} />
-        </div>
+        <div className="page-header-actions"></div>
       </PageHeader>
       <Filter limit={limit} config={config} />
 
