@@ -1,4 +1,3 @@
-import { isEmpty } from "lodash";
 import { toDate, isPast, subSeconds } from "date-fns";
 
 import api from "services/api";
@@ -20,12 +19,19 @@ const autoRefreshToken =
       return next(action);
     }
 
-    const access_token = getStorageItem("ac1") + getStorageItem("ac2");
+    const ac1 = getStorageItem("ac1");
+    const ac2 = getStorageItem("ac2");
+    const access_token = ac1 && ac2 ? ac1 + ac2 : null;
     const { auth } = getState();
 
-    if (!isEmpty(access_token)) {
-      const { exp } = tokenDecode(access_token);
-      const expireDate = subSeconds(toDate(exp * 1000), 60);
+    if (access_token) {
+      let expireDate = null;
+      try {
+        const { exp } = tokenDecode(access_token);
+        expireDate = subSeconds(toDate(exp * 1000), 60);
+      } catch {
+        // corrupt/partial token -> treat as expired, force refresh below
+      }
       const errorHandler = (e) => {
         return {
           error: e.response ? e.response.data : "error",
@@ -34,7 +40,7 @@ const autoRefreshToken =
         };
       };
 
-      if (!isPast(expireDate)) {
+      if (expireDate && !isPast(expireDate)) {
         return next(action);
       }
 

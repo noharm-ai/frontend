@@ -31,8 +31,12 @@ export const errorHandler = (e) => {
   };
 };
 
-export const tokenDecode = (token) =>
-  JSON.parse(window.atob(token.split(".")[1]));
+export const tokenDecode = (token) => {
+  const payload = token.split(".")[1];
+  const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+  return JSON.parse(window.atob(padded));
+};
 
 // convert array to object
 export const toObject = (array, key) =>
