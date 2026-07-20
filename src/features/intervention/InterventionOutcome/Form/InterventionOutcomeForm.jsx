@@ -76,8 +76,12 @@ export default function InterventionOutcomeForm() {
     });
   };
 
-  const openPrescription = (id) => {
-    window.open(`/prescricao/${id}`);
+  const openPrescription = (id, concilia = false) => {
+    if (concilia) {
+      window.open(`/conciliacao/${id}`);
+    } else {
+      window.open(`/prescricao/${id}`);
+    }
 
     trackInterventionOutcomeAction(
       TrackedInterventionOutcomeAction.CLICK_PRESCRIPTION,
@@ -366,6 +370,8 @@ export default function InterventionOutcomeForm() {
                                 ? outcomeData.origin.item
                                     .idPrescriptionAggregate
                                 : outcomeData.origin.item.idPrescription,
+
+                              outcomeData?.original.origin?.item?.concilia,
                             )
                           }
                         />
@@ -524,6 +530,7 @@ export default function InterventionOutcomeForm() {
                                     outcomeData?.header?.isCpoe
                                       ? values.destiny.idPrescriptionAggregate
                                       : values.destiny.idPrescription,
+                                    values.destiny.concilia,
                                   )
                                 }
                               />
@@ -787,12 +794,18 @@ function OriginDrugName({ outcomeData }) {
     return <>{outcomeData?.header?.originDrug}</>;
   }
 
-  if (!outcomeData?.header?.originDrug) {
-    return `Medicamento ${outcomeData?.origin?.item?.idDrug}`;
-  }
+  const currentOriginData = outcomeData?.original?.origin;
 
-  if (!outcomeData?.origin?.item?.idDrug) {
-    return outcomeData?.header?.originDrug;
+  if (currentOriginData?.item?.name === "NP") {
+    if (currentOriginData?.item?.concilia) {
+      return (
+        <Tooltip title="Medicamento Não Padronizado">{`NP - ${currentOriginData?.item?.drugNpName}`}</Tooltip>
+      );
+    }
+
+    return (
+      <>Medicamento Não Padronizado (ID: {currentOriginData?.item?.idDrug})</>
+    );
   }
 
   const href = `/medicamentos/${outcomeData?.header.idSegment}/${

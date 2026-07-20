@@ -903,6 +903,12 @@ api.protocols.getProtocols = (params = {}) =>
     ...setHeaders(),
   });
 
+api.protocols.tracePrescription = (params = {}) =>
+  instance.get(`protocol/prescription-trace`, {
+    params,
+    ...setHeaders(),
+  });
+
 /**
  * AUTH
  */
