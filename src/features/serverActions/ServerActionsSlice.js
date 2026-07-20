@@ -43,6 +43,22 @@ export const getPepLink = createAsyncThunk(
   }
 );
 
+export const traceProtocol = createAsyncThunk(
+  "serverActions/trace-protocol",
+  /**
+   * @param {{ idPrescription: number | string, idProtocol?: number }} params
+   */
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.protocols.tracePrescription(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 export const putMemory = createAsyncThunk(
   "serverActions/put-memory",
   async (params, thunkAPI) => {

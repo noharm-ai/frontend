@@ -476,7 +476,12 @@ export default function PatientCard({
         )}
       </Tooltip>
     ),
-    children: <ProtocolsTab protocolAlerts={prescription.protocolAlerts} />,
+    children: (
+      <ProtocolsTab
+        protocolAlerts={prescription.protocolAlerts}
+        idPrescription={prescription.idPrescription}
+      />
+    ),
   });
 
   tabs.push({

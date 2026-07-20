@@ -1,11 +1,25 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Collapse, Badge, CollapseProps, Flex } from "antd";
+import { FileSearchOutlined } from "@ant-design/icons";
 
 import { formatDate } from "utils/date";
+import { getErrorMessage } from "utils/errorHandler";
 import Tooltip from "components/Tooltip";
+import Button from "components/Button";
+import DefaultModal from "components/Modal";
+import notification from "components/notification";
+import { traceProtocol } from "features/serverActions/ServerActionsSlice";
+import { useAppDispatch } from "store/index";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
+
+import { ProtocolTrace } from "./ProtocolTrace/ProtocolTrace";
+import type { IPrescriptionTrace } from "./ProtocolTrace/types";
 
 interface IProtocolsTabProps {
   protocolAlerts: any;
+  idPrescription: number | string;
 }
 
 interface IProtocolResult {
@@ -16,8 +30,14 @@ interface IProtocolResult {
   variableMessages: string[];
 }
 
-export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
+export function ProtocolsTab({
+  protocolAlerts,
+  idPrescription,
+}: IProtocolsTabProps) {
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const [traceLoading, setTraceLoading] = useState(false);
+  const [trace, setTrace] = useState<IPrescriptionTrace | null>(null);
 
   const items: CollapseProps["items"] = [];
   const protocolGroups = Object.keys(protocolAlerts)
@@ -33,7 +53,7 @@ export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
       protocols = [
         ...protocols,
         ...protocolAlerts[group].filter(
-          (pa: IProtocolResult) => pa.level === level
+          (pa: IProtocolResult) => pa.level === level,
         ),
       ];
     });
@@ -59,12 +79,42 @@ export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
     }
   });
 
+  const explainProtocols = () => {
+    setTraceLoading(true);
+
+    dispatch(traceProtocol({ idPrescription })).then((response: any) => {
+      setTraceLoading(false);
+
+      if (response.error) {
+        notification.error({
+          message: getErrorMessage(response, t),
+        });
+      } else {
+        setTrace(response.payload.data);
+      }
+    });
+  };
+
   return (
     <div className="patient-data">
       <div className="patient-data-item full">
-        <div className="patient-data-item-label">
-          {t("labels.protocolAlerts")}
-        </div>
+        <Flex justify="space-between" align="center">
+          <div className="patient-data-item-label">
+            {t("labels.protocolAlerts")}
+          </div>
+
+          {PermissionService().has(Permission.MAINTAINER) && (
+            <Button
+              size="small"
+              icon={<FileSearchOutlined />}
+              loading={traceLoading}
+              onClick={explainProtocols}
+              style={{ marginRight: "10px", marginBottom: "5px" }}
+            >
+              {t("buttons.explainProtocols")}
+            </Button>
+          )}
+        </Flex>
 
         {hasAlerts ? (
           <div className="patient-data-item-value">
@@ -82,6 +132,23 @@ export function ProtocolsTab({ protocolAlerts }: IProtocolsTabProps) {
           </div>
         )}
       </div>
+
+      <DefaultModal
+        title={t("titles.protocolTrace")}
+        destroyOnHidden
+        open={trace != null}
+        onCancel={() => setTrace(null)}
+        width="min(1200px, 96vw)"
+        style={{ top: 20 }}
+        styles={{
+          container: { paddingLeft: 0, paddingRight: 0, paddingBottom: 0 },
+          header: { paddingLeft: 24, paddingRight: 24 },
+          body: { height: "80vh", padding: 0 },
+        }}
+        footer={null}
+      >
+        {trace && <ProtocolTrace trace={trace} />}
+      </DefaultModal>
     </div>
   );
 }

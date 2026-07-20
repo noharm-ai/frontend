@@ -1,0 +1,30 @@
+export const REASON_LABELS: Record<string, string> = {
+  COMPARED: "Comparação realizada",
+  COMBINATION_MATCHED: "Combinação correspondida",
+  COMBINATION_NO_MATCH: "Combinação não correspondida",
+  STAT_NOT_FOUND: "Indicador não encontrado",
+  EXAM_NOT_FOUND: "Exame não encontrado",
+  EXAM_VALUE_MISSING: "Valor do exame ausente",
+  EXAM_EXPIRED: "Exame expirado",
+  EXAM_DATE_INVALID: "Data do exame inválida",
+  VALUE_NOT_NUMERIC: "Valor não numérico",
+  NO_PATIENT: "Paciente não encontrado",
+  NO_ADMISSION_DATE: "Data de internação ausente",
+  AGE_MISSING: "Idade ausente",
+  WEIGHT_MISSING: "Peso ausente",
+  NO_SEGMENT_TYPE: "Tipo de segmento ausente",
+  INSURANCE_MISSING: "Convênio ausente",
+  OPERATOR_NOT_SUPPORTED: "Operador não suportado",
+  MEASURE_UNIT_MISSING: "Unidade de medida ausente",
+};
+
+export const LIST_FIELDS = new Set([
+  "substance",
+  "class",
+  "idDrug",
+  "route",
+  "idIcd",
+  "segmentType",
+  "idDepartment",
+  "idSegment",
+]);

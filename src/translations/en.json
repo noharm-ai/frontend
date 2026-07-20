@@ -357,7 +357,8 @@
     "protocolAlerts": "Protocol alerts"
   },
   "titles": {
-    "addDrugMeasureUnit": "Add Drug Unit"
+    "addDrugMeasureUnit": "Add Drug Unit",
+    "protocolTrace": "Protocol evaluation explanation"
   },
   "transcriptionLabels": {
     "idDrug": "Drug",
@@ -373,7 +374,8 @@
     "recentExams": "Main exams of the last 5 days. For all exams, click on See More."
   },
   "buttons": {
-    "search": "Search"
+    "search": "Search",
+    "explainProtocols": "Explain evaluation"
   },
   "prescriptionDrugTags": {
     "checked": "Checked previously",
