@@ -7,6 +7,7 @@ import Button from "components/Button";
 import { IProtocolFormBaseFields } from "./types";
 import { ProtocolVariableFieldEnum } from "src/models/ProtocolVariableFieldEnum";
 import clinicalNotesIndicator from "src/components/Screening/ClinicalNotes/ClinicalNotesIndicator";
+import { ProtocolSubstanceClassSelect } from "./ProtocolSubstanceClassSelect/ProtocolSubstanceClassSelect";
 
 import { VariableContainer, VariableGrid } from "../Protocol.style";
 
@@ -187,14 +188,12 @@ export function VariableTab() {
 
                 <div className={`form-row`}>
                   <div className="form-label">
-                    <label>Classe (idclasse):</label>
+                    <label>Classe:</label>
                   </div>
                   <div className="form-input">
-                    <Select
+                    <ProtocolSubstanceClassSelect
                       value={v.class}
-                      allowClear
-                      mode="tags"
-                      onChange={(value) => setConfig(idx, "class", value)}
+                      onChange={(ids) => setConfig(idx, "class", ids)}
                     />
                   </div>
                 </div>
@@ -457,7 +456,12 @@ export function VariableTab() {
                     <label>Valor:</label>
                   </div>
                   <div className="form-input">
-                    {v.operator === "IN" || v.operator === "NOTIN" ? (
+                    {v.field === ProtocolVariableFieldEnum.DRUG_CLASS ? (
+                      <ProtocolSubstanceClassSelect
+                        value={v.value}
+                        onChange={(ids) => setConfig(idx, "value", ids)}
+                      />
+                    ) : v.operator === "IN" || v.operator === "NOTIN" ? (
                       <Select
                         value={v.value}
                         mode="tags"
