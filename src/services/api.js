@@ -642,6 +642,22 @@ api.substance.getHandling = (params) =>
  * drugs namespace
  */
 api.drugs = {};
+api.drugs.findDrugs = (term) =>
+  instance.get(`/drugs/find`, {
+    params: {
+      term,
+    },
+    ...setHeaders(),
+  });
+
+api.drugs.resolveDrugs = (ids) =>
+  instance.get(`/drugs/resolve`, {
+    params: {
+      ids: (ids ?? []).join(","),
+    },
+    ...setHeaders(),
+  });
+
 api.drugs.getDrugAttributes = (idSegment, idDrug) =>
   instance.get(`/drugs/attributes/${idSegment}/${idDrug}`, {
     ...setHeaders(),
