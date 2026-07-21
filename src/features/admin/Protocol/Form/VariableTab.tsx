@@ -1,16 +1,14 @@
-import React from "react";
 import { useFormikContext } from "formik";
-import { Divider } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
 import { Input, Select, Radio } from "components/Inputs";
 import Button from "components/Button";
-import { IProtocolFormBaseFields } from "./ProtocolForm";
+import { IProtocolFormBaseFields } from "./types";
 import { ProtocolVariableFieldEnum } from "src/models/ProtocolVariableFieldEnum";
 import clinicalNotesIndicator from "src/components/Screening/ClinicalNotes/ClinicalNotesIndicator";
 
-import { VariableContainer } from "../Protocol.style";
+import { VariableContainer, VariableGrid } from "../Protocol.style";
 
 export function VariableTab() {
   const { values, errors, setFieldValue } =
@@ -70,23 +68,10 @@ export function VariableTab() {
 
   return (
     <>
-      {(values.config?.variables ?? []).map((v: any, idx: number) => (
-        <React.Fragment key={v.name}>
-          <VariableContainer>
-            <div className={`form-row`}>
-              <div className="form-label">
-                <label>Nome da variável:</label>
-              </div>
-              <div className="form-input">
-                <Input
-                  value={v.name}
-                  disabled
-                  onChange={({ target }) =>
-                    setConfig(idx, "name", target.value)
-                  }
-                />
-              </div>
-            </div>
+      <VariableGrid>
+        {(values.config?.variables ?? []).map((v: any, idx: number) => (
+          <VariableContainer key={v.name}>
+            <h4 className="variable-title">{v.name}</h4>
 
             <div className={`form-row`}>
               <div className="form-label">
@@ -520,7 +505,9 @@ export function VariableTab() {
                     {v.field === ProtocolVariableFieldEnum.AGE &&
                       v.operator !== "IN" &&
                       v.operator !== "NOTIN" && (
-                        <div className="form-info">Informe um número inteiro. Ex: 18</div>
+                        <div className="form-info">
+                          Informe um número inteiro. Ex: 18
+                        </div>
                       )}
                   </div>
                 </div>
@@ -538,9 +525,8 @@ export function VariableTab() {
               </Button>
             </div>
           </VariableContainer>
-          <Divider />
-        </React.Fragment>
-      ))}
+        ))}
+      </VariableGrid>
       <Button
         block
         icon={<PlusOutlined />}

@@ -44,6 +44,7 @@ import AdminIntegration from "pages/Admin/Integration";
 import AdminSegment from "pages/Admin/Segment";
 import AdminExam from "pages/Admin/Exam";
 import AdminProtocol from "pages/Admin/Protocol";
+import AdminProtocolEditor from "pages/Admin/Protocol/ProtocolEditor";
 import AdminReport from "pages/Admin/Report";
 import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
 
@@ -357,6 +358,11 @@ const routes = [
     exact: true,
     path: "/admin/protocolos",
     element: <WithAuth component={AdminProtocol} />,
+  },
+  {
+    exact: true,
+    path: "/admin/protocolos/:id",
+    element: <WithAuth component={AdminProtocolEditor} />,
   },
   {
     exact: true,
