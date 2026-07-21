@@ -8,6 +8,7 @@ import { IProtocolFormBaseFields } from "./types";
 import { ProtocolVariableFieldEnum } from "src/models/ProtocolVariableFieldEnum";
 import clinicalNotesIndicator from "src/components/Screening/ClinicalNotes/ClinicalNotesIndicator";
 import { ProtocolSubstanceClassSelect } from "./ProtocolSubstanceClassSelect/ProtocolSubstanceClassSelect";
+import { ProtocolSubstanceSelect } from "./ProtocolSubstanceSelect/ProtocolSubstanceSelect";
 
 import { VariableContainer, VariableGrid } from "../Protocol.style";
 
@@ -174,14 +175,12 @@ export function VariableTab() {
               <>
                 <div className={`form-row`}>
                   <div className="form-label">
-                    <label>Substância (sctid):</label>
+                    <label>Substância:</label>
                   </div>
                   <div className="form-input">
-                    <Select
+                    <ProtocolSubstanceSelect
                       value={v.substance}
-                      allowClear
-                      mode="tags"
-                      onChange={(value) => setConfig(idx, "substance", value)}
+                      onChange={(ids) => setConfig(idx, "substance", ids)}
                     />
                   </div>
                 </div>
@@ -458,6 +457,11 @@ export function VariableTab() {
                   <div className="form-input">
                     {v.field === ProtocolVariableFieldEnum.DRUG_CLASS ? (
                       <ProtocolSubstanceClassSelect
+                        value={v.value}
+                        onChange={(ids) => setConfig(idx, "value", ids)}
+                      />
+                    ) : v.field === ProtocolVariableFieldEnum.SUBSTANCE ? (
+                      <ProtocolSubstanceSelect
                         value={v.value}
                         onChange={(ids) => setConfig(idx, "value", ids)}
                       />

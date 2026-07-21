@@ -9,9 +9,13 @@ import api from "services/api";
 import notification from "components/notification";
 import { getErrorMessageFromException } from "utils/errorHandler";
 
-import { ClassOption, formatSubstanceClassLabel } from "./helpers";
+import {
+  SubstanceOption,
+  formatSubstanceLabel,
+  normalizeSubstance,
+} from "./helpers";
 
-interface ProtocolSubstanceClassModalProps {
+interface ProtocolSubstanceModalProps {
   open: boolean;
   onClose: () => void;
   selectedIds: Array<string | number>;
@@ -19,20 +23,20 @@ interface ProtocolSubstanceClassModalProps {
   onConfirm: (ids: string[], labelAdditions: Record<string, string>) => void;
 }
 
-export function ProtocolSubstanceClassModal({
+export function ProtocolSubstanceModal({
   open,
   onClose,
   selectedIds,
   labelMap,
   onConfirm,
-}: ProtocolSubstanceClassModalProps) {
+}: ProtocolSubstanceModalProps) {
   const { t } = useTranslation();
   const [term, setTerm] = useState("");
-  const [rows, setRows] = useState<ClassOption[]>([]);
+  const [rows, setRows] = useState<SubstanceOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [selectedItemsById, setSelectedItemsById] = useState<
-    Record<string, ClassOption>
+    Record<string, SubstanceOption>
   >({});
 
   // Re-seed from the current selection every time the modal is opened so a
@@ -50,9 +54,9 @@ export function ProtocolSubstanceClassModal({
   const fetchData = (value: string) => {
     setLoading(true);
     api.substance
-      .findSubstanceClasses(value)
+      .findSubstances(value)
       .then((response) => {
-        setRows(response.data?.data ?? []);
+        setRows((response.data?.data ?? []).map(normalizeSubstance));
       })
       .catch((err) => {
         notification.error({
@@ -78,14 +82,14 @@ export function ProtocolSubstanceClassModal({
   const rowSelection = {
     selectedRowKeys: selectedKeys,
     preserveSelectedRowKeys: true,
-    onChange: (keys: React.Key[], selectedRows: ClassOption[]) => {
+    onChange: (keys: React.Key[], selectedRows: SubstanceOption[]) => {
       const nextKeys = keys.map(String);
       setSelectedKeys(nextKeys);
 
       // antd hands back undefined rows for preserved keys not in the current
       // results, so keep the item we already knew for those.
       setSelectedItemsById((prev) => {
-        const next: Record<string, ClassOption> = {};
+        const next: Record<string, SubstanceOption> = {};
         nextKeys.forEach((key) => {
           const fromRows = (selectedRows ?? []).find(
             (r) => r && String(r.id) === key,
@@ -110,7 +114,7 @@ export function ProtocolSubstanceClassModal({
   const confirm = () => {
     const additions: Record<string, string> = {};
     Object.values(selectedItemsById).forEach((item) => {
-      additions[String(item.id)] = formatSubstanceClassLabel(item);
+      additions[String(item.id)] = formatSubstanceLabel(item);
     });
 
     onConfirm(selectedKeys, additions);
@@ -118,26 +122,22 @@ export function ProtocolSubstanceClassModal({
 
   const columns = [
     {
-      title: "ID",
+      title: "SCTID",
       dataIndex: "id",
       key: "id",
-      width: 120,
+      width: 160,
     },
     {
-      title: "Classe",
+      title: "Substância",
       dataIndex: "name",
       key: "name",
     },
-    {
-      title: "Classe pai",
-      dataIndex: "parent",
-      key: "parent",
-      render: (parent: string | null) => parent ?? "-",
-    },
   ];
 
-  const selectedLabels = selectedKeys.map(
-    (key) => selectedItemsById[key] ? formatSubstanceClassLabel(selectedItemsById[key]) : labelMap[key] ?? key,
+  const selectedLabels = selectedKeys.map((key) =>
+    selectedItemsById[key]
+      ? formatSubstanceLabel(selectedItemsById[key])
+      : labelMap[key] ?? key,
   );
 
   return (
@@ -153,7 +153,7 @@ export function ProtocolSubstanceClassModal({
       cancelText={t("actions.cancel")}
     >
       <header>
-        <h2 className="modal-title">Selecionar classes</h2>
+        <h2 className="modal-title">Selecionar substâncias</h2>
       </header>
 
       <div style={{ marginBottom: "1rem" }}>
@@ -178,14 +178,14 @@ export function ProtocolSubstanceClassModal({
         locale={{
           emptyText:
             term.length < 2
-              ? "Digite para pesquisar classes"
-              : "Nenhuma classe encontrada",
+              ? "Digite para pesquisar substâncias"
+              : "Nenhuma substância encontrada",
         }}
       />
 
       <div style={{ marginTop: "1rem" }}>
         <div style={{ marginBottom: "0.5rem", fontWeight: 500 }}>
-          Classes selecionadas ({selectedKeys.length})
+          Substâncias selecionadas ({selectedKeys.length})
         </div>
         <div
           style={{
@@ -200,7 +200,7 @@ export function ProtocolSubstanceClassModal({
           {selectedKeys.length === 0 ? (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="Nenhuma classe selecionada"
+              description="Nenhuma substância selecionada"
               style={{ margin: "0.5rem 0" }}
             />
           ) : (

@@ -608,6 +608,14 @@ api.substance.findSubstances = (term) =>
     ...setHeaders(),
   });
 
+api.substance.resolveSubstances = (ids) =>
+  instance.get(`${endpoints.substance}/resolve`, {
+    params: {
+      ids: (ids ?? []).join(","),
+    },
+    ...setHeaders(),
+  });
+
 api.substance.findSubstanceClasses = (term) =>
   instance.get(`${endpoints.substance}/class/find`, {
     params: {
