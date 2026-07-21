@@ -195,9 +195,13 @@ export function FileReport() {
     });
   };
 
-  const handleSuggestCharts = (hint: string) => {
-    setIsSuggestingCharts(true);
-
+  // Core suggestion request, reused by both the bulk button and the wizard's
+  // per-chart "Gerar com agente" step. Returns normalized ChartConfigs (or
+  // throws on error). Defaults are applied first so a backend-provided `series`
+  // (expression charts) is preserved by the trailing `...chart` spread.
+  const requestChartSuggestions = async (
+    hint: string,
+  ): Promise<ChartConfig[]> => {
     const payload = {
       columns: schema.map(({ key, label, type: columnType, options }) => ({
         key,
@@ -220,46 +224,54 @@ export function FileReport() {
       existingTitles: currentCharts.map((c) => c.title),
     };
 
-    dispatch(
+    const response: any = await dispatch(
       // @ts-expect-error legacy code
       suggestReportGraphs(payload),
-    ).then((response: any) => {
-      if (response.error) {
-        notification.error({ message: getErrorMessage(response, t) });
-      } else {
-        const suggestions = response.payload.data.data ?? [];
+    );
 
-        if (suggestions.length === 0) {
+    if (response.error) {
+      throw new Error(getErrorMessage(response, t));
+    }
+
+    const suggestions: ChartConfig[] = response.payload.data.data ?? [];
+    return suggestions.map((chart) => ({
+      aggregation: "none",
+      sortOrder: "none",
+      xSortOrder: "none",
+      xLabelRotate: 0,
+      topN: 0,
+      showLabels: false,
+      height: 400,
+      dateGrouping: "none",
+      showTitle: true,
+      colorPalette: "default",
+      stacked: false,
+      filters: [],
+      ...chart,
+      id: generateId(),
+    }));
+  };
+
+  const handleSuggestCharts = (hint: string) => {
+    setIsSuggestingCharts(true);
+    requestChartSuggestions(hint)
+      .then((charts) => {
+        if (charts.length === 0) {
           notification.info({
             message: "Nenhuma sugestão gerada para estes dados.",
           });
         } else {
-          chartCreatorRef.current?.appendCharts(
-            suggestions.map((chart: ChartConfig) => ({
-              aggregation: "none",
-              sortOrder: "none",
-              xSortOrder: "none",
-              xLabelRotate: 0,
-              topN: 0,
-              showLabels: false,
-              height: 400,
-              dateGrouping: "none",
-              showTitle: true,
-              colorPalette: "default",
-              stacked: false,
-              filters: [],
-              ...chart,
-              id: generateId(),
-            })),
-          );
+          chartCreatorRef.current?.appendCharts(charts);
           notification.success({
             message:
               "Gráfico sugerido adicionado. Revise e salve — clique novamente para sugerir outro.",
           });
         }
-      }
-      setIsSuggestingCharts(false);
-    });
+      })
+      .catch((e: any) => {
+        notification.error({ message: e?.message ?? "Erro ao sugerir gráfico." });
+      })
+      .finally(() => setIsSuggestingCharts(false));
   };
 
   const executeDownloadWithFormat = (
@@ -371,6 +383,7 @@ export function FileReport() {
                 initialCharts={initialCharts}
                 onChartsChange={setCurrentCharts}
                 readOnly={!canWriteGraphs}
+                onGenerateCharts={requestChartSuggestions}
                 extraActions={
                   <SuggestChartsButton
                     loading={isSuggestingCharts}
