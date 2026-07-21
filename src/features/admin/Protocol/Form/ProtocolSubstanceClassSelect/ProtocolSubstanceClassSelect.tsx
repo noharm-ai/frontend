@@ -2,30 +2,22 @@ import { useEffect, useId, useState } from "react";
 import { debounce } from "lodash";
 import { useTranslation } from "react-i18next";
 import { Flex } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined, TableOutlined } from "@ant-design/icons";
 
 import { Select } from "components/Inputs";
+import Button from "components/Button";
 import LoadBox from "components/LoadBox";
 import api from "services/api";
 import notification from "components/notification";
 import { getErrorMessageFromException } from "utils/errorHandler";
 
-interface ClassOption {
-  id: string;
-  name: string;
-  parent?: string | null;
-}
+import { ClassOption, formatSubstanceClassLabel } from "./helpers";
+import { ProtocolSubstanceClassModal } from "./ProtocolSubstanceClassModal";
 
 interface ProtocolSubstanceClassSelectProps {
   value?: Array<string | number>;
   onChange: (ids: Array<string | number>) => void;
 }
-
-const formatLabel = (option: ClassOption) => {
-  const base = option.parent ? `${option.parent} - ${option.name}` : option.name;
-
-  return `${option.id} - ${base}`;
-};
 
 export function ProtocolSubstanceClassSelect({
   value,
@@ -37,6 +29,7 @@ export function ProtocolSubstanceClassSelect({
   const [options, setOptions] = useState<ClassOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [resolving, setResolving] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   // The value can arrive as a non-array (e.g. a stale string left by the
   // free-text input shown before an operator is picked); ignore anything that
@@ -59,7 +52,7 @@ export function ProtocolSubstanceClassSelect({
         setLabelMap((prev) => {
           const next = { ...prev };
           items.forEach((item) => {
-            next[String(item.id)] = formatLabel(item);
+            next[String(item.id)] = formatSubstanceClassLabel(item);
           });
           // Ids with no match (e.g. a deleted class) fall back to the bare id
           // so the effect does not keep re-requesting them.
@@ -119,15 +112,24 @@ export function ProtocolSubstanceClassSelect({
     label: labelMap[String(id)] ?? String(id),
   }));
 
+  const applyModalSelection = (
+    ids: string[],
+    labelAdditions: Record<string, string>,
+  ) => {
+    setLabelMap((prev) => ({ ...prev, ...labelAdditions }));
+    onChange(ids);
+    setModalOpen(false);
+  };
+
   return (
-    <Flex>
-      <div style={{ flex: 1, maxWidth: "100%" }} id={containerId}>
+    <Flex gap={8} align="flex-start" style={{ width: "100%" }}>
+      <div style={{ flex: 1, minWidth: 0 }} id={containerId}>
         <Select
           labelInValue
           allowClear
           mode="multiple"
           value={selectValue}
-          style={{ minWidth: "300px", maxWidth: "100%" }}
+          style={{ width: "100%" }}
           notFoundContent={loading ? <LoadBox /> : null}
           onChange={handleChange}
           placeholder={loading ? "Carregando..." : "Digite para pesquisar"}
@@ -143,18 +145,32 @@ export function ProtocolSubstanceClassSelect({
         >
           {options.map((option) => (
             <Select.Option value={option.id} key={option.id}>
-              {formatLabel(option)}
+              {formatSubstanceClassLabel(option)}
             </Select.Option>
           ))}
         </Select>
       </div>
       {(loading || resolving) && (
-        <div style={{ width: "30px" }}>
+        <div style={{ width: "30px", flexShrink: 0 }}>
           <Flex align="center" justify="center" style={{ height: "100%" }}>
             <LoadingOutlined />
           </Flex>
         </div>
       )}
+      <Button
+        icon={<TableOutlined />}
+        title="Pesquisar em tabela"
+        style={{ flexShrink: 0 }}
+        onClick={() => setModalOpen(true)}
+      />
+
+      <ProtocolSubstanceClassModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        selectedIds={ids}
+        labelMap={labelMap}
+        onConfirm={applyModalSelection}
+      />
     </Flex>
   );
 }
