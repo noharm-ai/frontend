@@ -1,5 +1,6 @@
 // react-jsx transform active — no React default import needed
 import moment from "moment";
+import { deburr } from "lodash";
 import { SearchOutlined } from "@ant-design/icons";
 
 import { TextColumn } from "components/Table";
@@ -60,7 +61,7 @@ export const columns = (
       ),
       filteredValue: filteredInfo.searchKey || null,
       onFilter: (value: any, record: any) =>
-        (patientCache.getPatient(record.idPatient)?.name ?? "")
+        deburr(patientCache.getPatient(record.idPatient)?.name ?? "")
           .toLowerCase()
           .includes(value) ||
         `${record.admissionNumber}` === value ||
