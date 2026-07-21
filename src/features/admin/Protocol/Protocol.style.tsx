@@ -10,6 +10,22 @@ export const StickyPageHeader = styled(PageHeader)`
   padding: 16px 0;
   background: #eff1f4;
   border-bottom: 1px solid #e0e3e9;
+  transition:
+    padding 0.2s ease,
+    box-shadow 0.2s ease;
+
+  .page-header-title {
+    transition: font-size 0.2s ease;
+  }
+
+  &.is-stuck {
+    padding: 8px 24px;
+    box-shadow: 0 4px 12px rgba(46, 60, 90, 0.12);
+
+    .page-header-title {
+      font-size: 22px;
+    }
+  }
 `;
 
 export const VariableContainer = styled.div`

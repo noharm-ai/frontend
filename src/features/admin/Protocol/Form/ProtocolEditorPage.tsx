@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
@@ -36,6 +36,9 @@ export function ProtocolEditorPage() {
   const isSaving = saveStatus === "loading";
   const isNew = id === "new";
 
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const [isStuck, setIsStuck] = useState(false);
+
   useEffect(() => {
     if (!isNew) {
       dispatch(fetchProtocols({}));
@@ -45,6 +48,19 @@ export function ProtocolEditorPage() {
       dispatch(reset());
     };
   }, [dispatch, isNew]);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsStuck(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, []);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().nullable().required(t("validation.requiredField")),
@@ -118,7 +134,8 @@ export function ProtocolEditorPage() {
         values: any;
       }) => (
         <>
-          <StickyPageHeader>
+          <div ref={sentinelRef} />
+          <StickyPageHeader className={isStuck ? "is-stuck" : ""}>
             <div>
               <h1 className="page-header-title">
                 {isNew ? "Novo Protocolo" : values.name || "Editar Protocolo"}
