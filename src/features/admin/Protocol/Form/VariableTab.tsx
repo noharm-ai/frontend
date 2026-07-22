@@ -74,7 +74,16 @@ export function VariableTab() {
       <VariableGrid>
         {(values.config?.variables ?? []).map((v: any, idx: number) => (
           <VariableContainer key={v.name}>
-            <h4 className="variable-title">{v.name}</h4>
+            <div className="variable-header">
+              <h4 className="variable-title">{v.name}</h4>
+              <Button
+                danger
+                type="text"
+                icon={<DeleteOutlined />}
+                onClick={() => removeVariable(v.name)}
+                title="Remover Variável"
+              />
+            </div>
 
             <div className={`form-row`}>
               <div className="form-label">
@@ -525,17 +534,6 @@ export function VariableTab() {
                 </div>
               </>
             )}
-
-            <div className="form-row">
-              <Button
-                block
-                danger
-                icon={<DeleteOutlined />}
-                onClick={() => removeVariable(v.name)}
-              >
-                Remover Variável
-              </Button>
-            </div>
           </VariableContainer>
         ))}
       </VariableGrid>

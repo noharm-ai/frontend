@@ -34,10 +34,18 @@ export const VariableContainer = styled.div`
   border: 1px solid #f0f0f0;
   border-radius: 8px;
 
-  .variable-title {
-    margin: 0 0 1rem;
+  .variable-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid #f0f0f0;
+  }
+
+  .variable-title {
+    margin: 0;
     font-size: 1rem;
     font-weight: 600;
   }
