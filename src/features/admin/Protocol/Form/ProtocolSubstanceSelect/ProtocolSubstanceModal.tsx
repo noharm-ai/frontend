@@ -137,7 +137,7 @@ export function ProtocolSubstanceModal({
   const selectedLabels = selectedKeys.map((key) =>
     selectedItemsById[key]
       ? formatSubstanceLabel(selectedItemsById[key])
-      : labelMap[key] ?? key,
+      : (labelMap[key] ?? key),
   );
 
   return (
@@ -209,6 +209,7 @@ export function ProtocolSubstanceModal({
                 <Tag
                   key={key}
                   closable
+                  color="#a991d6"
                   onClose={(e) => {
                     e.preventDefault();
                     removeSelected(key);

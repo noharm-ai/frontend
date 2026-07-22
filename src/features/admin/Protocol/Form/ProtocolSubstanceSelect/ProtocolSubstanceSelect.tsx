@@ -148,6 +148,7 @@ export function ProtocolSubstanceSelect({
             filterOption: false,
             autoClearSearchValue: false,
           }}
+          maxTagCount={10}
         >
           {options.map((option) => (
             <Select.Option value={option.id} key={option.id}>

@@ -133,7 +133,7 @@ export function ProtocolDrugModal({
   const selectedLabels = selectedKeys.map((key) =>
     selectedItemsById[key]
       ? formatDrugLabel(selectedItemsById[key])
-      : labelMap[key] ?? key,
+      : (labelMap[key] ?? key),
   );
 
   return (
@@ -210,6 +210,7 @@ export function ProtocolDrugModal({
                     removeSelected(key);
                   }}
                   style={{ marginInlineEnd: 0, padding: "2px 8px" }}
+                  color="#a991d6"
                 >
                   {selectedLabels[i]}
                 </Tag>
