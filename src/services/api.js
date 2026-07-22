@@ -2,6 +2,7 @@ import axios from "axios";
 
 import { store } from "store/index";
 import { getStorageItem } from "utils/storage";
+import { ensureFreshToken } from "store/refreshTokenManager";
 
 /**
  * AXIOS instance.
@@ -68,6 +69,46 @@ export const setHeaders = () => {
         },
       };
 };
+
+/**
+ * Proactive token refresh for every request through `instance`.
+ *
+ * The `autoRefreshToken` Redux middleware only guards thunk dispatches; direct
+ * `api.*()` calls from components bypass it. This interceptor runs the same
+ * proactive refresh (sharing the single in-flight promise in Redux, so no
+ * duplicate refreshes) so a stale access token is refreshed before the request
+ * leaves. Auth endpoints are skipped to avoid recursion.
+ */
+const AUTH_ENDPOINTS = [
+  endpoints.refreshToken,
+  endpoints.authentication,
+  endpoints.oauth,
+];
+
+instance.interceptors.request.use(async (config) => {
+  const url = config.url || "";
+
+  if (AUTH_ENDPOINTS.some((endpoint) => url.startsWith(endpoint))) {
+    return config;
+  }
+
+  const refreshed = await ensureFreshToken();
+
+  if (refreshed) {
+    const ac1 = getStorageItem("ac1");
+    const ac2 = getStorageItem("ac2");
+
+    // setHeaders() already built the Authorization header synchronously with
+    // the OLD token, so refreshing storage alone is not enough — overwrite the
+    // header here, but only when a token header was actually attached (never
+    // inject one onto intentionally unauthenticated calls).
+    if (ac1 && ac2 && config.headers && config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${ac1 + ac2}`;
+    }
+  }
+
+  return config;
+});
 
 /**
  * Authentication.
