@@ -10,6 +10,7 @@ import clinicalNotesIndicator from "src/components/Screening/ClinicalNotes/Clini
 import { ProtocolSubstanceClassSelect } from "./ProtocolSubstanceClassSelect/ProtocolSubstanceClassSelect";
 import { ProtocolSubstanceSelect } from "./ProtocolSubstanceSelect/ProtocolSubstanceSelect";
 import { ProtocolDrugSelect } from "./ProtocolDrugSelect/ProtocolDrugSelect";
+import { ProtocolExamSelect } from "./ProtocolExamSelect/ProtocolExamSelect";
 
 import { VariableContainer, VariableGrid } from "../Protocol.style";
 
@@ -124,10 +125,10 @@ export function VariableTab() {
                     <label>Exame (tp_exame):</label>
                   </div>
                   <div className="form-input">
-                    <Input
+                    <ProtocolExamSelect
                       value={v.examType}
-                      onChange={({ target }) =>
-                        setConfig(idx, "examType", target.value)
+                      onChange={(examType) =>
+                        setConfig(idx, "examType", examType)
                       }
                     />
                   </div>
@@ -156,10 +157,10 @@ export function VariableTab() {
                     <label>Exame (tp_exame):</label>
                   </div>
                   <div className="form-input">
-                    <Input
+                    <ProtocolExamSelect
                       value={v.examRefType}
-                      onChange={({ target }) =>
-                        setConfig(idx, "examRefType", target.value)
+                      onChange={(examRefType) =>
+                        setConfig(idx, "examRefType", examRefType)
                       }
                     />
                   </div>
