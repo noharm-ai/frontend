@@ -11,6 +11,7 @@ import { ProtocolSubstanceClassSelect } from "./ProtocolSubstanceClassSelect/Pro
 import { ProtocolSubstanceSelect } from "./ProtocolSubstanceSelect/ProtocolSubstanceSelect";
 import { ProtocolDrugSelect } from "./ProtocolDrugSelect/ProtocolDrugSelect";
 import { ProtocolExamSelect } from "./ProtocolExamSelect/ProtocolExamSelect";
+import { ProtocolExamRefSelect } from "./ProtocolExamRefSelect/ProtocolExamRefSelect";
 
 import { VariableContainer, VariableGrid } from "../Protocol.style";
 
@@ -157,7 +158,7 @@ export function VariableTab() {
                     <label>Exame (tp_exame):</label>
                   </div>
                   <div className="form-input">
-                    <ProtocolExamSelect
+                    <ProtocolExamRefSelect
                       value={v.examRefType}
                       onChange={(examRefType) =>
                         setConfig(idx, "examRefType", examRefType)
