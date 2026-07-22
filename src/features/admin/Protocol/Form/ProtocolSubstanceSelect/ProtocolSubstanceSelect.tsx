@@ -74,6 +74,9 @@ export function ProtocolSubstanceSelect({
         });
       })
       .finally(() => setResolving(false));
+    // `labelMap` and `t` are deliberately excluded from the deps: this effect
+    // *writes* labelMap, so depending on it would loop. We re-resolve only when
+    // the set of saved ids (idsKey) changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idsKey]);
 

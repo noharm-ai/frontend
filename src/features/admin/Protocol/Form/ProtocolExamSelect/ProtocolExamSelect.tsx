@@ -20,12 +20,12 @@ export function ProtocolExamSelect({ value, onChange }: ProtocolExamSelectProps)
   const { t } = useTranslation();
   const containerId = `protocol-exam-select-${useId().replace(/:/g, "")}`;
   const [options, setOptions] = useState<ExamTypeOption[]>([]);
-  const [loading, setLoading] = useState(false);
+  // Starts true because we always fetch on mount; flipped off in `.finally`.
+  const [loading, setLoading] = useState(true);
 
   // The exam type list is a small, finite set (distinct active tp_exame), so we
   // load it once and let the Select filter client-side.
   useEffect(() => {
-    setLoading(true);
     api.exams
       .getExamTypes({})
       .then((response) => {
@@ -42,8 +42,7 @@ export function ProtocolExamSelect({ value, onChange }: ProtocolExamSelectProps)
         });
       })
       .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [t]);
 
   return (
     <div style={{ width: "100%" }} id={containerId}>

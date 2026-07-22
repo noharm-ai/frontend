@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { debounce } from "lodash";
 import { useTranslation } from "react-i18next";
 import { Table, Tag, Flex, Empty } from "antd";
@@ -34,22 +34,27 @@ export function ProtocolSubstanceModal({
   const [term, setTerm] = useState("");
   const [rows, setRows] = useState<SubstanceOption[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<string[]>(() =>
+    (selectedIds ?? []).map(String),
+  );
   const [selectedItemsById, setSelectedItemsById] = useState<
     Record<string, SubstanceOption>
   >({});
 
-  // Re-seed from the current selection every time the modal is opened so a
-  // second open never shows stale checkboxes.
-  useEffect(() => {
+  // Re-seed the working selection whenever the modal transitions to open, so a
+  // second open never shows stale checkboxes. Tracking the previous `open` and
+  // adjusting state during render is React's recommended alternative to a reset
+  // effect — no extra render commit and no dependency-lint escape hatch.
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (open) {
       setSelectedKeys((selectedIds ?? []).map(String));
       setSelectedItemsById({});
       setTerm("");
       setRows([]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }
 
   const fetchData = (value: string) => {
     setLoading(true);

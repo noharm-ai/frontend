@@ -12,6 +12,7 @@ import { ProtocolSubstanceSelect } from "./ProtocolSubstanceSelect/ProtocolSubst
 import { ProtocolDrugSelect } from "./ProtocolDrugSelect/ProtocolDrugSelect";
 import { ProtocolExamSelect } from "./ProtocolExamSelect/ProtocolExamSelect";
 import { ProtocolExamRefSelect } from "./ProtocolExamRefSelect/ProtocolExamRefSelect";
+import { ProtocolDepartmentSelect } from "./ProtocolDepartmentSelect/ProtocolDepartmentSelect";
 
 import { VariableContainer, VariableGrid } from "../Protocol.style";
 
@@ -477,6 +478,11 @@ export function VariableTab() {
                       />
                     ) : v.field === ProtocolVariableFieldEnum.ID_DRUG ? (
                       <ProtocolDrugSelect
+                        value={v.value}
+                        onChange={(ids) => setConfig(idx, "value", ids)}
+                      />
+                    ) : v.field === ProtocolVariableFieldEnum.ID_DEPARTMENT ? (
+                      <ProtocolDepartmentSelect
                         value={v.value}
                         onChange={(ids) => setConfig(idx, "value", ids)}
                       />
