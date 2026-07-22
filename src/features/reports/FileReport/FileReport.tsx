@@ -377,6 +377,22 @@ export function FileReport() {
           />
           {filteredData && filteredData.length > 0 && (
             <ErrorBoundary FallbackComponent={ChartCreatorFallback}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: "1.5rem",
+                }}
+              >
+                <h2 style={{ margin: 0, fontSize: 18 }}>Gráficos</h2>
+                {canWriteGraphs && (
+                  <SuggestChartsButton
+                    loading={isSuggestingCharts}
+                    onSuggest={handleSuggestCharts}
+                  />
+                )}
+              </div>
               <ChartCreator
                 ref={chartCreatorRef}
                 data={filteredData}
@@ -384,12 +400,6 @@ export function FileReport() {
                 onChartsChange={setCurrentCharts}
                 readOnly={!canWriteGraphs}
                 onGenerateCharts={requestChartSuggestions}
-                extraActions={
-                  <SuggestChartsButton
-                    loading={isSuggestingCharts}
-                    onSuggest={handleSuggestCharts}
-                  />
-                }
               />
 
               {canWriteGraphs && (

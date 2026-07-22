@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Popover } from "antd";
-import { BulbOutlined } from "@ant-design/icons";
+import { AppstoreAddOutlined } from "@ant-design/icons";
 import { Textarea } from "src/components/Inputs";
 import Button from "src/components/Button";
 
@@ -26,13 +26,13 @@ export const SuggestChartsButton: React.FC<SuggestChartsButtonProps> = ({
       trigger="click"
       open={open}
       onOpenChange={setOpen}
-      title="Sugerir gráfico"
+      title="Sugerir dashboard"
       content={
         <div style={{ width: 300 }}>
           <Textarea
             rows={3}
             maxLength={500}
-            placeholder="Opcional: descreva o que você quer visualizar"
+            placeholder="Opcional: descreva o dashboard que você quer visualizar"
             value={hint}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               setHint(e.target.value)
@@ -40,13 +40,13 @@ export const SuggestChartsButton: React.FC<SuggestChartsButtonProps> = ({
             style={{ marginBottom: "8px" }}
           />
           <Button type="primary" onClick={handleGenerate} block>
-            Gerar sugestão
+            Gerar dashboard
           </Button>
         </div>
       }
     >
-      <Button icon={<BulbOutlined />} loading={loading}>
-        Sugerir gráfico
+      <Button icon={<AppstoreAddOutlined />} loading={loading}>
+        Sugerir dashboard
       </Button>
     </Popover>
   );
