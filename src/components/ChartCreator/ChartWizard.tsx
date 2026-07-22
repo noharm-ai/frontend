@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
-import { Button, ConfigProvider, Modal, Steps } from "antd";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
+import { Button, ConfigProvider, Modal, Steps, Tooltip } from "antd";
+import { EnterOutlined } from "@ant-design/icons";
 import type { ChartConfig, ColumnSchema } from "./types";
 import { WizardPreview } from "./WizardPreview";
 import { StartStep } from "./steps/StartStep";
@@ -14,6 +15,45 @@ const genId = () => Math.random().toString(36).slice(2, 11);
 
 // NoHarm brand green (styles/colors accent) used to highlight active toggles.
 const NOHARM_GREEN = "#7ebe9a";
+
+const isMac =
+  typeof navigator !== "undefined" &&
+  /Mac|iPhone|iPod|iPad/i.test(navigator.platform || navigator.userAgent);
+
+const keyCapStyle: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  minWidth: 16,
+  height: 16,
+  padding: "0 3px",
+  fontSize: 11,
+  lineHeight: 1,
+  borderRadius: 3,
+  border: "1px solid currentColor",
+};
+
+/**
+ * Renders the keyboard shortcut for a footer button: any modifier keycaps
+ * (⇧ / ⌘ / ⌃) followed by the Enter (↵) icon. Uses Unicode key glyphs, so no
+ * extra icon library is needed.
+ */
+function ShortcutHint({ mods }: { mods: string[] }) {
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
+      {mods.map((m) => (
+        <span key={m} style={keyCapStyle}>
+          {m}
+        </span>
+      ))}
+      <EnterOutlined />
+    </span>
+  );
+}
+
+// Save is ⌘+Enter on Mac, Ctrl+Enter elsewhere — show only the current OS's key.
+const SAVE_MODS = [isMac ? "⌘" : "⌃"];
+const SAVE_SHORTCUT = isMac ? "⌘+Enter" : "Ctrl+Enter";
 
 const makeDefaultDraft = (): ChartConfig => ({
   id: genId(),
@@ -137,6 +177,73 @@ export function ChartWizard({
   const allValid = dataValid(draft) && metricsValid(draft, schema);
   const canAdvance = current?.valid ?? true;
 
+  // Keyboard shortcuts: Enter advances, Shift+Enter goes back, Ctrl/⌘+Enter saves.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Enter") return;
+      if (e.metaKey || e.ctrlKey) {
+        if (allValid) {
+          e.preventDefault();
+          onFinish(draft);
+        }
+        return;
+      }
+      if (isStartStep) return;
+      const el = e.target as HTMLElement | null;
+      // Enter has its own meaning inside a textarea or on a focused button.
+      if (el && (el.closest("textarea") || el.closest("button"))) return;
+      // Let an open Select/AutoComplete dropdown consume Enter itself.
+      if (document.querySelector(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")) return;
+      if (e.shiftKey) {
+        if (stepIndex > 0) {
+          e.preventDefault();
+          setStepIndex((i) => i - 1);
+        }
+        return;
+      }
+      if (!isLast && canAdvance) {
+        e.preventDefault();
+        setStepIndex((i) => i + 1);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, isStartStep, isLast, canAdvance, allValid, draft, onFinish, stepIndex]);
+
+  const saveButton = (
+    <Tooltip key="finish" title={`Salvar (${SAVE_SHORTCUT})`}>
+      <Button
+        type={isLast ? "primary" : "default"}
+        disabled={!allValid}
+        icon={<ShortcutHint mods={SAVE_MODS} />}
+        onClick={() => onFinish(draft)}
+      >
+        {isEditing ? "Salvar alterações" : "Adicionar gráfico"}
+      </Button>
+    </Tooltip>
+  );
+  const nextButton = (
+    <Tooltip key="next" title="Próximo (Enter)">
+      <Button
+        type="primary"
+        disabled={!canAdvance}
+        icon={<ShortcutHint mods={[]} />}
+        onClick={() => setStepIndex((i) => i + 1)}
+      >
+        Próximo
+      </Button>
+    </Tooltip>
+  );
+
+  // While editing, Save is available on every step; when creating, it appears
+  // only on the last step.
+  const actionButtons = isLast
+    ? [saveButton]
+    : isEditing
+      ? [saveButton, nextButton]
+      : [nextButton];
+
   const footer = isStartStep
     ? [
         <Button key="cancel" onClick={onCancel}>
@@ -147,18 +254,16 @@ export function ChartWizard({
         <Button key="cancel" onClick={onCancel}>
           Cancelar
         </Button>,
-        <Button key="back" disabled={stepIndex === 0} onClick={() => setStepIndex((i) => i - 1)}>
-          Voltar
-        </Button>,
-        isLast ? (
-          <Button key="finish" type="primary" disabled={!allValid} onClick={() => onFinish(draft)}>
-            {isEditing ? "Salvar alterações" : "Adicionar gráfico"}
+        <Tooltip key="back" title="Voltar (Shift+Enter)">
+          <Button
+            disabled={stepIndex === 0}
+            icon={<ShortcutHint mods={["⇧"]} />}
+            onClick={() => setStepIndex((i) => i - 1)}
+          >
+            Voltar
           </Button>
-        ) : (
-          <Button key="next" type="primary" disabled={!canAdvance} onClick={() => setStepIndex((i) => i + 1)}>
-            Próximo
-          </Button>
-        ),
+        </Tooltip>,
+        ...actionButtons,
       ];
 
   return (
