@@ -46,7 +46,6 @@ import {
   Filter,
 } from "./FileReport.utils";
 import { FilterRow } from "./FilterRow";
-import { SuggestChartsButton } from "./SuggestChartsButton";
 import { ErrorBoundary } from "react-error-boundary";
 
 const ChartCreatorFallback = ({
@@ -84,7 +83,6 @@ export function FileReport() {
   const [initialCharts, setInitialCharts] = useState<ChartConfig[]>([]);
   const [currentCharts, setCurrentCharts] = useState<ChartConfig[]>([]);
   const [isSavingCharts, setIsSavingCharts] = useState(false);
-  const [isSuggestingCharts, setIsSuggestingCharts] = useState(false);
   const chartCreatorRef = useRef<ChartCreatorHandle>(null);
   const canWriteGraphs = PermissionService().has(
     Permission.WRITE_CUSTOM_REPORTS_GRAPHS,
@@ -252,28 +250,6 @@ export function FileReport() {
     }));
   };
 
-  const handleSuggestCharts = (hint: string) => {
-    setIsSuggestingCharts(true);
-    requestChartSuggestions(hint)
-      .then((charts) => {
-        if (charts.length === 0) {
-          notification.info({
-            message: "Nenhuma sugestão gerada para estes dados.",
-          });
-        } else {
-          chartCreatorRef.current?.appendCharts(charts);
-          notification.success({
-            message:
-              "Gráfico sugerido adicionado. Revise e salve — clique novamente para sugerir outro.",
-          });
-        }
-      })
-      .catch((e: any) => {
-        notification.error({ message: e?.message ?? "Erro ao sugerir gráfico." });
-      })
-      .finally(() => setIsSuggestingCharts(false));
-  };
-
   const executeDownloadWithFormat = (
     filename: string,
     format: "csv" | "xlsx",
@@ -377,22 +353,6 @@ export function FileReport() {
           />
           {filteredData && filteredData.length > 0 && (
             <ErrorBoundary FallbackComponent={ChartCreatorFallback}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginTop: "1.5rem",
-                }}
-              >
-                <h2 style={{ margin: 0, fontSize: 18 }}>Gráficos</h2>
-                {canWriteGraphs && (
-                  <SuggestChartsButton
-                    loading={isSuggestingCharts}
-                    onSuggest={handleSuggestCharts}
-                  />
-                )}
-              </div>
               <ChartCreator
                 ref={chartCreatorRef}
                 data={filteredData}
