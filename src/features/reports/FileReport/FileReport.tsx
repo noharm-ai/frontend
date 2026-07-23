@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Spin, notification, FloatButton, Tag, Alert } from "antd";
+import { Spin, notification, FloatButton, Tag, Alert, Tabs } from "antd";
 import { useParams } from "react-router-dom";
 import {
   DeleteOutlined,
@@ -11,6 +11,8 @@ import {
   FileTextOutlined,
   FileExcelOutlined,
   SaveOutlined,
+  TableOutlined,
+  BarChartOutlined,
 } from "@ant-design/icons";
 
 import { useAppDispatch } from "src/store";
@@ -35,7 +37,12 @@ import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
 
 import { PageHeader } from "src/styles/PageHeader.style";
-import { FilterContainer, FilterActions, FilterList } from "./FileReport.style";
+import {
+  FilterContainer,
+  FilterActions,
+  FilterList,
+  ContentContainer,
+} from "./FileReport.style";
 import Modal from "src/components/Modal";
 import { ChartCreator } from "src/components/ChartCreator/ChartCreator";
 import { ChartConfig, ChartCreatorHandle } from "src/components/ChartCreator/types";
@@ -89,6 +96,10 @@ export function FileReport() {
   );
   const hasUnsavedChanges =
     JSON.stringify(currentCharts) !== JSON.stringify(initialCharts);
+
+  // Charts tab is shown (and comes first) when the report has charts or the
+  // user can create them; a viewer with no charts sees only the table.
+  const showChartsTab = currentCharts.length > 0 || canWriteGraphs;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -247,6 +258,11 @@ export function FileReport() {
       filters: [],
       ...chart,
       id: generateId(),
+      // The agent may return expression series without ids; the builder and
+      // renderer key each series by id, so ensure every one has a stable one.
+      ...(chart.series
+        ? { series: chart.series.map((s) => ({ ...s, id: s.id || generateId() })) }
+        : {}),
     }));
   };
 
@@ -346,32 +362,71 @@ export function FileReport() {
             </FilterActions>
           </FilterContainer>
 
-          <DataViewer
-            data={filteredData}
-            onRowClick={() => {}}
-            showFilters={false}
-          />
-          {filteredData && filteredData.length > 0 && (
-            <ErrorBoundary FallbackComponent={ChartCreatorFallback}>
-              <ChartCreator
-                ref={chartCreatorRef}
-                data={filteredData}
-                initialCharts={initialCharts}
-                onChartsChange={setCurrentCharts}
-                readOnly={!canWriteGraphs}
-                onGenerateCharts={requestChartSuggestions}
-              />
+          <ContentContainer>
+          <Tabs
+            // Remount when the tab set changes (e.g. charts load) so the
+            // correct default tab (Gráficos first when present) takes effect.
+            key={showChartsTab ? "with-charts" : "table-only"}
+            defaultActiveKey={showChartsTab ? "charts" : "table"}
+            items={[
+              ...(showChartsTab
+                ? [
+                    {
+                      key: "charts",
+                      label: (
+                        <span>
+                          <BarChartOutlined /> Gráficos
+                        </span>
+                      ),
+                      children:
+                        filteredData && filteredData.length > 0 ? (
+                          <ErrorBoundary FallbackComponent={ChartCreatorFallback}>
+                            <ChartCreator
+                              ref={chartCreatorRef}
+                              data={filteredData}
+                              initialCharts={initialCharts}
+                              onChartsChange={setCurrentCharts}
+                              readOnly={!canWriteGraphs}
+                              onGenerateCharts={requestChartSuggestions}
+                            />
 
-              {canWriteGraphs && (
-                <Alert
-                  type="info"
-                  showIcon
-                  description="A visualização de gráficos está disponível para todos, mas a adição e edição são restritas a usuários com permissão específica."
-                  style={{ maxWidth: "500px", margin: "2rem auto" }}
-                />
-              )}
-            </ErrorBoundary>
-          )}
+                            {canWriteGraphs && (
+                              <Alert
+                                type="info"
+                                showIcon
+                                description="A visualização de gráficos está disponível para todos, mas a adição e edição são restritas a usuários com permissão específica."
+                                style={{ maxWidth: "500px", margin: "2rem auto" }}
+                              />
+                            )}
+                          </ErrorBoundary>
+                        ) : (
+                          <Alert
+                            type="info"
+                            showIcon
+                            message="Sem dados para gerar gráficos com os filtros atuais."
+                          />
+                        ),
+                    },
+                  ]
+                : []),
+              {
+                key: "table",
+                label: (
+                  <span>
+                    <TableOutlined /> Tabela
+                  </span>
+                ),
+                children: (
+                  <DataViewer
+                    data={filteredData}
+                    onRowClick={() => {}}
+                    showFilters={false}
+                  />
+                ),
+              },
+            ]}
+          />
+          </ContentContainer>
         </div>
       </Spin>
 
