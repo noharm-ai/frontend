@@ -34,7 +34,7 @@ export function DataStep({ draft, patchDraft, keys }: WizardStepProps) {
       {needsAxis ? (
         <>
           <div>
-            <label style={labelStyle}>Agrupar por (eixo X)</label>
+            <label style={labelStyle}>Categoria (eixo X)</label>
             <Select
               mode="multiple"
               placeholder="Selecione a(s) coluna(s) que formam as categorias"
