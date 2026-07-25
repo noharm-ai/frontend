@@ -85,7 +85,6 @@ export function SupportForm() {
     ${aiResponse}
     `;
 
-    // @ts-expect-error ts 2554 (legacy code)
     const response: any = await dispatch(createTicket(payload));
 
     if (response.error) {
