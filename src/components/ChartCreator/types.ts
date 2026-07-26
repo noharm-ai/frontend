@@ -25,13 +25,26 @@ export interface ReferenceLine {
   label?: string;
 }
 
+/**
+ * A value series defined by an aggregation expression, e.g. "contagem()",
+ * "soma(dose)" or "contagem(a) / contagem(b) * 100". When `series` is present
+ * on a ChartConfig it takes precedence over the legacy `yKeys`/`aggregation`
+ * path. Kept optional so charts saved before this field remain valid.
+ */
+export interface ChartSeries {
+  id: string;
+  label?: string;
+  expr: string;
+}
+
 export interface ChartConfig {
   id: string;
-  type: "bar" | "hbar" | "line" | "pie";
+  type: "bar" | "hbar" | "line" | "pie" | "funnel" | "gauge" | "radar";
   xKeys: string[];
   yKeys: string[];
   title: string;
-  width: "full" | "half";
+  /** Layout width. "third" added later; older charts only use full/half. */
+  width: "full" | "half" | "third";
   aggregation?: AggregationType;
   sortOrder?: SortOrder;
   xSortOrder?: SortOrder;
@@ -44,7 +57,11 @@ export interface ChartConfig {
   showTitle?: boolean;
   colorPalette?: ColorPalette;
   stacked?: boolean;
+  /** Upper bound of the gauge dial; auto-computed from the value when unset. */
+  gaugeMax?: number;
   filters?: Filter[];
+  /** Expression-based value series. When set, overrides yKeys/aggregation. */
+  series?: ChartSeries[];
 }
 
 export interface ChartCreatorHandle {
@@ -57,5 +74,11 @@ export interface ChartCreatorProps {
   onChartsChange?: (charts: ChartConfig[]) => void;
   readOnly?: boolean;
   extraActions?: ReactNode;
+  /**
+   * Generates chart suggestions from a natural-language hint (LLM backend).
+   * When provided, the wizard exposes a "Gerar com agente" step that loads the
+   * first suggestion into the editable draft.
+   */
+  onGenerateCharts?: (hint: string) => Promise<ChartConfig[]>;
   ref?: Ref<ChartCreatorHandle>;
 }

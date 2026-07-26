@@ -11,6 +11,21 @@ export const FilterContainer = styled(Card)`
   }
 `;
 
+// Same card look as the filters, so the Table/Charts tabs don't float loose.
+export const ContentContainer = styled(Card)`
+  border-radius: 10px;
+  box-shadow: 0 -1px 7px rgb(0 0 0 / 16%);
+
+  .ant-card-body {
+    padding: 1rem;
+  }
+
+  /* The tab bar reaches the card edges; content keeps a small top gap. */
+  .ant-tabs-nav {
+    margin-bottom: 1rem;
+  }
+`;
+
 export const FilterActions = styled.div`
   display: flex;
   align-items: center;

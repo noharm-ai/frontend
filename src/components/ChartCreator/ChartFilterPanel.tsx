@@ -32,56 +32,60 @@ function FilterRowItem({ filter, schema, readOnly, onChange, onRemove }: FilterR
     onChange(filter.id, filter.field, null, e.target.value);
   };
 
-  const renderValueInput = () => {
-    if (!col) return null;
+  const isString = col?.type === "string";
 
+  // String filters: the list/text toggle stays on the top row (beside the
+  // field select); the value input/select drops to a full-width row below.
+  const modeToggle = (
+    <Radio.Group
+      value={filter.mode ?? "list"}
+      onChange={handleModeChange}
+      optionType="button"
+      buttonStyle="solid"
+      disabled={readOnly}
+      style={{ flexShrink: 0 }}
+    >
+      <Tooltip title="Selecionar da lista">
+        <Radio.Button value="list"><UnorderedListOutlined /></Radio.Button>
+      </Tooltip>
+      <Tooltip title="Texto livre">
+        <Radio.Button value="text"><FontSizeOutlined /></Radio.Button>
+      </Tooltip>
+    </Radio.Group>
+  );
+
+  const stringValueField =
+    filter.mode === "text" ? (
+      <Input
+        placeholder="Digite para buscar..."
+        value={filter.value}
+        onChange={(e) => handleValueChange(e.target.value)}
+        disabled={readOnly}
+        style={{ width: "100%" }}
+      />
+    ) : (
+      <SelectCustom
+        mode="multiple"
+        placeholder="Selecione os valores"
+        value={filter.value}
+        onChange={handleValueChange}
+        disabled={readOnly}
+        showSearch
+        optionFilterProp="children"
+        maxTagCount="responsive"
+        allowClear
+        style={{ width: "100%" }}
+      >
+        {col?.options?.map((opt) => (
+          <Select.Option key={opt} value={opt}>{opt}</Select.Option>
+        ))}
+      </SelectCustom>
+    );
+
+  // Value control(s) for the non-string types, kept inline on the top row.
+  const renderInlineValue = () => {
+    if (!col) return null;
     switch (col.type) {
-      case "string":
-        return (
-          <>
-            <Radio.Group
-              value={filter.mode ?? "list"}
-              onChange={handleModeChange}
-              optionType="button"
-              buttonStyle="solid"
-              disabled={readOnly}
-              style={{ flexShrink: 0 }}
-            >
-              <Tooltip title="Selecionar da lista">
-                <Radio.Button value="list"><UnorderedListOutlined /></Radio.Button>
-              </Tooltip>
-              <Tooltip title="Texto livre">
-                <Radio.Button value="text"><FontSizeOutlined /></Radio.Button>
-              </Tooltip>
-            </Radio.Group>
-            {filter.mode === "text" ? (
-              <Input
-                placeholder="Digite para buscar..."
-                value={filter.value}
-                onChange={(e) => handleValueChange(e.target.value)}
-                disabled={readOnly}
-                style={{ flex: 1 }}
-              />
-            ) : (
-              <SelectCustom
-                mode="multiple"
-                placeholder="Selecione os valores"
-                value={filter.value}
-                onChange={handleValueChange}
-                disabled={readOnly}
-                showSearch
-                optionFilterProp="children"
-                maxTagCount="responsive"
-                allowClear
-                style={{ flex: 1 }}
-              >
-                {col.options?.map((opt) => (
-                  <Select.Option key={opt} value={opt}>{opt}</Select.Option>
-                ))}
-              </SelectCustom>
-            )}
-          </>
-        );
       case "number":
         return (
           <>
@@ -122,28 +126,36 @@ function FilterRowItem({ filter, schema, readOnly, onChange, onRemove }: FilterR
   };
 
   return (
-    <Flex gap={8} align="center" wrap="wrap">
-      {!readOnly && (
-        <Button
-          danger
-          type="text"
-          icon={<DeleteOutlined />}
-          onClick={() => onRemove(filter.id)}
-          size="small"
+    <Flex vertical gap={8}>
+      <Flex gap={8} align="center" wrap="wrap">
+        {!readOnly && (
+          <Button
+            danger
+            type="text"
+            icon={<DeleteOutlined />}
+            onClick={() => onRemove(filter.id)}
+            size="small"
+          />
+        )}
+        <Select
+          placeholder="Campo"
+          value={filter.field || undefined}
+          onChange={handleFieldChange}
+          disabled={readOnly}
+          showSearch
+          style={{ width: 160, flexShrink: 0 }}
+          options={schema.map((c) => ({ label: c.label, value: c.key }))}
         />
-      )}
-      <Select
-        placeholder="Campo"
-        value={filter.field || undefined}
-        onChange={handleFieldChange}
-        disabled={readOnly}
-        showSearch
-        style={{ width: 160, flexShrink: 0 }}
-        options={schema.map((c) => ({ label: c.label, value: c.key }))}
-      />
-      <Flex gap={8} align="center" style={{ flex: 1, minWidth: 0 }}>
-        {renderValueInput()}
+        {col &&
+          (isString ? (
+            modeToggle
+          ) : (
+            <Flex gap={8} align="center" style={{ flex: 1, minWidth: 0 }}>
+              {renderInlineValue()}
+            </Flex>
+          ))}
       </Flex>
+      {isString && stringValueField}
     </Flex>
   );
 }
