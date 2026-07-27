@@ -966,6 +966,12 @@ api.lists.getIcds = (params = {}) =>
     ...setHeaders(),
   });
 
+api.lists.getRoutes = (params = {}) =>
+  instance.get(`lists/routes`, {
+    params,
+    ...setHeaders(),
+  });
+
 api.lists.findIcds = (term) =>
   instance.get(`lists/icds/find`, {
     params: {
