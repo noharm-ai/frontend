@@ -13,10 +13,10 @@ export default function SummaryReactions({ position, admissionNumber }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const likeStatus = useSelector(
-    (state) => state.summary.blocks[position]?.like
+    (state) => state.summary.blocks[position]?.like,
   );
   const blockText = useSelector(
-    (state) => state.summary.blocks[position]?.text
+    (state) => state.summary.blocks[position]?.text,
   );
 
   const likeAction = (type, extraInfo = {}) => {
@@ -31,7 +31,7 @@ export default function SummaryReactions({ position, admissionNumber }) {
           text: blockText,
           ...extraInfo,
         },
-      })
+      }),
     );
   };
 
@@ -47,8 +47,8 @@ export default function SummaryReactions({ position, admissionNumber }) {
       danger: true,
     },
     {
-      key: "3",
-      label: t("summary.excessiveInfo"),
+      key: "4",
+      label: t("summary.outOfScopeInfo"),
       danger: true,
     },
   ];

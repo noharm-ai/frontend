@@ -851,6 +851,7 @@
     "incorrectInfo": "Informação incorreta",
     "insufficientInfo": "Informação insuficiente",
     "excessiveInfo": "Informação excessiva",
+    "outOfScopeInfo": "Fora do escopo",
     "auditLegend": "Lista de registros encontrados pela IA",
     "statusPending": "Sumário pendente",
     "statusSuccess": "Sumário finalizado!",

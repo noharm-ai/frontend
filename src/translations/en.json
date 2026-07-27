@@ -840,6 +840,7 @@
     "incorrectInfo": "Incorrect information",
     "insufficientInfo": "Insufficient information",
     "excessiveInfo": "Excessive information",
+    "outOfScopeInfo": "Out of scope",
     "auditLegend": "Records found by AI",
     "statusPending": "Pending Summary",
     "statusSuccess": "Summary Completed!",
