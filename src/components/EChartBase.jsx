@@ -1,6 +1,21 @@
 import React, { useRef, useEffect, useState } from "react";
 import { init, getInstanceByDom } from "echarts";
 
+// ECharts 6 defaults the legend to the bottom, where it overlaps the plot.
+// Place it at the top when the chart hasn't specified a vertical position,
+// while respecting any explicit top/bottom set by the chart (e.g. pie charts).
+function withLegendDefaults(option) {
+  const legend = option?.legend;
+  if (!legend || legend.top !== undefined || legend.bottom !== undefined) {
+    return option;
+  }
+
+  return {
+    ...option,
+    legend: { top: 0, left: "center", ...legend },
+  };
+}
+
 export function EChartBase({
   option,
   style,
@@ -56,7 +71,10 @@ export function EChartBase({
     // Update chart
     if (chartRef.current !== null) {
       const chart = getInstanceByDom(chartRef.current);
-      chart.setOption({ ...defaultOptions, ...option }, settings);
+      chart.setOption(
+        { ...defaultOptions, ...withLegendDefaults(option) },
+        settings
+      );
     }
   }, [option, settings, theme]);
 
