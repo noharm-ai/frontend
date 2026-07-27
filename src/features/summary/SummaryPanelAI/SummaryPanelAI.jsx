@@ -18,7 +18,7 @@ import Tooltip from "components/Tooltip";
 import { Textarea } from "components/Inputs";
 import { textToHtml } from "utils/transformers/utils";
 
-import { setBlock, promptSummaryBlock } from "../SummarySlice";
+import { setBlock, promptSummaryBlock, setLike } from "../SummarySlice";
 import SummaryPanelAIConfig from "./SummaryPanelAIConfig";
 import SummaryPanelAIAudit from "./SummaryPanelAIAudit";
 import SummaryReactions from "../SummaryReactions/SummaryReactions";
@@ -33,6 +33,9 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
     (state) => state.summary.blocks[position]?.aiStatus,
   );
   const result = useSelector((state) => state.summary.blocks[position]?.text);
+  const original = useSelector(
+    (state) => state.summary.blocks[position]?.original,
+  );
   const [loading, setLoading] = useState(true);
   const [edit, setEdit] = useState(false);
   const [editText, setEditText] = useState("");
@@ -163,6 +166,26 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
     setEdit(true);
   };
 
+  const saveEditing = () => {
+    setEdit(false);
+
+    if (editText !== original) {
+      dispatch(
+        setLike({
+          type: "summary-edited",
+          block: position,
+          status: "edited",
+          value: {
+            admissionNumber,
+            block: position,
+            text: editText,
+            original: original,
+          },
+        }),
+      );
+    }
+  };
+
   if (error) {
     return (
       <SummaryPanel className="error">
@@ -226,7 +249,7 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
               <Button
                 shape="circle"
                 icon={<SaveOutlined />}
-                onClick={() => setEdit(false)}
+                onClick={() => saveEditing()}
                 size="large"
                 type="primary"
               />
