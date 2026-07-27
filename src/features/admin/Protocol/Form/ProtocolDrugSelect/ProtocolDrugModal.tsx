@@ -112,6 +112,17 @@ export function ProtocolDrugModal({
     });
   };
 
+  // Let a click anywhere on the row toggle its selection, not only the checkbox.
+  const toggleRow = (record: DrugOption) => {
+    const key = String(record.id);
+    if (selectedKeys.includes(key)) {
+      removeSelected(key);
+    } else {
+      setSelectedKeys((prev) => [...prev, key]);
+      setSelectedItemsById((prev) => ({ ...prev, [key]: record }));
+    }
+  };
+
   const confirm = () => {
     const additions: Record<string, string> = {};
     Object.values(selectedItemsById).forEach((item) => {
@@ -176,6 +187,19 @@ export function ProtocolDrugModal({
         rowSelection={rowSelection}
         pagination={false}
         scroll={{ y: "45vh" }}
+        onRow={(record) => ({
+          onClick: (e) => {
+            // The checkbox column toggles on its own; ignore those clicks so a
+            // checkbox tap does not immediately toggle back.
+            if (
+              (e.target as HTMLElement).closest(".ant-table-selection-column")
+            ) {
+              return;
+            }
+            toggleRow(record);
+          },
+          style: { cursor: "pointer" },
+        })}
         locale={{
           emptyText:
             term.length < 2

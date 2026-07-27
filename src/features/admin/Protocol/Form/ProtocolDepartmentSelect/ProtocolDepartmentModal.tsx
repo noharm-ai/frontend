@@ -74,6 +74,16 @@ export function ProtocolDepartmentModal({
     setSelectedKeys((prev) => prev.filter((k) => k !== key));
   };
 
+  // Let a click anywhere on the row toggle its selection, not only the checkbox.
+  const toggleRow = (record: DepartmentOption) => {
+    const key = String(record.id);
+    if (selectedKeys.includes(key)) {
+      removeSelected(key);
+    } else {
+      setSelectedKeys((prev) => [...prev, key]);
+    }
+  };
+
   const confirm = () => {
     onConfirm(selectedKeys);
   };
@@ -126,6 +136,19 @@ export function ProtocolDepartmentModal({
         rowSelection={rowSelection}
         pagination={false}
         scroll={{ y: "45vh" }}
+        onRow={(record) => ({
+          onClick: (e) => {
+            // The checkbox column toggles on its own; ignore those clicks so a
+            // checkbox tap does not immediately toggle back.
+            if (
+              (e.target as HTMLElement).closest(".ant-table-selection-column")
+            ) {
+              return;
+            }
+            toggleRow(record);
+          },
+          style: { cursor: "pointer" },
+        })}
         locale={{
           emptyText: "Nenhum setor encontrado",
         }}
